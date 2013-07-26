@@ -1,0 +1,44 @@
+{% load i18n %}
+<footer id="footer-menu">
+    <div class="fw-container">
+        <ul class="fw-footer-links">
+            <li>
+                <a href="http://fiduswriter.com/terms-and-conditions/" target="_blank">
+                    {% trans "Terms and Conditions" %}
+                </a>
+            </li>
+            <li>
+                <a href="http://www.mathjax.org/" target="_blank">
+                    {% trans "Equations and Math by mathjax" %}
+                </a>
+            </li>
+            <li>
+                <a href="https://bitbucket.org/fbennett/citeproc-js/wiki/Home" target="_blank">
+                    {% trans "Citations by citeproc.js" %}
+                </a>
+            </li>
+            <li>
+                <a href="http://fiduswriter.com/2013/03/15/how-do-i-enable-page-views-in-fidus-writer/" target="_blank">
+                    {% trans "Requires Chrome/enable css regions" %}
+                </a>
+            </li>
+        </ul>
+        <form name="setLangForm" action="/i18n/setlang/" method="post">
+            {% csrf_token %}
+            {% get_current_language as LANGUAGE_CODE %}
+            <input name="next" type="hidden" value="/" />
+            <select id="langSelection" name="language">
+                <option value="en"{% if 'en' == LANGUAGE_CODE %}{{ 'selected' }}{% endif %}>English</option>
+                <option value="es"{% if 'es' == LANGUAGE_CODE %}{{ 'selected' }}{% endif %}>Espa&ntilde;ol</option>
+            </select>
+        </form>
+    </div>
+</footer>
+<script>
+  $(function() {
+    $('#langSelection').change(function() {
+      document.setLangForm.submit();
+      return false;
+    });
+  });
+</script>

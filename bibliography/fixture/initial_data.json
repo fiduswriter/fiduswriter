@@ -1,0 +1,6249 @@
+[{
+        "pk": 1,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{---}",
+            "unicode": "\u2014"
+        }
+    }, {
+        "pk": 2,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textexclamdown}",
+            "unicode": "\u00a1"
+        }
+    }, {
+        "pk": 3,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textcent}",
+            "unicode": "\u00a2"
+        }
+    }, {
+        "pk": 4,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textsterling}",
+            "unicode": "\u00a3"
+        }
+    }, {
+        "pk": 5,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textyen}",
+            "unicode": "\u00a5"
+        }
+    }, {
+        "pk": 6,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textbrokenbar}",
+            "unicode": "\u00a6"
+        }
+    }, {
+        "pk": 7,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textsection}",
+            "unicode": "\u00a7"
+        }
+    }, {
+        "pk": 8,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textasciidieresis}",
+            "unicode": "\u00a8"
+        }
+    }, {
+        "pk": 9,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textcopyright}",
+            "unicode": "\u00a9"
+        }
+    }, {
+        "pk": 10,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textordfeminine}",
+            "unicode": "\u00aa"
+        }
+    }, {
+        "pk": 11,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\guillemotleft}",
+            "unicode": "\u00ab"
+        }
+    }, {
+        "pk": 12,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textlnot}",
+            "unicode": "\u00ac"
+        }
+    }, {
+        "pk": 13,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textregistered}",
+            "unicode": "\u00ae"
+        }
+    }, {
+        "pk": 14,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textasciimacron}",
+            "unicode": "\u00af"
+        }
+    }, {
+        "pk": 15,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textdegree}",
+            "unicode": "\u00b0"
+        }
+    }, {
+        "pk": 16,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textpm}",
+            "unicode": "\u00b1"
+        }
+    }, {
+        "pk": 17,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\texttwosuperior}",
+            "unicode": "\u00b2"
+        }
+    }, {
+        "pk": 18,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textthreesuperior}",
+            "unicode": "\u00b3"
+        }
+    }, {
+        "pk": 19,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textasciiacute}",
+            "unicode": "\u00b4"
+        }
+    }, {
+        "pk": 20,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textmu}",
+            "unicode": "\u00b5"
+        }
+    }, {
+        "pk": 21,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textparagraph}",
+            "unicode": "\u00b6"
+        }
+    }, {
+        "pk": 22,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textperiodcentered}",
+            "unicode": "\u00b7"
+        }
+    }, {
+        "pk": 23,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\c\\ }",
+            "unicode": "\u00b8"
+        }
+    }, {
+        "pk": 24,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textonesuperior}",
+            "unicode": "\u00b9"
+        }
+    }, {
+        "pk": 25,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textordmasculine}",
+            "unicode": "\u00ba"
+        }
+    }, {
+        "pk": 26,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\guillemotright}",
+            "unicode": "\u00bb"
+        }
+    }, {
+        "pk": 27,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textonequarter}",
+            "unicode": "\u00bc"
+        }
+    }, {
+        "pk": 28,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textonehalf}",
+            "unicode": "\u00bd"
+        }
+    }, {
+        "pk": 29,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textthreequarters}",
+            "unicode": "\u00be"
+        }
+    }, {
+        "pk": 30,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textquestiondown}",
+            "unicode": "\u00bf"
+        }
+    }, {
+        "pk": 31,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\AE}",
+            "unicode": "\u00c6"
+        }
+    }, {
+        "pk": 32,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\DH}",
+            "unicode": "\u00d0"
+        }
+    }, {
+        "pk": 33,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\texttimes}",
+            "unicode": "\u00d7"
+        }
+    }, {
+        "pk": 34,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\TH}",
+            "unicode": "\u00de"
+        }
+    }, {
+        "pk": 35,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\ss}",
+            "unicode": "\u00df"
+        }
+    }, {
+        "pk": 36,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\ae}",
+            "unicode": "\u00e6"
+        }
+    }, {
+        "pk": 37,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dh}",
+            "unicode": "\u00f0"
+        }
+    }, {
+        "pk": 38,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textdiv}",
+            "unicode": "\u00f7"
+        }
+    }, {
+        "pk": 39,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\th}",
+            "unicode": "\u00fe"
+        }
+    }, {
+        "pk": 40,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\i}",
+            "unicode": "\u0131"
+        }
+    }, {
+        "pk": 41,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\NG}",
+            "unicode": "\u014a"
+        }
+    }, {
+        "pk": 42,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\ng}",
+            "unicode": "\u014b"
+        }
+    }, {
+        "pk": 43,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\OE}",
+            "unicode": "\u0152"
+        }
+    }, {
+        "pk": 44,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\oe}",
+            "unicode": "\u0153"
+        }
+    }, {
+        "pk": 45,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textasciicircum}",
+            "unicode": "\u02c6"
+        }
+    }, {
+        "pk": 46,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~}",
+            "unicode": "\u02dc"
+        }
+    }, {
+        "pk": 47,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textacutedbl}",
+            "unicode": "\u02dd"
+        }
+    }, {
+        "pk": 48,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textendash}",
+            "unicode": "\u2013"
+        }
+    }, {
+        "pk": 49,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textemdash}",
+            "unicode": "\u2014"
+        }
+    }, {
+        "pk": 50,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textemdash}",
+            "unicode": "\u2015"
+        }
+    }, {
+        "pk": 51,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textbardbl}",
+            "unicode": "\u2016"
+        }
+    }, {
+        "pk": 52,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textunderscore}",
+            "unicode": "\u2017"
+        }
+    }, {
+        "pk": 53,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textquoteleft}",
+            "unicode": "\u2018"
+        }
+    }, {
+        "pk": 54,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textquoteright}",
+            "unicode": "\u2019"
+        }
+    }, {
+        "pk": 55,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\quotesinglbase}",
+            "unicode": "\u201a"
+        }
+    }, {
+        "pk": 56,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textquotedblleft}",
+            "unicode": "\u201c"
+        }
+    }, {
+        "pk": 57,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textquotedblright}",
+            "unicode": "\u201d"
+        }
+    }, {
+        "pk": 58,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\quotedblbase}",
+            "unicode": "\u201e"
+        }
+    }, {
+        "pk": 59,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\quotedblbase}",
+            "unicode": "\u201f"
+        }
+    }, {
+        "pk": 60,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textdagger}",
+            "unicode": "\u2020"
+        }
+    }, {
+        "pk": 61,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textdaggerdbl}",
+            "unicode": "\u2021"
+        }
+    }, {
+        "pk": 62,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textbullet}",
+            "unicode": "\u2022"
+        }
+    }, {
+        "pk": 63,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textellipsis}",
+            "unicode": "\u2026"
+        }
+    }, {
+        "pk": 64,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textperthousand}",
+            "unicode": "\u2030"
+        }
+    }, {
+        "pk": 65,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\guilsinglleft}",
+            "unicode": "\u2039"
+        }
+    }, {
+        "pk": 66,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\guilsinglright}",
+            "unicode": "\u203a"
+        }
+    }, {
+        "pk": 67,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textfractionsolidus}",
+            "unicode": "\u2044"
+        }
+    }, {
+        "pk": 68,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\texteuro}",
+            "unicode": "\u20ac"
+        }
+    }, {
+        "pk": 69,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textcelsius}",
+            "unicode": "\u2103"
+        }
+    }, {
+        "pk": 70,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textnumero}",
+            "unicode": "\u2116"
+        }
+    }, {
+        "pk": 71,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textcircledP}",
+            "unicode": "\u2117"
+        }
+    }, {
+        "pk": 72,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textservicemark}",
+            "unicode": "\u2120"
+        }
+    }, {
+        "pk": 73,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\texttrademark}",
+            "unicode": "\u2122"
+        }
+    }, {
+        "pk": 74,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textohm}",
+            "unicode": "\u2126"
+        }
+    }, {
+        "pk": 75,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textestimated}",
+            "unicode": "\u212e"
+        }
+    }, {
+        "pk": 76,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textleftarrow}",
+            "unicode": "\u2190"
+        }
+    }, {
+        "pk": 77,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textuparrow}",
+            "unicode": "\u2191"
+        }
+    }, {
+        "pk": 78,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textrightarrow}",
+            "unicode": "\u2192"
+        }
+    }, {
+        "pk": 79,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textdownarrow}",
+            "unicode": "\u2193"
+        }
+    }, {
+        "pk": 80,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\infty}",
+            "unicode": "\u221e"
+        }
+    }, {
+        "pk": 81,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~}",
+            "unicode": "\u223c"
+        }
+    }, {
+        "pk": 82,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\#}",
+            "unicode": "\u22d5"
+        }
+    }, {
+        "pk": 83,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textlangle}",
+            "unicode": "\u2329"
+        }
+    }, {
+        "pk": 84,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textrangle}",
+            "unicode": "\u232a"
+        }
+    }, {
+        "pk": 85,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textvisiblespace}",
+            "unicode": "\u2423"
+        }
+    }, {
+        "pk": 86,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\textopenbullet}",
+            "unicode": "\u25e6"
+        }
+    }, {
+        "pk": 87,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\%<}",
+            "unicode": "\u2701"
+        }
+    }, {
+        "pk": 88,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`A}",
+            "unicode": "\u00c0"
+        }
+    }, {
+        "pk": 89,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'A}",
+            "unicode": "\u00c1"
+        }
+    }, {
+        "pk": 90,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^A}",
+            "unicode": "\u00c2"
+        }
+    }, {
+        "pk": 91,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~A}",
+            "unicode": "\u00c3"
+        }
+    }, {
+        "pk": 92,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"A}",
+            "unicode": "\u00c4"
+        }
+    }, {
+        "pk": 93,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\rA}",
+            "unicode": "\u00c5"
+        }
+    }, {
+        "pk": 94,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\cC}",
+            "unicode": "\u00c7"
+        }
+    }, {
+        "pk": 95,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`E}",
+            "unicode": "\u00c8"
+        }
+    }, {
+        "pk": 96,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'E}",
+            "unicode": "\u00c9"
+        }
+    }, {
+        "pk": 97,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^E}",
+            "unicode": "\u00ca"
+        }
+    }, {
+        "pk": 98,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"E}",
+            "unicode": "\u00cb"
+        }
+    }, {
+        "pk": 99,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`I}",
+            "unicode": "\u00cc"
+        }
+    }, {
+        "pk": 100,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'I}",
+            "unicode": "\u00cd"
+        }
+    }, {
+        "pk": 101,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^I}",
+            "unicode": "\u00ce"
+        }
+    }, {
+        "pk": 102,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"I}",
+            "unicode": "\u00cf"
+        }
+    }, {
+        "pk": 103,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~N}",
+            "unicode": "\u00d1"
+        }
+    }, {
+        "pk": 104,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`O}",
+            "unicode": "\u00d2"
+        }
+    }, {
+        "pk": 105,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'O}",
+            "unicode": "\u00d3"
+        }
+    }, {
+        "pk": 106,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^O}",
+            "unicode": "\u00d4"
+        }
+    }, {
+        "pk": 107,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~O}",
+            "unicode": "\u00d5"
+        }
+    }, {
+        "pk": 108,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"O}",
+            "unicode": "\u00d6"
+        }
+    }, {
+        "pk": 109,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`U}",
+            "unicode": "\u00d9"
+        }
+    }, {
+        "pk": 110,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'U}",
+            "unicode": "\u00da"
+        }
+    }, {
+        "pk": 111,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^U}",
+            "unicode": "\u00db"
+        }
+    }, {
+        "pk": 112,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"U}",
+            "unicode": "\u00dc"
+        }
+    }, {
+        "pk": 113,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'Y}",
+            "unicode": "\u00dd"
+        }
+    }, {
+        "pk": 114,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`a}",
+            "unicode": "\u00e0"
+        }
+    }, {
+        "pk": 115,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'a}",
+            "unicode": "\u00e1"
+        }
+    }, {
+        "pk": 116,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^a}",
+            "unicode": "\u00e2"
+        }
+    }, {
+        "pk": 117,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~a}",
+            "unicode": "\u00e3"
+        }
+    }, {
+        "pk": 118,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"a}",
+            "unicode": "\u00e4"
+        }
+    }, {
+        "pk": 119,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\ra}",
+            "unicode": "\u00e5"
+        }
+    }, {
+        "pk": 120,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\cc}",
+            "unicode": "\u00e7"
+        }
+    }, {
+        "pk": 121,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`e}",
+            "unicode": "\u00e8"
+        }
+    }, {
+        "pk": 122,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'e}",
+            "unicode": "\u00e9"
+        }
+    }, {
+        "pk": 123,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^e}",
+            "unicode": "\u00ea"
+        }
+    }, {
+        "pk": 124,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"e}",
+            "unicode": "\u00eb"
+        }
+    }, {
+        "pk": 125,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`i}",
+            "unicode": "\u00ec"
+        }
+    }, {
+        "pk": 126,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'i}",
+            "unicode": "\u00ed"
+        }
+    }, {
+        "pk": 127,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^i}",
+            "unicode": "\u00ee"
+        }
+    }, {
+        "pk": 128,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"i}",
+            "unicode": "\u00ef"
+        }
+    }, {
+        "pk": 129,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~n}",
+            "unicode": "\u00f1"
+        }
+    }, {
+        "pk": 130,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`o}",
+            "unicode": "\u00f2"
+        }
+    }, {
+        "pk": 131,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'o}",
+            "unicode": "\u00f3"
+        }
+    }, {
+        "pk": 132,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^o}",
+            "unicode": "\u00f4"
+        }
+    }, {
+        "pk": 133,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~o}",
+            "unicode": "\u00f5"
+        }
+    }, {
+        "pk": 134,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"o}",
+            "unicode": "\u00f6"
+        }
+    }, {
+        "pk": 135,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`u}",
+            "unicode": "\u00f9"
+        }
+    }, {
+        "pk": 136,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'u}",
+            "unicode": "\u00fa"
+        }
+    }, {
+        "pk": 137,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^u}",
+            "unicode": "\u00fb"
+        }
+    }, {
+        "pk": 138,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"u}",
+            "unicode": "\u00fc"
+        }
+    }, {
+        "pk": 139,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'y}",
+            "unicode": "\u00fd"
+        }
+    }, {
+        "pk": 140,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"y}",
+            "unicode": "\u00ff"
+        }
+    }, {
+        "pk": 141,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\=A}",
+            "unicode": "\u0100"
+        }
+    }, {
+        "pk": 142,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\=a}",
+            "unicode": "\u0101"
+        }
+    }, {
+        "pk": 143,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\uA}",
+            "unicode": "\u0102"
+        }
+    }, {
+        "pk": 144,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\ua}",
+            "unicode": "\u0103"
+        }
+    }, {
+        "pk": 145,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\kA}",
+            "unicode": "\u0104"
+        }
+    }, {
+        "pk": 146,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\ka}",
+            "unicode": "\u0105"
+        }
+    }, {
+        "pk": 147,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'C}",
+            "unicode": "\u0106"
+        }
+    }, {
+        "pk": 148,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'c}",
+            "unicode": "\u0107"
+        }
+    }, {
+        "pk": 149,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^C}",
+            "unicode": "\u0108"
+        }
+    }, {
+        "pk": 150,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^c}",
+            "unicode": "\u0109"
+        }
+    }, {
+        "pk": 151,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.C}",
+            "unicode": "\u010a"
+        }
+    }, {
+        "pk": 152,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.c}",
+            "unicode": "\u010b"
+        }
+    }, {
+        "pk": 153,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vC}",
+            "unicode": "\u010c"
+        }
+    }, {
+        "pk": 154,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vc}",
+            "unicode": "\u010d"
+        }
+    }, {
+        "pk": 155,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vD}",
+            "unicode": "\u010e"
+        }
+    }, {
+        "pk": 156,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vd}",
+            "unicode": "\u010f"
+        }
+    }, {
+        "pk": 157,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\=E}",
+            "unicode": "\u0112"
+        }
+    }, {
+        "pk": 158,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\=e}",
+            "unicode": "\u0113"
+        }
+    }, {
+        "pk": 159,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\uE}",
+            "unicode": "\u0114"
+        }
+    }, {
+        "pk": 160,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\ue}",
+            "unicode": "\u0115"
+        }
+    }, {
+        "pk": 161,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.E}",
+            "unicode": "\u0116"
+        }
+    }, {
+        "pk": 162,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.e}",
+            "unicode": "\u0117"
+        }
+    }, {
+        "pk": 163,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\kE}",
+            "unicode": "\u0118"
+        }
+    }, {
+        "pk": 164,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\ke}",
+            "unicode": "\u0119"
+        }
+    }, {
+        "pk": 165,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vE}",
+            "unicode": "\u011a"
+        }
+    }, {
+        "pk": 166,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\ve}",
+            "unicode": "\u011b"
+        }
+    }, {
+        "pk": 167,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^G}",
+            "unicode": "\u011c"
+        }
+    }, {
+        "pk": 168,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^g}",
+            "unicode": "\u011d"
+        }
+    }, {
+        "pk": 169,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\uG}",
+            "unicode": "\u011e"
+        }
+    }, {
+        "pk": 170,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\ug}",
+            "unicode": "\u011f"
+        }
+    }, {
+        "pk": 171,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.G}",
+            "unicode": "\u0120"
+        }
+    }, {
+        "pk": 172,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.g}",
+            "unicode": "\u0121"
+        }
+    }, {
+        "pk": 173,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\cG}",
+            "unicode": "\u0122"
+        }
+    }, {
+        "pk": 174,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\cg}",
+            "unicode": "\u0123"
+        }
+    }, {
+        "pk": 175,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^H}",
+            "unicode": "\u0124"
+        }
+    }, {
+        "pk": 176,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^h}",
+            "unicode": "\u0125"
+        }
+    }, {
+        "pk": 177,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~I}",
+            "unicode": "\u0128"
+        }
+    }, {
+        "pk": 178,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~i}",
+            "unicode": "\u0129"
+        }
+    }, {
+        "pk": 179,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\=I}",
+            "unicode": "\u012a"
+        }
+    }, {
+        "pk": 180,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\=i}",
+            "unicode": "\u012b"
+        }
+    }, {
+        "pk": 181,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\uI}",
+            "unicode": "\u012c"
+        }
+    }, {
+        "pk": 182,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\ui}",
+            "unicode": "\u012d"
+        }
+    }, {
+        "pk": 183,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\kI}",
+            "unicode": "\u012e"
+        }
+    }, {
+        "pk": 184,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\ki}",
+            "unicode": "\u012f"
+        }
+    }, {
+        "pk": 185,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.I}",
+            "unicode": "\u0130"
+        }
+    }, {
+        "pk": 186,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^J}",
+            "unicode": "\u0134"
+        }
+    }, {
+        "pk": 187,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^j}",
+            "unicode": "\u0135"
+        }
+    }, {
+        "pk": 188,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\cK}",
+            "unicode": "\u0136"
+        }
+    }, {
+        "pk": 189,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\ck}",
+            "unicode": "\u0137"
+        }
+    }, {
+        "pk": 190,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'L}",
+            "unicode": "\u0139"
+        }
+    }, {
+        "pk": 191,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'l}",
+            "unicode": "\u013a"
+        }
+    }, {
+        "pk": 192,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\cL}",
+            "unicode": "\u013b"
+        }
+    }, {
+        "pk": 193,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\cl}",
+            "unicode": "\u013c"
+        }
+    }, {
+        "pk": 194,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vL}",
+            "unicode": "\u013d"
+        }
+    }, {
+        "pk": 195,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vl}",
+            "unicode": "\u013e"
+        }
+    }, {
+        "pk": 196,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "\\\\L{}",
+            "unicode": "\u0141"
+        }
+    }, {
+        "pk": 197,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "\\\\l{}",
+            "unicode": "\u0142"
+        }
+    }, {
+        "pk": 198,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'N}",
+            "unicode": "\u0143"
+        }
+    }, {
+        "pk": 199,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'n}",
+            "unicode": "\u0144"
+        }
+    }, {
+        "pk": 200,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\cN}",
+            "unicode": "\u0145"
+        }
+    }, {
+        "pk": 201,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\cn}",
+            "unicode": "\u0146"
+        }
+    }, {
+        "pk": 202,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vN}",
+            "unicode": "\u0147"
+        }
+    }, {
+        "pk": 203,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vn}",
+            "unicode": "\u0148"
+        }
+    }, {
+        "pk": 204,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\=O}",
+            "unicode": "\u014c"
+        }
+    }, {
+        "pk": 205,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\=o}",
+            "unicode": "\u014d"
+        }
+    }, {
+        "pk": 206,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\uO}",
+            "unicode": "\u014e"
+        }
+    }, {
+        "pk": 207,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\uo}",
+            "unicode": "\u014f"
+        }
+    }, {
+        "pk": 208,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\HO}",
+            "unicode": "\u0150"
+        }
+    }, {
+        "pk": 209,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\Ho}",
+            "unicode": "\u0151"
+        }
+    }, {
+        "pk": 210,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'R}",
+            "unicode": "\u0154"
+        }
+    }, {
+        "pk": 211,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'r}",
+            "unicode": "\u0155"
+        }
+    }, {
+        "pk": 212,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\cR}",
+            "unicode": "\u0156"
+        }
+    }, {
+        "pk": 213,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\cr}",
+            "unicode": "\u0157"
+        }
+    }, {
+        "pk": 214,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vR}",
+            "unicode": "\u0158"
+        }
+    }, {
+        "pk": 215,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vr}",
+            "unicode": "\u0159"
+        }
+    }, {
+        "pk": 216,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'S}",
+            "unicode": "\u015a"
+        }
+    }, {
+        "pk": 217,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'s}",
+            "unicode": "\u015b"
+        }
+    }, {
+        "pk": 218,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^S}",
+            "unicode": "\u015c"
+        }
+    }, {
+        "pk": 219,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^s}",
+            "unicode": "\u015d"
+        }
+    }, {
+        "pk": 220,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\cS}",
+            "unicode": "\u015e"
+        }
+    }, {
+        "pk": 221,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\cs}",
+            "unicode": "\u015f"
+        }
+    }, {
+        "pk": 222,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vS}",
+            "unicode": "\u0160"
+        }
+    }, {
+        "pk": 223,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vs}",
+            "unicode": "\u0161"
+        }
+    }, {
+        "pk": 224,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\cT}",
+            "unicode": "\u0162"
+        }
+    }, {
+        "pk": 225,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\ct}",
+            "unicode": "\u0163"
+        }
+    }, {
+        "pk": 226,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vT}",
+            "unicode": "\u0164"
+        }
+    }, {
+        "pk": 227,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vt}",
+            "unicode": "\u0165"
+        }
+    }, {
+        "pk": 228,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~U}",
+            "unicode": "\u0168"
+        }
+    }, {
+        "pk": 229,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~u}",
+            "unicode": "\u0169"
+        }
+    }, {
+        "pk": 230,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\=U}",
+            "unicode": "\u016a"
+        }
+    }, {
+        "pk": 231,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\=u}",
+            "unicode": "\u016b"
+        }
+    }, {
+        "pk": 232,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\uU}",
+            "unicode": "\u016c"
+        }
+    }, {
+        "pk": 233,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\uu}",
+            "unicode": "\u016d"
+        }
+    }, {
+        "pk": 234,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\HU}",
+            "unicode": "\u0170"
+        }
+    }, {
+        "pk": 235,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\Hu}",
+            "unicode": "\u0171"
+        }
+    }, {
+        "pk": 236,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\kU}",
+            "unicode": "\u0172"
+        }
+    }, {
+        "pk": 237,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\ku}",
+            "unicode": "\u0173"
+        }
+    }, {
+        "pk": 238,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^W}",
+            "unicode": "\u0174"
+        }
+    }, {
+        "pk": 239,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^w}",
+            "unicode": "\u0175"
+        }
+    }, {
+        "pk": 240,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^Y}",
+            "unicode": "\u0176"
+        }
+    }, {
+        "pk": 241,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^y}",
+            "unicode": "\u0177"
+        }
+    }, {
+        "pk": 242,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"Y}",
+            "unicode": "\u0178"
+        }
+    }, {
+        "pk": 243,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'Z}",
+            "unicode": "\u0179"
+        }
+    }, {
+        "pk": 244,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'z}",
+            "unicode": "\u017a"
+        }
+    }, {
+        "pk": 245,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.Z}",
+            "unicode": "\u017b"
+        }
+    }, {
+        "pk": 246,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.z}",
+            "unicode": "\u017c"
+        }
+    }, {
+        "pk": 247,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vZ}",
+            "unicode": "\u017d"
+        }
+    }, {
+        "pk": 248,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vz}",
+            "unicode": "\u017e"
+        }
+    }, {
+        "pk": 249,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vA}",
+            "unicode": "\u01cd"
+        }
+    }, {
+        "pk": 250,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\va}",
+            "unicode": "\u01ce"
+        }
+    }, {
+        "pk": 251,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vI}",
+            "unicode": "\u01cf"
+        }
+    }, {
+        "pk": 252,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vi}",
+            "unicode": "\u01d0"
+        }
+    }, {
+        "pk": 253,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vO}",
+            "unicode": "\u01d1"
+        }
+    }, {
+        "pk": 254,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vo}",
+            "unicode": "\u01d2"
+        }
+    }, {
+        "pk": 255,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vU}",
+            "unicode": "\u01d3"
+        }
+    }, {
+        "pk": 256,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vu}",
+            "unicode": "\u01d4"
+        }
+    }, {
+        "pk": 257,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vG}",
+            "unicode": "\u01e6"
+        }
+    }, {
+        "pk": 258,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vg}",
+            "unicode": "\u01e7"
+        }
+    }, {
+        "pk": 259,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vK}",
+            "unicode": "\u01e8"
+        }
+    }, {
+        "pk": 260,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vk}",
+            "unicode": "\u01e9"
+        }
+    }, {
+        "pk": 261,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\kO}",
+            "unicode": "\u01ea"
+        }
+    }, {
+        "pk": 262,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\ko}",
+            "unicode": "\u01eb"
+        }
+    }, {
+        "pk": 263,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\vj}",
+            "unicode": "\u01f0"
+        }
+    }, {
+        "pk": 264,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'G}",
+            "unicode": "\u01f4"
+        }
+    }, {
+        "pk": 265,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'g}",
+            "unicode": "\u01f5"
+        }
+    }, {
+        "pk": 266,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.B}",
+            "unicode": "\u1e02"
+        }
+    }, {
+        "pk": 267,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.b}",
+            "unicode": "\u1e03"
+        }
+    }, {
+        "pk": 268,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dB}",
+            "unicode": "\u1e04"
+        }
+    }, {
+        "pk": 269,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\db}",
+            "unicode": "\u1e05"
+        }
+    }, {
+        "pk": 270,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\bB}",
+            "unicode": "\u1e06"
+        }
+    }, {
+        "pk": 271,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\bb}",
+            "unicode": "\u1e07"
+        }
+    }, {
+        "pk": 272,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.D}",
+            "unicode": "\u1e0a"
+        }
+    }, {
+        "pk": 273,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.d}",
+            "unicode": "\u1e0b"
+        }
+    }, {
+        "pk": 274,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dD}",
+            "unicode": "\u1e0c"
+        }
+    }, {
+        "pk": 275,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dd}",
+            "unicode": "\u1e0d"
+        }
+    }, {
+        "pk": 276,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\bD}",
+            "unicode": "\u1e0e"
+        }
+    }, {
+        "pk": 277,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\bd}",
+            "unicode": "\u1e0f"
+        }
+    }, {
+        "pk": 278,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\cD}",
+            "unicode": "\u1e10"
+        }
+    }, {
+        "pk": 279,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\cd}",
+            "unicode": "\u1e11"
+        }
+    }, {
+        "pk": 280,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.F}",
+            "unicode": "\u1e1e"
+        }
+    }, {
+        "pk": 281,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.f}",
+            "unicode": "\u1e1f"
+        }
+    }, {
+        "pk": 282,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\=G}",
+            "unicode": "\u1e20"
+        }
+    }, {
+        "pk": 283,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\=g}",
+            "unicode": "\u1e21"
+        }
+    }, {
+        "pk": 284,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.H}",
+            "unicode": "\u1e22"
+        }
+    }, {
+        "pk": 285,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.h}",
+            "unicode": "\u1e23"
+        }
+    }, {
+        "pk": 286,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dH}",
+            "unicode": "\u1e24"
+        }
+    }, {
+        "pk": 287,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dh}",
+            "unicode": "\u1e25"
+        }
+    }, {
+        "pk": 288,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"H}",
+            "unicode": "\u1e26"
+        }
+    }, {
+        "pk": 289,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"h}",
+            "unicode": "\u1e27"
+        }
+    }, {
+        "pk": 290,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\cH}",
+            "unicode": "\u1e28"
+        }
+    }, {
+        "pk": 291,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\ch}",
+            "unicode": "\u1e29"
+        }
+    }, {
+        "pk": 292,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'K}",
+            "unicode": "\u1e30"
+        }
+    }, {
+        "pk": 293,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'k}",
+            "unicode": "\u1e31"
+        }
+    }, {
+        "pk": 294,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dK}",
+            "unicode": "\u1e32"
+        }
+    }, {
+        "pk": 295,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dk}",
+            "unicode": "\u1e33"
+        }
+    }, {
+        "pk": 296,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\bK}",
+            "unicode": "\u1e34"
+        }
+    }, {
+        "pk": 297,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\bk}",
+            "unicode": "\u1e35"
+        }
+    }, {
+        "pk": 298,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dL}",
+            "unicode": "\u1e36"
+        }
+    }, {
+        "pk": 299,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dl}",
+            "unicode": "\u1e37"
+        }
+    }, {
+        "pk": 300,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\bL}",
+            "unicode": "\u1e3a"
+        }
+    }, {
+        "pk": 301,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\bl}",
+            "unicode": "\u1e3b"
+        }
+    }, {
+        "pk": 302,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'M}",
+            "unicode": "\u1e3e"
+        }
+    }, {
+        "pk": 303,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'m}",
+            "unicode": "\u1e3f"
+        }
+    }, {
+        "pk": 304,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.M}",
+            "unicode": "\u1e40"
+        }
+    }, {
+        "pk": 305,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.m}",
+            "unicode": "\u1e41"
+        }
+    }, {
+        "pk": 306,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dM}",
+            "unicode": "\u1e42"
+        }
+    }, {
+        "pk": 307,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dm}",
+            "unicode": "\u1e43"
+        }
+    }, {
+        "pk": 308,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.N}",
+            "unicode": "\u1e44"
+        }
+    }, {
+        "pk": 309,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.n}",
+            "unicode": "\u1e45"
+        }
+    }, {
+        "pk": 310,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dN}",
+            "unicode": "\u1e46"
+        }
+    }, {
+        "pk": 311,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dn}",
+            "unicode": "\u1e47"
+        }
+    }, {
+        "pk": 312,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\bN}",
+            "unicode": "\u1e48"
+        }
+    }, {
+        "pk": 313,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\bn}",
+            "unicode": "\u1e49"
+        }
+    }, {
+        "pk": 314,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'P}",
+            "unicode": "\u1e54"
+        }
+    }, {
+        "pk": 315,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'p}",
+            "unicode": "\u1e55"
+        }
+    }, {
+        "pk": 316,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.P}",
+            "unicode": "\u1e56"
+        }
+    }, {
+        "pk": 317,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.p}",
+            "unicode": "\u1e57"
+        }
+    }, {
+        "pk": 318,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.R}",
+            "unicode": "\u1e58"
+        }
+    }, {
+        "pk": 319,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.r}",
+            "unicode": "\u1e59"
+        }
+    }, {
+        "pk": 320,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dR}",
+            "unicode": "\u1e5a"
+        }
+    }, {
+        "pk": 321,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dr}",
+            "unicode": "\u1e5b"
+        }
+    }, {
+        "pk": 322,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\bR}",
+            "unicode": "\u1e5e"
+        }
+    }, {
+        "pk": 323,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\br}",
+            "unicode": "\u1e5f"
+        }
+    }, {
+        "pk": 324,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.S}",
+            "unicode": "\u1e60"
+        }
+    }, {
+        "pk": 325,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.s}",
+            "unicode": "\u1e61"
+        }
+    }, {
+        "pk": 326,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dS}",
+            "unicode": "\u1e62"
+        }
+    }, {
+        "pk": 327,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\ds}",
+            "unicode": "\u1e63"
+        }
+    }, {
+        "pk": 328,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.T}",
+            "unicode": "\u1e6a"
+        }
+    }, {
+        "pk": 329,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.t}",
+            "unicode": "\u1e6b"
+        }
+    }, {
+        "pk": 330,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dT}",
+            "unicode": "\u1e6c"
+        }
+    }, {
+        "pk": 331,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dt}",
+            "unicode": "\u1e6d"
+        }
+    }, {
+        "pk": 332,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\bT}",
+            "unicode": "\u1e6e"
+        }
+    }, {
+        "pk": 333,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\bt}",
+            "unicode": "\u1e6f"
+        }
+    }, {
+        "pk": 334,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~V}",
+            "unicode": "\u1e7c"
+        }
+    }, {
+        "pk": 335,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~v}",
+            "unicode": "\u1e7d"
+        }
+    }, {
+        "pk": 336,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dV}",
+            "unicode": "\u1e7e"
+        }
+    }, {
+        "pk": 337,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dv}",
+            "unicode": "\u1e7f"
+        }
+    }, {
+        "pk": 338,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`W}",
+            "unicode": "\u1e80"
+        }
+    }, {
+        "pk": 339,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`w}",
+            "unicode": "\u1e81"
+        }
+    }, {
+        "pk": 340,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'W}",
+            "unicode": "\u1e82"
+        }
+    }, {
+        "pk": 341,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'w}",
+            "unicode": "\u1e83"
+        }
+    }, {
+        "pk": 342,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"W}",
+            "unicode": "\u1e84"
+        }
+    }, {
+        "pk": 343,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"w}",
+            "unicode": "\u1e85"
+        }
+    }, {
+        "pk": 344,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.W}",
+            "unicode": "\u1e86"
+        }
+    }, {
+        "pk": 345,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.w}",
+            "unicode": "\u1e87"
+        }
+    }, {
+        "pk": 346,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dW}",
+            "unicode": "\u1e88"
+        }
+    }, {
+        "pk": 347,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dw}",
+            "unicode": "\u1e89"
+        }
+    }, {
+        "pk": 348,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.X}",
+            "unicode": "\u1e8a"
+        }
+    }, {
+        "pk": 349,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.x}",
+            "unicode": "\u1e8b"
+        }
+    }, {
+        "pk": 350,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"X}",
+            "unicode": "\u1e8c"
+        }
+    }, {
+        "pk": 351,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"x}",
+            "unicode": "\u1e8d"
+        }
+    }, {
+        "pk": 352,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.Y}",
+            "unicode": "\u1e8e"
+        }
+    }, {
+        "pk": 353,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.y}",
+            "unicode": "\u1e8f"
+        }
+    }, {
+        "pk": 354,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^Z}",
+            "unicode": "\u1e90"
+        }
+    }, {
+        "pk": 355,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^z}",
+            "unicode": "\u1e91"
+        }
+    }, {
+        "pk": 356,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dZ}",
+            "unicode": "\u1e92"
+        }
+    }, {
+        "pk": 357,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dz}",
+            "unicode": "\u1e93"
+        }
+    }, {
+        "pk": 358,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\bZ}",
+            "unicode": "\u1e94"
+        }
+    }, {
+        "pk": 359,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\bz}",
+            "unicode": "\u1e95"
+        }
+    }, {
+        "pk": 360,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\bh}",
+            "unicode": "\u1e96"
+        }
+    }, {
+        "pk": 361,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"t}",
+            "unicode": "\u1e97"
+        }
+    }, {
+        "pk": 362,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dA}",
+            "unicode": "\u1ea0"
+        }
+    }, {
+        "pk": 363,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\da}",
+            "unicode": "\u1ea1"
+        }
+    }, {
+        "pk": 364,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dE}",
+            "unicode": "\u1eb8"
+        }
+    }, {
+        "pk": 365,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\de}",
+            "unicode": "\u1eb9"
+        }
+    }, {
+        "pk": 366,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~E}",
+            "unicode": "\u1ebc"
+        }
+    }, {
+        "pk": 367,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~e}",
+            "unicode": "\u1ebd"
+        }
+    }, {
+        "pk": 368,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dI}",
+            "unicode": "\u1eca"
+        }
+    }, {
+        "pk": 369,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\di}",
+            "unicode": "\u1ecb"
+        }
+    }, {
+        "pk": 370,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dO}",
+            "unicode": "\u1ecc"
+        }
+    }, {
+        "pk": 371,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\do}",
+            "unicode": "\u1ecd"
+        }
+    }, {
+        "pk": 372,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dU}",
+            "unicode": "\u1ee4"
+        }
+    }, {
+        "pk": 373,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\du}",
+            "unicode": "\u1ee5"
+        }
+    }, {
+        "pk": 374,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`Y}",
+            "unicode": "\u1ef2"
+        }
+    }, {
+        "pk": 375,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`y}",
+            "unicode": "\u1ef3"
+        }
+    }, {
+        "pk": 376,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dY}",
+            "unicode": "\u1ef4"
+        }
+    }, {
+        "pk": 377,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\dy}",
+            "unicode": "\u1ef5"
+        }
+    }, {
+        "pk": 378,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~Y}",
+            "unicode": "\u1ef8"
+        }
+    }, {
+        "pk": 379,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~y}",
+            "unicode": "\u1ef9"
+        }
+    }, {
+        "pk": 380,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\pounds}",
+            "unicode": "\u00a3"
+        }
+    }, {
+        "pk": 381,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\glqq}",
+            "unicode": "\u201e"
+        }
+    }, {
+        "pk": 382,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\grqq}",
+            "unicode": "\u201c"
+        }
+    }, {
+        "pk": 383,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`{A}}",
+            "unicode": "\u00c0"
+        }
+    }, {
+        "pk": 384,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{A}}",
+            "unicode": "\u00c1"
+        }
+    }, {
+        "pk": 385,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^{A}}",
+            "unicode": "\u00c2"
+        }
+    }, {
+        "pk": 386,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~{A}}",
+            "unicode": "\u00c3"
+        }
+    }, {
+        "pk": 387,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"{A}}",
+            "unicode": "\u00c4"
+        }
+    }, {
+        "pk": 388,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\r{A}}",
+            "unicode": "\u00c5"
+        }
+    }, {
+        "pk": 389,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\c{C}}",
+            "unicode": "\u00c7"
+        }
+    }, {
+        "pk": 390,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`{E}}",
+            "unicode": "\u00c8"
+        }
+    }, {
+        "pk": 391,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{E}}",
+            "unicode": "\u00c9"
+        }
+    }, {
+        "pk": 392,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^{E}}",
+            "unicode": "\u00ca"
+        }
+    }, {
+        "pk": 393,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"{E}}",
+            "unicode": "\u00cb"
+        }
+    }, {
+        "pk": 394,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`{I}}",
+            "unicode": "\u00cc"
+        }
+    }, {
+        "pk": 395,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{I}}",
+            "unicode": "\u00cd"
+        }
+    }, {
+        "pk": 396,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^{I}}",
+            "unicode": "\u00ce"
+        }
+    }, {
+        "pk": 397,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"{I}}",
+            "unicode": "\u00cf"
+        }
+    }, {
+        "pk": 398,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~{N}}",
+            "unicode": "\u00d1"
+        }
+    }, {
+        "pk": 399,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`{O}}",
+            "unicode": "\u00d2"
+        }
+    }, {
+        "pk": 400,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{O}}",
+            "unicode": "\u00d3"
+        }
+    }, {
+        "pk": 401,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^{O}}",
+            "unicode": "\u00d4"
+        }
+    }, {
+        "pk": 402,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~{O}}",
+            "unicode": "\u00d5"
+        }
+    }, {
+        "pk": 403,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"{O}}",
+            "unicode": "\u00d6"
+        }
+    }, {
+        "pk": 404,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`{U}}",
+            "unicode": "\u00d9"
+        }
+    }, {
+        "pk": 405,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{U}}",
+            "unicode": "\u00da"
+        }
+    }, {
+        "pk": 406,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^{U}}",
+            "unicode": "\u00db"
+        }
+    }, {
+        "pk": 407,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"{U}}",
+            "unicode": "\u00dc"
+        }
+    }, {
+        "pk": 408,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{Y}}",
+            "unicode": "\u00dd"
+        }
+    }, {
+        "pk": 409,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`{a}}",
+            "unicode": "\u00e0"
+        }
+    }, {
+        "pk": 410,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{a}}",
+            "unicode": "\u00e1"
+        }
+    }, {
+        "pk": 411,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^{a}}",
+            "unicode": "\u00e2"
+        }
+    }, {
+        "pk": 412,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~{a}}",
+            "unicode": "\u00e3"
+        }
+    }, {
+        "pk": 413,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"{a}}",
+            "unicode": "\u00e4"
+        }
+    }, {
+        "pk": 414,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\r{a}}",
+            "unicode": "\u00e5"
+        }
+    }, {
+        "pk": 415,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\c{c}}",
+            "unicode": "\u00e7"
+        }
+    }, {
+        "pk": 416,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`{e}}",
+            "unicode": "\u00e8"
+        }
+    }, {
+        "pk": 417,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{e}}",
+            "unicode": "\u00e9"
+        }
+    }, {
+        "pk": 418,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^{e}}",
+            "unicode": "\u00ea"
+        }
+    }, {
+        "pk": 419,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"{e}}",
+            "unicode": "\u00eb"
+        }
+    }, {
+        "pk": 420,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`{i}}",
+            "unicode": "\u00ec"
+        }
+    }, {
+        "pk": 421,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{i}}",
+            "unicode": "\u00ed"
+        }
+    }, {
+        "pk": 422,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^{i}}",
+            "unicode": "\u00ee"
+        }
+    }, {
+        "pk": 423,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"{i}}",
+            "unicode": "\u00ef"
+        }
+    }, {
+        "pk": 424,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~{n}}",
+            "unicode": "\u00f1"
+        }
+    }, {
+        "pk": 425,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`{o}}",
+            "unicode": "\u00f2"
+        }
+    }, {
+        "pk": 426,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{o}}",
+            "unicode": "\u00f3"
+        }
+    }, {
+        "pk": 427,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^{o}}",
+            "unicode": "\u00f4"
+        }
+    }, {
+        "pk": 428,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~{o}}",
+            "unicode": "\u00f5"
+        }
+    }, {
+        "pk": 429,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"{o}}",
+            "unicode": "\u00f6"
+        }
+    }, {
+        "pk": 430,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`{u}}",
+            "unicode": "\u00f9"
+        }
+    }, {
+        "pk": 431,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{u}}",
+            "unicode": "\u00fa"
+        }
+    }, {
+        "pk": 432,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^{u}}",
+            "unicode": "\u00fb"
+        }
+    }, {
+        "pk": 433,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"{u}}",
+            "unicode": "\u00fc"
+        }
+    }, {
+        "pk": 434,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{y}}",
+            "unicode": "\u00fd"
+        }
+    }, {
+        "pk": 435,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"{y}}",
+            "unicode": "\u00ff"
+        }
+    }, {
+        "pk": 436,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\={A}}",
+            "unicode": "\u0100"
+        }
+    }, {
+        "pk": 437,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\={a}}",
+            "unicode": "\u0101"
+        }
+    }, {
+        "pk": 438,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\u{A}}",
+            "unicode": "\u0102"
+        }
+    }, {
+        "pk": 439,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\u{a}}",
+            "unicode": "\u0103"
+        }
+    }, {
+        "pk": 440,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\k{A}}",
+            "unicode": "\u0104"
+        }
+    }, {
+        "pk": 441,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\k{a}}",
+            "unicode": "\u0105"
+        }
+    }, {
+        "pk": 442,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{C}}",
+            "unicode": "\u0106"
+        }
+    }, {
+        "pk": 443,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{c}}",
+            "unicode": "\u0107"
+        }
+    }, {
+        "pk": 444,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^{C}}",
+            "unicode": "\u0108"
+        }
+    }, {
+        "pk": 445,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^{c}}",
+            "unicode": "\u0109"
+        }
+    }, {
+        "pk": 446,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{C}}",
+            "unicode": "\u010a"
+        }
+    }, {
+        "pk": 447,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{c}}",
+            "unicode": "\u010b"
+        }
+    }, {
+        "pk": 448,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{C}}",
+            "unicode": "\u010c"
+        }
+    }, {
+        "pk": 449,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{c}}",
+            "unicode": "\u010d"
+        }
+    }, {
+        "pk": 450,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{D}}",
+            "unicode": "\u010e"
+        }
+    }, {
+        "pk": 451,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{d}}",
+            "unicode": "\u010f"
+        }
+    }, {
+        "pk": 452,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\={E}}",
+            "unicode": "\u0112"
+        }
+    }, {
+        "pk": 453,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\={e}}",
+            "unicode": "\u0113"
+        }
+    }, {
+        "pk": 454,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\u{E}}",
+            "unicode": "\u0114"
+        }
+    }, {
+        "pk": 455,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\u{e}}",
+            "unicode": "\u0115"
+        }
+    }, {
+        "pk": 456,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{E}}",
+            "unicode": "\u0116"
+        }
+    }, {
+        "pk": 457,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{e}}",
+            "unicode": "\u0117"
+        }
+    }, {
+        "pk": 458,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\k{E}}",
+            "unicode": "\u0118"
+        }
+    }, {
+        "pk": 459,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\k{e}}",
+            "unicode": "\u0119"
+        }
+    }, {
+        "pk": 460,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{E}}",
+            "unicode": "\u011a"
+        }
+    }, {
+        "pk": 461,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{e}}",
+            "unicode": "\u011b"
+        }
+    }, {
+        "pk": 462,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^{G}}",
+            "unicode": "\u011c"
+        }
+    }, {
+        "pk": 463,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^{g}}",
+            "unicode": "\u011d"
+        }
+    }, {
+        "pk": 464,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\u{G}}",
+            "unicode": "\u011e"
+        }
+    }, {
+        "pk": 465,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\u{g}}",
+            "unicode": "\u011f"
+        }
+    }, {
+        "pk": 466,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{G}}",
+            "unicode": "\u0120"
+        }
+    }, {
+        "pk": 467,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{g}}",
+            "unicode": "\u0121"
+        }
+    }, {
+        "pk": 468,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\c{G}}",
+            "unicode": "\u0122"
+        }
+    }, {
+        "pk": 469,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\c{g}}",
+            "unicode": "\u0123"
+        }
+    }, {
+        "pk": 470,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^{H}}",
+            "unicode": "\u0124"
+        }
+    }, {
+        "pk": 471,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^{h}}",
+            "unicode": "\u0125"
+        }
+    }, {
+        "pk": 472,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~{I}}",
+            "unicode": "\u0128"
+        }
+    }, {
+        "pk": 473,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~{i}}",
+            "unicode": "\u0129"
+        }
+    }, {
+        "pk": 474,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\={I}}",
+            "unicode": "\u012a"
+        }
+    }, {
+        "pk": 475,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\={i}}",
+            "unicode": "\u012b"
+        }
+    }, {
+        "pk": 476,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\u{I}}",
+            "unicode": "\u012c"
+        }
+    }, {
+        "pk": 477,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\u{i}}",
+            "unicode": "\u012d"
+        }
+    }, {
+        "pk": 478,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\k{I}}",
+            "unicode": "\u012e"
+        }
+    }, {
+        "pk": 479,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\k{i}}",
+            "unicode": "\u012f"
+        }
+    }, {
+        "pk": 480,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{I}}",
+            "unicode": "\u0130"
+        }
+    }, {
+        "pk": 481,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^{J}}",
+            "unicode": "\u0134"
+        }
+    }, {
+        "pk": 482,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^{j}}",
+            "unicode": "\u0135"
+        }
+    }, {
+        "pk": 483,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\c{K}}",
+            "unicode": "\u0136"
+        }
+    }, {
+        "pk": 484,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\c{k}}",
+            "unicode": "\u0137"
+        }
+    }, {
+        "pk": 485,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{L}}",
+            "unicode": "\u0139"
+        }
+    }, {
+        "pk": 486,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{l}}",
+            "unicode": "\u013a"
+        }
+    }, {
+        "pk": 487,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\c{L}}",
+            "unicode": "\u013b"
+        }
+    }, {
+        "pk": 488,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\c{l}}",
+            "unicode": "\u013c"
+        }
+    }, {
+        "pk": 489,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{L}}",
+            "unicode": "\u013d"
+        }
+    }, {
+        "pk": 490,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{l}}",
+            "unicode": "\u013e"
+        }
+    }, {
+        "pk": 491,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\L{}}",
+            "unicode": "\u0141"
+        }
+    }, {
+        "pk": 492,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\l{}}",
+            "unicode": "\u0142"
+        }
+    }, {
+        "pk": 493,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{N}}",
+            "unicode": "\u0143"
+        }
+    }, {
+        "pk": 494,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{n}}",
+            "unicode": "\u0144"
+        }
+    }, {
+        "pk": 495,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\c{N}}",
+            "unicode": "\u0145"
+        }
+    }, {
+        "pk": 496,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\c{n}}",
+            "unicode": "\u0146"
+        }
+    }, {
+        "pk": 497,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{N}}",
+            "unicode": "\u0147"
+        }
+    }, {
+        "pk": 498,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{n}}",
+            "unicode": "\u0148"
+        }
+    }, {
+        "pk": 499,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\={O}}",
+            "unicode": "\u014c"
+        }
+    }, {
+        "pk": 500,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\={o}}",
+            "unicode": "\u014d"
+        }
+    }, {
+        "pk": 501,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\u{O}}",
+            "unicode": "\u014e"
+        }
+    }, {
+        "pk": 502,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\u{o}}",
+            "unicode": "\u014f"
+        }
+    }, {
+        "pk": 503,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\H{O}}",
+            "unicode": "\u0150"
+        }
+    }, {
+        "pk": 504,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\H{o}}",
+            "unicode": "\u0151"
+        }
+    }, {
+        "pk": 505,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{R}}",
+            "unicode": "\u0154"
+        }
+    }, {
+        "pk": 506,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{r}}",
+            "unicode": "\u0155"
+        }
+    }, {
+        "pk": 507,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\c{R}}",
+            "unicode": "\u0156"
+        }
+    }, {
+        "pk": 508,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\c{r}}",
+            "unicode": "\u0157"
+        }
+    }, {
+        "pk": 509,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{R}}",
+            "unicode": "\u0158"
+        }
+    }, {
+        "pk": 510,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{r}}",
+            "unicode": "\u0159"
+        }
+    }, {
+        "pk": 511,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{S}}",
+            "unicode": "\u015a"
+        }
+    }, {
+        "pk": 512,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{s}}",
+            "unicode": "\u015b"
+        }
+    }, {
+        "pk": 513,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^{S}}",
+            "unicode": "\u015c"
+        }
+    }, {
+        "pk": 514,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^{s}}",
+            "unicode": "\u015d"
+        }
+    }, {
+        "pk": 515,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\c{S}}",
+            "unicode": "\u015e"
+        }
+    }, {
+        "pk": 516,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\c{s}}",
+            "unicode": "\u015f"
+        }
+    }, {
+        "pk": 517,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{S}}",
+            "unicode": "\u0160"
+        }
+    }, {
+        "pk": 518,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{s}}",
+            "unicode": "\u0161"
+        }
+    }, {
+        "pk": 519,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\c{T}}",
+            "unicode": "\u0162"
+        }
+    }, {
+        "pk": 520,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\c{t}}",
+            "unicode": "\u0163"
+        }
+    }, {
+        "pk": 521,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{T}}",
+            "unicode": "\u0164"
+        }
+    }, {
+        "pk": 522,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{t}}",
+            "unicode": "\u0165"
+        }
+    }, {
+        "pk": 523,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~{U}}",
+            "unicode": "\u0168"
+        }
+    }, {
+        "pk": 524,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~{u}}",
+            "unicode": "\u0169"
+        }
+    }, {
+        "pk": 525,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\={U}}",
+            "unicode": "\u016a"
+        }
+    }, {
+        "pk": 526,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\={u}}",
+            "unicode": "\u016b"
+        }
+    }, {
+        "pk": 527,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\u{U}}",
+            "unicode": "\u016c"
+        }
+    }, {
+        "pk": 528,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\u{u}}",
+            "unicode": "\u016d"
+        }
+    }, {
+        "pk": 529,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\H{U}}",
+            "unicode": "\u0170"
+        }
+    }, {
+        "pk": 530,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\H{u}}",
+            "unicode": "\u0171"
+        }
+    }, {
+        "pk": 531,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\k{U}}",
+            "unicode": "\u0172"
+        }
+    }, {
+        "pk": 532,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\k{u}}",
+            "unicode": "\u0173"
+        }
+    }, {
+        "pk": 533,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^{W}}",
+            "unicode": "\u0174"
+        }
+    }, {
+        "pk": 534,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^{w}}",
+            "unicode": "\u0175"
+        }
+    }, {
+        "pk": 535,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^{Y}}",
+            "unicode": "\u0176"
+        }
+    }, {
+        "pk": 536,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^{y}}",
+            "unicode": "\u0177"
+        }
+    }, {
+        "pk": 537,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"{Y}}",
+            "unicode": "\u0178"
+        }
+    }, {
+        "pk": 538,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{Z}}",
+            "unicode": "\u0179"
+        }
+    }, {
+        "pk": 539,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{z}}",
+            "unicode": "\u017a"
+        }
+    }, {
+        "pk": 540,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{Z}}",
+            "unicode": "\u017b"
+        }
+    }, {
+        "pk": 541,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{z}}",
+            "unicode": "\u017c"
+        }
+    }, {
+        "pk": 542,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{Z}}",
+            "unicode": "\u017d"
+        }
+    }, {
+        "pk": 543,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{z}}",
+            "unicode": "\u017e"
+        }
+    }, {
+        "pk": 544,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{A}}",
+            "unicode": "\u01cd"
+        }
+    }, {
+        "pk": 545,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{a}}",
+            "unicode": "\u01ce"
+        }
+    }, {
+        "pk": 546,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{I}}",
+            "unicode": "\u01cf"
+        }
+    }, {
+        "pk": 547,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{i}}",
+            "unicode": "\u01d0"
+        }
+    }, {
+        "pk": 548,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{O}}",
+            "unicode": "\u01d1"
+        }
+    }, {
+        "pk": 549,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{o}}",
+            "unicode": "\u01d2"
+        }
+    }, {
+        "pk": 550,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{U}}",
+            "unicode": "\u01d3"
+        }
+    }, {
+        "pk": 551,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{u}}",
+            "unicode": "\u01d4"
+        }
+    }, {
+        "pk": 552,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{G}}",
+            "unicode": "\u01e6"
+        }
+    }, {
+        "pk": 553,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{g}}",
+            "unicode": "\u01e7"
+        }
+    }, {
+        "pk": 554,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{K}}",
+            "unicode": "\u01e8"
+        }
+    }, {
+        "pk": 555,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{k}}",
+            "unicode": "\u01e9"
+        }
+    }, {
+        "pk": 556,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\k{O}}",
+            "unicode": "\u01ea"
+        }
+    }, {
+        "pk": 557,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\k{o}}",
+            "unicode": "\u01eb"
+        }
+    }, {
+        "pk": 558,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\v{j}}",
+            "unicode": "\u01f0"
+        }
+    }, {
+        "pk": 559,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{G}}",
+            "unicode": "\u01f4"
+        }
+    }, {
+        "pk": 560,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{g}}",
+            "unicode": "\u01f5"
+        }
+    }, {
+        "pk": 561,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{B}}",
+            "unicode": "\u1e02"
+        }
+    }, {
+        "pk": 562,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{b}}",
+            "unicode": "\u1e03"
+        }
+    }, {
+        "pk": 563,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{B}}",
+            "unicode": "\u1e04"
+        }
+    }, {
+        "pk": 564,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{b}}",
+            "unicode": "\u1e05"
+        }
+    }, {
+        "pk": 565,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\b{B}}",
+            "unicode": "\u1e06"
+        }
+    }, {
+        "pk": 566,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\b{b}}",
+            "unicode": "\u1e07"
+        }
+    }, {
+        "pk": 567,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{D}}",
+            "unicode": "\u1e0a"
+        }
+    }, {
+        "pk": 568,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{d}}",
+            "unicode": "\u1e0b"
+        }
+    }, {
+        "pk": 569,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{D}}",
+            "unicode": "\u1e0c"
+        }
+    }, {
+        "pk": 570,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{d}}",
+            "unicode": "\u1e0d"
+        }
+    }, {
+        "pk": 571,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\b{D}}",
+            "unicode": "\u1e0e"
+        }
+    }, {
+        "pk": 572,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\b{d}}",
+            "unicode": "\u1e0f"
+        }
+    }, {
+        "pk": 573,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\c{D}}",
+            "unicode": "\u1e10"
+        }
+    }, {
+        "pk": 574,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\c{d}}",
+            "unicode": "\u1e11"
+        }
+    }, {
+        "pk": 575,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{F}}",
+            "unicode": "\u1e1e"
+        }
+    }, {
+        "pk": 576,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{f}}",
+            "unicode": "\u1e1f"
+        }
+    }, {
+        "pk": 577,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\={G}}",
+            "unicode": "\u1e20"
+        }
+    }, {
+        "pk": 578,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\={g}}",
+            "unicode": "\u1e21"
+        }
+    }, {
+        "pk": 579,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{H}}",
+            "unicode": "\u1e22"
+        }
+    }, {
+        "pk": 580,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{h}}",
+            "unicode": "\u1e23"
+        }
+    }, {
+        "pk": 581,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{H}}",
+            "unicode": "\u1e24"
+        }
+    }, {
+        "pk": 582,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{h}}",
+            "unicode": "\u1e25"
+        }
+    }, {
+        "pk": 583,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"{H}}",
+            "unicode": "\u1e26"
+        }
+    }, {
+        "pk": 584,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"{h}}",
+            "unicode": "\u1e27"
+        }
+    }, {
+        "pk": 585,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\c{H}}",
+            "unicode": "\u1e28"
+        }
+    }, {
+        "pk": 586,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\c{h}}",
+            "unicode": "\u1e29"
+        }
+    }, {
+        "pk": 587,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{K}}",
+            "unicode": "\u1e30"
+        }
+    }, {
+        "pk": 588,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{k}}",
+            "unicode": "\u1e31"
+        }
+    }, {
+        "pk": 589,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{K}}",
+            "unicode": "\u1e32"
+        }
+    }, {
+        "pk": 590,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{k}}",
+            "unicode": "\u1e33"
+        }
+    }, {
+        "pk": 591,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\b{K}}",
+            "unicode": "\u1e34"
+        }
+    }, {
+        "pk": 592,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\b{k}}",
+            "unicode": "\u1e35"
+        }
+    }, {
+        "pk": 593,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{L}}",
+            "unicode": "\u1e36"
+        }
+    }, {
+        "pk": 594,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{l}}",
+            "unicode": "\u1e37"
+        }
+    }, {
+        "pk": 595,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\b{L}}",
+            "unicode": "\u1e3a"
+        }
+    }, {
+        "pk": 596,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\b{l}}",
+            "unicode": "\u1e3b"
+        }
+    }, {
+        "pk": 597,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{M}}",
+            "unicode": "\u1e3e"
+        }
+    }, {
+        "pk": 598,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{m}}",
+            "unicode": "\u1e3f"
+        }
+    }, {
+        "pk": 599,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{M}}",
+            "unicode": "\u1e40"
+        }
+    }, {
+        "pk": 600,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{m}}",
+            "unicode": "\u1e41"
+        }
+    }, {
+        "pk": 601,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{M}}",
+            "unicode": "\u1e42"
+        }
+    }, {
+        "pk": 602,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{m}}",
+            "unicode": "\u1e43"
+        }
+    }, {
+        "pk": 603,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{N}}",
+            "unicode": "\u1e44"
+        }
+    }, {
+        "pk": 604,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{n}}",
+            "unicode": "\u1e45"
+        }
+    }, {
+        "pk": 605,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{N}}",
+            "unicode": "\u1e46"
+        }
+    }, {
+        "pk": 606,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{n}}",
+            "unicode": "\u1e47"
+        }
+    }, {
+        "pk": 607,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\b{N}}",
+            "unicode": "\u1e48"
+        }
+    }, {
+        "pk": 608,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\b{n}}",
+            "unicode": "\u1e49"
+        }
+    }, {
+        "pk": 609,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{P}}",
+            "unicode": "\u1e54"
+        }
+    }, {
+        "pk": 610,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{p}}",
+            "unicode": "\u1e55"
+        }
+    }, {
+        "pk": 611,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{P}}",
+            "unicode": "\u1e56"
+        }
+    }, {
+        "pk": 612,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{p}}",
+            "unicode": "\u1e57"
+        }
+    }, {
+        "pk": 613,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{R}}",
+            "unicode": "\u1e58"
+        }
+    }, {
+        "pk": 614,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{r}}",
+            "unicode": "\u1e59"
+        }
+    }, {
+        "pk": 615,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{R}}",
+            "unicode": "\u1e5a"
+        }
+    }, {
+        "pk": 616,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{r}}",
+            "unicode": "\u1e5b"
+        }
+    }, {
+        "pk": 617,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\b{R}}",
+            "unicode": "\u1e5e"
+        }
+    }, {
+        "pk": 618,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\b{r}}",
+            "unicode": "\u1e5f"
+        }
+    }, {
+        "pk": 619,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{S}}",
+            "unicode": "\u1e60"
+        }
+    }, {
+        "pk": 620,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{s}}",
+            "unicode": "\u1e61"
+        }
+    }, {
+        "pk": 621,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{S}}",
+            "unicode": "\u1e62"
+        }
+    }, {
+        "pk": 622,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{s}}",
+            "unicode": "\u1e63"
+        }
+    }, {
+        "pk": 623,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{T}}",
+            "unicode": "\u1e6a"
+        }
+    }, {
+        "pk": 624,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{t}}",
+            "unicode": "\u1e6b"
+        }
+    }, {
+        "pk": 625,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{T}}",
+            "unicode": "\u1e6c"
+        }
+    }, {
+        "pk": 626,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{t}}",
+            "unicode": "\u1e6d"
+        }
+    }, {
+        "pk": 627,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\b{T}}",
+            "unicode": "\u1e6e"
+        }
+    }, {
+        "pk": 628,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\b{t}}",
+            "unicode": "\u1e6f"
+        }
+    }, {
+        "pk": 629,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~{V}}",
+            "unicode": "\u1e7c"
+        }
+    }, {
+        "pk": 630,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~{v}}",
+            "unicode": "\u1e7d"
+        }
+    }, {
+        "pk": 631,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{V}}",
+            "unicode": "\u1e7e"
+        }
+    }, {
+        "pk": 632,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{v}}",
+            "unicode": "\u1e7f"
+        }
+    }, {
+        "pk": 633,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`{W}}",
+            "unicode": "\u1e80"
+        }
+    }, {
+        "pk": 634,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`{w}}",
+            "unicode": "\u1e81"
+        }
+    }, {
+        "pk": 635,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{W}}",
+            "unicode": "\u1e82"
+        }
+    }, {
+        "pk": 636,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\'{w}}",
+            "unicode": "\u1e83"
+        }
+    }, {
+        "pk": 637,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"{W}}",
+            "unicode": "\u1e84"
+        }
+    }, {
+        "pk": 638,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"{w}}",
+            "unicode": "\u1e85"
+        }
+    }, {
+        "pk": 639,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{W}}",
+            "unicode": "\u1e86"
+        }
+    }, {
+        "pk": 640,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{w}}",
+            "unicode": "\u1e87"
+        }
+    }, {
+        "pk": 641,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{W}}",
+            "unicode": "\u1e88"
+        }
+    }, {
+        "pk": 642,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{w}}",
+            "unicode": "\u1e89"
+        }
+    }, {
+        "pk": 643,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{X}}",
+            "unicode": "\u1e8a"
+        }
+    }, {
+        "pk": 644,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{x}}",
+            "unicode": "\u1e8b"
+        }
+    }, {
+        "pk": 645,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"{X}}",
+            "unicode": "\u1e8c"
+        }
+    }, {
+        "pk": 646,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"{x}}",
+            "unicode": "\u1e8d"
+        }
+    }, {
+        "pk": 647,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{Y}}",
+            "unicode": "\u1e8e"
+        }
+    }, {
+        "pk": 648,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\.{y}}",
+            "unicode": "\u1e8f"
+        }
+    }, {
+        "pk": 649,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^{Z}}",
+            "unicode": "\u1e90"
+        }
+    }, {
+        "pk": 650,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\^{z}}",
+            "unicode": "\u1e91"
+        }
+    }, {
+        "pk": 651,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{Z}}",
+            "unicode": "\u1e92"
+        }
+    }, {
+        "pk": 652,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{z}}",
+            "unicode": "\u1e93"
+        }
+    }, {
+        "pk": 653,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\b{Z}}",
+            "unicode": "\u1e94"
+        }
+    }, {
+        "pk": 654,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\b{z}}",
+            "unicode": "\u1e95"
+        }
+    }, {
+        "pk": 655,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\b{h}}",
+            "unicode": "\u1e96"
+        }
+    }, {
+        "pk": 656,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\\"{t}}",
+            "unicode": "\u1e97"
+        }
+    }, {
+        "pk": 657,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{A}}",
+            "unicode": "\u1ea0"
+        }
+    }, {
+        "pk": 658,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{a}}",
+            "unicode": "\u1ea1"
+        }
+    }, {
+        "pk": 659,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{E}}",
+            "unicode": "\u1eb8"
+        }
+    }, {
+        "pk": 660,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{e}}",
+            "unicode": "\u1eb9"
+        }
+    }, {
+        "pk": 661,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~{E}}",
+            "unicode": "\u1ebc"
+        }
+    }, {
+        "pk": 662,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~{e}}",
+            "unicode": "\u1ebd"
+        }
+    }, {
+        "pk": 663,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{I}}",
+            "unicode": "\u1eca"
+        }
+    }, {
+        "pk": 664,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{i}}",
+            "unicode": "\u1ecb"
+        }
+    }, {
+        "pk": 665,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{O}}",
+            "unicode": "\u1ecc"
+        }
+    }, {
+        "pk": 666,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{o}}",
+            "unicode": "\u1ecd"
+        }
+    }, {
+        "pk": 667,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{U}}",
+            "unicode": "\u1ee4"
+        }
+    }, {
+        "pk": 668,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{u}}",
+            "unicode": "\u1ee5"
+        }
+    }, {
+        "pk": 669,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`{Y}}",
+            "unicode": "\u1ef2"
+        }
+    }, {
+        "pk": 670,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\`{y}}",
+            "unicode": "\u1ef3"
+        }
+    }, {
+        "pk": 671,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{Y}}",
+            "unicode": "\u1ef4"
+        }
+    }, {
+        "pk": 672,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\d{y}}",
+            "unicode": "\u1ef5"
+        }
+    }, {
+        "pk": 673,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~{Y}}",
+            "unicode": "\u1ef8"
+        }
+    }, {
+        "pk": 674,
+        "model": "bibliography.texspecialchar",
+        "fields": {
+            "tex": "{\\~{y}}",
+            "unicode": "\u1ef9"
+        }
+    }, {
+        "pk": 1,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Abstract",
+            "field_name": "abstract",
+            "biblatex": "abstract",
+            "csl": "abstract",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 2,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Addendum",
+            "field_name": "addendum",
+            "biblatex": "addendum",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 3,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Afterword",
+            "field_name": "afterword",
+            "biblatex": "afterword",
+            "field_type": "l_name"
+        }
+    }, {
+        "pk": 4,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Annotation",
+            "field_name": "annotation",
+            "biblatex": "annotation",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 5,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Annotations author(s)",
+            "field_name": "annotator",
+            "biblatex": "annotator",
+            "field_type": "l_name"
+        }
+    }, {
+        "pk": 6,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Author(s)",
+            "field_name": "author",
+            "biblatex": "author",
+            "csl": "author",
+            "field_type": "l_name"
+        },
+        "short_name": "author"
+    }, {
+        "pk": 7,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Author type",
+            "field_name": "authortype",
+            "biblatex": "authortype",
+            "field_type": "f_key"
+        }
+    }, {
+        "pk": 8,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Book author(s)",
+            "field_name": "bookauthor",
+            "biblatex": "bookauthor",
+            "csl": "container-author",
+            "field_type": "l_name"
+        }
+    }, {
+        "pk": 9,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Book pagination",
+            "field_name": "bookpagination",
+            "biblatex": "bookpagination",
+            "field_type": "f_key"
+        },
+        "keys": "pagination"
+    }, {
+        "pk": 10,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Book subtitle",
+            "field_name": "booksubtitle",
+            "biblatex": "booksubtitle",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 11,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Book title",
+            "field_name": "booktitle",
+            "biblatex": "booktitle",
+            "csl": "container-title",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 12,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Book title annex",
+            "field_name": "booktitleaddon",
+            "biblatex": "booktitleaddon",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 13,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Chapter or section",
+            "field_name": "chapter",
+            "biblatex": "chapter",
+            "csl": "chapter-number",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 14,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Author(s) of a commentary",
+            "field_name": "commentator",
+            "biblatex": "commentator",
+            "field_type": "l_name"
+        }
+    }, {
+        "pk": 15,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Publication date",
+            "field_name": "date",
+            "biblatex": "date",
+            "csl": "issued",
+            "field_type": "f_date"
+        },
+        "short_name": "published"
+    }, {
+        "pk": 16,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Digital Object Identifier",
+            "field_name": "doi",
+            "biblatex": "doi",
+            "csl": "DOI",
+            "field_type": "f_verbatim"
+        }
+    }, {
+        "pk": 17,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Edition",
+            "field_name": "edition",
+            "biblatex": "edition",
+            "csl": "edition",
+            "field_type": "f_integer"
+        }
+    }, {
+        "pk": 18,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Editor(s)",
+            "field_name": "editor",
+            "biblatex": "editor",
+            "csl": "editor",
+            "field_type": "l_name"
+        },
+        "short_name": "author"
+    }, {
+        "pk": 19,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Secondary editor",
+            "field_name": "editora",
+            "biblatex": "editora",
+            "field_type": "l_name"
+        }
+    }, {
+        "pk": 20,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Secondary editor 2",
+            "field_name": "editorb",
+            "biblatex": "editorb",
+            "field_type": "l_name"
+        }
+    }, {
+        "pk": 21,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Secondary editor 3",
+            "field_name": "editorc",
+            "biblatex": "editorc",
+            "field_type": "l_name"
+        }
+    }, {
+        "pk": 22,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Role of editor(s)",
+            "field_name": "editortype",
+            "biblatex": "editortype",
+            "field_type": "f_key"
+        }
+    }, {
+        "pk": 23,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Role of secondary editor",
+            "field_name": "editoratype",
+            "biblatex": "editoratype",
+            "field_type": "f_key"
+        }
+    }, {
+        "pk": 24,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Role of secondary editor 2",
+            "field_name": "editorbtype",
+            "biblatex": "editorbtype",
+            "field_type": "f_key"
+        }
+    }, {
+        "pk": 25,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Role of secondary editor 3",
+            "field_name": "editorctype",
+            "biblatex": "editorctype",
+            "field_type": "f_key"
+        }
+    }, {
+        "pk": 26,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Electronic identifier of an article",
+            "field_name": "eid",
+            "biblatex": "eid",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 27,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Entry subtype",
+            "field_name": "entrysubtype",
+            "biblatex": "entrysubtype",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 28,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Electronic identifier of an online publication",
+            "field_name": "eprint",
+            "biblatex": "eprint",
+            "field_type": "f_verbatim"
+        }
+    }, {
+        "pk": 29,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Additional information to an online publication",
+            "field_name": "eprintclass",
+            "biblatex": "eprintclass",
+            "field_type": "l_literal"
+        }
+    }, {
+        "pk": 30,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Eprint identifier type",
+            "field_name": "eprinttype",
+            "biblatex": "eprinttype",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 31,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Event date",
+            "field_name": "eventdate",
+            "biblatex": "eventdate",
+            "csl": "event-date",
+            "field_type": "f_date"
+        }
+    }, {
+        "pk": 32,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Event title",
+            "field_name": "eventtitle",
+            "biblatex": "eventtitle",
+            "csl": "event",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 33,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Local link to the work",
+            "field_name": "file",
+            "biblatex": "file",
+            "field_type": "f_verbatim"
+        }
+    }, {
+        "pk": 34,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Foreword author(s)",
+            "field_name": "foreword",
+            "biblatex": "foreword",
+            "field_type": "l_name"
+        }
+    }, {
+        "pk": 35,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Patent holder(s)",
+            "field_name": "holder",
+            "biblatex": "holder",
+            "field_type": "l_name"
+        }
+    }, {
+        "pk": 36,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Publication notice",
+            "field_name": "howpublished",
+            "biblatex": "howpublished",
+            "csl": "medium",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 37,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Title for indexing",
+            "field_name": "indextitle",
+            "biblatex": "indextitle",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 38,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Institution",
+            "field_name": "institution",
+            "biblatex": "institution",
+            "field_type": "l_literal"
+        }
+    }, {
+        "pk": 39,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Author(s) of an introduction to the work",
+            "field_name": "introduction",
+            "biblatex": "introduction",
+            "field_type": "l_name"
+        }
+    }, {
+        "pk": 40,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "ISAN",
+            "field_name": "isan",
+            "biblatex": "isan",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 41,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "ISBN",
+            "field_name": "isbn",
+            "biblatex": "isbn",
+            "csl": "ISBN",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 42,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "ISMN",
+            "field_name": "ismn",
+            "biblatex": "ismn",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 43,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "ISRN",
+            "field_name": "isrn",
+            "biblatex": "isrn",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 44,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "ISSN",
+            "field_name": "issn",
+            "biblatex": "issn",
+            "csl": "ISSN",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 45,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Issue",
+            "field_name": "issue",
+            "biblatex": "issue",
+            "csl": "issue",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 46,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Issue subtitle",
+            "field_name": "issuesubtitle",
+            "biblatex": "issuesubtitle",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 47,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Issue title",
+            "field_name": "issuetitle",
+            "biblatex": "issuetitle",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 48,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "ISWC",
+            "field_name": "iswc",
+            "biblatex": "iswc",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 49,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Subtitle of publication",
+            "field_name": "journalsubtitle",
+            "biblatex": "journalsubtitle",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 50,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Title of publication",
+            "field_name": "journaltitle",
+            "biblatex": "journaltitle",
+            "csl": "container-title",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 51,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Label",
+            "field_name": "label",
+            "biblatex": "label",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 52,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Language(s)",
+            "field_name": "language",
+            "biblatex": "language",
+            "csl": "language",
+            "field_type": "l_key"
+        }
+    }, {
+        "pk": 53,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Library information",
+            "field_name": "library",
+            "biblatex": "library",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 54,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Location(s) of publication",
+            "field_name": "location",
+            "biblatex": "location",
+            "csl": "publisher-place",
+            "field_type": "l_literal"
+        }
+    }, {
+        "pk": 55,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Main subtitle",
+            "field_name": "mainsubtitle",
+            "biblatex": "mainsubtitle",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 56,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Maintitle",
+            "field_name": "maintitle",
+            "biblatex": "maintitle",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 57,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Annex to the maintitle",
+            "field_name": "maintitleaddon",
+            "biblatex": "maintitleaddon",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 58,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "author name addon",
+            "field_name": "nameaddon",
+            "biblatex": "nameaddon",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 59,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Note",
+            "field_name": "note",
+            "biblatex": "note",
+            "csl": "note",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 60,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Number of the work in a series",
+            "field_name": "number",
+            "biblatex": "number",
+            "csl": "number",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 61,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Organization(s)",
+            "field_name": "organization",
+            "biblatex": "organization",
+            "field_type": "l_literal"
+        }
+    }, {
+        "pk": 62,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Publication date of the original work",
+            "field_name": "origdate",
+            "biblatex": "origdate",
+            "csl": "original-date",
+            "field_type": "f_date"
+        }
+    }, {
+        "pk": 63,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Language of the original work",
+            "field_name": "origlanguage",
+            "biblatex": "origlanguage",
+            "field_type": "f_key"
+        }
+    }, {
+        "pk": 64,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Publication location of the original edition",
+            "field_name": "origlocation",
+            "biblatex": "origlocation",
+            "csl": "original-publisher-place",
+            "field_type": "l_literal"
+        }
+    }, {
+        "pk": 65,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Publisher of the original edition",
+            "field_name": "origpublisher",
+            "biblatex": "origpublisher",
+            "csl": "original-publisher",
+            "field_type": "l_literal"
+        }
+    }, {
+        "pk": 66,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Title of the original work",
+            "field_name": "origtitle",
+            "biblatex": "origtitle",
+            "csl": "original-title",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 67,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Page numbers or page ranges",
+            "field_name": "pages",
+            "biblatex": "pages",
+            "csl": "page",
+            "field_type": "f_range"
+        }
+    }, {
+        "pk": 68,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Total number of pages",
+            "field_name": "pagetotal",
+            "biblatex": "pagetotal",
+            "csl": "number-of-pages",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 69,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Pagination",
+            "field_name": "pagination",
+            "biblatex": "pagination",
+            "field_type": "f_key"
+        },
+        "keys": "pagination"
+    }, {
+        "pk": 70,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Number of a partial volume",
+            "field_name": "part",
+            "biblatex": "part",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 71,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Publisher(s)",
+            "field_name": "publisher",
+            "biblatex": "publisher",
+            "csl": "publisher",
+            "field_type": "l_literal"
+        }
+    }, {
+        "pk": 72,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Publication state of the work",
+            "field_name": "pubstate",
+            "biblatex": "pubstate",
+            "csl": "status",
+            "field_type": "f_key"
+        },
+        "keys": "publication_state"
+    }, {
+        "pk": 73,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Title of reprint",
+            "field_name": "reprinttitle",
+            "biblatex": "reprinttitle",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 74,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Name of series",
+            "field_name": "series",
+            "biblatex": "series",
+            "csl": "collection-title",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 75,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Abbreviated author(s)",
+            "field_name": "shortauthor",
+            "biblatex": "shortauthor",
+            "field_type": "l_name"
+        }
+    }, {
+        "pk": 76,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Abbreviated editor(s)",
+            "field_name": "shorteditor",
+            "biblatex": "shorteditor",
+            "field_type": "l_name"
+        }
+    }, {
+        "pk": 77,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Shorthand",
+            "field_name": "shorthand",
+            "biblatex": "shorthand",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 78,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Shorthand intro",
+            "field_name": "shorthandintro",
+            "biblatex": "shorthandintro",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 79,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Acronym of the publication's title",
+            "field_name": "shortjournal",
+            "biblatex": "shortjournal",
+            "csl": "container-title-short",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 80,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Acronym of the series",
+            "field_name": "shortseries",
+            "biblatex": "shortseries",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 81,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Abridged title",
+            "field_name": "shorttitle",
+            "biblatex": "shorttitle",
+            "csl": "title-short",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 82,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Subtitle",
+            "field_name": "subtitle",
+            "biblatex": "subtitle",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 83,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Title",
+            "field_name": "title",
+            "biblatex": "title",
+            "csl": "title",
+            "field_type": "f_literal"
+        },
+        "short_name": "title"
+    }, {
+        "pk": 84,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Title addon",
+            "field_name": "titleaddon",
+            "biblatex": "titleaddon",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 85,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Translator(s)",
+            "field_name": "translator",
+            "biblatex": "translator",
+            "csl": "translator",
+            "field_type": "l_name"
+        }
+    }, {
+        "pk": 86,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Manual type",
+            "field_name": "type",
+            "biblatex": "type",
+            "field_type": "f_key"
+        },
+        "keys": "types"
+    }, {
+        "pk": 87,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "URL",
+            "field_name": "url",
+            "biblatex": "url",
+            "csl": "URL",
+            "field_type": "f_uri"
+        }
+    }, {
+        "pk": 88,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Access date",
+            "field_name": "urldate",
+            "biblatex": "urldate",
+            "csl": "accessed",
+            "field_type": "f_date"
+        }
+    }, {
+        "pk": 89,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Location of a conference",
+            "field_name": "venue",
+            "biblatex": "venue",
+            "csl": "event-place",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 90,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Version",
+            "field_name": "version",
+            "biblatex": "version",
+            "csl": "version",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 91,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Volume",
+            "field_name": "volume",
+            "biblatex": "volume",
+            "csl": "volume",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 92,
+        "model": "bibliography.entryfield",
+        "fields": {
+            "field_title": "Total number of volumes",
+            "field_name": "volumes",
+            "biblatex": "volumes",
+            "csl": "number-of-volumes",
+            "field_type": "f_literal"
+        }
+    }, {
+        "pk": 1,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Article",
+            "type_name": "article",
+            "type_order": 1,
+            "biblatex": "article", 
+            "csl": "article",
+            "required_fields": [6, 15, 50, 83],
+            "optional_fields": [85, 5, 14, 82, 84, 18, 19, 20, 21, 49, 47, 46, 52, 63, 74, 91, 60, 26, 45, 67, 90, 59, 44, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 2,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Book",
+            "type_name": "book",
+            "type_order": 10,
+            "biblatex": "book", 
+            "csl": "book",
+            "required_fields": [6, 83, 15],
+            "optional_fields": [18, 19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 56, 55, 57, 52, 63, 91, 70, 17, 92, 74, 60, 59, 71, 54, 41, 13, 67, 68, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 3,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Multi-volume book",
+            "type_name": "mvbook",
+            "type_order": 11,
+            "biblatex": "mvbook", 
+            "csl": "book",
+            "required_fields": [6, 83, 15],
+            "optional_fields": [18, 19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 52, 63, 17, 92, 74, 60, 59, 71, 54, 41, 68, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 4,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "In book",
+            "type_name": "inbook",
+            "type_order": 12,
+            "biblatex": "inbook", 
+            "csl": "chapter",
+            "required_fields": [6, 83, 11, 15],
+            "optional_fields": [8, 18, 19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 56, 55, 57, 10, 12, 52, 63, 91, 70, 17, 92, 74, 60, 59, 71, 54, 41, 13, 67, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 5,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Book in book",
+            "type_name": "bookinbook",
+            "type_order": 13,
+            "biblatex": "bookinbook", 
+            "csl": "chapter",
+            "required_fields": [6, 83, 11, 15],
+            "optional_fields": [8, 18, 19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 56, 55, 57, 10, 12, 52, 63, 91, 70, 17, 92, 74, 60, 59, 71, 54, 41, 13, 67, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 6,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Supplemental material in a book",
+            "type_name": "suppbook",
+            "type_order": 14,
+            "biblatex": "suppbook", 
+            "csl": "chapter",
+            "required_fields": [6, 83, 11, 15],
+            "optional_fields": [8, 18, 19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 56, 55, 57, 10, 12, 52, 63, 91, 70, 17, 92, 74, 60, 59, 71, 54, 41, 13, 67, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 7,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Booklet",
+            "type_name": "booklet",
+            "type_order": 15,
+            "biblatex": "booklet", 
+            "csl": "pamphlet",
+            "required_fields": [83, 15],
+            "eitheror_fields": [6, 18],
+            "optional_fields": [82, 84, 52, 36, 86, 59, 54, 13, 67, 68, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+        
+    }, {
+        "pk": 8,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Collection",
+            "type_name": "collection",
+            "type_order": 20,
+            "biblatex": "collection", 
+            "csl": "dataset",
+            "required_fields": [18, 83, 15],
+            "optional_fields": [19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 56, 55, 57, 52, 63, 91, 70, 17, 92, 74, 60, 59, 71, 54, 41, 13, 67, 68, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 9,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Multi-volume collection",
+            "type_name": "mvcollection",
+            "type_order": 21,
+            "biblatex": "mvcollection", 
+            "csl": "dataset",
+            "required_fields": [18, 83, 15],
+            "optional_fields": [19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 52, 63, 17, 92, 74, 60, 59, 71, 54, 41, 68, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 10,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "In collection",
+            "type_name": "incollection",
+            "type_order": 22,
+            "biblatex": "incollection", 
+            "csl": "entry",
+            "required_fields": [6, 18, 83, 11, 15],
+            "optional_fields": [19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 56, 55, 57, 10, 12, 52, 63, 91, 70, 17, 92, 74, 60, 59, 71, 54, 41, 13, 67, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 11,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Supplemental material in a collection",
+            "type_name": "suppcollection",
+            "type_order": 23,
+            "biblatex": "suppcollection", 
+            "csl": "entry",
+            "required_fields": [6, 18, 83, 11, 15],
+            "optional_fields": [19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 56, 55, 57, 10, 12, 52, 63, 91, 70, 17, 92, 74, 60, 59, 71, 54, 41, 13, 67, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 12,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Manual",
+            "type_name": "manual",
+            "type_order": 40,
+            "biblatex": "manual", 
+            "csl": "book",
+            "required_fields": [83, 15],
+            "eitheror_fields": [6, 18],
+            "optional_fields": [82, 84, 52, 17, 86, 74, 60, 90, 59, 61, 71, 54, 41, 13, 67, 68, 2, 72, 16, 28, 29, 30, 87, 88]
+        } 
+    }, {
+        "pk": 13,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Miscellany",
+            "type_name": "misc",
+            "type_order": 41,
+            "biblatex": "misc", 
+            "csl": "entry",
+            "required_fields": [83, 15],
+            "eitheror_fields": [6, 18],
+            "optional_fields": [82, 84, 52, 36, 86, 90, 59, 61, 54, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 14,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Online resource",
+            "type_name": "online",
+            "type_order": 42,
+            "biblatex": "online", 
+            "csl": "webpage",
+            "required_fields": [83, 15, 87],
+            "eitheror_fields": [6, 18],
+            "optional_fields": [82, 84, 52, 90, 59, 61, 2, 72, 88]
+        }
+    }, {
+        "pk": 15,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Patent",
+            "type_name": "patent",
+            "type_order": 43,
+            "biblatex": "patent", 
+            "csl": "patent",
+            "required_fields": [6, 83, 60, 15],
+            "optional_fields": [35, 82, 84, 86, 90, 54, 59, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 16,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Periodical",
+            "type_name": "periodical",
+            "type_order": 50,
+            "biblatex": "periodical", 
+            "csl": "book",
+            "required_fields": [18, 83, 15],
+            "optional_fields": [19, 20, 21, 82, 47, 46, 52, 74, 91, 60, 45, 59, 44, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 17,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Supplemental material in a periodical",
+            "type_name": "suppperiodical",
+            "type_order": 51,
+            "biblatex": "suppperiodical", 
+            "csl": "entry",
+            "required_fields": [6, 15, 50, 83],
+            "optional_fields": [85, 5, 14, 82, 84, 18, 19, 20, 21, 49, 47, 46, 52, 63, 74, 91, 60, 26, 45, 67, 90, 59, 44, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 18,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Proceedings",
+            "type_name": "proceedings",
+            "type_order": 60,
+            "biblatex": "proceedings", 
+            "csl": "entry",
+            "required_fields": [18, 83, 15],
+            "optional_fields": [82, 84, 56, 55, 57, 32, 31, 89, 52, 91, 70, 92, 74, 60, 59, 61, 71, 54, 41, 13, 67, 68, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 19,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Multi-volume proceedings",
+            "type_name": "mvproceedings",
+            "type_order": 61,
+            "biblatex": "mvproceedings", 
+            "csl": "entry",
+            "required_fields": [18, 83, 15],
+            "optional_fields": [82, 84, 32, 31, 89, 52, 92, 74, 60, 59, 61, 71, 54, 41, 68, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 20,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Article in a proceedings",
+            "type_name": "inproceedings",
+            "type_order": 62,
+            "biblatex": "inproceedings", 
+            "csl": "paper-conference",
+            "required_fields": [6, 18, 83, 11, 15],
+            "optional_fields": [82, 84, 56, 55, 57, 10, 12, 32, 31, 89, 52, 91, 70, 92, 74, 60, 59, 61, 71, 54, 41, 13, 67, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 21,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Reference",
+            "type_name": "reference",
+            "type_order": 70,
+            "biblatex": "book", 
+            "csl": "reference",
+            "required_fields": [18, 83, 15],
+            "optional_fields": [19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 56, 55, 57, 52, 63, 91, 70, 17, 92, 74, 60, 59, 71, 54, 41, 13, 67, 68, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 22,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Multi-volume work of reference",
+            "type_name": "mvreference",
+            "type_order": 71,
+            "biblatex": "mvreference", 
+            "csl": "book",
+            "required_fields": [18, 83, 15],
+            "optional_fields": [19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 52, 63, 17, 92, 74, 60, 59, 71, 54, 41, 68, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 23,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Article in a work of reference",
+            "type_name": "inreference",
+            "type_order": 72,
+            "biblatex": "inreference", 
+            "csl": "entry",
+            "required_fields": [6, 18, 83, 11, 15],
+            "optional_fields": [19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 56, 55, 57, 10, 12, 52, 63, 91, 70, 17, 92, 74, 60, 59, 71, 54, 41, 13, 67, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 24,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Report",
+            "type_name": "report",
+            "type_order": 80,
+            "biblatex": "report", 
+            "csl": "report",
+            "required_fields": [6, 83, 86, 38, 15],
+            "optional_fields": [82, 84, 52, 60, 90, 59, 54, 43, 13, 67, 68, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 25,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Thesis",
+            "type_name": "thesis",
+            "type_order": 81,
+            "biblatex": "thesis", 
+            "csl": "thesis",
+            "required_fields": [6, 83, 86, 38, 15],
+            "optional_fields": [82, 84, 52, 59, 54, 41, 13, 67, 68, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 26,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Unpublished",
+            "type_name": "unpublished",
+            "type_order": 90,
+            "biblatex": "unpublished", 
+            "csl": "manuscript",
+            "required_fields": [6, 83, 15],
+            "optional_fields": [82, 84, 52, 36, 59, 54, 41, 15, 2, 72, 87, 88]
+        }
+    }, {
+        "pk": 27,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Magazine article",
+            "type_name": "article-magazine",
+            "type_order": 2,
+            "biblatex": "article", 
+            "csl": "article-magazine",
+            "required_fields": [6, 15, 50, 83],
+            "optional_fields": [85, 5, 14, 82, 84, 18, 19, 20, 21, 49, 47, 46, 52, 63, 74, 91, 60, 26, 45, 67, 90, 59, 44, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 28,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Newspaper article",
+            "type_name": "article-newspaper",
+            "type_order": 3,
+            "biblatex": "article", 
+            "csl": "article-newspaper",
+            "required_fields": [6, 15, 50, 83],
+            "optional_fields": [85, 5, 14, 82, 84, 18, 19, 20, 21, 49, 47, 46, 52, 63, 74, 91, 60, 26, 45, 67, 90, 59, 44, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 29,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Journal article",
+            "type_name": "article-journal",
+            "type_order": 4,
+            "biblatex": "article", 
+            "csl": "article-journal",
+            "required_fields": [6, 15, 50, 83],
+            "optional_fields": [85, 5, 14, 82, 84, 18, 19, 20, 21, 49, 47, 46, 52, 63, 74, 91, 60, 26, 45, 67, 90, 59, 44, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 30,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Encyclopedia entry",
+            "type_name": "entry-encyclopedia",
+            "type_order": 73,
+            "biblatex": "inreference", 
+            "csl": "entry-encyclopedia",
+            "required_fields": [6, 18, 83, 11, 15],
+            "optional_fields": [19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 56, 55, 57, 10, 12, 52, 63, 91, 70, 17, 92, 74, 60, 59, 71, 54, 41, 13, 67, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 31,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Dictionary entry",
+            "type_name": "entry-dictionary",
+            "type_order": 74,
+            "biblatex": "inreference", 
+            "csl": "entry-dictionary",
+            "required_fields": [6, 18, 83, 11, 15],
+            "optional_fields": [19, 20, 21, 85, 5, 14, 39, 34, 3, 82, 84, 56, 55, 57, 10, 12, 52, 63, 91, 70, 17, 92, 74, 60, 59, 71, 54, 41, 13, 67, 2, 72, 16, 28, 29, 30, 87, 88]
+        }
+    }, {
+        "pk": 32,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Blog post",
+            "type_name": "post-weblog",
+            "type_order": 5,
+            "biblatex": "online", 
+            "csl": "post-weblog",
+            "required_fields": [83, 15, 87],
+            "eitheror_fields": [6, 18],
+            "optional_fields": [82, 84, 52, 90, 59, 61, 2, 72, 88]
+        }
+    }, {
+        "pk": 33,
+        "model": "bibliography.entrytype",
+        "fields": {
+            "type_title": "Forum post",
+            "type_name": "post",
+            "type_order": 30,
+            "biblatex": "online", 
+            "csl": "post",
+            "required_fields": [83, 15, 87],
+            "eitheror_fields": [6, 18],
+            "optional_fields": [82, 84, 52, 90, 59, 61, 2, 72, 88]
+        }
+    }, {
+        "pk": 1,
+        "model": "bibliography.localizationkey",
+        "fields": {
+            "key_type": "publication_state",
+            "key_name": "inpreparation",
+            "key_title": "in preparation"
+        }
+    }, {
+        "pk": 2,
+        "model": "bibliography.localizationkey",
+        "fields": {
+            "key_type": "publication_state",
+            "key_name": "submitted",
+            "key_title": "submitted to a journal or conference"
+        }
+    }, {
+        "pk": 3,
+        "model": "bibliography.localizationkey",
+        "fields": {
+            "key_type": "publication_state",
+            "key_name": "forthcoming",
+            "key_title": "forthcoming"
+        }
+    }, {
+        "pk": 4,
+        "model": "bibliography.localizationkey",
+        "fields": {
+            "key_type": "publication_state",
+            "key_name": "inpress",
+            "key_title": "in press"
+        }
+    }, {
+        "pk": 5,
+        "model": "bibliography.localizationkey",
+        "fields": {
+            "key_type": "publication_state",
+            "key_name": "prepublished",
+            "key_title": "pre-published"
+        }
+    }, {
+        "pk": 6,
+        "model": "bibliography.localizationkey",
+        "fields": {
+            "key_type": "pagination",
+            "key_name": "page",
+            "key_title": "page"
+        }
+    }, {
+        "pk": 7,
+        "model": "bibliography.localizationkey",
+        "fields": {
+            "key_type": "pagination",
+            "key_name": "column",
+            "key_title": "column"
+        }
+    }, {
+        "pk": 8,
+        "model": "bibliography.localizationkey",
+        "fields": {
+            "key_type": "pagination",
+            "key_name": "section",
+            "key_title": "section"
+        }
+    }, {
+        "pk": 9,
+        "model": "bibliography.localizationkey",
+        "fields": {
+            "key_type": "pagination",
+            "key_name": "paragraph",
+            "key_title": "paragraph"
+        }
+    }, {
+        "pk": 10,
+        "model": "bibliography.localizationkey",
+        "fields": {
+            "key_type": "pagination",
+            "key_name": "verse",
+            "key_title": "verse"
+        }
+    }, {
+        "pk": 11,
+        "model": "bibliography.localizationkey",
+        "fields": {
+            "key_type": "pagination",
+            "key_name": "line",
+            "key_title": "line"
+        }
+    }, {
+        "pk": 12,
+        "model": "bibliography.localizationkey",
+        "fields": {
+            "key_type": "types",
+            "key_name": "mathesis",
+            "key_title": "master’s thesis"
+        }
+    }, {
+        "pk": 13,
+        "model": "bibliography.localizationkey",
+        "fields": {
+            "key_type": "types",
+            "key_name": "phdthesis",
+            "key_title": "PhD thesis"
+        }
+    }, {
+        "pk": 14,
+        "model": "bibliography.localizationkey",
+        "fields": {
+            "key_type": "types",
+            "key_name": "candthesis",
+            "key_title": "Candidate thesis"
+        }
+    }, {
+        "pk": 15,
+        "model": "bibliography.localizationkey",
+        "fields": {
+            "key_type": "types",
+            "key_name": "techreport",
+            "key_title": "technical report"
+        }
+    }, {
+        "pk": 16,
+        "model": "bibliography.localizationkey",
+        "fields": {
+            "key_type": "types",
+            "key_name": "resreport",
+            "key_title": "research report"
+        }
+    }, {
+        "pk": 17,
+        "model": "bibliography.localizationkey",
+        "fields": {
+            "key_type": "types",
+            "key_name": "software",
+            "key_title": "computer software"
+        }
+    }, {
+        "pk": 18,
+        "model": "bibliography.localizationkey",
+        "fields": {
+            "key_type": "types",
+            "key_name": "datacd",
+            "key_title": "data cd"
+        }
+    }, {
+        "pk": 19,
+        "model": "bibliography.localizationkey",
+        "fields": {
+            "key_type": "types",
+            "key_name": "audiocd",
+            "key_title": "audio cd"
+        }
+    }, {
+        "pk": 20,
+        "model": "bibliography.localizationkey",
+        "fields": {
+            "key_type": "types",
+            "key_name": "software",
+            "key_title": "computer software"
+        }
+    }, {
+        "pk": 1,
+        "model": "bibliography.entrytypealias",
+        "fields": {
+            "type_name": "conference",
+            "type_alias": 20
+        }
+    }, {
+        "pk": 2,
+        "model": "bibliography.entrytypealias",
+        "fields": {
+            "type_name": "electronic",
+            "type_alias": 14
+        }
+    }, {
+        "pk": 3,
+        "model": "bibliography.entrytypealias",
+        "fields": {
+            "type_name": "mastersthesis",
+            "type_alias": 25
+        }
+    }, {
+        "pk": 4,
+        "model": "bibliography.entrytypealias",
+        "fields": {
+            "type_name": "phdthesis",
+            "type_alias": 25
+        }
+    }, {
+        "pk": 5,
+        "model": "bibliography.entrytypealias",
+        "fields": {
+            "type_name": "techreport",
+            "type_alias": 25
+        }
+    }, {
+        "pk": 6,
+        "model": "bibliography.entrytypealias",
+        "fields": {
+            "type_name": "www",
+            "type_alias": 14
+        }
+    }, {
+        "pk": 7,
+        "model": "bibliography.entryfieldalias",
+        "fields": {
+            "field_name": "address",
+            "field_alias": 54
+        }
+    }, {
+        "pk": 8,
+        "model": "bibliography.entryfieldalias",
+        "fields": {
+            "field_name": "annote,",
+            "field_alias": 4
+        }
+    }, {
+        "pk": 9,
+        "model": "bibliography.entryfieldalias",
+        "fields": {
+            "field_name": "archiveprefix",
+            "field_alias": 30
+        }
+    }, {
+        "pk": 10,
+        "model": "bibliography.entryfieldalias",
+        "fields": {
+            "field_name": "journal",
+            "field_alias": 50
+        }
+    }, {
+        "pk": 11,
+        "model": "bibliography.entryfieldalias",
+        "fields": {
+            "field_name": "pdf",
+            "field_alias": 33
+        }
+    }, {
+        "pk": 12,
+        "model": "bibliography.entryfieldalias",
+        "fields": {
+            "field_name": "primaryclass",
+            "field_alias": 29
+        }
+    }, {
+        "pk": 13,
+        "model": "bibliography.entryfieldalias",
+        "fields": {
+            "field_name": "school",
+            "field_alias": 38
+        }
+    }
+]

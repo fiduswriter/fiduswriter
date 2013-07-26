@@ -1,0 +1,95 @@
+body > header > .container {
+    z-index: 100;
+    overflow: visible;
+}
+
+#header-logo {
+    font-size: 30px;
+    line-height: 32px;
+    margin: 29px 0 25px;
+}
+#header-logo > img {
+    width: auto;
+    height: 25px;
+    margin-left: 2px;
+}
+
+#user-preferences {
+    position: absolute;
+    right: 40px;
+    top: 0;
+}
+#user-preferences .username {
+    display: inline-block;
+    color: #fff;
+    margin-right: 10px;
+}
+#user-preferences #preferences-btn {
+    display: inline-block;
+    padding: 0 3px;
+    height: 26px;
+    line-height: 26px;
+    border-color: #7d948e;
+    background-color: #76a698;
+}
+#user-preferences #preferences-btn:hover {
+    background-color: #96c6b8;
+}
+#preferences-btn .icon-cog {
+    margin-right: -5px;
+}
+#user-preferences > ul {
+    right: 5px;
+    top: 40px;
+}
+#user-preferences > ul:after {
+    right: 22px;
+}
+
+#user-preferences-pulldown {
+    position: fixed;
+    right: auto;
+}
+
+#header-nav {
+    position: relative;
+    background-color: #fff;
+    border-top: solid 1px #8d8d8d;
+    border-bottom: solid 1px #b6b6b6;
+    z-index: 1;
+}
+#header-nav, #header-nav .container, #header-nav p {
+    overflow: visible;
+}
+#header-nav p {
+    position: relative;
+    display: inline-block;
+    width: auto;
+    height: 40px;
+    line-height: 40px;
+    text-transform: uppercase;
+    margin-right: 18px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+#header-nav p.active-menu-wrapper:after {
+    position: absolute;
+    left: 50%;
+    top: 42px;
+    display: block;
+    font-family: 'fontello';
+    content: '\25be';
+    line-height: 100%;
+    font-size: 38px;
+    margin-left: -13px;
+    color: #fff;
+    text-shadow: 0 1px 1px #b6b6b6;
+}
+
+#header-nav a {
+    color: #a9abaa;
+    text-decoration: none;
+}
+#header-nav a:hover, #header-nav a.active {
+    color: #3a3e3d;
+}

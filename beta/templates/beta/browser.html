@@ -1,0 +1,14 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+{% load account %}
+{% load url from future %}
+
+{% block title %}{% trans "Browser check" %}{% endblock %}
+
+{% block body %}
+    <div id="login-left">
+    <h1>{% trans "Hey there!" %}</h1>
+         <p>{% blocktrans %}Unfortunately, Fiduswriter currently only works on Google Chrome. We are working to provide support for Mozilla Firefox.{% endblocktrans %}</p>
+    </div>
+{% endblock %}

@@ -1,0 +1,82 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+{% load account %}
+{% load url from future %}
+
+{% block title %}{% trans "Log In" %}{% endblock %}
+{% block loginlabel %}{% trans "New here" %}?{% endblock %}
+{% block loginhref %}{{signup_url}}{% endblock %}
+{% block loginbtn %}{% trans "Sign up" %}{% endblock %}
+{% block extraheaders %}
+<script type="text/javascript">
+    $(function() {
+        var btn_width = 1;
+        $('.fw-button.fw-socialaccount').each(function() {
+            var the_width = $(this).width();
+            if(btn_width < the_width)
+                btn_width = the_width;
+        });
+        $('.fw-button.fw-socialaccount').css('width', btn_width + 15);
+    });
+</script>
+{% endblock %}
+
+{% block body %}
+
+<div class="fw-login-left">
+    <h1 class="fw-login-title">{% trans "Log in" %}</h1>
+{% if not user.is_authenticated %}
+    {% if socialaccount.providers  %}
+    <p>
+        {% blocktrans with site.name as site_name %}
+        Please log in with one of your existing third party accounts or your Fiduswriter account.<br/>
+        If you are new here, please <a href="{{signup_url}}" title="Sign up for {{site_name}}">sign up</a>.
+        {% endblocktrans %}
+    </p>
+    <div class="socialaccount_ballot">
+        <ul class="socialaccount_providers">
+        {% load socialaccount %}
+        {% for provider in socialaccount.providers %}
+            <li>
+                <a title="{{provider.name}}" class="fw-button fw-socialaccount fw-{{provider.id}}"
+                    href="{% provider_login_url provider.id %}">
+                    <span class="icon-{{provider.id}}"></span>
+                    {% trans "Login with" %} {{provider.name}}
+                </a>
+            </li>
+        {% endfor %}
+        </ul>
+    </div>
+        {% include "socialaccount/snippets/login_extra.html" %}
+    {% endif %}
+{% else %}
+    {% include "account/snippets/already_logged_in.html" %}
+{% endif %}
+</div>
+<div class="fw-login-right">
+    <form class="login" method="POST" action="{% url 'account_login' %}">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div class="input-wrapper">
+            <label for="id_login">{% trans "Username" %}</label>
+            {{ form.login }}
+        </div>
+        <div class="input-wrapper">
+            <label for="id_password">{% trans "Password" %}</label>
+            {{ form.password }}
+        </div>
+        {% if redirect_field_value %}
+        <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+        {% endif %}
+        <div class="submit-wrapper">
+            <button class="fw-button fw-dark fw-uppercase" type="submit">{% trans "Log in" %}</button>
+            <br>
+            {{ form.remember }}
+            <label for="id_remember">{% trans "Remember me" %}</label>
+        </div>
+        <a id="lost-passwd" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+    </form>
+</div>
+{% endblock %}
+

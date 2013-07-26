@@ -1,0 +1,149 @@
+/* Simplepage for non CSS Regions browsers */
+
+.simplepage {
+width:5.43in;
+background-color:#fff;
+border:solid 1px #d9d9d9;
+min-height:10.6in;
+margin:60px auto .2in;
+padding:.2in 1.4in;
+}
+
+img {
+image-resolution:from-image;
+}
+
+.page {
+height:10.6in;
+width:5.43in;
+position:relative;
+page-break-after:always;
+background-color:#fff;
+margin-left:auto;
+margin-right:auto;
+padding:0 1.7in;
+}
+
+#toc-title:before {
+content:"Contents";
+}
+
+.toc-entry {
+width:4.1in;
+padding-top:.2in;
+}
+
+.toc-pagenumber {
+float:right;
+font-weight:400;
+margin-left:.3in;
+display:inline-block;
+}
+
+#booktitle {
+margin-top:1.7in;
+font-size:26px;
+font-weight:700;
+text-align:center;
+}
+
+#booksubtitle {
+font-size:18px;
+margin-top:.2in;
+font-weight:700;
+text-align:center;
+}
+
+#bookeditors {
+padding-top:2in;
+font-weight:700;
+text-align:center;
+font-size:12px;
+}
+
+#toc-title {
+font-size:35px;
+font-weight:700;
+text-align:center;
+}
+
+.toc-entry.section {
+font-weight:700;
+}
+
+.toc-entry .initial {
+font-weight:400;
+}
+
+.pagebreak {
+-webkit-region-break-after:always;
+}
+
+h1 {
+font-size:20pt;
+margin-bottom:80px;
+}
+
+.contents {
+height:8.97in;
+width:5.43in;
+position:absolute;
+bottom:1.2in;
+}
+
+.pagenumber {
+padding-top:.2in;
+position:absolute;
+bottom:.8in;
+left:0;
+right:0;
+}
+
+.header {
+padding-bottom:.2in;
+position:absolute;
+top:.3in;
+left:0;
+right:0;
+}
+
+.page:nth-child(odd) .pagenumber,.page:nth-child(odd) .header {
+margin-right:.8in;
+text-align:right;
+}
+
+.page:nth-child(even) .pagenumber,.page:nth-child(even) .header {
+margin-left:.8in;
+text-align:left;
+}
+
+.chapter .page:first-child .pagenumber {
+text-align:center;
+margin-left:auto;
+margin-right:auto;
+}
+
+body {
+min-width:1024px;
+background-image:url(../img/bg_body.png);
+margin:0;
+padding:0;
+}
+
+.header .initial,.page:nth-child(odd) .header .section,.page:nth-child(even) .header .chapter {
+display:none;
+}
+
+@media print{
+.pagenumber {
+bottom:0;
+}
+}
+
+@media screen{
+.page {
+border:solid 1px #d9d9d9;
+margin-bottom:.2in;
+padding:.2in 1.4in;
+}
+}

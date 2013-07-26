@@ -1,0 +1,505 @@
+{% load i18n %}
+{% load compress %}
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.png" type="image/png">
+        <title> Fidus Writer - {{document.title}} </title>
+        <meta name="description" content="{% trans "The all in one solution for collaborative academic writing." %}">
+        <script type="text/javascript">
+            // Disable the reload function until everything has been loaded. This
+            // will eliminate most cases of reloading the page before it is ready,
+            // which will shut down write access.
+            var disableReload = function(e) {
+            if (e.which == 116 ||(e.ctrlKey && e.which == 82)) e.preventDefault();
+            };
+            document.addEventListener("keydown", disableReload);
+
+
+            var mathjaxZipUrl = '{{ STATIC_URL }}zip/mathjax.zip';
+            var staticUrl = '{{ STATIC_URL }}';
+        </script>
+        <script>
+            var isChrome = false;
+
+            if(window.chrome) {
+                isChrome = true;
+            // We are on Chrome
+            }
+
+           if(!(isChrome)) {
+                var currentURL = location.href.substr(7);
+                var currentRelativeURL = currentURL.substr(currentURL.indexOf('/'));
+                if(currentRelativeURL != '/beta/browser/') {
+                    window.location = '/beta/browser';
+                }
+            }
+        </script>
+        <style>
+            #document-contents:not(:focus) > p:first-child:only-child > br::before {
+                content: "{% trans "Contents" %}...";
+            }
+
+            #document-title:empty:not(:focus)::before {
+                content: "{% trans "Title" %}...";
+            }
+            #metadata-subtitle:empty:not(:focus)::before, #metadata-subtitle:not(:focus) > p:first-child:only-child > br::before {
+                content: "{% trans "Subtitle" %}...";
+            }
+            #metadata-abstract:empty:not(:focus)::before, #metadata-abstract:not(:focus) > p:first-child:only-child > br::before {
+                content: "{% trans "Abstract" %}...";
+            }
+        </style>
+        <!--  Translations -->
+        <script type="text/javascript" src="/jsi18n/"></script>
+
+        <!-- commons styles -->
+        {% compress css %}
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/reset.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fonts.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/fonts.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/forms.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/ui-dialogs.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/ui-autofill.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/buttons.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/pulldown.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/loader.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/alerts.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/document-menu.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/document-table.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/dialog-table.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/dropkick.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/ui-tabs.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/add-remove-dialog.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/figure.css" />
+
+            <!-- layout styles -->
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/common.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/header-menu.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/bibliography.css" />
+
+            <!-- ICE -->
+            <link rel="stylesheet" href="{{ STATIC_URL }}css/ice.css" type="text/css" media="screen">
+            <!-- Hallo.js -->
+            <link rel="stylesheet" href="{{ STATIC_URL }}css/hallo.css" type="text/css">
+
+            <link rel="stylesheet" href="{{ STATIC_URL }}css/texteditor.css" type="text/css">
+            <!-- Comments -->
+            <link rel="stylesheet" href="{{ STATIC_URL }}css/comments.css" type="text/css">
+            <!-- Tracking -->
+            <link rel="stylesheet" href="{{ STATIC_URL }}css/tracking.css" type="text/css">
+            <!-- Access rights -->
+            <link rel="stylesheet" href="{{ STATIC_URL }}css/access-rights-dialog.css" type="text/css">
+            <!-- Citation dialog style -->
+            <link rel="stylesheet" href="{{ STATIC_URL }}css/citation-dialog.css" type="text/css">
+            <!-- document styles -->
+            <link id="document-style-link" rel="stylesheet" href="{{ STATIC_URL }}css/document/elephant.css" type="text/css">
+            <link id="document-style-link" rel="stylesheet" href="{{ STATIC_URL }}css/document/owl.css" type="text/css">
+            <link id="document-style-link" rel="stylesheet" href="{{ STATIC_URL }}css/document/fox.css" type="text/css">
+            <!--link rel="stylesheet" href="{{ STATIC_URL }}css/document/funky.css" type="text/css"-->
+            <!--link rel="stylesheet" href="{{ STATIC_URL }}css/document/modern.css" type="text/css"-->
+        {% endcompress %}
+
+
+        <!-- jQuery -->
+        <script type="text/javascript" src="{{ JQUERY_URL }}"></script>
+        <script type="text/javascript" src="{{ JQUERYMIGRATE_URL }}"></script>
+        <!-- jQuery UI -->
+        <script type="text/javascript" src="{{ JQUERYUI_URL }}"></script>
+        <!-- Underscore -->
+        <script type="text/javascript" src="{{ UNDERSCOREJS_URL }}"></script>
+        <!-- Mathjax -->
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+                extensions: ["tex2jax.js"],
+                jax: ["input/TeX", "output/SVG"],
+                tex2jax: {
+                    inlineMath: [ ['[MATH]','[/MATH]']],
+                    processEscapes: true
+                },
+                showMathMenu: false,
+                "SVG": {
+                    scale: 120
+                }
+            });
+        </script>
+        <script type="text/javascript" src="{{ MATHJAX_URL }}"></script>
+        <!-- citeproc -->
+        <script type="text/javascript; e4x=1" src="{{ STATIC_URL }}js/libs/citeproc/xmle4x.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/xmldom.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/citeproc.js"></script>
+        <!-- document styles -->
+        <script type="text/javascript">
+            var document_style_folder_path = '{{ STATIC_URL }}css/document/';
+        </script>
+
+        {% compress js %}
+            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.autoresize.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/common.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/menubase.js"></script>
+            <script type="text/javascript">
+                // Prevent migrate messages. Currently only one message from hallo.js is being created.
+                jQuery.migrateMute = true;
+            </script>
+
+            <!-- Django form submission code -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/csfr.js"></script>
+            <!-- jQuery tablesorter -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dataTables.min.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.ui.potato.menu.js"></script>
+            <!-- Dropkick -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dropkick-1.1.0.js"></script>
+            <!-- Rangy -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/rangy-core-1.2.3.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/rangy-selectionsaverestore.js"></script>
+            <!-- Pagination.js -->
+            <script type="text/javascript">
+                // Config options for pagination
+                var paginationConfigList = {
+                    'elephant': {
+                        'outerMargin': 90,
+                        'innerMargin': 90,
+                        'contentsTopMargin': 80,
+                        'headerTopMargin': 80,
+                        'contentsBottomMargin': 80,
+                        'pagenumberBottomMargin': 50
+                    },
+                    'owl': {
+                        'outerMargin': 90,
+                        'innerMargin': 90,
+                        'contentsTopMargin': 80,
+                        'headerTopMargin': 80,
+                        'contentsBottomMargin': 120,
+                        'pagenumberBottomMargin': 50
+                    },
+                    'fox': {
+                        'outerMargin': 80,
+                        'innerMargin': 80,
+                        'contentsTopMargin': 80,
+                        'headerTopMargin': 80,
+                        'contentsBottomMargin': 80,
+                        'pagenumberBottomMargin': 50
+                    }
+                };
+
+                var paginationConfig = {
+                    'flowElement' : "document.getElementById('flow')",
+                    'enableFrontmatter' : false,
+                    'divideContents' : false,
+                    'alwaysEven' : false,
+                    //'autostart': true,
+                    'pageWidth': 790,
+                    'pageHeight': 1117, // A4 is standard size
+                    'outerMargin': paginationConfigList.elephant.outerMargin,
+                    'innerMargin': paginationConfigList.elephant.innerMargin,
+                    'contentsTopMargin': paginationConfigList.elephant.contentsTopMargin,
+                    'headerTopMargin': paginationConfigList.elephant.headerTopMargin,
+                    'contentsBottomMargin': paginationConfigList.elephant.contentsBottomMargin,
+                    'pagenumberBottomMargin': paginationConfigList.elephant.pagenumberBottomMargin,
+                    'lengthUnit': 'px'
+                };
+            </script>
+
+            <script type="text/javascript"  src="{{ STATIC_URL }}js/libs/pagination.js"></script>
+
+            <!-- Zip.js -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/zip.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/deflate.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/inflate.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/zip-fs.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/zip-ext.js"></script>
+            <script type="text/javascript">
+                zip.useWebWorkers = false;
+            </script>
+
+            <!-- ICE -->
+            <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/polyfills.js'></script>
+            <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/ice.js'></script>
+            <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/dom.js'></script>
+            <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/icePlugin.js'></script>
+            <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/icePluginManager.js'></script>
+            <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/bookmark.js'></script>
+            <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/selection.js'></script>
+            <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/plugins/IceCopyPastePlugin/IceCopyPastePlugin.js'></script>
+            <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/plugins/IceEmdashPlugin/IceEmdashPlugin.js'></script>
+            <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/plugins/IceSmartQuotesPlugin/IceSmartQuotesPlugin.js'></script>
+            <!-- Hallo.js -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/hallo.js"></script>
+
+            <!-- Functions to modify bibliography -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-statics.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-helpers.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-template-dialogs.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/texteditor-template-dialogs.js"></script>
+            <!-- contact functions -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/contact-helpers.js"></script>
+            <!-- tools functions -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/tools-templates.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/tools-helpers.js"></script>
+            <!-- Usermedia functions -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/usermedia-helpers.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/usermedia-template-dialogs.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/usermedia-simplelist-template-dialogs.js"></script>
+            <!-- Math functions -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/math-helpers.js"></script>
+            <!-- Hallo plugins -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/make_buttons.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/create_buttonset.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/create_inlinestyle_buttons.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/bold.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/italic.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/create_blockstyle_buttons.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/all_blockstyles.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/lists.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/cite.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/comment.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/figure.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/footnote.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/link.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/math.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/undo_redo.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/box_position.js"></script>
+            <!-- Access rights dialog -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/text-template-dialogs.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/accessrights-helpers.js"></script>
+            <!-- Comment functions -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/comment-templates.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/comment-helpers.js"></script>
+            <script type="text/javascript">
+                var flatCommentList = [];
+                jQuery(document).bind('documentDataLoaded', function() {
+                    commentHelpers.fillFlatCommentList();
+                    commentHelpers.cleanCommentsList();
+                    commentHelpers.cleanReferers();
+                    jQuery(document).bind('bodyLayoutUpdated', function() {
+                        commentHelpers.layoutComments();
+                    });
+                });
+            </script>
+            <!-- Tracking functions -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/tracking-templates.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/tracking-helpers.js"></script>
+            <!-- Citation functions -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/citation-helpers.js"></script>
+            <!-- File export functions -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/export-templates.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.js"></script>
+            <!-- File import -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/importer.js"></script>
+            <!-- Document related functions -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor-templates.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor-helpers.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor-setup.js"></script>
+            <script type="text/javascript">
+                editorHelpers.bind();
+            </script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/movecursor/dom.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/movecursor/handle_manual_edits.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/movecursor/movecursor.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/clean-HTML.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/cutpaste.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/mutations.js"></script>
+
+            <!-- citeproc helpers -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/citeproc-helpers.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/citeproc-functions.js"></script>
+        {% endcompress %}
+
+        <script type="text/javascript">
+
+            if(window.chrome && navigator.appVersion.indexOf("Win") !== -1) {
+                // We are running Chrome on Windows. We will now load a special style file to make font rendering work.
+                    var link  = document.createElement('link');
+                    link.rel  = 'stylesheet';
+                    link.media = 'all';
+                    link.type = 'text/css';
+                    link.href = '{{ STATIC_URL }}css/windows-chrome-fonts.css';
+                    document.head.appendChild(link);
+            }
+        </script>
+    </head>
+    <body class="{% trans "en" %}">
+        <div id="wait">
+            <i class="icon-spin2 animate-spin"></i>
+        </div>
+        <div id="close-document-top" class="close icon-cancel-circle" title="{% trans "Close the document and return to the document overview menu." %}"></div>
+        <header id="header" title="The title of the document">
+            <h1>Untitled document</h1>
+            <nav id="header-navigation">
+                <div>
+                    <span class="header-nav-item" title="{% trans "File handling" %}">{% trans "File" %}</span>
+                    <div class="fw-pulldown fw-left">
+                        <ul>
+                            <li>
+                                <span class="fw-pulldown-item share icon-export" title="{% trans "Share the document with other users." %}"> {% trans "Share" %} </span>
+                            </li>
+                            <li>
+                                <span class="fw-pulldown-item close icon-cancel-circle" title="{% trans "Close the document and return to the document overview menu." %}"> {% trans "Close" %} </span>
+                            </li>
+                            <li>
+                                <span class="fw-pulldown-item save disabled icon-floppy" title="{% trans "Save the current document" %}"> {% trans "Save" %} </span>
+                            </li>
+                            <li>
+                                <span class="fw-pulldown-item savecopy disabled icon-floppy" title="{% trans "Save copy of the current document" %}"> {% trans "Save copy" %} </span>
+                            </li>
+                            <li>
+                                <span class="fw-pulldown-item download icon-download" title="{% trans "Download the current document" %}"> {% trans "Download" %} </span>
+                            </li>
+                            <li>
+                                <span class="fw-pulldown-item print icon-print" title="{% trans "Either print or create a PDF using your browser's print dialog" %}"> {% trans "Print/PDF" %} </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <span class="header-nav-item-disabled disabled exporter-menu" title="{% trans "Export of the document contents" %}">{% trans "Export" %}</span>
+                    <div class="fw-pulldown fw-left">
+                        <ul>
+                            <li>
+                                <span class="fw-pulldown-item html" title="{% trans "Export the document to an HTML file" %}">
+                                    HTML
+                                </span>
+                            </li>
+                            <li>
+                                <span class="fw-pulldown-item epub" title="{% trans "Export the document to an Epub electronic reader file." %}">
+                                    Epub
+                                </span>
+                            </li>
+                            <li>
+                                <span class="fw-pulldown-item latex" title="{% trans "Export the document to a Latex file. This will also attach a BibTex file if you are using citations." %}">
+                                    LaTeX
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <span class="header-nav-item-disabled disabled citationstyle-menu" title="{% trans "Choose your preferred citation style." %}">{% trans "Citation Style" %}</span>
+                    <div class="fw-pulldown fw-left">
+                        <ul>
+                            <li>
+                                <span class="fw-pulldown-item citationstyle" data-citationstyle="apa" title="{% trans "American Psychological Association." %}"> {% trans "APA" %} </span>
+                            </li>
+                            <li>
+                                <span class="fw-pulldown-item citationstyle" data-citationstyle="chicago-author-data" title="{% trans "The author-date variant of the Chicago style" %}"> {% trans "Chicago (Author-Date)" %} </span>
+                            </li>
+                            <li>
+                                <span class="fw-pulldown-item citationstyle" data-citationstyle="chicago-note-bibliography" title="{% trans "Chicago format with short notes and full bibliography" %}"> {% trans "Chicago (Note with Bibliography)" %} </span>
+                            </li>
+                            <li>
+                                <span class="fw-pulldown-item citationstyle" data-citationstyle="harvard1" title="{% trans "The Harvard author-date style" %}"> {% trans "Harvard" %} </span>
+                            </li>
+                            <li>
+                                <span class="fw-pulldown-item citationstyle" data-citationstyle="mla" title="{% trans "Modern Language Association" %}"> {% trans "MLA" %} </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <span class="header-nav-item" title="{% trans "Choose a document style" %}">{% trans "Document Style" %}</span>
+                    <div class="fw-pulldown fw-left">
+                        <ul>
+                            <li>
+                                <span class="fw-pulldown-item style" data-style="elephant" title="{% trans "Elephant" %}">
+                                    {% trans "Comfy Elephant" %}
+                                </span>
+                            </li>
+                            <li>
+                                <span class="fw-pulldown-item style" data-style="owl" title="{% trans "Owl" %}">
+                                    {% trans "Drowsy Owl" %}
+                                </span>
+                            </li>
+                            <li>
+                                <span class="fw-pulldown-item style" data-style="fox" title="{% trans "Fox" %}">
+                                    {% trans "Foxy Fox" %}
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <span class="header-nav-item papersize-menu" title="{% trans "Choose a papersize that for printing and PDF generation." %}">{% trans "Paper Size" %}</span>
+                    <div class="fw-pulldown fw-left">
+                        <ul>
+                            <li>
+                                <span class="fw-pulldown-item papersize" data-paperheight="1117" title="{% trans "A4 (DIN A4/ISO 216) which is used in most of the world." %}"> {% trans "DIN A4" %} </span>
+                            </li>
+                            <li>
+                                <span class="fw-pulldown-item papersize" data-paperheight="1020" title="{% trans "The format used by the USA and some other American countries." %}"> {% trans "US Letter" %} </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <span class="header-nav-item metadata-menu" title="{% trans "Choose which metadata to enable." %}">{% trans "Metadata" %}</span>
+                    <div class="fw-pulldown fw-left">
+                        <ul>
+                            <li>
+                                <span class="fw-pulldown-item metadata-menu-item metadata-subtitle" data-metadata="subtitle" title="{% trans "Define a subtitle in addition to the title of the document." %}"> {% trans "Subtitle" %} </span>
+                            </li>
+                            <li>
+                                <span class="fw-pulldown-item metadata-menu-item metadata-abstract" data-metadata="abstract" title="{% trans "Add an abstract to the document." %}"> {% trans "Abstract" %} </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div>
+                    <span class="header-nav-item tools-menu" title="{% trans "Tools" %}">{% trans "Tools" %}</span>
+                    <div class="fw-pulldown fw-left">
+                        <ul>
+                            <li>
+                                <span class="fw-pulldown-item tools-item" data-function="wordcounter" title="{% trans "Word counter" %}">
+                                  {% trans "Word counter" %}
+                                </span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <nav id="editor-navigation">
+            <span id="open-close-header" class="fw-button fw-light fw-large" title="{% trans "Show/hide the top menu." %}">
+                <i class="icon-angle-double-up"></i>
+            </span>
+            <div id="editor-tools-wrapper">
+                <div id="ice-control" class="fw-button fw-light fw-large" title="{% trans "Handle tracking of changes." %}">
+                    {% trans "Changes" %}
+                    <i class="icon-down-dir"></i>
+                    <div class="fw-pulldown fw-left">
+                        <ul>
+                            <li>
+                                <span class="fw-pulldown-item ice-track icon-ok" title="{% trans "Turn tracking of changes on." %}">{% trans "Track" %}</span>
+                            </li>
+                            <li>
+                                <span class="fw-pulldown-item ice-display icon-eye" title="{% trans "Show all changes that have been tracked in the entire document." %}">{% trans "Show" %}</span>
+                            </li>
+                            <li>
+                                <span class="fw-pulldown-item ice-accept-all icon-acceptall" title="{% trans "Accept all changes that have been tracked in the entire document." %}">{% trans "Accept all" %}</span>
+                            </li>
+                            <li>
+                                <span class="fw-pulldown-item ice-reject-all icon-rejectall" title="{% trans "Reject all changes that have been tracked in the entire document." %}">{% trans "Reject all" %}</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="comments-display" class="fw-button fw-light fw-large" title="{% trans "Show/hide comments" %}">
+                    {% trans "Comments" %}
+                </div>
+            </div>
+        </nav>
+
+        <div id="flow" class="comments-enabled CT-hide">
+            <div id="document-editable">
+                <div id="document-title" class="editable user-contents" title="{% trans "The title of the document" %}"></div>
+                <div id="document-metadata" class="user-contents"></div>
+                <div id="document-contents" class="editable user-contents"></div>
+            </div>
+            <div id="document-bibliography" class="user-contents"></div>
+            &nbsp; {% comment %}This space ensures that also an empty document will trigger pagination.{% endcomment %}
+        </div>
+        <div id="comment-box-container"></div><div id="tracking-box-container"></div>
+        {% include "beta/feedback.html" %}
+    </body>
+</html>

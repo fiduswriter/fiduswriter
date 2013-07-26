@@ -1,0 +1,229 @@
+.fw-document-table {
+    font-size: 12px;
+    line-height: 15px;
+    table-layout: fixed;
+}
+
+.fw-document-table.no-fix-layout {
+    table-layout: auto;
+}
+
+.fw-document-table-header {
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.fw-document-table-body {
+    float: left;
+    overflow: auto;
+    width: 600px;
+    height: 150px;
+}
+
+.fw-document-table-body.fw-large {
+    width: 820px;
+    height: 300px;
+}
+
+.fw-document-table-body.fw-small {
+    width: 342px;
+    height: 270px;
+}
+
+.fw-document-table-body.fw-min {
+    width: 342px;
+    height: 225px;
+}
+
+.fw-document-table-body [class^="icon-"]:before,
+.fw-document-table-body [class*=" icon-"]:before {
+    line-height: 3px;
+}
+
+.fw-document-table tbody tr:hover {
+  background-color: #fbf9d2;
+}
+
+.fw-document-table th,
+.fw-document-table td {
+    padding-right: 10px;
+    border-bottom: solid 1px #cecece;
+}
+
+.fw-document-table-header > tr > th,
+.fw-document-table-header > tr > td {
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+.fw-document-table-body > tr > th,
+.fw-document-table-body > tr > td {
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+.fw-document-table-header > tr > td:first-child,
+.fw-document-table-body > tr > td:first-child {
+    padding-left: 5px;
+}
+
+.fw-document-table-header > tr > th:last-child,
+.fw-document-table-header > tr > td:last-child,
+.fw-document-table-body > tr > td:last-child {
+    padding-right: 0;
+}
+
+.fw-document-table-title {
+    color: #a7321f;
+}
+
+.fw-document-table-title > span {
+    display: inline-block;
+    width: 195px;
+    margin-left: 10px;
+    vertical-align: top;
+}
+
+.fw-document-table .icon-trash {
+    font-size: 15px;
+}
+
+.owned-by-user .icon-access-right {
+    color: #a7321f;
+    cursor: pointer;
+}
+
+.owned-by-user .icon-access-right:hover {
+    color: #2c2723;
+}
+
+.icon-access-right.w:before,
+.collaborator-tr.w .icon-access-right:before {
+    content: '\270e';
+}
+
+.icon-access-right.r:before,
+.collaborator-tr.r .icon-access-right:before {
+    content: '\e70a';
+}
+
+.collaborator-tr.d {
+    display: none;
+}
+
+.fw-document-table .fw-avatar {
+    display: inline-block;
+    width: 25px;
+    height: 25px;
+    vertical-align: top;
+    margin-right: 10px;
+}
+
+/*
+ * Data Tables Plugin
+ */
+.fw-table-wrapper .dataTables_filter {
+    position: fixed;
+    left: auto;
+    top: 96px;
+    margin-left: 495px;
+    width: 315px;
+    text-align: right;
+    z-index: 5;
+}
+
+.fw-table-wrapper .dataTables_filter label {
+    color: #a9abaa;
+}
+
+.fw-table-wrapper .dataTables_filter label.focus {
+    color: #000;
+}
+
+.fw-table-wrapper .dataTables_filter label:after {
+    font-family: 'fontello';
+    content: '\e800';
+    margin-left: 5px;
+    font-size: 16px;
+}
+
+.fw-table-wrapper .dataTables_filter input[type="text"] {
+    width: 255px;
+    height: 20px;
+    padding: 0 0 2px;
+    border-style: none;
+    border-bottom-style: solid;
+    border-bottom-width: 1px;
+}
+
+.fw-table-wrapper .dataTables_filter input[type="text"]:focus {
+    background-color: transparent;
+}
+
+table.dataTable thead th {
+    cursor: pointer;
+}
+table.dataTable thead th:after {
+    display: inline;
+    margin-left: 8px;
+    font-family: "fontello";
+    line-height: 0;
+}
+table.dataTable thead th.sorting:after {
+    content: '\f0dc';
+}
+
+table.dataTable thead th.sorting_asc:after {
+    content: '\f0de';
+}
+table.dataTable thead th.sorting_desc:after {
+    content: '\f0dd';
+}
+
+/* the usermedia table */
+.fw-usermedia-title {
+    display: inline-block;
+    width: 270px;
+    height: auto;
+}
+.fw-usermedia-type {
+    display: block;
+    margin-top: 3px;
+}
+.fw-usermedia-image {
+    display: inline-block;
+    width: 60px;
+    height: 60px;
+    overflow: hidden;
+    vertical-align: top;
+    margin: 2px 14px 2px 0;
+}
+.fw-usermedia-image > img {
+    min-width: 100%;
+    min-height: 100%;
+}
+
+/* Align text with top of images */
+.fw-document-table-body td {
+    vertical-align: top;
+}
+
+.fw-document-table-body td.checkable {
+    position: relative;
+}
+.fw-document-table-body tr.checked td.checkable:after {
+    display: block;
+    width: 1em;
+    height: 1em;
+    position: absolute;
+    right: 12px;
+    font-family: 'fontello';
+    content: '\2713';
+    speak: none;
+    top: 12px;
+}
+
+/* Word counter dialog table */
+.fw-word-counter-tbody {
+    line-height: 38px;
+}

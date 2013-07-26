@@ -1,0 +1,206 @@
+.fw-button {
+    display: inline-block;
+    width: auto;
+    height: 34px;
+    color: #fff;
+    line-height: 34px;
+    padding: 0 12px;
+    font-size: 14px;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 3px;
+    cursor: pointer;
+    text-decoration: none;
+    background: none;
+    box-shadow: none;
+    box-sizing: content-box;
+}
+
+.fw-button:hover {
+    color: #fff;
+}
+
+.fw-button:focus {
+    outline-width: 5px;
+    outline-color: #8ab5a6;
+}
+
+.fw-button.fw-uppercase {
+    text-transform: uppercase;
+}
+
+.fw-button.fw-large {
+    height: 40px;
+    line-height: 40px;
+    padding: 0 10px;
+}
+
+.fw-button.fw-small {
+    height: 26px;
+    line-height: 26px;
+    padding: 0 6px;
+}
+
+.fw-button.fw-square {
+    width: 34px;
+    padding: 0;
+    text-align: center;
+}
+.fw-button.fw-large.fw-square {
+    width: 40px;
+}
+
+.fw-button .fw-button-icon:before {
+    line-height: 34px;
+    margin: 0;
+}
+.fw-button.fw-large .fw-button-icon:before {
+    line-height: 40px;
+}
+.fw-button.fw-small .fw-button-icon:before {
+    line-height: 26px;
+}
+
+.fw-button.fw-light {
+    border-color: #c9c9c9;
+    background-color: #f2f2f2;
+    color: #000;
+}
+
+.fw-button.fw-light:hover,
+.fw-button.fw-light.ui-state-active {
+    background-color: #c9c9c9;
+    color: #000;
+}
+
+.fw-button.fw-white {
+    border-color: #c9c9c9;
+    background-color: #f9f9f9;
+    color: #000;
+}
+.fw-button.fw-white:hover {
+    background-color: #f2f2f2;
+    color: #000;
+}
+
+.fw-button.fw-green {
+    border-color: #7d948e;
+    background-color: #76a698;
+}
+.fw-button.fw-green:hover {
+    background-color: #96c6b8;
+}
+
+.fw-button.fw-orange {
+    background: -moz-linear-gradient(top, #d3421c, #b13615);
+    background: -webkit-gradient(linear, left top, left bottom, from(#d3421c), to(#b13615));
+    border-color: #7d331f;
+}
+.fw-button.fw-orange:hover {
+    background: #b13615;
+}
+
+.fw-button.fw-dark {
+    background: -moz-linear-gradient(top, #6a6a6a, #585858);
+    background: -webkit-gradient(linear, left top, left bottom, from(#6a6a6a), to(#585858));
+    box-shadow: 0 1px 1px 0 #7f7f7f inset;
+    border-color: #4f4d4f;
+}
+.fw-button.fw-dark:hover {
+    background: #585858;
+}
+
+.fw-button.fw-socialaccount {
+    display: inline-block;
+    width: auto;
+    height: 38px;
+    border-radius: 5px;
+    font-size: 15px;
+    vertical-align: top;
+    line-height: 35px;
+    padding: 0;
+}
+
+.fw-button.fw-socialaccount:hover {
+    box-shadow: none;
+}
+
+.fw-button.fw-socialaccount > span {
+    display: inline-block;
+    width: 37px;
+    height: 100%;
+    text-align: center;
+    font-size: 15px;
+    margin-right: 12px;
+    border-right-style: solid;
+    border-right-width: 1px;
+    line-height: 37px;
+}
+
+.fw-button.fw-facebook {
+    background: -moz-linear-gradient(top, #0d78be, #0d63ab);
+    background: -webkit-gradient(linear, left top, left bottom, from(#0d78be), to(#0d63ab));
+    box-shadow: 0px 0px 1px 1px #3c9fdf inset;
+    border-color: #0557a1;
+}
+.fw-button.fw-facebook:hover {
+    background: #0d63ab;
+}
+.fw-button.fw-facebook > span {
+    border-right-color: #0557a1;
+    box-shadow: 1px 0 0 0 #3c9fdf;
+    font-size: 18px;
+}
+
+.fw-button.fw-twitter {
+    background: -moz-linear-gradient(top, #3ccfff, #17addf);
+    background: -webkit-gradient(linear, left top, left bottom, from(#3ccfff), to(#17addf));
+    box-shadow: 0px 0px 1px 1px #3dcfff inset;
+    border-color: #2498be;
+}
+.fw-button.fw-twitter:hover {
+    background: #17addf;
+}
+.fw-button.fw-twitter > span {
+    border-right-color: #2498be;
+    box-shadow: 1px 0 0 0 #8ddffc;
+}
+
+.fw-button.fw-google {
+    background: -moz-linear-gradient(top, #879ded, #6d84d8);
+    background: -webkit-gradient(linear, left top, left bottom, from(#879ded), to(#6d84d8));
+    box-shadow: 0px 0px 1px 1px #93a6e6 inset;
+    border-color: #6578bb;
+}
+.fw-button.fw-google:hover {
+    background: #6d84d8;
+}
+.fw-button.fw-google > span {
+    border-right-color: #6578bb;
+    box-shadow: 1px 0 0 0 #b1c0f2;
+    font-size: 18px;
+}
+
+.fw-plain-button {
+    display: block;
+    font-size: 11px;
+    line-height: 24px;
+    background-color: #d3d3d3;
+    font-weight: 700;
+    text-align: center;
+}
+
+.fw-plain-button:hover {
+    background-color: #c9c9c9;
+}
+
+.fw-button.disabled {
+    color: #cccccc;
+    cursor: default;
+}
+
+.fw-add-button:after {
+    font-family: 'fontello';
+    content: '\2795';
+    margin-left: 10px;
+}

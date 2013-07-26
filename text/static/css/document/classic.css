@@ -1,0 +1,77 @@
+.classic .user-contents {
+    font-family: 'Noticia Text', serif;
+    font-size: 1.2em;
+    line-height: 1.6em;
+}
+
+.classic .user-contents h1, .classic .user-contents h2, .classic .user-contents h3 {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-weight: 700;
+}
+
+.classic #document-title {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 60px;
+    font-weight: 900;
+}
+
+.classic #metadata-subtitle {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 40px;
+    font-weight: 900;
+}
+
+.classic #metadata-abstract {
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+.classic #document-metadata .metadata {
+    margin-bottom: 20px;
+}
+
+
+.classic .user-contents h1  {
+    font-size: 32px;
+}
+
+.classic .user-contents h2 {
+    font-size: 24px;
+}
+
+.classic .user-contents h3 {
+    font-size: 20px;
+}
+
+.classic .user-contents p {
+  line-height: 150%;
+}
+
+.classic .user-contents b {
+    font-weight: bold;
+}
+
+.classic .user-contents i {
+    font-style: italic;
+}
+
+.classic .user-contents ul,.classic .user-contents ol {
+    padding-left: 15px;
+}
+.classic .user-contents ul {
+    list-style: disc;
+}
+
+.classic .user-contents ol {
+    list-style: decimal;
+}
+
+.classic .user-contents blockquote {
+    padding-left: 50px;
+}
+.classic .user-contents code {
+    font-family: "Courier New", Courier, mono-space;
+}
+.classic .user-contents p, .classic .user-contents blockquote, .classic .user-contents code {
+    margin-bottom: 10px;    
+}

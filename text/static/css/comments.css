@@ -1,0 +1,143 @@
+/* Comments */
+.comments-enabled .comment {
+    background-color: #f2f2f2;
+}
+.comments-enabled .comment.active {
+    background-color: #fffacf;
+}
+#comment-box-container {
+    position: absolute;
+    left: 914px;
+    top: -20px;
+}
+
+#comment-box-container.hide {
+    display: none;
+}
+
+.pagination-simple + #comment-box-container {
+    top: 0px;
+}
+
+.comment-box {
+    background-color: #fbfbfb;
+    border: 1px solid #ccc;
+    position: absolute;
+    width: 200px;
+    padding: 9px;
+}
+.comment-box.active {
+    background-color: #fffacf;
+    left: -30px;
+    z-index: 5;
+}
+.comment-box.active:after {
+    position: absolute;
+    left: -11px;
+    top: 30px;
+    display: block;
+    font-family: 'fontello';
+    content: '\25c2';
+    line-height: 1em;
+    font-size: 36px;
+    color: #fffacf;
+    text-shadow: -1px 0 1px #ccc;
+}
+
+.comment-item {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: solid 1px #ccc;
+}
+.comment-item:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+}
+.comment-item.wait, .comment-answer.wait {
+    opacity: .5;
+}
+.comment-item.wait textarea, .comment-answer.wait .comment-answer-text {
+    background-image: url('../img/wait.gif');
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.comment-item.wait textarea {
+    background-size: 40px 40px;  
+}
+.comment-answer.wait .comment-answer-text {
+    background-size: 20px 20px;      
+}
+.comment-item.wait .submitComment, .comment-item.wait .cancelSubmitComment, .comment-answer.wait .comment-answer-btns {
+    display: none;
+}
+
+.comment-user {
+    margin-bottom: 9px;
+}
+.comment-user:after {
+    display: block;
+    clear: both;
+    content: '';
+}
+.comment-user-avatar {
+    width: 26px;
+    height: 26px;
+    float: left;
+    margin-right: 8px;
+    border: solid 1px #ccc;
+}
+.comment-user-name {
+    font-weight: 700;
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+.comment-date {
+    font-size: 10px;
+}
+.comment-p {
+    line-height: 18px;
+}
+.comment-box textarea {
+    resize: none;
+    width: 194px;
+}
+
+.commemt-controls {
+    margin-top: 9px;
+    font-size: 10px;
+    color: #af3515;
+}
+.commemt-controls > span {
+    margin-right: 5px;
+    cursor: pointer;
+}
+.commemt-controls > span:hover {
+    color: #999;
+}
+
+.comment-answer {
+    margin-top: 9px;
+}
+.comment-answer-btns {
+    margin-top: 5px;
+    text-align: right;
+}
+.comment-box .btn {
+    font-size: 12px;
+    height: 24px;
+    line-height: 24px;
+    padding: 0 7px;
+    margin: 0;
+}
+
+.comment-form {
+    display: none;
+}
+
+.delete-comment-all {
+    position: absolute;
+    right: 5px;
+    top: 8px;
+    cursor: pointer;
+}

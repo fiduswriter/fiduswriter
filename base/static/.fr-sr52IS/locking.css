@@ -1,0 +1,9 @@
+#content-main div#locking_notification {
+    border: 2px solid #f00;
+    padding: 5px;
+    background: #fee;
+    display: inline-block;
+    font-weight: bold;
+    display: none;
+	width: 510px;
+}

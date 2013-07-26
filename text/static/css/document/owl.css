@@ -1,0 +1,181 @@
+@font-face {
+  font-family: 'Cardo';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Cardo'), local('Cardo-Regular'), url(../../fonts/document/Cardo-Regular.woff) format('woff');
+}
+@font-face {
+  font-family: 'Cardo';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Cardo Bold'), local('Cardo-Bold'), url(../../fonts/document/Cardo-Bold.woff) format('woff');
+}
+@font-face {
+  font-family: 'Cardo';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Cardo Italic'), local('Cardo-Italic'), url(../../fonts/document/Cardo-Italic.woff) format('woff');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Open Sans'), local('OpenSans-Regular'), url(../../fonts/document/OpenSans-Regular.woff) format('woff');
+}
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Open Sans Bold'), local('OpenSans-Bold'), url(../../fonts/document/OpenSans-Bold.woff) format('woff');
+}
+
+.owl .user-contents {
+    font-family: 'Cardo', serif;
+    font-weight: 400;
+    font-size: 1.2em;
+    line-height: 1.6em;
+    text-align: justify;
+    word-wrap: break-word;
+}
+
+.owl #document-title {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 48px;
+    font-weight: 700;
+}
+
+.owl #metadata-subtitle {
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 40px;
+    font-weight: 900;
+}
+
+.owl #metadata-abstract {
+    margin-left: 50px;
+    margin-right: 50px;
+}
+
+.owl #document-metadata .metadata {
+    margin-bottom: 20px;
+}
+
+.owl .pagination-footnote:before,
+.owl .pagination-footnote > * > *:first-child:before {
+    font-family: 'Cardo', serif;
+    font-weight: 700;
+    font-size: 9px;
+    text-align: left;
+    font-style: normal;
+    vertical-align: super;
+    line-height: 0;
+}
+
+.owl .pagination-footnote > * > *:first-child:before {
+    margin-right: 5px;
+}
+
+.owl .pagination-footnote > * > * {
+    font-family: 'Cardo', serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 1.35em;
+}
+
+.owl ~ #pagination-layout .pagination-pagenumber {
+    font-family: 'Open Sans', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    text-align: center !important;
+    line-height: 30px;
+    right: auto !important;
+    left: 50% !important;
+    width: 60px;
+    height: 30px;
+    background-color: #f3f3f3;
+    -webkit-border-radius: 15px;
+    border-radius: 15px;
+    vertical-align: middle;
+    margin-left: -25px;
+}
+
+.owl ~ #pagination-layout .pagination-footnotes {
+    margin-top: 25px;
+}
+
+.owl .user-contents h1,
+.owl .user-contents h2,
+.owl .user-contents h3,
+.owl .user-contents p,
+.owl .user-contents blockquote,
+.owl .user-contents code,
+.owl .user-contents ol,
+.owl .user-contents ul {
+    margin-bottom: 35px;
+}
+
+.owl .user-contents h1,
+.owl .user-contents h2,
+.owl .user-contents h3 {
+    font-family: 'Open Sans', sans-serif;
+    font-weight: 400;
+    line-height: 1.35em;
+    text-align: left;
+}
+
+.owl .user-contents h1  {
+    font-size: 21px;
+}
+
+.owl .user-contents h2 {
+    font-size: 19px;
+}
+
+.owl .user-contents h3 {
+    font-size: 17px;
+}
+
+.owl .user-contents p,
+.owl .user-contents ol li,
+.owl .user-contents ul li {
+    font-size: 18px;
+    line-height: 1.5em;
+}
+
+.owl .user-contents b {
+    font-weight: 700;
+}
+
+.owl .user-contents i {
+    font-style: italic;
+}
+
+.owl .user-contents ul,
+.owl .user-contents ol {
+    padding-left: 15px;
+}
+.owl .user-contents ul {
+    list-style: disc;
+}
+
+.owl .user-contents ol {
+    list-style: decimal;
+}
+
+.owl .user-contents blockquote {
+    font-style: italic;
+    margin-left: 50px;
+    font-size: 18px;
+    line-height: 1.5em;
+}
+
+.owl .user-contents code {
+    display: block;
+    font-family: "Courier New", Courier, mono-space;
+    font-size: 13px;
+    line-height: 1.75em;
+}
+
+.owl #document-bibliography p {
+    font-size: 14px;
+    margin-bottom: 18px;
+}

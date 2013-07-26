@@ -1,0 +1,39 @@
+.fw-media-uploader .fw-media-title {
+    width: 276px;
+}
+
+.fw-media-uploader .figure-preview {
+    display: table;
+    margin: 18px 0;
+}
+
+.fw-media-uploader .figure-preview > div {
+    display: table-cell;
+    width: 406px;
+    height: 226px;
+    border: 2px dashed #8b8b8b;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.fw-media-uploader .figure-preview > div > img {
+    max-width: 400px;
+    max-height: 220px;
+}
+
+.fw-media-uploader .fw-media-category {
+    padding-bottom: 30px;
+}
+
+.fw-media-uploader .fw-media-category .fw-checkable-label {
+    margin: 10px 0 0;
+    width: 396px;
+}
+
+.fw-media-file-input {
+    display: none;
+}
+
+th.figure-preview-row, td.figure-preview-row {
+    vertical-align: top;
+}

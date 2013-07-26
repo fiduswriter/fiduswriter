@@ -1,0 +1,88 @@
+{% load i18n %}
+{% load compress %}
+<!DOCTYPE html>
+<html>
+<head>
+<title></title>
+{% compress css %}
+<!-- document styles -->
+<link rel="stylesheet" href="{{ STATIC_URL }}css/document/classic.css" type="text/css">
+<link rel="stylesheet" href="{{ STATIC_URL }}css/document/funky.css" type="text/css">
+<link rel="stylesheet" href="{{ STATIC_URL }}css/document/modern.css" type="text/css">
+{% endcompress %}
+        <script type="text/javascript" src="/jsi18n/"></script>
+        <!-- jQuery -->
+        <script type="text/javascript" src="{{ JQUERY_URL }}"></script>
+        <!-- Underscore -->
+        <script type="text/javascript" src="{{ UNDERSCOREJS_URL }}"></script>
+        <!-- Mathjax -->
+        <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+                extensions: ["tex2jax.js"],
+                jax: ["input/TeX", "output/SVG"],
+                tex2jax: {
+                    inlineMath: [ ['[MATH]','[/MATH]']],
+                    processEscapes: true
+                },
+                showMathMenu: false,
+                "SVG": {
+                    scale: 120
+                }
+            });
+        </script>
+        <script type="text/javascript" src="{{ MATHJAX_URL }}"></script>
+    {% compress js %}
+            <script type="text/javascript" src="{{ STATIC_URL }}js/csfr.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/common.js"></script>
+            <script type="text/javascript">
+                // Config options for pagination
+                var paginationConfig = {
+                    'flowElement' : "document.getElementById('flow')",
+                    enableFrontmatter : true,
+                    sectionStartMarker: 'div.part',
+                    sectionTitleMarker: 'h1',
+                    chapterStartMarker: 'div.chapter',
+                    chapterTitleMarker: 'h1',
+                    alwaysEven: true,
+                    autoStart: false,
+                    topfloatSelector: 'figure,h1',
+                    //lengthUnit: 'px'
+                };
+            </script>
+            <script type="text/javascript"  src="{{ STATIC_URL }}js/math-helpers.js"></script>
+            <!-- Citation functions -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/citation-helpers.js"></script>
+            <!-- citeproc -->
+            <script type="text/javascript; e4x=1" src="{{ STATIC_URL }}js/libs/citeproc/xmle4x.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/xmldom.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/citeproc.js"></script>
+            <!-- citeproc helpers -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/citeproc-helpers.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/citeproc-functions.js"></script>
+            <!-- Functions to modify bibliography -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-statics.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-helpers.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-template-dialogs.js"></script>
+            <script>
+                var lastStyleUsedFootnotes = false;
+            </script>
+
+            <script type="text/javascript"  src="{{ STATIC_URL }}js/libs/pagination.js"></script>
+
+            <script type="text/javascript"  src="{{ STATIC_URL }}js/print-templates.js"></script>
+            <script type="text/javascript"  src="{{ STATIC_URL }}js/print-helpers.js"></script>
+            <script type="text/javascript">
+                printHelpers.bind();
+            </script>
+    {% endcompress %}
+</head>
+<body>
+    <div id="flow">
+        <div id="book">
+        </div>
+        <div class="chapter">
+            <div id="bibliography" class="user-contents"></div>
+        </div>
+    </div>
+</body>
+</html>

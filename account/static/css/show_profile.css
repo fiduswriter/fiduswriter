@@ -1,0 +1,59 @@
+#profile-wrapper {
+    padding-bottom: 20px;
+}
+#profile-avatar {
+    position: relative;
+    float: left;
+    width: 128px;
+    text-align: center;
+    margin-right: 35px;
+}
+#profile-avatar img {
+    padding: 23px;
+    border: solid 1px #ccc;
+}
+#profile-data {
+    width: auto;
+    text-align: left;
+    line-height: 26px;
+}
+#avatar-pulldown-wrapper {
+    position: relative;
+}
+#edit-avatar-btn {
+    display: block;
+    font-size: 11px;
+    cursor: pointer;
+    background-color: #e6e6e6;
+    font-weight: 700;
+    padding: 5px 0 2px;
+    margin-top: 9px;
+}
+#edit-avatar-pulldown {
+    top: 33px;
+}
+#edit-avatar-pulldown:after {
+    left: 14px;
+}
+
+#profile-data th, #profile-data td {
+    padding-bottom: 5px;
+}
+#profile-data th {
+    padding-right: 20px;
+}
+#profile-submit-wrapper {
+    text-align: right;
+    padding-top: 30px;
+}
+#profile-data input {
+    width: 470px;
+}
+
+#confirmaccountdeletion p {
+  line-height: 1.3em;
+}
+
+#username-confirmation {
+  margin: 15px 0 0;
+}

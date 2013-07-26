@@ -1,0 +1,12 @@
+fiduswriter.sql
+*.pyc
+*~
+*-venv
+.DS_Store
+.pydevproject
+build
+.project
+local_settings.py
+.settings
+media
+.elasticbeanstalk/

@@ -1,0 +1,23 @@
+{% load i18n %}
+<footer id="footer-menu">
+    <div class="container">
+        <form name="setLangForm" action="/i18n/setlang/" method="post">
+            {% csrf_token %}
+            {% get_current_language as LANGUAGE_CODE %}
+            <input name="next" type="hidden" value="/" />
+            <select id="langSelection" name="language">
+                <option value="en"{% if 'en' == LANGUAGE_CODE %}{{ 'selected' }}{% endif %}>English</option>
+                <option value="es"{% if 'es' == LANGUAGE_CODE %}{{ 'selected' }}{% endif %}>Espa&ntilde;ol</option>
+                <option value="de"{% if 'de' == LANGUAGE_CODE %}{{ 'selected' }}{% endif %}>Deutsch</option>
+            </select>
+        </form>
+    </div>
+</footer>
+<script>
+  $(function() {
+    $('#langSelection').change(function() {
+      document.setLangForm.submit();
+      return false;
+    });
+  });
+</script>

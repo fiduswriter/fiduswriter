@@ -1,0 +1,439 @@
+body {
+    width: 100%;
+    height: 100%;
+    font-family: 'Lato', sans-serif;
+    font-size: 13px;
+    color: #2c2723;
+    width: 100%;
+    background-color: #f2f2f2;
+}
+
+#close-document-top {
+    position: fixed;
+    right: 30px;
+    top: 28px;
+    z-index: 100;
+    cursor: pointer;
+}
+
+#header {
+    position: fixed;
+    padding: 16px 0;
+    background-color: #84b4a7;
+    z-index: 99;
+    width: 100%;
+    top:0;
+}
+#header > h1 {
+    font-size: 22px;
+    color: #fff;
+    font-style: italic;
+    padding-left: 108px;
+    background: url(../img/fidus_face.png) no-repeat 48px 0;
+    background-size: 17px 21px;
+}
+#header-navigation {
+    position: relative;
+    margin: 20px 0 0 108px;
+    -webkit-user-select: none;
+}
+#header-navigation > div {
+    position: relative;
+    display: inline-block;
+    margin-right: 18px;
+    height: 18px;
+    overflow: visible;
+}
+#header-navigation span {
+    cursor: pointer;
+}
+#header-navigation .header-nav-item {
+    text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.3);
+}
+#header-navigation .header-nav-item:hover {
+    color: #fff;
+    text-shadow: none;
+}
+#header-navigation span.selected, #editor-navigation span.selected {
+    background-color: black;
+    color: white;
+}
+
+#header-navigation span.deactivated {
+    text-decoration: line-through;
+}
+#header-navigation span.disabled, #editor-navigation span.disabled {
+    color: #ccc !important;
+    text-shadow: none;
+}
+#header-navigation span.selected.disabled, #editor-navigation span.selected.disabled {
+    background-color: #ccc;
+    color: white !important;
+}
+/*
+ * Toolbar Style
+ */
+#editor-navigation {
+    position: fixed;
+    display: block;
+    background-color: #f9f9f9;
+    z-index: 88;
+    width: 100%;
+    top: 92px;
+    -webkit-user-select: none;
+}
+#editor-tools-wrapper {
+    position: relative;
+    padding: 12px 0;
+    width: 900px;
+}
+#open-close-header,
+#ice-control,
+#comments-display {
+    position: absolute;
+    z-index: 100;
+}
+#open-close-header {
+    left: 34px;
+    top: 12px;
+    background: transparent;
+    border-color: #f9f9f9;
+}
+#open-close-header:hover {
+    background: #c9c9c9;
+    border-color: #c9c9c9;
+}
+#open-close-header.header-closed .icon-angle-double-up:before {
+    content: '\f103';
+}
+#ice-control {
+    right: 0;
+}
+#comments-display {
+    left: 100%;
+    margin-left: 14px;
+    background-color: #fbf9d2;
+}
+#comments-display.selected {
+    background-color: #f2f2f2;
+}
+#comments-display:hover {
+    background-color: #c9c9c9;
+}
+#comments-display.disabled {
+    color: #ccc;
+    background-color: #f2f2f2;
+}
+.hallotoolbar {
+    position: relative;
+    left: 108px;
+    width: auto !important;
+}
+.hallotoolbar div.ui-buttonset {
+    position: relative;
+    display: inline-block;
+    white-space: nowrap;
+    vertical-align: top;
+    margin-right: 7px;
+}
+
+.hallotoolbar div.multiButtons {
+    width: auto;
+}
+
+.hallotoolbar div.multiButtons .multibuttonsCover {
+    position: relative;
+    width: 120px;
+    font-size: 11px;
+    font-weight: 900;
+}
+.hallotoolbar div.multiButtons .multibuttonsCover:after {
+    display: block;
+    position: absolute;
+    right: 10px;
+    top: 7px;
+    font-family: 'fontello';
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    speak: none;
+    text-align: right;
+    margin-top: 0;
+    content: '\25be';
+}
+
+.ui-dialog-content-table .dk_toggle {
+    width: 533px !important;
+}
+.ui-dialog-content-table .dk_options_inner a {
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.hallocite-dialog {
+    overflow: visible;
+}
+
+#pagination-layout {
+    position: absolute;
+    top: 200px;
+}
+
+.pagination-page {
+    margin: .5in 0 0 108px !important;
+}
+
+div#statusarea {
+    position: absolute;
+    right: 50%;
+    top: 100%;
+    z-index: 80;
+    width: 200px;
+    text-align: right;
+    margin-right: -4in;
+    color: #828282;
+    padding-top: 16px;
+}
+div#statusarea .saved {
+    padding: 2px 21px 0 0;
+    background: url(../img/loading.gif) no-repeat right top;
+}
+div#statusarea .error {
+    color: red;
+}
+.citation, .equation {
+    cursor: pointer;
+}
+#menu1 .selected:before {
+    content: "✓ ";
+}
+div#layout {
+    padding-top: 60px;
+}
+ul#menu2 {
+    clear: both;
+    width: 160px;
+    margin-top: 10px;
+}
+ul#menu1 > li.potato-menu-item {
+    border-radius: 6px;
+}
+li.potato-menu-item {
+    width: 160px;
+    font-size: 12px;
+    background-color: #EEEEEC;
+    /* background-color:#333;
+     background-color:rgba(0,0,0,0.9);*/
+}
+li.potato-menu-item a {
+    padding: 5px 20px 5px 12px;
+    color: black;
+}
+li.potato-menu-hover {
+    background-color: #ddd;
+}
+/*li.potato-menu-has-vertical > a {
+ background: transparent url(/images/icons/fammini/arrow_down.gif) right no-repeat;
+ }
+ li.potato-menu-has-holizontal > a {
+ background: transparent url(/images/icons/fammini/arrow_right.gif) right no-repeat;
+ }*/
+li.potato-menu-item ul {
+
+    border-radius: 6px;
+    border: 1px solid #BABDB6;
+}
+/*
+ * Dialog
+ */
+.dialogSubmit {
+    text-align: right;
+    margin-top: 20px;
+}
+
+/* for forms */
+input.required, error {
+    border: 2px solid red;
+}
+/*!
+ * jquery.ui.potato.menu
+ *
+ * Copyright (c) 2009-2010 makoto_kw, http://www.makotokw.com
+ * Licensed under the MIT license.
+ *
+ * @author makoto_kw
+ * @version 1.1
+ */
+ul.potato-menu {
+    margin: 0;
+    padding: 0;
+    width: auto;
+    list-style: none;
+}
+.potato-menu:after {
+    content: " ";
+    display: block;
+    visibility: hidden;
+    clear: both;
+    height: 0.1px;
+    font-size: 0.1em;
+    line-height: 0;
+}
+ul.potato-menu li.potato-menu-item {
+    margin: 0;
+    padding: 0;
+    position: relative;
+    list-style: none;
+    list-style-position: outside;
+    display: inline;
+    float: left;
+}
+ul.potato-menu li.potato-menu-item a {
+    display: block;
+    text-decoration: none;
+    white-space: nowrap;
+    outline: 0;
+}
+ul.potato-menu ul.potato-menu-group {
+    margin: 0;
+    padding: 3px;
+    -webkit-padding-start: 0;
+    -webkit-padding-end: 0;
+    position: absolute;
+    display: none;
+    z-index: 1000;
+    background-color: #EEEEEC;
+}
+/* For print */
+
+@media print {
+    #header, #header-navigation, #editor-navigation, #comment-box-container, #review-box-container, #close-document-top {
+        display: none !important;
+    }
+
+    #pagination-layout {
+        top: 0 !important;
+    }
+
+    .pagination-page {
+        margin: 0 !important;
+        border: 0 !important;
+    }
+}
+/* Overwrite color changes through font in editor. Webkit bug */
+
+font {
+    color: inherit !important;
+}
+/* For default contents of title and contents field*/
+
+#document-contents:not(:focus) > p:first-child:only-child > br,
+#document-metadata .metadata:empty:not(:focus)::before,
+#document-metadata .metadata:empty:not(:focus) > p:first-child:only-child > br::before {
+    text-transform: none;
+    color: #cecece;
+}
+
+#document-contents:not(:focus) > p:first-child:only-child > br,
+#document-title:not(:focus) > p:first-child:only-child > br,
+#document-metadata .metadata:not(:focus) > p:first-child:only-child > br {
+    display: block;
+    color: #cecece;
+    content: '';
+}
+
+/* overwrite dropkick layout for access rights dialogue */
+
+.access-rights-dialog select {
+    position: static;
+    visibility: inherit;
+    top: 0;
+}
+/* delete icon in access rights dialogue */
+span.delete {
+    cursor: pointer;
+}
+#document-title:focus, #document-contents:focus {
+    outline: none;
+}
+#document-contents {
+    min-height: 400px;
+}
+.pagination-simple .pagination-footnote > span {
+    width: 150px;
+}
+.pagination-footnote-item {
+    width: 100%;
+}
+.pagination-footnote-item-container {
+    cursor: pointer;
+}
+.pagination-footnote-item-container::before {
+    content: '\0000a0x';
+    position: absolute;
+    visibility: hidden;
+    font-weight: bold;
+}
+.pagination-footnote-item-container:hover::before {
+    visibility: visible;
+}
+.pagination-footnote-item-container > div {
+    margin-left: 15px;
+}
+
+.pagination-page {
+    border: 1px solid #ccc;
+}
+
+#document-contents, .pagination-footnote > * > * {
+    font-size: 12pt;
+}
+
+.pagination-simple {
+    padding: 50px;
+    padding-right: 170px;
+    position: relative;
+    top: 200px;
+    width: 570px;
+    bottom: 50px;
+}
+
+figure {
+    width: 80%;
+    border: 1px solid black;
+    padding: 5px;
+    text-align: center;
+    margin: 10%;
+}
+
+figure figcaption {
+    margin-top: 10px;
+    font-size: .9em;
+}
+
+figure img {
+    max-width: 100%
+}
+
+#flow {
+    counter-reset: figure-cat-0 figure-cat-1 figure-cat-2;
+}
+
+.figure-cat-figure::after {
+    counter-increment: figure-cat-0;
+    content: ' ' counter(figure-cat-0) ': ';
+}
+
+.figure-cat-photo::after {
+    counter-increment: figure-cat-1;
+    content: ' ' counter(figure-cat-1) ': ';
+}
+
+.figure-cat-table::after {
+    counter-increment: figure-cat-2;
+    content: ' ' counter(figure-cat-2) ': ';
+}
+
+*:focus {
+    outline: none;
+}

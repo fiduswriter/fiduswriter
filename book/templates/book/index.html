@@ -12,6 +12,10 @@
 <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/book.css" />
 
 {% endcompress %}
+<!-- citeproc -->
+<script type="text/javascript; e4x=1" src="{{ STATIC_URL }}js/libs/citeproc/xmle4x.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/xmldom.js"></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/citeproc.js"></script>
 {% compress js %}
 <!-- jQuery Dropkick -->
 <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dropkick-1.1.0.js"></script>
@@ -54,10 +58,6 @@
 <script type="text/javascript">
     var lastStyleUsedFootnotes = false;
 </script>
-<!-- citeproc -->
-<script type="text/javascript; e4x=1" src="{{ STATIC_URL }}js/libs/citeproc/xmle4x.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/xmldom.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/citeproc.js"></script>
 <!-- citeproc helpers -->
 <script type="text/javascript" src="{{ STATIC_URL }}js/citeproc-helpers.js"></script>
 <script type="text/javascript" src="{{ STATIC_URL }}js/citeproc-functions.js"></script>

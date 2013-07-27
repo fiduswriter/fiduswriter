@@ -98,7 +98,9 @@ jQuery(document).bind('documentDataLoaded', function () {
         pagination.setPageStyle();
         set_document_style_timer = setTimeout(function() {
             clearTimeout(set_document_style_timer);
-            document.webkitGetNamedFlows()[0].dispatchEvent(pagination.events.escapesNeedMove);
+            if (document.webkitGetNamedFlows) {
+                document.webkitGetNamedFlows()[0].dispatchEvent(pagination.events.escapesNeedMove);
+            }
         }, 200);
 
     };
@@ -169,7 +171,9 @@ jQuery(document).bind('documentDataLoaded', function () {
         commentHelpers.layoutComments();
         set_document_style_timer = setTimeout(function() {
             clearTimeout(set_document_style_timer);
-            document.webkitGetNamedFlows()[0].dispatchEvent(pagination.events.escapesNeedMove);
+            if (document.webkitGetNamedFlows) {
+                document.webkitGetNamedFlows()[0].dispatchEvent(pagination.events.escapesNeedMove);
+            }
         }, 100);
         return false;
     });

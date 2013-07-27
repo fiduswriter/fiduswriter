@@ -652,7 +652,7 @@
             resizable: false,
             top: 10,
             width: 820,
-            height: 580,
+            height: 590,
             modal: true,
             buttons: diaButtons,
             create: function () {

@@ -48,20 +48,25 @@ pip install -r requirements.txt
 python manage.py syncdb
 python manage.py migrate
 python manage.py loaddata bibliography/fixture/initial_bib_rules.json
-python manage.py loaddata bibliography/fixture/initial_tex_chars.json
 
 8. Run the fiduswriter server by typing:
 
 python manage.py runserver
 
-9. Navigate to "http://localhost:8000" in your favorite browser
+9. Navigate to "http://localhost:8000/admin/socialaccount/socialapp/add/"
 
-For best results:
+10. Add at least one social app for Facebook. If you do not have actual Facebook app credentials, use the following data and save:
+
+  Provider: Facebook
+  Name: Facebook
+  Client id: 1
+  Secret: 1
+  Sites: example.com
+
+For best results for the end user:
 
 10. Install Chrome/Chromium at least version 26
 
 11. Enable Webkit experimental features (in type "about:flags" into the navigation bar of the browser)
 
 12. Restart Chrome/Chromium
-
-13. Navigate to "http://localhost:8000" 

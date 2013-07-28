@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-25 12:57-0500\n"
+"POT-Creation-Date: 2013-07-28 06:27-0500\n"
 "PO-Revision-Date: 2013-03-03 12:18-0700\n"
 "Last-Translator: Ana Vera Resquín <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
@@ -67,9 +67,10 @@ msgstr ""
 "        "
 
 #: account/templates/account/email_confirm.html:38
+#, fuzzy
 msgid ""
 "\n"
-"        I am aware that I am participating in a beta test and that service "
+"        I am aware that I am signing up for a test account and that service "
 "may be ended abruptly and without notice, leaving me without my files.\n"
 "        "
 msgstr ""
@@ -79,11 +80,22 @@ msgstr ""
 "sin mis archivos.\n"
 "        "
 
-#: account/templates/account/email_confirm.html:46
+#: account/templates/account/email_confirm.html:44
+msgid ""
+"\n"
+"        Please notice that Fidus Writer currently only works with the Google "
+"Chrome browser. For best results, please enable CSS Regions within the "
+"browser. You can read how to do that <a href=\"http://fiduswriter."
+"com/2013/03/15/how-do-i-enable-page-views-in-fidus-writer/\" target=\"_blank"
+"\">here</a>.</p>\n"
+"        "
+msgstr ""
+
+#: account/templates/account/email_confirm.html:52
 msgid "Confirm"
 msgstr "Confirmar"
 
-#: account/templates/account/email_confirm.html:54
+#: account/templates/account/email_confirm.html:60
 #, python-format
 msgid ""
 "\n"
@@ -493,7 +505,7 @@ msgstr "Libros"
 msgid "Edit profile"
 msgstr "Edita tu perfil"
 
-#: base/templates/base.html:130
+#: base/templates/base.html:131
 msgid "Log out"
 msgstr "Cerrar sesión"
 
@@ -506,8 +518,8 @@ msgid "Equations and Math by mathjax"
 msgstr "Fórmulas matemáticas con mathjax"
 
 #: base/templates/footer.html:17
-msgid "Citations by citeproc.js"
-msgstr "Citas con citeproc.js"
+msgid "Citations with Citation Style Language"
+msgstr ""
 
 #: base/templates/footer.html:22
 msgid "Requires Chrome/enable css regions"
@@ -636,15 +648,15 @@ msgstr "Propietario"
 msgid "Rights"
 msgstr "Derechos"
 
-#: fiduswriter/settings.py:216
+#: fiduswriter/settings.py:206
 msgid "English"
 msgstr "Inglés"
 
-#: fiduswriter/settings.py:217
+#: fiduswriter/settings.py:207
 msgid "Spanish"
 msgstr "Español"
 
-#: fiduswriter/settings.py:218
+#: fiduswriter/settings.py:208
 msgid "German"
 msgstr "Alemán"
 
@@ -652,94 +664,94 @@ msgstr "Alemán"
 msgid "Contents"
 msgstr "Contenido"
 
-#: text/templates/text/editor.html:48 text/templates/text/editor.html:440
+#: text/templates/text/editor.html:48 text/templates/text/editor.html:439
 msgid "Subtitle"
 msgstr "Subtítulo"
 
-#: text/templates/text/editor.html:51 text/templates/text/editor.html:443
+#: text/templates/text/editor.html:51 text/templates/text/editor.html:442
 msgid "Abstract"
 msgstr "Resumen"
 
-#: text/templates/text/editor.html:323
+#: text/templates/text/editor.html:322
 msgid "en"
 msgstr "es"
 
-#: text/templates/text/editor.html:327 text/templates/text/editor.html:339
+#: text/templates/text/editor.html:326 text/templates/text/editor.html:338
 msgid "Close the document and return to the document overview menu."
 msgstr "Cerrar el documento y regresar a la lista de documentos."
 
-#: text/templates/text/editor.html:332
+#: text/templates/text/editor.html:331
 msgid "File handling"
 msgstr "Manejar archivos."
 
-#: text/templates/text/editor.html:332
+#: text/templates/text/editor.html:331
 #: usermedia/templates/usermedia/index.html:81
 msgid "File"
 msgstr "Archivo"
 
-#: text/templates/text/editor.html:336
+#: text/templates/text/editor.html:335
 msgid "Share the document with other users."
 msgstr "Compartir el documento con otros usuarios."
 
-#: text/templates/text/editor.html:336
+#: text/templates/text/editor.html:335
 msgid "Share"
 msgstr "Compartir"
 
-#: text/templates/text/editor.html:339
+#: text/templates/text/editor.html:338
 msgid "Close"
 msgstr "Cerrar"
 
-#: text/templates/text/editor.html:342
+#: text/templates/text/editor.html:341
 msgid "Save the current document"
 msgstr "Guardar este documento"
 
-#: text/templates/text/editor.html:342
+#: text/templates/text/editor.html:341
 msgid "Save"
 msgstr "Guardar"
 
-#: text/templates/text/editor.html:345
+#: text/templates/text/editor.html:344
 msgid "Save copy of the current document"
 msgstr "Guardar copia de este documento"
 
-#: text/templates/text/editor.html:345
+#: text/templates/text/editor.html:344
 msgid "Save copy"
 msgstr "Guardar copia"
 
-#: text/templates/text/editor.html:348
+#: text/templates/text/editor.html:347
 msgid "Download the current document"
 msgstr "Descargue este documento"
 
-#: text/templates/text/editor.html:348
+#: text/templates/text/editor.html:347
 msgid "Download"
 msgstr "Descargar"
 
-#: text/templates/text/editor.html:351
+#: text/templates/text/editor.html:350
 msgid "Either print or create a PDF using your browser's print dialog"
 msgstr ""
 "Imprimir o crear un archivo PDF con el dialogo de impresiones de tu "
 "navegador web"
 
-#: text/templates/text/editor.html:351
+#: text/templates/text/editor.html:350
 msgid "Print/PDF"
 msgstr "Imprimir/PDF"
 
-#: text/templates/text/editor.html:357
+#: text/templates/text/editor.html:356
 msgid "Export of the document contents"
 msgstr "Exportar el contenido del documento"
 
-#: text/templates/text/editor.html:357
+#: text/templates/text/editor.html:356
 msgid "Export"
 msgstr "Exportar"
 
-#: text/templates/text/editor.html:361
+#: text/templates/text/editor.html:360
 msgid "Export the document to an HTML file"
 msgstr "Exportar el documento a un archivo HTML"
 
-#: text/templates/text/editor.html:366
+#: text/templates/text/editor.html:365
 msgid "Export the document to an Epub electronic reader file."
 msgstr "Exportar el documento a un archivo de lectura electrónica Epub."
 
-#: text/templates/text/editor.html:371
+#: text/templates/text/editor.html:370
 msgid ""
 "Export the document to a Latex file. This will also attach a BibTex file if "
 "you are using citations."
@@ -747,187 +759,187 @@ msgstr ""
 "Exportar el documento a un archivo Latex. Si el documento contiene citas, "
 "incluiremos la bibliografia en formato BibTex."
 
-#: text/templates/text/editor.html:379
+#: text/templates/text/editor.html:378
 msgid "Choose your preferred citation style."
 msgstr "Escoger estilo de citas."
 
-#: text/templates/text/editor.html:379
+#: text/templates/text/editor.html:378
 msgid "Citation Style"
 msgstr "Estilo de Citas"
 
-#: text/templates/text/editor.html:383
+#: text/templates/text/editor.html:382
 msgid "American Psychological Association."
 msgstr "American Psychological Association."
 
-#: text/templates/text/editor.html:383
+#: text/templates/text/editor.html:382
 msgid "APA"
 msgstr "APA"
 
-#: text/templates/text/editor.html:386
+#: text/templates/text/editor.html:385
 msgid "The author-date variant of the Chicago style"
 msgstr "El tipo autor-fecha del estilo Chicago"
 
-#: text/templates/text/editor.html:386
+#: text/templates/text/editor.html:385
 msgid "Chicago (Author-Date)"
 msgstr "Chicago (Autor-Fecha)"
 
-#: text/templates/text/editor.html:389
+#: text/templates/text/editor.html:388
 msgid "Chicago format with short notes and full bibliography"
 msgstr "Estilo Chicago con pequeña nota y bibliografía completa"
 
-#: text/templates/text/editor.html:389
+#: text/templates/text/editor.html:388
 msgid "Chicago (Note with Bibliography)"
 msgstr "Chicago (Nota con Bibliografía)"
 
-#: text/templates/text/editor.html:392
+#: text/templates/text/editor.html:391
 msgid "The Harvard author-date style"
 msgstr "El estilo Harvard del tipo autor-fecha"
 
-#: text/templates/text/editor.html:392
+#: text/templates/text/editor.html:391
 msgid "Harvard"
 msgstr "Harvard"
 
-#: text/templates/text/editor.html:395
+#: text/templates/text/editor.html:394
 msgid "Modern Language Association"
 msgstr "Modern Language Association"
 
-#: text/templates/text/editor.html:395
+#: text/templates/text/editor.html:394
 msgid "MLA"
 msgstr "MLA"
 
-#: text/templates/text/editor.html:401
+#: text/templates/text/editor.html:400
 msgid "Choose a document style"
 msgstr "Escoger estilo del documento"
 
-#: text/templates/text/editor.html:401
+#: text/templates/text/editor.html:400
 msgid "Document Style"
 msgstr "Estilo del Documento"
 
-#: text/templates/text/editor.html:405
+#: text/templates/text/editor.html:404
 msgid "Elephant"
 msgstr ""
 
-#: text/templates/text/editor.html:406
+#: text/templates/text/editor.html:405
 msgid "Comfy Elephant"
 msgstr ""
 
-#: text/templates/text/editor.html:410
+#: text/templates/text/editor.html:409
 msgid "Owl"
 msgstr ""
 
-#: text/templates/text/editor.html:411
+#: text/templates/text/editor.html:410
 msgid "Drowsy Owl"
 msgstr ""
 
-#: text/templates/text/editor.html:415
+#: text/templates/text/editor.html:414
 msgid "Fox"
 msgstr ""
 
-#: text/templates/text/editor.html:416
+#: text/templates/text/editor.html:415
 msgid "Foxy Fox"
 msgstr ""
 
-#: text/templates/text/editor.html:423
+#: text/templates/text/editor.html:422
 msgid "Choose a papersize that for printing and PDF generation."
 msgstr "Escoge el tamaño del papel para imprimir y crear archivos PDF."
 
-#: text/templates/text/editor.html:423
+#: text/templates/text/editor.html:422
 msgid "Paper Size"
 msgstr "Tamaño del Papel"
 
-#: text/templates/text/editor.html:427
+#: text/templates/text/editor.html:426
 msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
 msgstr "A4 (DIN A4/ISO 216) tamaño más utilizado a nivel mundial."
 
-#: text/templates/text/editor.html:427
+#: text/templates/text/editor.html:426
 msgid "DIN A4"
 msgstr "A4"
 
-#: text/templates/text/editor.html:430
+#: text/templates/text/editor.html:429
 msgid "The format used by the USA and some other American countries."
 msgstr "Formato utilizado por los EEUU y algunos países de América."
 
-#: text/templates/text/editor.html:430
+#: text/templates/text/editor.html:429
 msgid "US Letter"
 msgstr "US Letter"
 
-#: text/templates/text/editor.html:436
+#: text/templates/text/editor.html:435
 msgid "Choose which metadata to enable."
 msgstr "Elige el metadato que deseas activar."
 
-#: text/templates/text/editor.html:436
+#: text/templates/text/editor.html:435
 msgid "Metadata"
 msgstr "Metadato"
 
-#: text/templates/text/editor.html:440
+#: text/templates/text/editor.html:439
 msgid "Define a subtitle in addition to the title of the document."
 msgstr "Definir un subtítulo además del título del documento."
 
-#: text/templates/text/editor.html:443
+#: text/templates/text/editor.html:442
 msgid "Add an abstract to the document."
 msgstr "Agregar un resumen del documento."
 
-#: text/templates/text/editor.html:449
+#: text/templates/text/editor.html:448
 msgid "Tools"
 msgstr "Herramientas"
 
-#: text/templates/text/editor.html:453 text/templates/text/editor.html:454
+#: text/templates/text/editor.html:452 text/templates/text/editor.html:453
 msgid "Word counter"
 msgstr "Contador de palabras"
 
-#: text/templates/text/editor.html:464
+#: text/templates/text/editor.html:463
 msgid "Show/hide the top menu."
 msgstr "Mostrar/ocultar el menú principal."
 
-#: text/templates/text/editor.html:468
+#: text/templates/text/editor.html:467
 msgid "Handle tracking of changes."
 msgstr "Manejar grabación de cambios"
 
-#: text/templates/text/editor.html:469
+#: text/templates/text/editor.html:468
 msgid "Changes"
 msgstr "Cambios"
 
-#: text/templates/text/editor.html:474
+#: text/templates/text/editor.html:473
 msgid "Turn tracking of changes on."
 msgstr "Activar/desactivar grabación de cambios"
 
-#: text/templates/text/editor.html:474
+#: text/templates/text/editor.html:473
 msgid "Track"
 msgstr "Grabar"
 
-#: text/templates/text/editor.html:477
+#: text/templates/text/editor.html:476
 msgid "Show all changes that have been tracked in the entire document."
 msgstr "Mostrar todos los cambios que han sido grabados en el documento."
 
-#: text/templates/text/editor.html:477
+#: text/templates/text/editor.html:476
 msgid "Show"
 msgstr "Mostrar"
 
-#: text/templates/text/editor.html:480
+#: text/templates/text/editor.html:479
 msgid "Accept all changes that have been tracked in the entire document."
 msgstr "Aceptar todos los cambios que han sido gravados en el documento."
 
-#: text/templates/text/editor.html:480
+#: text/templates/text/editor.html:479
 msgid "Accept all"
 msgstr "Aceptar todos"
 
-#: text/templates/text/editor.html:483
+#: text/templates/text/editor.html:482
 msgid "Reject all changes that have been tracked in the entire document."
 msgstr "Rechazar todos los cambios que han sido grabados en el documento."
 
-#: text/templates/text/editor.html:483
+#: text/templates/text/editor.html:482
 msgid "Reject all"
 msgstr "Rechazar todos"
 
-#: text/templates/text/editor.html:488
+#: text/templates/text/editor.html:487
 msgid "Show/hide comments"
 msgstr "Mostrar/ocultar comentarios"
 
-#: text/templates/text/editor.html:489
+#: text/templates/text/editor.html:488
 msgid "Comments"
 msgstr "Comentarios"
 
-#: text/templates/text/editor.html:496
+#: text/templates/text/editor.html:495
 msgid "The title of the document"
 msgstr "Título del documento"
 
@@ -962,6 +974,9 @@ msgstr "Tamaño (píxeles)"
 #: usermedia/templates/usermedia/index.html:83
 msgid "Updated"
 msgstr "Cambiado"
+
+#~ msgid "Citations by citeproc.js"
+#~ msgstr "Citas con citeproc.js"
 
 #~ msgid "Classic style"
 #~ msgstr "Estilo clásico"

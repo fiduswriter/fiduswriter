@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-25 12:57-0500\n"
+"POT-Creation-Date: 2013-07-28 06:27-0500\n"
 "PO-Revision-Date: 2013-03-03 12:18-0700\n"
 "Last-Translator: Ana Vera Resquín <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
@@ -30,24 +30,27 @@ msgid "No user is registered with the given email address."
 msgstr "Ningun usuario registrado con ese correo."
 
 #: account/static/js/contact-helpers.js:72
-msgid "Please invite him/her from "
+#, fuzzy
+msgid "Please invite him/her "
 msgstr "Por favor, invitale desde "
 
 #: account/static/js/contact-helpers.js:74
-msgid "Welcome to Fiduswriter"
+#, fuzzy
+msgid "Fiduswriter"
 msgstr "Bienvenidos a Fidus Writer"
 
 #: account/static/js/contact-helpers.js:75
-msgid "You are invited to Fiduswriter."
-msgstr "Estas invitado a utilizar Fiduswriter"
+msgid "Hey, I would like you to sign up for a Fiduswriter account."
+msgstr ""
 
 #: account/static/js/contact-helpers.js:76
-msgid "Please register from http://beta.fiduswriter.com"
+#, fuzzy
+msgid "Please register at http://beta.fiduswriter.com"
 msgstr "Por favor, registrate en http://beta.fiduswriter.com"
 
 #: account/static/js/contact-helpers.js:78
-msgid "here"
-msgstr "acá"
+msgid "by sending an email"
+msgstr ""
 
 #: account/static/js/contact-helpers.js:92
 msgid "Add a user to your contacts"
@@ -1205,7 +1208,7 @@ msgstr "Documento sin nombre"
 msgid "Document could not be saved"
 msgstr "El documento no se pudo guardar"
 
-#: text/static/js/editor-helpers.js:178
+#: text/static/js/editor-helpers.js:181
 msgid ""
 "Sorry, but the connection to the server has been lost. Please reload to "
 "ensure that no date is being lost."
@@ -1213,11 +1216,11 @@ msgstr ""
 "Perdón, pero la conexión con el servidor se perdió. Por favor, actualiza la "
 "página para asegurar que los datos no se han perdido."
 
-#: text/static/js/editor-helpers.js:185
+#: text/static/js/editor-helpers.js:188
 msgid "Ok"
 msgstr "Aprobar"
 
-#: text/static/js/editor-helpers.js:197
+#: text/static/js/editor-helpers.js:200
 msgid "No connection to server"
 msgstr "No hay conexión con el servidor"
 
@@ -1463,13 +1466,19 @@ msgstr "El/los imagen(es) han sido borrado(s)"
 msgid "Delete the image(s)"
 msgstr "Borrar el/los imagen(es)"
 
-#: usermedia/static/js/usermedia-helpers.js:556
+#: usermedia/static/js/usermedia-helpers.js:567
 msgid "Search for Filename"
 msgstr "Buscar por Nombre de archivo"
 
 #: usermedia/static/js/usermedia-template-dialogs.js:83
 msgid "Insert a title"
 msgstr "Insertar un título"
+
+#~ msgid "You are invited to Fiduswriter."
+#~ msgstr "Estas invitado a utilizar Fiduswriter"
+
+#~ msgid "here"
+#~ msgstr "acá"
 
 #~ msgid "Undefined"
 #~ msgstr "No definido"

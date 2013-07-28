@@ -22,7 +22,7 @@
     {% if user.is_authenticated %}
     {% include "account/snippets/already_logged_in.html" %}
     {% else %}
-    <form class="signup" id="signup_form" method="POST" action="{% url 'account_signup' %}" autocomplete="off">
+    <form class="signup" id="signup_form" method="POST" action="{% url 'account_signup' %}">
         {% csrf_token %}
         {{ form.non_field_errors }}
         <div class="input-wrapper">

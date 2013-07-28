@@ -25,7 +25,7 @@ urlpatterns = patterns('',
     
     # Show user profiles
     url(r'^team/$', views.list_team_members, name='list_team_members'),
-    url(r'^profile/(?P<username>[\w\d\.\-_\@]{3,30})$', views.show_profile, name='show_userprofile'),
+    url(r'^profile/(?P<username>[\w\d\.\-_\@]{1,30})$', views.show_profile, name='show_userprofile'),
     url(r'^avatar/delete/$', views.delete_avatar_js, name="delete_avatar_js"),
     url(r'^avatar/upload/$', views.upload_avatar_js, name="upload_avatar_js"),
     url(r'^passwordchange/$', views.password_change_js, name="password_change_js"),

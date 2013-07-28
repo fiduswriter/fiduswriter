@@ -46,7 +46,9 @@ pip install -r requirements.txt
 7. Synchronize the DB and create a superuser by typing:
 
 python manage.py syncdb
+
 python manage.py migrate
+
 python manage.py loaddata bibliography/fixture/initial_bib_rules.json
 
 8. Run the fiduswriter server by typing:
@@ -58,9 +60,13 @@ python manage.py runserver
 10. Add at least one social app for Facebook. If you do not have actual Facebook app credentials, use the following data and save:
 
   Provider: Facebook
+  
   Name: Facebook
+  
   Client id: 1
+  
   Secret: 1
+  
   Sites: example.com
 
 For best results for the end user:

@@ -29,31 +29,31 @@ The following are instructions working on most *NIX systems.
 
 3. Install virtualenv. To do so, type on the command line:
 
-easy_install virtualenv
+  easy_install virtualenv
 
 4. Once virtualenv is installed, you can use the virtualenv command to create virtual environments. The following command will create an environment called "fiduswriter-venv":
 
-virtualenv  --no-site-packages fiduswriter-venv
+  virtualenv  --no-site-packages fiduswriter-venv
 
 5. Activate the virtualenv by typing:
 
-source fiduswriter-venv/bin/activate
+  source fiduswriter-venv/bin/activate
 
 6. Install the requirements for running  fiduswriter by typing:
 
-pip install -r requirements.txt
+  pip install -r requirements.txt
 
 7. Synchronize the DB and create a superuser by typing:
 
-python manage.py syncdb
+  python manage.py syncdb
 
-python manage.py migrate
+  python manage.py migrate
 
-python manage.py loaddata bibliography/fixture/initial_bib_rules.json
+  python manage.py loaddata bibliography/fixture/initial_bib_rules.json
 
 8. Run the fiduswriter server by typing:
 
-python manage.py runserver
+  python manage.py runserver
 
 9. Navigate to "http://localhost:8000/admin/socialaccount/socialapp/add/"
 

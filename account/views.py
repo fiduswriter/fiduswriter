@@ -47,10 +47,11 @@ def show_profile(request,username):
     """ 
     response = {}
     if username==request.user.username:
-        response['user'] = request.user
         response['can_edit'] = True
     else:
-        response['user'] = User.objects.get(username=username)
+        the_user =  User.objects.filter(username=username)
+        if len(the_user) > 0:
+            response['the_user'] = the_user[0]
         response['can_edit'] = False
     return render_to_response('account/show_profile.html', 
         response,

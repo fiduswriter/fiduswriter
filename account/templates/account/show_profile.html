@@ -130,27 +130,27 @@
             </tbody>
         </table>
     </div>
-    {% else %}
+    {% elif the_user %}
     <div id="profile-wrapper">
-        <div id="profile-avatar">{% avatar user %}</div>
+        <div id="profile-avatar">{% avatar the_user %}</div>
         <table id="profile-data">
             <tbody>
                 <tr>
                     <th>{% trans 'Username' %}:</th>
-                    <td>{{user.username}}</td>
+                    <td>{{the_user.username}}</td>
                 </tr>
                 <tr>
                     <th>{% trans 'First name' %}:</th>
-                    <td>{{user.first_name}}</td>
+                    <td>{{the_user.first_name}}</td>
                 </tr>
                 <tr>
                     <th>{% trans 'Last name' %}:</th>
-                    <td>{{user.last_name}}</td>
+                    <td>{{the_user.last_name}}</td>
                 </tr>
                 <tr>
                     <th>{% trans 'Email' %}:</th>
                     <td>
-                        {% for emailaddress in user.emailaddress_set.all %}
+                        {% for emailaddress in the_user.emailaddress_set.all %}
                             {% if emailaddress.primary %}
                             {{ emailaddress.email }}
                             {%endif%}
@@ -159,6 +159,10 @@
                 </tr>
             </tbody>
         </table>
+    </div>
+    {% else %}
+    <div id="profile-wrapper">
+        <h1>{% trans 'User does not exist.' %}</h1>
     </div>
     {% endif %}
 {% endblock %}

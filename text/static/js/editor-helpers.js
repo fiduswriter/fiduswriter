@@ -148,7 +148,6 @@
     editorHelpers.saveDocumentIfChanged = function (callback) {
         var currentTime = new Date().getTime();
         if (currentTime - timeOfLastServerPing < 600000) {
-            console.log('and here');
             if (theDocument.changed) {
                 theDocument.changed = false;
                 jQuery('.save').addClass('disabled');

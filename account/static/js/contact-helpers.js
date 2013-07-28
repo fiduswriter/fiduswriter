@@ -69,14 +69,14 @@
                     var inviting_text = '<div class="warning">'
                         + gettext('No user is registered with the given email address.') +
                         '<br />'
-                        + gettext('Please invite him/her from ') +
-                        '<a href="mailto:' + user_email + '?subject='
-                            + encodeURIComponent(gettext('Welcome to Fiduswriter')) + '&body='
-                                + encodeURIComponent(gettext('You are invited to Fiduswriter.') + "\n"
-                                    + gettext('Please register from http://beta.fiduswriter.com')) +
+                        + gettext('Please invite him/her ') +
+                        '<a target="_blank" href="mailto:' + user_email + '?subject='
+                            + encodeURIComponent(gettext('Fiduswriter')) + '&body='
+                                + encodeURIComponent(gettext('Hey, I would like you to sign up for a Fiduswriter account.') + "\n"
+                                    + gettext('Please register at http://beta.fiduswriter.com')) +
                         '">'
-                            + gettext('here') +
-                        '</a>\
+                            + gettext('by sending an email') +
+                        '</a>!\
                     </div>';
                     $('#add-new-member').append(inviting_text);
                 }

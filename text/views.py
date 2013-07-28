@@ -186,6 +186,7 @@ def get_document_js(request):
                 response['document']['comments']='[]'
                 response['document']['settings']='{}'
                 response['document']['is_locked']=False
+                response['document']['access_rights']=[]
             else:
                 response['document']['id']=text.id
                 response['document']['title']=text.title

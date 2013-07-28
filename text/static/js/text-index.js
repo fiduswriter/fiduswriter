@@ -73,7 +73,7 @@ jQuery(document).ready(function () {
                 documentHelpers.deleteDocumentDialog(ids);
                 break;
             case 'share':
-                caccessrightsHelpers.createAccessRightsDialog(ids);
+                accessrightsHelpers.createAccessRightsDialog(ids);
                 break;
             case 'epub':
                 documentHelpers.getMissingDocumentListData(ids, function () {

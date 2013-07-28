@@ -149,6 +149,11 @@
   #closeFeedback:hover {
     color: #999;
   }
+  @media print {
+    .feedback-tab, .feedback-panel {
+      display: none;
+    }
+  } 
 </style>
 
 <a class="feedback-tab" href="#">{% trans "Feedback" %}</a>

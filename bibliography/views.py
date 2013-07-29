@@ -289,7 +289,9 @@ def delete_js(request):
     if request.is_ajax() and request.method == 'POST' :
         status = 201
         ids = request.POST.getlist('ids[]')
-        Entry.objects.filter(pk__in = ids, entry_owner = request.user).delete()
+        id_chunks=[ids[x:x+100] for x in xrange(0, len(ids), 100)]
+        for id_chunk in id_chunks:
+            Entry.objects.filter(pk__in = id_chunk, entry_owner = request.user).delete()
     return HttpResponse(status=status)
 
 #save changes or create a new category

@@ -443,8 +443,8 @@
                 if (this.pos == this.input.length) {
                     $.addAlert('error', "Runaway key");
                 }
-
-                if (this.input[this.pos].match("[a-zA-Z0-9_:\\.\\\?+/-]")) {
+                console.log(this.input[this.pos]);
+                if (this.input[this.pos].match("[a-zA-Z0-9_:;`\\.\\\?+/-]")) {
                     this.pos++
                 } else {
                     return this.input.substring(start, this.pos).toLowerCase();

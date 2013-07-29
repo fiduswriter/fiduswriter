@@ -165,3 +165,7 @@
     font-size: 14px;
     margin-bottom: 18px;
 }
+
+.elephant .equation {
+    font-size: 80%;
+}

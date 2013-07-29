@@ -335,19 +335,9 @@ font {
 }
 /* For default contents of title and contents field*/
 
-#document-contents:not(:focus) > p:first-child:only-child > br,
-#document-metadata .metadata:empty:not(:focus)::before,
-#document-metadata .metadata:empty:not(:focus) > p:first-child:only-child > br::before {
+#document-contents:before, #document-title:before, #metadata-subtitle:before, #metadata-abstract:before {
     text-transform: none;
     color: #cecece;
-}
-
-#document-contents:not(:focus) > p:first-child:only-child > br,
-#document-title:not(:focus) > p:first-child:only-child > br,
-#document-metadata .metadata:not(:focus) > p:first-child:only-child > br {
-    display: block;
-    color: #cecece;
-    content: '';
 }
 
 /* overwrite dropkick layout for access rights dialogue */

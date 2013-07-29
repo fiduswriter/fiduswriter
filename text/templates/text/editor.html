@@ -37,19 +37,21 @@
             }
         </script>
         <style>
-            #document-contents:not(:focus) > p:first-child:only-child > br::before {
+            /*#document-contents:not(:focus) > p:first-child:only-child > br::before {
                 content: "{% trans "Contents" %}...";
             }
 
-            #document-title:empty:not(:focus)::before {
+           /* #document-title:empty:not(:focus)::before {
                 content: "{% trans "Title" %}...";
-            }
+            }*/
             #metadata-subtitle:empty:not(:focus)::before, #metadata-subtitle:not(:focus) > p:first-child:only-child > br::before {
                 content: "{% trans "Subtitle" %}...";
             }
             #metadata-abstract:empty:not(:focus)::before, #metadata-abstract:not(:focus) > p:first-child:only-child > br::before {
                 content: "{% trans "Abstract" %}...";
             }
+        </style>
+        <style id="placeholderStyles">
         </style>
         <!--  Translations -->
         <script type="text/javascript" src="/jsi18n/"></script>

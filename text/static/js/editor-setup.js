@@ -146,6 +146,15 @@ jQuery(document).bind('documentDataLoaded', function () {
         toolsHelpers.toolsEventHandler(jQuery(this).data('function'));
         return false;
     });
+    
+    editorHelpers.setPlaceholders();
+    
+    jQuery(document).on('blur','#document-title,#document-contents,#metadata-subtitle,#metadata-abstract', function () {
+        editorHelpers.setPlaceholders();
+    });
+    jQuery(document).on('focus', '#document-title,#document-contents,#metadata-subtitle,#metadata-abstract', function () {
+        editorHelpers.setPlaceholders(jQuery(this).attr('id'));
+    });
 
     if (typeof (theDocument.settings.papersize) === 'undefined') {
         theDocument.settings.papersize = '1117';
@@ -343,8 +352,12 @@ jQuery(document).bind('documentDataLoaded', function () {
         // Set webpage title when document title changes
         jQuery('#document-title').bind('keyup paste change hallomodified',
             function () {
-                jQuery('title').html('Fidus Writer - ' + jQuery(this).text());
-                jQuery('#header h1').html(jQuery(this).text());
+                var theTitle = jQuery(this).text();
+                if (theTitle.length === 0) {
+                    theTitle = gettext('Untitled Document');
+                }
+                jQuery('title').html('Fidus Writer - ' + theTitle);
+                jQuery('#header h1').html(theTitle);
                 //theDocument.title = this.innerHTML;
             });
 

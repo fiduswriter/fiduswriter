@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-28 06:27-0500\n"
+"POT-Creation-Date: 2013-07-29 09:58-0500\n"
 "PO-Revision-Date: 2013-03-03 12:18-0700\n"
 "Last-Translator: Ana Vera Resquín <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
@@ -1208,7 +1208,27 @@ msgstr "Documento sin nombre"
 msgid "Document could not be saved"
 msgstr "El documento no se pudo guardar"
 
-#: text/static/js/editor-helpers.js:181
+#: text/static/js/editor-helpers.js:176
+#, fuzzy
+msgid "Title..."
+msgstr "Título"
+
+#: text/static/js/editor-helpers.js:179
+#, fuzzy
+msgid "Contents..."
+msgstr "Contactos"
+
+#: text/static/js/editor-helpers.js:182
+#, fuzzy
+msgid "Subtitle..."
+msgstr "Subtítulo"
+
+#: text/static/js/editor-helpers.js:185
+#, fuzzy
+msgid "Abstract..."
+msgstr "Abstracto"
+
+#: text/static/js/editor-helpers.js:198
 msgid ""
 "Sorry, but the connection to the server has been lost. Please reload to "
 "ensure that no date is being lost."
@@ -1216,13 +1236,18 @@ msgstr ""
 "Perdón, pero la conexión con el servidor se perdió. Por favor, actualiza la "
 "página para asegurar que los datos no se han perdido."
 
-#: text/static/js/editor-helpers.js:188
+#: text/static/js/editor-helpers.js:205
 msgid "Ok"
 msgstr "Aprobar"
 
-#: text/static/js/editor-helpers.js:200
+#: text/static/js/editor-helpers.js:217
 msgid "No connection to server"
 msgstr "No hay conexión con el servidor"
+
+#: text/static/js/editor-setup.js:357
+#, fuzzy
+msgid "Untitled Document"
+msgstr "Documento sin nombre"
 
 #: text/static/js/editor-templates.js:23
 msgid "The subtitle of the document"

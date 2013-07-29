@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-28 06:27-0500\n"
+"POT-Creation-Date: 2013-07-29 09:58-0500\n"
 "PO-Revision-Date: 2013-02-24 10:03-0600\n"
 "Last-Translator: Daniel Frebel <daniel@fiduswriter.com>\n"
 "Language-Team: German <daniel@fiduswriter.com>\n"
@@ -1321,7 +1321,27 @@ msgstr "Unbenanntes Dokumentes"
 msgid "Document could not be saved"
 msgstr "Dokument konnte nicht gespeichert werden"
 
-#: text/static/js/editor-helpers.js:181
+#: text/static/js/editor-helpers.js:176
+#, fuzzy
+msgid "Title..."
+msgstr "Titel"
+
+#: text/static/js/editor-helpers.js:179
+#, fuzzy
+msgid "Contents..."
+msgstr "Kontakte"
+
+#: text/static/js/editor-helpers.js:182
+#, fuzzy
+msgid "Subtitle..."
+msgstr "Untertitel"
+
+#: text/static/js/editor-helpers.js:185
+#, fuzzy
+msgid "Abstract..."
+msgstr "Abstract"
+
+#: text/static/js/editor-helpers.js:198
 msgid ""
 "Sorry, but the connection to the server has been lost. Please reload to "
 "ensure that no date is being lost."
@@ -1329,13 +1349,18 @@ msgstr ""
 "Leider wurde die Verbindung zum Server unterbrochen. Bette laden sie die "
 "Seite erneut damit keine Daten verloren gehen"
 
-#: text/static/js/editor-helpers.js:188
+#: text/static/js/editor-helpers.js:205
 msgid "Ok"
 msgstr "Ok"
 
-#: text/static/js/editor-helpers.js:200
+#: text/static/js/editor-helpers.js:217
 msgid "No connection to server"
 msgstr "Keine Verbindung zum Server"
+
+#: text/static/js/editor-setup.js:357
+#, fuzzy
+msgid "Untitled Document"
+msgstr "Unbenanntes Dokumentes"
 
 #: text/static/js/editor-templates.js:23
 #, fuzzy

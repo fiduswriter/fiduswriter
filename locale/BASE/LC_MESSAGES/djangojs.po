@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-28 06:27-0500\n"
+"POT-Creation-Date: 2013-07-29 09:58-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1202,18 +1202,38 @@ msgstr ""
 msgid "Document could not be saved"
 msgstr ""
 
-#: text/static/js/editor-helpers.js:181
+#: text/static/js/editor-helpers.js:176
+msgid "Title..."
+msgstr ""
+
+#: text/static/js/editor-helpers.js:179
+msgid "Contents..."
+msgstr ""
+
+#: text/static/js/editor-helpers.js:182
+msgid "Subtitle..."
+msgstr ""
+
+#: text/static/js/editor-helpers.js:185
+msgid "Abstract..."
+msgstr ""
+
+#: text/static/js/editor-helpers.js:198
 msgid ""
 "Sorry, but the connection to the server has been lost. Please reload to "
 "ensure that no date is being lost."
 msgstr ""
 
-#: text/static/js/editor-helpers.js:188
+#: text/static/js/editor-helpers.js:205
 msgid "Ok"
 msgstr ""
 
-#: text/static/js/editor-helpers.js:200
+#: text/static/js/editor-helpers.js:217
 msgid "No connection to server"
+msgstr ""
+
+#: text/static/js/editor-setup.js:357
+msgid "Untitled Document"
 msgstr ""
 
 #: text/static/js/editor-templates.js:23

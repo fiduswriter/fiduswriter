@@ -36,13 +36,13 @@
     mathHelpers.resetMath = function(callback) {
         // (Re)layout all math nodes
         var allEquations = jQuery('span.equation'), mathjax, i;
-        if (allEquations.length===0) {
+        /*if (allEquations.length===0) {
             mathjax = document.getElementById('MathJax_SVG_Hidden');
-            /*if (mathjax) {
+            if (mathjax) {
                 // There are no equations, so we remove the mathjax element.
                 mathjax.parentNode.parentNode.removeChild(mathjax.parentNode);
-            }*/
-        }
+            }
+        }*/
         for (i = 0; i < allEquations.length; i++) {
             mathHelpers.setMathNodeContents(allEquations[i]);
         }

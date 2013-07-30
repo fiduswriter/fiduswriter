@@ -21,7 +21,8 @@ Howto install
 
 The following are instructions working on most *NIX systems.
 
-0. Install the development package of libjpeg. How you do this depends on your system. On Ubuntu the package is called libjpeg-dev. Install with your favorite package manager.
+0. Install the development package of libjpeg. How you do this depends on your system. On Ubuntu the package is called libjpeg-dev. Install with your favorite package manager.  
+   If you are using debian, then the following packages should be installed: apt-get install python-dev python-virtualenv
 
 1. Start the command line (terminal).
 

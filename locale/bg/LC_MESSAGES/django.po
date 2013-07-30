@@ -1,0 +1,991 @@
+# Bulgarian translation for Fiduswriter
+# Copyright (C) 2013 Vladimir Vitkov
+# This file is distributed under the same license as the Fiduswriter.
+# Vladimir Vitkov <vvitkov@linux-bg.org>, 2013
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2013-07-29 17:14+0300\n"
+"PO-Revision-Date: 2013-07-29 14:14+0200\n"
+"Last-Translator: Vladimir Vitkov <vvitkov@linux-bg.org>\n"
+"Language-Team: Bulgarian <vvitkov@linux-bg.org>\n"
+"Language: BG\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: account/templates/account/base.html:10 base/templates/base.html:10
+#: text/templates/text/editor.html:9
+msgid "The all in one solution for collaborative academic writing."
+msgstr "Единственото решение за съвместно създаване на академични документи."
+
+#: account/templates/account/base.html:68
+#: account/templates/account/login.html:7
+#: account/templates/account/signup.html:10
+msgid "Log In"
+msgstr "Вход"
+
+#: account/templates/account/email_confirm.html:8
+msgid "Confirm E-mail Address"
+msgstr "Потвърди имейл"
+
+#: account/templates/account/email_confirm.html:17
+msgid "Confirm E-mail Address and Agree to Terms and Conditions"
+msgstr "Потвърдете вашият имейл и се съгласете с общите условия"
+
+#: account/templates/account/email_confirm.html:22
+#, python-format
+msgid ""
+"\n"
+"        Please confirm that you own the email <a href=\"mailto:%(email)s\">"
+"%(email)s</a>,\n"
+"        that you apply for the username %(user_display)s, and that you have "
+"read and agree to the\n"
+"        <a href=\"http://www.fiduswriter.com/?page_id=41\">Terms and "
+"Conditions</a>.\n"
+"        "
+msgstr ""
+"\n"
+"        Моля потвърдете, че имате контрол над имейла <a href=\"mailto:"
+"%(email)s\">%(email)s</a>,\n"
+"        че заявявате потребителско име %(user_display)s, и че сте прочел и "
+"сте съгласен с\n"
+"        <a href=\"http://www.fiduswriter.com/?page_id=41\">Общите Условия</"
+"a>.\n"
+"        "
+
+#: account/templates/account/email_confirm.html:31
+msgid ""
+"\n"
+"        I have read and agree to the <a href=\"http://www.fiduswriter.com/?"
+"page_id=41\">Terms and Conditions</a>.\n"
+"        "
+msgstr ""
+"\n"
+"        Прочетох и съм съгласен с <a href=\"http://www.fiduswriter.com/?"
+"page_id=41\">Общите Условия</a>.\n"
+"        "
+
+#: account/templates/account/email_confirm.html:38
+msgid ""
+"\n"
+"        I am aware that I am signing up for a test account and that service "
+"may be ended abruptly and without notice, leaving me without my files.\n"
+"        "
+msgstr ""
+"\n"
+"        Известно ми е, че се регистрирам за тестов акаунт, и че услугата "
+"може да бъде прекратена без предизвестие,\n"
+"        оставяйки ме без достъп до моите файлове.\n"
+"        "
+
+#: account/templates/account/email_confirm.html:44
+msgid ""
+"\n"
+"        Please notice that Fidus Writer currently only works with the Google "
+"Chrome browser. For best results, please enable CSS Regions within the "
+"browser. You can read how to do that <a href=\"http://fiduswriter."
+"com/2013/03/15/how-do-i-enable-page-views-in-fidus-writer/\" target=\"_blank"
+"\">here</a>.</p>\n"
+"        "
+msgstr ""
+"\n"
+"        За момента Fidus Writer работи само със Google Chrome браузър. За "
+"най добри резултати, моля включете CSS Regions от самият браузър. Информация "
+"как да бъде включена тази функционалност<a href=\"http://fiduswriter."
+"com/2013/03/15/how-do-i-enable-page-views-in-fidus-writer/\" target=\"_blank"
+"\">тук</a>.</p>\n"
+"        "
+
+#: account/templates/account/email_confirm.html:52
+msgid "Confirm"
+msgstr "Потвърди"
+
+#: account/templates/account/email_confirm.html:60
+#, python-format
+msgid ""
+"\n"
+"        This e-mail confirmation link expired or is invalid.\n"
+"        Please <a href=\"%(email_url)s\">issue a new e-mail confirmation "
+"request</a>.\n"
+"        "
+msgstr ""
+"\n"
+"        Тази връзка за потвърждение е изтекла.\n"
+"        Моля <a href=\"%(email_url)s\">изискайте нова връзка за "
+"потвърждение</a>.\n"
+"        "
+
+#: account/templates/account/list_team_members.html:8
+msgid "Team members"
+msgstr "Членове на екипа"
+
+#: account/templates/account/list_team_members.html:39
+msgid "Select action"
+msgstr "Изберете действие"
+
+#: account/templates/account/list_team_members.html:44
+#: bibliography/templates/bibliography/index.html:54
+#: book/templates/book/index.html:88 text/templates/text/index.html:73
+#: usermedia/templates/usermedia/index.html:41
+msgid "Delete selected"
+msgstr "Изтрий избраните"
+
+#: account/templates/account/list_team_members.html:52
+msgid "Add new contact"
+msgstr "Добавяне на нов контакт"
+
+#: account/templates/account/list_team_members.html:62
+#: base/templates/base.html:125
+msgid "Contacts"
+msgstr "Контакти"
+
+#: account/templates/account/list_team_members.html:63
+#: account/templates/account/password_reset.html:29
+#: account/templates/account/signup.html:45
+msgid "E-mail address"
+msgstr "Имейл адрес"
+
+#: account/templates/account/list_team_members.html:64
+#: account/templates/account/show_profile.html:88
+#: bibliography/templates/bibliography/index.html:109
+#: book/templates/book/index.html:147 text/templates/text/index.html:132
+#: usermedia/templates/usermedia/index.html:84
+msgid "Delete"
+msgstr "Изтрий"
+
+#: account/templates/account/login.html:8
+#: account/templates/account/password_reset.html:8
+msgid "New here"
+msgstr "Нов"
+
+#: account/templates/account/login.html:10
+#: account/templates/account/password_reset.html:10
+#: account/templates/account/signup.html:14
+#: account/templates/account/signup.html:52
+msgid "Sign up"
+msgstr "Създай акаунт"
+
+#: account/templates/account/login.html:28
+#: account/templates/account/login.html:73
+msgid "Log in"
+msgstr "Влез"
+
+#: account/templates/account/login.html:32
+#, python-format
+msgid ""
+"\n"
+"        Please log in with one of your existing third party accounts or your "
+"Fiduswriter account.<br/>\n"
+"        If you are new here, please <a href=\"%(signup_url)s\" title=\"Sign "
+"up for %(site_name)s\">sign up</a>.\n"
+"        "
+msgstr ""
+"\n"
+"        Моля влезте с някой от вашите съществуващи акаунти (трета страна) "
+"или вашият Fiduswriter akaunt.<br/>\n"
+"        Ако сте нов тук, моля <a href=\"%(signup_url)s\" title=\"Регистрация "
+"за %(site_name)s\">Регистрирайте се</a>.\n"
+"        "
+
+#: account/templates/account/login.html:45
+msgid "Login with"
+msgstr "Влез със"
+
+#: account/templates/account/login.html:62
+#: account/templates/account/show_profile.html:61
+#: account/templates/account/show_profile.html:139
+msgid "Username"
+msgstr "Потребител"
+
+#: account/templates/account/login.html:66
+#: account/templates/account/show_profile.html:73
+msgid "Password"
+msgstr "Парола"
+
+#: account/templates/account/login.html:76
+msgid "Remember me"
+msgstr "Запомни ме"
+
+#: account/templates/account/login.html:78
+msgid "Forgot Password?"
+msgstr "Забравена Парола?"
+
+#: account/templates/account/logout.html:6
+#: account/templates/account/logout.html:10
+#: account/templates/account/logout.html:20
+msgid "Sign Out"
+msgstr "Изход"
+
+#: account/templates/account/logout.html:12
+msgid "Are you sure you want to sign out?"
+msgstr "Сигурни ли сте, че искате да излезете?"
+
+#: account/templates/account/password_reset.html:7
+#: account/templates/account/password_reset.html:14
+msgid "Password reset"
+msgstr "Смяна на парола"
+
+#: account/templates/account/password_reset.html:15
+msgid ""
+"\n"
+"    <p>Forgotten your password? Enter your e-mail address below, and we'll "
+"send you an e-mail allowing you to reset it.</p>\n"
+"    <p>If you have any trouble resetting your password, please <a href="
+"\"mailto:mail@fiduswriter.com\">contact us</a>.</p>\n"
+"    "
+msgstr ""
+"\n"
+"    <p>Забравена парола? Въведете вашият имейл адрес долу, и ще ви изпратим "
+"инструкции за смяната и.</p>\n"
+"    <p>Ако имате проблеми със смяната на паролата, моля <a href=\"mailto:"
+"mail@fiduswriter.com\">пишете ни</a>.</p>\n"
+"    "
+
+#: account/templates/account/password_reset.html:33
+msgid "Reset My Password"
+msgstr "Смени моята Парола"
+
+#: account/templates/account/show_profile.html:40
+msgid "Edit profile picture"
+msgstr "Редактиране на профилна картинка"
+
+#: account/templates/account/show_profile.html:46
+msgid "Change picture"
+msgstr "Смени картинката"
+
+#: account/templates/account/show_profile.html:51
+msgid "Delete picture"
+msgstr "Изтрий картинката"
+
+#: account/templates/account/show_profile.html:65
+#: account/templates/account/show_profile.html:143
+msgid "First name"
+msgstr "Име"
+
+#: account/templates/account/show_profile.html:69
+#: account/templates/account/show_profile.html:147
+msgid "Last name"
+msgstr "Фамилия"
+
+#: account/templates/account/show_profile.html:80
+#: account/templates/account/show_profile.html:151
+msgid "Email"
+msgstr "Имейл"
+
+#: account/templates/account/show_profile.html:86
+msgid "Primary address"
+msgstr "Основен адрес"
+
+#: account/templates/account/show_profile.html:87
+msgid "Verified"
+msgstr "Потвърден"
+
+#: account/templates/account/show_profile.html:123
+#: beta/templates/beta/feedback.html:167
+msgid "submit"
+msgstr "изпрати"
+
+#: account/templates/account/show_profile.html:126
+msgid "Delete account"
+msgstr "Изтрий акаунт"
+
+#: account/templates/account/show_profile.html:165
+msgid "User does not exist."
+msgstr ""
+
+#: account/templates/account/signup.html:7
+msgid "Sign Up"
+msgstr "Създай Акаунт"
+
+#: account/templates/account/signup.html:8
+msgid "Already have an account"
+msgstr "Вече имате акаунт"
+
+#: account/templates/account/signup.html:16
+#, python-format
+msgid ""
+"\n"
+"        Already have an account? Then please <a href=\"%(login_url)s\" title="
+"\"Login to %(site_name)s\">login</a>.\n"
+"        "
+msgstr ""
+"\n"
+"        Вече имате акаунт? Тогава моля <a href=\"%(login_url)s\" title="
+"\"Login to %(site_name)s\">влезте</a>.\n"
+"        "
+
+#: account/templates/account/signup.html:30
+msgid "Choose your username"
+msgstr "Изберете потребителско име"
+
+#: account/templates/account/signup.html:35
+msgid "Create a password"
+msgstr "Създай парола"
+
+#: account/templates/account/signup.html:40
+msgid "Confirm your password"
+msgstr "Потвърди паролата"
+
+#: account/templates/account/signup_closed.html:6
+#: account/templates/account/signup_closed.html:10
+msgid "Sign Up Closed"
+msgstr "Създаването на акаунти е изключено"
+
+#: account/templates/account/signup_closed.html:11
+msgid "We are sorry, but the sign up is currently closed."
+msgstr "Съжалаваме, но в момента създаването на акаунти е изключено"
+
+#: account/templates/account/verification_sent.html:5
+#: account/templates/account/verification_sent.html:9
+msgid "Verify Your E-mail Address"
+msgstr "Потвърди имейл"
+
+#: account/templates/account/verification_sent.html:12
+#, python-format
+msgid ""
+"\n"
+"        We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> "
+"for verification.\n"
+"        Follow the link provided to finalize the signup process.\n"
+"        <br />\n"
+"        Please contact us if you do not receive it within a few minutes.\n"
+"        "
+msgstr ""
+"\n"
+"        Изпратихме имейл до <a href=\"mailto:%(email)s\">%(email)s</a> за "
+"потвърждение.\n"
+"        Последвайте изпратената връзка за да финализрате процеса.\n"
+"        <br />\n"
+"        Свържете се с нас ако не получите имейла до няколко минути.\n"
+"        "
+
+#: avatar/forms.py:34
+#, python-format
+msgid ""
+"%(ext)s is an invalid file extension. Authorized extensions are : "
+"%(valid_exts_list)s"
+msgstr ""
+"%(ext)s е невалидно разширение. Позволените разширения са : "
+"%(valid_exts_list)s"
+
+#: avatar/forms.py:38
+#, python-format
+msgid ""
+"Your file is too big (%(size)s), the maximum allowed size is "
+"%(max_valid_size)s"
+msgstr ""
+"Вашият файл е твърде голям (%(size)s), максималният разрешен размер е "
+"%(max_valid_size)s"
+
+#: avatar/forms.py:44
+#, python-format
+msgid ""
+"You already have %(nb_avatars)d avatars, and the maximum allowed is "
+"%(nb_max_avatars)d."
+msgstr ""
+"Имате %(nb_avatars)d аватара, а максимално разрешеният брой е "
+"%(nb_max_avatars)d."
+
+#: avatar/models.py:76
+#, python-format
+msgid "Avatar for %s"
+msgstr "Аватар за %s"
+
+#: avatar/views.py:72
+msgid "Successfully uploaded a new avatar."
+msgstr "Новият аватар е качен успешно."
+
+#: avatar/views.py:109
+msgid "Successfully updated your avatar."
+msgstr "Вашият аватар беше успешно обновен."
+
+#: avatar/views.py:145
+msgid "Successfully deleted the requested avatars."
+msgstr "Избраните аватари бяха изтрити."
+
+#: avatar/templates/avatar/add.html:5 avatar/templates/avatar/change.html:5
+msgid "Your current avatar: "
+msgstr "Текущ аватар"
+
+#: avatar/templates/avatar/add.html:8 avatar/templates/avatar/change.html:8
+msgid "You haven't uploaded an avatar yet. Please upload one now."
+msgstr "Все още нямате качени аватари. Моля качете аватар."
+
+#: avatar/templates/avatar/add.html:12 avatar/templates/avatar/change.html:19
+msgid "Upload New Image"
+msgstr "Качи ново изображение"
+
+#: avatar/templates/avatar/change.html:14
+msgid "Choose new Default"
+msgstr "Изберете нов по подразбиране"
+
+#: avatar/templates/avatar/confirm_delete.html:5
+msgid "Please select the avatars that you would like to delete."
+msgstr "Моля изберете аватарите които желаете да изтриете."
+
+#: avatar/templates/avatar/confirm_delete.html:8
+#, python-format
+msgid ""
+"You have no avatars to delete. Please <a href=\"%(avatar_change_url)s"
+"\">upload one</a> now."
+msgstr ""
+"Нямате аватари за изтриване. Моля <a href=\"%(avatar_change_url)s\">качете</"
+"a> аватар."
+
+#: avatar/templates/avatar/confirm_delete.html:14
+msgid "Delete These"
+msgstr "Изтрий тези"
+
+#: avatar/templates/notification/avatar_friend_updated/full.txt:1
+#, python-format
+msgid ""
+"%(avatar_creator)s has updated their avatar %(avatar)s.\n"
+"\n"
+"http://%(current_site)s%(avatar_url)s\n"
+msgstr ""
+"%(avatar_creator)s обнови своят аватар %(avatar)s.\n"
+"\n"
+"http://%(current_site)s%(avatar_url)s\n"
+
+#: avatar/templates/notification/avatar_friend_updated/notice.html:2
+#, python-format
+msgid ""
+"<a href=\"%(user_url)s\">%(avatar_creator)s</a> has updated their avatar <a "
+"href=\"%(avatar_url)s\">%(avatar)s</a>."
+msgstr ""
+"<a href=\"%(user_url)s\">%(avatar_creator)s</a> обнови своят аватар <a href="
+"\"%(avatar_url)s\">%(avatar)s</a>."
+
+#: avatar/templates/notification/avatar_updated/full.txt:1
+#, python-format
+msgid ""
+"Your avatar has been updated.  %(avatar)s\n"
+"\n"
+"http://%(current_site)s%(avatar_url)s\n"
+msgstr ""
+"Вашият аватар бе обновен.  %(avatar)s\n"
+"\n"
+"http://%(current_site)s%(avatar_url)s\n"
+
+#: avatar/templates/notification/avatar_updated/notice.html:2
+#, python-format
+msgid "You have updated your avatar <a href=\"%(avatar_url)s\">%(avatar)s</a>."
+msgstr "Вие обновихте вашият аватар <a href=\"%(avatar_url)s\">%(avatar)s</a>."
+
+#: avatar/templatetags/avatar_tags.py:48
+msgid "Default Avatar"
+msgstr "Аватар по подразбиране:"
+
+#: base/templates/base.html:89
+msgid "edit documents"
+msgstr "редактирай документи"
+
+#: base/templates/base.html:90
+msgid "Documents"
+msgstr "Документи"
+
+#: base/templates/base.html:94
+msgid "manage bibliography library"
+msgstr "управление на библиографска библиотека"
+
+#: base/templates/base.html:95
+msgid "Bibliography"
+msgstr "Библиография"
+
+#: base/templates/base.html:99
+msgid "manage image files"
+msgstr "управление на изображения"
+
+#: base/templates/base.html:100
+msgid "Images"
+msgstr "Изображения"
+
+#: base/templates/base.html:104
+msgid "compose books"
+msgstr "създаване на книга"
+
+#: base/templates/base.html:105
+msgid "Books"
+msgstr "Книги"
+
+#: base/templates/base.html:120
+msgid "Edit profile"
+msgstr "Редактирай профил"
+
+#: base/templates/base.html:131
+msgid "Log out"
+msgstr "Изход"
+
+#: base/templates/footer.html:7
+msgid "Terms and Conditions"
+msgstr "Общи условия"
+
+#: base/templates/footer.html:12
+msgid "Equations and Math by mathjax"
+msgstr "Формули и Уравнения от mathjax"
+
+#: base/templates/footer.html:17
+msgid "Citations with Citation Style Language"
+msgstr "Цитати с Citation Style Language"
+
+#: base/templates/footer.html:22
+msgid "Requires Chrome/enable css regions"
+msgstr "Необходим е Chrome/enable css regions"
+
+#: beta/templates/beta/browser.html:7
+msgid "Browser check"
+msgstr "Проверка на браузъра"
+
+#: beta/templates/beta/browser.html:11
+msgid "Hey there!"
+msgstr "Хей ти!"
+
+#: beta/templates/beta/browser.html:12
+msgid ""
+"Unfortunately, Fiduswriter currently only works on Google Chrome. We are "
+"working to provide support for Mozilla Firefox."
+msgstr ""
+"За съжаление Fiduswriter работи коректно само в Google Chrome за момента. "
+"Поддръжкаta на Mozilla Firefox е в процес на разработване."
+
+#: beta/templates/beta/feedback.html:159 beta/templates/beta/feedback.html:162
+msgid "Feedback"
+msgstr "Забележки"
+
+#: beta/templates/beta/feedback.html:171
+msgid "Thank you for your comment!"
+msgstr "Благодарим ви за коментара!"
+
+#: bibliography/templates/bibliography/index.html:5
+msgid "Bibliography Manager"
+msgstr "Управление на Библиография"
+
+#: bibliography/templates/bibliography/index.html:59
+msgid "Export selected"
+msgstr "Експортирай Избраните"
+
+#: bibliography/templates/bibliography/index.html:68
+#: bibliography/templates/bibliography/index.html:75
+#: usermedia/templates/usermedia/index.html:50
+#: usermedia/templates/usermedia/index.html:57
+msgid "All categories"
+msgstr "Всички категории"
+
+#: bibliography/templates/bibliography/index.html:83
+#: usermedia/templates/usermedia/index.html:65
+msgid "Edit categories"
+msgstr "Редактирай категории"
+
+#: bibliography/templates/bibliography/index.html:89
+msgid "Register new source"
+msgstr "Нов източник"
+
+#: bibliography/templates/bibliography/index.html:95
+msgid "Import Bibtex Library"
+msgstr "Импорт Bibtex библ."
+
+#: bibliography/templates/bibliography/index.html:105
+#: book/templates/book/index.html:142 text/templates/text/editor.html:45
+#: text/templates/text/index.html:127
+msgid "Title"
+msgstr "Заглавие"
+
+#: bibliography/templates/bibliography/index.html:106
+msgid "Sourcetype"
+msgstr "Тип на източника"
+
+#: bibliography/templates/bibliography/index.html:107
+msgid "Author"
+msgstr "Автор"
+
+#: bibliography/templates/bibliography/index.html:108
+msgid "Published"
+msgstr "Публикувани"
+
+#: book/templates/book/index.html:6
+msgid "Book Overview"
+msgstr "Обзор на Книгата"
+
+#: book/templates/book/index.html:93 text/templates/text/index.html:78
+msgid "Share selected"
+msgstr "Сподели избраните"
+
+#: book/templates/book/index.html:98 text/templates/text/index.html:83
+msgid "Copy selected"
+msgstr "Копирай избраните"
+
+#: book/templates/book/index.html:103 text/templates/text/index.html:88
+msgid "Export selected as Epub"
+msgstr "Експортирай избраните като Epub"
+
+#: book/templates/book/index.html:108 text/templates/text/index.html:93
+msgid "Export selected as HTML"
+msgstr "Експортирай избраните като HTML"
+
+#: book/templates/book/index.html:113 text/templates/text/index.html:98
+msgid "Export selected as LaTeX"
+msgstr "Експортирай избраните като LaTeX"
+
+#: book/templates/book/index.html:118
+msgid "Export selected for Print/PDF"
+msgstr "Експортирай избраните за Печат/PDF"
+
+#: book/templates/book/index.html:126
+msgid "Create New Book"
+msgstr "Нова Книга"
+
+#: book/templates/book/index.html:132
+msgid "Upload Fidus Book"
+msgstr "Качи Fidus Книга"
+
+#: book/templates/book/index.html:143 text/templates/text/index.html:128
+msgid "Created"
+msgstr "Създаден"
+
+#: book/templates/book/index.html:144 text/templates/text/index.html:129
+msgid "Last changed"
+msgstr "Последна промяна"
+
+#: book/templates/book/index.html:145 text/templates/text/index.html:130
+msgid "Owner"
+msgstr "Собственик"
+
+#: book/templates/book/index.html:146 text/templates/text/index.html:131
+msgid "Rights"
+msgstr "Права"
+
+#: fiduswriter/settings.py:206
+msgid "English"
+msgstr "Английски"
+
+#: fiduswriter/settings.py:207
+msgid "Spanish"
+msgstr "Испански"
+
+#: fiduswriter/settings.py:208
+msgid "German"
+msgstr "Немски"
+
+#: fiduswriter/settings.py:209
+msgid "Bulgarian"
+msgstr "Български"
+
+#: text/templates/text/editor.html:41
+msgid "Contents"
+msgstr "Съдържание"
+
+#: text/templates/text/editor.html:48 text/templates/text/editor.html:439
+msgid "Subtitle"
+msgstr "Подзаглавие"
+
+#: text/templates/text/editor.html:51 text/templates/text/editor.html:442
+msgid "Abstract"
+msgstr "Обобщение"
+
+#: text/templates/text/editor.html:322
+msgid "en"
+msgstr "англ"
+
+#: text/templates/text/editor.html:326 text/templates/text/editor.html:338
+msgid "Close the document and return to the document overview menu."
+msgstr "Затвори документа и се върни към обзора на документа"
+
+#: text/templates/text/editor.html:331
+msgid "File handling"
+msgstr "Управление на файлове"
+
+#: text/templates/text/editor.html:331
+#: usermedia/templates/usermedia/index.html:81
+msgid "File"
+msgstr "Файл"
+
+#: text/templates/text/editor.html:335
+msgid "Share the document with other users."
+msgstr "Сподели документа с други потребители"
+
+#: text/templates/text/editor.html:335
+msgid "Share"
+msgstr "Сподели"
+
+#: text/templates/text/editor.html:338
+msgid "Close"
+msgstr "Затвори"
+
+#: text/templates/text/editor.html:341
+msgid "Save the current document"
+msgstr "Запазване на текущия документ"
+
+#: text/templates/text/editor.html:341
+msgid "Save"
+msgstr "Запази"
+
+#: text/templates/text/editor.html:344
+msgid "Save copy of the current document"
+msgstr "Запази копие на документа"
+
+#: text/templates/text/editor.html:344
+#, fuzzy
+msgid "Save copy"
+msgstr "Запазване на копие"
+
+#: text/templates/text/editor.html:347
+msgid "Download the current document"
+msgstr "Изтегли текущият документ"
+
+#: text/templates/text/editor.html:347
+msgid "Download"
+msgstr "Изтегли"
+
+#: text/templates/text/editor.html:350
+msgid "Either print or create a PDF using your browser's print dialog"
+msgstr ""
+"Разпечатайте или създайте PDF от диалога за принтиране на вашият браузър"
+
+#: text/templates/text/editor.html:350
+msgid "Print/PDF"
+msgstr "Печат/PDF"
+
+#: text/templates/text/editor.html:356
+msgid "Export of the document contents"
+msgstr "Експортирай съдаржанието на документа"
+
+#: text/templates/text/editor.html:356
+msgid "Export"
+msgstr "Експортиране"
+
+#: text/templates/text/editor.html:360
+msgid "Export the document to an HTML file"
+msgstr "Експортирай документа към HTML"
+
+#: text/templates/text/editor.html:365
+msgid "Export the document to an Epub electronic reader file."
+msgstr "Експортирай документа като Epub електронна книга"
+
+#: text/templates/text/editor.html:370
+msgid ""
+"Export the document to a Latex file. This will also attach a BibTex file if "
+"you are using citations."
+msgstr ""
+"Експортирай документа като Latex файл. Това ще прикачи и BibTex файл ако "
+"използвате цитати."
+
+#: text/templates/text/editor.html:378
+msgid "Choose your preferred citation style."
+msgstr "Изберете предпочитан стил на цитатите."
+
+#: text/templates/text/editor.html:378
+msgid "Citation Style"
+msgstr "Стил на цитатите"
+
+#: text/templates/text/editor.html:382
+msgid "American Psychological Association."
+msgstr "American Psychological Association."
+
+#: text/templates/text/editor.html:382
+msgid "APA"
+msgstr ""
+
+#: text/templates/text/editor.html:385
+msgid "The author-date variant of the Chicago style"
+msgstr "Вариантът Автор-Дата на Чикаго стил"
+
+#: text/templates/text/editor.html:385
+msgid "Chicago (Author-Date)"
+msgstr "Chicago (Автор-Дата)"
+
+#: text/templates/text/editor.html:388
+msgid "Chicago format with short notes and full bibliography"
+msgstr "Чикаго формат със кратки бележки и пълна библиография"
+
+#: text/templates/text/editor.html:388
+msgid "Chicago (Note with Bibliography)"
+msgstr "Чикаго (Бележки с Библиография)"
+
+#: text/templates/text/editor.html:391
+msgid "The Harvard author-date style"
+msgstr "Харвардски автор-дата стил"
+
+#: text/templates/text/editor.html:391
+msgid "Harvard"
+msgstr "Харвард"
+
+#: text/templates/text/editor.html:394
+msgid "Modern Language Association"
+msgstr "Modern Language Association"
+
+#: text/templates/text/editor.html:394
+msgid "MLA"
+msgstr ""
+
+#: text/templates/text/editor.html:400
+msgid "Choose a document style"
+msgstr "Избери стил на документа"
+
+#: text/templates/text/editor.html:400
+msgid "Document Style"
+msgstr "Стил на Документа"
+
+#: text/templates/text/editor.html:404
+msgid "Elephant"
+msgstr ""
+
+#: text/templates/text/editor.html:405
+msgid "Comfy Elephant"
+msgstr ""
+
+#: text/templates/text/editor.html:409
+msgid "Owl"
+msgstr ""
+
+#: text/templates/text/editor.html:410
+msgid "Drowsy Owl"
+msgstr ""
+
+#: text/templates/text/editor.html:414
+msgid "Fox"
+msgstr ""
+
+#: text/templates/text/editor.html:415
+msgid "Foxy Fox"
+msgstr ""
+
+#: text/templates/text/editor.html:422
+msgid "Choose a papersize that for printing and PDF generation."
+msgstr "Изберете размерна на страниците за печат и генериране на PDF"
+
+#: text/templates/text/editor.html:422
+msgid "Paper Size"
+msgstr "Размер на лист"
+
+#: text/templates/text/editor.html:426
+msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
+msgstr "A4 (DIN A4/ISO 216) използван в по голямата част от света"
+
+#: text/templates/text/editor.html:426
+msgid "DIN A4"
+msgstr "DIN A4"
+
+#: text/templates/text/editor.html:429
+msgid "The format used by the USA and some other American countries."
+msgstr "Форматът използван в USA и някои американски страни."
+
+#: text/templates/text/editor.html:429
+msgid "US Letter"
+msgstr "US Letter"
+
+#: text/templates/text/editor.html:435
+msgid "Choose which metadata to enable."
+msgstr "Избери кои мета-данни да бъдат включени."
+
+#: text/templates/text/editor.html:435
+#, fuzzy
+msgid "Metadata"
+msgstr "Мета-данни"
+
+#: text/templates/text/editor.html:439
+msgid "Define a subtitle in addition to the title of the document."
+msgstr "Дефинирай подзаглавие за документа."
+
+#: text/templates/text/editor.html:442
+msgid "Add an abstract to the document."
+msgstr "Добави обобщение към документа"
+
+#: text/templates/text/editor.html:448
+#, fuzzy
+msgid "Tools"
+msgstr "Инструменти"
+
+#: text/templates/text/editor.html:452 text/templates/text/editor.html:453
+msgid "Word counter"
+msgstr "Брой Думи"
+
+#: text/templates/text/editor.html:463
+msgid "Show/hide the top menu."
+msgstr "Покажи/Скрий горното меню."
+
+#: text/templates/text/editor.html:467
+msgid "Handle tracking of changes."
+msgstr "Проследи промените."
+
+#: text/templates/text/editor.html:468
+msgid "Changes"
+msgstr "Промени"
+
+#: text/templates/text/editor.html:473
+msgid "Turn tracking of changes on."
+msgstr "Включи проследяването на промени"
+
+#: text/templates/text/editor.html:473
+msgid "Track"
+msgstr "Проследи"
+
+#: text/templates/text/editor.html:476
+msgid "Show all changes that have been tracked in the entire document."
+msgstr "Покажи всички промени които са проследени в документа."
+
+#: text/templates/text/editor.html:476
+msgid "Show"
+msgstr "Показване"
+
+#: text/templates/text/editor.html:479
+msgid "Accept all changes that have been tracked in the entire document."
+msgstr "Приеми всички промени които са проследени в целият документ."
+
+#: text/templates/text/editor.html:479
+msgid "Accept all"
+msgstr "Приеми всички"
+
+#: text/templates/text/editor.html:482
+msgid "Reject all changes that have been tracked in the entire document."
+msgstr "Отхвърли всички промени които са проследени в целият документ."
+
+#: text/templates/text/editor.html:482
+msgid "Reject all"
+msgstr "Отхвърли всички"
+
+#: text/templates/text/editor.html:487
+msgid "Show/hide comments"
+msgstr "Покажи/Скрий коментарите"
+
+#: text/templates/text/editor.html:488
+msgid "Comments"
+msgstr "Коментари"
+
+#: text/templates/text/editor.html:495
+msgid "The title of the document"
+msgstr "Заглавие на документа"
+
+#: text/templates/text/index.html:6
+msgid "Document Overview"
+msgstr "Преглед на документа"
+
+#: text/templates/text/index.html:103
+msgid "Download selected as Fidus Document"
+msgstr "Свали избраните като Fidus Документ"
+
+#: text/templates/text/index.html:111
+msgid "Create New Document"
+msgstr "Създай нов Документ"
+
+#: text/templates/text/index.html:117
+msgid "Upload Fidus Document"
+msgstr "Качи Fidus документ"
+
+#: usermedia/templates/usermedia/index.html:5
+msgid "Media Manager"
+msgstr "Управление на медийни елементи"
+
+#: usermedia/templates/usermedia/index.html:71
+msgid "Upload new image"
+msgstr "Качване на ново изображение"
+
+#: usermedia/templates/usermedia/index.html:82
+msgid "Size (px)"
+msgstr "Размер (px)"
+
+#: usermedia/templates/usermedia/index.html:83
+msgid "Updated"
+msgstr "Обновен"

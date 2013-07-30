@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-29 09:58-0500\n"
+"POT-Creation-Date: 2013-07-30 08:21-0500\n"
 "PO-Revision-Date: 2013-02-24 10:03-0600\n"
 "Last-Translator: Daniel Frebel <daniel@fiduswriter.com>\n"
 "Language-Team: German <daniel@fiduswriter.com>\n"
@@ -653,6 +653,10 @@ msgstr "Spanisch"
 #: fiduswriter/settings.py:208
 msgid "German"
 msgstr "Deutsch"
+
+#: fiduswriter/settings.py:209
+msgid "Bulgarian"
+msgstr ""
 
 #: text/templates/text/editor.html:41
 #, fuzzy

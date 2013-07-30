@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-29 09:58-0500\n"
+"POT-Creation-Date: 2013-07-30 08:21-0500\n"
 "PO-Revision-Date: 2013-03-03 12:18-0700\n"
 "Last-Translator: Ana Vera Resquín <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
@@ -662,6 +662,10 @@ msgstr "Español"
 #: fiduswriter/settings.py:208
 msgid "German"
 msgstr "Alemán"
+
+#: fiduswriter/settings.py:209
+msgid "Bulgarian"
+msgstr "Búlgaro"
 
 #: text/templates/text/editor.html:41
 msgid "Contents"
@@ -1465,9 +1469,6 @@ msgstr "Cambiado"
 
 #~ msgid "Azerbaijani"
 #~ msgstr "Azerbaiyán"
-
-#~ msgid "Bulgarian"
-#~ msgstr "Búlgaro"
 
 #~ msgid "Belarusian"
 #~ msgstr "Belarús"

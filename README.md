@@ -21,29 +21,27 @@ Howto install
 
 The following are instructions working on most *NIX systems.
 
-0. Install the development packages of libjpeg and python and the python virtual environment creator. How you do this depends on your system. On Debian and Ubuntu the packages are called libjpeg-dev, python-dev and python-virtualenv. Install them with your favorite package manager, for example on Debian/Ubuntu on the command line by running "sudo apt-get install libjpeg-dev python-dev python-virtualenv"
+0. Install the development packages of libjpeg and python and the python virtual environment creator. How you do this depends on your system. On Debian and Ubuntu the packages are called libjpeg-dev, python-dev and python-virtualenv. Install them with your favorite package manager, for example on the command line by running:
+
+  sudo apt-get install libjpeg-dev python-dev python-virtualenv
 
 1. Start the command line (terminal).
 
 2. Cd to where you have your sources.
 
-3. Install virtualenv. To do so, type on the command line:
-
-  easy_install virtualenv
-
-4. Once virtualenv is installed, you can use the virtualenv command to create virtual environments. The following command will create an environment called "fiduswriter-venv":
+3. You can use the virtualenv command to create virtual environments. The following command will create an environment called "fiduswriter-venv":
 
   virtualenv  --no-site-packages fiduswriter-venv
 
-5. Activate the virtualenv by typing:
+4. Activate the virtualenv by typing:
 
   source fiduswriter-venv/bin/activate
 
-6. Install the requirements for running  fiduswriter by typing:
+5. Install the requirements for running  fiduswriter by typing:
 
   pip install -r requirements.txt
 
-7. Synchronize the DB and create a superuser by typing:
+6. Synchronize the DB and create a superuser by typing:
 
   python manage.py syncdb
 
@@ -51,13 +49,17 @@ The following are instructions working on most *NIX systems.
 
   python manage.py loaddata bibliography/fixture/initial_bib_rules.json
 
-8. Run the fiduswriter server by typing:
+7. Run the fiduswriter server by typing:
 
   python manage.py runserver
 
-9. Navigate to "http://localhost:8000/admin/socialaccount/socialapp/add/"
+  or, to start the server with external access, run:
 
-10. Add at least one social app for Facebook. If you do not have actual Facebook app credentials, use the following data and save:
+  python manage.py runserver 0.0.0.0:8000
+
+8. Navigate to "http://localhost:8000/admin/socialaccount/socialapp/add/"
+
+9. Add at least one social app for Facebook. If you do not have actual Facebook app credentials, use the following data and save:
 
   Provider: Facebook
   
@@ -69,10 +71,13 @@ The following are instructions working on most *NIX systems.
   
   Sites: example.com
 
+  If you have given external access to your server above, you will also need to add the external address of your server to the Facebook socialapp settings.
+- - - - - -
+
 For best results for the end user:
 
-10. Install Chrome/Chromium at least version 26
+1. Install Chrome/Chromium at least version 26
 
-11. Enable Webkit experimental features (in type "about:flags" into the navigation bar of the browser)
+2. Enable Webkit experimental features (in type "about:flags" into the navigation bar of the browser)
 
-12. Restart Chrome/Chromium
+3. Restart Chrome/Chromium

@@ -17,64 +17,65 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 (function () {
     var exports = this,
         mathHelpers = {};
 
-    mathHelpers.setMathNodeContents = function(node) {
+    mathHelpers.setMathNodeContents = function (node) {
         // Set the innerText of a mathnode to be the same as the data-equation attribute
-        node.innerText = '[MATH]'+ node.getAttribute('data-equation') +'[/MATH]';
+        node.innerText = '[MATH]' + node.getAttribute('data-equation') +
+            '[/MATH]';
     };
-    
-    mathHelpers.layoutMathNode = function(node) {
+
+    mathHelpers.layoutMathNode = function (node) {
         // Layout a single math node
         mathHelpers.setMathNodeContents(node);
-        MathJax.Hub.Queue(["Typeset",MathJax.Hub, node],[mathHelpers.saveMathjaxElements]);
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub, node], [mathHelpers.saveMathjaxElements]);
     };
-    
-    mathHelpers.resetMath = function(callback) {
+
+    mathHelpers.resetMath = function (callback) {
         // (Re)layout all math nodes
-        var allEquations = jQuery('span.equation'), mathjax, i;
-        /*if (allEquations.length===0) {
-            mathjax = document.getElementById('MathJax_SVG_Hidden');
-            if (mathjax) {
-                // There are no equations, so we remove the mathjax element.
-                mathjax.parentNode.parentNode.removeChild(mathjax.parentNode);
-            }
-        }*/
+        var allEquations = jQuery('span.equation'),
+            i;
+
         for (i = 0; i < allEquations.length; i++) {
             mathHelpers.setMathNodeContents(allEquations[i]);
         }
-        MathJax.Hub.Queue(["Typeset",MathJax.Hub],[callback]);
-        
+
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub], [callback]);
     };
-    
+
     mathHelpers.saveMathjaxElements = function () {
-        var mathjaxDefs, mathjax, changed = false;
-        
-        mathjax = document.getElementById('MathJax_SVG_Hidden');
-        
-            if ((mathjax && (theDocument.settings.mathjax !== mathjax.parentNode.outerHTML)) ||
-                (!mathjax && theDocument.settings.mathjax)
-            ) {
-                changed = true;
-            }
-        
-            if (mathjax) {
-                theDocument.settings.mathjax = mathjax.parentNode.outerHTML;
-            } else {
-                theDocument.settings.mathjax = false;
-            }
-        
-            if (changed) {
-                editorHelpers.documentHasChanged();
-            }
-        
+        var mathjaxDefs, mathjax, changed = false,
+            allEquations = jQuery('span.equation');
+
+        if (allEquations.length === 0) {
+            mathjax = false;
+        } else {
+            mathjax = document.getElementById('MathJax_SVG_Hidden');
+        }
+
+        if ((mathjax && (theDocument.settings.mathjax !== mathjax.parentNode
+                .outerHTML)) ||
+            (!mathjax && theDocument.settings.mathjax)
+        ) {
+            changed = true;
+        }
+
+        if (mathjax) {
+            theDocument.settings.mathjax = mathjax.parentNode.outerHTML;
+        } else {
+            theDocument.settings.mathjax = false;
+        }
+
+        if (changed) {
+            editorHelpers.documentHasChanged();
+        }
+
     };
-    
-    
-    mathHelpers.bindEvents = function(openDialog) {
+
+
+    mathHelpers.bindEvents = function (openDialog) {
         jQuery(document).on('click', '.equation', function () {
             if (jQuery(this).closest('.del')[0]) {
                 // Inside a deletion node
@@ -83,7 +84,7 @@
             openDialog(this);
         });
     };
-  
+
     exports.mathHelpers = mathHelpers;
-    
+
 }).call(this);

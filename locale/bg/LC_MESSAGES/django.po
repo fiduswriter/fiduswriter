@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-08 06:09-0500\n"
+"POT-Creation-Date: 2013-08-08 17:19-0500\n"
 "PO-Revision-Date: 2013-07-29 14:14+0200\n"
 "Last-Translator: Vladimir Vitkov <vvitkov@linux-bg.org>\n"
 "Language-Team: Bulgarian <vvitkov@linux-bg.org>\n"
@@ -158,8 +158,8 @@ msgstr "Изтрий"
 
 #: account/templates/account/login.html:8
 #: account/templates/account/password_reset.html:8
-msgid "New here"
-msgstr "Нов"
+msgid "New here?"
+msgstr "Нов?"
 
 #: account/templates/account/login.html:10
 #: account/templates/account/password_reset.html:10

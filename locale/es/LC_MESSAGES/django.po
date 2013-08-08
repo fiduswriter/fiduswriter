@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-08 06:09-0500\n"
+"POT-Creation-Date: 2013-08-08 17:19-0500\n"
 "PO-Revision-Date: 2013-03-03 12:18-0700\n"
 "Last-Translator: Ana Vera Resquín <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
@@ -150,8 +150,8 @@ msgstr "Borrar"
 
 #: account/templates/account/login.html:8
 #: account/templates/account/password_reset.html:8
-msgid "New here"
-msgstr "Nuevo usuario"
+msgid "New here?"
+msgstr "¿Nuevo usuario?"
 
 #: account/templates/account/login.html:10
 #: account/templates/account/password_reset.html:10

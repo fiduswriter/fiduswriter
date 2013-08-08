@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-30 08:21-0500\n"
+"POT-Creation-Date: 2013-08-08 06:09-0500\n"
 "PO-Revision-Date: 2013-03-03 12:18-0700\n"
 "Last-Translator: Ana Vera Resquín <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
@@ -256,7 +256,8 @@ msgid "The bibliography has been updated"
 msgstr "La bibliografía ha sido actualizada"
 
 #: bibliography/static/js/bibliography-helpers.js:627
-msgid "Some errors are found. Please examin the form."
+#: usermedia/static/js/usermedia-helpers.js:42
+msgid "Some errors are found. Please examine the form."
 msgstr "Encontramos algunos errores. Por favor examina el formulario."
 
 #: bibliography/static/js/bibliography-helpers.js:673
@@ -1346,7 +1347,8 @@ msgid "Words"
 msgstr "Palabras"
 
 #: text/static/js/tools-templates.js:41
-msgid "Characters without blank"
+#, fuzzy
+msgid "Characters without blanks"
 msgstr "Caracteres sin espacios"
 
 #: text/static/js/tools-templates.js:45
@@ -1467,10 +1469,6 @@ msgstr "Ingresar código Latex"
 msgid "The image has been uploaded"
 msgstr "El imagen ha sido subido"
 
-#: usermedia/static/js/usermedia-helpers.js:42
-msgid "Some errors are found. Please examine the form."
-msgstr "Encontramos algunos errores. Por favor examina el formulario."
-
 #: usermedia/static/js/usermedia-helpers.js:226
 msgid "Upload image"
 msgstr "Subir imagen"
@@ -1498,6 +1496,9 @@ msgstr "Buscar por Nombre de archivo"
 #: usermedia/static/js/usermedia-template-dialogs.js:83
 msgid "Insert a title"
 msgstr "Insertar un título"
+
+#~ msgid "Some errors are found. Please examin the form."
+#~ msgstr "Encontramos algunos errores. Por favor examina el formulario."
 
 #~ msgid "You are invited to Fiduswriter."
 #~ msgstr "Estas invitado a utilizar Fiduswriter"

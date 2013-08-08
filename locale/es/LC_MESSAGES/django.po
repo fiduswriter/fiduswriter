@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-30 08:21-0500\n"
+"POT-Creation-Date: 2013-08-08 06:09-0500\n"
 "PO-Revision-Date: 2013-03-03 12:18-0700\n"
 "Last-Translator: Ana Vera Resquín <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
@@ -847,7 +847,8 @@ msgid "Foxy Fox"
 msgstr ""
 
 #: text/templates/text/editor.html:424
-msgid "Choose a papersize that for printing and PDF generation."
+#, fuzzy
+msgid "Choose a papersize for printing and PDF generation."
 msgstr "Escoge el tamaño del papel para imprimir y crear archivos PDF."
 
 #: text/templates/text/editor.html:424

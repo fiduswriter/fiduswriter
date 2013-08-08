@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-30 08:21-0500\n"
+"POT-Creation-Date: 2013-08-08 06:09-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -252,7 +252,8 @@ msgid "The bibliography has been updated"
 msgstr ""
 
 #: bibliography/static/js/bibliography-helpers.js:627
-msgid "Some errors are found. Please examin the form."
+#: usermedia/static/js/usermedia-helpers.js:42
+msgid "Some errors are found. Please examine the form."
 msgstr ""
 
 #: bibliography/static/js/bibliography-helpers.js:673
@@ -1333,7 +1334,7 @@ msgid "Words"
 msgstr ""
 
 #: text/static/js/tools-templates.js:41
-msgid "Characters without blank"
+msgid "Characters without blanks"
 msgstr ""
 
 #: text/static/js/tools-templates.js:45
@@ -1452,10 +1453,6 @@ msgstr ""
 
 #: usermedia/static/js/usermedia-helpers.js:37
 msgid "The image has been uploaded"
-msgstr ""
-
-#: usermedia/static/js/usermedia-helpers.js:42
-msgid "Some errors are found. Please examine the form."
 msgstr ""
 
 #: usermedia/static/js/usermedia-helpers.js:226

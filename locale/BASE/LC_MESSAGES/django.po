@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-30 08:21-0500\n"
+"POT-Creation-Date: 2013-08-08 06:09-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -780,7 +780,7 @@ msgid "Foxy Fox"
 msgstr ""
 
 #: text/templates/text/editor.html:424
-msgid "Choose a papersize that for printing and PDF generation."
+msgid "Choose a papersize for printing and PDF generation."
 msgstr ""
 
 #: text/templates/text/editor.html:424

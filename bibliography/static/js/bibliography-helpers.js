@@ -624,7 +624,7 @@
                         $.addAlert('success', gettext('The bibliography has been updated'));
                         jQuery("#createbook").dialog('close');
                     } else {
-                        $.addAlert('error', gettext('Some errors are found. Please examin the form.'));
+                        $.addAlert('error', gettext('Some errors are found. Please examine the form.'));
                     }
                 },
                 error: function (jqXHR, textStatus, errorThrown) {

@@ -38,7 +38,7 @@ var tmp_tools_word_counter = _.template('<div id="word-counter-dialog" title="<%
                     <td><%= words %></td>\
                 </tr>\
                 <tr>\
-                    <td>' + gettext('Characters without blank') + '</td>\
+                    <td>' + gettext('Characters without blanks') + '</td>\
                     <td><%= chars_no_space %></td>\
                 </tr>\
                 <tr>\

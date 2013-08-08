@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-30 08:21-0500\n"
+"POT-Creation-Date: 2013-08-08 06:09-0500\n"
 "PO-Revision-Date: 2013-07-29 17:13+0200\n"
 "Last-Translator: Vladimir Vitkov <vvitkov@linux-bg.org>\n"
 "Language-Team: Bulgarian <vvitkov@linux-bg.org>\n"
@@ -253,8 +253,9 @@ msgid "The bibliography has been updated"
 msgstr "Библиографията беше обновена"
 
 #: bibliography/static/js/bibliography-helpers.js:627
-msgid "Some errors are found. Please examin the form."
-msgstr "Бяха открити грешки. Моля прегледайте формата"
+#: usermedia/static/js/usermedia-helpers.js:42
+msgid "Some errors are found. Please examine the form."
+msgstr "Бяха открити грешки. Моля прегледайте формата."
 
 #: bibliography/static/js/bibliography-helpers.js:673
 #: usermedia/static/js/usermedia-helpers.js:93
@@ -1342,7 +1343,8 @@ msgid "Words"
 msgstr "Думи"
 
 #: text/static/js/tools-templates.js:41
-msgid "Characters without blank"
+#, fuzzy
+msgid "Characters without blanks"
 msgstr "Знаци (без интервали)"
 
 #: text/static/js/tools-templates.js:45
@@ -1463,10 +1465,6 @@ msgstr "Въвеждане на Latex формула"
 msgid "The image has been uploaded"
 msgstr "Изображението беше качено"
 
-#: usermedia/static/js/usermedia-helpers.js:42
-msgid "Some errors are found. Please examine the form."
-msgstr "Бяха открити грешки. Моля прегледайте формата."
-
 #: usermedia/static/js/usermedia-helpers.js:226
 msgid "Upload image"
 msgstr "Качи изображение"
@@ -1494,3 +1492,6 @@ msgstr "Търсене за файл"
 #: usermedia/static/js/usermedia-template-dialogs.js:83
 msgid "Insert a title"
 msgstr "Вмъкни заглавие"
+
+#~ msgid "Some errors are found. Please examin the form."
+#~ msgstr "Бяха открити грешки. Моля прегледайте формата"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-30 08:21-0500\n"
+"POT-Creation-Date: 2013-08-08 06:09-0500\n"
 "PO-Revision-Date: 2013-07-29 14:14+0200\n"
 "Last-Translator: Vladimir Vitkov <vvitkov@linux-bg.org>\n"
 "Language-Team: Bulgarian <vvitkov@linux-bg.org>\n"
@@ -853,7 +853,8 @@ msgid "Foxy Fox"
 msgstr ""
 
 #: text/templates/text/editor.html:424
-msgid "Choose a papersize that for printing and PDF generation."
+#, fuzzy
+msgid "Choose a papersize for printing and PDF generation."
 msgstr "Изберете размерна на страниците за печат и генериране на PDF"
 
 #: text/templates/text/editor.html:424

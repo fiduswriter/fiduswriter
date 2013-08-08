@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 0.1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-08 17:19-0500\n"
+"POT-Creation-Date: 2013-08-08 17:26-0500\n"
 "PO-Revision-Date: 2013-03-03 12:18-0700\n"
 "Last-Translator: Ana Vera Resquín <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
@@ -514,19 +514,19 @@ msgstr "Cerrar sesión"
 
 #: base/templates/footer.html:7
 msgid "Terms and Conditions"
-msgstr "Terminos y Condiciones"
+msgstr "Términos y Condiciones"
 
 #: base/templates/footer.html:12
 msgid "Equations and Math by mathjax"
-msgstr "Fórmulas matemáticas con mathjax"
+msgstr "Matemáticas con mathjax"
 
 #: base/templates/footer.html:17
 msgid "Citations with Citation Style Language"
-msgstr ""
+msgstr "Estilos de citaciones con CSL"
 
 #: base/templates/footer.html:22
 msgid "Requires Chrome/enable css regions"
-msgstr "Require Chrome/enable css regions"
+msgstr "Requiere Chrome/habilitar CSS Regions"
 
 #: beta/templates/beta/browser.html:7
 msgid "Browser check"
@@ -541,7 +541,7 @@ msgid ""
 "Unfortunately, Fiduswriter currently only works on Google Chrome. We are "
 "working to provide support for Mozilla Firefox."
 msgstr ""
-"Desafurtunamente, Fiduswriter por el momento require Google Chrome para "
+"Desafortunadamente, Fiduswriter por el momento requiere Google Chrome para "
 "poder funcionar. Estamos trabajando para dar acceso a los usuarios de "
 "Mozilla Firefox."
 

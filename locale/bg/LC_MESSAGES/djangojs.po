@@ -1,13 +1,13 @@
-# Bulgarian translation for Fiduswriter
+# Bulgarian translation for Fidus Writer
 # Copyright (C) 2013 Vladimir Vitkov
-# This file is distributed under the same license as the Fiduswriter.
+# This file is distributed under the same license as Fidus Writer.
 # Vladimir Vitkov <vvitkov@linux-bg.org>, 2013
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-08 17:26-0500\n"
+"POT-Creation-Date: 2013-08-09 06:38-0500\n"
 "PO-Revision-Date: 2013-07-29 17:13+0200\n"
 "Last-Translator: Vladimir Vitkov <vvitkov@linux-bg.org>\n"
 "Language-Team: Bulgarian <vvitkov@linux-bg.org>\n"
@@ -33,26 +33,28 @@ msgid "Please invite him/her "
 msgstr "Моля поканете него/нея"
 
 #: account/static/js/contact-helpers.js:74
-msgid "Fiduswriter"
-msgstr "Fiduswriter"
+msgid "Fidus Writer"
+msgstr "Fidus Writer"
 
 #: account/static/js/contact-helpers.js:75
-msgid "Hey, I would like you to sign up for a Fiduswriter account."
-msgstr "Хей, бих искал да създадеш акаунт във Fiduswriter."
+#, fuzzy
+msgid "Hey, I would like you to sign up for a Fidus Writer account."
+msgstr "Хей, бих искал да създадеш акаунт във Fidus Writer."
 
 #: account/static/js/contact-helpers.js:76
-msgid "Please register at http://beta.fiduswriter.com"
-msgstr "Моля регистрирай се на http://beta.fiduswriter.com"
+#, fuzzy
+msgid "Please register at"
+msgstr "Моля поканете него/нея"
 
-#: account/static/js/contact-helpers.js:78
+#: account/static/js/contact-helpers.js:79
 msgid "by sending an email"
 msgstr "със електронно писмо"
 
-#: account/static/js/contact-helpers.js:92
+#: account/static/js/contact-helpers.js:93
 msgid "Add a user to your contacts"
 msgstr "Добави потребител към твоите контакти"
 
-#: account/static/js/contact-helpers.js:98
+#: account/static/js/contact-helpers.js:99
 #: account/static/js/show_profile.js:169 account/static/js/show_profile.js:239
 #: account/static/js/show_profile.js:355
 #: bibliography/static/js/bibliography-helpers.js:710
@@ -66,8 +68,8 @@ msgstr "Добави потребител към твоите контакти"
 msgid "Submit"
 msgstr "Изпрати"
 
-#: account/static/js/contact-helpers.js:99
-#: account/static/js/contact-helpers.js:140
+#: account/static/js/contact-helpers.js:100
+#: account/static/js/contact-helpers.js:141
 #: account/static/js/show_profile.js:27 account/static/js/show_profile.js:94
 #: account/static/js/show_profile.js:151 account/static/js/show_profile.js:220
 #: account/static/js/show_profile.js:276 account/static/js/show_profile.js:328
@@ -93,7 +95,7 @@ msgstr "Изпрати"
 msgid "Cancel"
 msgstr "Отказ"
 
-#: account/static/js/contact-helpers.js:137
+#: account/static/js/contact-helpers.js:138
 #: account/static/js/profile-templates.js:2
 #: account/static/js/profile-templates.js:16
 #: bibliography/static/js/bibliography-helpers.js:1421
@@ -102,11 +104,11 @@ msgstr "Отказ"
 msgid "Confirm deletion"
 msgstr "Потвърди изтриването"
 
-#: account/static/js/contact-helpers.js:137
+#: account/static/js/contact-helpers.js:138
 msgid "Remove from the contacts"
 msgstr "Премахни от контактите"
 
-#: account/static/js/contact-helpers.js:139
+#: account/static/js/contact-helpers.js:140
 #: account/static/js/show_profile.js:90 account/static/js/show_profile.js:144
 #: bibliography/static/js/bibliography-helpers.js:1424
 #: book/static/js/book-helpers.js:89
@@ -1492,6 +1494,9 @@ msgstr "Търсене за файл"
 #: usermedia/static/js/usermedia-template-dialogs.js:83
 msgid "Insert a title"
 msgstr "Вмъкни заглавие"
+
+#~ msgid "Please register at http://beta.fiduswriter.com"
+#~ msgstr "Моля регистрирай се на http://beta.fiduswriter.com"
 
 #~ msgid "Some errors are found. Please examin the form."
 #~ msgstr "Бяха открити грешки. Моля прегледайте формата"

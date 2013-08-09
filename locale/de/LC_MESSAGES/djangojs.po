@@ -1,13 +1,13 @@
-# Fidus Writer Translation file
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# German translation for Fidus Writer
+# Copyright (C) 2013 Daniel Frebel
+# This file is distributed under the same license as Fidus Writer.
 # Daniel Frebel <daniel@fiduswriter.com>, 2013.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-08 17:26-0500\n"
+"POT-Creation-Date: 2013-08-09 06:38-0500\n"
 "PO-Revision-Date: 2013-02-24 10:03-0600\n"
 "Last-Translator: Daniel Frebel <daniel@fiduswriter.com>\n"
 "Language-Team: German <daniel@fiduswriter.com>\n"
@@ -34,26 +34,27 @@ msgid "Please invite him/her "
 msgstr "Bitte lade ihn/sie ein"
 
 #: account/static/js/contact-helpers.js:74
-msgid "Fiduswriter"
-msgstr "Fiduswriter"
+msgid "Fidus Writer"
+msgstr "Fidus Writer"
 
 #: account/static/js/contact-helpers.js:75
-msgid "Hey, I would like you to sign up for a Fiduswriter account."
-msgstr "Hallo, könntest du dir ein Fidus Writer Konto machen?"
+msgid "Hey, I would like you to sign up for a Fidus Writer account."
+msgstr ""
+"Hallo, ich würde dich gerne einladen ein Fidus Writer Konto zu erstellen?"
 
 #: account/static/js/contact-helpers.js:76
-msgid "Please register at http://beta.fiduswriter.com"
-msgstr "Bitte registriere dich auf der Seite http://beta.fiduswriter.com"
+msgid "Please register at"
+msgstr "Bitte registriere dich auf"
 
-#: account/static/js/contact-helpers.js:78
+#: account/static/js/contact-helpers.js:79
 msgid "by sending an email"
 msgstr "durch das Versenden einer E-Mail"
 
-#: account/static/js/contact-helpers.js:92
+#: account/static/js/contact-helpers.js:93
 msgid "Add a user to your contacts"
 msgstr "Füge einen Nutzer zu deiner Kontaktliste"
 
-#: account/static/js/contact-helpers.js:98
+#: account/static/js/contact-helpers.js:99
 #: account/static/js/show_profile.js:169 account/static/js/show_profile.js:239
 #: account/static/js/show_profile.js:355
 #: bibliography/static/js/bibliography-helpers.js:710
@@ -67,8 +68,8 @@ msgstr "Füge einen Nutzer zu deiner Kontaktliste"
 msgid "Submit"
 msgstr "Bestätigen"
 
-#: account/static/js/contact-helpers.js:99
-#: account/static/js/contact-helpers.js:140
+#: account/static/js/contact-helpers.js:100
+#: account/static/js/contact-helpers.js:141
 #: account/static/js/show_profile.js:27 account/static/js/show_profile.js:94
 #: account/static/js/show_profile.js:151 account/static/js/show_profile.js:220
 #: account/static/js/show_profile.js:276 account/static/js/show_profile.js:328
@@ -94,7 +95,7 @@ msgstr "Bestätigen"
 msgid "Cancel"
 msgstr "Abbrechen"
 
-#: account/static/js/contact-helpers.js:137
+#: account/static/js/contact-helpers.js:138
 #: account/static/js/profile-templates.js:2
 #: account/static/js/profile-templates.js:16
 #: bibliography/static/js/bibliography-helpers.js:1421
@@ -103,11 +104,11 @@ msgstr "Abbrechen"
 msgid "Confirm deletion"
 msgstr "Entfernen bestätigen"
 
-#: account/static/js/contact-helpers.js:137
+#: account/static/js/contact-helpers.js:138
 msgid "Remove from the contacts"
 msgstr "Aus den Kontakten entfernen"
 
-#: account/static/js/contact-helpers.js:139
+#: account/static/js/contact-helpers.js:140
 #: account/static/js/show_profile.js:90 account/static/js/show_profile.js:144
 #: bibliography/static/js/bibliography-helpers.js:1424
 #: book/static/js/book-helpers.js:89
@@ -1488,6 +1489,9 @@ msgstr "Such nach Dateiname"
 #: usermedia/static/js/usermedia-template-dialogs.js:83
 msgid "Insert a title"
 msgstr "Titel einsetzen"
+
+#~ msgid "Please register at http://beta.fiduswriter.com"
+#~ msgstr "Bitte registriere dich auf der Seite http://beta.fiduswriter.com"
 
 #~ msgid "Undefined"
 #~ msgstr "Nicht definiert"

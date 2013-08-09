@@ -1,13 +1,13 @@
-# Fidus Writer Spanish
+# Spanish translation for Fidus Writer
 # Copyright (C) 2012 Ana Vera Resquín
-# This file is distributed under the same license as the Fidus Writer package.
+# This file is distributed under the same license as Fidus Writer.
 # Ana Vera Resquín <ani.tavr77@gmail.com>, 2013.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: 0.1\n"
+"Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-08 17:26-0500\n"
+"POT-Creation-Date: 2013-08-09 06:38-0500\n"
 "PO-Revision-Date: 2013-03-03 12:18-0700\n"
 "Last-Translator: Ana Vera Resquín <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
@@ -67,7 +67,6 @@ msgstr ""
 "        "
 
 #: account/templates/account/email_confirm.html:38
-#, fuzzy
 msgid ""
 "\n"
 "        I am aware that I am signing up for a test account and that service "
@@ -75,9 +74,9 @@ msgid ""
 "        "
 msgstr ""
 "\n"
-"Estoy conciente, de que se trata de una versión beta del sitio y que el "
-"servicio puede ser terminado en cualquier momento sin nota previa, dejándome "
-"sin mis archivos.\n"
+"Estoy conciente, de que se trata de una versión de prueba y que el servicio "
+"puede ser terminado en cualquier momento sin nota previa, dejándome sin mis "
+"archivos.\n"
 "        "
 
 #: account/templates/account/email_confirm.html:44
@@ -170,14 +169,14 @@ msgstr "Inicia sesión"
 msgid ""
 "\n"
 "        Please log in with one of your existing third party accounts or your "
-"Fiduswriter account.<br/>\n"
+"Fidus Writer account.<br/>\n"
 "        If you are new here, please <a href=\"%(signup_url)s\" title=\"Sign "
 "up for %(site_name)s\">sign up</a>.\n"
 "        "
 msgstr ""
 "\n"
 "        Por favor inicia sesión utilizando una cuenta con uno de estos "
-"proveedores o tu cuenta de Fiduswriter.<br/>\n"
+"proveedores o tu cuenta de Fidus Writer.<br/>\n"
 "        ¿Sos nuevo?, por favor, <a href=\"%(signup_url)s\" title="
 "\"Regístrate para %(site_name)s\">regístrate</a>.\n"
 "        "
@@ -538,10 +537,10 @@ msgstr "¡Hola!"
 
 #: beta/templates/beta/browser.html:12
 msgid ""
-"Unfortunately, Fiduswriter currently only works on Google Chrome. We are "
+"Unfortunately, Fidus Writer currently only works on Google Chrome. We are "
 "working to provide support for Mozilla Firefox."
 msgstr ""
-"Desafortunadamente, Fiduswriter por el momento requiere Google Chrome para "
+"Desafortunadamente, Fidus Writer por el momento requiere Google Chrome para "
 "poder funcionar. Estamos trabajando para dar acceso a los usuarios de "
 "Mozilla Firefox."
 
@@ -847,7 +846,6 @@ msgid "Foxy Fox"
 msgstr ""
 
 #: text/templates/text/editor.html:424
-#, fuzzy
 msgid "Choose a papersize for printing and PDF generation."
 msgstr "Escoge el tamaño del papel para imprimir y crear archivos PDF."
 
@@ -1029,11 +1027,9 @@ msgstr "Cambiado"
 #~ msgid "Preview"
 #~ msgstr "Vista previa"
 
-#, fuzzy
 #~ msgid "File type"
 #~ msgstr "Tipo de archivo"
 
-#, fuzzy
 #~ msgid "Height (px)"
 #~ msgstr "Altura (píxeles)"
 
@@ -1298,7 +1294,6 @@ msgstr "Cambiado"
 #~ "Te hemos enviado un e-mail. Por favor, ponete en contacto con nosotros si "
 #~ "no lo recibes dentro de unos pocos minutos."
 
-#, fuzzy
 #~ msgid ""
 #~ "The password reset link was invalid, possibly because it has already been "
 #~ "used.  Please request a <a href=\"%(passwd_reset_url)s\">new password "
@@ -1319,7 +1314,6 @@ msgstr "Cambiado"
 #~ msgid "Signup"
 #~ msgstr "Regístrate"
 
-#, fuzzy
 #~ msgid ""
 #~ "Already have an account? Then please <a href=\"%(login_url)s\">sign in</"
 #~ "a>."
@@ -1684,7 +1678,6 @@ msgstr "Cambiado"
 #~ msgid "Traditional Chinese"
 #~ msgstr "Chino Tradicional"
 
-#, fuzzy
 #~ msgid "Successfully deleted %(count)d %(items)s."
 #~ msgstr "Se ha eliminado exitosamente %(count)d %(items)s."
 
@@ -1774,9 +1767,8 @@ msgstr "Cambiado"
 #~ msgid "None"
 #~ msgstr "Ningún"
 
-#, fuzzy
 #~ msgid "Changed %s."
-#~ msgstr "Cambios %s."
+#~ msgstr "Cambiado %s."
 
 #~ msgid "and"
 #~ msgstr "y"

@@ -71,9 +71,10 @@
                         '<br />'
                         + gettext('Please invite him/her ') +
                         '<a target="_blank" href="mailto:' + user_email + '?subject='
-                            + encodeURIComponent(gettext('Fiduswriter')) + '&body='
-                                + encodeURIComponent(gettext('Hey, I would like you to sign up for a Fiduswriter account.') + "\n"
-                                    + gettext('Please register at http://beta.fiduswriter.com')) +
+                            + encodeURIComponent(gettext('Fidus Writer')) + '&body='
+                                + encodeURIComponent(gettext('Hey, I would like you to sign up for a Fidus Writer account.') + "\n"
+                                    + gettext('Please register at')) + ' ' +
+				    window.location.origin +
                         '">'
                             + gettext('by sending an email') +
                         '</a>!\

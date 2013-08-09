@@ -1,13 +1,13 @@
-# Fidus Writer Translation file
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
+# German translation for Fidus Writer
+# Copyright (C) 2013 Daniel Frebel
+# This file is distributed under the same license as Fidus Writer.
 # Daniel Frebel <daniel@fiduswriter.com>, 2013.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: PACKAGE VERSION\n"
+"Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-08 17:26-0500\n"
+"POT-Creation-Date: 2013-08-09 06:38-0500\n"
 "PO-Revision-Date: 2013-02-24 10:03-0600\n"
 "Last-Translator: Daniel Frebel <daniel@fiduswriter.com>\n"
 "Language-Team: German <daniel@fiduswriter.com>\n"
@@ -175,14 +175,14 @@ msgstr "Anmelden"
 msgid ""
 "\n"
 "        Please log in with one of your existing third party accounts or your "
-"Fiduswriter account.<br/>\n"
+"Fidus Writer account.<br/>\n"
 "        If you are new here, please <a href=\"%(signup_url)s\" title=\"Sign "
 "up for %(site_name)s\">sign up</a>.\n"
 "        "
 msgstr ""
 "\n"
-"        Bitte melde dich mit einem deiner externen Konten oder deinem "
-"Fiduswriterkonto an.<br/>\n"
+"        Bitte melde dich mit einem deiner externen Konten oder deinem Fidus "
+"Writer Konto an.<br/>\n"
 "        Neu hier? Einfach kostenfrei ein neues <a href=\"%(signup_url)s\" "
 "title=\"Sign up for %(site_name)s\">Konto erstellen</a>.\n"
 "        "
@@ -535,10 +535,10 @@ msgstr "Hallo!"
 
 #: beta/templates/beta/browser.html:12
 msgid ""
-"Unfortunately, Fiduswriter currently only works on Google Chrome. We are "
+"Unfortunately, Fidus Writer currently only works on Google Chrome. We are "
 "working to provide support for Mozilla Firefox."
 msgstr ""
-"Leider ist Fiduswriter im Moment nur mit Google Chrome zu verwenden. Wir "
+"Leider ist Fidus Writer im Moment nur mit Google Chrome zu verwenden. Wir "
 "arbeiten an einer Version für Mozilla Firefox."
 
 #: beta/templates/beta/feedback.html:159 beta/templates/beta/feedback.html:162

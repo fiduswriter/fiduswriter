@@ -1,14 +1,14 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+# LANGUAGE translation for Fidus Writer
+# Copyright (C) YEAR THE TRANSLATORS NAME
+# This file is distributed under the same license as Fidus Writer.
+# THE TRANSLATORS NAME <EMAIL@ADDRESS>, YEAR
 #
 #, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-08 17:26-0500\n"
+"POT-Creation-Date: 2013-08-09 06:38-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,26 +34,26 @@ msgid "Please invite him/her "
 msgstr ""
 
 #: account/static/js/contact-helpers.js:74
-msgid "Fiduswriter"
+msgid "Fidus Writer"
 msgstr ""
 
 #: account/static/js/contact-helpers.js:75
-msgid "Hey, I would like you to sign up for a Fiduswriter account."
+msgid "Hey, I would like you to sign up for a Fidus Writer account."
 msgstr ""
 
 #: account/static/js/contact-helpers.js:76
-msgid "Please register at http://beta.fiduswriter.com"
+msgid "Please register at"
 msgstr ""
 
-#: account/static/js/contact-helpers.js:78
+#: account/static/js/contact-helpers.js:79
 msgid "by sending an email"
 msgstr ""
 
-#: account/static/js/contact-helpers.js:92
+#: account/static/js/contact-helpers.js:93
 msgid "Add a user to your contacts"
 msgstr ""
 
-#: account/static/js/contact-helpers.js:98
+#: account/static/js/contact-helpers.js:99
 #: account/static/js/show_profile.js:169 account/static/js/show_profile.js:239
 #: account/static/js/show_profile.js:355
 #: bibliography/static/js/bibliography-helpers.js:710
@@ -67,8 +67,8 @@ msgstr ""
 msgid "Submit"
 msgstr ""
 
-#: account/static/js/contact-helpers.js:99
-#: account/static/js/contact-helpers.js:140
+#: account/static/js/contact-helpers.js:100
+#: account/static/js/contact-helpers.js:141
 #: account/static/js/show_profile.js:27 account/static/js/show_profile.js:94
 #: account/static/js/show_profile.js:151 account/static/js/show_profile.js:220
 #: account/static/js/show_profile.js:276 account/static/js/show_profile.js:328
@@ -94,7 +94,7 @@ msgstr ""
 msgid "Cancel"
 msgstr ""
 
-#: account/static/js/contact-helpers.js:137
+#: account/static/js/contact-helpers.js:138
 #: account/static/js/profile-templates.js:2
 #: account/static/js/profile-templates.js:16
 #: bibliography/static/js/bibliography-helpers.js:1421
@@ -103,11 +103,11 @@ msgstr ""
 msgid "Confirm deletion"
 msgstr ""
 
-#: account/static/js/contact-helpers.js:137
+#: account/static/js/contact-helpers.js:138
 msgid "Remove from the contacts"
 msgstr ""
 
-#: account/static/js/contact-helpers.js:139
+#: account/static/js/contact-helpers.js:140
 #: account/static/js/show_profile.js:90 account/static/js/show_profile.js:144
 #: bibliography/static/js/bibliography-helpers.js:1424
 #: book/static/js/book-helpers.js:89

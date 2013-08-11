@@ -142,6 +142,7 @@
         parentComment = commentHelpers.findComment(newComment[
             'parent_comment_id']);
         parentComment['children'].push(newComment);
+        parentComment['active'] = false;
         flatCommentList.push(newComment);
         commentHelpers.layoutComments();
         editorHelpers.documentHasChanged();

@@ -197,6 +197,9 @@
             }
             editorHelpers.documentHasChanged();
         }
+        
+        comment['active'] = false;
+        
         commentHelpers.layoutComments();
 
 

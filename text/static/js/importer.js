@@ -348,12 +348,12 @@
                     aDocument.updated = data['updated'];
                     if (typeof (theDocumentList) !== 'undefined') {
                         theDocumentList.push(aDocument);
-                        stopDocumentTable();
+                        documentHelpers.stopDocumentTable();
                         jQuery('#document-table tbody').append(
                             tmp_documents_list_item({
                                     aDocument: aDocument
                                 }));
-                        startDocumentTable();
+                        documentHelpers.startDocumentTable();
                     } else if (typeof (theDocument) !== 'undefined') {
                         if (theDocument.rights ==='r' || theDocument.is_locked === true) {
                             // We only had right access to the document, so the editing elements won't show. We therefore need to reload the page to get them.

@@ -57,21 +57,8 @@ The following are instructions working on most *NIX systems.
 
   python manage.py runserver 0.0.0.0:8000
 
-8. Navigate to "http://localhost:8000/admin/socialaccount/socialapp/add/"
+8. If you need to add extra settings or run a production server, copy fiduswriter/local_settings.py-default to fiduswriter/local_settings.py and adjust the contents to fit yoru setup.
 
-9. Add at least one social app for Facebook. If you do not have actual Facebook app credentials, use the following data and save:
-
-  Provider: Facebook
-  
-  Name: Facebook
-  
-  Client id: 1
-  
-  Secret: 1
-  
-  Sites: example.com
-
-  If you have given external access to your server above, you will also need to add the external address of your server to the Facebook socialapp settings.
 - - - - - -
 
 For best results for the end user:

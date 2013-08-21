@@ -103,7 +103,20 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 # DEFAULT_FROM_EMAIL = ''
 EMAIL_SUBJECT_PREFIX = '[Fidus Writer]'
 
+# Add any extra packages you are using here.
+# If you want to enable the social network login options, make sure you add the authorization keys at
+# /admin/socialaccount/socialapp/
 
+INSTALLED_APPS += (
+    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.twitter',
+    'allauth.socialaccount.providers.github',
+    'allauth.socialaccount.providers.linkedin',
+    'allauth.socialaccount.providers.openid',
+    'allauth.socialaccount.providers.persona',
+    'allauth.socialaccount.providers.soundcloud',
+    'allauth.socialaccount.providers.stackexchange',)
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to

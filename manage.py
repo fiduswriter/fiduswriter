@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 #
-# This file is part of Fidus Writer <http://www.fiduswriter.com>
+# This file is part of Fidus Writer <http://www.fiduswriter.org>
 #
 # Copyright (C) 2013 Takuto Kojima, Johannes Wilm
 #

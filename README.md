@@ -7,7 +7,7 @@ Fidus Writer is an online collaborative editor especially made for academics who
 Contributing
 ----
 
-For details on contributing, please check http://fiduswriter.com/help-us/
+For details on contributing, please check http://fiduswriter.org/help-us/
 
 
 License

@@ -150,3 +150,6 @@ LOGGING = {
         },
     }
 }
+# If you need to run a public server, make sure to list all the domains under which the server should be available in ALLOWED_HOSTS
+
+#ALLOWED_HOSTS = ['www.fidusserver.com', 'localhost']

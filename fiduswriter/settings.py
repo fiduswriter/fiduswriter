@@ -48,7 +48,6 @@ TIME_ZONE = 'America/Chicago'
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
 LANGUAGE_CODE = 'en-us'
-#LANGUAGE_CODE = 'es-cl'
 
 SITE_ID = 1
 
@@ -178,13 +177,13 @@ INSTALLED_APPS = (
     'allauth.socialaccount',
     'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.twitter',
     #'allauth.socialaccount.providers.github',
     #'allauth.socialaccount.providers.linkedin',
     #'allauth.socialaccount.providers.openid',
     #'allauth.socialaccount.providers.persona',
     #'allauth.socialaccount.providers.soundcloud',
     #'allauth.socialaccount.providers.stackexchange',
-    'allauth.socialaccount.providers.twitter',
     'avatar',
     'compressor',
     'beta'

@@ -30,8 +30,8 @@
     {% if socialaccount.providers  %}
     <p>
         {% blocktrans with site.name as site_name %}
-        Please log in with one of your existing third party accounts or your Fidus Writer account.<br/>
-        If you are new here, please <a href="{{signup_url}}" title="Sign up for {{site_name}}">sign up</a>.
+        
+        If you are new here, please <a href="{{signup_url}}" title="Sign up for {{site_name}}">sign up</a> or use one of the below options to create an account.
         {% endblocktrans %}
     </p>
     <div class="socialaccount_ballot">
@@ -49,6 +49,8 @@
         </ul>
     </div>
         {% include "socialaccount/snippets/login_extra.html" %}
+    {% else %}
+        <p>If you are new here, please <a href="{{signup_url}}" title="Sign up for {{site_name}}">sign up</a>.</p>
     {% endif %}
 {% else %}
     {% include "account/snippets/already_logged_in.html" %}

@@ -35,6 +35,12 @@
 .icon-google:before { content: '\47'; } /* 'G' */
 .icon-twitter:before { content: '\54'; } /* 'T' */
 .icon-facebook:before { content: '\66'; } /* 'f' */
+.icon-openid:before { content: '\e803'; } /* '' */
+.icon-github:before { content: '\e801'; } /* '' */
+.icon-linkedin:before { content: '\e805'; } /* '' */
+.icon-soundcloud:before { content: '\e802'; } /* '' */
+.icon-stackexchange:before { content: '\e804'; } /* '' */
+.icon-persona:before { content: '\e806'; } /* '' */
 .icon-up-dir:before { content: '\25b4'; } /* '▴' */
 .icon-right-dir:before { content: '\25b8'; } /* '▸' */
 .icon-down-dir:before { content: '\25be'; } /* '▾' */
@@ -97,8 +103,8 @@
 .icon-acceptall:before { content: '\41'; } /* 'A' */
 .icon-rejectall:before { content: '\52'; } /* 'R' */
 .es .icon-bold:before { content: '\4b'; } /* 'N' */
-.es .icon-italic:before { content: '\4e': } /* 'K' */
-}
+.es .icon-italic:before { content: '\4e'; } /* 'K' */
+
 
 /* Animation example, for spinners */
 .animate-spin {

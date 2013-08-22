@@ -41,11 +41,9 @@ The following are instructions working on most *NIX systems.
 
   pip install -r requirements.txt
 
-6. copy fiduswriter/settings.py-default to fiduswriter/settings.py
+6. If you want to go beyond a local test installation, copy configuraiton.py-default to configuration.py, and edit configuration.py with a text editor, adjusting it to fit your needs.
 
-7. Edit the settings.py file with a text editor and adjust it to fit your needs.
-
-8. Synchronize the DB and create a superuser by typing:
+7. Synchronize the DB and create a superuser by typing:
 
   python manage.py syncdb
 
@@ -55,7 +53,7 @@ The following are instructions working on most *NIX systems.
 
   python manage.py loaddata base/fixture/initial_terms.json
 
-9. Run the fiduswriter server by typing:
+8. Run the fiduswriter server by typing:
 
   python manage.py runserver
 

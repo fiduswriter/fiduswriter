@@ -28,7 +28,7 @@ import os
 
 # If you want to show debug messages, set DEBUG to True.
 
-DEBUG = False
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 SERVER_INFO = {

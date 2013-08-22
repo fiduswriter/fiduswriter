@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-09 06:38-0500\n"
+"POT-Creation-Date: 2013-08-22 02:23-0500\n"
 "PO-Revision-Date: 2013-03-03 12:18-0700\n"
 "Last-Translator: Ana Vera Resquín <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
@@ -17,8 +17,9 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
-#: account/static/js/confirm_email.js:10
-msgid "Thanks for verifying! You can now log in to Fidus Writer."
+#: account/static/js/confirm_email.js:18
+#, fuzzy
+msgid "Thanks for verifying! You can now log in."
 msgstr "Gracias por confirmar! Ahora puedes ingresar a Fidus Writer."
 
 #: account/static/js/contact-helpers.js:29

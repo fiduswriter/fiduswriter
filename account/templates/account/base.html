@@ -8,26 +8,26 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
         <title> Fidus Writer - {% block title %}{% endblock %}. </title>
         <meta name="description" content="{% trans "The all in one solution for collaborative academic writing." %}">
-        <meta name="author" content="Takuto Kojima" />
+        <meta name="author" content="Fidus Writer" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.png" type="image/png"/>
         <!--link rel="apple-touch-icon" href="/apple-touch-icon.png" /-->
 
         {% compress css %}
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/reset.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fonts.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/fonts.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/forms.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/ui-dialogs.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/buttons.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/pulldown.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/loader.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/alerts.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/document-menu.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/document-table.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/dialog-table.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/dropkick.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/ui-tabs.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/reset.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fonts.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/fonts.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/forms.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/ui-dialogs.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/buttons.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/pulldown.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/loader.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/alerts.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/document-menu.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/document-table.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/dialog-table.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/dropkick.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/ui-tabs.css" />
         {% endcompress %}
 
         <!-- layout styles -->
@@ -61,7 +61,7 @@
         <header class="fw-header">
             <div class="fw-container">
                 <h1 class="fw-login-logo">
-                    <img src="{{ STATIC_URL }}img/logo.png" alt="Logo" title="Fiduswriter" width="231" height="39" />
+                    <a href="/"><img src="{{ STATIC_URL }}img/logo.png" alt="Logo" title="Fiduswriter" width="231" height="39" /></a>
                 </h1>
                 <nav class="fw-header-nav">
                     <label for="login-btn">{% block loginlabel %}{% endblock %}</label>

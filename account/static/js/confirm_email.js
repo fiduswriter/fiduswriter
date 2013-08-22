@@ -1,12 +1,20 @@
-$(document).ready(function(){
-    $('.checker').bind('click',function() {
-        if ($('#terms-check').is(':checked') && $('#beta-check').is(':checked')) {
-            $('#submit').removeAttr("disabled");
+jQuery(document).ready(function(){
+    jQuery('.checker').bind('click',function() {
+        var testCheck = false;
+        if (jQuery('#test-check').length > 0) {
+            if (jQuery('#test-check').is(':checked')) {
+                testCheck = true;
+            }
         } else {
-            $('#submit').attr("disabled", "disabled");
+            testCheck = true;
+        }
+        if (testCheck && jQuery('#terms-check').is(':checked')) {
+            jQuery('#submit').removeAttr("disabled");
+        } else {
+            jQuery('#submit').attr("disabled", "disabled");
         }
     });
-    $('#submit').bind('click',function() {
-        alert(gettext('Thanks for verifying! You can now log in to Fidus Writer.'));
+    jQuery('#submit').bind('click',function() {
+        alert(gettext('Thanks for verifying! You can now log in.'));
     });
 });

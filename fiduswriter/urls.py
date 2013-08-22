@@ -63,9 +63,13 @@ urlpatterns = patterns('',
     url(r'^book/', include('book.urls')),
     
     # Beta 
-    url(r'^beta/', include('beta.urls')),
+    url(r'^beta/', include('beta.urls')), 
 
+)
 
+urlpatterns += patterns('django.contrib.flatpages.views',
+    # Terms and conditions
+    url(r'^terms/$', 'flatpage', {'url': '/terms/'}, name='terms'),
 )
 
 if settings.DEBUG:

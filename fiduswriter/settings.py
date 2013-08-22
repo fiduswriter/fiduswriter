@@ -22,6 +22,14 @@ import os
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+SERVER_INFO = {
+    # This determines whether the server is used for testing and will let the users 
+    # upon signup know that their documents may disappear.  
+    'TEST_SERVER': True,
+    # This is the contact email that will be shown in various places all over the site.
+    'CONTACT_EMAIL': 'mail@email.com',
+}
+
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
 )
@@ -144,6 +152,7 @@ TEMPLATE_DIRS = (
 TEMPLATE_CONTEXT_PROCESSORS = (
     "base.context_processors.js_locations",
     "base.context_processors.css_locations",    
+    "base.context_processors.server_info",
     "django.core.context_processors.static",
     "django.core.context_processors.request",
     "django.contrib.auth.context_processors.auth",
@@ -164,6 +173,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.admin',
     'django.contrib.admindocs',
+    'django.contrib.flatpages',
     'south',
     'base',
     'menu',

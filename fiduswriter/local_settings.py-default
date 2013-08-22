@@ -23,13 +23,22 @@ MANAGERS = ADMINS
 #    }
 #}
 
-# Send emails using SMTP                               
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'localhost'
-EMAIL_HOST_USER = ''
-EMAIL_HOST_PASSWORD = ''
-EMAIL_PORT = 25
+# Send emails using SMTP. Specify your SMTP server email send options here.
 
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_HOST = 'localhost'
+#EMAIL_HOST_USER = ''
+#EMAIL_HOST_PASSWORD = ''
+#EMAIL_PORT = 25
+
+
+#SERVER_INFO = {
+    # This determines whether the server is used for testing and will let the users 
+    # upon signup know that their documents may disappear.  
+#    'TEST_SERVER': True,
+    # This is the contact email that will be shown in various places all over the site.
+#    'CONTACT_EMAIL': 'mail@email.com',
+#}
 
 
 # Local time zone for this installation. Choices can be found here:

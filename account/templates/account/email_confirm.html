@@ -22,23 +22,25 @@
         {% blocktrans with confirmation.email_address.email as email %}
         Please confirm that you own the email <a href="mailto:{{email}}">{{ email }}</a>,
         that you apply for the username {{ user_display }}, and that you have read and agree to the
-        <a href="http://www.fiduswriter.org/?page_id=41">Terms and Conditions</a>.
+        <a href="/terms/" target="_blank">Terms and Conditions</a>.
         {% endblocktrans %}
     </p>
 
     <p>
         <input type="checkbox" class="checker" id="terms-check">
         {% blocktrans %}
-        I have read and agree to the <a href="http://www.fiduswriter.org/?page_id=41">Terms and Conditions</a>.
+        I have read and agree to the <a href="/terms/" target="_blank">Terms and Conditions</a>.
         {% endblocktrans %}
     </p>
 
-    <p>
-        <input type="checkbox" class="checker" id="beta-check">
-        {% blocktrans %}
-        I am aware that I am signing up for a test account and that service may be ended abruptly and without notice, leaving me without my files.
-        {% endblocktrans %}
-    </p>
+    {% if TEST_SERVER %}
+        <p>
+            <input type="checkbox" class="checker" id="test-check">
+            {% blocktrans %}
+            I am aware that I am signing up for a test account and that service may be ended abruptly and without notice, leaving me without my files.
+            {% endblocktrans %}
+        </p>
+    {% endif %}
 
     <p>
         {% blocktrans %}

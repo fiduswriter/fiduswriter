@@ -49,6 +49,8 @@ The following are instructions working on most *NIX systems.
 
   python manage.py loaddata bibliography/fixture/initial_bib_rules.json
 
+  python manage.py loaddata base/fixture/initial_terms.json
+
 7. Run the fiduswriter server by typing:
 
   python manage.py runserver

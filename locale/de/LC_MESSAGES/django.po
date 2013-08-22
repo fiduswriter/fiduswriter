@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-09 06:38-0500\n"
+"POT-Creation-Date: 2013-08-22 02:23-0500\n"
 "PO-Revision-Date: 2013-02-24 10:03-0600\n"
 "Last-Translator: Daniel Frebel <daniel@fiduswriter.com>\n"
 "Language-Team: German <daniel@fiduswriter.com>\n"
@@ -37,15 +37,14 @@ msgid "Confirm E-mail Address and Agree to Terms and Conditions"
 msgstr "Bestätige die E-Mailadresse und stimme den Geschäftsbedingungen zu"
 
 #: account/templates/account/email_confirm.html:22
-#, python-format
+#, fuzzy, python-format
 msgid ""
 "\n"
 "        Please confirm that you own the email <a href=\"mailto:%(email)s\">"
 "%(email)s</a>,\n"
 "        that you apply for the username %(user_display)s, and that you have "
 "read and agree to the\n"
-"        <a href=\"http://www.fiduswriter.com/?page_id=41\">Terms and "
-"Conditions</a>.\n"
+"        <a href=\"/terms/\" target=\"_blank\">Terms and Conditions</a>.\n"
 "        "
 msgstr ""
 "\n"
@@ -56,35 +55,39 @@ msgstr ""
 "        "
 
 #: account/templates/account/email_confirm.html:31
+#, fuzzy
 msgid ""
 "\n"
-"        I have read and agree to the <a href=\"http://www.fiduswriter.com/?"
-"page_id=41\">Terms and Conditions</a>.\n"
+"        I have read and agree to the <a href=\"/terms/\" target=\"_blank"
+"\">Terms and Conditions</a>.\n"
 "        "
 msgstr ""
 "\n"
 "        Ich habe die <a href=\"http://www.fiduswriter.com/?"
 "page_id=41\">Geschäftsbedingungen</a> gelesen und stimme ihnen zu."
 
-#: account/templates/account/email_confirm.html:38
+#: account/templates/account/email_confirm.html:39
+#, fuzzy
 msgid ""
 "\n"
-"        I am aware that I am signing up for a test account and that service "
-"may be ended abruptly and without notice, leaving me without my files.\n"
-"        "
+"            I am aware that I am signing up for a test account and that "
+"service may be ended abruptly and without notice, leaving me without my "
+"files.\n"
+"            "
 msgstr ""
 "\n"
 "        Ich bin mir darüber im Klaren, dass ich an einem Betatest teilnehme "
 "und dass dieser ohne Vorankündigung jederzeit beendet werden kann.\n"
 "        "
 
-#: account/templates/account/email_confirm.html:44
+#: account/templates/account/email_confirm.html:46
+#, fuzzy
 msgid ""
 "\n"
 "        Please notice that Fidus Writer currently only works with the Google "
 "Chrome browser. For best results, please enable CSS Regions within the "
 "browser. You can read how to do that <a href=\"http://fiduswriter."
-"com/2013/03/15/how-do-i-enable-page-views-in-fidus-writer/\" target=\"_blank"
+"org/2013/03/15/how-do-i-enable-page-views-in-fidus-writer/\" target=\"_blank"
 "\">here</a>.</p>\n"
 "        "
 msgstr ""
@@ -96,11 +99,11 @@ msgstr ""
 "macht.</p>\n"
 "        "
 
-#: account/templates/account/email_confirm.html:52
+#: account/templates/account/email_confirm.html:54
 msgid "Confirm"
 msgstr "Bestätigen"
 
-#: account/templates/account/email_confirm.html:60
+#: account/templates/account/email_confirm.html:62
 #, python-format
 msgid ""
 "\n"
@@ -135,7 +138,7 @@ msgid "Add new contact"
 msgstr "Neuen Kontakt hinzufügen"
 
 #: account/templates/account/list_team_members.html:62
-#: base/templates/base.html:125
+#: base/templates/base.html:122
 msgid "Contacts"
 msgstr "Kontakte"
 
@@ -166,18 +169,18 @@ msgid "Sign up"
 msgstr "Registrieren"
 
 #: account/templates/account/login.html:28
-#: account/templates/account/login.html:73
+#: account/templates/account/login.html:75
 msgid "Log in"
 msgstr "Anmelden"
 
 #: account/templates/account/login.html:32
-#, python-format
+#, fuzzy, python-format
 msgid ""
 "\n"
-"        Please log in with one of your existing third party accounts or your "
-"Fidus Writer account.<br/>\n"
+"        \n"
 "        If you are new here, please <a href=\"%(signup_url)s\" title=\"Sign "
-"up for %(site_name)s\">sign up</a>.\n"
+"up for %(site_name)s\">sign up</a> or use one of the login options below to "
+"create an account.\n"
 "        "
 msgstr ""
 "\n"
@@ -191,22 +194,22 @@ msgstr ""
 msgid "Login with"
 msgstr "Anmelden mit"
 
-#: account/templates/account/login.html:62
+#: account/templates/account/login.html:64
 #: account/templates/account/show_profile.html:61
 #: account/templates/account/show_profile.html:139
 msgid "Username"
 msgstr "Nutzername"
 
-#: account/templates/account/login.html:66
+#: account/templates/account/login.html:68
 #: account/templates/account/show_profile.html:73
 msgid "Password"
 msgstr "Kennwort"
 
-#: account/templates/account/login.html:76
+#: account/templates/account/login.html:78
 msgid "Remember me"
 msgstr "Angemeldet bleiben"
 
-#: account/templates/account/login.html:78
+#: account/templates/account/login.html:80
 msgid "Forgot Password?"
 msgstr "Kennwort vergessen?"
 
@@ -226,12 +229,13 @@ msgid "Password reset"
 msgstr "Kennwort zurücksetzen"
 
 #: account/templates/account/password_reset.html:15
+#, fuzzy, python-format
 msgid ""
 "\n"
 "    <p>Forgotten your password? Enter your e-mail address below, and we'll "
 "send you an e-mail allowing you to reset it.</p>\n"
 "    <p>If you have any trouble resetting your password, please <a href="
-"\"mailto:mail@fiduswriter.com\">contact us</a>.</p>\n"
+"\"mailto:%(CONTACT_EMAIL)s\">contact us</a>.</p>\n"
 "    "
 msgstr ""
 "\n"
@@ -469,43 +473,43 @@ msgstr ""
 msgid "Default Avatar"
 msgstr "Bild entfernen"
 
-#: base/templates/base.html:89
+#: base/templates/base.html:86
 msgid "edit documents"
 msgstr "Dokumente bearbeiten"
 
-#: base/templates/base.html:90
+#: base/templates/base.html:87
 msgid "Documents"
 msgstr "Dokumente"
 
-#: base/templates/base.html:94
+#: base/templates/base.html:91
 msgid "manage bibliography library"
 msgstr "Bibliografisches Verzeichnis managen"
 
-#: base/templates/base.html:95
+#: base/templates/base.html:92
 msgid "Bibliography"
 msgstr "Bibliografie"
 
-#: base/templates/base.html:99
+#: base/templates/base.html:96
 msgid "manage image files"
 msgstr "Bilddatein managen"
 
-#: base/templates/base.html:100
+#: base/templates/base.html:97
 msgid "Images"
 msgstr "Bilder"
 
-#: base/templates/base.html:104
+#: base/templates/base.html:101
 msgid "compose books"
 msgstr "Bücher zusammensetzen"
 
-#: base/templates/base.html:105
+#: base/templates/base.html:102
 msgid "Books"
 msgstr "Bücher"
 
-#: base/templates/base.html:120
+#: base/templates/base.html:117
 msgid "Edit profile"
 msgstr "Profil bearbeiten"
 
-#: base/templates/base.html:131
+#: base/templates/base.html:128
 msgid "Log out"
 msgstr "Abmelden"
 

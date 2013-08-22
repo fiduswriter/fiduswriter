@@ -80,5 +80,5 @@ if settings.DEBUG:
    )
 
 
-if settings.EXTRA_URLS:
+if hasattr(settings, 'EXTRA_URLS'):
     urlpatterns += settings.EXTRA_URLS

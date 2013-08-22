@@ -16,13 +16,19 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+#############################################
+# Django settings for Fidus Writer project. #
+#############################################
+
+# After copying this file to settings.py, adjust the below settings to work 
+# with your setup.
+
+
 import os
-# Django settings for fiduswriter project.
 
+# If you want to show debug messages, set DEBUG to True.
 
-
-
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 SERVER_INFO = {
@@ -34,7 +40,7 @@ SERVER_INFO = {
 }
 
 ADMINS = (
-    # ('Your Name', 'your_email@example.com'),
+     ('Your Name', 'your_email@example.com'),
 )
 
 MANAGERS = ADMINS
@@ -47,8 +53,16 @@ DATABASES = {
 
 }
 
-# Write emails to console. Overwrite in local settings!
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
+# Send emails to console. 
+#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
+
+# Or send emails using an SMTP server
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_HOST = 'localhost'
+#EMAIL_HOST_USER = ''
+#EMAIL_HOST_PASSWORD = ''
+#EMAIL_PORT = 25
+#EMAIL_SUBJECT_PREFIX = '[Fidus Writer]'
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -62,33 +76,38 @@ LANGUAGE_CODE = 'en-us'
 
 SITE_ID = 1
 
-# If you set this to False, Django will make some optimizations so as not
-# to load the internationalization machinery.
+# If you set this to False, the server will make some optimizations so as not
+# to load the internationalization machinery. Fidus Writer makes use of 
+# internationalization, so you should probably keep this on.
+
 USE_I18N = True
 
 LOCALE_PATHS = (
     './locale',
 )
 
-# Allowed hostnames of this Django installation
-ALLOWED_HOSTS = ['localhost']
+# A list of allowed hostnames of this Fidus Writer installation
+ALLOWED_HOSTS = [
+    'localhost',
+]
 
-# If you set this to False, Django will not format dates, numbers and
+# If you set this to False, the server will not format dates, numbers and
 # calendars according to the current locale.
 USE_L10N = True
 
-# If you set this to False, Django will not use timezone-aware datetimes.
+# If you set this to False, the server will not use timezone-aware datetimes.
 USE_TZ = True
 
+# The top path of the project. The default is for it to point to the directory 
+# above this file.
 PROJECT_PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
 
 # Absolute filesystem path to the directory that will hold user-uploaded files.
-# Example: "/home/media/media.lawrence.com/media/"
+# The default is the media folder in the directory above this file.
 MEDIA_ROOT = os.path.join(PROJECT_PATH, 'media')
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash.
-# Examples: "http://media.lawrence.com/media/", "http://example.com/media/"
 MEDIA_URL = '/media/'
 
 # Absolute path to the directory static files should be collected to.
@@ -118,7 +137,7 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 
-# Make this unique, and don't share it with anybody.
+# Make this unique, and don't share it with anybody. Change the default string.
 SECRET_KEY = '2ouq2zgw5y-@w+t6!#zf#-z1inigg7$lg3p%8e3kkob1bf$#p4'
 
 # List of callables that know how to import templates from various sources.
@@ -128,6 +147,9 @@ TEMPLATE_LOADERS = (
 #     'django.template.loaders.eggs.Loader',
 )
 
+
+# These middleware classes is what Fidus Writer needs in its standard setup. 
+# You only need to change this in very advanced setups.
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -135,10 +157,10 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.locale.LocaleMiddleware',
-    # Uncomment the next line for simple clickjacking protection:
-    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 )
 
+# The location of the top urls.py file inside the fiduswriter folder. 
+# You only need to change this in very advanced setups.
 ROOT_URLCONF = 'fiduswriter.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
@@ -146,12 +168,12 @@ WSGI_APPLICATION = 'fiduswriter.wsgi.application'
 
 TEMPLATE_DIRS = (
     './templates',
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
+    # Put strings here, like "/home/html/django_templates".
+    # You only need to change this in very advanced setups.
 )
 
-
+# The context processors used by Fidus Writer.
+# You only need to change this in very advanced setups.
 TEMPLATE_CONTEXT_PROCESSORS = (
     "base.context_processors.js_locations",
     "base.context_processors.css_locations",    
@@ -163,9 +185,13 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "allauth.socialaccount.context_processors.socialaccount",
 )
 
+
 FIXTURE_DIRS = (
      './bibliography/fixture',
 )
+
+# The following are the apps needed by Fidus Writer. The lower part of the list
+# are modules to allow different login options.
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -191,6 +217,18 @@ INSTALLED_APPS = (
     'avatar',
     'compressor',
     'beta'
+    # If you want to enable one or several of the social network login options 
+    # below, make sure you add the authorization keys at:
+    # http://SERVER.COM/admin/socialaccount/socialapp/
+    #'allauth.socialaccount.providers.facebook',
+    #'allauth.socialaccount.providers.google',
+    #'allauth.socialaccount.providers.twitter',
+    #'allauth.socialaccount.providers.github',
+    #'allauth.socialaccount.providers.linkedin',
+    #'allauth.socialaccount.providers.openid',
+    #'allauth.socialaccount.providers.persona',
+    #'allauth.socialaccount.providers.soundcloud',
+    #'allauth.socialaccount.providers.stackexchange',
 )
 
 
@@ -203,7 +241,8 @@ AUTHENTICATION_BACKENDS = (
 )
 
 
-#Define available languages
+# Define available languages
+# You only need to change this in very advanced setups.
 gettext = lambda s: s
 LANGUAGES = (
     ('en', gettext('English')),
@@ -226,15 +265,8 @@ AUTH_PROFILE_MODULE = "account.UserProfile"
 # locking
 LOCK_TIMEOUT = 600
 
-# Add filter to remove 500 error in case of SuspiciousOperation. This is needed in Django 1.5 due to https://code.djangoproject.com/ticket/19866
+# The following adds a filter to remove 500 error in case of SuspiciousOperation. This is needed in Django 1.5 due to https://code.djangoproject.com/ticket/19866
 from fiduswriter.logging_filter import skip_suspicious_operations
-
-
-# A sample logging configuration. The only tangible logging
-# performed by this configuration is to send an email to
-# the site admins on every HTTP 500 error when DEBUG=False.
-# See http://docs.djangoproject.com/en/dev/topics/logging for
-# more details on how to customize your logging configuration.
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -264,7 +296,8 @@ LOGGING = {
     }
 }
 
-#global variables for avatar
+# Global variables for avatar
+# You only need to change this in very advanced setups.
 AVATAR_GRAVATAR_BACKUP = False
 AVATAR_DEFAULT_URL = 'img/default_avatar.png'
 AVATAR_MAX_AVATARS_PER_USER = 1
@@ -279,15 +312,7 @@ JS_LOCATIONS = {
     'MATHJAX_URL': STATIC_URL + 'js/libs/mathjax/MathJax.js',
     }
 
+
+
 CSS_LOCATIONS = {
     }
-
-
-
-try:
-    LOCAL_SETTINGS
-except NameError:
-    try:
-        from local_settings import *
-    except ImportError:
-        pass

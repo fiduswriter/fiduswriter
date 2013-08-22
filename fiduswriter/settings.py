@@ -19,6 +19,9 @@
 import os
 # Django settings for fiduswriter project.
 
+
+
+
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
@@ -278,6 +281,7 @@ JS_LOCATIONS = {
 
 CSS_LOCATIONS = {
     }
+
 
 
 try:

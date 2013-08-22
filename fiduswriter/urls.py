@@ -47,7 +47,7 @@ urlpatterns = patterns('',
     
     # Login / logout.
     (r'^login/$', 'django.contrib.auth.views.login'),
-    (r'^logout/$', logout_page),
+    url(r'^logout/$', logout_page, name='logout'),
     
     # Admin interface
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
@@ -78,3 +78,7 @@ if settings.DEBUG:
             'document_root': settings.MEDIA_ROOT,
         }),
    )
+
+
+if settings.EXTRA_URLS:
+    urlpatterns += settings.EXTRA_URLS

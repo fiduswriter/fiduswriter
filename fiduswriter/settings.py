@@ -314,3 +314,8 @@ JS_LOCATIONS = {
 
 CSS_LOCATIONS = {
     }
+
+try:
+    exec open('configuration.py') in globals()
+except:
+    pass

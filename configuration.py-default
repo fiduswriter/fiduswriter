@@ -1,0 +1,102 @@
+#
+# This file is part of Fidus Writer <http://www.fiduswriter.org>
+#
+# Copyright (C) 2013 Takuto Kojima, Johannes Wilm
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU Affero General Public License as
+# published by the Free Software Foundation, either version 3 of the
+# License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU Affero General Public License for more details.
+#
+# You should have received a copy of the GNU Affero General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+#############################################
+# Django settings for Fidus Writer project. #
+#############################################
+
+# After copying this file to configuration.py, adjust the below settings to work 
+# with your setup.
+
+
+import os
+
+# If you want to show debug messages, set DEBUG to True.
+
+DEBUG = False
+TEMPLATE_DEBUG = DEBUG
+
+SERVER_INFO = {
+    # This determines whether the server is used for testing and will let the users 
+    # upon signup know that their documents may disappear.  
+    'TEST_SERVER': True,
+    # This is the contact email that will be shown in various places all over the site.
+    'CONTACT_EMAIL': 'mail@email.com',
+}
+
+ADMINS = (
+     ('Your Name', 'your_email@example.com'),
+)
+
+MANAGERS = ADMINS
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.', # Add 'postgresql_psycopg2', 'mysql', 'sqlite3' or 'oracle'.
+        'NAME': '',                      # Or path to database file if using sqlite3.
+        'USER': '',                      # Not used with sqlite3.
+        'PASSWORD': '',                  # Not used with sqlite3.
+        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
+        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
+    }
+}
+
+# Send emails using an SMTP server
+#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+#EMAIL_HOST = 'localhost'
+#EMAIL_HOST_USER = ''
+#EMAIL_HOST_PASSWORD = ''
+#EMAIL_PORT = 25
+#EMAIL_SUBJECT_PREFIX = '[Fidus Writer]'
+
+
+# Make this unique, and don't share it with anybody. Change the default string.
+SECRET_KEY = '2ouq2zgw5y-@w+t6!#zf#-z1inigg7$lg3p%8e3kkob1bf$#p4'
+
+
+
+
+
+INSTALLED_APPS += (
+    # If you want to enable one or several of the social network login options 
+    # below, make sure you add the authorization keys at:
+    # http://SERVER.COM/admin/socialaccount/socialapp/
+    #'allauth.socialaccount.providers.facebook',
+    #'allauth.socialaccount.providers.google',
+    #'allauth.socialaccount.providers.twitter',
+    #'allauth.socialaccount.providers.github',
+    #'allauth.socialaccount.providers.linkedin',
+    #'allauth.socialaccount.providers.openid',
+    #'allauth.socialaccount.providers.persona',
+    #'allauth.socialaccount.providers.soundcloud',
+    #'allauth.socialaccount.providers.stackexchange',
+)
+
+
+# Location of commonly used Js libraries. Here the local version is given. For deployment a version on the net is better.
+JS_LOCATIONS = {
+    'JQUERY_URL': STATIC_URL + 'js/libs/jquery-1.9.1.js',
+    'JQUERYMIGRATE_URL': STATIC_URL + 'js/libs/jquery-migrate-1.1.1.js',
+    'JQUERYUI_URL': STATIC_URL + 'js/libs/jquery-ui-1.10.1.custom.js',
+    'UNDERSCOREJS_URL': STATIC_URL + 'js/libs/underscore-1.4.4-min.js',
+    'MODERNIZR_URL': STATIC_URL + 'js/libs/modernizr.js',
+    'MATHJAX_URL': STATIC_URL + 'js/libs/mathjax/MathJax.js',
+    }
+
+CSS_LOCATIONS = {
+    }

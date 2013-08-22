@@ -81,4 +81,7 @@ if settings.DEBUG:
 
 
 if hasattr(settings, 'EXTRA_URLS'):
-    urlpatterns += settings.EXTRA_URLS
+    for extra_url in settings.EXTRA_URLS:
+        urlpatterns += patterns('',
+            url(extra_url[0], include(extra_url[1])),
+        )

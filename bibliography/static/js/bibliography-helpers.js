@@ -1634,7 +1634,7 @@
 
     bibliographyHelpers.getBibDB = function(callback) {
         // Get the BibDB of the page.
-        var documentOwnerId, lastModified = localStorage.getItem('last_modified_biblist');
+        var documentOwnerId, lastModified = localStorage.getItem('last_modified_biblist'), numberOfEntries = localStorage.getItem('number_of_entries');
 
         window.BibDB = {};
         window.BibCategories = [];
@@ -1651,6 +1651,10 @@
         if (_.isNull(lastModified)) {
             lastModified = 0;
         }
+        
+        if (_.isNull(numberOfEntries)) {
+            numberOfEntries = 0;
+        }
 
         $.activateWait();
 
@@ -1658,7 +1662,8 @@
             url: '/bibliography/biblist/',
             data: {
                 'owner_id': documentOwnerId,
-                'last_modified': lastModified
+                'last_modified': lastModified,
+                'number_of_entries': numberOfEntries,
             },
             type: 'POST',
             dataType: 'json',
@@ -1670,6 +1675,7 @@
                     try {
                         localStorage.setItem('biblist',JSON.stringify(response.bibList));
                         localStorage.setItem('last_modified_biblist',response.last_modified);
+                        localStorage.setItem('number_of_entries',response.number_of_entries);
                     } catch (error) {
                         // The local storage was likely too small
                     }

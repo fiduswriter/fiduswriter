@@ -28,7 +28,7 @@ from django.core.exceptions import ValidationError
 from django.template import RequestContext
 from django.db import transaction, IntegrityError
 from django.contrib.auth.models import User
-from django.db.models import Max
+from django.db.models import Max, Count
 
 from bibliography.models import Entry, EntryType, EntryField, EntryCategory, EntryTypeAlias, EntryFieldAlias
 
@@ -141,7 +141,7 @@ def import_bibtex_js(request):
             if the_entry != False:
                 new_bibs.append(the_entry)
                 response['bib_ids'].append(the_entry.id)
-            response['bibs'] = serializer.serialize(new_bibs)
+            response['bibs'] = serializer.serialize(new_bibs, fields=('entry_key', 'entry_owner', 'entry_type', 'entry_cat', 'fields'))
     return HttpResponse(
         simplejson.dumps(response),
         content_type = 'application/json; charset=utf8',
@@ -173,7 +173,7 @@ def biblist_js(request):
                 if check_access_rights(user_id, request.user) == False:
                     status = 403
             if status == 200:
-                response['bibList'] = serializer.serialize(Entry.objects.filter(entry_owner__in = user_ids))
+                response['bibList'] = serializer.serialize(Entry.objects.filter(entry_owner__in = user_ids), fields=('entry_key', 'entry_owner', 'entry_type', 'entry_cat', 'fields'))
                 response['bibCategories']  = serializer.serialize(EntryCategory.objects.filter(category_owner__in = user_ids)) 
         else:
             if check_access_rights(user_id, request.user):
@@ -181,12 +181,20 @@ def biblist_js(request):
                     user_id = request.user.id
                 if user_id == request.user.id:    
                     last_modified_onclient = int(request.POST['last_modified'])
-                    last_modified_onserver = int(time.mktime(Entry.objects.filter(entry_owner=1).aggregate(Max('last_modified'))['last_modified__max'].timetuple()))
-                    if last_modified_onclient < last_modified_onserver:
+                    number_of_entries_onclient = int(request.POST['number_of_entries'])
+                    aggregation_values = Entry.objects.filter(entry_owner=1).aggregate(Max('last_modified'),Count('id'))
+                    last_modified__max = aggregation_values['last_modified__max']
+                    number_of_entries_onserver = aggregation_values['id__count']
+                    if last_modified__max:
+                        last_modified_onserver = int(time.mktime(last_modified__max.timetuple()))
+                    else:
+                        last_modified_onserver = 0
+                    if last_modified_onclient < last_modified_onserver or number_of_entries_onclient > number_of_entries_onserver:
                         response['bibList'] = serializer.serialize(Entry.objects.filter(entry_owner = user_id), fields=('entry_key', 'entry_owner', 'entry_type', 'entry_cat', 'fields'))
                         response['last_modified'] = last_modified_onserver
+                        response['number_of_entries'] = number_of_entries_onserver
                 else:
-                    response['bibList'] = serializer.serialize(Entry.objects.filter(entry_owner = user_id))
+                    response['bibList'] = serializer.serialize(Entry.objects.filter(entry_owner = user_id), fields=('entry_key', 'entry_owner', 'entry_type', 'entry_cat', 'fields'))
                 response['bibCategories']  = serializer.serialize(EntryCategory.objects.filter(category_owner = user_id))
                 status = 200                
     return HttpResponse(
@@ -279,7 +287,7 @@ def save_js(request):
                 the_entry.entry_cat = the_cat
                 the_entry.fields = simplejson.dumps(the_fields)
                 the_entry.save()
-                response['values']  = serializer.serialize([the_entry])
+                response['values']  = serializer.serialize([the_entry], fields=('entry_key', 'entry_owner', 'entry_type', 'entry_cat', 'fields'))
         else :
             #if the entry type doesn't exist
             status = 202

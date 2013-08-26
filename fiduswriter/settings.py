@@ -54,7 +54,7 @@ DATABASES = {
 }
 
 # Send emails to console. 
-#EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
 
 # Or send emails using an SMTP server
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

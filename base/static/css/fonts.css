@@ -88,15 +88,16 @@
 .icon-angle-down:before { content: '\f107'; } /* '' */
 .icon-quote-left:before { content: '\f10d'; } /* '' */
 .icon-quote-right:before { content: '\f10e'; } /* '' */
-.icon-picture:before { content: '🌄'; } /* '\1f304' */
-.icon-user:before { content: '👤'; } /* '\1f464' */
-.icon-floppy:before { content: '💾'; } /* '\1f4be' */
-.icon-doc:before { content: '📄'; } /* '\1f4c4' */
-.icon-book:before { content: '📕'; } /* '\1f4d5' */
-.icon-download:before { content: '📥'; } /* '\1f4e5' */
-.icon-link:before { content: '🔗'; } /* '\1f517' */
+.icon-picture:before { content: '\1f304'; } /* '' */
+.icon-user:before { content: '\1f464'; } /* '' */
+.icon-floppy:before { content: '\1f4be'; } /* '' */
+.icon-doc:before { content: '\1f4c4'; } /* '' */
+.icon-book:before { content: '\1f4d5'; } /* '' */
+.icon-download:before { content: '\1f4e5'; } /* '' */
+.icon-link:before { content: '\1f517'; } /* '' */
 .icon-math:before { content: '\4d'; } /* '' */
 .icon-search:before { content: '\e800'; }
+.icon-lock:before { content: '\e807'; } /* '' */
 /* Fidus Writer specific */
 .icon-footnote:before { content: '\46'; } /* 'F' */
 .icon-figure:before { content: '\49'; } /* 'F' */

@@ -118,11 +118,12 @@ class EntryTypeAlias(models.Model):
         verbose_name_plural = 'Entry type aliases'
 
 class Entry(models.Model):
-    entry_key   = models.CharField(max_length=64)
-    entry_owner = models.ForeignKey(User) #identifier of the user, who created the entry.
-    entry_type  = models.ForeignKey(EntryType) #identifier of the entrytype for the entry.
-    entry_cat   = models.CharField(max_length=255, default='')
-    fields = models.TextField(default='{}') #json object with all the fields 
+    entry_key     = models.CharField(max_length=64)
+    entry_owner   = models.ForeignKey(User) #identifier of the user, who created the entry.
+    entry_type    = models.ForeignKey(EntryType) #identifier of the entrytype for the entry.
+    entry_cat     = models.CharField(max_length=255, default='')
+    last_modified = models.DateTimeField(auto_now=True)
+    fields        = models.TextField(default='{}') #json object with all the fields 
     
     def __unicode__(self):
         return self.entry_key

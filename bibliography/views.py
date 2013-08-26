@@ -16,6 +16,8 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import time
+
 from django.conf import settings
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
@@ -24,9 +26,9 @@ from django.contrib.auth.decorators import login_required
 from django.core.context_processors import csrf
 from django.core.exceptions import ValidationError
 from django.template import RequestContext
-from django.db import transaction
-from django.db import IntegrityError
+from django.db import transaction, IntegrityError
 from django.contrib.auth.models import User
+from django.db.models import Max
 
 from bibliography.models import Entry, EntryType, EntryField, EntryCategory, EntryTypeAlias, EntryFieldAlias
 
@@ -177,7 +179,14 @@ def biblist_js(request):
             if check_access_rights(user_id, request.user):
                 if int(user_id) == 0:
                     user_id = request.user.id
-                response['bibList'] = serializer.serialize(Entry.objects.filter(entry_owner = user_id))
+                if user_id == request.user.id:    
+                    last_modified_onclient = int(request.POST['last_modified'])
+                    last_modified_onserver = int(time.mktime(Entry.objects.filter(entry_owner=1).aggregate(Max('last_modified'))['last_modified__max'].timetuple()))
+                    if last_modified_onclient < last_modified_onserver:
+                        response['bibList'] = serializer.serialize(Entry.objects.filter(entry_owner = user_id), fields=('entry_key', 'entry_owner', 'entry_type', 'entry_cat', 'fields'))
+                        response['last_modified'] = last_modified_onserver
+                else:
+                    response['bibList'] = serializer.serialize(Entry.objects.filter(entry_owner = user_id))
                 response['bibCategories']  = serializer.serialize(EntryCategory.objects.filter(category_owner = user_id))
                 status = 200                
     return HttpResponse(

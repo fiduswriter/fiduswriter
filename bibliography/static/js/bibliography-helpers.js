@@ -1634,7 +1634,7 @@
 
     bibliographyHelpers.getBibDB = function(callback) {
         // Get the BibDB of the page.
-        var documentOwnerId;
+        var documentOwnerId, lastModified = localStorage.getItem('last_modified_biblist');
 
         window.BibDB = {};
         window.BibCategories = [];
@@ -1647,20 +1647,37 @@
         } else {
             documentOwnerId = theDocument.owner.id;
         }
+        
+        if (_.isNull(lastModified)) {
+            lastModified = 0;
+        }
 
         $.activateWait();
 
         $.ajax({
             url: '/bibliography/biblist/',
             data: {
-                'owner_id': documentOwnerId
+                'owner_id': documentOwnerId,
+                'last_modified': lastModified
             },
             type: 'POST',
             dataType: 'json',
             success: function (response, textStatus, jqXHR) {
 
                 bibliographyHelpers.addBibCategoryList(response.bibCategories);
-                bibliographyHelpers.addBibList(response.bibList);
+                if (response.hasOwnProperty('bibList')) {
+                    bibliographyHelpers.addBibList(response.bibList);
+                    try {
+                        localStorage.setItem('biblist',JSON.stringify(response.bibList));
+                        localStorage.setItem('last_modified_biblist',response.last_modified);
+                    } catch (error) {
+                        // The local storage was likely too small
+                    }
+                } else {
+                    var bibList = JSON.parse(localStorage.getItem('biblist'));
+                    bibliographyHelpers.addBibList(bibList);
+                }
+                
                 jQuery(document.body).trigger("bibliography_ready");
                 if (callback) { callback(); }
             },

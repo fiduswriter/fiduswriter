@@ -179,7 +179,7 @@ def biblist_js(request):
             if check_access_rights(user_id, request.user):
                 if int(user_id) == 0:
                     user_id = request.user.id
-                if user_id == request.user.id:    
+                if user_id == request.user.id and request.POST.__contains__('last_modified'):    
                     last_modified_onclient = int(request.POST['last_modified'])
                     number_of_entries_onclient = int(request.POST['number_of_entries'])
                     aggregation_values = Entry.objects.filter(entry_owner=user_id).aggregate(Max('last_modified'),Count('id'))

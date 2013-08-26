@@ -27,6 +27,5 @@ urlpatterns = patterns('',
     url(r'^print/\d+/$', 'book.views.print_book', name='print'),
     url(r'^book/$', 'book.views.get_book_js', name='get_book_js'),
     
-    url(r'^accessright/delete/$', 'book.views.access_right_delete_js', name='access_right_delete_js'),
     url(r'^accessright/save/$', 'book.views.access_right_save_js', name='access_right_save_js'), 
 )

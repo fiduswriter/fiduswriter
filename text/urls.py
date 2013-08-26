@@ -31,6 +31,5 @@ urlpatterns = patterns('',
     url(r'^delete/$', 'text.views.delete_js', name='delete_js'),   
     url(r'^\d+/$', 'text.views.editor', name='editor'),
     
-    url(r'^accessright/delete/$', 'text.views.access_right_delete_js', name='access_right_delete_js'),
     url(r'^accessright/save/$', 'text.views.access_right_save_js', name='access_right_save_js'), 
 )

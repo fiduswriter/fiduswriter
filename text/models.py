@@ -46,6 +46,9 @@ class Text(models.Model):
     def __unicode__(self):
         return self.title
     
+    def get_absolute_url(self):
+        return "/text/%i/" % self.id
+    
     def is_locked(self):
         if self.currently_open == False:
             return False

@@ -17,13 +17,17 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.shortcuts import render_to_response
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpRequest
 from django.utils import simplejson, timezone
 from django.contrib.auth.decorators import login_required
 from django.core.context_processors import csrf
 from django.template import RequestContext
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
+from django.contrib.auth.models import User
+from django.utils.translation import ugettext as _
+from django.conf import settings
+from django.core.mail import send_mail
 
 from text.models import Text, AccessRight
 from text.forms import TextForm
@@ -56,7 +60,7 @@ def get_accessrights(ars):
         ret.append({
             'text_id': ar.text.id,
             'user_id': ar.user.id,
-            'user_name': ar.user.username,
+            'user_name': ar.user.readable_name,
             'rights': ar.rights,
             'avatar': the_avatar
         })
@@ -345,18 +349,31 @@ def delete_js(request):
         status=status
     )            
 
-@login_required
-def access_right_delete_js(request):
-    status = 405
-    if request.is_ajax() and request.method == 'POST':
-        access_right_id = int(request.POST['id'])
-        access_right = AccessRight.objects.get(pk=access_right_id,text__owner=request.user)
-        access_right.delete()
-        status = 200
-    return HttpResponse(
-        content_type = 'application/json; charset=utf8',
-        status=status
-    )
+def send_share_notification(request, doc_id, collaborator_id, tgt_right):
+    owner = request.user.readable_name
+    document = Text.objects.get(id=doc_id)
+    collaborator = User.objects.get(id=collaborator_id)
+    collaborator_name = collaborator.readable_name
+    collaborator_email = collaborator.email
+    right = 'read'
+    if tgt_right == 'w':
+        right = 'read and write'
+    link = HttpRequest.build_absolute_uri(request, document.get_absolute_url())
+    message_body = _('Hey %(collaborator_name)s,\n%(owner)s has shared a Fidus Writer document with you and given you %(right)s access rights.\nAccess the document through this link: %(link)s') % {'owner': owner, 'right': right, 'collaborator_name': collaborator_name, 'link': link}
+    send_mail(_('Fidus Writer document shared'), message_body, settings.DEFAULT_FROM_EMAIL,
+        [collaborator_email], fail_silently=True)
+
+def send_share_upgrade_notification(request, doc_id, collaborator_id):
+    owner = request.user.readable_name
+    document = Text.objects.get(id=doc_id)
+    collaborator = User.objects.get(id=collaborator_id)
+    collaborator_name = collaborator.readable_name
+    collaborator_email = collaborator.email
+    link = HttpRequest.build_absolute_uri(request, document.get_absolute_url())
+    message_body = _('Hey %(collaborator_name)s,\n%(owner)s has given you write access rights to a Fidus Writer document.\nAccess the document through this link: %(link)s') % {'owner': owner, 'collaborator_name': collaborator_name, 'link': link}
+    send_mail(_('Fidus Writer document write access'), message_body, settings.DEFAULT_FROM_EMAIL,
+        [collaborator_email], fail_silently=True)
+
 
 @login_required
 @transaction.commit_on_success
@@ -380,19 +397,27 @@ def access_right_save_js(request):
                     tgt_right = tgt_rights[x]
                 except IndexError:
                     tgt_right = 'r'
-                try:
-                    access_right = AccessRight.objects.get(text_id = doc_id, user_id = collaborator_id)
-                    access_right.rights = tgt_right
-                except ObjectDoesNotExist:
-                    access_right = AccessRight.objects.create(
-                        text_id = doc_id,
-                        user_id = collaborator_id,
-                        rights= tgt_right,
-                    )
                 if tgt_right == 'd':
-                # Status 'd' means the access right is marked for deletion.
-                    access_right.delete()
+                    # Status 'd' means the access right is marked for deletion.
+                    try:
+                        access_right = AccessRight.objects.get(text_id = doc_id, user_id = collaborator_id)
+                        access_right.delete()
+                    except:
+                        pass
                 else:
+                    try:
+                        access_right = AccessRight.objects.get(text_id = doc_id, user_id = collaborator_id)
+                        if access_right.rights != tgt_right:
+                            access_right.rights = tgt_right
+                            if tgt_right == 'w':
+                                send_share_upgrade_notification(request, doc_id, collaborator_id)                            
+                    except ObjectDoesNotExist:
+                        access_right = AccessRight.objects.create(
+                            text_id = doc_id,
+                            user_id = collaborator_id,
+                            rights= tgt_right,
+                        )
+                        send_share_notification(request, doc_id, collaborator_id, tgt_right)
                     access_right.save()
                 x += 1
         response['access_rights'] = get_accessrights(AccessRight.objects.filter(text__owner=request.user))

@@ -1649,11 +1649,11 @@
         }
         
         if (_.isNull(lastModified)) {
-            lastModified = 0;
+            lastModified = -1;
         }
         
         if (_.isNull(numberOfEntries)) {
-            numberOfEntries = 0;
+            numberOfEntries = -1;
         }
 
         $.activateWait();

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-22 02:23-0500\n"
+"POT-Creation-Date: 2013-08-26 08:08-0500\n"
 "PO-Revision-Date: 2013-07-29 14:14+0200\n"
 "Last-Translator: Vladimir Vitkov <vvitkov@linux-bg.org>\n"
 "Language-Team: Bulgarian <vvitkov@linux-bg.org>\n"
@@ -16,12 +16,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: account/templates/account/base.html:10 base/templates/base.html:10
+#: account/templates/account/base.html:7 base/templates/base.html:10
 #: text/templates/text/editor.html:9
 msgid "The all in one solution for collaborative academic writing."
 msgstr "Единственото решение за съвместно създаване на академични документи."
 
-#: account/templates/account/base.html:68
+#: account/templates/account/base.html:65
 #: account/templates/account/login.html:7
 #: account/templates/account/signup.html:10
 msgid "Log In"
@@ -610,6 +610,32 @@ msgstr "Автор"
 msgid "Published"
 msgstr "Публикувани"
 
+#: book/views.py:301
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,\n"
+"%(owner)s has shared the book '%(book)s' on Fidus Writer with you and given "
+"you %(right)s access rights.\n"
+"Find the book in your book overview: %(link)s"
+msgstr ""
+
+#: book/views.py:302
+msgid "Fidus Writer book shared"
+msgstr ""
+
+#: book/views.py:312
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,\n"
+"%(owner)s has given you write access rights to the book '%(book)s' on Fidus "
+"Writer.\n"
+"Find the book in your book overview: %(link)s"
+msgstr ""
+
+#: book/views.py:313
+msgid "Fidus Writer book write access"
+msgstr ""
+
 #: book/templates/book/index.html:6
 msgid "Book Overview"
 msgstr "Обзор на Книгата"
@@ -662,21 +688,47 @@ msgstr "Собственик"
 msgid "Rights"
 msgstr "Права"
 
-#: fiduswriter/settings.py:206
+#: fiduswriter/settings.py:248
 msgid "English"
 msgstr "Английски"
 
-#: fiduswriter/settings.py:207
+#: fiduswriter/settings.py:249
 msgid "Spanish"
 msgstr "Испански"
 
-#: fiduswriter/settings.py:208
+#: fiduswriter/settings.py:250
 msgid "German"
 msgstr "Немски"
 
-#: fiduswriter/settings.py:209
+#: fiduswriter/settings.py:251
 msgid "Bulgarian"
 msgstr "Български"
+
+#: text/views.py:362
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,\n"
+"%(owner)s has shared a Fidus Writer document with you and given you "
+"%(right)s access rights.\n"
+"Access the document through this link: %(link)s"
+msgstr ""
+
+#: text/views.py:363
+#, fuzzy
+msgid "Fidus Writer document shared"
+msgstr "редактирай документи"
+
+#: text/views.py:373
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,\n"
+"%(owner)s has given you write access rights to a Fidus Writer document.\n"
+"Access the document through this link: %(link)s"
+msgstr ""
+
+#: text/views.py:374
+msgid "Fidus Writer document write access"
+msgstr ""
 
 #: text/templates/text/editor.html:41
 msgid "Contents"

@@ -1672,13 +1672,13 @@
                 bibliographyHelpers.addBibCategoryList(response.bibCategories);
                 if (response.hasOwnProperty('bibList')) {
                     bibliographyHelpers.addBibList(response.bibList);
-                  //  try {
+                    try {
                         localStorage.setItem('biblist',JSON.stringify(response.bibList));
                         localStorage.setItem('last_modified_biblist',response.last_modified);
                         localStorage.setItem('number_of_entries',response.number_of_entries);
-                  //  } catch (error) {
+                    } catch (error) {
                         // The local storage was likely too small
-                  //  }
+                    }
                 } else {
                     var bibList = JSON.parse(localStorage.getItem('biblist'));
                     bibliographyHelpers.addBibList(bibList);

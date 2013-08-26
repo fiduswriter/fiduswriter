@@ -25,9 +25,9 @@
     bibliographyHelpers.serverBibItemToBibDB = function (item, aBibDB) {
         var id = item['id'];
         aBibDB[id] = jQuery.parseJSON(item['fields']);
-        aBibDB[id]['entry_type'] = item['entry_type']
-        aBibDB[id]['entry_key'] = item['entry_key']
-        aBibDB[id]['entry_cat'] = item['entry_cat']
+        aBibDB[id]['entry_type'] = item['entry_type'];
+        aBibDB[id]['entry_key'] = item['entry_key'];
+        aBibDB[id]['entry_cat'] = item['entry_cat'];
         return id;
     };
 
@@ -1672,13 +1672,13 @@
                 bibliographyHelpers.addBibCategoryList(response.bibCategories);
                 if (response.hasOwnProperty('bibList')) {
                     bibliographyHelpers.addBibList(response.bibList);
-                    try {
+                  //  try {
                         localStorage.setItem('biblist',JSON.stringify(response.bibList));
                         localStorage.setItem('last_modified_biblist',response.last_modified);
                         localStorage.setItem('number_of_entries',response.number_of_entries);
-                    } catch (error) {
+                  //  } catch (error) {
                         // The local storage was likely too small
-                    }
+                  //  }
                 } else {
                     var bibList = JSON.parse(localStorage.getItem('biblist'));
                     bibliographyHelpers.addBibList(bibList);

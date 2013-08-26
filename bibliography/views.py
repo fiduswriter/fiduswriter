@@ -182,7 +182,7 @@ def biblist_js(request):
                 if user_id == request.user.id:    
                     last_modified_onclient = int(request.POST['last_modified'])
                     number_of_entries_onclient = int(request.POST['number_of_entries'])
-                    aggregation_values = Entry.objects.filter(entry_owner=1).aggregate(Max('last_modified'),Count('id'))
+                    aggregation_values = Entry.objects.filter(entry_owner=user_id).aggregate(Max('last_modified'),Count('id'))
                     last_modified__max = aggregation_values['last_modified__max']
                     number_of_entries_onserver = aggregation_values['id__count']
                     if last_modified__max:

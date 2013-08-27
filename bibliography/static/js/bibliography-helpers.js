@@ -466,6 +466,11 @@
 
         this.key_value_list = function () {
             var kv = this.key_equals_value();
+            if (_.isUndefined(kv)) {
+                // Entry has no fields, so we delete it.
+                delete this.entries[this.currentEntry];
+                return;
+            }
             this.entries[this.currentEntry][kv[0]] = this.scan_bibtex_string(kv[
                 1]);
             while (this.tryMatch(",")) {

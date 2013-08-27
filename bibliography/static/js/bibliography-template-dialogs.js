@@ -94,11 +94,19 @@ var tmp_bibtable = _.template('\
                 <i class="icon-book"></i>\
                 <% if ( allowEdit ){ %>\
                     <span class="edit-bib fw-link-text fw-searchable" data-id="<%- id %>" data-type="<%- type %>">\
-                        <%- title %>\
+                        <% if (title.length>0) { %>\
+                            <%- title %>\
+                        <% } else { %>\
+                            <i>'+gettext('Untitled')+'</i>\
+                        <% } %>\
                     </span>\
                 <% } else { %>\
                     <span class="fw-searchable">\
-                        <%- title %>\
+                        <% if (title.length>0) { %>\
+                            <%- title %>\
+                        <% } else { %>\
+                            <i>'+gettext('Untitled')+'</i>\
+                        <% } %>\
                     </span>\
                 <% } %>\
             </span>\

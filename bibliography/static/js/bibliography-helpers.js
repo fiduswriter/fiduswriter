@@ -1511,7 +1511,7 @@
                 bibliographyHelpers.addBibList(response.bibs);
                 var errors = response.errors,
                     warnings = response.warning,
-                    len = errors.length;
+                    len = errors.length, i;
                 for (i = 0; i < len; i++) {
                     $.addAlert('error', errors[i]);
                 }

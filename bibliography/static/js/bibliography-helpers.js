@@ -1462,7 +1462,7 @@
     };
 
     bibliographyHelpers.importBibliography2 = function (e) {
-        var bib_data = new bibliographyHelpers.bibtexParser(), bib_entries;
+        var bib_data = new bibliographyHelpers.bibtexParser(), bib_entries, bib_keylist, totalChunks, currentChunkNumber;
         bib_data.setInput(e.target.result);
         bib_data.bibtex();
         bib_entries = bib_data.getEntries();
@@ -1470,7 +1470,33 @@
             $.deactivateWait();
             $.addAlert('error', gettext('No bibliography entries could be found in import file.'));
             return;
+        } else {
+            bib_keylist = Object.keys(bib_entries);
+            totalChunks = Math.ceil(bib_keylist.length/50);
+            currentChunkNumber = 0;
+            
+            function processChunk() {
+                var currentChunk;
+                if (currentChunkNumber < totalChunks) {
+                    currentChunk = {};
+                    for (var i = currentChunkNumber; i < currentChunkNumber + 50; i++) {
+                        currentChunk[bib_keylist[i]]= bib_entries[bib_keylist[i]];
+                    }
+                    bibliographyHelpers.importBibliography3(currentChunk, function() {
+                        currentChunkNumber++;
+                        processChunk();
+                    });  
+                } else {
+                    $.deactivateWait();
+                }
+            }
+            processChunk();
         }
+        
+    };
+    
+    bibliographyHelpers.importBibliography3 = function (bib_entries, callback) {
+        
         var post_data = {
             'bibs': $.toJSON(bib_entries)
         };
@@ -1499,7 +1525,7 @@
                 console.log(jqXHR.responseText);
             },
             complete: function () {
-                $.deactivateWait();
+                callback();
             }
         });
     };

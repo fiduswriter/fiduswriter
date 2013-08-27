@@ -169,6 +169,7 @@
 
 		function readUint8Array(index, length, callback, onerror) {
 			var reader = new FileReader();
+                        
 			reader.onload = function(e) {
 				callback(new Uint8Array(e.target.result));
 			};

@@ -18,6 +18,8 @@
  *
  */
 
+var FW_FILETYPE_VERSION = "1.0";
+
 (function () {
     var exports = this,
         importer = {};
@@ -28,7 +30,7 @@
                 }).contents === 'application/fidus+zip' &&
             _.findWhere(textFiles, {
                     filename: 'filetype-version'
-                }).contents === '1.0') {
+                }).contents === FW_FILETYPE_VERSION) {
             // This seems to be a valid fidus file with current version number.
             var shrunkBibDB = jQuery.parseJSON(
                 _.findWhere(
@@ -44,7 +46,12 @@
 
             importer.getDBs(aDocument, shrunkBibDB, shrunkImageDB, entries);
 
-        }
+        } else {
+                // The file is not a Fidus Writer file.
+                $.deactivateWait();
+                $.addAlert('error', gettext('The uploaded file does not appear to be of the version used on this server: ')+FW_FILETYPE_VERSION);
+                return;
+            }
     };
 
     importer.getDBs = function (aDocument, shrunkBibDB, shrunkImageDB,
@@ -74,10 +81,28 @@
     };
 
     importer.init = function (file) { // use a BlobReader to read the zip from a Blob object;
-        zip.createReader(new zip.BlobReader(file), function (reader) {
 
+        var reader = new FileReader();
+        reader.onloadend = function() {
+            if (reader.result.length > 60 && reader.result.substring(0,2) == 'PK' && reader.result.substring(38,59) == 'application/fidus+zip') {
+                importer.initZipFileRead(file);
+            } else {
+                // The file is not a Fidus Writer file.
+                $.deactivateWait();
+                $.addAlert('error', gettext('The uploaded file does not appear to be a Fidus Writer file.'));
+                return;
+            }
+        };
+        reader.readAsText(file);
+    };
+    
+    importer.initZipFileRead = function (file) {
+
+        zip.createReader(new zip.BlobReader(file), function (reader) {
             // get all entries from the zip
+           
             reader.getEntries(function (entries) {
+                
                 if (entries.length) {
 
                     var textFiles = [{
@@ -112,9 +137,11 @@
 
                 }
             });
+         
         }, function (error) {
             // onerror callback
         });
+        
     };
 
     importer.sendNewImageAndBibEntries = function (aDocument,

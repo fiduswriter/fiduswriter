@@ -319,7 +319,7 @@
             if (this.input.substring(this.pos, this.pos + s.length) == s) {
                 this.pos += s.length;
             } else {
-                $.addAlert('error', "Token mismatch, expected " + s +
+                console.log("Token mismatch, expected " + s +
                     ", found " + this.input
                     .substring(this.pos));
             }
@@ -385,7 +385,7 @@
                 } else if (this.input[this.pos] == '{') {
                     bracecount++;
                 } else if (this.pos == this.input.length - 1) {
-                    $.addAlert('error', "Unterminated value");
+                    console.log("Unterminated value");
                 }
                 this.pos++;
             }
@@ -401,7 +401,7 @@
                     this.match('"');
                     return this.input.substring(start, end);
                 } else if (this.pos == this.input.length - 1) {
-                    $.addAlert('error', "Unterminated value:" + this.input.substring(
+                    console.log("Unterminated value:" + this.input.substring(
                             start));
                 }
                 this.pos++;
@@ -421,7 +421,7 @@
                 } else if (k.match("^[0-9]+$")) {
                     return k;
                 } else {
-                    $.addAlert('error', "Value unexpected:" + this.input.substring(
+                    console.log("Value unexpected:" + this.input.substring(
                             start));
                 }
             }
@@ -441,7 +441,7 @@
             var start = this.pos;
             while (true) {
                 if (this.pos == this.input.length) {
-                    $.addAlert('error', "Runaway key");
+                    console.log("Runaway key");
                 }
                 if (this.input[this.pos].match("[a-zA-Z0-9_:;`\\.\\\?+/-]")) {
                     this.pos++
@@ -458,7 +458,7 @@
                 var val = this.value();
                 return [key, val];
             } else {
-                $.addAlert('error',
+                console.log(
                     "... = value expected, equals sign missing: " + this.input
                     .substring(this.pos));
             }
@@ -1462,12 +1462,19 @@
     };
 
     bibliographyHelpers.importBibliography2 = function (e) {
-        var bib_data = new bibliographyHelpers.bibtexParser();
+        var bib_data = new bibliographyHelpers.bibtexParser(), bib_entries;
         bib_data.setInput(e.target.result);
         bib_data.bibtex();
+        bib_entries = bib_data.getEntries();
+        if (_.isEmpty(bib_entries)) {
+            $.deactivateWait();
+            $.addAlert('error', gettext('No bibliography entries could be found in import file.'));
+            return;
+        }
         var post_data = {
-            'bibs': $.toJSON(bib_data.getEntries())
+            'bibs': $.toJSON(bib_entries)
         };
+        
         $.ajax({
             url: '/bibliography/import_bibtex/',
             type: 'post',

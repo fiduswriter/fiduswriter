@@ -5,111 +5,109 @@
 {% block title %}{% trans "Bibliography Manager" %}{% endblock %}
 
 {% block extraheaders %}
-{% compress css %}
-<link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/bibliography.css" />
-{% endcompress %}
+    {% compress css %}
+        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/bibliography.css" />
+    {% endcompress %}
 
-{% compress js %}
-<!-- jQuery tablesorter -->
-<script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dataTables.min.js"></script>
-<!-- jQuery json -->
-<script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.json-2.4.min.js"></script>
-<!-- jQuery Dropkick -->
-<script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dropkick-1.1.0.js"></script>
-            <!-- Zip.js -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/zip.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/deflate.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/inflate.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/zip-fs.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/zip-ext.js"></script>
-            <script type="text/javascript">
-                zip.useWebWorkers = false;
-            </script>
-{% endcompress %}
+    {% compress js %}
+        <!-- jQuery tablesorter -->
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dataTables.min.js"></script>
+        <!-- jQuery json -->
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.json-2.4.min.js"></script>
+        <!-- jQuery Dropkick -->
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dropkick-1.1.0.js"></script>
+        <!-- Zip.js -->
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/zip.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/deflate.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/inflate.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/zip-fs.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/zip-ext.js"></script>
+        <script type="text/javascript">
+            zip.useWebWorkers = false;
+        </script>
 
-{% compress js %}
-<script type="text/javascript" src="{{ STATIC_URL }}js/exporter.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/citation-helpers.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-statics.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-helpers.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-template-dialogs.js"></script>
-<script type="text/javascript">
-    bibliographyHelpers.bind();
-</script>
-{% endcompress %}
+        <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/citation-helpers.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-statics.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-helpers.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-template-dialogs.js"></script>
+        <script type="text/javascript">
+            bibliographyHelpers.bind();
+        </script>
+    {% endcompress %}
 
 {% endblock %}
 
 {% block contents %}
-<ul class="fw-document-menu">
-    <li class="fw-document-menu-item">
-        <div id="action-selection" class="fw-button fw-light fw-large">
-            <input type="checkbox" id="select-all-entry" />
-            <span id="select-action-dropdown" class="icon-down-dir"></span>
-        </div>
-        <div id="action-selection-pulldown" class="fw-pulldown fw-left">
-            <ul>
-                <li>
-                    <span class="fw-pulldown-item" data-action="delete">
-                        {% trans "Delete selected" %}
-                    </span>
-                </li>
-                <li>
-                    <span class="fw-pulldown-item" data-action="export">
-                        {% trans "Export selected" %}
-                    </span>
-                </li>
-            </ul>
-        </div>
-    </li>
-    <li class="fw-document-menu-item">
-        <div id="bib-category-btn" class="fw-button fw-light fw-large">
-            <input type="hidden" id="bib-category" value="0" />
-            <label>{% trans "All categories" %}</label>
-            <span class="icon-down-dir"></span>
-        </div>
-        <div id="bib-category-pulldown" class="fw-pulldown fw-left">
-            <ul id="bib-category-list">
-                <li>
-                    <span class="fw-pulldown-item" data-id="0">
-                        {% trans "All categories" %}
-                    </span>
-                </li>
-            </ul>
-        </div>
-    </li>
-    <li class="fw-document-menu-item">
-        <span id="edit-category" class="fw-button fw-light fw-large">
-            {% trans "Edit categories" %}
-            <span class="icon-edit"></span>
-        </span>
-    </li>
-    <li class="fw-document-menu-item">
-        <span class="edit-bib createNew fw-button fw-light fw-large">
-            {% trans "Register new source" %}
-            <span class="icon-plus-circle"></span>
-        </span>
-    </li>
-    <li class="fw-document-menu-item">
-        <span class="import-bib fw-button fw-light fw-large">
-            {% trans "Import Bibtex Library" %}
-            <span class="icon-download"></span>
-        </span>
-    </li>
-</ul>
-<div class="fw-table-wrapper">
-    <table id="bibliography" class="tablesorter fw-document-table">
-        <thead class="fw-document-table-header">
-            <tr>
-                <td width="30"></td>
-                <th width="235">{% trans "Title" %}</th>
-                <th width="170">{% trans "Sourcetype" %}</th>
-                <th width="175">{% trans "Author" %}</th>
-                <th width="100">{% trans "Published" %}</th>
-                <td width="50">{% trans "Delete" %}</td>
-            </tr>
-        </thead>
-        <tbody class="fw-document-table-body fw-large"></tbody>
-    </table>
-</div>
+    <ul class="fw-document-menu">
+        <li class="fw-document-menu-item">
+            <div id="action-selection" class="fw-button fw-light fw-large">
+                <input type="checkbox" id="select-all-entry" />
+                <span id="select-action-dropdown" class="icon-down-dir"></span>
+            </div>
+            <div id="action-selection-pulldown" class="fw-pulldown fw-left">
+                <ul>
+                    <li>
+                        <span class="fw-pulldown-item" data-action="delete">
+                            {% trans "Delete selected" %}
+                        </span>
+                    </li>
+                    <li>
+                        <span class="fw-pulldown-item" data-action="export">
+                            {% trans "Export selected" %}
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        <li class="fw-document-menu-item">
+            <div id="bib-category-btn" class="fw-button fw-light fw-large">
+                <input type="hidden" id="bib-category" value="0" />
+                <label>{% trans "All categories" %}</label>
+                <span class="icon-down-dir"></span>
+            </div>
+            <div id="bib-category-pulldown" class="fw-pulldown fw-left">
+                <ul id="bib-category-list">
+                    <li>
+                        <span class="fw-pulldown-item" data-id="0">
+                            {% trans "All categories" %}
+                        </span>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        <li class="fw-document-menu-item">
+            <span id="edit-category" class="fw-button fw-light fw-large">
+                {% trans "Edit categories" %}
+                <span class="icon-edit"></span>
+            </span>
+        </li>
+        <li class="fw-document-menu-item">
+            <span class="edit-bib createNew fw-button fw-light fw-large">
+                {% trans "Register new source" %}
+                <span class="icon-plus-circle"></span>
+            </span>
+        </li>
+        <li class="fw-document-menu-item">
+            <span class="import-bib fw-button fw-light fw-large">
+                {% trans "Import Bibtex Library" %}
+                <span class="icon-download"></span>
+            </span>
+        </li>
+    </ul>
+    <div class="fw-table-wrapper">
+        <table id="bibliography" class="tablesorter fw-document-table">
+            <thead class="fw-document-table-header">
+                <tr>
+                    <td width="30"></td>
+                    <th width="235">{% trans "Title" %}</th>
+                    <th width="170">{% trans "Sourcetype" %}</th>
+                    <th width="175">{% trans "Author" %}</th>
+                    <th width="100">{% trans "Published" %}</th>
+                    <td width="50">{% trans "Delete" %}</td>
+                </tr>
+            </thead>
+            <tbody class="fw-document-table-body fw-large"></tbody>
+        </table>
+    </div>
 {% endblock %}

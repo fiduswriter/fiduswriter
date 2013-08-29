@@ -1,11 +1,15 @@
-#alerts-wrapper {
+#alerts-outer-wrapper {
     position: fixed;
     right: 22px;
     bottom: 10px;
-    width: 328px;
-    height: auto;
-    overflow: visible;
+    direction:rtl;
+    -webkit-column-width: 328px;
+    width: 100%;
+}
+
+#alerts-wrapper {
     z-index: 1600;
+    direction:ltr;
 }
 
 #alerts-wrapper li {
@@ -21,6 +25,7 @@
     font-size: 15px;
     line-height: 20px;
     opacity: 0;
+    -webkit-column-break-inside: avoid;
 }
 
 #alerts-wrapper li:before {

@@ -70,9 +70,9 @@ jQuery.extend({
             'success': 'icon-ok'
         };
         var $alert_box = $('<li class="alerts-' + alert_type + ' ' + icon_names[alert_type] + '">' + alert_msg + '</li>');
-        if(0 == $('#alerts-wrapper').size())
-            $('body').append('<ul id="alerts-wrapper"></ul>');
-        $('#alerts-wrapper').prepend($alert_box);
+        if(0 == $('#alerts-outer-wrapper').size())
+            $('body').append('<div id="alerts-outer-wrapper"><ul id="alerts-wrapper"></ul></div>');
+        $('#alerts-wrapper').append($alert_box);
         $alert_box.fadeTo(fade_speed, 1, function() {
             $(this).delay('2000').fadeOut(fade_speed, function() { $(this).remove(); });
         });

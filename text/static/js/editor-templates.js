@@ -20,9 +20,9 @@
 
 var tmp_metadata = _.template('\
 <% if (settings.subtitle) { %>\
-    <div id="metadata-subtitle" class="editable metadata metadata-subtitle" data-metadata="subtitle" data-metadata-type="html" contenteditable="true" title="'+gettext('The subtitle of the document')+'"><%= metadata.subtitle %></div>\
+    <div id="metadata-subtitle" class="editable metadata metadata-subtitle" data-metadata="subtitle" contenteditable="true" title="'+gettext('The subtitle of the document')+'"><%= metadata.subtitle %></div>\
 <% } %>\
 <% if (settings.abstract) { %>\
-    <div id="metadata-abstract" class="editable metadata metadata-abstract" data-metadata="abstract" data-metadata-type="html" contenteditable="true" title="'+gettext('The abstract of the document')+'"><%= metadata.abstract %></div>\
+    <div id="metadata-abstract" class="editable metadata metadata-abstract" data-metadata="abstract" contenteditable="true" title="'+gettext('The abstract of the document')+'"><%= metadata.abstract %></div>\
 <% } %>\
 ');

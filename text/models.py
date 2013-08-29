@@ -29,9 +29,10 @@ MAX_SINCE_SAVE=timedelta(seconds=LOCK_TIMEOUT)
 class Text(models.Model):
     title = models.TextField(blank=True)
     contents = models.TextField()
-    metadata = models.TextField(default='{}') #json object with all the metadata besides the title
-    comments = models.TextField(default='[]') #json object with all the comments
-    settings = models.TextField(default='{}') #json object with all the settings 
+    metadata = models.TextField(default='{}') #json object of metadata besides the title
+    comments = models.TextField(default='[]') #json list of comments
+    settings = models.TextField(default='{}') #json object of settings
+    history = models.TextField(default='[]') #json list with the document history
     owner = models.ForeignKey(User,related_name='owner')
     added = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

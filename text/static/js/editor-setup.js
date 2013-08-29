@@ -69,78 +69,40 @@ jQuery(document).bind('documentDataLoaded', function () {
     });
 
 
-    if (typeof (theDocument.settings.documentstyle) === 'undefined') {
-        theDocument.settings.documentstyle = 'classic';
-    }
-
-    var setDocumentstyle = function () {
-        if(!paginationConfigList.hasOwnProperty(theDocument.settings.documentstyle)) {
-            theDocument.settings.documentstyle = 'elephant';
-        }
-
-        jQuery("#header-navigation .style.selected").removeClass('selected');
-        jQuery('span[data-style=' + theDocument.settings.documentstyle + ']').addClass('selected');
-
-        // Remove all available style classes from flow
-        jQuery("#header-navigation .style").each(function () {
-            var thisStyle = jQuery(this).attr('data-style');
-            jQuery('#flow').removeClass(thisStyle);
-        });
-
-        jQuery('#flow').addClass(theDocument.settings.documentstyle);
-
-        paginationConfig.outerMargin = paginationConfigList[theDocument.settings.documentstyle].outerMargin;
-        paginationConfig.innerMargin = paginationConfigList[theDocument.settings.documentstyle].innerMargin;
-        paginationConfig.contentsTopMargin = paginationConfigList[theDocument.settings.documentstyle].contentsTopMargin;
-        paginationConfig.headerTopMargin = paginationConfigList[theDocument.settings.documentstyle].headerTopMargin;
-        paginationConfig.contentsBottomMargin = paginationConfigList[theDocument.settings.documentstyle].contentsBottomMargin;
-        paginationConfig.pagenumberBottomMargin = paginationConfigList[theDocument.settings.documentstyle].pagenumberBottomMargin;
-        pagination.setPageStyle();
-        set_document_style_timer = setTimeout(function() {
-            clearTimeout(set_document_style_timer);
-            if (document.webkitGetNamedFlows) {
-                document.webkitGetNamedFlows()[0].dispatchEvent(pagination.events.escapesNeedMove);
-            }
-        }, 200);
-
-    };
 
     var set_document_style_timer = setTimeout(function() {
         clearTimeout(set_document_style_timer);
-        setDocumentstyle();
+        //setDocumentstyle();
+        editorHelpers.setDisplay.document('settings.documentstyle',theDocument.settings.documentstyle);
     }, 800);
 
     // Document Style switching
     jQuery("#header-navigation .style").bind('click', function () {
-        theDocument.settings.documentstyle = jQuery(this).attr('data-style');
-        setDocumentstyle();
-        editorHelpers.documentHasChanged();
-        commentHelpers.layoutComments();
+        if (editorHelpers.setDocumentData('settings.documentstyle',jQuery(this).attr(
+            'data-style'))) {
+        
+            editorHelpers.setDisplay.document('settings.documentstyle',theDocument.settings.documentstyle);
+            editorHelpers.documentHasChanged();
+            commentHelpers.layoutComments();
+        }
         return false;
     });
-
-    if (typeof (theDocument.settings.citationstyle) === 'undefined') {
-        theDocument.settings.citationstyle = 'apa';
-    }
-
-    var setCitationstyle = function () {
-        jQuery("#header-navigation .citationstyle.selected").removeClass('selected');
-        jQuery('span[data-citationstyle=' + theDocument.settings.citationstyle + ']').addClass('selected');
-        citationHelpers.formatCitationsInDoc();
-    };
+    
+    
+    editorHelpers.setDisplay.document('settings.citationstyle',theDocument.settings.citationstyle);
 
     jQuery('span[data-citationstyle=' + theDocument.settings.citationstyle + ']').addClass('selected');
 
     // Citation Style switching
     jQuery("#header-navigation .citationstyle").bind('click', function () {
-        theDocument.settings.citationstyle = jQuery(this).attr(
-            'data-citationstyle');
-        setCitationstyle();
-        editorHelpers.documentHasChanged();
-        commentHelpers.layoutComments();
+        if (editorHelpers.setDocumentData('settings.citationstyle',jQuery(this).attr(
+            'data-citationstyle'))) {
+            editorHelpers.setDisplay.document('settings.citationstyle',theDocument.settings.citationstyle);
+            editorHelpers.documentHasChanged();
+            commentHelpers.layoutComments();
+        }
         return false;
     });
-
     // Tools
     jQuery("#header-navigation .tools-item").bind('click', function () {
         toolsHelpers.toolsEventHandler(jQuery(this).data('function'));
@@ -156,48 +118,20 @@ jQuery(document).bind('documentDataLoaded', function () {
         editorHelpers.setPlaceholders(jQuery(this).attr('id'));
     });
 
-    if (typeof (theDocument.settings.papersize) === 'undefined') {
-        theDocument.settings.papersize = '1117';
-    }
-
-    var setPapersize = function () {
-        jQuery("#header-navigation .papersize.selected").removeClass(
-            'selected');
-        jQuery('span[data-paperheight=' + theDocument.settings.papersize +
-            ']').addClass('selected');
-
-    };
-
-    setPapersize();
-
+    editorHelpers.setDisplay.document('settings.papersize',theDocument.settings.papersize);
+    
     // Paper size switching
     jQuery("#header-navigation .papersize").bind('click', function () {
-        theDocument.settings.papersize = jQuery(this).attr('data-paperheight');
-        setPapersize();
-        editorHelpers.documentHasChanged();
-        paginationConfig['pageHeight'] = theDocument.settings.papersize;
-        pagination.setPageStyle();
-        commentHelpers.layoutComments();
-        set_document_style_timer = setTimeout(function() {
-            clearTimeout(set_document_style_timer);
-            if (document.webkitGetNamedFlows) {
-                document.webkitGetNamedFlows()[0].dispatchEvent(pagination.events.escapesNeedMove);
-            }
-        }, 100);
+        if (editorHelpers.setDocumentData('settings.papersize',(!theDocument.settings
+                .papersize))) {
+            editorHelpers.setDisplay.document('settings.papersize',theDocument.settings.papersize);
+            editorHelpers.documentHasChanged();
+        }
         return false;
     });
 
-    if (typeof (theDocument.settings.tracking) === 'undefined') {
-        theDocument.settings.tracking = false;
-    }
-
-    if (theDocument.id !== 0) {
-        jQuery('.savecopy').removeClass('disabled');
-    }
-
-    if (theDocument.settings.tracking) {
-        jQuery('.ice-track').addClass('selected');
-    }
+    editorHelpers.setDisplay.document('id', theDocument.id);
+    
 
     // Disable papersize menu if we are dealing with a non CSS Regions browser
     if (jQuery('.pagination-simple').length > 0) {
@@ -235,37 +169,16 @@ jQuery(document).bind('documentDataLoaded', function () {
             window.location.href = '/';
         });
     });
-    if (!theDocument.settings.hasOwnProperty('metadata')) {
-        theDocument.settings.metadata = {};
-    }
+
     editorHelpers.layoutMetadata();
 
     jQuery('.metadata-menu-item').bind('click', editorHelpers.switchMetadata);
-
-    jQuery(document).on('blur', '#document-metadata .metadata', function () {
-        var value;
-        if ('text' === jQuery(this).attr('data-metadata-type')) {
-            value = jQuery.trim(this.innerText);
-        } else if ('html' === jQuery(this).attr('data-metadata-type')) {
-            value = this.innerHTML;
-        }
-        if (value !== theDocument.metadata[jQuery(this).attr(
-            'data-metadata')]) {
-            theDocument.metadata[jQuery(this).attr('data-metadata')] =
-                value;
-            editorHelpers.documentHasChanged();
-        }
-    });
-
 
     jQuery('#metadata-subtitle, #metadata-abstract').bind('blur', function () {
         if (jQuery.trim(this.innerText) === '') {
             this.innerHTML = '<p><br></p>';
         };
     });
-
-
-
 
     if (!theDocument.is_owner) {
         jQuery('span.share').addClass('disabled');
@@ -277,9 +190,6 @@ jQuery(document).bind('documentDataLoaded', function () {
     if (theDocument.is_locked) {
         jQuery('#editor-navigation').hide();
     } else if (theDocument.rights === 'w') {
-
-
-
         window.tracker = new ice.InlineChangeEditor({
             element: document.querySelector('#document-editable'),
             handleEvents: false,
@@ -352,13 +262,7 @@ jQuery(document).bind('documentDataLoaded', function () {
         // Set webpage title when document title changes
         jQuery('#document-title').bind('keyup paste change hallomodified',
             function () {
-                var theTitle = jQuery(this).text();
-                if (theTitle.length === 0) {
-                    theTitle = gettext('Untitled Document');
-                }
-                jQuery('title').html('Fidus Writer - ' + theTitle);
-                jQuery('#header h1').html(theTitle);
-                //theDocument.title = this.innerHTML;
+                editorHelpers.setDisplay.document('title', jQuery(this).text().trim());
             });
 
         // When contents of document have changed, mark it as such
@@ -366,10 +270,6 @@ jQuery(document).bind('documentDataLoaded', function () {
             'keyup paste change hallomodified', function () {
                 editorHelpers.documentHasChanged();
             });
-        /*jQuery('#document-title').bind('keyup paste change', function () {
-            editorHelpers.documentHasChanged();
-            jQuery('.save').removeClass('disabled');
-        });*/
         jQuery('.save').bind('click', function () {
             editorHelpers.saveDocumentIfChanged();
         });
@@ -393,29 +293,22 @@ jQuery(document).bind('documentDataLoaded', function () {
         //ice pulldown
         $.addDropdownBox(jQuery('#ice-control'), jQuery('#ice-control .fw-pulldown'));
 
-        // Handle tracking menu events and set menu selected/disabled items correctly at document load time
-        if (theDocument.settings.tracking) {
-            jQuery('.ice-track').addClass('selected');
-        }
-
-        if (theDocument.settings.tracking_show) {
-            jQuery('.ice-display').addClass('selected');
-            jQuery('#flow').removeClass('CT-hide');
-        }
+        editorHelpers.setDisplay.document('settings.tracking',theDocument.settings.tracking);
+        editorHelpers.setDisplay.document('settings.tracking_show',theDocument.settings.tracking_show);
+       
 
         jQuery('.ice-display').bind('click', function () {
-            jQuery(this).toggleClass('selected');
-            jQuery('#flow').toggleClass('CT-hide');
-            theDocument.settings.tracking_show = (!theDocument.settings
-                .tracking_show);
+            editorHelpers.setDocumentData('settings.tracking_show',(!theDocument.settings
+                .tracking_show));
+            editorHelpers.setDisplay.document('settings.tracking_show',theDocument.settings.tracking_show);
             editorHelpers.documentHasChanged();
             return false;
         });
 
         if (theDocument.is_owner) {
             jQuery('.ice-track').bind('click', function () {
-                jQuery(this).toggleClass('selected');
-                theDocument.settings.tracking = (!theDocument.settings.tracking);
+                editorHelpers.setDocumentData('settings.tracking', (!theDocument.settings.tracking));
+                editorHelpers.setDisplay.document('settings.tracking',theDocument.settings.tracking);
                 editorHelpers.documentHasChanged();
                 return false;
             });

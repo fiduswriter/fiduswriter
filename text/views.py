@@ -188,6 +188,7 @@ def get_document_js(request):
                 response['document']['contents']='<p><br></p>'
                 response['document']['metadata']='{}'
                 response['document']['comments']='[]'
+                response['document']['history']='[]'
                 response['document']['settings']='{}'
                 response['document']['is_locked']=False
                 response['document']['access_rights']=[]
@@ -198,6 +199,7 @@ def get_document_js(request):
                 response['document']['metadata']=text.metadata
                 response['document']['comments']=text.comments
                 response['document']['settings']=text.settings
+                response['document']['history']=text.history
                 response['document']['access_rights'] = get_accessrights(AccessRight.objects.filter(text__owner=text_owner))
                 if text.is_locked():
                     response['document']['is_locked']=True
@@ -238,18 +240,19 @@ def save_js(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
-        text_id = int(request.POST['id'])
+        doc_id = int(request.POST['id'])
         form_data = request.POST.copy() 
         # We need to copy the request.POST in order to feed the request.user in
         # as the owner
         #if request.POST['title'] == '':
         #    form_data.__setitem__('title', '')
-        if text_id == 0:
+        if doc_id == 0:
             # We are dealing with a new document that still has not obtained an
             # ID.
             # We now add some data to the form from the webpage.
             form_data.__setitem__('owner', request.user.pk)
             form_data.__setitem__('last_editor', request.user.pk)
+            form_data.__setitem__('history', request.POST['last_history'])
             # Now we check the augmented form against the modelform
             form = TextForm(form_data)
             if form.is_valid():
@@ -257,7 +260,7 @@ def save_js(request):
                 # and return the id that was assigned back to the client.
                 form.save()
                 status = 201
-                response['text_id'] = form.instance.id
+                response['doc_id'] = form.instance.id
                 date_format = '%d/%m/%Y'
                 date_obj = dateutil.parser.parse(str(form.instance.added))
                 response['added'] = date_obj.strftime(date_format)
@@ -267,12 +270,21 @@ def save_js(request):
                 response['errors'] = form.errors 
                 
         else:
-            text = Text.objects.get(pk=text_id)
-            form_data.__setitem__('owner', text.owner.id)
+            doc = Text.objects.get(pk=doc_id)
+            form_data.__setitem__('owner', doc.owner.id)
             form_data.__setitem__('last_editor', request.user.pk)
             form_data.__setitem__('updated', timezone.now())
-            if text.owner==request.user:
-                form = TextForm(form_data,instance=text)
+            # add the documents recent history to the already saved history
+            last_history = request.POST['last_history']
+            if len(doc.history) > 2:
+                if len(last_history) > 2:
+                    form_data.__setitem__('history', doc.history[:-1]+',' + last_history[1:])
+                else:
+                    form_data.__setitem__('history', doc.history)
+            else:
+                form_data.__setitem__('history', last_history)
+            if doc.owner==request.user:
+                form = TextForm(form_data,instance=doc)
                 if form.is_valid():
                     form.save()
                     status = 200
@@ -282,8 +294,8 @@ def save_js(request):
             else:
                 # We are not dealing with the owner, so we need to check if the
                 # current user has the right to save the document
-                if len(text.accessright_set.filter(user=request.user,rights=u'w'))>0:
-                    form = TextForm(form_data,instance=text)
+                if len(doc.accessright_set.filter(user=request.user,rights=u'w'))>0:
+                    form = TextForm(form_data,instance=doc)
                     if form.is_valid():
                         form.save()
                         status = 200
@@ -302,15 +314,15 @@ def close_js(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
-        text_id = int(request.POST['id'])
-        if text_id == 0:
+        doc_id = int(request.POST['id'])
+        if doc_id == 0:
             # Document was never saved, so we just forget about it
             status = 200
         else:
-            text = Text.objects.get(pk=text_id)
-            if text.last_editor == request.user:
-                text.currently_open = False
-                text.save()
+            doc = Text.objects.get(pk=doc_id)
+            if doc.last_editor == request.user:
+                doc.currently_open = False
+                doc.save()
                 status = 200
     return HttpResponse(
         simplejson.dumps(response),
@@ -324,9 +336,9 @@ def ping_js(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
-        text_id = int(request.POST['id'])
-        if text_id > 0:
-            Text.objects.get(pk=text_id).save()
+        doc_id = int(request.POST['id'])
+        if doc_id > 0:
+            Text.objects.get(pk=doc_id).save()
         status = 200
     return HttpResponse(
         simplejson.dumps(response),
@@ -339,8 +351,8 @@ def delete_js(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
-        text_id = int(request.POST['id'])
-        document = Text.objects.get(pk=text_id,owner=request.user)
+        doc_id = int(request.POST['id'])
+        document = Text.objects.get(pk=doc_id,owner=request.user)
         document.delete()
         status = 200
     return HttpResponse(

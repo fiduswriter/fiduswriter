@@ -367,12 +367,15 @@ def send_share_notification(request, doc_id, collaborator_id, tgt_right):
     collaborator = User.objects.get(id=collaborator_id)
     collaborator_name = collaborator.readable_name
     collaborator_email = collaborator.email
+    document_title = document.title
+    if len(document_title)==0:
+        document_title = _('Untitled')
     right = 'read'
     if tgt_right == 'w':
         right = 'read and write'
     link = HttpRequest.build_absolute_uri(request, document.get_absolute_url())
-    message_body = _('Hey %(collaborator_name)s,\n%(owner)s has shared a Fidus Writer document with you and given you %(right)s access rights.\nAccess the document through this link: %(link)s') % {'owner': owner, 'right': right, 'collaborator_name': collaborator_name, 'link': link}
-    send_mail(_('Fidus Writer document shared'), message_body, settings.DEFAULT_FROM_EMAIL,
+    message_body = _('Hey %(collaborator_name)s,\n%(owner)s has shared the document \'%(document)s\'with you and given you %(right)s access rights.\nAccess the document through this link: %(link)s') % {'owner': owner, 'right': right, 'collaborator_name': collaborator_name, 'link': link, 'document': document_title}
+    send_mail(_('Document shared:')+' '+document_title, message_body, settings.DEFAULT_FROM_EMAIL,
         [collaborator_email], fail_silently=True)
 
 def send_share_upgrade_notification(request, doc_id, collaborator_id):

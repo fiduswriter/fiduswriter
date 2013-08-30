@@ -22,6 +22,7 @@ var tmp_documents_list = _.template('\
 <% _.each(theDocumentList,function(aDocument,key,list){%><%= tmp_documents_list_item({aDocument:aDocument})%><% }); %>');
 
 var tmp_documents_list_item = _.template('\
+ <% var documentTitle; if (0===aDocument.title.length) {documentTitle="'+gettext('Untitled')+'";} else {documentTitle=aDocument.title;} %>\
  <tr id="Text_<%- aDocument.id %>" <% if (theUser.id == aDocument.owner) { %>class="owned-by-user"<% } %> >\
                 <td width="20">\
                     <span class="fw-inline">\
@@ -34,11 +35,7 @@ var tmp_documents_list_item = _.template('\
                     <span class="fw-document-table-title fw-inline">\
                         <i class="icon-doc"></i>\
                         <a class="doc-title fw-link-text fw-searchable" href="/text/<%- aDocument.id %>/">\
-                            <% var documentTitle=document.createElement("div"); documentTitle.innerHTML=aDocument.title; if (documentTitle.innerText.length > 0) { %>\
-                                <%= documentTitle.innerText %>\
-                            <% } else { %>\
-                                '+gettext('Untitled')+'\
-                            <% } %>\
+                            <%- documentTitle %>\
                         </a>\
                         <% if (aDocument.is_locked) { %>\
                             <i class="icon-lock"></i>\
@@ -63,7 +60,7 @@ var tmp_documents_list_item = _.template('\
                     </span>\
                 </td>\
                  <td width="40" align="center">\
-                    <span class="delete-document fw-inline fw-link-text" data-id="<%- aDocument.id %>" data-title="<%- documentTitle.innerText %>">\
+                    <span class="delete-document fw-inline fw-link-text" data-id="<%- aDocument.id %>" data-title="<%- aDocument.title %>">\
                         <% if (theUser.id === aDocument.owner) { %><i class="icon-trash"></i><% } %>\
                     </span>\
                 </td>\

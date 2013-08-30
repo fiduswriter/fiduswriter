@@ -218,12 +218,9 @@
         var aDocument = _.findWhere(theDocumentList, {
             id: aChapter.text
         }),
-            documentTitle = document.createElement("div"),
+            documentTitle = aDocument.title,
             dialogHeader, dialogBody;
-        documentTitle.innerHTML = aDocument.title;
-        if (documentTitle.innerText.length > 0) {
-            documentTitle = documentTitle.innerText;
-        } else {
+        if (documentTitle.length < 0) {
             documentTitle = gettext('Untitled');
         }
         dialogHeader = gettext('Edit Chapter') + ': ' + aChapter.number +

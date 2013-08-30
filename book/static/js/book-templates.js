@@ -312,11 +312,9 @@ var tmp_book_chapter_list = _.template('\
                                         <% if (aChapter.part!="") { %>\
                                             <b class="part"><%- partCounter++ %>. '+gettext('Book part')+': <%- aChapter.part %></b><br>\
                                         <% } %>\
-                                        <%- aChapter.number %>. <% var documentTitle=document.createElement("div"); documentTitle.innerHTML=aChapter.title; if (documentTitle.innerText.length > 0) { %>\
-                                            <%= documentTitle.innerText %>\
-                                        <% } else { %>\
-                                            '+gettext('Untitled')+'\
-                                        <% } %>\
+                                        <%- aChapter.number %>. \
+                                        <% var documentTitle; if (0===aDocument.title.length) {documentTitle="'+gettext('Untitled')+'";} else {documentTitle=aDocument.title;} %>\
+                                        <%- documentTitle %>\
                                     </span>\
                                 </td>\
                                 <% if (theBook.rights==="w") { %>\
@@ -352,15 +350,12 @@ var tmp_book_chapter_list = _.template('\
 
 var tmp_book_document_list = _.template('\
                     <% _.each(theDocumentList, function(aDocument) { %>\
+                        <% var documentTitle; if (0===aDocument.title.length) {documentTitle="'+gettext('Untitled')+'";} else {documentTitle=aDocument.title;} %>\
                         <% if (!(_.findWhere(theBook.chapters, {text:aDocument.id}))) { %>\
                             <tr>\
                                 <td width="332" data-id="<%- aDocument.id %>" class="fw-checkable fw-checkable-td">\
                                     <span class="fw-inline">\
-                                        <% var documentTitle=document.createElement("div"); documentTitle.innerHTML=aDocument.title; if (documentTitle.innerText.length > 0) { %>\
-                                            <%= documentTitle.innerText %>\
-                                        <% } else { %>\
-                                            '+gettext('Untitled')+'\
-                                        <% } %>\
+                                        <%- documentTitle %>\
                                     </span>\
                                 </td>\
                             </tr>\

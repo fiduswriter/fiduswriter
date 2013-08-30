@@ -294,12 +294,15 @@ def send_share_notification(request, book_id, collaborator_id, tgt_right):
     collaborator = User.objects.get(id=collaborator_id)
     collaborator_name = collaborator.readable_name
     collaborator_email = collaborator.email
+    book_title = book.title
+    if len(book_title)==0:
+        book_title = _('Untitled')
     right = 'read'
     if tgt_right == 'w':
         right = 'read and write'
     link = HttpRequest.build_absolute_uri(request, '/book/')
-    message_body = _('Hey %(collaborator_name)s,\n%(owner)s has shared the book \'%(book)s\' on Fidus Writer with you and given you %(right)s access rights.\nFind the book in your book overview: %(link)s') % {'owner': owner, 'right': right, 'collaborator_name': collaborator_name, 'link': link, 'book': book.title}
-    send_mail(_('Fidus Writer book shared'), message_body, settings.DEFAULT_FROM_EMAIL,
+    message_body = _('Hey %(collaborator_name)s,\n%(owner)s has shared the book \'%(book)s\' on Fidus Writer with you and given you %(right)s access rights.\nFind the book in your book overview: %(link)s') % {'owner': owner, 'right': right, 'collaborator_name': collaborator_name, 'link': link, 'book': book_title}
+    send_mail(_('Book shared:')+' '+book_title, message_body, settings.DEFAULT_FROM_EMAIL,
         [collaborator_email], fail_silently=True)
 
 def send_share_upgrade_notification(request, book_id, collaborator_id):

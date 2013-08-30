@@ -298,7 +298,7 @@
         documentData.comments = JSON.stringify(theDocument.comments);
         documentData.last_history = JSON.stringify(theDocument.lastHistory);
         theDocument.lastHistory = [];
-        documentData.title = theDocument.title;
+        documentData.title = theDocument.title.substring(0,255);
         documentData.contents = theDocument.contents;
 
         var ajaxData = {

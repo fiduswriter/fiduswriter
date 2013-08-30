@@ -122,8 +122,7 @@ jQuery(document).bind('documentDataLoaded', function () {
     
     // Paper size switching
     jQuery("#header-navigation .papersize").bind('click', function () {
-        if (editorHelpers.setDocumentData('settings.papersize',(!theDocument.settings
-                .papersize))) {
+        if (editorHelpers.setDocumentData('settings.papersize',parseInt(jQuery(this).attr('data-paperheight')))) {
             editorHelpers.setDisplay.document('settings.papersize',theDocument.settings.papersize);
             editorHelpers.documentHasChanged();
         }

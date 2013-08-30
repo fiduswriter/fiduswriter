@@ -17,7 +17,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 (function () {
     var exports = this,
         commentHelpers = {};
@@ -25,25 +24,28 @@
     commentHelpers.localizeDate = function (milliseconds, sortable) {
         if (milliseconds > 0) {
             var the_date = new Date(milliseconds);
-            if(true === sortable) {
+            if (true === sortable) {
                 var yyyy = the_date.getFullYear(),
                     mm = the_date.getMonth() + 1,
                     dd = the_date.getDate();
 
-                if(10 > mm) {
+                if (10 > mm) {
                     mm = '0' + mm;
                 }
 
                 return yyyy + '/' + mm + '/' + dd;
-            } else {
+            }
+            else {
                 return the_date.toLocaleString();
             }
-        } else {
+        }
+        else {
             return '';
         }
     };
 
     commentHelpers.calculateCommentBoxOffset = function (referrer) {
+
         return referrer.getBoundingClientRect()['top'] + window.pageYOffset;
     };
 
@@ -54,15 +56,15 @@
     commentHelpers.findComment = function (id) {
         // Go through the list of comments, and return the comment specified by the id
         return _.findWhere(flatCommentList, {
-                'id': id
-            });
+            'id': id
+        });
     };
 
     commentHelpers.findActive = function () {
         // Go through the list of comments, and return the comment specified by the id
         return _.findWhere(flatCommentList, {
-                'active': true
-            });
+            'active': true
+        });
     };
 
     commentHelpers.findCommentReferrer = function (id) {
@@ -85,60 +87,104 @@
     commentHelpers.createNewComment = function (commentNode) {
         // Create a new comment, add it to the comment list and mark it as active.
         var newComment = {
-            'id': 0,
-            'user': theUser.id,
-            'user_name': theUser.name,
-            'user_avatar': theUser.avatar,
-            'date': 0,
-            'comment': '',
-            'editable': true,
-            'children': []
-        };
-        commentNode.setAttribute('data-id', 0);
-        commentHelpers.deactivateAll();
-        commentNode.classList.add('active');
-        newComment['active'] = true;
-        theDocument.comments.push(newComment);
-        flatCommentList.push(newComment);
-    };
-
-    commentHelpers.findNewId = function () {
-        return (_.max(flatCommentList, function (comment) {
-                    return comment.id;
-                }).id) + 1;
-    }
-
-    commentHelpers.createNewAnswer = function (parentId, commentText) {
-
-        var ajaxData, newAnswerBox;
-
-        ajaxData = {
-            'id': null,
-            'parent': parentId,
-            'content_type': 'text.text',
-            'object_pk': theDocument.id,
-            'comment': commentText,
-            'user': theUser.id
-        };
-
-        newAnswerBox = jQuery('.comment-box.active .comment-answer');
-
-        newAnswerBox.addClass('wait');
-
-        var newComment, parentComment;
-        //  json = jQuery.parseJSON(html);
-
-        newComment = {
             'id': commentHelpers.findNewId(),
             'user': theUser.id,
             'user_name': theUser.name,
             'user_avatar': theUser.avatar,
             'date': new Date().getTime(),
-            'comment': commentText,
+            'comment': '',
             'editable': true,
             'children': []
+        }, oldHtml, currentContainer, dmp, diff, newValue, theChange,
+                currentContainer;
+
+        commentNode.setAttribute('data-id', newComment.id);
+        commentHelpers.deactivateAll();
+        commentNode.classList.add('active');
+        newComment['active'] = true;
+
+
+        currentContainer = jQuery(commentNode).closest(
+            '#document-contents,#metadata-abstract,#metadata-subtitle,#document-title'
+        )[0];
+
+        if (currentContainer.id === 'document-contents') {
+            oldHtml = 'contents';
+        }
+        else if (currentContainer.id === 'metadata-abstract') {
+            oldHtml = 'metadata.abstract';
+        }
+        else if (currentContainer.id === 'metadata-subtitle') {
+            oldHtml = 'metadata.subtitle';
+        }
+        else if (currentContainer.id === 'document-title') {
+            oldHtml = 'metadata.title';
+        }
+
+
+
+        dmp = new diff_match_patch();
+        newValue = currentContainer.innerHTML;
+        diff = dmp.diff_main(eval('theDocument.' + oldHtml), newValue);
+        eval("theDocument." + oldHtml + "=unescape('" + escape(newValue) +
+            "')");
+
+        dmp.diff_cleanupEfficiency(diff);
+
+        theChange = [theUser.id, new Date().getTime(), 'comment', [
+            1,
+            "",
+            JSON.stringify(newComment), [
+                oldHtml,
+                diff
+            ]
+        ]];
+        theDocument.history.push(theChange);
+        theDocument.lastHistory.push(theChange);
+
+
+        theDocument.comments.push(newComment);
+
+        flatCommentList.push(newComment);
+
+        editorHelpers.documentHasChanged();
+    };
+
+    commentHelpers.findNewId = function () {
+        var nextCommentId = (_.max(flatCommentList, function (comment) {
+            return comment.id;
+        }).id) + 1;
+        if (_.isNaN(nextCommentId)) {
+            nextCommentId = 0;
+        }
+        return nextCommentId;
+    }
+
+    commentHelpers.createNewAnswer = function (parentId, commentText) {
+
+        var newComment, parentComment, theChange;
+
+        newComment = {
+            id: commentHelpers.findNewId(),
+            user: theUser.id,
+            user_name: theUser.name,
+            user_avatar: theUser.avatar,
+            date: new Date().getTime(),
+            comment: commentText,
+            editable: true,
+            children: [],
+            parent_comment_id: parseInt(parentId, 10)
         };
-        newComment['parent_comment_id'] = parseInt(parentId, 10);
+
+        theChange = [theUser.id, new Date().getTime(), 'comment.answer', [
+            1,
+            "",
+            JSON.stringify(newComment), []
+        ]];
+
+        theDocument.history.push(theChange);
+        theDocument.lastHistory.push(theChange);
+
         parentComment = commentHelpers.findComment(newComment[
             'parent_comment_id']);
         parentComment['children'].push(newComment);
@@ -167,43 +213,43 @@
         if (comment) {
             comment['active'] = false;
             id = comment['id'];
-            console.log(id);
+
             commentReference = commentHelpers.findCommentReferrer(id);
             commentReference.classList.remove('active');
             return true;
-        } else {
+        }
+        else {
             return false;
         }
     };
 
     commentHelpers.updateComment = function (id, commentText) {
-        // Save the change tto a comment both locally and in the DB
-        var comment, commentReference, commentItem;
-
-        commentItem = jQuery('.comment-box.active .commentText[data-id=' + id +
-            ']').attr('disabled', 'disabled').closest('.comment-item');
-
-        commentItem.addClass('wait');
+        // Save the change to a comment both locally and mark that the document has been changed
+        var comment, oldComment, theChange;
 
         comment = commentHelpers.findComment(id);
 
+        oldComment = JSON.stringify(comment);
+
         comment['comment'] = commentText;
 
-        if (0 === id) {
-            comment['id'] = commentHelpers.findNewId();
-            comment['date'] = new Date().getTime();
-            commentReference = commentHelpers.findCommentReferrer(id);
-            if (commentReference) {
-                commentReference.setAttribute('data-id', comment['id']);
-            }
-            editorHelpers.documentHasChanged();
-        }
-        
+        comment['date'] = new Date().getTime();
+
         comment['active'] = false;
+
+
+        theChange = [theUser.id, new Date().getTime(), 'comment', [
+            0,
+            oldComment,
+            JSON.stringify(comment), []
+        ]];
         
+        theDocument.history.push(theChange);
+        theDocument.lastHistory.push(theChange);
+
+        editorHelpers.documentHasChanged();
+
         commentHelpers.layoutComments();
-
-
         commentHelpers.deactivateAll();
 
     };
@@ -225,10 +271,12 @@
             id = commentHelpers.getCommentId(commentTextBox);
             if (id === 0) {
                 commentHelpers.deleteComment(id);
-            } else {
+            }
+            else {
                 commentHelpers.deactivateAll();
             }
-        } else {
+        }
+        else {
             commentHelpers.deactivateAll();
         }
         commentHelpers.layoutComments();
@@ -257,10 +305,12 @@
             if (usedIds.hasOwnProperty(commentId)) {
                 // If there are more than one elements in the document referring to the same footnote, remove all but the first one.
                 allComments[i].outerHTML = allComments[i].innerHTML;
-            } else if (!commentHelpers.findComment(commentId)) {
+            }
+            else if (!commentHelpers.findComment(commentId)) {
                 // The comment is referred to in the text, but doesn't exist in the comments DB. Remove it.
                 allComments[i].outerHTML = allComments[i].innerHTML;
-            } else {
+            }
+            else {
                 usedIds[commentId] = true;
             }
         }
@@ -269,7 +319,8 @@
     commentHelpers.bindEvents = function () {
         // Bind all the click events related to comments
         jQuery(document).on("click", ".submitComment", commentHelpers.submitComment);
-        jQuery(document).on("click", ".cancelSubmitComment", commentHelpers.cancelSubmitComment);
+        jQuery(document).on("click", ".cancelSubmitComment", commentHelpers
+            .cancelSubmitComment);
         jQuery(document).on("click", ".comment-box.inactive", function () {
             var commentId, comment;
             commentId = commentHelpers.getCommentId(this);
@@ -287,13 +338,14 @@
 
         jQuery(document).on('click', '.edit-comment', function () {
             var activeWrapper, btnParent, commentTextWrapper, commentP,
-                    commentForm;
+                commentForm;
             activeWrapper = jQuery('.comment-box.active');
             activeWrapper.find('.comment-p').show();
             activeWrapper.find('.comment-form').hide();
             activeWrapper.find('.commemt-controls').show();
             btnParent = jQuery(this).parent();
-            commentTextWrapper = btnParent.siblings('.comment-text-wrapper');
+            commentTextWrapper = btnParent.siblings(
+                '.comment-text-wrapper');
             commentP = commentTextWrapper.children('.comment-p');
             commentForm = commentTextWrapper.children('.comment-form');
             btnParent.parent().siblings('.comment-answer').hide();
@@ -307,18 +359,20 @@
         });
 
         jQuery(document).on('click', '.delete-comment', function () {
-            commentHelpers.deleteComment(parseInt(jQuery(this).attr('data-id'),
-                    10));
+            commentHelpers.deleteComment(parseInt(jQuery(this).attr(
+                    'data-id'),
+                10));
         });
 
         // Handle comments show/hide
 
-        jQuery(document).on('click', '#comments-display:not(.disabled)', function () {
-            jQuery(this).toggleClass('selected'); // what should this look like? CSS needs to be defined
-            jQuery('#comment-box-container').toggleClass('hide');
-            jQuery('#flow').toggleClass('comments-enabled');
-            jQuery('.toolbarcomment button').toggleClass('disabled');
-        });
+        jQuery(document).on('click', '#comments-display:not(.disabled)',
+            function () {
+                jQuery(this).toggleClass('selected'); // what should this look like? CSS needs to be defined
+                jQuery('#comment-box-container').toggleClass('hide');
+                jQuery('#flow').toggleClass('comments-enabled');
+                jQuery('.toolbarcomment button').toggleClass('disabled');
+            });
     };
 
     commentHelpers.deleteComment = function (id) {
@@ -327,7 +381,8 @@
             ids = [id],
             i,
             len,
-            commentReference, parentComment;
+            commentReference, parentComment, theChange, diff, oldHtml,
+                currentContainer;
         if (!comment.hasOwnProperty('parent_comment_id')) {
             len = comment.children.length;
             for (i = 0; i < len; i++) {
@@ -337,7 +392,28 @@
 
         commentReference = commentHelpers.findCommentReferrer(id);
         if (commentReference) {
+            currentContainer = jQuery(commentReference).closest(
+                '#document-contents,#metadata-abstract,#metadata-subtitle,#document-title'
+            )[0];
+
+            if (currentContainer.id === 'document-contents') {
+                oldHtml = 'contents';
+            }
+            else if (currentContainer.id === 'metadata-abstract') {
+                oldHtml = 'metadata.abstract';
+            }
+            else if (currentContainer.id === 'metadata-subtitle') {
+                oldHtml = 'metadata.subtitle';
+            }
+            else if (currentContainer.id === 'document-title') {
+                oldHtml = 'metadata.title';
+            }
             commentReference.outerHTML = commentReference.innerHTML;
+            dmp = new diff_match_patch();
+            newValue = currentContainer.innerHTML;
+            diff = dmp.diff_main(eval('theDocument.' + oldHtml), newValue);
+            eval("theDocument." + oldHtml + "=unescape('" + escape(newValue) +
+                "')");
         }
         if (comment.hasOwnProperty('parent_comment_id')) {
             // Delete the comment from the parent comment
@@ -347,11 +423,23 @@
                 parentComment.children, function (childComment) {
                     return (childComment === comment);
                 });
-        } else {
+            theChange = [theUser.id, new Date().getTime(), 'comment', [-1,
+                JSON.stringify(comment),
+                '', []
+            ]];
+        }
+        else {
             theDocument.comments = _.reject(theDocument.comments, function (
                 childComment) {
                 return (childComment === comment);
             });
+            theChange = [theUser.id, new Date().getTime(), 'comment', [-1,
+                JSON.stringify(comment),
+                '', [
+                    oldHtml,
+                    diff
+                ]
+            ]];
         }
 
         flatCommentList = _.reject(flatCommentList, function (childComment) {
@@ -359,6 +447,8 @@
         });
 
         commentHelpers.layoutComments();
+
+
         editorHelpers.documentHasChanged();
 
     };
@@ -401,8 +491,9 @@
             foundComment,
             i;
         if (activeComment) {
-            commentReferrer = commentHelpers.findCommentReferrer(activeComment[
-                'id']);
+            commentReferrer = commentHelpers.findCommentReferrer(
+                activeComment[
+                    'id']);
             initialCommentBox = commentHelpers.findCommentBox(activeComment[
                 'id']);
             lastOffsetTop = initialCommentBox.offsetTop;
@@ -412,14 +503,15 @@
                 foundComment = nextComments.shift();
                 if (foundComment === commentReferrer) {
                     break;
-                } else {
+                }
+                else {
                     previousComments.unshift(foundComment);
                 }
             }
 
             for (i = 0; i < previousComments.length; i++) {
                 commentBox = commentHelpers.findCommentBox(commentHelpers.getCommentId(
-                        previousComments[i]));
+                    previousComments[i]));
                 minOffsetTop = lastOffsetTop - commentBox.offsetHeight - 10;
                 if (commentBox.offsetTop > minOffsetTop) {
                     jQuery(commentBox).css('top', minOffsetTop + 'px');
@@ -429,17 +521,19 @@
 
             minOffsetTop = initialCommentBox.offsetTop + initialCommentBox.offsetHeight +
                 10;
-        } else {
+        }
+        else {
             minOffsetTop = 0;
             nextComments = jQuery('.comment');
         }
         for (i = 0; i < nextComments.length; i++) {
             commentBox = commentHelpers.findCommentBox(commentHelpers.getCommentId(
-                    nextComments[i]));
+                nextComments[i]));
             if (commentBox.offsetTop < minOffsetTop) {
                 jQuery(commentBox).css('top', minOffsetTop + 'px');
             }
-            minOffsetTop = commentBox.offsetTop + commentBox.offsetHeight + 10;
+            minOffsetTop = commentBox.offsetTop + commentBox.offsetHeight +
+                10;
         }
     };
 
@@ -448,7 +542,7 @@
         var activeCommentWrapper, activeCommentId;
         commentHelpers.cleanReferers();
         jQuery('#comment-box-container').html(_.template(tmp_comments,
-                theDocument.comments));
+            theDocument.comments));
         commentHelpers.layoutCommentsAvoidOverlap();
         jQuery('.comment').removeClass('active');
         activeCommentWrapper = jQuery('.comment-box.active');
@@ -457,8 +551,8 @@
             jQuery('.comment[data-id=' + activeCommentId + ']').addClass(
                 'active');
             activeCommentWrapper.find('.comment-answer-text').autoResize({
-                    'extraSpace': 0
-                });
+                'extraSpace': 0
+            });
         }
 
     };

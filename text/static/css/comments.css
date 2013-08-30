@@ -8,7 +8,7 @@
 #comment-box-container {
     position: absolute;
     left: 914px;
-    top: -20px;
+    top: 300px;
 }
 
 #comment-box-container.hide {

@@ -89,7 +89,7 @@
                         }
                         commentNode = document.createElement('span');
                         commentNode.classList.add('comment');
-                        commentHelpers.createNewComment(commentNode);
+                        
                         if (!range.canSurroundContents()) {
                             // We cannot surround the current selection, so we grab something nearby instead
                             range.selectNode(selection.anchorNode);
@@ -103,6 +103,7 @@
                                 return false;
                             }
                         }
+                        commentHelpers.createNewComment(commentNode);
                     }
 
                     widget.options.editable.keepActivated(true);

@@ -22,15 +22,15 @@ var tmp_comments = '<% _.each(theDocument.comments,function(comment,key,list){ %
         <div id="comment-box-<%= comment["id"] %>" data-id="<%= comment["id"] %>" class="comment-box \
             <% if(comment["active"]) { %>active<% } else { %>inactive<% } %>\
             " style="top:<%= commentHelpers.calculateCommentBoxOffset(jQuery(".comment[data-id="+comment["id"]+"]")[0]) %>px;">\
-            <% if(0 == comment["id"]) { %>\
+            <% if(0 === comment["comment"].length) { %>\
             <%= _.template(tmp_first_comment, {"comment": comment}) %>\
-            <% } else { %>\
+            <% } else { console.log("petersen");%>\
             <%= _.template(tmp_single_comment, {"comment": comment, active: comment["active"]}) %>\
             <% } %>\
             <% _.each(comment.children, function(child_comment) { %>\
                 <%= _.template(tmp_single_comment, {"comment": child_comment, active: comment["active"]}) %>\
             <% }) %>\
-            <% if(comment["active"] && 0 < comment["id"]) { %>\
+            <% if(comment["active"] && 0 < comment["comment"].length) { %>\
             <div class="comment-answer">\
                 <textarea class="comment-answer-text" rows="1"></textarea>\
                 <div class="comment-answer-btns">\

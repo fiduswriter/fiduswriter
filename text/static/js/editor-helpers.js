@@ -255,7 +255,6 @@
                 return false;
             }
             dmp.diff_cleanupEfficiency(diff);
-            
         } else {
             if (currentValue === newValue) {
                 // Don't create a history entry if nothing has changed

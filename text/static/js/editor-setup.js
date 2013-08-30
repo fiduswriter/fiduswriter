@@ -60,6 +60,8 @@ jQuery(document).bind('documentDataLoaded', function () {
     bibliographyHelpers.init();
     usermediaHelpers.init();
 
+   
+    
     // Enable Hallo.js Editor
     jQuery('#document-editable').hallo({
         plugins: plugins,
@@ -83,7 +85,7 @@ jQuery(document).bind('documentDataLoaded', function () {
         
             editorHelpers.setDisplay.document('settings.documentstyle',theDocument.settings.documentstyle);
             editorHelpers.documentHasChanged();
-            commentHelpers.layoutComments();
+           // commentHelpers.layoutComments();
         }
         return false;
     });

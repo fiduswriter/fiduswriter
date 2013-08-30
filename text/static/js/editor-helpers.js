@@ -152,6 +152,8 @@
                 document.webkitGetNamedFlows()[0].dispatchEvent(pagination.events.escapesNeedMove);
             }
         }, 200);
+        
+        commentHelpers.layoutComments();
 
     };
     
@@ -171,7 +173,7 @@
         commentHelpers.layoutComments();
         set_document_style_timer = setTimeout(function() {
             clearTimeout(set_document_style_timer);
-            if (document.webkitGetNamedFlows) {
+            if (document.webkitGetNamedFlows & document.webkitGetNamedFlows().length > 0) {
                 document.webkitGetNamedFlows()[0].dispatchEvent(pagination.events.escapesNeedMove);
             }
         }, 100);    

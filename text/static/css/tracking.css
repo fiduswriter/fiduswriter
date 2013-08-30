@@ -1,8 +1,8 @@
 #tracking-box-container {
     position: absolute;
     z-index: 93;
-    top: -20px;
-    left: 88px;
+    top: 300px;
+    left: -50px;
 }
 
 div.pagination-simple ~ #tracking-box-container {

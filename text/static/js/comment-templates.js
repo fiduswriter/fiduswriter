@@ -24,7 +24,7 @@ var tmp_comments = '<% _.each(theDocument.comments,function(comment,key,list){ %
             " style="top:<%= commentHelpers.calculateCommentBoxOffset(jQuery(".comment[data-id="+comment["id"]+"]")[0]) %>px;">\
             <% if(0 === comment["comment"].length) { %>\
             <%= _.template(tmp_first_comment, {"comment": comment}) %>\
-            <% } else { console.log("petersen");%>\
+            <% } else { %>\
             <%= _.template(tmp_single_comment, {"comment": comment, active: comment["active"]}) %>\
             <% } %>\
             <% _.each(comment.children, function(child_comment) { %>\

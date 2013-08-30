@@ -18,6 +18,8 @@
  *
  */
 
+var FW_LOCALSTORAGE_VERSION = "1.0";
+
 (function () {
     var exports = this,
         bibliographyHelpers = {};
@@ -1672,7 +1674,7 @@
 
     bibliographyHelpers.getBibDB = function(callback) {
         // Get the BibDB of the page.
-        var documentOwnerId, lastModified = localStorage.getItem('last_modified_biblist'), numberOfEntries = localStorage.getItem('number_of_entries');
+        var documentOwnerId, lastModified = parseInt(localStorage.getItem('last_modified_biblist')), numberOfEntries = parseInt(localStorage.getItem('number_of_entries')), localStorageVersion = localStorage.getItem('version');
 
         window.BibDB = {};
         window.BibCategories = [];
@@ -1686,11 +1688,16 @@
             documentOwnerId = theDocument.owner.id;
         }
         
-        if (_.isNull(lastModified)) {
+        if (_.isNaN(lastModified)) {
             lastModified = -1;
         }
         
-        if (_.isNull(numberOfEntries)) {
+        if (_.isNaN(numberOfEntries)) {
+            numberOfEntries = -1;
+        }
+        
+        if (localStorageVersion != FW_LOCALSTORAGE_VERSION) {
+            lastModified = -1;
             numberOfEntries = -1;
         }
 
@@ -1714,6 +1721,7 @@
                         localStorage.setItem('biblist',JSON.stringify(response.bibList));
                         localStorage.setItem('last_modified_biblist',response.last_modified);
                         localStorage.setItem('number_of_entries',response.number_of_entries);
+                        localStorage.setItem('version',FW_LOCALSTORAGE_VERSION);
                     } catch (error) {
                         // The local storage was likely too small
                     }

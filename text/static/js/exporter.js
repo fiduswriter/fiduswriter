@@ -18,6 +18,8 @@
  *
  */
 
+var FW_FILETYPE_VERSION = "1.0";
+
 (function () {
     var exports = this,
         exporter = {};
@@ -795,7 +797,7 @@
             contents: JSON.stringify(shrunkBibDB)
         }, {
             filename: 'filetype-version',
-            contents: '1.0'
+            contents: FW_FILETYPE_VERSION
         }];
 
         exporter.zipFileCreator(outputList, httpOutputList, exporter.createSlug(

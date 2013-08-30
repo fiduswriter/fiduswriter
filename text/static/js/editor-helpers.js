@@ -250,7 +250,7 @@
             }
             dmp = new diff_match_patch();
             diff = dmp.diff_main(currentValue, newValue);
-            if (diff.length==1 && diff[0][0]==0) {
+            if (diff.length===1 && diff[0][0]===0 || diff.length===0) {
                 // Don't create a history entry if nothing has changed
                 return false;
             }
@@ -290,6 +290,10 @@
         jQuery('#document-metadata .metadata').each(function() {
             editorHelpers.setDocumentData('metadata.'+jQuery(this).attr('data-metadata'), jQuery(this).html().trim());
         });
+        if (0===theDocument.lastHistory.length) {
+            $.addAlert('error','Nothing to save');
+            return;
+        }
         
         documentData.id = theDocument.id;
         documentData.currently_open = true;

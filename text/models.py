@@ -27,7 +27,7 @@ from fiduswriter.settings import LOCK_TIMEOUT
 MAX_SINCE_SAVE=timedelta(seconds=LOCK_TIMEOUT)
 
 class Text(models.Model):
-    title = models.CharField(max_length=255, default='')
+    title = models.CharField(max_length=255, default='', blank=True)
     contents = models.TextField(default='{}')
     metadata = models.TextField(default='{}') #json object of metadata
     comments = models.TextField(default='[]') #json list of comments

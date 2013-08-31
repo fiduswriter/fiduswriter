@@ -188,7 +188,7 @@ def get_document_js(request):
                 response['document']['contents']='<p><br></p>'
                 response['document']['metadata']='{}'
                 response['document']['comments']='[]'
-                response['document']['history']='[]'
+                response['document']['history']=''
                 response['document']['settings']='{}'
                 response['document']['is_locked']=False
                 response['document']['access_rights']=[]
@@ -275,14 +275,11 @@ def save_js(request):
             form_data.__setitem__('last_editor', request.user.pk)
             form_data.__setitem__('updated', timezone.now())
             # add the documents recent history to the already saved history
-            last_history = request.POST['last_history']
-            if len(doc.history) > 2:
-                if len(last_history) > 2:
-                    form_data.__setitem__('history', doc.history[:-1]+',' + last_history[1:])
-                else:
-                    form_data.__setitem__('history', doc.history)
-            else:
-                form_data.__setitem__('history', last_history)
+            # TODO: It should be investigated whether this way of handling the history costs a lot of memory and/or processing power.
+            # If it does, a special SQL function making use of the "concat" may be needed. The max size for the text field is limited to 4GB. 
+            # Also this may be cause for problems. Possible a NOSQL databse that stores JSON objects directly is needed.
+            form_data.__setitem__('history', doc.history + request.POST['last_history'])
+            
             if doc.owner==request.user:
                 form = TextForm(form_data,instance=doc)
                 if form.is_valid():

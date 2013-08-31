@@ -90,7 +90,7 @@
         theDocument.settings = jQuery.parseJSON(theDocument.settings);
         theDocument.metadata = jQuery.parseJSON(theDocument.metadata);
         theDocument.comments = jQuery.parseJSON(theDocument.comments);
-        theDocument.history = jQuery.parseJSON(theDocument.history);
+        theDocument.history = jQuery.parseJSON('['+theDocument.history+']');
         theDocument.lastHistory = [];
         
         var DEFAULTS = [
@@ -277,7 +277,7 @@
     };
     
     editorHelpers.saveDocument = function (callback) {
-        var documentData = {};
+        var documentData = {}, lastHistory;
         
         
         editorHelpers.setDocumentData('metadata.title', jQuery('#document-title').html().trim());
@@ -292,7 +292,7 @@
             editorHelpers.setDocumentData('metadata.'+jQuery(this).attr('data-metadata'), jQuery(this).html().trim());
         });
         if (0===theDocument.lastHistory.length) {
-            $.addAlert('error','Nothing to save');
+            //$.addAlert('error','Nothing to save');
             return;
         }
         
@@ -301,7 +301,11 @@
         documentData.settings = JSON.stringify(theDocument.settings);
         documentData.metadata = JSON.stringify(theDocument.metadata);
         documentData.comments = JSON.stringify(theDocument.comments);
-        documentData.last_history = JSON.stringify(theDocument.lastHistory);
+        lastHistory = JSON.stringify(theDocument.lastHistory);
+        documentData.last_history = lastHistory.substring(1,lastHistory.length-1);
+        if (theDocument.id > 0) {
+            documentData.last_history = ',' + documentData.last_history;
+        }
         theDocument.lastHistory = [];
         documentData.title = theDocument.title.substring(0,255);
         documentData.contents = theDocument.contents;

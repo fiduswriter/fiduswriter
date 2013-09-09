@@ -445,6 +445,21 @@
         });
 
     };
+    
+    editorHelpers.websocket = function (data) {
+        switch (data.type) {
+            case 'chat':
+                chatHelpers.newMessage(data);
+                break;
+            case 'connections':
+                chatHelpers.updateParticipantList(data);
+                break;
+            case 'welcome':
+                window.sessionId = data.key;
+                break;
+                
+        }
+    };
 
     editorHelpers.bind = function () {
         window.theDocument = undefined;
@@ -456,6 +471,10 @@
 
             if (isNaN(documentId)) {
                 documentId = 0;
+            }
+            window.ws = new WebSocket('ws://'+location.host+'/ws/'+documentId);
+            ws.onmessage = function(event) {
+                editorHelpers.websocket(JSON.parse(event.data));
             }
             editorHelpers.getDocumentData(documentId);
         });

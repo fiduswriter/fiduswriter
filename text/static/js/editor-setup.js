@@ -25,6 +25,7 @@ var toPrint = false,
     timeOfLastServerPing, saveTimer;
 
 
+    
 // Functions to be executed at startup
 jQuery(document).ready(function () {
     // Enable toolbar menu

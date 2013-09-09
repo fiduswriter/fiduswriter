@@ -1,0 +1,37 @@
+#chat {
+    position: fixed;
+    bottom: 0px;
+    right: 100px;
+    background-color: white;
+    width: 150px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-bottom: 0;
+    display: none;
+}
+
+#chat h1 {
+    text-align: right;
+}
+
+#chat-container .message:last-child {
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 6px;
+    padding-bottom: 6px;
+}
+
+#chat-container .message {
+    padding-top: 5px;
+}
+
+#current-editors {
+    position: fixed;
+    right: 50px;
+    top: 50px;
+    display: none;
+}
+
+#current-editors img {
+    width: 26px;
+    margin-left:4px;
+}

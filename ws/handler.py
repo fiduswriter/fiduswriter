@@ -47,6 +47,15 @@ class WebSocketHandler(BaseWebSocketHandler):
                 }
             if self.document in WebSocketHandler.sessions:
                 WebSocketHandler.send_updates(chat, self.document)
+        elif parsed["type"]=='transform':
+            chat = {
+                "id": str(uuid.uuid4()),
+                "change": parsed["change"],
+                "from": self.user.id,
+                "type": 'transform'
+                }
+            if self.document in WebSocketHandler.sessions:
+                WebSocketHandler.send_updates(chat, self.document, self.id)            
 
     def on_close(self):
         print 'Websocket closed'
@@ -79,11 +88,12 @@ class WebSocketHandler(BaseWebSocketHandler):
             WebSocketHandler.send_updates(chat, document)
 
     @classmethod
-    def send_updates(cls, chat, document):
+    def send_updates(cls, chat, document, sender_id=None):
         info("sending message to %d waiters", len(cls.sessions[document]))
         for waiter in cls.sessions[document].keys():
-            try:
-                cls.sessions[document][waiter].write_message(chat)
-            except:
-                error("Error sending message", exc_info=True)            
+            if cls.sessions[document][waiter].id != sender_id:
+                try:
+                    cls.sessions[document][waiter].write_message(chat)
+                except:
+                    error("Error sending message", exc_info=True)            
          

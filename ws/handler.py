@@ -42,7 +42,7 @@ class WebSocketHandler(BaseWebSocketHandler):
             chat = {
                 "id": str(uuid.uuid4()),
                 "body": parsed["body"],
-                "from": self.user.readable_name,
+                "from": self.user.id,
                 "type": 'chat'
                 }
             if self.document in WebSocketHandler.sessions:

@@ -464,7 +464,7 @@
     editorHelpers.bind = function () {
         window.theDocument = undefined;
         window.theUser = undefined;
-        $(document).ready(function () {
+        jQuery(document).ready(function () {
             var pathnameParts = window.location.pathname.split('/'),
                 documentId = parseInt(pathnameParts[pathnameParts.length -
                     2], 10);

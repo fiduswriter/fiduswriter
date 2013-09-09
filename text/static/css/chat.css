@@ -1,17 +1,25 @@
 #chat {
     position: fixed;
     bottom: 0px;
-    right: 100px;
+    right: 5px;
     background-color: white;
-    width: 150px;
+    width: 250px;
     padding: 10px;
     border: 1px solid #ccc;
     border-bottom: 0;
     display: none;
+    z-index: 100;
 }
 
-#chat h1 {
+#chat .resize-button {
     text-align: right;
+    cursor: pointer;
+    display: block;
+}
+
+#chat-container {
+    max-height: 300px;
+    overflow: overlay;
 }
 
 #chat-container .message:last-child {
@@ -34,4 +42,8 @@
 #current-editors img {
     width: 26px;
     margin-left:4px;
+}
+
+#messageform.empty:before {
+    color: #cecece;
 }

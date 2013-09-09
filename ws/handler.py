@@ -18,7 +18,6 @@ class WebSocketHandler(BaseWebSocketHandler):
         document = Text.objects.filter(id=self.document)
         if len(document) > 0:
             document = document[0]
-            print 'Current user: ' + str(self.user.readable_name)
             access_right = AccessRight.objects.filter(text=document, user=self.user)
             if document.owner == self.user or len(access_right) > 0:
                 if len (access_right) > 0:
@@ -27,7 +26,9 @@ class WebSocketHandler(BaseWebSocketHandler):
                     self.access_right = 'w'
                 if self.document not in WebSocketHandler.sessions:
                     WebSocketHandler.sessions[self.document]=dict()
-                self.id = len(WebSocketHandler.sessions[self.document])
+                    self.id = 0
+                else:
+                    self.id = max(WebSocketHandler.sessions[self.document])+1
                 WebSocketHandler.sessions[self.document][self.id] = self
                 self.write_message({
                     "type": 'welcome',
@@ -36,7 +37,6 @@ class WebSocketHandler(BaseWebSocketHandler):
                 WebSocketHandler.send_participant_list(self.document)
 
     def on_message(self, message):
-        print 'Websocket got a message from ' + str(self.user) + ': ' + str(message)
         parsed = json_decode(message)
         if parsed["type"]=='chat':
             chat = {
@@ -57,7 +57,7 @@ class WebSocketHandler(BaseWebSocketHandler):
                     "type": 'take_control'
                     }
                 WebSocketHandler.sessions[self.document][min(WebSocketHandler.sessions[self.document])].write_message(chat)
-                WebSocketHandler.send_participant_list(cls, document)
+                WebSocketHandler.send_participant_list(self.document)
             else:
                 del WebSocketHandler.sessions[self.document]
 

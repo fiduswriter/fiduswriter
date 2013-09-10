@@ -220,7 +220,8 @@
         jQuery('title').html('Fidus Writer - ' + theTitle);
         jQuery('#header h1').html(theTitle);
     };
-
+     
+    
     editorHelpers.setDisplay.FIELDS = {
         // A list of the functions used to update various fields to e called by editorHelpers.setDisplay.document
         'title': editorHelpers.setDisplay.title,
@@ -231,6 +232,8 @@
         'settings.papersize': editorHelpers.setDisplay.settingsPapersize,
         'settings.citationstyle': editorHelpers.setDisplay.settingsCitationstyle,
         'settings.documentstyle': editorHelpers.setDisplay.settingsDocumentstyle,
+        'settings.metadata.subtitle': editorHelpers.layoutMetadata,
+        'settings.metadata.abstract': editorHelpers.layoutMetadata,
         'id': editorHelpers.setDisplay.id
     };
 
@@ -297,8 +300,9 @@
         var dmp = new diff_match_patch();
         editorHelpers.getUpdatesFromInputFields();
         var savedSel = rangy.saveSelection();
-        theElement.innerHTML = dmp.patch_apply(
+        var theValue = dmp.patch_apply(
             dmp.patch_make(diffs), theElement.innerHTML)[0];
+        editorHelpers.setDisplay.document(field,theValue);
         rangy.restoreSelection(savedSel);
         editorHelpers.getUpdatesFromInputFields(false,true);
     };

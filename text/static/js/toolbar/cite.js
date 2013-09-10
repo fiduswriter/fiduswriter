@@ -128,6 +128,7 @@
 
                 //widget.options.editable.element.trigger('change');
                 citationHelpers.formatCitationsInDoc();
+                editorHelpers.documentHasChanged();
                 return true;
             };
 

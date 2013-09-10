@@ -11,6 +11,10 @@
     z-index: 100;
 }
 
+#chat.highlighted {
+    background-color: #6495ed;
+}
+
 #chat .resize-button {
     text-align: right;
     cursor: pointer;

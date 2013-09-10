@@ -70,6 +70,9 @@
             chatHelpers.beep();
             chatHelpers.flashtab(message.from + ': ' + message.body);
         }
+        if (chatContainer.css('display')==='none') {
+            jQuery("#chat").addClass('highlighted');
+        }
         node.slideDown({progress: function () {
             chatContainer[0].scrollTop = chatContainer[0].scrollHeight;
         }});
@@ -121,12 +124,18 @@
                 if (jQuery(this).hasClass('icon-angle-double-down')) {
                     jQuery(this).removeClass('icon-angle-double-down');
                     jQuery(this).addClass('icon-angle-double-up');
-                    //jQuery('#chat').css('height', '10px');
                     jQuery('#chat-container,#messageform').slideUp();
                 } else {
                     jQuery(this).removeClass('icon-angle-double-up');
                     jQuery(this).addClass('icon-angle-double-down');
                     jQuery('#chat-container,#messageform').slideDown();
+                    if (jQuery(this).parent().hasClass('highlighted')) {
+                        jQuery(this).parent().animate({
+                            backgroundColor: "#fff",
+                        }, 1000, 'swing', function() {
+                            jQuery(this).removeClass('highlighted').css('background-color','');
+                        });
+                    }
                 }
             });
             

@@ -14,7 +14,7 @@ def save_document(document,changes):
     document.contents = changes["contents"]
     document.metadata = changes["metadata"]
     document.settings = changes["settings"]
-    document.metadata = changes["comments"]    
+    document.comments = changes["comments"]    
     if len(document.history) > 0:        
         document.history += "," + changes["last_history"]
     else:

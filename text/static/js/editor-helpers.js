@@ -285,20 +285,32 @@
         return true;
     };
 
-    editorHelpers.applyContentChange = function (diffs) {
+    editorHelpers.setDiffChange = function (field,diffs) {
+        var theElement;
+        if (field==='contents') {
+            theElement = document.getElementById('document-contents');
+        } else if (field==='metadata.title') {
+            theElement = document.getElementById('document-title');
+        } else {
+            theElement = document.getElementById(field.replace(".","-"));
+        }
         var dmp = new diff_match_patch();
         editorHelpers.getUpdatesFromInputFields();
         var savedSel = rangy.saveSelection();
-        document.getElementById('document-contents').innerHTML = dmp.patch_apply(
-            dmp.patch_make(diffs), document.getElementById(
-                'document-contents').innerHTML)[0];
+        theElement.innerHTML = dmp.patch_apply(
+            dmp.patch_make(diffs), theElement.innerHTML)[0];
         rangy.restoreSelection(savedSel);
         editorHelpers.getUpdatesFromInputFields(false,true);
     };
 
     editorHelpers.applyDocumentDataChanges = function (data) {
-        if (data.change[2] === 'contents') {
-            editorHelpers.applyContentChange(data.change[3]);
+        if (editorHelpers.TEXT_FIELDS.indexOf(data.change[2]) != -1) {
+            editorHelpers.setDiffChange(data.change[2], data.change[3]);
+        } else if (data.change[2] != 'comment') {
+            editorHelpers.getUpdatesFromInputFields();
+            editorHelpers.setDocumentData(data.change[2], data.change[3][1], true);
+            editorHelpers.setDisplay.document(data.change[2], data.change[3][1]);
+            editorHelpers.getUpdatesFromInputFields(false,true);
         }
     };
 
@@ -322,6 +334,8 @@
 
     editorHelpers.saveDocument = function (callback) {
         var documentData = {}, lastHistory;
+        
+        jQuery('.save').addClass('disabled');
         
         // The title is saved twice: as metadata.title with html formatting and as just title as plain text.
         // Because we don't want two entries in the history, we avoid touching the history for the text-only version.
@@ -360,23 +374,6 @@
 
         return true;
 
-    };
-
-    editorHelpers.saveDocumentIfChanged = function (callback) {
-        // Only save if this session is enabled to do so. Only one session should be saving any given document at the same time.
-        //if (theDocument.changed) {
-        jQuery('.save').addClass('disabled');
-        theDocument.changed = false;
-        editorHelpers.getUpdatesFromInputFields(
-            function () {
-                editorHelpers.saveDocument(callback);
-            }
-        );
-
-        //}
-        //else if (callback) {
-        //    callback();
-        //}
     };
 
     editorHelpers.setPlaceholders = function (currentElement) {
@@ -463,7 +460,6 @@
             break;
         case 'welcome':
             editorHelpers.fillEditorPage(data.document);
-
             if (data.hasOwnProperty('user')) {
                 theUser = response.user;
             }

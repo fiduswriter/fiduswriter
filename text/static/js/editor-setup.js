@@ -140,24 +140,24 @@ jQuery(document).bind('documentDataLoaded', function () {
     }
 
     jQuery(document).on('click', '.savecopy:not(.disabled)', function () {
-        editorHelpers.saveDocumentIfChanged();
+        editorHelpers.saveDocument();
         exporter.savecopy(theDocument);
     });
 
     jQuery('.download').bind('click', function () {
-        editorHelpers.saveDocumentIfChanged();
+        editorHelpers.saveDocument();
         exporter.downloadNative(theDocument);
     });
     jQuery('.latex').bind('click', function () {
-        editorHelpers.saveDocumentIfChanged();
+        editorHelpers.saveDocument();
         exporter.downloadLatex(theDocument);
     });
     jQuery('.epub').bind('click', function () {
-        editorHelpers.saveDocumentIfChanged();
+        editorHelpers.saveDocument();
         exporter.downloadEpub(theDocument);
     });
     jQuery('.html').bind('click', function () {
-        editorHelpers.saveDocumentIfChanged();
+        editorHelpers.saveDocument();
         exporter.downloadHtml(theDocument);
     });
     jQuery('.print').bind('click', function () {
@@ -165,7 +165,7 @@ jQuery(document).bind('documentDataLoaded', function () {
         window.print();
     });
     jQuery('.close').bind('click', function () {
-        editorHelpers.saveDocumentIfChanged(function() {
+        editorHelpers.saveDocument(function() {
             window.location.href = '/';
         });
     });
@@ -203,7 +203,7 @@ jQuery(document).bind('documentDataLoaded', function () {
 
         // Set Auto-save to save every ten seconds
         saveTimer = setInterval(function () {
-            editorHelpers.saveDocumentIfChanged();
+            editorHelpers.saveDocument();
         }, 10000);
 
         changeTimer = setInterval(function () {
@@ -253,7 +253,7 @@ jQuery(document).bind('documentDataLoaded', function () {
                     event.ctrlKey) && !
                 (event.which == 19)) return true;
 
-            editorHelpers.saveDocumentIfChanged();
+            editorHelpers.saveDocument();
             event.preventDefault();
             return false;
         });
@@ -272,7 +272,7 @@ jQuery(document).bind('documentDataLoaded', function () {
                 editorHelpers.documentHasChanged();
             });
         jQuery('.save').bind('click', function () {
-            editorHelpers.saveDocumentIfChanged();
+            editorHelpers.saveDocument();
         });
 
 

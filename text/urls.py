@@ -24,7 +24,6 @@ urlpatterns = patterns('',
     url(r'^new/$', 'text.views.editor', name='editor'),
     url(r'^documentlist/$', 'text.views.get_documentlist_js', name='get_documentlist_js'),
     url(r'^documentlist/extra/$', 'text.views.get_documentlist_extra_js', name='get_documentlist_extra_js'),
-    url(r'^save/$', 'text.views.save_js', name='save_js'),
     url(r'^delete/$', 'text.views.delete_js', name='delete_js'),   
     url(r'^\d+/$', 'text.views.editor', name='editor'),
     

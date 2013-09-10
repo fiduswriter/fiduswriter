@@ -223,7 +223,7 @@
                         range.selectNode(figureNode);
                         range.collapse();
                         if (!useImage) {
-                            mathHelpers.layoutMathNode(contentNode);
+                            mathHelpers.layoutDisplayMathNode(contentNode);
                         }
                     } else if (insideFigure && insideFigure.parentNode && typeof(range) !== 'undefined') {
                         range.selectNode(insideFigure);
@@ -323,8 +323,8 @@
                                 .removeAttr('disabled');
                         } else {
                             jQuery('#inner-figure-preview')[0].innerHTML =
-                                '<p>[MATH]' + jQuery(this).val() +
-                                '[/MATH]</p>';
+                                '<p>\1f4c4[DMATH]' + jQuery(this).val() +
+                                '\1f4c4[/DMATH]</p>';
                             MathJax.Hub.Queue(["Typeset", MathJax.Hub,
                                     "inner-figure-preview"
                             ]);

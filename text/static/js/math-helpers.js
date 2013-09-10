@@ -23,8 +23,8 @@
 
     mathHelpers.setMathNodeContents = function (node) {
         // Set the innerText of a mathnode to be the same as the data-equation attribute
-        node.innerText = '[MATH]' + node.getAttribute('data-equation') +
-            '[/MATH]';
+        node.innerText = '\1f4c4[MATH]' + node.getAttribute('data-equation') +
+            '\1f4c4[/MATH]';
     };
 
     mathHelpers.layoutMathNode = function (node) {
@@ -33,6 +33,18 @@
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, node], [mathHelpers.saveMathjaxElements]);
     };
 
+    mathHelpers.setDisplayMathNodeContents = function (node) {
+        // Set the innerText of a display mathnode/math figure to be the same as the data-equation attribute
+        node.innerText = '\1f4c4[DMATH]' + node.getAttribute('data-equation') +
+            '\1f4c4[/DMATH]';
+    };
+    
+    mathHelpers.layoutDisplayMathNode = function (node) {
+        // Layout a single display math node
+        mathHelpers.setDisplayMathNodeContents(node);
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub, node], [mathHelpers.saveMathjaxElements]);
+    };    
+    
     mathHelpers.resetMath = function (callback) {
         // (Re)layout all math nodes
         var allEquations = jQuery('span.equation'),

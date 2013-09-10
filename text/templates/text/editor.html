@@ -8,19 +8,9 @@
         <title> Fidus Writer - {{document.title}} </title>
         <meta name="description" content="{% trans "The all in one solution for collaborative academic writing." %}">
         <script type="text/javascript">
-            // Disable the reload function until everything has been loaded. This
-            // will eliminate most cases of reloading the page before it is ready,
-            // which will shut down write access.
-            var disableReload = function(e) {
-            if (e.which == 116 ||(e.ctrlKey && e.which == 82)) e.preventDefault();
-            };
-            document.addEventListener("keydown", disableReload);
-
-
             var mathjaxZipUrl = '{{ STATIC_URL }}zip/mathjax.zip';
             var staticUrl = '{{ STATIC_URL }}';
-        </script>
-        <script>
+
             var isChrome = false;
 
             if(window.chrome) {

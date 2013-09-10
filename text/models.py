@@ -28,7 +28,7 @@ MAX_SINCE_SAVE=timedelta(seconds=LOCK_TIMEOUT)
 
 class Text(models.Model):
     title = models.CharField(max_length=255, default='', blank=True)
-    contents = models.TextField(default='{}')
+    contents = models.TextField(default='<p><br></p>')
     metadata = models.TextField(default='{}') #json object of metadata
     comments = models.TextField(default='[]') #json list of comments
     settings = models.TextField(default='{}') #json object of settings
@@ -36,33 +36,12 @@ class Text(models.Model):
     owner = models.ForeignKey(User,related_name='owner')
     added = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    
-    # The following is needed for locking texts
-    last_editor = models.ForeignKey(User,related_name='last_editor')
-    last_accessed = models.DateTimeField(auto_now=True,default=timezone.now())
-    currently_open = models.BooleanField(default=True)
-    # last_accessed is slightly different than updated, as it will be updated
-    # even when the model is saved without any changes to title or contents.
 
     def __unicode__(self):
         return self.title
     
     def get_absolute_url(self):
         return "/text/%i/" % self.id
-    
-    def is_locked(self):
-        if self.currently_open == False:
-            return False
-        if timezone.now() - self.last_accessed < MAX_SINCE_SAVE:
-            return True
-        else:
-            return False
-            
-    def is_locked_for(self, user):
-        if self.is_locked():
-            if self.last_editor!=user:
-                return True
-        return False
         
 
 RIGHTS_CHOICES  = (

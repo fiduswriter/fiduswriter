@@ -30,7 +30,6 @@ from django.conf import settings
 from django.core.mail import send_mail
 
 from text.models import Text, AccessRight
-from text.forms import TextForm
 from avatar.util import get_primary_avatar, get_default_avatar_url
 
 from avatar.templatetags.avatar_tags import avatar_url
@@ -112,7 +111,7 @@ def documents_list(request):
             'owner_avatar': avatar_url(document.owner,80),
             'added': added,
             'updated': updated,
-            'is_locked': document.is_locked(),
+            #'is_locked': document.is_locked(),
             'rights': access_right
         })
     return output_list
@@ -150,198 +149,6 @@ def editor(request):
     return render_to_response('text/editor.html', 
         response,
         context_instance=RequestContext(request))
-
-@login_required
-def get_document_js(request):
-    response={}
-    status = 405
-    can_access = False
-    is_owner = False
-    is_new = False
-    is_locked = False
-    text_owner = request.user
-    if request.is_ajax() and request.method == 'POST':
-        text_id = int(request.POST['id'])
-        if text_id == 0:
-            can_access = True
-            is_owner = True
-            is_new = True
-            access_rights = 'w'
-        else:
-            text = Text.objects.get(pk=text_id)
-            if text.owner == request.user:
-                can_access = True
-                is_owner = True
-                access_rights = 'w'
-            else:
-                ar = AccessRight.objects.filter(user=request.user,text=text)
-                if ar.count() > 0:
-                    can_access = True
-                    text_owner = text.owner
-                    access_rights = ar[0].rights
-        if can_access:
-            status = 200
-            response['document']={}
-            if is_new:
-                response['document']['id']=0
-                response['document']['title']=''
-                response['document']['contents']='<p><br></p>'
-                response['document']['metadata']='{}'
-                response['document']['comments']='[]'
-                response['document']['history']=''
-                response['document']['settings']='{}'
-                response['document']['is_locked']=False
-                response['document']['access_rights']=[]
-            else:
-                response['document']['id']=text.id
-                response['document']['title']=text.title
-                response['document']['contents']=text.contents
-                response['document']['metadata']=text.metadata
-                response['document']['comments']=text.comments
-                response['document']['settings']=text.settings
-                response['document']['history']=text.history
-                response['document']['access_rights'] = get_accessrights(AccessRight.objects.filter(text__owner=text_owner))
-                if text.is_locked():
-                    response['document']['is_locked']=True
-                else:
-                    response['document']['is_locked']=False
-                    text.currently_open = True
-                    text.last_editor = request.user
-                    text.save()
-     
-            response['document']['owner']={}
-            response['document']['owner']['id']=text_owner.id
-            response['document']['owner']['name']=text_owner.readable_name
-            response['document']['owner']['avatar']=avatar_url(text_owner,80)            
-            response['document']['owner']['team_members']=[]
-            for team_member in text_owner.leader.all():
-                tm_object = {}
-                tm_object['id'] = team_member.member.id
-                tm_object['name'] = team_member.member.readable_name
-                tm_object['avatar'] = avatar_url(team_member.member,80)
-                response['document']['owner']['team_members'].append(tm_object)
-            response['document']['is_owner']=is_owner
-            response['document']['rights'] = access_rights
-            if not is_owner:
-                response['user']={}
-                response['user']['id']=request.user.id
-                response['user']['name']=request.user.readable_name
-                response['user']['avatar']=avatar_url(request.user,80)
-    return HttpResponse(
-        simplejson.dumps(response),
-        content_type = 'application/json; charset=utf8',
-        status=status
-    )    
-
-
-  
-@login_required
-def save_js(request):
-    response = {}
-    status = 405
-    if request.is_ajax() and request.method == 'POST':
-        doc_id = int(request.POST['id'])
-        form_data = request.POST.copy() 
-        # We need to copy the request.POST in order to feed the request.user in
-        # as the owner
-        #if request.POST['title'] == '':
-        #    form_data.__setitem__('title', '')
-        if doc_id == 0:
-            # We are dealing with a new document that still has not obtained an
-            # ID.
-            # We now add some data to the form from the webpage.
-            form_data.__setitem__('owner', request.user.pk)
-            form_data.__setitem__('last_editor', request.user.pk)
-            form_data.__setitem__('history', request.POST['last_history'])
-            # Now we check the augmented form against the modelform
-            form = TextForm(form_data)
-            if form.is_valid():
-                # The form was valid, so we save the instance in the database,
-                # and return the id that was assigned back to the client.
-                form.save()
-                status = 201
-                response['doc_id'] = form.instance.id
-                date_format = '%d/%m/%Y'
-                date_obj = dateutil.parser.parse(str(form.instance.added))
-                response['added'] = date_obj.strftime(date_format)
-                date_obj = dateutil.parser.parse(str(form.instance.updated))
-                response['updated'] = date_obj.strftime(date_format)
-            else:
-                response['errors'] = form.errors 
-                
-        else:
-            doc = Text.objects.get(pk=doc_id)
-            form_data.__setitem__('owner', doc.owner.id)
-            form_data.__setitem__('last_editor', request.user.pk)
-            form_data.__setitem__('updated', timezone.now())
-            # add the documents recent history to the already saved history
-            # TODO: It should be investigated whether this way of handling the history costs a lot of memory and/or processing power.
-            # If it does, a special SQL function making use of the "concat" may be needed. The max size for the text field is limited to 4GB. 
-            # Also this may be cause for problems. Possible a NOSQL databse that stores JSON objects directly is needed.
-            form_data.__setitem__('history', doc.history + request.POST['last_history'])
-            
-            if doc.owner==request.user:
-                form = TextForm(form_data,instance=doc)
-                if form.is_valid():
-                    form.save()
-                    status = 200
-                else:
-                    response['errors'] = form.errors
-                    status = 422
-            else:
-                # We are not dealing with the owner, so we need to check if the
-                # current user has the right to save the document
-                if len(doc.accessright_set.filter(user=request.user,rights=u'w'))>0:
-                    form = TextForm(form_data,instance=doc)
-                    if form.is_valid():
-                        form.save()
-                        status = 200
-                    else:
-                        status = 422
-                else:
-                    status = 403
-    return HttpResponse(
-        simplejson.dumps(response),
-        content_type = 'application/json; charset=utf8',
-        status=status
-    )
-
-@login_required
-def close_js(request):
-    response = {}
-    status = 405
-    if request.is_ajax() and request.method == 'POST':
-        doc_id = int(request.POST['id'])
-        if doc_id == 0:
-            # Document was never saved, so we just forget about it
-            status = 200
-        else:
-            doc = Text.objects.get(pk=doc_id)
-            if doc.last_editor == request.user:
-                doc.currently_open = False
-                doc.save()
-                status = 200
-    return HttpResponse(
-        simplejson.dumps(response),
-        content_type = 'application/json; charset=utf8',
-        status=status
-    )        
-        
-
-@login_required
-def ping_js(request):
-    response = {}
-    status = 405
-    if request.is_ajax() and request.method == 'POST':
-        doc_id = int(request.POST['id'])
-        if doc_id > 0:
-            Text.objects.get(pk=doc_id).save()
-        status = 200
-    return HttpResponse(
-        simplejson.dumps(response),
-        content_type = 'application/json; charset=utf8',
-        status=status
-    )    
     
 @login_required    
 def delete_js(request):

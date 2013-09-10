@@ -17,39 +17,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
 (function () {
     var exports = this,
         editorHelpers = {};
 
-    editorHelpers.getDocumentData = function (id) {
-        $.ajax({
-            url: '/text/document/',
-            data: {
-                'id': id
-            },
-            type: 'POST',
-            dataType: 'json',
-            success: function (response, textStatus, jqXHR) {
-                editorHelpers.fillEditorPage(response.document);
-
-                if (response.hasOwnProperty('user')) {
-                    theUser = response.user;
-                } else {
-                    theUser = theDocument.owner;
-                }
-                jQuery.event.trigger({
-                    type: "documentDataLoaded",
-                });
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                $.addAlert('error', jqXHR.responseText);
-            },
-            complete: function () {
-                $.deactivateWait();
-            }
-        });
-    };
 
     editorHelpers.layoutMetadata = function () {
         var i;
@@ -61,7 +32,7 @@
                     'selected');
             }
         }
-        
+
         jQuery('#document-metadata').html(tmp_metadata({
             settings: theDocument.settings.metadata,
             metadata: theDocument.metadata
@@ -73,12 +44,13 @@
         editorHelpers.switchMetadataDocumentData(theMetadata);
         editorHelpers.setMetadataDisplay(theMetadata);
     };
-    
+
     editorHelpers.switchMetadataDocumentData = function (theMetadata) {
-        editorHelpers.setDocumentData('settings.metadata.'+theMetadata, !theDocument.settings.metadata[
-            theMetadata]);
+        editorHelpers.setDocumentData('settings.metadata.' + theMetadata, !
+            theDocument.settings.metadata[
+                theMetadata]);
     };
-    
+
     editorHelpers.setMetadataDisplay = function (theMetadata) {
         editorHelpers.layoutMetadata();
         editorHelpers.documentHasChanged();
@@ -90,9 +62,10 @@
         theDocument.settings = jQuery.parseJSON(theDocument.settings);
         theDocument.metadata = jQuery.parseJSON(theDocument.metadata);
         theDocument.comments = jQuery.parseJSON(theDocument.comments);
-        theDocument.history = jQuery.parseJSON('['+theDocument.history+']');
+        theDocument.history = jQuery.parseJSON('[' + theDocument.history +
+            ']');
         theDocument.lastHistory = [];
-        
+
         var DEFAULTS = [
             ['metadata.title', theDocument.title],
             ['settings.papersize', '1117'],
@@ -101,31 +74,43 @@
             ['settings.documentstyle', 'elephant'],
             ['settings.metadata', {}],
         ];
-        
-        for(var i=0;i<DEFAULTS.length;i++){
+
+        for (var i = 0; i < DEFAULTS.length; i++) {
             // TODO: Find a way to do this without eval.
-            if(eval("'undefined'===typeof(theDocument."+DEFAULTS[i][0]+")")) {
-                if ('string'===typeof(DEFAULTS[i][1])) {
-                    eval("theDocument."+DEFAULTS[i][0]+"=unescape('"+escape(DEFAULTS[i][1])+"')");
-                } else {
-                    eval("theDocument."+DEFAULTS[i][0]+"="+JSON.stringify(DEFAULTS[i][1]));
+            if (eval("'undefined'===typeof(theDocument." + DEFAULTS[i][0] +
+                ")")) {
+                if ('string' === typeof (DEFAULTS[i][1])) {
+                    eval("theDocument." + DEFAULTS[i][0] + "=unescape('" +
+                        escape(DEFAULTS[i][1]) + "')");
+                }
+                else {
+                    eval("theDocument." + DEFAULTS[i][0] + "=" + JSON.stringify(
+                        DEFAULTS[i][1]));
                 }
             }
-         
+
         }
-        
+
+        if (theDocument.new) {
+            // If the document is new, change the url. Then forget that the document is new.
+            window.history.replaceState("", "", "/text/" + theDocument.id +
+                "/");
+            delete theDocument.new;
+        }
+
         editorHelpers.setDisplay.document('contents', theDocument.contents);
-        editorHelpers.setDisplay.document('metadata.title', theDocument.metadata.title);
+        editorHelpers.setDisplay.document('metadata.title', theDocument.metadata
+            .title);
     };
 
     editorHelpers.documentHasChanged = function () {
         theDocument.changed = true;
         jQuery('.save').removeClass('disabled');
     };
-    
+
     editorHelpers.setDisplay = {};
-    
-    
+
+
     editorHelpers.setDisplay.settingsDocumentstyle = function (theValue) {
 
         jQuery("#header-navigation .style.selected").removeClass('selected');
@@ -141,28 +126,34 @@
 
         paginationConfig.outerMargin = paginationConfigList[theValue].outerMargin;
         paginationConfig.innerMargin = paginationConfigList[theValue].innerMargin;
-        paginationConfig.contentsTopMargin = paginationConfigList[theValue].contentsTopMargin;
+        paginationConfig.contentsTopMargin = paginationConfigList[theValue]
+            .contentsTopMargin;
         paginationConfig.headerTopMargin = paginationConfigList[theValue].headerTopMargin;
-        paginationConfig.contentsBottomMargin = paginationConfigList[theValue].contentsBottomMargin;
-        paginationConfig.pagenumberBottomMargin = paginationConfigList[theValue].pagenumberBottomMargin;
+        paginationConfig.contentsBottomMargin = paginationConfigList[
+            theValue].contentsBottomMargin;
+        paginationConfig.pagenumberBottomMargin = paginationConfigList[
+            theValue].pagenumberBottomMargin;
         pagination.setPageStyle();
-        set_document_style_timer = setTimeout(function() {
+        set_document_style_timer = setTimeout(function () {
             clearTimeout(set_document_style_timer);
             if (document.webkitGetNamedFlows) {
-                document.webkitGetNamedFlows()[0].dispatchEvent(pagination.events.escapesNeedMove);
+                document.webkitGetNamedFlows()[0].dispatchEvent(
+                    pagination.events.escapesNeedMove);
             }
         }, 200);
-        
+
         commentHelpers.layoutComments();
 
     };
-    
+
     editorHelpers.setDisplay.settingsCitationstyle = function (theValue) {
-        jQuery("#header-navigation .citationstyle.selected").removeClass('selected');
-        jQuery('span[data-citationstyle=' + theValue + ']').addClass('selected');
+        jQuery("#header-navigation .citationstyle.selected").removeClass(
+            'selected');
+        jQuery('span[data-citationstyle=' + theValue + ']').addClass(
+            'selected');
         citationHelpers.formatCitationsInDoc();
     };
-    
+
     editorHelpers.setDisplay.settingsPapersize = function (theValue) {
         jQuery("#header-navigation .papersize.selected").removeClass(
             'selected');
@@ -171,59 +162,65 @@
         paginationConfig['pageHeight'] = theValue;
         pagination.setPageStyle();
         commentHelpers.layoutComments();
-        set_document_style_timer = setTimeout(function() {
+        set_document_style_timer = setTimeout(function () {
             clearTimeout(set_document_style_timer);
-            if (document.webkitGetNamedFlows & document.webkitGetNamedFlows().length > 0) {
-                document.webkitGetNamedFlows()[0].dispatchEvent(pagination.events.escapesNeedMove);
+            if (document.webkitGetNamedFlows & document.webkitGetNamedFlows()
+                .length > 0) {
+                document.webkitGetNamedFlows()[0].dispatchEvent(
+                    pagination.events.escapesNeedMove);
             }
-        }, 100);    
-            
+        }, 100);
+
     };
 
     editorHelpers.setDisplay.id = function (theValue) {
         if (0 === theValue) {
             jQuery('.savecopy').addClass('disabled');
-        } else {
+        }
+        else {
             jQuery('.savecopy').removeClass('disabled');
         }
     };
-    
+
     editorHelpers.setDisplay.settingsTracking = function (theValue) {
-        if(theValue){
+        if (theValue) {
             jQuery('.ice-track').addClass('selected');
-        } else {
+        }
+        else {
             jQuery('.ice-track').removeClass('selected');
         }
     };
-    
+
     editorHelpers.setDisplay.settingsTrackingShow = function (theValue) {
         if (theValue) {
             jQuery('.ice-display').addClass('selected');
             jQuery('#flow').removeClass('CT-hide');
-        } else {
+        }
+        else {
             jQuery('.ice-display').removeClass('selected');
             jQuery('#flow').addClass('CT-hide');
         }
     };
-    
+
     editorHelpers.setDisplay.contents = function (theValue) {
         jQuery('#document-contents').html(theValue);
     };
-    
+
     editorHelpers.setDisplay.metadataTitle = function (theValue) {
         jQuery('#document-title').html(theValue);
-        editorHelpers.setDisplay.document('title', jQuery('#document-title').text().trim());
+        editorHelpers.setDisplay.document('title', jQuery('#document-title')
+            .text().trim());
     };
-    
+
     editorHelpers.setDisplay.title = function (theValue) {
         var theTitle = theValue;
         if (theTitle.length === 0) {
             theTitle = gettext('Untitled Document');
         }
         jQuery('title').html('Fidus Writer - ' + theTitle);
-        jQuery('#header h1').html(theTitle);      
+        jQuery('#header h1').html(theTitle);
     };
-    
+
     editorHelpers.setDisplay.FIELDS = {
         // A list of the functions used to update various fields to e called by editorHelpers.setDisplay.document
         'title': editorHelpers.setDisplay.title,
@@ -236,162 +233,173 @@
         'settings.documentstyle': editorHelpers.setDisplay.settingsDocumentstyle,
         'id': editorHelpers.setDisplay.id,
     };
-    
-     editorHelpers.setDisplay.document = function (theName, theValue) {
+
+    editorHelpers.setDisplay.document = function (theName, theValue) {
         editorHelpers.setDisplay.FIELDS[theName](theValue);
     };
 
-    editorHelpers.TEXT_FIELDS = ['contents','metadata.title','metadata.subtitle','metadata.abstract'];
-    
+    editorHelpers.TEXT_FIELDS = ['contents', 'metadata.title',
+        'metadata.subtitle', 'metadata.abstract'
+    ];
+
     editorHelpers.setDocumentData = function (theName, newValue) {
         var dmp, diff, theChange, currentValue;
-        currentValue = eval('theDocument.'+theName);
+        currentValue = eval('theDocument.' + theName);
         if (editorHelpers.TEXT_FIELDS.indexOf(theName) !== -1) {
-            if ('undefined'===typeof(currentValue)) {
+            if ('undefined' === typeof (currentValue)) {
                 currentValue = '';
             }
             dmp = new diff_match_patch();
             diff = dmp.diff_main(currentValue, newValue);
-            if (diff.length===1 && diff[0][0]===0 || diff.length===0) {
+            if (diff.length === 1 && diff[0][0] === 0 || diff.length === 0) {
                 // Don't create a history entry if nothing has changed
                 return false;
             }
             dmp.diff_cleanupEfficiency(diff);
-        } else {
+        }
+        else {
             if (currentValue === newValue) {
                 // Don't create a history entry if nothing has changed
                 return false;
             }
             diff = [currentValue, newValue];
         }
-        if ('string'===typeof(newValue)) {
+        if ('string' === typeof (newValue)) {
             // TODO: Using eval and escaping-unescaping is not very beautiful. If possible this should be done differently.
-            eval("theDocument."+theName+"=unescape('"+escape(newValue)+"')");
-        } else {
-            eval("theDocument."+theName+"="+JSON.stringify(newValue));
+            eval("theDocument." + theName + "=unescape('" + escape(newValue) +
+                "')");
+        }
+        else {
+            eval("theDocument." + theName + "=" + JSON.stringify(newValue));
         }
         theChange = [theUser.id, new Date().getTime(), theName, diff];
         theDocument.history.push(theChange);
         theDocument.lastHistory.push(theChange);
         return true;
     };
-    
+
     editorHelpers.applyContentChange = function (diffs) {
         var dmp = new diff_match_patch();
-        document.getElementById('document-contents').innerHTML = dmp.patch_apply(dmp.patch_make(diffs), document.getElementById('document-contents').innerHTML)[0];
+        document.getElementById('document-contents').innerHTML = dmp.patch_apply(
+            dmp.patch_make(diffs), document.getElementById(
+                'document-contents').innerHTML)[0];
     };
-    
+
     editorHelpers.applyDocumentDataChanges = function (data) {
         var diffs = data.change;
-        for (var i=0;i<diffs.length;i++) {
-            if (diffs[i][2]==='contents') {
+        for (var i = 0; i < diffs.length; i++) {
+            if (diffs[i][2] === 'contents') {
                 editorHelpers.applyContentChange(diffs[i][3]);
             }
         }
     };
-    
+
     editorHelpers.saveDocument = function (callback) {
         var documentData = {}, lastHistory;
-        
-        
-        editorHelpers.setDocumentData('metadata.title', jQuery('#document-title').html().trim());
-        editorHelpers.setDocumentData('contents', jQuery('#document-contents').html().trim());        
-        
+
+
+        editorHelpers.setDocumentData('metadata.title', jQuery(
+            '#document-title').html().trim());
+        editorHelpers.setDocumentData('contents', jQuery(
+            '#document-contents').html().trim());
+
         // The title is saved twice: as metadata.title with html formatting and as just title as plain text.
         // Because we don't want two entries in the history, we avoid touching the history for the text-only version.
-        
+
         theDocument.title = jQuery('#document-title').text().trim();
-        
-        jQuery('#document-metadata .metadata').each(function() {
-            editorHelpers.setDocumentData('metadata.'+jQuery(this).attr('data-metadata'), jQuery(this).html().trim());
+
+        jQuery('#document-metadata .metadata').each(function () {
+            editorHelpers.setDocumentData('metadata.' + jQuery(this).attr(
+                'data-metadata'), jQuery(this).html().trim());
         });
-        if (0===theDocument.lastHistory.length) {
+        if (0 === theDocument.lastHistory.length) {
             //$.addAlert('error','Nothing to save');
             return;
         }
+
+        ws.send(JSON.stringify({
+            type: 'transform',
+            change: theDocument.lastHistory
+        }));        
         
-        documentData.id = theDocument.id;
-        documentData.currently_open = true;
         documentData.settings = JSON.stringify(theDocument.settings);
         documentData.metadata = JSON.stringify(theDocument.metadata);
         documentData.comments = JSON.stringify(theDocument.comments);
         lastHistory = JSON.stringify(theDocument.lastHistory);
-        documentData.last_history = lastHistory.substring(1,lastHistory.length-1);
-        if (theDocument.id > 0) {
-            documentData.last_history = ',' + documentData.last_history;
-        }
-        console.log('sending ws');
-        ws.send(JSON.stringify({type:'transform',change:theDocument.lastHistory}));
+        documentData.last_history = lastHistory.substring(1, lastHistory.length-1);
         theDocument.lastHistory = [];
-        documentData.title = theDocument.title.substring(0,255);
+        documentData.title = theDocument.title.substring(0, 255);
         documentData.contents = theDocument.contents;
 
-        var ajaxData = {
+        ws.send(JSON.stringify({
+            type: 'save',
+            document: documentData
+        }))
+        
+        if (callback) {
+            callback();
+        }
+        
+      /*  var ajaxData = {
             url: '/text/save/',
             data: documentData,
             type: 'POST',
             dataType: 'json',
             success: function (response, textStatus, jqXHR) {
-                if (jqXHR.status === 201) {
-                    theDocument.id = response.doc_id;
-                    jQuery('.savecopy').removeClass('disabled');
-                    window.history.replaceState("", "", "/text/" +
-                        theDocument.id + "/");
+                if (callback) {
+                    callback();
                 }
-                editorHelpers.updatePingTimer(callback);
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 $.addAlert('error', gettext('Document could not be saved'));
             },
         }
 
-        $.ajax(ajaxData);
+        $.ajax(ajaxData);*/
         return true;
 
     };
 
     editorHelpers.saveDocumentIfChanged = function (callback) {
-        var currentTime = new Date().getTime();
-        if (currentTime - timeOfLastServerPing < 600000) {
-            if (theDocument.changed) {
-                theDocument.changed = false;
-                jQuery('.save').addClass('disabled');
-                editorHelpers.saveDocument(callback);
-            } else if (currentTime - timeOfLastServerPing > 550000) {
-                editorHelpers.pingServer(callback);
-            } else if (callback) {
-                callback();
-            }
-        } else {
-            window.clearInterval(saveTimer);
-            editorHelpers.noConnectionToServer();
+        // Only save if this session is enabled to do so. Only one session should be saving any given document at the same time.
+        if (window.enableSave && theDocument.changed) {
+            theDocument.changed = false;
+            jQuery('.save').addClass('disabled');
+            editorHelpers.saveDocument(callback);
         }
-    };
-
-    editorHelpers.updatePingTimer = function (callback) {
-        timeOfLastServerPing = new Date().getTime();
-        if (callback) {
+        else if (callback) {
             callback();
         }
     };
-    
+
     editorHelpers.setPlaceholders = function (currentElement) {
-        var placeHolderCss='';
-        if (jQuery('#document-title')[0].innerText.length===0 && currentElement != 'document-title') {
-            placeHolderCss += '#document-title:before {content: "'+gettext('Title...')+'"}\n'; 
+        var placeHolderCss = '';
+        if (jQuery('#document-title')[0].innerText.length === 0 &&
+            currentElement != 'document-title') {
+            placeHolderCss += '#document-title:before {content: "' +
+                gettext('Title...') + '"}\n';
         }
-        if (jQuery('#document-contents')[0].innerText.replace(/(\r\n|\n|\r)/gm,"").length===0 && currentElement != 'document-contents') {
-            placeHolderCss += '#document-contents:before {content: "'+gettext('Contents...')+'"}\n'; 
+        if (jQuery('#document-contents')[0].innerText.replace(
+                /(\r\n|\n|\r)/gm, "").length === 0 && currentElement !=
+            'document-contents') {
+            placeHolderCss += '#document-contents:before {content: "' +
+                gettext('Contents...') + '"}\n';
         }
-        if (jQuery('#metadata-subtitle').length > 0 && jQuery('#metadata-subtitle')[0].innerText.length===0 && currentElement != 'metadata-subtitle') {
-            placeHolderCss += '#metadata-subtitle:before {content: "'+gettext('Subtitle...')+'"}\n'; 
+        if (jQuery('#metadata-subtitle').length > 0 && jQuery(
+                '#metadata-subtitle')[0].innerText.length === 0 &&
+            currentElement != 'metadata-subtitle') {
+            placeHolderCss += '#metadata-subtitle:before {content: "' +
+                gettext('Subtitle...') + '"}\n';
         }
-        if (jQuery('#metadata-abstract').length > 0 && jQuery('#metadata-abstract')[0].innerText.length===0 && currentElement != 'metadata-abstract') {
-            placeHolderCss += '#metadata-abstract:before {content: "'+gettext('Abstract...')+'"}\n'; 
+        if (jQuery('#metadata-abstract').length > 0 && jQuery(
+                '#metadata-abstract')[0].innerText.length === 0 &&
+            currentElement != 'metadata-abstract') {
+            placeHolderCss += '#metadata-abstract:before {content: "' +
+                gettext('Abstract...') + '"}\n';
         }
         jQuery('#placeholderStyles')[0].innerHTML = placeHolderCss;
     };
-    
+
 
     editorHelpers.noConnectionToServer = function () {
         // If we come right out fo the print dialog, permit immediate reloading.
@@ -436,46 +444,43 @@
             20000)
     };
 
-    editorHelpers.pingServer = function (callback) {
-        var DocumentData = {};
-        DocumentData.id = theDocument.id;
-        $.ajax({
-            url: '/text/ping/',
-            data: DocumentData,
-            type: 'POST',
-            dataType: 'json',
-            success: function () {
-                editorHelpers.updatePingTimer(callback);
-            },
-            error: function () {
-                if (failedPingAttempts < 10) {
-                    // The ping was unsuccesful. Try again every second for 9 seconds;
-                    setTimeout(function () {
-                            editorHelpers.pingServer(callback);
-                        },
-                        1000);
-                } else {
-                    failedPingAttempts = 0;
-                }
-            }
-        });
 
-    };
-    
+
     editorHelpers.websocket = function (data) {
         switch (data.type) {
-            case 'chat':
-                chatHelpers.newMessage(data);
-                break;
-            case 'connections':
-                chatHelpers.updateParticipantList(data);
-                break;
-            case 'welcome':
-                window.sessionId = data.key;
-                break;
-            case 'transform':
-                editorHelpers.applyDocumentDataChanges(data);
-                break;
+        case 'chat':
+            chatHelpers.newMessage(data);
+            break;
+        case 'connections':
+            chatHelpers.updateParticipantList(data);
+            break;
+        case 'welcome':
+            editorHelpers.fillEditorPage(data.document);
+
+            if (data.hasOwnProperty('user')) {
+                theUser = response.user;
+            }
+            else {
+                theUser = theDocument.owner;
+            }
+            jQuery.event.trigger({
+                type: "documentDataLoaded",
+            });
+
+            window.sessionId = data.session_id;
+
+            if (data.hasOwnProperty('control')) {
+                window.enableSave = true;
+            }
+            else {
+                window.enableSave = false;
+            }
+            break;
+        case 'transform':
+            editorHelpers.applyDocumentDataChanges(data);
+            break;
+        case 'take_control':
+            window.enableSave = true;
         }
     };
 
@@ -490,11 +495,12 @@
             if (isNaN(documentId)) {
                 documentId = 0;
             }
-            window.ws = new WebSocket('ws://'+location.host+'/ws/doc/'+documentId);
-            ws.onmessage = function(event) {
+            window.ws = new WebSocket('ws://' + location.host +
+                '/ws/doc/' + documentId);
+            ws.onmessage = function (event) {
                 editorHelpers.websocket(JSON.parse(event.data));
             }
-            editorHelpers.getDocumentData(documentId);
+            ws.onclose = editorHelpers.noConnectionToServer;
         });
     };
 

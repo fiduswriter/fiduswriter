@@ -21,8 +21,7 @@
 // Initial editor wide variables
 var toPrint = false,
     lastStyleUsedFootnotes = false,
-    failedPingAttempts = 0,
-    timeOfLastServerPing, saveTimer;
+    saveTimer;
 
 
     
@@ -57,7 +56,6 @@ jQuery(document).bind('documentDataLoaded', function () {
         'toolbarcomment': {},
     };
     // We cannot download BibDB and ImageDB before we know if we are the document owner or not.
-    editorHelpers.updatePingTimer();
     bibliographyHelpers.init();
     usermediaHelpers.init();
 
@@ -185,13 +183,8 @@ jQuery(document).bind('documentDataLoaded', function () {
     if (!theDocument.is_owner) {
         jQuery('span.share').addClass('disabled');
     }
-
-    // Re-enable the reload button
-    document.removeEventListener("keydown", disableReload);
-
-    if (theDocument.is_locked) {
-        jQuery('#editor-navigation').hide();
-    } else if (theDocument.rights === 'w') {
+ 
+    if (theDocument.rights === 'w') {
         window.tracker = new ice.InlineChangeEditor({
             element: document.querySelector('#document-editable'),
             handleEvents: false,
@@ -361,20 +354,5 @@ jQuery(document).bind('documentDataLoaded', function () {
                 });
         });
 
-        // The following sends a signal that the page is being closed. This way the
-        // editor view will not be locked because the user is reloading the editor page
-        // or closes the wrong browser tab. Only if the writer performs two rapid
-        // document reloads after oneanother will he still be locked out.
-
-        jQuery(window).bind('beforeunload', function () {
-            jQuery.ajax({
-                url: '/text/close/',
-                data: {
-                    id: theDocument.id
-                },
-                type: 'POST',
-                async: false
-            });
-        });
     }
 });

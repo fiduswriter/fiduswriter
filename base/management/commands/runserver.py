@@ -30,7 +30,7 @@ from tornado.ioloop import IOLoop
 from tornado.web import Application, FallbackHandler, RequestHandler, StaticFileHandler
 from tornado.wsgi import WSGIContainer
 
-from ws.handler import WebSocketHandler
+from text.ws_views import DocumentWS
 
 DEFAULT_PORT = "8000"
 
@@ -43,9 +43,9 @@ class Command(BaseCommand):
         wsgi_app = WSGIContainer(WSGIHandler())
         tornado_app = Application([(r'/static/(.*)',
             DjangoStaticFilesHandler, {'default_filename': 'none.img'}),
-            ('/hello-tornado', HelloHandler), ('/ws/(\w+)',
-            WebSocketHandler), ('.*', FallbackHandler,
-            dict(fallback=wsgi_app))])
+            ('/hello-tornado', HelloHandler), 
+            ('/ws/doc/(\w+)', DocumentWS), 
+            ('.*', FallbackHandler, dict(fallback=wsgi_app))])
         if not port:
             self.port = DEFAULT_PORT
         else:

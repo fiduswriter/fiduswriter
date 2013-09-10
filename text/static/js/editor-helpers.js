@@ -490,7 +490,7 @@
             if (isNaN(documentId)) {
                 documentId = 0;
             }
-            window.ws = new WebSocket('ws://'+location.host+'/ws/'+documentId);
+            window.ws = new WebSocket('ws://'+location.host+'/ws/doc/'+documentId);
             ws.onmessage = function(event) {
                 editorHelpers.websocket(JSON.parse(event.data));
             }

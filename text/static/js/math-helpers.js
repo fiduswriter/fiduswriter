@@ -46,20 +46,29 @@
     };    
     
     mathHelpers.resetMath = function (callback) {
+        
+        
         // (Re)layout all math nodes
-        var allEquations = jQuery('span.equation'),
-            i;
+        var allEquations = jQuery('.equation'),
+            allFigureEquations = jQuery('.figure-equation'), 
+            mjQueue = MathJax.Hub.queue, i;
 
         for (i = 0; i < allEquations.length; i++) {
             mathHelpers.setMathNodeContents(allEquations[i]);
+            mjQueue.Push(["Typeset", MathJax.Hub, allEquations[i]]);
+        }
+        
+        for (i = 0; i < allFigureEquations.length; i++) {
+            mathHelpers.setDisplayMathNodeContents(allFigureEquations[i]);
+            mjQueue.Push(["Typeset", MathJax.Hub, allFigureEquations[i]]);
         }
 
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub], [callback]);
+        mjQueue.Push(callback);
     };
 
     mathHelpers.saveMathjaxElements = function () {
         var mathjaxDefs, mathjax, changed = false,
-            allEquations = jQuery('span.equation');
+            allEquations = jQuery('.equation, .figure-equation');
 
         if (allEquations.length === 0) {
             mathjax = false;

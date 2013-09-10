@@ -46,17 +46,18 @@
     };
 
     editorHelpers.switchMetadataDocumentData = function (theMetadata) {
-        editorHelpers.setDocumentData('settings.metadata.' + theMetadata, !
-            theDocument.settings.metadata[
+        editorHelpers.setDocumentData('settings.metadata.' + theMetadata, !theDocument.settings.metadata[
                 theMetadata]);
     };
 
-    editorHelpers.setMetadataDisplay = function (theMetadata) {
+    editorHelpers.setMetadataDisplay = function () {
         editorHelpers.layoutMetadata();
         editorHelpers.documentHasChanged();
     };
 
     editorHelpers.fillEditorPage = function (aDocument) {
+        var DEFAULTS, i;
+        
         theDocument = aDocument;
         theDocument.changed = false;
         theDocument.settings = jQuery.parseJSON(theDocument.settings);
@@ -66,19 +67,18 @@
             ']');
         theDocument.lastHistory = [];
 
-        var DEFAULTS = [
+        DEFAULTS = [
             ['metadata.title', theDocument.title],
             ['settings.papersize', '1117'],
             ['settings.citationstyle', 'apa'],
             ['settings.tracking', false],
             ['settings.documentstyle', 'elephant'],
-            ['settings.metadata', {}],
+            ['settings.metadata', {}]
         ];
 
-        for (var i = 0; i < DEFAULTS.length; i++) {
+        for (i = 0; i < DEFAULTS.length; i++) {
             // TODO: Find a way to do this without eval.
-            if (eval("'undefined'===typeof(theDocument." + DEFAULTS[i][0] +
-                ")")) {
+            if (eval("undefined===theDocument." + DEFAULTS[i][0])) {
                 if ('string' === typeof (DEFAULTS[i][1])) {
                     eval("theDocument." + DEFAULTS[i][0] + "=unescape('" +
                         escape(DEFAULTS[i][1]) + "')");
@@ -91,11 +91,11 @@
 
         }
 
-        if (theDocument.new) {
+        if (theDocument.is_new) {
             // If the document is new, change the url. Then forget that the document is new.
             window.history.replaceState("", "", "/text/" + theDocument.id +
                 "/");
-            delete theDocument.new;
+            delete theDocument.is_new;
         }
 
         editorHelpers.setDisplay.document('contents', theDocument.contents);
@@ -164,7 +164,7 @@
         commentHelpers.layoutComments();
         set_document_style_timer = setTimeout(function () {
             clearTimeout(set_document_style_timer);
-            if (document.webkitGetNamedFlows & document.webkitGetNamedFlows()
+            if (document.webkitGetNamedFlows && document.webkitGetNamedFlows()
                 .length > 0) {
                 document.webkitGetNamedFlows()[0].dispatchEvent(
                     pagination.events.escapesNeedMove);
@@ -231,7 +231,7 @@
         'settings.papersize': editorHelpers.setDisplay.settingsPapersize,
         'settings.citationstyle': editorHelpers.setDisplay.settingsCitationstyle,
         'settings.documentstyle': editorHelpers.setDisplay.settingsDocumentstyle,
-        'id': editorHelpers.setDisplay.id,
+        'id': editorHelpers.setDisplay.id
     };
 
     editorHelpers.setDisplay.document = function (theName, theValue) {
@@ -242,16 +242,16 @@
         'metadata.subtitle', 'metadata.abstract'
     ];
 
-    editorHelpers.setDocumentData = function (theName, newValue) {
+    editorHelpers.setDocumentData = function (theName, newValue, skipSendChange) {
         var dmp, diff, theChange, currentValue;
         currentValue = eval('theDocument.' + theName);
         if (editorHelpers.TEXT_FIELDS.indexOf(theName) !== -1) {
-            if ('undefined' === typeof (currentValue)) {
+            if (undefined === currentValue) {
                 currentValue = '';
             }
             dmp = new diff_match_patch();
             diff = dmp.diff_main(currentValue, newValue);
-            if (diff.length === 1 && diff[0][0] === 0 || diff.length === 0) {
+            if (((diff.length) === 1 && (diff[0][0] === 0)) || diff.length === 0) {
                 // Don't create a history entry if nothing has changed
                 return false;
             }
@@ -275,101 +275,108 @@
         theChange = [theUser.id, new Date().getTime(), theName, diff];
         theDocument.history.push(theChange);
         theDocument.lastHistory.push(theChange);
+        if (!skipSendChange) {
+            ws.send(JSON.stringify({
+                type: 'transform',
+                change: theChange
+            }));
+        }
+
         return true;
     };
 
     editorHelpers.applyContentChange = function (diffs) {
         var dmp = new diff_match_patch();
+        editorHelpers.getUpdatesFromInputFields();
+        var savedSel = rangy.saveSelection();
         document.getElementById('document-contents').innerHTML = dmp.patch_apply(
             dmp.patch_make(diffs), document.getElementById(
                 'document-contents').innerHTML)[0];
+        rangy.restoreSelection(savedSel);
+        editorHelpers.getUpdatesFromInputFields(false,true);
     };
 
     editorHelpers.applyDocumentDataChanges = function (data) {
-        var diffs = data.change;
-        for (var i = 0; i < diffs.length; i++) {
-            if (diffs[i][2] === 'contents') {
-                editorHelpers.applyContentChange(diffs[i][3]);
-            }
+        if (data.change[2] === 'contents') {
+            editorHelpers.applyContentChange(data.change[3]);
+        }
+    };
+
+    editorHelpers.getUpdatesFromInputFields = function (callback,skipSendChange) {
+
+        editorHelpers.setDocumentData('metadata.title', jQuery(
+            '#document-title').html().trim(),skipSendChange);
+
+        editorHelpers.setDocumentData('contents', jQuery(
+            '#document-contents').html().trim(),skipSendChange);
+
+        jQuery('#document-metadata .metadata').each(function () {
+            editorHelpers.setDocumentData('metadata.' + jQuery(this).attr(
+                'data-metadata'), jQuery(this).html().trim(),skipSendChange);
+        });
+
+        if (callback) {
+            callback();
         }
     };
 
     editorHelpers.saveDocument = function (callback) {
         var documentData = {}, lastHistory;
-
-
-        editorHelpers.setDocumentData('metadata.title', jQuery(
-            '#document-title').html().trim());
-        editorHelpers.setDocumentData('contents', jQuery(
-            '#document-contents').html().trim());
-
+        
         // The title is saved twice: as metadata.title with html formatting and as just title as plain text.
         // Because we don't want two entries in the history, we avoid touching the history for the text-only version.
 
         theDocument.title = jQuery('#document-title').text().trim();
 
-        jQuery('#document-metadata .metadata').each(function () {
-            editorHelpers.setDocumentData('metadata.' + jQuery(this).attr(
-                'data-metadata'), jQuery(this).html().trim());
-        });
         if (0 === theDocument.lastHistory.length) {
-            //$.addAlert('error','Nothing to save');
+            
+            if (callback) {
+                callback();
+            }
             return;
         }
 
-        ws.send(JSON.stringify({
-            type: 'transform',
-            change: theDocument.lastHistory
-        }));        
-        
-        documentData.settings = JSON.stringify(theDocument.settings);
-        documentData.metadata = JSON.stringify(theDocument.metadata);
-        documentData.comments = JSON.stringify(theDocument.comments);
-        lastHistory = JSON.stringify(theDocument.lastHistory);
-        documentData.last_history = lastHistory.substring(1, lastHistory.length-1);
-        theDocument.lastHistory = [];
-        documentData.title = theDocument.title.substring(0, 255);
-        documentData.contents = theDocument.contents;
 
-        ws.send(JSON.stringify({
-            type: 'save',
-            document: documentData
-        }))
-        
+        if (window.enableSave) {
+            documentData.settings = JSON.stringify(theDocument.settings);
+            documentData.metadata = JSON.stringify(theDocument.metadata);
+            documentData.comments = JSON.stringify(theDocument.comments);
+            lastHistory = JSON.stringify(theDocument.lastHistory);
+            documentData.last_history = lastHistory.substring(1,
+                lastHistory.length - 1);
+            theDocument.lastHistory = [];
+            documentData.title = theDocument.title.substring(0, 255);
+            documentData.contents = theDocument.contents;
+
+            ws.send(JSON.stringify({
+                type: 'save',
+                document: documentData
+            }))
+        }
+
         if (callback) {
             callback();
         }
-        
-      /*  var ajaxData = {
-            url: '/text/save/',
-            data: documentData,
-            type: 'POST',
-            dataType: 'json',
-            success: function (response, textStatus, jqXHR) {
-                if (callback) {
-                    callback();
-                }
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                $.addAlert('error', gettext('Document could not be saved'));
-            },
-        }
 
-        $.ajax(ajaxData);*/
         return true;
 
     };
 
     editorHelpers.saveDocumentIfChanged = function (callback) {
         // Only save if this session is enabled to do so. Only one session should be saving any given document at the same time.
-        if (window.enableSave && theDocument.changed) {
-            theDocument.changed = false;
-            jQuery('.save').addClass('disabled');
-            editorHelpers.saveDocument(callback);
-        }
-        else if (callback) {
-            callback();
-        }
+        //if (theDocument.changed) {
+        jQuery('.save').addClass('disabled');
+        theDocument.changed = false;
+        editorHelpers.getUpdatesFromInputFields(
+            function () {
+                editorHelpers.saveDocument(callback);
+            }
+        );
+
+        //}
+        //else if (callback) {
+        //    callback();
+        //}
     };
 
     editorHelpers.setPlaceholders = function (currentElement) {

@@ -206,6 +206,12 @@ jQuery(document).bind('documentDataLoaded', function () {
             editorHelpers.saveDocumentIfChanged();
         }, 10000);
 
+        changeTimer = setInterval(function () {
+            if (theDocument.changed) {
+                theDocument.changed = false;
+                editorHelpers.getUpdatesFromInputFields();
+            }
+        }, 1000);
         // bind the share dialog to the button if the user is the document owner
         if (theDocument.is_owner) {
             jQuery('.share').bind('click', function () {

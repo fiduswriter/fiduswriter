@@ -80,7 +80,7 @@ class DocumentWS(BaseWebSocketHandler):
             response['document']['is_owner']=self.is_owner
             response['document']['rights'] = self.access_rights
             if is_new:
-                response['document']['new'] = True
+                response['document']['is_new'] = True
             if not self.is_owner:
                 response['user']=dict()
                 response['user']['id']=self.user.id

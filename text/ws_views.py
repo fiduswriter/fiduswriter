@@ -48,7 +48,7 @@ class DocumentWS(BaseWebSocketHandler):
                     self.is_owner = False
                     access_rights = AccessRight.objects.filter(text=self.document, user=self.user)
                     if len(access_rights) > 0:
-                        self.access_rights = access_right[0]
+                        self.access_rights = access_rights[0].rights
                         can_access = True
                     else:
                         can_access = False

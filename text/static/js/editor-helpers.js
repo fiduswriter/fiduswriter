@@ -465,7 +465,7 @@
         case 'welcome':
             editorHelpers.fillEditorPage(data.document);
             if (data.hasOwnProperty('user')) {
-                theUser = response.user;
+                theUser = data.user;
             }
             else {
                 theUser = theDocument.owner;

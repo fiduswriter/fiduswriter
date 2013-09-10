@@ -323,8 +323,8 @@
                                 .removeAttr('disabled');
                         } else {
                             jQuery('#inner-figure-preview')[0].innerHTML =
-                                '<p>\1f4c4[DMATH]' + jQuery(this).val() +
-                                '\1f4c4[/DMATH]</p>';
+                                '<p>[DMATH]' + jQuery(this).val() +
+                                '[/DMATH]</p>';
                             MathJax.Hub.Queue(["Typeset", MathJax.Hub,
                                     "inner-figure-preview"
                             ]);

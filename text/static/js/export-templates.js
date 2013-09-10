@@ -166,8 +166,8 @@ var tmp_mathjax_html_header = _.template('\
         MathJax.Hub.Config({\
             jax: ["input/TeX","output/SVG"],\
             tex2jax: {\
-                    inlineMath: [ ["\1f4c4[MATH]","\1f4c4[/MATH]"]],\
-                    displayMath: [ ["\1f4c4[DMATH]","\1f4c4[/DMATH]"]],\
+                    inlineMath: [ ["[MATH]","[/MATH]"]],\
+                    displayMath: [ ["[DMATH]","[/DMATH]"]],\
                 processEscapes: true\
             },\
             extensions: ["tex2jax.js"],\
@@ -189,12 +189,12 @@ var tmp_mathjax_html_header_starter = _.template('\
                     var mjQueue = MathJax.Hub.queue;\
                     var equations = document.body.querySelectorAll(".equation");\
                     for (var i = 0; i < equations.length; i++) {\
-                        equations[i].innerHTML = "\1f4c4[MATH]"+equations[i].getAttribute("data-equation")+"\1f4c4[/MATH]";\
+                        equations[i].innerHTML = "[MATH]"+equations[i].getAttribute("data-equation")+"[/MATH]";\
                         mjQueue.Push(["Typeset",MathJax.Hub,equations[i[]);\
                     }\
                     var fequations = document.body.querySelectorAll(".figure-equation");\
                     for (var i = 0; i < fequations.length; i++) {\
-                        fequations[i].innerHTML = "\1f4c4[DMATH]"+fequations[i].getAttribute("data-equation")+"\1f4c4[/DMATH]";\
+                        fequations[i].innerHTML = "[DMATH]"+fequations[i].getAttribute("data-equation")+"[/DMATH]";\
                         mjQueue.Push(["Typeset",MathJax.Hub,fequations[i[]);\
                     }\
                 }\
@@ -210,12 +210,12 @@ var tmp_mathjax_xhtml_header_starter = _.template('\
                     var mjQueue = MathJax.Hub.queue;\
                     var equations = document.body.querySelectorAll(".equation");\
                     for (var i = 0; i < equations.length; i++) {\
-                        equations[i].innerHTML = "\1f4c4[MATH]"+equations[i].getAttribute("data-equation")+"\1f4c4[/MATH]";\
+                        equations[i].innerHTML = "[MATH]"+equations[i].getAttribute("data-equation")+"[/MATH]";\
                         mjQueue.Push(["Typeset",MathJax.Hub,equations[i]]);\
                     }\
                     var fequations = document.body.querySelectorAll(".figure-equation");\
                     for (var i = 0; i < fequations.length; i++) {\
-                        fequations[i].innerHTML = "\1f4c4[DMATH]"+fequations[i].getAttribute("data-equation")+"\1f4c4[/DMATH]";\
+                        fequations[i].innerHTML = "[DMATH]"+fequations[i].getAttribute("data-equation")+"[/DMATH]";\
                         mjQueue.Push(["Typeset",MathJax.Hub,fequations[i[]);\
                     }\
                 }\

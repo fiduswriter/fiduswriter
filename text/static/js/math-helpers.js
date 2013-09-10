@@ -23,8 +23,8 @@
 
     mathHelpers.setMathNodeContents = function (node) {
         // Set the innerText of a mathnode to be the same as the data-equation attribute
-        node.innerText = '\1f4c4[MATH]' + node.getAttribute('data-equation') +
-            '\1f4c4[/MATH]';
+        node.innerText = '[MATH]' + node.getAttribute('data-equation') +
+            '[/MATH]';
     };
 
     mathHelpers.layoutMathNode = function (node) {
@@ -35,8 +35,8 @@
 
     mathHelpers.setDisplayMathNodeContents = function (node) {
         // Set the innerText of a display mathnode/math figure to be the same as the data-equation attribute
-        node.innerText = '\1f4c4[DMATH]' + node.getAttribute('data-equation') +
-            '\1f4c4[/DMATH]';
+        node.innerText = '[DMATH]' + node.getAttribute('data-equation') +
+            '[/DMATH]';
     };
     
     mathHelpers.layoutDisplayMathNode = function (node) {

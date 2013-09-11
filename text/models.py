@@ -30,7 +30,6 @@ class Text(models.Model):
     title = models.CharField(max_length=255, default='', blank=True)
     contents = models.TextField(default='<p><br></p>')
     metadata = models.TextField(default='{}') #json object of metadata
-    comments = models.TextField(default='[]') #json list of comments
     settings = models.TextField(default='{}') #json object of settings
     history = models.TextField(default='') #json list with the document history with the beginning and end brackets ('[' and ']') left out. 
     owner = models.ForeignKey(User,related_name='owner')

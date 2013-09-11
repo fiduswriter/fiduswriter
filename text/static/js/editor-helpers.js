@@ -62,7 +62,6 @@
         theDocument.changed = false;
         theDocument.settings = jQuery.parseJSON(theDocument.settings);
         theDocument.metadata = jQuery.parseJSON(theDocument.metadata);
-        theDocument.comments = jQuery.parseJSON(theDocument.comments);
         theDocument.history = jQuery.parseJSON('[' + theDocument.history +
             ']');
         theDocument.lastHistory = [];
@@ -245,8 +244,11 @@
         'metadata.subtitle', 'metadata.abstract'
     ];
 
-    editorHelpers.setDocumentData = function (theName, newValue, skipSendChange) {
+    editorHelpers.setDocumentData = function (theName, newValue, skipSendChange, aUserId) {
         var dmp, diff, theChange, currentValue;
+        if (undefined===aUserId) {
+            aUserId=theUser.id;
+        }
         currentValue = eval('theDocument.' + theName);
         if (editorHelpers.TEXT_FIELDS.indexOf(theName) !== -1) {
             if (undefined === currentValue) {
@@ -275,7 +277,7 @@
         else {
             eval("theDocument." + theName + "=" + JSON.stringify(newValue));
         }
-        theChange = [theUser.id, new Date().getTime(), theName, diff];
+        theChange = [aUserId, new Date().getTime(), theName, diff];
         theDocument.history.push(theChange);
         theDocument.lastHistory.push(theChange);
         if (!skipSendChange) {
@@ -288,7 +290,7 @@
         return true;
     };
 
-    editorHelpers.setDiffChange = function (field,diffs) {
+    editorHelpers.setDiffChange = function (aUserId,field,diffs) {
         var theElement;
         if (field==='contents') {
             theElement = document.getElementById('document-contents');
@@ -300,15 +302,13 @@
         var dmp = new diff_match_patch();
         editorHelpers.getUpdatesFromInputFields();
         var savedSel = rangy.saveSelection();
-        console.log(savedSel);
-        console.log(theElement.innerHTML);
+        /* option 1
         if (savedSel.rangeInfos[0].collapsed) {
             document.getElementById(savedSel.rangeInfos[0].markerId).outerHTML='\u59fa';
         } else {
             document.getElementById(savedSel.rangeInfos[0].startMarkerId).outerHTML='\u59fb';
             document.getElementById(savedSel.rangeInfos[0].endMarkerId).outerHTML='\u59fa';
         }
-        console.log(theElement.innerHTML);
         var theValue = dmp.patch_apply(
             dmp.patch_make(diffs), theElement.innerHTML)[0];
         if (savedSel.rangeInfos[0].collapsed) {
@@ -317,33 +317,42 @@
             theValue = theValue.replace(/\u59fb/g,'<span id="'+savedSel.rangeInfos[0].startMarkerId+'"></span>');
             theValue = theValue.replace(/\u59fa/g,'<span id="'+savedSel.rangeInfos[0].endMarkerId+'"></span>');
         }
+        */
+        /* option 2 */
+        var currentValue = eval("theDocument."+field);
+        var caretDiff = dmp.diff_main(currentValue,theElement.innerHTML);
+        var theValueWithoutCaret = dmp.patch_apply(
+            dmp.patch_make(diffs), currentValue)[0];
+        var theValue = dmp.patch_apply(
+            dmp.patch_make(caretDiff), theValueWithoutCaret)[0];
+        /* end option 2 */
         editorHelpers.setDisplay.document(field,theValue);
         rangy.restoreSelection(savedSel);
-        editorHelpers.getUpdatesFromInputFields(false,true);
+        editorHelpers.getUpdatesFromInputFields(false,true,aUserId);
     };
 
     editorHelpers.applyDocumentDataChanges = function (data) {
         if (editorHelpers.TEXT_FIELDS.indexOf(data.change[2]) != -1) {
-            editorHelpers.setDiffChange(data.change[2], data.change[3]);
-        } else if (data.change[2] != 'comment') {
+            editorHelpers.setDiffChange(data.change[0], data.change[2], data.change[3]);
+        } else {
             editorHelpers.getUpdatesFromInputFields();
             editorHelpers.setDocumentData(data.change[2], data.change[3][1], true);
             editorHelpers.setDisplay.document(data.change[2], data.change[3][1]);
-            editorHelpers.getUpdatesFromInputFields(false,true);
+            editorHelpers.getUpdatesFromInputFields(false, true, data.change[0]);
         }
     };
 
-    editorHelpers.getUpdatesFromInputFields = function (callback,skipSendChange) {
+    editorHelpers.getUpdatesFromInputFields = function (callback,skipSendChange,aUser) {
 
         editorHelpers.setDocumentData('metadata.title', jQuery(
-            '#document-title').html().trim(),skipSendChange);
+            '#document-title').html().trim(),skipSendChange,aUser);
 
         editorHelpers.setDocumentData('contents', jQuery(
-            '#document-contents').html().trim(),skipSendChange);
+            '#document-contents').html().trim(),skipSendChange,aUser);
 
         jQuery('#document-metadata .metadata').each(function () {
             editorHelpers.setDocumentData('metadata.' + jQuery(this).attr(
-                'data-metadata'), jQuery(this).html().trim(),skipSendChange);
+                'data-metadata'), jQuery(this).html().trim(),skipSendChange,aUser);
         });
 
         if (callback) {
@@ -370,10 +379,9 @@
         }
 
 
-        if (window.enableSave) {
+        if (theDocument.enableSave) {
             documentData.settings = JSON.stringify(theDocument.settings);
             documentData.metadata = JSON.stringify(theDocument.metadata);
-            documentData.comments = JSON.stringify(theDocument.comments);
             lastHistory = JSON.stringify(theDocument.lastHistory);
             documentData.last_history = lastHistory.substring(1,
                 lastHistory.length - 1);
@@ -492,17 +500,18 @@
             window.sessionId = data.session_id;
 
             if (data.hasOwnProperty('control')) {
-                window.enableSave = true;
+                theDocument.enableSave = true;
             }
             else {
-                window.enableSave = false;
+                theDocument.enableSave = false;
             }
             break;
         case 'transform':
             editorHelpers.applyDocumentDataChanges(data);
             break;
         case 'take_control':
-            window.enableSave = true;
+            theDocument.localHistory = [];
+            theDocument.enableSave = true;
         }
     };
 

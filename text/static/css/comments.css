@@ -103,16 +103,16 @@
     width: 194px;
 }
 
-.commemt-controls {
+.comment-controls {
     margin-top: 9px;
     font-size: 10px;
     color: #af3515;
 }
-.commemt-controls > span {
+.comment-controls > span {
     margin-right: 5px;
     cursor: pointer;
 }
-.commemt-controls > span:hover {
+.comment-controls > span:hover {
     color: #999;
 }
 

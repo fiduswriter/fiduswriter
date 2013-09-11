@@ -17,20 +17,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-var tmp_comments = '<% _.each(theDocument.comments,function(comment,key,list){ %>\
-        <div id="comment-box-<%= comment["id"] %>" data-id="<%= comment["id"] %>" class="comment-box \
-            <% if(comment["active"]) { %>active<% } else { %>inactive<% } %>\
-            " style="top:<%= commentHelpers.calculateCommentBoxOffset(jQuery(".comment[data-id="+comment["id"]+"]")[0]) %>px;">\
-            <% if(0 === comment["comment"].length) { %>\
-            <%= _.template(tmp_first_comment, {"comment": comment}) %>\
+    
+var tmp_comments = _.template('<% _.each(theComments,function(comment,key,list){ %>\
+        <div id="comment-box-<%= comment.getAttribute("data-id") %>" data-id="<%= comment.getAttribute("data-id") %>" class="comment-box \
+            <% if(comment.id==="comment-"+theDocument.activeCommentId) { %>active<% } else { %>inactive<% } %>\
+            " style="top:<%= commentHelpers.calculateCommentBoxOffset(comment) %>px;">\
+            <% if(0 === comment.getAttribute("data-comment").length) { %>\
+            <%= tmp_first_comment({"comment": comment}) %>\
             <% } else { %>\
-            <%= _.template(tmp_single_comment, {"comment": comment, active: comment["active"]}) %>\
+            <%= tmp_single_comment({"comment": comment, active: (comment.id==="comment-"+theDocument.activeCommentId)}) %>\
             <% } %>\
-            <% _.each(comment.children, function(child_comment) { %>\
-                <%= _.template(tmp_single_comment, {"comment": child_comment, active: comment["active"]}) %>\
-            <% }) %>\
-            <% if(comment["active"] && 0 < comment["comment"].length) { %>\
+            <% var i=0; while (true) {\
+                    if (comment.hasAttribute("data-comment-answer-"+i+"-comment")) { %>\
+                        <%= tmp_answer_comment({comment: comment, answer: i, active: (comment.id==="comment-"+theDocument.activeCommentId)}) %>\
+                <% i++;} else { break; }\
+             } %>\
+            <% if(comment.id==="comment-"+theDocument.activeCommentId && 0 < comment.getAttribute("data-comment").length) { %>\
             <div class="comment-answer">\
                 <textarea class="comment-answer-text" rows="1"></textarea>\
                 <div class="comment-answer-btns">\
@@ -39,43 +41,72 @@ var tmp_comments = '<% _.each(theDocument.comments,function(comment,key,list){ %
                 </div>\
             </div>\
             <% } %>\
-            <% if(comment["active"] && comment["editable"]) { %>\
-            <span class="delete-comment-all delete-comment icon-cancel-circle" data-id="<%= comment["id"] %>"></span>\
+            <% if(comment.id==="comment-"+theDocument.activeCommentId && (parseInt(comment.getAttribute("data-user"))===theUser.id || theDocument.is_owner)) { %>\
+                <span class="delete-comment-all delete-comment icon-cancel-circle" data-id="<%= comment.getAttribute("data-id") %>"></span>\
             <% } %>\
         </div>\
-    <% }); %>';
+    <% }); %>');
 
-var tmp_single_comment = '<div class="comment-item">\
+var tmp_single_comment = _.template('<div class="comment-item">\
         <div class="comment-user">\
-            <img class="comment-user-avatar" src="<%= comment["user_avatar"] %>">\
-            <h5 class="comment-user-name"><%= comment["user_name"] %></h5>\
-            <p class="comment-date"><%= commentHelpers.localizeDate(comment["date"]) %></p>\
+            <img class="comment-user-avatar" src="<%= comment.getAttribute("data-user-avatar") %>">\
+            <h5 class="comment-user-name"><%= comment.getAttribute("data-user-name") %></h5>\
+            <p class="comment-date"><%= commentHelpers.localizeDate(comment.getAttribute("data-date")) %></p>\
         </div>\
         <div class="comment-text-wrapper">\
-            <p class="comment-p"><%= comment["comment"] %></p>\
+            <p class="comment-p"><%= comment.getAttribute("data-comment") %></p>\
             <div class="comment-form">\
-                <textarea class="commentText" data-id="<%= comment["id"] %>" rows="5"></textarea>\
+                <textarea class="commentText" data-id="<%= comment.getAttribute("data-id") %>" rows="5"></textarea>\
                 <span class="submitComment fw-button fw-dark">' + gettext("Edit") + '</span>\
                 <span class="cancelSubmitComment fw-button fw-orange">' + gettext("Cancel") + '</span>\
             </div>\
         </div>\
-        <% if(active && comment["editable"]) { %>\
-        <p class="commemt-controls">\
+        <% if(active && parseInt(comment.getAttribute("data-user"))===theUser.id) { %>\
+        <p class="comment-controls">\
             <span class="edit-comment">' + gettext("Edit") + '</span>\
-            <span class="delete-comment" data-id="<%= comment["id"] %>">' + gettext("Delete") + '</span>\
+            <span class="delete-comment" data-id="<%= comment.getAttribute("data-id") %>">' + gettext("Delete") + '</span>\
         </p>\
         <% } %>\
-    </div>';
+    </div>');
 
-var tmp_first_comment =  '<div class="comment-item">\
+var tmp_answer_comment = _.template('<div class="comment-item">\
         <div class="comment-user">\
-            <img class="comment-user-avatar" src="<%= comment["user_avatar"] %>">\
-            <h5 class="comment-user-name"><%= comment["user_name"] %></h5>\
-            <p class="comment-date"><%= commentHelpers.localizeDate(comment["date"]) %></p>\
+            <img class="comment-user-avatar" src="<%= comment.getAttribute("data-comment-answer-"+answer+"-user-avatar") %>">\
+            <h5 class="comment-user-name"><%= comment.getAttribute("data-comment-answer-"+answer+"-user-name") %></h5>\
+            <p class="comment-date"><%= commentHelpers.localizeDate(comment.getAttribute("data-comment-answer-"+answer+"-date")) %></p>\
+        </div>\
+        <% if (active && answer===theDocument.activeCommentAnswerId) { %>\
+            <div class="comment-text-wrapper">\
+                <div class="comment-answer-form">\
+                    <textarea class="commentAnswerText" data-id="<%= comment.getAttribute("data-id") %>" data-answer="<%= answer %>" rows="3"\
+                    ><%= comment.getAttribute("data-comment-answer-"+answer+"-comment") %></textarea>\
+                    <span class="submit-comment-answer-edit fw-button fw-dark">' + gettext("Edit") + '</span>\
+                    <span class="cancelSubmitComment fw-button fw-orange">' + gettext("Cancel") + '</span>\
+                </div>\
+           </div>\
+        <% } else { %>\
+                <div class="comment-text-wrapper">\
+                    <p class="comment-p"><%= comment.getAttribute("data-comment-answer-"+answer+"-comment") %></p>\
+                </div>\
+            <% if(active && (parseInt(comment.getAttribute("data-comment-answer-"+answer+"-user"))===theUser.id || theDocument.is_owner)) { %>\
+                <p class="comment-controls">\
+                    <span class="edit-comment-answer" data-id="<%= comment.getAttribute("data-id") %>" data-answer="<%= answer %>">' + gettext("Edit") + '</span>\
+                    <span class="delete-comment-answer" data-id="<%= comment.getAttribute("data-id") %>" data-answer="<%= answer %>">' + gettext("Delete") + '</span>\
+                </p>\
+            <% } %>\
+        <% } %>\
+    </div>');
+
+var tmp_first_comment =  _.template('<div class="comment-item">\
+        <div class="comment-user">\
+            <img class="comment-user-avatar" src="<%= comment.getAttribute("data-user-avatar") %>">\
+            <h5 class="comment-user-name"><%= comment.getAttribute("data-user-name") %></h5>\
+            <p class="comment-date"><%= commentHelpers.localizeDate(comment.getAttribute("data-date")) %></p>\
         </div>\
         <div class="comment-text-wrapper">\
-            <textarea class="commentText" data-id="<%= comment["id"] %>" rows="5"></textarea>\
+            <textarea class="commentText" data-id="<%= comment.getAttribute("data-id") %>" rows="5"></textarea>\
             <span class="submitComment fw-button fw-dark">' + gettext("Submit") + '</span>\
             <span class="cancelSubmitComment fw-button fw-orange">' + gettext("Cancel") + '</span>\
         </div>\
-    </div>';
+    </div>');
+

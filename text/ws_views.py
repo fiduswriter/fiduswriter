@@ -13,8 +13,7 @@ def save_document(document,changes):
     document.title = changes["title"]
     document.contents = changes["contents"]
     document.metadata = changes["metadata"]
-    document.settings = changes["settings"]
-    document.comments = changes["comments"]    
+    document.settings = changes["settings"]  
     if len(document.history) > 0:        
         document.history += "," + changes["last_history"]
     else:
@@ -62,7 +61,6 @@ class DocumentWS(BaseWebSocketHandler):
             response['document']['title']=self.document.title
             response['document']['contents']=self.document.contents
             response['document']['metadata']=self.document.metadata
-            response['document']['comments']=self.document.comments
             response['document']['settings']=self.document.settings
             response['document']['history']=self.document.history
             response['document']['access_rights'] = get_accessrights(AccessRight.objects.filter(text__owner=self.document.owner))

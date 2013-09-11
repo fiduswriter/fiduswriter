@@ -262,17 +262,6 @@
             <!-- Comment functions -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/comment-templates.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/comment-helpers.js"></script>
-            <script type="text/javascript">
-                var flatCommentList = [];
-                jQuery(document).bind('documentDataLoaded', function() {
-                    commentHelpers.fillFlatCommentList();
-                    commentHelpers.cleanCommentsList();
-                    commentHelpers.cleanReferers();
-                    jQuery(document).bind('bodyLayoutUpdated', function() {
-                        commentHelpers.layoutComments();
-                    });
-                });
-            </script>
             <!-- Tracking functions -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/tracking-templates.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/tracking-helpers.js"></script>

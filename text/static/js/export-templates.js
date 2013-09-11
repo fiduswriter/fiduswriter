@@ -96,9 +96,12 @@ var tmp_epub_xhtml = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
             <%= tmp_mathjax_html_header({})%>\
             <%= tmp_mathjax_xhtml_header_starter({})%>\
         <% } %>\
-        </head><body>\
+        </head><body \
         <% if (mathjax) { %>\
+            class="tex2jax_ignore">\
             <%= mathjax %>\
+        <% } else { %>\
+            >\
         <% } %>\
         <% if (part && part !="") {%>\
             <h1 class="part"><%= part %></h1>\
@@ -143,9 +146,12 @@ var tmp_html_export = _.template('<!DOCTYPE html>\n\
             <%= tmp_mathjax_html_header({})%>\
             <%= tmp_mathjax_html_header_starter({})%>\
         <% } %>\
-        </head><body>\
+        </head><body \
+        class="tex2jax_ignore">\
         <% if (mathjax) { %>\
             <%= mathjax %>\
+        <% } else { %>\
+            >\
         <% } %>\
         <% if (part && part !="") { %>\
             <h1 class="part"><%= part %></h1>\

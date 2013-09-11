@@ -203,13 +203,13 @@
     };
 
     editorHelpers.setDisplay.contents = function (theValue) {
-        jQuery('#document-contents').html(theValue);
+        document.getElementById('document-contents').innerHTML = theValue;
     };
 
     editorHelpers.setDisplay.metadataTitle = function (theValue) {
-        jQuery('#document-title').html(theValue);
-        editorHelpers.setDisplay.document('title', jQuery('#document-title')
-            .text().trim());
+        var titleEl = document.getElementById('document-title')
+        titleEl.innerHTML = theValue;
+        editorHelpers.setDisplay.document('title', titleEl.innerText.trim());
     };
 
     editorHelpers.setDisplay.title = function (theValue) {
@@ -300,8 +300,23 @@
         var dmp = new diff_match_patch();
         editorHelpers.getUpdatesFromInputFields();
         var savedSel = rangy.saveSelection();
+        console.log(savedSel);
+        console.log(theElement.innerHTML);
+        if (savedSel.rangeInfos[0].collapsed) {
+            document.getElementById(savedSel.rangeInfos[0].markerId).outerHTML='\u59fa';
+        } else {
+            document.getElementById(savedSel.rangeInfos[0].startMarkerId).outerHTML='\u59fb';
+            document.getElementById(savedSel.rangeInfos[0].endMarkerId).outerHTML='\u59fa';
+        }
+        console.log(theElement.innerHTML);
         var theValue = dmp.patch_apply(
             dmp.patch_make(diffs), theElement.innerHTML)[0];
+        if (savedSel.rangeInfos[0].collapsed) {
+            theValue = theValue.replace(/\u59fa/g,'<span id="'+savedSel.rangeInfos[0].markerId+'"></span>');
+        } else {
+            theValue = theValue.replace(/\u59fb/g,'<span id="'+savedSel.rangeInfos[0].startMarkerId+'"></span>');
+            theValue = theValue.replace(/\u59fa/g,'<span id="'+savedSel.rangeInfos[0].endMarkerId+'"></span>');
+        }
         editorHelpers.setDisplay.document(field,theValue);
         rangy.restoreSelection(savedSel);
         editorHelpers.getUpdatesFromInputFields(false,true);

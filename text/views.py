@@ -178,7 +178,7 @@ def send_share_notification(request, doc_id, collaborator_id, tgt_right):
     if tgt_right == 'w':
         right = 'read and write'
     link = HttpRequest.build_absolute_uri(request, document.get_absolute_url())
-    message_body = _('Hey %(collaborator_name)s,\n%(owner)s has shared the document \'%(document)s\'with you and given you %(right)s access rights.\nAccess the document through this link: %(link)s') % {'owner': owner, 'right': right, 'collaborator_name': collaborator_name, 'link': link, 'document': document_title}
+    message_body = _('Hey %(collaborator_name)s,\n%(owner)s has shared the document \'%(document)s\' with you and given you %(right)s access rights. \nAccess the document through this link: %(link)s') % {'owner': owner, 'right': right, 'collaborator_name': collaborator_name, 'link': link, 'document': document_title}
     send_mail(_('Document shared:')+' '+document_title, message_body, settings.DEFAULT_FROM_EMAIL,
         [collaborator_email], fail_silently=True)
 

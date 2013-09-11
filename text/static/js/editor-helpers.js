@@ -302,7 +302,7 @@
         var dmp = new diff_match_patch();
         editorHelpers.getUpdatesFromInputFields();
         var savedSel = rangy.saveSelection();
-        /* option 1
+        /* option 1 */
         if (savedSel.rangeInfos[0].collapsed) {
             document.getElementById(savedSel.rangeInfos[0].markerId).outerHTML='\u59fa';
         } else {
@@ -317,15 +317,15 @@
             theValue = theValue.replace(/\u59fb/g,'<span id="'+savedSel.rangeInfos[0].startMarkerId+'"></span>');
             theValue = theValue.replace(/\u59fa/g,'<span id="'+savedSel.rangeInfos[0].endMarkerId+'"></span>');
         }
-        */
-        /* option 2 */
+         /* end option 1 */
+        /* option 2 
         var currentValue = eval("theDocument."+field);
         var caretDiff = dmp.diff_main(currentValue,theElement.innerHTML);
         var theValueWithoutCaret = dmp.patch_apply(
             dmp.patch_make(diffs), currentValue)[0];
         var theValue = dmp.patch_apply(
             dmp.patch_make(caretDiff), theValueWithoutCaret)[0];
-        /* end option 2 */
+         end option 2 */
         editorHelpers.setDisplay.document(field,theValue);
         rangy.restoreSelection(savedSel);
         editorHelpers.getUpdatesFromInputFields(false,true,aUserId);

@@ -383,12 +383,11 @@
         jQuery('#comment-box-container').html(tmp_comments({
             theComments:theComments}));
         commentHelpers.layoutCommentsAvoidOverlap();
-        jQuery('.comment.active').removeClass('active');
+        jQuery('#activeCommentStyle').html('');
         activeCommentWrapper = jQuery('.comment-box.active');
         if (0 < activeCommentWrapper.size()) {
             theDocument.activeCommentId = activeCommentWrapper.attr('data-id');
-            jQuery('.comment[data-id=' + theDocument.activeCommentId + ']').addClass(
-                'active');
+            jQuery('#activeCommentStyle').html('.comments-enabled #comment-'+theDocument.activeCommentId+' {background-color: #fffacf;}');
             activeCommentWrapper.find('.comment-answer-text').autoResize({
                 'extraSpace': 0
             });

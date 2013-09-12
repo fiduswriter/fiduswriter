@@ -2,9 +2,7 @@
 .comments-enabled .comment {
     background-color: #f2f2f2;
 }
-.comments-enabled .comment.active {
-    background-color: #fffacf;
-}
+
 #comment-box-container {
     position: absolute;
     left: 914px;

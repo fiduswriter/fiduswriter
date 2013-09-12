@@ -46,7 +46,8 @@
     };
 
     editorHelpers.switchMetadataDocumentData = function (theMetadata) {
-        editorHelpers.setDocumentData('settings.metadata.' + theMetadata, !theDocument.settings.metadata[
+        editorHelpers.setDocumentData('settings.metadata.' + theMetadata, !
+            theDocument.settings.metadata[
                 theMetadata]);
     };
 
@@ -57,7 +58,7 @@
 
     editorHelpers.fillEditorPage = function (aDocument) {
         var DEFAULTS, i;
-        
+
         theDocument = aDocument;
         theDocument.changed = false;
         theDocument.settings = jQuery.parseJSON(theDocument.settings);
@@ -219,8 +220,8 @@
         jQuery('title').html('Fidus Writer - ' + theTitle);
         jQuery('#header h1').html(theTitle);
     };
-     
-    
+
+
     editorHelpers.setDisplay.FIELDS = {
         // A list of the functions used to update various fields to e called by editorHelpers.setDisplay.document
         'title': editorHelpers.setDisplay.title,
@@ -244,10 +245,11 @@
         'metadata.subtitle', 'metadata.abstract'
     ];
 
-    editorHelpers.setDocumentData = function (theName, newValue, skipSendChange, aUserId) {
+    editorHelpers.setDocumentData = function (theName, newValue,
+        skipSendChange, aUserId) {
         var dmp, diff, theChange, currentValue;
-        if (undefined===aUserId) {
-            aUserId=theUser.id;
+        if (undefined === aUserId) {
+            aUserId = theUser.id;
         }
         currentValue = eval('theDocument.' + theName);
         if (editorHelpers.TEXT_FIELDS.indexOf(theName) !== -1) {
@@ -256,7 +258,8 @@
             }
             dmp = new diff_match_patch();
             diff = dmp.diff_main(currentValue, newValue);
-            if (((diff.length) === 1 && (diff[0][0] === 0)) || diff.length === 0) {
+            if (((diff.length) === 1 && (diff[0][0] === 0)) || diff.length ===
+                0) {
                 // Don't create a history entry if nothing has changed
                 return false;
             }
@@ -290,34 +293,44 @@
         return true;
     };
 
-    editorHelpers.setDiffChange = function (aUserId,field,diffs) {
+    editorHelpers.setDiffChange = function (aUserId, field, diffs) {
         var theElement;
-        if (field==='contents') {
+        if (field === 'contents') {
             theElement = document.getElementById('document-contents');
-        } else if (field==='metadata.title') {
+        }
+        else if (field === 'metadata.title') {
             theElement = document.getElementById('document-title');
-        } else {
-            theElement = document.getElementById(field.replace(".","-"));
+        }
+        else {
+            theElement = document.getElementById(field.replace(".", "-"));
         }
         var dmp = new diff_match_patch();
         editorHelpers.getUpdatesFromInputFields();
         var savedSel = rangy.saveSelection();
         /* option 1 */
         if (savedSel.rangeInfos[0].collapsed) {
-            document.getElementById(savedSel.rangeInfos[0].markerId).outerHTML='\u59fa';
-        } else {
-            document.getElementById(savedSel.rangeInfos[0].startMarkerId).outerHTML='\u59fb';
-            document.getElementById(savedSel.rangeInfos[0].endMarkerId).outerHTML='\u59fa';
+            document.getElementById(savedSel.rangeInfos[0].markerId).outerHTML =
+                '\u59fa';
+        }
+        else {
+            document.getElementById(savedSel.rangeInfos[0].startMarkerId).outerHTML =
+                '\u59fb';
+            document.getElementById(savedSel.rangeInfos[0].endMarkerId).outerHTML =
+                '\u59fa';
         }
         var theValue = dmp.patch_apply(
             dmp.patch_make(diffs), theElement.innerHTML)[0];
         if (savedSel.rangeInfos[0].collapsed) {
-            theValue = theValue.replace(/\u59fa/g,'<span id="'+savedSel.rangeInfos[0].markerId+'"></span>');
-        } else {
-            theValue = theValue.replace(/\u59fb/g,'<span id="'+savedSel.rangeInfos[0].startMarkerId+'"></span>');
-            theValue = theValue.replace(/\u59fa/g,'<span id="'+savedSel.rangeInfos[0].endMarkerId+'"></span>');
+            theValue = theValue.replace(/\u59fa/g, '<span id="' + savedSel.rangeInfos[
+                0].markerId + '"></span>');
         }
-         /* end option 1 */
+        else {
+            theValue = theValue.replace(/\u59fb/g, '<span id="' + savedSel.rangeInfos[
+                0].startMarkerId + '"></span>');
+            theValue = theValue.replace(/\u59fa/g, '<span id="' + savedSel.rangeInfos[
+                0].endMarkerId + '"></span>');
+        }
+        /* end option 1 */
         /* option 2 
         var currentValue = eval("theDocument."+field);
         var caretDiff = dmp.diff_main(currentValue,theElement.innerHTML);
@@ -326,33 +339,40 @@
         var theValue = dmp.patch_apply(
             dmp.patch_make(caretDiff), theValueWithoutCaret)[0];
          end option 2 */
-        editorHelpers.setDisplay.document(field,theValue);
+        editorHelpers.setDisplay.document(field, theValue);
         rangy.restoreSelection(savedSel);
-        editorHelpers.getUpdatesFromInputFields(false,true,aUserId);
+        editorHelpers.getUpdatesFromInputFields(false, true, aUserId);
     };
 
     editorHelpers.applyDocumentDataChanges = function (data) {
         if (editorHelpers.TEXT_FIELDS.indexOf(data.change[2]) != -1) {
-            editorHelpers.setDiffChange(data.change[0], data.change[2], data.change[3]);
-        } else {
+            editorHelpers.setDiffChange(data.change[0], data.change[2],
+                data.change[3]);
+        }
+        else {
             editorHelpers.getUpdatesFromInputFields();
-            editorHelpers.setDocumentData(data.change[2], data.change[3][1], true);
-            editorHelpers.setDisplay.document(data.change[2], data.change[3][1]);
-            editorHelpers.getUpdatesFromInputFields(false, true, data.change[0]);
+            editorHelpers.setDocumentData(data.change[2], data.change[3][1],
+                true);
+            editorHelpers.setDisplay.document(data.change[2], data.change[3]
+                [1]);
+            editorHelpers.getUpdatesFromInputFields(false, true, data.change[
+                0]);
         }
     };
 
-    editorHelpers.getUpdatesFromInputFields = function (callback,skipSendChange,aUser) {
+    editorHelpers.getUpdatesFromInputFields = function (callback,
+        skipSendChange, aUser) {
 
         editorHelpers.setDocumentData('metadata.title', jQuery(
-            '#document-title').html().trim(),skipSendChange,aUser);
+            '#document-title').html().trim(), skipSendChange, aUser);
 
         editorHelpers.setDocumentData('contents', jQuery(
-            '#document-contents').html().trim(),skipSendChange,aUser);
+            '#document-contents').html().trim(), skipSendChange, aUser);
 
         jQuery('#document-metadata .metadata').each(function () {
             editorHelpers.setDocumentData('metadata.' + jQuery(this).attr(
-                'data-metadata'), jQuery(this).html().trim(),skipSendChange,aUser);
+                    'data-metadata'), jQuery(this).html().trim(),
+                skipSendChange, aUser);
         });
 
         if (callback) {
@@ -362,16 +382,16 @@
 
     editorHelpers.saveDocument = function (callback) {
         var documentData = {}, lastHistory;
-        
+
         jQuery('.save').addClass('disabled');
-        
+
         // The title is saved twice: as metadata.title with html formatting and as just title as plain text.
         // Because we don't want two entries in the history, we avoid touching the history for the text-only version.
 
         theDocument.title = jQuery('#document-title').text().trim();
 
         if (0 === theDocument.lastHistory.length) {
-            
+
             if (callback) {
                 callback();
             }

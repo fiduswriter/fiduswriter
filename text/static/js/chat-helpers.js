@@ -70,13 +70,15 @@
             chatHelpers.beep();
             chatHelpers.flashtab(message.from + ': ' + message.body);
         }
-        if (chatContainer.css('display')==='none') {
+        if (chatContainer.css('display') === 'none') {
             jQuery("#chat").addClass('highlighted');
         }
-        node.slideDown({progress: function () {
-            chatContainer[0].scrollTop = chatContainer[0].scrollHeight;
-        }});
-        
+        node.slideDown({
+            progress: function () {
+                chatContainer[0].scrollTop = chatContainer[0].scrollHeight;
+            }
+        });
+
     };
 
     chatHelpers.participantListTemplate = _.template(
@@ -114,42 +116,49 @@
     chatHelpers.bind = function () {
 
 
-        jQuery(document.head).append('<style>\n#messageform.empty:before{content:"'+gettext('Send a message...')+'"}\n</style>');
-        
+        jQuery(document.head).append(
+            '<style>\n#messageform.empty:before{content:"' + gettext(
+                'Send a message...') + '"}\n</style>');
+
         jQuery(document).ready(function () {
             jQuery('#chat-container').css('max-height', jQuery(window).height() -
                 200 + 'px');
 
             jQuery('#chat .resize-button').on("click", function () {
                 if (jQuery(this).hasClass('icon-angle-double-down')) {
-                    jQuery(this).removeClass('icon-angle-double-down');
+                    jQuery(this).removeClass(
+                        'icon-angle-double-down');
                     jQuery(this).addClass('icon-angle-double-up');
                     jQuery('#chat-container,#messageform').slideUp();
-                } else {
+                }
+                else {
                     jQuery(this).removeClass('icon-angle-double-up');
                     jQuery(this).addClass('icon-angle-double-down');
                     jQuery('#chat-container,#messageform').slideDown();
-                    if (jQuery(this).parent().hasClass('highlighted')) {
+                    if (jQuery(this).parent().hasClass(
+                        'highlighted')) {
                         jQuery(this).parent().animate({
                             backgroundColor: "#fff",
-                        }, 1000, 'swing', function() {
-                            jQuery(this).removeClass('highlighted').css('background-color','');
+                        }, 1000, 'swing', function () {
+                            jQuery(this).removeClass(
+                                'highlighted').css(
+                                'background-color', '');
                         });
                     }
                 }
             });
-            
+
             jQuery("#messageform").on("focus", function () {
                 jQuery(this).removeClass('empty');
             });
-            
+
             jQuery("#messageform").on("blur", function () {
-                if (jQuery(this).text().length===0) {
+                if (jQuery(this).text().length === 0) {
                     jQuery(this).addClass('empty');
                 }
             });
-            
-            
+
+
             jQuery("#messageform").on("keypress", function (e) {
                 if (e.keyCode == 13) {
                     chatHelpers.sendMessage(jQuery(this).text());

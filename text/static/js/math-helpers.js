@@ -38,26 +38,27 @@
         node.innerText = '[DMATH]' + node.getAttribute('data-equation') +
             '[/DMATH]';
     };
-    
+
     mathHelpers.layoutDisplayMathNode = function (node) {
         // Layout a single display math node
         mathHelpers.setDisplayMathNodeContents(node);
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, node], [mathHelpers.saveMathjaxElements]);
-    };    
-    
+    };
+
     mathHelpers.resetMath = function (callback) {
-        
-        
+
+
         // (Re)layout all math nodes
         var allEquations = jQuery('.equation'),
-            allFigureEquations = jQuery('.figure-equation'), 
-            mjQueue = MathJax.Hub.queue, i;
+            allFigureEquations = jQuery('.figure-equation'),
+            mjQueue = MathJax.Hub.queue,
+            i;
 
         for (i = 0; i < allEquations.length; i++) {
             mathHelpers.setMathNodeContents(allEquations[i]);
             mjQueue.Push(["Typeset", MathJax.Hub, allEquations[i]]);
         }
-        
+
         for (i = 0; i < allFigureEquations.length; i++) {
             mathHelpers.setDisplayMathNodeContents(allFigureEquations[i]);
             mjQueue.Push(["Typeset", MathJax.Hub, allFigureEquations[i]]);
@@ -72,7 +73,8 @@
 
         if (allEquations.length === 0) {
             mathjax = false;
-        } else {
+        }
+        else {
             mathjax = document.getElementById('MathJax_SVG_Hidden');
         }
 
@@ -85,7 +87,8 @@
 
         if (mathjax) {
             theDocument.settings.mathjax = mathjax.parentNode.outerHTML;
-        } else {
+        }
+        else {
             theDocument.settings.mathjax = false;
         }
 

@@ -60,14 +60,6 @@ jQuery(document).bind('documentDataLoaded', function () {
     usermediaHelpers.init();
 
    
-    
-    // Enable Hallo.js Editor
-    jQuery('#document-editable').hallo({
-        plugins: plugins,
-        editable: true,
-        toolbar: 'toolbarleft',
-        parentElement: jQuery('#editor-tools-wrapper')
-    });
 
 
 
@@ -172,6 +164,19 @@ jQuery(document).bind('documentDataLoaded', function () {
 
     editorHelpers.layoutMetadata();
 
+    if (theDocument.rights === 'r') {
+        jQuery('#editor-navigation').hide();
+        jQuery('.papersize-menu,.metadata-menu,.documentstyle-menu').addClass('disabled');
+    } else if (theDocument.rights === 'w') {
+   
+        // Enable Hallo.js Editor
+    jQuery('#document-editable').hallo({
+        plugins: plugins,
+        editable: true,
+        toolbar: 'toolbarleft',
+        parentElement: jQuery('#editor-tools-wrapper')
+    });    
+        
     jQuery('.metadata-menu-item').bind('click', editorHelpers.switchMetadata);
 
     jQuery('#metadata-subtitle, #metadata-abstract').bind('blur', function () {
@@ -184,7 +189,7 @@ jQuery(document).bind('documentDataLoaded', function () {
         jQuery('span.share').addClass('disabled');
     }
  
-    if (theDocument.rights === 'w') {
+    
         window.tracker = new ice.InlineChangeEditor({
             element: document.querySelector('#document-editable'),
             handleEvents: false,

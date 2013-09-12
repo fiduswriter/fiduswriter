@@ -18,7 +18,7 @@
  *
  */
 
-var FW_FILETYPE_VERSION = "1.0";
+var FW_FILETYPE_VERSION = "1.1";
 
 (function () {
     var exports = this,

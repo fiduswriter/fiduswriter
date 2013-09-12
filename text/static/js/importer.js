@@ -18,7 +18,7 @@
  *
  */
 
-var FW_FILETYPE_VERSION = "1.0";
+var FW_FILETYPE_VERSION = "1.1";
 
 (function () {
     var exports = this,
@@ -353,8 +353,7 @@ var FW_FILETYPE_VERSION = "1.0";
             title: aDocument.title,
             contents: aDocument.contents,
             settings: JSON.stringify(aDocument.settings),
-            metadata: JSON.stringify(aDocument.metadata),
-            comments: JSON.stringify(aDocument.comments)
+            metadata: JSON.stringify(aDocument.metadata)
         };
         jQuery.ajax({
                 url: '/text/save/',

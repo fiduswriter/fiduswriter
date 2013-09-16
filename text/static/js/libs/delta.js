@@ -4317,16 +4317,12 @@ var deltaProfile = require('./profiles/delta-tree-xml');
 var patch = require('./delta/patch');
 
 delta.Patch = function(document_contents, patch_content) {
-    console.log('1');
     var p = new patch.Patch(resolverProfile, docProfile, deltaProfile);
     var xhtml_contents = htmlToXhtml('<xml>'+document_contents+'</xml>');
     var doc = docProfile.loadOriginalDocument(xhtml_contents);
     var fragadapter = docProfile.createFragmentAdapter(doc.type);
     var delta = deltaProfile.loadDocument(patch_content, fragadapter);
-    console.log('2');
-    console.log([document_contents,patch_content,xhtml_contents]);
     p.patch(doc, delta);
-    console.log('3');
     var returnString = docProfile.serializeDocument(doc);
     
     return xhtmlToHtml(returnString.substring(5,returnString.length-6));

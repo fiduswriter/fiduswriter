@@ -85,21 +85,17 @@
         '<% _.each(participants, function(participant) { %><img src="<%= participant.avatar %>" alt="<%- participant.name %>" title="<%- participant.name %>"><% }); %>'
     );
 
-    chatHelpers.updateParticipantList = function (data) {
+    chatHelpers.updateParticipantList = function (participant_list) {
 
-        // If only one machine is connected and nothign has been chatted, don't show chat
-        if (data.participant_list.length === 1 && jQuery(
+        // If only one machine is connected and nothing has been chatted, don't show chat
+        if (participant_list.length === 1 && jQuery(
             '#chat-container .message').length === 0) {
             jQuery('#chat').css('display', 'none');
             jQuery('#current-editors').css('display', 'none');
         }
         else {
-            window.uniqueParticipantList = _.map(_.groupBy(data.participant_list,
-                'id'), function (entry) {
-                return entry[0]
-            });
             jQuery('#current-editors').html(chatHelpers.participantListTemplate({
-                participants: uniqueParticipantList
+                participants: window.uniqueParticipantList
             }));
             jQuery('#chat').css('display', 'block');
             jQuery('#current-editors').css('display', 'block');
@@ -107,10 +103,10 @@
     };
 
     chatHelpers.sendMessage = function (messageText) {
-        ws.send(JSON.stringify({
+        serverCommunications.send({
             type: 'chat',
             body: messageText
-        }));
+        });
     };
 
     chatHelpers.bind = function () {
@@ -170,9 +166,6 @@
 
         });
 
-
-
-
         window.theFocus = true;
 
         jQuery(window).on("blur focus", function (e) {
@@ -193,7 +186,6 @@
 
         })
     };
-
 
     exports.chatHelpers = chatHelpers;
 

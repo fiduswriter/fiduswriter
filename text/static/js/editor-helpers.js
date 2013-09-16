@@ -141,9 +141,7 @@
                     pagination.events.escapesNeedMove);
             }
         }, 200);
-
         commentHelpers.layoutComments();
-
     };
 
     editorHelpers.setDisplay.settingsCitationstyle = function (theValue) {
@@ -283,15 +281,16 @@
         theChange = [aUserId, new Date().getTime(), theName, diff];
         theDocument.history.push(theChange);
         theDocument.lastHistory.push(theChange);
-        if (!skipSendChange) {
+        /*if (!skipSendChange) {
             ws.send(JSON.stringify({
                 type: 'transform',
                 change: theChange
             }));
-        }
+        }*/
 
         return true;
     };
+    
 
     editorHelpers.setDiffChange = function (aUserId, field, diffs) {
         var theElement;
@@ -345,11 +344,6 @@
     };
 
     editorHelpers.applyDocumentDataChanges = function (data) {
-        if (editorHelpers.TEXT_FIELDS.indexOf(data.change[2]) != -1) {
-            editorHelpers.setDiffChange(data.change[0], data.change[2],
-                data.change[3]);
-        }
-        else {
             editorHelpers.getUpdatesFromInputFields();
             editorHelpers.setDocumentData(data.change[2], data.change[3][1],
                 true);
@@ -357,7 +351,6 @@
                 [1]);
             editorHelpers.getUpdatesFromInputFields(false, true, data.change[
                 0]);
-        }
     };
 
     editorHelpers.getUpdatesFromInputFields = function (callback,
@@ -409,10 +402,10 @@
             documentData.title = theDocument.title.substring(0, 255);
             documentData.contents = theDocument.contents;
 
-            ws.send(JSON.stringify({
+            serverCommunications.send({
                 type: 'save',
                 document: documentData
-            }))
+            });
         }
 
         if (callback) {
@@ -452,108 +445,8 @@
     };
 
 
-    editorHelpers.noConnectionToServer = function () {
-        // If we come right out fo the print dialog, permit immediate reloading.
-        if (toPrint) location.reload();
-
-        var noConnectionDialog = document.createElement('div');
-        noConnectionDialog.id = 'no-connection-dialog';
-        noConnectionDialog.innerHTML = '<p>' + gettext(
-            'Sorry, but the connection to the server has been lost. Please reload to ensure that no date is being lost.'
-        ) +
-            '</p>';
-
-        document.body.appendChild(noConnectionDialog);
-        diaButtons = {};
-
-        diaButtons[gettext('Ok')] = function () {
-            jQuery(this).dialog("close");
-        };
 
 
-        jQuery("#no-connection-dialog").dialog({
-            resizable: false,
-            width: 400,
-            height: 180,
-            modal: true,
-            buttons: diaButtons,
-            autoOpen: true,
-            title: gettext('No connection to server'),
-            create: function () {
-                var $the_dialog = jQuery(this).closest(".ui-dialog");
-                $the_dialog.find(".ui-button:first-child").addClass(
-                    "dark");
-            },
-            close: function () {
-                location.reload();
-            },
-        });
-
-        setTimeout(function () {
-                location.reload()
-            },
-            20000)
-    };
-
-
-
-    editorHelpers.websocket = function (data) {
-        switch (data.type) {
-        case 'chat':
-            chatHelpers.newMessage(data);
-            break;
-        case 'connections':
-            chatHelpers.updateParticipantList(data);
-            break;
-        case 'welcome':
-            editorHelpers.fillEditorPage(data.document);
-            if (data.hasOwnProperty('user')) {
-                theUser = data.user;
-            }
-            else {
-                theUser = theDocument.owner;
-            }
-            jQuery.event.trigger({
-                type: "documentDataLoaded",
-            });
-
-            window.sessionId = data.session_id;
-
-            if (data.hasOwnProperty('control')) {
-                theDocument.enableSave = true;
-            }
-            else {
-                theDocument.enableSave = false;
-            }
-            break;
-        case 'transform':
-            editorHelpers.applyDocumentDataChanges(data);
-            break;
-        case 'take_control':
-            theDocument.localHistory = [];
-            theDocument.enableSave = true;
-        }
-    };
-
-    editorHelpers.bind = function () {
-        window.theDocument = undefined;
-        window.theUser = undefined;
-        jQuery(document).ready(function () {
-            var pathnameParts = window.location.pathname.split('/'),
-                documentId = parseInt(pathnameParts[pathnameParts.length -
-                    2], 10);
-
-            if (isNaN(documentId)) {
-                documentId = 0;
-            }
-            window.ws = new WebSocket('ws://' + location.host +
-                '/ws/doc/' + documentId);
-            ws.onmessage = function (event) {
-                editorHelpers.websocket(JSON.parse(event.data));
-            }
-            ws.onclose = editorHelpers.noConnectionToServer;
-        });
-    };
 
     exports.editorHelpers = editorHelpers;
 

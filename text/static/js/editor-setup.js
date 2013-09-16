@@ -145,24 +145,34 @@ jQuery(document).bind('documentDataLoaded', function () {
     }
 
     jQuery(document).on('click', '.savecopy:not(.disabled)', function () {
-        editorHelpers.saveDocument();
+            editorHelpers.getUpdatesFromInputFields(function () {
+                editorHelpers.saveDocument();
+            });
         exporter.savecopy(theDocument);
     });
 
     jQuery('.download').bind('click', function () {
-        editorHelpers.saveDocument();
+            editorHelpers.getUpdatesFromInputFields(function () {
+                editorHelpers.saveDocument();
+            });
         exporter.downloadNative(theDocument);
     });
     jQuery('.latex').bind('click', function () {
-        editorHelpers.saveDocument();
+            editorHelpers.getUpdatesFromInputFields(function () {
+                editorHelpers.saveDocument();
+            });
         exporter.downloadLatex(theDocument);
     });
     jQuery('.epub').bind('click', function () {
-        editorHelpers.saveDocument();
+            editorHelpers.getUpdatesFromInputFields(function () {
+                editorHelpers.saveDocument();
+            });
         exporter.downloadEpub(theDocument);
     });
     jQuery('.html').bind('click', function () {
-        editorHelpers.saveDocument();
+            editorHelpers.getUpdatesFromInputFields(function () {
+                editorHelpers.saveDocument();
+            });
         exporter.downloadHtml(theDocument);
     });
     jQuery('.print').bind('click', function () {
@@ -170,10 +180,12 @@ jQuery(document).bind('documentDataLoaded', function () {
         window.print();
     });
     jQuery('.close').bind('click', function () {
-        editorHelpers.saveDocument(function () {
+            editorHelpers.getUpdatesFromInputFields(function () {
+                editorHelpers.saveDocument();
+            });
             window.location.href = '/';
         });
-    });
+
 
     editorHelpers.layoutMetadata();
 
@@ -182,7 +194,8 @@ jQuery(document).bind('documentDataLoaded', function () {
         jQuery('.papersize-menu,.metadata-menu,.documentstyle-menu').addClass(
             'disabled');
     }
-    else if (theDocument.rights === 'w') {
+    else if (theDocument.rights === 'w') { 
+   
 
         // Enable Hallo.js Editor
         jQuery('#document-editable').hallo({
@@ -224,15 +237,12 @@ jQuery(document).bind('documentDataLoaded', function () {
 
         // Set Auto-save to save every ten seconds
         saveTimer = setInterval(function () {
-            editorHelpers.saveDocument();
+            editorHelpers.getUpdatesFromInputFields(function () {
+                editorHelpers.saveDocument();
+            });
         }, 10000);
 
-        changeTimer = setInterval(function () {
-            if (theDocument.changed) {
-                theDocument.changed = false;
-                editorHelpers.getUpdatesFromInputFields();
-            }
-        }, 1000);
+
         // bind the share dialog to the button if the user is the document owner
         if (theDocument.is_owner) {
             jQuery('.share').bind('click', function () {
@@ -278,7 +288,9 @@ jQuery(document).bind('documentDataLoaded', function () {
                     event.ctrlKey) && !
                 (event.which == 19)) return true;
 
-            editorHelpers.saveDocument();
+            editorHelpers.getUpdatesFromInputFields(function () {
+                editorHelpers.saveDocument();
+            });
             event.preventDefault();
             return false;
         });
@@ -298,7 +310,9 @@ jQuery(document).bind('documentDataLoaded', function () {
                 editorHelpers.documentHasChanged();
             });
         jQuery('.save').bind('click', function () {
-            editorHelpers.saveDocument();
+            editorHelpers.getUpdatesFromInputFields(function () {
+                editorHelpers.saveDocument();
+            });
         });
 
 

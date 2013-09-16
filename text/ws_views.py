@@ -128,15 +128,9 @@ class DocumentWS(BaseWebSocketHandler):
                 }
             if self.document.id in DocumentWS.sessions:
                 DocumentWS.send_updates(chat, self.document.id)
-        elif parsed["type"]=='transform':
-            chat = {
-                "id": str(uuid.uuid4()),
-                "change": parsed["change"],
-                "from": self.user.id,
-                "type": 'transform'
-                }
+        elif parsed["type"]=='diff' or parsed["type"]=='transform':
             if self.document.id in DocumentWS.sessions:
-                DocumentWS.send_updates(chat, self.document.id, self.id)            
+                DocumentWS.send_updates(message, self.document.id, self.id)            
 
     def on_close(self):
         print 'Websocket closed'

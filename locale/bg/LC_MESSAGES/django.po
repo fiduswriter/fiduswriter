@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-08-26 08:08-0500\n"
-"PO-Revision-Date: 2013-07-29 14:14+0200\n"
+"PO-Revision-Date: 2013-09-18 08:54+0200\n"
 "Last-Translator: Vladimir Vitkov <vvitkov@linux-bg.org>\n"
 "Language-Team: Bulgarian <vvitkov@linux-bg.org>\n"
 "Language: BG\n"
@@ -16,10 +16,11 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: account/templates/account/base.html:7 base/templates/base.html:10
+#: account/templates/account/base.html:7
+#: base/templates/base.html:10
 #: text/templates/text/editor.html:9
 msgid "The all in one solution for collaborative academic writing."
-msgstr "Единственото решение за съвместно създаване на академични документи."
+msgstr "Комплексно решение за съвместно създаване на академични документи."
 
 #: account/templates/account/base.html:65
 #: account/templates/account/login.html:7
@@ -39,47 +40,37 @@ msgstr "Потвърдете вашият имейл и се съгласете 
 #, fuzzy, python-format
 msgid ""
 "\n"
-"        Please confirm that you own the email <a href=\"mailto:%(email)s\">"
-"%(email)s</a>,\n"
-"        that you apply for the username %(user_display)s, and that you have "
-"read and agree to the\n"
+"        Please confirm that you own the email <a href=\"mailto:%(email)s\">%(email)s</a>,\n"
+"        that you apply for the username %(user_display)s, and that you have read and agree to the\n"
 "        <a href=\"/terms/\" target=\"_blank\">Terms and Conditions</a>.\n"
 "        "
 msgstr ""
 "\n"
-"        Моля потвърдете, че имате контрол над имейла <a href=\"mailto:"
-"%(email)s\">%(email)s</a>,\n"
-"        че заявявате потребителско име %(user_display)s, и че сте прочел и "
-"сте съгласен с\n"
-"        <a href=\"http://www.fiduswriter.com/?page_id=41\">Общите Условия</"
-"a>.\n"
+"        Моля потвърдете, че имате контрол над имейла <a href=\"mailto:%(email)s\">%(email)s</a>,\n"
+"        че заявявате потребителско име %(user_display)s, и че сте прочел и сте съгласен с\n"
+"        <a href=\"http://www.fiduswriter.com/?page_id=41\">Общите Условия</a>.\n"
 "        "
 
 #: account/templates/account/email_confirm.html:31
 #, fuzzy
 msgid ""
 "\n"
-"        I have read and agree to the <a href=\"/terms/\" target=\"_blank"
-"\">Terms and Conditions</a>.\n"
+"        I have read and agree to the <a href=\"/terms/\" target=\"_blank\">Terms and Conditions</a>.\n"
 "        "
 msgstr ""
 "\n"
-"        Прочетох и съм съгласен с <a href=\"http://www.fiduswriter.com/?"
-"page_id=41\">Общите Условия</a>.\n"
+"        Прочетох и съм съгласен с <a href=\"http://www.fiduswriter.com/?page_id=41\">Общите Условия</a>.\n"
 "        "
 
 #: account/templates/account/email_confirm.html:39
 #, fuzzy
 msgid ""
 "\n"
-"            I am aware that I am signing up for a test account and that "
-"service may be ended abruptly and without notice, leaving me without my "
-"files.\n"
+"            I am aware that I am signing up for a test account and that service may be ended abruptly and without notice, leaving me without my files.\n"
 "            "
 msgstr ""
 "\n"
-"        Известно ми е, че се регистрирам за тестов акаунт, и че услугата "
-"може да бъде прекратена без предизвестие,\n"
+"        Известно ми е, че се регистрирам за тестов акаунт, и че услугата може да бъде прекратена без предизвестие,\n"
 "        оставяйки ме без достъп до моите файлове.\n"
 "        "
 
@@ -87,19 +78,11 @@ msgstr ""
 #, fuzzy
 msgid ""
 "\n"
-"        Please notice that Fidus Writer currently only works with the Google "
-"Chrome browser. For best results, please enable CSS Regions within the "
-"browser. You can read how to do that <a href=\"http://fiduswriter."
-"org/2013/03/15/how-do-i-enable-page-views-in-fidus-writer/\" target=\"_blank"
-"\">here</a>.</p>\n"
+"        Please notice that Fidus Writer currently only works with the Google Chrome browser. For best results, please enable CSS Regions within the browser. You can read how to do that <a href=\"http://fiduswriter.org/2013/03/15/how-do-i-enable-page-views-in-fidus-writer/\" target=\"_blank\">here</a>.</p>\n"
 "        "
 msgstr ""
 "\n"
-"        За момента Fidus Writer работи само със Google Chrome браузър. За "
-"най добри резултати, моля включете CSS Regions от самият браузър. Информация "
-"как да бъде включена тази функционалност<a href=\"http://fiduswriter."
-"com/2013/03/15/how-do-i-enable-page-views-in-fidus-writer/\" target=\"_blank"
-"\">тук</a>.</p>\n"
+"        За момента Fidus Writer работи само със Google Chrome браузър. За най добри резултати, моля включете CSS Regions от самият браузър. Информация как да бъде включена тази функционалност<a href=\"http://fiduswriter.com/2013/03/15/how-do-i-enable-page-views-in-fidus-writer/\" target=\"_blank\">тук</a>.</p>\n"
 "        "
 
 #: account/templates/account/email_confirm.html:54
@@ -111,14 +94,12 @@ msgstr "Потвърди"
 msgid ""
 "\n"
 "        This e-mail confirmation link expired or is invalid.\n"
-"        Please <a href=\"%(email_url)s\">issue a new e-mail confirmation "
-"request</a>.\n"
+"        Please <a href=\"%(email_url)s\">issue a new e-mail confirmation request</a>.\n"
 "        "
 msgstr ""
 "\n"
 "        Тази връзка за потвърждение е изтекла.\n"
-"        Моля <a href=\"%(email_url)s\">изискайте нова връзка за "
-"потвърждение</a>.\n"
+"        Моля <a href=\"%(email_url)s\">изискайте нова връзка за потвърждение</a>.\n"
 "        "
 
 #: account/templates/account/list_team_members.html:8
@@ -131,7 +112,8 @@ msgstr "Изберете действие"
 
 #: account/templates/account/list_team_members.html:44
 #: bibliography/templates/bibliography/index.html:54
-#: book/templates/book/index.html:88 text/templates/text/index.html:73
+#: book/templates/book/index.html:88
+#: text/templates/text/index.html:73
 #: usermedia/templates/usermedia/index.html:41
 msgid "Delete selected"
 msgstr "Изтрий избраните"
@@ -154,7 +136,8 @@ msgstr "Имейл адрес"
 #: account/templates/account/list_team_members.html:64
 #: account/templates/account/show_profile.html:88
 #: bibliography/templates/bibliography/index.html:109
-#: book/templates/book/index.html:147 text/templates/text/index.html:132
+#: book/templates/book/index.html:147
+#: text/templates/text/index.html:132
 #: usermedia/templates/usermedia/index.html:84
 msgid "Delete"
 msgstr "Изтрий"
@@ -181,16 +164,12 @@ msgstr "Влез"
 msgid ""
 "\n"
 "        \n"
-"        If you are new here, please <a href=\"%(signup_url)s\" title=\"Sign "
-"up for %(site_name)s\">sign up</a> or use one of the login options below to "
-"create an account.\n"
+"        If you are new here, please <a href=\"%(signup_url)s\" title=\"Sign up for %(site_name)s\">sign up</a> or use one of the login options below to create an account.\n"
 "        "
 msgstr ""
 "\n"
-"        Моля влезте с някой от вашите съществуващи акаунти (трета страна) "
-"или вашият Fidus Writer akaunt.<br/>\n"
-"        Ако сте нов тук, моля <a href=\"%(signup_url)s\" title=\"Регистрация "
-"за %(site_name)s\">Регистрирайте се</a>.\n"
+"        Моля влезте с някой от вашите съществуващи акаунти (трета страна) или вашият Fidus Writer akaunt.<br/>\n"
+"        Ако сте нов тук, моля <a href=\"%(signup_url)s\" title=\"Регистрация за %(site_name)s\">Регистрирайте се</a>.\n"
 "        "
 
 #: account/templates/account/login.html:45
@@ -235,17 +214,13 @@ msgstr "Смяна на парола"
 #, fuzzy, python-format
 msgid ""
 "\n"
-"    <p>Forgotten your password? Enter your e-mail address below, and we'll "
-"send you an e-mail allowing you to reset it.</p>\n"
-"    <p>If you have any trouble resetting your password, please <a href="
-"\"mailto:%(CONTACT_EMAIL)s\">contact us</a>.</p>\n"
+"    <p>Forgotten your password? Enter your e-mail address below, and we'll send you an e-mail allowing you to reset it.</p>\n"
+"    <p>If you have any trouble resetting your password, please <a href=\"mailto:%(CONTACT_EMAIL)s\">contact us</a>.</p>\n"
 "    "
 msgstr ""
 "\n"
-"    <p>Забравена парола? Въведете вашият имейл адрес долу, и ще ви изпратим "
-"инструкции за смяната и.</p>\n"
-"    <p>Ако имате проблеми със смяната на паролата, моля <a href=\"mailto:"
-"mail@fiduswriter.com\">пишете ни</a>.</p>\n"
+"    <p>Забравена парола? Въведете вашият имейл адрес долу, и ще ви изпратим инструкции за смяната и.</p>\n"
+"    <p>Ако имате проблеми със смяната на паролата, моля <a href=\"mailto:mail@fiduswriter.com\">пишете ни</a>.</p>\n"
 "    "
 
 #: account/templates/account/password_reset.html:33
@@ -298,7 +273,7 @@ msgstr "Изтрий акаунт"
 
 #: account/templates/account/show_profile.html:165
 msgid "User does not exist."
-msgstr ""
+msgstr "Потребителят не съществува"
 
 #: account/templates/account/signup.html:7
 msgid "Sign Up"
@@ -312,13 +287,11 @@ msgstr "Вече имате акаунт"
 #, python-format
 msgid ""
 "\n"
-"        Already have an account? Then please <a href=\"%(login_url)s\" title="
-"\"Login to %(site_name)s\">login</a>.\n"
+"        Already have an account? Then please <a href=\"%(login_url)s\" title=\"Login to %(site_name)s\">login</a>.\n"
 "        "
 msgstr ""
 "\n"
-"        Вече имате акаунт? Тогава моля <a href=\"%(login_url)s\" title="
-"\"Login to %(site_name)s\">влезте</a>.\n"
+"        Вече имате акаунт? Тогава моля <a href=\"%(login_url)s\" title=\"Login to %(site_name)s\">влезте</a>.\n"
 "        "
 
 #: account/templates/account/signup.html:30
@@ -351,16 +324,14 @@ msgstr "Потвърди имейл"
 #, python-format
 msgid ""
 "\n"
-"        We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> "
-"for verification.\n"
+"        We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> for verification.\n"
 "        Follow the link provided to finalize the signup process.\n"
 "        <br />\n"
 "        Please contact us if you do not receive it within a few minutes.\n"
 "        "
 msgstr ""
 "\n"
-"        Изпратихме имейл до <a href=\"mailto:%(email)s\">%(email)s</a> за "
-"потвърждение.\n"
+"        Изпратихме имейл до <a href=\"mailto:%(email)s\">%(email)s</a> за потвърждение.\n"
 "        Последвайте изпратената връзка за да финализрате процеса.\n"
 "        <br />\n"
 "        Свържете се с нас ако не получите имейла до няколко минути.\n"
@@ -368,30 +339,18 @@ msgstr ""
 
 #: avatar/forms.py:34
 #, python-format
-msgid ""
-"%(ext)s is an invalid file extension. Authorized extensions are : "
-"%(valid_exts_list)s"
-msgstr ""
-"%(ext)s е невалидно разширение. Позволените разширения са : "
-"%(valid_exts_list)s"
+msgid "%(ext)s is an invalid file extension. Authorized extensions are : %(valid_exts_list)s"
+msgstr "%(ext)s е невалидно разширение. Позволените разширения са : %(valid_exts_list)s"
 
 #: avatar/forms.py:38
 #, python-format
-msgid ""
-"Your file is too big (%(size)s), the maximum allowed size is "
-"%(max_valid_size)s"
-msgstr ""
-"Вашият файл е твърде голям (%(size)s), максималният разрешен размер е "
-"%(max_valid_size)s"
+msgid "Your file is too big (%(size)s), the maximum allowed size is %(max_valid_size)s"
+msgstr "Вашият файл е твърде голям (%(size)s), максималният разрешен размер е %(max_valid_size)s"
 
 #: avatar/forms.py:44
 #, python-format
-msgid ""
-"You already have %(nb_avatars)d avatars, and the maximum allowed is "
-"%(nb_max_avatars)d."
-msgstr ""
-"Имате %(nb_avatars)d аватара, а максимално разрешеният брой е "
-"%(nb_max_avatars)d."
+msgid "You already have %(nb_avatars)d avatars, and the maximum allowed is %(nb_max_avatars)d."
+msgstr "Имате %(nb_avatars)d аватара, а максимално разрешеният брой е %(nb_max_avatars)d."
 
 #: avatar/models.py:76
 #, python-format
@@ -410,15 +369,18 @@ msgstr "Вашият аватар беше успешно обновен."
 msgid "Successfully deleted the requested avatars."
 msgstr "Избраните аватари бяха изтрити."
 
-#: avatar/templates/avatar/add.html:5 avatar/templates/avatar/change.html:5
+#: avatar/templates/avatar/add.html:5
+#: avatar/templates/avatar/change.html:5
 msgid "Your current avatar: "
 msgstr "Текущ аватар"
 
-#: avatar/templates/avatar/add.html:8 avatar/templates/avatar/change.html:8
+#: avatar/templates/avatar/add.html:8
+#: avatar/templates/avatar/change.html:8
 msgid "You haven't uploaded an avatar yet. Please upload one now."
 msgstr "Все още нямате качени аватари. Моля качете аватар."
 
-#: avatar/templates/avatar/add.html:12 avatar/templates/avatar/change.html:19
+#: avatar/templates/avatar/add.html:12
+#: avatar/templates/avatar/change.html:19
 msgid "Upload New Image"
 msgstr "Качи ново изображение"
 
@@ -432,12 +394,8 @@ msgstr "Моля изберете аватарите които желаете �
 
 #: avatar/templates/avatar/confirm_delete.html:8
 #, python-format
-msgid ""
-"You have no avatars to delete. Please <a href=\"%(avatar_change_url)s"
-"\">upload one</a> now."
-msgstr ""
-"Нямате аватари за изтриване. Моля <a href=\"%(avatar_change_url)s\">качете</"
-"a> аватар."
+msgid "You have no avatars to delete. Please <a href=\"%(avatar_change_url)s\">upload one</a> now."
+msgstr "Нямате аватари за изтриване. Моля <a href=\"%(avatar_change_url)s\">качете</a> аватар."
 
 #: avatar/templates/avatar/confirm_delete.html:14
 msgid "Delete These"
@@ -456,12 +414,8 @@ msgstr ""
 
 #: avatar/templates/notification/avatar_friend_updated/notice.html:2
 #, python-format
-msgid ""
-"<a href=\"%(user_url)s\">%(avatar_creator)s</a> has updated their avatar <a "
-"href=\"%(avatar_url)s\">%(avatar)s</a>."
-msgstr ""
-"<a href=\"%(user_url)s\">%(avatar_creator)s</a> обнови своят аватар <a href="
-"\"%(avatar_url)s\">%(avatar)s</a>."
+msgid "<a href=\"%(user_url)s\">%(avatar_creator)s</a> has updated their avatar <a href=\"%(avatar_url)s\">%(avatar)s</a>."
+msgstr "<a href=\"%(user_url)s\">%(avatar_creator)s</a> обнови своят аватар <a href=\"%(avatar_url)s\">%(avatar)s</a>."
 
 #: avatar/templates/notification/avatar_updated/full.txt:1
 #, python-format
@@ -549,14 +503,11 @@ msgstr "Хей ти!"
 
 #: beta/templates/beta/browser.html:12
 #, fuzzy
-msgid ""
-"Unfortunately, Fidus Writer currently only works on Google Chrome. We are "
-"working to provide support for Mozilla Firefox."
-msgstr ""
-"За съжаление Fidus Writer работи коректно само в Google Chrome за момента. "
-"Поддръжкаta на Mozilla Firefox е в процес на разработване."
+msgid "Unfortunately, Fidus Writer currently only works on Google Chrome. We are working to provide support for Mozilla Firefox."
+msgstr "За съжаление Fidus Writer работи коректно само в Google Chrome за момента. Поддръжкаta на Mozilla Firefox е в процес на разработване."
 
-#: beta/templates/beta/feedback.html:159 beta/templates/beta/feedback.html:162
+#: beta/templates/beta/feedback.html:159
+#: beta/templates/beta/feedback.html:162
 msgid "Feedback"
 msgstr "Забележки"
 
@@ -593,7 +544,8 @@ msgid "Import Bibtex Library"
 msgstr "Импорт Bibtex библ."
 
 #: bibliography/templates/bibliography/index.html:105
-#: book/templates/book/index.html:142 text/templates/text/editor.html:45
+#: book/templates/book/index.html:142
+#: text/templates/text/editor.html:45
 #: text/templates/text/index.html:127
 msgid "Title"
 msgstr "Заглавие"
@@ -614,49 +566,58 @@ msgstr "Публикувани"
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(owner)s has shared the book '%(book)s' on Fidus Writer with you and given "
-"you %(right)s access rights.\n"
+"%(owner)s has shared the book '%(book)s' on Fidus Writer with you and given you %(right)s access rights.\n"
 "Find the book in your book overview: %(link)s"
 msgstr ""
+"Хей %(collaborator_name)s,\n"
+"%(owner)s сподели '%(book)s' във Fidus Writer и ти даде следните права %(right)s.\n"
+"Книгата може да видиш в общия изглед: %(link)s"
 
 #: book/views.py:302
 msgid "Fidus Writer book shared"
-msgstr ""
+msgstr "Fidus Writer книга бе споделена"
 
 #: book/views.py:312
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(owner)s has given you write access rights to the book '%(book)s' on Fidus "
-"Writer.\n"
+"%(owner)s has given you write access rights to the book '%(book)s' on Fidus Writer.\n"
 "Find the book in your book overview: %(link)s"
 msgstr ""
+"Хей %(collaborator_name)s,\n"
+"%(owner)s сподели ви даде права за писане в книгата '%(book)s' във Fidus Writer.\n"
+"Книгата може да видиш в общия изглед: %(link)s"
 
 #: book/views.py:313
 msgid "Fidus Writer book write access"
-msgstr ""
+msgstr "Достъп за писане във Fidus Writer книга"
 
 #: book/templates/book/index.html:6
 msgid "Book Overview"
 msgstr "Обзор на Книгата"
 
-#: book/templates/book/index.html:93 text/templates/text/index.html:78
+#: book/templates/book/index.html:93
+#: text/templates/text/index.html:78
 msgid "Share selected"
 msgstr "Сподели избраните"
 
-#: book/templates/book/index.html:98 text/templates/text/index.html:83
+#: book/templates/book/index.html:98
+#: text/templates/text/index.html:83
 msgid "Copy selected"
 msgstr "Копирай избраните"
 
-#: book/templates/book/index.html:103 text/templates/text/index.html:88
+#: book/templates/book/index.html:103
+#: text/templates/text/index.html:88
 msgid "Export selected as Epub"
 msgstr "Експортирай избраните като Epub"
 
-#: book/templates/book/index.html:108 text/templates/text/index.html:93
+#: book/templates/book/index.html:108
+#: text/templates/text/index.html:93
 msgid "Export selected as HTML"
 msgstr "Експортирай избраните като HTML"
 
-#: book/templates/book/index.html:113 text/templates/text/index.html:98
+#: book/templates/book/index.html:113
+#: text/templates/text/index.html:98
 msgid "Export selected as LaTeX"
 msgstr "Експортирай избраните като LaTeX"
 
@@ -672,19 +633,23 @@ msgstr "Нова Книга"
 msgid "Upload Fidus Book"
 msgstr "Качи Fidus Книга"
 
-#: book/templates/book/index.html:143 text/templates/text/index.html:128
+#: book/templates/book/index.html:143
+#: text/templates/text/index.html:128
 msgid "Created"
 msgstr "Създаден"
 
-#: book/templates/book/index.html:144 text/templates/text/index.html:129
+#: book/templates/book/index.html:144
+#: text/templates/text/index.html:129
 msgid "Last changed"
 msgstr "Последна промяна"
 
-#: book/templates/book/index.html:145 text/templates/text/index.html:130
+#: book/templates/book/index.html:145
+#: text/templates/text/index.html:130
 msgid "Owner"
 msgstr "Собственик"
 
-#: book/templates/book/index.html:146 text/templates/text/index.html:131
+#: book/templates/book/index.html:146
+#: text/templates/text/index.html:131
 msgid "Rights"
 msgstr "Права"
 
@@ -708,15 +673,16 @@ msgstr "Български"
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(owner)s has shared a Fidus Writer document with you and given you "
-"%(right)s access rights.\n"
+"%(owner)s has shared a Fidus Writer document with you and given you %(right)s access rights.\n"
 "Access the document through this link: %(link)s"
 msgstr ""
+"Хей %(collaborator_name)s,\n"
+"%(owner)s сподели Fidus Writer документ и ти даде следните права %(right)s.\n"
+"Документът може да видиш чрез следната връзка: %(link)s"
 
 #: text/views.py:363
-#, fuzzy
 msgid "Fidus Writer document shared"
-msgstr "редактирай документи"
+msgstr "Fidus Writer документ бе споделен"
 
 #: text/views.py:373
 #, python-format
@@ -725,20 +691,25 @@ msgid ""
 "%(owner)s has given you write access rights to a Fidus Writer document.\n"
 "Access the document through this link: %(link)s"
 msgstr ""
+"Хей %(collaborator_name)s,\n"
+"%(owner)s ти даде врава за писане във Fidus Writer документ %(right)s.\n"
+"Документът може да видиш чрез следната връзка: %(link)s"
 
 #: text/views.py:374
 msgid "Fidus Writer document write access"
-msgstr ""
+msgstr "Достъп за писане във Fidus Writer документ"
 
 #: text/templates/text/editor.html:41
 msgid "Contents"
 msgstr "Съдържание"
 
-#: text/templates/text/editor.html:48 text/templates/text/editor.html:441
+#: text/templates/text/editor.html:48
+#: text/templates/text/editor.html:441
 msgid "Subtitle"
 msgstr "Подзаглавие"
 
-#: text/templates/text/editor.html:51 text/templates/text/editor.html:444
+#: text/templates/text/editor.html:51
+#: text/templates/text/editor.html:444
 msgid "Abstract"
 msgstr "Обобщение"
 
@@ -746,7 +717,8 @@ msgstr "Обобщение"
 msgid "en"
 msgstr "англ"
 
-#: text/templates/text/editor.html:328 text/templates/text/editor.html:340
+#: text/templates/text/editor.html:328
+#: text/templates/text/editor.html:340
 msgid "Close the document and return to the document overview menu."
 msgstr "Затвори документа и се върни към обзора на документа"
 
@@ -784,7 +756,6 @@ msgid "Save copy of the current document"
 msgstr "Запази копие на документа"
 
 #: text/templates/text/editor.html:346
-#, fuzzy
 msgid "Save copy"
 msgstr "Запазване на копие"
 
@@ -798,8 +769,7 @@ msgstr "Изтегли"
 
 #: text/templates/text/editor.html:352
 msgid "Either print or create a PDF using your browser's print dialog"
-msgstr ""
-"Разпечатайте или създайте PDF от диалога за принтиране на вашият браузър"
+msgstr "Разпечатайте или създайте PDF от диалога за принтиране на вашият браузър"
 
 #: text/templates/text/editor.html:352
 msgid "Print/PDF"
@@ -822,12 +792,8 @@ msgid "Export the document to an Epub electronic reader file."
 msgstr "Експортирай документа като Epub електронна книга"
 
 #: text/templates/text/editor.html:372
-msgid ""
-"Export the document to a Latex file. This will also attach a BibTex file if "
-"you are using citations."
-msgstr ""
-"Експортирай документа като Latex файл. Това ще прикачи и BibTex файл ако "
-"използвате цитати."
+msgid "Export the document to a Latex file. This will also attach a BibTex file if you are using citations."
+msgstr "Експортирай документа като Latex файл. Това ще прикачи и BibTex файл ако използвате цитати."
 
 #: text/templates/text/editor.html:380
 msgid "Choose your preferred citation style."
@@ -843,7 +809,7 @@ msgstr "American Psychological Association."
 
 #: text/templates/text/editor.html:384
 msgid "APA"
-msgstr ""
+msgstr "APA"
 
 #: text/templates/text/editor.html:387
 msgid "The author-date variant of the Chicago style"
@@ -875,7 +841,7 @@ msgstr "Modern Language Association"
 
 #: text/templates/text/editor.html:396
 msgid "MLA"
-msgstr ""
+msgstr "MLA"
 
 #: text/templates/text/editor.html:402
 msgid "Choose a document style"
@@ -887,30 +853,29 @@ msgstr "Стил на Документа"
 
 #: text/templates/text/editor.html:406
 msgid "Elephant"
-msgstr ""
+msgstr "Elephant"
 
 #: text/templates/text/editor.html:407
 msgid "Comfy Elephant"
-msgstr ""
+msgstr "Comfy Elephant"
 
 #: text/templates/text/editor.html:411
 msgid "Owl"
-msgstr ""
+msgstr "Owl"
 
 #: text/templates/text/editor.html:412
 msgid "Drowsy Owl"
-msgstr ""
+msgstr "Drowsy Owl"
 
 #: text/templates/text/editor.html:416
 msgid "Fox"
-msgstr ""
+msgstr "Fox"
 
 #: text/templates/text/editor.html:417
 msgid "Foxy Fox"
-msgstr ""
+msgstr "Foxy Fox"
 
 #: text/templates/text/editor.html:424
-#, fuzzy
 msgid "Choose a papersize for printing and PDF generation."
 msgstr "Изберете размерна на страниците за печат и генериране на PDF"
 
@@ -939,7 +904,6 @@ msgid "Choose which metadata to enable."
 msgstr "Избери кои мета-данни да бъдат включени."
 
 #: text/templates/text/editor.html:437
-#, fuzzy
 msgid "Metadata"
 msgstr "Мета-данни"
 
@@ -952,11 +916,11 @@ msgid "Add an abstract to the document."
 msgstr "Добави обобщение към документа"
 
 #: text/templates/text/editor.html:450
-#, fuzzy
 msgid "Tools"
 msgstr "Инструменти"
 
-#: text/templates/text/editor.html:454 text/templates/text/editor.html:455
+#: text/templates/text/editor.html:454
+#: text/templates/text/editor.html:455
 msgid "Word counter"
 msgstr "Брой Думи"
 
@@ -1047,3 +1011,4 @@ msgstr "Размер (px)"
 #: usermedia/templates/usermedia/index.html:83
 msgid "Updated"
 msgstr "Обновен"
+

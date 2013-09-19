@@ -43,7 +43,11 @@ The following are instructions working on most *NIX systems.
 
 6. If you want to go beyond a local test installation, copy configuraiton.py-default to configuration.py, and edit configuration.py with a text editor, adjusting it to fit your needs.
 
-7. Synchronize the DB and create a superuser by typing:
+7. Recompile locale message files by typing:
+
+  python manage.py compilemessages
+
+8. Synchronize the DB and create a superuser by typing:
 
   python manage.py syncdb
 
@@ -53,7 +57,7 @@ The following are instructions working on most *NIX systems.
 
   python manage.py loaddata base/fixture/initial_terms.json
 
-8. Run the fiduswriter server by typing:
+9. Run the fiduswriter server by typing:
 
   python manage.py runserver
 

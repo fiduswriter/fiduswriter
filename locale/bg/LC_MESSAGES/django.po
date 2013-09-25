@@ -692,7 +692,7 @@ msgid ""
 "Access the document through this link: %(link)s"
 msgstr ""
 "Хей %(collaborator_name)s,\n"
-"%(owner)s ти даде врава за писане във Fidus Writer документ %(right)s.\n"
+"%(owner)s ти даде врава за писане във Fidus Writer документ достъп за писане.\n"
 "Документът може да видиш чрез следната връзка: %(link)s"
 
 #: text/views.py:374

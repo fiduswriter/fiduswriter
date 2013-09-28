@@ -21,33 +21,35 @@ Howto install
 
 The following are instructions working on most *NIX systems.
 
-0. Install the development packages of libjpeg and python and the python virtual environment creator. How you do this depends on your system. On Debian and Ubuntu the packages are called libjpeg-dev, python-dev and python-virtualenv. Install them with your favorite package manager, for example on the command line by running:
+1. Download the Fidus Writer sources to your computer. Unarchive if necessary.
+
+2. Install the development packages of libjpeg and python and the python virtual environment creator. How you do this depends on your system. On Debian and Ubuntu the packages are called libjpeg-dev, python-dev and python-virtualenv. Install them with your favorite package manager, for example on the command line by running:
 
   sudo apt-get install libjpeg-dev python-dev python-virtualenv
 
-1. Start the command line (terminal).
+3. Start the command line (terminal).
 
-2. Cd to where you have your sources.
+4. Cd to where you have your sources.
 
-3. You can use the virtualenv command to create virtual environments. The following command will create an environment called "fiduswriter-venv":
+5. You can use the virtualenv command to create virtual environments. The following command will create an environment called "fiduswriter-venv":
 
   virtualenv  --no-site-packages fiduswriter-venv
 
-4. Activate the virtualenv by typing:
+6. Activate the virtualenv by typing:
 
   source fiduswriter-venv/bin/activate
 
-5. Install the requirements for running  fiduswriter by typing:
+7. Install the requirements for running  fiduswriter by typing:
 
   pip install -r requirements.txt
 
-6. If you want to go beyond a local test installation, copy configuraiton.py-default to configuration.py, and edit configuration.py with a text editor, adjusting it to fit your needs.
+8. If you want to go beyond a local test installation, copy configuration.py-default to configuration.py, and edit configuration.py with a text editor, adjusting it to fit your needs.
 
-7. Recompile locale message files by typing:
+9. Recompile locale message files by typing:
 
   python manage.py compilemessages
 
-8. Synchronize the DB and create a superuser by typing:
+10. Synchronize the DB and create a superuser by typing:
 
   python manage.py syncdb
 
@@ -57,7 +59,7 @@ The following are instructions working on most *NIX systems.
 
   python manage.py loaddata base/fixture/initial_terms.json
 
-9. Run the fiduswriter server by typing:
+11. Run the Fidus Writer server by typing:
 
   python manage.py runserver
 

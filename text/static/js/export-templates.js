@@ -96,9 +96,12 @@ var tmp_epub_xhtml = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
             <%= tmp_mathjax_html_header({})%>\
             <%= tmp_mathjax_xhtml_header_starter({})%>\
         <% } %>\
-        </head><body>\
+        </head><body \
         <% if (mathjax) { %>\
+            class="tex2jax_ignore">\
             <%= mathjax %>\
+        <% } else { %>\
+            >\
         <% } %>\
         <% if (part && part !="") {%>\
             <h1 class="part"><%= part %></h1>\
@@ -143,9 +146,12 @@ var tmp_html_export = _.template('<!DOCTYPE html>\n\
             <%= tmp_mathjax_html_header({})%>\
             <%= tmp_mathjax_html_header_starter({})%>\
         <% } %>\
-        </head><body>\
+        </head><body \
+        class="tex2jax_ignore">\
         <% if (mathjax) { %>\
             <%= mathjax %>\
+        <% } else { %>\
+            >\
         <% } %>\
         <% if (part && part !="") { %>\
             <h1 class="part"><%= part %></h1>\
@@ -166,7 +172,8 @@ var tmp_mathjax_html_header = _.template('\
         MathJax.Hub.Config({\
             jax: ["input/TeX","output/SVG"],\
             tex2jax: {\
-                inlineMath: [ ["[MATH]","[/MATH]"]],\
+                    inlineMath: [ ["[MATH]","[/MATH]"]],\
+                    displayMath: [ ["[DMATH]","[/DMATH]"]],\
                 processEscapes: true\
             },\
             extensions: ["tex2jax.js"],\
@@ -185,11 +192,17 @@ var tmp_mathjax_html_header_starter = _.template('\
     <script type="text/javascript">\
             document.addEventListener("DOMContentLoaded", function () {\
                 if (window.hasOwnProperty("MathJax")) {\
-                    var equations = document.body.querySelectorAll(".equation,.figure-equation");\
+                    var mjQueue = MathJax.Hub.queue;\
+                    var equations = document.body.querySelectorAll(".equation");\
                     for (var i = 0; i < equations.length; i++) {\
                         equations[i].innerHTML = "[MATH]"+equations[i].getAttribute("data-equation")+"[/MATH]";\
+                        mjQueue.Push(["Typeset",MathJax.Hub,equations[i[]);\
                     }\
-                    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);\
+                    var fequations = document.body.querySelectorAll(".figure-equation");\
+                    for (var i = 0; i < fequations.length; i++) {\
+                        fequations[i].innerHTML = "[DMATH]"+fequations[i].getAttribute("data-equation")+"[/DMATH]";\
+                        mjQueue.Push(["Typeset",MathJax.Hub,fequations[i[]);\
+                    }\
                 }\
             });\
     </script>\
@@ -200,11 +213,17 @@ var tmp_mathjax_xhtml_header_starter = _.template('\
         <![CDATA[\
             document.addEventListener("DOMContentLoaded", function () {\
                 if (window.hasOwnProperty("MathJax")) {\
-                    var equations = document.body.querySelectorAll(".equation,.figure-equation");\
+                    var mjQueue = MathJax.Hub.queue;\
+                    var equations = document.body.querySelectorAll(".equation");\
                     for (var i = 0; i < equations.length; i++) {\
                         equations[i].innerHTML = "[MATH]"+equations[i].getAttribute("data-equation")+"[/MATH]";\
+                        mjQueue.Push(["Typeset",MathJax.Hub,equations[i]]);\
                     }\
-                    MathJax.Hub.Queue(["Typeset",MathJax.Hub]);\
+                    var fequations = document.body.querySelectorAll(".figure-equation");\
+                    for (var i = 0; i < fequations.length; i++) {\
+                        fequations[i].innerHTML = "[DMATH]"+fequations[i].getAttribute("data-equation")+"[/DMATH]";\
+                        mjQueue.Push(["Typeset",MathJax.Hub,fequations[i[]);\
+                    }\
                 }\
             });\
         ]]>\

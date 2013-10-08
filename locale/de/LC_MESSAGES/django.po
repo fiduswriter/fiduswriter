@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-26 08:08-0500\n"
+"POT-Creation-Date: 2013-10-08 03:47-0500\n"
 "PO-Revision-Date: 2013-02-24 10:03-0600\n"
 "Last-Translator: Daniel Frebel <daniel@fiduswriter.com>\n"
 "Language-Team: German <daniel@fiduswriter.com>\n"
@@ -127,7 +127,7 @@ msgid "Select action"
 msgstr "Aktion wählen"
 
 #: account/templates/account/list_team_members.html:44
-#: bibliography/templates/bibliography/index.html:54
+#: bibliography/templates/bibliography/index.html:52
 #: book/templates/book/index.html:88 text/templates/text/index.html:73
 #: usermedia/templates/usermedia/index.html:41
 msgid "Delete selected"
@@ -138,7 +138,7 @@ msgid "Add new contact"
 msgstr "Neuen Kontakt hinzufügen"
 
 #: account/templates/account/list_team_members.html:62
-#: base/templates/base.html:122
+#: base/templates/base.html:120
 msgid "Contacts"
 msgstr "Kontakte"
 
@@ -150,7 +150,7 @@ msgstr "E-Mailadresse"
 
 #: account/templates/account/list_team_members.html:64
 #: account/templates/account/show_profile.html:88
-#: bibliography/templates/bibliography/index.html:109
+#: bibliography/templates/bibliography/index.html:107
 #: book/templates/book/index.html:147 text/templates/text/index.html:132
 #: usermedia/templates/usermedia/index.html:84
 msgid "Delete"
@@ -473,43 +473,43 @@ msgstr ""
 msgid "Default Avatar"
 msgstr "Bild entfernen"
 
-#: base/templates/base.html:86
+#: base/templates/base.html:84
 msgid "edit documents"
 msgstr "Dokumente bearbeiten"
 
-#: base/templates/base.html:87
+#: base/templates/base.html:85
 msgid "Documents"
 msgstr "Dokumente"
 
-#: base/templates/base.html:91
+#: base/templates/base.html:89
 msgid "manage bibliography library"
 msgstr "Bibliografisches Verzeichnis managen"
 
-#: base/templates/base.html:92
+#: base/templates/base.html:90
 msgid "Bibliography"
 msgstr "Bibliografie"
 
-#: base/templates/base.html:96
+#: base/templates/base.html:94
 msgid "manage image files"
 msgstr "Bilddatein managen"
 
-#: base/templates/base.html:97
+#: base/templates/base.html:95
 msgid "Images"
 msgstr "Bilder"
 
-#: base/templates/base.html:101
+#: base/templates/base.html:99
 msgid "compose books"
 msgstr "Bücher zusammensetzen"
 
-#: base/templates/base.html:102
+#: base/templates/base.html:100
 msgid "Books"
 msgstr "Bücher"
 
-#: base/templates/base.html:117
+#: base/templates/base.html:115
 msgid "Edit profile"
 msgstr "Profil bearbeiten"
 
-#: base/templates/base.html:128
+#: base/templates/base.html:126
 msgid "Log out"
 msgstr "Abmelden"
 
@@ -538,9 +538,11 @@ msgid "Hey there!"
 msgstr "Hallo!"
 
 #: beta/templates/beta/browser.html:12
+#, fuzzy
 msgid ""
-"Unfortunately, Fidus Writer currently only works on Google Chrome. We are "
-"working to provide support for Mozilla Firefox."
+"Unfortunately, Fidus Writer currently only works on Google Chrome (29+) and "
+"Apple Safari (6.1+). We hope to provide support for Mozilla Firefox in the "
+"future."
 msgstr ""
 "Leider ist Fidus Writer im Moment nur mit Google Chrome zu verwenden. Wir "
 "arbeiten an einer Version für Mozilla Firefox."
@@ -557,49 +559,54 @@ msgstr "Vielen Dank für deine Anmerkung!"
 msgid "Bibliography Manager"
 msgstr "Bibliografiemanager"
 
-#: bibliography/templates/bibliography/index.html:59
+#: bibliography/templates/bibliography/index.html:57
 msgid "Export selected"
 msgstr "Auswahl exportieren"
 
-#: bibliography/templates/bibliography/index.html:68
-#: bibliography/templates/bibliography/index.html:75
+#: bibliography/templates/bibliography/index.html:66
+#: bibliography/templates/bibliography/index.html:73
 #: usermedia/templates/usermedia/index.html:50
 #: usermedia/templates/usermedia/index.html:57
 msgid "All categories"
 msgstr "Alle Kategorien"
 
-#: bibliography/templates/bibliography/index.html:83
+#: bibliography/templates/bibliography/index.html:81
 #: usermedia/templates/usermedia/index.html:65
 msgid "Edit categories"
 msgstr "Kategorien bearbeiten"
 
-#: bibliography/templates/bibliography/index.html:89
+#: bibliography/templates/bibliography/index.html:87
 msgid "Register new source"
 msgstr "Neue Quelle eintragen"
 
-#: bibliography/templates/bibliography/index.html:95
+#: bibliography/templates/bibliography/index.html:93
 msgid "Import Bibtex Library"
 msgstr "Bibtex Datei importieren"
 
-#: bibliography/templates/bibliography/index.html:105
-#: book/templates/book/index.html:142 text/templates/text/editor.html:45
+#: bibliography/templates/bibliography/index.html:103
+#: book/templates/book/index.html:142 text/templates/text/editor.html:38
 #: text/templates/text/index.html:127
 msgid "Title"
 msgstr "Titel"
 
-#: bibliography/templates/bibliography/index.html:106
+#: bibliography/templates/bibliography/index.html:104
 msgid "Sourcetype"
 msgstr "Dokumententyp"
 
-#: bibliography/templates/bibliography/index.html:107
+#: bibliography/templates/bibliography/index.html:105
 msgid "Author"
 msgstr "Autor"
 
-#: bibliography/templates/bibliography/index.html:108
+#: bibliography/templates/bibliography/index.html:106
 msgid "Published"
 msgstr "Veröffentlicht"
 
-#: book/views.py:301
+#: book/views.py:299 text/views.py:176
+#, fuzzy
+msgid "Untitled"
+msgstr "Untertitel"
+
+#: book/views.py:304
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
@@ -608,11 +615,11 @@ msgid ""
 "Find the book in your book overview: %(link)s"
 msgstr ""
 
-#: book/views.py:302
-msgid "Fidus Writer book shared"
+#: book/views.py:305
+msgid "Book shared:"
 msgstr ""
 
-#: book/views.py:312
+#: book/views.py:315
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
@@ -621,7 +628,7 @@ msgid ""
 "Find the book in your book overview: %(link)s"
 msgstr ""
 
-#: book/views.py:313
+#: book/views.py:316
 msgid "Fidus Writer book write access"
 msgstr ""
 
@@ -693,21 +700,21 @@ msgstr "Deutsch"
 msgid "Bulgarian"
 msgstr "Bulgarisch"
 
-#: text/views.py:362
+#: text/views.py:181
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(owner)s has shared a Fidus Writer document with you and given you "
-"%(right)s access rights.\n"
+"%(owner)s has shared the document '%(document)s' with you and given you "
+"%(right)s access rights. \n"
 "Access the document through this link: %(link)s"
 msgstr ""
 
-#: text/views.py:363
+#: text/views.py:182
 #, fuzzy
-msgid "Fidus Writer document shared"
-msgstr "Dokumente bearbeiten"
+msgid "Document shared:"
+msgstr "Dokumente"
 
-#: text/views.py:373
+#: text/views.py:192
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
@@ -715,101 +722,101 @@ msgid ""
 "Access the document through this link: %(link)s"
 msgstr ""
 
-#: text/views.py:374
+#: text/views.py:193
 msgid "Fidus Writer document write access"
 msgstr ""
 
-#: text/templates/text/editor.html:41
+#: text/templates/text/editor.html:34
 msgid "Contents"
 msgstr "Inhalt"
 
-#: text/templates/text/editor.html:48 text/templates/text/editor.html:441
+#: text/templates/text/editor.html:41 text/templates/text/editor.html:437
 msgid "Subtitle"
 msgstr "Untertitel"
 
-#: text/templates/text/editor.html:51 text/templates/text/editor.html:444
+#: text/templates/text/editor.html:44 text/templates/text/editor.html:440
 msgid "Abstract"
 msgstr "Zusammenfassung"
 
-#: text/templates/text/editor.html:324
+#: text/templates/text/editor.html:320
 msgid "en"
 msgstr "de"
 
-#: text/templates/text/editor.html:328 text/templates/text/editor.html:340
+#: text/templates/text/editor.html:324 text/templates/text/editor.html:336
 msgid "Close the document and return to the document overview menu."
 msgstr "Dokument schließen und zur Übersicht zurückkehren."
 
-#: text/templates/text/editor.html:333
+#: text/templates/text/editor.html:329
 msgid "File handling"
 msgstr "Dateiverwaltung"
 
-#: text/templates/text/editor.html:333
+#: text/templates/text/editor.html:329
 #: usermedia/templates/usermedia/index.html:81
 msgid "File"
 msgstr "Datei"
 
-#: text/templates/text/editor.html:337
+#: text/templates/text/editor.html:333
 msgid "Share the document with other users."
 msgstr "Teile das Dokument mit anderen Benutzern."
 
-#: text/templates/text/editor.html:337
+#: text/templates/text/editor.html:333
 msgid "Share"
 msgstr "Teilen"
 
-#: text/templates/text/editor.html:340
+#: text/templates/text/editor.html:336
 msgid "Close"
 msgstr "Schließen"
 
-#: text/templates/text/editor.html:343
+#: text/templates/text/editor.html:339
 msgid "Save the current document"
 msgstr "Das aktuelle Dokumente speichern"
 
-#: text/templates/text/editor.html:343
+#: text/templates/text/editor.html:339
 msgid "Save"
 msgstr "Speichern"
 
-#: text/templates/text/editor.html:346
+#: text/templates/text/editor.html:342
 msgid "Save copy of the current document"
 msgstr "Kopie des aktuellen Dokumentes speichern"
 
-#: text/templates/text/editor.html:346
+#: text/templates/text/editor.html:342
 msgid "Save copy"
 msgstr "Kopie speichern"
 
-#: text/templates/text/editor.html:349
+#: text/templates/text/editor.html:345
 msgid "Download the current document"
 msgstr "Aktuelles Dokument downloaden"
 
-#: text/templates/text/editor.html:349
+#: text/templates/text/editor.html:345
 msgid "Download"
 msgstr "Download"
 
-#: text/templates/text/editor.html:352
+#: text/templates/text/editor.html:348
 msgid "Either print or create a PDF using your browser's print dialog"
 msgstr ""
 "Entweder Drucke oder erstelle eine PDF mit dem Druckdialog des Browsers"
 
-#: text/templates/text/editor.html:352
+#: text/templates/text/editor.html:348
 msgid "Print/PDF"
 msgstr "Drucken/PDF"
 
-#: text/templates/text/editor.html:358
+#: text/templates/text/editor.html:354
 msgid "Export of the document contents"
 msgstr "Export des Inhaltes des Dokumentes"
 
-#: text/templates/text/editor.html:358
+#: text/templates/text/editor.html:354
 msgid "Export"
 msgstr "Exportieren"
 
-#: text/templates/text/editor.html:362
+#: text/templates/text/editor.html:358
 msgid "Export the document to an HTML file"
 msgstr "Exportiere das Dokument in eine HTML-Datei"
 
-#: text/templates/text/editor.html:367
+#: text/templates/text/editor.html:363
 msgid "Export the document to an Epub electronic reader file."
 msgstr "Exportiere das Dokument in eine Epub Datei."
 
-#: text/templates/text/editor.html:372
+#: text/templates/text/editor.html:368
 msgid ""
 "Export the document to a Latex file. This will also attach a BibTex file if "
 "you are using citations."
@@ -817,188 +824,188 @@ msgstr ""
 "Exportiere das Dokument in eine Latex Datei. Eine Bibtex Datei wird auch "
 "hinzugefügt wenn Zitate verwendet werden."
 
-#: text/templates/text/editor.html:380
+#: text/templates/text/editor.html:376
 msgid "Choose your preferred citation style."
 msgstr "Wähle deinen bevorzugten Zitierstil."
 
-#: text/templates/text/editor.html:380
+#: text/templates/text/editor.html:376
 msgid "Citation Style"
 msgstr "Zitierstil"
 
-#: text/templates/text/editor.html:384
+#: text/templates/text/editor.html:380
 msgid "American Psychological Association."
 msgstr "American Psychological Association."
 
-#: text/templates/text/editor.html:384
+#: text/templates/text/editor.html:380
 msgid "APA"
 msgstr "APA"
 
-#: text/templates/text/editor.html:387
+#: text/templates/text/editor.html:383
 msgid "The author-date variant of the Chicago style"
 msgstr "Die Autor-Datum Variante des Chicagostiles"
 
-#: text/templates/text/editor.html:387
+#: text/templates/text/editor.html:383
 msgid "Chicago (Author-Date)"
 msgstr "Chicago (Autor-Datum)"
 
-#: text/templates/text/editor.html:390
+#: text/templates/text/editor.html:386
 msgid "Chicago format with short notes and full bibliography"
 msgstr "Chicago Format mit kurzer Fußnote und kompletter Bibliografie"
 
-#: text/templates/text/editor.html:390
+#: text/templates/text/editor.html:386
 msgid "Chicago (Note with Bibliography)"
 msgstr "Chicago (Fußnote mit Bibliografie)"
 
-#: text/templates/text/editor.html:393
+#: text/templates/text/editor.html:389
 msgid "The Harvard author-date style"
 msgstr "Der Harvard Autor-Datum Stil"
 
-#: text/templates/text/editor.html:393
+#: text/templates/text/editor.html:389
 msgid "Harvard"
 msgstr "Havard"
 
-#: text/templates/text/editor.html:396
+#: text/templates/text/editor.html:392
 msgid "Modern Language Association"
 msgstr "Modern Language Association"
 
-#: text/templates/text/editor.html:396
+#: text/templates/text/editor.html:392
 msgid "MLA"
 msgstr "MLA"
 
-#: text/templates/text/editor.html:402
+#: text/templates/text/editor.html:398
 msgid "Choose a document style"
 msgstr "Wähle einen Dokumentenstil"
 
-#: text/templates/text/editor.html:402
+#: text/templates/text/editor.html:398
 msgid "Document Style"
 msgstr "Dokumentenstil"
 
-#: text/templates/text/editor.html:406
+#: text/templates/text/editor.html:402
 msgid "Elephant"
 msgstr "Elefant"
 
-#: text/templates/text/editor.html:407
+#: text/templates/text/editor.html:403
 msgid "Comfy Elephant"
 msgstr "Gemütlicher Elefant"
 
-#: text/templates/text/editor.html:411
+#: text/templates/text/editor.html:407
 msgid "Owl"
 msgstr "Eule"
 
-#: text/templates/text/editor.html:412
+#: text/templates/text/editor.html:408
 msgid "Drowsy Owl"
 msgstr "Schläfrige Eule"
 
-#: text/templates/text/editor.html:416
+#: text/templates/text/editor.html:412
 msgid "Fox"
 msgstr "Fuchs"
 
-#: text/templates/text/editor.html:417
+#: text/templates/text/editor.html:413
 msgid "Foxy Fox"
 msgstr "Sexy Fuchs"
 
-#: text/templates/text/editor.html:424
+#: text/templates/text/editor.html:420
 msgid "Choose a papersize for printing and PDF generation."
 msgstr "Wähle eine Papiergröße für Druck und PDF Erstellung."
 
-#: text/templates/text/editor.html:424
+#: text/templates/text/editor.html:420
 msgid "Paper Size"
 msgstr "Papiergröße"
 
-#: text/templates/text/editor.html:428
+#: text/templates/text/editor.html:424
 msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
 msgstr "DIN A4 (ISO 216) welches das meißtverwendete Format weltweit ist."
 
-#: text/templates/text/editor.html:428
+#: text/templates/text/editor.html:424
 msgid "DIN A4"
 msgstr "DIN A4"
 
-#: text/templates/text/editor.html:431
+#: text/templates/text/editor.html:427
 msgid "The format used by the USA and some other American countries."
 msgstr ""
 "Das Format das in den USA und einigen amerikanischen Staaten verwendet wird."
 
-#: text/templates/text/editor.html:431
+#: text/templates/text/editor.html:427
 msgid "US Letter"
 msgstr "US Letter"
 
-#: text/templates/text/editor.html:437
+#: text/templates/text/editor.html:433
 msgid "Choose which metadata to enable."
 msgstr "Wähle welche Metadaten zugänglich sein sollen."
 
-#: text/templates/text/editor.html:437
+#: text/templates/text/editor.html:433
 msgid "Metadata"
 msgstr "Metadaten"
 
-#: text/templates/text/editor.html:441
+#: text/templates/text/editor.html:437
 msgid "Define a subtitle in addition to the title of the document."
 msgstr "Definiere einen Untertitel neben dem Titel des Dokumentes."
 
-#: text/templates/text/editor.html:444
+#: text/templates/text/editor.html:440
 msgid "Add an abstract to the document."
 msgstr "Eine Zusammenfassung dem Dokument hinzufügen."
 
-#: text/templates/text/editor.html:450
+#: text/templates/text/editor.html:446
 msgid "Tools"
 msgstr "Werkzeuge"
 
-#: text/templates/text/editor.html:454 text/templates/text/editor.html:455
+#: text/templates/text/editor.html:450 text/templates/text/editor.html:451
 msgid "Word counter"
 msgstr "Wortzähler"
 
-#: text/templates/text/editor.html:465
+#: text/templates/text/editor.html:462
 msgid "Show/hide the top menu."
 msgstr "Yopmenu anzeigen/verstecken"
 
-#: text/templates/text/editor.html:469
+#: text/templates/text/editor.html:466
 msgid "Handle tracking of changes."
 msgstr "Steuer Tracking von Veränderungen."
 
-#: text/templates/text/editor.html:470
+#: text/templates/text/editor.html:467
 msgid "Changes"
 msgstr "Veränderungen"
 
-#: text/templates/text/editor.html:475
+#: text/templates/text/editor.html:472
 msgid "Turn tracking of changes on."
 msgstr "Tracking anschalten"
 
-#: text/templates/text/editor.html:475
+#: text/templates/text/editor.html:472
 msgid "Track"
 msgstr "Tracken"
 
-#: text/templates/text/editor.html:478
+#: text/templates/text/editor.html:475
 msgid "Show all changes that have been tracked in the entire document."
 msgstr "Alle Veränderungen die im Dokument getracked wurden anzeigen."
 
-#: text/templates/text/editor.html:478
+#: text/templates/text/editor.html:475
 msgid "Show"
 msgstr "Zeigen"
 
-#: text/templates/text/editor.html:481
+#: text/templates/text/editor.html:478
 msgid "Accept all changes that have been tracked in the entire document."
 msgstr "Akzeptiere alle Veränderungen die im Dokument getracked wurden."
 
-#: text/templates/text/editor.html:481
+#: text/templates/text/editor.html:478
 msgid "Accept all"
 msgstr "Alle Akzeptieren"
 
-#: text/templates/text/editor.html:484
+#: text/templates/text/editor.html:481
 msgid "Reject all changes that have been tracked in the entire document."
 msgstr "Verwerfe alle Veränderungen die im Dokument getracked wurden."
 
-#: text/templates/text/editor.html:484
+#: text/templates/text/editor.html:481
 msgid "Reject all"
 msgstr "Alle verwerfen"
 
-#: text/templates/text/editor.html:489
+#: text/templates/text/editor.html:486
 msgid "Show/hide comments"
 msgstr "Kommentare zeigen/verbergen"
 
-#: text/templates/text/editor.html:490
+#: text/templates/text/editor.html:487
 msgid "Comments"
 msgstr "Anmerkungen"
 
-#: text/templates/text/editor.html:497
+#: text/templates/text/editor.html:494
 msgid "The title of the document"
 msgstr "Der Titel des Dokumentes"
 
@@ -1033,6 +1040,10 @@ msgstr "Größe (px)"
 #: usermedia/templates/usermedia/index.html:83
 msgid "Updated"
 msgstr "Verändert"
+
+#, fuzzy
+#~ msgid "Fidus Writer document shared"
+#~ msgstr "Dokumente bearbeiten"
 
 #, fuzzy
 #~ msgid "Classic style"

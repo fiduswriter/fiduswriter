@@ -18,7 +18,7 @@
  *
  */
 
-var FW_FILETYPE_VERSION = "1.0";
+var FW_FILETYPE_VERSION = "1.1";
 
 (function () {
     var exports = this,
@@ -666,7 +666,7 @@ var FW_FILETYPE_VERSION = "1.0";
                 theDocument = aDocument;
                 jQuery('#header h1, #document-title').html(theDocument.title);
                 editorHelpers.documentHasChanged();
-                editorHelpers.saveDocumentIfChanged();
+                editorHelpers.saveDocument();
             } else {
                 importer.createNewDocument(aDocument);
             }

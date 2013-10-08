@@ -22,6 +22,7 @@
         commentHelpers = {};
 
     commentHelpers.localizeDate = function (milliseconds, sortable) {
+        milliseconds = parseInt(milliseconds);
         if (milliseconds > 0) {
             var the_date = new Date(milliseconds);
             if (true === sortable) {
@@ -53,21 +54,12 @@
         delete commentHelpers.pageMeasures;
     };
 
-    commentHelpers.findComment = function (id) {
-        // Go through the list of comments, and return the comment specified by the id
-        return _.findWhere(flatCommentList, {
-            'id': id
-        });
-    };
-
     commentHelpers.findActive = function () {
         // Go through the list of comments, and return the comment specified by the id
-        return _.findWhere(flatCommentList, {
-            'active': true
-        });
+        return theDocument.activeCommentId;
     };
 
-    commentHelpers.findCommentReferrer = function (id) {
+    commentHelpers.findComment = function (id) {
         // Go through the list of comments, and return the comment specified by the id
         return jQuery('.comment[data-id=' + id + ']')[0];
     };
@@ -85,173 +77,90 @@
     };
 
     commentHelpers.createNewComment = function (commentNode) {
-        // Create a new comment, add it to the comment list and mark it as active.
-        var newComment = {
-            'id': commentHelpers.findNewId(),
-            'user': theUser.id,
-            'user_name': theUser.name,
-            'user_avatar': theUser.avatar,
-            'date': new Date().getTime(),
-            'comment': '',
-            'editable': true,
-            'children': []
-        }, oldHtml, currentContainer, dmp, diff, newValue, theChange,
-                currentContainer;
+        // Create a new comment, and mark it as active.
+        var id = commentHelpers.findNewId();
 
-        commentNode.setAttribute('data-id', newComment.id);
+        commentNode.setAttribute('id', 'comment-' + id);
+        commentNode.setAttribute('data-id', id);
+        commentNode.setAttribute('data-user', theUser.id);
+        commentNode.setAttribute('data-user-name', theUser.name);
+        commentNode.setAttribute('data-user-avatar', theUser.avatar);
+        commentNode.setAttribute('data-date', new Date().getTime());
+        commentNode.setAttribute('data-comment', '');
+
         commentHelpers.deactivateAll();
-        commentNode.classList.add('active');
-        newComment['active'] = true;
+        theDocument.activeCommentId = id;
 
-
-        currentContainer = jQuery(commentNode).closest(
-            '#document-contents,#metadata-abstract,#metadata-subtitle,#document-title'
-        )[0];
-
-        if (currentContainer.id === 'document-contents') {
-            oldHtml = 'contents';
-        }
-        else if (currentContainer.id === 'metadata-abstract') {
-            oldHtml = 'metadata.abstract';
-        }
-        else if (currentContainer.id === 'metadata-subtitle') {
-            oldHtml = 'metadata.subtitle';
-        }
-        else if (currentContainer.id === 'document-title') {
-            oldHtml = 'metadata.title';
-        }
-
-
-
-        dmp = new diff_match_patch();
-        newValue = currentContainer.innerHTML;
-        diff = dmp.diff_main(eval('theDocument.' + oldHtml), newValue);
-        eval("theDocument." + oldHtml + "=unescape('" + escape(newValue) +
-            "')");
-
-        dmp.diff_cleanupEfficiency(diff);
-
-        theChange = [theUser.id, new Date().getTime(), 'comment', [
-            1,
-            "",
-            JSON.stringify(newComment), [
-                oldHtml,
-                diff
-            ]
-        ]];
-        theDocument.history.push(theChange);
-        theDocument.lastHistory.push(theChange);
-
-
-        theDocument.comments.push(newComment);
-
-        flatCommentList.push(newComment);
 
         editorHelpers.documentHasChanged();
     };
 
     commentHelpers.findNewId = function () {
-        var nextCommentId = (_.max(flatCommentList, function (comment) {
-            return comment.id;
-        }).id) + 1;
-        if (_.isNaN(nextCommentId)) {
-            nextCommentId = 0;
+        var i = 0;
+        while (true) {
+            if (jQuery('#comment-' + i).length === 0) {
+                break;
+            }
+            i++;
         }
-        return nextCommentId;
+        return i;
+
     }
+
+    commentHelpers.findFreeAnswerNumber = function (comment) {
+        var i = 0;
+        while (true) {
+            if (!comment.hasAttribute('data-comment-answer-' + i +
+                '-comment')) {
+                break;
+            }
+            i++;
+        }
+        return i;
+    };
 
     commentHelpers.createNewAnswer = function (parentId, commentText) {
 
-        var newComment, parentComment, theChange;
+        var comment = commentHelpers.findComment(parentId),
+            an = commentHelpers.findFreeAnswerNumber(comment);
 
-        newComment = {
-            id: commentHelpers.findNewId(),
-            user: theUser.id,
-            user_name: theUser.name,
-            user_avatar: theUser.avatar,
-            date: new Date().getTime(),
-            comment: commentText,
-            editable: true,
-            children: [],
-            parent_comment_id: parseInt(parentId, 10)
-        };
-
-        theChange = [theUser.id, new Date().getTime(), 'comment.answer', [
-            1,
-            "",
-            JSON.stringify(newComment), []
-        ]];
-
-        theDocument.history.push(theChange);
-        theDocument.lastHistory.push(theChange);
-
-        parentComment = commentHelpers.findComment(newComment[
-            'parent_comment_id']);
-        parentComment['children'].push(newComment);
-        parentComment['active'] = false;
-        flatCommentList.push(newComment);
+        comment.setAttribute('data-comment-answer-' + an + '-comment',
+            commentText);
+        comment.setAttribute('data-comment-answer-' + an + '-user', theUser
+            .id);
+        comment.setAttribute('data-comment-answer-' + an + '-user-name',
+            theUser.name);
+        comment.setAttribute('data-comment-answer-' + an + '-user-avatar',
+            theUser.avatar);
+        comment.setAttribute('data-comment-answer-' + an + '-date', new Date()
+            .getTime());
+        commentHelpers.deactivateAll();
         commentHelpers.layoutComments();
         editorHelpers.documentHasChanged();
-
     };
 
 
     commentHelpers.activateComment = function (id) {
         // Find the comment that is currently opened.
-        var comment, commentReference;
         commentHelpers.deactivateAll();
-        comment = commentHelpers.findComment(id);
-        comment['active'] = true;
-        commentReference = commentHelpers.findCommentReferrer(id);
-        commentReference.classList.add('active');
+        theDocument.activeCommentId = id;
     };
 
     commentHelpers.deactivateAll = function () {
         // Close the comment box and make sure no comment is marked as currently active.
-        var comment, id, commentReference;
-        comment = commentHelpers.findActive();
-        if (comment) {
-            comment['active'] = false;
-            id = comment['id'];
-
-            commentReference = commentHelpers.findCommentReferrer(id);
-            commentReference.classList.remove('active');
-            return true;
-        }
-        else {
-            return false;
-        }
+        delete theDocument.activeCommentId;
+        delete theDocument.activeCommentAnswerId;
     };
 
     commentHelpers.updateComment = function (id, commentText) {
-        // Save the change to a comment both locally and mark that the document has been changed
-        var comment, oldComment, theChange;
+        // Save the change to a comment and mark that the document has been changed
 
-        comment = commentHelpers.findComment(id);
-
-        oldComment = JSON.stringify(comment);
-
-        comment['comment'] = commentText;
-
-        comment['date'] = new Date().getTime();
-
-        comment['active'] = false;
-
-
-        theChange = [theUser.id, new Date().getTime(), 'comment', [
-            0,
-            oldComment,
-            JSON.stringify(comment), []
-        ]];
-        
-        theDocument.history.push(theChange);
-        theDocument.lastHistory.push(theChange);
-
+        var comment = commentHelpers.findComment(id);
+        comment.setAttribute('data-comment', commentText);
         editorHelpers.documentHasChanged();
 
-        commentHelpers.layoutComments();
         commentHelpers.deactivateAll();
-
+        commentHelpers.layoutComments();
     };
 
     commentHelpers.submitComment = function () {
@@ -261,6 +170,7 @@
         commentText = commentTextBox.value;
         commentId = commentHelpers.getCommentId(commentTextBox);
         commentHelpers.updateComment(commentId, commentText);
+
     };
 
     commentHelpers.cancelSubmitComment = function () {
@@ -269,7 +179,8 @@
         commentTextBox = jQuery(this).siblings('.commentText')[0];
         if (commentTextBox) {
             id = commentHelpers.getCommentId(commentTextBox);
-            if (id === 0) {
+            if (commentHelpers.findComment(id).getAttribute('data-comment')
+                .length === 0) {
                 commentHelpers.deleteComment(id);
             }
             else {
@@ -292,28 +203,19 @@
         commentHelpers.createNewAnswer(answerParent, answerText);
     };
 
-    commentHelpers.cleanReferers = function () {
-        // Go through all referers to comments in the text and make sure that the comments they refer to actually exist and that there is only one of them.
-        var commentId, allComments, usedIds, i;
-        allComments = jQuery('.comment');
-        usedIds = {};
-        for (i = 0; i < allComments.length; i++) {
-            // Remove potential active state
-            allComments[i].classList.remove('active');
-            allComments[i]['active'] = false;
-            commentId = commentHelpers.getCommentId(allComments[i]);
-            if (usedIds.hasOwnProperty(commentId)) {
-                // If there are more than one elements in the document referring to the same footnote, remove all but the first one.
-                allComments[i].outerHTML = allComments[i].innerHTML;
-            }
-            else if (!commentHelpers.findComment(commentId)) {
-                // The comment is referred to in the text, but doesn't exist in the comments DB. Remove it.
-                allComments[i].outerHTML = allComments[i].innerHTML;
-            }
-            else {
-                usedIds[commentId] = true;
-            }
-        }
+    commentHelpers.editAnswer = function (id, answerId) {
+        theDocument.activeCommentId = id;
+        theDocument.activeCommentAnswerId = answerId;
+        commentHelpers.layoutComments();
+    };
+
+
+    commentHelpers.submitAnswerUpdate = function (id, answerId, commentText) {
+        jQuery('#comment-' + id).attr('data-comment-answer-' + answerId +
+            '-comment', commentText);
+        commentHelpers.deactivateAll();
+        editorHelpers.documentHasChanged();
+        commentHelpers.layoutComments();
     };
 
     commentHelpers.bindEvents = function () {
@@ -322,16 +224,14 @@
         jQuery(document).on("click", ".cancelSubmitComment", commentHelpers
             .cancelSubmitComment);
         jQuery(document).on("click", ".comment-box.inactive", function () {
-            var commentId, comment;
+            var commentId;
             commentId = commentHelpers.getCommentId(this);
-            comment = commentHelpers.findComment(commentId);
             commentHelpers.activateComment(commentId);
             commentHelpers.layoutComments();
         });
         jQuery(document).on("click", ".comments-enabled .comment", function () {
-            var commentId, comment;
+            var commentId;
             commentId = commentHelpers.getCommentId(this);
-            comment = commentHelpers.findComment(commentId);
             commentHelpers.activateComment(commentId);
             commentHelpers.layoutComments();
         });
@@ -342,7 +242,7 @@
             activeWrapper = jQuery('.comment-box.active');
             activeWrapper.find('.comment-p').show();
             activeWrapper.find('.comment-form').hide();
-            activeWrapper.find('.commemt-controls').show();
+            activeWrapper.find('.comment-controls').show();
             btnParent = jQuery(this).parent();
             commentTextWrapper = btnParent.siblings(
                 '.comment-text-wrapper');
@@ -354,14 +254,34 @@
             commentForm.show();
             commentForm.children('textarea').val(commentP.text());
         });
+        jQuery(document).on('click', '.edit-comment-answer', function () {
+            commentHelpers.editAnswer(parseInt(jQuery(this).attr(
+                'data-id')), parseInt(jQuery(this).attr(
+                'data-answer')));
+        });
+        jQuery(document).on('click', '.submit-comment-answer-edit',
+            function () {
+                var textArea = jQuery(this).prev(),
+                    commentId = parseInt(textArea.attr('data-id')),
+                    answerId = parseInt(textArea.attr('data-answer')),
+                    theValue = textArea.val();
+                commentHelpers.submitAnswerUpdate(commentId, answerId,
+                    theValue);
+
+            });
         jQuery(document).on("click", ".comment-answer-submit", function () {
             commentHelpers.submitAnswer();
         });
 
         jQuery(document).on('click', '.delete-comment', function () {
             commentHelpers.deleteComment(parseInt(jQuery(this).attr(
-                    'data-id'),
-                10));
+                'data-id')));
+        });
+
+        jQuery(document).on('click', '.delete-comment-answer', function () {
+            commentHelpers.deleteCommentAnswer(parseInt(jQuery(this).attr(
+                'data-id')), parseInt(jQuery(this).attr(
+                'data-answer')));
         });
 
         // Handle comments show/hide
@@ -376,112 +296,63 @@
     };
 
     commentHelpers.deleteComment = function (id) {
-        // Handle the deletion of a comment, both locally and in the DB.
-        var comment = commentHelpers.findComment(id),
-            ids = [id],
-            i,
-            len,
-            commentReference, parentComment, theChange, diff, oldHtml,
-                currentContainer;
-        if (!comment.hasOwnProperty('parent_comment_id')) {
-            len = comment.children.length;
-            for (i = 0; i < len; i++) {
-                ids.push(comment.children[i].id);
-            }
-        }
-
-        commentReference = commentHelpers.findCommentReferrer(id);
-        if (commentReference) {
-            currentContainer = jQuery(commentReference).closest(
-                '#document-contents,#metadata-abstract,#metadata-subtitle,#document-title'
-            )[0];
-
-            if (currentContainer.id === 'document-contents') {
-                oldHtml = 'contents';
-            }
-            else if (currentContainer.id === 'metadata-abstract') {
-                oldHtml = 'metadata.abstract';
-            }
-            else if (currentContainer.id === 'metadata-subtitle') {
-                oldHtml = 'metadata.subtitle';
-            }
-            else if (currentContainer.id === 'document-title') {
-                oldHtml = 'metadata.title';
-            }
-            commentReference.outerHTML = commentReference.innerHTML;
-            dmp = new diff_match_patch();
-            newValue = currentContainer.innerHTML;
-            diff = dmp.diff_main(eval('theDocument.' + oldHtml), newValue);
-            eval("theDocument." + oldHtml + "=unescape('" + escape(newValue) +
-                "')");
-        }
-        if (comment.hasOwnProperty('parent_comment_id')) {
-            // Delete the comment from the parent comment
-            parentComment = commentHelpers.findComment(comment[
-                'parent_comment_id']);
-            parentComment.children = _.reject(
-                parentComment.children, function (childComment) {
-                    return (childComment === comment);
-                });
-            theChange = [theUser.id, new Date().getTime(), 'comment', [-1,
-                JSON.stringify(comment),
-                '', []
-            ]];
-        }
-        else {
-            theDocument.comments = _.reject(theDocument.comments, function (
-                childComment) {
-                return (childComment === comment);
-            });
-            theChange = [theUser.id, new Date().getTime(), 'comment', [-1,
-                JSON.stringify(comment),
-                '', [
-                    oldHtml,
-                    diff
-                ]
-            ]];
-        }
-
-        flatCommentList = _.reject(flatCommentList, function (childComment) {
-            return (childComment === comment);
-        });
-
+        // Handle the deletion of a comment.
+        var comment = commentHelpers.findComment(id);
+        comment.outerHTML = comment.innerHTML;
+        editorHelpers.documentHasChanged();
         commentHelpers.layoutComments();
 
+    };
 
+    commentHelpers.deleteCommentAnswer = function (id, answerId) {
+        // Handle the deletion of a comment answer.
+        var comment = commentHelpers.findComment(id);
+        while (true) {
+            if (!comment.hasAttribute('data-comment-answer-' + (answerId +
+                1) + '-comment')) {
+                comment.removeAttribute('data-comment-answer-' + answerId +
+                    '-comment');
+                comment.removeAttribute('data-comment-answer-' + answerId +
+                    '-user');
+                comment.removeAttribute('data-comment-answer-' + answerId +
+                    '-user-name');
+                comment.removeAttribute('data-comment-answer-' + answerId +
+                    '-user-avatar');
+                comment.removeAttribute('data-comment-answer-' + answerId +
+                    '-date');
+                break;
+            }
+            else {
+                comment.setAttribute('data-comment-answer-' + answerId +
+                    '-comment', comment.getAttribute('data-comment-answer-' +
+                        (answerId + 1) + '-comment'));
+                comment.setAttribute('data-comment-answer-' + answerId +
+                    '-user', comment.getAttribute('data-comment-answer-' +
+                        (answerId + 1) + '-user'));
+                comment.setAttribute('data-comment-answer-' + answerId +
+                    '-user-name', comment.getAttribute(
+                        'data-comment-answer-' + (answerId + 1) +
+                        '-user-name'));
+                comment.setAttribute('data-comment-answer-' + answerId +
+                    '-user-avatar', comment.getAttribute(
+                        'data-comment-answer-' + (answerId + 1) +
+                        '-user-avatar'));
+                comment.setAttribute('data-comment-answer-' + answerId +
+                    '-date', comment.getAttribute('data-comment-answer-' +
+                        (answerId + 1) + '-date'));
+                answerId++;
+            }
+
+        }
+        commentHelpers.deactivateAll();
         editorHelpers.documentHasChanged();
-
+        commentHelpers.layoutComments();
     };
 
-    commentHelpers.fillFlatCommentList = function () {
-        // We only operate with two levels of comments, so we will not try to find any comment beyodn the second level.
-        var i, j;
-        for (i = 0; i < theDocument.comments.length; i++) {
-            flatCommentList.push(theDocument.comments[i]);
-            for (j = 0; j < theDocument.comments[i]['children'].length; j++) {
-                flatCommentList.push(theDocument.comments[i]['children'][j]);
-            }
-        }
-    };
-
-    commentHelpers.cleanCommentsList = function () {
-        // Find all the nodes representing the different comments from the comments list and attach them.
-        var commentId, commentReference, i;
-        for (i = 0; i < theDocument.comments.length; i++) {
-            commentId = theDocument.comments[i]['id'];
-            commentReference = commentHelpers.findCommentReferrer(commentId);
-            if (!commentReference) {
-                // The reference to the comment does not exist in the text any more, so we go ahead and delete the comment
-                commentHelpers.deleteComment(commentId);
-            }
-
-        }
-    };
 
     commentHelpers.layoutCommentsAvoidOverlap = function () {
         // Avoid overlapping of comments.
-        var activeComment = commentHelpers.findActive(),
-            minOffsetTop,
+        var minOffsetTop,
             commentReferrer,
             lastOffsetTop,
             previousComments,
@@ -490,12 +361,10 @@
             initialCommentBox,
             foundComment,
             i;
-        if (activeComment) {
-            commentReferrer = commentHelpers.findCommentReferrer(
-                activeComment[
-                    'id']);
-            initialCommentBox = commentHelpers.findCommentBox(activeComment[
-                'id']);
+        if (undefined != theDocument.activeCommentId) {
+            commentReferrer = commentHelpers.findComment(
+                theDocument.activeCommentId);
+            initialCommentBox = commentHelpers.findCommentBox(theDocument.activeCommentId);
             lastOffsetTop = initialCommentBox.offsetTop;
             previousComments = [];
             nextComments = jQuery.makeArray(jQuery('.comment'));
@@ -539,17 +408,20 @@
 
     commentHelpers.layoutComments = function () {
         // Handle the layout of the comments on the screen.
-        var activeCommentWrapper, activeCommentId;
-        commentHelpers.cleanReferers();
-        jQuery('#comment-box-container').html(_.template(tmp_comments,
-            theDocument.comments));
+        var theComments = jQuery('.comment'),
+            activeCommentWrapper;
+        jQuery('#comment-box-container').html(tmp_comments({
+            theComments: theComments
+        }));
         commentHelpers.layoutCommentsAvoidOverlap();
-        jQuery('.comment').removeClass('active');
+        jQuery('#activeCommentStyle').html('');
         activeCommentWrapper = jQuery('.comment-box.active');
         if (0 < activeCommentWrapper.size()) {
-            activeCommentId = activeCommentWrapper.attr('data-id');
-            jQuery('.comment[data-id=' + activeCommentId + ']').addClass(
-                'active');
+            theDocument.activeCommentId = activeCommentWrapper.attr(
+                'data-id');
+            jQuery('#activeCommentStyle').html(
+                '.comments-enabled #comment-' + theDocument.activeCommentId +
+                ' {background-color: #fffacf;}');
             activeCommentWrapper.find('.comment-answer-text').autoResize({
                 'extraSpace': 0
             });

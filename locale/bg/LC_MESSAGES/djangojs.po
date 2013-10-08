@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-26 08:08-0500\n"
+"POT-Creation-Date: 2013-10-08 03:47-0500\n"
 "PO-Revision-Date: 2013-09-18 08:52+0200\n"
 "Last-Translator: Vladimir Vitkov <vvitkov@linux-bg.org>\n"
 "Language-Team: Bulgarian <vvitkov@linux-bg.org>\n"
@@ -55,47 +55,41 @@ msgid "Add a user to your contacts"
 msgstr "Добави потребител към твоите контакти"
 
 #: account/static/js/contact-helpers.js:99
-#: account/static/js/show_profile.js:169
-#: account/static/js/show_profile.js:239
+#: account/static/js/show_profile.js:169 account/static/js/show_profile.js:239
 #: account/static/js/show_profile.js:355
-#: bibliography/static/js/bibliography-helpers.js:710
-#: bibliography/static/js/bibliography-helpers.js:841
-#: book/static/js/book-helpers.js:238
-#: book/static/js/book-helpers.js.c:636
+#: bibliography/static/js/bibliography-helpers.js:717
+#: bibliography/static/js/bibliography-helpers.js:848
+#: book/static/js/book-helpers.js:235 book/static/js/book-helpers.js.c:633
 #: book/static/js/bookaccessrights-helpers.js:71
 #: text/static/js/accessrights-helpers.js:82
-#: text/static/js/comment-templates.js:37
-#: text/static/js/comment-templates.js:78
+#: text/static/js/comment-templates.js:40
+#: text/static/js/comment-templates.js:133
 #: usermedia/static/js/usermedia-helpers.js:130
 msgid "Submit"
 msgstr "Изпрати"
 
 #: account/static/js/contact-helpers.js:100
 #: account/static/js/contact-helpers.js:141
-#: account/static/js/show_profile.js:27
-#: account/static/js/show_profile.js:94
-#: account/static/js/show_profile.js:151
-#: account/static/js/show_profile.js:220
-#: account/static/js/show_profile.js:276
-#: account/static/js/show_profile.js:328
+#: account/static/js/show_profile.js:27 account/static/js/show_profile.js:94
+#: account/static/js/show_profile.js:151 account/static/js/show_profile.js:220
+#: account/static/js/show_profile.js:276 account/static/js/show_profile.js:328
 #: account/static/js/show_profile.js:385
-#: bibliography/static/js/bibliography-helpers.js:731
-#: bibliography/static/js/bibliography-helpers.js:846
-#: bibliography/static/js/bibliography-helpers.js:1428
-#: bibliography/static/js/bibliography-helpers.js:1518
-#: book/static/js/book-helpers.js:97
-#: book/static/js/book-helpers.js.c:245
-#: book/static/js/book-helpers.js:642
-#: book/static/js/book-templates.js:249
+#: bibliography/static/js/bibliography-helpers.js:738
+#: bibliography/static/js/bibliography-helpers.js:853
+#: bibliography/static/js/bibliography-helpers.js:1435
+#: bibliography/static/js/bibliography-helpers.js:1558
+#: book/static/js/book-helpers.js:97 book/static/js/book-helpers.js.c:242
+#: book/static/js/book-helpers.js:639 book/static/js/book-templates.js:249
 #: book/static/js/bookaccessrights-helpers.js:84
 #: text/static/js/accessrights-helpers.js:95
-#: text/static/js/comment-templates.js:38
-#: text/static/js/comment-templates.js:59
-#: text/static/js/comment-templates.js:79
+#: text/static/js/comment-templates.js:43
+#: text/static/js/comment-templates.js:70
+#: text/static/js/comment-templates.js:101
+#: text/static/js/comment-templates.js:136
 #: text/static/js/document-helpers.js:61
 #: text/static/js/document-helpers.js:109
 #: text/static/js/texteditor-template-dialogs.js:185
-#: text/static/js/toolbar/cite.js:227
+#: text/static/js/toolbar/cite.js:228
 #: usermedia/static/js/usermedia-helpers.js:152
 #: usermedia/static/js/usermedia-helpers.js:264
 #: usermedia/static/js/usermedia-helpers.js:355
@@ -105,9 +99,8 @@ msgstr "Отказ"
 #: account/static/js/contact-helpers.js:138
 #: account/static/js/profile-templates.js:2
 #: account/static/js/profile-templates.js:16
-#: bibliography/static/js/bibliography-helpers.js:1421
-#: book/static/js/book-helpers.js:85
-#: text/static/js/document-helpers.js:48
+#: bibliography/static/js/bibliography-helpers.js:1428
+#: book/static/js/book-helpers.js:85 text/static/js/document-helpers.js:48
 #: usermedia/static/js/usermedia-helpers.js:347
 msgid "Confirm deletion"
 msgstr "Потвърди изтриването"
@@ -117,13 +110,12 @@ msgid "Remove from the contacts"
 msgstr "Премахни от контактите"
 
 #: account/static/js/contact-helpers.js:140
-#: account/static/js/show_profile.js:90
-#: account/static/js/show_profile.js:144
-#: bibliography/static/js/bibliography-helpers.js:1424
+#: account/static/js/show_profile.js:90 account/static/js/show_profile.js:144
+#: bibliography/static/js/bibliography-helpers.js:1431
 #: book/static/js/book-helpers.js:89
 #: book/static/js/book-template-dialogs.js:44
-#: book/static/js/book-templates.js:293
-#: text/static/js/comment-templates.js:65
+#: book/static/js/book-templates.js:293 text/static/js/comment-templates.js:80
+#: text/static/js/comment-templates.js:115
 #: text/static/js/document-helpers.js:52
 #: text/static/js/text-template-dialogs.js:37
 #: text/static/js/texteditor-template-dialogs.js:65
@@ -136,8 +128,7 @@ msgstr "Изтрий"
 msgid "Profile updated"
 msgstr "Профилът е обновен"
 
-#: account/static/js/edit_profile.js:26
-#: account/static/js/show_profile.js:130
+#: account/static/js/edit_profile.js:26 account/static/js/show_profile.js:130
 msgid "Please check the above errors"
 msgstr "Моля проверете горните грешки"
 
@@ -151,15 +142,17 @@ msgstr "Качи профилна снимка"
 
 #: account/static/js/profile-templates.js:9
 #: bibliography/static/js/bibliography-template-dialogs.js:45
-#: book/static/js/book-templates.js:73
-#: text/static/js/document-templates.js:76
+#: book/static/js/book-templates.js:73 text/static/js/document-templates.js:73
 #: usermedia/static/js/usermedia-template-dialogs.js:85
 msgid "Select a file"
 msgstr "Изберете файл"
 
 #: account/static/js/profile-templates.js:17
-msgid "Really delete your account? Type in your username below to confirm deletion."
-msgstr "Наистина ли искате да изтиете вашият акаунт? Въведете потребителското си име по долу за да потвърдите изтриването."
+msgid ""
+"Really delete your account? Type in your username below to confirm deletion."
+msgstr ""
+"Наистина ли искате да изтиете вашият акаунт? Въведете потребителското си име "
+"по долу за да потвърдите изтриването."
 
 #: account/static/js/profile-templates.js:20
 msgid "Add Email"
@@ -202,8 +195,7 @@ msgstr "Моля потвърдете новата парола!"
 msgid "The password has been changed."
 msgstr "Паролата беше променена."
 
-#: account/static/js/show_profile.js:209
-#: account/static/js/show_profile.js:215
+#: account/static/js/show_profile.js:209 account/static/js/show_profile.js:215
 msgid "The password could not be changed!"
 msgstr "Паролата не можа да бъде променена!"
 
@@ -260,60 +252,64 @@ msgstr "Тази страница е заключена от <em>%(for_user)s"
 msgid "Your lock on this page is expired!"
 msgstr "Заключването ви за тази страница изтече!"
 
-#: bibliography/static/js/bibliography-helpers.js:624
+#: bibliography/static/js/bibliography-helpers.js:631
 msgid "The bibliography has been updated"
 msgstr "Библиографията беше обновена"
 
-#: bibliography/static/js/bibliography-helpers.js:627
+#: bibliography/static/js/bibliography-helpers.js:634
 #: usermedia/static/js/usermedia-helpers.js:42
 msgid "Some errors are found. Please examine the form."
 msgstr "Бяха открити грешки. Моля прегледайте формата."
 
-#: bibliography/static/js/bibliography-helpers.js:673
+#: bibliography/static/js/bibliography-helpers.js:680
 #: usermedia/static/js/usermedia-helpers.js:93
 msgid "The categories have been updated"
 msgstr "Категориите бяха обновени"
 
-#: bibliography/static/js/bibliography-helpers.js:701
+#: bibliography/static/js/bibliography-helpers.js:708
 #: usermedia/static/js/usermedia-helpers.js:121
 msgid "Edit Categories"
 msgstr "Редактирай категории"
 
-#: bibliography/static/js/bibliography-helpers.js:758
+#: bibliography/static/js/bibliography-helpers.js:765
 msgid "Register New Source"
 msgstr "Добавяне на нов източник"
 
-#: bibliography/static/js/bibliography-helpers.js:765
+#: bibliography/static/js/bibliography-helpers.js:772
 msgid "Edit Source"
 msgstr "Редактиране на източник"
 
-#: bibliography/static/js/bibliography-helpers.js:791
+#: bibliography/static/js/bibliography-helpers.js:798
 msgid "Select source type"
 msgstr "Избери тип на източника"
 
-#: bibliography/static/js/bibliography-helpers.js:811
+#: bibliography/static/js/bibliography-helpers.js:818
 msgid "Categories"
 msgstr "Категории"
 
-#: bibliography/static/js/bibliography-helpers.js:1408
+#: bibliography/static/js/bibliography-helpers.js:1415
 msgid "The bibliography item(s) have been deleted"
 msgstr "Библиографските запис(и) бяха изтрити"
 
-#: bibliography/static/js/bibliography-helpers.js:1422
+#: bibliography/static/js/bibliography-helpers.js:1429
 msgid "Delete the bibliography item(s)"
 msgstr "Изтриване на библиграфски запис(и)"
 
-#: bibliography/static/js/bibliography-helpers.js:1498
+#: bibliography/static/js/bibliography-helpers.js:1473
+msgid "No bibliography entries could be found in import file."
+msgstr ""
+
+#: bibliography/static/js/bibliography-helpers.js:1538
 #: text/static/js/document-helpers.js:87
 msgid "Import"
 msgstr "Импортиране"
 
-#: bibliography/static/js/bibliography-helpers.js:1546
+#: bibliography/static/js/bibliography-helpers.js:1586
 msgid " and others"
 msgstr "и други"
 
-#: bibliography/static/js/bibliography-helpers.js:1696
-#: text/static/js/toolbar/cite.js:248
+#: bibliography/static/js/bibliography-helpers.js:1765
+#: text/static/js/toolbar/cite.js:249
 msgid "Search for Bibliography"
 msgstr "Търсене на библиография"
 
@@ -647,10 +643,8 @@ msgid "Subtitle"
 msgstr "Подзаглавие"
 
 #: bibliography/static/js/bibliography-statics.js:844
-#: book/static/js/book-templates.js:82
-#: book/static/js/book-templates.js:218
-#: book/static/js/book-templates.js:291
-#: book/static/js/book-templates.js:501
+#: book/static/js/book-templates.js:82 book/static/js/book-templates.js:218
+#: book/static/js/book-templates.js:291 book/static/js/book-templates.js:496
 #: text/static/js/texteditor-template-dialogs.js:27
 #: text/static/js/texteditor-template-dialogs.js:63
 #: text/static/js/texteditor-template-dialogs.js:170
@@ -841,35 +835,43 @@ msgstr "Полета по избор"
 msgid "Extras"
 msgstr "Екстри"
 
-#: bibliography/static/js/bibliography-template-dialogs.js:181
+#: bibliography/static/js/bibliography-template-dialogs.js:100
+#: bibliography/static/js/bibliography-template-dialogs.js:108
+#: book/static/js/book-helpers.js:224 book/static/js/book-templates.js:40
+#: book/static/js/book-templates.js:316 book/static/js/book-templates.js:353
+#: text/static/js/document-templates.js:25
+msgid "Untitled"
+msgstr "Неозаглавен"
+
+#: bibliography/static/js/bibliography-template-dialogs.js:189
 msgid "First Name"
 msgstr "Име"
 
-#: bibliography/static/js/bibliography-template-dialogs.js:182
+#: bibliography/static/js/bibliography-template-dialogs.js:190
 msgid "Last Name"
 msgstr "Фамилия"
 
-#: bibliography/static/js/bibliography-template-dialogs.js:212
+#: bibliography/static/js/bibliography-template-dialogs.js:220
 msgid "Year"
 msgstr "Година"
 
-#: bibliography/static/js/bibliography-template-dialogs.js:213
+#: bibliography/static/js/bibliography-template-dialogs.js:221
 msgid "Year - Year"
 msgstr "Година - Година"
 
-#: bibliography/static/js/bibliography-template-dialogs.js:214
+#: bibliography/static/js/bibliography-template-dialogs.js:222
 msgid "Month/Year"
 msgstr "Месец/Година"
 
-#: bibliography/static/js/bibliography-template-dialogs.js:215
+#: bibliography/static/js/bibliography-template-dialogs.js:223
 msgid "M/Y - M/Y"
 msgstr "М/Г - М/Г"
 
-#: bibliography/static/js/bibliography-template-dialogs.js:216
+#: bibliography/static/js/bibliography-template-dialogs.js:224
 msgid "Month/Day/Year"
 msgstr "Месец/Ден/Година"
 
-#: bibliography/static/js/bibliography-template-dialogs.js:217
+#: bibliography/static/js/bibliography-template-dialogs.js:225
 msgid "M/D/Y - M/D/Y"
 msgstr "М/Д/Г - М/Д/Г"
 
@@ -881,12 +883,9 @@ msgstr "Обложка"
 msgid "Title page"
 msgstr "Заглавна страница"
 
-#: book/static/js/book-exporter.js:205
-#: book/static/js/book-exporter.js.c:278
-#: book/static/js/book-exporter.js:286
-#: text/static/js/exporter.js:934
-#: text/static/js/exporter.js.c:967
-#: text/static/js/exporter.js:975
+#: book/static/js/book-exporter.js:205 book/static/js/book-exporter.js.c:278
+#: book/static/js/book-exporter.js:286 text/static/js/exporter.js:936
+#: text/static/js/exporter.js.c:969 text/static/js/exporter.js:977
 msgid "en"
 msgstr "англ"
 
@@ -894,13 +893,11 @@ msgstr "англ"
 msgid "Copyright"
 msgstr "Авторски права"
 
-#: book/static/js/book-exporter.js:264
-#: text/static/js/exporter.js:954
+#: book/static/js/book-exporter.js:264 text/static/js/exporter.js:956
 msgid "en-US"
 msgstr "en-US"
 
-#: book/static/js/book-exporter.js:312
-#: book/static/js/book-exporter.js.c:452
+#: book/static/js/book-exporter.js:312 book/static/js/book-exporter.js.c:452
 msgid "English"
 msgstr "Английски"
 
@@ -920,53 +917,40 @@ msgstr "Книгата(е) бе изтрита."
 msgid "Select cover image"
 msgstr "Изберете изображение на корицата"
 
-#: book/static/js/book-helpers.js:227
-#: book/static/js/book-templates.js:40
-#: book/static/js/book-templates.js:318
-#: book/static/js/book-templates.js:362
-#: text/static/js/document-templates.js:40
-msgid "Untitled"
-msgstr "Неозаглавен"
-
-#: book/static/js/book-helpers.js:229
+#: book/static/js/book-helpers.js:226
 msgid "Edit Chapter"
 msgstr "Редактирай глава"
 
-#: book/static/js/book-helpers.js:410
-#: text/static/js/importer.js:152
-#: text/static/js/importer.js.c:369
+#: book/static/js/book-helpers.js:407 text/static/js/importer.js:179
+#: text/static/js/importer.js.c:395
 msgid "Could not save "
 msgstr "Не можа да бъде запазен"
 
-#: book/static/js/book-helpers.js:430
+#: book/static/js/book-helpers.js:427
 msgid "Create Book"
 msgstr "Създай Книга"
 
-#: book/static/js/book-helpers.js:452
+#: book/static/js/book-helpers.js:449
 msgid "Edit Book"
 msgstr "Редактирай Книга"
 
-#: book/static/js/book-helpers.js:646
+#: book/static/js/book-helpers.js:643
 msgid "Close"
 msgstr "Затвори"
 
-#: book/static/js/book-index.js:63
-#: text/static/js/text-index.js:62
+#: book/static/js/book-index.js:63 text/static/js/text-index.js:62
 msgid "You cannot delete or share: "
 msgstr "не можете да изтриете или споделите:"
 
-#: book/static/js/book-index.js:86
-#: text/static/js/exporter.js:888
+#: book/static/js/book-index.js:86 text/static/js/exporter.js:890
 msgid "Epub export has been initiated."
 msgstr "Започнат бе Epub експорт."
 
-#: book/static/js/book-index.js:97
-#: text/static/js/exporter.js:831
+#: book/static/js/book-index.js:97 text/static/js/exporter.js:833
 msgid "Latex export has been initiated."
 msgstr "Започнат бе Latex експорт."
 
-#: book/static/js/book-index.js:108
-#: text/static/js/exporter.js:1053
+#: book/static/js/book-index.js:108 text/static/js/exporter.js:1055
 msgid "HTML export has been initiated."
 msgstr "Започнат бе HTML експорт."
 
@@ -1005,13 +989,11 @@ msgstr "Редактор"
 msgid "Read only"
 msgstr "Само за четене"
 
-#: book/static/js/book-templates.js:70
-#: text/static/js/document-templates.js:73
+#: book/static/js/book-templates.js:70 text/static/js/document-templates.js:70
 msgid "Import another Fidus file"
 msgstr "Импортирайте друг Fidus файл"
 
-#: book/static/js/book-templates.js:90
-#: book/static/js/book-templates.js:503
+#: book/static/js/book-templates.js:90 book/static/js/book-templates.js:498
 #: text/static/js/texteditor-template-dialogs.js:28
 #: text/static/js/texteditor-template-dialogs.js:64
 msgid "Author"
@@ -1099,8 +1081,7 @@ msgstr "Основна информация"
 msgid "Chapters"
 msgstr "Глави"
 
-#: book/static/js/book-templates.js:262
-#: text/static/js/citation-helpers.js:176
+#: book/static/js/book-templates.js:262 text/static/js/citation-helpers.js:177
 msgid "Bibliography"
 msgstr "Библиография"
 
@@ -1132,46 +1113,43 @@ msgstr "Сортиране"
 msgid "Book part"
 msgstr "Част от Книгата"
 
-#: book/static/js/book-templates.js:376
-msgid "If this chapter starts a part of the book, specify the title of that part here"
-msgstr "Ако тази глава започва част от книга, въведете заглавието на тази част тук"
+#: book/static/js/book-templates.js:371
+msgid ""
+"If this chapter starts a part of the book, specify the title of that part "
+"here"
+msgstr ""
+"Ако тази глава започва част от книга, въведете заглавието на тази част тук"
 
-#: book/static/js/book-templates.js:376
+#: book/static/js/book-templates.js:371
 msgid "Book part title"
 msgstr "Заглавие на част от книгата"
 
-#: book/static/js/book-templates.js:455
+#: book/static/js/book-templates.js:450
 msgid "Cover Image"
 msgstr "Изображение за корица"
 
-#: book/static/js/book-templates.js:475
-#: book/static/js/book-templates.js:495
-#: book/static/js/book-templates.js:530
+#: book/static/js/book-templates.js:470 book/static/js/book-templates.js:490
+#: book/static/js/book-templates.js:525
 msgid "by"
 msgstr "от"
 
-#: book/static/js/book-templates.js:506
-#: book/static/js/book-templates.js:538
+#: book/static/js/book-templates.js:501 book/static/js/book-templates.js:533
 msgid "Published by"
 msgstr "Издадено от"
 
-#: book/static/js/book-templates.js:508
-#: book/static/js/book-templates.js:540
+#: book/static/js/book-templates.js:503 book/static/js/book-templates.js:535
 msgid "Last Updated"
 msgstr "Последно обновен"
 
-#: book/static/js/book-templates.js:509
-#: book/static/js/book-templates.js:541
+#: book/static/js/book-templates.js:504 book/static/js/book-templates.js:536
 msgid "Created"
 msgstr "Създаден"
 
-#: book/static/js/book-templates.js:510
-#: book/static/js/book-templates.js:542
+#: book/static/js/book-templates.js:505 book/static/js/book-templates.js:537
 msgid "Language"
 msgstr "Език"
 
-#: book/static/js/book-templates.js:511
-#: book/static/js/book-templates.js:543
+#: book/static/js/book-templates.js:506 book/static/js/book-templates.js:538
 msgid "Created by"
 msgstr "Създадено от"
 
@@ -1191,6 +1169,10 @@ msgstr "Сподели документа с други потребители"
 #: text/static/js/accessrights-helpers.js:79
 msgid "Add new contact"
 msgstr "Добавяне на нов контакт"
+
+#: text/static/js/chat-helpers.js:117
+msgid "Send a message..."
+msgstr ""
 
 #: text/static/js/citeproc-helpers.js:46
 msgid "American Psychological Association"
@@ -1212,8 +1194,10 @@ msgstr "Harvard Reference format (Author-Date)"
 msgid "Modern Language Association"
 msgstr "Modern Language Association"
 
-#: text/static/js/comment-templates.js:58
-#: text/static/js/comment-templates.js:64
+#: text/static/js/comment-templates.js:67
+#: text/static/js/comment-templates.js:77
+#: text/static/js/comment-templates.js:98
+#: text/static/js/comment-templates.js:112
 msgid "Edit"
 msgstr "Редактиране"
 
@@ -1229,48 +1213,28 @@ msgstr "Документ(и) бяха изтрити"
 msgid "Search for Document"
 msgstr "Търсене за документ"
 
-#: text/static/js/editor-helpers.js:94
-msgid "Untitled document"
+#: text/static/js/editor-helpers.js:216
+msgid "Untitled Document"
 msgstr "Неозаглавен документ"
 
-#: text/static/js/editor-helpers.js:139
-msgid "Document could not be saved"
-msgstr "Документа не беше запазен"
-
-#: text/static/js/editor-helpers.js:176
+#: text/static/js/editor-helpers.js:424
 #, fuzzy
 msgid "Title..."
 msgstr "Заглавие"
 
-#: text/static/js/editor-helpers.js:179
+#: text/static/js/editor-helpers.js:430
 msgid "Contents..."
 msgstr "Съдържание"
 
-#: text/static/js/editor-helpers.js:182
+#: text/static/js/editor-helpers.js:436
 #, fuzzy
 msgid "Subtitle..."
 msgstr "Подзаглавие"
 
-#: text/static/js/editor-helpers.js:185
+#: text/static/js/editor-helpers.js:442
 #, fuzzy
 msgid "Abstract..."
 msgstr "Обобщение"
-
-#: text/static/js/editor-helpers.js:198
-msgid "Sorry, but the connection to the server has been lost. Please reload to ensure that no date is being lost."
-msgstr "Съжаляваме, но връзката със сървъра бе прекъсната. Поля опреснете за да се предпазите от загуба на данни."
-
-#: text/static/js/editor-helpers.js:205
-msgid "Ok"
-msgstr "ОК"
-
-#: text/static/js/editor-helpers.js:217
-msgid "No connection to server"
-msgstr "Няма връзка към сървъра"
-
-#: text/static/js/editor-setup.js:357
-msgid "Untitled Document"
-msgstr "Неозаглавен документ"
 
 #: text/static/js/editor-templates.js:23
 msgid "The subtitle of the document"
@@ -1280,17 +1244,42 @@ msgstr "Подзаглавието на документа"
 msgid "The abstract of the document"
 msgstr "Обобщение на документа"
 
-#: text/static/js/exporter.js:662
+#: text/static/js/exporter.js:664
 msgid "Copy of "
 msgstr "Копие на"
 
-#: text/static/js/exporter.js:748
+#: text/static/js/exporter.js:750
 msgid "File export has been initiated."
 msgstr "Експортирането беше стартирано."
 
-#: text/static/js/importer.js:339
+#: text/static/js/importer.js:52
+msgid ""
+"The uploaded file does not appear to be of the version used on this server: "
+msgstr ""
+
+#: text/static/js/importer.js:92
+msgid "The uploaded file does not appear to be a Fidus Writer file."
+msgstr ""
+
+#: text/static/js/importer.js:365
 msgid " successfully imported."
 msgstr " успешно импортиран."
+
+#: text/static/js/server-communications.js:254
+msgid ""
+"Sorry, but the connection to the server has been lost. Please reload to "
+"ensure that no date is being lost."
+msgstr ""
+"Съжаляваме, но връзката със сървъра бе прекъсната. Поля опреснете за да се "
+"предпазите от загуба на данни."
+
+#: text/static/js/server-communications.js:261
+msgid "Ok"
+msgstr "ОК"
+
+#: text/static/js/server-communications.js:273
+msgid "No connection to server"
+msgstr "Няма връзка към сървъра"
 
 #: text/static/js/texteditor-template-dialogs.js:22
 msgid "Configure Citation"
@@ -1332,7 +1321,7 @@ msgid "Insert image"
 msgstr "Вмъкни изображение"
 
 #: text/static/js/texteditor-template-dialogs.js:143
-#: text/static/js/toolbar/figure.js:287
+#: text/static/js/toolbar/figure.js:332
 msgid "Figure"
 msgstr "Фигура"
 
@@ -1460,25 +1449,24 @@ msgstr "Настройка на цитати"
 msgid "Please select at least one citation source!"
 msgstr "Моля изберете поне един източник на цитати!"
 
-#: text/static/js/toolbar/cite.js:217
+#: text/static/js/toolbar/cite.js:218
 msgid "Register new source"
 msgstr "Добавяне на нов източник"
 
-#: text/static/js/toolbar/figure.js:33
+#: text/static/js/toolbar/figure.js:32
 msgid "Enter latex math or insert an image"
 msgstr "Въведете Latex формула или изображение"
 
-#: text/static/js/toolbar/figure.js:43
+#: text/static/js/toolbar/figure.js:42
 msgid "Images"
 msgstr "Изображения"
 
-#: text/static/js/toolbar/figure.js:281
+#: text/static/js/toolbar/figure.js:324
 #: usermedia/static/js/usermedia-helpers.js:232
 msgid "Update"
 msgstr "Обновяване"
 
-#: text/static/js/toolbar/figure.js:289
-#: text/static/js/toolbar/link.js:50
+#: text/static/js/toolbar/figure.js:334 text/static/js/toolbar/link.js:50
 #: text/static/js/toolbar/math.js:50
 msgid "Insert"
 msgstr "Вмъкване"
@@ -1519,8 +1507,14 @@ msgstr "Търсене за файл"
 msgid "Insert a title"
 msgstr "Вмъкни заглавие"
 
+#~ msgid "Untitled document"
+#~ msgstr "Неозаглавен документ"
+
+#~ msgid "Document could not be saved"
+#~ msgstr "Документа не беше запазен"
+
 #~ msgid "Please register at http://beta.fiduswriter.com"
 #~ msgstr "Моля регистрирай се на http://beta.fiduswriter.com"
+
 #~ msgid "Some errors are found. Please examin the form."
 #~ msgstr "Бяха открити грешки. Моля прегледайте формата"
-

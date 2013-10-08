@@ -8,27 +8,20 @@
         <title> Fidus Writer - {{document.title}} </title>
         <meta name="description" content="{% trans "The all in one solution for collaborative academic writing." %}">
         <script type="text/javascript">
-            // Disable the reload function until everything has been loaded. This
-            // will eliminate most cases of reloading the page before it is ready,
-            // which will shut down write access.
-            var disableReload = function(e) {
-            if (e.which == 116 ||(e.ctrlKey && e.which == 82)) e.preventDefault();
-            };
-            document.addEventListener("keydown", disableReload);
-
-
             var mathjaxZipUrl = '{{ STATIC_URL }}zip/mathjax.zip';
             var staticUrl = '{{ STATIC_URL }}';
-        </script>
-        <script>
-            var isChrome = false;
+
+            var isChromeOrSafari = false;
 
             if(window.chrome) {
-                isChrome = true;
+                isChromeOrSafari = true;
             // We are on Chrome
+            } else if (navigator.userAgent.indexOf('Safari/') > -1 && parseFloat(navigator.userAgent.match(/version\/([\.\d]+)/i)[1]) > 6) {
+                isChromeOrSafari = true;
+            // We are on Safari 6.1 or higher
             }
 
-           if(!(isChrome)) {
+            if(!(isChromeOrSafari)) {
                 var currentURL = location.href.substr(7);
                 var currentRelativeURL = currentURL.substr(currentURL.indexOf('/'));
                 if(currentRelativeURL != '/beta/browser/') {
@@ -51,7 +44,9 @@
                 content: "{% trans "Abstract" %}...";
             }
         </style>
-        <style id="placeholderStyles">
+        <style type="text/css" id="placeholderStyles">
+        </style>
+        <style type="text/css" id="activeCommentStyle">
         </style>
         <!--  Translations -->
         <script type="text/javascript" src="/jsi18n/"></script>
@@ -89,6 +84,8 @@
             <link rel="stylesheet" href="{{ STATIC_URL }}css/texteditor.css" type="text/css">
             <!-- Comments -->
             <link rel="stylesheet" href="{{ STATIC_URL }}css/comments.css" type="text/css">
+            <!-- Chat -->
+            <link rel="stylesheet" href="{{ STATIC_URL }}css/chat.css" type="text/css">
             <!-- Tracking -->
             <link rel="stylesheet" href="{{ STATIC_URL }}css/tracking.css" type="text/css">
             <!-- Access rights -->
@@ -118,6 +115,7 @@
                 jax: ["input/TeX", "output/SVG"],
                 tex2jax: {
                     inlineMath: [ ['[MATH]','[/MATH]']],
+                    displayMath: [ ['[DMATH]','[/DMATH]']],
                     processEscapes: true
                 },
                 showMathMenu: false,
@@ -139,6 +137,8 @@
         {% compress js %}
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.autoresize.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/diff_match_patch.js"></script>
+            <!--script type="text/javascript" src="{{ STATIC_URL }}js/libs/DOM-diff.js"></script-->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/delta.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/common.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/menubase.js"></script>
             <script type="text/javascript">
@@ -269,17 +269,6 @@
             <!-- Comment functions -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/comment-templates.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/comment-helpers.js"></script>
-            <script type="text/javascript">
-                var flatCommentList = [];
-                jQuery(document).bind('documentDataLoaded', function() {
-                    commentHelpers.fillFlatCommentList();
-                    commentHelpers.cleanCommentsList();
-                    commentHelpers.cleanReferers();
-                    jQuery(document).bind('bodyLayoutUpdated', function() {
-                        commentHelpers.layoutComments();
-                    });
-                });
-            </script>
             <!-- Tracking functions -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/tracking-templates.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/tracking-helpers.js"></script>
@@ -290,12 +279,18 @@
             <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.js"></script>
             <!-- File import -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/importer.js"></script>
+            <!-- Chat functions -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/chat-helpers.js"></script>
+            <script type="text/javascript">
+                chatHelpers.bind();
+            </script>
             <!-- Document related functions -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/editor-templates.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/editor-helpers.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/editor-setup.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/server-communications.js"></script>
             <script type="text/javascript">
-                editorHelpers.bind();
+                serverCommunications.bind();
             </script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/dom.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/handle_manual_edits.js"></script>
@@ -322,12 +317,12 @@
             }
         </script>
     </head>
-    <body class="{% trans "en" %}">
+    <body class="{% trans "en" %} tex2jax_ignore">
         <div id="wait">
             <i class="icon-spin2 animate-spin"></i>
         </div>
         <div id="close-document-top" class="close icon-cancel-circle" title="{% trans "Close the document and return to the document overview menu." %}"></div>
-        <header id="header" title="The title of the document">
+        <header id="header">
             <h1>Untitled document</h1>
             <nav id="header-navigation">
                 <div>
@@ -400,7 +395,7 @@
                     </div>
                 </div>
                 <div>
-                    <span class="header-nav-item" title="{% trans "Choose a document style" %}">{% trans "Document Style" %}</span>
+                    <span class="header-nav-item documentstyle-menu" title="{% trans "Choose a document style" %}">{% trans "Document Style" %}</span>
                     <div class="fw-pulldown fw-left">
                         <ul>
                             <li>
@@ -460,6 +455,7 @@
                     </div>
                 </div>
             </nav>
+            <div id="current-editors"></div>
         </header>
 
         <nav id="editor-navigation">
@@ -504,5 +500,13 @@
         </div>
         <div id="comment-box-container"></div><div id="tracking-box-container"></div>
         {% include "beta/feedback.html" %}
+        <div id="chat">
+            <i class="resize-button icon-angle-double-down"></i>
+            <div id="chat-container"></div>
+            <div id="messageform" contentEditable="true" class="empty"></div>
+            <audio id="chat-notification"> 
+                <source src="{{ STATIC_URL }}ogg/chat-notification.ogg" type="audio/ogg">
+            </audio>
+        </div>
     </body>
 </html>

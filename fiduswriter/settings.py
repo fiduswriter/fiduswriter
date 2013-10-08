@@ -246,9 +246,10 @@ AUTHENTICATION_BACKENDS = (
 gettext = lambda s: s
 LANGUAGES = (
     ('en', gettext('English')),
-    ('es', gettext('Spanish')),
-    ('de', gettext('German')),
     ('bg', gettext('Bulgarian')),
+    ('de', gettext('German')),
+    ('it', gettext('Italian')),
+    ('es', gettext('Spanish')),
 )
 
 

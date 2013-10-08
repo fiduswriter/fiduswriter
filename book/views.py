@@ -92,9 +92,6 @@ def get_book_js(request):
     if request.is_ajax() and request.method == 'POST':
             book_id = simplejson.loads(request.POST['id'])
             book = Book.objects.filter(id=book_id).filter(Q(owner=request.user) | Q(bookaccessright__user=request.user))
-            print book
-            print len(book[0].chapters.filter(Q(owner=request.user) | Q(accessright__user=request.user)))
-            print len(book[0].chapters.all())
             # TODO: Is it really enough to check if the number of chapters 
             # owned by or with access rights by the current user is smaller 
             # than the total number of chapters of a book?

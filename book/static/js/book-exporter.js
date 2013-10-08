@@ -163,12 +163,12 @@
 
             startHTML = '<h1 class="title">' + title + '</h1>';
 
-            if (aDocument.settings.metadata.subtitle && aDocument.metadata.subtitle &&
+            if (aDocument.settings.metadata && aDocument.settings.metadata.subtitle && aDocument.metadata.subtitle &&
                 aDocument.metadata.subtitle != '') {
                 startHTML += '<h2 class="subtitle">' + aDocument.metadata.subtitle +
                     '</h2>';
             }
-            if (aDocument.settings.metadata.abstract && aDocument.metadata.abstract &&
+            if (aDocument.settings.metadata && aDocument.settings.metadata.abstract && aDocument.metadata.abstract &&
                 aDocument.metadata.abstract != '') {
                 startHTML += '<div class="abstract">' + aDocument.metadata.abstract +
                     '</div>';

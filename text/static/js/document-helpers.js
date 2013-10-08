@@ -233,8 +233,6 @@
                             i].metadata);
                         aDocument.settings = jQuery.parseJSON(response.documents[
                             i].settings);
-                        aDocument.comments = jQuery.parseJSON(response.documents[
-                            i].comments);
                     }
                     if (callback) {
                         callback();

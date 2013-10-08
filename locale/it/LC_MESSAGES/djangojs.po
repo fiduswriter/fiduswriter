@@ -1,59 +1,58 @@
-# German translation for Fidus Writer
-# Copyright (C) 2013 Daniel Frebel
+# LANGUAGE translation for Fidus Writer
+# Copyright (C) YEAR THE TRANSLATORS NAME
 # This file is distributed under the same license as Fidus Writer.
-# Daniel Frebel <daniel@fiduswriter.com>, 2013.
+# THE TRANSLATORS NAME <EMAIL@ADDRESS>, YEAR
 #
+#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: 1.0\n"
+"Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2013-10-08 04:07-0500\n"
-"PO-Revision-Date: 2013-02-24 10:03-0600\n"
-"Last-Translator: Daniel Frebel <daniel@fiduswriter.com>\n"
-"Language-Team: German <daniel@fiduswriter.com>\n"
-"Language: DE \n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 
 #: account/static/js/confirm_email.js:18
 #, fuzzy
 msgid "Thanks for verifying! You can now log in."
-msgstr "Danke für die Bestätigung! Du kannst jetzt einloggen."
+msgstr "Grazie per esserti verificato! Ora puoi loggarti in Fidus Writer."
 
 #: account/static/js/contact-helpers.js:29
 msgid "E-mail address of the user"
-msgstr "E-Mailadresse des Nutzers"
+msgstr "Indirizzo e-mail dell'utente"
 
 #: account/static/js/contact-helpers.js:70
 msgid "No user is registered with the given email address."
-msgstr "Kein User ist mit der angegebenen E-Mail registriert."
+msgstr "Nessun utente é registrato con l'indirizzo mail che hai inserito."
 
 #: account/static/js/contact-helpers.js:72
 msgid "Please invite him/her "
-msgstr "Bitte lade ihn/sie ein"
+msgstr "Invitalo/a"
 
 #: account/static/js/contact-helpers.js:74
 msgid "Fidus Writer"
-msgstr "Fidus Writer"
+msgstr "Fidus Wrtier"
 
 #: account/static/js/contact-helpers.js:75
 msgid "Hey, I would like you to sign up for a Fidus Writer account."
-msgstr ""
-"Hallo, ich würde dich gerne einladen ein Fidus Writer Konto zu erstellen?"
+msgstr "Hey, ti voglio invitare su Fidus Writer."
 
 #: account/static/js/contact-helpers.js:76
 msgid "Please register at"
-msgstr "Bitte registriere dich auf"
+msgstr "Registrati su"
 
 #: account/static/js/contact-helpers.js:79
 msgid "by sending an email"
-msgstr "durch das Versenden einer E-Mail"
+msgstr "mandando una mail"
 
 #: account/static/js/contact-helpers.js:93
 msgid "Add a user to your contacts"
-msgstr "Füge einen Nutzer zu deiner Kontaktliste"
+msgstr "Aggiungi un utente ai tuoi contatti"
 
 #: account/static/js/contact-helpers.js:99
 #: account/static/js/show_profile.js:169 account/static/js/show_profile.js:239
@@ -67,7 +66,7 @@ msgstr "Füge einen Nutzer zu deiner Kontaktliste"
 #: text/static/js/comment-templates.js:133
 #: usermedia/static/js/usermedia-helpers.js:130
 msgid "Submit"
-msgstr "Bestätigen"
+msgstr "Invio"
 
 #: account/static/js/contact-helpers.js:100
 #: account/static/js/contact-helpers.js:141
@@ -95,7 +94,7 @@ msgstr "Bestätigen"
 #: usermedia/static/js/usermedia-helpers.js:264
 #: usermedia/static/js/usermedia-helpers.js:355
 msgid "Cancel"
-msgstr "Abbrechen"
+msgstr "Cancella"
 
 #: account/static/js/contact-helpers.js:138
 #: account/static/js/profile-templates.js:2
@@ -104,11 +103,11 @@ msgstr "Abbrechen"
 #: book/static/js/book-helpers.js:85 text/static/js/document-helpers.js:48
 #: usermedia/static/js/usermedia-helpers.js:347
 msgid "Confirm deletion"
-msgstr "Entfernen bestätigen"
+msgstr "Conferma eliminazione"
 
 #: account/static/js/contact-helpers.js:138
 msgid "Remove from the contacts"
-msgstr "Aus den Kontakten entfernen"
+msgstr "Elimina dai contatti"
 
 #: account/static/js/contact-helpers.js:140
 #: account/static/js/show_profile.js:90 account/static/js/show_profile.js:144
@@ -123,178 +122,180 @@ msgstr "Aus den Kontakten entfernen"
 #: text/static/js/texteditor-template-dialogs.js:159
 #: usermedia/static/js/usermedia-helpers.js:351
 msgid "Delete"
-msgstr "Entfernen"
+msgstr "Elimina"
 
 #: account/static/js/edit_profile.js:14
 msgid "Profile updated"
-msgstr "Profil aktualisiert"
+msgstr "Profilo aggiornato"
 
 #: account/static/js/edit_profile.js:26 account/static/js/show_profile.js:130
 msgid "Please check the above errors"
-msgstr "Bitte überprüfe die Fehler"
+msgstr "Per cortesia, controlla gli errori qua sopra"
 
 #: account/static/js/profile-templates.js:3
 msgid "Delete the avatar"
-msgstr "Bild entfernen"
+msgstr "Cancella l'avatar"
 
 #: account/static/js/profile-templates.js:5
 msgid "Upload your profile picture"
-msgstr "Profilbild uploaden"
+msgstr "Carica la tua immagine profilo"
 
 #: account/static/js/profile-templates.js:9
 #: bibliography/static/js/bibliography-template-dialogs.js:45
 #: book/static/js/book-templates.js:73 text/static/js/document-templates.js:73
 #: usermedia/static/js/usermedia-template-dialogs.js:85
 msgid "Select a file"
-msgstr "Datei wählen"
+msgstr "Seleziona un file"
 
 #: account/static/js/profile-templates.js:17
 msgid ""
 "Really delete your account? Type in your username below to confirm deletion."
 msgstr ""
-"Konto wirklich löschen? Schreibe deinen Username in das Feld unter diesem "
-"text um die Löschung zu bestätigen."
+"Vuoi veramente eliminare il tuo account? Digita il tuo nome utente per "
+"confermare l'eliminazione."
 
 #: account/static/js/profile-templates.js:20
 msgid "Add Email"
-msgstr "E-Mail hinzufügen"
+msgstr "Aggiungi un indirizzo mail"
 
 #: account/static/js/profile-templates.js:25
 msgid "Enter the new E-mail address"
-msgstr "Neue E-Mail adresse eingeben"
+msgstr "Inserisci il nuovo indirizzo mail"
 
 #: account/static/js/profile-templates.js:36
 msgid "Change Password"
-msgstr "Kennwort verändern"
+msgstr "Cambia Password"
 
 #: account/static/js/profile-templates.js:39
 msgid "Old password"
-msgstr "Altes Kennwort"
+msgstr "Vecchia password"
 
 #: account/static/js/profile-templates.js:40
 msgid "New password"
-msgstr "Neues Kennwort"
+msgstr "Nuova password"
 
 #: account/static/js/profile-templates.js:41
 msgid "Confirm the new password"
-msgstr "Neues Kennwort bestätigen"
+msgstr "Conferma la nuova password"
 
 #: account/static/js/show_profile.js:5
 #: usermedia/static/js/usermedia-helpers.js:225
 msgid "Upload"
-msgstr "Uploaden"
+msgstr "Carica"
 
 #: account/static/js/show_profile.js:177
 msgid "All fields are required!"
-msgstr "Alle Felder müssen ausgefüllt werden!"
+msgstr "Compila tutti i campi!"
 
 #: account/static/js/show_profile.js:182
 msgid "Please confirm the new password!"
-msgstr "Bitte neues Kennwort bestätigen!"
+msgstr "Per cortesia, conferma la nuova password!"
 
 #: account/static/js/show_profile.js:199
 msgid "The password has been changed."
-msgstr "Das Kennwort wurde verändert. "
+msgstr "La password é stata cambiata."
 
 #: account/static/js/show_profile.js:209 account/static/js/show_profile.js:215
 msgid "The password could not be changed!"
-msgstr "Das Kennwort konnte nicht verändert werden!"
+msgstr "La password non può essere cambiata!"
 
 #: account/static/js/show_profile.js:246
 msgid "New email address is required!"
-msgstr "Die neue E-Mailadresse muss ausgefüllt werden!"
+msgstr "E' necessario un nuovo indirizzo e-mail!"
 
 #: account/static/js/show_profile.js:264
 msgid "Confirmation e-mail sent to "
-msgstr "Verifizierungsemail versandt an "
+msgstr "L'e-mail di conferma é stata mandata a "
 
 #: account/static/js/show_profile.js:271
 msgid "The email could not be added!"
-msgstr "Die E-Mail konnte nicht hinzugefügt werden"
+msgstr "L'e-mail non può essere aggiunta!"
 
 #: account/static/js/show_profile.js:298
 msgid "Confirm remove"
-msgstr "Entfernen bestätigen"
+msgstr "Conferma rimozione"
 
 #: account/static/js/show_profile.js:299
 msgid "Remove the email address"
-msgstr "E-Mailadresse entfernen"
+msgstr "Rimuovi l'indirizzo email"
 
 #: account/static/js/show_profile.js:302
 msgid "Remove"
-msgstr "Entfernen"
+msgstr "Rimuovi"
 
 #: account/static/js/show_profile.js:323
 msgid "The email could not be removed!"
-msgstr "Die E-Mail konnte nicht entfernt werden!"
+msgstr "L'email non può essere rimossa!"
 
 #: account/static/js/show_profile.js:351
 msgid "Confirm set primary"
-msgstr "Primäremailsetzung bestätigen"
+msgstr "Imposta come primaria"
 
 #: account/static/js/show_profile.js:352
 msgid "Set the email address primary"
-msgstr "E-Mail als Primäremail setzen"
+msgstr "Imposta questo indirizzo e-mail come primario"
 
 #: account/static/js/show_profile.js:377
 msgid "The email could not be set primary!"
-msgstr "Die E-Mail konnte nicht als Primäremail gesetzt werden!"
+msgstr "Questo indirizzo e-mail non può essere impsotato come primario"
 
 #: base/static/.fr-sr52IS/admin.locking.js:119
 #, c-format
 msgid "Your lock on this page expires in less than %s"
-msgstr "Deine Seitensperre läuft in weniger als %s ab"
+msgstr "Il lucchetto su questa pagina scadrà in meno di %s"
 
 #: base/static/.fr-sr52IS/admin.locking.js:121
 msgid "This page is locked by <em>%(for_user)s"
-msgstr "Diese Seite ist gesperrt von <em>%(for_user)s"
+msgstr "Questa pagina è stata lucchettata da <em>%(for_user)s"
 
 #: base/static/.fr-sr52IS/admin.locking.js:123
 msgid "Your lock on this page is expired!"
-msgstr "Deine Sperre dieser Seite ist abgelaufen"
+msgstr "Il lucchetto su questa pagina é scaduto!"
 
 #: bibliography/static/js/bibliography-helpers.js:631
 msgid "The bibliography has been updated"
-msgstr "Die Bibliografie wurde upgedated"
+msgstr "La bibliografia é stata aggiornata"
 
 #: bibliography/static/js/bibliography-helpers.js:634
 #: usermedia/static/js/usermedia-helpers.js:42
 msgid "Some errors are found. Please examine the form."
-msgstr "Eine Fehler wurden gefunden. Bitte untersuche das Formular."
+msgstr ""
+"Alcuni errori sono stati trovati. Per cortesia, prova a eliminarli dal "
+"modulo."
 
 #: bibliography/static/js/bibliography-helpers.js:680
 #: usermedia/static/js/usermedia-helpers.js:93
 msgid "The categories have been updated"
-msgstr "Die Kategorien wurden upgedated."
+msgstr "Le categorie sono state aggiornate"
 
 #: bibliography/static/js/bibliography-helpers.js:708
 #: usermedia/static/js/usermedia-helpers.js:121
 msgid "Edit Categories"
-msgstr "Kategorien bearbeiten"
+msgstr "Modifica Categorie"
 
 #: bibliography/static/js/bibliography-helpers.js:765
 msgid "Register New Source"
-msgstr "Neue Quelle hinzufügen"
+msgstr "Registra una Nuova Fonte"
 
 #: bibliography/static/js/bibliography-helpers.js:772
 msgid "Edit Source"
-msgstr "Quelle bearbeiten"
+msgstr "Modifica Fonte"
 
 #: bibliography/static/js/bibliography-helpers.js:798
 msgid "Select source type"
-msgstr "Dokumententyp wählen"
+msgstr "Selezione il tipo di fonte"
 
 #: bibliography/static/js/bibliography-helpers.js:818
 msgid "Categories"
-msgstr "Kategorien"
+msgstr "Categorie"
 
 #: bibliography/static/js/bibliography-helpers.js:1415
 msgid "The bibliography item(s) have been deleted"
-msgstr "Der/Die Titel wurden entfernt"
+msgstr "Gli elementi della bibliografia sono stati cancellati"
 
 #: bibliography/static/js/bibliography-helpers.js:1429
 msgid "Delete the bibliography item(s)"
-msgstr "Titel enfernen"
+msgstr "Elimina gli elementi della bibliografia"
 
 #: bibliography/static/js/bibliography-helpers.js:1473
 msgid "No bibliography entries could be found in import file."
@@ -303,20 +304,20 @@ msgstr ""
 #: bibliography/static/js/bibliography-helpers.js:1538
 #: text/static/js/document-helpers.js:87
 msgid "Import"
-msgstr "Importieren"
+msgstr "Importa"
 
 #: bibliography/static/js/bibliography-helpers.js:1586
 msgid " and others"
-msgstr "und weitere"
+msgstr "e altri"
 
 #: bibliography/static/js/bibliography-helpers.js:1765
 #: text/static/js/toolbar/cite.js:249
 msgid "Search for Bibliography"
-msgstr "Bibliografie durchsuchen"
+msgstr "Cerca Bibliografia"
 
 #: bibliography/static/js/bibliography-statics.js:680
 msgid "Abstract"
-msgstr "Zusammenfassung"
+msgstr "Abstract"
 
 #: bibliography/static/js/bibliography-statics.js:682
 msgid "Addendum"
@@ -324,55 +325,55 @@ msgstr "Addendum"
 
 #: bibliography/static/js/bibliography-statics.js:684
 msgid "Afterword"
-msgstr "Nachwort"
+msgstr "Prologo"
 
 #: bibliography/static/js/bibliography-statics.js:686
 msgid "Annotation"
-msgstr "Annotation"
+msgstr "Annotazione"
 
 #: bibliography/static/js/bibliography-statics.js:688
 msgid "Annotations author(s)"
-msgstr "Verfasser der Annotation"
+msgstr "Autore/i delle annotazioni"
 
 #: bibliography/static/js/bibliography-statics.js:690
 msgid "Author(s)"
-msgstr "Autor(en)"
+msgstr "Autore/i"
 
 #: bibliography/static/js/bibliography-statics.js:692
 msgid "Author type"
-msgstr "Authortyp"
+msgstr "Tipo di autore"
 
 #: bibliography/static/js/bibliography-statics.js:694
 msgid "Book author(s)"
-msgstr "Buchautor(en)"
+msgstr "Autore/i del libro"
 
 #: bibliography/static/js/bibliography-statics.js:696
 msgid "Book pagination"
-msgstr "Seitennummerierung"
+msgstr "Impaginazione del libro"
 
 #: bibliography/static/js/bibliography-statics.js:698
 msgid "Book subtitle"
-msgstr "Buchuntertitel"
+msgstr "Sottotitolo del libro"
 
 #: bibliography/static/js/bibliography-statics.js:700
 msgid "Book title"
-msgstr "Buchtitel"
+msgstr "Titolo del libro"
 
 #: bibliography/static/js/bibliography-statics.js:702
 msgid "Book title annex"
-msgstr "Buchtitel Anhang"
+msgstr "Sottotitolo del libro"
 
 #: bibliography/static/js/bibliography-statics.js:704
 msgid "Chapter or section"
-msgstr "Kapitel oder Abschnitt"
+msgstr "Capitolo o sezione"
 
 #: bibliography/static/js/bibliography-statics.js:706
 msgid "Author(s) of a commentary"
-msgstr "Autor(en) eines Kommentars"
+msgstr "Autore/i di un commentario"
 
 #: bibliography/static/js/bibliography-statics.js:708
 msgid "Publication date"
-msgstr "Veröffentlichungsdatum"
+msgstr "Data di pubblicazione"
 
 #: bibliography/static/js/bibliography-statics.js:710
 msgid "Digital Object Identifier"
@@ -380,95 +381,95 @@ msgstr "Digital Object Identifier"
 
 #: bibliography/static/js/bibliography-statics.js:712
 msgid "Edition"
-msgstr "Ausgabe"
+msgstr "Edizione"
 
 #: bibliography/static/js/bibliography-statics.js:714
 msgid "Editor(s)"
-msgstr "Editor(en)"
+msgstr "Editore/i"
 
 #: bibliography/static/js/bibliography-statics.js:716
 msgid "Secondary editor"
-msgstr "Sekundärer Editor"
+msgstr "Editore secondario"
 
 #: bibliography/static/js/bibliography-statics.js:718
 msgid "Secondary editor 2"
-msgstr "Sekundärer Editor 2"
+msgstr "Editore secondario 2"
 
 #: bibliography/static/js/bibliography-statics.js:720
 msgid "Secondary editor 3"
-msgstr "Sekundärer Editor 3"
+msgstr "Editore secondario 3"
 
 #: bibliography/static/js/bibliography-statics.js:722
 msgid "Role of editor(s)"
-msgstr "Funktion des/der Editor(en)"
+msgstr "Ruolo dell'editore/i"
 
 #: bibliography/static/js/bibliography-statics.js:724
 msgid "Role of secondary editor"
-msgstr "Funktion des sekundären Editor"
+msgstr "Ruolo dell'editore secondario"
 
 #: bibliography/static/js/bibliography-statics.js:726
 msgid "Role of secondary editor 2"
-msgstr "Funktion des sekundären Editors 2"
+msgstr "Ruolo dell'editore secondario 2"
 
 #: bibliography/static/js/bibliography-statics.js:728
 msgid "Role of secondary editor 3"
-msgstr "Funktion des sekundären Editors 3"
+msgstr "Ruolo dell'editore secondario 3"
 
 #: bibliography/static/js/bibliography-statics.js:730
 msgid "Electronic identifier of an article"
-msgstr "Electronic Identifizier eines Artikels"
+msgstr "Identificatore Elettronico di un articolo"
 
 #: bibliography/static/js/bibliography-statics.js:732
 msgid "Entry subtype"
-msgstr "Subtyp"
+msgstr "Tipologia di entry"
 
 #: bibliography/static/js/bibliography-statics.js:734
 msgid "Electronic identifier of an online publication"
-msgstr "Electronicsche identifizierung einer online Publikation"
+msgstr "Identificatore elettronico di una pubblicaizone online"
 
 #: bibliography/static/js/bibliography-statics.js:736
 msgid "Additional information to an online publication"
-msgstr "Zusätzliche Informationen zu einer online Publikation"
+msgstr "Informazioni addizionali ad una pubblicazione online"
 
 #: bibliography/static/js/bibliography-statics.js:738
 msgid "Eprint identifier type"
-msgstr "E-Druck Identifikationstyp"
+msgstr "Tipo di Identificatore Eprint"
 
 #: bibliography/static/js/bibliography-statics.js:740
 msgid "Event date"
-msgstr "Veranstaltungsdatum"
+msgstr "Data evento"
 
 #: bibliography/static/js/bibliography-statics.js:742
 msgid "Event title"
-msgstr "Veranstaltungstitel"
+msgstr "Titolo evento"
 
 #: bibliography/static/js/bibliography-statics.js:744
 msgid "Local link to the work"
-msgstr "Lokaler Link zur Arbeit"
+msgstr "Link locale al lavoro"
 
 #: bibliography/static/js/bibliography-statics.js:746
 msgid "Foreword author(s)"
-msgstr "Vorwort Autor(en)"
+msgstr "Postfazione dell'autore/i"
 
 #: bibliography/static/js/bibliography-statics.js:748
 msgid "Patent holder(s)"
-msgstr "Pateninhaber"
+msgstr "Detentore del brevetto/i"
 
 #: bibliography/static/js/bibliography-statics.js:750
 msgid "Publication notice"
-msgstr "Veröffentlichungsbekanntgabe"
+msgstr "Avviso di pubblicazione"
 
 #: bibliography/static/js/bibliography-statics.js:752
 msgid "Title for indexing"
-msgstr "Titel für Indexierung"
+msgstr "Titolo per l'indicizzazione"
 
 #: bibliography/static/js/bibliography-statics.js:754
 msgid "Institution"
-msgstr "Institution"
+msgstr "Istituzione"
 
 #: bibliography/static/js/bibliography-statics.js:756
 msgid "Author(s) of an introduction to the work"
-msgstr "Autor(en) einer Einführung in die Arbeit"
+msgstr "Autore/i di una introduzione al lavoro"
 
 #: bibliography/static/js/bibliography-statics.js:758
 msgid "ISAN"
@@ -492,15 +493,15 @@ msgstr "ISSN"
 
 #: bibliography/static/js/bibliography-statics.js:768
 msgid "Issue"
-msgstr "Nummer einer Ausgabe"
+msgstr "Edizione"
 
 #: bibliography/static/js/bibliography-statics.js:770
 msgid "Issue subtitle"
-msgstr "Ausgabenuntertitel"
+msgstr "Sottotitolo dell'Edizione"
 
 #: bibliography/static/js/bibliography-statics.js:772
 msgid "Issue title"
-msgstr "Ausgabentitel"
+msgstr "Titolo dell'Edizione"
 
 #: bibliography/static/js/bibliography-statics.js:774
 msgid "ISWC"
@@ -508,140 +509,140 @@ msgstr "ISWC"
 
 #: bibliography/static/js/bibliography-statics.js:776
 msgid "Subtitle of publication"
-msgstr "Untertitel der Publikation"
+msgstr "Sottotitolo della pubblicazione"
 
 #: bibliography/static/js/bibliography-statics.js:778
 msgid "Title of publication"
-msgstr "Titel der Publikation"
+msgstr "Titolo della pubblicazione"
 
 #: bibliography/static/js/bibliography-statics.js:780
 msgid "Label"
-msgstr "Label"
+msgstr "Etichetta"
 
 #: bibliography/static/js/bibliography-statics.js:782
 msgid "Language(s)"
-msgstr "Sprache(n)"
+msgstr "Linguaggio/i"
 
 #: bibliography/static/js/bibliography-statics.js:784
 msgid "Library information"
-msgstr "Bibliotheksinformation"
+msgstr "Informazioni della libreria"
 
 #: bibliography/static/js/bibliography-statics.js:786
 msgid "Location(s) of publication"
-msgstr "Ort(e) der Publikation"
+msgstr "Luogo/hi di pubblicazione"
 
 #: bibliography/static/js/bibliography-statics.js:788
 msgid "Main subtitle"
-msgstr "Hauptuntertitel"
+msgstr "Sottotitolo principale"
 
 #: bibliography/static/js/bibliography-statics.js:790
 msgid "Maintitle"
-msgstr "Haupttitel"
+msgstr "Titolo principale"
 
 #: bibliography/static/js/bibliography-statics.js:792
 msgid "Annex to the maintitle"
-msgstr "Anhang zum Haupttitel"
+msgstr "Sottotitolo al Titolo principale"
 
 #: bibliography/static/js/bibliography-statics.js:794
 msgid "author name addon"
-msgstr "Autorenname Zusatz"
+msgstr "aggiungi nome autore"
 
 #: bibliography/static/js/bibliography-statics.js:796
 msgid "Note"
-msgstr "Notiz"
+msgstr "Note"
 
 #: bibliography/static/js/bibliography-statics.js:798
 msgid "Number of the work in a series"
-msgstr "Nummer der Arbeit aus Schriftenreihe"
+msgstr "Numero dei lavori in una serie"
 
 #: bibliography/static/js/bibliography-statics.js:800
 msgid "Organization(s)"
-msgstr "Organisation(en)"
+msgstr "Organizzazione/i"
 
 #: bibliography/static/js/bibliography-statics.js:802
 msgid "Publication date of the original work"
-msgstr "Veröffentlchungsdatum der Originalausgabe"
+msgstr "Data di pubblicazione del lavoro originale"
 
 #: bibliography/static/js/bibliography-statics.js:804
 msgid "Language of the original work"
-msgstr "Sprache der Originalausgabe"
+msgstr "Lingua del lavoro originale"
 
 #: bibliography/static/js/bibliography-statics.js:806
 msgid "Publication location of the original edition"
-msgstr "Veröffentlichungsort der Originalausgabe"
+msgstr "Luogo di pubblicaizone dell'edizione originale"
 
 #: bibliography/static/js/bibliography-statics.js:808
 msgid "Publisher of the original edition"
-msgstr "Verlag der Originalausgabe"
+msgstr "Casa editrice dell'edizione originale"
 
 #: bibliography/static/js/bibliography-statics.js:810
 msgid "Title of the original work"
-msgstr "Titel der Originalausgabe"
+msgstr "Titolo originale del lavoro"
 
 #: bibliography/static/js/bibliography-statics.js:812
 msgid "Page numbers or page ranges"
-msgstr "Seitenzahlen"
+msgstr "Numero di pagine o range di pagine"
 
 #: bibliography/static/js/bibliography-statics.js:814
 msgid "Total number of pages"
-msgstr "Seitenanzahl insgesammt"
+msgstr "Numero totale di pagine"
 
 #: bibliography/static/js/bibliography-statics.js:816
 msgid "Pagination"
-msgstr "Seitennummerierung"
+msgstr "Imapginazione"
 
 #: bibliography/static/js/bibliography-statics.js:818
 msgid "Number of a partial volume"
-msgstr "Nummer eines Bandes"
+msgstr "Numero di un volume parziale"
 
 #: bibliography/static/js/bibliography-statics.js:820
 msgid "Publisher(s)"
-msgstr "Verlag(e)"
+msgstr "Casa editrice/i"
 
 #: bibliography/static/js/bibliography-statics.js:822
 msgid "Publication state of the work"
-msgstr "Veröffentlichungsstatus der Arbeit"
+msgstr "Stato di pubblicazione"
 
 #: bibliography/static/js/bibliography-statics.js:824
 msgid "Title of reprint"
-msgstr "Titel der Neuauflage"
+msgstr "Titolo della ristampa"
 
 #: bibliography/static/js/bibliography-statics.js:826
 msgid "Name of series"
-msgstr "Name der Schriftenreihe"
+msgstr "Numero di una serie"
 
 #: bibliography/static/js/bibliography-statics.js:828
 msgid "Abbreviated author(s)"
-msgstr "Autorenkürzel"
+msgstr "Autore/i abbreviato/i"
 
 #: bibliography/static/js/bibliography-statics.js:830
 msgid "Abbreviated editor(s)"
-msgstr "Editorenkürzel"
+msgstr "Editore/i abbreviato/i"
 
 #: bibliography/static/js/bibliography-statics.js:832
 msgid "Shorthand"
-msgstr "Kurzform"
+msgstr "Quarta di copertina"
 
 #: bibliography/static/js/bibliography-statics.js:834
 msgid "Shorthand intro"
-msgstr "Kurzformintro"
+msgstr "Introduzione alla quarta di copertina"
 
 #: bibliography/static/js/bibliography-statics.js:836
 msgid "Acronym of the publication's title"
-msgstr "Akronym des Titels der Fachzeitschrift"
+msgstr "Acronimo del titolo della pubblicazione"
 
 #: bibliography/static/js/bibliography-statics.js:838
 msgid "Acronym of the series"
-msgstr "Akronym der Schriftenreihe"
+msgstr "Acronimo delle serie"
 
 #: bibliography/static/js/bibliography-statics.js:840
 msgid "Abridged title"
-msgstr "gekürzter Titel"
+msgstr "Titolo deprecato"
 
 #: bibliography/static/js/bibliography-statics.js:842
 #: book/static/js/book-templates.js:98
 msgid "Subtitle"
-msgstr "Untertitel"
+msgstr "Sottotiolo"
 
 #: bibliography/static/js/bibliography-statics.js:844
 #: book/static/js/book-templates.js:82 book/static/js/book-templates.js:218
@@ -650,19 +651,19 @@ msgstr "Untertitel"
 #: text/static/js/texteditor-template-dialogs.js:63
 #: text/static/js/texteditor-template-dialogs.js:170
 msgid "Title"
-msgstr "Titel"
+msgstr "Titolo"
 
 #: bibliography/static/js/bibliography-statics.js:846
 msgid "Title addon"
-msgstr "Titelzusatz"
+msgstr "aggiungi Titolo"
 
 #: bibliography/static/js/bibliography-statics.js:848
 msgid "Translator(s)"
-msgstr "Übersetzer"
+msgstr "Traduttore/i"
 
 #: bibliography/static/js/bibliography-statics.js:850
 msgid "Manual type"
-msgstr "Typ technische Dokumentation"
+msgstr "Tipo di manuale"
 
 #: bibliography/static/js/bibliography-statics.js:852
 msgid "URL"
@@ -670,171 +671,171 @@ msgstr "URL"
 
 #: bibliography/static/js/bibliography-statics.js:854
 msgid "Access date"
-msgstr "Zugangsdatum"
+msgstr "Data di accesso"
 
 #: bibliography/static/js/bibliography-statics.js:856
 msgid "Location of a conference"
-msgstr "Ort der Konferenz"
+msgstr "Luogo di una conferenza"
 
 #: bibliography/static/js/bibliography-statics.js:858
 msgid "Version"
-msgstr "Version"
+msgstr "Versione"
 
 #: bibliography/static/js/bibliography-statics.js:860
 msgid "Volume"
-msgstr "Band"
+msgstr "Volume"
 
 #: bibliography/static/js/bibliography-statics.js:862
 msgid "Total number of volumes"
-msgstr "gesammt Anzahl Bände"
+msgstr "Numero totale di volumi"
 
 #: bibliography/static/js/bibliography-statics.js:866
 msgid "Article"
-msgstr "Artikel"
+msgstr "Articolo"
 
 #: bibliography/static/js/bibliography-statics.js:871
 msgid "Book"
-msgstr "Buch"
+msgstr "Libro"
 
 #: bibliography/static/js/bibliography-statics.js:876
 msgid "Multi-volume book"
-msgstr "Buch mit mehreren Bänden"
+msgstr "Libro multi-volume"
 
 #: bibliography/static/js/bibliography-statics.js:881
 msgid "In book"
-msgstr "Im Buch"
+msgstr "Nel libro"
 
 #: bibliography/static/js/bibliography-statics.js:886
 msgid "Book in book"
-msgstr "Buch in Buch"
+msgstr "Libro nel libro"
 
 #: bibliography/static/js/bibliography-statics.js:891
 msgid "Supplemental material in a book"
-msgstr "Ergänzendes Material in Buch"
+msgstr "Materiale supplementare al libro"
 
 #: bibliography/static/js/bibliography-statics.js:896
 msgid "Booklet"
-msgstr "Booklet"
+msgstr "Libretto"
 
 #: bibliography/static/js/bibliography-statics.js:901
 msgid "Collection"
-msgstr "Sammmelband"
+msgstr "Collezione"
 
 #: bibliography/static/js/bibliography-statics.js:906
 msgid "Multi-volume collection"
-msgstr "Mehrbändiger Sammelband"
+msgstr "Colelzione di multi-volumi"
 
 #: bibliography/static/js/bibliography-statics.js:911
 msgid "In collection"
-msgstr "Beitrag in Sammelband"
+msgstr "In collezione"
 
 #: bibliography/static/js/bibliography-statics.js:916
 msgid "Supplemental material in a collection"
-msgstr "Ergänzendes Material in Sammelband"
+msgstr "Materiale supplementare in una collezione"
 
 #: bibliography/static/js/bibliography-statics.js:921
 msgid "Manual"
-msgstr "Technische Dokumentation(manual)"
+msgstr "Manuale"
 
 #: bibliography/static/js/bibliography-statics.js:926
 msgid "Miscellany"
-msgstr "Anderes"
+msgstr "Miscellanea"
 
 #: bibliography/static/js/bibliography-statics.js:931
 msgid "Online resource"
-msgstr "Online Quelle"
+msgstr "Risorsa online"
 
 #: bibliography/static/js/bibliography-statics.js:936
 msgid "Patent"
-msgstr "Patenschrift"
+msgstr "Brevetto"
 
 #: bibliography/static/js/bibliography-statics.js:941
 msgid "Periodical"
-msgstr "Periodikum"
+msgstr "Periodico"
 
 #: bibliography/static/js/bibliography-statics.js:946
 msgid "Supplemental material in a periodical"
-msgstr "Zusätzliches Material in Periodikum"
+msgstr "Materiale supplementare in un periodico"
 
 #: bibliography/static/js/bibliography-statics.js:951
 msgid "Proceedings"
-msgstr "Konferenzbericht"
+msgstr "Lavori di conferenza"
 
 #: bibliography/static/js/bibliography-statics.js:956
 msgid "Multi-volume proceedings"
-msgstr "Mehrbändiger Konferenzbericht"
+msgstr "Raccolta di lavori di conferenza"
 
 #: bibliography/static/js/bibliography-statics.js:961
 msgid "Article in a proceedings"
-msgstr "Artikel in Konferenzbericht"
+msgstr "Articolo in un lavoro di conferenza"
 
 #: bibliography/static/js/bibliography-statics.js:966
 msgid "Reference"
-msgstr "Quelle"
+msgstr "Bibliografia"
 
 #: bibliography/static/js/bibliography-statics.js:971
 msgid "Multi-volume work of reference"
-msgstr "Mehrbändige Quelle"
+msgstr "Raccolta bibliografica"
 
 #: bibliography/static/js/bibliography-statics.js:976
 msgid "Article in a work of reference"
-msgstr "Artikel in Referenzwerk"
+msgstr "Articolo di un raccolta bibliografica"
 
 #: bibliography/static/js/bibliography-statics.js:981
 msgid "Report"
-msgstr "Bericht"
+msgstr "Resoconto"
 
 #: bibliography/static/js/bibliography-statics.js:986
 msgid "Thesis"
-msgstr "Abschlussarbeit (thesis)"
+msgstr "Tesi"
 
 #: bibliography/static/js/bibliography-statics.js:991
 msgid "Unpublished"
-msgstr "Unveröffentlicht"
+msgstr "Non pubblicato"
 
 #: bibliography/static/js/bibliography-statics.js:996
 msgid "Magazine article"
-msgstr "Artikel in Zeitschrift"
+msgstr "Articolo di rivista"
 
 #: bibliography/static/js/bibliography-statics.js:1001
 msgid "Newspaper article"
-msgstr "Artikel in Zeitung"
+msgstr "Articolo di giornale"
 
 #: bibliography/static/js/bibliography-statics.js:1006
 msgid "Journal article"
-msgstr "Artikel in Fachzeitschrift"
+msgstr "Articolo di periodico"
 
 #: bibliography/static/js/bibliography-statics.js:1011
 msgid "Encyclopedia entry"
-msgstr "Eintrag in Nachschlagewerk"
+msgstr "Articolo enciclopedico"
 
 #: bibliography/static/js/bibliography-statics.js:1016
 msgid "Dictionary entry"
-msgstr "Eintrag in Wörterbuch"
+msgstr "Voce dizionario"
 
 #: bibliography/static/js/bibliography-statics.js:1021
 msgid "Blog post"
-msgstr "Blogeintrag"
+msgstr "Blog post"
 
 #: bibliography/static/js/bibliography-statics.js:1026
 msgid "Forum post"
-msgstr "Forumeintrag"
+msgstr "Post su un forum"
 
 #: bibliography/static/js/bibliography-template-dialogs.js:42
 msgid "Import another BibTex library"
-msgstr "Bibtex Datei importieren"
+msgstr "Importa un'altra Libreria BibTex"
 
 #: bibliography/static/js/bibliography-template-dialogs.js:55
 msgid "Required Fields"
-msgstr "Basisangaben"
+msgstr "Campo richiesto"
 
 #: bibliography/static/js/bibliography-template-dialogs.js:56
 msgid "Optional Fields"
-msgstr "Optionale Angaben"
+msgstr "Campo opzionale"
 
 #: bibliography/static/js/bibliography-template-dialogs.js:57
 msgid "Extras"
-msgstr "Extras"
+msgstr "Extra"
 
 #: bibliography/static/js/bibliography-template-dialogs.js:100
 #: bibliography/static/js/bibliography-template-dialogs.js:108
@@ -842,53 +843,53 @@ msgstr "Extras"
 #: book/static/js/book-templates.js:316 book/static/js/book-templates.js:353
 #: text/static/js/document-templates.js:25
 msgid "Untitled"
-msgstr "Ohne Titel"
+msgstr "Senza nome"
 
 #: bibliography/static/js/bibliography-template-dialogs.js:189
 msgid "First Name"
-msgstr "Vorname"
+msgstr "Nome"
 
 #: bibliography/static/js/bibliography-template-dialogs.js:190
 msgid "Last Name"
-msgstr "Nachname"
+msgstr "Cognome"
 
 #: bibliography/static/js/bibliography-template-dialogs.js:220
 msgid "Year"
-msgstr "Jahr"
+msgstr "Anno"
 
 #: bibliography/static/js/bibliography-template-dialogs.js:221
 msgid "Year - Year"
-msgstr "Jahr - Jahr"
+msgstr "Anno – Anno"
 
 #: bibliography/static/js/bibliography-template-dialogs.js:222
 msgid "Month/Year"
-msgstr "Monat/Jahr"
+msgstr "Mese/Anno"
 
 #: bibliography/static/js/bibliography-template-dialogs.js:223
 msgid "M/Y - M/Y"
-msgstr "M/J - M/J"
+msgstr "M/A – M/A"
 
 #: bibliography/static/js/bibliography-template-dialogs.js:224
 msgid "Month/Day/Year"
-msgstr "Monat/Tag/Jahr"
+msgstr "Mese/Giorno/Anno"
 
 #: bibliography/static/js/bibliography-template-dialogs.js:225
 msgid "M/D/Y - M/D/Y"
-msgstr "M/T/J - M/T/J"
+msgstr "M/G/A – M/G/A"
 
 #: book/static/js/book-exporter.js:123
 msgid "Cover"
-msgstr "Vorderseite"
+msgstr "Copertina"
 
 #: book/static/js/book-exporter.js:132
 msgid "Title page"
-msgstr "Titelseite"
+msgstr "Titolo pagina"
 
 #: book/static/js/book-exporter.js:205 book/static/js/book-exporter.js.c:278
 #: book/static/js/book-exporter.js:286 text/static/js/exporter.js:936
 #: text/static/js/exporter.js.c:969 text/static/js/exporter.js:977
 msgid "en"
-msgstr "de"
+msgstr "inglese"
 
 #: book/static/js/book-exporter.js:241
 msgid "Copyright"
@@ -896,195 +897,195 @@ msgstr "Copyright"
 
 #: book/static/js/book-exporter.js:264 text/static/js/exporter.js:956
 msgid "en-US"
-msgstr "de-DE"
+msgstr "Inglese Americano"
 
 #: book/static/js/book-exporter.js:312 book/static/js/book-exporter.js.c:452
 msgid "English"
-msgstr "Deutsch"
+msgstr "Inglese"
 
 #: book/static/js/book-helpers.js:64
 msgid "Search for Book Title"
-msgstr "Such nach Buchtitel"
+msgstr "Cerca il titolo del libro"
 
 #: book/static/js/book-helpers.js:87
 msgid "Delete the book(s)?"
-msgstr "Die Bücher/Das Buch entfernen?"
+msgstr "Cancella il libro/i"
 
 #: book/static/js/book-helpers.js:94
 msgid "The book(s) have been deleted"
-msgstr "Das/Die Dokument(e) wurde(n) entfernt"
+msgstr "Il libro/i è stato cancellato"
 
 #: book/static/js/book-helpers.js:158
 msgid "Select cover image"
-msgstr "Vorderseitenbild auswählen"
+msgstr "Scegli un immagine di copertina"
 
 #: book/static/js/book-helpers.js:226
 msgid "Edit Chapter"
-msgstr "Kapitell bearbeiten"
+msgstr "Modifica Capitolo"
 
 #: book/static/js/book-helpers.js:407 text/static/js/importer.js:179
 #: text/static/js/importer.js.c:395
 msgid "Could not save "
-msgstr "Konnte nicht speichern "
+msgstr "Non posso salvare "
 
 #: book/static/js/book-helpers.js:427
 msgid "Create Book"
-msgstr "Buch erstellen"
+msgstr "Crea Libro"
 
 #: book/static/js/book-helpers.js:449
 msgid "Edit Book"
-msgstr "Buch editieren"
+msgstr "Modifica Libro"
 
 #: book/static/js/book-helpers.js:643
 msgid "Close"
-msgstr "Schließen"
+msgstr "Chiudi"
 
 #: book/static/js/book-index.js:63 text/static/js/text-index.js:62
 msgid "You cannot delete or share: "
-msgstr "Du kannst nicht löschen oder teilen: "
+msgstr "Non puoi cancellare o condividere: "
 
 #: book/static/js/book-index.js:86 text/static/js/exporter.js:890
 msgid "Epub export has been initiated."
-msgstr "Epub export wurde initiert."
+msgstr "L'esportazione in Epub è cominciata."
 
 #: book/static/js/book-index.js:97 text/static/js/exporter.js:833
 msgid "Latex export has been initiated."
-msgstr "Latex export wurde initiert."
+msgstr "L'esportazione in Latex è cominciata"
 
 #: book/static/js/book-index.js:108 text/static/js/exporter.js:1055
 msgid "HTML export has been initiated."
-msgstr "HTML export wurde initiert."
+msgstr "L'esportazione in HTML è cominciata."
 
 #: book/static/js/book-template-dialogs.js:24
 #: text/static/js/text-template-dialogs.js:24
 msgid "My contacts"
-msgstr "Meine Kontakte"
+msgstr "I miei contatti"
 
 #: book/static/js/book-template-dialogs.js:26
 #: text/static/js/text-template-dialogs.js:26
 msgid "Contacts"
-msgstr "Kontakte"
+msgstr "Contatti"
 
 #: book/static/js/book-template-dialogs.js:39
 #: text/static/js/text-template-dialogs.js:32
 msgid "My collaborators"
-msgstr "Meine Helfer"
+msgstr "I miei collaboratori"
 
 #: book/static/js/book-template-dialogs.js:42
 #: text/static/js/text-template-dialogs.js:35
 msgid "Collaborators"
-msgstr "Helfer"
+msgstr "Collaboratori"
 
 #: book/static/js/book-template-dialogs.js:43
 #: text/static/js/text-template-dialogs.js:36
 msgid "Rights"
-msgstr "Rechte"
+msgstr "Diritti"
 
 #: book/static/js/book-template-dialogs.js:65
 #: text/static/js/text-template-dialogs.js:66
 msgid "Editor"
-msgstr "Editor"
+msgstr "Editore"
 
 #: book/static/js/book-template-dialogs.js:70
 #: text/static/js/text-template-dialogs.js:71
 msgid "Read only"
-msgstr "Nur lesen"
+msgstr "Solo lettura"
 
 #: book/static/js/book-templates.js:70 text/static/js/document-templates.js:70
 msgid "Import another Fidus file"
-msgstr "Andere Fidus Datei importieren"
+msgstr "Importa un altro file Fidus"
 
 #: book/static/js/book-templates.js:90 book/static/js/book-templates.js:498
 #: text/static/js/texteditor-template-dialogs.js:28
 #: text/static/js/texteditor-template-dialogs.js:64
 msgid "Author"
-msgstr "Autor"
+msgstr "Autore"
 
 #: book/static/js/book-templates.js:106
 msgid "Publisher"
-msgstr "Verlag"
+msgstr "Casa editrice"
 
 #: book/static/js/book-templates.js:114
 msgid "Copyright notice"
-msgstr "Copyright Notiz"
+msgstr "Nota del Copyright"
 
 #: book/static/js/book-templates.js:122
 msgid "Comma separated keywords"
-msgstr "Kommaseparierte Keywörter"
+msgstr "Parole chavi separate da virgola"
 
 #: book/static/js/book-templates.js:122
 msgid "Keywords"
-msgstr "Keywörter"
+msgstr "Parole chiave"
 
 #: book/static/js/book-templates.js:133
 msgid "Citation style"
-msgstr "Zitatestil"
+msgstr "Stile citazione"
 
 #: book/static/js/book-templates.js:148
 msgid "Document style"
-msgstr "Dokumentstil"
+msgstr "Stile documento"
 
 #: book/static/js/book-templates.js:160
 msgid "Paper size"
-msgstr "Papiergröße"
+msgstr "Formato carta"
 
 #: book/static/js/book-templates.js:165
 msgid "Folio (15 x 12 inch)"
-msgstr "Folio (15 x 12 inch)"
+msgstr "Folio (38,1 x 30,48 cm)"
 
 #: book/static/js/book-templates.js:166
 msgid "Quarto (12 × 9 inch)"
-msgstr "Quarto (12 × 9 inch)"
+msgstr "Quarto (30,48 × 22,86 cm)"
 
 #: book/static/js/book-templates.js:167
 msgid "Octavo (9 x 6 inch)"
-msgstr "Octavo (9 x 6 inch)"
+msgstr "Octavo (22,86 x 15,24 cm)"
 
 #: book/static/js/book-templates.js:168
 msgid "A5"
-msgstr "DIN A5"
+msgstr "A5"
 
 #: book/static/js/book-templates.js:169
 msgid "A4"
-msgstr "DIN A4"
+msgstr "A4"
 
 #: book/static/js/book-templates.js:187
 msgid "Cover image"
-msgstr "Vorderseitenbild"
+msgstr "Immagine copertina"
 
 #: book/static/js/book-templates.js:201
 msgid "Select Image"
-msgstr "Bild Auswählen"
+msgstr "Seleziona Immagine"
 
 #: book/static/js/book-templates.js:205
 msgid "Remove Image"
-msgstr "Bild Entfernen"
+msgstr "Rimuovi Immagine"
 
 #: book/static/js/book-templates.js:217
 #: text/static/js/texteditor-template-dialogs.js:169
 msgid "Image"
-msgstr "Bild"
+msgstr "Immagine"
 
 #: book/static/js/book-templates.js:242
 #: text/static/js/texteditor-template-dialogs.js:178
 msgid "Upload new image"
-msgstr "Neues Bild uploaden"
+msgstr "Carica una nuova immagine"
 
 #: book/static/js/book-templates.js:246
 msgid "Use selected image"
-msgstr "Gewähltes Bild verwenden"
+msgstr "Utilizza l'immagine selezionata"
 
 #: book/static/js/book-templates.js:260
 msgid "Basic info"
-msgstr "Basisangaben"
+msgstr "Informazioni base"
 
 #: book/static/js/book-templates.js:261
 msgid "Chapters"
-msgstr "Kapitel"
+msgstr "Capitoli"
 
 #: book/static/js/book-templates.js:262 text/static/js/citation-helpers.js:177
 msgid "Bibliography"
-msgstr "Bibliografie"
+msgstr "Bibliografia"
 
 #: book/static/js/book-templates.js:263
 msgid "Epub"
@@ -1092,85 +1093,85 @@ msgstr "Epub"
 
 #: book/static/js/book-templates.js:264
 msgid "Print/PDF"
-msgstr "Druck/PDF"
+msgstr "Stampa/PDF"
 
 #: book/static/js/book-templates.js:278
 msgid "My documents"
-msgstr "Meine Dokumente"
+msgstr "I miei documenti"
 
 #: book/static/js/book-templates.js:280
 msgid "Documents"
-msgstr "Dokumente"
+msgstr "Documenti"
 
 #: book/static/js/book-templates.js:289
 msgid "Book chapters"
-msgstr "Buchkapitel"
+msgstr "Capitoli del libro"
 
 #: book/static/js/book-templates.js:293
 msgid "Sort"
-msgstr "Sortieren"
+msgstr "Ordina"
 
 #: book/static/js/book-templates.js:313
 msgid "Book part"
-msgstr "Buchabschnitt"
+msgstr "Parte del libro"
 
 #: book/static/js/book-templates.js:371
 msgid ""
 "If this chapter starts a part of the book, specify the title of that part "
 "here"
 msgstr ""
-"Wenn dieses Kapitel einen Abschnitt des Buches starte, spezifiziere den "
-"Titel dieses Abschnittes hier"
+"Se questo capitolo è l'inizio di una nuova parte del libro, specifica il "
+"titolo della parte qua"
 
 #: book/static/js/book-templates.js:371
 msgid "Book part title"
-msgstr "Buchabschnitttitel"
+msgstr "Titolo della parte del libro"
 
 #: book/static/js/book-templates.js:450
 msgid "Cover Image"
-msgstr "Vorderseitenbild"
+msgstr "Immagine di copertina"
 
 #: book/static/js/book-templates.js:470 book/static/js/book-templates.js:490
 #: book/static/js/book-templates.js:525
 msgid "by"
-msgstr "von"
+msgstr "di"
 
 #: book/static/js/book-templates.js:501 book/static/js/book-templates.js:533
 msgid "Published by"
-msgstr "Publiziert von"
+msgstr "Pubblicato da"
 
 #: book/static/js/book-templates.js:503 book/static/js/book-templates.js:535
 msgid "Last Updated"
-msgstr "Zuletzt verändert"
+msgstr "Ultimo aggiornamento"
 
 #: book/static/js/book-templates.js:504 book/static/js/book-templates.js:536
 msgid "Created"
-msgstr "Erstellt"
+msgstr "Creato"
 
 #: book/static/js/book-templates.js:505 book/static/js/book-templates.js:537
 msgid "Language"
-msgstr "Sprache"
+msgstr "Lingua"
 
 #: book/static/js/book-templates.js:506 book/static/js/book-templates.js:538
 msgid "Created by"
-msgstr "Erstellt von"
+msgstr "Creato da"
 
 #: book/static/js/bookaccessrights-helpers.js:26
 msgid "Share your book with others"
-msgstr "Teile dein Buch mit anderen"
+msgstr "Condividi il tuo libro con altri"
 
 #: book/static/js/bookaccessrights-helpers.js:171
 #: text/static/js/accessrights-helpers.js:180
 msgid "Access rights have been saved"
-msgstr "Zugangsrechte wurde gespeichert"
+msgstr "I diritti di accesso sono stati aggiornati"
 
 #: text/static/js/accessrights-helpers.js:26
 msgid "Share your document with others"
-msgstr "Teile dein Dokument mit anderen"
+msgstr "Condividi i tuoi documenti con altri"
 
 #: text/static/js/accessrights-helpers.js:79
 msgid "Add new contact"
-msgstr "Registriere neuen Kontakt"
+msgstr "Aggiungi nuovo contatto"
 
 #: text/static/js/chat-helpers.js:117
 msgid "Send a message..."
@@ -1182,15 +1183,15 @@ msgstr "American Psychological Association"
 
 #: text/static/js/citeproc-helpers.js:48
 msgid "Chicago Manual of Style (Author-Date format)"
-msgstr "Chicago Manual of Style (Autor-Datum Format)"
+msgstr "Chicago Manual of Style (Author-Date format)"
 
 #: text/static/js/citeproc-helpers.js:50
 msgid "Chicago Manual of Style (Note with Bibliography)"
-msgstr "Chicago Manual of Style (Fußnote mit Bibliografie)"
+msgstr "Chicago Manual of Style (Note with Bibliography)"
 
 #: text/static/js/citeproc-helpers.js:52
 msgid "Harvard Reference format (Author-Date)"
-msgstr "Harvard Referenz Format (Autor-Datum)"
+msgstr "Harvard Reference format (Author-Date)"
 
 #: text/static/js/citeproc-helpers.js:54
 msgid "Modern Language Association"
@@ -1201,55 +1202,55 @@ msgstr "Modern Language Association"
 #: text/static/js/comment-templates.js:98
 #: text/static/js/comment-templates.js:112
 msgid "Edit"
-msgstr "Bearbeiten"
+msgstr "Modifica"
 
 #: text/static/js/document-helpers.js:50
 msgid "Delete the document(s)?"
-msgstr "Dokument(e) entfernen?"
+msgstr "Cancella il documento/i"
 
 #: text/static/js/document-helpers.js:58
 msgid "The document(s) have been deleted"
-msgstr "Dokument(e) wurde(n) entfernt "
+msgstr "Il documento è stato cancellato"
 
 #: text/static/js/document-helpers.js:162
 msgid "Search for Document"
-msgstr "Nach Dokument suchen"
+msgstr "Cerca un Documento"
 
 #: text/static/js/editor-helpers.js:216
 msgid "Untitled Document"
-msgstr "Unbenanntes Dokumentes"
+msgstr "Documento senza titolo"
 
 #: text/static/js/editor-helpers.js:424
 msgid "Title..."
-msgstr "Titel..."
+msgstr "Titolo..."
 
 #: text/static/js/editor-helpers.js:430
 msgid "Contents..."
-msgstr "Inhalt..."
+msgstr "Contenuti..."
 
 #: text/static/js/editor-helpers.js:436
 msgid "Subtitle..."
-msgstr "Untertitel..."
+msgstr "Sottotitoli..."
 
 #: text/static/js/editor-helpers.js:442
 msgid "Abstract..."
-msgstr "Zusammenfassung..."
+msgstr "Abstract..."
 
 #: text/static/js/editor-templates.js:23
 msgid "The subtitle of the document"
-msgstr "Der Untertitel des Dokumentes"
+msgstr "Il sottotitolo del documento"
 
 #: text/static/js/editor-templates.js:26
 msgid "The abstract of the document"
-msgstr "Zusammenfassung des Dokumentes"
+msgstr "L'abstract del docuemnto"
 
 #: text/static/js/exporter.js:664
 msgid "Copy of "
-msgstr "Kopie von "
+msgstr "Copia di "
 
 #: text/static/js/exporter.js:750
 msgid "File export has been initiated."
-msgstr "Dateiexport wurde initiert."
+msgstr "L'esportazione del file è cominciata"
 
 #: text/static/js/importer.js:52
 msgid ""
@@ -1262,15 +1263,15 @@ msgstr ""
 
 #: text/static/js/importer.js:365
 msgid " successfully imported."
-msgstr " importiert."
+msgstr " importato con successo"
 
 #: text/static/js/server-communications.js:254
 msgid ""
 "Sorry, but the connection to the server has been lost. Please reload to "
 "ensure that no date is being lost."
 msgstr ""
-"Leider wurde die Verbindung zum Server unterbrochen. Bitte lade die Seite "
-"erneut damit keine Daten verloren gehen"
+"Cacchiarola! la connessione al server è saltato. Per cortesia, prova a "
+"ricaricareper assicurarti che nessun dato sia stato perso."
 
 #: text/static/js/server-communications.js:261
 msgid "Ok"
@@ -1278,51 +1279,51 @@ msgstr "Ok"
 
 #: text/static/js/server-communications.js:273
 msgid "No connection to server"
-msgstr "Keine Verbindung zum Server"
+msgstr "Nessuna connessione al server"
 
 #: text/static/js/texteditor-template-dialogs.js:22
 msgid "Configure Citation"
-msgstr "Zitat Konfigurieren"
+msgstr "Configura Citazione"
 
 #: text/static/js/texteditor-template-dialogs.js:24
 msgid "My sources"
-msgstr "Meine Quellen"
+msgstr "Le mie risorse"
 
 #: text/static/js/texteditor-template-dialogs.js:37
 msgid "Citation format"
-msgstr "Zitateformat"
+msgstr "Formato della citazione"
 
 #: text/static/js/texteditor-template-dialogs.js:41
 #: text/static/js/texteditor-template-dialogs.js:55
 msgid "Author (1998)"
-msgstr "Autor (1998)"
+msgstr "Autore (1988)"
 
 #: text/static/js/texteditor-template-dialogs.js:43
 #: text/static/js/texteditor-template-dialogs.js:50
 msgid "(Author, 1998)"
-msgstr "(Autor, 1998)"
+msgstr "(Autore, 1988)"
 
 #: text/static/js/texteditor-template-dialogs.js:109
 msgid "Page"
-msgstr "Seite"
+msgstr "Pagina"
 
 #: text/static/js/texteditor-template-dialogs.js:113
 msgid "Text before"
-msgstr "Text davor"
+msgstr "Testo da mettere prima"
 
 #: text/static/js/texteditor-template-dialogs.js:125
 msgid "Insert formula"
-msgstr "Formel einfügen"
+msgstr "Inserisci formula"
 
 #: text/static/js/texteditor-template-dialogs.js:127
 #: text/static/js/texteditor-template-dialogs.js:182
 msgid "Insert image"
-msgstr "Bild einfügen"
+msgstr "Inserisci immagine"
 
 #: text/static/js/texteditor-template-dialogs.js:143
 #: text/static/js/toolbar/figure.js:332
 msgid "Figure"
-msgstr "Figure"
+msgstr "Figura"
 
 #: text/static/js/texteditor-template-dialogs.js:146
 msgid "Photo"
@@ -1330,259 +1331,184 @@ msgstr "Foto"
 
 #: text/static/js/texteditor-template-dialogs.js:149
 msgid "Table"
-msgstr "Table"
+msgstr "Tavola"
 
 #: text/static/js/texteditor-template-dialogs.js:155
 msgid "Insert caption"
-msgstr "Bilduntrtext einfügen"
+msgstr "Inserisci traduzione"
 
 #: text/static/js/tools-helpers.js:47
 msgid "Word counter"
-msgstr "Wortzähler"
+msgstr "Conteggio parole"
 
 #: text/static/js/tools-templates.js:25
 msgid "Number of"
-msgstr "Anzahl von"
+msgstr "Numero di"
 
 #: text/static/js/tools-templates.js:28
 msgid "Document"
-msgstr "Dokument"
+msgstr "Documento"
 
 #: text/static/js/tools-templates.js:33
 msgid "Pages"
-msgstr "Seiten"
+msgstr "Pagine"
 
 #: text/static/js/tools-templates.js:37
 msgid "Words"
-msgstr "Wörter"
+msgstr "Parole"
 
 #: text/static/js/tools-templates.js:41
 msgid "Characters without blanks"
-msgstr "Zeichen ohne Leerzeichen"
+msgstr "Caratteri senza spazi"
 
 #: text/static/js/tools-templates.js:45
 msgid "Characters with blanks"
-msgstr "Zeichen mit Leerzeichen"
+msgstr "Caratteri con spazi"
 
 #: text/static/js/tracking-helpers.js:48
 msgid "Unknown"
-msgstr "Unbekannt"
+msgstr "Sconosciuto"
 
 #: text/static/js/tracking-templates.js:28
 msgid "Accept Change"
-msgstr "Änderung Annehmen"
+msgstr "Conferma Cambiamenti"
 
 #: text/static/js/tracking-templates.js:29
 msgid "Reject Change"
-msgstr "Änderung ablehnen"
+msgstr "Rifuta Cambiamenti"
 
 #: text/static/js/toolbar/all_blockstyles.js:32
 msgid "Normal Text"
-msgstr "Einfacher Text"
+msgstr "Test Normale"
 
 #: text/static/js/toolbar/all_blockstyles.js:32
 msgid "Text that is part of a standard paragraph."
-msgstr "Text der teil eines Standardabschnittes ist."
+msgstr "il testo che è parte di paragrafi standard."
 
 #: text/static/js/toolbar/all_blockstyles.js:33
 msgid "1st Headline"
-msgstr "1. Überschrift"
+msgstr "Primo titolo di testa"
 
 #: text/static/js/toolbar/all_blockstyles.js:33
 msgid "A headline of the highest level (under title)."
-msgstr "Eine Überschrift des höchsten Niveaus (unter dem Dokumenttitel)."
+msgstr "Un titolo di testa di livello più alto (sotto il titolo)."
 
 #: text/static/js/toolbar/all_blockstyles.js:34
 msgid "2nd Headline"
-msgstr "2. Überschrift"
+msgstr "Secondo titolo di testa"
 
 #: text/static/js/toolbar/all_blockstyles.js:34
 msgid "A headline of the 2nd highest level."
-msgstr "Eine Überschrift des zweithöchsten Niveaus."
+msgstr "Un titolo di testa di secondo livello."
 
 #: text/static/js/toolbar/all_blockstyles.js:35
 msgid "3rd Headline"
-msgstr "3. Überschrift"
+msgstr "Terzo titolo di testa"
 
 #: text/static/js/toolbar/all_blockstyles.js:35
 msgid "A headline of the 3rd highest level."
-msgstr "Eine Überschrift des dritthöchsten Niveaus."
+msgstr "Un titolo di testa di terzo livello."
 
 #: text/static/js/toolbar/all_blockstyles.js:36
 msgid "Block quote"
-msgstr "Blockzitat"
+msgstr "Citazione tra virgolette"
 
 #: text/static/js/toolbar/all_blockstyles.js:36
 msgid "A longer quotation set as an indented block."
-msgstr "Ein längeres, eingerücktes Zitat"
+msgstr "Una citazione impostata come blocco testo separato."
 
 #: text/static/js/toolbar/all_blockstyles.js:37
 msgid "Code"
-msgstr "Kode"
+msgstr "Codice"
 
 #: text/static/js/toolbar/all_blockstyles.js:37
 msgid "Computer Code."
-msgstr "Computerkode"
+msgstr "Codice di programmazione."
 
 #: text/static/js/toolbar/all_blockstyles.js:38
 msgid "Numbered List"
-msgstr "Nummerierte Liste"
+msgstr "Lista numerata"
 
 #: text/static/js/toolbar/all_blockstyles.js:38
 msgid "An item in an ordered list."
-msgstr "Ein Eintrag in einer geordneten Liste"
+msgstr "Un oggetto in una lista ordinata"
 
 #: text/static/js/toolbar/all_blockstyles.js:39
 msgid "Bulleted List"
-msgstr "Punkteliste"
+msgstr "Lista puntinata"
 
 #: text/static/js/toolbar/all_blockstyles.js:39
 msgid "An item in an unordered list."
-msgstr "Ein eintrag in einer ungeordneten Liste"
+msgstr "Un oggetto in una lista non ordinata."
 
 #: text/static/js/toolbar/cite.js:33
 msgid "Configure citation"
-msgstr "Zitat Konfigurieren"
+msgstr "Configura citazione"
 
 #: text/static/js/toolbar/cite.js:79
 msgid "Please select at least one citation source!"
-msgstr "Wähle bitte mindestens eine Zitierungsquelle!"
+msgstr "Per cortesia, seleziona almeno una fonte di citazione"
 
 #: text/static/js/toolbar/cite.js:218
 msgid "Register new source"
-msgstr "Neue Quelle hinzufügen"
+msgstr "Registra una nuova fonte"
 
 #: text/static/js/toolbar/figure.js:32
 msgid "Enter latex math or insert an image"
-msgstr "Latexformel oder Bild einfügen"
+msgstr "Inserisci latex math o inserisci un immagine"
 
 #: text/static/js/toolbar/figure.js:42
 msgid "Images"
-msgstr "Bilder"
+msgstr "Immagini"
 
 #: text/static/js/toolbar/figure.js:324
 #: usermedia/static/js/usermedia-helpers.js:232
 msgid "Update"
-msgstr "Veränderung"
+msgstr "Aggiorna"
 
 #: text/static/js/toolbar/figure.js:334 text/static/js/toolbar/link.js:50
 #: text/static/js/toolbar/math.js:50
 msgid "Insert"
-msgstr "Einfügen"
+msgstr "Inserisci"
 
 #: text/static/js/toolbar/math.js:34
 msgid "Enter Latex math"
-msgstr "Latexformel eingeben"
+msgstr "Isnerisci latex math"
 
 #: usermedia/static/js/usermedia-helpers.js:37
 msgid "The image has been uploaded"
-msgstr "Das Bild wurde upgeloaded"
+msgstr "L'immagine è stata caricata"
 
 #: usermedia/static/js/usermedia-helpers.js:226
 msgid "Upload image"
-msgstr "Bild uploaden"
+msgstr "Carica immagine"
 
 #: usermedia/static/js/usermedia-helpers.js:233
 msgid "Update image"
-msgstr "Bild updaten"
+msgstr "Aggiorna immagine"
 
 #: usermedia/static/js/usermedia-helpers.js:257
 msgid "Select categories"
-msgstr "Kategorie auswählen"
+msgstr "Seleziona categorie"
 
 #: usermedia/static/js/usermedia-helpers.js:334
 msgid "The image(s) have been deleted"
-msgstr "Das Bild/Die Bilder wurde(n) entfernt"
+msgstr "L'immagine/i è stata cancellata"
 
 #: usermedia/static/js/usermedia-helpers.js:348
 msgid "Delete the image(s)"
-msgstr "Das Bild/Die Bilder löschen"
+msgstr "Cancella l'immagine/i"
 
 #: usermedia/static/js/usermedia-helpers.js:567
 msgid "Search for Filename"
-msgstr "Such nach Dateiname"
+msgstr "Cerca per Nome File"
 
 #: usermedia/static/js/usermedia-template-dialogs.js:83
 msgid "Insert a title"
-msgstr "Titel einsetzen"
+msgstr "Inserisci un titolo"
 
 #~ msgid "Untitled document"
-#~ msgstr "Unbenanntes Dokumentes"
+#~ msgstr "Documento senza titolo"
 
 #~ msgid "Document could not be saved"
-#~ msgstr "Dokument konnte nicht gespeichert werden"
-
-#~ msgid "Please register at http://beta.fiduswriter.com"
-#~ msgstr "Bitte registriere dich auf der Seite http://beta.fiduswriter.com"
-
-#~ msgid "Undefined"
-#~ msgstr "Nicht definiert"
-
-#, fuzzy
-#~ msgid "Sourcetype"
-#~ msgstr "Dokumententyp wählen"
-
-#, fuzzy
-#~ msgid "Published"
-#~ msgstr "Formel nicht veröffentlicht"
-
-#, fuzzy
-#~ msgid "Add Source"
-#~ msgstr "Quelle bearbeiten"
-
-#~ msgid "editor_roles of editor"
-#~ msgstr "Editor_Funktionen des Editors"
-
-#~ msgid "Journalsubtitle"
-#~ msgstr "Fachzeitschriftenuntertitel"
-
-#, fuzzy
-#~ msgid "Confirm Update"
-#~ msgstr "Entfernen bestätigen"
-
-#, fuzzy
-#~ msgid "Media File updated."
-#~ msgstr "Profil aktualisiert"
-
-#~ msgid "Specify document name and contents before saving!"
-#~ msgstr "Name und Inhalt angeben vor dem Speichern"
-
-#~ msgid "Before"
-#~ msgstr "Vorher"
-
-#~ msgid "Change roles"
-#~ msgstr "Aufgaben ändern"
-
-#~ msgid "Added to team"
-#~ msgstr "Zum Team hinzugefügt"
-
-#~ msgid "Changed roles"
-#~ msgstr "geänderte Aufgaben"
-
-#~ msgid "Add to team"
-#~ msgstr "Zum Team hinzufügen"
-
-#~ msgid "Comment"
-#~ msgstr "Kommentar"
-
-#~ msgid "Collaborators?"
-#~ msgstr "Helfer?"
-
-#~ msgid "Add Category"
-#~ msgstr "Kategorie hinzufügen"
-
-#~ msgid "Define access rights"
-#~ msgstr "Zugangskriterien festlegen"
-
-#~ msgid ""
-#~ "You have no team members. Please first add   people to your team before "
-#~ "giving access rights for others to edit your documents."
-#~ msgstr ""
-#~ "Sie haben keine Teammitglieder. Bitte zunächst Mitglieder hinzufügenund "
-#~ "darauf folgend Zugangsberechtigungen zur Bearbeitung erteilen."
-
-#~ msgid "Team member"
-#~ msgstr "Teammitglieder"
-
-#~ msgid "Save"
-#~ msgstr "Speichern"
+#~ msgstr "Il Documento non può essere salvato"

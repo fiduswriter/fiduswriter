@@ -20,24 +20,24 @@ msgstr ""
 #: account/templates/account/base.html:7 base/templates/base.html:10
 #: text/templates/text/editor.html:9
 msgid "The all in one solution for collaborative academic writing."
-msgstr ""
+msgstr "La soluzione completa per la stesura collaborativa di testi accademici"
 
 #: account/templates/account/base.html:65
 #: account/templates/account/login.html:7
 #: account/templates/account/signup.html:10
 msgid "Log In"
-msgstr ""
+msgstr "Accedi"
 
 #: account/templates/account/email_confirm.html:8
 msgid "Confirm E-mail Address"
-msgstr ""
+msgstr "Conferma Indirizzo E-mail"
 
 #: account/templates/account/email_confirm.html:17
 msgid "Confirm E-mail Address and Agree to Terms and Conditions"
-msgstr ""
+msgstr "Conferma Indirizzo E-mail e Aderisci ai Termini e Condizioni"
 
 #: account/templates/account/email_confirm.html:22
-#, python-format
+#, fuzzy, python-format
 msgid ""
 "\n"
 "        Please confirm that you own the email <a href=\"mailto:%(email)s\">"
@@ -47,16 +47,30 @@ msgid ""
 "        <a href=\"/terms/\" target=\"_blank\">Terms and Conditions</a>.\n"
 "        "
 msgstr ""
+"\n"
+"        Per cortesia, conferma che possiedi l'indirizzo e-mail <a href="
+"\"mailto:%(email)s\">%(email)s</a>,\n"
+"        associato al nome utente %(user_display)s, e che hai letto e aderito "
+"ai\n"
+"        <a href=\"http://www.fiduswriter.com/?page_id=41\">Termini "
+"eCondizioni</a>.\n"
+"        "
 
 #: account/templates/account/email_confirm.html:31
+#, fuzzy
 msgid ""
 "\n"
 "        I have read and agree to the <a href=\"/terms/\" target=\"_blank"
 "\">Terms and Conditions</a>.\n"
 "        "
 msgstr ""
+"\n"
+"        Ho letto e aderito ai <a href=\"http://www.fiduswriter.com/?"
+"page_id=41\">Termini e Condizioni</a>.\n"
+"        "
 
 #: account/templates/account/email_confirm.html:39
+#, fuzzy
 msgid ""
 "\n"
 "            I am aware that I am signing up for a test account and that "
@@ -64,8 +78,14 @@ msgid ""
 "files.\n"
 "            "
 msgstr ""
+"\n"
+"        Sono consapevole che sto creando un account di prova e per il "
+"servizio che offre potrebbe interrompere senza notfica, facendomi perdere i "
+"files.\n"
+"        "
 
 #: account/templates/account/email_confirm.html:46
+#, fuzzy
 msgid ""
 "\n"
 "        Please notice that Fidus Writer currently only works with the Google "
@@ -75,10 +95,17 @@ msgid ""
 "\">here</a>.</p>\n"
 "        "
 msgstr ""
+"\n"
+"        Per cortesia, nota che Fidus Writer lavora attualmente con Google "
+"Chrome browser. Per risultati migliori, per cortesia abilita le regioni CSS "
+"all'interno del browser. Per sapere come si fa puoi leggere qui <a href="
+"\"http://fiduswriter.com/2013/03/15/how-do-i-enable-page-views-in-fidus-"
+"writer/\" target=\"_blank\">here</a>.</p>\n"
+"        "
 
 #: account/templates/account/email_confirm.html:54
 msgid "Confirm"
-msgstr ""
+msgstr "Conferma"
 
 #: account/templates/account/email_confirm.html:62
 #, python-format
@@ -89,36 +116,41 @@ msgid ""
 "request</a>.\n"
 "        "
 msgstr ""
+"\n"
+"        Questa e-mail di conferma è scaduto o è invalido.\n"
+"        Per cortesia, <a href=\"%(email_url)s\">manda una nuova e-mail di "
+"conferma</a>.\n"
+"        "
 
 #: account/templates/account/list_team_members.html:8
 msgid "Team members"
-msgstr ""
+msgstr "Membri del team"
 
 #: account/templates/account/list_team_members.html:39
 msgid "Select action"
-msgstr ""
+msgstr "Scegli azione da compiere"
 
 #: account/templates/account/list_team_members.html:44
 #: bibliography/templates/bibliography/index.html:52
 #: book/templates/book/index.html:88 text/templates/text/index.html:73
 #: usermedia/templates/usermedia/index.html:41
 msgid "Delete selected"
-msgstr ""
+msgstr "Cancella selezionati"
 
 #: account/templates/account/list_team_members.html:52
 msgid "Add new contact"
-msgstr ""
+msgstr "Aggiungi un nuovo contatto"
 
 #: account/templates/account/list_team_members.html:62
 #: base/templates/base.html:120
 msgid "Contacts"
-msgstr ""
+msgstr "Contatti"
 
 #: account/templates/account/list_team_members.html:63
 #: account/templates/account/password_reset.html:29
 #: account/templates/account/signup.html:45
 msgid "E-mail address"
-msgstr ""
+msgstr "Indirizzi e-mail"
 
 #: account/templates/account/list_team_members.html:64
 #: account/templates/account/show_profile.html:88
@@ -126,27 +158,27 @@ msgstr ""
 #: book/templates/book/index.html:147 text/templates/text/index.html:132
 #: usermedia/templates/usermedia/index.html:84
 msgid "Delete"
-msgstr ""
+msgstr "Cancella"
 
 #: account/templates/account/login.html:8
 #: account/templates/account/password_reset.html:8
 msgid "New here?"
-msgstr ""
+msgstr "Nuovo da queste parti?"
 
 #: account/templates/account/login.html:10
 #: account/templates/account/password_reset.html:10
 #: account/templates/account/signup.html:14
 #: account/templates/account/signup.html:52
 msgid "Sign up"
-msgstr ""
+msgstr "Registrati"
 
 #: account/templates/account/login.html:28
 #: account/templates/account/login.html:75
 msgid "Log in"
-msgstr ""
+msgstr "Entra"
 
 #: account/templates/account/login.html:32
-#, python-format
+#, fuzzy, python-format
 msgid ""
 "\n"
 "        \n"
@@ -155,47 +187,53 @@ msgid ""
 "create an account.\n"
 "        "
 msgstr ""
+"\n"
+"        Puoi fare il login con uno dei tuoi esistenti account su servizi di "
+"terze parti o con il tuo  account di Fidus Writer.<br/>\n"
+"        Se sei nuovo da queste parti, per cortesia <a href=\"%(signup_url)s"
+"\" title=\"Registrati su %(site_name)s\">qua</a>.\n"
+"        "
 
 #: account/templates/account/login.html:45
 msgid "Login with"
-msgstr ""
+msgstr "Entra con"
 
 #: account/templates/account/login.html:64
 #: account/templates/account/show_profile.html:61
 #: account/templates/account/show_profile.html:139
 msgid "Username"
-msgstr ""
+msgstr "Nome Utente"
 
 #: account/templates/account/login.html:68
 #: account/templates/account/show_profile.html:73
 msgid "Password"
-msgstr ""
+msgstr "Password"
 
 #: account/templates/account/login.html:78
 msgid "Remember me"
-msgstr ""
+msgstr "Ricordami"
 
 #: account/templates/account/login.html:80
 msgid "Forgot Password?"
-msgstr ""
+msgstr "Hai dimenticato la Password?"
 
 #: account/templates/account/logout.html:6
 #: account/templates/account/logout.html:10
 #: account/templates/account/logout.html:20
 msgid "Sign Out"
-msgstr ""
+msgstr "Esci"
 
 #: account/templates/account/logout.html:12
 msgid "Are you sure you want to sign out?"
-msgstr ""
+msgstr "Sei sicuro di voler uscire?"
 
 #: account/templates/account/password_reset.html:7
 #: account/templates/account/password_reset.html:14
 msgid "Password reset"
-msgstr ""
+msgstr "Ripristina la password"
 
 #: account/templates/account/password_reset.html:15
-#, python-format
+#, fuzzy, python-format
 msgid ""
 "\n"
 "    <p>Forgotten your password? Enter your e-mail address below, and we'll "
@@ -204,66 +242,72 @@ msgid ""
 "\"mailto:%(CONTACT_EMAIL)s\">contact us</a>.</p>\n"
 "    "
 msgstr ""
+"\n"
+"    <p>Hai dimenticato la password? Inserisci il tuo indirizzo e-mail qua "
+"sotto, e ti manderemo una mail per resettare la password.</p>\n"
+"    <p>Se riscontri dei problemi nel ripristino della password, perfavore <a "
+"href=\"mailto:mail@fiduswriter.com\">contattaci</a>.</p>\n"
+"    "
 
 #: account/templates/account/password_reset.html:33
 msgid "Reset My Password"
-msgstr ""
+msgstr "Ripristina la Mia Password"
 
 #: account/templates/account/show_profile.html:40
 msgid "Edit profile picture"
-msgstr ""
+msgstr "Modifica l'immagine del profilo"
 
 #: account/templates/account/show_profile.html:46
 msgid "Change picture"
-msgstr ""
+msgstr "Cambia l'immagine"
 
 #: account/templates/account/show_profile.html:51
 msgid "Delete picture"
-msgstr ""
+msgstr "Elimina l'immagine"
 
 #: account/templates/account/show_profile.html:65
 #: account/templates/account/show_profile.html:143
 msgid "First name"
-msgstr ""
+msgstr "Nome"
 
 #: account/templates/account/show_profile.html:69
 #: account/templates/account/show_profile.html:147
 msgid "Last name"
-msgstr ""
+msgstr "Cognome"
 
 #: account/templates/account/show_profile.html:80
 #: account/templates/account/show_profile.html:151
 msgid "Email"
-msgstr ""
+msgstr "Email"
 
 #: account/templates/account/show_profile.html:86
 msgid "Primary address"
-msgstr ""
+msgstr "Indirizzo primario"
 
 #: account/templates/account/show_profile.html:87
 msgid "Verified"
-msgstr ""
+msgstr "Verificato"
 
 #: account/templates/account/show_profile.html:123
 #: beta/templates/beta/feedback.html:167
 msgid "submit"
-msgstr ""
+msgstr "invio"
 
 #: account/templates/account/show_profile.html:126
 msgid "Delete account"
-msgstr ""
+msgstr "Cancella account"
 
 #: account/templates/account/show_profile.html:165
 msgid "User does not exist."
-msgstr ""
+msgstr "L'utente non esiste."
 
 #: account/templates/account/signup.html:7
 msgid "Sign Up"
-msgstr ""
+msgstr "Registrati"
 
 #: account/templates/account/signup.html:8
 msgid "Already have an account"
-msgstr ""
+msgstr "Ho già un account."
 
 #: account/templates/account/signup.html:16
 #, python-format
@@ -273,32 +317,37 @@ msgid ""
 "\"Login to %(site_name)s\">login</a>.\n"
 "        "
 msgstr ""
+"\n"
+"        Possiedi già un account? Allora <a href=\"%(login_url)s\" title="
+"\"effettua il login %(site_name)s\">qua</a>.\n"
+"        "
 
 #: account/templates/account/signup.html:30
 msgid "Choose your username"
-msgstr ""
+msgstr "Scegli il tuo nome utente"
 
 #: account/templates/account/signup.html:35
 msgid "Create a password"
-msgstr ""
+msgstr "Crea la tua password"
 
 #: account/templates/account/signup.html:40
 msgid "Confirm your password"
-msgstr ""
+msgstr "Conferma la tua password"
 
 #: account/templates/account/signup_closed.html:6
 #: account/templates/account/signup_closed.html:10
 msgid "Sign Up Closed"
-msgstr ""
+msgstr "Registrazioni momentaneamente chisue"
 
 #: account/templates/account/signup_closed.html:11
 msgid "We are sorry, but the sign up is currently closed."
 msgstr ""
+"Ci dispiace un sacco, ma abbiamo temporaneamente chiuso le registrazioni."
 
 #: account/templates/account/verification_sent.html:5
 #: account/templates/account/verification_sent.html:9
 msgid "Verify Your E-mail Address"
-msgstr ""
+msgstr "Verifica il Tuo Indirizzo E-mail"
 
 #: account/templates/account/verification_sent.html:12
 #, python-format
@@ -311,6 +360,14 @@ msgid ""
 "        Please contact us if you do not receive it within a few minutes.\n"
 "        "
 msgstr ""
+"\n"
+"        Abbiamo mandato una mail a <a href=\"mailto:%(email)s\">%(email)s</"
+"a> per la verifica.\n"
+"        Segui il link che ti abbiamo mandato per finalizzare la "
+"registrazione.\n"
+"        <br />\n"
+"        Contattaci se non lo ricevi nel giro di qualche minuto.\n"
+"        "
 
 #: avatar/forms.py:34
 #, python-format
@@ -318,6 +375,8 @@ msgid ""
 "%(ext)s is an invalid file extension. Authorized extensions are : "
 "%(valid_exts_list)s"
 msgstr ""
+"%(ext)s è un tipo di file attualmente non supportato. I tipi di file "
+"supportati sono: %(valid_exts_list)s"
 
 #: avatar/forms.py:38
 #, python-format
@@ -325,6 +384,8 @@ msgid ""
 "Your file is too big (%(size)s), the maximum allowed size is "
 "%(max_valid_size)s"
 msgstr ""
+"Il tuo file è troppo grande! (%(size)s), Per ora puoi caricare file che "
+"arrivano ad un massimo di %(max_valid_size)s"
 
 #: avatar/forms.py:44
 #, python-format
@@ -332,43 +393,44 @@ msgid ""
 "You already have %(nb_avatars)d avatars, and the maximum allowed is "
 "%(nb_max_avatars)d."
 msgstr ""
+"Hai già creato %(nb_avatars)d avatars, ed il limite è di %(nb_max_avatars)d."
 
 #: avatar/models.py:76
 #, python-format
 msgid "Avatar for %s"
-msgstr ""
+msgstr "Avatar per %s"
 
 #: avatar/views.py:72
 msgid "Successfully uploaded a new avatar."
-msgstr ""
+msgstr "Nuovo avatar caricato con successo."
 
 #: avatar/views.py:109
 msgid "Successfully updated your avatar."
-msgstr ""
+msgstr "Avatar aggiornato con successo."
 
 #: avatar/views.py:145
 msgid "Successfully deleted the requested avatars."
-msgstr ""
+msgstr "Hai cancellato degli avatar con successo."
 
 #: avatar/templates/avatar/add.html:5 avatar/templates/avatar/change.html:5
 msgid "Your current avatar: "
-msgstr ""
+msgstr "Stai usando questo avatar: "
 
 #: avatar/templates/avatar/add.html:8 avatar/templates/avatar/change.html:8
 msgid "You haven't uploaded an avatar yet. Please upload one now."
-msgstr ""
+msgstr "Non hai ancora caricato nessun avatar. Caricane uno ora."
 
 #: avatar/templates/avatar/add.html:12 avatar/templates/avatar/change.html:19
 msgid "Upload New Image"
-msgstr ""
+msgstr "Carica una Nuova Immagine"
 
 #: avatar/templates/avatar/change.html:14
 msgid "Choose new Default"
-msgstr ""
+msgstr "Scegli un nuovo Default"
 
 #: avatar/templates/avatar/confirm_delete.html:5
 msgid "Please select the avatars that you would like to delete."
-msgstr ""
+msgstr "Seleziona degli avatar che vorresti cancellare."
 
 #: avatar/templates/avatar/confirm_delete.html:8
 #, python-format
@@ -376,10 +438,12 @@ msgid ""
 "You have no avatars to delete. Please <a href=\"%(avatar_change_url)s"
 "\">upload one</a> now."
 msgstr ""
+"Non hai nessun avatar da cancellare. Per cortesia <a href="
+"\"%(avatar_change_url)s\">caricane uno</a> ora."
 
 #: avatar/templates/avatar/confirm_delete.html:14
 msgid "Delete These"
-msgstr ""
+msgstr "Cancella Questi"
 
 #: avatar/templates/notification/avatar_friend_updated/full.txt:1
 #, python-format
@@ -388,6 +452,9 @@ msgid ""
 "\n"
 "http://%(current_site)s%(avatar_url)s\n"
 msgstr ""
+"%(avatar_creator)s ha aggiornato il proprio avatar %(avatar)s.\n"
+"\n"
+"http://%(current_site)s%(avatar_url)s\n"
 
 #: avatar/templates/notification/avatar_friend_updated/notice.html:2
 #, python-format
@@ -395,6 +462,8 @@ msgid ""
 "<a href=\"%(user_url)s\">%(avatar_creator)s</a> has updated their avatar <a "
 "href=\"%(avatar_url)s\">%(avatar)s</a>."
 msgstr ""
+"<a href=\"%(user_url)s\">%(avatar_creator)s</a> ha aggiornato il proprio "
+"avatar <a href=\"%(avatar_url)s\">%(avatar)s</a>."
 
 #: avatar/templates/notification/avatar_updated/full.txt:1
 #, python-format
@@ -403,144 +472,152 @@ msgid ""
 "\n"
 "http://%(current_site)s%(avatar_url)s\n"
 msgstr ""
+"Il tuo avatar è stato aggiornato.  %(avatar)s\n"
+"\n"
+"http://%(current_site)s%(avatar_url)s\n"
 
 #: avatar/templates/notification/avatar_updated/notice.html:2
 #, python-format
 msgid "You have updated your avatar <a href=\"%(avatar_url)s\">%(avatar)s</a>."
 msgstr ""
+"Hai aggiornato il tuo avatar <a href=\"%(avatar_url)s\">%(avatar)s</a>."
 
 #: avatar/templatetags/avatar_tags.py:48
 msgid "Default Avatar"
-msgstr ""
+msgstr "Avatar di Default"
 
 #: base/templates/base.html:84
 msgid "edit documents"
-msgstr ""
+msgstr "modifica documenti"
 
 #: base/templates/base.html:85
 msgid "Documents"
-msgstr ""
+msgstr "Documenti"
 
 #: base/templates/base.html:89
 msgid "manage bibliography library"
-msgstr ""
+msgstr "gestisci la libreria bibliografica"
 
 #: base/templates/base.html:90
 msgid "Bibliography"
-msgstr ""
+msgstr "Bibliografia"
 
 #: base/templates/base.html:94
 msgid "manage image files"
-msgstr ""
+msgstr "gestisci i file immagine"
 
 #: base/templates/base.html:95
 msgid "Images"
-msgstr ""
+msgstr "Immagini"
 
 #: base/templates/base.html:99
 msgid "compose books"
-msgstr ""
+msgstr "componi libri"
 
 #: base/templates/base.html:100
 msgid "Books"
-msgstr ""
+msgstr "Libri"
 
 #: base/templates/base.html:115
 msgid "Edit profile"
-msgstr ""
+msgstr "Modifica profilo"
 
 #: base/templates/base.html:126
 msgid "Log out"
-msgstr ""
+msgstr "Esci"
 
 #: base/templates/footer.html:7
 msgid "Terms and Conditions"
-msgstr ""
+msgstr "Termini e Condizioni"
 
 #: base/templates/footer.html:12
 msgid "Equations and Math by mathjax"
-msgstr ""
+msgstr "Equazioni e matematica by mathjax"
 
 #: base/templates/footer.html:17
 msgid "Citations with Citation Style Language"
-msgstr ""
+msgstr "Citazioni con Linguaggio Stile di Citazione"
 
 #: base/templates/footer.html:22
 msgid "Requires Chrome/enable css regions"
-msgstr ""
+msgstr "Richiede Chrome/enable css regions"
 
 #: beta/templates/beta/browser.html:7
 msgid "Browser check"
-msgstr ""
+msgstr "Controllo Browser"
 
 #: beta/templates/beta/browser.html:11
 msgid "Hey there!"
-msgstr ""
+msgstr "Hey!"
 
 #: beta/templates/beta/browser.html:12
+#, fuzzy
 msgid ""
 "Unfortunately, Fidus Writer currently only works on Google Chrome (29+) and "
 "Apple Safari (6.1+). We hope to provide support for Mozilla Firefox in the "
 "future."
 msgstr ""
+"Sfortunatamente, Fidus Writer può girare solo su Google Chrome. Stiamo "
+"lavorando sodo per fornire la compatibilità anche su Mozilla Firefox."
 
 #: beta/templates/beta/feedback.html:159 beta/templates/beta/feedback.html:162
 msgid "Feedback"
-msgstr ""
+msgstr "Feedback"
 
 #: beta/templates/beta/feedback.html:171
 msgid "Thank you for your comment!"
-msgstr ""
+msgstr "Grazie per il commento!"
 
 #: bibliography/templates/bibliography/index.html:5
 msgid "Bibliography Manager"
-msgstr ""
+msgstr "Gestisci Bibliografia"
 
 #: bibliography/templates/bibliography/index.html:57
 msgid "Export selected"
-msgstr ""
+msgstr "Esporta selezionati"
 
 #: bibliography/templates/bibliography/index.html:66
 #: bibliography/templates/bibliography/index.html:73
 #: usermedia/templates/usermedia/index.html:50
 #: usermedia/templates/usermedia/index.html:57
 msgid "All categories"
-msgstr ""
+msgstr "Tutte le categorie"
 
 #: bibliography/templates/bibliography/index.html:81
 #: usermedia/templates/usermedia/index.html:65
 msgid "Edit categories"
-msgstr ""
+msgstr "Modifica le categorie"
 
 #: bibliography/templates/bibliography/index.html:87
 msgid "Register new source"
-msgstr ""
+msgstr "Registra una nuova fonte"
 
 #: bibliography/templates/bibliography/index.html:93
 msgid "Import Bibtex Library"
-msgstr ""
+msgstr "Importa Libreria Bibtex"
 
 #: bibliography/templates/bibliography/index.html:103
 #: book/templates/book/index.html:142 text/templates/text/editor.html:38
 #: text/templates/text/index.html:127
 msgid "Title"
-msgstr ""
+msgstr "Titolo"
 
 #: bibliography/templates/bibliography/index.html:104
 msgid "Sourcetype"
-msgstr ""
+msgstr "Tipologia di Fonte"
 
 #: bibliography/templates/bibliography/index.html:105
 msgid "Author"
-msgstr ""
+msgstr "Autore"
 
 #: bibliography/templates/bibliography/index.html:106
 msgid "Published"
-msgstr ""
+msgstr "Pubblicato"
 
 #: book/views.py:299 text/views.py:176
+#, fuzzy
 msgid "Untitled"
-msgstr ""
+msgstr "Sottotitolo"
 
 #: book/views.py:304
 #, python-format
@@ -570,71 +647,71 @@ msgstr ""
 
 #: book/templates/book/index.html:6
 msgid "Book Overview"
-msgstr ""
+msgstr "Panoramica del Libro"
 
 #: book/templates/book/index.html:93 text/templates/text/index.html:78
 msgid "Share selected"
-msgstr ""
+msgstr "Condividi selezionati"
 
 #: book/templates/book/index.html:98 text/templates/text/index.html:83
 msgid "Copy selected"
-msgstr ""
+msgstr "Copia selezionati"
 
 #: book/templates/book/index.html:103 text/templates/text/index.html:88
 msgid "Export selected as Epub"
-msgstr ""
+msgstr "Esporta selezionati in Epub"
 
 #: book/templates/book/index.html:108 text/templates/text/index.html:93
 msgid "Export selected as HTML"
-msgstr ""
+msgstr "Esporta selezionati in HTML"
 
 #: book/templates/book/index.html:113 text/templates/text/index.html:98
 msgid "Export selected as LaTeX"
-msgstr ""
+msgstr "Esporta selezionati in LaTeX"
 
 #: book/templates/book/index.html:118
 msgid "Export selected for Print/PDF"
-msgstr ""
+msgstr "Esporta selezionati per la stampa o PDF"
 
 #: book/templates/book/index.html:126
 msgid "Create New Book"
-msgstr ""
+msgstr "Crea Nuovo Libro"
 
 #: book/templates/book/index.html:132
 msgid "Upload Fidus Book"
-msgstr ""
+msgstr "Carica un Libro Fidus"
 
 #: book/templates/book/index.html:143 text/templates/text/index.html:128
 msgid "Created"
-msgstr ""
+msgstr "Creato"
 
 #: book/templates/book/index.html:144 text/templates/text/index.html:129
 msgid "Last changed"
-msgstr ""
+msgstr "Ultimi cambiamenti"
 
 #: book/templates/book/index.html:145 text/templates/text/index.html:130
 msgid "Owner"
-msgstr ""
+msgstr "Proprietario"
 
 #: book/templates/book/index.html:146 text/templates/text/index.html:131
 msgid "Rights"
-msgstr ""
+msgstr "Diritti"
 
 #: fiduswriter/settings.py:248
 msgid "English"
-msgstr ""
+msgstr "Inglese"
 
 #: fiduswriter/settings.py:249
 msgid "Spanish"
-msgstr ""
+msgstr "Spagnolo"
 
 #: fiduswriter/settings.py:250
 msgid "German"
-msgstr ""
+msgstr "Tedesco"
 
 #: fiduswriter/settings.py:251
 msgid "Bulgarian"
-msgstr ""
+msgstr "Bulgaro"
 
 #: text/views.py:181
 #, python-format
@@ -646,8 +723,9 @@ msgid ""
 msgstr ""
 
 #: text/views.py:182
+#, fuzzy
 msgid "Document shared:"
-msgstr ""
+msgstr "Documenti"
 
 #: text/views.py:192
 #, python-format
@@ -663,170 +741,173 @@ msgstr ""
 
 #: text/templates/text/editor.html:34
 msgid "Contents"
-msgstr ""
+msgstr "Contenuti"
 
 #: text/templates/text/editor.html:41 text/templates/text/editor.html:437
 msgid "Subtitle"
-msgstr ""
+msgstr "Sottotitolo"
 
 #: text/templates/text/editor.html:44 text/templates/text/editor.html:440
 msgid "Abstract"
-msgstr ""
+msgstr "Abstract"
 
 #: text/templates/text/editor.html:320
 msgid "en"
-msgstr ""
+msgstr "en"
 
 #: text/templates/text/editor.html:324 text/templates/text/editor.html:336
 msgid "Close the document and return to the document overview menu."
-msgstr ""
+msgstr "Chiudi il documento e torna alla panoramica del documento"
 
 #: text/templates/text/editor.html:329
 msgid "File handling"
-msgstr ""
+msgstr "Gestione File"
 
 #: text/templates/text/editor.html:329
 #: usermedia/templates/usermedia/index.html:81
 msgid "File"
-msgstr ""
+msgstr "File"
 
 #: text/templates/text/editor.html:333
 msgid "Share the document with other users."
-msgstr ""
+msgstr "Condividi il documento con altri utenti."
 
 #: text/templates/text/editor.html:333
 msgid "Share"
-msgstr ""
+msgstr "Condividi"
 
 #: text/templates/text/editor.html:336
 msgid "Close"
-msgstr ""
+msgstr "Chiudi"
 
 #: text/templates/text/editor.html:339
 msgid "Save the current document"
-msgstr ""
+msgstr "Salva il documento corrente"
 
 #: text/templates/text/editor.html:339
 msgid "Save"
-msgstr ""
+msgstr "Salva"
 
 #: text/templates/text/editor.html:342
 msgid "Save copy of the current document"
-msgstr ""
+msgstr "Salva una copira del documento corrente"
 
 #: text/templates/text/editor.html:342
 msgid "Save copy"
-msgstr ""
+msgstr "Salva copia"
 
 #: text/templates/text/editor.html:345
 msgid "Download the current document"
-msgstr ""
+msgstr "Scarica il docuemnto corrente"
 
 #: text/templates/text/editor.html:345
 msgid "Download"
-msgstr ""
+msgstr "Scarica"
 
 #: text/templates/text/editor.html:348
 msgid "Either print or create a PDF using your browser's print dialog"
-msgstr ""
+msgstr "Stampa o crea PDF usando la finestra di dialogo del tuo browser"
 
 #: text/templates/text/editor.html:348
 msgid "Print/PDF"
-msgstr ""
+msgstr "Stampa/PDF"
 
 #: text/templates/text/editor.html:354
 msgid "Export of the document contents"
-msgstr ""
+msgstr "Esporta i contenuti del documento"
 
 #: text/templates/text/editor.html:354
 msgid "Export"
-msgstr ""
+msgstr "Esporta"
 
 #: text/templates/text/editor.html:358
 msgid "Export the document to an HTML file"
-msgstr ""
+msgstr "Esporta il documento in un file HTML"
 
 #: text/templates/text/editor.html:363
 msgid "Export the document to an Epub electronic reader file."
-msgstr ""
+msgstr "Esporta il documento in un file Epub electronic reader file."
 
 #: text/templates/text/editor.html:368
 msgid ""
 "Export the document to a Latex file. This will also attach a BibTex file if "
 "you are using citations."
 msgstr ""
+"Esporta il documento in un file Latex. Questo sarà allegato ad un file "
+"BibTex sestai usando citazioni."
 
 #: text/templates/text/editor.html:376
 msgid "Choose your preferred citation style."
-msgstr ""
+msgstr "Seleziona lo stile di citazione che preferisci"
 
 #: text/templates/text/editor.html:376
 msgid "Citation Style"
-msgstr ""
+msgstr "Stile di Citazione"
 
 #: text/templates/text/editor.html:380
 msgid "American Psychological Association."
-msgstr ""
+msgstr "American Psychological Association."
 
 #: text/templates/text/editor.html:380
 msgid "APA"
-msgstr ""
+msgstr "APA"
 
 #: text/templates/text/editor.html:383
 msgid "The author-date variant of the Chicago style"
-msgstr ""
+msgstr "The author-date variant of the Chicago style"
 
 #: text/templates/text/editor.html:383
 msgid "Chicago (Author-Date)"
-msgstr ""
+msgstr "Chicago (Author-Date)"
 
 #: text/templates/text/editor.html:386
+#, fuzzy
 msgid "Chicago format with short notes and full bibliography"
-msgstr ""
+msgstr "Chicago (Note con Bibliografia)"
 
 #: text/templates/text/editor.html:386
 msgid "Chicago (Note with Bibliography)"
-msgstr ""
+msgstr "Chicago (Note con Bibliografia)"
 
 #: text/templates/text/editor.html:389
 msgid "The Harvard author-date style"
-msgstr ""
+msgstr "The Harvard author-date style"
 
 #: text/templates/text/editor.html:389
 msgid "Harvard"
-msgstr ""
+msgstr "Harvard"
 
 #: text/templates/text/editor.html:392
 msgid "Modern Language Association"
-msgstr ""
+msgstr "Modern Language Association"
 
 #: text/templates/text/editor.html:392
 msgid "MLA"
-msgstr ""
+msgstr "MLA"
 
 #: text/templates/text/editor.html:398
 msgid "Choose a document style"
-msgstr ""
+msgstr "Seleziona uno stile di documento"
 
 #: text/templates/text/editor.html:398
 msgid "Document Style"
-msgstr ""
+msgstr "Stile Documento"
 
 #: text/templates/text/editor.html:402
 msgid "Elephant"
-msgstr ""
+msgstr "Elephant"
 
 #: text/templates/text/editor.html:403
 msgid "Comfy Elephant"
-msgstr ""
+msgstr "Comfy Elephant"
 
 #: text/templates/text/editor.html:407
 msgid "Owl"
-msgstr ""
+msgstr "Owl"
 
 #: text/templates/text/editor.html:408
 msgid "Drowsy Owl"
-msgstr ""
+msgstr "Drowsy Owl"
 
 #: text/templates/text/editor.html:412
 msgid "Fox"
@@ -834,140 +915,143 @@ msgstr ""
 
 #: text/templates/text/editor.html:413
 msgid "Foxy Fox"
-msgstr ""
+msgstr "Fox"
 
 #: text/templates/text/editor.html:420
 msgid "Choose a papersize for printing and PDF generation."
-msgstr ""
+msgstr "Seleziona un formato di stampa e generazione di PDF"
 
 #: text/templates/text/editor.html:420
 msgid "Paper Size"
-msgstr ""
+msgstr "Dimensione Carta"
 
 #: text/templates/text/editor.html:424
 msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
-msgstr ""
+msgstr "A4 (DIN A4/ISO 216) usato nella maggior parte del mondo."
 
 #: text/templates/text/editor.html:424
 msgid "DIN A4"
-msgstr ""
+msgstr "DIN A4"
 
 #: text/templates/text/editor.html:427
 msgid "The format used by the USA and some other American countries."
-msgstr ""
+msgstr "Il formato usato negli USA e in altri paesi Americani."
 
 #: text/templates/text/editor.html:427
 msgid "US Letter"
-msgstr ""
+msgstr "US Letter"
 
 #: text/templates/text/editor.html:433
 msgid "Choose which metadata to enable."
-msgstr ""
+msgstr "Seleziona i metadati da attivare."
 
 #: text/templates/text/editor.html:433
 msgid "Metadata"
-msgstr ""
+msgstr "Metadati"
 
 #: text/templates/text/editor.html:437
 msgid "Define a subtitle in addition to the title of the document."
-msgstr ""
+msgstr "Definisci un sottotitolo in aggiunta al titolo del documento."
 
 #: text/templates/text/editor.html:440
 msgid "Add an abstract to the document."
-msgstr ""
+msgstr "Aggiungi un abstract al docuemnto."
 
 #: text/templates/text/editor.html:446
 msgid "Tools"
-msgstr ""
+msgstr "Strumenti"
 
 #: text/templates/text/editor.html:450 text/templates/text/editor.html:451
 msgid "Word counter"
-msgstr ""
+msgstr "Conteggio parole"
 
 #: text/templates/text/editor.html:462
 msgid "Show/hide the top menu."
-msgstr ""
+msgstr "Mostra/Nascondi il menu superiore."
 
 #: text/templates/text/editor.html:466
 msgid "Handle tracking of changes."
-msgstr ""
+msgstr "Gestisci lo storico dei cambiamenti"
 
 #: text/templates/text/editor.html:467
 msgid "Changes"
-msgstr ""
+msgstr "Cambiamenti"
 
 #: text/templates/text/editor.html:472
 msgid "Turn tracking of changes on."
-msgstr ""
+msgstr "Abilità il monitoraggio dei cambiamenti."
 
 #: text/templates/text/editor.html:472
 msgid "Track"
-msgstr ""
+msgstr "Monitora"
 
 #: text/templates/text/editor.html:475
 msgid "Show all changes that have been tracked in the entire document."
 msgstr ""
+"Mostra tutti i cambiamenti che sono stai monitorati nell'intero documento."
 
 #: text/templates/text/editor.html:475
 msgid "Show"
-msgstr ""
+msgstr "Mostra"
 
 #: text/templates/text/editor.html:478
 msgid "Accept all changes that have been tracked in the entire document."
 msgstr ""
+"Accetta tutti i cambiamenti che sono stati monitorati nell'intero documento."
 
 #: text/templates/text/editor.html:478
 msgid "Accept all"
-msgstr ""
+msgstr "Accetta tutto"
 
 #: text/templates/text/editor.html:481
 msgid "Reject all changes that have been tracked in the entire document."
 msgstr ""
+"Rifiuta tutti i cambiamenti che sono stati monitorati nell'intero documento."
 
 #: text/templates/text/editor.html:481
 msgid "Reject all"
-msgstr ""
+msgstr "Rifiuta tutto"
 
 #: text/templates/text/editor.html:486
 msgid "Show/hide comments"
-msgstr ""
+msgstr "Mostra/Nascondi i commenti"
 
 #: text/templates/text/editor.html:487
 msgid "Comments"
-msgstr ""
+msgstr "Commenti"
 
 #: text/templates/text/editor.html:494
 msgid "The title of the document"
-msgstr ""
+msgstr "Il titolo del docuemnto"
 
 #: text/templates/text/index.html:6
 msgid "Document Overview"
-msgstr ""
+msgstr "Panoramica Documento"
 
 #: text/templates/text/index.html:103
 msgid "Download selected as Fidus Document"
-msgstr ""
+msgstr "Scarica i selezionati come Documenti Fidus"
 
 #: text/templates/text/index.html:111
 msgid "Create New Document"
-msgstr ""
+msgstr "Crea Nuovo Documento"
 
 #: text/templates/text/index.html:117
 msgid "Upload Fidus Document"
-msgstr ""
+msgstr "Carica Documento Fidus"
 
 #: usermedia/templates/usermedia/index.html:5
 msgid "Media Manager"
-msgstr ""
+msgstr "Gestisci File multimediali"
 
 #: usermedia/templates/usermedia/index.html:71
 msgid "Upload new image"
-msgstr ""
+msgstr "Carica una nuova immagine"
 
 #: usermedia/templates/usermedia/index.html:82
 msgid "Size (px)"
-msgstr ""
+msgstr "Dimensione (px)"
 
 #: usermedia/templates/usermedia/index.html:83
 msgid "Updated"
-msgstr ""
+msgstr "Aggiornamento effettuato!"

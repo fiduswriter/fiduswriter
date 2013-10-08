@@ -50,7 +50,9 @@
     </div>
         {% include "socialaccount/snippets/login_extra.html" %}
     {% else %}
+        {% blocktrans with site.name as site_name %}
         <p>If you are new here, please <a href="{{signup_url}}" title="Sign up for {{site_name}}">sign up</a>.</p>
+        {% endblocktrans %}
     {% endif %}
 {% else %}
     {% include "account/snippets/already_logged_in.html" %}

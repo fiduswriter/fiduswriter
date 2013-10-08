@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-08 04:07-0500\n"
+"POT-Creation-Date: 2013-10-08 04:34-0500\n"
 "PO-Revision-Date: 2013-02-24 10:03-0600\n"
 "Last-Translator: Daniel Frebel <daniel@fiduswriter.com>\n"
 "Language-Team: German <daniel@fiduswriter.com>\n"
@@ -169,7 +169,7 @@ msgid "Sign up"
 msgstr "Registrieren"
 
 #: account/templates/account/login.html:28
-#: account/templates/account/login.html:75
+#: account/templates/account/login.html:77
 msgid "Log in"
 msgstr "Anmelden"
 
@@ -194,22 +194,37 @@ msgstr ""
 msgid "Login with"
 msgstr "Anmelden mit"
 
-#: account/templates/account/login.html:64
+#: account/templates/account/login.html:53
+#, fuzzy, python-format
+msgid ""
+"\n"
+"        <p>If you are new here, please <a href=\"%(signup_url)s\" title="
+"\"Sign up for %(site_name)s\">sign up</a>.</p>\n"
+"        "
+msgstr ""
+"\n"
+"        Bitte melde dich mit einem deiner externen Konten oder deinem Fidus "
+"Writer Konto an.<br/>\n"
+"        Neu hier? Einfach kostenfrei ein neues <a href=\"%(signup_url)s\" "
+"title=\"Sign up for %(site_name)s\">Konto erstellen</a>.\n"
+"        "
+
+#: account/templates/account/login.html:66
 #: account/templates/account/show_profile.html:61
 #: account/templates/account/show_profile.html:139
 msgid "Username"
 msgstr "Nutzername"
 
-#: account/templates/account/login.html:68
+#: account/templates/account/login.html:70
 #: account/templates/account/show_profile.html:73
 msgid "Password"
 msgstr "Kennwort"
 
-#: account/templates/account/login.html:78
+#: account/templates/account/login.html:80
 msgid "Remember me"
 msgstr "Angemeldet bleiben"
 
-#: account/templates/account/login.html:80
+#: account/templates/account/login.html:82
 msgid "Forgot Password?"
 msgstr "Kennwort vergessen?"
 
@@ -689,16 +704,20 @@ msgid "English"
 msgstr "Englisch"
 
 #: fiduswriter/settings.py:249
-msgid "Spanish"
-msgstr "Spanisch"
+msgid "Bulgarian"
+msgstr "Bulgarisch"
 
 #: fiduswriter/settings.py:250
 msgid "German"
 msgstr "Deutsch"
 
 #: fiduswriter/settings.py:251
-msgid "Bulgarian"
-msgstr "Bulgarisch"
+msgid "Italian"
+msgstr ""
+
+#: fiduswriter/settings.py:252
+msgid "Spanish"
+msgstr "Spanisch"
 
 #: text/views.py:181
 #, python-format

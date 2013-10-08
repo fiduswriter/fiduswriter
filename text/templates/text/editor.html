@@ -11,14 +11,17 @@
             var mathjaxZipUrl = '{{ STATIC_URL }}zip/mathjax.zip';
             var staticUrl = '{{ STATIC_URL }}';
 
-            var isChrome = false;
+            var isChromeOrSafari = false;
 
             if(window.chrome) {
-                isChrome = true;
+                isChromeOrSafari = true;
             // We are on Chrome
+            } else if (navigator.userAgent.indexOf('Safari/') > -1 && parseFloat(navigator.userAgent.match(/version\/([\.\d]+)/i)[1]) > 6) {
+                isChromeOrSafari = true;
+            // We are on Safari 6.1 or higher
             }
 
-           if(!(isChrome)) {
+            if(!(isChromeOrSafari)) {
                 var currentURL = location.href.substr(7);
                 var currentRelativeURL = currentURL.substr(currentURL.indexOf('/'));
                 if(currentRelativeURL != '/beta/browser/') {

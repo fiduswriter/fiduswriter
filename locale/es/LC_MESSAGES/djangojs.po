@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-26 08:08-0500\n"
+"POT-Creation-Date: 2013-10-08 03:47-0500\n"
 "PO-Revision-Date: 2013-03-03 12:18-0700\n"
 "Last-Translator: Ana Vera Resquín <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
@@ -57,13 +57,13 @@ msgstr "Añadir un usuario a tu lista de contactos"
 #: account/static/js/contact-helpers.js:99
 #: account/static/js/show_profile.js:169 account/static/js/show_profile.js:239
 #: account/static/js/show_profile.js:355
-#: bibliography/static/js/bibliography-helpers.js:710
-#: bibliography/static/js/bibliography-helpers.js:841
-#: book/static/js/book-helpers.js:238 book/static/js/book-helpers.js.c:636
+#: bibliography/static/js/bibliography-helpers.js:717
+#: bibliography/static/js/bibliography-helpers.js:848
+#: book/static/js/book-helpers.js:235 book/static/js/book-helpers.js.c:633
 #: book/static/js/bookaccessrights-helpers.js:71
 #: text/static/js/accessrights-helpers.js:82
-#: text/static/js/comment-templates.js:37
-#: text/static/js/comment-templates.js:78
+#: text/static/js/comment-templates.js:40
+#: text/static/js/comment-templates.js:133
 #: usermedia/static/js/usermedia-helpers.js:130
 msgid "Submit"
 msgstr "Añadir"
@@ -74,21 +74,22 @@ msgstr "Añadir"
 #: account/static/js/show_profile.js:151 account/static/js/show_profile.js:220
 #: account/static/js/show_profile.js:276 account/static/js/show_profile.js:328
 #: account/static/js/show_profile.js:385
-#: bibliography/static/js/bibliography-helpers.js:731
-#: bibliography/static/js/bibliography-helpers.js:846
-#: bibliography/static/js/bibliography-helpers.js:1428
-#: bibliography/static/js/bibliography-helpers.js:1518
-#: book/static/js/book-helpers.js:97 book/static/js/book-helpers.js.c:245
-#: book/static/js/book-helpers.js:642 book/static/js/book-templates.js:249
+#: bibliography/static/js/bibliography-helpers.js:738
+#: bibliography/static/js/bibliography-helpers.js:853
+#: bibliography/static/js/bibliography-helpers.js:1435
+#: bibliography/static/js/bibliography-helpers.js:1558
+#: book/static/js/book-helpers.js:97 book/static/js/book-helpers.js.c:242
+#: book/static/js/book-helpers.js:639 book/static/js/book-templates.js:249
 #: book/static/js/bookaccessrights-helpers.js:84
 #: text/static/js/accessrights-helpers.js:95
-#: text/static/js/comment-templates.js:38
-#: text/static/js/comment-templates.js:59
-#: text/static/js/comment-templates.js:79
+#: text/static/js/comment-templates.js:43
+#: text/static/js/comment-templates.js:70
+#: text/static/js/comment-templates.js:101
+#: text/static/js/comment-templates.js:136
 #: text/static/js/document-helpers.js:61
 #: text/static/js/document-helpers.js:109
 #: text/static/js/texteditor-template-dialogs.js:185
-#: text/static/js/toolbar/cite.js:227
+#: text/static/js/toolbar/cite.js:228
 #: usermedia/static/js/usermedia-helpers.js:152
 #: usermedia/static/js/usermedia-helpers.js:264
 #: usermedia/static/js/usermedia-helpers.js:355
@@ -98,7 +99,7 @@ msgstr "Cancelar"
 #: account/static/js/contact-helpers.js:138
 #: account/static/js/profile-templates.js:2
 #: account/static/js/profile-templates.js:16
-#: bibliography/static/js/bibliography-helpers.js:1421
+#: bibliography/static/js/bibliography-helpers.js:1428
 #: book/static/js/book-helpers.js:85 text/static/js/document-helpers.js:48
 #: usermedia/static/js/usermedia-helpers.js:347
 msgid "Confirm deletion"
@@ -110,10 +111,11 @@ msgstr "Borrar de tus contactos"
 
 #: account/static/js/contact-helpers.js:140
 #: account/static/js/show_profile.js:90 account/static/js/show_profile.js:144
-#: bibliography/static/js/bibliography-helpers.js:1424
+#: bibliography/static/js/bibliography-helpers.js:1431
 #: book/static/js/book-helpers.js:89
 #: book/static/js/book-template-dialogs.js:44
-#: book/static/js/book-templates.js:293 text/static/js/comment-templates.js:65
+#: book/static/js/book-templates.js:293 text/static/js/comment-templates.js:80
+#: text/static/js/comment-templates.js:115
 #: text/static/js/document-helpers.js:52
 #: text/static/js/text-template-dialogs.js:37
 #: text/static/js/texteditor-template-dialogs.js:65
@@ -140,7 +142,7 @@ msgstr "Subir tu imagen de perfil"
 
 #: account/static/js/profile-templates.js:9
 #: bibliography/static/js/bibliography-template-dialogs.js:45
-#: book/static/js/book-templates.js:73 text/static/js/document-templates.js:76
+#: book/static/js/book-templates.js:73 text/static/js/document-templates.js:73
 #: usermedia/static/js/usermedia-template-dialogs.js:85
 msgid "Select a file"
 msgstr "Selecciona un archivo "
@@ -249,60 +251,64 @@ msgstr "Esta página está bloqueada por <em>%(for_user)s"
 msgid "Your lock on this page is expired!"
 msgstr "¡Tu tiempo en esta pagina ha expirado!"
 
-#: bibliography/static/js/bibliography-helpers.js:624
+#: bibliography/static/js/bibliography-helpers.js:631
 msgid "The bibliography has been updated"
 msgstr "La bibliografía ha sido actualizada"
 
-#: bibliography/static/js/bibliography-helpers.js:627
+#: bibliography/static/js/bibliography-helpers.js:634
 #: usermedia/static/js/usermedia-helpers.js:42
 msgid "Some errors are found. Please examine the form."
 msgstr "Encontramos algunos errores. Por favor examina el formulario."
 
-#: bibliography/static/js/bibliography-helpers.js:673
+#: bibliography/static/js/bibliography-helpers.js:680
 #: usermedia/static/js/usermedia-helpers.js:93
 msgid "The categories have been updated"
 msgstr "Las categorías han sido actualizadas"
 
-#: bibliography/static/js/bibliography-helpers.js:701
+#: bibliography/static/js/bibliography-helpers.js:708
 #: usermedia/static/js/usermedia-helpers.js:121
 msgid "Edit Categories"
 msgstr "Editar Categorías"
 
-#: bibliography/static/js/bibliography-helpers.js:758
+#: bibliography/static/js/bibliography-helpers.js:765
 msgid "Register New Source"
 msgstr "Registra Nueva Fuente"
 
-#: bibliography/static/js/bibliography-helpers.js:765
+#: bibliography/static/js/bibliography-helpers.js:772
 msgid "Edit Source"
 msgstr "Edita Fuente"
 
-#: bibliography/static/js/bibliography-helpers.js:791
+#: bibliography/static/js/bibliography-helpers.js:798
 msgid "Select source type"
 msgstr "Escoge tipo de fuente"
 
-#: bibliography/static/js/bibliography-helpers.js:811
+#: bibliography/static/js/bibliography-helpers.js:818
 msgid "Categories"
 msgstr "Categorías"
 
-#: bibliography/static/js/bibliography-helpers.js:1408
+#: bibliography/static/js/bibliography-helpers.js:1415
 msgid "The bibliography item(s) have been deleted"
 msgstr "El/los artículo(s) seleccionados han sido borrados de bibliografía"
 
-#: bibliography/static/js/bibliography-helpers.js:1422
+#: bibliography/static/js/bibliography-helpers.js:1429
 msgid "Delete the bibliography item(s)"
 msgstr "Borrar el/los artículo(s) de la bibliografía"
 
-#: bibliography/static/js/bibliography-helpers.js:1498
+#: bibliography/static/js/bibliography-helpers.js:1473
+msgid "No bibliography entries could be found in import file."
+msgstr ""
+
+#: bibliography/static/js/bibliography-helpers.js:1538
 #: text/static/js/document-helpers.js:87
 msgid "Import"
 msgstr "Importar"
 
-#: bibliography/static/js/bibliography-helpers.js:1546
+#: bibliography/static/js/bibliography-helpers.js:1586
 msgid " and others"
 msgstr " y otros"
 
-#: bibliography/static/js/bibliography-helpers.js:1696
-#: text/static/js/toolbar/cite.js:248
+#: bibliography/static/js/bibliography-helpers.js:1765
+#: text/static/js/toolbar/cite.js:249
 msgid "Search for Bibliography"
 msgstr "Buscar por Bibliografía"
 
@@ -637,7 +643,7 @@ msgstr "Subtítulo"
 
 #: bibliography/static/js/bibliography-statics.js:844
 #: book/static/js/book-templates.js:82 book/static/js/book-templates.js:218
-#: book/static/js/book-templates.js:291 book/static/js/book-templates.js:501
+#: book/static/js/book-templates.js:291 book/static/js/book-templates.js:496
 #: text/static/js/texteditor-template-dialogs.js:27
 #: text/static/js/texteditor-template-dialogs.js:63
 #: text/static/js/texteditor-template-dialogs.js:170
@@ -828,35 +834,43 @@ msgstr "Campos Opcionales"
 msgid "Extras"
 msgstr "Extras"
 
-#: bibliography/static/js/bibliography-template-dialogs.js:181
+#: bibliography/static/js/bibliography-template-dialogs.js:100
+#: bibliography/static/js/bibliography-template-dialogs.js:108
+#: book/static/js/book-helpers.js:224 book/static/js/book-templates.js:40
+#: book/static/js/book-templates.js:316 book/static/js/book-templates.js:353
+#: text/static/js/document-templates.js:25
+msgid "Untitled"
+msgstr "Sin título"
+
+#: bibliography/static/js/bibliography-template-dialogs.js:189
 msgid "First Name"
 msgstr "Nombre"
 
-#: bibliography/static/js/bibliography-template-dialogs.js:182
+#: bibliography/static/js/bibliography-template-dialogs.js:190
 msgid "Last Name"
 msgstr "Apellido"
 
-#: bibliography/static/js/bibliography-template-dialogs.js:212
+#: bibliography/static/js/bibliography-template-dialogs.js:220
 msgid "Year"
 msgstr "Año"
 
-#: bibliography/static/js/bibliography-template-dialogs.js:213
+#: bibliography/static/js/bibliography-template-dialogs.js:221
 msgid "Year - Year"
 msgstr "Año - Año"
 
-#: bibliography/static/js/bibliography-template-dialogs.js:214
+#: bibliography/static/js/bibliography-template-dialogs.js:222
 msgid "Month/Year"
 msgstr "Mes/Año"
 
-#: bibliography/static/js/bibliography-template-dialogs.js:215
+#: bibliography/static/js/bibliography-template-dialogs.js:223
 msgid "M/Y - M/Y"
 msgstr "M/A - M/A"
 
-#: bibliography/static/js/bibliography-template-dialogs.js:216
+#: bibliography/static/js/bibliography-template-dialogs.js:224
 msgid "Month/Day/Year"
 msgstr "Mes/Día/Año"
 
-#: bibliography/static/js/bibliography-template-dialogs.js:217
+#: bibliography/static/js/bibliography-template-dialogs.js:225
 msgid "M/D/Y - M/D/Y"
 msgstr "M/D/A - M/D/A"
 
@@ -869,8 +883,8 @@ msgid "Title page"
 msgstr "Página de título"
 
 #: book/static/js/book-exporter.js:205 book/static/js/book-exporter.js.c:278
-#: book/static/js/book-exporter.js:286 text/static/js/exporter.js:934
-#: text/static/js/exporter.js.c:967 text/static/js/exporter.js:975
+#: book/static/js/book-exporter.js:286 text/static/js/exporter.js:936
+#: text/static/js/exporter.js.c:969 text/static/js/exporter.js:977
 msgid "en"
 msgstr "es"
 
@@ -878,7 +892,7 @@ msgstr "es"
 msgid "Copyright"
 msgstr "Copyright"
 
-#: book/static/js/book-exporter.js:264 text/static/js/exporter.js:954
+#: book/static/js/book-exporter.js:264 text/static/js/exporter.js:956
 msgid "en-US"
 msgstr "es-ES"
 
@@ -902,30 +916,24 @@ msgstr "El/los documento(s) han sido borrado(s)"
 msgid "Select cover image"
 msgstr "Seleccionar imagen de tapada"
 
-#: book/static/js/book-helpers.js:227 book/static/js/book-templates.js:40
-#: book/static/js/book-templates.js:318 book/static/js/book-templates.js:362
-#: text/static/js/document-templates.js:40
-msgid "Untitled"
-msgstr "Sin título"
-
-#: book/static/js/book-helpers.js:229
+#: book/static/js/book-helpers.js:226
 msgid "Edit Chapter"
 msgstr "Editar Capítulo"
 
-#: book/static/js/book-helpers.js:410 text/static/js/importer.js:152
-#: text/static/js/importer.js.c:369
+#: book/static/js/book-helpers.js:407 text/static/js/importer.js:179
+#: text/static/js/importer.js.c:395
 msgid "Could not save "
 msgstr "No se pudo guardar "
 
-#: book/static/js/book-helpers.js:430
+#: book/static/js/book-helpers.js:427
 msgid "Create Book"
 msgstr "Crear Libro"
 
-#: book/static/js/book-helpers.js:452
+#: book/static/js/book-helpers.js:449
 msgid "Edit Book"
 msgstr "Editar Libro"
 
-#: book/static/js/book-helpers.js:646
+#: book/static/js/book-helpers.js:643
 msgid "Close"
 msgstr "Cerrar"
 
@@ -933,15 +941,15 @@ msgstr "Cerrar"
 msgid "You cannot delete or share: "
 msgstr "No puedes borrar o compartir: "
 
-#: book/static/js/book-index.js:86 text/static/js/exporter.js:888
+#: book/static/js/book-index.js:86 text/static/js/exporter.js:890
 msgid "Epub export has been initiated."
 msgstr "Exportación del archivo Epub ha sido iniciado."
 
-#: book/static/js/book-index.js:97 text/static/js/exporter.js:831
+#: book/static/js/book-index.js:97 text/static/js/exporter.js:833
 msgid "Latex export has been initiated."
 msgstr "Exportación del archivo Latex ha sido iniciado."
 
-#: book/static/js/book-index.js:108 text/static/js/exporter.js:1053
+#: book/static/js/book-index.js:108 text/static/js/exporter.js:1055
 msgid "HTML export has been initiated."
 msgstr "Exportación del archivo HTML ha sido iniciado."
 
@@ -980,11 +988,11 @@ msgstr "Redactor"
 msgid "Read only"
 msgstr "Solo lectura"
 
-#: book/static/js/book-templates.js:70 text/static/js/document-templates.js:73
+#: book/static/js/book-templates.js:70 text/static/js/document-templates.js:70
 msgid "Import another Fidus file"
 msgstr "Importar otra archivo Fidus"
 
-#: book/static/js/book-templates.js:90 book/static/js/book-templates.js:503
+#: book/static/js/book-templates.js:90 book/static/js/book-templates.js:498
 #: text/static/js/texteditor-template-dialogs.js:28
 #: text/static/js/texteditor-template-dialogs.js:64
 msgid "Author"
@@ -1072,7 +1080,7 @@ msgstr "Info básico"
 msgid "Chapters"
 msgstr "Capítulos"
 
-#: book/static/js/book-templates.js:262 text/static/js/citation-helpers.js:176
+#: book/static/js/book-templates.js:262 text/static/js/citation-helpers.js:177
 msgid "Bibliography"
 msgstr "Bibliografía"
 
@@ -1104,7 +1112,7 @@ msgstr "Ordenar"
 msgid "Book part"
 msgstr "Parte de libro"
 
-#: book/static/js/book-templates.js:376
+#: book/static/js/book-templates.js:371
 msgid ""
 "If this chapter starts a part of the book, specify the title of that part "
 "here"
@@ -1112,36 +1120,36 @@ msgstr ""
 "Si ese capítulo empieza una parte del libro, especifica el título de esa "
 "parte acáhere"
 
-#: book/static/js/book-templates.js:376
+#: book/static/js/book-templates.js:371
 msgid "Book part title"
 msgstr "Título de la parte del libro"
 
-#: book/static/js/book-templates.js:455
+#: book/static/js/book-templates.js:450
 msgid "Cover Image"
 msgstr "Imagen de Tapada"
 
-#: book/static/js/book-templates.js:475 book/static/js/book-templates.js:495
-#: book/static/js/book-templates.js:530
+#: book/static/js/book-templates.js:470 book/static/js/book-templates.js:490
+#: book/static/js/book-templates.js:525
 msgid "by"
 msgstr "de"
 
-#: book/static/js/book-templates.js:506 book/static/js/book-templates.js:538
+#: book/static/js/book-templates.js:501 book/static/js/book-templates.js:533
 msgid "Published by"
 msgstr "Publicado port"
 
-#: book/static/js/book-templates.js:508 book/static/js/book-templates.js:540
+#: book/static/js/book-templates.js:503 book/static/js/book-templates.js:535
 msgid "Last Updated"
 msgstr "Último cambio"
 
-#: book/static/js/book-templates.js:509 book/static/js/book-templates.js:541
+#: book/static/js/book-templates.js:504 book/static/js/book-templates.js:536
 msgid "Created"
 msgstr "Creado"
 
-#: book/static/js/book-templates.js:510 book/static/js/book-templates.js:542
+#: book/static/js/book-templates.js:505 book/static/js/book-templates.js:537
 msgid "Language"
 msgstr "Idioma"
 
-#: book/static/js/book-templates.js:511 book/static/js/book-templates.js:543
+#: book/static/js/book-templates.js:506 book/static/js/book-templates.js:538
 msgid "Created by"
 msgstr "Creado por"
 
@@ -1161,6 +1169,10 @@ msgstr "Compartir tus documentos con otros"
 #: text/static/js/accessrights-helpers.js:79
 msgid "Add new contact"
 msgstr "Añadir nuevo contacto"
+
+#: text/static/js/chat-helpers.js:117
+msgid "Send a message..."
+msgstr ""
 
 #: text/static/js/citeproc-helpers.js:46
 msgid "American Psychological Association"
@@ -1182,8 +1194,10 @@ msgstr "El estilo Harvard del tipo autor-fecha"
 msgid "Modern Language Association"
 msgstr "Modern Language Association"
 
-#: text/static/js/comment-templates.js:58
-#: text/static/js/comment-templates.js:64
+#: text/static/js/comment-templates.js:67
+#: text/static/js/comment-templates.js:77
+#: text/static/js/comment-templates.js:98
+#: text/static/js/comment-templates.js:112
 msgid "Edit"
 msgstr "Editar"
 
@@ -1199,49 +1213,25 @@ msgstr "El/los documento(s) han sido borrado(s)"
 msgid "Search for Document"
 msgstr "Buscar el Documento"
 
-#: text/static/js/editor-helpers.js:94
-msgid "Untitled document"
+#: text/static/js/editor-helpers.js:216
+msgid "Untitled Document"
 msgstr "Documento sin nombre"
 
-#: text/static/js/editor-helpers.js:139
-msgid "Document could not be saved"
-msgstr "El documento no se pudo guardar"
-
-#: text/static/js/editor-helpers.js:176
+#: text/static/js/editor-helpers.js:424
 msgid "Title..."
 msgstr "Título..."
 
-#: text/static/js/editor-helpers.js:179
+#: text/static/js/editor-helpers.js:430
 msgid "Contents..."
 msgstr "Contenido..."
 
-#: text/static/js/editor-helpers.js:182
+#: text/static/js/editor-helpers.js:436
 msgid "Subtitle..."
 msgstr "Subtítulo..."
 
-#: text/static/js/editor-helpers.js:185
+#: text/static/js/editor-helpers.js:442
 msgid "Abstract..."
 msgstr "Abstracto..."
-
-#: text/static/js/editor-helpers.js:198
-msgid ""
-"Sorry, but the connection to the server has been lost. Please reload to "
-"ensure that no date is being lost."
-msgstr ""
-"Perdón, pero la conexión con el servidor se perdió. Por favor, actualiza la "
-"página para asegurar que los datos no se han perdido."
-
-#: text/static/js/editor-helpers.js:205
-msgid "Ok"
-msgstr "Aprobar"
-
-#: text/static/js/editor-helpers.js:217
-msgid "No connection to server"
-msgstr "No hay conexión con el servidor"
-
-#: text/static/js/editor-setup.js:357
-msgid "Untitled Document"
-msgstr "Documento sin nombre"
 
 #: text/static/js/editor-templates.js:23
 msgid "The subtitle of the document"
@@ -1251,17 +1241,42 @@ msgstr "El subtítulo del documento"
 msgid "The abstract of the document"
 msgstr "El resumen del documento"
 
-#: text/static/js/exporter.js:662
+#: text/static/js/exporter.js:664
 msgid "Copy of "
 msgstr "Copia de "
 
-#: text/static/js/exporter.js:748
+#: text/static/js/exporter.js:750
 msgid "File export has been initiated."
 msgstr "Exportación del archivo ha sido iniciado"
 
-#: text/static/js/importer.js:339
+#: text/static/js/importer.js:52
+msgid ""
+"The uploaded file does not appear to be of the version used on this server: "
+msgstr ""
+
+#: text/static/js/importer.js:92
+msgid "The uploaded file does not appear to be a Fidus Writer file."
+msgstr ""
+
+#: text/static/js/importer.js:365
 msgid " successfully imported."
 msgstr " importado con exito."
+
+#: text/static/js/server-communications.js:254
+msgid ""
+"Sorry, but the connection to the server has been lost. Please reload to "
+"ensure that no date is being lost."
+msgstr ""
+"Perdón, pero la conexión con el servidor se perdió. Por favor, actualiza la "
+"página para asegurar que los datos no se han perdido."
+
+#: text/static/js/server-communications.js:261
+msgid "Ok"
+msgstr "Aprobar"
+
+#: text/static/js/server-communications.js:273
+msgid "No connection to server"
+msgstr "No hay conexión con el servidor"
 
 #: text/static/js/texteditor-template-dialogs.js:22
 msgid "Configure Citation"
@@ -1303,7 +1318,7 @@ msgid "Insert image"
 msgstr "Insertar imagen"
 
 #: text/static/js/texteditor-template-dialogs.js:143
-#: text/static/js/toolbar/figure.js:287
+#: text/static/js/toolbar/figure.js:332
 msgid "Figure"
 msgstr "Figura"
 
@@ -1431,24 +1446,24 @@ msgstr "Configurar cita"
 msgid "Please select at least one citation source!"
 msgstr "Por favro, selecciona al menos un fuente!"
 
-#: text/static/js/toolbar/cite.js:217
+#: text/static/js/toolbar/cite.js:218
 msgid "Register new source"
 msgstr "Registra nueva fuente"
 
-#: text/static/js/toolbar/figure.js:33
+#: text/static/js/toolbar/figure.js:32
 msgid "Enter latex math or insert an image"
 msgstr "Ingresar código latex o insertar un imagen"
 
-#: text/static/js/toolbar/figure.js:43
+#: text/static/js/toolbar/figure.js:42
 msgid "Images"
 msgstr "Imagenes"
 
-#: text/static/js/toolbar/figure.js:281
+#: text/static/js/toolbar/figure.js:324
 #: usermedia/static/js/usermedia-helpers.js:232
 msgid "Update"
 msgstr "Cambiar"
 
-#: text/static/js/toolbar/figure.js:289 text/static/js/toolbar/link.js:50
+#: text/static/js/toolbar/figure.js:334 text/static/js/toolbar/link.js:50
 #: text/static/js/toolbar/math.js:50
 msgid "Insert"
 msgstr "Insertar"
@@ -1488,6 +1503,12 @@ msgstr "Buscar por Nombre de archivo"
 #: usermedia/static/js/usermedia-template-dialogs.js:83
 msgid "Insert a title"
 msgstr "Insertar un título"
+
+#~ msgid "Untitled document"
+#~ msgstr "Documento sin nombre"
+
+#~ msgid "Document could not be saved"
+#~ msgstr "El documento no se pudo guardar"
 
 #~ msgid "Please register at http://beta.fiduswriter.com"
 #~ msgstr "Por favor, registrate en http://beta.fiduswriter.com"

@@ -300,7 +300,7 @@
                                 citationHelpers.appendToCitedBooks(selected_books);
                             });
 
-                            $(document).on('click', '#selected-source-1 .delete', function() {
+                            $(document).on('click', '.selected-source .delete', function() {
                                 var source_wrapper_id = '#selected-source-' + $(this).data('id');
                                 $(source_wrapper_id).remove();
                             });

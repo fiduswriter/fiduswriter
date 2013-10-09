@@ -81,7 +81,7 @@ var tmp_citation_book = _.template('<tr class="fw-checkable fw-checkable-tr" dat
             <span class="fw-inline fw-searchable"><%- author %></span>\
         </td>\
     </tr>');
-var tmp_selected_citation = _.template('<tr id="selected-source-<%= id %>"><td colspan="3" width="335">\
+var tmp_selected_citation = _.template('<tr id="selected-source-<%= id %>" class="selected-source"><td colspan="3" width="335">\
       <table class="fw-cite-parts-table">\
           <tr>\
               <td width="135">\

@@ -377,7 +377,6 @@
         // Handles the pressing of the arrow left key
         selection = rangy.getSelection();
         range = selection.getRangeAt(0);
-
         // Check if we are inside a citation, but not at the very beginning of it.
         insideCitation = jQuery(range.startContainer).closest(
             '.citation')[0];
@@ -439,8 +438,8 @@
             }
         }
 
-        if (range.startContainer.nodeType === 3 && range.startOffset === 0 && jQuery(range.startContainer.previousSibling).is('.equation')) {
-            // We are just behind an equation.
+        if (range.startContainer.nodeType === 3 && range.startOffset === 1 && jQuery(range.startContainer.previousSibling).is('.equation')) {
+            // We are just behind an equation the empty space node behind it.
             if (dom.isAtStart(range.startContainer.previousSibling, jQuery(range.startContainer).closest('p, li, h1, h2, h3, code, blockquote')[0])) {
                 // The equation is at the start of a container item. Place an empty space node in front of it and move the cursor there.
                 emptySpaceNode = document.createTextNode('\u180e');

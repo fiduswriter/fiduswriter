@@ -20,9 +20,6 @@
 # Django settings for Fidus Writer project. #
 #############################################
 
-# After copying this file to settings.py, adjust the below settings to work 
-# with your setup.
-
 
 import os
 

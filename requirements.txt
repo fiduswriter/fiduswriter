@@ -6,6 +6,7 @@ dateutils==0.6.6
 distribute==0.6.36
 django-allauth==0.10.1
 django-appconf==0.6
+django-avatar==2.0
 django-compressor==1.3
 httplib2==0.8
 oauth2==1.5.211

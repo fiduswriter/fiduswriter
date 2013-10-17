@@ -23,9 +23,9 @@ The following are instructions working on most *NIX systems.
 
 1. Download the Fidus Writer sources to your computer. Unarchive if necessary.
 
-2. Install the development packages of libjpeg and python and the python virtual environment creator. How you do this depends on your system. On Debian and Ubuntu the packages are called libjpeg-dev, python-dev and python-virtualenv. Install them with your favorite package manager, for example on the command line by running:
+2. Install the development packages of libjpeg, gettext, python and the python virtual environment creator. How you do this depends on your system. On Debian and Ubuntu the packages are called libjpeg-dev, python-dev and python-virtualenv. Install them with your favorite package manager, for example on the command line by running:
 
-  sudo apt-get install libjpeg-dev python-dev python-virtualenv
+  sudo apt-get install libjpeg-dev python-dev python-virtualenv gettext
 
 3. Start the command line (terminal).
 

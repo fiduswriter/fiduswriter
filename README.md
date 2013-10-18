@@ -43,7 +43,10 @@ The following are instructions working on most *NIX systems.
 
   pip install -r requirements.txt
 
-8. If you want to go beyond a local test installation, copy configuration.py-default to configuration.py, and edit configuration.py with a text editor, adjusting it to fit your needs.
+8. If you want to go beyond a local test installation, copy configuration.py-default to configuration.py, and edit configuration.py with a text editor, adjusting it to fit your needs. 
+   If you you set DEBUG = False in configuration.py, you need to run the CSS compressor:
+
+  python manage.py compress 
 
 9. Recompile locale message files by typing:
 

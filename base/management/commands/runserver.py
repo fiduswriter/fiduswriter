@@ -19,7 +19,7 @@
 from datetime import datetime
 from sys import platform
 
-from django.core.management.base import BaseCommand
+from django.core.management.base import BaseCommand, CommandError
 from django.utils import translation
 from django.conf import settings
 from django.core.handlers.wsgi import WSGIHandler

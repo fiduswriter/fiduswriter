@@ -43,6 +43,7 @@ class Command(BaseCommand):
         wsgi_app = WSGIContainer(WSGIHandler())
         tornado_app = Application([(r'/static/(.*)',
             DjangoStaticFilesHandler, {'default_filename': 'none.img'}),
+            (r'/media/(.*)', StaticFileHandler, {'path': settings.MEDIA_ROOT}),
             ('/hello-tornado', HelloHandler), 
             ('/ws/doc/(\w+)', DocumentWS), 
             ('.*', FallbackHandler, dict(fallback=wsgi_app))])

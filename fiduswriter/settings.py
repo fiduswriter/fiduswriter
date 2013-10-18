@@ -134,6 +134,8 @@ STATICFILES_FINDERS = (
     'compressor.finders.CompressorFinder',
 )
 
+COMPRESS_OUTPUT_DIR = '.'
+
 # Make this unique, and don't share it with anybody. Change the default string.
 SECRET_KEY = '2ouq2zgw5y-@w+t6!#zf#-z1inigg7$lg3p%8e3kkob1bf$#p4'
 

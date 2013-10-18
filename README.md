@@ -63,9 +63,9 @@ The following are instructions working on most *NIX systems.
 
   python manage.py runserver
 
-  or, to start the server with external access, run:
+  or, to start the server on a different port than the default 8000, run:
 
-  python manage.py runserver 0.0.0.0:8000
+  python manage.py runserver 8000
 
 - - - - - -
 

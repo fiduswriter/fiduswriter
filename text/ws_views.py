@@ -32,10 +32,10 @@ def save_document(document,changes):
     document.contents = changes["contents"]
     document.metadata = changes["metadata"]
     document.settings = changes["settings"]  
-    if len(document.history) > 0:        
-        document.history += "," + changes["last_history"]
-    else:
-        document.history = changes["last_history"]
+    #if len(document.history) > 0:        
+    #    document.history += "," + changes["last_history"]
+    #else:
+    #    document.history = changes["last_history"]
     document.save()
 
 class DocumentWS(BaseWebSocketHandler):
@@ -80,7 +80,7 @@ class DocumentWS(BaseWebSocketHandler):
             response['document']['contents']=self.document.contents
             response['document']['metadata']=self.document.metadata
             response['document']['settings']=self.document.settings
-            response['document']['history']=self.document.history
+            #response['document']['history']=self.document.history
             response['document']['access_rights'] = get_accessrights(AccessRight.objects.filter(text__owner=self.document.owner))
             response['document']['owner'] = dict()
             response['document']['owner']['id']=self.document.owner.id

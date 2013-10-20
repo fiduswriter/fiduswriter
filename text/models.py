@@ -31,7 +31,7 @@ class Text(models.Model):
     contents = models.TextField(default='<p><br></p>')
     metadata = models.TextField(default='{}') #json object of metadata
     settings = models.TextField(default='{}') #json object of settings
-    history = models.TextField(default='') #json list with the document history with the beginning and end brackets ('[' and ']') left out. 
+#    history = models.TextField(default='') #json list with the document history with the beginning and end brackets ('[' and ']') left out. 
     owner = models.ForeignKey(User,related_name='owner')
     added = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

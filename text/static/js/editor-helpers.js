@@ -63,9 +63,7 @@
         theDocument.changed = false;
         theDocument.settings = jQuery.parseJSON(theDocument.settings);
         theDocument.metadata = jQuery.parseJSON(theDocument.metadata);
-        theDocument.history = jQuery.parseJSON('[' + theDocument.history +
-            ']');
-        theDocument.lastHistory = [];
+
 
         DEFAULTS = [
             ['metadata.title', theDocument.title],
@@ -245,13 +243,13 @@
 
     editorHelpers.setDocumentData = function (theName, newValue,
         skipSendChange, aUserId) {
-        var dmp, diff, theChange, currentValue;
+        var diff, theChange, currentValue;
         if (undefined === aUserId) {
             aUserId = theUser.id;
         }
         currentValue = eval('theDocument.' + theName);
-        if (editorHelpers.TEXT_FIELDS.indexOf(theName) !== -1) {
-            if (undefined === currentValue) {
+        if (editorHelpers.TEXT_FIELDS.indexOf(theName) === -1) {
+         /*   if (undefined === currentValue) {
                 currentValue = '';
             }
             dmp = new diff_match_patch();
@@ -261,9 +259,9 @@
                 // Don't create a history entry if nothing has changed
                 return false;
             }
-            dmp.diff_cleanupEfficiency(diff);
-        }
-        else {
+            dmp.diff_cleanupEfficiency(diff);*/
+       // }
+       // else {
             if (currentValue === newValue) {
                 // Don't create a history entry if nothing has changed
                 return false;
@@ -279,14 +277,14 @@
             eval("theDocument." + theName + "=" + JSON.stringify(newValue));
         }
         theChange = [aUserId, new Date().getTime(), theName, diff];
-        theDocument.history.push(theChange);
-        theDocument.lastHistory.push(theChange);
-        /*if (!skipSendChange) {
+        //theDocument.history.push(theChange);
+        //theDocument.lastHistory.push(theChange);
+        if (!skipSendChange) {
             ws.send(JSON.stringify({
                 type: 'transform',
                 change: theChange
             }));
-        }*/
+        }
 
         return true;
     };
@@ -374,7 +372,7 @@
     };
 
     editorHelpers.saveDocument = function (callback) {
-        var documentData = {}, lastHistory;
+        var documentData = {};
 
         jQuery('.save').addClass('disabled');
 
@@ -383,22 +381,19 @@
 
         theDocument.title = jQuery('#document-title').text().trim();
 
-        if (0 === theDocument.lastHistory.length) {
+       /* if (0 === theDocument.lastHistory.length) {
 
             if (callback) {
                 callback();
             }
             return;
-        }
+        }*/
 
 
         if (theDocument.enableSave) {
             documentData.settings = JSON.stringify(theDocument.settings);
             documentData.metadata = JSON.stringify(theDocument.metadata);
-            lastHistory = JSON.stringify(theDocument.lastHistory);
-            documentData.last_history = lastHistory.substring(1,
-                lastHistory.length - 1);
-            theDocument.lastHistory = [];
+            
             documentData.title = theDocument.title.substring(0, 255);
             documentData.contents = theDocument.contents;
 

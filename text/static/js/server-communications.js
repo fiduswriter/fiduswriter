@@ -62,7 +62,7 @@
             editorHelpers.applyDocumentDataChanges(data);
             break;            
         case 'take_control':
-            theDocument.localHistory = [];
+           // theDocument.localHistory = [];
             theDocument.enableSave = true;
         }
     };

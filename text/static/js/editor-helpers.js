@@ -267,6 +267,8 @@
                 return false;
             }
             diff = [currentValue, newValue];
+        } else {
+            return false;
         }
         if ('string' === typeof (newValue)) {
             // TODO: Using eval and escaping-unescaping is not very beautiful. If possible this should be done differently.
@@ -342,6 +344,10 @@
     };
 
     editorHelpers.applyDocumentDataChanges = function (data) {
+            console.log(data);
+            if (data.type=='transform') {
+                return false;
+            }
             editorHelpers.getUpdatesFromInputFields();
             editorHelpers.setDocumentData(data.change[2], data.change[3][1],
                 true);

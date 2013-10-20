@@ -55,8 +55,7 @@
             }
             break;
         case 'diff':
-            console.log(data);
-            theDocument.newDiffs[data.field].push(data);
+            theDocument.newDiffs.push(data);
             break;
         case 'transform':
             editorHelpers.applyDocumentDataChanges(data);
@@ -83,156 +82,86 @@
     
     var metadataFields = ['title','subtitle','abstract'];
     
-    serverCommunications.resetOldFields = function () {
-        var i;
-        theDocument.oldFields = {};
-        theDocument.oldFields.contents = theDocument.contents;
-        
-        theDocument.newDiffs = {};
-        theDocument.newDiffs.contents = [];
-        theDocument.usedDiffs = {};
-        theDocument.usedDiffs.contents = [];
-        for (i = 0; i < metadataFields.length;i++) {
-            if (theDocument.metadata[metadataFields[i]]) {
-                theDocument.oldFields[metadataFields[i]] = theDocument.metadata[metadataFields[i]];
-            } else {
-                theDocument.oldFields[metadataFields[i]] = '';
-            }
-            theDocument.newDiffs[metadataFields[i]] = [];
-            theDocument.usedDiffs[metadataFields[i]] = [];
-        }
+    serverCommunications.resetTextChangeList = function () {
+        theDocument.newDiffs = [];
+        theDocument.usedDiffs = [];
+        theDocument.textChangeList = [];
+        serverCommunications.addCurrentToTextChangeList();
     };
     
-    serverCommunications.makeDiff = function (fieldName,fromString,toString) {
-        return {
+    serverCommunications.addCurrentToTextChangeList = function () {
+        theDocument.textChangeList.push([document.getElementById('document-editable').cloneNode(true),new Date().getTime()]);
+    };
+    
+    
+    serverCommunications.makeDiff = function () {
+        console.log(theDocument.textChangeList[theDocument.textChangeList.length-1][0]);
+        var theDiff = domDiff.diff(theDocument.textChangeList[theDocument.textChangeList.length-1][0],document.getElementById('document-editable'));
+        console.log(theDiff);
+        var thePackage = {
             type: 'diff',
-            field: fieldName, 
             time: new Date().getTime(), 
             session: theDocument.sessionId, 
-            diff: delta.Diff(fromString,toString)
+            diff: theDiff
         };
         
+        serverCommunications.send(thePackage);
+        theDocument.newDiffs.push(thePackage);
+        serverCommunications.orderAndApplyChanges();
     };
     
-    serverCommunications.updateEditField = function (field) {
-        var theElement, theValue, beforeContents, beforeContentsWithCaret, caretDiff, savedSel;
-        if (field==='title' || field=='contents') {
-            theElement = document.getElementById('document-'+field);
-        } else {
-            theElement = document.getElementById('metadata-'+field);
-        }
-        if (field==='contents') {
-            theValue=theDocument.contents;
-        } else {
-            theValue=theDocument.metadata[field];
-        }
+    serverCommunications.orderAndApplyChanges = function () {
+        var newestDiffs = [], patchDiff, tempCombinedNode, i;
         
-        beforeContents = theElement.innerHTML;
-        
-        savedSel = rangy.saveSelection();
-        
-        beforeContentsWithCaret = theElement.innerHTML;
-        
-        if (beforeContents!=beforeContentsWithCaret) {
-            caretDiff = delta.Diff(beforeContents,beforeContentsWithCaret);
-            theValue = delta.Patch(theValue,caretDiff);
-        }
-        theElement.innerHTML = theValue;
-        rangy.restoreSelection(savedSel);
-        
-    };
-    
-    serverCommunications.orderAndApplyChanges = function (field) {
-        var newestDiffs = [], fieldValue = theDocument.oldFields[field], patchDiff, i;
-        
-        while (theDocument.newDiffs[field].length > 0) {
-            newestDiffs.push(theDocument.newDiffs[field].pop());
+        while (theDocument.newDiffs.length > 0) {
+            newestDiffs.push(theDocument.newDiffs.pop());
         }
         newestDiffs = _.sortBy(newestDiffs,function(diff){return diff.time;});
         
         
-        if (theDocument.usedDiffs[field].length > 0) {
-            while (newestDiffs[0].time < theDocument.usedDiffs[field][theDocument.usedDiffs[field].length-1].time) {
-            // If the timestamp of the first of the newestDiffs is earlier than the last used, diff, we need to unpatch that and move the history backwards.
-            // This happens if a diff that is older than 500 milliseconds reaches us.
-                patchDiff = theDocument.usedDiffs[field].pop();
-                fieldValue = delta.Unpatch(fieldValue,patchDiff.diff);
-                newestDiffs.push(patchDiff);
-                newestDiffs = _.sortBy(newestDiffs,function(diff){return diff.time;});
+        while (newestDiffs[0].time < theDocument.textChangeList[theDocument.textChangeList.length-1][1]) {
+            // We receive a change timed before the last change we recorded, so we need to go further back.
+            theDocument.textChangeList.pop();
+            if (theDocument.textChangeList.length===0) {
+                // We receive changes from before the first recorded version on this client. We need to reload the page.
+                location.reload();
             }
-        }
-        for (i = 0; i < newestDiffs.length; i++) {
-            fieldValue = delta.Patch(fieldValue,newestDiffs[i].diff);
-            theDocument.usedDiffs[field].push(newestDiffs[i]);
-        }
-        theDocument.oldFields[field] = fieldValue;
-        if (field==='contents') {
-            theDocument.contents = fieldValue;
-        } else {
-            theDocument.metadata[field] = fieldValue;
-        }
-        serverCommunications.updateEditField(field);
-    };
-    
-    serverCommunications.createDiffs = function () {
-        var diff;
-        if (theDocument.oldFields.contents != theDocument.contents) {
-            diff = serverCommunications.makeDiff('contents', theDocument.oldFields.contents, theDocument.contents);
-            serverCommunications.send(diff);
-            if (theDocument.newDiffs.contents.length===0) {
-                // There are no new changes from anywhere else, but there are local changes
-                // Copy the new data to old data and update the time.
-                theDocument.oldFields.contents = theDocument.contents;
-            } else {
-                // There are both local and remote changes. Integrate them!
-                theDocument.newDiffs.contents.push(diff);
-                serverCommunications.orderAndApplyChanges('contents');
+            while(theDocument.usedDiffs[theDocument.usedDiffs.length-1].time > theDocument.textChangeList[theDocument.textChangeList.length-1][1]) {
+                newestDiffs.push(theDocument.usedDiffs.pop());
             }
-            
-        } else if (theDocument.newDiffs.contents.length > 0) {
-            serverCommunications.orderAndApplyChanges('contents');
-        }
-        for (var i =0; i < metadataFields.length;i++) {
-            if (theDocument.metadata[metadataFields[i]] && theDocument.oldFields[metadataFields[i]] != theDocument.metadata[metadataFields[i]]) {
-                diff = serverCommunications.makeDiff(metadataFields[i], theDocument.oldFields[metadataFields[i]], theDocument.metadata[metadataFields[i]]);
-                serverCommunications.send(diff);
-                if (theDocument.newDiffs[metadataFields[i]].length===0) {
-                    // There are no new changes from anywhere else, but there are local changes
-                    // Copy the new data to old data and update the time.
-                    theDocument.oldFields[metadataFields[i]] = theDocument.metadata[metadataFields[i]];
-                } else {
-                    // There are both local and remote changes. Integrate them!
-                    theDocument.newDiffs[metadataFields[i]].push(diff);
-                    serverCommunications.orderAndApplyChanges(metadataFields[i]);
-                }
+            newestDiffs = _.sortBy(newestDiffs,function(diff){return diff.time;});
                 
-            } else if (theDocument.newDiffs[metadataFields[i]].length > 0) {
-                serverCommunications.orderAndApplyChanges(metadataFields[i]);
-            }
         }
+        
+        // We create a temporary node that has been patched with all changes so
+        // that only the things that need to change from the node in the DOM
+        // structure have to be touched.
+        tempPatchedNode = theDocument.textChangeList[theDocument.textChangeList.length-1][0].cloneNode(true);
+        
+        for (i = 0; i < newestDiffs.length; i++) {
+            domDiff.patch(tempPatchedNode,newestDiffs[i].diff);
+            theDocument.usedDiffs.push(newestDiffs[i]);
+        }
+        theDocument.textChangeList.push([tempPatchedNode,new Date().getTime()]);
+        // Now that the tempPatchedNode represents what the editor should look like, go ahead and apply only the differences.
+        
+        domDiff.patch(document.getElementById('document-editable'), domDiff.diff(document.getElementById('document-editable'), tempPatchedNode));
+        
     };
     
     serverCommunications.incorporateUpdates = function () {
         if (theDocument.changed) {
             theDocument.changed = false;
-            editorHelpers.getUpdatesFromInputFields();
-            serverCommunications.createDiffs();
-        } else {
-            if (theDocument.newDiffs.contents.length > 0) {
-                serverCommunications.orderAndApplyChanges('contents');
-            }
-            for (var i=0; i < metadataFields.length;i++) {
-                if (theDocument.newDiffs[metadataFields[i]].length > 0) {
-                    serverCommunications.orderAndApplyChanges(metadataFields[i]);
-                }
-            }
+            serverCommunications.makeDiff();
+        } else if (theDocument.newDiffs.length > 0) {
+            serverCommunications.orderAndApplyChanges();
         }
     };
 
     serverCommunications.startCollaborativeMode = function () {
         editorHelpers.getUpdatesFromInputFields(
             function () {
-                serverCommunications.resetOldFields();
+                serverCommunications.resetTextChangeList();
             }
         );
         serverCommunications.collaborateTimer = setInterval(serverCommunications.incorporateUpdates,500);

@@ -230,6 +230,8 @@
         'settings.documentstyle': editorHelpers.setDisplay.settingsDocumentstyle,
         'settings.metadata.subtitle': editorHelpers.layoutMetadata,
         'settings.metadata.abstract': editorHelpers.layoutMetadata,
+        'settings.metadata.authors': editorHelpers.layoutMetadata,
+        'settings.metadata.keywords': editorHelpers.layoutMetadata,
         'id': editorHelpers.setDisplay.id
     };
 
@@ -238,7 +240,7 @@
     };
 
     editorHelpers.TEXT_FIELDS = ['contents', 'metadata.title',
-        'metadata.subtitle', 'metadata.abstract'
+        'metadata.subtitle', 'metadata.abstract', 'metadata.authors', 'metadata.keywords'
     ];
 
     editorHelpers.setDocumentData = function (theName, newValue,
@@ -249,27 +251,12 @@
         }
         currentValue = eval('theDocument.' + theName);
         if (editorHelpers.TEXT_FIELDS.indexOf(theName) === -1) {
-         /*   if (undefined === currentValue) {
-                currentValue = '';
-            }
-            dmp = new diff_match_patch();
-            diff = dmp.diff_main(currentValue, newValue);
-            if (((diff.length) === 1 && (diff[0][0] === 0)) || diff.length ===
-                0) {
-                // Don't create a history entry if nothing has changed
-                return false;
-            }
-            dmp.diff_cleanupEfficiency(diff);*/
-       // }
-       // else {
             if (currentValue === newValue) {
                 // Don't create a history entry if nothing has changed
                 return false;
             }
             diff = [currentValue, newValue];
-        } else {
-            return false;
-        }
+        } 
         if ('string' === typeof (newValue)) {
             // TODO: Using eval and escaping-unescaping is not very beautiful. If possible this should be done differently.
             eval("theDocument." + theName + "=unescape('" + escape(newValue) +
@@ -344,7 +331,6 @@
     };
 
     editorHelpers.applyDocumentDataChanges = function (data) {
-            console.log(data);
             if (data.type=='transform') {
                 return false;
             }
@@ -441,6 +427,18 @@
             currentElement != 'metadata-abstract') {
             placeHolderCss += '#metadata-abstract:before {content: "' +
                 gettext('Abstract...') + '"}\n';
+        }
+        if (jQuery('#metadata-authors').length > 0 && jQuery(
+                '#metadata-authors')[0].innerText.length === 0 &&
+            currentElement != 'metadata-authors') {
+            placeHolderCss += '#metadata-authors:before {content: "' +
+                gettext('Author(s)...') + '"}\n';
+        }
+        if (jQuery('#metadata-keywords').length > 0 && jQuery(
+                '#metadata-keywords')[0].innerText.length === 0 &&
+            currentElement != 'metadata-keywords') {
+            placeHolderCss += '#metadata-keywords:before {content: "' +
+                gettext('Keywords...') + '"}\n';
         }
         jQuery('#placeholderStyles')[0].innerHTML = placeHolderCss;
     };

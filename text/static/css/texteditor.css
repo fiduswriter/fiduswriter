@@ -335,7 +335,7 @@ font {
 }
 /* For default contents of title and contents field*/
 
-#document-contents:before, #document-title:before, #metadata-subtitle:before, #metadata-abstract:before {
+#document-contents:before, #document-title:before, #metadata-subtitle:before, #metadata-abstract:before, #metadata-authors:before, #metadata-keywords:before {
     text-transform: none;
     color: #cecece;
 }

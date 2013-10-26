@@ -30,18 +30,17 @@
             }
         </script>
         <style>
-            /*#document-contents:not(:focus) > p:first-child:only-child > br::before {
-                content: "{% trans "Contents" %}...";
-            }
-
-           /* #document-title:empty:not(:focus)::before {
-                content: "{% trans "Title" %}...";
-            }*/
             #metadata-subtitle:empty:not(:focus)::before, #metadata-subtitle:not(:focus) > p:first-child:only-child > br::before {
                 content: "{% trans "Subtitle" %}...";
             }
             #metadata-abstract:empty:not(:focus)::before, #metadata-abstract:not(:focus) > p:first-child:only-child > br::before {
                 content: "{% trans "Abstract" %}...";
+            }
+            #metadata-authors:empty:not(:focus)::before, #metadata-authors:not(:focus) > p:first-child:only-child > br::before {
+                content: "{% trans "Authors" %}...";
+            }
+            #metadata-keywords:empty:not(:focus)::before, #metadata-keywords:not(:focus) > p:first-child:only-child > br::before {
+                content: "{% trans "Keywords" %}...";
             }
         </style>
         <style type="text/css" id="placeholderStyles">
@@ -438,6 +437,12 @@
                             </li>
                             <li>
                                 <span class="fw-pulldown-item metadata-menu-item metadata-abstract" data-metadata="abstract" title="{% trans "Add an abstract to the document." %}"> {% trans "Abstract" %} </span>
+                            </li>
+                            <li>
+                                <span class="fw-pulldown-item metadata-menu-item metadata-authors" data-metadata="authors" title="{% trans "Specify the authors of the document." %}"> {% trans "Author(s)" %} </span>
+                            </li>
+                            <li>
+                                <span class="fw-pulldown-item metadata-menu-item metadata-keywords" data-metadata="keywords" title="{% trans "Add keywords to facilitate categorization." %}"> {% trans "Keywords" %} </span>
                             </li>
                         </ul>
                     </div>

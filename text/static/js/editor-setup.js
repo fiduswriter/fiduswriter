@@ -111,12 +111,12 @@ jQuery(document).bind('documentDataLoaded', function () {
     editorHelpers.setPlaceholders();
 
     jQuery(document).on('blur',
-        '#document-title,#document-contents,#metadata-subtitle,#metadata-abstract',
+        '#document-title,#document-contents,#metadata-subtitle,#metadata-abstract,#metadata-authors,#metadata-keywords',
         function () {
             editorHelpers.setPlaceholders();
         });
     jQuery(document).on('focus',
-        '#document-title,#document-contents,#metadata-subtitle,#metadata-abstract',
+        '#document-title,#document-contents,#metadata-subtitle,#metadata-abstract,#metadata-authors,#metadata-keywords',
         function () {
             editorHelpers.setPlaceholders(jQuery(this).attr('id'));
         });
@@ -207,7 +207,7 @@ jQuery(document).bind('documentDataLoaded', function () {
 
         jQuery('.metadata-menu-item').bind('click', editorHelpers.switchMetadata);
 
-        jQuery('#metadata-subtitle, #metadata-abstract').bind('blur',
+        jQuery('#metadata-subtitle, #metadata-abstract, #metadata-authors, #metadata-keywords').bind('blur',
             function () {
                 if (jQuery.trim(this.innerText) === '') {
                     this.innerHTML = '<p><br></p>';

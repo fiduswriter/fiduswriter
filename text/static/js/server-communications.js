@@ -80,7 +80,7 @@
         chatHelpers.updateParticipantList(participant_list);
     };
     
-    var metadataFields = ['title','subtitle','abstract'];
+    var metadataFields = ['title','subtitle','abstract','authors','keywords'];
     
     serverCommunications.resetTextChangeList = function () {
         theDocument.newDiffs = [];

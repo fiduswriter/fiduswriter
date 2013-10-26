@@ -22,7 +22,13 @@ var tmp_metadata = _.template('\
 <% if (settings.subtitle) { %>\
     <div id="metadata-subtitle" class="editable metadata metadata-subtitle" data-metadata="subtitle" contenteditable="true" title="'+gettext('The subtitle of the document')+'"><%= metadata.subtitle %></div>\
 <% } %>\
+<% if (settings.authors) { %>\
+    <div id="metadata-authors" class="editable metadata metadata-authors" data-metadata="authors" contenteditable="true" title="'+gettext('The authors of the document (comma-separated)')+'"><%= metadata.authors %></div>\
+<% } %>\
 <% if (settings.abstract) { %>\
     <div id="metadata-abstract" class="editable metadata metadata-abstract" data-metadata="abstract" contenteditable="true" title="'+gettext('The abstract of the document')+'"><%= metadata.abstract %></div>\
+<% } %>\
+<% if (settings.keywords) { %>\
+    <div id="metadata-keywords" class="editable metadata metadata-keywords" data-metadata="keywords" contenteditable="true" title="'+gettext('The keywords related to the document (comma-separated)')+'"><%= metadata.keywords %></div>\
 <% } %>\
 ');

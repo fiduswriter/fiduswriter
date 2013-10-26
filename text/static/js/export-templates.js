@@ -23,7 +23,12 @@ var tmp_epub_opf = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
     \t<metadata xmlns:dc="http://purl.org/dc/elements/1.1/">\n\
     \t\t<dc:identifier id="<%= idType %>"><%= id %></dc:identifier>\n\
     \t\t<dc:title><%= title %></dc:title>\n\
-    \t\t<dc:creator><%= creator %></dc:creator>\n\
+    <% _.each(authors,function(author){ %>\
+        \t\t<dc:creator><%= author %></dc:creator>\n\
+    <% }); %>\
+    <% _.each(keywords,function(keyword){ %>\
+        \t\t<dc:subject><%= keyword %></dc:subject>\n\
+    <% }); %>\
     \t\t<dc:language><%= language %></dc:language>\n\
     \t\t<dc:date><%= date %></dc:date>\n\
     \t\t<meta property="dcterms:modified"><%= modified %></meta>\n\
@@ -160,8 +165,14 @@ var tmp_html_export = _.template('<!DOCTYPE html>\n\
         <% if (metadataSettings.subtitle && metadata.subtitle && metadata.subtitle != "") { %>\
             <h2 class="subtitle"><%= metadata.subtitle %></h2>\
         <% } %>\
-        <% if (metadataSettings.abstract) { %>\
+        <% if (metadataSettings.abstract && metadata.abstract && metadata.abstract != "") { %>\
             <div class="abstract"><%= metadata.abstract %></div>\
+        <% } %>\
+        <% if (metadataSettings.authors && metadata.authors && metadata.authors != "") { %>\
+            <div class="authors"><%= metadata.authors %></div>\
+        <% } %>\
+        <% if (metadataSettings.keywords && metadata.keywords && metadata.keywords != "") { %>\
+            <div class="keywords"><%= metadata.keywords %></div>\
         <% } %>\
         <%= contents %></body></html>');
 

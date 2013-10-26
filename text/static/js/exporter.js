@@ -244,7 +244,7 @@ var FW_FILETYPE_VERSION = "1.1";
     };
 
     exporter.findLatexDocumentFeatures = function (htmlCode, title, author,
-        subtitle,
+        subtitle, keywords, specifiedAuthors,
         metadata, documentClass) {
         var includePackages, documentEndCommands = '',
             latexStart, latexEnd;
@@ -262,6 +262,15 @@ var FW_FILETYPE_VERSION = "1.1";
 \n}'
         }
 
+        if (keywords && metadata.keywords && metadata.keywords != '') {
+            includePackages +=
+'\\def\\keywords{\\vspace{.5em}\
+{\\textit{Keywords}:\\,\\relax%\
+}}\
+\\def\\endkeywords{\\par}'
+        }        
+      
+        
 
         if (jQuery(htmlCode).find('a').length > 0) {
             includePackages += '\n\\usepackage{hyperref}';
@@ -301,13 +310,26 @@ var FW_FILETYPE_VERSION = "1.1";
 
         latexStart = '\\documentclass{' + documentClass + '}\n' +
             includePackages +
-            '\n\\begin{document}\n\n\\title{' + title + '}\n\\author{'+author+'}\n';
+            '\n\\begin{document}\n\n\\title{' + title + '}';
+        if (specifiedAuthors && metadata.authors && metadata.authors != '') {
+            var authorsDiv = document.createElement('div');
+            authorsDiv.innerHTML = metadata.authors;
+            latexStart += '\n\\author{'+authorsDiv.innerText+'}\n';
+        } else {
+            latexStart += '\n\\author{'+author+'}\n';
+        }
         if (subtitle && metadata.subtitle && metadata.subtitle != '') {
             var subtitleDiv = document.createElement('div');
             subtitleDiv.innerHTML = metadata.subtitle;
             latexStart += '\\subtitle{' + subtitleDiv.innerText + '}\n';
         }
-
+        if (keywords && metadata.keywords && metadata.keywords != '') {
+            var keywordsDiv = document.createElement('div');
+            keywordsDiv.innerHTML = metadata.keywords;
+            latexStart += '\\begin{keywords}\n' + keywordsDiv.innerText + '\\end{keywords}\n';
+        }
+        
+        
         latexStart += '\n\\maketitle\n\n';
 
         if(documentClass==='book') {
@@ -359,7 +381,7 @@ var FW_FILETYPE_VERSION = "1.1";
             } else {}
         } else {
             documentFeatures = exporter.findLatexDocumentFeatures(
-                htmlCode, title, author, metadataSettings.subtitle, metadata,
+                htmlCode, title, author, metadataSettings.subtitle, metadataSettings.keywords, metadataSettings.authors, metadata,
                 'article');
             latexStart += documentFeatures.latexStart;
             latexEnd += documentFeatures.latexEnd;
@@ -880,7 +902,7 @@ var FW_FILETYPE_VERSION = "1.1";
             xhtmlCode, containerCode, opfCode,
             styleSheets = [],
             outputList, httpOutputList = [],
-            i, startHTML;
+            i, startHTML, authors, keywords, cleanDiv = document.createElement('div');
 
         title = document.createElement('div');
         title.innerHTML = aDocument.title;
@@ -952,10 +974,26 @@ var FW_FILETYPE_VERSION = "1.1";
 
         timestamp = exporter.getTimestamp();
 
+        if (aDocument.settings.metadata.authors && aDocument.metadata.authors && aDocument.metadata.authors != '') {
+            cleanDiv.innerHTML = aDocument.metadata.authors;
+            authors = jQuery.map(cleanDiv.innerText.split(","), jQuery.trim);
+        } else {
+            authors = [aDocument.owner.name];
+        }
+        
+        if (aDocument.settings.metadata.keywords && aDocument.metadata.keywords && aDocument.metadata.keywords != '') {
+            cleanDiv.innerHTML = aDocument.metadata.keywords;
+            keywords = jQuery.map(cleanDiv.innerText.split(","), jQuery.trim);
+        } else {
+            keywords = [];
+        }
+        
+        
         opfCode = tmp_epub_opf({
             language: gettext('en-US'), // TODO: specify a document language rather than using the current users UI language
             title: title,
-            creator: aDocument.owner.name, // TODO: make this specifiable as meta data
+            authors: authors,
+            keywords: keywords,
             idType: 'fidus',
             id: aDocument.id,
             date: timestamp.slice(0, 10), // TODO: the date should probably be the original document creation date instead

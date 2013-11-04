@@ -384,7 +384,8 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                         this.match("}");
                         return this.input.substring(start, end);
                     }
-                } else if (this.input[this.pos] == '{') {
+                } else if (this.input[this.pos] == '{'  && this.input[this.pos - 1] !=
+                    '\\') {
                     bracecount++;
                 } else if (this.pos == this.input.length - 1) {
                     console.log("Unterminated value");
@@ -444,6 +445,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             while (true) {
                 if (this.pos == this.input.length) {
                     console.log("Runaway key");
+                    return;
                 }
                 if (this.input[this.pos].match("[a-zA-Z0-9_:;`\\.\\\?+/-]")) {
                     this.pos++
@@ -482,6 +484,10 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                     break;
                 }
                 kv = this.key_equals_value();
+                if (typeof(kv)==='undefined') {
+                    $.addAlert('error', gettext('A variable could not be identified. Possible error in bibtex syntax.'));
+                    break;
+                }
                 val = this.scan_bibtex_string(kv[1]);
                 switch (kv[0]) {
                 case 'date':

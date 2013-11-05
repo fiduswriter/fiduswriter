@@ -27,21 +27,21 @@
         
         var $changeNode = jQuery(changeNode);
         var cid = $changeNode.attr('data-cid');
-        var owner_id = $changeNode.attr('data-userid');
+        var owner_id = parseInt($changeNode.attr('data-userid'), 10);
         var node_class = _.detect($changeNode.attr('class').split(' '), function(class_name) { return 0 <= class_name.indexOf('cts-'); });
         changeNode = jQuery(".ins[data-cid="+cid+"], .del[data-cid="+cid+"]")[0];
         var changeNodeOffset = {
             'top': (commentHelpers.calculateCommentBoxOffset(changeNode) - 100) + 'px',
             'left': (changeNode.offsetLeft + 65) + 'px'
         };
-        if (parseInt(owner_id, 10)===theUser.id) {
+        if (owner_id===theUser.id) {
             // The comment was written by the current user and owner of the document.
             changeOwner = {
                 'user_name': theUser.name,
                 'avatar': theUser.avatar
             };
         } else {
-            changeOwner = _.detect(access_rights, function(user){ return user.user_id === owner_id; });
+            changeOwner = _.detect(theDocument.access_rights, function(user){ return user.user_id === owner_id; });
             if(typeof changeOwner === 'undefined') {
                 // The change was made a user who no longer has access rights
                 changeOwner = {

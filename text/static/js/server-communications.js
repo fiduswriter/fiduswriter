@@ -151,7 +151,6 @@
     
     serverCommunications.incorporateUpdates = function () {
         if (theDocument.changed) {
-            theDocument.changed = false;
             serverCommunications.makeDiff();
         } else if (theDocument.newDiffs.length > 0) {
             serverCommunications.orderAndApplyChanges();

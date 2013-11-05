@@ -237,9 +237,11 @@ jQuery(document).bind('documentDataLoaded', function () {
 
         // Set Auto-save to save every ten seconds
         saveTimer = setInterval(function () {
-            editorHelpers.getUpdatesFromInputFields(function () {
-                editorHelpers.saveDocument();
-            });
+            if (theDocument.changed) { 
+                editorHelpers.getUpdatesFromInputFields(function () {
+                    editorHelpers.saveDocument();
+                });
+            }
         }, 10000);
 
 

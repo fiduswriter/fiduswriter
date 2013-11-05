@@ -349,7 +349,6 @@ var FW_FILETYPE_VERSION = "1.1";
 
     importer.createNewDocument = function (aDocument) {
         var postData = {
-            id: 0,
             title: aDocument.title,
             contents: aDocument.contents,
             settings: JSON.stringify(aDocument.settings),

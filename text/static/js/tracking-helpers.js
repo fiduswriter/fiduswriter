@@ -24,7 +24,6 @@
 
     trackingHelpers.createReviewBox = function(changeNode) {
         var changeOwner, changeTime;
-        
         var $changeNode = jQuery(changeNode);
         var cid = $changeNode.attr('data-cid');
         var owner_id = parseInt($changeNode.attr('data-userid'), 10);

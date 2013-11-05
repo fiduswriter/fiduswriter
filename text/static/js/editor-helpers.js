@@ -266,8 +266,7 @@
             eval("theDocument." + theName + "=" + JSON.stringify(newValue));
         }
         theChange = [aUserId, new Date().getTime(), theName, diff];
-        //theDocument.history.push(theChange);
-        //theDocument.lastHistory.push(theChange);
+
         if (!skipSendChange) {
             ws.send(JSON.stringify({
                 type: 'transform',
@@ -345,7 +344,7 @@
 
     editorHelpers.getUpdatesFromInputFields = function (callback,
         skipSendChange, aUser) {
-
+        
         editorHelpers.setDocumentData('metadata.title', jQuery(
             '#document-title').html().trim(), skipSendChange, aUser);
 
@@ -394,6 +393,8 @@
                 document: documentData
             });
         }
+        
+        theDocument.changed = false;
 
         if (callback) {
             callback();

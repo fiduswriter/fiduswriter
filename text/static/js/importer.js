@@ -356,7 +356,7 @@ var FW_FILETYPE_VERSION = "1.1";
             metadata: JSON.stringify(aDocument.metadata)
         };
         jQuery.ajax({
-                url: '/text/save/',
+                url: '/text/import/',
                 data: postData,
                 type: 'POST',
                 dataType: 'json',
@@ -393,7 +393,7 @@ var FW_FILETYPE_VERSION = "1.1";
                 },
                 error: function () {
                     jQuery.addAlert('error', gettext('Could not save ') +
-                        theDocument.title);
+                        aDocument.title);
                 },
                 complete: function () {
                     jQuery.deactivateWait();

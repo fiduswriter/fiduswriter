@@ -246,3 +246,29 @@ def access_right_save_js(request):
         content_type = 'application/json; charset=utf8',
         status=status
     )
+    
+
+  
+@login_required
+def import_js(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        document = Text.objects.create(owner_id=request.user.pk)
+        document.title = request.POST['title']
+        document.contents = request.POST['contents']
+        document.metadata = request.POST['metadata']
+        document.settings = request.POST['settings']
+        document.save()
+        response['text_id'] = document.id
+        date_format = '%d/%m/%Y'
+        date_obj = dateutil.parser.parse(str(document.added))
+        response['added'] = date_obj.strftime(date_format)
+        date_obj = dateutil.parser.parse(str(document.updated))
+        response['updated'] = date_obj.strftime(date_format)
+        status = 201
+    return HttpResponse(
+        simplejson.dumps(response),
+        content_type = 'application/json; charset=utf8',
+        status=status
+    )    

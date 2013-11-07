@@ -1,7 +1,7 @@
 #tracking-box-container {
     position: absolute;
     z-index: 93;
-    top: 300px;
+    top: -20px;
     left: -50px;
 }
 

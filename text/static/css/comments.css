@@ -6,7 +6,7 @@
 #comment-box-container {
     position: absolute;
     left: 914px;
-    top: 300px;
+    top: -20px;
 }
 
 #comment-box-container.hide {

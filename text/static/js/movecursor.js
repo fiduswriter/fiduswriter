@@ -22,6 +22,8 @@
     var exports = this,
         keyEvents = {};
 
+    keyEvents.controlPressed = false;
+    
     keyEvents.bindEvents = function () {
         // Send keydown events by testkeypress.
         jQuery('.editable').bind('keydown', function (evt) {
@@ -107,6 +109,12 @@
                 return true;
             }
             break;
+        case 85:
+            if (keyEvents.UKey(evt, editorContainer)) {
+                evt.preventDefault();
+                return true;
+            }            
+            break;
         case 144:
             if (keyEvents.numLock(evt, editorContainer)) {
                 evt.preventDefault();
@@ -129,13 +137,13 @@
 
     keyEvents.testKeyPressAfter = function (evt, editorContainer) {
         switch (evt.keyCode) {
-        case 27:
-            if (true) {
-                evt.preventDefault();
-                evt.stopPropagation();
-                jQuery(editorContainer).trigger('blur');
-                return true;
-            }
+        case 17: // Control
+            keyEvents.controlPressed = false;
+            break;
+        case 27: // ESC
+            evt.preventDefault();
+            evt.stopPropagation();
+            jQuery(editorContainer).trigger('blur');
             break;
         default:
             break;
@@ -337,6 +345,7 @@
     // Keycode 17
 
     keyEvents.control = function (evt, editorContainer) {
+        keyEvents.controlPressed = true;
         return false;
     };
 
@@ -687,6 +696,13 @@
         }
         // return false so that the delete key action will take place.
         return false;
+    };
+    
+    // Keycode 85
+    
+    keyEvents.UKey = function (evt, editorContainer) {
+        // Prevent ctrl+u but don't prevent normal u.
+        return keyEvents.controlPressed;
     };
 
     // Keycode 144

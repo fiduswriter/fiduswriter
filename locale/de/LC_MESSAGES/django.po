@@ -881,7 +881,7 @@ msgstr "Der Harvard Autor-Datum Stil"
 
 #: text/templates/text/editor.html:389
 msgid "Harvard"
-msgstr "Havard"
+msgstr "Harvard"
 
 #: text/templates/text/editor.html:392
 msgid "Modern Language Association"

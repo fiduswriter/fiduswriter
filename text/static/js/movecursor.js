@@ -27,6 +27,9 @@
         jQuery('.editable').bind('keydown', function (evt) {
             return keyEvents.testKeyPress(evt, this);
         });
+        jQuery('.editable').bind('keyup', function (evt) {
+            return keyEvents.testKeyPressAfter(evt, this);
+        });
     }
 
 
@@ -75,7 +78,7 @@
             }
             break;
         case 27:
-            if (keyEvents.alt(evt, editorContainer)) {
+            if (keyEvents.esc(evt, editorContainer)) {
                 evt.preventDefault();
                 return true;
             }
@@ -124,7 +127,20 @@
         }
     }
 
-
+    keyEvents.testKeyPressAfter = function (evt, editorContainer) {
+        switch (evt.keyCode) {
+        case 27:
+            if (true) {
+                evt.preventDefault();
+                evt.stopPropagation();
+                jQuery(editorContainer).trigger('blur');
+                return true;
+            }
+            break;
+        default:
+            break;
+        }
+    };
 
     // Keycode 8
 
@@ -339,7 +355,7 @@
     // Keycode 27
 
     keyEvents.esc = function (evt, editorContainer) {
-        return false;
+        return true;
     };
 
 

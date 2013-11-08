@@ -16,13 +16,14 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
+
 from django.http import HttpResponseRedirect
 from django.http import HttpResponse
 from django.contrib.auth import logout
 from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
-from django.utils import simplejson
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.exceptions import ObjectDoesNotExist
@@ -75,7 +76,7 @@ def password_change_js(request):
             status = 201
     
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )
@@ -104,7 +105,7 @@ def add_email_js(request):
             response['msg'] = add_email_form.errors
     
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )
@@ -140,7 +141,7 @@ def delete_email_js(request):
             pass
     
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )
@@ -183,7 +184,7 @@ def primary_email_js(request):
             response['msg'] = "e-mail address does not exist"
             
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )
@@ -214,7 +215,7 @@ def upload_avatar_js(request):
             response['avatar'] = accountutil.get_user_avatar_url(request.user)
             status = 200
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )
@@ -246,7 +247,7 @@ def delete_avatar_js(request):
             response['avatar'] = accountutil.get_user_avatar_url(request.user)
             status = 200
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )
@@ -266,7 +267,7 @@ def delete_user_js(request):
         user.save()
         status = 200
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )        
@@ -280,7 +281,7 @@ def save_profile_js(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
-        form_data = simplejson.loads(request.POST['form_data'])
+        form_data = json.loads(request.POST['form_data'])
         user_object = User.objects.get(pk=request.user.pk)
         user_form = UserForm(form_data['user'], instance=user_object)
         if user_form.is_valid():
@@ -306,7 +307,7 @@ def save_profile_js(request):
         '''
             
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )    
@@ -372,7 +373,7 @@ def add_team_member_js(request):
             pass
         
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )
@@ -385,7 +386,7 @@ def change_team_member_roles_js(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
-        form_data = simplejson.loads(request.POST['form_data'])
+        form_data = json.loads(request.POST['form_data'])
         form_data['leader'] = request.user.pk
         member=User.objects.get(pk=form_data['member'])
         team_member_object_instance = request.user.leader.filter(member=member)[0]
@@ -394,7 +395,7 @@ def change_team_member_roles_js(request):
             team_member_form.save()
             status = 200
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )
@@ -417,7 +418,7 @@ def remove_team_member_js(request):
             team_member_object_instance.delete()
         status = 200
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )    

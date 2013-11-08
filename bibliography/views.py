@@ -17,11 +17,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import time
+import json
 
 from django.conf import settings
 from django.shortcuts import render_to_response
 from django.http import HttpResponse
-from django.utils import simplejson
 from django.contrib.auth.decorators import login_required
 from django.core.context_processors import csrf
 from django.core.exceptions import ValidationError
@@ -73,7 +73,7 @@ def import_bibtex_js(request):
         from bibliography.bib import BibDate
         response['errors'] = []
         response['warning'] = []
-        bibs = simplejson.loads(request.POST['bibs'])
+        bibs = json.loads(request.POST['bibs'])
         status = 200
         e_types = {}
         for e_type in EntryType.objects.all():
@@ -136,14 +136,14 @@ def import_bibtex_js(request):
                     if isinstance(val, list) :
                         val = ' and '.join(val)
                     the_fields[field_type.field_name] = val
-            inserting_obj['fields'] = simplejson.dumps(the_fields)        
+            inserting_obj['fields'] = json.dumps(the_fields)        
             the_entry = save_bib_to_db(inserting_obj)
             if the_entry != False:
                 new_bibs.append(the_entry)
                 response['bib_ids'].append(the_entry.id)
             response['bibs'] = serializer.serialize(new_bibs, fields=('entry_key', 'entry_owner', 'entry_type', 'entry_cat', 'fields'))
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )
@@ -198,7 +198,7 @@ def biblist_js(request):
                 response['bibCategories']  = serializer.serialize(EntryCategory.objects.filter(category_owner = user_id))
                 status = 200                
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )
@@ -285,7 +285,7 @@ def save_js(request):
                     the_entry.entry_key = 'Fidusbibliography_' + str(the_entry.id)
                 #clear categories of the entry to restore them new
                 the_entry.entry_cat = the_cat
-                the_entry.fields = simplejson.dumps(the_fields)
+                the_entry.fields = json.dumps(the_fields)
                 the_entry.save()
                 response['values']  = serializer.serialize([the_entry], fields=('entry_key', 'entry_owner', 'entry_type', 'entry_cat', 'fields'))
         else :
@@ -294,7 +294,7 @@ def save_js(request):
             response['errormsg']['error'] = 'this type of entry does not exist.'
             
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )
@@ -336,7 +336,7 @@ def save_category_js(request):
         status = 201
         
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )

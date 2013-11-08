@@ -16,13 +16,13 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
 from time import mktime
 
 from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
 from django.core.context_processors import csrf
 from django.template import RequestContext
-from django.utils import simplejson
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.core.serializers.python import Serializer
@@ -82,7 +82,7 @@ def save_js(request):
             response['values']['height'] = image.height
             response['values']['width'] = image.width
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )            
@@ -154,7 +154,7 @@ def images_js(request):
             
 
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )
@@ -184,7 +184,7 @@ def save_category_js(request):
         status = 201
         
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )

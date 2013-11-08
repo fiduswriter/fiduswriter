@@ -16,9 +16,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
+
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpRequest
-from django.utils import simplejson, timezone
+from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.core.context_processors import csrf
 from django.template import RequestContext
@@ -84,7 +86,7 @@ def get_documentlist_extra_js(request):
         documents = Text.objects.filter(id__in=ids)
         response['documents'] = serializer.serialize(documents, fields=('contents','id','comments','settings','metadata'))
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )   
@@ -136,7 +138,7 @@ def get_documentlist_js(request):
         response['user']['avatar']=avatar_url(request.user,80)            
         response['access_rights'] = get_accessrights(AccessRight.objects.filter(text__owner=request.user))
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )        
@@ -160,7 +162,7 @@ def delete_js(request):
         document.delete()
         status = 200
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )            
@@ -242,7 +244,7 @@ def access_right_save_js(request):
         response['access_rights'] = get_accessrights(AccessRight.objects.filter(text__owner=request.user))
         status = 201
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )
@@ -268,7 +270,7 @@ def import_js(request):
         response['updated'] = date_obj.strftime(date_format)
         status = 201
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )    

@@ -46,6 +46,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': './fiduswriter.sql',
+        'CONN_MAX_AGE': 15
     }
 
 }

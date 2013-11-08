@@ -16,9 +16,11 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+import json
+
 from django.shortcuts import render_to_response
 from django.http import HttpResponse, HttpRequest
-from django.utils import simplejson, timezone
+from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.core.context_processors import csrf
 from django.template import RequestContext
@@ -90,7 +92,7 @@ def get_book_js(request):
     response={}
     status = 405
     if request.is_ajax() and request.method == 'POST':
-            book_id = simplejson.loads(request.POST['id'])
+            book_id = json.loads(request.POST['id'])
             book = Book.objects.filter(id=book_id).filter(Q(owner=request.user) | Q(bookaccessright__user=request.user))
             # TODO: Is it really enough to check if the number of chapters 
             # owned by or with access rights by the current user is smaller 
@@ -117,7 +119,7 @@ def get_book_js(request):
                 status = 200
             
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )    
@@ -175,7 +177,7 @@ def get_booklist_js(request):
         response['user']['avatar']=avatar_url(request.user,80)            
         response['access_rights'] = get_accessrights(BookAccessRight.objects.filter(book__owner=request.user))
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )
@@ -207,12 +209,12 @@ def save_js(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
-        the_book = simplejson.loads(request.POST['the_book'])
+        the_book = json.loads(request.POST['the_book'])
         the_chapters = the_book.pop('chapters')
        # if the_book['cover_image']==False:
        #     the_book.pop('cover_image')
-        the_book['metadata']=simplejson.dumps(the_book['metadata'])
-        the_book['settings']=simplejson.dumps(the_book['settings'])
+        the_book['metadata']=json.dumps(the_book['metadata'])
+        the_book['settings']=json.dumps(the_book['settings'])
         if the_book['id'] == 0:
             # We are dealing with a new book that still has not obtained an
             # ID.
@@ -269,7 +271,7 @@ def save_js(request):
                     status = 403
             
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )
@@ -286,7 +288,7 @@ def delete_js(request):
         book.delete()
         status = 200
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )            
@@ -377,7 +379,7 @@ def access_right_save_js(request):
         response['access_rights'] = get_accessrights(BookAccessRight.objects.filter(book__owner=request.user))
         status = 201
     return HttpResponse(
-        simplejson.dumps(response),
+        json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
     )

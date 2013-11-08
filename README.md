@@ -41,6 +41,7 @@ The following are instructions working on most *NIX systems.
 
 7. Install the requirements for running  fiduswriter by typing:
 
+  pip install -U setuptools
   pip install -r requirements.txt
 
 8. If you want to go beyond a local test installation, copy configuration.py-default to configuration.py, and edit configuration.py with a text editor, adjusting it to fit your needs. 

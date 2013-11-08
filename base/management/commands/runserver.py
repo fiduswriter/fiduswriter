@@ -20,7 +20,7 @@ from datetime import datetime
 from sys import platform
 
 from django.core.management.base import BaseCommand, CommandError
-from django.utils import translation
+from django.utils import translation, autoreload
 from django.conf import settings
 from django.core.handlers.wsgi import WSGIHandler
 
@@ -40,6 +40,18 @@ class Command(BaseCommand):
     help = 'Run django using the tornado server'
 
     def handle(self, port=None, *args, **options):
+        if not port:
+            self.port = DEFAULT_PORT
+        else:
+            self.port = port
+        if not self.port.isdigit():
+            raise CommandError("%r is not a valid port number." % self.port)        
+        if settings.DEBUG:
+            autoreload.main(self.inner_run, args, options)
+        else:
+            self.inner_run(*args, **options)
+        
+    def inner_run(self, *args, **options):    
         wsgi_app = WSGIContainer(WSGIHandler())
         tornado_app = Application([(r'/static/(.*)',
             DjangoStaticFilesHandler, {'default_filename': 'none.img'}),
@@ -47,12 +59,6 @@ class Command(BaseCommand):
             ('/hello-tornado', HelloHandler), 
             ('/ws/doc/(\w+)', DocumentWS), 
             ('.*', FallbackHandler, dict(fallback=wsgi_app))])
-        if not port:
-            self.port = DEFAULT_PORT
-        else:
-            self.port = port
-        if not self.port.isdigit():
-            raise CommandError("%r is not a valid port number." % self.port)
         quit_command = (platform == 'win32') and 'CTRL-BREAK' or 'CONTROL-C'
         
         self.stdout.write("Validating models...\n\n")

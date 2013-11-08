@@ -116,7 +116,7 @@
  * Bug report: https://github.com/fiduswriter/fiduswriter/issues/40
  * 
  */
-/*
+
 .animate-spin {
   -webkit-animation: spin 2s infinite linear;
   animation: spin 2s infinite linear;
@@ -146,7 +146,7 @@
     transform: rotate(359deg);
   }
 }
-*/
+/**/
 
 /*
  * styles for Lato

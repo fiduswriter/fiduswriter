@@ -49,6 +49,7 @@ The following are instructions working on most *NIX systems.
    If you you set DEBUG = False in configuration.py, you likely need to run:
 
   python manage.py collectstatic
+  
   python manage.py compress 
 
 9. Recompile locale message files by typing:

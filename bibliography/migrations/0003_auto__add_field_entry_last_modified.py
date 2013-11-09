@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import datetime
+import django.utils.timezone
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
@@ -10,7 +10,7 @@ class Migration(SchemaMigration):
     def forwards(self, orm):
         # Adding field 'Entry.last_modified'
         db.add_column(u'bibliography_entry', 'last_modified',
-                      self.gf('django.db.models.fields.DateTimeField')(auto_now=True, default=datetime.datetime(2013, 8, 26, 0, 0), blank=True),
+                      self.gf('django.db.models.fields.DateTimeField')(auto_now=True, default=django.utils.timezone.now, blank=True),
                       keep_default=False)
 
 

@@ -25,33 +25,33 @@ The following are instructions working on most *NIX systems.
 
 2. Install the development packages of libjpeg, gettext, python and the python virtual environment creator. How you do this depends on your system. On Debian and Ubuntu the packages are called libjpeg-dev, python-dev and python-virtualenv. Install them with your favorite package manager, for example on the command line by running:
 
-  sudo apt-get install libjpeg-dev python-dev python-virtualenv gettext
+  > sudo apt-get install libjpeg-dev python-dev python-virtualenv gettext
 
 3. Cd to where you have your sources using your terminal/command line.
 
 4. You can use the virtualenv command to create virtual environments. The following command will create an environment called "fiduswriter-venv":
 
-  virtualenv  --no-site-packages fiduswriter-venv
+  > virtualenv  --no-site-packages fiduswriter-venv
 
 5. Activate the virtualenv by typing:
 
-  source fiduswriter-venv/bin/activate
+  > source fiduswriter-venv/bin/activate
 
 6. Install the requirements for running  fiduswriter by typing:
 
-  pip install -U setuptools
+  > pip install -U setuptools
   
-  pip install -r requirements.txt
+  > pip install -r requirements.txt
 
 7. The default is to use sqlite as the database backend. If you want to use mysql instead, you need a few more things:
 
   a. Install the libmysql development package. On Debian/Ubuntu, run:
 
-    sudo apt-get install libmysqlclient-development
+    > sudo apt-get install libmysqlclient-development
 
   b. Install the requirements specific to MySQL:  
   
-    pip install -r requirements-mysql.txt
+    > pip install -r requirements-mysql.txt
 
   c. Create a database and user with access to it, making sure that the characterset of the database is set to UTF8. Check here http://www.debuntu.org/how-to-create-a-mysql-database-and-set-privileges-to-a-user/ for how to create a database and set up user priviliges. Make sure that when you create the database, you specify the characterset:
     
@@ -60,38 +60,40 @@ The following are instructions working on most *NIX systems.
 8. If you want to go beyond a local test installation, copy configuration.py-default to configuration.py, and edit configuration.py with a text editor, adjusting it to fit your needs. 
    If you you set DEBUG = False in configuration.py, you likely need to run:
 
-  python manage.py collectstatic
+  > python manage.py collectstatic
   
-  python manage.py compress 
+  > python manage.py compress 
 
 9. Recompile locale message files by typing:
 
-  python manage.py compilemessages
+  > python manage.py compilemessages
 
 10. Synchronize the DB and create a superuser by typing:
 
-  python manage.py syncdb
+  > python manage.py syncdb
 
-  python manage.py migrate
+  > python manage.py migrate
 
-  python manage.py loaddata bibliography/fixture/initial_bib_rules.json
+  > python manage.py loaddata bibliography/fixture/initial_bib_rules.json
 
-  python manage.py loaddata base/fixture/initial_terms.json
+  > python manage.py loaddata base/fixture/initial_terms.json
 
 11. Run the Fidus Writer server by typing:
 
-  python manage.py runserver
+  > python manage.py runserver
 
   or, to start the server on a different port than the default 8000, run:
 
-  python manage.py runserver 8000
+  > python manage.py runserver 8000
 
 - - - - - -
 
 For best results for the end user:
 
-1. Install Chrome/Chromium at least version 26
+1. Install a recent version of Chrome/Chromium 
 
-2. Enable Webkit experimental features (in type "about:flags" into the navigation bar of the browser)
+2. Enable "Enable experimental Web Platform features." (in type "about:flags" into the navigation bar of the browser)
 
 3. Restart Chrome/Chromium
+
+Alternatively you can use Safari 6.1+

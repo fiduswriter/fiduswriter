@@ -32,7 +32,7 @@ DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
 SERVER_INFO = {
-    # This determines whether the server is used for testing and will let the users 
+    # This determines whether the server is used for testing and will let the users know
     # upon signup know that their documents may disappear.  
     'TEST_SERVER': True,
     # This is the contact email that will be shown in various places all over the site.

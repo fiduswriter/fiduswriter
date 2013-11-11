@@ -27,23 +27,35 @@ The following are instructions working on most *NIX systems.
 
   sudo apt-get install libjpeg-dev python-dev python-virtualenv gettext
 
-3. Start the command line (terminal).
+3. Cd to where you have your sources using your terminal/command line.
 
-4. Cd to where you have your sources.
-
-5. You can use the virtualenv command to create virtual environments. The following command will create an environment called "fiduswriter-venv":
+4. You can use the virtualenv command to create virtual environments. The following command will create an environment called "fiduswriter-venv":
 
   virtualenv  --no-site-packages fiduswriter-venv
 
-6. Activate the virtualenv by typing:
+5. Activate the virtualenv by typing:
 
   source fiduswriter-venv/bin/activate
 
-7. Install the requirements for running  fiduswriter by typing:
+6. Install the requirements for running  fiduswriter by typing:
 
   pip install -U setuptools
   
   pip install -r requirements.txt
+
+7. The default is to use sqlite as the database backend. If you want to use mysql instead, you need a few more things:
+
+  a. Install the libmysql development package. On Debian/Ubuntu, run:
+
+    sudo apt-get install libmysqlclient-development
+
+  b. Install the requirements specific to MySQL:  
+  
+    pip install -r requirements-mysql.txt
+
+  c. Create a database and user with access to it, making sure that the characterset of the database is set to UTF8. Check here http://www.debuntu.org/how-to-create-a-mysql-database-and-set-privileges-to-a-user/ for how to create a database and set up user priviliges. Make sure that when you create the database, you specify the characterset:
+    
+    > CREATE DATABASE <dbname> CHARACTER SET utf8;
 
 8. If you want to go beyond a local test installation, copy configuration.py-default to configuration.py, and edit configuration.py with a text editor, adjusting it to fit your needs. 
    If you you set DEBUG = False in configuration.py, you likely need to run:

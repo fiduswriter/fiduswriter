@@ -55,7 +55,7 @@ The following are instructions working on most *NIX systems.
 
   c. Create a database and user with access to it, making sure that the characterset of the database is set to UTF8. Check here http://www.debuntu.org/how-to-create-a-mysql-database-and-set-privileges-to-a-user/ for how to create a database and set up user priviliges. Make sure that when you create the database, you specify the characterset:
     
-    > CREATE DATABASE <dbname> CHARACTER SET utf8;
+    > create database DBNAME character set utf8;
 
 8. If you want to go beyond a local test installation, copy configuration.py-default to configuration.py, and edit configuration.py with a text editor, adjusting it to fit your needs. 
    If you you set DEBUG = False in configuration.py, you likely need to run:

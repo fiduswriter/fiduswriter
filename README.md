@@ -51,7 +51,7 @@ The following are instructions working on most *NIX systems.
 
   b. Install the requirements specific to MySQL:  
   
-    > pip install -r requirements-mysql.txt
+    > pip install -r mysql-requirements.txt
 
   c. Create a database and user with access to it, making sure that the characterset of the database is set to UTF8. Check here http://www.debuntu.org/how-to-create-a-mysql-database-and-set-privileges-to-a-user/ for how to create a database and set up user priviliges. Make sure that when you create the database, you specify the characterset:
     
@@ -62,13 +62,19 @@ The following are instructions working on most *NIX systems.
 
   > python manage.py collectstatic
   
-  > python manage.py compress 
+  > python manage.py compress
 
-9. Recompile locale message files by typing:
+9. If you will be running several instances of Fidus Writer that need to communicate between each other, you will need to add redis for message exchange. Install a redis server, install the requirements like this:
+
+  > pip install -r redis-requirements.txt
+
+  And you will need to adjust configuration.py by specifying the CACHES (see configuration.py-default comments).
+
+10. Recompile locale message files by typing:
 
   > python manage.py compilemessages
 
-10. Synchronize the DB and create a superuser by typing:
+11. Synchronize the DB and create a superuser by typing:
 
   > python manage.py syncdb
 
@@ -78,7 +84,7 @@ The following are instructions working on most *NIX systems.
 
   > python manage.py loaddata base/fixture/initial_terms.json
 
-11. Run the Fidus Writer server by typing:
+12. Run the Fidus Writer server by typing:
 
   > python manage.py runserver
 

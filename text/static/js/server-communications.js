@@ -31,6 +31,7 @@
             chatHelpers.newMessage(data);
             break;
         case 'connections':
+            console.log(data);
             serverCommunications.updateParticipantList(data.participant_list);
             break;
         case 'welcome':
@@ -95,9 +96,8 @@
     
     
     serverCommunications.makeDiff = function () {
-        console.log(theDocument.textChangeList[theDocument.textChangeList.length-1][0]);
         var theDiff = domDiff.diff(theDocument.textChangeList[theDocument.textChangeList.length-1][0],document.getElementById('document-editable'));
-        console.log(theDiff);
+
         var thePackage = {
             type: 'diff',
             time: new Date().getTime(), 
@@ -229,6 +229,7 @@
             window.ws = new WebSocket('ws://' + location.host +
                 '/ws/doc/' + documentId);
             ws.onmessage = function (event) {
+                console.log(event);
                 serverCommunications.receive(JSON.parse(event.data));
             }
             ws.onclose = serverCommunications.noConnectionToServer;

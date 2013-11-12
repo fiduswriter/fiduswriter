@@ -1,0 +1,2 @@
+tornado-redis==2.4.12
+django-redis==3.3

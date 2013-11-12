@@ -69,7 +69,16 @@ MANAGERS = ADMINS
 # Make this unique, and don't share it with anybody. Change the default string.
 SECRET_KEY = '2ouq2zgw5y-@w+t6!#zf#-z1inigg7$lg3p%8e3kkob1bf$#p4'
 
-
+# Use Redis for caching
+#CACHES = {
+#    "default": {
+#        "BACKEND": "redis_cache.cache.RedisCache",
+#        "LOCATION": "127.0.0.1:6379:1",
+#        "OPTIONS": {
+#            "CLIENT_CLASS": "redis_cache.client.DefaultClient",
+#        }
+#    }
+#}
 
 
 

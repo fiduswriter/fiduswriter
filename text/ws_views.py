@@ -32,10 +32,6 @@ def save_document(document,changes):
     document.contents = changes["contents"]
     document.metadata = changes["metadata"]
     document.settings = changes["settings"]  
-    #if len(document.history) > 0:        
-    #    document.history += "," + changes["last_history"]
-    #else:
-    #    document.history = changes["last_history"]
     document.save()
 
 class DocumentWS(BaseWebSocketHandler):
@@ -56,7 +52,6 @@ class DocumentWS(BaseWebSocketHandler):
             if len(document) > 0:
                 document = document[0]
                 self.document = document
-                
                 if self.document.owner == self.user:
                     self.access_rights = 'w'
                     self.is_owner = True
@@ -72,6 +67,9 @@ class DocumentWS(BaseWebSocketHandler):
             else:
                 can_access = False
         if can_access:
+            self.channel = str(self.document.id)
+            if self.USE_REDIS:
+                self.listen_to_redis()            
             response = dict()
             response['type'] = 'welcome'
             response['document'] = dict()
@@ -80,7 +78,6 @@ class DocumentWS(BaseWebSocketHandler):
             response['document']['contents']=self.document.contents
             response['document']['metadata']=self.document.metadata
             response['document']['settings']=self.document.settings
-            #response['document']['history']=self.document.history
             response['document']['access_rights'] = get_accessrights(AccessRight.objects.filter(text__owner=self.document.owner))
             response['document']['owner'] = dict()
             response['document']['owner']['id']=self.document.owner.id
@@ -102,20 +99,59 @@ class DocumentWS(BaseWebSocketHandler):
                 response['user']['id']=self.user.id
                 response['user']['name']=self.user.readable_name
                 response['user']['avatar']=avatar_url(self.user,80)
-            
-            
-            if self.document.id not in DocumentWS.sessions:
-                DocumentWS.sessions[self.document.id]=dict()
+
+            if self.channel not in DocumentWS.sessions:
+                DocumentWS.sessions[self.channel]=dict()
                 self.id = 0
                 response['control']=True
             else:
-                self.id = max(DocumentWS.sessions[self.document.id])+1
-            DocumentWS.sessions[self.document.id][self.id] = self
+                self.id = max(DocumentWS.sessions[self.channel])+1
+            
             response['session_id']= self.id
             self.write_message(response)
-            DocumentWS.send_participant_list(self.document.id)
+            
+            if self.USE_REDIS:
+                chat = {   
+                    'type': 'new_participant',
+                    'key': self.id,
+                    'user_info':
+                        {
+#                        'channel': self.channel,
+                        'key':self.id,
+                        'id':self.user.id,
+                        'name':self.user.readable_name,
+                        'avatar':avatar_url(self.user,80)
+                        }
+                    }
+                DocumentWS.send_updates(chat, self.channel)
+            else:
+                DocumentWS.sessions[self.channel][self.id] = self
+                self.send_participant_list()
+
+
+    def process_redis_message(self, message):
+        # Message from redis
+        if message.kind == 'message':
+            print message.body
+            parsed = json_decode(message.body)
+            print parsed
+            if parsed["type"]=="new_participant":
+                DocumentWS.sessions[self.channel][parsed["key"]] = parsed["user_info"]
+                self.send_participant_list_redis()
+            elif parsed["type"]=="participant_exit":
+                del DocumentWS.sessions[self.channel][parsed["key"]]
+                self.send_participant_list_redis()
+                if len(DocumentWS.sessions[self.channel]) > 0 and min(DocumentWS.sessions[self.channel]) == self.id:
+                    chat = {
+                        "type": 'take_control'
+                        }
+                    self.write_message(chat)
+            else:
+                self.write_message(message.body)
+
 
     def on_message(self, message):
+        # Message from browser
         parsed = json_decode(message)
         if parsed["type"]=='save' and self.access_rights == 'w':
             save_document(self.document, parsed["document"])
@@ -126,49 +162,66 @@ class DocumentWS(BaseWebSocketHandler):
                 "from": self.user.id,
                 "type": 'chat'
                 }
-            if self.document.id in DocumentWS.sessions:
-                DocumentWS.send_updates(chat, self.document.id)
+            if self.channel in DocumentWS.sessions:
+                DocumentWS.send_updates(chat, self.channel)
         elif parsed["type"]=='diff' or parsed["type"]=='transform':
-            if self.document.id in DocumentWS.sessions:
-                DocumentWS.send_updates(message, self.document.id, self.id)            
+            if self.channel in DocumentWS.sessions:
+                DocumentWS.send_updates(parsed, self.channel, self.id)
 
     def on_close(self):
-        print 'Websocket closed'
-        if hasattr(self, 'document') and self.document.id in DocumentWS.sessions:
-            del DocumentWS.sessions[self.document.id][self.id]
-            if DocumentWS.sessions[self.document.id]:
+        if self.USE_REDIS:
+            self.on_close_redis()
+        else:
+            self.on_close_without_redis()
+    
+    
+    def on_close_redis(self):
+        chat = {
+            "key": self.id,
+            "type": 'participant_exit'
+            }
+        new_controller = min(DocumentWS.sessions[self.channel])
+        DocumentWS.send_updates(message, self.channel, self.id)
+        if self.redis_client.subscribed:
+            self.redis_client.unsubscribe(self.channel)
+            self.redis_client.disconnect()
+    
+    def on_close_without_redis(self):
+        if hasattr(self, 'document') and self.channel in DocumentWS.sessions:
+            del DocumentWS.sessions[self.channel][self.id]
+            if DocumentWS.sessions[self.channel]:
                 chat = {
                     "type": 'take_control'
                     }
-                DocumentWS.sessions[self.document.id][min(DocumentWS.sessions[self.document.id])].write_message(chat)
-                DocumentWS.send_participant_list(self.document.id)
+                DocumentWS.sessions[self.channel][min(DocumentWS.sessions[self.channel])].write_message(chat)
+                self.send_participant_list()
             else:
-                del DocumentWS.sessions[self.document.id]
+                del DocumentWS.sessions[self.channel]
 
-    @classmethod
-    def send_participant_list(cls, document):
-        if document in DocumentWS.sessions:
+    def send_participant_list(self):
+        # send participant list to everyone connected to this server
+        if self.channel in DocumentWS.sessions:
             participant_list = []
-            for waiter in cls.sessions[document].keys():
+            for participant_id in DocumentWS.sessions[self.channel].keys():
                 participant_list.append({
-                    'key':waiter,
-                    'id':cls.sessions[document][waiter].user.id,
-                    'name':cls.sessions[document][waiter].user.readable_name,
-                    'avatar':avatar_url(cls.sessions[document][waiter].user,80)
-                    })
+                    'key':participant_id,
+                    'id':DocumentWS.sessions[self.channel][participant_id].user.id,
+                    'name':DocumentWS.sessions[self.channel][participant_id].user.readable_name,
+                    'avatar':avatar_url(DocumentWS.sessions[self.channel][participant_id].user,80)
+                    })     
             chat = {
                 "participant_list": participant_list,
                 "type": 'connections'
                 }
-            DocumentWS.send_updates(chat, document)
-
-    @classmethod
-    def send_updates(cls, chat, document, sender_id=None):
-        info("sending message to %d waiters", len(cls.sessions[document]))
-        for waiter in cls.sessions[document].keys():
-            if cls.sessions[document][waiter].id != sender_id:
-                try:
-                    cls.sessions[document][waiter].write_message(chat)
-                except:
-                    error("Error sending message", exc_info=True)            
+            DocumentWS.send_updates(chat, self.channel)
+            
+    def send_participant_list_redis(self):
+        # send the participant list only to this user (when using redis)
+        participant_list = DocumentWS.sessions[self.channel].values()
+        chat = {
+            "participant_list": participant_list,
+            "type": 'connections'
+            }
+        self.write_message(chat)            
+            
          

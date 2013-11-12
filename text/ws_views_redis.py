@@ -18,7 +18,7 @@
 
 import uuid
 
-from ws.base import BaseWebSocketHandler
+from ws.base_redis import BaseRedisWebSocketHandler
 from logging import info, error
 from tornado.escape import json_decode
 
@@ -32,17 +32,12 @@ def save_document(document,changes):
     document.contents = changes["contents"]
     document.metadata = changes["metadata"]
     document.settings = changes["settings"]  
-    #if len(document.history) > 0:        
-    #    document.history += "," + changes["last_history"]
-    #else:
-    #    document.history = changes["last_history"]
     document.save()
 
-class DocumentWS(BaseWebSocketHandler):
-    sessions = dict()
+class DocumentWS(BaseRedisWebSocketHandler):
 
     def open(self, document_id):
-        print 'Websocket opened'
+        print 'Websocket opened - redis'
         self.user = self.get_current_user()
         if int(document_id) == 0:
             can_access = True
@@ -56,7 +51,6 @@ class DocumentWS(BaseWebSocketHandler):
             if len(document) > 0:
                 document = document[0]
                 self.document = document
-                
                 if self.document.owner == self.user:
                     self.access_rights = 'w'
                     self.is_owner = True
@@ -72,6 +66,8 @@ class DocumentWS(BaseWebSocketHandler):
             else:
                 can_access = False
         if can_access:
+            self.channel = str(self.document.id)
+            self.listen_to_redis()            
             response = dict()
             response['type'] = 'welcome'
             response['document'] = dict()
@@ -80,7 +76,6 @@ class DocumentWS(BaseWebSocketHandler):
             response['document']['contents']=self.document.contents
             response['document']['metadata']=self.document.metadata
             response['document']['settings']=self.document.settings
-            #response['document']['history']=self.document.history
             response['document']['access_rights'] = get_accessrights(AccessRight.objects.filter(text__owner=self.document.owner))
             response['document']['owner'] = dict()
             response['document']['owner']['id']=self.document.owner.id
@@ -102,20 +97,49 @@ class DocumentWS(BaseWebSocketHandler):
                 response['user']['id']=self.user.id
                 response['user']['name']=self.user.readable_name
                 response['user']['avatar']=avatar_url(self.user,80)
-            
-            
-            if self.document.id not in DocumentWS.sessions:
-                DocumentWS.sessions[self.document.id]=dict()
+            print self.channel
+            participants = self.get_storage_object('participants_'+str(self.channel))
+            if participants == None or len(participants.keys()) == 0:
+                participants = {}
                 self.id = 0
-                response['control']=True
             else:
-                self.id = max(DocumentWS.sessions[self.document.id])+1
-            DocumentWS.sessions[self.document.id][self.id] = self
+                print participants
+                self.id = int(max(participants))+1
+            participants[self.id] = {
+                    'key':self.id,
+                    'id':self.user.id,
+                    'name':self.user.readable_name,
+                    'avatar':avatar_url(self.user,80)
+                    }
+            self.set_storage_object('participants_'+str(self.channel),participants)
+            message = {   
+                'type': 'participant_update',
+                }
+            self.send_updates(message)
+
             response['session_id']= self.id
             self.write_message(response)
-            DocumentWS.send_participant_list(self.document.id)
 
+
+    def process_redis_message(self, message):
+        # Message from redis
+        if message.kind == 'message':
+            parsed = json_decode(message.body)
+            if parsed["type"]=="participant_update":
+                self.send_participant_list()
+            elif parsed["type"]=="participant_exit":
+                self.send_participant_list()
+                participants = self.get_storage_object('participants_'+str(self.channel))
+                if len(participants) > 0 and min(participants) == self.id:
+                    chat = {
+                        "type": 'take_control'
+                        }
+                    self.write_message(chat)
+            else:
+                self.write_message(message.body)
+            
     def on_message(self, message):
+        # Message from browser
         parsed = json_decode(message)
         if parsed["type"]=='save' and self.access_rights == 'w':
             save_document(self.document, parsed["document"])
@@ -126,49 +150,32 @@ class DocumentWS(BaseWebSocketHandler):
                 "from": self.user.id,
                 "type": 'chat'
                 }
-            if self.document.id in DocumentWS.sessions:
-                DocumentWS.send_updates(chat, self.document.id)
+            self.send_updates(chat)
         elif parsed["type"]=='diff' or parsed["type"]=='transform':
-            if self.document.id in DocumentWS.sessions:
-                DocumentWS.send_updates(message, self.document.id, self.id)            
-
+            self.send_updates(parsed)
+    
     def on_close(self):
-        print 'Websocket closed'
-        if hasattr(self, 'document') and self.document.id in DocumentWS.sessions:
-            del DocumentWS.sessions[self.document.id][self.id]
-            if DocumentWS.sessions[self.document.id]:
-                chat = {
-                    "type": 'take_control'
-                    }
-                DocumentWS.sessions[self.document.id][min(DocumentWS.sessions[self.document.id])].write_message(chat)
-                DocumentWS.send_participant_list(self.document.id)
-            else:
-                del DocumentWS.sessions[self.document.id]
-
-    @classmethod
-    def send_participant_list(cls, document):
-        if document in DocumentWS.sessions:
-            participant_list = []
-            for waiter in cls.sessions[document].keys():
-                participant_list.append({
-                    'key':waiter,
-                    'id':cls.sessions[document][waiter].user.id,
-                    'name':cls.sessions[document][waiter].user.readable_name,
-                    'avatar':avatar_url(cls.sessions[document][waiter].user,80)
-                    })
-            chat = {
-                "participant_list": participant_list,
-                "type": 'connections'
-                }
-            DocumentWS.send_updates(chat, document)
-
-    @classmethod
-    def send_updates(cls, chat, document, sender_id=None):
-        info("sending message to %d waiters", len(cls.sessions[document]))
-        for waiter in cls.sessions[document].keys():
-            if cls.sessions[document][waiter].id != sender_id:
-                try:
-                    cls.sessions[document][waiter].write_message(chat)
-                except:
-                    error("Error sending message", exc_info=True)            
+        participants = self.get_storage_object('participants_'+str(self.channel))
+        if participants and hasattr(self, 'id') and self.id in participants:
+            del participants[self.id] 
+            self.set_storage_object('participants_'+str(self.channel),participants)
+        else:
+            print participants
+        message = {
+            "type": 'participant_exit'
+            }
+        self.send_updates(message)
+        if self.redis_client.subscribed:
+            self.redis_client.unsubscribe(self.channel)
+            self.redis_client.disconnect()
+            
+    def send_participant_list(self):
+        # send the participant list only to this user (when using redis)
+        participant_list = self.get_storage_object('participants_'+str(self.channel))
+        chat = {
+            "participant_list": participant_list,
+            "type": 'connections'
+            }
+        self.write_message(chat)            
+            
          

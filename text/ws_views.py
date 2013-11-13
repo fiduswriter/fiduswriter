@@ -133,7 +133,6 @@ class DocumentWS(BaseWebSocketHandler):
                 DocumentWS.send_updates(message, self.document.id, self.id)            
 
     def on_close(self):
-        print 'Websocket closed'
         if hasattr(self, 'document') and self.document.id in DocumentWS.sessions:
             del DocumentWS.sessions[self.document.id][self.id]
             if DocumentWS.sessions[self.document.id]:

@@ -97,13 +97,11 @@ class DocumentWS(BaseRedisWebSocketHandler):
                 response['user']['id']=self.user.id
                 response['user']['name']=self.user.readable_name
                 response['user']['avatar']=avatar_url(self.user,80)
-            print self.channel
             participants = self.get_storage_object('participants_'+str(self.channel))
             if participants == None or len(participants.keys()) == 0:
                 participants = {}
                 self.id = 0
             else:
-                print participants
                 self.id = int(max(participants))+1
             participants[self.id] = {
                     'key':self.id,
@@ -156,14 +154,12 @@ class DocumentWS(BaseRedisWebSocketHandler):
     
     def on_close(self):
         participants = self.get_storage_object('participants_'+str(self.channel))
-        if participants and hasattr(self, 'id') and self.id in participants:
-            del participants[self.id] 
+        if participants and hasattr(self, 'id') and str(self.id) in participants:
+            del participants[str(self.id)] 
             self.set_storage_object('participants_'+str(self.channel),participants)
-        else:
-            print participants
-        message = {
-            "type": 'participant_exit'
-            }
+            message = {
+                "type": 'participant_exit'
+                }
         self.send_updates(message)
         if self.redis_client.subscribed:
             self.redis_client.unsubscribe(self.channel)
@@ -171,7 +167,7 @@ class DocumentWS(BaseRedisWebSocketHandler):
             
     def send_participant_list(self):
         # send the participant list only to this user (when using redis)
-        participant_list = self.get_storage_object('participants_'+str(self.channel))
+        participant_list = self.get_storage_object('participants_'+str(self.channel)).values()
         chat = {
             "participant_list": participant_list,
             "type": 'connections'

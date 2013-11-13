@@ -14,6 +14,9 @@ from django.utils.importlib import import_module
 from django.core.handlers.wsgi import WSGIRequest
 
 import tornadoredis
+
+#TODO: Redis connection pools. When/how should they be used? Currently we don't use them at all.
+# Also, the subscription list of every pubsub channel is kept in regular redis. When redis 2.8 comes out, this should possibly be changed.
 try:
     redis_password = settings.CACHES['default']['OPTIONS']['PASSWORD']
 except KeyError:

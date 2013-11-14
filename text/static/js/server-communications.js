@@ -153,6 +153,8 @@
         
         domDiff.apply(document.getElementById('document-editable'), domDiff.diff(document.getElementById('document-editable'), tempPatchedNode));
         
+        // Also make sure that placeholders correspond to the current state of affairs
+        editorHelpers.setPlaceholders();
     };
     
     serverCommunications.incorporateUpdates = function () {

@@ -12,7 +12,7 @@
 
 $(document).ready(function() {
     function removeModal($helpUnderlay) {
-        $helpUnderlay.removeClass("help-isVisible")
+        $helpUnderlay.removeClass("help-isVisible");
     }
 
     function getWindowWidth() {
@@ -131,7 +131,7 @@ $(document).ready(function() {
     }
 
     // All the Ajax stuff is below.
-    $.get("question.mark.html", function(data) {
+    $.get("/static/question.mark.html", function(data) {
         $("body").append(data);
         doQuestionMark();
     });

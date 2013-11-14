@@ -1,7 +1,498 @@
-/**
- * almond 0.2.6 Copyright (c) 2011-2012, The Dojo Foundation All Rights Reserved.
- * Available via the MIT or new BSD license.
- * see: http://github.com/jrburke/almond for details
- */
+  // fix Array
+  (function() {
+    var oldfn = Array.prototype.push;
+    Array.prototype.push = function(element) {
+      oldfn.call(this, element);
+      return this;
+    };
+  }());
 
-(function(){var e,t,n;(function(r){function d(e,t){return h.call(e,t)}function v(e,t){var n,r,i,s,o,u,a,f,c,h,p=t&&t.split("/"),d=l.map,v=d&&d["*"]||{};if(e&&e.charAt(0)===".")if(t){p=p.slice(0,p.length-1),e=p.concat(e.split("/"));for(f=0;f<e.length;f+=1){h=e[f];if(h===".")e.splice(f,1),f-=1;else if(h===".."){if(f===1&&(e[2]===".."||e[0]===".."))break;f>0&&(e.splice(f-1,2),f-=2)}}e=e.join("/")}else e.indexOf("./")===0&&(e=e.substring(2));if((p||v)&&d){n=e.split("/");for(f=n.length;f>0;f-=1){r=n.slice(0,f).join("/");if(p)for(c=p.length;c>0;c-=1){i=d[p.slice(0,c).join("/")];if(i){i=i[r];if(i){s=i,o=f;break}}}if(s)break;!u&&v&&v[r]&&(u=v[r],a=f)}!s&&u&&(s=u,o=a),s&&(n.splice(0,o,s),e=n.join("/"))}return e}function m(e,t){return function(){return s.apply(r,p.call(arguments,0).concat([e,t]))}}function g(e){return function(t){return v(t,e)}}function y(e){return function(t){a[e]=t}}function b(e){if(d(f,e)){var t=f[e];delete f[e],c[e]=!0,i.apply(r,t)}if(!d(a,e)&&!d(c,e))throw new Error("No "+e);return a[e]}function w(e){var t,n=e?e.indexOf("!"):-1;return n>-1&&(t=e.substring(0,n),e=e.substring(n+1,e.length)),[t,e]}function E(e){return function(){return l&&l.config&&l.config[e]||{}}}var i,s,o,u,a={},f={},l={},c={},h=Object.prototype.hasOwnProperty,p=[].slice;o=function(e,t){var n,r=w(e),i=r[0];return e=r[1],i&&(i=v(i,t),n=b(i)),i?n&&n.normalize?e=n.normalize(e,g(t)):e=v(e,t):(e=v(e,t),r=w(e),i=r[0],e=r[1],i&&(n=b(i))),{f:i?i+"!"+e:e,n:e,pr:i,p:n}},u={require:function(e){return m(e)},exports:function(e){var t=a[e];return typeof t!="undefined"?t:a[e]={}},module:function(e){return{id:e,uri:"",exports:a[e],config:E(e)}}},i=function(e,t,n,i){var s,l,h,p,v,g=[],w;i=i||e;if(typeof n=="function"){t=!t.length&&n.length?["require","exports","module"]:t;for(v=0;v<t.length;v+=1){p=o(t[v],i),l=p.f;if(l==="require")g[v]=u.require(e);else if(l==="exports")g[v]=u.exports(e),w=!0;else if(l==="module")s=g[v]=u.module(e);else if(d(a,l)||d(f,l)||d(c,l))g[v]=b(l);else{if(!p.p)throw new Error(e+" missing "+l);p.p.load(p.n,m(i,!0),y(l),{}),g[v]=a[l]}}h=n.apply(a[e],g);if(e)if(s&&s.exports!==r&&s.exports!==a[e])a[e]=s.exports;else if(h!==r||!w)a[e]=h}else e&&(a[e]=n)},e=t=s=function(e,t,n,a,f){return typeof e=="string"?u[e]?u[e](t):b(o(e,t).f):(e.splice||(l=e,t.splice?(e=t,t=n,n=null):e=r),t=t||function(){},typeof n=="function"&&(n=a,a=f),a?i(r,e,t,n):setTimeout(function(){i(r,e,t,n)},4),s)},s.config=function(e){return l=e,l.deps&&s(l.deps,l.callback),s},e._defined=a,n=function(e,t,n){t.splice||(n=t,t=[]),!d(a,e)&&!d(f,e)&&(f[e]=[e,t,n])},n.amd={jQuery:!0}})(),n("almond",function(){}),n("Utils",[],function(){var e={makeArray:function(e,t){var n=function(e){e.slice();for(var t=0,r=e.length;t<r;t++)e[t]instanceof Array&&(e[t]=n(e[t]))};t instanceof Array&&(t=n(t));var r=function(){return t};return(new Array(e)).join(".").split(".").map(r)},renderArray:function(e){return rendered=[],e.forEach(function(e){rendered.push(e.join(" "))}),rendered.join("\n")},toHTML:function(e){var t=document.createElement("div");return t.appendChild(e.cloneNode(!0)),t.innerHTML},grow:function(t,n){return t=t.slice(),n instanceof Array||(n=[n]),n.forEach(function(e){t.push(e)}),t},getGapInformation:function(e,t,n){var r=function(e){return function(){return e}},i=this.makeArray(e.childNodes.length,!0),s=this.makeArray(t.childNodes.length,!0),o=0;return n.forEach(function(e){var t,n;for(t=e.old,n=t+e.length;t<n;t++)i[t]=o;for(t=e["new"],n=t+e.length;t<n;t++)s[t]=o;o++}),{gaps1:i,gaps2:s}},createChild:function(e){var t=document.createElement("div");return t.innerHTML=e,t.childNodes[0]},getFromRoute:function(e,t){var n=e;while(t.length>0)n=n.childNodes[t.splice(0,1)[0]];return n}};return e}),n("SubsetMapping",[],function(){var e=function(t,n){this.old=t,this["new"]=n};return e.prototype={contains:function(t){return t.length<this.length?t["new"]>=this["new"]&&t["new"]<this["new"]+this.length:!1},toString:function t(){return this.length+" element subset, first mapping: old "+this.old+" → new "+this["new"]}},e}),n("roughlyEqual",[],function(){var e=function t(e,n,r){if(!e||!n)return!1;if(e.nodeType!==n.nodeType)return!1;if(e.nodeType===3)return e.data===n.data;if(e.nodeName!==n.nodeName)return!1;if(e.childNodes.length!==n.childNodes.length)return!1;var i=!0;for(var s=e.childNodes.length-1;s>=0;s--)r?i=i&&e.childNodes[s].nodeName===n.childNodes[s].nodeName:i=i&&t(e.childNodes[s],n.childNodes[s],!0);return i};return e}),n("markSubTrees",["SubsetMapping","roughlyEqual","Utils"],function(e,t,n){var r=function(n,r,i,s){var o=0,u=[],a=n.length,f=r.length,l=[],c,h,p;for(c=0;c<a+1;c++)l[c]=[];for(h=0;h<a;h++)for(p=0;p<f;p++)!i[h]&&!s[p]&&t(n[h],r[p])?(l[h+1][p+1]=l[h][p]?l[h][p]+1:1,l[h+1][p+1]>o&&(o=l[h+1][p+1],u=[h+1,p+1])):l[h+1][p+1]=0;if(o===0)return!1;var d=[u[0]-o,u[1]-o],v=new e(d[0],d[1]);return v.length=o,v},i=function(t,i){t=t.cloneNode(!0),i=i.cloneNode(!0);var s=t.childNodes,o=i.childNodes,u=n.makeArray(s.length,!1),a=n.makeArray(o.length,!1),f=[],l=!0,c;while(l){l=r(s,o,u,a);if(l){f.push(l);for(c=0;c<l.length;c++)u[l.old+c]=!0;for(c=0;c<l.length;c++)a[l.new+c]=!0}}return f};return i}),n("DiffTracker",[],function(){var e=function(){this.diffInformation=[]};return e.prototype={last:!1,track:function(e){this.diffInformation.push(e),this.last=e},reset:function(){this.diffInformation=[]},toString:function(){return this.diffInformation}},e}),n("findAttrDiff",[],function(){var e=function(t,n,r,i){if(t.nodeType===3)return[];var s=Array.prototype.slice,o=function(e,t){return e.name>t.name},u=s.call(t.attributes).sort(o),a=s.call(n.attributes).sort(o),f=function(e,t){for(var n=0,r=t.length;n<r;n++)if(t[n].name===e.name)return n;return-1},l,c=[];return u.forEach(function(e){var t=f(e,a);if(t===-1){l={action:"removed attribute",route:r,attribute:{name:e.name,value:e.nodeValue}},i.track(l),c.push(l);return}var n=a.splice(t,1)[0];e.nodeValue!==n.nodeValue&&(l={action:"modified attribute",route:r,attribute:{name:e.name,oldValue:e.nodeValue,newValue:n.nodeValue}},i.track(l),c.push(l))}),a.forEach(function(e){l={action:"added attribute",route:r,attribute:{name:e.name,value:e.nodeValue}},i.track(l),c.push(l)}),c};return e}),n("getFirstDiff",["markSubTrees","Utils"],function(e,t){var n=function(r,i,s,o){console.log(r,i),o=o||[];if(r.nodeType===3&&i.nodeType===3)return r.data!==i.data?{action:"replace",oldValue:r.data,newValue:i.data,route:[0]}:!1;var u=s.gaps1,a=u.length,f=s.gaps2,l=u.length,c,h=a<l?a:l,p=0,d,v=function(e){return e!==!0},m=u.filter(v),g=m.length,y=f.filter(v),b=y.length,w=g<b?m:y;for(c=0,h=w.length;c<h;c++)if(m[c]!=y[c]){var d=m[c];return{action:"move",route:o,group:d}}var E,S,x,T;for(c=0,h=a<l?a:l;c<h;c++){E=u[c],S=f[c];if(E===!0){if(S===!0){x=r.childNodes[c],T=i.childNodes[c];if(x.nodeType===3&&T.nodeType===3)return{action:"replace",oldValue:x.data,newValue:T.data,route:[0]};if(x.nodeType===3&&T.nodeType!==3)return{action:"text to node",oldValue:x.data,newValue:t.toHTML(T),route:o};if(x.nodeType!==3&&T.nodeType===3)return{action:"node to text",oldValue:t.toHTML(x),newValue:T.data,route:o};var N=e(x,T),s=t.getGapInformation(x,T,N),C=n(x,T,s,o);return C.route=[c].concat(C.route),console.log(C),C}return console.log("node removed at "+c),{action:"remove",nodeNumber:c,route:[c]}}if(S===!0)return console.log("node inserted at "+c),{action:"insert",nodeNumber:c,route:[c]}}return!1};return n}),n("resolveOuterDiff",[],function(){var e=function(e,t){var n=e.cloneNode(!0);return t.forEach(function(e){var t=e.action,r=e.attribute;t==="removed attribute"?n.removeAttribute(r.name):t==="modified attribute"?n.setAttribute(r.name,r.newValue):t==="added attribute"&&n.setAttribute(r.name,r.value)}),n};return e}),n("resolveDiff",["markSubTrees","getFirstDiff","Utils"],function(e,t,n){var r=function(e,t,r,i,s){s=s||{track:function(){},last:!1};var o=t.cloneNode(!0),u=e.route,a=typeof e.baseNodeNumber=="number"?o.childNodes[e.baseNodeNumber]:o;refbase=typeof e.baseNodeNumber=="number"?r.childNodes[e.baseNodeNumber]:r;if(e.action==="replace"){console.log("replacing...",u,t),s.track({action:"text modification",route:u.slice(),oldData:e.oldValue,newData:e.newValue});var f=n.getFromRoute(a,u);console.log(f),f.data=e.newValue}else if(e.action==="node to text")s.track({action:"node to text",route:u.slice(),oldData:e.oldValue,newData:e.newValue}),a.innerHTML=e.newValue;else if(e.action==="text to node")s.track({action:"text to node",route:u.slice(),oldData:e.oldValue,newData:e.newValue}),a.innerHTML=e.newValue;else if(e.action==="remove"){var l=a.childNodes[e.nodeNumber];a.removeChild(l),s.track({action:"remove element",route:n.grow(u,e.baseNodeNumber?[e.baseNodeNumber,e.nodeNumber]:e.nodeNumber)})}else if(e.action==="insert"){var c=e.nodeNumber+1,h=refbase.childNodes[e.nodeNumber].cloneNode(!0);if(c>=a.childNodes.length)s.track({action:"append element",route:n.grow(u,e.baseNodeNumber?[e.baseNodeNumber,e.nodeNumber]:e.nodeNumber),element:n.toHTML(h)}),a.appendChild(h);else{var p=a.childNodes[e.nodeNumber],e={action:"insert element",route:n.grow(u,e.baseNodeNumber?[e.baseNodeNumber,e.nodeNumber]:e.nodeNumber),element:n.toHTML(h)};s.track(e),console.log(e),a.insertBefore(h,p)}}else if(e.action==="modified"){var d=a.childNodes[e.nodeNumber],h=refbase.childNodes[e.nodeNumber];if(e.unknown)s.track({action:"inner modification",oldData:a.innerHTML,newData:refbase.innerHTML,nodeNumber:u.slice(),route:e.route.slice()});else{if(!(d.nodeType===3&h.nodeType===3))throw console.log(d),console.log(h),s.track({action:"unknown modification",oldNode:d,newNode:h,route:n.grow(u,e.nodeNumber)}),new Error("modified is unhandled between non-text nodes at the moment");s.track({action:"text modification",route:n.grow(u,e.nodeNumber),oldData:d.data,newData:h.data}),d.data=h.data}}else if(e.action==="move"){var v=i[e.group],m=v.old,g=v["new"],l,p;s.track({action:"move elements",route:u.slice(),from:m,to:g,length:v.length});if(m>g)for(var y=0;y<v.length;y++)l=o.childNodes[m+y],p=o.childNodes[g+y],o.insertBefore(l,p);else for(var y=v.length-1;y>=0;y--)l=o.childNodes[m+y],p=o.childNodes[g+1+y],o.insertBefore(l,p)}return o};return r}),n("applyDiff",["Utils"],function(e){var t=function(t,n){var r=t.action,i=t.attribute;if(r==="removed attribute")return n.removeAttribute(i.name);if(r==="modified attribute")return n.setAttribute(i.name,i.newValue);if(r==="added attribute")return n.setAttribute(i.name,i.value);var s=t.element;if(r==="remove element")return n.parentNode.removeChild(n);if(r==="append element")return n.parentNode.appendChild(e.createChild(s));if(r==="insert element"){var o=n.nextSibling;return o.parentNode.insertBefore(e.createChild(s),o)}if(r==="move elements"){var u=t.from,a=t.to,f=t.length,l,c;if(u>a)for(var h=0;h<f;h++)l=n.childNodes[u+h],c=n.childNodes[a+h],n.insertBefore(l,c);else for(var h=f-1;h>=0;h--)l=n.childNodes[u+h],c=n.childNodes[a+1+h],n.insertBefore(l,c);return}if(r==="text modification")return n.data=t.newData;if(r==="text to node")return n.innerHTML=t.newData;if(r==="node to text")return n.innerHTML=t.newData;throw new Error(r+" unsupported")},n=function(e,n){var r=e.route.slice();node=n;try{while(r.length>0)node=node.childNodes[r.splice(0,1)[0]]}catch(i){throw console.error("Error caused by ["+e.action+"]",e),i}t(e,node)},r=function(e,t){e.forEach(function(e){n(e,t)})};return{applyOperationToNode:t,applyOperation:n,applyDiff:r}}),n("DOMdiff",["Utils","markSubTrees","DiffTracker","findAttrDiff","getFirstDiff","resolveOuterDiff","resolveDiff","applyDiff"],function(e,t,n,r,i,s,o,u){var a=!0,f=10,l=new n,c=function h(n,u,c){if(a&&l.diffInformation.length>f)throw new Error("diff cap reached");c||(c=[],l.reset());var p=r(n,u,c,l);n=s(n,p);var d=t(n,u);if(d.length===0){if(n.childNodes.length>0||u.childNodes.length>0){var v={action:"modified",nodeNumber:"unknown",route:c,unknown:!0};o(v,n,u,d,l)}return}var m=d[0],g=m.old===0&&m["new"]===0,y=m.length===n.childNodes.length;if(d.length===1&&g&&y){for(var b=0,w=n.childNodes.length;b<w;b++)h(n.childNodes[b],u.childNodes[b],e.grow(c,b));return}var E=e.getGapInformation(n,u,d),v=i(n,u,E);if(v===!1)throw new Error("more than 1 mapped subtree ("+d.length+") found, but no diff could be found...");v.route=c.concat(v.route),n=o(v,n,u,d,l),h(n,u,c)};return{findDiff:c,applyDiff:u,diffTracker:l}}),t(["DOMdiff","markSubTrees","applyDiff"],function(e,t,n){var r={};r.diff=function(n,r){console.log(n),console.log(r);var i=t(n,r);return e.findDiff(n,r),e.diffTracker.diffInformation},r.patch=function(e,t,r){console.log(e),n.applyDiff(t,e),r&&r()},window.domDiff=r}),n("compile-domdiff",function(){})})();
+  const ADD_ATTRIBUTE = "add attribute",
+        MODIFY_ATTRIBUTE = "modify attribute",
+        REMOVE_ATTRIBUTE = "remove attribute",
+        REPLACE_INNER_HTML = "replace innerHTML",
+        RELOCATE_GROUP = "relocate group",
+        REMOVE_ELEMENT = "remove element",
+        ADD_ELEMENT = "add element";
+
+  var Diff = function(options) {
+    var diff = this;
+    Object.keys(options).forEach(function(option) {
+      diff[option] = options[option];
+    });
+  }
+  Diff.prototype = {
+    toString: function() {
+      return JSON.stringify(this);
+    }
+  };
+
+  var SubsetMapping = function SubsetMapping(a, b) {
+    this["old"] = a;
+    this["new"] = b;
+  };
+
+  SubsetMapping.prototype = {
+    contains: function contains(subset) {
+      if(subset.length < this.length) {
+        return subset["new"] >= this["new"] && subset["new"] < this["new"] + this.length;
+      }
+      return false;
+    },
+    toString: function toString() {
+      return this.length + " element subset, first mapping: old " + this["old"] + " → new " + this["new"];
+    }
+  };
+
+  var roughlyEqual = function roughlyEqual(e1, e2, preventRecursion) {
+    if (!e1 || !e2) return false;
+    if (e1.nodeType !== e2.nodeType) return false;
+    if (e1.nodeType === 3) {
+      if (e2.nodeType !==3) return false;
+      // Note that we initially don't care what the text content of a node is,
+      // the mere fact that it's the same tag and "has text" means it's roughly
+      // equal, and then we can find out the true text difference later.
+      return preventRecursion ? true : e1.data === e2.data;
+    }
+    if (e1.nodeName !== e2.nodeName) return false;
+    if (e1.childNodes.length !== e2.childNodes.length) return false;
+    var thesame = true;
+    for (var i=e1.childNodes.length-1; i >= 0; i--) {
+      if (preventRecursion) {
+        thesame = thesame && (e1.childNodes[i].nodeName === e2.childNodes[i].nodeName);
+      } else {
+        // note: we only allow one level of recursion at any depth. If 'preventRecursion'
+        //       was not set, we must explicitly force it to true for child iterations.
+        thesame = thesame && roughlyEqual(e1.childNodes[i], e2.childNodes[i], true);
+      }
+    }
+    return thesame;
+  };
+
+  /**
+   * based on https://en.wikibooks.org/wiki/Algorithm_implementation/Strings/Longest_common_substring#JavaScript
+   */
+  var findCommonSubsets = function(c1, c2, marked1, marked2) {
+    var lcsSize = 0,
+        index = [],
+        len1 = c1.length,
+        len2 = c2.length;
+    // set up the matching table
+    var matches = [], a, i, j;
+    for (a = 0; a < len1+1; a++) { matches[a] = []; }
+    // fill the matches with distance values
+    for (i = 0; i < len1; i++) {
+      for (j = 0; j < len2; j++) {
+        if (!marked1[i] && !marked2[j] && roughlyEqual(c1[i], c2[j])) {
+          matches[i+1][j+1] = (matches[i][j] ? matches[i][j] + 1 : 1);
+          if (matches[i+1][j+1] > lcsSize) {
+            lcsSize = matches[i+1][j+1];
+            index = [i+1, j+1];
+          }
+        } else { matches[i+1][j+1] = 0; }
+      }
+    }
+    if(lcsSize === 0) { return false; }
+    var origin = [index[0] - lcsSize, index[1] - lcsSize];
+    var ret = new SubsetMapping(origin[0], origin[1]);
+    ret.length = lcsSize;
+    return ret;
+  };
+
+  /**
+   * This should really be a predefined function in Array...
+   */
+  var makeArray = function(n, v) {
+    var deepcopy = function(v) {
+      v.slice();
+      for(var i=0, last=v.length; i<last; i++){
+        if(v[i] instanceof Array) {
+          v[i] = deepcopy(v[i]); }}};
+    if(v instanceof Array) { v = deepcopy(v); }
+    var set = function() { return v; };
+    return (new Array(n)).join('.').split('.').map(set);
+  };
+
+  /**
+   * Generate arrays that indicate which node belongs to which subset,
+   * or whether it's actually an orphan node, existing in only one
+   * of the two trees, rather than somewhere in both.
+   */
+  var getGapInformation = function(t1, t2, stable) {
+    // [true, true, ...] arrays
+    var set = function(v) { return function() { return v; }},
+        gaps1 = this.makeArray(t1.childNodes.length, true),
+        gaps2 = this.makeArray(t2.childNodes.length, true),
+        group = 0;
+
+    // give elements from the same subset the same group number
+    stable.forEach(function(subset) {
+      var i, end;
+      for(i = subset["old"], end = i + subset.length; i < end; i++) {
+        gaps1[i] = group;
+      }
+      for(i = subset["new"], end = i + subset.length; i < end; i++) {
+        gaps2[i] = group;
+      }
+      group++;
+    });
+
+    return { gaps1: gaps1, gaps2: gaps2 };
+  };
+
+  /**
+   * Find all matching subsets, based on immediate child differences only.
+   */
+  var markSubTrees = function(oldTree, newTree) {
+    oldTree = oldTree.cloneNode(true);
+    newTree = newTree.cloneNode(true);
+    // note: the child lists are views, and so update as we update old/newTree
+    var oldChildren = oldTree.childNodes,
+        newChildren = newTree.childNodes,
+        marked1 = makeArray(oldChildren.length, false),
+        marked2 = makeArray(newChildren.length, false),
+        subsets = [], subset = true, i;
+    while (subset) {
+      subset = findCommonSubsets(oldChildren, newChildren, marked1, marked2);
+      if(subset) {
+        subsets.push(subset);
+        for(i=0; i<subset.length; i++) { marked1[subset.old+i] = true; }
+        for(i=0; i<subset.length; i++) { marked2[subset.new+i] = true; }
+      }
+    }
+    return subsets;
+  };
+
+  var findFirstInnerDiff = function(t1, t2, subtrees, route) {
+    if(subtrees.length === 0) return false;
+
+    var gapInformation = getGapInformation(t1, t2, subtrees),
+        gaps1 = gapInformation.gaps1,
+        gl1 = gaps1.length,
+        gaps2 = gapInformation.gaps2,
+        gl2 = gaps1.length,
+        i,
+        last = gl1 < gl2 ? gl1 : gl2;
+
+    // Check for correct submap sequencing (irrespective of gaps) first:
+    var sequence = 0,
+        group,
+        shortest = gl1<gl2 ? gaps1 : gaps2;
+
+    // group relocation
+    for(i=0, last = shortest.length; i<last; i++) {
+      if(gaps1[i] === true) {
+        return new Diff({
+          action: REMOVE_ELEMENT,
+          route: route.slice().push(i),
+          element: t1.childNodes[i].outerHTML
+        });
+      }
+      if(gaps2[i] === true) {
+        return new Diff({
+          action: ADD_ELEMENT,
+          route: route.slice().push(i),
+          element: t2.childNodes[i].outerHTML
+        });
+      }
+      if(gaps1[i] != gaps2[i]) {
+        group = subtrees[gaps1[i]];
+        return new Diff({
+          action: RELOCATE_GROUP,
+          group: group,
+          from: i,
+          to: group["new"],
+          route: route
+        });
+      }
+    }
+    return false;
+  };
+
+(function() {
+
+  function swap(obj, p1, p2) {
+    (function(_) { obj[p1] = obj[p2]; obj[p2] = _; } (obj[p1]));
+  };
+
+
+  var DiffTracker = function() {
+    this.list = [];
+  };
+  DiffTracker.prototype = {
+    list: false,
+    add: function(difflist) {
+      var list = this.list;
+      difflist.forEach(function(diff) {
+        list.push(diff);
+      });
+    },
+    forEach: function(fn) {
+      this.list.forEach(fn);
+    }
+  };
+
+
+
+  var debug = true,
+      diffcap = 10,
+      diffcount;
+
+  var DOMdiff = function() {};
+  DOMdiff.prototype = {
+
+    // ===== Create a diff =====
+
+    diff: function(t1, t2) {
+      diffcount = 0;
+      t1 = t1.cloneNode(true);
+      this.tracker = new DiffTracker();
+      return this.findDiffs(t1, t2);
+    },
+    findDiffs: function(t1, t2) {
+      var diff;
+      do {
+        if(debug) {
+          diffcount++;
+          if(diffcount > diffcap) {
+            throw new Error("surpassed diffcap");
+          }
+        }
+        difflist = this.findFirstDiff(t1, t2, []);
+        if(difflist) {
+          if(!difflist.length) { difflist = [difflist]; }
+          this.tracker.add(difflist);
+          this.apply(t1, difflist);
+        }
+      } while (difflist);
+      return this.tracker.list;
+    },
+    findFirstDiff: function(t1, t2, route) {
+      // outer differences?
+      var difflist = this.findOuterDiff(t1, t2, route);
+      if(difflist.length > 0) { return difflist; }
+      // inner differences?
+      var diff = this.findInnerDiff(t1, t2, route);
+      if(diff) { return [diff]; }
+      // no differences
+      return false;
+    },
+    findOuterDiff: function(t1, t2, route) {
+      var slice = Array.prototype.slice,
+          byName = function(a, b) { return a.name > b.name; },
+          attr1 = slice.call(t1.attributes).sort(byName),
+          attr2 = slice.call(t2.attributes).sort(byName),
+          find = function(attr, list) {
+            for(var i=0, last=list.length; i<last; i++) {
+              if(list[i].name === attr.name)
+                return i;
+            }
+            return -1;
+          },
+          diffs = [];
+      attr1.forEach(function(attr) {
+        var pos = find(attr, attr2);
+        if(pos === -1) {
+          return diffs.push(new Diff({
+            action: REMOVE_ATTRIBUTE,
+            attribute: {
+              name: attr.name,
+              value: attr.nodeValue
+            },
+            route: route
+          }));
+        }
+        var a2 = attr2.splice(pos, 1)[0];
+        if(attr.nodeValue !== a2.nodeValue) {
+          diffs.push(new Diff({
+            action: MODIFY_ATTRIBUTE,
+            attribute: {
+              name: attr.name,
+              oldValue: attr.nodeValue,
+              newValue: a2.nodeValue
+            },
+            route: route
+          }));
+        }
+      });
+      attr2.forEach(function(attr) {
+        diffs.push(new Diff({
+          action: ADD_ATTRIBUTE,
+          attribute: {
+            name: attr.name,
+            value: attr.nodeValue
+          },
+          route: route
+        }));
+      });
+      return diffs;
+    },
+    findInnerDiff: function(t1, t2, route) {
+      var subtrees = markSubTrees(t1, t2);
+      var mappings = subtrees.length;
+
+      // no correspondence whatsoever
+      if(mappings === 0 && (t1.childNodes.length > 0 || t2.childNodes.length > 0)) {
+        return new Diff({
+          action: REPLACE_INNER_HTML,
+          oldValue: t1.innerHTML,
+          newValue: t2.innerHTML,
+          route: route
+        });
+      }
+
+      // possibly identical content: verify
+      if(mappings === 1) {
+        var diff, i, last, e1, e2;
+        for(i=0, last=t1.childNodes.length; i<last; i++) {
+          e1 = t1.childNodes[i];
+          e2 = t2.childNodes[i];
+          if(e1.nodeType === 3 && e2.nodeType === 3) {
+            if(e1.data !== e2.data) {
+              return new Diff({
+                action: MODIFY_TEXT,
+                oldValue: e1.data,
+                newValue: e2.data
+              });
+            }
+            continue;
+          }
+          diff = this.findInnerDiff(e1, e2, route.slice().push(i));
+          if(diff) {
+            return diff;
+          }
+        }
+      }
+
+      // one or more differences: find first diff
+      return this.findFirstInnerDiff(t1, t2, subtrees, route);
+    },
+
+    // imported
+    findFirstInnerDiff: findFirstInnerDiff,
+
+    // ===== Apply a diff =====
+
+    apply: function(tree, diffs) {
+      var dobj = this;
+      if(!diffs.length) { diffs = [diffs]; }
+      diffs.forEach(function(diff) {
+        dobj.applyDiff(tree, diff);
+      });
+    },
+    getFromRoute: function(tree, route) {
+        console.log([tree,route]);
+      route = route.slice();
+      var c, node = tree;
+      while(route.length > 0) {
+        c = route.splice(0,1)[0];
+        node = node.childNodes[c];
+      }
+      return node;
+    },
+    applyDiff: function(tree, diff) {
+      var node = this.getFromRoute(tree, diff.route);
+      if(diff.action === ADD_ATTRIBUTE) {
+        node.addAttribute(diff.attribute.name, diff.attribute.value);
+      }
+      else if(diff.action === MODIFY_ATTRIBUTE) {
+        node.setAttribute(diff.attribute.name, diff.attribute.newValue);
+      }
+      else if(diff.action === REMOVE_ATTRIBUTE) {
+        node.setAttribute(diff.attribute.name, diff.attribute.value);
+      }
+      else if(diff.action === REPLACE_INNER_HTML) {
+        node.innerHTML = diff.newValue;
+      }
+      else if(diff.action === RELOCATE_GROUP) {
+        var group = diff.group,
+            from = diff.from,
+            to = diff.to,
+            child, reference;
+
+        // slide elements down
+        if(from > to ) {
+          for(var i=0; i<group.length; i++) {
+            child = node.childNodes[from + i];
+            reference = node.childNodes[to + i];
+            node.insertBefore(child, reference);
+          }
+          return;
+        }
+
+        // slide elements up
+        for(var i=group.length-1; i>=0; i--) {
+          child = node.childNodes[from + i];
+          reference = node.childNodes[to + 1 + i];
+          node.insertBefore(child, reference);
+        }
+      }
+      else if(diff.action === REMOVE_ELEMENT) {
+        node.parentNode.removeChild(node);
+      }
+      else if(diff.action === ADD_ELEMENT) {
+        // we actually need a different node when adding:
+        var route =  diff.route.slice(),
+            c = route.splice(route.length-1,1)[0],
+            d = document.createElement("div");
+        node = this.getFromRoute(tree, route);
+        d.innerHTML = diff.element;
+        var newNode = d.childNodes[0];
+        if(c>=node.childNodes.length) {
+          node.appendChild(newNode);
+        } else {
+          var reference = node.childNodes[c];
+          node.insertBefore(newNode, reference);
+        }
+      }
+    },
+
+    // ===== Undo a diff =====
+
+    undo: function(tree, diffs) {
+      diffs = diffs.slice();
+      var dobj = this;
+      if(!diffs.length) { diffs = [diffs]; }
+      diffs.reverse();
+      diffs.forEach(function(diff) {
+        dobj.undoDiff(tree, diff);
+      });
+    },
+    undoDiff: function(tree, diff) {
+      if(diff.action === ADD_ATTRIBUTE) {
+        diff.action = REMOVE_ATTRIBUTE;
+        this.applyDiff(tree, diff);
+      }
+      else if(diff.action === MODIFY_ATTRIBUTE) {
+        swap(diff.attribute, "oldValue", "newValue");
+        this.applyDiff(tree, diff);
+      }
+      else if(diff.action === REMOVE_ATTRIBUTE) {
+        diff.action = ADD_ATTRIBUTE;
+        this.applyDiff(tree, diff);
+      }
+      else if(diff.action === REPLACE_INNER_HTML) {
+        swap(diff, "oldValue", "newValue");
+        this.applyDiff(tree, diff);
+      }
+      else if(diff.action === RELOCATE_GROUP) {
+        swap(diff, "from", "to");
+        this.applyDiff(tree, diff);
+      }
+      else if(diff.action === REMOVE_ELEMENT) {
+        diff.action = ADD_ELEMENT;
+        this.applyDiff(tree, diff);;
+      }
+      else if(diff.action === ADD_ELEMENT) {
+        diff.action = REMOVE_ELEMENT;
+        this.applyDiff(tree, diff);;
+      }
+    },
+  };
+
+
+
+  window.DOMdiff = DOMdiff;
+}());
+
+domDiff = new DOMdiff();

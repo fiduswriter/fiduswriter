@@ -93,7 +93,7 @@
     };
 
     citationHelpers.formatCitationsInDoc = function () {
-        console.log('formatting citations');
+        //console.log('formatting citations');
         jQuery('#document-bibliography').html(
             citationHelpers.formatCitations(
                 jQuery('#document-editable')[0],

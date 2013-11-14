@@ -280,7 +280,7 @@ jQuery(document).bind('documentDataLoaded', function () {
                     }
                 });
 
-            mutations.bind(editableArea);
+            //mutations.bind(editableArea);
         }
 
         // Bind CTRL+s to save document.

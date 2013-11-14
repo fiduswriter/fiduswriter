@@ -147,6 +147,7 @@
             'selected');
         jQuery('span[data-citationstyle=' + theValue + ']').addClass(
             'selected');
+        //console.log('editor-helpers.js');
         citationHelpers.formatCitationsInDoc();
     };
 

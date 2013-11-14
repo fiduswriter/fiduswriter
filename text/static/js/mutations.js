@@ -94,6 +94,7 @@
 
 
          if (layoutCitationsNeeded) {
+             //console.log('mutations.js');
              citationHelpers.formatCitationsInDoc();
          }
          if (layoutEquationsNeeded) {

@@ -1863,6 +1863,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
 
         bibliographyHelpers.getBibDB(function(){
             if (window.hasOwnProperty('theDocument')) {
+                //console.log('bibhelpers')
                 citationHelpers.formatCitationsInDoc();
             }
         });

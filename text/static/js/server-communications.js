@@ -31,7 +31,7 @@
             chatHelpers.newMessage(data);
             break;
         case 'connections':
-            console.log(data);
+            //console.log(data);
             serverCommunications.updateParticipantList(data.participant_list);
             break;
         case 'welcome':
@@ -98,6 +98,12 @@
     serverCommunications.makeDiff = function () {
         var theDiff = domDiff.diff(theDocument.textChangeList[theDocument.textChangeList.length-1][0],document.getElementById('document-editable'));
 
+        if (theDiff.length===0) {
+            return;
+        }
+        
+        console.log(theDiff);
+        
         var thePackage = {
             type: 'diff',
             time: new Date().getTime(), 
@@ -139,13 +145,13 @@
         tempPatchedNode = theDocument.textChangeList[theDocument.textChangeList.length-1][0].cloneNode(true);
         
         for (i = 0; i < newestDiffs.length; i++) {
-            domDiff.patch(tempPatchedNode,newestDiffs[i].diff);
+            domDiff.apply(tempPatchedNode,newestDiffs[i].diff);
             theDocument.usedDiffs.push(newestDiffs[i]);
         }
         theDocument.textChangeList.push([tempPatchedNode,new Date().getTime()]);
         // Now that the tempPatchedNode represents what the editor should look like, go ahead and apply only the differences.
         
-        domDiff.patch(document.getElementById('document-editable'), domDiff.diff(document.getElementById('document-editable'), tempPatchedNode));
+        domDiff.apply(document.getElementById('document-editable'), domDiff.diff(document.getElementById('document-editable'), tempPatchedNode));
         
     };
     
@@ -229,7 +235,7 @@
             window.ws = new WebSocket('ws://' + location.host +
                 '/ws/doc/' + documentId);
             ws.onmessage = function (event) {
-                console.log(event);
+                //console.log(event);
                 serverCommunications.receive(JSON.parse(event.data));
             }
             ws.onclose = serverCommunications.noConnectionToServer;

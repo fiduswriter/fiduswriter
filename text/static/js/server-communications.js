@@ -102,7 +102,7 @@
             return;
         }
         
-        console.log(theDiff);
+        //console.log(theDiff);
         
         var thePackage = {
             type: 'diff',
@@ -117,7 +117,7 @@
     };
     
     serverCommunications.orderAndApplyChanges = function () {
-        var newestDiffs = [], patchDiff, tempCombinedNode, i;
+        var newestDiffs = [], patchDiff, tempCombinedNode, i, applicableDiffs;
         
         while (theDocument.newDiffs.length > 0) {
             newestDiffs.push(theDocument.newDiffs.pop());
@@ -149,12 +149,17 @@
             theDocument.usedDiffs.push(newestDiffs[i]);
         }
         theDocument.textChangeList.push([tempPatchedNode,new Date().getTime()]);
-        // Now that the tempPatchedNode represents what the editor should look like, go ahead and apply only the differences.
+        // Now that the tempPatchedNode represents what the editor should look like, go ahead and apply only the differences, if there are any.
         
-        domDiff.apply(document.getElementById('document-editable'), domDiff.diff(document.getElementById('document-editable'), tempPatchedNode));
+        applicableDiffs = domDiff.diff(document.getElementById('document-editable'), tempPatchedNode);
         
-        // Also make sure that placeholders correspond to the current state of affairs
-        editorHelpers.setPlaceholders();
+        if (applicableDiffs.length > 0) {
+        
+            domDiff.apply(document.getElementById('document-editable'), applicableDiffs);
+        
+            // Also make sure that placeholders correspond to the current state of affairs
+            editorHelpers.setPlaceholders();
+        }
     };
     
     serverCommunications.incorporateUpdates = function () {

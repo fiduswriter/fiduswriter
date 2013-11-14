@@ -343,14 +343,16 @@
 
       // possibly identical content: verify
       if(mappings === 1) {
+          //console.log([subtrees, t1.outerHTML, t2.outerHTML]);
         var diff, i, last, e1, e2;
         for(i=0, last=t1.childNodes.length; i<last; i++) {
           e1 = t1.childNodes[i];
           e2 = t2.childNodes[i];
           if(e1.nodeType === 3 && e2.nodeType === 3) {
             if(e1.data !== e2.data) {
+                console.log([subtrees, t1.outerHTML, t2.outerHTML, e1.data, e2.data]);
               return new Diff({
-                action: MODIFY_TEXT,
+                action: REPLACE_INNER_HTML_X,
                 oldValue: e1.data,
                 newValue: e2.data
               });
@@ -374,6 +376,7 @@
     // ===== Apply a diff =====
 
     apply: function(tree, diffs) {
+        //console.log([tree,diffs]);
       var dobj = this;
       if(!diffs.length) { diffs = [diffs]; }
       diffs.forEach(function(diff) {
@@ -391,9 +394,10 @@
       return node;
     },
     applyDiff: function(tree, diff) {
+        //console.log([tree,diff]);
       var node = this.getFromRoute(tree, diff.route);
       if(diff.action === ADD_ATTRIBUTE) {
-        node.addAttribute(diff.attribute.name, diff.attribute.value);
+        node.setAttribute(diff.attribute.name, diff.attribute.value);
       }
       else if(diff.action === MODIFY_ATTRIBUTE) {
         node.setAttribute(diff.attribute.name, diff.attribute.newValue);
@@ -435,6 +439,7 @@
         var route =  diff.route.slice(),
             c = route.splice(route.length-1,1)[0],
             d = document.createElement("div");
+        //console.log('getFromRoute');
         node = this.getFromRoute(tree, route);
         d.innerHTML = diff.element;
         var newNode = d.childNodes[0];

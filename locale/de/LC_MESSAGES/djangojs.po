@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-10-08 04:35-0500\n"
+"POT-Creation-Date: 2013-11-14 15:23-0600\n"
 "PO-Revision-Date: 2013-02-24 10:03-0600\n"
 "Last-Translator: Daniel Frebel <daniel@fiduswriter.com>\n"
 "Language-Team: German <daniel@fiduswriter.com>\n"
@@ -58,8 +58,8 @@ msgstr "Füge einen Nutzer zu deiner Kontaktliste"
 #: account/static/js/contact-helpers.js:99
 #: account/static/js/show_profile.js:169 account/static/js/show_profile.js:239
 #: account/static/js/show_profile.js:355
-#: bibliography/static/js/bibliography-helpers.js:717
-#: bibliography/static/js/bibliography-helpers.js:848
+#: bibliography/static/js/bibliography-helpers.js:723
+#: bibliography/static/js/bibliography-helpers.js:854
 #: book/static/js/book-helpers.js:235 book/static/js/book-helpers.js.c:633
 #: book/static/js/bookaccessrights-helpers.js:71
 #: text/static/js/accessrights-helpers.js:82
@@ -75,10 +75,10 @@ msgstr "Bestätigen"
 #: account/static/js/show_profile.js:151 account/static/js/show_profile.js:220
 #: account/static/js/show_profile.js:276 account/static/js/show_profile.js:328
 #: account/static/js/show_profile.js:385
-#: bibliography/static/js/bibliography-helpers.js:738
-#: bibliography/static/js/bibliography-helpers.js:853
-#: bibliography/static/js/bibliography-helpers.js:1435
-#: bibliography/static/js/bibliography-helpers.js:1558
+#: bibliography/static/js/bibliography-helpers.js:744
+#: bibliography/static/js/bibliography-helpers.js:859
+#: bibliography/static/js/bibliography-helpers.js:1441
+#: bibliography/static/js/bibliography-helpers.js:1564
 #: book/static/js/book-helpers.js:97 book/static/js/book-helpers.js.c:242
 #: book/static/js/book-helpers.js:639 book/static/js/book-templates.js:249
 #: book/static/js/bookaccessrights-helpers.js:84
@@ -90,7 +90,7 @@ msgstr "Bestätigen"
 #: text/static/js/document-helpers.js:61
 #: text/static/js/document-helpers.js:109
 #: text/static/js/texteditor-template-dialogs.js:185
-#: text/static/js/toolbar/cite.js:228
+#: text/static/js/toolbar/cite.js:229
 #: usermedia/static/js/usermedia-helpers.js:152
 #: usermedia/static/js/usermedia-helpers.js:264
 #: usermedia/static/js/usermedia-helpers.js:355
@@ -100,7 +100,7 @@ msgstr "Abbrechen"
 #: account/static/js/contact-helpers.js:138
 #: account/static/js/profile-templates.js:2
 #: account/static/js/profile-templates.js:16
-#: bibliography/static/js/bibliography-helpers.js:1428
+#: bibliography/static/js/bibliography-helpers.js:1434
 #: book/static/js/book-helpers.js:85 text/static/js/document-helpers.js:48
 #: usermedia/static/js/usermedia-helpers.js:347
 msgid "Confirm deletion"
@@ -112,7 +112,7 @@ msgstr "Aus den Kontakten entfernen"
 
 #: account/static/js/contact-helpers.js:140
 #: account/static/js/show_profile.js:90 account/static/js/show_profile.js:144
-#: bibliography/static/js/bibliography-helpers.js:1431
+#: bibliography/static/js/bibliography-helpers.js:1437
 #: book/static/js/book-helpers.js:89
 #: book/static/js/book-template-dialogs.js:44
 #: book/static/js/book-templates.js:293 text/static/js/comment-templates.js:80
@@ -240,77 +240,68 @@ msgstr "E-Mail als Primäremail setzen"
 msgid "The email could not be set primary!"
 msgstr "Die E-Mail konnte nicht als Primäremail gesetzt werden!"
 
-#: base/static/.fr-sr52IS/admin.locking.js:119
-#, c-format
-msgid "Your lock on this page expires in less than %s"
-msgstr "Deine Seitensperre läuft in weniger als %s ab"
+#: bibliography/static/js/bibliography-helpers.js:488
+msgid "A variable could not be identified. Possible error in bibtex syntax."
+msgstr ""
 
-#: base/static/.fr-sr52IS/admin.locking.js:121
-msgid "This page is locked by <em>%(for_user)s"
-msgstr "Diese Seite ist gesperrt von <em>%(for_user)s"
-
-#: base/static/.fr-sr52IS/admin.locking.js:123
-msgid "Your lock on this page is expired!"
-msgstr "Deine Sperre dieser Seite ist abgelaufen"
-
-#: bibliography/static/js/bibliography-helpers.js:631
+#: bibliography/static/js/bibliography-helpers.js:637
 msgid "The bibliography has been updated"
 msgstr "Die Bibliografie wurde upgedated"
 
-#: bibliography/static/js/bibliography-helpers.js:634
+#: bibliography/static/js/bibliography-helpers.js:640
 #: usermedia/static/js/usermedia-helpers.js:42
 msgid "Some errors are found. Please examine the form."
 msgstr "Eine Fehler wurden gefunden. Bitte untersuche das Formular."
 
-#: bibliography/static/js/bibliography-helpers.js:680
+#: bibliography/static/js/bibliography-helpers.js:686
 #: usermedia/static/js/usermedia-helpers.js:93
 msgid "The categories have been updated"
 msgstr "Die Kategorien wurden upgedated."
 
-#: bibliography/static/js/bibliography-helpers.js:708
+#: bibliography/static/js/bibliography-helpers.js:714
 #: usermedia/static/js/usermedia-helpers.js:121
 msgid "Edit Categories"
 msgstr "Kategorien bearbeiten"
 
-#: bibliography/static/js/bibliography-helpers.js:765
+#: bibliography/static/js/bibliography-helpers.js:771
 msgid "Register New Source"
 msgstr "Neue Quelle hinzufügen"
 
-#: bibliography/static/js/bibliography-helpers.js:772
+#: bibliography/static/js/bibliography-helpers.js:778
 msgid "Edit Source"
 msgstr "Quelle bearbeiten"
 
-#: bibliography/static/js/bibliography-helpers.js:798
+#: bibliography/static/js/bibliography-helpers.js:804
 msgid "Select source type"
 msgstr "Dokumententyp wählen"
 
-#: bibliography/static/js/bibliography-helpers.js:818
+#: bibliography/static/js/bibliography-helpers.js:824
 msgid "Categories"
 msgstr "Kategorien"
 
-#: bibliography/static/js/bibliography-helpers.js:1415
+#: bibliography/static/js/bibliography-helpers.js:1421
 msgid "The bibliography item(s) have been deleted"
 msgstr "Der/Die Titel wurden entfernt"
 
-#: bibliography/static/js/bibliography-helpers.js:1429
+#: bibliography/static/js/bibliography-helpers.js:1435
 msgid "Delete the bibliography item(s)"
 msgstr "Titel enfernen"
 
-#: bibliography/static/js/bibliography-helpers.js:1473
+#: bibliography/static/js/bibliography-helpers.js:1479
 msgid "No bibliography entries could be found in import file."
 msgstr ""
 
-#: bibliography/static/js/bibliography-helpers.js:1538
+#: bibliography/static/js/bibliography-helpers.js:1544
 #: text/static/js/document-helpers.js:87
 msgid "Import"
 msgstr "Importieren"
 
-#: bibliography/static/js/bibliography-helpers.js:1586
+#: bibliography/static/js/bibliography-helpers.js:1592
 msgid " and others"
 msgstr "und weitere"
 
-#: bibliography/static/js/bibliography-helpers.js:1765
-#: text/static/js/toolbar/cite.js:249
+#: bibliography/static/js/bibliography-helpers.js:1771
+#: text/static/js/toolbar/cite.js:250
 msgid "Search for Bibliography"
 msgstr "Bibliografie durchsuchen"
 
@@ -885,8 +876,8 @@ msgid "Title page"
 msgstr "Titelseite"
 
 #: book/static/js/book-exporter.js:205 book/static/js/book-exporter.js.c:278
-#: book/static/js/book-exporter.js:286 text/static/js/exporter.js:936
-#: text/static/js/exporter.js.c:969 text/static/js/exporter.js:977
+#: book/static/js/book-exporter.js:286 text/static/js/exporter.js:958
+#: text/static/js/exporter.js.c:1007 text/static/js/exporter.js:1015
 msgid "en"
 msgstr "de"
 
@@ -894,7 +885,7 @@ msgstr "de"
 msgid "Copyright"
 msgstr "Copyright"
 
-#: book/static/js/book-exporter.js:264 text/static/js/exporter.js:956
+#: book/static/js/book-exporter.js:264 text/static/js/exporter.js:993
 msgid "en-US"
 msgstr "de-DE"
 
@@ -923,7 +914,7 @@ msgid "Edit Chapter"
 msgstr "Kapitell bearbeiten"
 
 #: book/static/js/book-helpers.js:407 text/static/js/importer.js:179
-#: text/static/js/importer.js.c:395
+#: text/static/js/importer.js.c:394
 msgid "Could not save "
 msgstr "Konnte nicht speichern "
 
@@ -943,15 +934,15 @@ msgstr "Schließen"
 msgid "You cannot delete or share: "
 msgstr "Du kannst nicht löschen oder teilen: "
 
-#: book/static/js/book-index.js:86 text/static/js/exporter.js:890
+#: book/static/js/book-index.js:86 text/static/js/exporter.js:912
 msgid "Epub export has been initiated."
 msgstr "Epub export wurde initiert."
 
-#: book/static/js/book-index.js:97 text/static/js/exporter.js:833
+#: book/static/js/book-index.js:97 text/static/js/exporter.js:855
 msgid "Latex export has been initiated."
 msgstr "Latex export wurde initiert."
 
-#: book/static/js/book-index.js:108 text/static/js/exporter.js:1055
+#: book/static/js/book-index.js:108 text/static/js/exporter.js:1093
 msgid "HTML export has been initiated."
 msgstr "HTML export wurde initiert."
 
@@ -1215,39 +1206,58 @@ msgstr "Dokument(e) wurde(n) entfernt "
 msgid "Search for Document"
 msgstr "Nach Dokument suchen"
 
-#: text/static/js/editor-helpers.js:216
+#: text/static/js/editor-helpers.js:215
 msgid "Untitled Document"
 msgstr "Unbenanntes Dokumentes"
 
-#: text/static/js/editor-helpers.js:424
+#: text/static/js/editor-helpers.js:413
 msgid "Title..."
 msgstr "Titel..."
 
-#: text/static/js/editor-helpers.js:430
+#: text/static/js/editor-helpers.js:419
 msgid "Contents..."
 msgstr "Inhalt..."
 
-#: text/static/js/editor-helpers.js:436
+#: text/static/js/editor-helpers.js:425
 msgid "Subtitle..."
 msgstr "Untertitel..."
 
-#: text/static/js/editor-helpers.js:442
+#: text/static/js/editor-helpers.js:431
 msgid "Abstract..."
 msgstr "Zusammenfassung..."
+
+#: text/static/js/editor-helpers.js:437
+#, fuzzy
+msgid "Author(s)..."
+msgstr "Autor(en)"
+
+#: text/static/js/editor-helpers.js:443
+#, fuzzy
+msgid "Keywords..."
+msgstr "Keywörter"
 
 #: text/static/js/editor-templates.js:23
 msgid "The subtitle of the document"
 msgstr "Der Untertitel des Dokumentes"
 
 #: text/static/js/editor-templates.js:26
+#, fuzzy
+msgid "The authors of the document (comma-separated)"
+msgstr "Zusammenfassung des Dokumentes"
+
+#: text/static/js/editor-templates.js:29
 msgid "The abstract of the document"
 msgstr "Zusammenfassung des Dokumentes"
 
-#: text/static/js/exporter.js:664
+#: text/static/js/editor-templates.js:32
+msgid "The keywords related to the document (comma-separated)"
+msgstr ""
+
+#: text/static/js/exporter.js:686
 msgid "Copy of "
 msgstr "Kopie von "
 
-#: text/static/js/exporter.js:750
+#: text/static/js/exporter.js:772
 msgid "File export has been initiated."
 msgstr "Dateiexport wurde initiert."
 
@@ -1260,11 +1270,11 @@ msgstr ""
 msgid "The uploaded file does not appear to be a Fidus Writer file."
 msgstr ""
 
-#: text/static/js/importer.js:365
+#: text/static/js/importer.js:364
 msgid " successfully imported."
 msgstr " importiert."
 
-#: text/static/js/server-communications.js:254
+#: text/static/js/server-communications.js:195
 msgid ""
 "Sorry, but the connection to the server has been lost. Please reload to "
 "ensure that no date is being lost."
@@ -1272,11 +1282,11 @@ msgstr ""
 "Leider wurde die Verbindung zum Server unterbrochen. Bitte lade die Seite "
 "erneut damit keine Daten verloren gehen"
 
-#: text/static/js/server-communications.js:261
+#: text/static/js/server-communications.js:202
 msgid "Ok"
 msgstr "Ok"
 
-#: text/static/js/server-communications.js:273
+#: text/static/js/server-communications.js:214
 msgid "No connection to server"
 msgstr "Keine Verbindung zum Server"
 
@@ -1364,7 +1374,7 @@ msgstr "Zeichen ohne Leerzeichen"
 msgid "Characters with blanks"
 msgstr "Zeichen mit Leerzeichen"
 
-#: text/static/js/tracking-helpers.js:48
+#: text/static/js/tracking-helpers.js:47
 msgid "Unknown"
 msgstr "Unbekannt"
 
@@ -1375,6 +1385,29 @@ msgstr "Änderung Annehmen"
 #: text/static/js/tracking-templates.js:29
 msgid "Reject Change"
 msgstr "Änderung ablehnen"
+
+#: text/static/js/libs/question.mark.templates.js:23
+#: text/static/js/libs/question.mark.templates.js:38
+#: text/static/js/libs/question.mark.templates.js:52
+#: text/static/js/libs/question.mark.templates.js:66
+#: text/static/js/libs/question.mark.templates.js:80
+msgid "Keyboard Shortcuts"
+msgstr ""
+
+#: text/static/js/libs/question.mark.templates.js:30
+#: text/static/js/libs/question.mark.templates.js:44
+#: text/static/js/libs/question.mark.templates.js:58
+#: text/static/js/libs/question.mark.templates.js:72
+#, fuzzy
+msgid "Print"
+msgstr "Druck/PDF"
+
+#: text/static/js/libs/question.mark.templates.js:34
+#: text/static/js/libs/question.mark.templates.js:48
+#: text/static/js/libs/question.mark.templates.js:62
+#: text/static/js/libs/question.mark.templates.js:76
+msgid "Save"
+msgstr "Speichern"
 
 #: text/static/js/toolbar/all_blockstyles.js:32
 msgid "Normal Text"
@@ -1448,7 +1481,7 @@ msgstr "Zitat Konfigurieren"
 msgid "Please select at least one citation source!"
 msgstr "Wähle bitte mindestens eine Zitierungsquelle!"
 
-#: text/static/js/toolbar/cite.js:218
+#: text/static/js/toolbar/cite.js:219
 msgid "Register new source"
 msgstr "Neue Quelle hinzufügen"
 
@@ -1505,6 +1538,15 @@ msgstr "Such nach Dateiname"
 #: usermedia/static/js/usermedia-template-dialogs.js:83
 msgid "Insert a title"
 msgstr "Titel einsetzen"
+
+#~ msgid "Your lock on this page expires in less than %s"
+#~ msgstr "Deine Seitensperre läuft in weniger als %s ab"
+
+#~ msgid "This page is locked by <em>%(for_user)s"
+#~ msgstr "Diese Seite ist gesperrt von <em>%(for_user)s"
+
+#~ msgid "Your lock on this page is expired!"
+#~ msgstr "Deine Sperre dieser Seite ist abgelaufen"
 
 #~ msgid "Untitled document"
 #~ msgstr "Unbenanntes Dokumentes"
@@ -1583,6 +1625,3 @@ msgstr "Titel einsetzen"
 
 #~ msgid "Team member"
 #~ msgstr "Teammitglieder"
-
-#~ msgid "Save"
-#~ msgstr "Speichern"

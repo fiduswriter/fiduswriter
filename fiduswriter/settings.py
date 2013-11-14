@@ -310,7 +310,7 @@ JS_LOCATIONS = {
     'JQUERYMIGRATE_URL': STATIC_URL + 'js/libs/jquery-migrate-1.2.1.js',
     'JQUERYUI_URL': STATIC_URL + 'js/libs/jquery-ui-1.10.1.custom.js',
     'UNDERSCOREJS_URL': STATIC_URL + 'js/libs/underscore-1.5.2.js',
-    'MODERNIZR_URL': STATIC_URL + 'js/libs/modernizr.js',
+    'MODERNIZR_URL': STATIC_URL + 'js/libs/modernizr-2.6.3.js',
     'MATHJAX_URL': STATIC_URL + 'js/libs/mathjax/MathJax.js',
     }
 

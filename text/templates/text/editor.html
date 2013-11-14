@@ -74,6 +74,9 @@
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/add-remove-dialog.css" />
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/figure.css" />
 
+            <!-- question.mark.js -->
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/question.mark.css" />
+
             <!-- layout styles -->
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/common.css" />
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/header-menu.css" />
@@ -214,6 +217,9 @@
             <script type="text/javascript">
                 zip.useWebWorkers = false;
             </script>
+
+            <!-- Question Mark -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/question.mark.js"></script>
 
             <!-- ICE -->
             <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/polyfills.js'></script>
@@ -509,7 +515,7 @@
             <i class="resize-button icon-angle-double-down"></i>
             <div id="chat-container"></div>
             <div id="messageform" contentEditable="true" class="empty"></div>
-            <audio id="chat-notification"> 
+            <audio id="chat-notification">
                 <source src="{{ STATIC_URL }}ogg/chat-notification.ogg" type="audio/ogg">
             </audio>
         </div>

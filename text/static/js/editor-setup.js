@@ -194,8 +194,8 @@ jQuery(document).bind('documentDataLoaded', function () {
         jQuery('.papersize-menu,.metadata-menu,.documentstyle-menu').addClass(
             'disabled');
     }
-    else if (theDocument.rights === 'w') { 
-   
+    else if (theDocument.rights === 'w') {
+
 
         // Enable Hallo.js Editor
         jQuery('#document-editable').hallo({
@@ -237,7 +237,7 @@ jQuery(document).bind('documentDataLoaded', function () {
 
         // Set Auto-save to save every ten seconds
         saveTimer = setInterval(function () {
-            if (theDocument.changed) { 
+            if (theDocument.changed) {
                 editorHelpers.getUpdatesFromInputFields(function () {
                     editorHelpers.saveDocument();
                 });
@@ -286,17 +286,26 @@ jQuery(document).bind('documentDataLoaded', function () {
         // Bind CTRL+s to save document.
         jQuery(document).keydown(function (event) {
             //19 for Mac Command+S
-            if (!(String.fromCharCode(event.which).toLowerCase() == 's' &&
-                    event.ctrlKey) && !
-                (event.which == 19)) return true;
+            /* Crtl + S => save document */
+            if ((String.fromCharCode(event.which).toLowerCase() == 's' &&
+                 event.ctrlKey) || event.which == 19) {
+                event.preventDefault();
+                editorHelpers.getUpdatesFromInputFields(function () {
+                    editorHelpers.saveDocument();
+                });
+                return false;
 
-            editorHelpers.getUpdatesFromInputFields(function () {
-                editorHelpers.saveDocument();
-            });
-            event.preventDefault();
-            return false;
+                /* Crtl + ? => show shortcuts */
+            } else if (event.ctrlKey && event.which == 191) {
+                event.preventDefault();
+                $().showShortcuts();
+                return false;
+
+                /* nothing */
+            } else {
+                return true;
+            }
         });
-
 
 
         // Set webpage title when document title changes

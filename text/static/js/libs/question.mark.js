@@ -131,8 +131,10 @@ $(document).ready(function() {
     }
 
     // All the Ajax stuff is below.
-    $.get("/static/question.mark.html", function(data) {
-        $("body").append(data);
-        doQuestionMark();
-    });
+    
+    $("body").append(tmp_question_mark());
+    //$.get("/static/question.mark.html", function(data) {
+    //    $("body").append(data);
+    doQuestionMark();
+    //});
 });

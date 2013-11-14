@@ -220,6 +220,7 @@
 
             <!-- Question Mark -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/question.mark.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/question.mark.templates.js"></script>
 
             <!-- ICE -->
             <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/polyfills.js'></script>
@@ -460,6 +461,11 @@
                             <li>
                                 <span class="fw-pulldown-item tools-item" data-function="wordcounter" title="{% trans "Word counter" %}">
                                   {% trans "Word counter" %}
+                                </span>
+                            </li>
+                            <li>
+                                <span class="fw-pulldown-item tools-item" data-function="showshortcuts" title="{% trans "Keyboard shortcuts" %}">
+                                  {% trans "Keyboard shortcuts" %}
                                 </span>
                             </li>
                         </ul>

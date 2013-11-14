@@ -287,8 +287,7 @@ jQuery(document).bind('documentDataLoaded', function () {
         jQuery(document).keydown(function (event) {
             //19 for Mac Command+S
             /* Crtl + S => save document */
-            if ((String.fromCharCode(event.which).toLowerCase() == 's' &&
-                 event.ctrlKey) || event.which == 19) {
+            if ((event.ctrlKey && event.which == 83) || event.which == 19) {
                 event.preventDefault();
                 editorHelpers.getUpdatesFromInputFields(function () {
                     editorHelpers.saveDocument();

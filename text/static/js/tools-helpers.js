@@ -74,7 +74,11 @@
             case 'wordcounter':
                 this.wordCounter();
                 break;
+            case 'showshortcuts':
+                $().showShortcuts();
+                break;
         };
+        
     }
 
     exports.toolsHelpers = toolsHelpers;

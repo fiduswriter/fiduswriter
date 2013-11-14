@@ -323,10 +323,6 @@ ul.potato-menu ul.potato-menu-group {
     body {
         margin-bottom: 0;
     }
-    
-    {
-        display: none;
-    }
 }
 /* Overwrite color changes through font in editor. Webkit bug */
 

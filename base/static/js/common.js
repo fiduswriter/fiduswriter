@@ -1,5 +1,6 @@
 /**
- * This file is part of Fidus Writer <http://www.fiduswriter.org>
+ * @file Basic functions for all Fidus Writer pages.
+ * @license This file is part of Fidus Writer <http://www.fiduswriter.org>
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm
  *
@@ -18,49 +19,77 @@
  *
  */
 
-//extend jQuery for common functions
+/** Extend jQuery for common functions 
+ * @namespace jQuery
+ */
 jQuery.extend({
+    /** Specifies whether a dropdown box is opened. Only supports one dropdown box per page.
+     * @memberof jQuery
+     */
     'isDropdownBoxOpen': false,
+    /** Creates a dropdown box.
+     * @param btn The button to open and close the dropdown box.
+     * @param box The node containing the contents of the dropdown box.
+     * @memberof jQuery
+     */    
     'addDropdownBox': function(btn, box) {
         btn.bind('click', function() {
-            //console.log(box.css('display'));
             if('none' == box.css('display')) {
                 $.openDropdownBox(box);
             }
         });
     },
+    /** Opens a dropdown box.
+     * @param box The node containing the contents of the dropdown box.
+     * @memberof jQuery
+     */    
     'openDropdownBox': function(box) {
-      //  if($.isDropdownBoxOpen)
-       //     return false;
         box.show();
         setTimeout(function() {
-            $(document).on('click', {'box': box}, $.closeDropdownBox);
+            jQuery(document).on('click', {'box': box}, $.closeDropdownBox);
         }, 100);
         $.isDropdownBoxOpen = true;
     },
+    /** Closes a dropdown box
+     * @memberof jQuery
+     * @param e ?
+     */        
     'closeDropdownBox': function(e) {
-        $(document).off('click', $.closeDropdownBox);
+        jQuery(document).off('click', $.closeDropdownBox);
         if(e.data.box.hasOwnProperty('type'))
             e.data.box = box.data.box;
         e.data.box.hide();
         $.isDropdownBoxOpen = false;
     },
+    /** Checkes or uncheckes a checkable label. This is used for example for bibliography categories when editing bibliography items. 
+     * @memberof jQuery
+     * @param label The node who's parent has to be checked or unchecked.
+     */    
     'setCheckableLabel': function(label) {
         checkbox = label.parent().find('input[type=checkbox]');
         if(label.hasClass('checked')) {
             label.removeClass('checked');
-            //checkbox.attr('checked', true);
         } else {
             label.addClass('checked');
-            //checkbox.attr('checked', false);
         }
     },
+    /** Cover the page signaling to the user to wait.
+     * @memberof jQuery
+     */
     'activateWait': function() {
-        $('#wait').addClass('active');
+        jQuery('#wait').addClass('active');
     },
+    /** Remove the wait cover.
+     * @memberof jQuery
+     */
     'deactivateWait': function() {
-        $('#wait').removeClass('active');
+        jQuery('#wait').removeClass('active');
     },
+    /** Show a message to the user.
+     * @memberof jQuery
+     * @param alert_type The type of message that is shown (error, warning, info or success).
+     * @param alert_msg The message text.
+     */
     'addAlert': function(alert_type, alert_msg) {
         var fade_speed = 300;
         var icon_names = {
@@ -69,25 +98,27 @@ jQuery.extend({
             'info': 'icon-info-circle',
             'success': 'icon-ok'
         };
-        var $alert_box = $('<li class="alerts-' + alert_type + ' ' + icon_names[alert_type] + '">' + alert_msg + '</li>');
-        if(0 == $('#alerts-outer-wrapper').size())
-            $('body').append('<div id="alerts-outer-wrapper"><ul id="alerts-wrapper"></ul></div>');
-        $('#alerts-wrapper').append($alert_box);
+        var $alert_box = jQuery('<li class="alerts-' + alert_type + ' ' + icon_names[alert_type] + '">' + alert_msg + '</li>');
+        if(0 == jQuery('#alerts-outer-wrapper').size())
+            jQuery('body').append('<div id="alerts-outer-wrapper"><ul id="alerts-wrapper"></ul></div>');
+        jQuery('#alerts-wrapper').append($alert_box);
         $alert_box.fadeTo(fade_speed, 1, function() {
-            $(this).delay('2000').fadeOut(fade_speed, function() { $(this).remove(); });
+            jQuery(this).delay('2000').fadeOut(fade_speed, function() { jQuery(this).remove(); });
         });
     }
 });
 
-$(document).ready(function () {
-    var resizenow = function() {
-        var wh = $(window).height();
-        var document_table = $('.fw-table-wrapper .fw-document-table-body');
-        if(0 < document_table.size()) {
-            document_table.css('height', wh - 320);
-        }
+/** Things that need to happen whenever the window resizes */
+var resizeNow = function() {
+    var wh = jQuery(window).height();
+    var document_table = jQuery('.fw-table-wrapper .fw-document-table-body');
+    if(0 < document_table.size()) {
+        document_table.css('height', wh - 320);
     }
+};
 
-    $(window).resize(resizenow);
-    resizenow();
+
+jQuery(document).ready(function () {
+    jQuery(window).resize(resizeNow);
+    resizeNow();
 });

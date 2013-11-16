@@ -1,5 +1,5 @@
 /**
- * This file is part of Fidus Writer <http://www.fiduswriter.org>
+ * @license This file is part of Fidus Writer <http://www.fiduswriter.org>
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm
  *
@@ -246,11 +246,14 @@
 
     editorHelpers.setDocumentData = function (theName, newValue,
         skipSendChange, aUserId) {
-        var diff, theChange, currentValue;
+        var theChange, currentValue;
         if (undefined === aUserId) {
             aUserId = theUser.id;
         }
         currentValue = eval('theDocument.' + theName);
+        if (editorHelpers.TEXT_FIELDS.indexOf(theName) != -1) {
+            return false;
+        }
         if (editorHelpers.TEXT_FIELDS.indexOf(theName) === -1) {
             if (currentValue === newValue) {
                 // Don't create a history entry if nothing has changed

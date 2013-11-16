@@ -89,8 +89,8 @@ http://hallojs.org
         this.element.off("keyup", this._keys);
         this.element.off("keyup mouseup", this._checkSelection);
         this.bound = false;
-        jQuery(this.element).removeClass('isModified');
-        jQuery(this.element).removeClass('inEditMode');
+        //jQuery(this.element).removeClass('isModified');
+        //jQuery(this.element).removeClass('inEditMode');
         this.element.parents('a').andSelf().each(function(idx, elem) {
           var element;
           element = jQuery(elem);
@@ -205,11 +205,11 @@ http://hallojs.org
         return this.previousContent !== this.getContents();
       },
       setUnmodified: function() {
-        jQuery(this.element).removeClass('isModified');
+        //jQuery(this.element).removeClass('isModified');
         return this.previousContent = this.getContents();
       },
       setModified: function() {
-        jQuery(this.element).addClass('isModified');
+        //jQuery(this.element).addClass('isModified');
         return this._trigger('modified', null, {
           editable: this,
           content: this.getContents()
@@ -375,11 +375,11 @@ http://hallojs.org
         if (this.getContents() === this.options.placeholder) {
           this.setContents('');
         }
-        jQuery(this.element).addClass('inEditMode');
+        //jQuery(this.element).addClass('inEditMode');
         return this._trigger("activated", null, this);
       },
       turnOff: function() {
-        jQuery(this.element).removeClass('inEditMode');
+        //jQuery(this.element).removeClass('inEditMode');
         this._trigger("deactivated", null, this);
         if (!this.getContents()) {
           return this.setContents(this.options.placeholder);
@@ -914,14 +914,14 @@ http://hallojs.org
           return indicator.remove();
         });
         return this.options.editable.element.hover(function() {
-          if (jQuery(this).hasClass('inEditMode')) {
-            return;
-          }
+         // if (jQuery(this).hasClass('inEditMode')) {
+         //   return;
+        //  }
           return indicator.show();
         }, function(data) {
-          if (jQuery(this).hasClass('inEditMode')) {
-            return;
-          }
+          //if (jQuery(this).hasClass('inEditMode')) {
+          //  return;
+          //}
           if (data.relatedTarget === indicator.get(0)) {
             return;
           }
@@ -1561,7 +1561,7 @@ http://hallojs.org
             stop: function(event, ui) {
               return widget._handleStopEvent(event, ui);
             },
-            disabled: !editable.hasClass('inEditMode'),
+            disabled: pass,//!editable.hasClass('inEditMode'),
             cursorAt: {
               top: 50,
               left: 50

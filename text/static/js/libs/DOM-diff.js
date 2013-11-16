@@ -275,6 +275,7 @@
         if(debug) {
           diffcount++;
           if(diffcount > diffcap) {
+              //console.log([t1,t2]);
             throw new Error("surpassed diffcap");
           }
         }

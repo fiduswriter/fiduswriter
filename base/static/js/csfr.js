@@ -1,5 +1,6 @@
 /**
- * This file is part of Fidus Writer <http://www.fiduswriter.org>
+ * @file Functions to deal with Django's Cross Site Request Forgery (CSRF) protection.
+ * @license This file is part of Fidus Writer <http://www.fiduswriter.org>
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm
  *
@@ -18,7 +19,9 @@
  *
  */
 
-// using jQuery
+/** Get cookie to set as part of the request header of all AJAX requests to the server.
+ * @param name The name of the token which to look for in the cookie. 
+ */
 function getCookie(name) {
     var cookieValue = null;
     if (document.cookie && document.cookie != '') {
@@ -34,6 +37,10 @@ function getCookie(name) {
     }
     return cookieValue;
 }
+
+/**
+ * The Cross Site Request Forgery (CSRF) token
+ */
 var csrftoken = getCookie('csrftoken');
 
 function csrfSafeMethod(method) {

@@ -1,5 +1,6 @@
 /**
- * This file is part of Fidus Writer <http://www.fiduswriter.org>
+ * @file Functions related to the bibliography.
+ * @license This file is part of Fidus Writer <http://www.fiduswriter.org>
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm
  *
@@ -18,12 +19,23 @@
  *
  */
 
+/** The version number of Bibliography local storage. Needs to be increased when large changes are made to force reload. */
 var FW_LOCALSTORAGE_VERSION = "1.0";
 
 (function () {
     var exports = this,
+ /** 
+  * Helper functions for the bibliography. 
+  * @namespace bibliographyHelpers
+  */
         bibliographyHelpers = {};
-
+    
+/** Converts a bibliography item as it arrives from the server to a BibDB object. 
+* @function serverBibItemToBibDB
+* @memberof bibliographyHelpers
+* @param item The bibliography item from the server.
+* @param aBibDB The BibDB to add the item to.
+*/    
     bibliographyHelpers.serverBibItemToBibDB = function (item, aBibDB) {
         var id = item['id'];
         aBibDB[id] = jQuery.parseJSON(item['fields']);
@@ -33,8 +45,13 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         return id;
     };
 
+    /** This takes a list of new bib entries and adds them to BibDB and the bibliography table 
+     * @function addBibList
+     * @memberof bibliographyHelpers
+     * @param bibList The list of bibliography items from the server.
+     */
     bibliographyHelpers.addBibList = function (bibList) {
-        // This takes a list of new bib entries and adds them to BibDB and the bibliography table
+        
         var i, pks = [];
         for (i = 0; i < bibList.length; i++) {
             pks.push(bibliographyHelpers.serverBibItemToBibDB(bibList[i],BibDB));
@@ -55,7 +72,12 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             jQuery("#cite-source-table").trigger("update");
         }
     };
-
+    /** Converts a BibDB to a DB of the CSL type. The output is written to window.CSLDB.
+     * @function setCSLDB
+     * @memberof bibliographyHelpers
+     * @param aBibDB The bibliography database to convert. 
+     * 
+     */
     bibliographyHelpers.setCSLDB = function(aBibDB) {
         window.CSLDB = {};
         for(bib_id in aBibDB) {
@@ -63,7 +85,13 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             CSLDB[bib_id].id = bib_id;
         }
     };
-
+    /** Converts one BibDB entry to CSL format.
+     * @function getCSLEntry
+     * @memberof bibliographyHelpers
+     * @param id The id identifying the bibliography entry.
+     * @param aBibDB The BibDB from which the entry is recovered.
+     * 
+     */
     bibliographyHelpers.getCSLEntry = function (id, aBibDB) {
         var bib = aBibDB[id],
             cslOutput = {},
@@ -136,7 +164,13 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         cslOutput['type'] = BibEntryTypes[bib.entry_type].csl;
         return cslOutput;
     };
-
+    
+    /** Exports bibliography to BibLaTeX format 
+     * @function bibLatexExport
+     * @memberof bibliographyHelpers
+     * @param pks A list of pk values of the bibliography items to be exported.
+     * @param aBibDB The bibliography database to export from.
+     */
     bibliographyHelpers.bibLatexExport = function (pks, aBibDB) {
         this.bibtex_array = [];
         this.bibtex_str = '';
@@ -266,6 +300,10 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         this.bibtex_str = this._getBibtexString(this.bibtex_array);
     };
 
+    /** Parses files in BibTeX/BibLaTeX format 
+     * @function bibTexParser
+     * @memberof bibliographyHelpers
+     */
     bibliographyHelpers.bibtexParser = function () {
         this.pos = 0;
         this.input = "";
@@ -624,6 +662,11 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         };
     };
 
+    /** Saves a bibliography entry to the database on the server.
+     * @function createBibEntry
+     * @memberof bibliographyHelpers
+     * @param post_data The bibliography data to send to the server. 
+     */
     bibliographyHelpers.createBibEntry = function (post_data) {
         $.activateWait();
         $.ajax({
@@ -648,7 +691,12 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                 }
             });
     };
-
+    
+    /** Displays an error on bibliography entry creation
+     * @function displayCreateBibEntryError
+     * @memberof bibliographyHelpers
+     * @param errors Errors to be displayed
+     */
     bibliographyHelpers.displayCreateBibEntryError = function (errors) {
         var noError = true,
             e_key;
@@ -664,7 +712,11 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         return noError;
     };
 
-    //save changes or create a new category
+    /** Update or create new category 
+     * @function createCategory
+     * @memberof bibliographyHelpers
+     * @param cats The category objects to add.     
+     */
     bibliographyHelpers.createCategory = function (cats) {
         var post_data = {
             'ids[]': cats.ids,
@@ -695,7 +747,11 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         });
     };
 
-    //delete a category
+    /** Delete a categories
+     * @function deleteCategory
+     * @memberof bibliographyHelpers
+     * @param ids A list of ids to delete.
+     */
     bibliographyHelpers.deleteCategory = function (ids) {
         var post_data = {
             'ids[]': ids
@@ -708,8 +764,10 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             });
     };
 
-    //open a dialog for editing categories
-    //var deleted_cat;
+    /** Opens a dialog for editing categories.
+     * @function createCategoryDialog
+     * @memberof bibliographyHelpers
+     */
     bibliographyHelpers.createCategoryDialog = function () {
         var dialogHeader = gettext('Edit Categories');
         var dialogBody = tmp_editcategories({
@@ -764,7 +822,12 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
 
     }
 
-    //open a dialog for creating or editing an entry
+    /** Opens a dialog for creating or editing a bibliography entry.
+     * @function createBibEntryDialog
+     * @memberof bibliographyHelpers
+     * @param id The id of the bibliography item (if available).
+     * @param type The id of the type of source (a book, an article, etc.).
+     */
     bibliographyHelpers.createBibEntryDialog = function (id, type) {
         var entryType, rFields, oFields, eoFields, dialogHeader;
         if (null == id || 'undefined' === typeof (id)) {
@@ -891,7 +954,11 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             $.setCheckableLabel(jQuery(this))
         });
     }
-
+    /** Handles the submission of the bibliography entry form.
+     * @function onCreateBibEntrySubmitHandler
+     * @memberof bibliographyHelpers
+     * @param id The id of the bibliography item.
+     */
     bibliographyHelpers.onCreateBibEntrySubmitHandler = function (id) {
         //when submitted, the values in form elements will be restored
         var formValues = {
@@ -1064,6 +1131,11 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         jQuery('#createbook .warning').detach();
     };
 
+    /** Adds a list of bibliography categories to current list of bibliography categories. 
+     * @function addBibCategoryList
+     * @memberof bibliographyHelpers
+     * @param newBibCategories The new categories which will be added to the existing ones. 
+     */
     bibliographyHelpers.addBibCategoryList = function (newBibCategories) {
         var i;
         BibCategories = BibCategories.concat(newBibCategories);
@@ -1071,13 +1143,21 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             bibliographyHelpers.appendToBibCatList(newBibCategories[i]);
         }
     };
-
+    
+    /** Add an item to the HTML list of bibliography categories. 
+     * @function appendToBibCatList
+     * @memberof bibliographyHelpers
+     * @param bCat Category to be appended.
+     */ 
     bibliographyHelpers.appendToBibCatList = function (bCat) {
         jQuery('#bib-category-list').append(tmp_bibliography_category_list_item({'bCat': bCat}));
     };
-
+    
+    /** Add and remove name list field.
+     * @function addRemoveListHandler
+     * @memberof bibliographyHelpers
+     */ 
     bibliographyHelpers.addRemoveListHandler = function () {
-        //add and remove name list field
         jQuery('.fw-add-input').bind('click', function () {
             var $parent = jQuery(this).parents('.fw-list-input');
             if (0 == $parent.next().size()) {
@@ -1137,6 +1217,12 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         jQuery('.dk').dropkick();
     };
 
+    /** Create an array with of numbers.
+     * @function createDateRnge
+     * @memberof bibliographyHelpers
+     * @param startR Start number
+     * @param endR End number
+     */     
     bibliographyHelpers.createDateRnge = function (startR, endR) {
         var ret = Array();
         for (var i = startR; i <= endR; i++) {
@@ -1144,8 +1230,14 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         }
         return ret;
     };
-
-    //return html with form elements for the book dialog
+    
+    /** Return html with form elements for the bibliography entry dialog. 
+     * @function getFieldForms
+     * @memberof bibliographyHelpers
+     * @param fields A list of the fields
+     * @param eitheror Fields of which either entry A or B is obligatory.
+     * @param id The id of the bibliography entry.
+     */ 
     bibliographyHelpers.getFieldForms = function (fields, eitheror, id) {
         if(null == eitheror || undefined == eitheror) { eitheror = []; }
         var ret = '';
@@ -1213,7 +1305,13 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         }
         return ret;
     };
-
+    /** Recover the current value of a certain field in the bibliography item form.
+     * @function getFormPart
+     * @memberof bibliographyHelpers
+     * @param form_info Information about the field -- such as it's type (date, text string, etc.)
+     * @param the_id The id specifying the field.
+     * @param the_value The current value of the field.
+     */ 
     bibliographyHelpers.getFormPart = function (form_info, the_id, the_value) {
         var the_type = form_info.type;
         var field_name = 'eField' + the_id;
@@ -1375,7 +1473,12 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                     });
         }
     };
-
+    /** Change the type of the bibliography item in the form (article, book, etc.) 
+     * @function updateBibEntryDialog
+     * @memberof bibliographyHelpers
+     * @param id The id of the bibliography entry.
+     * @param type The new type of the bibliography entry.
+     */ 
     bibliographyHelpers.updateBibEntryDialog = function (id, type) {
         var entryType = BibEntryTypes[type];
 
@@ -1393,8 +1496,11 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
 
         bibliographyHelpers.addRemoveListHandler();
     };
-
-    //delete bib entry
+    /** Delete a list of bibliography items both locally and on the server.
+     * @function deleteBibEntry
+     * @memberof bibliographyHelpers
+     * @param ids A list of bibliography item ids that are to be deleted.
+     */ 
     bibliographyHelpers.deleteBibEntry = function (ids) {
         for (var i = 0; i < ids.length; i++) {
             ids[i] = parseInt(ids[i]);
@@ -1428,7 +1534,11 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                 }
             });
     };
-
+    /** Dialog to confirm deletion of bibliography items.
+     * @function deleteBibEntryDialog
+     * @memberof bibliographyHelpers
+     * @param ids Ids of items that are to be deleted.
+     */ 
     bibliographyHelpers.deleteBibEntryDialog = function (ids) {
         jQuery('body').append('<div id="confirmdeletion" title="' + gettext(
                 'Confirm deletion') + '"><p>' + gettext(
@@ -1458,7 +1568,11 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                 }
             });
     };
-
+    /** Export a list of bibliography items to bibLateX and serve the file to the user as a ZIP-file.
+     * @function exportBibliographyBL
+     * @memberof bibliographyHelpers
+     * @param ids A list of ids of the bibliography items that are to be exported.
+     */ 
     bibliographyHelpers.exportBibliographyBL = function (ids) {
         var bib_export = new bibliographyHelpers.bibLatexExport(ids),
             export_obj = [{
@@ -1468,7 +1582,11 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             ];
         exporter.zipFileCreator(export_obj, [], 'bibliography.zip')
     };
-
+    /** Second step of the BibTeX file import. Takes a BibTeX file object, processes client side and cuts into chunks to be uploaded to the server.
+     * @function importBibliography2
+     * @memberof bibliographyHelpers
+     * @param e File object that is to be imported. 
+     */ 
     bibliographyHelpers.importBibliography2 = function (e) {
         var bib_data = new bibliographyHelpers.bibtexParser(), bib_entries, bib_keylist, totalChunks, currentChunkNumber;
         bib_data.setInput(e.target.result);
@@ -1502,7 +1620,13 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         }
         
     };
-    
+    /** Third step of the BibTeX file import. Takes lists of bibliography entries and sends them to the server.
+     * @function importBibliography3
+     * @memberof bibliographyHelpers
+     * @param bib_entries The list of bib_entries received from importBibliography2.
+     * @param callback Function to be called when import to server has finished.
+     * 
+     */     
     bibliographyHelpers.importBibliography3 = function (bib_entries, callback) {
         
         var post_data = {
@@ -1537,7 +1661,10 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             }
         });
     };
-
+    /** First step of the BibTeX file import. Creates a dialog box to specify upload file.
+     * @function importBibliography
+     * @memberof bibliographyHelpers
+     */ 
     bibliographyHelpers.importBibliography = function () {
         jQuery('body').append(tmp_import_bib());
         diaButtons = {};
@@ -1588,9 +1715,17 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                 }
             });
     };
-
+    /** Translated text of " and others". 
+     * @constant _and_others
+     * @memberof bibliographyHelpers
+     */ 
     bibliographyHelpers._and_others = gettext(' and others');
-
+    /** Add or update an item in the bibliography table (HTML). 
+     * @function appendToBibTable
+     * @memberof bibliographyHelpers
+     * @param pk The pk specifying the bibliography item.
+     * @param bib_info An object with the current information about the bibliography item.
+     */ 
     bibliographyHelpers.appendToBibTable = function (pk, bib_info) {
         var allowEdit;
         var $tr = jQuery('#Entry_' + pk);
@@ -1649,7 +1784,12 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                     }));
         }
     };
-
+    /** Get a bibliography from the server.
+     * @function getABibDB
+     * @memberof bibliographyHelpers
+     * @param ownerId The id of the person who's bibliography will be returned.
+     * @param callback Will be called when process has finished with the new bibliography as an argument.
+     */ 
     bibliographyHelpers.getABibDB = function(ownerId, callback) {
         // Get the BibDB of one specific user and call the callback with it.
             var aBibDB={};
@@ -1677,9 +1817,13 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                 });
 
     };
-
+    /** Get the bibliography of the current user from the server and create as window.BibDB.  
+     * @function getBibDB
+     * @memberof bibliographyHelpers
+     * @param callback Will be called afterward. 
+     */ 
     bibliographyHelpers.getBibDB = function(callback) {
-        // Get the BibDB of the page.
+
         var documentOwnerId, lastModified = parseInt(localStorage.getItem('last_modified_biblist')), numberOfEntries = parseInt(localStorage.getItem('number_of_entries')), localStorageVersion = localStorage.getItem('version');
 
         window.BibDB = {};
@@ -1747,11 +1891,17 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             }
         });
     };
-
+    /** Stop the interactive parts of the bibliography table.
+     * @function stopBibliographyTable
+     * @memberof bibliographyHelpers
+     */ 
     bibliographyHelpers.stopBibliographyTable = function () {
         jQuery('#bibliography').dataTable().fnDestroy();
     };
-
+    /** Start the interactive parts of the bibliography table.
+     * @function startBibliographyTable
+     * @memberof bibliographyHelpers
+     */ 
     bibliographyHelpers.startBibliographyTable = function () {
         // The sortable table seems not to have an option to accept new data added to the DOM. Instead we destroy and recreate it.
         jQuery('#bibliography').dataTable({
@@ -1787,8 +1937,10 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             source: autocomplete_tags
         });
     };
-    
-    //var bibliography_data_table;
+    /** Initialize the bibliography table and bind interactive parts.
+     * @function init
+     * @memberof bibliographyHelpers
+     */     
     bibliographyHelpers.init = function () {
 
         jQuery(document).on('click', '.delete-bib', function () {
@@ -1863,12 +2015,14 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
 
         bibliographyHelpers.getBibDB(function(){
             if (window.hasOwnProperty('theDocument')) {
-                //console.log('bibhelpers')
                 citationHelpers.formatCitationsInDoc();
             }
         });
     };
-
+    /** Bind the init function to jQuery(document).ready.
+     * @function bind
+     * @memberof bibliographyHelpers
+     */ 
     bibliographyHelpers.bind = function () {
         jQuery(document).ready(function () {
 

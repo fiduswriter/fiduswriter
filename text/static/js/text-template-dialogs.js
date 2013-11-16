@@ -1,5 +1,6 @@
 /**
- * This file is part of Fidus Writer <http://www.fiduswriter.org>
+ * @file Templates for access rights dialogs.
+ * @license This file is part of Fidus Writer <http://www.fiduswriter.org>
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm
  *
@@ -18,6 +19,7 @@
  *
  */
 
+/** The access rights dialogue template */
 var tmp_access_right_overview = _.template('\
     <div id="access-rights-dialog" title="<%- dialogHeader %>">\
         <div id="my-contacts" class="fw-ar-container">\
@@ -40,6 +42,7 @@ var tmp_access_right_overview = _.template('\
             </table>\
         </div>\
     </div>');
+/** The template for an individual row in the right hand side list of users (all contacts) of the access rights dialogue. */ 
 var tmp_access_right_tr = _.template('<% _.each(contacts, function(contact) { %>\
         <tr>\
             <td width="337" data-id="<%- contact.id %>" data-avatar="<%- contact.avatar %>" data-name="<%- contact.name %>" class="fw-checkable fw-checkable-td">\
@@ -48,6 +51,7 @@ var tmp_access_right_tr = _.template('<% _.each(contacts, function(contact) { %>
             </td>\
         </tr>\
     <% }) %>');
+/** The template for an individual row in the left hand side list of users (the collaborators of the current document) of the access rights dialogue. */ 
 var tmp_collaborators = _.template('<% _.each(collaborators, function(collaborator) { %>\
         <tr id="collaborator-<%- collaborator.user_id %>" data-id="<%- collaborator.user_id %>"\
         class="collaborator-tr <%- collaborator.rights %>" data-right="<%- collaborator.rights %>">\
@@ -82,10 +86,3 @@ var tmp_collaborators = _.template('<% _.each(collaborators, function(collaborat
             </td>\
         </tr>\
     <% }) %>');
-/*
-var tmp_users_with_rights = _.template('\
-    <% _.each(rights,function(right,key,list){ %>\
-    <p><%= teamMembers[right.user_id] %> (<%= right.rights %>)</p>\
-    <% }); %>\
-    ');
-*/

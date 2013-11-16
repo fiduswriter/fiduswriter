@@ -1,5 +1,5 @@
 /**
- * This file is part of Fidus Writer <http://www.fiduswriter.org>
+ * @license This file is part of Fidus Writer <http://www.fiduswriter.org>
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm
  *

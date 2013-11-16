@@ -1,5 +1,5 @@
 /**
- * This file is part of Fidus Writer <http://www.fiduswriter.org>
+ * @license This file is part of Fidus Writer <http://www.fiduswriter.org>
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm
  *
@@ -88,6 +88,7 @@
         theDocument.usedDiffs = [];
         theDocument.textChangeList = [];
         serverCommunications.addCurrentToTextChangeList();
+        serverCommunications.diffNode = document.getElementById('document-editable').cloneNode(true); // a node against which changes are tested constantly.
     };
     
     serverCommunications.addCurrentToTextChangeList = function () {
@@ -96,11 +97,12 @@
     
     
     serverCommunications.makeDiff = function () {
-        var theDiff = domDiff.diff(theDocument.textChangeList[theDocument.textChangeList.length-1][0],document.getElementById('document-editable'));
+        var theDiff = domDiff.diff(serverCommunications.diffNode,document.getElementById('document-editable'));
 
         if (theDiff.length===0) {
             return;
         }
+        domDiff.apply(serverCommunications.diffNode, theDiff);
         
         //console.log(theDiff);
         

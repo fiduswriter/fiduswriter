@@ -20,7 +20,7 @@
  */
 
 /** Get cookie to set as part of the request header of all AJAX requests to the server.
- * @param name The name of the token which to look for in the cookie. 
+ * @param name The name of the token to look for in the cookie. 
  */
 function getCookie(name) {
     var cookieValue = null;

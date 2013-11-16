@@ -1,4 +1,5 @@
 /**
+ * @file Set ups things on the editor page.
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
@@ -17,10 +18,10 @@
  * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
  *
  */
-// Initial editor wide variables
-var toPrint = false,
-    lastStyleUsedFootnotes = false,
-    saveTimer;
+
+
+var lastStyleUsedFootnotes = false;
+    /** Whether the citation style before the current one was footnote based. This is used to determine whetherthe page needs to be reformatted. */
 
 
 
@@ -176,7 +177,6 @@ jQuery(document).bind('documentDataLoaded', function () {
         exporter.downloadHtml(theDocument);
     });
     jQuery('.print').bind('click', function () {
-        toPrint = true;
         window.print();
     });
     jQuery('.close').bind('click', function () {
@@ -236,7 +236,7 @@ jQuery(document).bind('documentDataLoaded', function () {
         mathHelpers.resetMath(mathHelpers.saveMathjaxElements);
 
         // Set Auto-save to save every ten seconds
-        saveTimer = setInterval(function () {
+        setInterval(function () {
             if (theDocument.changed) {
                 editorHelpers.getUpdatesFromInputFields(function () {
                     editorHelpers.saveDocument();

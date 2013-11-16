@@ -1,4 +1,5 @@
 /**
+ * @file Helper functions related to the editor.
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
@@ -20,6 +21,7 @@
 (function () {
     var exports = this,
         editorHelpers = {};
+        
 
 
     editorHelpers.layoutMetadata = function () {

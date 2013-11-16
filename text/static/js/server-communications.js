@@ -188,8 +188,6 @@
     };
 
     serverCommunications.noConnectionToServer = function () {
-        // If we come right out fo the print dialog, permit immediate reloading.
-        if (toPrint) location.reload();
 
         var noConnectionDialog = document.createElement('div');
         noConnectionDialog.id = 'no-connection-dialog';

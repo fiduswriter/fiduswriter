@@ -18,6 +18,7 @@
  *
  */
 
+/** A template for the book access rights overview */
 var tmp_book_access_right_overview = _.template('\
     <div id="access-rights-dialog" title="<%- dialogHeader %>">\
         <div id="my-contacts" class="fw-ar-container">\
@@ -47,6 +48,7 @@ var tmp_book_access_right_overview = _.template('\
             </table>\
         </div>\
     </div>');
+/** A template for the book collaboration pane */
 var tmp_book_collaborators = _.template('<% _.each(collaborators, function(collaborator) { %>\
         <tr id="collaborator-<%- collaborator.user_id %>" data-id="<%- collaborator.user_id %>"\
         class="collaborator-tr <%- collaborator.rights %>" data-right="<%- collaborator.rights %>">\

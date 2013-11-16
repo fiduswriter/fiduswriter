@@ -17,10 +17,10 @@
  * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
  *
  */
-
+/** A template for the list of books */
 var tmp_book_list = _.template('\
 <% _.each(theBookList,function(aBook,key,list){%><%= tmp_book_list_item({aBook:aBook})%><% }); %>');
-
+/** A template for a book in the list of books */
 var tmp_book_list_item = _.template('\
  <tr id="Book_<%- aBook.id %>" <% if (theUser.id == aBook.owner) { %>class="owned-by-user"<% } %> >\
                 <td width="20">\
@@ -66,7 +66,7 @@ var tmp_book_list_item = _.template('\
                 </td>\
             </tr>\
 ');
-
+/** A template for the Fidus Writer document file uploader. */
 var tmp_import_fidus = _.template('<div id="importfidus" title="' + gettext('Import another Fidus file') + '">\
         <form id="import-fidus-form" method="post" enctype="multipart/form-data" class="ajax-upload">\
             <input type="file" id="fidus-uploader" name="fidus" required />\
@@ -75,7 +75,7 @@ var tmp_import_fidus = _.template('<div id="importfidus" title="' + gettext('Imp
         </form>\
     </div>');
 
-
+/** A template for the basic info book template pane */
 var tmp_book_basic_info = _.template('\
     <tr>\
         <th>\
@@ -126,7 +126,7 @@ var tmp_book_basic_info = _.template('\
         </td>\
     </tr>\
 ');
-
+/** A template for the citation style pane of the book dialog */
 var tmp_book_bibliography_data = _.template('\
     <tr>\
         <th>\
@@ -141,7 +141,7 @@ var tmp_book_bibliography_data = _.template('\
         </td>\
     </tr>\
 ');
-
+/** A template for the print related data pane of the book dialog */
 var tmp_book_print_data = _.template('\
     <tr>\
         <th>\
@@ -174,14 +174,14 @@ var tmp_book_print_data = _.template('\
         </td>\
     </tr>\
 ');
-
+/** A template for the epub related data pane of the book dialog */
 var tmp_book_epub_data = _.template('\
     <tr id="figure-preview-row">\
         <%= coverImage %>\
     </tr>\
     ');
 
-
+/** A template for the cover image input on the epub pane of the book dialog. */
 var tmp_book_epub_data_cover = _.template('\
         <th class="figure-preview-row">\
             <h4 class="fw-tablerow-title">'+gettext("Cover image")+'</h4>\
@@ -208,7 +208,7 @@ var tmp_book_epub_data_cover = _.template('\
             </td>\
         <% } %>\
 ');
-
+/** A template for the cover image selection for the epub version of a book. */
 var tmp_book_cover_image_selection = _.template('\
     <div id="book-cover-image-selection">\
         <table id="imagelist" class="tablesorter fw-document-table" style="width:342px;">\
@@ -252,7 +252,7 @@ var tmp_book_cover_image_selection = _.template('\
     </div>\
 ');
 
-
+/** A template for the book dialog. */
 var tmp_book_dialog = _.template('\
     <div id="book-dialog" title="<%- dialogHeader %>">\
         <div id="bookoptionsTab">\
@@ -271,7 +271,7 @@ var tmp_book_dialog = _.template('\
         </div>\
     </div>');
 
-
+/** A template for the chapter pane of the book dialog. */
 var tmp_book_dialog_chapters = _.template('\
     <% if (theBook.rights==="w") { %>\
         <div class="fw-ar-container">\
@@ -298,7 +298,7 @@ var tmp_book_dialog_chapters = _.template('\
             </table>\
         </div>\
     ');
-
+/** A template for the chapter list on the chapter pane the book dialog. */
 var tmp_book_chapter_list = _.template('\
                     <% var partCounter = 1; %>\
                     <% _.each(_.sortBy(theBook.chapters, function (chapter) {return chapter.number;}), function(aChapter,index,list) { %>\
@@ -347,7 +347,7 @@ var tmp_book_chapter_list = _.template('\
                             </tr>\
                     <% }) %>\
                     ');
-
+/** A template for the document list on the chapter pane of the book dialog */
 var tmp_book_document_list = _.template('\
                     <% _.each(theDocumentList, function(aDocument) { %>\
                         <% var documentTitle; if (0===aDocument.title.length) {documentTitle="'+gettext('Untitled')+'";} else {documentTitle=aDocument.title;} %>\
@@ -362,7 +362,7 @@ var tmp_book_document_list = _.template('\
                         <% } %>\
                     <% }) %>\
                     ');
-
+/** A template for the chapter dialog for books */
 var tmp_book_chapter_dialog = _.template('\
     <div id="book-chapter-dialog" title="<%- dialogHeader %>">\
         <table class="fw-dialog-table">\
@@ -377,7 +377,7 @@ var tmp_book_chapter_dialog = _.template('\
        </table>\
     </div>\
     ');
-
+/** A template to create the OPF file of book epubs. */
 var tmp_epub_book_opf = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
     <package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="<%= idType %>" xml:lang="<%= language %>" prefix="cc: http://creativecommons.org/ns#">\n\
     \t<metadata xmlns:dc="http://purl.org/dc/elements/1.1/">\n\
@@ -437,7 +437,7 @@ var tmp_epub_book_opf = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
     \t</spine>\n\
     </package>\
     ');
-
+/** A template to create the book epub cover XML. */
 var tmp_epub_book_cover = _.template('\
 <?xml version="1.0" encoding="UTF-8"?>\
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">\
@@ -452,7 +452,7 @@ var tmp_epub_book_cover = _.template('\
     </body>\
 </html>\
 ');
-
+/** A template to create the book epub titlepage XML. */
 var tmp_epub_book_titlepage = _.template('\
 <?xml version="1.0" encoding="UTF-8"?>\
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">\
@@ -473,7 +473,7 @@ var tmp_epub_book_titlepage = _.template('\
    </body>\
 </html>\
 ');
-
+/** A template to create the book epub copyright page XML. */
 var tmp_epub_book_copyright = _.template('\
 <?xml version="1.0" encoding="UTF-8"?>\
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">\
@@ -509,7 +509,7 @@ var tmp_epub_book_copyright = _.template('\
     </body>\
 </html>\
 ');
-
+/** A template to create the book index. */
 var tmp_html_book_index = _.template('\
     <html>\n\
     \t<head>\n\
@@ -538,7 +538,7 @@ var tmp_html_book_index = _.template('\
     \t\t<p>'+gettext('Created by')+': <%= creator %></p>\
     \t</body>\n\
     </html>');
-
+/** A template to create the book index item. */
 var tmp_html_book_index_item = _.template('\t\t\t\t<li><a href="<% if (item.link) {print(item.link);} else { %>document<% if (item.docNum) {print("-"+item.docNum);}%>.html#<% print(item.id); } %>"><%= item.title %></a>\
     <% if (item.subItems.length > 0) { %>\
         <ol>\
@@ -548,7 +548,7 @@ var tmp_html_book_index_item = _.template('\t\t\t\t<li><a href="<% if (item.link
         </ol>\
     <% } %>\
 </li>\n');
-
+/** A template to create the latex book index. */
 var tmp_latex_book_index = _.template('\
     <%= latexStart %>\
     <% _.each(aBook.chapters,function(chapter){ %>\
@@ -556,7 +556,7 @@ var tmp_latex_book_index = _.template('\
     <% }); %>\
     <%= latexEnd %>\
 ');
-
+/** A template to create latex book index items. */
 var tmp_latex_book_index_item = _.template('\
 <% if(chapter.part && chapter.part != "") { %>\
     \n\t\\part{<%= chapter.part %>}\

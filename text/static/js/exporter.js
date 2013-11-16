@@ -1,9 +1,10 @@
 /**
- * @license This file is part of Fidus Writer <http://www.fiduswriter.org>
+ * @file Handles export of Fidus Writer document files into downloadable formats.
+ * @copyright This file is part of <a href="http://www.fiduswriter.org">Fidus Writer</a>.
  *
- * Copyright (C) 2013 Takuto Kojima, Johannes Wilm
+ * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
  *
- * This program is free software: you can redistribute it and/or modify
+ * @license This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as
  * published by the Free Software Foundation, either version 3 of the
  * License, or (at your option) any later version.
@@ -14,14 +15,19 @@
  * GNU Affero General Public License for more details.
  *
  * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
  *
  */
-
+/** The current Fidus Writer filetype version. The importer will not import from a different version and the exporter will include this number in all exports.
+ */
 var FW_FILETYPE_VERSION = "1.1";
 
 (function () {
     var exports = this,
+  /** 
+  * Functions to export the Fidus Writer document. TODO 
+  * @namespace exporter
+  */
         exporter = {};
 
     exporter.downloadFile = function (zipFilename, blob) {

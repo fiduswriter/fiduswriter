@@ -1,4 +1,5 @@
 /**
+ * @file Sets up the user media page.
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
@@ -20,6 +21,9 @@
 
 (function () {
     var exports = this,
+ /** Helper functions for user added images/SVGs. TODO
+  * @namespace usermediaHelpers
+  */
         usermediaHelpers = {};
 
     usermediaHelpers.createImage = function (post_data) {

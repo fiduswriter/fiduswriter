@@ -1,4 +1,5 @@
 /**
+ * @file Templates for a simple image overview within the editor
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
@@ -18,7 +19,7 @@
  *
  */
 
-// overwrite this variable for the image list in the editor
+/** Simpler image overview table for use in editor. */
 var tmp_usermedia_table = _.template('\
                 <tr id="Image_<%- id %>" class="<% _.each(cats, function(cat) { %>cat_<%- cat %> <% }) %>" >\
                      <td class="type" style="width:100px;">\

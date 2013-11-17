@@ -1,4 +1,5 @@
 /**
+ * @file Sets up the handling of the menu on the menu pages (almost all pages, except the editor).
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.

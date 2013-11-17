@@ -1,4 +1,5 @@
 /**
+ * @file Templates for the Images overview page
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
@@ -17,12 +18,12 @@
  * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
  *
  */
-
+/** A template to edit image categories. */
 var tmp_usermedia_editcategories = _.template('\
     <div id="editCategories" title="<%- dialogHeader %>">\
         <table id="editCategoryList" class="fw-dialog-table"><tbody><%= categories %></tbody></table>\
     </div>');
-
+/** A template for the image category edit form. */
 var tmp_usermedia_categoryforms = _.template('\
     <% _.each(categories, function(cat) { %>\
     <tr id="categoryTr_<%- cat.id %>" class="fw-list-input">\
@@ -38,7 +39,7 @@ var tmp_usermedia_categoryforms = _.template('\
             <span class="fw-add-input icon-addremove"></span>\
         </td>\
     </tr>');
-
+/** A template for image overview list. */
 var tmp_usermedia_table = _.template('\
                 <tr id="Image_<%- id %>" class="<% _.each(cats, function(cat) { %>cat_<%- cat %> <% }) %>">\
                     <td width="30">\
@@ -69,14 +70,14 @@ var tmp_usermedia_table = _.template('\
                         </span>\
                     </td>\
                 </tr>');
-
+/* A template for each image category list item */
 var tmp_usermedia_category_list_item = _.template('\
     <li>\
         <span class="fw-pulldown-item" data-id="<%- iCat.id %>">\
             <%- iCat.category_title %>\
         </span>\
     </li>');
-
+/* A template for the form for the image upload dialog. */
 var tmp_usermedia_upload = _.template('<div id="uploadimage" class="fw-media-uploader" title="<%- action %>">\
     <form action="#" method="post" class="usermediaUploadForm">\
         <div>\
@@ -91,8 +92,8 @@ var tmp_usermedia_upload = _.template('<div id="uploadimage" class="fw-media-upl
         </div></div>\
         <%= categories %>\
     </form></div>');
-
-var tmp_usermedia_upload_categoriy = _.template('<% if(0 < categories.length) { %>\
+/* A template for the image category selection of the image selection dialog. */
+var tmp_usermedia_upload_category = _.template('<% if(0 < categories.length) { %>\
         <div class="fw-media-category">\
             <div><%- fieldTitle %></div>\
             <% _.each(categories, function(cat) { %>\

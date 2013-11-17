@@ -1,4 +1,5 @@
 /**
+ * @file Templates for Fidus writer document export.
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
@@ -17,7 +18,7 @@
  * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
  *
  */
-
+/** A template for the OPF file of an epub. */
 var tmp_epub_opf = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
     <package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="<%= idType %>" xml:lang="<%= language %>" prefix="cc: http://creativecommons.org/ns#">\n\
     \t<metadata xmlns:dc="http://purl.org/dc/elements/1.1/">\n\
@@ -52,18 +53,18 @@ var tmp_epub_opf = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
     \t\t<itemref idref="t1" />\n\
     \t</spine>\n\
     </package>');
-
+/** A template for each CSS item of an epub's OPF file. */
 var tmp_epub_opf_css_item = _.template('\t\t\t<item id="css<%= index %>" href="<%= item.filename %>" media-type="text/css" />\n');     
-
+/** A template for each image in an epub's OPF file. */
 var tmp_epub_opf_image_item = _.template('\t\t\t<item <% if (item.coverImage) { %>id="cover-image" properties="cover-image"<% } else { %>id="img<%= index %>"<% } %> href="<%= item.filename %>" media-type="image/<% if (item.filename.split(".")[1]==="png") { %>png<% } else if (item.filename.split(".")[1]==="svg") { %>svg+xml<% } else { %>jpeg<% } %>" />\n');     
-
+/** A template for the contianer XML of an epub file. */
 var tmp_epub_container = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
     <container xmlns="urn:oasis:names:tc:opendocument:xmlns:container" version="1.0">\n\
     \t<rootfiles>\n\
     \t\t<rootfile full-path="EPUB/document.opf" media-type="application/oebps-package+xml"/>\n\
     \t</rootfiles>\n\
     </container>');
-    
+/** A template of the NCX file of an epub. */    
 var tmp_epub_ncx = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
     <ncx xmlns:ncx="http://www.daisy.org/z3986/2005/ncx/" xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="<%= shortLang %>">\n\
         \t<head>\n\
@@ -79,7 +80,7 @@ var tmp_epub_ncx = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
             <% }); %>\
         \t</navMap>\n\
     </ncx>');
-    
+/** A template for each list item in the navMap of an epub's NCX file. */    
 var tmp_epub_ncx_item = _.template('\
 \t\t<navPoint id="<%= item.id %><% if (item.docNum) {print("-"+item.docNum);}%>">\n\
         \t\t\t<navLabel>\n\
@@ -90,7 +91,7 @@ var tmp_epub_ncx_item = _.template('\
             <%= tmp_epub_ncx_item({"item":item})%>\
         <% }); %>\
     \t\t</navPoint>\n');
-    
+/** A template for a document in an epub. */    
 var tmp_epub_xhtml = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
     <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<%= shortLang %>" lang="<%= shortLang %>"\
         xmlns:epub="http://www.idpf.org/2007/ops">\n<head><title><%= title %></title>\
@@ -112,10 +113,10 @@ var tmp_epub_xhtml = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
             <h1 class="part"><%= part %></h1>\
         <% } %>\
         <%= body %></body></html>');
-
+/** A template for each CSS item in an epub document file. */
 var tmp_epub_xhtml_css_item = _.template('\t<link rel="stylesheet" type="text/css" href="<%= item.filename %>" />');
 
-
+/** A template for an epub's navigation document. */
 var tmp_epub_nav = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
     <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<%= shortLang %>" lang="<%= shortLang %>" xmlns:epub="http://www.idpf.org/2007/ops">\n\
     \t<head>\n\
@@ -131,7 +132,7 @@ var tmp_epub_nav = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
     \t\t</nav>\n\
     \t</body>\n\
     </html>');
-    
+/** A template for each item in an epub's navigation document. */    
 var tmp_epub_nav_item = _.template('\t\t\t\t<li><a href="<% if (item.link) {print(item.link);} else { %>document<% if (item.docNum) {print("-"+item.docNum);}%>.xhtml#<% print(item.id); } %>"><%= item.title %></a>\
     <% if (item.subItems.length > 0) { %>\
         <ol>\
@@ -141,7 +142,7 @@ var tmp_epub_nav_item = _.template('\t\t\t\t<li><a href="<% if (item.link) {prin
         </ol>\
     <% } %>\
 </li>\n');
-
+/** A template for HTML export of a document. */
 var tmp_html_export = _.template('<!DOCTYPE html>\n\
     <html>\n<head><title><%= title %></title>\
         <% _.each(styleSheets,function(item){ %>\
@@ -175,9 +176,9 @@ var tmp_html_export = _.template('<!DOCTYPE html>\n\
             <div class="keywords"><%= metadata.keywords %></div>\
         <% } %>\
         <%= contents %></body></html>');
-
+/** A template for each item in an HTML export of a Fidus Writer document. */
 var tmp_html_css_item = _.template('\t<link rel="stylesheet" type="text/css" href="<%= item.filename %>" />');
-
+/** A template for the MathJax parts to include in the header of a HTML/XHTML document if it includes MathJax. */
 var tmp_mathjax_html_header = _.template('\
     <script type="text/x-mathjax-config">\
         MathJax.Hub.Config({\
@@ -198,7 +199,7 @@ var tmp_mathjax_html_header = _.template('\
     <script type="text/javascript" src="mathjax/MathJax.js">\
     </script>\
     ');
-    
+/** A template to initiate MathJax execution in the header of a HTML document if it includes MathJax. */    
 var tmp_mathjax_html_header_starter = _.template('\
     <script type="text/javascript">\
             document.addEventListener("DOMContentLoaded", function () {\
@@ -218,7 +219,7 @@ var tmp_mathjax_html_header_starter = _.template('\
             });\
     </script>\
     ');
-
+/** A template to initiate MathJax execution in the header of an XHTML document if it includes MathJax. */  
 var tmp_mathjax_xhtml_header_starter = _.template('\
     <script type="text/javascript">\
         <![CDATA[\
@@ -241,7 +242,7 @@ var tmp_mathjax_xhtml_header_starter = _.template('\
     </script>\
     ');    
     
-    
+/** A template to include MathJax in an Epub's OPF file. */      
 var tmp_epub_opf_mathjax_items = _.template('\
         <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/BasicLatin.js" id="id0" media-type="application/x-javascript"/>\
         <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/MiscMathSymbolsB.js" id="id1" media-type="application/x-javascript"/>\

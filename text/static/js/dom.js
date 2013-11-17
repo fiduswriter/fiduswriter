@@ -1,4 +1,5 @@
 /**
+ * @file Deals with common dom operations needed for caret movement. 
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
@@ -20,6 +21,10 @@
 
 (function () {
     var exports = this,
+   /** 
+  * Common DOM functions needed for caret movement. TODO 
+  * @namespace dom
+  */
         dom = {};
 
     dom.findPreviousElement = function (node, upperLimitContainer) {

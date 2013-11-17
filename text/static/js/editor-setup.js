@@ -19,12 +19,11 @@
  *
  */
 
-
+/** Whether the citation style before the current one was footnote based. This is used to determine whetherthe page needs to be reformatted.
+ * @constant lastStyleUsedFootnotes
+ */
 var lastStyleUsedFootnotes = false;
-    /** Whether the citation style before the current one was footnote based. This is used to determine whetherthe page needs to be reformatted. */
-
-
-
+    
 // Functions to be executed at startup
 jQuery(document).ready(function () {
     // Enable toolbar menu

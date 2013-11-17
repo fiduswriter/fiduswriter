@@ -1,4 +1,5 @@
 /**
+ * @file Templates for the bibliography overview page
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
@@ -17,12 +18,12 @@
  * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
  *
  */
-
+/** A template for the editing of bibliography categories list. */
 var tmp_editcategories = _.template('\
     <div id="editCategories" title="<%- dialogHeader %>">\
         <table id="editCategoryList" class="fw-dialog-table"><tbody><%= categories %></tbody></table>\
     </div>');
-
+/** A template for each category in the category list edit of the bibliography categories list. */
 var tmp_categoryforms = _.template('\
     <% _.each(categories, function(cat) { %>\
     <tr id="categoryTr_<%- cat.id %>" class="fw-list-input">\
@@ -38,7 +39,7 @@ var tmp_categoryforms = _.template('\
             <span class="fw-add-input icon-addremove"></span>\
         </td>\
     </tr>');
-
+/** a template for the BibTeX import dialog */
 var tmp_import_bib = _.template('<div id="importbibtex" title="' + gettext('Import another BibTex library') + '">\
         <form id="import-bib-form" method="post" enctype="multipart/form-data" class="ajax-upload">\
             <input type="file" id="bib-uploader" name="bib" required />\
@@ -46,7 +47,7 @@ var tmp_import_bib = _.template('<div id="importbibtex" title="' + gettext('Impo
             <label id="import-bib-name" class="ajax-upload-label"></label>\
         </form>\
     </div>');
-
+/** A template for the bibliography item edit dialog. */
 var tmp_create_bibitem = _.template('\
     <div id="createbook" title="<%- dialogHeader %>">\
         <%= sourcetype %>\
@@ -61,7 +62,7 @@ var tmp_create_bibitem = _.template('\
             <div id="optionTab3"><table class="fw-dialog-table"><tbody><%= extras %></tbody></table></div>\
         </div>\
     </div>');
-
+/** A template to select the bibliography item source type */
 var tmp_sourcetype = _.template('<div id="source-type-selection" class="fw-button fw-white fw-large">\
         <input type="hidden" id="id_<%- fieldName %>" name="<%- fieldName %>" value="<%- fieldValue %>" />\
         <span id="selected-source-type-title"><%= fieldTitle %></span>\
@@ -74,7 +75,7 @@ var tmp_sourcetype = _.template('<div id="source-type-selection" class="fw-butto
             <% }) %></ul>\
         </div>\
     </div>');
-
+/* A template to show the category selection pane of the bibliography item edit dialog. */ 
 var tmp_category = _.template('\
     <tr>\
         <th><h4 class="fw-tablerow-title"><%- fieldTitle %></h4></th>\
@@ -83,7 +84,7 @@ var tmp_category = _.template('\
             <input class="fw-checkable-input entryForm entry-cat" type="checkbox" id="entryCat<%- cat.id %>" name="entryCat" value="<%- cat.id %>"<%- cat.checked %> />\
         <% }) %></td>\
     </tr>');
-
+/* A template for the overview list of bibliography items. */
 var tmp_bibtable = _.template('\
     <tr id="Entry_<%- id %>" class="<% _.each(cats, function(cat) { %>cat_<%- cat %> <% }) %>">\
         <td width="30">\
@@ -122,26 +123,17 @@ var tmp_bibtable = _.template('\
             <% } %>\
         </td>\
     </tr>');
-
+/** A template for each input field row of the bibliography item edit form. */
 var tmp_input_tr = _.template('\
     <tr>\
         <th><h4 class="fw-tablerow-title"><%- gettext(fieldTitle) %></h4></th>\
         <%= inputForm %>\
     </tr>');
-
+/** A template for each input field of the bibliography item edit form. */
 var tmp_input = _.template('<td>\
         <input class="entryForm" type="<%- fieldType %>" name="<%- fieldName %>" id="id_<%- fieldName %>" value="<%- fieldValue %>" />\
     </td>');
-
-/*var tmp_select = _.template('<td>\
-        <select class="entryForm dk" name="<%- fieldName %>" id="id_<%- fieldName %>">\
-            <option value="<%- fieldDefault.value %>"><%- fieldDefault.title %></option>\
-            <% _.each(options, function(option) { %>\
-                <option value="<%- option.value %>"<% if(option.value == fieldValue) { %> selected<%} %>><%- option.title %></option>\
-            <% }) %>\
-        </select>\
-    </td>');*/
-
+/** A template for selection fields in the bibliography item edit form. */
 var tmp_select = _.template('<td>\
         <div class="fw-bib-select-pulldown fw-button fw-white">\
             <label><% if("" == fieldValue) { %><%- fieldDefault.title %><% } else { %><%- fieldTitle %><% } %></label>\
@@ -166,7 +158,7 @@ var tmp_select = _.template('<td>\
             </div>\
         </div>\
     </td>');
-
+/** A template for date input fields in the bibliography item edit form. */
 var tmp_dateinput = _.template('<td class="entryForm fw-date-form" data-type="date" data-field-name="<%- fieldName %>">\
         <table class="fw-bib-date-table"><tr>\
             <td class="month-td"><input <%= monthSelect %> placeholder="Month" /></td>\
@@ -178,12 +170,12 @@ var tmp_dateinput = _.template('<td class="entryForm fw-date-form" data-type="da
             <td class="year-td2"><input <%= year2Select %> placeholder="Year" /></td>\
         </tr></table>\
     </td>');
-
-var tmp_dateselect = _.template('type="text" name="<%- fomrname %>" class="select-<%- type %>" value="<%- value %>"');
+/** A template for each item (year, date, month) of a date input fields in the bibliography item edit form. */
+var tmp_dateselect = _.template('type="text" name="<%- formname %>" class="select-<%- type %>" value="<%- value %>"');
 var tmp_list_input = _.template('<td class="entryForm" data-type="<%- filedType %>" data-field-name="<%- fieldName %>">\
         <%= inputForm %>\
     </td>');
-
+/** A template for name list fields (authors, editors) in the bibliography item edit form. */
 var tmp_namelist_input = _.template('<% _.each(fieldValue, function(val) { %>\
         <div class="fw-list-input">\
             <input type="text" class="fw-name-input fw-first" value="<%= val.first %>" placeholder="' + gettext('First Name') + '" />\
@@ -191,11 +183,11 @@ var tmp_namelist_input = _.template('<% _.each(fieldValue, function(val) { %>\
             <span class="fw-add-input icon-addremove"></span>\
         </div>\
     <% }) %>');
-
+/** A template for name list field items in the bibliography item edit form. */
 var tmp_literallist_input = _.template('<% _.each(fieldValue, function(val) { %>\
         <div class="fw-list-input"><input class="fw-input" type="text" value="<%= val %>" /><span class="fw-add-input icon-addremove"></span></div>\
     <% }) %>');
-
+/** A template for either-or fields in the bibliography item edit form. */
 var tmp_eitheror_tr = _.template('<tr class="eitheror">\
         <th>\
             <div class="fw-bib-field-pulldown fw-bib-form-pulldown">\
@@ -215,7 +207,7 @@ var tmp_eitheror_tr = _.template('<tr class="eitheror">\
         </th>\
         <%= inputForm %>\
     </tr>');
-
+/** Dictionary of date selection options for bibliography item editor (localized). */
 var date_format = {
     'y': gettext('Year'),
     'y/y': gettext('Year - Year'),
@@ -224,6 +216,7 @@ var date_format = {
     'mdy': gettext('Month/Day/Year'),
     'mdy/mdy': gettext('M/D/Y - M/D/Y')
 };
+/** A template of a date input row of the bibliography item edit form. */
 var tmp_dateinput_tr = _.template('<tr class="date-input-tr" data-format="<%= format %>">\
         <th>\
             <div class="fw-data-format-pulldown fw-bib-form-pulldown">\
@@ -243,7 +236,7 @@ var tmp_dateinput_tr = _.template('<tr class="date-input-tr" data-format="<%= fo
         </th>\
         <%= inputForm %>\
     </tr>');
-
+/** A template of a bibliography category list item. */
 var tmp_bibliography_category_list_item = _.template('\
     <li>\
         <span class="fw-pulldown-item" data-id="<%- bCat.id %>">\

@@ -30,9 +30,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        output_js = u'// This file is automatically created using ./manage.py create_bibliography_js\n'
+        output_js = u'/** @file Sets up strings for working with TeX \n This file is automatically created using ./manage.py create_bibliography_js\n/*\n'
         
-        # list of tex special chars
+        output_js += '/** A list of special chars in Tex and their unicode equivalent. */\n'
         output_js += 'var tex_special_chars = [\n'
 
         for special_char in TexSpecialChar.objects.all() :
@@ -45,12 +45,12 @@ class Command(BaseCommand):
         output_js += '];\n'
         
         # list of field types of Bibligraphy DB with lookup by field name
-        fixtures_list = json.loads(open(PROJECT_PATH + '/bibliography/fixture/initial_data.json').read())
+        fixtures_list = json.loads(open(PROJECT_PATH + '/bibliography/fixture/initial_bib_rules.json').read())
         localization_key = {}
         for fixture_entry in fixtures_list:
             if 'keys' in fixture_entry:
                 localization_key[fixture_entry['pk']] = fixture_entry['keys']
-                
+        output_js += '/** A list of field types of Bibligraphy DB with lookup by field name. */\n'        
         output_js += 'var BibFieldTypes = {\n'
         for field in EntryField.objects.all():
             output_js += str(field.field_name) + ': {\n'
@@ -67,7 +67,7 @@ class Command(BaseCommand):
         output_js += '};\n'
         
         # list of all bibentry types and their fields
-        
+        output_js += '/** A list of all bibentry types and their fields. */\n'     
         output_js += 'var BibEntryTypes = {\n'
         
         entry_types = []
@@ -97,6 +97,7 @@ class Command(BaseCommand):
         output_js += '};\n'
         
         # list of all the localization keys
+        output_js += '/** A list of all the bibliography keys and their full name. */\n'  
         output_js += 'var LocalizationKeys = [\n'
         for l_key in LocalizationKey.objects.all():
             output_js += '{\n'

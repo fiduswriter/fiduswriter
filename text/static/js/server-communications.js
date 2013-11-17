@@ -1,4 +1,5 @@
 /**
+ * @file Handles communications with the server (including document collaboration) over Websockets.
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
@@ -19,6 +20,9 @@
  */
 (function () {
     var exports = this,
+     /** Sets up communicating with server (retrieving document, saving, collaboration, etc.). TODO 
+     * @namespace serverCommunications
+     */ 
         serverCommunications = {};
 
     serverCommunications.send = function (data) {

@@ -1,4 +1,5 @@
 /**
+ * @file Templates for the book overview page.
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.

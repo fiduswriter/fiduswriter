@@ -1,4 +1,5 @@
 /**
+ * @file Functions to deal with copy and paste.
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
@@ -20,6 +21,10 @@
 
 (function () {
     var exports = this,
+  /** 
+  * Functions related to pasting in the editor. TODO 
+  * @namespace paste
+  */
         paste = {};
 
     paste.removeExtraFormatting = function (elem, pasteElement) {
@@ -104,6 +109,10 @@
 
 (function () {
     var exports = this,
+   /** 
+  * Functions related to cutting from the editor. TODO 
+  * @namespace cut
+  */
         cut = {};
 
     cut.waitForCut = function (elem, oldString) { //IE/Firefox/Webkit

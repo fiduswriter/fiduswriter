@@ -1,4 +1,5 @@
 /**
+ * @file Handles the visual elements of the track changes feature.
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
@@ -20,8 +21,16 @@
 
 (function () {
     var exports = this,
+   /** Helper functions for dealing with tracked changes.
+   * @namespace trackingHelpers
+  */  
         trackingHelpers = {};
 
+    /** Creates a dialog to accept or reject a change.
+     * @function createReviewBox
+     * @memberof trackingHelpers
+     * @param changeNode The change node that is to be rejected/accepted.
+     */    
     trackingHelpers.createReviewBox = function(changeNode) {
         var changeOwner, changeTime;
         var $changeNode = jQuery(changeNode);
@@ -58,22 +67,34 @@
             'change_time': changeTime
         }));
     };
-    
+    /** Marks a change as accepted.
+     * @function acceptChange
+     * @memberof trackingHelpers
+     * @param cid data-cid attribute of the track node that will be accepted.
+     */      
     trackingHelpers.acceptChange = function(cid) {
         var changeNodes = jQuery('.ins[data-cid='+cid+'],.del[data-cid='+cid+']');
         for (var i=0;i<changeNodes.length;i++) {
             window.tracker.acceptChange(changeNodes[i]);
-            editorHelpers.documentHasChanged();
         }
+        editorHelpers.documentHasChanged();
     };
-    
+    /** Marks a change as rejected.
+     * @function rejectChange
+     * @memberof trackingHelpers
+     * @param cid data-cid attribute of the track node that will be rejected.
+     */         
     trackingHelpers.rejectChange = function(cid) {
         var changeNodes = jQuery('.ins[data-cid='+cid+'],.del[data-cid='+cid+']');
         for (var i=0;i<changeNodes.length;i++) {
             window.tracker.rejectChange(changeNodes[i]);
-            editorHelpers.documentHasChanged();
         }
+        editorHelpers.documentHasChanged();
     };
+        /** Bind events related to clicking on change nodes.
+     * @function bindEvents
+     * @memberof trackingHelpers
+     */     
     
     trackingHelpers.bindEvents = function() {
         jQuery(document).on("click", ".ins,.del", function(){

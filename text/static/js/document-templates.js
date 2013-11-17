@@ -1,4 +1,5 @@
 /**
+ * @file Templates for the document overview page.
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
@@ -17,10 +18,10 @@
  * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
  *
  */
-
+/** A template for the document overview list. */
 var tmp_documents_list = _.template('\
 <% _.each(theDocumentList,function(aDocument,key,list){%><%= tmp_documents_list_item({aDocument:aDocument})%><% }); %>');
-
+/** A template for each document overview list item. */
 var tmp_documents_list_item = _.template('\
  <% var documentTitle; if (0===aDocument.title.length) {documentTitle="'+gettext('Untitled')+'";} else {documentTitle=aDocument.title;} %>\
  <tr id="Text_<%- aDocument.id %>" <% if (theUser.id == aDocument.owner) { %>class="owned-by-user"<% } %> >\
@@ -66,7 +67,7 @@ var tmp_documents_list_item = _.template('\
                 </td>\
             </tr>\
 ');
-
+/** A template for the Fidus Writer document import dialog */ 
 var tmp_import_fidus = _.template('<div id="importfidus" title="' + gettext('Import another Fidus file') + '">\
         <form id="import-fidus-form" method="post" enctype="multipart/form-data" class="ajax-upload">\
             <input type="file" id="fidus-uploader" name="fidus" required />\

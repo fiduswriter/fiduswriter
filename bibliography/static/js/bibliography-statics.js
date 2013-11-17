@@ -1,4 +1,7 @@
-// This file is automatically created using ./manage.py create_bibliography_js
+/** @file Sets up strings for working with TeX 
+ This file is automatically created using ./manage.py create_bibliography_js
+/*
+/** A list of special chars in Tex and their unicode equivalent. */
 var tex_special_chars = [
 { 'unicode': "—", 'tex': "{---}"},
 { 'unicode': "¡", 'tex': "{\\textexclamdown}"},
@@ -675,6 +678,7 @@ var tex_special_chars = [
 { 'unicode': "Ỹ", 'tex': "{\\~{Y}}"},
 { 'unicode': "ỹ", 'tex': "{\\~{y}}"},
 ];
+/** A list of field types of Bibligraphy DB with lookup by field name. */
 var BibFieldTypes = {
 abstract: {
 'id': 1, 'type': 'f_literal', 'name': 'abstract', 'biblatex': 'abstract', 'csl': 'abstract', 'title': gettext('Abstract'),},
@@ -861,6 +865,7 @@ volume: {
 volumes: {
 'id': 92, 'type': 'f_literal', 'name': 'volumes', 'biblatex': 'volumes', 'csl': 'number-of-volumes', 'title': gettext('Total number of volumes'),},
 };
+/** A list of all bibentry types and their fields. */
 var BibEntryTypes = {
 1 : {
 'id': 1, 'order': 1, 'name': 'article', 'biblatex': 'article', 'csl': 'article', 'title': gettext('Article'), 'required':['author','date','journaltitle','title',],
@@ -1028,6 +1033,7 @@ var BibEntryTypes = {
 'optional':['addendum','language','note','organization','pubstate','subtitle','titleaddon','urldate','version',]
 },
 };
+/** A list of all the bibliography keys and their full name. */
 var LocalizationKeys = [
 {
 'type': 'publication_state', 'name': 'inpreparation', 'title': 'in\ preparation'

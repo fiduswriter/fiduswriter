@@ -1,4 +1,5 @@
 /**
+ * @file Templates for the editable area in the editor.
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
@@ -17,7 +18,7 @@
  * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
  *
  */
-
+/** A template for the metadata fields in the editor. */
 var tmp_metadata = _.template('\
 <% if (settings.subtitle) { %>\
     <div id="metadata-subtitle" class="editable metadata metadata-subtitle" data-metadata="subtitle" contenteditable="true" title="'+gettext('The subtitle of the document')+'"><%= metadata.subtitle %></div>\

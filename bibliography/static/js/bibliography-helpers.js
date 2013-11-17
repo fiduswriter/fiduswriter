@@ -1359,32 +1359,32 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                         'fieldName': field_name,
                         'dateSelect': tmp_dateselect({
                             'type': 'date',
-                            'fomrname': 'date' + the_id,
+                            'formname': 'date' + the_id,
                             'value': d_val[0]
                         }),
                         'monthSelect': tmp_dateselect({
                             'type': 'month',
-                            'fomrname': 'month' + the_id,
+                            'formname': 'month' + the_id,
                             'value': m_val[0]
                         }),
                         'yearSelect': tmp_dateselect({
                             'type': 'year',
-                            'fomrname': 'year' + the_id,
+                            'formname': 'year' + the_id,
                             'value': y_val[0]
                         }),
                         'date2Select': tmp_dateselect({
                             'type': 'date2',
-                            'fomrname': 'date2' + the_id,
+                            'formname': 'date2' + the_id,
                             'value': d_val[1]
                         }),
                         'month2Select': tmp_dateselect({
                             'type': 'month2',
-                            'fomrname': 'month2' + the_id,
+                            'formname': 'month2' + the_id,
                             'value': m_val[1]
                         }),
                         'year2Select': tmp_dateselect({
                             'type': 'year2',
-                            'fomrname': 'year2' + the_id,
+                            'formname': 'year2' + the_id,
                             'value': y_val[1]
                         })
                     }),

@@ -1,4 +1,5 @@
 /**
+ * @ Connects the editor with ICE tracking.
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
@@ -20,6 +21,10 @@
 
 (function () {
     var exports = this,
+   /** 
+  * Functions to call to insert/delete items in the editable area of the editor. It communictaes with ICE to find out if item removal/insertion should be tracked. TODO 
+  * @namespace manualEdits
+  */
         manualEdits = {};
 
         var topBlockElements = {
@@ -34,7 +39,12 @@
             'CODE': true,
         };
         
-        
+  /** Insert an item
+   * @function insert
+  * @memberof manualEdits
+  * @param node Node to be inserted
+  * @param range Current selection range
+  */    
     manualEdits.insert = function(node, range) {
         var tmpNextBlockNode = false, thisBlockNode;
         if (node.nodeName in topBlockElements && (range.startContainer.nodeName === '#text' || !range.startContainer.classList.contains('editable'))) {
@@ -57,7 +67,13 @@
         }
    
     };
-    
+  /** Remove an item
+   * @function remove
+  * @memberof manualEdits
+  * @param node Node to be removed
+  * @param range Current selection range
+  * @param moveLeft Whether to move to the left of the deleted item after deletion has taken place (only interesting if changes are tracked).
+  */           
     manualEdits.remove = function(node, range, moveLeft) {
         if (theDocument.settings.tracking) {
             return tracker._addNodeTracking(node, range, moveLeft);

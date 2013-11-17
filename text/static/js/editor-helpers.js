@@ -20,6 +20,9 @@
  */
 (function () {
     var exports = this,
+     /** Helper functions for the editor. TODO 
+     * @namespace editorHelpers
+     */ 
         editorHelpers = {};
         
 

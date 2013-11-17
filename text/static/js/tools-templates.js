@@ -1,4 +1,5 @@
 /**
+ * @file Templates for the tools items of the editor.
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
@@ -17,7 +18,7 @@
  * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
  *
  */
-
+/** A template for the word counter */
 var tmp_tools_word_counter = _.template('<div id="word-counter-dialog" title="<%- dialogHeader %>">\
         <table class="fw-document-table no-fix-layout">\
             <thead class="fw-document-table-header"><tr>\

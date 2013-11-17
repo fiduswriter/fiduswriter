@@ -1,4 +1,5 @@
 /**
+ * @file Templates for the ICE tracking feature
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
@@ -17,7 +18,7 @@
  * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
  *
  */
-
+/** A template to show a change review dialog. */
 var tmp_reviewchangebox = '<div id="review-box-<%= cid %>" data-cid="<%= cid %>" class="review-box <%= node_class %>"\
     style="top:<%= node_offset.top %>; left:<%= node_offset.left %>;">\
         <div class="change-owner">\

@@ -1,4 +1,5 @@
 /**
+ * @file Templates for citations and figures in the editor
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
@@ -17,7 +18,7 @@
  * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
  *
  */
-
+/** A template to configure citations in the editor */
 var tmp_configure_citation = _.template('\
     <div id="<%= dialogId %>" title="' + gettext('Configure Citation') + '">\
         <div id="my-sources" class="fw-ar-container">\
@@ -70,6 +71,7 @@ var tmp_configure_citation = _.template('\
             </table>\
         </div>\
     </div>');
+/** A template for each item that can be cited inside the citation configuration dialog of the editor. */ 
 var tmp_citation_book = _.template('<tr class="fw-checkable fw-checkable-tr" data-id="<%- id %>" data-type="<%- type %>" data-title="<%= title %>" data-author="<%= author %>">\
         <td width="162">\
             <span class="fw-document-table-title fw-inline">\
@@ -81,6 +83,7 @@ var tmp_citation_book = _.template('<tr class="fw-checkable fw-checkable-tr" dat
             <span class="fw-inline fw-searchable"><%- author %></span>\
         </td>\
     </tr>');
+/** A template for each selected citation item inside the citation configuration dialog of the editor. */ 
 var tmp_selected_citation = _.template('<tr id="selected-source-<%= id %>" class="selected-source"><td colspan="3" width="335">\
       <table class="fw-cite-parts-table">\
           <tr>\
@@ -117,6 +120,7 @@ var tmp_selected_citation = _.template('<tr id="selected-source-<%= id %>" class
           </tr>\
       </table>\
   </td></tr>');
+/** A template to configure the display of a figure in the editor. */ 
 var tmp_configure_figure = _.template('\
             <div id="<%= dialogId %>" class="fw-media-uploader">\
                 <form action="#" method="post" class="mathForm">\
@@ -161,6 +165,7 @@ var tmp_configure_figure = _.template('\
                         <input type="submit" id="addFigureButton" class="fw-button fw-dark" />\
                     </div>\
                 </form></div>');
+/** A template to select images inside the figure configuration dialog in the editor. */ 
 var tmp_figure_image = _.template('\
     <div>\
         <table id="imagelist" class="tablesorter fw-document-table" style="width:342px;">\

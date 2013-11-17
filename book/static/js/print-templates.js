@@ -1,4 +1,5 @@
 /**
+ * @ Templates for printing of books.
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
@@ -17,7 +18,7 @@
  * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
  *
  */
-
+/** A template for the initial pages of a book before the contents begin. */
 var tmp_book_print_start = _.template('\
     <h1 id="document-title"><%= theBook.title %></h1>\
     <% if (theBook.metadata.subtitle && theBook.metadata.subtitle != "" ) { %>\
@@ -35,7 +36,7 @@ var tmp_book_print_start = _.template('\
     <% } %>\
 <div class="pagination-pagebreak">\
 ');
-
+/** A template for the print view of a book. */
 var tmp_book_print = _.template('\
 <% _.each(theBook.chapters, function (chapter) { %>\
     <% if (chapter.part && chapter.part != "") { %>\

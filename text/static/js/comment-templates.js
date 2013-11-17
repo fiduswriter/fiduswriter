@@ -1,4 +1,5 @@
 /**
+ * @file Templates for the comment system.
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
@@ -17,6 +18,7 @@
  * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
  *
  */
+/** A template to display all the comments */
 var tmp_comments = _.template(
     '<% _.each(theComments,function(comment,key,list){ %>\
         <div id="comment-box-<%= comment.getAttribute("data-id") %>" data-id="<%= comment.getAttribute("data-id") %>" class="comment-box \
@@ -51,7 +53,7 @@ var tmp_comments = _.template(
         </div>\
     <% }); %>'
 );
-
+/** A template to show one individual comment */
 var tmp_single_comment = _.template(
     '<div class="comment-item">\
         <div class="comment-user">\
@@ -81,7 +83,7 @@ var tmp_single_comment = _.template(
         </p>\
         <% } %>\
     </div>');
-
+/** A template for an answer to a comment */
 var tmp_answer_comment = _.template(
     '<div class="comment-item">\
         <div class="comment-user">\
@@ -119,7 +121,7 @@ var tmp_answer_comment = _.template(
         <% } %>\
     </div>'
 );
-
+/** A template for the editor of a first comment before it has been saved (not an answer to a comment). */
 var tmp_first_comment = _.template(
     '<div class="comment-item">\
         <div class="comment-user">\

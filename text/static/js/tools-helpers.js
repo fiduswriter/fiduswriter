@@ -1,4 +1,5 @@
 /**
+ * @file Handles the tools menu of the editor
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
@@ -20,8 +21,17 @@
 
 (function () {
     var exports = this,
+    /** 
+  * Helper functions for the the items in the tools menu of the editor. 
+  * @namespace toolsHelpers
+  */
         toolsHelpers = {};
 
+        
+  /** Calculates words and characters of document and displays a dialog with the results.
+   * @function wordCounter
+  * @memberof toolsHelpers
+  */         
     toolsHelpers.wordCounter = function() {
         var text_content = document.getElementById('document-editable').innerText,
             bibliography_content = document.getElementById('document-bibliography').innerText,
@@ -66,9 +76,13 @@
             }
         });
 
-        console.log(num_pages, num_words, num_chars, num_no_space);
+        //console.log(num_pages, num_words, num_chars, num_no_space);
     }
-
+  /** Handles the clicking of an item in the tools menu
+   * @function toolsEventHandler
+  * @memberof toolsHelpers
+  * @param function_name Name of the data-function attribute of the clicked item.
+  */  
     toolsHelpers.toolsEventHandler = function(function_name) {
         switch(function_name) {
             case 'wordcounter':

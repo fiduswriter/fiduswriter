@@ -1,4 +1,5 @@
 /**
+ * @file Handles communicatiosn with MathJax
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
@@ -19,6 +20,9 @@
  */
 (function () {
     var exports = this,
+     /** Helper functions for MathJax. TODO 
+     * @namespace mathHelpers
+     */ 
         mathHelpers = {};
 
     mathHelpers.setMathNodeContents = function (node) {

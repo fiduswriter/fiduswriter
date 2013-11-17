@@ -1,4 +1,5 @@
 /**
+ * @file Helper functions to deal with book printing.
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
@@ -20,6 +21,10 @@
 
 (function () {
     var exports = this,
+    /** 
+    * Helper functions for the book print page. TODO 
+    * @namespace printHelpers
+    */
         printHelpers = {}, documentOwners=[];
         
     var pageSizes = {

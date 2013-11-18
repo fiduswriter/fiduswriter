@@ -255,7 +255,7 @@
 
 
   var debug = true,
-      diffcap = 10,
+      diffcap = 500,
       diffcount;
 
   var DOMdiff = function() {};
@@ -264,10 +264,16 @@
     // ===== Create a diff =====
 
     diff: function(t1, t2) {
+     // console.log('start diff');
       diffcount = 0;
       t1 = t1.cloneNode(true);
+      t1.normalize();
+      t2 = t2.cloneNode(true);
+      t2.normalize();
       this.tracker = new DiffTracker();
       return this.findDiffs(t1, t2);
+     // console.log('end diff '+diffcount);
+     // return return_value;
     },
     findDiffs: function(t1, t2) {
       var diff;
@@ -387,7 +393,7 @@
           if(e2 && !e1) {
             if(e2.nodeType === 3) {
               return new Diff({
-                action: REMOVE_TEXT_ELEMENT,
+                action: ADD_TEXT_ELEMENT,
                 route: route.slice().push(i),
                 element: e2.data
               });
@@ -561,3 +567,5 @@
 
 
 domDiff = new DOMdiff();
+
+//tl = new TraceLogger(domDiff);

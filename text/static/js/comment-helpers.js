@@ -161,10 +161,12 @@
 
         var comment = commentHelpers.findComment(id);
         comment.setAttribute('data-comment', commentText);
-        editorHelpers.documentHasChanged();
 
         commentHelpers.deactivateAll();
         commentHelpers.layoutComments();
+        console.log('theDocument.changed');
+        editorHelpers.documentHasChanged();
+        console.log(theDocument.changed);
     };
 
     commentHelpers.submitComment = function () {

@@ -66,6 +66,7 @@
 
         theDocument = aDocument;
         theDocument.changed = false;
+        theDocument.touched = false;
         theDocument.settings = jQuery.parseJSON(theDocument.settings);
         theDocument.metadata = jQuery.parseJSON(theDocument.metadata);
 
@@ -106,8 +107,10 @@
             .title);
     };
 
+    /** Called whenever anything has changed in the document text. Makes sure that saving and synchronizing with peers happens. */
     editorHelpers.documentHasChanged = function () {
-        theDocument.changed = true;
+        theDocument.changed = true; // For document saving
+        theDocument.touched = true; // For synchronizing with other viewers
         jQuery('.save').removeClass('disabled');
     };
 
@@ -250,22 +253,19 @@
     ];
 
     editorHelpers.setDocumentData = function (theName, newValue,
-        skipSendChange, aUserId) {
+         sendChange) {
         var theChange, currentValue;
-        if (undefined === aUserId) {
-            aUserId = theUser.id;
+        //if (undefined === aUserId) {
+        //    aUserId = theUser.id;
+        //}
+        if (undefined === sendChange) {
+            sendChange = true;
         }
         currentValue = eval('theDocument.' + theName);
-        if (editorHelpers.TEXT_FIELDS.indexOf(theName) != -1) {
-            return false;
-        }
-        if (editorHelpers.TEXT_FIELDS.indexOf(theName) === -1) {
-            if (currentValue === newValue) {
-                // Don't create a history entry if nothing has changed
-                return false;
-            }
-            diff = [currentValue, newValue];
-        } 
+       // if (editorHelpers.TEXT_FIELDS.indexOf(theName) != -1) {
+       //     return false;
+        //}
+
         if ('string' === typeof (newValue)) {
             // TODO: Using eval and escaping-unescaping is not very beautiful. If possible this should be done differently.
             eval("theDocument." + theName + "=unescape('" + escape(newValue) +
@@ -274,19 +274,26 @@
         else {
             eval("theDocument." + theName + "=" + JSON.stringify(newValue));
         }
-        theChange = [aUserId, new Date().getTime(), theName, diff];
-
-        if (!skipSendChange) {
-            ws.send(JSON.stringify({
-                type: 'transform',
-                change: theChange
-            }));
-        }
-
+        if (editorHelpers.TEXT_FIELDS.indexOf(theName) === -1) {
+            if (currentValue === newValue) {
+                // Don't create a history entry if nothing has changed
+                return false;
+            }
+            //diff = [currentValue, newValue];
+        
+            theChange = [theName, newValue, new Date().getTime()];
+            console.log('sending transform')
+            if (sendChange) {
+                serverCommunications.send({
+                    type: 'transform',
+                    change: theChange
+                });
+           }
+    }
         return true;
     };
     
-
+    /*
     editorHelpers.setDiffChange = function (aUserId, field, diffs) {
         var theElement;
         if (field === 'contents') {
@@ -301,7 +308,7 @@
         var dmp = new diff_match_patch();
         editorHelpers.getUpdatesFromInputFields();
         var savedSel = rangy.saveSelection();
-        /* option 1 */
+        /* option 1 
         if (savedSel.rangeInfos[0].collapsed) {
             document.getElementById(savedSel.rangeInfos[0].markerId).outerHTML =
                 '\u59fa';
@@ -332,38 +339,35 @@
             dmp.patch_make(diffs), currentValue)[0];
         var theValue = dmp.patch_apply(
             dmp.patch_make(caretDiff), theValueWithoutCaret)[0];
-         end option 2 */
+         end option 2 
         editorHelpers.setDisplay.document(field, theValue);
         rangy.restoreSelection(savedSel);
         editorHelpers.getUpdatesFromInputFields(false, true, aUserId);
-    };
+    };*/
 
-    editorHelpers.applyDocumentDataChanges = function (data) {
+   /* editorHelpers.applyDocumentDataChanges = function (data) {
             if (data.type=='transform') {
                 return false;
             }
             editorHelpers.getUpdatesFromInputFields();
-            editorHelpers.setDocumentData(data.change[2], data.change[3][1],
-                true);
+            editorHelpers.setDocumentData(data.change[2], data.change[3][1]);
             editorHelpers.setDisplay.document(data.change[2], data.change[3]
                 [1]);
             editorHelpers.getUpdatesFromInputFields(false, true, data.change[
                 0]);
-    };
+    };*/
 
-    editorHelpers.getUpdatesFromInputFields = function (callback,
-        skipSendChange, aUser) {
+    editorHelpers.getUpdatesFromInputFields = function (callback) {
         
         editorHelpers.setDocumentData('metadata.title', jQuery(
-            '#document-title').html().trim(), skipSendChange, aUser);
+            '#document-title').html().trim());
 
         editorHelpers.setDocumentData('contents', jQuery(
-            '#document-contents').html().trim(), skipSendChange, aUser);
+            '#document-contents').html().trim());
 
         jQuery('#document-metadata .metadata').each(function () {
             editorHelpers.setDocumentData('metadata.' + jQuery(this).attr(
-                    'data-metadata'), jQuery(this).html().trim(),
-                skipSendChange, aUser);
+                    'data-metadata'), jQuery(this).html().trim());
         });
 
         if (callback) {

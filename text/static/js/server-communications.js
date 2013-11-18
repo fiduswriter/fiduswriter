@@ -63,10 +63,10 @@
             theDocument.newDiffs.push(data);
             break;
         case 'transform':
-            editorHelpers.applyDocumentDataChanges(data);
+            editorHelpers.setDocumentData(data.change[0],data.change[1],false);
+            editorHelpers.setDisplay.document(data.change[0],data.change[1]);
             break;            
         case 'take_control':
-           // theDocument.localHistory = [];
             theDocument.enableSave = true;
         }
     };
@@ -101,20 +101,39 @@
     
     
     serverCommunications.makeDiff = function () {
-        var theDiff = domDiff.diff(serverCommunications.diffNode,document.getElementById('document-editable'));
+        var theDiff = domDiff.diff(serverCommunications.diffNode,document.getElementById('document-editable')), 
+            containsCitation = 0, containsEquation = 0, containsComment = 0, diffText = '', i;
 
         if (theDiff.length===0) {
+            console.log('zero length');
             return;
         }
+        console.log(theDiff);
         domDiff.apply(serverCommunications.diffNode, theDiff);
-        
-        //console.log(theDiff);
+        for (i=0;i<theDiff.length;i++) {
+            if (theDiff[i].hasOwnProperty('element')) {
+                diffText = theDiff[i]['element'];
+            } else if (theDiff[i].hasOwnProperty('oldValue') && theDiff[i].hasOwnProperty('newValue')) {
+                diffText = theDiff[i]['oldValue'] + theDiff[i]['newValue'];
+            }
+            //console.log(theDiff[i]);
+            if (diffText.indexOf('citation') != -1) {
+                containsCitation = 1;
+            }
+            if (diffText.indexOf('equation') != -1) {
+                containsEquation = 1;
+            }
+            if (diffText.indexOf('comment') != -1) {
+                containsComment = 1;
+            }            
+        }
         
         var thePackage = {
             type: 'diff',
             time: new Date().getTime(), 
             session: theDocument.sessionId, 
-            diff: theDiff
+            diff: theDiff,
+            features: [containsCitation, containsEquation, containsComment]
         };
         
         serverCommunications.send(thePackage);
@@ -123,7 +142,7 @@
     };
     
     serverCommunications.orderAndApplyChanges = function () {
-        var newestDiffs = [], patchDiff, tempCombinedNode, i, applicableDiffs;
+        var newestDiffs = [], patchDiff, tempCombinedNode, tempPatchedNode, i, applicableDiffs, containsCitation = false, containsEquation = false, containsComment = false;
         
         while (theDocument.newDiffs.length > 0) {
             newestDiffs.push(theDocument.newDiffs.pop());
@@ -152,6 +171,15 @@
         
         for (i = 0; i < newestDiffs.length; i++) {
             domDiff.apply(tempPatchedNode,newestDiffs[i].diff);
+            if (newestDiffs[i].features[0]) {
+                containsCitation = true;
+            }
+            if (newestDiffs[i].features[1]) {
+                containsEquation = true;
+            }
+            if (newestDiffs[i].features[2]) {
+                containsComment = true;
+            }            
             theDocument.usedDiffs.push(newestDiffs[i]);
         }
         theDocument.textChangeList.push([tempPatchedNode,new Date().getTime()]);
@@ -165,11 +193,25 @@
         
             // Also make sure that placeholders correspond to the current state of affairs
             editorHelpers.setPlaceholders();
+            // If something was done about citations, reformat these.
+            if (containsCitation) {
+                citationHelpers.formatCitationsInDoc();
+            }
+            // If something was changed about equations, recheck these.
+            if (containsEquation) {
+                mathHelpers.resetMath(mathHelpers.saveMathjaxElements);
+            }
+            // If new comments were added reformat these.
+            if (containsComment) {
+                commentHelpers.layoutComments();
+            }
         }
     };
     
     serverCommunications.incorporateUpdates = function () {
-        if (theDocument.changed) {
+        if (theDocument.touched) {
+            console.log('making diff')
+            theDocument.touched = false;
             serverCommunications.makeDiff();
         } else if (theDocument.newDiffs.length > 0) {
             serverCommunications.orderAndApplyChanges();
@@ -177,6 +219,7 @@
     };
 
     serverCommunications.startCollaborativeMode = function () {
+        theDocument.touched = false;
         editorHelpers.getUpdatesFromInputFields(
             function () {
                 serverCommunications.resetTextChangeList();

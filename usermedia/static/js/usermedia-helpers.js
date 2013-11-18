@@ -27,7 +27,6 @@
         usermediaHelpers = {};
 
     usermediaHelpers.createImage = function (post_data) {
-        console.log(post_data);
         $.activateWait();
         $.ajax({
             url: '/usermedia/save/',
@@ -486,7 +485,6 @@
                     response.images[i].image = response.images[i].image.split('?')[0];
                     anImageDB[response.images[i]['pk']] = response.images[
                         i];
-                    console.log(anImageDB[response.images[i]['pk']]);
                 }
                 if (callback) {
                     callback(anImageDB);

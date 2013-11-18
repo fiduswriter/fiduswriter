@@ -18,20 +18,22 @@
  * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
  *
  */
-
 /** The version number of Bibliography local storage. Needs to be increased when large changes are made to force reload. */
 var FW_LOCALSTORAGE_VERSION = "1.0";
 
 (function () {
     var exports = this,
- /** 
-  * Helper functions for the bibliography. 
-  * @namespace bibliographyHelpers
-  */
+        /** 
+         * Helper functions for the bibliography.
+         * @namespace bibliographyHelpers
+         */
         bibliographyHelpers = {};
 
-        
-    /** Dictionary of date selection options for bibliography item editor (localized). */
+
+    /** Dictionary of date selection options for bibliography item editor (localized). 
+     * @constant date_format
+     * @memberof bibliographyHelpers
+     */
     bibliographyHelpers.date_format = {
         'y': gettext('Year'),
         'y/y': gettext('Year - Year'),
@@ -39,14 +41,14 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         'my/my': gettext('M/Y - M/Y'),
         'mdy': gettext('Month/Day/Year'),
         'mdy/mdy': gettext('M/D/Y - M/D/Y')
-    };        
-        
-/** Converts a bibliography item as it arrives from the server to a BibDB object. 
-* @function serverBibItemToBibDB
-* @memberof bibliographyHelpers
-* @param item The bibliography item from the server.
-* @param aBibDB The BibDB to add the item to.
-*/    
+    };
+
+    /** Converts a bibliography item as it arrives from the server to a BibDB object. 
+     * @function serverBibItemToBibDB
+     * @memberof bibliographyHelpers
+     * @param item The bibliography item from the server.
+     * @param aBibDB The BibDB to add the item to.
+     */
     bibliographyHelpers.serverBibItemToBibDB = function (item, aBibDB) {
         var id = item['id'];
         aBibDB[id] = jQuery.parseJSON(item['fields']);
@@ -62,13 +64,13 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
      * @param bibList The list of bibliography items from the server.
      */
     bibliographyHelpers.addBibList = function (bibList) {
-        
+
         var i, pks = [];
         for (i = 0; i < bibList.length; i++) {
-            pks.push(bibliographyHelpers.serverBibItemToBibDB(bibList[i],BibDB));
+            pks.push(bibliographyHelpers.serverBibItemToBibDB(bibList[i], BibDB));
         }
 
-        if(jQuery('#bibliography').length > 0) {
+        if (jQuery('#bibliography').length > 0) {
             bibliographyHelpers.stopBibliographyTable();
             for (i = 0; i < pks.length; i++) {
                 bibliographyHelpers.appendToBibTable(pks[i], BibDB[pks[i]]);
@@ -76,7 +78,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             bibliographyHelpers.startBibliographyTable();
         }
 
-        if(0 < jQuery('#add-cite-book').size()) {
+        if (0 < jQuery('#add-cite-book').size()) {
             for (i = 0; i < pks.length; i++) {
                 citationHelpers.appendToCitationDialog(pks[i], BibDB[pks[i]]);
             }
@@ -86,12 +88,12 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
     /** Converts a BibDB to a DB of the CSL type. The output is written to window.CSLDB.
      * @function setCSLDB
      * @memberof bibliographyHelpers
-     * @param aBibDB The bibliography database to convert. 
-     * 
+     * @param aBibDB The bibliography database to convert.
+     *
      */
-    bibliographyHelpers.setCSLDB = function(aBibDB) {
+    bibliographyHelpers.setCSLDB = function (aBibDB) {
         window.CSLDB = {};
-        for(bib_id in aBibDB) {
+        for (bib_id in aBibDB) {
             CSLDB[bib_id] = bibliographyHelpers.getCSLEntry(bib_id, aBibDB);
             CSLDB[bib_id].id = bib_id;
         }
@@ -101,7 +103,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
      * @memberof bibliographyHelpers
      * @param id The id identifying the bibliography entry.
      * @param aBibDB The BibDB from which the entry is recovered.
-     * 
+     *
      */
     bibliographyHelpers.getCSLEntry = function (id, aBibDB) {
         var bib = aBibDB[id],
@@ -129,7 +131,9 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                 dates_value[dates_value.length] = date_value;
             }
 
-            return {'date-parts': dates_value};
+            return {
+                'date-parts': dates_value
+            };
         };
 
         this._reformName = function (the_value) {
@@ -175,7 +179,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         cslOutput['type'] = BibEntryTypes[bib.entry_type].csl;
         return cslOutput;
     };
-    
+
     /** Exports bibliography to BibLaTeX format 
      * @function bibLatexExport
      * @memberof bibliographyHelpers
@@ -185,7 +189,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
     bibliographyHelpers.bibLatexExport = function (pks, aBibDB) {
         this.bibtex_array = [];
         this.bibtex_str = '';
-        if (typeof(aBibDB) === 'undefined' && typeof(window.BibDB) != 'undefined') {
+        if (typeof (aBibDB) === 'undefined' && typeof (window.BibDB) != 'undefined') {
             aBibDB = BibDB
         }
 
@@ -401,7 +405,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
 
         this.skipToNext = function () {
             while ((this.input.length > this.pos) && (this.input[this.pos] !=
-                    "@")) {
+                "@")) {
                 this.pos++
             }
             if (this.input.length == this.pos) {
@@ -433,7 +437,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                         this.match("}");
                         return this.input.substring(start, end);
                     }
-                } else if (this.input[this.pos] == '{'  && this.input[this.pos - 1] !=
+                } else if (this.input[this.pos] == '{' && this.input[this.pos - 1] !=
                     '\\') {
                     bracecount++;
                 } else if (this.pos == this.input.length - 1) {
@@ -454,7 +458,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                     return this.input.substring(start, end);
                 } else if (this.pos == this.input.length - 1) {
                     console.log("Unterminated value:" + this.input.substring(
-                            start));
+                        start));
                 }
                 this.pos++;
             }
@@ -474,7 +478,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                     return k;
                 } else {
                     console.log("Value unexpected:" + this.input.substring(
-                            start));
+                        start));
                 }
             }
         };
@@ -533,7 +537,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                     break;
                 }
                 kv = this.key_equals_value();
-                if (typeof(kv)==='undefined') {
+                if (typeof (kv) === 'undefined') {
                     $.addAlert('error', gettext('A variable could not be identified. Possible error in bibtex syntax.'));
                     break;
                 }
@@ -553,7 +557,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             var date_format = 'd.m.Y';
             if ('undefined' == typeof (issued) || '' == issued) {
                 if ('undefined' == typeof (this.entries[this.currentEntry].date
-                        .month)) {
+                    .month)) {
                     issued = ''
                     date_format = 'Y';
                 } else {
@@ -561,7 +565,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                     date_format = 'm.Y';
                 }
                 if ('undefined' == typeof (this.entries[this.currentEntry].date
-                        .year)) {
+                    .year)) {
                     issued = '';
                     date_format = '';
                 } else {
@@ -676,33 +680,33 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
     /** Saves a bibliography entry to the database on the server.
      * @function createBibEntry
      * @memberof bibliographyHelpers
-     * @param post_data The bibliography data to send to the server. 
+     * @param post_data The bibliography data to send to the server.
      */
     bibliographyHelpers.createBibEntry = function (post_data) {
         $.activateWait();
         $.ajax({
-                url: '/bibliography/save/',
-                data: post_data,
-                type: 'POST',
-                dataType: 'json',
-                success: function (response, textStatus, jqXHR) {
-                    if (bibliographyHelpers.displayCreateBibEntryError(response.errormsg)) {
-                        bibliographyHelpers.addBibList(response.values);
-                        $.addAlert('success', gettext('The bibliography has been updated'));
-                        jQuery("#createbook").dialog('close');
-                    } else {
-                        $.addAlert('error', gettext('Some errors are found. Please examine the form.'));
-                    }
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    $.addAlert('error', errorThrown);
-                },
-                complete: function () {
-                    $.deactivateWait();
+            url: '/bibliography/save/',
+            data: post_data,
+            type: 'POST',
+            dataType: 'json',
+            success: function (response, textStatus, jqXHR) {
+                if (bibliographyHelpers.displayCreateBibEntryError(response.errormsg)) {
+                    bibliographyHelpers.addBibList(response.values);
+                    $.addAlert('success', gettext('The bibliography has been updated'));
+                    jQuery("#createbook").dialog('close');
+                } else {
+                    $.addAlert('error', gettext('Some errors are found. Please examine the form.'));
                 }
-            });
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                $.addAlert('error', errorThrown);
+            },
+            complete: function () {
+                $.deactivateWait();
+            }
+        });
     };
-    
+
     /** Displays an error on bibliography entry creation
      * @function displayCreateBibEntryError
      * @memberof bibliographyHelpers
@@ -726,7 +730,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
     /** Update or create new category 
      * @function createCategory
      * @memberof bibliographyHelpers
-     * @param cats The category objects to add.     
+     * @param cats The category objects to add.
      */
     bibliographyHelpers.createCategory = function (cats) {
         var post_data = {
@@ -768,11 +772,11 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             'ids[]': ids
         };
         $.ajax({
-                url: '/bibliography/delete_category/',
-                data: post_data,
-                type: 'POST',
-                dataType: 'json'
-            });
+            url: '/bibliography/delete_category/',
+            data: post_data,
+            type: 'POST',
+            dataType: 'json'
+        });
     };
 
     /** Opens a dialog for editing categories.
@@ -782,11 +786,11 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
     bibliographyHelpers.createCategoryDialog = function () {
         var dialogHeader = gettext('Edit Categories');
         var dialogBody = tmp_editcategories({
-                'dialogHeader': dialogHeader,
-                'categories': tmp_categoryforms({
-                        'categories': BibCategories
-                    })
-            });
+            'dialogHeader': dialogHeader,
+            'categories': tmp_categoryforms({
+                'categories': BibCategories
+            })
+        });
         jQuery('body').append(dialogBody);
         var diaButtons = {};
         diaButtons[gettext('Submit')] = function () {
@@ -803,14 +807,16 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                     new_cat.titles.push(this_val);
                 } else if ('' == this_val && 0 < this_id) {
                     bibliographyHelpers.deleted_cat[bibliographyHelpers.deleted_cat
-                    .length] = this_id;
+                        .length] = this_id;
                 }
             });
             bibliographyHelpers.deleteCategory(bibliographyHelpers.deleted_cat);
             bibliographyHelpers.createCategory(new_cat);
             jQuery(this).dialog('close');
         };
-        diaButtons[gettext('Cancel')] = function() { jQuery(this).dialog('close'); };
+        diaButtons[gettext('Cancel')] = function () {
+            jQuery(this).dialog('close');
+        };
 
         jQuery("#editCategories").dialog({
             resizable: false,
@@ -996,141 +1002,140 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             }
 
             dataTypeSwitch: switch (the_type) {
-                case 'fieldkeys':
-                    var selected_key_item = $this.find('.fw-pulldown-item.selected');
-                    if(0 == selected_key_item.size()) {
-                        selected_key_item = $this.find('.fw-pulldown-item:eq(0)');
-                    }
-                    the_value = selected_key_item.data('value');
+            case 'fieldkeys':
+                var selected_key_item = $this.find('.fw-pulldown-item.selected');
+                if (0 == selected_key_item.size()) {
+                    selected_key_item = $this.find('.fw-pulldown-item:eq(0)');
+                }
+                the_value = selected_key_item.data('value');
+                break;
+            case 'date':
+                //if it is a date form, the values will be formatted yyyy-mm-dd
+                var y_val = $this.find('.select-year').val(),
+                    m_val = $this.find('.select-month').val(),
+                    d_val = $this.find('.select-date').val(),
+                    y2_val = $this.find('.select-year2').val(),
+                    m2_val = $this.find('.select-month2').val(),
+                    d2_val = $this.find('.select-date2').val(),
+                    date_format = $this.siblings('th').find('.fw-data-format-pulldown .fw-pulldown-item.selected').data('value'),
+                    date_form = '',
+                    date_val = '',
+                    required_dates,
+                    required_values,
+                    date_objs = [],
+                    i, len;
+
+                switch (date_format) {
+                case 'y':
+                    required_values = required_dates = [y_val];
+                    date_form = 'Y';
                     break;
-                case 'date':
-                    //if it is a date form, the values will be formatted yyyy-mm-dd
-                    var y_val = $this.find('.select-year').val(),
-                        m_val = $this.find('.select-month').val(),
-                        d_val = $this.find('.select-date').val(),
-                        y2_val = $this.find('.select-year2').val(),
-                        m2_val = $this.find('.select-month2').val(),
-                        d2_val = $this.find('.select-date2').val(),
-                        date_format = $this.siblings('th').find('.fw-data-format-pulldown .fw-pulldown-item.selected').data('value'),
-                        date_form = '',
-                        date_val = '',
-                        required_dates,
-                        required_values,
-                        date_objs = [],
-                        i, len;
-
-                    switch(date_format) {
-                        case 'y':
-                            required_values = required_dates = [y_val];
-                            date_form = 'Y';
-                            break;
-                        case 'my':
-                            required_values = [y_val, m_val];
-                            required_dates = [y_val + '/' + m_val]
-                            date_form = 'Y/m';
-                            break;
-                        case 'mdy':
-                            required_values = [y_val, m_val, d_val];
-                            required_dates = [y_val + '/' + m_val + '/' + d_val];
-                            date_form = 'Y/m/d';
-                            break;
-                        case 'y/y':
-                            required_values = required_dates = [y_val, y2_val];
-                            date_form = 'Y-Y2';
-                            break;
-                        case 'my/my':
-                            required_values = [y_val, y2_val, m_val, m2_val];
-                            required_dates = [y_val + '/' + m_val, y2_val + '/' + m2_val];
-                            date_form = 'Y/m-Y2/m2';
-                            break;
-                        case 'mdy/mdy':
-                            required_values = [y_val, m_val, d_val, y2_val, m2_val, d2_val];
-                            required_dates = [y_val + '/' + m_val + '/' + d_val,
-                                y2_val + '/' + m2_val + '/' + d2_val];
-                            date_form = 'Y/m/d-Y2/m2/d2';
-                            break;
-                    }
-
-                    len = required_values.length;
-                    for(i = 0; i < len; i ++) {
-                        if('undefined' === typeof(required_values[i])
-                        || null == required_values[i]
-                        || '' == required_values[i]) {
-                            the_value = '';
-                            break dataTypeSwitch;
-                        }
-                    }
-
-                    len = required_dates.length;
-                    for(i = 0; i < len; i ++) {
-                        var date_obj = new Date(required_dates[i]);
-                        if('Invalid Date' == date_obj) {
-                            the_value = '';
-                            break dataTypeSwitch;
-                        }
-                        date_objs.push(date_obj);
-                    }
-
-                    date_form = date_form.replace('d', date_objs[0].getUTCDate());
-                    date_form = date_form.replace('m', date_objs[0].getUTCMonth() + 1);
-                    date_form = date_form.replace('Y', date_objs[0].getUTCFullYear());
-
-                    if(2 == date_objs.length) {
-                        date_form = date_form.replace('d2', date_objs[1].getUTCDate());
-                        date_form = date_form.replace('m2', date_objs[1].getUTCMonth() + 1);
-                        date_form = date_form.replace('Y2', date_objs[1].getUTCFullYear());
-                    }
-
-                    the_value = date_form;
+                case 'my':
+                    required_values = [y_val, m_val];
+                    required_dates = [y_val + '/' + m_val]
+                    date_form = 'Y/m';
                     break;
-                case 'namelist':
-                    the_value = [];
-                    $this.find('.fw-list-input').each(function () {
-                        $tr = jQuery(this);
-                        var first_name = jQuery.trim($tr.find(
-                                '.fw-name-input.fw-first').val());
-                        var last_name = jQuery.trim($tr.find(
-                                '.fw-name-input.fw-last').val());
-                        var full_name = '';
-                        if ('' == first_name && '' == last_name) {
-                            return true;
-                        } else if ('' == last_name) {
-                            full_name = '{' + first_name + '}';
-                        } else if ('' == first_name) {
-                            full_name = '{' + last_name + '}';
-                        } else {
-                            full_name = '{' + first_name + '} {' + last_name + '}';
-                        }
-                        the_value[the_value.length] = full_name;
-                    });
-                    if (0 == the_value.length) {
+                case 'mdy':
+                    required_values = [y_val, m_val, d_val];
+                    required_dates = [y_val + '/' + m_val + '/' + d_val];
+                    date_form = 'Y/m/d';
+                    break;
+                case 'y/y':
+                    required_values = required_dates = [y_val, y2_val];
+                    date_form = 'Y-Y2';
+                    break;
+                case 'my/my':
+                    required_values = [y_val, y2_val, m_val, m2_val];
+                    required_dates = [y_val + '/' + m_val, y2_val + '/' + m2_val];
+                    date_form = 'Y/m-Y2/m2';
+                    break;
+                case 'mdy/mdy':
+                    required_values = [y_val, m_val, d_val, y2_val, m2_val, d2_val];
+                    required_dates = [y_val + '/' + m_val + '/' + d_val,
+                        y2_val + '/' + m2_val + '/' + d2_val
+                    ];
+                    date_form = 'Y/m/d-Y2/m2/d2';
+                    break;
+                }
+
+                len = required_values.length;
+                for (i = 0; i < len; i++) {
+                    if ('undefined' === typeof (required_values[i]) || null == required_values[i] || '' == required_values[i]) {
                         the_value = '';
-                    } else {
-                        the_name += '[]';
+                        break dataTypeSwitch;
                     }
-                    break;
-                case 'literallist':
-                    the_value = [];
-                    $this.find('.fw-list-input').each(function () {
-                        var input_val = jQuery.trim(jQuery(this).find('.fw-input').val());
-                        if ('' == input_val) return true;
-                        the_value[the_value.length] = '{' + input_val + '}';
-                    });
-                    if (0 == the_value.length) {
+                }
+
+                len = required_dates.length;
+                for (i = 0; i < len; i++) {
+                    var date_obj = new Date(required_dates[i]);
+                    if ('Invalid Date' == date_obj) {
                         the_value = '';
-                    } else {
-                        the_name += '[]';
+                        break dataTypeSwitch;
                     }
-                    break;
-                case 'checkbox':
-                    //if it is a checkbox, the value will be restored as an Array
-                    the_name = the_name + '[]'
-                    if (undefined == formValues[the_name]) formValues[the_name] = [];
-                    if ($this.prop("checked")) formValues[the_name][formValues[
-                        the_name].length] = $this.val();
-                    return;
-                default:
-                    the_value = $this.val().replace(/(^\s+)|(\s+$)/g, "");
+                    date_objs.push(date_obj);
+                }
+
+                date_form = date_form.replace('d', date_objs[0].getUTCDate());
+                date_form = date_form.replace('m', date_objs[0].getUTCMonth() + 1);
+                date_form = date_form.replace('Y', date_objs[0].getUTCFullYear());
+
+                if (2 == date_objs.length) {
+                    date_form = date_form.replace('d2', date_objs[1].getUTCDate());
+                    date_form = date_form.replace('m2', date_objs[1].getUTCMonth() + 1);
+                    date_form = date_form.replace('Y2', date_objs[1].getUTCFullYear());
+                }
+
+                the_value = date_form;
+                break;
+            case 'namelist':
+                the_value = [];
+                $this.find('.fw-list-input').each(function () {
+                    $tr = jQuery(this);
+                    var first_name = jQuery.trim($tr.find(
+                        '.fw-name-input.fw-first').val());
+                    var last_name = jQuery.trim($tr.find(
+                        '.fw-name-input.fw-last').val());
+                    var full_name = '';
+                    if ('' == first_name && '' == last_name) {
+                        return true;
+                    } else if ('' == last_name) {
+                        full_name = '{' + first_name + '}';
+                    } else if ('' == first_name) {
+                        full_name = '{' + last_name + '}';
+                    } else {
+                        full_name = '{' + first_name + '} {' + last_name + '}';
+                    }
+                    the_value[the_value.length] = full_name;
+                });
+                if (0 == the_value.length) {
+                    the_value = '';
+                } else {
+                    the_name += '[]';
+                }
+                break;
+            case 'literallist':
+                the_value = [];
+                $this.find('.fw-list-input').each(function () {
+                    var input_val = jQuery.trim(jQuery(this).find('.fw-input').val());
+                    if ('' == input_val) return true;
+                    the_value[the_value.length] = '{' + input_val + '}';
+                });
+                if (0 == the_value.length) {
+                    the_value = '';
+                } else {
+                    the_name += '[]';
+                }
+                break;
+            case 'checkbox':
+                //if it is a checkbox, the value will be restored as an Array
+                the_name = the_name + '[]'
+                if (undefined == formValues[the_name]) formValues[the_name] = [];
+                if ($this.prop("checked")) formValues[the_name][formValues[
+                    the_name].length] = $this.val();
+                return;
+            default:
+                the_value = $this.val().replace(/(^\s+)|(\s+$)/g, "");
             }
 
             if (isMust && (undefined == the_value || '' == the_value)) {
@@ -1145,7 +1150,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
     /** Adds a list of bibliography categories to current list of bibliography categories. 
      * @function addBibCategoryList
      * @memberof bibliographyHelpers
-     * @param newBibCategories The new categories which will be added to the existing ones. 
+     * @param newBibCategories The new categories which will be added to the existing ones.
      */
     bibliographyHelpers.addBibCategoryList = function (newBibCategories) {
         var i;
@@ -1154,20 +1159,22 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             bibliographyHelpers.appendToBibCatList(newBibCategories[i]);
         }
     };
-    
+
     /** Add an item to the HTML list of bibliography categories. 
      * @function appendToBibCatList
      * @memberof bibliographyHelpers
      * @param bCat Category to be appended.
-     */ 
+     */
     bibliographyHelpers.appendToBibCatList = function (bCat) {
-        jQuery('#bib-category-list').append(tmp_bibliography_category_list_item({'bCat': bCat}));
+        jQuery('#bib-category-list').append(tmp_bibliography_category_list_item({
+            'bCat': bCat
+        }));
     };
-    
+
     /** Add and remove name list field.
      * @function addRemoveListHandler
      * @memberof bibliographyHelpers
-     */ 
+     */
     bibliographyHelpers.addRemoveListHandler = function () {
         jQuery('.fw-add-input').bind('click', function () {
             var $parent = jQuery(this).parents('.fw-list-input');
@@ -1182,14 +1189,14 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                     var this_id = $the_prev.attr('data-id');
                     if ('undefined' != typeof (this_id))
                         bibliographyHelpers.deleted_cat[bibliographyHelpers.deleted_cat
-                        .length] = this_id;
+                            .length] = this_id;
                 }
                 $parent.remove();
             }
         });
 
         // init dropdown for eitheror field names
-        jQuery('.fw-bib-field-pulldown').each(function() {
+        jQuery('.fw-bib-field-pulldown').each(function () {
             jQuery.addDropdownBox(jQuery(this), jQuery(this).children('.fw-pulldown'));
         });
         jQuery('.fw-bib-field-pulldown .fw-pulldown-item').bind('click', function () {
@@ -1201,7 +1208,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         });
 
         // init dropdown for date format pulldown
-        jQuery('.fw-data-format-pulldown').each(function() {
+        jQuery('.fw-data-format-pulldown').each(function () {
             jQuery.addDropdownBox(jQuery(this), jQuery(this).children('.fw-pulldown'));
         });
         jQuery('.fw-data-format-pulldown .fw-pulldown-item').bind('click', function () {
@@ -1214,7 +1221,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         });
 
         // nit dropdown for f_key selection
-        jQuery('.fw-bib-select-pulldown').each(function() {
+        jQuery('.fw-bib-select-pulldown').each(function () {
             jQuery.addDropdownBox(jQuery(this), jQuery(this).children('.fw-pulldown'));
         });
         jQuery('.fw-bib-select-pulldown .fw-pulldown-item').bind('click', function () {
@@ -1233,7 +1240,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
      * @memberof bibliographyHelpers
      * @param startR Start number
      * @param endR End number
-     */     
+     */
     bibliographyHelpers.createDateRnge = function (startR, endR) {
         var ret = Array();
         for (var i = startR; i <= endR; i++) {
@@ -1241,16 +1248,18 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         }
         return ret;
     };
-    
+
     /** Return html with form elements for the bibliography entry dialog. 
      * @function getFieldForms
      * @memberof bibliographyHelpers
      * @param fields A list of the fields
      * @param eitheror Fields of which either entry A or B is obligatory.
      * @param id The id of the bibliography entry.
-     */ 
+     */
     bibliographyHelpers.getFieldForms = function (fields, eitheror, id) {
-        if(null == eitheror || undefined == eitheror) { eitheror = []; }
+        if (null == eitheror || undefined == eitheror) {
+            eitheror = [];
+        }
         var ret = '';
         var eitheror_fields = [],
             the_value;
@@ -1266,7 +1275,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                 }
             }
             //get html with template function of underscore.js
-            if('f_date' == BibFieldTypes[this].type) {
+            if ('f_date' == BibFieldTypes[this].type) {
                 var date_form_html = bibliographyHelpers.getFormPart(BibFieldTypes[this], this, the_value),
                     date_format = date_form_html[1];
                 ret += tmp_dateinput_tr({
@@ -1292,7 +1301,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                 //if the field has value, get html with template function of underscore.js
                 if (0 !== id) {
                     var current_val = BibDB[id][this.name];
-                    if(null != current_val && 'undefined' != typeof(current_val) && '' != current_val) {
+                    if (null != current_val && 'undefined' != typeof (current_val) && '' != current_val) {
                         selected_field = this;
                         return false;
                     }
@@ -1322,166 +1331,172 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
      * @param form_info Information about the field -- such as it's type (date, text string, etc.)
      * @param the_id The id specifying the field.
      * @param the_value The current value of the field.
-     */ 
+     */
     bibliographyHelpers.getFormPart = function (form_info, the_id, the_value) {
         var the_type = form_info.type;
         var field_name = 'eField' + the_id;
         switch (the_type) {
-            case 'f_date':
-                the_value = citationHelpers.formatDateString(the_value);
-                var dates = the_value.split('-'),
-                    y_val = ['', ''],
-                    m_val = ['', ''],
-                    d_val = ['', ''],
-                    min_date_length = 3,
-                    date_format,
-                    i, len = dates.length;
+        case 'f_date':
+            the_value = citationHelpers.formatDateString(the_value);
+            var dates = the_value.split('-'),
+                y_val = ['', ''],
+                m_val = ['', ''],
+                d_val = ['', ''],
+                min_date_length = 3,
+                date_format,
+                i, len = dates.length;
 
-                for(i = 0; i < len; i++) {
-                    var values = dates[i].split('/'),
-                        values_len = values.length;
+            for (i = 0; i < len; i++) {
+                var values = dates[i].split('/'),
+                    values_len = values.length;
 
-                    y_val[i] = values[0];
-                    if(1 < values_len) { m_val[i] = values[1]; }
-                    if(2 < values_len) { d_val[i] = values[2]; }
-                    if(values_len < min_date_length) { min_date_length = values_len; }
+                y_val[i] = values[0];
+                if (1 < values_len) {
+                    m_val[i] = values[1];
                 }
+                if (2 < values_len) {
+                    d_val[i] = values[2];
+                }
+                if (values_len < min_date_length) {
+                    min_date_length = values_len;
+                }
+            }
 
-                if(1 < len) {
-                    if(2 < min_date_length) {
-                        date_format = 'mdy/mdy';
-                    }else if(1 < min_date_length) {
-                        date_format = 'my/my';
-                    } else {
-                        date_format = 'y/y';
-                    }
+            if (1 < len) {
+                if (2 < min_date_length) {
+                    date_format = 'mdy/mdy';
+                } else if (1 < min_date_length) {
+                    date_format = 'my/my';
                 } else {
-                    if(2 < min_date_length) {
-                        date_format = 'mdy';
-                    }else if(1 < min_date_length) {
-                        date_format = 'my';
-                    } else {
-                        date_format = 'y';
+                    date_format = 'y/y';
+                }
+            } else {
+                if (2 < min_date_length) {
+                    date_format = 'mdy';
+                } else if (1 < min_date_length) {
+                    date_format = 'my';
+                } else {
+                    date_format = 'y';
+                }
+            }
+
+            return [
+                tmp_dateinput({
+                    'fieldName': field_name,
+                    'dateSelect': tmp_dateselect({
+                        'type': 'date',
+                        'formname': 'date' + the_id,
+                        'value': d_val[0]
+                    }),
+                    'monthSelect': tmp_dateselect({
+                        'type': 'month',
+                        'formname': 'month' + the_id,
+                        'value': m_val[0]
+                    }),
+                    'yearSelect': tmp_dateselect({
+                        'type': 'year',
+                        'formname': 'year' + the_id,
+                        'value': y_val[0]
+                    }),
+                    'date2Select': tmp_dateselect({
+                        'type': 'date2',
+                        'formname': 'date2' + the_id,
+                        'value': d_val[1]
+                    }),
+                    'month2Select': tmp_dateselect({
+                        'type': 'month2',
+                        'formname': 'month2' + the_id,
+                        'value': m_val[1]
+                    }),
+                    'year2Select': tmp_dateselect({
+                        'type': 'year2',
+                        'formname': 'year2' + the_id,
+                        'value': y_val[1]
+                    })
+                }),
+                date_format
+            ];
+            break;
+        case 'l_name':
+            var names = the_value.split('} and {'),
+                name_values = [];
+
+            for (var i = 0; i < names.length; i++) {
+                var name_parts = names[i].split('} {'),
+                    f_name = name_parts[0].replace('{', '').replace('}', ''),
+                    l_name = (1 < name_parts.length) ? name_parts[1].replace('}', '') : '';
+                name_values[name_values.length] = {
+                    'first': f_name,
+                    'last': l_name
+                };
+            }
+
+            if (0 == name_values.length) {
+                name_values[0] = {
+                    'first': '',
+                    'last': ''
+                };
+            }
+            return tmp_list_input({
+                'filedType': 'namelist',
+                'fieldName': field_name,
+                'inputForm': tmp_namelist_input({
+                    'fieldValue': name_values
+                })
+            });
+            break;
+        case 'l_key':
+        case 'l_literal':
+            var literals = the_value.split('} and {');
+            var literal_values = [];
+            for (var i = 0; i < literals.length; i++) {
+                literal_values[literal_values.length] = literals[i].replace('{',
+                    '').replace('}', '');
+            }
+            if (0 == literal_values.length)
+                literal_values[0] = '';
+            return tmp_list_input({
+                'filedType': 'literallist',
+                'fieldName': field_name,
+                'inputForm': tmp_literallist_input({
+                    'fieldValue': literal_values
+                })
+            });
+        case 'f_key':
+            if ('undefined' != typeof (form_info.localization)) {
+                var l_keys = _.select(LocalizationKeys, function (obj) {
+                    return obj.type == form_info.localization;
+                }),
+                    key_options = [],
+                    selected_value_title = '';
+                jQuery.each(l_keys, function () {
+                    if (this.name == the_value) {
+                        selected_value_title = this.title;
                     }
-                }
-
-                return [
-                    tmp_dateinput({
-                        'fieldName': field_name,
-                        'dateSelect': tmp_dateselect({
-                            'type': 'date',
-                            'formname': 'date' + the_id,
-                            'value': d_val[0]
-                        }),
-                        'monthSelect': tmp_dateselect({
-                            'type': 'month',
-                            'formname': 'month' + the_id,
-                            'value': m_val[0]
-                        }),
-                        'yearSelect': tmp_dateselect({
-                            'type': 'year',
-                            'formname': 'year' + the_id,
-                            'value': y_val[0]
-                        }),
-                        'date2Select': tmp_dateselect({
-                            'type': 'date2',
-                            'formname': 'date2' + the_id,
-                            'value': d_val[1]
-                        }),
-                        'month2Select': tmp_dateselect({
-                            'type': 'month2',
-                            'formname': 'month2' + the_id,
-                            'value': m_val[1]
-                        }),
-                        'year2Select': tmp_dateselect({
-                            'type': 'year2',
-                            'formname': 'year2' + the_id,
-                            'value': y_val[1]
-                        })
-                    }),
-                    date_format
-                ];
+                    key_options.push({
+                        'value': this.name,
+                        'title': this.title
+                    });
+                });
+                return tmp_select({
+                    'fieldName': field_name,
+                    'fieldTitle': selected_value_title,
+                    'fieldValue': the_value,
+                    'fieldDefault': {
+                        'value': '',
+                        'title': ''
+                    },
+                    'options': key_options
+                });
                 break;
-            case 'l_name':
-                var names = the_value.split('} and {'),
-                    name_values = [];
+            }
 
-                for (var i = 0; i < names.length; i++) {
-                    var name_parts = names[i].split('} {'),
-                        f_name = name_parts[0].replace('{', '').replace('}', ''),
-                        l_name = (1 < name_parts.length) ? name_parts[1].replace('}', '') : '';
-                    name_values[name_values.length] = {
-                        'first': f_name,
-                        'last': l_name
-                    };
-                }
-
-                if (0 == name_values.length) {
-                    name_values[0] = {
-                        'first': '',
-                        'last': ''
-                    };
-                }
-                return tmp_list_input({
-                        'filedType': 'namelist',
-                        'fieldName': field_name,
-                        'inputForm': tmp_namelist_input({
-                                'fieldValue': name_values
-                            })
-                    });
-                break;
-            case 'l_key':
-            case 'l_literal':
-                var literals = the_value.split('} and {');
-                var literal_values = [];
-                for (var i = 0; i < literals.length; i++) {
-                    literal_values[literal_values.length] = literals[i].replace('{',
-                        '').replace('}', '');
-                }
-                if (0 == literal_values.length)
-                    literal_values[0] = '';
-                return tmp_list_input({
-                        'filedType': 'literallist',
-                        'fieldName': field_name,
-                        'inputForm': tmp_literallist_input({
-                                'fieldValue': literal_values
-                            })
-                    });
-            case 'f_key':
-                if ('undefined' != typeof(form_info.localization)) {
-                    var l_keys = _.select(LocalizationKeys, function (obj) {
-                        return obj.type == form_info.localization;
-                    }),
-                        key_options = [],
-                        selected_value_title = '';
-                    jQuery.each(l_keys, function () {
-                        if(this.name == the_value) {
-                            selected_value_title = this.title;
-                        }
-                        key_options.push({
-                            'value': this.name,
-                            'title': this.title
-                        });
-                    });
-                    return tmp_select({
-                            'fieldName': field_name,
-                            'fieldTitle': selected_value_title,
-                            'fieldValue': the_value,
-                            'fieldDefault': {
-                                'value': '',
-                                'title': ''
-                            },
-                            'options': key_options
-                        });
-                    break;
-                }
-
-            default:
-                return tmp_input({
-                        'fieldType': 'text',
-                        'fieldName': field_name,
-                        'fieldValue': the_value
-                    });
+        default:
+            return tmp_input({
+                'fieldType': 'text',
+                'fieldName': field_name,
+                'fieldValue': the_value
+            });
         }
     };
     /** Change the type of the bibliography item in the form (article, book, etc.) 
@@ -1489,7 +1504,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
      * @memberof bibliographyHelpers
      * @param id The id of the bibliography entry.
      * @param type The new type of the bibliography entry.
-     */ 
+     */
     bibliographyHelpers.updateBibEntryDialog = function (id, type) {
         var entryType = BibEntryTypes[type];
 
@@ -1500,8 +1515,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         ));
 
         jQuery('#optionTab2 > table > tbody').html(bibliographyHelpers.getFieldForms(
-            entryType.optional,
-            [],
+            entryType.optional, [],
             id
         ));
 
@@ -1511,7 +1525,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
      * @function deleteBibEntry
      * @memberof bibliographyHelpers
      * @param ids A list of bibliography item ids that are to be deleted.
-     */ 
+     */
     bibliographyHelpers.deleteBibEntry = function (ids) {
         for (var i = 0; i < ids.length; i++) {
             ids[i] = parseInt(ids[i]);
@@ -1521,39 +1535,39 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         };
         $.activateWait();
         $.ajax({
-                url: '/bibliography/delete/',
-                data: post_data,
-                type: 'POST',
-                success: function (response, textStatus, jqXHR) {
-                    var i, len = ids.length,
-                        j, len2;
-                    bibliographyHelpers.stopBibliographyTable();
-                    for (i = 0; i < len; i++) {
-                        delete BibDB[ids[i]];
-                    }
-                    var elements_id = '#Entry_' + ids.join(', #Entry_');
-                    jQuery(elements_id).detach();
-                    bibliographyHelpers.startBibliographyTable();
-                    $.addAlert('success', gettext(
-                            'The bibliography item(s) have been deleted'));
-                },
-                error: function (jqXHR, textStatus, errorThrown) {
-                    $.addAlert('error', jqXHR.responseText);
-                },
-                complete: function () {
-                    $.deactivateWait();
+            url: '/bibliography/delete/',
+            data: post_data,
+            type: 'POST',
+            success: function (response, textStatus, jqXHR) {
+                var i, len = ids.length,
+                    j, len2;
+                bibliographyHelpers.stopBibliographyTable();
+                for (i = 0; i < len; i++) {
+                    delete BibDB[ids[i]];
                 }
-            });
+                var elements_id = '#Entry_' + ids.join(', #Entry_');
+                jQuery(elements_id).detach();
+                bibliographyHelpers.startBibliographyTable();
+                $.addAlert('success', gettext(
+                    'The bibliography item(s) have been deleted'));
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                $.addAlert('error', jqXHR.responseText);
+            },
+            complete: function () {
+                $.deactivateWait();
+            }
+        });
     };
     /** Dialog to confirm deletion of bibliography items.
      * @function deleteBibEntryDialog
      * @memberof bibliographyHelpers
      * @param ids Ids of items that are to be deleted.
-     */ 
+     */
     bibliographyHelpers.deleteBibEntryDialog = function (ids) {
         jQuery('body').append('<div id="confirmdeletion" title="' + gettext(
-                'Confirm deletion') + '"><p>' + gettext(
-                'Delete the bibliography item(s)') + '?</p></div>');
+            'Confirm deletion') + '"><p>' + gettext(
+            'Delete the bibliography item(s)') + '?</p></div>');
         diaButtons = {};
         diaButtons[gettext('Delete')] = function () {
             bibliographyHelpers.deleteBibEntry(ids);
@@ -1563,43 +1577,43 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             jQuery(this).dialog('close');
         };
         jQuery("#confirmdeletion").dialog({
-                resizable: false,
-                height: 180,
-                modal: true,
-                buttons: diaButtons,
-                create: function () {
-                    var $the_dialog = jQuery(this).closest(".ui-dialog");
-                    $the_dialog.find(".ui-button:first-child").addClass(
-                        "fw-button fw-dark");
-                    $the_dialog.find(".ui-button:last").addClass(
-                        "fw-button fw-orange");
-                },
-                close: function () {
-                    jQuery("#confirmdeletion").dialog('destroy').remove();
-                }
-            });
+            resizable: false,
+            height: 180,
+            modal: true,
+            buttons: diaButtons,
+            create: function () {
+                var $the_dialog = jQuery(this).closest(".ui-dialog");
+                $the_dialog.find(".ui-button:first-child").addClass(
+                    "fw-button fw-dark");
+                $the_dialog.find(".ui-button:last").addClass(
+                    "fw-button fw-orange");
+            },
+            close: function () {
+                jQuery("#confirmdeletion").dialog('destroy').remove();
+            }
+        });
     };
     /** Export a list of bibliography items to bibLateX and serve the file to the user as a ZIP-file.
      * @function exportBibliographyBL
      * @memberof bibliographyHelpers
      * @param ids A list of ids of the bibliography items that are to be exported.
-     */ 
+     */
     bibliographyHelpers.exportBibliographyBL = function (ids) {
         var bib_export = new bibliographyHelpers.bibLatexExport(ids),
             export_obj = [{
-                    'filename': 'bibliography.bib',
-                    'contents': bib_export.bibtex_str
-                }
-            ];
+                'filename': 'bibliography.bib',
+                'contents': bib_export.bibtex_str
+            }];
         exporter.zipFileCreator(export_obj, [], 'bibliography.zip')
     };
     /** Second step of the BibTeX file import. Takes a BibTeX file object, processes client side and cuts into chunks to be uploaded to the server.
      * @function importBibliography2
      * @memberof bibliographyHelpers
-     * @param e File object that is to be imported. 
-     */ 
+     * @param e File object that is to be imported.
+     */
     bibliographyHelpers.importBibliography2 = function (e) {
-        var bib_data = new bibliographyHelpers.bibtexParser(), bib_entries, bib_keylist, totalChunks, currentChunkNumber;
+        var bib_data = new bibliographyHelpers.bibtexParser(),
+            bib_entries, bib_keylist, totalChunks, currentChunkNumber;
         bib_data.setInput(e.target.result);
         bib_data.bibtex();
         bib_entries = bib_data.getEntries();
@@ -1609,41 +1623,41 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             return;
         } else {
             bib_keylist = Object.keys(bib_entries);
-            totalChunks = Math.ceil(bib_keylist.length/50);
+            totalChunks = Math.ceil(bib_keylist.length / 50);
             currentChunkNumber = 0;
-            
+
             function processChunk() {
                 var currentChunk;
                 if (currentChunkNumber < totalChunks) {
                     currentChunk = {};
                     for (var i = currentChunkNumber; i < currentChunkNumber + 50; i++) {
-                        currentChunk[bib_keylist[i]]= bib_entries[bib_keylist[i]];
+                        currentChunk[bib_keylist[i]] = bib_entries[bib_keylist[i]];
                     }
-                    bibliographyHelpers.importBibliography3(currentChunk, function() {
+                    bibliographyHelpers.importBibliography3(currentChunk, function () {
                         currentChunkNumber++;
                         processChunk();
-                    });  
+                    });
                 } else {
                     $.deactivateWait();
                 }
             }
             processChunk();
         }
-        
+
     };
     /** Third step of the BibTeX file import. Takes lists of bibliography entries and sends them to the server.
      * @function importBibliography3
      * @memberof bibliographyHelpers
      * @param bib_entries The list of bib_entries received from importBibliography2.
      * @param callback Function to be called when import to server has finished.
-     * 
-     */     
+     *
+     */
     bibliographyHelpers.importBibliography3 = function (bib_entries, callback) {
-        
+
         var post_data = {
             'bibs': $.toJSON(bib_entries)
         };
-        
+
         $.ajax({
             url: '/bibliography/import_bibtex/',
             type: 'post',
@@ -1654,7 +1668,8 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                 bibliographyHelpers.addBibList(response.bibs);
                 var errors = response.errors,
                     warnings = response.warning,
-                    len = errors.length, i;
+                    len = errors.length,
+                    i;
                 for (i = 0; i < len; i++) {
                     $.addAlert('error', errors[i]);
                 }
@@ -1675,7 +1690,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
     /** First step of the BibTeX file import. Creates a dialog box to specify upload file.
      * @function importBibliography
      * @memberof bibliographyHelpers
-     */ 
+     */
     bibliographyHelpers.importBibliography = function () {
         jQuery('body').append(tmp_import_bib());
         diaButtons = {};
@@ -1703,40 +1718,40 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             jQuery(this).dialog('close');
         };
         jQuery("#importbibtex").dialog({
-                resizable: false,
-                height: 180,
-                modal: true,
-                buttons: diaButtons,
-                create: function () {
-                    var $the_dialog = jQuery(this).closest(".ui-dialog");
-                    $the_dialog.find(".ui-button:first-child").addClass(
-                        "fw-button fw-dark");
-                    $the_dialog.find(".ui-button:last").addClass(
-                        "fw-button fw-orange");
-                    jQuery('#bib-uploader').bind('change', function () {
-                        jQuery('#import-bib-name').html(jQuery(this).val().replace(
-                                /C:\\fakepath\\/i, ''));
-                    });
-                    jQuery('#import-bib-btn').bind('click', function () {
-                        jQuery('#bib-uploader').trigger('click');
-                    });
-                },
-                close: function () {
-                    jQuery("#importbibtex").dialog('destroy').remove();
-                }
-            });
+            resizable: false,
+            height: 180,
+            modal: true,
+            buttons: diaButtons,
+            create: function () {
+                var $the_dialog = jQuery(this).closest(".ui-dialog");
+                $the_dialog.find(".ui-button:first-child").addClass(
+                    "fw-button fw-dark");
+                $the_dialog.find(".ui-button:last").addClass(
+                    "fw-button fw-orange");
+                jQuery('#bib-uploader').bind('change', function () {
+                    jQuery('#import-bib-name').html(jQuery(this).val().replace(
+                        /C:\\fakepath\\/i, ''));
+                });
+                jQuery('#import-bib-btn').bind('click', function () {
+                    jQuery('#bib-uploader').trigger('click');
+                });
+            },
+            close: function () {
+                jQuery("#importbibtex").dialog('destroy').remove();
+            }
+        });
     };
     /** Translated text of " and others". 
      * @constant _and_others
      * @memberof bibliographyHelpers
-     */ 
+     */
     bibliographyHelpers._and_others = gettext(' and others');
     /** Add or update an item in the bibliography table (HTML). 
      * @function appendToBibTable
      * @memberof bibliographyHelpers
      * @param pk The pk specifying the bibliography item.
      * @param bib_info An object with the current information about the bibliography item.
-     */ 
+     */
     bibliographyHelpers.appendToBibTable = function (pk, bib_info) {
         var allowEdit;
         var $tr = jQuery('#Entry_' + pk);
@@ -1773,26 +1788,26 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
 
         if (0 < $tr.size()) { //if the entry exists, update
             $tr.replaceWith(tmp_bibtable({
-                        'id': pk,
-                        'cats': bib_info.entry_cat.split(','),
-                        'type': bib_info.entry_type,
-                        'typetitle': BibEntryTypes[bib_info.entry_type]['title'],
-                        'title': bib_info.title.replace(/[{}]/g, ''),
-                        'author': bibauthor,
-                        'published': citationHelpers.formatDateString(bib_info.date),
-                        'allowEdit': allowEdit
-                    }));
+                'id': pk,
+                'cats': bib_info.entry_cat.split(','),
+                'type': bib_info.entry_type,
+                'typetitle': BibEntryTypes[bib_info.entry_type]['title'],
+                'title': bib_info.title.replace(/[{}]/g, ''),
+                'author': bibauthor,
+                'published': citationHelpers.formatDateString(bib_info.date),
+                'allowEdit': allowEdit
+            }));
         } else { //if this is the new entry, append
             jQuery('#bibliography > tbody').append(tmp_bibtable({
-                        'id': pk,
-                        'cats': bib_info.entry_cat.split(','),
-                        'type': bib_info.entry_type,
-                        'typetitle': BibEntryTypes[bib_info.entry_type]['title'],
-                        'title': bib_info.title.replace(/[{}]/g, ''),
-                        'author': bibauthor,
-                        'published': citationHelpers.formatDateString(bib_info.date),
-                        'allowEdit': allowEdit
-                    }));
+                'id': pk,
+                'cats': bib_info.entry_cat.split(','),
+                'type': bib_info.entry_type,
+                'typetitle': BibEntryTypes[bib_info.entry_type]['title'],
+                'title': bib_info.title.replace(/[{}]/g, ''),
+                'author': bibauthor,
+                'published': citationHelpers.formatDateString(bib_info.date),
+                'allowEdit': allowEdit
+            }));
         }
     };
     /** Get a bibliography from the server.
@@ -1800,42 +1815,44 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
      * @memberof bibliographyHelpers
      * @param ownerId The id of the person who's bibliography will be returned.
      * @param callback Will be called when process has finished with the new bibliography as an argument.
-     */ 
-    bibliographyHelpers.getABibDB = function(ownerId, callback) {
+     */
+    bibliographyHelpers.getABibDB = function (ownerId, callback) {
         // Get the BibDB of one specific user and call the callback with it.
-            var aBibDB={};
-            $.ajax({
-                    url: '/bibliography/biblist/',
-                    data: {
-                        'owner_id': ownerId
-                    },
-                    type: 'POST',
-                    dataType: 'json',
-                    success: function (response, textStatus, jqXHR) {
-                        for (i=0;i<response.bibList.length;i++) {
-                            bibliographyHelpers.serverBibItemToBibDB(response.bibList[i],aBibDB);
-                        }
-                        if (callback) {
-                            callback(aBibDB);
-                        }
-                    },
-                    error: function (jqXHR, textStatus, errorThrown) {
-                        $.addAlert('error', jqXHR.responseText);
-                    },
-                    complete: function () {
-                        $.deactivateWait();
-                    }
-                });
+        var aBibDB = {};
+        $.ajax({
+            url: '/bibliography/biblist/',
+            data: {
+                'owner_id': ownerId
+            },
+            type: 'POST',
+            dataType: 'json',
+            success: function (response, textStatus, jqXHR) {
+                for (i = 0; i < response.bibList.length; i++) {
+                    bibliographyHelpers.serverBibItemToBibDB(response.bibList[i], aBibDB);
+                }
+                if (callback) {
+                    callback(aBibDB);
+                }
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                $.addAlert('error', jqXHR.responseText);
+            },
+            complete: function () {
+                $.deactivateWait();
+            }
+        });
 
     };
     /** Get the bibliography of the current user from the server and create as window.BibDB.  
      * @function getBibDB
      * @memberof bibliographyHelpers
-     * @param callback Will be called afterward. 
-     */ 
-    bibliographyHelpers.getBibDB = function(callback) {
+     * @param callback Will be called afterward.
+     */
+    bibliographyHelpers.getBibDB = function (callback) {
 
-        var documentOwnerId, lastModified = parseInt(localStorage.getItem('last_modified_biblist')), numberOfEntries = parseInt(localStorage.getItem('number_of_entries')), localStorageVersion = localStorage.getItem('version');
+        var documentOwnerId, lastModified = parseInt(localStorage.getItem('last_modified_biblist')),
+            numberOfEntries = parseInt(localStorage.getItem('number_of_entries')),
+            localStorageVersion = localStorage.getItem('version');
 
         window.BibDB = {};
         window.BibCategories = [];
@@ -1848,15 +1865,15 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         } else {
             documentOwnerId = theDocument.owner.id;
         }
-        
+
         if (_.isNaN(lastModified)) {
             lastModified = -1;
         }
-        
+
         if (_.isNaN(numberOfEntries)) {
             numberOfEntries = -1;
         }
-        
+
         if (localStorageVersion != FW_LOCALSTORAGE_VERSION) {
             lastModified = -1;
             numberOfEntries = -1;
@@ -1879,10 +1896,10 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                 if (response.hasOwnProperty('bibList')) {
                     bibliographyHelpers.addBibList(response.bibList);
                     try {
-                        localStorage.setItem('biblist',JSON.stringify(response.bibList));
-                        localStorage.setItem('last_modified_biblist',response.last_modified);
-                        localStorage.setItem('number_of_entries',response.number_of_entries);
-                        localStorage.setItem('version',FW_LOCALSTORAGE_VERSION);
+                        localStorage.setItem('biblist', JSON.stringify(response.bibList));
+                        localStorage.setItem('last_modified_biblist', response.last_modified);
+                        localStorage.setItem('number_of_entries', response.number_of_entries);
+                        localStorage.setItem('version', FW_LOCALSTORAGE_VERSION);
                     } catch (error) {
                         // The local storage was likely too small
                     }
@@ -1890,9 +1907,11 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                     var bibList = JSON.parse(localStorage.getItem('biblist'));
                     bibliographyHelpers.addBibList(bibList);
                 }
-                
+
                 jQuery(document.body).trigger("bibliography_ready");
-                if (callback) { callback(); }
+                if (callback) {
+                    callback();
+                }
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 $.addAlert('error', jqXHR.responseText);
@@ -1905,14 +1924,14 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
     /** Stop the interactive parts of the bibliography table.
      * @function stopBibliographyTable
      * @memberof bibliographyHelpers
-     */ 
+     */
     bibliographyHelpers.stopBibliographyTable = function () {
         jQuery('#bibliography').dataTable().fnDestroy();
     };
     /** Start the interactive parts of the bibliography table.
      * @function startBibliographyTable
      * @memberof bibliographyHelpers
-     */ 
+     */
     bibliographyHelpers.startBibliographyTable = function () {
         // The sortable table seems not to have an option to accept new data added to the DOM. Instead we destroy and recreate it.
         jQuery('#bibliography').dataTable({
@@ -1932,15 +1951,15 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         jQuery('#bibliography_filter input').attr('placeholder', gettext('Search for Bibliography'));
 
         jQuery('#bibliography_filter input').unbind('focus, blur');
-        jQuery('#bibliography_filter input').bind('focus', function() {
+        jQuery('#bibliography_filter input').bind('focus', function () {
             jQuery(this).parent().addClass('focus');
         });
-        jQuery('#bibliography_filter input').bind('blur', function() {
+        jQuery('#bibliography_filter input').bind('blur', function () {
             jQuery(this).parent().removeClass('focus');
         });
 
         var autocomplete_tags = [];
-        jQuery('#bibliography .fw-searchable').each(function() {
+        jQuery('#bibliography .fw-searchable').each(function () {
             autocomplete_tags.push(this.innerText);
         });
         autocomplete_tags = _.uniq(autocomplete_tags);
@@ -1951,7 +1970,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
     /** Initialize the bibliography table and bind interactive parts.
      * @function init
      * @memberof bibliographyHelpers
-     */     
+     */
     bibliographyHelpers.init = function () {
 
         jQuery(document).on('click', '.delete-bib', function () {
@@ -2006,25 +2025,29 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             var action_name = jQuery(this).attr('data-action'),
                 ids = [];
 
-            if ('' == action_name || 'undefined' == typeof (action_name)) { return; }
+            if ('' == action_name || 'undefined' == typeof (action_name)) {
+                return;
+            }
 
             jQuery('.entry-select:checked').each(function () {
                 ids[ids.length] = jQuery(this).attr('data-id');
             });
 
-            if (0 == ids.length) { return; }
+            if (0 == ids.length) {
+                return;
+            }
 
             switch (action_name) {
-                case 'delete':
-                    bibliographyHelpers.deleteBibEntryDialog(ids);
-                    break;
-                case 'export':
-                    bibliographyHelpers.exportBibliographyBL(ids);
-                    break;
+            case 'delete':
+                bibliographyHelpers.deleteBibEntryDialog(ids);
+                break;
+            case 'export':
+                bibliographyHelpers.exportBibliographyBL(ids);
+                break;
             }
         });
 
-        bibliographyHelpers.getBibDB(function(){
+        bibliographyHelpers.getBibDB(function () {
             if (window.hasOwnProperty('theDocument')) {
                 citationHelpers.formatCitationsInDoc();
             }
@@ -2033,7 +2056,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
     /** Bind the init function to jQuery(document).ready.
      * @function bind
      * @memberof bibliographyHelpers
-     */ 
+     */
     bibliographyHelpers.bind = function () {
         jQuery(document).ready(function () {
 

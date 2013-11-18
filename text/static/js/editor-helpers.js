@@ -20,13 +20,17 @@
  */
 (function () {
     var exports = this,
-     /** Helper functions for the editor. TODO 
+     /** Helper functions for the editor.
      * @namespace editorHelpers
      */ 
         editorHelpers = {};
         
 
-
+    /** Select the metadata options in the menu that are set as enabled in theDocument.settings.metadata. NAME_OF_METADATA.  
+     * Then layout the selected metadata on the page using the values  from theDocument.metadata.NAME_OF_METADATA.
+     * @function layoutMetadata
+     * @memberof editorHelpers 
+     */ 
     editorHelpers.layoutMetadata = function () {
         var i;
         jQuery('.metadata-menu-item').removeClass('selected');
@@ -44,23 +48,34 @@
         }));
     };
 
+    /** Turn enabled metadata off and disabled metadata on, Function is bound to clicking option in metadata menu. 
+     * @function switchMetadata
+     * @memberof editorHelpers
+     */  
     editorHelpers.switchMetadata = function () {
         var theMetadata = jQuery(this).attr('data-metadata');
-        editorHelpers.switchMetadataDocumentData(theMetadata);
-        editorHelpers.setMetadataDisplay(theMetadata);
-    };
-
-    editorHelpers.switchMetadataDocumentData = function (theMetadata) {
         editorHelpers.setDocumentData('settings.metadata.' + theMetadata, !
             theDocument.settings.metadata[
                 theMetadata]);
+        editorHelpers.setMetadataDisplay(theMetadata);
     };
 
+    /** Layout metadata and then mark the document as having changed.
+     * @function setMetadataDisplay
+     * @memberof editorHelpers
+     */
     editorHelpers.setMetadataDisplay = function () {
         editorHelpers.layoutMetadata();
         editorHelpers.documentHasChanged();
     };
 
+    
+    /** Fill the editor page with the document data from the server.
+     * This is done after the document data is loaded from the server. 
+     * @function fillEditorPage
+     * @memberof editorHelpers
+     * @param aDocument The document object as it comes from the server.
+     */
     editorHelpers.fillEditorPage = function (aDocument) {
         var DEFAULTS, i;
 
@@ -107,16 +122,25 @@
             .title);
     };
 
-    /** Called whenever anything has changed in the document text. Makes sure that saving and synchronizing with peers happens. */
+    /** Called whenever anything has changed in the document text. Makes sure that saving and synchronizing with peers happens.
+     * @function documentHasChanged
+     * @memberof editorHelpers
+     */
     editorHelpers.documentHasChanged = function () {
         theDocument.changed = true; // For document saving
         theDocument.touched = true; // For synchronizing with other viewers
         jQuery('.save').removeClass('disabled');
     };
 
+    /** Functions related to taking document data from theDocument.* and displaying it (ie making it part of the DOM structure). 
+     * @namespace editorHelpers.setDisplay 
+     */
     editorHelpers.setDisplay = {};
 
-
+    /** Set the document style.
+     * @function settingsDocumentstyle
+     * @memberof editorHelpers.setDisplay
+     * @param theValue The name of the document style to switch to.*/
     editorHelpers.setDisplay.settingsDocumentstyle = function (theValue) {
 
         jQuery("#header-navigation .style.selected").removeClass('selected');
@@ -149,7 +173,10 @@
         }, 200);
         commentHelpers.layoutComments();
     };
-
+    /** Set the document style.
+     * @function settingsCitationstyle
+     * @memberof editorHelpers.setDisplay
+     * @param theValue The name of the citation style to switch to.*/
     editorHelpers.setDisplay.settingsCitationstyle = function (theValue) {
         jQuery("#header-navigation .citationstyle.selected").removeClass(
             'selected');
@@ -158,7 +185,10 @@
         //console.log('editor-helpers.js');
         citationHelpers.formatCitationsInDoc();
     };
-
+    /** Set the document's paper size.
+     * @function settingsPapersize
+     * @memberof editorHelpers.setDisplay
+     * @param theValue The paper height number associated with the paper size (A4: 1117, US Letter: 1020). */
     editorHelpers.setDisplay.settingsPapersize = function (theValue) {
         jQuery("#header-navigation .papersize.selected").removeClass(
             'selected');
@@ -177,7 +207,10 @@
         }, 100);
 
     };
-
+    /** Set the document id.
+     * @function id
+     * @memberof editorHelpers.setDisplay
+     * @param theValue The id of the current document.*/
     editorHelpers.setDisplay.id = function (theValue) {
         if (0 === theValue) {
             jQuery('.savecopy').addClass('disabled');
@@ -186,7 +219,10 @@
             jQuery('.savecopy').removeClass('disabled');
         }
     };
-
+    /** Set tracking to be on or off.
+     * @function settingsTracking
+     * @memberof editorHelpers.setDisplay
+     * @param theValue false: tracking is off, true: tracking is on.*/
     editorHelpers.setDisplay.settingsTracking = function (theValue) {
         if (theValue) {
             jQuery('.ice-track').addClass('selected');
@@ -195,7 +231,10 @@
             jQuery('.ice-track').removeClass('selected');
         }
     };
-
+    /** Show or hide tracked changes.
+     * @function settingsDocumentstyle
+     * @memberof editorHelpers.setDisplay
+     * @param theValue false: changes are not shown, true: changes are shown.*/
     editorHelpers.setDisplay.settingsTrackingShow = function (theValue) {
         if (theValue) {
             jQuery('.ice-display').addClass('selected');
@@ -206,17 +245,27 @@
             jQuery('#flow').addClass('CT-hide');
         }
     };
-
+     /** Add the document contents/body text.
+     * @function contents
+     * @memberof editorHelpers.setDisplay
+     * @param theValue The HTML of the contents/main body.*/
     editorHelpers.setDisplay.contents = function (theValue) {
         document.getElementById('document-contents').innerHTML = theValue;
     };
 
+    /** Set the document title on the page.
+     * @function metadataTitle
+     * @memberof editorHelpers.setDisplay
+     * @param theValue The HTML of the title.*/
     editorHelpers.setDisplay.metadataTitle = function (theValue) {
         var titleEl = document.getElementById('document-title')
         titleEl.innerHTML = theValue;
         editorHelpers.setDisplay.document('title', titleEl.innerText.trim());
     };
-
+    /** Set the document title in the menu.
+     * @function title
+     * @memberof editorHelpers.setDisplay
+     * @param theValue The text of the title.*/
     editorHelpers.setDisplay.title = function (theValue) {
         var theTitle = theValue;
         if (theTitle.length === 0) {
@@ -226,9 +275,12 @@
         jQuery('#header h1').html(theTitle);
     };
 
-
+    /** A dictionary linking field names with set display functions. 
+     * @constant  FIELDS
+     * @memberof editorHelpers.setDisplay
+     */
     editorHelpers.setDisplay.FIELDS = {
-        // A list of the functions used to update various fields to e called by editorHelpers.setDisplay.document
+        // A list of the functions used to update various fields to be called by editorHelpers.setDisplay.document
         'title': editorHelpers.setDisplay.title,
         'metadata.title': editorHelpers.setDisplay.metadataTitle,
         'contents': editorHelpers.setDisplay.contents,
@@ -243,28 +295,38 @@
         'settings.metadata.keywords': editorHelpers.layoutMetadata,
         'id': editorHelpers.setDisplay.id
     };
-
+    /** Set any field on the editor page
+     * @function document
+     * @memberof editorHelpers.setDisplay
+     * @param theName The name of the field.
+     * @param theValue The value of the field.*/
     editorHelpers.setDisplay.document = function (theName, theValue) {
         editorHelpers.setDisplay.FIELDS[theName](theValue);
     };
-
+    /** A list of fields contain editable text.
+     * @constant  TEXT_FIELDS
+     * @memberof editorHelpers
+     */
     editorHelpers.TEXT_FIELDS = ['contents', 'metadata.title',
         'metadata.subtitle', 'metadata.abstract', 'metadata.authors', 'metadata.keywords'
     ];
 
+    /** Sets a variable in theDocument to a value and optionally sends a change notification to other editors.
+     * This notification is used in case of simple fields (all fields that are not individually editable in the text editor 
+     * -- citation style, set tracking, etc. but not the document title) to make other clients copy the same values.
+     * @function setDocumentData
+     * @memberof editorHelpers
+     * @param theName The name of the variable.
+     * @param newValue The value that the variable is to be set to.
+     * @param sendChange Whether a change notification should be sent to other clients. Default is true.
+     */ 
     editorHelpers.setDocumentData = function (theName, newValue,
          sendChange) {
         var theChange, currentValue;
-        //if (undefined === aUserId) {
-        //    aUserId = theUser.id;
-        //}
         if (undefined === sendChange) {
             sendChange = true;
         }
         currentValue = eval('theDocument.' + theName);
-       // if (editorHelpers.TEXT_FIELDS.indexOf(theName) != -1) {
-       //     return false;
-        //}
 
         if ('string' === typeof (newValue)) {
             // TODO: Using eval and escaping-unescaping is not very beautiful. If possible this should be done differently.
@@ -293,70 +355,11 @@
         return true;
     };
     
-    /*
-    editorHelpers.setDiffChange = function (aUserId, field, diffs) {
-        var theElement;
-        if (field === 'contents') {
-            theElement = document.getElementById('document-contents');
-        }
-        else if (field === 'metadata.title') {
-            theElement = document.getElementById('document-title');
-        }
-        else {
-            theElement = document.getElementById(field.replace(".", "-"));
-        }
-        var dmp = new diff_match_patch();
-        editorHelpers.getUpdatesFromInputFields();
-        var savedSel = rangy.saveSelection();
-        /* option 1 
-        if (savedSel.rangeInfos[0].collapsed) {
-            document.getElementById(savedSel.rangeInfos[0].markerId).outerHTML =
-                '\u59fa';
-        }
-        else {
-            document.getElementById(savedSel.rangeInfos[0].startMarkerId).outerHTML =
-                '\u59fb';
-            document.getElementById(savedSel.rangeInfos[0].endMarkerId).outerHTML =
-                '\u59fa';
-        }
-        var theValue = dmp.patch_apply(
-            dmp.patch_make(diffs), theElement.innerHTML)[0];
-        if (savedSel.rangeInfos[0].collapsed) {
-            theValue = theValue.replace(/\u59fa/g, '<span id="' + savedSel.rangeInfos[
-                0].markerId + '"></span>');
-        }
-        else {
-            theValue = theValue.replace(/\u59fb/g, '<span id="' + savedSel.rangeInfos[
-                0].startMarkerId + '"></span>');
-            theValue = theValue.replace(/\u59fa/g, '<span id="' + savedSel.rangeInfos[
-                0].endMarkerId + '"></span>');
-        }
-        /* end option 1 */
-        /* option 2 
-        var currentValue = eval("theDocument."+field);
-        var caretDiff = dmp.diff_main(currentValue,theElement.innerHTML);
-        var theValueWithoutCaret = dmp.patch_apply(
-            dmp.patch_make(diffs), currentValue)[0];
-        var theValue = dmp.patch_apply(
-            dmp.patch_make(caretDiff), theValueWithoutCaret)[0];
-         end option 2 
-        editorHelpers.setDisplay.document(field, theValue);
-        rangy.restoreSelection(savedSel);
-        editorHelpers.getUpdatesFromInputFields(false, true, aUserId);
-    };*/
-
-   /* editorHelpers.applyDocumentDataChanges = function (data) {
-            if (data.type=='transform') {
-                return false;
-            }
-            editorHelpers.getUpdatesFromInputFields();
-            editorHelpers.setDocumentData(data.change[2], data.change[3][1]);
-            editorHelpers.setDisplay.document(data.change[2], data.change[3]
-                [1]);
-            editorHelpers.getUpdatesFromInputFields(false, true, data.change[
-                0]);
-    };*/
-
+    /** Copy editable fields (title, body/contents, keywords, abstract, etc.) from the HTML and store the values inside theDocument.
+     * @function getUpdatesFromInputFields
+     * @memberof editorHelpers
+     * @param callback Callback to be called after copying data (optional).
+     */ 
     editorHelpers.getUpdatesFromInputFields = function (callback) {
         
         editorHelpers.setDocumentData('metadata.title', jQuery(
@@ -374,7 +377,12 @@
             callback();
         }
     };
-
+    /** Will save the current Document to the server if theDocument.enableSave is true. 
+     * In collaborative mode, only the first client to connect will have theDocument.enableSave set to true.
+     * @function saveDocument
+     * @memberof editorHelpers
+     * @param callback Callback to be called after copying data (optional).
+     */ 
     editorHelpers.saveDocument = function (callback) {
         var documentData = {};
 
@@ -384,15 +392,6 @@
         // Because we don't want two entries in the history, we avoid touching the history for the text-only version.
 
         theDocument.title = jQuery('#document-title').text().trim();
-
-       /* if (0 === theDocument.lastHistory.length) {
-
-            if (callback) {
-                callback();
-            }
-            return;
-        }*/
-
 
         if (theDocument.enableSave) {
             documentData.settings = JSON.stringify(theDocument.settings);
@@ -416,7 +415,10 @@
         return true;
 
     };
-
+    /** Show or hide placeholders ('Contents...', 'Title...', etc.) depending on whether these elements are empty or not. 
+     * @function saveDocument
+     * @memberof editorHelpers
+     */ 
     editorHelpers.setPlaceholders = function (currentElement) {
         var placeHolderCss = '';
         if (jQuery('#document-title')[0].innerText.length === 0 &&
@@ -456,10 +458,6 @@
         }
         jQuery('#placeholderStyles')[0].innerHTML = placeHolderCss;
     };
-
-
-
-
 
     exports.editorHelpers = editorHelpers;
 

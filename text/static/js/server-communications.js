@@ -274,20 +274,20 @@
     };
 
     /** Tries to measure the time offset between cleint and server as change diffs will be submitted using the clients time. */
-    serverCommunications.getServerTimeoffset = function (clientOffsetTimeTrials) {
+    serverCommunications.getClientTimeOffset = function (clientOffsetTimeTrials) {
         var request = new XMLHttpRequest(), startTime = Date.now();
-        r.open('HEAD', '/hello-tornado', false);
-        r.onreadystatechange = function () {
+        request.open('HEAD', '/hello-tornado', false);
+        request.onreadystatechange = function () {
             var timeNow = Date.now(), 
-                latency = timeNow - start, 
-                serverTime = new Date(r.getResponseHeader('DATE')), 
+                latency = timeNow - startTime, 
+                serverTime = new Date(request.getResponseHeader('DATE')), 
                 offset = (serverTime.getTime() + (latency / 2)) - timeNow;
             if (!clientOffsetTimeTrials) {
                 clientOffsetTimeTrials = [];
             }
             clientOffsetTimeTrials.push(offset);
             if (clientOffsetTimeTrials.length < 5) {
-                editorHelpers.getServerTimeoffset(clientOffsetTimeTrials);
+                serverCommunications.getClientTimeOffset(clientOffsetTimeTrials);
             } else {
                 var total = clientOffsetTimeTrials.reduce(function(a, b) { return a + b });
                 window.clientOffsetTime = parseInt(total / clientOffsetTimeTrials.length);
@@ -308,7 +308,7 @@
                 documentId = parseInt(pathnameParts[pathnameParts.length -
                     2], 10);
 
-            serverCommunications.getServerTimeoffset();
+            serverCommunications.getClientTimeOffset();
             
             if (isNaN(documentId)) {
                 documentId = 0;

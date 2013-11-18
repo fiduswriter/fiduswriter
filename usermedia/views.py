@@ -66,7 +66,6 @@ def save_js(request):
             image.image_cat = request.POST['imageCat']
         if 'image' in request.FILES:
             image.image = request.FILES['image']
-
         image.save()
         response['values'] = {
             'pk': image.id,

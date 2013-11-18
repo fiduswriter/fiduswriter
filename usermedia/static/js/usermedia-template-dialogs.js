@@ -81,11 +81,11 @@ var tmp_usermedia_category_list_item = _.template('\
 var tmp_usermedia_upload = _.template('<div id="uploadimage" class="fw-media-uploader" title="<%- action %>">\
     <form action="#" method="post" class="usermediaUploadForm">\
         <div>\
-            <input name="title" class="fw-media-title fw-meida-form" type="text" placeholder="' + gettext('Insert a title') + '" value="<%- title %>" />\
+            <input name="title" class="fw-media-title fw-media-form" type="text" placeholder="' + gettext('Insert a title') + '" value="<%- title %>" />\
             <button type="button" class="fw-media-select-button fw-button fw-light">'
                 + gettext('Select a file') +
             '</button>\
-            <input name="image" type="file" class="fw-media-file-input fw-meida-form">\
+            <input name="image" type="file" class="fw-media-file-input fw-media-form">\
         </div>\
         <div class="figure-preview"><div>\
             <% if(image) { %><img src="<%- image %>" /><% } %>\
@@ -100,7 +100,7 @@ var tmp_usermedia_upload_category = _.template('<% if(0 < categories.length) { %
                 <label class="fw-checkable fw-checkable-label<%- cat.checked %>" for="imageCat<%- cat.id %>">\
                     <%- cat.category_title %>\
                 </label>\
-                <input class="fw-checkable-input fw-meida-form entry-cat" type="checkbox"\
+                <input class="fw-checkable-input fw-media-form entry-cat" type="checkbox"\
                     id="imageCat<%- cat.id %>" name="imageCat" value="<%- cat.id %>"<%- cat.checked %>>\
             <% }); %>\
         </div>\

@@ -44,7 +44,7 @@ class Image(models.Model):
     file_type = models.CharField(max_length=20,blank=True,null=True)
     height = models.IntegerField(blank=True,null=True)
     width = models.IntegerField(blank=True,null=True)
-    checksum = models.IntegerField(max_length=50, default=0)
+    checksum = models.BigIntegerField(max_length=50, default=0)
     
     
     def __unicode__(self):

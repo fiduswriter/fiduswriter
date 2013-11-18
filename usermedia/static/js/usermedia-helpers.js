@@ -27,6 +27,7 @@
         usermediaHelpers = {};
 
     usermediaHelpers.createImage = function (post_data) {
+        console.log(post_data);
         $.activateWait();
         $.ajax({
             url: '/usermedia/save/',
@@ -185,7 +186,7 @@
 
         formValues.append('id', id);
 
-        jQuery('.fw-meida-form').each(function () {
+        jQuery('.fw-media-form').each(function () {
             var $this = jQuery(this);
             var the_name = $this.attr('name') || $this.attr('data-field-name');
             var the_type = $this.attr('type') || $this.attr('data-type');
@@ -256,7 +257,7 @@
             'title': title,
             'thumbnail': thumbnail,
             'image': image,
-            'categories': tmp_usermedia_upload_categoriy({
+            'categories': tmp_usermedia_upload_category({
                 'categories': iCats,
                 'fieldTitle': gettext('Select categories')
             })

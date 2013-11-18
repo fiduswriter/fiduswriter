@@ -207,23 +207,15 @@ var tmp_eitheror_tr = _.template('<tr class="eitheror">\
         </th>\
         <%= inputForm %>\
     </tr>');
-/** Dictionary of date selection options for bibliography item editor (localized). */
-var date_format = {
-    'y': gettext('Year'),
-    'y/y': gettext('Year - Year'),
-    'my': gettext('Month/Year'),
-    'my/my': gettext('M/Y - M/Y'),
-    'mdy': gettext('Month/Day/Year'),
-    'mdy/mdy': gettext('M/D/Y - M/D/Y')
-};
+
 /** A template of a date input row of the bibliography item edit form. */
 var tmp_dateinput_tr = _.template('<tr class="date-input-tr" data-format="<%= format %>">\
         <th>\
             <div class="fw-data-format-pulldown fw-bib-form-pulldown">\
-                <label><%- fieldTitle %> <span>(<%- date_format[format] %>)</span></label>\
+                <label><%- fieldTitle %> <span>(<%- BibliographyHelpers.date_format[format] %>)</span></label>\
                 <span class="icon-down-dir"></span>\
                 <div class="fw-pulldown fw-left">\
-                    <ul><% _.each(date_format, function(format_title, key) { %>\
+                    <ul><% _.each(BibliographyHelpers.date_format, function(format_title, key) { %>\
                         <li>\
                             <span class="fw-pulldown-item<% if(key == format) { %> selected<% } %>"\
                                 data-value="<%= key %>">\

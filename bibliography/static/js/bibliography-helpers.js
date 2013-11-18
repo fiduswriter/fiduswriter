@@ -29,7 +29,18 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
   * @namespace bibliographyHelpers
   */
         bibliographyHelpers = {};
-    
+
+        
+    /** Dictionary of date selection options for bibliography item editor (localized). */
+    bibliographyHelpers.date_format = {
+        'y': gettext('Year'),
+        'y/y': gettext('Year - Year'),
+        'my': gettext('Month/Year'),
+        'my/my': gettext('M/Y - M/Y'),
+        'mdy': gettext('Month/Day/Year'),
+        'mdy/mdy': gettext('M/D/Y - M/D/Y')
+    };        
+        
 /** Converts a bibliography item as it arrives from the server to a BibDB object. 
 * @function serverBibItemToBibDB
 * @memberof bibliographyHelpers

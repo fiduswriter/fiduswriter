@@ -92,6 +92,9 @@ class Command(BaseCommand):
 
 class HelloHandler(RequestHandler):
 
+    def head(self):
+        self.finish()
+        
     def get(self):
         self.write('Hello from tornado')
 

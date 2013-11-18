@@ -343,7 +343,7 @@
             }
             //diff = [currentValue, newValue];
         
-            theChange = [theName, newValue, new Date().getTime()];
+            theChange = [theName, newValue, new Date().getTime()+window.clientOffsetTime];
             console.log('sending transform')
             if (sendChange) {
                 serverCommunications.send({
@@ -458,7 +458,7 @@
         }
         jQuery('#placeholderStyles')[0].innerHTML = placeHolderCss;
     };
-
+    
     exports.editorHelpers = editorHelpers;
 
 }).call(this);

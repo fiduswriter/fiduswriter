@@ -96,7 +96,7 @@
     };
     
     serverCommunications.addCurrentToTextChangeList = function () {
-        theDocument.textChangeList.push([document.getElementById('document-editable').cloneNode(true),new Date().getTime()]);
+        theDocument.textChangeList.push([document.getElementById('document-editable').cloneNode(true),new Date().getTime()+window.clientOffsetTime]);
     };
     
     
@@ -130,7 +130,7 @@
         
         var thePackage = {
             type: 'diff',
-            time: new Date().getTime(), 
+            time: new Date().getTime() + window.clientOffsetTime, 
             session: theDocument.sessionId, 
             diff: theDiff,
             features: [containsCitation, containsEquation, containsComment]
@@ -182,7 +182,7 @@
             }            
             theDocument.usedDiffs.push(newestDiffs[i]);
         }
-        theDocument.textChangeList.push([tempPatchedNode,new Date().getTime()]);
+        theDocument.textChangeList.push([tempPatchedNode,new Date().getTime()+window.clientOffsetTime]);
         // Now that the tempPatchedNode represents what the editor should look like, go ahead and apply only the differences, if there are any.
         
         applicableDiffs = domDiff.diff(document.getElementById('document-editable'), tempPatchedNode);
@@ -210,7 +210,6 @@
     
     serverCommunications.incorporateUpdates = function () {
         if (theDocument.touched) {
-            console.log('making diff')
             theDocument.touched = false;
             serverCommunications.makeDiff();
         } else if (theDocument.newDiffs.length > 0) {
@@ -274,15 +273,43 @@
         }, 20000);
     };
 
+    /** Tries to measure the time offset between cleint and server as change diffs will be submitted using the clients time. */
+    serverCommunications.getServerTimeoffset = function (clientOffsetTimeTrials) {
+        var request = new XMLHttpRequest(), startTime = Date.now();
+        r.open('HEAD', '/hello-tornado', false);
+        r.onreadystatechange = function () {
+            var timeNow = Date.now(), 
+                latency = timeNow - start, 
+                serverTime = new Date(r.getResponseHeader('DATE')), 
+                offset = (serverTime.getTime() + (latency / 2)) - timeNow;
+            if (!clientOffsetTimeTrials) {
+                clientOffsetTimeTrials = [];
+            }
+            clientOffsetTimeTrials.push(offset);
+            if (clientOffsetTimeTrials.length < 5) {
+                editorHelpers.getServerTimeoffset(clientOffsetTimeTrials);
+            } else {
+                var total = clientOffsetTimeTrials.reduce(function(a, b) { return a + b });
+                window.clientOffsetTime = parseInt(total / clientOffsetTimeTrials.length);
+                delete clientOffsetTimeTrials;
+            }
+        };
+        request.send(null);
+    };    
+    
+    
 
     serverCommunications.bind = function () {
         window.theDocument = undefined;
         window.theUser = undefined;
+        window.clientOffsetTime = 0;
         jQuery(document).ready(function () {
             var pathnameParts = window.location.pathname.split('/'),
                 documentId = parseInt(pathnameParts[pathnameParts.length -
                     2], 10);
 
+            serverCommunications.getServerTimeoffset();
+            
             if (isNaN(documentId)) {
                 documentId = 0;
             }

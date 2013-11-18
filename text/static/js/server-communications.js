@@ -183,6 +183,12 @@
             theDocument.usedDiffs.push(newestDiffs[i]);
         }
         theDocument.textChangeList.push([tempPatchedNode,new Date().getTime()+window.clientOffsetTime]);
+        
+        // If we have keept more than 10 old document versions, discard the first one. We should never need that older versions anyway.
+        if (theDocument.textChangeList.length > 10) {
+            theDocument.textChangeList.shift();
+        }
+        
         // Now that the tempPatchedNode represents what the editor should look like, go ahead and apply only the differences, if there are any.
         
         applicableDiffs = domDiff.diff(document.getElementById('document-editable'), tempPatchedNode);
@@ -232,7 +238,7 @@
         clearInterval(serverCommunications.collaborateTimer);
         theDocument.collaborativeMode = false;
     };
-
+    /** When the connection to the server has been lost, notify the user and ask to reload page. */
     serverCommunications.noConnectionToServer = function () {
 
         var noConnectionDialog = document.createElement('div');

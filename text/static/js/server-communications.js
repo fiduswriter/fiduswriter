@@ -108,7 +108,7 @@
             console.log('zero length');
             return;
         }
-        console.log(theDiff);
+        //console.log(theDiff);
         domDiff.apply(serverCommunications.diffNode, theDiff);
         for (i=0;i<theDiff.length;i++) {
             if (theDiff[i].hasOwnProperty('element')) {

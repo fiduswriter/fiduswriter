@@ -101,6 +101,7 @@ class DocumentWS(BaseRedisWebSocketHandler):
             if participants == None or len(participants.keys()) == 0:
                 participants = {}
                 self.id = 0
+                response['control']=True
             else:
                 self.id = int(max(participants))+1
             participants[self.id] = {

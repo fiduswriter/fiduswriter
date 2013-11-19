@@ -1,1 +1,0 @@
-fiduswriter/wsgi.py

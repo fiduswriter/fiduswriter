@@ -20,9 +20,9 @@
  */
 (function () {
     var exports = this,
-     /** Sets up communicating with server (retrieving document, saving, collaboration, etc.). TODO 
-     * @namespace serverCommunications
-     */ 
+        /** Sets up communicating with server (retrieving document, saving, collaboration, etc.). TODO 
+         * @namespace serverCommunications
+         */
         serverCommunications = {};
 
     serverCommunications.send = function (data) {
@@ -42,8 +42,7 @@
             editorHelpers.fillEditorPage(data.document);
             if (data.hasOwnProperty('user')) {
                 theUser = data.user;
-            }
-            else {
+            } else {
                 theUser = theDocument.owner;
             }
             jQuery.event.trigger({
@@ -54,8 +53,7 @@
 
             if (data.hasOwnProperty('control')) {
                 theDocument.enableSave = true;
-            }
-            else {
+            } else {
                 theDocument.enableSave = false;
             }
             break;
@@ -63,9 +61,9 @@
             theDocument.newDiffs.push(data);
             break;
         case 'transform':
-            editorHelpers.setDocumentData(data.change[0],data.change[1],false);
-            editorHelpers.setDisplay.document(data.change[0],data.change[1]);
-            break;            
+            editorHelpers.setDocumentData(data.change[0], data.change[1], false);
+            editorHelpers.setDisplay.document(data.change[0], data.change[1]);
+            break;
         case 'take_control':
             theDocument.enableSave = true;
         }
@@ -78,15 +76,14 @@
         });
         if (participant_list.length > 1 && (!theDocument.collaborativeMode)) {
             serverCommunications.startCollaborativeMode();
-        }
-        else if (participant_list.length === 1 && theDocument.collaborativeMode) {
+        } else if (participant_list.length === 1 && theDocument.collaborativeMode) {
             serverCommunications.stopCollaborativeMode();
         }
         chatHelpers.updateParticipantList(participant_list);
     };
-    
-    var metadataFields = ['title','subtitle','abstract','authors','keywords'];
-    
+
+    var metadataFields = ['title', 'subtitle', 'abstract', 'authors', 'keywords'];
+
     serverCommunications.resetTextChangeList = function () {
         theDocument.newDiffs = [];
         theDocument.usedDiffs = [];
@@ -94,23 +91,26 @@
         serverCommunications.addCurrentToTextChangeList();
         serverCommunications.diffNode = document.getElementById('document-editable').cloneNode(true); // a node against which changes are tested constantly.
     };
-    
-    serverCommunications.addCurrentToTextChangeList = function () {
-        theDocument.textChangeList.push([document.getElementById('document-editable').cloneNode(true),new Date().getTime()+window.clientOffsetTime]);
-    };
-    
-    
-    serverCommunications.makeDiff = function () {
-        var theDiff = domDiff.diff(serverCommunications.diffNode,document.getElementById('document-editable')), 
-            containsCitation = 0, containsEquation = 0, containsComment = 0, diffText = '', i;
 
-        if (theDiff.length===0) {
-            console.log('zero length');
+    serverCommunications.addCurrentToTextChangeList = function () {
+        theDocument.textChangeList.push([document.getElementById('document-editable').cloneNode(true), new Date().getTime() + window.clientOffsetTime]);
+    };
+
+
+    serverCommunications.makeDiff = function () {
+        var theDiff = domDiff.diff(serverCommunications.diffNode, document.getElementById('document-editable')),
+            containsCitation = 0,
+            containsEquation = 0,
+            containsComment = 0,
+            diffText = '',
+            i;
+
+        if (theDiff.length === 0) {
             return;
         }
         //console.log(theDiff);
         domDiff.apply(serverCommunications.diffNode, theDiff);
-        for (i=0;i<theDiff.length;i++) {
+        for (i = 0; i < theDiff.length; i++) {
             if (theDiff[i].hasOwnProperty('element')) {
                 diffText = theDiff[i]['element'];
             } else if (theDiff[i].hasOwnProperty('oldValue') && theDiff[i].hasOwnProperty('newValue')) {
@@ -125,52 +125,58 @@
             }
             if (diffText.indexOf('comment') != -1) {
                 containsComment = 1;
-            }            
+            }
         }
-        
+
         var thePackage = {
             type: 'diff',
-            time: new Date().getTime() + window.clientOffsetTime, 
-            session: theDocument.sessionId, 
+            time: new Date().getTime() + window.clientOffsetTime,
             diff: theDiff,
             features: [containsCitation, containsEquation, containsComment]
         };
-        
+
         serverCommunications.send(thePackage);
         theDocument.newDiffs.push(thePackage);
         serverCommunications.orderAndApplyChanges();
     };
-    
+
     serverCommunications.orderAndApplyChanges = function () {
-        var newestDiffs = [], patchDiff, tempCombinedNode, tempPatchedNode, i, applicableDiffs, containsCitation = false, containsEquation = false, containsComment = false;
-        
+        var newestDiffs = [],
+            patchDiff, tempCombinedNode, tempPatchedNode, i, applicableDiffs, containsCitation = false,
+            containsEquation = false,
+            containsComment = false;
+
         while (theDocument.newDiffs.length > 0) {
             newestDiffs.push(theDocument.newDiffs.pop());
         }
-        newestDiffs = _.sortBy(newestDiffs,function(diff){return diff.time;});
-        
-        
-        while (newestDiffs[0].time < theDocument.textChangeList[theDocument.textChangeList.length-1][1]) {
+        newestDiffs = _.sortBy(newestDiffs, function (diff) {
+            return diff.time;
+        });
+
+
+        while (newestDiffs[0].time < theDocument.textChangeList[theDocument.textChangeList.length - 1][1]) {
             // We receive a change timed before the last change we recorded, so we need to go further back.
             theDocument.textChangeList.pop();
-            if (theDocument.textChangeList.length===0) {
+            if (theDocument.textChangeList.length === 0) {
                 // We receive changes from before the first recorded version on this client. We need to reload the page.
                 location.reload();
             }
-            while(theDocument.usedDiffs[theDocument.usedDiffs.length-1].time > theDocument.textChangeList[theDocument.textChangeList.length-1][1]) {
+            while (theDocument.usedDiffs[theDocument.usedDiffs.length - 1].time > theDocument.textChangeList[theDocument.textChangeList.length - 1][1]) {
                 newestDiffs.push(theDocument.usedDiffs.pop());
             }
-            newestDiffs = _.sortBy(newestDiffs,function(diff){return diff.time;});
-                
+            newestDiffs = _.sortBy(newestDiffs, function (diff) {
+                return diff.time;
+            });
+
         }
-        
+
         // We create a temporary node that has been patched with all changes so
         // that only the things that need to change from the node in the DOM
         // structure have to be touched.
-        tempPatchedNode = theDocument.textChangeList[theDocument.textChangeList.length-1][0].cloneNode(true);
-        
+        tempPatchedNode = theDocument.textChangeList[theDocument.textChangeList.length - 1][0].cloneNode(true);
+
         for (i = 0; i < newestDiffs.length; i++) {
-            domDiff.apply(tempPatchedNode,newestDiffs[i].diff);
+            domDiff.apply(tempPatchedNode, newestDiffs[i].diff);
             if (newestDiffs[i].features[0]) {
                 containsCitation = true;
             }
@@ -179,24 +185,24 @@
             }
             if (newestDiffs[i].features[2]) {
                 containsComment = true;
-            }            
+            }
             theDocument.usedDiffs.push(newestDiffs[i]);
         }
-        theDocument.textChangeList.push([tempPatchedNode,new Date().getTime()+window.clientOffsetTime]);
-        
+        theDocument.textChangeList.push([tempPatchedNode, new Date().getTime() + window.clientOffsetTime]);
+
         // If we have keept more than 10 old document versions, discard the first one. We should never need that older versions anyway.
         if (theDocument.textChangeList.length > 10) {
             theDocument.textChangeList.shift();
         }
-        
+
         // Now that the tempPatchedNode represents what the editor should look like, go ahead and apply only the differences, if there are any.
-        
+
         applicableDiffs = domDiff.diff(document.getElementById('document-editable'), tempPatchedNode);
-        
+
         if (applicableDiffs.length > 0) {
-        
+
             domDiff.apply(document.getElementById('document-editable'), applicableDiffs);
-        
+
             // Also make sure that placeholders correspond to the current state of affairs
             editorHelpers.setPlaceholders();
             // If something was done about citations, reformat these.
@@ -213,7 +219,7 @@
             }
         }
     };
-    
+
     serverCommunications.incorporateUpdates = function () {
         if (theDocument.touched) {
             theDocument.touched = false;
@@ -230,7 +236,7 @@
                 serverCommunications.resetTextChangeList();
             }
         );
-        serverCommunications.collaborateTimer = setInterval(serverCommunications.incorporateUpdates,500);
+        serverCommunications.collaborateTimer = setInterval(serverCommunications.incorporateUpdates, 500);
         theDocument.collaborativeMode = true;
     };
 
@@ -281,12 +287,13 @@
 
     /** Tries to measure the time offset between cleint and server as change diffs will be submitted using the clients time. */
     serverCommunications.getClientTimeOffset = function (clientOffsetTimeTrials) {
-        var request = new XMLHttpRequest(), startTime = Date.now();
+        var request = new XMLHttpRequest(),
+            startTime = Date.now();
         request.open('HEAD', '/hello-tornado', false);
         request.onreadystatechange = function () {
-            var timeNow = Date.now(), 
-                latency = timeNow - startTime, 
-                serverTime = new Date(request.getResponseHeader('DATE')), 
+            var timeNow = Date.now(),
+                latency = timeNow - startTime,
+                serverTime = new Date(request.getResponseHeader('DATE')),
                 offset = (serverTime.getTime() + (latency / 2)) - timeNow;
             if (!clientOffsetTimeTrials) {
                 clientOffsetTimeTrials = [];
@@ -295,15 +302,17 @@
             if (clientOffsetTimeTrials.length < 5) {
                 serverCommunications.getClientTimeOffset(clientOffsetTimeTrials);
             } else {
-                var total = clientOffsetTimeTrials.reduce(function(a, b) { return a + b });
+                var total = clientOffsetTimeTrials.reduce(function (a, b) {
+                    return a + b
+                });
                 window.clientOffsetTime = parseInt(total / clientOffsetTimeTrials.length);
                 delete clientOffsetTimeTrials;
             }
         };
         request.send(null);
-    };    
-    
-    
+    };
+
+
 
     serverCommunications.bind = function () {
         window.theDocument = undefined;
@@ -315,7 +324,7 @@
                     2], 10);
 
             serverCommunications.getClientTimeOffset();
-            
+
             if (isNaN(documentId)) {
                 documentId = 0;
             }

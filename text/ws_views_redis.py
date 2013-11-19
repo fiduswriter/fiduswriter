@@ -134,7 +134,7 @@ class DocumentWS(BaseRedisWebSocketHandler):
                         "type": 'take_control'
                         }
                     self.write_message(chat)
-            else:
+            elif parsed["type"]=='chat' or parsed["session"] != self.id:
                 self.write_message(message.body)
             
     def on_message(self, message):
@@ -151,6 +151,7 @@ class DocumentWS(BaseRedisWebSocketHandler):
                 }
             self.send_updates(chat)
         elif parsed["type"]=='diff' or parsed["type"]=='transform':
+            parsed["session"] = self.id
             self.send_updates(parsed)
     
     def on_close(self):

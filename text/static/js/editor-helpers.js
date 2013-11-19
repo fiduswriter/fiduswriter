@@ -344,7 +344,7 @@
             //diff = [currentValue, newValue];
         
             theChange = [theName, newValue, new Date().getTime()+window.clientOffsetTime];
-            console.log('sending transform')
+
             if (sendChange) {
                 serverCommunications.send({
                     type: 'transform',

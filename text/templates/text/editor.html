@@ -10,7 +10,11 @@
         <script type="text/javascript">
             var mathjaxZipUrl = '{{ STATIC_URL }}zip/mathjax.zip';
             var staticUrl = '{{ STATIC_URL }}';
-
+            {% if WS_PORT %}
+                var websocketPort = {{WS_PORT}};
+            {% else %}
+                var websocketPort = location.port.length>0?location.port:'80';
+            {% endif %}
             var isChromeOrSafari = false;
 
             if(window.chrome) {

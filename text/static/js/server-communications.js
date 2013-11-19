@@ -328,8 +328,10 @@
             if (isNaN(documentId)) {
                 documentId = 0;
             }
-            window.ws = new WebSocket('ws://' + location.host +
-                '/ws/doc/' + documentId);
+            
+            window.ws = new WebSocket('ws://' + location.host.split(':')[0] + ':' + websocketPort +
+            '/ws/doc/' + documentId);
+            
             ws.onmessage = function (event) {
                 //console.log(event);
                 serverCommunications.receive(JSON.parse(event.data));

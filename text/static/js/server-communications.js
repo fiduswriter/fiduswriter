@@ -161,7 +161,7 @@
                 // We receive changes from before the first recorded version on this client. We need to reload the page.
                 location.reload();
             }
-            while (theDocument.usedDiffs[theDocument.usedDiffs.length - 1].time > theDocument.textChangeList[theDocument.textChangeList.length - 1][1]) {
+            while (theDocument.usedDiffs.length > 0 && theDocument.usedDiffs[theDocument.usedDiffs.length - 1].time > theDocument.textChangeList[theDocument.textChangeList.length - 1][1]) {
                 newestDiffs.push(theDocument.usedDiffs.pop());
             }
             newestDiffs = _.sortBy(newestDiffs, function (diff) {

@@ -1,6 +1,6 @@
 Django==1.6
 Pillow==2.2.1
-South==0.8.3
+South==0.8.2
 argparse==1.2.1
 dateutils==0.6.6
 distribute==0.7.3

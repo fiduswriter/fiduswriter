@@ -297,6 +297,7 @@ jQuery(document).bind('documentDataLoaded', function () {
                 /* Crtl + ? => show shortcuts */
             } else if (event.ctrlKey && event.which == 191) {
                 event.preventDefault();
+                
                 $().showShortcuts();
                 return false;
 

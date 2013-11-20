@@ -4,93 +4,13 @@
  * License: http://creativecommons.org/licenses/by/2.0/, no credit needed.
  */
 
-.help-underlay * {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-
-.help-underlay {
-  position: absolute;
-  background: #555;
-  background: rgba(170, 170, 170, 0.3);
-  visibility: hidden;
-  opacity: 0;
-  -webkit-transition: opacity .2s linear;
-  -moz-transition: opacity .2s linear;
-  -o-transition: opacity .2s linear;
-  transition: opacity .2s linear;
-  left: 0; right: 0; top: 0; bottom: 0;
-}
-
-.ie8 .help-underlay {
-  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(opacity=95)"; /* for IE8 in IE7 mode */
-  filter: alpha(opacity=95); /* for IE8 */
-  visibility: hidden;
-}
-
-.help-modal {
-  position: fixed;
-  z-index: 99999;
-  left: 0; right: 0; top: 0; bottom: 0;
-  width: 80%;
-  margin: auto;
-  background: #f2f2f2;
-  max-height: 80%;
-  overflow: auto;
-  font-family: Arial, sans-serif;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  -webkit-box-shadow: 0 4px 12px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.5);
-  box-shadow: 0 4px 12px rgba(0,0,0,.4), inset 0 1px 0 rgba(255,255,255,.5);
-  padding: 19px;
-}
-
-  .help-modal-content {
-    padding: 0 20px;
-  }
-
-  .help-close {
-    position: absolute;
-    top: 22px;
-    right: 19px;
-    cursor: pointer;
-  }
-  
-  .help-close:hover {
-    color: #a9abaa !important;
-  }
-
-    .help-close:hover {
-      color: #000;
-    }
-
-.help-modal h1 {
-  text-align: center;
-  font-size: 16px;
-  font-weight: 700;
-  padding-bottom: .4em;
-
-}
-
-  .help-modal h1 .help-key {
+  .help-key {
     float: none;
     line-height: 1.5;
     position: relative;
     bottom: 4px;
   }
 
-.help-isVisible {
-  opacity: 1;
-  visibility: visible;
-  height: auto;
-  z-index: 8888;
-}
-
-.ie8 .help-underlay.help-isVisible {
-  visibility: visible;
-}
 
 .help-list-wrap {
   overflow: hidden;

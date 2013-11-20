@@ -90,17 +90,23 @@ def get_documentlist_extra_js(request):
         content_type = 'application/json; charset=utf8',
         status=status
     )   
-
+import time
 def documents_list(request):
     documents = Document.objects.filter(Q(owner=request.user) | Q(accessright__user=request.user)).order_by('-updated')
     output_list=[]
     for document in documents :
         access_right = 'w' if document.owner == request.user else AccessRight.objects.get(user=request.user,document=document).rights
-        date_format = '%d/%m/%Y'
-        date_obj = dateutil.parser.parse(str(document.added))
-        added = date_obj.strftime(date_format)
-        date_obj = dateutil.parser.parse(str(document.updated))
-        updated = date_obj.strftime(date_format)
+        revisions = DocumentRevision.objects.filter(document=document)
+        revision_list = []
+        for revision in revisions:
+            revision_list.append({
+                'date': time.mktime(revision.date.utctimetuple()),
+                'note': revision.note,
+                'pk': revision.pk
+            })
+        
+        added = time.mktime(document.added.utctimetuple())
+        updated = time.mktime(document.updated.utctimetuple())
         is_owner = False
         if document.owner == request.user:
             is_owner = True
@@ -113,8 +119,8 @@ def documents_list(request):
             'owner_avatar': avatar_url(document.owner,80),
             'added': added,
             'updated': updated,
-            #'is_locked': document.is_locked(),
-            'rights': access_right
+            'rights': access_right,
+            'revisions': revision_list
         })
     return output_list
     
@@ -263,11 +269,8 @@ def import_js(request):
         document.settings = request.POST['settings']
         document.save()
         response['text_id'] = document.id
-        date_format = '%d/%m/%Y'
-        date_obj = dateutil.parser.parse(str(document.added))
-        response['added'] = date_obj.strftime(date_format)
-        date_obj = dateutil.parser.parse(str(document.updated))
-        response['updated'] = date_obj.strftime(date_format)
+        response['added'] = time.mktime(document.added.utctuple())
+        response['updated'] = time.mktime(document.updated.utctuple())
         status = 201
     return HttpResponse(
         json.dumps(response),

@@ -62,7 +62,7 @@ var tmp_usermedia_table = _.template('\
                         <span class="fw-inline"><%- width %> x <%- height %></span>\
                     </td>\
                     <td width="170" class="file_type ">\
-                        <span class="fw-inline"><%= commentHelpers.localizeDate(added, true) %></span>\
+                        <span class="fw-inline"><%= jQuery.localizeDate(added, true) %></span>\
                     </td>\
                     <td width="50" align="center">\
                         <span class="delete-image fw-inline fw-link-text" data-id="<%- id %>" data-title="<%- title %>">\

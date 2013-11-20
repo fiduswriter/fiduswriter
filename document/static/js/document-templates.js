@@ -44,10 +44,10 @@ var tmp_documents_list_item = _.template('\
                     </span>\
                 </td>\
                 <td width="115">\
-                    <span class="fw-inline"><%- aDocument.added %></span>\
+                    <span class="fw-inline"><%- jQuery.localizeDate(aDocument.added*1000, true) %></span>\
                 </td>\
                 <td width="115">\
-                    <span class="fw-inline"><%- aDocument.updated %></span>\
+                    <span class="fw-inline"><%- jQuery.localizeDate(aDocument.updated*1000, true) %></span>\
                 </td>\
                 <td width="170">\
                     <span>\

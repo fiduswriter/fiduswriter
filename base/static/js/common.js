@@ -105,7 +105,35 @@ jQuery.extend({
         $alert_box.fadeTo(fade_speed, 1, function() {
             jQuery(this).delay('2000').fadeOut(fade_speed, function() { jQuery(this).remove(); });
         });
-    }
+    },
+    /** Turn milliseconds since epoch (UTC) into a local date string.
+     * @memberof jQuery
+     * @param {number} milliseconds Number of milliseconds since epoch (1/1/1970 midnight, UTC).
+     * @param {boolean} sortable Whether the result should appear in a date only list. 
+     */    
+    'localizeDate': function (milliseconds, sortable) {
+        milliseconds = parseInt(milliseconds);
+        if (milliseconds > 0) {
+            var the_date = new Date(milliseconds);
+            if (true === sortable) {
+                var yyyy = the_date.getFullYear(),
+                    mm = the_date.getMonth() + 1,
+                    dd = the_date.getDate();
+
+                if (10 > mm) {
+                    mm = '0' + mm;
+                }
+
+                return yyyy + '/' + mm + '/' + dd;
+            }
+            else {
+                return the_date.toLocaleString();
+            }
+        }
+        else {
+            return '';
+        }
+    },
 });
 
 /** Things that need to happen whenever the window resizes */

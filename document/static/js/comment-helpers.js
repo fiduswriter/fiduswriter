@@ -25,30 +25,6 @@
          */
         commentHelpers = {};
 
-    commentHelpers.localizeDate = function (milliseconds, sortable) {
-        milliseconds = parseInt(milliseconds);
-        if (milliseconds > 0) {
-            var the_date = new Date(milliseconds);
-            if (true === sortable) {
-                var yyyy = the_date.getFullYear(),
-                    mm = the_date.getMonth() + 1,
-                    dd = the_date.getDate();
-
-                if (10 > mm) {
-                    mm = '0' + mm;
-                }
-
-                return yyyy + '/' + mm + '/' + dd;
-            }
-            else {
-                return the_date.toLocaleString();
-            }
-        }
-        else {
-            return '';
-        }
-    };
-
     commentHelpers.calculateCommentBoxOffset = function (referrer) {
 
         return referrer.getBoundingClientRect()['top'] + window.pageYOffset;

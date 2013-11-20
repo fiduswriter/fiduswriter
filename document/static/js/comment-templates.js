@@ -59,7 +59,7 @@ var tmp_single_comment = _.template(
         <div class="comment-user">\
             <img class="comment-user-avatar" src="<%= comment.getAttribute("data-user-avatar") %>">\
             <h5 class="comment-user-name"><%= comment.getAttribute("data-user-name") %></h5>\
-            <p class="comment-date"><%= commentHelpers.localizeDate(comment.getAttribute("data-date")) %></p>\
+            <p class="comment-date"><%= jQuery.localizeDate(comment.getAttribute("data-date")) %></p>\
         </div>\
         <div class="comment-text-wrapper">\
             <p class="comment-p"><%= comment.getAttribute("data-comment") %></p>\
@@ -89,7 +89,7 @@ var tmp_answer_comment = _.template(
         <div class="comment-user">\
             <img class="comment-user-avatar" src="<%= comment.getAttribute("data-comment-answer-"+answer+"-user-avatar") %>">\
             <h5 class="comment-user-name"><%= comment.getAttribute("data-comment-answer-"+answer+"-user-name") %></h5>\
-            <p class="comment-date"><%= commentHelpers.localizeDate(comment.getAttribute("data-comment-answer-"+answer+"-date")) %></p>\
+            <p class="comment-date"><%= jQuery.localizeDate(comment.getAttribute("data-comment-answer-"+answer+"-date")) %></p>\
         </div>\
         <% if (active && answer===theDocument.activeCommentAnswerId) { %>\
             <div class="comment-text-wrapper">\
@@ -127,7 +127,7 @@ var tmp_first_comment = _.template(
         <div class="comment-user">\
             <img class="comment-user-avatar" src="<%= comment.getAttribute("data-user-avatar") %>">\
             <h5 class="comment-user-name"><%= comment.getAttribute("data-user-name") %></h5>\
-            <p class="comment-date"><%= commentHelpers.localizeDate(comment.getAttribute("data-date")) %></p>\
+            <p class="comment-date"><%= jQuery.localizeDate(comment.getAttribute("data-date")) %></p>\
         </div>\
         <div class="comment-text-wrapper">\
             <textarea class="commentText" data-id="<%= comment.getAttribute("data-id") %>" rows="5"></textarea>\

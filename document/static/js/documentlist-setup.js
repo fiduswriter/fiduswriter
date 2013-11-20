@@ -26,13 +26,29 @@ jQuery(document).ready(function () {
     });
 
     jQuery(document).on('click', '.owned-by-user .rights', function () {
-        var DocumentId = parseInt(jQuery(this).attr('data-id'));
-        accessrightsHelpers.createAccessRightsDialog([DocumentId]);
+        var documentId = parseInt(jQuery(this).attr('data-id'));
+        accessrightsHelpers.createAccessRightsDialog([documentId]);
     });
     
     jQuery(document).on('click', '.revisions', function () {
-        var DocumentId = parseInt(jQuery(this).attr('data-id'));
-        accessrightsHelpers.createAccessRightsDialog([DocumentId]);
+        var documentId = parseInt(jQuery(this).attr('data-id'));
+        documentrevisionsHelpers.createDialog(documentId);
+    });
+    
+    jQuery(document).on('click', '.download-revision', function () {
+        var revisionId = parseInt(jQuery(this).attr('data-id'));
+        var revisionFilename = parseInt(jQuery(this).attr('data-filename'));
+        documentrevisionsHelpers.download(revisionId, revisionFilename);
+    });
+    
+    jQuery(document).on('click', '.recreate-revision', function () {
+        var revisionId = parseInt(jQuery(this).attr('data-id'));
+        documentrevisionsHelpers.recreate(revisionId);
+    });
+    
+    jQuery(document).on('click', '.delete-revision', function () {
+        var revisionId = parseInt(jQuery(this).attr('data-id'));
+        documentrevisionsHelpers.delete(revisionId);
     });
 
     //select all entries

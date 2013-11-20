@@ -24,6 +24,10 @@
     width: 820px;
     height: 300px;
 }
+.fw-document-table-body.fw-middle {
+    width: 600px;
+    height: 300px;
+}
 
 .fw-document-table-body.fw-small {
     width: 342px;
@@ -92,12 +96,12 @@
     font-size: 15px;
 }
 
-.owned-by-user .icon-access-right,.fw-document-table .icon-clock {
+.owned-by-user .icon-access-right,.fw-document-table .icon-clock, .fw-document-table .icon-trash, .fw-document-table .icon-download {
     color: #a7321f;
     cursor: pointer;
 }
 
-.owned-by-user .icon-access-right:hover,.fw-document-table .icon-clock:hover {
+.owned-by-user .icon-access-right:hover,.fw-document-table .icon-clock:hover, .fw-document-table .icon-trash:hover, .fw-document-table .icon-download:hover {
     color: #2c2723;
 }
 

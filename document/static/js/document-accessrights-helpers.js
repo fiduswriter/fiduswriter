@@ -175,7 +175,7 @@
             'rights[]': rights
         }
         $.ajax({
-            url: '/text/accessright/save/',
+            url: '/document/accessright/save/',
             data: post_data,
             type: 'POST',
             dataType: 'json',

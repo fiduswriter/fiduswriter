@@ -102,6 +102,7 @@ def documents_list(request):
             revision_list.append({
                 'date': time.mktime(revision.date.utctimetuple()),
                 'note': revision.note,
+                'file_name': revision.file_name,
                 'pk': revision.pk
             })
         
@@ -269,8 +270,8 @@ def import_js(request):
         document.settings = request.POST['settings']
         document.save()
         response['text_id'] = document.id
-        response['added'] = time.mktime(document.added.utctuple())
-        response['updated'] = time.mktime(document.updated.utctuple())
+        response['added'] = time.mktime(document.added.utctimetuple())
+        response['updated'] = time.mktime(document.updated.utctimetuple())
         status = 201
     return HttpResponse(
         json.dumps(response),
@@ -298,6 +299,7 @@ def upload_js(request):
             status = 201
             revision = DocumentRevision()
             revision.file_object = request.FILES['file']
+            revision.file_name = request.FILES['file'].name
             revision.note = request.POST['note']
             revision.document_id = document_id
             revision.save()
@@ -306,3 +308,54 @@ def upload_js(request):
         content_type = 'application/json; charset=utf8',
         status=status
     )
+    
+# Download a revision that was previously uploaded    
+@login_required
+def download_js(request):
+    can_access = False
+    if request.is_ajax() and request.method == 'POST':
+        revision_id = request.POST['id']
+        revision = DocumentRevision.objects.filter(pk=int(revision_id))
+        if len(revision) > 0:
+            revision = revision[0]
+            document = revision.document
+            if document.owner == request.user:
+                can_access = True
+            else:
+                access_rights = AccessRight.objects.filter(document=document, user=request.user)
+                if len(access_rights) > 0:
+                    can_save = True
+        if can_access:
+            response = {}
+            http_response = HttpResponse(
+                revision.file_object.file,
+                content_type = 'application/zip; charset=x-user-defined',
+                status=200
+            )
+            http_response['Content-Disposition'] = 'attachment; filename=some_name.zip'
+            return http_response
+    return HttpResponse(
+        json.dumps({}),
+        content_type = 'application/json; charset=utf8',
+        status=405
+    )
+    
+@login_required
+def delete_revision_js(request):
+    response = {}
+    can_save = False
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        revision_id = request.POST['id']
+        revision = DocumentRevision.objects.filter(pk=int(revision_id))
+        if len(revision) > 0:
+            revision = revision[0]
+            document = revision.document
+            if document.owner == request.user:
+                status = 200
+                revision.delete()
+    return HttpResponse(
+        json.dumps(response),
+        content_type = 'application/json; charset=utf8',
+        status=status
+    )                

@@ -66,4 +66,5 @@ class DocumentRevision(models.Model):
     note = models.CharField(max_length=255, default='', blank=True)
     date = models.DateTimeField(auto_now=True)
     file_object = models.FileField(upload_to=revision_filename)
+    file_name = models.CharField(max_length=255, default='', blank=True)
     

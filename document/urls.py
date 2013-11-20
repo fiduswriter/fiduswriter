@@ -27,6 +27,8 @@ urlpatterns = patterns('',
     url(r'^delete/$', 'document.views.delete_js', name='delete_js'),
     url(r'^import/$', 'document.views.import_js', name='import_js'),
     url(r'^upload/$', 'document.views.upload_js', name='upload_js'),
+    url(r'^download/$', 'document.views.download_js', name='download_js'),
+    url(r'^delete_revision/$', 'document.views.delete_revision_js', name='delete_revision_js'),
     url(r'^\d+/$', 'document.views.editor', name='editor'),
     
     url(r'^accessright/save/$', 'document.views.access_right_save_js', name='access_right_save_js'), 

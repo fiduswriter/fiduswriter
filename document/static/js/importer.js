@@ -361,7 +361,7 @@ var FW_FILETYPE_VERSION = "1.1";
             metadata: JSON.stringify(aDocument.metadata)
         };
         jQuery.ajax({
-                url: '/text/import/',
+                url: '/document/import/',
                 data: postData,
                 type: 'POST',
                 dataType: 'json',
@@ -377,6 +377,7 @@ var FW_FILETYPE_VERSION = "1.1";
                     aDocument.is_owner = true;
                     aDocument.added = data['added'];
                     aDocument.updated = data['updated'];
+                    aDocument.revisions = [];
                     if (typeof (theDocumentList) !== 'undefined') {
                         theDocumentList.push(aDocument);
                         documentHelpers.stopDocumentTable();
@@ -388,11 +389,11 @@ var FW_FILETYPE_VERSION = "1.1";
                     } else if (typeof (theDocument) !== 'undefined') {
                         if (theDocument.rights ==='r' || theDocument.is_locked === true) {
                             // We only had right access to the document, so the editing elements won't show. We therefore need to reload the page to get them.
-                            window.location = '/text/'+aDocument.id+'/';
+                            window.location = '/document/'+aDocument.id+'/';
                         } else {
                             theDocument = aDocument;
                             jQuery('#document-contents').html(aDocument.contents);
-                            window.history.pushState("", "", "/text/"+theDocument.id+"/");
+                            window.history.pushState("", "", "/document/"+theDocument.id+"/");
                         }
                     }
                 },

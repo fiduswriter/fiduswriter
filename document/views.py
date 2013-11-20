@@ -31,7 +31,7 @@ from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.core.mail import send_mail
 
-from text.models import Text, AccessRight
+from document.models import Document, AccessRight, DocumentRevision
 from avatar.util import get_primary_avatar, get_default_avatar_url
 
 from avatar.templatetags.avatar_tags import avatar_url
@@ -71,7 +71,7 @@ def get_accessrights(ars):
 def index(request):
     response = {}
     response.update(csrf(request))
-    return render_to_response('text/index.html',
+    return render_to_response('document/index.html',
         response,
         context_instance=RequestContext(request))
 
@@ -82,8 +82,8 @@ def get_documentlist_extra_js(request):
     if request.is_ajax() and request.method == 'POST':
         status = 200
         ids = request.POST['ids'].split(',')
-        #documents = Text.objects.filter(Q(owner=request.user) | Q(accessright__user=request.user)).filter(id__in=ids)
-        documents = Text.objects.filter(id__in=ids)
+        #documents = Document.objects.filter(Q(owner=request.user) | Q(accessright__user=request.user)).filter(id__in=ids)
+        documents = Document.objects.filter(id__in=ids)
         response['documents'] = serializer.serialize(documents, fields=('contents','id','comments','settings','metadata'))
     return HttpResponse(
         json.dumps(response),
@@ -92,10 +92,10 @@ def get_documentlist_extra_js(request):
     )   
 
 def documents_list(request):
-    documents = Text.objects.filter(Q(owner=request.user) | Q(accessright__user=request.user)).order_by('-updated')
+    documents = Document.objects.filter(Q(owner=request.user) | Q(accessright__user=request.user)).order_by('-updated')
     output_list=[]
     for document in documents :
-        access_right = 'w' if document.owner == request.user else AccessRight.objects.get(user=request.user,text=document).rights
+        access_right = 'w' if document.owner == request.user else AccessRight.objects.get(user=request.user,document=document).rights
         date_format = '%d/%m/%Y'
         date_obj = dateutil.parser.parse(str(document.added))
         added = date_obj.strftime(date_format)
@@ -136,7 +136,7 @@ def get_documentlist_js(request):
         response['user']['id']=request.user.id
         response['user']['name']=request.user.readable_name
         response['user']['avatar']=avatar_url(request.user,80)            
-        response['access_rights'] = get_accessrights(AccessRight.objects.filter(text__owner=request.user))
+        response['access_rights'] = get_accessrights(AccessRight.objects.filter(document__owner=request.user))
     return HttpResponse(
         json.dumps(response),
         content_type = 'application/json; charset=utf8',
@@ -148,7 +148,7 @@ def get_documentlist_js(request):
 def editor(request):
     response = {}
     
-    return render_to_response('text/editor.html', 
+    return render_to_response('document/editor.html', 
         response,
         context_instance=RequestContext(request))
     
@@ -158,7 +158,7 @@ def delete_js(request):
     status = 405
     if request.is_ajax() and request.method == 'POST':
         doc_id = int(request.POST['id'])
-        document = Text.objects.get(pk=doc_id,owner=request.user)
+        document = Document.objects.get(pk=doc_id,owner=request.user)
         document.delete()
         status = 200
     return HttpResponse(
@@ -169,7 +169,7 @@ def delete_js(request):
 
 def send_share_notification(request, doc_id, collaborator_id, tgt_right):
     owner = request.user.readable_name
-    document = Text.objects.get(id=doc_id)
+    document = Document.objects.get(id=doc_id)
     collaborator = User.objects.get(id=collaborator_id)
     collaborator_name = collaborator.readable_name
     collaborator_email = collaborator.email
@@ -186,7 +186,7 @@ def send_share_notification(request, doc_id, collaborator_id, tgt_right):
 
 def send_share_upgrade_notification(request, doc_id, collaborator_id):
     owner = request.user.readable_name
-    document = Text.objects.get(id=doc_id)
+    document = Document.objects.get(id=doc_id)
     collaborator = User.objects.get(id=collaborator_id)
     collaborator_name = collaborator.readable_name
     collaborator_email = collaborator.email
@@ -208,7 +208,7 @@ def access_right_save_js(request):
         for tgt_doc in tgt_documents:
             doc_id = int(tgt_doc)
             try:
-                the_doc = Text.objects.get(pk=doc_id, owner=request.user)
+                the_doc = Document.objects.get(pk=doc_id, owner=request.user)
             except ObjectDoesNotExist:
                 continue
             x = 0
@@ -221,27 +221,27 @@ def access_right_save_js(request):
                 if tgt_right == 'd':
                     # Status 'd' means the access right is marked for deletion.
                     try:
-                        access_right = AccessRight.objects.get(text_id = doc_id, user_id = collaborator_id)
+                        access_right = AccessRight.objects.get(document_id = doc_id, user_id = collaborator_id)
                         access_right.delete()
                     except:
                         pass
                 else:
                     try:
-                        access_right = AccessRight.objects.get(text_id = doc_id, user_id = collaborator_id)
+                        access_right = AccessRight.objects.get(document_id = doc_id, user_id = collaborator_id)
                         if access_right.rights != tgt_right:
                             access_right.rights = tgt_right
                             if tgt_right == 'w':
                                 send_share_upgrade_notification(request, doc_id, collaborator_id)                            
                     except ObjectDoesNotExist:
                         access_right = AccessRight.objects.create(
-                            text_id = doc_id,
+                            document_id = doc_id,
                             user_id = collaborator_id,
                             rights= tgt_right,
                         )
                         send_share_notification(request, doc_id, collaborator_id, tgt_right)
                     access_right.save()
                 x += 1
-        response['access_rights'] = get_accessrights(AccessRight.objects.filter(text__owner=request.user))
+        response['access_rights'] = get_accessrights(AccessRight.objects.filter(document__owner=request.user))
         status = 201
     return HttpResponse(
         json.dumps(response),
@@ -256,7 +256,7 @@ def import_js(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
-        document = Text.objects.create(owner_id=request.user.pk)
+        document = Document.objects.create(owner_id=request.user.pk)
         document.title = request.POST['title']
         document.contents = request.POST['contents']
         document.metadata = request.POST['metadata']
@@ -273,4 +273,33 @@ def import_js(request):
         json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
-    )    
+    )
+    
+@login_required
+def upload_js(request):
+    response = {}
+    can_save = False
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        document_id = request.POST['document_id']
+        document = Document.objects.filter(id=int(document_id))
+        if len(document) > 0:
+            document = document[0]
+            if document.owner == request.user:
+                can_save = True
+            else:
+                access_rights = AccessRight.objects.filter(document=document, user=request.user)
+                if len(access_rights) > 0 and access_rights[0] == 'w':
+                    can_save = True
+        if can_save:
+            status = 201
+            revision = DocumentRevision()
+            revision.file_object = request.FILES['file']
+            revision.note = request.POST['note']
+            revision.document_id = document_id
+            revision.save()
+    return HttpResponse(
+        json.dumps(response),
+        content_type = 'application/json; charset=utf8',
+        status=status
+    )

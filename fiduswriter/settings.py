@@ -208,7 +208,7 @@ INSTALLED_APPS = (
     'south',
     'base',
     'menu',
-    'text',
+    'document',
     'book',
     'bibliography',
     'usermedia',

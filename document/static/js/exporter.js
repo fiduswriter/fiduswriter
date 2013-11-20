@@ -24,12 +24,18 @@ var FW_FILETYPE_VERSION = "1.1";
 
 (function () {
     var exports = this,
-  /** 
-  * Functions to export the Fidus Writer document. TODO 
-  * @namespace exporter
-  */
+        /** 
+         * Functions to export the Fidus Writer document. TODO
+         * @namespace exporter
+         */
         exporter = {};
 
+    /** Offers a file to the user as if it were downloaded.
+     * @function downloadFile
+     * @memberof exporter
+     * @param {string} zipFileName The name of the file.
+     * @param {blob} blob The contents of the file.
+     */
     exporter.downloadFile = function (zipFilename, blob) {
         var blobURL = URL.createObjectURL(blob);
         var fakeDownloadLink = document.createElement('a');
@@ -41,9 +47,78 @@ var FW_FILETYPE_VERSION = "1.1";
         fakeDownloadLink.dispatchEvent(clickEvent);
     };
 
+    /** Uploads a Fidus Writer document to the server.
+     * @function uploadFile
+     * @memberof exporter
+     * @param {string} zipFileName The name of the file.
+     * @param {blob} blob The contents of the file.
+     */
+    exporter.uploadFile = function (zipFilename, blob) {
+
+
+        var diaButtons = {};
+
+        diaButtons[gettext("Save")] = function () {
+            var data = new FormData();
+
+            data.append('note', jQuery(this).find('.revision-note').val());
+            data.append('file', blob, zipFilename);
+            data.append('document_id', theDocument.id);
+
+            jQuery.ajax({
+                url: '/document/upload/',
+                data: data,
+                type: 'POST',
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function () {
+                    jQuery.addAlert('success', gettext('Revision saved'));
+                },
+                error: function () {
+                    jQuery.addAlert('error', gettext('Revision could not be saved.'));
+                }
+            });
+            jQuery(this).dialog("close");
+
+        };
+
+        diaButtons[gettext("Cancel")] = function () {
+            jQuery(this).dialog("close");
+        };
+
+        jQuery(tmp_revision_dialog()).dialog({
+            autoOpen: true,
+            height: 180,
+            width: 300,
+            modal: true,
+            buttons: diaButtons,
+            create: function () {
+                var $the_dialog = jQuery(this).closest(".ui-dialog");
+                $the_dialog.find(".ui-button:first-child").addClass(
+                    "fw-button fw-dark");
+                $the_dialog.find(".ui-button:last").addClass(
+                    "fw-button fw-orange");
+            },
+        });
+
+
+    }; //XXX
+
+    /** Creates a zip file.
+     * @function zipFileCreator
+     * @memberof exporter
+     * @param {list} textFiles A list of files in plain text format.
+     * @param {list} httpFiles A list fo files that have to be downloaded from the internet before being included.
+     * @param {string} zipFileName The name of the zip file to be created
+     * @param {string} [mimeType=application/zip] The mimetype of the file that is to be created.
+     * @param {list} includeZips A list of zip files to be merged into the output zip file.
+     * @param {boolean} [upload=false] Whether to upload rather than downloading the Zip file once finished.
+     */
+
     exporter.zipFileCreator = function (textFiles, httpFiles, zipFileName,
         mimeType,
-        includeZips) {
+        includeZips, upload) {
         var zipFs = new zip.fs.FS(),
             i, zipDir;
 
@@ -122,7 +197,11 @@ var FW_FILETYPE_VERSION = "1.1";
 
                 process(writer, zipFs.root, function () {
                     writer.close(function (blob) {
-                        exporter.downloadFile(zipFileName, blob);
+                        if (upload) {
+                            exporter.uploadFile(zipFileName, blob);
+                        } else {
+                            exporter.downloadFile(zipFileName, blob);
+                        }
                     });
                 });
 
@@ -237,7 +316,9 @@ var FW_FILETYPE_VERSION = "1.1";
             newImg.setAttribute('data-src', name);
             this.parentNode.replaceChild(newImg, this);
 
-            if (!_.findWhere(images,{'filename':name})) {
+            if (!_.findWhere(images, {
+                'filename': name
+            })) {
 
                 images.push({
                     'filename': name,
@@ -270,13 +351,13 @@ var FW_FILETYPE_VERSION = "1.1";
 
         if (keywords && metadata.keywords && metadata.keywords != '') {
             includePackages +=
-'\\def\\keywords{\\vspace{.5em}\
+                '\\def\\keywords{\\vspace{.5em}\
 {\\textit{Keywords}:\\,\\relax%\
 }}\
 \\def\\endkeywords{\\par}'
-        }        
-      
-        
+        }
+
+
 
         if (jQuery(htmlCode).find('a').length > 0) {
             includePackages += '\n\\usepackage{hyperref}';
@@ -320,9 +401,9 @@ var FW_FILETYPE_VERSION = "1.1";
         if (specifiedAuthors && metadata.authors && metadata.authors != '') {
             var authorsDiv = document.createElement('div');
             authorsDiv.innerHTML = metadata.authors;
-            latexStart += '\n\\author{'+authorsDiv.innerText+'}\n';
+            latexStart += '\n\\author{' + authorsDiv.innerText + '}\n';
         } else {
-            latexStart += '\n\\author{'+author+'}\n';
+            latexStart += '\n\\author{' + author + '}\n';
         }
         if (subtitle && metadata.subtitle && metadata.subtitle != '') {
             var subtitleDiv = document.createElement('div');
@@ -334,17 +415,17 @@ var FW_FILETYPE_VERSION = "1.1";
             keywordsDiv.innerHTML = metadata.keywords;
             latexStart += '\\begin{keywords}\n' + keywordsDiv.innerText + '\\end{keywords}\n';
         }
-        
-        
+
+
         latexStart += '\n\\maketitle\n\n';
 
-        if(documentClass==='book') {
-            if (metadata.publisher && metadata.publisher !='') {
-                latexStart += metadata.publisher +'\n\n';
+        if (documentClass === 'book') {
+            if (metadata.publisher && metadata.publisher != '') {
+                latexStart += metadata.publisher + '\n\n';
             }
 
-            if (metadata.copyright && metadata.copyright !='') {
-                latexStart += metadata.copyright +'\n\n';
+            if (metadata.copyright && metadata.copyright != '') {
+                latexStart += metadata.copyright + '\n\n';
             }
 
             latexStart += '\n\\tableofcontents';
@@ -728,6 +809,17 @@ var FW_FILETYPE_VERSION = "1.1";
         }
     };
 
+    /** Create a Fidus Writer document and upload it to the server as a backup.
+     * @function uploadNative
+     * @memberof exporter
+     * @param aDocument The document to turn into a Fidus Writer document and upload.
+     */
+    exporter.uploadNative = function (aDocument) {
+        exporter.native(aDocument, ImageDB, BibDB, function (aDocument, shrunkImageDB, shrunkBibDB, images) {
+            exporter.nativeFile(aDocument, shrunkImageDB, shrunkBibDB, images, true);
+        });
+    };
+
     exporter.downloadNative = function (aDocument) {
         if (window.hasOwnProperty('theDocument')) {
             exporter.native(aDocument, ImageDB, BibDB, exporter.nativeFile);
@@ -810,7 +902,11 @@ var FW_FILETYPE_VERSION = "1.1";
 
     exporter.nativeFile = function (aDocument, shrunkImageDB,
         shrunkBibDB,
-        images) {
+        images, upload) {
+
+        if ('undefined' === typeof upload) {
+            upload = false;
+        }
 
         httpOutputList = images;
 
@@ -830,7 +926,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
         exporter.zipFileCreator(outputList, httpOutputList, exporter.createSlug(
                 aDocument.title) +
-            '.fidus', 'application/fidus+zip');
+            '.fidus', 'application/fidus+zip', false, upload);
     };
 
     exporter.downloadLatex = function (aDocument) {
@@ -986,15 +1082,15 @@ var FW_FILETYPE_VERSION = "1.1";
         } else {
             authors = [aDocument.owner.name];
         }
-        
+
         if (aDocument.settings.metadata.keywords && aDocument.metadata.keywords && aDocument.metadata.keywords != '') {
             cleanDiv.innerHTML = aDocument.metadata.keywords;
             keywords = jQuery.map(cleanDiv.innerText.split(","), jQuery.trim);
         } else {
             keywords = [];
         }
-        
-        
+
+
         opfCode = tmp_epub_opf({
             language: gettext('en-US'), // TODO: specify a document language rather than using the current users UI language
             title: title,

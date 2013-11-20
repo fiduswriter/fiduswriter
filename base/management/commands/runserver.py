@@ -31,9 +31,9 @@ from tornado.web import Application, FallbackHandler, RequestHandler, StaticFile
 from tornado.wsgi import WSGIContainer
 
 if settings.CACHES["default"]["BACKEND"]=="redis_cache.cache.RedisCache":
-    from text.ws_views_redis import DocumentWS
+    from document.ws_views_redis import DocumentWS
 else:
-    from text.ws_views import DocumentWS
+    from document.ws_views import DocumentWS
 
 DEFAULT_PORT = "8000"
 

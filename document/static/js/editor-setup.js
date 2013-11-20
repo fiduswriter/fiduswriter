@@ -291,6 +291,7 @@ jQuery(document).bind('documentDataLoaded', function () {
                 editorHelpers.getUpdatesFromInputFields(function () {
                     editorHelpers.saveDocument();
                 });
+                exporter.uploadNative(theDocument);
                 return false;
 
                 /* Crtl + ? => show shortcuts */
@@ -322,6 +323,7 @@ jQuery(document).bind('documentDataLoaded', function () {
             editorHelpers.getUpdatesFromInputFields(function () {
                 editorHelpers.saveDocument();
             });
+            exporter.uploadNative(theDocument);
         });
 
 

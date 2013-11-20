@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import datetime
+from south.utils import datetime_utils as datetime
 from south.db import db
 from south.v2 import SchemaMigration
 from django.db import models
@@ -8,42 +8,54 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding model 'Text'
-        db.create_table(u'text_text', (
+        # Adding model 'Document'
+        db.create_table(u'document_document', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=128)),
-            ('contents', self.gf('django.db.models.fields.TextField')()),
+            ('title', self.gf('django.db.models.fields.CharField')(default='', max_length=255, blank=True)),
+            ('contents', self.gf('django.db.models.fields.TextField')(default='<p><br></p>')),
+            ('metadata', self.gf('django.db.models.fields.TextField')(default='{}')),
+            ('settings', self.gf('django.db.models.fields.TextField')(default='{}')),
             ('owner', self.gf('django.db.models.fields.related.ForeignKey')(related_name='owner', to=orm['auth.User'])),
             ('added', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('updated', self.gf('django.db.models.fields.DateTimeField')(auto_now_add=True, blank=True)),
-            ('last_editor', self.gf('django.db.models.fields.related.ForeignKey')(related_name='last_editor', to=orm['auth.User'])),
-            ('last_accessed', self.gf('django.db.models.fields.DateTimeField')(default=datetime.datetime(2013, 5, 30, 0, 0), auto_now=True, blank=True)),
-            ('currently_open', self.gf('django.db.models.fields.BooleanField')(default=True)),
+            ('updated', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
         ))
-        db.send_create_signal(u'text', ['Text'])
+        db.send_create_signal(u'document', ['Document'])
 
         # Adding model 'AccessRight'
-        db.create_table(u'text_accessright', (
+        db.create_table(u'document_accessright', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('text', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['text.Text'])),
+            ('document', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['document.Document'])),
             ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
             ('rights', self.gf('django.db.models.fields.CharField')(max_length=1)),
         ))
-        db.send_create_signal(u'text', ['AccessRight'])
+        db.send_create_signal(u'document', ['AccessRight'])
 
-        # Adding unique constraint on 'AccessRight', fields ['text', 'user']
-        db.create_unique(u'text_accessright', ['text_id', 'user_id'])
+        # Adding unique constraint on 'AccessRight', fields ['document', 'user']
+        db.create_unique(u'document_accessright', ['document_id', 'user_id'])
+
+        # Adding model 'DocumentRevision'
+        db.create_table(u'document_documentrevision', (
+            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
+            ('document', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['document.Document'])),
+            ('note', self.gf('django.db.models.fields.CharField')(default='', max_length=255, blank=True)),
+            ('date', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
+            ('file_object', self.gf('django.db.models.fields.files.FileField')(max_length=100)),
+        ))
+        db.send_create_signal(u'document', ['DocumentRevision'])
 
 
     def backwards(self, orm):
-        # Removing unique constraint on 'AccessRight', fields ['text', 'user']
-        db.delete_unique(u'text_accessright', ['text_id', 'user_id'])
+        # Removing unique constraint on 'AccessRight', fields ['document', 'user']
+        db.delete_unique(u'document_accessright', ['document_id', 'user_id'])
 
-        # Deleting model 'Text'
-        db.delete_table(u'text_text')
+        # Deleting model 'Document'
+        db.delete_table(u'document_document')
 
         # Deleting model 'AccessRight'
-        db.delete_table(u'text_accessright')
+        db.delete_table(u'document_accessright')
+
+        # Deleting model 'DocumentRevision'
+        db.delete_table(u'document_documentrevision')
 
 
     models = {
@@ -65,7 +77,7 @@ class Migration(SchemaMigration):
             'date_joined': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'email': ('django.db.models.fields.EmailField', [], {'max_length': '75', 'blank': 'True'}),
             'first_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
-            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Group']", 'symmetrical': 'False', 'blank': 'True'}),
+            'groups': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Group']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'is_active': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
             'is_staff': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
@@ -73,7 +85,7 @@ class Migration(SchemaMigration):
             'last_login': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime.now'}),
             'last_name': ('django.db.models.fields.CharField', [], {'max_length': '30', 'blank': 'True'}),
             'password': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
+            'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'symmetrical': 'False', 'related_name': "u'user_set'", 'blank': 'True', 'to': u"orm['auth.Permission']"}),
             'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
         },
         u'contenttypes.contenttype': {
@@ -83,25 +95,32 @@ class Migration(SchemaMigration):
             'model': ('django.db.models.fields.CharField', [], {'max_length': '100'}),
             'name': ('django.db.models.fields.CharField', [], {'max_length': '100'})
         },
-        u'text.accessright': {
-            'Meta': {'unique_together': "(('text', 'user'),)", 'object_name': 'AccessRight'},
+        u'document.accessright': {
+            'Meta': {'unique_together': "(('document', 'user'),)", 'object_name': 'AccessRight'},
+            'document': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['document.Document']"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'rights': ('django.db.models.fields.CharField', [], {'max_length': '1'}),
-            'text': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['text.Text']"}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"})
         },
-        u'text.text': {
-            'Meta': {'object_name': 'Text'},
+        u'document.document': {
+            'Meta': {'object_name': 'Document'},
             'added': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'}),
-            'contents': ('django.db.models.fields.TextField', [], {}),
-            'currently_open': ('django.db.models.fields.BooleanField', [], {'default': 'True'}),
+            'contents': ('django.db.models.fields.TextField', [], {'default': "'<p><br></p>'"}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'last_accessed': ('django.db.models.fields.DateTimeField', [], {'default': 'datetime.datetime(2013, 5, 30, 0, 0)', 'auto_now': 'True', 'blank': 'True'}),
-            'last_editor': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'last_editor'", 'to': u"orm['auth.User']"}),
+            'metadata': ('django.db.models.fields.TextField', [], {'default': "'{}'"}),
             'owner': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'owner'", 'to': u"orm['auth.User']"}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '128'}),
-            'updated': ('django.db.models.fields.DateTimeField', [], {'auto_now_add': 'True', 'blank': 'True'})
+            'settings': ('django.db.models.fields.TextField', [], {'default': "'{}'"}),
+            'title': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '255', 'blank': 'True'}),
+            'updated': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'})
+        },
+        u'document.documentrevision': {
+            'Meta': {'object_name': 'DocumentRevision'},
+            'date': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
+            'document': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['document.Document']"}),
+            'file_object': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'note': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '255', 'blank': 'True'})
         }
     }
 
-    complete_apps = ['text']
+    complete_apps = ['document']

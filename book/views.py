@@ -34,8 +34,8 @@ from django.core.mail import send_mail
 from book.models import Book, BookAccessRight, Chapter
 from book.forms import BookForm
 
-from text.models import AccessRight
-from text.views import documents_list
+from document.models import AccessRight
+from document.views import documents_list
 
 from avatar.util import get_primary_avatar, get_default_avatar_url
 from avatar.templatetags.avatar_tags import avatar_url
@@ -191,13 +191,13 @@ def add_chapters(book_instance, chapters, status, this_user):
             for bar in BookAccessRight.objects.filter(book=book_instance):
                 if len(new_chapter.text.accessright_set.filter(user=bar.user))==0:
                     AccessRight.objects.create(
-                                text_id = new_chapter.text.id,
+                                document_id = new_chapter.text.id,
                                 user_id = bar.user.id,
                                 rights= 'r',
                             )
             if this_user != book_instance.owner and len(new_chapter.text.accessright_set.filter(user=book_instance.owner))==0:
                 AccessRight.objects.create(
-                                text_id = new_chapter.text.id,
+                                document_id = new_chapter.text.id,
                                 user_id = book_instance.owner.id,
                                 rights= 'r',
                             )
@@ -371,7 +371,7 @@ def access_right_save_js(request):
                         # give read access to the chapter documents the collaborator.
                         if text.owner == request.user and len(text.accessright_set.filter(user_id=collaborator_id)) == 0:
                             AccessRight.objects.create(
-                                text_id = text.id,
+                                document_id = text.id,
                                 user_id = collaborator_id,
                                 rights= 'r',
                             )

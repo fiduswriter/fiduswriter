@@ -33,9 +33,9 @@ js_info_dict = {
 
 
 urlpatterns = patterns('',
-    url(r'^$', 'text.views.index', name='index'),
+    url(r'^$', 'document.views.index', name='index'),
     (r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /text/\nDisallow: /bibliography/", mimetype="text/plain")),
-    url(r'^text/', include('text.urls')),
+    url(r'^document/', include('document.urls')),
     url(r'^bibliography/', include('bibliography.urls')),
 
     # I18n manual language switcher

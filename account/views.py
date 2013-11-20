@@ -32,7 +32,7 @@ from django.contrib.auth.models import User
 from account.models import UserProfile
 from account.forms import UserForm, UserProfileForm, TeamMemberForm
 import account.util as accountutil
-from text.models import AccessRight
+from document.models import AccessRight
 
 def logout_page(request):
     """
@@ -412,7 +412,7 @@ def remove_team_member_js(request):
         for former_member in former_members :
             former_member = int(former_member)
             # Revoke all permissions given to this person
-            AccessRight.objects.filter(user_id=former_member,text__owner=request.user).delete()
+            AccessRight.objects.filter(user_id=former_member,document__owner=request.user).delete()
             # Now delete the user from the team
             team_member_object_instance = request.user.leader.filter(member_id=former_member)[0]
             team_member_object_instance.delete()

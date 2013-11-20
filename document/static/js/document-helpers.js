@@ -31,7 +31,7 @@
         var postData = {};
         postData['id'] = id;
         $.ajax({
-            url: '/text/delete/',
+            url: '/document/delete/',
             data: postData,
             type: 'POST',
             dataType: 'json',
@@ -187,7 +187,7 @@
 
     documentHelpers.getDocumentListData = function (id) {
         $.ajax({
-            url: '/text/documentlist/',
+            url: '/document/documentlist/',
             data: {},
             type: 'POST',
             dataType: 'json',
@@ -222,7 +222,7 @@
         }
         if (incompleteIds.length > 0) {
             $.ajax({
-                url: '/text/documentlist/extra/',
+                url: '/document/documentlist/extra/',
                 data: {
                     ids: incompleteIds.join(',')
                 },

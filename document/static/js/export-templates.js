@@ -436,4 +436,8 @@ var tmp_epub_opf_mathjax_items = _.template('\
         <item href="mathjax/jax/element/mml/optable/CombDiacritMarks.js" id="id191" media-type="application/x-javascript"/>\
         <item href="mathjax/jax/output/SVG/fonts/TeX/Math/Italic/Main.js" id="id192" media-type="application/x-javascript"/>\
         <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/Main.js" id="id193" media-type="application/x-javascript"/>');
+
+/** Dialog to add a note to a revision before saving. */
+tmp_revision_dialog = _.template('\
+<div title="Revision description"><p>'+gettext('Description (optional)')+' <input type="text" class="revision-note"></p></div>');
         

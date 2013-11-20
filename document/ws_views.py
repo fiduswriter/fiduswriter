@@ -22,8 +22,8 @@ from ws.base import BaseWebSocketHandler
 from logging import info, error
 from tornado.escape import json_decode
 
-from text.models import AccessRight, Text
-from text.views import get_accessrights
+from document.models import AccessRight, Document
+from document.views import get_accessrights
 from avatar.templatetags.avatar_tags import avatar_url
 
 
@@ -49,10 +49,10 @@ class DocumentWS(BaseWebSocketHandler):
             self.is_owner = True
             self.access_rights = 'w'
             is_new = True
-            self.document = Text.objects.create(owner_id=self.user.id)
+            self.document = Document.objects.create(owner_id=self.user.id)
         else:
             is_new = False
-            document = Text.objects.filter(id=int(document_id))
+            document = Document.objects.filter(id=int(document_id))
             if len(document) > 0:
                 document = document[0]
                 self.document = document
@@ -63,7 +63,7 @@ class DocumentWS(BaseWebSocketHandler):
                     can_access = True
                 else:
                     self.is_owner = False
-                    access_rights = AccessRight.objects.filter(text=self.document, user=self.user)
+                    access_rights = AccessRight.objects.filter(document=self.document, user=self.user)
                     if len(access_rights) > 0:
                         self.access_rights = access_rights[0].rights
                         can_access = True
@@ -81,7 +81,7 @@ class DocumentWS(BaseWebSocketHandler):
             response['document']['metadata']=self.document.metadata
             response['document']['settings']=self.document.settings
             #response['document']['history']=self.document.history
-            response['document']['access_rights'] = get_accessrights(AccessRight.objects.filter(text__owner=self.document.owner))
+            response['document']['access_rights'] = get_accessrights(AccessRight.objects.filter(document__owner=self.document.owner))
             response['document']['owner'] = dict()
             response['document']['owner']['id']=self.document.owner.id
             response['document']['owner']['name']=self.document.owner.readable_name

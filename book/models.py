@@ -18,7 +18,7 @@
 
 from django.db import models
 
-from text.models import Text
+from document.models import Document
 from usermedia.models import Image
 from django.contrib.auth.models import User
 
@@ -27,7 +27,7 @@ class Book(models.Model):
     metadata = models.TextField(default='{}')
     settings = models.TextField(default='{}')
     cover_image = models.ForeignKey(Image, blank=True, null=True, default=None)
-    chapters = models.ManyToManyField(Text, through='Chapter', blank=True, null=True, default=None)
+    chapters = models.ManyToManyField(Document, through='Chapter', blank=True, null=True, default=None)
     owner = models.ForeignKey(User)
     added = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now_add=True)    
@@ -36,7 +36,7 @@ class Book(models.Model):
         return self.title
 
 class Chapter(models.Model):
-    text = models.ForeignKey(Text)
+    text = models.ForeignKey(Document)
     book = models.ForeignKey(Book)
     number = models.IntegerField()
     part = models.CharField(max_length=128, blank=True, default='')

@@ -35,7 +35,7 @@ var tmp_documents_list_item = _.template('\
                 <td width="230">\
                     <span class="fw-document-table-title fw-inline">\
                         <i class="icon-doc"></i>\
-                        <a class="doc-title fw-link-text fw-searchable" href="/text/<%- aDocument.id %>/">\
+                        <a class="doc-title fw-link-text fw-searchable" href="/document/<%- aDocument.id %>/">\
                             <%- documentTitle %>\
                         </a>\
                         <% if (aDocument.is_locked) { %>\

@@ -49,23 +49,23 @@
                 type: "documentDataLoaded",
             });
 
-            theDocument.sessionId = data.session_id;
+            theDocumentValues.sessionId = data.session_id;
 
             if (data.hasOwnProperty('control')) {
-                theDocument.enableSave = true;
+                theDocumentValues.enableSave = true;
             } else {
-                theDocument.enableSave = false;
+                theDocumentValues.enableSave = false;
             }
             break;
         case 'diff':
-            theDocument.newDiffs.push(data);
+            theDocumentValues.newDiffs.push(data);
             break;
         case 'transform':
             editorHelpers.setDocumentData(data.change[0], data.change[1], false);
             editorHelpers.setDisplay.document(data.change[0], data.change[1]);
             break;
         case 'take_control':
-            theDocument.enableSave = true;
+            theDocumentValues.enableSave = true;
         }
     };
 
@@ -74,9 +74,9 @@
             'id'), function (entry) {
             return entry[0]
         });
-        if (participant_list.length > 1 && (!theDocument.collaborativeMode)) {
+        if (participant_list.length > 1 && (!theDocumentValues.collaborativeMode)) {
             serverCommunications.startCollaborativeMode();
-        } else if (participant_list.length === 1 && theDocument.collaborativeMode) {
+        } else if (participant_list.length === 1 && theDocumentValues.collaborativeMode) {
             serverCommunications.stopCollaborativeMode();
         }
         chatHelpers.updateParticipantList(participant_list);
@@ -85,20 +85,21 @@
     var metadataFields = ['title', 'subtitle', 'abstract', 'authors', 'keywords'];
 
     serverCommunications.resetTextChangeList = function () {
-        theDocument.newDiffs = [];
-        theDocument.usedDiffs = [];
-        theDocument.textChangeList = [];
+        
+        theDocumentValues.newDiffs = [];
+        theDocumentValues.usedDiffs = [];
+        theDocumentValues.textChangeList = [];
         serverCommunications.addCurrentToTextChangeList();
-        serverCommunications.diffNode = document.getElementById('document-editable').cloneNode(true); // a node against which changes are tested constantly.
+        theDocumentValues.diffNode = document.getElementById('document-editable').cloneNode(true); // a node against which changes are tested constantly.
     };
 
     serverCommunications.addCurrentToTextChangeList = function () {
-        theDocument.textChangeList.push([document.getElementById('document-editable').cloneNode(true), new Date().getTime() + window.clientOffsetTime]);
+        theDocumentValues.textChangeList.push([document.getElementById('document-editable').cloneNode(true), new Date().getTime() + window.clientOffsetTime]);
     };
 
 
     serverCommunications.makeDiff = function () {
-        var theDiff = domDiff.diff(serverCommunications.diffNode, document.getElementById('document-editable')),
+        var theDiff = domDiff.diff(theDocumentValues.diffNode, document.getElementById('document-editable')),
             containsCitation = 0,
             containsEquation = 0,
             containsComment = 0,
@@ -109,7 +110,7 @@
             return;
         }
         //console.log(theDiff);
-        domDiff.apply(serverCommunications.diffNode, theDiff);
+        domDiff.apply(theDocumentValues.diffNode, theDiff);
         for (i = 0; i < theDiff.length; i++) {
             if (theDiff[i].hasOwnProperty('element')) {
                 diffText = theDiff[i]['element'];
@@ -136,7 +137,7 @@
         };
 
         serverCommunications.send(thePackage);
-        theDocument.newDiffs.push(thePackage);
+        theDocumentValues.newDiffs.push(thePackage);
         serverCommunications.orderAndApplyChanges();
     };
 
@@ -146,23 +147,23 @@
             containsEquation = false,
             containsComment = false;
 
-        while (theDocument.newDiffs.length > 0) {
-            newestDiffs.push(theDocument.newDiffs.pop());
+        while (theDocumentValues.newDiffs.length > 0) {
+            newestDiffs.push(theDocumentValues.newDiffs.pop());
         }
         newestDiffs = _.sortBy(newestDiffs, function (diff) {
             return diff.time;
         });
 
 
-        while (newestDiffs[0].time < theDocument.textChangeList[theDocument.textChangeList.length - 1][1]) {
+        while (newestDiffs[0].time < theDocumentValues.textChangeList[theDocumentValues.textChangeList.length - 1][1]) {
             // We receive a change timed before the last change we recorded, so we need to go further back.
-            theDocument.textChangeList.pop();
-            if (theDocument.textChangeList.length === 0) {
+            theDocumentValues.textChangeList.pop();
+            if (theDocumentValues.textChangeList.length === 0) {
                 // We receive changes from before the first recorded version on this client. We need to reload the page.
                 location.reload();
             }
-            while (theDocument.usedDiffs.length > 0 && theDocument.usedDiffs[theDocument.usedDiffs.length - 1].time > theDocument.textChangeList[theDocument.textChangeList.length - 1][1]) {
-                newestDiffs.push(theDocument.usedDiffs.pop());
+            while (theDocumentValues.usedDiffs.length > 0 && theDocumentValues.usedDiffs[theDocumentValues.usedDiffs.length - 1].time > theDocumentValues.textChangeList[theDocumentValues.textChangeList.length - 1][1]) {
+                newestDiffs.push(theDocumentValues.usedDiffs.pop());
             }
             newestDiffs = _.sortBy(newestDiffs, function (diff) {
                 return diff.time;
@@ -173,7 +174,7 @@
         // We create a temporary node that has been patched with all changes so
         // that only the things that need to change from the node in the DOM
         // structure have to be touched.
-        tempPatchedNode = theDocument.textChangeList[theDocument.textChangeList.length - 1][0].cloneNode(true);
+        tempPatchedNode = theDocumentValues.textChangeList[theDocumentValues.textChangeList.length - 1][0].cloneNode(true);
 
         for (i = 0; i < newestDiffs.length; i++) {
             domDiff.apply(tempPatchedNode, newestDiffs[i].diff);
@@ -186,13 +187,13 @@
             if (newestDiffs[i].features[2]) {
                 containsComment = true;
             }
-            theDocument.usedDiffs.push(newestDiffs[i]);
+            theDocumentValues.usedDiffs.push(newestDiffs[i]);
         }
-        theDocument.textChangeList.push([tempPatchedNode, new Date().getTime() + window.clientOffsetTime]);
+        theDocumentValues.textChangeList.push([tempPatchedNode, new Date().getTime() + window.clientOffsetTime]);
 
         // If we have keept more than 10 old document versions, discard the first one. We should never need that older versions anyway.
-        if (theDocument.textChangeList.length > 10) {
-            theDocument.textChangeList.shift();
+        if (theDocumentValues.textChangeList.length > 10) {
+            theDocumentValues.textChangeList.shift();
         }
 
         // Now that the tempPatchedNode represents what the editor should look like, go ahead and apply only the differences, if there are any.
@@ -221,16 +222,16 @@
     };
 
     serverCommunications.incorporateUpdates = function () {
-        if (theDocument.touched) {
-            theDocument.touched = false;
+        if (theDocumentValues.touched) {
+            theDocumentValues.touched = false;
             serverCommunications.makeDiff();
-        } else if (theDocument.newDiffs.length > 0) {
+        } else if (theDocumentValues.newDiffs.length > 0) {
             serverCommunications.orderAndApplyChanges();
         }
     };
 
     serverCommunications.startCollaborativeMode = function () {
-        theDocument.touched = false;
+        theDocumentValues.touched = false;
         editorHelpers.getUpdatesFromInputFields(
             function () {
                 serverCommunications.resetTextChangeList();
@@ -242,7 +243,7 @@
 
     serverCommunications.stopCollaborativeMode = function () {
         clearInterval(serverCommunications.collaborateTimer);
-        theDocument.collaborativeMode = false;
+        theDocumentValues.collaborativeMode = false;
     };
     /** When the connection to the server has been lost, notify the user and ask to reload page. */
     serverCommunications.noConnectionToServer = function () {
@@ -316,6 +317,7 @@
 
     serverCommunications.bind = function () {
         window.theDocument = undefined;
+        window.theDocumentValues = {};
         window.theUser = undefined;
         window.clientOffsetTime = 0;
         jQuery(document).ready(function () {

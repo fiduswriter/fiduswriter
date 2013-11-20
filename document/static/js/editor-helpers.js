@@ -80,8 +80,8 @@
         var DEFAULTS, i;
 
         theDocument = aDocument;
-        theDocument.changed = false;
-        theDocument.touched = false;
+        theDocumentValues.changed = false;
+        theDocumentValues.touched = false;
         theDocument.settings = jQuery.parseJSON(theDocument.settings);
         theDocument.metadata = jQuery.parseJSON(theDocument.metadata);
 
@@ -112,7 +112,7 @@
 
         if (theDocument.is_new) {
             // If the document is new, change the url. Then forget that the document is new.
-            window.history.replaceState("", "", "/text/" + theDocument.id +
+            window.history.replaceState("", "", "/document/" + theDocument.id +
                 "/");
             delete theDocument.is_new;
         }
@@ -127,9 +127,9 @@
      * @memberof editorHelpers
      */
     editorHelpers.documentHasChanged = function () {
-        theDocument.changed = true; // For document saving
-        theDocument.touched = true; // For synchronizing with other viewers
-        jQuery('.save').removeClass('disabled');
+        theDocumentValues.changed = true; // For document saving
+        theDocumentValues.touched = true; // For synchronizing with other viewers
+        //jQuery('.save').removeClass('disabled');
     };
 
     /** Functions related to taking document data from theDocument.* and displaying it (ie making it part of the DOM structure). 
@@ -378,7 +378,7 @@
         }
     };
     /** Will save the current Document to the server if theDocument.enableSave is true. 
-     * In collaborative mode, only the first client to connect will have theDocument.enableSave set to true.
+     * In collaborative mode, only the first client to connect will have theDocumentValues.enableSave set to true.
      * @function saveDocument
      * @memberof editorHelpers
      * @param callback Callback to be called after copying data (optional).
@@ -386,14 +386,14 @@
     editorHelpers.saveDocument = function (callback) {
         var documentData = {};
 
-        jQuery('.save').addClass('disabled');
+        //jQuery('.save').addClass('disabled');
 
         // The title is saved twice: as metadata.title with html formatting and as just title as plain text.
         // Because we don't want two entries in the history, we avoid touching the history for the text-only version.
 
         theDocument.title = jQuery('#document-title').text().trim();
 
-        if (theDocument.enableSave) {
+        if (theDocumentValues.enableSave) {
             documentData.settings = JSON.stringify(theDocument.settings);
             documentData.metadata = JSON.stringify(theDocument.metadata);
             

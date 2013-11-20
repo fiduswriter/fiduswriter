@@ -16,17 +16,21 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import patterns, url
+from django.contrib import admin
 
-urlpatterns = patterns('',
+from document.models import Document, AccessRight, DocumentRevision
 
-    url(r'^$', 'text.views.index', name='index'),
-    url(r'^new/$', 'text.views.editor', name='editor'),
-    url(r'^documentlist/$', 'text.views.get_documentlist_js', name='get_documentlist_js'),
-    url(r'^documentlist/extra/$', 'text.views.get_documentlist_extra_js', name='get_documentlist_extra_js'),
-    url(r'^delete/$', 'text.views.delete_js', name='delete_js'),
-    url(r'^import/$', 'text.views.import_js', name='import_js'), 
-    url(r'^\d+/$', 'text.views.editor', name='editor'),
-    
-    url(r'^accessright/save/$', 'text.views.access_right_save_js', name='access_right_save_js'), 
-)
+class DocumentAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(Document, DocumentAdmin)
+
+class AccessRightAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(AccessRight, AccessRightAdmin)
+
+class DocumentRevisionAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(DocumentRevision, DocumentRevisionAdmin)

@@ -26,7 +26,7 @@ from fiduswriter.settings import LOCK_TIMEOUT
 
 MAX_SINCE_SAVE=timedelta(seconds=LOCK_TIMEOUT)
 
-class Text(models.Model):
+class Document(models.Model):
     title = models.CharField(max_length=255, default='', blank=True)
     contents = models.TextField(default='<p><br></p>')
     metadata = models.TextField(default='{}') #json object of metadata
@@ -39,7 +39,7 @@ class Text(models.Model):
         return self.title
     
     def get_absolute_url(self):
-        return "/text/%i/" % self.id
+        return "/document/%i/" % self.id
         
 
 RIGHTS_CHOICES  = (
@@ -48,12 +48,22 @@ RIGHTS_CHOICES  = (
 )
 
 class AccessRight(models.Model):
-    text = models.ForeignKey(Text)
+    document = models.ForeignKey(Document)
     user = models.ForeignKey(User)
     rights = models.CharField(max_length=1, choices=RIGHTS_CHOICES, blank=False)
     
     class Meta:
-        unique_together = (("text", "user"),)
+        unique_together = (("document", "user"),)
 
     def __unicode__(self):
-        return self.user.readable_name+' ('+self.rights+') on '+self.text.title
+        return self.user.readable_name+' ('+self.rights+') on '+self.document.title
+
+def revision_filename(instance, filename):
+    return '/'.join(['revision', str(instance.document.id), filename])
+
+class DocumentRevision(models.Model):
+    document = models.ForeignKey(Document)
+    note = models.CharField(max_length=255, default='', blank=True)
+    date = models.DateTimeField(auto_now=True)
+    file_object = models.FileField(upload_to=revision_filename)
+    

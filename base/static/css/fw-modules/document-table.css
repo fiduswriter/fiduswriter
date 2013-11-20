@@ -73,6 +73,10 @@
     padding-right: 0;
 }
 
+.fw-document-table-body td.td-icon {
+    text-align: center;
+}
+
 .fw-document-table-title {
     color: #a7321f;
 }
@@ -88,12 +92,12 @@
     font-size: 15px;
 }
 
-.owned-by-user .icon-access-right {
+.owned-by-user .icon-access-right,.fw-document-table .icon-clock {
     color: #a7321f;
     cursor: pointer;
 }
 
-.owned-by-user .icon-access-right:hover {
+.owned-by-user .icon-access-right:hover,.fw-document-table .icon-clock:hover {
     color: #2c2723;
 }
 

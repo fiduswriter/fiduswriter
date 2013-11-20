@@ -29,6 +29,11 @@ jQuery(document).ready(function () {
         var DocumentId = parseInt(jQuery(this).attr('data-id'));
         accessrightsHelpers.createAccessRightsDialog([DocumentId]);
     });
+    
+    jQuery(document).on('click', '.revisions', function () {
+        var DocumentId = parseInt(jQuery(this).attr('data-id'));
+        accessrightsHelpers.createAccessRightsDialog([DocumentId]);
+    });
 
     //select all entries
     jQuery('#select-all-entry').bind('change', function () {

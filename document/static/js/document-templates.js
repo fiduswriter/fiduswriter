@@ -32,21 +32,25 @@ var tmp_documents_list_item = _.template('\
                             data-owner="<%- aDocument.owner %>"/>\
                     </span>\
                 </td>\
-                <td width="230">\
+                <td width="220">\
                     <span class="fw-document-table-title fw-inline">\
                         <i class="icon-doc"></i>\
                         <a class="doc-title fw-link-text fw-searchable" href="/document/<%- aDocument.id %>/">\
                             <%- documentTitle %>\
                         </a>\
-                        <% if (aDocument.is_locked) { %>\
-                            <i class="icon-lock"></i>\
-                        <% } %>\
                     </span>\
                 </td>\
-                <td width="115">\
+                <td width="80" class="td-icon">\
+                    <% if (aDocument.revisions.length > 0) { %>\
+                        <span class="fw-inline revisions" data-id="<%- aDocument.id %>">\
+                            <i class="icon-clock"></i>\
+                        </span>\
+                    <% } %>\
+                </td>\
+                <td width="80">\
                     <span class="fw-inline"><%- jQuery.localizeDate(aDocument.added*1000, true) %></span>\
                 </td>\
-                <td width="115">\
+                <td width="80">\
                     <span class="fw-inline"><%- jQuery.localizeDate(aDocument.updated*1000, true) %></span>\
                 </td>\
                 <td width="170">\
@@ -55,12 +59,12 @@ var tmp_documents_list_item = _.template('\
                     </span>\
                     <span class="fw-inline fw-searchable"><%- aDocument.owner_name %></span>\
                 </td>\
-                <td width="60" align="center">\
+                <td width="60"  class="td-icon">\
                     <span class="rights fw-inline" data-id="<%- aDocument.id %>">\
                         <i data-id="<%- aDocument.id %>" class="icon-access-right <%- aDocument.rights %>"></i>\
                     </span>\
                 </td>\
-                 <td width="40" align="center">\
+                 <td width="40"  class="td-icon">\
                     <span class="delete-document fw-inline fw-link-text" data-id="<%- aDocument.id %>" data-title="<%- aDocument.title %>">\
                         <% if (theUser.id === aDocument.owner) { %><i class="icon-trash"></i><% } %>\
                     </span>\

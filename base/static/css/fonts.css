@@ -97,7 +97,7 @@
 .icon-link:before { content: '\1f517'; } /* '' */
 .icon-math:before { content: '\4d'; } /* '' */
 .icon-search:before { content: '\e800'; }
-.icon-lock:before { content: '\e807'; } /* '' */
+.icon-clock:before { content: '\e807'; } /* '' */
 /* Fidus Writer specific */
 .icon-footnote:before { content: '\46'; } /* 'F' */
 .icon-figure:before { content: '\49'; } /* 'F' */

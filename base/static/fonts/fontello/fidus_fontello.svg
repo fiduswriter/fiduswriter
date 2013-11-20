@@ -2,7 +2,7 @@
 <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
 <svg>
 <metadata>
-Created by FontForge 20110222 at Mon Aug 26 10:44:56 2013
+Created by FontForge 20110222 at Wed Nov 20 17:55:59 2013
  By Johannes Wilm,,,
 Copyright (C) 2012 by original authors @ fontello.com
 </metadata>
@@ -253,7 +253,7 @@ l416.901 -117.647l29.355 103.986zM288.645 672.917l-55.864 -92.537l370.811 -223.9
     <glyph glyph-name="uniE806" unicode="&#xe806;" horiz-adv-x="785" 
 d="M786 66q0 -67 -41 -106t-108 -39h-488q-68 0 -108 39t-41 106q0 30 2 58t8 61t15 61t24 54t35 45t48 30t62 11q5 0 23 -12t42 -27t60 -27t74 -12t74 12t60 27t42 27t23 12q34 0 62 -11t48 -30t35 -45t24 -54t15 -61t8 -61t2 -58zM607 564q0 -89 -63 -151t-151 -63
 t-151 63t-63 151t63 151t151 63t151 -63t63 -151z" />
-    <glyph glyph-name="uniE807" unicode="&#xe807;" horiz-adv-x="642" 
-d="M179 421h286v107q0 59 -42 101t-101 42t-101 -42t-42 -101v-107zM643 367v-321q0 -22 -16 -38t-38 -16h-536q-22 0 -38 16t-16 38v321q0 22 16 38t38 16h18v107q0 103 74 176t176 74t176 -74t74 -176v-107h18q22 0 38 -16t16 -38z" />
+    <glyph glyph-name="uniE807" unicode="&#xe807;" horiz-adv-x="910" 
+d="M0 349q0 188 134 322t322 134t321 -134t133 -322t-133 -321t-321 -133t-322 133t-134 321zM119 349q0 -140 99 -238t238 -99t238 99t99 238t-99 238t-238 99t-238 -99t-99 -238zM291 280v117h117v213h117v-330h-234z" />
   </font>
 </defs></svg>

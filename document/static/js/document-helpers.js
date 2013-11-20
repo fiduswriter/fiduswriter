@@ -160,7 +160,7 @@
             },
             "aoColumnDefs": [{
                 "bSortable": false,
-                "aTargets": [0, 5, 6]
+                "aTargets": [0, 2, 6, 7]
             }],
         });
 

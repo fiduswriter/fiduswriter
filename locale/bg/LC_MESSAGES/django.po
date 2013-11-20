@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-14 15:23-0600\n"
+"POT-Creation-Date: 2013-11-20 17:51-0600\n"
 "PO-Revision-Date: 2013-09-18 08:54+0200\n"
 "Last-Translator: Vladimir Vitkov <vvitkov@linux-bg.org>\n"
 "Language-Team: Bulgarian <vvitkov@linux-bg.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: account/templates/account/base.html:7 base/templates/base.html:10
-#: text/templates/text/editor.html:9
+#: document/templates/document/editor.html:9
 msgid "The all in one solution for collaborative academic writing."
 msgstr "Комплексно решение за съвместно създаване на академични документи."
 
@@ -131,8 +131,8 @@ msgstr "Изберете действие"
 
 #: account/templates/account/list_team_members.html:44
 #: bibliography/templates/bibliography/index.html:52
-#: book/templates/book/index.html:88 text/templates/text/index.html:73
-#: usermedia/templates/usermedia/index.html:41
+#: book/templates/book/index.html:88 document/templates/document/index.html:77
+#: usermedia/templates/usermedia/index.html:39
 msgid "Delete selected"
 msgstr "Изтрий избраните"
 
@@ -154,8 +154,9 @@ msgstr "Имейл адрес"
 #: account/templates/account/list_team_members.html:64
 #: account/templates/account/show_profile.html:88
 #: bibliography/templates/bibliography/index.html:107
-#: book/templates/book/index.html:147 text/templates/text/index.html:132
-#: usermedia/templates/usermedia/index.html:84
+#: book/templates/book/index.html:147
+#: document/templates/document/index.html:137
+#: usermedia/templates/usermedia/index.html:82
 msgid "Delete"
 msgstr "Изтрий"
 
@@ -473,13 +474,13 @@ msgstr "Експортирай Избраните"
 
 #: bibliography/templates/bibliography/index.html:66
 #: bibliography/templates/bibliography/index.html:73
-#: usermedia/templates/usermedia/index.html:50
-#: usermedia/templates/usermedia/index.html:57
+#: usermedia/templates/usermedia/index.html:48
+#: usermedia/templates/usermedia/index.html:55
 msgid "All categories"
 msgstr "Всички категории"
 
 #: bibliography/templates/bibliography/index.html:81
-#: usermedia/templates/usermedia/index.html:65
+#: usermedia/templates/usermedia/index.html:63
 msgid "Edit categories"
 msgstr "Редактирай категории"
 
@@ -492,7 +493,8 @@ msgid "Import Bibtex Library"
 msgstr "Импорт Bibtex библ."
 
 #: bibliography/templates/bibliography/index.html:103
-#: book/templates/book/index.html:142 text/templates/text/index.html:127
+#: book/templates/book/index.html:142
+#: document/templates/document/index.html:131
 msgid "Title"
 msgstr "Заглавие"
 
@@ -508,7 +510,7 @@ msgstr "Автор"
 msgid "Published"
 msgstr "Публикувани"
 
-#: book/views.py:304 text/views.py:178
+#: book/views.py:304 document/views.py:185
 #, fuzzy
 msgid "Untitled"
 msgstr "Подзаглавие"
@@ -551,23 +553,26 @@ msgstr "Достъп за писане във Fidus Writer книга"
 msgid "Book Overview"
 msgstr "Обзор на Книгата"
 
-#: book/templates/book/index.html:93 text/templates/text/index.html:78
+#: book/templates/book/index.html:93 document/templates/document/index.html:82
 msgid "Share selected"
 msgstr "Сподели избраните"
 
-#: book/templates/book/index.html:98 text/templates/text/index.html:83
+#: book/templates/book/index.html:98 document/templates/document/index.html:87
 msgid "Copy selected"
 msgstr "Копирай избраните"
 
-#: book/templates/book/index.html:103 text/templates/text/index.html:88
+#: book/templates/book/index.html:103
+#: document/templates/document/index.html:92
 msgid "Export selected as Epub"
 msgstr "Експортирай избраните като Epub"
 
-#: book/templates/book/index.html:108 text/templates/text/index.html:93
+#: book/templates/book/index.html:108
+#: document/templates/document/index.html:97
 msgid "Export selected as HTML"
 msgstr "Експортирай избраните като HTML"
 
-#: book/templates/book/index.html:113 text/templates/text/index.html:98
+#: book/templates/book/index.html:113
+#: document/templates/document/index.html:102
 msgid "Export selected as LaTeX"
 msgstr "Експортирай избраните като LaTeX"
 
@@ -583,43 +588,27 @@ msgstr "Нова Книга"
 msgid "Upload Fidus Book"
 msgstr "Качи Fidus Книга"
 
-#: book/templates/book/index.html:143 text/templates/text/index.html:128
+#: book/templates/book/index.html:143
+#: document/templates/document/index.html:133
 msgid "Created"
 msgstr "Създаден"
 
-#: book/templates/book/index.html:144 text/templates/text/index.html:129
+#: book/templates/book/index.html:144
+#: document/templates/document/index.html:134
 msgid "Last changed"
 msgstr "Последна промяна"
 
-#: book/templates/book/index.html:145 text/templates/text/index.html:130
+#: book/templates/book/index.html:145
+#: document/templates/document/index.html:135
 msgid "Owner"
 msgstr "Собственик"
 
-#: book/templates/book/index.html:146 text/templates/text/index.html:131
+#: book/templates/book/index.html:146
+#: document/templates/document/index.html:136
 msgid "Rights"
 msgstr "Права"
 
-#: fiduswriter/settings.py:249
-msgid "English"
-msgstr "Английски"
-
-#: fiduswriter/settings.py:250
-msgid "Bulgarian"
-msgstr "Български"
-
-#: fiduswriter/settings.py:251
-msgid "German"
-msgstr "Немски"
-
-#: fiduswriter/settings.py:252
-msgid "Italian"
-msgstr ""
-
-#: fiduswriter/settings.py:253
-msgid "Spanish"
-msgstr "Испански"
-
-#: text/views.py:183
+#: document/views.py:190
 #, fuzzy, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
@@ -631,12 +620,12 @@ msgstr ""
 "%(owner)s сподели Fidus Writer документ и ти даде следните права %(right)s.\n"
 "Документът може да видиш чрез следната връзка: %(link)s"
 
-#: text/views.py:184
+#: document/views.py:191
 #, fuzzy
 msgid "Document shared:"
 msgstr "Документи"
 
-#: text/views.py:194
+#: document/views.py:201
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
@@ -648,106 +637,113 @@ msgstr ""
 "писане.\n"
 "Документът може да видиш чрез следната връзка: %(link)s"
 
-#: text/views.py:195
+#: document/views.py:202
 msgid "Fidus Writer document write access"
 msgstr "Достъп за писане във Fidus Writer документ"
 
-#: text/templates/text/editor.html:34 text/templates/text/editor.html:443
+#: document/templates/document/editor.html:38
+#: document/templates/document/editor.html:447
 msgid "Subtitle"
 msgstr "Подзаглавие"
 
-#: text/templates/text/editor.html:37 text/templates/text/editor.html:446
+#: document/templates/document/editor.html:41
+#: document/templates/document/editor.html:450
 msgid "Abstract"
 msgstr "Обобщение"
 
-#: text/templates/text/editor.html:40
+#: document/templates/document/editor.html:44
 #, fuzzy
 msgid "Authors"
 msgstr "Автор"
 
-#: text/templates/text/editor.html:43 text/templates/text/editor.html:452
+#: document/templates/document/editor.html:47
+#: document/templates/document/editor.html:456
 msgid "Keywords"
 msgstr ""
 
-#: text/templates/text/editor.html:326
+#: document/templates/document/editor.html:330
 msgid "en"
 msgstr "англ"
 
-#: text/templates/text/editor.html:330 text/templates/text/editor.html:342
+#: document/templates/document/editor.html:334
+#: document/templates/document/editor.html:346
 msgid "Close the document and return to the document overview menu."
 msgstr "Затвори документа и се върни към обзора на документа"
 
-#: text/templates/text/editor.html:335
+#: document/templates/document/editor.html:339
 msgid "File handling"
 msgstr "Управление на файлове"
 
-#: text/templates/text/editor.html:335
-#: usermedia/templates/usermedia/index.html:81
+#: document/templates/document/editor.html:339
+#: usermedia/templates/usermedia/index.html:79
 msgid "File"
 msgstr "Файл"
 
-#: text/templates/text/editor.html:339
+#: document/templates/document/editor.html:343
 msgid "Share the document with other users."
 msgstr "Сподели документа с други потребители"
 
-#: text/templates/text/editor.html:339
+#: document/templates/document/editor.html:343
 msgid "Share"
 msgstr "Сподели"
 
-#: text/templates/text/editor.html:342
+#: document/templates/document/editor.html:346
 msgid "Close"
 msgstr "Затвори"
 
-#: text/templates/text/editor.html:345
-msgid "Save the current document"
-msgstr "Запазване на текущия документ"
-
-#: text/templates/text/editor.html:345
-msgid "Save"
-msgstr "Запази"
-
-#: text/templates/text/editor.html:348
-msgid "Save copy of the current document"
+#: document/templates/document/editor.html:349
+#, fuzzy
+msgid "Save a revision of the current document"
 msgstr "Запази копие на документа"
 
-#: text/templates/text/editor.html:348
-msgid "Save copy"
+#: document/templates/document/editor.html:349
+msgid "Save revision"
+msgstr ""
+
+#: document/templates/document/editor.html:352
+#, fuzzy
+msgid "Create copy of the current document"
+msgstr "Запази копие на документа"
+
+#: document/templates/document/editor.html:352
+#, fuzzy
+msgid "Create copy"
 msgstr "Запазване на копие"
 
-#: text/templates/text/editor.html:351
+#: document/templates/document/editor.html:355
 msgid "Download the current document"
 msgstr "Изтегли текущият документ"
 
-#: text/templates/text/editor.html:351
+#: document/templates/document/editor.html:355
 msgid "Download"
 msgstr "Изтегли"
 
-#: text/templates/text/editor.html:354
+#: document/templates/document/editor.html:358
 msgid "Either print or create a PDF using your browser's print dialog"
 msgstr ""
 "Разпечатайте или създайте PDF от диалога за принтиране на вашият браузър"
 
-#: text/templates/text/editor.html:354
+#: document/templates/document/editor.html:358
 msgid "Print/PDF"
 msgstr "Печат/PDF"
 
-#: text/templates/text/editor.html:360
+#: document/templates/document/editor.html:364
 msgid "Export of the document contents"
 msgstr "Експортирай съдаржанието на документа"
 
-#: text/templates/text/editor.html:360
+#: document/templates/document/editor.html:364
 msgid "Export"
 msgstr "Експортиране"
 
-#: text/templates/text/editor.html:364
+#: document/templates/document/editor.html:368
 msgid "Export the document to an HTML file"
 msgstr "Експортирай документа към HTML"
 
-#: text/templates/text/editor.html:369
+#: document/templates/document/editor.html:373
 msgid "Export the document to an Epub electronic reader file."
 msgstr "Експортирай документа като Epub електронна книга"
 
-#: text/templates/text/editor.html:374
+#: document/templates/document/editor.html:378
 msgid ""
 "Export the document to a Latex file. This will also attach a BibTex file if "
 "you are using citations."
@@ -755,239 +751,271 @@ msgstr ""
 "Експортирай документа като Latex файл. Това ще прикачи и BibTex файл ако "
 "използвате цитати."
 
-#: text/templates/text/editor.html:382
+#: document/templates/document/editor.html:386
 msgid "Choose your preferred citation style."
 msgstr "Изберете предпочитан стил на цитатите."
 
-#: text/templates/text/editor.html:382
+#: document/templates/document/editor.html:386
 msgid "Citation Style"
 msgstr "Стил на цитатите"
 
-#: text/templates/text/editor.html:386
+#: document/templates/document/editor.html:390
 msgid "American Psychological Association."
 msgstr "American Psychological Association."
 
-#: text/templates/text/editor.html:386
+#: document/templates/document/editor.html:390
 msgid "APA"
 msgstr "APA"
 
-#: text/templates/text/editor.html:389
+#: document/templates/document/editor.html:393
 msgid "The author-date variant of the Chicago style"
 msgstr "Вариантът Автор-Дата на Чикаго стил"
 
-#: text/templates/text/editor.html:389
+#: document/templates/document/editor.html:393
 msgid "Chicago (Author-Date)"
 msgstr "Chicago (Автор-Дата)"
 
-#: text/templates/text/editor.html:392
+#: document/templates/document/editor.html:396
 msgid "Chicago format with short notes and full bibliography"
 msgstr "Чикаго формат със кратки бележки и пълна библиография"
 
-#: text/templates/text/editor.html:392
+#: document/templates/document/editor.html:396
 msgid "Chicago (Note with Bibliography)"
 msgstr "Чикаго (Бележки с Библиография)"
 
-#: text/templates/text/editor.html:395
+#: document/templates/document/editor.html:399
 msgid "The Harvard author-date style"
 msgstr "Харвардски автор-дата стил"
 
-#: text/templates/text/editor.html:395
+#: document/templates/document/editor.html:399
 msgid "Harvard"
 msgstr "Харвард"
 
-#: text/templates/text/editor.html:398
+#: document/templates/document/editor.html:402
 msgid "Modern Language Association"
 msgstr "Modern Language Association"
 
-#: text/templates/text/editor.html:398
+#: document/templates/document/editor.html:402
 msgid "MLA"
 msgstr "MLA"
 
-#: text/templates/text/editor.html:404
+#: document/templates/document/editor.html:408
 msgid "Choose a document style"
 msgstr "Избери стил на документа"
 
-#: text/templates/text/editor.html:404
+#: document/templates/document/editor.html:408
 msgid "Document Style"
 msgstr "Стил на Документа"
 
-#: text/templates/text/editor.html:408
+#: document/templates/document/editor.html:412
 msgid "Elephant"
 msgstr "Elephant"
 
-#: text/templates/text/editor.html:409
+#: document/templates/document/editor.html:413
 msgid "Comfy Elephant"
 msgstr "Comfy Elephant"
 
-#: text/templates/text/editor.html:413
+#: document/templates/document/editor.html:417
 msgid "Owl"
 msgstr "Owl"
 
-#: text/templates/text/editor.html:414
+#: document/templates/document/editor.html:418
 msgid "Drowsy Owl"
 msgstr "Drowsy Owl"
 
-#: text/templates/text/editor.html:418
+#: document/templates/document/editor.html:422
 msgid "Fox"
 msgstr "Fox"
 
-#: text/templates/text/editor.html:419
+#: document/templates/document/editor.html:423
 msgid "Foxy Fox"
 msgstr "Foxy Fox"
 
-#: text/templates/text/editor.html:426
+#: document/templates/document/editor.html:430
 msgid "Choose a papersize for printing and PDF generation."
 msgstr "Изберете размерна на страниците за печат и генериране на PDF"
 
-#: text/templates/text/editor.html:426
+#: document/templates/document/editor.html:430
 msgid "Paper Size"
 msgstr "Размер на лист"
 
-#: text/templates/text/editor.html:430
+#: document/templates/document/editor.html:434
 msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
 msgstr "A4 (DIN A4/ISO 216) използван в по голямата част от света"
 
-#: text/templates/text/editor.html:430
+#: document/templates/document/editor.html:434
 msgid "DIN A4"
 msgstr "DIN A4"
 
-#: text/templates/text/editor.html:433
+#: document/templates/document/editor.html:437
 msgid "The format used by the USA and some other American countries."
 msgstr "Форматът използван в USA и някои американски страни."
 
-#: text/templates/text/editor.html:433
+#: document/templates/document/editor.html:437
 msgid "US Letter"
 msgstr "US Letter"
 
-#: text/templates/text/editor.html:439
+#: document/templates/document/editor.html:443
 msgid "Choose which metadata to enable."
 msgstr "Избери кои мета-данни да бъдат включени."
 
-#: text/templates/text/editor.html:439
+#: document/templates/document/editor.html:443
 msgid "Metadata"
 msgstr "Мета-данни"
 
-#: text/templates/text/editor.html:443
+#: document/templates/document/editor.html:447
 msgid "Define a subtitle in addition to the title of the document."
 msgstr "Дефинирай подзаглавие за документа."
 
-#: text/templates/text/editor.html:446
+#: document/templates/document/editor.html:450
 msgid "Add an abstract to the document."
 msgstr "Добави обобщение към документа"
 
-#: text/templates/text/editor.html:449
+#: document/templates/document/editor.html:453
 #, fuzzy
 msgid "Specify the authors of the document."
 msgstr "Заглавие на документа"
 
-#: text/templates/text/editor.html:449
+#: document/templates/document/editor.html:453
 #, fuzzy
 msgid "Author(s)"
 msgstr "Автор"
 
-#: text/templates/text/editor.html:452
+#: document/templates/document/editor.html:456
 msgid "Add keywords to facilitate categorization."
 msgstr ""
 
-#: text/templates/text/editor.html:458
+#: document/templates/document/editor.html:462
 msgid "Tools"
 msgstr "Инструменти"
 
-#: text/templates/text/editor.html:462 text/templates/text/editor.html:463
+#: document/templates/document/editor.html:466
+#: document/templates/document/editor.html:467
 msgid "Word counter"
 msgstr "Брой Думи"
 
-#: text/templates/text/editor.html:467 text/templates/text/editor.html:468
+#: document/templates/document/editor.html:471
+#: document/templates/document/editor.html:472
 msgid "Keyboard shortcuts"
 msgstr ""
 
-#: text/templates/text/editor.html:479
+#: document/templates/document/editor.html:483
 msgid "Show/hide the top menu."
 msgstr "Покажи/Скрий горното меню."
 
-#: text/templates/text/editor.html:483
+#: document/templates/document/editor.html:487
 msgid "Handle tracking of changes."
 msgstr "Проследи промените."
 
-#: text/templates/text/editor.html:484
+#: document/templates/document/editor.html:488
 msgid "Changes"
 msgstr "Промени"
 
-#: text/templates/text/editor.html:489
+#: document/templates/document/editor.html:493
 msgid "Turn tracking of changes on."
 msgstr "Включи проследяването на промени"
 
-#: text/templates/text/editor.html:489
+#: document/templates/document/editor.html:493
 msgid "Track"
 msgstr "Проследи"
 
-#: text/templates/text/editor.html:492
+#: document/templates/document/editor.html:496
 msgid "Show all changes that have been tracked in the entire document."
 msgstr "Покажи всички промени които са проследени в документа."
 
-#: text/templates/text/editor.html:492
+#: document/templates/document/editor.html:496
 msgid "Show"
 msgstr "Показване"
 
-#: text/templates/text/editor.html:495
+#: document/templates/document/editor.html:499
 msgid "Accept all changes that have been tracked in the entire document."
 msgstr "Приеми всички промени които са проследени в целият документ."
 
-#: text/templates/text/editor.html:495
+#: document/templates/document/editor.html:499
 msgid "Accept all"
 msgstr "Приеми всички"
 
-#: text/templates/text/editor.html:498
+#: document/templates/document/editor.html:502
 msgid "Reject all changes that have been tracked in the entire document."
 msgstr "Отхвърли всички промени които са проследени в целият документ."
 
-#: text/templates/text/editor.html:498
+#: document/templates/document/editor.html:502
 msgid "Reject all"
 msgstr "Отхвърли всички"
 
-#: text/templates/text/editor.html:503
+#: document/templates/document/editor.html:507
 msgid "Show/hide comments"
 msgstr "Покажи/Скрий коментарите"
 
-#: text/templates/text/editor.html:504
+#: document/templates/document/editor.html:508
 msgid "Comments"
 msgstr "Коментари"
 
-#: text/templates/text/editor.html:511
+#: document/templates/document/editor.html:515
 msgid "The title of the document"
 msgstr "Заглавие на документа"
 
-#: text/templates/text/index.html:6
+#: document/templates/document/index.html:6
 msgid "Document Overview"
 msgstr "Преглед на документа"
 
-#: text/templates/text/index.html:103
+#: document/templates/document/index.html:107
 msgid "Download selected as Fidus Document"
 msgstr "Свали избраните като Fidus Документ"
 
-#: text/templates/text/index.html:111
+#: document/templates/document/index.html:115
 msgid "Create New Document"
 msgstr "Създай нов Документ"
 
-#: text/templates/text/index.html:117
+#: document/templates/document/index.html:121
 msgid "Upload Fidus Document"
 msgstr "Качи Fidus документ"
+
+#: document/templates/document/index.html:132
+msgid "Revisions"
+msgstr ""
+
+#: fiduswriter/settings.py:250
+msgid "English"
+msgstr "Английски"
+
+#: fiduswriter/settings.py:251
+msgid "Bulgarian"
+msgstr "Български"
+
+#: fiduswriter/settings.py:252
+msgid "German"
+msgstr "Немски"
+
+#: fiduswriter/settings.py:253
+msgid "Italian"
+msgstr ""
+
+#: fiduswriter/settings.py:254
+msgid "Spanish"
+msgstr "Испански"
 
 #: usermedia/templates/usermedia/index.html:5
 msgid "Media Manager"
 msgstr "Управление на медийни елементи"
 
-#: usermedia/templates/usermedia/index.html:71
+#: usermedia/templates/usermedia/index.html:69
 msgid "Upload new image"
 msgstr "Качване на ново изображение"
 
-#: usermedia/templates/usermedia/index.html:82
+#: usermedia/templates/usermedia/index.html:80
 msgid "Size (px)"
 msgstr "Размер (px)"
 
-#: usermedia/templates/usermedia/index.html:83
+#: usermedia/templates/usermedia/index.html:81
 msgid "Updated"
 msgstr "Обновен"
+
+#~ msgid "Save the current document"
+#~ msgstr "Запазване на текущия документ"
+
+#~ msgid "Save"
+#~ msgstr "Запази"
 
 #~ msgid ""
 #~ "%(ext)s is an invalid file extension. Authorized extensions are : "

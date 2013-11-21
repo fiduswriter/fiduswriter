@@ -331,7 +331,7 @@
                 documentId = 0;
             }
             
-            wsConnectionAttempts = 0;
+            var wsConnectionAttempts = 0;
             
             function createWSConnection() {
                 var connectTime = new Date();
@@ -350,6 +350,7 @@
                     } else if (wsConnectionAttempts < 10) {
                         wsConnectionAttempts++;
                         setTimeout(2000,createWSConnection);
+                        console.log('reattempting connecting');
                     } else {
                         wsConnectionAttempts = 0;
                         serverCommunications.noConnectionToServer();

@@ -331,7 +331,7 @@
                 documentId = 0;
             }
             
-            
+            wsConnectionAttempts = 0;
             
             function createWSConnection() {
                 var connectTime = new Date();
@@ -344,12 +344,18 @@
                 }
                 ws.onclose = function (event) {
                     var currentTime = new Date();
-                    if (currentTime-connectTime > 1000) {
+                    if (currentTime-connectTime > 10000) {
+                        wsConnectionAttempts = 0;
                         createWSConnection();
+                    } else if (wsConnectionAttempts < 10) {
+                        wsConnectionAttempts++;
+                        setTimeout(2000,createWSConnection);
                     } else {
+                        wsConnectionAttempts = 0;
                         serverCommunications.noConnectionToServer();
                     }
                 }
+                
             }
             
             createWSConnection();

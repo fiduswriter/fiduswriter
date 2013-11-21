@@ -331,14 +331,28 @@
                 documentId = 0;
             }
             
-            window.ws = new WebSocket('ws://' + location.host.split(':')[0] + ':' + websocketPort +
-            '/ws/doc/' + documentId);
             
-            ws.onmessage = function (event) {
-                //console.log(event);
-                serverCommunications.receive(JSON.parse(event.data));
+            
+            function createWSConnection() {
+                var connectTime = new Date();
+                
+                window.ws = new WebSocket('ws://' + location.host.split(':')[0] + ':' + websocketPort +
+            '/ws/doc/' + documentId);
+                
+                ws.onmessage = function (event) {
+                    serverCommunications.receive(JSON.parse(event.data));
+                }
+                ws.onclose = function (event) {
+                    var currentTime = new Date();
+                    if (currentTime-connectTime > 1000) {
+                        createWSConnection();
+                    } else {
+                        serverCommunications.noConnectionToServer();
+                    }
+                }
             }
-            ws.onclose = serverCommunications.noConnectionToServer;
+            
+            createWSConnection();
         });
     };
 

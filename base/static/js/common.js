@@ -77,13 +77,13 @@ jQuery.extend({
      * @memberof jQuery
      */
     'activateWait': function() {
-        jQuery('#wait').addClass('active');
+//        jQuery('#wait').addClass('active');
     },
     /** Remove the wait cover.
      * @memberof jQuery
      */
     'deactivateWait': function() {
-        jQuery('#wait').removeClass('active');
+//        jQuery('#wait').removeClass('active');
     },
     /** Show a message to the user.
      * @memberof jQuery

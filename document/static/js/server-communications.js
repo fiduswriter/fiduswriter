@@ -339,7 +339,7 @@
                 window.ws = new WebSocket('ws://' + location.host.split(':')[0] + ':' + websocketPort +
             '/ws/doc/' + documentId);
                 
-                wsPinger = setInterval(60000, function() {serverCommunications.send({'type':'ping'})});
+                wsPinger = setInterval(function() {serverCommunications.send({'type':'ping'})}, 60000);
                 
                 ws.onmessage = function (event) {
                     serverCommunications.receive(JSON.parse(event.data));
@@ -352,7 +352,7 @@
                         createWSConnection();
                     } else if (wsConnectionAttempts < 10) {
                         wsConnectionAttempts++;
-                        setTimeout(2000,createWSConnection);
+                        setTimeout(createWSConnection, 2000);
                         console.log('reattempting connecting');
                     } else {
                         wsConnectionAttempts = 0;

@@ -339,7 +339,7 @@
                 window.ws = new WebSocket('ws://' + location.host.split(':')[0] + ':' + websocketPort +
             '/ws/doc/' + documentId);
                 
-                wsPinger = setInterval(60000, serverCommunications.send({'type':'ping'}));
+                wsPinger = setInterval(60000, function() {serverCommunications.send({'type':'ping'})});
                 
                 ws.onmessage = function (event) {
                     serverCommunications.receive(JSON.parse(event.data));

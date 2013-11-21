@@ -132,7 +132,14 @@
                     },
                     type: 'POST',
                     success: function () {
-                        jQuery('tr.revision-' + id).remove();
+                        var thisTr = jQuery('tr.revision-' + id),
+                            documentId = jQuery(thisTr).attr('data-document'),
+                            aDocument = _.findWhere(theDocumentList, {id:parseInt(documentId)});
+                        aDocument.revisions = _.reject(aDocument.revisions, function (revision) {return (revision.pk==id); });
+                        if (aDocument.revisions.length===0) {
+                            jQuery('#Text_'+documentId+' .revisions').detach();
+                        }
+                        jQuery(thisTr).remove();
                         jQuery.addAlert('success', gettext('Revision deleted'));
                     },
                     error: function () {
@@ -154,7 +161,7 @@
             height: 180,
             modal: true,
             close: function () {
-                jQuery("#confirmdeletion").detach();
+                jQuery(this).dialog('destroy').remove();
             },
             buttons: diaButtons,
             create: function () {

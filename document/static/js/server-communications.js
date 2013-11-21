@@ -334,16 +334,19 @@
             var wsConnectionAttempts = 0;
             
             function createWSConnection() {
-                var connectTime = new Date();
+                var connectTime = new Date(), wsPinger;
                 
                 window.ws = new WebSocket('ws://' + location.host.split(':')[0] + ':' + websocketPort +
             '/ws/doc/' + documentId);
+                
+                wsPinger = setInterval(60000, serverCommunications.send({'type':'ping'}));
                 
                 ws.onmessage = function (event) {
                     serverCommunications.receive(JSON.parse(event.data));
                 }
                 ws.onclose = function (event) {
                     var currentTime = new Date();
+                    clearInterval(wsPinger);
                     if (currentTime-connectTime > 10000) {
                         wsConnectionAttempts = 0;
                         createWSConnection();

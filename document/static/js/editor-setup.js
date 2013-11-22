@@ -327,6 +327,15 @@ jQuery(document).bind('documentDataLoaded', function () {
             exporter.uploadNative(theDocument);
         });
 
+        jQuery(window).on('beforeunload', function(){
+            editorHelpers.getUpdatesFromInputFields(function () {
+                editorHelpers.saveDocument();
+            });
+            if (theDocumentValues.collaborativeMode) {
+                serverCommunications.incorporateUpdates();
+            }
+            return gettext('Leave editor');
+        });
 
 
         jQuery(document).on('click', '.pagination-footnote-item-container',

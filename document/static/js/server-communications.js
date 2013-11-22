@@ -233,7 +233,7 @@
             }
         );
         serverCommunications.collaborateTimer = setInterval(serverCommunications.incorporateUpdates, 500);
-        theDocument.collaborativeMode = true;
+        theDocumentValues.collaborativeMode = true;
     };
 
     serverCommunications.stopCollaborativeMode = function () {
@@ -354,7 +354,6 @@
                         serverCommunications.noConnectionToServer();
                     }
                 }
-                
             }
             
             createWSConnection();

@@ -37,7 +37,7 @@ jQuery(document).ready(function () {
     
     jQuery(document).on('click', '.download-revision', function () {
         var revisionId = parseInt(jQuery(this).attr('data-id'));
-        var revisionFilename = parseInt(jQuery(this).attr('data-filename'));
+        var revisionFilename = jQuery(this).attr('data-filename');
         documentrevisionsHelpers.download(revisionId, revisionFilename);
     });
     

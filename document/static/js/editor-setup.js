@@ -188,12 +188,12 @@ jQuery(document).bind('documentDataLoaded', function () {
 
     editorHelpers.layoutMetadata();
 
-    if (theDocument.rights === 'r') {
+    if (theDocumentValues.rights === 'r') {
         jQuery('#editor-navigation').hide();
         jQuery('.papersize-menu,.metadata-menu,.documentstyle-menu').addClass(
             'disabled');
     }
-    else if (theDocument.rights === 'w') {
+    else if (theDocumentValues.rights === 'w') {
 
 
         // Enable Hallo.js Editor
@@ -213,7 +213,7 @@ jQuery(document).bind('documentDataLoaded', function () {
                 };
             });
 
-        if (!theDocument.is_owner) {
+        if (!theDocumentValues.is_owner) {
             jQuery('span.share').addClass('disabled');
         }
 
@@ -236,7 +236,7 @@ jQuery(document).bind('documentDataLoaded', function () {
 
         // Set Auto-save to save every ten seconds
         setInterval(function () {
-            if (theDocument.changed) {
+            if (theDocumentValues.changed) {
                 editorHelpers.getUpdatesFromInputFields(function () {
                     editorHelpers.saveDocument();
                 });
@@ -245,7 +245,7 @@ jQuery(document).bind('documentDataLoaded', function () {
 
 
         // bind the share dialog to the button if the user is the document owner
-        if (theDocument.is_owner) {
+        if (theDocumentValues.is_owner) {
             jQuery('.share').bind('click', function () {
                 accessrightsHelpers.createAccessRightsDialog([
                     theDocument.id
@@ -364,7 +364,7 @@ jQuery(document).bind('documentDataLoaded', function () {
             return false;
         });
 
-        if (theDocument.is_owner) {
+        if (theDocumentValues.is_owner) {
             jQuery('.ice-track').bind('click', function () {
                 editorHelpers.setDocumentData('settings.tracking', (!
                     theDocument.settings.tracking));

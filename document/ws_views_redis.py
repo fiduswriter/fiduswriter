@@ -88,10 +88,11 @@ class DocumentWS(BaseRedisWebSocketHandler):
                 tm_object['name'] = team_member.member.readable_name
                 tm_object['avatar'] = avatar_url(team_member.member,80)
                 response['document']['owner']['team_members'].append(tm_object)
-            response['document']['is_owner']=self.is_owner
-            response['document']['rights'] = self.access_rights
+            response['document_values'] = dict()    
+            response['document_values']['is_owner']=self.is_owner
+            response['document_values']['rights'] = self.access_rights
             if is_new:
-                response['document']['is_new'] = True
+                response['document_values']['is_new'] = True
             if not self.is_owner:
                 response['user']=dict()
                 response['user']['id']=self.user.id
@@ -101,9 +102,10 @@ class DocumentWS(BaseRedisWebSocketHandler):
             if participants == None or len(participants.keys()) == 0:
                 participants = {}
                 self.id = 0
-                response['control']=True
+                response['document_values']['control']=True
             else:
                 self.id = int(max(participants))+1
+                response['document_values']['control']=False
             participants[self.id] = {
                     'key':self.id,
                     'id':self.user.id,
@@ -116,7 +118,7 @@ class DocumentWS(BaseRedisWebSocketHandler):
                 }
             self.send_updates(message)
 
-            response['session_id']= self.id
+            response['document_values']['session_id']= self.id
             self.write_message(response)
 
 
@@ -129,7 +131,7 @@ class DocumentWS(BaseRedisWebSocketHandler):
             elif parsed["type"]=="participant_exit":
                 self.send_participant_list()
                 participants = self.get_storage_object('participants_'+str(self.channel))
-                if len(participants) > 0 and min(participants) == self.id:
+                if len(participants.keys()) > 0 and int(min(participants.keys())) == self.id:
                     chat = {
                         "type": 'take_control'
                         }
@@ -162,7 +164,7 @@ class DocumentWS(BaseRedisWebSocketHandler):
             message = {
                 "type": 'participant_exit'
                 }
-        self.send_updates(message)
+            self.send_updates(message)
         if self.redis_client.subscribed:
             self.redis_client.unsubscribe(self.channel)
             self.redis_client.disconnect()

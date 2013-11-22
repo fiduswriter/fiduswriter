@@ -89,10 +89,11 @@ class DocumentWS(BaseWebSocketHandler):
                 tm_object['name'] = team_member.member.readable_name
                 tm_object['avatar'] = avatar_url(team_member.member,80)
                 response['document']['owner']['team_members'].append(tm_object)
-            response['document']['is_owner']=self.is_owner
-            response['document']['rights'] = self.access_rights
+            response['document_values'] = dict()    
+            response['document_values']['is_owner']=self.is_owner
+            response['document_values']['rights'] = self.access_rights
             if is_new:
-                response['document']['is_new'] = True
+                response['document_values']['is_new'] = True
             if not self.is_owner:
                 response['user']=dict()
                 response['user']['id']=self.user.id
@@ -103,11 +104,11 @@ class DocumentWS(BaseWebSocketHandler):
             if self.document.id not in DocumentWS.sessions:
                 DocumentWS.sessions[self.document.id]=dict()
                 self.id = 0
-                response['control']=True
+                response['document_values']['control']=True
             else:
                 self.id = max(DocumentWS.sessions[self.document.id])+1
             DocumentWS.sessions[self.document.id][self.id] = self
-            response['session_id']= self.id
+            response['document_values']['session_id']= self.id
             self.write_message(response)
             DocumentWS.send_participant_list(self.document.id)
 

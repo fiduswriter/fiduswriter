@@ -39,7 +39,7 @@
             serverCommunications.updateParticipantList(data.participant_list);
             break;
         case 'welcome':
-            editorHelpers.fillEditorPage(data.document);
+            editorHelpers.fillEditorPage(data.document, data.document_values);
             if (data.hasOwnProperty('user')) {
                 theUser = data.user;
             } else {
@@ -48,14 +48,6 @@
             jQuery.event.trigger({
                 type: "documentDataLoaded",
             });
-
-            theDocumentValues.sessionId = data.session_id;
-
-            if (data.hasOwnProperty('control')) {
-                theDocumentValues.enableSave = true;
-            } else {
-                theDocumentValues.enableSave = false;
-            }
             break;
         case 'diff':
             theDocumentValues.newDiffs.push(data);
@@ -65,7 +57,7 @@
             editorHelpers.setDisplay.document(data.change[0], data.change[1]);
             break;
         case 'take_control':
-            theDocumentValues.enableSave = true;
+            theDocumentValues.control = true;
         }
     };
 
@@ -117,7 +109,6 @@
             } else if (theDiff[i].hasOwnProperty('oldValue') && theDiff[i].hasOwnProperty('newValue')) {
                 diffText = theDiff[i]['oldValue'] + theDiff[i]['newValue'];
             }
-            //console.log(theDiff[i]);
             if (diffText.indexOf('citation') != -1) {
                 containsCitation = 1;
             }
@@ -203,7 +194,7 @@
         if (applicableDiffs.length > 0) {
 
             domDiff.apply(document.getElementById('document-editable'), applicableDiffs);
-
+            
             // Also make sure that placeholders correspond to the current state of affairs
             editorHelpers.setPlaceholders();
             // If something was done about citations, reformat these.
@@ -218,6 +209,10 @@
             if (containsComment) {
                 commentHelpers.layoutComments();
             }
+            editorHelpers.setDisplay.document('title', jQuery('#document-title').text().trim());
+            // Mark the document as having changed to trigger saving, 
+            // but don't mark it as having been touched so it doesn't trigger synchronization with peers.
+            theDocumentValues.changed = true;
         }
     };
 

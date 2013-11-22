@@ -99,6 +99,8 @@
 
     documentrevisionsHelpers.download = function (id, filename) {
         // Have to use XMLHttpRequest rather than jQuery.ajax as it's the only way to receive a blob.
+        
+        console.log([id,filename]);
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {

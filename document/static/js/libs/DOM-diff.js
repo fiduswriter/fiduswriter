@@ -1,14 +1,5 @@
 
-  // fix Array
-  (function() {
-    var oldfn = Array.prototype.push;
-    Array.prototype.push = function(element) {
-      oldfn.call(this, element);
-      return this;
-    };
-  }());
-
-  const ADD_ATTRIBUTE = "add attribute",
+  var ADD_ATTRIBUTE = "add attribute",
         MODIFY_ATTRIBUTE = "modify attribute",
         REMOVE_ATTRIBUTE = "remove attribute",
         MODIFY_TEXT_ELEMENT = "modify text element",
@@ -322,7 +313,7 @@
       attr1.forEach(function(attr) {
         var pos = find(attr, attr2);
         if(pos === -1) {
-          return diffs.push(new Diff({
+          diffs.push(new Diff({
             action: REMOVE_ATTRIBUTE,
             attribute: {
               name: attr.name,
@@ -330,6 +321,7 @@
             },
             route: route
           }));
+          return diffs;
         }
         var a2 = attr2.splice(pos, 1)[0];
         if(attr.nodeValue !== a2.nodeValue) {

@@ -24,8 +24,9 @@ var tmp_comments = _.template(
         <div id="comment-box-<%= comment.getAttribute("data-id") %>" data-id="<%= comment.getAttribute("data-id") %>" class="comment-box \
             <% if(comment.id==="comment-"+theDocument.activeCommentId) { %>active<% } else { %>inactive<% } %>\
             " style="top:<%= commentHelpers.calculateCommentBoxOffset(comment) %>px;">\
+            <% if (comment.id==="comment-"+theDocument.activeCommentId || comment.getAttribute("data-comment").length > 0) { %>\
             <% if(0 === comment.getAttribute("data-comment").length) { %>\
-            <%= tmp_first_comment({"comment": comment}) %>\
+                <%= tmp_first_comment({"comment": comment}) %>\
             <% } else { %>\
             <%= tmp_single_comment({"comment": comment, active: (comment.id==="comment-"+theDocument.activeCommentId)}) %>\
             <% } %>\
@@ -49,6 +50,7 @@ var tmp_comments = _.template(
             <% } %>\
             <% if(comment.id==="comment-"+theDocument.activeCommentId && (parseInt(comment.getAttribute("data-user"))===theUser.id || theDocument.is_owner)) { %>\
                 <span class="delete-comment-all delete-comment icon-cancel-circle" data-id="<%= comment.getAttribute("data-id") %>"></span>\
+            <% } %>\
             <% } %>\
         </div>\
     <% }); %>'

@@ -50,6 +50,7 @@
             });
             break;
         case 'diff':
+            console.log('receiving '+data.time);
             theDocumentValues.newDiffs.push(data);
             break;
         case 'transform':
@@ -103,11 +104,18 @@
         }
         //console.log(theDiff);
         domDiff.apply(theDocumentValues.diffNode, theDiff);
+        if (theDocumentValues.diffNode.outerHTML.length != document.getElementById('document-editable').outerHTML.length) {
+            console.log('ERROR');
+            console.log(theDocumentValues.diffNode.outerHTML);
+            console.log(document.getElementById('document-editable').outerHTML);
+        }
         for (i = 0; i < theDiff.length; i++) {
             if (theDiff[i].hasOwnProperty('element')) {
                 diffText = theDiff[i]['element'];
             } else if (theDiff[i].hasOwnProperty('oldValue') && theDiff[i].hasOwnProperty('newValue')) {
                 diffText = theDiff[i]['oldValue'] + theDiff[i]['newValue'];
+            } else if (theDiff[i].hasOwnProperty('attribute')) {
+                diffText = theDiff[i]['attribute']['name'];
             }
             if (diffText.indexOf('citation') != -1) {
                 containsCitation = 1;
@@ -126,7 +134,7 @@
             diff: theDiff,
             features: [containsCitation, containsEquation, containsComment]
         };
-
+        console.log('sending '+thePackage.time);
         serverCommunications.send(thePackage);
         theDocumentValues.newDiffs.push(thePackage);
         serverCommunications.orderAndApplyChanges();
@@ -232,7 +240,7 @@
                 serverCommunications.resetTextChangeList();
             }
         );
-        serverCommunications.collaborateTimer = setInterval(serverCommunications.incorporateUpdates, 500);
+        serverCommunications.collaborateTimer = setInterval(serverCommunications.incorporateUpdates, 2000);
         theDocumentValues.collaborativeMode = true;
     };
 

@@ -140,9 +140,7 @@
 
         commentHelpers.deactivateAll();
         commentHelpers.layoutComments();
-        console.log('theDocument.changed');
         editorHelpers.documentHasChanged();
-        console.log(theDocument.changed);
     };
 
     commentHelpers.submitComment = function () {
@@ -380,11 +378,13 @@
         for (i = 0; i < nextComments.length; i++) {
             commentBox = commentHelpers.findCommentBox(commentHelpers.getCommentId(
                 nextComments[i]));
-            if (commentBox.offsetTop < minOffsetTop) {
-                jQuery(commentBox).css('top', minOffsetTop + 'px');
-            }
-            minOffsetTop = commentBox.offsetTop + commentBox.offsetHeight +
-                10;
+           // if (commentBox) {
+                if (commentBox.offsetTop < minOffsetTop) {
+                    jQuery(commentBox).css('top', minOffsetTop + 'px');
+                }
+                minOffsetTop = commentBox.offsetTop + commentBox.offsetHeight +
+                    10;
+           // }
         }
     };
 

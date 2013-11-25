@@ -1,5 +1,4 @@
-
-  var ADD_ATTRIBUTE = "add attribute",
+  const ADD_ATTRIBUTE = "add attribute",
         MODIFY_ATTRIBUTE = "modify attribute",
         REMOVE_ATTRIBUTE = "remove attribute",
         MODIFY_TEXT_ELEMENT = "modify text element",
@@ -7,7 +6,8 @@
         REMOVE_ELEMENT = "remove element",
         ADD_ELEMENT = "add element",
         REMOVE_TEXT_ELEMENT = "remove text element",
-        ADD_TEXT_ELEMENT = "add text element";
+        ADD_TEXT_ELEMENT = "add text element",
+        REPLACE_ELEMENT = "replace element";
 
   var Diff = function(options) {
     var diff = this;
@@ -63,6 +63,56 @@
     return thesame;
   };
 
+ 
+  var htmlToJson = function(node) {
+      var jsonNode = {}, i;
+      
+      if (node.nodeType===3) {
+          jsonNode.t = node.data;
+      } else if (node.nodeType===8) {
+          jsonNode.co = node.data;
+      } else {
+          jsonNode.nn = node.nodeName;
+          if (node.attributes && node.attributes.length > 0) {
+            jsonNode.a = [];  
+            for (i=0;i<node.attributes.length;i++) {
+              jsonNode.a.push([node.attributes[i].name,node.attributes[i].value]);
+            }
+          }
+          if (node.childNodes && node.childNodes.length > 0) {
+            jsonNode.c = [];
+            for (i=0;i<node.childNodes.length;i++) {
+              jsonNode.c.push(htmlToJson(node.childNodes[i]));
+            }
+          }
+      }
+      return jsonNode;
+  };
+  
+    var jsonToHtml = function(jsonNode) {
+      var node, i;
+      if (jsonNode.hasOwnProperty('t')) {
+          node = document.createTextNode(jsonNode.t);
+      } else if (jsonNode.hasOwnProperty('co')) {
+          node = document.createComment(jsonNode.co);
+      } else {
+          node = document.createElement(jsonNode.nn);
+          if (jsonNode.a) {
+            for (i=0;i<jsonNode.a.length;i++) {
+              node.setAttribute(jsonNode.a[i][0],jsonNode.a[i][1]);
+            }
+          }
+          if (jsonNode.c) {
+              for (i=0;i<jsonNode.c.length;i++) {
+                node.appendChild(jsonToHtml(jsonNode.c[i]))
+              }
+          }
+      }
+      return node;
+    };  
+  
+
+  
   /**
    * based on https://en.wikibooks.org/wiki/Algorithm_implementation/Strings/Longest_common_substring#JavaScript
    */
@@ -165,7 +215,7 @@
         gl1 = gaps1.length,
         gaps2 = gapInformation.gaps2,
         gl2 = gaps1.length,
-        i,
+        i, j,
         last = gl1 < gl2 ? gl1 : gl2;
 
     // Check for correct submap sequencing (irrespective of gaps) first:
@@ -187,7 +237,7 @@
         return new Diff({
           action: REMOVE_ELEMENT,
           route: route.concat(i),
-          element: node.outerHTML
+          element: htmlToJson(node)
         });
       }
       if(gaps2[i] === true) {
@@ -202,18 +252,31 @@
         return new Diff({
           action: ADD_ELEMENT,
           route: route.concat(i),
-          element: node.outerHTML
+          element: htmlToJson(node)
         });
       }
       if(gaps1[i] != gaps2[i]) {
         group = subtrees[gaps1[i]];
-        return new Diff({
-          action: RELOCATE_GROUP,
-          group: group,
-          from: i,
-          to: group["new"],
-          route: route
-        });
+        var toGroup = Math.min(group["new"],(t1.childNodes.length-group.length));
+        if (toGroup != i) {
+          //Check wehther destination nodes are different than originating ones.
+          var destinationDifferent = false;
+          for (j=0; j < group.length; j++) {
+              if (!t1.childNodes[toGroup+j].isEqualNode(t1.childNodes[i+j])) {
+                  destinationDifferent = true;
+              }
+          
+          }
+          if (destinationDifferent) {
+            return new Diff({
+              action: RELOCATE_GROUP,
+              group: group,
+              from: i,
+              to: toGroup,
+              route: route
+            });
+          }
+        }
       }
     }
     return false;
@@ -245,7 +308,7 @@
 
 
   var debug = true,
-      diffcap = 10,
+      diffcap = 500,
       diffcount;
 
   var DOMdiff = function() {};
@@ -254,25 +317,22 @@
     // ===== Create a diff =====
 
     diff: function(t1, t2) {
-        
       diffcount = 0;
-      t1n = t1.cloneNode(true); 
+      t1 = t1.cloneNode(true)
+      t2 = t2.cloneNode(true)
       this.tracker = new DiffTracker();
-      console.log([t1.outerHTML,t2.outerHTML]);
-      returnvalue= this.findDiffs(t1n, t2);
-      console.log([t1.outerHTML,t2.outerHTML,returnvalue]);
-      return returnvalue;
+      return this.findDiffs(t1, t2);
     },
     findDiffs: function(t1, t2) {
       var diff;
       do {
         if(debug) {
-          console.log(diffcount++);
+          diffcount++;
           if(diffcount > diffcap) {
-              console.log([t1.outerHTML,t2.outerHTML]);
             throw new Error("surpassed diffcap");
           }
         }
+
         difflist = this.findFirstDiff(t1, t2, []);
         if(difflist) {
           if(!difflist.length) { difflist = [difflist]; }
@@ -298,6 +358,16 @@
       return false;
     },
     findOuterDiff: function(t1, t2, route) {
+     
+      if (t1.nodeName != t2.nodeName) {
+          return [new Diff({
+              action: REPLACE_ELEMENT,
+              oldValue: htmlToJson(t1),
+              newValue: htmlToJson(t2),
+              route: route
+        })];
+      }  
+      
       var slice = Array.prototype.slice,
           byName = function(a, b) { return a.name > b.name; },
           attr1 = slice.call(t1.attributes).sort(byName),
@@ -310,6 +380,7 @@
             return -1;
           },
           diffs = [];
+          
       attr1.forEach(function(attr) {
         var pos = find(attr, attr2);
         if(pos === -1) {
@@ -355,19 +426,20 @@
       // if t1 or t2 contain differences that are not text nodes, return a diff. 
 
       // two text nodes with differences
-      if(mappings === 0 && t1.nodeType === 3 && t2.nodeType === 3 && t1.data != t2.data) {
-        return new Diff({
-          action: MODIFY_TEXT_ELEMENT,
-          oldValue: t1.data,
-          newValue: t2.data,
-          route: route
-        });
+      if(mappings === 0) {
+        if (t1.nodeType === 3 && t2.nodeType === 3 && t1.data != t2.data) {
+          return new Diff({
+            action: MODIFY_TEXT_ELEMENT,
+            oldValue: t1.data,
+            newValue: t2.data,
+            route: route
+          });
+        }
       }
-
       // possibly identical content: verify
       if(mappings < 2) {
         var diff, difflist, i, last, e1, e2;
-        for(i=0, last=t1.childNodes.length; i<last; i++) {
+        for(i=0, last=Math.max(t1.childNodes.length,t2.childNodes.length); i<last; i++) {
           e1 = t1.childNodes[i];
           e2 = t2.childNodes[i];
           // TODO: this is a similar code path to the one
@@ -383,7 +455,7 @@
             return new Diff({
               action: REMOVE_ELEMENT,
               route: route.concat(i),
-              element: e1.outerHTML
+              element: htmlToJson(e1)
             });
           }
           if(e2 && !e1) {
@@ -397,10 +469,10 @@
             return new Diff({
               action: ADD_ELEMENT,
               route: route.concat(i),
-              element: e1.outerHTML
+              element: htmlToJson(e2)
             });
           }
-          if (e1.nodeType != 3 && e2.nodeType != 3) {
+          if (e1.nodeType != 3 || e2.nodeType != 3) {
             difflist = this.findOuterDiff(e1, e2, route.concat(i));
             if(difflist.length > 0) {
               return difflist;
@@ -457,27 +529,32 @@
       else if(diff.action === MODIFY_TEXT_ELEMENT) {
         node.data = this.textDiff(node.data, diff.oldValue, diff.newValue);
       }
+      else if(diff.action === REPLACE_ELEMENT) {
+        //var outerNode = document.createElement('div');
+        //outerNode.innerHTML = diff.newValue;
+        //var newNode = outerNode.firstChild;
+          var newNode = jsonToHtml(diff.newValue);
+        node.parentNode.replaceChild(newNode, node);
+      }
       else if(diff.action === RELOCATE_GROUP) {
         var group = diff.group,
             from = diff.from,
             to = diff.to,
             child, reference;
-
-        // slide elements down
-        if(from > to ) {
-          for(var i=0; i<group.length; i++) {
-            child = node.childNodes[from + i];
-            reference = node.childNodes[to + i];
+        reference = node.childNodes[to+group.length];
+        // slide elements up
+        if(from < to ) {
+          for(var i=0; i<group.length; i++) {   
+            child = node.childNodes[from];
             node.insertBefore(child, reference);
           }
-          return;
-        }
-
-        // slide elements up
-        for(var i=group.length-1; i>=0; i--) {
-          child = node.childNodes[from + i];
-          reference = node.childNodes[to + 1 + i];
-          node.insertBefore(child, reference);
+        } else {
+          // slide elements down
+          reference = node.childNodes[to];
+          for(var i=0; i< group.length; i++) {
+            child = node.childNodes[from+i];     
+            node.insertBefore(child, reference);
+          }
         }
       }
       else if(diff.action === REMOVE_ELEMENT) {
@@ -488,11 +565,12 @@
       }
       else if(diff.action === ADD_ELEMENT) {
         var route =  diff.route.slice(),
-            c = route.splice(route.length-1,1)[0],
-            d = document.createElement("div");
+            c = route.splice(route.length-1,1)[0];
+            //d = document.createElement("div");
         node = this.getFromRoute(tree, route);
-        d.innerHTML = diff.element;
-        var newNode = d.childNodes[0];
+        //d.innerHTML = diff.element;
+        //var newNode = d.childNodes[0];
+        var newNode = jsonToHtml(diff.element);
         if(c>=node.childNodes.length) {
           node.appendChild(newNode);
         } else {
@@ -541,9 +619,14 @@
       else if(diff.action === MODIFY_TEXT_ELEMENT) {
         swap(diff, "oldValue", "newValue");
         this.applyDiff(tree, diff);
+      }
+      else if(diff.action === REPLACE_ELEMENT) {
+        swap(diff, "oldValue", "newValue");
+        this.applyDiff(tree, diff);
       }      
       else if(diff.action === RELOCATE_GROUP) {
         swap(diff, "from", "to");
+        //diff.from = diff.from - diff.group.length +1;
         this.applyDiff(tree, diff);
       }
       else if(diff.action === REMOVE_ELEMENT) {
@@ -564,9 +647,7 @@
       }
     },
   };
-
-
-
   window.DOMdiff = DOMdiff;
 }());
+
 domDiff = new DOMdiff();

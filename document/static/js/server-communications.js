@@ -361,6 +361,7 @@
                     serverCommunications.receive(JSON.parse(event.data));
                 }
                 ws.onclose = function (event) {
+                    console.log('lost connection');
                     serverCommunications.noConnectionToServer();
                 }
 /*                    var currentTime = new Date();

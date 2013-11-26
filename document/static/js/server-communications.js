@@ -24,6 +24,8 @@
          * @namespace serverCommunications
          */
         serverCommunications = {};
+        
+    var domDiff = new DOMdiff();     
 
     serverCommunications.send = function (data) {
         ws.send(JSON.stringify(data));

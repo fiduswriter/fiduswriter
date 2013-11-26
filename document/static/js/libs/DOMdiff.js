@@ -626,7 +626,6 @@
       }      
       else if(diff.action === RELOCATE_GROUP) {
         swap(diff, "from", "to");
-        //diff.from = diff.from - diff.group.length +1;
         this.applyDiff(tree, diff);
       }
       else if(diff.action === REMOVE_ELEMENT) {
@@ -647,7 +646,8 @@
       }
     },
   };
+
+
+
   window.DOMdiff = DOMdiff;
 }());
-
-domDiff = new DOMdiff();

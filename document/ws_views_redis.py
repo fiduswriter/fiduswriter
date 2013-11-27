@@ -43,10 +43,10 @@ class DocumentWS(BaseRedisWebSocketHandler):
             can_access = True
             self.is_owner = True
             self.access_rights = 'w'
-            is_new = True
+            self.is_new = True
             self.document = Document.objects.create(owner_id=self.user.id)
         else:
-            is_new = False
+            self.is_new = False
             document = Document.objects.filter(id=int(document_id))
             if len(document) > 0:
                 document = document[0]
@@ -67,45 +67,18 @@ class DocumentWS(BaseRedisWebSocketHandler):
                 can_access = False
         if can_access:
             self.channel = str(self.document.id)
-            self.listen_to_redis()            
+            self.listen_to_redis()
             response = dict()
             response['type'] = 'welcome'
-            response['document'] = dict()
-            response['document']['id']=self.document.id
-            response['document']['title']=self.document.title
-            response['document']['contents']=self.document.contents
-            response['document']['metadata']=self.document.metadata
-            response['document']['settings']=self.document.settings
-            response['document']['access_rights'] = get_accessrights(AccessRight.objects.filter(document__owner=self.document.owner))
-            response['document']['owner'] = dict()
-            response['document']['owner']['id']=self.document.owner.id
-            response['document']['owner']['name']=self.document.owner.readable_name
-            response['document']['owner']['avatar']=avatar_url(self.document.owner,80)            
-            response['document']['owner']['team_members']=[]
-            for team_member in self.document.owner.leader.all():
-                tm_object = dict()
-                tm_object['id'] = team_member.member.id
-                tm_object['name'] = team_member.member.readable_name
-                tm_object['avatar'] = avatar_url(team_member.member,80)
-                response['document']['owner']['team_members'].append(tm_object)
-            response['document_values'] = dict()    
-            response['document_values']['is_owner']=self.is_owner
-            response['document_values']['rights'] = self.access_rights
-            if is_new:
-                response['document_values']['is_new'] = True
-            if not self.is_owner:
-                response['user']=dict()
-                response['user']['id']=self.user.id
-                response['user']['name']=self.user.readable_name
-                response['user']['avatar']=avatar_url(self.user,80)
+            self.write_message(response)
             participants = self.get_storage_object('participants_'+str(self.channel))
             if participants == None or len(participants.keys()) == 0:
                 participants = {}
                 self.id = 0
-                response['document_values']['control']=True
+                self.in_control = True
             else:
                 self.id = int(max(participants))+1
-                response['document_values']['control']=False
+                self.in_control = False
             participants[self.id] = {
                     'key':self.id,
                     'id':self.user.id,
@@ -117,9 +90,44 @@ class DocumentWS(BaseRedisWebSocketHandler):
                 'type': 'participant_update',
                 }
             self.send_updates(message)
-
-            response['document_values']['session_id']= self.id
-            self.write_message(response)
+            
+    def get_document(self):
+        response = dict()
+        response['type'] = 'document_data'        
+        response['document'] = dict()
+        response['document']['id']=self.document.id
+        response['document']['title']=self.document.title
+        response['document']['contents']=self.document.contents
+        response['document']['metadata']=self.document.metadata
+        response['document']['settings']=self.document.settings
+        response['document']['access_rights'] = get_accessrights(AccessRight.objects.filter(document__owner=self.document.owner))
+        response['document']['owner'] = dict()
+        response['document']['owner']['id']=self.document.owner.id
+        response['document']['owner']['name']=self.document.owner.readable_name
+        response['document']['owner']['avatar']=avatar_url(self.document.owner,80)            
+        response['document']['owner']['team_members']=[]
+        for team_member in self.document.owner.leader.all():
+            tm_object = dict()
+            tm_object['id'] = team_member.member.id
+            tm_object['name'] = team_member.member.readable_name
+            tm_object['avatar'] = avatar_url(team_member.member,80)
+            response['document']['owner']['team_members'].append(tm_object)
+        response['document_values'] = dict()    
+        response['document_values']['is_owner']=self.is_owner
+        response['document_values']['rights'] = self.access_rights
+        if self.is_new:
+            response['document_values']['is_new'] = True
+        if not self.is_owner:
+            response['user']=dict()
+            response['user']['id']=self.user.id
+            response['user']['name']=self.user.readable_name
+            response['user']['avatar']=avatar_url(self.user,80)
+        if self.in_control:
+            response['document_values']['control']=True
+        else:
+            response['document_values']['control']=False
+        response['document_values']['session_id']= self.id
+        self.write_message(response)
 
 
     def process_redis_message(self, message):
@@ -142,7 +150,9 @@ class DocumentWS(BaseRedisWebSocketHandler):
     def on_message(self, message):
         # Message from browser
         parsed = json_decode(message)
-        if parsed["type"]=='save' and self.access_rights == 'w':
+        if parsed["type"]=='get_document':
+            self.get_document()
+        elif parsed["type"]=='save' and self.access_rights == 'w':
             save_document(self.document, parsed["document"])
         elif parsed["type"]=='chat':
             chat = {

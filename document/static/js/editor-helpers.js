@@ -78,7 +78,6 @@
      */
     editorHelpers.fillEditorPage = function (aDocument, aDocumentValues) {
         var DEFAULTS, i;
-
         theDocument = aDocument;
         theDocumentValues = aDocumentValues;
         theDocumentValues.changed = false;

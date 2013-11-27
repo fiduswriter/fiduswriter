@@ -50,7 +50,7 @@
         }
 
         for (i = 0; i < len; i++) {
-            if (_.include(documentIds, theAccessRights[i].text_id)) {
+            if (_.include(documentIds, theAccessRights[i].document_id)) {
                 if ('undefined' == typeof (document_collaborators[
                     theAccessRights[i].user_id])) {
                     document_collaborators[theAccessRights[i].user_id] =

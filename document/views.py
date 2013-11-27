@@ -59,7 +59,7 @@ def get_accessrights(ars):
         else:
             the_avatar = get_default_avatar_url()
         ret.append({
-            'text_id': ar.text.id,
+            'document_id': ar.document.id,
             'user_id': ar.user.id,
             'user_name': ar.user.readable_name,
             'rights': ar.rights,
@@ -269,7 +269,7 @@ def import_js(request):
         document.metadata = request.POST['metadata']
         document.settings = request.POST['settings']
         document.save()
-        response['text_id'] = document.id
+        response['document_id'] = document.id
         response['added'] = time.mktime(document.added.utctimetuple())
         response['updated'] = time.mktime(document.updated.utctimetuple())
         status = 201

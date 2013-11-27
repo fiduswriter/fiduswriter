@@ -368,7 +368,7 @@ var FW_FILETYPE_VERSION = "1.1";
                 success: function (data, textStatus, jqXHR) {
                     jQuery.addAlert('info', aDocument.title + gettext(
                             ' successfully imported.'));
-                    aDocument.id = data['text_id'];
+                    aDocument.id = data['document_id'];
                     aDocument.owner = theUser.id;
                     aDocument.owner_name = theUser.name;
                     aDocument.owner_avatar = theUser.avatar;

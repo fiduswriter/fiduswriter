@@ -279,7 +279,7 @@
                 serverCommunications.resetTextChangeList();
             }
         );
-        serverCommunications.collaborateTimer = setInterval(serverCommunications.incorporateUpdates, 500);
+        serverCommunications.collaborateTimer = setInterval(serverCommunications.incorporateUpdates, 100);
         theDocumentValues.collaborativeMode = true;
     };
 

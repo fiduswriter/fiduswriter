@@ -177,7 +177,7 @@ class DocumentWS(BaseRedisWebSocketHandler):
                 "type": 'participant_exit'
                 }
             self.send_updates(message)
-        if self.redis_client.subscribed:
+        if self.redis_client and self.redis_client.subscribed:
             self.redis_client.unsubscribe(self.channel)
             self.redis_client.disconnect()
             

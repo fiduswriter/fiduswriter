@@ -33,18 +33,16 @@
     /** A list of messages to be sent. Only used when temporarily offline. Messages will be sent when returning back online. */
     serverCommunications.messagesToSend = [];
     
-    /** A list of messages that have been received. Only used when document setup is not quite ready. */
-    serverCommunications.receivedMessages = [];
     
     serverCommunications.activate_connection = function () {
-        
+        serverCommunications.connected = true;
         while (serverCommunications.messagesToSend.length > 0) {
             serverCommunications.send(serverCommunications.messagesToSend.shift());
         }
         if (serverCommunications.firstTimeConnection) {
             serverCommunications.send({type: 'get_document'});
         } else {
-            serverCommunications.connected = true;
+            serverCommunications.send({type: 'participant_update'});
         }
         serverCommunications.firstTimeConnection = false;
 
@@ -64,7 +62,7 @@
     };
     /** Sends data to server or keeps it in a list if currently offline. */
     serverCommunications.send = function (data) {
-        if (serverCommunications.connected || data.type==='get_document') {
+        if (serverCommunications.connected) {
             ws.send(JSON.stringify(data));
         } else {
             serverCommunications.messagesToSend.push(data);
@@ -92,10 +90,7 @@
             jQuery.event.trigger({
                 type: "documentDataLoaded",
             });
-            while (serverCommunications.receivedMessages.length > 0) {
-                serverCommunications.receive(serverCommunications.receivedMessages.shift());
-            }
-            serverCommunications.connected = true;
+            serverCommunications.send({type: 'participant_update'});
             break;
         case 'diff':
             console.log('receiving '+data.time);
@@ -391,11 +386,7 @@
                 
                 ws.onmessage = function (event) {
                     var data = JSON.parse(event.data);
-                    if (serverCommunications.connected  || data.type==='welcome' || data.type === 'document_data') {
-                        serverCommunications.receive(data);
-                    } else {
-                        serverCommunications.receivedMessages.push(data);
-                    }
+                    serverCommunications.receive(data);
                 }
                 ws.onclose = function (event) {
                     serverCommunications.connected = false;

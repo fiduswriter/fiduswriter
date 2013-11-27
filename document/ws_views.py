@@ -76,7 +76,7 @@ class DocumentWS(BaseWebSocketHandler):
             response = dict()
             response['type'] = 'welcome'
             self.write_message(response)
-            DocumentWS.send_participant_list(self.document.id)
+            #DocumentWS.send_participant_list(self.document.id)
 
     def get_document(self):
         response = dict()
@@ -119,6 +119,8 @@ class DocumentWS(BaseWebSocketHandler):
         parsed = json_decode(message)
         if parsed["type"]=='get_document':
             self.get_document()
+        if parsed["type"]=='participant_update':
+            DocumentWS.send_participant_list(self.document.id)
         elif parsed["type"]=='save' and self.access_rights == 'w':
             save_document(self.document, parsed["document"])
         elif parsed["type"]=='chat':

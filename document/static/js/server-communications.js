@@ -352,7 +352,7 @@
             function createWSConnection() {
                 var connectTime = new Date(), wsPinger;
                 
-                window.ws = new WebSocket('ws://' + location.host.split(':')[0] + ':' + websocketPort +
+                window.ws = new WebSocket('ws://' + websocketServer + ':' + websocketPort +
             '/ws/doc/' + documentId);
                 
                 wsPinger = setInterval(function() {serverCommunications.send({'type':'ping'})}, 50000);

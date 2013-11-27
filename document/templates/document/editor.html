@@ -16,7 +16,7 @@
                 var websocketPort = location.port.length>0?location.port:'80';
             {% endif %}
             {% if WS_SERVER %}
-                var websocketServer = {{WS_SERVER}};
+                var websocketServer = '{{ WS_SERVER }}';
             {% else %}
                 var websocketServer = location.host.split(':')[0];
             {% endif %}

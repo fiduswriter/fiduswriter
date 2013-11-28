@@ -28,6 +28,58 @@
     // enable DOMdiff debug and allow up to 500 diff operations.
     var domDiff = new DOMdiff(true,500);
     
+    var dmp = new diff_match_patch();
+    
+    
+    domDiff.textDiff = function (node, currentValue, expectedValue, newValue) {
+        var selection = document.getSelection(), range = selection.getRangeAt(0), containsSelection = false, finalValue, setSelStart, setSelEnd, selectionStartOffset, selectionEndOffset; 
+        if (range.startContainer.isSameNode(node)) {
+            setSelStart = true;
+            currentValue = currentValue.substring(0,range.startOffset)+'\0'+currentValue.substring(range.startOffset);
+        }
+        if (range.endContainer.isSameNode(node)) {
+            setSelEnd = true;
+            currentValue = currentValue.substring(0,range.endOffset+1)+'\0'+currentValue.substring(range.endOffset+1);
+        }
+        if (currentValue != expectedValue) {
+            console.log('conflict!');
+            finalValue = dmp.patch_apply(dmp.patch_make(expectedValue,newValue),currentValue)[0]
+            //diff = diff(expectedValue, newValue);
+            //mergedValue = apply(currentValue, diff);
+            
+        } else {
+            finalValue = newValue;
+        }
+        if (finalValue.indexOf('\0') != -1) {
+            if (setSelStart) {
+                selectionStartOffset = finalValue.indexOf('\0');
+                finalValue = finalValue.replace('\0','');
+            }
+            if (setSelEnd) {
+                selectionEndOffset = finalValue.indexOf('\0');
+                finalValue = finalValue.replace('\0','');
+            }
+        }
+        
+        node.data = finalValue;
+        
+        if (setSelStart || setSelEnd) {
+            //range = document.createRange();
+            //range.selectNodeContents(node);
+            if (setSelStart && selectionStartOffset > -1) {
+                range.setStart(node,selectionStartOffset);
+            }
+            if (setSelEnd && selectionEndOffset > -1) {
+                console.log(selectionEndOffset);
+                range.setEnd(node,selectionEndOffset);
+            }
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+        
+//       return;
+    };
+    
     serverCommunications.connected = false;
     
     /** A list of messages to be sent. Only used when temporarily offline. Messages will be sent when returning back online. */

@@ -79,7 +79,6 @@
                         mathNode.classList.add('equation');
                         mathNode.setAttribute('data-equation', math);
                         mathNode.innerHTML = ' ';
-                        //emptySpaceNode = document.createTextNode('\u180e');
                         insideMath.parentNode.insertBefore(mathNode, insideMath.nextSibling);
 
                         manualEdits.remove(insideMath, false);

@@ -70,8 +70,11 @@ class DocumentWS(BaseRedisWebSocketHandler):
             self.listen_to_redis()
             response = dict()
             response['type'] = 'welcome'
-            self.write_message(response)       
-            participants = self.get_storage_object('participants_'+str(self.channel))
+            self.write_message(response)
+            if self.pubsub_numsub(self.channel)==1:
+                participants = None
+            else:
+                participants = self.get_storage_object('participants_'+str(self.channel))
             if participants == None or len(participants.keys()) == 0:
                 participants = {}
                 self.id = 0
@@ -86,11 +89,7 @@ class DocumentWS(BaseRedisWebSocketHandler):
                     'avatar':avatar_url(self.user,80)
                     }
             self.set_storage_object('participants_'+str(self.channel),participants)
-          #  message = {   
-          #      'type': 'participant_update',
-          #      }
-          #  self.send_updates(message)
-            
+
     def get_document(self):
         response = dict()
         response['type'] = 'document_data'        

@@ -1,6 +1,8 @@
 import json
 import redis
 
+from redis.exceptions import ResponseError
+
 from tornado.websocket import WebSocketHandler
 from tornado.wsgi import WSGIContainer
 from tornado.escape import json_decode
@@ -15,8 +17,9 @@ from django.core.handlers.wsgi import WSGIRequest
 
 import tornadoredis
 
-#TODO: Redis connection pools. When/how should they be used? Currently we don't use them at all.
-# Also, the subscription list of every pubsub channel is kept in regular redis. When redis 2.8 comes out, this should possibly be changed.
+# TODO: Redis connection pools. When/how should they be used? Currently we don't use them at all.
+# Also, the subscription list of every pubsub channel is kept in regular redis. 
+# When using Redis 2.8, it is reset when "pubsub numsub channelname" returns zero.
 try:
     redis_password = settings.CACHES['default']['OPTIONS']['PASSWORD']
 except KeyError:
@@ -63,6 +66,16 @@ class BaseRedisWebSocketHandler(WebSocketHandler):
 
     def set_storage_object(self, variable,contents):
         return redis_client_storage.set(variable,json.dumps(contents))
+
+    def pubsub_numsub(self, channel):
+        try:
+            # Requires Redis 2.8
+            subscribers = int(redis_client_storage.execute_command('PUBSUB','NUMSUB', channel)[1])
+            print subscribers
+        except ResponseError:
+            subscribers = 'UNKNOWN'
+        return subscribers
+
 
     def allow_draft76(self):
         # for iOS 5.0 Safari

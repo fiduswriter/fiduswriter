@@ -81,8 +81,7 @@
                         mathNode.innerHTML = ' ';
                         //emptySpaceNode = document.createTextNode('\u180e');
                         insideMath.parentNode.insertBefore(mathNode, insideMath.nextSibling);
-                        //range.selectNode(mathNode);
-                        //range.collapse();
+
                         manualEdits.remove(insideMath, false);
 
                     }
@@ -99,8 +98,6 @@
                     manualEdits.insert(mathNode, range);
                     emptySpaceNode = document.createTextNode('\u180e');
                     mathNode.parentNode.insertBefore(emptySpaceNode, mathNode.nextSibling);
-                    range.selectNode(emptySpaceNode);
-                    range.collapse();
                 }
 
                 //widget.options.editable.element.trigger('change');
@@ -126,8 +123,8 @@
                 buttonset.append(button);
                 dialog.bind('dialogclose', function () {
                     jQuery('label', button).removeClass('ui-state-active');
-                    if (mathNode) {
-                        range.selectNode(mathNode);
+                    if (mathNode && mathNode.nextSibling) {
+                        range.selectNode(mathNode.nextSibling);
                         range.collapse();
                         selection.removeAllRanges();
                         selection.addRange(range);

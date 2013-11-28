@@ -32,13 +32,13 @@
     
     
     domDiff.textDiff = function (node, currentValue, expectedValue, newValue) {
-        var selection = document.getSelection(), range = selection.getRangeAt(0), containsSelection = false, finalValue, setSelStart, setSelEnd, selectionStartOffset, selectionEndOffset; 
+        var selection = document.getSelection(), range = selection.getRangeAt(0), containsSelection = false, finalValue, selectionStartOffset, selectionEndOffset; 
         if (range.startContainer.isSameNode(node)) {
-            setSelStart = true;
+            selectionStartOffset = range.startOffset;
             currentValue = currentValue.substring(0,range.startOffset)+'\0'+currentValue.substring(range.startOffset);
         }
         if (range.endContainer.isSameNode(node)) {
-            setSelEnd = true;
+            selectionEndOffset = range.endOffset;
             currentValue = currentValue.substring(0,range.endOffset+1)+'\0'+currentValue.substring(range.endOffset+1);
         }
         if (currentValue != expectedValue) {
@@ -51,11 +51,11 @@
             finalValue = newValue;
         }
         if (finalValue.indexOf('\0') != -1) {
-            if (setSelStart) {
+            if (selectionStartOffset) {
                 selectionStartOffset = finalValue.indexOf('\0');
                 finalValue = finalValue.replace('\0','');
             }
-            if (setSelEnd) {
+            if (selectionEndOffset && finalValue.indexOf('\0') != -1) {
                 selectionEndOffset = finalValue.indexOf('\0');
                 finalValue = finalValue.replace('\0','');
             }
@@ -63,14 +63,13 @@
         
         node.data = finalValue;
         
-        if (setSelStart || setSelEnd) {
+        if (selectionStartOffset || selectionEndOffset) {
             //range = document.createRange();
             //range.selectNodeContents(node);
-            if (setSelStart && selectionStartOffset > -1) {
+            if (selectionStartOffset) {
                 range.setStart(node,selectionStartOffset);
             }
-            if (setSelEnd && selectionEndOffset > -1) {
-                console.log(selectionEndOffset);
+            if (selectionEndOffset) {
                 range.setEnd(node,selectionEndOffset);
             }
             selection.removeAllRanges();
@@ -235,6 +234,9 @@
             patchDiff, tempCombinedNode, tempPatchedNode, i, applicableDiffs, containsCitation = false,
             containsEquation = false,
             containsComment = false;
+            
+        // Disable keyboard input while diffs are applied   
+        theDocumentValues.disableInput = true;
 
         while (theDocumentValues.newDiffs.length > 0) {
             newestDiffs.push(theDocumentValues.newDiffs.pop());
@@ -312,6 +314,9 @@
             // but don't mark it as having been touched so it doesn't trigger synchronization with peers.
             theDocumentValues.changed = true;
         }
+        
+        // Reenable keyboard input after diffs have been applied   
+        theDocumentValues.disableInput = false;
     };
 
     serverCommunications.incorporateUpdates = function () {

@@ -31,9 +31,17 @@
     keyEvents.bindEvents = function () {
         // Send keydown events by testkeypress.
         jQuery('.editable').bind('keydown', function (evt) {
+            if (theDocumentValues.disableInput) {
+                evt.preventDefault();
+                return true;
+            }
             return keyEvents.testKeyPress(evt, this);
         });
         jQuery('.editable').bind('keyup', function (evt) {
+            if (theDocumentValues.disableInput) {
+                evt.preventDefault();
+                return true;
+            }
             return keyEvents.testKeyPressAfter(evt, this);
         });
     }

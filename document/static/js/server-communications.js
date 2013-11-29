@@ -338,7 +338,7 @@
         } else if (theDocumentValues.newDiffs.length > 0) {
             try {
                 serverCommunications.orderAndApplyChanges();
-            } catch {
+            } catch (err) {
                 if (!theDocumentValues.control) {
                     serverCommunications.send({type:'get_document_update'});
                 }

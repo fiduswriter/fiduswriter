@@ -67,10 +67,16 @@
             //range = document.createRange();
             //range.selectNodeContents(node);
             if (selectionStartOffset) {
-                range.setStart(node,selectionStartOffset);
+                if (finalValue.length <= selectionStartOffset) {
+                    selectionStartOffset = finalValue.length - 1;
+                }
+                range.setStart(node, selectionStartOffset);
             }
             if (selectionEndOffset) {
-                range.setEnd(node,selectionEndOffset);
+                if (finalValue.length <= selectionEndOffset) {
+                    selectionEndOffset = finalValue.length - 1;
+                }
+                range.setEnd(node, selectionEndOffset);
             }
             selection.removeAllRanges();
             selection.addRange(range);

@@ -147,6 +147,7 @@
             serverCommunications.send({type: 'participant_update'});
             break;
         case 'document_data_update':
+            console.log('applying update');
             editorHelpers.updateEditorPage(data.document);
             break;
         case 'diff':
@@ -335,7 +336,13 @@
             theDocumentValues.touched = false;
             serverCommunications.makeDiff();
         } else if (theDocumentValues.newDiffs.length > 0) {
-            serverCommunications.orderAndApplyChanges();
+            try {
+                serverCommunications.orderAndApplyChanges();
+            } catch {
+                if (!theDocumentValues.control) {
+                    serverCommunications.send({type:'get_document_update'});
+                }
+            }
         }
     };
 

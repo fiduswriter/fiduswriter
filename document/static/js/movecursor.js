@@ -133,6 +133,9 @@
                 return true;
             }
             break;
+        case 229:
+            return true;
+            break;
         default:
             if (keyEvents.otherKey(evt, editorContainer)) {
                 evt.preventDefault();

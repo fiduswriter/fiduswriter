@@ -26,7 +26,7 @@
         serverCommunications = {};
     
     // enable DOMdiff debug and allow up to 500 diff operations.
-    var domDiff = new DOMdiff(true,500);
+    window.domDiff = new DOMdiff(true,500);
     
     var dmp = new diff_match_patch();
     
@@ -127,6 +127,9 @@
             break;
         case 'connections':
             serverCommunications.updateParticipantList(data.participant_list);
+            if (theDocumentValues.control) {
+                theDocumentValues.sentHash = false;
+            }
             break;
         case 'welcome':
             serverCommunications.activate_connection();
@@ -143,6 +146,9 @@
             });
             serverCommunications.send({type: 'participant_update'});
             break;
+        case 'document_data_update':
+            editorHelpers.updateEditorPage(data.document);
+            break;
         case 'diff':
             console.log('receiving '+data.time);
             theDocumentValues.newDiffs.push(data);
@@ -153,6 +159,11 @@
             break;
         case 'take_control':
             theDocumentValues.control = true;
+            theDocumentValues.sentHash = false;
+            break;
+        case 'hash':
+            editorHelpers.checkHash(data.hash);
+            break;
         }
     };
 
@@ -456,7 +467,7 @@
                     } else if (wsConnectionAttempts < 10) {
                         wsConnectionAttempts++;
                         setTimeout(createWSConnection, 2000);
-                        console.log('reattempting connecting');
+                        console.log('attempting to reconnect');
                     } else {
                         wsConnectionAttempts = 0;
                         serverCommunications.noConnectionToServer();

@@ -128,6 +128,17 @@ class DocumentWS(BaseRedisWebSocketHandler):
         response['document_values']['session_id']= self.id
         self.write_message(response)
 
+    def get_document_update(self):
+        response = dict()
+        response['type'] = 'document_data_update'        
+        response['document'] = dict()
+        response['document']['id']=self.document.id
+        response['document']['title']=self.document.title
+        response['document']['contents']=self.document.contents
+        response['document']['metadata']=self.document.metadata
+        response['document']['settings']=self.document.settings
+        self.write_message(response)
+
 
     def process_redis_message(self, message):
         # Message from redis
@@ -151,6 +162,8 @@ class DocumentWS(BaseRedisWebSocketHandler):
         parsed = json_decode(message)
         if parsed["type"]=='get_document':
             self.get_document()
+        if parsed["type"]=='get_document_update':
+            self.get_document_update()            
         if parsed["type"]=='participant_update':
             self.send_updates(parsed)
         elif parsed["type"]=='save' and self.access_rights == 'w':
@@ -163,7 +176,7 @@ class DocumentWS(BaseRedisWebSocketHandler):
                 "type": 'chat'
                 }
             self.send_updates(chat)
-        elif parsed["type"]=='diff' or parsed["type"]=='transform':
+        elif parsed["type"]=='diff' or parsed["type"]=='transform' or parsed["type"]=='hash':
             parsed["session"] = self.id
             self.send_updates(parsed)
     

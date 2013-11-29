@@ -32,7 +32,7 @@
      * @memberof editorHelpers 
      */ 
     editorHelpers.layoutMetadata = function () {
-        var i;
+        var i, metadataNode = document.getElementById('document-metadata'), metadataClone = metadataNode.cloneNode(true), diffs;
         jQuery('.metadata-menu-item').removeClass('selected');
 
         for (i in theDocument.settings.metadata) {
@@ -42,10 +42,13 @@
             }
         }
 
-        jQuery('#document-metadata').html(tmp_metadata({
+        metadataClone.innerHTML = tmp_metadata({
             settings: theDocument.settings.metadata,
             metadata: theDocument.metadata
-        }));
+        });
+        
+        diffs = domDiff.diff(metadataNode, metadataClone);
+        domDiff.apply(metadataNode,diffs);
     };
 
     /** Turn enabled metadata off and disabled metadata on, Function is bound to clicking option in metadata menu. 
@@ -69,12 +72,36 @@
         editorHelpers.documentHasChanged();
     };
 
+    /** Update the editor page with the document data from the server.
+     * This is done if it was detected that the local version of the document 
+     * doesn't correspond to the one on the server. 
+     * @function updateEditorPage
+     * @memberof editorHelpers
+     * @param aDocument The document object as it comes from the server.
+     * @param aDocumentValues The document value object consists of variables 
+     * that differ from session to session.
+     */
+    editorHelpers.updateEditorPage = function (aDocument) {
+        theDocumentValues.changed = false;
+        theDocumentValues.touched = false;
+        theDocument.settings = jQuery.parseJSON(aDocument.settings);
+        theDocument.metadata = jQuery.parseJSON(aDocument.metadata);
+        theDocument.contents = aDocument.contents;
+        
+        editorHelpers.setDisplay.document('contents', theDocument.contents);
+        editorHelpers.setDisplay.document('metadata.title', theDocument.metadata
+            .title);
+        editorHelpers.layoutMetadata();
+    };
+    
     
     /** Fill the editor page with the document data from the server.
      * This is done after the document data is loaded from the server. 
      * @function fillEditorPage
      * @memberof editorHelpers
      * @param aDocument The document object as it comes from the server.
+     * @param aDocumentValues The document value object consists of variables 
+     * that differ from session to session.
      */
     editorHelpers.fillEditorPage = function (aDocument, aDocumentValues) {
         var DEFAULTS, i;
@@ -245,12 +272,20 @@
             jQuery('#flow').addClass('CT-hide');
         }
     };
+    
      /** Add the document contents/body text.
      * @function contents
      * @memberof editorHelpers.setDisplay
      * @param theValue The HTML of the contents/main body.*/
     editorHelpers.setDisplay.contents = function (theValue) {
-        document.getElementById('document-contents').innerHTML = theValue;
+        var contentsNode = document.getElementById('document-contents'), contentsClone = contentsNode.cloneNode(true), diffs;
+        
+        contentsClone.innerHTML = theValue;
+        
+        diffs = domDiff.diff(contentsNode, contentsClone);
+        
+        domDiff.apply(contentsNode, diffs);
+        
     };
 
     /** Set the document title on the page.
@@ -258,9 +293,14 @@
      * @memberof editorHelpers.setDisplay
      * @param theValue The HTML of the title.*/
     editorHelpers.setDisplay.metadataTitle = function (theValue) {
-        var titleEl = document.getElementById('document-title')
-        titleEl.innerHTML = theValue;
-        editorHelpers.setDisplay.document('title', titleEl.innerText.trim());
+        var titleNode = document.getElementById('document-title'), titleClone = titleNode.cloneNode(true), diffs;
+        titleClone.innerHTML = theValue;
+        
+        diffs = domDiff.diff(titleNode, titleClone);
+        
+        domDiff.apply(titleNode, diffs);
+        
+        editorHelpers.setDisplay.document('title', titleNode.innerText.trim());
     };
     /** Set the document title in the menu.
      * @function title
@@ -376,6 +416,34 @@
             callback();
         }
     };
+    
+    /** Calculates a hash sum of the document data to make sure collaborating editors all have the same document. 
+     * Function from jsperf.com/hashing-string.
+     * @function docHash
+     * @memberof editorHelpers
+     */ 
+    
+    editorHelpers.docHash = function() {
+        var str = document.getElementById('document-editable').innerText, res = 0, len = str.length;
+        for (var i = 0; i < len; i++) {
+            res = res * 31 + str.charCodeAt(i);
+            res = res & res;
+        }
+        return res;
+    }
+
+    /** Checks whether a hash sum corresponds with the local document.
+     * @function checkHash
+     * @memberof editorHelpers
+     */     
+    editorHelpers.checkHash = function(hash) {
+        if (editorHelpers.docHash() != hash) {
+            serverCommunications.send({type: 'get_document_update'});
+        }
+    }
+    
+
+
     /** Will save the current Document to the server if theDocumentValues.control is true. 
      * In collaborative mode, only the first client to connect will have theDocumentValues.control set to true.
      * @function saveDocument

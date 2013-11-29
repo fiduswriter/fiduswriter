@@ -71,7 +71,6 @@ class BaseRedisWebSocketHandler(WebSocketHandler):
         try:
             # Requires Redis 2.8
             subscribers = int(redis_client_storage.execute_command('PUBSUB','NUMSUB', channel)[1])
-            print subscribers
         except ResponseError:
             subscribers = 'UNKNOWN'
         return subscribers

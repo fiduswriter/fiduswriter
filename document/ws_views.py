@@ -113,13 +113,25 @@ class DocumentWS(BaseWebSocketHandler):
             response['document_values']['control']=True
         response['document_values']['session_id']= self.id
         self.write_message(response)
-        
+
+    def get_document_update(self):
+        response = dict()
+        response['type'] = 'document_data_update'        
+        response['document'] = dict()
+        response['document']['id']=self.document.id
+        response['document']['title']=self.document.title
+        response['document']['contents']=self.document.contents
+        response['document']['metadata']=self.document.metadata
+        response['document']['settings']=self.document.settings
+        self.write_message(response)        
 
     def on_message(self, message):
         parsed = json_decode(message)
         if parsed["type"]=='get_document':
             self.get_document()
-        if parsed["type"]=='participant_update':
+        elif parsed["type"]=='get_document':
+            self.get_document_update()    
+        elif parsed["type"]=='participant_update':
             DocumentWS.send_participant_list(self.document.id)
         elif parsed["type"]=='save' and self.access_rights == 'w':
             save_document(self.document, parsed["document"])
@@ -132,7 +144,7 @@ class DocumentWS(BaseWebSocketHandler):
                 }
             if self.document.id in DocumentWS.sessions:
                 DocumentWS.send_updates(chat, self.document.id)
-        elif parsed["type"]=='diff' or parsed["type"]=='transform':
+        elif parsed["type"]=='diff' or parsed["type"]=='transform' or parsed["type"]=='hash':
             if self.document.id in DocumentWS.sessions:
                 DocumentWS.send_updates(message, self.document.id, self.id)            
 

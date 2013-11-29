@@ -237,9 +237,16 @@ jQuery(document).bind('documentDataLoaded', function () {
         // Set Auto-save to save every ten seconds
         setInterval(function () {
             if (theDocumentValues.changed) {
+                theDocumentValues.sentHash = false;
                 editorHelpers.getUpdatesFromInputFields(function () {
                     editorHelpers.saveDocument();
                 });
+            } else if (theDocumentValues.control && !theDocumentValues.sentHash) {
+                theDocumentValues.sentHash = true;
+                serverCommunications.send({
+                    type: 'hash',
+                    hash: editorHelpers.docHash()
+                })
             }
         }, 10000);
 

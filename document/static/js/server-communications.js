@@ -26,7 +26,7 @@
         serverCommunications = {};
     
     // enable DOMdiff debug and allow up to 500 diff operations.
-    window.domDiff = new DOMdiff(false);
+    window.domDiff = new DOMdiff(true,500);
     
     var dmp = new diff_match_patch();
     

@@ -278,7 +278,14 @@
      * @memberof editorHelpers.setDisplay
      * @param theValue The HTML of the contents/main body.*/
     editorHelpers.setDisplay.contents = function (theValue) {
-        var contentsNode = document.getElementById('document-contents'), contentsClone = contentsNode.cloneNode(true), diffs;
+        var contentsNode = document.getElementById('document-contents'), contentsClone, diffs;
+        
+        if (contentsNode.innerText.length===0) {
+            contentsNode.innerHTML = theValue;
+            return;
+        }
+        
+        contentsClone = contentsNode.cloneNode(true)
         
         contentsClone.innerHTML = theValue;
         
@@ -293,7 +300,15 @@
      * @memberof editorHelpers.setDisplay
      * @param theValue The HTML of the title.*/
     editorHelpers.setDisplay.metadataTitle = function (theValue) {
-        var titleNode = document.getElementById('document-title'), titleClone = titleNode.cloneNode(true), diffs;
+        var titleNode = document.getElementById('document-title'), titleClone, diffs;
+        
+        
+        if (titleNode.innerText.length===0) {
+            titleNode.innerHTML = theValue;
+            return;
+        }
+        
+        titleClone = titleNode.cloneNode(true);
         titleClone.innerHTML = theValue;
         
         diffs = domDiff.diff(titleNode, titleClone);

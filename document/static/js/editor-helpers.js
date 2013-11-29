@@ -194,8 +194,10 @@
         set_document_style_timer = setTimeout(function () {
             clearTimeout(set_document_style_timer);
             if (document.webkitGetNamedFlows) {
-                document.webkitGetNamedFlows()[0].dispatchEvent(
-                    pagination.events.escapesNeedMove);
+                if (document.webkitGetNamedFlows()[0]) {
+                    document.webkitGetNamedFlows()[0].dispatchEvent(
+                        pagination.events.escapesNeedMove);
+                }
             }
         }, 200);
         commentHelpers.layoutComments();

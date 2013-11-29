@@ -100,7 +100,7 @@
     } else if (jsonNode.hasOwnProperty('co')) {
       node = document.createComment(jsonNode.co);
     } else {
-      if (jsonNode.nn==='SVG') {
+      if (jsonNode.nn==='svg') {
         node = document.createElementNS('http://www.w3.org/2000/svg','svg');
       } else {
         node = document.createElement(jsonNode.nn);

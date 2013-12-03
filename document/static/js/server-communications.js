@@ -464,10 +464,18 @@
     serverCommunications.firstTimeConnection = true;
 
     serverCommunications.bind = function () {
+        var pathnameParts = window.location.pathname.split('/');
         window.theDocument = undefined;
         window.theDocumentValues = {};
         window.theUser = undefined;
         window.clientOffsetTime = 0;
+        window.documentId = parseInt(pathnameParts[pathnameParts.length -
+                        2], 10);
+        
+        if (isNaN(documentId)) {
+            documentId = 0;
+        }       
+        
         jQuery(document).ready(function () {
 
             serverCommunications.getClientTimeOffset();
@@ -476,14 +484,7 @@
 
             function createWSConnection() {
                 var connectTime = new Date(),
-                    wsPinger, pathnameParts = window.location.pathname.split('/'),
-                    documentId = parseInt(pathnameParts[pathnameParts.length -
-                        2], 10);
-
-                if (isNaN(documentId)) {
-                    documentId = 0;
-                }
-
+                    wsPinger;
 
                 window.ws = new WebSocket('ws://' + websocketServer + ':' + websocketPort +
                     '/ws/doc/' + documentId);

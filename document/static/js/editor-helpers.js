@@ -113,7 +113,8 @@
         theDocument.settings = jQuery.parseJSON(theDocument.settings);
         theDocument.metadata = jQuery.parseJSON(theDocument.metadata);
 
-
+        documentId = theDocument.id;
+        
         DEFAULTS = [
             ['metadata.title', theDocument.title],
             ['settings.papersize', '1117'],
@@ -304,7 +305,6 @@
      * @param theValue The HTML of the title.*/
     editorHelpers.setDisplay.metadataTitle = function (theValue) {
         var titleNode = document.getElementById('document-title'), titleClone, diffs;
-        
         
         titleClone = titleNode.cloneNode(true);
         titleClone.innerHTML = theValue;

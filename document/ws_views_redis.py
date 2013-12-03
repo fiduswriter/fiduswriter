@@ -181,6 +181,7 @@ class DocumentWS(BaseRedisWebSocketHandler):
             self.send_updates(parsed)
     
     def on_close(self):
+        print "closing"
         participants = self.get_storage_object('participants_'+str(self.channel))
         if participants and hasattr(self, 'id') and str(self.id) in participants:
             del participants[str(self.id)] 

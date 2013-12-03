@@ -306,11 +306,6 @@
         var titleNode = document.getElementById('document-title'), titleClone, diffs;
         
         
-        if (titleNode.innerText.length===0) {
-            titleNode.innerHTML = theValue;
-            return;
-        }
-        
         titleClone = titleNode.cloneNode(true);
         titleClone.innerHTML = theValue;
         
@@ -318,13 +313,14 @@
         
         domDiff.apply(titleNode, diffs);
         
-        editorHelpers.setDisplay.document('title', titleNode.innerText.trim());
+        editorHelpers.setDisplay.document('title', titleClone.innerText);
     };
     /** Set the document title in the menu.
      * @function title
      * @memberof editorHelpers.setDisplay
      * @param theValue The text of the title.*/
     editorHelpers.setDisplay.title = function (theValue) {
+        console.log(theValue);
         var theTitle = theValue;
         if (theTitle.length === 0) {
             theTitle = gettext('Untitled Document');

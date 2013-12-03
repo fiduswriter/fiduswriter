@@ -218,6 +218,7 @@
             containsCitation = 0,
             containsEquation = 0,
             containsComment = 0,
+            containsTrackedchange = 0,
             diffText = '',
             i;
 
@@ -243,13 +244,16 @@
             if (diffText.indexOf('comment') != -1) {
                 containsComment = 1;
             }
+            if (diffText.indexOf('data-cid') != -1) {
+                containsTrackedchange = 1;
+            }
         }
 
         var thePackage = {
             type: 'diff',
             time: new Date().getTime() + window.clientOffsetTime,
             diff: theDiff,
-            features: [containsCitation, containsEquation, containsComment]
+            features: [containsCitation, containsEquation, containsComment, containsTrackedchange]
         };
         console.log('sending ' + thePackage.time);
         serverCommunications.send(thePackage);
@@ -261,7 +265,8 @@
         var newestDiffs = [],
             patchDiff, tempCombinedNode, tempPatchedNode, i, applicableDiffs, containsCitation = false,
             containsEquation = false,
-            containsComment = false;
+            containsComment = false,
+            containsTrackedchange = false;
 
         // Disable keyboard input while diffs are applied   
         theDocumentValues.disableInput = true;
@@ -306,6 +311,9 @@
             if (newestDiffs[i].features[2]) {
                 containsComment = true;
             }
+            if (newestDiffs[i].features[3]) {
+                containsTrackedchange = true;
+            }
             theDocumentValues.usedDiffs.push(newestDiffs[i]);
         }
         theDocumentValues.textChangeList.push([tempPatchedNode, new Date().getTime() + window.clientOffsetTime]);
@@ -336,6 +344,10 @@
             // If new comments were added reformat these.
             if (containsComment) {
                 commentHelpers.layoutComments();
+            }
+            // If tracked changes are added, update tracker.
+            if (containsTrackedchange) {
+                tracker.initializeEditor();
             }
             editorHelpers.setDisplay.document('title', jQuery('#document-title').text().trim());
             // Mark the document as having changed to trigger saving, 

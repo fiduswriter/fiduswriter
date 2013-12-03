@@ -753,7 +753,7 @@
         id = this.getNewChangeId();
       }
       return id;
-    },
+    },//XX
 
     startBatchChange: function () {
       this._batchChangeid = this.getNewChangeId();

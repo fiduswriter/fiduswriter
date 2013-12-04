@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-20 17:51-0600\n"
+"POT-Creation-Date: 2013-12-04 02:49-0600\n"
 "PO-Revision-Date: 2013-09-18 08:52+0200\n"
 "Last-Translator: Vladimir Vitkov <vvitkov@linux-bg.org>\n"
 "Language-Team: Bulgarian <vvitkov@linux-bg.org>\n"
@@ -61,8 +61,8 @@ msgstr "Добави потребител към твоите контакти"
 #: bibliography/static/js/bibliography-helpers.js:934
 #: book/static/js/book-helpers.js:240 book/static/js/book-helpers.js.c:638
 #: book/static/js/bookaccessrights-helpers.js:76
-#: document/static/js/comment-templates.js:42
-#: document/static/js/comment-templates.js:135
+#: document/static/js/comment-templates.js:43
+#: document/static/js/comment-templates.js:137
 #: document/static/js/document-accessrights-helpers.js:87
 #: usermedia/static/js/usermedia-helpers.js:134
 msgid "Submit"
@@ -81,14 +81,14 @@ msgstr "Изпрати"
 #: book/static/js/book-helpers.js:102 book/static/js/book-helpers.js.c:247
 #: book/static/js/book-helpers.js:644 book/static/js/book-templates.js:250
 #: book/static/js/bookaccessrights-helpers.js:89
-#: document/static/js/comment-templates.js:45
-#: document/static/js/comment-templates.js:72
-#: document/static/js/comment-templates.js:103
-#: document/static/js/comment-templates.js:138
+#: document/static/js/comment-templates.js:46
+#: document/static/js/comment-templates.js:74
+#: document/static/js/comment-templates.js:105
+#: document/static/js/comment-templates.js:140
 #: document/static/js/document-accessrights-helpers.js:100
 #: document/static/js/document-helpers.js:66
 #: document/static/js/document-helpers.js:114
-#: document/static/js/document-revisions-helpers.js:148
+#: document/static/js/document-revisions-helpers.js:157
 #: document/static/js/exporter.js:86
 #: document/static/js/figure-citation-templates.js:190
 #: document/static/js/toolbar/cite.js:229
@@ -118,11 +118,11 @@ msgstr "Премахни от контактите"
 #: book/static/js/book-helpers.js:94
 #: book/static/js/book-template-dialogs.js:46
 #: book/static/js/book-templates.js:294
-#: document/static/js/comment-templates.js:82
-#: document/static/js/comment-templates.js:117
+#: document/static/js/comment-templates.js:84
+#: document/static/js/comment-templates.js:119
 #: document/static/js/document-accessrights-templates.js:39
 #: document/static/js/document-helpers.js:57
-#: document/static/js/document-revisions-helpers.js:143
+#: document/static/js/document-revisions-helpers.js:152
 #: document/static/js/document-revisions-templates.js:31
 #: document/static/js/figure-citation-templates.js:66
 #: document/static/js/figure-citation-templates.js:163
@@ -1188,10 +1188,10 @@ msgstr "Harvard Reference format (Author-Date)"
 msgid "Modern Language Association"
 msgstr "Modern Language Association"
 
-#: document/static/js/comment-templates.js:69
-#: document/static/js/comment-templates.js:79
-#: document/static/js/comment-templates.js:100
-#: document/static/js/comment-templates.js:114
+#: document/static/js/comment-templates.js:71
+#: document/static/js/comment-templates.js:81
+#: document/static/js/comment-templates.js:102
+#: document/static/js/comment-templates.js:116
 msgid "Edit"
 msgstr "Редактиране"
 
@@ -1215,11 +1215,11 @@ msgstr "Документ(и) бяха изтрити"
 msgid "Search for Document"
 msgstr "Търсене за документ"
 
-#: document/static/js/document-revisions-helpers.js:136
+#: document/static/js/document-revisions-helpers.js:145
 msgid "Revision deleted"
 msgstr ""
 
-#: document/static/js/document-revisions-helpers.js:139
+#: document/static/js/document-revisions-helpers.js:148
 msgid "Could not delete revision."
 msgstr ""
 
@@ -1248,38 +1248,43 @@ msgstr ""
 msgid "Do you really want to delete the revision?"
 msgstr ""
 
-#: document/static/js/editor-helpers.js:272
+#: document/static/js/editor-helpers.js:326
 msgid "Untitled Document"
 msgstr "Неозаглавен документ"
 
-#: document/static/js/editor-helpers.js:427
+#: document/static/js/editor-helpers.js:507
 #, fuzzy
 msgid "Title..."
 msgstr "Заглавие"
 
-#: document/static/js/editor-helpers.js:433
+#: document/static/js/editor-helpers.js:513
 msgid "Contents..."
 msgstr "Съдържание"
 
-#: document/static/js/editor-helpers.js:439
+#: document/static/js/editor-helpers.js:519
 #, fuzzy
 msgid "Subtitle..."
 msgstr "Подзаглавие"
 
-#: document/static/js/editor-helpers.js:445
+#: document/static/js/editor-helpers.js:525
 #, fuzzy
 msgid "Abstract..."
 msgstr "Обобщение"
 
-#: document/static/js/editor-helpers.js:451
+#: document/static/js/editor-helpers.js:531
 #, fuzzy
 msgid "Author(s)..."
 msgstr "Автор(и)"
 
-#: document/static/js/editor-helpers.js:457
+#: document/static/js/editor-helpers.js:537
 #, fuzzy
 msgid "Keywords..."
 msgstr "Ключови думи"
+
+#: document/static/js/editor-setup.js:344
+#, fuzzy
+msgid "Leave editor"
+msgstr "Втори Редактор"
 
 #: document/static/js/editor-templates.js:24
 msgid "The subtitle of the document"
@@ -1396,7 +1401,7 @@ msgstr ""
 msgid " successfully imported."
 msgstr " успешно импортиран."
 
-#: document/static/js/server-communications.js:254
+#: document/static/js/server-communications.js:401
 msgid ""
 "Sorry, but the connection to the server has been lost. Please reload to "
 "ensure that no date is being lost."
@@ -1404,11 +1409,11 @@ msgstr ""
 "Съжаляваме, но връзката със сървъра бе прекъсната. Поля опреснете за да се "
 "предпазите от загуба на данни."
 
-#: document/static/js/server-communications.js:261
+#: document/static/js/server-communications.js:408
 msgid "Ok"
 msgstr "ОК"
 
-#: document/static/js/server-communications.js:273
+#: document/static/js/server-communications.js:420
 msgid "No connection to server"
 msgstr "Няма връзка към сървъра"
 

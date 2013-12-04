@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-11-20 17:51-0600\n"
+"POT-Creation-Date: 2013-12-04 02:49-0600\n"
 "PO-Revision-Date: 2013-02-24 10:03-0600\n"
 "Last-Translator: Daniel Frebel <daniel@fiduswriter.com>\n"
 "Language-Team: German <daniel@fiduswriter.com>\n"
@@ -625,109 +625,109 @@ msgstr ""
 msgid "Fidus Writer document write access"
 msgstr ""
 
-#: document/templates/document/editor.html:38
-#: document/templates/document/editor.html:447
+#: document/templates/document/editor.html:43
+#: document/templates/document/editor.html:448
 msgid "Subtitle"
 msgstr "Untertitel"
 
-#: document/templates/document/editor.html:41
-#: document/templates/document/editor.html:450
+#: document/templates/document/editor.html:46
+#: document/templates/document/editor.html:451
 msgid "Abstract"
 msgstr "Zusammenfassung"
 
-#: document/templates/document/editor.html:44
+#: document/templates/document/editor.html:49
 #, fuzzy
 msgid "Authors"
 msgstr "Autor"
 
-#: document/templates/document/editor.html:47
-#: document/templates/document/editor.html:456
+#: document/templates/document/editor.html:52
+#: document/templates/document/editor.html:457
 msgid "Keywords"
 msgstr ""
 
-#: document/templates/document/editor.html:330
+#: document/templates/document/editor.html:331
 msgid "en"
 msgstr "de"
 
-#: document/templates/document/editor.html:334
-#: document/templates/document/editor.html:346
+#: document/templates/document/editor.html:335
+#: document/templates/document/editor.html:347
 msgid "Close the document and return to the document overview menu."
 msgstr "Dokument schließen und zur Übersicht zurückkehren."
 
-#: document/templates/document/editor.html:339
+#: document/templates/document/editor.html:340
 msgid "File handling"
 msgstr "Dateiverwaltung"
 
-#: document/templates/document/editor.html:339
+#: document/templates/document/editor.html:340
 #: usermedia/templates/usermedia/index.html:79
 msgid "File"
 msgstr "Datei"
 
-#: document/templates/document/editor.html:343
+#: document/templates/document/editor.html:344
 msgid "Share the document with other users."
 msgstr "Teile das Dokument mit anderen Benutzern."
 
-#: document/templates/document/editor.html:343
+#: document/templates/document/editor.html:344
 msgid "Share"
 msgstr "Teilen"
 
-#: document/templates/document/editor.html:346
+#: document/templates/document/editor.html:347
 msgid "Close"
 msgstr "Schließen"
 
-#: document/templates/document/editor.html:349
+#: document/templates/document/editor.html:350
 #, fuzzy
 msgid "Save a revision of the current document"
 msgstr "Kopie des aktuellen Dokumentes speichern"
 
-#: document/templates/document/editor.html:349
+#: document/templates/document/editor.html:350
 msgid "Save revision"
 msgstr ""
 
-#: document/templates/document/editor.html:352
+#: document/templates/document/editor.html:353
 #, fuzzy
 msgid "Create copy of the current document"
 msgstr "Kopie des aktuellen Dokumentes speichern"
 
-#: document/templates/document/editor.html:352
+#: document/templates/document/editor.html:353
 #, fuzzy
 msgid "Create copy"
 msgstr "Kopie speichern"
 
-#: document/templates/document/editor.html:355
+#: document/templates/document/editor.html:356
 msgid "Download the current document"
 msgstr "Aktuelles Dokument downloaden"
 
-#: document/templates/document/editor.html:355
+#: document/templates/document/editor.html:356
 msgid "Download"
 msgstr "Download"
 
-#: document/templates/document/editor.html:358
+#: document/templates/document/editor.html:359
 msgid "Either print or create a PDF using your browser's print dialog"
 msgstr ""
 "Entweder Drucke oder erstelle eine PDF mit dem Druckdialog des Browsers"
 
-#: document/templates/document/editor.html:358
+#: document/templates/document/editor.html:359
 msgid "Print/PDF"
 msgstr "Drucken/PDF"
 
-#: document/templates/document/editor.html:364
+#: document/templates/document/editor.html:365
 msgid "Export of the document contents"
 msgstr "Export des Inhaltes des Dokumentes"
 
-#: document/templates/document/editor.html:364
+#: document/templates/document/editor.html:365
 msgid "Export"
 msgstr "Exportieren"
 
-#: document/templates/document/editor.html:368
+#: document/templates/document/editor.html:369
 msgid "Export the document to an HTML file"
 msgstr "Exportiere das Dokument in eine HTML-Datei"
 
-#: document/templates/document/editor.html:373
+#: document/templates/document/editor.html:374
 msgid "Export the document to an Epub electronic reader file."
 msgstr "Exportiere das Dokument in eine Epub Datei."
 
-#: document/templates/document/editor.html:378
+#: document/templates/document/editor.html:379
 msgid ""
 "Export the document to a Latex file. This will also attach a BibTex file if "
 "you are using citations."
@@ -735,208 +735,208 @@ msgstr ""
 "Exportiere das Dokument in eine Latex Datei. Eine Bibtex Datei wird auch "
 "hinzugefügt wenn Zitate verwendet werden."
 
-#: document/templates/document/editor.html:386
+#: document/templates/document/editor.html:387
 msgid "Choose your preferred citation style."
 msgstr "Wähle deinen bevorzugten Zitierstil."
 
-#: document/templates/document/editor.html:386
+#: document/templates/document/editor.html:387
 msgid "Citation Style"
 msgstr "Zitierstil"
 
-#: document/templates/document/editor.html:390
+#: document/templates/document/editor.html:391
 msgid "American Psychological Association."
 msgstr "American Psychological Association."
 
-#: document/templates/document/editor.html:390
+#: document/templates/document/editor.html:391
 msgid "APA"
 msgstr "APA"
 
-#: document/templates/document/editor.html:393
+#: document/templates/document/editor.html:394
 msgid "The author-date variant of the Chicago style"
 msgstr "Die Autor-Datum Variante des Chicagostiles"
 
-#: document/templates/document/editor.html:393
+#: document/templates/document/editor.html:394
 msgid "Chicago (Author-Date)"
 msgstr "Chicago (Autor-Datum)"
 
-#: document/templates/document/editor.html:396
+#: document/templates/document/editor.html:397
 msgid "Chicago format with short notes and full bibliography"
 msgstr "Chicago Format mit kurzer Fußnote und kompletter Bibliografie"
 
-#: document/templates/document/editor.html:396
+#: document/templates/document/editor.html:397
 msgid "Chicago (Note with Bibliography)"
 msgstr "Chicago (Fußnote mit Bibliografie)"
 
-#: document/templates/document/editor.html:399
+#: document/templates/document/editor.html:400
 msgid "The Harvard author-date style"
 msgstr "Der Harvard Autor-Datum Stil"
 
-#: document/templates/document/editor.html:399
+#: document/templates/document/editor.html:400
 msgid "Harvard"
 msgstr "Havard"
 
-#: document/templates/document/editor.html:402
+#: document/templates/document/editor.html:403
 msgid "Modern Language Association"
 msgstr "Modern Language Association"
 
-#: document/templates/document/editor.html:402
+#: document/templates/document/editor.html:403
 msgid "MLA"
 msgstr "MLA"
 
-#: document/templates/document/editor.html:408
+#: document/templates/document/editor.html:409
 msgid "Choose a document style"
 msgstr "Wähle einen Dokumentenstil"
 
-#: document/templates/document/editor.html:408
+#: document/templates/document/editor.html:409
 msgid "Document Style"
 msgstr "Dokumentenstil"
 
-#: document/templates/document/editor.html:412
+#: document/templates/document/editor.html:413
 msgid "Elephant"
 msgstr "Elefant"
 
-#: document/templates/document/editor.html:413
+#: document/templates/document/editor.html:414
 msgid "Comfy Elephant"
 msgstr "Gemütlicher Elefant"
 
-#: document/templates/document/editor.html:417
+#: document/templates/document/editor.html:418
 msgid "Owl"
 msgstr "Eule"
 
-#: document/templates/document/editor.html:418
+#: document/templates/document/editor.html:419
 msgid "Drowsy Owl"
 msgstr "Schläfrige Eule"
 
-#: document/templates/document/editor.html:422
+#: document/templates/document/editor.html:423
 msgid "Fox"
 msgstr "Fuchs"
 
-#: document/templates/document/editor.html:423
+#: document/templates/document/editor.html:424
 msgid "Foxy Fox"
 msgstr "Sexy Fuchs"
 
-#: document/templates/document/editor.html:430
+#: document/templates/document/editor.html:431
 msgid "Choose a papersize for printing and PDF generation."
 msgstr "Wähle eine Papiergröße für Druck und PDF Erstellung."
 
-#: document/templates/document/editor.html:430
+#: document/templates/document/editor.html:431
 msgid "Paper Size"
 msgstr "Papiergröße"
 
-#: document/templates/document/editor.html:434
+#: document/templates/document/editor.html:435
 msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
 msgstr "DIN A4 (ISO 216) welches das meißtverwendete Format weltweit ist."
 
-#: document/templates/document/editor.html:434
+#: document/templates/document/editor.html:435
 msgid "DIN A4"
 msgstr "DIN A4"
 
-#: document/templates/document/editor.html:437
+#: document/templates/document/editor.html:438
 msgid "The format used by the USA and some other American countries."
 msgstr ""
 "Das Format das in den USA und einigen amerikanischen Staaten verwendet wird."
 
-#: document/templates/document/editor.html:437
+#: document/templates/document/editor.html:438
 msgid "US Letter"
 msgstr "US Letter"
 
-#: document/templates/document/editor.html:443
+#: document/templates/document/editor.html:444
 msgid "Choose which metadata to enable."
 msgstr "Wähle welche Metadaten zugänglich sein sollen."
 
-#: document/templates/document/editor.html:443
+#: document/templates/document/editor.html:444
 msgid "Metadata"
 msgstr "Metadaten"
 
-#: document/templates/document/editor.html:447
+#: document/templates/document/editor.html:448
 msgid "Define a subtitle in addition to the title of the document."
 msgstr "Definiere einen Untertitel neben dem Titel des Dokumentes."
 
-#: document/templates/document/editor.html:450
+#: document/templates/document/editor.html:451
 msgid "Add an abstract to the document."
 msgstr "Eine Zusammenfassung dem Dokument hinzufügen."
 
-#: document/templates/document/editor.html:453
+#: document/templates/document/editor.html:454
 #, fuzzy
 msgid "Specify the authors of the document."
 msgstr "Der Titel des Dokumentes"
 
-#: document/templates/document/editor.html:453
+#: document/templates/document/editor.html:454
 #, fuzzy
 msgid "Author(s)"
 msgstr "Autor"
 
-#: document/templates/document/editor.html:456
+#: document/templates/document/editor.html:457
 msgid "Add keywords to facilitate categorization."
 msgstr ""
 
-#: document/templates/document/editor.html:462
+#: document/templates/document/editor.html:463
 msgid "Tools"
 msgstr "Werkzeuge"
 
-#: document/templates/document/editor.html:466
 #: document/templates/document/editor.html:467
+#: document/templates/document/editor.html:468
 msgid "Word counter"
 msgstr "Wortzähler"
 
-#: document/templates/document/editor.html:471
 #: document/templates/document/editor.html:472
+#: document/templates/document/editor.html:473
 msgid "Keyboard shortcuts"
 msgstr ""
 
-#: document/templates/document/editor.html:483
+#: document/templates/document/editor.html:484
 msgid "Show/hide the top menu."
 msgstr "Yopmenu anzeigen/verstecken"
 
-#: document/templates/document/editor.html:487
+#: document/templates/document/editor.html:488
 msgid "Handle tracking of changes."
 msgstr "Steuer Tracking von Veränderungen."
 
-#: document/templates/document/editor.html:488
+#: document/templates/document/editor.html:489
 msgid "Changes"
 msgstr "Veränderungen"
 
-#: document/templates/document/editor.html:493
+#: document/templates/document/editor.html:494
 msgid "Turn tracking of changes on."
 msgstr "Tracking anschalten"
 
-#: document/templates/document/editor.html:493
+#: document/templates/document/editor.html:494
 msgid "Track"
 msgstr "Tracken"
 
-#: document/templates/document/editor.html:496
+#: document/templates/document/editor.html:497
 msgid "Show all changes that have been tracked in the entire document."
 msgstr "Alle Veränderungen die im Dokument getracked wurden anzeigen."
 
-#: document/templates/document/editor.html:496
+#: document/templates/document/editor.html:497
 msgid "Show"
 msgstr "Zeigen"
 
-#: document/templates/document/editor.html:499
+#: document/templates/document/editor.html:500
 msgid "Accept all changes that have been tracked in the entire document."
 msgstr "Akzeptiere alle Veränderungen die im Dokument getracked wurden."
 
-#: document/templates/document/editor.html:499
+#: document/templates/document/editor.html:500
 msgid "Accept all"
 msgstr "Alle Akzeptieren"
 
-#: document/templates/document/editor.html:502
+#: document/templates/document/editor.html:503
 msgid "Reject all changes that have been tracked in the entire document."
 msgstr "Verwerfe alle Veränderungen die im Dokument getracked wurden."
 
-#: document/templates/document/editor.html:502
+#: document/templates/document/editor.html:503
 msgid "Reject all"
 msgstr "Alle verwerfen"
 
-#: document/templates/document/editor.html:507
+#: document/templates/document/editor.html:508
 msgid "Show/hide comments"
 msgstr "Kommentare zeigen/verbergen"
 
-#: document/templates/document/editor.html:508
+#: document/templates/document/editor.html:509
 msgid "Comments"
 msgstr "Anmerkungen"
 
-#: document/templates/document/editor.html:515
+#: document/templates/document/editor.html:516
 msgid "The title of the document"
 msgstr "Der Titel des Dokumentes"
 

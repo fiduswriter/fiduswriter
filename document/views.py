@@ -293,7 +293,7 @@ def upload_js(request):
                 can_save = True
             else:
                 access_rights = AccessRight.objects.filter(document=document, user=request.user)
-                if len(access_rights) > 0 and access_rights[0] == 'w':
+                if len(access_rights) > 0 and access_rights[0].rights == 'w':
                     can_save = True
         if can_save:
             status = 201

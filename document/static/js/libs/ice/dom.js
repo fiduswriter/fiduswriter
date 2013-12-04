@@ -258,6 +258,16 @@
   dom.isStubElement = function (element) {
     return dom.STUB_ELEMENTS.lastIndexOf(element.nodeName.toLowerCase()) != -1;
   };
+  dom.removeBRFromChild = function (node) {
+    if (node && node.hasChildNodes()) {
+      for(var z=0; z < node.childNodes.length ; z++) {
+        var child = node.childNodes[z];
+        if (child && (ice.dom.BREAK_ELEMENT == ice.dom.getTagName(child))) {
+          child.parentNode.removeChild(child);
+        }
+      }
+    }
+  };
   dom.isChildOf = function (el, parent) {
     try {
       while (el && el.parentNode) {
@@ -270,47 +280,43 @@
     return false;
   };
   dom.isChildOfTagName = function (el, name) {
-    var parentNode = null;
     try {
       while (el && el.parentNode) {
         if (el.parentNode && el.parentNode.tagName && el.parentNode.tagName.toLowerCase() === name) {
-          parentNode = el.parentNode;
+          return el.parentNode;
         }
         el = el.parentNode;
       }
     } catch (e) {}
-    return parentNode;
+    return false;
   };
 
 
   dom.isChildOfTagNames = function (el, names) {
-    var parentNode = null;
     try {
       while (el && el.parentNode) {
         if (el.parentNode && el.parentNode.tagName) {
           tagName = el.parentNode.tagName.toLowerCase();
           for (var i = 0; i < names.length; i++) {
             if (tagName === names[i]) {
-              parentNode = el.parentNode;
-              break;
+              return el.parentNode;
             }
           }
         }
         el = el.parentNode;
       }
     } catch (e) {}
-    return parentNode;
+    return null;
   };
 
   dom.isChildOfClassName = function (el, name) {
-    var parentNode = null;
     try {
       while (el && el.parentNode) {
-        if (jQuery(el.parentNode).hasClass(name)) parentNode = el.parentNode;
+        if (jQuery(el.parentNode).hasClass(name)) return el.parentNode;
         el = el.parentNode;
       }
     } catch (e) {}
-    return parentNode;
+    return null;
   };
   dom.cloneNode = function (elems, cloneEvents) {
     if (cloneEvents === undefined) {

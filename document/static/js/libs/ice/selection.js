@@ -73,7 +73,7 @@
 
       var move = function (range, unitType, units, isStart) {
         if (units === 0) {
-          throw Error('InvalidArgumentException: units cannot be 0');
+		  return;
         }
 
         switch (unitType) {
@@ -285,6 +285,7 @@
           // We need to move to the next selectable container.
           while (diff > 0) {
             container = this.getNextContainer(container, skippedBlockElem);
+
             if (container.nodeType === ice.dom.ELEMENT_NODE) {
               continue;
             }

@@ -347,7 +347,7 @@
             }
             // If tracked changes are added, update tracker.
             if (containsTrackedchange) {
-                tracker.initializeEditor();
+                tracker.findTrackTags();
             }
             editorHelpers.setDisplay.document('title', jQuery('#document-title').text().trim());
             // Mark the document as having changed to trigger saving, 

@@ -227,7 +227,7 @@ jQuery(document).bind('documentDataLoaded', function () {
                 id: theUser.id,
                 name: theUser.name
             },
-            plugins: ['IceSmartQuotesPlugin', 'IceEmdashPlugin', ]
+            plugins: []
         }).startTracking();
         document.querySelector('#document-editable').removeAttribute(
             'contenteditable');

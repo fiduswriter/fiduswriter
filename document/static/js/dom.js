@@ -141,7 +141,7 @@
 
     dom.noTrackIfDisabled = function (range) {
         if (!theDocument.settings.tracking) {
-            var insideChange = jQuery(range.startContainer).closest('.ins,.del')[0];
+            var insideChange = jQuery(range.startContainer).parents('.ins,.del').last()[0];
             if (insideChange) {
                 // We are inside a change node, although tracking has been disabled. 
                 // This means that we have to split the change node at the current position, before we can continue.

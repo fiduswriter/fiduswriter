@@ -22,7 +22,7 @@ from django.core.mail import send_mail
 from django.core.context_processors import csrf
 from django.template import RequestContext
 
-from beta.models import Feedback
+from feedback.models import Feedback
 
 def feedback(request):
     status = 405
@@ -43,6 +43,6 @@ def browser(request):
     response={}
     response['user'] = request.user
     response.update(csrf(request))
-    return render_to_response('beta/browser.html', 
+    return render_to_response('feedback/browser.html', 
         response,
         context_instance=RequestContext(request))

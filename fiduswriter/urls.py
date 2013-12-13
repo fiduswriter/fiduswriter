@@ -62,8 +62,8 @@ urlpatterns = patterns('',
     # Media manager 
     url(r'^book/', include('book.urls')),
     
-    # Beta 
-    url(r'^beta/', include('beta.urls')), 
+    # Feedback 
+    url(r'^feedback/', include('feedback.urls')), 
 
 )
 

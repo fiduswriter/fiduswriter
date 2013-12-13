@@ -9,17 +9,17 @@ class Migration(SchemaMigration):
 
     def forwards(self, orm):
         # Adding model 'Feedback'
-        db.create_table(u'beta_feedback', (
+        db.create_table(u'feedback_feedback', (
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('message', self.gf('django.db.models.fields.TextField')()),
             ('owner', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'], null=True, blank=True)),
         ))
-        db.send_create_signal(u'beta', ['Feedback'])
+        db.send_create_signal(u'feedback', ['Feedback'])
 
 
     def backwards(self, orm):
         # Deleting model 'Feedback'
-        db.delete_table(u'beta_feedback')
+        db.delete_table(u'feedback_feedback')
 
 
     models = {
@@ -52,7 +52,7 @@ class Migration(SchemaMigration):
             'user_permissions': ('django.db.models.fields.related.ManyToManyField', [], {'to': u"orm['auth.Permission']", 'symmetrical': 'False', 'blank': 'True'}),
             'username': ('django.db.models.fields.CharField', [], {'unique': 'True', 'max_length': '30'})
         },
-        u'beta.feedback': {
+        u'feedback.feedback': {
             'Meta': {'object_name': 'Feedback'},
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'message': ('django.db.models.fields.TextField', [], {}),
@@ -67,4 +67,4 @@ class Migration(SchemaMigration):
         }
     }
 
-    complete_apps = ['beta']
+    complete_apps = ['feedback']

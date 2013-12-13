@@ -38,7 +38,7 @@
 
       $.ajax({
         type : "POST",
-        url : "/beta/feedback/",
+        url : "/feedback/feedback/",
         data : data,
         success : function() {
           $('#closeFeedback').show();
@@ -161,7 +161,7 @@
   <div id="feedback-wrapper">
     <div id="feedback-title">{% trans "Feedback" %}</div>
     <div id="feedback-form">
-      <form method="post" action="/beta/feedback/">
+      <form method="post" action="/feedback/feedback/">
         {% csrf_token %}
         <textarea id="message" name="message" rows="10" cols="30"></textarea>
         <input type="button" value='{% trans "submit" %}' id="feedbackbutton" class="btn dark" />

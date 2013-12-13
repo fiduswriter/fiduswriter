@@ -33,8 +33,8 @@
             if(!(isChromeOrSafari)) {
                 var currentURL = location.href.substr(7);
                 var currentRelativeURL = currentURL.substr(currentURL.indexOf('/'));
-                if(currentRelativeURL != '/beta/browser/') {
-                    window.location = '/beta/browser';
+                if(currentRelativeURL != '/feedback/browser/') {
+                    window.location = '/feedback/browser';
                 }
             }
         </script>
@@ -521,7 +521,7 @@
             &nbsp; {% comment %}This space ensures that also an empty document will trigger pagination.{% endcomment %}
         </div>
         <div id="comment-box-container"></div><div id="tracking-box-container"></div>
-        {% include "beta/feedback.html" %}
+        {% include "feedback/feedback.html" %}
         <div id="chat">
             <i class="resize-button icon-angle-double-down"></i>
             <div id="chat-container"></div>

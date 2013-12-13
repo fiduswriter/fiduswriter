@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-12-04 02:49-0600\n"
+"POT-Creation-Date: 2013-12-13 01:18-0600\n"
 "PO-Revision-Date: 2013-09-18 08:54+0200\n"
 "Last-Translator: Vladimir Vitkov <vvitkov@linux-bg.org>\n"
 "Language-Team: Bulgarian <vvitkov@linux-bg.org>\n"
@@ -304,7 +304,7 @@ msgid "Verified"
 msgstr "Потвърден"
 
 #: account/templates/account/show_profile.html:123
-#: beta/templates/beta/feedback.html:167
+#: feedback/templates/feedback/feedback.html:167
 msgid "submit"
 msgstr "изпрати"
 
@@ -437,32 +437,6 @@ msgstr "Цитати с Citation Style Language"
 #: base/templates/footer.html:22
 msgid "Requires Chrome/enable css regions"
 msgstr "Необходим е Chrome/enable css regions"
-
-#: beta/templates/beta/browser.html:7
-msgid "Browser check"
-msgstr "Проверка на браузъра"
-
-#: beta/templates/beta/browser.html:11
-msgid "Hey there!"
-msgstr "Хей ти!"
-
-#: beta/templates/beta/browser.html:12
-#, fuzzy
-msgid ""
-"Unfortunately, Fidus Writer currently only works on Google Chrome (29+) and "
-"Apple Safari (6.1+). We hope to provide support for Mozilla Firefox in the "
-"future."
-msgstr ""
-"За съжаление Fidus Writer работи коректно само в Google Chrome за момента. "
-"Поддръжкаta на Mozilla Firefox е в процес на разработване."
-
-#: beta/templates/beta/feedback.html:159 beta/templates/beta/feedback.html:162
-msgid "Feedback"
-msgstr "Забележки"
-
-#: beta/templates/beta/feedback.html:171
-msgid "Thank you for your comment!"
-msgstr "Благодарим ви за коментара!"
 
 #: bibliography/templates/bibliography/index.html:5
 msgid "Bibliography Manager"
@@ -974,6 +948,33 @@ msgstr "Качи Fidus документ"
 #: document/templates/document/index.html:132
 msgid "Revisions"
 msgstr ""
+
+#: feedback/templates/feedback/browser.html:7
+msgid "Browser check"
+msgstr "Проверка на браузъра"
+
+#: feedback/templates/feedback/browser.html:11
+msgid "Hey there!"
+msgstr "Хей ти!"
+
+#: feedback/templates/feedback/browser.html:12
+#, fuzzy
+msgid ""
+"Unfortunately, Fidus Writer currently only works on Google Chrome (29+) and "
+"Apple Safari (6.1+). We hope to provide support for Mozilla Firefox in the "
+"future."
+msgstr ""
+"За съжаление Fidus Writer работи коректно само в Google Chrome за момента. "
+"Поддръжкаta на Mozilla Firefox е в процес на разработване."
+
+#: feedback/templates/feedback/feedback.html:159
+#: feedback/templates/feedback/feedback.html:162
+msgid "Feedback"
+msgstr "Забележки"
+
+#: feedback/templates/feedback/feedback.html:171
+msgid "Thank you for your comment!"
+msgstr "Благодарим ви за коментара!"
 
 #: fiduswriter/settings.py:250
 msgid "English"

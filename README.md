@@ -47,7 +47,7 @@ The following are instructions working on most *NIX systems.
 
   a. Install the libmysql development package. On Debian/Ubuntu, run:
 
-    > sudo apt-get install libmysqlclient-development
+    > sudo apt-get install libmysqlclient-dev
 
   b. Install the requirements specific to MySQL:  
   

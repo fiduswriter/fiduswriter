@@ -30,7 +30,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        output_js = u'/** @file Sets up strings for working with TeX \n This file is automatically created using ./manage.py create_bibliography_js\n/*\n'
+        output_js = u'/** @file Sets up strings for working with TeX \n This file is automatically created using ./manage.py create_bibliography_js\n*/\n'
         
         output_js += '/** A list of special chars in Tex and their unicode equivalent. */\n'
         output_js += 'var tex_special_chars = [\n'

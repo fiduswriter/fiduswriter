@@ -58,10 +58,8 @@
         </style>
         <!--  Translations -->
         <script type="text/javascript" src="/jsi18n/"></script>
-        <!-- document styles -->
-        <link id="document-style-link" rel="stylesheet" href="{{ STATIC_URL }}css/document/elephant.css" type="text/css">
-        <link id="document-style-link" rel="stylesheet" href="{{ STATIC_URL }}css/document/owl.css" type="text/css">
-        <link id="document-style-link" rel="stylesheet" href="{{ STATIC_URL }}css/document/fox.css" type="text/css">
+        <!-- document style -->
+        <link id="document-style-link" rel="stylesheet" type="text/css">
 
         <!-- commons styles -->
         {% compress css %}
@@ -140,6 +138,7 @@
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/xmldom.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/citeproc.js"></script>
         <!-- document styles -->
+        <script type="text/javascript" src="{{ STATIC_URL }}js/document/stylelist.js"></script>
         <script type="text/javascript">
             var document_style_folder_path = '{{ STATIC_URL }}css/document/';
         </script>
@@ -169,32 +168,6 @@
             <!-- Pagination.js -->
             <script type="text/javascript">
                 // Config options for pagination
-                var paginationConfigList = {
-                    'elephant': {
-                        'outerMargin': 90,
-                        'innerMargin': 90,
-                        'contentsTopMargin': 80,
-                        'headerTopMargin': 80,
-                        'contentsBottomMargin': 80,
-                        'pagenumberBottomMargin': 50
-                    },
-                    'owl': {
-                        'outerMargin': 90,
-                        'innerMargin': 90,
-                        'contentsTopMargin': 80,
-                        'headerTopMargin': 80,
-                        'contentsBottomMargin': 120,
-                        'pagenumberBottomMargin': 50
-                    },
-                    'fox': {
-                        'outerMargin': 80,
-                        'innerMargin': 80,
-                        'contentsTopMargin': 80,
-                        'headerTopMargin': 80,
-                        'contentsBottomMargin': 80,
-                        'pagenumberBottomMargin': 50
-                    }
-                };
 
                 var paginationConfig = {
                     'flowElement' : "document.getElementById('flow')",
@@ -204,12 +177,12 @@
                     //'autostart': true,
                     'pageWidth': 790,
                     'pageHeight': 1117, // A4 is standard size
-                    'outerMargin': paginationConfigList.elephant.outerMargin,
-                    'innerMargin': paginationConfigList.elephant.innerMargin,
-                    'contentsTopMargin': paginationConfigList.elephant.contentsTopMargin,
-                    'headerTopMargin': paginationConfigList.elephant.headerTopMargin,
-                    'contentsBottomMargin': paginationConfigList.elephant.contentsBottomMargin,
-                    'pagenumberBottomMargin': paginationConfigList.elephant.pagenumberBottomMargin,
+                    'outerMargin': 90,
+                    'innerMargin': 90,
+                    'contentsTopMargin': 80,
+                    'headerTopMargin': 80,
+                    'contentsBottomMargin': 80,
+                    'pagenumberBottomMargin': 50,
                     'lengthUnit': 'px'
                 };
             </script>
@@ -408,22 +381,7 @@
                 <div>
                     <span class="header-nav-item documentstyle-menu" title="{% trans "Choose a document style" %}">{% trans "Document Style" %}</span>
                     <div class="fw-pulldown fw-left">
-                        <ul>
-                            <li>
-                                <span class="fw-pulldown-item style" data-style="elephant" title="{% trans "Elephant" %}">
-                                    {% trans "Comfy Elephant" %}
-                                </span>
-                            </li>
-                            <li>
-                                <span class="fw-pulldown-item style" data-style="owl" title="{% trans "Owl" %}">
-                                    {% trans "Drowsy Owl" %}
-                                </span>
-                            </li>
-                            <li>
-                                <span class="fw-pulldown-item style" data-style="fox" title="{% trans "Fox" %}">
-                                    {% trans "Foxy Fox" %}
-                                </span>
-                            </li>
+                        <ul id="documentstyle-list">
                         </ul>
                     </div>
                 </div>

@@ -103,7 +103,7 @@ jQuery.extend({
             jQuery('body').append('<div id="alerts-outer-wrapper"><ul id="alerts-wrapper"></ul></div>');
         jQuery('#alerts-wrapper').append($alert_box);
         $alert_box.fadeTo(fade_speed, 1, function() {
-            jQuery(this).delay('2000').fadeOut(fade_speed, function() { jQuery(this).remove(); });
+            //jQuery(this).delay('2000').fadeOut(fade_speed, function() { jQuery(this).remove(); });
         });
     },
     /** Turn milliseconds since epoch (UTC) into a local date string.

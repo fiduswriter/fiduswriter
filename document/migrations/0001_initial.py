@@ -40,6 +40,7 @@ class Migration(SchemaMigration):
             ('note', self.gf('django.db.models.fields.CharField')(default='', max_length=255, blank=True)),
             ('date', self.gf('django.db.models.fields.DateTimeField')(auto_now=True, blank=True)),
             ('file_object', self.gf('django.db.models.fields.files.FileField')(max_length=100)),
+            ('file_name', self.gf('django.db.models.fields.CharField')(default='', max_length=255, blank=True)),
         ))
         db.send_create_signal(u'document', ['DocumentRevision'])
 
@@ -117,6 +118,7 @@ class Migration(SchemaMigration):
             'Meta': {'object_name': 'DocumentRevision'},
             'date': ('django.db.models.fields.DateTimeField', [], {'auto_now': 'True', 'blank': 'True'}),
             'document': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['document.Document']"}),
+            'file_name': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '255', 'blank': 'True'}),
             'file_object': ('django.db.models.fields.files.FileField', [], {'max_length': '100'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'note': ('django.db.models.fields.CharField', [], {'default': "''", 'max_length': '255', 'blank': 'True'})

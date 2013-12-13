@@ -81,8 +81,14 @@ The following are instructions working on most *NIX systems.
   > python manage.py migrate
 
   > python manage.py loaddata bibliography/fixture/initial_bib_rules.json
+  
+  > python manage.py create_bibliography_js
 
   > python manage.py loaddata base/fixture/initial_terms.json
+  
+  > python manage.py loaddata style/fixture/initial_styles.json
+  
+  > python manage.py create_document_styles
 
 12. Run the Fidus Writer server by typing:
 

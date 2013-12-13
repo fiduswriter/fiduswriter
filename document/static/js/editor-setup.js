@@ -78,7 +78,6 @@ jQuery(document).bind('documentDataLoaded', function () {
             editorHelpers.setDisplay.document('settings.documentstyle',
                 theDocument.settings.documentstyle);
             editorHelpers.documentHasChanged();
-            // commentHelpers.layoutComments();
         }
         return false;
     });

@@ -36,5 +36,4 @@ class Command(BaseCommand):
         EntryTypeAlias.objects.all().delete()
         LocalizationKey.objects.all().delete()
         
-        #call_command("loaddata", "initial_bib_rules.json")
-        call_command("loaddata", "initial_tex_chars.json")
+        call_command("loaddata", "initial_bib_rules.json")

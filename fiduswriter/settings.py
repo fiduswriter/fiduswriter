@@ -206,6 +206,7 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django.contrib.flatpages',
     'south',
+    'fixturemedia',
     'base',
     'menu',
     'document',
@@ -218,7 +219,8 @@ INSTALLED_APPS = (
     'allauth.socialaccount',
     'avatar',
     'compressor',
-    'feedback'
+    'feedback',
+    'style'
     # If you want to enable one or several of the social network login options 
     # below, make sure you add the authorization keys at:
     # http://SERVER.COM/admin/socialaccount/socialapp/

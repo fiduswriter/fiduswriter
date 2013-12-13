@@ -120,7 +120,7 @@
             ['settings.papersize', '1117'],
             ['settings.citationstyle', 'apa'],
             ['settings.tracking', false],
-            ['settings.documentstyle', 'elephant'],
+            ['settings.documentstyle', defaultDocumentStyle],
             ['settings.metadata', {}]
         ];
 
@@ -172,27 +172,20 @@
      * @param theValue The name of the document style to switch to.*/
     editorHelpers.setDisplay.settingsDocumentstyle = function (theValue) {
 
+        var documentStyleLink = document.getElementById('document-style-link');
+        
+        var newDocumentStyleLink = document.createElement('link');
+        newDocumentStyleLink.setAttribute("rel", "stylesheet");
+        newDocumentStyleLink.setAttribute("type", "text/css");
+        newDocumentStyleLink.setAttribute("id", "document-style-link");
+        newDocumentStyleLink.setAttribute("href", staticUrl+'css/document/'+theValue+'.css');
+        
+        documentStyleLink.parentElement.replaceChild(newDocumentStyleLink, documentStyleLink);
+        
+        
         jQuery("#header-navigation .style.selected").removeClass('selected');
         jQuery('span[data-style=' + theValue + ']').addClass('selected');
 
-        // Remove all available style classes from flow
-        jQuery("#header-navigation .style").each(function () {
-            var thisStyle = jQuery(this).attr('data-style');
-            jQuery('#flow').removeClass(thisStyle);
-        });
-
-        jQuery('#flow').addClass(theValue);
-
-        paginationConfig.outerMargin = paginationConfigList[theValue].outerMargin;
-        paginationConfig.innerMargin = paginationConfigList[theValue].innerMargin;
-        paginationConfig.contentsTopMargin = paginationConfigList[theValue]
-            .contentsTopMargin;
-        paginationConfig.headerTopMargin = paginationConfigList[theValue].headerTopMargin;
-        paginationConfig.contentsBottomMargin = paginationConfigList[
-            theValue].contentsBottomMargin;
-        paginationConfig.pagenumberBottomMargin = paginationConfigList[
-            theValue].pagenumberBottomMargin;
-        pagination.setPageStyle();
         set_document_style_timer = setTimeout(function () {
             clearTimeout(set_document_style_timer);
             if (document.webkitGetNamedFlows) {

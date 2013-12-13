@@ -20,35 +20,35 @@
  */
 
 
-$(function() {
+jQuery(function() {
     //intialize the teammember table
-    $('#team-table tbody').append(contactHelpers.tmp_teammember({'members': teammembers}));
+    jQuery('#team-table tbody').append(contactHelpers.tmp_teammember({'members': teammembers}));
 
     //select all members
-    $('#select-all-entry').bind('change', function() {
+    jQuery('#select-all-entry').bind('change', function() {
         var new_bool = false;
-        if($(this).prop("checked"))
+        if(jQuery(this).prop("checked"))
             new_bool = true;
-        $('.entry-select').not(':disabled').each(function() {
+        jQuery('.entry-select').not(':disabled').each(function() {
             this.checked = new_bool
         });
     });
 
-    $('.add-contact').bind('click', contactHelpers.addMemberDialog);
+    jQuery('.add-contact').bind('click', contactHelpers.addMemberDialog);
 
-    $.addDropdownBox($('#select-action-dropdown'), $('#action-selection-pulldown'));
-    $('#action-selection-pulldown span').bind('click', function() {
-        var ids = [], action_name = $(this).attr('data-action');
+    $.addDropdownBox(jQuery('#select-action-dropdown'), jQuery('#action-selection-pulldown'));
+    jQuery('#action-selection-pulldown span').bind('click', function() {
+        var ids = [], action_name = jQuery(this).attr('data-action');
         if('' == action_name || 'undefined' == typeof(action_name))
             return;
-        $('.entry-select:checked').each(function() {
-            ids[ids.length] = parseInt($(this).attr('data-id'));
+        jQuery('.entry-select:checked').each(function() {
+            ids[ids.length] = parseInt(jQuery(this).attr('data-id'));
         });
         contactHelpers.deleteMemberDialog(ids);
     });
 
     //delete single user
-    $(document).on('click', '.delete-single-member', function() {
-        contactHelpers.deleteMemberDialog([$(this).attr('data-id')]);
+    jQuery(document).on('click', '.delete-single-member', function() {
+        contactHelpers.deleteMemberDialog([jQuery(this).attr('data-id')]);
     });
 });

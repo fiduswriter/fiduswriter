@@ -2,13 +2,13 @@ from optparse import make_option
 import os
 from os.path import abspath, dirname, exists, join
 
-from django.conf import settings
 from django.core.management.base import CommandError
 import django.core.management.commands.dumpdata
 import django.core.serializers
 from django.db.models.fields.files import FileField
 import django.dispatch
 from django.core.files.storage import default_storage
+from django.core.files.base import File
 
 from fixturemedia.management.commands.loaddata import models_with_filefields
 
@@ -79,6 +79,6 @@ class Command(django.core.management.commands.dumpdata.Command):
             pre_dump.connect(self.save_images_for_signal, sender=modelclass)
 
         self.set_up_serializer(ser_format)
-        if True:
-        #with open(outfilename, 'w') as self.stdout:
+
+        with File(open(outfilename, 'w')) as self.stdout:
             super(Command, self).handle(*app_labels, **options)

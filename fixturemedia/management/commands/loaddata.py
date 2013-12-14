@@ -1,8 +1,6 @@
-import os
 from os.path import dirname, exists, isdir, join, relpath
 
 from django.conf import settings
-from django.core.files import File
 import django.core.management.commands.loaddata
 import django.core.serializers
 from django.db.models import get_apps, get_models, signals

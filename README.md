@@ -16,10 +16,11 @@ License
 All of Fidus Writer's original code is licensed under the GNU AFFERO GENERAL PUBLIC LICENSE, for details see LICENSE. Some third party libraries are licensed under other, compatible open source libraries. Licensing information is included in those files.
 
 
-Howto install
+Simple install
 ----
 
-The following are instructions working on most *NIX systems.
+
+The following are instructions working on most *NIX systems and gives you a simple test installation.
 
 1. Download the Fidus Writer sources to your computer. Unarchive if necessary.
 
@@ -43,69 +44,61 @@ The following are instructions working on most *NIX systems.
   
   > pip install -r requirements.txt
 
-7. The default is to use sqlite as the database backend. If you want to use mysql instead, you need a few more things:
+7. Initialize the Fidus Writer site and create a super user by typing:
 
-  a. Install the libmysql development package. On Debian/Ubuntu, run:
-
-    > sudo apt-get install libmysqlclient-dev
-
-  b. Install the requirements specific to MySQL:  
+  > python manage.py init
   
-    > pip install -r mysql-requirements.txt
-
-  c. Create a database and user with access to it, making sure that the characterset of the database is set to UTF8. Check here http://www.debuntu.org/how-to-create-a-mysql-database-and-set-privileges-to-a-user/ for how to create a database and set up user priviliges. Make sure that when you create the database, you specify the characterset:
-    
-    > create database DBNAME character set utf8;
-
-8. If you want to go beyond a local test installation, copy configuration.py-default to configuration.py, and edit configuration.py with a text editor, adjusting it to fit your needs. 
-   If you you set DEBUG = False in configuration.py, you likely need to run:
-
-  > python manage.py collectstatic
-  
-  > python manage.py compress
-
-9. If you will be running several instances of Fidus Writer that need to communicate between each other, you will need to add redis for message exchange. Install a redis server, install the requirements like this:
-
-  > pip install -r redis-requirements.txt
-
-  And you will need to adjust configuration.py by specifying the CACHES (see configuration.py-default comments).
-
-10. Recompile locale message files by typing:
-
-  > python manage.py compilemessages
-
-11. Synchronize the DB and create a superuser by typing:
-
-  > python manage.py syncdb
-
-  > python manage.py migrate
-
-  > python manage.py loaddata bibliography/fixture/initial_bib_rules.json
-  
-  > python manage.py create_bibliography_js
-
-  > python manage.py loaddata base/fixture/initial_terms.json
-  
-  > python manage.py loaddata style/fixture/initial_styles.json
-  
-  > python manage.py create_document_styles
-
-12. Run the Fidus Writer server by typing:
+8. Run the Fidus Writer server by typing:
 
   > python manage.py runserver
 
-  or, to start the server on a different port than the default 8000, run:
+9. In your Chrome/Chromium/Safari browser, navigate to http://localhost:8000/
 
-  > python manage.py runserver 8000
 
-- - - - - -
+Advanced options
+----
 
-For best results for the end user:
+### Individual pages in Chromium/Chrome:
 
-1. Install a recent version of Chrome/Chromium 
+Go to "chrome:flags" in the URL navigation bar of your browser and enable "Enable experimental Web Platform features." 
 
-2. Enable "Enable experimental Web Platform features." (in type "about:flags" into the navigation bar of the browser)
+### Use a MySQL/PostGreSQL server instead of sqlite:
 
-3. Restart Chrome/Chromium
+  1. Install the libmysql development package. On Debian/Ubuntu, you can do this by executing:
 
-Alternatively you can use Safari 6.1+
+    > sudo apt-get install libmysqlclient-dev
+
+  2. While inside your Fidus Writer virtualenv, install the python requirements specific to MySQL:  
+  
+    > pip install -r mysql-requirements.txt
+
+  3. Create a database and a user with access to it, making sure that the characterset of the database is set to UTF8. Check here http://www.debuntu.org/how-to-create-a-mysql-database-and-set-privileges-to-a-user/ for how to create a database and set up user priviliges. Make sure that when you create the database, you specify the characterset:
+    
+    > create database DBNAME character set utf8;
+
+  4. Copy configuration.py-default to configuration.py, uncomment and fill out the section entitled "DATABASES".
+
+### Run several instances of Fidus Writer in parallel:
+ 
+  1. If you will be running several instances of Fidus Writer that need to communicate between each other, you will need to add redis for message exchange. Install a redis server. On Debian/Ubuntu, you need to do:
+  
+    > sudo apt-get install redis-server 
+  
+  2. While inside your Fidus Writer virtualenv, install the python requirements for redis like this:
+
+    > pip install -r redis-requirements.txt
+
+  3. Copy configuration.py-default to configuration.py, uncomment and fill out the section entitled "CACHES".
+
+
+### Run the Fidus Writer server on an alternative port:
+
+  Instead of starting the server with:
+
+  > python manage.py runserver
+
+  Specify the port number like this:
+
+  > python manage.py runserver 9000
+  
+  9000 is the port number that this server listens on.

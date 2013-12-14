@@ -45,7 +45,7 @@ class Command(BaseCommand):
         output_js += '];\n'
         
         # list of field types of Bibligraphy DB with lookup by field name
-        fixtures_list = json.loads(open(PROJECT_PATH + '/bibliography/fixture/initial_bib_rules.json').read())
+        fixtures_list = json.loads(open(PROJECT_PATH + '/bibliography/fixtures/initial_bib_rules.json').read())
         localization_key = {}
         for fixture_entry in fixtures_list:
             if 'keys' in fixture_entry:

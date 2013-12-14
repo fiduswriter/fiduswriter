@@ -2,6 +2,7 @@ from os.path import dirname, exists, isdir, join, relpath
 
 from django.conf import settings
 import django.core.management.commands.loaddata
+from django.core.files.storage import default_storage
 import django.core.serializers
 from django.db.models import get_apps, get_models, signals
 from django.db.models.fields.files import FileField
@@ -33,14 +34,12 @@ class Command(django.core.management.commands.loaddata.Command):
                 # don't intend, throwing OSErrors for mismatched modes. So
                 # just check if it exists first.
                 try:
-                    in_file = open(filepath, 'r')
-                    file_contents = in_file.read()
-                    in_file.close()
+                    default_storage.save(path.name, open(filepath, 'r'))
                 except FileNotFoundError:
                     self.stderr.write("Expected file at {} doesn't exist, skipping".format(filepath))
                     continue
                 
-                default_storage.save(target_path, file_contents)
+                
  
 
 

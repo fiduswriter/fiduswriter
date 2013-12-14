@@ -188,10 +188,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 )
 
 
-FIXTURE_DIRS = (
-     './bibliography/fixture',
-)
-
 # The following are the apps needed by Fidus Writer. The lower part of the list
 # are modules to allow different login options.
 

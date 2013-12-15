@@ -35,7 +35,7 @@ class Command(django.core.management.commands.loaddata.Command):
                 # just check if it exists first.
                 try:
                     default_storage.save(path.name, open(filepath, 'r'))
-                except FileNotFoundError:
+                except NameError:
                     self.stderr.write("Expected file at {} doesn't exist, skipping".format(filepath))
                     continue
                 

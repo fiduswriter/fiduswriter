@@ -24,7 +24,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
 (function () {
     var exports = this,
-        /** 
+        /**
          * Functions to export the Fidus Writer document. TODO
          * @namespace exporter
          */
@@ -197,7 +197,9 @@ var FW_FILETYPE_VERSION = "1.1";
 
                 process(writer, zipFs.root, function () {
                     writer.close(function (blob) {
-                        if (upload) {
+                        if ('submittoojs' == upload) {
+                            ojsconnector.submitDocToOJS(zipFileName, blob);
+                        } else if (upload) {
                             exporter.uploadFile(zipFileName, blob);
                         } else {
                             exporter.downloadFile(zipFileName, blob);
@@ -861,13 +863,17 @@ var FW_FILETYPE_VERSION = "1.1";
         }
     };
 
-    exporter.native = function (aDocument, anImageDB, aBibDB, callback) {
+    exporter.native = function (aDocument, anImageDB, aBibDB, callback, upload) {
         var contents, outputList, httpOutputList, images, shrunkImageDB,
             shrunkBibDB = {}, imageUrls = [],
             citeList = [],
             i;
 
         $.addAlert('info', gettext('File export has been initiated.'));
+
+        if ('undefined' === typeof upload) {
+            upload = false;
+        }
 
         contents = document.createElement('div');
         contents.innerHTML = aDocument.contents;
@@ -896,7 +902,7 @@ var FW_FILETYPE_VERSION = "1.1";
             shrunkBibDB[citeList[i]] = aBibDB[citeList[i]];
         }
 
-        callback(aDocument, shrunkImageDB, shrunkBibDB, images);
+        callback(aDocument, shrunkImageDB, shrunkBibDB, images, upload);
 
     };
 

@@ -65,6 +65,8 @@ urlpatterns = patterns('',
     # Beta 
     url(r'^beta/', include('beta.urls')), 
 
+    #for access from OJS
+    url(r'^ojscommand/', include('ojs.urls')),
 )
 
 urlpatterns += patterns('django.contrib.flatpages.views',

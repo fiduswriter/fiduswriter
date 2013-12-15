@@ -23,7 +23,7 @@
  * @constant lastStyleUsedFootnotes
  */
 var lastStyleUsedFootnotes = false;
-    
+
 // Functions to be executed at startup
 jQuery(document).ready(function () {
     // Enable toolbar menu
@@ -297,7 +297,7 @@ jQuery(document).bind('documentDataLoaded', function () {
                 /* Crtl + ? => show shortcuts */
             } else if (event.ctrlKey && event.which == 191) {
                 event.preventDefault();
-                
+
                 $().showShortcuts();
                 return false;
 
@@ -336,7 +336,6 @@ jQuery(document).bind('documentDataLoaded', function () {
             }
             return gettext('Leave editor');
         });
-
 
         jQuery(document).on('click', '.pagination-footnote-item-container',
             function (e) {

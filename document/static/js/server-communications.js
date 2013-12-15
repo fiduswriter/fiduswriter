@@ -20,7 +20,7 @@
  */
 (function () {
     var exports = this,
-        /** Sets up communicating with server (retrieving document, saving, collaboration, etc.). TODO 
+        /** Sets up communicating with server (retrieving document, saving, collaboration, etc.). TODO
          * @namespace serverCommunications
          */
         serverCommunications = {};
@@ -78,7 +78,7 @@
     var metadataFields = ['title', 'subtitle', 'abstract', 'authors', 'keywords'];
 
     serverCommunications.resetTextChangeList = function () {
-        
+
         theDocumentValues.newDiffs = [];
         theDocumentValues.usedDiffs = [];
         theDocumentValues.textChangeList = [];
@@ -202,7 +202,7 @@
         if (applicableDiffs.length > 0) {
 
             domDiff.apply(document.getElementById('document-editable'), applicableDiffs);
-            
+
             // Also make sure that placeholders correspond to the current state of affairs
             editorHelpers.setPlaceholders();
             // If something was done about citations, reformat these.
@@ -218,7 +218,7 @@
                 commentHelpers.layoutComments();
             }
             editorHelpers.setDisplay.document('title', jQuery('#document-title').text().trim());
-            // Mark the document as having changed to trigger saving, 
+            // Mark the document as having changed to trigger saving,
             // but don't mark it as having been touched so it doesn't trigger synchronization with peers.
             theDocumentValues.changed = true;
         }
@@ -333,17 +333,17 @@
             if (isNaN(documentId)) {
                 documentId = 0;
             }
-            
+
             var wsConnectionAttempts = 0;
-            
+
             function createWSConnection() {
                 var connectTime = new Date(), wsPinger;
-                
+
                 window.ws = new WebSocket('ws://' + location.host.split(':')[0] + ':' + websocketPort +
             '/ws/doc/' + documentId);
-                
+
                 wsPinger = setInterval(function() {serverCommunications.send({'type':'ping'})}, 50000);
-                
+
                 ws.onmessage = function (event) {
                     serverCommunications.receive(JSON.parse(event.data));
                 }
@@ -363,7 +363,7 @@
                     }
                 }
             }
-            
+
             createWSConnection();
         });
     };

@@ -830,7 +830,7 @@
         elements = ice.dom.getElementsBetween(bookmark.start, bookmark.end),
         b1 = ice.dom.parents(range.startContainer, this.blockEls.join(', '))[0],
         b2 = ice.dom.parents(range.endContainer, this.blockEls.join(', '))[0],
-        betweenBlocks = new Array(); 
+        betweenBlocks = new Array();
 
       for (var i = 0; i < elements.length; i++) {
         var elem = elements[i];

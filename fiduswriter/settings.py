@@ -218,7 +218,8 @@ INSTALLED_APPS = (
     'allauth.socialaccount',
     'avatar',
     'compressor',
-    'beta'
+    'beta',
+    'ojs'
     # If you want to enable one or several of the social network login options 
     # below, make sure you add the authorization keys at:
     # http://SERVER.COM/admin/socialaccount/socialapp/
@@ -317,6 +318,9 @@ JS_LOCATIONS = {
 
 CSS_LOCATIONS = {
     }
+
+# Global variables for OJS application
+OJS_HOME_URL = 'http://localhost:8888/fidus1.1_ojsdummy/'
 
 try:
     exec open(os.path.join(PROJECT_PATH, 'configuration.py')) in globals()

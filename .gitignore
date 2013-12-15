@@ -10,3 +10,4 @@ local_settings.py
 .settings
 media
 .elasticbeanstalk/
+*.mo

@@ -325,7 +325,7 @@
             data: post_data,
             type: 'POST',
             success: function (response, textStatus, jqXHR) {
-                
+
                 usermediaHelpers.stopUsermediaTable();
                 var i, len = ids.length,
                     j;
@@ -538,21 +538,21 @@
             }
         });
     };
-    
+
     usermediaHelpers.stopUsermediaTable = function () {
         jQuery('#imagelist').dataTable().fnDestroy();
     };
 
     usermediaHelpers.startUsermediaTable = function () {
         // The sortable table seems not to have an option to accept new data added to the DOM. Instead we destroy and recreate it.
-        
+
         var nonSortable = [0, 2];
-        
+
         // Only on the large usermedia table remove the 5th row sorting as well.
         if (jQuery('#imagelist th').length > 2) {
             nonSortable.push(4);
         }
-        
+
         jQuery('#imagelist').dataTable({
             "bPaginate": false,
             "bLengthChange": false,
@@ -587,7 +587,7 @@
         });
     };
 
-    
+
 
     usermediaHelpers.init = function (callback) {
 

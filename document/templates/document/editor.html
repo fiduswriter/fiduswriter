@@ -142,7 +142,7 @@
         </script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.autoresize.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/DOM-diff.js"></script>
-            
+
         {% compress js %}
 
             <script type="text/javascript" src="{{ STATIC_URL }}js/common.js"></script>
@@ -314,6 +314,9 @@
             <script type="text/javascript" src="{{ STATIC_URL }}js/citeproc-functions.js"></script>
         {% endcompress %}
 
+        <!-- ojs connector -->
+        <script type="text/javascript" src="{{ STATIC_URL }}js/ojs-connector.js"></script>
+
         <script type="text/javascript">
 
             if(window.chrome && navigator.appVersion.indexOf("Win") !== -1) {
@@ -339,8 +342,16 @@
                     <span class="header-nav-item" title="{% trans "File handling" %}">{% trans "File" %}</span>
                     <div class="fw-pulldown fw-left">
                         <ul>
+                          {% if ojsuser %}
                             <li>
-                                <span class="fw-pulldown-item share icon-export" title="{% trans "Share the document with other users." %}"> {% trans "Share" %} </span>
+                                <span class="fw-pulldown-item submit-ojs icon-floppy" title="{% trans "Submit the current document to the Journal" %}"> {% trans "Submit to Journal" %} </span>
+                            </li>
+                            <li>
+                                <a href="/ojscommand/back/" class="fw-pulldown-item icon-cancel-circle" title="{% trans "Close the document and return to the document overview menu." %}"> {% trans "Close" %} </a>
+                            </li>
+                          {% else %}
+                            <li>
+                                <span class="fw-pulldown-item share icon-export" title="{% trans "Share the document with other users." %}"> {% trans "Share" %}</span>
                             </li>
                             <li>
                                 <span class="fw-pulldown-item close icon-cancel-circle" title="{% trans "Close the document and return to the document overview menu." %}"> {% trans "Close" %} </span>
@@ -357,9 +368,11 @@
                             <li>
                                 <span class="fw-pulldown-item print icon-print" title="{% trans "Either print or create a PDF using your browser's print dialog" %}"> {% trans "Print/PDF" %} </span>
                             </li>
+                          {% endif %}
                         </ul>
                     </div>
                 </div>
+              {% if not ojsuser %}
                 <div>
                     <span class="header-nav-item-disabled disabled exporter-menu" title="{% trans "Export of the document contents" %}">{% trans "Export" %}</span>
                     <div class="fw-pulldown fw-left">
@@ -382,6 +395,7 @@
                         </ul>
                     </div>
                 </div>
+              {% endif %}
                 <div>
                     <span class="header-nav-item-disabled disabled citationstyle-menu" title="{% trans "Choose your preferred citation style." %}">{% trans "Citation Style" %}</span>
                     <div class="fw-pulldown fw-left">
@@ -404,6 +418,7 @@
                         </ul>
                     </div>
                 </div>
+              {% if not ojsuser %}
                 <div>
                     <span class="header-nav-item documentstyle-menu" title="{% trans "Choose a document style" %}">{% trans "Document Style" %}</span>
                     <div class="fw-pulldown fw-left">
@@ -458,6 +473,7 @@
                         </ul>
                     </div>
                 </div>
+              {% endif %}
                 <div>
                     <span class="header-nav-item tools-menu" title="{% trans "Tools" %}">{% trans "Tools" %}</span>
                     <div class="fw-pulldown fw-left">
@@ -484,6 +500,7 @@
                 <i class="icon-angle-double-up"></i>
             </span>
             <div id="editor-tools-wrapper">
+              {% if not ojsuser %}
                 <div id="ice-control" class="fw-button fw-light fw-large" title="{% trans "Handle tracking of changes." %}">
                     {% trans "Changes" %}
                     <i class="icon-down-dir"></i>
@@ -507,6 +524,7 @@
                 <div id="comments-display" class="fw-button fw-light fw-large" title="{% trans "Show/hide comments" %}">
                     {% trans "Comments" %}
                 </div>
+              {% endif %}
             </div>
         </nav>
 

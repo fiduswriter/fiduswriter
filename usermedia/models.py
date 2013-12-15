@@ -31,8 +31,13 @@ def get_file_path(instance, filename):
     ext = filename.split('.')[-1].lower()
     if not ext in ALLOWED_EXTENSIONS:
         raise IntegrityError
-    filename = "%s.%s" % (uuid.uuid4(), ext)
-    return os.path.join('images', filename)
+    
+    filepath = os.path.join('images', filename)
+    if(os.path.isfile(filepath)) :
+        filename = "%s.%s" % (uuid.uuid4(), ext)
+        filepath = os.path.join('images', filename)
+        
+    return filepath
 
 class Image(models.Model):
     title = models.CharField(max_length=128)

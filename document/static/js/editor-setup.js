@@ -431,9 +431,12 @@ jQuery(document).bind('documentDataLoaded', function () {
             jQuery('#editor-navigation').stop().animate({
                 'top': toolnav_top
             });
-            jQuery('#pagination-layout, #comment-box-container').stop()
+            jQuery('#pagination-layout').stop()
                 .animate({
-                    'top': content_top
+                    'top': content_top },
+                    {'complete': function () {
+                        commentHelpers.layoutComments();
+                    }
                 });
         });
 

@@ -194,8 +194,9 @@
                         pagination.events.escapesNeedMove);
                 }
             }
+            commentHelpers.layoutComments();
         }, 200);
-        commentHelpers.layoutComments();
+        
     };
     /** Set the document style.
      * @function settingsCitationstyle

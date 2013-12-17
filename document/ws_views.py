@@ -149,7 +149,7 @@ class DocumentWS(BaseWebSocketHandler):
                 DocumentWS.send_updates(message, self.document.id, self.id)            
 
     def on_close(self):
-        if hasattr(self, 'document') and self.document.id in DocumentWS.sessions:
+        if hasattr(self, 'document') and self.document.id in DocumentWS.sessions and self.id in DocumentWS.sessions[self.document.id]:
             del DocumentWS.sessions[self.document.id][self.id]
             if DocumentWS.sessions[self.document.id] and self.in_control:
                 chat = {

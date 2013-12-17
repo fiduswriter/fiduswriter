@@ -278,7 +278,6 @@
             return diff.time;
         });
 
-
         while (newestDiffs[0].time < theDocumentValues.textChangeList[theDocumentValues.textChangeList.length - 1][1]) {
             // We receive a change timed before the last change we recorded, so we need to go further back.
             theDocumentValues.textChangeList.pop();

@@ -153,8 +153,9 @@
 
                         figureNode.appendChild(contentNode);
                         figureNode.appendChild(captionNode);
-                        insideFigure.parentNode.insertBefore(figureNode,
-                            insideFigure.nextSibling);
+                        manualEdits.insert(figureNode, range);
+                        //insideFigure.parentNode.insertBefore(figureNode,
+                        //    insideFigure.nextSibling);
                         range.selectNode(figureNode);
                         range.collapse();
                         manualEdits.remove(insideFigure, false);
@@ -208,22 +209,30 @@
 
                     figureNode.appendChild(contentNode);
                     figureNode.appendChild(captionNode);
-                    thisBlock = jQuery(range.startContainer).closest(
+                    manualEdits.insert(figureNode, range);
+                    /*thisBlock = jQuery(range.startContainer).closest(
                         'p, ul, ol, h1, h2, h3, code, blockquote')[0];
                     thisBlock.parentNode.insertBefore(figureNode,
-                        thisBlock.nextSibling);
+                        thisBlock.nextSibling);*/
 
                 }
 
                 paragraphNode = document.createElement('p');
                 paragraphNode.innerHTML = '<br>';
-                figureNode.parentNode.appendChild(paragraphNode);
+                if (figureNode.parentNode.nodeName==='SPAN') {
+                    // We are inside a span track node
+                    figureNode = figureNode.parentNode;
+                }
+                figureNode.parentNode.insertBefore(paragraphNode, figureNode.nextSibling);
 
+                range.selectNode(paragraphNode);
+                range.collapse();
+                
                 editorHelpers.documentHasChanged();
-                range.selectNode(figureNode.nextSibling);
-                range.collapse(true);
+                //range.selectNode(figureNode.nextSibling);
+                //range.collapse(true);
 
-                widget.options.editable.removeAllSelections();
+                //widget.options.editable.removeAllSelections();
                 dialog.dialog('close');
                 return false;
             };

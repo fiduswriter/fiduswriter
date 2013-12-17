@@ -51,11 +51,13 @@
             thisBlockNode = jQuery(range.startContainer).closest('p, h1, h2, h3, ul, ol, figure, blockquote, code')[0];
             range.selectNode(thisBlockNode);
             range.collapse();
-            return;
+            console.log("test");
+            // return;
         }
         if (theDocument.settings.tracking) {
-
-            return tracker.insert(node, range);
+            var returnValue = tracker.insert(node, range);
+            editorHelpers.documentHasChanged();
+            return returnValue;
         } else {
             range.insertNode(node);
             range.selectNode(node);
@@ -63,7 +65,8 @@
             // check if there is a Mongolian vowel space behind the node we just inserted. If so, remove it.
              if (node.nextSibling && node.nextSibling.nodeType === 3 && node.nextSibling.data === '\u180e') {
                 jQuery(node.nextSibling).remove();
-            } 
+            }
+            editorHelpers.documentHasChanged();
         }
    
     };
@@ -76,9 +79,13 @@
   */           
     manualEdits.remove = function(node, range, moveLeft) {
         if (theDocument.settings.tracking) {
-            return tracker._addNodeTracking(node, range, moveLeft);
+            returnValue = tracker._addNodeTracking(node, range, moveLeft);
+            editorHelpers.documentHasChanged();
+            return returnValue;
         } else {
-            return jQuery(node).remove();
+            returnValue = jQuery(node).remove();
+            editorHelpers.documentHasChanged();
+            return returnValue;
         }
     };    
 

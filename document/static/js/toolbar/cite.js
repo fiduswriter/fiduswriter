@@ -126,10 +126,7 @@
                     jQuery(emptySpaceNode).remove();
                 }
 
-                //widget.options.editable.element.trigger('change');
-                console.log('cite 2');
                 citationHelpers.formatCitationsInDoc();
-                editorHelpers.documentHasChanged();
                 return true;
             };
 
@@ -338,7 +335,6 @@
                         jQuery(this).removeClass('header-nav-item-disabled');
                         jQuery(this).addClass('header-nav-item');
                     });
-                    //console.log('cite.js');
                     citationHelpers.formatCitationsInDoc();
                     editorHelpers.documentHasChanged();
                 }

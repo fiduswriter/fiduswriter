@@ -398,6 +398,7 @@ figure {
     padding: 5px;
     text-align: center;
     margin: 10%;
+    -webkit-region-break-inside: avoid;
 }
 
 figure figcaption {

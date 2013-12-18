@@ -31,6 +31,7 @@
     var dmp = new diff_match_patch();
 
 
+    
     domDiff.textDiff = function (node, currentValue, expectedValue, newValue) {
         var selection = document.getSelection(),
             range = selection.getRangeAt(0),
@@ -125,6 +126,12 @@
         }
         return node;
     };
+    
+    serverCommunications.setDiffTimer = function () {
+        serverCommunications.resetTextChangeList();
+        serverCommunications.diffTimer = setInterval(serverCommunications.incorporateUpdates, 100);
+    };
+    
     /** Sends data to server or keeps it in a list if currently offline. */
     serverCommunications.send = function (data) {
         if (serverCommunications.connected) {
@@ -255,10 +262,26 @@
             diff: theDiff,
             features: [containsCitation, containsEquation, containsComment, containsTrackedchange]
         };
-        console.log('sending ' + thePackage.time);
-        serverCommunications.send(thePackage);
-        theDocumentValues.newDiffs.push(thePackage);
-        serverCommunications.orderAndApplyChanges();
+        
+        if (theDocumentValues.collaborativeMode) {
+            console.log('sending ' + thePackage.time);
+            serverCommunications.send(thePackage);
+        }
+        if (theDocumentValues.undo) {
+            theDocumentValues.undo = false;
+            thePackage.undo = 1;
+        } else if (theDocumentValues.redo) {
+            theDocumentValues.redo = false;
+            thePackage.undo = 2;
+        }
+        
+        thePackage.session = theDocumentValues.session_id;
+        if (theDocumentValues.collaborativeMode) {
+            theDocumentValues.newDiffs.push(thePackage);
+            serverCommunications.orderAndApplyChanges();
+        } else {
+            theDocumentValues.usedDiffs.push(thePackage);
+        }
     };
 
     serverCommunications.orderAndApplyChanges = function () {
@@ -378,20 +401,15 @@
     serverCommunications.startCollaborativeMode = function () {
         console.log('starting collab mode');
         theDocumentValues.touched = false;
-        editorHelpers.getUpdatesFromInputFields(
-            function () {
-                serverCommunications.resetTextChangeList();
-            }
-        );
-        serverCommunications.collaborateTimer = setInterval(serverCommunications.incorporateUpdates, 100);
+        
         theDocumentValues.collaborativeMode = true;
     };
 
     serverCommunications.stopCollaborativeMode = function () {
-        clearInterval(serverCommunications.collaborateTimer);
+
         theDocumentValues.collaborativeMode = false;
     };
-    /** When the connection to the server has been lost, notify the user and ask to reload page. */
+    /** If the connection to the server has been lost, notify the user and ask to reload page. */
     serverCommunications.noConnectionToServer = function () {
 
         var noConnectionDialog = document.createElement('div');
@@ -519,6 +537,9 @@
 
             createWSConnection();
         });
+        
+    
+        
     };
 
     exports.serverCommunications = serverCommunications;

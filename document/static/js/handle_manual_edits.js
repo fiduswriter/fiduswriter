@@ -47,11 +47,12 @@
   */    
     manualEdits.insert = function(node, range) {
         var tmpNextBlockNode = false, thisBlockNode;
+        
         if (node.nodeName in topBlockElements && (range.startContainer.nodeName === '#text' || !range.startContainer.classList.contains('editable'))) {
             thisBlockNode = jQuery(range.startContainer).closest('p, h1, h2, h3, ul, ol, figure, blockquote, code')[0];
             range.selectNode(thisBlockNode);
             range.collapse();
-            console.log("test");
+            // console.log("test");
             // return;
         }
         if (theDocument.settings.tracking) {
@@ -78,6 +79,7 @@
   * @param moveLeft Whether to move to the left of the deleted item after deletion has taken place (only interesting if changes are tracked).
   */           
     manualEdits.remove = function(node, range, moveLeft) {
+        
         if (theDocument.settings.tracking) {
             returnValue = tracker._addNodeTracking(node, range, moveLeft);
             editorHelpers.documentHasChanged();

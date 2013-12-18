@@ -27,6 +27,7 @@
         keyEvents = {};
 
     keyEvents.controlPressed = false;
+    keyEvents.shiftPressed = false;
     
     keyEvents.bindEvents = function () {
         // Send keydown events by testkeypress.
@@ -86,7 +87,7 @@
             }
             break;
         case 20:
-            if (keyEvents.alt(evt, editorContainer)) {
+            if (keyEvents.capsLock(evt, editorContainer)) {
                 evt.preventDefault();
                 return true;
             }
@@ -127,6 +128,12 @@
                 return true;
             }            
             break;
+        case 90:
+            if (keyEvents.ZKey(evt, editorContainer)) {
+                evt.preventDefault();
+                return true;
+            }            
+            break;            
         case 144:
             if (keyEvents.numLock(evt, editorContainer)) {
                 evt.preventDefault();
@@ -152,16 +159,19 @@
 
     keyEvents.testKeyPressAfter = function (evt, editorContainer) {
         switch (evt.keyCode) {
-        case 17: // Control
-            keyEvents.controlPressed = false;
-            break;
-        case 27: // ESC
-            evt.preventDefault();
-            evt.stopPropagation();
-            jQuery(editorContainer).trigger('blur');
-            break;
-        default:
-            break;
+            case 16: // Shift
+                keyEvents.shiftPressed = false;
+                break;
+            case 17: // Control
+                keyEvents.controlPressed = false;
+                break;
+            case 27: // ESC
+                evt.preventDefault();
+                evt.stopPropagation();
+                jQuery(editorContainer).trigger('blur');
+                break;
+            default:
+                break;
         }
     };
 
@@ -354,6 +364,7 @@
     // Keycode 16
 
     keyEvents.shift = function (evt, editorContainer) {
+        keyEvents.shiftPressed = true;
         return false;
     };
 
@@ -717,8 +728,61 @@
     
     keyEvents.UKey = function (evt, editorContainer) {
         // Prevent ctrl+u but don't prevent normal u.
-        return keyEvents.controlPressed;
+        if (keyEvents.controlPressed) {
+            return true;
+        } else {
+            return keyEvents.otherKey(evt, editorContainer);
+        }
     };
+    
+    // Keycode 90
+    
+    keyEvents.ZKey = function (evt, editorContainer) {
+        // Interrupt ctrl+z and ctrl+shift+z, but let normal z be treated as any other key.
+        console.log('Zkey');
+
+        if (keyEvents.controlPressed) {
+            var theDiff, aDiff;
+            
+            if (keyEvents.shiftPressed) {
+                 var theDiffs = _.where(theDocumentValues.usedDiffs,{session:theDocumentValues.session_id});
+                 console.log(theDiffs);
+                 while (theDiff===undefined) {
+                     if (theDiffs.length===0) {
+                         return true;
+                     }
+                     aDiff = theDiffs.pop();
+                     if (aDiff.undo===undefined || aDiff.undo===-1) {
+                         // the last diff is not an undo diff
+                         return true;
+                     } else if (aDiff.undo===1) {
+                         theDiff = aDiff;
+                     }   
+                 }
+                 
+                 theDiff.undo = -2;
+                 theDocumentValues.redo = true;
+                 domDiff.undo(document.getElementById('document-editable'),theDiff.diff);
+                return true;
+                 
+            }
+            
+            
+            theDiff = _.where(theDocumentValues.usedDiffs,{session:theDocumentValues.session_id,undo: undefined}).pop();
+            
+            if (!theDiff) {
+                return true;
+            }
+            theDiff.undo = -1;
+            theDocumentValues.undo = true;
+            domDiff.undo(document.getElementById('document-editable'),theDiff.diff);
+            return true;
+        } else {
+            //theDocumentValues.undo = false;
+            return keyEvents.otherKey(evt, editorContainer);
+        }
+    };
+
 
     // Keycode 144
 

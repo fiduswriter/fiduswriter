@@ -233,6 +233,7 @@ jQuery(document).bind('documentDataLoaded', function () {
         jQuery('.editable').attr('contenteditable', true);
         mathHelpers.resetMath(mathHelpers.saveMathjaxElements);
 
+        
         // Set Auto-save to save every ten seconds
         setInterval(function () {
             if (theDocumentValues.changed) {
@@ -333,7 +334,7 @@ jQuery(document).bind('documentDataLoaded', function () {
             exporter.uploadNative(theDocument);
         });
 
-        jQuery(window).on('beforeunload', function(){
+       /* jQuery(window).on('beforeunload', function(){
             editorHelpers.getUpdatesFromInputFields(function () {
                 editorHelpers.saveDocument();
             });
@@ -341,7 +342,7 @@ jQuery(document).bind('documentDataLoaded', function () {
                 serverCommunications.incorporateUpdates();
             }
             return gettext('Leave editor');
-        });
+        }); */
 
 
         jQuery(document).on('click', '.pagination-footnote-item-container',

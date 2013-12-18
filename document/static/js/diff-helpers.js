@@ -102,13 +102,14 @@
         theDocumentValues.newDiffs = [];
         theDocumentValues.usedDiffs = [];
         theDocumentValues.textChangeList = [];
-        theDocumentValues.textChangeList.push([diffHelpers.cleanAGNode(document.getElementById('document-editable').cloneNode(true)), new Date().getTime() + window.clientOffsetTime]);
-        theDocumentValues.diffNode = diffHelpers.cleanAGNode(document.getElementById('document-editable').cloneNode(true)); // a node against which changes are tested constantly.
-        diffHelpers.diffTimer = setInterval(diffHelpers.incorporateUpdates, 100);
+        theDocumentValues.documentNode = document.getElementById('document-editable');
+        theDocumentValues.diffNode = diffHelpers.cleanAGNode(theDocumentValues.documentNode.cloneNode(true)); // a node against which changes are tested constantly.
+        theDocumentValues.textChangeList.push([theDocumentValues.diffNode.cloneNode(true), new Date().getTime() + window.clientOffsetTime]); // A list of the most recent node versions, used when receiving older collaboration updates and undo.        
+        diffHelpers.diffTimer = setInterval(diffHelpers.handleChanges, 100);
     };
 
-    diffHelpers.makeDiff = function () {
-        var theDiff = domDiff.diff(theDocumentValues.diffNode, diffHelpers.cleanAGNode(document.getElementById('document-editable').cloneNode(true))),
+    diffHelpers.makeDiff = function (isUndo) {
+        var theDiff = domDiff.diff(theDocumentValues.diffNode, diffHelpers.cleanAGNode(theDocumentValues.documentNode.cloneNode(true))),
             containsCitation = 0,
             containsEquation = 0,
             containsComment = 0,
@@ -119,7 +120,7 @@
         if (theDiff.length === 0) {
             return;
         }
-        theDocumentValues.diffNode = diffHelpers.cleanAGNode(document.getElementById('document-editable').cloneNode(true));
+        theDocumentValues.diffNode = diffHelpers.cleanAGNode(theDocumentValues.documentNode.cloneNode(true));
 
         for (i = 0; i < theDiff.length; i++) {
             if (theDiff[i].hasOwnProperty('element')) {
@@ -154,12 +155,10 @@
             console.log('sending ' + thePackage.time);
             serverCommunications.send(thePackage);
         }
-        if (theDocumentValues.undo) {
-            theDocumentValues.undo = false;
+        if (isUndo === true) {
             thePackage.undo = 1;
-        } else if (theDocumentValues.redo) {
-            theDocumentValues.redo = false;
-            thePackage.undo = 2;
+        } else if (isUndo === false) {
+            thePackage.undo = 3;
         }
 
         thePackage.session = theDocumentValues.session_id;
@@ -169,6 +168,39 @@
         } else {
             theDocumentValues.usedDiffs.push(thePackage);
         }
+    };
+    
+    /** Applies all patches from a specific starting point, excluding those marked as undo patches.
+     * By marking a specific patch for undo by adding the attribute undo = 1, one can effectively apply 
+     * that undo by running applyUndo using the timestamp of the diff as the starting point.
+     * @param time A point in time before which patches will be applied.
+     */
+    diffHelpers.applyUndo = function (time, isUndo) {
+        var i = theDocumentValues.textChangeList.length - 1, tempPatchedNode, startTime, applicableDiffs = [];
+        
+        while (theDocumentValues.textChangeList[i][1]>time) {
+            i--;
+        }
+        
+        tempPatchedNode = theDocumentValues.textChangeList[i][0].cloneNode(true);
+        startTime = theDocumentValues.textChangeList[i][1];
+        i = theDocumentValues.usedDiffs.length - 1;
+        
+        while (i > -1 && startTime < theDocumentValues.usedDiffs[i].time) {
+            if (theDocumentValues.usedDiffs[i].undo===undefined || theDocumentValues.usedDiffs[i].undo===2) {
+                applicableDiffs.unshift(theDocumentValues.usedDiffs[i]);
+            }
+            i--;
+        }
+        
+        for (i = 0; i < applicableDiffs.length; i++) {
+            domDiff.apply(tempPatchedNode, applicableDiffs[i].diff);
+        }
+        
+        
+        domDiff.apply(theDocumentValues.documentNode, domDiff.diff(diffHelpers.cleanAGNode(theDocumentValues.documentNode.cloneNode(true)), tempPatchedNode));
+        
+        diffHelpers.makeDiff(isUndo);
     };
 
     diffHelpers.orderAndApplyChanges = function () {
@@ -187,7 +219,7 @@
         newestDiffs = _.sortBy(newestDiffs, function (diff) {
             return diff.time;
         });
-
+        
         while (newestDiffs[0].time < theDocumentValues.textChangeList[theDocumentValues.textChangeList.length - 1][1]) {
             // We receive a change timed before the last change we recorded, so we need to go further back.
             theDocumentValues.textChangeList.pop();
@@ -227,19 +259,20 @@
         }
         theDocumentValues.textChangeList.push([tempPatchedNode, new Date().getTime() + window.clientOffsetTime]);
 
-        // If we have keept more than 10 old document versions, discard the first one. We should never need that older versions anyway.
-        if (theDocumentValues.textChangeList.length > 10) {
-            theDocumentValues.textChangeList.shift();
+        // If we have keept more than 100 old document versions, discard the *second* one.  
+        // If we really need something older, we will need to go back to the first, initial version and apply all changes.
+        if (theDocumentValues.textChangeList.length > 100) {
+            theDocumentValues.textChangeList.splice(1,1);
         }
 
         // Now that the tempPatchedNode represents what the editor should look like, go ahead and apply only the differences, if there are any.
 
-        applicableDiffs = domDiff.diff(diffHelpers.cleanAGNode(document.getElementById('document-editable').cloneNode(true)), tempPatchedNode);
+        applicableDiffs = domDiff.diff(diffHelpers.cleanAGNode(theDocumentValues.documentNode.cloneNode(true)), tempPatchedNode);
 
         if (applicableDiffs.length > 0) {
 
-            domDiff.apply(document.getElementById('document-editable'), applicableDiffs);
-            theDocumentValues.diffNode = diffHelpers.cleanAGNode(document.getElementById('document-editable').cloneNode(true));
+            domDiff.apply(theDocumentValues.documentNode, applicableDiffs);
+            theDocumentValues.diffNode = diffHelpers.cleanAGNode(theDocumentValues.documentNode.cloneNode(true));
             // Also make sure that placeholders correspond to the current state of affairs
             editorHelpers.setPlaceholders();
             // If something was done about citations, reformat these.
@@ -268,7 +301,7 @@
         theDocumentValues.disableInput = false;
     };
 
-    diffHelpers.incorporateUpdates = function () {
+    diffHelpers.handleChanges = function () {
         if (theDocumentValues.touched) {
             theDocumentValues.touched = false;
             diffHelpers.makeDiff();
@@ -287,13 +320,11 @@
 
     diffHelpers.startCollaborativeMode = function () {
         console.log('starting collab mode');
-        theDocumentValues.touched = false;
-
         theDocumentValues.collaborativeMode = true;
     };
 
     diffHelpers.stopCollaborativeMode = function () {
-
+        diffHelpers.orderAndApplyChanges();
         theDocumentValues.collaborativeMode = false;
     };
  

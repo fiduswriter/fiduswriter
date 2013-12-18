@@ -52,8 +52,7 @@
             thisBlockNode = jQuery(range.startContainer).closest('p, h1, h2, h3, ul, ol, figure, blockquote, code')[0];
             range.selectNode(thisBlockNode);
             range.collapse();
-            // console.log("test");
-            // return;
+
         }
         if (theDocument.settings.tracking) {
             var returnValue = tracker.insert(node, range);

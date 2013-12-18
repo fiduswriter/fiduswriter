@@ -310,7 +310,7 @@ jQuery(document).bind('documentDataLoaded', function () {
                 editorHelpers.saveDocument();
             });
             if (theDocumentValues.collaborativeMode) {
-                diffHelpers.incorporateUpdates();
+                diffHelpers.handleChanges();
             }
             return gettext('Leave editor');
         }); */

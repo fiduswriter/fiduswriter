@@ -110,6 +110,7 @@
         theDocumentValues = aDocumentValues;
         theDocumentValues.changed = false;
         theDocumentValues.touched = false;
+        theDocumentValues.virgin = true;
         theDocument.settings = jQuery.parseJSON(theDocument.settings);
         theDocument.metadata = jQuery.parseJSON(theDocument.metadata);
 

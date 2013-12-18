@@ -51,7 +51,7 @@ jQuery(document).bind('documentDataLoaded', function () {
         'toolbarcite': {},
         'toolbarmath': {},
         'toolbarfigure': {},
-        // 'toolbarundoredo': {},
+        'toolbarundoredo': {},
         'toolbarcomment': {},
     };
     // We cannot download BibDB and ImageDB before we know if we are the document owner or not.

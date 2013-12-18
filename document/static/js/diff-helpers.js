@@ -115,7 +115,7 @@
             i;
 
         if (theDiff.length === 0) {
-            return;
+            return false;
         }
         theDocumentValues.diffNode = diffHelpers.cleanAGNode(theDocumentValues.documentNode.cloneNode(true));
 
@@ -153,12 +153,16 @@
         }
         if (!isUndo) {
             if (theDocumentValues.undoMode) {
+                delete theDocumentValues.undoMode;
                 // We have been redoing and undoing and are just now leaving this mode. 
                 // We delete all undoed diffs, as we will never be able to recover them.
                 theDocumentValues.usedDiffs = _.where(theDocumentValues.usedDiffs, {
                     undo: undefined
-                })
-            }
+                });
+                // Enable undo button and disable redo button
+                document.querySelector('.icon-ccw').parentNode.parentNode.classList.remove('disabled');
+                document.querySelector('.icon-cw').parentNode.parentNode.classList.add('disabled');
+            } 
             thePackage.session = theDocumentValues.session_id;
             if (theDocumentValues.collaborativeMode) {
                 theDocumentValues.newDiffs.push(thePackage);
@@ -167,6 +171,7 @@
                 theDocumentValues.usedDiffs.push(thePackage);
             }
         }
+        return true;
     };
 
     /** Execute an undo command on the editable area. */
@@ -189,14 +194,19 @@
                 i = theDiffs.length;
             }
         }
-
+        
         if (!theDiff) {
             return true;
         }
         
         theDiff.undo = true;
 
+        if (_.where(theDiffs, {undo:undefined}).length===0) {
+            document.querySelector('.icon-ccw').parentNode.parentNode.classList.add('disabled');
+        }
+        
         diffHelpers.applyUndo(theDiff.time, isUndo);
+        document.querySelector('.icon-cw').parentNode.parentNode.classList.remove('disabled');
         return true;
     };
 
@@ -231,6 +241,11 @@
             return true;
         }
         diffHelpers.applyUndo(theDiff.time, isUndo);
+        
+        if (_.where(theDiffs,{undo:true}).length===0) {
+            document.querySelector('.icon-cw').parentNode.parentNode.classList.add('disabled');
+        }
+        document.querySelector('.icon-ccw').parentNode.parentNode.classList.remove('disabled');
         return true;
     };
 
@@ -369,7 +384,10 @@
     diffHelpers.handleChanges = function () {
         if (theDocumentValues.touched) {
             theDocumentValues.touched = false;
-            diffHelpers.makeDiff();
+            if (diffHelpers.makeDiff() && theDocumentValues.virgin) {
+                document.querySelector('.icon-ccw').parentNode.parentNode.classList.remove('disabled');
+                delete theDocumentValues.virgin;
+            }
         } else if (theDocumentValues.newDiffs.length > 0) {
             try {
                 diffHelpers.orderAndApplyChanges();

@@ -32,17 +32,28 @@
             buttonset = $.Fidus.buttonset.prototype.createButtonset.call(this, this.widgetName, 1);
             buttonize = function (cmd, label) {
                 var buttonElement;
-                buttonElement = jQuery('<button></button>');
-                buttonElement.makebutton({
+                button = jQuery('<button></button>');
+                button.makebutton({
                     uuid: _this.options.uuid,
                     editable: _this.options.editable,
                     label: label,
                     icon: cmd === 'undo' ? 'icon-ccw' : 'icon-cw',
-                    command: cmd,
                     queryState: false,
                     cssClass: _this.options.buttonCssClass
                 });
-                return buttonset.append(buttonElement);
+                button.attr('class', 'fw-button fw-light fw-large fw-square disabled');
+                button.bind("click", function (event) {
+                    if (jQuery(this).hasClass('disabled')) {
+                        // Undo/redo have been disabled.
+                        return false;
+                    }
+                    if (cmd === 'undo') {
+                        diffHelpers.undo();
+                    } else {
+                        diffHelpers.redo();
+                    }
+                });
+                return buttonset.append(button);
             };
             buttonize(func, funcName);
             buttonset.hallobuttonset();

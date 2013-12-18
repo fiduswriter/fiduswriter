@@ -92,7 +92,7 @@
         editorHelpers.setDisplay.document('metadata.title', theDocument.metadata
             .title);
         editorHelpers.layoutMetadata();
-        theDocumentValues.diffNode = serverCommunications.cleanAGNode(document.getElementById('document-editable').cloneNode(true));
+        theDocumentValues.diffNode = diffHelpers.cleanAGNode(document.getElementById('document-editable').cloneNode(true));
     };
     
     

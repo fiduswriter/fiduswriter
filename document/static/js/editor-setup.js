@@ -232,7 +232,7 @@ jQuery(document).bind('documentDataLoaded', function () {
         mathHelpers.resetMath(mathHelpers.saveMathjaxElements);
 
 
-        serverCommunications.setDiffTimer();
+        diffHelpers.setup();
 
         // Set Auto-save to save every ten seconds
         setInterval(function () {
@@ -310,7 +310,7 @@ jQuery(document).bind('documentDataLoaded', function () {
                 editorHelpers.saveDocument();
             });
             if (theDocumentValues.collaborativeMode) {
-                serverCommunications.incorporateUpdates();
+                diffHelpers.incorporateUpdates();
             }
             return gettext('Leave editor');
         }); */

@@ -1,5 +1,5 @@
 /**
- * @file Handles the movement of the caret in the editor. Needed to work around bugs in Chrome/Safari.
+ * @file Handles the pressing of keys on the editor page. Needs to work around bugs in Chrome/Safari.
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
@@ -20,7 +20,7 @@
  */
 (function () {
     var exports = this,
-        /** Handles key press events in the editor. TODO 
+        /** Handles key press events on the editor page. TODO 
          * @namespace keyEvents
          */
         keyEvents = {};

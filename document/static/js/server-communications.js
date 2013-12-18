@@ -31,7 +31,7 @@
     var dmp = new diff_match_patch();
 
 
-    
+
     domDiff.textDiff = function (node, currentValue, expectedValue, newValue) {
         var selection = document.getSelection(),
             range = selection.getRangeAt(0),
@@ -126,12 +126,12 @@
         }
         return node;
     };
-    
+
     serverCommunications.setDiffTimer = function () {
         serverCommunications.resetTextChangeList();
         serverCommunications.diffTimer = setInterval(serverCommunications.incorporateUpdates, 100);
     };
-    
+
     /** Sends data to server or keeps it in a list if currently offline. */
     serverCommunications.send = function (data) {
         if (serverCommunications.connected) {
@@ -262,7 +262,7 @@
             diff: theDiff,
             features: [containsCitation, containsEquation, containsComment, containsTrackedchange]
         };
-        
+
         if (theDocumentValues.collaborativeMode) {
             console.log('sending ' + thePackage.time);
             serverCommunications.send(thePackage);
@@ -274,7 +274,7 @@
             theDocumentValues.redo = false;
             thePackage.undo = 2;
         }
-        
+
         thePackage.session = theDocumentValues.session_id;
         if (theDocumentValues.collaborativeMode) {
             theDocumentValues.newDiffs.push(thePackage);
@@ -401,7 +401,7 @@
     serverCommunications.startCollaborativeMode = function () {
         console.log('starting collab mode');
         theDocumentValues.touched = false;
-        
+
         theDocumentValues.collaborativeMode = true;
     };
 
@@ -487,12 +487,12 @@
         window.theUser = undefined;
         window.clientOffsetTime = 0;
         window.documentId = parseInt(pathnameParts[pathnameParts.length -
-                        2], 10);
-        
+            2], 10);
+
         if (isNaN(documentId)) {
             documentId = 0;
-        }       
-        
+        }
+
         jQuery(document).ready(function () {
 
             serverCommunications.getClientTimeOffset();
@@ -537,9 +537,9 @@
 
             createWSConnection();
         });
-        
-    
-        
+
+
+
     };
 
     exports.serverCommunications = serverCommunications;

@@ -43,6 +43,14 @@ var tmp_shortcuts = _.template('\
             <kbd class="help-key"><span>CTRL+I</span></kbd>\
             <span class="help-key-def">'+gettext('Italics')+'</span>\
           </li>\
+          <li class="help-key-unit">\
+            <kbd class="help-key"><span>CTRL+Z</span></kbd>\
+            <span class="help-key-def">'+gettext('Undo')+'</span>\
+          </li>\
+          <li class="help-key-unit">\
+            <kbd class="help-key"><span>CTRL+Shift+Z</span></kbd>\
+            <span class="help-key-def">'+gettext('Redo')+'</span>\
+          </li>\
         </ul><!-- .help-list -->\
       </div><!-- .help-list-wrap -->\
 </div>\

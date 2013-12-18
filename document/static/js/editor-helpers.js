@@ -150,7 +150,6 @@
         editorHelpers.setDisplay.document('metadata.title', theDocument.metadata
             .title);
         
-        serverCommunications.setDiffTimer();
     };
 
     /** Called whenever anything has changed in the document text. Makes sure that saving and synchronizing with peers happens.

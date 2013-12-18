@@ -18,38 +18,80 @@
  * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
  *
  */
-
 (function () {
     var exports = this,
-      /** Handles key press events in the editor. TODO 
-     * @namespace keyEvents
-     */ 
+        /** Handles key press events in the editor. TODO 
+         * @namespace keyEvents
+         */
         keyEvents = {};
 
-    keyEvents.controlPressed = false;
-    keyEvents.shiftPressed = false;
-    
+
     keyEvents.bindEvents = function () {
-        // Send keydown events by testkeypress.
+        // Send keydown events while editing by testKeyPressEditing.
         jQuery('.editable').bind('keydown', function (evt) {
             if (theDocumentValues.disableInput) {
                 evt.preventDefault();
                 return true;
             }
-            return keyEvents.testKeyPress(evt, this);
+            return keyEvents.testKeyPressEditing(evt, this);
         });
         jQuery('.editable').bind('keyup', function (evt) {
             if (theDocumentValues.disableInput) {
                 evt.preventDefault();
                 return true;
             }
-            return keyEvents.testKeyPressAfter(evt, this);
+            return keyEvents.testKeyPressAfterEditing(evt, this);
         });
-    }
+
+        // Send keydown events while on editor page by testKeyPressEditor
+        jQuery(document).keydown(function (evt) {
+
+            if (theDocumentValues.disableInput) {
+                evt.preventDefault();
+                return true;
+            }
+
+            return keyEvents.testKeyPressEditor(evt);
+        });
+
+    };
+
+    keyEvents.testKeyPressEditor = function (evt) {
+
+        switch (evt.which) {
+        case 19:
+            if (keyEvents.macCommandSKey(evt)) {
+                evt.preventDefault();
+                return true;
+            }
+            break;
+        case 83:
+            if (keyEvents.sKey(evt)) {
+                evt.preventDefault();
+                return true;
+            }
+            break;
+        case 90:
+            if (keyEvents.zKeyEditor(evt)) {
+                evt.preventDefault();
+                return true;
+            }
+            break;
+        case 191:
+            if (keyEvents.questionKey(evt)) {
+                evt.preventDefault();
+                return true;
+            }
+            break;
+        }
+
+        return true;
+
+    };
 
 
-    keyEvents.testKeyPress = function (evt, editorContainer) {
-        switch (evt.keyCode) {
+    keyEvents.testKeyPressEditing = function (evt, editorContainer) {
+        switch (evt.which) {
         case 8:
             if (keyEvents.backspace(evt, editorContainer)) {
                 evt.preventDefault();
@@ -123,17 +165,17 @@
             }
             break;
         case 85:
-            if (keyEvents.UKey(evt, editorContainer)) {
+            if (keyEvents.uKey(evt, editorContainer)) {
                 evt.preventDefault();
                 return true;
-            }            
+            }
             break;
         case 90:
-            if (keyEvents.ZKey(evt, editorContainer)) {
+            if (keyEvents.zKeyEditing(evt, editorContainer)) {
                 evt.preventDefault();
                 return true;
-            }            
-            break;            
+            }
+            break;
         case 144:
             if (keyEvents.numLock(evt, editorContainer)) {
                 evt.preventDefault();
@@ -155,23 +197,18 @@
         } else {
             return true;
         }
-    }
+    };
 
-    keyEvents.testKeyPressAfter = function (evt, editorContainer) {
+
+    keyEvents.testKeyPressAfterEditing = function (evt, editorContainer) {
         switch (evt.keyCode) {
-            case 16: // Shift
-                keyEvents.shiftPressed = false;
-                break;
-            case 17: // Control
-                keyEvents.controlPressed = false;
-                break;
-            case 27: // ESC
-                evt.preventDefault();
-                evt.stopPropagation();
-                jQuery(editorContainer).trigger('blur');
-                break;
-            default:
-                break;
+        case 27: // ESC
+            evt.preventDefault();
+            evt.stopPropagation();
+            jQuery(editorContainer).trigger('blur');
+            break;
+        default:
+            break;
         }
     };
 
@@ -340,7 +377,7 @@
                 selection.removeAllRanges();
                 selection.addRange(range);
                 return true;
-            } else if (range.startOffset===0 && dom.isAtStart(range.startContainer, insideHeadline)) {
+            } else if (range.startOffset === 0 && dom.isAtStart(range.startContainer, insideHeadline)) {
                 paragraphNode = document.createElement('p');
                 paragraphNode.innerHTML = '<br>';
                 insideHeadline.parentNode.insertBefore(paragraphNode,
@@ -364,14 +401,12 @@
     // Keycode 16
 
     keyEvents.shift = function (evt, editorContainer) {
-        keyEvents.shiftPressed = true;
         return false;
     };
 
     // Keycode 17
 
     keyEvents.control = function (evt, editorContainer) {
-        keyEvents.controlPressed = true;
         return false;
     };
 
@@ -379,6 +414,16 @@
 
     keyEvents.alt = function (evt, editorContainer) {
         return false;
+    };
+
+    // Keycode 19
+
+    keyEvents.macCommandSKey = function (evt) {
+        editorHelpers.getUpdatesFromInputFields(function () {
+            editorHelpers.saveDocument();
+        });
+        exporter.uploadNative(theDocument);
+        return true;
     };
 
     // Keycode 20
@@ -647,7 +692,7 @@
     keyEvents.deleteKey = function (evt, editorContainer) {
         // Handles the pressing of the delete key
         var range, selection, nextContainer, foundFootnoteOrCitation,
-                insideFootnote;
+            insideFootnote;
 
         selection = rangy.getSelection();
         range = selection.getRangeAt(0);
@@ -723,63 +768,84 @@
         // return false so that the delete key action will take place.
         return false;
     };
-    
+
+    // Keycode 83
+
+    keyEvents.sKey = function (evt) {
+        if (evt.ctrlKey) {
+            return keyEvents.macCommandSKey(evt);
+        } else {
+            return false;
+        }
+    };
+
     // Keycode 85
-    
-    keyEvents.UKey = function (evt, editorContainer) {
+
+    keyEvents.uKey = function (evt, editorContainer) {
         // Prevent ctrl+u but don't prevent normal u.
-        if (keyEvents.controlPressed) {
+        if (evt.ctrlKey) {
             return true;
         } else {
             return keyEvents.otherKey(evt, editorContainer);
         }
     };
-    
-    // Keycode 90
-    
-    keyEvents.ZKey = function (evt, editorContainer) {
-        // Interrupt ctrl+z and ctrl+shift+z, but let normal z be treated as any other key.
-        console.log('Zkey');
 
-        if (keyEvents.controlPressed) {
+    // Keycode 90
+
+    keyEvents.zKeyEditing = function (evt, editorContainer) {
+        if (evt.ctrlKey) {
+            return true;
+        } else {
+            return keyEvents.otherKey(evt, editorContainer);
+        }
+    };
+
+    keyEvents.zKeyEditor = function (evt) {
+        // Interrupt ctrl+z and ctrl+shift+z, but let normal z be treated as any other key.
+
+        if (evt.ctrlKey) {
             var theDiff, aDiff;
-            
-            if (keyEvents.shiftPressed) {
-                 var theDiffs = _.where(theDocumentValues.usedDiffs,{session:theDocumentValues.session_id});
-                 console.log(theDiffs);
-                 while (theDiff===undefined) {
-                     if (theDiffs.length===0) {
-                         return true;
-                     }
-                     aDiff = theDiffs.pop();
-                     if (aDiff.undo===undefined || aDiff.undo===-1) {
-                         // the last diff is not an undo diff
-                         return true;
-                     } else if (aDiff.undo===1) {
-                         theDiff = aDiff;
-                     }   
-                 }
-                 
-                 theDiff.undo = -2;
-                 theDocumentValues.redo = true;
-                 domDiff.undo(document.getElementById('document-editable'),theDiff.diff);
+
+            if (evt.shiftKey) {
+                var theDiffs = _.where(theDocumentValues.usedDiffs, {
+                    session: theDocumentValues.session_id
+                });
+                console.log(theDiffs);
+                while (theDiff === undefined) {
+                    if (theDiffs.length === 0) {
+                        return true;
+                    }
+                    aDiff = theDiffs.pop();
+                    if (aDiff.undo === undefined || aDiff.undo === -1) {
+                        // the last diff is not an undo diff
+                        return true;
+                    } else if (aDiff.undo === 1) {
+                        theDiff = aDiff;
+                    }
+                }
+
+                theDiff.undo = -2;
+                theDocumentValues.redo = true;
+                domDiff.undo(document.getElementById('document-editable'), theDiff.diff);
                 return true;
-                 
+
             }
-            
-            
-            theDiff = _.where(theDocumentValues.usedDiffs,{session:theDocumentValues.session_id,undo: undefined}).pop();
-            
+
+
+            theDiff = _.where(theDocumentValues.usedDiffs, {
+                session: theDocumentValues.session_id,
+                undo: undefined
+            }).pop();
+
             if (!theDiff) {
                 return true;
             }
             theDiff.undo = -1;
             theDocumentValues.undo = true;
-            domDiff.undo(document.getElementById('document-editable'),theDiff.diff);
+            domDiff.undo(document.getElementById('document-editable'), theDiff.diff);
             return true;
         } else {
-            //theDocumentValues.undo = false;
-            return keyEvents.otherKey(evt, editorContainer);
+            return false;
         }
     };
 
@@ -788,6 +854,13 @@
 
     keyEvents.numLock = function (evt, editorContainer) {
         return false;
+    };
+
+    // Keycode 191
+
+    keyEvents.questionKey = function (evt) {
+        jQuery().showShortcuts();
+        return true;
     };
 
 

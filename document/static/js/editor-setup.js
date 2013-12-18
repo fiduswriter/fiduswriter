@@ -18,12 +18,11 @@
  * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
  *
  */
-
 /** Whether the citation style before the current one was footnote based. This is used to determine whetherthe page needs to be reformatted.
  * @constant lastStyleUsedFootnotes
  */
 var lastStyleUsedFootnotes = false;
-    
+
 // Functions to be executed at startup
 jQuery(document).ready(function () {
     // Enable toolbar menu
@@ -144,45 +143,45 @@ jQuery(document).bind('documentDataLoaded', function () {
     }
 
     jQuery(document).on('click', '.savecopy:not(.disabled)', function () {
-            editorHelpers.getUpdatesFromInputFields(function () {
-                editorHelpers.saveDocument();
-            });
+        editorHelpers.getUpdatesFromInputFields(function () {
+            editorHelpers.saveDocument();
+        });
         exporter.savecopy(theDocument);
     });
 
     jQuery('.download').bind('click', function () {
-            editorHelpers.getUpdatesFromInputFields(function () {
-                editorHelpers.saveDocument();
-            });
+        editorHelpers.getUpdatesFromInputFields(function () {
+            editorHelpers.saveDocument();
+        });
         exporter.downloadNative(theDocument);
     });
     jQuery('.latex').bind('click', function () {
-            editorHelpers.getUpdatesFromInputFields(function () {
-                editorHelpers.saveDocument();
-            });
+        editorHelpers.getUpdatesFromInputFields(function () {
+            editorHelpers.saveDocument();
+        });
         exporter.downloadLatex(theDocument);
     });
     jQuery('.epub').bind('click', function () {
-            editorHelpers.getUpdatesFromInputFields(function () {
-                editorHelpers.saveDocument();
-            });
+        editorHelpers.getUpdatesFromInputFields(function () {
+            editorHelpers.saveDocument();
+        });
         exporter.downloadEpub(theDocument);
     });
     jQuery('.html').bind('click', function () {
-            editorHelpers.getUpdatesFromInputFields(function () {
-                editorHelpers.saveDocument();
-            });
+        editorHelpers.getUpdatesFromInputFields(function () {
+            editorHelpers.saveDocument();
+        });
         exporter.downloadHtml(theDocument);
     });
     jQuery('.print').bind('click', function () {
         window.print();
     });
     jQuery('.close').bind('click', function () {
-            editorHelpers.getUpdatesFromInputFields(function () {
-                editorHelpers.saveDocument();
-            });
-            window.location.href = '/';
+        editorHelpers.getUpdatesFromInputFields(function () {
+            editorHelpers.saveDocument();
         });
+        window.location.href = '/';
+    });
 
 
     editorHelpers.layoutMetadata();
@@ -191,8 +190,7 @@ jQuery(document).bind('documentDataLoaded', function () {
         jQuery('#editor-navigation').hide();
         jQuery('.papersize-menu,.metadata-menu,.documentstyle-menu').addClass(
             'disabled');
-    }
-    else if (theDocumentValues.rights === 'w') {
+    } else if (theDocumentValues.rights === 'w') {
 
 
         // Enable Hallo.js Editor
@@ -233,7 +231,9 @@ jQuery(document).bind('documentDataLoaded', function () {
         jQuery('.editable').attr('contenteditable', true);
         mathHelpers.resetMath(mathHelpers.saveMathjaxElements);
 
-        
+
+        serverCommunications.setDiffTimer();
+
         // Set Auto-save to save every ten seconds
         setInterval(function () {
             if (theDocumentValues.changed) {
@@ -280,40 +280,11 @@ jQuery(document).bind('documentDataLoaded', function () {
                 function (evt) {
                     if (theDocument.settings.tracking) {
                         return tracker.handleEvent(evt);
-                    }
-                    else {
+                    } else {
                         return true;
                     }
                 });
-
-            //mutations.bind(editableArea);
         }
-
-        // Bind CTRL+s to save document.
-        jQuery(document).keydown(function (event) {
-            //19 for Mac Command+S
-            /* Crtl + S => save document */
-            if ((event.ctrlKey && event.which == 83) || event.which == 19) {
-                event.preventDefault();
-                editorHelpers.getUpdatesFromInputFields(function () {
-                    editorHelpers.saveDocument();
-                });
-                exporter.uploadNative(theDocument);
-                return false;
-
-                /* Crtl + ? => show shortcuts */
-            } else if (event.ctrlKey && event.which == 191) {
-                event.preventDefault();
-                
-                $().showShortcuts();
-                return false;
-
-                /* nothing */
-            } else {
-                return true;
-            }
-        });
-
 
         // Set webpage title when document title changes
         jQuery('#document-title').bind('keyup paste change hallomodified',
@@ -334,7 +305,7 @@ jQuery(document).bind('documentDataLoaded', function () {
             exporter.uploadNative(theDocument);
         });
 
-       /* jQuery(window).on('beforeunload', function(){
+        /* jQuery(window).on('beforeunload', function(){
             editorHelpers.getUpdatesFromInputFields(function () {
                 editorHelpers.saveDocument();
             });
@@ -404,8 +375,7 @@ jQuery(document).bind('documentDataLoaded', function () {
 
             // Bind in-text tracking menu
             trackingHelpers.bindEvents();
-        }
-        else {
+        } else {
             jQuery('.ice-track').addClass('disabled');
             jQuery('.ice-accept-all').addClass('disabled');
             jQuery('.ice-reject-all').addClass('disabled');
@@ -422,8 +392,7 @@ jQuery(document).bind('documentDataLoaded', function () {
                 header_top = 0,
                 toolnav_top = 92,
                 content_top = 200;
-            }
-            else {
+            } else {
                 jQuery(this).addClass('header-closed');
             }
             jQuery('#header').stop().animate({
@@ -434,8 +403,9 @@ jQuery(document).bind('documentDataLoaded', function () {
             });
             jQuery('#pagination-layout').stop()
                 .animate({
-                    'top': content_top },
-                    {'complete': function () {
+                    'top': content_top
+                }, {
+                    'complete': function () {
                         commentHelpers.layoutComments();
                     }
                 });

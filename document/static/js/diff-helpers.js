@@ -41,10 +41,7 @@
             currentValue = currentValue.substring(0, range.endOffset + 1) + '\0' + currentValue.substring(range.endOffset + 1);
         }
         if (currentValue != expectedValue) {
-            console.log('conflict!');
             finalValue = dmp.patch_apply(dmp.patch_make(expectedValue, newValue), currentValue)[0]
-            //diff = diff(expectedValue, newValue);
-            //mergedValue = apply(currentValue, diff);
 
         } else {
             finalValue = newValue;
@@ -152,10 +149,16 @@
         };
 
         if (theDocumentValues.collaborativeMode) {
-            console.log('sending ' + thePackage.time);
             serverCommunications.send(thePackage);
         }
         if (!isUndo) {
+            if (theDocumentValues.undoMode) {
+                // We have been redoing and undoing and are just now leaving this mode. 
+                // We delete all undoed diffs, as we will never be able to recover them.
+                theDocumentValues.usedDiffs = _.where(theDocumentValues.usedDiffs, {
+                    undo: undefined
+                })
+            }
             thePackage.session = theDocumentValues.session_id;
             if (theDocumentValues.collaborativeMode) {
                 theDocumentValues.newDiffs.push(thePackage);
@@ -168,6 +171,13 @@
 
     /** Execute an undo command on the editable area. */
     diffHelpers.undo = function () {
+        var theDiffs, theDiff, isUndo = true, i;
+        
+        if (!theDocumentValues.undoMode) {
+            // We are entering undo mdoe. We will make normal diffs one last time before starting with undoing.
+            diffHelpers.makeDiff();
+            theDocumentValues.undoMode = true;
+        }
         theDiffs = _.where(theDocumentValues.usedDiffs, {
             session: theDocumentValues.session_id,
         }).reverse();
@@ -183,7 +193,8 @@
         if (!theDiff) {
             return true;
         }
-        theDiff.undo = 1;
+        
+        theDiff.undo = true;
 
         diffHelpers.applyUndo(theDiff.time, isUndo);
         return true;
@@ -191,6 +202,7 @@
 
     /** Execute a redo command on a previous undo command on the editable area. */
     diffHelpers.redo = function () {
+        var theDiffs, theDiff, isUndo = true, i;
         theDiffs = _.where(theDocumentValues.usedDiffs, {
             session: theDocumentValues.session_id
         }).reverse();
@@ -372,7 +384,6 @@
     };
 
     diffHelpers.startCollaborativeMode = function () {
-        console.log('starting collab mode');
         theDocumentValues.collaborativeMode = true;
     };
 

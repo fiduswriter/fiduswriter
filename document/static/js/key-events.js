@@ -804,7 +804,6 @@
         // Interrupt ctrl+z and ctrl+shift+z, but let normal z be treated as any other key.
 
         if (evt.ctrlKey) {
-            var theDiffs, theDiff, isUndo = true, i;
 
             if (evt.shiftKey) {
                 // Redo

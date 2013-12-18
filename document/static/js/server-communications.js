@@ -86,11 +86,9 @@
             });
             break;
         case 'document_data_update':
-            console.log('applying update');
             editorHelpers.updateEditorPage(data.document);
             break;
         case 'diff':
-            console.log('receiving ' + data.time);
             theDocumentValues.newDiffs.push(data);
             break;
         case 'transform':

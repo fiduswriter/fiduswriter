@@ -155,10 +155,13 @@
             console.log('sending ' + thePackage.time);
             serverCommunications.send(thePackage);
         }
-        if (isUndo === true) {
+        if (isUndo === 0) {
             thePackage.undo = 1;
-        } else if (isUndo === false) {
+        } else if (isUndo === 1) {
             thePackage.undo = 3;
+        } else if (isUndo === 2) {
+            // We are dealing with an undo of a redo of an undo, which we just reverted and won't save locally.
+            return true;
         }
 
         thePackage.session = theDocumentValues.session_id;
@@ -187,7 +190,7 @@
         i = theDocumentValues.usedDiffs.length - 1;
         
         while (i > -1 && startTime < theDocumentValues.usedDiffs[i].time) {
-            if (theDocumentValues.usedDiffs[i].undo===undefined || theDocumentValues.usedDiffs[i].undo===2) {
+            if (theDocumentValues.usedDiffs[i].undo===undefined) {
                 applicableDiffs.unshift(theDocumentValues.usedDiffs[i]);
             }
             i--;

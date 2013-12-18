@@ -804,11 +804,14 @@
         // Interrupt ctrl+z and ctrl+shift+z, but let normal z be treated as any other key.
 
         if (evt.ctrlKey) {
-            var theDiff, theUndoneDiff, i, j = 0;
+            var theDiffs, theDiff, theUndoneDiff, isUndo, i, j = 0;
 
             if (evt.shiftKey) {
                 // Redo
-                var theDiffs = _.where(theDocumentValues.usedDiffs, {
+                
+                isUndo = false;
+                
+                theDiffs = _.where(theDocumentValues.usedDiffs, {
                     session: theDocumentValues.session_id
                 }).reverse();
                 if (theDiffs.length === 0) {
@@ -841,25 +844,41 @@
                     return true;
                 }
                 theDiff.undo = -2;
-                theUndoneDiff.undo = 2;
-                diffHelpers.applyUndo(theUndoneDiff.time, false);
+                delete theUndoneDiff.undo;
+                diffHelpers.applyUndo(theUndoneDiff.time, isUndo);
 
                 return true;
 
             }
             // Undo
 
-            theDiff = _.where(theDocumentValues.usedDiffs, {
+            isUndo = true;
+            
+            theDiffs = _.where(theDocumentValues.usedDiffs, {
                 session: theDocumentValues.session_id,
-                undo: undefined
-            }).pop();
+            }).reverse();
 
+            
+            for (i = 0; i < theDiffs.length; i++) {
+                if (theDiffs[i].undo===undefined) {
+                    theDiff = theDiffs[i];
+                    if (i > 0 && theDiffs[i-1].undo===-2) {
+                        isUndo = false;
+                        theDiffs[i-1].undo = 1;
+                    }
+                    i = theDiffs.length;
+                } else if (theDiffs[i].undo===1 && i > 0 && theDiffs[i-1].undo===-2) {
+                    isUndo = false;
+                    theDiffs[i-1].undo = 1;
+                } 
+            }
+            
             if (!theDiff) {
                 return true;
             }
             theDiff.undo = -1;
             //theDocumentValues.undo = true;
-            diffHelpers.applyUndo(theDiff.time, true);
+            diffHelpers.applyUndo(theDiff.time, isUndo);
             //domDiff.undo(document.getElementById('document-editable'), theDiff.diff);
             return true;
         } else {

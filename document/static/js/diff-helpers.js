@@ -155,54 +155,104 @@
             console.log('sending ' + thePackage.time);
             serverCommunications.send(thePackage);
         }
-        if (isUndo === 0) {
-            thePackage.undo = 1;
-        } else if (isUndo === 1) {
-            thePackage.undo = 3;
-        } else if (isUndo === 2) {
-            // We are dealing with an undo of a redo of an undo, which we just reverted and won't save locally.
+        if (!isUndo) {
+            thePackage.session = theDocumentValues.session_id;
+            if (theDocumentValues.collaborativeMode) {
+                theDocumentValues.newDiffs.push(thePackage);
+                diffHelpers.orderAndApplyChanges();
+            } else {
+                theDocumentValues.usedDiffs.push(thePackage);
+            }
+        }
+    };
+
+    /** Execute an undo command on the editable area. */
+    diffHelpers.undo = function () {
+        theDiffs = _.where(theDocumentValues.usedDiffs, {
+            session: theDocumentValues.session_id,
+        }).reverse();
+
+
+        for (i = 0; i < theDiffs.length; i++) {
+            if (theDiffs[i].undo === undefined) {
+                theDiff = theDiffs[i];
+                i = theDiffs.length;
+            }
+        }
+
+        if (!theDiff) {
+            return true;
+        }
+        theDiff.undo = 1;
+
+        diffHelpers.applyUndo(theDiff.time, isUndo);
+        return true;
+    };
+
+    /** Execute a redo command on a previous undo command on the editable area. */
+    diffHelpers.redo = function () {
+        theDiffs = _.where(theDocumentValues.usedDiffs, {
+            session: theDocumentValues.session_id
+        }).reverse();
+        if (theDiffs.length === 0) {
             return true;
         }
 
-        thePackage.session = theDocumentValues.session_id;
-        if (theDocumentValues.collaborativeMode) {
-            theDocumentValues.newDiffs.push(thePackage);
-            diffHelpers.orderAndApplyChanges();
-        } else {
-            theDocumentValues.usedDiffs.push(thePackage);
+        for (i = 0; i < theDiffs.length; i++) {
+            if (theDiffs[i].undo === undefined) {
+                if (i === 0) {
+                    // Hit upon a non-undo related diff before finding a node to diff.
+                    return true;
+                } else {
+                    delete theDiffs[i - 1].undo;
+                    theDiff = theDiffs[i - 1];
+                    i = theDiffs.length;
+                }
+            } else if (i === (theDiffs.length - 1)) {
+                delete theDiffs[i].undo;
+                theDiff = theDiffs[i];
+            }
+
         }
+        if (!theDiff) {
+            // No more to redo.
+            return true;
+        }
+        diffHelpers.applyUndo(theDiff.time, isUndo);
+        return true;
     };
-    
+
     /** Applies all patches from a specific starting point, excluding those marked as undo patches.
-     * By marking a specific patch for undo by adding the attribute undo = 1, one can effectively apply 
+     * By marking a specific patch for undo by adding the attribute undo = 1, one can effectively apply
      * that undo by running applyUndo using the timestamp of the diff as the starting point.
      * @param time A point in time before which patches will be applied.
      */
     diffHelpers.applyUndo = function (time, isUndo) {
-        var i = theDocumentValues.textChangeList.length - 1, tempPatchedNode, startTime, applicableDiffs = [];
-        
-        while (theDocumentValues.textChangeList[i][1]>time) {
+        var i = theDocumentValues.textChangeList.length - 1,
+            tempPatchedNode, startTime, applicableDiffs = [];
+
+        while (theDocumentValues.textChangeList[i][1] > time) {
             i--;
         }
-        
+
         tempPatchedNode = theDocumentValues.textChangeList[i][0].cloneNode(true);
         startTime = theDocumentValues.textChangeList[i][1];
         i = theDocumentValues.usedDiffs.length - 1;
-        
+
         while (i > -1 && startTime < theDocumentValues.usedDiffs[i].time) {
-            if (theDocumentValues.usedDiffs[i].undo===undefined) {
+            if (theDocumentValues.usedDiffs[i].undo === undefined) {
                 applicableDiffs.unshift(theDocumentValues.usedDiffs[i]);
             }
             i--;
         }
-        
+
         for (i = 0; i < applicableDiffs.length; i++) {
             domDiff.apply(tempPatchedNode, applicableDiffs[i].diff);
         }
-        
-        
+
+
         domDiff.apply(theDocumentValues.documentNode, domDiff.diff(diffHelpers.cleanAGNode(theDocumentValues.documentNode.cloneNode(true)), tempPatchedNode));
-        
+
         diffHelpers.makeDiff(isUndo);
     };
 
@@ -222,7 +272,7 @@
         newestDiffs = _.sortBy(newestDiffs, function (diff) {
             return diff.time;
         });
-        
+
         while (newestDiffs[0].time < theDocumentValues.textChangeList[theDocumentValues.textChangeList.length - 1][1]) {
             // We receive a change timed before the last change we recorded, so we need to go further back.
             theDocumentValues.textChangeList.pop();
@@ -265,7 +315,7 @@
         // If we have keept more than 100 old document versions, discard the *second* one.  
         // If we really need something older, we will need to go back to the first, initial version and apply all changes.
         if (theDocumentValues.textChangeList.length > 100) {
-            theDocumentValues.textChangeList.splice(1,1);
+            theDocumentValues.textChangeList.splice(1, 1);
         }
 
         // Now that the tempPatchedNode represents what the editor should look like, go ahead and apply only the differences, if there are any.
@@ -330,7 +380,7 @@
         diffHelpers.orderAndApplyChanges();
         theDocumentValues.collaborativeMode = false;
     };
- 
+
 
     exports.diffHelpers = diffHelpers;
     exports.domDiff = domDiff;

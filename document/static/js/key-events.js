@@ -804,83 +804,14 @@
         // Interrupt ctrl+z and ctrl+shift+z, but let normal z be treated as any other key.
 
         if (evt.ctrlKey) {
-            var theDiffs, theDiff, theUndoneDiff, isUndo, i, j = 0;
+            var theDiffs, theDiff, isUndo = true, i;
 
             if (evt.shiftKey) {
                 // Redo
-                
-                isUndo = false;
-                
-                theDiffs = _.where(theDocumentValues.usedDiffs, {
-                    session: theDocumentValues.session_id
-                }).reverse();
-                if (theDiffs.length === 0) {
-                    return true;
-                }
-                console.log(theDiffs);
-                
-                for (i = 0; i < theDiffs.length; i++) {
-                    if (theDiff===undefined) {
-                        if (theDiffs[i].undo === 1) {
-                            theDiff = theDiffs[i];
-                        } if (theDiffs[i].undo === undefined) {
-                            // Hit upon a non-undo related diff before finding a node to diff.
-                            return true;
-                        }
-                    } else if (theDiffs[i].undo === undefined) {
-                        // Hit upon a non-undo related diff before finding the undoed diff. Error and abort.
-                        return true;
-                    } else {
-                        j += theDiffs[i].undo;
-                        if (j < 0) {
-                            theUndoneDiff = theDiffs[i];
-                            i = theDiffs.length;
-                        }
-                    }
-                       
-                }
-                if (!theDiff) {
-                    // No more to redo.
-                    return true;
-                }
-                theDiff.undo = -2;
-                delete theUndoneDiff.undo;
-                diffHelpers.applyUndo(theUndoneDiff.time, isUndo);
-
-                return true;
-
+                return diffHelpers.redo();
             }
-            // Undo
-
-            isUndo = true;
-            
-            theDiffs = _.where(theDocumentValues.usedDiffs, {
-                session: theDocumentValues.session_id,
-            }).reverse();
-
-            
-            for (i = 0; i < theDiffs.length; i++) {
-                if (theDiffs[i].undo===undefined) {
-                    theDiff = theDiffs[i];
-                    if (i > 0 && theDiffs[i-1].undo===-2) {
-                        isUndo = false;
-                        theDiffs[i-1].undo = 1;
-                    }
-                    i = theDiffs.length;
-                } else if (theDiffs[i].undo===1 && i > 0 && theDiffs[i-1].undo===-2) {
-                    isUndo = false;
-                    theDiffs[i-1].undo = 1;
-                } 
-            }
-            
-            if (!theDiff) {
-                return true;
-            }
-            theDiff.undo = -1;
-            //theDocumentValues.undo = true;
-            diffHelpers.applyUndo(theDiff.time, isUndo);
-            //domDiff.undo(document.getElementById('document-editable'), theDiff.diff);
-            return true;
+            // Undo            
+            return diffHelpers.undo();
         } else {
             return false;
         }

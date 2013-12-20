@@ -32,7 +32,7 @@
      * @memberof editorHelpers 
      */ 
     editorHelpers.layoutMetadata = function () {
-        var i, metadataNode = document.getElementById('document-metadata'), metadataClone = metadataNode.cloneNode(true), diffs;
+        var i, metadataNode = document.getElementById('document-metadata'), metadataClone = metadataNode.cloneNode(), diffs;
         jQuery('.metadata-menu-item').removeClass('selected');
 
         for (i in theDocument.settings.metadata) {
@@ -47,8 +47,12 @@
             metadata: theDocument.metadata
         });
         
+        metadataClone = nodeConverter.toView(metadataClone);
+        
         diffs = domDiff.diff(metadataNode, metadataClone);
         domDiff.apply(metadataNode,diffs);
+        
+        nodeConverter.redoFootnotes();
     };
 
     /** Turn enabled metadata off and disabled metadata on, Function is bound to clicking option in metadata menu. 
@@ -92,7 +96,7 @@
         editorHelpers.setDisplay.document('metadata.title', theDocument.metadata
             .title);
         editorHelpers.layoutMetadata();
-        theDocumentValues.diffNode = diffHelpers.cleanAGNode(document.getElementById('document-editable').cloneNode(true));
+        theDocumentValues.diffNode = nodeConverter.toModel(document.getElementById('document-editable'));
     };
     
     
@@ -160,7 +164,6 @@
     editorHelpers.documentHasChanged = function () {
         theDocumentValues.changed = true; // For document saving
         theDocumentValues.touched = true; // For synchronizing with other viewers
-        //jQuery('.save').removeClass('disabled');
     };
 
     /** Functions related to taking document data from theDocument.* and displaying it (ie making it part of the DOM structure). 
@@ -280,18 +283,22 @@
     editorHelpers.setDisplay.contents = function (theValue) {
         var contentsNode = document.getElementById('document-contents'), contentsClone, diffs;
         
-        if (contentsNode.innerText.length===0) {
-            contentsNode.innerHTML = theValue;
-            return;
-        }
+        //if (contentsNode.innerText.length===0) {
+        //    contentsNode.innerHTML = theValue;
+        //    return;
+        //}
         
-        contentsClone = contentsNode.cloneNode(true)
+        contentsClone = contentsNode.cloneNode();
         
         contentsClone.innerHTML = theValue;
+        
+        contentsClone = nodeConverter.toView(contentsClone);
         
         diffs = domDiff.diff(contentsNode, contentsClone);
         
         domDiff.apply(contentsNode, diffs);
+        
+        nodeConverter.redoFootnotes();
         
     };
 
@@ -302,12 +309,15 @@
     editorHelpers.setDisplay.metadataTitle = function (theValue) {
         var titleNode = document.getElementById('document-title'), titleClone, diffs;
         
-        titleClone = titleNode.cloneNode(true);
+        titleClone = titleNode.cloneNode();
         titleClone.innerHTML = theValue;
+        titleClone = nodeConverter.toView(titleClone);
         
         diffs = domDiff.diff(titleNode, titleClone);
         
         domDiff.apply(titleNode, diffs);
+        
+        nodeConverter.redoFootnotes();
         
         editorHelpers.setDisplay.document('title', titleClone.innerText);
     };
@@ -316,7 +326,7 @@
      * @memberof editorHelpers.setDisplay
      * @param theValue The text of the title.*/
     editorHelpers.setDisplay.title = function (theValue) {
-        console.log(theValue);
+
         var theTitle = theValue;
         if (theTitle.length === 0) {
             theTitle = gettext('Untitled Document');
@@ -411,16 +421,20 @@
      */ 
     editorHelpers.getUpdatesFromInputFields = function (callback) {
         
-        editorHelpers.setDocumentData('metadata.title', jQuery(
-            '#document-title').html().trim());
+        var i, j, metadata;
+        
+        editorHelpers.setDocumentData('metadata.title', nodeConverter.toModel(document.getElementById('document-title')).innerHTML);
 
-        editorHelpers.setDocumentData('contents', jQuery(
-            '#document-contents').html().trim());
+        editorHelpers.setDocumentData('contents', nodeConverter.toModel(document.getElementById('document-contents')).innerHTML);
 
-        jQuery('#document-metadata .metadata').each(function () {
-            editorHelpers.setDocumentData('metadata.' + jQuery(this).attr(
-                    'data-metadata'), jQuery(this).html().trim());
-        });
+        metadata = document.querySelectorAll('#document-metadata .metadata');
+        
+        j = metadata.length;
+        
+        for (i=0; i > j; i++) {
+            editorHelpers.setDocumentData('metadata.' + metadata[i].getAttribute(
+                    'data-metadata'), nodeConverter.toModel(metadata[i]).innerHTML);   
+        }
 
         if (callback) {
             callback();

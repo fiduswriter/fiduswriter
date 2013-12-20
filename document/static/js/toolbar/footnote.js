@@ -48,7 +48,7 @@
                 button.attr('class', 'fw-button fw-light fw-large fw-square');
                 buttonset.append(button);
                 button.bind("click", function (event) {
-                    var range, selection, footnoteSpan, startContainer, innerFootnote, scrollView;
+                    var range, selection, fn, startContainer, innerFootnote, scrollView;
                     // The tracker gets a range created with rangy rather than the native browser version
 
                     selection = rangy.getSelection();
@@ -59,22 +59,22 @@
                         // If user is trying to create a footnote inside another footnote, we stop.
                         return false;
                     }
-                    footnoteSpan = document.createElement('span');
-                    footnoteSpan.id = pagination.createRandomId('pagination-footnote-');
-                    footnoteSpan.classList.add('pagination-footnote');
-                    // A footnote needs to have to inenr spans to work with the current Webkit implementation of CSS Regions.
-                    // The Mongolian space character at the end is included so that the caret can blaced at the end of the footnote
-                    // We use 200b rather than 180e here, because this character is essential for the document structure.
-                    // This way all the 180e characters can be removed during document saving in the DB.
-                    footnoteSpan.innerHTML = '<span><span><br></span></span>\u200b';
+                    fn = document.createDocumentFragment();
+                    
+                    innerFootnote = document.createElement('br')
+                    
+                    fn.appendChild(innerFootnote);
+                    
+                    fn = nodeConverter.createFootnoteView(fn);
+                    
                     // Make sure to get out of any track changes node if tracking is disabled.
                     range = dom.noTrackIfDisabled(range);
                     // Make sure to get out of any citation node.
                     range = dom.noCitationOrLinkNode(range);
                     // Insert the footnote
-                    manualEdits.insert(footnoteSpan, range);
-                    document.getElementById('flow').dispatchEvent(pagination.events.redoEscapes);
-                    innerFootnote = footnoteSpan.firstChild.firstChild;
+                    manualEdits.insert(fn, range);
+                    nodeConverter.redoFootnotes();
+
                     range.selectNodeContents(innerFootnote);
                     range.collapse();
                     selection = rangy.getSelection();

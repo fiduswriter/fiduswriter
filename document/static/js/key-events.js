@@ -518,7 +518,7 @@
                 if (dom.isAtStart(insideFootnote, jQuery(insideFootnote).closest(
                     'p, li, h1, h2, h3, code, blockquote')[0])) {
                     // ---Adding an empty space node at the start of a paragraph---
-                    // We are inside the outer part of a footnote that is the very first element inside a paragaph.
+                    // We are inside the outer part of a footnote that is the very first element of a paragraph.
                     // We will need to add a character before it so that we can put the caret there.
                     emptySpaceNode = document.createTextNode('\u180e');
                     var containerBlock = jQuery(insideFootnote).closest(

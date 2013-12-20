@@ -253,13 +253,6 @@ var FW_FILETYPE_VERSION = "1.1";
         // Replace nbsp spaces with normal ones
         htmlCode.innerHTML = htmlCode.innerHTML.replace(/&nbsp;/g, ' ');
 
-        jQuery(htmlCode).find('.pagination-footnote').each(function () {
-            this.innerHTML = this.firstChild.firstChild.innerHTML;
-            this.classList.remove('pagination-footnote');
-            this.classList.add('footnote');
-            this.removeAttribute('id');
-        });
-
         jQuery(htmlCode).find('.del').each(function () {
             this.outerHTML = '';
         });

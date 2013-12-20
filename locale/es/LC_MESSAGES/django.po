@@ -245,7 +245,7 @@ msgstr ""
 "    <p>Olvidaste tu contraseña? Ingresá tu correo electrónico abajo, y te "
 "enviaremos un correo que te permita restablecerla.</p>\n"
 "    <p>Si tienes algún problema haciéndolo, por favor <a href=\"mailto:"
-"mail@fiduswriter.com\">contáctanos</a>.</p>\n"
+"%(CONTACT_EMAIL)s\">contáctanos</a>.</p>\n"
 "    "
 
 #: account/templates/account/password_reset.html:33

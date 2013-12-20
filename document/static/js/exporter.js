@@ -628,10 +628,8 @@ var FW_FILETYPE_VERSION = "1.1";
                 this.outerHTML = '$' + equation + '$';
             });
 
-        jQuery(htmlCode).find('.pagination-footnote').each(function () {
-            jQuery(this).replaceWith('\\footnote{' + this.firstChild
-                .firstChild
-                .innerHTML + '}');
+        jQuery(htmlCode).find('.footnote').each(function () {
+            jQuery(this).replaceWith('\\footnote{' + this.innerHTML + '}');
         });
 
         returnObject = {

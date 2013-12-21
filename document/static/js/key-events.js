@@ -237,15 +237,7 @@
             }
         }
 
-        if (range.startContainer.nodeType === 3 && range.startOffset === 1 &&
-            range.startContainer.textContent[0] === '\u180e') {
-            // We found an empty space node at the start of a paragraph. It was placed there by
-            // the above section "---Adding an empty space node at the start of a paragraph---" before a footnote at the start of a line.
-            // We will move the caret to the left part of the space and continue processing.
 
-            range.selectNode(range.startContainer);
-            range.collapse(true);
-        }
 
         var thisParagraph = jQuery(range.startContainer).closest(
             'p, li, h1, h2, h3, code, blockquote')[0];
@@ -480,33 +472,7 @@
             }
         }
 
-        if (range.startContainer.nodeType === 3 && range.startOffset === 1 && jQuery(range.startContainer.previousSibling).is('.equation')) {
-            // We are just behind an equation the empty space node behind it.
-            if (dom.isAtStart(range.startContainer.previousSibling, jQuery(range.startContainer).closest('p, li, h1, h2, h3, code, blockquote')[0])) {
-                // The equation is at the start of a container item. Place an empty space node in front of it and move the cursor there.
-                emptySpaceNode = document.createTextNode('\u180e');
-                var containerBlock = jQuery(range.startContainer).closest(
-                    'p, li, h1, h2, h3, code, blockquote')[0];
-                containerBlock.insertBefore(emptySpaceNode, containerBlock.firstChild);
-            }
-            range.selectNode(range.startContainer.previousSibling.previousSibling);
-            range.collapse();
-            selection.removeAllRanges();
-            selection.addRange(range);
-            return true;
-        }
 
-        if (range.startContainer.nodeType === 3 && range.startOffset === 1 &&
-            range.startContainer.textContent[0] === '\u180e') {
-            // We found an empty space node at the start of a paragraph. It was placed there by
-            // the above section "---Adding an empty space node at the start of a paragraph---" before a footnote at the start of a line.
-            // We will move the caret to the left part of the space and continue processing.
-            range.selectNode(range.startContainer);
-            range.collapse(true);
-            selection.removeAllRanges();
-            selection.addRange(range);
-            return false;
-        }
 
         // The selection range has to be collapsed and either be right at the start of an element, or not be a text node.
         if (range.collapsed && (range.startOffset === 0 || range.startContainer
@@ -550,7 +516,7 @@
     keyEvents.arrowRight = function (evt, editorContainer) {
         // Handles the pressing of an arrow right key
         var range, nextContainer, foundFootnote, insideFootnote,
-            insideInnerFootnote;
+            insideInnerFootnote, spaceCharacter;
 
         selection = rangy.getSelection();
         range = selection.getRangeAt(0);
@@ -566,15 +532,7 @@
             return true;
         }
 
-        if (range.startContainer.nodeType === 3 && range.startOffset === 0 &&
-            range.startContainer.textContent[0] === '\u180e') {
-            // We found an empty space node at the start of a paragraph. It was placed there by
-            // the above section "---Adding an empty space node at the start of a paragraph---" before a footnote at the start of a line.
-            // We will move the caret to the right part of the space and continue processing.
 
-            range.selectNode(range.startContainer);
-            range.collapse();
-        }
 
         // The selection range has to be collapsed and either be right at the end of an element, or not be a text node.
         if (range.collapsed && (dom.isAtEndInCurrentContainer(range) || range.startContainer
@@ -594,9 +552,9 @@
 
                 if (foundFootnote) {
                     // We found a footnote at the very start of the next block element, we need
-                    // to insert an empty space character before it so that the caret can be moved there.
-                    emptySpaceNode = document.createTextNode('\u180e');
-                    foundFootnote.parentNode.insertBefore(emptySpaceNode,
+                    // to insert an space character before it so that the caret can be moved there.
+                    spaceNode = document.createTextNode(' ');
+                    foundFootnote.parentNode.insertBefore(spaceNode,
                         foundFootnote);
                 }
                 // Else check if the next node is something else than a text node.
@@ -640,15 +598,7 @@
             return true;
         }
 
-        if (range.startContainer.nodeType === 3 && range.startOffset === 0 &&
-            range.startContainer.textContent[0] === '\u180e') {
-            // We found an empty space node at the start of a paragraph. It was placed there by
-            // the above section "---Adding an empty space node at the start of a paragraph---" before a footnote at the start of a line.
-            // We will move the caret to the right part of the space and continue processing.
 
-            range.selectNode(range.startContainer);
-            range.collapse();
-        }
 
         var thisParagraph = jQuery(range.startContainer).closest(
             'p, li, h1, h2, h3, code, blockquote')[0];
@@ -783,14 +733,7 @@
             }
             setTimeout(replaceSpace, 1);
         }
-        if (range.startContainer.nodeType === 3 && range.startOffset === 0 &&
-            range.startContainer.textContent[0] === '\u180e') {
-            // We found an empty space node at the start of a paragraph. It was placed there by
-            // the above section "---Adding an empty space node at the start of a paragraph---" before a footnote at the start of a line.
-            // We will move the caret to the right part of the space and continue processing.
-            range.selectNode(range.startContainer);
-            range.collapse();
-        }
+
         // Check whether tracking has been disabled and if so, wehther we are in a change node that we need to get out of.
         range = dom.noTrackIfDisabled(range);
 

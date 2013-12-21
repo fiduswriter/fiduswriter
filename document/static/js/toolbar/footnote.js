@@ -61,6 +61,8 @@
                     }
                     fn = document.createDocumentFragment();
                     
+                    fn.appendChild(document.createTextNode(' '));
+                    
                     innerFootnote = document.createElement('br')
                     
                     fn.appendChild(innerFootnote);
@@ -73,9 +75,9 @@
                     range = dom.noCitationOrLinkNode(range);
                     // Insert the footnote
                     manualEdits.insert(fn, range);
-                    if (nodeConverter.beforeFootnote) {
-                        fn.parentNode.insertBefore(nodeConverter.beforeFootnote(), fn);
-                    }
+                    //if (nodeConverter.beforeFootnote) {
+                    //    fn.parentNode.insertBefore(nodeConverter.beforeFootnote(), fn);
+                    //}
                     nodeConverter.redoFootnotes();
 
                     range.selectNodeContents(innerFootnote);

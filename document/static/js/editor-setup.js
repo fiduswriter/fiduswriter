@@ -243,6 +243,7 @@ jQuery(document).bind('documentDataLoaded', function () {
                 });
             } else if (theDocumentValues.control && !theDocumentValues.sentHash) {
                 theDocumentValues.sentHash = true;
+                console.log('sending hash');
                 serverCommunications.send({
                     type: 'hash',
                     hash: editorHelpers.docHash()

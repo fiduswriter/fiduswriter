@@ -129,7 +129,7 @@ class DocumentWS(BaseWebSocketHandler):
         parsed = json_decode(message)
         if parsed["type"]=='get_document':
             self.get_document()
-        elif parsed["type"]=='get_document':
+        elif parsed["type"]=='get_document_update':
             self.get_document_update()    
         elif parsed["type"]=='participant_update':
             DocumentWS.send_participant_list(self.document.id)
@@ -145,8 +145,9 @@ class DocumentWS(BaseWebSocketHandler):
             if self.document.id in DocumentWS.sessions:
                 DocumentWS.send_updates(chat, self.document.id)
         elif parsed["type"]=='diff' or parsed["type"]=='transform' or parsed["type"]=='hash':
+            
             if self.document.id in DocumentWS.sessions:
-                DocumentWS.send_updates(message, self.document.id, self.id)            
+                DocumentWS.send_updates(message, self.document.id, self.id)           
 
     def on_close(self):
         if hasattr(self, 'document') and self.document.id in DocumentWS.sessions and self.id in DocumentWS.sessions[self.document.id]:

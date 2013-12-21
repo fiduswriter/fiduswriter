@@ -156,7 +156,6 @@
                         deleteButton = document.createElement('button');
                         deleteButton.classList.add('fw-button');
                         deleteButton.classList.add('fw-orange');
-                        deleteButton.id = ('equation-delete-button');
                         deleteButton.appendChild(document.createTextNode(gettext('Remove')));
                         submitButton.parentNode.insertBefore(deleteButton, submitButton);
                         jQuery(deleteButton).bind('click', function (event) {

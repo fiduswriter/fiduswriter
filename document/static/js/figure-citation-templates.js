@@ -63,7 +63,7 @@ var tmp_configure_citation = _.template('\
                 <thead class="fw-document-table-header"><tr>\
                     <th width="135">' + gettext("Title") + '</th>\
                     <th width="135">' + gettext("Author") + '</th>\
-                    <td width="50" align="center">' + gettext("Delete") + '</td>\
+                    <td width="50" align="center">' + gettext("Remove") + '</td>\
                 </tr></thead>\
                 <tbody class="fw-document-table-body fw-min">\
                   <%= selectedbooks %>\
@@ -160,7 +160,7 @@ var tmp_configure_figure = _.template('\
                 '" /></div>\
                     <div class="dialogSubmit">\
                         <input type="button" id="deleteFigureButton" class="fw-button fw-orange" value="' +
-                gettext('Delete') +
+                gettext('Remove') +
                 '"/>\
                         <input type="submit" id="addFigureButton" class="fw-button fw-dark" />\
                     </div>\

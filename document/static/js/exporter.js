@@ -990,7 +990,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
     exporter.epub = function (aDocument, aBibDB) {
         var title, contents, contentsBody, contentItems, images,
-            bibliography,
+            bibliography, equations,
             htmlCode, includeZips = [],
             xhtmlCode, containerCode, opfCode,
             styleSheets = [],
@@ -1037,7 +1037,16 @@ var FW_FILETYPE_VERSION = "1.1";
 
         contentsBody = document.createElement('body');
 
-        contentsBody.innerHTML = contents.innerHTML;
+        while (contents.firstChild) {
+            contentsBody.appendChild(contents.firstChild);
+        }
+        
+        equations = contentsBody.querySelectorAll('.equation');
+
+        for (i=0;i<equations.length;i++) {
+            mathHelpers.layoutMathNode(equations[i]);
+        }
+        
 
         // Make links to all H1-3 and create a TOC list of them
         contentItems = exporter.orderLinks(exporter.setLinks(

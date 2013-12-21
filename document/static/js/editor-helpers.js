@@ -450,7 +450,7 @@
      */ 
     
     editorHelpers.docHash = function() {
-        var str = document.getElementById('document-editable').innerText, res = 0, len = str.length;
+        var str = theDocumentValues.diffNode.innerHTML, res = 0, len = str.length;
         for (var i = 0; i < len; i++) {
             res = res * 31 + str.charCodeAt(i);
             res = res & res;

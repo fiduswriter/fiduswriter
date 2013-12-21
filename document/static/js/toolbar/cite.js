@@ -100,7 +100,7 @@
                 }
 
                 if (citationNode) {
-                    emptySpaceNode = document.createTextNode('\u180e');
+                //    emptySpaceNode = document.createTextNode('\u180e');
                     citationNode.parentNode.insertBefore(emptySpaceNode, citationNode.nextSibling);
                     range.selectNode(emptySpaceNode);
                     range.collapse(true);
@@ -121,11 +121,15 @@
                 // Insert the citation
                 manualEdits.insert(citeSpan, range);
 
-                if (emptySpaceNode) {
-                    jQuery(emptySpaceNode).remove();
-                }
+                //if (emptySpaceNode) {
+                //    jQuery(emptySpaceNode).remove();
+                //}
 
+                
+                
                 citationHelpers.formatCitationsInDoc();
+                
+                citeSpan.parentNode.insertBefore(nodeConverter.afterNode(), citeSpan.nextSibling);
                 return true;
             };
 

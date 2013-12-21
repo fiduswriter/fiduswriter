@@ -95,7 +95,6 @@
                 }
 
                 mathNode.parentNode.insertBefore(nodeConverter.afterNode(), mathNode.nextSibling);
-
                 widget.options.editable.removeAllSelections();
                 dialog.dialog('close');
                 return false;

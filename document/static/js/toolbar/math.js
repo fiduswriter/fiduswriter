@@ -46,7 +46,7 @@
             dialog = jQuery('<div id="' + dialogId + '">\
                 <form action="#" method="post" class="mathForm">\
                     <input style="width: 250px;" class="math" type="text" name="math" value="' + this.options.defaultMath + '" />\
-                    <div class="dialogSubmit">\
+                    <div class="dialogSubmit ui-dialog-buttonset">\
                         <input type="submit" id="addmathButton" class="fw-button fw-dark" value="' + gettext("Insert") + '" />\
                     </div>\
                 </form></div>');
@@ -75,31 +75,27 @@
                         return false;
                     } else {
 
-                        mathNode = document.createElement('span');
-                        mathNode.classList.add('equation');
+                        mathNode = nodeConverter.createMathView();
                         mathNode.setAttribute('data-equation', math);
-                        mathNode.innerHTML = ' ';
                         insideMath.parentNode.insertBefore(mathNode, insideMath.nextSibling);
 
                         manualEdits.remove(insideMath, false);
 
                     }
                 } else {
-                    mathNode = document.createElement('span');
-                    mathNode.classList.add('equation');
+                    mathNode = nodeConverter.createMathView();
                     mathNode.setAttribute('data-equation', math);
-                    mathNode.innerHTML = ' ';
                     // Make sure to get out of any track changes node if tracking is disabled.
                     range = dom.noTrackIfDisabled(range);
                     // Make sure to get out of any citation node.
                     range = dom.noCitationOrLinkNode(range);
                     // Insert the new math node
                     manualEdits.insert(mathNode, range);
-                    emptySpaceNode = document.createTextNode('\u180e');
-                    mathNode.parentNode.insertBefore(emptySpaceNode, mathNode.nextSibling);
+                    
                 }
 
-                //widget.options.editable.element.trigger('change');
+                mathNode.parentNode.insertBefore(nodeConverter.afterNode(), mathNode.nextSibling);
+
                 widget.options.editable.removeAllSelections();
                 dialog.dialog('close');
                 return false;
@@ -107,7 +103,7 @@
             dialog.find("form").submit(dialogSubmitCb);
             buttonset = $.Fidus.buttonset.prototype.createButtonset.call(this, widget.widgetName, 1);
             buttonize = function (type) {
-                var button, id, openDialog;
+                var button, id, openDialog, deleteButton, submitButton;
                 id = "" + _this.options.uuid + "-" + type;
                 button = jQuery('<button></button>');
                 button.makebutton({
@@ -122,6 +118,14 @@
                 buttonset.append(button);
                 dialog.bind('dialogclose', function () {
                     jQuery('label', button).removeClass('ui-state-active');
+                    if (submitButton) {
+                        submitButton.setAttribute('value', gettext('Insert'));
+                        delete submitButton;
+                    }
+                    if (deleteButton && deleteButton.parentNode) {
+                        deleteButton.parentNode.removeChild(deleteButton);
+                        delete deleteButton;
+                    }
                     if (mathNode && mathNode.nextSibling) {
                         range.selectNode(mathNode.nextSibling);
                         range.collapse();
@@ -147,7 +151,23 @@
 
                     if (insideMath) {
                         mathInput.val(insideMath.getAttribute('data-equation'));
-                        jQuery(mathInput[0].form).find('input[type=submit]').val('update');
+                        submitButton = jQuery(mathInput[0].form).find('input[type=submit]')[0];
+                        submitButton.setAttribute('value', gettext('Update'));
+                        deleteButton = document.createElement('button');
+                        deleteButton.classList.add('fw-button');
+                        deleteButton.classList.add('fw-orange');
+                        deleteButton.id = ('equation-delete-button');
+                        deleteButton.appendChild(document.createTextNode(gettext('Remove')));
+                        submitButton.parentNode.insertBefore(deleteButton, submitButton);
+                        jQuery(deleteButton).bind('click', function (event) {
+                            event.stopPropagation();
+                            event.preventDefault();
+                            insideMath.parentNode.removeChild(insideMath);
+                            insideMath = false;
+                            dialog.dialog('close');
+                            return false;
+                        });
+                        
                     } else {
                         mathInput.val(widget.options.defaultMath);
                     }

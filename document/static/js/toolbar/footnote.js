@@ -73,6 +73,9 @@
                     range = dom.noCitationOrLinkNode(range);
                     // Insert the footnote
                     manualEdits.insert(fn, range);
+                    if (nodeConverter.beforeFootnote) {
+                        fn.parentNode.insertBefore(nodeConverter.beforeFootnote(), fn);
+                    }
                     nodeConverter.redoFootnotes();
 
                     range.selectNodeContents(innerFootnote);

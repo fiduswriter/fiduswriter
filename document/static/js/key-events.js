@@ -216,20 +216,8 @@
 
     keyEvents.backspace = function (evt, editorContainer) {
         // Handles the pressing of the backspace key
-        var range, selection, previousContainer, insideCitation, insideFootnote,
-            foundFootnoteOrCitation;
-
-        selection = rangy.getSelection();
-        range = selection.getRangeAt(0);
-
-        // Check if we are inside a citation
-        insideCitation = jQuery(range.startContainer).closest('.citation')[0];
-        if (insideCitation) {
-            // We are inside a citation, now mark the citation as deleted.
-            manualEdits.remove(insideCitation, range, true);
-
-            return true;
-        }
+        var selection = rangy.getSelection(), range = selection.getRangeAt(0), previousContainer, insideFootnote,
+            foundFootnote;
 
         // Check if we are inside a footnote and whether we are at the very beginning of it.
         insideFootnote = jQuery(range.startContainer).closest(
@@ -292,12 +280,12 @@
             }
 
             if (previousContainer && previousContainer.nodeType !== 3) {
-                // Try to find a footnote or citation at the extreme end of the previous container
-                foundFootnoteOrCitation = dom.findLastElement(previousContainer,
-                    '.pagination-footnote, .citation');
-                // If we find a footnote or citation, we hand the entire node to be deleted.
-                if (foundFootnoteOrCitation) {
-                    manualEdits.remove(foundFootnoteOrCitation, range, true);
+                // Try to find a footnote at the extreme end of the previous container
+                foundFootnote = dom.findLastElement(previousContainer,
+                    '.pagination-footnote');
+                // If we find a footnote, we hand the entire node to be deleted.
+                if (foundFootnote) {
+                    manualEdits.remove(foundFootnote, range, true);
                     // The previous node has been (marked as) deleted already, so we return true which prevents the default backspace key action from happening.
                     return true;
                 }
@@ -322,14 +310,13 @@
 
     keyEvents.enter = function (evt, editorContainer) {
         // Handles Enter.
-        // This will make sure we are outside of any citation before the line break is inserted.
         var selection, range, insideSpecialElement, paragraphNode;
         selection = rangy.getSelection();
         range = selection.getRangeAt(0);
 
         // Check if we are inside a citation, footnote or link
         insideSpecialElement = jQuery(range.startContainer).closest(
-            '.citation, .pagination-footnote, .comment, a')[0];
+            '.pagination-footnote, .comment, a')[0];
         if (insideSpecialElement) {
             // We insert a Mongolian vowel space which has no width.
             emptySpaceNode = document.createTextNode('\u180e');
@@ -466,42 +453,12 @@
 
 
     // Keycode 37
-
+     /** Handles the pressing of the arrow left key */
     keyEvents.arrowLeft = function (evt, editorContainer) {
-        var range, selection, previousContainer, insideCitation, insideFootnote,
-            foundFootnoteOrCitation, emptySpaceNode;
-        // Handles the pressing of the arrow left key
-        selection = rangy.getSelection();
-        range = selection.getRangeAt(0);
-        // Check if we are inside a citation, but not at the very beginning of it.
-        insideCitation = jQuery(range.startContainer).closest(
-            '.citation')[0];
 
-        if (insideCitation && (range.startOffset !== 0 || !dom.isAtStart(range.startContainer,
-            insideCitation))) {
-            if (dom.isAtStart(insideCitation, jQuery(insideCitation).closest(
-                'li')[0])) {
-                // We are inside a citation that is the very first element inside a list item.
-                // There is no problem putting the caret in front of it, so there is no need to
-                // place a space node in front of it.
+        var selection = rangy.getSelection(), range = selection.getRangeAt(0), previousContainer, insideFootnote,
+             foundFootnote, emptySpaceNode;
 
-            } else if (dom.isAtStart(insideCitation, jQuery(insideCitation).closest(
-                'p')[0])) {
-                // ---Adding an empty space node at the start of a paragraph---
-                // We are inside a citation that is the very first element inside a paragraph.
-                // We will need to add a character before it so that we can put the caret there.
-                emptySpaceNode = document.createTextNode('\u180e');
-                var containerBlock = jQuery(insideCitation).closest('p')[0];
-                containerBlock.insertBefore(emptySpaceNode, containerBlock.firstChild);
-            }
-            // We are inside a citation, now move the caret to the left of it.
-            range.selectNode(insideCitation);
-            range.collapse(true);
-            // selection = rangy.getSelection();
-            selection.removeAllRanges();
-            selection.addRange(range);
-            return true;
-        }
 
         // Check if we are inside a footnote and whether we are at the very beginning of it.
         insideFootnote = jQuery(range.startContainer).closest(
@@ -514,17 +471,6 @@
                 // We are at the very start inside a footnote. Just leave the caret where it is.
                 return true;
             } else if (!insideInnerFootnote) {
-
-                if (dom.isAtStart(insideFootnote, jQuery(insideFootnote).closest(
-                    'p, li, h1, h2, h3, code, blockquote')[0])) {
-                    // ---Adding an empty space node at the start of a paragraph---
-                    // We are inside the outer part of a footnote that is the very first element of a paragraph.
-                    // We will need to add a character before it so that we can put the caret there.
-                    emptySpaceNode = document.createTextNode('\u180e');
-                    var containerBlock = jQuery(insideFootnote).closest(
-                        'p, li, h1, h2, h3, code, blockquote')[0];
-                    containerBlock.insertBefore(emptySpaceNode, containerBlock.firstChild);
-                }
                 // We are only in the outer part of the footnote. We will move the caret to the left of the footnote.
                 range.selectNode(insideFootnote);
                 range.collapse(true);
@@ -579,11 +525,11 @@
                 // Check if the previous node has to be something else than a text node for us to look at it.
             } else if (previousContainer && previousContainer.nodeType !== 3) {
                 // Try to find a footnote or citation at the extreme end of the previous container
-                foundFootnoteOrCitation = dom.findLastElement(previousContainer,
-                    '.pagination-footnote, .citation');
+                foundFootnote = dom.findLastElement(previousContainer,
+                    '.pagination-footnote');
                 // If we find a footnote or citation, move the caret before it.
-                if (foundFootnoteOrCitation) {
-                    range.selectNodeContents(foundFootnoteOrCitation);
+                if (foundFootnote) {
+                    range.selectNodeContents(foundFootnote);
                     range.collapse(true);
                     selection.removeAllRanges();
                     selection.addRange(range);
@@ -595,7 +541,7 @@
                 return true;
             }
         }
-        // return false so that the delete key action will take place.
+        // return false so that the arrow left key action will take place.
         return false;
     };
 
@@ -603,24 +549,11 @@
 
     keyEvents.arrowRight = function (evt, editorContainer) {
         // Handles the pressing of an arrow right key
-        var range, nextContainer, foundFootnoteOrCitation, insideFootnote,
+        var range, nextContainer, foundFootnote, insideFootnote,
             insideInnerFootnote;
 
         selection = rangy.getSelection();
         range = selection.getRangeAt(0);
-
-        // Check whether we are inside a citation (relevant at the start of a line)
-        insideCitation = jQuery(range.startContainer).closest(
-            '.citation')[0];
-
-        if (insideCitation && (!dom.isAtEndInCurrentContainer(range) || !dom.isAtEnd(
-            range.endContainer, insideCitation))) {
-            range.selectNode(insideCitation);
-            range.collapse();
-            selection.removeAllRanges();
-            selection.addRange(range);
-            return true;
-        }
 
         // Check if we are inside a the inner part of a footnote and whether we are at the very end of it.
         insideInnerFootnote = jQuery(range.startContainer).closest(
@@ -670,7 +603,7 @@
             } else if (nextContainer.nodeType !== 3) {
                 // Try to find a footnote or citation at the beginning of the next container
                 foundFootnoteOrCitation = dom.findFirstElement(nextContainer,
-                    '.pagination-footnote, .citation');
+                    '.pagination-footnote');
                 // If we find a footnote or citation, we need to move the caret to the right of it.
                 if (foundFootnoteOrCitation) {
 
@@ -707,13 +640,6 @@
             return true;
         }
 
-        // Check whether we are inside a citation (relevant at the start of a line).
-        // If we are, delete it.
-        insideCitation = jQuery(range.startContainer).closest('.citation')[0];
-        if (insideCitation) {
-            manualEdits.remove(insideCitation, range);
-        }
-
         if (range.startContainer.nodeType === 3 && range.startOffset === 0 &&
             range.startContainer.textContent[0] === '\u180e') {
             // We found an empty space node at the start of a paragraph. It was placed there by
@@ -732,7 +658,7 @@
             // We are the very end of a paragraph. Hitting delete here means merging this paragraph with the next one.
             nextParagraph = thisParagraph.nextSibling;
             if (!nextParagraph || theDocument.settings.tracking || jQuery(nextParagraph).is('figure')) {
-                // This is the last paragraph of the document or tracking is enabled or a fiure is following this paragraph.
+                // This is the last paragraph of the document or tracking is enabled or a figure is following this paragraph.
                 // Just leave the caret where it is.
                 return true;
             } else {

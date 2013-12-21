@@ -81,9 +81,9 @@
                 }
 
                 cite_items.each(function () {
-                    cite_ids.push($(this).find('.delete').data('id'));
-                    cite_pages.push($(this).find('.fw-cite-page').val());
-                    cite_prefixes.push($(this).find('.fw-cite-text').val());
+                    cite_ids.push(jQuery(this).find('.delete').data('id'));
+                    cite_pages.push(jQuery(this).find('.fw-cite-page').val());
+                    cite_prefixes.push(jQuery(this).find('.fw-cite-text').val());
                 });
 
                 bibFormat = jQuery('#citation-style-label').data('style');
@@ -107,14 +107,13 @@
                     manualEdits.remove(citationNode, false);
                     citationNode = false;
                 }
-
-                citeSpan = document.createElement('span');
-                citeSpan.classList.add('citation');
+                
+                citeSpan = nodeConverter.createCiteView();
                 citeSpan.setAttribute('data-bib-entry', bibEntry);
                 citeSpan.setAttribute('data-bib-before', bibBefore);
                 citeSpan.setAttribute('data-bib-page', bibPage);
                 citeSpan.setAttribute('data-bib-format', bibFormat);
-                citeSpan.innerHTML = ' ';
+                
                 // Make sure to get out of any track changes node if tracking is disabled.
                 range = dom.noTrackIfDisabled(range);
                 // Make sure to get out of any citation node.
@@ -210,7 +209,7 @@
                         })
                     );
 
-                    $('body').append(dialog);
+                    jQuery('body').append(dialog);
 
                     var diaButtons = {};
                     diaButtons[gettext('Register new source')] = function () {
@@ -227,13 +226,13 @@
                         dialog.dialog('close');
                     };
 
-                    $('#cite-source-table').bind('update', function () {
-                        if ($(this).hasClass('dataTable')) {
-                            $(this).dataTable({
+                    jQuery('#cite-source-table').bind('update', function () {
+                        if (jQuery(this).hasClass('dataTable')) {
+                            jQuery(this).dataTable({
                                 "bRetrieve": true,
                             });
                         } else {
-                            $(this).dataTable({
+                            jQuery(this).dataTable({
                                 "bPaginate": false,
                                 "bLengthChange": false,
                                 "bFilter": true,
@@ -244,14 +243,14 @@
                                 },
                             });
                         }
-                        $('#cite-source-table_filter input').attr('placeholder', gettext('Search for Bibliography'));
+                        jQuery('#cite-source-table_filter input').attr('placeholder', gettext('Search for Bibliography'));
 
                         var autocomplete_tags = [];
                         jQuery('#cite-source-table .fw-searchable').each(function() {
                             autocomplete_tags.push(this.innerText);
                         });
                         autocomplete_tags = _.uniq(autocomplete_tags);
-                        $("#cite-source-table_filter input").autocomplete({
+                        jQuery("#cite-source-table_filter input").autocomplete({
                             source: autocomplete_tags
                         });
                     });
@@ -266,41 +265,41 @@
                         modal : true,
                         buttons : diaButtons,
                         create : function () {
-                            var $the_dialog = $(this).closest(".ui-dialog");
+                            var $the_dialog = jQuery(this).closest(".ui-dialog");
                             $the_dialog.find(".ui-dialog-buttonset .ui-button:eq(0)").addClass("fw-button fw-light fw-add-button");
                             $the_dialog.find(".ui-dialog-buttonset .ui-button:eq(1)").addClass("fw-button fw-dark");
                             $the_dialog.find(".ui-dialog-buttonset .ui-button:eq(2)").addClass("fw-button fw-orange");
 
-                            $('#cite-source-table').trigger('update');
+                            jQuery('#cite-source-table').trigger('update');
 
-                            $.addDropdownBox($('#citation-style-label'), $('#citation-style-pulldown'));
-                            $(document).on('click','#citation-style-pulldown .fw-pulldown-item', function () {
-                                $('#citation-style-label label').html($(this).html());
-                                $('#citation-style-label').attr('data-style', $(this).data('style'));
+                            $.addDropdownBox(jQuery('#citation-style-label'), jQuery('#citation-style-pulldown'));
+                            jQuery(document).on('click','#citation-style-pulldown .fw-pulldown-item', function () {
+                                jQuery('#citation-style-label label').html(jQuery(this).html());
+                                jQuery('#citation-style-label').attr('data-style', jQuery(this).data('style'));
                             });
 
-                            $(document).on('click', '#add-cite-book', function() {
-                                var selected_sources = $('#cite-source-table .fw-checkable.checked'),
+                            jQuery(document).on('click', '#add-cite-book', function() {
+                                var selected_sources = jQuery('#cite-source-table .fw-checkable.checked'),
                                     selected_books = [];
                                 selected_sources.each(function() {
-                                    var id = $(this).data('id');
-                                    if($('#selected-source-' + id).size()) {
+                                    var id = jQuery(this).data('id');
+                                    if(jQuery('#selected-source-' + id).size()) {
                                         return;
                                     }
                                     selected_books.push({
                                         'id': id,
-                                        'type': $(this).data('type'),
-                                        'title': $(this).data('title'),
-                                        'author': $(this).data('author')
+                                        'type': jQuery(this).data('type'),
+                                        'title': jQuery(this).data('title'),
+                                        'author': jQuery(this).data('author')
                                     });
                                 });
                                 selected_sources.removeClass('checked');
                                 citationHelpers.appendToCitedBooks(selected_books);
                             });
 
-                            $(document).on('click', '.selected-source .delete', function() {
-                                var source_wrapper_id = '#selected-source-' + $(this).data('id');
-                                $(source_wrapper_id).remove();
+                            jQuery(document).on('click', '.selected-source .delete', function() {
+                                var source_wrapper_id = '#selected-source-' + jQuery(this).data('id');
+                                jQuery(source_wrapper_id).remove();
                             });
                         },
 
@@ -316,11 +315,11 @@
                             selection.addRange(range);
                             widget.options.editable.element.focus();
                             widget.options.editable.keepActivated(false);
-                            $(this).dialog('destroy').remove();
+                            jQuery(this).dialog('destroy').remove();
                         }
                     });
 
-                    $('.fw-checkable').bind('click', function() { $.setCheckableLabel($(this)); });
+                    jQuery('.fw-checkable').bind('click', function() { $.setCheckableLabel(jQuery(this)); });
                 }
 
                 function enableCitations() {
@@ -368,7 +367,6 @@
             if (this.options.link) {
                 buttonset.buttonset();
                 toolbar.append(buttonset);
-                //return dialog.dialog(this.options.dialogOpts);
             }
         },
 

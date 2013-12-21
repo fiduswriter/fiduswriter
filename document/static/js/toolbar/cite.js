@@ -198,7 +198,7 @@
                         }
                     });
 
-                    var submit_button_text = citationNode ? 'Update' : 'Insert';
+                    
 
                     dialog = jQuery(
                         tmp_configure_citation({
@@ -211,20 +211,31 @@
 
                     jQuery('body').append(dialog);
 
-                    var diaButtons = {};
-                    diaButtons[gettext('Register new source')] = function () {
+                    var diaButtons = [];
+                    diaButtons.push({text: gettext('Register new source'), click: function () {
                         bibliographyHelpers.createBibEntryDialog();
-                    };
+                    }, class: 'fw-button fw-light fw-add-button'});
+                    
+                    if (citationNode) {
+                        diaButtons.push({text: gettext('Remove'), click: function () {
+                            citationNode.parentNode.removeChild(citationNode);
+                            citationNode = false;
+                            citeSpan = false;
+                            dialog.dialog('close');
+                        }, class: 'fw-button fw-orange'});
+                    }
+                    
+                    var submit_button_text = citationNode ? 'Update' : 'Insert';
 
-                    diaButtons[gettext(submit_button_text)] = function () {
+                    diaButtons.push({text: gettext(submit_button_text), click: function () {
                         if(dialogSubmitCb()) {
                             dialog.dialog('close');
                         }
-                    };
+                    }, class: "fw-button fw-dark"});
 
-                    diaButtons[gettext('Cancel')] = function () {
+                    diaButtons.push({text: gettext('Cancel'), click: function () {
                         dialog.dialog('close');
-                    };
+                    }, class: 'fw-button fw-orange'});
 
                     jQuery('#cite-source-table').bind('update', function () {
                         if (jQuery(this).hasClass('dataTable')) {
@@ -266,9 +277,6 @@
                         buttons : diaButtons,
                         create : function () {
                             var $the_dialog = jQuery(this).closest(".ui-dialog");
-                            $the_dialog.find(".ui-dialog-buttonset .ui-button:eq(0)").addClass("fw-button fw-light fw-add-button");
-                            $the_dialog.find(".ui-dialog-buttonset .ui-button:eq(1)").addClass("fw-button fw-dark");
-                            $the_dialog.find(".ui-dialog-buttonset .ui-button:eq(2)").addClass("fw-button fw-orange");
 
                             jQuery('#cite-source-table').trigger('update');
 

@@ -86,6 +86,8 @@
      * that differ from session to session.
      */
     editorHelpers.updateEditorPage = function (aDocument) {
+        clearInterval(diffHelpers.diffTimer);
+        jQuery('.toolbarundoredo button').addClass('disabled');
         theDocumentValues.changed = false;
         theDocumentValues.touched = false;
         theDocument.settings = jQuery.parseJSON(aDocument.settings);
@@ -96,7 +98,7 @@
         editorHelpers.setDisplay.document('metadata.title', theDocument.metadata
             .title);
         editorHelpers.layoutMetadata();
-        theDocumentValues.diffNode = nodeConverter.toModel(document.getElementById('document-editable'));
+        diffHelpers.setup();
     };
     
     

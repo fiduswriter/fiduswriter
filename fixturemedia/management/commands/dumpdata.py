@@ -38,14 +38,13 @@ class Command(django.core.management.commands.dumpdata.Command):
             target_path = join(self.target_dir, path.name)
             if not exists(dirname(target_path)):
                 os.makedirs(dirname(target_path))
-           
-            in_file = default_storage.open(path.name, 'r')
+
+            in_file = default_storage.open(path.name, 'rb')
             file_contents = in_file.read()
             in_file.close()
-            
-            out_file = open(target_path, 'w')
-            out_file.write(file_contents)
-            out_file.close()
+
+            with open(target_path, 'wb') as out_file:
+                out_file.write(file_contents)
 
     def set_up_serializer(self, ser_format):
         try:

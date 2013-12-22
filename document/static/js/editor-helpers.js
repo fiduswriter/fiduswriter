@@ -111,8 +111,6 @@
      * that differ from session to session.
      */
     editorHelpers.fillEditorPage = function (aDocument, aDocumentValues) {
-        
-        console.log(aDocument, aDocumentValues);
         var DEFAULTS, i;
         theDocument = aDocument;
         theDocumentValues = aDocumentValues;
@@ -216,7 +214,6 @@
             'selected');
         jQuery('span[data-citationstyle=' + theValue + ']').addClass(
             'selected');
-        //console.log('editor-helpers.js');
         citationHelpers.formatCitationsInDoc();
     };
     /** Set the document's paper size.
@@ -311,7 +308,7 @@
      * @memberof editorHelpers.setDisplay
      * @param theValue The HTML of the title.*/
     editorHelpers.setDisplay.metadataTitle = function (theValue) {
-        console.log(theValue);
+
         var titleNode = document.getElementById('document-title'), titleClone, diffs;
         
         titleClone = titleNode.cloneNode();
@@ -323,7 +320,7 @@
         domDiff.apply(titleNode, diffs);
         
         nodeConverter.redoFootnotes();
-        console.log(titleClone);
+
         editorHelpers.setDisplay.document('title', titleClone.textContent);
     };
     /** Set the document title in the menu.
@@ -331,8 +328,6 @@
      * @memberof editorHelpers.setDisplay
      * @param theValue The text of the title.*/
     editorHelpers.setDisplay.title = function (theValue) {
-console.log("setting display for title")
-       // var theTitle = theValue;
         if (theValue.length === 0) {
             theValue = gettext('Untitled Document');
         }

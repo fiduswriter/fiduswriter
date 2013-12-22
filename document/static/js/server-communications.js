@@ -244,9 +244,7 @@
                     }
                 }
             }
-            setTimeout( function () {
-                createWSConnection();
-            }, 5000);
+            createWSConnection();
 
         });
 

@@ -120,7 +120,7 @@
         } else {
             if (range.endOffset === range.endContainer.childNodes.length) {
                 return true;
-            } else if (range.endContainer.innerText === '\n') {
+            } else if (range.endContainer.textContent === '\n') {
                 return true;
             }
         }
@@ -204,7 +204,7 @@
 
     dom.mergeParagraphs = function (firstPar, secondPar, range) {
         
-        if (firstPar.innerText === '\n') {
+        if (firstPar.textContent === '\n') {
             // The first paragraph is empty, so we remove it.
             jQuery(firstPar).remove();
             return range;
@@ -225,7 +225,7 @@
         // We now move the caret at the end of the first paragraph.
         range.selectNodeContents(firstPar);
         range.collapse();
-        if (secondPar.innerText !== '\n') {
+        if (secondPar.textContent !== '\n') {
             while (secondPar.firstChild) {
                 // As long as the second paragraph has more children, we transfer them one by one to the first paragraph.
                 firstPar.appendChild(secondPar.firstChild);

@@ -262,7 +262,7 @@
 
                         var autocomplete_tags = [];
                         jQuery('#cite-source-table .fw-searchable').each(function() {
-                            autocomplete_tags.push(this.innerText);
+                            autocomplete_tags.push(this.textContent);
                         });
                         autocomplete_tags = _.uniq(autocomplete_tags);
                         jQuery("#cite-source-table_filter input").autocomplete({

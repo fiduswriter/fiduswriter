@@ -33,8 +33,8 @@
   * @memberof toolsHelpers
   */         
     toolsHelpers.wordCounter = function() {
-        var text_content = document.getElementById('document-editable').innerText,
-            bibliography_content = document.getElementById('document-bibliography').innerText,
+        var text_content = document.getElementById('document-editable').textContent,
+            bibliography_content = document.getElementById('document-bibliography').textContent,
             whole_content = text_content + ' ' + bibliography_content,
             num_pages = jQuery('#pagination-layout .pagination-page').size(),
             num_words,

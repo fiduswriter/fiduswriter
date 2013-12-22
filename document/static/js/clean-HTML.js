@@ -120,7 +120,7 @@
                     }
                 } else if (node.nodeName === 'A' && node.classList.contains('sdfootnotesym')) {
                     node.parentNode.classList.add('sdfootnote');
-                    node.parentNode.setAttribute('data-footnote-id',node.innerText);
+                    node.parentNode.setAttribute('data-footnote-id',node.textContent);
                     node.parentNode.removeChild(node);
                 } else if (node.classList && node.classList.contains('Apple-interchange-newline')) { // Webkit places a BR at the end of certain text pasages when they are copied. We remove this.
                     node.parentNode.removeChild(node);

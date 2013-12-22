@@ -344,14 +344,17 @@
         var stylesheet = document.createElement('style');
         stylesheet.innerHTML =
             ".pagination-main-contents-container {display: -webkit-flex; " +
-            "-webkit-flex-direction: column;}" +
+            "-webkit-flex-direction: column; display: flex; " +
+            "flex-direction: column;}" +
             "\n.pagination-contents-container {position: absolute;}" +
-            "\n.pagination-contents {display: -webkit-flex; -webkit-flex: 1;}"
+            "\n.pagination-contents {display: -webkit-flex; -webkit-flex: 1; " + 
+            "display: flex; flex: 1;}"
         /* There seems to be a bug in the new flexbox model code which requires the
          * height to be set to an arbitrary value (which is ignored).
          */ + "\n.pagination-contents {height: 0px;}" +
-            "\n.pagination-contents-column {-webkit-flex: 1;}" + "\nbody {" +
-            "counter-reset: pagination-footnote pagination-footnote-reference;}" +
+            "\n.pagination-contents-column {-webkit-flex: 1; flex: 1;}" + 
+            "\nbody {counter-reset: pagination-footnote " +
+            "pagination-footnote-reference;}" +
             "\n.pagination-footnote::before {" +
             "counter-increment: pagination-footnote-reference; " +
             "content: counter(pagination-footnote-reference);}" +
@@ -364,12 +367,12 @@
             "-webkit-region-break-after: always;}" +
             "\n.pagination-pagenumber, .pagination-header {position: absolute;}" +
             "\n.pagination-pagebreak {-webkit-region-break-after: always;}" +
-            "\n.pagination-simple {height: auto; position-relative;}" +
+            "\n.pagination-simple {height: auto; position:relative;}" +
             "\n.pagination-page {margin-left:auto; margin-right:auto;}" +
             "\n.pagination-marginnote-item {position:absolute;}" +
             "\n.pagination-marginnote > * {display: block;}" +
             "\n.pagination-index-page {float:right;}" +
-            "\n.pagination-index-list div {margin-left: 5px;)";
+            "\n.pagination-index-list div {margin-left: 5px;}";
         document.head.appendChild(stylesheet);
     };
 
@@ -417,9 +420,11 @@
         + "\n@media screen{.pagination-page {border:solid 1px #000; " +
             "margin-bottom:.2in;}}" +
             "\n.pagination-main-contents-container {width:" + contentsWidth + ";}" + 
-            "\n.pagination-contents-container {bottom:" + contentsBottomMargin + "; height:" + contentsHeight + "; display: -webkit-flex;}"
+            "\n.pagination-contents-container {bottom:" + contentsBottomMargin +
+            "; height:" + contentsHeight + "; display: -webkit-flex; " +
+            "display: flex;}" +
         // Images should at max size be slightly smaller than the contentsWidth.
-        + "\nimg {max-height: " + imageMaxHeight + ";max-width: " +
+            "\nimg {max-height: " + imageMaxHeight + ";max-width: " +
             imageMaxWidth + ";}" + "\n.pagination-pagenumber {bottom:" +
             pagenumberBottomMargin + ";}" + "\n.pagination-header {top:" +
             headerTopMargin + ";}" +
@@ -447,7 +452,7 @@
             "{position: relative; top: -0.5em; font-size: 80%;}" +
             "\n.pagination-toc-entry .pagination-toc-pagenumber, " +
             ".pagination-tof-entry .pagination-tof-pagenumber, " +
-            ".pagination-tot-entry .pagination-tot-pagenumber {float:right}"
+            ".pagination-tot-entry .pagination-tot-pagenumber {float:right;}"
         /* This seems to be a bug in Webkit. But unless we set the width of the 
          * original element that is being flown, some elements extend beyond the
          * mainContentsContainer's width.
@@ -714,11 +719,11 @@
                 if (image && image.alt !== '') {
                     title = image.alt;
                 } else if (caption) {
-                    title = caption.innerText;
+                    title = caption.textContent;
                 } else {
                     title = 'Figure '+ i + '.' + j;
                 }
-                pagenumber = pagination.findPage(figure).querySelector('.pagination-pagenumber').innerText;
+                pagenumber = pagination.findPage(figure).querySelector('.pagination-pagenumber').textContent;
                 tofItemDiv = document.createElement('div');
                 tofItemDiv.classList.add('pagination-tof-entry');
                 tofItemTextSpan = document.createElement('span');
@@ -772,11 +777,11 @@
                 figure = pagination.closest(tables[j], 'figure');
                     caption = figure.querySelector('figcaption');
                     if (caption) {
-                        title = caption.innerText;
+                        title = caption.textContent;
                     } else {
                         title = 'Table '+ i + '.' + j;
                     }
-                    pagenumber = pagination.findPage(figure).querySelector('.pagination-pagenumber').innerText;
+                    pagenumber = pagination.findPage(figure).querySelector('.pagination-pagenumber').textContent;
                     totItemDiv = document.createElement('div');
                     totItemDiv.classList.add('pagination-tot-entry');
                     totItemTextSpan = document.createElement('span');
@@ -1242,11 +1247,11 @@
                 
             });
             if (document.hasOwnProperty('fontloader')) {
-                document.fontloader.addEventListener('loadingdone', function() {
-                        // When fonts have been loaded, update the body layout.
-                        // TODO: This does not seem to work at all times. 
-                        document.body.dispatchEvent(pagination.events.bodyLayoutUpdated);
-                });
+            	document.fontloader.addEventListener('loadingdone', function() {
+                	// When fonts have been loaded, update the body layout.
+                	// TODO: This does not seem to work at all times. 
+                	document.body.dispatchEvent(pagination.events.bodyLayoutUpdated);
+            	});
             }
         }
         if (pagination.config('enableCrossReferences')) {
@@ -1498,11 +1503,11 @@
         // Find the first page number used in this flowObject.
         var startpageNumberField;
         
-        if (this.rawdiv.innerText.length > 0 && pagination.config('numberPages')) {
+        if (this.rawdiv.textContent.length > 0 && pagination.config('numberPages')) {
             startpageNumberField =
                 this.div.querySelector('.pagination-pagenumber');
             if (startpageNumberField) {    
-                this.startpageNumber = startpageNumberField.innerText;
+                this.startpageNumber = startpageNumberField.textContent;
             }
         }
     };
@@ -2063,7 +2068,7 @@
     flowObject.prototype.addOrRemovePages = function (pages) {
         // This loop is called when we believe pages have to added or removed. 
 
-        if ((this.namedFlow.overset) && (this.rawdiv.innerText.length > 0)) {
+        if ((this.namedFlow.overset) && (this.rawdiv.textContent.length > 0)) {
             /* If there are too few regions (overset==True) and the contents of
              * rawdiv are at least 1 character long, pages need to be added.
              */
@@ -2151,8 +2156,8 @@
         || navigator.userAgent.indexOf('7.0 Safari/') > -1) {
             /* Safari 6.1/7 does not include the regionoversetchange event. 
              * Newer versions should drop the regionlayoutupdate event.
-                 */
-                flowObject.namedFlow.addEventListener("webkitregionlayoutupdate", checkOverset);
+         	 */
+        	flowObject.namedFlow.addEventListener("webkitregionlayoutupdate", checkOverset);
         }
 
         flowObject.currentlyChecking = false;

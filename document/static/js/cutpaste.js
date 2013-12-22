@@ -33,7 +33,7 @@
 
             cleanHTML.init(pasteElement); // Clean the html for the body text
         } else {
-            pasteElement.innerHTML = pasteElement.innerText; // Remove all html tags in the title
+            pasteElement.innerHTML = pasteElement.textContent; // Remove all html tags in the title
         }
         return true;
 
@@ -87,7 +87,7 @@
                     paste.removeExtraFormatting(this, pasteElement);
 
                 } else if (/text\/plain/.test(e.clipboardData.types)) {
-                    pasteElement.innerText = e.clipboardData.getData(
+                    pasteElement.textContent = e.clipboardData.getData(
                         'text/plain');
                 }
 

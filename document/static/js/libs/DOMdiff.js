@@ -447,20 +447,20 @@
             action: REMOVE_ATTRIBUTE,
             attribute: {
               name: attr.name,
-              value: attr.nodeValue
+              value: attr.value
             },
             route: route
           }));
           return diffs;
         }
         var a2 = attr2.splice(pos, 1)[0];
-        if (attr.nodeValue !== a2.nodeValue) {
+        if (attr.value !== a2.value) {
           diffs.push(new Diff({
             action: MODIFY_ATTRIBUTE,
             attribute: {
               name: attr.name,
-              oldValue: attr.nodeValue,
-              newValue: a2.nodeValue
+              oldValue: attr.value,
+              newValue: a2.value
             },
             route: route
           }));
@@ -471,7 +471,7 @@
           action: ADD_ATTRIBUTE,
           attribute: {
             name: attr.name,
-            value: attr.nodeValue
+            value: attr.value
           },
           route: route
         }));

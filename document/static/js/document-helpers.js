@@ -175,7 +175,7 @@
 
         var autocomplete_tags = [];
         jQuery('#document-table .fw-searchable').each(function() {
-            autocomplete_tags.push(this.innerText);
+            autocomplete_tags.push(this.textContent);
         });
         autocomplete_tags = _.uniq(autocomplete_tags);
         $("#document-table_wrapper .dataTables_filter input").autocomplete({

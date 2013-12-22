@@ -77,7 +77,7 @@
 
         var autocomplete_tags = [];
         jQuery('#book-table .fw-searchable').each(function() {
-            autocomplete_tags.push(this.innerText);
+            autocomplete_tags.push(this.textContent);
         });
         autocomplete_tags = _.uniq(autocomplete_tags);
         jQuery("#book-table_filter input").autocomplete({
@@ -570,7 +570,7 @@
                 }
                 theBook.chapters.push({
                     text: documentId,
-                    title: jQuery.trim(this.innerText),
+                    title: jQuery.trim(this.textContent),
                     number: lastChapterNumber + 1,
                     part: ''
                 });

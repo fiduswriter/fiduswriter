@@ -1960,7 +1960,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
 
         var autocomplete_tags = [];
         jQuery('#bibliography .fw-searchable').each(function () {
-            autocomplete_tags.push(this.innerText);
+            autocomplete_tags.push(this.textContent);
         });
         autocomplete_tags = _.uniq(autocomplete_tags);
         jQuery("#bibliography_filter input").autocomplete({

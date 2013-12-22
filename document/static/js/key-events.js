@@ -369,7 +369,7 @@
 
         insideList = jQuery(range.startContainer).closest('li')[0];
 
-        if (insideList && insideList.innerText === '\n') {
+        if (insideList && insideList.textContent === '\n') {
             dom.switchBlockElementWhileSavingCaretPosition(insideList, 'p');
             return true;
         }

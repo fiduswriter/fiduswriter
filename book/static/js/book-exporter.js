@@ -154,7 +154,7 @@
 
             title = document.createElement('div');
             title.innerHTML = aDocument.title;
-            title = title.innerText;
+            title = title.textContent;
 
             bibliography = citationHelpers.formatCitations(contents,
                 aBook.settings.citationstyle,
@@ -378,7 +378,7 @@
             });
             title = document.createElement('div');
             title.innerHTML = aDocument.title;
-            title = title.innerText;
+            title = title.textContent;
 
             contents = document.createElement('div');
             contents.innerHTML = aDocument.contents;
@@ -501,7 +501,7 @@
 
             title = document.createElement('div');
             title.innerHTML = aDocument.title;
-            title = title.innerText;
+            title = title.textContent;
 
             contents = document.createElement('div');
             contents.innerHTML = aDocument.contents;

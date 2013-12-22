@@ -26,8 +26,8 @@
         mathHelpers = {};
 
     mathHelpers.setMathNodeContents = function (node) {
-        // Set the innerText of a mathnode to be the same as the data-equation attribute
-        node.innerText = '[MATH]' + node.getAttribute('data-equation') +
+        // Set the textContent of a mathnode to be the same as the data-equation attribute
+        node.textContent = '[MATH]' + node.getAttribute('data-equation') +
             '[/MATH]';
     };
 
@@ -38,8 +38,8 @@
     };
 
     mathHelpers.setDisplayMathNodeContents = function (node) {
-        // Set the innerText of a display mathnode/math figure to be the same as the data-equation attribute
-        node.innerText = '[DMATH]' + node.getAttribute('data-equation') +
+        // Set the textContent of a display mathnode/math figure to be the same as the data-equation attribute
+        node.textContent = '[DMATH]' + node.getAttribute('data-equation') +
             '[/DMATH]';
     };
 

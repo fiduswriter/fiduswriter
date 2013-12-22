@@ -32,11 +32,11 @@
             range = selection.getRangeAt(0),
             containsSelection = false,
             finalValue, selectionStartOffset, selectionEndOffset;
-        if (range.startContainer.isSameNode(node)) {
+        if (range.startContainer == node) {
             selectionStartOffset = range.startOffset;
             currentValue = currentValue.substring(0, range.startOffset) + '\0' + currentValue.substring(range.startOffset);
         }
-        if (range.endContainer.isSameNode(node)) {
+        if (range.endContainer == node) {
             selectionEndOffset = range.endOffset;
             currentValue = currentValue.substring(0, range.endOffset + 1) + '\0' + currentValue.substring(range.endOffset + 1);
         }

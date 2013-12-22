@@ -205,7 +205,7 @@ jQuery(document).bind('documentDataLoaded', function () {
 
         jQuery('#metadata-subtitle, #metadata-abstract, #metadata-authors, #metadata-keywords').bind('blur',
             function () {
-                if (jQuery.trim(this.innerText) === '') {
+                if (jQuery.trim(this.textContent) === '') {
                     this.innerHTML = '<p><br></p>';
                 };
             });

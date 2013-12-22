@@ -139,7 +139,7 @@
 
                         figureCatNode.innerHTML = jQuery(
                             '#figure-category-list span[data-category=' +
-                            figCat + ']')[0].innerText;
+                            figCat + ']')[0].textContent;
 
                         captionTextNode = document.createElement('span');
                         captionTextNode.setAttribute('data-caption',
@@ -196,7 +196,7 @@
                     figureCatNode.innerHTML = jQuery(
                         '#figure-category-list span[data-category=' +
                         figCat +
-                        ']')[0].innerText;
+                        ']')[0].textContent;
 
                     captionTextNode = document.createElement('span');
                     captionTextNode.setAttribute('data-caption',
@@ -312,9 +312,9 @@
                         figTypeInputValue = insideFigure.getAttribute(
                             'data-figure-category');
                         figTypeInput.val(figTypeInputValue);
-                        figTypeSelectorValue.innerText = jQuery(
+                        figTypeSelectorValue.textContent = jQuery(
                             '#figure-category-list span[data-category=' +
-                            figTypeInputValue + ']')[0].innerText;
+                            figTypeInputValue + ']')[0].textContent;
                         useImage = insideFigure.getAttribute(
                             'data-image');
                         if ('' !== useImage) {
@@ -337,7 +337,7 @@
                     else {
                         mathInput.val('');
                         captionInput.val('');
-                        figTypeSelectorValue.innerText = gettext(
+                        figTypeSelectorValue.textContent = gettext(
                             'Figure');
                         figTypeInput.val('figure');
                         jQuery('#addFigureButton').val(gettext('Insert'));

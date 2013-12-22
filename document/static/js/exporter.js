@@ -394,19 +394,19 @@ var FW_FILETYPE_VERSION = "1.1";
         if (specifiedAuthors && metadata.authors && metadata.authors != '') {
             var authorsDiv = document.createElement('div');
             authorsDiv.innerHTML = metadata.authors;
-            latexStart += '\n\\author{' + authorsDiv.innerText + '}\n';
+            latexStart += '\n\\author{' + authorsDiv.textContent + '}\n';
         } else {
             latexStart += '\n\\author{' + author + '}\n';
         }
         if (subtitle && metadata.subtitle && metadata.subtitle != '') {
             var subtitleDiv = document.createElement('div');
             subtitleDiv.innerHTML = metadata.subtitle;
-            latexStart += '\\subtitle{' + subtitleDiv.innerText + '}\n';
+            latexStart += '\\subtitle{' + subtitleDiv.textContent + '}\n';
         }
         if (keywords && metadata.keywords && metadata.keywords != '') {
             var keywordsDiv = document.createElement('div');
             keywordsDiv.innerHTML = metadata.keywords;
-            latexStart += '\\begin{keywords}\n' + keywordsDiv.innerText + '\\end{keywords}\n';
+            latexStart += '\\begin{keywords}\n' + keywordsDiv.textContent + '\\end{keywords}\n';
         }
 
 
@@ -457,7 +457,7 @@ var FW_FILETYPE_VERSION = "1.1";
             if (metadataSettings.subtitle && metadata.subtitle &&
                 metadata.subtitle != '') {
                 cleanDiv.innerHTML = metadata.subtitle;
-                latexStart += '\\section{' + cleanDiv.innerText + '}\n';
+                latexStart += '\\section{' + cleanDiv.textContent + '}\n';
             } else {}
         } else {
             documentFeatures = exporter.findLatexDocumentFeatures(
@@ -508,15 +508,15 @@ var FW_FILETYPE_VERSION = "1.1";
         });
 
         jQuery(htmlCode).find('h1').each(function () {
-            jQuery(this).replaceWith('\n\n\\section{' + this.innerText +
+            jQuery(this).replaceWith('\n\n\\section{' + this.textContent +
                 '}\n');
         });
         jQuery(htmlCode).find('h2').each(function () {
-            jQuery(this).replaceWith('\n\n\\subsection{' + this.innerText +
+            jQuery(this).replaceWith('\n\n\\subsection{' + this.textContent +
                 '}\n');
         });
         jQuery(htmlCode).find('h3').each(function () {
-            jQuery(this).replaceWith('\n\n\\subsubsection{' + this.innerText +
+            jQuery(this).replaceWith('\n\n\\subsubsection{' + this.textContent +
                 '}\n');
         });
         jQuery(htmlCode).find('p').each(function () {
@@ -633,7 +633,7 @@ var FW_FILETYPE_VERSION = "1.1";
         });
 
         returnObject = {
-            latex: latexStart + htmlCode.innerText + latexEnd,
+            latex: latexStart + htmlCode.textContent + latexEnd,
         };
         if (isChapter) {
             returnObject.listedWorksList = listedWorksList;
@@ -679,7 +679,7 @@ var FW_FILETYPE_VERSION = "1.1";
         var contentItems = [],
             title;
         jQuery(htmlCode).find('h1,h2,h3').each(function () {
-            title = jQuery.trim(this.innerText);
+            title = jQuery.trim(this.textContent);
             if (title !== '') {
                 var contentItem = {};
                 contentItem.title = title;
@@ -942,7 +942,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
         title = document.createElement('div');
         title.innerHTML = aDocument.title;
-        title = title.innerText;
+        title = title.textContent;
 
         $.addAlert('info', title + ': ' + gettext(
             'Latex export has been initiated.'));
@@ -999,7 +999,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
         title = document.createElement('div');
         title.innerHTML = aDocument.title;
-        title = title.innerText;
+        title = title.textContent;
 
         $.addAlert('info', title + ': ' + gettext(
             'Epub export has been initiated.'));
@@ -1078,14 +1078,14 @@ var FW_FILETYPE_VERSION = "1.1";
 
         if (aDocument.settings.metadata.authors && aDocument.metadata.authors && aDocument.metadata.authors != '') {
             cleanDiv.innerHTML = aDocument.metadata.authors;
-            authors = jQuery.map(cleanDiv.innerText.split(","), jQuery.trim);
+            authors = jQuery.map(cleanDiv.textContent.split(","), jQuery.trim);
         } else {
             authors = [aDocument.owner.name];
         }
 
         if (aDocument.settings.metadata.keywords && aDocument.metadata.keywords && aDocument.metadata.keywords != '') {
             cleanDiv.innerHTML = aDocument.metadata.keywords;
-            keywords = jQuery.map(cleanDiv.innerText.split(","), jQuery.trim);
+            keywords = jQuery.map(cleanDiv.textContent.split(","), jQuery.trim);
         } else {
             keywords = [];
         }
@@ -1189,7 +1189,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
         title = document.createElement('div');
         title.innerHTML = aDocument.title;
-        title = title.innerText;
+        title = title.textContent;
 
         $.addAlert('info', title + ': ' + gettext(
             'HTML export has been initiated.'));

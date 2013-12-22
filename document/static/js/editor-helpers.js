@@ -111,6 +111,8 @@
      * that differ from session to session.
      */
     editorHelpers.fillEditorPage = function (aDocument, aDocumentValues) {
+        
+        console.log(aDocument, aDocumentValues);
         var DEFAULTS, i;
         theDocument = aDocument;
         theDocumentValues = aDocumentValues;
@@ -285,7 +287,7 @@
     editorHelpers.setDisplay.contents = function (theValue) {
         var contentsNode = document.getElementById('document-contents'), contentsClone, diffs;
         
-        //if (contentsNode.innerText.length===0) {
+        //if (contentsNode.textContent.length===0) {
         //    contentsNode.innerHTML = theValue;
         //    return;
         //}
@@ -309,6 +311,7 @@
      * @memberof editorHelpers.setDisplay
      * @param theValue The HTML of the title.*/
     editorHelpers.setDisplay.metadataTitle = function (theValue) {
+        console.log(theValue);
         var titleNode = document.getElementById('document-title'), titleClone, diffs;
         
         titleClone = titleNode.cloneNode();
@@ -320,21 +323,21 @@
         domDiff.apply(titleNode, diffs);
         
         nodeConverter.redoFootnotes();
-        
-        editorHelpers.setDisplay.document('title', titleClone.innerText);
+        console.log(titleClone);
+        editorHelpers.setDisplay.document('title', titleClone.textContent);
     };
     /** Set the document title in the menu.
      * @function title
      * @memberof editorHelpers.setDisplay
      * @param theValue The text of the title.*/
     editorHelpers.setDisplay.title = function (theValue) {
-
-        var theTitle = theValue;
-        if (theTitle.length === 0) {
-            theTitle = gettext('Untitled Document');
+console.log("setting display for title")
+       // var theTitle = theValue;
+        if (theValue.length === 0) {
+            theValue = gettext('Untitled Document');
         }
-        jQuery('title').html('Fidus Writer - ' + theTitle);
-        jQuery('#header h1').html(theTitle);
+        jQuery('title').html('Fidus Writer - ' + theValue);
+        jQuery('#header h1').html(theValue);
     };
 
     /** A dictionary linking field names with set display functions. 
@@ -513,37 +516,37 @@
      */ 
     editorHelpers.setPlaceholders = function (currentElement) {
         var placeHolderCss = '';
-        if (jQuery('#document-title')[0].innerText.length === 0 &&
+        if (jQuery('#document-title')[0].textContent.length === 0 &&
             currentElement != 'document-title') {
             placeHolderCss += '#document-title:before {content: "' +
                 gettext('Title...') + '"}\n';
         }
-        if (jQuery('#document-contents')[0].innerText.replace(
+        if (jQuery('#document-contents')[0].textContent.replace(
                 /(\r\n|\n|\r)/gm, "").length === 0 && currentElement !=
             'document-contents') {
             placeHolderCss += '#document-contents:before {content: "' +
                 gettext('Contents...') + '"}\n';
         }
         if (jQuery('#metadata-subtitle').length > 0 && jQuery(
-                '#metadata-subtitle')[0].innerText.length === 0 &&
+                '#metadata-subtitle')[0].textContent.length === 0 &&
             currentElement != 'metadata-subtitle') {
             placeHolderCss += '#metadata-subtitle:before {content: "' +
                 gettext('Subtitle...') + '"}\n';
         }
         if (jQuery('#metadata-abstract').length > 0 && jQuery(
-                '#metadata-abstract')[0].innerText.length === 0 &&
+                '#metadata-abstract')[0].textContent.length === 0 &&
             currentElement != 'metadata-abstract') {
             placeHolderCss += '#metadata-abstract:before {content: "' +
                 gettext('Abstract...') + '"}\n';
         }
         if (jQuery('#metadata-authors').length > 0 && jQuery(
-                '#metadata-authors')[0].innerText.length === 0 &&
+                '#metadata-authors')[0].textContent.length === 0 &&
             currentElement != 'metadata-authors') {
             placeHolderCss += '#metadata-authors:before {content: "' +
                 gettext('Author(s)...') + '"}\n';
         }
         if (jQuery('#metadata-keywords').length > 0 && jQuery(
-                '#metadata-keywords')[0].innerText.length === 0 &&
+                '#metadata-keywords')[0].textContent.length === 0 &&
             currentElement != 'metadata-keywords') {
             placeHolderCss += '#metadata-keywords:before {content: "' +
                 gettext('Keywords...') + '"}\n';

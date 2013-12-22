@@ -222,7 +222,7 @@
                     
                     if (citationNode) {
                         diaButtons.push({text: gettext('Remove'), click: function () {
-                            citationNode.parentNode.removeChild(citationNode);
+                            manualEdits.remove(citationNode, range);
                             citationNode = false;
                             citeSpan = false;
                             dialog.dialog('close');

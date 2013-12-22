@@ -17,7 +17,6 @@
  * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
  *
  */
-
 // toolbar math
 (function (jQuery) {
     return jQuery.widget("IKS.toolbarmath", {
@@ -91,7 +90,7 @@
                     range = dom.noCitationOrLinkNode(range);
                     // Insert the new math node
                     manualEdits.insert(mathNode, range);
-                    
+
                 }
 
                 mathNode.parentNode.insertBefore(nodeConverter.afterNode(), mathNode.nextSibling);
@@ -141,7 +140,7 @@
                     widget.options.editable.element.focus();
                     return widget.options.editable.keepActivated(false);
                 });
-                openDialog = function(clickedFormula) {
+                openDialog = function (clickedFormula) {
                     insideMath = clickedFormula;
                     selection = rangy.getSelection();
                     range = selection.getRangeAt(0);
@@ -160,12 +159,12 @@
                         jQuery(deleteButton).bind('click', function (event) {
                             event.stopPropagation();
                             event.preventDefault();
-                            insideMath.parentNode.removeChild(insideMath);
+                            manualEdits.remove(insideMath, range);
                             insideMath = false;
                             dialog.dialog('close');
                             return false;
                         });
-                        
+
                     } else {
                         mathInput.val(widget.options.defaultMath);
                     }

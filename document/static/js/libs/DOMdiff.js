@@ -588,19 +588,19 @@
       var node = this.getFromRoute(tree, diff.route);
 
       if (diff.action === ADD_ATTRIBUTE) {
-        if (!node.setAttribute)
+        if (!node || !node.setAttribute)
           return false;
         node.setAttribute(diff.attribute.name, diff.attribute.value);
       } else if (diff.action === MODIFY_ATTRIBUTE) {
-        if (!node.setAttribute)
+        if (!node || !node.setAttribute)
           return false;          
         node.setAttribute(diff.attribute.name, diff.attribute.newValue);
       } else if (diff.action === REMOVE_ATTRIBUTE) {
-        if (!node.removeAttribute)
+        if (!node || !node.removeAttribute)
           return false;          
         node.removeAttribute(diff.attribute.name);
       } else if (diff.action === MODIFY_TEXT_ELEMENT) {
-          if (node.nodeType!=3)
+          if (!node || node.nodeType!=3)
             return false;
         this.textDiff(node, node.data, diff.oldValue, diff.newValue);
       } else if (diff.action === REPLACE_ELEMENT) {
@@ -629,7 +629,7 @@
       } else if (diff.action === REMOVE_ELEMENT) {
         node.parentNode.removeChild(node);
       } else if (diff.action === REMOVE_TEXT_ELEMENT) {
-          if (node.nodeType!=3)
+          if (!node || node.nodeType!=3)
             return false;
         node.parentNode.removeChild(node);
       } else if (diff.action === ADD_ELEMENT) {
@@ -648,7 +648,7 @@
           c = route.splice(route.length - 1, 1)[0],
           newNode = document.createTextNode(diff.element);
         node = this.getFromRoute(tree, route);
-        if (!node.childNodes)
+        if (!node || !node.childNodes)
           return false;
         if (c >= node.childNodes.length) {
           node.appendChild(newNode);

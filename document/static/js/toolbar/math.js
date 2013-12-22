@@ -42,20 +42,23 @@
             var buttonize, buttonset, dialog, dialogId, dialogSubmitCb, mathInput, insideMath, mathNode, noChange, widget, range, selection, _this = this;
             widget = this;
             dialogId = "" + this.options.uuid + "-dialog";
+            
+            
             dialog = jQuery('<div id="' + dialogId + '">\
-                <form action="#" method="post" class="mathForm">\
                     <input style="width: 250px;" class="math" type="text" name="math" value="' + this.options.defaultMath + '" />\
                     <div class="dialogSubmit ui-dialog-buttonset">\
-                        <input type="submit" id="addmathButton" class="fw-button fw-dark" value="' + gettext("Insert") + '" />\
+                        <button id="addMathButton" class="fw-button fw-dark"></button>\
+                        <button id="cancelMathButton" class="fw-button fw-orange">'+gettext("Cancel")+'</button>\
                     </div>\
-                </form></div>');
+                </div>');
             mathInput = jQuery('input[name=math]', dialog).focus(function (e) {
                 return this.select();
             });
             dialogSubmitCb = function (event) {
                 var math, emptySpaceNode;
                 noChange = false;
-                event.preventDefault();
+                console.log("trick or treat");
+                //event.preventDefault();
                 math = mathInput.val();
 
                 if (((new RegExp(/^\s*$/)).test(math))) {
@@ -98,7 +101,10 @@
                 dialog.dialog('close');
                 return false;
             };
-            dialog.find("form").submit(dialogSubmitCb);
+            dialog.find('#addMathButton').bind('click', dialogSubmitCb);
+            dialog.find('#cancelMathButton').bind('click', function () {
+                dialog.dialog('close');
+            });
             buttonset = $.Fidus.buttonset.prototype.createButtonset.call(this, widget.widgetName, 1);
             buttonize = function (type) {
                 var button, id, openDialog, deleteButton, submitButton;
@@ -116,10 +122,6 @@
                 buttonset.append(button);
                 dialog.bind('dialogclose', function () {
                     jQuery('label', button).removeClass('ui-state-active');
-                    if (submitButton) {
-                        submitButton.setAttribute('value', gettext('Insert'));
-                        delete submitButton;
-                    }
                     if (deleteButton && deleteButton.parentNode) {
                         deleteButton.parentNode.removeChild(deleteButton);
                         delete deleteButton;
@@ -146,11 +148,10 @@
                     range = selection.getRangeAt(0);
 
                     mathInput = jQuery('input[name=math]', dialog);
-
+                    submitButton = document.getElementById('addMathButton');
                     if (insideMath) {
                         mathInput.val(insideMath.getAttribute('data-equation'));
-                        submitButton = jQuery(mathInput[0].form).find('input[type=submit]')[0];
-                        submitButton.setAttribute('value', gettext('Update'));
+                        submitButton.textContent = gettext('Update');
                         deleteButton = document.createElement('button');
                         deleteButton.classList.add('fw-button');
                         deleteButton.classList.add('fw-orange');
@@ -166,6 +167,7 @@
                         });
 
                     } else {
+                        submitButton.textContent = gettext('Insert');
                         mathInput.val(widget.options.defaultMath);
                     }
 

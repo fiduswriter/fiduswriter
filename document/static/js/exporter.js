@@ -1184,7 +1184,7 @@ var FW_FILETYPE_VERSION = "1.1";
         var title, contents, bibliography, htmlCode, outputList,
             httpOutputList,
             styleSheets = [],
-            includeZips = [];
+            includeZips = [], equations;
 
 
         title = document.createElement('div');
@@ -1197,6 +1197,12 @@ var FW_FILETYPE_VERSION = "1.1";
         contents = document.createElement('div');
         contents.innerHTML = aDocument.contents;
 
+        equations = contents.querySelectorAll('.equation');
+
+        for (i=0;i<equations.length;i++) {
+            mathHelpers.layoutMathNode(equations[i]);
+        }
+        
         bibliography = citationHelpers.formatCitations(contents,
             aDocument.settings.citationstyle,
             aBibDB);

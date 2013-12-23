@@ -424,8 +424,8 @@ $(document).ready(function() {
     }
 
     jQuery.addDropdownBox($('#edit-avatar-btn'), $('#edit-avatar-pulldown'));
-    jQuery('.change-avatar').bind('click', changeAvatarDialog);
-    jQuery('.delete-avatar').bind('click', deleteAvatarDialog);
+    jQuery('.change-avatar').bind('mousedown', changeAvatarDialog);
+    jQuery('.delete-avatar').bind('mousedown', deleteAvatarDialog);
     jQuery('#submit-profile').bind('click', saveProfile);
     jQuery('#delete-account').bind('click', deleteUserDialog);
     jQuery('#fw-edit-profile-pwd').bind('click',changePwdDialog);

@@ -37,7 +37,7 @@ jQuery(function() {
     jQuery('.add-contact').bind('click', contactHelpers.addMemberDialog);
 
     $.addDropdownBox(jQuery('#select-action-dropdown'), jQuery('#action-selection-pulldown'));
-    jQuery('#action-selection-pulldown span').bind('click', function() {
+    jQuery('#action-selection-pulldown span').bind('mousedown', function() {
         var ids = [], action_name = jQuery(this).attr('data-action');
         if('' == action_name || 'undefined' == typeof(action_name))
             return;

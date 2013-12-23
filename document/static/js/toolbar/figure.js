@@ -63,7 +63,6 @@ jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (
         text: submitMessage,
         class: 'fw-button fw-dark',
         click: function (event) {
-            console.log('submit');
             event.preventDefault();
             equation = mathInput.val();
             caption = captionInput.val();
@@ -89,13 +88,7 @@ jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (
                 // the figure has not been changed, just close the dialog
                 dialog.dialog('close');
                 return false;
-            } else {
-                console.log('changes');
-                console.log([insideFigure, equation, image, caption, category]);
-                HANFDAN = insideFigure;
             }
-
-
 
             figureNode = document.createElement('figure');
             figureNode.setAttribute('data-equation', equation);
@@ -271,7 +264,6 @@ jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (
     jQuery('#figure-category-pulldown li span').bind(
         'mousedown', function (event) {
             event.preventDefault();
-            console.log(this);
             category = this.id.split('-')[2];
             setFigureLabel();
         });

@@ -267,7 +267,7 @@ jQuery(document).bind('documentDataLoaded', function () {
         }
 
         // Set webpage title when document title changes
-        jQuery('#document-title').bind('keyup paste change hallomodified',
+        jQuery('#document-title').bind('keyup paste change',
             function () {
                 editorHelpers.setDisplay.document('title', jQuery(this).text()
                     .trim());
@@ -275,7 +275,7 @@ jQuery(document).bind('documentDataLoaded', function () {
 
         // When contents of document have changed, mark it as such
         jQuery('#document-editable').bind(
-            'keyup paste change hallomodified', function () {
+            'keyup paste change', function () {
                 editorHelpers.documentHasChanged();
             });
         jQuery('.save').bind('click', function () {
@@ -303,13 +303,11 @@ jQuery(document).bind('documentDataLoaded', function () {
             }
         );
 
-        var wait_hallotoolbar = setTimeout(function () {
-            //set extra eventhandlers for hallotoolbar
-            jQuery('.hallotoolbar .multibuttonsCover').each(function () {
+            jQuery('.multibuttonsCover').each(function () {
                 $.addDropdownBox(jQuery(this), jQuery(this).siblings(
                     '.fw-pulldown'));
             });
-        }, 100);
+
 
         //ice pulldown
         $.addDropdownBox(jQuery('#ice-control'), jQuery(

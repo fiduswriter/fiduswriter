@@ -196,7 +196,7 @@ jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (
         resizable: false,
         draggable: false,
         buttons: dialogButtons,
-        dialogClass: 'hallofigure-dialog',
+        dialogClass: 'figure-dialog',
         close: function () {
             if (figureNode && figureNode.parentNode) {
                 range.selectNode(figureNode);
@@ -311,7 +311,7 @@ jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (
                 modal: true,
                 resizable: false,
                 draggable: false,
-                dialogClass: 'hallofigureimage-dialog',
+                dialogClass: 'figureimage-dialog',
                 close: function () {
                     jQuery(this).dialog('destroy').remove();
                 }

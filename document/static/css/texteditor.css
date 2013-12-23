@@ -170,10 +170,6 @@ body {
     overflow: hidden;
 }
 
-.hallocite-dialog {
-    overflow: visible;
-}
-
 #pagination-layout {
     position: absolute;
     top: 200px;

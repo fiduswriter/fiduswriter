@@ -95,13 +95,14 @@ jQuery(document).on('mousedown', '#button-math, .equation', function (event) {
 
 
 
-    dialog = jQuery('<div title="' + gettext('Latex equation') + '">\
+    dialog = jQuery('<div>\
                         <input style="width: 250px;" class="math" type="text" name="math" value="' + formula + '" />\
                     </div>');
 
 
     dialog.dialog({
         buttons: dialogButtons,
+        title: gettext('Latex equation'),
         modal: true,
         close: function () {
             jQuery(this).dialog('destroy').remove();

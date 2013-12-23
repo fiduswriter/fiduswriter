@@ -18,15 +18,54 @@
  *
  */
 // toolbar figure
-jQuery(document).on('mousedown', '#figure-comment, :not(.del) figure', function (event) {
+jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (event) {
 
-            dialogSubmit = function (event) {
-                var math, caption, emptySpaceNode, figCat;
+        var selection = rangy.getSelection(),
+        range = selection.getRangeAt(0), dialog, submitMessage = gettext('Insert'),
+            dialogButtons = [],
+            insideFigure = false,
+            figureNode = false,
+            contentNode = false,
+            image = false,
+            caption = '',
+            category = 'figure',
+            equation = '';
+        event.preventDefault();
+
+        if (jQuery(this).is('figure')) {
+            insideFigure = this;
+            submitMessage = gettext('Update');
+            equation = insideFigure.getAttribute(
+                'data-equation');
+            caption = insideFigure.getAttribute(
+                'data-caption');
+            figureCategory = insideFigure.getAttribute(
+                'data-figure-category');
+
+            image = insideFigure.getAttribute(
+                'data-image');
+            if ('' === image) {
+                image = false;
+            } else {
+                image = ImageDB[image];
+                //TODO: Figure out what to do if the image has been deleted from ImageDB in the meantime.                          
+            }
+        }
+
+        dialog = jQuery(tmp_configure_figure({
+            equation: equation,
+            caption: caption
+        }));
+
+        dialogButtons.push({
+            text: submitMessage,
+            class: 'fw-button fw-dark',
+            click: function (event) {
                 event.preventDefault();
                 math = mathInput.val();
                 caption = captionInput.val();
 
-                if ((new RegExp(/^\s*$/)).test(math) && (!useImage)) {
+                if ((new RegExp(/^\s*$/)).test(math) && (!image)) {
                     // The math input is empty. Delete a math node if it exist. Then close the dialog.
                     if (insideFigure) {
                         manualEdits.remove(insideFigure, false);
@@ -34,138 +73,87 @@ jQuery(document).on('mousedown', '#figure-comment, :not(.del) figure', function 
                     dialog.dialog('close');
                     return false;
                 }
-                figCat = figTypeInput.val();
-                if (insideFigure) {
-                    if (math === insideFigure.getAttribute(
-                            'data-equation') &&
-                        (useImage.pk === insideFigure.getAttribute(
-                            'data-image')) &&
-                        caption === insideFigure.getAttribute(
-                            'data-caption') &&
-                        figCat === insideFigure.getAttribute(
-                            'data-figure-category')) {
-                        // the figure has not been changed, just close the dialog
-                        dialog.dialog('close');
-                        return false;
-                    }
-                    else {
 
-                        figureNode = document.createElement('figure');
-                        figureNode.setAttribute('data-equation', math);
-                        if (useImage) {
-                            figureNode.setAttribute('data-image',
-                                useImage['pk']);
-                        }
-                        else {
-                            figureNode.setAttribute('data-image', '');
-                        }
-                        figureNode.setAttribute('data-caption', caption);
-                        figureNode.setAttribute('data-figure-category',
-                            figCat);
-                        figureNode.setAttribute('contenteditable',
-                            false);
-
-                        contentNode = document.createElement('div');
-                        if (useImage) {
-                            contentNode.innerHTML = '<img src="' +
-                                useImage.image +
-                                '">';
-                        }
-                        else {
-                            contentNode.classList.add('figure-equation');
-                            contentNode.setAttribute('data-equation',
-                                math);
-                            contentNode.innerHTML = ' ';
-                        }
-
-
-                        figureCatNode = document.createElement('span');
-                        figureCatNode.setAttribute(
-                            'data-figure-category',
-                            figCat);
-                        figureCatNode.classList.add('figure-cat-' +
-                            figCat);
-
-                        figureCatNode.innerHTML = jQuery(
-                            '#figure-category-list span[data-category=' +
-                            figCat + ']')[0].textContent;
-
-                        captionTextNode = document.createElement('span');
-                        captionTextNode.setAttribute('data-caption',
-                            caption);
-                        captionTextNode.innerHTML = caption;
-
-                        captionNode = document.createElement(
-                            'figcaption');
-                        captionNode.appendChild(figureCatNode);
-                        captionNode.appendChild(captionTextNode);
-
-                        figureNode.appendChild(contentNode);
-                        figureNode.appendChild(captionNode);
-                        manualEdits.insert(figureNode, range);
-                        //insideFigure.parentNode.insertBefore(figureNode,
-                        //    insideFigure.nextSibling);
-                        range.selectNode(figureNode);
-                        range.collapse();
-                        manualEdits.remove(insideFigure, false);
-
-                    }
+                if (insideFigure && math === insideFigure.getAttribute(
+                        'data-equation') &&
+                    (image.pk === insideFigure.getAttribute(
+                        'data-image')) &&
+                    caption === insideFigure.getAttribute(
+                        'data-caption') &&
+                    category === insideFigure.getAttribute(
+                        'data-figure-category')) {
+                    // the figure has not been changed, just close the dialog
+                    dialog.dialog('close');
+                    return false;
                 }
-                else {
-                    figureNode = document.createElement('figure');
-                    figureNode.setAttribute('data-equation', math);
-                    if (useImage) {
-                        figureNode.setAttribute('data-image', useImage[
-                            'pk']);
-                    }
-                    else {
-                        figureNode.setAttribute('data-image', '');
-                    }
-                    figureNode.setAttribute('data-caption', caption);
-                    figureNode.setAttribute('data-figure-category',
-                        figCat);
-                    figureNode.setAttribute('contenteditable', false);
 
-                    contentNode = document.createElement('div');
-                    if (useImage) {
-                        contentNode.innerHTML = '<img src="' + useImage
-                            .image +
-                            '">';
-                    }
-                    else {
-                        contentNode.classList.add('figure-equation');
-                        contentNode.setAttribute('data-equation', math);
-                        contentNode.innerHTML = ' ';
-                    }
+                figureNode = document.createElement('figure');
+                figureNode.setAttribute('data-equation', math);
+                if (image) {
+                    figureNode.setAttribute('data-image',
+                        image.pk);
+                } else {
+                    figureNode.setAttribute('data-image', '');
+                }
+                figureNode.setAttribute('data-caption', caption);
+                figureNode.setAttribute('data-figure-category',
+                    category);
+                figureNode.setAttribute('contenteditable',
+                    false);
 
+                contentNode = document.createElement('div');
+                if (image) {
+                    contentNode.innerHTML = '<img src="' +
+                        image.image +
+                        '">';
+                } else {
+                    contentNode.classList.add('figure-equation');
+                    contentNode.setAttribute('data-equation',
+                        math);
+                    contentNode.innerHTML = ' ';
+                }
+
+                if (category != 'none') {
                     figureCatNode = document.createElement('span');
-                    figureCatNode.setAttribute('data-figure-category',
-                        figCat);
-                    figureCatNode.classList.add('figure-cat-' + figCat);
-                    figureCatNode.innerHTML = jQuery(
-                        '#figure-category-list span[data-category=' +
-                        figCat +
-                        ']')[0].textContent;
+                    figureCatNode.setAttribute(
+                        'data-figure-category',
+                        category);
+                    figureCatNode.classList.add('figure-cat-' +
+                        category);
 
+                    figureCatNode.innerHTML = jQuery(
+                        '#figure-category-btn label')[0].textContent;
+                    captionNode.appendChild(figureCatNode);
+                }
+                if (caption != '') {
                     captionTextNode = document.createElement('span');
                     captionTextNode.setAttribute('data-caption',
                         caption);
                     captionTextNode.innerHTML = caption;
 
-                    captionNode = document.createElement('figcaption');
-                    captionNode.appendChild(figureCatNode);
+                    captionNode = document.createElement(
+                        'figcaption');
+                
                     captionNode.appendChild(captionTextNode);
-
-                    figureNode.appendChild(contentNode);
-                    figureNode.appendChild(captionNode);
-                    manualEdits.insert(figureNode, range);
-
-
                 }
+                figureNode.appendChild(contentNode);
+                if (category != 'none' || caption != '') {
+                    figureNode.appendChild(captionNode);
+                }
+                manualEdits.insert(figureNode, range);
+                range.selectNode(figureNode);
+                range.collapse();
+
+                if (insideFigure) {
+                    manualEdits.remove(insideFigure, false);
+                }
+
+
+
 
                 paragraphNode = document.createElement('p');
                 paragraphNode.innerHTML = '<br>';
-                if (figureNode.parentNode.nodeName==='SPAN') {
+                if (figureNode.parentNode.nodeName === 'SPAN') {
                     // We are inside a span track node
                     figureNode = figureNode.parentNode;
                 }
@@ -173,34 +161,127 @@ jQuery(document).on('mousedown', '#figure-comment, :not(.del) figure', function 
 
                 range.selectNode(paragraphNode);
                 range.collapse();
-                
+
                 editorHelpers.documentHasChanged();
 
                 dialog.dialog('close');
                 return false;
-            };
-            
-                  dialogOpts: {
-                autoOpen: false,
-                width: 'auto',
-                height: 'auto',
-                title: gettext("Enter latex math or insert an image"),
-                modal: true,
-                resizable: false,
-                draggable: false,
-                dialogClass: 'hallofigure-dialog'
             },
-            imageDialogOpts: {
-                autoOpen: false,
-                width: 'auto',
-                height: 'auto',
-                title: gettext("Images"),
-                modal: true,
-                resizable: false,
-                draggable: false,
-                dialogClass: 'hallofigureimage-dialog'
+        });
+
+        dialogButtons.push({
+            text: gettext('Cancel'),
+            class: 'fw-button fw-orange',
+            click: function (event) {
+                dialog.dialog('close');
+            }
+        });
+
+
+        dialogOpts = {
+            width: 'auto',
+            height: 'auto',
+            title: gettext("Enter latex math or insert an image"),
+            modal: true,
+            resizable: false,
+            draggable: false,
+            buttons: dialogButtons,
+            dialogClass: 'hallofigure-dialog',
+            close: function () {
+                if (figureNode && figureNode.parentNode) {
+                    range.selectNode(figureNode);
+                    range.collapse();
+                    if (!image) {
+                        mathHelpers.layoutDisplayMathNode(
+                            contentNode);
+                    }
+                } else if (insideFigure && insideFigure.parentNode &&
+                    typeof (range) !== 'undefined') {
+                    range.selectNode(insideFigure);
+                    range.collapse();
+                }
+                if (range) {
+                    selection.removeAllRanges();
+                    selection.addRange(range);
+                }
             },
-            
+        };
+
+
+        dialog.dialog(dialogOpts);
+
+
+        mathInput = jQuery('input[name=figure-math]', dialog).focus(
+            function (
+                e) {
+                return this.select();
+            });
+        captionInput = jQuery('input[name=figure-caption]', dialog)
+            .focus(function (
+                e) {
+                return this.select();
+            });
+
+        figTypeInput = jQuery('#figure-category', dialog);
+
+        categoryLabel = jQuery(
+            '#figure-category-btn label',
+            dialog);
+
+        function setFigureLabel() {
+            categoryLabel.html(jQuery('#figure-category-' + category).text());
+        }
+        setFigureLabel();
+
+        function layoutMathPreview() {
+            jQuery('#inner-figure-preview')[0].innerHTML =
+                '<p>[DMATH]' + equation +
+                '[/DMATH]</p>';
+            MathJax.Hub.Queue(["Typeset",
+                MathJax.Hub,
+                "inner-figure-preview"
+            ]);
+        }
+
+        if (equation) {
+            layoutMathPreview();
+        }
+
+
+        $.addDropdownBox(jQuery('#figure-category-btn'), jQuery(
+            '#figure-category-pulldown'));
+
+        jQuery('#figure-category-pulldown li span').bind(
+            'mousedown', function (event) {
+                event.preventDefault();
+                console.log(this);
+                category = this.id.split('-')[2];
+                setFigureLabel();
+            });
+
+        jQuery('input[name=figure-math]').bind('focus',
+            function () {
+                // If a figure is being entered, disable the image button
+                jQuery('#insertFigureImage').addClass(
+                    'disabled').attr(
+                    'disabled', 'disabled');
+            });
+
+        jQuery('input[name=figure-math]').bind('blur',
+            function () {
+                if (jQuery(this).val() === '') {
+                    jQuery('#inner-figure-preview')[0].innerHTML =
+                        '';
+                    // enable image button
+                    jQuery('#insertFigureImage').removeClass(
+                        'disabled')
+                        .removeAttr('disabled');
+                } else {
+                    equation = jQuery(this).val();
+                layoutMathPreview();
+            }
+        });
+
 
 });
 
@@ -212,7 +293,7 @@ jQuery(document).on('mousedown', '#figure-comment, :not(.del) figure', function 
             uuid: "figure",
             link: true,
             image: true,
-      
+
             butonCssClass: null
         },
         populateToolbar: function (toolbar) {
@@ -220,25 +301,29 @@ jQuery(document).on('mousedown', '#figure-comment, :not(.del) figure', function 
                 dialogSubmitCb,
                 mathInput, captionInput, figTypeInput, insideFigure,
                 figureNode, contentNode, captionNode, widget, range,
-                    selection,
-                useImage = false,
+                selection,
+                image = false,
                 _this = this;
 
-            dialog = jQuery(tmp_configure_figure({
-            }));
-            imageDialog = jQuery(tmp_figure_image());
-            mathInput = jQuery('input[name=figure-math]', dialog).focus(
-                function (
-                    e) {
-                    return this.select();
-                });
-            captionInput = jQuery('input[name=figure-caption]', dialog)
-                .focus(function (
-                    e) {
-                    return this.select();
-                });
 
-            dialog.find("form").submit(dialogSubmit);
+
+
+            imageDialogOpts = {
+                autoOpen: false,
+                width: 'auto',
+                height: 'auto',
+                title: gettext("Images"),
+                modal: true,
+                resizable: false,
+                draggable: false,
+                dialogClass: 'hallofigureimage-dialog'
+            };
+
+            imageDialog = jQuery(tmp_figure_image());
+
+
+
+
             buttonset = $.Fidus.buttonset.prototype.createButtonset.call(
                 this,
                 widget.widgetName, 1);
@@ -257,30 +342,7 @@ jQuery(document).on('mousedown', '#figure-comment, :not(.del) figure', function 
                 button.attr('class',
                     'fw-button fw-light fw-large fw-square');
                 buttonset.append(button);
-                dialog.bind('dialogclose', function () {
-                    jQuery('label', button).removeClass(
-                        'ui-state-active');
-                    if (figureNode && figureNode.parentNode) {
-                        range.selectNode(figureNode);
-                        range.collapse();
-                        if (!useImage) {
-                            mathHelpers.layoutDisplayMathNode(
-                                contentNode);
-                        }
-                    }
-                    else if (insideFigure && insideFigure.parentNode &&
-                        typeof (range) !== 'undefined') {
-                        range.selectNode(insideFigure);
-                        range.collapse();
-                    }
-                    if (range) {
-                        selection.removeAllRanges();
-                        selection.addRange(range);
-                    }
-                    widget.options.editable.element.focus();
-                    return widget.options.editable.keepActivated(
-                        false);
-                });
+
                 openDialog = function (onFigure) {
                     var figTypeSelectorValue, figTypeInputValue;
                     jQuery(document).trigger('openFigureDialog');
@@ -289,8 +351,7 @@ jQuery(document).on('mousedown', '#figure-comment, :not(.del) figure', function 
 
                     if (selection.getAllRanges().length === 0) {
                         range = rangy.createRange();
-                    }
-                    else {
+                    } else {
                         range = selection.getRangeAt(0);
                     }
                     jQuery('#inner-figure-preview')[0].innerHTML = '';
@@ -306,46 +367,17 @@ jQuery(document).on('mousedown', '#figure-comment, :not(.del) figure', function 
                         '#figure-category-btn label',
                         dialog)[0];
 
-                    if (insideFigure) {
-                        mathInput.val(insideFigure.getAttribute(
-                            'data-equation'));
-                        captionInput.val(insideFigure.getAttribute(
-                            'data-caption'));
-                        figTypeInputValue = insideFigure.getAttribute(
-                            'data-figure-category');
-                        figTypeInput.val(figTypeInputValue);
-                        figTypeSelectorValue.textContent = jQuery(
-                            '#figure-category-list span[data-category=' +
-                            figTypeInputValue + ']')[0].textContent;
-                        useImage = insideFigure.getAttribute(
-                            'data-image');
-                        if ('' !== useImage) {
-                            useImage = ImageDB[useImage];
-                            //TODO: Figure out what to do if the image has been deleted from ImageDB in the meantime.
-                            jQuery('input[name=figure-math]').attr(
-                                'disabled',
-                                'disabled');
-                            jQuery('#inner-figure-preview')[0].innerHTML =
-                                '<img src="' + useImage.image +
-                                '" >';
-                        }
-                        else {
-                            useImage = false;
-                        }
-                        jQuery('#addFigureButton').val(gettext('Update'));
-                        jQuery('#deleteFigureButton').css('display',
-                            'inline-block');
-                    }
-                    else {
-                        mathInput.val('');
-                        captionInput.val('');
-                        figTypeSelectorValue.textContent = gettext(
-                            'Figure');
-                        figTypeInput.val('figure');
-                        jQuery('#addFigureButton').val(gettext('Insert'));
-                        jQuery('#deleteFigureButton').css('display',
-                            'none');
-                    }
+
+
+                    mathInput.val('');
+                    captionInput.val('');
+                    figTypeSelectorValue.textContent = gettext(
+                        'Figure');
+                    figTypeInput.val('figure');
+                    jQuery('#addFigureButton').val(gettext('Insert'));
+                    jQuery('#deleteFigureButton').css('display',
+                        'none');
+
 
                     widget.options.editable.keepActivated(true);
                     dialog.dialog('open');
@@ -359,44 +391,6 @@ jQuery(document).on('mousedown', '#figure-comment, :not(.del) figure', function 
 
                 jQuery(document).one('openFigureDialog', function () {
 
-                    $.addDropdownBox($('#figure-category-btn'), $(
-                        '#figure-category-pulldown'));
-                    $('#figure-category-pulldown li > span').bind(
-                        'click', function () {
-                            $('#figure-category-btn > label').html(
-                                $(this).html());
-                            $('#figure-category').val($(this).attr(
-                                'data-category'));
-                            $('#figure-category').trigger('change');
-                        });
-                    jQuery('input[name=figure-math]').bind('focus',
-                        function () {
-                            // If a figure is being entered, disable the image button
-                            jQuery('#insertFigureImage').addClass(
-                                'disabled').attr(
-                                'disabled', 'disabled');
-                        });
-
-                    jQuery('input[name=figure-math]').bind('blur',
-                        function () {
-                            if (jQuery(this).val() === '') {
-                                jQuery('#inner-figure-preview')[0].innerHTML =
-                                    '';
-                                // enable image button
-                                jQuery('#insertFigureImage').removeClass(
-                                    'disabled')
-                                    .removeAttr('disabled');
-                            }
-                            else {
-                                jQuery('#inner-figure-preview')[0].innerHTML =
-                                    '<p>[DMATH]' + jQuery(this).val() +
-                                    '[/DMATH]</p>';
-                                MathJax.Hub.Queue(["Typeset",
-                                    MathJax.Hub,
-                                    "inner-figure-preview"
-                                ]);
-                            }
-                        });
 
 
 
@@ -404,11 +398,15 @@ jQuery(document).on('mousedown', '#figure-comment, :not(.del) figure', function 
 
                 // functions for image selection dialog
                 jQuery(document).on('click', '#imagelist tr', function () {
-                    if (!jQuery(this).hasClass('checked')) {
-                        jQuery('#imagelist tr.checked').removeClass(
-                            'checked');
+                    var checkedImage = jQuery('#imagelist tr.checked'),
+                        selecting = true;
+                    if (checkedImage.length > 0 && this == checkedImage[0]) {
+                        selecting = false;
                     }
-                    jQuery(this).toggleClass('checked');
+                    checkedImage.removeClass('checked');
+                    if (selecting) {
+                        jQuery(this).addClass('checked');
+                    }
                 });
 
                 jQuery(document).on('click', '#selectImageFigureButton',
@@ -416,18 +414,17 @@ jQuery(document).on('mousedown', '#figure-comment, :not(.del) figure', function 
                         var checkedImage = jQuery(
                             '#imagelist tr.checked');
                         if (0 === checkedImage.length) {
-                            useImage = false;
+                            image = false;
                             jQuery('#inner-figure-preview')[0].innerHTML =
                                 '';
                             jQuery('input[name=figure-math]').removeAttr(
                                 'disabled');
-                        }
-                        else {
-                            useImage = ImageDB[checkedImage[0].id.split(
+                        } else {
+                            image = ImageDB[checkedImage[0].id.split(
                                 '_')[1]];
                             jQuery('#inner-figure-preview')[0].innerHTML =
                                 '<img src="' +
-                                useImage.image +
+                                image.image +
                                 '" style="max-width: 400px;max-height:220px">';
                             jQuery('input[name=figure-math]').attr(
                                 'disabled',
@@ -453,18 +450,16 @@ jQuery(document).on('mousedown', '#figure-comment, :not(.del) figure', function 
                     function () {
                         jQuery('#imagelist tr.checked').removeClass(
                             'checked');
-                        if (useImage) {
-                            jQuery('#Image_' + useImage.pk).addClass(
+                        if (image) {
+                            jQuery('#Image_' + image.pk).addClass(
                                 'checked');
                         }
                         imageDialog.dialog('open');
                     });
 
-                
-                
-                
-                
-                
+
+
+
                 jQuery(document).on('click', 'figure', function () {
                     if (jQuery(this).closest('.del')[0]) {
                         // Inside a deletion node

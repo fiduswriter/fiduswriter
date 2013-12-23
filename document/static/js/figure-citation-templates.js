@@ -126,7 +126,7 @@ var tmp_configure_figure = _.template('\
                 <form action="#" method="post" class="mathForm">\
                     <div>\
                         <input class="fw-media-title figure-math" type="text" name="figure-math" placeholder="'
-                            + gettext('Insert formula') + '" />\
+                            + gettext('Insert formula') + '" value="<%- equation %>"/>\
                         <button type="button" id="insertFigureImage" class="fw-button fw-light">'
                             + gettext('Insert image') + ' <i class="icon-figure"></i>\
                         </button>\
@@ -143,27 +143,24 @@ var tmp_configure_figure = _.template('\
                         </div>\
                         <div id="figure-category-pulldown" class="fw-pulldown fw-left">\
                             <ul id="figure-category-list">\
-                                <li><span class="fw-pulldown-item" data-category="figure">' +
+                                <li><span class="fw-pulldown-item" id="figure-category-none">' +
+                gettext('None') +
+                '</span></li>\
+                                <li><span class="fw-pulldown-item" id="figure-category-figure">' +
                 gettext('Figure') +
                 '</span></li>\
-                                <li><span class="fw-pulldown-item" data-category="photo">' +
+                                <li><span class="fw-pulldown-item" id="figure-category-photo">' +
                 gettext('Photo') +
                 '</span></li>\
-                                <li><span class="fw-pulldown-item" data-category="table">' +
+                                <li><span class="fw-pulldown-item" id="figure-category-table">' +
                 gettext('Table') +
                 '</span></li>\
                             </ul>\
                         </div>\
                     </div>\
-                    <div style="margin-top:10px;"><input style="width: 402px;" class="caption" type="text" name="figure-caption" placeholder="' +
+                    <div style="margin-top:10px;"><input style="width: 402px;" class="caption" type="text" name="figure-caption" value="<%- caption %>" placeholder="' +
                 gettext('Insert caption') +
                 '" /></div>\
-                    <div class="dialogSubmit">\
-                        <input type="button" id="deleteFigureButton" class="fw-button fw-orange" value="' +
-                gettext('Remove') +
-                '"/>\
-                        <input type="submit" id="addFigureButton" class="fw-button fw-dark" />\
-                    </div>\
                 </form></div>');
 /** A template to select images inside the figure configuration dialog in the editor. */ 
 var tmp_figure_image = _.template('\

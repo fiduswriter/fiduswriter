@@ -608,7 +608,7 @@
         //open dropdown for image category
         $.addDropdownBox(jQuery('#image-category-btn'), jQuery(
             '#image-category-pulldown'));
-        jQuery(document).on('click', '#image-category-pulldown li > span',
+        jQuery(document).on('mousedown', '#image-category-pulldown li > span',
             function () {
                 jQuery('#image-category-btn > label').html(jQuery(this).html());
                 jQuery('#image-category').val(jQuery(this).attr('data-id'));
@@ -637,7 +637,7 @@
         $.addDropdownBox(jQuery('#select-action-dropdown'), jQuery(
             '#action-selection-pulldown'));
         //submit image actions
-        jQuery('#action-selection-pulldown li > span').bind('click', function () {
+        jQuery('#action-selection-pulldown li > span').bind('mousedown', function () {
             var action_name = jQuery(this).attr('data-action'),
                 ids = [];
             if ('' == action_name || 'undefined' == typeof (action_name))

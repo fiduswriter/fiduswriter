@@ -20,33 +20,33 @@
  */
 
 jQuery(document).ready(function () {
-    jQuery(document).on('click', '.delete-document', function () {
+    jQuery(document).on('mousedown', '.delete-document', function () {
         var DocumentId = jQuery(this).attr('data-id');
         documentHelpers.deleteDocumentDialog([DocumentId]);
     });
 
-    jQuery(document).on('click', '.owned-by-user .rights', function () {
+    jQuery(document).on('mousedown', '.owned-by-user .rights', function () {
         var documentId = parseInt(jQuery(this).attr('data-id'));
         accessrightsHelpers.createAccessRightsDialog([documentId]);
     });
     
-    jQuery(document).on('click', '.revisions', function () {
+    jQuery(document).on('mousedown', '.revisions', function () {
         var documentId = parseInt(jQuery(this).attr('data-id'));
         documentrevisionsHelpers.createDialog(documentId);
     });
     
-    jQuery(document).on('click', '.download-revision', function () {
+    jQuery(document).on('mousedown', '.download-revision', function () {
         var revisionId = parseInt(jQuery(this).attr('data-id'));
         var revisionFilename = jQuery(this).attr('data-filename');
         documentrevisionsHelpers.download(revisionId, revisionFilename);
     });
     
-    jQuery(document).on('click', '.recreate-revision', function () {
+    jQuery(document).on('mousedown', '.recreate-revision', function () {
         var revisionId = parseInt(jQuery(this).attr('data-id'));
         documentrevisionsHelpers.recreate(revisionId);
     });
     
-    jQuery(document).on('click', '.delete-revision', function () {
+    jQuery(document).on('mousedown', '.delete-revision', function () {
         var revisionId = parseInt(jQuery(this).attr('data-id'));
         documentrevisionsHelpers.delete(revisionId);
     });
@@ -66,7 +66,7 @@ jQuery(document).ready(function () {
         '#action-selection-pulldown-documents'));
 
     //submit action for selected document
-    jQuery('#action-selection-pulldown-documents li > span').bind('click',
+    jQuery('#action-selection-pulldown-documents li > span').bind('mousedown',
         function () {
             var action_name = jQuery(this).attr('data-action'),
                 ids = [];
@@ -151,5 +151,5 @@ jQuery(document).ready(function () {
         });
 
     //import a fidus filw
-    jQuery('.import-fidus').bind('click', documentHelpers.importFidus);
+    jQuery('.import-fidus').bind('mousedown', documentHelpers.importFidus);
 });

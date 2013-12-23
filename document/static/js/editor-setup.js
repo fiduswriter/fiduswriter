@@ -57,7 +57,7 @@ jQuery(document).bind('documentDataLoaded', function () {
     }, 800);
 
     // Document Style switching
-    jQuery("#header-navigation .style").bind('click', function () {
+    jQuery("#header-navigation .style").bind('mousedown', function () {
         if (editorHelpers.setDocumentData('settings.documentstyle',
             jQuery(this).attr(
                 'data-style'))) {
@@ -77,7 +77,7 @@ jQuery(document).bind('documentDataLoaded', function () {
         ']').addClass('selected');
 
     // Citation Style switching
-    jQuery("#header-navigation .citationstyle").bind('click', function () {
+    jQuery("#header-navigation .citationstyle").bind('mousedown', function () {
         if (editorHelpers.setDocumentData('settings.citationstyle',
             jQuery(this).attr(
                 'data-citationstyle'))) {
@@ -89,7 +89,7 @@ jQuery(document).bind('documentDataLoaded', function () {
         return false;
     });
     // Tools
-    jQuery("#header-navigation .tools-item").bind('click', function () {
+    jQuery("#header-navigation .tools-item").bind('mousedown', function () {
         toolsHelpers.toolsEventHandler(jQuery(this).data('function'));
         return false;
     });
@@ -111,7 +111,7 @@ jQuery(document).bind('documentDataLoaded', function () {
         .papersize);
 
     // Paper size switching
-    jQuery("#header-navigation .papersize").bind('click', function () {
+    jQuery("#header-navigation .papersize").bind('mousedown', function () {
         if (editorHelpers.setDocumentData('settings.papersize',
             parseInt(jQuery(this).attr('data-paperheight')))) {
             editorHelpers.setDisplay.document('settings.papersize',
@@ -126,45 +126,45 @@ jQuery(document).bind('documentDataLoaded', function () {
 
     // Disable papersize menu if we are dealing with a non CSS Regions browser
     if (jQuery('.pagination-simple').length > 0) {
-        jQuery('.papersize-menu').unbind('click');
+        jQuery('.papersize-menu').unbind('mousedown');
         jQuery('.papersize-menu').addClass('disabled');
     }
 
-    jQuery(document).on('click', '.savecopy:not(.disabled)', function () {
+    jQuery(document).on('mousedown', '.savecopy:not(.disabled)', function () {
         editorHelpers.getUpdatesFromInputFields(function () {
             editorHelpers.saveDocument();
         });
         exporter.savecopy(theDocument);
     });
 
-    jQuery('.download').bind('click', function () {
+    jQuery('.download').bind('mousedown', function () {
         editorHelpers.getUpdatesFromInputFields(function () {
             editorHelpers.saveDocument();
         });
         exporter.downloadNative(theDocument);
     });
-    jQuery('.latex').bind('click', function () {
+    jQuery('.latex').bind('mousedown', function () {
         editorHelpers.getUpdatesFromInputFields(function () {
             editorHelpers.saveDocument();
         });
         exporter.downloadLatex(theDocument);
     });
-    jQuery('.epub').bind('click', function () {
+    jQuery('.epub').bind('mousedown', function () {
         editorHelpers.getUpdatesFromInputFields(function () {
             editorHelpers.saveDocument();
         });
         exporter.downloadEpub(theDocument);
     });
-    jQuery('.html').bind('click', function () {
+    jQuery('.html').bind('mousedown', function () {
         editorHelpers.getUpdatesFromInputFields(function () {
             editorHelpers.saveDocument();
         });
         exporter.downloadHtml(theDocument);
     });
-    jQuery('.print').bind('click', function () {
+    jQuery('.print').bind('mousedown', function () {
         window.print();
     });
-    jQuery('.close').bind('click', function () {
+    jQuery('.close').bind('mousedown', function () {
         editorHelpers.getUpdatesFromInputFields(function () {
             editorHelpers.saveDocument();
         });
@@ -233,7 +233,7 @@ jQuery(document).bind('documentDataLoaded', function () {
 
         // bind the share dialog to the button if the user is the document owner
         if (theDocumentValues.is_owner) {
-            jQuery('.share').bind('click', function () {
+            jQuery('.share').bind('mousedown', function () {
                 accessrightsHelpers.createAccessRightsDialog([
                     theDocument.id
                 ]);
@@ -278,7 +278,7 @@ jQuery(document).bind('documentDataLoaded', function () {
             'keyup paste change', function () {
                 editorHelpers.documentHasChanged();
             });
-        jQuery('.save').bind('click', function () {
+        jQuery('.save').bind('mousedown', function () {
             editorHelpers.getUpdatesFromInputFields(function () {
                 editorHelpers.saveDocument();
             });
@@ -392,7 +392,7 @@ jQuery(document).bind('documentDataLoaded', function () {
     }
 });
 
-/*jQuery('body').bind("bibliography_ready", function (event) {
+jQuery(document).bind("bibliography_ready", function (event) {
                         jQuery('.citationstyle-menu, .exporter-menu').each(function () {
                         jQuery.addDropdownBox(jQuery(this), jQuery(this).siblings('.fw-pulldown'));
                         jQuery(this).removeClass('disabled');
@@ -400,4 +400,4 @@ jQuery(document).bind('documentDataLoaded', function () {
                         jQuery(this).addClass('header-nav-item');
                     });
                     citationHelpers.formatCitationsInDoc();
-});*/
+});

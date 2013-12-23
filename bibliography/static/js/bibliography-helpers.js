@@ -909,7 +909,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
 
         //open dropdown for selecting source type
         $.addDropdownBox(jQuery('#source-type-selection'), jQuery('#source-type-selection > .fw-pulldown'));
-        jQuery('#source-type-selection .fw-pulldown-item').bind('click', function () {
+        jQuery('#source-type-selection .fw-pulldown-item').bind('mousedown', function () {
             var source_type_title = jQuery(this).html(),
                 source_type_id = jQuery(this).attr('data-value');
             jQuery(this).parent().siblings('.selected').removeClass('selected');
@@ -1199,7 +1199,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         jQuery('.fw-bib-field-pulldown').each(function () {
             jQuery.addDropdownBox(jQuery(this), jQuery(this).children('.fw-pulldown'));
         });
-        jQuery('.fw-bib-field-pulldown .fw-pulldown-item').bind('click', function () {
+        jQuery('.fw-bib-field-pulldown .fw-pulldown-item').bind('mousedown', function () {
             var selected_title = jQuery(this).html(),
                 selected_value = jQuery(this).data('value');
             jQuery(this).parent().parent().find('.fw-pulldown-item.selected').removeClass('selected');
@@ -1211,7 +1211,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         jQuery('.fw-data-format-pulldown').each(function () {
             jQuery.addDropdownBox(jQuery(this), jQuery(this).children('.fw-pulldown'));
         });
-        jQuery('.fw-data-format-pulldown .fw-pulldown-item').bind('click', function () {
+        jQuery('.fw-data-format-pulldown .fw-pulldown-item').bind('mousedown', function () {
             var selected_title = jQuery(this).html(),
                 selected_value = jQuery(this).data('value');
             jQuery(this).parent().parent().find('.fw-pulldown-item.selected').removeClass('selected');
@@ -1224,7 +1224,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         jQuery('.fw-bib-select-pulldown').each(function () {
             jQuery.addDropdownBox(jQuery(this), jQuery(this).children('.fw-pulldown'));
         });
-        jQuery('.fw-bib-select-pulldown .fw-pulldown-item').bind('click', function () {
+        jQuery('.fw-bib-select-pulldown .fw-pulldown-item').bind('mousedown', function () {
             var selected_title = jQuery(this).html(),
                 selected_value = jQuery(this).data('value');
             jQuery(this).parent().parent().find('.fw-pulldown-item.selected').removeClass('selected');
@@ -2021,7 +2021,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         jQuery('.import-bib').bind('click', bibliographyHelpers.importBibliography);
 
         //submit entry actions
-        jQuery('#action-selection-pulldown li > span').bind('click', function () {
+        jQuery('#action-selection-pulldown li > span').bind('mousedown', function () {
             var action_name = jQuery(this).attr('data-action'),
                 ids = [];
 
@@ -2051,6 +2051,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             if (window.hasOwnProperty('theDocument')) {
                 citationHelpers.formatCitationsInDoc();
             }
+            jQuery(document).trigger("bibliography_ready");
         });
     };
     /** Bind the init function to jQuery(document).ready.

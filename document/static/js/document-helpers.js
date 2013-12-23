@@ -130,8 +130,8 @@
                         .replace(
                             /C:\\fakepath\\/i, ''));
                 });
-                jQuery('#import-fidus-btn').bind('click', function () {
-                    jQuery('#fidus-uploader').trigger('click');
+                jQuery('#import-fidus-btn').bind('mousedown', function () {
+                    jQuery('#fidus-uploader').trigger('mousedown');
                 });
             },
             close: function () {

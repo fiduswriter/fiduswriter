@@ -45,7 +45,7 @@ jQuery(document).ready(function () {
         '#action-selection-pulldown-books'));
 
     //submit action for selected document
-    jQuery('#action-selection-pulldown-books li > span').bind('click',
+    jQuery('#action-selection-pulldown-books li > span').bind('mousedown',
         function () {
             var action_name = jQuery(this).attr('data-action'),
                 ids = [],

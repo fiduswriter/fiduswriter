@@ -51,6 +51,16 @@ jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (
             image = ImageDB[image];
             //TODO: Figure out what to do if the image has been deleted from ImageDB in the meantime.                          
         }
+        dialogButtons.push({
+            text: gettext('Remove'),
+            class: 'fw-button fw-orange',
+            click: function () {
+                manualEdits.remove(insideFigure, range);
+                insideFigure = false;
+                dialog.dialog('close');
+            }
+        });
+        
     }
 
     dialog = jQuery(tmp_configure_figure({

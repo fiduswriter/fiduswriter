@@ -33,9 +33,7 @@ jQuery.extend({
      * @memberof jQuery
      */    
     'addDropdownBox': function(btn, box) {
-        console.log(btn);
         btn.bind('mousedown', function(e) {
-            console.log(btn);
             e.preventDefault();
             if('none' == box.css('display')) {
                 $.openDropdownBox(box);

@@ -34,6 +34,7 @@
             type: 'POST',
             dataType: 'json',
             success: function (response, textStatus, jqXHR) {
+                console.log(response);
                 if (usermediaHelpers.displayCreateImageError(response.errormsg)) {
                     usermediaHelpers.stopUsermediaTable();
                     ImageDB[response.values.pk] = response.values;
@@ -445,7 +446,7 @@
 
         if (0 < $tr.size()) { //if the image entry exists, update
             $tr.replaceWith(tmp_usermedia_table({
-                'id': pk,
+                'pk': pk,
                 'cats': image_info.cats,
                 'file_type': file_type,
                 'title': image_info.title,
@@ -457,7 +458,7 @@
             }));
         } else { //if this is the new image, append
             jQuery('#imagelist > tbody').append(tmp_usermedia_table({
-                'id': pk,
+                'pk': pk,
                 'cats': image_info.cats,
                 'file_type': file_type,
                 'title': image_info.title,

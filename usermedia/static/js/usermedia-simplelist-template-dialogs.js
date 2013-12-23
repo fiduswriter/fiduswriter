@@ -21,7 +21,7 @@
 
 /** Simpler image overview table for use in editor. */
 var tmp_usermedia_table = _.template('\
-                <tr id="Image_<%- id %>" class="<% _.each(cats, function(cat) { %>cat_<%- cat %> <% }) %>" >\
+                <tr id="Image_<%- pk %>" class="<% _.each(cats, function(cat) { %>cat_<%- cat %> <% }) %>" >\
                      <td class="type" style="width:100px;">\
                         <% if (thumbnail) { %>\
                             <img src="<%- thumbnail %>" style="max-heigth:30px;max-width:30px;">\
@@ -31,7 +31,7 @@ var tmp_usermedia_table = _.template('\
                     </td>\
                     <td class="title" style="width:212px;">\
                         <span class="fw-inline">\
-                            <span class="edit-image fw-link-text icon-figure" data-id="<%- id %>">\
+                            <span class="edit-image fw-link-text icon-figure" data-id="<%- pk %>">\
                                 <%- title %>\
                             </span>\
                         </span>\

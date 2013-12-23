@@ -131,17 +131,14 @@ var tmp_configure_figure = _.template('\
                             + gettext('Insert image') + ' <i class="icon-figure"></i>\
                         </button>\
                     </div>\
-                    <div class="figure-preview">\
-                        <div id="inner-figure-preview"></div>\
-                    </div>\
                     <input type="hidden" id="figure-category">\
-                    <div>\
+                    <div style="margin-top: 10px;">\
                         <div id="figure-category-btn" class="fw-button fw-light fw-large">\
                             <input type="hidden" id="figure-category" />\
                             <label></label>\
                             <span class="icon-down-dir"></span>\
                         </div>\
-                        <div id="figure-category-pulldown" class="fw-pulldown fw-left">\
+                        <div id="figure-category-pulldown" class="fw-pulldown fw-left" style="left: 10px;">\
                             <ul id="figure-category-list">\
                                 <li><span class="fw-pulldown-item" id="figure-category-none">' +
                 gettext('None') +
@@ -158,7 +155,10 @@ var tmp_configure_figure = _.template('\
                             </ul>\
                         </div>\
                     </div>\
-                    <div style="margin-top:10px;"><input style="width: 402px;" class="caption" type="text" name="figure-caption" value="<%- caption %>" placeholder="' +
+                    <div class="figure-preview">\
+                        <div id="inner-figure-preview"></div>\
+                    </div>\
+                    <div style="margin-top: 10px;"><input style="width: 402px;" class="caption" type="text" name="figure-caption" value="<%- caption %>" placeholder="' +
                 gettext('Insert caption') +
                 '" /></div>\
                 </form></div>');
@@ -173,6 +173,7 @@ var tmp_figure_image = _.template('\
             </tr>\
         </thead>\
         <tbody class="fw-document-table-body fw-small">\
+            <% _.each(ImageDB, function (anImage) { %> <%= tmp_usermedia_table(anImage) %> <% }); %>\
         </tbody>\
     </table>\
         <div class="dialogSubmit">\

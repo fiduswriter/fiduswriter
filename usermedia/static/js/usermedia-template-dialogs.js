@@ -41,10 +41,10 @@ var tmp_usermedia_categoryforms = _.template('\
     </tr>');
 /** A template for image overview list. */
 var tmp_usermedia_table = _.template('\
-                <tr id="Image_<%- id %>" class="<% _.each(cats, function(cat) { %>cat_<%- cat %> <% }) %>">\
+                <tr id="Image_<%- pk %>" class="<% _.each(cats, function(cat) { %>cat_<%- cat %> <% }) %>">\
                     <td width="30">\
                         <span class="fw-inline">\
-                            <input type="checkbox" class="entry-select" data-id="<%- id %>">\
+                            <input type="checkbox" class="entry-select" data-id="<%- pk %>">\
                         </span>\
                     </td>\
                     <td width="350" class="title">\
@@ -52,7 +52,7 @@ var tmp_usermedia_table = _.template('\
                             <img src="<% if(thumbnail) { %><%- thumbnail %><% } else { %><%- image %><% } %>">\
                         </span>\
                         <span class="fw-inline fw-usermedia-title">\
-                            <span class="edit-image fw-link-text fw-searchable" data-id="<%- id %>">\
+                            <span class="edit-image fw-link-text fw-searchable" data-id="<%- pk %>">\
                                 <%- title %>\
                             </span>\
                             <span class="fw-usermedia-type"><%- file_type %></span>\
@@ -65,7 +65,7 @@ var tmp_usermedia_table = _.template('\
                         <span class="fw-inline"><%= jQuery.localizeDate(added, true) %></span>\
                     </td>\
                     <td width="50" align="center">\
-                        <span class="delete-image fw-inline fw-link-text" data-id="<%- id %>" data-title="<%- title %>">\
+                        <span class="delete-image fw-inline fw-link-text" data-id="<%- pk %>" data-title="<%- title %>">\
                             <i class="icon-trash"></i>\
                         </span>\
                     </td>\

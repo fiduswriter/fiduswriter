@@ -180,28 +180,7 @@ jQuery(document).bind('documentDataLoaded', function () {
             'disabled');
     } else if (theDocumentValues.rights === 'w') {
 
-
-        // Enable Hallo.js Editor
-      /*  jQuery('#document-editable').hallo({
-            plugins: {
-                'toolbarheadings': {},
-                'toolbarbold': {},
-                'toolbaritalic': {},
-                'toolbarlists': {},
-                'toolbarlink': {},
-                'toolbarfootnote': {},
-                'toolbarcite': {},
-                'toolbarmath': {},
-                'toolbarfigure': {},
-                'toolbarundoredo': {},
-                'toolbarcomment': {},
-            },
-            editable: true,
-            toolbar: 'toolbarleft',
-            parentElement: jQuery('#editor-tools-wrapper')
-        }); */
-
-        jQuery('.metadata-menu-item').bind('click', editorHelpers.switchMetadata);
+        jQuery('.metadata-menu-item').bind('mousedown', editorHelpers.switchMetadata);
 
         jQuery('#metadata-subtitle, #metadata-abstract, #metadata-authors, #metadata-keywords').bind('blur',
             function () {
@@ -342,7 +321,7 @@ jQuery(document).bind('documentDataLoaded', function () {
             theDocument.settings.tracking_show);
 
 
-        jQuery('.ice-display').bind('click', function () {
+        jQuery('.ice-display').bind('mousedown', function () {
             editorHelpers.setDocumentData('settings.tracking_show', (!
                 theDocument.settings
                 .tracking_show));
@@ -353,7 +332,7 @@ jQuery(document).bind('documentDataLoaded', function () {
         });
 
         if (theDocumentValues.is_owner) {
-            jQuery('.ice-track').bind('click', function () {
+            jQuery('.ice-track').bind('mousedown', function () {
                 editorHelpers.setDocumentData('settings.tracking', (!
                     theDocument.settings.tracking));
                 editorHelpers.setDisplay.document('settings.tracking',
@@ -362,13 +341,13 @@ jQuery(document).bind('documentDataLoaded', function () {
                 return false;
             });
 
-            jQuery('.ice-accept-all').bind('click', function () {
+            jQuery('.ice-accept-all').bind('mousedown', function () {
                 window.tracker.acceptAll();
                 editorHelpers.documentHasChanged();
                 return false;
             });
 
-            jQuery('.ice-reject-all').bind('click', function () {
+            jQuery('.ice-reject-all').bind('mousedown', function () {
                 window.tracker.rejectAll();
                 editorHelpers.documentHasChanged();
                 return false;

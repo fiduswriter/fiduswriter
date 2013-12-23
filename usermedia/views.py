@@ -68,7 +68,7 @@ def save_js(request):
             image.image = request.FILES['image']
         image.save()
         response['values'] = {
-            'pk': image.id,
+            'pk': image.pk,
             'title': image.title,
             'image': image.image.url,
             'file_type': image.file_type,
@@ -137,7 +137,7 @@ def images_js(request):
             response['images'] = []
             for image in images :
                 field_obj = {
-                    'pk': image.id,
+                    'pk': image.pk,
                     'title': image.title,
                     'image': image.image.url,
                     'file_type': image.file_type,

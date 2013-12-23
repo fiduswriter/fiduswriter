@@ -19,18 +19,8 @@
  */
 
 // inlinestyles bold
-(function (jQuery) {
-    return jQuery.widget("IKS.toolbarbold", $.Fidus.inlinestylebutton, {
-        options: {
-            editable: null,
-            uuid: "",
-            formattings: {
-                bold: true
-            },
-            buttonCssClass: null
-        },
-        populateToolbar: function (toolbar) {
-            return $.Fidus.inlinestylebutton.prototype.addTools.call(this, toolbar);
-        }
-    });
-})(jQuery);
+jQuery(document).on('mousedown', '#button-bold', function () {
+    event.preventDefault();        
+    document.execCommand("bold", false, null);
+        
+});

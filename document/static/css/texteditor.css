@@ -124,12 +124,12 @@ body {
     color: #ccc;
     background-color: #f2f2f2;
 }
-.hallotoolbar {
+.editortoolbar {
     position: relative;
     left: 108px;
     width: auto !important;
 }
-.hallotoolbar div.ui-buttonset {
+.editortoolbar div.ui-buttonset {
     position: relative;
     display: inline-block;
     white-space: nowrap;
@@ -137,17 +137,17 @@ body {
     margin-right: 7px;
 }
 
-.hallotoolbar div.multiButtons {
+.editortoolbar div.multiButtons {
     width: auto;
 }
 
-.hallotoolbar div.multiButtons .multibuttonsCover {
+.editortoolbar div.multiButtons .multibuttonsCover {
     position: relative;
     width: 120px;
     font-size: 11px;
     font-weight: 900;
 }
-.hallotoolbar div.multiButtons .multibuttonsCover:after {
+.editortoolbar div.multiButtons .multibuttonsCover:after {
     display: block;
     position: absolute;
     right: 10px;

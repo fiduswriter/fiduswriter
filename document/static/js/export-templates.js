@@ -439,5 +439,5 @@ var tmp_epub_opf_mathjax_items = _.template('\
 
 /** Dialog to add a note to a revision before saving. */
 tmp_revision_dialog = _.template('\
-<div title="'+gettext('Revision description')+'"><p>'+gettext('Description (optional)')+' <input type="text" class="revision-note"></p></div>');
+<div title="'+gettext('Revision description')+'"><p><input type="text" class="revision-note" placeholder="'+gettext('Description (optional)')+'"></p></div>');
         

@@ -19,18 +19,8 @@
  */
 
 // inlinestyles italic
-(function (jQuery) {
-    return jQuery.widget("IKS.toolbaritalic", $.Fidus.inlinestylebutton, {
-        options: {
-            editable: null,
-            uuid: "",
-            formattings: {
-                italic: true
-            },
-            buttonCssClass: null
-        },
-        populateToolbar: function (toolbar) {
-            return $.Fidus.inlinestylebutton.prototype.addTools.call(this, toolbar);
-        }
-    });
-})(jQuery);
+jQuery(document).on('mousedown', '#button-italic', function (event) {
+    event.preventDefault();
+    document.execCommand("italic", false, null);
+        
+});

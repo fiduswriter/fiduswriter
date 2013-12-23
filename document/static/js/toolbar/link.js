@@ -19,153 +19,74 @@
  */
 
 // toolbar link
-(function (jQuery) {
-    return jQuery.widget("IKS.toolbarlink", {
-        options: {
-            editable: null,
-            uuid: "",
-            link: true,
-            image: true,
-            defaultUrl: 'http://',
-            dialogOpts: {
-                autoOpen: false,
-                width: 'auto',
-                height: 'auto',
-                title: "Enter Link",
-                modal: true,
-                resizable: false,
-                draggable: false,
-                dialogClass: 'hallolink-dialog'
-            },
-            butonCssClass: null
-        },
-        populateToolbar: function (toolbar) {
-            var buttonize, buttonset, dialog, dialogId, dialogSubmitCb, urlInput, noChange, widget, range, selection, _this = this;
-            widget = this;
-            dialogId = "" + this.options.uuid + "-dialog";
-            dialog = jQuery('<div id="' + dialogId + '">\
-                <form action="#" method="post" class="linkForm">\
-                    <input style="width: 250px;" class="url" type="text" name="url" value="' + this.options.defaultUrl + '" />\
-                    <div class="dialogSubmit">\
-                        <input type="submit" id="addlinkButton" class="fw-button fw-dark" value="' + gettext("Insert") + '" />\
-                    </div>\
-                </form></div>');
-            urlInput = jQuery('input[name=url]', dialog).focus(function (e) {
-                return this.select();
-            });
-            dialogSubmitCb = function (event) {
-                var link, insideLink, linkNode, emptySpaceNode;
-                noChange = false;
-                event.preventDefault();
-                link = urlInput.val();
-                insideLink = jQuery(range.startContainer).closest('a')[0];
+jQuery(document).on('mousedown', '#button-link', function (event) {
+    event.preventDefault();    
+    var selection = rangy.getSelection(),
+        range = selection.getRangeAt(0),
+        dialog, dialogButtons = [],
+        defaultLink = 'http://';
 
-                if (((new RegExp(/^\s*$/)).test(link)) || link === widget.options.defaultUrl) {
-                    // The link url is empty or the default one. DElete a link if it exist. Then close the dialog.
-                    if (insideLink) {
-                        manualEdits.remove(insideLink, false);
-                    }
-                    dialog.dialog('close');
-                    return false;
-                }
+    if (jQuery(range.startContainer).closest('a').length > 0) {
+        // We are inside of a link. Exit.
+        dialog.dialog('close');
+        return;
+    }
+            
+    dialogButtons.push({
+        text: gettext('Insert'),
+        class: 'fw-button fw-dark',
+        click: function () {
 
-                // We create the linkNode before we actually use it, because the browser may modify the url (adding trailing slahses, etc.).
-                // So to see whether it is the same as one that already exists, we need to do create it here already.
-                linkNode = document.createElement('a');
-                linkNode.setAttribute('href', link);
+            var link = dialog.find('input.link').val(), linktext = dialog.find('input.linktext').val(), linkNode;
 
-                if (insideLink) {
-                    if (linkNode.href === insideLink.href) {
-                        // the link has not been changed, just close the dialog
-                        dialog.dialog('close');
-                        return false;
-                    } else {
-                        emptySpaceNode = document.createTextNode('\u180e');
-                        insideLink.parentNode.insertBefore(emptySpaceNode, insideLink.nextSibling);
-                        range.selectNode(emptySpaceNode);
-                        range.collapse(true);
-                        manualEdits.remove(insideLink, false);
-                    }
-                }
-
-                linkNode.innerHTML = link;
-                // Make sure to get out of any track changes node if tracking is disabled.
-                range = dom.noTrackIfDisabled(range);
-                // Make sure to get out of any citation node.
-                range = dom.noCitationOrLinkNode(range);
-                // Insert the new link node
-                manualEdits.insert(linkNode, range);
-                //widget.options.editable.element.trigger('change');
-                widget.options.editable.removeAllSelections();
+            if ((new RegExp(/^\s*$/)).test(link) || link === defaultLink) {
+                // The link input is empty or hasn't been changed from the default value. Just close the dialog.
                 dialog.dialog('close');
-                return false;
-            };
-            dialog.find("form").submit(dialogSubmitCb);
-            buttonset = $.Fidus.buttonset.prototype.createButtonset.call(this, widget.widgetName, 1);
-            buttonize = function (type) {
-                var button, id;
-                id = "" + _this.options.uuid + "-" + type;
-                button = jQuery('<button></button>');
-                button.makebutton({
-                    label: 'Link',
-                    icon: 'icon-link',
-                    editable: _this.options.editable,
-                    //command: 'link',
-                    queryState: false,
-                    uuid: _this.options.uuid,
-                    cssClass: _this.options.buttonCssClass
-                });
-                button.attr('class', 'fw-button fw-light fw-large fw-square');
-                buttonset.append(button);
-                dialog.bind('dialogclose', function () {
-                    jQuery('label', button).removeClass('ui-state-active');
-                    range.collapse();
-                    selection.removeAllRanges();
-                    selection.addRange(range);
-                    widget.options.editable.element.focus();
-                    return widget.options.editable.keepActivated(false);
-                });
-                button.bind("click", function (event) {
-
-                    selection = rangy.getSelection();
-                    range = selection.getRangeAt(0);
-
-                    urlInput = jQuery('input[name=url]', dialog);
-                    if (range.startContainer.parentNode.href === void 0) {
-                        urlInput.val(widget.options.defaultUrl);
-                    } else {
-                        urlInput.val(jQuery(range.startContainer.parentNode).attr('href'));
-                        jQuery(urlInput[0].form).find('input[type=submit]').val('Update');
-                    }
-                    noChange = true;
-                    widget.options.editable.keepActivated(true);
-
-                    dialog.dialog('open');
-
-                    return false;
-                });
-                return _this.element.bind("keyup paste change mouseup", function (event) {
-                    var nodeName, start;
-                    start = jQuery(widget.options.editable.getSelection().startContainer);
-                    nodeName = start.prop('nodeName') ? start.prop('nodeName') : start.parent().prop('nodeName');
-                    if (nodeName && nodeName.toUpperCase() === "A") {
-                        jQuery('.link_button').addClass('ui-state-active');
-                        return;
-                    } else {
-                        jQuery('.link_button').removeClass('ui-state-active');
-                    }
-                    return jQuery('label', button).removeClass('ui-state-active');
-                });
-            };
-            if (this.options.link) {
-                buttonize("A");
+                return;
             }
-            if (this.options.link) {
-                buttonset.buttonset();
-                toolbar.append(buttonset);
-                return dialog.dialog(this.options.dialogOpts);
+            
+            if ((new RegExp(/^\s*$/)).test(linktext)) {
+                linktext = link;
             }
-        },
-        _init: function () {}
+            
+            linkNode = document.createElement('a');
+            linkNode.setAttribute('href', link);
+            linkNode.textContent = linktext;
+            // Make sure to get out of any track changes node if tracking is disabled.
+            range = dom.noTrackIfDisabled(range);
+            // Make sure to get out of any citation node.
+            range = dom.noCitationOrLinkNode(range);
+            // Insert the new link node
+            manualEdits.insert(linkNode, range);
+
+        //    linkNode.parentNode.insertBefore(nodeConverter.afterNode(), linkNode.nextSibling);
+
+            dialog.dialog('close');
+        }
     });
-})(jQuery);
+
+
+    dialogButtons.push({
+        text: gettext('Cancel'),
+        class: 'fw-button fw-orange',
+        click: function () {
+            dialog.dialog('close');
+        }
+    });
+
+    dialog = jQuery('<div title="' + gettext('Link') + '">\
+                        <p><input class="linktext" type="text" value="" placeholder="' + gettext('Link text (optional)') + '"/></p>\
+                        <p><input class="link" type="text" value="' + defaultLink + '" /></p>\
+                    </div>');
+
+
+    dialog.dialog({
+        buttons: dialogButtons,
+        modal: true,
+        close: function () {
+            jQuery(this).dialog('destroy').remove();
+        }
+    });
+
+
+});

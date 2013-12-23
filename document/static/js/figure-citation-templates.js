@@ -20,7 +20,7 @@
  */
 /** A template to configure citations in the editor */
 var tmp_configure_citation = _.template('\
-    <div id="<%= dialogId %>" title="' + gettext('Configure Citation') + '">\
+    <div title="' + gettext('Configure Citation') + '">\
         <div id="my-sources" class="fw-ar-container">\
             <h3 class="fw-green-title">' + gettext("My sources") + '</h3>\
             <table id="cite-source-table" class="fw-document-table">\
@@ -122,7 +122,7 @@ var tmp_selected_citation = _.template('<tr id="selected-source-<%= id %>" class
   </td></tr>');
 /** A template to configure the display of a figure in the editor. */ 
 var tmp_configure_figure = _.template('\
-            <div id="<%= dialogId %>" class="fw-media-uploader">\
+            <div class="fw-media-uploader">\
                 <form action="#" method="post" class="mathForm">\
                     <div>\
                         <input class="fw-media-title figure-math" type="text" name="figure-math" placeholder="'

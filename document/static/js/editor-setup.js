@@ -41,19 +41,7 @@ jQuery(document).ready(function () {
 // Functions to be executed when document has loaded
 jQuery(document).bind('documentDataLoaded', function () {
 
-    var plugins = {
-        'toolbarheadings': {},
-        'toolbarbold': {},
-        'toolbaritalic': {},
-        'toolbarlists': {},
-        'toolbarlink': {},
-        'toolbarfootnote': {},
-        'toolbarcite': {},
-        'toolbarmath': {},
-        'toolbarfigure': {},
-        'toolbarundoredo': {},
-        'toolbarcomment': {},
-    };
+    
     // We cannot download BibDB and ImageDB before we know if we are the document owner or not.
     bibliographyHelpers.init();
     usermediaHelpers.init();
@@ -194,12 +182,24 @@ jQuery(document).bind('documentDataLoaded', function () {
 
 
         // Enable Hallo.js Editor
-        jQuery('#document-editable').hallo({
-            plugins: plugins,
+      /*  jQuery('#document-editable').hallo({
+            plugins: {
+                'toolbarheadings': {},
+                'toolbarbold': {},
+                'toolbaritalic': {},
+                'toolbarlists': {},
+                'toolbarlink': {},
+                'toolbarfootnote': {},
+                'toolbarcite': {},
+                'toolbarmath': {},
+                'toolbarfigure': {},
+                'toolbarundoredo': {},
+                'toolbarcomment': {},
+            },
             editable: true,
             toolbar: 'toolbarleft',
             parentElement: jQuery('#editor-tools-wrapper')
-        });
+        }); */
 
         jQuery('.metadata-menu-item').bind('click', editorHelpers.switchMetadata);
 
@@ -414,3 +414,13 @@ jQuery(document).bind('documentDataLoaded', function () {
 
     }
 });
+
+/*jQuery('body').bind("bibliography_ready", function (event) {
+                        jQuery('.citationstyle-menu, .exporter-menu').each(function () {
+                        jQuery.addDropdownBox(jQuery(this), jQuery(this).siblings('.fw-pulldown'));
+                        jQuery(this).removeClass('disabled');
+                        jQuery(this).removeClass('header-nav-item-disabled');
+                        jQuery(this).addClass('header-nav-item');
+                    });
+                    citationHelpers.formatCitationsInDoc();
+});*/

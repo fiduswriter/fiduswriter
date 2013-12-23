@@ -190,13 +190,7 @@
         //bibliographyHTML = _.unique(bibliographyHTML.split('<p>')).join('<p>')
         bibliographyHTML = bibliographyHTML.replace(/<div class="csl-entry">/g, '<p>');
         return bibliographyHTML.replace(/<\/div>/g, '</p>');
-    };
-
-    citationHelpers.bindEvents = function(openDialog) {
-        jQuery(document).on('click', '.citation', function () {
-            openDialog();
-        });
-    };
+     };
 
     citationHelpers.appendToCitedBooks = function(books) {
         var i, len = books.length;

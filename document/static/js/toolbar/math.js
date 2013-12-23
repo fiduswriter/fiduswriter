@@ -18,191 +18,95 @@
  *
  */
 // toolbar math
-(function (jQuery) {
-    return jQuery.widget("IKS.toolbarmath", {
-        options: {
-            editable: null,
-            uuid: "math",
-            link: true,
-            image: true,
-            defaultMath: 'x=2*y',
-            dialogOpts: {
-                autoOpen: false,
-                width: 'auto',
-                height: 'auto',
-                title: gettext("Enter Latex math"),
-                modal: true,
-                resizable: false,
-                draggable: false,
-                dialogClass: 'hallomath-dialog'
-            },
-            butonCssClass: null
-        },
-        populateToolbar: function (toolbar) {
-            var buttonize, buttonset, dialog, dialogId, dialogSubmitCb, mathInput, insideMath, mathNode, noChange, widget, range, selection, _this = this;
-            widget = this;
-            dialogId = "" + this.options.uuid + "-dialog";
-            
-            
-            dialog = jQuery('<div id="' + dialogId + '">\
-                    <input style="width: 250px;" class="math" type="text" name="math" value="' + this.options.defaultMath + '" />\
-                    <div class="dialogSubmit ui-dialog-buttonset">\
-                        <button id="addMathButton" class="fw-button fw-dark"></button>\
-                        <button id="cancelMathButton" class="fw-button fw-orange">'+gettext("Cancel")+'</button>\
-                    </div>\
-                </div>');
-            mathInput = jQuery('input[name=math]', dialog).focus(function (e) {
-                return this.select();
-            });
-            dialogSubmitCb = function (event) {
-                var math, emptySpaceNode;
-                noChange = false;
-                console.log("trick or treat");
-                //event.preventDefault();
-                math = mathInput.val();
+jQuery(document).on('mousedown', '#button-math, .equation', function (event) {
+    event.preventDefault();    
+    var selection = rangy.getSelection(),
+        range = selection.getRangeAt(0),
+        dialog, dialogButtons = [],
+        submitMessage = gettext('Insert'),
+        insideMath = false,
+        formula = 'x=2*y';
 
-                if (((new RegExp(/^\s*$/)).test(math))) {
-                    // The math input is empty. Delete a math node if it exist. Then close the dialog.
-                    if (insideMath) {
-                        manualEdits.remove(insideMath, false);
-                    }
-                    dialog.dialog('close');
-                    return false;
-                }
+
+    if (jQuery(this).is('.equation')) {
+        insideMath = this;
+        range.selectNode(this);
+        range.collapse();
+        formula = jQuery(this).attr('data-equation');
+        submitMessage = gettext('Update');
+        dialogButtons.push({
+            text: gettext('Remove'),
+            class: 'fw-button fw-orange',
+            click: function () {
+                manualEdits.remove(insideMath, range);
+                insideMath = false;
+                dialog.dialog('close');
+            }
+        });
+    }
+
+    dialogButtons.push({
+        text: submitMessage,
+        class: 'fw-button fw-dark',
+        click: function () {
+
+            var math = dialog.find('input').val(), mathNode;
+
+            if ((new RegExp(/^\s*$/)).test(math)) {
+                // The math input is empty. Delete a math node if it exist. Then close the dialog.
                 if (insideMath) {
-
-                    if (math === insideMath.getAttribute('data-equation')) {
-                        // the equation has not been changed, just close the dialog
-                        dialog.dialog('close');
-                        return false;
-                    } else {
-
-                        mathNode = nodeConverter.createMathView();
-                        mathNode.setAttribute('data-equation', math);
-                        insideMath.parentNode.insertBefore(mathNode, insideMath.nextSibling);
-
-                        manualEdits.remove(insideMath, false);
-
-                    }
-                } else {
-                    mathNode = nodeConverter.createMathView();
-                    mathNode.setAttribute('data-equation', math);
-                    // Make sure to get out of any track changes node if tracking is disabled.
-                    range = dom.noTrackIfDisabled(range);
-                    // Make sure to get out of any citation node.
-                    range = dom.noCitationOrLinkNode(range);
-                    // Insert the new math node
-                    manualEdits.insert(mathNode, range);
-
+                    manualEdits.remove(insideMath, false);
                 }
-
+                dialog.dialog('close');
+                return;
+            } else if (insideMath && math === insideMath.getAttribute('data-equation')) {
+                dialog.dialog('close');
+                return;
+            }
+            mathNode = nodeConverter.createMathView();
+            mathNode.setAttribute('data-equation', math);
+            // Make sure to get out of any track changes node if tracking is disabled.
+            range = dom.noTrackIfDisabled(range);
+            // Make sure to get out of any citation node.
+            range = dom.noCitationOrLinkNode(range);
+            // Insert the new math node
+            manualEdits.insert(mathNode, range);
+            if (insideMath) {
+                manualEdits.remove(insideMath, false);
+            } else {
                 mathNode.parentNode.insertBefore(nodeConverter.afterNode(), mathNode.nextSibling);
-                widget.options.editable.removeAllSelections();
-                dialog.dialog('close');
-                return false;
-            };
-            dialog.find('#addMathButton').bind('click', dialogSubmitCb);
-            dialog.find('#cancelMathButton').bind('click', function () {
-                dialog.dialog('close');
-            });
-            buttonset = $.Fidus.buttonset.prototype.createButtonset.call(this, widget.widgetName, 1);
-            buttonize = function (type) {
-                var button, id, openDialog, deleteButton, submitButton;
-                id = "" + _this.options.uuid + "-" + type;
-                button = jQuery('<button></button>');
-                button.makebutton({
-                    label: 'Math',
-                    icon: 'icon-math',
-                    editable: _this.options.editable,
-                    queryState: false,
-                    uuid: _this.options.uuid,
-                    cssClass: _this.options.buttonCssClass
-                });
-                button.attr('class', 'fw-button fw-light fw-large fw-square');
-                buttonset.append(button);
-                dialog.bind('dialogclose', function () {
-                    jQuery('label', button).removeClass('ui-state-active');
-                    if (deleteButton && deleteButton.parentNode) {
-                        deleteButton.parentNode.removeChild(deleteButton);
-                        delete deleteButton;
-                    }
-                    if (mathNode && mathNode.nextSibling) {
-                        range.selectNode(mathNode.nextSibling);
-                        range.collapse();
-                        selection.removeAllRanges();
-                        selection.addRange(range);
-                        mathHelpers.layoutMathNode(mathNode);
-                    } else if (insideMath) {
-                        range.selectNode(insideMath);
-                        range.collapse();
-                        selection.removeAllRanges();
-                        selection.addRange(range);
-                    }
-
-                    widget.options.editable.element.focus();
-                    return widget.options.editable.keepActivated(false);
-                });
-                openDialog = function (clickedFormula) {
-                    insideMath = clickedFormula;
-                    selection = rangy.getSelection();
-                    range = selection.getRangeAt(0);
-
-                    mathInput = jQuery('input[name=math]', dialog);
-                    submitButton = document.getElementById('addMathButton');
-                    if (insideMath) {
-                        mathInput.val(insideMath.getAttribute('data-equation'));
-                        submitButton.textContent = gettext('Update');
-                        deleteButton = document.createElement('button');
-                        deleteButton.classList.add('fw-button');
-                        deleteButton.classList.add('fw-orange');
-                        deleteButton.appendChild(document.createTextNode(gettext('Remove')));
-                        submitButton.parentNode.insertBefore(deleteButton, submitButton);
-                        jQuery(deleteButton).bind('click', function (event) {
-                            event.stopPropagation();
-                            event.preventDefault();
-                            manualEdits.remove(insideMath, range);
-                            insideMath = false;
-                            dialog.dialog('close');
-                            return false;
-                        });
-
-                    } else {
-                        submitButton.textContent = gettext('Insert');
-                        mathInput.val(widget.options.defaultMath);
-                    }
-
-                    noChange = true;
-                    widget.options.editable.keepActivated(true);
-                    dialog.dialog('open');
-
-                    return false;
-                }
-                button.bind("click", function (event) {
-                    openDialog();
-                });
-                mathHelpers.bindEvents(openDialog);
-
-                return _this.element.bind("keyup paste change mouseup", function (event) {
-                    var insideMath, start;
-                    start = jQuery(widget.options.editable.getSelection().startContainer);
-                    insideMath = jQuery(start).closest('.equation')[0];
-                    if (insideMath) {
-                        jQuery('.math_button').addClass('ui-state-active');
-                    } else {
-                        jQuery('.math_button').removeClass('ui-state-active');
-                        if (commentHelpers.deactivateAll()) commentHelpers.layoutComments();
-                    }
-                });
-            };
-            if (this.options.link) {
-                buttonize("A");
             }
-            if (this.options.link) {
-                buttonset.buttonset();
-                toolbar.append(buttonset);
-                return dialog.dialog(this.options.dialogOpts);
-            }
-        },
-        _init: function () {}
+
+            mathHelpers.layoutMathNode(mathNode);
+
+            dialog.dialog('close');
+        }
     });
-})(jQuery);
+
+
+    dialogButtons.push({
+        text: gettext('Cancel'),
+        class: 'fw-button fw-orange',
+        click: function () {
+            dialog.dialog('close');
+        }
+    });
+
+
+
+
+    dialog = jQuery('<div title="' + gettext('Latex equation') + '">\
+                        <input style="width: 250px;" class="math" type="text" name="math" value="' + formula + '" />\
+                    </div>');
+
+
+    dialog.dialog({
+        buttons: dialogButtons,
+        modal: true,
+        close: function () {
+            jQuery(this).dialog('destroy').remove();
+        }
+    });
+
+
+});

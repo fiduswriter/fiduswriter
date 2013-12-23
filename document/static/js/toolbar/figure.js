@@ -18,60 +18,9 @@
  *
  */
 // toolbar figure
-(function (jQuery) {
-    return jQuery.widget("IKS.toolbarfigure", {
-        options: {
-            editable: null,
-            uuid: "figure",
-            link: true,
-            image: true,
-            dialogOpts: {
-                autoOpen: false,
-                width: 'auto',
-                height: 'auto',
-                title: gettext("Enter latex math or insert an image"),
-                modal: true,
-                resizable: false,
-                draggable: false,
-                dialogClass: 'hallofigure-dialog'
-            },
-            imageDialogOpts: {
-                autoOpen: false,
-                width: 'auto',
-                height: 'auto',
-                title: gettext("Images"),
-                modal: true,
-                resizable: false,
-                draggable: false,
-                dialogClass: 'hallofigureimage-dialog'
-            },
-            butonCssClass: null
-        },
-        populateToolbar: function (toolbar) {
-            var buttonize, buttonset, dialog, imageDialog, dialogId,
-                dialogSubmitCb,
-                mathInput, captionInput, figTypeInput, insideFigure,
-                figureNode, contentNode, captionNode, widget, range,
-                    selection,
-                useImage = false,
-                _this = this;
-            widget = this;
-            dialogId = "" + this.options.uuid + "-dialog";
-            dialog = jQuery(tmp_configure_figure({
-                'dialogId': dialogId,
-            }));
-            imageDialog = jQuery(tmp_figure_image());
-            mathInput = jQuery('input[name=figure-math]', dialog).focus(
-                function (
-                    e) {
-                    return this.select();
-                });
-            captionInput = jQuery('input[name=figure-caption]', dialog)
-                .focus(function (
-                    e) {
-                    return this.select();
-                });
-            dialogSubmitCb = function (event) {
+jQuery(document).on('mousedown', '#figure-comment, :not(.del) figure', function (event) {
+
+            dialogSubmit = function (event) {
                 var math, caption, emptySpaceNode, figCat;
                 event.preventDefault();
                 math = mathInput.val();
@@ -210,10 +159,7 @@
                     figureNode.appendChild(contentNode);
                     figureNode.appendChild(captionNode);
                     manualEdits.insert(figureNode, range);
-                    /*thisBlock = jQuery(range.startContainer).closest(
-                        'p, ul, ol, h1, h2, h3, code, blockquote')[0];
-                    thisBlock.parentNode.insertBefore(figureNode,
-                        thisBlock.nextSibling);*/
+
 
                 }
 
@@ -229,14 +175,70 @@
                 range.collapse();
                 
                 editorHelpers.documentHasChanged();
-                //range.selectNode(figureNode.nextSibling);
-                //range.collapse(true);
 
-                //widget.options.editable.removeAllSelections();
                 dialog.dialog('close');
                 return false;
             };
-            dialog.find("form").submit(dialogSubmitCb);
+            
+                  dialogOpts: {
+                autoOpen: false,
+                width: 'auto',
+                height: 'auto',
+                title: gettext("Enter latex math or insert an image"),
+                modal: true,
+                resizable: false,
+                draggable: false,
+                dialogClass: 'hallofigure-dialog'
+            },
+            imageDialogOpts: {
+                autoOpen: false,
+                width: 'auto',
+                height: 'auto',
+                title: gettext("Images"),
+                modal: true,
+                resizable: false,
+                draggable: false,
+                dialogClass: 'hallofigureimage-dialog'
+            },
+            
+
+});
+
+
+(function (jQuery) {
+    return jQuery.widget("IKS.toolbarfigure", {
+        options: {
+            editable: null,
+            uuid: "figure",
+            link: true,
+            image: true,
+      
+            butonCssClass: null
+        },
+        populateToolbar: function (toolbar) {
+            var buttonize, buttonset, dialog, imageDialog, dialogId,
+                dialogSubmitCb,
+                mathInput, captionInput, figTypeInput, insideFigure,
+                figureNode, contentNode, captionNode, widget, range,
+                    selection,
+                useImage = false,
+                _this = this;
+
+            dialog = jQuery(tmp_configure_figure({
+            }));
+            imageDialog = jQuery(tmp_figure_image());
+            mathInput = jQuery('input[name=figure-math]', dialog).focus(
+                function (
+                    e) {
+                    return this.select();
+                });
+            captionInput = jQuery('input[name=figure-caption]', dialog)
+                .focus(function (
+                    e) {
+                    return this.select();
+                });
+
+            dialog.find("form").submit(dialogSubmit);
             buttonset = $.Fidus.buttonset.prototype.createButtonset.call(
                 this,
                 widget.widgetName, 1);
@@ -458,6 +460,11 @@
                         imageDialog.dialog('open');
                     });
 
+                
+                
+                
+                
+                
                 jQuery(document).on('click', 'figure', function () {
                     if (jQuery(this).closest('.del')[0]) {
                         // Inside a deletion node

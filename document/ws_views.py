@@ -127,6 +127,7 @@ class DocumentWS(BaseWebSocketHandler):
 
     def on_message(self, message):
         parsed = json_decode(message)
+        print parsed
         if parsed["type"]=='get_document':
             self.get_document()
         elif parsed["type"]=='get_document_update':

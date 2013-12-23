@@ -19,50 +19,13 @@
  */
 
 // toolbar undo / redo
-(function (jQuery) {
-    return jQuery.widget("IKS.toolbarundoredo", {
-        options: {
-            editable: null,
-            toolbar: null,
-            uuid: '',
-            buttonCssClass: null
-        },
-        addButton: function (toolbar, func, funcName) {
-            var buttonize, buttonset, _this = this;
-            buttonset = $.Fidus.buttonset.prototype.createButtonset.call(this, this.widgetName, 1);
-            buttonize = function (cmd, label) {
-                var buttonElement;
-                button = jQuery('<button></button>');
-                button.makebutton({
-                    uuid: _this.options.uuid,
-                    editable: _this.options.editable,
-                    label: label,
-                    icon: cmd === 'undo' ? 'icon-ccw' : 'icon-cw',
-                    queryState: false,
-                    cssClass: _this.options.buttonCssClass
-                });
-                button.attr('class', 'fw-button fw-light fw-large fw-square disabled');
-                button.bind("click", function (event) {
-                    if (jQuery(this).hasClass('disabled')) {
-                        // Undo/redo have been disabled.
-                        return false;
-                    }
-                    if (cmd === 'undo') {
-                        diffHelpers.undo();
-                    } else {
-                        diffHelpers.redo();
-                    }
-                });
-                return buttonset.append(button);
-            };
-            buttonize(func, funcName);
-            buttonset.hallobuttonset();
-            return toolbar.append(buttonset);
-        },
-        populateToolbar: function (toolbar) {
-            this.addButton(toolbar, "undo", "Undo");
-            this.addButton(toolbar, "redo", "Redo");
-        },
-        _init: function () {}
-    });
-})(jQuery);
+
+jQuery(document).on('mousedown', '#button-undo:not(.disabled)', function (event) {
+    event.preventDefault();
+    diffHelpers.undo(); 
+});
+
+jQuery(document).on('mousedown', '#button-redo:not(.disabled)', function (event) {
+    event.preventDefault();
+    diffHelpers.redo();  
+});

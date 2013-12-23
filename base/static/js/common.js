@@ -33,7 +33,8 @@ jQuery.extend({
      * @memberof jQuery
      */    
     'addDropdownBox': function(btn, box) {
-        btn.bind('click', function() {
+        btn.bind('mousedown', function(e) {
+            e.preventDefault();
             if('none' == box.css('display')) {
                 $.openDropdownBox(box);
             }
@@ -46,7 +47,7 @@ jQuery.extend({
     'openDropdownBox': function(box) {
         box.show();
         setTimeout(function() {
-            jQuery(document).on('click', {'box': box}, $.closeDropdownBox);
+            jQuery(document).on('mousedown', {'box': box}, $.closeDropdownBox);
         }, 100);
         $.isDropdownBoxOpen = true;
     },
@@ -55,7 +56,8 @@ jQuery.extend({
      * @param e ?
      */        
     'closeDropdownBox': function(e) {
-        jQuery(document).off('click', $.closeDropdownBox);
+        e.preventDefault();
+        jQuery(document).off('mousedown', $.closeDropdownBox);
         if(e.data.box.hasOwnProperty('type'))
             e.data.box = box.data.box;
         e.data.box.hide();

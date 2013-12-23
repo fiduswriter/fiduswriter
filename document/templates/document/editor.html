@@ -211,9 +211,6 @@
             <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/bookmark.js'></script>
             <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/selection.js'></script>
 
-            <!-- Hallo.js -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/hallo.js"></script>
-
             <!-- Functions to modify bibliography -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-statics.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-helpers.js"></script>
@@ -231,13 +228,10 @@
             <!-- Math functions -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/math-helpers.js"></script>
             <!-- Hallo plugins -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/make_buttons.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/create_buttonset.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/create_inlinestyle_buttons.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/bold.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/italic.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/create_blockstyle_buttons.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/all_blockstyles.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/highlight_buttons.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/blockstyles.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/lists.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/cite.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/comment.js"></script>
@@ -246,7 +240,6 @@
             <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/link.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/math.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/undo_redo.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/box_position.js"></script>
             <!-- Access rights dialog -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/document-accessrights-templates.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/document-accessrights-helpers.js"></script>
@@ -336,7 +329,7 @@
                     </div>
                 </div>
                 <div>
-                    <span class="header-nav-item-disabled disabled exporter-menu" title="{% trans "Export of the document contents" %}">{% trans "Export" %}</span>
+                    <span class="header-nav-item-disabled exporter-menu" title="{% trans "Export of the document contents" %}">{% trans "Export" %}</span>
                     <div class="fw-pulldown fw-left">
                         <ul>
                             <li>
@@ -358,7 +351,7 @@
                     </div>
                 </div>
                 <div>
-                    <span class="header-nav-item-disabled disabled citationstyle-menu" title="{% trans "Choose your preferred citation style." %}">{% trans "Citation Style" %}</span>
+                    <span class="header-nav-item-disabled citationstyle-menu" title="{% trans "Choose your preferred citation style." %}">{% trans "Citation Style" %}</span>
                     <div class="fw-pulldown fw-left">
                         <ul>
                             <li>
@@ -466,6 +459,147 @@
                 </div>
                 <div id="comments-display" class="fw-button fw-light fw-large" title="{% trans "Show/hide comments" %}">
                     {% trans "Comments" %}
+                </div>
+                <div class="editortoolbar" style="display: block;">
+                    <div class="toolbarheadings ui-buttonset multiButtons">
+                        <span class="multibuttonsCover fw-button fw-light fw-large" title="{% trans "Text that is part of a standard paragraph." %}" id="block-style-label">{% trans "Normal Text" %}</span>
+                        <div class="fw-pulldown fw-left" style="display: none;">
+                            <ul>
+                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                                    <span class="ui-button-text" title="{% trans "Text that is part of a standard paragraph." %}">
+                                        <input type="radio" >
+                                        <label class="fw-pulldown-item" id="p_button">{% trans "Normal Text" %}</label>
+                                    </span>
+                                </li>
+                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                                    <span class="ui-button-text" title="{% trans "A headline of the highest level (under title)." %}">
+                                        <input type="radio">                    
+                                        <label class="fw-pulldown-item" id="h1_button">{% trans "1st Headline" %}</label>
+                                    </span>
+                                </li>
+                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                                    <span class="ui-button-text" title="{% trans "A headline of the 2nd highest level." %}">
+                                        <input type="radio">                    
+                                        <label class="fw-pulldown-item" id="h2_button">{% trans "2nd Headline" %}</label>
+                                    </span>
+                                </li>
+                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                                    <span class="ui-button-text" title="{% trans "A headline of the 3rd highest level." %}">
+                                        <input type="radio">                    
+                                        <label id="h3_button" class="fw-pulldown-item">{% trans "3rd Headline" %}</label>
+                                    </span>
+                                </li>
+                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                                    <span class="ui-button-text" title="{% trans "A longer quotation set as an indented block." %}">
+                                        <input type="radio">
+                                        <label id="blockquote_button" class="fw-pulldown-item">{% trans "Block quote" %}</label>
+                                    </span>
+                                </li>
+                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                                    <span class="ui-button-text" title="{% trans "Computer Code." %}">
+                                        <input type="radio">
+                                        <label id="code_button" class="fw-pulldown-item">{% trans "Code" %}</label>
+                                    </span>
+                                </li>
+                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                                    <span class="ui-button-text" title="{% trans "An item in an ordered list." %}">
+                                        <input type="radio">                    
+                                        <label id="ol_button" class="fw-pulldown-item">{% trans "Numbered List" %}</label>
+                                    </span>
+                                </li>
+                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                                    <span class="ui-button-text" title="{% trans "An item in an unordered list." %}">
+                                        <input type="radio">
+                                        <label id="ul_button" class="fw-pulldown-item">{% trans "Bulleted List" %}</label>
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="toolbarbold ui-buttonset">
+                        <button class="fw-button fw-light fw-large fw-square" id="button-bold" title="{% trans "Bold" %}">
+                            <span class="ui-button-text">
+                                <i class="icon-bold"></i>    
+                            </span>
+                        </button>
+                    </div>
+                    <div class="toolbaritalic ui-buttonset">
+                        <button class="fw-button fw-light fw-large fw-square" id="button-italic" title="{% trans "Italic" %}">
+                            <span class="ui-button-text">
+                                <i class="icon-italic"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="toolbarol ui-buttonset">
+                        <button class="fw-button fw-light fw-large fw-square" id="button-ol" title="{% trans "Numbered list" %}">
+                            <span class="ui-button-text">
+                                <i class="icon-list-numbered"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="toolbarul ui-buttonset">
+                        <button class="fw-button fw-light fw-large fw-square" id="button-ul" title="{% trans "Bulleted list" %}">
+                            <span class="ui-button-text">
+                                <i class="icon-list-bullet"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="toolbarlink ui-buttonset">
+                        <button class="fw-button fw-light fw-large fw-square" id="button-link" title="{% trans "Link" %}">
+                            <span class="ui-button-text">
+                                <i class="icon-link"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="toolbarfootnote ui-buttonset">
+                        <button class="fw-button fw-light fw-large fw-square" id="button-footnote" title="{% trans "Footnote" %}">
+                            <span class="ui-button-text">
+                                <i class="icon-footnote"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="toolbarcite ui-buttonset">
+                        <button class="fw-button fw-light fw-large fw-square" id="button-cite" title="{% trans "Cite" %}">
+                            <span class="ui-button-text">
+                                <i class="icon-quote-right"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="toolbarmath ui-buttonset">
+                        <button class="fw-button fw-light fw-large fw-square" id="button-math" title="{% trans "Math" %}">
+                            <span class="ui-button-text">
+                                <i class="icon-math"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="toolbarfigure ui-buttonset">
+                        <button class="fw-button fw-light fw-large fw-square"  id="button-figure" title="{% trans "Figure" %}">
+                            <span class="ui-button-text">
+                                <i class="icon-figure"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="toolbarundoredo ui-buttonset">
+                        <button class="fw-button fw-light fw-large fw-square disabled"  id="button-undo" title="{% trans "Undo" %}">
+                            <span class="ui-button-text">
+                                <i class="icon-ccw"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="toolbarundoredo ui-buttonset">
+                        <button class="fw-button fw-light fw-large fw-square disabled"  id="button-redo" title="{% trans "Redo" %}">
+                            <span class="ui-button-text">
+                                <i class="icon-cw"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="toolbarcomment ui-buttonset">
+                        <button class="fw-button fw-light fw-large fw-square"  id="button-comment" title="{% trans "Comment" %}">
+                            <span class="ui-button-text">
+                                <i class="icon-comment-empty"></i>
+                            </span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </nav>

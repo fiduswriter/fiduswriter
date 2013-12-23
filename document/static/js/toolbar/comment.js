@@ -17,120 +17,65 @@
  * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
  *
  */
+// Toolbar comment
+jQuery(document).on('mousedown', '#button-comment:not(.disabled)', function (event) {
+  
+    var selection = rangy.getSelection(),
+        range = selection.getRangeAt(0),
+        insideComment = jQuery(range.startContainer).closest('.comment')[0],
+        commentNode, insideCitation, savedSel;
+        
+    event.preventDefault();    
+        
+    if (insideComment) {
+        commentNode = insideComment;
+    } else {
 
-(function (jQuery) {
-    return jQuery.widget("IKS.toolbarcomment", {
-        options: {
-            editable: null,
-            uuid: "",
-            link: true,
-            image: true,
-            butonCssClass: null
-            // More options
-        },
-        populateToolbar: function (toolbar) {
-            var buttonize, buttonset, commentNode, widget, range, selection, _this = this;
-            widget = this;
-            buttonset = $.Fidus.buttonset.prototype.createButtonset.call(this, widget.widgetName, 1);
-            buttonize = function (type) {
-                var button, id;
-                id = "comment-" + _this.options.uuid + "-" + type;
-                button = jQuery('<button></button>');
-                button.makebutton({
-                    label: 'Comment',
-                    icon: 'icon-comment-empty',
-                    editable: _this.options.editable,
-                    queryState: false,
-                    uuid: _this.options.uuid,
-                    cssClass: _this.options.buttonCssClass
-                });
-                button.attr('class', 'fw-button fw-light fw-large fw-square');
-                buttonset.append(button);
-                button.bind("click", function (event) {
-                    if ($(this).hasClass('disabled')) {
-                        // Comments have been disabled.
-                        return false;
-                    }
+        insideCitation = jQuery(range.startContainer).closest('.citation')[0];
 
-                    selection = rangy.getSelection();
-                    range = selection.getRangeAt(0);
+        if (insideCitation) {
+            range.selectNode(insideCitation);
+        } else if (range.collapsed) {
+            // The range is collapsed, so instead we will use the word around the selection.
+            savedSel = rangy.saveSelection();
+            range.startContainer.parentElement.normalize();
+            rangy.restoreSelection(savedSel);
+            range = selection.getRangeAt(0);
 
-                    insideComment = jQuery(range.startContainer).closest('.comment')[0];
-                    if (insideComment) {
-                        commentNode = insideComment;
-                    } else {
-                        
-                        insideCitation = jQuery(range.startContainer).closest('.citation')[0];
+            // Using native range instead of rangy. This will be part of Rangy 1.3 text range module.
+            range.nativeRange.expand('word');
+            if (range.nativeRange.collapsed) {
+                // The range is still collapsed! We must have been some place where there was no word.
+                // We move the start of the range one character to the left and try again. 
+                range.moveCharLeft(true, 1);
+                range.nativeRange.expand('word');
 
-                        if (insideCitation) {
-                            range.selectNode(insideCitation);
-                        } else if (range.collapsed) {
-                            // The range is collapsed, so instead we will use the word around the selection.
-                            var savedSel = rangy.saveSelection();
-                            range.startContainer.parentElement.normalize();
-                            rangy.restoreSelection(savedSel);
-                            range = selection.getRangeAt(0);
+                if (range.nativeRange.collapsed) {
 
-                            // Using native range instead of rangy. This will be part of Rangy 1.3 text range module.
-                            range.nativeRange.expand('word');
-                            if (range.nativeRange.collapsed) {
-                                // The range is still collapsed! We must have been some place where there was no word.
-                                // We move the start of the range one character to the left and try again. 
-                                range.moveCharLeft(true, 1);
-                                range.nativeRange.expand('word');
-                                
-                                if (range.nativeRange.collapsed) {
-                                
-                                    // We decide that no comment can be placed here.
-                                    console.log('could not find word');
-                                    return false;
-                                }
-                            }
-                        }
-                        commentNode = document.createElement('span');
-                        commentNode.classList.add('comment');
-                        
-                        if (!range.canSurroundContents()) {
-                            // We cannot surround the current selection, so we grab something nearby instead
-                            range.selectNode(selection.anchorNode);
-                        }
-                        if (range.canSurroundContents()) {
-                            // A bug in rangy -- some times it claims that certain content can be surrounded, when this is not the case.
-                            try {
-                                range.surroundContents(commentNode);
-                            } catch (err) {
-                                // We give up placing a comment at the current place.
-                                return false;
-                            }
-                        }
-                        commentHelpers.createNewComment(commentNode);
-                    }
-
-                    widget.options.editable.keepActivated(true);
-                    commentHelpers.layoutComments();
+                    // We decide that no comment can be placed here.
+                    console.log('could not find word');
                     return false;
-                });
-                return _this.element.bind("keyup paste change mouseup", function (event) {
-                    var insideComment, start;
-                    start = jQuery(widget.options.editable.getSelection().startContainer);
-                    insideComment = jQuery(start).closest('.comments-enabled .comment')[0];
-                    if (insideComment) {
-                        jQuery('.comment_button').addClass('ui-state-active');
-                    } else {
-                        jQuery('.comment_button').removeClass('ui-state-active');
-                        if (commentHelpers.deactivateAll()) commentHelpers.layoutComments();
-                    }
-                });
-            };
-            if (this.options.link) {
-                buttonize("A");
+                }
             }
-            if (this.options.link) {
-                buttonset.buttonset();
-                toolbar.append(buttonset);
-                return true;
+        }
+        commentNode = document.createElement('span');
+        commentNode.classList.add('comment');
+
+        if (!range.canSurroundContents()) {
+            // We cannot surround the current selection, so we grab something nearby instead
+            range.selectNode(selection.anchorNode);
+        }
+        if (range.canSurroundContents()) {
+            // A bug in rangy -- some times it claims that certain content can be surrounded, when this is not the case.
+            try {
+                range.surroundContents(commentNode);
+            } catch (err) {
+                // We give up placing a comment at the current place.
+                return false;
             }
-        },
-        _init: function () {}
-    });
-})(jQuery);
+        }
+        commentHelpers.createNewComment(commentNode);
+    }
+
+    commentHelpers.layoutComments();
+});

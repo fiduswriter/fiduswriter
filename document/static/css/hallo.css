@@ -1,8 +1,10 @@
-div.hallotoolbar {
+div.editortoolbar {
   width: 37px;
   height: auto;
   overflow: visible;
   z-index: 80;
+  -moz-user-select: none;
+  -webkit-user-select: none;
 }
 div.halloEditIndicator {
   background-color: #000000;

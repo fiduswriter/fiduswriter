@@ -268,6 +268,9 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
             jQuery(this).dialog('destroy').remove();
         }
     });
+    
+    jQuery('input').blur();
+    
     jQuery('.fw-checkable').bind('click', function () {
         $.setCheckableLabel($(this));
     });

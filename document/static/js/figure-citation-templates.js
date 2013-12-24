@@ -123,11 +123,10 @@ var tmp_selected_citation = _.template('<tr id="selected-source-<%= id %>" class
 /** A template to configure the display of a figure in the editor. */ 
 var tmp_configure_figure = _.template('\
             <div class="fw-media-uploader">\
-                <form action="#" method="post" class="mathForm">\
                     <div>\
                         <input class="fw-media-title figure-math" type="text" name="figure-math" placeholder="'
-                            + gettext('Insert formula') + '" value="<%- equation %>"/>\
-                        <button type="button" id="insertFigureImage" class="fw-button fw-light">'
+                            + gettext('Insert formula') + '" value="<%- equation %>" <%if (image) {%>disabled=disabled<%} %>/>\
+                        <button type="button" id="insertFigureImage" class="fw-button fw-light<%if (equation!=="") {%> disabled<%} %>">'
                             + gettext('Insert image') + ' <i class="icon-figure"></i>\
                         </button>\
                     </div>\
@@ -161,7 +160,7 @@ var tmp_configure_figure = _.template('\
                     <div style="margin-top: 10px;"><input style="width: 402px;" class="caption" type="text" name="figure-caption" value="<%- caption %>" placeholder="' +
                 gettext('Insert caption') +
                 '" /></div>\
-                </form></div>');
+                </div>');
 /** A template to select images inside the figure configuration dialog in the editor. */ 
 var tmp_figure_image = _.template('\
     <div>\

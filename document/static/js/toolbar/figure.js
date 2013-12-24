@@ -30,7 +30,8 @@ jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (
         image = false,
         caption = '',
         category = 'figure',
-        equation = '';
+        equation = '',
+        mathInput, captionInput;
     event.preventDefault();
 
     if (jQuery(this).is('figure')) {
@@ -72,7 +73,9 @@ jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (
     dialogButtons.push({
         text: submitMessage,
         class: 'fw-button fw-dark',
-        click: function (event) {
+        mousedown: function (event) {
+            var figureCatNode, captionTextNode, captionNode;
+            console.log('clicked')
             event.preventDefault();
             equation = mathInput.val();
             caption = captionInput.val();
@@ -193,7 +196,7 @@ jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (
 
     dialogOpts = {
         width: 'auto',
-        height: 'auto',
+        height: 585,
         title: gettext("Enter latex math or insert an image"),
         modal: true,
         resizable: false,
@@ -224,11 +227,11 @@ jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (
 
     dialog.dialog(dialogOpts);
 
-    mathInput = jQuery('input[name=figure-math]', dialog).focus(
+    mathInput = jQuery('input[name=figure-math]', dialog); /*.focus(
         function (
             e) {
             return this.select();
-        });
+        });*/
     captionInput = jQuery('input[name=figure-caption]', dialog)
         .focus(function (
             e) {
@@ -288,6 +291,7 @@ jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (
 
     jQuery('input[name=figure-math]').bind('blur',
         function () {
+            console.log('bluring')
             if (jQuery(this).val() === '') {
                 jQuery('#inner-figure-preview')[0].innerHTML =
                     '';

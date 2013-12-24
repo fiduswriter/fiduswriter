@@ -395,6 +395,7 @@ figure {
     text-align: center;
     margin: 10%;
     -webkit-region-break-inside: avoid;
+    cursor: pointer;
 }
 
 figure figcaption {

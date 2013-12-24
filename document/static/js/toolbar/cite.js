@@ -19,27 +19,41 @@
  */
 // toolbar cite
 jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
-    
+
     var ids,
-    selection = rangy.getSelection(),
-    range = selection.getRangeAt(0),
-
-    clickedNode = range.startContainer,
-    citationNode = jQuery(clickedNode).closest('.citation')[0],
-    bibEntryStart = jQuery(citationNode).attr('data-bib-entry'),
-    bibFormatStart = 'autocite',
-    bibBeforeStart = jQuery(citationNode).attr('data-bib-before'),
-    bibPageStart = jQuery(citationNode).attr('data-bib-page'),
-
-    books = '',
+        selection = rangy.getSelection(),
+        range,
+        bibEntryStart,
+        bibFormatStart = 'autocite',
+        bibBeforeStart,
+        bibPageStart,
+        books = '',
         cited_books = '',
         cited_ids = [],
         cited_prefixes,
-        cited_pages;
+        cited_pages,
+        citeSpan;
         
     event.preventDefault();
 
-    dialogSubmit = function () {
+    
+    if (jQuery(this).is('.citation')) {
+        citationNode = this;
+        range = rangy.createRange();
+        range.selectNode(citationNode);
+        range.collapse();
+        bibFormatStart = jQuery(citationNode).attr('data-bib-format');
+        bibEntryStart = jQuery(citationNode).attr('data-bib-entry');
+        bibBeforeStart = jQuery(citationNode).attr('data-bib-before');
+        bibPageStart = jQuery(citationNode).attr('data-bib-page');
+        cited_ids = bibEntryStart.split(',');
+        cited_prefixes = bibBeforeStart.split(',,,');
+        cited_pages = bibPageStart.split(',,,');        
+    } else {
+        range = selection.getRangeAt(0);
+    }
+    
+    function dialogSubmit() {
         var cite_items = jQuery('#selected-cite-source-table .fw-cite-parts-table'),
             cite_ids = [],
             cite_prefixes = [],
@@ -72,10 +86,6 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
         }
 
         if (citationNode) {
-            //    emptySpaceNode = document.createTextNode('\u180e');
-            citationNode.parentNode.insertBefore(emptySpaceNode, citationNode.nextSibling);
-            range.selectNode(emptySpaceNode);
-            range.collapse(true);
             manualEdits.remove(citationNode, false);
             citationNode = false;
         }
@@ -101,13 +111,6 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
         citeSpan.parentNode.insertBefore(nodeConverter.afterNode(), citeSpan.nextSibling);
         return true;
     };
-
-    if (citationNode) {
-        cited_ids = bibEntryStart.split(',');
-        cited_prefixes = bibBeforeStart.split(',,,');
-        cited_pages = bibPageStart.split(',,,');
-        bibFormatStart = jQuery(citationNode).attr('data-bib-format');
-    }
 
     _.each(BibDB, function (bibs, index) {
         var this_book = {
@@ -223,7 +226,7 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
             jQuery('#cite-source-table').trigger('update');
 
             $.addDropdownBox(jQuery('#citation-style-label'), jQuery('#citation-style-pulldown'));
-            jQuery(document).on('click', '#citation-style-pulldown .fw-pulldown-item', function () {
+            jQuery('#citation-style-pulldown .fw-pulldown-item').bind('mousedown', function () {
                 jQuery('#citation-style-label label').html(jQuery(this).html());
                 jQuery('#citation-style-label').attr('data-style', jQuery(this).data('style'));
             });

@@ -21,7 +21,7 @@
 jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (event) {
 
     var selection = rangy.getSelection(),
-        range = selection.getRangeAt(0),
+        range,
         dialog, submitMessage = gettext('Insert'),
         dialogButtons = [],
         insideFigure = false,
@@ -36,6 +36,9 @@ jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (
 
     if (jQuery(this).is('figure')) {
         insideFigure = this;
+        range = rangy.createRange();
+        range.selectNode(insideFigure);
+        range.collapse();
         submitMessage = gettext('Update');
         equation = insideFigure.getAttribute(
             'data-equation');
@@ -62,6 +65,8 @@ jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (
             }
         });
         
+    } else {
+        range = selection.getRangeAt(0)
     }
 
     dialog = jQuery(tmp_configure_figure({
@@ -75,7 +80,6 @@ jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (
         class: 'fw-button fw-dark',
         mousedown: function (event) {
             var figureCatNode, captionTextNode, captionNode;
-            console.log('clicked')
             event.preventDefault();
             equation = mathInput.val();
             caption = captionInput.val();
@@ -291,7 +295,6 @@ jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (
 
     jQuery('input[name=figure-math]').bind('blur',
         function () {
-            console.log('bluring')
             if (jQuery(this).val() === '') {
                 jQuery('#inner-figure-preview')[0].innerHTML =
                     '';

@@ -231,7 +231,7 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
                 jQuery('#citation-style-label').attr('data-style', jQuery(this).data('style'));
             });
 
-            jQuery(document).on('click', '#add-cite-book', function () {
+            jQuery('#add-cite-book').bind('click', function () {
                 var selected_sources = jQuery('#cite-source-table .fw-checkable.checked'),
                     selected_books = [];
                 selected_sources.each(function () {
@@ -250,7 +250,7 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
                 citationHelpers.appendToCitedBooks(selected_books);
             });
 
-            jQuery(document).on('click', '.selected-source .delete', function () {
+            jQuery('.selected-source .delete').bind('click', function () {
                 var source_wrapper_id = '#selected-source-' + jQuery(this).data('id');
                 jQuery(source_wrapper_id).remove();
             });

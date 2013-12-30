@@ -331,6 +331,12 @@ font {
     text-transform: none;
     color: #cecece;
 }
+/* For Firefox problem: shows input fields without height. */
+
+#document-contents, #document-title, #metadata-subtitle, #metadata-abstract, #metadata-authors, #metadata-keywords {
+    min-height: 1.5em;
+}
+
 
 /* overwrite dropkick layout for access rights dialogue */
 

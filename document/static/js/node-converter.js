@@ -59,7 +59,10 @@
         fnNodes = modelNode.querySelectorAll('.pagination-footnote');
         
         for (i = 0; i < fnNodes.length; i++) {
-            newFn = fnNodes[i].firstChild.firstChild;
+            newFn = document.createElement('span');
+            while (fnNodes[i].firstChild.firstChild.firstChild) {
+                newFn.appendChild(fnNodes[i].firstChild.firstChild.firstChild);
+            }
             newFn.classList.add('footnote');
             newFn.contentEditable = 'inherit';
             fnNodes[i].parentNode.replaceChild(newFn, fnNodes[i]);
@@ -83,10 +86,18 @@
     nodeConverter.createFootnoteView = function (htmlFragment) {
         var fn = document.createElement('span'), id;
         fn.classList.add('pagination-footnote');
+        
         fn.appendChild(document.createElement('span'));
-        fn.appendChild(document.createTextNode('\u200b'));
-        fn.firstChild.appendChild(document.createElement('span'));
+        if (isFirefox) {
+            fn.contentEditable = false;
+            fn.firstChild.appendChild(document.createElement('div'));
+            fn.firstChild.firstChild.contentEditable = true;
+        } else {
+            fn.appendChild(document.createTextNode('\u200b'));
+            fn.firstChild.appendChild(document.createElement('span'));
+        }
         fn.firstChild.firstChild.appendChild(htmlFragment);
+
         id=document.querySelectorAll('.pagionation-footnote').length;
         while(document.getElementById(id)) {
             id++;

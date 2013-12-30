@@ -20,22 +20,17 @@
             {% else %}
                 var websocketServer = location.host.split(':')[0];
             {% endif %}
-            var isChromeOrSafari = false;
 
-            if(window.chrome) {
-                isChromeOrSafari = true;
-            // We are on Chrome
-            } else if (navigator.userAgent.indexOf('Safari/') > -1 && parseFloat(navigator.userAgent.match(/version\/([\.\d]+)/i)[1]) > 6) {
-                isChromeOrSafari = true;
-            // We are on Safari 6.1 or higher
-            }
+            var isChrome = (window.hasOwnProperty('chrome')), 
+                isSafari = (navigator.userAgent.indexOf('Safari/') > -1), 
+                isFirefox = !(window.mozInnerScreenX == null);
 
-            if(!(isChromeOrSafari)) {
-       /*         var currentURL = location.href.substr(7);
+            if(!(isChrome || isSafari || isFirefox )) {
+                var currentURL = location.href.substr(7);
                 var currentRelativeURL = currentURL.substr(currentURL.indexOf('/'));
                 if(currentRelativeURL != '/feedback/browser/') {
                     window.location = '/feedback/browser';
-                } */
+                }
             }
         </script>
         <style>

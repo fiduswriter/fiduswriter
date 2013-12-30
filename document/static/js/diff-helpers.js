@@ -89,6 +89,7 @@
         theDocumentValues.diffNode = nodeConverter.toModel(theDocumentValues.documentNode); // a node against which changes are tested constantly.
         theDocumentValues.textChangeList.push([theDocumentValues.diffNode.cloneNode(true), new Date().getTime() + window.clientOffsetTime]); // A list of the most recent node versions, used when receiving older collaboration updates and undo.        
         diffHelpers.diffTimer = setInterval(diffHelpers.handleChanges, 100);
+        theDocumentValues.disableInput = false;
     };
 
     diffHelpers.makeDiff = function (isUndo) {
@@ -391,11 +392,10 @@
             try {
                 diffHelpers.orderAndApplyChanges();
             } catch (err) {
-                if (!theDocumentValues.control) {
-                    serverCommunications.send({
-                        type: 'get_document_update'
-                    });
-                }
+                theDocumentValues.disableInput = true;
+                serverCommunications.send({
+                    type: 'get_document_update'
+                });
             }
         }
     };

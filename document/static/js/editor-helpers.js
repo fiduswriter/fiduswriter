@@ -462,6 +462,7 @@
      */     
     editorHelpers.checkHash = function(hash) {
         if (editorHelpers.docHash() != hash) {
+            theDocumentValues.disableInput = true;
             serverCommunications.send({type: 'get_document_update'});
         }
     }

@@ -35,40 +35,42 @@
             
         if (selection.rangeCount > 0) {
             range = selection.getRangeAt(0);
-        } else {
-            range = rangy.createRange();
         }
         
-        if (range.startContainer == node) {
+        if (range && range.startContainer == node) {
             selectionStartOffset = range.startOffset;
             currentValue = currentValue.substring(0, range.startOffset) + '\0' + currentValue.substring(range.startOffset);
         }
-        if (range.endContainer == node) {
+        if (range && range.endContainer == node) {
             selectionEndOffset = range.endOffset;
             currentValue = currentValue.substring(0, range.endOffset + 1) + '\0' + currentValue.substring(range.endOffset + 1);
         }
         if (currentValue != expectedValue) {
+            console.log('UNEXPECTED VALUE');
+            console.log([currentValue, expectedValue]);
             finalValue = dmp.patch_apply(dmp.patch_make(expectedValue, newValue), currentValue)[0]
 
         } else {
             finalValue = newValue;
         }
         if (finalValue.indexOf('\0') != -1) {
-            if (selectionStartOffset) {
+            if (selectionStartOffset != undefined) {
                 selectionStartOffset = finalValue.indexOf('\0');
                 finalValue = finalValue.replace('\0', '');
             }
-            if (selectionEndOffset && finalValue.indexOf('\0') != -1) {
-                selectionEndOffset = finalValue.indexOf('\0');
-                finalValue = finalValue.replace('\0', '');
+            if (finalValue.indexOf('\0') != -1) {
+                if (selectionEndOffset != undefined) {
+                    selectionEndOffset = finalValue.indexOf('\0');
+                }
+                finalValue = finalValue.replace(/\0/g, '');
             }
+            
         }
 
         node.data = finalValue;
 
-        if (selectionStartOffset || selectionEndOffset) {
-            //range = document.createRange();
-            //range.selectNodeContents(node);
+        if (range && (selectionStartOffset != undefined || selectionEndOffset != undefined)) {
+
             if (selectionStartOffset) {
                 if (finalValue.length <= selectionStartOffset) {
                     selectionStartOffset = finalValue.length - 1;

@@ -369,8 +369,13 @@
 
     diff: function (t1, t2) {
       diffcount = 0;
-      t1 = t1.cloneNode(true)
-      t2 = t2.cloneNode(true)
+      t1 = t1.cloneNode(true);
+      t2 = t2.cloneNode(true);
+      if (this.debug) {
+          this.t1Orig = htmlToJson(t1);
+          this.t2Orig = htmlToJson(t2);
+      }
+      
       this.tracker = new DiffTracker();
       return this.findDiffs(t1, t2);
     },
@@ -380,7 +385,7 @@
         if (this.debug) {
           diffcount++;
           if (diffcount > this.diffcap) {
-            throw new Error("surpassed diffcap");
+            throw new Error("surpassed diffcap: " + this.t1Orig + " -> " + this.t2Orig);
           }
         }
 

@@ -33,10 +33,16 @@ jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (
         equation = '',
         mathInput, captionInput;
     event.preventDefault();
+    
+    if (selection.rangeCount > 0) {
+        range = selection.getRangeAt(0);
+    } else {
+        range = rangy.createRange();
+    }
+    
 
     if (jQuery(this).is('figure')) {
         insideFigure = this;
-        range = rangy.createRange();
         range.selectNode(insideFigure);
         range.collapse();
         submitMessage = gettext('Update');
@@ -65,8 +71,6 @@ jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (
             }
         });
         
-    } else {
-        range = selection.getRangeAt(0)
     }
 
     dialog = jQuery(tmp_configure_figure({

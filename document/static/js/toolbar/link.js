@@ -22,10 +22,17 @@
 jQuery(document).on('mousedown', '#button-link', function (event) {
     event.preventDefault();    
     var selection = rangy.getSelection(),
-        range = selection.getRangeAt(0),
+        range,
         dialog, dialogButtons = [],
         defaultLink = 'http://';
 
+        if (selection.rangeCount > 0) {
+            range = selection.getRangeAt(0);
+        } else {
+            range = rangy.createRange();
+        }            
+            
+            
     if (jQuery(range.startContainer).closest('a').length > 0) {
         // We are inside of a link. Exit.
         dialog.dialog('close');

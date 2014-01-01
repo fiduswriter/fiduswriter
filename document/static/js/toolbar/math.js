@@ -21,11 +21,17 @@
 jQuery(document).on('mousedown', '#button-math, .equation', function (event) {
     event.preventDefault();    
     var selection = rangy.getSelection(),
-        range = selection.getRangeAt(0),
+        range,
         dialog, dialogButtons = [],
         submitMessage = gettext('Insert'),
         insideMath = false,
         formula = 'x=2*y';
+                    
+        if (selection.rangeCount > 0) {
+            range = selection.getRangeAt(0);
+        } else {
+            range = rangy.createRange();
+        }                    
 
 
     if (jQuery(this).is('.equation')) {

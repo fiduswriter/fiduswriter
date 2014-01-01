@@ -99,6 +99,8 @@
             .title);
         editorHelpers.layoutMetadata();
         diffHelpers.setup();
+        mathHelpers.resetMath();
+        citationHelpers.formatCitationsInDoc();
     };
     
     
@@ -490,11 +492,13 @@
             
             documentData.title = theDocument.title.substring(0, 255);
             documentData.contents = theDocument.contents;
-
+            console.log('saving');
             serverCommunications.send({
                 type: 'save',
                 document: documentData
             });
+        } else {
+            console.log('not saving');
         }
         
         theDocumentValues.changed = false;

@@ -21,9 +21,18 @@
 jQuery(document).on('mousedown', '#button-comment:not(.disabled)', function (event) {
   
     var selection = rangy.getSelection(),
-        range = selection.getRangeAt(0),
-        insideComment = jQuery(range.startContainer).closest('.comment')[0],
+        range,
+        insideComment,
         commentNode, insideCitation, savedSel;
+        
+        
+    if (selection.rangeCount > 0) {
+        range = selection.getRangeAt(0);
+    } else {
+        return false;
+    }
+    
+    insideComment = jQuery(range.startContainer).closest('.comment')[0];
         
     event.preventDefault();    
         

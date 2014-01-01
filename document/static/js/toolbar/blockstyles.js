@@ -43,8 +43,17 @@ jQuery(document).on('mousedown', '#button-ul', function (event) {
 
 jQuery(document).bind('updateBlockFormat', function (event) {
     var selection = rangy.getSelection(),
-        range = selection.getRangeAt(0),
-        format = jQuery(range.startContainer).closest('p, ul, ol, h1, h2, h3, code, blockquote');
+        range,
+        format;
+                      
+    if (selection.rangeCount > 0) {
+        range = selection.getRangeAt(0);
+    } else {
+        range = rangy.createRange();
+    }
+    
+    format = jQuery(range.startContainer).closest('p, ul, ol, h1, h2, h3, code, blockquote');
+                      
     if (format.length === 0) {
         return;
     } else {

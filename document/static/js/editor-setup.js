@@ -220,7 +220,7 @@ jQuery(document).bind('documentDataLoaded', function () {
                 editorHelpers.getUpdatesFromInputFields(function () {
                     editorHelpers.saveDocument();
                 });
-            } else if (theDocumentValues.control && !theDocumentValues.sentHash) {
+            } else if (theDocumentValues.control && !theDocumentValues.sentHash && theDocumentValues.collaborativeMode) {
                 theDocumentValues.sentHash = true;
                 console.log('sending hash');
                 serverCommunications.send({

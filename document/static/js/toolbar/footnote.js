@@ -21,13 +21,21 @@
 jQuery(document).on('mousedown', '#button-footnote', function (event) {
 
     var selection = rangy.getSelection(),
-        range = selection.getRangeAt(0),
-        startContainer = range.startContainer,
+        range,
         fn, innerFootnote, scrollView;
+        
+    event.preventDefault();    
+        
+    if (selection.rangeCount > 0) {
+        range = selection.getRangeAt(0);
+    } else {
+        return false;
+    }        
 
-    event.preventDefault();
+    
+    
 
-    if (jQuery(startContainer).closest('.pagination-footnote > span').length > 0) {
+    if (jQuery(range.startContainer).closest('.pagination-footnote > span').length > 0) {
         // If user is trying to create a footnote inside another footnote, we stop.
         return false;
     }

@@ -32,14 +32,21 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
         cited_ids = [],
         cited_prefixes,
         cited_pages,
-        citeSpan;
+        citeSpan,
+        citationNode;
         
     event.preventDefault();
 
     
+    if (selection.rangeCount > 0) {
+        range = selection.getRangeAt(0);
+    } else {
+        range = rangy.createRange();
+    }
+    
+    
     if (jQuery(this).is('.citation')) {
         citationNode = this;
-        range = rangy.createRange();
         range.selectNode(citationNode);
         range.collapse();
         bibFormatStart = jQuery(citationNode).attr('data-bib-format');
@@ -49,8 +56,6 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
         cited_ids = bibEntryStart.split(',');
         cited_prefixes = bibBeforeStart.split(',,,');
         cited_pages = bibPageStart.split(',,,');        
-    } else {
-        range = selection.getRangeAt(0);
     }
     
     function dialogSubmit() {

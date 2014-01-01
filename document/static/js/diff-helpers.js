@@ -28,10 +28,17 @@
     var dmp = new diff_match_patch();
 
     domDiff.textDiff = function (node, currentValue, expectedValue, newValue) {
-        var selection = document.getSelection(),
-            range = selection.getRangeAt(0),
+        var selection = rangy.getSelection(),
+            range,
             containsSelection = false,
             finalValue, selectionStartOffset, selectionEndOffset;
+            
+        if (selection.rangeCount > 0) {
+            range = selection.getRangeAt(0);
+        } else {
+            range = rangy.createRange();
+        }
+        
         if (range.startContainer == node) {
             selectionStartOffset = range.startOffset;
             currentValue = currentValue.substring(0, range.startOffset) + '\0' + currentValue.substring(range.startOffset);
@@ -392,6 +399,8 @@
             try {
                 diffHelpers.orderAndApplyChanges();
             } catch (err) {
+                console.log("ERROR");
+                console.log(err);
                 theDocumentValues.disableInput = true;
                 serverCommunications.send({
                     type: 'get_document_update'

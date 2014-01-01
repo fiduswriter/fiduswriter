@@ -135,7 +135,8 @@
             var document_style_folder_path = '{{ STATIC_URL }}css/document/';
         </script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.autoresize.js"></script>
-        
+        <!-- diff-match-patch -->
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/diff_match_patch.js"></script>
             
         {% compress js %}
 
@@ -181,8 +182,7 @@
 
             <script type="text/javascript"  src="{{ STATIC_URL }}js/libs/pagination.js"></script>
 
-            <!-- diff-match-patch -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/diff_match_patch.js"></script>
+
             <!-- Zip.js -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/zip.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/deflate.js"></script>

@@ -51,7 +51,6 @@
 
     mathHelpers.resetMath = function (callback) {
 
-
         // (Re)layout all math nodes
         var allEquations = jQuery('.equation'),
             allFigureEquations = jQuery('.figure-equation'),

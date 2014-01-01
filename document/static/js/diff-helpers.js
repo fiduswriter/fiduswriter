@@ -157,12 +157,25 @@
                 delete theDocumentValues.undoMode;
                 // We have been redoing and undoing and are just now leaving this mode. 
                 // We delete all undoed diffs, as we will never be able to recover them.
+                console.log('exiting from undo mode');
+
+                i = _.findWhere(theDocumentValues.usedDiffs,{undo:true}).time;
+                
+                while (theDocumentValues.textChangeList[theDocumentValues.textChangeList.length-1][1] > i) {
+                    theDocumentValues.textChangeList.pop();
+                }
+                
                 theDocumentValues.usedDiffs = _.where(theDocumentValues.usedDiffs, {
                     undo: undefined
                 });
+                
+                while (theDocumentValues.usedDiffs.length > 0 && theDocumentValues.usedDiffs[theDocumentValues.usedDiffs.length-1].time > theDocumentValues.textChangeList[theDocumentValues.textChangeList.length-1][1]) {
+                    theDocumentValues.newDiffs(theDocumentValues.usedDiffs.pop());
+                }
+                
                 // Enable undo button and disable redo button
-                document.querySelector('.icon-ccw').parentNode.parentNode.classList.remove('disabled');
-                document.querySelector('.icon-cw').parentNode.parentNode.classList.add('disabled');
+                document.getElementById('button-undo').classList.remove('disabled');
+                document.getElementById('button-redo').classList.add('disabled');
             } 
             thePackage.session = theDocumentValues.session_id;
             if (theDocumentValues.collaborativeMode) {
@@ -203,11 +216,11 @@
         theDiff.undo = true;
 
         if (_.where(theDiffs, {undo:undefined}).length===0) {
-            document.querySelector('.icon-ccw').parentNode.parentNode.classList.add('disabled');
+            document.getElementById('button-undo').classList.add('disabled');
         }
         
         diffHelpers.applyUndo(theDiff.time, isUndo);
-        document.querySelector('.icon-cw').parentNode.parentNode.classList.remove('disabled');
+        document.getElementById('button-redo').classList.remove('disabled');
         return true;
     };
 
@@ -244,9 +257,9 @@
         diffHelpers.applyUndo(theDiff.time, isUndo);
         
         if (_.where(theDiffs,{undo:true}).length===0) {
-            document.querySelector('.icon-cw').parentNode.parentNode.classList.add('disabled');
+            document.getElementById('button-redo').classList.add('disabled');
         }
-        document.querySelector('.icon-ccw').parentNode.parentNode.classList.remove('disabled');
+        document.getElementById('button-undo').classList.remove('disabled');
         return true;
     };
 
@@ -394,7 +407,7 @@
         if (theDocumentValues.touched) {
             theDocumentValues.touched = false;
             if (diffHelpers.makeDiff() && theDocumentValues.virgin) {
-                document.querySelector('.icon-ccw').parentNode.parentNode.classList.remove('disabled');
+                document.getElementById('button-undo').classList.remove('disabled');
                 delete theDocumentValues.virgin;
             }
         } else if (theDocumentValues.newDiffs.length > 0) {

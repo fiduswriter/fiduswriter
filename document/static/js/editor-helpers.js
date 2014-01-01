@@ -114,6 +114,7 @@
      * that differ from session to session.
      */
     editorHelpers.updateEditorPage = function (aDocument) {
+        console.log('updating editor');
         clearInterval(diffHelpers.diffTimer);
         jQuery('.toolbarundoredo button').addClass('disabled');
         theDocumentValues.changed = false;
@@ -493,6 +494,7 @@
      */     
     editorHelpers.checkHash = function(hash) {
         if (editorHelpers.docHash() != hash) {
+            console.log('Hash did not match. Will get update from server.');
             theDocumentValues.disableInput = true;
             serverCommunications.send({type: 'get_document_update'});
         }

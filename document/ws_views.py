@@ -115,6 +115,8 @@ class DocumentWS(BaseWebSocketHandler):
         self.write_message(response)
 
     def get_document_update(self):
+        document_id = self.document.id
+        self.document = Document.objects.get(id=document_id)        
         response = dict()
         response['type'] = 'document_data_update'        
         response['document'] = dict()

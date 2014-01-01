@@ -95,6 +95,9 @@
 
   var jsonToHtml = function (jsonNode, insideSvg) {
     var node, i;
+    if (jsonNode===undefined) {
+        return false;
+    }
     if (jsonNode.hasOwnProperty('t')) {
       node = document.createTextNode(jsonNode.t);
     } else if (jsonNode.hasOwnProperty('co')) {

@@ -28,7 +28,7 @@ MAX_SINCE_SAVE=timedelta(seconds=LOCK_TIMEOUT)
 
 class Document(models.Model):
     title = models.CharField(max_length=255, default='', blank=True)
-    contents = models.TextField(default='<p><br></p>')
+    contents = models.TextField(default='{"nn":"DIV","a":[],"c":[{"nn":"P","c":[{"nn":"BR"}]}]}')
     metadata = models.TextField(default='{}') #json object of metadata
     settings = models.TextField(default='{}') #json object of settings 
     owner = models.ForeignKey(User,related_name='owner')

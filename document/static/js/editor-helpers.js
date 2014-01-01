@@ -33,16 +33,16 @@
     
     editorHelpers.tmpMetadata = _.template('\
         <% if (settings.subtitle) { %>\
-            <div id="metadata-subtitle" class="editable metadata metadata-subtitle" data-metadata="subtitle" contenteditable="true" title="'+gettext('The subtitle of the document')+'"><%= metadata.subtitle %></div>\
+            <div id="metadata-subtitle" class="editable metadata metadata-subtitle" data-metadata="subtitle" contenteditable="true" title="'+gettext('The subtitle of the document')+'"></div>\
         <% } %>\
         <% if (settings.authors) { %>\
-            <div id="metadata-authors" class="editable metadata metadata-authors" data-metadata="authors" contenteditable="true" title="'+gettext('The authors of the document (comma-separated)')+'"><%= metadata.authors %></div>\
+            <div id="metadata-authors" class="editable metadata metadata-authors" data-metadata="authors" contenteditable="true" title="'+gettext('The authors of the document (comma-separated)')+'"></div>\
         <% } %>\
         <% if (settings.abstract) { %>\
-            <div id="metadata-abstract" class="editable metadata metadata-abstract" data-metadata="abstract" contenteditable="true" title="'+gettext('The abstract of the document')+'"><%= metadata.abstract %></div>\
+            <div id="metadata-abstract" class="editable metadata metadata-abstract" data-metadata="abstract" contenteditable="true" title="'+gettext('The abstract of the document')+'"></div>\
         <% } %>\
         <% if (settings.keywords) { %>\
-            <div id="metadata-keywords" class="editable metadata metadata-keywords" data-metadata="keywords" contenteditable="true" title="'+gettext('The keywords related to the document (comma-separated)')+'"><%= metadata.keywords %></div>\
+            <div id="metadata-keywords" class="editable metadata metadata-keywords" data-metadata="keywords" contenteditable="true" title="'+gettext('The keywords related to the document (comma-separated)')+'"></div>\
         <% } %>\
     ');
         
@@ -53,20 +53,27 @@
      * @memberof editorHelpers 
      */ 
     editorHelpers.layoutMetadata = function () {
-        var i, metadataNode = document.getElementById('document-metadata'), metadataClone = metadataNode.cloneNode(), diffs;
+        var i, metadataNode = document.getElementById('document-metadata'), metadataClone = metadataNode.cloneNode(), metadataDataNode, layoutDataNode, diffs;
         jQuery('.metadata-menu-item').removeClass('selected');
 
+        metadataClone.innerHTML = editorHelpers.tmpMetadata({
+            settings: theDocument.settings.metadata
+        });        
+        
         for (i in theDocument.settings.metadata) {
             if (theDocument.settings.metadata[i]) {
                 jQuery('.metadata-menu-item.metadata-' + i).addClass(
                     'selected');
             }
+            if (theDocument.metadata[i]) {
+                metadataDataNode = jsonToHtml(theDocument.metadata[i]);
+                layoutDataNode  = metadataClone.querySelector('#metadata-'+i);
+                while (metadataDataNode.firstChild) {
+                    layoutDataNode.appendChild(metadataDataNode.firstChild);
+                }
+            }
         }
 
-        metadataClone.innerHTML = editorHelpers.tmpMetadata({
-            settings: theDocument.settings.metadata,
-            metadata: theDocument.metadata
-        });
         
         metadataClone = nodeConverter.toView(metadataClone);
         
@@ -113,7 +120,7 @@
         theDocumentValues.touched = false;
         theDocument.settings = jQuery.parseJSON(aDocument.settings);
         theDocument.metadata = jQuery.parseJSON(aDocument.metadata);
-        theDocument.contents = aDocument.contents;
+        theDocument.contents = jQuery.parseJSON(aDocument.contents);
         
         editorHelpers.setDisplay.document('contents', theDocument.contents);
         editorHelpers.setDisplay.document('metadata.title', theDocument.metadata
@@ -142,7 +149,8 @@
         theDocumentValues.virgin = true;
         theDocument.settings = jQuery.parseJSON(theDocument.settings);
         theDocument.metadata = jQuery.parseJSON(theDocument.metadata);
-
+        theDocument.contents = jQuery.parseJSON(theDocument.contents);
+        
         documentId = theDocument.id;
         
         DEFAULTS = [
@@ -305,16 +313,13 @@
      * @memberof editorHelpers.setDisplay
      * @param theValue The HTML of the contents/main body.*/
     editorHelpers.setDisplay.contents = function (theValue) {
-        var contentsNode = document.getElementById('document-contents'), contentsClone, diffs;
+        var contentsNode = document.getElementById('document-contents'), contentsClone = contentsNode.cloneNode(), converterNode = jsonToHtml(theValue), diffs;
         
-        //if (contentsNode.textContent.length===0) {
-        //    contentsNode.innerHTML = theValue;
-        //    return;
-        //}
         
-        contentsClone = contentsNode.cloneNode();
+        while(converterNode.firstChild) {
+            contentsClone.appendChild(converterNode.firstChild);
+        }
         
-        contentsClone.innerHTML = theValue;
         
         contentsClone = nodeConverter.toView(contentsClone);
         
@@ -332,10 +337,12 @@
      * @param theValue The HTML of the title.*/
     editorHelpers.setDisplay.metadataTitle = function (theValue) {
 
-        var titleNode = document.getElementById('document-title'), titleClone, diffs;
+        var titleNode = document.getElementById('document-title'), titleClone = titleNode.cloneNode(), converterNode = jsonToHtml(theValue), diffs;
         
-        titleClone = titleNode.cloneNode();
-        titleClone.innerHTML = theValue;
+        while(converterNode.firstChild) {
+            titleClone.appendChild(converterNode.firstChild);
+        }
+        
         titleClone = nodeConverter.toView(titleClone);
         
         diffs = domDiff.diff(titleNode, titleClone);
@@ -445,18 +452,19 @@
     editorHelpers.getUpdatesFromInputFields = function (callback) {
         
         var i, j, metadata;
-        
-        editorHelpers.setDocumentData('metadata.title', nodeConverter.toModel(document.getElementById('document-title')).innerHTML);
+        console.log('getting updates');
+        editorHelpers.setDocumentData('metadata.title', htmlToJson(nodeConverter.toModel(document.getElementById('document-title'))));
 
-        editorHelpers.setDocumentData('contents', nodeConverter.toModel(document.getElementById('document-contents')).innerHTML);
+        editorHelpers.setDocumentData('contents', htmlToJson(nodeConverter.toModel(document.getElementById('document-contents'))));
 
         metadata = document.querySelectorAll('#document-metadata .metadata');
         
         j = metadata.length;
         
-        for (i=0; i > j; i++) {
+        for (i=0; i < j; i++) {
             editorHelpers.setDocumentData('metadata.' + metadata[i].getAttribute(
-                    'data-metadata'), nodeConverter.toModel(metadata[i]).innerHTML);   
+                    'data-metadata'), htmlToJson(nodeConverter.toModel(metadata[i])));
+            console.log(htmlToJson(nodeConverter.toModel(metadata[i])));
         }
 
         if (callback) {
@@ -512,7 +520,7 @@
             documentData.metadata = JSON.stringify(theDocument.metadata);
             
             documentData.title = theDocument.title.substring(0, 255);
-            documentData.contents = theDocument.contents;
+            documentData.contents = JSON.stringify(theDocument.contents);
             console.log('saving');
             serverCommunications.send({
                 type: 'save',

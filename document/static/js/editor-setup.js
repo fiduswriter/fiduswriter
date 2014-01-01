@@ -197,7 +197,7 @@ jQuery(document).bind('documentDataLoaded', function () {
         window.tracker = new ice.InlineChangeEditor({
             element: document.querySelector('#document-editable'),
             handleEvents: false,
-            mergeBlocks: false,
+             mergeBlocks: false,
             contentEditable: true,
             currentUser: {
                 id: theUser.id,

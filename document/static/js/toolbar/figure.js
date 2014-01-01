@@ -36,9 +36,14 @@ jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (
     
     if (selection.rangeCount > 0) {
         range = selection.getRangeAt(0);
+        if (jQuery(range.startContainer).closest('#document-editable').length===0) {
+            range = rangy.createRange();
+        }
+        
     } else {
         range = rangy.createRange();
-    }
+    }    
+    
     
 
     if (jQuery(this).is('figure')) {

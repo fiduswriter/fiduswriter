@@ -28,14 +28,17 @@ jQuery(document).on('mousedown', '#button-link', function (event) {
 
         if (selection.rangeCount > 0) {
             range = selection.getRangeAt(0);
+            if (jQuery(range.startContainer).closest('#document-editable').length===0) {
+                return false;
+            }
+            
         } else {
-            range = rangy.createRange();
-        }            
+            return false;
+        }       
             
             
     if (jQuery(range.startContainer).closest('a').length > 0) {
         // We are inside of a link. Exit.
-        dialog.dialog('close');
         return;
     }
             

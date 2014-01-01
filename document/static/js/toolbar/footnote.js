@@ -28,10 +28,12 @@ jQuery(document).on('mousedown', '#button-footnote', function (event) {
         
     if (selection.rangeCount > 0) {
         range = selection.getRangeAt(0);
+        if (jQuery(range.startContainer).closest('#document-editable').length===0) {
+            return false;
+        }
     } else {
         return false;
-    }        
-
+    }
     
     
 

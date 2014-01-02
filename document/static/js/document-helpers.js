@@ -131,7 +131,8 @@
                             /C:\\fakepath\\/i, ''));
                 });
                 jQuery('#import-fidus-btn').bind('mousedown', function () {
-                    jQuery('#fidus-uploader').trigger('mousedown');
+                    console.log('triggering');
+                    jQuery('#fidus-uploader').trigger('click');
                 });
             },
             close: function () {

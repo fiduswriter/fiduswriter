@@ -346,7 +346,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
         if (keywords && metadata.keywords) {
             tempNode = jsonToHtml(metadata.keywords);
-            if (tempNode.textContent.length > 0) {            
+            if (tempNode.textContent.length > 0) {
                 includePackages +=
                     '\\def\\keywords{\\vspace{.5em}\
                     {\\textit{Keywords}:\\,\\relax%\
@@ -396,16 +396,16 @@ var FW_FILETYPE_VERSION = "1.1";
         latexStart = '\\documentclass{' + documentClass + '}\n' +
             includePackages +
             '\n\\begin{document}\n\n\\title{' + title + '}';
-  
+
         if (specifiedAuthors && metadata.authors) {
             tempNode = jsonToHtml(metadata.authors);
             if (tempNode.textContent.length > 0) {
                 author = tempNode.textContent;
             }
         }
-        
+
         latexStart += '\n\\author{' + author + '}\n';
-        
+
         if (subtitle && metadata.subtitle) {
             tempNode = jsonToHtml(metadata.subtitle);
             if (tempNode.textContent.length > 0) {
@@ -432,7 +432,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
             if (metadata.copyright) {
                 tempNode = jsonToHtml(metadata.copyright);
-                if (tempNode.textContent.length > 0) {                
+                if (tempNode.textContent.length > 0) {
                     latexStart += tempNode.textContent + '\n\n';
                 }
             }
@@ -486,12 +486,12 @@ var FW_FILETYPE_VERSION = "1.1";
 
 
         if (metadataSettings.abstract && metadata.abstract) {
-                tempNode = jsonToHtml(metadata.abstract);
-                if (tempNode.textContent.length > 0) {
-            
+            tempNode = jsonToHtml(metadata.abstract);
+            if (tempNode.textContent.length > 0) {
+
                 htmlCode.innerHTML = '<div class="abstract">' + tempNode.innerHTML +
                     '</div>' + htmlCode.innerHTML;
-                }
+            }
         }
 
 
@@ -766,44 +766,44 @@ var FW_FILETYPE_VERSION = "1.1";
 
     /** Same functionality as jsonToHtml in DOMdiff.js, but also offers output in XHTML format. */
     exporter.jsonToHtml = function (jsonNode, docType) {
-    var parser;
-    if (jsonNode===undefined) {
-        return false;
-    }
-    if (docType==='xhtml') {
-        parser = new DOMParser().parseFromString('<xml/>',"text/xml");
-    } else {
-        parser = document;
-    }
-    
-    function inner(jsonNode, insideSvg) {
-        var node, i;
-        if (jsonNode.hasOwnProperty('t')) {
-            node = parser.createTextNode(jsonNode.t);
-        } else if (jsonNode.hasOwnProperty('co')) {
-            node = parser.createComment(jsonNode.co);
-        } else {
-            if (jsonNode.nn==='svg' || insideSvg) {
-                node = parser.createElementNS('http://www.w3.org/2000/svg',jsonNode.nn);
-                insideSvg = true;
-            } else {
-                node = parser.createElement(jsonNode.nn);
-            }
-            if (jsonNode.a) {
-                for (i = 0; i < jsonNode.a.length; i++) {
-                    node.setAttribute(jsonNode.a[i][0], jsonNode.a[i][1]);
-                }
-            }
-            if (jsonNode.c) {
-                for (i = 0; i < jsonNode.c.length; i++) {
-                    node.appendChild(inner(jsonNode.c[i], insideSvg));
-                }
-            }
+        var parser;
+        if (jsonNode === undefined) {
+            return false;
         }
-        return node;
-    }
-    return inner(jsonNode);
-  };
+        if (docType === 'xhtml') {
+            parser = new DOMParser().parseFromString('<xml/>', "text/xml");
+        } else {
+            parser = document;
+        }
+
+        function inner(jsonNode, insideSvg) {
+            var node, i;
+            if (jsonNode.hasOwnProperty('t')) {
+                node = parser.createTextNode(jsonNode.t);
+            } else if (jsonNode.hasOwnProperty('co')) {
+                node = parser.createComment(jsonNode.co);
+            } else {
+                if (jsonNode.nn === 'svg' || insideSvg) {
+                    node = parser.createElementNS('http://www.w3.org/2000/svg', jsonNode.nn);
+                    insideSvg = true;
+                } else {
+                    node = parser.createElement(jsonNode.nn);
+                }
+                if (jsonNode.a) {
+                    for (i = 0; i < jsonNode.a.length; i++) {
+                        node.setAttribute(jsonNode.a[i][0], jsonNode.a[i][1]);
+                    }
+                }
+                if (jsonNode.c) {
+                    for (i = 0; i < jsonNode.c.length; i++) {
+                        node.appendChild(inner(jsonNode.c[i], insideSvg));
+                    }
+                }
+            }
+            return node;
+        }
+        return inner(jsonNode);
+    };
 
     exporter.savecopy = function (aDocument) {
         if (aDocument.is_owner) {
@@ -993,11 +993,11 @@ var FW_FILETYPE_VERSION = "1.1";
 
         $.addAlert('info', title + ': ' + gettext(
             'Latex export has been initiated.'));
-    
+
         contents = document.createElement('div');
-        
+
         tempNode = jsonToHtml(aDocument.contents);
-        
+
         while (tempNode.firstChild) {
             contents.appendChild(tempNode.firstChild);
         }
@@ -1039,12 +1039,12 @@ var FW_FILETYPE_VERSION = "1.1";
             });
         }
     };
-    
-    
+
+
     // Mathjax automatically adds soem elements to the current document after making SVGs. We need these elements.
     exporter.getMathjaxHeader = function () {
         var mathjax = document.getElementById('MathJax_SVG_Hidden');
-        if (mathjax===undefined) {
+        if (mathjax === undefined) {
             return false;
         } else {
             return mathjax.parentElement;
@@ -1065,9 +1065,9 @@ var FW_FILETYPE_VERSION = "1.1";
 
 
         contents = document.createElement('div');
-        
+
         tempNode = jsonToHtml(aDocument.contents);
-        
+
         while (tempNode.firstChild) {
             contents.appendChild(tempNode.firstChild);
         }
@@ -1086,7 +1086,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
         if (aDocument.settings.metadata.subtitle && aDocument.metadata.subtitle) {
             tempNode = jsonToHtml(aDocument.metadata.subtitle);
-            
+
             if (tempNode.textContent.length > 0) {
                 startHTML += '<h2 class="subtitle">' + tempNode.textContent +
                     '</h2>';
@@ -1109,20 +1109,22 @@ var FW_FILETYPE_VERSION = "1.1";
         while (contents.firstChild) {
             contentsBody.appendChild(contents.firstChild);
         }
-        
+
         equations = contentsBody.querySelectorAll('.equation');
 
-        for (i=0;i<equations.length;i++) {
+        for (i = 0; i < equations.length; i++) {
             mathHelpers.layoutMathNode(equations[i]);
         }
-        mathHelpers.queueExecution(function() {
+        mathHelpers.queueExecution(function () {
             exporter.epub2(aDocument, contentsBody, images, title, styleSheets);
         });
-    };        
-    
+    };
+
     exporter.epub2 = function (aDocument, contentsBody, images, title, styleSheets) {
-        var mathjax, contentsBodyEpubPrepared, xhtmlCode, containerCode, timestamp, keywords, contentItems, authors, tempNode, outputList, includeZips = [], opfCode, ncxCode, navCode, httpOutputList = [], i;
-        
+        var mathjax, contentsBodyEpubPrepared, xhtmlCode, containerCode, timestamp, keywords, contentItems, authors, tempNode, outputList, includeZips = [],
+            opfCode, ncxCode, navCode, httpOutputList = [],
+            i;
+
         mathjax = exporter.jsonToHtml(htmlToJson(exporter.getMathjaxHeader()), 'xhtml').outerHTML;
 
         // Make links to all H1-3 and create a TOC list of them
@@ -1131,7 +1133,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
         contentsBodyEpubPrepared = exporter.styleEpubFootnotes(
             contentsBody);
-        
+
         xhtmlCode = tmp_epub_xhtml({
             part: false,
             shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
@@ -1139,7 +1141,7 @@ var FW_FILETYPE_VERSION = "1.1";
             styleSheets: styleSheets,
             body: exporter.jsonToHtml(htmlToJson(contentsBodyEpubPrepared), 'xhtml').innerHTML,
             mathjax: mathjax,
-        });        
+        });
 
         xhtmlCode = exporter.replaceImgSrc(xhtmlCode);
 
@@ -1148,14 +1150,14 @@ var FW_FILETYPE_VERSION = "1.1";
         timestamp = exporter.getTimestamp();
 
         authors = [aDocument.owner.name];
-        
+
         if (aDocument.settings.metadata.authors && aDocument.metadata.authors) {
             tempNode = jsonToHtml(aDocument.metadata.authors);
             if (tempNode.textContent.length > 0) {
                 authors = jQuery.map(tempNode.textContent.split(","), jQuery.trim);
             }
         }
-        
+
         keywords = [];
 
         if (aDocument.settings.metadata.keywords && aDocument.metadata.keywords) {
@@ -1267,30 +1269,31 @@ var FW_FILETYPE_VERSION = "1.1";
             'HTML export has been initiated.'));
 
         contents = document.createElement('div');
-        
+
         tempNode = jsonToHtml(aDocument.contents);
-        
+
         while (tempNode.firstChild) {
             contents.appendChild(tempNode.firstChild);
         }
 
         equations = contents.querySelectorAll('.equation');
 
-        for (i=0;i<equations.length;i++) {
+        for (i = 0; i < equations.length; i++) {
             mathHelpers.layoutMathNode(equations[i]);
         }
-        mathHelpers.queueExecution(function() {
+        mathHelpers.queueExecution(function () {
             exporter.html2(aDocument, aBibDB, styleSheets, title, contents);
         });
     };
-        
-    exporter.html2 = function (aDocument, aBibDB, styleSheets, title, contents) {    
+
+    exporter.html2 = function (aDocument, aBibDB, styleSheets, title, contents) {
         var bibliography, htmlCode, outputList,
             httpOutputList,
-            includeZips = [], mathjax;
-            
+            includeZips = [],
+            mathjax;
+
         mathjax = exporter.getMathjaxHeader().outerHTML;
-        
+
         bibliography = citationHelpers.formatCitations(contents,
             aDocument.settings.citationstyle,
             aBibDB);

@@ -317,8 +317,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
     importer.translateReferenceIds = function (aDocument, BibTranslationTable,
         ImageTranslationTable) {
-        var contents = document.createElement('div');
-        contents.innerHTML = aDocument.contents;
+        var contents = jsonToHtml(aDocument.contents);
         jQuery(contents).find('img').each(function () {
             var translationEntry = _.findWhere(ImageTranslationTable, {
                     oldUrl: jQuery(this).attr('src')
@@ -346,7 +345,7 @@ var FW_FILETYPE_VERSION = "1.1";
             jQuery(this).attr('data-bib-entry', citekeys.join(','));
         });
 
-        aDocument.contents = contents.innerHTML;
+        aDocument.contents = htmlToJson(contents);
 
         importer.createNewDocument(aDocument);
 
@@ -356,7 +355,7 @@ var FW_FILETYPE_VERSION = "1.1";
     importer.createNewDocument = function (aDocument) {
         var postData = {
             title: aDocument.title,
-            contents: aDocument.contents,
+            contents: JSON.stringify(aDocument.contents),
             settings: JSON.stringify(aDocument.settings),
             metadata: JSON.stringify(aDocument.metadata)
         };
@@ -366,12 +365,15 @@ var FW_FILETYPE_VERSION = "1.1";
                 type: 'POST',
                 dataType: 'json',
                 success: function (data, textStatus, jqXHR) {
+                    var tempNode;
                     jQuery.addAlert('info', aDocument.title + gettext(
                             ' successfully imported.'));
                     aDocument.id = data['document_id'];
-                    aDocument.owner = theUser.id;
-                    aDocument.owner_name = theUser.name;
-                    aDocument.owner_avatar = theUser.avatar;
+                    aDocument.owner = {
+                        id: theUser.id,
+                        name: theUser.name,
+                        avatar: theUser.avatar
+                    },
                     aDocument.rights = 'w';
                     aDocument.is_locked = false;
                     aDocument.is_owner = true;
@@ -392,7 +394,10 @@ var FW_FILETYPE_VERSION = "1.1";
                             window.location = '/document/'+aDocument.id+'/';
                         } else {
                             theDocument = aDocument;
-                            jQuery('#document-contents').html(aDocument.contents);
+                            tempNode = jsonToHtml(aDocument.contents);
+                            while (tempNode.firstChild) {
+                                document.getElementById('document-contents').appendChild(tempNode.firstChild);
+                            }
                             window.history.pushState("", "", "/document/"+theDocument.id+"/");
                         }
                     }

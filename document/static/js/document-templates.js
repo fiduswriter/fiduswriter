@@ -72,7 +72,7 @@ var tmp_documents_list_item = _.template('\
             </tr>\
 ');
 /** A template for the Fidus Writer document import dialog */ 
-var tmp_import_fidus = _.template('<div id="importfidus" title="' + gettext('Import another Fidus file') + '">\
+var tmp_import_fidus = _.template('<div id="importfidus" title="' + gettext('Import a Fidus file') + '">\
         <form id="import-fidus-form" method="post" enctype="multipart/form-data" class="ajax-upload">\
             <input type="file" id="fidus-uploader" name="fidus" required />\
             <span id="import-fidus-btn" class="fw-button fw-white fw-large">' + gettext('Select a file') + '</span>\

@@ -40,7 +40,7 @@ var tmp_categoryforms = _.template('\
         </td>\
     </tr>');
 /** a template for the BibTeX import dialog */
-var tmp_import_bib = _.template('<div id="importbibtex" title="' + gettext('Import another BibTex library') + '">\
+var tmp_import_bib = _.template('<div id="importbibtex" title="' + gettext('Import a BibTex library') + '">\
         <form id="import-bib-form" method="post" enctype="multipart/form-data" class="ajax-upload">\
             <input type="file" id="bib-uploader" name="bib" required />\
             <span id="import-bib-btn" class="fw-button fw-white fw-large">' + gettext('Select a file') + '</span>\

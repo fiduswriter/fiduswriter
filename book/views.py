@@ -184,6 +184,8 @@ def get_booklist_js(request):
 
 def add_chapters(book_instance, chapters, status, this_user):
     for chapter in chapters:
+        print chapter
+        print book_instance.id
         new_chapter = Chapter(book=book_instance,text_id=chapter['text'],number=chapter['number'],part=chapter['part'])
         new_chapter.save()
         # If the current user is the owner of the chapter-document, make sure that everyone with access to the book gets at least read access.
@@ -233,7 +235,7 @@ def save_js(request):
                 response['added'] = date_obj.strftime(date_format)
                 date_obj = dateutil.parser.parse(str(form.instance.updated))
                 response['updated'] = date_obj.strftime(date_format)
-                status = add_chapters(form.instance,the_chapters, status, request.user)
+                status = add_chapters(form.instance, the_chapters, status, request.user)
             else:
                 response['errors'] = form.errors 
                 

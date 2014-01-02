@@ -49,7 +49,7 @@ class Command(BaseCommand):
             output_css = u'/** @file A document style definition. \n This file is automatically created using ./manage.py create_document_styles\n*/\n'
             for font in ds.fonts.all():
                 output_css += u'\n@font-face {\n'
-                output_css += font.fontface_definition.replace('[URL]',font.font_file.url)
+                output_css += font.fontface_definition.replace('[URL]',font.font_file.url.split("?")[0])
                 output_css += u'\n}\n'
             output_css += ds.contents
             

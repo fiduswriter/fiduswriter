@@ -145,6 +145,7 @@ var tmp_epub_nav_item = _.template('\t\t\t\t<li><a href="<% if (item.link) {prin
 /** A template for HTML export of a document. */
 var tmp_html_export = _.template('<!DOCTYPE html>\n\
     <html>\n<head><title><%= title %></title>\
+        <% var tempNode; %>\
         <% _.each(styleSheets,function(item){ %>\
             <%= tmp_html_css_item({"item":item})%>\
         <% }); %>\
@@ -156,24 +157,34 @@ var tmp_html_export = _.template('<!DOCTYPE html>\n\
         class="tex2jax_ignore">\
         <% if (mathjax) { %>\
             <%= mathjax %>\
-        <% } else { %>\
-            >\
         <% } %>\
         <% if (part && part !="") { %>\
             <h1 class="part"><%= part %></h1>\
         <% } %>\
         <h1 class="title"><%= title %></h1>\
-        <% if (metadataSettings.subtitle && metadata.subtitle && metadata.subtitle != "") { %>\
-            <h2 class="subtitle"><%= metadata.subtitle %></h2>\
+        <% if (metadataSettings.subtitle && metadata.subtitle) { %>\
+            <% tempNode = jsonToHtml(metadata.subtitle); %>\
+            <% if (tempNode.textContent.length > 0) { %>\
+                <h2 class="subtitle"><%= tempNode.textContent %></h2>\
+            <% } %>\
         <% } %>\
-        <% if (metadataSettings.abstract && metadata.abstract && metadata.abstract != "") { %>\
-            <div class="abstract"><%= metadata.abstract %></div>\
+        <% if (metadataSettings.abstract && metadata.abstract) { %>\
+            <% tempNode = jsonToHtml(metadata.abstract); %>\
+            <% if (tempNode.textContent.length > 0) { %>\
+                <div class="abstract"><%= tempNode.textContent %></div>\
+            <% } %>\
         <% } %>\
-        <% if (metadataSettings.authors && metadata.authors && metadata.authors != "") { %>\
-            <div class="authors"><%= metadata.authors %></div>\
+        <% if (metadataSettings.authors && metadata.authors) { %>\
+            <% tempNode = jsonToHtml(metadata.authors); %>\
+            <% if (tempNode.textContent.length > 0) { %>\
+                <div class="authors"><%= tempNode.textContent %></div>\
+            <% } %>\
         <% } %>\
-        <% if (metadataSettings.keywords && metadata.keywords && metadata.keywords != "") { %>\
-            <div class="keywords"><%= metadata.keywords %></div>\
+        <% if (metadataSettings.keywords && metadata.keywords) { %>\
+            <% tempNode = jsonToHtml(metadata.keywords); %>\
+            <% if (tempNode.textContent.length > 0) { %>\
+                <div class="keywords"><%= tempNode.textContent %></div>\
+            <% } %>\
         <% } %>\
         <%= contents %></body></html>');
 /** A template for each item in an HTML export of a Fidus Writer document. */

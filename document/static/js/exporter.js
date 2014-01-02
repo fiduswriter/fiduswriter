@@ -327,27 +327,33 @@ var FW_FILETYPE_VERSION = "1.1";
         subtitle, keywords, specifiedAuthors,
         metadata, documentClass) {
         var includePackages, documentEndCommands = '',
-            latexStart, latexEnd;
+            latexStart, latexEnd, tempNode;
 
         includePackages = '\\usepackage[utf8]{luainputenc}';
 
-        if (subtitle && metadata.subtitle && metadata.subtitle != '') {
-            includePackages +=
-                '\n\\usepackage{titling}\
-\n\\newcommand{\\subtitle}[1]{%\
-\n\t\\posttitle{%\
-\n\t\t\\par\\end{center}\
-\n\t\t\\begin{center}\\large#1\\end{center}\
-\n\t\t\\vskip 0.5em}%\
-\n}'
+        if (subtitle && metadata.subtitle) {
+            tempNode = jsonToHtml(metadata.subtitle);
+            if (tempNode.textContent.length > 0) {
+                includePackages +=
+                    '\n\\usepackage{titling}\
+                    \n\\newcommand{\\subtitle}[1]{%\
+                    \n\t\\posttitle{%\
+                    \n\t\t\\par\\end{center}\
+                    \n\t\t\\begin{center}\\large#1\\end{center}\
+                    \n\t\t\\vskip 0.5em}%\
+                    \n}'
+            }
         }
 
-        if (keywords && metadata.keywords && metadata.keywords != '') {
-            includePackages +=
-                '\\def\\keywords{\\vspace{.5em}\
-{\\textit{Keywords}:\\,\\relax%\
-}}\
-\\def\\endkeywords{\\par}'
+        if (keywords && metadata.keywords) {
+            tempNode = jsonToHtml(metadata.keywords);
+            if (tempNode.textContent.length > 0) {            
+                includePackages +=
+                    '\\def\\keywords{\\vspace{.5em}\
+                    {\\textit{Keywords}:\\,\\relax%\
+                    }}\
+                    \\def\\endkeywords{\\par}'
+            }
         }
 
 
@@ -391,34 +397,43 @@ var FW_FILETYPE_VERSION = "1.1";
         latexStart = '\\documentclass{' + documentClass + '}\n' +
             includePackages +
             '\n\\begin{document}\n\n\\title{' + title + '}';
-        if (specifiedAuthors && metadata.authors && metadata.authors != '') {
-            var authorsDiv = document.createElement('div');
-            authorsDiv.innerHTML = metadata.authors;
-            latexStart += '\n\\author{' + authorsDiv.textContent + '}\n';
-        } else {
-            latexStart += '\n\\author{' + author + '}\n';
+        if (specifiedAuthors && metadata.authors) {
+            tempNode = jsonToHtml(metadata.authors);
+            if (tempNode.textContent.length > 0) {
+                author = tempNode.textContent;
+            }
         }
-        if (subtitle && metadata.subtitle && metadata.subtitle != '') {
-            var subtitleDiv = document.createElement('div');
-            subtitleDiv.innerHTML = metadata.subtitle;
-            latexStart += '\\subtitle{' + subtitleDiv.textContent + '}\n';
+        latexStart += '\n\\author{' + author + '}\n';
+        
+        if (subtitle && metadata.subtitle) {
+            tempNode = jsonToHtml(metadata.subtitle);
+            if (tempNode.textContent.length > 0) {
+                latexStart += '\\subtitle{' + tempNode.textContent + '}\n';
+            }
         }
-        if (keywords && metadata.keywords && metadata.keywords != '') {
-            var keywordsDiv = document.createElement('div');
-            keywordsDiv.innerHTML = metadata.keywords;
-            latexStart += '\\begin{keywords}\n' + keywordsDiv.textContent + '\\end{keywords}\n';
+        if (keywords && metadata.keywords) {
+            tempNode = jsonToHtml(metadata.keywords);
+            if (tempNode.textContent.length > 0) {
+                latexStart += '\\begin{keywords}\n' + tempNode.textContent + '\\end{keywords}\n';
+            }
         }
 
 
         latexStart += '\n\\maketitle\n\n';
 
         if (documentClass === 'book') {
-            if (metadata.publisher && metadata.publisher != '') {
-                latexStart += metadata.publisher + '\n\n';
+            if (metadata.publisher) {
+                tempNode = jsonToHtml(metadata.publisher);
+                if (tempNode.textContent.length > 0) {
+                    latexStart += tempNode.textContent + '\n\n';
+                }
             }
 
-            if (metadata.copyright && metadata.copyright != '') {
-                latexStart += metadata.copyright + '\n\n';
+            if (metadata.copyright) {
+                tempNode = jsonToHtml(metadata.copyright);
+                if (tempNode.textContent.length > 0) {                
+                    latexStart += tempNode.textContent + '\n\n';
+                }
             }
 
             latexStart += '\n\\tableofcontents';
@@ -439,7 +454,7 @@ var FW_FILETYPE_VERSION = "1.1";
         metadataSettings, metadata, isChapter, listedWorksList) {
         var latexStart = '',
             latexEnd = '',
-            documentFeatures, cleanDiv = document.createElement('div'),
+            documentFeatures,
             bibExport, returnObject;
         if (!listedWorksList) {
             listedWorksList = [];
@@ -454,11 +469,12 @@ var FW_FILETYPE_VERSION = "1.1";
         if (isChapter) {
             latexStart += '\\chapter{' + title + '}\n';
             //htmlCode.innerHTML =  '<div class="title">' + title + '</div>' + htmlCode.innerHTML;
-            if (metadataSettings.subtitle && metadata.subtitle &&
-                metadata.subtitle != '') {
-                cleanDiv.innerHTML = metadata.subtitle;
-                latexStart += '\\section{' + cleanDiv.textContent + '}\n';
-            } else {}
+            if (metadataSettings.subtitle && metadata.subtitle) {
+                tempNode = jsonToHtml(metadata.subtitle);
+                if (tempNode.textContent.length > 0) {
+                    latexStart += '\\section{' + tempNode.textContent + '}\n';
+                }
+            }
         } else {
             documentFeatures = exporter.findLatexDocumentFeatures(
                 htmlCode, title, author, metadataSettings.subtitle, metadataSettings.keywords, metadataSettings.authors, metadata,
@@ -468,10 +484,13 @@ var FW_FILETYPE_VERSION = "1.1";
         }
 
 
-        if (metadataSettings.abstract && metadata.abstract && metadata.abstract !=
-            '') {
-            htmlCode.innerHTML = '<div class="abstract">' + metadata.abstract +
-                '</div>' + htmlCode.innerHTML;
+        if (metadataSettings.abstract && metadata.abstract) {
+                tempNode = jsonToHtml(metadata.abstract);
+                if (tempNode.textContent.length > 0) {
+            
+                htmlCode.innerHTML = '<div class="abstract">' + tempNode.innerHTML +
+                    '</div>' + htmlCode.innerHTML;
+                }
         }
 
 
@@ -860,8 +879,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
         $.addAlert('info', gettext('File export has been initiated.'));
 
-        contents = document.createElement('div');
-        contents.innerHTML = aDocument.contents;
+        contents = jsonToHtml(aDocument.contents);
 
         images = exporter.findImages(contents);
 
@@ -938,17 +956,20 @@ var FW_FILETYPE_VERSION = "1.1";
 
     exporter.latex = function (aDocument, aBibDB) {
         var contents, latexCode, htmlCode, title, outputList,
-            httpOutputList;
+            httpOutputList, tempNode;
 
-        title = document.createElement('div');
-        title.innerHTML = aDocument.title;
-        title = title.textContent;
+        title = aDocument.title;
 
         $.addAlert('info', title + ': ' + gettext(
             'Latex export has been initiated.'));
-
+    
         contents = document.createElement('div');
-        contents.innerHTML = aDocument.contents;
+        
+        tempNode = jsonToHtml(aDocument.contents);
+        
+        while (tempNode.firstChild) {
+            contents.appendChild(tempNode.firstChild);
+        }
 
         httpOutputList = exporter.findImages(contents);
 
@@ -994,19 +1015,22 @@ var FW_FILETYPE_VERSION = "1.1";
             htmlCode, includeZips = [],
             xhtmlCode, containerCode, opfCode,
             styleSheets = [],
-            outputList, httpOutputList = [],
-            i, startHTML, authors, keywords, cleanDiv = document.createElement('div');
+            outputList, httpOutputList = [], tempNode,
+            i, startHTML, authors, keywords;
 
-        title = document.createElement('div');
-        title.innerHTML = aDocument.title;
-        title = title.textContent;
+        title = aDocument.title;
 
         $.addAlert('info', title + ': ' + gettext(
             'Epub export has been initiated.'));
 
 
         contents = document.createElement('div');
-        contents.innerHTML = aDocument.contents;
+        
+        tempNode = jsonToHtml(aDocument.contents);
+        
+        while (tempNode.firstChild) {
+            contents.appendChild(tempNode.firstChild);
+        }
 
         bibliography = citationHelpers.formatCitations(contents,
             aDocument.settings.citationstyle,
@@ -1020,15 +1044,20 @@ var FW_FILETYPE_VERSION = "1.1";
 
         startHTML = '<h1 class="title">' + title + '</h1>';
 
-        if (aDocument.settings.metadata.subtitle && aDocument.metadata.subtitle &&
-            aDocument.metadata.subtitle != '') {
-            startHTML += '<h2 class="subtitle">' + aDocument.metadata.subtitle +
-                '</h2>';
+        if (aDocument.settings.metadata.subtitle && aDocument.metadata.subtitle) {
+            tempNode = jsonToHtml(aDocument.metadata.subtitle);
+            
+            if (tempNode.textContent.length > 0) {
+                startHTML += '<h2 class="subtitle">' + tempNode.textContent +
+                    '</h2>';
+            }
         }
-        if (aDocument.settings.metadata.abstract && aDocument.metadata.abstract &&
-            aDocument.metadata.abstract != '') {
-            startHTML += '<div class="abstract">' + aDocument.metadata.abstract +
-                '</div>';
+        if (aDocument.settings.metadata.abstract && aDocument.metadata.abstract) {
+            tempNode = jsonToHtml(aDocument.metadata.abstract);
+            if (tempNode.textContent.length > 0) {
+                startHTML += '<div class="abstract">' + tempNode.textContent +
+                    '</div>';
+            }
         }
 
         contents.innerHTML = startHTML + contents.innerHTML;
@@ -1059,8 +1088,6 @@ var FW_FILETYPE_VERSION = "1.1";
             part: false,
             shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
             title: title,
-            metadata: aDocument.metadata,
-            metadataSettings: aDocument.settings.metadata,
             styleSheets: styleSheets,
             body: contentsBodyEpubPrepared.innerHTML,
             mathjax: aDocument.settings.mathjax,
@@ -1076,18 +1103,22 @@ var FW_FILETYPE_VERSION = "1.1";
 
         timestamp = exporter.getTimestamp();
 
-        if (aDocument.settings.metadata.authors && aDocument.metadata.authors && aDocument.metadata.authors != '') {
-            cleanDiv.innerHTML = aDocument.metadata.authors;
-            authors = jQuery.map(cleanDiv.textContent.split(","), jQuery.trim);
-        } else {
-            authors = [aDocument.owner.name];
+        authors = [aDocument.owner.name];
+        
+        if (aDocument.settings.metadata.authors && aDocument.metadata.authors) {
+            tempNode = jsonToHtml(aDocument.metadata.authors);
+            if (tempNode.textContent.length > 0) {
+                authors = jQuery.map(tempNode.textContent.split(","), jQuery.trim);
+            }
         }
+        
+        keywords = [];
 
-        if (aDocument.settings.metadata.keywords && aDocument.metadata.keywords && aDocument.metadata.keywords != '') {
-            cleanDiv.innerHTML = aDocument.metadata.keywords;
-            keywords = jQuery.map(cleanDiv.textContent.split(","), jQuery.trim);
-        } else {
-            keywords = [];
+        if (aDocument.settings.metadata.keywords && aDocument.metadata.keywords) {
+            tempNode = jsonToHtml(aDocument.metadata.keywords);
+            if (tempNode.textContent.length > 0) {
+                keywords = jQuery.map(tempNode.textContent.split(","), jQuery.trim);
+            }
         }
 
 
@@ -1181,21 +1212,24 @@ var FW_FILETYPE_VERSION = "1.1";
     };
 
     exporter.html = function (aDocument, aBibDB) {
-        var title, contents, bibliography, htmlCode, outputList,
+        var title, contents, tempNode, bibliography, htmlCode, outputList,
             httpOutputList,
             styleSheets = [],
             includeZips = [], equations;
 
 
-        title = document.createElement('div');
-        title.innerHTML = aDocument.title;
-        title = title.textContent;
+        title = aDocument.title;
 
         $.addAlert('info', title + ': ' + gettext(
             'HTML export has been initiated.'));
 
         contents = document.createElement('div');
-        contents.innerHTML = aDocument.contents;
+        
+        tempNode = jsonToHtml(aDocument.contents);
+        
+        while (tempNode.firstChild) {
+            contents.appendChild(tempNode.firstChild);
+        }
 
         equations = contents.querySelectorAll('.equation');
 

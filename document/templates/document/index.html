@@ -9,6 +9,27 @@
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/add-remove-dialog.css" />
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/access-rights-dialog.css" />
     {% endcompress %}
+
+    <!-- Mathjax -->
+    <script type="text/x-mathjax-config">
+            MathJax.Hub.Config({
+                extensions: ["tex2jax.js"],
+                jax: ["input/TeX", "output/SVG"],
+                tex2jax: {
+                    inlineMath: [ ['[MATH]','[/MATH]']],
+                    displayMath: [ ['[DMATH]','[/DMATH]']],
+                    processEscapes: true
+                },
+                showMathMenu: false,
+                "SVG": {
+                    scale: 120
+                }
+            });
+    </script>
+    <script type="text/javascript" src="{{ MATHJAX_URL }}"></script>
+    <!-- citeproc -->
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/xmldom.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/citeproc.js"></script>
     {% compress js %}
         <script type="text/javascript" src="{{ STATIC_URL }}js/document-accessrights-templates.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/document-accessrights-helpers.js"></script>
@@ -25,7 +46,8 @@
         <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-statics.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-helpers.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-template-dialogs.js"></script>
-
+        <!-- Math functions -->
+        <script type="text/javascript" src="{{ STATIC_URL }}js/math-helpers.js"></script>
         <!-- document revisions -->
         <script type="text/javascript" src="{{ STATIC_URL }}js/document-revisions-helpers.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/document-revisions-templates.js"></script>
@@ -37,7 +59,8 @@
         <script type="text/javascript" src="{{ STATIC_URL }}js/usermedia-helpers.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/usermedia-template-dialogs.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/usermedia-simplelist-template-dialogs.js"></script>
-
+        <!-- DOM-diff -->
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/DOMdiff.js"></script>
         <!-- Zip.js -->
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/zip.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/deflate.js"></script>
@@ -60,6 +83,9 @@
         <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.js"></script>
         <!-- File import -->
         <script type="text/javascript" src="{{ STATIC_URL }}js/importer.js"></script>
+        <!-- citeproc helpers -->
+        <script type="text/javascript" src="{{ STATIC_URL }}js/citeproc-helpers.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/citeproc-functions.js"></script>
     {% endcompress %}
 {% endblock %}
 

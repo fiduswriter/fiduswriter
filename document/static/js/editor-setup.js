@@ -208,7 +208,7 @@ jQuery(document).bind('documentDataLoaded', function () {
         document.querySelector('#document-editable').removeAttribute(
             'contenteditable');
         jQuery('.editable').attr('contenteditable', true);
-        mathHelpers.resetMath(mathHelpers.saveMathjaxElements);
+        mathHelpers.resetMath();
 
 
         diffHelpers.setup();

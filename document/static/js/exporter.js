@@ -283,10 +283,9 @@ var FW_FILETYPE_VERSION = "1.1";
 
     };
 
-    exporter.cleanHTMLString = function (htmlString) {
-        htmlString = htmlString.replace(/<img data-src([^>]+)>/gm,
-            "<img src$1>");
-
+    exporter.replaceImgSrc = function (htmlString) {
+        htmlString = htmlString.replace(/<(img|IMG) data-src([^>]+)>/gm,
+            "<$1 src$2>");
         return htmlString;
     }
 
@@ -397,12 +396,14 @@ var FW_FILETYPE_VERSION = "1.1";
         latexStart = '\\documentclass{' + documentClass + '}\n' +
             includePackages +
             '\n\\begin{document}\n\n\\title{' + title + '}';
+  
         if (specifiedAuthors && metadata.authors) {
             tempNode = jsonToHtml(metadata.authors);
             if (tempNode.textContent.length > 0) {
                 author = tempNode.textContent;
             }
         }
+        
         latexStart += '\n\\author{' + author + '}\n';
         
         if (subtitle && metadata.subtitle) {
@@ -763,16 +764,46 @@ var FW_FILETYPE_VERSION = "1.1";
         return htmlCode;
     }
 
-    exporter.htmlToXhtml = function (htmlString) {
-        htmlString = htmlString.replace(/<br>/g, "<br />");
-        htmlString = htmlString.replace(/(<img[^>]+)>/gm, "$1 />");
-        htmlString = htmlString.replace(/<svg/g,
-            "<svg version='1.1' xmlns='http://www.w3.org/2000/svg' ");
-        // stroke-thickness is output by mathjax, yet the epub3 validator doesn't like it. Filed ticket https://github.com/mathjax/MathJax/issues/461
-        htmlString = htmlString.replace(/stroke-thickness/g,
-            "stroke-width");
-        return htmlString;
-    };
+    /** Same functionality as jsonToHtml in DOMdiff.js, but also offers output in XHTML format. */
+    exporter.jsonToHtml = function (jsonNode, docType) {
+    var parser;
+    if (jsonNode===undefined) {
+        return false;
+    }
+    if (docType==='xhtml') {
+        parser = new DOMParser().parseFromString('<xml/>',"text/xml");
+    } else {
+        parser = document;
+    }
+    
+    function inner(jsonNode, insideSvg) {
+        var node, i;
+        if (jsonNode.hasOwnProperty('t')) {
+            node = parser.createTextNode(jsonNode.t);
+        } else if (jsonNode.hasOwnProperty('co')) {
+            node = parser.createComment(jsonNode.co);
+        } else {
+            if (jsonNode.nn==='svg' || insideSvg) {
+                node = parser.createElementNS('http://www.w3.org/2000/svg',jsonNode.nn);
+                insideSvg = true;
+            } else {
+                node = parser.createElement(jsonNode.nn);
+            }
+            if (jsonNode.a) {
+                for (i = 0; i < jsonNode.a.length; i++) {
+                    node.setAttribute(jsonNode.a[i][0], jsonNode.a[i][1]);
+                }
+            }
+            if (jsonNode.c) {
+                for (i = 0; i < jsonNode.c.length; i++) {
+                    node.appendChild(inner(jsonNode.c[i], insideSvg));
+                }
+            }
+        }
+        return node;
+    }
+    return inner(jsonNode);
+  };
 
     exporter.savecopy = function (aDocument) {
         if (aDocument.is_owner) {
@@ -973,7 +1004,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
         httpOutputList = exporter.findImages(contents);
 
-        latexCode = exporter.htmlToLatex(title, aDocument.owner_name, contents, aBibDB,
+        latexCode = exporter.htmlToLatex(title, aDocument.owner.name, contents, aBibDB,
             aDocument.settings.metadata, aDocument.metadata);
 
         outputList = [{
@@ -1008,15 +1039,24 @@ var FW_FILETYPE_VERSION = "1.1";
             });
         }
     };
+    
+    
+    // Mathjax automatically adds soem elements to the current document after making SVGs. We need these elements.
+    exporter.getMathjaxHeader = function () {
+        var mathjax = document.getElementById('MathJax_SVG_Hidden');
+        if (mathjax===undefined) {
+            return false;
+        } else {
+            return mathjax.parentElement;
+        }
+    };
 
     exporter.epub = function (aDocument, aBibDB) {
-        var title, contents, contentsBody, contentItems, images,
+        var title, contents, contentsBody, images,
             bibliography, equations,
-            htmlCode, includeZips = [],
-            xhtmlCode, containerCode, opfCode,
-            styleSheets = [],
-            outputList, httpOutputList = [], tempNode,
-            i, startHTML, authors, keywords;
+            styleSheets = [], //TODO: fill style sheets with somethign meaningful.
+            tempNode,
+            i, startHTML;
 
         title = aDocument.title;
 
@@ -1075,7 +1115,15 @@ var FW_FILETYPE_VERSION = "1.1";
         for (i=0;i<equations.length;i++) {
             mathHelpers.layoutMathNode(equations[i]);
         }
+        mathHelpers.queueExecution(function() {
+            exporter.epub2(aDocument, contentsBody, images, title, styleSheets);
+        });
+    };        
+    
+    exporter.epub2 = function (aDocument, contentsBody, images, title, styleSheets) {
+        var mathjax, contentsBodyEpubPrepared, xhtmlCode, containerCode, timestamp, keywords, contentItems, authors, tempNode, outputList, includeZips = [], opfCode, ncxCode, navCode, httpOutputList = [], i;
         
+        mathjax = exporter.jsonToHtml(htmlToJson(exporter.getMathjaxHeader()), 'xhtml').outerHTML;
 
         // Make links to all H1-3 and create a TOC list of them
         contentItems = exporter.orderLinks(exporter.setLinks(
@@ -1083,21 +1131,17 @@ var FW_FILETYPE_VERSION = "1.1";
 
         contentsBodyEpubPrepared = exporter.styleEpubFootnotes(
             contentsBody);
-
-        htmlCode = tmp_epub_xhtml({
+        
+        xhtmlCode = tmp_epub_xhtml({
             part: false,
             shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
             title: title,
             styleSheets: styleSheets,
-            body: contentsBodyEpubPrepared.innerHTML,
-            mathjax: aDocument.settings.mathjax,
-        });
+            body: exporter.jsonToHtml(htmlToJson(contentsBodyEpubPrepared), 'xhtml').innerHTML,
+            mathjax: mathjax,
+        });        
 
-        htmlCode = exporter.cleanHTMLString(htmlCode);
-
-        // Turning to XHTML. This has to happen last, as this operation menas we will only have the xhtml available as a string
-
-        xhtmlCode = exporter.htmlToXhtml(htmlCode);
+        xhtmlCode = exporter.replaceImgSrc(xhtmlCode);
 
         containerCode = tmp_epub_container({});
 
@@ -1132,7 +1176,7 @@ var FW_FILETYPE_VERSION = "1.1";
             date: timestamp.slice(0, 10), // TODO: the date should probably be the original document creation date instead
             modified: timestamp,
             styleSheets: styleSheets,
-            mathjax: aDocument.settings.mathjax,
+            mathjax: mathjax,
             images: images
         });
 
@@ -1183,7 +1227,7 @@ var FW_FILETYPE_VERSION = "1.1";
             });
         }
 
-        if (aDocument.settings.mathjax) {
+        if (mathjax) {
             includeZips.push({
                 'directory': 'EPUB',
                 'url': mathjaxZipUrl,
@@ -1212,10 +1256,9 @@ var FW_FILETYPE_VERSION = "1.1";
     };
 
     exporter.html = function (aDocument, aBibDB) {
-        var title, contents, tempNode, bibliography, htmlCode, outputList,
-            httpOutputList,
+        var title, contents, tempNode,
             styleSheets = [],
-            includeZips = [], equations;
+            equations;
 
 
         title = aDocument.title;
@@ -1236,6 +1279,17 @@ var FW_FILETYPE_VERSION = "1.1";
         for (i=0;i<equations.length;i++) {
             mathHelpers.layoutMathNode(equations[i]);
         }
+        mathHelpers.queueExecution(function() {
+            exporter.html2(aDocument, aBibDB, styleSheets, title, contents);
+        });
+    };
+        
+    exporter.html2 = function (aDocument, aBibDB, styleSheets, title, contents) {    
+        var bibliography, htmlCode, outputList,
+            httpOutputList,
+            includeZips = [], mathjax;
+            
+        mathjax = exporter.getMathjaxHeader().outerHTML;
         
         bibliography = citationHelpers.formatCitations(contents,
             aDocument.settings.citationstyle,
@@ -1249,7 +1303,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
         contents = exporter.cleanHTML(contents);
 
-        contentsCode = exporter.cleanHTMLString(contents.innerHTML);
+        contentsCode = exporter.replaceImgSrc(contents.innerHTML);
 
         htmlCode = tmp_html_export({
             part: false,
@@ -1258,7 +1312,7 @@ var FW_FILETYPE_VERSION = "1.1";
             metadataSettings: aDocument.settings.metadata,
             styleSheets: styleSheets,
             contents: contentsCode,
-            mathjax: aDocument.settings.mathjax,
+            mathjax: mathjax,
         });
 
         outputList = [{
@@ -1268,7 +1322,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
         outputList = outputList.concat(styleSheets);
 
-        if (aDocument.settings.mathjax) {
+        if (mathjax) {
             includeZips.push({
                 'directory': '',
                 'url': mathjaxZipUrl,

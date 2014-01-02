@@ -233,7 +233,7 @@
                         aDocument = _.findWhere(theDocumentList, {
                             id: response.documents[i].id
                         });
-                        aDocument.contents = response.documents[i].contents;
+                        aDocument.contents = jQuery.parseJSON(response.documents[i].contents);
                         aDocument.metadata = jQuery.parseJSON(response.documents[
                             i].metadata);
                         aDocument.settings = jQuery.parseJSON(response.documents[

@@ -34,7 +34,11 @@
     mathHelpers.layoutMathNode = function (node) {
         // Layout a single math node
         mathHelpers.setMathNodeContents(node);
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub, node], [mathHelpers.saveMathjaxElements]);
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub, node]);
+    };
+    
+    mathHelpers.queueExecution = function (callback) {
+        MathJax.Hub.Queue([callback]);
     };
 
     mathHelpers.setDisplayMathNodeContents = function (node) {
@@ -46,7 +50,7 @@
     mathHelpers.layoutDisplayMathNode = function (node) {
         // Layout a single display math node
         mathHelpers.setDisplayMathNodeContents(node);
-        MathJax.Hub.Queue(["Typeset", MathJax.Hub, node], [mathHelpers.saveMathjaxElements]);
+        MathJax.Hub.Queue(["Typeset", MathJax.Hub, node]);
     };
 
     mathHelpers.resetMath = function (callback) {
@@ -69,38 +73,6 @@
 
         mjQueue.Push(callback);
     };
-
-    mathHelpers.saveMathjaxElements = function () {
-        var mathjaxDefs, mathjax, changed = false,
-            allEquations = jQuery('.equation, .figure-equation');
-
-        if (allEquations.length === 0) {
-            mathjax = false;
-        }
-        else {
-            mathjax = document.getElementById('MathJax_SVG_Hidden');
-        }
-
-        if ((mathjax && (theDocument.settings.mathjax !== mathjax.parentNode
-                .outerHTML)) ||
-            (!mathjax && theDocument.settings.mathjax)
-        ) {
-            changed = true;
-        }
-
-        if (mathjax) {
-            theDocument.settings.mathjax = mathjax.parentNode.outerHTML;
-        }
-        else {
-            theDocument.settings.mathjax = false;
-        }
-
-        if (changed) {
-            editorHelpers.documentHasChanged();
-        }
-
-    };
-
 
     mathHelpers.bindEvents = function (openDialog) {
         jQuery(document).on('click', '.equation', function () {

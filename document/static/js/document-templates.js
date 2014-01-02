@@ -24,12 +24,12 @@ var tmp_documents_list = _.template('\
 /** A template for each document overview list item. */
 var tmp_documents_list_item = _.template('\
  <% var documentTitle; if (0===aDocument.title.length) {documentTitle="'+gettext('Untitled')+'";} else {documentTitle=aDocument.title;} %>\
- <tr id="Text_<%- aDocument.id %>" <% if (theUser.id == aDocument.owner) { %>class="owned-by-user"<% } %> >\
+ <tr id="Text_<%- aDocument.id %>" <% if (theUser.id == aDocument.owner.id) { %>class="owned-by-user"<% } %> >\
                 <td width="20">\
                     <span class="fw-inline">\
                         <input type="checkbox" class="entry-select"\
                             data-id="<%- aDocument.id %>"\
-                            data-owner="<%- aDocument.owner %>"/>\
+                            data-owner="<%- aDocument.owner.id %>"/>\
                     </span>\
                 </td>\
                 <td width="220">\
@@ -55,9 +55,9 @@ var tmp_documents_list_item = _.template('\
                 </td>\
                 <td width="170">\
                     <span>\
-                        <img class="fw-avatar" src="<%- aDocument.owner_avatar %>" />\
+                        <img class="fw-avatar" src="<%- aDocument.owner.avatar %>" />\
                     </span>\
-                    <span class="fw-inline fw-searchable"><%- aDocument.owner_name %></span>\
+                    <span class="fw-inline fw-searchable"><%- aDocument.owner.name %></span>\
                 </td>\
                 <td width="60"  class="td-icon">\
                     <span class="rights fw-inline" data-id="<%- aDocument.id %>">\
@@ -66,7 +66,7 @@ var tmp_documents_list_item = _.template('\
                 </td>\
                  <td width="40"  class="td-icon">\
                     <span class="delete-document fw-inline fw-link-text" data-id="<%- aDocument.id %>" data-title="<%- aDocument.title %>">\
-                        <% if (theUser.id === aDocument.owner) { %><i class="icon-trash"></i><% } %>\
+                        <% if (theUser.id === aDocument.owner.id) { %><i class="icon-trash"></i><% } %>\
                     </span>\
                 </td>\
             </tr>\

@@ -379,7 +379,7 @@
             }
             // If something was changed about equations, recheck these.
             if (containsEquation) {
-                mathHelpers.resetMath(mathHelpers.saveMathjaxElements);
+                mathHelpers.resetMath();
             }
             // If new comments were added reformat these.
             if (containsComment) {

@@ -34,8 +34,8 @@
     mathHelpers.layoutMathNode = function (node) {
         // Layout a single math node
         mathHelpers.setMathNodeContents(node);
+        //document.body.appendChild(node);
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, node]);
-        console.log(node);
     };
     
     mathHelpers.queueExecution = function (callback) {

@@ -94,7 +94,7 @@
         var coverImage, contents, contentItems = [],
             images = [],
             bibliography, chapters = [],
-            aChapter,
+            aChapter, equations, figureEquations,
             styleSheets = [],
             outputList = [],
             tempNode, mathjax = false,
@@ -193,17 +193,23 @@
             
             aChapter.part = aBook.chapters[i].part;
 
-            equations = contents.querySelectorAll('.equation, .figure-equation');
-            if (equations.length > 0 ) {
+            equations = contents.querySelectorAll('.equation');
+           
+            figureEquations = contents.querySelectorAll('.figure-equation');
+            
+            if (equations.length > 0 || figureEquations.length > 0) {
                 aChapter.mathjax = true;
                 mathjax = true;
             }
-            
+
             for (j = 0; j < equations.length; j++) {
-                //console.log(equations[j]);
                 mathHelpers.layoutMathNode(equations[j]);
-            }
+            }            
+
             
+            for (j = 0; j < figureEquations.length; j++) {
+                mathHelpers.layoutDisplayMathNode(figureEquations[j]);
+            }                    
 
             if (aBook.chapters[i].part && aBook.chapters[i].part != '') {
                 contentItems.push({

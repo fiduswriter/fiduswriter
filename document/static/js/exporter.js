@@ -103,7 +103,7 @@ var FW_FILETYPE_VERSION = "1.1";
         });
 
 
-    }; //XXX
+    }; 
 
     /** Creates a zip file.
      * @function zipFileCreator
@@ -1044,7 +1044,7 @@ var FW_FILETYPE_VERSION = "1.1";
     // Mathjax automatically adds soem elements to the current document after making SVGs. We need these elements.
     exporter.getMathjaxHeader = function () {
         var mathjax = document.getElementById('MathJax_SVG_Hidden');
-        if (mathjax === undefined) {
+        if (mathjax === undefined || mathjax === null) {
             return false;
         } else {
             return mathjax.parentElement;
@@ -1053,7 +1053,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
     exporter.epub = function (aDocument, aBibDB) {
         var title, contents, contentsBody, images,
-            bibliography, equations,
+            bibliography, equations, figureEquations,
             styleSheets = [], //TODO: fill style sheets with somethign meaningful.
             tempNode, mathjax,
             i, startHTML;
@@ -1110,15 +1110,20 @@ var FW_FILETYPE_VERSION = "1.1";
             contentsBody.appendChild(contents.firstChild);
         }
 
-        equations = contentsBody.querySelectorAll('.equation, .figure-equation');
+        equations = contentsBody.querySelectorAll('.equation');
+        
+        figureEquations = contentsBody.querySelectorAll('.figure-equation');
 
-        if (equations.length > 0) {
+        if (equations.length > 0 || figureEquations.length > 0) {
             mathjax = true;
         }
         
         for (i = 0; i < equations.length; i++) {
             mathHelpers.layoutMathNode(equations[i]);
         }
+        for (i = 0; i < figureEquations.length; i++) {
+            mathHelpers.layoutDisplayMathNode(figureEquations[i]);
+        }        
         mathHelpers.queueExecution(function () {
             setTimeout( function() {
             exporter.epub2(aDocument, contentsBody, images, title, styleSheets, mathjax);
@@ -1272,7 +1277,7 @@ var FW_FILETYPE_VERSION = "1.1";
     exporter.html = function (aDocument, aBibDB) {
         var title, contents, tempNode,
             styleSheets = [],
-            equations, mathjax = false;
+            equations, figureEquations, mathjax = false;
 
         title = aDocument.title;
 
@@ -1287,15 +1292,21 @@ var FW_FILETYPE_VERSION = "1.1";
             contents.appendChild(tempNode.firstChild);
         }
 
-        equations = contents.querySelectorAll('.equation, .figure-equation');
+        equations = contents.querySelectorAll('.equation');
+        
+        figureEquations = contents.querySelectorAll('.figure-equation');
 
-        if (equations.length > 0) {
+        if (equations.length > 0 || figureEquations.length > 0) {
             mathjax = true;
         }
         
         for (i = 0; i < equations.length; i++) {
             mathHelpers.layoutMathNode(equations[i]);
         }
+        for (i = 0; i < figureEquations.length; i++) {
+             mathHelpers.layoutDisplayMathNode(figureEquations[i]);
+        }
+        
         mathHelpers.queueExecution(function () {
             exporter.html2(aDocument, aBibDB, styleSheets, title, contents, mathjax);
         });

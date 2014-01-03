@@ -442,7 +442,7 @@
                 metadata: {},
                 settings: {
                     citationstyle: 'apa',
-                    documentstyle: 'classic',
+                    documentstyle: defaultDocumentStyle,
                     papersize: 'octavo'
                 }
             };

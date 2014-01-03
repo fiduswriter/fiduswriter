@@ -30,11 +30,9 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        output_js = u'/** @file Makes a list of available styles in the document style menu. \n This file is automatically created using ./manage.py create_document_styles\n*/\n'
+        output_js = u'/** @file Makes a list of available styles for the document and book style menus. \n This file is automatically created using ./manage.py create_document_styles\n*/\n'
         
-        output_js += u'\ndocument.addEventListener("DOMContentLoaded", function(event) {\n'
-        
-        output_js += u'var documentStyleList = document.getElementById("documentstyle-list"), documentStyleListItem;\n'
+        output_js += u'var documentStyleList = [\n'
         
         default_document_style = False
         
@@ -43,9 +41,7 @@ class Command(BaseCommand):
             if not default_document_style:
                 default_document_style = ds.filename
 
-            output_js += u'documentStyleListItem=document.createElement("li");\n'
-            output_js += u'documentStyleListItem.innerHTML = "<span class=\'fw-pulldown-item style\' data-style=\'' + ds.filename + '\' title=\'' + ds.title + '\'>' + ds.title + '</span>";\n'
-            output_js += u'documentStyleList.appendChild(documentStyleListItem);\n'
+            output_js += u'{filename: "' + ds.filename + '", title: "' + ds.title + '"},\n'
             output_css = u'/** @file A document style definition. \n This file is automatically created using ./manage.py create_document_styles\n*/\n'
             for font in ds.fonts.all():
                 output_css += u'\n@font-face {\n'
@@ -62,7 +58,7 @@ class Command(BaseCommand):
             css_file.write(output_css.encode('utf8'))
 
             css_file.close()
-        output_js += u'});\n'
+        output_js += u'];\n'
         output_js += u'var defaultDocumentStyle = "'+default_document_style+'";'
         d = os.path.dirname(PROJECT_PATH+'/style/static/js/document/stylelist.js')
         if not os.path.exists(d):

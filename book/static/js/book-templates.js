@@ -150,8 +150,8 @@ var tmp_book_print_data = _.template('\
         </th>\
         <td>\
         <select class="entryForm dk" name="book-settings-documentstyle" id="book-settings-documentstyle" <% if (theBook.rights==="r") {print("disabled=disabled")} %> >\
-            <% _.each([["classic","Classic"],["modern","Modern"],["funky","Funky"]], function(documentstyle) { %>\
-                <option value="<%= documentstyle[0] %>"<% if(documentstyle[0] == theBook.settings.documentstyle) { %> selected<%} %>><%= documentstyle[1] %></option>\
+            <% _.each(documentStyleList, function(documentstyle) { %>\
+                <option value="<%= documentstyle.filename %>"<% if(documentstyle.filename == theBook.settings.documentstyle) { %> selected<%} %>><%= documentstyle.title %></option>\
             <% }) %>\
         </select>\
         </td>\

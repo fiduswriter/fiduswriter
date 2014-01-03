@@ -25,6 +25,9 @@ var lastStyleUsedFootnotes = false;
 
 // Functions to be executed at startup
 jQuery(document).ready(function () {
+    
+    var documentStyleMenu = document.getElementById("documentstyle-list"), documentStyleMenuItem;
+    
     // Enable toolbar menu
     jQuery('#menu1').ptMenu();
 
@@ -35,7 +38,11 @@ jQuery(document).ready(function () {
     });
 
 
-
+    for (i = 0; i < documentStyleList.length; i++) {   
+        documentStyleMenuItem=document.createElement("li");
+        documentStyleMenuItem.innerHTML = "<span class='fw-pulldown-item style' data-style='"+documentStyleList[i].filename+"' title='"+documentStyleList[i].title+"'>"+documentStyleList[i].title+"</span>";
+        documentStyleMenu.appendChild(documentStyleMenuItem);
+    }
 });
 
 // Functions to be executed when document has loaded
@@ -45,9 +52,6 @@ jQuery(document).bind('documentDataLoaded', function () {
     // We cannot download BibDB and ImageDB before we know if we are the document owner or not.
     bibliographyHelpers.init();
     usermediaHelpers.init();
-
-
-
 
     var set_document_style_timer = setTimeout(function () {
         clearTimeout(set_document_style_timer);

@@ -5,10 +5,8 @@
 <head>
 <title></title>
 {% compress css %}
-<!-- document styles -->
-<link rel="stylesheet" href="{{ STATIC_URL }}css/document/elephant.css" type="text/css">
-<link rel="stylesheet" href="{{ STATIC_URL }}css/document/owl.css" type="text/css">
-<link rel="stylesheet" href="{{ STATIC_URL }}css/document/fox.css" type="text/css">
+        <!-- document style -->
+        <link id="document-style-link" rel="stylesheet" type="text/css">
 {% endcompress %}
         <script type="text/javascript" src="/jsi18n/"></script>
         <!-- jQuery -->
@@ -35,6 +33,9 @@
         <!-- citeproc -->
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/xmldom.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/citeproc.js"></script>
+        <script type="text/javascript">
+            var staticUrl = '{{ STATIC_URL }}';
+        </script>
     {% compress js %}
             <!-- DOM-diff -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/DOMdiff.js"></script>

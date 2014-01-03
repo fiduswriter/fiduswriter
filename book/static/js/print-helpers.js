@@ -55,6 +55,7 @@
         theBook = aBook;
         theBook.settings = jQuery.parseJSON(theBook.settings);
         theBook.metadata = jQuery.parseJSON(theBook.metadata);
+        printHelpers.setDocumentStyle(theBook.settings.documentstyle);
         for (i = 0; i < theBook.chapters.length; i++) {
             theBook.chapters[i].metadata = jQuery.parseJSON(theBook.chapters[
                 i].metadata);
@@ -119,6 +120,17 @@
         });
         
         
+    };
+    
+    printHelpers.setDocumentStyle = function (theValue) {
+        var documentStyleLink = document.getElementById('document-style-link'),
+            newDocumentStyleLink = document.createElement('link');
+        newDocumentStyleLink.setAttribute("rel", "stylesheet");
+        newDocumentStyleLink.setAttribute("type", "text/css");
+        newDocumentStyleLink.setAttribute("id", "document-style-link");
+        newDocumentStyleLink.setAttribute("href", staticUrl+'css/document/'+theValue+'.css');
+        
+        documentStyleLink.parentElement.replaceChild(newDocumentStyleLink, documentStyleLink);        
     };
 
 

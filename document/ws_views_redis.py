@@ -28,13 +28,11 @@ from avatar.templatetags.avatar_tags import avatar_url
 
 
 def save_document(document,changes):
-    print "saving"
     document.title = changes["title"]
     document.contents = changes["contents"]
     document.metadata = changes["metadata"]
     document.settings = changes["settings"]  
     document.save()
-    print document
 
 class DocumentWS(BaseRedisWebSocketHandler):
 
@@ -141,7 +139,6 @@ class DocumentWS(BaseRedisWebSocketHandler):
         response['document']['contents']=self.document.contents
         response['document']['metadata']=self.document.metadata
         response['document']['settings']=self.document.settings
-        print response
         self.write_message(response)
 
 
@@ -160,7 +157,6 @@ class DocumentWS(BaseRedisWebSocketHandler):
                         }
                     self.write_message(chat)
             elif parsed["type"]=='chat' or parsed["session"] != self.id:
-                print parsed
                 self.write_message(message.body)
             
     def on_message(self, message):

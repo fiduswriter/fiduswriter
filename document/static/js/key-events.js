@@ -702,8 +702,12 @@
     // Keycode 191
 
     keyEvents.questionKey = function (evt) {
-        jQuery().showShortcuts();
-        return true;
+        if (evt.ctrlKey) {
+            jQuery().showShortcuts();
+            return true;
+        } else {
+            return false;
+        }
     };
 
 

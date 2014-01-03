@@ -39,6 +39,7 @@ var tmp_book_print_start = _.template('\
 /** A template for the print view of a book. */
 var tmp_book_print = _.template('\
 <% _.each(theBook.chapters, function (chapter) { %>\
+    <% var tempNode; %>\
     <% if (chapter.part && chapter.part != "") { %>\
         <div class="part">\
             <h1><%= chapter.part %></h1>\
@@ -47,14 +48,20 @@ var tmp_book_print = _.template('\
     <div class="chapter">\
         <h1 class="title"><%= chapter.title %></h1>\
         <% if (chapter.settings.metadata) { %>\
-            <% if (chapter.settings.metadata.subtitle && chapter.metadata.subtitle && chapter.metadata.subtitle != "" ) { %>\
-                <h2 class="metadata-subtitle"><%= chapter.metadata.subtitle %></h2>\
+            <% if (chapter.settings.metadata.subtitle && chapter.metadata.subtitle) { %>\
+                <% tempNode = jsonToHtml(chapter.metadata.subtitle) %>\
+                <% if (tempNode.textContent.length > 0) { %>\
+                    <h2 class="metadata-subtitle"><%= tempNode.textContent %></h2>\
+                <% } %>\
             <% } %>\
-            <% if (chapter.settings.metadata.abstract && chapter.metadata.abstract && chapter.metadata.abstract != "" ) { %>\
-                <div class="metadata-abstract"><%= chapter.metadata.abstract %></div>\
+            <% if (chapter.settings.metadata.abstract && chapter.metadata.abstract ) { %>\
+                <% tempNode = jsonToHtml(chapter.metadata.abstract) %>\
+                <% if (tempNode.textContent.length > 0) { %>\
+                    <h2 class="metadata-abstract"><%= tempNode.textContent %></h2>\
+                <% } %>\
             <% } %>\
         <% } %>\
-        <%= chapter.contents %>\
+        <%= nodeConverter.toView(jsonToHtml(JSON.parse(chapter.contents))).innerHTML %>\
     </div>\
 <% }); %>\
 ');

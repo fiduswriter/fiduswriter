@@ -33,10 +33,21 @@
         </script>
         <script type="text/javascript" src="{{ MATHJAX_URL }}"></script>
         <!-- citeproc -->
-        <script type="text/javascript; e4x=1" src="{{ STATIC_URL }}js/libs/citeproc/xmle4x.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/xmldom.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/citeproc.js"></script>
     {% compress js %}
+            <!-- DOM-diff -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/DOMdiff.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/node-converter.js"></script>
+            <script type="text/javascript">
+                if (!document.webkitGetNamedFlows) {
+                    var currentURL = location.href.substr(7);
+                    var currentRelativeURL = currentURL.substr(currentURL.indexOf('/'));
+                    if(currentRelativeURL != '/feedback/browser/') {
+                        window.location = '/feedback/browser';
+                    }
+                }
+            </script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/csrf.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/common.js"></script>
             <script type="text/javascript">

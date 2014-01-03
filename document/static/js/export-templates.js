@@ -219,12 +219,12 @@ var tmp_mathjax_html_header_starter = _.template('\
                     var equations = document.body.querySelectorAll(".equation");\
                     for (var i = 0; i < equations.length; i++) {\
                         equations[i].innerHTML = "[MATH]"+equations[i].getAttribute("data-equation")+"[/MATH]";\
-                        mjQueue.Push(["Typeset",MathJax.Hub,equations[i[]);\
+                        mjQueue.Push(["Typeset",MathJax.Hub,equations[i]]);\
                     }\
                     var fequations = document.body.querySelectorAll(".figure-equation");\
                     for (var i = 0; i < fequations.length; i++) {\
                         fequations[i].innerHTML = "[DMATH]"+fequations[i].getAttribute("data-equation")+"[/DMATH]";\
-                        mjQueue.Push(["Typeset",MathJax.Hub,fequations[i[]);\
+                        mjQueue.Push(["Typeset",MathJax.Hub,fequations[i]]);\
                     }\
                 }\
             });\

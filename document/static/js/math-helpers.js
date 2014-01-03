@@ -34,10 +34,10 @@
     mathHelpers.layoutMathNode = function (node) {
         // Layout a single math node
         mathHelpers.setMathNodeContents(node);
-        //document.body.appendChild(node);
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, node]);
     };
     
+    /** Queue a function to be executed after all other functions are done. */
     mathHelpers.queueExecution = function (callback) {
         MathJax.Hub.Queue(callback);
     };

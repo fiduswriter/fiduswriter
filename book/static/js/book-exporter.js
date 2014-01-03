@@ -257,7 +257,7 @@
             
             
         for (i=0;i<chapters.length;i++) {
-console.log(chapters[i].contents);
+
             chapters[i].contents = exporter.styleEpubFootnotes(chapters[i].contents);
             
             if (chapters[i].mathjax) {
@@ -399,12 +399,10 @@ console.log(chapters[i].contents);
     };
 
     bookExporter.html = function (aBook, anImageDB, aBibDB) {
-        var title, contents, bibliography, outputList = [],
-            images = [],
-            aDocument, aChapter, mathjax = false,
+        var contents, bibliography,
+            aDocument, mathjax = false,
             styleSheets = [],
-            contentItems = [],
-            includeZips = [];
+            chapters = [], i, j;
 
 
         aBook.chapters = _.sortBy(aBook.chapters, function (chapter) {
@@ -416,12 +414,8 @@ console.log(chapters[i].contents);
             aDocument = _.findWhere(theDocumentList, {
                 id: aBook.chapters[i].text
             });
-            title = document.createElement('div');
-            title.innerHTML = aDocument.title;
-            title = title.textContent;
 
-            contents = document.createElement('div');
-            contents.innerHTML = aDocument.contents;
+            contents = jsonToHtml(aDocument.contents);
 
             bibliography = citationHelpers.formatCitations(contents,
                 aBook.settings.citationstyle,
@@ -430,7 +424,55 @@ console.log(chapters[i].contents);
             if (bibliography.length > 0) {
                 contents.innerHTML += bibliography;
             }
+            
+            equations = contents.querySelectorAll('.equation');
+           
+            figureEquations = contents.querySelectorAll('.figure-equation');
+            
+            if (equations.length > 0 || figureEquations.length > 0) {
+                mathjax = true;
+            }
 
+            for (j = 0; j < equations.length; j++) {
+                mathHelpers.layoutMathNode(equations[j]);
+            }            
+
+            
+            for (j = 0; j < figureEquations.length; j++) {
+                mathHelpers.layoutDisplayMathNode(figureEquations[j]);
+            }    
+            
+            chapters.push({document:aDocument,contents:contents});
+        }
+        mathHelpers.queueExecution(function () {
+            bookExporter.html2(chapters, mathjax, styleSheets, aBook);
+        });
+    };
+    
+    bookExporter.html2 = function (chapters, mathjax, styleSheets, aBook) {    
+        var title, contents, outputList = [],
+            images = [],
+            aDocument,
+            contentItems = [],
+            includeZips = [], i;
+            
+        if (mathjax) {
+            mathjax = exporter.getMathjaxHeader();
+        
+            if (mathjax) {    
+                mathjax = mathjax.outerHTML;
+            }
+        }    
+            
+            
+        for (i=0; i < chapters.length; i++) {
+            
+            contents = chapters[i].contents;
+            
+            aDocument = chapters[i].document;
+
+            title = aDocument.title;
+                        
             images = images.concat(exporter.findImages(contents));
 
             contents = exporter.cleanHTML(contents);
@@ -460,7 +502,7 @@ console.log(chapters[i].contents);
                 aBook.chapters[i].number));
 
 
-            contentsCode = exporter.cleanHTMLString(contents.innerHTML);
+            contentsCode = exporter.replaceImgSrc(contents.innerHTML);
 
             htmlCode = tmp_html_export({
                 'part': aBook.chapters[i].part,
@@ -469,7 +511,7 @@ console.log(chapters[i].contents);
                 'metadataSettings': aDocument.settings.metadata,
                 'styleSheets': styleSheets,
                 'contents': contentsCode,
-                'mathjax': aDocument.settings.mathjax,
+                'mathjax': mathjax,
             });
 
             outputList.push({
@@ -477,9 +519,6 @@ console.log(chapters[i].contents);
                 contents: htmlCode
             });
 
-            if (aDocument.settings.mathjax) {
-                mathjax = true;
-            }
         }
 
         contentItems = exporter.orderLinks(contentItems);
@@ -523,7 +562,7 @@ console.log(chapters[i].contents);
 
     bookExporter.latex = function (aBook, anImageDB, aBibDB) {
         var contents, latexCode, htmlCode, title, outputList = [],
-            images = [],
+            images = [], aDocument,
             listedWorksList = [],
             bibtex, allContent = document.createElement('div'),
             documentFeatures, latexStart, latexEnd, author;
@@ -539,18 +578,15 @@ console.log(chapters[i].contents);
                 id: aBook.chapters[i].text
             });
 
-            title = document.createElement('div');
-            title.innerHTML = aDocument.title;
-            title = title.textContent;
+            title = aDocument.title;
 
-            contents = document.createElement('div');
-            contents.innerHTML = aDocument.contents;
+            contents = jsonToHtml(aDocument.contents);
 
-            allContent.innerHTML += aDocument.contents;
+            allContent.innerHTML += contents.innerHTML;
 
             images = images.concat(exporter.findImages(contents));
 
-            latexCode = exporter.htmlToLatex(title, aDocument.owner_name, contents, aBibDB,
+            latexCode = exporter.htmlToLatex(title, aDocument.owner.name, contents, aBibDB,
                 aDocument.settings.metadata, aDocument.metadata, true,
                 listedWorksList);
 
@@ -569,8 +605,9 @@ console.log(chapters[i].contents);
             author = aBook.owner_name;
         }
         documentFeatures = exporter.findLatexDocumentFeatures(
-            allContent, aBook.title, author, true, aBook.metadata, 'book');
-
+            allContent, aBook.title, author, aBook.metadata.subtitle, aBook.metadata.keywords, aBook.metadata.author, aBook.metadata, 'book');
+ 
+        
         latexStart = documentFeatures.latexStart;
         latexEnd = documentFeatures.latexEnd;
 

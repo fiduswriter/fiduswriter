@@ -47,7 +47,7 @@
         for (i = 0; i < aBook.chapters.length; i++) {
             documentOwners.push(_.findWhere(theDocumentList, {
                 id: aBook.chapters[i].text
-            }).owner);
+            }).owner.id);
         }
 
         documentOwners = _.unique(documentOwners).join(',');
@@ -91,16 +91,14 @@
     };
 
     bookExporter.epub = function (aBook, anImageDB, aBibDB) {
-        var title, coverImage, contents, contentsBody, contentItems = [],
+        var coverImage, contents, contentItems = [],
             images = [],
-            bibliography, aDocument, chapters = [],
-            aChapter, aDocument,
-            htmlCode, includeZips = [],
-            xhtmlCode, containerCode, opfCode,
+            bibliography, chapters = [],
+            aChapter,
             styleSheets = [],
             outputList = [],
-            httpOutputList = [],
-            i, j, startHTML, mathjax = false;
+            tempNode, mathjax = false,
+            i, j, startHTML;
 
         aBook.chapters = _.sortBy(aBook.chapters, function (chapter) {
             return chapter.number;
@@ -146,15 +144,19 @@
 
         for (i = 0; i < aBook.chapters.length; i++) {
 
-            aDocument = _.findWhere(theDocumentList, {
+            aChapter = {};
+            
+            aChapter.document = _.findWhere(theDocumentList, {
                 id: aBook.chapters[i].text
             });
-            contents = document.createElement('div');
-            contents.innerHTML = aDocument.contents;
-
-            title = document.createElement('div');
-            title.innerHTML = aDocument.title;
-            title = title.textContent;
+            
+            tempNode = jsonToHtml(aChapter.document.contents);
+            
+            contents = document.createElement('body');
+            
+            while (tempNode.firstChild) {
+                contents.appendChild(tempNode.firstChild);
+            }
 
             bibliography = citationHelpers.formatCitations(contents,
                 aBook.settings.citationstyle,
@@ -166,32 +168,48 @@
 
             images = images.concat(exporter.findImages(contents));
 
-            startHTML = '<h1 class="title">' + title + '</h1>';
+            startHTML = '<h1 class="title">' + aChapter.document.title + '</h1>';
 
-            if (aDocument.settings.metadata && aDocument.settings.metadata.subtitle && aDocument.metadata.subtitle &&
-                aDocument.metadata.subtitle != '') {
-                startHTML += '<h2 class="subtitle">' + aDocument.metadata.subtitle +
-                    '</h2>';
+            if (aChapter.document.settings.metadata && aChapter.document.settings.metadata.subtitle && aChapter.document.metadata.subtitle) {
+                tempNode = jsonToHtml(aChapter.document.metadata.subtitle);
+                if (tempNode.textContent.length > 0) {
+                    startHTML += '<h2 class="subtitle">' + tempNode.textContent +
+                        '</h2>';
+                }
             }
-            if (aDocument.settings.metadata && aDocument.settings.metadata.abstract && aDocument.metadata.abstract &&
-                aDocument.metadata.abstract != '') {
-                startHTML += '<div class="abstract">' + aDocument.metadata.abstract +
-                    '</div>';
+            if (aChapter.document.settings.metadata && aChapter.document.settings.metadata.abstract && aChapter.document.metadata.abstract) {
+                tempNode = jsonToHtml(aChapter.document.metadata.subtitle);
+                if (tempNode.textContent.length > 0) {                
+                    startHTML += '<div class="abstract">' + tempNode.textContent +
+                        '</div>';
+                }
             }
 
             contents.innerHTML = startHTML + contents.innerHTML;
 
             contents = exporter.cleanHTML(contents);
+            
+            aChapter.number = aBook.chapters[i].number;
+            
+            aChapter.part = aBook.chapters[i].part;
 
-            contentsBody = document.createElement('body');
-
-            contentsBody.innerHTML = contents.innerHTML;
+            equations = contents.querySelectorAll('.equation, .figure-equation');
+            if (equations.length > 0 ) {
+                aChapter.mathjax = true;
+                mathjax = true;
+            }
+            
+            for (j = 0; j < equations.length; j++) {
+                //console.log(equations[j]);
+                mathHelpers.layoutMathNode(equations[j]);
+            }
+            
 
             if (aBook.chapters[i].part && aBook.chapters[i].part != '') {
                 contentItems.push({
                     link: 'document-' + aBook.chapters[i].number + '.xhtml',
-                    title: aBook.chapters[i].part,
-                    docNum: aBook.chapters[i].number,
+                    title: aChapter.part,
+                    docNum: aChapter.number,
                     id: 0,
                     level: -1,
                     subItems: [],
@@ -200,43 +218,61 @@
 
             // Make links to all H1-3 and create a TOC list of them
             contentItems = contentItems.concat(exporter.setLinks(
-                contentsBody, aBook.chapters[i].number));
+                contents, aChapter.number));
+            
+         //   aChapter.contents = exporter.styleEpubFootnotes(contents);
+            
+            aChapter.contents = contents;
+            
+            chapters.push(aChapter)            
 
-            contentsBodyEpubPrepared = exporter.styleEpubFootnotes(
-                contentsBody);
-
-            htmlCode = tmp_epub_xhtml({
-                part: aBook.chapters[i].part,
+        }
+        
+        mathHelpers.queueExecution(function () {
+            bookExporter.epub2(chapters, contentItems, images, coverImage, styleSheets, outputList, mathjax, aBook);
+        });
+    };
+    
+    
+    bookExporter.epub2 = function (chapters, contentItems, images, coverImage, styleSheets, outputList, mathjax, aBook) {   
+        var includeZips = [],
+            xhtmlCode, opfCode,
+            httpOutputList = [],
+            i;
+        
+            
+        if (mathjax) {
+            mathjax = exporter.getMathjaxHeader();
+        
+            if (mathjax) {    
+                mathjax = exporter.jsonToHtml(htmlToJson(mathjax), 'xhtml').outerHTML;
+            }
+        }
+            
+            
+        for (i=0;i<chapters.length;i++) {
+console.log(chapters[i].contents);
+            chapters[i].contents = exporter.styleEpubFootnotes(chapters[i].contents);
+            
+            if (chapters[i].mathjax) {
+                chapters[i].mathjax = mathjax;
+            }
+            
+            xhtmlCode = tmp_epub_xhtml({
+                part: chapters[i].part,
                 shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
-                title: title,
-                metadata: aDocument.metadata,
-                metadataSettings: aDocument.settings.metadata,
+                title: chapters[i].document.title,
+                metadata: chapters[i].document.metadata,
+                metadataSettings: chapters[i].document.settings.metadata,
                 styleSheets: styleSheets,
-                body: contentsBodyEpubPrepared.innerHTML,
-                mathjax: aDocument.settings.mathjax
+                body: exporter.jsonToHtml(htmlToJson(chapters[i].contents), 'xhtml').innerHTML,
+                mathjax: chapters[i].mathjax
             });
 
-
-
-            htmlCode = exporter.cleanHTMLString(htmlCode);
-
-            // Turning to XHTML. This has to happen last, as this operation menas we will only have the xhtml available as a string
-
-            xhtmlCode = exporter.htmlToXhtml(htmlCode);
-
-            aChapter = {
-                number: aBook.chapters[i].number
-            }
-
-            if (aDocument.settings.mathjax) {
-                mathjax = true;
-                aChapter.mathjax = true;
-            }
-
-            chapters.push(aChapter)
+            xhtmlCode = exporter.replaceImgSrc(xhtmlCode);
 
             outputList.push({
-                filename: 'EPUB/document-' + aBook.chapters[i].number + '.xhtml',
+                filename: 'EPUB/document-' + chapters[i].number + '.xhtml',
                 contents: xhtmlCode
             });
         }
@@ -251,8 +287,6 @@
         });
 
         contentItems = exporter.orderLinks(contentItems);
-
-        containerCode = tmp_epub_container({});
 
         timestamp = exporter.getTimestamp();
 
@@ -281,9 +315,9 @@
 
         ncxCode = tmp_epub_ncx({
             shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
-            title: title,
+            title: aBook.title,
             idType: 'fidus',
-            id: aDocument.id,
+            id: aBook.id,
             contentItems: contentItems
         });
 
@@ -294,7 +328,7 @@
 
         outputList = outputList.concat([{
             filename: 'META-INF/container.xml',
-            contents: containerCode
+            contents: tmp_epub_container({})
         }, {
             filename: 'EPUB/document.opf',
             contents: opfCode

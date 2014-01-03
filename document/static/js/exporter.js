@@ -638,7 +638,7 @@ var FW_FILETYPE_VERSION = "1.1";
                 '}\n\\end{figure}\n';
         });
 
-        jQuery(htmlCode).find('.equation,.figure-equation').each(
+        jQuery(htmlCode).find('.equation, .figure-equation').each(
             function () {
                 var equation = jQuery(this).attr('data-equation');
                 // TODO: The string is for some reason escaped. The following line removes this.
@@ -1055,7 +1055,7 @@ var FW_FILETYPE_VERSION = "1.1";
         var title, contents, contentsBody, images,
             bibliography, equations,
             styleSheets = [], //TODO: fill style sheets with somethign meaningful.
-            tempNode,
+            tempNode, mathjax,
             i, startHTML;
 
         title = aDocument.title;
@@ -1110,23 +1110,35 @@ var FW_FILETYPE_VERSION = "1.1";
             contentsBody.appendChild(contents.firstChild);
         }
 
-        equations = contentsBody.querySelectorAll('.equation');
+        equations = contentsBody.querySelectorAll('.equation, .figure-equation');
 
+        if (equations.length > 0) {
+            mathjax = true;
+        }
+        
         for (i = 0; i < equations.length; i++) {
             mathHelpers.layoutMathNode(equations[i]);
         }
         mathHelpers.queueExecution(function () {
-            exporter.epub2(aDocument, contentsBody, images, title, styleSheets);
+            setTimeout( function() {
+            exporter.epub2(aDocument, contentsBody, images, title, styleSheets, mathjax);
+            }, 2000);
         });
     };
 
-    exporter.epub2 = function (aDocument, contentsBody, images, title, styleSheets) {
-        var mathjax, contentsBodyEpubPrepared, xhtmlCode, containerCode, timestamp, keywords, contentItems, authors, tempNode, outputList, includeZips = [],
+    exporter.epub2 = function (aDocument, contentsBody, images, title, styleSheets, mathjax) {
+        var contentsBodyEpubPrepared, xhtmlCode, containerCode, timestamp, keywords, contentItems, authors, tempNode, outputList, includeZips = [],
             opfCode, ncxCode, navCode, httpOutputList = [],
             i;
 
-        mathjax = exporter.jsonToHtml(htmlToJson(exporter.getMathjaxHeader()), 'xhtml').outerHTML;
-
+        if (mathjax) {
+            mathjax = exporter.getMathjaxHeader();
+        
+            if (mathjax) {    
+                mathjax = exporter.jsonToHtml(htmlToJson(mathjax), 'xhtml').outerHTML;
+            }
+        }
+        
         // Make links to all H1-3 and create a TOC list of them
         contentItems = exporter.orderLinks(exporter.setLinks(
             contentsBody));
@@ -1260,8 +1272,7 @@ var FW_FILETYPE_VERSION = "1.1";
     exporter.html = function (aDocument, aBibDB) {
         var title, contents, tempNode,
             styleSheets = [],
-            equations;
-
+            equations, mathjax = false;
 
         title = aDocument.title;
 
@@ -1276,23 +1287,32 @@ var FW_FILETYPE_VERSION = "1.1";
             contents.appendChild(tempNode.firstChild);
         }
 
-        equations = contents.querySelectorAll('.equation');
+        equations = contents.querySelectorAll('.equation, .figure-equation');
 
+        if (equations.length > 0) {
+            mathjax = true;
+        }
+        
         for (i = 0; i < equations.length; i++) {
             mathHelpers.layoutMathNode(equations[i]);
         }
         mathHelpers.queueExecution(function () {
-            exporter.html2(aDocument, aBibDB, styleSheets, title, contents);
+            exporter.html2(aDocument, aBibDB, styleSheets, title, contents, mathjax);
         });
     };
 
-    exporter.html2 = function (aDocument, aBibDB, styleSheets, title, contents) {
+    exporter.html2 = function (aDocument, aBibDB, styleSheets, title, contents, mathjax) {
         var bibliography, htmlCode, outputList,
             httpOutputList,
-            includeZips = [],
-            mathjax;
+            includeZips = [];
 
-        mathjax = exporter.getMathjaxHeader().outerHTML;
+        if (mathjax) {
+            mathjax = exporter.getMathjaxHeader()
+        
+            if (mathjax) {
+                mathjax = mathjax.outerHTML;
+            }
+        }
 
         bibliography = citationHelpers.formatCitations(contents,
             aDocument.settings.citationstyle,

@@ -35,10 +35,11 @@
         // Layout a single math node
         mathHelpers.setMathNodeContents(node);
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, node]);
+        console.log(node);
     };
     
     mathHelpers.queueExecution = function (callback) {
-        MathJax.Hub.Queue([callback]);
+        MathJax.Hub.Queue(callback);
     };
 
     mathHelpers.setDisplayMathNodeContents = function (node) {

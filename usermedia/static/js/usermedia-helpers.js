@@ -34,7 +34,6 @@
             type: 'POST',
             dataType: 'json',
             success: function (response, textStatus, jqXHR) {
-                console.log(response);
                 if (usermediaHelpers.displayCreateImageError(response.errormsg)) {
                     usermediaHelpers.stopUsermediaTable();
                     ImageDB[response.values.pk] = response.values;

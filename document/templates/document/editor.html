@@ -334,7 +334,11 @@
         <div id="wait">
             <i class="icon-spin2 animate-spin"></i>
         </div>
+        {% if ojsuser %}
+        <a href="/ojscommand/back/" id="close-document-top" class="close icon-cancel-circle" title="{% trans "Close the document and return to OJS." %}"></a>
+        {% else %}
         <div id="close-document-top" class="close icon-cancel-circle" title="{% trans "Close the document and return to the document overview menu." %}"></div>
+        {% endif %}
         <header id="header">
             <h1>Untitled document</h1>
             <nav id="header-navigation">

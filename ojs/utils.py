@@ -19,6 +19,8 @@
 import uuid
 
 from django.contrib.auth import authenticate, login, logout
+from django.conf import settings
+
 from allauth.account import forms as authforms
 from allauth import utils as authutils
 
@@ -27,7 +29,7 @@ from document.models import Document
 def make_tmp_user_data():
     uniq_id = uuid.uuid4().hex
     u_name = 'ojsuser_' + authutils.generate_unique_username(uniq_id)
-    u_pass = 'aaaaaa'
+    u_pass = settings.OJS_API_KEY
     u_data = {
         'username': u_name,
         'password1': u_pass,

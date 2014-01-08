@@ -19,7 +19,7 @@
  *
  */
 
-/** Extend jQuery for common functions 
+/** Extend jQuery for common functions
  * @namespace jQuery
  */
 jQuery.extend({
@@ -31,7 +31,7 @@ jQuery.extend({
      * @param btn The button to open and close the dropdown box.
      * @param box The node containing the contents of the dropdown box.
      * @memberof jQuery
-     */    
+     */
     'addDropdownBox': function(btn, box) {
         btn.bind('click', function() {
             if('none' == box.css('display')) {
@@ -42,7 +42,7 @@ jQuery.extend({
     /** Opens a dropdown box.
      * @param box The node containing the contents of the dropdown box.
      * @memberof jQuery
-     */    
+     */
     'openDropdownBox': function(box) {
         box.show();
         setTimeout(function() {
@@ -53,7 +53,7 @@ jQuery.extend({
     /** Closes a dropdown box
      * @memberof jQuery
      * @param e ?
-     */        
+     */
     'closeDropdownBox': function(e) {
         jQuery(document).off('click', $.closeDropdownBox);
         if(e.data.box.hasOwnProperty('type'))
@@ -61,10 +61,10 @@ jQuery.extend({
         e.data.box.hide();
         $.isDropdownBoxOpen = false;
     },
-    /** Checkes or uncheckes a checkable label. This is used for example for bibliography categories when editing bibliography items. 
+    /** Checkes or uncheckes a checkable label. This is used for example for bibliography categories when editing bibliography items.
      * @memberof jQuery
      * @param label The node who's parent has to be checked or unchecked.
-     */    
+     */
     'setCheckableLabel': function(label) {
         checkbox = label.parent().find('input[type=checkbox]');
         if(label.hasClass('checked')) {
@@ -109,8 +109,8 @@ jQuery.extend({
     /** Turn milliseconds since epoch (UTC) into a local date string.
      * @memberof jQuery
      * @param {number} milliseconds Number of milliseconds since epoch (1/1/1970 midnight, UTC).
-     * @param {boolean} sortable Whether the result should appear in a date only list. 
-     */    
+     * @param {boolean} sortable Whether the result should appear in a date only list.
+     */
     'localizeDate': function (milliseconds, sortable) {
         milliseconds = parseInt(milliseconds);
         if (milliseconds > 0) {

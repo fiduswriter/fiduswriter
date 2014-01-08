@@ -75,7 +75,7 @@ var tmp_sourcetype = _.template('<div id="source-type-selection" class="fw-butto
             <% }) %></ul>\
         </div>\
     </div>');
-/* A template to show the category selection pane of the bibliography item edit dialog. */ 
+/* A template to show the category selection pane of the bibliography item edit dialog. */
 var tmp_category = _.template('\
     <tr>\
         <th><h4 class="fw-tablerow-title"><%- fieldTitle %></h4></th>\
@@ -212,10 +212,10 @@ var tmp_eitheror_tr = _.template('<tr class="eitheror">\
 var tmp_dateinput_tr = _.template('<tr class="date-input-tr" data-format="<%= format %>">\
         <th>\
             <div class="fw-data-format-pulldown fw-bib-form-pulldown">\
-                <label><%- fieldTitle %> <span>(<%- BibliographyHelpers.date_format[format] %>)</span></label>\
+                <label><%- fieldTitle %> <span>(<%- bibliographyHelpers.date_format[format] %>)</span></label>\
                 <span class="icon-down-dir"></span>\
                 <div class="fw-pulldown fw-left">\
-                    <ul><% _.each(BibliographyHelpers.date_format, function(format_title, key) { %>\
+                    <ul><% _.each(bibliographyHelpers.date_format, function(format_title, key) { %>\
                         <li>\
                             <span class="fw-pulldown-item<% if(key == format) { %> selected<% } %>"\
                                 data-value="<%= key %>">\

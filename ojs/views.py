@@ -28,6 +28,9 @@ from django.core.context_processors import csrf
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 from django.core.files import File
+from django.conf import settings
+from django.views.defaults import bad_request
+from django.utils.translation import ugettext as _
 
 from usermedia.models import Image
 from bibliography.models import Entry, EntryType, EntryField
@@ -37,30 +40,33 @@ from . import utils
 
 @csrf_exempt
 def index(request):
-    return HttpResponseRedirect("/")
-
-@csrf_exempt
-def create(request):
-    if request.method == 'POST':
-        if all (key in request.POST for key in ("post_url", "back_url", "title", "abstract")):
-            #first: create a one-time account
+    if request.method == 'POST' and 'op' in request.POST:
+        op = request.POST['op']
+        if "validate" == op and 'apiKey' in request.POST:
+            if settings.OJS_API_KEY == request.POST['apiKey']:
+                return HttpResponse("OK")
+            
+        elif "edit" == op and all(key in request.POST for key in ("articleId", "apiUrl", "saveAccessKey", "redirectUrl")):
             u_data = utils.make_tmp_user_data()
             
             if(utils.make_tmp_user(request, u_data)):
                 tmp_u = utils.login_tmp_user(request, u_data['username'], u_data['password1'])
-                request.session['ojs_post_url'] = request.POST['post_url']
-                request.session['ojs_back_url'] = request.POST['back_url']
-                
+                request.session.set_expiry(0)
+                request.session['ojs_articleId'] = request.POST['articleId']
+                request.session['ojs_apiUrl'] = request.POST['apiUrl']
+                request.session['ojs_saveAccessKey'] = request.POST['saveAccessKey']
+                request.session['ojs_redirectUrl'] = request.POST['redirectUrl']
             
                 #second: create a blank new document
-                doc_meta = '{"title": "' + str(request.POST['title']) + '","abstract": "' + str(request.POST['abstract']) + '"}'
+                doc_title = _('Untitled')
+                doc_meta = '{"title": "' + doc_title + '","abstract": "' + _('Undefined') + '"}'
                 doc_settings = '{"papersize": "1117","citationstyle": "apa","tracking": false,"documentstyle": "elephant","metadata": {"abstract":true},"mathjax": false}'
-                document = utils.create_doc(tmp_u.pk, request.POST['title'], "<p></p>", doc_meta, doc_settings)
+                document = utils.create_doc(tmp_u.pk, doc_title, "<p></p>", doc_meta, doc_settings)
                 
                 #third: redirect to the document
                 return HttpResponseRedirect("/document/" + str(document.id))
-        
-    return HttpResponseRedirect("/")
+                
+    return bad_request(request, template_name='400.html')
     
 @csrf_exempt
 def open(request):
@@ -72,6 +78,7 @@ def open(request):
             u_data = utils.make_tmp_user_data()
             if(utils.make_tmp_user(request, u_data)):
                 tmp_u = utils.login_tmp_user(request, u_data['username'], u_data['password1'])
+                request.session.set_expiry(0)
                 request.session['ojs_post_url'] = request.POST['post_url']
                 request.session['ojs_back_url'] = request.POST['back_url']
                 
@@ -163,21 +170,26 @@ def open(request):
 @login_required
 def geturl_js(request):
     status = 405
-    response = ""
-    if("ojs_post_url" in request.session):
+    response = {}
+    if(all(key in request.session for key in ("ojs_articleId", "ojs_apiUrl", "ojs_saveAccessKey"))):
         status = 200
-        response = request.session['ojs_post_url']
+        response = {
+            'articleId' : request.session['ojs_articleId'],
+            'apiUrl' : request.session['ojs_apiUrl'],
+            'saveAccessKey' : request.session['ojs_saveAccessKey'],
+        }
         
     return HttpResponse(
-        response,
-        content_type = 'text/plain; charset=utf8',
+        json.dumps(response),
+        content_type = 'application/json; charset=utf8',
         status=status
     )
 
 @login_required
 def back(request):
-    if("ojs_back_url" in request.session):
-        backurl = request.session["ojs_back_url"]
+    if("ojs_redirectUrl" in request.session):
+        backurl = request.session["ojs_redirectUrl"]
+        
         #delete the tmp. document
         documents = Document.objects.filter(owner=request.user)
         for doc in documents:
@@ -189,7 +201,10 @@ def back(request):
         user = User.objects.get(id=uid)
         user.delete()
         
+        #flush session variables
+        request.session.flush()
+        
         return HttpResponseRedirect(backurl)
     
-    return HttpResponseRedirect("/")
+    return bad_request(request, template_name='400.html')
     

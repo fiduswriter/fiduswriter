@@ -1,11 +1,16 @@
 (function () {
   var ojsconnector = {},
     submit_url = '';
+    submit_data = {};
 
   ojsconnector.submitDocToOJS = function(zipFileName, blob) {
     var f_data = new FormData();
     $.activateWait();
-    f_data.append('fidusfile', blob, zipFileName);
+
+    for(key in submit_data)
+      f_data.append(key, submit_data[key]);
+
+    f_data.append('file', blob, zipFileName);
 
     jQuery.ajax({
       type: 'POST',
@@ -17,14 +22,19 @@
       processData: false,
       dataType: 'text',
       success: function(responseData, textStatus, jqXHR) {
-        if('success' == responseData) {
+        if('OK' == responseData) {
           location.href = '/ojscommand/back/'
         } else {
-          alert('POST failed.');
+          console.log(responseData);
+          $.addAlert('error', 'POST TO OJS DENIED');
         }
       },
       error: function (responseData, textStatus, errorThrown) {
-        alert('POST failed.');
+        console.log(responseData);
+        $.addAlert('POST TO OJS DENIED');
+      },
+      complete: function() {
+        $.deactivateWait();
       }
     });
   }
@@ -34,13 +44,20 @@
       jQuery.ajax({
         type: 'GET',
         url: '/ojscommand/geturl/',
-        dataType: 'text',
-        success: function(responseData, textStatus, jqXHR) {
-          submit_url = responseData;
+        dataType: 'json',
+        success: function(response, textStatus, jqXHR) {
+          submit_url = response.apiUrl;
+          submit_data = {
+            'articleId' : response.articleId,
+            'op' : 'save',
+            'title' : theDocument.title,
+            'abstract' : theDocument.metadata.abstract,
+            'accessKey' : response.saveAccessKey,
+          };
           exporter.native(theDocument, ImageDB, BibDB, exporter.nativeFile, 'submittoojs');
         },
-        error: function (responseData, textStatus, errorThrown) {
-          alert('POST failed.');
+        error: function (jqXHR, textStatus, errorThrown) {
+          $.addAlert('error', 'COULD NOT GET PATH TO OJS');
         }
       });
     });

@@ -22,5 +22,5 @@
 jQuery(document).on('mousedown', '#button-italic', function (event) {
     event.preventDefault();
     document.execCommand("italic", false, null);
-        
+    editorHelpers.documentHasChanged();
 });

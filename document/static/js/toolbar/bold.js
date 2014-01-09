@@ -22,5 +22,5 @@
 jQuery(document).on('mousedown', '#button-bold', function () {
     event.preventDefault();        
     document.execCommand("bold", false, null);
-        
+    editorHelpers.documentHasChanged();   
 });

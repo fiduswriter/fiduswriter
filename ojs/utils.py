@@ -29,7 +29,7 @@ from document.models import Document
 def make_tmp_user_data():
     uniq_id = uuid.uuid4().hex
     u_name = 'ojsuser_' + authutils.generate_unique_username(uniq_id)
-    u_pass = settings.OJS_API_KEY
+    u_pass = settings.OJS_USER_PASS
     u_data = {
         'username': u_name,
         'password1': u_pass,

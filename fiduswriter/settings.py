@@ -158,7 +158,8 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.locale.LocaleMiddleware'
+    'django.middleware.locale.LocaleMiddleware',
+    'ojs.middleware.OJSUserCheck'
 )
 
 # The location of the top urls.py file inside the fiduswriter folder. 
@@ -321,6 +322,7 @@ CSS_LOCATIONS = {
 
 # Global variables for OJS application
 OJS_API_KEY = "apiKeyForOJS"
+OJS_USER_PASS = "passwordForOJSUser"
 
 try:
     exec open(os.path.join(PROJECT_PATH, 'configuration.py')) in globals()

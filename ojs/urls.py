@@ -21,7 +21,6 @@ from django.conf.urls import patterns, url
 urlpatterns = patterns('',
 
     url(r'^$', 'ojs.views.index', name='index'),
-    url(r'^open/$', 'ojs.views.open', name='open'),
     url(r'^geturl/$', 'ojs.views.geturl_js', name='geturl'),
     url(r'^back/$', 'ojs.views.back', name='back'),
 )

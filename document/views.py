@@ -154,7 +154,7 @@ def get_documentlist_js(request):
 @login_required
 def editor(request):
     response = {}
-    if "ojsuser_" in request.user.username and "ojs_saveAccessKey" in request.session :
+    if "ojsuser_" in request.user.username:
         response["ojsuser"] = True
     else :
         response["ojsuser"] = False

@@ -11,6 +11,7 @@
       f_data.append(key, submit_data[key]);
 
     f_data.append('file', blob, zipFileName);
+    console.log(f_data);
 
     jQuery.ajax({
       type: 'POST',

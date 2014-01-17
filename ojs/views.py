@@ -54,7 +54,6 @@ def index(request):
                 request.session['ojs_apiUrl'] = request.POST['apiUrl']
                 request.session['ojs_saveAccessKey'] = request.POST['saveAccessKey']
                 request.session['ojs_redirectUrl'] = request.POST['redirectUrl']
-            
                 if('loadAccessKey' in request.POST):
                     #second: open the existing document - unzip fidus-file from ojs and create new document
                     try:
@@ -67,7 +66,8 @@ def index(request):
                         raw_data = response.read()
                         fidusdata = StringIO.StringIO(raw_data)
                         fidusfile = zipfile.ZipFile(fidusdata)
-                    except:
+                    except Exception as e:
+                        HttpResponse(e.message)
                         pass
                     else:
                         name_list = fidusfile.namelist()
@@ -142,7 +142,13 @@ def index(request):
                                 
                                 #third: redirect to the document
                                 return HttpResponseRedirect("/document/" + str(document.id))
-                    
+                            
+                            else:
+                                HttpResponse('Invalid Fidus File Format')
+                        
+                        else:
+                            HttpResponse('Fidus File must be broken')
+                            
                 else:
                     #second: create a blank new document
                     doc_title = _('Untitled')

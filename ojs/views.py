@@ -67,8 +67,7 @@ def index(request):
                         fidusdata = StringIO.StringIO(raw_data)
                         fidusfile = zipfile.ZipFile(fidusdata)
                     except Exception as e:
-                        HttpResponse(e.message)
-                        pass
+                        return HttpResponse(e.message)
                     else:
                         name_list = fidusfile.namelist()
                         if all (key in name_list for key in ("filetype-version", "mimetype", "document.json", "images.json", "bibliography.json")):
@@ -144,10 +143,10 @@ def index(request):
                                 return HttpResponseRedirect("/document/" + str(document.id))
                             
                             else:
-                                HttpResponse('Invalid Fidus File Format')
+                                return HttpResponse('Invalid Fidus File Format')
                         
                         else:
-                            HttpResponse('Fidus File must be broken')
+                            return HttpResponse('Fidus File must be broken')
                             
                 else:
                     #second: create a blank new document
@@ -158,7 +157,9 @@ def index(request):
                 
                     #third: redirect to the document
                     return HttpResponseRedirect("/document/" + str(document.id))
-                
+            else:
+                print()
+                return HttpResponse('Unable to create tmp user')
     return bad_request(request, template_name='400.html')
     
 @login_required

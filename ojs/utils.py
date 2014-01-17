@@ -41,9 +41,12 @@ def make_tmp_user_data():
 
 def make_tmp_user(request, user_data):
     signup_form = authforms.SignupForm(user_data)
-    if(signup_form.is_valid()):
+    try:
+        signup_form.is_valid()
         signup_form.save(request)
         return True
+    except:
+        pass        
     
     return False
 

@@ -435,7 +435,7 @@
         range = selection.getRangeAt(0);
 
         manualEdits.insert(spaceNode, range);
-
+        
         selection.removeAllRanges();
         selection.addRange(range);
 

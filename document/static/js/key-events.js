@@ -746,7 +746,7 @@
 
 
         // Check whether bold setting corresponds with whether we currently are using bold.
-        if (jQuery('.bold_button.ui-state-active').length > 0 && jQuery(range.startContainer)
+        if (jQuery('#button-bold.ui-state-active').length > 0 && jQuery(range.startContainer)
             .closest('b').length === 0) {
             var boldNode = document.createElement('b');
             boldNode.innerHTML = '\u180e';
@@ -755,13 +755,13 @@
             }
             range.insertNode(boldNode);
             range.selectNodeContents(boldNode);
-        } else if (jQuery('.bold_button.ui-state-active').length === 0 &&
+        } else if (jQuery('#button-bold.ui-state-active').length === 0 &&
             jQuery(range.startContainer).closest('b').length > 0) {
             dom.splitNode(jQuery(range.startContainer).closest('b')[0], range);
         }
 
         // Check whether italics setting corresponds with whether we currently are using italics.
-        if (jQuery('.italic_button.ui-state-active').length > 0 && jQuery(range
+        if (jQuery('#button-italic.ui-state-active').length > 0 && jQuery(range
             .startContainer).closest('i').length === 0) {
             var italicsNode = document.createElement('i');
             italicsNode.innerHTML = '\u180e';
@@ -771,7 +771,7 @@
             range.insertNode(italicsNode);
             range.selectNodeContents(italicsNode);
 
-        } else if (jQuery('.italic_button.ui-state-active').length === 0 &&
+        } else if (jQuery('#button-italic.ui-state-active').length === 0 &&
             jQuery(range.startContainer).closest('i').length > 0) {
             dom.splitNode(jQuery(range.startContainer).closest('i')[0], range);
         }

@@ -748,8 +748,7 @@
         // Check whether bold setting corresponds with whether we currently are using bold.
         if (jQuery('#button-bold.ui-state-active').length > 0 && jQuery(range.startContainer)
             .closest('b').length === 0) {
-            var boldNode = document.createElement('b'), tempSpaceNode;
-            tempSpaceNode = document.createTextNode(' ');
+            var boldNode = document.createElement('b'), tempSpaceNode = document.createTextNode(' ');
             boldNode.appendChild(tempSpaceNode);
             if (!range.collapsed) {
                 range.collapse();
@@ -778,8 +777,7 @@
         // Check whether italics setting corresponds with whether we currently are using italics.
         if (jQuery('#button-italic.ui-state-active').length > 0 && jQuery(range
             .startContainer).closest('i').length === 0) {
-            var italicNode = document.createElement('i'), tempSpaceNode;
-            tempSpaceNode = document.createTextNode(' ');
+            var italicNode = document.createElement('i'), tempSpaceNode = document.createTextNode(' ');
             italicNode.appendChild(tempSpaceNode);
             if (!range.collapsed) {
                 range.collapse();

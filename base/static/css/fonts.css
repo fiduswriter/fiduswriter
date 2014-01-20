@@ -148,15 +148,6 @@
 }
  */
 
-/*
- * For U+180e zero space character
- */
-
-@font-face {
-  font-family: 'Lato';
-  src: url(../fonts/fontello/fidus_fontello.woff) format('woff');
-  unicode-range: U+180e;
-}
 
 /*
  * styles for Lato

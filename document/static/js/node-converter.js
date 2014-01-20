@@ -72,10 +72,6 @@
             neNodes[i].removeAttribute('contenteditable');
         }
         
-       // modelNode.innerHTML = modelNode.innerHTML.replace(
-       //     /[\u180e]/g,
-       //     '');
-        
         return modelNode;
     };
     

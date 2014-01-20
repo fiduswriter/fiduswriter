@@ -247,7 +247,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
         // Remove empty space characters
         htmlCode.innerHTML = htmlCode.innerHTML.replace(
-            /[\u180e\u200b\u205f]/g,
+            /[\u200b\u205f]/g,
             '');
 
         // Replace nbsp spaces with normal ones
@@ -497,7 +497,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
         // Remove empty space characters
         htmlCode.innerHTML = htmlCode.innerHTML.replace(
-            /[\u180e\u200b\u205f]/g,
+            /[\u200b\u205f]/g,
             '');
 
         // Replace nbsp spaces with normal ones

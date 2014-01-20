@@ -62,10 +62,6 @@
             range.insertNode(node);
             range.selectNode(node);
             range.collapse();
-            // check if there is a Mongolian vowel space behind the node we just inserted. If so, remove it.
-             //if (node.nextSibling && node.nextSibling.nodeType === 3 && node.nextSibling.data === '\u180e') {
-             //   jQuery(node.nextSibling).remove();
-            //}
             editorHelpers.documentHasChanged();
         }
    

@@ -129,13 +129,13 @@
 
     dom.splitNode = function (node, range) {
         // Split the change node at the caret position and return a selected empty space node between the two.
-        var emptySpaceNode = document.createTextNode('\u180e');
+        var tempSpaceNode = document.createTextNode(' ');
         range.setEndAfter(node);
         var remainingNode = range.extractContents();
         range.collapseAfter(node);
         range.insertNode(remainingNode);
-        range.insertNode(emptySpaceNode);
-        range.selectNodeContents(emptySpaceNode);
+        range.insertNode(tempSpaceNode);
+        range.selectNodeContents(tempSpaceNode);
         return range;
     };
 
@@ -181,7 +181,7 @@
             }
 
             // We insert a Mongolian vowel space which has no width. 
-            emptySpaceNode = document.createTextNode('\u180e');
+            emptySpaceNode = document.createTextNode(' ');
             
             nodeToEscape.parentNode.insertBefore(emptySpaceNode, nodeToEscape.nextSibling);
             range.selectNodeContents(emptySpaceNode);
@@ -210,15 +210,6 @@
             return range;
         }
         
-        if (secondPar.firstChild.nodeType === 3 && secondPar.firstChild.textContent[0] === '\u180e') {
-            // The first character of the second paragraph is an empty space node. 
-            // This was placed there to allow the cursor to move before a footnote or citation. 
-            // There is no more need for it now, so we will go ahead and remove it before merging the two paragraphs.
-            var restTextNode = secondPar.firstChild.splitText(1);
-            // We are splitting of the first character of the text node at the start of the second paragraph. 
-            // In case more letters were added beyond the empty space node this is important.
-            jQuery(secondPar.firstChild).remove();
-        }
         // We normalize the second paragraph, which means we eliminate empty text nodes.
         secondPar.normalize();
 

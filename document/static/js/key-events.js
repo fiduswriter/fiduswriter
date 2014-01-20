@@ -311,7 +311,7 @@
             '.pagination-footnote, .comment, a')[0];
         if (insideSpecialElement) {
             // We insert a Mongolian vowel space which has no width.
-            emptySpaceNode = document.createTextNode('\u180e');
+            emptySpaceNode = document.createTextNode(' ');
             if (insideSpecialElement.nextSibling) {
                 insideSpecialElement.parentNode.insertBefore(emptySpaceNode,
                     insideSpecialElement.nextSibling);
@@ -333,7 +333,7 @@
             jQuery(range.endContainer.nextSibling).is('.pagination-footnote')) {
             // We are directly in front of a footnote. We insert an empty space node before this footnote before executing the enter.
             var currentContainer = range.endContainer;
-            emptySpaceNode = document.createTextNode('\u180e');
+            emptySpaceNode = document.createTextNode(' ');
             currentContainer.parentNode.insertBefore(emptySpaceNode,
                 currentContainer.nextSibling);
         }
@@ -427,7 +427,7 @@
         var range, selection;
 
         // Insert a scientific space as space character for now. We replace it when entering the next letter (see below under 'otherKey').
-        spaceNode = document.createTextNode('\u205f');
+        spaceNode = document.createTextNode(' ');
 
         keyEvents.otherKey(evt, editorContainer);
 
@@ -749,7 +749,7 @@
         if (jQuery('#button-bold.ui-state-active').length > 0 && jQuery(range.startContainer)
             .closest('b').length === 0) {
             var boldNode = document.createElement('b');
-            boldNode.innerHTML = '\u180e';
+            boldNode.innerHTML = ' ';
             if (!range.collapsed) {
                 range.collapse();
             }
@@ -764,7 +764,7 @@
         if (jQuery('#button-italic.ui-state-active').length > 0 && jQuery(range
             .startContainer).closest('i').length === 0) {
             var italicsNode = document.createElement('i');
-            italicsNode.innerHTML = '\u180e';
+            italicsNode.innerHTML = ' ';
             if (!range.collapsed) {
                 range.collapse();
             }

@@ -14,16 +14,6 @@
  * styles for Lato
  */
 
-/*
- * For U+180e zero space character
- */
-
-@font-face {
-  font-family: 'Lato':
-  src: url('../fonts/fontello/fidus_fontello.svg');
-  unicode-range: U+180e;
-}
-
 @font-face {
   font-family: 'Lato';
   font-style: normal;

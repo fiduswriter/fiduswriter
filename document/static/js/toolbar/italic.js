@@ -20,7 +20,25 @@
 
 // inlinestyles italic
 jQuery(document).on('mousedown', '#button-italic', function (event) {
+    var selection = rangy.getSelection(),
+                    range;
     event.preventDefault();
-    document.execCommand("italic", false, null);
-    editorHelpers.documentHasChanged();
+    
+    if (selection.rangeCount > 0) {
+        range = selection.getRangeAt(0);
+        if (jQuery(range.startContainer).closest('#document-editable').length===0) {
+            return false;
+        }
+        
+    } else {
+        return false;
+    }
+    
+    if (range.collapsed) {
+        jQuery(this).toggleClass('ui-state-active');
+    } else {
+        document.execCommand("italic", false, null);
+        editorHelpers.documentHasChanged();
+        jQuery(this).toggleClass('ui-state-active');
+    }
 });

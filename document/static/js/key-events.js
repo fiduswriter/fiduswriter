@@ -722,7 +722,7 @@
         selection = rangy.getSelection();
         range = selection.getRangeAt(0);
 
-        if (spaceNode && spaceNode.parentNode) {
+    /*    if (spaceNode && spaceNode.parentNode) {
             function replaceSpace() {
                 // We replace the last entered space (for which we used a scientific space) with a normal space when the next letter is being entered.
                 // This way we make sure that words break correctly at the end of lines.
@@ -736,7 +736,7 @@
                 }
             }
             setTimeout(replaceSpace, 1);
-        }
+        } */
 
         // Check whether tracking has been disabled and if so, wehther we are in a change node that we need to get out of.
         range = dom.noTrackIfDisabled(range);
@@ -755,6 +755,21 @@
             }
             range.insertNode(boldNode);
             range.selectNodeContents(boldNode);
+            range.collapse();
+            function removeInitialSpace () {
+                tempSpaceNode = boldNode.firstChild;
+                if (tempSpaceNode.data.length > 1 && tempSpaceNode.data[0]===' ') {
+                    tempSpaceNode.data = tempSpaceNode.data.substring(1);
+                    selection = rangy.getSelection();
+                    range = rangy.createRange();
+                    range.selectNodeContents(tempSpaceNode);
+                    range.collapse();
+                    selection.setSingleRange(range);
+                }
+            }
+            setTimeout(removeInitialSpace, 1);
+        
+        
         } else if (jQuery('#button-bold.ui-state-active').length === 0 &&
             jQuery(range.startContainer).closest('b').length > 0) {
             dom.splitNode(jQuery(range.startContainer).closest('b')[0], range);
@@ -763,13 +778,26 @@
         // Check whether italics setting corresponds with whether we currently are using italics.
         if (jQuery('#button-italic.ui-state-active').length > 0 && jQuery(range
             .startContainer).closest('i').length === 0) {
-            var italicsNode = document.createElement('i');
-            italicsNode.innerHTML = ' ';
+            var italicNode = document.createElement('i');
+            italicNode.innerHTML = ' ';
             if (!range.collapsed) {
                 range.collapse();
             }
-            range.insertNode(italicsNode);
-            range.selectNodeContents(italicsNode);
+            range.insertNode(italicNode);
+            range.selectNodeContents(italicNode);
+            range.collapse();
+            function removeInitialSpace () {
+                tempSpaceNode = italicNode.firstChild;
+                if (tempSpaceNode.data.length > 1 && tempSpaceNode.data[0]===' ') {
+                    tempSpaceNode.data = tempSpaceNode.data.substring(1);
+                    selection = rangy.getSelection();
+                    range = rangy.createRange();
+                    range.selectNodeContents(tempSpaceNode);
+                    range.collapse();
+                    selection.setSingleRange(range);
+                }
+            }
+            setTimeout(removeInitialSpace, 1);
 
         } else if (jQuery('#button-italic.ui-state-active').length === 0 &&
             jQuery(range.startContainer).closest('i').length > 0) {

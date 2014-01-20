@@ -135,7 +135,19 @@
         range.collapseAfter(node);
         range.insertNode(remainingNode);
         range.insertNode(tempSpaceNode);
-        range.selectNodeContents(tempSpaceNode);
+        range.selectNode(tempSpaceNode);
+        range.collapse();
+        function removeInitialSpace () {
+            if (tempSpaceNode.data.length > 1 && tempSpaceNode.data[0]===' ') {
+                tempSpaceNode.data = tempSpaceNode.data.substring(1);
+                selection = rangy.getSelection();
+                range = rangy.createRange();
+                range.selectNodeContents(tempSpaceNode);
+                range.collapse();
+                selection.setSingleRange(range);
+            }
+        }
+        setTimeout(removeInitialSpace, 1);
         return range;
     };
 

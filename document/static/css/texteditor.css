@@ -435,3 +435,7 @@ figure img {
 *:focus {
     outline: none;
 }
+
+#document-editable {
+    white-space: pre-wrap;
+}

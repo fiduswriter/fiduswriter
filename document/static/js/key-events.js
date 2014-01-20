@@ -748,8 +748,9 @@
         // Check whether bold setting corresponds with whether we currently are using bold.
         if (jQuery('#button-bold.ui-state-active').length > 0 && jQuery(range.startContainer)
             .closest('b').length === 0) {
-            var boldNode = document.createElement('b'), removeInitialSpace;
+            var boldNode = document.createElement('b'), tempSpaceNode;
             boldNode.innerHTML = ' ';
+            tempSpaceNode = boldNode.firstChild;
             if (!range.collapsed) {
                 range.collapse();
             }
@@ -757,7 +758,6 @@
             range.selectNodeContents(boldNode);
             range.collapse();
             function removeInitialSpace () {
-                tempSpaceNode = boldNode.firstChild;
                 if (tempSpaceNode.data.length > 1 && tempSpaceNode.data[0]===' ') {
                     tempSpaceNode.data = tempSpaceNode.data.substring(1);
                     selection = rangy.getSelection();
@@ -778,8 +778,9 @@
         // Check whether italics setting corresponds with whether we currently are using italics.
         if (jQuery('#button-italic.ui-state-active').length > 0 && jQuery(range
             .startContainer).closest('i').length === 0) {
-            var italicNode = document.createElement('i'), removeInitialSpace;
+            var italicNode = document.createElement('i'), tempSpaceNode;
             italicNode.innerHTML = ' ';
+            tempSpaceNode = italicNode.firstChild;
             if (!range.collapsed) {
                 range.collapse();
             }
@@ -787,7 +788,6 @@
             range.selectNodeContents(italicNode);
             range.collapse();
             function removeInitialSpace () {
-                tempSpaceNode = italicNode.firstChild;
                 if (tempSpaceNode.data.length > 1 && tempSpaceNode.data[0]===' ') {
                     tempSpaceNode.data = tempSpaceNode.data.substring(1);
                     selection = rangy.getSelection();

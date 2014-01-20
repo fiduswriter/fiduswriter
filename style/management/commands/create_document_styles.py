@@ -18,6 +18,7 @@
 
 import os
 import json
+import re
 from re import escape
 from fiduswriter.settings import PROJECT_PATH
 from style.models import DocumentStyle
@@ -43,10 +44,25 @@ class Command(BaseCommand):
 
             output_js += u'{filename: "' + ds.filename + '", title: "' + ds.title + '"},\n'
             output_css = u'/** @file A document style definition. \n This file is automatically created using ./manage.py create_document_styles\n*/\n'
+            
+            #adding extra font with Zero Space for MVS
+            output_css += u'\n@font-face {\n'
+            output_css += u"font-family: 'Zero Space MVS';\n"
+            output_css += u"src: local('Zero Space MVS'), local('ZeroSpaceMVS'), url(/document/static/fonts/zerospacemvs/zerospacemvs.woff) format('woff');\n"
+            output_css += u'\n}\n'
+            output_css += u"\n.user-contents { font-family: 'Zero Space MVS'; }\n"
+            
             for font in ds.fonts.all():
-                output_css += u'\n@font-face {\n'
-                output_css += font.fontface_definition.replace('[URL]',font.font_file.url.split("?")[0])
-                output_css += u'\n}\n'
+                font_face = u'\n@font-face {\n'
+                font_face += font.fontface_definition.replace('[URL]',font.font_file.url.split("?")[0])
+                font_face += u'\n}\n'
+                
+                font_face_mvs = re.sub(r'src:(.+);',
+                    'src: url(/static/fonts/zerospacemvs/zerospacemvs.svg) format("svg");\r\nunicode-range: "U+180E";',
+                    font_face)
+                
+                output_css += font_face
+                output_css += font_face_mvs
             output_css += ds.contents
             
             d = os.path.dirname(PROJECT_PATH+'/style/static/css/document/'+ds.filename+'.css')

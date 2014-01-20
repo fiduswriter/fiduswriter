@@ -1,24 +1,27 @@
 <?xml version="1.0" standalone="no"?>
-<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-<svg xmlns="http://www.w3.org/2000/svg">
-<metadata>Copyright (C) 2014 by Takuto Kojima</metadata>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" >
+<svg>
+<metadata>
+Created by FontForge 20120731 at Mon Jan 20 03:31:37 2014
+ By Johannes Wilm,,,
+</metadata>
 <defs>
 <font id="zerospacemvs" horiz-adv-x="0" >
-<font-face
-  font-family="Zero Space MVS"
-  units-per-em="2048"
-  panose-1="2 11 6 4 2 2 2 2 2 4"
-  ascent="1638"
-  descent="-410"
-  x-height="1062"
-  cap-height="1466"
-  bbox="-1360.02 -665 4096 2060"
-  underline-thickness="150"
-  underline-position="-142"
-  unicode-range="U+180E"
-/>
-<missing-glyph horiz-adv-x="1000" />
-<glyph glyph-name="uni180E" unicode="᠎" />
-</font>
-</defs>
-</svg>
+  <font-face 
+    font-family="Zero Space MVS"
+    font-weight="400"
+    font-stretch="normal"
+    units-per-em="2048"
+    panose-1="2 11 6 4 2 2 2 2 2 4"
+    ascent="1638"
+    descent="-410"
+    bbox="0 0 0 0"
+    underline-thickness="150"
+    underline-position="-142"
+    unicode-range="U+200B-200B"
+  />
+    <missing-glyph />
+    <glyph glyph-name="uni200B" unicode="&#x200b;" 
+ />
+  </font>
+</defs></svg>

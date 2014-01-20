@@ -749,8 +749,8 @@
         if (jQuery('#button-bold.ui-state-active').length > 0 && jQuery(range.startContainer)
             .closest('b').length === 0) {
             var boldNode = document.createElement('b'), tempSpaceNode;
-            boldNode.innerHTML = ' ';
-            tempSpaceNode = boldNode.firstChild;
+            tempSpaceNode = document.createTextNode(' ');
+            boldNode.appendChild(tempSpaceNode);
             if (!range.collapsed) {
                 range.collapse();
             }
@@ -779,8 +779,8 @@
         if (jQuery('#button-italic.ui-state-active').length > 0 && jQuery(range
             .startContainer).closest('i').length === 0) {
             var italicNode = document.createElement('i'), tempSpaceNode;
-            italicNode.innerHTML = ' ';
-            tempSpaceNode = italicNode.firstChild;
+            tempSpaceNode = document.createTextNode(' ');
+            italicNode.appendChild(tempSpaceNode);
             if (!range.collapsed) {
                 range.collapse();
             }

@@ -48,11 +48,15 @@
         dataType: 'json',
         success: function(response, textStatus, jqXHR) {
           submit_url = response.apiUrl;
+          submit_title = theDocument.title;
+          submit_abs = theDocument.metadata.abstract;
+          if('' == submit_title || null == submit_title || 'undefined' == typeof(submit_title)) { submit_title = 'Untitled'; }
+          if('' == submit_abs || null == submit_abs || 'undefined' == typeof(submit_abs)) { submit_abs = 'Undefined'; }
           submit_data = {
             'articleId' : response.articleId,
             'op' : 'save',
-            'title' : theDocument.title,
-            'abstract' : theDocument.metadata.abstract,
+            'title' : submit_title,
+            'abstract' : submit_abs,
             'accessKey' : response.saveAccessKey,
           };
           exporter.native(theDocument, ImageDB, BibDB, exporter.nativeFile, 'submittoojs');

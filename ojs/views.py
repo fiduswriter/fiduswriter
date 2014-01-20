@@ -150,10 +150,9 @@ def index(request):
                             
                 else:
                     #second: create a blank new document
-                    doc_title = _('Untitled')
-                    doc_meta = '{"title": "' + doc_title + '","abstract": "' + _('Undefined') + '"}'
+                    doc_meta = '{"title": "","abstract": ""}'
                     doc_settings = '{"papersize": "1117","citationstyle": "apa","tracking": false,"documentstyle": "elephant","metadata": {"abstract":true},"mathjax": false}'
-                    document = utils.create_doc(tmp_u.pk, doc_title, "<p></p>", doc_meta, doc_settings)
+                    document = utils.create_doc(tmp_u.pk, "", "<p></p>", doc_meta, doc_settings)
                 
                     #third: redirect to the document
                     return HttpResponseRedirect("/document/" + str(document.id))

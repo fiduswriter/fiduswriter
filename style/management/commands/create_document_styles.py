@@ -48,7 +48,7 @@ class Command(BaseCommand):
             #adding extra font with Zero Space for MVS
             output_css += u'\n@font-face {\n'
             output_css += u"font-family: 'Zero Space MVS';\n"
-            output_css += u"src: local('Zero Space MVS'), local('ZeroSpaceMVS'), url(../fonts/zerospacemvs/zerospacemvs.woff) format('woff');\n"
+            output_css += u"src: local('Zero Space MVS'), local('ZeroSpaceMVS'), url(../../fonts/zerospacemvs/zerospacemvs.woff) format('woff');\n"
             output_css += u'\n}\n'
             output_css += u"\n.user-contents { font-family: 'Zero Space MVS'; }\n"
             
@@ -58,7 +58,7 @@ class Command(BaseCommand):
                 font_face += u'\n}\n'
                 
                 font_face_mvs = re.sub(r'src:(.+);',
-                    'src: url(../fonts/zerospacemvs/zerospacemvs.svg) format("svg");\r\nunicode-range: "U+200B";',
+                    'src: url(../../fonts/zerospacemvs/zerospacemvs.svg) format("svg");\r\nunicode-range: "U+200B";',
                     font_face)
                 
                 output_css += font_face

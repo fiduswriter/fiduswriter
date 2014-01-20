@@ -58,7 +58,7 @@ class Command(BaseCommand):
                 font_face += u'\n}\n'
                 
                 font_face_mvs = re.sub(r'src:(.+);',
-                    'src: url(/static/fonts/zerospacemvs/zerospacemvs.svg) format("svg");\r\nunicode-range: "U+180E";',
+                    'src: url(/static/fonts/zerospacemvs/zerospacemvs.svg) format("svg");\r\nunicode-range: "U+200B";',
                     font_face)
                 
                 output_css += font_face

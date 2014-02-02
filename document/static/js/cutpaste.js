@@ -28,13 +28,9 @@
         paste = {};
 
     paste.removeExtraFormatting = function (elem, pasteElement) {
-        
-        if (elem.classList.contains('editable')) {
 
-            cleanHTML.init(pasteElement); // Clean the html for the body text
-        } else {
-            pasteElement.innerHTML = pasteElement.textContent; // Remove all html tags in the title
-        }
+        cleanHTML.init(pasteElement); // Clean the html
+
         return true;
 
     };

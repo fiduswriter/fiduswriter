@@ -109,9 +109,9 @@ Advanced options
 ### Add new document styles:
 
   1. While your server is running, navigate to http://[ADDRESS:PORT]/admin/style .
-  2. Add all required document fonts. Each font consists of a font file and a CSS definition of the font. Notice that instead the URL for the font file in the CSS defition should be [URL]
+  2. Add all required document fonts. Each font consists of a font file and a CSS definition of the font. Notice that instead the URL for the font file in the CSS definition should be [URL]
   3. Add one or several new document styles. Insert the CSS definition and select all the fonts required by the style.
-  4. In your console, interrupt the server  and run:
+  4. In your console, interrupt the server and run:
   
     > python manage.py create_document_styles
 

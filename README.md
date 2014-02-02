@@ -52,16 +52,19 @@ The following are instructions working on most *NIX systems and gives you a simp
 
   > python manage.py runserver
 
-9. In your Chrome/Chromium/Safari browser, navigate to http://localhost:8000/
+9. In your Chrome/Chromium/Safari browser, navigate to http://localhost:8000/ and set up a user account.
 
+
+10. Notice that emails sent to the user appear in the console until an SMTP backend is configured (see below).
 
 Advanced options
 ----
+### Setup SMTP for the email:
 
-### Individual pages in Chromium/Chrome:
+  1. Copy the file configuration.py-default to configuration.py
 
-Go to "chrome:flags" in the URL navigation bar of your browser and enable "Enable experimental Web Platform features." 
-
+  2. Edit the lines that start with "EMAIL" uncommenting and adding your server configuration.
+  
 ### Use a MySQL/PostGreSQL server instead of sqlite:
 
   1. Install the libmysql development package. On Debian/Ubuntu, you can do this by executing:

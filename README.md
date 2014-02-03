@@ -63,7 +63,7 @@ Advanced options
 
   1. Copy the file configuration.py-default to configuration.py
 
-  2. Edit the lines that start with "EMAIL" uncommenting and adding your server configuration.
+  2. Edit the lines that start with "EMAIL" uncommenting and adding your server configuration. Depending on your server setup you may also need to configure DEFAULT_FROM_EMAIL
   
 ### Use a MySQL/PostGreSQL server instead of sqlite:
 

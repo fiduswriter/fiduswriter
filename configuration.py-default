@@ -64,6 +64,9 @@ MANAGERS = ADMINS
 #EMAIL_HOST_PASSWORD = ''
 #EMAIL_PORT = 25
 #EMAIL_SUBJECT_PREFIX = '[Fidus Writer]'
+#EMAIL_USE_TLS = False
+#DEFAULT_FROM_EMAIL = 'mail@email.com'
+
 
 
 # Make this unique, and don't share it with anybody. Change the default string.

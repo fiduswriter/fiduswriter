@@ -211,6 +211,16 @@ def save_js(request):
     response['errormsg'] = {}
     status = 403
     if request.is_ajax() and request.method == 'POST' :
+        owner_id = request.user.id
+        if 'owner_id' in request.POST:
+            requested_owner_id = int(request.POST['owner_id'])
+            # If the user has write access to at least one document of another 
+            # user, we allow him to add new and edit bibliography entries of 
+            # this user.
+            if len(AccessRight.objects.filter(
+                document__owner = requested_owner_id, 
+                user = request.user.id, rights = 'w')) > 0:
+                owner_id = requested_owner_id
         status = 200
         the_id    = int(request.POST['id'])            
         the_type  = EntryType.objects.filter(pk = int(request.POST['entrytype']))
@@ -271,16 +281,16 @@ def save_js(request):
                         if isinstance(val, list) :
                             val = ' and '.join(val);
                             
-                    the_fields[f_type.field_name] = val     
+                    the_fields[f_type.field_name] = val
                     #setattr(the_entry, f_type.field_name, val)
                     
             if 0 == len(response['errormsg']) :
                 if 0 < the_id : #saving changes
-                    the_entry = Entry.objects.get(pk=the_id)
+                    the_entry = Entry.objects.get(pk=the_id, entry_owner = owner_id)
                     the_entry.entry_type = the_type
                 else : #creating a new entry
                     status = 201
-                    the_entry = Entry(entry_key = 'tmp_key', entry_owner = request.user, entry_type = the_type)
+                    the_entry = Entry(entry_key = 'tmp_key', entry_owner_id = owner_id, entry_type = the_type)
                     the_entry.save()
                     the_entry.entry_key = 'Fidusbibliography_' + str(the_entry.id)
                 #clear categories of the entry to restore them new

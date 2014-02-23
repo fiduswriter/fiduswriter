@@ -982,6 +982,10 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             'id': id,
             'entrytype': jQuery('#id_entrytype').val()
         };
+        
+        if (window.hasOwnProperty('theDocumentValues') && !(theDocumentValues.is_owner)) {
+            formValues['owner_id'] = theDocument.owner.id;
+        }
         jQuery('.entryForm').each(function () {
             var $this = jQuery(this);
             var the_name = $this.attr('name') || $this.attr('data-field-name');
@@ -1701,7 +1705,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                 return false;
             }
             bib_file = bib_file[0];
-            if (1048576 < bib_file.size) {
+            if (10485760 < bib_file.size) {
                 console.log('file too big');
                 return false;
             }

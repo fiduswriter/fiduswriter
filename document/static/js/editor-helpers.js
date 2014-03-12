@@ -73,7 +73,6 @@
                 }
             }
         }
-
         
         metadataClone = nodeConverter.toView(metadataClone);
         
@@ -237,6 +236,7 @@
         }, 200);
         
     };
+    
     /** Set the document style.
      * @function settingsCitationstyle
      * @memberof editorHelpers.setDisplay
@@ -248,6 +248,7 @@
             'selected');
         citationHelpers.formatCitationsInDoc();
     };
+    
     /** Set the document's paper size.
      * @function settingsPapersize
      * @memberof editorHelpers.setDisplay
@@ -270,6 +271,7 @@
         }, 100);
 
     };
+    
     /** Set the document id.
      * @function id
      * @memberof editorHelpers.setDisplay
@@ -282,6 +284,7 @@
             jQuery('.savecopy').removeClass('disabled');
         }
     };
+    
     /** Set tracking to be on or off.
      * @function settingsTracking
      * @memberof editorHelpers.setDisplay
@@ -294,6 +297,7 @@
             jQuery('.ice-track').removeClass('selected');
         }
     };
+    
     /** Show or hide tracked changes.
      * @function settingsDocumentstyle
      * @memberof editorHelpers.setDisplay
@@ -354,6 +358,7 @@
 
         editorHelpers.setDisplay.document('title', titleClone.textContent);
     };
+    
     /** Set the document title in the menu.
      * @function title
      * @memberof editorHelpers.setDisplay

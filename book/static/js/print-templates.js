@@ -49,19 +49,19 @@ var tmp_book_print = _.template('\
         <h1 class="title"><%= chapter.title %></h1>\
         <% if (chapter.settings.metadata) { %>\
             <% if (chapter.settings.metadata.subtitle && chapter.metadata.subtitle) { %>\
-                <% tempNode = jsonToHtml(chapter.metadata.subtitle) %>\
+                <% tempNode = exporter.obj2Node(chapter.metadata.subtitle) %>\
                 <% if (tempNode.textContent.length > 0) { %>\
                     <h2 class="metadata-subtitle"><%= tempNode.textContent %></h2>\
                 <% } %>\
             <% } %>\
             <% if (chapter.settings.metadata.abstract && chapter.metadata.abstract ) { %>\
-                <% tempNode = jsonToHtml(chapter.metadata.abstract) %>\
+                <% tempNode = exporter.obj2Node(chapter.metadata.abstract) %>\
                 <% if (tempNode.textContent.length > 0) { %>\
                     <h2 class="metadata-abstract"><%= tempNode.textContent %></h2>\
                 <% } %>\
             <% } %>\
         <% } %>\
-        <%= nodeConverter.toView(jsonToHtml(JSON.parse(chapter.contents))).innerHTML %>\
+        <%= nodeConverter.toView(exporter.obj2Node(JSON.parse(chapter.contents))).innerHTML %>\
     </div>\
 <% }); %>\
 ');

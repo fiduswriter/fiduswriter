@@ -331,7 +331,7 @@ var FW_FILETYPE_VERSION = "1.1";
         includePackages = '\\usepackage[utf8]{luainputenc}';
 
         if (subtitle && metadata.subtitle) {
-            tempNode = jsonToHtml(metadata.subtitle);
+            tempNode = exporter.obj2Node(metadata.subtitle);
             if (tempNode.textContent.length > 0) {
                 includePackages +=
                     '\n\\usepackage{titling}\
@@ -345,7 +345,7 @@ var FW_FILETYPE_VERSION = "1.1";
         }
 
         if (keywords && metadata.keywords) {
-            tempNode = jsonToHtml(metadata.keywords);
+            tempNode = exporter.obj2Node(metadata.keywords);
             if (tempNode.textContent.length > 0) {
                 includePackages +=
                     '\\def\\keywords{\\vspace{.5em}\
@@ -398,7 +398,7 @@ var FW_FILETYPE_VERSION = "1.1";
             '\n\\begin{document}\n\n\\title{' + title + '}';
 
         if (specifiedAuthors && metadata.authors) {
-            tempNode = jsonToHtml(metadata.authors);
+            tempNode = exporter.obj2Node(metadata.authors);
             if (tempNode.textContent.length > 0) {
                 author = tempNode.textContent;
             }
@@ -407,13 +407,13 @@ var FW_FILETYPE_VERSION = "1.1";
         latexStart += '\n\\author{' + author + '}\n';
 
         if (subtitle && metadata.subtitle) {
-            tempNode = jsonToHtml(metadata.subtitle);
+            tempNode = exporter.obj2Node(metadata.subtitle);
             if (tempNode.textContent.length > 0) {
                 latexStart += '\\subtitle{' + tempNode.textContent + '}\n';
             }
         }
         if (keywords && metadata.keywords) {
-            tempNode = jsonToHtml(metadata.keywords);
+            tempNode = exporter.obj2Node(metadata.keywords);
             if (tempNode.textContent.length > 0) {
                 latexStart += '\\begin{keywords}\n' + tempNode.textContent + '\\end{keywords}\n';
             }
@@ -424,14 +424,14 @@ var FW_FILETYPE_VERSION = "1.1";
 
         if (documentClass === 'book') {
             if (metadata.publisher) {
-                tempNode = jsonToHtml(metadata.publisher);
+                tempNode = exporter.obj2Node(metadata.publisher);
                 if (tempNode.textContent.length > 0) {
                     latexStart += tempNode.textContent + '\n\n';
                 }
             }
 
             if (metadata.copyright) {
-                tempNode = jsonToHtml(metadata.copyright);
+                tempNode = exporter.obj2Node(metadata.copyright);
                 if (tempNode.textContent.length > 0) {
                     latexStart += tempNode.textContent + '\n\n';
                 }
@@ -471,7 +471,7 @@ var FW_FILETYPE_VERSION = "1.1";
             latexStart += '\\chapter{' + title + '}\n';
             //htmlCode.innerHTML =  '<div class="title">' + title + '</div>' + htmlCode.innerHTML;
             if (metadataSettings.subtitle && metadata.subtitle) {
-                tempNode = jsonToHtml(metadata.subtitle);
+                tempNode = exporter.obj2Node(metadata.subtitle);
                 if (tempNode.textContent.length > 0) {
                     latexStart += '\\section{' + tempNode.textContent + '}\n';
                 }
@@ -486,7 +486,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
 
         if (metadataSettings.abstract && metadata.abstract) {
-            tempNode = jsonToHtml(metadata.abstract);
+            tempNode = exporter.obj2Node(metadata.abstract);
             if (tempNode.textContent.length > 0) {
 
                 htmlCode.innerHTML = '<div class="abstract">' + tempNode.innerHTML +
@@ -762,12 +762,12 @@ var FW_FILETYPE_VERSION = "1.1";
         htmlCode.innerHTML += footnotesCode;
 
         return htmlCode;
-    }
+    };
 
-    /** Same functionality as jsonToHtml in DOMdiff.js, but also offers output in XHTML format. */
-    exporter.jsonToHtml = function (jsonNode, docType) {
+    /** Same functionality as objToNode/nodeToObj in diffDOM.js, but also offers output in XHTML format (obj2Node) and without form support. */
+    exporter.obj2Node = function (obj, docType) {
         var parser;
-        if (jsonNode === undefined) {
+        if (obj === undefined) {
             return false;
         }
         if (docType === 'xhtml') {
@@ -776,35 +776,63 @@ var FW_FILETYPE_VERSION = "1.1";
             parser = document;
         }
 
-        function inner(jsonNode, insideSvg) {
+        function inner(obj, insideSvg) {
             var node, i;
-            if (jsonNode.hasOwnProperty('t')) {
-                node = parser.createTextNode(jsonNode.t);
-            } else if (jsonNode.hasOwnProperty('co')) {
-                node = parser.createComment(jsonNode.co);
+            if (obj.hasOwnProperty('t')) {
+                node = parser.createTextNode(obj.t);
+            } else if (obj.hasOwnProperty('co')) {
+                node = parser.createComment(obj.co);
             } else {
-                if (jsonNode.nn === 'svg' || insideSvg) {
-                    node = parser.createElementNS('http://www.w3.org/2000/svg', jsonNode.nn);
+                if (obj.nn === 'svg' || insideSvg) {
+                    node = parser.createElementNS('http://www.w3.org/2000/svg', obj.nn);
                     insideSvg = true;
                 } else {
-                    node = parser.createElement(jsonNode.nn);
+                    node = parser.createElement(obj.nn);
                 }
-                if (jsonNode.a) {
-                    for (i = 0; i < jsonNode.a.length; i++) {
-                        node.setAttribute(jsonNode.a[i][0], jsonNode.a[i][1]);
+                if (obj.a) {
+                    for (i = 0; i < obj.a.length; i++) {
+                        node.setAttribute(obj.a[i][0], obj.a[i][1]);
                     }
                 }
-                if (jsonNode.c) {
-                    for (i = 0; i < jsonNode.c.length; i++) {
-                        node.appendChild(inner(jsonNode.c[i], insideSvg));
+                if (obj.c) {
+                    for (i = 0; i < obj.c.length; i++) {
+                        node.appendChild(inner(obj.c[i], insideSvg));
                     }
                 }
             }
             return node;
         }
-        return inner(jsonNode);
+        return inner(obj);
+    };
+    
+    exporter.node2Obj = function (node) {
+        var obj = {}, i;
+
+        if (node.nodeType === 3) {
+            obj.t = node.data;
+        } else if (node.nodeType === 8) {
+            obj.co = node.data;
+        } else {
+            obj.nn = node.nodeName;
+            if (node.attributes && node.attributes.length > 0) {
+                obj.a = [];
+                for (i = 0; i < node.attributes.length; i++) {
+                    obj.a.push([node.attributes[i].name, node.attributes[i].value]);
+                }
+            }
+            if (node.childNodes && node.childNodes.length > 0) {
+                obj.c = [];
+                for (i = 0; i < node.childNodes.length; i++) {
+                    obj.c.push(exporter.node2Obj(node.childNodes[i]));
+                }
+            }
+        }
+        return obj;
     };
 
+    
+    
+    
     exporter.savecopy = function (aDocument) {
         if (aDocument.is_owner) {
             // If the current user of the document is also the owner, the copying is easy:
@@ -910,7 +938,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
         $.addAlert('info', gettext('File export has been initiated.'));
 
-        contents = jsonToHtml(aDocument.contents);
+        contents = exporter.obj2Node(aDocument.contents);
 
         images = exporter.findImages(contents);
 
@@ -996,7 +1024,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
         contents = document.createElement('div');
 
-        tempNode = jsonToHtml(aDocument.contents);
+        tempNode = exporter.obj2Node(aDocument.contents);
 
         while (tempNode.firstChild) {
             contents.appendChild(tempNode.firstChild);
@@ -1066,7 +1094,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
         contents = document.createElement('div');
 
-        tempNode = jsonToHtml(aDocument.contents);
+        tempNode = exporter.obj2Node(aDocument.contents);
 
         while (tempNode.firstChild) {
             contents.appendChild(tempNode.firstChild);
@@ -1085,7 +1113,7 @@ var FW_FILETYPE_VERSION = "1.1";
         startHTML = '<h1 class="title">' + title + '</h1>';
 
         if (aDocument.settings.metadata.subtitle && aDocument.metadata.subtitle) {
-            tempNode = jsonToHtml(aDocument.metadata.subtitle);
+            tempNode = exporter.obj2Node(aDocument.metadata.subtitle);
 
             if (tempNode.textContent.length > 0) {
                 startHTML += '<h2 class="subtitle">' + tempNode.textContent +
@@ -1093,7 +1121,7 @@ var FW_FILETYPE_VERSION = "1.1";
             }
         }
         if (aDocument.settings.metadata.abstract && aDocument.metadata.abstract) {
-            tempNode = jsonToHtml(aDocument.metadata.abstract);
+            tempNode = exporter.obj2Node(aDocument.metadata.abstract);
             if (tempNode.textContent.length > 0) {
                 startHTML += '<div class="abstract">' + tempNode.textContent +
                     '</div>';
@@ -1140,7 +1168,7 @@ var FW_FILETYPE_VERSION = "1.1";
             mathjax = exporter.getMathjaxHeader();
         
             if (mathjax) {    
-                mathjax = exporter.jsonToHtml(htmlToJson(mathjax), 'xhtml').outerHTML;
+                mathjax = exporter.obj2Node(exporter.node2Obj(mathjax), 'xhtml').outerHTML;
             }
         }
         
@@ -1156,7 +1184,7 @@ var FW_FILETYPE_VERSION = "1.1";
             shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
             title: title,
             styleSheets: styleSheets,
-            body: exporter.jsonToHtml(htmlToJson(contentsBodyEpubPrepared), 'xhtml').innerHTML,
+            body: exporter.obj2Node(exporter.node2Obj(contentsBodyEpubPrepared), 'xhtml').innerHTML,
             mathjax: mathjax,
         });
 
@@ -1169,7 +1197,7 @@ var FW_FILETYPE_VERSION = "1.1";
         authors = [aDocument.owner.name];
 
         if (aDocument.settings.metadata.authors && aDocument.metadata.authors) {
-            tempNode = jsonToHtml(aDocument.metadata.authors);
+            tempNode = exporter.obj2Node(aDocument.metadata.authors);
             if (tempNode.textContent.length > 0) {
                 authors = jQuery.map(tempNode.textContent.split(","), jQuery.trim);
             }
@@ -1178,7 +1206,7 @@ var FW_FILETYPE_VERSION = "1.1";
         keywords = [];
 
         if (aDocument.settings.metadata.keywords && aDocument.metadata.keywords) {
-            tempNode = jsonToHtml(aDocument.metadata.keywords);
+            tempNode = exporter.obj2Node(aDocument.metadata.keywords);
             if (tempNode.textContent.length > 0) {
                 keywords = jQuery.map(tempNode.textContent.split(","), jQuery.trim);
             }
@@ -1286,7 +1314,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
         contents = document.createElement('div');
 
-        tempNode = jsonToHtml(aDocument.contents);
+        tempNode = exporter.obj2Node(aDocument.contents);
 
         while (tempNode.firstChild) {
             contents.appendChild(tempNode.firstChild);

@@ -111,7 +111,7 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
 
 
 
-        citationHelpers.formatCitationsInDoc();
+     //   citationHelpers.formatCitationsInDoc();
 
         citeSpan.parentNode.insertBefore(nodeConverter.afterNode(), citeSpan.nextSibling);
         return true;

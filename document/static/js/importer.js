@@ -317,7 +317,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
     importer.translateReferenceIds = function (aDocument, BibTranslationTable,
         ImageTranslationTable) {
-        var contents = jsonToHtml(aDocument.contents);
+        var contents = exporter.obj2Node(aDocument.contents);
         jQuery(contents).find('img').each(function () {
             var translationEntry = _.findWhere(ImageTranslationTable, {
                     oldUrl: jQuery(this).attr('src')
@@ -345,7 +345,7 @@ var FW_FILETYPE_VERSION = "1.1";
             jQuery(this).attr('data-bib-entry', citekeys.join(','));
         });
 
-        aDocument.contents = htmlToJson(contents);
+        aDocument.contents = exporter.node2Obj(contents);
 
         importer.createNewDocument(aDocument);
 
@@ -394,7 +394,7 @@ var FW_FILETYPE_VERSION = "1.1";
                             window.location = '/document/'+aDocument.id+'/';
                         } else {
                             theDocument = aDocument;
-                            tempNode = jsonToHtml(aDocument.contents);
+                            tempNode = exporter.obj2Node(aDocument.contents);
                             while (tempNode.firstChild) {
                                 document.getElementById('document-contents').appendChild(tempNode.firstChild);
                             }

@@ -66,7 +66,7 @@
                     'selected');
             }
             if (theDocument.metadata[i]) {
-                metadataDataNode = jsonToHtml(theDocument.metadata[i]);
+                metadataDataNode = exporter.obj2Node(theDocument.metadata[i]);
                 layoutDataNode  = metadataClone.querySelector('#metadata-'+i);
                 while (metadataDataNode.firstChild) {
                     layoutDataNode.appendChild(metadataDataNode.firstChild);
@@ -314,7 +314,7 @@
      * @memberof editorHelpers.setDisplay
      * @param theValue The HTML of the contents/main body.*/
     editorHelpers.setDisplay.contents = function (theValue) {
-        var contentsNode = document.getElementById('document-contents'), contentsClone = contentsNode.cloneNode(), converterNode = jsonToHtml(theValue), diffs;
+        var contentsNode = document.getElementById('document-contents'), contentsClone = contentsNode.cloneNode(), converterNode = exporter.obj2Node(theValue), diffs;
         
         
         while(converterNode.firstChild) {
@@ -338,7 +338,7 @@
      * @param theValue The HTML of the title.*/
     editorHelpers.setDisplay.metadataTitle = function (theValue) {
 
-        var titleNode = document.getElementById('document-title'), titleClone = titleNode.cloneNode(), converterNode = jsonToHtml(theValue), diffs;
+        var titleNode = document.getElementById('document-title'), titleClone = titleNode.cloneNode(), converterNode = exporter.obj2Node(theValue), diffs;
         
         while(converterNode.firstChild) {
             titleClone.appendChild(converterNode.firstChild);
@@ -454,9 +454,9 @@
         
         var i, j, metadata;
         console.log('getting updates');
-        editorHelpers.setDocumentData('metadata.title', htmlToJson(nodeConverter.toModel(document.getElementById('document-title'))));
+        editorHelpers.setDocumentData('metadata.title', exporter.node2Obj(nodeConverter.toModel(document.getElementById('document-title'))));
 
-        editorHelpers.setDocumentData('contents', htmlToJson(nodeConverter.toModel(document.getElementById('document-contents'))));
+        editorHelpers.setDocumentData('contents', exporter.node2Obj(nodeConverter.toModel(document.getElementById('document-contents'))));
 
         metadata = document.querySelectorAll('#document-metadata .metadata');
         
@@ -464,8 +464,8 @@
         
         for (i=0; i < j; i++) {
             editorHelpers.setDocumentData('metadata.' + metadata[i].getAttribute(
-                    'data-metadata'), htmlToJson(nodeConverter.toModel(metadata[i])));
-            console.log(htmlToJson(nodeConverter.toModel(metadata[i])));
+                    'data-metadata'), exporter.node2Obj(nodeConverter.toModel(metadata[i])));
+            //console.log(exporter.node2Obj(nodeConverter.toModel(metadata[i])));
         }
 
         if (callback) {

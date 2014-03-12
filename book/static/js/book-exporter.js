@@ -150,7 +150,7 @@
                 id: aBook.chapters[i].text
             });
             
-            tempNode = jsonToHtml(aChapter.document.contents);
+            tempNode = exporter.obj2Node(aChapter.document.contents);
             
             contents = document.createElement('body');
             
@@ -171,14 +171,14 @@
             startHTML = '<h1 class="title">' + aChapter.document.title + '</h1>';
 
             if (aChapter.document.settings.metadata && aChapter.document.settings.metadata.subtitle && aChapter.document.metadata.subtitle) {
-                tempNode = jsonToHtml(aChapter.document.metadata.subtitle);
+                tempNode = exporter.obj2Node(aChapter.document.metadata.subtitle);
                 if (tempNode.textContent.length > 0) {
                     startHTML += '<h2 class="subtitle">' + tempNode.textContent +
                         '</h2>';
                 }
             }
             if (aChapter.document.settings.metadata && aChapter.document.settings.metadata.abstract && aChapter.document.metadata.abstract) {
-                tempNode = jsonToHtml(aChapter.document.metadata.subtitle);
+                tempNode = exporter.obj2Node(aChapter.document.metadata.subtitle);
                 if (tempNode.textContent.length > 0) {                
                     startHTML += '<div class="abstract">' + tempNode.textContent +
                         '</div>';
@@ -251,7 +251,7 @@
             mathjax = exporter.getMathjaxHeader();
         
             if (mathjax) {    
-                mathjax = exporter.jsonToHtml(htmlToJson(mathjax), 'xhtml').outerHTML;
+                mathjax = exporter.obj2Node(exporter.node2Obj(mathjax), 'xhtml').outerHTML;
             }
         }
             
@@ -271,7 +271,7 @@
                 metadata: chapters[i].document.metadata,
                 metadataSettings: chapters[i].document.settings.metadata,
                 styleSheets: styleSheets,
-                body: exporter.jsonToHtml(htmlToJson(chapters[i].contents), 'xhtml').innerHTML,
+                body: exporter.obj2Node(exporter.node2Obj(chapters[i].contents), 'xhtml').innerHTML,
                 mathjax: chapters[i].mathjax
             });
 
@@ -415,7 +415,7 @@
                 id: aBook.chapters[i].text
             });
 
-            contents = jsonToHtml(aDocument.contents);
+            contents = exporter.obj2Node(aDocument.contents);
 
             bibliography = citationHelpers.formatCitations(contents,
                 aBook.settings.citationstyle,
@@ -580,7 +580,7 @@
 
             title = aDocument.title;
 
-            contents = jsonToHtml(aDocument.contents);
+            contents = exporter.obj2Node(aDocument.contents);
 
             allContent.innerHTML += contents.innerHTML;
 

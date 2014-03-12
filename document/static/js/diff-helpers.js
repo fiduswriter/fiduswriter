@@ -23,7 +23,7 @@
         /** Sets up communicating with server (retrieving document, saving, collaboration, etc.). TODO 
          * @namespace diffHelpers
          */
-        diffHelpers = {}, domDiff = new DOMdiff(true, 500); // debug mode for DOMdiff
+        diffHelpers = {}, domDiff = new diffDOM(); // no debug mode for diffDOM
 
     var dmp = new diff_match_patch();
 
@@ -118,15 +118,17 @@
         theDocumentValues.diffNode = nodeConverter.toModel(theDocumentValues.documentNode);
 
         for (i = 0; i < theDiff.length; i++) {
-            if (theDiff[i].hasOwnProperty('element')) {
+            diffText = JSON.stringify(theDiff[i]);
+/*            if (theDiff[i].hasOwnProperty('element')) {
                 diffText = JSON.stringify(theDiff[i]['element']);
             } else if (theDiff[i].hasOwnProperty('oldValue') && theDiff[i].hasOwnProperty('newValue')) {
                 diffText = JSON.stringify(theDiff[i]['oldValue']) + JSON.stringify(theDiff[i]['newValue']);
             } else if (theDiff[i].hasOwnProperty('attribute')) {
                 diffText = theDiff[i]['attribute']['name'];
-            }
+            }*/
             if (diffText.indexOf('citation') != -1) {
                 containsCitation = 1;
+                citationHelpers.formatCitationsInDoc();
             }
             if (diffText.indexOf('equation') != -1) {
                 containsEquation = 1;

@@ -68,7 +68,8 @@ class Command(BaseCommand):
 
             css_file.close()
         output_js += u'];\n'
-        output_js += u'var defaultDocumentStyle = "'+default_document_style+'";'
+        if (default_document_style):
+            output_js += u'var defaultDocumentStyle = "'+default_document_style+'";'
         d = os.path.dirname(PROJECT_PATH+'/style/static/js/document/stylelist.js')
         if not os.path.exists(d):
             os.makedirs(d)

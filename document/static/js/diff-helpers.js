@@ -427,12 +427,15 @@
     };
 
     diffHelpers.startCollaborativeMode = function () {
+        theDocumentValues.textChangeList.push([theDocumentValues.diffNode.cloneNode(true), new Date().getTime() + window.clientOffsetTime]);
         theDocumentValues.collaborativeMode = true;
+        console.log('starting collab');
     };
 
     diffHelpers.stopCollaborativeMode = function () {
         diffHelpers.orderAndApplyChanges();
         theDocumentValues.collaborativeMode = false;
+        console.log('stopping collab');
     };
 
 

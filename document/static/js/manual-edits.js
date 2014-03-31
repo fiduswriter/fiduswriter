@@ -21,8 +21,8 @@
 
 (function () {
     var exports = this,
-   /** 
-  * Functions to call to insert/delete items in the editable area of the editor. It communictaes with ICE to find out if item removal/insertion should be tracked. TODO 
+   /**
+  * Functions to call to insert/delete items in the editable area of the editor. It communictaes with ICE to find out if item removal/insertion should be tracked. TODO
   * @namespace manualEdits
   */
         manualEdits = {};
@@ -38,18 +38,18 @@
             'BLOCKQUOTE': true,
             'CODE': true,
         };
-        
+
   /** Insert an item
    * @function insert
   * @memberof manualEdits
   * @param node Node to be inserted
   * @param range Current selection range
-  */    
+  */
     manualEdits.insert = function(node, range) {
         var tmpNextBlockNode = false, thisBlockNode;
-        
+
         if (node.nodeName in topBlockElements && (range.startContainer.nodeName === '#text' || !range.startContainer.classList.contains('editable'))) {
-            thisBlockNode = jQuery(range.startContainer).closest('p, h1, h2, h3, ul, ol, figure, blockquote, code')[0];
+            thisBlockNode = jQuery(range.startContainer).closest('div, p, h1, h2, h3, ul, ol, figure, blockquote, code')[0];
             range.selectNode(thisBlockNode);
             range.collapse();
 
@@ -64,7 +64,7 @@
             range.collapse();
             editorHelpers.documentHasChanged();
         }
-   
+
     };
   /** Remove an item
    * @function remove
@@ -72,9 +72,9 @@
   * @param node Node to be removed
   * @param range Current selection range
   * @param moveLeft Whether to move to the left of the deleted item after deletion has taken place (only interesting if changes are tracked).
-  */           
+  */
     manualEdits.remove = function(node, range, moveLeft) {
-        
+
         if (theDocument.settings.tracking) {
             returnValue = tracker._addNodeTracking(node, range, moveLeft);
             editorHelpers.documentHasChanged();
@@ -84,9 +84,9 @@
             editorHelpers.documentHasChanged();
             return returnValue;
         }
-    };    
+    };
 
-    
+
     exports.manualEdits = manualEdits;
 
 }).call(this);

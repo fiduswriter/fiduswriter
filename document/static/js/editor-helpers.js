@@ -187,7 +187,12 @@
         editorHelpers.setDisplay.document('contents', theDocument.contents);
         editorHelpers.setDisplay.document('metadata.title', theDocument.metadata
             .title);
-        
+        // If CSS Regions is not present, wait one second and then relayout the footnotes. At this time the fonts should have loaded.
+        if(document.querySelector('.pagination-simple')) {
+            setTimeout(function() {
+                pagination.adjustSimpleEscapenotes(document.getElementById('flow'));//XX
+            }, 1000);
+        }
     };
 
     /** Called whenever anything has changed in the document text. Makes sure that saving and synchronizing with peers happens.

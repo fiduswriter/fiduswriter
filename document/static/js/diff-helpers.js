@@ -102,6 +102,7 @@
     };
 
     diffHelpers.makeDiff = function (isUndo) {
+        
         var theDiff = domDiff.diff(theDocumentValues.diffNode, nodeConverter.toModel(theDocumentValues.documentNode)),
             containsCitation = 0,
             containsEquation = 0,
@@ -110,7 +111,7 @@
             containsTrackedchange = 0,
             diffText = '',
             i;
-
+            
         if (theDiff.length === 0) {
             return false;
         }

@@ -172,14 +172,14 @@
 
             if (aChapter.document.settings.metadata && aChapter.document.settings.metadata.subtitle && aChapter.document.metadata.subtitle) {
                 tempNode = exporter.obj2Node(aChapter.document.metadata.subtitle);
-                if (tempNode.textContent.length > 0) {
+                if (tempNode && tempNode.textContent.length > 0) {
                     startHTML += '<h2 class="subtitle">' + tempNode.textContent +
                         '</h2>';
                 }
             }
             if (aChapter.document.settings.metadata && aChapter.document.settings.metadata.abstract && aChapter.document.metadata.abstract) {
-                tempNode = exporter.obj2Node(aChapter.document.metadata.subtitle);
-                if (tempNode.textContent.length > 0) {                
+                tempNode = exporter.obj2Node(aChapter.document.metadata.abstract);
+                if (tempNode && tempNode.textContent.length > 0) {                
                     startHTML += '<div class="abstract">' + tempNode.textContent +
                         '</div>';
                 }

@@ -594,6 +594,7 @@
 
         jQuery(document).on('click', '#select-cover-image-button', function () {
             bookHelpers.selectCoverImageDialog(theBook,anImageDB);
+            usermediaHelpers.startUsermediaTable();
         });
 
         jQuery(document).on('click', '#remove-cover-image-button', function () {

@@ -152,6 +152,8 @@
             
             tempNode = exporter.obj2Node(aChapter.document.contents);
             
+            console.log(tempNode);
+            
             contents = document.createElement('body');
             
             while (tempNode.firstChild) {

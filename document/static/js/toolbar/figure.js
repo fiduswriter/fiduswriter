@@ -178,8 +178,6 @@ jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (
             }
 
 
-
-
             paragraphNode = document.createElement('p');
             paragraphNode.innerHTML = '<br>';
             if (figureNode.parentNode.nodeName === 'SPAN') {

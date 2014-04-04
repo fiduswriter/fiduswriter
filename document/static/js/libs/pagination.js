@@ -1,6 +1,6 @@
 /*!
- * BookJS
- * Copyright 2012-13  Steven Levithan, and Johannes Wilm. Freely available 
+ * pagination.js
+ * Copyright 2012-13 Steven Levithan, and Johannes Wilm. Freely available
  * under the AGPL. For further details see LICENSE.txt
  *
  * Using this library you can turn an HTML element into a series
@@ -15,8 +15,8 @@
  * code.
  * If you need to set custom options, set them before including this javascript
  * file by defining an object named paginationConfig and setting the
- * customization options as keys within this object. If you want to style the 
- * output in a specific way, customize the pagination.css file and include it, like 
+ * customization options as keys within this object. If you want to style the
+ * output in a specific way, customize the pagination.css file and include it, like
  * this:
  *
  * <link href="pagination.css" rel="stylesheet" type="text/css" />
@@ -30,10 +30,10 @@
  * <script src="pagination.js" type="text/javascript"></script>
  *
  * OPTIONS
- * 
+ *
  * The following options are available to customize the pagination behavior. In
  * the descriptions below you can see the default values for these options. You
- * only need to specify the options if you want to deviate from the default 
+ * only need to specify the options if you want to deviate from the default
  * value.
  *
  * sectionStartMarker: 'h1' -- This is the HTML element we look for to find where
@@ -51,191 +51,194 @@
  * flowElement: 'document.body' -- This specifies element the container element
  * of the content we will flow into pages. You can use any javascript selector
  * here, such as "document.getElementById('contents')" .
- * 
+ *
  * alwaysEven: false -- This determines whether each section and chapter should
  * have an even number of pages (2, 4, 6, 8, ...).
  *
  * columns: 1 -- This specifies the number of number of columns used for the
- * body text. 
- * 
+ * body text.
+ *
  * enableFrontmatter: true -- This resolves whether a table of contents, page\
- * headers and other frontmatter contents should be added upon page creation. 
+ * headers and other frontmatter contents should be added upon page creation.
  * Note: divideContents has to be true if one wants the frontmatter to render.
- * 
- * enableTableOfFigures: false -- This creates a table of figures in the front. 
+ *
+ * enableTableOfFigures: false -- This creates a table of figures in the front.
  * Figures are expected to be in the HTML5 format:
- * 
+ *
  * <figure>...<figcaption></figcaption></figure>
- * 
+ *
  * If an <img> element is present in the figure, its alt-attribute text will be
- * used as the reference text. If no <img> element is present, or one is 
- * present, but it has no alt-attribute, the contents of the <figcaption> 
- * element will be usd instead. If no <figcaption> element is present, a 
+ * used as the reference text. If no <img> element is present, or one is
+ * present, but it has no alt-attribute, the contents of the <figcaption>
+ * element will be usd instead. If no <figcaption> element is present, a
  * description text is generated of the following format:
- * 
+ *
  * "Figure chapter.number"
- * 
- * enableTableOfTables: false -- This creates a table of <table>s within 
+ *
+ * enableTableOfTables: false -- This creates a table of <table>s within
  * <figure>s, similarly to enableTableOfFigures. If this option is enabled,
- * tables will not additionally be listed in the table of figures. If no 
- * <figcaption> element is present, the description text will be in the 
+ * tables will not additionally be listed in the table of figures. If no
+ * <figcaption> element is present, the description text will be in the
  * following format:
- * 
+ *
  * "Table chapter.number"
- * 
- * enableCrossReferences: true -- This converts the inner part of all internal 
+ *
+ * enableCrossReferences: true -- This converts the inner part of all internal
  * links within the flow element into the page number of the page the referred
- * element is placed on. 
- * 
- * enableWordIndex: true -- This creates a word index. An empty word index 
- * element has to be placed somewhere in the HTML and given the class 
+ * element is placed on.
+ *
+ * enableWordIndex: true -- This creates a word index. An empty word index
+ * element has to be placed somewhere in the HTML and given the class
  * pagination-index-list. every index word is defined this way:
- * 
+ *
  * <someElement class="pagination-index" data-pagination-index=
  * "topcategory!subcategory!subsubcategory"></someElement>
  *
  * bulkPagesToAdd: 50 -- This is the initial number of pages of each flowable
  * part (section, chapter). After this number is added, adjustments are made by
- * adding another bulk of pages or deleting pages individually. It takes much 
+ * adding another bulk of pages or deleting pages individually. It takes much
  * less time to delete pages than to add them individually, so it is a point to
- * overshoot the target value. For larger chapters add many pages at a time so 
+ * overshoot the target value. For larger chapters add many pages at a time so
  * there is less time spent reflowing text.
  *
- * pagesToAddIncrementRatio: 1.4 -- This is the ratio of how the bulk of pages 
+ * pagesToAddIncrementRatio: 1.4 -- This is the ratio of how the bulk of pages
  * incremented. If the initial bulkPagestoAdd is 50 and those initial 50 pages
  * were not enough space to fit the contents of that chapter, then next
  * 1.4 * 50 = 70 are pages, for a total of 50+70 = 120 pages, etc. .  1.4 seems
  * to be the fastest in most situations.
  *
  * frontmatterContents: none -- These are the HTML contents that are added to
- * the frontmatter before the table of contents. This would usually be a title 
- * page and a copyright page, including page breaks. 
+ * the frontmatter before the table of contents. This would usually be a title
+ * page and a copyright page, including page breaks.
  *
- * autoStart: true -- This controls whether pagination should be executed 
+ * autoStart: true -- This controls whether pagination should be executed
  * automatically upon page load. If it is set to false, pagination has to be
  * initiated manually. See below under "methods."
- * 
- * numberPages: true -- This controls whether page numbers should be used. If 
+ *
+ * numberPages: true -- This controls whether page numbers should be used. If
  * page numbers are not used, the table of contents is automatically left out.
- * 
- * divideContents: true -- This controls whether the contents are divdided up 
+ *
+ * divideContents: true -- This controls whether the contents are divdided up
  * according to sections and chapters before flowing. CSS Regions take a long
  * time when more than 20-30 pages are involved, which is why it usually makes
  * sense to divide the contents up. However, if the contents to be flown takes
- * up less space than this, there is no need to do this division. The added 
- * benefit of not doing it is that the original DOM of the part that contains 
+ * up less space than this, there is no need to do this division. The added
+ * benefit of not doing it is that the original DOM of the part that contains
  * the conents will not be modified. Only the container element that holds the
  * contents will be assigned another CSS class. Note: divideContents has to be
  * true if one wants the frontmatter to render.
  *
- * maxPageNumber: 10000 -- This controls the maximum amount of pages. If more 
- * pages than this are added, BookJS will die. Notice that pages are added 
- * incrementally, so you won't be able to control the exact number of pages. 
+ * maxPageNumber: 10000 -- This controls the maximum amount of pages. If more
+ * pages than this are added, pagination.js will die. Notice that pages are added
+ * incrementally, so you won't be able to control the exact number of pages.
  * You should always set this to something much larger than what you will ever
  * expect that you book will need.
- * 
- * topfloatSelector: '.pagination-topfloat' -- This is the CSS selector used 
- * for finding top floats within the HTML code. Top floats are placed on the 
- * page either of the reference or the one following it. In editing 
- * environments, the top float should be inserted inside two additional 
+ *
+ * topfloatSelector: '.pagination-topfloat' -- This is the CSS selector used
+ * for finding top floats within the HTML code. Top floats are placed on the
+ * page either of the reference or the one following it. In editing
+ * environments, the top float should be inserted inside two additional
  * elements, like this:
- * 
+ *
  * <span class='pagination-topfloat'><span><span>This is the top float contents
  * </span></span></span>
- * 
- * footnoteSelector: '.pagination-footnote' -- This is the CSS selector used 
- * for finding footnotes within the HTML code. Footnotes are automatically 
+ *
+ * footnoteSelector: '.pagination-footnote' -- This is the CSS selector used
+ * for finding footnotes within the HTML code. Footnotes are automatically
  * moved if the page of their reference changes. In editing environments, the
  * footnote should be inserted inside two additional elements, like this:
- * 
+ *
  * <span class='pagination-footnote'><span><span>This is a footnote</span>
- * </span></span>. 
- * 
- * marginnoteSelector: '.pagination-marginnote' -- this is the CSS selector 
- * used for finding marginnotes within the HTML code. Margin notes are moved 
- * whenever the reference to them is moved. They do not overlap and don't go 
- * beyond the bottom of the text. At the same time they are placed as close as 
+ * </span></span>.
+ *
+ * marginnoteSelector: '.pagination-marginnote' -- this is the CSS selector
+ * used for finding marginnotes within the HTML code. Margin notes are moved
+ * whenever the reference to them is moved. They do not overlap and don't go
+ * beyond the bottom of the text. At the same time they are placed as close as
  * possible to where they are referenced from.
- * 
+ *
  * <span class='pagination-marginnote'><span><span>This is a margin note</span>
- * </span></span>. 
- * 
+ * </span></span>.
+ *
  * Three settings can be defined to adjust margin notes:
- * 
+ *
  * marginNotesWidth: 1.0 (inch): This is the width oiccupied by margin notes.
- * 
- * marginNotesSeparatorWidth: 0.09 (inch): This is the gap between body text and 
+ *
+ * marginNotesSeparatorWidth: 0.09 (inch): This is the gap between body text and
  * margin notes.
- * 
- * marginNotesVerticalSeparatorWidth': 0.09 (inch): This is the vertical space 
+ *
+ * marginNotesVerticalSeparatorWidth': 0.09 (inch): This is the vertical space
  * between any two margin notes.
- * 
+ *
  * Page style options
- * 
- * These settings provide a way to do simple styling of the page. These 
- * settings are different from the baove ones in that they can be overriden 
- * through CSS to provide more advanced designs (see the above note on 
+ *
+ * These settings provide a way to do simple styling of the page. These
+ * settings are different from the baove ones in that they can be overriden
+ * through CSS to provide more advanced designs (see the above note on
  * pagination.css).
- * 
- * outerMargin: .5 (inch)-- This controls the margin on the outer part of the 
+ *
+ * outerMargin: .5 (inch)-- This controls the margin on the outer part of the
  * page.
- * 
- * innerMargin: .8 (inch)-- This controls the margin on the inenr part of the 
+ *
+ * innerMargin: .8 (inch)-- This controls the margin on the inenr part of the
  * page.
- * 
- * contentsTopMargin: .8 (inch)-- This controls the margin between the top of 
+ *
+ * contentsTopMargin: .8 (inch)-- This controls the margin between the top of
  * the page and the top of the contents.
- * 
- * headerTopMargin: .3 (inch) -- This controls the margin between the top of 
+ *
+ * headerTopMargin: .3 (inch) -- This controls the margin between the top of
  * the page and the top of the page headers.
- * 
- * contentsBottomMargin: .8 (inch) -- This controls the margin between the 
+ *
+ * contentsBottomMargin: .8 (inch) -- This controls the margin between the
  * bottom of the page and the bottom of the contents.
- * 
- * pagenumberBottomMargin: .3 (inch) -- This controls the margin between the 
+ *
+ * pagenumberBottomMargin: .3 (inch) -- This controls the margin between the
  * bottom of the page and the bottom of the page number.
- * 
+ *
  * pageHeight: 8.3 (inch) -- This controls the height of the page.
- * 
+ *
  * pageWidth: 5.8 (inch) -- This controls the width of the page.
  *
  * columnSeparatorWidth: .09 (inch) -- This is the space between columns.
- * 
- * lengthUnit: 'in' (inch) -- Use this to specify the unit used in all the page 
+ *
+ * lengthUnit: 'in' (inch) -- Use this to specify the unit used in all the page
  * style options. It can be any unit supported by CSS.
- * 
+ *
  * METHODS
- * 
+ *
  * Changing the page style after initialization
- * 
- * At times the user might want to change the page design or page size after 
- * BookJS has started -- for example to look at the same text in different page
- * sizes. To do this, he has to change all the page style options which are now
- * located inside paginationConfig and run pagination.setPageStyle(). Like 
- * this:
- * 
+ *
+ * At times the user might want to change the page design or page size after
+ * pagination.js has started -- for example to look at the same text in
+ * different page sizes. To do this, he has to change all the page style
+ * options which are now located inside paginationConfig and run
+ * pagination.setPageStyle(). Like this:
+ *
  * paginationConfig['pageHeight'] = 11;
  * paginationConfig['pageWidth'] = 8;
  * pagination.setPageStyle();
- * 
+ *
  * Initializing page flowing after loading
- * 
+ *
  * If one chooses not to flow the pages automatically upon page loading, it has
- * to be initiated manually by calling pagination.applyBookLayout() or 
- * pagination.applySimpleBookLayout() in case CSS Regions are not present. 
- * 
+ * to be initiated manually by calling pagination.applyBookLayout() or
+ * pagination.applySimpleBookLayout() in case CSS Regions are not present.
+ *
  * Check whether CSS regions are present.
- * 
+ *
  * pagination._cssRegionCheck() will return true or false, depending on whether
  * CSS Regions are present or not.
- * 
- */ (function () {
+ *
+ */
+(function () {
 
     var exports = this,
         defaults,
         pagination = {};
 
-    // pagination is the object that contains the namespace used by BookJS.
+    /* pagination is the object that contains the namespace used by 
+     * pagination.js.
+     */
 
     defaults = {
         // pagination.config starts out with default config options.
@@ -283,10 +286,10 @@
         // Create roman numeral representations of numbers.
         var digits = String(+this.value).split(""),
             key = ["", "C", "CC", "CCC", "CD", "D", "DC", "DCC", "DCCC", "CM",
-                    "",
-                    "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC", "",
-                    "I", "II",
-                    "III", "IV", "V", "VI", "VII", "VIII", "IX"
+                "",
+                "X", "XX", "XXX", "XL", "L", "LX", "LXX", "LXXX", "XC", "",
+                "I", "II",
+                "III", "IV", "V", "VI", "VII", "VIII", "IX"
             ],
             roman = "",
             i = 3;
@@ -311,8 +314,8 @@
     pagination.pageStyleSheet = document.createElement('style');
 
     pagination.initiate = function () {
-        /* Initiate BookJS by importing user set config options and setting basic
-         * CSS style.
+        /* Initiate pagination.js by importing user set config options and 
+         * setting basic CSS style.
          */
 
         this.setStyle();
@@ -338,8 +341,8 @@
     };
 
     pagination.setStyle = function () {
-        /* Set style for the regions and pages used by BookJS and add it to the
-         * head of the DOM.
+        /* Set style for the regions and pages used by pagination.js and add it
+         * to the head of the DOM.
          */
         var stylesheet = document.createElement('style');
         stylesheet.innerHTML =
@@ -347,12 +350,13 @@
             "-webkit-flex-direction: column; display: flex; " +
             "flex-direction: column;}" +
             "\n.pagination-contents-container {position: absolute;}" +
-            "\n.pagination-contents {display: -webkit-flex; -webkit-flex: 1; " + 
+            "\n.pagination-contents {display: -webkit-flex; -webkit-flex: 1; " +
             "display: flex; flex: 1;}"
         /* There seems to be a bug in the new flexbox model code which requires the
          * height to be set to an arbitrary value (which is ignored).
-         */ + "\n.pagination-contents {height: 0px;}" +
-            "\n.pagination-contents-column {-webkit-flex: 1; flex: 1;}" + 
+         */
+        + "\n.pagination-contents {height: 0px;}" +
+            "\n.pagination-contents-column {-webkit-flex: 1; flex: 1;}" +
             "\nbody {counter-reset: pagination-footnote " +
             "pagination-footnote-reference;}" +
             "\n.pagination-footnote::before {" +
@@ -379,7 +383,7 @@
     pagination.setPageStyle = function () {
         // Set style for a particular page size.
         var unit = pagination.config('lengthUnit'),
-            marginNotesWidthNumber = pagination.config('marginNotesWidth') * pagination.config('enableMarginNotes'), 
+            marginNotesWidthNumber = pagination.config('marginNotesWidth') * pagination.config('enableMarginNotes'),
             marginNotesWidth = marginNotesWidthNumber + unit,
             simpleMarginNotesWidth = pagination.config('marginNotesWidth') + unit,
             simpleMarginNotesWidthAndMargin = pagination.config('marginNotesWidth') + pagination.config('marginNotesVerticalSeparatorWidth') + unit,
@@ -392,11 +396,10 @@
             contentsColumnSeparatorWidthNumber = pagination.config('columnSeparatorWidth'),
             contentsColumnSeparatorWidth = contentsColumnSeparatorWidthNumber + unit,
             columnWidth = contentsWidthNumber / pagination.config('columns') -
-                (contentsColumnSeparatorWidthNumber * (pagination.config('columns') - 1))
-                + unit,
+                (contentsColumnSeparatorWidthNumber * (pagination.config('columns') - 1)) + unit,
             contentsHeightNumber = pagination.config('pageHeight') - pagination
                 .config('contentsTopMargin') - pagination.config(
-                'contentsBottomMargin'),
+                    'contentsBottomMargin'),
             contentsHeight = contentsHeightNumber + unit,
             pageWidth = pagination.config('pageWidth') + unit,
             pageHeight = pagination.config('pageHeight') + unit,
@@ -409,7 +412,7 @@
             headerTopMargin = pagination.config('headerTopMargin') + unit,
             imageMaxHeight = contentsHeightNumber - .1 + unit,
             imageMaxWidth = contentsWidthNumber - .1 + unit;
-            
+
         pagination.pageStyleSheet.innerHTML =
             ".pagination-page {height:" + pageHeight + "; width:" + pageWidth +
             ";" + "background-color: #fff;}" + "\n@page {size:" + pageWidth +
@@ -419,12 +422,12 @@
         // To give the appearance on the screen of pages, add a space of .2in
         + "\n@media screen{.pagination-page {border:solid 1px #000; " +
             "margin-bottom:.2in;}}" +
-            "\n.pagination-main-contents-container {width:" + contentsWidth + ";}" + 
+            "\n.pagination-main-contents-container {width:" + contentsWidth + ";}" +
             "\n.pagination-contents-container {bottom:" + contentsBottomMargin +
             "; height:" + contentsHeight + "; display: -webkit-flex; " +
             "display: flex;}" +
         // Images should at max size be slightly smaller than the contentsWidth.
-            "\nimg {max-height: " + imageMaxHeight + ";max-width: " +
+        "\nimg {max-height: " + imageMaxHeight + ";max-width: " +
             imageMaxWidth + ";}" + "\n.pagination-pagenumber {bottom:" +
             pagenumberBottomMargin + ";}" + "\n.pagination-header {top:" +
             headerTopMargin + ";}" +
@@ -456,19 +459,18 @@
         /* This seems to be a bug in Webkit. But unless we set the width of the 
          * original element that is being flown, some elements extend beyond the
          * mainContentsContainer's width.
-         */ 
-        
+         */
+
         + "\n.pagination-contents-item {width:" + columnWidth + ";}" +
-            "\n.pagination-frontmatter-contents {width:" + contentsWidth + ";}"
-        + "\n.pagination-contents-column-separator {width:" + contentsColumnSeparatorWidth + ";}" +
+            "\n.pagination-frontmatter-contents {width:" + contentsWidth + ";}" + "\n.pagination-contents-column-separator {width:" + contentsColumnSeparatorWidth + ";}" +
         // Footnotes in non-CSS Regions browsers will render as right margin notes.
         "\n.pagination-simple .pagination-footnote > span, .pagination-simple .pagination-marginnote > span {" +
             "position: absolute; right: 0in; width: " + simpleMarginNotesWidth + ";}" +
-        "\n.pagination-simple {padding-right:" + simpleMarginNotesWidthAndMargin + ";}" +
-        "\n.pagination-marginnotes, .pagination-marginnote-item {width:" + marginNotesWidth + ";}" +
-        "\n.pagination-marginnote-item {margin-bottom:" + marginNotesVerticalSeparator + ";}" +
-        "\n.pagination-marginnotes-separator {width:" + marginNotesSeparatorWidth + ";}" +
-        "\n.pagination-main-contents-container, .pagination-marginnotes, .pagination-marginnotes-separator {height:" + contentsHeight + ";}";
+            "\n.pagination-simple {padding-right:" + simpleMarginNotesWidthAndMargin + ";}" +
+            "\n.pagination-marginnotes, .pagination-marginnote-item {width:" + marginNotesWidth + ";}" +
+            "\n.pagination-marginnote-item {margin-bottom:" + marginNotesVerticalSeparator + ";}" +
+            "\n.pagination-marginnotes-separator {width:" + marginNotesSeparatorWidth + ";}" +
+            "\n.pagination-main-contents-container, .pagination-marginnotes, .pagination-marginnotes-separator {height:" + contentsHeight + ";}";
     };
 
 
@@ -510,7 +512,7 @@
 
     pagination.pageCounterCreator.prototype.numberPages = function () {
         /* If the pages associated with this page counter need to be updated, 
-         * go through all of them from the start of the book and number them, 
+         * go through all of them from the start of the book and number them,
          * thereby potentially removing old page numbers.
          */
         var pagenumbersToNumber, i;
@@ -527,7 +529,7 @@
     pagination.pageCounters = {};
     /* pagination.pageCounters contains all the page counters we use in a book --
      * typically these are two -- roman for the frontmatter and arab for the main
-     * body contents. 
+     * body contents.
      */
 
     pagination.pageCounters.arab = new pagination.pageCounterCreator(
@@ -541,11 +543,11 @@
 
     pagination.createPages = function (num, flowName, pageCounterClass, columns) {
         // Create the DOM structure of num number of pages.
-        var page, contents, footnotes, contentsContainer, mainContentsContainer, column, columnSeparator, 
-            topfloats, header, chapterheader, sectionheader, pagenumberfield, 
+        var page, contents, footnotes, contentsContainer, mainContentsContainer, column, columnSeparator,
+            topfloats, header, chapterheader, sectionheader, pagenumberfield,
             marginNotesContainer, marginNotesSeparator, i, j,
             tempRoot = document.createDocumentFragment();
-            
+
         for (i = 0; i < num; i++) {
             page = document.createElement('div');
             page.classList.add('pagination-page');
@@ -576,7 +578,7 @@
             if (flowName) {
                 contentsContainer = document.createElement('div');
                 contentsContainer.classList.add('pagination-contents-container');
-                
+
                 mainContentsContainer = document.createElement('div');
                 mainContentsContainer.classList.add('pagination-main-contents-container');
 
@@ -590,14 +592,14 @@
                     column = document.createElement('div');
                     column.classList.add('pagination-contents-column');
                     contents.appendChild(column);
-                    
+
                     if ((columns - j) > 1) {
                         columnSeparator = document.createElement('div');
                         columnSeparator.classList.add('pagination-contents-column-separator');
                         contents.appendChild(columnSeparator);
                     }
-                }               
-                
+                }
+
                 footnotes = document.createElement('div');
                 footnotes.classList.add('pagination-footnotes');
 
@@ -605,22 +607,22 @@
                 mainContentsContainer.appendChild(contents);
                 mainContentsContainer.appendChild(footnotes);
                 contentsContainer.appendChild(mainContentsContainer);
-                
+
                 // Containers for margin notes
                 marginNotesSeparator = document.createElement('div');
                 marginNotesSeparator.classList.add('pagination-marginnotes-separator');
-                
+
                 marginNotesContainer = document.createElement('div');
                 marginNotesContainer.classList.add('pagination-marginnotes');
-                
-                if (i%2 == 0) {
+
+                if (i % 2 == 0) {
                     contentsContainer.appendChild(marginNotesSeparator);
-                    contentsContainer.appendChild(marginNotesContainer); 
+                    contentsContainer.appendChild(marginNotesContainer);
                 } else {
                     contentsContainer.insertBefore(marginNotesSeparator, contentsContainer.firstChild);
-                    contentsContainer.insertBefore(marginNotesContainer, contentsContainer.firstChild); 
+                    contentsContainer.insertBefore(marginNotesContainer, contentsContainer.firstChild);
                 }
-                
+
                 page.appendChild(contentsContainer);
                 // If no flowName is given, an empty page is created.
             } else {
@@ -633,7 +635,9 @@
     };
 
     pagination.events = {};
-    // pagination.events represents all the events created specifically by BookJS.
+    /* pagination.events represents all the events created specifically by 
+     * pagination.js.
+     */
 
     pagination.events.bodyLayoutUpdated = document.createEvent('Event');
     pagination.events.bodyLayoutUpdated.initEvent(
@@ -679,15 +683,15 @@
     /* escapesNeedMove is emitted when at least one reference to a an escape 
      * node (footnote, top float) no longer is on the page where it used to be.
      */
-    
+
     pagination.events.redoEscapes = document.createEvent('Event');
     pagination.events.redoEscapes.initEvent(
         'redoEscapes',
         true,
         true);
-    /* redoEscapes is being listened to by BookJS to see when escape nodes 
+    /* redoEscapes is being listened to by pagination.js to see when escape nodes 
      * (footnotes, top floats) need to be refound and redrawn. This can be used
-     * by editors that need to add new footnotes or top floats. 
+     * by editors that need to add new footnotes or top floats.
      */
 
     pagination.tof = function (bodyObjects) {
@@ -695,22 +699,22 @@
          * create a "table of figures".
          */
         var tofDiv, tofTitleH1, figures, figure, image, title, caption, pagenumber, tofItemDiv, tofItemTextSpan, tofItemPnSpan, tofItemPnText, i, j;
-        
-        
+
+
         tofDiv = document.createElement('div');
         tofDiv.id = 'pagination-tof';
-        
+
         tofTitleH1 = document.createElement('h1');
         tofTitleH1.id = 'pagination-tof-title';
 
         tofDiv.appendChild(tofTitleH1);
-        
-        
+
+
         for (i = 0; i < bodyObjects.length; i++) {
             figures = bodyObjects[i].rawdiv.querySelectorAll('figure');
             for (j = 0; j < figures.length; j++) {
                 figure = figures[j];
-                
+
                 if (pagination.config('enableTableOfTables') && figure.querySelector('table')) {
                     continue;
                 }
@@ -719,15 +723,15 @@
                 if (image && image.alt !== '') {
                     title = image.alt;
                 } else if (caption) {
-                    title = caption.textContent;
+                    title = caption.innerText;
                 } else {
-                    title = 'Figure '+ i + '.' + j;
+                    title = 'Figure ' + i + '.' + j;
                 }
-                pagenumber = pagination.findPage(figure).querySelector('.pagination-pagenumber').textContent;
+                pagenumber = pagination.findPage(figure).querySelector('.pagination-pagenumber').innerText;
                 tofItemDiv = document.createElement('div');
                 tofItemDiv.classList.add('pagination-tof-entry');
                 tofItemTextSpan = document.createElement('span');
-                tofItemTextSpan.classList.add('pagination-tof-text');                
+                tofItemTextSpan.classList.add('pagination-tof-text');
                 tofItemTextSpan.innerHTML = title;
                 tofItemDiv.appendChild(tofItemTextSpan);
 
@@ -739,73 +743,73 @@
 
                 tofItemDiv.appendChild(tofItemPnSpan);
 
-                tofDiv.appendChild(tofItemDiv);                
-                
+                tofDiv.appendChild(tofItemDiv);
+
             }
         }
-        
-        return tofDiv; 
-        
+
+        return tofDiv;
+
     }
-    
-    pagination.closest = function(element, searchedFor) {
+
+    pagination.closest = function (element, searchedFor) {
         if (element.webkitMatchesSelector(searchedFor)) {
             return element;
         } else {
             return pagination.closest(element.parentNode, searchedFor);
         }
     };
-    
+
     pagination.tot = function (bodyObjects) {
         /* Go through all pages of all flowobjects, looking for all tables within figures to 
          * create a "table of tables".
          */
         var totDiv, totTitleH1, tables, figure, table, title, caption, pagenumber, totItemDiv, totItemTextSpan, totItemPnSpan, totItemPnText, i, j;
-        
-        
+
+
         totDiv = document.createElement('div');
         totDiv.id = 'pagination-tot';
-        
+
         totTitleH1 = document.createElement('h1');
         totTitleH1.id = 'pagination-tot-title';
 
         totDiv.appendChild(totTitleH1);
-        
+
         for (i = 0; i < bodyObjects.length; i++) {
             tables = bodyObjects[i].rawdiv.querySelectorAll('figure table');
             for (j = 0; j < tables.length; j++) {
                 figure = pagination.closest(tables[j], 'figure');
-                    caption = figure.querySelector('figcaption');
-                    if (caption) {
-                        title = caption.textContent;
-                    } else {
-                        title = 'Table '+ i + '.' + j;
-                    }
-                    pagenumber = pagination.findPage(figure).querySelector('.pagination-pagenumber').textContent;
-                    totItemDiv = document.createElement('div');
-                    totItemDiv.classList.add('pagination-tot-entry');
-                    totItemTextSpan = document.createElement('span');
-                    totItemTextSpan.classList.add('pagination-tot-text');                
-                    totItemTextSpan.innerHTML = title;
-                    totItemDiv.appendChild(totItemTextSpan);
+                caption = figure.querySelector('figcaption');
+                if (caption) {
+                    title = caption.innerText;
+                } else {
+                    title = 'Table ' + i + '.' + j;
+                }
+                pagenumber = pagination.findPage(figure).querySelector('.pagination-pagenumber').innerText;
+                totItemDiv = document.createElement('div');
+                totItemDiv.classList.add('pagination-tot-entry');
+                totItemTextSpan = document.createElement('span');
+                totItemTextSpan.classList.add('pagination-tot-text');
+                totItemTextSpan.innerHTML = title;
+                totItemDiv.appendChild(totItemTextSpan);
 
-                    totItemPnSpan = document.createElement('span');
-                    totItemPnSpan.classList.add('pagination-tot-pagenumber');
+                totItemPnSpan = document.createElement('span');
+                totItemPnSpan.classList.add('pagination-tot-pagenumber');
 
-                    totItemPnText = document.createTextNode(pagenumber);
-                    totItemPnSpan.appendChild(totItemPnText);
+                totItemPnText = document.createTextNode(pagenumber);
+                totItemPnSpan.appendChild(totItemPnText);
 
-                    totItemDiv.appendChild(totItemPnSpan);
+                totItemDiv.appendChild(totItemPnSpan);
 
-                    totDiv.appendChild(totItemDiv);
-                
+                totDiv.appendChild(totItemDiv);
+
             }
         }
-        
-        return totDiv; 
-        
-    }    
-    
+
+        return totDiv;
+
+    }
+
     pagination.findPage = function (object) {
         /* Find the page a certain element is placed on
          */
@@ -814,30 +818,30 @@
         allPages = document.querySelectorAll('.pagination-page');
         firstPage = allPages[0];
         firstPageOffsetTop = firstPage.getBoundingClientRect()['top'];
-        lastPage = allPages[allPages.length-1];
+        lastPage = allPages[allPages.length - 1];
         lastPageOffsetTop = lastPage.getBoundingClientRect()['top'];
-        pageStartDistance = (lastPageOffsetTop - firstPageOffsetTop)/(allPages.length-1);
-        
+        pageStartDistance = (lastPageOffsetTop - firstPageOffsetTop) / (allPages.length - 1);
+
         objectOffsetTop = object.getBoundingClientRect()['top'];
-        pageNumber = parseInt((objectOffsetTop - firstPageOffsetTop)/pageStartDistance, 10);
+        pageNumber = parseInt((objectOffsetTop - firstPageOffsetTop) / pageStartDistance, 10);
         return allPages[pageNumber];
-        
+
     };
-    
+
     pagination.marginNotesContainerStartDistance = false;
     pagination.firstMarginNotesContainerOffsetTop = false;
-    
+
     pagination.setMarginNotesContainerStartDistance = function () {
         /* Find the actual distance between the margin note containers between 
-         * pages and the top offset for the first page. We assume that the 
+         * pages and the top offset for the first page. We assume that the
          * first two pages are not empty for this to work.
          */
-        var allPages, 
-            firstMarginNotesContainer, 
-            firstMarginNotesContainerOffsetTop, 
-            secondMarginNotesContainer, 
-            secondMarginNotesContainersOffsetTop, 
-            marginNotesContainerStartDistance; 
+        var allPages,
+            firstMarginNotesContainer,
+            firstMarginNotesContainerOffsetTop,
+            secondMarginNotesContainer,
+            secondMarginNotesContainersOffsetTop,
+            marginNotesContainerStartDistance;
         allPages = document.querySelectorAll('.pagination-page');
         firstMarginNotesContainer = allPages[0].querySelector('.pagination-marginnotes');
         pagination.firstMarginNotesContainerOffsetTop = firstMarginNotesContainer.getBoundingClientRect()['top'] + window.pageYOffset;
@@ -845,82 +849,87 @@
         secondMarginNotesContainersOffsetTop = secondMarginNotesContainer.getBoundingClientRect()['top'] + window.pageYOffset;
         pagination.marginNotesContainerStartDistance = secondMarginNotesContainersOffsetTop - pagination.firstMarginNotesContainerOffsetTop;
     };
-    
+
     pagination.findMarginNotesContainerAndOffset = function (object) {
         /* Find the margin note container next to the object, and the top 
          * offset within it.
          */
 
-        var allPages, objectOffsetTop, containerNumber, offsetTopWithinContainer; 
+        var allPages, objectOffsetTop, containerNumber, offsetTopWithinContainer;
 
         if (!pagination.marginNotesContainerStartDistance) {
             pagination.setMarginNotesContainerStartDistance();
         };
-        
+
         allPages = document.querySelectorAll('.pagination-page');
         objectOffsetTop = object.getBoundingClientRect()['top'] + window.pageYOffset;
 
-        containerNumber = parseInt((objectOffsetTop - pagination.firstMarginNotesContainerOffsetTop)/pagination.marginNotesContainerStartDistance, 10);
-        
+        containerNumber = parseInt((objectOffsetTop - pagination.firstMarginNotesContainerOffsetTop) / pagination.marginNotesContainerStartDistance, 10);
+
         offsetTopWithinContainer = objectOffsetTop - containerNumber * (pagination.marginNotesContainerStartDistance) - pagination.firstMarginNotesContainerOffsetTop;
         return [allPages[containerNumber].querySelector('.pagination-marginnotes'), offsetTopWithinContainer, objectOffsetTop];
     };
-    
+
     pagination.adjustMarginNotesPositionsPerPage = function (marginNotesContainer) {
         /* Adjust the placement of all the margin notes on one particular page.
          */
-        var marginNotesItems = marginNotesContainer.querySelectorAll('.pagination-marginnote-item'), marginNotesList = [], i;
-        
+        var marginNotesItems = marginNotesContainer.querySelectorAll('.pagination-marginnote-item'),
+            marginNotesList = [],
+            i;
+
         if (marginNotesItems.length === 0) {
             return false;
         }
-        
+
         for (i = 0; i < marginNotesItems.length; i++) {
-            marginNotesList.push(marginNotesItems[i]);    
+            marginNotesList.push(marginNotesItems[i]);
         }
-        
-        marginNotesList.sort(function(a, b) {
+
+        marginNotesList.sort(function (a, b) {
             return a.offsetTop == b.offsetTop ? 0 : (a.offsetTop > b.offsetTop ? 1 : -1);
         });
-        
+
         for (i = 1; i < marginNotesList.length; i++) {
-            if ((marginNotesList[i-1].offsetTop + marginNotesList[i-1].offsetHeight + parseInt(window.getComputedStyle(marginNotesList[i-1]).marginBottom)) > marginNotesList[i].offsetTop ) {
-                marginNotesList[i].style.top = (marginNotesList[i-1].offsetTop + marginNotesList[i-1].offsetHeight + parseInt(window.getComputedStyle(marginNotesList[i-1]).marginBottom)) + 'px';
+            if ((marginNotesList[i - 1].offsetTop + marginNotesList[i - 1].offsetHeight + parseInt(window.getComputedStyle(marginNotesList[i - 1]).marginBottom)) > marginNotesList[i].offsetTop) {
+                marginNotesList[i].style.top = (marginNotesList[i - 1].offsetTop + marginNotesList[i - 1].offsetHeight + parseInt(window.getComputedStyle(marginNotesList[i - 1]).marginBottom)) + 'px';
             }
         }
-        
-        if (marginNotesList[marginNotesList.length-1].offsetTop + marginNotesList[marginNotesList.length-1].offsetHeight > marginNotesContainer.offsetHeight) {
-            marginNotesList[marginNotesList.length-1].style.top = (marginNotesContainer.offsetHeight - marginNotesList[marginNotesList.length-1].offsetHeight) + 'px';
-            for (i = (marginNotesList.length-2); i > -1; i--) {
-                                if (marginNotesList[i+1].offsetTop < (marginNotesList[i].offsetTop + marginNotesList[i].offsetHeight + parseInt(window.getComputedStyle(marginNotesList[i]).marginBottom)) ) {
-                    marginNotesList[i].style.top = (marginNotesList[i+1].offsetTop - (marginNotesList[i].offsetHeight + parseInt(window.getComputedStyle(marginNotesList[i]).marginBottom)) ) + 'px';
+
+        if (marginNotesList[marginNotesList.length - 1].offsetTop + marginNotesList[marginNotesList.length - 1].offsetHeight > marginNotesContainer.offsetHeight) {
+            marginNotesList[marginNotesList.length - 1].style.top = (marginNotesContainer.offsetHeight - marginNotesList[marginNotesList.length - 1].offsetHeight) + 'px';
+            for (i = (marginNotesList.length - 2); i > -1; i--) {
+                if (marginNotesList[i + 1].offsetTop < (marginNotesList[i].offsetTop + marginNotesList[i].offsetHeight + parseInt(window.getComputedStyle(marginNotesList[i]).marginBottom))) {
+                    marginNotesList[i].style.top = (marginNotesList[i + 1].offsetTop - (marginNotesList[i].offsetHeight + parseInt(window.getComputedStyle(marginNotesList[i]).marginBottom))) + 'px';
                 } else {
                     break;
                 }
-            }            
-            
+            }
+
         }
-        
+
         return true;
     };
-    
+
     pagination.adjustAllMarginNotesPositions = function () {
         /* Add margin notes for the entire document
          */
-        var allMarginNoteContainers = document.querySelectorAll('.pagination-marginnotes'), i;
-        
-        for (i=0; i < allMarginNoteContainers.length; i++) {
+        var allMarginNoteContainers = document.querySelectorAll('.pagination-marginnotes'),
+            i;
+
+        for (i = 0; i < allMarginNoteContainers.length; i++) {
             pagination.adjustMarginNotesPositionsPerPage(allMarginNoteContainers[i]);
         }
     };
-    
+
     pagination.findAllCrossReferences = function () {
         /* Find all links that point to places within the same document
          */
-        var flowElement = eval(pagination.config('flowElement')), allReferences = flowElement.querySelectorAll('a'), referredElement, pageNumber, i;
-        
-        for (i=0; i < allReferences.length;i++) {
-            if (allReferences[i].getAttribute('href')[0]==='#') {
+        var flowElement = eval(pagination.config('flowElement')),
+            allReferences = flowElement.querySelectorAll('a'),
+            referredElement, pageNumber, i;
+
+        for (i = 0; i < allReferences.length; i++) {
+            if (allReferences[i].getAttribute('href')[0] === '#') {
                 referredElement = flowElement.querySelector(allReferences[i].getAttribute('href'));
                 pageNumber = pagination.findPage(referredElement).querySelector('.pagination-pagenumber').innerHTML;
                 if (allReferences[i].innerHTML !== pageNumber) {
@@ -929,43 +938,44 @@
             }
         }
     };
-    
+
     pagination.orderIndexItem = function (itemList, indexTerms, page) {
         /* take an index item as output by findAllIndexItems and order it.
-         */        
-        if (itemList.length===0) {
+         */
+        if (itemList.length === 0) {
             if (!(indexTerms.hasOwnProperty('pagination-index-page'))) {
                 indexTerms['pagination-index-page'] = [];
-            } else if (indexTerms['pagination-index-page'][indexTerms['pagination-index-page'].length-1]===page) {
+            } else if (indexTerms['pagination-index-page'][indexTerms['pagination-index-page'].length - 1] === page) {
                 // last page is same as this page
                 return;
             }
-            
+
             indexTerms['pagination-index-page'].push(page);
             return;
         }
         if (!(indexTerms.hasOwnProperty(itemList[0]))) {
             indexTerms[itemList[0]] = {};
         }
-        
+
         var subIndexTerms = indexTerms[itemList.shift()];
-        
-        pagination.orderIndexItem(itemList,subIndexTerms,page);
+
+        pagination.orderIndexItem(itemList, subIndexTerms, page);
         return;
     };
-    
+
     pagination.findAllIndexItems = function () {
         /* find all index items.
          */
-        var allIndexItems = document.querySelectorAll('.pagination-index'), pageNumber, indexTerms = {}, indexTerm, i;
- 
-        for (i=0; i < allIndexItems.length; i++) {
+        var allIndexItems = document.querySelectorAll('.pagination-index'),
+            pageNumber, indexTerms = {}, indexTerm, i;
+
+        for (i = 0; i < allIndexItems.length; i++) {
             indexTerm = allIndexItems[i].getAttribute('data-pagination-index').split('!');
             pagination.orderIndexItem(indexTerm, indexTerms, pagination.findPage(allIndexItems[i]).querySelector('.pagination-pagenumber').innerHTML);
         }
         return indexTerms;
     };
-    
+
     pagination.sortAssociativeArray = function (associativeArray) {
         var keys = [];
         for (key in associativeArray) {
@@ -973,14 +983,15 @@
         }
         return keys.sort();
     };
-    
+
     pagination.layoutWordIndex = function (indexTerms, element) {
-        var keys = pagination.sortAssociativeArray(indexTerms), newElement, pageElement, i;
-        for (i=0; i < keys.length;i++) {
+        var keys = pagination.sortAssociativeArray(indexTerms),
+            newElement, pageElement, i;
+        for (i = 0; i < keys.length; i++) {
             if (keys[i] === 'pagination-index-page') {
                 pageElement = document.createElement('span');
                 pageElement.classList.add('pagination-index-page');
-                
+
                 pageElement.innerHTML = indexTerms[keys[i]];
                 element.insertBefore(pageElement, element.firstChild.nextSibling);
             } else {
@@ -990,25 +1001,26 @@
                 pagination.layoutWordIndex(indexTerms[keys[i]], newElement);
             }
         }
-        
+
     };
-    
+
     pagination.createWordIndex = function () {
-        var wordIndexElement = document.querySelector('.pagination-index-list'), newElement = document.createElement('div');
+        var wordIndexElement = document.querySelector('.pagination-index-list'),
+            newElement = document.createElement('div');
 
         if (!wordIndexElement) {
             return;
         }
-        
+
         pagination.layoutWordIndex(pagination.findAllIndexItems(), newElement);
-        
+
         if (wordIndexElement && (wordIndexElement.innerHTML !== newElement.innerHTML)) {
             wordIndexElement.innerHTML = newElement.innerHTML;
         }
-        
+
     };
-    
-    
+
+
     pagination.headersAndToc = function (bodyObjects) {
         /* Go through all pages of all flowObjects and add page headers and
          * calculate the table fo contents (TOC) for the frontmatter. This has to
@@ -1016,8 +1028,10 @@
          * flown and has to redone when there are changes to the body contents that
          * can influence the TOC (such as page creation or deletion).
          */
-        var currentChapterTitle = '', currentSectionTitle = '', pages, chapterHeader, sectionHeader, tocDiv, tocItemDiv, tocItemPnText, tocTitleH1, tocItemPnSpan, tocItemTextSpan, 
-     i, j;
+        var currentChapterTitle = '',
+            currentSectionTitle = '',
+            pages, chapterHeader, sectionHeader, tocDiv, tocItemDiv, tocItemPnText, tocTitleH1, tocItemPnSpan, tocItemTextSpan,
+            i, j;
 
         if (pagination.config('numberPages')) {
             tocDiv = document.createElement('div');
@@ -1047,7 +1061,7 @@
                 if (chapterHeader) {
                     chapterHeader.innerHTML = currentChapterTitle;
                 }
-                
+
                 sectionHeader = pages[j].querySelector(
                     '.pagination-header .pagination-header-section');
                 if (sectionHeader) {
@@ -1055,7 +1069,7 @@
                 }
             }
 
-            if (bodyObjects[i].type && pagination.config('numberPages') && (typeof(bodyObjects[i].startpageNumber) != 'undefined')) {
+            if (bodyObjects[i].type && pagination.config('numberPages') && (typeof (bodyObjects[i].startpageNumber) != 'undefined')) {
 
                 tocItemDiv = document.createElement('div');
                 tocItemDiv.classList.add('pagination-toc-entry');
@@ -1089,14 +1103,16 @@
         /* Go through the entire body contents and look for chapterStartMarker and
          * sectionStartMarker to divide it up. We will then float these elements
          * individually, as CSS Regions has problems flowing material that requires
-         * 100+ regions. 
+         * 100+ regions.
          */
-        var bodyObjects = [], chapterCounter = 0, bodyContainer, bodyContents, i;
+        var bodyObjects = [],
+            chapterCounter = 0,
+            bodyContainer, bodyContents, i;
 
         bodyObjects.push(
             new pagination.flowObject(
-            'pagination-body-pre',
-            pagination.pageCounters.arab));
+                'pagination-body-pre',
+                pagination.pageCounters.arab));
 
         bodyContainer = eval(pagination.config('flowElement'));
         bodyContents = bodyContainer.childNodes;
@@ -1107,20 +1123,20 @@
             if (bodyContents[0].nodeType === 1) {
                 if (
                     bodyContents[0].webkitMatchesSelector(
-                    pagination.config('chapterStartMarker'))) {
+                        pagination.config('chapterStartMarker'))) {
                     bodyObjects.push(
                         new pagination.flowObject(
-                        'pagination-body-' + chapterCounter++,
-                        pagination.pageCounters.arab));
+                            'pagination-body-' + chapterCounter++,
+                            pagination.pageCounters.arab));
                     bodyObjects[chapterCounter].setType('chapter');
 
                 } else if (
                     bodyContents[0].webkitMatchesSelector(
-                    pagination.config('sectionStartMarker'))) {
+                        pagination.config('sectionStartMarker'))) {
                     bodyObjects.push(
                         new pagination.flowObject(
-                        'pagination-body-' + chapterCounter++,
-                        pagination.pageCounters.arab));
+                            'pagination-body-' + chapterCounter++,
+                            pagination.pageCounters.arab));
                     bodyObjects[chapterCounter].setType('section');
                 }
             }
@@ -1138,7 +1154,7 @@
 
         if (eval(pagination.config('flowElement')) === document.body) {
             /* We are reflowing the body itself, yet the layout will be added to 
-             * the body. This will make the broser crash. So we need to move the 
+             * the body. This will make the broser crash. So we need to move the
              * original contents inside a Div of its own first.
              */
             rawdiv = document.createElement('div');
@@ -1169,11 +1185,11 @@
 
     pagination.applyBookLayout = function () {
         /* Apply this layout if CSS Regions are present.
-         * Will first divide the original DOM up into individual chapters and 
+         * Will first divide the original DOM up into individual chapters and
          * sections.
          */
         var bodyObjects, layoutDiv, contentsDiv, toc, tof, tot, redoToc, fmObject, i;
-        
+
         bodyObjects = pagination.createBodyObjects();
 
         // Create div for layout
@@ -1205,7 +1221,7 @@
             contentsDiv.insertBefore(fmObject.rawdiv, contentsDiv.firstChild);
             fmObject.rawdiv.innerHTML = pagination.config('frontmatterContents');
             toc = pagination.headersAndToc(bodyObjects);
-            
+
             if (pagination.config('numberPages')) {
                 fmObject.rawdiv.appendChild(toc);
             }
@@ -1216,7 +1232,7 @@
             if (pagination.config('enableTableOfTables')) {
                 tot = pagination.tot(bodyObjects);
                 fmObject.rawdiv.appendChild(tot);
-            }            
+            }
             layoutDiv.insertBefore(fmObject.div, bodyObjects[0].div);
             fmObject.initiate();
             redoToc = function () {
@@ -1228,7 +1244,7 @@
                     tof = pagination.tof(bodyObjects);
                     fmObject.rawdiv.replaceChild(tof, oldTof);
                 }
-               if (pagination.config('enableTableOfTables')) {
+                if (pagination.config('enableTableOfTables')) {
                     var oldTot = tot;
                     tot = pagination.tot(bodyObjects);
                     fmObject.rawdiv.replaceChild(tot, oldTot);
@@ -1238,29 +1254,29 @@
                 }
                 if (pagination.config('enableWordIndex')) {
                     pagination.createWordIndex();
-                }                
+                }
             };
-            document.body.addEventListener('bodyLayoutUpdated', function() {
+            document.body.addEventListener('bodyLayoutUpdated', function () {
                 // We have to set a time out of zero to make sure fonts have been applied, etc. before toc and tof are being calculated.
                 // TODO: Ideally, this shouldn't be needed.
                 setTimeout(redoToc, 0);
-                
+
             });
             if (document.hasOwnProperty('fontloader')) {
-            	document.fontloader.addEventListener('loadingdone', function() {
-                	// When fonts have been loaded, update the body layout.
-                	// TODO: This does not seem to work at all times. 
-                	document.body.dispatchEvent(pagination.events.bodyLayoutUpdated);
-            	});
+                document.fontloader.addEventListener('loadingdone', function () {
+                    // When fonts have been loaded, update the body layout.
+                    // TODO: This does not seem to work at all times. 
+                    document.body.dispatchEvent(pagination.events.bodyLayoutUpdated);
+                });
             }
         }
         if (pagination.config('enableCrossReferences')) {
             pagination.findAllCrossReferences();
         }
-        
+
         if (pagination.config('enableWordIndex')) {
             pagination.createWordIndex();
-        }         
+        }
         document.dispatchEvent(pagination.events.layoutFlowFinished);
     };
 
@@ -1268,10 +1284,10 @@
     pagination.applySimpleBookLayout = function () {
         // Apply this alternative layout in case CSS Regions are not present 
         var contentsDiv, simplePage;
-        
+
         if (eval(pagination.config('flowElement')) === document.body) {
             /* We are reflowing the body itself, yet the layout will be added to 
-             * the body. This will make the broser crash. So we need to move the 
+             * the body. This will make the broser crash. So we need to move the
              * original contents inside a Div of its own first.
              */
             contentsDiv = document.createElement('div');
@@ -1296,42 +1312,44 @@
         //bodyContainer.innerHTML = '';
         //document.body.appendChild(simplePage);
         pagination.adjustSimpleEscapenotes(simplePage);
-        
+
         var observerOptions = {
-                attributes: false,
-                subtree: true,
-                characterData: true,
-                childList: true
-            };
-            
-            var observer = new MutationObserver(function (mutations) {
-                observer.disconnect();
-                pagination.adjustSimpleEscapenotes(simplePage);
-                observer.observe(simplePage,observerOptions);
-            });
-        observer.observe(simplePage,observerOptions);
+            attributes: false,
+            subtree: true,
+            characterData: true,
+            childList: true
+        };
+
+        var observer = new MutationObserver(function (mutations) {
+            observer.disconnect();
+            pagination.adjustSimpleEscapenotes(simplePage);
+            observer.observe(simplePage, observerOptions);
+        });
+        observer.observe(simplePage, observerOptions);
         document.dispatchEvent(pagination.events.layoutFlowFinished);
     };
-    
+
     pagination.resetSimpleEscapenotes = function () {
-        var escapenotes = eval(pagination.config('flowElement')).querySelectorAll(pagination.config('footnoteSelector')+' > *, '+ pagination.config('marginnoteSelector') + ' > *'), i;
-        for (i=0;i<escapenotes.length;i++) {
-            escapenotes[i].style.top='';
+        var escapenotes = eval(pagination.config('flowElement')).querySelectorAll(pagination.config('footnoteSelector') + ' > *, ' + pagination.config('marginnoteSelector') + ' > *'),
+            i;
+        for (i = 0; i < escapenotes.length; i++) {
+            escapenotes[i].style.top = '';
         }
     };
-    
+
     pagination.adjustSimpleEscapenotes = function (simplePage) {
-        var escapenotes = simplePage.querySelectorAll(pagination.config('footnoteSelector')+' > *, '+ pagination.config('marginnoteSelector') + ' > *'), i;
+        var escapenotes = simplePage.querySelectorAll(pagination.config('footnoteSelector') + ' > *, ' + pagination.config('marginnoteSelector') + ' > *'),
+            i;
         if (escapenotes.length > 0 && escapenotes[0].style.top !== '') {
             escapenotes[0].style.top = '';
         }
-        if (escapenotes.length > 1) {   
-            escapenotes[0].style.top='';
-            for (i=1;i<escapenotes.length;i++) {
-                if ((escapenotes[i].parentNode.offsetTop<(escapenotes[i-1].offsetTop+escapenotes[i-1].offsetHeight)) &&
-                    escapenotes[i].style.top !== (escapenotes[i-1].offsetTop+escapenotes[i-1].offsetHeight)+'px'
+        if (escapenotes.length > 1) {
+            escapenotes[0].style.top = '';
+            for (i = 1; i < escapenotes.length; i++) {
+                if ((escapenotes[i].parentNode.offsetTop < (escapenotes[i - 1].offsetTop + escapenotes[i - 1].offsetHeight)) &&
+                    escapenotes[i].style.top !== (escapenotes[i - 1].offsetTop + escapenotes[i - 1].offsetHeight) + 'px'
                 ) {
-                    escapenotes[i].style.top=(escapenotes[i-1].offsetTop+escapenotes[i-1].offsetHeight)+'px';
+                    escapenotes[i].style.top = (escapenotes[i - 1].offsetTop + escapenotes[i - 1].offsetHeight) + 'px';
                 }
             }
         }
@@ -1341,14 +1359,14 @@
         // Check whether CSS Regions are present in Chrome 23+ version
         var returnValue;
         if (
-        (
-            document.webkitGetNamedFlows) && (
-            document.webkitGetNamedFlows() !== null)) {
+            (
+                document.webkitGetNamedFlows) && (
+                document.webkitGetNamedFlows() !== null)) {
             returnValue = true;
         } else {
             returnValue = false;
         }
-        
+
         return returnValue;
     };
 
@@ -1502,12 +1520,12 @@
     flowObject.prototype.findStartpageNumber = function () {
         // Find the first page number used in this flowObject.
         var startpageNumberField;
-        
-        if (this.rawdiv.textContent.length > 0 && pagination.config('numberPages')) {
+
+        if (this.rawdiv.innerText.length > 0 && pagination.config('numberPages')) {
             startpageNumberField =
                 this.div.querySelector('.pagination-pagenumber');
-            if (startpageNumberField) {    
-                this.startpageNumber = startpageNumberField.textContent;
+            if (startpageNumberField) {
+                this.startpageNumber = startpageNumberField.innerText;
             }
         }
     };
@@ -1558,50 +1576,52 @@
          * note the page they are on. This way we can compare to this
          * list when changes have been made and determine whether footnotes need to be reflown.
          */
-        var escapeTypes = ['footnote', 'topfloat', 'marginnote'], j, i;
+        var escapeTypes = ['footnote', 'topfloat', 'marginnote'],
+            j, i;
 
         for (j = 0; j < escapeTypes.length; j++) {
             for (i = 0; i < this.escapes[escapeTypes[j]].length; i++) {
-                this.escapes[escapeTypes[j]][i]['referencePage'] = 
-                  this.findEscapeReferencePage(
-                    this.escapes[escapeTypes[j]][i]['reference']);
-                if (escapeTypes[j]==='marginnote') {
-                    this.escapes[escapeTypes[j]][i]['referenceTopOffset'] = 
-                      this.escapes[escapeTypes[j]][i]['reference'].getBoundingClientRect()['top'] + window.pageYOffset;                   
+                this.escapes[escapeTypes[j]][i]['referencePage'] =
+                    this.findEscapeReferencePage(
+                        this.escapes[escapeTypes[j]][i]['reference']);
+                if (escapeTypes[j] === 'marginnote') {
+                    this.escapes[escapeTypes[j]][i]['referenceTopOffset'] =
+                        this.escapes[escapeTypes[j]][i]['reference'].getBoundingClientRect()['top'] + window.pageYOffset;
                 }
             }
         }
     };
-    
+
     flowObject.prototype.freezeMarginnoteOffsetTop = function () {
         /* For all the references of margin notes,
          * note their top offset. This way we can compare to this
          * list when changes have been made and determine whether margin notes need to be moved.
          */
         var i;
-            for (i = 0; i < this.escapes.marginnote.length; i++) {
-                this.escapes.marginnote[i]['referenceOffsetTop'] = 
-                    this.escapes.marginnote[i]['reference'].offsetTop;
-            }
-    };    
+        for (i = 0; i < this.escapes.marginnote.length; i++) {
+            this.escapes.marginnote[i]['referenceOffsetTop'] =
+                this.escapes.marginnote[i]['reference'].offsetTop;
+        }
+    };
 
     flowObject.prototype.checkAllEscapeReferencePagesPlacements = function () {
         /* For all the references of top/bottom escapes (topfloats, footnotes),
-         * check if they are still on the same page they were on when we froze 
+         * check if they are still on the same page they were on when we froze
          * them. If one has changed, dispatch a redoEscapes event.
          */
-        var escapeTypes = ['footnote', 'topfloat', 'marginnote'], j, i;
+        var escapeTypes = ['footnote', 'topfloat', 'marginnote'],
+            j, i;
 
         for (j = 0; j < escapeTypes.length; j++) {
             for (i = 0; i < this.escapes[escapeTypes[j]].length; i++) {
 
                 if (document.getElementById(this.escapes[escapeTypes[j]][i][
-                        'id'
+                    'id'
                 ]) === null) {
                     /* It seems this escape reference had been deleted, so we dispatch an 
                      * event that will redo all escapes.
                      */
-                    
+
                     if (escapeTypes[j] === 'marginnote') {
                         this.rawdiv.dispatchEvent(pagination.events.redoMarginnotes);
                         this.namedFlow.dispatchEvent(pagination.events.marginnotesNeedMove);
@@ -1610,7 +1630,7 @@
                         this.rawdiv.dispatchEvent(pagination.events.redoEscapes);
                         this.namedFlow.dispatchEvent(pagination.events.escapesNeedMove);
                         return;
-                    }                    
+                    }
 
                 }
 
@@ -1626,8 +1646,8 @@
                 } else if (escapeTypes[j] === 'marginnote' && (this.escapes[escapeTypes[j]][i]['reference'].getBoundingClientRect()['top'] + window.pageYOffset) !== this.escapes[escapeTypes[j]][i]['referenceTopOffset']) {
                     this.namedFlow.dispatchEvent(pagination.events.marginnotesNeedMove);
                 }
-                
-                
+
+
 
             }
         }
@@ -1641,7 +1661,8 @@
         /* Check whether a footnote/top float and it's corresponding reference in the text
          * are on the same page.
          */
-        var escapeReference = document.getElementById(escapeObject['id']), referencePage, escapePage;
+        var escapeReference = document.getElementById(escapeObject['id']),
+            referencePage, escapePage;
 
         referencePage = this.findEscapeReferencePage(
             escapeReference);
@@ -1658,7 +1679,8 @@
 
     flowObject.prototype.setupEscapeReflow = function () {
         // Connect footnote reflow events with triggers.
-        var flowObject = this, reFlow, redoEscapes;
+        var flowObject = this,
+            reFlow, redoEscapes;
 
 
         reFlow = function () {
@@ -1671,9 +1693,9 @@
             flowObject.layoutMarginnotes();
             flowObject.freezeEscapeReferencePages();
         };
-        
+
         this.namedFlow.addEventListener('marginnotesNeedMove', reFlowMarginnotes);
-        
+
         redoEscapes = function () {
             flowObject.redoEscapes();
         };
@@ -1684,7 +1706,8 @@
     flowObject.prototype.redoEscapes = function () {
         /* Reset all top floats and footnotes.
          */
-        var escapeTypes = ['footnote', 'topfloat'], i, j;
+        var escapeTypes = ['footnote', 'topfloat'],
+            i, j;
 
         for (j = 0; j < escapeTypes.length; j++) {
 
@@ -1721,7 +1744,7 @@
     flowObject.prototype.findAllMarginnotes = function () {
         // Find all the footnotes in the text and prepare them for flow.
         this.findAllEscapes('marginnote');
-    };    
+    };
 
     flowObject.prototype.findAllFootnotes = function () {
         // Find all the footnotes in the text and prepare them for flow.
@@ -1743,7 +1766,7 @@
 
 
         /* Look for all the items that have "pagination-"+escapeType in their 
-         * class list. These will be treated as escapes from the normal text 
+         * class list. These will be treated as escapes from the normal text
          * flow.
          */
         allEscapes = this.rawdiv.querySelectorAll(
@@ -1803,7 +1826,7 @@
         // Layout all footnotes
         this.layoutEscapes('footnote');
     };
-    
+
     flowObject.prototype.layoutMarginnotes = function () {
         // Layout all footnotes
         this.layoutEscapes('marginnote');
@@ -1812,13 +1835,13 @@
     flowObject.prototype.layoutEscapes = function (escapeType) {
         // Layout all footnotes and top floats
         var i;
-        
+
         if (escapeType === 'footnote') {
 
             for (i = 0; i < this.escapes[escapeType].length; i++) {
                 /* Go through all footnotes, and remove the hidden nodes that were 
-                 * previously placed to make sure footnote reference and footnote 
-                 * were on the same page. 
+                 * previously placed to make sure footnote reference and footnote
+                 * were on the same page.
                  */
 
                 if ('hidden' in this.escapes[
@@ -1836,7 +1859,7 @@
              * correctly.
              */
             var escapeReferencePage, firstEscapeContainer, marginnoteOffsetTop, marginnoteOffsetTopTotal, checkSpacerSize, observer, newEscapeReferencePage, newEscapeContainer, marginNotesAndOffset;
-            
+
             if (escapeType === 'marginnote') {
                 marginNotesAndOffset = pagination.findMarginNotesContainerAndOffset(document.getElementById(this.escapes[escapeType][i]['id']));
                 firstEscapeContainer = marginNotesAndOffset[0];
@@ -1863,10 +1886,10 @@
                      */
 
                     if (escapeType === 'topfloat' && this.escapes[escapeType][i][
-                            'item'
+                        'item'
                     ].parentNode.children.length === 1) {
                         /* If this is the only top float on the page where the top 
-                         * float had previously been placed, we remove the 
+                         * float had previously been placed, we remove the
                          * pagination-page-topfloat class of the page
                          */
                         this.escapes[escapeType][i]['item'].parentNode.parentNode
@@ -1877,33 +1900,33 @@
                     if (this.escapes[escapeType][i]['item'].parentNode !== firstEscapeContainer) {
                         this.escapes[escapeType][i]['item'].parentNode.removeChild(
                             this.escapes[escapeType][i]['item']);
-                   
-                    
+
+
                         escapeReferencePage = this.findEscapeReferencePage(
                             document.getElementById(this.escapes[escapeType][i][
                                 'id'
-                        ]));
+                            ]));
                         firstEscapeContainer = escapeReferencePage.querySelector(
                             '.pagination-' + escapeType + 's');
-                     }
+                    }
                 }
 
 
                 if (i === 0 || this.escapes[escapeType][i - 1]['item'].parentNode !==
                     firstEscapeContainer) {
                     /* If this is the first footnote or top float or the previous 
-                     * one is not on the same page, we insert it at the very 
+                     * one is not on the same page, we insert it at the very
                      * beginning of the footnote/top float container.
                      */
                     firstEscapeContainer.insertBefore(this.escapes[escapeType][
-                            i
+                        i
                     ]['item'], firstEscapeContainer.firstChild);
                 } else {
                     /* If the previous footnote/top float is on the same page, we 
                      * insert after that one
                      */
                     firstEscapeContainer.insertBefore(this.escapes[escapeType][
-                            i
+                        i
                     ]['item'], this.escapes[escapeType][i - 1]['item'].nextSibling);
                 }
 
@@ -1922,7 +1945,7 @@
                 this.escapes[escapeType][i]))) {
                 /* If the footnote reference has been moved from one page to
                  * another through the insertion procedure, we move the footnote to
-                 * where it is referenced from now and create an empty div 
+                 * where it is referenced from now and create an empty div
                  * ('hidden') and set it in it's place.
                  */
 
@@ -1939,7 +1962,7 @@
 
                     this.escapes[escapeType][i]['hidden'].id = this.escapes[
                         escapeType][i][
-                            'id'
+                        'id'
                     ] +
                         'hidden';
 
@@ -1959,7 +1982,7 @@
                                 pagination.events.escapesNeedMove);
                         }
                     };
-                    
+
                     observer = new MutationObserver(function (mutations) {
                         checkSpacerSize();
                     });
@@ -1984,18 +2007,18 @@
                 if (i === 0 || this.escapes[escapeType][i - 1]['item'].parentNode !==
                     newEscapeContainer) {
                     /* If this is the first footnote or top float or the previous 
-                     * one is not on the same page, we insert it at the very 
+                     * one is not on the same page, we insert it at the very
                      * beginning of the footnote/top float container.
                      */
                     newEscapeContainer.insertBefore(this.escapes[escapeType][i][
-                            'item'
+                        'item'
                     ], newEscapeContainer.firstChild);
                 } else {
                     /* If the previous footnote/top float is on the same page, we 
                      * insert after that one
                      */
                     newEscapeContainer.insertBefore(this.escapes[escapeType][i][
-                            'item'
+                        'item'
                     ], this.escapes[escapeType][i - 1]['item'].nextSibling);
                 }
 
@@ -2010,8 +2033,8 @@
 
             }
         }
-        
-        if (escapeType==='marginnote') {
+
+        if (escapeType === 'marginnote') {
             pagination.adjustAllMarginNotesPositions();
         }
     };
@@ -2020,7 +2043,8 @@
     flowObject.prototype.makeEvenPages = function () {
         // If the number of pages is odd, add an empty page.
         var emptyPage = this.div.querySelector(
-            '.pagination-page.pagination-empty'), allPages;
+            '.pagination-page.pagination-empty'),
+            allPages;
         if (emptyPage) {
             this.div.removeChild(emptyPage);
         }
@@ -2028,10 +2052,10 @@
         if (allPages.length % 2 === 1) {
             this.div.appendChild(
                 pagination.createPages(
-                1,
-                false,
-                this.pageCounter.cssClass,
-                this.columns));
+                    1,
+                    false,
+                    this.pageCounter.cssClass,
+                    this.columns));
         }
     };
 
@@ -2040,26 +2064,28 @@
          * pages. Else use the config option bulkPagesToAdd times
          * pagesToAddIncrementRatio to determine how many pages should be added.
          * It is a point to overshoot the target, as it is more costly to add than
-         * to remove pages. 
+         * to remove pages.
          */
-        if (this.bulkPagesToAdd > pagination.config('maxPageNumber')) {return;}
+        if (this.bulkPagesToAdd > pagination.config('maxPageNumber')) {
+            return;
+        }
         if ('undefined' === typeof (numberOfPages)) {
             this.div.appendChild(
                 pagination.createPages(
-                this.bulkPagesToAdd,
-                this.name,
-                this.pageCounter.cssClass,
-                this.columns));
+                    this.bulkPagesToAdd,
+                    this.name,
+                    this.pageCounter.cssClass,
+                    this.columns));
             this.bulkPagesToAdd = Math.floor(
                 this.bulkPagesToAdd * pagination.config(
-                'pagesToAddIncrementRatio'));
+                    'pagesToAddIncrementRatio'));
         } else {
             this.div.appendChild(
                 pagination.createPages(
-                numberOfPages,
-                this.name,
-                this.pageCounter.cssClass,
-                this.columns));
+                    numberOfPages,
+                    this.name,
+                    this.pageCounter.cssClass,
+                    this.columns));
         }
         this.addOrRemovePages(numberOfPages);
     };
@@ -2068,7 +2094,7 @@
     flowObject.prototype.addOrRemovePages = function (pages) {
         // This loop is called when we believe pages have to added or removed. 
 
-        if ((this.namedFlow.overset) && (this.rawdiv.textContent.length > 0)) {
+        if ((this.namedFlow.overset) && (this.rawdiv.innerText.length > 0)) {
             /* If there are too few regions (overset==True) and the contents of
              * rawdiv are at least 1 character long, pages need to be added.
              */
@@ -2076,10 +2102,10 @@
             this.redoPages = true;
             this.addPagesLoop(pages);
         } else if (
-        (this.namedFlow.firstEmptyRegionIndex !== -1) && (
-        (
-            this.namedFlow.getRegions().length - this.namedFlow.firstEmptyRegionIndex) >=
-            this.columns)) {
+            (this.namedFlow.firstEmptyRegionIndex !== -1) && (
+                (
+                    this.namedFlow.getRegions().length - this.namedFlow.firstEmptyRegionIndex) >=
+                this.columns)) {
             /* If there are excess regions, and the number of empty regions is
              * equal to or higher than the number of columns, we need to remove
              * pages.
@@ -2089,7 +2115,7 @@
         } else if (this.redoPages) {
             /* If pages have either been added or removed, make sure than the total
              * number of pages is even if alwaysEven has been set, and emit a
-             * bodyLayoutUpdated event if this is not the frontmatter. 
+             * bodyLayoutUpdated event if this is not the frontmatter.
              */
             this.redoPages = false;
             if (pagination.config('alwaysEven')) {
@@ -2109,11 +2135,12 @@
          * how many pages are needed before we add them.
          */
 
-        var allPages = this.div.querySelectorAll('.pagination-page'), i;
+        var allPages = this.div.querySelectorAll('.pagination-page'),
+            i;
 
         for (
             i = (
-            Math.ceil(this.namedFlow.firstEmptyRegionIndex / this.columns)); i <
+                Math.ceil(this.namedFlow.firstEmptyRegionIndex / this.columns)); i <
             allPages.length; i++) {
             this.div.removeChild(allPages[i]);
         }
@@ -2125,17 +2152,18 @@
         /* Setup automatic addition and removing of pages when content is added or
          * removed.
          */
-        var flowObject = this, checkOverset, checkAllEscapeReferencePagesPlacements, observer, observerOptions, reFlow, ourRawdiv;
+        var flowObject = this,
+            checkOverset, checkAllEscapeReferencePagesPlacements, observer, observerOptions, reFlow, ourRawdiv;
 
         checkOverset = function () {
             /* Something has changed in the contents of this flow. Check if the
              * values of overset or firstEmptyRegionIndex have changed. If this is
-             * the case, emit a pageLayoutUpdate event. 
+             * the case, emit a pageLayoutUpdate event.
              */
             if (
-            (
-                flowObject.namedFlow.overset !== flowObject.overset) || (
-                flowObject.namedFlow.firstEmptyRegionIndex !== flowObject.firstEmptyRegionIndex)) {
+                (
+                    flowObject.namedFlow.overset !== flowObject.overset) || (
+                    flowObject.namedFlow.firstEmptyRegionIndex !== flowObject.firstEmptyRegionIndex)) {
                 flowObject.overset = flowObject.namedFlow.overset;
                 flowObject.firstEmptyRegionIndex =
                     flowObject.namedFlow.firstEmptyRegionIndex;
@@ -2148,28 +2176,27 @@
         checkAllEscapeReferencePagesPlacements = function () {
             flowObject.checkAllEscapeReferencePagesPlacements();
         };
-        
-        
+
+
         flowObject.namedFlow.addEventListener("webkitregionoversetchange", checkOverset);
 
-        if (navigator.userAgent.indexOf('6.1 Safari/') > -1 
-        || navigator.userAgent.indexOf('7.0 Safari/') > -1) {
+        if (navigator.userAgent.indexOf('6.1 Safari/') > -1 || navigator.userAgent.indexOf('7.0 Safari/') > -1) {
             /* Safari 6.1/7 does not include the regionoversetchange event. 
              * Newer versions should drop the regionlayoutupdate event.
-         	 */
-        	flowObject.namedFlow.addEventListener("webkitregionlayoutupdate", checkOverset);
+             */
+            flowObject.namedFlow.addEventListener("webkitregionlayoutupdate", checkOverset);
         }
 
         flowObject.currentlyChecking = false;
-        
+
         if (this.rawdiv) {
             /* Create an observer instance to watch if anything is being changed in
              * the contents of the original text.
-             * We do this instead of listening to the webkitregionlayoutupdate 
+             * We do this instead of listening to the webkitregionlayoutupdate
              * event of the flow, because it is ridden with bugs and fires too often.
-             * This could be changed once 
+             * This could be changed once
              * https://bugs.webkit.org/show_bug.cgi?id=105366 has been resolved.
-             * 
+             *
              * TODO: Check whether throttling this event makes sense.
              */
             observerOptions = {
@@ -2178,22 +2205,22 @@
                 characterData: true,
                 childList: true
             };
-            
+
             ourRawdiv = this.rawdiv;
-            
+
             observer = new MutationObserver(function (mutations) {
-                
+
                 if (!(flowObject.currentlyChecking)) {
                     flowObject.currentlyChecking = true;
-                    setTimeout(function() {
+                    setTimeout(function () {
                         checkAllEscapeReferencePagesPlacements();
                         flowObject.currentlyChecking = false;
-                    },1);
+                    }, 1);
                 }
             });
 
-            observer.observe(ourRawdiv,observerOptions);
-            
+            observer.observe(ourRawdiv, observerOptions);
+
         }
 
         reFlow = function () {
@@ -2204,7 +2231,7 @@
             }
         };
         this.namedFlow.addEventListener('pageLayoutUpdate', reFlow);
-        
+
     };
 
     exports.flowObject = flowObject;

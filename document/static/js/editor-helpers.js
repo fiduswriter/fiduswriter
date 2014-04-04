@@ -64,12 +64,12 @@
             if (theDocument.settings.metadata[i]) {
                 jQuery('.metadata-menu-item.metadata-' + i).addClass(
                     'selected');
-            }
-            if (theDocument.metadata[i]) {
-                metadataDataNode = exporter.obj2Node(theDocument.metadata[i]);
-                layoutDataNode  = metadataClone.querySelector('#metadata-'+i);
-                while (metadataDataNode.firstChild) {
-                    layoutDataNode.appendChild(metadataDataNode.firstChild);
+                if (theDocument.metadata[i]) {
+                    metadataDataNode = exporter.obj2Node(theDocument.metadata[i]);
+                    layoutDataNode  = metadataClone.querySelector('#metadata-'+i);
+                    while (metadataDataNode.firstChild) {
+                        layoutDataNode.appendChild(metadataDataNode.firstChild);
+                    }
                 }
             }
         }

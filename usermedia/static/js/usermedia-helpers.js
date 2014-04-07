@@ -90,7 +90,7 @@
             success: function (response, textStatus, jqXHR) {
                 if (jqXHR.status == 201) {
                     // TODO: Why do we reload the entire list when one new category is created?
-                    ImageCategories = [];
+                    imageCategories = [];
                     jQuery('#image-category-list li').not(':first').remove();
                     usermediaHelpers.addImageCategoryList(response);
 
@@ -126,7 +126,7 @@
         var dialogBody = tmp_usermedia_editcategories({
             'dialogHeader': dialogHeader,
             'categories': tmp_usermedia_categoryforms({
-                'categories': ImageCategories
+                'categories': imageCategories
             })
         });
         jQuery('body').append(dialogBody);
@@ -238,14 +238,14 @@
         }
 
         var iCats = [];
-        jQuery.each(ImageCategories, function (i, iCat) {
+        jQuery.each(imageCategories, function (i, iCat) {
             var len = iCats.length;
             iCats[len] = {
                 'id': iCat.id,
                 'category_title': iCat.category_title
             };
             if (0 <= jQuery.inArray(String(iCat.id), imageCat)) {
-                iCats[len].checked = ' checked';
+                iCats[len].checked = ' checked';cat
             } else {
                 iCats[len].checked = '';
             }
@@ -394,11 +394,11 @@
 
     };
 
-    usermediaHelpers.addImageCategoryList = function (newImageCategories) {
+    usermediaHelpers.addImageCategoryList = function (newimageCategories) {
         var i;
-        ImageCategories = ImageCategories.concat(newImageCategories);
-        for (i = 0; i < newImageCategories.length; i++) {
-            usermediaHelpers.appendToImageCatList(newImageCategories[i]);
+        imageCategories = imageCategories.concat(newimageCategories);
+        for (i = 0; i < newimageCategories.length; i++) {
+            usermediaHelpers.appendToImageCatList(newimageCategories[i]);
         }
     };
 
@@ -505,7 +505,7 @@
         var documentOwnerId;
 
         window.ImageDB = {};
-        window.ImageCategories = [];
+        window.imageCategories = [];
         //Fill ImageDB
         if (typeof (theDocument) === 'undefined') {
             documentOwnerId = 0;

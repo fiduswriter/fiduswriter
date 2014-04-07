@@ -342,7 +342,7 @@ def save_category_js(request):
                 the_cat = EntryCategory.objects.get(pk = the_id)
                 the_cat.category_title = the_title
             the_cat.save()
-            response.append({'id': the_cat.id, 'title': the_cat.category_title});
+            response.append({'id': the_cat.id, 'category_title': the_cat.category_title});
         status = 201
         
     return HttpResponse(

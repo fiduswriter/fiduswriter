@@ -127,13 +127,6 @@ jQuery(document).bind('documentDataLoaded', function () {
 
     editorHelpers.setDisplay.document('id', theDocument.id);
 
-
-    // Disable papersize menu if we are dealing with a non CSS Regions browser
-    if (jQuery('.pagination-simple').length > 0) {
-        jQuery('.papersize-menu').unbind('mousedown');
-        jQuery('.papersize-menu').addClass('disabled');
-    }
-
     jQuery(document).on('mousedown', '.savecopy:not(.disabled)', function () {
         editorHelpers.getUpdatesFromInputFields(function () {
             editorHelpers.saveDocument();

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-16 14:20-0500\n"
+"POT-Creation-Date: 2014-04-16 17:50-0500\n"
 "PO-Revision-Date: 2013-09-18 08:52+0200\n"
 "Last-Translator: Vladimir Vitkov <vvitkov@linux-bg.org>\n"
 "Language-Team: Bulgarian <vvitkov@linux-bg.org>\n"
@@ -1268,52 +1268,52 @@ msgstr ""
 msgid "Do you really want to delete the revision?"
 msgstr ""
 
-#: document/static/js/editor-helpers.js:36
+#: document/static/js/editor-helpers.js:63
 msgid "The subtitle of the document"
 msgstr "Подзаглавието на документа"
 
-#: document/static/js/editor-helpers.js:39
+#: document/static/js/editor-helpers.js:66
 #, fuzzy
 msgid "The authors of the document (comma-separated)"
 msgstr "Обобщение на документа"
 
-#: document/static/js/editor-helpers.js:42
+#: document/static/js/editor-helpers.js:69
 msgid "The abstract of the document"
 msgstr "Обобщение на документа"
 
-#: document/static/js/editor-helpers.js:45
+#: document/static/js/editor-helpers.js:72
 msgid "The keywords related to the document (comma-separated)"
 msgstr ""
 
-#: document/static/js/editor-helpers.js:357
+#: document/static/js/editor-helpers.js:384
 msgid "Untitled Document"
 msgstr "Неозаглавен документ"
 
-#: document/static/js/editor-helpers.js:547
+#: document/static/js/editor-helpers.js:574
 #, fuzzy
 msgid "Title..."
 msgstr "Заглавие"
 
-#: document/static/js/editor-helpers.js:553
+#: document/static/js/editor-helpers.js:580
 msgid "Contents..."
 msgstr "Съдържание"
 
-#: document/static/js/editor-helpers.js:559
+#: document/static/js/editor-helpers.js:586
 #, fuzzy
 msgid "Subtitle..."
 msgstr "Подзаглавие"
 
-#: document/static/js/editor-helpers.js:565
+#: document/static/js/editor-helpers.js:592
 #, fuzzy
 msgid "Abstract..."
 msgstr "Обобщение"
 
-#: document/static/js/editor-helpers.js:571
+#: document/static/js/editor-helpers.js:598
 #, fuzzy
 msgid "Author(s)..."
 msgstr "Автор(и)"
 
-#: document/static/js/editor-helpers.js:577
+#: document/static/js/editor-helpers.js:604
 #, fuzzy
 msgid "Keywords..."
 msgstr "Ключови думи"

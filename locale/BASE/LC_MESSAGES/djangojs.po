@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-16 14:20-0500\n"
+"POT-Creation-Date: 2014-04-16 17:50-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1259,47 +1259,47 @@ msgstr ""
 msgid "Do you really want to delete the revision?"
 msgstr ""
 
-#: document/static/js/editor-helpers.js:36
+#: document/static/js/editor-helpers.js:63
 msgid "The subtitle of the document"
 msgstr ""
 
-#: document/static/js/editor-helpers.js:39
+#: document/static/js/editor-helpers.js:66
 msgid "The authors of the document (comma-separated)"
 msgstr ""
 
-#: document/static/js/editor-helpers.js:42
+#: document/static/js/editor-helpers.js:69
 msgid "The abstract of the document"
 msgstr ""
 
-#: document/static/js/editor-helpers.js:45
+#: document/static/js/editor-helpers.js:72
 msgid "The keywords related to the document (comma-separated)"
 msgstr ""
 
-#: document/static/js/editor-helpers.js:357
+#: document/static/js/editor-helpers.js:384
 msgid "Untitled Document"
 msgstr ""
 
-#: document/static/js/editor-helpers.js:547
+#: document/static/js/editor-helpers.js:574
 msgid "Title..."
 msgstr ""
 
-#: document/static/js/editor-helpers.js:553
+#: document/static/js/editor-helpers.js:580
 msgid "Contents..."
 msgstr ""
 
-#: document/static/js/editor-helpers.js:559
+#: document/static/js/editor-helpers.js:586
 msgid "Subtitle..."
 msgstr ""
 
-#: document/static/js/editor-helpers.js:565
+#: document/static/js/editor-helpers.js:592
 msgid "Abstract..."
 msgstr ""
 
-#: document/static/js/editor-helpers.js:571
+#: document/static/js/editor-helpers.js:598
 msgid "Author(s)..."
 msgstr ""
 
-#: document/static/js/editor-helpers.js:577
+#: document/static/js/editor-helpers.js:604
 msgid "Keywords..."
 msgstr ""
 

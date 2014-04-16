@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-03 18:47-0600\n"
+"POT-Creation-Date: 2014-04-16 14:20-0500\n"
 "PO-Revision-Date: 2013-09-18 08:52+0200\n"
 "Last-Translator: Vladimir Vitkov <vvitkov@linux-bg.org>\n"
 "Language-Team: Bulgarian <vvitkov@linux-bg.org>\n"
@@ -73,7 +73,7 @@ msgstr "Добави потребител към твоите контакти"
 #: account/static/js/show_profile.js:377
 #: bibliography/static/js/bibliography-helpers.js:796
 #: bibliography/static/js/bibliography-helpers.js:934
-#: book/static/js/book-helpers.js:240 book/static/js/book-helpers.js.c:638
+#: book/static/js/book-helpers.js:240 book/static/js/book-helpers.js.c:639
 #: book/static/js/bookaccessrights-helpers.js:76
 #: document/static/js/comment-templates.js:43
 #: document/static/js/comment-templates.js:137
@@ -93,7 +93,7 @@ msgstr "Изпрати"
 #: bibliography/static/js/bibliography-helpers.js:1580
 #: bibliography/static/js/bibliography-helpers.js:1721
 #: book/static/js/book-helpers.js:102 book/static/js/book-helpers.js.c:247
-#: book/static/js/book-helpers.js:644 book/static/js/book-templates.js:250
+#: book/static/js/book-helpers.js:645 book/static/js/book-templates.js:250
 #: book/static/js/bookaccessrights-helpers.js:89
 #: document/static/js/comment-templates.js:46
 #: document/static/js/comment-templates.js:74
@@ -106,7 +106,7 @@ msgstr "Изпрати"
 #: document/static/js/exporter.js:86
 #: document/static/js/figure-citation-templates.js:187
 #: document/static/js/toolbar/cite.js:176
-#: document/static/js/toolbar/figure.js:202
+#: document/static/js/toolbar/figure.js:200
 #: document/static/js/toolbar/link.js:80 document/static/js/toolbar/math.js:98
 #: usermedia/static/js/usermedia-helpers.js:156
 #: usermedia/static/js/usermedia-helpers.js:268
@@ -900,21 +900,21 @@ msgstr "Обложка"
 msgid "Title page"
 msgstr "Заглавна страница"
 
-#: book/static/js/book-exporter.js:269 book/static/js/book-exporter.js.c:323
-#: book/static/js/book-exporter.js:331 document/static/js/exporter.js:1156
-#: document/static/js/exporter.js.c:1203 document/static/js/exporter.js:1211
+#: book/static/js/book-exporter.js:271 book/static/js/book-exporter.js.c:325
+#: book/static/js/book-exporter.js:333 document/static/js/exporter.js:1184
+#: document/static/js/exporter.js.c:1231 document/static/js/exporter.js:1239
 msgid "en"
 msgstr "англ"
 
-#: book/static/js/book-exporter.js:288
+#: book/static/js/book-exporter.js:290
 msgid "Copyright"
 msgstr "Авторски права"
 
-#: book/static/js/book-exporter.js:309 document/static/js/exporter.js:1189
+#: book/static/js/book-exporter.js:311 document/static/js/exporter.js:1217
 msgid "en-US"
 msgstr "en-US"
 
-#: book/static/js/book-exporter.js:357 book/static/js/book-exporter.js.c:536
+#: book/static/js/book-exporter.js:359 book/static/js/book-exporter.js.c:538
 msgid "English"
 msgstr "Английски"
 
@@ -951,7 +951,7 @@ msgstr "Създай Книга"
 msgid "Edit Book"
 msgstr "Редактирай Книга"
 
-#: book/static/js/book-helpers.js:648
+#: book/static/js/book-helpers.js:649
 #: document/static/js/document-revisions-helpers.js:39
 #: document/static/js/libs/question.mark.js:16
 msgid "Close"
@@ -961,15 +961,15 @@ msgstr "Затвори"
 msgid "You cannot delete or share: "
 msgstr "не можете да изтриете или споделите:"
 
-#: book/static/js/book-index.js:87 document/static/js/exporter.js:1064
+#: book/static/js/book-index.js:87 document/static/js/exporter.js:1092
 msgid "Epub export has been initiated."
 msgstr "Започнат бе Epub експорт."
 
-#: book/static/js/book-index.js:98 document/static/js/exporter.js:995
+#: book/static/js/book-index.js:98 document/static/js/exporter.js:1023
 msgid "Latex export has been initiated."
 msgstr "Започнат бе Latex експорт."
 
-#: book/static/js/book-index.js:109 document/static/js/exporter.js:1285
+#: book/static/js/book-index.js:109 document/static/js/exporter.js:1313
 msgid "HTML export has been initiated."
 msgstr "Започнат бе HTML експорт."
 
@@ -1285,35 +1285,35 @@ msgstr "Обобщение на документа"
 msgid "The keywords related to the document (comma-separated)"
 msgstr ""
 
-#: document/static/js/editor-helpers.js:363
+#: document/static/js/editor-helpers.js:357
 msgid "Untitled Document"
 msgstr "Неозаглавен документ"
 
-#: document/static/js/editor-helpers.js:553
+#: document/static/js/editor-helpers.js:547
 #, fuzzy
 msgid "Title..."
 msgstr "Заглавие"
 
-#: document/static/js/editor-helpers.js:559
+#: document/static/js/editor-helpers.js:553
 msgid "Contents..."
 msgstr "Съдържание"
 
-#: document/static/js/editor-helpers.js:565
+#: document/static/js/editor-helpers.js:559
 #, fuzzy
 msgid "Subtitle..."
 msgstr "Подзаглавие"
 
-#: document/static/js/editor-helpers.js:571
+#: document/static/js/editor-helpers.js:565
 #, fuzzy
 msgid "Abstract..."
 msgstr "Обобщение"
 
-#: document/static/js/editor-helpers.js:577
+#: document/static/js/editor-helpers.js:571
 #, fuzzy
 msgid "Author(s)..."
 msgstr "Автор(и)"
 
-#: document/static/js/editor-helpers.js:583
+#: document/static/js/editor-helpers.js:577
 #, fuzzy
 msgid "Keywords..."
 msgstr "Ключови думи"
@@ -1339,11 +1339,11 @@ msgstr ""
 msgid "Revision could not be saved."
 msgstr "Документа не беше запазен"
 
-#: document/static/js/exporter.js:814
+#: document/static/js/exporter.js:842
 msgid "Copy of "
 msgstr "Копие на"
 
-#: document/static/js/exporter.js:911
+#: document/static/js/exporter.js:939
 msgid "File export has been initiated."
 msgstr "Експортирането беше стартирано."
 
@@ -1528,11 +1528,11 @@ msgstr "Вмъкване"
 msgid "Update"
 msgstr "Обновяване"
 
-#: document/static/js/toolbar/figure.js:213
+#: document/static/js/toolbar/figure.js:211
 msgid "Enter latex math or insert an image"
 msgstr "Въведете Latex формула или изображение"
 
-#: document/static/js/toolbar/figure.js:328
+#: document/static/js/toolbar/figure.js:326
 msgid "Images"
 msgstr "Изображения"
 

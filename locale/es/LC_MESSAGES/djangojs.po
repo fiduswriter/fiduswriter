@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-03-03 18:47-0600\n"
+"POT-Creation-Date: 2014-04-16 14:20-0500\n"
 "PO-Revision-Date: 2013-03-03 12:18-0700\n"
 "Last-Translator: Ana Vera Resquín <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
@@ -73,7 +73,7 @@ msgstr "Añadir un usuario a tu lista de contactos"
 #: account/static/js/show_profile.js:377
 #: bibliography/static/js/bibliography-helpers.js:796
 #: bibliography/static/js/bibliography-helpers.js:934
-#: book/static/js/book-helpers.js:240 book/static/js/book-helpers.js.c:638
+#: book/static/js/book-helpers.js:240 book/static/js/book-helpers.js.c:639
 #: book/static/js/bookaccessrights-helpers.js:76
 #: document/static/js/comment-templates.js:43
 #: document/static/js/comment-templates.js:137
@@ -93,7 +93,7 @@ msgstr "Añadir"
 #: bibliography/static/js/bibliography-helpers.js:1580
 #: bibliography/static/js/bibliography-helpers.js:1721
 #: book/static/js/book-helpers.js:102 book/static/js/book-helpers.js.c:247
-#: book/static/js/book-helpers.js:644 book/static/js/book-templates.js:250
+#: book/static/js/book-helpers.js:645 book/static/js/book-templates.js:250
 #: book/static/js/bookaccessrights-helpers.js:89
 #: document/static/js/comment-templates.js:46
 #: document/static/js/comment-templates.js:74
@@ -106,7 +106,7 @@ msgstr "Añadir"
 #: document/static/js/exporter.js:86
 #: document/static/js/figure-citation-templates.js:187
 #: document/static/js/toolbar/cite.js:176
-#: document/static/js/toolbar/figure.js:202
+#: document/static/js/toolbar/figure.js:200
 #: document/static/js/toolbar/link.js:80 document/static/js/toolbar/math.js:98
 #: usermedia/static/js/usermedia-helpers.js:156
 #: usermedia/static/js/usermedia-helpers.js:268
@@ -899,21 +899,21 @@ msgstr "Tapada"
 msgid "Title page"
 msgstr "Página de título"
 
-#: book/static/js/book-exporter.js:269 book/static/js/book-exporter.js.c:323
-#: book/static/js/book-exporter.js:331 document/static/js/exporter.js:1156
-#: document/static/js/exporter.js.c:1203 document/static/js/exporter.js:1211
+#: book/static/js/book-exporter.js:271 book/static/js/book-exporter.js.c:325
+#: book/static/js/book-exporter.js:333 document/static/js/exporter.js:1184
+#: document/static/js/exporter.js.c:1231 document/static/js/exporter.js:1239
 msgid "en"
 msgstr "es"
 
-#: book/static/js/book-exporter.js:288
+#: book/static/js/book-exporter.js:290
 msgid "Copyright"
 msgstr "Copyright"
 
-#: book/static/js/book-exporter.js:309 document/static/js/exporter.js:1189
+#: book/static/js/book-exporter.js:311 document/static/js/exporter.js:1217
 msgid "en-US"
 msgstr "es-ES"
 
-#: book/static/js/book-exporter.js:357 book/static/js/book-exporter.js.c:536
+#: book/static/js/book-exporter.js:359 book/static/js/book-exporter.js.c:538
 msgid "English"
 msgstr "Español"
 
@@ -950,7 +950,7 @@ msgstr "Crear Libro"
 msgid "Edit Book"
 msgstr "Editar Libro"
 
-#: book/static/js/book-helpers.js:648
+#: book/static/js/book-helpers.js:649
 #: document/static/js/document-revisions-helpers.js:39
 #: document/static/js/libs/question.mark.js:16
 msgid "Close"
@@ -960,15 +960,15 @@ msgstr "Cerrar"
 msgid "You cannot delete or share: "
 msgstr "No puedes borrar o compartir: "
 
-#: book/static/js/book-index.js:87 document/static/js/exporter.js:1064
+#: book/static/js/book-index.js:87 document/static/js/exporter.js:1092
 msgid "Epub export has been initiated."
 msgstr "Exportación del archivo Epub ha sido iniciado."
 
-#: book/static/js/book-index.js:98 document/static/js/exporter.js:995
+#: book/static/js/book-index.js:98 document/static/js/exporter.js:1023
 msgid "Latex export has been initiated."
 msgstr "Exportación del archivo Latex ha sido iniciado."
 
-#: book/static/js/book-index.js:109 document/static/js/exporter.js:1285
+#: book/static/js/book-index.js:109 document/static/js/exporter.js:1313
 msgid "HTML export has been initiated."
 msgstr "Exportación del archivo HTML ha sido iniciado."
 
@@ -1285,32 +1285,32 @@ msgstr "El resumen del documento"
 msgid "The keywords related to the document (comma-separated)"
 msgstr ""
 
-#: document/static/js/editor-helpers.js:363
+#: document/static/js/editor-helpers.js:357
 msgid "Untitled Document"
 msgstr "Documento sin nombre"
 
-#: document/static/js/editor-helpers.js:553
+#: document/static/js/editor-helpers.js:547
 msgid "Title..."
 msgstr "Título..."
 
-#: document/static/js/editor-helpers.js:559
+#: document/static/js/editor-helpers.js:553
 msgid "Contents..."
 msgstr "Contenido..."
 
-#: document/static/js/editor-helpers.js:565
+#: document/static/js/editor-helpers.js:559
 msgid "Subtitle..."
 msgstr "Subtítulo..."
 
-#: document/static/js/editor-helpers.js:571
+#: document/static/js/editor-helpers.js:565
 msgid "Abstract..."
 msgstr "Abstracto..."
 
-#: document/static/js/editor-helpers.js:577
+#: document/static/js/editor-helpers.js:571
 #, fuzzy
 msgid "Author(s)..."
 msgstr "Autor(es)"
 
-#: document/static/js/editor-helpers.js:583
+#: document/static/js/editor-helpers.js:577
 #, fuzzy
 msgid "Keywords..."
 msgstr "Palabras claves"
@@ -1336,11 +1336,11 @@ msgstr ""
 msgid "Revision could not be saved."
 msgstr "El documento no se pudo guardar"
 
-#: document/static/js/exporter.js:814
+#: document/static/js/exporter.js:842
 msgid "Copy of "
 msgstr "Copia de "
 
-#: document/static/js/exporter.js:911
+#: document/static/js/exporter.js:939
 msgid "File export has been initiated."
 msgstr "Exportación del archivo ha sido iniciado"
 
@@ -1525,11 +1525,11 @@ msgstr "Insertar"
 msgid "Update"
 msgstr "Cambiar"
 
-#: document/static/js/toolbar/figure.js:213
+#: document/static/js/toolbar/figure.js:211
 msgid "Enter latex math or insert an image"
 msgstr "Ingresar código latex o insertar un imagen"
 
-#: document/static/js/toolbar/figure.js:328
+#: document/static/js/toolbar/figure.js:326
 msgid "Images"
 msgstr "Imagenes"
 

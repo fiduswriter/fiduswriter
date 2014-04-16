@@ -142,6 +142,28 @@
 
             <script type="text/javascript" src="{{ STATIC_URL }}js/common.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/menubase.js"></script>
+            <!-- simplePagination.js -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/simplePagination.js"></script>
+            <script type="text/javascript">
+                // Config options for pagination
+
+                var paginationConfig = {
+                    'flowElement' : "document.getElementById('flow')",
+                    'enableFrontmatter' : false,
+                    'divideContents' : false,
+                    'alwaysEven' : false,
+                    //'autostart': true,
+                    'pageWidth': 790,
+                    'pageHeight': 1117, // A4 is standard size
+                    'outerMargin': 90,
+                    'innerMargin': 90,
+                    'contentsTopMargin': 80,
+                    'headerTopMargin': 80,
+                    'contentsBottomMargin': 80,
+                    'pagenumberBottomMargin': 50,
+                    'lengthUnit': 'px'
+                };
+            </script>
             <script type="text/javascript">
                 // Prevent migrate messages. Currently only one message from hallo.js is being created.
                 jQuery.migrateMute = true;

@@ -34,7 +34,6 @@
     
     editorEscapes.reset = function () {
         
-        console.log('adjusting');
         var pageElement = document.getElementById('flow'), 
             escapeNodes = pageElement.querySelectorAll('.pagination-footnote > *'),
             styleText='', i;

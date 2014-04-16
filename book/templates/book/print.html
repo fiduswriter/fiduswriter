@@ -39,20 +39,16 @@
             <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/node-converter.js"></script>
             <script type="text/javascript">
-                if (!document.webkitGetNamedFlows) {
-                    var currentURL = location.href.substr(7);
-                    var currentRelativeURL = currentURL.substr(currentURL.indexOf('/'));
-                    if(currentRelativeURL != '/feedback/browser/') {
-                        window.location = '/feedback/browser';
-                    }
-                }
+                var isChrome = (window.hasOwnProperty('chrome')), 
+                isSafari = (navigator.userAgent.indexOf('Safari/') > -1), 
+                isFirefox = !(window.mozInnerScreenX == null);
             </script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/csrf.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/common.js"></script>
             <script type="text/javascript">
                 // Config options for pagination
                 var paginationConfig = {
-                    'flowElement' : "document.getElementById('flow')",
+                    flowElement : "document.getElementById('flow')",
                     enableFrontmatter : true,
                     sectionStartMarker: 'div.part',
                     sectionTitleMarker: 'h1',
@@ -60,8 +56,7 @@
                     chapterTitleMarker: 'h1',
                     alwaysEven: true,
                     autoStart: false,
-                    topfloatSelector: 'figure,h1',
-                    //lengthUnit: 'px'
+                    topfloatSelector: 'figure',
                 };
             </script>
             <script type="text/javascript"  src="{{ STATIC_URL }}js/math-helpers.js"></script>
@@ -78,7 +73,7 @@
                 var lastStyleUsedFootnotes = false;
             </script>
 
-            <script type="text/javascript"  src="{{ STATIC_URL }}js/libs/pagination.js"></script>
+            <script type="text/javascript"  src="{{ STATIC_URL }}js/libs/simplePagination.js"></script>
 
             <script type="text/javascript"  src="{{ STATIC_URL }}js/print-templates.js"></script>
             <script type="text/javascript"  src="{{ STATIC_URL }}js/print-helpers.js"></script>

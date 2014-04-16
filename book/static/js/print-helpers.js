@@ -116,7 +116,7 @@
             pagination.initiate();
             pagination.applyBookLayout();
             jQuery("#pagination-contents").addClass('user-contents');
-            jQuery('head title').html(jQuery('#document-title')[0].textContent);
+            jQuery('head title').html(jQuery('#document-title').text());
         });
         
         

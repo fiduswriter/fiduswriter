@@ -79,7 +79,7 @@
         diffs = domDiff.diff(metadataNode, metadataClone);
         domDiff.apply(metadataNode,diffs);
         
-        nodeConverter.redoFootnotes();
+        editorEscapes.reset();
     };
 
     /** Turn enabled metadata off and disabled metadata on, Function is bound to clicking option in metadata menu. 
@@ -187,12 +187,12 @@
         editorHelpers.setDisplay.document('contents', theDocument.contents);
         editorHelpers.setDisplay.document('metadata.title', theDocument.metadata
             .title);
-        // If CSS Regions is not present, wait one second and then relayout the footnotes. At this time the fonts should have loaded.
-        if(document.querySelector('.pagination-simple')) {
-            setTimeout(function() {
-                pagination.adjustSimpleEscapenotes(document.getElementById('flow'));//XX
-            }, 1000);
-        }
+        // Wait one second and then relayout the footnotes. At this time the fonts should have loaded.
+
+        setTimeout(function() {
+            editorEscapes.reset();
+        }, 1000);
+        
     };
 
     /** Called whenever anything has changed in the document text. Makes sure that saving and synchronizing with peers happens.
@@ -231,12 +231,6 @@
 
         set_document_style_timer = setTimeout(function () {
             clearTimeout(set_document_style_timer);
-            if (document.webkitGetNamedFlows) {
-                if (document.webkitGetNamedFlows()[0]) {
-                    document.webkitGetNamedFlows()[0].dispatchEvent(
-                        pagination.events.escapesNeedMove);
-                }
-            }
             commentHelpers.layoutComments();
         }, 200);
         
@@ -264,16 +258,6 @@
         jQuery('span[data-paperheight=' + theValue +
             ']').addClass('selected');
         paginationConfig['pageHeight'] = theValue;
-        pagination.setPageStyle();
-        commentHelpers.layoutComments();
-        set_document_style_timer = setTimeout(function () {
-            clearTimeout(set_document_style_timer);
-            if (document.webkitGetNamedFlows && document.webkitGetNamedFlows()
-                .length > 0) {
-                document.webkitGetNamedFlows()[0].dispatchEvent(
-                    pagination.events.escapesNeedMove);
-            }
-        }, 100);
 
     };
     
@@ -337,7 +321,7 @@
         
         domDiff.apply(contentsNode, diffs);
         
-        nodeConverter.redoFootnotes();
+        editorEscapes.reset();
         
     };
 
@@ -359,7 +343,7 @@
         
         domDiff.apply(titleNode, diffs);
         
-        nodeConverter.redoFootnotes();
+        editorEscapes.reset();
 
         editorHelpers.setDisplay.document('title', titleClone.textContent);
     };

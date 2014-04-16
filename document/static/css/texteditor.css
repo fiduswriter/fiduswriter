@@ -415,7 +415,27 @@ figure img {
 
 #flow {
     counter-reset: figure-cat-0 figure-cat-1 figure-cat-2;
+    background-color: white;
 }
+
+body {counter-reset: pagination-footnote pagination-footnote-reference;}
+#flow .pagination-footnote::before {
+    counter-increment: pagination-footnote-reference;
+    content: counter(pagination-footnote-reference);
+}
+
+#flow .pagination-footnote > * > *:first-child::before {
+    counter-increment: pagination-footnote;
+    content: counter(pagination-footnote);}
+#flow .pagination-footnote > * > * {display: block;}
+#flow .pagination-footnote > * > * {font-size: 0.7em; margin:.25em;}
+#flow .pagination-footnote > * > *::before, .pagination-footnote::before {position: relative; top: -0.5em; font-size: 80%;}
+#flow .pagination-footnote > span, .pagination-simple .pagination-marginnote > span {
+    position: absolute; 
+    right: 0in; 
+    width: 1.5in;
+}
+
 
 .figure-cat-figure::after {
     counter-increment: figure-cat-0;

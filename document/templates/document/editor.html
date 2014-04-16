@@ -158,31 +158,6 @@
             <!-- Rangy -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/rangy-core-1.2.3.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/rangy-selectionsaverestore.js"></script>
-            <!-- Pagination.js -->
-            <script type="text/javascript">
-                // Config options for pagination
-
-                var paginationConfig = {
-                    'flowElement' : "document.getElementById('flow')",
-                    'enableFrontmatter' : false,
-                    'divideContents' : false,
-                    'alwaysEven' : false,
-                    //'autostart': true,
-                    'pageWidth': 790,
-                    'pageHeight': 1117, // A4 is standard size
-                    'outerMargin': 90,
-                    'innerMargin': 90,
-                    'contentsTopMargin': 80,
-                    'headerTopMargin': 80,
-                    'contentsBottomMargin': 80,
-                    'pagenumberBottomMargin': 50,
-                    'lengthUnit': 'px'
-                };
-            </script>
-
-            <script type="text/javascript"  src="{{ STATIC_URL }}js/libs/pagination.js"></script>
-
-
             <!-- Zip.js -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/zip.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/deflate.js"></script>
@@ -253,6 +228,8 @@
             <script type="text/javascript">
                 chatHelpers.bind();
             </script>
+            <!-- Moving of footnotes-->
+            <script type="text/javascript"  src="{{ STATIC_URL }}js/editor-escapes.js"></script>
             <!-- Document related functions -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/editor-helpers.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/editor-setup.js"></script>
@@ -595,14 +572,13 @@
             </div>
         </nav>
 
-        <div id="flow" class="comments-enabled CT-hide">
+        <div id="flow" class="comments-enabled CT-hide pagination-page pagination-simple">
             <div id="document-editable">
                 <div id="document-title" class="editable user-contents" title="{% trans "The title of the document" %}"></div>
                 <div id="document-metadata" class="user-contents"></div>
                 <div id="document-contents" class="editable user-contents"></div>
             </div>
             <div id="document-bibliography" class="user-contents"></div>
-            &nbsp; {% comment %}This space ensures that also an empty document will trigger pagination.{% endcomment %}
         </div>
         <div id="comment-box-container"></div><div id="tracking-box-container"></div>
         {% include "feedback/feedback.html" %}

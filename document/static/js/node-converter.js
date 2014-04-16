@@ -34,8 +34,8 @@
             while(fnNodes[i].firstChild) {
                 newFn.appendChild(fnNodes[i].firstChild);
             }
-            newFn = nodeConverter.createFootnoteView(newFn);
-            //fnNodes[i].parentNode.insertBefore(nodeConverter.beforeFootnote(), fnNodes[i]);
+            newFn = nodeConverter.createFootnoteView(newFn, i);
+
             fnNodes[i].parentNode.replaceChild(newFn, fnNodes[i]);
         }
         
@@ -75,11 +75,7 @@
         return modelNode;
     };
     
-    nodeConverter.redoFootnotes = function () {
-        document.getElementById('flow').dispatchEvent(pagination.events.redoEscapes);
-    };
-    
-    nodeConverter.createFootnoteView = function (htmlFragment) {
+    nodeConverter.createFootnoteView = function (htmlFragment, number) {
         var fn = document.createElement('span'), id;
         fn.classList.add('pagination-footnote');
         
@@ -94,11 +90,15 @@
         }
         fn.firstChild.firstChild.appendChild(htmlFragment);
 
-        id=document.querySelectorAll('.pagionation-footnote').length;
-        while(document.getElementById(id)) {
-            id++;
+        if (typeof number === 'undefined') {
+            number = document.getElementById('#flow').querySelectorAll('.pagination-footnote').length;
+        
+            while (document.getElementById('pagination-footnote-'+number)) {
+                number++;
+            }
         }
-        fn.id = 'pagination-footnote-'+ id;
+               
+        fn.id = 'pagination-footnote-'+ number;
         return fn;
     };
     

@@ -173,7 +173,7 @@
         }
 
         if ('note' == citeproc_obj.citationtype || lastStyleUsedFootnotes) {
-            document.getElementById('flow').dispatchEvent(pagination.events.redoEscapes);
+            editorEscapes.reset();
             if ('note' != citeproc_obj.citationtype) {
                 lastStyleUsedFootnotes = false;
             }

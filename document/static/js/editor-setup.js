@@ -48,7 +48,7 @@ jQuery(document).ready(function () {
 // Functions to be executed when document has loaded
 jQuery(document).bind('documentDataLoaded', function () {
 
-    
+    editorEscapes.initiate();
     // We cannot download BibDB and ImageDB before we know if we are the document owner or not.
     bibliographyHelpers.init();
     usermediaHelpers.init();

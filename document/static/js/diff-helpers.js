@@ -350,9 +350,9 @@
             if (newestDiffs[i].features[2]) {
                 containsComment = true;
             }
-            if (newestDiffs[i].features[3]) {
+        //    if (newestDiffs[i].features[3]) {
                 containsFootnote = true;
-            }            
+        //    }            
             if (newestDiffs[i].features[4]) {
                 containsTrackedchange = true;
             }
@@ -390,7 +390,8 @@
             }
             // If footnotes were changed reformat these.
             if (containsFootnote) {
-                nodeConverter.redoFootnotes();
+                editorEscapes.reset();
+                console.log('redo footnotes');
             }            
             // If tracked changes are added, update tracker.
             if (containsTrackedchange) {

@@ -42,7 +42,7 @@
             manualEdits.insert(pasteElement.firstChild, range);
         }
         if (cleanHTML.footnoteInOutput) {
-            document.getElementById('flow').dispatchEvent(pagination.events.redoEscapes);
+            editorEscapes.reset();
             cleanHTML.footnoteInOutput = false;
         }
         return true;

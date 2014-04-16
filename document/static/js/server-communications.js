@@ -108,7 +108,7 @@
     serverCommunications.updateParticipantList = function (participant_list) {
         window.uniqueParticipantList = _.map(_.groupBy(participant_list,
             'id'), function (entry) {
-            return entry[0]
+            return entry[0];
         });
         if (participant_list.length > 1 && (!theDocumentValues.collaborativeMode)) {
             diffHelpers.startCollaborativeMode();

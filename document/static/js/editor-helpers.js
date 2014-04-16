@@ -25,6 +25,33 @@
      */ 
         editorHelpers = {};
 
+        
+    /** Call printing dialog and destroy print view after printing. (step 2 of printing process)
+     * @function print
+     * @memberof editorHelpers
+     */
+    
+    editorHelpers.printReady = function() {
+        var flowTo = document.getElementById('print');
+        window.print();
+        jQuery(flowTo).hide();
+        jQuery(flowTo).html('');
+        delete window.flowCopy;
+    };
+    
+    document.addEventListener('layoutFlowFinished', editorHelpers.printReady, false);
+
+    /** Initiate printing using simplePagination. (step 1 of printing process)
+     * @function print
+     * @memberof editorHelpers
+     */
+    
+    editorHelpers.print = function() {
+        var flowTo = document.getElementById('print');
+        window.flowCopy = document.getElementById('flow').cloneNode(true);
+        jQuery(flowTo).show();
+        pagination.applyBookLayoutWithoutDivision();
+    };
 
     /** A template for the metadata fields in the editor. 
      * @function tmpMetadata

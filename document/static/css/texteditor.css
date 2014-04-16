@@ -170,12 +170,7 @@ body {
     overflow: hidden;
 }
 
-#pagination-layout {
-    position: absolute;
-    top: 200px;
-}
-
-.pagination-page {
+#flow {
     margin: .5in 0 0 108px !important;
 }
 
@@ -303,10 +298,11 @@ ul.potato-menu ul.potato-menu-group {
 /* For print */
 
 @media print {
-    #header, #header-navigation, #editor-navigation, #comment-box-container, #review-box-container, #close-document-top {
+    
+    #editor {
         display: none !important;
     }
-
+/*
     #pagination-layout {
         top: 0 !important;
     }
@@ -318,7 +314,16 @@ ul.potato-menu ul.potato-menu-group {
     
     body {
         margin-bottom: 0;
-    }
+    }*/
+}
+#print {
+    z-index: 100;
+    position: absolute;
+    top: 0;
+    min-height: 100%;
+    min-width: 100%;
+    background-color: rgba(234,234,234,0.5);
+    display: none;
 }
 /* Overwrite color changes through font in editor. Webkit bug */
 
@@ -355,7 +360,7 @@ span.delete {
 #document-contents {
     min-height: 400px;
 }
-.pagination-simple .pagination-footnote > span {
+#flow .pagination-footnote > span {
     width: 150px;
 }
 .pagination-footnote-item {
@@ -377,7 +382,7 @@ span.delete {
     margin-left: 15px;
 }
 
-.pagination-page {
+#flow {
     border: 1px solid #ccc;
 }
 
@@ -385,7 +390,7 @@ span.delete {
     font-size: 12pt;
 }
 
-.pagination-simple {
+#flow {
     padding: 50px;
     padding-right: 170px;
     position: relative;
@@ -430,7 +435,7 @@ body {counter-reset: pagination-footnote pagination-footnote-reference;}
 #flow .pagination-footnote > * > * {display: block;}
 #flow .pagination-footnote > * > * {font-size: 0.7em; margin:.25em;}
 #flow .pagination-footnote > * > *::before, .pagination-footnote::before {position: relative; top: -0.5em; font-size: 80%;}
-#flow .pagination-footnote > span, .pagination-simple .pagination-marginnote > span {
+#flow .pagination-footnote > span {
     position: absolute; 
     right: 0in; 
     width: 1.5in;

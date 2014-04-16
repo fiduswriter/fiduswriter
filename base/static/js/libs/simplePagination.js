@@ -24,6 +24,7 @@
         'chapterStartMarker': 'h2',
         'chapterTitleMarker': 'h2',
         'flowElement': 'document.body',
+        'flowTo': 'document.body',
         'alwaysEven': true,
         //        'columns': 1,
         'enableFrontmatter': true,
@@ -264,6 +265,17 @@
 
     };
 
+    pagination.events = {};
+    
+    pagination.events.layoutFlowFinished = document.createEvent('Event');
+    pagination.events.layoutFlowFinished.initEvent(
+        'layoutFlowFinished',
+        true,
+        true);
+    /* layoutFlowFinished is emitted the first time the flow of the entire book has
+     * been created.
+     */    
+    
 
     pagination.config = function (configKey) {
         /* Return configuration variables either from paginationConfig if present,
@@ -533,8 +545,7 @@
             lastPage.removeChild(lastPage.firstChild);
 
 
-        } else
-        if (overflow.firstChild && lastPage.firstChild) {
+        } else if (overflow.firstChild && lastPage.firstChild) {
             setTimeout(function () {
                 pagination.fillPage(overflow, container, pageCounterStyle);
             }, 1);
@@ -578,6 +589,7 @@
                 pagination.flowElement(flowObject.fragment, layoutDiv.firstChild, 'roman');
             }
             window.scrollTo(0, 0);
+            document.dispatchEvent(pagination.events.layoutFlowFinished);
         }
 
     };
@@ -592,6 +604,7 @@
         } else {
             window.scrollTo(0, 0);
             pagination.pageCounters[pageCounterStyle].numberPages();
+            document.dispatchEvent(pagination.events.layoutFlowFinished);
         }
     };
 
@@ -607,7 +620,8 @@
         var layoutDiv = document.createElement('div'),
             bodyLayoutDiv = document.createElement('div'),
             flowedElement = eval(pagination.config('flowElement')),
-            flowFragment = document.createDocumentFragment();
+            flowFragment = document.createDocumentFragment(),
+            flowTo = eval(pagination.config('flowTo'));
 
         while (flowedElement.firstChild) {
             flowFragment.appendChild(flowedElement.firstChild);
@@ -616,7 +630,7 @@
         layoutDiv.id = 'pagination-layout';
         bodyLayoutDiv.id = 'pagination-body';
         layoutDiv.appendChild(bodyLayoutDiv);
-        document.body.appendChild(layoutDiv);
+        flowTo.appendChild(layoutDiv);
 
         pagination.flowElement(flowFragment, bodyLayoutDiv, 'arab');
     };
@@ -632,7 +646,8 @@
             dividers = flowedElement.querySelectorAll(dividerSelector),
             range = document.createRange(),
             extraElement, tempNode, i, nextChapter = false,
-            nextSection = false;
+            nextSection = false, 
+            flowTo = eval(pagination.config('flowTo'));
 
         pagination.bodyFlowObjects = [];
         pagination.currentFragment = -1;
@@ -705,7 +720,7 @@
 
         pagination.bodyFlowObjects.push(flowObject);
 
-        document.body.appendChild(layoutDiv);
+        flowTo.appendChild(layoutDiv);
 
         pagination.paginateDivision(layoutDiv, 'arab');
 

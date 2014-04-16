@@ -65,6 +65,12 @@
                 return true;
             }
             break;
+        case 80:
+            if (keyEvents.pKey(evt)) {
+                evt.preventDefault();
+                return true;
+            }
+            break;               
         case 83:
             if (keyEvents.sKey(evt)) {
                 evt.preventDefault();
@@ -163,7 +169,7 @@
                 evt.preventDefault();
                 return true;
             }
-            break;
+            break;         
         case 85:
             if (keyEvents.uKey(evt, editorContainer)) {
                 evt.preventDefault();
@@ -643,6 +649,17 @@
         }
         // return false so that the delete key action will take place.
         return false;
+    };
+    
+    // Keycode 80
+
+    keyEvents.pKey = function (evt) {
+        if (evt.ctrlKey) {
+            editorHelpers.print();
+            return true;
+        } else {
+            return false;
+        }
     };
 
     // Keycode 83

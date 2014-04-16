@@ -143,12 +143,12 @@
             <script type="text/javascript" src="{{ STATIC_URL }}js/common.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/menubase.js"></script>
             <!-- simplePagination.js -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/simplePagination.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/simplePagination.js"></script>
             <script type="text/javascript">
                 // Config options for pagination
 
                 var paginationConfig = {
-                    'flowElement' : "document.getElementById('flow')",
+                    'flowElement' : "flowCopy",
                     'enableFrontmatter' : false,
                     'divideContents' : false,
                     'alwaysEven' : false,
@@ -161,7 +161,8 @@
                     'headerTopMargin': 80,
                     'contentsBottomMargin': 80,
                     'pagenumberBottomMargin': 50,
-                    'lengthUnit': 'px'
+                    'lengthUnit': 'px',
+                    'flowTo': 'document.getElementById("print")'
                 };
             </script>
             <script type="text/javascript">
@@ -286,6 +287,7 @@
         </script>
     </head>
     <body class="{% trans "en" %} tex2jax_ignore">
+        <div id="editor">
         <div id="wait">
             <i class="icon-spin2 animate-spin"></i>
         </div>
@@ -594,7 +596,7 @@
             </div>
         </nav>
 
-        <div id="flow" class="comments-enabled CT-hide pagination-page pagination-simple">
+        <div id="flow" class="comments-enabled CT-hide">
             <div id="document-editable">
                 <div id="document-title" class="editable user-contents" title="{% trans "The title of the document" %}"></div>
                 <div id="document-metadata" class="user-contents"></div>
@@ -612,5 +614,7 @@
                 <source src="{{ STATIC_URL }}ogg/chat-notification.ogg" type="audio/ogg">
             </audio>
         </div>
+        </div>
+        <div id="print"></div>
     </body>
 </html>

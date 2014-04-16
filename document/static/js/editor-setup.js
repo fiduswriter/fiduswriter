@@ -159,7 +159,7 @@ jQuery(document).bind('documentDataLoaded', function () {
         exporter.downloadHtml(theDocument);
     });
     jQuery('.print').bind('mousedown', function () {
-        window.print();
+        editorHelpers.print();
     });
     jQuery('.close').bind('mousedown', function () {
         editorHelpers.getUpdatesFromInputFields(function () {

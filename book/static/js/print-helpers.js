@@ -99,15 +99,20 @@
     };
 
     printHelpers.fillPrintPage = function (aBibDB) {
+        
+        var bibliography = jQuery('#bibliography');
         jQuery(document.body).addClass(theBook.settings.documentstyle);
         jQuery('#book')[0].outerHTML = tmp_book_print({
             theBook: theBook
         });
         
         
-        jQuery('#bibliography').html(citationHelpers.formatCitations(document.body, theBook.settings.citationstyle, aBibDB));
+        jQuery(bibliography).html(citationHelpers.formatCitations(document.body, theBook.settings.citationstyle, aBibDB));
         
-
+        if (jQuery(bibliography).text().trim().length===0) {
+            jQuery(bibliography).remove();
+        }
+        
         paginationConfig['frontmatterContents'] = tmp_book_print_start({
             theBook: theBook
         });

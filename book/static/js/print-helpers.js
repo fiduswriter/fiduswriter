@@ -110,7 +110,7 @@
         jQuery(bibliography).html(citationHelpers.formatCitations(document.body, theBook.settings.citationstyle, aBibDB));
         
         if (jQuery(bibliography).text().trim().length===0) {
-            jQuery(bibliography).remove();
+            jQuery(bibliography).parent().remove();
         }
         
         paginationConfig['frontmatterContents'] = tmp_book_print_start({

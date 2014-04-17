@@ -148,8 +148,8 @@
         });
         var $spans = $(
             '.edit-right-wrapper .fw-pulldown-item, .delete-collaborator');
-        $spans.unbind('click');
-        $spans.bind('click', function () {
+        $spans.unbind('mousedown');
+        $spans.bind('mousedown', function () {
             var new_right = $(this).attr('data-right');
             $(this).closest('.collaborator-tr').attr('class',
                 'collaborator-tr ' + new_right);

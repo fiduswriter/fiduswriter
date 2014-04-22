@@ -9,15 +9,14 @@
 
 
 
-    var exports = this,
-        defaults,
-        pagination = {};
+    //    var exports = this,
+    var pagination = {};
 
     /* pagination is the object that contains the namespace used by 
      * pagination.js.
      */
 
-    defaults = {
+    pagination.defaults = {
         // pagination.config starts out with default config options.
         'sectionStartMarker': 'h1',
         'sectionTitleMarker': 'h1',
@@ -189,7 +188,7 @@
             .pagination-page {height:" + pageHeight + "; width:" + pageWidth + ";\
             background-color: #fff;}\
             @page {size:" + pageWidth + " " + pageHeight + ";}\
-            body {background-color: #efefef;}\
+            body {background-color: #efefef; margin:0;}\
             @media screen{.pagination-page {border:solid 1px #000; margin-bottom:.2in;}} \
             .pagination-main-contents-container {width:" + contentsWidth + "; height:" + contentsHeight + ";\
                 bottom:" + contentsBottomMargin + ";} \
@@ -266,7 +265,7 @@
     };
 
     pagination.events = {};
-    
+
     pagination.events.layoutFlowFinished = document.createEvent('Event');
     pagination.events.layoutFlowFinished.initEvent(
         'layoutFlowFinished',
@@ -274,8 +273,8 @@
         true);
     /* layoutFlowFinished is emitted the first time the flow of the entire book has
      * been created.
-     */    
-    
+     */
+
 
     pagination.config = function (configKey) {
         /* Return configuration variables either from paginationConfig if present,
@@ -284,8 +283,8 @@
         var returnValue;
         if (typeof paginationConfig != 'undefined' && paginationConfig.hasOwnProperty(configKey)) {
             returnValue = paginationConfig[configKey];
-        } else if (defaults.hasOwnProperty(configKey)) {
-            returnValue = defaults[configKey];
+        } else if (pagination.defaults.hasOwnProperty(configKey)) {
+            returnValue = pagination.defaults[configKey];
         } else {
             returnValue = false;
         }
@@ -589,7 +588,6 @@
                 pagination.flowElement(flowObject.fragment, layoutDiv.firstChild, 'roman');
             }
             window.scrollTo(0, 0);
-            document.dispatchEvent(pagination.events.layoutFlowFinished);
         }
 
     };
@@ -646,7 +644,7 @@
             dividers = flowedElement.querySelectorAll(dividerSelector),
             range = document.createRange(),
             extraElement, tempNode, i, nextChapter = false,
-            nextSection = false, 
+            nextSection = false,
             flowTo = eval(pagination.config('flowTo'));
 
         pagination.bodyFlowObjects = [];
@@ -726,42 +724,52 @@
 
     };
 
+    pagination.bindEvents = function () {
+        document.addEventListener(
+            "readystatechange",
+            function () {
+                if (pagination.config('autoStart') === true) {
+                    if (document.readyState === 'interactive') {
+                        var imgs = document.images,
+                            len = imgs.length,
+                            counter = 0;
 
-    document.addEventListener(
-        "readystatechange",
-        function () {
-            if (pagination.config('autoStart') === true) {
-                if (document.readyState === 'interactive') {
-                    var imgs = document.images,
-                        len = imgs.length,
-                        counter = 0;
+                        function incrementCounter() {
+                            counter++;
+                            if (counter === len) {
 
-                    function incrementCounter() {
-                        counter++;
-                        if (counter === len) {
-
-                            if (pagination.config('divideContents')) {
-                                pagination.applyBookLayout();
-                            } else {
-                                pagination.applyBookLayoutWithoutDivision();
+                                if (pagination.config('divideContents')) {
+                                    pagination.applyBookLayout();
+                                } else {
+                                    pagination.applyBookLayoutWithoutDivision();
+                                }
                             }
                         }
-                    }
 
-                    [].forEach.call(imgs, function (img) {
-                        img.addEventListener('load', incrementCounter, false);
-                    });
-                    if (len === 0) {
-                        incrementCounter();
+                        [].forEach.call(imgs, function (img) {
+                            img.addEventListener('load', incrementCounter, false);
+                        });
+                        if (len === 0) {
+                            incrementCounter();
+                        }
                     }
                 }
             }
+        );
+    };
+
+    if (typeof exports !== 'undefined') {
+        if (typeof module !== 'undefined' && module.exports) {
+            exports = module.exports = pagination;
         }
-    );
+        exports.pagination = pagination;
+    } else {
+        // `window` in the browser, or `exports` on the server
+        this.pagination = pagination;
+        pagination.initiate();
+        pagination.bindEvents();
+    }
 
-    exports.pagination = pagination;
-}).call(this);
 
-if (typeof paginationConfig === 'undefined' || !paginationConfig.hasOwnProperty('autostart') || paginationConfig.autoStart === false) {
-    pagination.initiate();
-}
+
+}.call(this));

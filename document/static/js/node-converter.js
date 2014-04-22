@@ -91,7 +91,7 @@
         fn.firstChild.firstChild.appendChild(htmlFragment);
 
         if (typeof number === 'undefined') {
-            number = document.getElementById('#flow').querySelectorAll('.pagination-footnote').length;
+            number = document.getElementById('flow').querySelectorAll('.pagination-footnote').length;
         
             while (document.getElementById('pagination-footnote-'+number)) {
                 number++;

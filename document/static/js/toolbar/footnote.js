@@ -60,7 +60,7 @@ jQuery(document).on('mousedown', '#button-footnote', function (event) {
     //if (nodeConverter.beforeFootnote) {
     //    fn.parentNode.insertBefore(nodeConverter.beforeFootnote(), fn);
     //}
-    nodeConverter.redoFootnotes();
+    editorEscapes.reset();
 
     range.selectNodeContents(innerFootnote);
     range.collapse();

@@ -49,7 +49,7 @@
         bibliographyHelpers.setCSLDB(aBibDB);
         var citeproc,
             citation_texts = [],
-            isAuthDate = _.include(this.authorDateStyles, citation_style),
+            isAuthDate,
             i, len = citations.length;
 
         if(this.styles.hasOwnProperty(citation_style)) {
@@ -60,8 +60,10 @@
                 break;
             }
         }
+        
+        isAuthDate = citation_style.authorDate;
 
-        citeproc = new CSL.Engine(new Sys(), citation_style);
+        citeproc = new CSL.Engine(new Sys(), citation_style.definition);
 
         for(i = 0; i < len; i ++) {
             var citation = citations[i],

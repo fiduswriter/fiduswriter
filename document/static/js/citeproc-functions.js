@@ -49,7 +49,6 @@
         bibliographyHelpers.setCSLDB(aBibDB);
         var citeproc,
             citation_texts = [],
-            isAuthDate,
             i, len = citations.length;
 
         if(this.styles.hasOwnProperty(citation_style)) {
@@ -60,8 +59,6 @@
                 break;
             }
         }
-        
-        isAuthDate = citation_style.authorDate;
 
         citeproc = new CSL.Engine(new Sys(), citation_style.definition);
 
@@ -69,7 +66,7 @@
             var citation = citations[i],
                 citation_text = citeproc.appendCitationCluster(citation);
 
-            if(isAuthDate && 'textcite' == citation_formats[i]) {
+            if(citation_style.authorDate && 'textcite' == citation_formats[i]) {
                 var new_cite_text = '',
                     only_name_option, only_date_option,
                     items = citation.citationItems,

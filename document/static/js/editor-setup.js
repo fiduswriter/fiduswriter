@@ -18,10 +18,7 @@
  * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
  *
  */
-/** Whether the citation style before the current one was footnote based. This is used to determine whetherthe page needs to be reformatted.
- * @constant lastStyleUsedFootnotes
- */
-var lastStyleUsedFootnotes = false;
+
 
 // Functions to be executed at startup
 jQuery(document).ready(function () {

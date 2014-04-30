@@ -171,13 +171,7 @@
             }
             allCitations[citations_ids[j]].innerHTML = ' ' + citation_text;
         }
-
-        if ('note' == citeproc_obj.citationtype || lastStyleUsedFootnotes) {
-            editorEscapes.reset();
-            if ('note' != citeproc_obj.citationtype) {
-                lastStyleUsedFootnotes = false;
-            }
-        }
+        editorEscapes.reset();
 
         bibliographyHTML += '<h1>' + gettext('Bibliography') + '</h1>';
         // Add entry to bibliography

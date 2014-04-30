@@ -25,7 +25,103 @@
   * Functions to display citations and the bibliography. TODO 
   * @namespace citationHelpers
   */
-        citationHelpers = {};
+        citationHelpers = {},
+         citeprocSys = function(){
+            this.abbreviations = {"default": {}};
+            this.abbrevsname = "default";
+        };
+
+    citeprocSys.prototype.retrieveItem = function(id){
+        return CSLDB[id];
+    };
+
+    citeprocSys.prototype.retrieveLocale = function(lang){
+        return citeproc.locals[lang];
+    };
+
+    citeprocSys.prototype.getAbbreviation = function(dummy, obj, jurisdiction, vartype, key){
+        try {
+            if (this.abbreviations[this.abbrevsname][vartype][key]) {
+                obj["default"][vartype][key] = this.abbreviations[this.abbrevsname][vartype][key];
+            } else {
+                obj["default"][vartype][key] = "";
+            }
+        } catch (e) {
+            // There is breakage here that needs investigating.
+        }
+    };
+
+    citationHelpers.getFormattedCitations = function(citations, citation_style, citation_formats, aBibDB) {
+        bibliographyHelpers.setCSLDB(aBibDB);
+        var citeprocInstance,
+            citation_texts = [],
+            i, len = citations.length;
+
+        if(citeproc.styles.hasOwnProperty(citation_style)) {
+            citation_style = citeproc.styles[citation_style];
+        } else {
+            for(style_name in citeproc.styles) {
+                citation_style = citeproc.styles[style_name];
+                break;
+            }
+        }
+
+        citeprocInstance = new CSL.Engine(new citeprocSys(), citation_style.definition);
+
+        for(i = 0; i < len; i ++) {
+            var citation = citations[i],
+                citation_text = citeprocInstance.appendCitationCluster(citation);
+
+            if(citation_style.authorDate && 'textcite' == citation_formats[i]) {
+                var new_cite_text = '',
+                    only_name_option, only_date_option,
+                    items = citation.citationItems,
+                    j, len2 = items.length;
+
+                for(j = 0; j < len2; j ++) {
+                    only_name_option = [{
+                        id: items[j].id,
+                        "author-only": 1
+                    }];
+
+                    only_date_option = [{
+                        id: items[j].id,
+                        "suppress-author": 1
+                    }];
+
+                    if(items[j].locator) {
+                       only_date_option[0].label = items[j].locator;
+                    }
+
+                    if(items[j].label) {
+                       only_date_option[0].label = items[j].label;
+                    }
+
+                    if(items[j].prefix) {
+                       only_date_option[0].prefix = items[j].prefix;
+                    }
+
+                    if(items[j].suffix) {
+                        only_date_option[0].suffix = items[j].suffix;
+                    }
+
+                    if(0 < j) { new_cite_text += '; '; }
+                    new_cite_text += citeprocInstance.makeCitationCluster(only_name_option);
+                    new_cite_text += ' ' + citeprocInstance.makeCitationCluster(only_date_option);
+                }
+
+                citation_text[0][1] = new_cite_text;
+            }
+
+            citation_texts.push(citation_text);
+        }
+
+        return {
+            'citations': citation_texts,
+            'bibliography': citeprocInstance.makeBibliography(),
+            'citationtype': citeprocInstance.cslXml.className
+        };
+    };
 
     citationHelpers.formatDateString = function (dateString) {
         // This mirrors the formatting of the date as returned by Python in bibliography/models.py
@@ -162,7 +258,7 @@
             return '';
         }
 
-        citeproc_obj = citeprocHelpers.getOutputs(citeproc_params, citationstyle, bib_formats, aBibDB);
+        citeproc_obj = citationHelpers.getFormattedCitations(citeproc_params, citationstyle, bib_formats, aBibDB);
         len = citeproc_obj.citations.length;
         for(j = 0; j < len; j ++) {
             var citation_text = citeproc_obj.citations[j][0][1];

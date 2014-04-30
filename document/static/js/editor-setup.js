@@ -19,7 +19,6 @@
  *
  */
 
-
 // Functions to be executed at startup
 jQuery(document).ready(function () {
     

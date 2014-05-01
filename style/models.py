@@ -19,3 +19,19 @@ class DocumentStyle(models.Model):
     
     def __unicode__(self):
         return self.title
+    
+class CitationStyle(models.Model):
+    title = models.CharField(max_length=128,help_text='The human readable title.')
+    short_title = models.SlugField(max_length=20,help_text='A title used for constant names.')
+    contents = models.TextField(help_text='The XML style definiton.')
+    
+    def __unicode__(self):
+        return self.title    
+    
+class CitationLocale(models.Model):
+    title = models.CharField(max_length=128,help_text='The human readable title.')
+    short_title = models.SlugField(max_length=20,help_text='A title used for constant names.')
+    contents = models.TextField(help_text='The XML style definiton.')
+    
+    def __unicode__(self):
+        return self.title    

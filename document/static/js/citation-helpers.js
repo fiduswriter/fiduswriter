@@ -55,7 +55,7 @@
         bibliographyHelpers.setCSLDB(aBibDB);
         var citeprocInstance,
             citation_texts = [],
-            i, len = citations.length;
+            len = citations.length, inText, i;
 
         if(citeproc.styles.hasOwnProperty(citation_style)) {
             citation_style = citeproc.styles[citation_style];
@@ -67,12 +67,14 @@
         }
 
         citeprocInstance = new CSL.Engine(new citeprocSys(), citation_style.definition);
+        
+        inText = citeprocInstance.cslXml.className === 'in-text';
 
         for(i = 0; i < len; i ++) {
             var citation = citations[i],
                 citation_text = citeprocInstance.appendCitationCluster(citation);
 
-            if(citation_style.authorDate && 'textcite' == citation_formats[i]) {
+            if(inText && 'textcite' == citation_formats[i]) {
                 var new_cite_text = '',
                     only_name_option, only_date_option,
                     items = citation.citationItems,

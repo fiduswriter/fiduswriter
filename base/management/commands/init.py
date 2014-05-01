@@ -38,6 +38,7 @@ class Command(BaseCommand):
         call_command("create_bibliography_js")
         call_command("loaddata", "style/fixtures/initial_styles.json")
         call_command("create_document_styles")
+        call_command("create_citation_styles")
         call_command("loaddata", "base/fixtures/initial_terms.json")
         call_command("compilemessages")
         try:

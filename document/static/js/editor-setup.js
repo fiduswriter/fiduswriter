@@ -22,7 +22,9 @@
 // Functions to be executed at startup
 jQuery(document).ready(function () {
     
-    var documentStyleMenu = document.getElementById("documentstyle-list"), documentStyleMenuItem;
+    var documentStyleMenu = document.getElementById("documentstyle-list"), 
+        citationStyleMenu = document.getElementById("citationstyle-list"),
+        newMenuItem, i;
     
     // Enable toolbar menu
     jQuery('#menu1').ptMenu();
@@ -35,10 +37,16 @@ jQuery(document).ready(function () {
 
 
     for (i = 0; i < documentStyleList.length; i++) {   
-        documentStyleMenuItem=document.createElement("li");
-        documentStyleMenuItem.innerHTML = "<span class='fw-pulldown-item style' data-style='"+documentStyleList[i].filename+"' title='"+documentStyleList[i].title+"'>"+documentStyleList[i].title+"</span>";
-        documentStyleMenu.appendChild(documentStyleMenuItem);
+        newMenuItem=document.createElement("li");
+        newMenuItem.innerHTML = "<span class='fw-pulldown-item style' data-style='"+documentStyleList[i].filename+"' title='"+documentStyleList[i].title+"'>"+documentStyleList[i].title+"</span>";
+        documentStyleMenu.appendChild(newMenuItem);
     }
+    for (i in citeproc.styles) {   
+        newMenuItem=document.createElement("li");
+        newMenuItem.innerHTML = "<span class='fw-pulldown-item citationstyle' data-citationstyle='"+i+"' title='"+citeproc.styles[i].name+"'>"+citeproc.styles[i].name+"</span>";
+        citationStyleMenu.appendChild(newMenuItem);
+    }
+    
 });
 
 // Functions to be executed when document has loaded

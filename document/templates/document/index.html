@@ -73,8 +73,13 @@
         <script type="text/javascript">
             zip.useWebWorkers = false;
         </script>
+        <!-- citeproc -->
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/xmldom.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/citeproc.js"></script>
         <!-- Citation functions -->
         <script type="text/javascript" src="{{ STATIC_URL }}js/citation-helpers.js"></script>
+        <!-- Citation definitions -->
+        <script type="text/javascript" src="{{ STATIC_URL }}js/citation/definitions.js"></script>
         <!-- File export functions -->
         <script type="text/javascript">
             var mathjaxZipUrl = '{{ STATIC_URL }}zip/mathjax.zip';
@@ -83,9 +88,6 @@
         <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.js"></script>
         <!-- File import -->
         <script type="text/javascript" src="{{ STATIC_URL }}js/importer.js"></script>
-        <!-- citeproc helpers -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/citeproc-helpers.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/citeproc-functions.js"></script>
     {% endcompress %}
 {% endblock %}
 

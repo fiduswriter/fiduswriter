@@ -129,6 +129,10 @@
         <!-- citeproc -->
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/xmldom.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/citeproc.js"></script>
+        <!-- Citation functions -->
+        <script type="text/javascript" src="{{ STATIC_URL }}js/citation-helpers.js"></script>
+        <!-- Citation definitions -->
+        <script type="text/javascript" src="{{ STATIC_URL }}js/citation/definitions.js"></script>
         <!-- document styles -->
         <script type="text/javascript" src="{{ STATIC_URL }}js/document/stylelist.js"></script>
         <script type="text/javascript">
@@ -239,10 +243,6 @@
             <!-- Tracking functions -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/tracking-templates.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/tracking-helpers.js"></script>
-            <!-- Citation functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/citation-helpers.js"></script>
-            <!-- Citation definitions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/citation/definitions.js"></script>
             <!-- File export functions -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/export-templates.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.js"></script>
@@ -269,8 +269,6 @@
             <script type="text/javascript" src="{{ STATIC_URL }}js/key-events.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/clean-HTML.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/cutpaste.js"></script>
-
-            <!--script type="text/javascript" src="{{ STATIC_URL }}js/citeproc-functions.js"></script-->
         {% endcompress %}
 
         <script type="text/javascript">

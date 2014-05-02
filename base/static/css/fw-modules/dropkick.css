@@ -74,7 +74,7 @@
 }
 /* Set a max-height on the options inner */
 .dk_options_inner, .dk_touch .dk_options {
-    max-height: 300px;
+    max-height: 185px;
 }
 /******  End Theme ******/
 
@@ -122,7 +122,7 @@
     display: block;
 }
 .dk_options_inner {
-    overflow: auto;
+    overflow-y: scroll;
     position: relative;
 }
 .dk_touch .dk_options {

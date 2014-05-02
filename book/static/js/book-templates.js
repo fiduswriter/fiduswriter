@@ -135,8 +135,8 @@ var tmp_book_bibliography_data = _.template('\
         </th>\
         <td>\
         <select class="entryForm dk" name="book-settings-citationstyle" id="book-settings-citationstyle" <% if (theBook.rights==="r") {print("disabled=disabled")} %> >\
-            <% _.each(citeprocHelpers.styles, function(citationstyle, key) { %>\
-                <option value="<%= key %>"<% if(key == theBook.settings.citationstyle) { %> selected<%} %>><%= this.citeprocHelpers.styles[key].name %></option>\
+            <% _.each(citeproc.styles, function(citationstyle, key) { %>\
+                <option value="<%= key %>"<% if(key == theBook.settings.citationstyle) { %> selected<%} %>><%= citeproc.styles[key].name %></option>\
             <% }) %>\
         </select>\
         </td>\

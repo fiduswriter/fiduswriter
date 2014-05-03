@@ -28,13 +28,10 @@
             });
         </script>
         <script type="text/javascript" src="{{ MATHJAX_URL }}"></script>
-        <!-- citeproc -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/xmldom.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/citeproc.js"></script>
-        <script type="text/javascript">
-            var staticUrl = '{{ STATIC_URL }}';
-        </script>
     {% compress js %}
+            <script type="text/javascript">
+                var staticUrl = '{{ STATIC_URL }}';
+            </script>
             <!-- DOM-diff -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/node-converter.js"></script>
@@ -73,9 +70,10 @@
             <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-statics.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-helpers.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-template-dialogs.js"></script>
-
+            <!-- Pagination -->
             <script type="text/javascript"  src="{{ STATIC_URL }}js/libs/simplePagination.js"></script>
-
+            <!-- Moving of footnotes-->
+            <script type="text/javascript"  src="{{ STATIC_URL }}js/editor-escapes.js"></script>
             <script type="text/javascript"  src="{{ STATIC_URL }}js/print-templates.js"></script>
             <script type="text/javascript"  src="{{ STATIC_URL }}js/print-helpers.js"></script>
             <script type="text/javascript">

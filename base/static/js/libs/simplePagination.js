@@ -378,6 +378,7 @@
         contents.style.height = (contents.parentElement.clientHeight - contents.previousSibling.clientHeight - contents.nextSibling.clientHeight) + 'px';
         contents.style[pagination.columnWidthTerm] = contents.clientWidth + 'px';
         contents.style[pagination.columnGapTerm] = '0px';
+        dewd();
 
         manualPageBreak = contents.querySelector(pagination.config('pagebreakSelector'));
 

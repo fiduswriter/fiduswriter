@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-16 17:54-0500\n"
+"POT-Creation-Date: 2014-05-04 04:10-0500\n"
 "PO-Revision-Date: 2013-03-03 12:18-0700\n"
 "Last-Translator: Ana Vera Resquín <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
@@ -1102,7 +1102,7 @@ msgid "Chapters"
 msgstr "Capítulos"
 
 #: book/static/js/book-templates.js:263
-#: document/static/js/citation-helpers.js:182
+#: document/static/js/citation-helpers.js:274
 msgid "Bibliography"
 msgstr "Bibliografía"
 
@@ -1187,26 +1187,6 @@ msgstr "Derechos de accesso han sido guardado"
 #: document/static/js/chat-helpers.js:122
 msgid "Send a message..."
 msgstr ""
-
-#: document/static/js/citeproc-helpers.js:62
-msgid "American Psychological Association"
-msgstr "American Psychological Association"
-
-#: document/static/js/citeproc-helpers.js:64
-msgid "Chicago Manual of Style (Author-Date format)"
-msgstr "Chicago (Autor-Fecha)"
-
-#: document/static/js/citeproc-helpers.js:66
-msgid "Chicago Manual of Style (Note with Bibliography)"
-msgstr "Chicago (Nota con Bibliografía)"
-
-#: document/static/js/citeproc-helpers.js:68
-msgid "Harvard Reference format (Author-Date)"
-msgstr "El estilo Harvard del tipo autor-fecha"
-
-#: document/static/js/citeproc-helpers.js:70
-msgid "Modern Language Association"
-msgstr "Modern Language Association"
 
 #: document/static/js/comment-templates.js:71
 #: document/static/js/comment-templates.js:81
@@ -1576,6 +1556,21 @@ msgstr "Buscar por Nombre de archivo"
 #: usermedia/static/js/usermedia-template-dialogs.js:84
 msgid "Insert a title"
 msgstr "Insertar un título"
+
+#~ msgid "American Psychological Association"
+#~ msgstr "American Psychological Association"
+
+#~ msgid "Chicago Manual of Style (Author-Date format)"
+#~ msgstr "Chicago (Autor-Fecha)"
+
+#~ msgid "Chicago Manual of Style (Note with Bibliography)"
+#~ msgstr "Chicago (Nota con Bibliografía)"
+
+#~ msgid "Harvard Reference format (Author-Date)"
+#~ msgstr "El estilo Harvard del tipo autor-fecha"
+
+#~ msgid "Modern Language Association"
+#~ msgstr "Modern Language Association"
 
 #, fuzzy
 #~ msgid "Leave editor"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-16 17:54-0500\n"
+"POT-Creation-Date: 2014-05-04 04:10-0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -1096,7 +1096,7 @@ msgid "Chapters"
 msgstr ""
 
 #: book/static/js/book-templates.js:263
-#: document/static/js/citation-helpers.js:182
+#: document/static/js/citation-helpers.js:274
 msgid "Bibliography"
 msgstr ""
 
@@ -1178,26 +1178,6 @@ msgstr ""
 
 #: document/static/js/chat-helpers.js:122
 msgid "Send a message..."
-msgstr ""
-
-#: document/static/js/citeproc-helpers.js:62
-msgid "American Psychological Association"
-msgstr ""
-
-#: document/static/js/citeproc-helpers.js:64
-msgid "Chicago Manual of Style (Author-Date format)"
-msgstr ""
-
-#: document/static/js/citeproc-helpers.js:66
-msgid "Chicago Manual of Style (Note with Bibliography)"
-msgstr ""
-
-#: document/static/js/citeproc-helpers.js:68
-msgid "Harvard Reference format (Author-Date)"
-msgstr ""
-
-#: document/static/js/citeproc-helpers.js:70
-msgid "Modern Language Association"
 msgstr ""
 
 #: document/static/js/comment-templates.js:71

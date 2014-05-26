@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-04-16 17:54-0500\n"
+"POT-Creation-Date: 2014-05-04 04:10-0500\n"
 "PO-Revision-Date: 2013-09-18 08:52+0200\n"
 "Last-Translator: Vladimir Vitkov <vvitkov@linux-bg.org>\n"
 "Language-Team: Bulgarian <vvitkov@linux-bg.org>\n"
@@ -1103,7 +1103,7 @@ msgid "Chapters"
 msgstr "Глави"
 
 #: book/static/js/book-templates.js:263
-#: document/static/js/citation-helpers.js:182
+#: document/static/js/citation-helpers.js:274
 msgid "Bibliography"
 msgstr "Библиография"
 
@@ -1187,26 +1187,6 @@ msgstr "Правата за достъп бяха запазени"
 #: document/static/js/chat-helpers.js:122
 msgid "Send a message..."
 msgstr ""
-
-#: document/static/js/citeproc-helpers.js:62
-msgid "American Psychological Association"
-msgstr "American Psychological Association."
-
-#: document/static/js/citeproc-helpers.js:64
-msgid "Chicago Manual of Style (Author-Date format)"
-msgstr "Chicago Manual of Style (Author-Date format)"
-
-#: document/static/js/citeproc-helpers.js:66
-msgid "Chicago Manual of Style (Note with Bibliography)"
-msgstr "Chicago Manual of Style (Note with Bibliography)"
-
-#: document/static/js/citeproc-helpers.js:68
-msgid "Harvard Reference format (Author-Date)"
-msgstr "Harvard Reference format (Author-Date)"
-
-#: document/static/js/citeproc-helpers.js:70
-msgid "Modern Language Association"
-msgstr "Modern Language Association"
 
 #: document/static/js/comment-templates.js:71
 #: document/static/js/comment-templates.js:81
@@ -1579,6 +1559,21 @@ msgstr "Търсене за файл"
 #: usermedia/static/js/usermedia-template-dialogs.js:84
 msgid "Insert a title"
 msgstr "Вмъкни заглавие"
+
+#~ msgid "American Psychological Association"
+#~ msgstr "American Psychological Association."
+
+#~ msgid "Chicago Manual of Style (Author-Date format)"
+#~ msgstr "Chicago Manual of Style (Author-Date format)"
+
+#~ msgid "Chicago Manual of Style (Note with Bibliography)"
+#~ msgstr "Chicago Manual of Style (Note with Bibliography)"
+
+#~ msgid "Harvard Reference format (Author-Date)"
+#~ msgstr "Harvard Reference format (Author-Date)"
+
+#~ msgid "Modern Language Association"
+#~ msgstr "Modern Language Association"
 
 #, fuzzy
 #~ msgid "Leave editor"

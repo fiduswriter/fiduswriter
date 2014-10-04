@@ -19,7 +19,7 @@
 import json
 
 from django.shortcuts import render_to_response
-from django.http import HttpResponse, HttpRequest
+from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.core.context_processors import csrf
@@ -85,9 +85,8 @@ def get_documentlist_extra_js(request):
         documents = Document.objects.filter(Q(owner=request.user) | Q(accessright__user=request.user)).filter(id__in=ids)
         #documents = Document.objects.filter(id__in=ids)
         response['documents'] = serializer.serialize(documents, fields=('contents','id','settings','metadata'))
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+    return JsonResponse(
+        response,
         status=status
     )
 import time
@@ -146,9 +145,8 @@ def get_documentlist_js(request):
         response['user']['name']=request.user.readable_name
         response['user']['avatar']=avatar_url(request.user,80)
         response['access_rights'] = get_accessrights(AccessRight.objects.filter(document__owner=request.user))
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+    return JsonResponse(
+        response,
         status=status
     )
 
@@ -170,9 +168,8 @@ def delete_js(request):
         document = Document.objects.get(pk=doc_id,owner=request.user)
         document.delete()
         status = 200
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+    return JsonResponse(
+        response,
         status=status
     )
 
@@ -252,9 +249,8 @@ def access_right_save_js(request):
                 x += 1
         response['access_rights'] = get_accessrights(AccessRight.objects.filter(document__owner=request.user))
         status = 201
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+    return JsonResponse(
+        response,
         status=status
     )
 
@@ -275,9 +271,8 @@ def import_js(request):
         response['added'] = time.mktime(document.added.utctimetuple())
         response['updated'] = time.mktime(document.updated.utctimetuple())
         status = 201
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+    return JsonResponse(
+        response,
         status=status
     )
 
@@ -305,9 +300,8 @@ def upload_js(request):
             revision.note = request.POST['note']
             revision.document_id = document_id
             revision.save()
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+    return JsonResponse(
+        response,
         status=status
     )
 
@@ -315,6 +309,7 @@ def upload_js(request):
 @login_required
 def download_js(request):
     can_access = False
+    response = {}
     if request.is_ajax() and request.method == 'POST':
         revision_id = request.POST['id']
         revision = DocumentRevision.objects.filter(pk=int(revision_id))
@@ -336,9 +331,8 @@ def download_js(request):
             )
             http_response['Content-Disposition'] = 'attachment; filename=some_name.zip'
             return http_response
-    return HttpResponse(
-        json.dumps({}),
-        content_type = 'application/json; charset=utf8',
+    return JsonResponse(
+        response,
         status=405
     )
 
@@ -356,8 +350,7 @@ def delete_revision_js(request):
             if document.owner == request.user:
                 status = 200
                 revision.delete()
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+    return JsonResponse(
+        response,
         status=status
     )

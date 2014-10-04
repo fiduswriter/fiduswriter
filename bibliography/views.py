@@ -21,7 +21,7 @@ import json
 
 from django.conf import settings
 from django.shortcuts import render_to_response
-from django.http import HttpResponse
+from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.core.context_processors import csrf
 from django.core.exceptions import ValidationError
@@ -45,7 +45,7 @@ serializer = SimpleSerializer()
 @login_required
 def index(request):
     response = {}
-    
+
     response.update(csrf(request))
     return render_to_response('bibliography/index.html', response, context_instance = RequestContext(request))
 
@@ -136,15 +136,14 @@ def import_bibtex_js(request):
                     if isinstance(val, list) :
                         val = ' and '.join(val)
                     the_fields[field_type.field_name] = val
-            inserting_obj['fields'] = json.dumps(the_fields)        
+            inserting_obj['fields'] = json.dumps(the_fields)
             the_entry = save_bib_to_db(inserting_obj)
             if the_entry != False:
                 new_bibs.append(the_entry)
                 response['bib_ids'].append(the_entry.id)
             response['bibs'] = serializer.serialize(new_bibs, fields=('entry_key', 'entry_owner', 'entry_type', 'entry_cat', 'fields'))
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+    return JsonResponse(
+        response,
         status=status
     )
 
@@ -157,7 +156,7 @@ def check_access_rights(other_user_id, this_user):
         has_access = True
     elif AccessRight.objects.filter(document__owner=other_user_id, user=this_user).count() > 0:
         has_access = True
-    return has_access    
+    return has_access
 
 #returns list of bibliography items
 @login_required
@@ -174,12 +173,12 @@ def biblist_js(request):
                     status = 403
             if status == 200:
                 response['bibList'] = serializer.serialize(Entry.objects.filter(entry_owner__in = user_ids), fields=('entry_key', 'entry_owner', 'entry_type', 'entry_cat', 'fields'))
-                response['bibCategories']  = serializer.serialize(EntryCategory.objects.filter(category_owner__in = user_ids)) 
+                response['bibCategories']  = serializer.serialize(EntryCategory.objects.filter(category_owner__in = user_ids))
         else:
             if check_access_rights(user_id, request.user):
                 if int(user_id) == 0:
                     user_id = request.user.id
-                if user_id == request.user.id and request.POST.__contains__('last_modified'):    
+                if user_id == request.user.id and request.POST.__contains__('last_modified'):
                     last_modified_onclient = int(request.POST['last_modified'])
                     number_of_entries_onclient = int(request.POST['number_of_entries'])
                     aggregation_values = Entry.objects.filter(entry_owner=user_id).aggregate(Max('last_modified'),Count('id'))
@@ -196,13 +195,12 @@ def biblist_js(request):
                 else:
                     response['bibList'] = serializer.serialize(Entry.objects.filter(entry_owner = user_id), fields=('entry_key', 'entry_owner', 'entry_type', 'entry_cat', 'fields'))
                 response['bibCategories']  = serializer.serialize(EntryCategory.objects.filter(category_owner = user_id))
-                status = 200                
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+                status = 200
+    return JsonResponse(
+        response,
         status=status
     )
-           
+
 
 #save changes or create a new entry
 @login_required
@@ -214,15 +212,15 @@ def save_js(request):
         owner_id = request.user.id
         if 'owner_id' in request.POST:
             requested_owner_id = int(request.POST['owner_id'])
-            # If the user has write access to at least one document of another 
-            # user, we allow him to add new and edit bibliography entries of 
+            # If the user has write access to at least one document of another
+            # user, we allow him to add new and edit bibliography entries of
             # this user.
             if len(AccessRight.objects.filter(
-                document__owner = requested_owner_id, 
+                document__owner = requested_owner_id,
                 user = request.user.id, rights = 'w')) > 0:
                 owner_id = requested_owner_id
         status = 200
-        the_id    = int(request.POST['id'])            
+        the_id    = int(request.POST['id'])
         the_type  = EntryType.objects.filter(pk = int(request.POST['entrytype']))
         #the entry type must exists
         if the_type.exists() :
@@ -250,7 +248,7 @@ def save_js(request):
                         f_type = f_type[0]
                     else:
                         continue
-                    
+
                     if '' == val :
                         pass
                     elif 'null' == val :
@@ -280,10 +278,10 @@ def save_js(request):
                     elif f_type.field_type in ['l_name', 'l_literal', 'l_key'] :
                         if isinstance(val, list) :
                             val = ' and '.join(val);
-                            
+
                     the_fields[f_type.field_name] = val
                     #setattr(the_entry, f_type.field_name, val)
-                    
+
             if 0 == len(response['errormsg']) :
                 if 0 < the_id : #saving changes
                     the_entry = Entry.objects.get(pk=the_id, entry_owner = owner_id)
@@ -302,10 +300,9 @@ def save_js(request):
             #if the entry type doesn't exist
             status = 202
             response['errormsg']['error'] = 'this type of entry does not exist.'
-            
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+
+    return JsonResponse(
+        response,
         status=status
     )
 
@@ -313,13 +310,17 @@ def save_js(request):
 @login_required
 def delete_js(request):
     status = 405
+    response = {}
     if request.is_ajax() and request.method == 'POST' :
         status = 201
         ids = request.POST.getlist('ids[]')
         id_chunks=[ids[x:x+100] for x in xrange(0, len(ids), 100)]
         for id_chunk in id_chunks:
             Entry.objects.filter(pk__in = id_chunk, entry_owner = request.user).delete()
-    return HttpResponse(status=status)
+    return JsonResponse(
+        response,
+        status=status
+    )
 
 #save changes or create a new category
 @login_required
@@ -344,10 +345,9 @@ def save_category_js(request):
             the_cat.save()
             response.append({'id': the_cat.id, 'category_title': the_cat.category_title});
         status = 201
-        
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+
+    return JsonResponse(
+        response,
         status=status
     )
 
@@ -355,11 +355,14 @@ def save_category_js(request):
 @login_required
 def delete_category_js(request):
     status = 405
+    response = {}
     if request.is_ajax() and request.method == 'POST' :
         ids = request.POST.getlist('ids[]')
         for id in ids :
-            EntryCategory.objects.get(pk = int(id)).delete()    
+            EntryCategory.objects.get(pk = int(id)).delete()
         status = 201
-        
-    return HttpResponse(status=status)
-        
+
+    return JsonResponse(
+        response,
+        status=status
+    )

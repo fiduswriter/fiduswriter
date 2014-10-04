@@ -23,7 +23,7 @@ from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
 from django.core.context_processors import csrf
 from django.template import RequestContext
-from django.http import HttpResponse
+from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.core.serializers.python import Serializer
 
@@ -39,7 +39,7 @@ serializer = SimpleSerializer()
 @login_required
 def index(request):
     response = {}
-    
+
     response.update(csrf(request))
     return render_to_response('usermedia/index.html', response, context_instance = RequestContext(request))
 
@@ -80,23 +80,26 @@ def save_js(request):
             response['values']['thumbnail'] = image.thumbnail.url
             response['values']['height'] = image.height
             response['values']['width'] = image.width
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+    return JsonResponse(
+        response,
         status=status
-    )            
-            
-            
+    )
+
+
 
 #delete an image
 @login_required
 def delete_js(request):
     status = 405
+    response = {}
     if request.is_ajax() and request.method == 'POST' :
         status = 201
         ids = request.POST.getlist('ids[]')
         Image.objects.filter(pk__in = ids, uploader = request.user).delete()
-    return HttpResponse(status=status)
+    return JsonResponse(
+        response,
+        status=status
+    )
 
 
 def check_access_rights(other_user_id, this_user):
@@ -108,7 +111,7 @@ def check_access_rights(other_user_id, this_user):
         has_access = True
     elif AccessRight.objects.filter(document__owner=other_user_id, user=this_user).count() > 0:
         has_access = True
-    return has_access   
+    return has_access
 
 #returns list of images
 @login_required
@@ -150,11 +153,8 @@ def images_js(request):
                     field_obj['height'] = image.height
                     field_obj['width'] = image.width
                 response['images'].append(field_obj)
-            
-
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+    return JsonResponse(
+        response,
         status=status
     )
 
@@ -181,10 +181,9 @@ def save_category_js(request):
             the_cat.save()
             response.append({'id': the_cat.id, 'category_title': the_cat.category_title});
         status = 201
-        
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+
+    return JsonResponse(
+        response,
         status=status
     )
 
@@ -192,10 +191,14 @@ def save_category_js(request):
 @login_required
 def delete_category_js(request):
     status = 405
+    response = {}
     if request.is_ajax() and request.method == 'POST' :
         ids = request.POST.getlist('ids[]')
         for id in ids :
-            ImageCategory.objects.get(pk = int(id)).delete()    
+            ImageCategory.objects.get(pk = int(id)).delete()
         status = 201
-        
-    return HttpResponse(status=status)
+
+    return JsonResponse(
+        response,
+        status=status
+    )

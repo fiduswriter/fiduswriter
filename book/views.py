@@ -86,16 +86,16 @@ def print_book(request):
     return render_to_response('book/print.html',
         response,
         context_instance=RequestContext(request))
-    
-@login_required    
+
+@login_required
 def get_book_js(request):
     response={}
     status = 405
     if request.is_ajax() and request.method == 'POST':
             book_id = json.loads(request.POST['id'])
             book = Book.objects.filter(id=book_id).filter(Q(owner=request.user) | Q(bookaccessright__user=request.user))
-            # TODO: Is it really enough to check if the number of chapters 
-            # owned by or with access rights by the current user is smaller 
+            # TODO: Is it really enough to check if the number of chapters
+            # owned by or with access rights by the current user is smaller
             # than the total number of chapters of a book?
             if len(book) == 0 or len(book[0].chapters.filter(Q(owner=request.user) | Q(accessright__user=request.user))) < len(book[0].chapters.all()):
                 response['error']='insufficient rights'
@@ -117,14 +117,13 @@ def get_book_js(request):
                         'owner': chapter.text.owner.id
                         })
                 status = 200
-            
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+
+    return JsonResponse(
+        response,
         status=status
-    )    
-    
-    
+    )
+
+
 @login_required
 def get_booklist_js(request):
     response={}
@@ -174,11 +173,10 @@ def get_booklist_js(request):
         response['user']={}
         response['user']['id']=request.user.id
         response['user']['name']=request.user.readable_name
-        response['user']['avatar']=avatar_url(request.user,80)            
+        response['user']['avatar']=avatar_url(request.user,80)
         response['access_rights'] = get_accessrights(BookAccessRight.objects.filter(book__owner=request.user))
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+    return JsonResponse(
+        response,
         status=status
     )
 
@@ -204,7 +202,7 @@ def add_chapters(book_instance, chapters, status, this_user):
                                 rights= 'r',
                             )
     return status
-  
+
 @login_required
 def save_js(request):
     date_format = '%d/%m/%Y'
@@ -221,7 +219,7 @@ def save_js(request):
             # We are dealing with a new book that still has not obtained an
             # ID.
             the_book['owner'] = request.user.pk
-            
+
             # Now we check the augmented form against the modelform
             form = BookForm(the_book)
             if form.is_valid():
@@ -237,8 +235,8 @@ def save_js(request):
                 response['updated'] = date_obj.strftime(date_format)
                 status = add_chapters(form.instance, the_chapters, status, request.user)
             else:
-                response['errors'] = form.errors 
-                
+                response['errors'] = form.errors
+
         else:
             book = Book.objects.get(pk=the_book['id'])
             the_book['owner']=book.owner.id
@@ -271,7 +269,7 @@ def save_js(request):
                         status = 422
                 else:
                     status = 403
-            
+
     return HttpResponse(
         json.dumps(response),
         content_type = 'application/json; charset=utf8',
@@ -280,7 +278,7 @@ def save_js(request):
 
 
 
-@login_required    
+@login_required
 def delete_js(request):
     response = {}
     status = 405
@@ -293,7 +291,7 @@ def delete_js(request):
         json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
-    )            
+    )
 
 def send_share_notification(request, book_id, collaborator_id, tgt_right):
     owner = request.user.readable_name
@@ -359,7 +357,7 @@ def access_right_save_js(request):
                         if access_right.rights != tgt_right:
                             access_right.rights = tgt_right
                             if tgt_right == 'w':
-                                send_share_upgrade_notification(request, book_id, collaborator_id)                              
+                                send_share_upgrade_notification(request, book_id, collaborator_id)
                     except ObjectDoesNotExist:
                         access_right = BookAccessRight.objects.create(
                             book_id = book_id,
@@ -369,7 +367,7 @@ def access_right_save_js(request):
                         send_share_notification(request, book_id, collaborator_id, tgt_right)
                     access_right.save()
                     for text in the_book.chapters.all():
-                        # If one shares a book with another user and that user has no access rights on the chapters that belong to the current user, 
+                        # If one shares a book with another user and that user has no access rights on the chapters that belong to the current user,
                         # give read access to the chapter documents the collaborator.
                         if text.owner == request.user and len(text.accessright_set.filter(user_id=collaborator_id)) == 0:
                             AccessRight.objects.create(

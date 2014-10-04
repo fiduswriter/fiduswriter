@@ -1,7 +1,7 @@
 from django.forms import ModelForm
 
 from django.contrib.auth.models import User
-from account.models import UserProfile, TeamMember
+from .models import UserProfile, TeamMember
 
 class UserForm(ModelForm):
     class Meta:
@@ -12,7 +12,7 @@ class UserProfileForm(ModelForm):
     class Meta:
         model = UserProfile
         fields = ('about',)
-        
+
 class TeamMemberForm(ModelForm):
     class Meta:
         model = TeamMember

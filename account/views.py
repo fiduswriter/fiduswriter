@@ -18,8 +18,7 @@
 
 import json
 
-from django.http import HttpResponseRedirect
-from django.http import HttpResponse
+from django.http import JsonResponse, HttpResponseRedirect
 from django.contrib.auth import logout
 from django.shortcuts import render_to_response
 from django.template import RequestContext
@@ -59,7 +58,7 @@ def logout_page(request):
 def show_profile(request,username):
     """
     Show user profile page
-    """ 
+    """
     response = {}
     if username==request.user.username:
         response['can_edit'] = True
@@ -68,10 +67,10 @@ def show_profile(request,username):
         if len(the_user) > 0:
             response['the_user'] = the_user[0]
         response['can_edit'] = False
-    return render_to_response('account/show_profile.html', 
+    return render_to_response('account/show_profile.html',
         response,
         context_instance=RequestContext(request))
-    
+
 @login_required
 def password_change_js(request):
     '''
@@ -87,13 +86,12 @@ def password_change_js(request):
         else:
             response['msg'] = form.errors
             status = 201
-    
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+
+    return JsonResponse(
+        response,
         status=status
     )
-    
+
 @login_required
 def add_email_js(request):
     '''
@@ -114,13 +112,12 @@ def add_email_js(request):
         else:
             status = 201
             response['msg'] = add_email_form.errors
-    
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+
+    return JsonResponse(
+        response,
         status=status
     )
-    
+
 @login_required
 def delete_email_js(request):
     response = {}
@@ -145,18 +142,17 @@ def delete_email_js(request):
                     user=request.user,
                     email_address=email_address
                 )
-                
+
         except EmailAddress.DoesNotExist:
             pass
-    
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+
+    return JsonResponse(
+        response,
         status=status
     )
-    
+
 @login_required
-def primary_email_js(request):    
+def primary_email_js(request):
     response = {}
     status = 405
     email = request.POST["email"]
@@ -176,7 +172,7 @@ def primary_email_js(request):
                     from_email_address = EmailAddress.objects.get(user=request.user, primary=True )
                 except EmailAddress.DoesNotExist:
                     from_email_address = None
-                    
+
                 status = 200
                 email_address.set_as_primary()
                 response['msg'] = "Primary e-mail address set"
@@ -189,13 +185,12 @@ def primary_email_js(request):
         except EmailAddress.DoesNotExist:
             status = 201
             response['msg'] = "e-mail address does not exist"
-            
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+
+    return JsonResponse(
+        response,
         status=status
     )
-    
+
 @login_required
 def upload_avatar_js(request):
     '''
@@ -218,12 +213,11 @@ def upload_avatar_js(request):
             avatar_updated.send(sender=Avatar, user=request.user, avatar=avatar)
             response['avatar'] = accountutil.get_user_avatar_url(request.user)
             status = 200
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+    return JsonResponse(
+        response,
         status=status
     )
-    
+
 @login_required
 def delete_avatar_js(request):
     '''
@@ -246,9 +240,8 @@ def delete_avatar_js(request):
             Avatar.objects.filter(pk=aid).delete()
             response['avatar'] = accountutil.get_user_avatar_url(request.user)
             status = 200
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+    return JsonResponse(
+        response,
         status=status
     )
 
@@ -263,15 +256,14 @@ def delete_user_js(request):
         user = request.user
         # Only remove users who are not marked as having staff status to prevent administratoras from deleting themselves accidentally.
         if user.is_staff == False:
-            user.is_active = False  
+            user.is_active = False
         user.save()
         status = 200
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+    return JsonResponse(
+        response,
         status=status
-    )        
-        
+    )
+
 
 @login_required
 def save_profile_js(request):
@@ -305,14 +297,13 @@ def save_profile_js(request):
             else:
                 response['errors']+=profile_form.errors
         '''
-            
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
-        status=status
-    )    
 
-@login_required        
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+@login_required
 def list_team_members(request):
     """
     List all team members of the current user
@@ -322,7 +313,7 @@ def list_team_members(request):
     '''
     paginator = Paginator(all_team_members, 25)
     # Show only 25 team members at a time
-    
+
     page = request.GET.get('page')
     try:
         team_members = paginator.page(page)
@@ -334,9 +325,9 @@ def list_team_members(request):
         team_members = paginator.page(paginator.num_pages)
     '''
     response['teammembers'] = all_team_members
-    return render_to_response('account/list_team_members.html', 
+    return render_to_response('account/list_team_members.html',
         response, context_instance=RequestContext(request))
-        
+
 @login_required
 def add_team_member_js(request):
     """
@@ -380,10 +371,9 @@ def add_team_member_js(request):
                     response['error'] = 2 #'This person is already in your contacts!'
         else:
 	    response['error'] = 3 #'User cannot be found'
-        
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+
+    return JsonResponse(
+        response,
         status=status
     )
 
@@ -403,12 +393,11 @@ def change_team_member_roles_js(request):
         if team_member_form.is_valid():
             team_member_form.save()
             status = 200
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+    return JsonResponse(
+        response,
         status=status
     )
-    
+
 @login_required
 def remove_team_member_js(request):
     """
@@ -426,8 +415,7 @@ def remove_team_member_js(request):
             team_member_object_instance = request.user.leader.filter(member_id=former_member)[0]
             team_member_object_instance.delete()
         status = 200
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+    return JsonResponse(
+        response,
         status=status
-    )    
+    )

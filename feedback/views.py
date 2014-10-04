@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.shortcuts import render_to_response
-from django.http import HttpResponse
+from django.http import JsonResponse
 from django.core.mail import send_mail
 from django.core.context_processors import csrf
 from django.template import RequestContext
@@ -26,6 +26,7 @@ from feedback.models import Feedback
 
 def feedback(request):
     status = 405
+    response = {}
     if request.is_ajax() and request.method == 'POST':
         status = 200
         feedback_message = request.POST['message']
@@ -35,14 +36,17 @@ def feedback(request):
         if request.user.is_authenticated():
             new_feedback.owner = request.user
         new_feedback.save()
-        
-    return HttpResponse(status=status)            
 
-    
+    return JsonResponse(
+        response,
+        status=status
+    )
+
+
 def browser(request):
     response={}
     response['user'] = request.user
     response.update(csrf(request))
-    return render_to_response('feedback/browser.html', 
+    return render_to_response('feedback/browser.html',
         response,
         context_instance=RequestContext(request))

@@ -23,6 +23,9 @@ class UserProfile(models.Model):
     user = models.ForeignKey(User, unique=True)
     about = models.TextField(max_length=500, blank=True)
 
+    class Meta:
+        db_table = 'account_userprofile'
+
 User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 
 def get_readable_name(user):
@@ -36,8 +39,8 @@ User.readable_name = property(lambda u: get_readable_name(u))
 
 # Anyone can define anyone as a team member without approval from that person.
 # This works in only one direction. Team leaders are the owners of their documents,
-# and the same user can be a Team member on the document of someone else. 
-# Students/academics helping oneanother with their writings with shifting 
+# and the same user can be a Team member on the document of someone else.
+# Students/academics helping oneanother with their writings with shifting
 # responsibilities are the use case in mind here.
 # Roles are stored as a comma separated list as a CharField
 
@@ -46,6 +49,7 @@ class TeamMember(models.Model):
     leader = models.ForeignKey(User, related_name='leader')
     member = models.ForeignKey(User, related_name='member')
     roles = models.CharField(max_length=100, blank=True)
-    
+
     class Meta:
         unique_together = (("leader", "member"),)
+        db_table = "account_teammember"

@@ -19,7 +19,7 @@
 import json
 
 from django.shortcuts import render_to_response
-from django.http import HttpResponse, HttpRequest
+from django.http import JsonResponse, HttpRequest
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.core.context_processors import csrf
@@ -270,9 +270,8 @@ def save_js(request):
                 else:
                     status = 403
 
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+    return JsonResponse(
+        response,
         status=status
     )
 
@@ -287,9 +286,8 @@ def delete_js(request):
         book = Book.objects.get(pk=book_id,owner=request.user)
         book.delete()
         status = 200
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+    return JsonResponse(
+        response,
         status=status
     )
 
@@ -378,8 +376,7 @@ def access_right_save_js(request):
                 x += 1
         response['access_rights'] = get_accessrights(BookAccessRight.objects.filter(book__owner=request.user))
         status = 201
-    return HttpResponse(
-        json.dumps(response),
-        content_type = 'application/json; charset=utf8',
+    return JsonResponse(
+        response,
         status=status
     )

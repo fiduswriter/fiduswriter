@@ -347,6 +347,7 @@ def delete_revision_js(request):
     response = {}
     can_save = False
     status = 405
+    print request
     if request.is_ajax() and request.method == 'POST':
         revision_id = request.POST['id']
         revision = DocumentRevision.objects.filter(pk=int(revision_id))

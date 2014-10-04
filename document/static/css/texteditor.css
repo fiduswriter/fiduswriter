@@ -298,7 +298,7 @@ ul.potato-menu ul.potato-menu-group {
 /* For print */
 
 @media print {
-    
+
     #editor {
         display: none !important;
     }
@@ -311,7 +311,7 @@ ul.potato-menu ul.potato-menu-group {
         margin: 0 !important;
         border: 0 !important;
     }
-    
+
     body {
         margin-bottom: 0;
     }*/
@@ -340,6 +340,7 @@ font {
 
 #document-contents, #document-title, #metadata-subtitle, #metadata-abstract, #metadata-authors, #metadata-keywords {
     min-height: 1.5em;
+    line-height: initial; /* Cancel out 1.6em line height for metadata/title. */
 }
 
 
@@ -436,8 +437,8 @@ body {counter-reset: pagination-footnote pagination-footnote-reference;}
 #flow .pagination-footnote > * > * {font-size: 0.7em; margin:.25em;}
 #flow .pagination-footnote > * > *::before, .pagination-footnote::before {position: relative; top: -0.5em; font-size: 80%;}
 #flow .pagination-footnote > span {
-    position: absolute; 
-    right: 0in; 
+    position: absolute;
+    right: 0in;
     width: 1.5in;
 }
 

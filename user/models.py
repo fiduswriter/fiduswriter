@@ -23,9 +23,6 @@ class UserProfile(models.Model):
     user = models.ForeignKey(User, unique=True)
     about = models.TextField(max_length=500, blank=True)
 
-    class Meta:
-        db_table = 'account_userprofile'
-
 User.profile = property(lambda u: UserProfile.objects.get_or_create(user=u)[0])
 
 def get_readable_name(user):
@@ -52,4 +49,3 @@ class TeamMember(models.Model):
 
     class Meta:
         unique_together = (("leader", "member"),)
-        db_table = "account_teammember"

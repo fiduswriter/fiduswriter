@@ -89,7 +89,7 @@ def get_documentlist_extra_js(request):
         json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
-    )   
+    )
 import time
 def documents_list(request):
     documents = Document.objects.filter(Q(owner=request.user) | Q(accessright__user=request.user)).order_by('-updated')
@@ -105,7 +105,7 @@ def documents_list(request):
                 'file_name': revision.file_name,
                 'pk': revision.pk
             })
-        
+
         added = time.mktime(document.added.utctimetuple())
         updated = time.mktime(document.updated.utctimetuple())
         is_owner = False
@@ -115,7 +115,7 @@ def documents_list(request):
             'id': document.id,
             'title': document.title,
             'is_owner': is_owner,
-            'owner': { 
+            'owner': {
                 'id': document.owner.id,
                 'name': document.owner.readable_name,
                 'avatar': avatar_url(document.owner,80)
@@ -126,7 +126,7 @@ def documents_list(request):
             'revisions': revision_list
         })
     return output_list
-    
+
 @login_required
 def get_documentlist_js(request):
     response={}
@@ -144,24 +144,24 @@ def get_documentlist_js(request):
         response['user']={}
         response['user']['id']=request.user.id
         response['user']['name']=request.user.readable_name
-        response['user']['avatar']=avatar_url(request.user,80)            
+        response['user']['avatar']=avatar_url(request.user,80)
         response['access_rights'] = get_accessrights(AccessRight.objects.filter(document__owner=request.user))
     return HttpResponse(
         json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
-    )        
+    )
 
 
 @login_required
 def editor(request):
     response = {}
-    
-    return render_to_response('document/editor.html', 
+
+    return render_to_response('document/editor.html',
         response,
         context_instance=RequestContext(request))
-    
-@login_required    
+
+@login_required
 def delete_js(request):
     response = {}
     status = 405
@@ -174,7 +174,7 @@ def delete_js(request):
         json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
-    )            
+    )
 
 def send_share_notification(request, doc_id, collaborator_id, tgt_right):
     owner = request.user.readable_name
@@ -240,7 +240,7 @@ def access_right_save_js(request):
                         if access_right.rights != tgt_right:
                             access_right.rights = tgt_right
                             if tgt_right == 'w':
-                                send_share_upgrade_notification(request, doc_id, collaborator_id)                            
+                                send_share_upgrade_notification(request, doc_id, collaborator_id)
                     except ObjectDoesNotExist:
                         access_right = AccessRight.objects.create(
                             document_id = doc_id,
@@ -257,9 +257,9 @@ def access_right_save_js(request):
         content_type = 'application/json; charset=utf8',
         status=status
     )
-    
 
-  
+
+
 @login_required
 def import_js(request):
     response = {}
@@ -280,7 +280,7 @@ def import_js(request):
         content_type = 'application/json; charset=utf8',
         status=status
     )
-    
+
 @login_required
 def upload_js(request):
     response = {}
@@ -310,8 +310,8 @@ def upload_js(request):
         content_type = 'application/json; charset=utf8',
         status=status
     )
-    
-# Download a revision that was previously uploaded    
+
+# Download a revision that was previously uploaded
 @login_required
 def download_js(request):
     can_access = False
@@ -341,13 +341,12 @@ def download_js(request):
         content_type = 'application/json; charset=utf8',
         status=405
     )
-    
+
 @login_required
 def delete_revision_js(request):
     response = {}
     can_save = False
     status = 405
-    print request
     if request.is_ajax() and request.method == 'POST':
         revision_id = request.POST['id']
         revision = DocumentRevision.objects.filter(pk=int(revision_id))
@@ -361,4 +360,4 @@ def delete_revision_js(request):
         json.dumps(response),
         content_type = 'application/json; charset=utf8',
         status=status
-    )                
+    )

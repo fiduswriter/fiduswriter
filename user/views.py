@@ -28,9 +28,9 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.core.exceptions import ObjectDoesNotExist
 
 
-from account.models import UserProfile
-from account.forms import UserForm, UserProfileForm, TeamMemberForm
-import account.util as accountutil
+from .models import UserProfile
+from .forms import UserForm, UserProfileForm, TeamMemberForm
+from . import util as userutil
 from document.models import AccessRight
 
 
@@ -211,7 +211,7 @@ def upload_avatar_js(request):
             avatar.avatar.save(image_file.name, image_file)
             avatar.save()
             avatar_updated.send(sender=Avatar, user=request.user, avatar=avatar)
-            response['avatar'] = accountutil.get_user_avatar_url(request.user)
+            response['avatar'] = userutil.get_user_avatar_url(request.user)
             status = 200
     return JsonResponse(
         response,
@@ -238,7 +238,7 @@ def delete_avatar_js(request):
                     avatar_updated.send(sender=Avatar, user=request.user, avatar=avatar)
                     break
             Avatar.objects.filter(pk=aid).delete()
-            response['avatar'] = accountutil.get_user_avatar_url(request.user)
+            response['avatar'] = userutil.get_user_avatar_url(request.user)
             status = 200
     return JsonResponse(
         response,
@@ -359,7 +359,7 @@ def add_team_member_js(request):
                 team_member_form = TeamMemberForm(form_data)
                 if team_member_form.is_valid():
                     team_member_form.save()
-                    the_avatar = accountutil.get_user_avatar_url(new_member)
+                    the_avatar = userutil.get_user_avatar_url(new_member)
                     response['member'] = {
                         'id': new_member.pk,
                         'name': new_member.username,

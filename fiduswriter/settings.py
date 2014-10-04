@@ -192,6 +192,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 # are modules to allow different login options.
 
 INSTALLED_APPS = (
+    'base',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -202,7 +203,6 @@ INSTALLED_APPS = (
     'django.contrib.admindocs',
     'django.contrib.flatpages',
     'fixturemedia',
-    'base',
     'menu',
     'document',
     'book',
@@ -238,6 +238,8 @@ AUTHENTICATION_BACKENDS = (
     # `allauth` specific authentication methods, such as login by e-mail
     "allauth.account.auth_backends.AuthenticationBackend",
 )
+
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 
 # Define available languages

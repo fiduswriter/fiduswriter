@@ -23,7 +23,7 @@ admin.autodiscover()
 
 import settings
 
-from account.views import logout_page
+from user.views import logout_page
 
 js_info_dict = {
     'packages': (
@@ -42,28 +42,28 @@ urlpatterns = patterns('',
     (r'^i18n/', include('django.conf.urls.i18n')),
 
     # I18n Javascript translations
-    url(r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict),    
-    
-    
+    url(r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict),
+
+
     # Login / logout.
     (r'^login/$', 'django.contrib.auth.views.login'),
     url(r'^logout/$', logout_page, name='logout'),
-    
+
     # Admin interface
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^admin/', include(admin.site.urls)),
 
     # Account management
-    (r'^account/', include('account.urls')),
-    
-    # Media manager 
+    (r'^account/', include('user.urls')),
+
+    # Media manager
     url(r'^usermedia/', include('usermedia.urls')),
 
-    # Media manager 
+    # Media manager
     url(r'^book/', include('book.urls')),
-    
-    # Feedback 
-    url(r'^feedback/', include('feedback.urls')), 
+
+    # Feedback
+    url(r'^feedback/', include('feedback.urls')),
 
 )
 

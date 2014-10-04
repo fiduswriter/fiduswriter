@@ -29,8 +29,8 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
 SERVER_INFO = {
-    # This determines whether the server is used for testing and will let the users 
-    # upon signup know that their documents may disappear.  
+    # This determines whether the server is used for testing and will let the users
+    # upon signup know that their documents may disappear.
     'TEST_SERVER': True,
     # This is the contact email that will be shown in various places all over the site.
     'CONTACT_EMAIL': 'mail@email.com',
@@ -52,8 +52,8 @@ DATABASES = {
 
 }
 
-# Send emails to console. 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend' 
+# Send emails to console.
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Or send emails using an SMTP server
 #EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -77,7 +77,7 @@ LANGUAGE_CODE = 'en-us'
 SITE_ID = 1
 
 # If you set this to False, the server will make some optimizations so as not
-# to load the internationalization machinery. Fidus Writer makes use of 
+# to load the internationalization machinery. Fidus Writer makes use of
 # internationalization, so you should probably keep this on.
 
 USE_I18N = True
@@ -98,7 +98,7 @@ USE_L10N = True
 # If you set this to False, the server will not use timezone-aware datetimes.
 USE_TZ = True
 
-# The top path of the project. The default is for it to point to the directory 
+# The top path of the project. The default is for it to point to the directory
 # above this file.
 PROJECT_PATH = os.path.realpath(os.path.join(os.path.dirname(__file__), '..'))
 
@@ -150,7 +150,7 @@ TEMPLATE_LOADERS = (
 )
 
 
-# These middleware classes is what Fidus Writer needs in its standard setup. 
+# These middleware classes is what Fidus Writer needs in its standard setup.
 # You only need to change this in very advanced setups.
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
@@ -161,7 +161,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.locale.LocaleMiddleware',
 )
 
-# The location of the top urls.py file inside the fiduswriter folder. 
+# The location of the top urls.py file inside the fiduswriter folder.
 # You only need to change this in very advanced setups.
 ROOT_URLCONF = 'fiduswriter.urls'
 
@@ -178,7 +178,7 @@ TEMPLATE_DIRS = (
 # You only need to change this in very advanced setups.
 TEMPLATE_CONTEXT_PROCESSORS = (
     "base.context_processors.js_locations",
-    "base.context_processors.css_locations",    
+    "base.context_processors.css_locations",
     "base.context_processors.server_info",
     "django.core.context_processors.static",
     "django.core.context_processors.request",
@@ -201,7 +201,6 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.flatpages',
-    'south',
     'fixturemedia',
     'base',
     'menu',
@@ -209,7 +208,7 @@ INSTALLED_APPS = (
     'book',
     'bibliography',
     'usermedia',
-    'account',
+    'user',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -217,7 +216,7 @@ INSTALLED_APPS = (
     'compressor',
     'feedback',
     'style'
-    # If you want to enable one or several of the social network login options 
+    # If you want to enable one or several of the social network login options
     # below, make sure you add the authorization keys at:
     # http://SERVER.COM/admin/socialaccount/socialapp/
     #'allauth.socialaccount.providers.facebook',

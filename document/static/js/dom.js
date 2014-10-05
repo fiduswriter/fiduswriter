@@ -1,5 +1,5 @@
 /**
- * @file Deals with common dom operations needed for caret movement. 
+ * @file Deals with common dom operations needed for caret movement.
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
@@ -21,8 +21,8 @@
 
 (function () {
     var exports = this,
-   /** 
-  * Common DOM functions needed for caret movement. TODO 
+   /**
+  * Common DOM functions needed for caret movement. TODO
   * @namespace dom
   */
         dom = {};
@@ -155,7 +155,7 @@
         if (!theDocument.settings.tracking) {
             var insideChange = jQuery(range.startContainer).parents('.ins,.del').last()[0];
             if (insideChange) {
-                // We are inside a change node, although tracking has been disabled. 
+                // We are inside a change node, although tracking has been disabled.
                 // This means that we have to split the change node at the current position, before we can continue.
                 range = dom.splitNode(insideChange, range);
             }
@@ -170,16 +170,16 @@
 
         // Check if we are inside a comment (if at the very end of it, we will need to escape)
         insideComment = jQuery(range.startContainer).closest('.comment')[0];
-        
+
         // Check if we are inside a link (if at the very end of it, we will need to escape)
         insideLink = jQuery(range.startContainer).closest('a')[0];
 
         // Check if we are inside a footnote (if at the very end of it, we will need to escape)
         insideFootnote = jQuery(range.startContainer).closest('.pagination-footnote')[0];
 
-        if (insideCitation 
-            || (insideComment && (dom.isAtEndInCurrentContainer(range)) && (dom.isAtEnd(range.endContainer, insideComment))) 
-            || (insideLink && (dom.isAtEndInCurrentContainer(range)) && (dom.isAtEnd(range.endContainer, insideLink))) 
+        if (insideCitation
+            || (insideComment && (dom.isAtEndInCurrentContainer(range)) && (dom.isAtEnd(range.endContainer, insideComment)))
+            || (insideLink && (dom.isAtEndInCurrentContainer(range)) && (dom.isAtEnd(range.endContainer, insideLink)))
             || (insideFootnote && (dom.isAtEndInCurrentContainer(range)) && (dom.isAtEnd(range.endContainer, insideFootnote)))) {
 
             if (insideCitation) {
@@ -192,9 +192,9 @@
                 nodeToEscape = insideFootnote;
             }
 
-            // We insert a Mongolian vowel space which has no width. 
+            // We insert a Mongolian vowel space which has no width.
             emptySpaceNode = document.createTextNode(' ');
-            
+
             nodeToEscape.parentNode.insertBefore(emptySpaceNode, nodeToEscape.nextSibling);
             range.selectNodeContents(emptySpaceNode);
 
@@ -215,13 +215,13 @@
     };
 
     dom.mergeParagraphs = function (firstPar, secondPar, range) {
-        
-        if (firstPar.textContent === '\n') {
-            // The first paragraph is empty, so we remove it.
+
+        if (firstPar.textContent === '\n' ||  !firstPar.nodeType !== 1) {
+            // The first paragraph is empty or not an element node, so we remove it.
             jQuery(firstPar).remove();
             return range;
         }
-        
+
         // We normalize the second paragraph, which means we eliminate empty text nodes.
         secondPar.normalize();
 
@@ -241,20 +241,20 @@
     };
 
     dom.switchBlockElementWhileSavingCaretPosition = function(currentBlockElement, switchTo) {
-        
+
         var savedSel, returnValue;
-        
+
         if (currentBlockElement) {
-            savedSel = rangy.saveSelection(); 
+            savedSel = rangy.saveSelection();
             returnValue = dom.switchBlockElement(currentBlockElement, switchTo);
             rangy.restoreSelection(savedSel);
-            
+
         } else {
             returnValue = false;
         }
         return returnValue;
     };
-    
+
     dom.switchBlockElement = function(currentBlockElement, switchTo) {
         var replacementNode, secondReplacementNode, oldList, secondOldList, thirdOldList;
         if (switchTo === 'ol' || switchTo === 'ul') {
@@ -266,7 +266,7 @@
                 if (currentBlockElement.previousSibling) {
                     if (currentBlockElement.nextSibling) {
                         // This list item is between other list items of the same type.
-                        oldList = currentBlockElement.parentNode;  
+                        oldList = currentBlockElement.parentNode;
                         replacementNode = document.createElement(switchTo);
                         secondReplacementNode = oldList.cloneNode(false);
                         while (currentBlockElement.nextSibling) {
@@ -275,7 +275,7 @@
                         replacementNode.appendChild(currentBlockElement);
                         oldList.parentNode.insertBefore(replacementNode, oldList.nextSibling);
                         replacementNode.parentNode.insertBefore(secondReplacementNode, replacementNode.nextSibling);
-                        
+
                     } else {
                         // This list item only has list items before it
                         if (currentBlockElement.parentNode.nextSibling && jQuery(currentBlockElement.parentNode.nextSibling).is(switchTo)) {
@@ -283,11 +283,11 @@
                             currentBlockElement.parentNode.nextSibling.insertBefore(currentBlockElement, currentBlockElement.parentNode.nextSibling.firstChild);
                         } else {
                             // A new list has to be created and added behind the current one.
-                            oldList = currentBlockElement.parentNode; 
+                            oldList = currentBlockElement.parentNode;
                             replacementNode = document.createElement(switchTo);
                             replacementNode.appendChild(currentBlockElement);
                             oldList.parentNode.insertBefore(replacementNode, oldList.nextSibling);
-                        } 
+                        }
                     }
                 } else if (currentBlockElement.nextSibling) {
                     // This list item only has list items after it
@@ -305,8 +305,8 @@
                     // This is a single item of a list.
                     if (currentBlockElement.parentNode.previousSibling && jQuery(currentBlockElement.parentNode.previousSibling).is(switchTo)) {
                         if (currentBlockElement.parentNode.nextSibling && jQuery(currentBlockElement.parentNode.nextSibling).is(switchTo)) {
-                            // There is a list of the same type both before and after this item. Add the current item to the list before it, 
-                            // then remove the current list. Then move all items of the list behidn this one to the first list and finally 
+                            // There is a list of the same type both before and after this item. Add the current item to the list before it,
+                            // then remove the current list. Then move all items of the list behidn this one to the first list and finally
                             // remove that list.
                             oldList = currentBlockElement.parentNode;
                             secondOldList = currentBlockElement.parentNode.previousSibling;
@@ -353,7 +353,7 @@
                 currentBlockElement.nextSibling.innerHTML = '<li>'+currentBlockElement.innerHTML+'</li>' +
                     currentBlockElement.nextSibling.innerHTML;
                 currentBlockElement.parentNode.removeChild(currentBlockElement);
-                    
+
             } else {
             // We are exchanging a P, H1, H2 or H3 with a list.
                 replacementNode = document.createElement(switchTo);
@@ -380,7 +380,7 @@
                         oldList.parentNode.insertBefore(replacementNode, oldList.nextSibling);
                         replacementNode.parentNode.insertBefore(secondReplacementNode, replacementNode.nextSibling);
                     } else {
-                        // The currentBlockElement is an item at the end of a list. We add a new element after the list and remove the item from the list.   
+                        // The currentBlockElement is an item at the end of a list. We add a new element after the list and remove the item from the list.
                         oldList.removeChild(currentBlockElement);
                         oldList.parentNode.insertBefore(replacementNode, oldList.nextSibling);
                     }
@@ -392,18 +392,18 @@
                    // The item is a single item within a list. We replace the list with the new element.
                    oldList.parentNode.replaceChild(replacementNode, oldList);
                 }
-                   
+
             } else {
                 // We are exchanging one non-list block element with another.
                 replacementNode = document.createElement(switchTo);
                 replacementNode.innerHTML = currentBlockElement.innerHTML;
                 currentBlockElement.parentNode.replaceChild(replacementNode, currentBlockElement);
             }
-           
+
         }
-        
+
         return true;
-       
+
     };
 
     exports.dom = dom;

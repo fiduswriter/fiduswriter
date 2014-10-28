@@ -60,8 +60,13 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='book',
             name='chapters',
-            field=models.ManyToManyField(default=None, to='document.Document', null=True, through='book.Chapter', blank=True),
+            field=models.ManyToManyField(to='document.Document', null=True, through='book.Chapter', blank=True),
             preserve_default=True,
+        ),
+        migrations.AlterField(
+            model_name='book',
+            name='chapters',
+            field=models.ManyToManyField(default=None, to=b'document.Document', null=True, through='book.Chapter', blank=True),
         ),
         migrations.AddField(
             model_name='book',

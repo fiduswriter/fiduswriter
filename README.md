@@ -7,6 +7,8 @@ Fidus Writer is an online collaborative editor especially made for academics who
 Contributing
 ----
 
+[![Bountysource](https://www.bountysource.com/badge/tracker?tracker_id=328497)](https://www.bountysource.com/trackers/328497-fiduswriter?utm_source=328497&utm_medium=shield&utm_campaign=TRACKER_BADGE)
+
 For details on contributing, please check http://fiduswriter.org/help-us/
 
 

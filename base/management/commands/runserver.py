@@ -22,18 +22,8 @@ from sys import platform
 from django.core.management.base import BaseCommand, CommandError
 from django.utils import translation, autoreload
 from django.conf import settings
-from django.core.handlers.wsgi import WSGIHandler
 
-from tornado.options import options, define, parse_command_line
-from tornado.httpserver import HTTPServer
-from tornado.ioloop import IOLoop
-from tornado.web import Application, FallbackHandler, RequestHandler, StaticFileHandler
-from tornado.wsgi import WSGIContainer
-
-if settings.CACHES["default"]["BACKEND"]=="redis_cache.cache.RedisCache":
-    from document.ws_views_redis import DocumentWS
-else:
-    from document.ws_views import DocumentWS
+from base.servers.tornado_django_hybrid import run as run_server
 
 DEFAULT_PORT = "8000"
 
@@ -48,22 +38,15 @@ class Command(BaseCommand):
         else:
             self.port = port
         if not self.port.isdigit():
-            raise CommandError("%r is not a valid port number." % self.port)        
+            raise CommandError("%r is not a valid port number." % self.port)
         if settings.DEBUG:
             autoreload.main(self.inner_run, args, options)
         else:
             self.inner_run(*args, **options)
-        
-    def inner_run(self, *args, **options):    
-        wsgi_app = WSGIContainer(WSGIHandler())
-        tornado_app = Application([(r'/static/(.*)',
-            DjangoStaticFilesHandler, {'default_filename': 'none.img'}),
-            (r'/media/(.*)', StaticFileHandler, {'path': settings.MEDIA_ROOT}),
-            ('/hello-tornado', HelloHandler), 
-            ('/ws/doc/(\w+)', DocumentWS), 
-            ('.*', FallbackHandler, dict(fallback=wsgi_app))])
+
+    def inner_run(self, *args, **options):
         quit_command = (platform == 'win32') and 'CTRL-BREAK' or 'CONTROL-C'
-        
+
         self.stdout.write("Validating models...\n\n")
         self.validate(display_num_errors=True)
         self.stdout.write((
@@ -83,56 +66,5 @@ class Command(BaseCommand):
         # set it up correctly for the first request (particularly important
         # in the "--noreload" case).
         translation.activate(settings.LANGUAGE_CODE)
-        
-        server = HTTPServer(tornado_app)
-        server.listen(int(self.port))
-        IOLoop.instance().start()
 
-
-
-class HelloHandler(RequestHandler):
-
-    def head(self):
-        self.finish()
-        
-    def get(self):
-        self.write('Hello from tornado')
-
-
-
-class DjangoStaticFilesHandler(StaticFileHandler):
-
-    #settings = None
-
-    def initialize(self, default_filename=None):
-        super(DjangoStaticFilesHandler, self).initialize(None,
-                default_filename=None)
-        #self.settings = settings
-
-    def validate_absolute_path(self, root, absolute_path):
-        return absolute_path
-
-    def get_absolute_path(self, root, path):
-        for finder in settings.STATICFILES_FINDERS:
-            finderClass = self.get_class(finder)
-            instance = finderClass()
-
-            new_path = instance.find(path)
-            if len(new_path) > 0:
-                return new_path
-
-    def get_class(self, kls):
-        parts = kls.split('.')
-        module = '.'.join(parts[:-1])
-        m = __import__(module)
-        for comp in parts[1:]:
-            m = getattr(m, comp)
-        return m
-
-    def set_extra_headers(self, path):
-        self.set_header('Cache-Control', 'no-cache, must-revalidate')
-        self.set_header('Expires', '0')
-        now = datetime.now()
-        expiration = datetime(now.year - 1, now.month, now.day)
-        self.set_header('Last-Modified', expiration)
-        
+        run_server(self.port)

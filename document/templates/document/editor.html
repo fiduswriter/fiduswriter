@@ -25,7 +25,7 @@
                 isSafari = (navigator.userAgent.indexOf('Safari/') > -1), 
                 isFirefox = !(window.mozInnerScreenX == null);
 
-            if(!(isChrome || isSafari)) {
+            if(!(isChrome || isSafari || isFirefox)) {
                 var currentURL = location.href.substr(7);
                 var currentRelativeURL = currentURL.substr(currentURL.indexOf('/'));
                 if(currentRelativeURL != '/feedback/browser/') {

@@ -18,16 +18,15 @@
  * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
  *
  */
-
-(function () {
+(function() {
     var exports = this,
-  /**
-  * Functions related to pasting in the editor. TODO
-  * @namespace paste
-  */
+        /**
+         * Functions related to pasting in the editor. TODO
+         * @namespace paste
+         */
         paste = {};
 
-    paste.addPasteContents = function (pasteElement, footnotes) {
+    paste.addPasteContents = function(pasteElement, footnotes) {
         var selection = rangy.getSelection();
         var range = selection.getRangeAt(0);
         while (pasteElement.firstChild) {
@@ -41,33 +40,34 @@
 
     paste.recentlyPasted = false; // prevent double pasting by checking whether paste has been done recently
 
-    paste.handlePaste = function (event) {
-        var footnotes = false, pasteElement, htmlCleaner;
+    paste.handlePaste = function(event) {
+        var footnotes = false,
+            pasteElement, htmlCleaner;
         // We cancel the paste event, copy clipboard data, clean it, insert it
 
-            event.stopPropagation();
-            event.preventDefault();
-            if (!paste.recentlyPasted) {
-                paste.recentlyPasted = true;
-                setTimeout(function () {
-                    paste.recentlyPasted = false;
-                }, 1)
-                pasteElement = document.createElement('div');
+        event.stopPropagation();
+        event.preventDefault();
+        if (!paste.recentlyPasted) {
+            paste.recentlyPasted = true;
+            setTimeout(function() {
+                paste.recentlyPasted = false;
+            }, 1)
+            pasteElement = document.createElement('div');
 
-                if (/text\/html/.test(event.clipboardData.types)) {
-                    pasteElement.innerHTML = event.clipboardData.getData(
-                        'text/html');
-                    htmlCleaner = new cleanHTML(pasteElement);
-                    footnotes = htmlCleaner.footnotes;
+            if (/text\/html/.test(event.clipboardData.types)) {
+                pasteElement.innerHTML = event.clipboardData.getData(
+                    'text/html');
+                htmlCleaner = new cleanHTML(pasteElement);
+                footnotes = htmlCleaner.footnotes;
 
-                } else if (/text\/plain/.test(event.clipboardData.types)) {
-                    pasteElement.textContent = event.clipboardData.getData(
-                        'text/plain');
-                }
-
-                paste.addPasteContents(pasteElement, footnotes);
-                return false;
+            } else if (/text\/plain/.test(event.clipboardData.types)) {
+                pasteElement.textContent = event.clipboardData.getData(
+                    'text/plain');
             }
+
+            paste.addPasteContents(pasteElement, footnotes);
+            return false;
+        }
     };
 
     exports.paste = paste;

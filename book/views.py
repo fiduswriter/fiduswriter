@@ -321,7 +321,7 @@ def send_share_upgrade_notification(request, book_id, collaborator_id):
 
 
 @login_required
-@transaction.commit_on_success
+@transaction.atomic
 def access_right_save_js(request):
     status = 405
     response={}

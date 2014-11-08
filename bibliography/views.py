@@ -64,7 +64,7 @@ def save_bib_to_db(inserting_obj):
 
 #bibtex file import
 @login_required
-@transaction.commit_on_success
+@transaction.atomic
 def import_bibtex_js(request):
     response = {}
     status = 405

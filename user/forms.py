@@ -16,3 +16,4 @@ class UserProfileForm(ModelForm):
 class TeamMemberForm(ModelForm):
     class Meta:
         model = TeamMember
+        exclude = []

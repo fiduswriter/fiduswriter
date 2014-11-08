@@ -18,46 +18,45 @@
  * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
  *
  */
-
 // Functions to be executed at startup
-jQuery(document).ready(function () {
-    
-    var documentStyleMenu = document.getElementById("documentstyle-list"), 
+jQuery(document).ready(function() {
+
+    var documentStyleMenu = document.getElementById("documentstyle-list"),
         citationStyleMenu = document.getElementById("citationstyle-list"),
         newMenuItem, i;
-    
+
     // Enable toolbar menu
     jQuery('#menu1').ptMenu();
 
     //open dropdown for headermenu
-    jQuery('.header-nav-item').each(function () {
+    jQuery('.header-nav-item').each(function() {
         $.addDropdownBox(jQuery(this), jQuery(this).siblings(
             '.fw-pulldown'));
     });
 
 
-    for (i = 0; i < documentStyleList.length; i++) {   
-        newMenuItem=document.createElement("li");
-        newMenuItem.innerHTML = "<span class='fw-pulldown-item style' data-style='"+documentStyleList[i].filename+"' title='"+documentStyleList[i].title+"'>"+documentStyleList[i].title+"</span>";
+    for (i = 0; i < documentStyleList.length; i++) {
+        newMenuItem = document.createElement("li");
+        newMenuItem.innerHTML = "<span class='fw-pulldown-item style' data-style='" + documentStyleList[i].filename + "' title='" + documentStyleList[i].title + "'>" + documentStyleList[i].title + "</span>";
         documentStyleMenu.appendChild(newMenuItem);
     }
-    for (i in citeproc.styles) {   
-        newMenuItem=document.createElement("li");
-        newMenuItem.innerHTML = "<span class='fw-pulldown-item citationstyle' data-citationstyle='"+i+"' title='"+citeproc.styles[i].name+"'>"+citeproc.styles[i].name+"</span>";
+    for (i in citeproc.styles) {
+        newMenuItem = document.createElement("li");
+        newMenuItem.innerHTML = "<span class='fw-pulldown-item citationstyle' data-citationstyle='" + i + "' title='" + citeproc.styles[i].name + "'>" + citeproc.styles[i].name + "</span>";
         citationStyleMenu.appendChild(newMenuItem);
     }
-    
+
 });
 
 // Functions to be executed when document has loaded
-jQuery(document).bind('documentDataLoaded', function () {
+jQuery(document).bind('documentDataLoaded', function() {
 
     editorEscapes.initiate();
     // We cannot download BibDB and ImageDB before we know if we are the document owner or not.
     bibliographyHelpers.init();
     usermediaHelpers.init();
 
-    var set_document_style_timer = setTimeout(function () {
+    var set_document_style_timer = setTimeout(function() {
         clearTimeout(set_document_style_timer);
         //setDocumentstyle();
         editorHelpers.setDisplay.document('settings.documentstyle',
@@ -65,10 +64,10 @@ jQuery(document).bind('documentDataLoaded', function () {
     }, 800);
 
     // Document Style switching
-    jQuery("#header-navigation .style").bind('mousedown', function () {
+    jQuery("#header-navigation .style").bind('mousedown', function() {
         if (editorHelpers.setDocumentData('settings.documentstyle',
-            jQuery(this).attr(
-                'data-style'))) {
+                jQuery(this).attr(
+                    'data-style'))) {
 
             editorHelpers.setDisplay.document('settings.documentstyle',
                 theDocument.settings.documentstyle);
@@ -85,10 +84,10 @@ jQuery(document).bind('documentDataLoaded', function () {
         ']').addClass('selected');
 
     // Citation Style switching
-    jQuery("#header-navigation .citationstyle").bind('mousedown', function () {
+    jQuery("#header-navigation .citationstyle").bind('mousedown', function() {
         if (editorHelpers.setDocumentData('settings.citationstyle',
-            jQuery(this).attr(
-                'data-citationstyle'))) {
+                jQuery(this).attr(
+                    'data-citationstyle'))) {
             editorHelpers.setDisplay.document('settings.citationstyle',
                 theDocument.settings.citationstyle);
             editorHelpers.documentHasChanged();
@@ -97,7 +96,7 @@ jQuery(document).bind('documentDataLoaded', function () {
         return false;
     });
     // Tools
-    jQuery("#header-navigation .tools-item").bind('mousedown', function () {
+    jQuery("#header-navigation .tools-item").bind('mousedown', function() {
         toolsHelpers.toolsEventHandler(jQuery(this).data('function'));
         return false;
     });
@@ -106,12 +105,12 @@ jQuery(document).bind('documentDataLoaded', function () {
 
     jQuery(document).on('blur',
         '#document-title,#document-contents,#metadata-subtitle,#metadata-abstract,#metadata-authors,#metadata-keywords',
-        function () {
+        function() {
             editorHelpers.setPlaceholders();
         });
     jQuery(document).on('focus',
         '#document-title,#document-contents,#metadata-subtitle,#metadata-abstract,#metadata-authors,#metadata-keywords',
-        function () {
+        function() {
             editorHelpers.setPlaceholders(jQuery(this).attr('id'));
         });
 
@@ -119,9 +118,9 @@ jQuery(document).bind('documentDataLoaded', function () {
         .papersize);
 
     // Paper size switching
-    jQuery("#header-navigation .papersize").bind('mousedown', function () {
+    jQuery("#header-navigation .papersize").bind('mousedown', function() {
         if (editorHelpers.setDocumentData('settings.papersize',
-            parseInt(jQuery(this).attr('data-paperheight')))) {
+                parseInt(jQuery(this).attr('data-paperheight')))) {
             editorHelpers.setDisplay.document('settings.papersize',
                 theDocument.settings.papersize);
             editorHelpers.documentHasChanged();
@@ -131,42 +130,42 @@ jQuery(document).bind('documentDataLoaded', function () {
 
     editorHelpers.setDisplay.document('id', theDocument.id);
 
-    jQuery(document).on('mousedown', '.savecopy:not(.disabled)', function () {
-        editorHelpers.getUpdatesFromInputFields(function () {
+    jQuery(document).on('mousedown', '.savecopy:not(.disabled)', function() {
+        editorHelpers.getUpdatesFromInputFields(function() {
             editorHelpers.saveDocument();
         });
         exporter.savecopy(theDocument);
     });
 
-    jQuery('.download').bind('mousedown', function () {
-        editorHelpers.getUpdatesFromInputFields(function () {
+    jQuery('.download').bind('mousedown', function() {
+        editorHelpers.getUpdatesFromInputFields(function() {
             editorHelpers.saveDocument();
         });
         exporter.downloadNative(theDocument);
     });
-    jQuery('.latex').bind('mousedown', function () {
-        editorHelpers.getUpdatesFromInputFields(function () {
+    jQuery('.latex').bind('mousedown', function() {
+        editorHelpers.getUpdatesFromInputFields(function() {
             editorHelpers.saveDocument();
         });
         exporter.downloadLatex(theDocument);
     });
-    jQuery('.epub').bind('mousedown', function () {
-        editorHelpers.getUpdatesFromInputFields(function () {
+    jQuery('.epub').bind('mousedown', function() {
+        editorHelpers.getUpdatesFromInputFields(function() {
             editorHelpers.saveDocument();
         });
         exporter.downloadEpub(theDocument);
     });
-    jQuery('.html').bind('mousedown', function () {
-        editorHelpers.getUpdatesFromInputFields(function () {
+    jQuery('.html').bind('mousedown', function() {
+        editorHelpers.getUpdatesFromInputFields(function() {
             editorHelpers.saveDocument();
         });
         exporter.downloadHtml(theDocument);
     });
-    jQuery('.print').bind('mousedown', function () {
+    jQuery('.print').bind('mousedown', function() {
         editorHelpers.print();
     });
-    jQuery('.close').bind('mousedown', function () {
-        editorHelpers.getUpdatesFromInputFields(function () {
+    jQuery('.close').bind('mousedown', function() {
+        editorHelpers.getUpdatesFromInputFields(function() {
             editorHelpers.saveDocument();
         });
         window.location.href = '/';
@@ -184,7 +183,7 @@ jQuery(document).bind('documentDataLoaded', function () {
         jQuery('.metadata-menu-item').bind('mousedown', editorHelpers.switchMetadata);
 
         jQuery('#metadata-subtitle, #metadata-abstract, #metadata-authors, #metadata-keywords').bind('blur',
-            function () {
+            function() {
                 if (jQuery.trim(this.textContent) === '') {
                     this.innerHTML = '<p><br></p>';
                 };
@@ -198,7 +197,7 @@ jQuery(document).bind('documentDataLoaded', function () {
         window.tracker = new ice.InlineChangeEditor({
             element: document.querySelector('#document-editable'),
             handleEvents: false,
-             mergeBlocks: false,
+            mergeBlocks: false,
             contentEditable: true,
             currentUser: {
                 id: theUser.id,
@@ -215,10 +214,10 @@ jQuery(document).bind('documentDataLoaded', function () {
         diffHelpers.setup();
 
         // Set Auto-save to save every ten seconds
-        setInterval(function () {
+        setInterval(function() {
             if (theDocumentValues.changed) {
                 theDocumentValues.sentHash = false;
-                editorHelpers.getUpdatesFromInputFields(function () {
+                editorHelpers.getUpdatesFromInputFields(function() {
                     editorHelpers.saveDocument();
                 });
             } else if (theDocumentValues.control && !theDocumentValues.sentHash && theDocumentValues.collaborativeMode) {
@@ -234,7 +233,7 @@ jQuery(document).bind('documentDataLoaded', function () {
 
         // bind the share dialog to the button if the user is the document owner
         if (theDocumentValues.is_owner) {
-            jQuery('.share').bind('mousedown', function () {
+            jQuery('.share').bind('mousedown', function() {
                 accessrightsHelpers.createAccessRightsDialog([
                     theDocument.id
                 ]);
@@ -258,7 +257,7 @@ jQuery(document).bind('documentDataLoaded', function () {
 
             // Send key events on to the tracker directly.
             jQuery(editableArea).bind('keyup keypress mousedown mouseup',
-                function (evt) {
+                function(evt) {
                     if (theDocument.settings.tracking) {
                         return tracker.handleEvent(evt);
                     } else {
@@ -269,18 +268,19 @@ jQuery(document).bind('documentDataLoaded', function () {
 
         // Set webpage title when document title changes
         jQuery('#document-title').bind('keyup paste change',
-            function () {
+            function() {
                 editorHelpers.setDisplay.document('title', jQuery(this).text()
                     .trim());
             });
 
         // When contents of document have changed, mark it as such
         jQuery('#document-editable').bind(
-            'keyup paste change', function () {
+            'keyup paste change',
+            function() {
                 editorHelpers.documentHasChanged();
             });
-        jQuery('.save').bind('mousedown', function () {
-            editorHelpers.getUpdatesFromInputFields(function () {
+        jQuery('.save').bind('mousedown', function() {
+            editorHelpers.getUpdatesFromInputFields(function() {
                 editorHelpers.saveDocument();
             });
             exporter.uploadNative(theDocument);
@@ -298,16 +298,16 @@ jQuery(document).bind('documentDataLoaded', function () {
 
 
         jQuery(document).on('click', '.pagination-footnote-item-container',
-            function (e) {
+            function(e) {
                 var footnote = document.getElementById(this.dataset.footnoteId);
                 tracker._addNodeTracking(footnote, false, false);
             }
         );
 
-            jQuery('.multibuttonsCover').each(function () {
-                $.addDropdownBox(jQuery(this), jQuery(this).siblings(
-                    '.fw-pulldown'));
-            });
+        jQuery('.multibuttonsCover').each(function() {
+            $.addDropdownBox(jQuery(this), jQuery(this).siblings(
+                '.fw-pulldown'));
+        });
 
 
         //ice pulldown
@@ -320,7 +320,7 @@ jQuery(document).bind('documentDataLoaded', function () {
             theDocument.settings.tracking_show);
 
 
-        jQuery('.ice-display').bind('mousedown', function () {
+        jQuery('.ice-display').bind('mousedown', function() {
             editorHelpers.setDocumentData('settings.tracking_show', (!
                 theDocument.settings
                 .tracking_show));
@@ -331,7 +331,7 @@ jQuery(document).bind('documentDataLoaded', function () {
         });
 
         if (theDocumentValues.is_owner) {
-            jQuery('.ice-track').bind('mousedown', function () {
+            jQuery('.ice-track').bind('mousedown', function() {
                 editorHelpers.setDocumentData('settings.tracking', (!
                     theDocument.settings.tracking));
                 editorHelpers.setDisplay.document('settings.tracking',
@@ -340,13 +340,13 @@ jQuery(document).bind('documentDataLoaded', function () {
                 return false;
             });
 
-            jQuery('.ice-accept-all').bind('mousedown', function () {
+            jQuery('.ice-accept-all').bind('mousedown', function() {
                 window.tracker.acceptAll();
                 editorHelpers.documentHasChanged();
                 return false;
             });
 
-            jQuery('.ice-reject-all').bind('mousedown', function () {
+            jQuery('.ice-reject-all').bind('mousedown', function() {
                 window.tracker.rejectAll();
                 editorHelpers.documentHasChanged();
                 return false;
@@ -362,15 +362,15 @@ jQuery(document).bind('documentDataLoaded', function () {
 
 
         //open and close header
-        jQuery('#open-close-header').bind('click', function () {
+        jQuery('#open-close-header').bind('click', function() {
             var header_top = -92,
                 toolnav_top = 0,
                 content_top = 108;
             if (jQuery(this).hasClass('header-closed')) {
                 jQuery(this).removeClass('header-closed');
                 header_top = 0,
-                toolnav_top = 92,
-                content_top = 200;
+                    toolnav_top = 92,
+                    content_top = 200;
             } else {
                 jQuery(this).addClass('header-closed');
             }
@@ -384,7 +384,7 @@ jQuery(document).bind('documentDataLoaded', function () {
                 .animate({
                     'top': content_top
                 }, {
-                    'complete': function () {
+                    'complete': function() {
                         commentHelpers.layoutComments();
                     }
                 });
@@ -393,12 +393,12 @@ jQuery(document).bind('documentDataLoaded', function () {
     }
 });
 
-jQuery(document).bind("bibliography_ready", function (event) {
-                        jQuery('.citationstyle-menu, .exporter-menu').each(function () {
-                        jQuery.addDropdownBox(jQuery(this), jQuery(this).siblings('.fw-pulldown'));
-                        jQuery(this).removeClass('disabled');
-                        jQuery(this).removeClass('header-nav-item-disabled');
-                        jQuery(this).addClass('header-nav-item');
-                    });
-                    citationHelpers.formatCitationsInDoc();
+jQuery(document).bind("bibliography_ready", function(event) {
+    jQuery('.citationstyle-menu, .exporter-menu').each(function() {
+        jQuery.addDropdownBox(jQuery(this), jQuery(this).siblings('.fw-pulldown'));
+        jQuery(this).removeClass('disabled');
+        jQuery(this).removeClass('header-nav-item-disabled');
+        jQuery(this).addClass('header-nav-item');
+    });
+    citationHelpers.formatCitationsInDoc();
 });

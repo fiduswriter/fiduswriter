@@ -21,8 +21,8 @@
                 var websocketServer = location.host.split(':')[0];
             {% endif %}
 
-            var isChrome = (window.hasOwnProperty('chrome')), 
-                isSafari = (navigator.userAgent.indexOf('Safari/') > -1), 
+            var isChrome = (window.hasOwnProperty('chrome')),
+                isSafari = (navigator.userAgent.indexOf('Safari/') > -1),
                 isFirefox = !(window.mozInnerScreenX == null);
 
             if(!(isChrome || isSafari || isFirefox)) {
@@ -141,7 +141,7 @@
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.autoresize.js"></script>
         <!-- diff-match-patch -->
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/diff_match_patch.js"></script>
-            
+
         {% compress js %}
 
             <script type="text/javascript" src="{{ STATIC_URL }}js/common.js"></script>
@@ -268,7 +268,8 @@
             <script type="text/javascript" src="{{ STATIC_URL }}js/manual-edits.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/key-events.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/clean-HTML.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/cutpaste.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/cut.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/paste.js"></script>
         {% endcompress %}
 
         <script type="text/javascript">
@@ -448,19 +449,19 @@
                                 </li>
                                 <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
                                     <span class="ui-button-text" title="{% trans "A headline of the highest level (under title)." %}">
-                                        <input type="radio">                    
+                                        <input type="radio">
                                         <label class="fw-pulldown-item" id="h1_button">{% trans "1st Headline" %}</label>
                                     </span>
                                 </li>
                                 <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
                                     <span class="ui-button-text" title="{% trans "A headline of the 2nd highest level." %}">
-                                        <input type="radio">                    
+                                        <input type="radio">
                                         <label class="fw-pulldown-item" id="h2_button">{% trans "2nd Headline" %}</label>
                                     </span>
                                 </li>
                                 <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
                                     <span class="ui-button-text" title="{% trans "A headline of the 3rd highest level." %}">
-                                        <input type="radio">                    
+                                        <input type="radio">
                                         <label id="h3_button" class="fw-pulldown-item">{% trans "3rd Headline" %}</label>
                                     </span>
                                 </li>
@@ -478,7 +479,7 @@
                                 </li>
                                 <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
                                     <span class="ui-button-text" title="{% trans "An item in an ordered list." %}">
-                                        <input type="radio">                    
+                                        <input type="radio">
                                         <label id="ol_button" class="fw-pulldown-item">{% trans "Numbered List" %}</label>
                                     </span>
                                 </li>
@@ -494,7 +495,7 @@
                     <div class="toolbarbold ui-buttonset">
                         <button class="fw-button fw-light fw-large fw-square" id="button-bold" title="{% trans "Bold" %}">
                             <span class="ui-button-text">
-                                <i class="icon-bold"></i>    
+                                <i class="icon-bold"></i>
                             </span>
                         </button>
                     </div>

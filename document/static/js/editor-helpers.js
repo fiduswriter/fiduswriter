@@ -22,15 +22,15 @@
     var exports = this,
      /** Helper functions for the editor.
      * @namespace editorHelpers
-     */ 
+     */
         editorHelpers = {};
 
-        
+
     /** Call printing dialog and destroy print view after printing. (step 2 of printing process)
      * @function print
      * @memberof editorHelpers
      */
-    
+
     editorHelpers.printReady = function() {
         var flowTo = document.getElementById('print');
         window.print();
@@ -38,14 +38,14 @@
         jQuery(flowTo).html('');
         delete window.flowCopy;
     };
-    
+
     document.addEventListener('layoutFlowFinished', editorHelpers.printReady, false);
 
     /** Initiate printing using simplePagination. (step 1 of printing process)
      * @function print
      * @memberof editorHelpers
      */
-    
+
     editorHelpers.print = function() {
         var flowTo = document.getElementById('print');
         window.flowCopy = document.getElementById('flow').cloneNode(true);
@@ -53,11 +53,11 @@
         pagination.applyBookLayoutWithoutDivision();
     };
 
-    /** A template for the metadata fields in the editor. 
+    /** A template for the metadata fields in the editor.
      * @function tmpMetadata
-     * @memberof editorHelpers 
+     * @memberof editorHelpers
      */
-    
+
     editorHelpers.tmpMetadata = _.template('\
         <% if (settings.subtitle) { %>\
             <div id="metadata-subtitle" class="editable metadata metadata-subtitle" data-metadata="subtitle" contenteditable="true" title="'+gettext('The subtitle of the document')+'"></div>\
@@ -72,21 +72,21 @@
             <div id="metadata-keywords" class="editable metadata metadata-keywords" data-metadata="keywords" contenteditable="true" title="'+gettext('The keywords related to the document (comma-separated)')+'"></div>\
         <% } %>\
     ');
-        
 
-    /** Select the metadata options in the menu that are set as enabled in theDocument.settings.metadata. NAME_OF_METADATA.  
+
+    /** Select the metadata options in the menu that are set as enabled in theDocument.settings.metadata. NAME_OF_METADATA.
      * Then layout the selected metadata on the page using the values  from theDocument.metadata.NAME_OF_METADATA.
      * @function layoutMetadata
-     * @memberof editorHelpers 
-     */ 
+     * @memberof editorHelpers
+     */
     editorHelpers.layoutMetadata = function () {
         var i, metadataNode = document.getElementById('document-metadata'), metadataClone = metadataNode.cloneNode(), metadataDataNode, layoutDataNode, diffs;
         jQuery('.metadata-menu-item').removeClass('selected');
 
         metadataClone.innerHTML = editorHelpers.tmpMetadata({
             settings: theDocument.settings.metadata
-        });        
-        
+        });
+
         for (i in theDocument.settings.metadata) {
             if (theDocument.settings.metadata[i]) {
                 jQuery('.metadata-menu-item.metadata-' + i).addClass(
@@ -100,19 +100,19 @@
                 }
             }
         }
-        
+
         metadataClone = nodeConverter.toView(metadataClone);
-        
+
         diffs = domDiff.diff(metadataNode, metadataClone);
         domDiff.apply(metadataNode,diffs);
-        
+
         editorEscapes.reset();
     };
 
-    /** Turn enabled metadata off and disabled metadata on, Function is bound to clicking option in metadata menu. 
+    /** Turn enabled metadata off and disabled metadata on, Function is bound to clicking option in metadata menu.
      * @function switchMetadata
      * @memberof editorHelpers
-     */  
+     */
     editorHelpers.switchMetadata = function () {
         var theMetadata = jQuery(this).attr('data-metadata');
         editorHelpers.setDocumentData('settings.metadata.' + theMetadata, !
@@ -131,12 +131,12 @@
     };
 
     /** Update the editor page with the document data from the server.
-     * This is done if it was detected that the local version of the document 
-     * doesn't correspond to the one on the server. 
+     * This is done if it was detected that the local version of the document
+     * doesn't correspond to the one on the server.
      * @function updateEditorPage
      * @memberof editorHelpers
      * @param aDocument The document object as it comes from the server.
-     * @param aDocumentValues The document value object consists of variables 
+     * @param aDocumentValues The document value object consists of variables
      * that differ from session to session.
      */
     editorHelpers.updateEditorPage = function (aDocument) {
@@ -148,7 +148,7 @@
         theDocument.settings = jQuery.parseJSON(aDocument.settings);
         theDocument.metadata = jQuery.parseJSON(aDocument.metadata);
         theDocument.contents = jQuery.parseJSON(aDocument.contents);
-        
+
         editorHelpers.setDisplay.document('contents', theDocument.contents);
         editorHelpers.setDisplay.document('metadata.title', theDocument.metadata
             .title);
@@ -157,14 +157,14 @@
         mathHelpers.resetMath();
         citationHelpers.formatCitationsInDoc();
     };
-    
-    
+
+
     /** Fill the editor page with the document data from the server.
-     * This is done after the document data is loaded from the server. 
+     * This is done after the document data is loaded from the server.
      * @function fillEditorPage
      * @memberof editorHelpers
      * @param aDocument The document object as it comes from the server.
-     * @param aDocumentValues The document value object consists of variables 
+     * @param aDocumentValues The document value object consists of variables
      * that differ from session to session.
      */
     editorHelpers.fillEditorPage = function (aDocument, aDocumentValues) {
@@ -177,9 +177,9 @@
         theDocument.settings = jQuery.parseJSON(theDocument.settings);
         theDocument.metadata = jQuery.parseJSON(theDocument.metadata);
         theDocument.contents = jQuery.parseJSON(theDocument.contents);
-        
+
         documentId = theDocument.id;
-        
+
         DEFAULTS = [
             ['metadata.title', theDocument.title],
             ['settings.papersize', '1117'],
@@ -219,7 +219,7 @@
         setTimeout(function() {
             editorEscapes.reset();
         }, 1000);
-        
+
     };
 
     /** Called whenever anything has changed in the document text. Makes sure that saving and synchronizing with peers happens.
@@ -231,8 +231,8 @@
         theDocumentValues.touched = true; // For synchronizing with other viewers
     };
 
-    /** Functions related to taking document data from theDocument.* and displaying it (ie making it part of the DOM structure). 
-     * @namespace editorHelpers.setDisplay 
+    /** Functions related to taking document data from theDocument.* and displaying it (ie making it part of the DOM structure).
+     * @namespace editorHelpers.setDisplay
      */
     editorHelpers.setDisplay = {};
 
@@ -243,16 +243,16 @@
     editorHelpers.setDisplay.settingsDocumentstyle = function (theValue) {
 
         var documentStyleLink = document.getElementById('document-style-link');
-        
+
         var newDocumentStyleLink = document.createElement('link');
         newDocumentStyleLink.setAttribute("rel", "stylesheet");
         newDocumentStyleLink.setAttribute("type", "text/css");
         newDocumentStyleLink.setAttribute("id", "document-style-link");
         newDocumentStyleLink.setAttribute("href", staticUrl+'css/document/'+theValue+'.css');
-        
+
         documentStyleLink.parentElement.replaceChild(newDocumentStyleLink, documentStyleLink);
-        
-        
+
+
         jQuery("#header-navigation .style.selected").removeClass('selected');
         jQuery('span[data-style=' + theValue + ']').addClass('selected');
 
@@ -260,9 +260,9 @@
             clearTimeout(set_document_style_timer);
             commentHelpers.layoutComments();
         }, 200);
-        
+
     };
-    
+
     /** Set the document style.
      * @function settingsCitationstyle
      * @memberof editorHelpers.setDisplay
@@ -274,7 +274,7 @@
             'selected');
         citationHelpers.formatCitationsInDoc();
     };
-    
+
     /** Set the document's paper size.
      * @function settingsPapersize
      * @memberof editorHelpers.setDisplay
@@ -287,7 +287,7 @@
         paginationConfig['pageHeight'] = theValue;
 
     };
-    
+
     /** Set the document id.
      * @function id
      * @memberof editorHelpers.setDisplay
@@ -300,7 +300,7 @@
             jQuery('.savecopy').removeClass('disabled');
         }
     };
-    
+
     /** Set tracking to be on or off.
      * @function settingsTracking
      * @memberof editorHelpers.setDisplay
@@ -313,7 +313,7 @@
             jQuery('.ice-track').removeClass('selected');
         }
     };
-    
+
     /** Show or hide tracked changes.
      * @function settingsDocumentstyle
      * @memberof editorHelpers.setDisplay
@@ -328,28 +328,28 @@
             jQuery('#flow').addClass('CT-hide');
         }
     };
-    
+
      /** Add the document contents/body text.
      * @function contents
      * @memberof editorHelpers.setDisplay
      * @param theValue The HTML of the contents/main body.*/
     editorHelpers.setDisplay.contents = function (theValue) {
         var contentsNode = document.getElementById('document-contents'), contentsClone = contentsNode.cloneNode(), converterNode = exporter.obj2Node(theValue), diffs;
-        
-        
+
+
         while(converterNode.firstChild) {
             contentsClone.appendChild(converterNode.firstChild);
         }
-        
-        
+
+
         contentsClone = nodeConverter.toView(contentsClone);
-        
+
         diffs = domDiff.diff(contentsNode, contentsClone);
-        
+
         domDiff.apply(contentsNode, diffs);
-        
+
         editorEscapes.reset();
-        
+
     };
 
     /** Set the document title on the page.
@@ -359,22 +359,22 @@
     editorHelpers.setDisplay.metadataTitle = function (theValue) {
 
         var titleNode = document.getElementById('document-title'), titleClone = titleNode.cloneNode(), converterNode = exporter.obj2Node(theValue), diffs;
-        
+
         while(converterNode.firstChild) {
             titleClone.appendChild(converterNode.firstChild);
         }
-        
+
         titleClone = nodeConverter.toView(titleClone);
-        
+
         diffs = domDiff.diff(titleNode, titleClone);
-        
+
         domDiff.apply(titleNode, diffs);
-        
+
         editorEscapes.reset();
 
         editorHelpers.setDisplay.document('title', titleClone.textContent);
     };
-    
+
     /** Set the document title in the menu.
      * @function title
      * @memberof editorHelpers.setDisplay
@@ -387,7 +387,7 @@
         jQuery('#header h1').html(theValue);
     };
 
-    /** A dictionary linking field names with set display functions. 
+    /** A dictionary linking field names with set display functions.
      * @constant  FIELDS
      * @memberof editorHelpers.setDisplay
      */
@@ -415,23 +415,35 @@
     editorHelpers.setDisplay.document = function (theName, theValue) {
         editorHelpers.setDisplay.FIELDS[theName](theValue);
     };
-    /** A list of fields contain editable text.
-     * @constant  TEXT_FIELDS
+    /** A list of fields contain editable text/html.
+     * @constant  CONTENT_FIELDS
      * @memberof editorHelpers
      */
-    editorHelpers.TEXT_FIELDS = ['contents', 'metadata.title',
+    editorHelpers.CONTENT_FIELDS = ['contents', 'metadata.title',
         'metadata.subtitle', 'metadata.abstract', 'metadata.authors', 'metadata.keywords'
     ];
 
+    /** A list of elements containing HTML and allow inserting of complex HTML elements.
+     * @constant  HTML_ELEMENTS
+     * @memberof editorHelpers
+     */
+    editorHelpers.HTML_ELEMENTS = ['document-contents','metadata-abstract'];
+
+    /** A list of elements allowing only text and track changes nodes (no other, more complex HTML).
+     * @constant  TEXT_ELEMENTS
+     * @memberof editorHelpers
+     */
+    editorHelpers.TEXT_ELEMENTS = ['document-title','metadata-subtitle','metadata-authors','metadata-keywords'];
+
     /** Sets a variable in theDocument to a value and optionally sends a change notification to other editors.
-     * This notification is used in case of simple fields (all fields that are not individually editable in the text editor 
+     * This notification is used in case of simple fields (all fields that are not individually editable in the text editor
      * -- citation style, set tracking, etc. but not the document title) to make other clients copy the same values.
      * @function setDocumentData
      * @memberof editorHelpers
      * @param theName The name of the variable.
      * @param newValue The value that the variable is to be set to.
      * @param sendChange Whether a change notification should be sent to other clients. Default is true.
-     */ 
+     */
     editorHelpers.setDocumentData = function (theName, newValue,
          sendChange) {
         var theChange, currentValue;
@@ -448,12 +460,12 @@
         else {
             eval("theDocument." + theName + "=" + JSON.stringify(newValue));
         }
-        if (editorHelpers.TEXT_FIELDS.indexOf(theName) === -1) {
+        if (editorHelpers.CONTENT_FIELDS.indexOf(theName) === -1) {
             if (currentValue === newValue) {
                 // Don't create a history entry if nothing has changed
                 return false;
             }
-        
+
             theChange = [theName, newValue, new Date().getTime()+window.clientOffsetTime];
 
             if (sendChange) {
@@ -465,14 +477,14 @@
     }
         return true;
     };
-    
+
     /** Copy editable fields (title, body/contents, keywords, abstract, etc.) from the HTML and store the values inside theDocument.
      * @function getUpdatesFromInputFields
      * @memberof editorHelpers
      * @param callback Callback to be called after copying data (optional).
-     */ 
+     */
     editorHelpers.getUpdatesFromInputFields = function (callback) {
-        
+
         var i, j, metadata;
         console.log('getting updates');
         editorHelpers.setDocumentData('metadata.title', exporter.node2Obj(nodeConverter.toModel(document.getElementById('document-title'))));
@@ -480,9 +492,9 @@
         editorHelpers.setDocumentData('contents', exporter.node2Obj(nodeConverter.toModel(document.getElementById('document-contents'))));
 
         metadata = document.querySelectorAll('#document-metadata .metadata');
-        
+
         j = metadata.length;
-        
+
         for (i=0; i < j; i++) {
             editorHelpers.setDocumentData('metadata.' + metadata[i].getAttribute(
                     'data-metadata'), exporter.node2Obj(nodeConverter.toModel(metadata[i])));
@@ -493,13 +505,13 @@
             callback();
         }
     };
-    
-    /** Calculates a hash sum of the document data to make sure collaborating editors all have the same document. 
+
+    /** Calculates a hash sum of the document data to make sure collaborating editors all have the same document.
      * Function from jsperf.com/hashing-string.
      * @function docHash
      * @memberof editorHelpers
-     */ 
-    
+     */
+
     editorHelpers.docHash = function() {
         var str = theDocumentValues.diffNode.textContent, res = 0, len = str.length;
         for (var i = 0; i < len; i++) {
@@ -512,7 +524,7 @@
     /** Checks whether a hash sum corresponds with the local document.
      * @function checkHash
      * @memberof editorHelpers
-     */     
+     */
     editorHelpers.checkHash = function(hash) {
         if (editorHelpers.docHash() != hash) {
             console.log('Hash did not match. Will get update from server.');
@@ -520,15 +532,15 @@
             serverCommunications.send({type: 'get_document_update'});
         }
     }
-    
 
 
-    /** Will save the current Document to the server if theDocumentValues.control is true. 
+
+    /** Will save the current Document to the server if theDocumentValues.control is true.
      * In collaborative mode, only the first client to connect will have theDocumentValues.control set to true.
      * @function saveDocument
      * @memberof editorHelpers
      * @param callback Callback to be called after copying data (optional).
-     */ 
+     */
     editorHelpers.saveDocument = function (callback) {
         var documentData = {};
 
@@ -536,12 +548,12 @@
         // Because we don't want two entries in the history, we avoid touching the history for the text-only version.
 
         theDocument.title = jQuery('#document-title').text().trim();
-        
+
 
         if (theDocumentValues.control) {
             documentData.settings = JSON.stringify(theDocument.settings);
             documentData.metadata = JSON.stringify(theDocument.metadata);
-            
+
             documentData.title = theDocument.title.substring(0, 255);
             documentData.contents = JSON.stringify(theDocument.contents);
             console.log('saving');
@@ -552,7 +564,7 @@
         } else {
             console.log('not saving');
         }
-        
+
         theDocumentValues.changed = false;
 
         if (callback) {
@@ -562,10 +574,10 @@
         return true;
 
     };
-    /** Show or hide placeholders ('Contents...', 'Title...', etc.) depending on whether these elements are empty or not. 
+    /** Show or hide placeholders ('Contents...', 'Title...', etc.) depending on whether these elements are empty or not.
      * @function setPlaceholders
      * @memberof editorHelpers
-     */ 
+     */
     editorHelpers.setPlaceholders = function (currentElement) {
         var placeHolderCss = '';
         if (jQuery('#document-title')[0].textContent.length === 0 &&
@@ -605,7 +617,7 @@
         }
         jQuery('#placeholderStyles')[0].innerHTML = placeHolderCss;
     };
-    
+
     exports.editorHelpers = editorHelpers;
 
 }).call(this);

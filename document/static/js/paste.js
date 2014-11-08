@@ -27,8 +27,14 @@
         paste = {};
 
     paste.addPasteContents = function(pasteElement, footnotes) {
-        var selection = rangy.getSelection();
-        var range = selection.getRangeAt(0);
+        var selection = rangy.getSelection(),
+            range = selection.getRangeAt(0);
+        if (editorHelpers.TEXT_ELEMENTS.indexOf(jQuery(range.startContainer).closest('.editable')[0].id)!=-1) {
+            // We are inside an element that does not allow complex HTML.
+            // Paste therefore only text contents and forget about footnotes.
+            pasteElement.textContent = pasteElement.textContent;
+            footnotes = false;
+        }
         while (pasteElement.firstChild) {
             manualEdits.insert(pasteElement.firstChild, range);
         }
@@ -38,13 +44,26 @@
         return true;
     };
 
+    paste.insertText = function (textString) {
+        var pasteElement = document.createElement('div');
+            pasteElement.textcontent = textString;
+        paste.addPasteContents(pasteElement, false);
+    };
+
+
+    paste.insertHTML = function (htmlString) {
+        var pasteElement = document.createElement('div'),
+            htmlCleaner;
+            pasteElement.innerHTML = htmlString;
+            htmlCleaner = new cleanHTML(pasteElement);
+        paste.addPasteContents(pasteElement, htmlCleaner.footnotes);
+    };
+
     paste.recentlyPasted = false; // prevent double pasting by checking whether paste has been done recently
 
     paste.handlePaste = function(event) {
-        var footnotes = false,
-            pasteElement, htmlCleaner;
         // We cancel the paste event, copy clipboard data, clean it, insert it
-
+        var htmlString;
         event.stopPropagation();
         event.preventDefault();
         if (!paste.recentlyPasted) {
@@ -52,21 +71,14 @@
             setTimeout(function() {
                 paste.recentlyPasted = false;
             }, 1)
-            pasteElement = document.createElement('div');
 
             if (/text\/html/.test(event.clipboardData.types)) {
-                pasteElement.innerHTML = event.clipboardData.getData(
-                    'text/html');
-                htmlCleaner = new cleanHTML(pasteElement);
-                footnotes = htmlCleaner.footnotes;
-
+                paste.insertHTML(event.clipboardData.getData(
+                    'text/html'));
             } else if (/text\/plain/.test(event.clipboardData.types)) {
-                pasteElement.textContent = event.clipboardData.getData(
-                    'text/plain');
+                paste.insertText(event.clipboardData.getData(
+                    'text/plain'));
             }
-
-            paste.addPasteContents(pasteElement, footnotes);
-            return false;
         }
     };
 

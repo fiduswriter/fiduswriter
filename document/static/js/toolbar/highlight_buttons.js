@@ -25,7 +25,7 @@ jQuery(document).on('keyup paste change mouseup', '#document-editable', function
         range = selection.getRangeAt(0), bold, italic, link;
 
     bold = jQuery(range.startContainer).closest('b');
-    
+
     if (bold.length > 0) {
         jQuery('#button-bold').addClass('ui-state-active');
     } else {
@@ -33,7 +33,7 @@ jQuery(document).on('keyup paste change mouseup', '#document-editable', function
     }
 
     italic = jQuery(range.startContainer).closest('i');
-    
+
     if (italic.length > 0) {
         jQuery('#button-italic').addClass('ui-state-active');
     } else {
@@ -41,15 +41,14 @@ jQuery(document).on('keyup paste change mouseup', '#document-editable', function
     }
 
     link = jQuery(range.startContainer).closest('a');
-    
+
     if (link.length > 0) {
-        jQuery('#button-linḱ').addClass('ui-state-active');
+        jQuery('#button-link').addClass('ui-state-active');
     } else {
         jQuery('#button-link').removeClass('ui-state-active');
-    }    
-    
-    
+    }
+
     jQuery(document).trigger('updateBlockFormat');
-   
-    
+
+
 });

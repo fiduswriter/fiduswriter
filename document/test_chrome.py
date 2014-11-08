@@ -233,21 +233,21 @@ class CaretMovementTests(LiveTornadoTestCase):
             'window.testCaret = %s' % testCaretJS
         )
 
-class PasteTests(CaretMovementTests):
-    def runTest(self, case):
-        doc = self.createDocument(case.givenContents)
-        self.loadDocumentEditor(doc)
-
-        self.injectHelpers()
-        self.setCaret(case.givenCaret)
-        (self.driver.find_element_by_id(case.editableElement)
-                    .send_keys(case.givenKeys))
-
-        # grab caret from browser and compare in python,
-        # to get more informative failure messages
-        self.assertEqual(
-            case.expectedCaret,
-            self.getCaret()
-        )
-        # test browser-side, in case caret grabbing is buggy
-        self.assertTrue(self.caretIsAt(case.expectedCaret))
+# class PasteTests(CaretMovementTests):
+#     def runTest(self, case):
+#         doc = self.createDocument(case.givenContents)
+#         self.loadDocumentEditor(doc)
+#
+#         self.injectHelpers()
+#         self.setCaret(case.givenCaret)
+#         (self.driver.find_element_by_id(case.editableElement)
+#                     .send_keys(case.givenKeys))
+#
+#         # grab caret from browser and compare in python,
+#         # to get more informative failure messages
+#         self.assertEqual(
+#             case.expectedCaret,
+#             self.getCaret()
+#         )
+#         # test browser-side, in case caret grabbing is buggy
+#         self.assertTrue(self.caretIsAt(case.expectedCaret))

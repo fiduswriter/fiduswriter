@@ -63,8 +63,166 @@ var cleanHTML = function(element) {
             'CODE': true,
         };
 
-        var allowedAttributes = {
-            'href': true,
+        var cleanContainerElements = { // Elements with sepcific cleanign instructions
+            'A': function (node) {
+                if (node.classList.contains('sdfootnoteanc')) {
+                    /* This is a wordprocessor footnote. Create a new footnote
+                    We need to turn it from:
+                    <a class="sdfootnoteanc">...contents...</a>
+                    into:
+                    <span class="pagination-footnote"><span><span>...contents...</span></span></span>
+                    */
+                    var newNode = document.createElement('span');
+                    newNode.appendChild(document.createElement('span'));
+                    newNode.id = pagination.createRandomId(
+                        'pagination-footnote-');
+                    newNode.classList.add('pagination-footnote');
+
+                    newNode.firstChild.appendChild(document.createElement('span'));
+
+                    while (node.firstChild) {
+                        newNode.firstChild.firstChild.appendChild(node.firstChild);
+                    }
+
+                    node.parentNode.replaceChild(newNode, node);
+
+                    that.footnotes = true;
+
+                    // Now loop through the inner parts of the footnote node.
+                    that.loop(node.firstChild.firstChild);
+                } else {
+                    // We create a new link, only copying the href and textContent of the old link in order to lose all other attributes;
+                    var textContent = node.textContent,
+                    link = node.getAttribute('href'),
+                    newLinkNode = document.createElement('a');
+                    newLinkNode.textContent = textContent;
+                    newLinkNode.setAttribute('href', link);
+                    element.parentNode.replaceChild(newLinkNode,Node);
+                }
+            },
+            'SPAN': function (node) {
+                var newNode;
+                if ((node.classList.contains(
+                            'citation')) ||
+                    (node.classList.contains(
+                            'equation')) ||
+                    (node.classList.contains(
+                            'figure-equation'))) {
+                    /* We are likely dealing with an element known to us, so we only remove any potential styling attribute.
+                    TODO: better cleanup. */
+                    node.removeAttribute('style');
+                } else if (node.classList.contains(
+                        'pagination-footnote')) {
+                    /* This is a Fidus Writer footnote with the structure <span class="pagination-footnote"><span><span>...content...</span></span></span>.
+                    We recreate the three outer spans to make sure they have no extra attributes.
+                    */
+                    if (node.firstChild && node.firstChild.firstChild) {
+                        newNode = document.createElement('span');
+
+                        newNode.id = pagination.createRandomId(
+                            'pagination-footnote-');
+                        newNode.classList.add('pagination-footnote');
+
+                        newNode.appendChild(document.createElement('span'));
+                        newNode.firstChild.appendChild(document.createElement('span'));
+
+                        while (node.firstChild.firstChild.firstChild) {
+                            newNode.firstChild.firstChild.appendChild(node.firstChild.firstChild.firstChild);
+                        }
+                        node.parentNode.replaceChild(newNode, node);
+
+                        that.footnotes = true;
+
+                        // Now loop through the inner parts of the footnote node.
+                        that.loop(node.firstChild.firstChild);
+                    } else {
+                        /* The node does not havce the two required span child nodes.
+                        Something must have gone wrong, or it just happens to have this class name but come from another app than FW.
+                        We therefore delete it entirely. */
+                        node.parentNode.removeChild(node);
+
+                    }
+
+                } else {
+                    // The span is not of any of the known types. Clean each child node, move them to the parent node, and then delete the node itself.
+
+                    while (node.firstChild) {
+                        var newNode = node.firstChild;
+                        node.parentNode.insertBefore(newNode, node);
+                        that.loop(newNode);
+                    }
+                    node.parentNode.removeChild(node);
+                }
+            },
+            'P': function (node) {
+                var newNode, referenceNode, footnoteSymbolNode, footnodeID, topBlockNode;
+                if (jQuery(node).find('span.sdfootnotesym').length > 0) {
+                    // As we are going through the cleaning from the back to the front, we find the footnote contents before the reference to it.
+                    footnoteSymbolNode = jQuery(node).find('span.sdfootnotesym')[0];
+                    if (footnodeSymbolNode) {
+                        footnodeID = footnoteSymbolNode.textContent;
+                        footnodeSymbolNode.parentNode.removeChild(footnodeSymbolNode);
+
+                        // We move the contents of this node to the reference node.
+                        referenceNode = jQuery(node).closest('.clean-container').find('a[name=sdfootnote'+footnodeID+'anc]')[0];
+                    }
+                    if (footnodeID && referenceNode) {
+                        while (node.firstChild) {
+                            referenceNode.appendChild(node.firstChild);
+                        }
+                        node.parentNode.removeChild(node);
+                    } else {
+                        // The footnote is there, but not the reference to it is not or it doesn't contain a symbol we need to reference it correctly.
+                        // We delete the footnote.
+                        node.parentNode.removeChild(node);
+                    }
+                } else if (node.textContent.length===0) {
+                    // Remove empty paragraphs;
+                    node.parentNode.removeChild(node);
+                } else {
+                    newNode = document.createElement('p');
+                    topBlockNode = node;
+                    // P-nodes should only be accepted as top level block nodes. If the P is inside of another block node, move it to the top.
+                    while (!topBlockNode.parentNode.classList.contains('clean-container')) {
+                        topBlockNode = topBlockNode.parentNode;
+                    }
+                    topBlockNode.parentNode.insertBefore(newNode, topBlockNode);
+                    while (node.firstChild) {
+                        newNode.appendChild(node.firstChild);
+                        that.loop(newNode.lastChild);
+                    }
+                    node.parentNode.removeChild(node);
+
+                }
+            },
+            'STYLE': function (node) {
+                node.parentNode.removeChild(node);
+            },
+            'SCRIPT': function (node) {
+                node.parentNode.removeChild(node);
+            },
+            'DIV': function (node) {
+                // Div nodes are not accepted. Turn them into P nodes if needed.
+                var topBlockNode, newNode;
+                if (node.textContent.length===0) {
+                    // Remove empty paragraphs;
+                    node.parentNode.removeChild(node);
+                } else {
+                    newNode = document.createElement('p');
+                    topBlockNode = node;
+                    // convert the node into a top level P block node. If the node is inside of another block node, move it to the top.
+                    while (!topBlockNode.parentNode.classList.contains('clean-container')) {
+                        topBlockNode = topBlockNode.parentNode;
+                    }
+                    topBlockNode.parentNode.insertBefore(newNode, topBlockNode);
+                    while (node.firstChild) {
+                        newNode.appendChild(node.firstChild);
+                        that.loop(newNode.lastChild);
+                    }
+                    node.parentNode.removeChild(node);
+
+                }
+            }
         };
 
         this.ignoreAboveBlocks = function (node) {
@@ -79,49 +237,7 @@ var cleanHTML = function(element) {
             var newNode, i, fragment, referenceNode;
 
             if (node.nodeName != '#text') {
-                if ((node.nodeName === 'SPAN' && node.classList.contains(
-                            'citation')) ||
-                    (node.nodeName === 'SPAN' && node.classList.contains(
-                            'equation')) ||
-                    (node.nodeName === 'SPAN' && node.classList.contains(
-                            'figure-equation'))) { // We are dealing with an element known to us, so let it go.
-                    node.removeAttribute('style');
-                } else if (node.nodeName === 'SPAN' && node.classList.contains(
-                        'pagination-footnote') || node.nodeName === 'A' && node.classList.contains('sdfootnoteanc')) {
-                    newNode = document.createElement('span');
-                    newNode.appendChild(document.createElement('span'));
-                    newNode.id = pagination.createRandomId(
-                        'pagination-footnote-');
-                    newNode.classList.add('pagination-footnote');
-
-                    node.parentNode.replaceChild(newNode, node);
-
-                    that.footnotes = true;
-
-
-                    if (node.nodeName === 'A') {
-                        // This is a footnote from a word processor. It is only a reference to the footnote, so set everything for finding the contents later on.
-                        newNode.firstChild.appendChild(document.createElement('span'));
-                        newNode.firstChild.firstChild.innerHTML = node.innerHTML;
-                    } else {
-                        node.removeAttribute('style');
-                        node.removeAttribute('class');
-                        node.removeAttribute('id');
-                        newNode.firstChild.appendChild(node);
-                    }
-                } else if (node.nodeName === 'P' && node.classList.contains('sdfootnote') & node.hasAttribute('data-footnote-id')) {
-
-                    referenceNode = jQuery(node).closest('.clean-container').find('a[name=sdfootnote'+node.getAttribute('data-footnote-id')+'anc]')[0];
-                    if (referenceNode) {
-                        //node.removeChild(node.firstChild);
-                        referenceNode.innerHTML = node.innerHTML;
-                        node.parentNode.removeChild(node);
-                    }
-                } else if (node.nodeName === 'A' && node.classList.contains('sdfootnotesym')) {
-                    node.parentNode.classList.add('sdfootnote');
-                    node.parentNode.setAttribute('data-footnote-id',node.textContent);
-                    node.parentNode.removeChild(node);
-                } else if (node.classList && node.classList.contains('Apple-interchange-newline')) { // Webkit places a BR at the end of certain text pasages when they are copied. We remove this.
+                if (node.classList && node.classList.contains('Apple-interchange-newline')) { // Webkit places a BR at the end of certain text pasages when they are copied. We remove this.
                     node.parentNode.removeChild(node);
                 } else if (node.nodeName in allowedHTML && (!node.classList.contains('clean-ignore'))) {
                     if (node.nodeName in topBlockElements) {
@@ -137,9 +253,7 @@ var cleanHTML = function(element) {
                     }
                     for (i = node.attributes.length - 1; i > -1; i--) {
                         var attributeName = node.attributes[i].name;
-                        if (!(attributeName in allowedAttributes)) {
-                            node.removeAttribute(attributeName);
-                        }
+                        node.removeAttribute(attributeName);
                     }
                 } else if (node.nodeName in topBlockElements && (!node.classList.contains('clean-ignore'))) {
                     that.ignoreAboveBlocks(node.parentNode);
@@ -149,10 +263,7 @@ var cleanHTML = function(element) {
                         newNode.appendChild(node.firstChild);
                     }
                     node.parentNode.replaceChild(newNode, node);
-                } else if (node.nodeName === 'STYLE' || node.nodeName === 'SCRIPT') {
-                    node.parentNode.removeChild(node);
-                }
-             else {
+                } else {
                 fragment = document.createDocumentFragment();
                 while (node.firstChild) {
                     fragment.appendChild(node.firstChild);
@@ -165,8 +276,12 @@ var cleanHTML = function(element) {
     this.loop = function (node) {
         var i;
         for (i = node.childNodes.length - 1; i > -1; i--) {
-            that.loop(node.childNodes[i]);
-            that.cleanChildNode(node.childNodes[i]);
+            if (node.childNodes[i].nodeName in cleanContainerElements) {
+                cleanContainerElements[node.childNodes[i].nodeName](node.childNodes[i]);
+            } else {
+                that.loop(node.childNodes[i]);
+                that.cleanChildNode(node.childNodes[i]);
+            }
         }
         return node;
     };

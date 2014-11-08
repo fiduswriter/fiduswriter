@@ -19,12 +19,13 @@
  *
  */
 
-(function () {
-        var exports = this,
-        /** Clean HTML to only keep HTML entities that are in sue by Fidus Writer.
-         * @namespace cleanHTML
+var cleanHTML = function(element) {
+        /** Clean HTML to only keep HTML entities that are in use by Fidus Writer.
          */
-            cleanHTML = {};
+
+        var that = this;
+        this.element = element;
+        this.footnotes = false;
 
 
         var allowedHTML = {
@@ -66,17 +67,15 @@
             'href': true,
         };
 
-        cleanHTML.ignoreAboveBlocks = function (node) {
+        this.ignoreAboveBlocks = function (node) {
             if (!node.classList.contains('clean-container')) {
                 node.classList.add('clean-ignore');
-                cleanHTML.ignoreAboveBlocks(node.parentNode);
+                that.ignoreAboveBlocks(node.parentNode);
             }
         };
-        
-        
-        cleanHTML.footnoteInOutput = false;
 
-        cleanHTML.cleanChildNode = function (node) {
+
+        this.cleanChildNode = function (node) {
             var newNode, i, fragment, referenceNode;
 
             if (node.nodeName != '#text') {
@@ -94,12 +93,12 @@
                     newNode.id = pagination.createRandomId(
                         'pagination-footnote-');
                     newNode.classList.add('pagination-footnote');
-                    
+
                     node.parentNode.replaceChild(newNode, node);
-                    
-                    cleanHTML.footnoteInOutput = true;
-                
-                    
+
+                    that.footnotes = true;
+
+
                     if (node.nodeName === 'A') {
                         // This is a footnote from a word processor. It is only a reference to the footnote, so set everything for finding the contents later on.
                         newNode.firstChild.appendChild(document.createElement('span'));
@@ -111,7 +110,7 @@
                         newNode.firstChild.appendChild(node);
                     }
                 } else if (node.nodeName === 'P' && node.classList.contains('sdfootnote') & node.hasAttribute('data-footnote-id')) {
- 
+
                     referenceNode = jQuery(node).closest('.clean-container').find('a[name=sdfootnote'+node.getAttribute('data-footnote-id')+'anc]')[0];
                     if (referenceNode) {
                         //node.removeChild(node.firstChild);
@@ -133,7 +132,7 @@
                             }
                             node.parentNode.replaceChild(fragment, node);
                         } else {
-                            cleanHTML.ignoreAboveBlocks(node.parentNode);
+                            that.ignoreAboveBlocks(node.parentNode);
                         }
                     }
                     for (i = node.attributes.length - 1; i > -1; i--) {
@@ -143,7 +142,7 @@
                         }
                     }
                 } else if (node.nodeName in topBlockElements && (!node.classList.contains('clean-ignore'))) {
-                    cleanHTML.ignoreAboveBlocks(node.parentNode);
+                    that.ignoreAboveBlocks(node.parentNode);
 
                     newNode = document.createElement('p');
                     while (node.firstChild) {
@@ -163,19 +162,20 @@
         }
     };
 
-    cleanHTML.loop = function (node) {
-        for (var i = node.childNodes.length - 1; i > -1; i--) {
-            cleanHTML.loop(node.childNodes[i]);
-            cleanHTML.cleanChildNode(node.childNodes[i]);
+    this.loop = function (node) {
+        var i;
+        for (i = node.childNodes.length - 1; i > -1; i--) {
+            that.loop(node.childNodes[i]);
+            that.cleanChildNode(node.childNodes[i]);
         }
         return node;
     };
-    
-    cleanHTML.init = function (node) {
-        var blockNode = false, newNode, childNode, i;
+
+    this.init = function () {
+        var node = this.element, blockNode = false, newNode, childNode, i;
         node.classList.add('clean-container');
-        node.innerHTML = node.innerHTML.replace(/&nbsp;/g, ' '); 
-        cleanHTML.loop(node);
+        node.innerHTML = node.innerHTML.replace(/&nbsp;/g, ' ');
+        that.loop(node);
         // Go through all nodes again. Any top node after a block node needs to be wrapped in a block node as well.
         for (i = 0; i < node.childNodes.length; i++) {
             childNode = node.childNodes[i];
@@ -190,7 +190,5 @@
         node.classList.remove('clean-container');
         return node;
     };
-
-    exports.cleanHTML = cleanHTML;
-
-}).call(this);
+    this.init();
+};

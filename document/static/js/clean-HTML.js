@@ -26,25 +26,6 @@ var cleanHTML = function(element) {
     this.element = element;
     this.footnotes = false;
 
-
-    var allowedHTML = {
-        'P': true,
-        'BR': true,
-        'H1': true,
-        'H2': true,
-        'H3': true,
-        'I': true,
-        'B': true,
-        'A': true,
-        'LI': true,
-        'UL': true,
-        'OL': true,
-        'FIGURE': true,
-        'FIGCAPTION': true,
-        'BLOCKQUOTE': true,
-        'CODE': true,
-    };
-
     var topBlockElements = {
         'P': true,
         'H1': true,
@@ -64,6 +45,8 @@ var cleanHTML = function(element) {
 
     var cleanContainerElements = { // Elements with sepcific cleanign instructions
         'A': function(node) {
+            console.log(node);
+            window.lastLink = node;
             if (node.classList.contains('sdfootnoteanc')) {
                 /* This is a wordprocessor footnote. Create a new footnote
                 We need to turn it from:
@@ -73,8 +56,11 @@ var cleanHTML = function(element) {
                 */
                 var newNode = document.createElement('span');
                 newNode.appendChild(document.createElement('span'));
-                newNode.id = pagination.createRandomId(
-                    'pagination-footnote-');
+                // while (document.getElementById('pagination-footnote-'+number)) {
+                //     number++;
+                // }
+                // newNode.id = pagination.createRandomId(
+                //     'pagination-footnote-');
                 newNode.classList.add('pagination-footnote');
 
                 newNode.firstChild.appendChild(document.createElement('span'));
@@ -88,7 +74,7 @@ var cleanHTML = function(element) {
                 that.footnotes = true;
 
                 // Now loop through the inner parts of the footnote node.
-                that.loop(node.firstChild.firstChild);
+                that.loop(newNode.firstChild.firstChild);
             } else {
                 // We create a new link, only copying the href and textContent of the old link in order to lose all other attributes;
                 var textContent = node.textContent,
@@ -123,8 +109,8 @@ var cleanHTML = function(element) {
                 if (node.firstChild && node.firstChild.firstChild) {
                     newNode = document.createElement('span');
 
-                    newNode.id = pagination.createRandomId(
-                        'pagination-footnote-');
+                    //newNode.id = pagination.createRandomId(
+                    //    'pagination-footnote-');
                     newNode.classList.add('pagination-footnote');
 
                     newNode.appendChild(document.createElement('span'));
@@ -160,19 +146,24 @@ var cleanHTML = function(element) {
             }
         },
         'P': function(node) {
-            var newNode, referenceNode, footnoteSymbolNode, footnodeID, topBlockNode;
-            if (jQuery(node).find('span.sdfootnotesym').length > 0) {
+            var newNode, referenceNode, footnoteSymbolNode, footnoteID, topBlockNode;
+            if (node.classList.contains('sdfootnote')) {
+                // This is a word processor footnote.
                 // As we are going through the cleaning from the back to the front, we find the footnote contents before the reference to it.
-                footnoteSymbolNode = jQuery(node).find('span.sdfootnotesym')[0];
-                if (footnodeSymbolNode) {
-                    footnodeID = footnoteSymbolNode.textContent;
-                    footnodeSymbolNode.parentNode.removeChild(footnodeSymbolNode);
+                footnoteSymbolNode = jQuery(node).find('a.sdfootnotesym')[0];
+                if (footnoteSymbolNode) {
+                    footnoteID = footnoteSymbolNode.textContent;
+                    node.removeChild(footnoteSymbolNode);
 
                     // We move the contents of this node to the reference node.
-                    referenceNode = jQuery(node).closest('.clean-container').find('a[name=sdfootnote' + footnodeID + 'anc]')[0];
+                    referenceNode = jQuery(node).closest('.clean-container').find('a[name=sdfootnote' + footnoteID + 'anc]')[0];
                 }
-                if (footnodeID && referenceNode) {
-                    // Appending to reference node. We are not cleaning this content as the reference node will be discovered later on.
+                if (footnoteID && referenceNode) {
+                    // Clean referenceNode
+                    while (referenceNode.firstChild) {
+                        referenceNode.removeChild(referenceNode.firstChild);
+                    }
+                    // Insert into reference node. We are not cleaning this content as the reference node will be discovered later on.
                     while (node.firstChild) {
                         referenceNode.appendChild(node.firstChild);
                     }
@@ -205,6 +196,7 @@ var cleanHTML = function(element) {
             node.parentNode.removeChild(node);
         },
         'DIV': function(node) {
+
             // Div nodes are not accepted. Turn them into P nodes if needed.
             var topBlockNode = node, newNode = document.createElement('p');
 

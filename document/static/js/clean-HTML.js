@@ -303,7 +303,7 @@ var cleanHTML = function(element) {
                     that.loop(newNode.lastChild);
                 }
                 node.parentNode.removeChild(node);
-            }
+            },
             'FIGURE': function (node) {
                 var newNode,
                     topBlockNode = node;
@@ -321,56 +321,46 @@ var cleanHTML = function(element) {
                     }
                 }
                 node.parentNode.removeChild(node);
-            }
+            },
+            'BR': function (node) {
+                //if (node.classList && node.classList.contains('Apple-interchange-newline')) {
+                    // Webkit places a BR at the end of certain text pasages when they are copied. We remove this.
+                    node.parentNode.removeChild(node);
+                //} else {
+                //    if (['P','CODE','BLOCKQUOTE',''].indexOf(node.parentNode.nodeName) != -1)
+                //}
+            },
+            'I': function (node) {
+                var newNode = document.createElement('i');
+                node.parentNode.insertBefore(newNode, node);
+                while (node.firstChild) {
+                    newNode.appendChild(node.firstChild);
+                    that.loop(newNode.lastChild);
+                }
+                node.parentNode.removeChild(node);
+            },
+            'B': function (node) {
+                var newNode = document.createElement('b');
+                node.parentNode.insertBefore(newNode, node);
+                while (node.firstChild) {
+                    newNode.appendChild(node.firstChild);
+                    that.loop(newNode.lastChild);
+                }
+                node.parentNode.removeChild(node);
+            },
         };
-
-        this.ignoreAboveBlocks = function (node) {
-            if (!node.classList.contains('clean-container')) {
-                node.classList.add('clean-ignore');
-                that.ignoreAboveBlocks(node.parentNode);
-            }
-        };
-
 
         this.cleanChildNode = function (node) {
-            var newNode, i, fragment, referenceNode;
+            var newNode, fragment;
 
             if (node.nodeName != '#text') {
-                if (node.classList && node.classList.contains('Apple-interchange-newline')) { // Webkit places a BR at the end of certain text pasages when they are copied. We remove this.
-                    node.parentNode.removeChild(node);
-                } else if (node.nodeName in allowedHTML && (!node.classList.contains('clean-ignore'))) {
-                    if (node.nodeName in topBlockElements) {
-                        if (jQuery(node).closest('li').length > 0) {
-                            fragment = document.createDocumentFragment();
-                            while (node.firstChild) {
-                                fragment.appendChild(node.firstChild);
-                            }
-                            node.parentNode.replaceChild(fragment, node);
-                        } else {
-                            that.ignoreAboveBlocks(node.parentNode);
-                        }
-                    }
-                    for (i = node.attributes.length - 1; i > -1; i--) {
-                        var attributeName = node.attributes[i].name;
-                        node.removeAttribute(attributeName);
-                    }
-                } else if (node.nodeName in topBlockElements && (!node.classList.contains('clean-ignore'))) {
-                    that.ignoreAboveBlocks(node.parentNode);
-
-                    newNode = document.createElement('p');
-                    while (node.firstChild) {
-                        newNode.appendChild(node.firstChild);
-                    }
-                    node.parentNode.replaceChild(newNode, node);
-                } else {
-                fragment = document.createDocumentFragment();
+                newNode = document.createDocumentFragment();
                 while (node.firstChild) {
-                    fragment.appendChild(node.firstChild);
+                    newNode.appendChild(node.firstChild);
                 }
-                node.parentNode.replaceChild(fragment, node);
+                node.parentNode.replaceChild(newNode, node);
             }
-        }
-    };
+        };
 
     this.loop = function (node) {
         // var currentNode;

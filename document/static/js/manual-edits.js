@@ -66,9 +66,9 @@
         }
         selection = rangy.getSelection();
         selection.setSingleRange(range);
-        if (node.nextSibling) {
+        if (node.nextSibling && node.nextSibling.scrollIntoView) {
             node.nextSibling.scrollIntoView();
-        } else {
+        } else if (node.scrollIntoView) {
             node.scrollIntoView();
         }
 

@@ -29,8 +29,8 @@
     paste.addPasteContents = function(pasteElement, footnotes) {
         var selection = rangy.getSelection(),
             range = selection.getRangeAt(0),
-            startFigure = false, // A figure at the start of the paste.
-            endFigure = false, // A figure at the end of the paste.
+            startPaste, // the first node to be pasted
+            endPaste, // The last node to be pasted.
             newNode;
         if (editorHelpers.TEXT_ELEMENTS.indexOf(jQuery(range.startContainer).closest('.editable')[0].id)!=-1) {
             // We are inside an element that does not allow complex HTML.
@@ -42,26 +42,27 @@
             // paste is empty.
             return true;
         }
-        if (pasteElement.firstChild.nodeName==='FIGURE') {
-            startFigure = pasteElement.firstChild;
-        }
-        if (pasteElement.lastChild.nodeName==='FIGURE') {
-            endFigure = pasteElement.lastChild;
-        }
+        startPaste = pasteElement.firstChild;
+        endPaste = pasteElement.lastChild;
+
         while (pasteElement.firstChild) {
             manualEdits.insert(pasteElement.firstChild, range);
         }
-        // If there is no text block node before a figure at the start of the paste, add it now.
-        if (startFigure && ((!startFigure.previousSibling) || editorHelpers.TEXT_BLOCK_ELEMENTS.indexOf(startFigure.previousSibling.nodeName) === -1)) {
+        if (startPaste.nodeName==='FIGURE' && ((!startPaste.previousSibling) || editorHelpers.TEXT_BLOCK_ELEMENTS.indexOf(startPaste.previousSibling.nodeName) === -1)) {
+            // If there is no text block node before a figure at the start of the paste, add it now.
             newNode = document.createElement('p');
             newNode.innerHTML = '<br/>';
-            startFigure.parentNode.insertBefore(newNode, startFigure);
+            startPaste.parentNode.insertBefore(newNode, startPaste);
+        } else if (startPaste.nodeName != 'FIGURE' && startPaste.previousSibling && editorHelpers.TEXT_BLOCK_ELEMENTS.indexOf(startPaste.previousSibling.nodeName) != -1 && startPaste.previousSibling.textContent.trim().length === 0) {
+            // If there was an empty paragraph before the first pasted paragraph, remove it.
+            startPaste.parentNode.removeChild(startPaste.previousSibling);
         }
-        // If there is no text block node after a figure at the end of the paste, add it now.
-        if (endFigure && ((!endFigure.nextSibling) || editorHelpers.TEXT_BLOCK_ELEMENTS.indexOf(endFigure.nextSibling.nodeName) === -1)) {
+
+        if (endPaste.nodeName==='FIGURE' && ((!endPaste.nextSibling) || editorHelpers.TEXT_BLOCK_ELEMENTS.indexOf(endPaste.nextSibling.nodeName) === -1)) {
+            // If there is no text block node after a figure at the end of the paste, add it now.
             newNode = document.createElement('p');
             newNode.innerHTML = '<br/>';
-            endFigure.parentNode.insertBefore(newNode, endFigure.nextSibling);
+            endPaste.parentNode.insertBefore(newNode, endPaste.nextSibling);
         }
         if (footnotes) {
             editorEscapes.reset();

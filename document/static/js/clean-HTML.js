@@ -222,6 +222,57 @@ var cleanHTML = function(element) {
 
 
         },
+        'H1': function(node) {
+
+            var topBlockNode = node, newNode = document.createElement('h1');
+
+            // If the node is inside of another block node, move it to the top.
+            while (topBlockNode.parentNode.parentNode) {
+                topBlockNode = topBlockNode.parentNode;
+            }
+
+            topBlockNode.parentNode.insertBefore(newNode, topBlockNode);
+            while (node.firstChild) {
+                newNode.appendChild(node.firstChild);
+            }
+            that.loop(newNode);
+            node.parentNode.removeChild(node);
+
+        },
+        'H2': function(node) {
+
+            var topBlockNode = node, newNode = document.createElement('h2');
+
+            // If the node is inside of another block node, move it to the top.
+            while (topBlockNode.parentNode.parentNode) {
+                topBlockNode = topBlockNode.parentNode;
+            }
+
+            topBlockNode.parentNode.insertBefore(newNode, topBlockNode);
+            while (node.firstChild) {
+                newNode.appendChild(node.firstChild);
+            }
+            that.loop(newNode);
+            node.parentNode.removeChild(node);
+
+        },
+        'H3': function(node) {
+
+            var topBlockNode = node, newNode = document.createElement('h3');
+
+            // If the node is inside of another block node, move it to the top.
+            while (topBlockNode.parentNode.parentNode) {
+                topBlockNode = topBlockNode.parentNode;
+            }
+
+            topBlockNode.parentNode.insertBefore(newNode, topBlockNode);
+            while (node.firstChild) {
+                newNode.appendChild(node.firstChild);
+            }
+            that.loop(newNode);
+            node.parentNode.removeChild(node);
+
+        },
         'H4': function(node) {
             // H4 nodes are not accepted. Turn them into P nodes if needed.
             cleanContainerElements.DIV(node);
@@ -368,6 +419,8 @@ var cleanHTML = function(element) {
         var newNode;
 
         if (node.nodeName != '#text') {
+            //node.textContent = node.textContent.trim();
+        //} else {
             newNode = document.createDocumentFragment();
             while (node.firstChild) {
                 newNode.appendChild(node.firstChild);
@@ -377,27 +430,13 @@ var cleanHTML = function(element) {
     };
 
     this.loop = function(node) {
-        // var currentNode;
-        // if (node.firstChild) {
-        //     currentNode = node.lastChild;
-        //     while (currentNode) {
-        //         if (currentNode.nodeName in cleanContainerElements) {
-        //             cleanContainerElements[currentNode.nodeName](currentNode);
-        //         } else {
-        //             that.loop(currentNode);
-        //             that.cleanChildNode(currentNode);
-        //         }
-        //         currentNode = currentNode.previousSibling;
-        //     }
 
         var i, j, childNodes = [];
         for (i = node.childNodes.length - 1; i > -1; i--) {
             childNodes.push(node.childNodes[i]);
         }
-        window.ent=childNodes;
-        //console.log(childNodes);
+
         for (j = 0; j < childNodes.length; j++) {
-        //    console.log('1');
             /* The cleaning process may add new nodes, at the same time,
               we need to go through the nodes in reverse order.
               This means we need to do these calculations with j and i. */
@@ -414,11 +453,15 @@ var cleanHTML = function(element) {
     this.init = function() {
         var node = this.element,
             blockNode = false,
-            newNode, childNode, childNodes = [], figures, i;
+            newNode, childNode, childNodes = [], figures, textBlockElements, i;
 
         node.classList.add('clean-container');
+        node.innerHTML = node.innerHTML.replace(/\n/g,' ').trim();
+        node.innerHTML = node.innerHTML.replace(/&nbsp;/g, ' ');
+        node.innerHTML = node.innerHTML.replace(/\s{2,}/g, ' ');
         that.loop(node);
-        node.innerHTML = node.innerHTML.replace(/&nbsp;/g, ' '); // Joins sibling text nodes and replaces space signs.
+        node.innerHTML = node.innerHTML.replace(/\s{2,}/g, ' ');
+        //node.innerHTML = node.innerHTML.replace(/&nbsp;/g, ' '); // Joins sibling text nodes and replaces space signs.
         // Go through all nodes again. Any top node after a block node needs to be wrapped in a block node as well.
         for (i = 0; i < node.childNodes.length; i++) {
             childNodes.push(node.childNodes[i]);
@@ -426,13 +469,21 @@ var cleanHTML = function(element) {
         for (i = 0; i < childNodes.length; i++) {
             childNode = childNodes[i];
             if (blockNode && !(childNode.nodeName in topBlockElements)) {
-                newNode = document.createElement('p');
-                node.replaceChild(newNode, childNode);
-                newNode.appendChild(childNode);
+                if (childNode.textContent.trim().length===0) {
+                    node.removeChild(childNode);
+                } else {
+                    newNode = document.createElement('p');
+                    node.replaceChild(newNode, childNode);
+                    childNode.textContent = childNode.textContent.trim();
+                    newNode.appendChild(childNode);
+                }
             } else if (blockNode && (childNode.nodeName in topBlockElements) && childNode.childNodes.length===0) {
                 // Block element is empty. Delete it.
                 node.removeChild(childNode);
-            } else if (childNode.nodeName in topBlockElements) {
+            } else if (blockNode && (childNode.nodeName in topBlockElements) && childNode.childNodes.length===1  && childNode.firstChild.textContent.trim().length === 0) {
+                // Block element only contains spaces. Delete it.
+                node.removeChild(childNode);
+            } else if (!blockNode && childNode.nodeName in topBlockElements) {
                 blockNode = true;
             }
         }
@@ -450,6 +501,14 @@ var cleanHTML = function(element) {
                 node.insertBefore(newNode, figure.nextSibling);
             }
         }
+        // At the beginning of text block elements there are some times single spaces. Remove them.
+        textBlockElements = jQuery(node).find(editorHelpers.TEXT_BLOCK_ELEMENTS.join(','));
+        for (i=0;i<textBlockElements.length;i++) {
+            if (textBlockElements[i].firstChild.nodeName==='#text') {
+                textBlockElements[i].firstChild.textContent = textBlockElements[i].firstChild.textContent.trimLeft();
+            }
+        }
+
 
         // Special case: Paste is just one text block element long. We remove the block element and let the contents merge into the current block element.
         if (node.childNodes.length===1 && editorHelpers.TEXT_BLOCK_ELEMENTS.indexOf(node.childNodes[0].nodeName) != -1) {
@@ -459,7 +518,6 @@ var cleanHTML = function(element) {
             node.removeChild(node.firstChild);
         }
         node.classList.remove('clean-container');
-    //    console.log(node.innerHTML);
         return node;
     };
     this.init();

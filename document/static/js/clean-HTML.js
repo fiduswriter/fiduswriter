@@ -176,9 +176,6 @@ var cleanHTML = function(element) {
                         // We delete the footnote.
                         node.parentNode.removeChild(node);
                     }
-                } else if (node.textContent.length===0) {
-                    // Remove empty paragraphs;
-                    node.parentNode.removeChild(node);
                 } else {
                     newNode = document.createElement('p');
                     topBlockNode = node;
@@ -222,6 +219,108 @@ var cleanHTML = function(element) {
                     node.parentNode.removeChild(node);
 
                 }
+            },
+            'H4': function (node) {
+                // H4 nodes are not accepted. Turn them into P nodes if needed.
+                cleanContainerElements.DIV(node);
+            },
+            'H5': function (node) {
+                // H4 nodes are not accepted. Turn them into P nodes if needed.
+                cleanContainerElements.DIV(node);
+            },
+            'H6': function (node) {
+                // H4 nodes are not accepted. Turn them into P nodes if needed.
+                cleanContainerElements.DIV(node);
+            },
+            'UL': function (node) {
+                var newNode, topBlockNode;
+                // Make sure that the UL is the topmost node and that all direct children are LI nodes
+                newNode = document.createElement('UL');
+                topBlockNode = node;
+                // convert the node into a top level P block node. If the node is inside of another block node, move it to the top.
+                while (!topBlockNode.parentNode.classList.contains('clean-container')) {
+                    topBlockNode = topBlockNode.parentNode;
+                }
+                topBlockNode.parentNode.insertBefore(newNode, topBlockNode);
+                while (node.firstChild) {
+                    if (node.firstChild.nodeName==='LI') {
+                        newNode.appendChild(node.firstChild);
+                        that.loop(newNode.lastChild);
+                    } else {
+                        node.removeChild(node.firstChild);
+                    }
+                }
+                node.parentNode.removeChild(node);
+            },
+            'OL': function (node) {
+                var newNode, topBlockNode;
+                // Make sure that the UL is the topmost node and that all direct children are LI nodes
+                newNode = document.createElement('OL');
+                topBlockNode = node;
+                // convert the node into a top level P block node. If the node is inside of another block node, move it to the top.
+                while (!topBlockNode.parentNode.classList.contains('clean-container')) {
+                    topBlockNode = topBlockNode.parentNode;
+                }
+                topBlockNode.parentNode.insertBefore(newNode, topBlockNode);
+                while (node.firstChild) {
+                    if (node.firstChild.nodeName==='LI') {
+                        newNode.appendChild(node.firstChild);
+                        that.loop(newNode.lastChild);
+                    } else {
+                        node.removeChild(node.firstChild);
+                    }
+                }
+                node.parentNode.removeChild(node);
+            },
+            'CODE': function (node) {
+                var newNode = document.createElement('code'),
+                    topBlockNode = node;
+                // CODE-nodes should only be accepted as top level block nodes. If the CODE is inside of another block node, move it to the top.
+                while (!topBlockNode.parentNode.classList.contains('clean-container')) {
+                    topBlockNode = topBlockNode.parentNode;
+                }
+                topBlockNode.parentNode.insertBefore(newNode, topBlockNode);
+                while (node.firstChild) {
+                    newNode.appendChild(node.firstChild);
+                    that.loop(newNode.lastChild);
+                }
+                node.parentNode.removeChild(node);
+            },
+            'PRE': function (node) {
+                // PRE-node is turned into CODE-node
+                cleanContainerElements.CODE(node);
+            },
+            'BLOCKQUOTE': function (node) {
+                var newNode = document.createElement('blockquote'),
+                    topBlockNode = node;
+                // Blockquote-nodes should only be accepted as top level block nodes. If the Blockquote is inside of another block node, move it to the top.
+                while (!topBlockNode.parentNode.classList.contains('clean-container')) {
+                    topBlockNode = topBlockNode.parentNode;
+                }
+                topBlockNode.parentNode.insertBefore(newNode, topBlockNode);
+                while (node.firstChild) {
+                    newNode.appendChild(node.firstChild);
+                    that.loop(newNode.lastChild);
+                }
+                node.parentNode.removeChild(node);
+            }
+            'FIGURE': function (node) {
+                var newNode,
+                    topBlockNode = node;
+                if (node.childNodes.length===2 && node.childNodes[0].nodeName==='DIV' && node.childNodes[1].nodeName==='FIGCAPTION') {
+                    // We assume that this is a figure that originates in Fidus Writer.
+                    // TODO: Clean figcaption and div nodes!
+                    newNode = document.createElement('figure')
+                    // FIGURE-nodes should only be accepted as top level block nodes. If the FIGURE is inside of another block node, move it to the top.
+                    while (!topBlockNode.parentNode.classList.contains('clean-container')) {
+                        topBlockNode = topBlockNode.parentNode;
+                    }
+                    topBlockNode.parentNode.insertBefore(newNode, topBlockNode);
+                    while (node.firstChild) {
+                        newNode.appendChild(node.firstChild);
+                    }
+                }
+                node.parentNode.removeChild(node);
             }
         };
 
@@ -274,14 +373,34 @@ var cleanHTML = function(element) {
     };
 
     this.loop = function (node) {
-        var i;
-        for (i = node.childNodes.length - 1; i > -1; i--) {
-            if (node.childNodes[i].nodeName in cleanContainerElements) {
-                cleanContainerElements[node.childNodes[i].nodeName](node.childNodes[i]);
+        // var currentNode;
+        // if (node.firstChild) {
+        //     currentNode = node.lastChild;
+        //     while (currentNode) {
+        //         if (currentNode.nodeName in cleanContainerElements) {
+        //             cleanContainerElements[currentNode.nodeName](currentNode);
+        //         } else {
+        //             that.loop(currentNode);
+        //             that.cleanChildNode(currentNode);
+        //         }
+        //         currentNode = currentNode.previousSibling;
+        //     }
+
+        var i, j, childNodes = [];
+        for (i=node.childNodes.length-1;i>-1;i--) {
+            childNodes.push(node.childNodes[i]);
+        }
+        for (j = 0; j < childNodes.length; j++) {
+            /* The cleaning process may add new nodes, at the same time,
+              we need to go through the nodes in reverse order.
+              This means we need to do these calculations with j and i. */
+            if (childNodes[j].nodeName in cleanContainerElements) {
+                cleanContainerElements[childNodes[j].nodeName](childNodes[j]);
             } else {
-                that.loop(node.childNodes[i]);
-                that.cleanChildNode(node.childNodes[i]);
+                that.loop(childNodes[j]);
+                that.cleanChildNode(childNodes[j]);
             }
+        }
         }
         return node;
     };

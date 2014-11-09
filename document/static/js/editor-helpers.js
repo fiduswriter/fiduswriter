@@ -435,6 +435,14 @@
      */
     editorHelpers.TEXT_ELEMENTS = ['document-title','metadata-subtitle','metadata-authors','metadata-keywords'];
 
+
+    /** A list of block elements that can contain text used in all elements listed in HTML_ELEMENTS.
+     * @constant  TEXT_BLOCK_ELEMENTS
+     * @memberof editorHelpers
+     */
+     
+    editorHelpers.TEXT_BLOCK_ELEMENTS = ['P','UL','OL','CODE','H1','H2','H3', 'BLOCKQUOTE'];
+
     /** Sets a variable in theDocument to a value and optionally sends a change notification to other editors.
      * This notification is used in case of simple fields (all fields that are not individually editable in the text editor
      * -- citation style, set tracking, etc. but not the document title) to make other clients copy the same values.

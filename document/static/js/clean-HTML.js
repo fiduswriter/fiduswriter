@@ -56,11 +56,7 @@ var cleanHTML = function(element) {
                 */
                 var newNode = document.createElement('span');
                 newNode.appendChild(document.createElement('span'));
-                // while (document.getElementById('pagination-footnote-'+number)) {
-                //     number++;
-                // }
-                // newNode.id = pagination.createRandomId(
-                //     'pagination-footnote-');
+
                 newNode.classList.add('pagination-footnote');
 
                 newNode.firstChild.appendChild(document.createElement('span'));
@@ -109,8 +105,6 @@ var cleanHTML = function(element) {
                 if (node.firstChild && node.firstChild.firstChild) {
                     newNode = document.createElement('span');
 
-                    //newNode.id = pagination.createRandomId(
-                    //    'pagination-footnote-');
                     newNode.classList.add('pagination-footnote');
 
                     newNode.appendChild(document.createElement('span'));
@@ -380,12 +374,7 @@ var cleanHTML = function(element) {
             node.parentNode.removeChild(node);
         },
         'BR': function(node) {
-            //if (node.classList && node.classList.contains('Apple-interchange-newline')) {
-            // Webkit places a BR at the end of certain text pasages when they are copied. We remove this.
             node.parentNode.removeChild(node);
-            //} else {
-            //    if (['P','CODE','BLOCKQUOTE',''].indexOf(node.parentNode.nodeName) != -1)
-            //}
         },
         'I': function(node) {
             var newNode = document.createElement('i');

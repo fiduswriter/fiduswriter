@@ -38,6 +38,10 @@
             pasteElement.textContent = pasteElement.textContent;
             footnotes = false;
         }
+        if (!pasteElement.firstChild) {
+            // paste is empty.
+            return true;
+        }
         if (pasteElement.firstChild.nodeName==='FIGURE') {
             startFigure = pasteElement.firstChild;
         }

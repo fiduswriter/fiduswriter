@@ -46,7 +46,7 @@
   * @param range Current selection range
   */
     manualEdits.insert = function(node, range) {
-        var tmpNextBlockNode = false, thisBlockNode;
+        var tmpNextBlockNode = false, thisBlockNode, selection;
 
         if (node.nodeName in topBlockElements && (range.startContainer.nodeName === '#text' || !range.startContainer.classList.contains('editable'))) {
             thisBlockNode = jQuery(range.startContainer).closest('div, p, h1, h2, h3, ul, ol, figure, blockquote, code')[0];
@@ -63,6 +63,13 @@
             range.selectNode(node);
             range.collapse();
             editorHelpers.documentHasChanged();
+        }
+        selection = rangy.getSelection();
+        selection.setSingleRange(range);
+        if (node.nextSibling) {
+            node.nextSibling.scrollIntoView();
+        } else {
+            node.scrollIntoView();
         }
 
     };

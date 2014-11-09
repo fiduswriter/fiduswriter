@@ -39,6 +39,20 @@
         delete window.flowCopy;
     };
 
+    /** Check if a specific node is scrolled into view
+     * @function checkViewable
+     * @memberof editorHelpers
+     */
+
+    editorHelpers.checkViewable = function(node) {
+    var windowTop = jQuery(window).scrollTop() + 300,
+        windowBottom = windowTop + jQuery(window).height(),
+        nodeTop = jQuery(node).offset().top,
+        nodeBottom = nodeTop + jQuery(node).height();
+
+    return ((nodeBottom <= windowBottom) && (nodeTop >= windowTop));
+    }
+
     document.addEventListener('layoutFlowFinished', editorHelpers.printReady, false);
 
     /** Initiate printing using simplePagination. (step 1 of printing process)
@@ -440,7 +454,7 @@
      * @constant  TEXT_BLOCK_ELEMENTS
      * @memberof editorHelpers
      */
-     
+
     editorHelpers.TEXT_BLOCK_ELEMENTS = ['P','UL','OL','CODE','H1','H2','H3', 'BLOCKQUOTE'];
 
     /** Sets a variable in theDocument to a value and optionally sends a change notification to other editors.

@@ -216,8 +216,8 @@
 
     dom.mergeParagraphs = function (firstPar, secondPar, range) {
 
-        if (firstPar.textContent === '\n' ||  !firstPar.nodeType !== 1) {
-            // The first paragraph is empty or not an element node, so we remove it.
+        if (firstPar.textContent === '\n') {
+            // The first paragraph is empty, so we remove it.
             jQuery(firstPar).remove();
             return range;
         }
@@ -235,8 +235,8 @@
             }
         }
         // Now that the second paragraph is empty, we remove it.
-
-        jQuery(secondPar).remove();
+        secondPar.parentNode.removeChild(secondPar);
+        
         return range;
     };
 

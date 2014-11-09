@@ -34,17 +34,17 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
         cited_pages,
         citeSpan,
         citationNode;
-        
+
     event.preventDefault();
 
-    
+
     if (selection.rangeCount > 0) {
         range = selection.getRangeAt(0);
     } else {
         range = rangy.createRange();
     }
-    
-    
+
+
     if (jQuery(this).is('.citation')) {
         citationNode = this;
         range.selectNode(citationNode);
@@ -55,9 +55,9 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
         bibPageStart = jQuery(citationNode).attr('data-bib-page');
         cited_ids = bibEntryStart.split(',');
         cited_prefixes = bibBeforeStart.split(',,,');
-        cited_pages = bibPageStart.split(',,,');        
+        cited_pages = bibPageStart.split(',,,');
     }
-    
+
     function dialogSubmit() {
         var cite_items = jQuery('#selected-cite-source-table .fw-cite-parts-table'),
             cite_ids = [],
@@ -107,11 +107,6 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
         range = dom.noCitationOrLinkNode(range);
         // Insert the citation
         manualEdits.insert(citeSpan, range);
-
-
-
-
-     //   citationHelpers.formatCitationsInDoc();
 
         citeSpan.parentNode.insertBefore(nodeConverter.afterNode(), citeSpan.nextSibling);
         return true;
@@ -273,9 +268,9 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
             jQuery(this).dialog('destroy').remove();
         }
     });
-    
+
     jQuery('input').blur();
-    
+
     jQuery('.fw-checkable').bind('click', function () {
         $.setCheckableLabel($(this));
     });

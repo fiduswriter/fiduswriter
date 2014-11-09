@@ -21,8 +21,8 @@
 
 (function () {
     var exports = this,
-   /** 
-  * Functions to display citations and the bibliography. TODO 
+   /**
+  * Functions to display citations and the bibliography. TODO
   * @namespace citationHelpers
   */
         citationHelpers = {},
@@ -67,7 +67,7 @@
         }
 
         citeprocInstance = new CSL.Engine(new citeprocSys(), citation_style.definition);
-        
+
         inText = citeprocInstance.cslXml.className === 'in-text';
 
         for(i = 0; i < len; i ++) {
@@ -267,7 +267,7 @@
             if('note' == citeproc_obj.citationtype) {
                 citation_text = '<span class="pagination-footnote"><span><span>' + citation_text + '</span></span></span>';
             }
-            allCitations[citations_ids[j]].innerHTML = ' ' + citation_text;
+            allCitations[citations_ids[j]].innerHTML = citation_text;
         }
         editorEscapes.reset();
 

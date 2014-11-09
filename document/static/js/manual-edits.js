@@ -66,12 +66,17 @@
         }
         selection = rangy.getSelection();
         selection.setSingleRange(range);
-        if (node.nextSibling && node.nextSibling.scrollIntoView) {
-            node.nextSibling.scrollIntoView();
-        } else if (node.scrollIntoView) {
-            node.scrollIntoView();
+        if (!editorHelpers.checkViewable(node)) {
+            if (node.nextSibling && node.nextSibling.scrollIntoView) {
+                jQuery('html, body').animate({
+                    scrollTop: jQuery(node.nextSibling).offset().top - 300
+                });
+            } else if (node.scrollIntoView) {
+                jQuery('html, body').animate({
+                    scrollTop: jQuery(node).offset().top - 300
+                });
+            }
         }
-
     };
   /** Remove an item
    * @function remove

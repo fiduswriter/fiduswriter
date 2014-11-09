@@ -20,7 +20,7 @@
  */
 (function () {
     var exports = this,
-        /** Handles key press events on the editor page. TODO 
+        /** Handles key press events on the editor page. TODO
          * @namespace keyEvents
          */
         keyEvents = {};
@@ -70,7 +70,7 @@
                 evt.preventDefault();
                 return true;
             }
-            break;               
+            break;
         case 83:
             if (keyEvents.sKey(evt)) {
                 evt.preventDefault();
@@ -169,7 +169,7 @@
                 evt.preventDefault();
                 return true;
             }
-            break;         
+            break;
         case 85:
             if (keyEvents.uKey(evt, editorContainer)) {
                 evt.preventDefault();
@@ -244,12 +244,12 @@
         }
 
 
-
         var thisParagraph = jQuery(range.startContainer).closest(
             'p, li, h1, h2, h3, code, blockquote')[0];
 
         if (thisParagraph && range.collapsed && range.startOffset === 0 && dom.isAtStart(range.startContainer,
             thisParagraph)) {
+
             // We are the very start of a paragraph. Pressing backspace here means merging this paragraph with the previous one.
             previousParagraph = thisParagraph.previousSibling;
             if (!previousParagraph || theDocument.settings.tracking || jQuery(previousParagraph).is('figure')) {
@@ -264,7 +264,6 @@
                 return true;
             }
         }
-
 
         // The selection range has to be collapsed and either be right at the start of an element, or not be a text node.
         if (range.collapsed && (range.startOffset === 0 || range.startContainer
@@ -441,7 +440,7 @@
         range = selection.getRangeAt(0);
 
         manualEdits.insert(spaceNode, range);
-        
+
         selection.removeAllRanges();
         selection.addRange(range);
 
@@ -650,7 +649,7 @@
         // return false so that the delete key action will take place.
         return false;
     };
-    
+
     // Keycode 80
 
     keyEvents.pKey = function (evt) {
@@ -702,7 +701,7 @@
                 // Redo
                 return diffHelpers.redo();
             }
-            // Undo            
+            // Undo
             return diffHelpers.undo();
         } else {
             return false;
@@ -784,8 +783,8 @@
                 }
             }
             setTimeout(removeInitialSpace, 1);
-        
-        
+
+
         } else if (jQuery('#button-bold.ui-state-active').length === 0 &&
             jQuery(range.startContainer).closest('b').length > 0) {
             dom.splitNode(jQuery(range.startContainer).closest('b')[0], range);

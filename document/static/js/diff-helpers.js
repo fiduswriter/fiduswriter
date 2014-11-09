@@ -20,7 +20,7 @@
  */
 (function () {
     var exports = this,
-        /** Sets up communicating with server (retrieving document, saving, collaboration, etc.). TODO 
+        /** Sets up communicating with server (retrieving document, saving, collaboration, etc.). TODO
          * @namespace diffHelpers
          */
         diffHelpers = {}, domDiff = new diffDOM(); // no debug mode for diffDOM
@@ -32,11 +32,11 @@
             range,
             containsSelection = false,
             finalValue, selectionStartOffset, selectionEndOffset;
-            
+
         if (selection.rangeCount > 0) {
             range = selection.getRangeAt(0);
         }
-        
+
         if (range && range.startContainer == node) {
             selectionStartOffset = range.startOffset;
             currentValue = currentValue.substring(0, range.startOffset) + '\0' + currentValue.substring(range.startOffset);
@@ -64,7 +64,7 @@
                 }
                 finalValue = finalValue.replace(/\0/g, '');
             }
-            
+
         }
 
         node.data = finalValue;
@@ -96,13 +96,13 @@
         theDocumentValues.textChangeList = [];
         theDocumentValues.documentNode = document.getElementById('document-editable');
         theDocumentValues.diffNode = nodeConverter.toModel(theDocumentValues.documentNode); // a node against which changes are tested constantly.
-        theDocumentValues.textChangeList.push([theDocumentValues.diffNode.cloneNode(true), new Date().getTime() + window.clientOffsetTime]); // A list of the most recent node versions, used when receiving older collaboration updates and undo.        
+        theDocumentValues.textChangeList.push([theDocumentValues.diffNode.cloneNode(true), new Date().getTime() + window.clientOffsetTime]); // A list of the most recent node versions, used when receiving older collaboration updates and undo.
         diffHelpers.diffTimer = setInterval(diffHelpers.handleChanges, 100);
         theDocumentValues.disableInput = false;
     };
 
     diffHelpers.makeDiff = function (isUndo) {
-        
+
         var theDiff = domDiff.diff(theDocumentValues.diffNode, nodeConverter.toModel(theDocumentValues.documentNode)),
             containsCitation = 0,
             containsEquation = 0,
@@ -111,7 +111,7 @@
             containsTrackedchange = 0,
             diffText = '',
             i;
-            
+
         if (theDiff.length === 0) {
             return false;
         }
@@ -158,28 +158,28 @@
         if (!isUndo) {
             if (theDocumentValues.undoMode) {
                 delete theDocumentValues.undoMode;
-                // We have been redoing and undoing and are just now leaving this mode. 
+                // We have been redoing and undoing and are just now leaving this mode.
                 // We delete all undoed diffs, as we will never be able to recover them.
                 console.log('exiting from undo mode');
 
                 i = _.findWhere(theDocumentValues.usedDiffs,{undo:true}).time;
-                
+
                 while (theDocumentValues.textChangeList[theDocumentValues.textChangeList.length-1][1] > i) {
                     theDocumentValues.textChangeList.pop();
                 }
-                
+
                 theDocumentValues.usedDiffs = _.where(theDocumentValues.usedDiffs, {
                     undo: undefined
                 });
-                
+
                 while (theDocumentValues.usedDiffs.length > 0 && theDocumentValues.usedDiffs[theDocumentValues.usedDiffs.length-1].time > theDocumentValues.textChangeList[theDocumentValues.textChangeList.length-1][1]) {
-                    theDocumentValues.newDiffs(theDocumentValues.usedDiffs.pop());
+                    theDocumentValues.newDiffs.push(theDocumentValues.usedDiffs.pop());
                 }
-                
+
                 // Enable undo button and disable redo button
                 document.getElementById('button-undo').classList.remove('disabled');
                 document.getElementById('button-redo').classList.add('disabled');
-            } 
+            }
             thePackage.session = theDocumentValues.session_id;
             if (theDocumentValues.collaborativeMode) {
                 theDocumentValues.newDiffs.push(thePackage);
@@ -194,7 +194,7 @@
     /** Execute an undo command on the editable area. */
     diffHelpers.undo = function () {
         var theDiffs, theDiff, isUndo = true, i;
-        
+
         if (!theDocumentValues.undoMode) {
             // We are entering undo mdoe. We will make normal diffs one last time before starting with undoing.
             diffHelpers.makeDiff();
@@ -211,17 +211,17 @@
                 i = theDiffs.length;
             }
         }
-        
+
         if (!theDiff) {
             return true;
         }
-        
+
         theDiff.undo = true;
 
         if (_.where(theDiffs, {undo:undefined}).length===0) {
             document.getElementById('button-undo').classList.add('disabled');
         }
-        
+
         diffHelpers.applyUndo(theDiff.time, isUndo);
         document.getElementById('button-redo').classList.remove('disabled');
         return true;
@@ -258,7 +258,7 @@
             return true;
         }
         diffHelpers.applyUndo(theDiff.time, isUndo);
-        
+
         if (_.where(theDiffs,{undo:true}).length===0) {
             document.getElementById('button-redo').classList.add('disabled');
         }
@@ -308,7 +308,7 @@
             containsFootnote = false,
             containsTrackedchange = false;
 
-        // Disable keyboard input while diffs are applied   
+        // Disable keyboard input while diffs are applied
         theDocumentValues.disableInput = true;
 
         while (theDocumentValues.newDiffs.length > 0) {
@@ -352,7 +352,7 @@
             }
         //    if (newestDiffs[i].features[3]) {
                 containsFootnote = true;
-        //    }            
+        //    }
             if (newestDiffs[i].features[4]) {
                 containsTrackedchange = true;
             }
@@ -360,7 +360,7 @@
         }
         theDocumentValues.textChangeList.push([tempPatchedNode, new Date().getTime() + window.clientOffsetTime]);
 
-        // If we have keept more than 100 old document versions, discard the *second* one.  
+        // If we have keept more than 100 old document versions, discard the *second* one.
         // If we really need something older, we will need to go back to the first, initial version and apply all changes.
         if (theDocumentValues.textChangeList.length > 100) {
             theDocumentValues.textChangeList.splice(1, 1);
@@ -369,7 +369,7 @@
         // Now that the tempPatchedNode represents what the editor should look like, go ahead and apply only the differences, if there are any.
 
         applicableDiffs = domDiff.diff(nodeConverter.cleanNodeView(theDocumentValues.documentNode), nodeConverter.toView(tempPatchedNode));
-        
+
         if (applicableDiffs.length > 0) {
 
             domDiff.apply(theDocumentValues.documentNode, applicableDiffs);
@@ -392,18 +392,18 @@
             if (containsFootnote) {
                 editorEscapes.reset();
                 console.log('redo footnotes');
-            }            
+            }
             // If tracked changes are added, update tracker.
             if (containsTrackedchange) {
                 tracker.findTrackTags();
             }
             editorHelpers.setDisplay.document('title', jQuery('#document-title').text().trim());
-            // Mark the document as having changed to trigger saving, 
+            // Mark the document as having changed to trigger saving,
             // but don't mark it as having been touched so it doesn't trigger synchronization with peers.
             theDocumentValues.changed = true;
         }
 
-        // Reenable keyboard input after diffs have been applied   
+        // Reenable keyboard input after diffs have been applied
         theDocumentValues.disableInput = false;
     };
 

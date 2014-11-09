@@ -192,8 +192,15 @@ div#statusarea .saved {
 div#statusarea .error {
     color: red;
 }
-.citation, .equation {
+#flow #document-bibliography {
+    background-color: lightgrey;
+}
+#document-editable .citation, .equation {
     cursor: pointer;
+    background-color: lightgrey;
+}
+#document-editable .citation:hover, .equation:hover {
+    background-color: grey;
 }
 #menu1 .selected:before {
     content: "✓ ";

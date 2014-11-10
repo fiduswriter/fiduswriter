@@ -29,12 +29,14 @@ from django.template import RequestContext
 from django.db import transaction, IntegrityError
 from django.contrib.auth.models import User
 from django.db.models import Max, Count
+from django.core.serializers.python import Serializer
+
+from bibliography.bib import Persons
+from bibliography.bib import BibDate
 
 from bibliography.models import Entry, EntryType, EntryField, EntryCategory, EntryTypeAlias, EntryFieldAlias
 
 from document.models import AccessRight
-
-from django.core.serializers.python import Serializer
 
 class SimpleSerializer(Serializer):
     def end_object( self, obj ):
@@ -45,11 +47,10 @@ serializer = SimpleSerializer()
 @login_required
 def index(request):
     response = {}
-
     response.update(csrf(request))
     return render_to_response('bibliography/index.html', response, context_instance = RequestContext(request))
 
-def save_bib_to_db(inserting_obj):
+def save_bib_to_db(inserting_obj, suffix):
     try:
         the_entry = Entry(**inserting_obj)
         the_entry.save()
@@ -57,20 +58,23 @@ def save_bib_to_db(inserting_obj):
     except IntegrityError:
         similar = Entry.objects.filter(**inserting_obj)
         if (len(similar) == 0):
-            inserting_obj['entry_key'] = inserting_obj['entry_key']+ '+'
-            return save_bib_to_db(inserting_obj)
+            old_entry_key = inserting_obj['entry_key']
+            new_suffix = suffix + 1
+            if suffix == 0:
+                new_entry_key = old_entry_key + '_1'
+            else:
+                 new_entry_key = old_entry_key[:-(len(str(suffix))+1)] + '_' + str(new_suffix)
+            inserting_obj['entry_key'] = new_entry_key
+            return save_bib_to_db(inserting_obj, new_suffix)
         else:
             return False
 
 #bibtex file import
 @login_required
-#@transaction.atomic
 def import_bibtex_js(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST' :
-        from bibliography.bib import Persons
-        from bibliography.bib import BibDate
         response['errors'] = []
         response['warning'] = []
         bibs = json.loads(request.POST['bibs'])
@@ -88,20 +92,20 @@ def import_bibtex_js(request):
         for e_field in EntryFieldAlias.objects.all():
             e_fields_alias[e_field.field_name] = e_field
         new_bibs = []
-        response['bib_ids']=[]
+        response['key_translations']={}
         for bib_key in bibs :
             bib = bibs[bib_key]
             bib_type_name = bib['bibtype']
             #the entry type must exists
-            try:
+            if bib_type_name in e_types:
                 the_type = e_types[bib_type_name]
-            except KeyError:
-                try:
-                    type_alias = e_types_alias[bib_type_name]
-                    the_type = type_alias.type_alias
-                except KeyError:
-                    the_type  = e_types['misc']
-                    response['warning'].append(bib_key + ' is saved as misc. Fidus Writer does not support "' + bib_type_name + '"')
+            elif bib_type_name in e_types_alias:
+                type_alias = e_types_alias[bib_type_name]
+                the_type = type_alias.type_alias
+            else:
+                the_type  = e_types['misc']
+                response['warning'].append(bib_key + ' is saved as misc. Fidus Writer does not support "' + bib_type_name + '"')
+
             inserting_obj = {
                 'entry_key': bib_key,
                 'entry_owner': request.user,
@@ -113,34 +117,34 @@ def import_bibtex_js(request):
                 if key in ['bibtype', 'year', 'month'] :
                     #do not save the value of type, year and month
                     continue
-                else :
-                    try:
-                        field_type = e_fields[key]
-                    except KeyError:
-                        try:
-                            field_alias = e_fields_alias[key]
-                            field_type = field_alias.field_alias
-                        except KeyError:
-                            response['errors'].append(key + ' of ' + bib_key + ' could not be saved. Fidus Writer does not support the field.')
-                            continue
-                    if 'l_name' == field_type.field_type :
-                        #restore name list value like "author"
-                        persons = Persons(val)
-                        val = persons.get_names()
-                    elif 'f_date' == field_type.field_type :
-                        #restore date value like "date"
-                        bib_date = BibDate(val)
-                        val = bib_date.date
-                    if isinstance(val, basestring) :
-                        val = val.strip("{}")
-                    if isinstance(val, list) :
-                        val = ' and '.join(val)
-                    the_fields[field_type.field_name] = val
+                elif key in e_fields:
+                    field_type = e_fields[key]
+                elif key in e_fields_alias:
+                    field_alias = e_fields_alias[key]
+                    field_type = field_alias.field_alias
+                else:
+                    response['errors'].append(key + ' of ' + bib_key + ' could not be saved. Fidus Writer does not support the field.')
+                    continue
+
+                if 'l_name' == field_type.field_type :
+                    #restore name list value like "author"
+                    persons = Persons(val)
+                    val = persons.get_names()
+                elif 'f_date' == field_type.field_type :
+                    #restore date value like "date"
+                    bib_date = BibDate(val)
+                    val = bib_date.date
+                if isinstance(val, basestring) :
+                    val = val.strip("{}")
+                if isinstance(val, list) :
+                    val = ' and '.join(val)
+                the_fields[field_type.field_name] = val
             inserting_obj['fields'] = json.dumps(the_fields)
-            the_entry = save_bib_to_db(inserting_obj)
+            old_key = inserting_obj['entry_key']
+            the_entry = save_bib_to_db(inserting_obj, 0)
             if the_entry != False:
                 new_bibs.append(the_entry)
-                response['bib_ids'].append(the_entry.id)
+                response['key_translations'][old_key] = the_entry.entry_key
             response['bibs'] = serializer.serialize(new_bibs, fields=('entry_key', 'entry_owner', 'entry_type', 'entry_cat', 'fields'))
     return JsonResponse(
         response,

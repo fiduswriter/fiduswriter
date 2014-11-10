@@ -24,8 +24,8 @@ var FW_FILETYPE_VERSION = "1.1";
 
 (function () {
     var exports = this,
-  /** 
-  * Functions to import Fidus Writer documents. TODO 
+  /**
+  * Functions to import Fidus Writer documents. TODO
   * @namespace importer
   */
         importer = {};
@@ -101,14 +101,14 @@ var FW_FILETYPE_VERSION = "1.1";
         };
         reader.readAsText(file);
     };
-    
+
     importer.initZipFileRead = function (file) {
 
         zip.createReader(new zip.BlobReader(file), function (reader) {
             // get all entries from the zip
-           
+
             reader.getEntries(function (entries) {
-                
+
                 if (entries.length) {
 
                     var textFiles = [{
@@ -143,11 +143,11 @@ var FW_FILETYPE_VERSION = "1.1";
 
                 }
             });
-         
+
         }, function (error) {
             // onerror callback
         });
-        
+
     };
 
     importer.sendNewImageAndBibEntries = function (aDocument,
@@ -202,9 +202,7 @@ var FW_FILETYPE_VERSION = "1.1";
                     i, bibDict = {};
 
                 for (i = 0; i < bibEntries.length; i++) {
-                    bibEntries[i]['bibtype'] = BibEntryTypes[bibEntries[i][
-                        'entry_type'
-                    ]].name
+                    bibEntries[i]['bibtype'] = BibEntryTypes[bibEntries[i]['entry_type']].name;
                     bibDict[bibEntries[i]['entry_key']] = bibEntries[i];
                     delete bibDict[bibEntries[i]['entry_key']].entry_type;
 
@@ -230,10 +228,18 @@ var FW_FILETYPE_VERSION = "1.1";
                             for (i = 0; i < len; i++) {
                                 $.addAlert('warning', warnings[i]);
                             }
-                            for (i = 0; i < response.bib_ids.length; i++) {
-                                BibTranslationTable[newBibEntries[i].oldId] =
-                                    response.bib_ids[i];
-                            }
+                            window.bibs = response.bibs;
+                            window.newBibEntries = newBibEntries;
+                            _.each(response.key_translations, function(newKey,oldKey) {
+                                var newID = _.findWhere(response.bibs, {entry_key: newKey}).id,
+                                oldID = _.findWhere(newBibEntries, {oldEntryKey: oldKey}).oldId;
+                                BibTranslationTable[oldID] = newID;
+                            })
+
+                            // for (i = 0; i < response.bib_ids.length; i++) {
+                            //     BibTranslationTable[newBibEntries[i].oldId] =
+                            //         response.bib_ids[i];
+                            // }
                             bibliographyHelpers.addBibList(response.bibs);
                             importer.translateReferenceIds(aDocument,
                                 BibTranslationTable, ImageTranslationTable);
@@ -432,6 +438,7 @@ var FW_FILETYPE_VERSION = "1.1";
                 //create new
                 newBibEntries.push({
                         oldId: key,
+                        oldEntryKey: shrunkBibDB[key].entry_key,
                         entry: shrunkBibDB[key]
                     });
             } else if (1 === matchEntries.length && parseInt(key) !==
@@ -442,12 +449,13 @@ var FW_FILETYPE_VERSION = "1.1";
                                 id: parseInt(key)
                             }))) {
                     // There are several matches, and none of the matches have the same id as the key in shrunkBibDB.
-                    // We now pick the first match. 
+                    // We now pick the first match.
                     // TODO: Figure out if this behavior is correct.
                     BibTranslationTable[parseInt(key)] = matchEntries[0].id;
                 }
             }
         }
+        console.log(newBibEntries);
 
         // Remove the id values again
         for (key in BibDB) {
@@ -496,7 +504,7 @@ var FW_FILETYPE_VERSION = "1.1";
                                 pk: parseInt(key)
                             }))) {
                     // There are several matches, and none of the matches have the same id as the key in shrunkImageDB.
-                    // We now pick the first match. 
+                    // We now pick the first match.
                     // TODO: Figure out if this behavior is correct.
                     ImageTranslationTable.push({
                             oldId: key,

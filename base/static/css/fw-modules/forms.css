@@ -7,7 +7,8 @@ button {
 }
 
 input[type='text'],
-input[type='password'] {
+input[type='password'],
+input[type='email'] {
     padding: 0 3px;
     height: 36px;
 }
@@ -18,6 +19,7 @@ textarea {
 
 input[type='text'],
 input[type='password'],
+input[type='email'],
 textarea {
     font-size: 14px;
     line-height: 1.33em;
@@ -28,6 +30,7 @@ textarea {
 
 input[type='text']:focus,
 input[type='password']:focus,
+input[type='email']:focus,
 textarea:focus {
     background-color: #fbf9d2;
 }

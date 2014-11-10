@@ -29,7 +29,7 @@ from django.contrib.auth.models import User
 class TexSpecialChar(models.Model):
     tex = models.CharField(max_length=255)
     unicode = models.CharField(max_length=20)
-    
+
     def __unicode__(self):
         return self.unicode
 
@@ -38,7 +38,7 @@ class LocalizationKey(models.Model):
     key_type = models.CharField(max_length=20)
     key_name = models.CharField(max_length=20)
     key_title = models.CharField(max_length=48)
-    
+
     def __unicode__(self):
         return self.key_title
 
@@ -46,10 +46,10 @@ class LocalizationKey(models.Model):
 class EntryCategory(models.Model):
     category_title = models.CharField(max_length=100)
     category_owner = models.ForeignKey(User)
-    
+
     def __unicode__(self):
         return self.category_title
-    
+
     class Meta:
         verbose_name_plural = 'Entry categories'
 
@@ -70,13 +70,13 @@ class EntryField(models.Model):
         ('f_code', 'Code field'),
         ('f_uri', 'URI Field')
     ) #types of field
-    
+
     field_name  = models.CharField(max_length=30, unique=True) # fidus type name (only with alphabet a-z in smallcase).
     biblatex = models.CharField(max_length=30) # biblatex name (only with alphabet a-z in smallcase).
     csl = models.CharField(max_length=30, blank=True) # csl type name (only with alphabet a-z in smallcase).
     field_title = models.CharField(max_length=100) #name for human to read.
     field_type  = models.CharField(max_length=30, choices=FIELDTYPE_CHOICES, default='l_name', blank=False) #definition for datatype of input for the field.
-    
+
     def __unicode__(self):
         return self.field_title
 
@@ -84,7 +84,7 @@ class EntryField(models.Model):
 class EntryFieldAlias(models.Model):
     field_name = models.CharField(max_length=30, unique=True) #name for biblatex (only with alphabet a-z in smallcase).
     field_alias = models.ForeignKey(EntryField)
-    
+
     def __unicode__(self):
         return self.field_name
 
@@ -104,16 +104,16 @@ class EntryType(models.Model):
 
     def __unicode__(self):
         return self.type_title
-    
-    
+
+
 #Aliases of EntryType
 class EntryTypeAlias(models.Model):
     type_name = models.CharField(max_length=30, unique=True) #name for biblatex (only with alphabet a-z in smallcase).
     type_alias = models.ForeignKey(EntryType)
-    
+
     def __unicode__(self):
         return self.field_name
-    
+
     class Meta:
         verbose_name_plural = 'Entry type aliases'
 
@@ -123,10 +123,10 @@ class Entry(models.Model):
     entry_type    = models.ForeignKey(EntryType) #identifier of the entrytype for the entry.
     entry_cat     = models.CharField(max_length=255, default='')
     last_modified = models.DateTimeField(auto_now=True)
-    fields        = models.TextField(default='{}') #json object with all the fields 
-    
+    fields        = models.TextField(default='{}') #json object with all the fields
+
     def __unicode__(self):
         return self.entry_key
-    
+
     class Meta:
         unique_together = (('entry_key', 'entry_owner'),)

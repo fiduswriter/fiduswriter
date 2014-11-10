@@ -466,15 +466,15 @@ var cleanHTML = function(element) {
         // Make sure there is an empty line before and after each figure except at the very beginning and end of the paste.
         figures = jQuery(node).find('figure');
         for (i=0;i<figures.length;i++) {
-            if (figure.previousSibling && editorHelpers.TEXT_BLOCK_ELEMENTS.indexOf(figure.previousSibling.nodeName) === -1) {
+            if (figures[i].previousSibling && editorHelpers.TEXT_BLOCK_ELEMENTS.indexOf(figures[i].previousSibling.nodeName) === -1) {
                 newNode = document.createElement('p');
                 newNode.innerHTML = '<br/>';
-                node.insertBefore(newNode, figure);
+                node.insertBefore(newNode, figures[i]);
             }
-            if (figure.nextSibling && editorHelpers.TEXT_BLOCK_ELEMENTS.indexOf(figure.nextSibling.nodeName) === -1) {
+            if (figures[i].nextSibling && editorHelpers.TEXT_BLOCK_ELEMENTS.indexOf(figures[i].nextSibling.nodeName) === -1) {
                 newNode = document.createElement('p');
                 newNode.innerHTML = '<br/>';
-                node.insertBefore(newNode, figure.nextSibling);
+                node.insertBefore(newNode, figures[i].nextSibling);
             }
         }
         // At the beginning of text block elements there are some times single spaces. Remove them.

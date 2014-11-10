@@ -363,7 +363,7 @@ var FW_FILETYPE_VERSION = "1.1";
         }
         if (jQuery(htmlCode).find('.citation').length > 0) {
             includePackages +=
-                '\n\\usepackage[backend=biber]{biblatex}\n\\bibliography{bibliography}';
+                '\n\\usepackage[backend=biber,hyperref=false,citestyle=authoryear,bibstyle=authoryear]{biblatex}\n\\bibliography{bibliography}';
             documentEndCommands += '\n\n\\printbibliography';
         }
 
@@ -413,6 +413,9 @@ var FW_FILETYPE_VERSION = "1.1";
                 latexStart += '\\subtitle{' + tempNode.textContent + '}\n';
             }
         }
+
+        latexStart += '\n\\maketitle\n\n';
+
         if (keywords && metadata.keywords) {
             tempNode = exporter.obj2Node(metadata.keywords);
             if (tempNode.textContent.length > 0) {
@@ -420,8 +423,6 @@ var FW_FILETYPE_VERSION = "1.1";
             }
         }
 
-
-        latexStart += '\n\\maketitle\n\n';
 
         if (documentClass === 'book') {
             if (metadata.publisher) {

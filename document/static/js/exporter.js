@@ -22,9 +22,9 @@
  */
 var FW_FILETYPE_VERSION = "1.1";
 
-(function () {
+(function() {
     var exports = this,
-        /** 
+        /**
          * Functions to export the Fidus Writer document. TODO
          * @namespace exporter
          */
@@ -36,7 +36,7 @@ var FW_FILETYPE_VERSION = "1.1";
      * @param {string} zipFileName The name of the file.
      * @param {blob} blob The contents of the file.
      */
-    exporter.downloadFile = function (zipFilename, blob) {
+    exporter.downloadFile = function(zipFilename, blob) {
         var blobURL = URL.createObjectURL(blob);
         var fakeDownloadLink = document.createElement('a');
         var clickEvent = document.createEvent("MouseEvent");
@@ -53,12 +53,12 @@ var FW_FILETYPE_VERSION = "1.1";
      * @param {string} zipFileName The name of the file.
      * @param {blob} blob The contents of the file.
      */
-    exporter.uploadFile = function (zipFilename, blob) {
+    exporter.uploadFile = function(zipFilename, blob) {
 
 
         var diaButtons = {};
 
-        diaButtons[gettext("Save")] = function () {
+        diaButtons[gettext("Save")] = function() {
             var data = new FormData();
 
             data.append('note', jQuery(this).find('.revision-note').val());
@@ -72,10 +72,10 @@ var FW_FILETYPE_VERSION = "1.1";
                 cache: false,
                 contentType: false,
                 processData: false,
-                success: function () {
+                success: function() {
                     jQuery.addAlert('success', gettext('Revision saved'));
                 },
-                error: function () {
+                error: function() {
                     jQuery.addAlert('error', gettext('Revision could not be saved.'));
                 }
             });
@@ -83,7 +83,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
         };
 
-        diaButtons[gettext("Cancel")] = function () {
+        diaButtons[gettext("Cancel")] = function() {
             jQuery(this).dialog("close");
         };
 
@@ -93,7 +93,7 @@ var FW_FILETYPE_VERSION = "1.1";
             width: 300,
             modal: true,
             buttons: diaButtons,
-            create: function () {
+            create: function() {
                 var $the_dialog = jQuery(this).closest(".ui-dialog");
                 $the_dialog.find(".ui-button:first-child").addClass(
                     "fw-button fw-dark");
@@ -103,7 +103,7 @@ var FW_FILETYPE_VERSION = "1.1";
         });
 
 
-    }; 
+    };
 
     /** Creates a zip file.
      * @function zipFileCreator
@@ -116,7 +116,7 @@ var FW_FILETYPE_VERSION = "1.1";
      * @param {boolean} [upload=false] Whether to upload rather than downloading the Zip file once finished.
      */
 
-    exporter.zipFileCreator = function (textFiles, httpFiles, zipFileName,
+    exporter.zipFileCreator = function(textFiles, httpFiles, zipFileName,
         mimeType,
         includeZips, upload) {
         var zipFs = new zip.fs.FS(),
@@ -129,7 +129,7 @@ var FW_FILETYPE_VERSION = "1.1";
         }
 
 
-        var createZip = function () {
+        var createZip = function() {
             for (i = 0; i < textFiles.length; i++) {
 
                 zipFs.root.addText(textFiles[i].filename, textFiles[i].contents);
@@ -144,7 +144,7 @@ var FW_FILETYPE_VERSION = "1.1";
             }
 
 
-            zip.createWriter(new zip.BlobWriter(mimeType), function (
+            zip.createWriter(new zip.BlobWriter(mimeType), function(
                 writer) {
 
 
@@ -168,14 +168,15 @@ var FW_FILETYPE_VERSION = "1.1";
                             }
 
                             zipWriter.add(child.getFullname(), reader,
-                                function () {
+                                function() {
                                     currentIndex += child.uncompressedSize ||
                                         0;
-                                    process(zipWriter, child, function () {
+                                    process(zipWriter, child, function() {
                                         childIndex++;
                                         exportChild();
                                     }, onprogress, totalSize);
-                                }, function (index) {
+                                },
+                                function(index) {
                                     if (onprogress)
                                         onprogress(currentIndex + index,
                                             totalSize);
@@ -195,8 +196,8 @@ var FW_FILETYPE_VERSION = "1.1";
 
 
 
-                process(writer, zipFs.root, function () {
-                    writer.close(function (blob) {
+                process(writer, zipFs.root, function() {
+                    writer.close(function(blob) {
                         if (upload) {
                             exporter.uploadFile(zipFileName, blob);
                         } else {
@@ -211,7 +212,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
         if (includeZips) {
             i = 0;
-            var includeZipLoop = function () {
+            var includeZipLoop = function() {
                 // for (i = 0; i < includeZips.length; i++) {
                 if (i === includeZips.length) {
                     createZip();
@@ -222,7 +223,7 @@ var FW_FILETYPE_VERSION = "1.1";
                         zipDir = zipFs.root.addDirectory(includeZips[i].directory);
                     }
                     zipDir.importHttpContent(includeZips[i].url, false,
-                        function () {
+                        function() {
                             i++;
                             includeZipLoop();
                         });
@@ -235,14 +236,14 @@ var FW_FILETYPE_VERSION = "1.1";
         }
     };
 
-    exporter.createSlug = function (str) {
+    exporter.createSlug = function(str) {
         str = str.replace(/[^a-zA-Z0-9\s]/g, "");
         str = str.toLowerCase();
         str = str.replace(/\s/g, '-');
         return str;
     };
 
-    exporter.cleanHTML = function (htmlCode) {
+    exporter.cleanHTML = function(htmlCode) {
 
 
         // Remove empty space characters
@@ -253,29 +254,29 @@ var FW_FILETYPE_VERSION = "1.1";
         // Replace nbsp spaces with normal ones
         htmlCode.innerHTML = htmlCode.innerHTML.replace(/&nbsp;/g, ' ');
 
-        jQuery(htmlCode).find('.del').each(function () {
+        jQuery(htmlCode).find('.del').each(function() {
             this.outerHTML = '';
         });
 
-        jQuery(htmlCode).find('.citation,.ins').each(function () {
+        jQuery(htmlCode).find('.citation,.ins').each(function() {
             this.outerHTML = this.innerHTML;
         });
 
-        jQuery(htmlCode).find('script').each(function () {
+        jQuery(htmlCode).find('script').each(function() {
             this.outerHTML = '';
         });
 
         jQuery(htmlCode).find('figcaption .figure-cat-figure').each(
-            function (index) {
+            function(index) {
                 this.innerHTML += ' ' + (index + 1) + ': ';
             });
 
-        jQuery(htmlCode).find('figcaption .figure-cat-photo').each(function (
+        jQuery(htmlCode).find('figcaption .figure-cat-photo').each(function(
             index) {
             this.innerHTML += ' ' + (index + 1) + ': ';
         });
 
-        jQuery(htmlCode).find('figcaption .figure-cat-table').each(function (
+        jQuery(htmlCode).find('figcaption .figure-cat-table').each(function(
             index) {
             this.innerHTML += ' ' + (index + 1) + ': ';
         });
@@ -283,17 +284,17 @@ var FW_FILETYPE_VERSION = "1.1";
 
     };
 
-    exporter.replaceImgSrc = function (htmlString) {
+    exporter.replaceImgSrc = function(htmlString) {
         htmlString = htmlString.replace(/<(img|IMG) data-src([^>]+)>/gm,
             "<$1 src$2>");
         return htmlString;
     }
 
-    exporter.findImages = function (htmlCode) {
+    exporter.findImages = function(htmlCode) {
         var imageLinks = jQuery(htmlCode).find('img'),
             images = [];
 
-        imageLinks.each(function (index) {
+        imageLinks.each(function(index) {
             var src, name, newImg;
             src = jQuery(this).attr('src').split('?')[0];
             name = src.split('/').pop();
@@ -309,8 +310,8 @@ var FW_FILETYPE_VERSION = "1.1";
             this.parentNode.replaceChild(newImg, this);
 
             if (!_.findWhere(images, {
-                'filename': name
-            })) {
+                    'filename': name
+                })) {
 
                 images.push({
                     'filename': name,
@@ -322,7 +323,7 @@ var FW_FILETYPE_VERSION = "1.1";
         return images;
     };
 
-    exporter.findLatexDocumentFeatures = function (htmlCode, title, author,
+    exporter.findLatexDocumentFeatures = function(htmlCode, title, author,
         subtitle, keywords, specifiedAuthors,
         metadata, documentClass) {
         var includePackages, documentEndCommands = '',
@@ -348,10 +349,10 @@ var FW_FILETYPE_VERSION = "1.1";
             tempNode = exporter.obj2Node(metadata.keywords);
             if (tempNode.textContent.length > 0) {
                 includePackages +=
-                    '\\def\\keywords{\\vspace{.5em}\
-                    {\\textit{Keywords}:\\,\\relax%\
-                    }}\
-                    \\def\\endkeywords{\\par}'
+                    '\n\\def\\keywords{\\vspace{.5em}\
+                    \n{\\textit{Keywords}:\\,\\relax%\
+                    \n}}\
+                    \n\\def\\endkeywords{\\par}'
             }
         }
 
@@ -451,7 +452,7 @@ var FW_FILETYPE_VERSION = "1.1";
         };
     };
 
-    exporter.htmlToLatex = function (title, author, htmlCode, aBibDB,
+    exporter.htmlToLatex = function(title, author, htmlCode, aBibDB,
         metadataSettings, metadata, isChapter, listedWorksList) {
         var latexStart = '',
             latexEnd = '',
@@ -462,7 +463,7 @@ var FW_FILETYPE_VERSION = "1.1";
         }
 
         // Remove sections that are marked as deleted
-        jQuery(htmlCode).find('.del').each(function () {
+        jQuery(htmlCode).find('.del').each(function() {
             this.outerHTML = '';
         });
 
@@ -512,54 +513,53 @@ var FW_FILETYPE_VERSION = "1.1";
         htmlCode.innerHTML = htmlCode.innerHTML.replace(/\\/g, '\\\\');
         htmlCode.innerHTML = htmlCode.innerHTML.replace(/{/g, '\{');
         htmlCode.innerHTML = htmlCode.innerHTML.replace(/}/g, '\}');
-        htmlCode.innerHTML = htmlCode.innerHTML.replace(/\[/g, '\\\[');
-        htmlCode.innerHTML = htmlCode.innerHTML.replace(/\]/g, '\\\]');
         htmlCode.innerHTML = htmlCode.innerHTML.replace(/\$/g, '\\\$');
         htmlCode.innerHTML = htmlCode.innerHTML.replace(/\#/g, '\\\#');
+        htmlCode.innerHTML = htmlCode.innerHTML.replace(/\%/g, '\\\%');
 
-        jQuery(htmlCode).find('i').each(function () {
+        jQuery(htmlCode).find('i').each(function() {
             jQuery(this).replaceWith('\\emph{' + this.innerHTML +
                 '}');
         });
 
-        jQuery(htmlCode).find('b').each(function () {
+        jQuery(htmlCode).find('b').each(function() {
             jQuery(this).replaceWith('\\textbf{' + this.innerHTML +
                 '}');
         });
 
-        jQuery(htmlCode).find('h1').each(function () {
+        jQuery(htmlCode).find('h1').each(function() {
             jQuery(this).replaceWith('\n\n\\section{' + this.textContent +
                 '}\n');
         });
-        jQuery(htmlCode).find('h2').each(function () {
+        jQuery(htmlCode).find('h2').each(function() {
             jQuery(this).replaceWith('\n\n\\subsection{' + this.textContent +
                 '}\n');
         });
-        jQuery(htmlCode).find('h3').each(function () {
+        jQuery(htmlCode).find('h3').each(function() {
             jQuery(this).replaceWith('\n\n\\subsubsection{' + this.textContent +
                 '}\n');
         });
-        jQuery(htmlCode).find('p').each(function () {
+        jQuery(htmlCode).find('p').each(function() {
             jQuery(this).replaceWith('\n\n' + this.innerHTML + '\n');
         });
-        jQuery(htmlCode).find('li').each(function () {
+        jQuery(htmlCode).find('li').each(function() {
             jQuery(this).replaceWith('\n\\item ' + this.innerHTML +
                 '\n');
         });
-        jQuery(htmlCode).find('ul').each(function () {
+        jQuery(htmlCode).find('ul').each(function() {
             jQuery(this).replaceWith('\n\\begin{itemize}' + this.innerHTML +
                 '\\end{itemize}\n');
         });
-        jQuery(htmlCode).find('ol').each(function () {
+        jQuery(htmlCode).find('ol').each(function() {
             jQuery(this).replaceWith('\n\\begin{enumerated}' + this
                 .innerHTML +
                 '\\end{enumerated}\n');
         });
-        jQuery(htmlCode).find('code').each(function () {
+        jQuery(htmlCode).find('code').each(function() {
             jQuery(this).replaceWith('\n\\begin{code}\n\n' + this.innerHTML +
                 '\n\n\\end{code}\n');
         });
-        jQuery(htmlCode).find('div.abstract').each(function () {
+        jQuery(htmlCode).find('div.abstract').each(function() {
             jQuery(this).replaceWith('\n\\begin{abstract}\n\n' +
                 this.innerHTML +
                 '\n\n\\end{abstract}\n');
@@ -568,58 +568,79 @@ var FW_FILETYPE_VERSION = "1.1";
         // join code paragraphs that follow oneanother
         htmlCode.innerHTML = htmlCode.innerHTML.replace(
             /\\end{code}\n\n\\begin{code}\n\n/g, '');
-        jQuery(htmlCode).find('blockquote').each(function () {
+        jQuery(htmlCode).find('blockquote').each(function() {
             jQuery(this).replaceWith('\n\\begin{quote}\n\n' + this.innerHTML +
                 '\n\n\\end{quote}\n');
         });
         // join quote paragraphs that follow oneanother
         htmlCode.innerHTML = htmlCode.innerHTML.replace(
             /\\end{quote}\n\n\\begin{quote}\n\n/g, '');
-        jQuery(htmlCode).find('a').each(function () {
+        jQuery(htmlCode).find('a').each(function() {
             jQuery(this).replaceWith('\\href{' + this.href + '}{' +
                 this.innerHTML +
                 '}');
         });
-        jQuery(htmlCode).find('.citation').each(function () {
+        jQuery(htmlCode).find('.citation').each(function() {
             var citationEntries = jQuery(this).attr(
-                'data-bib-entry').split(
-                ','),
+                    'data-bib-entry').split(
+                    ','),
                 citationBefore = jQuery(this).attr(
-                    'data-bib-before'),
-                citationPage = jQuery(this).attr('data-bib-page'),
+                    'data-bib-before').split(',,,'),
+                citationPage = jQuery(this).attr('data-bib-page').split(',,,'),
                 citationFormat = jQuery(this).attr(
                     'data-bib-format'),
-                citationCommand = '\\' + citationFormat;
+                citationCommand = '\\' + citationFormat,
+                i;
 
-            if (citationBefore.length > 0) {
-                citationCommand += '[' + citationBefore + ']';
-                if (citationPage.length === 0) {
-                    citationCommand += '[]';
+            if (citationEntries.length > 1 && citationBefore.join('').length === 0 && citationPage.join('').length === 0) {
+                // multi source citation without page numbers or text before.
+                citationCommand += '{';
+
+                for (i = 0; i < citationEntries.length; i++) {
+                    citationCommand += aBibDB[citationEntries[i]].entry_key;
+
+                    if (i + 1 < citationEntries.length) {
+                        citationCommand += ',';
+                    }
+                    if (listedWorksList.indexOf(citationEntries[i]) === -
+                        1) {
+                        listedWorksList.push(citationEntries[i]);
+                    }
+                }
+                citationCommand += '}';
+            } else {
+                if (citationEntries.length > 1) {
+                    citationCommand += 's'; // Switching from \autocite to \autocites
+                }
+                for (i = 0; i < citationEntries.length; i++) {
+
+                    if (citationBefore[i].length > 0) {
+                        citationCommand += '[' + citationBefore[i] + ']';
+                        if (citationPage[i].length === 0) {
+                            citationCommand += '[]';
+                        }
+                    }
+                    if (citationPage[i].length > 0) {
+                        citationCommand += '[' + citationPage[i] + ']';
+                    }
+                    citationCommand += '{';
+
+                    citationCommand += aBibDB[citationEntries[i]].entry_key;
+
+                    if (listedWorksList.indexOf(citationEntries[i]) === -
+                        1) {
+                        listedWorksList.push(citationEntries[i]);
+                    }
+                    citationCommand += '}';
+
                 }
             }
-            if (citationPage.length > 0) {
-                citationCommand += '[' + citationPage + ']';
-            }
-            citationCommand += '{';
 
-            for (var i = 0; i < citationEntries.length; i++) {
-                citationCommand += aBibDB[citationEntries[i]].entry_key;
-
-                if (i + 1 < citationEntries.length) {
-                    citationCommand += ',';
-                }
-                if (listedWorksList.indexOf(citationEntries[i]) === -
-                    1) {
-                    listedWorksList.push(citationEntries[i]);
-                }
-
-            }
-            citationCommand += '}';
             jQuery(this).replaceWith(citationCommand);
 
         });
 
-        jQuery(htmlCode).find('figure').each(function () {
+        jQuery(htmlCode).find('figure').each(function() {
             var caption, figureType, filename, latexPackage,
                 filenameList;
             figureType = jQuery(this).find('figcaption')[0].firstChild
@@ -639,7 +660,7 @@ var FW_FILETYPE_VERSION = "1.1";
         });
 
         jQuery(htmlCode).find('.equation, .figure-equation').each(
-            function () {
+            function() {
                 var equation = jQuery(this).attr('data-equation');
                 // TODO: The string is for some reason escaped. The following line removes this.
                 equation = equation.replace(/\\/g, "*BACKSLASH*").replace(
@@ -648,7 +669,7 @@ var FW_FILETYPE_VERSION = "1.1";
                 this.outerHTML = '$' + equation + '$';
             });
 
-        jQuery(htmlCode).find('.footnote').each(function () {
+        jQuery(htmlCode).find('.footnote').each(function() {
             jQuery(this).replaceWith('\\footnote{' + this.innerHTML + '}');
         });
 
@@ -665,7 +686,7 @@ var FW_FILETYPE_VERSION = "1.1";
         return returnObject;
     };
 
-    exporter.getTimestamp = function () {
+    exporter.getTimestamp = function() {
         var today = new Date();
         var second = today.getUTCSeconds();
         var minute = today.getUTCMinutes();
@@ -695,10 +716,10 @@ var FW_FILETYPE_VERSION = "1.1";
         return returnValue;
     };
 
-    exporter.setLinks = function (htmlCode, docNum) {
+    exporter.setLinks = function(htmlCode, docNum) {
         var contentItems = [],
             title;
-        jQuery(htmlCode).find('h1,h2,h3').each(function () {
+        jQuery(htmlCode).find('h1,h2,h3').each(function() {
             title = jQuery.trim(this.textContent);
             if (title !== '') {
                 var contentItem = {};
@@ -720,7 +741,7 @@ var FW_FILETYPE_VERSION = "1.1";
         return contentItems;
     };
 
-    exporter.orderLinks = function (contentItems) {
+    exporter.orderLinks = function(contentItems) {
         var i, j;
         for (i = 0; i < contentItems.length; i++) {
             contentItems[i].subItems = [];
@@ -745,10 +766,10 @@ var FW_FILETYPE_VERSION = "1.1";
         return contentItems;
     };
 
-    exporter.styleEpubFootnotes = function (htmlCode) {
+    exporter.styleEpubFootnotes = function(htmlCode) {
         var footnotesCode = '';
         footnoteCounter = 0;
-        jQuery(htmlCode).find('.footnote').each(function () {
+        jQuery(htmlCode).find('.footnote').each(function() {
             footnoteCounter++;
             footnotesCode += '<aside epub:type="footnote" id="n' +
                 footnoteCounter + '"><p>' + footnoteCounter + ' ' +
@@ -765,7 +786,7 @@ var FW_FILETYPE_VERSION = "1.1";
     };
 
     /** Same functionality as objToNode/nodeToObj in diffDOM.js, but also offers output in XHTML format (obj2Node) and without form support. */
-    exporter.obj2Node = function (obj, docType) {
+    exporter.obj2Node = function(obj, docType) {
         var parser;
         if (obj === undefined) {
             return false;
@@ -804,9 +825,10 @@ var FW_FILETYPE_VERSION = "1.1";
         }
         return inner(obj);
     };
-    
-    exporter.node2Obj = function (node) {
-        var obj = {}, i;
+
+    exporter.node2Obj = function(node) {
+        var obj = {},
+            i;
 
         if (node.nodeType === 3) {
             obj.t = node.data;
@@ -830,10 +852,10 @@ var FW_FILETYPE_VERSION = "1.1";
         return obj;
     };
 
-    
-    
-    
-    exporter.savecopy = function (aDocument) {
+
+
+
+    exporter.savecopy = function(aDocument) {
         if (aDocument.is_owner) {
             // If the current user of the document is also the owner, the copying is easy:
             // we simply reset the id to zero, change the title and save the document.
@@ -866,10 +888,10 @@ var FW_FILETYPE_VERSION = "1.1";
             if (window.hasOwnProperty('theDocument')) {
                 exporter.native(aDocument, ImageDB, BibDB, importAsUser);
             } else {
-                bibliographyHelpers.getABibDB(aDocument.owner, function (
+                bibliographyHelpers.getABibDB(aDocument.owner, function(
                     aBibDB) {
                     usermediaHelpers.getAnImageDB(aDocument.owner,
-                        function (anImageDB) {
+                        function(anImageDB) {
                             exporter.native(aDocument, anImageDB,
                                 aBibDB, importAsUser);
                         });
@@ -883,21 +905,21 @@ var FW_FILETYPE_VERSION = "1.1";
      * @memberof exporter
      * @param aDocument The document to turn into a Fidus Writer document and upload.
      */
-    exporter.uploadNative = function (aDocument) {
-        exporter.native(aDocument, ImageDB, BibDB, function (aDocument, shrunkImageDB, shrunkBibDB, images) {
+    exporter.uploadNative = function(aDocument) {
+        exporter.native(aDocument, ImageDB, BibDB, function(aDocument, shrunkImageDB, shrunkBibDB, images) {
             exporter.nativeFile(aDocument, shrunkImageDB, shrunkBibDB, images, true);
         });
     };
 
-    exporter.downloadNative = function (aDocument) {
+    exporter.downloadNative = function(aDocument) {
         if (window.hasOwnProperty('theDocument')) {
             exporter.native(aDocument, ImageDB, BibDB, exporter.nativeFile);
         } else {
             if (aDocument.is_owner) {
-                if ('undefined' === typeof (BibDB)) {
-                    bibliographyHelpers.getBibDB(function () {
-                        if ('undefined' === typeof (ImageDB)) {
-                            usermediaHelpers.getImageDB(function () {
+                if ('undefined' === typeof(BibDB)) {
+                    bibliographyHelpers.getBibDB(function() {
+                        if ('undefined' === typeof(ImageDB)) {
+                            usermediaHelpers.getImageDB(function() {
                                 exporter.native(aDocument,
                                     ImageDB,
                                     BibDB, exporter.nativeFile);
@@ -908,8 +930,8 @@ var FW_FILETYPE_VERSION = "1.1";
                                 exporter.nativeFile);
                         }
                     });
-                } else if ('undefined' === typeof (ImageDB)) {
-                    usermediaHelpers.getImageDB(function () {
+                } else if ('undefined' === typeof(ImageDB)) {
+                    usermediaHelpers.getImageDB(function() {
                         exporter.native(aDocument, ImageDB, BibDB,
                             exporter.nativeFile);
                     });
@@ -918,10 +940,10 @@ var FW_FILETYPE_VERSION = "1.1";
                         .nativeFile);
                 }
             } else {
-                bibliographyHelpers.getABibDB(aDocument.owner, function (
+                bibliographyHelpers.getABibDB(aDocument.owner, function(
                     aBibDB) {
                     usermediaHelpers.getAnImageDB(aDocument.owner,
-                        function (anImageDB) {
+                        function(anImageDB) {
                             exporter.native(aDocument, anImageDB,
                                 aBibDB, exporter.nativeFile);
                         });
@@ -930,9 +952,10 @@ var FW_FILETYPE_VERSION = "1.1";
         }
     };
 
-    exporter.native = function (aDocument, anImageDB, aBibDB, callback) {
+    exporter.native = function(aDocument, anImageDB, aBibDB, callback) {
         var contents, outputList, httpOutputList, images, shrunkImageDB,
-            shrunkBibDB = {}, imageUrls = [],
+            shrunkBibDB = {},
+            imageUrls = [],
             citeList = [],
             i;
 
@@ -945,12 +968,12 @@ var FW_FILETYPE_VERSION = "1.1";
         imageUrls = _.pluck(images, 'url');
 
 
-        shrunkImageDB = _.filter(anImageDB, function (image) {
+        shrunkImageDB = _.filter(anImageDB, function(image) {
             return (imageUrls.indexOf(image.image.split('?').shift()) !== -
                 1);
         });
 
-        jQuery(contents).find('.citation').each(function () {
+        jQuery(contents).find('.citation').each(function() {
             citeList.push(jQuery(this).attr('data-bib-entry'))
         });
 
@@ -968,7 +991,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
     };
 
-    exporter.nativeFile = function (aDocument, shrunkImageDB,
+    exporter.nativeFile = function(aDocument, shrunkImageDB,
         shrunkBibDB,
         images, upload) {
 
@@ -997,23 +1020,23 @@ var FW_FILETYPE_VERSION = "1.1";
             '.fidus', 'application/fidus+zip', false, upload);
     };
 
-    exporter.downloadLatex = function (aDocument) {
+    exporter.downloadLatex = function(aDocument) {
         if (window.hasOwnProperty('theDocument') || (window.hasOwnProperty(
-            'BibDB') && aDocument.is_owner)) {
+                'BibDB') && aDocument.is_owner)) {
             exporter.latex(aDocument, BibDB);
         } else if (aDocument.is_owner) {
-            bibliographyHelpers.getBibDB(function () {
+            bibliographyHelpers.getBibDB(function() {
                 exporter.latex(aDocument, BibDB);
             });
         } else {
-            bibliographyHelpers.getABibDB(aDocument.owner, function (
+            bibliographyHelpers.getABibDB(aDocument.owner, function(
                 aBibDB) {
                 exporter.latex(aDocument, aBibDB);
             });
         }
     };
 
-    exporter.latex = function (aDocument, aBibDB) {
+    exporter.latex = function(aDocument, aBibDB) {
         var contents, latexCode, htmlCode, title, outputList,
             httpOutputList, tempNode;
 
@@ -1052,16 +1075,16 @@ var FW_FILETYPE_VERSION = "1.1";
             '.latex.zip');
     };
 
-    exporter.downloadEpub = function (aDocument) {
+    exporter.downloadEpub = function(aDocument) {
         if (window.hasOwnProperty('theDocument') || (window.hasOwnProperty(
-            'BibDB') && aDocument.is_owner)) {
+                'BibDB') && aDocument.is_owner)) {
             exporter.epub(aDocument, BibDB);
         } else if (aDocument.is_owner) {
-            bibliographyHelpers.getBibDB(function () {
+            bibliographyHelpers.getBibDB(function() {
                 exporter.epub(aDocument, BibDB);
             });
         } else {
-            bibliographyHelpers.getABibDB(aDocument.owner, function (
+            bibliographyHelpers.getABibDB(aDocument.owner, function(
                 aBibDB) {
                 exporter.epub(aDocument, aBibDB);
             });
@@ -1070,7 +1093,7 @@ var FW_FILETYPE_VERSION = "1.1";
 
 
     // Mathjax automatically adds soem elements to the current document after making SVGs. We need these elements.
-    exporter.getMathjaxHeader = function () {
+    exporter.getMathjaxHeader = function() {
         var mathjax = document.getElementById('MathJax_SVG_Hidden');
         if (mathjax === undefined || mathjax === null) {
             return false;
@@ -1079,7 +1102,7 @@ var FW_FILETYPE_VERSION = "1.1";
         }
     };
 
-    exporter.epub = function (aDocument, aBibDB) {
+    exporter.epub = function(aDocument, aBibDB) {
         var title, contents, contentsBody, images,
             bibliography, equations, figureEquations,
             styleSheets = [], //TODO: fill style sheets with somethign meaningful.
@@ -1139,39 +1162,39 @@ var FW_FILETYPE_VERSION = "1.1";
         }
 
         equations = contentsBody.querySelectorAll('.equation');
-        
+
         figureEquations = contentsBody.querySelectorAll('.figure-equation');
 
         if (equations.length > 0 || figureEquations.length > 0) {
             mathjax = true;
         }
-        
+
         for (i = 0; i < equations.length; i++) {
             mathHelpers.layoutMathNode(equations[i]);
         }
         for (i = 0; i < figureEquations.length; i++) {
             mathHelpers.layoutDisplayMathNode(figureEquations[i]);
-        }        
-        mathHelpers.queueExecution(function () {
-            setTimeout( function() {
-            exporter.epub2(aDocument, contentsBody, images, title, styleSheets, mathjax);
+        }
+        mathHelpers.queueExecution(function() {
+            setTimeout(function() {
+                exporter.epub2(aDocument, contentsBody, images, title, styleSheets, mathjax);
             }, 2000);
         });
     };
 
-    exporter.epub2 = function (aDocument, contentsBody, images, title, styleSheets, mathjax) {
+    exporter.epub2 = function(aDocument, contentsBody, images, title, styleSheets, mathjax) {
         var contentsBodyEpubPrepared, xhtmlCode, containerCode, timestamp, keywords, contentItems, authors, tempNode, outputList, includeZips = [],
             opfCode, ncxCode, navCode, httpOutputList = [],
             i;
 
         if (mathjax) {
             mathjax = exporter.getMathjaxHeader();
-        
-            if (mathjax) {    
+
+            if (mathjax) {
                 mathjax = exporter.obj2Node(exporter.node2Obj(mathjax), 'xhtml').outerHTML;
             }
         }
-        
+
         // Make links to all H1-3 and create a TOC list of them
         contentItems = exporter.orderLinks(exporter.setLinks(
             contentsBody));
@@ -1286,23 +1309,23 @@ var FW_FILETYPE_VERSION = "1.1";
             '.epub', 'application/epub+zip', includeZips);
     };
 
-    exporter.downloadHtml = function (aDocument) {
+    exporter.downloadHtml = function(aDocument) {
         if (window.hasOwnProperty('theDocument') || (window.hasOwnProperty(
-            'BibDB') && aDocument.is_owner)) {
+                'BibDB') && aDocument.is_owner)) {
             exporter.html(aDocument, BibDB);
         } else if (aDocument.is_owner) {
-            bibliographyHelpers.getBibDB(function () {
+            bibliographyHelpers.getBibDB(function() {
                 exporter.html(aDocument, BibDB);
             });
         } else {
-            bibliographyHelpers.getABibDB(aDocument.owner, function (
+            bibliographyHelpers.getABibDB(aDocument.owner, function(
                 aBibDB) {
                 exporter.html(aDocument, aBibDB);
             });
         }
     };
 
-    exporter.html = function (aDocument, aBibDB) {
+    exporter.html = function(aDocument, aBibDB) {
         var title, contents, tempNode,
             styleSheets = [],
             equations, figureEquations, mathjax = false;
@@ -1321,33 +1344,33 @@ var FW_FILETYPE_VERSION = "1.1";
         }
 
         equations = contents.querySelectorAll('.equation');
-        
+
         figureEquations = contents.querySelectorAll('.figure-equation');
 
         if (equations.length > 0 || figureEquations.length > 0) {
             mathjax = true;
         }
-        
+
         for (i = 0; i < equations.length; i++) {
             mathHelpers.layoutMathNode(equations[i]);
         }
         for (i = 0; i < figureEquations.length; i++) {
-             mathHelpers.layoutDisplayMathNode(figureEquations[i]);
+            mathHelpers.layoutDisplayMathNode(figureEquations[i]);
         }
-        
-        mathHelpers.queueExecution(function () {
+
+        mathHelpers.queueExecution(function() {
             exporter.html2(aDocument, aBibDB, styleSheets, title, contents, mathjax);
         });
     };
 
-    exporter.html2 = function (aDocument, aBibDB, styleSheets, title, contents, mathjax) {
+    exporter.html2 = function(aDocument, aBibDB, styleSheets, title, contents, mathjax) {
         var bibliography, htmlCode, outputList,
             httpOutputList,
             includeZips = [];
 
         if (mathjax) {
             mathjax = exporter.getMathjaxHeader()
-        
+
             if (mathjax) {
                 mathjax = mathjax.outerHTML;
             }

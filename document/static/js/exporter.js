@@ -511,8 +511,8 @@ var FW_FILETYPE_VERSION = "1.1";
 
         // Escape characters that are protected in some way.
         htmlCode.innerHTML = htmlCode.innerHTML.replace(/\\/g, '\\\\');
-        htmlCode.innerHTML = htmlCode.innerHTML.replace(/{/g, '\{');
-        htmlCode.innerHTML = htmlCode.innerHTML.replace(/}/g, '\}');
+        htmlCode.innerHTML = htmlCode.innerHTML.replace(/\{/g, '\{');
+        htmlCode.innerHTML = htmlCode.innerHTML.replace(/\}/g, '\}');
         htmlCode.innerHTML = htmlCode.innerHTML.replace(/\$/g, '\\\$');
         htmlCode.innerHTML = htmlCode.innerHTML.replace(/\#/g, '\\\#');
         htmlCode.innerHTML = htmlCode.innerHTML.replace(/\%/g, '\\\%');

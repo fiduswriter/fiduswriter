@@ -23,14 +23,14 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
 
 (function () {
     var exports = this,
-        /** 
+        /**
          * Helper functions for the bibliography.
          * @namespace bibliographyHelpers
          */
         bibliographyHelpers = {};
 
 
-    /** Dictionary of date selection options for bibliography item editor (localized). 
+    /** Dictionary of date selection options for bibliography item editor (localized).
      * @constant date_format
      * @memberof bibliographyHelpers
      */
@@ -43,7 +43,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         'mdy/mdy': gettext('M/D/Y - M/D/Y')
     };
 
-    /** Converts a bibliography item as it arrives from the server to a BibDB object. 
+    /** Converts a bibliography item as it arrives from the server to a BibDB object.
      * @function serverBibItemToBibDB
      * @memberof bibliographyHelpers
      * @param item The bibliography item from the server.
@@ -58,7 +58,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         return id;
     };
 
-    /** This takes a list of new bib entries and adds them to BibDB and the bibliography table 
+    /** This takes a list of new bib entries and adds them to BibDB and the bibliography table
      * @function addBibList
      * @memberof bibliographyHelpers
      * @param bibList The list of bibliography items from the server.
@@ -180,7 +180,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         return cslOutput;
     };
 
-    /** Exports bibliography to BibLaTeX format 
+    /** Exports bibliography to BibLaTeX format
      * @function bibLatexExport
      * @memberof bibliographyHelpers
      * @param pks A list of pk values of the bibliography items to be exported.
@@ -257,7 +257,40 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                     tex_special_chars[i].tex);
             }
             return the_value;
-        }
+        };
+
+        this._cleanBraces = function (the_value, pk) {
+            var openBraces = ((the_value.match(/\{/g) || []).length),
+                closeBraces = ((the_value.match(/\}/g) || []).length), braceLevel, len, i;
+            if (openBraces === 0 && closeBraces === 0) {
+                // There are no braces, return the original value;
+                return the_value;
+            } else if (openBraces != closeBraces) {
+                // There are different amount of open and close braces, so we delete them all.
+                the_value = the_value.replace(/}/g, '');
+                the_value = the_value.replace(/{/g, '');
+                return the_value;
+            } else {
+                // There are the same amount of open and close braces, but we don't know if they are in the right order.
+                braceLevel = 0, len = the_value.length;
+                for (i = 0; i < len; i++) {
+                    if (the_value[i] === '{') {
+                        braceLevel++;
+                    }
+                    if (the_value[i] === '}') {
+                        braceLevel--;
+                    }
+                    if (braceLevel < 0) {
+                        // A brace was closed before it was opened. Abort and remove all the braces.
+                        the_value = the_value.replace(/\}/g, '');
+                        the_value = the_value.replace(/\{/g, '');
+                        return the_value;
+                    }
+                }
+                // Braces were accurate.
+                return the_value;
+            }
+        };
 
         this._getBibtexString = function (biblist) {
             var i, len = biblist.length,
@@ -275,7 +308,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                 str += "\r\n}"
             }
             return str;
-        }
+        };
 
         var i, len = pks.length,
             pk, bib, f_values,
@@ -306,7 +339,8 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                     }
                     continue;
                 }
-                f_value = this._escapeTexSpecialChars(f_value, pk);
+                //f_value = this._escapeTexSpecialChars(f_value, pk);
+                f_value = this._cleanBraces(f_value, pk);
                 f_values[BibFieldTypes[f_key]['biblatex']] = f_value;
             }
             bib_entry.values = f_values;
@@ -315,7 +349,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         this.bibtex_str = this._getBibtexString(this.bibtex_array);
     };
 
-    /** Parses files in BibTeX/BibLaTeX format 
+    /** Parses files in BibTeX/BibLaTeX format
      * @function bibTexParser
      * @memberof bibliographyHelpers
      */
@@ -727,7 +761,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         return noError;
     };
 
-    /** Update or create new category 
+    /** Update or create new category
      * @function createCategory
      * @memberof bibliographyHelpers
      * @param cats The category objects to add.
@@ -982,7 +1016,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             'id': id,
             'entrytype': jQuery('#id_entrytype').val()
         };
-        
+
         if (window.hasOwnProperty('theDocumentValues') && !(theDocumentValues.is_owner)) {
             formValues['owner_id'] = theDocument.owner.id;
         }
@@ -1151,7 +1185,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         jQuery('#createbook .warning').detach();
     };
 
-    /** Adds a list of bibliography categories to current list of bibliography categories. 
+    /** Adds a list of bibliography categories to current list of bibliography categories.
      * @function addBibCategoryList
      * @memberof bibliographyHelpers
      * @param newBibCategories The new categories which will be added to the existing ones.
@@ -1164,7 +1198,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         }
     };
 
-    /** Add an item to the HTML list of bibliography categories. 
+    /** Add an item to the HTML list of bibliography categories.
      * @function appendToBibCatList
      * @memberof bibliographyHelpers
      * @param bCat Category to be appended.
@@ -1253,7 +1287,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         return ret;
     };
 
-    /** Return html with form elements for the bibliography entry dialog. 
+    /** Return html with form elements for the bibliography entry dialog.
      * @function getFieldForms
      * @memberof bibliographyHelpers
      * @param fields A list of the fields
@@ -1503,7 +1537,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             });
         }
     };
-    /** Change the type of the bibliography item in the form (article, book, etc.) 
+    /** Change the type of the bibliography item in the form (article, book, etc.)
      * @function updateBibEntryDialog
      * @memberof bibliographyHelpers
      * @param id The id of the bibliography entry.
@@ -1745,12 +1779,12 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             }
         });
     };
-    /** Translated text of " and others". 
+    /** Translated text of " and others".
      * @constant _and_others
      * @memberof bibliographyHelpers
      */
     bibliographyHelpers._and_others = gettext(' and others');
-    /** Add or update an item in the bibliography table (HTML). 
+    /** Add or update an item in the bibliography table (HTML).
      * @function appendToBibTable
      * @memberof bibliographyHelpers
      * @param pk The pk specifying the bibliography item.
@@ -1847,7 +1881,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         });
 
     };
-    /** Get the bibliography of the current user from the server and create as window.BibDB.  
+    /** Get the bibliography of the current user from the server and create as window.BibDB.
      * @function getBibDB
      * @memberof bibliographyHelpers
      * @param callback Will be called afterward.

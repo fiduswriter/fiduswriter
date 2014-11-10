@@ -808,6 +808,9 @@ var FW_FILETYPE_VERSION = "1.1";
                 if (obj.nn === 'svg' || insideSvg) {
                     node = parser.createElementNS('http://www.w3.org/2000/svg', obj.nn);
                     insideSvg = true;
+                } else if (obj.nn === 'script') {
+                    // Do not allow scripts
+                    return parser.createTextNode('');
                 } else {
                     node = parser.createElement(obj.nn);
                 }

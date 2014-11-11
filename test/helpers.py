@@ -93,7 +93,6 @@ testCaretJS = """//"; // without this, javascript linter doesn't work on code be
    * @returns {Selection}
    */
   testCaret.setCaret = function setCaret(selection, caret) {
-    console.log(caret);
     var r = rangy.createRange();
     var toStart = true;
 

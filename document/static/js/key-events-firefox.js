@@ -1,5 +1,5 @@
 /**
- * @file Handles the pressing of keys on the editor page. Needs to work around bugs in Firefox.
+ * @file Handles the pressing of keys on the editor page. Needs to work around bugs in Chrome/Safari.
  * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
  *
  * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
@@ -24,6 +24,19 @@
          * @namespace keyEventsFirefox
          */
         keyEventsFirefox = {};
+    var ARROW_DOWN = 40;
+    var LASTS_OF_ALL_EDITABLE_BLOCKS = [
+      '#document-contents > p:eq(-1)',
+      '#document-contents > ol:eq(-1)',
+      '#document-contents > ul:eq(-1)',
+    ].join(',');
+    var LASTS_OF_ALL_EDITABLE_INLINES = [
+      // !!! what about text nodes?
+      '> a:eq(-1)',
+      '> b:eq(-1)',
+      '> i:eq(-1)',
+      // !!! what about comments?
+    ].join(',');
 
 
     keyEventsFirefox.bindEvents = function () {
@@ -43,788 +56,109 @@
             return keyEventsFirefox.testKeyPressAfterEditing(evt, this);
         });
 
-        // Send keydown events while on editor page by testKeyPressEditor
-        jQuery(document).keydown(function (evt) {
-
-            if (theDocumentValues.disableInput) {
-                evt.preventDefault();
-                return true;
-            }
-
-            return keyEventsFirefox.testKeyPressEditor(evt);
-        });
-
     };
 
     keyEventsFirefox.testKeyPressEditor = function (evt) {
-
-        switch (evt.which) {
-        case 19:
-            if (keyEventsFirefox.macCommandSKey(evt)) {
-                evt.preventDefault();
-                return true;
-            }
-            break;
-        case 80:
-            if (keyEventsFirefox.pKey(evt)) {
-                evt.preventDefault();
-                return true;
-            }
-            break;               
-        case 83:
-            if (keyEventsFirefox.sKey(evt)) {
-                evt.preventDefault();
-                return true;
-            }
-            break;
-        case 90:
-            if (keyEventsFirefox.zKeyEditor(evt)) {
-                evt.preventDefault();
-                return true;
-            }
-            break;
-        case 191:
-            if (keyEventsFirefox.questionKey(evt)) {
-                evt.preventDefault();
-                return true;
-            }
-            break;
-        }
-
-        return true;
-
-    };
-
-
-    keyEventsFirefox.testKeyPressEditing = function (evt, editorContainer) {
-        switch (evt.which) {
-        case 8:
-            if (keyEventsFirefox.backspace(evt, editorContainer)) {
-                evt.preventDefault();
-                return true;
-            }
-            break;
-        case 9:
-            if (keyEventsFirefox.tab(evt, editorContainer)) {
-                evt.preventDefault();
-                return true;
-            }
-            break;
-        case 13:
-            if (keyEventsFirefox.enter(evt, editorContainer)) {
-                evt.preventDefault();
-                return true;
-            }
-            break;
-        case 16:
-            if (keyEventsFirefox.shift(evt, editorContainer)) {
-                evt.preventDefault();
-                return true;
-            }
-            break;
-        case 17:
-            if (keyEventsFirefox.control(evt, editorContainer)) {
-                evt.preventDefault();
-                return true;
-            }
-            break;
-        case 18:
-            if (keyEventsFirefox.alt(evt, editorContainer)) {
-                evt.preventDefault();
-                return true;
-            }
-            break;
-        case 20:
-            if (keyEventsFirefox.capsLock(evt, editorContainer)) {
-                evt.preventDefault();
-                return true;
-            }
-            break;
-        case 27:
-            if (keyEventsFirefox.esc(evt, editorContainer)) {
-                evt.preventDefault();
-                return true;
-            }
-            break;
-        case 32:
-            if (keyEventsFirefox.space(evt, editorContainer)) {
-                evt.preventDefault();
-                return true;
-            }
-            break;
-        case 37:
-            if (keyEventsFirefox.arrowLeft(evt, editorContainer)) {
-                evt.preventDefault();
-                return true;
-            }
-            break;
-        case 39:
-            if (keyEventsFirefox.arrowRight(evt, editorContainer)) {
-                evt.preventDefault();
-                return true;
-            }
-            break;
-        case 46:
-            if (keyEventsFirefox.deleteKey(evt, editorContainer)) {
-                evt.preventDefault();
-                return true;
-            }
-            break;         
-        case 85:
-            if (keyEventsFirefox.uKey(evt, editorContainer)) {
-                evt.preventDefault();
-                return true;
-            }
-            break;
-        case 90:
-            if (keyEventsFirefox.zKeyEditing(evt, editorContainer)) {
-                evt.preventDefault();
-                return true;
-            }
-            break;
-        case 144:
-            if (keyEventsFirefox.numLock(evt, editorContainer)) {
-                evt.preventDefault();
-                return true;
-            }
-            break;
-        case 229:
-            return true;
-            break;
-        default:
-            if (keyEventsFirefox.otherKey(evt, editorContainer)) {
-                evt.preventDefault();
-                return true;
-            }
-            break;
-        }
-        if (theDocument.settings.tracking) {
-            return tracker.handleEvent(evt);
-        } else {
-            return true;
-        }
-    };
-
-
-    keyEventsFirefox.testKeyPressAfterEditing = function (evt, editorContainer) {
-        switch (evt.keyCode) {
-        case 27: // ESC
-            evt.preventDefault();
-            evt.stopPropagation();
-            jQuery(editorContainer).trigger('blur');
-            break;
-        default:
-            break;
-        }
-    };
-
-    // Keycode 8
-
-    keyEventsFirefox.backspace = function (evt, editorContainer) {
-        // Handles the pressing of the backspace key
-        var selection = rangy.getSelection(), range = selection.getRangeAt(0), previousContainer, insideFootnote,
-            foundFootnote;
-
-        // Check if we are inside a footnote and whether we are at the very beginning of it.
-        insideFootnote = jQuery(range.startContainer).closest(
-            '.pagination-footnote')[0];
-        insideInnerFootnote = jQuery(range.startContainer).closest(
-            '.pagination-footnote > span > span')[0];
-
-        if (insideFootnote) {
-            if (insideInnerFootnote && range.startOffset === 0 && dom.isAtStart(
-                range.startContainer, insideFootnote)) {
-                // We are at the very start inside a footnote. Just leave the caret where it is and don't delete anything.
-                return true;
-            } else if (!insideInnerFootnote) {
-                // We are only in the outer part of the footnote. We will mark it as deleted.
-                manualEdits.remove(insideFootnote, range, true);
-                return true;
-            }
-        }
-
-
-
-        var thisParagraph = jQuery(range.startContainer).closest(
-            'p, li, h1, h2, h3, code, blockquote')[0];
-
-        if (thisParagraph && range.collapsed && range.startOffset === 0 && dom.isAtStart(range.startContainer,
-            thisParagraph)) {
-            // We are the very start of a paragraph. Pressing backspace here means merging this paragraph with the previous one.
-            previousParagraph = thisParagraph.previousSibling;
-            if (!previousParagraph || theDocument.settings.tracking || jQuery(previousParagraph).is('figure')) {
-                // This is the first paragraph of the document or tracking is enabled or the previous block element is a figure.
-                // Just leave the caret where it is
-                return true;
-            } else {
-                range = dom.mergeParagraphs(previousParagraph, thisParagraph,
-                    range);
-                selection.removeAllRanges();
-                selection.addRange(range);
-                return true;
-            }
-        }
-
-
-        // The selection range has to be collapsed and either be right at the start of an element, or not be a text node.
-        if (range.collapsed && (range.startOffset === 0 || range.startContainer
-            .nodeType !== 3)) {
-            if (range.startOffset === 0) {
-                previousContainer = dom.findPreviousElement(range.startContainer,
-                    editorContainer);
-            } else {
-                previousContainer = range.startContainer.childNodes[range.startOffset -
-                    1];
-            }
-
-            if (previousContainer && previousContainer.nodeType !== 3) {
-                // Try to find a footnote at the extreme end of the previous container
-                foundFootnote = dom.findLastElement(previousContainer,
-                    '.pagination-footnote');
-                // If we find a footnote, we hand the entire node to be deleted.
-                if (foundFootnote) {
-                    manualEdits.remove(foundFootnote, range, true);
-                    // The previous node has been (marked as) deleted already, so we return true which prevents the default backspace key action from happening.
-                    return true;
-                }
-            } else if (!previousContainer) {
-                // We are at the beginning of the very first paragraph in the editor. Leave the caret where it is without deleting anything.
-                return true;
-            }
-
-        }
-        // return false so that the delete key action will take place.
-        return false;
-    };
-
-    // Keycode 9
-
-    keyEventsFirefox.tab = function (evt, editorContainer) {
-        return true;
-        //TODO: figure out what to do when user presses tab key. Currently the tab key is just disabled.
-    };
-
-    // Keycode 13
-
-    keyEventsFirefox.enter = function (evt, editorContainer) {
-        // Handles Enter.
-        var selection, range, insideSpecialElement, paragraphNode;
-        selection = rangy.getSelection();
-        range = selection.getRangeAt(0);
-
-        // Check if we are inside a citation, footnote or link
-        insideSpecialElement = jQuery(range.startContainer).closest(
-            '.pagination-footnote, .comment, a')[0];
-        if (insideSpecialElement) {
-            // We insert a Mongolian vowel space which has no width.
-            emptySpaceNode = document.createTextNode(' ');
-            if (insideSpecialElement.nextSibling) {
-                insideSpecialElement.parentNode.insertBefore(emptySpaceNode,
-                    insideSpecialElement.nextSibling);
-            } else {
-                insideSpecialElement.parentNode.appendChild(emptySpaceNode);
-            }
-            range.selectNodeContents(emptySpaceNode);
-            range.collapse();
-            selection.removeAllRanges();
-            selection.addRange(range);
-            // The Mongolian vowel node has served it's purpose and can be removed again.
-            // Different from entering other characters, in the case of Enter we need to time it out.
-
-            function removeEmptySpace() {
-                jQuery(emptySpaceNode).remove();
-            }
-            setTimeout(removeEmptySpace, 1);
-        } else if (dom.isAtEndInCurrentContainer(range) && range.endContainer.nextSibling &&
-            jQuery(range.endContainer.nextSibling).is('.pagination-footnote')) {
-            // We are directly in front of a footnote. We insert an empty space node before this footnote before executing the enter.
-            var currentContainer = range.endContainer;
-            emptySpaceNode = document.createTextNode(' ');
-            currentContainer.parentNode.insertBefore(emptySpaceNode,
-                currentContainer.nextSibling);
-        }
-
-
-
-
-        insideHeadline = jQuery(range.startContainer).closest('h1, h2, h3')[0];
-
-        if (insideHeadline) {
-            if (dom.isAtEndInCurrentContainer(range) && dom.isAtEnd(range.startContainer, insideHeadline)) {
-                // If one presses enter at the end of a headline, instead of creating a new paragraph,
-                // Chrome tends to create a div. We therefore interrupt the default action and create a paragraph manually.
-                paragraphNode = document.createElement('p');
-                paragraphNode.innerHTML = '<br>';
-                insideHeadline.parentNode.insertBefore(paragraphNode,
-                    insideHeadline.nextSibling);
-                range.selectNode(paragraphNode);
-                range.collapse(true);
-                selection.removeAllRanges();
-                selection.addRange(range);
-                return true;
-            } else if (range.startOffset === 0 && dom.isAtStart(range.startContainer, insideHeadline)) {
-                paragraphNode = document.createElement('p');
-                paragraphNode.innerHTML = '<br>';
-                insideHeadline.parentNode.insertBefore(paragraphNode,
-                    insideHeadline);
-                return true;
-            }
-        }
-
-        // If one presses enter inside an empty list item, convert this list item into a paragraph.
-
-        insideList = jQuery(range.startContainer).closest('li')[0];
-
-        if (insideList && insideList.textContent === '\n') {
-            dom.switchBlockElementWhileSavingCaretPosition(insideList, 'p');
-            return true;
-        }
-
-        return false;
-    };
-
-    // Keycode 16
-
-    keyEventsFirefox.shift = function (evt, editorContainer) {
-        return false;
-    };
-
-    // Keycode 17
-
-    keyEventsFirefox.control = function (evt, editorContainer) {
-        return false;
-    };
-
-    // Keycode 18
-
-    keyEventsFirefox.alt = function (evt, editorContainer) {
-        return false;
-    };
-
-    // Keycode 19
-
-    keyEventsFirefox.macCommandSKey = function (evt) {
-        editorHelpers.getUpdatesFromInputFields(function () {
-            editorHelpers.saveDocument();
-        });
-        exporter.uploadNative(theDocument);
-        return true;
-    };
-
-    // Keycode 20
-
-    keyEventsFirefox.capsLock = function (evt, editorContainer) {
-        return false;
-    };
-
-    // Keycode 27
-
-    keyEventsFirefox.esc = function (evt, editorContainer) {
         return true;
     };
 
 
-    // Keycode 32
+  keyEventsFirefox.testKeyPressEditing = function (evt, editorContainer) {
+    // !!!
+    // untested
+    var caret = getCaret();
+    var newCaret;
 
-    var spaceNode;
+    switch (evt.which) {
+    case ARROW_DOWN:
+      newCaret = keyEventsFirefox.arrowDown(evt, caret);
+      break;
+    }
 
-    keyEventsFirefox.space = function (evt, editorContainer) {
+    if (newCaret && newCaret !== caret) {
+      setCaret(newCaret);
+    }
+  };
 
-        var range, selection;
 
-        // Insert a scientific space as space character for now. We replace it when entering the next letter (see below under 'otherKey').
-        spaceNode = document.createTextNode(' ');
+  keyEventsFirefox.testKeyPressAfterEditing = function (evt, editorContainer) {
+    return;
+  };
 
-        keyEventsFirefox.otherKey(evt, editorContainer);
 
-        selection = rangy.getSelection();
-        range = selection.getRangeAt(0);
+  /**
+   * Prevents the caret from leaving the text node if there is no editable line
+   * below.
+   * @function arrowDown
+   * @memberof keyEventsFirefox
+   * @param {...} ...
+   * @returns {...}
+   */
+  keyEventsFirefox.arrowDown = function arrowDownHandler(evt, caret) {
+    // !!!
+    // untested
+    if (!atLastDocumentLine(caret)) {
+      return null;
+    }
+      
+    evt.preventDefault();
+    return setCaret({
+      node: caret.node,
+      offset: caret.node.length,
+    });
+  };
 
-        manualEdits.insert(spaceNode, range);
-        
-        selection.removeAllRanges();
-        selection.addRange(range);
+  function atLastDocumentLine(caret) {
+    // !!!
+    // untested
+    // that is a lot of querying for a navigation key
+    return getLastDocumentTextNode().is(caret.node);
+  }
 
-        return true;
+  function getLastDocumentTextNode() {
+    // !!!
+    // untested
+    return $(LASTS_OF_ALL_EDITABLE_BLOCKS).last()
+          .find(LASTS_OF_ALL_EDITABLE_INLINES).last()
+          .contents().last(); // text node
+  }
 
+  function getCaret() {
+    // !!!
+    // untested
+    // global dependency
+    // assumes collapsed caret
+    var caret;
+    var range = rangy.getSelection().getRangeAt(0);
+    var node = range.startContainer;
+    var offset = range.startOffset;
+
+    caret = {
+      node: node,
+      offset: offset,
     };
+    return caret;
+  }
+
+  function setCaret(caret) {
+    // !!!
+    // untested
+    // global dependency
+    var selection = rangy.getSelection();
+    var r = rangy.createRange();
+    var toStart = true;
+
+    r.collapse(toStart);
+    r.setStart(
+      caret.node,
+      caret.offset
+    );
+
+    selection.removeAllRanges();
+    selection.addRange(r);
+  }
 
 
-    // Keycode 37
-     /** Handles the pressing of the arrow left key */
-    keyEventsFirefox.arrowLeft = function (evt, editorContainer) {
-
-        var selection = rangy.getSelection(), range = selection.getRangeAt(0), previousContainer, insideFootnote,
-             foundFootnote, emptySpaceNode;
-
-
-        // Check if we are inside a footnote and whether we are at the very beginning of it.
-        insideFootnote = jQuery(range.startContainer).closest(
-            '.pagination-footnote')[0];
-        if (insideFootnote) {
-            insideInnerFootnote = jQuery(range.startContainer).closest(
-                '.pagination-footnote > span > span')[0];
-            if (insideInnerFootnote && range.startOffset === 0 && dom.isAtStart(
-                range.startContainer, insideFootnote)) {
-                // We are at the very start inside a footnote. Just leave the caret where it is.
-                return true;
-            } else if (!insideInnerFootnote) {
-                // We are only in the outer part of the footnote. We will move the caret to the left of the footnote.
-                range.selectNode(insideFootnote);
-                range.collapse(true);
-                selection.removeAllRanges();
-                selection.addRange(range);
-                return true;
-            }
-        }
-
-
-
-        // The selection range has to be collapsed and either be right at the start of an element, or not be a text node.
-        if (range.collapsed && (range.startOffset === 0 || range.startContainer
-            .nodeType !== 3)) {
-            if (range.startOffset === 0) {
-                previousContainer = dom.findPreviousElement(range.startContainer,
-                    editorContainer);
-            } else {
-                previousContainer = range.startContainer.childNodes[range.startOffset -
-                    1];
-            }
-            // Check if we are in front of a new paragraph. If so, let the cursor move its natural course.
-            if (previousContainer && jQuery(previousContainer).is(
-                'p, li, h1, h2, h3, code, blockquote')) {
-                return false;
-                // Check if the previous node has to be something else than a text node for us to look at it.
-            } else if (previousContainer && previousContainer.nodeType !== 3) {
-                // Try to find a footnote or citation at the extreme end of the previous container
-                foundFootnote = dom.findLastElement(previousContainer,
-                    '.pagination-footnote');
-                // If we find a footnote or citation, move the caret before it.
-                if (foundFootnote) {
-                    range.selectNodeContents(foundFootnote);
-                    range.collapse(true);
-                    selection.removeAllRanges();
-                    selection.addRange(range);
-                    return true;
-                }
-
-            } else {
-                // We are at the beginning of the very first element. Just leave the caret where it is.
-                return true;
-            }
-        }
-        // return false so that the arrow left key action will take place.
-        return false;
-    };
-
-    // Keycode 39
-
-    keyEventsFirefox.arrowRight = function (evt, editorContainer) {
-        // Handles the pressing of an arrow right key
-        var range, nextContainer, foundFootnote, insideFootnote,
-            insideInnerFootnote, spaceCharacter;
-
-        selection = rangy.getSelection();
-        range = selection.getRangeAt(0);
-
-        // Check if we are inside a the inner part of a footnote and whether we are at the very end of it.
-        insideInnerFootnote = jQuery(range.startContainer).closest(
-            '.pagination-footnote > span > span')[0];
-
-        // Check whether we are at the very end of the inner part of a footnote
-        if (insideInnerFootnote && dom.isAtEndInCurrentContainer(range) && dom.isAtEnd(
-            range.endContainer, insideInnerFootnote)) {
-            // We are at the very end inside a footnote. Just leave the caret where it is.
-            return true;
-        }
-
-
-
-        // The selection range has to be collapsed and either be right at the end of an element, or not be a text node.
-        if (range.collapsed && (dom.isAtEndInCurrentContainer(range) || range.startContainer
-            .nodeType !== 3)) {
-            if (dom.isAtEndInCurrentContainer(range)) {
-                nextContainer = dom.findNextElement(range.startContainer,
-                    editorContainer);
-            } else {
-                nextContainer = range.startContainer.childNodes[range.startOffset];
-            }
-            // Check if we are at the end of a paragraph. If so, check if there is a footnote
-            // at the start of the next paragraph. If this is the case, an empty space needs
-            // to be inserted before it.
-            if (nextContainer && jQuery(nextContainer).is('p, li, h1, h2, h3, code, blockquote')) {
-                foundFootnote = dom.findFirstElement(nextContainer,
-                    '.pagination-footnote');
-
-                if (foundFootnote) {
-                    // We found a footnote at the very start of the next block element, we need
-                    // to insert an space character before it so that the caret can be moved there.
-                    spaceNode = document.createTextNode(' ');
-                    foundFootnote.parentNode.insertBefore(spaceNode,
-                        foundFootnote);
-                }
-                // Else check if the next node is something else than a text node.
-            } else if (nextContainer.nodeType !== 3) {
-                // Try to find a footnote or citation at the beginning of the next container
-                foundFootnoteOrCitation = dom.findFirstElement(nextContainer,
-                    '.pagination-footnote');
-                // If we find a footnote or citation, we need to move the caret to the right of it.
-                if (foundFootnoteOrCitation) {
-
-                    range.selectNodeContents(foundFootnoteOrCitation);
-                    range.collapse();
-
-                    selection.removeAllRanges();
-                    selection.addRange(range);
-                    return true;
-                }
-            }
-        }
-        // return false so that the arrow right key action will take place.
-        return false;
-    };
-
-    // Keycode 46
-
-    keyEventsFirefox.deleteKey = function (evt, editorContainer) {
-        // Handles the pressing of the delete key
-        var range, selection, nextContainer, foundFootnoteOrCitation,
-            insideFootnote;
-
-        selection = rangy.getSelection();
-        range = selection.getRangeAt(0);
-
-        // Check if we are inside a footnote and whether we are at the very end of it.
-        insideInnerFootnote = jQuery(range.startContainer).closest(
-            '.pagination-footnote > span > span')[0];
-
-        if (insideInnerFootnote && range.collapsed && dom.isAtEndInCurrentContainer(range) && dom.isAtEnd(
-            range.endContainer, insideInnerFootnote)) {
-            // We are at the very end inside a footnote. Just leave the caret where it is.
-            return true;
-        }
-
-
-
-        var thisParagraph = jQuery(range.startContainer).closest(
-            'p, li, h1, h2, h3, code, blockquote')[0];
-
-        if (thisParagraph && range.collapsed && dom.isAtEndInCurrentContainer(range) && dom.isAtEnd(
-            range.startContainer, thisParagraph)) {
-            // We are the very end of a paragraph. Hitting delete here means merging this paragraph with the next one.
-            nextParagraph = thisParagraph.nextSibling;
-            if (!nextParagraph || theDocument.settings.tracking || jQuery(nextParagraph).is('figure')) {
-                // This is the last paragraph of the document or tracking is enabled or a figure is following this paragraph.
-                // Just leave the caret where it is.
-                return true;
-            } else {
-                range = dom.mergeParagraphs(thisParagraph, nextParagraph, range);
-                selection.removeAllRanges();
-                selection.addRange(range);
-                return true;
-            }
-        }
-
-
-        // The selection range has to be collapsed and either be right at the end of an element, or not be a text node.
-        if (range.collapsed && (dom.isAtEndInCurrentContainer(range) || range.startContainer
-            .nodeType !== 3)) {
-            if (dom.isAtEndInCurrentContainer(range)) {
-                nextContainer = dom.findNextElement(range.startContainer,
-                    editorContainer);
-            } else {
-                nextContainer = range.startContainer.childNodes[range.startOffset];
-            }
-            if (nextContainer.nodeType !== 3) {
-                // Try to find a footnote or citation at the beginning of the next container
-                foundFootnoteOrCitation = dom.findFirstElement(nextContainer,
-                    '.pagination-footnote, .citation');
-                // If we find a footnote or citation, we hand the entire node to be deleted.
-                if (foundFootnoteOrCitation) {
-                    manualEdits.remove(foundFootnoteOrCitation, range);
-                    // The next node has been (marked as) deleted already, so we return true which prevents the default delete key action from happening.
-                    return true;
-                }
-            }
-        }
-        // return false so that the delete key action will take place.
-        return false;
-    };
-    
-    // Keycode 80
-
-    keyEventsFirefox.pKey = function (evt) {
-        if (evt.ctrlKey) {
-            editorHelpers.print();
-            return true;
-        } else {
-            return false;
-        }
-    };
-
-    // Keycode 83
-
-    keyEventsFirefox.sKey = function (evt) {
-        if (evt.ctrlKey) {
-            return keyEventsFirefox.macCommandSKey(evt);
-        } else {
-            return false;
-        }
-    };
-
-    // Keycode 85
-
-    keyEventsFirefox.uKey = function (evt, editorContainer) {
-        // Prevent ctrl+u but don't prevent normal u.
-        if (evt.ctrlKey) {
-            return true;
-        } else {
-            return keyEventsFirefox.otherKey(evt, editorContainer);
-        }
-    };
-
-    // Keycode 90
-
-    keyEventsFirefox.zKeyEditing = function (evt, editorContainer) {
-        if (evt.ctrlKey) {
-            return true;
-        } else {
-            return keyEventsFirefox.otherKey(evt, editorContainer);
-        }
-    };
-
-    keyEventsFirefox.zKeyEditor = function (evt) {
-        // Interrupt ctrl+z and ctrl+shift+z, but let normal z be treated as any other key.
-
-        if (evt.ctrlKey) {
-
-            if (evt.shiftKey) {
-                // Redo
-                return diffHelpers.redo();
-            }
-            // Undo            
-            return diffHelpers.undo();
-        } else {
-            return false;
-        }
-    };
-
-
-    // Keycode 144
-
-    keyEventsFirefox.numLock = function (evt, editorContainer) {
-        return false;
-    };
-
-    // Keycode 191
-
-    keyEventsFirefox.questionKey = function (evt) {
-        if (evt.ctrlKey) {
-            jQuery().showShortcuts();
-            return true;
-        } else {
-            return false;
-        }
-    };
-
-
-    // Default
-
-    keyEventsFirefox.
-    otherKey = function (evt, editorContainer) {
-        // Handles letters and numbers.
-        // This will check whether the caret is at a valid position.
-        var range, selection;
-
-        selection = rangy.getSelection();
-        range = selection.getRangeAt(0);
-
-    /*    if (spaceNode && spaceNode.parentNode) {
-            function replaceSpace() {
-                // We replace the last entered space (for which we used a scientific space) with a normal space when the next letter is being entered.
-                // This way we make sure that words break correctly at the end of lines.
-                if (spaceNode) {
-                    var savedSel = rangy.saveSelection();
-                    var newLetter = spaceNode.splitText(1);
-                    spaceNode.nodeValue = ' ';
-                    spaceNode = null;
-                    newLetter.parentNode.normalize();
-                    rangy.restoreSelection(savedSel);
-                }
-            }
-            setTimeout(replaceSpace, 1);
-        } */
-
-        // Check whether tracking has been disabled and if so, wehther we are in a change node that we need to get out of.
-        range = dom.noTrackIfDisabled(range);
-
-        // Chech whether tracking is inside a citation or link node. If yes, get it out.
-        range = dom.noCitationOrLinkNode(range);
-
-
-        // Check whether bold setting corresponds with whether we currently are using bold.
-        if (jQuery('#button-bold.ui-state-active').length > 0 && jQuery(range.startContainer)
-            .closest('b').length === 0) {
-            var boldNode = document.createElement('b'), tempSpaceNode = document.createTextNode(' ');
-            boldNode.appendChild(tempSpaceNode);
-            if (!range.collapsed) {
-                range.collapse();
-            }
-            range.insertNode(boldNode);
-            range.selectNodeContents(boldNode);
-            range.collapse();
-            function removeInitialSpace () {
-                if (tempSpaceNode.data.length > 1 && tempSpaceNode.data[0]===' ') {
-                    tempSpaceNode.data = tempSpaceNode.data.substring(1);
-                    selection = rangy.getSelection();
-                    range = rangy.createRange();
-                    range.selectNodeContents(tempSpaceNode);
-                    range.collapse();
-                    selection.setSingleRange(range);
-                }
-            }
-            setTimeout(removeInitialSpace, 1);
-        
-        
-        } else if (jQuery('#button-bold.ui-state-active').length === 0 &&
-            jQuery(range.startContainer).closest('b').length > 0) {
-            dom.splitNode(jQuery(range.startContainer).closest('b')[0], range);
-        }
-
-        // Check whether italics setting corresponds with whether we currently are using italics.
-        if (jQuery('#button-italic.ui-state-active').length > 0 && jQuery(range
-            .startContainer).closest('i').length === 0) {
-            var italicNode = document.createElement('i'), tempSpaceNode = document.createTextNode(' ');
-            italicNode.appendChild(tempSpaceNode);
-            if (!range.collapsed) {
-                range.collapse();
-            }
-            range.insertNode(italicNode);
-            range.selectNodeContents(italicNode);
-            range.collapse();
-            function removeInitialSpace () {
-                if (tempSpaceNode.data.length > 1 && tempSpaceNode.data[0]===' ') {
-                    tempSpaceNode.data = tempSpaceNode.data.substring(1);
-                    selection = rangy.getSelection();
-                    range = rangy.createRange();
-                    range.selectNodeContents(tempSpaceNode);
-                    range.collapse();
-                    selection.setSingleRange(range);
-                }
-            }
-            setTimeout(removeInitialSpace, 1);
-
-        } else if (jQuery('#button-italic.ui-state-active').length === 0 &&
-            jQuery(range.startContainer).closest('i').length > 0) {
-            dom.splitNode(jQuery(range.startContainer).closest('i')[0], range);
-        }
-
-        selection.removeAllRanges();
-        selection.addRange(range);
-
-        return false;
-    };
-
-    exports.keyEventsFirefox = keyEventsFirefox;
+  exports.keyEventsFirefox = keyEventsFirefox;
 
 }).call(this);

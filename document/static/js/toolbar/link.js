@@ -46,11 +46,12 @@ jQuery(document).on('mousedown', '#button-link', function(event) {
 
             var newLink = dialog.find('input.link').val(),
                 linkText = dialog.find('input.linktext').val(),
-                linkNode, selection;
+                linkNode, selection = rangy.getSelection();
 
             if ((new RegExp(/^\s*$/)).test(newLink) || newLink === defaultLink) {
                 // The link input is empty or hasn't been changed from the default value. Just close the dialog.
                 dialog.dialog('close');
+                selection.setSingleRange(range);
                 return;
             }
 
@@ -59,7 +60,6 @@ jQuery(document).on('mousedown', '#button-link', function(event) {
                 linkText = link;
             }
             dialog.dialog('close');
-            selection = rangy.getSelection();
             selection.setSingleRange(range);
             insertElement.link(newLink, linkText);
 
@@ -70,7 +70,9 @@ jQuery(document).on('mousedown', '#button-link', function(event) {
         text: gettext('Cancel'),
         class: 'fw-button fw-orange',
         click: function() {
+            var selection = rangy.getSelection();
             dialog.dialog('close');
+            selection.setSingleRange(range);
         }
     });
 

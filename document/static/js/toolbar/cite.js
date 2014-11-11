@@ -21,14 +21,13 @@
 jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
 
     var ids,
-        selection = rangy.getSelection(),
-        range,
+        range = insertElement.findRange(),
         bibEntryStart,
         bibFormatStart = 'autocite',
         bibBeforeStart,
         bibPageStart,
-        books = '',
-        cited_books = '',
+        citableItemsHTML = '',
+        citedItemsHTML = '',
         cited_ids = [],
         cited_prefixes,
         cited_pages,
@@ -38,13 +37,6 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
         submit_button_text;
 
     event.preventDefault();
-
-
-    if (selection.rangeCount > 0) {
-        range = selection.getRangeAt(0);
-    } else {
-        range = rangy.createRange();
-    }
 
 
     if (jQuery(this).is('.citation')) {
@@ -114,23 +106,23 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
         return true;
     };
 
-    _.each(BibDB, function (bibs, index) {
-        var this_book = {
+    _.each(BibDB, function (bib, index) {
+        var bibEntry = {
             'id': index,
-            'type': bibs.entry_type,
-            'title': bibs.title || '',
-            'author': bibs.author || bibs.editor || ''
+            'type': bib.entry_type,
+            'title': bib.title || '',
+            'author': bib.author || bib.editor || ''
         }, cited_id;
 
-        this_book.title = this_book.title.replace(/[{}]/g, '');
-        this_book.author = this_book.author.replace(/[{}]/g, '');
-        books += toolbarTemplates.citationBook(this_book);
+        bibEntry.title = bibEntry.title.replace(/[{}]/g, '');
+        bibEntry.author = bibEntry.author.replace(/[{}]/g, '');
+        citableItemsHTML += toolbarTemplates.citationItem(bibEntry);
 
         cited_id = _.indexOf(cited_ids, index);
-        if (0 <= cited_id) {
-            this_book.prefix = cited_prefixes[cited_id];
-            this_book.page = cited_pages[cited_id];
-            cited_books += toolbarTemplates.citationBook(this_book);
+        if (-1 < cited_id) {
+            bibEntry.prefix = cited_prefixes[cited_id];
+            bibEntry.page = cited_pages[cited_id];
+            citedItemsHTML += toolbarTemplates.selectedCitation(bibEntry);
         }
     });
 
@@ -150,6 +142,8 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
                 citationNode = false;
                 citeSpan = false;
                 dialog.dialog('close');
+                var selection = rangy.getSelection();
+                selection.setSingleRange(range);
             },
             class: 'fw-button fw-orange'
         });
@@ -160,7 +154,9 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
     diaButtons.push({
         text: gettext(submit_button_text),
         click: function () {
+            var selection = rangy.getSelection();
             if (dialogSubmit()) {
+                selection.setSingleRange(range);
                 dialog.dialog('close');
             }
         },
@@ -170,46 +166,19 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
     diaButtons.push({
         text: gettext('Cancel'),
         click: function () {
+            var selection = rangy.getSelection();
             dialog.dialog('close');
+            selection.setSingleRange(range);
         },
         class: 'fw-button fw-orange'
     });
 
-    jQuery('#cite-source-table').bind('update', function () {
-        var autocomplete_tags = [];
-
-        if (jQuery(this).hasClass('dataTable')) {
-            jQuery(this).dataTable({
-                "bRetrieve": true,
-            });
-        } else {
-            jQuery(this).dataTable({
-                "bPaginate": false,
-                "bLengthChange": false,
-                "bFilter": true,
-                "bInfo": false,
-                "bAutoWidth": false,
-                "oLanguage": {
-                    "sSearch": ''
-                },
-            });
-        }
-        jQuery('#cite-source-table_filter input').attr('placeholder', gettext('Search for Bibliography'));
-
-        jQuery('#cite-source-table .fw-searchable').each(function () {
-            autocomplete_tags.push(this.textContent);
-        });
-        autocomplete_tags = _.uniq(autocomplete_tags);
-        jQuery("#cite-source-table_filter input").autocomplete({
-            source: autocomplete_tags
-        });
-    });
 
     dialog = jQuery(
         toolbarTemplates.configureCitation({
-            'books': books,
-            'selectedbooks': cited_books,
-            'citeformat': bibFormatStart
+            'citableItemsHTML': citableItemsHTML,
+            'citedItemsHTML': citedItemsHTML,
+            'citeFormat': bibFormatStart
         })
     );
 
@@ -224,6 +193,38 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
         create: function () {
             var $the_dialog = jQuery(this).closest(".ui-dialog");
 
+jQuery('#cite-source-table').bind('update', function () {
+    var autocomplete_tags = [];
+    console.log('data table');
+    if (jQuery(this).hasClass('dataTable')) {
+        jQuery(this).dataTable({
+            "bRetrieve": true,
+        });
+    } else {
+        jQuery(this).dataTable({
+            "bPaginate": false,
+            "bLengthChange": false,
+            "bFilter": true,
+            "bInfo": false,
+            "bAutoWidth": false,
+            "oLanguage": {
+                "sSearch": ''
+            },
+        });
+    }
+    jQuery('#cite-source-table_filter input').attr('placeholder', gettext('Search bibliography'));
+
+    jQuery('#cite-source-table .fw-searchable').each(function () {
+        autocomplete_tags.push(this.textContent);
+    });
+    autocomplete_tags = _.uniq(autocomplete_tags);
+    jQuery("#cite-source-table_filter input").autocomplete({
+        source: autocomplete_tags
+    });
+});
+
+
+
             jQuery('#cite-source-table').trigger('update');
 
             $.addDropdownBox(jQuery('#citation-style-label'), jQuery('#citation-style-pulldown'));
@@ -233,39 +234,31 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
             });
 
             jQuery('#add-cite-book').bind('click', function () {
-                var selected_sources = jQuery('#cite-source-table .fw-checkable.checked'),
-                    selected_books = [];
-                selected_sources.each(function () {
+                var checkedElements = jQuery('#cite-source-table .fw-checkable.checked'),
+                    selectedItems = [];
+                checkedElements.each(function () {
                     var id = jQuery(this).data('id');
                     if (jQuery('#selected-source-' + id).size()) {
                         return;
                     }
-                    selected_books.push({
+                    selectedItems.push({
                         'id': id,
                         'type': jQuery(this).data('type'),
                         'title': jQuery(this).data('title'),
                         'author': jQuery(this).data('author')
                     });
                 });
-                selected_sources.removeClass('checked');
-                citationHelpers.appendToCitedBooks(selected_books);
+                checkedElements.removeClass('checked');
+                citationHelpers.appendToCitedItems(selectedItems);
             });
 
-            jQuery('.selected-source .delete').bind('click', function () {
+            jQuery($the_dialog).on('click', '.selected-source .delete', function () {
                 var source_wrapper_id = '#selected-source-' + jQuery(this).data('id');
                 jQuery(source_wrapper_id).remove();
             });
         },
 
         close: function () {
-            if (citeSpan) {
-                range.selectNode(citeSpan);
-            } else if (citationNode) {
-                range.selectNode(citationNode);
-            }
-            range.collapse();
-            selection.removeAllRanges();
-            selection.addRange(range);
             jQuery(this).dialog('destroy').remove();
         }
     });

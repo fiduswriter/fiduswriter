@@ -284,10 +284,10 @@
         return bibliographyHTML.replace(/<\/div>/g, '</p>');
      };
 
-    citationHelpers.appendToCitedBooks = function(books) {
+    citationHelpers.appendToCitedItems = function(books) {
         var i, len = books.length;
         for(i = 0; i < len; i ++) {
-            $('#selected-cite-source-table .fw-document-table-body').append(toolbarTemplates.citationBook({
+            $('#selected-cite-source-table .fw-document-table-body').append(toolbarTemplates.selectedCitation({
                 'id': books[i].id,
                 'type': books[i].type,
                 'title': books[i].title,
@@ -307,15 +307,16 @@
         // TODO: Such entries should likely not be accepted by the importer.
         if (typeof bib_info.title === 'undefined') bib_info.title = '';
 
-        var book_data = {
+        var citeItemData = {
             'id': pk,
             'type': bib_info.entry_type,
             'title': bib_info.title.replace(/[{}]/g, ''),
             'author': bibauthor.replace(/[{}]/g, '')
         };
 
-        $('#cite-source-table > tbody').append(toolbarTemplates.citationBook(book_data));
-        citationHelpers.appendToCitedBooks([book_data]);
+        $('#cite-source-table > tbody').append(toolbarTemplates.citationItem(citeItemData));
+        $('#cite-source-table').trigger('update');
+        citationHelpers.appendToCitedItems([citeItemData]);
     }
 
     exports.citationHelpers = citationHelpers;

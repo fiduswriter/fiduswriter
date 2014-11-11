@@ -228,18 +228,11 @@ var FW_FILETYPE_VERSION = "1.1";
                             for (i = 0; i < len; i++) {
                                 $.addAlert('warning', warnings[i]);
                             }
-                            window.bibs = response.bibs;
-                            window.newBibEntries = newBibEntries;
                             _.each(response.key_translations, function(newKey,oldKey) {
                                 var newID = _.findWhere(response.bibs, {entry_key: newKey}).id,
                                 oldID = _.findWhere(newBibEntries, {oldEntryKey: oldKey}).oldId;
                                 BibTranslationTable[oldID] = newID;
                             })
-
-                            // for (i = 0; i < response.bib_ids.length; i++) {
-                            //     BibTranslationTable[newBibEntries[i].oldId] =
-                            //         response.bib_ids[i];
-                            // }
                             bibliographyHelpers.addBibList(response.bibs);
                             importer.translateReferenceIds(aDocument,
                                 BibTranslationTable, ImageTranslationTable);

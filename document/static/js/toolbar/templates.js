@@ -121,7 +121,7 @@
                         <th width="161">' + gettext("Author") + '</th>\
                     </tr></thead>\
                     <tbody class="fw-document-table-body fw-min">\
-                        <%= books %>\
+                        <%= citableItemsHTML %>\
                     </tbody>\
                 </table>\
             </div>\
@@ -129,8 +129,8 @@
             <div id="cite-books" class="fw-ar-container">\
                 <h3 class="fw-green-title">' + gettext("Citation format") + '</h3>\
                 <div id="citation-style-selector" class="fw-pulldown-select">\
-                    <div id="citation-style-label" class="fw-pulldown-select-label" data-style="<%= citeformat %>"><label>\
-                    <% if("textcite" == citeformat){ %>'
+                    <div id="citation-style-label" class="fw-pulldown-select-label" data-style="<%= citeFormat %>"><label>\
+                    <% if("textcite" == citeFormat){ %>'
                         + gettext("Author (1998)") +
                     '<% } else { %>'
                         + gettext("(Author, 1998)") +
@@ -158,14 +158,14 @@
                         <td width="50" align="center">' + gettext("Remove") + '</td>\
                     </tr></thead>\
                     <tbody class="fw-document-table-body fw-min">\
-                      <%= selectedbooks %>\
+                      <%= citedItemsHTML %>\
                     </tbody>\
                 </table>\
             </div>\
         </div>');
 
     /** A template for each item that can be cited inside the citation configuration dialog of the editor. */
-    toolbarTemplates.citationBook = _.template('<tr class="fw-checkable fw-checkable-tr" data-id="<%- id %>" data-type="<%- type %>" data-title="<%= title %>" data-author="<%= author %>">\
+    toolbarTemplates.citationItem = _.template('<tr class="fw-checkable fw-checkable-tr" data-id="<%- id %>" data-type="<%- type %>" data-title="<%= title %>" data-author="<%= author %>">\
             <td width="162">\
                 <span class="fw-document-table-title fw-inline">\
                     <i class="icon-book"></i>\

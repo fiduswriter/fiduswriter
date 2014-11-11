@@ -33,7 +33,9 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
         cited_prefixes,
         cited_pages,
         citeSpan,
-        citationNode;
+        citationNode,
+        diaButtons = [],
+        submit_button_text;
 
     event.preventDefault();
 
@@ -118,22 +120,20 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
             'type': bibs.entry_type,
             'title': bibs.title || '',
             'author': bibs.author || bibs.editor || ''
-        };
+        }, cited_id;
 
         this_book.title = this_book.title.replace(/[{}]/g, '');
         this_book.author = this_book.author.replace(/[{}]/g, '');
-        books += tmp_citation_book(this_book);
+        books += toolbarTemplates.citationBook(this_book);
 
-        var cited_id = _.indexOf(cited_ids, index);
+        cited_id = _.indexOf(cited_ids, index);
         if (0 <= cited_id) {
             this_book.prefix = cited_prefixes[cited_id];
             this_book.page = cited_pages[cited_id];
-            cited_books += tmp_selected_citation(this_book);
+            cited_books += toolbarTemplates.citationBook(this_book);
         }
     });
 
-
-    var diaButtons = [];
     diaButtons.push({
         text: gettext('Register new source'),
         click: function () {
@@ -155,7 +155,7 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
         });
     }
 
-    var submit_button_text = citationNode ? 'Update' : 'Insert';
+    submit_button_text = citationNode ? 'Update' : 'Insert';
 
     diaButtons.push({
         text: gettext(submit_button_text),
@@ -176,6 +176,8 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
     });
 
     jQuery('#cite-source-table').bind('update', function () {
+        var autocomplete_tags = [];
+
         if (jQuery(this).hasClass('dataTable')) {
             jQuery(this).dataTable({
                 "bRetrieve": true,
@@ -194,7 +196,6 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
         }
         jQuery('#cite-source-table_filter input').attr('placeholder', gettext('Search for Bibliography'));
 
-        var autocomplete_tags = [];
         jQuery('#cite-source-table .fw-searchable').each(function () {
             autocomplete_tags.push(this.textContent);
         });
@@ -205,7 +206,7 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
     });
 
     dialog = jQuery(
-        tmp_configure_citation({
+        toolbarTemplates.configureCitation({
             'books': books,
             'selectedbooks': cited_books,
             'citeformat': bibFormatStart

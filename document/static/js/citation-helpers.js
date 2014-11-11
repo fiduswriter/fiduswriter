@@ -287,7 +287,7 @@
     citationHelpers.appendToCitedBooks = function(books) {
         var i, len = books.length;
         for(i = 0; i < len; i ++) {
-            $('#selected-cite-source-table .fw-document-table-body').append(tmp_selected_citation({
+            $('#selected-cite-source-table .fw-document-table-body').append(toolbarTemplates.citationBook({
                 'id': books[i].id,
                 'type': books[i].type,
                 'title': books[i].title,
@@ -314,7 +314,7 @@
             'author': bibauthor.replace(/[{}]/g, '')
         };
 
-        $('#cite-source-table > tbody').append(tmp_citation_book(book_data));
+        $('#cite-source-table > tbody').append(toolbarTemplates.citationBook(book_data));
         citationHelpers.appendToCitedBooks([book_data]);
     }
 

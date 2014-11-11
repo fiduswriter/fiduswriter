@@ -19,20 +19,20 @@
  */
 // toolbar math
 jQuery(document).on('mousedown', '#button-math, .equation', function (event) {
-    event.preventDefault();    
+    event.preventDefault();
     var selection = rangy.getSelection(),
         range,
         dialog, dialogButtons = [],
         submitMessage = gettext('Insert'),
         insideMath = false,
         formula = 'x=2*y';
-                    
+
         if (selection.rangeCount > 0) {
             range = selection.getRangeAt(0);
             if (jQuery(range.startContainer).closest('#document-editable').length===0) {
                 range = rangy.createRange();
             }
-            
+
         } else {
             range = rangy.createRange();
         }
@@ -102,12 +102,7 @@ jQuery(document).on('mousedown', '#button-math, .equation', function (event) {
         }
     });
 
-
-
-
-    dialog = jQuery('<div>\
-                        <input style="width: 250px;" class="math" type="text" name="math" value="' + formula + '" />\
-                    </div>');
+    dialog = jQuery(toolbarTemplates.mathDialog({formula:formula}));
 
 
     dialog.dialog({

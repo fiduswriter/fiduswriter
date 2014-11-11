@@ -33,18 +33,18 @@ jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (
         equation = '',
         mathInput, captionInput;
     event.preventDefault();
-    
+
     if (selection.rangeCount > 0) {
         range = selection.getRangeAt(0);
         if (jQuery(range.startContainer).closest('#document-editable').length===0) {
             range = rangy.createRange();
         }
-        
+
     } else {
         range = rangy.createRange();
-    }    
-    
-    
+    }
+
+
 
     if (jQuery(this).is('figure')) {
         insideFigure = this;
@@ -64,7 +64,7 @@ jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (
             image = false;
         } else {
             image = ImageDB[image];
-            //TODO: Figure out what to do if the image has been deleted from ImageDB in the meantime.                          
+            //TODO: Figure out what to do if the image has been deleted from ImageDB in the meantime.
         }
         dialogButtons.push({
             text: gettext('Remove'),
@@ -75,10 +75,10 @@ jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (
                 dialog.dialog('close');
             }
         });
-        
+
     }
 
-    dialog = jQuery(tmp_configure_figure({
+    dialog = jQuery(toolbarTemplates.configureFigure({
         equation: equation,
         caption: caption,
         image: image
@@ -320,7 +320,7 @@ jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (
             if (jQuery(this).hasClass('disabled')) {
                 return;
             }
-            var imageDialog = jQuery(tmp_figure_image()).dialog({
+            var imageDialog = jQuery(toolbarTemplates.figureImage()).dialog({
                 width: 'auto',
                 height: 'auto',
                 title: gettext("Images"),

@@ -18,7 +18,7 @@
  *
  */
 // toolbar cite
-jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
+jQuery(document).on('mousedown', '#button-cite, .citation', function(event) {
 
     var ids,
         range = insertElement.findRange(),
@@ -68,7 +68,7 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
             return false;
         }
 
-        cite_items.each(function () {
+        cite_items.each(function() {
             cite_ids.push(jQuery(this).find('.delete').data('id'));
             cite_pages.push(jQuery(this).find('.fw-cite-page').val());
             cite_prefixes.push(jQuery(this).find('.fw-cite-text').val());
@@ -106,13 +106,14 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
         return true;
     };
 
-    _.each(BibDB, function (bib, index) {
+    _.each(BibDB, function(bib, index) {
         var bibEntry = {
-            'id': index,
-            'type': bib.entry_type,
-            'title': bib.title || '',
-            'author': bib.author || bib.editor || ''
-        }, cited_id;
+                'id': index,
+                'type': bib.entry_type,
+                'title': bib.title || '',
+                'author': bib.author || bib.editor || ''
+            },
+            cited_id;
 
         bibEntry.title = bibEntry.title.replace(/[{}]/g, '');
         bibEntry.author = bibEntry.author.replace(/[{}]/g, '');
@@ -128,7 +129,7 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
 
     diaButtons.push({
         text: gettext('Register new source'),
-        click: function () {
+        click: function() {
             bibliographyHelpers.createBibEntryDialog();
         },
         class: 'fw-button fw-light fw-add-button'
@@ -137,7 +138,7 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
     if (citationNode) {
         diaButtons.push({
             text: gettext('Remove'),
-            click: function () {
+            click: function() {
                 manualEdits.remove(citationNode, range);
                 citationNode = false;
                 citeSpan = false;
@@ -153,7 +154,7 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
 
     diaButtons.push({
         text: gettext(submit_button_text),
-        click: function () {
+        click: function() {
             var selection = rangy.getSelection();
             if (dialogSubmit()) {
                 selection.setSingleRange(range);
@@ -165,7 +166,7 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
 
     diaButtons.push({
         text: gettext('Cancel'),
-        click: function () {
+        click: function() {
             var selection = rangy.getSelection();
             dialog.dialog('close');
             selection.setSingleRange(range);
@@ -190,53 +191,52 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function (event) {
         height: 540,
         modal: true,
         buttons: diaButtons,
-        create: function () {
+        create: function() {
             var $the_dialog = jQuery(this).closest(".ui-dialog");
 
-jQuery('#cite-source-table').bind('update', function () {
-    var autocomplete_tags = [];
-    console.log('data table');
-    if (jQuery(this).hasClass('dataTable')) {
-        jQuery(this).dataTable({
-            "bRetrieve": true,
-        });
-    } else {
-        jQuery(this).dataTable({
-            "bPaginate": false,
-            "bLengthChange": false,
-            "bFilter": true,
-            "bInfo": false,
-            "bAutoWidth": false,
-            "oLanguage": {
-                "sSearch": ''
-            },
-        });
-    }
-    jQuery('#cite-source-table_filter input').attr('placeholder', gettext('Search bibliography'));
+            jQuery('#cite-source-table').bind('update', function() {
+                var autocomplete_tags = [];
+                if (jQuery(this).hasClass('dataTable')) {
+                    jQuery(this).dataTable({
+                        "bRetrieve": true,
+                    });
+                } else {
+                    jQuery(this).dataTable({
+                        "bPaginate": false,
+                        "bLengthChange": false,
+                        "bFilter": true,
+                        "bInfo": false,
+                        "bAutoWidth": false,
+                        "oLanguage": {
+                            "sSearch": ''
+                        },
+                    });
+                }
+                jQuery('#cite-source-table_filter input').attr('placeholder', gettext('Search bibliography'));
 
-    jQuery('#cite-source-table .fw-searchable').each(function () {
-        autocomplete_tags.push(this.textContent);
-    });
-    autocomplete_tags = _.uniq(autocomplete_tags);
-    jQuery("#cite-source-table_filter input").autocomplete({
-        source: autocomplete_tags
-    });
-});
+                jQuery('#cite-source-table .fw-searchable').each(function() {
+                    autocomplete_tags.push(this.textContent);
+                });
+                autocomplete_tags = _.uniq(autocomplete_tags);
+                jQuery("#cite-source-table_filter input").autocomplete({
+                    source: autocomplete_tags
+                });
+            });
 
 
 
             jQuery('#cite-source-table').trigger('update');
 
             $.addDropdownBox(jQuery('#citation-style-label'), jQuery('#citation-style-pulldown'));
-            jQuery('#citation-style-pulldown .fw-pulldown-item').bind('mousedown', function () {
+            jQuery('#citation-style-pulldown .fw-pulldown-item').bind('mousedown', function() {
                 jQuery('#citation-style-label label').html(jQuery(this).html());
                 jQuery('#citation-style-label').attr('data-style', jQuery(this).data('style'));
             });
 
-            jQuery('#add-cite-book').bind('click', function () {
+            jQuery('#add-cite-book').bind('click', function() {
                 var checkedElements = jQuery('#cite-source-table .fw-checkable.checked'),
                     selectedItems = [];
-                checkedElements.each(function () {
+                checkedElements.each(function() {
                     var id = jQuery(this).data('id');
                     if (jQuery('#selected-source-' + id).size()) {
                         return;
@@ -252,20 +252,20 @@ jQuery('#cite-source-table').bind('update', function () {
                 citationHelpers.appendToCitedItems(selectedItems);
             });
 
-            jQuery($the_dialog).on('click', '.selected-source .delete', function () {
+            jQuery($the_dialog).on('click', '.selected-source .delete', function() {
                 var source_wrapper_id = '#selected-source-' + jQuery(this).data('id');
                 jQuery(source_wrapper_id).remove();
             });
         },
 
-        close: function () {
+        close: function() {
             jQuery(this).dialog('destroy').remove();
         }
     });
 
     jQuery('input').blur();
 
-    jQuery('.fw-checkable').bind('click', function () {
+    jQuery('.fw-checkable').bind('click', function() {
         $.setCheckableLabel($(this));
     });
 });

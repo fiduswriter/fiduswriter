@@ -60,6 +60,20 @@ CaretTestCase = namedtuple(
     ]
 )
 
+InsertionTestCase = namedtuple(
+    'InsertionTestCase', [
+        'name',             # string to be used as the test method name,
+                            #   will be prepended with test_
+        'description',      # string with a short description of what is
+                            #   being tested
+        'givenContents',    # DocumentContents string
+        'givenCaret',       # position of caret at start of test
+        'expectedContents', # expected document contents at end of test
+        'expectedCaret',    # expected caret position at end of test
+    ]
+
+)
+
 
 # TEST COMMONS
 class DataCasesToTestMethodsMeta(type):
@@ -145,7 +159,6 @@ class Manipulator(object):
         )
 
     def loadDocumentEditor(self, doc):
-        # !!!
         DRIVER.get("%s%s" % (
             self.live_server_url,
             doc.get_absolute_url()
@@ -180,6 +193,16 @@ class Manipulator(object):
             );
             ''',
             expectedCaret
+        )
+
+    def getDocumentContents(self):
+        return DRIVER.execute_script(
+            """
+            // refresh theDocument first
+            editorHelpers.getUpdatesFromInputFields();
+
+            return JSON.stringify(theDocument.contents);
+            """
         )
 
 
@@ -221,45 +244,45 @@ def tearDownModule():
 
 # TESTS
 """ !!! temporary
-? What are the possible single-element actions?
-  movement
-    - within node
-    - within node with selection
-    - between nodes
-    - between nodes with selection
-  insertion
-    - insert text within node
-    - insert node within node
-    - insert text with selection within node
-    - insert text with selection across nodes
-    - insert node with selection within node
-    - insert node with selection across nodes
-    - pasting rich text?
-    - pasting non-text contents?
-  deletion
-    - delete next within node
-    - delete next at end of node
-    - delete previous within node
-    - delete previous at start of node
-  updating
-    - change text style within inline token
-    - change text style with selection across nodes
-    - change type of element
+    ? What are the possible single-element actions?
+      movement
+        - within node
+        - within node with selection
+        - between nodes
+        - between nodes with selection
+      insertion
+        - insert text within node
+        - insert node within node
+        - insert text with selection within node
+        - insert text with selection across nodes
+        - insert node with selection within node
+        - insert node with selection across nodes
+        - pasting rich text?
+        - pasting non-text contents?
+      deletion
+        - delete next within node
+        - delete next at end of node
+        - delete previous within node
+        - delete previous at start of node
+      updating
+        - change text style within inline token
+        - change text style with selection across nodes
+        - change type of element
 
-? Where can the caret move within the main editor?
-    + Text
-    + BoldText
-    + ItalicText
-    + Link
+    ? Where can the caret move within the main editor?
+        + Text
+        + BoldText
+        + ItalicText
+        + Link
 
-? Where should the caret not be able to move to in the main editor?
-    - Footnote
-    - Citation
-    - Equation
+    ? Where should the caret not be able to move to in the main editor?
+        - Footnote
+        - Citation
+        - Equation
 """
 
 
-class CaretMovementInSingleChildParagraph(CaretPositionTest):
+class MovementInSingleChildParagraph(CaretPositionTest):
     __metaclass__ = DataCasesToTestMethodsMeta
     movement_within_short = [
         # movement within a short node
@@ -493,7 +516,7 @@ class CaretMovementInSingleChildParagraph(CaretPositionTest):
     )
 
 
-class CaretMovementInMultiChildParagraph(CaretTestCase):
+class MovementInMultiChildParagraph(CaretTestCase):
     __metaclass__ = DataCasesToTestMethodsMeta
 
     # each case will be passed into self.runCheck
@@ -515,3 +538,91 @@ class CaretMovementInMultiChildParagraph(CaretTestCase):
         # movement_between_link_italic,
         # movement_between_link_link,
     )
+
+
+class InsertionOfLink(LiveTornadoTestCase, Manipulator):
+    __metaclass__ = DataCasesToTestMethodsMeta
+    linkText = 'all the ipsums'
+    linkAddressWithoutHTTP = 'www.example.com'
+    linkAddress = 'http://' + linkAddressWithoutHTTP
+    expectedLink = Link(linkText, linkAddress)
+
+    cases = [
+        InsertionTestCase(**{
+            'name': 'atStartOfParagraph',
+            'description': 'caret at start of paragraph inserts link before'
+                           ' text',
+            'givenContents': Contents(Paragraph(Text(SHORT_LOREM))),
+            'givenCaret': Caret(
+                parent='#document-contents > :eq(0)',
+                node=0,
+                offset=0
+            ),
+            'expectedContents': Contents(
+                Paragraph(expectedLink, Text(SHORT_LOREM))
+            ),
+            'expectedCaret': Caret(
+                parent='#document-contents > :eq(0)',
+                node=0,
+                offset=0
+            ),
+        }),
+        InsertionTestCase(**{
+            'name': 'atStartOfParagraph',
+            'description': 'caret within BoldText inserts Link between two'
+                           ' BoldTexts',
+            'givenContents': Contents(Paragraph(BoldText(SHORT_LOREM))),
+            'givenCaret': Caret(
+                parent='#document-contents > :eq(0) > :eq(0)',
+                node=0,
+                offset=len('Lorem'),
+            ),
+            'expectedContents': Contents(
+                Paragraph(
+                    BoldText('Lorem'),
+                    expectedLink,
+                    BoldText(SHORT_LOREM[len('Lorem'):])
+                )
+            ),
+            'expectedCaret': Caret(
+                parent='#document-contents > :eq(0) > :eq(0)',
+                node=0,
+                offset=len('Lorem'),
+            ),
+        }),
+    ]
+
+    def setUp(self):
+        self.createAndLoginUser()
+
+    def runCheck(self, case):
+        self.loadDocumentEditor(
+            self.createDocument(case.givenContents)
+        )
+
+        self.injectHelpers()
+        self.setCaret(case.givenCaret)
+
+        (DRIVER.find_element_by_id('button-link')
+               .click())
+        WebDriverWait(DRIVER, 10).until(
+            EC.presence_of_element_located((By.XPATH,
+                '//span['
+                    '@class="ui-dialog-title"'
+                    ' and text()="Link"'
+                ']'
+            ))
+        )
+
+        (DRIVER.find_element_by_css_selector('input.linktext')
+               .send_keys(self.linkText))
+        (DRIVER.find_element_by_css_selector('input.link')
+               .send_keys(self.linkAddressWithoutHTTP))
+
+        (DRIVER.find_element_by_xpath('//button/span[text()="Insert"]')
+               .click())
+
+        self.assertEqual(
+            str(case.expectedContents),
+            self.getDocumentContents()
+        )

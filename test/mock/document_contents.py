@@ -23,17 +23,17 @@ class Contents(list):
     ... ])
     True
     """
-    template = '{"nn":"DIV","a":[["id","document-contents"]],"c":[%s]}'
-    # template = ''.join([
-    #     '{"nn":"DIV",',
-    #         '"a":[',
-    #             '["id","document-contents"],',
-    #             '["class","editable user-contents"],',
-    #             '["contenteditable","true"]',
-    #         '],',
-    #         '"c":[%s]',
-    #     '}',
-    # ])
+    # template = '{"nn":"DIV","a":[["id","document-contents"]],"c":[%s]}'
+    template = ''.join([
+        '{"nn":"DIV",',
+            '"a":[',
+                '["contenteditable","true"],',
+                '["class","editable user-contents"],',
+                '["id","document-contents"]',
+            '],',
+            '"c":[%s]',
+        '}',
+    ])
 
     def __init__(self, *manyBlockContents):
         for b in manyBlockContents:

@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from collections import namedtuple
+from itertools import chain
+from unittest import skip
 
 from allauth.account.models import EmailAddress
 from django.contrib.auth.hashers import make_password
@@ -16,8 +18,8 @@ from test.helpers import testCaretJS
 from test.testcases import LiveTornadoTestCase
 from test.mock.document_contents import *
 
-from itertools import chain
-
+# GLOBALS
+global DRIVER
 
 # CONSTANTS
 SHORT_LOREM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
@@ -59,7 +61,7 @@ CaretTestCase = namedtuple(
 )
 
 
-# TEST MAKERS
+# TEST COMMONS
 class DataCasesToTestMethodsMeta(type):
     """
     Generate test methods from data-driven cases.
@@ -72,7 +74,7 @@ class DataCasesToTestMethodsMeta(type):
 
         def gen_test(case):
             def test(self):
-                self.runTest(case)
+                self.runCheck(case)
             test.__doc__ = case.description
 
             return test
@@ -82,6 +84,140 @@ class DataCasesToTestMethodsMeta(type):
 
         return type.__new__(mcs, name, bases, clsdict)
 
+
+class Manipulator(object):
+    """
+    Methods for manipulating django and the browser.
+    """
+    user = None
+    username = 'Yeti'
+    email = 'yeti@example.com'
+    passtext = 'otter'
+
+    # mixed
+    def createAndLoginUser(self):
+        """Creates a dummy user in the database, and logs in the browser as that
+           user."""
+        # TODO: replace with fixture
+        self.user = self.createUser(self.username, self.email, self.passtext)
+        self.loginUser(self.username, self.passtext)
+
+    # create django data
+    def createUser(self, username, email, passtext):
+        user = User.objects.create(
+            username=username,
+            password=make_password(passtext),
+            is_active=True
+        )
+        user.save()
+
+        # avoid the unverified-email login trap
+        EmailAddress.objects.create(
+            user=user,
+            email=email,
+            verified=True,
+        ).save()
+
+        return user
+
+    def createDocument(self, contents):
+        doc = Document.objects.create(
+            owner=self.user,
+            contents=str(contents),
+        )
+        doc.save()
+        return doc
+
+    # drive browser
+    def loginUser(self, username, passtext):
+        DRIVER.get('%s%s' % (
+            self.live_server_url,
+            '/account/login/'
+        ))
+        (DRIVER
+            .find_element_by_id('id_login')
+            .send_keys(username))
+        (DRIVER
+            .find_element_by_id('id_password')
+            .send_keys(passtext + Keys.RETURN))
+        WebDriverWait(DRIVER, 10).until(
+            EC.presence_of_element_located((By.ID, 'user-preferences'))
+        )
+
+    def loadDocumentEditor(self, doc):
+        # !!!
+        DRIVER.get("%s%s" % (
+            self.live_server_url,
+            doc.get_absolute_url()
+        ))
+        WebDriverWait(DRIVER, 10).until(
+            EC.presence_of_element_located((By.ID, 'document-contents'))
+        )
+
+    # execute javascript
+    def injectHelpers(self):
+        return DRIVER.execute_script(
+            'window.testCaret = %s' % testCaretJS
+        )
+
+    def getCaret(self):
+        return DRIVER.execute_script(
+            'return testCaret.getCaret(rangy.getSelection());'
+        )
+
+    def setCaret(self, caret):
+        return DRIVER.execute_script(
+            'testCaret.setCaret(rangy.getSelection(), arguments[0]);',
+            caret
+        )
+
+    def caretIsAt(self, expectedCaret):
+        return DRIVER.execute_script(
+            '''
+            return testCaret.caretsMatch(
+                arguments[0],
+                testCaret.getCaret(rangy.getSelection())
+            );
+            ''',
+            expectedCaret
+        )
+
+
+class CaretPositionTest(LiveTornadoTestCase, Manipulator):
+    """
+    Base for all tests that check that Caret is at an expected position after
+    entering a given series of keys.
+    """
+    def setUp(self):
+        self.createAndLoginUser()
+
+    def runCheck(self, caretCase):
+        self.loadDocumentEditor(
+            self.createDocument(caretCase.givenContents)
+        )
+
+        self.injectHelpers()
+        self.setCaret(caretCase.givenCaret)
+        (DRIVER.find_element_by_id('document-contents')
+               .send_keys(caretCase.givenKeys))
+
+        # grab caret from browser and compare in python,
+        # to get more informative failure messages
+        self.assertEqual(
+            caretCase.expectedCaret,
+            self.getCaret()
+        )
+        # test browser-side, in case caret grabbing is buggy
+        self.assertTrue(self.caretIsAt(caretCase.expectedCaret))
+
+
+# TEST MODULE SETUP
+# DRIVER initialized in setUpModule isn't visible outside setUpModule
+DRIVER = webdriver.Firefox()
+
+
+def tearDownModule():
+    DRIVER.quit()
 
 # TESTS
 """ !!! temporary
@@ -123,12 +259,8 @@ class DataCasesToTestMethodsMeta(type):
 """
 
 
-class CaretInParagraphTests(LiveTornadoTestCase):
+class CaretMovementInSingleChildParagraph(CaretPositionTest):
     __metaclass__ = DataCasesToTestMethodsMeta
-    username = 'Yeti'
-    email = 'yeti@example.com'
-    passtext = 'otter'
-
     movement_within_short = [
         # movement within a short node
         CaretTestCase(**{
@@ -352,12 +484,20 @@ class CaretInParagraphTests(LiveTornadoTestCase):
         for c in movement_within_short
     ]
 
-    # each case will be passed into self.runTest
+    # each case will be passed into self.runCheck
     cases = chain(
         # movement_in_text,
         movement_in_bold,
         # movement_in_italic,
         # movement_in_link,
+    )
+
+
+class CaretMovementInMultiChildParagraph(CaretTestCase):
+    __metaclass__ = DataCasesToTestMethodsMeta
+
+    # each case will be passed into self.runCheck
+    cases = chain(
         # movement_between_text_text,
         # movement_between_text_bold,
         # movement_between_text_italic,
@@ -375,111 +515,3 @@ class CaretInParagraphTests(LiveTornadoTestCase):
         # movement_between_link_italic,
         # movement_between_link_link,
     )
-
-    @classmethod
-    def setUpClass(cls):
-        cls.driver = webdriver.Firefox()
-        super(CaretInParagraphTests, cls).setUpClass()
-
-    @classmethod
-    def tearDownClass(cls):
-        cls.driver.quit()
-        super(CaretInParagraphTests, cls).tearDownClass()
-
-    def setUp(self):
-        """Creates a dummy user in the database, and logs in the browser as that
-           user."""
-        # the DB gets cleared after each test, including the user
-        # may be possible to replace this with a fixture
-        self.user = User.objects.create(
-            username=self.username,
-            password=make_password(self.passtext),
-            is_active=True
-        )
-        self.user.save()
-
-        # avoid the unverified-email login trap
-        EmailAddress.objects.create(
-            user=self.user,
-            email=self.email,
-            verified=True,
-        ).save()
-
-        self.driver.get('%s%s' % (
-            self.live_server_url,
-            '/account/login/'
-        ))
-        (self.driver
-            .find_element_by_id('id_login')
-            .send_keys(self.user.username))
-        (self.driver
-            .find_element_by_id('id_password')
-            .send_keys(self.passtext + Keys.RETURN))
-        WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.ID, 'user-preferences'))
-        )
-
-    def runTest(self, case):
-        doc = self.createDocument(case.givenContents)
-        self.loadDocumentEditor(doc)
-
-        self.injectHelpers()
-        # WebDriverWait(self.driver, 600, 600000).until(
-        #     EC.presence_of_element_located((By.ID, 'nonexistent'))
-        # )
-        self.setCaret(case.givenCaret)
-        (self.driver.find_element_by_id('document-contents')
-                    .send_keys(case.givenKeys))
-
-        # grab caret from browser and compare in python,
-        # to get more informative failure messages
-        self.assertEqual(
-            case.expectedCaret,
-            self.getCaret()
-        )
-        # test browser-side, in case caret grabbing is buggy
-        self.assertTrue(self.caretIsAt(case.expectedCaret))
-
-    def createDocument(self, contents):
-        doc = Document.objects.create(
-            owner=self.user,
-            contents=str(contents),
-        )
-        doc.save()
-        return doc
-
-    def loadDocumentEditor(self, doc):
-        self.driver.get("%s%s" % (
-            self.live_server_url,
-            doc.get_absolute_url()
-        ))
-        WebDriverWait(self.driver, 10).until(
-            EC.presence_of_element_located((By.ID, 'document-contents'))
-        )
-
-    def getCaret(self):
-        return self.driver.execute_script(
-            'return testCaret.getCaret(rangy.getSelection());'
-        )
-
-    def setCaret(self, caret):
-        return self.driver.execute_script(
-            'testCaret.setCaret(rangy.getSelection(), arguments[0]);',
-            caret
-        )
-
-    def caretIsAt(self, expectedCaret):
-        return self.driver.execute_script(
-            '''
-            return testCaret.caretsMatch(
-                arguments[0],
-                testCaret.getCaret(rangy.getSelection())
-            );
-            ''',
-            expectedCaret
-        )
-
-    def injectHelpers(self):
-        return self.driver.execute_script(
-            'window.testCaret = %s' % testCaretJS
-        )

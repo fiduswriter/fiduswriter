@@ -269,6 +269,7 @@
             <script type="text/javascript" src="{{ STATIC_URL }}js/dom.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/manual-edits.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/key-events.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/key-events-firefox.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/clean-HTML.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/cut.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/paste.js"></script>
@@ -284,6 +285,11 @@
                     link.type = 'text/css';
                     link.href = '{{ STATIC_URL }}css/windows-chrome-fonts.css';
                     document.head.appendChild(link);
+            }
+        </script>
+        <script>
+            if (isFirefox) {
+                window.keyEvents = window.keyEventsFirefox;
             }
         </script>
     </head>

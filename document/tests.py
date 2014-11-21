@@ -236,7 +236,7 @@ class CaretPositionTest(LiveTornadoTestCase, Manipulator):
 
 # TEST MODULE SETUP
 # DRIVER initialized in setUpModule isn't visible outside setUpModule
-DRIVER = webdriver.Firefox()
+DRIVER = webdriver.Chrome()
 
 
 def tearDownModule():

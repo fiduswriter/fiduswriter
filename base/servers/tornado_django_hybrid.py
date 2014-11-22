@@ -24,7 +24,7 @@ from tornado.ioloop import IOLoop
 from tornado.web import Application, FallbackHandler, StaticFileHandler
 from tornado.wsgi import WSGIContainer
 
-from base.handlers import DjangoStaticFilesHandler, HelloHandler
+from base.handlers import DjangoStaticFilesHandler, HelloHandler, RobotsHandler
 
 if settings.CACHES["default"]["BACKEND"] == "redis_cache.cache.RedisCache":
     from document.ws_views_redis import DocumentWS

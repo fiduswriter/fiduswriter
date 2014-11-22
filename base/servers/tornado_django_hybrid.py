@@ -39,6 +39,7 @@ def make_tornado_server():
                                                      'none.img'}),
         (r'/media/(.*)', StaticFileHandler, {'path': settings.MEDIA_ROOT}),
         ('/hello-tornado', HelloHandler),
+        ('/robots.txt', RobotsHandler),
         ('/ws/doc/(\w+)', DocumentWS),
         ('.*', FallbackHandler, dict(fallback=wsgi_app))
     ])

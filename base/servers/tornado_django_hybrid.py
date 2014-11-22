@@ -24,7 +24,7 @@ from tornado.ioloop import IOLoop
 from tornado.web import Application, FallbackHandler, StaticFileHandler
 from tornado.wsgi import WSGIContainer
 
-from base.handlers import DjangoStaticFilesHandler, HelloHandler, RobotsHandler
+from base.handlers import DjangoStaticFilesHandler, HelloHandler, RobotzHandler
 
 if settings.CACHES["default"]["BACKEND"] == "redis_cache.cache.RedisCache":
     from document.ws_views_redis import DocumentWS
@@ -39,7 +39,7 @@ def make_tornado_server():
                                                      'none.img'}),
         (r'/media/(.*)', StaticFileHandler, {'path': settings.MEDIA_ROOT}),
         ('/hello-tornado', HelloHandler),
-        ('/robots.txt', RobotsHandler),
+        ('/robots.txt', RobotzHandler),
         ('/ws/doc/(\w+)', DocumentWS),
         ('.*', FallbackHandler, dict(fallback=wsgi_app))
     ])

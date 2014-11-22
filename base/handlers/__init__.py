@@ -31,7 +31,7 @@ class HelloHandler(RequestHandler):
     def get(self):
         self.write('Hello from tornado')
 
-class RobotzHandler(RequestHandler):
+class RobotsHandler(RequestHandler):
 
     def head(self):
         self.finish()

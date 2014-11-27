@@ -10,6 +10,9 @@ from django.core.handlers.wsgi import WSGIRequest
 
 class BaseWebSocketHandler(WebSocketHandler):
 
+    def check_origin(self, origin):
+        return True
+
     def allow_draft76(self):
         # for iOS 5.0 Safari
         return True

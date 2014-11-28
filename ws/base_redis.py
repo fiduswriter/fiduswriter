@@ -1,5 +1,6 @@
 import json
 import redis
+from urlparse import urlparse
 
 from redis.exceptions import ResponseError
 
@@ -43,8 +44,17 @@ class BaseRedisWebSocketHandler(WebSocketHandler):
         self.channel = 'channel'
 
     def check_origin(self, origin):
-        return True
-        # TODO: We probably only should allow connections from the same server but possibly a different port.
+        parsed_origin = urlparse(origin)
+        origin = parsed_origin.netloc
+        # remove port if present
+        origin = origin.split(':')[0]
+        origin = origin.lower()
+
+        host = self.request.headers.get("Host")
+        # remove port if present
+        host = host.split(':')[0]
+        # Check to see that origin matches host directly, EXCLUDING ports
+        return origin == host
 
     @tornado.gen.engine
     def listen_to_redis(self):

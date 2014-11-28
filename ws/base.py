@@ -1,3 +1,5 @@
+from urlparse import urlparse
+
 from tornado.websocket import WebSocketHandler
 from tornado.wsgi import WSGIContainer
 
@@ -11,8 +13,17 @@ from django.core.handlers.wsgi import WSGIRequest
 class BaseWebSocketHandler(WebSocketHandler):
 
     def check_origin(self, origin):
-        return True
-        # TODO: We probably only should allow connections from the same server but possibly a different port.
+        parsed_origin = urlparse(origin)
+        origin = parsed_origin.netloc
+        # remove port if present
+        origin = origin.split(':')[0]
+        origin = origin.lower()
+
+        host = self.request.headers.get("Host")
+        # remove port if present
+        host = host.split(':')[0]
+        # Check to see that origin matches host directly, EXCLUDING ports
+        return origin == host
 
     def allow_draft76(self):
         # for iOS 5.0 Safari

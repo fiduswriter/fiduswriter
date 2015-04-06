@@ -202,6 +202,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.admindocs',
     'django.contrib.flatpages',
+    'django_js_error_hook',
     'fixturemedia',
     'menu',
     'document',
@@ -267,30 +268,41 @@ AUTH_PROFILE_MODULE = "account.UserProfile"
 # locking
 LOCK_TIMEOUT = 600
 
-# The following adds a filter to remove 500 error in case of SuspiciousOperation. This is needed in Django 1.5 due to https://code.djangoproject.com/ticket/19866
-from fiduswriter.logging_filter import skip_suspicious_operations
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'filters': {
         'require_debug_false': {
             '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'formatters': {
+        'verbose': {
+            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
         },
-        # Filter due to https://code.djangoproject.com/ticket/19866
-        'skip_suspicious_operations': {
-            '()': 'django.utils.log.CallbackFilter',
-            'callback': skip_suspicious_operations,
+        'simple': {
+            'format': '\033[22;32m%(levelname)s\033[0;0m %(message)s'
         },
     },
     'handlers': {
         'mail_admins': {
             'level': 'ERROR',
-            'filters': ['require_debug_false','skip_suspicious_operations'],
+            'filters': ['require_debug_false'],
             'class': 'django.utils.log.AdminEmailHandler'
-        }
+        },
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'simple'
+            },
     },
     'loggers': {
         'django.request': {
+            'handlers': ['mail_admins'],
+            'level': 'ERROR',
+            'propagate': True,
+        },
+        'javascript_error': {
             'handlers': ['mail_admins'],
             'level': 'ERROR',
             'propagate': True,

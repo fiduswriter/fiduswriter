@@ -9,6 +9,8 @@
         <script type="text/javascript" src="/jsi18n/"></script>
         <!-- jQuery -->
         <script type="text/javascript" src="{{ JQUERY_URL }}"></script>
+        <!-- JS error handling -->
+        <script type="text/javascript" src="{% url js-error-handler-js %}"></script>
         <!-- Underscore -->
         <script type="text/javascript" src="{{ UNDERSCOREJS_URL }}"></script>
         <!-- Mathjax -->
@@ -36,8 +38,8 @@
             <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/node-converter.js"></script>
             <script type="text/javascript">
-                var isChrome = (window.hasOwnProperty('chrome')), 
-                isSafari = (navigator.userAgent.indexOf('Safari/') > -1), 
+                var isChrome = (window.hasOwnProperty('chrome')),
+                isSafari = (navigator.userAgent.indexOf('Safari/') > -1),
                 isFirefox = !(window.mozInnerScreenX == null);
 
             </script>

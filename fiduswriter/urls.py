@@ -35,6 +35,7 @@ js_info_dict = {
 urlpatterns = patterns('',
     url(r'^$', 'document.views.index', name='index'),
     (r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /text/\nDisallow: /bibliography/", mimetype="text/plain")),
+    url(r'^js_error_hook/', include('django_js_error_hook.urls')),
     url(r'^document/', include('document.urls')),
     url(r'^bibliography/', include('bibliography.urls')),
 

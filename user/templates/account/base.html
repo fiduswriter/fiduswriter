@@ -36,7 +36,8 @@
 
         <!--script type="text/javascript" src="{{ MODERNIZR_URL }}"></script-->
         <script type="text/javascript" src="{{ JQUERY_URL }}"></script>
-
+        <!-- JS error handling -->
+        <script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
         {% compress js %}
         <script type="text/javascript" src="{{ STATIC_URL }}js/csrf.js"></script>
         {% endcompress %}
@@ -78,5 +79,6 @@
         </div>
         {% include "footer.html" %}
         {% include "feedback/feedback.html" %}
+        
     </body>
 </html>

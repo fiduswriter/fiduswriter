@@ -33,6 +33,7 @@ SERVER_INFO = {
     # upon signup know that their documents may disappear.
     'TEST_SERVER': True,
     # This is the contact email that will be shown in various places all over the site.
+    # It will also be used to forward feedback messages.
     'CONTACT_EMAIL': 'mail@email.com',
     'WS_PORT': False
 }

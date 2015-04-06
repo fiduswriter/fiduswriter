@@ -15,24 +15,24 @@
     MODIFY_VALUE = 10,
     MODIFY_CHECKED = 11,
     MODIFY_SELECTED = 12,
-    ACTION = 13,
-    ROUTE = 14,
-    OLD_VALUE = 15,
-    NEW_VALUE = 16,
-    ELEMENT = 17,
-    GROUP = 18,
-    FROM = 19,
-    TO = 20,
-    NAME = 21,
-    VALUE = 22,
-    TEXT = 23,
-    ATTRIBUTES = 24,
-    NODE_NAME = 25,
-    COMMENT = 26,
-    CHILD_NODES = 27,
-    CHECKED = 28,
-    SELECTED = 29;
-
+    MODIFY_DATA = 13,
+    ACTION = 14,
+    ROUTE = 15,
+    OLD_VALUE = 16,
+    NEW_VALUE = 17,
+    ELEMENT = 18,
+    GROUP = 19,
+    FROM = 20,
+    TO = 21,
+    NAME = 22,
+    VALUE = 23,
+    TEXT = 24,
+    ATTRIBUTES = 25,
+    NODE_NAME = 26,
+    COMMENT = 27,
+    CHILD_NODES = 28,
+    CHECKED = 29,
+    SELECTED = 30;
 
   var Diff = function (options) {
     var diff = this;
@@ -63,7 +63,59 @@
     }
   };
 
-  var roughlyEqual = function roughlyEqual(e1, e2, preventRecursion) {
+  var elementDescriptors = function(el) {
+    var output = [];
+    if (el.nodeType == 1) {
+      output.push(el.tagName);
+      if (typeof(el.className) == 'string') {
+        output.push(el.tagName + '.' + el.className.replace(/ /g, '.'));
+      }
+      if (el.id) {
+        output.push(el.tagName + '#' + el.id);
+      }
+    }
+    return output;
+  }
+
+  var findUniqueDescriptors = function(li) {
+    var uniqueDescriptors = {};
+    var duplicateDescriptors = {};
+
+    for (var i = 0; i < li.length; i++) {
+      var node = li[i];
+      var descriptors = elementDescriptors(node);
+      for (var j = 0; j < descriptors.length; j++) {
+        var descriptor = descriptors[j];
+        var inUnique = descriptor in uniqueDescriptors;
+        var inDupes = descriptor in duplicateDescriptors;
+        if (!inUnique && !inDupes) {
+          uniqueDescriptors[descriptor] = true;
+        } else if (inUnique) {
+          delete uniqueDescriptors[descriptor];
+          duplicateDescriptors[descriptor] = true;
+        }
+      }
+    }
+
+    return uniqueDescriptors;
+  }
+
+  var uniqueInBoth = function(l1, l2) {
+    var l1Unique = findUniqueDescriptors(l1);
+    var l2Unique = findUniqueDescriptors(l2);
+    var inBoth = {};
+
+    var key;
+    for (key in l1Unique) {
+      if (l2Unique[key]) {
+        inBoth[key] = true;
+      }
+    }
+
+    return inBoth;
+  }
+
+  var roughlyEqual = function roughlyEqual(e1, e2, uniqueDescriptors, sameSiblings, preventRecursion) {
     if (!e1 || !e2) return false;
     if (e1.nodeType !== e2.nodeType) return false;
     if (e1.nodeType === 3) {
@@ -74,15 +126,28 @@
       return preventRecursion ? true : e1.data === e2.data;
     }
     if (e1.nodeName !== e2.nodeName) return false;
+    if (e1.tagName === e2.tagName) {
+      if (e1.tagName in uniqueDescriptors) return true
+      if (e1.id && e1.id === e2.id) {
+        var idDescriptor = e1.tagName + '#' + e1.id;
+        if (idDescriptor in uniqueDescriptors) return true;
+      }
+      if (e1.className && e1.className === e2.className) {
+        var classDescriptor = e1.tagName + '.' + e1.className.replace(/ /g, '.');
+        if (classDescriptor in uniqueDescriptors) return true;
+      }
+      if (sameSiblings) return true;
+    }
     if (e1.childNodes.length !== e2.childNodes.length) return false;
     var thesame = true;
+    var childUniqueDescriptors = uniqueInBoth(e1.childNodes, e2.childNodes);
     for (var i = e1.childNodes.length - 1; i >= 0; i--) {
       if (preventRecursion) {
         thesame = thesame && (e1.childNodes[i].nodeName === e2.childNodes[i].nodeName);
       } else {
         // note: we only allow one level of recursion at any depth. If 'preventRecursion'
         //       was not set, we must explicitly force it to true for child iterations.
-        thesame = thesame && roughlyEqual(e1.childNodes[i], e2.childNodes[i], true);
+        thesame = thesame && roughlyEqual(e1.childNodes[i], e2.childNodes[i], childUniqueDescriptors, true, true);
       }
     }
     return thesame;
@@ -115,7 +180,7 @@
         } else if (!(options[i].selected) && clonedOptions[i].selected) {
           clonedOptions[i].selected = false;
         }
-      }      
+      }
       if (node.selected && !(clonedNode.selected)) {
         clonedNode.selected = true;
       } else if (!(node.selected) && clonedNode.selected) {
@@ -207,14 +272,41 @@
       len2 = c2.length;
     // set up the matching table
     var matches = [],
-      a, i, j;
+      a, i, j, k, l;
     for (a = 0; a < len1 + 1; a++) {
       matches[a] = [];
     }
+
+    var uniqueDescriptors = uniqueInBoth(c1, c2);
+
+    // If all of the elements are the same tag, id and class, then we can
+    // consider them roughly the same even if they have a different number of
+    // children. This will reduce removing and re-adding similar elements.
+    var subsetsSame = len1 == len2;
+    if (subsetsSame) {
+      for (k = 0; k < len1; k++) {
+        var c1Desc = elementDescriptors(c1[k]);
+        var c2Desc = elementDescriptors(c2[k]);
+        if (c1Desc.length != c2Desc.length) {
+          subsetsSame = false;
+          break;
+        }
+        for (l = 0; l < c1Desc.length; l++) {
+          if (c1Desc[l] != c2Desc[l]) {
+            subsetsSame = false;
+            break;
+          }
+        }
+        if (!subsetsSame) {
+          break;
+        }
+      }
+    }
+
     // fill the matches with distance values
     for (i = 0; i < len1; i++) {
       for (j = 0; j < len2; j++) {
-        if (!marked1[i] && !marked2[j] && roughlyEqual(c1[i], c2[j])) {
+        if (!marked1[i] && !marked2[j] && roughlyEqual(c1[i], c2[j], uniqueDescriptors, subsetsSame)) {
           matches[i + 1][j + 1] = (matches[i][j] ? matches[i][j] + 1 : 1);
           if (matches[i + 1][j + 1] > lcsSize) {
             lcsSize = matches[i + 1][j + 1];
@@ -511,7 +603,6 @@
             throw new Error("surpassed diffcap:" + JSON.stringify(this.t1Orig) + " -> " + JSON.stringify(this.t2Orig));
           }
         }
-
         difflist = this.findFirstDiff(t1, t2, []);
         if (difflist) {
           if (!difflist.length) {
@@ -544,7 +635,7 @@
     },
     findOuterDiff: function (t1, t2, route) {
       var k;
-      
+
       if (t1.nodeName != t2.nodeName) {
         k = {};
         k[ACTION] = REPLACE_ELEMENT;
@@ -553,13 +644,13 @@
         k[ROUTE] = route;
         return [new Diff(k)];
       }
-      
+
       var slice = Array.prototype.slice,
         byName = function (a, b) {
           return a.name > b.name;
         },
-        attr1 = slice.call(t1.attributes).sort(byName),
-        attr2 = slice.call(t2.attributes).sort(byName),
+        attr1 = t1.attributes ? slice.call(t1.attributes).sort(byName) : [],
+        attr2 = t2.attributes ? slice.call(t2.attributes).sort(byName) : [],
         find = function (attr, list) {
           for (var i = 0, last = list.length; i < last; i++) {
             if (list[i].name === attr.name)
@@ -568,8 +659,6 @@
           return -1;
         },
         diffs = [];
-      
-      
       if ((t1.value || t2.value) && t1.value !== t2.value && t1.nodeName !== 'OPTION') {
         k = {};
         k[ACTION] = MODIFY_VALUE;
@@ -585,7 +674,7 @@
         k[NEW_VALUE] = t2.checked;
         k[ROUTE] = route;
         diffs.push(new Diff(k));
-      }  
+      }
 
       attr1.forEach(function (attr) {
         var pos = find(attr, attr2),
@@ -609,9 +698,17 @@
           k[NEW_VALUE] = a2.value;
 
           diffs.push(new Diff(k));
-                   
+               //    console.log(diffs);
         }
       });
+      if (!t1.attributes && t1.data !== t2.data) {
+          k = {};
+          k[ACTION] = MODIFY_DATA;
+          k[ROUTE] = route;
+          k[OLD_VALUE] = t1.data;
+          k[NEW_VALUE] = t2.data;
+          diffs.push(new Diff(k));
+      }
       if (diffs.length > 0) {
         return diffs;
       };
@@ -623,9 +720,9 @@
         k[NAME] = attr.name;
         k[VALUE] = attr.value;
         diffs.push(new Diff(k));
-        
+
       });
-      
+
       if ((t1.selected || t2.selected) && t1.selected !== t2.selected) {
         if (diffs.length > 0) {
             return diffs;
@@ -636,8 +733,8 @@
         k[NEW_VALUE] = t2.selected;
         k[ROUTE] = route;
         diffs.push(new Diff(k));
-      }      
-      
+      }
+
       return diffs;
     },
     findInnerDiff: function (t1, t2, route) {
@@ -645,7 +742,7 @@
         mappings = subtrees.length,
         k;
       // no correspondence whatsoever
-      // if t1 or t2 contain differences that are not text nodes, return a diff. 
+      // if t1 or t2 contain differences that are not text nodes, return a diff.
 
       // two text nodes with differences
       if (mappings === 0) {
@@ -765,6 +862,10 @@
         if (!node || typeof node.value === 'undefined')
           return false;
         node.value = diff[NEW_VALUE];
+      } else if (diff[ACTION] === MODIFY_DATA) {
+        if (!node || typeof node.data === 'undefined')
+          return false;
+        node.data = diff[NEW_VALUE];
       } else if (diff[ACTION] === MODIFY_CHECKED) {
         if (!node || typeof node.checked === 'undefined')
           return false;
@@ -772,7 +873,7 @@
       } else if (diff[ACTION] === MODIFY_SELECTED) {
         if (!node || typeof node.selected === 'undefined')
           return false;
-        node.selected = diff[NEW_VALUE];     
+        node.selected = diff[NEW_VALUE];
       } else if (diff[ACTION] === MODIFY_TEXT_ELEMENT) {
         if (!node || node.nodeType != 3)
           return false;
@@ -863,6 +964,9 @@
       } else if (diff[ACTION] === MODIFY_VALUE) {
         swap(diff, OLD_VALUE, NEW_VALUE);
         this.applyDiff(tree, diff);
+      } else if (diff[ACTION] === MODIFY_DATA) {
+        swap(diff, OLD_VALUE, NEW_VALUE);
+        this.applyDiff(tree, diff);
       } else if (diff[ACTION] === MODIFY_CHECKED) {
         swap(diff, OLD_VALUE, NEW_VALUE);
         this.applyDiff(tree, diff);
@@ -891,5 +995,14 @@
     },
   };
 
-  window.diffDOM = diffDOM;
-}());
+  if (typeof exports !== 'undefined') {
+    if (typeof module !== 'undefined' && module.exports) {
+      exports = module.exports = diffDOM;
+    }
+    exports.diffDOM = diffDOM;
+  } else {
+    // `window` in the browser, or `exports` on the server
+    this.diffDOM = diffDOM;
+  }
+
+}.call(this));

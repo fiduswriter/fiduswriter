@@ -1,0 +1,1549 @@
+# LANGUAGE translation for Fidus Writer
+# Copyright (C) YEAR THE TRANSLATORS NAME
+# This file is distributed under the same license as Fidus Writer.
+# THE TRANSLATORS NAME <EMAIL@ADDRESS>, YEAR
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Fidus Writer \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-05-04 04:10-0500\n"
+"PO-Revision-Date: 2015-04-24 23:57-0300\n"
+"Last-Translator: Job Diogenes Ribeiro Borges <jobdrb@gmail.com>\n"
+"Language-Team: Brazilian Portuguese <jobdrb@gmail.com>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 1.5.4\n"
+"Language: pt_BR\n"
+"X-Poedit-SourceCharset: UTF-8\n"
+
+#: account/static/js/confirm_email.js:18
+msgid "Thanks for verifying! You can now log in."
+msgstr "Obrigado por realizar a verificação! Agora você pode Entrar."
+
+#: account/static/js/contact-helpers.js:54
+msgid "E-mail address or username"
+msgstr "Endereço de email ou nome de usuário"
+
+#: account/static/js/contact-helpers.js:96
+msgid "You cannot add yourself to your contacts!"
+msgstr "Você não pode adicionar-se aos seus contatos!"
+
+#: account/static/js/contact-helpers.js:98
+msgid "This person is already in your contacts"
+msgstr "Esta pessoa já está em seus contatos"
+
+#: account/static/js/contact-helpers.js:100
+msgid "No user is registered with the given email address."
+msgstr "Nenhum usuário está registrado com o endereço de e-mail fornecido."
+
+#: account/static/js/contact-helpers.js:102
+msgid "Please invite him/her "
+msgstr "Por favor, fazer o convite "
+
+#: account/static/js/contact-helpers.js:104
+msgid "Fidus Writer"
+msgstr "Fidus Writer"
+
+#: account/static/js/contact-helpers.js:105
+msgid "Hey, I would like you to sign up for a Fidus Writer account."
+msgstr "Ola, eu gostaria que você se inscrever para uma conta do Fidus Writer."
+
+#: account/static/js/contact-helpers.js:106
+msgid "Please register at"
+msgstr "Por favor, registre-se em"
+
+#: account/static/js/contact-helpers.js:109
+msgid "by sending an email"
+msgstr "enviando um e-mail"
+
+#: account/static/js/contact-helpers.js:112
+msgid "User is not registered."
+msgstr "O usuário não está registrado."
+
+#: account/static/js/contact-helpers.js:125
+msgid "Add a user to your contacts"
+msgstr "Adicionar um usuário para seus contatos"
+
+#: account/static/js/contact-helpers.js:131
+#: account/static/js/show_profile.js:191 account/static/js/show_profile.js:261
+#: account/static/js/show_profile.js:377
+#: bibliography/static/js/bibliography-helpers.js:796
+#: bibliography/static/js/bibliography-helpers.js:934
+#: book/static/js/book-helpers.js:240 book/static/js/book-helpers.js.c:639
+#: book/static/js/bookaccessrights-helpers.js:76
+#: document/static/js/comment-templates.js:43
+#: document/static/js/comment-templates.js:137
+#: document/static/js/document-accessrights-helpers.js:87
+#: usermedia/static/js/usermedia-helpers.js:134
+msgid "Submit"
+msgstr "Enviar"
+
+#: account/static/js/contact-helpers.js:132
+#: account/static/js/contact-helpers.js:173
+#: account/static/js/show_profile.js:49 account/static/js/show_profile.js:116
+#: account/static/js/show_profile.js:173 account/static/js/show_profile.js:242
+#: account/static/js/show_profile.js:298 account/static/js/show_profile.js:350
+#: account/static/js/show_profile.js:407
+#: bibliography/static/js/bibliography-helpers.js:817
+#: bibliography/static/js/bibliography-helpers.js:939
+#: bibliography/static/js/bibliography-helpers.js:1580
+#: bibliography/static/js/bibliography-helpers.js:1721
+#: book/static/js/book-helpers.js:102 book/static/js/book-helpers.js.c:247
+#: book/static/js/book-helpers.js:645 book/static/js/book-templates.js:250
+#: book/static/js/bookaccessrights-helpers.js:89
+#: document/static/js/comment-templates.js:46
+#: document/static/js/comment-templates.js:74
+#: document/static/js/comment-templates.js:105
+#: document/static/js/comment-templates.js:140
+#: document/static/js/document-accessrights-helpers.js:100
+#: document/static/js/document-helpers.js:66
+#: document/static/js/document-helpers.js:114
+#: document/static/js/document-revisions-helpers.js:157
+#: document/static/js/exporter.js:86
+#: document/static/js/figure-citation-templates.js:187
+#: document/static/js/toolbar/cite.js:176
+#: document/static/js/toolbar/figure.js:200
+#: document/static/js/toolbar/link.js:80 document/static/js/toolbar/math.js:98
+#: usermedia/static/js/usermedia-helpers.js:156
+#: usermedia/static/js/usermedia-helpers.js:268
+#: usermedia/static/js/usermedia-helpers.js:359
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: account/static/js/contact-helpers.js:170
+#: account/static/js/profile-templates.js:23
+#: account/static/js/profile-templates.js:37
+#: bibliography/static/js/bibliography-helpers.js:1573
+#: book/static/js/book-helpers.js:90 document/static/js/document-helpers.js:53
+#: document/static/js/document-revisions-templates.js:56
+#: usermedia/static/js/usermedia-helpers.js:351
+msgid "Confirm deletion"
+msgstr "Confirmar exclusão"
+
+#: account/static/js/contact-helpers.js:170
+msgid "Remove from the contacts"
+msgstr "Remover dos contatos"
+
+#: account/static/js/contact-helpers.js:172
+#: account/static/js/show_profile.js:112 account/static/js/show_profile.js:166
+#: bibliography/static/js/bibliography-helpers.js:1576
+#: book/static/js/book-helpers.js:94
+#: book/static/js/book-template-dialogs.js:46
+#: book/static/js/book-templates.js:294
+#: document/static/js/comment-templates.js:84
+#: document/static/js/comment-templates.js:119
+#: document/static/js/document-accessrights-templates.js:39
+#: document/static/js/document-helpers.js:57
+#: document/static/js/document-revisions-helpers.js:152
+#: document/static/js/document-revisions-templates.js:31
+#: usermedia/static/js/usermedia-helpers.js:355
+msgid "Delete"
+msgstr "Excluir"
+
+#: account/static/js/edit_profile.js:35
+msgid "Profile updated"
+msgstr "Perfil atualizado"
+
+#: account/static/js/edit_profile.js:47 account/static/js/show_profile.js:152
+msgid "Please check the above errors"
+msgstr "Por favor, verifique os erros acima"
+
+#: account/static/js/profile-templates.js:24
+msgid "Delete the avatar"
+msgstr "Excluir o avatar"
+
+#: account/static/js/profile-templates.js:26
+msgid "Upload your profile picture"
+msgstr "Carregue sua foto de perfil"
+
+#: account/static/js/profile-templates.js:30
+#: bibliography/static/js/bibliography-template-dialogs.js:46
+#: book/static/js/book-templates.js:74
+#: document/static/js/document-templates.js:78
+#: usermedia/static/js/usermedia-template-dialogs.js:86
+msgid "Select a file"
+msgstr "Selecione um arquivo"
+
+#: account/static/js/profile-templates.js:38
+msgid ""
+"Really delete your account? Type in your username below to confirm deletion."
+msgstr ""
+"Deseja realmente excluir a sua conta? Digite abaixo o seu nome de usuário "
+"para confirmar a exclusão."
+
+#: account/static/js/profile-templates.js:41
+msgid "Add Email"
+msgstr "Adicionar E-mail"
+
+#: account/static/js/profile-templates.js:46
+msgid "Enter the new E-mail address"
+msgstr "Digite o novo endereço de e-mail"
+
+#: account/static/js/profile-templates.js:57
+msgid "Change Password"
+msgstr "Alterar sua Senha"
+
+#: account/static/js/profile-templates.js:60
+msgid "Old password"
+msgstr "Senha Antiga"
+
+#: account/static/js/profile-templates.js:61
+msgid "New password"
+msgstr "Nova senha"
+
+#: account/static/js/profile-templates.js:62
+msgid "Confirm the new password"
+msgstr "Confirme a nova senha"
+
+#: account/static/js/show_profile.js:27
+#: usermedia/static/js/usermedia-helpers.js:229
+msgid "Upload"
+msgstr "Carregar"
+
+#: account/static/js/show_profile.js:199
+msgid "All fields are required!"
+msgstr "Todos os campos são obrigatórios!"
+
+#: account/static/js/show_profile.js:204
+msgid "Please confirm the new password!"
+msgstr "Por favor, confirme a nova senha!"
+
+#: account/static/js/show_profile.js:221
+msgid "The password has been changed."
+msgstr "A senha foi alterada."
+
+#: account/static/js/show_profile.js:231 account/static/js/show_profile.js:237
+msgid "The password could not be changed!"
+msgstr "A senha não pode ser alterada!"
+
+#: account/static/js/show_profile.js:268
+msgid "New email address is required!"
+msgstr "É necessário um novo endereço de e-mail!"
+
+#: account/static/js/show_profile.js:286
+msgid "Confirmation e-mail sent to "
+msgstr "Confirmação de e-mail enviada para"
+
+#: account/static/js/show_profile.js:293
+msgid "The email could not be added!"
+msgstr "O e-mail não pôde ser adicionado!"
+
+#: account/static/js/show_profile.js:320
+msgid "Confirm remove"
+msgstr "Confirmar remover"
+
+#: account/static/js/show_profile.js:321
+msgid "Remove the email address"
+msgstr "Remover o endereço de email"
+
+#: account/static/js/show_profile.js:324
+#: document/static/js/figure-citation-templates.js:66
+#: document/static/js/toolbar/cite.js:152
+#: document/static/js/toolbar/figure.js:70
+#: document/static/js/toolbar/math.js:48
+msgid "Remove"
+msgstr "Remover"
+
+#: account/static/js/show_profile.js:345
+msgid "The email could not be removed!"
+msgstr "O e-mail não pôde ser removido!"
+
+#: account/static/js/show_profile.js:373
+msgid "Confirm set primary"
+msgstr "Confirmar definir principal"
+
+#: account/static/js/show_profile.js:374
+msgid "Set the email address primary"
+msgstr "Defina o principal endereço de e-mail"
+
+#: account/static/js/show_profile.js:399
+msgid "The email could not be set primary!"
+msgstr "O e-mail não pôde ser definido como princial!"
+
+#: bibliography/static/js/bibliography-helpers.js:38
+msgid "Year"
+msgstr "Ano"
+
+#: bibliography/static/js/bibliography-helpers.js:39
+msgid "Year - Year"
+msgstr "Ano - Ano"
+
+#: bibliography/static/js/bibliography-helpers.js:40
+msgid "Month/Year"
+msgstr "Ano/Mês"
+
+#: bibliography/static/js/bibliography-helpers.js:41
+msgid "M/Y - M/Y"
+msgstr "A/M - A/M"
+
+#: bibliography/static/js/bibliography-helpers.js:42
+msgid "Month/Day/Year"
+msgstr "Dia/Mês/Ano"
+
+#: bibliography/static/js/bibliography-helpers.js:43
+msgid "M/D/Y - M/D/Y"
+msgstr "D/M/A - D/M/A"
+
+#: bibliography/static/js/bibliography-helpers.js:541
+msgid "A variable could not be identified. Possible error in bibtex syntax."
+msgstr ""
+"Uma variável não pode ser identificada. Possível erro na sintaxe bibtex."
+
+#: bibliography/static/js/bibliography-helpers.js:695
+msgid "The bibliography has been updated"
+msgstr "A bibliografia foi atualizada"
+
+#: bibliography/static/js/bibliography-helpers.js:698
+#: usermedia/static/js/usermedia-helpers.js:46
+msgid "Some errors are found. Please examine the form."
+msgstr "Foram encontrados alguns erros. Por favor, verifique o formulário."
+
+#: bibliography/static/js/bibliography-helpers.js:753
+#: usermedia/static/js/usermedia-helpers.js:97
+msgid "The categories have been updated"
+msgstr "As categorias foram atualizados"
+
+#: bibliography/static/js/bibliography-helpers.js:787
+#: usermedia/static/js/usermedia-helpers.js:125
+msgid "Edit Categories"
+msgstr "Editar categorias"
+
+#: bibliography/static/js/bibliography-helpers.js:851
+msgid "Register New Source"
+msgstr "Criar Nova Fonte"
+
+#: bibliography/static/js/bibliography-helpers.js:858
+msgid "Edit Source"
+msgstr "Editar Fonte"
+
+#: bibliography/static/js/bibliography-helpers.js:884
+msgid "Select source type"
+msgstr "Selecionar o tipo da fonte"
+
+#: bibliography/static/js/bibliography-helpers.js:904
+msgid "Categories"
+msgstr "Categorias"
+
+#: bibliography/static/js/bibliography-helpers.js:1556
+msgid "The bibliography item(s) have been deleted"
+msgstr "As bibliografias foram excluídas"
+
+#: bibliography/static/js/bibliography-helpers.js:1574
+msgid "Delete the bibliography item(s)"
+msgstr "Excluir as bibliografias"
+
+#: bibliography/static/js/bibliography-helpers.js:1626
+msgid "No bibliography entries could be found in import file."
+msgstr "Nenhum registro bibliográfico foi encontrado no arquivo de importação."
+
+#: bibliography/static/js/bibliography-helpers.js:1701
+#: document/static/js/document-helpers.js:92
+msgid "Import"
+msgstr "Importar"
+
+#: bibliography/static/js/bibliography-helpers.js:1752
+msgid " and others"
+msgstr "e outros"
+
+#: bibliography/static/js/bibliography-helpers.js:1955
+#: document/static/js/toolbar/cite.js:200
+msgid "Search for Bibliography"
+msgstr "Pesquisar Bibliografia"
+
+#: bibliography/static/js/bibliography-statics.js:684
+msgid "Abstract"
+msgstr "Resumo"
+
+#: bibliography/static/js/bibliography-statics.js:686
+msgid "Addendum"
+msgstr "Apêndice"
+
+#: bibliography/static/js/bibliography-statics.js:688
+msgid "Afterword"
+msgstr "Posfácio"
+
+#: bibliography/static/js/bibliography-statics.js:690
+msgid "Annotation"
+msgstr "Anotação"
+
+#: bibliography/static/js/bibliography-statics.js:692
+msgid "Annotations author(s)"
+msgstr "Autor(es) Anotações"
+
+#: bibliography/static/js/bibliography-statics.js:694
+msgid "Author(s)"
+msgstr "Autor(es)"
+
+#: bibliography/static/js/bibliography-statics.js:696
+msgid "Author type"
+msgstr "Tipo de Autor"
+
+#: bibliography/static/js/bibliography-statics.js:698
+msgid "Book author(s)"
+msgstr "Autores do Livro"
+
+#: bibliography/static/js/bibliography-statics.js:700
+msgid "Book pagination"
+msgstr "Paginação do Livro"
+
+#: bibliography/static/js/bibliography-statics.js:702
+msgid "Book subtitle"
+msgstr "Subtítulo do Livro"
+
+#: bibliography/static/js/bibliography-statics.js:704
+msgid "Book title"
+msgstr "Título do Livro"
+
+#: bibliography/static/js/bibliography-statics.js:706
+msgid "Book title annex"
+msgstr "Título do anexo do Livro"
+
+#: bibliography/static/js/bibliography-statics.js:708
+msgid "Chapter or section"
+msgstr "Capítulo ou seção"
+
+#: bibliography/static/js/bibliography-statics.js:710
+msgid "Author(s) of a commentary"
+msgstr "Autor(es) de um comentário"
+
+#: bibliography/static/js/bibliography-statics.js:712
+msgid "Publication date"
+msgstr "Data de publicação"
+
+#: bibliography/static/js/bibliography-statics.js:714
+msgid "Digital Object Identifier"
+msgstr "Digital Object Identifier (DOI)"
+
+#: bibliography/static/js/bibliography-statics.js:716
+msgid "Edition"
+msgstr "Edição"
+
+#: bibliography/static/js/bibliography-statics.js:718
+msgid "Editor(s)"
+msgstr "Editor(es)"
+
+#: bibliography/static/js/bibliography-statics.js:720
+msgid "Secondary editor"
+msgstr "Editor Secundário"
+
+#: bibliography/static/js/bibliography-statics.js:722
+msgid "Secondary editor 2"
+msgstr "Editor Secundária 2"
+
+#: bibliography/static/js/bibliography-statics.js:724
+msgid "Secondary editor 3"
+msgstr "Editor Secundária 3"
+
+#: bibliography/static/js/bibliography-statics.js:726
+msgid "Role of editor(s)"
+msgstr "Papel do(s) editor(es)"
+
+#: bibliography/static/js/bibliography-statics.js:728
+msgid "Role of secondary editor"
+msgstr "Papel do editor secundário"
+
+#: bibliography/static/js/bibliography-statics.js:730
+msgid "Role of secondary editor 2"
+msgstr "Papel do editor secundário 2"
+
+#: bibliography/static/js/bibliography-statics.js:732
+msgid "Role of secondary editor 3"
+msgstr "Papel do editor secundário 3"
+
+#: bibliography/static/js/bibliography-statics.js:734
+msgid "Electronic identifier of an article"
+msgstr "Identificador eletrônico de um artigo"
+
+#: bibliography/static/js/bibliography-statics.js:736
+msgid "Entry subtype"
+msgstr "Entre com o subtitpo"
+
+#: bibliography/static/js/bibliography-statics.js:738
+msgid "Electronic identifier of an online publication"
+msgstr "Identificador eletrônico de uma publicação on-line"
+
+#: bibliography/static/js/bibliography-statics.js:740
+msgid "Additional information to an online publication"
+msgstr "Informações adicionais para uma publicação on-line"
+
+#: bibliography/static/js/bibliography-statics.js:742
+msgid "Eprint identifier type"
+msgstr "Tipo de identificador Eprint"
+
+#: bibliography/static/js/bibliography-statics.js:744
+msgid "Event date"
+msgstr "Data do evento"
+
+#: bibliography/static/js/bibliography-statics.js:746
+msgid "Event title"
+msgstr "Título do evento"
+
+#: bibliography/static/js/bibliography-statics.js:748
+msgid "Local link to the work"
+msgstr "Ligação local para o trabalho"
+
+#: bibliography/static/js/bibliography-statics.js:750
+msgid "Foreword author(s)"
+msgstr "Autor(es) do Prefácio "
+
+#: bibliography/static/js/bibliography-statics.js:752
+msgid "Patent holder(s)"
+msgstr "Donos da Patente"
+
+#: bibliography/static/js/bibliography-statics.js:754
+msgid "Publication notice"
+msgstr "Aviso de publicação"
+
+#: bibliography/static/js/bibliography-statics.js:756
+msgid "Title for indexing"
+msgstr "Título para indexação"
+
+#: bibliography/static/js/bibliography-statics.js:758
+msgid "Institution"
+msgstr "Instituição"
+
+#: bibliography/static/js/bibliography-statics.js:760
+msgid "Author(s) of an introduction to the work"
+msgstr "Autor(es) de uma introdução ao trabalho"
+
+#: bibliography/static/js/bibliography-statics.js:762
+msgid "ISAN"
+msgstr "ISAN"
+
+#: bibliography/static/js/bibliography-statics.js:764
+msgid "ISBN"
+msgstr "ISBN"
+
+#: bibliography/static/js/bibliography-statics.js:766
+msgid "ISMN"
+msgstr "ISMN"
+
+#: bibliography/static/js/bibliography-statics.js:768
+msgid "ISRN"
+msgstr "ISRN"
+
+#: bibliography/static/js/bibliography-statics.js:770
+msgid "ISSN"
+msgstr "ISSN"
+
+#: bibliography/static/js/bibliography-statics.js:772
+msgid "Issue"
+msgstr "Edição"
+
+#: bibliography/static/js/bibliography-statics.js:774
+msgid "Issue subtitle"
+msgstr "Subtítulo da edição"
+
+#: bibliography/static/js/bibliography-statics.js:776
+msgid "Issue title"
+msgstr "Título da edição"
+
+#: bibliography/static/js/bibliography-statics.js:778
+msgid "ISWC"
+msgstr "ISWC"
+
+#: bibliography/static/js/bibliography-statics.js:780
+msgid "Subtitle of publication"
+msgstr "Subtítulo da publicação"
+
+#: bibliography/static/js/bibliography-statics.js:782
+msgid "Title of publication"
+msgstr "Título da publicação"
+
+#: bibliography/static/js/bibliography-statics.js:784
+msgid "Label"
+msgstr "Rótulo"
+
+#: bibliography/static/js/bibliography-statics.js:786
+msgid "Language(s)"
+msgstr "Lingua(s)"
+
+#: bibliography/static/js/bibliography-statics.js:788
+msgid "Library information"
+msgstr "Informações da Biblioteca"
+
+#: bibliography/static/js/bibliography-statics.js:790
+msgid "Location(s) of publication"
+msgstr "Local(s) da publicação"
+
+#: bibliography/static/js/bibliography-statics.js:792
+msgid "Main subtitle"
+msgstr "SubTítulo Principal"
+
+#: bibliography/static/js/bibliography-statics.js:794
+msgid "Maintitle"
+msgstr "Título príncipal"
+
+#: bibliography/static/js/bibliography-statics.js:796
+msgid "Annex to the maintitle"
+msgstr "Anexar ao título principal"
+
+#: bibliography/static/js/bibliography-statics.js:798
+msgid "author name addon"
+msgstr "nome do autor addon"
+
+#: bibliography/static/js/bibliography-statics.js:800
+msgid "Note"
+msgstr "Nota"
+
+#: bibliography/static/js/bibliography-statics.js:802
+msgid "Number of the work in a series"
+msgstr "Número do trabalho em uma série"
+
+#: bibliography/static/js/bibliography-statics.js:804
+msgid "Organization(s)"
+msgstr "Organizações"
+
+#: bibliography/static/js/bibliography-statics.js:806
+msgid "Publication date of the original work"
+msgstr "Data de publicação do trabalho original"
+
+#: bibliography/static/js/bibliography-statics.js:808
+msgid "Language of the original work"
+msgstr "Idioma da obra original"
+
+#: bibliography/static/js/bibliography-statics.js:810
+msgid "Publication location of the original edition"
+msgstr "Localização de publicação da edição original"
+
+#: bibliography/static/js/bibliography-statics.js:812
+msgid "Publisher of the original edition"
+msgstr "Editor da edição original"
+
+#: bibliography/static/js/bibliography-statics.js:814
+msgid "Title of the original work"
+msgstr "Título da obra original"
+
+#: bibliography/static/js/bibliography-statics.js:816
+msgid "Page numbers or page ranges"
+msgstr "Os números de páginas ou intervalos de páginas"
+
+#: bibliography/static/js/bibliography-statics.js:818
+msgid "Total number of pages"
+msgstr "Número total de páginas"
+
+#: bibliography/static/js/bibliography-statics.js:820
+msgid "Pagination"
+msgstr "Paginação"
+
+#: bibliography/static/js/bibliography-statics.js:822
+msgid "Number of a partial volume"
+msgstr "Número de um volume parcial"
+
+#: bibliography/static/js/bibliography-statics.js:824
+msgid "Publisher(s)"
+msgstr "Editor(es)"
+
+#: bibliography/static/js/bibliography-statics.js:826
+msgid "Publication state of the work"
+msgstr "Estado de publicação da obra"
+
+#: bibliography/static/js/bibliography-statics.js:828
+msgid "Title of reprint"
+msgstr "Título de reimpressão"
+
+#: bibliography/static/js/bibliography-statics.js:830
+msgid "Name of series"
+msgstr "Nome da série"
+
+#: bibliography/static/js/bibliography-statics.js:832
+msgid "Abbreviated author(s)"
+msgstr "Autores abreviados"
+
+#: bibliography/static/js/bibliography-statics.js:834
+msgid "Abbreviated editor(s)"
+msgstr "Editores abreviados"
+
+#: bibliography/static/js/bibliography-statics.js:836
+msgid "Shorthand"
+msgstr "Taquigrafia"
+
+#: bibliography/static/js/bibliography-statics.js:838
+msgid "Shorthand intro"
+msgstr "Introdução Taquigráfica"
+
+#: bibliography/static/js/bibliography-statics.js:840
+msgid "Acronym of the publication's title"
+msgstr "Sigla do título da publicação"
+
+#: bibliography/static/js/bibliography-statics.js:842
+msgid "Acronym of the series"
+msgstr "Sigla da série"
+
+#: bibliography/static/js/bibliography-statics.js:844
+msgid "Abridged title"
+msgstr "Título abreviado"
+
+#: bibliography/static/js/bibliography-statics.js:846
+#: book/static/js/book-templates.js:99
+msgid "Subtitle"
+msgstr "Subtítulo"
+
+#: bibliography/static/js/bibliography-statics.js:848
+#: book/static/js/book-templates.js:83 book/static/js/book-templates.js:219
+#: book/static/js/book-templates.js:292 book/static/js/book-templates.js:497
+#: document/static/js/figure-citation-templates.js:28
+#: document/static/js/figure-citation-templates.js:64
+#: document/static/js/figure-citation-templates.js:171
+msgid "Title"
+msgstr "Título"
+
+#: bibliography/static/js/bibliography-statics.js:850
+msgid "Title addon"
+msgstr "Título anexo"
+
+#: bibliography/static/js/bibliography-statics.js:852
+msgid "Translator(s)"
+msgstr "Tradutores"
+
+#: bibliography/static/js/bibliography-statics.js:854
+msgid "Manual type"
+msgstr "Tipo manual"
+
+#: bibliography/static/js/bibliography-statics.js:856
+msgid "URL"
+msgstr "URL"
+
+#: bibliography/static/js/bibliography-statics.js:858
+msgid "Access date"
+msgstr "Data de acesso"
+
+#: bibliography/static/js/bibliography-statics.js:860
+msgid "Location of a conference"
+msgstr "Localização da conferência"
+
+#: bibliography/static/js/bibliography-statics.js:862
+msgid "Version"
+msgstr "Versão"
+
+#: bibliography/static/js/bibliography-statics.js:864
+msgid "Volume"
+msgstr "Volume"
+
+#: bibliography/static/js/bibliography-statics.js:866
+msgid "Total number of volumes"
+msgstr "Número total de volumes"
+
+#: bibliography/static/js/bibliography-statics.js:871
+msgid "Article"
+msgstr "Artigo"
+
+#: bibliography/static/js/bibliography-statics.js:876
+msgid "Book"
+msgstr "Livro"
+
+#: bibliography/static/js/bibliography-statics.js:881
+msgid "Multi-volume book"
+msgstr "Livro multi-volume"
+
+#: bibliography/static/js/bibliography-statics.js:886
+msgid "In book"
+msgstr "No livro"
+
+#: bibliography/static/js/bibliography-statics.js:891
+msgid "Book in book"
+msgstr "Livro no livro"
+
+#: bibliography/static/js/bibliography-statics.js:896
+msgid "Supplemental material in a book"
+msgstr "Material suplementar num livro"
+
+#: bibliography/static/js/bibliography-statics.js:901
+msgid "Booklet"
+msgstr "Folheto"
+
+#: bibliography/static/js/bibliography-statics.js:906
+msgid "Collection"
+msgstr "Coleção"
+
+#: bibliography/static/js/bibliography-statics.js:911
+msgid "Multi-volume collection"
+msgstr "Coleção multi-volume"
+
+#: bibliography/static/js/bibliography-statics.js:916
+msgid "In collection"
+msgstr "Na coleção"
+
+#: bibliography/static/js/bibliography-statics.js:921
+msgid "Supplemental material in a collection"
+msgstr "Material suplementar numa coleção"
+
+#: bibliography/static/js/bibliography-statics.js:926
+msgid "Manual"
+msgstr "Manual"
+
+#: bibliography/static/js/bibliography-statics.js:931
+msgid "Miscellany"
+msgstr "Miscelânea"
+
+#: bibliography/static/js/bibliography-statics.js:936
+msgid "Online resource"
+msgstr "Recurso online"
+
+#: bibliography/static/js/bibliography-statics.js:941
+msgid "Patent"
+msgstr "Patente"
+
+#: bibliography/static/js/bibliography-statics.js:946
+msgid "Periodical"
+msgstr "Periódico"
+
+#: bibliography/static/js/bibliography-statics.js:951
+msgid "Supplemental material in a periodical"
+msgstr "Material suplementar num periódico"
+
+#: bibliography/static/js/bibliography-statics.js:956
+msgid "Proceedings"
+msgstr "Anais"
+
+#: bibliography/static/js/bibliography-statics.js:961
+msgid "Multi-volume proceedings"
+msgstr "Anais multi-volume"
+
+#: bibliography/static/js/bibliography-statics.js:966
+msgid "Article in a proceedings"
+msgstr "Artigo em anais"
+
+#: bibliography/static/js/bibliography-statics.js:971
+msgid "Reference"
+msgstr "Referência"
+
+#: bibliography/static/js/bibliography-statics.js:976
+msgid "Multi-volume work of reference"
+msgstr "Trabalho Multi-volume de referência"
+
+#: bibliography/static/js/bibliography-statics.js:981
+msgid "Article in a work of reference"
+msgstr "Artigo numa obra de referência"
+
+#: bibliography/static/js/bibliography-statics.js:986
+msgid "Report"
+msgstr "Relatório"
+
+#: bibliography/static/js/bibliography-statics.js:991
+msgid "Thesis"
+msgstr "Tese"
+
+#: bibliography/static/js/bibliography-statics.js:996
+msgid "Unpublished"
+msgstr "Inédito"
+
+#: bibliography/static/js/bibliography-statics.js:1001
+msgid "Magazine article"
+msgstr "Artigo de revista"
+
+#: bibliography/static/js/bibliography-statics.js:1006
+msgid "Newspaper article"
+msgstr "Artigo de jornal"
+
+#: bibliography/static/js/bibliography-statics.js:1011
+msgid "Journal article"
+msgstr "Artigo de jornal"
+
+#: bibliography/static/js/bibliography-statics.js:1016
+msgid "Encyclopedia entry"
+msgstr "Entrada de Encyclopedia"
+
+#: bibliography/static/js/bibliography-statics.js:1021
+msgid "Dictionary entry"
+msgstr "Entrada de Dicionário"
+
+#: bibliography/static/js/bibliography-statics.js:1026
+msgid "Blog post"
+msgstr "Postagem de blog"
+
+#: bibliography/static/js/bibliography-statics.js:1031
+msgid "Forum post"
+msgstr "Postagem de fórum"
+
+#: bibliography/static/js/bibliography-template-dialogs.js:43
+msgid "Import a BibTex library"
+msgstr "Importar uma biblioteca BibTex"
+
+#: bibliography/static/js/bibliography-template-dialogs.js:56
+msgid "Required Fields"
+msgstr "Campos obrigatórios"
+
+#: bibliography/static/js/bibliography-template-dialogs.js:57
+msgid "Optional Fields"
+msgstr "Campos opcionais"
+
+#: bibliography/static/js/bibliography-template-dialogs.js:58
+msgid "Extras"
+msgstr "Extras"
+
+#: bibliography/static/js/bibliography-template-dialogs.js:101
+#: bibliography/static/js/bibliography-template-dialogs.js:109
+#: book/static/js/book-helpers.js:229 book/static/js/book-templates.js:41
+#: book/static/js/book-templates.js:317 book/static/js/book-templates.js:354
+#: document/static/js/document-templates.js:26
+msgid "Untitled"
+msgstr "Sem título"
+
+#: bibliography/static/js/bibliography-template-dialogs.js:181
+msgid "First Name"
+msgstr "Primeiro Nome"
+
+#: bibliography/static/js/bibliography-template-dialogs.js:182
+msgid "Last Name"
+msgstr "Sobrenome"
+
+#: book/static/js/book-exporter.js:126
+msgid "Cover"
+msgstr "Capa"
+
+#: book/static/js/book-exporter.js:135
+msgid "Title page"
+msgstr "Folha de rosto"
+
+#: book/static/js/book-exporter.js:271 book/static/js/book-exporter.js.c:325
+#: book/static/js/book-exporter.js:333 document/static/js/exporter.js:1184
+#: document/static/js/exporter.js.c:1231 document/static/js/exporter.js:1239
+msgid "en"
+msgstr "en"
+
+#: book/static/js/book-exporter.js:290
+msgid "Copyright"
+msgstr "Direitos autorais"
+
+#: book/static/js/book-exporter.js:311 document/static/js/exporter.js:1217
+msgid "en-US"
+msgstr "en-US"
+
+#: book/static/js/book-exporter.js:359 book/static/js/book-exporter.js.c:538
+msgid "English"
+msgstr "Inglês"
+
+#: book/static/js/book-helpers.js:69
+msgid "Search for Book Title"
+msgstr "Procurar por Título do Livro"
+
+#: book/static/js/book-helpers.js:92
+msgid "Delete the book(s)?"
+msgstr "Excluir livro(s)?"
+
+#: book/static/js/book-helpers.js:99
+msgid "The book(s) have been deleted"
+msgstr "O(s) livro(s) foram excluídos"
+
+#: book/static/js/book-helpers.js:163
+msgid "Select cover image"
+msgstr "Seleciona a imagem da capa"
+
+#: book/static/js/book-helpers.js:231
+msgid "Edit Chapter"
+msgstr "Editar Capítulo"
+
+#: book/static/js/book-helpers.js:412 document/static/js/importer.js:185
+#: document/static/js/importer.js.c:406
+msgid "Could not save "
+msgstr "Não foi possível salvar"
+
+#: book/static/js/book-helpers.js:432
+msgid "Create Book"
+msgstr "Criar Livro"
+
+#: book/static/js/book-helpers.js:454
+msgid "Edit Book"
+msgstr "Editar Livro"
+
+#: book/static/js/book-helpers.js:649
+#: document/static/js/document-revisions-helpers.js:39
+#: document/static/js/libs/question.mark.js:16
+msgid "Close"
+msgstr "Fechar"
+
+#: book/static/js/book-index.js:64 document/static/js/documentlist-setup.js:84
+msgid "You cannot delete or share: "
+msgstr "Você não pode excluir ou compartilhar:"
+
+#: book/static/js/book-index.js:87 document/static/js/exporter.js:1092
+msgid "Epub export has been initiated."
+msgstr "Foi iniciada a exportação para Epub"
+
+#: book/static/js/book-index.js:98 document/static/js/exporter.js:1023
+msgid "Latex export has been initiated."
+msgstr "Foi iniciada a exportação para Látex "
+
+#: book/static/js/book-index.js:109 document/static/js/exporter.js:1313
+msgid "HTML export has been initiated."
+msgstr "Foi iniciada a Exportação para HTML "
+
+#: book/static/js/book-template-dialogs.js:26
+#: document/static/js/document-accessrights-templates.js:26
+msgid "My contacts"
+msgstr "Meus contatos"
+
+#: book/static/js/book-template-dialogs.js:28
+#: document/static/js/document-accessrights-templates.js:28
+msgid "Contacts"
+msgstr "Contatos"
+
+#: book/static/js/book-template-dialogs.js:41
+#: document/static/js/document-accessrights-templates.js:34
+msgid "My collaborators"
+msgstr "Meus colaboradores"
+
+#: book/static/js/book-template-dialogs.js:44
+#: document/static/js/document-accessrights-templates.js:37
+msgid "Collaborators"
+msgstr "Colaboradores"
+
+#: book/static/js/book-template-dialogs.js:45
+#: document/static/js/document-accessrights-templates.js:38
+msgid "Rights"
+msgstr "Direitos"
+
+#: book/static/js/book-template-dialogs.js:68
+#: document/static/js/document-accessrights-templates.js:70
+msgid "Editor"
+msgstr "Editor"
+
+#: book/static/js/book-template-dialogs.js:73
+#: document/static/js/document-accessrights-templates.js:75
+msgid "Read only"
+msgstr "Somente leitura"
+
+#: book/static/js/book-templates.js:71
+#: document/static/js/document-templates.js:75
+msgid "Import a Fidus file"
+msgstr "Importar um arquivo Fidus"
+
+#: book/static/js/book-templates.js:91 book/static/js/book-templates.js:499
+#: document/static/js/figure-citation-templates.js:29
+#: document/static/js/figure-citation-templates.js:65
+msgid "Author"
+msgstr "Autor"
+
+#: book/static/js/book-templates.js:107
+msgid "Publisher"
+msgstr "Editor"
+
+#: book/static/js/book-templates.js:115
+msgid "Copyright notice"
+msgstr "Nota de direitos autorais"
+
+#: book/static/js/book-templates.js:123
+msgid "Comma separated keywords"
+msgstr "Palavras-chave separadas por vírgula "
+
+#: book/static/js/book-templates.js:123
+msgid "Keywords"
+msgstr "Palavras-chave"
+
+#: book/static/js/book-templates.js:134
+msgid "Citation style"
+msgstr "Estilo de Citação"
+
+#: book/static/js/book-templates.js:149
+msgid "Document style"
+msgstr "Estilo do Documento"
+
+#: book/static/js/book-templates.js:161
+msgid "Paper size"
+msgstr "Tamanho do papel"
+
+#: book/static/js/book-templates.js:166
+msgid "Folio (15 x 12 inch)"
+msgstr "Folio (15 x 12 polegadas)"
+
+#: book/static/js/book-templates.js:167
+msgid "Quarto (12 × 9 inch)"
+msgstr "Quarto (12 × 9 polegadas)"
+
+#: book/static/js/book-templates.js:168
+msgid "Octavo (9 x 6 inch)"
+msgstr "Octavo (9 x 6 polegadas)"
+
+#: book/static/js/book-templates.js:169
+msgid "A5"
+msgstr "A5"
+
+#: book/static/js/book-templates.js:170
+msgid "A4"
+msgstr "A4"
+
+#: book/static/js/book-templates.js:188
+msgid "Cover image"
+msgstr "Imagem da capa"
+
+#: book/static/js/book-templates.js:202
+msgid "Select Image"
+msgstr "Selecionar Imagem"
+
+#: book/static/js/book-templates.js:206
+msgid "Remove Image"
+msgstr "Remover imagem"
+
+#: book/static/js/book-templates.js:218
+#: document/static/js/figure-citation-templates.js:170
+msgid "Image"
+msgstr "Imagem"
+
+#: book/static/js/book-templates.js:243
+#: document/static/js/figure-citation-templates.js:180
+msgid "Upload new image"
+msgstr "Carregar nova imagem"
+
+#: book/static/js/book-templates.js:247
+msgid "Use selected image"
+msgstr "Usar imagem selecionada"
+
+#: book/static/js/book-templates.js:261
+msgid "Basic info"
+msgstr "Informação básica"
+
+#: book/static/js/book-templates.js:262
+msgid "Chapters"
+msgstr "Capítulos"
+
+#: book/static/js/book-templates.js:263
+#: document/static/js/citation-helpers.js:274
+msgid "Bibliography"
+msgstr "Bibliografia"
+
+#: book/static/js/book-templates.js:264
+msgid "Epub"
+msgstr "Epub"
+
+#: book/static/js/book-templates.js:265
+msgid "Print/PDF"
+msgstr "Imprimir / PDF"
+
+#: book/static/js/book-templates.js:279
+msgid "My documents"
+msgstr "Meus documentos"
+
+#: book/static/js/book-templates.js:281
+msgid "Documents"
+msgstr "Documentos"
+
+#: book/static/js/book-templates.js:290
+msgid "Book chapters"
+msgstr "Capítulos de livros"
+
+#: book/static/js/book-templates.js:294
+msgid "Sort"
+msgstr "Ordenar"
+
+#: book/static/js/book-templates.js:314
+msgid "Book part"
+msgstr "Parte do livro"
+
+#: book/static/js/book-templates.js:372
+msgid ""
+"If this chapter starts a part of the book, specify the title of that part "
+"here"
+msgstr ""
+"Se este capítulo inicia uma parte do livro, especificar o título dessa parte "
+"aqui"
+
+#: book/static/js/book-templates.js:372
+msgid "Book part title"
+msgstr "Título parte Livro"
+
+#: book/static/js/book-templates.js:451
+msgid "Cover Image"
+msgstr "Imagem da capa"
+
+#: book/static/js/book-templates.js:471 book/static/js/book-templates.js:491
+#: book/static/js/book-templates.js:526
+msgid "by"
+msgstr "por"
+
+#: book/static/js/book-templates.js:502 book/static/js/book-templates.js:534
+msgid "Published by"
+msgstr "Publicado por"
+
+#: book/static/js/book-templates.js:504 book/static/js/book-templates.js:536
+msgid "Last Updated"
+msgstr "Ultima Atualização"
+
+#: book/static/js/book-templates.js:505 book/static/js/book-templates.js:537
+msgid "Created"
+msgstr "Criado"
+
+#: book/static/js/book-templates.js:506 book/static/js/book-templates.js:538
+msgid "Language"
+msgstr "Idioma "
+
+#: book/static/js/book-templates.js:507 book/static/js/book-templates.js:539
+msgid "Created by"
+msgstr "Criado por"
+
+#: book/static/js/bookaccessrights-helpers.js:31
+msgid "Share your book with others"
+msgstr "Compartilhar o seu livro com os outros"
+
+#: book/static/js/bookaccessrights-helpers.js:176
+#: document/static/js/document-accessrights-helpers.js:185
+msgid "Access rights have been saved"
+msgstr "Os direitos de acesso foram salvos"
+
+#: document/static/js/chat-helpers.js:122
+msgid "Send a message..."
+msgstr "Envie uma mensagem ..."
+
+#: document/static/js/comment-templates.js:71
+#: document/static/js/comment-templates.js:81
+#: document/static/js/comment-templates.js:102
+#: document/static/js/comment-templates.js:116
+msgid "Edit"
+msgstr "Editar"
+
+#: document/static/js/document-accessrights-helpers.js:31
+msgid "Share your document with others"
+msgstr "Compartilhe seu documento com os outros"
+
+#: document/static/js/document-accessrights-helpers.js:84
+msgid "Add new contact"
+msgstr "Adicionar novo contato"
+
+#: document/static/js/document-helpers.js:55
+msgid "Delete the document(s)?"
+msgstr "Excluir o(s) documento(s)?"
+
+#: document/static/js/document-helpers.js:63
+msgid "The document(s) have been deleted"
+msgstr "Documentos excluídos"
+
+#: document/static/js/document-helpers.js:168
+msgid "Search for Document"
+msgstr "Pesquisar por Documento"
+
+#: document/static/js/document-revisions-helpers.js:145
+msgid "Revision deleted"
+msgstr "Revisão excluída"
+
+#: document/static/js/document-revisions-helpers.js:148
+msgid "Could not delete revision."
+msgstr "Não foi possível excluir revisão."
+
+#: document/static/js/document-revisions-templates.js:23
+msgid "Saved revisions of"
+msgstr "Gravadas revisões de"
+
+#: document/static/js/document-revisions-templates.js:26
+msgid "Time"
+msgstr "Tempo"
+
+#: document/static/js/document-revisions-templates.js:27
+msgid "Description"
+msgstr "Descrição"
+
+#: document/static/js/document-revisions-templates.js:28
+msgid "Recreate"
+msgstr "Recriar"
+
+#: document/static/js/document-revisions-templates.js:29
+msgid "Download"
+msgstr "Baixar"
+
+#: document/static/js/document-revisions-templates.js:58
+msgid "Do you really want to delete the revision?"
+msgstr "Você realmente quer apagar a revisão?"
+
+#: document/static/js/editor-helpers.js:63
+msgid "The subtitle of the document"
+msgstr "O subtítulo do documento"
+
+#: document/static/js/editor-helpers.js:66
+msgid "The authors of the document (comma-separated)"
+msgstr "Os autores do documento (separados por vírgula)"
+
+#: document/static/js/editor-helpers.js:69
+msgid "The abstract of the document"
+msgstr "O resumo do documento"
+
+#: document/static/js/editor-helpers.js:72
+msgid "The keywords related to the document (comma-separated)"
+msgstr "As palavras-chave relacionadas com o documento (separados por vírgula)"
+
+#: document/static/js/editor-helpers.js:384
+msgid "Untitled Document"
+msgstr "Documento sem título"
+
+#: document/static/js/editor-helpers.js:574
+msgid "Title..."
+msgstr "Título ..."
+
+#: document/static/js/editor-helpers.js:580
+msgid "Contents..."
+msgstr "Conteúdo ..."
+
+#: document/static/js/editor-helpers.js:586
+msgid "Subtitle..."
+msgstr "Subtítulo ..."
+
+#: document/static/js/editor-helpers.js:592
+msgid "Abstract..."
+msgstr "Abstrac/Resumo ..."
+
+#: document/static/js/editor-helpers.js:598
+msgid "Author(s)..."
+msgstr "Autor (s) ..."
+
+#: document/static/js/editor-helpers.js:604
+msgid "Keywords..."
+msgstr "Palavras-chave ..."
+
+#: document/static/js/export-templates.js:453
+msgid "Revision description"
+msgstr "Descrição da Revisão"
+
+#: document/static/js/export-templates.js:453
+msgid "Description (optional)"
+msgstr "Descrição (opcional)"
+
+#: document/static/js/exporter.js:61
+msgid "Save"
+msgstr "Salvar"
+
+#: document/static/js/exporter.js:76
+msgid "Revision saved"
+msgstr "Revisão salva"
+
+#: document/static/js/exporter.js:79
+msgid "Revision could not be saved."
+msgstr "Revisão não pôde ser salva"
+
+#: document/static/js/exporter.js:842
+msgid "Copy of "
+msgstr "Cópia de"
+
+#: document/static/js/exporter.js:939
+msgid "File export has been initiated."
+msgstr "Foi iniciada a exportação"
+
+#: document/static/js/figure-citation-templates.js:23
+msgid "Configure Citation"
+msgstr "Configurar Citação"
+
+#: document/static/js/figure-citation-templates.js:25
+msgid "My sources"
+msgstr "Minhas fontes"
+
+#: document/static/js/figure-citation-templates.js:38
+msgid "Citation format"
+msgstr "Formato da Citação"
+
+#: document/static/js/figure-citation-templates.js:42
+#: document/static/js/figure-citation-templates.js:56
+msgid "Author (1998)"
+msgstr "Autor (1998)"
+
+#: document/static/js/figure-citation-templates.js:44
+#: document/static/js/figure-citation-templates.js:51
+msgid "(Author, 1998)"
+msgstr "(Autor, 1998)"
+
+#: document/static/js/figure-citation-templates.js:112
+msgid "Page"
+msgstr "Página"
+
+#: document/static/js/figure-citation-templates.js:116
+msgid "Text before"
+msgstr "Texto antes"
+
+#: document/static/js/figure-citation-templates.js:128
+msgid "Insert formula"
+msgstr "Inserir fórmula"
+
+#: document/static/js/figure-citation-templates.js:130
+#: document/static/js/figure-citation-templates.js:184
+msgid "Insert image"
+msgstr "Inserir imagem"
+
+#: document/static/js/figure-citation-templates.js:143
+msgid "None"
+msgstr "Nenhum"
+
+#: document/static/js/figure-citation-templates.js:146
+msgid "Figure"
+msgstr "Figura"
+
+#: document/static/js/figure-citation-templates.js:149
+msgid "Photo"
+msgstr "Foto"
+
+#: document/static/js/figure-citation-templates.js:152
+msgid "Table"
+msgstr "Tabela"
+
+#: document/static/js/figure-citation-templates.js:161
+msgid "Insert caption"
+msgstr "Inserir legenda"
+
+#: document/static/js/importer.js:58
+msgid ""
+"The uploaded file does not appear to be of the version used on this server: "
+msgstr "O arquivo enviado não parece ser da versão utilizada neste servidor:"
+
+#: document/static/js/importer.js:98
+msgid "The uploaded file does not appear to be a Fidus Writer file."
+msgstr "O arquivo enviado não parece ser um arquivo Fidus."
+
+#: document/static/js/importer.js:370
+msgid " successfully imported."
+msgstr "importados com sucesso."
+
+#: document/static/js/server-communications.js:128
+msgid ""
+"Sorry, but the connection to the server has been lost. Please reload to "
+"ensure that no date is being lost."
+msgstr ""
+"Desculpe, mas a conexão com o servidor foi perdida. Recarregue para garantir "
+"que nenhuma data está sendo perdida."
+
+#: document/static/js/server-communications.js:135
+msgid "Ok"
+msgstr "Ok"
+
+#: document/static/js/server-communications.js:147
+msgid "No connection to server"
+msgstr "Sem conexão com o servidor"
+
+#: document/static/js/tools-helpers.js:57
+msgid "Word counter"
+msgstr "Contador de palavras"
+
+#: document/static/js/tools-templates.js:26
+msgid "Number of"
+msgstr "Número de"
+
+#: document/static/js/tools-templates.js:29
+msgid "Document"
+msgstr "Documento"
+
+#: document/static/js/tools-templates.js:34
+msgid "Pages"
+msgstr "Páginas"
+
+#: document/static/js/tools-templates.js:38
+msgid "Words"
+msgstr "Palavras"
+
+#: document/static/js/tools-templates.js:42
+msgid "Characters without blanks"
+msgstr "Personagens sem espaços em branco"
+
+#: document/static/js/tools-templates.js:46
+msgid "Characters with blanks"
+msgstr "Personagens com espaços em branco"
+
+#: document/static/js/tracking-helpers.js:56
+msgid "Unknown"
+msgstr "Desconhecido"
+
+#: document/static/js/tracking-templates.js:29
+msgid "Accept Change"
+msgstr "Aceitar Alterações"
+
+#: document/static/js/tracking-templates.js:30
+msgid "Reject Change"
+msgstr "Rejeitar alteração"
+
+#: document/static/js/libs/question.mark.templates.js:21
+msgid "Keyboard Shortcuts"
+msgstr "Atalhos Do Teclado"
+
+#: document/static/js/libs/question.mark.templates.js:26
+msgid "Print"
+msgstr "Impressão"
+
+#: document/static/js/libs/question.mark.templates.js:30
+msgid "Save revision"
+msgstr "Salvar revisão"
+
+#: document/static/js/libs/question.mark.templates.js:34
+msgid "Show keyboard shortcuts"
+msgstr "Atalhos de teclado Mostrar"
+
+#: document/static/js/libs/question.mark.templates.js:40
+msgid "Bold"
+msgstr "Negrito"
+
+#: document/static/js/libs/question.mark.templates.js:44
+msgid "Italics"
+msgstr "Itálico"
+
+#: document/static/js/libs/question.mark.templates.js:48
+msgid "Undo"
+msgstr "Desfazer"
+
+#: document/static/js/libs/question.mark.templates.js:52
+msgid "Redo"
+msgstr "Refazer"
+
+#: document/static/js/toolbar/cite.js:73
+msgid "Please select at least one citation source!"
+msgstr "Por favor, selecione pelo menos uma fonte de citação!"
+
+#: document/static/js/toolbar/cite.js:143
+msgid "Register new source"
+msgstr "Registrar nova fonte"
+
+#: document/static/js/toolbar/figure.js:25
+#: document/static/js/toolbar/link.js:46 document/static/js/toolbar/math.js:26
+msgid "Insert"
+msgstr "Insert"
+
+#: document/static/js/toolbar/figure.js:53
+#: document/static/js/toolbar/math.js:46
+#: usermedia/static/js/usermedia-helpers.js:236
+msgid "Update"
+msgstr "Atualizar"
+
+#: document/static/js/toolbar/figure.js:211
+msgid "Enter latex math or insert an image"
+msgstr "Entre com equação Latex de matemática ou inserir uma imagem"
+
+#: document/static/js/toolbar/figure.js:326
+msgid "Images"
+msgstr "Imagens"
+
+#: document/static/js/toolbar/link.js:87
+msgid "Link"
+msgstr "Link"
+
+#: document/static/js/toolbar/link.js:88
+msgid "Link text (optional)"
+msgstr "O texto do link (opcional)"
+
+#: document/static/js/toolbar/math.js:115
+msgid "Latex equation"
+msgstr "Equação Latex"
+
+#: usermedia/static/js/usermedia-helpers.js:41
+msgid "The image has been uploaded"
+msgstr "A imagem foi carregada"
+
+#: usermedia/static/js/usermedia-helpers.js:230
+msgid "Upload image"
+msgstr "Enviar imagem"
+
+#: usermedia/static/js/usermedia-helpers.js:237
+msgid "Update image"
+msgstr "Atualizar imagem"
+
+#: usermedia/static/js/usermedia-helpers.js:261
+msgid "Select categories"
+msgstr "Escolha as categorias"
+
+#: usermedia/static/js/usermedia-helpers.js:338
+msgid "The image(s) have been deleted"
+msgstr "As imagens foram excluídas"
+
+#: usermedia/static/js/usermedia-helpers.js:352
+msgid "Delete the image(s)"
+msgstr "Apagar a imagens"
+
+#: usermedia/static/js/usermedia-helpers.js:570
+msgid "Search for Filename"
+msgstr "Procure por nome do arquívo"
+
+#: usermedia/static/js/usermedia-template-dialogs.js:84
+msgid "Insert a title"
+msgstr "Inserir um título"

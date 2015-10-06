@@ -203,7 +203,11 @@ jQuery(document).bind('documentDataLoaded', function() {
                 id: theUser.id,
                 name: theUser.name
             },
-            plugins: []
+            plugins: [],
+            hostMethods: {
+                logError: function () {},
+                notifyChange: function () {}
+            }
         }).startTracking();
         document.querySelector('#document-editable').removeAttribute(
             'contenteditable');

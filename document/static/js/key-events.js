@@ -146,12 +146,12 @@
                 return true;
             }
             break;
-        case 32:
+        /*case 32:
             if (keyEvents.space(evt, editorContainer)) {
                 evt.preventDefault();
                 return true;
             }
-            break;
+            break;*/
         case 37:
             if (keyEvents.arrowLeft(evt, editorContainer)) {
                 evt.preventDefault();

@@ -539,7 +539,6 @@ class MovementInMultiChildParagraph(CaretTestCase):
         # movement_between_link_link,
     )
 
-
 class InsertionOfLink(LiveTornadoTestCase, Manipulator):
     __metaclass__ = DataCasesToTestMethodsMeta
     linkText = 'all the ipsums'
@@ -621,7 +620,6 @@ class InsertionOfLink(LiveTornadoTestCase, Manipulator):
 
         (DRIVER.find_element_by_xpath('//button/span[text()="Insert"]')
                .click())
-
         self.assertEqual(
             str(case.expectedContents),
             self.getDocumentContents()

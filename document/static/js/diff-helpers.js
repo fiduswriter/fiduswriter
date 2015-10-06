@@ -23,72 +23,75 @@
         /** Sets up communicating with server (retrieving document, saving, collaboration, etc.). TODO
          * @namespace diffHelpers
          */
-        diffHelpers = {}, domDiff = new diffDOM(); // no debug mode for diffDOM
+        diffHelpers = {},
+        domDiff = new diffDOM({
+          valueDiffing: true,
+          textDiff: function (node, currentValue, expectedValue, newValue) {
+              // custom text merging to use diff_match_patch.js
+              var selection = rangy.getSelection(),
+                  range,
+                  containsSelection = false,
+                  finalValue, selectionStartOffset, selectionEndOffset;
+
+              if (selection.rangeCount > 0) {
+                  range = selection.getRangeAt(0);
+              }
+
+              if (range && range.startContainer == node) {
+                  selectionStartOffset = range.startOffset;
+                  currentValue = currentValue.substring(0, range.startOffset) + '\0' + currentValue.substring(range.startOffset);
+              }
+              if (range && range.endContainer == node) {
+                  selectionEndOffset = range.endOffset;
+                  currentValue = currentValue.substring(0, range.endOffset + 1) + '\0' + currentValue.substring(range.endOffset + 1);
+              }
+              if (currentValue != expectedValue) {
+                  console.log('UNEXPECTED VALUE');
+                  console.log([currentValue, expectedValue]);
+                  finalValue = dmp.patch_apply(dmp.patch_make(expectedValue, newValue), currentValue)[0]
+
+              } else {
+                  finalValue = newValue;
+              }
+              if (finalValue.indexOf('\0') != -1) {
+                  if (selectionStartOffset != undefined) {
+                      selectionStartOffset = finalValue.indexOf('\0');
+                      finalValue = finalValue.replace('\0', '');
+                  }
+                  if (finalValue.indexOf('\0') != -1) {
+                      if (selectionEndOffset != undefined) {
+                          selectionEndOffset = finalValue.indexOf('\0');
+                      }
+                      finalValue = finalValue.replace(/\0/g, '');
+                  }
+
+              }
+
+              node.data = finalValue;
+
+              if (range && (selectionStartOffset != undefined || selectionEndOffset != undefined)) {
+
+                  if (selectionStartOffset) {
+                      if (finalValue.length <= selectionStartOffset) {
+                          selectionStartOffset = finalValue.length - 1;
+                      }
+                      range.setStart(node, selectionStartOffset);
+                  }
+                  if (selectionEndOffset) {
+                      if (finalValue.length <= selectionEndOffset) {
+                          selectionEndOffset = finalValue.length - 1;
+                      }
+                      range.setEnd(node, selectionEndOffset);
+                  }
+                  selection.removeAllRanges();
+                  selection.addRange(range);
+              }
+
+          },
+
+        });
 
     var dmp = new diff_match_patch();
-
-    domDiff.textDiff = function (node, currentValue, expectedValue, newValue) {
-        var selection = rangy.getSelection(),
-            range,
-            containsSelection = false,
-            finalValue, selectionStartOffset, selectionEndOffset;
-
-        if (selection.rangeCount > 0) {
-            range = selection.getRangeAt(0);
-        }
-
-        if (range && range.startContainer == node) {
-            selectionStartOffset = range.startOffset;
-            currentValue = currentValue.substring(0, range.startOffset) + '\0' + currentValue.substring(range.startOffset);
-        }
-        if (range && range.endContainer == node) {
-            selectionEndOffset = range.endOffset;
-            currentValue = currentValue.substring(0, range.endOffset + 1) + '\0' + currentValue.substring(range.endOffset + 1);
-        }
-        if (currentValue != expectedValue) {
-            console.log('UNEXPECTED VALUE');
-            console.log([currentValue, expectedValue]);
-            finalValue = dmp.patch_apply(dmp.patch_make(expectedValue, newValue), currentValue)[0]
-
-        } else {
-            finalValue = newValue;
-        }
-        if (finalValue.indexOf('\0') != -1) {
-            if (selectionStartOffset != undefined) {
-                selectionStartOffset = finalValue.indexOf('\0');
-                finalValue = finalValue.replace('\0', '');
-            }
-            if (finalValue.indexOf('\0') != -1) {
-                if (selectionEndOffset != undefined) {
-                    selectionEndOffset = finalValue.indexOf('\0');
-                }
-                finalValue = finalValue.replace(/\0/g, '');
-            }
-
-        }
-
-        node.data = finalValue;
-
-        if (range && (selectionStartOffset != undefined || selectionEndOffset != undefined)) {
-
-            if (selectionStartOffset) {
-                if (finalValue.length <= selectionStartOffset) {
-                    selectionStartOffset = finalValue.length - 1;
-                }
-                range.setStart(node, selectionStartOffset);
-            }
-            if (selectionEndOffset) {
-                if (finalValue.length <= selectionEndOffset) {
-                    selectionEndOffset = finalValue.length - 1;
-                }
-                range.setEnd(node, selectionEndOffset);
-            }
-            selection.removeAllRanges();
-            selection.addRange(range);
-        }
-
-    };
-
 
     diffHelpers.setup = function () {
         theDocumentValues.newDiffs = [];

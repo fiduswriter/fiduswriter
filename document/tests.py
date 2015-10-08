@@ -223,7 +223,6 @@ class CaretPositionTest(LiveTornadoTestCase, Manipulator):
         self.setCaret(caretCase.givenCaret)
         (DRIVER.find_element_by_id('document-contents')
                .send_keys(caretCase.givenKeys))
-
         # grab caret from browser and compare in python,
         # to get more informative failure messages
         self.assertEqual(
@@ -509,8 +508,8 @@ class MovementInSingleChildParagraph(CaretPositionTest):
 
     # each case will be passed into self.runCheck
     cases = chain(
-        # movement_in_text,
-        movement_in_bold,
+        #movement_in_text,
+        #movement_in_bold,
         # movement_in_italic,
         # movement_in_link,
     )
@@ -567,9 +566,9 @@ class InsertionOfLink(LiveTornadoTestCase, Manipulator):
             ),
         }),
         InsertionTestCase(**{
-            'name': 'atStartOfParagraph',
-            'description': 'caret within BoldText inserts Link between two'
-                           ' BoldTexts',
+            'name': 'linkInsideBold',
+            'description': 'caret within Bold inserts Link between two'
+                           ' Bold',
             'givenContents': Contents(Paragraph(BoldText(SHORT_LOREM))),
             'givenCaret': Caret(
                 parent='#document-contents > :eq(0) > :eq(0)',
@@ -578,9 +577,11 @@ class InsertionOfLink(LiveTornadoTestCase, Manipulator):
             ),
             'expectedContents': Contents(
                 Paragraph(
-                    BoldText('Lorem'),
-                    expectedLink,
-                    BoldText(SHORT_LOREM[len('Lorem'):])
+                    Bold(
+                        Text('Lorem'),
+                        expectedLink,
+                        Text(SHORT_LOREM[len('Lorem'):])
+                    ),
                 )
             ),
             'expectedCaret': Caret(

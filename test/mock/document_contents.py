@@ -27,9 +27,9 @@ class Contents(list):
     template = ''.join([
         '{"nn":"DIV",',
             '"a":[',
-                '["contenteditable","true"],',
+                '["id","document-contents"],',
                 '["class","editable user-contents"],',
-                '["id","document-contents"]',
+                '["contenteditable","true"]',
             '],',
             '"c":[%s]',
         '}',
@@ -239,13 +239,25 @@ class Text(FlatInlineContent):
         self.contents = t
 
 
+class Bold(InlineContent, ListOfInlineContent):
+    """
+    Bold is [InlineContent]
+    interpretation: inline content formatted as bold text
+    """
+    template = '{"nn":"B","c":[%s]}'
+
+    def __str__(self):
+        return self.template % ','.join([
+            str(ic)
+            for ic in self
+        ])
+
 class BoldText(Text):
     """
     BoldText is String
     interpretation: string formatted as bold text
     """
     template = '{"nn":"B","c":[{"t":"%(contents)s"}]}'
-
 
 class ItalicText(Text):
     """

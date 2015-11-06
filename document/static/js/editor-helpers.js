@@ -45,12 +45,16 @@
      */
 
     editorHelpers.checkViewable = function(node) {
-    var windowTop = jQuery(window).scrollTop() + 300,
+        if (node.nodeType === 3) {
+            node = node.parentNode;
+        }
+        
+        var windowTop = jQuery(window).scrollTop() + 300,
         windowBottom = windowTop + jQuery(window).height(),
         nodeTop = jQuery(node).offset().top,
         nodeBottom = nodeTop + jQuery(node).height();
 
-    return ((nodeBottom <= windowBottom) && (nodeTop >= windowTop));
+        return ((nodeBottom <= windowBottom) && (nodeTop >= windowTop));
     }
 
     document.addEventListener('layoutFlowFinished', editorHelpers.printReady, false);

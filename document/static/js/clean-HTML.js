@@ -40,7 +40,6 @@ var cleanHTML = function(element) {
 
     var cleanContainerElements = { // Elements with sepcific cleanign instructions
         'A': function(node) {
-            console.log(node);
             window.lastLink = node;
             if (node.classList.contains('sdfootnoteanc')) {
                 /* This is a wordprocessor footnote. Create a new footnote
@@ -136,9 +135,11 @@ var cleanHTML = function(element) {
         },
         'P': function(node) {
             var newNode, referenceNode, footnoteSymbolNode, footnoteID, topBlockNode;
-            if (node.classList.contains('sdfootnote')) {
+            if (node.classList.contains('sdfootnote') | jQuery(node).find('a.sdfootnotesym').length > 0) {
                 // This is a word processor footnote.
-                // As we are going through the cleaning from the back to the front, we find the footnote contents before the reference to it.
+                // It should have the 'sdfootnote' class, but sometimes, when coming from LibreOffice, it is missing.
+                // As we are going through the cleaning from the back to the front,
+                // we find the footnote contents before the reference to it.
                 footnoteSymbolNode = jQuery(node).find('a.sdfootnotesym')[0];
                 if (footnoteSymbolNode) {
                     footnoteID = footnoteSymbolNode.textContent;
@@ -430,7 +431,6 @@ var cleanHTML = function(element) {
         var node = this.element,
             blockNode = false,
             newNode, childNode, childNodes = [], figures, textBlockElements, i;
-
         node.classList.add('clean-container');
         node.innerHTML = node.innerHTML.replace(/\n/g,' ').trim();
         node.innerHTML = node.innerHTML.replace(/&nbsp;/g, ' ');

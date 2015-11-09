@@ -4,16 +4,16 @@
         defaults, pageElement,
         editorEscapes = {};
 
-      
+
       editorEscapes.stylesheet = document.createElement('style');
-        
+
       editorEscapes.initiate = function () {
-        // Apply this alternative layout in case CSS Regions are not present 
-        var pageElement = document.getElementById('flow');  
+        // Apply this alternative layout in case CSS Regions are not present
+        var pageElement = document.getElementById('flow');
 
 
         document.head.appendChild(editorEscapes.stylesheet);
-        
+
         editorEscapes.reset();
 
         var observerOptions = {
@@ -30,13 +30,26 @@
         });
         observer.observe(pageElement, observerOptions);
     };
-    
-    
+
+
     editorEscapes.reset = function () {
-        
-        var pageElement = document.getElementById('flow'), 
+
+        var pageElement = document.getElementById('flow'),
             escapeNodes = pageElement.querySelectorAll('.pagination-footnote > *'),
-            styleText='', i;
+            styleText='',
+            escapeIdNumber = 0,
+            i;
+
+        // Make sure all footnotes have their own ID.
+        for (i = 0; i < escapeNodes.length; i++) {
+            if (!escapeNodes[i].parentNode.id) {
+                while (document.getElementById('pagination-footnote-'+escapeIdNumber)) {
+                  escapeIdNumber++;
+                }
+                escapeNodes[i].parentNode.id = 'pagination-footnote-'+escapeIdNumber;
+            }
+
+        }
 
         editorEscapes.stylesheet.textContent = '';
         if (escapeNodes.length > 1) {
@@ -51,7 +64,7 @@
             }
         }
     };
-    
+
     exports.editorEscapes = editorEscapes;
 
-}).call(this);    
+}).call(this);

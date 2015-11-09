@@ -36,9 +36,38 @@ var cleanHTML = function(element) {
         'FIGURE': true,
         'BLOCKQUOTE': true,
         'CODE': true,
-    };
+    },
+    flattenList = function (listNode, listItems) {
+        var listItems = listItems || [], newLiElement, i, j;
+        for (i=0; i < listNode.childNodes.length; i++) {
+            if (listNode.childNodes[i].nodeName === 'LI') {
+                while(listNode.childNodes[i].firstChild.textContent.trim().length === 0) {
+                    listNode.childNodes[i].removeChild(listNode.childNodes[i].firstChild);
+                }
+                if (listNode.childNodes[i].firstChild) {
+                    if (topBlockElements[listNode.childNodes[i].firstChild.nodeName]) {
+                        // We have blocks inside the list. We turn these into individual list items.
+                        for (j=0; j < listNode.childNodes[i].childNodes.length; j++) {
+                            if (['OL', 'UL'].indexOf(listNode.childNodes[i].childNodes[j].nodeName) !== -1 ) {
+                                listItems = flattenList(listNode.childNodes[i].childNodes[j], listItems);
+                            } else {
+                                newLiElement = document.createElement('li');
+                                while (listNode.childNodes[i].childNodes[j].firstChild) {
+                                    newLiElement.appendChild(listNode.childNodes[i].childNodes[j].firstChild);
+                                };
+                                listItems.push(newLiElement);
+                            }
 
-    var cleanContainerElements = { // Elements with sepcific cleanign instructions
+                        }
+                    } else {
+                        listItems.push(listNode.childNodes[i]);
+                    }
+                }
+            }
+        }
+        return listItems;
+    },
+    cleanContainerElements = { // Elements with specific cleaning instructions
         'A': function(node) {
             window.lastLink = node;
             if (node.classList.contains('sdfootnoteanc')) {
@@ -143,7 +172,7 @@ var cleanHTML = function(element) {
                 footnoteSymbolNode = jQuery(node).find('a.sdfootnotesym')[0];
                 if (footnoteSymbolNode) {
                     footnoteID = footnoteSymbolNode.textContent;
-                    node.removeChild(footnoteSymbolNode);
+                    footnoteSymbolNode.parentNode.removeChild(footnoteSymbolNode);
 
                     // We move the contents of this node to the reference node.
                     referenceNode = jQuery(node).closest('.clean-container').find('a[name=sdfootnote' + footnoteID + 'anc]')[0];
@@ -268,7 +297,7 @@ var cleanHTML = function(element) {
             cleanContainerElements.DIV(node);
         },
         'UL': function(node) {
-            var newNode, topBlockNode;
+            var newNode, topBlockNode, listItems;
             // Make sure that the UL is the topmost node and that all direct children are LI nodes
             newNode = document.createElement('UL');
             topBlockNode = node;
@@ -276,19 +305,20 @@ var cleanHTML = function(element) {
             while (topBlockNode.parentNode.parentNode) {
                 topBlockNode = topBlockNode.parentNode;
             }
+
             topBlockNode.parentNode.insertBefore(newNode, topBlockNode);
-            while (node.firstChild) {
-                if (node.firstChild.nodeName === 'LI') {
-                    newNode.appendChild(node.firstChild);
-                } else {
-                    node.removeChild(node.firstChild);
-                }
+
+            listItems = flattenList(node);
+
+            while (listItems.length > 0) {
+                newNode.appendChild(listItems.pop());
             }
+
             node.parentNode.removeChild(node);
             that.loop(newNode);
         },
         'OL': function(node) {
-            var newNode, topBlockNode;
+            var newNode, topBlockNode, listItems;
             // Make sure that the UL is the topmost node and that all direct children are LI nodes
             newNode = document.createElement('OL');
             topBlockNode = node;
@@ -297,13 +327,13 @@ var cleanHTML = function(element) {
                 topBlockNode = topBlockNode.parentNode;
             }
             topBlockNode.parentNode.insertBefore(newNode, topBlockNode);
-            while (node.firstChild) {
-                if (node.firstChild.nodeName === 'LI') {
-                    newNode.appendChild(node.firstChild);
-                } else {
-                    node.removeChild(node.firstChild);
-                }
+
+            listItems = flattenList(node);
+
+            while (listItems.length > 0) {
+                newNode.appendChild(listItems.pop());
             }
+
             node.parentNode.removeChild(node);
             that.loop(newNode);
         },
@@ -313,7 +343,16 @@ var cleanHTML = function(element) {
                 newNode = document.createElement('li');
                 node.parentNode.insertBefore(newNode, node);
                 while (node.firstChild) {
-                    newNode.appendChild(node.firstChild);
+                    /*if (topBlockElements[node.firstChild.nodeName]) {
+                        // We have found a P or another block element inside a LI. We take the children of this element
+                        // and make them invididual points in the list rather than the element itself.
+                        while (node.firstChild.firstChild) {
+                            newNode.appendChild(node.firstChild.firstChild);
+                        }
+                        node.removeChild(node.firstChild);
+                    } else {*/
+                        newNode.appendChild(node.firstChild);
+                    //}
                 }
                 that.loop(newNode);
             }
@@ -390,6 +429,11 @@ var cleanHTML = function(element) {
             node.parentNode.removeChild(node);
             that.loop(newNode);
         },
+        'TABLE': function(node) {
+            // We do not support tables, so remove them.
+
+            node.parentNode.removeChild(node);
+        }
     };
 
     this.cleanChildNode = function(node) {
@@ -431,6 +475,7 @@ var cleanHTML = function(element) {
         var node = this.element,
             blockNode = false,
             newNode, childNode, childNodes = [], figures, textBlockElements, i;
+//        console.log(node.innerHTML);
         node.classList.add('clean-container');
         node.innerHTML = node.innerHTML.replace(/\n/g,' ').trim();
         node.innerHTML = node.innerHTML.replace(/&nbsp;/g, ' ');

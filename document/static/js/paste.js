@@ -29,6 +29,7 @@
     paste.addPasteContents = function(pasteElement, footnotes) {
         var selection = rangy.getSelection(),
             range = selection.getRangeAt(0),
+            scrollIntoView = false,
             startPaste, // the first node to be pasted
             endPaste, // The last node to be pasted.
             newNode;
@@ -46,7 +47,10 @@
         endPaste = pasteElement.lastChild;
 
         while (pasteElement.firstChild) {
-            manualEdits.insert(pasteElement.firstChild, range);
+            if (pasteElement.childNodes.length === 1) {
+                scrollIntoView = true;
+            }
+            manualEdits.insert(pasteElement.firstChild, range, scrollIntoView);
         }
         if (startPaste.nodeName==='FIGURE' && ((!startPaste.previousSibling) || editorHelpers.TEXT_BLOCK_ELEMENTS.indexOf(startPaste.previousSibling.nodeName) === -1)) {
             // If there is no text block node before a figure at the start of the paste, add it now.
@@ -67,6 +71,8 @@
         if (footnotes) {
             editorEscapes.reset();
         }
+
+
         return true;
     };
 

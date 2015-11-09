@@ -45,8 +45,10 @@
   * @param node Node to be inserted
   * @param range Current selection range
   */
-    manualEdits.insert = function(node, range) {
-        var tmpNextBlockNode = false, thisBlockNode, selection;
+    manualEdits.insert = function(node, range, scrollIntoView) {
+        var tmpNextBlockNode = false,
+        scrollIntoView = typeof scrollIntoView !== 'undefined' ? scrollIntoView : true,
+        thisBlockNode, selection;
 
         if (node.nodeName in topBlockElements && (range.startContainer.nodeName === '#text' || !range.startContainer.classList.contains('editable'))) {
             thisBlockNode = jQuery(range.startContainer).closest('div, p, h1, h2, h3, ul, ol, figure, blockquote, code')[0];
@@ -66,7 +68,7 @@
         }
         selection = rangy.getSelection();
         selection.setSingleRange(range);
-        if (!editorHelpers.checkViewable(node)) {
+        if (scrollIntoView && (!editorHelpers.checkViewable(node))) {
             if (node.nextSibling && node.nextSibling.scrollIntoView) {
                 jQuery('html, body').animate({
                     scrollTop: jQuery(node.nextSibling).offset().top - 300

@@ -474,5 +474,10 @@ body {counter-reset: pagination-footnote pagination-footnote-reference;}
 }
 
 .ProseMirror {
-  border: 1px solid white !important;
+  border: none !important;
+}
+
+.ProseMirror-content {
+  padding: 0 !important;
+  line-height: inherit !important;
 }

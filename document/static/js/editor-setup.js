@@ -25,6 +25,8 @@ jQuery(document).ready(function() {
         citationStyleMenu = document.getElementById("citationstyle-list"),
         newMenuItem, i;
 
+    editorHelpers.init();
+
     // Enable toolbar menu
     jQuery('#menu1').ptMenu();
 
@@ -46,6 +48,8 @@ jQuery(document).ready(function() {
         citationStyleMenu.appendChild(newMenuItem);
     }
 
+
+
 });
 
 // Functions to be executed when document has loaded
@@ -55,6 +59,8 @@ jQuery(document).bind('documentDataLoaded', function() {
     // We cannot download BibDB and ImageDB before we know if we are the document owner or not.
     bibliographyHelpers.init();
     usermediaHelpers.init();
+
+
 
     var set_document_style_timer = setTimeout(function() {
         clearTimeout(set_document_style_timer);
@@ -104,12 +110,15 @@ jQuery(document).bind('documentDataLoaded', function() {
     editorHelpers.setPlaceholders();
 
     jQuery(document).on('blur',
-        '#document-title,#document-contents,#metadata-subtitle,#metadata-abstract,#metadata-authors,#metadata-keywords',
+//        '#document-title,#document-contents,#metadata-subtitle,#metadata-abstract,#metadata-authors,#metadata-keywords',
+        '#document-title,#metadata-subtitle,#metadata-abstract,#metadata-authors,#metadata-keywords',
         function() {
             editorHelpers.setPlaceholders();
         });
     jQuery(document).on('focus',
-        '#document-title,#document-contents,#metadata-subtitle,#metadata-abstract,#metadata-authors,#metadata-keywords',
+
+//        '#document-title,#document-contents,#metadata-subtitle,#metadata-abstract,#metadata-authors,#metadata-keywords',
+        '#document-title,#metadata-subtitle,#metadata-abstract,#metadata-authors,#metadata-keywords',
         function() {
             editorHelpers.setPlaceholders(jQuery(this).attr('id'));
         });

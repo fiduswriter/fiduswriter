@@ -25,6 +25,11 @@
      */
         editorHelpers = {};
 
+    // Initiate ProseMirror
+    editorHelpers.init = function () {
+      editorHelpers.contentEditor = proseMirrorHelpers.makeEditor(document.getElementById('document-contents'));
+    };
+
 
     /** Call printing dialog and destroy print view after printing. (step 2 of printing process)
      * @function print
@@ -48,7 +53,7 @@
         if (node.nodeType === 3) {
             node = node.parentNode;
         }
-        
+
         var windowTop = jQuery(window).scrollTop() + 300,
         windowBottom = windowTop + jQuery(window).height(),
         nodeTop = jQuery(node).offset().top,
@@ -194,8 +199,9 @@
         theDocumentValues.virgin = true;
         theDocument.settings = jQuery.parseJSON(theDocument.settings);
         theDocument.metadata = jQuery.parseJSON(theDocument.metadata);
-        theDocument.contents = jQuery.parseJSON(theDocument.contents);
 
+        theDocument.contents = jQuery.parseJSON(theDocument.contents);
+        delete theDocument.contents.a; // Remove all attributes of the top elements. These should not be stored in the database, but have been there in the past.
         documentId = theDocument.id;
 
         DEFAULTS = [
@@ -347,11 +353,21 @@
         }
     };
 
+
+
+    editorHelpers.setDisplay.contents = function (theValue) {
+        var converterNode = exporter.obj2Node(theValue),
+            doc;
+        converterNode.normalize();
+        console.log(converterNode);
+        doc = pm.fromDOM(pm.schema, converterNode);
+        editorHelpers.contentEditor.setContent(doc);
+    };
      /** Add the document contents/body text.
      * @function contents
      * @memberof editorHelpers.setDisplay
      * @param theValue The HTML of the contents/main body.*/
-    editorHelpers.setDisplay.contents = function (theValue) {
+/*    editorHelpers.setDisplay.contentsOld = function (theValue) {
         var contentsNode = document.getElementById('document-contents'), contentsClone = contentsNode.cloneNode(), converterNode = exporter.obj2Node(theValue), diffs;
 
 
@@ -368,7 +384,7 @@
 
         editorEscapes.reset();
 
-    };
+    };*/
 
     /** Set the document title on the page.
      * @function metadataTitle
@@ -515,7 +531,7 @@
         console.log('getting updates');
         editorHelpers.setDocumentData('metadata.title', exporter.node2Obj(nodeConverter.toModel(document.getElementById('document-title'))));
 
-        editorHelpers.setDocumentData('contents', exporter.node2Obj(nodeConverter.toModel(document.getElementById('document-contents'))));
+        //editorHelpers.setDocumentData('contents', exporter.node2Obj(nodeConverter.toModel(document.getElementById('document-contents'))));
 
         metadata = document.querySelectorAll('#document-metadata .metadata');
 
@@ -611,12 +627,12 @@
             placeHolderCss += '#document-title:before {content: "' +
                 gettext('Title...') + '"}\n';
         }
-        if (jQuery('#document-contents')[0].textContent.replace(
+        /*if (jQuery('#document-contents')[0].textContent.replace(
                 /(\r\n|\n|\r)/gm, "").length === 0 && currentElement !=
             'document-contents') {
             placeHolderCss += '#document-contents:before {content: "' +
                 gettext('Contents...') + '"}\n';
-        }
+        }*/
         if (jQuery('#metadata-subtitle').length > 0 && jQuery(
                 '#metadata-subtitle')[0].textContent.length === 0 &&
             currentElement != 'metadata-subtitle') {

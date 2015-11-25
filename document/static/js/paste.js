@@ -78,7 +78,7 @@
 
     paste.insertText = function (textString) {
         var pasteElement = document.createElement('div');
-            pasteElement.textcontent = textString;
+            pasteElement.textContent = textString;
         paste.addPasteContents(pasteElement, false);
     };
 

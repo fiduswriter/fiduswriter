@@ -27,7 +27,7 @@
 
     // Initiate ProseMirror
     editorHelpers.init = function () {
-      editorHelpers.contentEditor = proseMirrorHelpers.makeEditor(document.getElementById('document-contents'));
+      editorHelpers.contentEditor = proseMirrorConnector.makeEditor(document.getElementById('document-contents'));
     };
 
 
@@ -359,8 +359,7 @@
         var converterNode = exporter.obj2Node(theValue),
             doc;
         converterNode.normalize();
-        console.log(converterNode);
-        doc = pm.fromDOM(pm.defaultSchema, converterNode);
+        doc = proseMirrorConnector.fromDOM(proseMirrorConnector.schema, converterNode);
         editorHelpers.contentEditor.setContent(doc);
     };
      /** Add the document contents/body text.

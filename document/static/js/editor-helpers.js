@@ -360,7 +360,7 @@
             doc;
         converterNode.normalize();
         console.log(converterNode);
-        doc = pm.fromDOM(pm.schema, converterNode);
+        doc = pm.fromDOM(pm.defaultSchema, converterNode);
         editorHelpers.contentEditor.setContent(doc);
     };
      /** Add the document contents/body text.

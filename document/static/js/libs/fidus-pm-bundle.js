@@ -7,10 +7,11 @@ window.pm = {
     Node: require("../src/model").Node,
     fromDOM: require("../src/parse/dom").fromDOM,
     fromHTML: require("../src/parse/dom").fromHTML,
-    MenuBar: require("../src/menu/menubar").MenuBar
+    MenuBar: require("../src/menu/menubar").MenuBar,
+    schema: require("../src/model").defaultSchema
 };
 
-},{"../src/edit/main":14,"../src/menu/menubar":20,"../src/model":26,"../src/parse/dom":31}],2:[function(require,module,exports){
+},{"../src/edit/main":13,"../src/menu/menubar":19,"../src/model":25,"../src/parse/dom":30}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -162,7 +163,7 @@ if (_dom.browser.mac) keys["Ctrl-F"] = keys["Ctrl-B"] = keys["Ctrl-P"] = keys["C
 var captureKeys = new _keys.Keymap(keys);
 exports.captureKeys = captureKeys;
 
-},{"../dom":2,"./keys":13,"./selection":17}],4:[function(require,module,exports){
+},{"../dom":2,"./keys":12,"./selection":16}],4:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -213,7 +214,6 @@ var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = 
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-exports.defineCommand = defineCommand;
 exports.defineParamHandler = defineParamHandler;
 exports.initCommands = initCommands;
 exports.defaultKeymap = defaultKeymap;
@@ -240,16 +240,174 @@ var _keys = require("./keys");
 
 var _selection = require("./selection");
 
-var globalCommands = Object.create(null);
+var _options = require("./options");
+
 var paramHandlers = Object.create(null);
 
-function defineCommand(name, cmd) {
-  globalCommands[name] = cmd instanceof Command ? cmd : new Command(name, cmd);
-}
+var empty = [];
 
-_model.NodeType.attachCommand = _model.MarkType.attachCommand = function (name, create) {
-  this.register("commands", { name: name, create: create });
-};
+// FIXME document individual commands
+
+// ;; A command is a named piece of functionality that can be bound to
+// a key, shown in the menu, or otherwise exposed to the user.
+//
+// The commands available in a given editor are gathered from the
+// [registries](#Registry) given to the editor, and the node and
+// mark types in its [schema](#Schema.registry). Use the
+// [`register`](#NodeType.register) method with `"command"` as the
+// name and a `CommandSpec` as value to define a new command.
+//
+// This module defines a [bunch of commands](#edit_commands) in the
+// [default registry](#defaultRegistry).
+
+var Command = (function () {
+  function Command(spec, self) {
+    _classCallCheck(this, Command);
+
+    // :: string The name of the command.
+    this.name = spec.name;
+    if (!this.name) throw new Error("Trying to define a command without a name");
+    // :: CommandSpec The command's specifying object.
+    this.spec = spec;
+    this.self = self;
+  }
+
+  // ;; #path=CommandSpec #kind=interface #toc=false
+  // Commands are defined using objects that specify various aspects of
+  // the command. The only properties that _must_ appear in a command
+  // spec are [`name`](#CommandSpec.name) and [`run`](#CommandSpec.run).
+  // You should probably also give your commands a `label`.
+
+  // :: string #path=CommandSpec.name
+  // The name of the command, which will be its key in
+  // `ProseMirror.commands`, and the thing passed to
+  // [`execCommand`](#ProseMirror.execCommand).
+
+  // :: string #path=CommandSpec.label
+  // A user-facing label for the command. This will be used, among other
+  // things. as the tooltip title for the command's menu item. If there
+  // is no `label`, the command's `name` will be used instead.
+
+  // :: (pm: ProseMirror, ...params: [any]) → ?bool #path=CommandSpec.run
+  // The function that executes the command. If the command has
+  // [parameters](#CommandSpec.params), their values are passed as
+  // arguments. For commands [registered](#NodeType.register) on node or
+  // mark types, `this` will be bound to the node or mark type when this
+  // function is ran. Should return `false` when the command could not
+  // be executed.
+
+  // :: [CommandParam] #path=CommandSpec.params
+  // The parameters that this command expects.
+
+  // :: (pm: ProseMirror) → bool #path=CommandSpec.select
+  // The function used to [select](#Command.select) the command. `this`
+  // will again be bound to a node or mark type, when available.
+
+  // :: (pm: ProseMirror) → bool #path=CommandSpec.active
+  // The function used to determine whether the command is
+  // [active](#Command.active). `this` refers to the associated node or
+  // mark type.
+
+  // :: union<string, [string]> #path=CommandSpec.key
+  // The default key binding or bindings for this command.
+
+  // :: union<string, [string]> #path=CommandSpec.pcKey
+  // Default key binding or bindings specific to non-Mac platforms.
+
+  // :: union<string, [string]> #path=CommandSpec.macKey
+  // Default key binding or bindings specific to the Mac platform.
+
+  // FIXME document menu and icon properties
+
+  // ;; #path=CommandParam #kind=interface #toc=false
+  // The parameters that a command can take are specified using objects
+  // with the following properties:
+
+  // :: string #path=CommandParam.label
+  // The user-facing name of the parameter. Shown to the user when
+  // prompting for this parameter.
+
+  // :: string #path=CommandParam.type
+  // The type of the parameter. Supported types are `"text"` and `"select"`.
+
+  // :: any #path=CommandParam.default
+  // A default value for the parameter.
+
+  // :: (string, (pm: ProseMirror, cmd: Command, callback: (?[any])))
+  // Register a parameter handler, which is a function that prompts the
+  // user to enter values for a command's [parameters](#CommandParam), and
+  // calls a callback with the values received. See also the
+  // [`commandParamHandler` option](#commandParamHandler).
+
+  // :: (ProseMirror, ?[any]) → ?bool
+  // Execute this command. If the command takes
+  // [parameters](#Command.params), they can be passed as second
+  // argument here, or omitted, in which case a [parameter
+  // handler](#defineParamHandler) will be called to prompt the user
+  // for values.
+  //
+  // Returns the value returned by the command spec's [`run`
+  // method](#CommandSpec.run), or `false` if the command could not be
+  // ran.
+
+  _createClass(Command, [{
+    key: "exec",
+    value: function exec(pm, params) {
+      var _this = this;
+
+      var run = this.spec.run;
+      if (!this.params.length) return run.call(this.self, pm);
+      if (params) return run.call.apply(run, [this.self, pm].concat(_toConsumableArray(params)));
+      var handler = getParamHandler(pm);
+      if (!handler) return false;
+      handler(pm, this, function (params) {
+        if (params) run.call.apply(run, [_this.self, pm].concat(_toConsumableArray(params)));
+      });
+    }
+
+    // :: (ProseMirror) → bool
+    // Ask this command whether it is currently relevant, given the
+    // editor's document and selection. If the command does not define a
+    // [`select`](#CommandSpec.select) method, this always returns true.
+  }, {
+    key: "select",
+    value: function select(pm) {
+      var f = this.spec.select;
+      return f ? f.call(this.self, pm) : true;
+    }
+
+    // :: (ProseMirror) → bool
+    // Ask this command whether it is “active”. This is mostly used to
+    // style inline mark icons (such as strong) differently when the
+    // selection contains such marks.
+  }, {
+    key: "active",
+    value: function active(pm) {
+      var f = this.spec.active;
+      return f ? f.call(this.self, pm) : false;
+    }
+
+    // :: [CommandParam]
+    // Get the list of parameters that this command expects.
+  }, {
+    key: "params",
+    get: function get() {
+      return this.spec.params || empty;
+    }
+
+    // :: string
+    // Get the label for this command.
+  }, {
+    key: "label",
+    get: function get() {
+      return this.spec.label || this.name;
+    }
+  }]);
+
+  return Command;
+})();
+
+exports.Command = Command;
 
 function defineParamHandler(name, handler) {
   paramHandlers[name] = handler;
@@ -260,65 +418,11 @@ function getParamHandler(pm) {
   if (option && paramHandlers[option]) return paramHandlers[option];
 }
 
-var Command = (function () {
-  function Command(name, options) {
-    _classCallCheck(this, Command);
-
-    this.name = name;
-    this.label = options.label || name;
-    this.run = options.run;
-    this.params = options.params || [];
-    this.select = options.select || function () {
-      return true;
-    };
-    this.active = options.active || function () {
-      return false;
-    };
-    this.info = options;
-    this.display = options.display || "icon";
-  }
-
-  _createClass(Command, [{
-    key: "exec",
-    value: function exec(pm, params) {
-      var _this = this;
-
-      if (!this.params.length) return this.run(pm);
-      if (params) return this.run.apply(this, [pm].concat(_toConsumableArray(params)));
-      var handler = getParamHandler(pm);
-      if (handler) handler(pm, this, function (params) {
-        if (params) _this.run.apply(_this, [pm].concat(_toConsumableArray(params)));
-      });else return false;
-    }
-  }]);
-
-  return Command;
-})();
-
-exports.Command = Command;
-
-function initCommands(schema) {
+function initCommands(pm) {
   var result = Object.create(null);
-  for (var cmd in globalCommands) {
-    result[cmd] = globalCommands[cmd];
-  }function fromTypes(types) {
-    var _loop = function (_name) {
-      var type = types[_name],
-          cmds = type.commands;
-      if (cmds) cmds.forEach(function (_ref) {
-        var name = _ref.name;
-        var create = _ref.create;
-
-        result[name] = new Command(name, create(type));
-      });
-    };
-
-    for (var _name in types) {
-      _loop(_name);
-    }
-  }
-  fromTypes(schema.nodes);
-  fromTypes(schema.marks);
+  pm.registry("command", function (spec, type) {
+    result[spec.name] = new Command(spec, type);
+  });
   return result;
 }
 
@@ -335,19 +439,19 @@ function defaultKeymap(pm) {
       var _d$$exec2 = _slicedToArray(_d$$exec, 3);
 
       var _ = _d$$exec2[0];
-      var _name2 = _d$$exec2[1];
+      var _name = _d$$exec2[1];
       var _d$$exec2$2 = _d$$exec2[2];
       var rank = _d$$exec2$2 === undefined ? 50 : _d$$exec2$2;
 
-      (0, _utilSortedinsert2["default"])(bindings[_name2] || (bindings[_name2] = []), { command: command, rank: rank }, function (a, b) {
+      (0, _utilSortedinsert2["default"])(bindings[_name] || (bindings[_name] = []), { command: command, rank: rank }, function (a, b) {
         return a.rank - b.rank;
       });
     }
   }
-  for (var _name3 in pm.commands) {
-    var cmd = pm.commands[_name3];
-    add(_name3, cmd.info.key);
-    add(_name3, _dom.browser.mac ? cmd.info.macKey : cmd.info.pcKey);
+  for (var _name2 in pm.commands) {
+    var cmd = pm.commands[_name2];
+    add(_name2, cmd.spec.key);
+    add(_name2, _dom.browser.mac ? cmd.spec.macKey : cmd.spec.pcKey);
   }
 
   for (var key in bindings) {
@@ -359,30 +463,16 @@ function defaultKeymap(pm) {
 
 var andScroll = { scrollIntoView: true };
 
-_model.HardBreak.attachCommand("insertHardBreak", function (type) {
-  return {
-    label: "Insert hard break",
-    run: function run(pm) {
-      var _pm$selection = pm.selection;
-      var node = _pm$selection.node;
-      var from = _pm$selection.from;
-
-      if (node && node.isBlock) return false;else if (pm.doc.path(from.path).type.isCode) return pm.tr.typeText("\n").apply(andScroll);else return pm.tr.replaceSelection(type.create()).apply(andScroll);
-    },
-    key: ["Mod-Enter", "Shift-Enter"]
-  };
-});
-
 function markActive(pm, type) {
   var sel = pm.selection;
   if (sel.empty) return type.isInSet(pm.activeMarks());else return pm.doc.rangeHasMark(sel.from, sel.to, type);
 }
 
 function canAddInline(pm, type) {
-  var _pm$selection2 = pm.selection;
-  var from = _pm$selection2.from;
-  var to = _pm$selection2.to;
-  var empty = _pm$selection2.empty;
+  var _pm$selection = pm.selection;
+  var from = _pm$selection.from;
+  var to = _pm$selection.to;
+  var empty = _pm$selection.empty;
 
   if (empty) return !type.isInSet(pm.activeMarks()) && pm.doc.path(from.path).type.canContainMark(type);
   var can = false;
@@ -394,9 +484,9 @@ function canAddInline(pm, type) {
 }
 
 function markApplies(pm, type) {
-  var _pm$selection3 = pm.selection;
-  var from = _pm$selection3.from;
-  var to = _pm$selection3.to;
+  var _pm$selection2 = pm.selection;
+  var from = _pm$selection2.from;
+  var to = _pm$selection2.to;
 
   var relevant = false;
   pm.doc.nodesBetween(from, to, function (node) {
@@ -408,51 +498,65 @@ function markApplies(pm, type) {
   return relevant;
 }
 
-function generateMarkCommands(type, name, labelName, info) {
+function generateMarkCommands(type, name, labelName, spec) {
   if (!labelName) labelName = name;
   var cap = name.charAt(0).toUpperCase() + name.slice(1);
-  type.attachCommand("set" + cap, function (type) {
-    return {
-      label: "Set " + labelName,
-      run: function run(pm) {
-        pm.setMark(type, true);
-      },
-      select: function select(pm) {
-        return canAddInline(pm, type);
-      },
-      icon: { from: name }
-    };
+  type.register("command", {
+    name: "set" + cap,
+    label: "Set " + labelName,
+    run: function run(pm) {
+      pm.setMark(this, true);
+    },
+    select: function select(pm) {
+      return canAddInline(pm, this);
+    },
+    icon: { from: name }
   });
-  type.attachCommand("unset" + cap, function (type) {
-    return {
-      label: "Remove " + labelName,
-      run: function run(pm) {
-        pm.setMark(type, false);
-      },
-      select: function select(pm) {
-        return markActive(pm, type);
-      },
-      icon: { from: name }
-    };
+  type.register("command", {
+    name: "unset" + cap,
+    label: "Remove " + labelName,
+    run: function run(pm) {
+      pm.setMark(this, false);
+    },
+    select: function select(pm) {
+      return markActive(pm, this);
+    },
+    icon: { from: name }
   });
-  type.attachCommand(name, function (type) {
-    var command = {
-      label: "Toggle " + labelName,
-      run: function run(pm) {
-        pm.setMark(type, null);
-      },
-      active: function active(pm) {
-        return markActive(pm, type);
-      },
-      select: function select(pm) {
-        return markApplies(pm, type);
-      }
-    };
-    for (var prop in info) {
-      command[prop] = info[prop];
-    }return command;
-  });
+  var command = {
+    name: name,
+    label: "Toggle " + labelName,
+    run: function run(pm) {
+      pm.setMark(this, null);
+    },
+    active: function active(pm) {
+      return markActive(pm, this);
+    },
+    select: function select(pm) {
+      return markApplies(pm, this);
+    }
+  };
+  for (var prop in spec) {
+    command[prop] = spec[prop];
+  }type.register("command", command);
 }
+
+// :: StrongMark #path=setStrong #kind=command
+// Add the [strong](#StrongMark) mark to the selected content.
+
+// :: StrongMark #path=unsetStrong #kind=command
+// Remove the [strong](#StrongMark) mark from the selected content.
+
+// :: StrongMark #path=strong #kind=command// Toggle the [strong](#StrongMark) mark. If there is any strong
+// content in the selection, or there is no selection and the [active
+// marks](#ProseMirror.activeMarks) contain the strong mark, this
+// counts as [active](#Command.active) and executing it removes the
+// mark. Otherwise, this does not count as active, and executing it
+// makes the selected content strong.
+//
+// **Keybindings:** Mod-B
+//
+// Registers itself in the inline [menu](#FIXME).
 
 generateMarkCommands(_model.StrongMark, "strong", null, {
   menuGroup: "inline", menuRank: 20,
@@ -463,6 +567,24 @@ generateMarkCommands(_model.StrongMark, "strong", null, {
   key: "Mod-B"
 });
 
+// :: EmMark #path=setEm #kind=command
+// Add the [emphasis](#EmMark) mark to the selected content.
+
+// :: EmMark #path=unsetEm #kind=command
+// Remove the [emphasis](#EmMark) mark from the selected content.
+
+// :: EmMark #path=em #kind=command
+// Toggle the [emphasis](#EmMark) mark. If there is any emphasized
+// content in the selection, or there is no selection and the [active
+// marks](#ProseMirror.activeMarks) contain the emphasis mark, this
+// counts as [active](#Command.active) and executing it removes the
+// mark. Otherwise, this does not count as active, and executing it
+// makes the selected content emphasized.
+//
+// **Keybindings:** Mod-I
+//
+// Registers itself in the inline [menu](#FIXME).
+
 generateMarkCommands(_model.EmMark, "em", "emphasis", {
   menuGroup: "inline", menuRank: 21,
   icon: {
@@ -471,6 +593,24 @@ generateMarkCommands(_model.EmMark, "em", "emphasis", {
   },
   key: "Mod-I"
 });
+
+// :: CodeMark #path=setCode #kind=command
+// Add the [code](#CodeMark) mark to the selected content.
+
+// :: CodeMark #path=unsetCode #kind=command
+// Remove the [code](#CodeMark) mark from the selected content.
+
+// :: CodeMark #path=code #kind=command
+// Toggle the [code](#CodeMark) mark. If there is any code-styled
+// content in the selection, or there is no selection and the [active
+// marks](#ProseMirror.activeMarks) contain the code mark, this
+// counts as [active](#Command.active) and executing it removes the
+// mark. Otherwise, this does not count as active, and executing it
+// styles the selected content as code.
+//
+// **Keybindings:** Mod-`
+//
+// Registers itself in the inline [menu](#FIXME).
 
 generateMarkCommands(_model.CodeMark, "code", null, {
   menuGroup: "inline", menuRank: 22,
@@ -481,71 +621,103 @@ generateMarkCommands(_model.CodeMark, "code", null, {
   key: "Mod-`"
 });
 
-_model.LinkMark.attachCommand("unlink", function (type) {
-  return {
-    label: "Unlink",
-    run: function run(pm) {
-      pm.setMark(type, false);
-    },
-    select: function select(pm) {
-      return markActive(pm, type);
-    },
-    active: function active() {
-      return true;
-    },
-    menuGroup: "inline", menuRank: 30,
-    icon: { from: "link" }
-  };
+// :: LinkMark #path=unlink #kind=command
+// Removes all links for the selected content, or, if there is no
+// selection, from the [active marks](#ProseMirror.activeMarks). Will
+// only [select](#Command.select) itself when there is a link in the
+// selection or active marks.
+//
+// Registers itself in the inline [menu](#FIXME).
+
+_model.LinkMark.register("command", {
+  name: "unlink",
+  label: "Unlink",
+  run: function run(pm) {
+    pm.setMark(this, false);
+  },
+  select: function select(pm) {
+    return markActive(pm, this);
+  },
+  active: function active() {
+    return true;
+  },
+  menuGroup: "inline", menuRank: 30,
+  icon: { from: "link" }
 });
 
-_model.LinkMark.attachCommand("link", function (type) {
-  return {
-    label: "Add link",
-    run: function run(pm, href, title) {
-      pm.setMark(type, true, { href: href, title: title });
-    },
-    params: [{ name: "Target", type: "text" }, { name: "Title", type: "text", "default": "" }],
-    select: function select(pm) {
-      return markApplies(pm, type) && !markActive(pm, type);
-    },
-    menuGroup: "inline", menuRank: 30,
-    icon: {
-      width: 951, height: 1024,
-      path: "M832 694q0-22-16-38l-118-118q-16-16-38-16-24 0-41 18 1 1 10 10t12 12 8 10 7 14 2 15q0 22-16 38t-38 16q-8 0-15-2t-14-7-10-8-12-12-10-10q-18 17-18 41 0 22 16 38l117 118q15 15 38 15 22 0 38-14l84-83q16-16 16-38zM430 292q0-22-16-38l-117-118q-16-16-38-16-22 0-38 15l-84 83q-16 16-16 38 0 22 16 38l118 118q15 15 38 15 24 0 41-17-1-1-10-10t-12-12-8-10-7-14-2-15q0-22 16-38t38-16q8 0 15 2t14 7 10 8 12 12 10 10q18-17 18-41zM941 694q0 68-48 116l-84 83q-47 47-116 47-69 0-116-48l-117-118q-47-47-47-116 0-70 50-119l-50-50q-49 50-118 50-68 0-116-48l-118-118q-48-48-48-116t48-116l84-83q47-47 116-47 69 0 116 48l117 118q47 47 47 116 0 70-50 119l50 50q49-50 118-50 68 0 116 48l118 118q48 48 48 116z"
-    }
-  };
+// :: LinkMark #path=link #kind=command
+// Adds a link mark to the selection or set of [active
+// marks](#ProseMirror.activeMarks). Takes parameters to determine the
+// attributes of the link:
+//
+// **`href`**`: string`
+//   : The link's target.
+//
+// **`title`**`: string`
+//   : The link's title.
+//
+// Adds itself to the inline [menu](#FIXME). Only selects itself when
+// `unlink` isn't selected, so that only one of the two is visible in
+// the menu at any time.
+
+_model.LinkMark.register("command", {
+  name: "link",
+  label: "Add link",
+  run: function run(pm, href, title) {
+    pm.setMark(this, true, { href: href, title: title });
+  },
+  params: [{ label: "Target", type: "text" }, { label: "Title", type: "text", "default": "" }],
+  select: function select(pm) {
+    return markApplies(pm, this) && !markActive(pm, this);
+  },
+  menuGroup: "inline", menuRank: 30,
+  icon: {
+    width: 951, height: 1024,
+    path: "M832 694q0-22-16-38l-118-118q-16-16-38-16-24 0-41 18 1 1 10 10t12 12 8 10 7 14 2 15q0 22-16 38t-38 16q-8 0-15-2t-14-7-10-8-12-12-10-10q-18 17-18 41 0 22 16 38l117 118q15 15 38 15 22 0 38-14l84-83q16-16 16-38zM430 292q0-22-16-38l-117-118q-16-16-38-16-22 0-38 15l-84 83q-16 16-16 38 0 22 16 38l118 118q15 15 38 15 24 0 41-17-1-1-10-10t-12-12-8-10-7-14-2-15q0-22 16-38t38-16q8 0 15 2t14 7 10 8 12 12 10 10q18-17 18-41zM941 694q0 68-48 116l-84 83q-47 47-116 47-69 0-116-48l-117-118q-47-47-47-116 0-70 50-119l-50-50q-49 50-118 50-68 0-116-48l-118-118q-48-48-48-116t48-116l84-83q47-47 116-47 69 0 116 48l117 118q47 47 47 116 0 70-50 119l50 50q49-50 118-50 68 0 116 48l118 118q48 48 48 116z"
+  }
+  // FIXME pre-fill params when a single link is selected
+  // (If parameter pre-filling is going to continue working like that)
 });
 
-_model.Image.attachCommand("insertImage", function (type) {
-  return {
-    label: "Insert image",
-    run: function run(pm, src, alt, title) {
-      return pm.tr.replaceSelection(type.create({ src: src, title: title, alt: alt })).apply(andScroll);
-    },
-    params: [{ name: "Image URL", type: "text" }, { name: "Description / alternative text", type: "text", "default": "" }, { name: "Title", type: "text", "default": "" }],
-    select: function select(pm) {
-      return pm.doc.path(pm.selection.from.path).type.canContainType(type);
-    },
-    menuGroup: "inline", menuRank: 40,
-    icon: {
-      width: 1097, height: 1024,
-      path: "M365 329q0 45-32 77t-77 32-77-32-32-77 32-77 77-32 77 32 32 77zM950 548v256h-804v-109l182-182 91 91 292-292zM1005 146h-914q-7 0-12 5t-5 12v694q0 7 5 12t12 5h914q7 0 12-5t5-12v-694q0-7-5-12t-12-5zM1097 164v694q0 37-26 64t-64 26h-914q-37 0-64-26t-26-64v-694q0-37 26-64t64-26h914q37 0 64 26t26 64z"
-    },
-    prefillParams: function prefillParams(pm) {
-      var node = pm.selection.node;
+// :: Image #path=insertImage #kind=command
+// Replace the selection with an [image](#Image) node. Takes paramers
+// that specify the image's attributes:
+//
+// **`src`**`: string`
+//   : The URL of the image.
+//
+// **`alt`**`: string`
+//   : The alt text for the image.
+//
+// **`title`**`: string`
+//   : A title for the image.
+//
+// Registers itself in the inline [menu](#FIXME).
 
-      if (node && node.type == type) return [node.attrs.src, node.attrs.alt, node.attrs.title];
-    }
-  };
+_model.Image.register("command", {
+  name: "insertImage",
+  label: "Insert image",
+  run: function run(pm, src, alt, title) {
+    return pm.tr.replaceSelection(this.create({ src: src, title: title, alt: alt })).apply(andScroll);
+  },
+  params: [{ label: "Image URL", type: "text" }, { label: "Description / alternative text", type: "text", "default": "" }, { label: "Title", type: "text", "default": "" }],
+  select: function select(pm) {
+    return pm.doc.path(pm.selection.from.path).type.canContainType(this);
+  },
+  menuGroup: "inline", menuRank: 40,
+  icon: {
+    width: 1097, height: 1024,
+    path: "M365 329q0 45-32 77t-77 32-77-32-32-77 32-77 77-32 77 32 32 77zM950 548v256h-804v-109l182-182 91 91 292-292zM1005 146h-914q-7 0-12 5t-5 12v694q0 7 5 12t12 5h914q7 0 12-5t5-12v-694q0-7-5-12t-12-5zM1097 164v694q0 37-26 64t-64 26h-914q-37 0-64-26t-26-64v-694q0-37 26-64t64-26h914q37 0 64 26t26 64z"
+  },
+  prefillParams: function prefillParams(pm) {
+    var node = pm.selection.node;
+
+    if (node && node.type == this) return [node.attrs.src, node.attrs.alt, node.attrs.title];
+    // FIXME else use the selected text as alt
+  }
 });
 
-/**
- * Get an offset moving backward from a current offset inside a node.
- *
- * @param  {Object} parent The parent node.
- * @param  {int}    offset Offset to move from inside the node.
- * @param  {string} by     Size to delete by. Either "char" or "word".
- */
+// Get an offset moving backward from a current offset inside a node.
 function moveBackward(parent, offset, by) {
   if (by != "char" && by != "word") throw new Error("Unknown motion unit: " + by);
 
@@ -580,7 +752,15 @@ function moveBackward(parent, offset, by) {
   }
 }
 
-defineCommand("deleteSelection", {
+// ;; #path=deleteSelection #kind=command
+// Delete the selection, if there is one.
+//
+// **Keybindings:** Backspace, Delete, Mod-Backspace, Mod-Delete,
+// **Ctrl-H (Mac), Alt-Backspace (Mac), Ctrl-D (Mac),
+// **Ctrl-Alt-Backspace (Mac), Alt-Delete (Mac), Alt-D (Mac)
+
+_options.defaultRegistry.register("command", {
+  name: "deleteSelection",
   label: "Delete the selection",
   run: function run(pm) {
     return pm.tr.replaceSelection().apply(andScroll);
@@ -612,12 +792,22 @@ function deleteBarrier(pm, cut) {
   return pm.tr.lift(selAfter.from, selAfter.to).apply(andScroll);
 }
 
-defineCommand("joinBackward", {
+// ;; #path=joinBackward #kind=command
+// If the selection is empty and at the start of a textblock, move
+// that block closer to the block before it, by lifting it out of its
+// parent or, if it has no parent it doesn't share with the node
+// before it, moving it into a parent of that node, or joining it with
+// that.
+//
+// **Keybindings:** Backspace, Mod-Backspace
+
+_options.defaultRegistry.register("command", {
+  name: "joinBackward",
   label: "Join with the block above",
   run: function run(pm) {
-    var _pm$selection4 = pm.selection;
-    var head = _pm$selection4.head;
-    var empty = _pm$selection4.empty;
+    var _pm$selection3 = pm.selection;
+    var head = _pm$selection3.head;
+    var empty = _pm$selection3.empty;
 
     if (!empty || head.offset > 0) return false;
 
@@ -641,12 +831,19 @@ defineCommand("joinBackward", {
   key: ["Backspace(30)", "Mod-Backspace(30)"]
 });
 
-defineCommand("deleteCharBefore", {
+// ;; #path=deleteCharBefore #kind=command
+// Delete the character before the cursor, if the selection is empty
+// and the cursor isn't at the start of a textblock.
+//
+// **Keybindings:** Backspace, Ctrl-H (Mac)
+
+_options.defaultRegistry.register("command", {
+  name: "deleteCharBefore",
   label: "Delete a character before the cursor",
   run: function run(pm) {
-    var _pm$selection5 = pm.selection;
-    var head = _pm$selection5.head;
-    var empty = _pm$selection5.empty;
+    var _pm$selection4 = pm.selection;
+    var head = _pm$selection4.head;
+    var empty = _pm$selection4.empty;
 
     if (!empty || head.offset == 0) return false;
     var from = moveBackward(pm.doc.path(head.path), head.offset, "char");
@@ -656,12 +853,19 @@ defineCommand("deleteCharBefore", {
   macKey: "Ctrl-H(40)"
 });
 
-defineCommand("deleteWordBefore", {
+// ;; #path=deleteWordBefore #kind=command
+// Delete the word before the cursor, if the selection is empty and
+// the cursor isn't at the start of a textblock.
+//
+// **Keybindings:** Mod-Backspace, Alt-Backspace (Mac)
+
+_options.defaultRegistry.register("command", {
+  name: "deleteWordBefore",
   label: "Delete the word before the cursor",
   run: function run(pm) {
-    var _pm$selection6 = pm.selection;
-    var head = _pm$selection6.head;
-    var empty = _pm$selection6.empty;
+    var _pm$selection5 = pm.selection;
+    var head = _pm$selection5.head;
+    var empty = _pm$selection5.empty;
 
     if (!empty || head.offset == 0) return false;
     var from = moveBackward(pm.doc.path(head.path), head.offset, "word");
@@ -702,12 +906,22 @@ function moveForward(parent, offset, by) {
   }
 }
 
-defineCommand("joinForward", {
+// ;; #path=joinForward #kind=command
+// If the selection is empty and the cursor is at the end of a
+// textblock, move the node after it closer to the node with the
+// cursor (lifting it out of parents that aren't shared, moving it
+// into parents of the cursor block, or joining the two when they are
+// siblings).
+//
+// **Keybindings:** Delete, Mod-Delete
+
+_options.defaultRegistry.register("command", {
+  name: "joinForward",
   label: "Join with the block below",
   run: function run(pm) {
-    var _pm$selection7 = pm.selection;
-    var head = _pm$selection7.head;
-    var empty = _pm$selection7.empty;
+    var _pm$selection6 = pm.selection;
+    var head = _pm$selection6.head;
+    var empty = _pm$selection6.empty;
 
     if (!empty || head.offset < pm.doc.path(head.path).size) return false;
 
@@ -732,12 +946,19 @@ defineCommand("joinForward", {
   key: ["Delete(30)", "Mod-Delete(30)"]
 });
 
-defineCommand("deleteCharAfter", {
+// ;; #path=deleteCharAfter #kind=command
+// Delete the character after the cursor, if the selection is empty
+// and the cursor isn't at the end of its textblock.
+//
+// **Keybindings:** Delete, Ctrl-D (Mac)
+
+_options.defaultRegistry.register("command", {
+  name: "deleteCharAfter",
   label: "Delete a character after the cursor",
   run: function run(pm) {
-    var _pm$selection8 = pm.selection;
-    var head = _pm$selection8.head;
-    var empty = _pm$selection8.empty;
+    var _pm$selection7 = pm.selection;
+    var head = _pm$selection7.head;
+    var empty = _pm$selection7.empty;
 
     if (!empty || head.offset == pm.doc.path(head.path).size) return false;
     var to = moveForward(pm.doc.path(head.path), head.offset, "char");
@@ -747,12 +968,20 @@ defineCommand("deleteCharAfter", {
   macKey: "Ctrl-D(60)"
 });
 
-defineCommand("deleteWordAfter", {
-  label: "Delete a character after the cursor",
+// ;; #path=deleteWordAfter #kind=command
+// Delete the word after the cursor, if the selection is empty and the
+// cursor isn't at the end of a textblock.
+//
+// **Keybindings:** Mod-Delete, Ctrl-Alt-Backspace (Mac), Alt-Delete
+// (Mac), Alt-D (Mac)
+
+_options.defaultRegistry.register("command", {
+  name: "deleteWordAfter",
+  label: "Delete a word after the cursor",
   run: function run(pm) {
-    var _pm$selection9 = pm.selection;
-    var head = _pm$selection9.head;
-    var empty = _pm$selection9.empty;
+    var _pm$selection8 = pm.selection;
+    var head = _pm$selection8.head;
+    var empty = _pm$selection8.empty;
 
     if (!empty || head.offset == pm.doc.path(head.path).size) return false;
     var to = moveForward(pm.doc.path(head.path), head.offset, "word");
@@ -763,21 +992,30 @@ defineCommand("deleteWordAfter", {
 });
 
 function joinPointAbove(pm) {
-  var _pm$selection10 = pm.selection;
-  var node = _pm$selection10.node;
-  var from = _pm$selection10.from;
+  var _pm$selection9 = pm.selection;
+  var node = _pm$selection9.node;
+  var from = _pm$selection9.from;
 
   if (node) return (0, _transform.joinableBlocks)(pm.doc, from) ? from : null;else return (0, _transform.joinPoint)(pm.doc, from, -1);
 }
 
-defineCommand("joinUp", {
+// ;; #path=joinUp #kind=command
+// Join the selected block or, if there is a text selection, the
+// closest ancestor block of the selection that can be joined, with
+// the sibling above it.
+//
+// **Keybindings:** Alt-Up
+//
+// Registers itself in the block [menu](#FIXME)
+
+_options.defaultRegistry.register("command", {
+  name: "joinUp",
   label: "Join with above block",
   run: function run(pm) {
-    var node = pm.selection.node;
     var point = joinPointAbove(pm);
     if (!point) return false;
     pm.tr.join(point).apply();
-    if (node) pm.setNodeSelection(point.move(-1));
+    if (pm.selection.node) pm.setNodeSelection(point.move(-1));
   },
   select: function select(pm) {
     return joinPointAbove(pm);
@@ -791,14 +1029,21 @@ defineCommand("joinUp", {
 });
 
 function joinPointBelow(pm) {
-  var _pm$selection11 = pm.selection;
-  var node = _pm$selection11.node;
-  var to = _pm$selection11.to;
+  var _pm$selection10 = pm.selection;
+  var node = _pm$selection10.node;
+  var to = _pm$selection10.to;
 
   if (node) return (0, _transform.joinableBlocks)(pm.doc, to) ? to : null;else return (0, _transform.joinPoint)(pm.doc, to, 1);
 }
 
-defineCommand("joinDown", {
+// ;; #path=joinDown #kind=command
+// Join the selected block, or the closest ancestor of the selection
+// that can be joined, with the sibling after it.
+//
+// **Keybindings:** Alt-Down
+
+_options.defaultRegistry.register("command", {
+  name: "joinDown",
   label: "Join with below block",
   run: function run(pm) {
     var node = pm.selection.node;
@@ -813,19 +1058,28 @@ defineCommand("joinDown", {
   key: "Alt-Down"
 });
 
-defineCommand("lift", {
+// ;; #path=lift #kind=command
+// Lift the selected block, or the closest ancestor block of the
+// selection that can be lifted, out of its parent node.
+//
+// **Keybindings:** Alt-Left
+//
+// Registers itself in the block [menu](#FIXME).
+
+_options.defaultRegistry.register("command", {
+  name: "lift",
   label: "Lift out of enclosing block",
   run: function run(pm) {
-    var _pm$selection12 = pm.selection;
-    var from = _pm$selection12.from;
-    var to = _pm$selection12.to;
+    var _pm$selection11 = pm.selection;
+    var from = _pm$selection11.from;
+    var to = _pm$selection11.to;
 
     return pm.tr.lift(from, to).apply(andScroll);
   },
   select: function select(pm) {
-    var _pm$selection13 = pm.selection;
-    var from = _pm$selection13.from;
-    var to = _pm$selection13.to;
+    var _pm$selection12 = pm.selection;
+    var from = _pm$selection12.from;
+    var to = _pm$selection12.to;
 
     return (0, _transform.canLift)(pm.doc, from, to);
   },
@@ -841,39 +1095,45 @@ function isAtTopOfListItem(doc, from, to, listType) {
   return _model.Pos.samePath(from.path, to.path) && from.path.length >= 2 && from.path[from.path.length - 1] == 0 && listType.canContain(doc.path(from.path.slice(0, from.path.length - 1)));
 }
 
-function wrapCommand(type, name, labelName, isList, info) {
-  type.attachCommand("wrap" + name, function (type) {
-    var command = {
-      label: "Wrap in " + labelName,
-      run: function run(pm) {
-        var _pm$selection14 = pm.selection;
-        var from = _pm$selection14.from;
-        var to = _pm$selection14.to;
-        var head = _pm$selection14.head;var doJoin = false;
-        if (isList && head && isAtTopOfListItem(pm.doc, from, to, type)) {
-          // Don't do anything if this is the top of the list
-          if (from.path[from.path.length - 2] == 0) return false;
-          doJoin = true;
-        }
-        var tr = pm.tr.wrap(from, to, type);
-        if (doJoin) tr.join(from.shorten(from.depth - 2));
-        return tr.apply(andScroll);
-      },
-      select: function select(pm) {
-        var _pm$selection15 = pm.selection;
-        var from = _pm$selection15.from;
-        var to = _pm$selection15.to;
-        var head = _pm$selection15.head;
-
-        if (isList && head && isAtTopOfListItem(pm.doc, from, to, type) && from.path[from.path.length - 2] == 0) return false;
-        return (0, _transform.canWrap)(pm.doc, from, to, type);
+function wrapCommand(type, name, labelName, isList, spec) {
+  var command = {
+    name: "wrap" + name,
+    label: "Wrap in " + labelName,
+    run: function run(pm) {
+      var _pm$selection13 = pm.selection;
+      var from = _pm$selection13.from;
+      var to = _pm$selection13.to;
+      var head = _pm$selection13.head;var doJoin = false;
+      if (isList && head && isAtTopOfListItem(pm.doc, from, to, this)) {
+        // Don't do anything if this is the top of the list
+        if (from.path[from.path.length - 2] == 0) return false;
+        doJoin = true;
       }
-    };
-    for (var key in info) {
-      command[key] = info[key];
-    }return command;
-  });
+      var tr = pm.tr.wrap(from, to, this);
+      if (doJoin) tr.join(from.shorten(from.depth - 2));
+      return tr.apply(andScroll);
+    },
+    select: function select(pm) {
+      var _pm$selection14 = pm.selection;
+      var from = _pm$selection14.from;
+      var to = _pm$selection14.to;
+      var head = _pm$selection14.head;
+
+      if (isList && head && isAtTopOfListItem(pm.doc, from, to, this) && from.path[from.path.length - 2] == 0) return false;
+      return (0, _transform.canWrap)(pm.doc, from, to, this);
+    }
+  };
+  for (var key in spec) {
+    command[key] = spec[key];
+  }type.register("command", command);
 }
+
+// :: BulletList #path=wrapBulletList #kind=command
+// Wrap the selection in a bullet list.
+//
+// **Keybindings:** Alt-Right '*', Alt-Right '-'
+//
+// Registers itself in the block [menu](#FIXME).
 
 wrapCommand(_model.BulletList, "BulletList", "bullet list", true, {
   menuGroup: "block", menuRank: 40,
@@ -884,6 +1144,13 @@ wrapCommand(_model.BulletList, "BulletList", "bullet list", true, {
   key: ["Alt-Right '*'", "Alt-Right '-'"]
 });
 
+// :: OrderedList #path=wrapOrderedList #kind=command
+// Wrap the selection in an ordered list.
+//
+// **Keybindings:** Alt-Right '1'
+//
+// Registers itself in the block [menu](#FIXME).
+
 wrapCommand(_model.OrderedList, "OrderedList", "ordered list", true, {
   menuGroup: "block", menuRank: 41,
   icon: {
@@ -892,6 +1159,13 @@ wrapCommand(_model.OrderedList, "OrderedList", "ordered list", true, {
   },
   key: "Alt-Right '1'"
 });
+
+// :: BlockQuote #path=wrapBlockQuote #kind=command
+// Wrap the selection in a block quote.
+//
+// **Keybindings:** Alt-Right '>', Alt-Right '"'
+//
+// Registers itself in the block [menu](#FIXME).
 
 wrapCommand(_model.BlockQuote, "BlockQuote", "block quote", false, {
   menuGroup: "block", menuRank: 45,
@@ -902,7 +1176,34 @@ wrapCommand(_model.BlockQuote, "BlockQuote", "block quote", false, {
   key: ["Alt-Right '>'", "Alt-Right '\"'"]
 });
 
-defineCommand("newlineInCode", {
+// :: HardBreak #path=insertHardBreak #kind=command
+// Replace the selection with a hard break node. If the selection is
+// in a node whose [type](#NodeType) has a truthy `isCode` property
+// (such as `CodeBlock` in the default schema), a regular newline is
+// inserted instead.
+//
+// **Keybindings:** Mod-Enter, Shift-Enter
+_model.HardBreak.register("command", {
+  name: "insertHardBreak",
+  label: "Insert hard break",
+  run: function run(pm) {
+    var _pm$selection15 = pm.selection;
+    var node = _pm$selection15.node;
+    var from = _pm$selection15.from;
+
+    if (node && node.isBlock) return false;else if (pm.doc.path(from.path).type.isCode) return pm.tr.typeText("\n").apply(andScroll);else return pm.tr.replaceSelection(this.create()).apply(andScroll);
+  },
+  key: ["Mod-Enter", "Shift-Enter"]
+});
+
+// ;; #path=newlineInCode #kind=command
+// If the selection is in a node whose type has a truthy `isCode`
+// property, replace the selection with a newline character.
+//
+// **Keybindings:** Enter
+
+_options.defaultRegistry.register("command", {
+  name: "newlineInCode",
   label: "Insert newline",
   run: function run(pm) {
     var _pm$selection16 = pm.selection;
@@ -914,7 +1215,14 @@ defineCommand("newlineInCode", {
   key: "Enter(10)"
 });
 
-defineCommand("createParagraphNear", {
+// ;; #path=createParagraphNew #kind=command
+// If a content-less block node is selected, create an empty paragraph
+// before (if it is its parent's first child) or after it.
+//
+// **Keybindings:** Enter
+
+_options.defaultRegistry.register("command", {
+  name: "createParagraphNear",
   label: "Create a paragraph near the selected leaf block",
   run: function run(pm) {
     var _pm$selection17 = pm.selection;
@@ -925,26 +1233,43 @@ defineCommand("createParagraphNear", {
     if (!node || !node.isBlock || node.type.contains) return false;
     var side = from.offset ? to : from;
     pm.tr.insert(side, pm.schema.defaultTextblockType().create()).apply(andScroll);
-    pm.setSelection(new _model.Pos(side.toPath(), 0));
+    pm.setTextSelection(new _model.Pos(side.toPath(), 0));
   },
   key: "Enter(20)"
 });
 
-defineCommand("liftEmptyBlock", {
+// ;; #path=liftEmptyBlock #kind=command
+// If the cursor is in an empty textblock that can be lifted, lift the
+// block.
+//
+// **Keybindings:** Enter
+
+_options.defaultRegistry.register("command", {
+  name: "liftEmptyBlock",
   label: "Move current block up",
   run: function run(pm) {
     var _pm$selection18 = pm.selection;
     var head = _pm$selection18.head;
     var empty = _pm$selection18.empty;
 
-    if (!empty || head.offset > 0) return false;
-    if (head.path[head.path.length - 1] > 0 && pm.tr.split(head.shorten()).apply() !== false) return;
+    if (!empty || head.offset > 0 || pm.doc.path(head.path).size) return false;
+    if (head.depth > 1) {
+      var shorter = head.shorten();
+      if (shorter.offset > 0 && shorter.offset < pm.doc.path(shorter.path).size - 1 && pm.tr.split(shorter).apply() !== false) return;
+    }
     return pm.tr.lift(head).apply(andScroll);
   },
   key: "Enter(30)"
 });
 
-defineCommand("splitBlock", {
+// ;; #path=splitBlock #kind=command
+// Split the parent block of the selection. If the selection is a text
+// selection, delete it.
+//
+// **Keybindings:** Enter
+
+_options.defaultRegistry.register("command", {
+  name: "splitBlock",
   label: "Split the current block",
   run: function run(pm) {
     var _pm$selection19 = pm.selection;
@@ -962,51 +1287,72 @@ defineCommand("splitBlock", {
   key: "Enter(60)"
 });
 
-_model.ListItem.attachCommand("splitListItem", function (type) {
-  return {
-    label: "Split the current list item",
-    run: function run(pm) {
-      var _pm$selection20 = pm.selection;
-      var from = _pm$selection20.from;
-      var to = _pm$selection20.to;
-      var node = _pm$selection20.node;
-      var empty = _pm$selection20.empty;
+// :: ListItem #path=splitListItem #kind=command
+// If the selection is a text selection inside of a child of a list
+// item, split that child and the list item, and delete the selection.
+//
+// **Keybindings:** Enter
 
-      if (node && node.isBlock || from.path.length < 2 || !_model.Pos.samePath(from.path, to.path) || empty && from.offset == 0) return false;
-      var toParent = from.shorten(),
-          grandParent = pm.doc.path(toParent.path);
-      if (grandParent.type != type) return false;
-      var nextType = to.offset == grandParent.child(toParent.offset).size ? pm.schema.defaultTextblockType() : null;
-      return pm.tr["delete"](from, to).split(from, 2, nextType).apply(andScroll);
-    },
-    key: "Enter(50)"
-  };
+_model.ListItem.register("command", {
+  name: "splitListItem",
+  label: "Split the current list item",
+  run: function run(pm) {
+    var _pm$selection20 = pm.selection;
+    var from = _pm$selection20.from;
+    var to = _pm$selection20.to;
+    var node = _pm$selection20.node;
+
+    if (node && node.isBlock || from.path.length < 2 || !_model.Pos.samePath(from.path, to.path)) return false;
+    var toParent = from.shorten(),
+        grandParent = pm.doc.path(toParent.path);
+    if (grandParent.type != this) return false;
+    var nextType = to.offset == grandParent.child(toParent.offset).size ? pm.schema.defaultTextblockType() : null;
+    return pm.tr["delete"](from, to).split(from, 2, nextType).apply(andScroll);
+  },
+  key: "Enter(50)"
 });
+
+function alreadyHasBlockType(doc, from, to, type, attrs) {
+  var found = false;
+  if (!attrs) attrs = {};
+  doc.nodesBetween(from, to || from, function (node) {
+    if (node.isTextblock) {
+      if (node.hasMarkup(type, attrs)) found = true;
+      return false;
+    }
+  });
+  return found;
+}
 
 function blockTypeCommand(type, name, labelName, attrs, key) {
   if (!attrs) attrs = {};
-  type.attachCommand(name, function (type) {
-    return {
-      label: "Change to " + labelName,
-      run: function run(pm) {
-        var _pm$selection21 = pm.selection;
-        var from = _pm$selection21.from;
-        var to = _pm$selection21.to;
+  type.register("command", {
+    name: name,
+    label: "Change to " + labelName,
+    run: function run(pm) {
+      var _pm$selection21 = pm.selection;
+      var from = _pm$selection21.from;
+      var to = _pm$selection21.to;
 
-        return pm.tr.setBlockType(from, to, type, attrs).apply(andScroll);
-      },
-      select: function select(pm) {
-        var _pm$selection22 = pm.selection;
-        var from = _pm$selection22.from;
-        var to = _pm$selection22.to;
-        var node = _pm$selection22.node;
+      return pm.tr.setBlockType(from, to, this, attrs).apply(andScroll);
+    },
+    select: function select(pm) {
+      var _pm$selection22 = pm.selection;
+      var from = _pm$selection22.from;
+      var to = _pm$selection22.to;
+      var node = _pm$selection22.node;
 
-        if (node) return node.isTextblock && !node.hasMarkup(type, attrs);else return !(0, _transform.alreadyHasBlockType)(pm.doc, from, to, type, attrs);
-      },
-      key: key
-    };
+      if (node) return node.isTextblock && !node.hasMarkup(this, attrs);else return !alreadyHasBlockType(pm.doc, from, to, this, attrs);
+    },
+    key: key
   });
 }
+
+// :: Heading #path=makeH_ #kind=command
+// The commands `makeH1` to `makeH6` set the textblocks in the
+// selection to become headers with the given level.
+//
+// **Keybindings:** Mod-H '1' through Mod-H '6'
 
 blockTypeCommand(_model.Heading, "makeH1", "heading 1", { level: 1 }, "Mod-H '1'");
 blockTypeCommand(_model.Heading, "makeH2", "heading 2", { level: 2 }, "Mod-H '2'");
@@ -1015,52 +1361,44 @@ blockTypeCommand(_model.Heading, "makeH4", "heading 4", { level: 4 }, "Mod-H '4'
 blockTypeCommand(_model.Heading, "makeH5", "heading 5", { level: 5 }, "Mod-H '5'");
 blockTypeCommand(_model.Heading, "makeH6", "heading 6", { level: 6 }, "Mod-H '6'");
 
+// :: Paragraph #path=makeParagraph #kind=command
+// Set the textblocks in the selection to be regular paragraphs.
+//
+// **Keybindings:** Mod-P
+
 blockTypeCommand(_model.Paragraph, "makeParagraph", "paragraph", null, "Mod-P");
+
+// :: CodeBlock #path=makeCodeBlock #kind=command
+// Set the textblocks in the selection to be code blocks.
+//
+// **Keybindings:** Mod-\
+
 blockTypeCommand(_model.CodeBlock, "makeCodeBlock", "code block", null, "Mod-\\");
 
-_model.HorizontalRule.attachCommand("insertHorizontalRule", function (type) {
-  return {
-    label: "Insert horizontal rule",
-    run: function run(pm) {
-      return pm.tr.replaceSelection(type.create()).apply(andScroll);
-    },
-    key: "Mod-Space"
-  };
-});
+// :: HorizontalRule #path=insertHorizontalRule #kind=command
+// Replace the selection with a horizontal rule.
+//
+// **Keybindings:** Mod-=
 
-defineCommand("undo", {
-  label: "Undo last change",
+_model.HorizontalRule.register("command", {
+  name: "insertHorizontalRule",
+  label: "Insert horizontal rule",
   run: function run(pm) {
-    pm.scrollIntoView();return pm.history.undo();
+    return pm.tr.replaceSelection(this.create()).apply(andScroll);
   },
-  select: function select(pm) {
-    return pm.history.canUndo();
-  },
-  menuGroup: "history", menuRank: 10,
-  icon: {
-    width: 1024, height: 1024,
-    path: "M761 1024c113-206 132-520-313-509v253l-384-384 384-384v248c534-13 594 472 313 775z"
-  },
-  key: "Mod-Z"
+  key: "Mod-="
 });
 
-defineCommand("redo", {
-  label: "Redo last undone change",
-  run: function run(pm) {
-    pm.scrollIntoView();return pm.history.redo();
-  },
-  select: function select(pm) {
-    return pm.history.canRedo();
-  },
-  menuGroup: "history", menuRank: 20,
-  icon: {
-    width: 1024, height: 1024,
-    path: "M576 248v-248l384 384-384 384v-253c-446-10-427 303-313 509-280-303-221-789 313-775z"
-  },
-  key: ["Mod-Y", "Shift-Mod-Z"]
-});
+// ;; #path=textblockType #kind=command
+// Change the type of the selected textblocks. Takes one parameter,
+// `type`, which should be a `{type: NodeType, attrs: ?Object}`
+// object, giving the new type and its attributes.
+//
+// Registers itself in the block [menu](#FIXME), where it creates the
+// textblock type dropdown.
 
-defineCommand("textblockType", {
+_options.defaultRegistry.register("command", {
+  name: "textblockType",
   label: "Change block type",
   run: function run(pm, type) {
     var _pm$selection23 = pm.selection;
@@ -1074,7 +1412,7 @@ defineCommand("textblockType", {
 
     return !node || node.isTextblock;
   },
-  params: [{ name: "Type", type: "select", options: listTextblockTypes, "default": currentTextblockType, defaultLabel: "Type..." }],
+  params: [{ label: "Type", type: "select", options: listTextblockTypes, "default": currentTextblockType, defaultLabel: "Type..." }],
   display: "select",
   menuGroup: "block", menuRank: 10
 });
@@ -1090,8 +1428,8 @@ function listTextblockTypes(pm) {
   if (cached) return cached;
 
   var found = [];
-  for (var _name4 in pm.schema.nodes) {
-    var type = pm.schema.nodes[_name4];
+  for (var _name3 in pm.schema.nodes) {
+    var type = pm.schema.nodes[_name3];
     if (!type.textblockTypes) continue;
     for (var i = 0; i < type.textblockTypes.length; i++) {
       var info = type.textblockTypes[i];
@@ -1131,7 +1469,16 @@ function nodeAboveSelection(pm) {
   return i == 0 ? false : sel.head.shorten(i - 1);
 }
 
-defineCommand("selectParentBlock", {
+// ;; #path=selectParentBlock #kind=command
+// Move the selection to the node wrapping the current selection, if
+// any. (Will not select the document node.)
+//
+// **Keybindings:** Esc
+//
+// Registers itself in the block [menu](#FIXME).
+
+_options.defaultRegistry.register("command", {
+  name: "selectParentNode",
   label: "Select parent node",
   run: function run(pm) {
     var node = nodeAboveSelection(pm);
@@ -1166,16 +1513,16 @@ function selectBlockHorizontally(pm, dir) {
   if (!empty && !node) return false;
 
   if (node && node.isInline) {
-    pm.setSelection(dir > 0 ? to : from);
+    pm.setTextSelection(dir > 0 ? to : from);
     return true;
   }
 
   var parent = undefined;
   if (!node && (parent = pm.doc.path(from.path)) && (dir > 0 ? from.offset < parent.size : from.offset)) {
-    var _ref2 = dir > 0 ? parent.chunkAfter(from.offset) : parent.chunkBefore(from.offset);
+    var _ref = dir > 0 ? parent.chunkAfter(from.offset) : parent.chunkBefore(from.offset);
 
-    var nextNode = _ref2.node;
-    var start = _ref2.start;
+    var nextNode = _ref.node;
+    var start = _ref.start;
 
     if (nextNode.type.selectable && start == from.offset - (dir > 0 ? 0 : 1)) {
       pm.setNodeSelection(dir < 0 ? from.move(-1) : from);
@@ -1186,13 +1533,19 @@ function selectBlockHorizontally(pm, dir) {
 
   var next = moveSelectionBlock(pm, dir);
   if (next && (next instanceof _selection.NodeSelection || node)) {
-    pm.setSelection(next);
+    pm.setSelectionDirect(next);
     return true;
   }
   return false;
 }
 
-defineCommand("selectBlockLeft", {
+// ;; #path=selectBlockLeft #kind=command
+// Select the node directly before the cursor, if any.
+//
+// **Keybindings:** Left, Mod-Left
+
+_options.defaultRegistry.register("command", {
+  name: "selectNodeLeft",
   label: "Move the selection onto or out of the block to the left",
   run: function run(pm) {
     var done = selectBlockHorizontally(pm, -1);
@@ -1202,7 +1555,13 @@ defineCommand("selectBlockLeft", {
   key: ["Left", "Mod-Left"]
 });
 
-defineCommand("selectBlockRight", {
+// ;; #path=selectNodeRight #kind=command
+// Select the node directly after the cursor, if any.
+//
+// **Keybindings:** Right, Mod-Right
+
+_options.defaultRegistry.register("command", {
+  name: "selectNodeRight",
   label: "Move the selection onto or out of the block to the right",
   run: function run(pm) {
     var done = selectBlockHorizontally(pm, 1);
@@ -1227,7 +1586,7 @@ function selectBlockVertically(pm, dir) {
   if (leavingTextblock) {
     var next = moveSelectionBlock(pm, dir);
     if (next && next instanceof _selection.NodeSelection) {
-      pm.setSelection(next);
+      pm.setSelectionDirect(next);
       if (!node) pm.sel.lastNonNodePos = from;
       return true;
     }
@@ -1246,11 +1605,17 @@ function selectBlockVertically(pm, dir) {
     (0, _selection.setDOMSelectionToPos)(pm, last);
     return false;
   }
-  pm.setSelection(beyond);
+  pm.setSelectionDirect(beyond);
   return true;
 }
 
-defineCommand("selectBlockUp", {
+// ;; #path=selectNodeUp #kind=command
+// Select the node directly above the cursor, if any.
+//
+// **Keybindings:** Up
+
+_options.defaultRegistry.register("command", {
+  name: "selectNodeUp",
   label: "Move the selection onto or out of the block above",
   run: function run(pm) {
     var done = selectBlockVertically(pm, -1);
@@ -1260,7 +1625,13 @@ defineCommand("selectBlockUp", {
   key: "Up"
 });
 
-defineCommand("selectBlockDown", {
+// ;; #path=selectNodeDown #kind=command
+// Select the node directly below the cursor, if any.
+//
+// **Keybindings:** Down
+
+_options.defaultRegistry.register("command", {
+  name: "selectNodeDown",
   label: "Move the selection onto or out of the block below",
   run: function run(pm) {
     var done = selectBlockVertically(pm, 1);
@@ -1270,7 +1641,55 @@ defineCommand("selectBlockDown", {
   key: "Down"
 });
 
-},{"../dom":2,"../model":26,"../transform":38,"../util/sortedinsert":49,"./char":4,"./keys":13,"./selection":17}],6:[function(require,module,exports){
+// ;; #path=undo #kind=command
+// Undo the most recent change event, if any.
+//
+// **Keybindings:** Mod-Z
+//
+// Registers itself in the history [menu](#FIXME).
+
+_options.defaultRegistry.register("command", {
+  name: "undo",
+  label: "Undo last change",
+  run: function run(pm) {
+    pm.scrollIntoView();return pm.history.undo();
+  },
+  select: function select(pm) {
+    return pm.history.canUndo();
+  },
+  menuGroup: "history", menuRank: 10,
+  icon: {
+    width: 1024, height: 1024,
+    path: "M761 1024c113-206 132-520-313-509v253l-384-384 384-384v248c534-13 594 472 313 775z"
+  },
+  key: "Mod-Z"
+});
+
+// ;; #path=redo #kind=command
+// Redo the most recently undone change event, if any.
+//
+// **Keybindings:** Mod-Y, Shift-Mod-Z
+//
+// Registers itself in the history [menu](#FIXME).
+
+_options.defaultRegistry.register("command", {
+  name: "redo",
+  label: "Redo last undone change",
+  run: function run(pm) {
+    pm.scrollIntoView();return pm.history.redo();
+  },
+  select: function select(pm) {
+    return pm.history.canRedo();
+  },
+  menuGroup: "history", menuRank: 20,
+  icon: {
+    width: 1024, height: 1024,
+    path: "M576 248v-248l384 384-384 384v-253c-446-10-427 303-313 509-280-303-221-789 313-775z"
+  },
+  key: ["Mod-Y", "Shift-Mod-Z"]
+});
+
+},{"../dom":2,"../model":25,"../transform":37,"../util/sortedinsert":49,"./char":4,"./keys":12,"./options":14,"./selection":16}],6:[function(require,module,exports){
 "use strict";
 
 var _dom = require("../dom");
@@ -1347,7 +1766,7 @@ function applyDOMChange(pm) {
   if (changeStart) {
     var changeEnd = findDiffEndConstrained(pm.doc.content, updated.content, changeStart);
     // Mark nodes touched by this change as 'to be redrawn'
-    pm.markRangeDirty((0, _model.siblingRange)(pm.doc, changeStart, changeEnd.a));
+    pm.markRangeDirty(pm.doc.siblingRange(changeStart, changeEnd.a));
 
     pm.tr.replace(changeStart, changeEnd.a, updated, changeStart, changeEnd.b).apply();
     return true;
@@ -1458,7 +1877,7 @@ function scanText(start, end) {
   }
 }
 
-},{"../model":26,"../parse/dom":31,"../transform/tree":46,"./selection":17}],8:[function(require,module,exports){
+},{"../model":25,"../parse/dom":30,"../transform/tree":45,"./selection":16}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1480,7 +1899,7 @@ var _main = require("./main");
 function options(path, ranges) {
   return {
     onRender: function onRender(node, dom, offset) {
-      if (node.type.contains == null) {
+      if (!node.isText && node.type.contains == null) {
         dom.contentEditable = false;
         if (node.isBlock) dom.setAttribute("pm-leaf", "true");
       }
@@ -1542,7 +1961,7 @@ function draw(pm, doc) {
 }
 
 function adjustTrailingHacks(dom, node) {
-  var needs = node.size == 0 || node.lastChild.type.isBR ? "br" : node.lastChild.type.contains == null ? "text" : null;
+  var needs = node.size == 0 || node.lastChild.type.isBR ? "br" : !node.lastChild.isText && node.lastChild.type.contains == null ? "text" : null;
   var last = dom.lastChild;
   var has = !last || last.nodeType != 1 || !last.hasAttribute("pm-ignore") ? null : last.nodeName == "BR" ? "br" : "text";
   if (needs != has) {
@@ -1592,7 +2011,13 @@ function redraw(pm, dirty, doc, prev) {
         reuseDOM = true;
       } else if (pChild && !child.isText && child.sameMarkup(pChild) && dirty.get(pChild) != _main.DIRTY_REDRAW) {
         reuseDOM = true;
-        scan(domPos, child, pChild);
+        var contentNode = domPos;
+        for (;;) {
+          var first = contentNode.firstChild;
+          if (!first || first.hasAttribute("pm-ignore") || first.hasAttribute("pm-offset")) break;
+          contentNode = first;
+        }
+        scan(contentNode, child, pChild);
       } else {
         var rendered = (0, _serializeDom.renderNodeToDOM)(child, opts, offset);
         dom.insertBefore(rendered, domPos);
@@ -1616,70 +2041,7 @@ function redraw(pm, dirty, doc, prev) {
   scan(pm.content, doc, prev);
 }
 
-},{"../dom":2,"../model":26,"../serialize/dom":34,"./main":14}],9:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.eventMixin = eventMixin;
-var methods = {
-  on: function on(type, f) {
-    var map = this._handlers || (this._handlers = {});
-    var arr = map[type] || (map[type] = []);
-    arr.push(f);
-  },
-
-  off: function off(type, f) {
-    var arr = this._handlers && this._handlers[type];
-    if (arr) for (var i = 0; i < arr.length; ++i) {
-      if (arr[i] == f) {
-        arr.splice(i, 1);break;
-      }
-    }
-  },
-
-  signal: function signal(type) {
-    var arr = this._handlers && this._handlers[type];
-
-    for (var _len = arguments.length, values = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      values[_key - 1] = arguments[_key];
-    }
-
-    if (arr) for (var i = 0; i < arr.length; ++i) {
-      arr[i].apply(arr, values);
-    }
-  },
-
-  signalHandleable: function signalHandleable(type) {
-    var arr = this._handlers && this._handlers[type];
-    if (arr) {
-      for (var _len2 = arguments.length, values = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-        values[_key2 - 1] = arguments[_key2];
-      }
-
-      for (var i = 0; i < arr.length; ++i) {
-        var result = arr[i].apply(arr, values);
-        if (result !== false) return result;
-      }
-    }return false;
-  },
-
-  hasHandler: function hasHandler(type) {
-    var arr = this._handlers && this._handlers[type];
-    return arr && arr.length > 0;
-  }
-};
-
-// Add event-related methods to a constructor's prototype, to make
-// registering events on such objects more convenient.
-
-function eventMixin(ctor) {
-  var proto = ctor.prototype;
-  for (var prop in methods) if (methods.hasOwnProperty(prop)) proto[prop] = methods[prop];
-}
-
-},{}],10:[function(require,module,exports){
+},{"../dom":2,"../model":25,"../serialize/dom":33,"./main":13}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1780,7 +2142,7 @@ var CompressionWorker = (function () {
 
           this.remap.moveToVersion(stepVersion);
 
-          var mappedStep = (0, _transform.mapStep)(step, this.remap.remap);
+          var mappedStep = step.map(this.remap.remap);
           if (mappedStep && isDelStep(step)) {
             var extra = 0,
                 start = step.from;
@@ -1840,7 +2202,7 @@ var CompressionWorker = (function () {
 })();
 
 function isDelStep(step) {
-  return step.name == "replace" && step.from.offset < step.to.offset && _model.Pos.samePath(step.from.path, step.to.path) && (!step.param || step.param.content.size == 0);
+  return step.type == "replace" && step.from.offset < step.to.offset && _model.Pos.samePath(step.from.path, step.to.path) && (!step.param || step.param.content.size == 0);
 }
 
 var compressStepCount = 150;
@@ -1928,7 +2290,7 @@ var Branch = (function () {
           collapsing = false;
           remap.moveToVersion(invertedStep.version);
 
-          step = (0, _transform.mapStep)(step, remap.remap);
+          step = step.map(remap.remap);
           var result = step && tr.step(step);
           if (result) {
             ids.push(invertedStep.id);
@@ -2162,7 +2524,12 @@ var History = (function () {
 
 exports.History = History;
 
-},{"../model":26,"../transform":38}],11:[function(require,module,exports){
+},{"../model":25,"../transform":37}],10:[function(require,module,exports){
+// !! This module implements the ProseMirror editor. It contains
+// functionality related to editing, selection, and integration with
+// the browser. `ProseMirror` is the class you'll want to instantiate
+// and interact with when using the editor.
+
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2186,6 +2553,18 @@ Object.defineProperty(exports, "defineOption", {
     return _options.defineOption;
   }
 });
+Object.defineProperty(exports, "Registry", {
+  enumerable: true,
+  get: function get() {
+    return _options.Registry;
+  }
+});
+Object.defineProperty(exports, "defaultRegistry", {
+  enumerable: true,
+  get: function get() {
+    return _options.defaultRegistry;
+  }
+});
 
 var _selection = require("./selection");
 
@@ -2196,21 +2575,24 @@ Object.defineProperty(exports, "Range", {
   }
 });
 
-var _event = require("./event");
-
-Object.defineProperty(exports, "eventMixin", {
-  enumerable: true,
-  get: function get() {
-    return _event.eventMixin;
-  }
-});
-
 var _keys = require("./keys");
 
 Object.defineProperty(exports, "Keymap", {
   enumerable: true,
   get: function get() {
     return _keys.Keymap;
+  }
+});
+Object.defineProperty(exports, "keyName", {
+  enumerable: true,
+  get: function get() {
+    return _keys.keyName;
+  }
+});
+Object.defineProperty(exports, "keyNames", {
+  enumerable: true,
+  get: function get() {
+    return _keys.keyNames;
   }
 });
 
@@ -2244,7 +2626,7 @@ Object.defineProperty(exports, "Command", {
   }
 });
 
-},{"./commands":5,"./event":9,"./keys":13,"./main":14,"./options":15,"./range":16,"./selection":17}],12:[function(require,module,exports){
+},{"./commands":5,"./keys":12,"./main":13,"./options":14,"./range":15,"./selection":16}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2306,6 +2688,7 @@ var Input = (function () {
     this.draggingFrom = false;
 
     this.keymaps = [];
+    this.defaultKeymap = null;
 
     this.storedMarks = null;
 
@@ -2379,6 +2762,10 @@ function dispatchKey(pm, name, e) {
   }
 
   var handle = function handle(bound) {
+    if (bound === false) return "nothing";
+    if (bound == "...") return "multi";
+    if (bound == null) return false;
+
     var result = false;
     if (Array.isArray(bound)) {
       for (var i = 0; result === false && i < bound.length; i++) {
@@ -2389,13 +2776,13 @@ function dispatchKey(pm, name, e) {
     } else {
       result = bound(pm);
     }
-    return result !== false;
+    return result == false ? false : "handled";
   };
 
   var result = undefined;
   for (var i = 0; !result && i < pm.input.keymaps.length; i++) {
-    result = (0, _keys.lookupKey)(name, pm.input.keymaps[i].map, handle, pm);
-  }if (!result) result = (0, _keys.lookupKey)(name, pm.options.keymap, handle, pm) || (0, _keys.lookupKey)(name, _capturekeys.captureKeys, handle, pm);
+    result = handle(pm.input.keymaps[i].map.lookup(name, pm));
+  }if (!result) result = handle(pm.baseKeymap.lookup(name, pm)) || handle(_capturekeys.captureKeys.lookup(name));
 
   // If the key should be used in sequence with the next key, store the keyname internally.
   if (result == "multi") pm.input.keySeq = name;
@@ -2427,6 +2814,8 @@ function inputText(pm, range, text) {
   var tr = pm.tr;
   tr.replaceWith(range.from, range.to, pm.schema.text(text, marks)).apply();
   pm.scrollIntoView();
+  // :: () #path=ProseMirror#events#textInput
+  // Fired when the user types text into the editor.
   pm.signal("textInput", text);
 }
 
@@ -2461,7 +2850,8 @@ function selectClickedNode(pm, e) {
   e.preventDefault();
 }
 
-var lastClick = 0;
+var lastClick = 0,
+    oneButLastClick = 0;
 
 handlers.mousedown = function (pm, e) {
   if (e.ctrlKey) return selectClickedNode(pm, e);
@@ -2469,26 +2859,47 @@ handlers.mousedown = function (pm, e) {
   pm.sel.pollForUpdate();
 
   var now = Date.now(),
-      multi = now - lastClick < 500;
+      doubleClick = now - lastClick < 500,
+      tripleClick = now - oneButLastClick < 600;
+  oneButLastClick = lastClick;
   lastClick = now;
-  if (pm.input.shiftKey || multi) return;
+  if (tripleClick) {
+    e.preventDefault();
+    var pos = (0, _selection.selectableNodeAbove)(pm, e.target, { left: e.clientX, top: e.clientY }, true);
+    if (pos) {
+      var node = pm.doc.nodeAfter(pos);
+      if (node.isBlock && !node.isTextblock) {
+        pm.setNodeSelection(pos);
+      } else {
+        var path = node.isInline ? pos.path : pos.toPath();
+        if (node.isInline) node = pm.doc.path(path);
+        pm.setTextSelection(new _model.Pos(path, 0), new _model.Pos(path, node.size));
+      }
+      pm.focus();
+    }
+    return;
+  }
+  if (pm.input.shiftKey || doubleClick) return;
 
   var x = e.clientX,
-      y = e.clientY;
-  var done = function done() {
+      y = e.clientY,
+      moved = false;
+  var up = function up() {
     removeEventListener("mouseup", up);
     removeEventListener("mousemove", move);
-  };
-  var up = function up() {
-    done();
-    var pos = (0, _selection.selectableNodeAbove)(pm, e.target, { left: e.clientX, top: e.clientY });
+    if ((0, _selection.handleNodeClick)(pm, e)) return;
+
+    var pos = !moved && (0, _selection.selectableNodeAbove)(pm, e.target, { left: e.clientX, top: e.clientY });
     if (pos) {
       pm.setNodeSelection(pos);
       pm.focus();
+    } else {
+      pm.sel.pollForUpdate();
     }
   };
   var move = function move(e) {
-    if (Math.abs(x - e.clientX) > 4 || Math.abs(y - e.clientY) > 4) done();
+    if (!moved && (Math.abs(x - e.clientX) > 4 || Math.abs(y - e.clientY) > 4)) moved = true;
+    pm.sel.pollForUpdate();
   };
   addEventListener("mouseup", up);
   addEventListener("mousemove", move);
@@ -2496,10 +2907,6 @@ handlers.mousedown = function (pm, e) {
 
 handlers.touchdown = function (pm) {
   pm.sel.pollForUpdate();
-};
-
-handlers.mousemove = function (pm, e) {
-  if (e.which || e.button) pm.sel.pollForUpdate();
 };
 
 /**
@@ -2561,7 +2968,7 @@ function finishComposing(pm) {
   pm.ensureOperation();
   pm.input.composing = null;
   if (text != info.data) inputText(pm, info.range, text);
-  if (range && !range.eq(pm.sel.range)) pm.setSelection(range);
+  if (range && !range.eq(pm.sel.range)) pm.setSelectionDirect(range);
 }
 
 handlers.input = function (pm) {
@@ -2572,6 +2979,7 @@ handlers.input = function (pm) {
     return;
   }
 
+  pm.sel.stopPollingForUpdate();
   (0, _domchange.applyDOMChange)(pm);
   pm.scrollIntoView();
 };
@@ -2619,7 +3027,7 @@ handlers.paste = function (pm, e) {
     } else if (html) {
       doc = (0, _parseDom.fromHTML)(pm.schema, html);
     } else {
-      doc = (0, _parse.convertFrom)(pm.schema, txt, (0, _parse.knownSource)("markdown") ? "markdown" : "text");
+      doc = (0, _parse.parseFrom)(pm.schema, txt, (0, _parse.knownSource)("markdown") ? "markdown" : "text");
     }
     pm.tr.replace(sel.from, sel.to, doc, from || (0, _selection.findSelectionAtStart)(doc).from, to || (0, _selection.findSelectionAtEnd)(doc).to).apply();
     pm.scrollIntoView();
@@ -2671,7 +3079,7 @@ handlers.drop = function (pm, e) {
   var html = undefined,
       txt = undefined,
       doc = undefined;
-  if (html = e.dataTransfer.getData("text/html")) doc = (0, _parseDom.fromHTML)(pm.schema, html, { document: document });else if (txt = e.dataTransfer.getData("text/plain")) doc = (0, _parse.convertFrom)(pm.schema, txt, (0, _parse.knownSource)("markdown") ? "markdown" : "text");
+  if (html = e.dataTransfer.getData("text/html")) doc = (0, _parseDom.fromHTML)(pm.schema, html, { document: document });else if (txt = e.dataTransfer.getData("text/plain")) doc = (0, _parse.parseFrom)(pm.schema, txt, (0, _parse.knownSource)("markdown") ? "markdown" : "text");
 
   if (doc) {
     e.preventDefault();
@@ -2683,22 +3091,26 @@ handlers.drop = function (pm, e) {
       insertPos = tr.map(insertPos).pos;
     }
     tr.replace(insertPos, insertPos, doc, (0, _selection.findSelectionAtStart)(doc).from, (0, _selection.findSelectionAtEnd)(doc).to).apply();
-    pm.setSelection(insertPos, tr.map(insertPos).pos);
+    pm.setTextSelection(insertPos, tr.map(insertPos).pos);
     pm.focus();
   }
 };
 
 handlers.focus = function (pm) {
   (0, _dom.addClass)(pm.wrapper, "ProseMirror-focused");
+  // :: () #path=ProseMirror#events#focus
+  // Fired when the editor gains focus.
   pm.signal("focus");
 };
 
 handlers.blur = function (pm) {
   (0, _dom.rmClass)(pm.wrapper, "ProseMirror-focused");
+  // :: () #path=ProseMirror#events#blur
+  // Fired when the editor loses focus.
   pm.signal("blur");
 };
 
-},{"../dom":2,"../model":26,"../parse":32,"../parse/dom":31,"../parse/text":33,"../serialize/dom":34,"../serialize/text":36,"./capturekeys":3,"./domchange":7,"./keys":13,"./selection":17}],13:[function(require,module,exports){
+},{"../dom":2,"../model":25,"../parse":31,"../parse/dom":30,"../parse/text":32,"../serialize/dom":33,"../serialize/text":35,"./capturekeys":3,"./domchange":7,"./keys":12,"./selection":16}],12:[function(require,module,exports){
 // From CodeMirror, should be factored into its own NPM module
 
 // declare_global: navigator
@@ -2713,18 +3125,14 @@ var _createClass = (function () { function defineProperties(target, props) { for
 exports.keyName = keyName;
 exports.isModifierKey = isModifierKey;
 exports.normalizeKeyName = normalizeKeyName;
-exports.lookupKey = lookupKey;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var mac = typeof navigator != "undefined" ? /Mac/.test(navigator.platform) : false;
 
-/**
- * A map of KeyboardEvent keycodes to key names.
- *
- * @type {Array}
- */
-var names = {
+// :: Object<string>
+// A map from key codes to key names.
+var keyNames = {
   3: "Enter", 8: "Backspace", 9: "Tab", 13: "Enter", 16: "Shift", 17: "Ctrl", 18: "Alt",
   19: "Pause", 20: "CapsLock", 27: "Esc", 32: "Space", 33: "PageUp", 34: "PageDown", 35: "End",
   36: "Home", 37: "Left", 38: "Up", 39: "Right", 40: "Down", 44: "PrintScrn", 45: "Insert",
@@ -2735,44 +3143,59 @@ var names = {
   63273: "Home", 63275: "End", 63276: "PageUp", 63277: "PageDown", 63302: "Insert"
 };
 
-exports.names = names;
+exports.keyNames = keyNames;
 // Number keys
 for (var i = 0; i < 10; i++) {
-  names[i + 48] = names[i + 96] = String(i);
+  keyNames[i + 48] = keyNames[i + 96] = String(i);
 } // Alphabetic keys
 for (var i = 65; i <= 90; i++) {
-  names[i] = String.fromCharCode(i);
+  keyNames[i] = String.fromCharCode(i);
 } // Function keys
 for (var i = 1; i <= 12; i++) {
-  names[i + 111] = names[i + 63235] = "F" + i;
-} /**
-   * Given a keypress event, get the key name.
-   *
-   * @param  {KeyboardEvent} event   The keypress event.
-   * @param  {Boolean}       noShift
-   * @return {string}                The key name.
-   */
+  keyNames[i + 111] = keyNames[i + 63235] = "F" + i;
+} // :: (KeyboardEvent) → ?string
+// Find a name for the given keydown event. If the keycode in the
+// event is not known, this will return `null`. Otherwise, it will
+// return a string like `"Shift-Cmd-Ctrl-Alt-Home"`. The parts before
+// the dashes give the modifiers (always in that order, if present),
+// and the last word gives the key name, which one of the names in
+// `keyNames`.
+//
+// The convention for keypress events is to use the pressed character
+// between single quotes. Due to limitations in the browser API,
+// keypress events can not have modifiers.
 
-function keyName(event, noShift) {
-  var base = names[event.keyCode],
+function keyName(event) {
+  var base = keyNames[event.keyCode],
       name = base;
-  if (name == null || event.altGraphKey) return false;
+  if (name == null || event.altGraphKey) return null;
 
   if (event.altKey && base != "Alt") name = "Alt-" + name;
   if (event.ctrlKey && base != "Ctrl") name = "Ctrl-" + name;
   if (event.metaKey && base != "Cmd") name = "Cmd-" + name;
-  if (!noShift && event.shiftKey && base != "Shift") name = "Shift-" + name;
+  if (event.shiftKey && base != "Shift") name = "Shift-" + name;
   return name;
 }
 
-function isModifierKey(value) {
-  var name = typeof value == "string" ? value : names[value.keyCode];
+// :: (string) → bool
+// Test whether the given key name refers to a modifier key.
+
+function isModifierKey(name) {
+  name = /[^-]*$/.exec(name)[0];
   return name == "Ctrl" || name == "Alt" || name == "Shift" || name == "Mod";
 }
 
-function normalizeKeyName(fullName) {
-  var parts = fullName.split(/-(?!'?$)/),
-      name = parts[parts.length - 1];
+// :: (string) → string
+// Normalize a sloppy key name, which may have modifiers in the wrong
+// order or use shorthands for modifiers, to a properly formed key
+// name. Used to normalize names provided in keymaps.
+//
+// Note that the modifier `mod` is a shorthand for `Cmd` on Mac, and
+// `Ctrl` on other platforms.
+
+function normalizeKeyName(name) {
+  var parts = name.split(/-(?!'?$)/),
+      result = parts[parts.length - 1];
   var alt = undefined,
       ctrl = undefined,
       shift = undefined,
@@ -2783,19 +3206,31 @@ function normalizeKeyName(fullName) {
       if (mac) cmd = true;else ctrl = true;
     } else throw new Error("Unrecognized modifier name: " + mod);
   }
-  if (alt) name = "Alt-" + name;
-  if (ctrl) name = "Ctrl-" + name;
-  if (cmd) name = "Cmd-" + name;
-  if (shift) name = "Shift-" + name;
-  return name;
+  if (alt) result = "Alt-" + result;
+  if (ctrl) result = "Ctrl-" + result;
+  if (cmd) result = "Cmd-" + result;
+  if (shift) result = "Shift-" + result;
+  return result;
 }
 
-/**
- * A group of bindings of key names and editor commands,
- * which override the default key press event behavior in the editor's DOM.
- */
+// ;; A keymap binds a set of [key names](#keyName) to commands names
+// or functions.
 
 var Keymap = (function () {
+  // :: (Object, ?Object)
+  // Construct a keymap using the bindings in `keys`, whose properties
+  // should be [key names](#keyName) or space-separated sequences of
+  // key names. In the second case, the binding will be for a
+  // multi-stroke key combination.
+  //
+  // When `options` has a property `call`, this will be a programmatic
+  // keymap, meaning that instead of looking keys up in its set of
+  // bindings, it will pass the key name to `options.call`, and use
+  // the return value of that calls as the resolved binding.
+  //
+  // `options.name` can be used to give the keymap a name, making it
+  // easier to [remove](#ProseMirror.removeKeymap) from an editor.
+
   function Keymap(keys, options) {
     _classCallCheck(this, Keymap);
 
@@ -2806,23 +3241,13 @@ var Keymap = (function () {
     }
   }
 
-  /**
-   * Lookup a key name in a KeyMap, and pass the mapped value to a handler.
-   *
-   * @param {string}   key     The key name.
-   * @param {Keymap}   map     The key map. If the keymap has an options.call method,
-   *                           that will be invoked to get the mapped value.
-   * @param {Function} handle  Callback
-   * @param {Object}   context
-   * @return {string} If the key name has a mapping and the callback is invoked ("handled"),
-   *                  if the key name needs to be combined in sequence with the next key ("multi"),
-   *                  if there is no mapping ("nothing").
-   */
+  // :: (string, any)
+  // Add a binding for the given key or key sequence.
 
   _createClass(Keymap, [{
     key: "addBinding",
     value: function addBinding(keyname, value) {
-      var keys = keyname.split(" ").map(normalizeKeyName);
+      var keys = keyname.split(/ +(?!\'$)/).map(normalizeKeyName);
       for (var i = 0; i < keys.length; i++) {
         var _name = keys.slice(0, i + 1).join(" ");
         var val = i == keys.length - 1 ? value : "...";
@@ -2830,10 +3255,13 @@ var Keymap = (function () {
         if (!prev) this.bindings[_name] = val;else if (prev != val) throw new Error("Inconsistent bindings for " + _name);
       }
     }
+
+    // :: (string)
+    // Remove the binding for the given key or key sequence.
   }, {
     key: "removeBinding",
     value: function removeBinding(keyname) {
-      var keys = keyname.split(" ").map(normalizeKeyName);
+      var keys = keyname.split(/ +(?!\'$)/).map(normalizeKeyName);
       for (var i = keys.length - 1; i >= 0; i--) {
         var _name2 = keys.slice(0, i).join(" ");
         var val = this.bindings[_name2];
@@ -2847,6 +3275,17 @@ var Keymap = (function () {
         if (binding.length > name && binding.indexOf(name) == 0 && binding.charAt(name.length) == " ") return false;
       }return true;
     }
+
+    // :: (string, ?any) → any
+    // Looks up the given key or key sequence in this keymap. Returns
+    // the value the key is bound to (which may be undefined if it is
+    // not bound), or the string `"..."` if the key is a prefix of a
+    // multi-key sequence that is bound by this keymap.
+  }, {
+    key: "lookup",
+    value: function lookup(key, context) {
+      return this.options.call ? this.options.call(key, context) : this.bindings[key];
+    }
   }]);
 
   return Keymap;
@@ -2854,41 +3293,7 @@ var Keymap = (function () {
 
 exports.Keymap = Keymap;
 
-function lookupKey(_x, _x2, _x3, _x4) {
-  var _again = true;
-
-  _function: while (_again) {
-    var key = _x,
-        map = _x2,
-        handle = _x3,
-        context = _x4;
-    _again = false;
-
-    var found = map.options.call ? map.options.call(key, context) : map.bindings[key];
-    if (found === false) return "nothing";
-    if (found === "...") return "multi";
-    if (found != null && handle(found)) return "handled";
-
-    var fall = map.options.fallthrough;
-    if (fall) {
-      if (!Array.isArray(fall)) {
-        _x = key;
-        _x2 = fall;
-        _x3 = handle;
-        _x4 = context;
-        _again = true;
-        found = fall = undefined;
-        continue _function;
-      }
-      for (var i = 0; i < fall.length; i++) {
-        var result = lookupKey(key, fall[i], handle, context);
-        if (result) return result;
-      }
-    }
-  }
-}
-
-},{}],14:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2917,19 +3322,9 @@ var _utilSortedinsert2 = _interopRequireDefault(_utilSortedinsert);
 
 var _utilMap = require("../util/map");
 
-var _options = require("./options");
-
-var _selection2 = require("./selection");
+var _utilEvent = require("../util/event");
 
 var _dom = require("../dom");
-
-var _draw = require("./draw");
-
-var _input = require("./input");
-
-var _history = require("./history");
-
-var _event = require("./event");
 
 var _serializeText = require("../serialize/text");
 
@@ -2939,41 +3334,62 @@ var _parse = require("../parse");
 
 var _serialize = require("../serialize");
 
+var _options = require("./options");
+
+var _selection2 = require("./selection");
+
+var _draw = require("./draw");
+
+var _input = require("./input");
+
+var _history = require("./history");
+
 var _commands = require("./commands");
 
 var _range = require("./range");
 
 var _keys = require("./keys");
 
-/**
- * ProseMirror editor class.
- * @class
- */
+// ;; This is the class used to represent instances of the editor. A
+// ProseMirror editor holds a [document](#Node) and a
+// [selection](#Selection), and displays an editable surface
+// representing that document in the browser document.
+//
+// Contains event methods (`on`, etc) from the [event
+// mixin](#EventMixin).
 
 var ProseMirror = (function () {
-  /**
-   * @param {Object} opts        Instance options hash.
-   * @param {Object} opts.schema The document model schema for the editor instance.
-   * @param {Object} opts.doc    The document model for the instance. Optional.
-   */
+  // :: (Object)
+  // Construct a new editor from a set of [options](#edit_options)
+  // and, if it has a [`place`](#place) option, add it to the
+  // document.
 
   function ProseMirror(opts) {
     _classCallCheck(this, ProseMirror);
 
     opts = this.options = (0, _options.parseOptions)(opts);
+    // :: Schema
+    // The schema for this editor's document.
     this.schema = opts.schema;
     if (opts.doc == null) opts.doc = this.schema.node("doc", null, [this.schema.node("paragraph")]);
+    // :: DOMNode
+    // The editable DOM node containing the document.
     this.content = (0, _dom.elt)("div", { "class": "ProseMirror-content" });
+    // :: DOMNode
+    // The outer DOM element of the editor.
     this.wrapper = (0, _dom.elt)("div", { "class": "ProseMirror" }, this.content);
     this.wrapper.ProseMirror = this;
 
     if (opts.place && opts.place.appendChild) opts.place.appendChild(this.wrapper);else if (opts.place) opts.place(this.wrapper);
 
-    this.setDocInner(opts.docFormat ? (0, _parse.convertFrom)(this.schema, opts.doc, opts.docFormat, { document: document }) : opts.doc);
+    this.setDocInner(opts.docFormat ? (0, _parse.parseFrom)(this.schema, opts.doc, opts.docFormat) : opts.doc);
     (0, _draw.draw)(this, this.doc);
     this.content.contentEditable = true;
     if (opts.label) this.content.setAttribute("aria-label", opts.label);
 
+    // :: Object
+    // A namespace where modules can store references to themselves
+    // associated with this editor instance.
     this.mod = Object.create(null);
     this.operation = null;
     this.dirtyNodes = new _utilMap.Map(); // Maps node object to 1 (re-scan content) or 2 (redraw entirely)
@@ -2983,97 +3399,46 @@ var ProseMirror = (function () {
     this.accurateSelection = false;
     this.input = new _input.Input(this);
 
-    this.commands = (0, _commands.initCommands)(this.schema);
+    // :: Object<Command>
+    // The commands available in the editor.
+    this.commands = (0, _commands.initCommands)(this);
     this.commandKeys = Object.create(null);
 
     (0, _options.initOptions)(this);
   }
 
-  /**
-   * @return {Range} The instance of the editor's selection range.
-   */
+  // :: (string, any)
+  // Update the value of the given [option](#edit_options).
 
   _createClass(ProseMirror, [{
-    key: "apply",
-
-    /**
-     * Apply a transform on the editor.
-     */
-    value: function apply(transform) {
-      var options = arguments.length <= 1 || arguments[1] === undefined ? nullOptions : arguments[1];
-
-      if (transform.doc == this.doc) return false;
-      if (transform.docs[0] != this.doc && (0, _model.findDiffStart)(transform.docs[0], this.doc)) throw new Error("Applying a transform that does not start with the current document");
-
-      this.updateDoc(transform.doc, transform, options.selection);
-      this.signal("transform", transform, options);
-      if (options.scrollIntoView) this.scrollIntoView();
-      return transform;
+    key: "setOption",
+    value: function setOption(name, value) {
+      (0, _options.setOption)(this, name, value);
     }
 
-    /**
-     * @return {Transform} A new transform object.
-     */
+    // :: (string) → any
+    // Get the current value of the given [option](#edit_options).
   }, {
-    key: "setContent",
-    value: function setContent(value, format) {
-      if (format) value = (0, _parse.convertFrom)(this.schema, value, format);
-      this.setDoc(value);
+    key: "getOption",
+    value: function getOption(name) {
+      return this.options[name];
     }
+
+    // :: Selection
+    // Get the current selection.
   }, {
-    key: "getContent",
-    value: function getContent(format) {
-      return format ? (0, _serialize.convertTo)(this.doc, format) : this.doc;
+    key: "setTextSelection",
+
+    // :: (Pos, ?Pos)
+    // Set the selection to a [text selection](#TextSelection) from
+    // `anchor` to `head`, or, if `head` is null, a cursor selection at
+    // `anchor`.
+    value: function setTextSelection(anchor, head) {
+      this.setSelection(new _selection2.TextSelection(anchor, head));
     }
-  }, {
-    key: "setDocInner",
-    value: function setDocInner(doc) {
-      if (doc.type != this.schema.nodes.doc) throw new Error("Trying to set a document with a different schema");
-      this.doc = doc;
-      this.ranges = new _range.RangeStore(this);
-      this.history = new _history.History(this);
-    }
-  }, {
-    key: "setDoc",
-    value: function setDoc(doc, sel) {
-      if (!sel) sel = (0, _selection2.findSelectionAtStart)(doc);
-      this.signal("beforeSetDoc", doc, sel);
-      this.ensureOperation();
-      this.setDocInner(doc);
-      this.sel.set(sel, true);
-      this.signal("setDoc", doc, sel);
-    }
-  }, {
-    key: "updateDoc",
-    value: function updateDoc(doc, mapping, selection) {
-      this.ensureOperation();
-      this.input.maybeAbortComposition();
-      this.ranges.transform(mapping);
-      this.doc = doc;
-      this.sel.setAndSignal(selection || this.sel.range.map(doc, mapping));
-      this.signal("change");
-    }
-  }, {
-    key: "checkPos",
-    value: function checkPos(pos, block) {
-      if (!this.doc.isValidPos(pos, block)) throw new Error("Position " + pos + " is not valid in current document");
-    }
-  }, {
-    key: "setSelection",
-    value: function setSelection(rangeOrAnchor, head) {
-      var range = rangeOrAnchor;
-      if (!(range instanceof _selection2.Selection)) range = new _selection2.TextSelection(rangeOrAnchor, head);
-      if (range instanceof _selection2.TextSelection) {
-        this.checkPos(range.head, true);
-        this.checkPos(range.anchor, true);
-      } else {
-        this.checkPos(range.from, false);
-        this.checkPos(range.to, false);
-      }
-      this.ensureOperation();
-      this.input.maybeAbortComposition();
-      if (!range.eq(this.sel.range)) this.sel.setAndSignal(range);
-    }
+
+    // :: (Pos)
+    // Set the selection to a node selection on the node after `pos`.
   }, {
     key: "setNodeSelection",
     value: function setNodeSelection(pos) {
@@ -3084,6 +3449,135 @@ var ProseMirror = (function () {
       if (!node.type.selectable) throw new Error("Trying to select a non-selectable node");
       this.input.maybeAbortComposition();
       this.sel.setAndSignal(new _selection2.NodeSelection(pos, pos.move(1), node));
+    }
+
+    // :: (Selection)
+    // Set the selection to the given selection object.
+  }, {
+    key: "setSelection",
+    value: function setSelection(selection) {
+      if (selection instanceof _selection2.TextSelection) {
+        this.checkPos(selection.head, true);
+        if (!selection.empty) this.checkPos(selection.anchor, true);
+      } else {
+        this.checkPos(selection.to, false);
+      }
+      this.setSelectionDirect(selection);
+    }
+  }, {
+    key: "setSelectionDirect",
+    value: function setSelectionDirect(selection) {
+      this.ensureOperation();
+      this.input.maybeAbortComposition();
+      if (!selection.eq(this.sel.range)) this.sel.setAndSignal(selection);
+    }
+
+    // :: (any, ?string)
+    // Replace the editor's document. When `format` is given, it should
+    // be a [parsable format](#parse), and `value` should something in
+    // that format. If not, `value` should be a `Node`.
+  }, {
+    key: "setContent",
+    value: function setContent(value, format) {
+      if (format) value = (0, _parse.parseFrom)(this.schema, value, format);
+      this.setDoc(value);
+    }
+
+    // :: (?string) → any
+    // Get the editor's content in a given format. When `format` is not
+    // given, a `Node` is returned. If it is given, it should be an
+    // existing [serialization format](#serialize).
+  }, {
+    key: "getContent",
+    value: function getContent(format) {
+      return format ? (0, _serialize.serializeTo)(this.doc, format) : this.doc;
+    }
+  }, {
+    key: "setDocInner",
+    value: function setDocInner(doc) {
+      if (doc.type != this.schema.nodes.doc) throw new Error("Trying to set a document with a different schema");
+      // :: Node The current document.
+      this.doc = doc;
+      this.ranges = new _range.RangeStore(this);
+      this.history = new _history.History(this);
+    }
+
+    // :: (Node, ?Selection)
+    // Set the editor's content, and optionally include a new selection.
+  }, {
+    key: "setDoc",
+    value: function setDoc(doc, sel) {
+      if (!sel) sel = (0, _selection2.findSelectionAtStart)(doc);
+      // :: (doc: Node, selection: Selection) #path=ProseMirror#events#beforeSetDoc
+      // Fired when [`setDoc`](#ProseMirror.setDoc) is called, before
+      // the document is actually updated.
+      this.signal("beforeSetDoc", doc, sel);
+      this.ensureOperation();
+      this.setDocInner(doc);
+      this.sel.set(sel, true);
+      // :: (doc: Node, selection: Selection) #path=ProseMirror#events#setDoc
+      // Fired when [`setDoc`](#ProseMirror.setDoc) is called, after
+      // the document is updated.
+      this.signal("setDoc", doc, sel);
+    }
+  }, {
+    key: "updateDoc",
+    value: function updateDoc(doc, mapping, selection) {
+      this.ensureOperation();
+      this.input.maybeAbortComposition();
+      this.ranges.transform(mapping);
+      this.doc = doc;
+      this.sel.setAndSignal(selection || this.sel.range.map(doc, mapping));
+      // :: () #path=ProseMirror#events#change
+      // Fired when the document has changed. See
+      // [`setDoc`](#ProseMirror.event_setDoc) and
+      // [`transform`](#ProseMirror.event_transform) for more specific
+      // change-related events.
+      this.signal("change");
+    }
+
+    // :: EditorTransform
+    // Create an editor- and selection-aware `Transform` for this editor.
+  }, {
+    key: "apply",
+
+    // :: (Transform, ?Object) → ?Transform
+    // Apply a transformation (which you might want to create with the
+    // [`tr` getter](#ProseMirror.tr)) to the document in the editor.
+    // The following options are supported:
+    //
+    // **`selection`**`: ?Selection`
+    //   : A new selection to set after the transformation is applied.
+    //
+    // **`scrollIntoView`**: ?bool
+    //   : When true, scroll the selection into view on the next
+    //     [redraw](#ProseMirror.flush).
+    //
+    // Returns the transform, or `false` if there were no steps in it.
+    value: function apply(transform) {
+      var options = arguments.length <= 1 || arguments[1] === undefined ? nullOptions : arguments[1];
+
+      if (transform.doc == this.doc) return false;
+      if (transform.docs[0] != this.doc && (0, _model.findDiffStart)(transform.docs[0], this.doc)) throw new Error("Applying a transform that does not start with the current document");
+
+      this.updateDoc(transform.doc, transform, options.selection);
+      // :: (Transform, Object) #path=ProseMirror#events#transform
+      // Signals that a (non-empty) transformation has been aplied to
+      // the editor. Passes the `Transform` and the options given to
+      // [`apply`](#ProseMirror.apply) as arguments to the handler.
+      this.signal("transform", transform, options);
+      if (options.scrollIntoView) this.scrollIntoView();
+      return transform;
+    }
+
+    // :: (Pos, ?bool)
+    // Verify that the given position is valid in the current document,
+    // and throw an error otherwise. When `textblock` is true, the position
+    // must also fall within a textblock node.
+  }, {
+    key: "checkPos",
+    value: function checkPos(pos, textblock) {
+      if (!this.doc.isValidPos(pos, textblock)) throw new Error("Position " + pos + " is not valid in current document");
     }
   }, {
     key: "ensureOperation",
@@ -3106,10 +3600,22 @@ var ProseMirror = (function () {
       }
       return this.operation;
     }
+
+    // :: ()
+    // Flush any pending changes to the DOM. When the document,
+    // selection, or marked ranges in an editor change, the DOM isn't
+    // updated immediately, but rather scheduled to be updated the next
+    // time the browser redraws the screen. This method can be used to
+    // force this to happen immediately. It can be useful when you, for
+    // example, want to measure where on the screen a part of the
+    // document ends up, immediately after changing the document.
   }, {
     key: "flush",
     value: function flush() {
       if (!document.body.contains(this.wrapper) || !this.operation) return;
+      // :: () #path=ProseMirror#events#flushing
+      // Fired when the editor is about to [flush](#ProseMirror.flush)
+      // an update to the DOM.
       this.signal("flushing");
       var op = this.operation;
       if (!op) return;
@@ -3127,21 +3633,30 @@ var ProseMirror = (function () {
       if ((redrawn || !op.sel.eq(this.sel.range)) && !this.input.composing) this.sel.toDOM(op.focus);
 
       if (op.scrollIntoView !== false) (0, _selection2.scrollIntoView)(this, op.scrollIntoView);
+      // :: () #path=ProseMirror#events#draw
+      // Fired when the editor redrew its document in the DOM.
       if (docChanged) this.signal("draw");
+      // :: () #path=ProseMirror#events#flush
+      // Fired when the editor has finished
+      // [flushing](#ProseMirror.flush) an update to the DOM. If you
+      // need to respond to this with a DOM update of your own, use this
+      // event to read layout from the DOM, and
+      // [`flushed`](#ProseMirror.event_flushed) to update the DOM.
       this.signal("flush");
+      // :: () #path=ProseMirror#events#flushed
+      // Fired when the editor has finished
+      // [flushing](#ProseMirror.flush) an update to the DOM, after
+      // [`flush`](#ProseMirror.event_flush) has fired.
       this.signal("flushed");
       this.accurateSelection = false;
     }
-  }, {
-    key: "setOption",
-    value: function setOption(name, value) {
-      (0, _options.setOption)(this, name, value);
-    }
-  }, {
-    key: "getOption",
-    value: function getOption(name) {
-      return this.options[name];
-    }
+
+    // :: (Keymap, ?number)
+    // Add a [keymap](#Keymap) to the editor. Keymaps added in this way
+    // are queried before the [base keymap](#keymap).
+    // The `rank` parameter can be used to control when they are queried
+    // relative to other maps added like this. Maps with a lower rank
+    // get queried first.
   }, {
     key: "addKeymap",
     value: function addKeymap(map) {
@@ -3151,6 +3666,10 @@ var ProseMirror = (function () {
         return a.rank - b.rank;
       });
     }
+
+    // :: (union<string, Keymap>)
+    // Remove the given keymap, or the keymap with the given name, from
+    // the editor.
   }, {
     key: "removeKeymap",
     value: function removeKeymap(map) {
@@ -3164,6 +3683,30 @@ var ProseMirror = (function () {
     }
   }, {
     key: "markRange",
+
+    // :: (Pos, Pos, ?Object) → MarkedRange
+    // Create a marked range between the given positions. Marked ranges
+    // “track” the part of the document they point to—as the document
+    // changes, they are updated to move, grow, and shrink along with
+    // their content.
+    //
+    // `options` may be an object containing these properties:
+    //
+    // **`inclusiveLeft`**`: bool = false`
+    //   : Whether the left side of the range is inclusive. When it is,
+    //     content inserted at that point will become part of the range.
+    //     When not, it will be outside of the range.
+    //
+    // **`inclusiveRight`**`: bool = false`
+    //   : Whether the right side of the range is inclusive.
+    //
+    // **`removeWhenEmpty`**`: bool = true`
+    //   : Whether the range should be forgotten when it becomes empty
+    //     (because all of its content was deleted).
+    //
+    // **`className`**: string
+    //   : A CSS class to add to the inline content that is part of this
+    //     range.
     value: function markRange(from, to, options) {
       this.checkPos(from);
       this.checkPos(to);
@@ -3171,11 +3714,21 @@ var ProseMirror = (function () {
       this.ranges.addRange(range);
       return range;
     }
+
+    // :: (MarkedRange)
+    // Remove the given range from the editor.
   }, {
     key: "removeRange",
     value: function removeRange(range) {
       this.ranges.removeRange(range);
     }
+
+    // :: (MarkType, ?bool, ?Object)
+    // Set (when `to` is true), unset (`to` is false), or toggle (`to`
+    // is null) the given mark type on the selection. When there is a
+    // non-empty selection, the marks of the selection are updated. When
+    // the selection is empty, the set of [active
+    // marks](#ProseMirror.activeMarks) is updated.
   }, {
     key: "setMark",
     value: function setMark(type, to, attrs) {
@@ -3185,37 +3738,69 @@ var ProseMirror = (function () {
         if (to == null) to = !type.isInSet(marks);
         if (to && !this.doc.path(sel.head.path).type.canContainMark(type)) return;
         this.input.storedMarks = to ? type.create(attrs).addToSet(marks) : type.removeFromSet(marks);
+        // :: () #path=ProseMirror#events#activeMarkChange
+        // Fired when the set of [active marks](#ProseMirror.activeMarks) changes.
         this.signal("activeMarkChange");
       } else {
         if (to != null ? to : !this.doc.rangeHasMark(sel.from, sel.to, type)) this.apply(this.tr.addMark(sel.from, sel.to, type.create(attrs)));else this.apply(this.tr.removeMark(sel.from, sel.to, type));
       }
     }
+
+    // :: () → [Mark]
+    // Get the marks at the cursor. By default, this yields the marks
+    // associated with the content at the cursor, as per `Node.marksAt`.
+    // But `setMark` may have been used to change the set of active
+    // marks, in which case that set is returned.
   }, {
     key: "activeMarks",
     value: function activeMarks() {
-      return this.input.storedMarks || this.doc.marksAt(this.selection.head);
+      var head;
+      return this.input.storedMarks || ((head = this.selection.head) ? this.doc.marksAt(head) : []);
     }
+
+    // :: ()
+    // Give the editor focus.
   }, {
     key: "focus",
     value: function focus() {
       if (this.operation) this.operation.focus = true;else this.sel.toDOM(true);
     }
+
+    // :: () → bool
+    // Query whether the editor has focus.
   }, {
     key: "hasFocus",
     value: function hasFocus() {
       if (this.sel.range instanceof _selection2.NodeSelection) return document.activeElement == this.content;else return (0, _selection2.hasFocus)(this);
     }
+
+    // :: () → Node
+    // Get the part of the document that falls within the selection.
   }, {
     key: "posAtCoords",
+
+    // :: ({top: number, left: number}) → ?Pos
+    // If the given coordinates (which should be relative to the top
+    // left corner of the window—not the page) fall within the editable
+    // content, this method will return the document position that
+    // corresponds to those coordinates.
     value: function posAtCoords(coords) {
       return (0, _selection2.posAtCoords)(this, coords);
     }
+
+    // :: (Pos) → {top: number, left: number, bottom: number}
+    // Find the screen coordinates (relative to top left corner of the
+    // window) of the given document position.
   }, {
     key: "coordsAtPos",
     value: function coordsAtPos(pos) {
       this.checkPos(pos);
       return (0, _selection2.coordsAtPos)(this, pos);
     }
+
+    // :: (?Pos)
+    // Scroll the given position, or the cursor position if `pos` isn't
+    // given, into view.
   }, {
     key: "scrollIntoView",
     value: function scrollIntoView() {
@@ -3225,31 +3810,52 @@ var ProseMirror = (function () {
       this.ensureOperation();
       this.operation.scrollIntoView = pos;
     }
+
+    // :: (string, ?[any]) → bool
+    // Execute the named [command](#Command). If the command takes
+    // parameters and they are not passed here, the user will be
+    // prompted for them.
   }, {
     key: "execCommand",
     value: function execCommand(name, params) {
       var cmd = this.commands[name];
       return !!(cmd && cmd.exec(this, params) !== false);
     }
+
+    // :: (string) → ?string
+    // Return the name of the key that is bound to the given command, if
+    // any.
   }, {
     key: "keyForCommand",
     value: function keyForCommand(name) {
       var cached = this.commandKeys[name];
       if (cached !== undefined) return cached;
 
-      var cmd = this.commands[name];
+      var cmd = this.commands[name],
+          keymap = this.baseKeymap;
       if (!cmd) return this.commandKeys[name] = null;
-      var key = cmd.info.key || (_dom.browser.mac ? cmd.info.macKey : cmd.info.pcKey);
+      var key = cmd.spec.key || (_dom.browser.mac ? cmd.spec.macKey : cmd.spec.pcKey);
       if (key) {
         key = (0, _keys.normalizeKeyName)(Array.isArray(key) ? key[0] : key);
-        var deflt = this.options.keymap.bindings[key];
+        var deflt = keymap.bindings[key];
         if (Array.isArray(deflt) ? deflt.indexOf(name) > -1 : deflt == name) return this.commandKeys[name] = key;
       }
-      for (var _key in this.options.keymap.bindings) {
-        var bound = this.options.keymap.bindings[_key];
+      for (var _key in keymap.bindings) {
+        var bound = keymap.bindings[_key];
         if (Array.isArray(bound) ? bound.indexOf(name) > -1 : bound == name) return this.commandKeys[name] = _key;
       }
       return this.commandKeys[name] = null;
+    }
+  }, {
+    key: "registry",
+    value: function registry(name, f) {
+      var _this2 = this;
+
+      this.schema.registry(name, f);
+      this.options.registries.forEach(function (reg) {
+        var array = reg.registry[name];
+        if (array) for (var i = 0; i < array.length; i++) f(array[i], _this2);
+      });
     }
   }, {
     key: "markRangeDirty",
@@ -3292,20 +3898,28 @@ var ProseMirror = (function () {
       return this.sel.range;
     }
   }, {
+    key: "tr",
+    get: function get() {
+      return new EditorTransform(this);
+    }
+  }, {
+    key: "baseKeymap",
+    get: function get() {
+      return this.options.keymap || this.defaultKeymap || (this.defaultKeymap = (0, _commands.defaultKeymap)(this));
+    }
+  }, {
     key: "selectedDoc",
     get: function get() {
       var sel = this.selection;
       return this.doc.sliceBetween(sel.from, sel.to);
     }
+
+    // :: () → string
+    // Get the text that falls within the selection.
   }, {
     key: "selectedText",
     get: function get() {
       return (0, _serializeText.toText)(this.selectedDoc);
-    }
-  }, {
-    key: "tr",
-    get: function get() {
-      return new EditorTransform(this);
     }
   }]);
 
@@ -3320,7 +3934,7 @@ exports.DIRTY_RESCAN = DIRTY_RESCAN;
 exports.DIRTY_REDRAW = DIRTY_REDRAW;
 var nullOptions = {};
 
-(0, _event.eventMixin)(ProseMirror);
+(0, _utilEvent.eventMixin)(ProseMirror);
 
 var Operation = function Operation(pm) {
   _classCallCheck(this, Operation);
@@ -3330,7 +3944,11 @@ var Operation = function Operation(pm) {
   this.scrollIntoView = false;
   this.focus = false;
   this.composingAtStart = !!pm.input.composing;
-};
+}
+
+// ;; #toc=false A selection-aware extension of `Transform`. Use
+// `ProseMirror.tr` to create an instance.
+;
 
 var EditorTransform = (function (_Transform) {
   _inherits(EditorTransform, _Transform);
@@ -3342,13 +3960,26 @@ var EditorTransform = (function (_Transform) {
     this.pm = pm;
   }
 
+  // :: (?Object) → ?EditorTransform
+  // Apply the transformation. Returns the transform, or `false` it is
+  // was empty.
+
   _createClass(EditorTransform, [{
     key: "apply",
     value: function apply(options) {
       return this.pm.apply(this, options);
     }
+
+    // :: Selection
+    // Get the editor's current selection, [mapped](#Selection.map)
+    // through the steps in this transform.
   }, {
     key: "replaceSelection",
+
+    // :: (?Node, ?bool) → EditorTransform
+    // Replace the selection with the given node, or delete it if `node`
+    // is null. When `inheritMarks` is true and the node is an inline
+    // node, it inherits the marks from the place where it is inserted.
     value: function replaceSelection(node, inheritMarks) {
       var _selection = this.selection;
       var empty = _selection.empty;
@@ -3380,11 +4011,17 @@ var EditorTransform = (function (_Transform) {
 
       if (node) return this.replaceWith(from, to, node);else return this["delete"](from, to);
     }
+
+    // :: () → EditorTransform
+    // Delete the selection.
   }, {
     key: "deleteSelection",
     value: function deleteSelection() {
       return this.replaceSelection();
     }
+
+    // :: (string) → EditorTransform
+    // Replace the selection with a text node containing the given string.
   }, {
     key: "typeText",
     value: function typeText(text) {
@@ -3400,12 +4037,15 @@ var EditorTransform = (function (_Transform) {
   return EditorTransform;
 })(_transform.Transform);
 
-},{"../dom":2,"../model":26,"../parse":32,"../parse/text":33,"../serialize":35,"../serialize/text":36,"../transform":38,"../util/map":48,"../util/sortedinsert":49,"./commands":5,"./css":6,"./draw":8,"./event":9,"./history":10,"./input":12,"./keys":13,"./options":15,"./range":16,"./selection":17}],15:[function(require,module,exports){
+},{"../dom":2,"../model":25,"../parse":31,"../parse/text":32,"../serialize":34,"../serialize/text":35,"../transform":37,"../util/event":47,"../util/map":48,"../util/sortedinsert":49,"./commands":5,"./css":6,"./draw":8,"./history":9,"./input":11,"./keys":12,"./options":14,"./range":15,"./selection":16}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
 exports.defineOption = defineOption;
 exports.parseOptions = parseOptions;
 exports.initOptions = initOptions;
@@ -3415,7 +4055,44 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 var _model = require("../model");
 
-var _commands = require("./commands");
+// ;; A registry is a namespace for [commands](#Commands), input
+// rules, and so on. They provide a way to define commands and such in
+// a scoped way, without having them show up on all your editors by
+// default all of a sudden. See also the [`registries`
+// option](#registries).
+
+var Registry = (function () {
+  // :: (string)
+  // Create a new registry with the given name.
+
+  function Registry(name) {
+    _classCallCheck(this, Registry);
+
+    this.name = name;
+    this.registry = Object.create(null);
+  }
+
+  // :: Registry
+  // The registry in which built-in commands and input rules are
+  // registered. The default content of the `registries` option.
+
+  // :: (string, *)
+  // Register a new item in this registry.
+
+  _createClass(Registry, [{
+    key: "register",
+    value: function register(name, value) {
+      ;(this.registry[name] || (this.registry[name] = [])).push(value);
+    }
+  }]);
+
+  return Registry;
+})();
+
+exports.Registry = Registry;
+var defaultRegistry = new Registry("default");
+
+exports.defaultRegistry = defaultRegistry;
 
 var Option = function Option(defaultValue, update, updateOnInit) {
   _classCallCheck(this, Option);
@@ -3425,35 +4102,74 @@ var Option = function Option(defaultValue, update, updateOnInit) {
   this.updateOnInit = updateOnInit !== false;
 };
 
-var options = {
-  __proto__: null,
+var options = Object.create(null);
 
-  schema: new Option(_model.defaultSchema, false, false),
-
-  doc: new Option(null, function (pm, value) {
-    pm.setDoc(value);
-  }, false),
-
-  docFormat: new Option(null),
-
-  place: new Option(null),
-
-  keymap: new Option(null, function (pm, value) {
-    if (!value) pm.options.keymap = (0, _commands.defaultKeymap)(pm);
-  }),
-
-  historyDepth: new Option(50),
-
-  historyEventDelay: new Option(500),
-
-  commandParamHandler: new Option("default"),
-
-  label: new Option(null)
-};
+// :: (string, any, (pm: ProseMirror, newValue: any, oldValue: any, init: bool), bool)
+// Define a new option. The `update` handler will be called with the
+// option's old and new value every time the option is
+// [changed](#ProseMirror.setOption). When `updateOnInit` is true, it
+// is also called on editor init, with null as the old value, and a fourth
+// argument of true.
 
 function defineOption(name, defaultValue, update, updateOnInit) {
   options[name] = new Option(defaultValue, update, updateOnInit);
 }
+
+// :: Schema #path=schema #kind=option
+// The [schema](#Schema) that the editor's document should use.
+defineOption("schema", _model.defaultSchema, false);
+
+// :: any #path=doc #kind=option
+// The starting document. Usually a `Node`, but can be in another
+// format when the `docFormat` option is also specified.
+defineOption("doc", null, function (pm, value) {
+  return pm.setDoc(value);
+}, false);
+
+// :: ?string #path=docFormat #kind=option
+// The format in which the `doc` option is given. Defaults to `null`
+// (a raw `Node`).
+defineOption("docFormat", null);
+
+// :: ?union<DOMNode, (DOMNode)> #path=place #kind=option
+// Determines the placement of the editor in the page. When `null`,
+// the editor is not placed. When a DOM node is given, the editor is
+// appended to that node. When a function is given, it is called
+// with the editor's wrapping DOM node, and is expected to place it
+// into the document.
+defineOption("place", null);
+
+// :: Keymap #path=keymap #kind=option
+// The base [keymap](#Keymap). When not given, a default keymap is
+// synthesized from the default key bindings provided by the
+// [commands](#Command) that are in scope for the editor.
+defineOption("keymap", null);
+
+// :: [Registry]
+// The set of [registries](#Registry) the editor should load items
+// from.
+defineOption("registries", [defaultRegistry], false);
+
+// :: number #path=historyDepth #kind=option
+// The amount of history events that are collected before the oldest
+// events are discarded. Defaults to 100.
+defineOption("historyDepth", 100);
+
+// :: number #path=historyEventDelay #kind=option
+// The amount of milliseconds that must pass between changes to
+// start a new history event. Defaults to 500.
+defineOption("historyEventDelay", 500);
+
+// :: string #path=commandParamHandler #kind=option
+// The name of the handler used to prompt the user for [command
+// parameters](#CommandParam). Only relevant when multiple such
+// handlers are loaded, and you want to choose between them.
+defineOption("commandParamHandler", "default");
+
+// :: ?string #path=label #kind=option
+// The label of the editor. When set, the editable DOM node gets an
+// `aria-label` attribute with this value.
+defineOption("label", null);
 
 function parseOptions(obj) {
   var result = Object.create(null);
@@ -3485,7 +4201,7 @@ function setOption(pm, name, value) {
   if (desc.update) desc.update(pm, value, old, false);
 }
 
-},{"../model":26,"./commands":5}],16:[function(require,module,exports){
+},{"../model":25}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3496,21 +4212,34 @@ var _createClass = (function () { function defineProperties(target, props) { for
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _event = require("./event");
+var _utilEvent = require("../util/event");
+
+// ;; A [marked range](#ProseMirror.markRange). Includes the methods
+// from the [event mixin](#EventMixin).
 
 var MarkedRange = (function () {
   function MarkedRange(from, to, options) {
     _classCallCheck(this, MarkedRange);
 
     this.options = options || {};
+    // :: ?Pos
+    // The current start position of the range. Updated whenever the
+    // editor's document is changed. Set to `null` when the marked
+    // range is [removed](#ProseMirror.removeRange).
     this.from = from;
+    // :: ?Pos
+    // The current end position of the range. Updated whenever the
+    // editor's document is changed. Set to `null` when the marked
+    // range is [removed](#ProseMirror.removeRange).
     this.to = to;
   }
 
   _createClass(MarkedRange, [{
-    key: "clear",
-    value: function clear() {
-      this.signal("removed", this.from);
+    key: "remove",
+    value: function remove() {
+      // :: (from: Pos, to: Pos) #path=MarkedRange#events#removed
+      // Signalled when the marked range is removed from the editor.
+      this.signal("removed", this.from, this.to.max(this.from));
       this.from = this.to = null;
     }
   }]);
@@ -3520,7 +4249,7 @@ var MarkedRange = (function () {
 
 exports.MarkedRange = MarkedRange;
 
-(0, _event.eventMixin)(MarkedRange);
+(0, _utilEvent.eventMixin)(MarkedRange);
 
 var RangeSorter = (function () {
   function RangeSorter() {
@@ -3609,7 +4338,7 @@ var RangeStore = (function () {
         this.sorted.remove(range.from, range);
         this.sorted.remove(range.to, range);
         this.pm.markRangeDirty(range);
-        range.clear();
+        range.remove();
       }
     }
   }, {
@@ -3620,7 +4349,7 @@ var RangeStore = (function () {
         range.from = mapping.map(range.from, range.options.inclusiveLeft ? -1 : 1).pos;
         range.to = mapping.map(range.to, range.options.inclusiveRight ? 1 : -1).pos;
         var diff = range.from.cmp(range.to);
-        if (range.options.clearWhenEmpty !== false && diff >= 0) {
+        if (range.options.removeWhenEmpty !== false && diff >= 0) {
           this.removeRange(range);
           i--;
         } else if (diff > 0) {
@@ -3675,7 +4404,7 @@ var RangeTracker = (function () {
   return RangeTracker;
 })();
 
-},{"./event":9}],17:[function(require,module,exports){
+},{"../util/event":47}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3699,6 +4428,7 @@ exports.findSelectionNear = findSelectionNear;
 exports.findSelectionAtStart = findSelectionAtStart;
 exports.findSelectionAtEnd = findSelectionAtEnd;
 exports.selectableNodeAbove = selectableNodeAbove;
+exports.handleNodeClick = handleNodeClick;
 exports.verticalMotionLeavesTextblock = verticalMotionLeavesTextblock;
 exports.setDOMSelectionToPos = setDOMSelectionToPos;
 
@@ -3735,6 +4465,8 @@ var SelectionState = (function () {
     key: "setAndSignal",
     value: function setAndSignal(range, clearLast) {
       this.set(range, clearLast);
+      // :: () #path=ProseMirror#events#selectionChange
+      // Indicates that the editor's selection has changed.
       this.pm.signal("selectionChange");
     }
   }, {
@@ -3743,12 +4475,6 @@ var SelectionState = (function () {
       this.range = range;
       if (!range.node) this.lastNonNodePos = null;
       if (clearLast !== false) this.lastAnchorNode = null;
-    }
-  }, {
-    key: "setNodeAndSignal",
-    value: function setNodeAndSignal(pos) {
-      this.setNode(pos);
-      this.pm.signal("selectionChange");
     }
   }, {
     key: "pollForUpdate",
@@ -3767,11 +4493,18 @@ var SelectionState = (function () {
           } else if (!_this2.readUpdate() && ++n == 1) {
             _this2.pollTimeout = setTimeout(check, 50);
           } else {
-            _this2.pollState = null;
-            _this2.pollToSync();
+            _this2.stopPollingForUpdate();
           }
       };
       this.pollTimeout = setTimeout(check, 20);
+    }
+  }, {
+    key: "stopPollingForUpdate",
+    value: function stopPollingForUpdate() {
+      if (this.pollState == "update") {
+        this.pollState = null;
+        this.pollToSync();
+      }
     }
   }, {
     key: "domChanged",
@@ -3839,9 +4572,8 @@ var SelectionState = (function () {
       window.getSelection().removeAllRanges();
       if (takeFocus) this.pm.content.focus();
       var pos = this.range.from,
-          node = this.range.node,
-          dom = undefined;
-      if (node.isInline) dom = findByOffset(resolvePath(this.pm.content, pos.path), pos.offset, true).node;else dom = resolvePath(this.pm.content, pos.toPath());
+          node = this.range.node;
+      var dom = resolvePath(this.pm.content, pos.toPath());
       if (dom == this.lastNode) return;
       this.clearNode();
       addNodeSelection(node, dom);
@@ -3897,8 +4629,7 @@ var SelectionState = (function () {
     value: function beforeStartOp() {
       if (this.pollState == "update" && this.readUpdate()) {
         clearTimeout(this.pollTimeout);
-        this.pollState = null;
-        this.pollToSync();
+        this.stopPollingForUpdate();
       } else {
         this.syncDOM();
       }
@@ -3923,69 +4654,65 @@ function windowRect() {
     top: 0, bottom: window.innerHeight };
 }
 
+// ;; An editor selection. Can be one of two selection types:
+// `TextSelection` and `NodeSelection`. Both have the properties
+// listed here, but also contain more information (such as the
+// selected [node](#NodeSelection.node) or the
+// [head](#TextSelection.head) and [anchor](#TextSelection.anchor)).
+
 var Selection = function Selection() {
   _classCallCheck(this, Selection);
 };
 
 exports.Selection = Selection;
 
-var NodeSelection = (function (_Selection) {
-  _inherits(NodeSelection, _Selection);
+// :: Pos #path=Selection.prototype.from
+// The start of the selection.
 
-  function NodeSelection(from, to, node) {
-    _classCallCheck(this, NodeSelection);
+// :: Pos #path=Selection.prototype.to
+// The end of the selection.
 
-    _get(Object.getPrototypeOf(NodeSelection.prototype), "constructor", this).call(this);
-    this.from = from;
-    this.to = to;
-    this.node = node;
-  }
+// :: bool #path=Selection.empty
+// True if the selection is an empty text selection (head an anchor
+// are the same).
 
-  /**
-   * Text selection range class.
-   *
-   * A range consists of a head (the active location of the cursor)
-   * and an anchor (the start location of the selection).
-   */
+// :: (other: Selection) → bool #path=Selection.eq
+// Test whether the selection is the same as another selection.
 
-  _createClass(NodeSelection, [{
-    key: "eq",
-    value: function eq(other) {
-      return other instanceof NodeSelection && !this.from.cmp(other.from);
-    }
-  }, {
-    key: "map",
-    value: function map(doc, mapping) {
-      var from = mapping.map(this.from, 1).pos;
-      var to = mapping.map(this.to, -1).pos;
-      if (_model.Pos.samePath(from.path, to.path) && from.offset == to.offset - 1) {
-        var node = doc.nodeAfter(from);
-        if (node.type.selectable) return new NodeSelection(from, to, node);
-      }
-      return findSelectionNear(doc, from);
-    }
-  }, {
-    key: "empty",
-    get: function get() {
-      return false;
-    }
-  }]);
+// :: (doc: Node, mapping: Mappable) → Selection #path=Selection.map
+// Map this selection through a [mappable](#Mappable) thing. `doc`
+// should be the new document, to which we are mapping.
 
-  return NodeSelection;
-})(Selection);
+// ;; #toc=false A text selection represents a classical editor
+// selection, with a head (the moving side) and anchor (immobile
+// side), both of which point into textblock nodes. It can be empty (a
+// regular cursor position).
 
-exports.NodeSelection = NodeSelection;
+var TextSelection = (function (_Selection) {
+  _inherits(TextSelection, _Selection);
 
-var TextSelection = (function (_Selection2) {
-  _inherits(TextSelection, _Selection2);
+  // :: (Pos, ?Pos)
+  // Construct a text selection. When `head` is not given, it defaults
+  // to `anchor`.
 
   function TextSelection(anchor, head) {
     _classCallCheck(this, TextSelection);
 
     _get(Object.getPrototypeOf(TextSelection.prototype), "constructor", this).call(this);
+    // :: Pos
+    // The selection's immobile side (does not move when pressing
+    // shift-arrow).
     this.anchor = anchor;
+    // :: Pos
+    // The selection's mobile side (the side that moves when pressing
+    // shift-arrow).
     this.head = head || anchor;
   }
+
+  // ;; #toc=false A node selection is a selection that points at a
+  // single node. All nodes marked [selectable](#NodeType.selectable)
+  // can be the target of a node selection. In such an object, `from`
+  // and `to` point directly before and after the selected node.
 
   _createClass(TextSelection, [{
     key: "eq",
@@ -4027,14 +4754,60 @@ var TextSelection = (function (_Selection2) {
 
 exports.TextSelection = TextSelection;
 
-function pathFromDOM(node) {
+var NodeSelection = (function (_Selection2) {
+  _inherits(NodeSelection, _Selection2);
+
+  // :: (Pos, Pos, Node)
+  // Create a node selection. Does not verify the validity of its
+  // arguments. Use `ProseMirror.setNodeSelection` for an easier,
+  // error-checking way to create a node selection.
+
+  function NodeSelection(from, to, node) {
+    _classCallCheck(this, NodeSelection);
+
+    _get(Object.getPrototypeOf(NodeSelection.prototype), "constructor", this).call(this);
+    this.from = from;
+    this.to = to;
+    // :: Node The selected node.
+    this.node = node;
+  }
+
+  _createClass(NodeSelection, [{
+    key: "eq",
+    value: function eq(other) {
+      return other instanceof NodeSelection && !this.from.cmp(other.from);
+    }
+  }, {
+    key: "map",
+    value: function map(doc, mapping) {
+      var from = mapping.map(this.from, 1).pos;
+      var to = mapping.map(this.to, -1).pos;
+      if (_model.Pos.samePath(from.path, to.path) && from.offset == to.offset - 1) {
+        var node = doc.nodeAfter(from);
+        if (node.type.selectable) return new NodeSelection(from, to, node);
+      }
+      return findSelectionNear(doc, from);
+    }
+  }, {
+    key: "empty",
+    get: function get() {
+      return false;
+    }
+  }]);
+
+  return NodeSelection;
+})(Selection);
+
+exports.NodeSelection = NodeSelection;
+
+function pathFromDOM(pm, node) {
   var path = [];
-  for (;;) {
+  for (; node != pm.content;) {
     var attr = node.getAttribute("pm-offset");
-    if (!attr) return path;
-    path.unshift(+attr);
+    if (attr) path.unshift(+attr);
     node = node.parentNode;
   }
+  return path;
 }
 
 function widthFromDOM(dom) {
@@ -4065,7 +4838,7 @@ function posFromDOMInner(pm, dom, domOffset, loose) {
     dom = _parent;
   }
 
-  var path = pathFromDOM(dom);
+  var path = pathFromDOM(pm, dom);
   if (dom.hasAttribute("pm-leaf")) return _model.Pos.from(path, extraOffset + (domOffset ? 1 : 0));
 
   var offset = 0;
@@ -4365,18 +5138,55 @@ function findSelectionAtEnd(node, path, text) {
   return findSelectionIn(node, path.slice(), node.size, -1, text);
 }
 
+// ;; #path=NodeType #kind=class #noAnchor
+// You can add several properties to [node types](#NodeType) to
+// influence the way the editor interacts with them.
+
+// :: (node: Node, path: [number], dom: DOMNode, coords: {left: number, top: number}) → ?Pos
+// #path=NodeType.prototype.countCoordsAsChild
+// Specifies that, if this node is clicked, a child node might
+// actually be meant. This is used to, for example, make clicking a
+// list marker (which, in the DOM, is part of the list node) select
+// the list item it belongs to. Should return null if the given
+// coordinates don't refer to a child node, or the [position](#Pos)
+// before thechild otherwise.
+
 function selectableNodeAbove(pm, dom, coords, liberal) {
   for (; dom && dom != pm.content; dom = dom.parentNode) {
     if (dom.hasAttribute("pm-offset")) {
-      var path = pathFromDOM(dom);
-      var node = pm.doc.path(path);
-      if (node.type.clicked) {
-        var result = node.type.clicked(node, path, dom, coords);
+      var path = pathFromDOM(pm, dom),
+          node = pm.doc.path(path);
+      if (node.type.countCoordsAsChild) {
+        var result = node.type.countCoordsAsChild(node, path, dom, coords);
         if (result) return result;
       }
       // Leaf nodes are implicitly clickable
       if ((liberal || node.type.contains == null) && node.type.selectable) return _model.Pos.from(path);
-      return null;
+      if (!liberal) return null;
+    }
+  }
+}
+
+// :: (pm: ProseMirror, event: MouseEvent, path: [number], node: Node) → bool
+// #path=NodeType.prototype.handleClick
+// If a node is directly clicked (that is, the click didn't land in a
+// DOM node belonging to a child node), and its type has a
+// `handleClick` method, that method is given a chance to handle the
+// click. The method is called, and should return `false` if it did
+// _not_ handle the click.
+//
+// The `event` passed is the event for `"mousedown"`, but calling
+// `preventDefault` on it has no effect, since this method is only
+// called after a corresponding `"mouseup"` has occurred and
+// ProseMirror has determined that this is not a drag or multi-click
+// event.
+
+function handleNodeClick(pm, event) {
+  for (var dom = event.target; dom && dom != pm.content; dom = dom.parentNode) {
+    if (dom.hasAttribute("pm-offset")) {
+      var path = pathFromDOM(pm, dom),
+          node = pm.doc.path(path);
+      return node.type.handleClick && node.type.handleClick(pm, event, path, node) !== false;
     }
   }
 }
@@ -4409,7 +5219,7 @@ function setDOMSelectionToPos(pm, pos) {
   sel.addRange(range);
 }
 
-},{"../dom":2,"../model":26}],18:[function(require,module,exports){
+},{"../dom":2,"../model":25}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4458,7 +5268,7 @@ function buildSVG(name, data) {
 
 (0, _dom.insertCSS)("\n.ProseMirror-icon {\n  display: inline-block;\n  line-height: .8;\n  vertical-align: middle;\n  padding: 2px 8px;\n  cursor: pointer;\n}\n\n.ProseMirror-icon-active {\n  background: #666;\n  border-radius: 4px;\n}\n\n.ProseMirror-icon svg {\n  fill: currentColor;\n  height: 1em;\n}\n");
 
-},{"../dom":2}],19:[function(require,module,exports){
+},{"../dom":2}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4628,7 +5438,7 @@ function renderIcon(command, menu) {
 
 function resolveIcon(pm, command) {
   for (;;) {
-    var icon = command.info.icon;
+    var icon = command.spec.icon;
     if (!icon) break;
     if (icon.from) {
       command = pm.commands[icon.from];
@@ -4683,17 +5493,18 @@ function showSelectMenu(pm, item, dom) {
 }
 
 function renderItem(item, menu) {
-  if (item.display == "icon") return renderIcon(item, menu);else if (item.display == "select") return renderSelect(item, menu);else if (!item.display) throw new Error("Command " + item.name + " can not be shown in a menu");else return item.display(menu);
+  var display = item.display || item.spec.display || "icon";
+  if (display == "icon") return renderIcon(item, menu);else if (display == "select") return renderSelect(item, menu);else if (!display) throw new Error("Command " + item.name + " can not be shown in a menu");else return display.call(item, menu);
 }
 
 function buildParamForm(pm, command) {
-  var prefill = command.info.prefillParams && command.info.prefillParams(pm);
+  var prefill = command.spec.prefillParams && command.spec.prefillParams(pm);
   var fields = command.params.map(function (param, i) {
     var field = undefined,
         name = "field_" + i;
     var val = prefill ? prefill[i] : param["default"] || "";
     if (param.type == "text") field = (0, _dom.elt)("input", { name: name, type: "text",
-      placeholder: param.name,
+      placeholder: param.label,
       value: val,
       autocomplete: "off" });else if (param.type == "select") field = (0, _dom.elt)("select", { name: name }, (param.options.call ? param.options(pm) : param.options).map(function (o) {
       return (0, _dom.elt)("option", { value: o.value, selected: o == val }, o.label);
@@ -4779,8 +5590,8 @@ function commandGroups(pm) {
     var found = [];
     for (var _name in pm.commands) {
       var cmd = pm.commands[_name];
-      if (cmd.info.menuGroup && cmd.info.menuGroup == group) (0, _utilSortedinsert2["default"])(found, cmd, function (a, b) {
-        return (a.info.menuRank || 50) - (b.info.menuRank || 50);
+      if (cmd.spec.menuGroup && cmd.spec.menuGroup == group) (0, _utilSortedinsert2["default"])(found, cmd, function (a, b) {
+        return (a.spec.menuRank || 50) - (b.spec.menuRank || 50);
       });
     }
     return found;
@@ -4802,7 +5613,7 @@ function tooltipParamHandler(pm, command, callback) {
 // FIXME check for obsolete styles
 (0, _dom.insertCSS)("\n\n.ProseMirror-menu {\n  margin: 0 -4px;\n  line-height: 1;\n  white-space: pre;\n}\n.ProseMirror-tooltip .ProseMirror-menu {\n  width: -webkit-fit-content;\n  width: fit-content;\n}\n\n.ProseMirror-tooltip-back-wrapper {\n  padding-left: 12px;\n}\n.ProseMirror-tooltip-back {\n  position: absolute;\n  top: 5px; left: 5px;\n  cursor: pointer;\n}\n.ProseMirror-tooltip-back:after {\n  content: \"«\";\n}\n\n.ProseMirror-menuicon {\n  margin: 0 7px;\n}\n\n.ProseMirror-menuseparator {\n  display: inline-block;\n}\n.ProseMirror-menuseparator:after {\n  content: \"︙\";\n  opacity: 0.5;\n  padding: 0 4px;\n  vertical-align: baseline;\n}\n\n.ProseMirror-select, .ProseMirror-select-menu {\n  border: 1px solid #777;\n  border-radius: 3px;\n  font-size: 90%;\n}\n\n.ProseMirror-select {\n  padding: 1px 12px 1px 4px;\n  display: inline-block;\n  vertical-align: middle;\n  position: relative;\n  cursor: pointer;\n  margin: 0 8px;\n}\n\n.ProseMirror-select-command-textblockType {\n  min-width: 3.2em;\n}\n\n.ProseMirror-select:after {\n  content: \"▿\";\n  color: #777;\n  position: absolute;\n  right: 4px;\n}\n\n.ProseMirror-select-menu {\n  position: absolute;\n  background: #444;\n  color: white;\n  padding: 2px 2px;\n  z-index: 15;\n}\n.ProseMirror-select-menu div {\n  cursor: pointer;\n  padding: 0 1em 0 2px;\n}\n.ProseMirror-select-menu div:hover {\n  background: #777;\n}\n\n");
 
-},{"../dom":2,"../edit":11,"../util/sortedinsert":49,"./icons":18,"./tooltip":21}],20:[function(require,module,exports){
+},{"../dom":2,"../edit":10,"../util/sortedinsert":49,"./icons":17,"./tooltip":20}],19:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -4881,7 +5692,7 @@ var MenuBar = (function () {
     this.pm = pm;
 
     this.menuElt = (0, _dom.elt)("div", { "class": "ProseMirror-menubar-inner" });
-    this.wrapper = (0, _dom.elt)("div", { "class": "ProseMirror-menubar" }, (0, _dom.elt)("div", { "class": "ProseMirror-menu", style: "visibility: hiffdden; z-index: 100" }, (0, _dom.elt)("span", { "class": "ProseMirror-menuicon" }, (0, _dom.elt)("div", { "class": "ProseMirror-icon" }, "x"))), this.menuElt);
+    this.wrapper = (0, _dom.elt)("div", { "class": "ProseMirror-menubar" }, (0, _dom.elt)("div", { "class": "ProseMirror-menu" }, (0, _dom.elt)("span", { "class": "ProseMirror-menuicon" }, (0, _dom.elt)("div", { "class": "ProseMirror-icon" }, "x"))), this.menuElt);
     pm.wrapper.insertBefore(this.wrapper, pm.wrapper.firstChild);
 
     this.update = new _update.MenuUpdate(pm, "selectionChange change activeMarkChange", function () {
@@ -4988,7 +5799,7 @@ function findWrappingScrollable(node) {
 
 (0, _dom.insertCSS)("\n.ProseMirror-menubar {\n  position: relative;\n  margin-bottom: 3px;\n  border-top-left-radius: inherit;\n  border-top-right-radius: inherit;\n}\n\n.ProseMirror-menubar-inner {\n  color: #666;\n  padding: 1px 6px;\n  top: 0; left: 0; right: 0;\n  position: absolute;\n  border-bottom: 1px solid silver;\n  background: white;\n  z-index: 10;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  border-top-left-radius: inherit;\n  border-top-right-radius: inherit;\n}\n\n.ProseMirror-menubar .ProseMirror-icon-active {\n  background: #eee;\n}\n\n.ProseMirror-menubar input[type=\"text\"],\n.ProseMirror-menubar textarea {\n  background: #eee;\n  color: black;\n  border: none;\n  outline: none;\n  width: 100%;\n  box-sizing: -moz-border-box;\n  box-sizing: border-box;\n}\n\n.ProseMirror-menubar input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n.ProseMirror-menubar form {\n  position: relative;\n  padding: 2px 4px;\n}\n\n.ProseMirror-menubar .ProseMirror-blocktype {\n  border: 1px solid #ccc;\n  min-width: 4em;\n}\n.ProseMirror-menubar .ProseMirror-blocktype:after {\n  color: #ccc;\n}\n\n.ProseMirror-menubar-sliding {\n  -webkit-transition: left 0.2s ease-out;\n  -moz-transition: left 0.2s ease-out;\n  transition: left 0.2s ease-out;\n  position: relative;\n  left: 100%;\n  width: 100%;\n  box-sizing: -moz-border-box;\n  box-sizing: border-box;\n  padding-left: 16px;\n  background: white;\n}\n\n.ProseMirror-menubar-back {\n  position: absolute;\n  height: 100%;\n  margin-top: -1px;\n  padding-bottom: 2px;\n  width: 10px;\n  left: 0;\n  border-right: 1px solid silver;\n  cursor: pointer;\n}\n.ProseMirror-menubar-back:after {\n  content: \"«\";\n}\n\n");
 
-},{"../dom":2,"../edit":11,"./menu":19,"./update":22}],21:[function(require,module,exports){
+},{"../dom":2,"../edit":10,"./menu":18,"./update":21}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5121,9 +5932,9 @@ var Tooltip = (function () {
 
 exports.Tooltip = Tooltip;
 
-(0, _dom.insertCSS)("\n\n.ProseMirror-tooltip {\n  position: absolute;\n  display: none;\n  box-sizing: border-box;\n  -moz-box-sizing: border- box;\n  overflow: hidden;\n\n  -webkit-transition: width 0.4s ease-out, height 0.4s ease-out, left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  -moz-transition: width 0.4s ease-out, height 0.4s ease-out, left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  transition: width 0.4s ease-out, height 0.4s ease-out, left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  opacity: 0;\n\n  border-radius: 5px;\n  padding: 3px 7px;\n  margin: 0;\n  background: #444;\n  border-color: #777;\n  color: white;\n\n  z-index: 5;\n}\n\n.ProseMirror-tooltip-pointer {\n  content: \"\";\n  position: absolute;\n  display: none;\n  width: 0; height: 0;\n\n  -webkit-transition: left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  -moz-transition: left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  transition: left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  opacity: 0;\n\n  z-index: 5;\n}\n\n.ProseMirror-tooltip-pointer-above {\n  border-left: 6px solid transparent;\n  border-right: 6px solid transparent;\n  border-top: 6px solid #444;\n}\n\n.ProseMirror-tooltip-pointer-below {\n  border-left: 6px solid transparent;\n  border-right: 6px solid transparent;\n  border-bottom: 6px solid #444;\n}\n\n.ProseMirror-tooltip-pointer-right {\n  border-top: 6px solid transparent;\n  border-bottom: 6px solid transparent;\n  border-right: 6px solid #444;\n}\n\n.ProseMirror-tooltip-pointer-left {\n  border-top: 6px solid transparent;\n  border-bottom: 6px solid transparent;\n  border-left: 6px solid #444;\n}\n\n.ProseMirror-tooltip input[type=\"text\"],\n.ProseMirror-tooltip textarea {\n  background: #666;\n  color: white;\n  border: none;\n  outline: none;\n}\n\n.ProseMirror-tooltip input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n");
+(0, _dom.insertCSS)("\n\n.ProseMirror-tooltip {\n  position: absolute;\n  display: none;\n  box-sizing: border-box;\n  -moz-box-sizing: border- box;\n  overflow: hidden;\n\n  -webkit-transition: width 0.4s ease-out, height 0.4s ease-out, left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  -moz-transition: width 0.4s ease-out, height 0.4s ease-out, left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  transition: width 0.4s ease-out, height 0.4s ease-out, left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  opacity: 0;\n\n  border-radius: 5px;\n  padding: 3px 7px;\n  margin: 0;\n  background: #444;\n  border-color: #777;\n  color: white;\n\n  z-index: 11;\n}\n\n.ProseMirror-tooltip-pointer {\n  content: \"\";\n  position: absolute;\n  display: none;\n  width: 0; height: 0;\n\n  -webkit-transition: left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  -moz-transition: left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  transition: left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  opacity: 0;\n\n  z-index: 12;\n}\n\n.ProseMirror-tooltip-pointer-above {\n  border-left: 6px solid transparent;\n  border-right: 6px solid transparent;\n  border-top: 6px solid #444;\n}\n\n.ProseMirror-tooltip-pointer-below {\n  border-left: 6px solid transparent;\n  border-right: 6px solid transparent;\n  border-bottom: 6px solid #444;\n}\n\n.ProseMirror-tooltip-pointer-right {\n  border-top: 6px solid transparent;\n  border-bottom: 6px solid transparent;\n  border-right: 6px solid #444;\n}\n\n.ProseMirror-tooltip-pointer-left {\n  border-top: 6px solid transparent;\n  border-bottom: 6px solid transparent;\n  border-left: 6px solid #444;\n}\n\n.ProseMirror-tooltip input[type=\"text\"],\n.ProseMirror-tooltip textarea {\n  background: #666;\n  color: white;\n  border: none;\n  outline: none;\n}\n\n.ProseMirror-tooltip input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n");
 
-},{"../dom":2}],22:[function(require,module,exports){
+},{"../dom":2}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5202,12 +6013,16 @@ var MenuUpdate = (function () {
   }, {
     key: "force",
     value: function force() {
-      this.mustUpdate = false;
-      this.updateInfo = null;
-      this.lastFlush = Date.now();
-      clearTimeout(this.timeout);
-      var update = this.prepare();
-      if (update) update();
+      if (this.pm.operation) {
+        this.onEvent();
+      } else {
+        this.mustUpdate = false;
+        this.updateInfo = null;
+        this.lastFlush = Date.now();
+        clearTimeout(this.timeout);
+        var update = this.prepare();
+        if (update) update();
+      }
     }
   }]);
 
@@ -5216,7 +6031,7 @@ var MenuUpdate = (function () {
 
 exports.MenuUpdate = MenuUpdate;
 
-},{}],23:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5233,7 +6048,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 var _schema = require("./schema");
 
-// ;; The default top-level document node type.
+// ;; #toc="Default schema" The default top-level document node type.
 
 var Doc = (function (_Block) {
   _inherits(Doc, _Block);
@@ -5244,7 +6059,7 @@ var Doc = (function (_Block) {
     _get(Object.getPrototypeOf(Doc.prototype), "constructor", this).apply(this, arguments);
   }
 
-  // ;; The default blockquote node type.
+  // ;; #toc=false The default blockquote node type.
 
   _createClass(Doc, null, [{
     key: "kind",
@@ -5267,7 +6082,7 @@ var BlockQuote = (function (_Block2) {
     _get(Object.getPrototypeOf(BlockQuote.prototype), "constructor", this).apply(this, arguments);
   }
 
-  // ;; The default ordered list node type. Has a single attribute,
+  // ;; #toc=false The default ordered list node type. Has a single attribute,
   // `order`, which determines the number at which the list starts
   // counting, and defaults to 1.
   return BlockQuote;
@@ -5298,7 +6113,7 @@ exports.OrderedList = OrderedList;
 
 OrderedList.attributes = { order: new _schema.Attribute({ "default": "1" }) };
 
-// ;; The default bullet list node type.
+// ;; #toc=false The default bullet list node type.
 
 var BulletList = (function (_Block4) {
   _inherits(BulletList, _Block4);
@@ -5309,7 +6124,7 @@ var BulletList = (function (_Block4) {
     _get(Object.getPrototypeOf(BulletList.prototype), "constructor", this).apply(this, arguments);
   }
 
-  // ;; The default list item node type.
+  // ;; #toc=false The default list item node type.
 
   _createClass(BulletList, null, [{
     key: "contains",
@@ -5332,7 +6147,7 @@ var ListItem = (function (_Block5) {
     _get(Object.getPrototypeOf(ListItem.prototype), "constructor", this).apply(this, arguments);
   }
 
-  // ;; The default horizontal rule node type.
+  // ;; #toc=false The default horizontal rule node type.
 
   _createClass(ListItem, null, [{
     key: "kind",
@@ -5355,8 +6170,8 @@ var HorizontalRule = (function (_Block6) {
     _get(Object.getPrototypeOf(HorizontalRule.prototype), "constructor", this).apply(this, arguments);
   }
 
-  // ;; The default heading node type. Has a single attribute `level`,
-  // which indicates the heading level, and defaults to 1.
+  // ;; #toc=false The default heading node type. Has a single attribute
+  // `level`, which indicates the heading level, and defaults to 1.
 
   _createClass(HorizontalRule, null, [{
     key: "contains",
@@ -5386,8 +6201,8 @@ exports.Heading = Heading;
 
 Heading.attributes = { level: new _schema.Attribute({ "default": "1" }) };
 
-// ;; The default code block / listing node type. Only allows unmarked
-// text nodes inside of it.
+// ;; #toc=false The default code block / listing node type. Only
+// allows unmarked text nodes inside of it.
 
 var CodeBlock = (function (_Textblock2) {
   _inherits(CodeBlock, _Textblock2);
@@ -5398,7 +6213,7 @@ var CodeBlock = (function (_Textblock2) {
     _get(Object.getPrototypeOf(CodeBlock.prototype), "constructor", this).apply(this, arguments);
   }
 
-  // ;; The default paragraph node type.
+  // ;; #toc=false The default paragraph node type.
 
   _createClass(CodeBlock, [{
     key: "containsMarks",
@@ -5431,7 +6246,8 @@ var Paragraph = (function (_Textblock3) {
     _get(Object.getPrototypeOf(Paragraph.prototype), "constructor", this).apply(this, arguments);
   }
 
-  // ;; The default inline image node type. Has these attributes:
+  // ;; #toc=false The default inline image node type. Has these
+  // attributes:
   //
   // - **`src`** (required): The URL of the image.
   // - **`alt`**: The alt text.
@@ -5469,7 +6285,7 @@ Image.attributes = {
   title: new _schema.Attribute({ "default": "" })
 };
 
-// ;; The default hard break node type.
+// ;; #toc=false The default hard break node type.
 
 var HardBreak = (function (_Inline2) {
   _inherits(HardBreak, _Inline2);
@@ -5480,9 +6296,7 @@ var HardBreak = (function (_Inline2) {
     _get(Object.getPrototypeOf(HardBreak.prototype), "constructor", this).apply(this, arguments);
   }
 
-  // Mark types
-
-  // ;; The default emphasis mark type.
+  // ;; #toc=false The default emphasis mark type.
 
   _createClass(HardBreak, [{
     key: "selectable",
@@ -5510,7 +6324,7 @@ var EmMark = (function (_MarkType) {
     _get(Object.getPrototypeOf(EmMark.prototype), "constructor", this).apply(this, arguments);
   }
 
-  // ;; The default strong mark type.
+  // ;; #toc=false The default strong mark type.
 
   _createClass(EmMark, null, [{
     key: "rank",
@@ -5533,7 +6347,7 @@ var StrongMark = (function (_MarkType2) {
     _get(Object.getPrototypeOf(StrongMark.prototype), "constructor", this).apply(this, arguments);
   }
 
-  // ;; The default link mark type. Has these attributes:
+  // ;; #toc=false The default link mark type. Has these attributes:
   //
   // - **`href`** (required): The link target.
   // - **`title`**: The link's title.
@@ -5576,7 +6390,7 @@ LinkMark.attributes = {
   title: new _schema.Attribute({ "default": "" })
 };
 
-// ;; The default code font mark type.
+// ;; #toc=false The default code font mark type.
 
 var CodeMark = (function (_MarkType4) {
   _inherits(CodeMark, _MarkType4);
@@ -5633,7 +6447,7 @@ var defaultSpec = new _schema.SchemaSpec({
 var defaultSchema = new _schema.Schema(defaultSpec);
 exports.defaultSchema = defaultSchema;
 
-},{"./schema":30}],24:[function(require,module,exports){
+},{"./schema":29}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5733,7 +6547,7 @@ function findDiffEnd(a, b) {
   return { a: new _pos.Pos(pathA, offA), b: new _pos.Pos(pathB, offB) };
 }
 
-},{"./pos":29}],25:[function(require,module,exports){
+},{"./pos":28}],24:[function(require,module,exports){
 // ;; A fragment is an abstract type used to represent a node's
 // collection of child nodes. It tries to hide considerations about
 // the actual way in which the child nodes are stored, so that
@@ -6406,7 +7220,7 @@ if (typeof Symbol != "undefined") {
   };
 }
 
-},{}],26:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 // !!
 // This module defines ProseMirror's document model, the data
 // structure used to define and inspect content documents. It
@@ -6418,6 +7232,9 @@ if (typeof Symbol != "undefined") {
 //   document structure
 //
 // * The data type for document [positions](#Pos)
+//
+// This module does not depend on the browser API being available
+// (i.e. you can load it into any JavaScript environment).
 
 "use strict";
 
@@ -6628,12 +7445,6 @@ Object.defineProperty(exports, "Pos", {
                 return _pos.Pos;
         }
 });
-Object.defineProperty(exports, "siblingRange", {
-        enumerable: true,
-        get: function get() {
-                return _pos.siblingRange;
-        }
-});
 
 var _diff = require("./diff");
 
@@ -6650,12 +7461,12 @@ Object.defineProperty(exports, "findDiffEnd", {
         }
 });
 
-},{"./defaultschema":23,"./diff":24,"./fragment":25,"./mark":27,"./node":28,"./pos":29,"./schema":30}],27:[function(require,module,exports){
+},{"./defaultschema":22,"./diff":23,"./fragment":24,"./mark":26,"./node":27,"./pos":28,"./schema":29}],26:[function(require,module,exports){
 // ;; A mark is a piece of information that can be attached to a node,
 // such as it being emphasized, in code font, or a link. It has a type
 // and optionally a set of attributes that provide further information
 // (such as the target of the link). Marks are created through a
-// [schema](#Schema), which controls which types exist and which
+// `Schema`, which controls which types exist and which
 // attributes they have.
 "use strict";
 
@@ -6664,8 +7475,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -6704,9 +7513,9 @@ var Mark = (function () {
       for (var i = 0; i < set.length; i++) {
         var other = set[i];
         if (other.type == this.type) {
-          if (this.eq(other)) return set;else return [].concat(_toConsumableArray(set.slice(0, i)), [this], _toConsumableArray(set.slice(i + 1)));
+          if (this.eq(other)) return set;else return set.slice(0, i).concat(this).concat(set.slice(i + 1));
         }
-        if (other.type.rank > this.type.rank) return [].concat(_toConsumableArray(set.slice(0, i)), [this], _toConsumableArray(set.slice(i)));
+        if (other.type.rank > this.type.rank) return set.slice(0, i).concat(this).concat(set.slice(i));
       }
       return set.concat(this);
     }
@@ -6717,7 +7526,7 @@ var Mark = (function () {
   }, {
     key: "removeFromSet",
     value: function removeFromSet(set) {
-      for (var i = 0; i < set.length; i++) if (this.eq(set[i])) return [].concat(_toConsumableArray(set.slice(0, i)), _toConsumableArray(set.slice(i + 1)));
+      for (var i = 0; i < set.length; i++) if (this.eq(set[i])) return set.slice(0, i).concat(set.slice(i + 1));
       return set;
     }
 
@@ -6755,6 +7564,21 @@ var Mark = (function () {
         if (!a[i].eq(b[i])) return false;
       }return true;
     }
+
+    // :: (?union<Mark, [Mark]>) → [Mark]
+    // Create a properly sorted mark set from null, a single mark, or an
+    // unsorted array of marks.
+  }, {
+    key: "setFrom",
+    value: function setFrom(marks) {
+      if (!marks || marks.length == 0) return empty;
+      if (marks instanceof Mark) return [marks];
+      var copy = marks.slice();
+      copy.sort(function (a, b) {
+        return a.type.rank - b.type.rank;
+      });
+      return copy;
+    }
   }]);
 
   return Mark;
@@ -6762,7 +7586,9 @@ var Mark = (function () {
 
 exports.Mark = Mark;
 
-},{}],28:[function(require,module,exports){
+var empty = [];
+
+},{}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6781,7 +7607,10 @@ var _fragment = require("./fragment");
 
 var _mark = require("./mark");
 
-var emptyArray = [];
+var _pos = require("./pos");
+
+var emptyArray = [],
+    emptyAttrs = Object.create(null);
 
 // ;; This class represents a node in the tree that makes up a
 // ProseMirror document. So a document is an instance of `Node`, with
@@ -6908,7 +7737,7 @@ var Node = (function () {
   }, {
     key: "hasMarkup",
     value: function hasMarkup(type, attrs, marks) {
-      return this.type == type && Node.sameAttrs(this.attrs, attrs) && _mark.Mark.sameSet(this.marks, marks || emptyArray);
+      return this.type == type && Node.sameAttrs(this.attrs, attrs || emptyAttrs) && _mark.Mark.sameSet(this.marks, marks || emptyArray);
     }
   }, {
     key: "copy",
@@ -7046,6 +7875,30 @@ var Node = (function () {
           if (n >= node.size) return false;
           node = node.child(n);
         }
+      }
+    }
+
+    // :: (Pos, Pos) → {from: Pos, to: Pos}
+    // Finds the narrowest sibling range (two positions that both point
+    // into the same node) that encloses the given positions.
+  }, {
+    key: "siblingRange",
+    value: function siblingRange(from, to) {
+      for (var i = 0, node = this;; i++) {
+        if (node.isTextblock) {
+          var path = from.path.slice(0, i - 1),
+              offset = from.path[i - 1];
+          return { from: new _pos.Pos(path, offset), to: new _pos.Pos(path, offset + 1) };
+        }
+        var fromEnd = i == from.path.length,
+            toEnd = i == to.path.length;
+        var left = fromEnd ? from.offset : from.path[i];
+        var right = toEnd ? to.offset : to.path[i];
+        if (fromEnd || toEnd || left != right) {
+          var path = from.path.slice(0, i);
+          return { from: new _pos.Pos(path, left), to: new _pos.Pos(path, right + (toEnd ? 0 : 1)) };
+        }
+        node = node.child(left);
       }
     }
 
@@ -7230,9 +8083,7 @@ var Node = (function () {
     key: "sameAttrs",
     value: function sameAttrs(a, b) {
       if (a == b) return true;
-      var empty = isEmpty(a);
-      if (empty != isEmpty(b)) return false;
-      if (!empty) for (var prop in a) {
+      for (var prop in a) {
         if (a[prop] !== b[prop]) return false;
       }return true;
     }
@@ -7312,17 +8163,10 @@ function wrapMarks(marks, str) {
   }return str;
 }
 
-function isEmpty(obj) {
-  if (obj) for (var _ in obj) {
-    return false;
-  }return true;
-}
-
-},{"./fragment":25,"./mark":27}],29:[function(require,module,exports){
+},{"./fragment":24,"./mark":26,"./pos":28}],28:[function(require,module,exports){
 // ;; Instances of the `Pos` class represent positions in a document.
 // A position an array of integers that describe a path to the target
-// node (see [`Node.path`](#Node..path)) and an integer offset into
-// that target node.
+// node (see `Node.path`) and an integer offset into that target node.
 
 "use strict";
 
@@ -7331,8 +8175,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-exports.siblingRange = siblingRange;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -7360,6 +8202,25 @@ var Pos = (function () {
 
     // :: number
     // The length of the position's path.
+  }, {
+    key: "max",
+
+    // :: (Pos) → Pos
+    // Return the greater of two positions.
+    value: function max(other) {
+      return this.cmp(other) > 0 ? this : other;
+    }
+
+    // :: (Pos) → Pos
+    // Return the lesser of two positions.
+  }, {
+    key: "mmin",
+    value: function mmin(other) {
+      return this.cmp(other) < 0 ? this : other;
+    }
+
+    // :: ([number], [number]) → bool
+    // Compares two paths and returns true when they are the same.
   }, {
     key: "cmp",
 
@@ -7401,7 +8262,7 @@ var Pos = (function () {
       return new Pos(this.path, this.offset + by);
     }
 
-    // :: (?move) → [number]
+    // :: (?number) → [number]
     // Convert this position to an array of numbers (including its
     // offset). Optionally pass an argument to adjust the value of the
     // offset.
@@ -7434,7 +8295,7 @@ var Pos = (function () {
 
     // :: ([number], ?number) → Pos
     // Build a position from an array of numbers (as in
-    // [toPath](#Pos.toPath)), taking the last element of the array as
+    // [`toPath`](#Pos.toPath)), taking the last element of the array as
     // offset and optionally moving it by `move`.
   }, {
     key: "depth",
@@ -7452,9 +8313,6 @@ var Pos = (function () {
       }
       if (lenA > lenB) return offsetB <= pathA[i] ? 1 : -1;else if (lenB > lenA) return offsetA <= pathB[i] ? -1 : 1;else return offsetA - offsetB;
     }
-
-    // :: ([number], [number]) → bool
-    // Compares two paths and returns true when they are the same.
   }, {
     key: "samePath",
     value: function samePath(pathA, pathB) {
@@ -7495,26 +8353,7 @@ var Pos = (function () {
 
 exports.Pos = Pos;
 
-function siblingRange(doc, from, to) {
-  for (var i = 0, node = doc;; i++) {
-    if (node.isTextblock) {
-      var path = from.path.slice(0, i - 1),
-          offset = from.path[i - 1];
-      return { from: new Pos(path, offset), to: new Pos(path, offset + 1) };
-    }
-    var fromEnd = i == from.path.length,
-        toEnd = i == to.path.length;
-    var left = fromEnd ? from.offset : from.path[i];
-    var right = toEnd ? to.offset : to.path[i];
-    if (fromEnd || toEnd || left != right) {
-      var path = from.path.slice(0, i);
-      return { from: new Pos(path, left), to: new Pos(path, right + (toEnd ? 0 : 1)) };
-    }
-    node = node.child(left);
-  }
-}
-
-},{}],30:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7539,7 +8378,8 @@ var _mark = require("./mark");
 
 var _utilError = require("../util/error");
 
-// ;; The exception type used to signal schema-related errors.
+// ;; #toc=false The exception type used to signal schema-related
+// errors.
 
 var SchemaError = (function (_ProseMirrorError) {
   _inherits(SchemaError, _ProseMirrorError);
@@ -7588,8 +8428,8 @@ function findKinds(type, name, schema, override) {
   }
 }
 
-// ;; Node types are objects allocated once per [`Schema`](#Schema)
-// and used to tag [`Node`](#Node) instances with a type. They are
+// ;; Node types are objects allocated once per `Schema`
+// and used to tag `Node` instances with a type. They are
 // instances of sub-types of this class, and contain information about
 // the node type (its name, its allowed attributes, methods for
 // serializing it to various formats, information to guide
@@ -7610,9 +8450,9 @@ var NodeType = (function () {
     // The attributes allowed on this node type.
     this.attrs = attrs;
     // :: Schema
-    // A link back to the [`Schema`](#Schema) the node type belongs to.
+    // A link back to the `Schema` the node type belongs to.
     this.schema = schema;
-    this.defaultAttrs = null;
+    this.defaultAttrs = getDefaultAttrs(attrs);
   }
 
   // :: Object<Attribute>
@@ -7689,8 +8529,7 @@ var NodeType = (function () {
   }, {
     key: "findConnection",
     value: function findConnection(other) {
-      // FIXME be more careful about order, and about chosen nodes
-      // having default attrs
+      // FIXME somehow define an order in which these are tried
       if (this.canContainType(other)) return [];
 
       var seen = Object.create(null);
@@ -7698,8 +8537,8 @@ var NodeType = (function () {
       while (active.length) {
         var current = active.shift();
         for (var _name in this.schema.nodes) {
-          var type = this.schema.nodeType(_name);
-          if (!(type.contains in seen) && current.from.canContainType(type)) {
+          var type = this.schema.nodes[_name];
+          if (type.defaultAttrs && !(type.contains in seen) && current.from.canContainType(type)) {
             var via = current.via.concat(type);
             if (type.canContainType(other)) return via;
             active.push({ from: type, via: via });
@@ -7715,16 +8554,16 @@ var NodeType = (function () {
     }
 
     // :: (?Object, ?Fragment, ?[Mark]) → Node
-    // Create a [`Node`](#Node) of this type. The given attributes are
+    // Create a `Node` of this type. The given attributes are
     // checked and defaulted (you can pass `null` to use the type's
     // defaults entirely, if no required attributes exist). `content`
-    // may be a [`Fragment`](#Fragment), a node, an array of nodes, or
+    // may be a `Fragment`, a node, an array of nodes, or
     // `null`. Similarly `marks` may be `null` to default to the empty
     // set of marks.
   }, {
     key: "create",
     value: function create(attrs, content, marks) {
-      return new _node.Node(this, this.buildAttrs(attrs, content), _fragment.Fragment.from(content), marks);
+      return new _node.Node(this, this.buildAttrs(attrs, content), _fragment.Fragment.from(content), _mark.Mark.setFrom(marks));
     }
   }, {
     key: "createAutoFill",
@@ -7814,7 +8653,12 @@ var NodeType = (function () {
         var type = info.type || SchemaError.raise("Missing node type for " + _name2);
         findKinds(type, _name2, schema, info.kind);
         var contains = "contains" in info ? info.contains : type.contains;
-        result[_name2] = new type(_name2, contains, info.attributes || type.attributes, schema);
+        var attrs = type.attributes;
+        if (info.attributes) {
+          attrs = copyObj(attrs);
+          for (var aName in info.attributes) attrs[aName] = info.attributes[aName];
+        }
+        result[_name2] = new type(_name2, contains, attrs, schema);
       }
       for (var _name3 in result) {
         var contains = result[_name3].contains;
@@ -7823,21 +8667,18 @@ var NodeType = (function () {
       if (!result.doc) SchemaError.raise("Every schema needs a 'doc' type");
       if (!result.text) SchemaError.raise("Every schema needs a 'text' type");
 
-      for (var _name4 in types) {
-        types[_name4].defaultAttrs = getDefaultAttrs(types[_name4].attrs);
-      }return result;
+      return result;
     }
 
     // :: (string, *)
-    // Register a metadata element for this type. That is, add `value`
-    // to the array under the property name `name` on the type's
-    // prototype, creating the array if it wasn't already there. This is
-    // mostly used to attach things like commands and parsing strategies
-    // to node type.
+    // Register an element in this type's registry. That is, add `value`
+    // to the array associated with `name` in the registry stored in
+    // type's `prototype`. This is mostly used to attach things like
+    // commands and parsing strategies to node types. See `Schema.registry`.
   }, {
     key: "register",
     value: function register(name, value) {
-      ;(this.prototype[name] || (this.prototype[name] = [])).push(value);
+      var registry = this.prototype.hasOwnProperty("registry") ? this.prototype.registry : this.prototype.registry = Object.create(null);(registry[name] || (registry[name] = [])).push(value);
     }
   }, {
     key: "kind",
@@ -7852,7 +8693,7 @@ var NodeType = (function () {
 exports.NodeType = NodeType;
 NodeType.attributes = {};
 
-// ;; Base type for block nodetypes.
+// ;; #toc=false Base type for block nodetypes.
 
 var Block = (function (_NodeType) {
   _inherits(Block, _NodeType);
@@ -7863,7 +8704,7 @@ var Block = (function (_NodeType) {
     _get(Object.getPrototypeOf(Block.prototype), "constructor", this).apply(this, arguments);
   }
 
-  // ;; Base type for textblock node types.
+  // ;; #toc=false Base type for textblock node types.
 
   _createClass(Block, [{
     key: "defaultContent",
@@ -7911,7 +8752,7 @@ var Textblock = (function (_Block) {
     _get(Object.getPrototypeOf(Textblock.prototype), "constructor", this).apply(this, arguments);
   }
 
-  // ;; Base type for inline node types.
+  // ;; #toc=false Base type for inline node types.
 
   _createClass(Textblock, [{
     key: "containsMarks",
@@ -7949,7 +8790,7 @@ var Inline = (function (_NodeType2) {
     _get(Object.getPrototypeOf(Inline.prototype), "constructor", this).apply(this, arguments);
   }
 
-  // ;; The text node type.
+  // ;; #toc=false The text node type.
 
   _createClass(Inline, [{
     key: "isInline",
@@ -8010,38 +8851,53 @@ var Text = (function (_Inline) {
 
 exports.Text = Text;
 
-var Attribute =
-// :: (Object)
-// Create an attribute. `options` is an object containing the
-// settings for the attributes. The following settings are
-// supported:
-//
-// **`default`**: `?string`
-// : The default value for this attribute, to choose when no
-//   explicit value is provided.
-//
-// **`compute`**: `?(Fragment) → string`
-// : A function that computes a default value for the attribute from
-//   the node's content.
-//
-// Attributes that have no default or compute property must be
-// provided whenever a node or mark of a type that has them is
-// created.
-function Attribute() {
-  var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+var Attribute = (function () {
+  // :: (Object)
+  // Create an attribute. `options` is an object containing the
+  // settings for the attributes. The following settings are
+  // supported:
+  //
+  // **`default`**: `?string`
+  // : The default value for this attribute, to choose when no
+  //   explicit value is provided.
+  //
+  // **`compute`**: `?(Fragment) → string`
+  // : A function that computes a default value for the attribute from
+  //   the node's content.
+  //
+  // Attributes that have no default or compute property must be
+  // provided whenever a node or mark of a type that has them is
+  // created.
 
-  _classCallCheck(this, Attribute);
+  function Attribute() {
+    var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
-  this["default"] = options["default"];
-  this.compute = options.compute;
-}
+    _classCallCheck(this, Attribute);
 
-// Marks
+    this["default"] = options["default"];
+    this.compute = options.compute;
+    this.registry = Object.create(null);
+  }
 
-// ;; Like nodes, marks (which are associated with nodes to signify
-// things like emphasis or being part of a link) are tagged with type
-// objects, which are instantiated once per [Schema](#Schema).
-;
+  // Marks
+
+  // ;; Like nodes, marks (which are associated with nodes to signify
+  // things like emphasis or being part of a link) are tagged with type
+  // objects, which are instantiated once per `Schema`.
+
+  // :: (string, *)
+  // Register a value in this attribute's registry. See
+  // `NodeType.register` and `Schema.registry`.
+
+  _createClass(Attribute, [{
+    key: "register",
+    value: function register(name, value) {
+      ;(this.registry[name] || (this.registry[name] = [])).push(value);
+    }
+  }]);
+
+  return Attribute;
+})();
 
 exports.Attribute = Attribute;
 
@@ -8104,16 +8960,12 @@ var MarkType = (function () {
         if (set[i].type == this) return set[i];
       }
     }
-
-    // :: (string, *)
-    // Register a metadata element for this mark type. Adds `value` to
-    // the array under the property name `name` on the type's prototype.
   }], [{
     key: "getOrder",
     value: function getOrder(marks) {
       var sorted = [];
-      for (var _name5 in marks) {
-        sorted.push({ name: _name5, rank: marks[_name5].type.rank });
+      for (var _name4 in marks) {
+        sorted.push({ name: _name4, rank: marks[_name4].type.rank });
       }sorted.sort(function (a, b) {
         return a.rank - b.rank;
       });
@@ -8127,17 +8979,12 @@ var MarkType = (function () {
     value: function compile(marks, schema) {
       var order = this.getOrder(marks);
       var result = Object.create(null);
-      for (var _name6 in marks) {
-        var info = marks[_name6];
+      for (var _name5 in marks) {
+        var info = marks[_name5];
         var attrs = info.attributes || info.type.attributes;
-        result[_name6] = new info.type(_name6, attrs, order[_name6], schema);
+        result[_name5] = new info.type(_name5, attrs, order[_name5], schema);
       }
       return result;
-    }
-  }, {
-    key: "register",
-    value: function register(name, value) {
-      ;(this.prototype[name] || (this.prototype[name] = [])).push(value);
     }
   }, {
     key: "rank",
@@ -8151,6 +8998,11 @@ var MarkType = (function () {
 
 exports.MarkType = MarkType;
 MarkType.attributes = {};
+
+// :: (string, *)
+// Register a metadata element for this mark type. See also
+// `NodeType.register`.
+MarkType.register = NodeType.register;
 
 // Schema specifications are data structures that specify a schema --
 // a set of node types, their names, attributes, and nesting behavior.
@@ -8168,14 +9020,14 @@ function ensureWrapped(obj) {
 
 function overlayObj(obj, overlay) {
   var copy = copyObj(obj);
-  for (var _name7 in overlay) {
-    var info = ensureWrapped(overlay[_name7]);
+  for (var _name6 in overlay) {
+    var info = ensureWrapped(overlay[_name6]);
     if (info == null) {
-      delete copy[_name7];
+      delete copy[_name6];
     } else if (info.type) {
-      copy[_name7] = info;
+      copy[_name6] = info;
     } else {
-      var existing = copy[_name7] = copyObj(copy[_name7]);
+      var existing = copy[_name6] = copyObj(copy[_name6]);
       for (var prop in info) {
         existing[prop] = info[prop];
       }
@@ -8184,25 +9036,39 @@ function overlayObj(obj, overlay) {
   return copy;
 }
 
-// FIXME clean up handling of attributes, finish documentation.
-
 // ;; A schema specification is a blueprint for an actual
-// [`Schema`](#Schema). It maps names to node and mark types, along
+// `Schema`. It maps names to node and mark types, along
 // with extra information, such as additional attributes and changes
 // to node kinds and relations.
 //
 // A specification consists of an object that maps node names to node
 // type constructors and another similar object mapping mark names to
 // mark type constructors.
+//
+// For flexibility and reusability, node and mark type classes do not
+// declare their own name. Instead, each schema that includes them can
+// assign a name to them, as well as override their
+// [kind](#NodeType.kind) and [contained kind](#NodeType.contains), or
+// adding extra [attributes](#NodeType.attributes).
 
 var SchemaSpec = (function () {
   // :: (?Object<{type: NodeType}>, ?Object<{type: MarkType}>)
-
   // Create a schema specification from scratch. The arguments map
   // node names to node type constructors and mark names to mark type
   // constructors. Their property value should be either the type
   // constructors themselves, or objects with a type constructor under
-  // their `type` property, and optionally other properties.
+  // their `type` property, and optionally these other properties:
+  //
+  // **`contains`**`: string`
+  //   : Only valid for `nodes`. The [kind](#NodeType.kind) of the
+  //     nodes that this node can contain in this schema.
+  //
+  // **`kind`**`: string`
+  //  : Only valid for `nodes`. Overrides the kind of this node in
+  //    this schema. Same format as `NodeType.kind`.
+  //
+  // **`attributes`**`: Object<Attribute>`
+  //   : Extra attributes to attach to this node in this schema.
 
   function SchemaSpec(nodes, marks) {
     _classCallCheck(this, SchemaSpec);
@@ -8216,28 +9082,45 @@ var SchemaSpec = (function () {
   // object, and use it for all nodes that don't specify specific
   // attributes.
 
+  // :: (?Object<?{type: NodeType}>, ?Object<?{type: MarkType}>) → SchemaSpec
+  // Base a new schema spec on this one by specifying nodes and marks
+  // to add, change, or remove.
+  //
+  // When `nodes` is passed, it should be an object mapping type names
+  // to either `null`, to delete the type of that name, to a
+  // `NodeType`, to add or replace the node type of that name, or to
+  // an object containing [extension
+  // properties](#SchemaSpec_constructor), to add to the existing
+  // description of that node type.
+  //
+  // Similarly, `marks` can be an object to add, change, or remove
+  // marks in the schema.
+
   _createClass(SchemaSpec, [{
-    key: "updateNodes",
-    value: function updateNodes(nodes) {
-      return new SchemaSpec(overlayObj(this.nodes, nodes), this.marks);
+    key: "update",
+    value: function update(nodes, marks) {
+      return new SchemaSpec(nodes ? overlayObj(this.nodes, nodes) : this.nodes, marks ? overlayObj(this.marks, marks) : this.marks);
     }
+
+    // :: (?union<string, (name: string, type: NodeType) → bool>, string, Attribute) → SchemaSpec
+    // Create a new schema spec with attributes added to selected node
+    // types. `filter` can be `null`, to add the attribute to all node
+    // types, a string, to add it only to the named node type, or a
+    // predicate function, to add it to node types that pass the
+    // predicate.
+    //
+    // This attribute will be added alongside the node type's [default
+    // attributes](#NodeType.attributes).
   }, {
     key: "addAttribute",
-    value: function addAttribute(filter, attrName, attrInfo) {
+    value: function addAttribute(filter, attrName, attr) {
       var copy = copyObj(this.nodes);
-      for (var _name8 in copy) {
-        if (typeof filter == "string" ? filter == _name8 : typeof filter == "function" ? filter(_name8, copy[_name8]) : filter ? filter == copy[_name8] : true) {
-          var info = copy[_name8] = copyObj(copy[_name8]);
-          if (!info.attributes) info.attributes = copyObj(info.type.attributes);
-          info.attributes[attrName] = attrInfo;
+      for (var _name7 in copy) {
+        if (typeof filter == "string" ? filter == _name7 : typeof filter == "function" ? filter(_name7, copy[_name7]) : filter ? filter == copy[_name7] : true) {
+          var info = copy[_name7] = copyObj(copy[_name7]);(info.attributes || (info.attributes = Object.create(null)))[attrName] = attr;
         }
       }
       return new SchemaSpec(copy, this.marks);
-    }
-  }, {
-    key: "updateMarks",
-    value: function updateMarks(marks) {
-      return new SchemaSpec(this.nodes, overlayObj(this.marks, marks));
     }
   }]);
 
@@ -8257,13 +9140,13 @@ function getDefaultAttrs(attrs) {
 
 function _buildAttrs(attrSpec, attrs, arg1, arg2) {
   var built = Object.create(null);
-  for (var _name9 in attrSpec) {
-    var value = attrs && attrs[_name9];
+  for (var _name8 in attrSpec) {
+    var value = attrs && attrs[_name8];
     if (value == null) {
-      var attr = attrSpec[_name9];
-      if (attr["default"] != null) value = attr["default"];else if (attr.compute) value = attr.compute(arg1, arg2);else SchemaError.raise("No value supplied for attribute " + _name9);
+      var attr = attrSpec[_name8];
+      if (attr["default"] != null) value = attr["default"];else if (attr.compute) value = attr.compute(arg1, arg2);else SchemaError.raise("No value supplied for attribute " + _name8);
     }
-    built[_name9] = value;
+    built[_name8] = value;
   }
   return built;
 }
@@ -8301,13 +9184,11 @@ var Schema = (function () {
     this.markFromJSON = this.markFromJSON.bind(this);
   }
 
-  // FIXME normalize mark arrays passed to these methods
-
   // :: (union<string, NodeType>, ?Object, ?union<Fragment, Node, [Node]>, ?[Mark]) → Node
   // Create a node in this schema. The `type` may be a string or a
-  // [`NodeType`](#NodeType) instance. Attributes will be extended
-  // with defaults, `content` may be a [`Fragment`](#Fragment),
-  // `null`, a [`Node`](#Node), or an array of nodes.
+  // `NodeType` instance. Attributes will be extended
+  // with defaults, `content` may be a `Fragment`,
+  // `null`, a `Node`, or an array of nodes.
   //
   // When creating a text node, `content` should be a string and is
   // interpreted as the node's text.
@@ -8329,7 +9210,7 @@ var Schema = (function () {
   }, {
     key: "text",
     value: function text(_text, marks) {
-      return this.nodes.text.create(null, _text, marks);
+      return this.nodes.text.create(null, _text, _mark.Mark.setFrom(marks));
     }
 
     // :: () → ?NodeType
@@ -8341,8 +9222,8 @@ var Schema = (function () {
     value: function defaultTextblockType() {
       var cached = this.cached.defaultTextblockType;
       if (cached !== undefined) return cached;
-      for (var _name10 in this.nodes) {
-        if (this.nodes[_name10].defaultTextblock) return this.cached.defaultTextblockType = this.nodes[_name10];
+      for (var _name9 in this.nodes) {
+        if (this.nodes[_name9].defaultTextblock) return this.cached.defaultTextblockType = this.nodes[_name9];
       }
       return this.cached.defaultTextblockType = null;
     }
@@ -8376,7 +9257,7 @@ var Schema = (function () {
     }
 
     // :: (string) → NodeType
-    // Get the [`NodeType`](#NodeType) associated with the given name in
+    // Get the `NodeType` associated with the given name in
     // this schema, or raise an error if it does not exist.
   }, {
     key: "nodeType",
@@ -8395,6 +9276,39 @@ var Schema = (function () {
         if (!sub) return false;
       }
     }
+
+    // :: (string, (value: *, source: union<NodeType, MarkType, Attribute>))
+    // Retrieve all registered items under the given name from this
+    // schema. The given function will be called with each item and, as
+    // a second argument, the element—node type, mark type, or
+    // attribute—that it was associated with.
+  }, {
+    key: "registry",
+    value: function registry(name, f) {
+      var attrsSeen = [];
+      for (var i = 0; i < 2; i++) {
+        var obj = i ? this.marks : this.nodes;
+        for (var tname in obj) {
+          var type = obj[tname];
+          if (type.constructor.prototype.hasOwnProperty("registry")) {
+            var reg = type.registry[name];
+            if (reg) for (var j = 0; j < reg.length; j++) {
+              f(reg[j], type);
+            }
+          }
+          for (var aname in type.attrs) {
+            var attr = type.attrs[aname],
+                reg = attr.registry[name];
+            if (reg && attrsSeen.indexOf(attr) == -1) {
+              attrsSeen.push(attr);
+              for (var j = 0; j < reg.length; j++) {
+                f(reg[j], attr);
+              }
+            }
+          }
+        }
+      }
+    }
   }]);
 
   return Schema;
@@ -8402,7 +9316,7 @@ var Schema = (function () {
 
 exports.Schema = Schema;
 
-},{"../util/error":47,"./fragment":25,"./mark":27,"./node":28}],31:[function(require,module,exports){
+},{"../util/error":46,"./fragment":24,"./mark":26,"./node":27}],30:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8420,9 +9334,15 @@ var _model = require("../model");
 
 var _index = require("./index");
 
+// :: (Schema, DOMNode, ?Object) → Node
+// Parse document from the content of a DOM node. To pass an explicit
+// parent document (for example, when not in a browser window
+// environment, where we simply use the global document), pass it as
+// the `document` property of `options`.
+
 function fromDOM(schema, dom, options) {
   if (!options) options = {};
-  var context = new Context(schema, options.topNode || schema.node("doc"));
+  var context = new DOMParseState(schema, options.topNode || schema.node("doc"), options);
   var start = options.from ? dom.childNodes[options.from] : dom.firstChild;
   var end = options.to != null && dom.childNodes[options.to] || null;
   context.addAll(start, end, true);
@@ -8431,7 +9351,46 @@ function fromDOM(schema, dom, options) {
   return doc;
 }
 
+// ;; #path=DOMParseSpec #kind=interface #toc=false
+// To define the way [node](#NodeType) and [mark](#MarkType) types are
+// parsed, you can associate one or more DOM parsing specifications to
+// them using the [`register`](#NodeType.register) method with the
+// `parseDOM` property name. Each of them defines a parsing strategy
+// for a certain type of DOM node.
+//
+// Note that `Attribute`s may also contain a `parseDOM` property,
+// which should _not_ be a `DOMParseSpec`, but simply a function that
+// computes the attribute's value from a DOM node.
+
+// :: ?string #path=DOMParseSpec.tag
+// The (lower-case) tag name for which to activate this parser. When
+// not given, it is activated for all nodes.
+
+// :: ?number #path=DOMParseSpec.rank
+// The precedence of this parsing strategy. Should be a number between
+// 0 and 100, which determines when this parser gets a chance relative
+// to others that apply to the node (low ranks go first). Defaults to
+// 50.
+
+// :: union<string, (dom: DOMNode, state: DOMParseState) → ?bool> #path=DOMParseSpec.parse
+// The function that, given a DOM node, parses it, updating the parse
+// state. It should return (the exact value) `false` when it wants to
+// indicate that it was not able to parse this node. This function is
+// called in such a way that `this` is bound to the type that the
+// parse spec was associated with.
+//
+// When this is set to the string `"block"`, the content of the DOM
+// node is parsed as the content in a node of the type that this spec
+// was associated with.
+//
+// When set to the string `"mark"`, the content of the DOM node is
+// parsed with an instance of the mark that this spec was associated
+// with added to their marks.
+
 (0, _index.defineSource)("dom", fromDOM);
+
+// :: (Schema, string, ?Object) → Node
+// Parses the HTML into a DOM, and then calls through to `fromDOM`.
 
 function fromHTML(schema, html, options) {
   var wrap = (options && options.document || window.document).createElement("div");
@@ -8451,10 +9410,16 @@ var blockElements = {
 
 var noMarks = [];
 
-var Context = (function () {
-  function Context(schema, topNode) {
-    _classCallCheck(this, Context);
+// ;; #toc=false A state object used to track context during a parse,
+// and to expose methods to custom parsing functions.
 
+var DOMParseState = (function () {
+  function DOMParseState(schema, topNode, options) {
+    _classCallCheck(this, DOMParseState);
+
+    // :: Object The options passed to this parse.
+    this.options = options || {};
+    // :: Schema The schema that we are parsing into.
     this.schema = schema;
     this.stack = [];
     this.marks = noMarks;
@@ -8463,7 +9428,7 @@ var Context = (function () {
     this.nodeInfo = nodeInfo(schema);
   }
 
-  _createClass(Context, [{
+  _createClass(DOMParseState, [{
     key: "parseAttrs",
     value: function parseAttrs(dom, type, attrs) {
       for (var attr in type.attrs) {
@@ -8504,7 +9469,7 @@ var Context = (function () {
     value: function tryParsers(parsers, dom) {
       if (parsers) for (var i = 0; i < parsers.length; i++) {
         var parser = parsers[i];
-        if (parser.parse(dom, this, parser.type, null, this.options) !== false) return true;
+        if (parser.parse.call(parser.type, dom, this) !== false) return true;
       }
     }
   }, {
@@ -8552,10 +9517,14 @@ var Context = (function () {
       this.top.content.push(node);
       return node;
     }
+
+    // :: (DOMNode, NodeType, ?Object, [Node]) → Node
+    // Insert a node of the given type, with the given content, based on
+    // `dom`, at the current position in the document.
   }, {
     key: "insertFrom",
-    value: function insertFrom(dom, type, attrs, content, styles) {
-      return this.insert(type.createAutoFill(this.parseAttrs(dom, type, attrs), content, styles));
+    value: function insertFrom(dom, type, attrs, content) {
+      return this.insert(type.createAutoFill(this.parseAttrs(dom, type, attrs), content, this.marks));
     }
   }, {
     key: "enter",
@@ -8594,6 +9563,29 @@ var Context = (function () {
       if (this.marks.length) this.marks = noMarks;
       this.closing = false;
     }
+
+    // :: (DOMNode, NodeType, ?Object)
+    // Parse the contents of `dom` as children of a node of the given
+    // type.
+  }, {
+    key: "wrapIn",
+    value: function wrapIn(dom, type, attrs) {
+      this.enterFrom(dom, type, attrs);
+      this.addAll(dom.firstChild, null, true);
+      this.leave();
+    }
+
+    // :: (DOMNode, Mark)
+    // Parse the contents of `dom`, with `mark` added to the set of
+    // current marks.
+  }, {
+    key: "wrapMark",
+    value: function wrapMark(dom, mark) {
+      var old = this.marks;
+      this.marks = (mark.instance || mark).addToSet(old);
+      this.addAll(dom.firstChild, null);
+      this.marks = old;
+    }
   }, {
     key: "top",
     get: function get() {
@@ -8601,7 +9593,7 @@ var Context = (function () {
     }
   }]);
 
-  return Context;
+  return DOMParseState;
 })();
 
 function nodeInfo(schema) {
@@ -8611,53 +9603,43 @@ function nodeInfo(schema) {
 function summarizeNodeInfo(schema) {
   var tags = Object.create(null);
   tags._ = [];
-  function read(value) {
-    var info = value.parseDOM;
-    if (!info) return;
-    info.forEach(function (info) {
-      var tag = info.tag || "_";(tags[tag] || (tags[tag] = [])).push({
-        type: value,
-        rank: info.rank == null ? 50 : info.rank,
-        parse: info.parse
-      });
+  schema.registry("parseDOM", function (info, type) {
+    var tag = info.tag || "_";
+    var parse = info.parse;
+    if (parse == "block") parse = function (dom, state) {
+      state.wrapIn(dom, this);
+    };else if (parse == "mark") parse = function (dom, state) {
+      state.wrapMark(dom, this);
+    };(tags[tag] || (tags[tag] = [])).push({
+      type: type, parse: parse,
+      rank: info.rank == null ? 50 : info.rank
     });
-  }
-
-  for (var _name2 in schema.nodes) {
-    read(schema.nodes[_name2]);
-  }for (var _name3 in schema.marks) {
-    read(schema.marks[_name3]);
-  }for (var tag in tags) {
+  });
+  for (var tag in tags) {
     tags[tag].sort(function (a, b) {
       return a.rank - b.rank;
     });
   }return tags;
 }
 
-function wrap(dom, context, type, attrs) {
-  context.enterFrom(dom, type, attrs);
-  context.addAll(dom.firstChild, null, true);
-  context.leave();
-}
+_model.Paragraph.register("parseDOM", { tag: "p", parse: "block" });
 
-_model.Paragraph.register("parseDOM", { tag: "p", parse: wrap });
-
-_model.BlockQuote.register("parseDOM", { tag: "blockquote", parse: wrap });
+_model.BlockQuote.register("parseDOM", { tag: "blockquote", parse: "block" });
 
 var _loop = function (i) {
   _model.Heading.register("parseDOM", {
     tag: "h" + i,
-    parse: function parse(dom, context, type) {
-      return wrap(dom, context, type, { level: i });
+    parse: function parse(dom, state) {
+      state.wrapIn(dom, this, { level: i });
     }
   });
 };
 
 for (var i = 1; i <= 6; i++) {
   _loop(i);
-}_model.HorizontalRule.register("parseDOM", { tag: "hr", parse: wrap });
+}_model.HorizontalRule.register("parseDOM", { tag: "hr", parse: "block" });
 
-_model.CodeBlock.register("parseDOM", { tag: "pre", parse: function parse(dom, context, type) {
+_model.CodeBlock.register("parseDOM", { tag: "pre", parse: function parse(dom, state) {
     var params = dom.firstChild && /^code$/i.test(dom.firstChild.nodeName) && dom.firstChild.getAttribute("class");
     if (params && /fence/.test(params)) {
       var found = [],
@@ -8669,24 +9651,24 @@ _model.CodeBlock.register("parseDOM", { tag: "pre", parse: function parse(dom, c
       params = null;
     }
     var text = dom.textContent;
-    context.insertFrom(dom, type, { params: params }, text ? [context.schema.text(text)] : []);
+    state.insertFrom(dom, this, { params: params }, text ? [state.schema.text(text)] : []);
   } });
 
-_model.BulletList.register("parseDOM", { tag: "ul", parse: wrap });
+_model.BulletList.register("parseDOM", { tag: "ul", parse: "block" });
 
-_model.OrderedList.register("parseDOM", { tag: "ol", parse: function parse(dom, context, type) {
+_model.OrderedList.register("parseDOM", { tag: "ol", parse: function parse(dom, state) {
     var attrs = { order: dom.getAttribute("start") || 1 };
-    wrap(dom, context, type, attrs);
+    state.wrapIn(dom, this, attrs);
   } });
 
-_model.ListItem.register("parseDOM", { tag: "li", parse: wrap });
+_model.ListItem.register("parseDOM", { tag: "li", parse: "block" });
 
-_model.HardBreak.register("parseDOM", { tag: "br", parse: function parse(dom, context, type) {
-    context.insertFrom(dom, type, null, null, context.marks);
+_model.HardBreak.register("parseDOM", { tag: "br", parse: function parse(dom, state) {
+    state.insertFrom(dom, this);
   } });
 
-_model.Image.register("parseDOM", { tag: "img", parse: function parse(dom, context, type) {
-    context.insertFrom(dom, type, {
+_model.Image.register("parseDOM", { tag: "img", parse: function parse(dom, state) {
+    state.insertFrom(dom, this, {
       src: dom.getAttribute("src"),
       title: dom.getAttribute("title") || null,
       alt: dom.getAttribute("alt") || null
@@ -8695,47 +9677,81 @@ _model.Image.register("parseDOM", { tag: "img", parse: function parse(dom, conte
 
 // Inline style tokens
 
-function inline(dom, context, style) {
-  var old = context.marks;
-  context.marks = (style.instance || style).addToSet(old);
-  context.addAll(dom.firstChild, null);
-  context.marks = old;
-}
-
-_model.LinkMark.register("parseDOM", { tag: "a", parse: function parse(dom, context, style) {
+_model.LinkMark.register("parseDOM", { tag: "a", parse: function parse(dom, state) {
     var href = dom.getAttribute("href");
     if (!href) return false;
-    inline(dom, context, style.create({ href: href, title: dom.getAttribute("title") }));
+    state.wrapMark(dom, this.create({ href: href, title: dom.getAttribute("title") }));
   } });
 
-_model.EmMark.register("parseDOM", { tag: "i", parse: inline });
-_model.EmMark.register("parseDOM", { tag: "em", parse: inline });
+_model.EmMark.register("parseDOM", { tag: "i", parse: "mark" });
+_model.EmMark.register("parseDOM", { tag: "em", parse: "mark" });
 
-_model.StrongMark.register("parseDOM", { tag: "b", parse: inline });
-_model.StrongMark.register("parseDOM", { tag: "strong", parse: inline });
+_model.StrongMark.register("parseDOM", { tag: "b", parse: "mark" });
+_model.StrongMark.register("parseDOM", { tag: "strong", parse: "mark" });
 
-_model.CodeMark.register("parseDOM", { tag: "code", parse: inline });
+_model.CodeMark.register("parseDOM", { tag: "code", parse: "mark" });
 
-},{"../model":26,"./index":32}],32:[function(require,module,exports){
+},{"../model":25,"./index":31}],31:[function(require,module,exports){
+// !! This module implements a way to register and access parsers from
+// various input formats to ProseMirror's [document format](#Node). To
+// load the actual parsers, you need to import parser modules like
+// `parse/dom` or `parse/markdown`, which will then register
+// themselves here, as well as export special-purpose parsing
+// functions.
+//
+// These are the parses in the distribution:
+//
+// **`"json"`**
+//   : The top-level module defines a single parser `"json"`, which
+//     uses `Node.fromJSON` to parse JSON data.
+//
+// **`"dom"`**
+//   : Parses [DOM
+//     nodes](https://developer.mozilla.org/en-US/docs/Web/API/Node).
+//     Defined in `parse/dom`. See `fromDOM`.
+//
+// **`"html"`**
+//   : Parses strings of HTML content. Defined in `parse/dom`.
+//
+// **`"markdown"`**
+//   : Parses strings of
+//     [CommonMark](http://commonmark.org/)-formatted text. Defined in
+//     `parse/markdown`. See `fromMarkdown`.
+//
+// **`"text"`**
+//   : Simply splits a string of text on blank lines and creates a
+//     document containing those lines as paragraphs. Defined in
+//     `parse/text`. See `fromText`.
+
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.convertFrom = convertFrom;
+exports.parseFrom = parseFrom;
 exports.knownSource = knownSource;
 exports.defineSource = defineSource;
 var parsers = Object.create(null);
 
-function convertFrom(schema, value, format, arg) {
+// :: (Schema, any, string, ?Object) → Node
+// Parse document `value` from the format named by `format`. If
+// `options` is given, it is passed along to the parser function.
+
+function parseFrom(schema, value, format, options) {
   var converter = parsers[format];
   if (!converter) throw new Error("Source format " + format + " not defined");
-  return converter(schema, value, arg);
+  return converter(schema, value, options);
 }
+
+// :: (string) → bool
+// Query whether a parser for the named format has been registered.
 
 function knownSource(format) {
   return !!parsers[format];
 }
+
+// :: (string, (Schema, any, ?Object) → Node)
+// Register a parser function for `format`.
 
 function defineSource(format, func) {
   parsers[format] = func;
@@ -8745,7 +9761,7 @@ defineSource("json", function (schema, json) {
   return schema.nodeFromJSON(json);
 });
 
-},{}],33:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8757,6 +9773,9 @@ var _index = require("./index");
 
 // FIXME is it meaningful to try and attach text-parsing information
 // to node types?
+
+// :: (Schema, string) → Node
+// Convert a string into a simple ProseMirror document.
 
 function fromText(schema, text) {
   var blocks = text.trim().split(/\n{2,}/);
@@ -8776,7 +9795,7 @@ function fromText(schema, text) {
 
 (0, _index.defineSource)("text", fromText);
 
-},{"./index":32}],34:[function(require,module,exports){
+},{"./index":31}],33:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8786,8 +9805,8 @@ Object.defineProperty(exports, "__esModule", {
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 exports.toDOM = toDOM;
-exports.toHTML = toHTML;
 exports.renderNodeToDOM = renderNodeToDOM;
+exports.toHTML = toHTML;
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -8795,30 +9814,57 @@ var _model = require("../model");
 
 var _index = require("./index");
 
-// declare_global: window
+// ;; #toc=false Object used to to expose relevant values and methods
+// to DOM serializer functions.
 
 var DOMSerializer = (function () {
   function DOMSerializer(options) {
     _classCallCheck(this, DOMSerializer);
 
+    // :: Object The options passed to the serializer.
     this.options = options || {};
+    // :: DOMDocument The DOM document in which we are working.
     this.doc = this.options.document || window.document;
   }
 
+  // :: (Node, ?Object) → DOMFragment
+  // Serialize the content of the given node to a DOM fragment. When not
+  // in the browser, the `document` option, containing a DOM document,
+  // should be passed so that the serialize can create nodes.
+  //
+  // To define rendering behavior for your own [node](#NodeType) and
+  // [mark](#MarkType) types, give them a `serializeDOM` method. This
+  // method is passed a `Node` and a `DOMSerializer`, and should return
+  // the [DOM
+  // node](https://developer.mozilla.org/en-US/docs/Web/API/Node) that
+  // represents this node and its content. For marks, that should be an
+  // inline wrapping node like `<a>` or `<strong>`.
+  //
+  // Individual attributes can also define serialization behavior. If an
+  // `Attribute` object has a `serializeDOM` method, that will be called
+  // with the DOM node representing the node that the attribute applies
+  // to and the atttribute's value, so that it can set additional DOM
+  // attributes on the DOM node.
+
+  // :: (string, ?Object, ...union<string, DOMNode>) → DOMNode
+  // Create a DOM node of the given type, with (optionally) the given
+  // attributes and content. Content elements may be strings (for text
+  // nodes) or other DOM nodes.
+
   _createClass(DOMSerializer, [{
     key: "elt",
-    value: function elt(tag, attrs) {
-      var result = this.doc.createElement(tag);
+    value: function elt(type, attrs) {
+      var result = this.doc.createElement(type);
       if (attrs) for (var _name in attrs) {
         if (_name == "style") result.style.cssText = attrs[_name];else if (attrs[_name]) result.setAttribute(_name, attrs[_name]);
       }
 
-      for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-        args[_key - 2] = arguments[_key];
+      for (var _len = arguments.length, content = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+        content[_key - 2] = arguments[_key];
       }
 
-      for (var i = 0; i < args.length; i++) {
-        result.appendChild(typeof args[i] == "string" ? this.doc.createTextNode(args[i]) : args[i]);
+      for (var i = 0; i < content.length; i++) {
+        result.appendChild(typeof content[i] == "string" ? this.doc.createTextNode(content[i]) : content[i]);
       }return result;
     }
   }, {
@@ -8902,6 +9948,10 @@ var DOMSerializer = (function () {
       }
       return dom;
     }
+
+    // :: (Node, string, ?Object) → DOMNode
+    // Render the content of ProseMirror node into a DOM node with the
+    // given tag name and attributes.
   }, {
     key: "renderAs",
     value: function renderAs(node, tagName, tagAttrs) {
@@ -8920,14 +9970,10 @@ function toDOM(node) {
 
 (0, _index.defineTarget)("dom", toDOM);
 
-function toHTML(node, options) {
-  var serializer = new DOMSerializer(options);
-  var wrap = serializer.elt("div");
-  wrap.appendChild(serializer.renderContent(node));
-  return wrap.innerHTML;
-}
-
-(0, _index.defineTarget)("html", toHTML);
+// :: (Node, ?Object) → DOMNode
+// Serialize a given node to a DOM node. This is useful when you need
+// to serialize a part of a document, as opposed to the whole
+// document.
 
 function renderNodeToDOM(node, options, offset) {
   var serializer = new DOMSerializer(options);
@@ -8939,6 +9985,20 @@ function renderNodeToDOM(node, options, offset) {
   return dom;
 }
 
+// :: (Node, ?Object) → string
+// Serialize a node as an HTML string. Goes through `toDOM` and then
+// serializes the result. Again, you must pass a `document` option
+// when not in the browser.
+
+function toHTML(node, options) {
+  var serializer = new DOMSerializer(options);
+  var wrap = serializer.elt("div");
+  wrap.appendChild(serializer.renderContent(node));
+  return wrap.innerHTML;
+}
+
+(0, _index.defineTarget)("html", toHTML);
+
 // Block nodes
 
 function def(cls, method) {
@@ -8949,7 +10009,7 @@ def(_model.BlockQuote, function (node, s) {
   return s.renderAs(node, "blockquote");
 });
 
-_model.BlockQuote.prototype.clicked = function (_, path, dom, coords) {
+_model.BlockQuote.prototype.countCoordsAsChild = function (_, path, dom, coords) {
   var childBox = dom.firstChild.getBoundingClientRect();
   if (coords.left < childBox.left - 2) return _model.Pos.from(path);
 };
@@ -8962,7 +10022,7 @@ def(_model.OrderedList, function (node, s) {
   return s.renderAs(node, "ol", { start: node.attrs.order != "1" && node.attrs.order });
 });
 
-_model.OrderedList.prototype.clicked = _model.BulletList.prototype.clicked = function (_, path, dom, coords) {
+_model.OrderedList.prototype.countCoordsAsChild = _model.BulletList.prototype.countCoordsAsChild = function (_, path, dom, coords) {
   for (var i = 0; i < dom.childNodes.length; i++) {
     var child = dom.childNodes[i];
     if (!child.hasAttribute("pm-offset")) continue;
@@ -9031,26 +10091,63 @@ def(_model.LinkMark, function (mark, s) {
     title: mark.attrs.title });
 });
 
-},{"../model":26,"./index":35}],35:[function(require,module,exports){
+},{"../model":25,"./index":34}],34:[function(require,module,exports){
+// !! This module provides a way to register and access functions that
+// serialize ProseMirror [documents](#Node) to various formats. To
+// load the actual serializers, you need to include submodules of this
+// module (or 3rd party serialization modules), which will register
+// themselves to this module.
+//
+// These are the serializers defined:
+//
+// **`"json"`**
+//   : Use `Node.toJSON` to serialize the node as JSON. Defined by the
+//     top-level `serialize` module.
+//
+// **`"dom"`**
+//   : Serialize to a [DOM
+//     fragment](https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment).
+//     Defined in `serialize/dom`. See `toDOM`.
+//
+// **`"html"`**
+//   : Serialize to HTML text. Defined in `serialize/dom`. See `toHTML`.
+//
+// **`"markdown"`**
+//   : Serialize to [CommonMark](http://commonmark.org/) marked-up
+//     text. Defined in `serialize/markdown`. See `toMarkdown`.
+//
+// **`"text"`**
+//   : Serialize to plain text. Defined in `serialize/text`. See `toText`.
+
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.convertTo = convertTo;
+exports.serializeTo = serializeTo;
 exports.knownTarget = knownTarget;
 exports.defineTarget = defineTarget;
 var serializers = Object.create(null);
 
-function convertTo(doc, format, arg) {
+// :: (Node, string, ?Object) → any
+// Serialize the given document to the given format. If `options` is
+// given, it will be passed along to the serializer function.
+
+function serializeTo(doc, format, options) {
   var converter = serializers[format];
   if (!converter) throw new Error("Target format " + format + " not defined");
-  return converter(doc, arg);
+  return converter(doc, options);
 }
+
+// :: (string) → bool
+// Query whether a given serialization format has been registered.
 
 function knownTarget(format) {
   return !!serializers[format];
 }
+
+// :: (string, (Node, ?Object) → any)
+// Register a function as the serializer for `format`.
 
 function defineTarget(format, func) {
   serializers[format] = func;
@@ -9060,7 +10157,7 @@ defineTarget("json", function (doc) {
   return doc.toJSON();
 });
 
-},{}],36:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9097,13 +10194,16 @@ _model.Text.prototype.serializeText = function (node) {
   return node.text;
 };
 
+// :: (Node) → string
+// Serialize a node as a plain text string.
+
 function toText(doc) {
   return doc.type.serializeText(doc).trim();
 }
 
 (0, _index.defineTarget)("text", toText);
 
-},{"../model":26,"./index":35}],37:[function(require,module,exports){
+},{"../model":25,"./index":34}],36:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9111,7 +10211,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.canLift = canLift;
 exports.canWrap = canWrap;
-exports.alreadyHasBlockType = alreadyHasBlockType;
 
 var _model = require("../model");
 
@@ -9123,7 +10222,23 @@ var _tree = require("./tree");
 
 var _map = require("./map");
 
-(0, _step.defineStep)("ancestor", {
+// !! **`ancestor`**
+//    : Change the stack of nodes that wrap the part of the document
+//      between `from` and `to`, which must point into the same parent
+//      node.
+//
+//      The set of ancestors to replace is determined by the `depth`
+//      property of the step's parameter. If this is greater than
+//      zero, `from` and `to` must point at the start and end of a
+//      stack of nodes, of that depth, since this step will not split
+//      nodes.
+//
+//      The set of new ancestors to wrap with is determined by the
+//      `types` and `attrs` properties of the parameter. The first
+//      should be an array of `NodeType`s, and the second, optionally,
+//      an array of attribute objects.
+
+_step.Step.define("ancestor", {
   apply: function apply(doc, step) {
     var from = step.from,
         to = step.to;
@@ -9189,7 +10304,7 @@ var _map = require("./map");
     }
     var moved = [new _map.MovedRange(from, to.offset - from.offset, startOfInner)];
     if (end - start != insertedSize) moved.push(new _map.MovedRange(new _model.Pos(toParent, end), parentSize - end, new _model.Pos(toParent, start + insertedSize)));
-    return new _transform.TransformResult(copy, new _map.PosMap(moved, replaced));
+    return new _step.StepResult(copy, new _map.PosMap(moved, replaced));
   },
   invert: function invert(step, oldDoc, map) {
     var types = [],
@@ -9244,12 +10359,21 @@ function canBeLifted(doc, range) {
   }
 }
 
+// :: (Node, Pos, ?Pos) → bool
+// Tells you whether the given positions' [sibling
+// range](#Node.siblingRange), or any of its ancestor nodes, can be
+// lifted out of a parent.
+
 function canLift(doc, from, to) {
-  var range = (0, _model.siblingRange)(doc, from, to || from);
+  var range = doc.siblingRange(from, to || from);
   var found = canBeLifted(doc, range);
   if (found) return { found: found, range: range };
 }
 
+// :: (Pos, ?Pos) → Transform
+// Lift the nearest liftable ancestor of the [sibling
+// range](#Node.siblingRange) of the given positions out of its
+// parent (or do nothing if no such node exists).
 _transform.Transform.prototype.lift = function (from) {
   var to = arguments.length <= 1 || arguments[1] === undefined ? from : arguments[1];
   return (function () {
@@ -9263,7 +10387,7 @@ _transform.Transform.prototype.lift = function (from) {
 
     for (var d = 0, pos = range.to;; d++) {
       if (pos.offset < this.doc.path(pos.path).size) {
-        this.split(pos, depth);
+        this.split(pos, depth - d);
         break;
       }
       if (d == depth - 1) break;
@@ -9296,8 +10420,12 @@ _transform.Transform.prototype.lift = function (from) {
   }).apply(this, arguments);
 };
 
+// :: (Node, Pos, ?Pos, NodeType) → bool
+// Determines whether the [sibling range](#Node.siblingRange) of the
+// given positions can be wrapped in the given node type.
+
 function canWrap(doc, from, to, type) {
-  var range = (0, _model.siblingRange)(doc, from, to || from);
+  var range = doc.siblingRange(from, to || from);
   if (range.from.offset == range.to.offset) return null;
   var parent = doc.path(range.from.path);
   var around = parent.type.findConnection(type);
@@ -9305,6 +10433,10 @@ function canWrap(doc, from, to, type) {
   if (around && inside) return { range: range, around: around, inside: inside };
 }
 
+// :: (Pos, ?Pos, NodeType, ?Object) → Transform
+// Wrap the [sibling range](#Node.siblingRange) of the given positions
+// in a node of the given type, with the given attributes (if
+// possible).
 _transform.Transform.prototype.wrap = function (from, to, type, wrapAttrs) {
   var can = canWrap(this.doc, from, to, type);
   if (!can) return this;
@@ -9330,18 +10462,9 @@ _transform.Transform.prototype.wrap = function (from, to, type, wrapAttrs) {
   return this;
 };
 
-function alreadyHasBlockType(doc, from, to, type, attrs) {
-  var found = false;
-  if (!attrs) attrs = {};
-  doc.nodesBetween(from, to || from, function (node) {
-    if (node.isTextblock) {
-      if (node.hasMarkup(type, attrs)) found = true;
-      return false;
-    }
-  });
-  return found;
-}
-
+// :: (Pos, ?Pos, NodeType, ?Object) → Transform
+// Set the type of all textblocks (partly) between `from` and `to` to
+// the given node type with the given attributes.
 _transform.Transform.prototype.setBlockType = function (from, to, type, attrs) {
   var _this = this;
 
@@ -9357,6 +10480,8 @@ _transform.Transform.prototype.setBlockType = function (from, to, type, attrs) {
   return this;
 };
 
+// :: (Pos, NodeType, ?Object) → Transform
+// Change the type and attributes of the node after `pos`.
 _transform.Transform.prototype.setNodeType = function (pos, type, attrs) {
   var node = this.doc.nodeAfter(pos);
   var path = pos.toPath();
@@ -9364,7 +10489,7 @@ _transform.Transform.prototype.setNodeType = function (pos, type, attrs) {
   return this;
 };
 
-},{"../model":26,"./map":40,"./step":44,"./transform":45,"./tree":46}],38:[function(require,module,exports){
+},{"../model":25,"./map":39,"./step":43,"./transform":44,"./tree":45}],37:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9377,14 +10502,20 @@ require("./split");
 
 require("./replace");
 
+// !! This module defines a way to transform documents. Transforming
+// happens in `Step`s, which are atomic, well-defined modifications to
+// a document. [Applying](`Step.apply`) a step produces a new document
+// and a [position map](#PosMap) that maps positions in the old
+// document to position in the new document. Steps can be
+// [inverted](#Step.invert) to create a step that undoes their effect,
+// and chained together in a convenience object called a `Transform`.
+//
+// This module does not depend on the browser API being available
+// (i.e. you can load it into any JavaScript environment).
+//
+// These are the types of steps defined:
 var _transform = require("./transform");
 
-Object.defineProperty(exports, "TransformResult", {
-  enumerable: true,
-  get: function get() {
-    return _transform.TransformResult;
-  }
-});
 Object.defineProperty(exports, "Transform", {
   enumerable: true,
   get: function get() {
@@ -9400,6 +10531,12 @@ Object.defineProperty(exports, "Step", {
     return _step.Step;
   }
 });
+Object.defineProperty(exports, "StepResult", {
+  enumerable: true,
+  get: function get() {
+    return _step.StepResult;
+  }
+});
 
 var _ancestor = require("./ancestor");
 
@@ -9413,12 +10550,6 @@ Object.defineProperty(exports, "canWrap", {
   enumerable: true,
   get: function get() {
     return _ancestor.canWrap;
-  }
-});
-Object.defineProperty(exports, "alreadyHasBlockType", {
-  enumerable: true,
-  get: function get() {
-    return _ancestor.alreadyHasBlockType;
   }
 });
 
@@ -9451,12 +10582,6 @@ Object.defineProperty(exports, "MapResult", {
     return _map.MapResult;
   }
 });
-Object.defineProperty(exports, "mapStep", {
-  enumerable: true,
-  get: function get() {
-    return _map.mapStep;
-  }
-});
 Object.defineProperty(exports, "Remapping", {
   enumerable: true,
   get: function get() {
@@ -9464,7 +10589,7 @@ Object.defineProperty(exports, "Remapping", {
   }
 });
 
-},{"./ancestor":37,"./join":39,"./map":40,"./mark":41,"./replace":42,"./split":43,"./step":44,"./transform":45}],39:[function(require,module,exports){
+},{"./ancestor":36,"./join":38,"./map":39,"./mark":40,"./replace":41,"./split":42,"./step":43,"./transform":44}],38:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9481,7 +10606,12 @@ var _step = require("./step");
 
 var _map = require("./map");
 
-(0, _step.defineStep)("join", {
+// !! **`join`**
+//   : Join two block elements together. `from` and `to` must point at
+//     the end of the first and start of the second element (so that
+//     the intention is preserved even when the positions are mapped).
+
+_step.Step.define("join", {
   apply: function apply(doc, step) {
     var before = doc.path(step.from.path);
     var after = doc.path(step.to.path);
@@ -9501,12 +10631,16 @@ var _map = require("./map");
     var copy = doc.replaceDeep(targetPath, target.splice(offset - 1, offset + 1, _model.Fragment.from(joined)));
 
     var map = new _map.PosMap([new _map.MovedRange(step.to, after.size, step.from), new _map.MovedRange(new _model.Pos(targetPath, offset + 1), oldSize - offset - 1, new _model.Pos(targetPath, offset))], [new _map.ReplacedRange(step.from, step.to, step.from, step.from, step.to.shorten())]);
-    return new _transform.TransformResult(copy, map);
+    return new _step.StepResult(copy, map);
   },
   invert: function invert(step, oldDoc) {
     return new _step.Step("split", null, null, step.from, oldDoc.path(step.to.path).copy());
   }
 });
+
+// :: (Node, Pos) → bool
+// Test whether the blocks before and after a given position can be
+// joined.
 
 function joinableBlocks(doc, pos) {
   if (pos.offset == 0) return false;
@@ -9515,6 +10649,11 @@ function joinableBlocks(doc, pos) {
   var type = parent.child(pos.offset - 1).type;
   return !type.isTextblock && type.contains && type == parent.child(pos.offset).type;
 }
+
+// :: (Node, Pos, ?number) → ?Pos
+// Find an ancestor of the given position that can be joined to the
+// block before (or after if `dir` is positive). Returns the joinable
+// point, if any.
 
 function joinPoint(doc, pos) {
   var dir = arguments.length <= 2 || arguments[2] === undefined ? -1 : arguments[2];
@@ -9526,6 +10665,8 @@ function joinPoint(doc, pos) {
   }
 }
 
+// :: (Pos) → Transform
+// Join the blocks around the given position.
 _transform.Transform.prototype.join = function (at) {
   var parent = this.doc.path(at.path);
   if (at.offset == 0 || at.offset == parent.size || parent.isTextblock) return this;
@@ -9533,7 +10674,7 @@ _transform.Transform.prototype.join = function (at) {
   return this;
 };
 
-},{"../model":26,"./map":40,"./step":44,"./transform":45}],40:[function(require,module,exports){
+},{"../model":25,"./map":39,"./step":43,"./transform":44}],39:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9542,13 +10683,20 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-exports.mapStep = mapStep;
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var _model = require("../model");
 
-var _step = require("./step");
+// ;; #kind=interface #path=Mappable #toc=false
+// There are various things that positions can be mapped through.
+// We'll denote those as 'mappable'. This is not an actual class in
+// the codebase, only an agreed-on interface.
+
+// :: (pos: Pos, bias: ?number) → MapResult
+// #path=Mappable.map
+// Map a position through this object. When given, the `bias`
+// determines in which direction to move when a chunk of content is
+// inserted at or around the mapped position.
 
 var MovedRange = (function () {
   function MovedRange(start, size) {
@@ -9612,19 +10760,6 @@ exports.ReplacedRange = ReplacedRange;
 
 var empty = [];
 
-var MapResult = function MapResult(pos) {
-  var deleted = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
-  var recover = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
-
-  _classCallCheck(this, MapResult);
-
-  this.pos = pos;
-  this.deleted = deleted;
-  this.recover = recover;
-};
-
-exports.MapResult = MapResult;
-
 function offsetFrom(base, pos) {
   if (pos.path.length > base.path.length) {
     var path = [pos.path[base.path.length] - base.offset];
@@ -9668,6 +10803,10 @@ function mapThrough(map, pos, bias, back) {
   return new MapResult(pos);
 }
 
+// ;; A position map, holding information about the way positions in
+// the pre-step version of a document correspond to positions in the
+// post-step version. This class implements `Mappable`.
+
 var PosMap = (function () {
   function PosMap(moved, replaced) {
     _classCallCheck(this, PosMap);
@@ -9676,16 +10815,29 @@ var PosMap = (function () {
     this.replaced = replaced || empty;
   }
 
+  // ;; #toc=false The return value of mapping a position.
+
   _createClass(PosMap, [{
     key: "recover",
     value: function recover(offset) {
       return this.replaced[offset.rangeID].after.ref.extend(offset.offset);
     }
+
+    // :: (Pos, ?number) → MapResult
+    // Map the given position through this map. The `bias` parameter can
+    // be used to control what happens when the transform inserted
+    // content at (or around) this position—if `bias` is negative, the a
+    // position before the inserted content will be returned, if it is
+    // positive, a position after the insertion is returned.
   }, {
     key: "map",
     value: function map(pos, bias) {
       return mapThrough(this, pos, bias, false);
     }
+
+    // :: () → PosMap
+    // Create an inverted version of this map. The result can be used to
+    // map positions in the post-step document to the pre-step document.
   }, {
     key: "invert",
     value: function invert() {
@@ -9702,6 +10854,22 @@ var PosMap = (function () {
 })();
 
 exports.PosMap = PosMap;
+
+var MapResult = function MapResult(pos) {
+  var deleted = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+  var recover = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
+
+  _classCallCheck(this, MapResult);
+
+  // :: Pos The mapped version of the position.
+  this.pos = pos;
+  // :: bool Tells you whether the position was deleted, that is,
+  // whether the step removed its surroundings from the document.
+  this.deleted = deleted;
+  this.recover = recover;
+};
+
+exports.MapResult = MapResult;
 
 var InvertedPosMap = (function () {
   function InvertedPosMap(map) {
@@ -9738,8 +10906,16 @@ var InvertedPosMap = (function () {
 var nullMap = new PosMap();
 
 exports.nullMap = nullMap;
+// ;; A remapping represents a pipeline of zero or more mappings. It
+// is a specialized data structured used to manage mapping through a
+// series of steps, typically including inverted and non-inverted
+// versions of the same step. (This comes up when ‘rebasing’ steps for
+// collaboration or history management.) This class implements
+// `Mappable`.
 
 var Remapping = (function () {
+  // :: (?[PosMap], ?[PosMap])
+
   function Remapping() {
     var head = arguments.length <= 0 || arguments[0] === undefined ? [] : arguments[0];
     var tail = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
@@ -9747,10 +10923,22 @@ var Remapping = (function () {
 
     _classCallCheck(this, Remapping);
 
+    // :: [PosMap]
+    // The maps in the head of the mapping are applied to input
+    // positions first, back-to-front. So the map at the end of this
+    // array (if any) is the very first one applied.
     this.head = head;
+    // The maps in the tail are applied last, front-to-back.
     this.tail = tail;
     this.mirror = mirror;
   }
+
+  // :: (PosMap, ?number) → number
+  // Add a map to the mapping's front. If this map is the mirror image
+  // (produced by an inverted step) of another map in this mapping,
+  // that map's id (as returned by this method or
+  // [`addToBack`](#Remapping.addToBack)) should be passed as a second
+  // parameter to register the correspondence.
 
   _createClass(Remapping, [{
     key: "addToFront",
@@ -9760,6 +10948,11 @@ var Remapping = (function () {
       if (corr != null) this.mirror[id] = corr;
       return id;
     }
+
+    // :: (PosMap, ?number) → number
+    // Add a map to the mapping's back. If the map is the mirror image
+    // of another mapping in this object, the id of that map should be
+    // passed to register the correspondence.
   }, {
     key: "addToBack",
     value: function addToBack(map, corr) {
@@ -9773,6 +10966,10 @@ var Remapping = (function () {
     value: function get(id) {
       return id < 0 ? this.head[-id - 1] : this.tail[id];
     }
+
+    // :: (Pos, ?number) → MapResult
+    // Map a position through this remapping, optionally passing a bias
+    // direction.
   }, {
     key: "map",
     value: function map(pos, bias) {
@@ -9802,45 +10999,7 @@ var Remapping = (function () {
 
 exports.Remapping = Remapping;
 
-function maxPos(a, b) {
-  return a.cmp(b) > 0 ? a : b;
-}
-
-function mapStep(step, remapping) {
-  var allDeleted = true;
-  var from = null,
-      to = null,
-      pos = null;
-
-  if (step.from) {
-    var result = remapping.map(step.from, 1);
-    from = result.pos;
-    if (!result.deleted) allDeleted = false;
-  }
-  if (step.to) {
-    if (step.to.cmp(step.from) == 0) {
-      to = from;
-    } else {
-      var result = remapping.map(step.to, -1);
-      to = maxPos(result.pos, from);
-      if (!result.deleted) allDeleted = false;
-    }
-  }
-  if (step.pos) {
-    if (from && step.pos.cmp(step.from) == 0) {
-      pos = from;
-    } else if (to && step.pos.cmp(step.to) == 0) {
-      pos = to;
-    } else {
-      var result = remapping.map(step.pos, 1);
-      pos = result.pos;
-      if (!result.deleted) allDeleted = false;
-    }
-  }
-  if (!allDeleted) return new _step.Step(step.name, from, to, pos, step.param);
-}
-
-},{"../model":26,"./step":44}],41:[function(require,module,exports){
+},{"../model":25}],40:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -9851,9 +11010,18 @@ var _step = require("./step");
 
 var _tree = require("./tree");
 
-(0, _step.defineStep)("addMark", {
+// !!
+// **`addMark`**
+//   : Add the `Mark` given as the step's parameter to all
+//     inline content between `from` and `to` (when allowed).
+//
+// **`removeMark`**
+//   : Remove the `Mark` given as the step's parameter from all inline
+//     content between `from` and `to`.
+
+_step.Step.define("addMark", {
   apply: function apply(doc, step) {
-    return new _transform.TransformResult((0, _tree.copyStructure)(doc, step.from, step.to, function (node, from, to) {
+    return new _step.StepResult((0, _tree.copyStructure)(doc, step.from, step.to, function (node, from, to) {
       if (!node.type.canContainMark(step.param)) return node;
       return (0, _tree.copyInline)(node, from, to, function (node) {
         return node.mark(step.param.addToSet(node.marks));
@@ -9871,7 +11039,9 @@ var _tree = require("./tree");
   }
 });
 
-_transform.Transform.prototype.addMark = function (from, to, st) {
+// :: (Pos, Pos, Mark) → Transform
+// Add the given mark to the inline content between `from` and `to`.
+_transform.Transform.prototype.addMark = function (from, to, mark) {
   var _this = this;
 
   var removed = [],
@@ -9881,10 +11051,10 @@ _transform.Transform.prototype.addMark = function (from, to, st) {
   this.doc.inlineNodesBetween(from, to, function (_ref, path, start, end, parent) {
     var marks = _ref.marks;
 
-    if (st.isInSet(marks) || !parent.type.canContainMark(st.type)) {
+    if (mark.isInSet(marks) || !parent.type.canContainMark(mark.type)) {
       adding = removing = null;
     } else {
-      var rm = st.type.isInSet(marks);
+      var rm = mark.type.isInSet(marks);
       if (rm) {
         if (removing && removing.param.eq(rm)) {
           removing.to = new _model.Pos(path, end);
@@ -9898,7 +11068,7 @@ _transform.Transform.prototype.addMark = function (from, to, st) {
       if (adding) {
         adding.to = new _model.Pos(path, end);
       } else {
-        adding = new _step.Step("addMark", new _model.Pos(path, start), new _model.Pos(path, end), null, st);
+        adding = new _step.Step("addMark", new _model.Pos(path, start), new _model.Pos(path, end), null, mark);
         added.push(adding);
       }
     }
@@ -9912,9 +11082,9 @@ _transform.Transform.prototype.addMark = function (from, to, st) {
   return this;
 };
 
-(0, _step.defineStep)("removeMark", {
+_step.Step.define("removeMark", {
   apply: function apply(doc, step) {
-    return new _transform.TransformResult((0, _tree.copyStructure)(doc, step.from, step.to, function (node, from, to) {
+    return new _step.StepResult((0, _tree.copyStructure)(doc, step.from, step.to, function (node, from, to) {
       return (0, _tree.copyInline)(node, from, to, function (node) {
         return node.mark(step.param.removeFromSet(node.marks));
       });
@@ -9931,10 +11101,13 @@ _transform.Transform.prototype.addMark = function (from, to, st) {
   }
 });
 
+// :: (Pos, Pos, union<Mark, MarkType>) → Transform
+// Remove the given mark, or all marks of the given type, from inline
+// nodes between `from` and `to`.
 _transform.Transform.prototype.removeMark = function (from, to) {
   var _this2 = this;
 
-  var st = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
+  var mark = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
 
   var matched = [],
       step = 0;
@@ -9943,11 +11116,11 @@ _transform.Transform.prototype.removeMark = function (from, to) {
 
     step++;
     var toRemove = null;
-    if (st instanceof _model.MarkType) {
-      var found = st.isInSet(marks);
+    if (mark instanceof _model.MarkType) {
+      var found = mark.isInSet(marks);
       if (found) toRemove = [found];
-    } else if (st) {
-      if (st.isInSet(marks)) toRemove = [st];
+    } else if (mark) {
+      if (mark.isInSet(marks)) toRemove = [mark];
     } else {
       toRemove = marks;
     }
@@ -9975,6 +11148,10 @@ _transform.Transform.prototype.removeMark = function (from, to) {
   return this;
 };
 
+// :: (Pos, Pos, ?NodeType) → Transform
+// Remove all marks and non-text inline nodes, or if `newParent` is
+// given, all marks and inline nodes that may not appear as content of
+// `newParent`, from the given range.
 _transform.Transform.prototype.clearMarkup = function (from, to, newParent) {
   var _this3 = this;
 
@@ -10002,7 +11179,7 @@ _transform.Transform.prototype.clearMarkup = function (from, to, newParent) {
   }return this;
 };
 
-},{"../model":26,"./step":44,"./transform":45,"./tree":46}],42:[function(require,module,exports){
+},{"../model":25,"./step":43,"./transform":44,"./tree":45}],41:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10019,6 +11196,31 @@ var _step = require("./step");
 var _map = require("./map");
 
 var _tree = require("./tree");
+
+// !! **`replace`**
+
+//   : Delete the part of the document between `from` and `to` and
+//     optionally replace it with another chunk of content. `pos` must
+//     point at the ‘root’ at which the cut starts—a position between
+//     and above `from` and `to`.
+//
+//     When new content is to be inserted, the step's parameter should
+//     be an object of shape `{content: `[`Fragment`](#Fragment)`,
+//     openLeft: number, openRight: number}`. The step will insert the
+//     given content at the root of the cut, and `openLeft` and
+//     `openRight` indicate how much of the content on both sides
+//     should be consided ‘open’.
+//
+//     A replace step will try to join open nodes on both sides of the
+//     cut. That is, nodes in the original document that are partially
+//     cut off by `from` and `to`, and nodes at the sides of the
+//     replacement content as specificed by `openLeft` and
+//     `openRight`. For example, if `openLeft` is 2, the first node of
+//     the replacement content as well as its first child is
+//     considered open. Whenever two open nodes with the same
+//     [markup](#Node.sameMarkup) end up next to each other, they are
+//     joined. Open nodes that aren't joined are [closed](#Node.close)
+//     to ensure their content (or lack of it) is valid.
 
 function findMovedChunks(oldNode, oldPath, newNode, startDepth) {
   var moved = [];
@@ -10063,7 +11265,7 @@ function replace(node, from, to, root, repl) {
 
 var nullRepl = { content: _model.emptyFragment, openLeft: 0, openRight: 0 };
 
-(0, _step.defineStep)("replace", {
+_step.Step.define("replace", {
   apply: function apply(doc, step) {
     var rootPos = step.pos,
         root = rootPos.path;
@@ -10077,7 +11279,7 @@ var nullRepl = { content: _model.emptyFragment, openLeft: 0, openRight: 0 };
 
     var end = moved.length ? moved[moved.length - 1].dest : step.to;
     var replaced = new _map.ReplacedRange(step.from, step.to, step.from, end, rootPos, rootPos);
-    return new _transform.TransformResult(out, new _map.PosMap(moved, [replaced]));
+    return new _step.StepResult(out, new _map.PosMap(moved, [replaced]));
   },
   invert: function invert(step, oldDoc, map) {
     var depth = step.pos.depth;
@@ -10188,21 +11390,16 @@ function moveText(tr, doc, before, after) {
   }
 }
 
-/**
- * Delete content between two positions.
- *
- * @param  {Pos} from
- * @param  {Pos} to
- * @return this
- */
+// :: (Pos, Pos) → Transform
+// Delete the content between the given positions.
 _transform.Transform.prototype["delete"] = function (from, to) {
   if (from.cmp(to)) this.replace(from, to);
   return this;
 };
 
-/**
- * Replace the content between two positions.
- */
+// :: (Pos, Pos, Node, Pos, Pos) → Transform
+// Replace the part of the document between `from` and `to` with the
+// part of the `source` between `start` and `end`.
 _transform.Transform.prototype.replace = function (from, to, source, start, end) {
   var repl = undefined,
       depth = undefined,
@@ -10272,6 +11469,10 @@ _transform.Transform.prototype.replace = function (from, to, source, start, end)
   return this;
 };
 
+// :: (Pos, Pos, union<Fragment, Node, [Node]>) → Transform
+// Replace the given sibling range (position ponting into the same
+// parent) with the given content, which may be a fragment, node, or
+// array of nodes.
 _transform.Transform.prototype.replaceWith = function (from, to, content) {
   if (!(content instanceof _model.Fragment)) content = _model.Fragment.from(content);
   if (!_model.Pos.samePath(from.path, to.path)) return this;
@@ -10279,19 +11480,27 @@ _transform.Transform.prototype.replaceWith = function (from, to, content) {
   return this;
 };
 
+// :: (Pos, union<Fragment, Node, [Node]>) → Transform
+// Insert the given content at the `pos`.
 _transform.Transform.prototype.insert = function (pos, content) {
   return this.replaceWith(pos, pos, content);
 };
 
-_transform.Transform.prototype.insertInline = function (pos, node) {
-  return this.insert(pos, node.mark(this.doc.marksAt(pos)));
-};
-
+// :: (Pos, string) → Transform
+// Insert the given text at `pos`, inheriting the marks of the
+// existing content at that position.
 _transform.Transform.prototype.insertText = function (pos, text) {
   return this.insert(pos, this.doc.type.schema.text(text, this.doc.marksAt(pos)));
 };
 
-},{"../model":26,"./map":40,"./step":44,"./transform":45,"./tree":46}],43:[function(require,module,exports){
+// :: (Pos, Node) → Transform
+// Insert the given node at `pos`, inheriting the marks of the
+// existing content at that position.
+_transform.Transform.prototype.insertInline = function (pos, node) {
+  return this.insert(pos, node.mark(this.doc.marksAt(pos)));
+};
+
+},{"../model":25,"./map":39,"./step":43,"./transform":44,"./tree":45}],42:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -10302,7 +11511,13 @@ var _step = require("./step");
 
 var _map = require("./map");
 
-(0, _step.defineStep)("split", {
+// !! **`split`**
+//   : Split a block node at `pos`. The parameter, if given, may be
+//     `{type, ?attrs}` object giving the node type and optionally the
+//     attributes of the node created to hold the content after the
+//     split.
+
+_step.Step.define("split", {
   apply: function apply(doc, step) {
     var pos = step.pos;
     if (pos.depth == 0) return null;
@@ -10328,7 +11543,7 @@ var _map = require("./map");
 
     var dest = new _model.Pos(parentPath.concat(offset + 1), 0);
     var map = new _map.PosMap([new _map.MovedRange(pos, targetSize - pos.offset, dest), new _map.MovedRange(new _model.Pos(parentPath, offset + 1), newParent.size - 2 - offset, new _model.Pos(parentPath, offset + 2))], [new _map.ReplacedRange(pos, pos, pos, dest, pos, pos.shorten(null, 1))]);
-    return new _transform.TransformResult(copy, map);
+    return new _step.StepResult(copy, map);
   },
   invert: function invert(step, _oldDoc, map) {
     return new _step.Step("join", step.pos, map.map(step.pos).pos);
@@ -10341,6 +11556,11 @@ var _map = require("./map");
   }
 });
 
+// :: (Pos, ?number, ?NodeType, ?Object) → Transform
+// Split the node at the given position, and optionally, if `depth` is
+// greater than one, any number of nodes above that. By default, the part
+// split off will inherit the node type of the original node. This can
+// be changed by passing `typeAfter` and `attrsAfter`.
 _transform.Transform.prototype.split = function (pos, depth, typeAfter, attrsAfter) {
   if (depth === undefined) depth = 1;
 
@@ -10353,6 +11573,10 @@ _transform.Transform.prototype.split = function (pos, depth, typeAfter, attrsAft
   }
 };
 
+// :: (Pos, ?number) → Transform
+// Split at the given position, _if_ that position isn't already at
+// the start or end of a node. If `depth` is greater than one, also do
+// so for parent positions above the given position.
 _transform.Transform.prototype.splitIfNeeded = function (pos) {
   var depth = arguments.length <= 1 || arguments[1] === undefined ? 1 : arguments[1];
 
@@ -10363,7 +11587,7 @@ _transform.Transform.prototype.splitIfNeeded = function (pos) {
   return this;
 };
 
-},{"../model":26,"./map":40,"./step":44,"./transform":45}],44:[function(require,module,exports){
+},{"../model":25,"./map":39,"./step":43,"./transform":44}],43:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10372,53 +11596,154 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-exports.defineStep = defineStep;
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var _model = require("../model");
 
+var _map = require("./map");
+
+// ;; A step object wraps an atomic operation. It generally applies
+// only to the document it was created for, since the positions
+// associated with it will only make sense for that document.
+
 var Step = (function () {
-  function Step(name, from, to, pos) {
+  // :: (string, ?Pos, ?Pos, ?Pos, ?any)
+  // Build a step. The type should name a [defined](Step.define) step
+  // type, and the shape of the positions and parameter should be
+  // appropriate for that type.
+
+  function Step(type, from, to, pos) {
     var param = arguments.length <= 4 || arguments[4] === undefined ? null : arguments[4];
 
     _classCallCheck(this, Step);
 
-    if (!(name in steps)) throw new Error("Unknown step type: " + name);
-    this.name = name;
+    if (!(type in steps)) throw new Error("Unknown step type: " + type);
+    // :: string
+    // The type of the step.
+    this.type = type;
+    // :: ?Pos
+    // The start of the step's range, if any. Which of the three
+    // optional positions associated with a step a given step type
+    // uses differs. The way each of these positions is mapped when
+    // the step is mapped over a [position mapping](#PosMap) depends
+    // on its role.
     this.from = from;
+    // :: ?Pos
+    // The end of the step's range.
     this.to = to;
+    // :: ?Pos
+    // The base position for this step.
     this.pos = pos;
+    // :: ?any
+    // Extra step-type-specific information associated with the step.
     this.param = param;
   }
+
+  // ;; #toc=false Objects of this type are returned as the result of
+  // applying a transform step to a document.
+
+  // :: (Node) → ?StepResult
+  // Applies this step to the given document, returning a result
+  // containing the transformed document (the input document is not
+  // changed) and a `PosMap`. If the step could not meaningfully be
+  // applied to the given document, this returns `null`.
 
   _createClass(Step, [{
     key: "apply",
     value: function apply(doc) {
-      return steps[this.name].apply(doc, this);
+      return steps[this.type].apply(doc, this);
     }
+
+    // :: (Node, PosMap) → Step
+    // Create an inverted version of this step. Needs the document as it
+    // was before the step, as well as `PosMap` created by applying the
+    // step to that document, as input.
   }, {
     key: "invert",
     value: function invert(oldDoc, map) {
-      return steps[this.name].invert(this, oldDoc, map);
+      return steps[this.type].invert(this, oldDoc, map);
     }
+
+    // :: (Mappable) → ?Step
+    // Map this step through a mappable thing, returning either a
+    // version of that step with its positions adjusted, or `null` if
+    // the step was entirely deleted by the mapping.
+  }, {
+    key: "map",
+    value: function map(remapping) {
+      var allDeleted = true;
+      var from = null,
+          to = null,
+          pos = null;
+
+      if (this.from) {
+        var result = remapping.map(this.from, 1);
+        from = result.pos;
+        if (!result.deleted) allDeleted = false;
+      }
+      if (this.to) {
+        if (this.to.cmp(this.from) == 0) {
+          to = from;
+        } else {
+          var result = remapping.map(this.to, -1);
+          to = result.pos.max(from);
+          if (!result.deleted) allDeleted = false;
+        }
+      }
+      if (this.pos) {
+        if (from && this.pos.cmp(this.from) == 0) {
+          pos = from;
+        } else if (to && this.pos.cmp(this.to) == 0) {
+          pos = to;
+        } else {
+          var result = remapping.map(this.pos, 1);
+          pos = result.pos;
+          if (!result.deleted) allDeleted = false;
+        }
+      }
+      return allDeleted ? null : new Step(this.type, from, to, pos, this.param);
+    }
+
+    // :: () → Object
+    // Create a JSON-serializeable representation of this step.
   }, {
     key: "toJSON",
     value: function toJSON() {
-      var impl = steps[this.name];
+      var impl = steps[this.type];
       return {
-        name: this.name,
+        type: this.type,
         from: this.from,
         to: this.to,
         pos: this.pos,
         param: impl.paramToJSON ? impl.paramToJSON(this.param) : this.param
       };
     }
+
+    // :: (Schema, Object) → Step
+    // Deserialize a step from its JSON representation.
   }], [{
     key: "fromJSON",
     value: function fromJSON(schema, json) {
-      var impl = steps[json.name];
-      return new Step(json.name, json.from && _model.Pos.fromJSON(json.from), json.to && _model.Pos.fromJSON(json.to), json.pos && _model.Pos.fromJSON(json.pos), impl.paramFromJSON ? impl.paramFromJSON(schema, json.param) : json.param);
+      var impl = steps[json.type];
+      return new Step(json.type, json.from && _model.Pos.fromJSON(json.from), json.to && _model.Pos.fromJSON(json.to), json.pos && _model.Pos.fromJSON(json.pos), impl.paramFromJSON ? impl.paramFromJSON(schema, json.param) : json.param);
+    }
+
+    // :: (string, Object)
+    // Define a new type of step. Implementation should have the
+    // following properties:
+    //
+    // **`apply`**`(doc: Node, step: Step) → ?StepResult
+    //   : Applies the step to a document.
+    // **`invert`**`(step: Step, oldDoc: Node, map: PosMap) → Step
+    //   : Create an inverted version of the step.
+    // **`paramToJSON`**`(param: ?any) → ?Object
+    //   : Serialize this step type's parameter to JSON.
+    // **`paramFromJSON`**`(schema: Schema, json: ?Object) → ?any
+    //   : Deserialize this step type's parameter from JSON.
+  }, {
+    key: "define",
+    value: function define(type, implementation) {
+      steps[type] = implementation;
     }
   }]);
 
@@ -10427,13 +11752,24 @@ var Step = (function () {
 
 exports.Step = Step;
 
+var StepResult = function StepResult(doc) {
+  var map = arguments.length <= 1 || arguments[1] === undefined ? _map.nullMap : arguments[1];
+
+  _classCallCheck(this, StepResult);
+
+  // :: Node The transformed document.
+  this.doc = doc;
+  // :: PosMap
+  // The position map that describes the correspondence between the
+  // old and the new document.
+  this.map = map;
+};
+
+exports.StepResult = StepResult;
+
 var steps = Object.create(null);
 
-function defineStep(name, impl) {
-  steps[name] = impl;
-}
-
-},{"../model":26}],45:[function(require,module,exports){
+},{"../model":25,"./map":39}],44:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10448,28 +11784,47 @@ var _step2 = require("./step");
 
 var _map = require("./map");
 
-var TransformResult = function TransformResult(doc) {
-  var map = arguments.length <= 1 || arguments[1] === undefined ? _map.nullMap : arguments[1];
-
-  _classCallCheck(this, TransformResult);
-
-  this.doc = doc;
-  this.map = map;
-};
-
-exports.TransformResult = TransformResult;
+// ;; A change to a document often consists of a series of
+// [steps](#Step). This class provides a convenience abstraction to
+// build up and track such an array of steps. A `Transform` object
+// implements `Mappable`.
+//
+// The high-level transforming methods return the `Transform` object
+// itself, so that they can be chained.
 
 var Transform = (function () {
+  // :: (Node)
+  // Create a transformation that starts with the given document.
+
   function Transform(doc) {
     _classCallCheck(this, Transform);
 
-    this.docs = [doc];
+    // :: [Step]
+    // The accumulated steps.
     this.steps = [];
+    // :: [Node]
+    // The individual document versions. Always has a length one more
+    // than `steps`, since it also includes the original starting
+    // document.
+    this.docs = [doc];
+    // :: [PosMap]
+    // The position maps produced by the steps. Has the same length as
+    // `steps`.
     this.maps = [];
   }
 
+  // :: Node
+  // The current version of the transformed document.
+
   _createClass(Transform, [{
     key: "step",
+
+    // :: (Step) → ?StepResult
+    // Add a step to this transformation. If the step can be
+    // [applied](#Step.apply) to the current document, the result of
+    // applying it is returned, and an element is added to the
+    // [`steps`](#Transform.steps), [`docs`](#Transform.docs), and
+    // [`maps`](#Transform.maps) arrays.
     value: function step(_step, from, to, pos, param) {
       if (typeof _step == "string") _step = new _step2.Step(_step, from, to, pos, param);
       var result = _step.apply(this.doc);
@@ -10480,6 +11835,10 @@ var Transform = (function () {
       }
       return result;
     }
+
+    // :: (Pos, ?number) → MapResult
+    // Map a position through the whole transformation (all the position
+    // maps in [`maps`](#Transform.maps)), and return the result.
   }, {
     key: "map",
     value: function map(pos, bias) {
@@ -10496,6 +11855,9 @@ var Transform = (function () {
     get: function get() {
       return this.docs[this.docs.length - 1];
     }
+
+    // :: Node
+    // The original input document.
   }, {
     key: "before",
     get: function get() {
@@ -10508,7 +11870,7 @@ var Transform = (function () {
 
 exports.Transform = Transform;
 
-},{"./map":40,"./step":44}],46:[function(require,module,exports){
+},{"./map":39,"./step":43}],45:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10601,7 +11963,7 @@ function samePathDepth(a, b) {
   }
 }
 
-},{"../model":26}],47:[function(require,module,exports){
+},{"../model":25}],46:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10649,6 +12011,90 @@ exports.ProseMirrorError = ProseMirrorError;
 function functionName(f) {
   var match = /^function (\w+)/.exec(f.toString());
   return match && match[1];
+}
+
+},{}],47:[function(require,module,exports){
+// ;; #path=EventMixin #kind=interface
+// A set of methods for objects that emit events. Added by calling
+// `eventMixin` on a constructor.
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.eventMixin = eventMixin;
+var methods = {
+  // :: (type: string, handler: (...args: [any])) #path=EventMixin.on
+  // Register an event handler for the given event type.
+  on: function on(type, f) {
+    var map = this._handlers || (this._handlers = {});
+    var arr = map[type] || (map[type] = []);
+    arr.push(f);
+  },
+
+  // :: (type: string, handler: (...args: [any])) #path=EventMixin.off
+  // Unregister an event handler for the given event type.
+  off: function off(type, f) {
+    var arr = this._handlers && this._handlers[type];
+    if (arr) for (var i = 0; i < arr.length; ++i) {
+      if (arr[i] == f) {
+        arr.splice(i, 1);break;
+      }
+    }
+  },
+
+  // :: (type: string, ...args: [any]) #path=EventMixin.signal
+  // Signal an event of the given type, passing any number of
+  // arguments. Will call the handlers for the event, passing them the
+  // arguments.
+  signal: function signal(type) {
+    var arr = this._handlers && this._handlers[type];
+
+    for (var _len = arguments.length, values = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      values[_key - 1] = arguments[_key];
+    }
+
+    if (arr) for (var i = 0; i < arr.length; ++i) {
+      arr[i].apply(arr, values);
+    }
+  },
+
+  // :: (type: string, ...args: [any]) #path=EventMixin.signalHandleable
+  // Signal a handleable event of the given type. All handlers for the
+  // event will be called with the given arguments, until one of them
+  // returns something that is not the value `false`. When that
+  // happens, the return value of that handler is returned. If that
+  // does not happen, `false` is returned.
+  signalHandleable: function signalHandleable(type) {
+    var arr = this._handlers && this._handlers[type];
+    if (arr) {
+      for (var _len2 = arguments.length, values = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+        values[_key2 - 1] = arguments[_key2];
+      }
+
+      for (var i = 0; i < arr.length; ++i) {
+        var result = arr[i].apply(arr, values);
+        if (result !== false) return result;
+      }
+    }return false;
+  },
+
+  // :: (type: string) → bool #path=EventMixin.hasHandler
+  // Query whether there are any handlers for this event type.
+  hasHandler: function hasHandler(type) {
+    var arr = this._handlers && this._handlers[type];
+    return arr && arr.length > 0;
+  }
+};
+
+// :: (())
+// Add the methods in the `EventMixin` interface to the prototype
+// object of the given constructor.
+
+function eventMixin(ctor) {
+  var proto = ctor.prototype;
+  for (var prop in methods) if (methods.hasOwnProperty(prop)) proto[prop] = methods[prop];
 }
 
 },{}],48:[function(require,module,exports){

@@ -30,6 +30,6 @@ do
   outfile="$dirname/$outfilename.js"
   echo "Converting $file to $outfile"
   echo '/* This file has been automatically generated. DO NOT EDIT IT.' > $outfile
-  echo 'Changes will be overwritten. Edit *.es6.js file and run ./es6-compiler.js */' >> $outfile
+  echo "Changes will be overwritten. Edit $basename and run ./es6-compiler.js */" >> $outfile
   $babel $file --presets es2015 >> $outfile
 done

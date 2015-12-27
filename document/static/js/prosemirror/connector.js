@@ -1,5 +1,5 @@
 /* This file has been automatically generated. DO NOT EDIT IT.
-Changes will be overwritten. Edit *.es6.js file and run ./es6-compiler.js */
+Changes will be overwritten. Edit connector.es6.js and run ./es6-compiler.js */
 "use strict";
 
 (function () {

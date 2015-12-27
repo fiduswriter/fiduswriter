@@ -16,10 +16,9 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.http import JsonResponse
 from django.template.context_processors import csrf
-from django.template import RequestContext
 
 from feedback.models import Feedback
 
@@ -46,6 +45,5 @@ def browser(request):
     response={}
     response['user'] = request.user
     response.update(csrf(request))
-    return render_to_response('feedback/browser.html',
-        response,
-        context_instance=RequestContext(request))
+    return render(request,'feedback/browser.html',
+        response)

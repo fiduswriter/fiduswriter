@@ -20,12 +20,11 @@ import time
 import json
 
 from django.conf import settings
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.template.context_processors import csrf
 from django.core.exceptions import ValidationError
-from django.template import RequestContext
 from django.db import transaction, IntegrityError
 from django.contrib.auth.models import User
 from django.db.models import Max, Count
@@ -48,7 +47,7 @@ serializer = SimpleSerializer()
 def index(request):
     response = {}
     response.update(csrf(request))
-    return render_to_response('bibliography/index.html', response, context_instance = RequestContext(request))
+    return render(request, 'bibliography/index.html', response)
 
 def save_bib_to_db(inserting_obj, suffix):
     try:

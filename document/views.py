@@ -18,12 +18,11 @@
 
 import json
 
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.template.context_processors import csrf
-from django.template import RequestContext
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
@@ -71,9 +70,8 @@ def get_accessrights(ars):
 def index(request):
     response = {}
     response.update(csrf(request))
-    return render_to_response('document/index.html',
-        response,
-        context_instance=RequestContext(request))
+    return render(request, 'document/index.html',
+        response)
 
 @login_required
 def get_documentlist_extra_js(request):
@@ -155,9 +153,8 @@ def get_documentlist_js(request):
 def editor(request):
     response = {}
 
-    return render_to_response('document/editor.html',
-        response,
-        context_instance=RequestContext(request))
+    return render(request, 'document/editor.html',
+        response)
 
 @login_required
 def delete_js(request):

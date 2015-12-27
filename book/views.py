@@ -18,12 +18,11 @@
 
 import json
 
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.http import JsonResponse, HttpRequest
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.template.context_processors import csrf
-from django.template import RequestContext
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
@@ -75,17 +74,15 @@ def get_accessrights(ars):
 def index(request):
     response = {}
     response.update(csrf(request))
-    return render_to_response('book/index.html',
-        response,
-        context_instance=RequestContext(request))
+    return render(request, 'book/index.html',
+        response)
 
 @login_required
 def print_book(request):
     response = {}
     response.update(csrf(request))
-    return render_to_response('book/print.html',
-        response,
-        context_instance=RequestContext(request))
+    return render(request, 'book/print.html',
+        response)
 
 @login_required
 def get_book_js(request):

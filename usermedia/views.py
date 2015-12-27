@@ -19,10 +19,9 @@
 import json
 from time import mktime
 
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.template.context_processors import csrf
-from django.template import RequestContext
 from django.http import JsonResponse
 from django.contrib.auth.models import User
 from django.core.serializers.python import Serializer
@@ -41,7 +40,7 @@ def index(request):
     response = {}
 
     response.update(csrf(request))
-    return render_to_response('usermedia/index.html', response, context_instance = RequestContext(request))
+    return render(request, 'usermedia/index.html', response)
 
 #save changes or create a new entry
 @login_required

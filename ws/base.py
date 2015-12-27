@@ -34,7 +34,7 @@ class BaseWebSocketHandler(WebSocketHandler):
 
     # Prepare ORM connections
 
-        connection.queries = []
+        #connection.queries = []
 
     def finish(self, chunk=None):
         super(BaseWebSocketHandler, self).finish(chunk=chunk)

@@ -20,8 +20,7 @@ import json
 
 from django.http import JsonResponse, HttpResponseRedirect
 from django.contrib.auth import logout
-from django.shortcuts import render_to_response
-from django.template import RequestContext
+from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -67,9 +66,8 @@ def show_profile(request,username):
         if len(the_user) > 0:
             response['the_user'] = the_user[0]
         response['can_edit'] = False
-    return render_to_response('account/show_profile.html',
-        response,
-        context_instance=RequestContext(request))
+    return render(request, 'account/show_profile.html',
+        response)
 
 @login_required
 def password_change_js(request):
@@ -325,8 +323,8 @@ def list_team_members(request):
         team_members = paginator.page(paginator.num_pages)
     '''
     response['teammembers'] = all_team_members
-    return render_to_response('account/list_team_members.html',
-        response, context_instance=RequestContext(request))
+    return render(request, 'account/list_team_members.html',
+        response)
 
 @login_required
 def add_team_member_js(request):

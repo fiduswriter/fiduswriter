@@ -1,21 +1,26 @@
+/* This file has been automatically generated. DO NOT EDIT IT.
+Changes will be overwritten. Edit *.es6.js file and run ./es6-compiler.js */
+"use strict";
+
 (function () {
-    var exports = this,
-     /** Functions for ProseMirror integration.
-     * @namespace proseMirrorConnector
-     */
-        proseMirrorConnector = {};
+  var exports = this,
 
-proseMirrorConnector.makeEditor = function (where) {
-  return new pm.ProseMirror({
-    place: where,
-//    menuBar: {float: true},
-  })
-};
+  /** Functions for ProseMirror integration.
+  * @namespace proseMirrorConnector
+  */
+  proseMirrorConnector = {};
 
-proseMirrorConnector.fromDOM = pm.fromDOM;
+  proseMirrorConnector.makeEditor = function (where) {
+    return new pm.ProseMirror({
+      place: where
+    });
+  };
 
-proseMirrorConnector.schema = pm.defaultSchema;
+  //    menuBar: {float: true},
+  proseMirrorConnector.fromDOM = pm.fromDOM;
 
-exports.proseMirrorConnector = proseMirrorConnector;
+  proseMirrorConnector.schema = pm.defaultSchema;
 
-}).call(this);
+  exports.proseMirrorConnector = proseMirrorConnector;
+}).call(undefined);
+

@@ -106,7 +106,7 @@ jQuery(document).bind('documentDataLoaded', function() {
         toolsHelpers.toolsEventHandler(jQuery(this).data('function'));
         return false;
     });
-
+/*
     editorHelpers.setPlaceholders();
 
     jQuery(document).on('blur',
@@ -122,7 +122,7 @@ jQuery(document).bind('documentDataLoaded', function() {
         function() {
             editorHelpers.setPlaceholders(jQuery(this).attr('id'));
         });
-
+*/
     editorHelpers.setDisplay.document('settings.papersize', theDocument.settings
         .papersize);
 
@@ -181,7 +181,7 @@ jQuery(document).bind('documentDataLoaded', function() {
     });
 
 
-    editorHelpers.layoutMetadata();
+//    editorHelpers.layoutMetadata();
 
     if (theDocumentValues.rights === 'r') {
         jQuery('#editor-navigation').hide();
@@ -203,7 +203,7 @@ jQuery(document).bind('documentDataLoaded', function() {
         }
 
 
-        window.tracker = new ice.InlineChangeEditor({
+  /*      window.tracker = new ice.InlineChangeEditor({
             element: document.querySelector('#document-editable'),
             handleEvents: false,
             mergeBlocks: false,
@@ -220,7 +220,7 @@ jQuery(document).bind('documentDataLoaded', function() {
         }).startTracking();
         document.querySelector('#document-editable').removeAttribute(
             'contenteditable');
-        jQuery('.editable').attr('contenteditable', true);
+        jQuery('.editable').attr('contenteditable', true);*/
         mathHelpers.resetMath();
 
 
@@ -258,7 +258,7 @@ jQuery(document).bind('documentDataLoaded', function() {
 
         // Bind comment functions
         commentHelpers.bindEvents();
-
+        /*
         var editableArea = document.querySelector("#document-editable");
 
         if (editableArea) {
@@ -292,6 +292,7 @@ jQuery(document).bind('documentDataLoaded', function() {
             function() {
                 editorHelpers.documentHasChanged();
             });
+        */
         jQuery('.save').bind('mousedown', function() {
             editorHelpers.getUpdatesFromInputFields(function() {
                 editorHelpers.saveDocument();
@@ -310,12 +311,12 @@ jQuery(document).bind('documentDataLoaded', function() {
         }); */
 
 
-        jQuery(document).on('click', '.pagination-footnote-item-container',
+        /*jQuery(document).on('click', '.pagination-footnote-item-container',
             function(e) {
                 var footnote = document.getElementById(this.dataset.footnoteId);
                 tracker._addNodeTracking(footnote, false, false);
             }
-        );
+        );*/
 
         jQuery('.multibuttonsCover').each(function() {
             $.addDropdownBox(jQuery(this), jQuery(this).siblings(
@@ -327,11 +328,11 @@ jQuery(document).bind('documentDataLoaded', function() {
         $.addDropdownBox(jQuery('#ice-control'), jQuery(
             '#ice-control .fw-pulldown'));
 
-        editorHelpers.setDisplay.document('settings.tracking', theDocument.settings
+        /*editorHelpers.setDisplay.document('settings.tracking', theDocument.settings
             .tracking);
         editorHelpers.setDisplay.document('settings.tracking_show',
             theDocument.settings.tracking_show);
-
+            */
 
         jQuery('.ice-display').bind('mousedown', function() {
             editorHelpers.setDocumentData('settings.tracking_show', (!

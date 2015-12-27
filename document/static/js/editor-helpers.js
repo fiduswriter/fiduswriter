@@ -27,7 +27,7 @@
 
     // Initiate ProseMirror
     editorHelpers.init = function () {
-      editorHelpers.contentEditor = proseMirrorConnector.makeEditor(document.getElementById('document-contents'));
+    //  editorHelpers.contentEditor = proseMirrorConnector.makeEditor(document.getElementById('document-contents'));
     };
 
 
@@ -81,7 +81,7 @@
      * @memberof editorHelpers
      */
 
-    editorHelpers.tmpMetadata = _.template('\
+  /*  editorHelpers.tmpMetadata = _.template('\
         <% if (settings.subtitle) { %>\
             <div id="metadata-subtitle" class="editable metadata metadata-subtitle" data-metadata="subtitle" contenteditable="true" title="'+gettext('The subtitle of the document')+'"></div>\
         <% } %>\
@@ -94,7 +94,7 @@
         <% if (settings.keywords) { %>\
             <div id="metadata-keywords" class="editable metadata metadata-keywords" data-metadata="keywords" contenteditable="true" title="'+gettext('The keywords related to the document (comma-separated)')+'"></div>\
         <% } %>\
-    ');
+    ');*/
 
 
     /** Select the metadata options in the menu that are set as enabled in theDocument.settings.metadata. NAME_OF_METADATA.
@@ -102,6 +102,7 @@
      * @function layoutMetadata
      * @memberof editorHelpers
      */
+     /*
     editorHelpers.layoutMetadata = function () {
         var i, metadataNode = document.getElementById('document-metadata'), metadataClone = metadataNode.cloneNode(), metadataDataNode, layoutDataNode, diffs;
         jQuery('.metadata-menu-item').removeClass('selected');
@@ -130,7 +131,7 @@
         domDiff.apply(metadataNode,diffs);
 
         editorEscapes.reset();
-    };
+    };*/
 
     /** Turn enabled metadata off and disabled metadata on, Function is bound to clicking option in metadata menu.
      * @function switchMetadata
@@ -141,17 +142,17 @@
         editorHelpers.setDocumentData('settings.metadata.' + theMetadata, !
             theDocument.settings.metadata[
                 theMetadata]);
-        editorHelpers.setMetadataDisplay(theMetadata);
+//        editorHelpers.setMetadataDisplay(theMetadata);
     };
 
     /** Layout metadata and then mark the document as having changed.
      * @function setMetadataDisplay
      * @memberof editorHelpers
      */
-    editorHelpers.setMetadataDisplay = function () {
+    /*editorHelpers.setMetadataDisplay = function () {
         editorHelpers.layoutMetadata();
         editorHelpers.documentHasChanged();
-    };
+    };*/
 
     /** Update the editor page with the document data from the server.
      * This is done if it was detected that the local version of the document
@@ -163,7 +164,8 @@
      * that differ from session to session.
      */
     editorHelpers.updateEditorPage = function (aDocument) {
-        console.log('updating editor');
+      /*  console.log('updating editor');
+
         clearInterval(diffHelpers.diffTimer);
         jQuery('.toolbarundoredo button').addClass('disabled');
         theDocumentValues.changed = false;
@@ -178,7 +180,7 @@
         editorHelpers.layoutMetadata();
         diffHelpers.setup();
         mathHelpers.resetMath();
-        citationHelpers.formatCitationsInDoc();
+        citationHelpers.formatCitationsInDoc();*/
     };
 
 
@@ -201,7 +203,7 @@
         theDocument.metadata = jQuery.parseJSON(theDocument.metadata);
 
         theDocument.contents = jQuery.parseJSON(theDocument.contents);
-        delete theDocument.contents.a; // Remove all attributes of the top elements. These should not be stored in the database, but have been there in the past.
+//        delete theDocument.contents.a; // Remove all attributes of the top elements. These should not be stored in the database, but have been there in the past.
         documentId = theDocument.id;
 
         DEFAULTS = [
@@ -234,10 +236,11 @@
                 "/");
             delete theDocumentValues.is_new;
         }
-
-        editorHelpers.setDisplay.document('contents', theDocument.contents);
-        editorHelpers.setDisplay.document('metadata.title', theDocument.metadata
-            .title);
+        proseMirrorConnector.loadDocument(theDocument);
+console.log('loading document');
+//        editorHelpers.setDisplay.document('contents', theDocument.contents);
+//        editorHelpers.setDisplay.document('metadata.title', theDocument.metadata
+//            .title);
         // Wait one second and then relayout the footnotes. At this time the fonts should have loaded.
 
         setTimeout(function() {
@@ -245,6 +248,7 @@
         }, 1000);
 
     };
+
 
     /** Called whenever anything has changed in the document text. Makes sure that saving and synchronizing with peers happens.
      * @function documentHasChanged
@@ -329,20 +333,20 @@
      * @function settingsTracking
      * @memberof editorHelpers.setDisplay
      * @param theValue false: tracking is off, true: tracking is on.*/
-    editorHelpers.setDisplay.settingsTracking = function (theValue) {
+    /*editorHelpers.setDisplay.settingsTracking = function (theValue) {
         if (theValue) {
             jQuery('.ice-track').addClass('selected');
         }
         else {
             jQuery('.ice-track').removeClass('selected');
         }
-    };
+    };*/
 
     /** Show or hide tracked changes.
      * @function settingsDocumentstyle
      * @memberof editorHelpers.setDisplay
      * @param theValue false: changes are not shown, true: changes are shown.*/
-    editorHelpers.setDisplay.settingsTrackingShow = function (theValue) {
+    /*editorHelpers.setDisplay.settingsTrackingShow = function (theValue) {
         if (theValue) {
             jQuery('.ice-display').addClass('selected');
             jQuery('#flow').removeClass('CT-hide');
@@ -351,17 +355,17 @@
             jQuery('.ice-display').removeClass('selected');
             jQuery('#flow').addClass('CT-hide');
         }
-    };
+    };*/
 
 
 
-    editorHelpers.setDisplay.contents = function (theValue) {
+    /*editorHelpers.setDisplay.contents = function (theValue) {
         var converterNode = exporter.obj2Node(theValue),
             doc;
         converterNode.normalize();
-        doc = proseMirrorConnector.fromDOM(proseMirrorConnector.schema, converterNode);
-        editorHelpers.contentEditor.setContent(doc);
-    };
+      //  doc = proseMirrorConnector.fromDOM(proseMirrorConnector.schema, converterNode);
+      //  editorHelpers.contentEditor.setContent(doc);
+    };*/
      /** Add the document contents/body text.
      * @function contents
      * @memberof editorHelpers.setDisplay
@@ -389,7 +393,7 @@
      * @function metadataTitle
      * @memberof editorHelpers.setDisplay
      * @param theValue The HTML of the title.*/
-    editorHelpers.setDisplay.metadataTitle = function (theValue) {
+    /*editorHelpers.setDisplay.metadataTitle = function (theValue) {
 
         var titleNode = document.getElementById('document-title'), titleClone = titleNode.cloneNode(), converterNode = exporter.obj2Node(theValue), diffs;
 
@@ -406,7 +410,7 @@
         editorEscapes.reset();
 
         editorHelpers.setDisplay.document('title', titleClone.textContent);
-    };
+    };*/
 
     /** Set the document title in the menu.
      * @function title
@@ -427,17 +431,17 @@
     editorHelpers.setDisplay.FIELDS = {
         // A list of the functions used to update various fields to be called by editorHelpers.setDisplay.document
         'title': editorHelpers.setDisplay.title,
-        'metadata.title': editorHelpers.setDisplay.metadataTitle,
-        'contents': editorHelpers.setDisplay.contents,
-        'settings.tracking': editorHelpers.setDisplay.settingsTracking,
-        'settings.tracking_show': editorHelpers.setDisplay.settingsTrackingShow,
+        /*'metadata.title': editorHelpers.setDisplay.metadataTitle,
+        'contents': editorHelpers.setDisplay.contents,*/
+        /*'settings.tracking': editorHelpers.setDisplay.settingsTracking,
+        'settings.tracking_show': editorHelpers.setDisplay.settingsTrackingShow,*/
         'settings.papersize': editorHelpers.setDisplay.settingsPapersize,
         'settings.citationstyle': editorHelpers.setDisplay.settingsCitationstyle,
         'settings.documentstyle': editorHelpers.setDisplay.settingsDocumentstyle,
-        'settings.metadata.subtitle': editorHelpers.layoutMetadata,
-        'settings.metadata.abstract': editorHelpers.layoutMetadata,
-        'settings.metadata.authors': editorHelpers.layoutMetadata,
-        'settings.metadata.keywords': editorHelpers.layoutMetadata,
+        //'settings.metadata.subtitle': editorHelpers.layoutMetadata,
+        //'settings.metadata.abstract': editorHelpers.layoutMetadata,
+        //'settings.metadata.authors': editorHelpers.layoutMetadata,
+        //'settings.metadata.keywords': editorHelpers.layoutMetadata,
         'id': editorHelpers.setDisplay.id
     };
     /** Set any field on the editor page

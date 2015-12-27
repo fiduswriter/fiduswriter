@@ -69,10 +69,18 @@
 	Title.register("parseDOM", {
 	  tag: "div",
 	  parse: function parse(dom, state) {
-	    if (!dom.id === 'document-title') return false;
+	    if (dom.id !== 'document-title') return false;
 	    state.wrapIn(dom, this);
 	  }
 	});
+
+	Title.prototype.serializeDOM = function (node, serializer) {
+	  var dom = serializer.elt("div", {
+	    id: 'document-title'
+	  });
+	  serializer.renderContent(node, dom);
+	  return dom;
+	};
 
 	var MetaData = (function (_pm$Block) {
 	  _inherits(MetaData, _pm$Block);
@@ -89,10 +97,18 @@
 	MetaData.register("parseDOM", {
 	  tag: "div",
 	  parse: function parse(dom, state) {
-	    if (!dom.id === 'document-metadata') return false;
+	    if (dom.id !== 'document-metadata') return false;
 	    state.wrapIn(dom, this);
 	  }
 	});
+
+	MetaData.prototype.serializeDOM = function (node, serializer) {
+	  var dom = serializer.elt("div", {
+	    id: 'document-metadata'
+	  });
+	  serializer.renderContent(node, dom);
+	  return dom;
+	};
 
 	var MetaDataSubtitle = (function (_pm$Textblock2) {
 	  _inherits(MetaDataSubtitle, _pm$Textblock2);
@@ -109,10 +125,18 @@
 	MetaDataSubtitle.register("parseDOM", {
 	  tag: "div",
 	  parse: function parse(dom, state) {
-	    if (!dom.id === 'metadata-subtitle') return false;
+	    if (dom.id !== 'metadata-subtitle') return false;
 	    state.wrapIn(dom, this);
 	  }
 	});
+
+	MetaDataSubtitle.prototype.serializeDOM = function (node, serializer) {
+	  var dom = serializer.elt("div", {
+	    id: 'metadata-subtitle'
+	  });
+	  serializer.renderContent(node, dom);
+	  return dom;
+	};
 
 	var MetaDataAuthors = (function (_pm$Textblock3) {
 	  _inherits(MetaDataAuthors, _pm$Textblock3);
@@ -129,10 +153,18 @@
 	MetaDataAuthors.register("parseDOM", {
 	  tag: "div",
 	  parse: function parse(dom, state) {
-	    if (!dom.id === 'metadata-authors') return false;
+	    if (dom.id !== 'metadata-authors') return false;
 	    state.wrapIn(dom, this);
 	  }
 	});
+
+	MetaDataAuthors.prototype.serializeDOM = function (node, serializer) {
+	  var dom = serializer.elt("div", {
+	    id: 'metadata-authors'
+	  });
+	  serializer.renderContent(node, dom);
+	  return dom;
+	};
 
 	var MetaDataAbstract = (function (_pm$Block2) {
 	  _inherits(MetaDataAbstract, _pm$Block2);
@@ -149,10 +181,18 @@
 	MetaDataAbstract.register("parseDOM", {
 	  tag: "div",
 	  parse: function parse(dom, state) {
-	    if (!dom.id === 'metadata-abstract') return false;
+	    if (dom.id !== 'metadata-abstract') return false;
 	    state.wrapIn(dom, this);
 	  }
 	});
+
+	MetaDataAbstract.prototype.serializeDOM = function (node, serializer) {
+	  var dom = serializer.elt("div", {
+	    id: 'metadata-abstract'
+	  });
+	  serializer.renderContent(node, dom);
+	  return dom;
+	};
 
 	var MetaDataKeywords = (function (_pm$Textblock4) {
 	  _inherits(MetaDataKeywords, _pm$Textblock4);
@@ -169,10 +209,18 @@
 	MetaDataKeywords.register("parseDOM", {
 	  tag: "div",
 	  parse: function parse(dom, state) {
-	    if (!dom.id === 'metadata-keywords') return false;
+	    if (dom.id !== 'metadata-keywords') return false;
 	    state.wrapIn(dom, this);
 	  }
 	});
+
+	MetaDataKeywords.prototype.serializeDOM = function (node, serializer) {
+	  var dom = serializer.elt("div", {
+	    id: 'metadata-keywords'
+	  });
+	  serializer.renderContent(node, dom);
+	  return dom;
+	};
 
 	var DocumentContents = (function (_pm$Block3) {
 	  _inherits(DocumentContents, _pm$Block3);
@@ -189,10 +237,18 @@
 	DocumentContents.register("parseDOM", {
 	  tag: "div",
 	  parse: function parse(dom, state) {
-	    if (!dom.id === 'document-contents') return false;
+	    if (dom.id !== 'document-contents') return false;
 	    state.wrapIn(dom, this);
 	  }
 	});
+
+	DocumentContents.prototype.serializeDOM = function (node, serializer) {
+	  var dom = serializer.elt("div", {
+	    id: 'document-contents'
+	  });
+	  serializer.renderContent(node, dom);
+	  return dom;
+	};
 
 	var fidusSchema = new pm.Schema(pm.defaultSchema.spec.update({
 	  title: Title,

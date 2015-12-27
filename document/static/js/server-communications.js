@@ -20,7 +20,7 @@
  */
 (function () {
     var exports = this,
-        /** Sets up communicating with server (retrieving document, saving, collaboration, etc.). TODO 
+        /** Sets up communicating with server (retrieving document, saving, collaboration, etc.). TODO
          * @namespace serverCommunications
          */
         serverCommunications = {};
@@ -86,7 +86,7 @@
             });
             break;
         case 'document_data_update':
-            editorHelpers.updateEditorPage(data.document);
+        //    editorHelpers.updateEditorPage(data.document);
             break;
         case 'diff':
             theDocumentValues.newDiffs.push(data);
@@ -99,9 +99,9 @@
             theDocumentValues.control = true;
             theDocumentValues.sentHash = false;
             break;
-        case 'hash':
+/*        case 'hash':
             editorHelpers.checkHash(data.hash);
-            break;
+            break;*/
         }
     };
 

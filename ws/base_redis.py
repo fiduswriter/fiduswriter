@@ -98,7 +98,7 @@ class BaseRedisWebSocketHandler(WebSocketHandler):
 
     # Prepare ORM connections
 
-        connection.queries = []
+        #connection.queries = []
 
     def finish(self, chunk=None):
         super(BaseRedisWebSocketHandler, self).finish(chunk=chunk)

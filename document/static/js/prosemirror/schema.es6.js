@@ -8,6 +8,14 @@ Title.register("parseDOM", {
   }
 });
 
+Title.prototype.serializeDOM = (node, serializer) => {
+  let dom = serializer.elt("div", {
+    id: 'document-title'
+  })
+  serializer.renderContent(node, dom);
+  return dom;
+}
+
 class MetaData extends pm.Block {}
 
 MetaData.register("parseDOM", {
@@ -17,6 +25,14 @@ MetaData.register("parseDOM", {
     state.wrapIn(dom, this)
   }
 });
+
+MetaData.prototype.serializeDOM = (node, serializer) => {
+  let dom = serializer.elt("div", {
+    id: 'document-metadata'
+  })
+  serializer.renderContent(node, dom);
+  return dom;
+}
 
 class MetaDataSubtitle extends pm.Textblock {}
 
@@ -28,6 +44,14 @@ MetaDataSubtitle.register("parseDOM", {
   }
 });
 
+MetaDataSubtitle.prototype.serializeDOM = (node, serializer) => {
+  let dom = serializer.elt("div", {
+    id: 'metadata-subtitle'
+  })
+  serializer.renderContent(node, dom);
+  return dom;
+}
+
 class MetaDataAuthors extends pm.Textblock {}
 
 MetaDataAuthors.register("parseDOM", {
@@ -37,6 +61,14 @@ MetaDataAuthors.register("parseDOM", {
     state.wrapIn(dom, this)
   }
 });
+
+MetaDataAuthors.prototype.serializeDOM = (node, serializer) => {
+  let dom = serializer.elt("div", {
+    id: 'metadata-authors'
+  })
+  serializer.renderContent(node, dom);
+  return dom;
+}
 
 class MetaDataAbstract extends pm.Block {}
 
@@ -48,6 +80,14 @@ MetaDataAbstract.register("parseDOM", {
   }
 });
 
+MetaDataAbstract.prototype.serializeDOM = (node, serializer) => {
+  let dom = serializer.elt("div", {
+    id: 'metadata-abstract'
+  })
+  serializer.renderContent(node, dom);
+  return dom;
+}
+
 class MetaDataKeywords extends pm.Textblock {}
 
 MetaDataKeywords.register("parseDOM", {
@@ -58,6 +98,14 @@ MetaDataKeywords.register("parseDOM", {
   }
 });
 
+MetaDataKeywords.prototype.serializeDOM = (node, serializer) => {
+  let dom = serializer.elt("div", {
+    id: 'metadata-keywords'
+  })
+  serializer.renderContent(node, dom);
+  return dom;
+}
+
 class DocumentContents extends pm.Block {}
 
 DocumentContents.register("parseDOM", {
@@ -67,6 +115,14 @@ DocumentContents.register("parseDOM", {
     state.wrapIn(dom, this)
   }
 });
+
+DocumentContents.prototype.serializeDOM = (node, serializer) => {
+  let dom = serializer.elt("div", {
+    id: 'document-contents'
+  })
+  serializer.renderContent(node, dom);
+  return dom;
+}
 
 var fidusSchema = new pm.Schema(pm.defaultSchema.spec.update({
   title: Title,

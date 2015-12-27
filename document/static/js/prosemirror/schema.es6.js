@@ -1,0 +1,1 @@
+window.fidusSchema = pm.defaultSchema;

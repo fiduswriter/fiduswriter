@@ -1,9 +1,6 @@
-(function () {
-    var exports = this,
-     /** Functions for ProseMirror integration.
-     * @namespace proseMirrorConnector
-     */
-        proseMirrorConnector = {};
+/* Functions for ProseMirror integration.*/
+
+var proseMirrorConnector = {};
 
 proseMirrorConnector.makeEditor = function (where) {
   return new pm.ProseMirror({
@@ -13,9 +10,6 @@ proseMirrorConnector.makeEditor = function (where) {
 };
 
 proseMirrorConnector.fromDOM = pm.fromDOM;
+proseMirrorConnector.schema = fidusSchema;
 
-proseMirrorConnector.schema = pm.defaultSchema;
-
-exports.proseMirrorConnector = proseMirrorConnector;
-
-}).call(this);
+window.proseMirrorConnector = proseMirrorConnector;

@@ -14,11 +14,12 @@ then
 pip install nodeenv
 nodeenv -p
 
-npm install -g babel babel-cli
+npm install -g babel babel-cli webpack
 npm install babel-preset-es2015
 fi
 
 babel=$(which babel)
+webpack=$(which webpack)
 
 IFS=$'\n';
 
@@ -27,9 +28,11 @@ do
   dirname=$(dirname "$file")
   basename=$(basename "$file")
   outfilename="${basename%.es6.js}"
+  tmpfile=$(mktemp)
   outfile="$dirname/$outfilename.js"
   echo "Converting $file to $outfile"
-  echo '/* This file has been automatically generated. DO NOT EDIT IT.' > $outfile
-  echo "Changes will be overwritten. Edit $basename and run ./es6-compiler.js */" >> $outfile
-  $babel $file --presets es2015 >> $outfile
+  $babel $file --presets es2015 >> $tmpfile
+  $webpack $tmpfile $outfile
+  rm $tmpfile
+  sed -i "1i /* This file has been automatically generated. DO NOT EDIT IT. \n Changes will be overwritten. Edit $basename and run ./es6-compiler.sh */"  "$outfile"
 done

@@ -1,5 +1,5 @@
 /* This file has been automatically generated. DO NOT EDIT IT. 
- Changes will be overwritten. Edit connector.es6.js and run ./es6-compiler.sh */
+ Changes will be overwritten. Edit schema.es6.js and run ./es6-compiler.sh */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -48,21 +48,7 @@
 
 	"use strict";
 
-	/* Functions for ProseMirror integration.*/
-
-	var proseMirrorConnector = {};
-
-	proseMirrorConnector.makeEditor = function (where) {
-	  return new pm.ProseMirror({
-	    place: where
-	  });
-	};
-
-	//    menuBar: {float: true},
-	proseMirrorConnector.fromDOM = pm.fromDOM;
-	proseMirrorConnector.schema = fidusSchema;
-
-	window.proseMirrorConnector = proseMirrorConnector;
+	window.fidusSchema = pm.defaultSchema;
 
 
 

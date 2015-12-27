@@ -20,7 +20,7 @@
 # Django settings for Fidus Writer project. #
 #############################################
 
-# After copying this file to configuration.py, adjust the below settings to work 
+# After copying this file to configuration.py, adjust the below settings to work
 # with your setup.
 
 
@@ -29,11 +29,10 @@ import os
 # If you want to show debug messages, set DEBUG to True.
 
 DEBUG = False
-TEMPLATE_DEBUG = DEBUG
 
 SERVER_INFO = {
     # This determines whether the server is used for testing and will let the users know
-    # upon signup know that their documents may disappear.  
+    # upon signup know that their documents may disappear.
     'TEST_SERVER': True,
     # This is the contact email that will be shown in various places all over the site.
     'CONTACT_EMAIL': 'mail@email.com',
@@ -53,7 +52,7 @@ MANAGERS = ADMINS
 #        'PASSWORD': '',                  # Not used with sqlite3.
 #        'HOST': '',                      # Set to empty string for localhost. Not used with sqlite3.
 #        'PORT': '',                      # Set to empty string for default. Not used with sqlite3.
-#        'CONN_MAX_AGE': 15               # The max time in seconds a database connection should wait for a subsequent request. 
+#        'CONN_MAX_AGE': 15               # The max time in seconds a database connection should wait for a subsequent request.
 #    }
 #}
 
@@ -86,7 +85,7 @@ SECRET_KEY = '2ouq2zgw5y-@w+t6!#zf#-z1inigg7$lg3p%8e3kkob1bf$#p4'
 
 
 INSTALLED_APPS += (
-    # If you want to enable one or several of the social network login options 
+    # If you want to enable one or several of the social network login options
     # below, make sure you add the authorization keys at:
     # http://SERVER.COM/admin/socialaccount/socialapp/
     #'allauth.socialaccount.providers.facebook',

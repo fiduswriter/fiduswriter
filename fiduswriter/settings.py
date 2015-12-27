@@ -26,7 +26,6 @@ import os
 # If you want to show debug messages, set DEBUG to True.
 
 DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 
 SERVER_INFO = {
     # This determines whether the server is used for testing and will let the users
@@ -143,12 +142,6 @@ COMPRESS_OUTPUT_DIR = '.'
 # Make this unique, and don't share it with anybody. Change the default string.
 SECRET_KEY = '2ouq2zgw5y-@w+t6!#zf#-z1inigg7$lg3p%8e3kkob1bf$#p4'
 
-# List of callables that know how to import templates from various sources.
-TEMPLATE_LOADERS = (
-    'django.template.loaders.filesystem.Loader',
-    'django.template.loaders.app_directories.Loader',
-#     'django.template.loaders.eggs.Loader',
-)
 
 
 # These middleware classes is what Fidus Writer needs in its standard setup.
@@ -169,22 +162,33 @@ ROOT_URLCONF = 'fiduswriter.urls'
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'fiduswriter.wsgi.application'
 
-TEMPLATE_DIRS = (
-    './templates',
-    # Put strings here, like "/home/html/django_templates".
-    # You only need to change this in very advanced setups.
-)
 
-# The context processors used by Fidus Writer.
-# You only need to change this in very advanced setups.
-TEMPLATE_CONTEXT_PROCESSORS = (
-    "base.context_processors.js_locations",
-    "base.context_processors.css_locations",
-    "base.context_processors.server_info",
-    "django.template.context_processors.static",
-    "django.template.context_processors.request",
-    "django.contrib.auth.context_processors.auth",
-)
+TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [
+            './templates',
+            # Put strings here, like "/home/html/django_templates".
+            # You only need to change this in very advanced setups.
+        ],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'base.context_processors.js_locations',
+                'base.context_processors.css_locations',
+                'base.context_processors.server_info',
+                'django.contrib.auth.context_processors.auth',
+                'django.template.context_processors.debug',
+                'django.template.context_processors.i18n',
+                'django.template.context_processors.media',
+                'django.template.context_processors.static',
+                'django.template.context_processors.request',
+                'django.template.context_processors.tz',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
 
 
 # The following are the apps needed by Fidus Writer. The lower part of the list

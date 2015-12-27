@@ -16,9 +16,10 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import patterns, url
+from django.conf.urls import url
+from . import views
 
-urlpatterns = patterns('',
-    url(r'^feedback/$', 'feedback.views.feedback', name='feedback'),
-    url(r'^browser/$', 'feedback.views.browser', name='browser'),
-)
+urlpatterns = [
+    url('^feedback/$', views.feedback, name='feedback'),
+    url('^browser/$', views.browser, name='browser'),
+]

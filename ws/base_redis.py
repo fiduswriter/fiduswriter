@@ -13,7 +13,7 @@ from django.db import connection
 from django.contrib import auth
 from logging import info, debug
 from django.conf import settings
-from django.utils.importlib import import_module
+from importlib import import_module
 from django.core.handlers.wsgi import WSGIRequest
 
 import tornadoredis

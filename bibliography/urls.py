@@ -16,15 +16,16 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
+from . import views
 
-urlpatterns = patterns('',
-    url(r'^$', 'bibliography.views.index', name='index'),
-    url(r'^import_bibtex/$', 'bibliography.views.import_bibtex_js', name='import_bibtex'),
-    url(r'^save/$', 'bibliography.views.save_js', name='save'),
-    url(r'^delete/$', 'bibliography.views.delete_js', name='delete'),
-    url(r'^save_category/$', 'bibliography.views.save_category_js', name='save_category'),
-    url(r'^delete_category/$', 'bibliography.views.delete_category_js', name='delete_category'),
-    url(r'^biblist/$', 'bibliography.views.biblist_js', name='biblist')
-)
+urlpatterns = [
+    url('^$', views.index, name='index'),
+    url('^import_bibtex/$', views.import_bibtex_js, name='import_bibtex'),
+    url('^save/$', views.save_js, name='save'),
+    url('^delete/$', views.delete_js, name='delete'),
+    url('^save_category/$', views.save_category_js, name='save_category'),
+    url('^delete_category/$', views.delete_category_js, name='delete_category'),
+    url('^biblist/$', views.biblist_js, name='biblist')
+]

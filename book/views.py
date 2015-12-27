@@ -22,7 +22,7 @@ from django.shortcuts import render_to_response
 from django.http import JsonResponse, HttpRequest
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-from django.core.context_processors import csrf
+from django.template.context_processors import csrf
 from django.template import RequestContext
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist

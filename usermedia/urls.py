@@ -16,13 +16,15 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
-urlpatterns = patterns('',
-    url(r'^$', 'usermedia.views.index', name='index'),
-    url(r'^save/$', 'usermedia.views.save_js', name='save_js'),
-    url(r'^delete/$', 'usermedia.views.delete_js', name='delete_js'),
-    url(r'^images/$', 'usermedia.views.images_js', name='images_js'),
-    url(r'^save_category/$', 'usermedia.views.save_category_js', name='save_category_js'),
-    url(r'^delete_category/$', 'usermedia.views.delete_category_js', name='delete_category_js')
-)
+from . import views
+
+urlpatterns = [
+    url('^$', views.index, name='index'),
+    url('^save/$', views.save_js, name='save_js'),
+    url('^delete/$', views.delete_js, name='delete_js'),
+    url('^images/$', views.images_js, name='images_js'),
+    url('^save_category/$', views.save_category_js, name='save_category_js'),
+    url('^delete_category/$', views.delete_category_js, name='delete_category_js')
+]

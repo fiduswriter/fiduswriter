@@ -16,16 +16,16 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
-urlpatterns = patterns('',
+from . import views
 
-    url(r'^$', 'book.views.index', name='index'),
-    url(r'^booklist/$', 'book.views.get_booklist_js', name='get_booklist_js'),
-    url(r'^save/$', 'book.views.save_js', name='save_js'),
-    url(r'^delete/$', 'book.views.delete_js', name='delete_js'),
-    url(r'^print/\d+/$', 'book.views.print_book', name='print'),
-    url(r'^book/$', 'book.views.get_book_js', name='get_book_js'),
-    
-    url(r'^accessright/save/$', 'book.views.access_right_save_js', name='access_right_save_js'), 
-)
+urlpatterns = [
+    url('^$', views.index, name='index'),
+    url('^booklist/$', views.get_booklist_js, name='get_booklist_js'),
+    url('^save/$', views.save_js, name='save_js'),
+    url('^delete/$', views.delete_js, name='delete_js'),
+    url('^print/\d+/$', views.print_book, name='print'),
+    url('^book/$', views.get_book_js, name='get_book_js'),
+    url('^accessright/save/$', views.access_right_save_js, name='access_right_save_js'),
+]

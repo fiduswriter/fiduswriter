@@ -37,7 +37,7 @@ from unittest import skipIf         # NOQA: Imported here for backward compatibi
 
 from django.conf import settings
 from django.core.exceptions import ImproperlyConfigured
-from django.core.handlers.wsgi import WSGIHandler
+
 from django.core.servers.basehttp import WSGIRequestHandler, WSGIServer
 from django.db import connections
 from django.utils import six

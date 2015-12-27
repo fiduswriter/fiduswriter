@@ -21,7 +21,7 @@ from time import mktime
 
 from django.shortcuts import render_to_response
 from django.contrib.auth.decorators import login_required
-from django.core.context_processors import csrf
+from django.template.context_processors import csrf
 from django.template import RequestContext
 from django.http import JsonResponse
 from django.contrib.auth.models import User

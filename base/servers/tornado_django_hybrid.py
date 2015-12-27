@@ -17,7 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 from django.conf import settings
-from django.core.handlers.wsgi import WSGIHandler
+from django.core.wsgi import get_wsgi_application
 
 from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
@@ -33,7 +33,7 @@ else:
 
 
 def make_tornado_server():
-    wsgi_app = WSGIContainer(WSGIHandler())
+    wsgi_app = WSGIContainer(get_wsgi_application())
     tornado_app = Application([
         (r'/static/(.*)', DjangoStaticFilesHandler, {'default_filename':
                                                      'none.img'}),

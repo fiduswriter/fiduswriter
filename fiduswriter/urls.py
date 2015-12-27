@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 from django.http import HttpResponse
 from django.contrib import admin
 admin.autodiscover()
@@ -25,64 +25,71 @@ import settings
 
 from user.views import logout_page
 
+
+from django.contrib.flatpages import views as flatpages_views
+
 js_info_dict = {
     'packages': (
         'django.conf',
      ),
 }
 
+from document.views import index as document_index
 
-urlpatterns = patterns('',
-    url(r'^$', 'document.views.index', name='index'),
-    (r'^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /text/\nDisallow: /bibliography/", mimetype="text/plain")),
-    url(r'^js_error_hook/', include('django_js_error_hook.urls')),
-    url(r'^document/', include('document.urls')),
-    url(r'^bibliography/', include('bibliography.urls')),
+from django.views.i18n import javascript_catalog as i18n_javascript_catalog
+from django.contrib.auth.views import login as login_view
+
+urlpatterns = [
+    url('^$', document_index, name='index'),
+    url('^robots\.txt$', lambda r: HttpResponse("User-agent: *\nDisallow: /text/\nDisallow: /bibliography/", mimetype="text/plain")),
+    url('^js_error_hook/', include('django_js_error_hook.urls')),
+    url('^document/', include('document.urls')),
+    url('^bibliography/', include('bibliography.urls')),
 
     # I18n manual language switcher
-    (r'^i18n/', include('django.conf.urls.i18n')),
+    url('^i18n/', include('django.conf.urls.i18n')),
+
+
 
     # I18n Javascript translations
-    url(r'^jsi18n/$', 'django.views.i18n.javascript_catalog', js_info_dict),
+    url('^jsi18n/$', i18n_javascript_catalog, js_info_dict),
 
 
     # Login / logout.
-    (r'^login/$', 'django.contrib.auth.views.login'),
-    url(r'^logout/$', logout_page, name='logout'),
+    url('^login/$', login_view),
+    url('^logout/$', logout_page, name='logout'),
 
     # Admin interface
-    url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
-    url(r'^admin/', include(admin.site.urls)),
+    url('^admin/doc/', include('django.contrib.admindocs.urls')),
+    url('^admin/', include(admin.site.urls)),
 
     # Account management
-    (r'^account/', include('user.urls')),
+    url('^account/', include('user.urls')),
 
     # Media manager
-    url(r'^usermedia/', include('usermedia.urls')),
+    url('^usermedia/', include('usermedia.urls')),
 
     # Media manager
-    url(r'^book/', include('book.urls')),
+    url('^book/', include('book.urls')),
 
     # Feedback
-    url(r'^feedback/', include('feedback.urls')),
+    url('^feedback/', include('feedback.urls')),
 
-)
-
-urlpatterns += patterns('django.contrib.flatpages.views',
     # Terms and conditions
-    url(r'^terms/$', 'flatpage', {'url': '/terms/'}, name='terms'),
-)
+    url('^terms/$', flatpages_views.flatpage, {'url': '/terms/'}, name='terms'),
+]
 
 if settings.DEBUG:
-    urlpatterns += patterns('',
-        url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {
+    from django.views.static import serve as static_serve
+    urlpatterns += [
+        url('^media/(?P<path>.*)$', static_serve, {
             'document_root': settings.MEDIA_ROOT,
         }),
-   )
+   ]
 
 
 if hasattr(settings, 'EXTRA_URLS'):
     for extra_url in settings.EXTRA_URLS:
-        urlpatterns += patterns('',
+        urlpatterns += [
             url(extra_url[0], include(extra_url[1])),
-        )
+        ]

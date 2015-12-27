@@ -44,12 +44,12 @@ class Image(models.Model):
     file_type = models.CharField(max_length=20,blank=True,null=True)
     height = models.IntegerField(blank=True,null=True)
     width = models.IntegerField(blank=True,null=True)
-    checksum = models.BigIntegerField(max_length=50, default=0)
-    
-    
+    checksum = models.BigIntegerField(default=0)
+
+
     def __unicode__(self):
         return self.title
-    
+
     def create_checksum(self):
         if self.checksum == 0:
             from time import time
@@ -57,16 +57,16 @@ class Image(models.Model):
                 self.checksum = int(str(self.image.file.size) + str(time()).split('.')[0])
             else:
                 self.checksum = time()
-    
+
     def check_filetype(self):
         if not self.image:
             return
         if not hasattr(self.image.file, 'content_type'):
             return
-        
+
         if not self.image.file.content_type in ALLOWED_FILETYPES:
-            raise IntegrityError  
-    
+            raise IntegrityError
+
     def create_thumbnail(self):
         # original code for this method came from
         # http://snipt.net/danfreak/generate-thumbnails-in-django-with-pil/
@@ -99,16 +99,16 @@ class Image(models.Model):
         else:
             self.file_type = DJANGO_TYPE
             return
-        
+
         # Open original photo which we want to thumbnail using PIL's Image
         image = PilImage.open(StringIO(self.image.read()))
 
         self.width, self.height = image.size
-        
+
         #cropping the thumbnail to exactly 60 x 60 px
         src_width, src_height = image.size
         dst_width = dst_height = 60
-        
+
         if src_width < src_height:
             crop_width = crop_height = src_width
             x_offset = 0
@@ -117,9 +117,9 @@ class Image(models.Model):
             crop_width = crop_height = src_height
             x_offset = int(float(src_width - crop_width) / 2)
             y_offset = 0
-            
+
         image = image.crop((x_offset, y_offset, x_offset+int(crop_width), y_offset+int(crop_height)))
-        
+
         # Convert to RGB if necessary
         # Thanks to Limodou on DjangoSnippets.org
         # http://www.djangosnippets.org/snippets/20/
@@ -145,25 +145,25 @@ class Image(models.Model):
         suf = SimpleUploadedFile(os.path.split(self.image.name)[-1], temp_handle.read(), content_type=DJANGO_TYPE)
         # Save SimpleUploadedFile into image field
         self.thumbnail.save('%s_thumbnail.%s'%(os.path.splitext(suf.name)[0],FILE_EXTENSION), suf, save=False)
- 
- 
- 
+
+
+
     def save(self):
         # create a thumbnail
         self.create_checksum()
         self.check_filetype()
         self.create_thumbnail()
- 
+
         super(Image, self).save()
-    
-    
+
+
 #category
 class ImageCategory(models.Model):
     category_title = models.CharField(max_length=100)
     category_owner = models.ForeignKey(User)
-    
+
     def __unicode__(self):
-        return self.category_title    
-    
+        return self.category_title
+
     class Meta:
         verbose_name_plural = 'Image categories'

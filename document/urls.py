@@ -16,20 +16,20 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from django.conf.urls import patterns, url
+from django.conf.urls import url
 
-urlpatterns = patterns('',
+from . import views
 
-    url(r'^$', 'document.views.index', name='index'),
-    url(r'^new/$', 'document.views.editor', name='editor'),
-    url(r'^documentlist/$', 'document.views.get_documentlist_js', name='get_documentlist_js'),
-    url(r'^documentlist/extra/$', 'document.views.get_documentlist_extra_js', name='get_documentlist_extra_js'),
-    url(r'^delete/$', 'document.views.delete_js', name='delete_js'),
-    url(r'^import/$', 'document.views.import_js', name='import_js'),
-    url(r'^upload/$', 'document.views.upload_js', name='upload_js'),
-    url(r'^download/$', 'document.views.download_js', name='download_js'),
-    url(r'^delete_revision/$', 'document.views.delete_revision_js', name='delete_revision_js'),
-    url(r'^\d+/$', 'document.views.editor', name='editor'),
-    
-    url(r'^accessright/save/$', 'document.views.access_right_save_js', name='access_right_save_js'), 
-)
+urlpatterns = [
+    url('^$', views.index, name='index'),
+    url('^new/$', views.editor, name='editor'),
+    url('^documentlist/$', views.get_documentlist_js, name='get_documentlist_js'),
+    url('^documentlist/extra/$', views.get_documentlist_extra_js, name='get_documentlist_extra_js'),
+    url('^delete/$', views.delete_js, name='delete_js'),
+    url('^import/$', views.import_js, name='import_js'),
+    url('^upload/$', views.upload_js, name='upload_js'),
+    url('^download/$', views.download_js, name='download_js'),
+    url('^delete_revision/$', views.delete_revision_js, name='delete_revision_js'),
+    url('^\d+/$', views.editor, name='editor'),
+    url('^accessright/save/$', views.access_right_save_js, name='access_right_save_js'),
+]

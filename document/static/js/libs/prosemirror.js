@@ -12136,7 +12136,7 @@ window.pm = {
     Schema: _model.Schema,
     defaultSchema: _model.defaultSchema,
     Block: _model.Block,
-    TextBlock: _model.TextBlock,
+    Textblock: _model.Textblock,
     Inline: _model.Inline,
     Text: _model.Text,
     Attribute: _model.Attribute,

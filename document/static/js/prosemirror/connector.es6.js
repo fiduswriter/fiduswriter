@@ -5,6 +5,7 @@ var proseMirrorConnector = {};
 proseMirrorConnector.makeEditor = function (where) {
   return new pm.ProseMirror({
     place: where,
+    schema: fidusSchema
 //    menuBar: {float: true},
   })
 };

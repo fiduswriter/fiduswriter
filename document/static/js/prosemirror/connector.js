@@ -54,11 +54,12 @@
 
 	proseMirrorConnector.makeEditor = function (where) {
 	  return new pm.ProseMirror({
-	    place: where
+	    place: where,
+	    schema: fidusSchema
+	    //    menuBar: {float: true},
 	  });
 	};
 
-	//    menuBar: {float: true},
 	proseMirrorConnector.fromDOM = pm.fromDOM;
 	proseMirrorConnector.schema = fidusSchema;
 

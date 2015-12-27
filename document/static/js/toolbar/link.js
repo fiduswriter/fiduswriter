@@ -1,42 +1,24 @@
-/**
- * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
- *
- * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
- *
- * @license This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
- *
- */
 // toolbar link
 jQuery(document).on('mousedown', '#button-link', function(event) {
-    event.preventDefault();
-    var range = insertElement.findRange(),
+
+    if (!theEditor.editor.hasFocus()) {
+      return false;
+    }
+
+    var selection = theEditor.editor.selection,
         dialogButtons = [],
         dialog,
         link = 'http://',
-        linkText = '',
+        linkTitle = '',
         defaultLink = 'http://',
         submitButtonText = 'Insert',
-        linkElement = jQuery(range.startContainer).closest('a')[0];
+        linkElement = _.find(theEditor.editor.activeMarks(),function(mark){return (mark.type.name==='link')});
 
-    if (!range) {
-        return false;
-    }
 
     if (linkElement) {
         submitButtonText = 'Update';
-        linkText = linkElement.textContent;
-        link = linkElement.href;
+        linkTitle = linkElement.attrs.title;
+        link = linkElement.attrs.href;
     }
 
     dialogButtons.push({
@@ -45,23 +27,22 @@ jQuery(document).on('mousedown', '#button-link', function(event) {
         click: function() {
 
             var newLink = dialog.find('input.link').val(),
-                linkText = dialog.find('input.linktext').val(),
-                linkNode, selection = rangy.getSelection();
+                linkTitle = dialog.find('input.linktitle').val(),
+                linkNode;
 
             if ((new RegExp(/^\s*$/)).test(newLink) || newLink === defaultLink) {
                 // The link input is empty or hasn't been changed from the default value. Just close the dialog.
                 dialog.dialog('close');
-                selection.setSingleRange(range);
+                theEditor.editor.focus();
                 return;
             }
 
-            if ((new RegExp(/^\s*$/)).test(linkText)) {
+            /*if ((new RegExp(/^\s*$/)).test(linkTitle)) {
                 // The link text is empty. Make it the same as the link itself.
                 linkText = link;
-            }
+            }*/
             dialog.dialog('close');
-            selection.setSingleRange(range);
-            insertElement.link(newLink, linkText);
+            theEditor.editor.execCommand('link',[newLink, linkTitle]);
 
         }
     });
@@ -70,14 +51,13 @@ jQuery(document).on('mousedown', '#button-link', function(event) {
         text: gettext('Cancel'),
         class: 'fw-button fw-orange',
         click: function() {
-            var selection = rangy.getSelection();
             dialog.dialog('close');
-            selection.setSingleRange(range);
+            theEditor.editor.focus();
         }
     });
 
     dialog = jQuery(toolbarTemplates.linkDialog({
-        linkText: linkText,
+        linkTitle: linkTitle,
         link: link
     }));
 

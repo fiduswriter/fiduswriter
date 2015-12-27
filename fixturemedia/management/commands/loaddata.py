@@ -4,21 +4,37 @@ from django.conf import settings
 import django.core.management.commands.loaddata
 from django.core.files.storage import default_storage
 import django.core.serializers
-from django.db.models import get_apps, get_models, signals
+from django.db.models import signals
 from django.db.models.fields.files import FileField
 from django.utils._os import upath
 
+try:
+    from django.apps import apps
+    get_models = apps.get_models
+    get_apps = lambda: filter(None, [a.models_module for a in apps.get_app_configs()])
+
+    def get_modelclasses():
+        for modelclass in get_models():
+            yield modelclass
+
+except ImportError:
+    # old Django case
+    from django.db.models import get_apps, get_models
+
+    def get_modelclasses():
+        for app in get_apps():
+            modelclasses = get_models(app)
+            for modelclass in modelclasses:
+                yield modelclass
 
 # For Python < 3.3
 file_not_found_error = getattr(__builtins__,'FileNotFoundError', IOError)
 
 
 def models_with_filefields():
-    for app in get_apps():
-        modelclasses = get_models(app)
-        for modelclass in modelclasses:
-            if any(isinstance(field, FileField) for field in modelclass._meta.fields):
-                yield modelclass
+    for modelclass in get_modelclasses():
+        if any(isinstance(field, FileField) for field in modelclass._meta.fields):
+            yield modelclass
 
 
 class Command(django.core.management.commands.loaddata.Command):

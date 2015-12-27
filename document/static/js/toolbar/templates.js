@@ -28,7 +28,7 @@
 
     toolbarTemplates.linkDialog = _.template('\
         <div title="' + gettext("Link") + '">\
-            <p><input class="linktext" type="text" value="<%- linkText %>" placeholder="' + gettext("Link text (optional") + '"/></p>\
+            <p><input class="linktitle" type="text" value="<%- linkTitle %>" placeholder="' + gettext("Link text (optional") + '"/></p>\
             <p><input class="link" type="text" value="<%- link  %>" placeholder="' + gettext("Link") + '"/></p>\
         </div>\
     ');

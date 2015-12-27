@@ -236,8 +236,8 @@
                 "/");
             delete theDocumentValues.is_new;
         }
-        proseMirrorConnector.loadDocument(theDocument);
-console.log('loading document');
+        theEditor.loadDocument(theDocument);
+
 //        editorHelpers.setDisplay.document('contents', theDocument.contents);
 //        editorHelpers.setDisplay.document('metadata.title', theDocument.metadata
 //            .title);

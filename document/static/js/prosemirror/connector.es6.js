@@ -1,18 +1,18 @@
 /* Functions for ProseMirror integration.*/
 
-var proseMirrorConnector = {};
+var theEditor = {};
 
 function makeEditor (where, doc) {
   return new pm.ProseMirror({
     place: where,
     schema: fidusSchema,
-    doc: doc
-//    menuBar: {float: true},
+    doc: doc,
+    menuBar: true,
   })
 };
 
 
-proseMirrorConnector.loadDocument = function (aDocument) {
+theEditor.loadDocument = function (aDocument) {
     var editorNode = document.createElement('div'),
       titleNode = exporter.obj2Node(aDocument.metadata.title),
       metadataNode = document.createElement('div'),
@@ -38,15 +38,19 @@ proseMirrorConnector.loadDocument = function (aDocument) {
       editorNode.appendChild(metadataNode);
       editorNode.appendChild(documentContentsNode);
 
-
-      console.log(editorNode.innerHTML)
+//      console.log(editorNode.innerHTML)
 
       var doc = pm.fromDOM(fidusSchema, editorNode);
-      proseMirrorConnector.editor = makeEditor(document.getElementById('document-editable'), doc);
+      theEditor.editor = makeEditor(document.getElementById('document-editable'), doc);
+
+      var editorTools = document.getElementById('editor-tools-wrapper');
+      //editorTools.innerHTML = '';
+      //editorTools.appendChild(document.querySelector('.ProseMirror-menubar'));
+
 };
 
 
-proseMirrorConnector.fromDOM = pm.fromDOM;
-proseMirrorConnector.schema = fidusSchema;
+theEditor.fromDOM = pm.fromDOM;
+theEditor.schema = fidusSchema;
 
-window.proseMirrorConnector = proseMirrorConnector;
+window.theEditor = theEditor;

@@ -1,26 +1,34 @@
-/**
- * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
- *
- * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
- *
- * @license This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
- *
- */
 // blockstyle paragraph, h1 - h3, lists
 jQuery(document).on('mousedown', '.toolbarheadings label', function (event) {
+    console.log(this.id.split('_')[0]);
+    switch (this.id.split('_')[0]) {
+        case 'h1':
+          theEditor.editor.execCommand('makeH1');
+          break;
+        case 'h2':
+          theEditor.editor.execCommand('makeH2');
+          break;
+        case 'h3':
+          theEditor.editor.execCommand('makeH3');
+          break;
+        case 'p':
+          theEditor.editor.execCommand('makeParagraph');
+          break;
+        case 'code':
+          theEditor.editor.execCommand('makeCodeBlock');
+          break;
+        case 'blockquote':
+          theEditor.editor.execCommand('wrapBlockquote');
+          break;
+        case 'ol':
+          theEditor.editor.execCommand('wrapOrderedList');
+          break;
+        case 'ul':
+          theEditor.editor.execCommand('wrapBulletList');
+          break;
+    }
 
-    var selection = rangy.getSelection(),
+/*    var selection = rangy.getSelection(),
         range = selection.getRangeAt(0),
         currentBlockElement = jQuery(range.startContainer).closest('p, li, h1, h2, h3, code, blockquote')[0];
 
@@ -29,7 +37,7 @@ jQuery(document).on('mousedown', '.toolbarheadings label', function (event) {
     if (dom.switchBlockElementWhileSavingCaretPosition(currentBlockElement, this.id.split('_')[0])) {
         jQuery(document).trigger('updateBlockFormat');
         editorHelpers.documentHasChanged();
-    }
+    }*/
 
 });
 
@@ -41,19 +49,19 @@ jQuery(document).on('mousedown', '#button-ul', function (event) {
     jQuery('#ul_button').mousedown();
 });
 
-jQuery(document).bind('updateBlockFormat', function (event) {
+/*jQuery(document).bind('updateBlockFormat', function (event) {
     var selection = rangy.getSelection(),
         range,
         format;
-                      
+
     if (selection.rangeCount > 0) {
         range = selection.getRangeAt(0);
     } else {
         range = rangy.createRange();
     }
-    
+
     format = jQuery(range.startContainer).closest('p, ul, ol, h1, h2, h3, code, blockquote');
-                      
+
     if (format.length === 0) {
         return;
     } else {
@@ -72,4 +80,4 @@ jQuery(document).bind('updateBlockFormat', function (event) {
     } else {
         jQuery('#button-ul,#button-ol').removeClass('ui-state-active');
     }
-});
+});*/

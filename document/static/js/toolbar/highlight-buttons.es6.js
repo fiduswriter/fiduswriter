@@ -3,6 +3,17 @@
 const MIN_FLUSH_DELAY = 200
 const UPDATE_TIMEOUT = 200
 
+const BLOCK_LABELS = {
+  'paragraph': 'Normal Text',
+  'ordered_list': 'Numbered List',
+  'bullet_list': 'Bulleted List',
+  'blockquote': 'Block Quote',
+  'heading_1': '1st Heading',
+  'heading_2': '2nd Heading',
+  'heading_3': '3rd Heading',
+  'code_block': 'Code'
+}
+
 export class HighlightToolbarButtons {
   constructor(pm, events) {
     this.pm = pm
@@ -57,7 +68,6 @@ export class HighlightToolbarButtons {
   markMenu() {
     /* Fidus Writer code */
     var marks = theEditor.editor.activeMarks();
-
     var strong = marks.some(function(mark){return (mark.type.name==='strong')});
 
     if (strong) {
@@ -81,6 +91,122 @@ export class HighlightToolbarButtons {
     } else {
         jQuery('#button-link').removeClass('ui-state-active');
     }
+
+    /* Block level selector */
+    var headElementType = theEditor.editor.doc.path([theEditor.editor.selection.head.path[0]]).type.name,
+    anchorElementType = theEditor.editor.doc.path([theEditor.editor.selection.anchor.path[0]]).type.name;
+
+    // For metadata, one has to look one level deeper.
+    if (headElementType==='metadata') {
+        headElementType = theEditor.editor.doc.path(theEditor.editor.selection.head.path.slice(0,2)).type.name;
+    }
+
+    if (anchorElementType==='metadata') {
+        anchorElementType = theEditor.editor.doc.path(theEditor.editor.selection.anchor.path.slice(0,2)).type.name;
+    }
+
+    if (headElementType !== anchorElementType) {
+        /* Selection goes across document parts */
+        jQuery('#button-ul,#button-ol,#block-style-label').addClass('disabled');
+        jQuery('#block-style-label').html('');
+
+    } else {
+
+        switch (headElementType) {
+            case 'title':
+                jQuery('#button-ul,#button-ol,#block-style-label').addClass('disabled');
+                jQuery('#block-style-label').html('Title');
+                break;
+            case 'metadatasubtitle':
+                jQuery('#button-ul,#button-ol,#block-style-label').addClass('disabled');
+                jQuery('#block-style-label').html('Subtitle');
+                break;
+            case 'metadataauthors':
+                jQuery('#button-ul,#button-ol,#block-style-label').addClass('disabled');
+                jQuery('#block-style-label').html('Authors');
+                break;
+            case 'metadatakeywords':
+                jQuery('#button-ul,#button-ol,#block-style-label').addClass('disabled');
+                jQuery('#block-style-label').html('Keywords');
+                break;
+            case 'metadataabstract':
+                jQuery('#button-ul,#button-ol,#block-style-label').removeClass('disabled');
+
+                var headPath = theEditor.editor.selection.head.path,
+                anchorPath = theEditor.editor.selection.anchor.path,
+                blockNodeType = true, blockNode, nextBlockNodeType;
+
+                if (headPath[2]===anchorPath[2]) {
+                  // Selection within a single block.
+                  blockNode = theEditor.editor.doc.path(theEditor.editor.selection.anchor.path.slice(0,3));
+                  blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
+                  jQuery('#block-style-label').html('Body: ' + BLOCK_LABELS[blockNodeType]);
+                } else {
+                    var iterator = theEditor.editor.doc.path(theEditor.editor.selection.head.path.slice(0,2)).iter(
+                        _.min([headPath[2],anchorPath[2]]),
+                        _.max([headPath[2],anchorPath[2]])+1
+                    );
+
+                    while(!iterator.atEnd() && blockNodeType) {
+                        nextBlockNode = iterator.next();
+                        nextBlockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
+                        if (blockNodeType===true) {
+                            blockNodeType = nextBlockNodeType;
+                        }
+                        if (blockNodeType !== nextBlockNodeType) {
+                            blockNodeType = false;
+                        }
+                    }
+
+
+                    if (blockNodeType) {
+                        jQuery('#block-style-label').html('Abstract: ' + BLOCK_LABELS[blockNodeType]);
+                    } else {
+                        jQuery('#block-style-label').html('Abstract');
+                    }
+                }
+
+                break;
+            case 'documentcontents':
+                jQuery('#button-ul,#button-ol,#block-style-label').removeClass('disabled');
+
+                var headPath = theEditor.editor.selection.head.path,
+                anchorPath = theEditor.editor.selection.anchor.path,
+                blockNodeType = true, blockNode, nextBlockNodeType;
+
+                if (headPath[1]===anchorPath[1]) {
+                    // Selection within a single block.
+                    blockNode = theEditor.editor.doc.path(theEditor.editor.selection.anchor.path.slice(0,2));
+                    blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
+                    jQuery('#block-style-label').html('Body: ' + BLOCK_LABELS[blockNodeType]);
+                } else {
+                    var iterator = theEditor.editor.doc.path(theEditor.editor.selection.head.path.slice(0,1)).iter(
+                        _.min([headPath[1],anchorPath[1]]),
+                        _.max([headPath[1],anchorPath[1]])+1
+                    );
+
+                    while(!iterator.atEnd() && blockNodeType) {
+                        blockNode = iterator.next();
+                        nextBlockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
+                        if (blockNodeType===true) {
+                            blockNodeType = nextBlockNodeType;
+                        }
+                        if (blockNodeType !== nextBlockNodeType) {
+                            blockNodeType = false;
+                        }
+                    }
+
+                    if (blockNodeType) {
+                        jQuery('#block-style-label').html('Body: ' + BLOCK_LABELS[blockNodeType]);
+                    } else {
+                        jQuery('#block-style-label').html('Body');
+                    }
+                }
+
+                break;
+        }
+    }
+
 
     return true;
   }

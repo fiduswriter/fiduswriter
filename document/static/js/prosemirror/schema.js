@@ -250,6 +250,173 @@
 	  return dom;
 	};
 
+	var Footnote = (function (_pm$Inline) {
+	  _inherits(Footnote, _pm$Inline);
+
+	  function Footnote() {
+	    _classCallCheck(this, Footnote);
+
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Footnote).apply(this, arguments));
+	  }
+
+	  return Footnote;
+	})(pm.Inline);
+
+	Footnote.register("parseDOM", {
+	  tag: "span",
+	  parse: function parse(dom, state) {
+	    if (!dom.classList.contains('footnote')) return false;
+	    state.wrapIn(dom, this); // Doesn't currently work, see https://github.com/ProseMirror/prosemirror/issues/109
+	  }
+	});
+
+	Footnote.register("parseDOM", {
+	  tag: "span",
+	  parse: function parse(dom, state) {
+	    if (!dom.classList.contains('pagination-footnote')) return false;
+	    state.wrapIn(dom.firstChild.firstChild, this);
+	  }
+	});
+
+	Footnote.prototype.serializeDOM = function (node, serializer) {
+	  var dom = serializer.elt("span", {
+	    class: 'pagination-footnote'
+	  });
+	  dom.appendChild(serializer.elt("span"));
+	  dom.firstChild.appendChild(serializer.elt("span"));
+	  serializer.renderContent(node, dom.firstChild.firstChild);
+	  return dom;
+	};
+
+	var Citation = (function (_pm$Inline2) {
+	  _inherits(Citation, _pm$Inline2);
+
+	  function Citation() {
+	    _classCallCheck(this, Citation);
+
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Citation).apply(this, arguments));
+	  }
+
+	  return Citation;
+	})(pm.Inline);
+
+	Citation.register("parseDOM", {
+	  tag: "span",
+	  parse: function parse(dom, state) {
+	    if (!dom.classList.contains('citation')) return false;
+	    state.insertFrom(dom, this, {
+	      bibFormat: dom.getAttribute('data-bib-format'),
+	      bibEntry: dom.getAttribute('data-bib-entry'),
+	      bibBefore: dom.getAttribute('data-bib-before'),
+	      bibPage: dom.getAttribute('data-bib-page')
+	    });
+	  }
+	});
+
+	Citation.prototype.serializeDOM = function (node, serializer) {
+	  var dom = serializer.elt("span", {
+	    class: 'citation',
+	    dataBibFormat: node.attrs.bibFormat,
+	    dataBibEntry: node.attrs.bibEntry,
+	    dataBibBefore: node.attrs.bibBefore,
+	    dataBibPage: node.attrs.bibPage
+	  });
+	  return dom;
+	};
+
+	var Equation = (function (_pm$Inline3) {
+	  _inherits(Equation, _pm$Inline3);
+
+	  function Equation() {
+	    _classCallCheck(this, Equation);
+
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Equation).apply(this, arguments));
+	  }
+
+	  return Equation;
+	})(pm.Inline);
+
+	Equation.register("parseDOM", {
+	  tag: "span",
+	  parse: function parse(dom, state) {
+	    if (!dom.classList.contains('equation')) return false;
+	    state.insertFrom(dom, this, {
+	      equation: dom.getAttribute('data-equation')
+	    });
+	  }
+	});
+
+	Equation.prototype.serializeDOM = function (node, serializer) {
+	  var dom = serializer.elt("span", {
+	    class: 'equation',
+	    dataEquation: node.attrs.equation
+	  });
+	  return dom;
+	};
+
+	var Figure = (function (_pm$Block4) {
+	  _inherits(Figure, _pm$Block4);
+
+	  function Figure() {
+	    _classCallCheck(this, Figure);
+
+	    return _possibleConstructorReturn(this, Object.getPrototypeOf(Figure).apply(this, arguments));
+	  }
+
+	  return Figure;
+	})(pm.Block);
+
+	Figure.register("parseDOM", {
+	  tag: "figure",
+	  parse: function parse(dom, state) {
+	    state.insertFrom(dom, this, {
+	      equation: dom.getAttribute('data-equation'),
+	      image: dom.getAttribute('data-image'),
+	      figureCategory: dom.getAttribute('data-figure-category'),
+	      caption: dom.getAttribute('data-caption')
+	    });
+	  }
+	});
+
+	Figure.prototype.serializeDOM = function (node, serializer) {
+	  var dom = serializer.elt("figure", {
+	    dataEquation: node.attrs.equation,
+	    dataImage: node.attrs.image,
+	    dataFigureCategory: node.attrs.figureCategory,
+	    dataCaption: node.attrs.caption
+	  });
+	  if (node.attrs.image.length > 0) {
+	    dom.appendChild(serializer.elt("div"));
+	    dom.firstChild.appendChild(serializer.elt("img", {
+	      "src": ImageDB[node.attrs.image].image
+	    }));
+	  } else {
+	    dom.appendChild(serializer.elt("div", {
+	      class: 'figure-equation',
+	      dataEquation: node.attrs.equation
+	    }));
+	  }
+	  var captionNode = serializer.elt("figcaption");
+	  if (node.attrs.figureCategory !== 'none') {
+	    var figureCatNode = serializer.elt("span", {
+	      class: 'figure-cat-' + node.attrs.figureCategory,
+	      dataFigureCategory: node.attrs.figureCategory
+	    });
+	    figureCatNode.innerHTML = node.attrs.figureCategory;
+	    captionNode.appendChild(figureCatNode);
+	  }
+	  if (node.attrs.figureCaption !== '') {
+	    var captionTextNode = serializer.elt("span", {
+	      dataCaption: node.attrs.figureCaption
+	    });
+	    captionTextNode.innerHTML = node.attrs.figureCaption;
+
+	    captionNode.appendChild(captionTextNode);
+	  }
+	  dom.appendChild(captionNode);
+	  return dom;
+	};
+
 	var fidusSchema = new pm.Schema(pm.defaultSchema.spec.update({
 	  title: Title,
 	  metadata: MetaData,
@@ -257,7 +424,11 @@
 	  metadataauthors: MetaDataAuthors,
 	  metadataabstract: MetaDataAbstract,
 	  metadatakeywords: MetaDataKeywords,
-	  documentcontents: DocumentContents
+	  documentcontents: DocumentContents,
+	  footnote: Footnote,
+	  citation: Citation,
+	  equation: Equation,
+	  figure: Figure
 	}));
 
 	window.fidusSchema = fidusSchema;

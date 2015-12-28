@@ -140,7 +140,7 @@ export class HighlightToolbarButtons {
                   // Selection within a single block.
                   blockNode = theEditor.editor.doc.path(theEditor.editor.selection.anchor.path.slice(0,3));
                   blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
-                  jQuery('#block-style-label').html('Body: ' + BLOCK_LABELS[blockNodeType]);
+                  jQuery('#block-style-label').html('Abstract: ' + BLOCK_LABELS[blockNodeType]);
                 } else {
                     var iterator = theEditor.editor.doc.path(theEditor.editor.selection.head.path.slice(0,2)).iter(
                         _.min([headPath[2],anchorPath[2]]),

@@ -18,14 +18,14 @@
  *
  */
 // toolbar footnote
-jQuery(document).on('mousedown', '#button-footnote', function (event) {
+jQuery(document).on('mousedown', '#button-footnote:not(.disabled)', function (event) {
 
     var selection = rangy.getSelection(),
         range,
         fn, innerFootnote, scrollView;
-        
-    event.preventDefault();    
-        
+
+    event.preventDefault();
+
     if (selection.rangeCount > 0) {
         range = selection.getRangeAt(0);
         if (jQuery(range.startContainer).closest('#document-editable').length===0) {
@@ -34,8 +34,8 @@ jQuery(document).on('mousedown', '#button-footnote', function (event) {
     } else {
         return false;
     }
-    
-    
+
+
 
     if (jQuery(range.startContainer).closest('.pagination-footnote > span').length > 0) {
         // If user is trying to create a footnote inside another footnote, we stop.

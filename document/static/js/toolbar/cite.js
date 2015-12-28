@@ -18,8 +18,8 @@
  *
  */
 // toolbar cite
-jQuery(document).on('mousedown', '#button-cite, .citation', function(event) {
-
+jQuery(document).on('mousedown', '#button-cite:not(.disabled), .citation', function(event) {
+/*
     var ids,
         range = insertElement.findRange(),
         bibEntryStart,
@@ -268,4 +268,5 @@ jQuery(document).on('mousedown', '#button-cite, .citation', function(event) {
     jQuery('.fw-checkable').bind('click', function() {
         $.setCheckableLabel($(this));
     });
+    */
 });

@@ -1,12 +1,11 @@
 // toolbar link
-jQuery(document).on('mousedown', '#button-link', function(event) {
+jQuery(document).on('mousedown', '#button-link:not(.disabled)', function(event) {
 
     if (!theEditor.editor.hasFocus()) {
       return false;
     }
 
-    var selection = theEditor.editor.selection,
-        dialogButtons = [],
+    var dialogButtons = [],
         dialog,
         link = 'http://',
         linkTitle = '',

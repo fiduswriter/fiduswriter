@@ -18,8 +18,8 @@
  *
  */
 // toolbar figure
-jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (event) {
-
+jQuery(document).on('mousedown', '#button-figure:not(.disabled), :not(.del) figure', function (event) {
+/*
     var selection = rangy.getSelection(),
         range,
         dialog, submitMessage = gettext('Insert'),
@@ -238,11 +238,7 @@ jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (
 
     dialog.dialog(dialogOpts);
 
-    mathInput = jQuery('input[name=figure-math]', dialog); /*.focus(
-        function (
-            e) {
-            return this.select();
-        });*/
+    mathInput = jQuery('input[name=figure-math]', dialog);
     captionInput = jQuery('input[name=figure-caption]', dialog)
         .focus(function (
             e) {
@@ -369,7 +365,7 @@ jQuery(document).on('mousedown', '#button-figure, :not(.del) figure', function (
 
         });
 
-
+*/
 });
 
 // functions for the image selection dialog

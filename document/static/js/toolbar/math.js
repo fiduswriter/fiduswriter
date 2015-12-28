@@ -18,7 +18,8 @@
  *
  */
 // toolbar math
-jQuery(document).on('mousedown', '#button-math, .equation', function (event) {
+jQuery(document).on('mousedown', '#button-math:not(.disabled), .equation', function (event) {
+  /*
     event.preventDefault();
     var selection = rangy.getSelection(),
         range,
@@ -114,5 +115,5 @@ jQuery(document).on('mousedown', '#button-math, .equation', function (event) {
         }
     });
 
-
+*/
 });

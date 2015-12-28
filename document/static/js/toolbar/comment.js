@@ -19,23 +19,23 @@
  */
 // Toolbar comment
 jQuery(document).on('mousedown', '#button-comment:not(.disabled)', function (event) {
-  
+  /*
     var selection = rangy.getSelection(),
         range,
         insideComment,
         commentNode, insideCitation, savedSel;
-        
-        
+
+
     if (selection.rangeCount > 0) {
         range = selection.getRangeAt(0);
     } else {
         return false;
     }
-    
+
     insideComment = jQuery(range.startContainer).closest('.comment')[0];
-        
-    event.preventDefault();    
-        
+
+    event.preventDefault();
+
     if (insideComment) {
         commentNode = insideComment;
     } else {
@@ -55,7 +55,7 @@ jQuery(document).on('mousedown', '#button-comment:not(.disabled)', function (eve
             range.nativeRange.expand('word');
             if (range.nativeRange.collapsed) {
                 // The range is still collapsed! We must have been some place where there was no word.
-                // We move the start of the range one character to the left and try again. 
+                // We move the start of the range one character to the left and try again.
                 range.moveCharLeft(true, 1);
                 range.nativeRange.expand('word');
 
@@ -86,5 +86,5 @@ jQuery(document).on('mousedown', '#button-comment:not(.disabled)', function (eve
         commentHelpers.createNewComment(commentNode);
     }
 
-    commentHelpers.layoutComments();
+    commentHelpers.layoutComments();*/
 });

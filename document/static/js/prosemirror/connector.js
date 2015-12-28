@@ -69,7 +69,8 @@
 	      metadataSubtitleNode = aDocument.metadata.subtitle ? exporter.obj2Node(aDocument.metadata.subtitle) : document.createElement('div'),
 	      metadataAuthorsNode = aDocument.metadata.authors ? exporter.obj2Node(aDocument.metadata.authors) : document.createElement('div'),
 	      metadataAbstractNode = aDocument.metadata.abstract ? exporter.obj2Node(aDocument.metadata.abstract) : document.createElement('div'),
-	      metadataKeywordsNode = aDocument.metadata.keywords ? exporter.obj2Node(aDocument.metadata.keywords) : document.createElement('div');
+	      metadataKeywordsNode = aDocument.metadata.keywords ? exporter.obj2Node(aDocument.metadata.keywords) : document.createElement('div'),
+	      doc;
 
 	  titleNode.id = 'document-title';
 	  metadataNode.id = 'document-metadata';
@@ -87,14 +88,10 @@
 	  editorNode.appendChild(metadataNode);
 	  editorNode.appendChild(documentContentsNode);
 
-	  //      console.log(editorNode.innerHTML)
-
-	  var doc = pm.fromDOM(fidusSchema, editorNode);
+	  doc = pm.fromDOM(fidusSchema, editorNode);
 	  theEditor.editor = makeEditor(document.getElementById('document-editable'), doc);
 
-	  var editorTools = document.getElementById('editor-tools-wrapper');
-	  //editorTools.innerHTML = '';
-	  //editorTools.appendChild(document.querySelector('.ProseMirror-menubar'));
+	  new HighlightToolbarButtons(theEditor.editor, "selectionChange change activeMarkChange");
 	};
 
 	theEditor.fromDOM = pm.fromDOM;

@@ -84,8 +84,6 @@
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/header-menu.css" />
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/bibliography.css" />
 
-            <!-- ICE -->
-            <link rel="stylesheet" href="{{ STATIC_URL }}css/ice.css" type="text/css">
             <!-- Editor -->
             <link rel="stylesheet" href="{{ STATIC_URL }}css/texteditor.css" type="text/css">
             <!-- Comments -->
@@ -145,8 +143,6 @@
             var document_style_folder_path = '{{ STATIC_URL }}css/document/';
         </script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.autoresize.js"></script>
-        <!-- diff-match-patch -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/diff_match_patch.js"></script>
 
         {% compress js %}
 
@@ -179,8 +175,6 @@
                 // Prevent migrate messages. Currently only one message from hallo.js is being created.
                 jQuery.migrateMute = true;
             </script>
-            <!-- diffDOM -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/diffDOM.js"></script>
             <!-- Django form submission code -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/csrf.js"></script>
             <!-- jQuery tablesorter -->
@@ -204,12 +198,6 @@
             <!-- Question Mark -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/question.mark.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/question.mark.templates.js"></script>
-
-            <!-- ICE -->
-            <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/ice.js'></script>
-            <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/dom.js'></script>
-            <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/bookmark.js'></script>
-            <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/selection.js'></script>
 
             <!-- Functions to modify bibliography -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-statics.js"></script>
@@ -239,17 +227,12 @@
             <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/undo_redo.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/comment.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/templates.js"></script>
-            <!-- Editor insert functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/insert-element.js"></script>
             <!-- Access rights dialog -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/document-accessrights-templates.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/document-accessrights-helpers.js"></script>
             <!-- Comment functions -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/comment-templates.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/comment-helpers.js"></script>
-            <!-- Tracking functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/tracking-templates.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/tracking-helpers.js"></script>
             <!-- File export functions -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/export-templates.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.js"></script>
@@ -269,15 +252,9 @@
             <script type="text/javascript">
                 serverCommunications.bind();
             </script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/diff-helpers.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/node-converter.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/dom.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/manual-edits.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/key-events.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/key-events-firefox.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/clean-HTML.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/cut.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/paste.js"></script>
         {% endcompress %}
 
         <script type="text/javascript">

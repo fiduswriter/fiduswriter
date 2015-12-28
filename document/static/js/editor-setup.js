@@ -224,7 +224,7 @@ jQuery(document).bind('documentDataLoaded', function() {
         mathHelpers.resetMath();
 
 
-        diffHelpers.setup();
+//        diffHelpers.setup();
 
         // Set Auto-save to save every ten seconds
         setInterval(function() {
@@ -254,7 +254,7 @@ jQuery(document).bind('documentDataLoaded', function() {
         }
 
 
-        keyEvents.bindEvents();
+//        keyEvents.bindEvents();
 
         // Bind comment functions
         commentHelpers.bindEvents();
@@ -354,7 +354,7 @@ jQuery(document).bind('documentDataLoaded', function() {
                 return false;
             });
 
-            jQuery('.ice-accept-all').bind('mousedown', function() {
+          /*  jQuery('.ice-accept-all').bind('mousedown', function() {
                 window.tracker.acceptAll();
                 editorHelpers.documentHasChanged();
                 return false;
@@ -364,14 +364,14 @@ jQuery(document).bind('documentDataLoaded', function() {
                 window.tracker.rejectAll();
                 editorHelpers.documentHasChanged();
                 return false;
-            });
+            });*/
 
             // Bind in-text tracking menu
-            trackingHelpers.bindEvents();
+        //    trackingHelpers.bindEvents();
         } else {
-            jQuery('.ice-track').addClass('disabled');
-            jQuery('.ice-accept-all').addClass('disabled');
-            jQuery('.ice-reject-all').addClass('disabled');
+            //jQuery('.ice-track').addClass('disabled');
+            //jQuery('.ice-accept-all').addClass('disabled');
+            //jQuery('.ice-reject-all').addClass('disabled');
         }
 
 

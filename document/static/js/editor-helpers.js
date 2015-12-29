@@ -164,23 +164,18 @@
      * that differ from session to session.
      */
     editorHelpers.updateEditorPage = function (aDocument) {
-      /*  console.log('updating editor');
+        console.log('updating editor');
 
         clearInterval(diffHelpers.diffTimer);
         jQuery('.toolbarundoredo button').addClass('disabled');
         theDocumentValues.changed = false;
-        theDocumentValues.touched = false;
         theDocument.settings = jQuery.parseJSON(aDocument.settings);
         theDocument.metadata = jQuery.parseJSON(aDocument.metadata);
         theDocument.contents = jQuery.parseJSON(aDocument.contents);
 
-        editorHelpers.setDisplay.document('contents', theDocument.contents);
-        editorHelpers.setDisplay.document('metadata.title', theDocument.metadata
-            .title);
-        editorHelpers.layoutMetadata();
-        diffHelpers.setup();
+        theEditor.update(theDocument);
         mathHelpers.resetMath();
-        citationHelpers.formatCitationsInDoc();*/
+        citationHelpers.formatCitationsInDoc();
     };
 
 
@@ -197,13 +192,11 @@
         theDocument = aDocument;
         theDocumentValues = aDocumentValues;
         theDocumentValues.changed = false;
-      //  theDocumentValues.touched = false;
         theDocumentValues.virgin = true;
         theDocument.settings = jQuery.parseJSON(theDocument.settings);
         theDocument.metadata = jQuery.parseJSON(theDocument.metadata);
 
         theDocument.contents = jQuery.parseJSON(theDocument.contents);
-//        delete theDocument.contents.a; // Remove all attributes of the top elements. These should not be stored in the database, but have been there in the past.
         documentId = theDocument.id;
 
         DEFAULTS = [
@@ -236,11 +229,8 @@
                 "/");
             delete theDocumentValues.is_new;
         }
-        theEditor.loadDocument(theDocument);
+        theEditor.initiate(theDocument);
 
-//        editorHelpers.setDisplay.document('contents', theDocument.contents);
-//        editorHelpers.setDisplay.document('metadata.title', theDocument.metadata
-//            .title);
         // Wait one second and then relayout the footnotes. At this time the fonts should have loaded.
 
         setTimeout(function() {

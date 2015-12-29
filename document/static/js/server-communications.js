@@ -86,7 +86,7 @@
             });
             break;
         case 'document_data_update':
-        //    editorHelpers.updateEditorPage(data.document);
+            editorHelpers.updateEditorPage(data.document);
             break;
         case 'diff':
             theEditor.applyDiffs(data);

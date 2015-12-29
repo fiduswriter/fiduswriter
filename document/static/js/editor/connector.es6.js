@@ -13,7 +13,7 @@ function makeEditor (where, doc) {
 };
 
 
-theEditor.loadDocument = function (aDocument) {
+theEditor.createDoc = function (aDocument) {
     var editorNode = document.createElement('div'),
       titleNode = exporter.obj2Node(aDocument.metadata.title),
       metadataNode = document.createElement('div'),
@@ -41,13 +41,21 @@ theEditor.loadDocument = function (aDocument) {
       editorNode.appendChild(documentContentsNode);
 
       doc = pm.fromDOM(fidusSchema, editorNode)
+
+      return doc;
+};
+
+theEditor.initiate = function (aDocument) {
+      let doc = theEditor.createDoc(aDocument);
       theEditor.editor = makeEditor(document.getElementById('document-editable'), doc);
-
       new UpdateUI(theEditor.editor, "selectionChange change activeMarkChange");
-
       theEditor.editor.on('change', editorHelpers.documentHasChanged);
-
       theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators);
+};
+
+theEditor.update = function (aDocument) {
+      let doc = theEditor.createDoc(aDocument);
+      theEditor.editor.updateDoc(doc);
 };
 
 theEditor.getUpdates = function (callback) {
@@ -76,7 +84,6 @@ theEditor.sendToCollaborators = function () {
               diff: toSend.steps.map(s => s.toJSON())
           }
           serverCommunications.send(aPackage);
-          console.log('sent: ' + JSON.stringify(aPackage));
       }
 
       pm.mod.collab.confirmSteps(toSend)
@@ -109,10 +116,13 @@ theEditor.getHash = function () {
 };
 
 theEditor.checkHash = function(hash) {
-    if (hash===theEditor.getHash()) return true;
-
+    console.log('Verifying hash')
+    if (hash===theEditor.getHash()) {
+        console.log('Hash could be verified');
+        return true;
+    }
+    console.log('Hash could not be verified, requesting document.');
     serverCommunications.send({type: 'get_document_update'});
-
     return false;
 }
 

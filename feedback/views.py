@@ -39,11 +39,3 @@ def feedback(request):
         response,
         status=status
     )
-
-
-def browser(request):
-    response={}
-    response['user'] = request.user
-    response.update(csrf(request))
-    return render(request,'feedback/browser.html',
-        response)

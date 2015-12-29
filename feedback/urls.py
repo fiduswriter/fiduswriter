@@ -21,5 +21,4 @@ from . import views
 
 urlpatterns = [
     url('^feedback/$', views.feedback, name='feedback'),
-    url('^browser/$', views.browser, name='browser'),
 ]

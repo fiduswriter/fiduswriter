@@ -20,18 +20,6 @@
             {% else %}
                 var websocketServer = location.host.split(':')[0];
             {% endif %}
-
-            var isChrome = (window.hasOwnProperty('chrome')),
-                isSafari = (navigator.userAgent.indexOf('Safari/') > -1),
-                isFirefox = !(window.mozInnerScreenX == null);
-
-            if(!(isChrome || isSafari)) {
-                var currentURL = location.href.substr(7);
-                var currentRelativeURL = currentURL.substr(currentURL.indexOf('/'));
-                if(currentRelativeURL != '/feedback/browser/') {
-                    window.location = '/feedback/browser';
-                }
-            }
         </script>
         <style>
             #metadata-subtitle:empty:not(:focus)::before, #metadata-subtitle:not(:focus) > p:first-child:only-child > br::before {
@@ -265,11 +253,6 @@
                     link.type = 'text/css';
                     link.href = '{{ STATIC_URL }}css/windows-chrome-fonts.css';
                     document.head.appendChild(link);
-            }
-        </script>
-        <script>
-            if (isFirefox) {
-                window.keyEvents = window.keyEventsFirefox;
             }
         </script>
     </head>

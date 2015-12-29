@@ -243,18 +243,6 @@
             <script type="text/javascript" src="{{ STATIC_URL }}js/node-converter.js"></script>
         {% endcompress %}
 
-        <script type="text/javascript">
-
-            if(window.chrome && navigator.appVersion.indexOf("Win") !== -1) {
-                // We are running Chrome on Windows. We will now load a special style file to make font rendering work.
-                    var link  = document.createElement('link');
-                    link.rel  = 'stylesheet';
-                    link.media = 'all';
-                    link.type = 'text/css';
-                    link.href = '{{ STATIC_URL }}css/windows-chrome-fonts.css';
-                    document.head.appendChild(link);
-            }
-        </script>
     </head>
     <body class="{% trans "en" %} tex2jax_ignore">
         <div id="editor">

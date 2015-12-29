@@ -238,7 +238,7 @@ jQuery(document).bind('documentDataLoaded', function() {
                 console.log('sending hash');
                 serverCommunications.send({
                     type: 'hash',
-                    hash: editorHelpers.docHash()
+                    hash: theEditor.getHash()
                 })
             }
         }, 10000);

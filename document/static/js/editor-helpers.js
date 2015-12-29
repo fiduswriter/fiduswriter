@@ -537,26 +537,26 @@
      * @memberof editorHelpers
      */
 
-    editorHelpers.docHash = function() {
-        var str = theDocumentValues.diffNode.textContent, res = 0, len = str.length;
+/*    editorHelpers.getHash = function(string) {
+        var res = 0, len = string.length;
         for (var i = 0; i < len; i++) {
-            res = res * 31 + str.charCodeAt(i);
+            res = res * 31 + string.charCodeAt(i);
             res = res & res;
         }
         return res;
-    }
+    }*/
 
     /** Checks whether a hash sum corresponds with the local document.
      * @function checkHash
      * @memberof editorHelpers
      */
-    editorHelpers.checkHash = function(hash) {
+    /*editorHelpers.checkHash = function(hash) {
         if (editorHelpers.docHash() != hash) {
             console.log('Hash did not match. Will get update from server.');
             theDocumentValues.disableInput = true;
             serverCommunications.send({type: 'get_document_update'});
         }
-    }
+    }*/
 
 
 

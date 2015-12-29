@@ -89,7 +89,7 @@
         //    editorHelpers.updateEditorPage(data.document);
             break;
         case 'diff':
-            theDocumentValues.newDiffs.push(data);
+            theEditor.applyDiffs(data);
             break;
         case 'transform':
             editorHelpers.setDocumentData(data.change[0], data.change[1], false);
@@ -99,9 +99,9 @@
             theDocumentValues.control = true;
             theDocumentValues.sentHash = false;
             break;
-/*        case 'hash':
-            editorHelpers.checkHash(data.hash);
-            break;*/
+        case 'hash':
+            theEditor.checkHash(data.hash);
+            break;
         }
     };
 
@@ -111,9 +111,9 @@
             return entry[0];
         });
         if (participant_list.length > 1 && (!theDocumentValues.collaborativeMode)) {
-            diffHelpers.startCollaborativeMode();
+            theEditor.startCollaborativeMode();
         } else if (participant_list.length === 1 && theDocumentValues.collaborativeMode) {
-            diffHelpers.stopCollaborativeMode();
+            theEditor.stopCollaborativeMode();
         }
         chatHelpers.updateParticipantList(participant_list);
     };

@@ -4,6 +4,147 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var _edit = require("../edit");
+
+var _utilEvent = require("../util/event");
+
+var _rebase = require("./rebase");
+
+exports.rebaseSteps = _rebase.rebaseSteps;
+
+(0, _edit.defineOption)("collab", false, function (pm, value) {
+  if (pm.mod.collab) {
+    pm.mod.collab.detach();
+    pm.mod.collab = null;
+  }
+
+  if (value) {
+    pm.mod.collab = new Collab(pm, value);
+  }
+});
+
+var Collab = (function () {
+  function Collab(pm, options) {
+    var _this = this;
+
+    _classCallCheck(this, Collab);
+
+    this.pm = pm;
+    this.options = options;
+
+    this.version = options.version || 0;
+    this.versionDoc = pm.doc;
+
+    this.unconfirmedSteps = [];
+    this.unconfirmedMaps = [];
+
+    pm.on("transform", this.onTransform = function (transform) {
+      for (var i = 0; i < transform.steps.length; i++) {
+        _this.unconfirmedSteps.push(transform.steps[i]);
+        _this.unconfirmedMaps.push(transform.maps[i]);
+      }
+      _this.signal("mustSend");
+    });
+    pm.on("beforeSetDoc", this.onSetDoc = function () {
+      throw new Error("setDoc is not supported on a collaborative editor");
+    });
+    pm.history.allowCollapsing = false;
+  }
+
+  _createClass(Collab, [{
+    key: "detach",
+    value: function detach() {
+      this.pm.off("transform", this.onTransform);
+      this.pm.off("beforeSetDoc", this.onSetDoc);
+      this.pm.history.allowCollapsing = true;
+    }
+  }, {
+    key: "hasSendableSteps",
+    value: function hasSendableSteps() {
+      return this.unconfirmedSteps.length > 0;
+    }
+  }, {
+    key: "sendableSteps",
+    value: function sendableSteps() {
+      return {
+        version: this.version,
+        doc: this.pm.doc,
+        steps: this.unconfirmedSteps.slice()
+      };
+    }
+  }, {
+    key: "confirmSteps",
+    value: function confirmSteps(sendable) {
+      this.unconfirmedSteps.splice(0, sendable.steps.length);
+      this.unconfirmedMaps.splice(0, sendable.steps.length);
+      this.version += sendable.steps.length;
+      this.versionDoc = sendable.doc;
+    }
+  }, {
+    key: "receive",
+    value: function receive(steps) {
+      var doc = this.versionDoc;
+      var maps = steps.map(function (step) {
+        var result = step.apply(doc);
+        doc = result.doc;
+        return result.map;
+      });
+      this.version += steps.length;
+      this.versionDoc = doc;
+
+      var rebased = (0, _rebase.rebaseSteps)(doc, maps, this.unconfirmedSteps, this.unconfirmedMaps);
+      this.unconfirmedSteps = rebased.transform.steps.slice();
+      this.unconfirmedMaps = rebased.transform.maps.slice();
+
+      this.pm.updateDoc(rebased.doc, rebased.mapping);
+      this.pm.history.rebased(maps, rebased.transform, rebased.positions);
+      return maps;
+    }
+  }]);
+
+  return Collab;
+})();
+
+(0, _utilEvent.eventMixin)(Collab);
+},{"../edit":11,"../util/event":48,"./rebase":2}],2:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.rebaseSteps = rebaseSteps;
+
+var _transform = require("../transform");
+
+function rebaseSteps(doc, forward, steps, maps) {
+  var remap = new _transform.Remapping([], forward.slice());
+  var transform = new _transform.Transform(doc);
+  var positions = [];
+
+  for (var i = 0; i < steps.length; i++) {
+    var step = steps[i].map(remap);
+    var result = step && transform.step(step);
+    var id = remap.addToFront(maps[i].invert());
+    if (result) {
+      remap.addToBack(result.map, id);
+      positions.push(transform.steps.length - 1);
+    } else {
+      positions.push(-1);
+    }
+  }
+  return { doc: transform.doc, transform: transform, mapping: remap, positions: positions };
+}
+},{"../transform":38}],3:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 exports.elt = elt;
 exports.requestAnimationFrame = requestAnimationFrame;
 exports.rmClass = rmClass;
@@ -84,7 +225,7 @@ function insertCSS(css) {
   style.textContent = css;
   document.head.insertBefore(style, document.head.firstChild);
 }
-},{}],2:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -148,7 +289,7 @@ if (_dom.browser.mac) keys["Ctrl-F"] = keys["Ctrl-B"] = keys["Ctrl-P"] = keys["C
 
 var captureKeys = new _keys.Keymap(keys);
 exports.captureKeys = captureKeys;
-},{"../dom":1,"./keys":11,"./selection":15}],3:[function(require,module,exports){
+},{"../dom":3,"./keys":13,"./selection":17}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -187,7 +328,7 @@ function charCategory(ch) {
 function isExtendingChar(ch) {
   return ch.charCodeAt(0) >= 768 && extendingChar.test(ch);
 }
-},{}],4:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1672,13 +1813,13 @@ _options.defaultRegistry.register("command", {
   },
   key: ["Mod-Y", "Shift-Mod-Z"]
 });
-},{"../dom":1,"../model":24,"../transform":36,"../util/sortedinsert":48,"./char":3,"./keys":11,"./options":13,"./selection":15}],5:[function(require,module,exports){
+},{"../dom":3,"../model":26,"../transform":38,"../util/sortedinsert":50,"./char":5,"./keys":13,"./options":15,"./selection":17}],7:[function(require,module,exports){
 "use strict";
 
 var _dom = require("../dom");
 
 (0, _dom.insertCSS)("\n\n.ProseMirror {\n  border: 1px solid silver;\n  position: relative;\n}\n\n.ProseMirror-content {\n  padding: 4px 8px 4px 14px;\n  white-space: pre-wrap;\n  line-height: 1.2;\n}\n\n.ProseMirror-drop-target {\n  position: absolute;\n  width: 1px;\n  background: #666;\n  display: none;\n}\n\n.ProseMirror-content ul.tight p, .ProseMirror-content ol.tight p {\n  margin: 0;\n}\n\n.ProseMirror-content ul, .ProseMirror-content ol {\n  padding-left: 30px;\n  cursor: default;\n}\n\n.ProseMirror-content blockquote {\n  padding-left: 1em;\n  border-left: 3px solid #eee;\n  margin-left: 0; margin-right: 0;\n}\n\n.ProseMirror-content pre {\n  white-space: pre-wrap;\n}\n\n.ProseMirror-selectednode {\n  outline: 2px solid #8cf;\n}\n\n.ProseMirror-content p:first-child,\n.ProseMirror-content h1:first-child,\n.ProseMirror-content h2:first-child,\n.ProseMirror-content h3:first-child,\n.ProseMirror-content h4:first-child,\n.ProseMirror-content h5:first-child,\n.ProseMirror-content h6:first-child {\n  margin-top: .3em;\n}\n\n/* Add space around the hr to make clicking it easier */\n\n.ProseMirror-content hr {\n  position: relative;\n  height: 6px;\n  border: none;\n}\n\n.ProseMirror-content hr:after {\n  content: \"\";\n  position: absolute;\n  left: 10px;\n  right: 10px;\n  top: 2px;\n  border-top: 2px solid silver;\n}\n\n.ProseMirror-content img {\n  cursor: default;\n}\n\n/* Make sure li selections wrap around markers */\n\n.ProseMirror-content li {\n  position: relative;\n  pointer-events: none; /* Don't do weird stuff with marker clicks */\n}\n.ProseMirror-content li > * {\n  pointer-events: auto;\n}\n\nli.ProseMirror-selectednode {\n  outline: none;\n}\n\nli.ProseMirror-selectednode:after {\n  content: \"\";\n  position: absolute;\n  left: -32px;\n  right: -2px; top: -2px; bottom: -2px;\n  border: 2px solid #8cf;\n  pointer-events: none;\n}\n\n");
-},{"../dom":1}],6:[function(require,module,exports){
+},{"../dom":3}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1858,7 +1999,7 @@ function scanText(start, end) {
     cur = cur.firstChild || nodeAfter(cur);
   }
 }
-},{"../model":24,"../parse/dom":29,"../transform/tree":44,"./selection":15}],7:[function(require,module,exports){
+},{"../model":26,"../parse/dom":31,"../transform/tree":46,"./selection":17}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2021,7 +2162,7 @@ function redraw(pm, dirty, doc, prev) {
   }
   scan(pm.content, doc, prev);
 }
-},{"../dom":1,"../model":24,"../serialize/dom":32,"./main":12}],8:[function(require,module,exports){
+},{"../dom":3,"../model":26,"../serialize/dom":34,"./main":14}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2503,7 +2644,7 @@ var History = (function () {
 })();
 
 exports.History = History;
-},{"../model":24,"../transform":36}],9:[function(require,module,exports){
+},{"../model":26,"../transform":38}],11:[function(require,module,exports){
 // !! This module implements the ProseMirror editor. It contains
 // functionality related to editing, selection, and integration with
 // the browser. `ProseMirror` is the class you'll want to instantiate
@@ -2604,7 +2745,7 @@ Object.defineProperty(exports, "Command", {
     return _commands.Command;
   }
 });
-},{"./commands":4,"./keys":11,"./main":12,"./options":13,"./range":14,"./selection":15}],10:[function(require,module,exports){
+},{"./commands":6,"./keys":13,"./main":14,"./options":15,"./range":16,"./selection":17}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3087,7 +3228,7 @@ handlers.blur = function (pm) {
   // Fired when the editor loses focus.
   pm.signal("blur");
 };
-},{"../dom":1,"../model":24,"../parse":30,"../parse/dom":29,"../parse/text":31,"../serialize/dom":32,"../serialize/text":34,"./capturekeys":2,"./domchange":6,"./keys":11,"./selection":15}],11:[function(require,module,exports){
+},{"../dom":3,"../model":26,"../parse":32,"../parse/dom":31,"../parse/text":33,"../serialize/dom":34,"../serialize/text":36,"./capturekeys":4,"./domchange":8,"./keys":13,"./selection":17}],13:[function(require,module,exports){
 // From CodeMirror, should be factored into its own NPM module
 
 // declare_global: navigator
@@ -3269,7 +3410,7 @@ var Keymap = (function () {
 })();
 
 exports.Keymap = Keymap;
-},{}],12:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4012,7 +4153,7 @@ var EditorTransform = (function (_Transform) {
 
   return EditorTransform;
 })(_transform.Transform);
-},{"../dom":1,"../model":24,"../parse":30,"../parse/text":31,"../serialize":33,"../serialize/text":34,"../transform":36,"../util/event":46,"../util/map":47,"../util/sortedinsert":48,"./commands":4,"./css":5,"./draw":7,"./history":8,"./input":10,"./keys":11,"./options":13,"./range":14,"./selection":15}],13:[function(require,module,exports){
+},{"../dom":3,"../model":26,"../parse":32,"../parse/text":33,"../serialize":35,"../serialize/text":36,"../transform":38,"../util/event":48,"../util/map":49,"../util/sortedinsert":50,"./commands":6,"./css":7,"./draw":9,"./history":10,"./input":12,"./keys":13,"./options":15,"./range":16,"./selection":17}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4175,7 +4316,7 @@ function setOption(pm, name, value) {
   pm.options[name] = value;
   if (desc.update) desc.update(pm, value, old, false);
 }
-},{"../model":24}],14:[function(require,module,exports){
+},{"../model":26}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4377,7 +4518,7 @@ var RangeTracker = (function () {
 
   return RangeTracker;
 })();
-},{"../util/event":46}],15:[function(require,module,exports){
+},{"../util/event":48}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5191,7 +5332,7 @@ function setDOMSelectionToPos(pm, pos) {
   sel.removeAllRanges();
   sel.addRange(range);
 }
-},{"../dom":1,"../model":24}],16:[function(require,module,exports){
+},{"../dom":3,"../model":26}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5239,7 +5380,7 @@ function buildSVG(name, data) {
 }
 
 (0, _dom.insertCSS)("\n.ProseMirror-icon {\n  display: inline-block;\n  line-height: .8;\n  vertical-align: middle;\n  padding: 2px 8px;\n  cursor: pointer;\n}\n\n.ProseMirror-icon-active {\n  background: #666;\n  border-radius: 4px;\n}\n\n.ProseMirror-icon svg {\n  fill: currentColor;\n  height: 1em;\n}\n");
-},{"../dom":1}],17:[function(require,module,exports){
+},{"../dom":3}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5423,7 +5564,7 @@ function resolveIcon(pm, command) {
 
 function renderSelect(item, menu) {
   var param = item.params[0];
-  var value = !param["default"] ? null : param["default"].call ? param["default"](menu.pm) : param["default"];
+  var value = paramDefault(param, menu.pm, item);
 
   var dom = (0, _dom.elt)("div", { "class": "ProseMirror-select ProseMirror-select-command-" + item.name, title: item.label }, !value ? param.defaultLabel || "Select..." : value.display ? value.display(value) : value.label);
   dom.addEventListener("mousedown", function (e) {
@@ -5468,12 +5609,16 @@ function renderItem(item, menu) {
   if (display == "icon") return renderIcon(item, menu);else if (display == "select") return renderSelect(item, menu);else if (!display) throw new Error("Command " + item.name + " can not be shown in a menu");else return display.call(item, menu);
 }
 
+function paramDefault(param, pm, command) {
+  return !param["default"] ? "" : param["default"].call ? param["default"].call(command.self, pm) : param["default"];
+}
+
 function buildParamForm(pm, command) {
-  var prefill = command.spec.prefillParams && command.spec.prefillParams(pm);
+  var prefill = command.spec.prefillParams && command.spec.prefillParams.call(command.self, pm);
   var fields = command.params.map(function (param, i) {
     var field = undefined,
         name = "field_" + i;
-    var val = prefill ? prefill[i] : param["default"] || "";
+    var val = prefill ? prefill[i] : paramDefault(param, pm, command);
     if (param.type == "text") field = (0, _dom.elt)("input", { name: name, type: "text",
       placeholder: param.label,
       value: val,
@@ -5491,7 +5636,7 @@ function gatherParams(pm, command, form) {
   var params = command.params.map(function (param, i) {
     var val = form.elements["field_" + i].value;
     if (val) return val;
-    if (param["default"] == null) bad = true;else return param["default"].call ? param["default"](pm) : param["default"];
+    if (param["default"] == null) bad = true;else return paramDefault(param, pm, command);
   });
   return bad ? null : params;
 }
@@ -5583,7 +5728,7 @@ function tooltipParamHandler(pm, command, callback) {
 
 // FIXME check for obsolete styles
 (0, _dom.insertCSS)("\n\n.ProseMirror-menu {\n  margin: 0 -4px;\n  line-height: 1;\n  white-space: pre;\n}\n.ProseMirror-tooltip .ProseMirror-menu {\n  width: -webkit-fit-content;\n  width: fit-content;\n}\n\n.ProseMirror-tooltip-back-wrapper {\n  padding-left: 12px;\n}\n.ProseMirror-tooltip-back {\n  position: absolute;\n  top: 5px; left: 5px;\n  cursor: pointer;\n}\n.ProseMirror-tooltip-back:after {\n  content: \"«\";\n}\n\n.ProseMirror-menuicon {\n  margin: 0 7px;\n}\n\n.ProseMirror-menuseparator {\n  display: inline-block;\n}\n.ProseMirror-menuseparator:after {\n  content: \"︙\";\n  opacity: 0.5;\n  padding: 0 4px;\n  vertical-align: baseline;\n}\n\n.ProseMirror-select, .ProseMirror-select-menu {\n  border: 1px solid #777;\n  border-radius: 3px;\n  font-size: 90%;\n}\n\n.ProseMirror-select {\n  padding: 1px 12px 1px 4px;\n  display: inline-block;\n  vertical-align: middle;\n  position: relative;\n  cursor: pointer;\n  margin: 0 8px;\n}\n\n.ProseMirror-select-command-textblockType {\n  min-width: 3.2em;\n}\n\n.ProseMirror-select:after {\n  content: \"▿\";\n  color: #777;\n  position: absolute;\n  right: 4px;\n}\n\n.ProseMirror-select-menu {\n  position: absolute;\n  background: #444;\n  color: white;\n  padding: 2px 2px;\n  z-index: 15;\n}\n.ProseMirror-select-menu div {\n  cursor: pointer;\n  padding: 0 1em 0 2px;\n}\n.ProseMirror-select-menu div:hover {\n  background: #777;\n}\n\n");
-},{"../dom":1,"../edit":9,"../util/sortedinsert":48,"./icons":16,"./tooltip":19}],18:[function(require,module,exports){
+},{"../dom":3,"../edit":11,"../util/sortedinsert":50,"./icons":18,"./tooltip":21}],20:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -5768,7 +5913,7 @@ function findWrappingScrollable(node) {
 }
 
 (0, _dom.insertCSS)("\n.ProseMirror-menubar {\n  position: relative;\n  margin-bottom: 3px;\n  border-top-left-radius: inherit;\n  border-top-right-radius: inherit;\n}\n\n.ProseMirror-menubar-inner {\n  color: #666;\n  padding: 1px 6px;\n  top: 0; left: 0; right: 0;\n  position: absolute;\n  border-bottom: 1px solid silver;\n  background: white;\n  z-index: 10;\n  -moz-box-sizing: border-box;\n  box-sizing: border-box;\n  overflow: hidden;\n  border-top-left-radius: inherit;\n  border-top-right-radius: inherit;\n}\n\n.ProseMirror-menubar .ProseMirror-icon-active {\n  background: #eee;\n}\n\n.ProseMirror-menubar input[type=\"text\"],\n.ProseMirror-menubar textarea {\n  background: #eee;\n  color: black;\n  border: none;\n  outline: none;\n  width: 100%;\n  box-sizing: -moz-border-box;\n  box-sizing: border-box;\n}\n\n.ProseMirror-menubar input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n.ProseMirror-menubar form {\n  position: relative;\n  padding: 2px 4px;\n}\n\n.ProseMirror-menubar .ProseMirror-blocktype {\n  border: 1px solid #ccc;\n  min-width: 4em;\n}\n.ProseMirror-menubar .ProseMirror-blocktype:after {\n  color: #ccc;\n}\n\n.ProseMirror-menubar-sliding {\n  -webkit-transition: left 0.2s ease-out;\n  -moz-transition: left 0.2s ease-out;\n  transition: left 0.2s ease-out;\n  position: relative;\n  left: 100%;\n  width: 100%;\n  box-sizing: -moz-border-box;\n  box-sizing: border-box;\n  padding-left: 16px;\n  background: white;\n}\n\n.ProseMirror-menubar-back {\n  position: absolute;\n  height: 100%;\n  margin-top: -1px;\n  padding-bottom: 2px;\n  width: 10px;\n  left: 0;\n  border-right: 1px solid silver;\n  cursor: pointer;\n}\n.ProseMirror-menubar-back:after {\n  content: \"«\";\n}\n\n");
-},{"../dom":1,"../edit":9,"./menu":17,"./update":20}],19:[function(require,module,exports){
+},{"../dom":3,"../edit":11,"./menu":19,"./update":22}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5902,7 +6047,7 @@ var Tooltip = (function () {
 exports.Tooltip = Tooltip;
 
 (0, _dom.insertCSS)("\n\n.ProseMirror-tooltip {\n  position: absolute;\n  display: none;\n  box-sizing: border-box;\n  -moz-box-sizing: border- box;\n  overflow: hidden;\n\n  -webkit-transition: width 0.4s ease-out, height 0.4s ease-out, left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  -moz-transition: width 0.4s ease-out, height 0.4s ease-out, left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  transition: width 0.4s ease-out, height 0.4s ease-out, left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  opacity: 0;\n\n  border-radius: 5px;\n  padding: 3px 7px;\n  margin: 0;\n  background: #444;\n  border-color: #777;\n  color: white;\n\n  z-index: 11;\n}\n\n.ProseMirror-tooltip-pointer {\n  content: \"\";\n  position: absolute;\n  display: none;\n  width: 0; height: 0;\n\n  -webkit-transition: left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  -moz-transition: left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  transition: left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  opacity: 0;\n\n  z-index: 12;\n}\n\n.ProseMirror-tooltip-pointer-above {\n  border-left: 6px solid transparent;\n  border-right: 6px solid transparent;\n  border-top: 6px solid #444;\n}\n\n.ProseMirror-tooltip-pointer-below {\n  border-left: 6px solid transparent;\n  border-right: 6px solid transparent;\n  border-bottom: 6px solid #444;\n}\n\n.ProseMirror-tooltip-pointer-right {\n  border-top: 6px solid transparent;\n  border-bottom: 6px solid transparent;\n  border-right: 6px solid #444;\n}\n\n.ProseMirror-tooltip-pointer-left {\n  border-top: 6px solid transparent;\n  border-bottom: 6px solid transparent;\n  border-left: 6px solid #444;\n}\n\n.ProseMirror-tooltip input[type=\"text\"],\n.ProseMirror-tooltip textarea {\n  background: #666;\n  color: white;\n  border: none;\n  outline: none;\n}\n\n.ProseMirror-tooltip input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n");
-},{"../dom":1}],20:[function(require,module,exports){
+},{"../dom":3}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5998,7 +6143,7 @@ var MenuUpdate = (function () {
 })();
 
 exports.MenuUpdate = MenuUpdate;
-},{}],21:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6413,7 +6558,7 @@ var defaultSpec = new _schema.SchemaSpec({
 // ProseMirror's default document schema.
 var defaultSchema = new _schema.Schema(defaultSpec);
 exports.defaultSchema = defaultSchema;
-},{"./schema":28}],22:[function(require,module,exports){
+},{"./schema":30}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6512,7 +6657,7 @@ function findDiffEnd(a, b) {
   }
   return { a: new _pos.Pos(pathA, offA), b: new _pos.Pos(pathB, offB) };
 }
-},{"./pos":27}],23:[function(require,module,exports){
+},{"./pos":29}],25:[function(require,module,exports){
 // ;; A fragment is an abstract type used to represent a node's
 // collection of child nodes. It tries to hide considerations about
 // the actual way in which the child nodes are stored, so that
@@ -7184,7 +7329,7 @@ if (typeof Symbol != "undefined") {
     return this;
   };
 }
-},{}],24:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 // !!
 // This module defines ProseMirror's document model, the data
 // structure used to define and inspect content documents. It
@@ -7424,7 +7569,7 @@ Object.defineProperty(exports, "findDiffEnd", {
                 return _diff.findDiffEnd;
         }
 });
-},{"./defaultschema":21,"./diff":22,"./fragment":23,"./mark":25,"./node":26,"./pos":27,"./schema":28}],25:[function(require,module,exports){
+},{"./defaultschema":23,"./diff":24,"./fragment":25,"./mark":27,"./node":28,"./pos":29,"./schema":30}],27:[function(require,module,exports){
 // ;; A mark is a piece of information that can be attached to a node,
 // such as it being emphasized, in code font, or a link. It has a type
 // and optionally a set of attributes that provide further information
@@ -7550,7 +7695,7 @@ var Mark = (function () {
 exports.Mark = Mark;
 
 var empty = [];
-},{}],26:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8124,7 +8269,7 @@ function wrapMarks(marks, str) {
     str = marks[i].type.name + "(" + str + ")";
   }return str;
 }
-},{"./fragment":23,"./mark":25,"./pos":27}],27:[function(require,module,exports){
+},{"./fragment":25,"./mark":27,"./pos":29}],29:[function(require,module,exports){
 // ;; Instances of the `Pos` class represent positions in a document.
 // A position an array of integers that describe a path to the target
 // node (see `Node.path`) and an integer offset into that target node.
@@ -8313,7 +8458,7 @@ var Pos = (function () {
 })();
 
 exports.Pos = Pos;
-},{}],28:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9275,7 +9420,7 @@ var Schema = (function () {
 })();
 
 exports.Schema = Schema;
-},{"../util/error":45,"./fragment":23,"./mark":25,"./node":26}],29:[function(require,module,exports){
+},{"../util/error":47,"./fragment":25,"./mark":27,"./node":28}],31:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9649,7 +9794,7 @@ _model.StrongMark.register("parseDOM", { tag: "b", parse: "mark" });
 _model.StrongMark.register("parseDOM", { tag: "strong", parse: "mark" });
 
 _model.CodeMark.register("parseDOM", { tag: "code", parse: "mark" });
-},{"../model":24,"./index":30}],30:[function(require,module,exports){
+},{"../model":26,"./index":32}],32:[function(require,module,exports){
 // !! This module implements a way to register and access parsers from
 // various input formats to ProseMirror's [document format](#Node). To
 // load the actual parsers, you need to import parser modules like
@@ -9718,7 +9863,7 @@ function defineSource(format, func) {
 defineSource("json", function (schema, json) {
   return schema.nodeFromJSON(json);
 });
-},{}],31:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9751,7 +9896,7 @@ function fromText(schema, text) {
 }
 
 (0, _index.defineSource)("text", fromText);
-},{"./index":30}],32:[function(require,module,exports){
+},{"./index":32}],34:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10046,7 +10191,7 @@ def(_model.LinkMark, function (mark, s) {
   return s.elt("a", { href: mark.attrs.href,
     title: mark.attrs.title });
 });
-},{"../model":24,"./index":33}],33:[function(require,module,exports){
+},{"../model":26,"./index":35}],35:[function(require,module,exports){
 // !! This module provides a way to register and access functions that
 // serialize ProseMirror [documents](#Node) to various formats. To
 // load the actual serializers, you need to include submodules of this
@@ -10111,7 +10256,7 @@ function defineTarget(format, func) {
 defineTarget("json", function (doc) {
   return doc.toJSON();
 });
-},{}],34:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10156,7 +10301,7 @@ function toText(doc) {
 }
 
 (0, _index.defineTarget)("text", toText);
-},{"../model":24,"./index":33}],35:[function(require,module,exports){
+},{"../model":26,"./index":35}],37:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10441,7 +10586,7 @@ _transform.Transform.prototype.setNodeType = function (pos, type, attrs) {
   this.step("ancestor", new _model.Pos(path, 0), new _model.Pos(path, node.size), null, { depth: 1, types: [type], attrs: [attrs] });
   return this;
 };
-},{"../model":24,"./map":38,"./step":42,"./transform":43,"./tree":44}],36:[function(require,module,exports){
+},{"../model":26,"./map":40,"./step":44,"./transform":45,"./tree":46}],38:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10540,7 +10685,7 @@ Object.defineProperty(exports, "Remapping", {
     return _map.Remapping;
   }
 });
-},{"./ancestor":35,"./join":37,"./map":38,"./mark":39,"./replace":40,"./split":41,"./step":42,"./transform":43}],37:[function(require,module,exports){
+},{"./ancestor":37,"./join":39,"./map":40,"./mark":41,"./replace":42,"./split":43,"./step":44,"./transform":45}],39:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10624,7 +10769,7 @@ _transform.Transform.prototype.join = function (at) {
   this.step("join", new _model.Pos(at.path.concat(at.offset - 1), parent.child(at.offset - 1).size), new _model.Pos(at.path.concat(at.offset), 0));
   return this;
 };
-},{"../model":24,"./map":38,"./step":42,"./transform":43}],38:[function(require,module,exports){
+},{"../model":26,"./map":40,"./step":44,"./transform":45}],40:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10948,7 +11093,7 @@ var Remapping = (function () {
 })();
 
 exports.Remapping = Remapping;
-},{"../model":24}],39:[function(require,module,exports){
+},{"../model":26}],41:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -11127,7 +11272,7 @@ _transform.Transform.prototype.clearMarkup = function (from, to, newParent) {
     this.step(delSteps[i]);
   }return this;
 };
-},{"../model":24,"./step":42,"./transform":43,"./tree":44}],40:[function(require,module,exports){
+},{"../model":26,"./step":44,"./transform":45,"./tree":46}],42:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11447,7 +11592,7 @@ _transform.Transform.prototype.insertText = function (pos, text) {
 _transform.Transform.prototype.insertInline = function (pos, node) {
   return this.insert(pos, node.mark(this.doc.marksAt(pos)));
 };
-},{"../model":24,"./map":38,"./step":42,"./transform":43,"./tree":44}],41:[function(require,module,exports){
+},{"../model":26,"./map":40,"./step":44,"./transform":45,"./tree":46}],43:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -11533,7 +11678,7 @@ _transform.Transform.prototype.splitIfNeeded = function (pos) {
   }
   return this;
 };
-},{"../model":24,"./map":38,"./step":42,"./transform":43}],42:[function(require,module,exports){
+},{"../model":26,"./map":40,"./step":44,"./transform":45}],44:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11714,7 +11859,7 @@ var StepResult = function StepResult(doc) {
 exports.StepResult = StepResult;
 
 var steps = Object.create(null);
-},{"../model":24,"./map":38}],43:[function(require,module,exports){
+},{"../model":26,"./map":40}],45:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11814,7 +11959,7 @@ var Transform = (function () {
 })();
 
 exports.Transform = Transform;
-},{"./map":38,"./step":42}],44:[function(require,module,exports){
+},{"./map":40,"./step":44}],46:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11906,7 +12051,7 @@ function samePathDepth(a, b) {
     if (i == a.path.length || i == b.path.length || a.path[i] != b.path[i]) return i;
   }
 }
-},{"../model":24}],45:[function(require,module,exports){
+},{"../model":26}],47:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11955,7 +12100,7 @@ function functionName(f) {
   var match = /^function (\w+)/.exec(f.toString());
   return match && match[1];
 }
-},{}],46:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 // ;; #path=EventMixin #kind=interface
 // A set of methods for objects that emit events. Added by calling
 // `eventMixin` on a constructor.
@@ -12038,7 +12183,7 @@ function eventMixin(ctor) {
   var proto = ctor.prototype;
   for (var prop in methods) if (methods.hasOwnProperty(prop)) proto[prop] = methods[prop];
 }
-},{}],47:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12095,7 +12240,7 @@ var Map = window.Map || (function () {
   return _class;
 })();
 exports.Map = Map;
-},{}],48:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12110,7 +12255,7 @@ function sortedInsert(array, elt, compare) {
 }
 
 module.exports = exports["default"];
-},{}],49:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 "use strict";
 
 var _main = require("prosemirror/dist/edit/main");
@@ -12124,6 +12269,10 @@ var _menubar = require("prosemirror/dist/menu/menubar");
 var _dom2 = require("prosemirror/dist/dom");
 
 var _dom3 = require("prosemirror/dist/serialize/dom");
+
+var _transform = require("prosemirror/dist/transform");
+
+require("prosemirror/dist/collab");
 
 window.pm = {
     ProseMirror: _main.ProseMirror,
@@ -12142,7 +12291,8 @@ window.pm = {
     Attribute: _model.Attribute,
     StyleType: _model.StyleType,
     elt: _dom2.elt,
-    wrap: _dom3.wrap
+    wrap: _dom3.wrap,
+    Step: _transform.Step
 };
 
-},{"prosemirror/dist/dom":1,"prosemirror/dist/edit/main":12,"prosemirror/dist/menu/menubar":18,"prosemirror/dist/model":24,"prosemirror/dist/parse/dom":29,"prosemirror/dist/serialize/dom":32}]},{},[49]);
+},{"prosemirror/dist/collab":1,"prosemirror/dist/dom":3,"prosemirror/dist/edit/main":14,"prosemirror/dist/menu/menubar":20,"prosemirror/dist/model":26,"prosemirror/dist/parse/dom":31,"prosemirror/dist/serialize/dom":34,"prosemirror/dist/transform":38}]},{},[51]);

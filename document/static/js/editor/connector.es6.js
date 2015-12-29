@@ -8,6 +8,7 @@ function makeEditor (where, doc) {
     schema: fidusSchema,
     doc: doc,
     menuBar: true,
+    collab: {version: 0}
   })
 };
 
@@ -44,7 +45,9 @@ theEditor.loadDocument = function (aDocument) {
 
       new UpdateUI(theEditor.editor, "selectionChange change activeMarkChange");
 
-      theEditor.editor.on('change', function(){editorHelpers.documentHasChanged();});
+      theEditor.editor.on('change', editorHelpers.documentHasChanged);
+
+      theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators);
 };
 
 theEditor.getUpdates = function (callback) {
@@ -62,6 +65,56 @@ theEditor.getUpdates = function (callback) {
       }
 };
 
+theEditor.sendToCollaborators = function () {
+    console.log('send to collabs')
+      let pm = theEditor.editor
+      let toSend = pm.mod.collab.sendableSteps()
+      if (theDocumentValues.collaborativeMode) {
+          let aPackage = {
+              type: 'diff',
+              time: new Date().getTime() + window.clientOffsetTime,
+              diff: toSend.steps.map(s => s.toJSON())
+          }
+          serverCommunications.send(aPackage);
+          console.log('sent: ' + JSON.stringify(aPackage));
+      }
+
+      pm.mod.collab.confirmSteps(toSend)
+    };
+
+theEditor.applyDiffs = function(aPackage) {
+    theEditor.editor.mod.collab.receive(aPackage.diff.map(j => pm.Step.fromJSON(fidusSchema, j)));
+}
+
+
+theEditor.startCollaborativeMode = function () {
+    theDocumentValues.collaborativeMode = true;
+};
+
+theEditor.stopCollaborativeMode = function () {
+    theDocumentValues.collaborativeMode = false;
+};
+
+theEditor.getHash = function () {
+    let string = theEditor.editor.getContent('html')
+    let len = string.length
+    var hash = 0, char, i;
+    if (len == 0) return hash;
+    for (i = 0; i < len; i++) {
+        char = string.charCodeAt(i);
+        hash = ((hash<<5)-hash)+char;
+        hash = hash & hash;
+    }
+    return hash;
+};
+
+theEditor.checkHash = function(hash) {
+    if (hash===theEditor.getHash()) return true;
+
+    serverCommunications.send({type: 'get_document_update'});
+
+    return false;
+}
 
 theEditor.fromDOM = pm.fromDOM;
 theEditor.schema = fidusSchema;

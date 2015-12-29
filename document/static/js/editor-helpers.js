@@ -48,7 +48,7 @@
      * @function checkViewable
      * @memberof editorHelpers
      */
-
+/*
     editorHelpers.checkViewable = function(node) {
         if (node.nodeType === 3) {
             node = node.parentNode;
@@ -60,7 +60,7 @@
         nodeBottom = nodeTop + jQuery(node).height();
 
         return ((nodeBottom <= windowBottom) && (nodeTop >= windowTop));
-    }
+    }*/
 
     document.addEventListener('layoutFlowFinished', editorHelpers.printReady, false);
 
@@ -197,7 +197,7 @@
         theDocument = aDocument;
         theDocumentValues = aDocumentValues;
         theDocumentValues.changed = false;
-        theDocumentValues.touched = false;
+      //  theDocumentValues.touched = false;
         theDocumentValues.virgin = true;
         theDocument.settings = jQuery.parseJSON(theDocument.settings);
         theDocument.metadata = jQuery.parseJSON(theDocument.metadata);
@@ -256,7 +256,7 @@
      */
     editorHelpers.documentHasChanged = function () {
         theDocumentValues.changed = true; // For document saving
-        theDocumentValues.touched = true; // For synchronizing with other viewers
+      //  theDocumentValues.touched = true; // For synchronizing with other viewers
     };
 
     /** Functions related to taking document data from theDocument.* and displaying it (ie making it part of the DOM structure).
@@ -412,25 +412,13 @@
         editorHelpers.setDisplay.document('title', titleClone.textContent);
     };*/
 
-    /** Set the document title in the menu.
-     * @function title
-     * @memberof editorHelpers.setDisplay
-     * @param theValue The text of the title.*/
-    editorHelpers.setDisplay.title = function (theValue) {
-        if (theValue.length === 0) {
-            theValue = gettext('Untitled Document');
-        }
-        jQuery('title').html('Fidus Writer - ' + theValue);
-        jQuery('#header h1').html(theValue);
-    };
-
     /** A dictionary linking field names with set display functions.
      * @constant  FIELDS
      * @memberof editorHelpers.setDisplay
      */
     editorHelpers.setDisplay.FIELDS = {
         // A list of the functions used to update various fields to be called by editorHelpers.setDisplay.document
-        'title': editorHelpers.setDisplay.title,
+  //      'title': editorHelpers.setDisplay.title,
         /*'metadata.title': editorHelpers.setDisplay.metadataTitle,
         'contents': editorHelpers.setDisplay.contents,*/
         /*'settings.tracking': editorHelpers.setDisplay.settingsTracking,
@@ -438,10 +426,10 @@
         'settings.papersize': editorHelpers.setDisplay.settingsPapersize,
         'settings.citationstyle': editorHelpers.setDisplay.settingsCitationstyle,
         'settings.documentstyle': editorHelpers.setDisplay.settingsDocumentstyle,
-        //'settings.metadata.subtitle': editorHelpers.layoutMetadata,
-        //'settings.metadata.abstract': editorHelpers.layoutMetadata,
-        //'settings.metadata.authors': editorHelpers.layoutMetadata,
-        //'settings.metadata.keywords': editorHelpers.layoutMetadata,
+        'settings.metadata.subtitle': editorHelpers.layoutMetadata,
+        'settings.metadata.abstract': editorHelpers.layoutMetadata,
+        'settings.metadata.authors': editorHelpers.layoutMetadata,
+        'settings.metadata.keywords': editorHelpers.layoutMetadata,
         'id': editorHelpers.setDisplay.id
     };
     /** Set any field on the editor page
@@ -471,14 +459,6 @@
      * @memberof editorHelpers
      */
     editorHelpers.TEXT_ELEMENTS = ['document-title','metadata-subtitle','metadata-authors','metadata-keywords'];
-
-
-    /** A list of block elements that can contain text used in all elements listed in HTML_ELEMENTS.
-     * @constant  TEXT_BLOCK_ELEMENTS
-     * @memberof editorHelpers
-     */
-
-    editorHelpers.TEXT_BLOCK_ELEMENTS = ['P','UL','OL','CODE','H1','H2','H3', 'BLOCKQUOTE'];
 
     /** Sets a variable in theDocument to a value and optionally sends a change notification to other editors.
      * This notification is used in case of simple fields (all fields that are not individually editable in the text editor
@@ -528,7 +508,7 @@
      * @memberof editorHelpers
      * @param callback Callback to be called after copying data (optional).
      */
-    editorHelpers.getUpdatesFromInputFields = function (callback) {
+    /*editorHelpers.getUpdatesFromInputFields = function (callback) {
 
         var i, j, metadata;
         console.log('getting updates');
@@ -549,7 +529,7 @@
         if (callback) {
             callback();
         }
-    };
+    };*/
 
     /** Calculates a hash sum of the document data to make sure collaborating editors all have the same document.
      * Function from jsperf.com/hashing-string.
@@ -592,7 +572,7 @@
         // The title is saved twice: as metadata.title with html formatting and as just title as plain text.
         // Because we don't want two entries in the history, we avoid touching the history for the text-only version.
 
-        theDocument.title = jQuery('#document-title').text().trim();
+      //  theDocument.title = jQuery('#document-title').text().trim();
 
 
         if (theDocumentValues.control) {

@@ -91,7 +91,26 @@
 	  doc = pm.fromDOM(fidusSchema, editorNode);
 	  theEditor.editor = makeEditor(document.getElementById('document-editable'), doc);
 
-	  new HighlightToolbarButtons(theEditor.editor, "selectionChange change activeMarkChange");
+	  new UpdateUI(theEditor.editor, "selectionChange change activeMarkChange");
+
+	  theEditor.editor.on('change', function () {
+	    editorHelpers.documentHasChanged();
+	  });
+	};
+
+	theEditor.getUpdates = function (callback) {
+	  var outputNode = theEditor.editor.getContent('dom');
+	  theDocument.title = theEditor.editor.doc.firstChild.textContent;
+	  theDocument.metadata.title = exporter.node2Obj(outputNode.getElementById('document-title'));
+	  theDocument.metadata.subtitle = exporter.node2Obj(outputNode.getElementById('metadata-subtitle'));
+	  theDocument.metadata.authors = exporter.node2Obj(outputNode.getElementById('metadata-authors'));
+	  theDocument.metadata.abstract = exporter.node2Obj(outputNode.getElementById('metadata-abstract'));
+	  theDocument.metadata.keywords = exporter.node2Obj(outputNode.getElementById('metadata-keywords'));
+	  theDocument.contents = exporter.node2Obj(outputNode.getElementById('document-contents'));
+
+	  if (callback) {
+	    callback();
+	  }
 	};
 
 	theEditor.fromDOM = pm.fromDOM;

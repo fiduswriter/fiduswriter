@@ -111,8 +111,8 @@
         <script type="text/javascript" src="{{ UNDERSCOREJS_URL }}"></script>
         <!-- ProseMirror -->
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/prosemirror.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/prosemirror/schema.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/prosemirror/connector.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/editor/schema.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/editor/connector.js"></script>
         <!-- Mathjax -->
         <script type="text/x-mathjax-config">
             MathJax.Hub.Config({
@@ -215,18 +215,18 @@
             <!-- Math functions -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/math-helpers.js"></script>
             <!-- Editor toolbar buttons -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/highlight-buttons.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/blockstyles.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/bold.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/italic.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/link.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/footnote.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/cite.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/math.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/figure.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/undo_redo.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/comment.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/templates.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/update-ui.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/blockstyles.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/bold.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/italic.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/link.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/footnote.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/cite.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/math.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/figure.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/undo_redo.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/comment.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/templates.js"></script>
             <!-- Access rights dialog -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/document-accessrights-templates.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/document-accessrights-helpers.js"></script>
@@ -253,8 +253,6 @@
                 serverCommunications.bind();
             </script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/node-converter.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/clean-HTML.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/cut.js"></script>
         {% endcompress %}
 
         <script type="text/javascript">
@@ -403,7 +401,7 @@
                 <i class="icon-angle-double-up"></i>
             </span>
             <div id="editor-tools-wrapper">
-                <div id="ice-control" class="fw-button fw-light fw-large" title="{% trans "Handle tracking of changes." %}">
+                <div id="ice-control" class="fw-button fw-light fw-large disabled" title="{% trans "Handle tracking of changes." %}">
                     {% trans "Changes" %}
                     <i class="icon-down-dir"></i>
                     <div class="fw-pulldown fw-left">
@@ -428,7 +426,7 @@
                 </div>
                 <div class="editortoolbar" style="display: block;">
                     <div class="toolbarheadings ui-buttonset multiButtons">
-                        <span class="multibuttonsCover fw-button fw-light fw-large" title="{% trans "Text that is part of a standard paragraph." %}" id="block-style-label">{% trans "Normal Text" %}</span>
+                        <span class="multibuttonsCover fw-button fw-light fw-large edit-button" title="{% trans "Text that is part of a standard paragraph." %}" id="block-style-label">{% trans "Normal Text" %}</span>
                         <div class="fw-pulldown fw-left" style="display: none;">
                             <ul>
                                 <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
@@ -483,63 +481,63 @@
                         </div>
                     </div>
                     <div class="toolbarbold ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square" id="button-bold" title="{% trans "Bold" %}">
+                        <button class="fw-button fw-light fw-large fw-square edit-button" id="button-bold" title="{% trans "Bold" %}">
                             <span class="ui-button-text">
                                 <i class="icon-bold"></i>
                             </span>
                         </button>
                     </div>
                     <div class="toolbaritalic ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square" id="button-italic" title="{% trans "Italic" %}">
+                        <button class="fw-button fw-light fw-large fw-square edit-button" id="button-italic" title="{% trans "Italic" %}">
                             <span class="ui-button-text">
                                 <i class="icon-italic"></i>
                             </span>
                         </button>
                     </div>
                     <div class="toolbarol ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square" id="button-ol" title="{% trans "Numbered list" %}">
+                        <button class="fw-button fw-light fw-large fw-square edit-button" id="button-ol" title="{% trans "Numbered list" %}">
                             <span class="ui-button-text">
                                 <i class="icon-list-numbered"></i>
                             </span>
                         </button>
                     </div>
                     <div class="toolbarul ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square" id="button-ul" title="{% trans "Bulleted list" %}">
+                        <button class="fw-button fw-light fw-large fw-square edit-button" id="button-ul" title="{% trans "Bulleted list" %}">
                             <span class="ui-button-text">
                                 <i class="icon-list-bullet"></i>
                             </span>
                         </button>
                     </div>
                     <div class="toolbarlink ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square" id="button-link" title="{% trans "Link" %}">
+                        <button class="fw-button fw-light fw-large fw-square edit-button" id="button-link" title="{% trans "Link" %}">
                             <span class="ui-button-text">
                                 <i class="icon-link"></i>
                             </span>
                         </button>
                     </div>
                     <div class="toolbarfootnote ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square" id="button-footnote" title="{% trans "Footnote" %}">
+                        <button class="fw-button fw-light fw-large fw-square edit-button" id="button-footnote" title="{% trans "Footnote" %}">
                             <span class="ui-button-text">
                                 <i class="icon-footnote"></i>
                             </span>
                         </button>
                     </div>
                     <div class="toolbarcite ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square" id="button-cite" title="{% trans "Cite" %}">
+                        <button class="fw-button fw-light fw-large fw-square edit-button" id="button-cite" title="{% trans "Cite" %}">
                             <span class="ui-button-text">
                                 <i class="icon-quote-right"></i>
                             </span>
                         </button>
                     </div>
                     <div class="toolbarmath ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square" id="button-math" title="{% trans "Math" %}">
+                        <button class="fw-button fw-light fw-large fw-square edit-button" id="button-math" title="{% trans "Math" %}">
                             <span class="ui-button-text">
                                 <i class="icon-math"></i>
                             </span>
                         </button>
                     </div>
                     <div class="toolbarfigure ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square"  id="button-figure" title="{% trans "Figure" %}">
+                        <button class="fw-button fw-light fw-large fw-square edit-button"  id="button-figure" title="{% trans "Figure" %}">
                             <span class="ui-button-text">
                                 <i class="icon-figure"></i>
                             </span>

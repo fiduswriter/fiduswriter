@@ -1,6 +1,5 @@
 // blockstyle paragraph, h1 - h3, lists
 jQuery(document).on('mousedown', '.toolbarheadings label', function (event) {
-    console.log(this.id.split('_')[0]);
     switch (this.id.split('_')[0]) {
         case 'h1':
           theEditor.editor.execCommand('makeH1');
@@ -18,7 +17,7 @@ jQuery(document).on('mousedown', '.toolbarheadings label', function (event) {
           theEditor.editor.execCommand('makeCodeBlock');
           break;
         case 'blockquote':
-          theEditor.editor.execCommand('wrapBlockquote');
+          theEditor.editor.execCommand('wrapBlockQuote');
           break;
         case 'ol':
           theEditor.editor.execCommand('wrapOrderedList');

@@ -1,5 +1,5 @@
 /* This file has been automatically generated. DO NOT EDIT IT. 
- Changes will be overwritten. Edit highlight-buttons.es6.js and run ./es6-compiler.sh */
+ Changes will be overwritten. Edit update-ui.es6.js and run ./es6-compiler.sh */
 /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -56,7 +56,7 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	// Highlight buttons (adapted from ProseMirror's src/menu/update.js)
+	// Update UI (adapted from ProseMirror's src/menu/update.js)
 
 	var MIN_FLUSH_DELAY = 200;
 	var UPDATE_TIMEOUT = 200;
@@ -72,11 +72,11 @@
 	    'code_block': 'Code'
 	};
 
-	var HighlightToolbarButtons = exports.HighlightToolbarButtons = (function () {
-	    function HighlightToolbarButtons(pm, events) {
+	var UpdateUI = exports.UpdateUI = (function () {
+	    function UpdateUI(pm, events) {
 	        var _this = this;
 
-	        _classCallCheck(this, HighlightToolbarButtons);
+	        _classCallCheck(this, UpdateUI);
 
 	        this.pm = pm;
 
@@ -92,9 +92,10 @@
 	            return pm.on(event, _this.onEvent);
 	        });
 	        pm.on("flushed", this.onFlushed = this.onFlushed.bind(this));
+	        this.updateUI();
 	    }
 
-	    _createClass(HighlightToolbarButtons, [{
+	    _createClass(UpdateUI, [{
 	        key: 'detach',
 	        value: function detach() {
 	            var _this2 = this;
@@ -114,7 +115,7 @@
 	                this.lastFlush = now;
 	                clearTimeout(this.timeout);
 	                this.mustUpdate = false;
-	                this.markMenu();
+	                this.updateUI();
 	            }
 	        }
 	    }, {
@@ -134,13 +135,23 @@
 	                this.updateInfo = null;
 	                this.lastFlush = Date.now();
 	                clearTimeout(this.timeout);
-	                this.markMenu();
+	                this.updateUI();
 	            }
 	        }
 	    }, {
-	        key: 'markMenu',
-	        value: function markMenu() {
+	        key: 'updateUI',
+	        value: function updateUI() {
 	            /* Fidus Writer code */
+
+	            var documentTitle = theEditor.editor.doc.firstChild.textContent;
+	            //editorHelpers.setDisplay.title = function (theValue) {
+	            if (documentTitle.length === 0) {
+	                documentTitle = gettext('Untitled Document');
+	            }
+	            jQuery('title').html('Fidus Writer - ' + documentTitle);
+	            jQuery('#header h1').html(documentTitle);
+	            //};
+
 	            var marks = theEditor.editor.activeMarks();
 	            var strong = marks.some(function (mark) {
 	                return mark.type.name === 'strong';
@@ -187,29 +198,30 @@
 
 	            if (headElementType !== anchorElementType) {
 	                /* Selection goes across document parts */
-	                jQuery('#button-ul,#button-ol,#block-style-label').addClass('disabled');
+	                jQuery('.editortoolbar button').addClass('disabled');
 	                jQuery('#block-style-label').html('');
 	            } else {
 
 	                switch (headElementType) {
 	                    case 'title':
-	                        jQuery('#button-ul,#button-ol,#block-style-label').addClass('disabled');
+	                        jQuery('.edit-button').addClass('disabled');
 	                        jQuery('#block-style-label').html('Title');
 	                        break;
 	                    case 'metadatasubtitle':
-	                        jQuery('#button-ul,#button-ol,#block-style-label').addClass('disabled');
+	                        jQuery('.edit-button').addClass('disabled');
 	                        jQuery('#block-style-label').html('Subtitle');
 	                        break;
 	                    case 'metadataauthors':
-	                        jQuery('#button-ul,#button-ol,#block-style-label').addClass('disabled');
+	                        jQuery('.edit-button').addClass('disabled');
 	                        jQuery('#block-style-label').html('Authors');
 	                        break;
 	                    case 'metadatakeywords':
-	                        jQuery('#button-ul,#button-ol,#block-style-label').addClass('disabled');
+	                        jQuery('.edit-button').addClass('disabled');
 	                        jQuery('#block-style-label').html('Keywords');
 	                        break;
 	                    case 'metadataabstract':
-	                        jQuery('#button-ul,#button-ol,#block-style-label').removeClass('disabled');
+	                        jQuery('.edit-button').removeClass('disabled');
+	                        jQuery('#button-figure').addClass('disabled');
 
 	                        var headPath = theEditor.editor.selection.head.path,
 	                            anchorPath = theEditor.editor.selection.anchor.path,
@@ -245,7 +257,7 @@
 
 	                        break;
 	                    case 'documentcontents':
-	                        jQuery('#button-ul,#button-ol,#block-style-label').removeClass('disabled');
+	                        jQuery('.edit-button').removeClass('disabled');
 
 	                        var headPath = theEditor.editor.selection.head.path,
 	                            anchorPath = theEditor.editor.selection.anchor.path,
@@ -287,10 +299,10 @@
 	        }
 	    }]);
 
-	    return HighlightToolbarButtons;
+	    return UpdateUI;
 	})();
 
-	window.HighlightToolbarButtons = HighlightToolbarButtons;
+	window.UpdateUI = UpdateUI;
 
 
 

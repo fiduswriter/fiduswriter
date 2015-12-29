@@ -140,32 +140,32 @@ jQuery(document).bind('documentDataLoaded', function() {
     editorHelpers.setDisplay.document('id', theDocument.id);
 
     jQuery(document).on('mousedown', '.savecopy:not(.disabled)', function() {
-        editorHelpers.getUpdatesFromInputFields(function() {
+        theEditor.getUpdates(function() {
             editorHelpers.saveDocument();
         });
         exporter.savecopy(theDocument);
     });
 
     jQuery('.download').bind('mousedown', function() {
-        editorHelpers.getUpdatesFromInputFields(function() {
+        theEditor.getUpdates(function() {
             editorHelpers.saveDocument();
         });
         exporter.downloadNative(theDocument);
     });
     jQuery('.latex').bind('mousedown', function() {
-        editorHelpers.getUpdatesFromInputFields(function() {
+        theEditor.getUpdates(function() {
             editorHelpers.saveDocument();
         });
         exporter.downloadLatex(theDocument);
     });
     jQuery('.epub').bind('mousedown', function() {
-        editorHelpers.getUpdatesFromInputFields(function() {
+        theEditor.getUpdates(function() {
             editorHelpers.saveDocument();
         });
         exporter.downloadEpub(theDocument);
     });
     jQuery('.html').bind('mousedown', function() {
-        editorHelpers.getUpdatesFromInputFields(function() {
+        theEditor.getUpdates(function() {
             editorHelpers.saveDocument();
         });
         exporter.downloadHtml(theDocument);
@@ -174,7 +174,7 @@ jQuery(document).bind('documentDataLoaded', function() {
         editorHelpers.print();
     });
     jQuery('.close').bind('mousedown', function() {
-        editorHelpers.getUpdatesFromInputFields(function() {
+        theEditor.getUpdates(function() {
             editorHelpers.saveDocument();
         });
         window.location.href = '/';
@@ -230,7 +230,7 @@ jQuery(document).bind('documentDataLoaded', function() {
         setInterval(function() {
             if (theDocumentValues.changed) {
                 theDocumentValues.sentHash = false;
-                editorHelpers.getUpdatesFromInputFields(function() {
+                theEditor.getUpdates(function() {
                     editorHelpers.saveDocument();
                 });
             } else if (theDocumentValues.control && !theDocumentValues.sentHash && theDocumentValues.collaborativeMode) {
@@ -294,7 +294,7 @@ jQuery(document).bind('documentDataLoaded', function() {
             });
         */
         jQuery('.save').bind('mousedown', function() {
-            editorHelpers.getUpdatesFromInputFields(function() {
+            theEditor.getUpdates(function() {
                 editorHelpers.saveDocument();
             });
             exporter.uploadNative(theDocument);

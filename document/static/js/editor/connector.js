@@ -104,7 +104,10 @@
 
 	theEditor.update = function (aDocument) {
 	    var doc = theEditor.createDoc(aDocument);
-	    theEditor.editor.updateDoc(doc);
+	    theEditor.editor.setOption("collab", null);
+	    theEditor.editor.setContent(doc);
+	    theEditor.editor.setOption("collab", { version: 0 });
+	    theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators);
 	};
 
 	theEditor.getUpdates = function (callback) {
@@ -127,6 +130,7 @@
 	    var pm = theEditor.editor;
 	    var toSend = pm.mod.collab.sendableSteps();
 	    if (theDocumentValues.collaborativeMode) {
+	        console.log(toSend.steps);
 	        var aPackage = {
 	            type: 'diff',
 	            time: new Date().getTime() + window.clientOffsetTime,

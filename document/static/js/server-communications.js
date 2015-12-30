@@ -164,7 +164,7 @@
     serverCommunications.getClientTimeOffset = function (clientOffsetTimeTrials) {
         var request = new XMLHttpRequest(),
             startTime = Date.now();
-        request.open('HEAD', '/hello-tornado', false);
+        request.open('HEAD', '/hello-tornado', true);
         request.onreadystatechange = function () {
             var timeNow = Date.now(),
                 latency = timeNow - startTime,

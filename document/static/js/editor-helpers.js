@@ -166,7 +166,6 @@
     editorHelpers.updateEditorPage = function (aDocument) {
         console.log('updating editor');
 
-        clearInterval(diffHelpers.diffTimer);
         jQuery('.toolbarundoredo button').addClass('disabled');
         theDocumentValues.changed = false;
         theDocument.settings = jQuery.parseJSON(aDocument.settings);
@@ -565,7 +564,7 @@
       //  theDocument.title = jQuery('#document-title').text().trim();
 
 
-        if (theDocumentValues.control) {
+        if (theDocumentValues.control===true) {
             documentData.settings = JSON.stringify(theDocument.settings);
             documentData.metadata = JSON.stringify(theDocument.metadata);
 

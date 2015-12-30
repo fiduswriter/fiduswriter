@@ -26,12 +26,11 @@ from document.models import AccessRight, Document
 from document.views import get_accessrights
 from avatar.templatetags.avatar_tags import avatar_url
 
-
 def save_document(document,changes):
     document.title = changes["title"]
     document.contents = changes["contents"]
     document.metadata = changes["metadata"]
-    document.settings = changes["settings"]  
+    document.settings = changes["settings"]
     document.save()
 
 class DocumentWS(BaseWebSocketHandler):
@@ -53,7 +52,7 @@ class DocumentWS(BaseWebSocketHandler):
             if len(document) > 0:
                 document = document[0]
                 self.document = document
-                
+
                 if self.document.owner == self.user:
                     self.access_rights = 'w'
                     self.is_owner = True
@@ -65,6 +64,7 @@ class DocumentWS(BaseWebSocketHandler):
                         self.access_rights = access_rights[0].rights
                         can_access = True
         if can_access:
+            print self.document.id
             if self.document.id not in DocumentWS.sessions:
                 DocumentWS.sessions[self.document.id]=dict()
                 self.id = 0
@@ -72,7 +72,7 @@ class DocumentWS(BaseWebSocketHandler):
             else:
                 self.id = max(DocumentWS.sessions[self.document.id])+1
                 self.in_control = False
-            DocumentWS.sessions[self.document.id][self.id] = self    
+            DocumentWS.sessions[self.document.id][self.id] = self
             response = dict()
             response['type'] = 'welcome'
             self.write_message(response)
@@ -91,7 +91,7 @@ class DocumentWS(BaseWebSocketHandler):
         response['document']['owner'] = dict()
         response['document']['owner']['id']=self.document.owner.id
         response['document']['owner']['name']=self.document.owner.readable_name
-        response['document']['owner']['avatar']=avatar_url(self.document.owner,80)            
+        response['document']['owner']['avatar']=avatar_url(self.document.owner,80)
         response['document']['owner']['team_members']=[]
         for team_member in self.document.owner.leader.all():
             tm_object = dict()
@@ -99,7 +99,7 @@ class DocumentWS(BaseWebSocketHandler):
             tm_object['name'] = team_member.member.readable_name
             tm_object['avatar'] = avatar_url(team_member.member,80)
             response['document']['owner']['team_members'].append(tm_object)
-        response['document_values'] = dict()    
+        response['document_values'] = dict()
         response['document_values']['is_owner']=self.is_owner
         response['document_values']['rights'] = self.access_rights
         if self.is_new:
@@ -116,24 +116,24 @@ class DocumentWS(BaseWebSocketHandler):
 
     def get_document_update(self):
         document_id = self.document.id
-        self.document = Document.objects.get(id=document_id)        
+        self.document = Document.objects.get(id=document_id)
         response = dict()
-        response['type'] = 'document_data_update'        
+        response['type'] = 'document_data_update'
         response['document'] = dict()
         response['document']['id']=self.document.id
         response['document']['title']=self.document.title
         response['document']['contents']=self.document.contents
         response['document']['metadata']=self.document.metadata
         response['document']['settings']=self.document.settings
-        self.write_message(response)        
+        self.write_message(response)
 
     def on_message(self, message):
         parsed = json_decode(message)
-        print parsed
+        print parsed["type"]
         if parsed["type"]=='get_document':
             self.get_document()
         elif parsed["type"]=='get_document_update':
-            self.get_document_update()    
+            self.get_document_update()
         elif parsed["type"]=='participant_update':
             DocumentWS.send_participant_list(self.document.id)
         elif parsed["type"]=='save' and self.access_rights == 'w':
@@ -147,10 +147,12 @@ class DocumentWS(BaseWebSocketHandler):
                 }
             if self.document.id in DocumentWS.sessions:
                 DocumentWS.send_updates(chat, self.document.id)
-        elif parsed["type"]=='diff' or parsed["type"]=='transform' or parsed["type"]=='hash':
-            
+        elif parsed["type"]=='transform' or parsed["type"]=='hash':
             if self.document.id in DocumentWS.sessions:
-                DocumentWS.send_updates(message, self.document.id, self.id)           
+                DocumentWS.send_updates(message, self.document.id, self.id)
+        elif parsed["type"]=='diff':
+            if self.document.id in DocumentWS.sessions:
+                DocumentWS.send_updates(message, self.document.id, self.id)
 
     def on_close(self):
         if hasattr(self, 'document') and self.document.id in DocumentWS.sessions and self.id in DocumentWS.sessions[self.document.id]:
@@ -191,5 +193,4 @@ class DocumentWS(BaseWebSocketHandler):
                 try:
                     cls.sessions[document][waiter].write_message(chat)
                 except:
-                    error("Error sending message", exc_info=True)            
-         
+                    error("Error sending message", exc_info=True)

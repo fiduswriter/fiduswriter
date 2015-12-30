@@ -130,7 +130,6 @@
 	    var pm = theEditor.editor;
 	    var toSend = pm.mod.collab.sendableSteps();
 	    if (theDocumentValues.collaborativeMode) {
-	        console.log(toSend.steps);
 	        var aPackage = {
 	            type: 'diff',
 	            time: new Date().getTime() + window.clientOffsetTime,

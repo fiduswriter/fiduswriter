@@ -64,7 +64,7 @@
 
 	theEditor.createDoc = function (aDocument) {
 	    var editorNode = document.createElement('div'),
-	        titleNode = exporter.obj2Node(aDocument.metadata.title),
+	        titleNode = aDocument.metadata.title ? exporter.obj2Node(aDocument.metadata.title) : document.createElement('div'),
 	        metadataNode = document.createElement('div'),
 	        documentContentsNode = exporter.obj2Node(aDocument.contents),
 	        metadataSubtitleNode = aDocument.metadata.subtitle ? exporter.obj2Node(aDocument.metadata.subtitle) : document.createElement('div'),
@@ -140,7 +140,7 @@
 	        serverCommunications.send(aPackage);
 	    }
 
-	    pm.mod.collab.confirmSteps(toSend);
+	    //      pm.mod.collab.confirmSteps(toSend)
 	};
 
 	theEditor.applyDiffs = function (aPackage) {

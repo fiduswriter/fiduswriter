@@ -21,12 +21,13 @@ import uuid
 from ws.base import BaseWebSocketHandler
 from logging import info, error
 from tornado.escape import json_decode
-
+from tornado.websocket import WebSocketClosedError
 from document.models import AccessRight, Document
 from document.views import get_accessrights
 from avatar.templatetags.avatar_tags import avatar_url
 
-def save_document(document,changes):
+def save_document(document_id,changes):
+    document = DocumentWS.sessions[document_id]['document']
     document.title = changes["title"]
     document.contents = changes["contents"]
     document.metadata = changes["metadata"]
@@ -45,55 +46,59 @@ class DocumentWS(BaseWebSocketHandler):
             self.is_owner = True
             self.access_rights = 'w'
             self.is_new = True
-            self.document = Document.objects.create(owner_id=self.user.id)
+            document = Document.objects.create(owner_id=self.user.id)
+            self.document_id = document.id
         else:
             self.is_new = False
             document = Document.objects.filter(id=int(document_id))
             if len(document) > 0:
                 document = document[0]
-                self.document = document
-
-                if self.document.owner == self.user:
+                self.document_id = document.id
+                if document.owner == self.user:
                     self.access_rights = 'w'
                     self.is_owner = True
                     can_access = True
                 else:
                     self.is_owner = False
-                    access_rights = AccessRight.objects.filter(document=self.document, user=self.user)
+                    access_rights = AccessRight.objects.filter(document=document, user=self.user)
                     if len(access_rights) > 0:
                         self.access_rights = access_rights[0].rights
                         can_access = True
         if can_access:
-            print self.document.id
-            if self.document.id not in DocumentWS.sessions:
-                DocumentWS.sessions[self.document.id]=dict()
+            print document.id
+            if document.id not in DocumentWS.sessions:
+                DocumentWS.sessions[document.id]=dict()
                 self.id = 0
-                self.in_control = True
+                DocumentWS.sessions[document.id]['participants']=dict()
+                DocumentWS.sessions[document.id]['document'] = document
+                DocumentWS.sessions[document.id]['in_control'] = self.id
             else:
-                self.id = max(DocumentWS.sessions[self.document.id])+1
-                self.in_control = False
-            DocumentWS.sessions[self.document.id][self.id] = self
+                self.id = max(DocumentWS.sessions[document.id]['participants'])+1
+            DocumentWS.sessions[document.id]['participants'][self.id] = self
+            print DocumentWS.sessions[document.id]
             response = dict()
             response['type'] = 'welcome'
             self.write_message(response)
+
             #DocumentWS.send_participant_list(self.document.id)
 
     def get_document(self):
         response = dict()
         response['type'] = 'document_data'
         response['document'] = dict()
-        response['document']['id']=self.document.id
-        response['document']['title']=self.document.title
-        response['document']['contents']=self.document.contents
-        response['document']['metadata']=self.document.metadata
-        response['document']['settings']=self.document.settings
-        response['document']['access_rights'] = get_accessrights(AccessRight.objects.filter(document__owner=self.document.owner))
+        document = DocumentWS.sessions[self.document_id]['document']
+        response['document']['id']=document.id
+        response['document']['title']=document.title
+        response['document']['contents']=document.contents
+        response['document']['metadata']=document.metadata
+        response['document']['settings']=document.settings
+        response['document']['access_rights'] = get_accessrights(AccessRight.objects.filter(document__owner=document.owner))
         response['document']['owner'] = dict()
-        response['document']['owner']['id']=self.document.owner.id
-        response['document']['owner']['name']=self.document.owner.readable_name
-        response['document']['owner']['avatar']=avatar_url(self.document.owner,80)
+        response['document']['owner']['id']=document.owner.id
+        response['document']['owner']['name']=document.owner.readable_name
+        response['document']['owner']['avatar']=avatar_url(document.owner,80)
         response['document']['owner']['team_members']=[]
-        for team_member in self.document.owner.leader.all():
+        for team_member in document.owner.leader.all():
             tm_object = dict()
             tm_object['id'] = team_member.member.id
             tm_object['name'] = team_member.member.readable_name
@@ -109,22 +114,21 @@ class DocumentWS(BaseWebSocketHandler):
             response['user']['id']=self.user.id
             response['user']['name']=self.user.readable_name
             response['user']['avatar']=avatar_url(self.user,80)
-        if self.in_control:
+        if DocumentWS.sessions[self.document_id]['in_control'] == self.id:
             response['document_values']['control']=True
         response['document_values']['session_id']= self.id
         self.write_message(response)
 
     def get_document_update(self):
-        document_id = self.document.id
-        self.document = Document.objects.get(id=document_id)
+        document = DocumentWS.sessions[self.document_id]['document']
         response = dict()
         response['type'] = 'document_data_update'
         response['document'] = dict()
-        response['document']['id']=self.document.id
-        response['document']['title']=self.document.title
-        response['document']['contents']=self.document.contents
-        response['document']['metadata']=self.document.metadata
-        response['document']['settings']=self.document.settings
+        response['document']['id']=document.id
+        response['document']['title']=document.title
+        response['document']['contents']=document.contents
+        response['document']['metadata']=document.metadata
+        response['document']['settings']=document.settings
         self.write_message(response)
 
     def on_message(self, message):
@@ -135,9 +139,9 @@ class DocumentWS(BaseWebSocketHandler):
         elif parsed["type"]=='get_document_update':
             self.get_document_update()
         elif parsed["type"]=='participant_update':
-            DocumentWS.send_participant_list(self.document.id)
-        elif parsed["type"]=='save' and self.access_rights == 'w':
-            save_document(self.document, parsed["document"])
+            DocumentWS.send_participant_list(self.document_id)
+        elif parsed["type"]=='save' and self.access_rights == 'w' and DocumentWS.sessions[self.document_id]['in_control'] == self.id:
+            save_document(self.document_id, parsed["document"])
         elif parsed["type"]=='chat':
             chat = {
                 "id": str(uuid.uuid4()),
@@ -145,52 +149,57 @@ class DocumentWS(BaseWebSocketHandler):
                 "from": self.user.id,
                 "type": 'chat'
                 }
-            if self.document.id in DocumentWS.sessions:
-                DocumentWS.send_updates(chat, self.document.id)
+            if self.document_id in DocumentWS.sessions:
+                DocumentWS.send_updates(chat, self.document_id)
         elif parsed["type"]=='transform' or parsed["type"]=='hash':
-            if self.document.id in DocumentWS.sessions:
-                DocumentWS.send_updates(message, self.document.id, self.id)
+            if self.document_id in DocumentWS.sessions:
+                DocumentWS.send_updates(message, self.document_id, self.id)
         elif parsed["type"]=='diff':
-            if self.document.id in DocumentWS.sessions:
-                DocumentWS.send_updates(message, self.document.id, self.id)
+            if self.document_id in DocumentWS.sessions:
+                DocumentWS.send_updates(message, self.document_id, self.id)
 
     def on_close(self):
-        if hasattr(self, 'document') and self.document.id in DocumentWS.sessions and self.id in DocumentWS.sessions[self.document.id]:
-            del DocumentWS.sessions[self.document.id][self.id]
-            if DocumentWS.sessions[self.document.id] and self.in_control:
-                chat = {
-                    "type": 'take_control'
-                    }
-                new_controller = DocumentWS.sessions[self.document.id][min(DocumentWS.sessions[self.document.id])]
-                new_controller.in_control = True
-                new_controller.write_message(chat)
-                DocumentWS.send_participant_list(self.document.id)
-            else:
-                del DocumentWS.sessions[self.document.id]
+        print "Websocket closing"
+        if hasattr(self, 'document_id') and self.document_id in DocumentWS.sessions and self.id in DocumentWS.sessions[self.document_id]['participants']:
+            del DocumentWS.sessions[self.document_id]['participants'][self.id]
+            if DocumentWS.sessions[self.document_id]['in_control']==self.id:
+                if len(DocumentWS.sessions[self.document_id]['participants'].keys()) > 0:
+                    chat = {
+                        "type": 'take_control'
+                        }
+                    new_controller = DocumentWS.sessions[self.document_id]['participants'][min(DocumentWS.sessions[self.document_id]['participants'])]
+                    DocumentWS.sessions[self.document_id]['in_control'] = new_controller.id
+                    new_controller.write_message(chat)
+                    DocumentWS.send_participant_list(self.document_id)
+                    print DocumentWS.sessions[self.document_id]
+                else:
+                    DocumentWS.sessions[self.document_id]['document'].save()
+                    del DocumentWS.sessions[self.document_id]
+                    print "noone left"
 
     @classmethod
-    def send_participant_list(cls, document):
-        if document in DocumentWS.sessions:
+    def send_participant_list(cls, document_id):
+        if document_id in DocumentWS.sessions:
             participant_list = []
-            for waiter in cls.sessions[document].keys():
+            for waiter in cls.sessions[document_id]['participants'].keys():
                 participant_list.append({
                     'key':waiter,
-                    'id':cls.sessions[document][waiter].user.id,
-                    'name':cls.sessions[document][waiter].user.readable_name,
-                    'avatar':avatar_url(cls.sessions[document][waiter].user,80)
+                    'id':cls.sessions[document_id]['participants'][waiter].user.id,
+                    'name':cls.sessions[document_id]['participants'][waiter].user.readable_name,
+                    'avatar':avatar_url(cls.sessions[document_id]['participants'][waiter].user,80)
                     })
             chat = {
                 "participant_list": participant_list,
                 "type": 'connections'
                 }
-            DocumentWS.send_updates(chat, document)
+            DocumentWS.send_updates(chat, document_id)
 
     @classmethod
-    def send_updates(cls, chat, document, sender_id=None):
-        info("sending message to %d waiters", len(cls.sessions[document]))
-        for waiter in cls.sessions[document].keys():
-            if cls.sessions[document][waiter].id != sender_id:
+    def send_updates(cls, chat, document_id, sender_id=None):
+        info("sending message to %d waiters", len(cls.sessions[document_id]))
+        for waiter in cls.sessions[document_id]['participants'].keys():
+            if cls.sessions[document_id]['participants'][waiter].id != sender_id:
                 try:
-                    cls.sessions[document][waiter].write_message(chat)
-                except:
+                    cls.sessions[document_id]['participants'][waiter].write_message(chat)
+                except WebSocketClosedError:
                     error("Error sending message", exc_info=True)

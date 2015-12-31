@@ -42,8 +42,13 @@
             });
         } else {
             serverCommunications.send({
+                type: 'check_version',
+                version: theEditor.editor.mod.collab.version
+            });
+            serverCommunications.send({
                 type: 'participant_update'
             });
+
         }
         serverCommunications.firstTimeConnection = false;
     };
@@ -73,6 +78,7 @@
             break;
         case 'document_data':
             editorHelpers.fillEditorPage(data.document, data.document_values);
+            theEditor.applyDiffs(data.last_diffs);
             if (data.hasOwnProperty('user')) {
                 theUser = data.user;
             } else {
@@ -87,9 +93,10 @@
             break;
         case 'document_data_update':
             editorHelpers.updateEditorPage(data.document);
+            theEditor.applyDiffs(data.last_diffs);
             break;
         case 'diff':
-            theEditor.applyDiffs(data);
+            theEditor.applyDiffs(data.diff);
             break;
         case 'confirm_diff':
             theEditor.confirmDiff(data.request_id);
@@ -102,8 +109,8 @@
             theDocumentValues.control = true;
             theDocumentValues.sentHash = false;
             break;
-        case 'hash':
-            theEditor.checkHash(data.hash);
+        case 'check_hash':
+            theEditor.checkHash(data.version,data.hash);
             break;
         }
     };

@@ -39,23 +39,6 @@
         delete window.flowCopy;
     };
 
-    /** Check if a specific node is scrolled into view
-     * @function checkViewable
-     * @memberof editorHelpers
-     */
-/*
-    editorHelpers.checkViewable = function(node) {
-        if (node.nodeType === 3) {
-            node = node.parentNode;
-        }
-
-        var windowTop = jQuery(window).scrollTop() + 300,
-        windowBottom = windowTop + jQuery(window).height(),
-        nodeTop = jQuery(node).offset().top,
-        nodeBottom = nodeTop + jQuery(node).height();
-
-        return ((nodeBottom <= windowBottom) && (nodeTop >= windowTop));
-    }*/
 
     document.addEventListener('layoutFlowFinished', editorHelpers.printReady, false);
 
@@ -71,62 +54,6 @@
         pagination.applyBookLayoutWithoutDivision();
     };
 
-    /** A template for the metadata fields in the editor.
-     * @function tmpMetadata
-     * @memberof editorHelpers
-     */
-
-  /*  editorHelpers.tmpMetadata = _.template('\
-        <% if (settings.subtitle) { %>\
-            <div id="metadata-subtitle" class="editable metadata metadata-subtitle" data-metadata="subtitle" contenteditable="true" title="'+gettext('The subtitle of the document')+'"></div>\
-        <% } %>\
-        <% if (settings.authors) { %>\
-            <div id="metadata-authors" class="editable metadata metadata-authors" data-metadata="authors" contenteditable="true" title="'+gettext('The authors of the document (comma-separated)')+'"></div>\
-        <% } %>\
-        <% if (settings.abstract) { %>\
-            <div id="metadata-abstract" class="editable metadata metadata-abstract" data-metadata="abstract" contenteditable="true" title="'+gettext('The abstract of the document')+'"></div>\
-        <% } %>\
-        <% if (settings.keywords) { %>\
-            <div id="metadata-keywords" class="editable metadata metadata-keywords" data-metadata="keywords" contenteditable="true" title="'+gettext('The keywords related to the document (comma-separated)')+'"></div>\
-        <% } %>\
-    ');*/
-
-
-    /** Select the metadata options in the menu that are set as enabled in theDocument.settings.metadata. NAME_OF_METADATA.
-     * Then layout the selected metadata on the page using the values  from theDocument.metadata.NAME_OF_METADATA.
-     * @function layoutMetadata
-     * @memberof editorHelpers
-     */
-     /*
-    editorHelpers.layoutMetadata = function () {
-        var i, metadataNode = document.getElementById('document-metadata'), metadataClone = metadataNode.cloneNode(), metadataDataNode, layoutDataNode, diffs;
-        jQuery('.metadata-menu-item').removeClass('selected');
-
-        metadataClone.innerHTML = editorHelpers.tmpMetadata({
-            settings: theDocument.settings.metadata
-        });
-
-        for (i in theDocument.settings.metadata) {
-            if (theDocument.settings.metadata[i]) {
-                jQuery('.metadata-menu-item.metadata-' + i).addClass(
-                    'selected');
-                if (theDocument.metadata[i]) {
-                    metadataDataNode = exporter.obj2Node(theDocument.metadata[i]);
-                    layoutDataNode  = metadataClone.querySelector('#metadata-'+i);
-                    while (metadataDataNode.firstChild) {
-                        layoutDataNode.appendChild(metadataDataNode.firstChild);
-                    }
-                }
-            }
-        }
-
-        metadataClone = nodeConverter.toView(metadataClone);
-
-        diffs = domDiff.diff(metadataNode, metadataClone);
-        domDiff.apply(metadataNode,diffs);
-
-        editorEscapes.reset();
-    };*/
 
     /** Turn enabled metadata off and disabled metadata on, Function is bound to clicking option in metadata menu.
      * @function switchMetadata
@@ -137,17 +64,8 @@
         editorHelpers.setDocumentData('settings.metadata.' + theMetadata, !
             theDocument.settings.metadata[
                 theMetadata]);
-//        editorHelpers.setMetadataDisplay(theMetadata);
+        // TODO: Make metadata that is switched off not show. Possibly with CSS?
     };
-
-    /** Layout metadata and then mark the document as having changed.
-     * @function setMetadataDisplay
-     * @memberof editorHelpers
-     */
-    /*editorHelpers.setMetadataDisplay = function () {
-        editorHelpers.layoutMetadata();
-        editorHelpers.documentHasChanged();
-    };*/
 
     /** Update the editor page with the document data from the server.
      * This is done if it was detected that the local version of the document
@@ -167,7 +85,7 @@
         theDocument.metadata = jQuery.parseJSON(aDocument.metadata);
         theDocument.contents = jQuery.parseJSON(aDocument.contents);
 
-        theEditor.update(theDocument);
+        theEditor.update();
         mathHelpers.resetMath();
         citationHelpers.formatCitationsInDoc();
     };
@@ -223,7 +141,7 @@
                 "/");
             delete theDocumentValues.is_new;
         }
-        theEditor.initiate(theDocument);
+        theEditor.initiate();
 
         // Wait one second and then relayout the footnotes. At this time the fonts should have loaded.
 
@@ -313,100 +231,12 @@
         }
     };
 
-    /** Set tracking to be on or off.
-     * @function settingsTracking
-     * @memberof editorHelpers.setDisplay
-     * @param theValue false: tracking is off, true: tracking is on.*/
-    /*editorHelpers.setDisplay.settingsTracking = function (theValue) {
-        if (theValue) {
-            jQuery('.ice-track').addClass('selected');
-        }
-        else {
-            jQuery('.ice-track').removeClass('selected');
-        }
-    };*/
-
-    /** Show or hide tracked changes.
-     * @function settingsDocumentstyle
-     * @memberof editorHelpers.setDisplay
-     * @param theValue false: changes are not shown, true: changes are shown.*/
-    /*editorHelpers.setDisplay.settingsTrackingShow = function (theValue) {
-        if (theValue) {
-            jQuery('.ice-display').addClass('selected');
-            jQuery('#flow').removeClass('CT-hide');
-        }
-        else {
-            jQuery('.ice-display').removeClass('selected');
-            jQuery('#flow').addClass('CT-hide');
-        }
-    };*/
-
-
-
-    /*editorHelpers.setDisplay.contents = function (theValue) {
-        var converterNode = exporter.obj2Node(theValue),
-            doc;
-        converterNode.normalize();
-      //  doc = proseMirrorConnector.fromDOM(proseMirrorConnector.schema, converterNode);
-      //  editorHelpers.contentEditor.setContent(doc);
-    };*/
-     /** Add the document contents/body text.
-     * @function contents
-     * @memberof editorHelpers.setDisplay
-     * @param theValue The HTML of the contents/main body.*/
-/*    editorHelpers.setDisplay.contentsOld = function (theValue) {
-        var contentsNode = document.getElementById('document-contents'), contentsClone = contentsNode.cloneNode(), converterNode = exporter.obj2Node(theValue), diffs;
-
-
-        while(converterNode.firstChild) {
-            contentsClone.appendChild(converterNode.firstChild);
-        }
-
-
-        contentsClone = nodeConverter.toView(contentsClone);
-
-        diffs = domDiff.diff(contentsNode, contentsClone);
-
-        domDiff.apply(contentsNode, diffs);
-
-        editorEscapes.reset();
-
-    };*/
-
-    /** Set the document title on the page.
-     * @function metadataTitle
-     * @memberof editorHelpers.setDisplay
-     * @param theValue The HTML of the title.*/
-    /*editorHelpers.setDisplay.metadataTitle = function (theValue) {
-
-        var titleNode = document.getElementById('document-title'), titleClone = titleNode.cloneNode(), converterNode = exporter.obj2Node(theValue), diffs;
-
-        while(converterNode.firstChild) {
-            titleClone.appendChild(converterNode.firstChild);
-        }
-
-        titleClone = nodeConverter.toView(titleClone);
-
-        diffs = domDiff.diff(titleNode, titleClone);
-
-        domDiff.apply(titleNode, diffs);
-
-        editorEscapes.reset();
-
-        editorHelpers.setDisplay.document('title', titleClone.textContent);
-    };*/
-
     /** A dictionary linking field names with set display functions.
      * @constant  FIELDS
      * @memberof editorHelpers.setDisplay
      */
     editorHelpers.setDisplay.FIELDS = {
         // A list of the functions used to update various fields to be called by editorHelpers.setDisplay.document
-  //      'title': editorHelpers.setDisplay.title,
-        /*'metadata.title': editorHelpers.setDisplay.metadataTitle,
-        'contents': editorHelpers.setDisplay.contents,*/
-        /*'settings.tracking': editorHelpers.setDisplay.settingsTracking,
-        'settings.tracking_show': editorHelpers.setDisplay.settingsTrackingShow,*/
         'settings.papersize': editorHelpers.setDisplay.settingsPapersize,
         'settings.citationstyle': editorHelpers.setDisplay.settingsCitationstyle,
         'settings.documentstyle': editorHelpers.setDisplay.settingsDocumentstyle,
@@ -487,60 +317,6 @@
         return true;
     };
 
-    /** Copy editable fields (title, body/contents, keywords, abstract, etc.) from the HTML and store the values inside theDocument.
-     * @function getUpdatesFromInputFields
-     * @memberof editorHelpers
-     * @param callback Callback to be called after copying data (optional).
-     */
-    /*editorHelpers.getUpdatesFromInputFields = function (callback) {
-
-        var i, j, metadata;
-        console.log('getting updates');
-        editorHelpers.setDocumentData('metadata.title', exporter.node2Obj(nodeConverter.toModel(document.getElementById('document-title'))));
-
-        //editorHelpers.setDocumentData('contents', exporter.node2Obj(nodeConverter.toModel(document.getElementById('document-contents'))));
-
-        metadata = document.querySelectorAll('#document-metadata .metadata');
-
-        j = metadata.length;
-
-        for (i=0; i < j; i++) {
-            editorHelpers.setDocumentData('metadata.' + metadata[i].getAttribute(
-                    'data-metadata'), exporter.node2Obj(nodeConverter.toModel(metadata[i])));
-            //console.log(exporter.node2Obj(nodeConverter.toModel(metadata[i])));
-        }
-
-        if (callback) {
-            callback();
-        }
-    };*/
-
-    /** Calculates a hash sum of the document data to make sure collaborating editors all have the same document.
-     * Function from jsperf.com/hashing-string.
-     * @function docHash
-     * @memberof editorHelpers
-     */
-
-/*    editorHelpers.getHash = function(string) {
-        var res = 0, len = string.length;
-        for (var i = 0; i < len; i++) {
-            res = res * 31 + string.charCodeAt(i);
-            res = res & res;
-        }
-        return res;
-    }*/
-
-    /** Checks whether a hash sum corresponds with the local document.
-     * @function checkHash
-     * @memberof editorHelpers
-     */
-    /*editorHelpers.checkHash = function(hash) {
-        if (editorHelpers.docHash() != hash) {
-            console.log('Hash did not match. Will get update from server.');
-            theDocumentValues.disableInput = true;
-            serverCommunications.send({type: 'get_document_update'});
-        }
-    }*/
 
 
 
@@ -553,12 +329,6 @@
     editorHelpers.saveDocument = function (callback) {
         var documentData = {};
 
-        // The title is saved twice: as metadata.title with html formatting and as just title as plain text.
-        // Because we don't want two entries in the history, we avoid touching the history for the text-only version.
-
-      //  theDocument.title = jQuery('#document-title').text().trim();
-
-
         if (theDocumentValues.control===true) {
             documentData.settings = JSON.stringify(theDocument.settings);
             documentData.metadata = JSON.stringify(theDocument.metadata);
@@ -566,6 +336,7 @@
             documentData.title = theDocument.title.substring(0, 255);
             documentData.contents = JSON.stringify(theDocument.contents);
             documentData.version = theDocument.version;
+            documentData.hash = theDocument.hash;
             console.log('saving');
             serverCommunications.send({
                 type: 'save',

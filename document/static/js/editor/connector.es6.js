@@ -45,20 +45,22 @@ theEditor.createDoc = function (aDocument) {
       return doc;
 };
 
-theEditor.initiate = function (aDocument) {
-      let doc = theEditor.createDoc(aDocument);
-      theEditor.editor = makeEditor(document.getElementById('document-editable'), doc, aDocument.version);
+theEditor.initiate = function () {
+      let doc = theEditor.createDoc(theDocument);
+      theEditor.editor = makeEditor(document.getElementById('document-editable'), doc, theDocument.version);
+      theDocument.hash = theEditor.getHash();
       new UpdateUI(theEditor.editor, "selectionChange change activeMarkChange");
       theEditor.editor.on('change', editorHelpers.documentHasChanged);
       theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators);
 };
 
-theEditor.update = function (aDocument) {
-      let doc = theEditor.createDoc(aDocument);
+theEditor.update = function () {
+      let doc = theEditor.createDoc(theDocument);
       theEditor.editor.setOption("collab", null)
       theEditor.editor.setContent(doc);
-      theEditor.editor.setOption("collab", {version: aDocument.version})
+      theEditor.editor.setOption("collab", {version: theDocument.version})
       theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators);
+      theDocument.hash = theEditor.getHash();
 };
 
 theEditor.getUpdates = function (callback) {
@@ -71,7 +73,7 @@ theEditor.getUpdates = function (callback) {
       theDocument.metadata.abstract = exporter.node2Obj(outputNode.getElementById('metadata-abstract'));
       theDocument.metadata.keywords = exporter.node2Obj(outputNode.getElementById('metadata-keywords'));
       theDocument.contents = exporter.node2Obj(outputNode.getElementById('document-contents'));
-
+      theDocument.hash = theEditor.getHash();
       if (callback) {
           callback();
       }
@@ -101,8 +103,8 @@ theEditor.confirmDiff = function (request_id) {
     theEditor.editor.mod.collab.confirmSteps(sentSteps)
 };
 
-theEditor.applyDiffs = function(aPackage) {
-    theEditor.editor.mod.collab.receive(aPackage.diff.map(j => pm.Step.fromJSON(fidusSchema, j)));
+theEditor.applyDiffs = function(diffs) {
+    theEditor.editor.mod.collab.receive(diffs.map(j => pm.Step.fromJSON(fidusSchema, j)));
 }
 
 
@@ -115,7 +117,7 @@ theEditor.stopCollaborativeMode = function () {
 };
 
 theEditor.getHash = function () {
-    let string = theEditor.editor.getContent('html')
+    let string = JSON.stringify(theEditor.editor.mod.collab.versionDoc)
     let len = string.length
     var hash = 0, char, i;
     if (len == 0) return hash;
@@ -126,18 +128,24 @@ theEditor.getHash = function () {
     }
     return hash;
 };
-
-theEditor.checkHash = function(hash) {
+theEditor.checkHash = function(version, hash) {
     console.log('Verifying hash')
-    if (hash===theEditor.getHash()) {
-        console.log('Hash could be verified');
-        return true;
+    if (version===theEditor.editor.mod.collab.version) {
+      if(hash===theEditor.getHash()) {
+          console.log('Hash could be verified');
+          return;
+      }
+      console.log('Hash could not be verified, requesting document.');
+      serverCommunications.send({type: 'get_document_update'});
+      return;
+    } else {
+      serverCommunications.send({
+        type: 'check_version',
+        version: theEditor.editor.mod.collab.version
+      });
+      return;
     }
-    console.log('Hash could not be verified, requesting document.');
-    serverCommunications.send({type: 'get_document_update'});
-    return false;
 }
-
 theEditor.fromDOM = pm.fromDOM;
 theEditor.schema = fidusSchema;
 

@@ -20,7 +20,7 @@ import uuid
 
 from ws.base import BaseWebSocketHandler
 from logging import info, error
-from tornado.escape import json_decode
+from tornado.escape import json_decode, json_encode
 from tornado.websocket import WebSocketClosedError
 from document.models import AccessRight, Document
 from document.views import get_accessrights
@@ -33,6 +33,7 @@ def save_document(document_id,changes):
     document.metadata = changes["metadata"]
     document.settings = changes["settings"]
     document.version = changes["version"]
+    document.last_diffs = json_encode(DocumentWS.sessions[document_id]['last_diffs'])
     document.save()
 
 class DocumentWS(BaseWebSocketHandler):
@@ -71,18 +72,11 @@ class DocumentWS(BaseWebSocketHandler):
                 self.id = 0
                 DocumentWS.sessions[document.id]['participants']=dict()
                 DocumentWS.sessions[document.id]['document'] = document
-                # The document may have received more diffs that what were
-                # present in the last full version of the document. The
-                # difference should not be more than a handful of changes, so we
-                # discard these when opening the document again.
-                # OBS! This also means that the list of last_diffs will need to 
-                # remove those extra diffs.
-                document.diff_version = document.version
+                DocumentWS.sessions[document.id]['last_diffs'] = json_decode(document.last_diffs)
                 DocumentWS.sessions[document.id]['in_control'] = self.id
             else:
                 self.id = max(DocumentWS.sessions[document.id]['participants'])+1
             DocumentWS.sessions[document.id]['participants'][self.id] = self
-            print DocumentWS.sessions[document.id]
             response = dict()
             response['type'] = 'welcome'
             self.write_message(response)
@@ -112,6 +106,8 @@ class DocumentWS(BaseWebSocketHandler):
         response['document']['owner']['name']=document.owner.readable_name
         response['document']['owner']['avatar']=avatar_url(document.owner,80)
         response['document']['owner']['team_members']=[]
+        requested_diffs = document.diff_version - document.version
+        response['last_diffs'] = DocumentWS.sessions[self.document_id]["last_diffs"][:requested_diffs]
         for team_member in document.owner.leader.all():
             tm_object = dict()
             tm_object['id'] = team_member.member.id
@@ -144,6 +140,8 @@ class DocumentWS(BaseWebSocketHandler):
         response['document']['contents']=document.contents
         response['document']['metadata']=document.metadata
         response['document']['settings']=document.settings
+        requested_diffs = document.diff_version - document.version
+        response['last_diffs'] = DocumentWS.sessions[self.document_id]["last_diffs"][:requested_diffs]
         self.write_message(response)
 
     def on_message(self, message):
@@ -157,6 +155,11 @@ class DocumentWS(BaseWebSocketHandler):
             DocumentWS.send_participant_list(self.document_id)
         elif parsed["type"]=='save' and self.access_rights == 'w' and DocumentWS.sessions[self.document_id]['in_control'] == self.id:
             save_document(self.document_id, parsed["document"])
+            DocumentWS.send_updates({
+                "type": 'check_hash',
+                "version": parsed["document"]["version"],
+                "hash": parsed["document"]["hash"]
+            }, self.document_id, self.id)
         elif parsed["type"]=='chat':
             chat = {
                 "id": str(uuid.uuid4()),
@@ -166,19 +169,35 @@ class DocumentWS(BaseWebSocketHandler):
                 }
             if self.document_id in DocumentWS.sessions:
                 DocumentWS.send_updates(chat, self.document_id)
-        elif parsed["type"]=='transform' or parsed["type"]=='hash':
+        elif parsed["type"]=='transform':
             if self.document_id in DocumentWS.sessions:
                 DocumentWS.send_updates(message, self.document_id, self.id)
         elif parsed["type"]=='diff':
             if self.document_id in DocumentWS.sessions:
                 document = DocumentWS.sessions[self.document_id]["document"]
                 if parsed["version"] == document.diff_version:
-                    print "DIFFS"
-                    print parsed["diff"]
-                    print len(parsed["diff"])
+                    DocumentWS.sessions[self.document_id]["last_diffs"].append(parsed["diff"])
+                    # store 500 diffs or all the diffs from the last document version to the latest diff -- whatever is the greatest.
+                    number_stored_diffs = max(500, document.diff_version - document.version)
+                    DocumentWS.sessions[self.document_id]["last_diffs"] = DocumentWS.sessions[self.document_id]["last_diffs"][:number_stored_diffs]
                     document.diff_version += len(parsed["diff"])
                     self.confirm_diff(parsed["request_id"])
                     DocumentWS.send_updates(message, self.document_id, self.id)
+        elif parsed["type"]=='check_version':
+            document_session = DocumentWS.sessions[self.document_id]
+            if parsed["version"] + len(document_session["last_diffs"]) >= document_session["document"].diff_version:
+                number_requested_diffs = document_session["document"].diff_version - parsed["version"]
+                response = {
+                    "type": "diff",
+                    "version": parsed["version"],
+                    "diff": document_session["last_diffs"][:number_requested_diffs],
+                    "request_id": 0
+                }
+                self.write_message(response)
+            else:
+                # Client has a version that is too old
+                self.get_document_update()
+
 
     def on_close(self):
         print "Websocket closing"
@@ -193,8 +212,8 @@ class DocumentWS(BaseWebSocketHandler):
                     DocumentWS.sessions[self.document_id]['in_control'] = new_controller.id
                     new_controller.write_message(chat)
                     DocumentWS.send_participant_list(self.document_id)
-                    print DocumentWS.sessions[self.document_id]
                 else:
+                    DocumentWS.sessions[self.document_id]['document'].last_diffs = json_encode(DocumentWS.sessions[self.document_id]['last_diffs'])
                     DocumentWS.sessions[self.document_id]['document'].save()
                     del DocumentWS.sessions[self.document_id]
                     print "noone left"

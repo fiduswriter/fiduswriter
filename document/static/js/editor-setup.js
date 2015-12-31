@@ -201,45 +201,17 @@ jQuery(document).bind('documentDataLoaded', function() {
         }
 
 
-  /*      window.tracker = new ice.InlineChangeEditor({
-            element: document.querySelector('#document-editable'),
-            handleEvents: false,
-            mergeBlocks: false,
-            contentEditable: true,
-            currentUser: {
-                id: theUser.id,
-                name: theUser.name
-            },
-            plugins: [],
-            hostMethods: {
-                logError: function () {},
-                notifyChange: function () {}
-            }
-        }).startTracking();
-        document.querySelector('#document-editable').removeAttribute(
-            'contenteditable');
-        jQuery('.editable').attr('contenteditable', true);*/
         mathHelpers.resetMath();
 
 
-//        diffHelpers.setup();
-
-        // Set Auto-save to save every ten seconds
+        // Set Auto-save to save every two minutes
         setInterval(function() {
             if (theDocumentValues.changed) {
-                theDocumentValues.sentHash = false;
                 theEditor.getUpdates(function() {
                     editorHelpers.saveDocument();
                 });
-            } else if (theDocumentValues.control && !theDocumentValues.sentHash && theDocumentValues.collaborativeMode) {
-                theDocumentValues.sentHash = true;
-                console.log('sending hash');
-                serverCommunications.send({
-                    type: 'hash',
-                    hash: theEditor.getHash()
-                })
             }
-        }, 10000);
+        }, 120000);
 
 
         // bind the share dialog to the button if the user is the document owner
@@ -252,45 +224,9 @@ jQuery(document).bind('documentDataLoaded', function() {
         }
 
 
-//        keyEvents.bindEvents();
-
         // Bind comment functions
         commentHelpers.bindEvents();
-        /*
-        var editableArea = document.querySelector("#document-editable");
 
-        if (editableArea) {
-            // Send paste to handlePaste
-            editableArea.addEventListener('paste', paste.handlePaste, false);
-
-            // Send cut to handleCut
-            editableArea.addEventListener('cut', cut.handleCut, false);
-
-            // Send key events on to the tracker directly.
-            jQuery(editableArea).bind('keyup keypress mousedown mouseup',
-                function(evt) {
-                    if (theDocument.settings.tracking) {
-                        return tracker.handleEvent(evt);
-                    } else {
-                        return true;
-                    }
-                });
-        }
-
-        // Set webpage title when document title changes
-        jQuery('#document-title').bind('keyup paste change',
-            function() {
-                editorHelpers.setDisplay.document('title', jQuery(this).text()
-                    .trim());
-            });
-
-        // When contents of document have changed, mark it as such
-        jQuery('#document-editable').bind(
-            'keyup paste change',
-            function() {
-                editorHelpers.documentHasChanged();
-            });
-        */
         jQuery('.save').bind('mousedown', function() {
             theEditor.getUpdates(function() {
                 editorHelpers.saveDocument();
@@ -298,39 +234,12 @@ jQuery(document).bind('documentDataLoaded', function() {
             exporter.uploadNative(theDocument);
         });
 
-        /* jQuery(window).on('beforeunload', function(){
-            editorHelpers.getUpdatesFromInputFields(function () {
-                editorHelpers.saveDocument();
-            });
-            if (theDocumentValues.collaborativeMode) {
-                diffHelpers.handleChanges();
-            }
-            return gettext('Leave editor');
-        }); */
-
-
-        /*jQuery(document).on('click', '.pagination-footnote-item-container',
-            function(e) {
-                var footnote = document.getElementById(this.dataset.footnoteId);
-                tracker._addNodeTracking(footnote, false, false);
-            }
-        );*/
 
         jQuery('.multibuttonsCover').each(function() {
             $.addDropdownBox(jQuery(this), jQuery(this).siblings(
                 '.fw-pulldown'));
         });
 
-
-        //ice pulldown
-        $.addDropdownBox(jQuery('#ice-control'), jQuery(
-            '#ice-control .fw-pulldown'));
-
-        /*editorHelpers.setDisplay.document('settings.tracking', theDocument.settings
-            .tracking);
-        editorHelpers.setDisplay.document('settings.tracking_show',
-            theDocument.settings.tracking_show);
-            */
 
         jQuery('.ice-display').bind('mousedown', function() {
             editorHelpers.setDocumentData('settings.tracking_show', (!
@@ -341,37 +250,6 @@ jQuery(document).bind('documentDataLoaded', function() {
             editorHelpers.documentHasChanged();
             return false;
         });
-
-        if (theDocumentValues.is_owner) {
-            jQuery('.ice-track').bind('mousedown', function() {
-                editorHelpers.setDocumentData('settings.tracking', (!
-                    theDocument.settings.tracking));
-                editorHelpers.setDisplay.document('settings.tracking',
-                    theDocument.settings.tracking);
-                editorHelpers.documentHasChanged();
-                return false;
-            });
-
-          /*  jQuery('.ice-accept-all').bind('mousedown', function() {
-                window.tracker.acceptAll();
-                editorHelpers.documentHasChanged();
-                return false;
-            });
-
-            jQuery('.ice-reject-all').bind('mousedown', function() {
-                window.tracker.rejectAll();
-                editorHelpers.documentHasChanged();
-                return false;
-            });*/
-
-            // Bind in-text tracking menu
-        //    trackingHelpers.bindEvents();
-        } else {
-            //jQuery('.ice-track').addClass('disabled');
-            //jQuery('.ice-accept-all').addClass('disabled');
-            //jQuery('.ice-reject-all').addClass('disabled');
-        }
-
 
         //open and close header
         jQuery('#open-close-header').bind('click', function() {

@@ -66,12 +66,18 @@ class DocumentWS(BaseWebSocketHandler):
                         self.access_rights = access_rights[0].rights
                         can_access = True
         if can_access:
-            print document.id
             if document.id not in DocumentWS.sessions:
                 DocumentWS.sessions[document.id]=dict()
                 self.id = 0
                 DocumentWS.sessions[document.id]['participants']=dict()
                 DocumentWS.sessions[document.id]['document'] = document
+                # The document may have received more diffs that what were
+                # present in the last full version of the document. The
+                # difference should not be more than a handful of changes, so we
+                # discard these when opening the document again.
+                # OBS! This also means that the list of last_diffs will need to 
+                # remove those extra diffs.
+                document.diff_version = document.version
                 DocumentWS.sessions[document.id]['in_control'] = self.id
             else:
                 self.id = max(DocumentWS.sessions[document.id]['participants'])+1

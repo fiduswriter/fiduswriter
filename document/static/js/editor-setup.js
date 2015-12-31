@@ -25,8 +25,6 @@ jQuery(document).ready(function() {
         citationStyleMenu = document.getElementById("citationstyle-list"),
         newMenuItem, i;
 
-    editorHelpers.init();
-
     // Enable toolbar menu
     jQuery('#menu1').ptMenu();
 

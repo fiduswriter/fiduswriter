@@ -2,13 +2,13 @@
 
 var theEditor = {};
 
-function makeEditor (where, doc) {
+function makeEditor (where, doc, version) {
   return new pm.ProseMirror({
     place: where,
     schema: fidusSchema,
     doc: doc,
     menuBar: true,
-    collab: {version: 0}
+    collab: {version: version}
   })
 };
 
@@ -47,7 +47,7 @@ theEditor.createDoc = function (aDocument) {
 
 theEditor.initiate = function (aDocument) {
       let doc = theEditor.createDoc(aDocument);
-      theEditor.editor = makeEditor(document.getElementById('document-editable'), doc);
+      theEditor.editor = makeEditor(document.getElementById('document-editable'), doc, aDocument.version);
       new UpdateUI(theEditor.editor, "selectionChange change activeMarkChange");
       theEditor.editor.on('change', editorHelpers.documentHasChanged);
       theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators);
@@ -57,13 +57,14 @@ theEditor.update = function (aDocument) {
       let doc = theEditor.createDoc(aDocument);
       theEditor.editor.setOption("collab", null)
       theEditor.editor.setContent(doc);
-      theEditor.editor.setOption("collab", {version: 0})
+      theEditor.editor.setOption("collab", {version: aDocument.version})
       theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators);
 };
 
 theEditor.getUpdates = function (callback) {
-      var outputNode = theEditor.editor.getContent('dom');
+      var outputNode = pm.serializeTo(theEditor.editor.mod.collab.versionDoc,'dom');
       theDocument.title = theEditor.editor.doc.firstChild.textContent;
+      theDocument.version = theEditor.editor.mod.collab.version;
       theDocument.metadata.title = exporter.node2Obj(outputNode.getElementById('document-title'));
       theDocument.metadata.subtitle = exporter.node2Obj(outputNode.getElementById('metadata-subtitle'));
       theDocument.metadata.authors = exporter.node2Obj(outputNode.getElementById('metadata-authors'));
@@ -76,21 +77,29 @@ theEditor.getUpdates = function (callback) {
       }
 };
 
-theEditor.sendToCollaborators = function () {
-    console.log('send to collabs')
-      let pm = theEditor.editor
-      let toSend = pm.mod.collab.sendableSteps()
-      if (theDocumentValues.collaborativeMode) {
-          let aPackage = {
-              type: 'diff',
-              time: new Date().getTime() + window.clientOffsetTime,
-              diff: toSend.steps.map(s => s.toJSON())
-          }
-          serverCommunications.send(aPackage);
-      }
+theEditor.unconfirmedSteps = {};
 
-      pm.mod.collab.confirmSteps(toSend)
-    };
+var confirmStepsRequestCounter = 0;
+
+theEditor.sendToCollaborators = function () {
+      console.log('send to collabs')
+      let toSend = theEditor.editor.mod.collab.sendableSteps()
+      let request_id = confirmStepsRequestCounter++
+      let aPackage = {
+          type: 'diff',
+          version: theEditor.editor.mod.collab.version,
+          diff: toSend.steps.map(s => s.toJSON()),
+          request_id: request_id
+      }
+      serverCommunications.send(aPackage)
+      theEditor.unconfirmedSteps[request_id] = toSend
+};
+
+theEditor.confirmDiff = function (request_id) {
+    console.log('confirming steps')
+    let sentSteps = theEditor.unconfirmedSteps[request_id]
+    theEditor.editor.mod.collab.confirmSteps(sentSteps)
+};
 
 theEditor.applyDiffs = function(aPackage) {
     theEditor.editor.mod.collab.receive(aPackage.diff.map(j => pm.Step.fromJSON(fidusSchema, j)));

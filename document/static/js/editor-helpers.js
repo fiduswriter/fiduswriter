@@ -25,11 +25,6 @@
      */
         editorHelpers = {};
 
-    // Initiate ProseMirror
-    editorHelpers.init = function () {
-    //  editorHelpers.contentEditor = proseMirrorConnector.makeEditor(document.getElementById('document-contents'));
-    };
-
 
     /** Call printing dialog and destroy print view after printing. (step 2 of printing process)
      * @function print
@@ -570,6 +565,7 @@
 
             documentData.title = theDocument.title.substring(0, 255);
             documentData.contents = JSON.stringify(theDocument.contents);
+            documentData.version = theDocument.version;
             console.log('saving');
             serverCommunications.send({
                 type: 'save',

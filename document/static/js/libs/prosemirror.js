@@ -312,13 +312,8 @@ function isWordChar(ch) {
   );
 }
 
-/**
- * Get the category of a given character. Either a "space",
- * a character that can be part of a word ("word"), or anything else ("other").
- *
- * @param  {string} ch The character.
- * @return {string}
- */
+// Get the category of a given character. Either a "space",
+// a character that can be part of a word ("word"), or anything else ("other").
 
 function charCategory(ch) {
   return (/\s/.test(ch) ? "space" : isWordChar(ch) ? "word" : "other"
@@ -339,9 +334,10 @@ var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = 
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
+exports.defineCommand = defineCommand;
 exports.defineParamHandler = defineParamHandler;
-exports.initCommands = initCommands;
-exports.defaultKeymap = defaultKeymap;
+exports.deriveCommands = deriveCommands;
+exports.deriveKeymap = deriveKeymap;
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
 
@@ -365,104 +361,45 @@ var _keys = require("./keys");
 
 var _selection = require("./selection");
 
-var _options = require("./options");
+var commands = Object.create(null);
 
 var paramHandlers = Object.create(null);
 
-var empty = [];
+// :: (CommandSpec)
+// Define a globally available command. Note that
+// [namespaces](#namespace) can still be used to prevent the command
+// from showing up in editor where you don't want it to show up.
 
-// FIXME document individual commands
+function defineCommand(spec) {
+  if (commands[spec.name]) throw new Error("Duplicate definition of command " + spec.name);
+  commands[spec.name] = spec;
+}
 
 // ;; A command is a named piece of functionality that can be bound to
 // a key, shown in the menu, or otherwise exposed to the user.
 //
 // The commands available in a given editor are gathered from the
-// [registries](#Registry) given to the editor, and the node and
-// mark types in its [schema](#Schema.registry). Use the
+// commands defined with `defineCommand`, and from
+// [specs](#CommandSpec) associated with node and mark types in the
+// editor's [schema](#Schema.registry). Use the
 // [`register`](#NodeType.register) method with `"command"` as the
-// name and a `CommandSpec` as value to define a new command.
+// name and a `CommandSpec` as value to associate a command with a
+// node or mark.
 //
 // This module defines a [bunch of commands](#edit_commands) in the
-// [default registry](#defaultRegistry).
+// [default schema](#defaultSchema) and global command registry.
 
 var Command = (function () {
-  function Command(spec, self) {
+  function Command(spec, self, name) {
     _classCallCheck(this, Command);
 
     // :: string The name of the command.
-    this.name = spec.name;
+    this.name = name || spec.name;
     if (!this.name) throw new Error("Trying to define a command without a name");
     // :: CommandSpec The command's specifying object.
     this.spec = spec;
     this.self = self;
   }
-
-  // ;; #path=CommandSpec #kind=interface #toc=false
-  // Commands are defined using objects that specify various aspects of
-  // the command. The only properties that _must_ appear in a command
-  // spec are [`name`](#CommandSpec.name) and [`run`](#CommandSpec.run).
-  // You should probably also give your commands a `label`.
-
-  // :: string #path=CommandSpec.name
-  // The name of the command, which will be its key in
-  // `ProseMirror.commands`, and the thing passed to
-  // [`execCommand`](#ProseMirror.execCommand).
-
-  // :: string #path=CommandSpec.label
-  // A user-facing label for the command. This will be used, among other
-  // things. as the tooltip title for the command's menu item. If there
-  // is no `label`, the command's `name` will be used instead.
-
-  // :: (pm: ProseMirror, ...params: [any]) → ?bool #path=CommandSpec.run
-  // The function that executes the command. If the command has
-  // [parameters](#CommandSpec.params), their values are passed as
-  // arguments. For commands [registered](#NodeType.register) on node or
-  // mark types, `this` will be bound to the node or mark type when this
-  // function is ran. Should return `false` when the command could not
-  // be executed.
-
-  // :: [CommandParam] #path=CommandSpec.params
-  // The parameters that this command expects.
-
-  // :: (pm: ProseMirror) → bool #path=CommandSpec.select
-  // The function used to [select](#Command.select) the command. `this`
-  // will again be bound to a node or mark type, when available.
-
-  // :: (pm: ProseMirror) → bool #path=CommandSpec.active
-  // The function used to determine whether the command is
-  // [active](#Command.active). `this` refers to the associated node or
-  // mark type.
-
-  // :: union<string, [string]> #path=CommandSpec.key
-  // The default key binding or bindings for this command.
-
-  // :: union<string, [string]> #path=CommandSpec.pcKey
-  // Default key binding or bindings specific to non-Mac platforms.
-
-  // :: union<string, [string]> #path=CommandSpec.macKey
-  // Default key binding or bindings specific to the Mac platform.
-
-  // FIXME document menu and icon properties
-
-  // ;; #path=CommandParam #kind=interface #toc=false
-  // The parameters that a command can take are specified using objects
-  // with the following properties:
-
-  // :: string #path=CommandParam.label
-  // The user-facing name of the parameter. Shown to the user when
-  // prompting for this parameter.
-
-  // :: string #path=CommandParam.type
-  // The type of the parameter. Supported types are `"text"` and `"select"`.
-
-  // :: any #path=CommandParam.default
-  // A default value for the parameter.
-
-  // :: (string, (pm: ProseMirror, cmd: Command, callback: (?[any])))
-  // Register a parameter handler, which is a function that prompts the
-  // user to enter values for a command's [parameters](#CommandParam), and
-  // calls a callback with the values received. See also the
-  // [`commandParamHandler` option](#commandParamHandler).
 
   // :: (ProseMirror, ?[any]) → ?bool
   // Execute this command. If the command takes
@@ -534,6 +471,86 @@ var Command = (function () {
 
 exports.Command = Command;
 
+var empty = [];
+
+// ;; #path=CommandSpec #kind=interface #toc=false
+// Commands are defined using objects that specify various aspects of
+// the command. The only properties that _must_ appear in a command
+// spec are [`name`](#CommandSpec.name) and [`run`](#CommandSpec.run).
+// You should probably also give your commands a `label`.
+
+// :: string #path=CommandSpec.name
+// The name of the command, which will be its key in
+// `ProseMirror.commands`, and the thing passed to
+// [`execCommand`](#ProseMirror.execCommand). Can be
+// [namespaced](#namespaces), (and probably should, for user-defined
+// commands).
+
+// :: string #path=CommandSpec.label
+// A user-facing label for the command. This will be used, among other
+// things. as the tooltip title for the command's menu item. If there
+// is no `label`, the command's `name` will be used instead.
+
+// :: (pm: ProseMirror, ...params: [any]) → ?bool #path=CommandSpec.run
+// The function that executes the command. If the command has
+// [parameters](#CommandSpec.params), their values are passed as
+// arguments. For commands [registered](#NodeType.register) on node or
+// mark types, `this` will be bound to the node or mark type when this
+// function is ran. Should return `false` when the command could not
+// be executed.
+
+// :: [CommandParam] #path=CommandSpec.params
+// The parameters that this command expects.
+
+// :: (pm: ProseMirror) → bool #path=CommandSpec.select
+// The function used to [select](#Command.select) the command. `this`
+// will again be bound to a node or mark type, when available.
+
+// :: (pm: ProseMirror) → bool #path=CommandSpec.active
+// The function used to determine whether the command is
+// [active](#Command.active). `this` refers to the associated node or
+// mark type.
+
+// :: union<string, [string]> #path=CommandSpec.keys
+// The default key bindings for this command. May either be an array
+// of strings containing [key names](#FIXME), or an object with
+// optional `all`, `mac`, and `pc` properties, specifying arrays of
+// keys for different platforms.
+
+// :: union<bool, Object> #path=CommandSpec.derive
+// [Mark](#MarkType) and [node](#NodeType) types often need to define
+// boilerplate commands. To reduce the amount of duplicated code, you
+// can derive such commands by setting the `derive` property to either
+// `true` or an object which is passed to the deriving function. If
+// this object has a `name` property, that is used, instead of the
+// command name, to pick a deriving function.
+//
+// For node types, you can derive `"insert"`, `"make"`, and `"wrap"`.
+//
+// For mark types, you can derive `"set"`, `"unset"`, and `"toggle"`.
+
+// FIXME document menu and icon properties
+
+// ;; #path=CommandParam #kind=interface #toc=false
+// The parameters that a command can take are specified using objects
+// with the following properties:
+
+// :: string #path=CommandParam.label
+// The user-facing name of the parameter. Shown to the user when
+// prompting for this parameter.
+
+// :: string #path=CommandParam.type
+// The type of the parameter. Supported types are `"text"` and `"select"`.
+
+// :: any #path=CommandParam.default
+// A default value for the parameter.
+
+// :: (string, (pm: ProseMirror, cmd: Command, callback: (?[any])))
+// Register a parameter handler, which is a function that prompts the
+// user to enter values for a command's [parameters](#CommandParam), and
+// calls a callback with the values received. See also the
+// [`commandParamHandler` option](#commandParamHandler).
+
 function defineParamHandler(name, handler) {
   paramHandlers[name] = handler;
 }
@@ -543,45 +560,81 @@ function getParamHandler(pm) {
   if (option && paramHandlers[option]) return paramHandlers[option];
 }
 
-function initCommands(pm) {
-  var result = Object.create(null);
-  pm.registry("command", function (spec, type) {
-    result[spec.name] = new Command(spec, type);
+function deriveCommands(pm) {
+  var found = Object.create(null),
+      config = pm.options.commands;
+  function add(name, spec, self) {
+    if (!pm.isInNamespace(name)) return;
+    if (found[name]) throw new Error("Duplicate definition of command " + name);
+    found[name] = new Command(spec, self, name);
+  }
+  function addAndOverride(name, spec, self) {
+    if (Object.prototype.hasOwnProperty.call(config, name)) {
+      var confSpec = config[name];
+      if (!confSpec) return;
+      if (confSpec.run) return;
+      var newSpec = Object.create(null);
+      for (var prop in spec) {
+        newSpec[prop] = spec[prop];
+      }for (var prop in confSpec) {
+        newSpec[prop] = confSpec[prop];
+      }spec = newSpec;
+    }
+    add(name, spec, self);
+  }
+
+  pm.schema.registry("command", function (spec, type, name) {
+    if (spec.derive) {
+      var conf = typeof spec.derive == "object" ? spec.derive : {};
+      var dname = conf.name || spec.name;
+      var derive = type.constructor.deriveableCommands[dname];
+      if (!derive) throw new Error("Don't know how to derive command " + dname);
+      var derived = derive.call(type, conf);
+      for (var prop in spec) if (prop != "derive") derived[prop] = spec[prop];
+      spec = derived;
+    }
+    addAndOverride("schema:" + name + ":" + spec.name, spec, type);
   });
-  return result;
+  for (var _name in commands) {
+    addAndOverride(_name, commands[_name]);
+  }for (var _name2 in config) {
+    var spec = config[_name2];
+    if (spec && spec.run) add(_name2, spec);
+  }
+  return found;
 }
 
-function defaultKeymap(pm) {
-  var bindings = {};
-  function add(command, key) {
-    if (Array.isArray(key)) {
-      for (var i = 0; i < key.length; i++) {
-        add(command, key[i]);
-      }
-    } else if (key) {
-      var _d$$exec = /^(.+?)(?:\((\d+)\))?$/.exec(key);
+function deriveKeymap(pm) {
+  var bindings = {},
+      platform = _dom.browser.mac ? "mac" : "pc";
+  function add(command, keys) {
+    for (var i = 0; i < keys.length; i++) {
+      var _d$$exec = /^(.+?)(?:\((\d+)\))?$/.exec(keys[i]);
 
       var _d$$exec2 = _slicedToArray(_d$$exec, 3);
 
       var _ = _d$$exec2[0];
-      var _name = _d$$exec2[1];
+      var _name3 = _d$$exec2[1];
       var _d$$exec2$2 = _d$$exec2[2];
       var rank = _d$$exec2$2 === undefined ? 50 : _d$$exec2$2;
 
-      (0, _utilSortedinsert2["default"])(bindings[_name] || (bindings[_name] = []), { command: command, rank: rank }, function (a, b) {
+      (0, _utilSortedinsert2["default"])(bindings[_name3] || (bindings[_name3] = []), { command: command, rank: rank }, function (a, b) {
         return a.rank - b.rank;
       });
     }
   }
-  for (var _name2 in pm.commands) {
-    var cmd = pm.commands[_name2];
-    add(_name2, cmd.spec.key);
-    add(_name2, _dom.browser.mac ? cmd.spec.macKey : cmd.spec.pcKey);
+  for (var _name4 in pm.commands) {
+    var cmd = pm.commands[_name4],
+        keys = cmd.spec.keys;
+    if (!keys) continue;
+    if (Array.isArray(keys)) add(cmd, keys);
+    if (keys.all) add(cmd, keys.all);
+    if (keys[platform]) add(cmd, keys[platform]);
   }
 
   for (var key in bindings) {
     bindings[key] = bindings[key].map(function (b) {
-      return b.command;
+      return b.command.name;
     });
   }return new _keys.Keymap(bindings);
 }
@@ -623,34 +676,33 @@ function markApplies(pm, type) {
   return relevant;
 }
 
-function generateMarkCommands(type, name, labelName, spec) {
-  if (!labelName) labelName = name;
-  var cap = name.charAt(0).toUpperCase() + name.slice(1);
-  type.register("command", {
-    name: "set" + cap,
-    label: "Set " + labelName,
+_model.NodeType.deriveableCommands = Object.create(null);
+_model.MarkType.deriveableCommands = Object.create(null);
+
+_model.MarkType.deriveableCommands.set = function () {
+  return {
     run: function run(pm) {
       pm.setMark(this, true);
     },
     select: function select(pm) {
       return canAddInline(pm, this);
-    },
-    icon: { from: name }
-  });
-  type.register("command", {
-    name: "unset" + cap,
-    label: "Remove " + labelName,
+    }
+  };
+};
+
+_model.MarkType.deriveableCommands.unset = function () {
+  return {
     run: function run(pm) {
       pm.setMark(this, false);
     },
     select: function select(pm) {
       return markActive(pm, this);
-    },
-    icon: { from: name }
-  });
-  var command = {
-    name: name,
-    label: "Toggle " + labelName,
+    }
+  };
+};
+
+_model.MarkType.deriveableCommands.toggle = function () {
+  return {
     run: function run(pm) {
       pm.setMark(this, null);
     },
@@ -661,18 +713,22 @@ function generateMarkCommands(type, name, labelName, spec) {
       return markApplies(pm, this);
     }
   };
-  for (var prop in spec) {
-    command[prop] = spec[prop];
-  }type.register("command", command);
-}
+};
 
-// :: StrongMark #path=setStrong #kind=command
+// FIXME find a way to put an introduction text above the command section
+
+// ;; #path="schema:strong:set" #kind=command
 // Add the [strong](#StrongMark) mark to the selected content.
 
-// :: StrongMark #path=unsetStrong #kind=command
+_model.StrongMark.register("command", { name: "set", derive: true, label: "Set strong" });
+
+// ;; #path="schema:strong:unset" #kind=command
 // Remove the [strong](#StrongMark) mark from the selected content.
 
-// :: StrongMark #path=strong #kind=command// Toggle the [strong](#StrongMark) mark. If there is any strong
+_model.StrongMark.register("command", { name: "unset", derive: true, label: "Unset strong" });
+
+// ;; #path="schema:strong:toggle" #kind=command
+// Toggle the [strong](#StrongMark) mark. If there is any strong
 // content in the selection, or there is no selection and the [active
 // marks](#ProseMirror.activeMarks) contain the strong mark, this
 // counts as [active](#Command.active) and executing it removes the
@@ -683,22 +739,29 @@ function generateMarkCommands(type, name, labelName, spec) {
 //
 // Registers itself in the inline [menu](#FIXME).
 
-generateMarkCommands(_model.StrongMark, "strong", null, {
-  menuGroup: "inline", menuRank: 20,
+_model.StrongMark.register("command", {
+  name: "toggle",
+  derive: true,
+  label: "Toggle strong",
+  menuGroup: "inline(20)",
   icon: {
     width: 805, height: 1024,
     path: "M317 869q42 18 80 18 214 0 214-191 0-65-23-102-15-25-35-42t-38-26-46-14-48-6-54-1q-41 0-57 5 0 30-0 90t-0 90q0 4-0 38t-0 55 2 47 6 38zM309 442q24 4 62 4 46 0 81-7t62-25 42-51 14-81q0-40-16-70t-45-46-61-24-70-8q-28 0-74 7 0 28 2 86t2 86q0 15-0 45t-0 45q0 26 0 39zM0 950l1-53q8-2 48-9t60-15q4-6 7-15t4-19 3-18 1-21 0-19v-37q0-561-12-585-2-4-12-8t-25-6-28-4-27-2-17-1l-2-47q56-1 194-6t213-5q13 0 39 0t38 0q40 0 78 7t73 24 61 40 42 59 16 78q0 29-9 54t-22 41-36 32-41 25-48 22q88 20 146 76t58 141q0 57-20 102t-53 74-78 48-93 27-100 8q-25 0-75-1t-75-1q-60 0-175 6t-132 6z"
   },
-  key: "Mod-B"
+  keys: ["Mod-B"]
 });
 
-// :: EmMark #path=setEm #kind=command
+// ;; #path=schema:em:set #kind=command
 // Add the [emphasis](#EmMark) mark to the selected content.
 
-// :: EmMark #path=unsetEm #kind=command
+_model.EmMark.register("command", { name: "set", derive: true, label: "Add emphasis" });
+
+// ;; #path=schema:em:unset #kind=command
 // Remove the [emphasis](#EmMark) mark from the selected content.
 
-// :: EmMark #path=em #kind=command
+_model.EmMark.register("command", { name: "unset", derive: true, label: "Remove emphasis" });
+
+// ;; #path=schema:em:toggle #kind=command
 // Toggle the [emphasis](#EmMark) mark. If there is any emphasized
 // content in the selection, or there is no selection and the [active
 // marks](#ProseMirror.activeMarks) contain the emphasis mark, this
@@ -710,22 +773,29 @@ generateMarkCommands(_model.StrongMark, "strong", null, {
 //
 // Registers itself in the inline [menu](#FIXME).
 
-generateMarkCommands(_model.EmMark, "em", "emphasis", {
-  menuGroup: "inline", menuRank: 21,
+_model.EmMark.register("command", {
+  name: "toggle",
+  derive: true,
+  label: "Toggle emphasis",
+  menuGroup: "inline(21)",
   icon: {
     width: 585, height: 1024,
     path: "M0 949l9-48q3-1 46-12t63-21q16-20 23-57 0-4 35-165t65-310 29-169v-14q-13-7-31-10t-39-4-33-3l10-58q18 1 68 3t85 4 68 1q27 0 56-1t69-4 56-3q-2 22-10 50-17 5-58 16t-62 19q-4 10-8 24t-5 22-4 26-3 24q-15 84-50 239t-44 203q-1 5-7 33t-11 51-9 47-3 32l0 10q9 2 105 17-1 25-9 56-6 0-18 0t-18 0q-16 0-49-5t-49-5q-78-1-117-1-29 0-81 5t-69 6z"
   },
-  key: "Mod-I"
+  keys: ["Mod-I"]
 });
 
-// :: CodeMark #path=setCode #kind=command
+// ;; #path=schema:code:set #kind=command
 // Add the [code](#CodeMark) mark to the selected content.
 
-// :: CodeMark #path=unsetCode #kind=command
+_model.CodeMark.register("command", { name: "set", derive: true, label: "Set code style" });
+
+// ;; #path=schema:code:unset #kind=command
 // Remove the [code](#CodeMark) mark from the selected content.
 
-// :: CodeMark #path=code #kind=command
+_model.CodeMark.register("command", { name: "unset", derive: true, label: "Remove code style" });
+
+// ;; #path=schema:code:toggle #kind=command
 // Toggle the [code](#CodeMark) mark. If there is any code-styled
 // content in the selection, or there is no selection and the [active
 // marks](#ProseMirror.activeMarks) contain the code mark, this
@@ -737,16 +807,19 @@ generateMarkCommands(_model.EmMark, "em", "emphasis", {
 //
 // Registers itself in the inline [menu](#FIXME).
 
-generateMarkCommands(_model.CodeMark, "code", null, {
-  menuGroup: "inline", menuRank: 22,
+_model.CodeMark.register("command", {
+  name: "toggle",
+  derive: true,
+  label: "Toggle code style",
+  menuGroup: "inline(22)",
   icon: {
     width: 896, height: 1024,
     path: "M608 192l-96 96 224 224-224 224 96 96 288-320-288-320zM288 192l-288 320 288 320 96-96-224-224 224-224-96-96z"
   },
-  key: "Mod-`"
+  keys: ["Mod-`"]
 });
 
-// :: LinkMark #path=unlink #kind=command
+// ;; #path=schema:link:unset #kind=command
 // Removes all links for the selected content, or, if there is no
 // selection, from the [active marks](#ProseMirror.activeMarks). Will
 // only [select](#Command.select) itself when there is a link in the
@@ -754,23 +827,23 @@ generateMarkCommands(_model.CodeMark, "code", null, {
 //
 // Registers itself in the inline [menu](#FIXME).
 
+var linkIcon = {
+  width: 951, height: 1024,
+  path: "M832 694q0-22-16-38l-118-118q-16-16-38-16-24 0-41 18 1 1 10 10t12 12 8 10 7 14 2 15q0 22-16 38t-38 16q-8 0-15-2t-14-7-10-8-12-12-10-10q-18 17-18 41 0 22 16 38l117 118q15 15 38 15 22 0 38-14l84-83q16-16 16-38zM430 292q0-22-16-38l-117-118q-16-16-38-16-22 0-38 15l-84 83q-16 16-16 38 0 22 16 38l118 118q15 15 38 15 24 0 41-17-1-1-10-10t-12-12-8-10-7-14-2-15q0-22 16-38t38-16q8 0 15 2t14 7 10 8 12 12 10 10q18-17 18-41zM941 694q0 68-48 116l-84 83q-47 47-116 47-69 0-116-48l-117-118q-47-47-47-116 0-70 50-119l-50-50q-49 50-118 50-68 0-116-48l-118-118q-48-48-48-116t48-116l84-83q47-47 116-47 69 0 116 48l117 118q47 47 47 116 0 70-50 119l50 50q49-50 118-50 68 0 116 48l118 118q48 48 48 116z"
+};
+
 _model.LinkMark.register("command", {
-  name: "unlink",
+  name: "unset",
+  derive: true,
   label: "Unlink",
-  run: function run(pm) {
-    pm.setMark(this, false);
-  },
-  select: function select(pm) {
-    return markActive(pm, this);
-  },
+  menuGroup: "inline(30)",
   active: function active() {
     return true;
   },
-  menuGroup: "inline", menuRank: 30,
-  icon: { from: "link" }
+  icon: linkIcon
 });
 
-// :: LinkMark #path=link #kind=command
+// ;; #path=schema:link:set #kind=command
 // Adds a link mark to the selection or set of [active
 // marks](#ProseMirror.activeMarks). Takes parameters to determine the
 // attributes of the link:
@@ -786,7 +859,7 @@ _model.LinkMark.register("command", {
 // the menu at any time.
 
 _model.LinkMark.register("command", {
-  name: "link",
+  name: "set",
   label: "Add link",
   run: function run(pm, href, title) {
     pm.setMark(this, true, { href: href, title: title });
@@ -795,16 +868,13 @@ _model.LinkMark.register("command", {
   select: function select(pm) {
     return markApplies(pm, this) && !markActive(pm, this);
   },
-  menuGroup: "inline", menuRank: 30,
-  icon: {
-    width: 951, height: 1024,
-    path: "M832 694q0-22-16-38l-118-118q-16-16-38-16-24 0-41 18 1 1 10 10t12 12 8 10 7 14 2 15q0 22-16 38t-38 16q-8 0-15-2t-14-7-10-8-12-12-10-10q-18 17-18 41 0 22 16 38l117 118q15 15 38 15 22 0 38-14l84-83q16-16 16-38zM430 292q0-22-16-38l-117-118q-16-16-38-16-22 0-38 15l-84 83q-16 16-16 38 0 22 16 38l118 118q15 15 38 15 24 0 41-17-1-1-10-10t-12-12-8-10-7-14-2-15q0-22 16-38t38-16q8 0 15 2t14 7 10 8 12 12 10 10q18-17 18-41zM941 694q0 68-48 116l-84 83q-47 47-116 47-69 0-116-48l-117-118q-47-47-47-116 0-70 50-119l-50-50q-49 50-118 50-68 0-116-48l-118-118q-48-48-48-116t48-116l84-83q47-47 116-47 69 0 116 48l117 118q47 47 47 116 0 70-50 119l50 50q49-50 118-50 68 0 116 48l118 118q48 48 48 116z"
-  }
+  menuGroup: "inline(30)",
+  icon: linkIcon
   // FIXME pre-fill params when a single link is selected
   // (If parameter pre-filling is going to continue working like that)
 });
 
-// :: Image #path=insertImage #kind=command
+// ;; #path=schema:image:insert #kind=command
 // Replace the selection with an [image](#Image) node. Takes paramers
 // that specify the image's attributes:
 //
@@ -820,7 +890,7 @@ _model.LinkMark.register("command", {
 // Registers itself in the inline [menu](#FIXME).
 
 _model.Image.register("command", {
-  name: "insertImage",
+  name: "insert",
   label: "Insert image",
   run: function run(pm, src, alt, title) {
     return pm.tr.replaceSelection(this.create({ src: src, title: title, alt: alt })).apply(andScroll);
@@ -829,7 +899,7 @@ _model.Image.register("command", {
   select: function select(pm) {
     return pm.doc.path(pm.selection.from.path).type.canContainType(this);
   },
-  menuGroup: "inline", menuRank: 40,
+  menuGroup: "inline(40)",
   icon: {
     width: 1097, height: 1024,
     path: "M365 329q0 45-32 77t-77 32-77-32-32-77 32-77 77-32 77 32 32 77zM950 548v256h-804v-109l182-182 91 91 292-292zM1005 146h-914q-7 0-12 5t-5 12v694q0 7 5 12t12 5h914q7 0 12-5t5-12v-694q0-7-5-12t-12-5zM1097 164v694q0 37-26 64t-64 26h-914q-37 0-64-26t-26-64v-694q0-37 26-64t64-26h914q37 0 64 26t26 64z"
@@ -884,14 +954,16 @@ function moveBackward(parent, offset, by) {
 // **Ctrl-H (Mac), Alt-Backspace (Mac), Ctrl-D (Mac),
 // **Ctrl-Alt-Backspace (Mac), Alt-Delete (Mac), Alt-D (Mac)
 
-_options.defaultRegistry.register("command", {
+defineCommand({
   name: "deleteSelection",
   label: "Delete the selection",
   run: function run(pm) {
     return pm.tr.replaceSelection().apply(andScroll);
   },
-  key: ["Backspace(10)", "Delete(10)", "Mod-Backspace(10)", "Mod-Delete(10)"],
-  macKey: ["Ctrl-H(10)", "Alt-Backspace(10)", "Ctrl-D(10)", "Ctrl-Alt-Backspace(10)", "Alt-Delete(10)", "Alt-D(10)"]
+  keys: {
+    all: ["Backspace(10)", "Delete(10)", "Mod-Backspace(10)", "Mod-Delete(10)"],
+    mac: ["Ctrl-H(10)", "Alt-Backspace(10)", "Ctrl-D(10)", "Ctrl-Alt-Backspace(10)", "Alt-Delete(10)", "Alt-D(10)"]
+  }
 });
 
 function deleteBarrier(pm, cut) {
@@ -926,7 +998,7 @@ function deleteBarrier(pm, cut) {
 //
 // **Keybindings:** Backspace, Mod-Backspace
 
-_options.defaultRegistry.register("command", {
+defineCommand({
   name: "joinBackward",
   label: "Join with the block above",
   run: function run(pm) {
@@ -953,7 +1025,7 @@ _options.defaultRegistry.register("command", {
     // Apply the joining algorithm
     return deleteBarrier(pm, cut);
   },
-  key: ["Backspace(30)", "Mod-Backspace(30)"]
+  keys: ["Backspace(30)", "Mod-Backspace(30)"]
 });
 
 // ;; #path=deleteCharBefore #kind=command
@@ -962,7 +1034,7 @@ _options.defaultRegistry.register("command", {
 //
 // **Keybindings:** Backspace, Ctrl-H (Mac)
 
-_options.defaultRegistry.register("command", {
+defineCommand({
   name: "deleteCharBefore",
   label: "Delete a character before the cursor",
   run: function run(pm) {
@@ -974,8 +1046,10 @@ _options.defaultRegistry.register("command", {
     var from = moveBackward(pm.doc.path(head.path), head.offset, "char");
     return pm.tr["delete"](new _model.Pos(head.path, from), head).apply(andScroll);
   },
-  key: "Backspace(60)",
-  macKey: "Ctrl-H(40)"
+  keys: {
+    all: ["Backspace(60)"],
+    mac: ["Ctrl-H(40)"]
+  }
 });
 
 // ;; #path=deleteWordBefore #kind=command
@@ -984,7 +1058,7 @@ _options.defaultRegistry.register("command", {
 //
 // **Keybindings:** Mod-Backspace, Alt-Backspace (Mac)
 
-_options.defaultRegistry.register("command", {
+defineCommand({
   name: "deleteWordBefore",
   label: "Delete the word before the cursor",
   run: function run(pm) {
@@ -996,8 +1070,10 @@ _options.defaultRegistry.register("command", {
     var from = moveBackward(pm.doc.path(head.path), head.offset, "word");
     return pm.tr["delete"](new _model.Pos(head.path, from), head).apply(andScroll);
   },
-  key: "Mod-Backspace(40)",
-  macKey: "Alt-Backspace(40)"
+  keys: {
+    all: ["Mod-Backspace(40)"],
+    mac: ["Alt-Backspace(40)"]
+  }
 });
 
 function moveForward(parent, offset, by) {
@@ -1040,7 +1116,7 @@ function moveForward(parent, offset, by) {
 //
 // **Keybindings:** Delete, Mod-Delete
 
-_options.defaultRegistry.register("command", {
+defineCommand({
   name: "joinForward",
   label: "Join with the block below",
   run: function run(pm) {
@@ -1068,7 +1144,7 @@ _options.defaultRegistry.register("command", {
     // Apply the joining algorithm
     return deleteBarrier(pm, cut);
   },
-  key: ["Delete(30)", "Mod-Delete(30)"]
+  keys: ["Delete(30)", "Mod-Delete(30)"]
 });
 
 // ;; #path=deleteCharAfter #kind=command
@@ -1077,7 +1153,7 @@ _options.defaultRegistry.register("command", {
 //
 // **Keybindings:** Delete, Ctrl-D (Mac)
 
-_options.defaultRegistry.register("command", {
+defineCommand({
   name: "deleteCharAfter",
   label: "Delete a character after the cursor",
   run: function run(pm) {
@@ -1089,8 +1165,10 @@ _options.defaultRegistry.register("command", {
     var to = moveForward(pm.doc.path(head.path), head.offset, "char");
     return pm.tr["delete"](head, new _model.Pos(head.path, to)).apply(andScroll);
   },
-  key: "Delete(60)",
-  macKey: "Ctrl-D(60)"
+  keys: {
+    all: ["Delete(60)"],
+    mac: ["Ctrl-D(60)"]
+  }
 });
 
 // ;; #path=deleteWordAfter #kind=command
@@ -1100,7 +1178,7 @@ _options.defaultRegistry.register("command", {
 // **Keybindings:** Mod-Delete, Ctrl-Alt-Backspace (Mac), Alt-Delete
 // (Mac), Alt-D (Mac)
 
-_options.defaultRegistry.register("command", {
+defineCommand({
   name: "deleteWordAfter",
   label: "Delete a word after the cursor",
   run: function run(pm) {
@@ -1112,8 +1190,10 @@ _options.defaultRegistry.register("command", {
     var to = moveForward(pm.doc.path(head.path), head.offset, "word");
     return pm.tr["delete"](head, new _model.Pos(head.path, to)).apply(andScroll);
   },
-  key: "Mod-Delete(40)",
-  macKey: ["Ctrl-Alt-Backspace(40)", "Alt-Delete(40)", "Alt-D(40)"]
+  keys: {
+    all: ["Mod-Delete(40)"],
+    mac: ["Ctrl-Alt-Backspace(40)", "Alt-Delete(40)", "Alt-D(40)"]
+  }
 });
 
 function joinPointAbove(pm) {
@@ -1133,24 +1213,25 @@ function joinPointAbove(pm) {
 //
 // Registers itself in the block [menu](#FIXME)
 
-_options.defaultRegistry.register("command", {
+defineCommand({
   name: "joinUp",
   label: "Join with above block",
   run: function run(pm) {
-    var point = joinPointAbove(pm);
+    var point = joinPointAbove(pm),
+        isNode = pm.selection.node;
     if (!point) return false;
     pm.tr.join(point).apply();
-    if (pm.selection.node) pm.setNodeSelection(point.move(-1));
+    if (isNode) pm.setNodeSelection(point.move(-1));
   },
   select: function select(pm) {
     return joinPointAbove(pm);
   },
-  menuGroup: "block", menuRank: 80,
+  menuGroup: "block(80)",
   icon: {
     width: 800, height: 900,
     path: "M0 75h800v125h-800z M0 825h800v-125h-800z M250 400h100v-100h100v100h100v100h-100v100h-100v-100h-100z"
   },
-  key: "Alt-Up"
+  keys: ["Alt-Up"]
 });
 
 function joinPointBelow(pm) {
@@ -1167,7 +1248,7 @@ function joinPointBelow(pm) {
 //
 // **Keybindings:** Alt-Down
 
-_options.defaultRegistry.register("command", {
+defineCommand({
   name: "joinDown",
   label: "Join with below block",
   run: function run(pm) {
@@ -1180,7 +1261,7 @@ _options.defaultRegistry.register("command", {
   select: function select(pm) {
     return joinPointBelow(pm);
   },
-  key: "Alt-Down"
+  keys: ["Alt-Down"]
 });
 
 // ;; #path=lift #kind=command
@@ -1191,7 +1272,7 @@ _options.defaultRegistry.register("command", {
 //
 // Registers itself in the block [menu](#FIXME).
 
-_options.defaultRegistry.register("command", {
+defineCommand({
   name: "lift",
   label: "Lift out of enclosing block",
   run: function run(pm) {
@@ -1208,33 +1289,31 @@ _options.defaultRegistry.register("command", {
 
     return (0, _transform.canLift)(pm.doc, from, to);
   },
-  menuGroup: "block", menuRank: 75,
+  menuGroup: "block(75)",
   icon: {
     width: 1024, height: 1024,
     path: "M219 310v329q0 7-5 12t-12 5q-8 0-13-5l-164-164q-5-5-5-13t5-13l164-164q5-5 13-5 7 0 12 5t5 12zM1024 749v109q0 7-5 12t-12 5h-987q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h987q7 0 12 5t5 12zM1024 530v109q0 7-5 12t-12 5h-621q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h621q7 0 12 5t5 12zM1024 310v109q0 7-5 12t-12 5h-621q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h621q7 0 12 5t5 12zM1024 91v109q0 7-5 12t-12 5h-987q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h987q7 0 12 5t5 12z"
   },
-  key: "Alt-Left"
+  keys: ["Alt-Left"]
 });
 
 function isAtTopOfListItem(doc, from, to, listType) {
   return _model.Pos.samePath(from.path, to.path) && from.path.length >= 2 && from.path[from.path.length - 1] == 0 && listType.canContain(doc.path(from.path.slice(0, from.path.length - 1)));
 }
 
-function wrapCommand(type, name, labelName, isList, spec) {
-  var command = {
-    name: "wrap" + name,
-    label: "Wrap in " + labelName,
+_model.NodeType.deriveableCommands.wrap = function (conf) {
+  return {
     run: function run(pm) {
       var _pm$selection13 = pm.selection;
       var from = _pm$selection13.from;
       var to = _pm$selection13.to;
       var head = _pm$selection13.head;var doJoin = false;
-      if (isList && head && isAtTopOfListItem(pm.doc, from, to, this)) {
+      if (this.isList && head && isAtTopOfListItem(pm.doc, from, to, this)) {
         // Don't do anything if this is the top of the list
         if (from.path[from.path.length - 2] == 0) return false;
         doJoin = true;
       }
-      var tr = pm.tr.wrap(from, to, this);
+      var tr = pm.tr.wrap(from, to, this, conf.attrs);
       if (doJoin) tr.join(from.shorten(from.depth - 2));
       return tr.apply(andScroll);
     },
@@ -1244,64 +1323,70 @@ function wrapCommand(type, name, labelName, isList, spec) {
       var to = _pm$selection14.to;
       var head = _pm$selection14.head;
 
-      if (isList && head && isAtTopOfListItem(pm.doc, from, to, this) && from.path[from.path.length - 2] == 0) return false;
-      return (0, _transform.canWrap)(pm.doc, from, to, this);
+      if (this.isList && head && isAtTopOfListItem(pm.doc, from, to, this) && from.path[from.path.length - 2] == 0) return false;
+      return (0, _transform.canWrap)(pm.doc, from, to, this, conf.attrs);
     }
   };
-  for (var key in spec) {
-    command[key] = spec[key];
-  }type.register("command", command);
-}
+};
 
-// :: BulletList #path=wrapBulletList #kind=command
+// ;; #path=schema:bullet_list:wrap #kind=command
 // Wrap the selection in a bullet list.
 //
 // **Keybindings:** Alt-Right '*', Alt-Right '-'
 //
 // Registers itself in the block [menu](#FIXME).
 
-wrapCommand(_model.BulletList, "BulletList", "bullet list", true, {
-  menuGroup: "block", menuRank: 40,
+_model.BulletList.register("command", {
+  name: "wrap",
+  derive: true,
+  labelName: "bullet list",
+  menuGroup: "block(40)",
   icon: {
     width: 768, height: 896,
     path: "M0 512h128v-128h-128v128zM0 256h128v-128h-128v128zM0 768h128v-128h-128v128zM256 512h512v-128h-512v128zM256 256h512v-128h-512v128zM256 768h512v-128h-512v128z"
   },
-  key: ["Alt-Right '*'", "Alt-Right '-'"]
+  keys: ["Alt-Right '*'", "Alt-Right '-'"]
 });
 
-// :: OrderedList #path=wrapOrderedList #kind=command
+// ;; #path=schema:ordered_list:wrap #kind=command
 // Wrap the selection in an ordered list.
 //
 // **Keybindings:** Alt-Right '1'
 //
 // Registers itself in the block [menu](#FIXME).
 
-wrapCommand(_model.OrderedList, "OrderedList", "ordered list", true, {
-  menuGroup: "block", menuRank: 41,
+_model.OrderedList.register("command", {
+  name: "wrap",
+  derive: true,
+  labelName: "ordered list",
+  menuGroup: "block(41)",
   icon: {
     width: 768, height: 896,
     path: "M320 512h448v-128h-448v128zM320 768h448v-128h-448v128zM320 128v128h448v-128h-448zM79 384h78v-256h-36l-85 23v50l43-2v185zM189 590c0-36-12-78-96-78-33 0-64 6-83 16l1 66c21-10 42-15 67-15s32 11 32 28c0 26-30 58-110 112v50h192v-67l-91 2c49-30 87-66 87-113l1-1z"
   },
-  key: "Alt-Right '1'"
+  keys: ["Alt-Right '1'"]
 });
 
-// :: BlockQuote #path=wrapBlockQuote #kind=command
+// ;; #path=schema:blockquote:wrap #kind=command
 // Wrap the selection in a block quote.
 //
 // **Keybindings:** Alt-Right '>', Alt-Right '"'
 //
 // Registers itself in the block [menu](#FIXME).
 
-wrapCommand(_model.BlockQuote, "BlockQuote", "block quote", false, {
-  menuGroup: "block", menuRank: 45,
+_model.BlockQuote.register("command", {
+  name: "wrap",
+  derive: true,
+  labelName: "block quote",
+  menuGroup: "block(45)",
   icon: {
     width: 640, height: 896,
     path: "M0 448v256h256v-256h-128c0 0 0-128 128-128v-128c0 0-256 0-256 256zM640 320v-128c0 0-256 0-256 256v256h256v-256h-128c0 0 0-128 128-128z"
   },
-  key: ["Alt-Right '>'", "Alt-Right '\"'"]
+  keys: ["Alt-Right '>'", "Alt-Right '\"'"]
 });
 
-// :: HardBreak #path=insertHardBreak #kind=command
+// ;; #path=schema:hard_break:insert #kind=command
 // Replace the selection with a hard break node. If the selection is
 // in a node whose [type](#NodeType) has a truthy `isCode` property
 // (such as `CodeBlock` in the default schema), a regular newline is
@@ -1309,7 +1394,7 @@ wrapCommand(_model.BlockQuote, "BlockQuote", "block quote", false, {
 //
 // **Keybindings:** Mod-Enter, Shift-Enter
 _model.HardBreak.register("command", {
-  name: "insertHardBreak",
+  name: "insert",
   label: "Insert hard break",
   run: function run(pm) {
     var _pm$selection15 = pm.selection;
@@ -1318,7 +1403,7 @@ _model.HardBreak.register("command", {
 
     if (node && node.isBlock) return false;else if (pm.doc.path(from.path).type.isCode) return pm.tr.typeText("\n").apply(andScroll);else return pm.tr.replaceSelection(this.create()).apply(andScroll);
   },
-  key: ["Mod-Enter", "Shift-Enter"]
+  keys: ["Mod-Enter", "Shift-Enter"]
 });
 
 // ;; #path=newlineInCode #kind=command
@@ -1327,7 +1412,7 @@ _model.HardBreak.register("command", {
 //
 // **Keybindings:** Enter
 
-_options.defaultRegistry.register("command", {
+defineCommand({
   name: "newlineInCode",
   label: "Insert newline",
   run: function run(pm) {
@@ -1337,7 +1422,7 @@ _options.defaultRegistry.register("command", {
     var node = _pm$selection16.node;var block = undefined;
     if (!node && _model.Pos.samePath(from.path, to.path) && (block = pm.doc.path(from.path)).type.isCode && to.offset < block.size) return pm.tr.typeText("\n").apply(andScroll);else return false;
   },
-  key: "Enter(10)"
+  keys: ["Enter(10)"]
 });
 
 // ;; #path=createParagraphNew #kind=command
@@ -1346,7 +1431,7 @@ _options.defaultRegistry.register("command", {
 //
 // **Keybindings:** Enter
 
-_options.defaultRegistry.register("command", {
+defineCommand({
   name: "createParagraphNear",
   label: "Create a paragraph near the selected leaf block",
   run: function run(pm) {
@@ -1360,7 +1445,7 @@ _options.defaultRegistry.register("command", {
     pm.tr.insert(side, pm.schema.defaultTextblockType().create()).apply(andScroll);
     pm.setTextSelection(new _model.Pos(side.toPath(), 0));
   },
-  key: "Enter(20)"
+  keys: ["Enter(20)"]
 });
 
 // ;; #path=liftEmptyBlock #kind=command
@@ -1369,7 +1454,7 @@ _options.defaultRegistry.register("command", {
 //
 // **Keybindings:** Enter
 
-_options.defaultRegistry.register("command", {
+defineCommand({
   name: "liftEmptyBlock",
   label: "Move current block up",
   run: function run(pm) {
@@ -1384,7 +1469,7 @@ _options.defaultRegistry.register("command", {
     }
     return pm.tr.lift(head).apply(andScroll);
   },
-  key: "Enter(30)"
+  keys: ["Enter(30)"]
 });
 
 // ;; #path=splitBlock #kind=command
@@ -1393,7 +1478,7 @@ _options.defaultRegistry.register("command", {
 //
 // **Keybindings:** Enter
 
-_options.defaultRegistry.register("command", {
+defineCommand({
   name: "splitBlock",
   label: "Split the current block",
   run: function run(pm) {
@@ -1409,17 +1494,17 @@ _options.defaultRegistry.register("command", {
       return pm.tr["delete"](from, to).split(from, 1, type).apply(andScroll);
     }
   },
-  key: "Enter(60)"
+  keys: ["Enter(60)"]
 });
 
-// :: ListItem #path=splitListItem #kind=command
+// ;; #path=schema:list_item:split #kind=command
 // If the selection is a text selection inside of a child of a list
 // item, split that child and the list item, and delete the selection.
 //
 // **Keybindings:** Enter
 
 _model.ListItem.register("command", {
-  name: "splitListItem",
+  name: "split",
   label: "Split the current list item",
   run: function run(pm) {
     var _pm$selection20 = pm.selection;
@@ -1434,7 +1519,7 @@ _model.ListItem.register("command", {
     var nextType = to.offset == grandParent.child(toParent.offset).size ? pm.schema.defaultTextblockType() : null;
     return pm.tr["delete"](from, to).split(from, 2, nextType).apply(andScroll);
   },
-  key: "Enter(50)"
+  keys: ["Enter(50)"]
 });
 
 function alreadyHasBlockType(doc, from, to, type, attrs) {
@@ -1449,17 +1534,14 @@ function alreadyHasBlockType(doc, from, to, type, attrs) {
   return found;
 }
 
-function blockTypeCommand(type, name, labelName, attrs, key) {
-  if (!attrs) attrs = {};
-  type.register("command", {
-    name: name,
-    label: "Change to " + labelName,
+_model.NodeType.deriveableCommands.make = function (conf) {
+  return {
     run: function run(pm) {
       var _pm$selection21 = pm.selection;
       var from = _pm$selection21.from;
       var to = _pm$selection21.to;
 
-      return pm.tr.setBlockType(from, to, this, attrs).apply(andScroll);
+      return pm.tr.setBlockType(from, to, this, conf.attrs).apply(andScroll);
     },
     select: function select(pm) {
       var _pm$selection22 = pm.selection;
@@ -1467,51 +1549,67 @@ function blockTypeCommand(type, name, labelName, attrs, key) {
       var to = _pm$selection22.to;
       var node = _pm$selection22.node;
 
-      if (node) return node.isTextblock && !node.hasMarkup(this, attrs);else return !alreadyHasBlockType(pm.doc, from, to, this, attrs);
-    },
-    key: key
-  });
-}
+      if (node) return node.isTextblock && !node.hasMarkup(this, conf.attrs);else return !alreadyHasBlockType(pm.doc, from, to, this, conf.attrs);
+    }
+  };
+};
 
-// :: Heading #path=makeH_ #kind=command
-// The commands `makeH1` to `makeH6` set the textblocks in the
+// ;; #path=schema::heading::make_ #kind=command
+// The commands `make1` to `make6` set the textblocks in the
 // selection to become headers with the given level.
 //
 // **Keybindings:** Mod-H '1' through Mod-H '6'
 
-blockTypeCommand(_model.Heading, "makeH1", "heading 1", { level: 1 }, "Mod-H '1'");
-blockTypeCommand(_model.Heading, "makeH2", "heading 2", { level: 2 }, "Mod-H '2'");
-blockTypeCommand(_model.Heading, "makeH3", "heading 3", { level: 3 }, "Mod-H '3'");
-blockTypeCommand(_model.Heading, "makeH4", "heading 4", { level: 4 }, "Mod-H '4'");
-blockTypeCommand(_model.Heading, "makeH5", "heading 5", { level: 5 }, "Mod-H '5'");
-blockTypeCommand(_model.Heading, "makeH6", "heading 6", { level: 6 }, "Mod-H '6'");
-
-// :: Paragraph #path=makeParagraph #kind=command
+for (var i = 1; i <= 6; i++) {
+  _model.Heading.register("command", {
+    name: "make" + i,
+    derive: { name: "make", attrs: { level: i } },
+    label: "Change to heading " + i,
+    keys: ["Mod-H '" + i + "'"]
+  });
+} // ;; #path=schema:paragraph:make #kind=command
 // Set the textblocks in the selection to be regular paragraphs.
 //
 // **Keybindings:** Mod-P
 
-blockTypeCommand(_model.Paragraph, "makeParagraph", "paragraph", null, "Mod-P");
+_model.Paragraph.register("command", {
+  name: "make",
+  derive: true,
+  label: "Change to paragraph",
+  keys: ["Mod-P"]
+});
 
-// :: CodeBlock #path=makeCodeBlock #kind=command
+// ;; #path=schema:code_block:make #kind=command
 // Set the textblocks in the selection to be code blocks.
 //
 // **Keybindings:** Mod-\
 
-blockTypeCommand(_model.CodeBlock, "makeCodeBlock", "code block", null, "Mod-\\");
+_model.CodeBlock.register("command", {
+  name: "make",
+  derive: true,
+  label: "Change to code block",
+  keys: ["Mod-\\"]
+});
 
-// :: HorizontalRule #path=insertHorizontalRule #kind=command
+// FIXME automate attribute reading?
+_model.NodeType.deriveableCommands.insert = function (conf) {
+  return {
+    run: function run(pm) {
+      return pm.tr.replaceSelection(this.create(conf.attrs)).apply(andScroll);
+    }
+  };
+};
+
+// ;; #path=schema:horizontal_rule:insert #kind=command
 // Replace the selection with a horizontal rule.
 //
-// **Keybindings:** Mod-=
+// **Keybindings:** Mod-Shift-Minus
 
 _model.HorizontalRule.register("command", {
-  name: "insertHorizontalRule",
+  name: "insert",
+  derive: true,
   label: "Insert horizontal rule",
-  run: function run(pm) {
-    return pm.tr.replaceSelection(this.create()).apply(andScroll);
-  },
-  key: "Mod-="
+  keys: ["Mod-Shift--"]
 });
 
 // ;; #path=textblockType #kind=command
@@ -1522,7 +1620,7 @@ _model.HorizontalRule.register("command", {
 // Registers itself in the block [menu](#FIXME), where it creates the
 // textblock type dropdown.
 
-_options.defaultRegistry.register("command", {
+defineCommand({
   name: "textblockType",
   label: "Change block type",
   run: function run(pm, type) {
@@ -1539,7 +1637,7 @@ _options.defaultRegistry.register("command", {
   },
   params: [{ label: "Type", type: "select", options: listTextblockTypes, "default": currentTextblockType, defaultLabel: "Type..." }],
   display: "select",
-  menuGroup: "block", menuRank: 10
+  menuGroup: "block(10)"
 });
 
 _model.Paragraph.prototype.textblockTypes = [{ label: "Normal", rank: 10 }];
@@ -1553,8 +1651,8 @@ function listTextblockTypes(pm) {
   if (cached) return cached;
 
   var found = [];
-  for (var _name3 in pm.schema.nodes) {
-    var type = pm.schema.nodes[_name3];
+  for (var _name5 in pm.schema.nodes) {
+    var type = pm.schema.nodes[_name5];
     if (!type.textblockTypes) continue;
     for (var i = 0; i < type.textblockTypes.length; i++) {
       var info = type.textblockTypes[i];
@@ -1594,15 +1692,14 @@ function nodeAboveSelection(pm) {
   return i == 0 ? false : sel.head.shorten(i - 1);
 }
 
-// ;; #path=selectParentBlock #kind=command
+// ;; #path=selectParentNode #kind=command
 // Move the selection to the node wrapping the current selection, if
 // any. (Will not select the document node.)
 //
 // **Keybindings:** Esc
 //
 // Registers itself in the block [menu](#FIXME).
-
-_options.defaultRegistry.register("command", {
+defineCommand({
   name: "selectParentNode",
   label: "Select parent node",
   run: function run(pm) {
@@ -1613,9 +1710,9 @@ _options.defaultRegistry.register("command", {
   select: function select(pm) {
     return nodeAboveSelection(pm);
   },
-  menuGroup: "block", menuRank: 90,
+  menuGroup: "block(90)",
   icon: { text: "⬚", style: "font-weight: bold; vertical-align: 20%" },
-  key: "Esc"
+  keys: ["Esc"]
 });
 
 function moveSelectionBlock(pm, dir) {
@@ -1628,7 +1725,7 @@ function moveSelectionBlock(pm, dir) {
   return (0, _selection.findSelectionFrom)(pm.doc, node && node.isBlock ? side : side.shorten(null, dir > 0 ? 1 : 0), dir);
 }
 
-function selectBlockHorizontally(pm, dir) {
+function selectNodeHorizontally(pm, dir) {
   var _pm$selection26 = pm.selection;
   var empty = _pm$selection26.empty;
   var node = _pm$selection26.node;
@@ -1664,20 +1761,20 @@ function selectBlockHorizontally(pm, dir) {
   return false;
 }
 
-// ;; #path=selectBlockLeft #kind=command
+// ;; #path=selectNodeLeft #kind=command
 // Select the node directly before the cursor, if any.
 //
 // **Keybindings:** Left, Mod-Left
 
-_options.defaultRegistry.register("command", {
+defineCommand({
   name: "selectNodeLeft",
   label: "Move the selection onto or out of the block to the left",
   run: function run(pm) {
-    var done = selectBlockHorizontally(pm, -1);
+    var done = selectNodeHorizontally(pm, -1);
     if (done) pm.scrollIntoView();
     return done;
   },
-  key: ["Left", "Mod-Left"]
+  keys: ["Left", "Mod-Left"]
 });
 
 // ;; #path=selectNodeRight #kind=command
@@ -1685,18 +1782,18 @@ _options.defaultRegistry.register("command", {
 //
 // **Keybindings:** Right, Mod-Right
 
-_options.defaultRegistry.register("command", {
+defineCommand({
   name: "selectNodeRight",
   label: "Move the selection onto or out of the block to the right",
   run: function run(pm) {
-    var done = selectBlockHorizontally(pm, 1);
+    var done = selectNodeHorizontally(pm, 1);
     if (done) pm.scrollIntoView();
     return done;
   },
-  key: ["Right", "Mod-Right"]
+  keys: ["Right", "Mod-Right"]
 });
 
-function selectBlockVertically(pm, dir) {
+function selectNodeVertically(pm, dir) {
   var _pm$selection27 = pm.selection;
   var empty = _pm$selection27.empty;
   var node = _pm$selection27.node;
@@ -1739,15 +1836,15 @@ function selectBlockVertically(pm, dir) {
 //
 // **Keybindings:** Up
 
-_options.defaultRegistry.register("command", {
+defineCommand({
   name: "selectNodeUp",
   label: "Move the selection onto or out of the block above",
   run: function run(pm) {
-    var done = selectBlockVertically(pm, -1);
+    var done = selectNodeVertically(pm, -1);
     if (done !== false) pm.scrollIntoView();
     return done;
   },
-  key: "Up"
+  keys: ["Up"]
 });
 
 // ;; #path=selectNodeDown #kind=command
@@ -1755,15 +1852,15 @@ _options.defaultRegistry.register("command", {
 //
 // **Keybindings:** Down
 
-_options.defaultRegistry.register("command", {
+defineCommand({
   name: "selectNodeDown",
   label: "Move the selection onto or out of the block below",
   run: function run(pm) {
-    var done = selectBlockVertically(pm, 1);
+    var done = selectNodeVertically(pm, 1);
     if (done !== false) pm.scrollIntoView();
     return done;
   },
-  key: "Down"
+  keys: ["Down"]
 });
 
 // ;; #path=undo #kind=command
@@ -1773,7 +1870,7 @@ _options.defaultRegistry.register("command", {
 //
 // Registers itself in the history [menu](#FIXME).
 
-_options.defaultRegistry.register("command", {
+defineCommand({
   name: "undo",
   label: "Undo last change",
   run: function run(pm) {
@@ -1782,12 +1879,12 @@ _options.defaultRegistry.register("command", {
   select: function select(pm) {
     return pm.history.canUndo();
   },
-  menuGroup: "history", menuRank: 10,
+  menuGroup: "history(10)",
   icon: {
     width: 1024, height: 1024,
     path: "M761 1024c113-206 132-520-313-509v253l-384-384 384-384v248c534-13 594 472 313 775z"
   },
-  key: "Mod-Z"
+  keys: ["Mod-Z"]
 });
 
 // ;; #path=redo #kind=command
@@ -1797,7 +1894,7 @@ _options.defaultRegistry.register("command", {
 //
 // Registers itself in the history [menu](#FIXME).
 
-_options.defaultRegistry.register("command", {
+defineCommand({
   name: "redo",
   label: "Redo last undone change",
   run: function run(pm) {
@@ -1806,14 +1903,14 @@ _options.defaultRegistry.register("command", {
   select: function select(pm) {
     return pm.history.canRedo();
   },
-  menuGroup: "history", menuRank: 20,
+  menuGroup: "history(20)",
   icon: {
     width: 1024, height: 1024,
     path: "M576 248v-248l384 384-384 384v-253c-446-10-427 303-313 509-280-303-221-789 313-775z"
   },
-  key: ["Mod-Y", "Shift-Mod-Z"]
+  keys: ["Mod-Y", "Shift-Mod-Z"]
 });
-},{"../dom":3,"../model":26,"../transform":38,"../util/sortedinsert":50,"./char":5,"./keys":13,"./options":15,"./selection":17}],7:[function(require,module,exports){
+},{"../dom":3,"../model":26,"../transform":38,"../util/sortedinsert":50,"./char":5,"./keys":13,"./selection":17}],7:[function(require,module,exports){
 "use strict";
 
 var _dom = require("../dom");
@@ -2673,18 +2770,6 @@ Object.defineProperty(exports, "defineOption", {
     return _options.defineOption;
   }
 });
-Object.defineProperty(exports, "Registry", {
-  enumerable: true,
-  get: function get() {
-    return _options.Registry;
-  }
-});
-Object.defineProperty(exports, "defaultRegistry", {
-  enumerable: true,
-  get: function get() {
-    return _options.defaultRegistry;
-  }
-});
 
 var _selection = require("./selection");
 
@@ -2782,10 +2867,8 @@ var _selection = require("./selection");
 
 var stopSeq = null;
 
-/**
- * A collection of DOM events that occur within the editor, and callback functions
- * to invoke when the event fires.
- */
+// A collection of DOM events that occur within the editor, and callback functions
+// to invoke when the event fires.
 var handlers = {};
 
 var Input = (function () {
@@ -2795,6 +2878,7 @@ var Input = (function () {
     _classCallCheck(this, Input);
 
     this.pm = pm;
+    this.baseKeymap = null;
 
     this.keySeq = null;
 
@@ -2829,17 +2913,8 @@ var Input = (function () {
     });
   }
 
-  /**
-   * Dispatch a key press to the internal keymaps, which will override the default
-   * DOM behavior.
-   *
-   * @param  {ProseMirror}   pm The editor instance.
-   * @param  {string}        name The name of the key pressed.
-   * @param  {KeyboardEvent} e
-   * @return {string} If the key name has a mapping and the callback is invoked ("handled"),
-   *                  if the key name needs to be combined in sequence with the next key ("multi"),
-   *                  if there is no mapping ("nothing").
-   */
+  // Dispatch a key press to the internal keymaps, which will override the default
+  // DOM behavior.
 
   _createClass(Input, [{
     key: "maybeAbortComposition",
@@ -2901,7 +2976,7 @@ function dispatchKey(pm, name, e) {
   var result = undefined;
   for (var i = 0; !result && i < pm.input.keymaps.length; i++) {
     result = handle(pm.input.keymaps[i].map.lookup(name, pm));
-  }if (!result) result = handle(pm.baseKeymap.lookup(name, pm)) || handle(_capturekeys.captureKeys.lookup(name));
+  }if (!result) result = handle(pm.input.baseKeymap.lookup(name, pm)) || handle(_capturekeys.captureKeys.lookup(name));
 
   // If the key should be used in sequence with the next key, store the keyname internally.
   if (result == "multi") pm.input.keySeq = name;
@@ -3028,9 +3103,7 @@ handlers.touchdown = function (pm) {
   pm.sel.pollForUpdate();
 };
 
-/**
- * A class to track state while creating a composed character.
- */
+// A class to track state while creating a composed character.
 
 var Composing = function Composing(pm, data) {
   _classCallCheck(this, Composing);
@@ -3518,9 +3591,9 @@ var ProseMirror = (function () {
 
     // :: Object<Command>
     // The commands available in the editor.
-    this.commands = (0, _commands.initCommands)(this);
-    this.commandKeys = Object.create(null);
-
+    this.commands = null;
+    this.commandKeys = null;
+    this.updateCommands();
     (0, _options.initOptions)(this);
   }
 
@@ -3531,6 +3604,9 @@ var ProseMirror = (function () {
     key: "setOption",
     value: function setOption(name, value) {
       (0, _options.setOption)(this, name, value);
+      // :: (name: string, value: *) #path=ProseMirror#events#optionChanged
+      // Fired when [`setOption`](#ProseMirror.setOption) is called.
+      this.signal("optionChanged", name, value);
     }
 
     // :: (string) → any
@@ -3539,6 +3615,32 @@ var ProseMirror = (function () {
     key: "getOption",
     value: function getOption(name) {
       return this.options[name];
+    }
+  }, {
+    key: "updateCommands",
+    value: function updateCommands() {
+      // :: () #path=ProseMirror#events#commandsChanging
+      // Fired before the set of commands for the editor is updated.
+      this.signal("commandsChanging");
+      this.commands = (0, _commands.deriveCommands)(this);
+      this.input.baseKeymap = (0, _commands.deriveKeymap)(this);
+      this.commandKeys = Object.create(null);
+      // :: () #path=ProseMirror#events#commandsChanged
+      // Fired when the set of commands for the editor is updated.
+      this.signal("commandsChanged");
+    }
+
+    // :: (string) → bool
+    // Test whether the given string corresponds to any of the
+    // [namespaces](#namespaces) enabled for this editor.
+  }, {
+    key: "isInNamespace",
+    value: function isInNamespace(name) {
+      for (var i = 0; i < this.options.namespaces.length; i++) {
+        var ns = this.options.namespaces[i];
+        var match = ns == "default" ? name.indexOf(":") == -1 : name.indexOf(ns) == 0 && name.charAt(ns.length) == ":";
+        if (match) return true;
+      }
     }
 
     // :: Selection
@@ -3798,8 +3900,6 @@ var ProseMirror = (function () {
         }
       }
     }
-  }, {
-    key: "markRange",
 
     // :: (Pos, Pos, ?Object) → MarkedRange
     // Create a marked range between the given positions. Marked ranges
@@ -3824,6 +3924,8 @@ var ProseMirror = (function () {
     // **`className`**: string
     //   : A CSS class to add to the inline content that is part of this
     //     range.
+  }, {
+    key: "markRange",
     value: function markRange(from, to, options) {
       this.checkPos(from);
       this.checkPos(to);
@@ -3949,7 +4051,7 @@ var ProseMirror = (function () {
       if (cached !== undefined) return cached;
 
       var cmd = this.commands[name],
-          keymap = this.baseKeymap;
+          keymap = this.input.baseKeymap;
       if (!cmd) return this.commandKeys[name] = null;
       var key = cmd.spec.key || (_dom.browser.mac ? cmd.spec.macKey : cmd.spec.pcKey);
       if (key) {
@@ -3962,17 +4064,6 @@ var ProseMirror = (function () {
         if (Array.isArray(bound) ? bound.indexOf(name) > -1 : bound == name) return this.commandKeys[name] = _key;
       }
       return this.commandKeys[name] = null;
-    }
-  }, {
-    key: "registry",
-    value: function registry(name, f) {
-      var _this2 = this;
-
-      this.schema.registry(name, f);
-      this.options.registries.forEach(function (reg) {
-        var array = reg.registry[name];
-        if (array) for (var i = 0; i < array.length; i++) f(array[i], _this2);
-      });
     }
   }, {
     key: "markRangeDirty",
@@ -4018,11 +4109,6 @@ var ProseMirror = (function () {
     key: "tr",
     get: function get() {
       return new EditorTransform(this);
-    }
-  }, {
-    key: "baseKeymap",
-    get: function get() {
-      return this.options.keymap || this.defaultKeymap || (this.defaultKeymap = (0, _commands.defaultKeymap)(this));
     }
   }, {
     key: "selectedDoc",
@@ -4159,9 +4245,6 @@ var EditorTransform = (function (_Transform) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
 exports.defineOption = defineOption;
 exports.parseOptions = parseOptions;
 exports.initOptions = initOptions;
@@ -4170,45 +4253,6 @@ exports.setOption = setOption;
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var _model = require("../model");
-
-// ;; A registry is a namespace for [commands](#Commands), input
-// rules, and so on. They provide a way to define commands and such in
-// a scoped way, without having them show up on all your editors by
-// default all of a sudden. See also the [`registries`
-// option](#registries).
-
-var Registry = (function () {
-  // :: (string)
-  // Create a new registry with the given name.
-
-  function Registry(name) {
-    _classCallCheck(this, Registry);
-
-    this.name = name;
-    this.registry = Object.create(null);
-  }
-
-  // :: Registry
-  // The registry in which built-in commands and input rules are
-  // registered. The default content of the `registries` option.
-
-  // :: (string, *)
-  // Register a new item in this registry.
-
-  _createClass(Registry, [{
-    key: "register",
-    value: function register(name, value) {
-      ;(this.registry[name] || (this.registry[name] = [])).push(value);
-    }
-  }]);
-
-  return Registry;
-})();
-
-exports.Registry = Registry;
-var defaultRegistry = new Registry("default");
-
-exports.defaultRegistry = defaultRegistry;
 
 var Option = function Option(defaultValue, update, updateOnInit) {
   _classCallCheck(this, Option);
@@ -4255,17 +4299,6 @@ defineOption("docFormat", null);
 // into the document.
 defineOption("place", null);
 
-// :: Keymap #path=keymap #kind=option
-// The base [keymap](#Keymap). When not given, a default keymap is
-// synthesized from the default key bindings provided by the
-// [commands](#Command) that are in scope for the editor.
-defineOption("keymap", null);
-
-// :: [Registry]
-// The set of [registries](#Registry) the editor should load items
-// from.
-defineOption("registries", [defaultRegistry], false);
-
 // :: number #path=historyDepth #kind=option
 // The amount of history events that are collected before the oldest
 // events are discarded. Defaults to 100.
@@ -4275,6 +4308,43 @@ defineOption("historyDepth", 100);
 // The amount of milliseconds that must pass between changes to
 // start a new history event. Defaults to 500.
 defineOption("historyEventDelay", 500);
+
+// :: Object<?CommandSpec> #path=commands #kind=option
+// Delete, add, or modify [commands](#ProseMirror.commands) associated
+// with this editor. The property names of the given object should
+// correspond to command [names](#CommandSpec.name), and their values
+// can be `null`, to disable a command, an object contain a `run`
+// property, to add a command, and an object without `run`, to extend
+// or reconfigure the existing command with that name. The latter can
+// be used to change, for example, the [key
+// bindings](#CommandSpec.keys) for a command or its appearance in the
+// menu.
+defineOption("commands", {}, function (pm) {
+  return pm.updateCommands();
+}, false);
+
+// :: [string] #path=namespaces #kind=option
+// An array of namespaces that are enabled for this editor. These are
+// used to filter [commands](#defineCommand) and [input
+// rules](#defineInputRule) so that you can define these without
+// having them show up in every editor.
+//
+// A namespaced name looks like `"space:name"` or `"space:sub:name"`.
+// Those would, for example, only show up if the namespace `"space"`
+// is chosen. Names without a colon are considered part of the
+// `"default"` namespace. Commands and input rules associated with
+// schema [nodes](#NodeType) or [marks](#MarkType) will be namespaced
+// under `"schema:"` and then the name of the element they are
+// associated with, for example `"schema:horizontal_rule:insert"`.
+//
+// This option's default value is `["default", "schema"]`, including
+// all the ‘top level’ items and those associated with schema
+// elements, but nothing else.
+//
+// See also `ProseMirror.isInNamespace`.
+defineOption("namespaces", ["default", "schema"], function (pm) {
+  return pm.updateCommands();
+}, false);
 
 // :: string #path=commandParamHandler #kind=option
 // The name of the handler used to prompt the user for [command
@@ -5043,13 +5113,7 @@ function leafAt(node, offset) {
   }
 }
 
-/**
- * Get a DOM element at a given position in the document.
- *
- * @param {Node} parent The parent DOM node.
- * @param {Pos} pos     The position in the document.
- * @return {Object}     The DOM node and character offset inside the node.
- */
+// Get a DOM element at a given position in the document.
 function DOMFromPos(parent, pos) {
   var dom = resolvePath(parent, pos.path);
   var found = findByOffset(dom, pos.offset, true),
@@ -5063,13 +5127,7 @@ function hasFocus(pm) {
   return sel.rangeCount && (0, _dom.contains)(pm.content, sel.anchorNode);
 }
 
-/**
- * Given an x,y position on the editor, get the position in the document.
- *
- * @param  {ProseMirror} pm     Editor instance.
- * @param  {Object}      coords The x, y coordinates.
- * @return {Pos}
- */
+// Given an x,y position on the editor, get the position in the document.
 // FIXME fails on the space between lines
 // FIXME reformulate as selectionAtCoords? So that it can't return null
 
@@ -5095,14 +5153,8 @@ function textRect(node, from, to) {
   return range.getBoundingClientRect();
 }
 
-/**
- * Given a position in the document model, get a bounding box of the character at
- * that position, relative to the window.
- *
- * @param  {ProseMirror} pm The editor instance.
- * @param  {Pos}         pos
- * @return {Object} The bounding box.
- */
+// Given a position in the document model, get a bounding box of the character at
+// that position, relative to the window.
 
 function coordsAtPos(pm, pos) {
   var _DOMFromPos = DOMFromPos(pm.content, pos);
@@ -5386,6 +5438,8 @@ function buildSVG(name, data) {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; })();
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
@@ -5697,20 +5751,46 @@ var separator = {
   }
 };
 
+function menuRank(cmd) {
+  var match = /^[^(]+\((\d+)\)$/.exec(cmd.spec.menuGroup);
+  return match ? +match[1] : 50;
+}
+
+function computeMenuGroups(pm) {
+  var groups = Object.create(null);
+  for (var _name in pm.commands) {
+    var cmd = pm.commands[_name],
+        spec = cmd.spec.menuGroup;
+    if (!spec) continue;
+
+    var _$exec = /^[^(]+/.exec(spec);
+
+    var _$exec2 = _slicedToArray(_$exec, 1);
+
+    var group = _$exec2[0];
+
+    (0, _utilSortedinsert2["default"])(groups[group] || (groups[group] = []), cmd, function (a, b) {
+      return menuRank(a) - menuRank(b);
+    });
+  }
+  pm.mod.menuGroups = groups;
+  var clear = function clear() {
+    pm.mod.menuGroups = null;
+    pm.off("commandsChanging", clear);
+  };
+  pm.on("commandsChanging", clear);
+  return groups;
+}
+
 function commandGroups(pm) {
+  var groups = pm.mod.menuGroups || computeMenuGroups(pm);
+
   for (var _len = arguments.length, names = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
     names[_key - 1] = arguments[_key];
   }
 
   return names.map(function (group) {
-    var found = [];
-    for (var _name in pm.commands) {
-      var cmd = pm.commands[_name];
-      if (cmd.spec.menuGroup && cmd.spec.menuGroup == group) (0, _utilSortedinsert2["default"])(found, cmd, function (a, b) {
-        return (a.spec.menuRank || 50) - (b.spec.menuRank || 50);
-      });
-    }
-    return found;
+    return groups[group];
   });
 }
 
@@ -5810,14 +5890,13 @@ var MenuBar = (function () {
     this.wrapper = (0, _dom.elt)("div", { "class": "ProseMirror-menubar" }, (0, _dom.elt)("div", { "class": "ProseMirror-menu" }, (0, _dom.elt)("span", { "class": "ProseMirror-menuicon" }, (0, _dom.elt)("div", { "class": "ProseMirror-icon" }, "x"))), this.menuElt);
     pm.wrapper.insertBefore(this.wrapper, pm.wrapper.firstChild);
 
-    this.update = new _update.MenuUpdate(pm, "selectionChange change activeMarkChange", function () {
+    this.update = new _update.MenuUpdate(pm, "selectionChange change activeMarkChange commandsChanged", function () {
       return _this.prepareUpdate();
     });
     this.menu = new _menu.Menu(pm, new BarDisplay(this.menuElt, function () {
       return _this.resetMenu();
     }));
 
-    this.menuItems = config && config.items || (0, _menu.commandGroups)(pm, "inline", "block", "history");
     this.update.force();
 
     this.floating = false;
@@ -5852,7 +5931,7 @@ var MenuBar = (function () {
   }, {
     key: "resetMenu",
     value: function resetMenu() {
-      this.menu.show(this.menuItems);
+      this.menu.show((0, _menu.commandGroups)(this.pm, "inline", "block", "history"));
     }
   }, {
     key: "updateFloat",
@@ -6211,7 +6290,12 @@ var OrderedList = (function (_Block3) {
     _get(Object.getPrototypeOf(OrderedList.prototype), "constructor", this).apply(this, arguments);
   }
 
-  _createClass(OrderedList, null, [{
+  _createClass(OrderedList, [{
+    key: "isList",
+    get: function get() {
+      return true;
+    }
+  }], [{
     key: "contains",
     get: function get() {
       return "list_item";
@@ -6238,7 +6322,12 @@ var BulletList = (function (_Block4) {
 
   // ;; #toc=false The default list item node type.
 
-  _createClass(BulletList, null, [{
+  _createClass(BulletList, [{
+    key: "isList",
+    get: function get() {
+      return true;
+    }
+  }], [{
     key: "contains",
     get: function get() {
       return "list_item";
@@ -9271,13 +9360,16 @@ var Schema = (function () {
     // The specification on which the schema is based.
     this.spec = spec;
     this.kinds = Object.create(null);
+
     // :: Object<NodeType>
     // An object mapping the schema's node names to node type objects.
     this.nodes = NodeType.compile(spec.nodes, this);
     // :: Object<MarkType>
     // A map from mark names to mark type objects.
     this.marks = MarkType.compile(spec.marks, this);
-    // :: Object
+    for (var prop in this.nodes) {
+      if (prop in this.marks) SchemaError.raise(prop + " can not be both a node and a mark");
+    } // :: Object
     // An object for storing whatever values modules may want to
     // compute and cache per schema. (If you want to store something
     // in it, try to use property names unlikely to clash.)
@@ -9382,11 +9474,11 @@ var Schema = (function () {
       }
     }
 
-    // :: (string, (value: *, source: union<NodeType, MarkType, Attribute>))
+    // :: (string, (value: *, source: union<NodeType, MarkType, Attribute>, name: string))
     // Retrieve all registered items under the given name from this
-    // schema. The given function will be called with each item and, as
-    // a second argument, the element—node type, mark type, or
-    // attribute—that it was associated with.
+    // schema. The given function will be called with each item, the
+    // element—node type, mark type, or attribute—that it was associated
+    // with, and that element's name in the schema.
   }, {
     key: "registry",
     value: function registry(name, f) {
@@ -9398,7 +9490,7 @@ var Schema = (function () {
           if (type.constructor.prototype.hasOwnProperty("registry")) {
             var reg = type.registry[name];
             if (reg) for (var j = 0; j < reg.length; j++) {
-              f(reg[j], type);
+              f(reg[j], type, tname);
             }
           }
           for (var aname in type.attrs) {
@@ -9407,7 +9499,7 @@ var Schema = (function () {
             if (reg && attrsSeen.indexOf(attr) == -1) {
               attrsSeen.push(attr);
               for (var j = 0; j < reg.length; j++) {
-                f(reg[j], attr);
+                f(reg[j], attr, aname);
               }
             }
           }
@@ -12270,6 +12362,8 @@ var _dom2 = require("prosemirror/dist/dom");
 
 var _dom3 = require("prosemirror/dist/serialize/dom");
 
+var _serialize = require("prosemirror/dist/serialize");
+
 var _transform = require("prosemirror/dist/transform");
 
 require("prosemirror/dist/collab");
@@ -12292,7 +12386,8 @@ window.pm = {
     StyleType: _model.StyleType,
     elt: _dom2.elt,
     wrap: _dom3.wrap,
-    Step: _transform.Step
+    Step: _transform.Step,
+    serializeTo: _serialize.serializeTo
 };
 
-},{"prosemirror/dist/collab":1,"prosemirror/dist/dom":3,"prosemirror/dist/edit/main":14,"prosemirror/dist/menu/menubar":20,"prosemirror/dist/model":26,"prosemirror/dist/parse/dom":31,"prosemirror/dist/serialize/dom":34,"prosemirror/dist/transform":38}]},{},[51]);
+},{"prosemirror/dist/collab":1,"prosemirror/dist/dom":3,"prosemirror/dist/edit/main":14,"prosemirror/dist/menu/menubar":20,"prosemirror/dist/model":26,"prosemirror/dist/parse/dom":31,"prosemirror/dist/serialize":35,"prosemirror/dist/serialize/dom":34,"prosemirror/dist/transform":38}]},{},[51]);

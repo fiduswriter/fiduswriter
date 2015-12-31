@@ -32,6 +32,7 @@ def save_document(document_id,changes):
     document.contents = changes["contents"]
     document.metadata = changes["metadata"]
     document.settings = changes["settings"]
+    document.version = changes["version"]
     document.save()
 
 class DocumentWS(BaseWebSocketHandler):
@@ -82,12 +83,19 @@ class DocumentWS(BaseWebSocketHandler):
 
             #DocumentWS.send_participant_list(self.document.id)
 
+    def confirm_diff(self, request_id):
+        response = dict()
+        response['type'] = 'confirm_diff'
+        response['request_id'] = request_id
+        self.write_message(response)
+
     def get_document(self):
         response = dict()
         response['type'] = 'document_data'
         response['document'] = dict()
         document = DocumentWS.sessions[self.document_id]['document']
         response['document']['id']=document.id
+        response['document']['version']=document.version
         response['document']['title']=document.title
         response['document']['contents']=document.contents
         response['document']['metadata']=document.metadata
@@ -125,6 +133,7 @@ class DocumentWS(BaseWebSocketHandler):
         response['type'] = 'document_data_update'
         response['document'] = dict()
         response['document']['id']=document.id
+        response['document']['version']=document.version
         response['document']['title']=document.title
         response['document']['contents']=document.contents
         response['document']['metadata']=document.metadata
@@ -156,7 +165,14 @@ class DocumentWS(BaseWebSocketHandler):
                 DocumentWS.send_updates(message, self.document_id, self.id)
         elif parsed["type"]=='diff':
             if self.document_id in DocumentWS.sessions:
-                DocumentWS.send_updates(message, self.document_id, self.id)
+                document = DocumentWS.sessions[self.document_id]["document"]
+                if parsed["version"] == document.diff_version:
+                    print "DIFFS"
+                    print parsed["diff"]
+                    print len(parsed["diff"])
+                    document.diff_version += len(parsed["diff"])
+                    self.confirm_diff(parsed["request_id"])
+                    DocumentWS.send_updates(message, self.document_id, self.id)
 
     def on_close(self):
         print "Websocket closing"

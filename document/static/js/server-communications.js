@@ -91,6 +91,9 @@
         case 'diff':
             theEditor.applyDiffs(data);
             break;
+        case 'confirm_diff':
+            theEditor.confirmDiff(data.request_id);
+            break;
         case 'transform':
             editorHelpers.setDocumentData(data.change[0], data.change[1], false);
             editorHelpers.setDisplay.document(data.change[0], data.change[1]);
@@ -160,33 +163,6 @@
         }, 20000);
     };
 
-    /** Tries to measure the time offset between cleint and server as change diffs will be submitted using the clients time. */
-    serverCommunications.getClientTimeOffset = function (clientOffsetTimeTrials) {
-        var request = new XMLHttpRequest(),
-            startTime = Date.now();
-        request.open('HEAD', '/hello-tornado', true);
-        request.onreadystatechange = function () {
-            var timeNow = Date.now(),
-                latency = timeNow - startTime,
-                serverTime = new Date(request.getResponseHeader('DATE')),
-                offset = (serverTime.getTime() + (latency / 2)) - timeNow;
-            if (!clientOffsetTimeTrials) {
-                clientOffsetTimeTrials = [];
-            }
-            clientOffsetTimeTrials.push(offset);
-            if (clientOffsetTimeTrials.length < 5) {
-                serverCommunications.getClientTimeOffset(clientOffsetTimeTrials);
-            } else {
-                var total = clientOffsetTimeTrials.reduce(function (a, b) {
-                    return a + b
-                });
-                window.clientOffsetTime = parseInt(total / clientOffsetTimeTrials.length);
-                delete clientOffsetTimeTrials;
-            }
-        };
-        request.send(null);
-    };
-
     /** Whether the connection is established for the first time. */
     serverCommunications.firstTimeConnection = true;
 
@@ -204,8 +180,6 @@
         }
 
         jQuery(document).ready(function () {
-
-            serverCommunications.getClientTimeOffset();
 
             var wsConnectionAttempts = 0;
 

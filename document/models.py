@@ -30,17 +30,20 @@ class Document(models.Model):
     title = models.CharField(max_length=255, default='', blank=True)
     contents = models.TextField(default='{"nn":"DIV","a":[],"c":[{"nn":"P","c":[{"nn":"BR"}]}]}')
     metadata = models.TextField(default='{}') #json object of metadata
-    settings = models.TextField(default='{}') #json object of settings 
+    version = models.PositiveIntegerField(default=0)
+    last_diffs = models.TextField(default='[]')
+    diff_version = models.PositiveIntegerField(default=0)
+    settings = models.TextField(default='{}') #json object of settings
     owner = models.ForeignKey(User,related_name='owner')
     added = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
     def __unicode__(self):
         return self.title
-    
+
     def get_absolute_url(self):
         return "/document/%i/" % self.id
-        
+
 
 RIGHTS_CHOICES  = (
     ('r', 'read'),
@@ -51,7 +54,7 @@ class AccessRight(models.Model):
     document = models.ForeignKey(Document)
     user = models.ForeignKey(User)
     rights = models.CharField(max_length=1, choices=RIGHTS_CHOICES, blank=False)
-    
+
     class Meta:
         unique_together = (("document", "user"),)
 
@@ -67,4 +70,3 @@ class DocumentRevision(models.Model):
     date = models.DateTimeField(auto_now=True)
     file_object = models.FileField(upload_to=revision_filename)
     file_name = models.CharField(max_length=255, default='', blank=True)
-    

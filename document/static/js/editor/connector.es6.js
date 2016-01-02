@@ -1,5 +1,7 @@
 /* Functions for ProseMirror integration.*/
 
+import {Pos} from "prosemirror/dist/model"
+
 var theEditor = {};
 
 function makeEditor (where, doc, version) {
@@ -52,6 +54,16 @@ theEditor.initiate = function () {
       new UpdateUI(theEditor.editor, "selectionChange change activeMarkChange");
       theEditor.editor.on('change', editorHelpers.documentHasChanged);
       theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators);
+      editorHelpers.setPlaceholders();
+
+      theEditor.editor.on('blur',
+          function() {
+              editorHelpers.setPlaceholders();
+          });
+      theEditor.editor.on('focus',
+          function() {
+              editorHelpers.setPlaceholders(jQuery(this).attr('id'));
+          });
 };
 
 theEditor.update = function () {

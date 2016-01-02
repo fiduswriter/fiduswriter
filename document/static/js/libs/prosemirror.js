@@ -12366,6 +12366,14 @@ var _serialize = require("prosemirror/dist/serialize");
 
 var _transform = require("prosemirror/dist/transform");
 
+var _edit = require("prosemirror/dist/edit");
+
+var _event = require("prosemirror/dist/util/event");
+
+var _update = require("prosemirror/dist/menu/update");
+
+var _tooltip = require("prosemirror/dist/menu/tooltip");
+
 require("prosemirror/dist/collab");
 
 window.pm = {
@@ -12387,7 +12395,11 @@ window.pm = {
     elt: _dom2.elt,
     wrap: _dom3.wrap,
     Step: _transform.Step,
-    serializeTo: _serialize.serializeTo
+    serializeTo: _serialize.serializeTo,
+    defineCommand: _edit.defineCommand,
+    eventMixin: _event.eventMixin,
+    MenuUpdate: _update.MenuUpdate,
+    Tooltip: _tooltip.Tooltip
 };
 
-},{"prosemirror/dist/collab":1,"prosemirror/dist/dom":3,"prosemirror/dist/edit/main":14,"prosemirror/dist/menu/menubar":20,"prosemirror/dist/model":26,"prosemirror/dist/parse/dom":31,"prosemirror/dist/serialize":35,"prosemirror/dist/serialize/dom":34,"prosemirror/dist/transform":38}]},{},[51]);
+},{"prosemirror/dist/collab":1,"prosemirror/dist/dom":3,"prosemirror/dist/edit":11,"prosemirror/dist/edit/main":14,"prosemirror/dist/menu/menubar":20,"prosemirror/dist/menu/tooltip":21,"prosemirror/dist/menu/update":22,"prosemirror/dist/model":26,"prosemirror/dist/parse/dom":31,"prosemirror/dist/serialize":35,"prosemirror/dist/serialize/dom":34,"prosemirror/dist/transform":38,"prosemirror/dist/util/event":48}]},{},[51]);

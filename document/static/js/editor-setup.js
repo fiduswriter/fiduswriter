@@ -104,23 +104,7 @@ jQuery(document).bind('documentDataLoaded', function() {
         toolsHelpers.toolsEventHandler(jQuery(this).data('function'));
         return false;
     });
-/*
-    editorHelpers.setPlaceholders();
 
-    jQuery(document).on('blur',
-//        '#document-title,#document-contents,#metadata-subtitle,#metadata-abstract,#metadata-authors,#metadata-keywords',
-        '#document-title,#metadata-subtitle,#metadata-abstract,#metadata-authors,#metadata-keywords',
-        function() {
-            editorHelpers.setPlaceholders();
-        });
-    jQuery(document).on('focus',
-
-//        '#document-title,#document-contents,#metadata-subtitle,#metadata-abstract,#metadata-authors,#metadata-keywords',
-        '#document-title,#metadata-subtitle,#metadata-abstract,#metadata-authors,#metadata-keywords',
-        function() {
-            editorHelpers.setPlaceholders(jQuery(this).attr('id'));
-        });
-*/
     editorHelpers.setDisplay.document('settings.papersize', theDocument.settings
         .papersize);
 
@@ -189,12 +173,6 @@ jQuery(document).bind('documentDataLoaded', function() {
 
         jQuery('.metadata-menu-item').bind('mousedown', editorHelpers.switchMetadata);
 
-        jQuery('#metadata-subtitle, #metadata-abstract, #metadata-authors, #metadata-keywords').bind('blur',
-            function() {
-                if (jQuery.trim(this.textContent) === '') {
-                    this.innerHTML = '<p><br></p>';
-                };
-            });
 
         if (!theDocumentValues.is_owner) {
             jQuery('span.share').addClass('disabled');
@@ -238,17 +216,6 @@ jQuery(document).bind('documentDataLoaded', function() {
         jQuery('.multibuttonsCover').each(function() {
             $.addDropdownBox(jQuery(this), jQuery(this).siblings(
                 '.fw-pulldown'));
-        });
-
-
-        jQuery('.ice-display').bind('mousedown', function() {
-            editorHelpers.setDocumentData('settings.tracking_show', (!
-                theDocument.settings
-                .tracking_show));
-            editorHelpers.setDisplay.document('settings.tracking_show',
-                theDocument.settings.tracking_show);
-            editorHelpers.documentHasChanged();
-            return false;
         });
 
         //open and close header

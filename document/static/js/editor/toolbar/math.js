@@ -19,16 +19,20 @@
  */
 // toolbar math
 jQuery(document).on('mousedown', '#button-math:not(.disabled), .equation', function (event) {
-  /*
-    event.preventDefault();
-    var selection = rangy.getSelection(),
-        range,
-        dialog, dialogButtons = [],
+
+  if (!theEditor.editor.hasFocus()) {
+    return false;
+  }
+
+  //  event.preventDefault();
+  //  var selection = rangy.getSelection(),
+  //      range,
+    var    dialog, dialogButtons = [],
         submitMessage = gettext('Insert'),
         insideMath = false,
         formula = 'x=2*y';
 
-        if (selection.rangeCount > 0) {
+    /*    if (selection.rangeCount > 0) {
             range = selection.getRangeAt(0);
             if (jQuery(range.startContainer).closest('#document-editable').length===0) {
                 range = rangy.createRange();
@@ -37,7 +41,7 @@ jQuery(document).on('mousedown', '#button-math:not(.disabled), .equation', funct
         } else {
             range = rangy.createRange();
         }
-
+*/
 
     if (jQuery(this).is('.equation')) {
         insideMath = this;

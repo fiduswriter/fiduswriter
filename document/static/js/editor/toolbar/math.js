@@ -19,7 +19,7 @@
  */
 // toolbar math
 jQuery(document).on('mousedown', '#button-math:not(.disabled), .equation', function (event) {
-
+/*
   if (!theEditor.editor.hasFocus()) {
     return false;
   }
@@ -32,28 +32,19 @@ jQuery(document).on('mousedown', '#button-math:not(.disabled), .equation', funct
         insideMath = false,
         formula = 'x=2*y';
 
-    /*    if (selection.rangeCount > 0) {
-            range = selection.getRangeAt(0);
-            if (jQuery(range.startContainer).closest('#document-editable').length===0) {
-                range = rangy.createRange();
-            }
 
-        } else {
-            range = rangy.createRange();
-        }
-*/
 
     if (jQuery(this).is('.equation')) {
         insideMath = this;
-        range.selectNode(this);
-        range.collapse();
+  //      range.selectNode(this);
+  //      range.collapse();
         formula = jQuery(this).attr('data-equation');
         submitMessage = gettext('Update');
         dialogButtons.push({
             text: gettext('Remove'),
             class: 'fw-button fw-orange',
             click: function () {
-                manualEdits.remove(insideMath, range);
+    //            manualEdits.remove(insideMath, range);
                 insideMath = false;
                 dialog.dialog('close');
             }

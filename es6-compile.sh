@@ -9,17 +9,14 @@
 #
 # Run this script every time you update an *.es6.js file.
 
-if ! hash babel 2>/dev/null;
+if ! hash node_modules/.bin/browserify 2>/dev/null;
 then
 pip install nodeenv
 nodeenv -p
 
-npm install -g babel babel-cli webpack
-npm install babel-preset-es2015
-fi
+npm install
 
-babel=$(which babel)
-webpack=$(which webpack)
+fi
 
 IFS=$'\n';
 
@@ -28,11 +25,8 @@ do
   dirname=$(dirname "$file")
   basename=$(basename "$file")
   outfilename="${basename%.es6.js}"
-  tmpfile=$(mktemp)
   outfile="$dirname/$outfilename.js"
   echo "Converting $file to $outfile"
-  $babel $file --presets es2015 >> $tmpfile
-  $webpack $tmpfile $outfile
-  rm $tmpfile
+  node_modules/.bin/browserify --outfile $outfile -t babelify $file
   sed -i "1i /* This file has been automatically generated. DO NOT EDIT IT. \n Changes will be overwritten. Edit $basename and run ./es6-compiler.sh */"  "$outfile"
 done

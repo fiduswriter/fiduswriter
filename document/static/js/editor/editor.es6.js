@@ -1,11 +1,32 @@
 /* Functions for ProseMirror integration.*/
 
-import {Pos} from "prosemirror/dist/model"
+import {ProseMirror} from "prosemirror/dist/edit/main"
+
+import {fromDOM, fromHTML} from "prosemirror/dist/parse/dom"
+
+import {SchemaSpec, Schema, defaultSchema, Block, Textblock, Inline, Text,
+        Attribute, StyleType} from "prosemirror/dist/model"
+
+import {serializeTo} from "prosemirror/dist/serialize"
+
+import {Step} from "prosemirror/dist/transform"
+
+import {defineCommand} from "prosemirror/dist/edit"
+import {eventMixin} from "prosemirror/dist/util/event"
+import {MenuUpdate} from "prosemirror/dist/menu/update"
+
+import {Tooltip} from "prosemirror/dist/menu/tooltip"
+
+import "prosemirror/dist/collab"
+
+import {fidusSchema} from "./schema"
+
+import {UpdateUI} from "./update-ui"
 
 var theEditor = {};
 
 function makeEditor (where, doc, version) {
-  return new pm.ProseMirror({
+  return new ProseMirror({
     place: where,
     schema: fidusSchema,
     doc: doc,
@@ -42,7 +63,7 @@ theEditor.createDoc = function (aDocument) {
       editorNode.appendChild(metadataNode);
       editorNode.appendChild(documentContentsNode);
 
-      doc = pm.fromDOM(fidusSchema, editorNode)
+      doc = fromDOM(fidusSchema, editorNode)
 
       return doc;
 };
@@ -76,7 +97,7 @@ theEditor.update = function () {
 };
 
 theEditor.getUpdates = function (callback) {
-      var outputNode = pm.serializeTo(theEditor.editor.mod.collab.versionDoc,'dom');
+      var outputNode = serializeTo(theEditor.editor.mod.collab.versionDoc,'dom');
       theDocument.title = theEditor.editor.doc.firstChild.textContent;
       theDocument.version = theEditor.editor.mod.collab.version;
       theDocument.metadata.title = exporter.node2Obj(outputNode.getElementById('document-title'));
@@ -116,7 +137,7 @@ theEditor.confirmDiff = function (request_id) {
 };
 
 theEditor.applyDiffs = function(diffs) {
-    theEditor.editor.mod.collab.receive(diffs.map(j => pm.Step.fromJSON(fidusSchema, j)));
+    theEditor.editor.mod.collab.receive(diffs.map(j => Step.fromJSON(fidusSchema, j)));
 }
 
 
@@ -158,7 +179,5 @@ theEditor.checkHash = function(version, hash) {
       return;
     }
 }
-theEditor.fromDOM = pm.fromDOM;
-theEditor.schema = fidusSchema;
 
 window.theEditor = theEditor;

@@ -1,310 +1,225 @@
-/* This file has been automatically generated. DO NOT EDIT IT. 
- Changes will be overwritten. Edit update-ui.es6.js and run ./es6-compiler.sh */
-/******/ (function(modules) { // webpackBootstrap
-/******/ 	// The module cache
-/******/ 	var installedModules = {};
+// Update UI (adapted from ProseMirror's src/menu/update.js)
 
-/******/ 	// The require function
-/******/ 	function __webpack_require__(moduleId) {
+const MIN_FLUSH_DELAY = 200
+const UPDATE_TIMEOUT = 200
 
-/******/ 		// Check if module is in cache
-/******/ 		if(installedModules[moduleId])
-/******/ 			return installedModules[moduleId].exports;
+const BLOCK_LABELS = {
+  'paragraph': 'Normal Text',
+  'ordered_list': 'Numbered List',
+  'bullet_list': 'Bulleted List',
+  'blockquote': 'Block Quote',
+  'heading_1': '1st Heading',
+  'heading_2': '2nd Heading',
+  'heading_3': '3rd Heading',
+  'code_block': 'Code'
+}
 
-/******/ 		// Create a new module (and put it into the cache)
-/******/ 		var module = installedModules[moduleId] = {
-/******/ 			exports: {},
-/******/ 			id: moduleId,
-/******/ 			loaded: false
-/******/ 		};
+export class UpdateUI {
+  constructor(pm, events) {
+    this.pm = pm
 
-/******/ 		// Execute the module function
-/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+    this.mustUpdate = false
+    this.updateInfo = null
+    this.timeout = null
+    this.lastFlush = 0
 
-/******/ 		// Flag the module as loaded
-/******/ 		module.loaded = true;
+    this.events = events.split(" ")
+    this.onEvent = this.onEvent.bind(this)
+    this.force = this.force.bind(this)
+    this.events.forEach(event => pm.on(event, this.onEvent))
+    pm.on("flushed", this.onFlushed = this.onFlushed.bind(this))
+    this.updateUI()
+  }
 
-/******/ 		// Return the exports of the module
-/******/ 		return module.exports;
-/******/ 	}
+  detach() {
+    clearTimeout(this.timeout)
+    this.events.forEach(event => this.pm.off(event, this.onEvent))
+    this.pm.off("flush", this.onFlush)
+    this.pm.off("flushed", this.onFlushed)
+  }
 
+  onFlushed() {
+    let now = Date.now()
+    if (this.mustUpdate && (now - this.lastFlush) >= MIN_FLUSH_DELAY) {
+      this.lastFlush = now
+      clearTimeout(this.timeout)
+      this.mustUpdate = false
+      this.updateUI()
+    }
+  }
 
-/******/ 	// expose the modules object (__webpack_modules__)
-/******/ 	__webpack_require__.m = modules;
+  onEvent() {
+    this.mustUpdate = true
+    clearTimeout(this.timeout)
+    this.timeout = setTimeout(this.force, UPDATE_TIMEOUT)
+  }
 
-/******/ 	// expose the module cache
-/******/ 	__webpack_require__.c = installedModules;
+  force() {
+    if (this.pm.operation) {
+      this.onEvent()
+    } else {
+      this.mustUpdate = false
+      this.updateInfo = null
+      this.lastFlush = Date.now()
+      clearTimeout(this.timeout)
+      this.updateUI()
+    }
+  }
 
-/******/ 	// __webpack_public_path__
-/******/ 	__webpack_require__.p = "";
+  updateUI() {
+    /* Fidus Writer code */
 
-/******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(0);
-/******/ })
-/************************************************************************/
-/******/ ([
-/* 0 */
-/***/ function(module, exports) {
+    var documentTitle = theEditor.editor.doc.firstChild.textContent;
+    //editorHelpers.setDisplay.title = function (theValue) {
+        if (documentTitle.length === 0) {
+            documentTitle = gettext('Untitled Document');
+        }
+        jQuery('title').html('Fidus Writer - ' + documentTitle);
+        jQuery('#header h1').html(documentTitle);
+    //};
 
-	'use strict';
+    var marks = theEditor.editor.activeMarks();
+    var strong = marks.some(function(mark){return (mark.type.name==='strong')});
 
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+    if (strong) {
+        jQuery('#button-bold').addClass('ui-state-active');
+    } else {
+        jQuery('#button-bold').removeClass('ui-state-active');
+    }
 
-	Object.defineProperty(exports, "__esModule", {
-	    value: true
-	});
+    var em = marks.some(function(mark){return (mark.type.name==='em')});
 
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+    if (em) {
+        jQuery('#button-italic').addClass('ui-state-active');
+    } else {
+        jQuery('#button-italic').removeClass('ui-state-active');
+    }
 
-	// Update UI (adapted from ProseMirror's src/menu/update.js)
+    var link = marks.some(function(mark){return (mark.type.name==='link')});
 
-	var MIN_FLUSH_DELAY = 200;
-	var UPDATE_TIMEOUT = 200;
+    if (link) {
+        jQuery('#button-link').addClass('ui-state-active');
+    } else {
+        jQuery('#button-link').removeClass('ui-state-active');
+    }
 
-	var BLOCK_LABELS = {
-	    'paragraph': 'Normal Text',
-	    'ordered_list': 'Numbered List',
-	    'bullet_list': 'Bulleted List',
-	    'blockquote': 'Block Quote',
-	    'heading_1': '1st Heading',
-	    'heading_2': '2nd Heading',
-	    'heading_3': '3rd Heading',
-	    'code_block': 'Code'
-	};
+    /* Block level selector */
+    var headElementType = theEditor.editor.doc.path([theEditor.editor.selection.head.path[0]]).type.name,
+    anchorElementType = theEditor.editor.doc.path([theEditor.editor.selection.anchor.path[0]]).type.name;
 
-	var UpdateUI = exports.UpdateUI = (function () {
-	    function UpdateUI(pm, events) {
-	        var _this = this;
+    // For metadata, one has to look one level deeper.
+    if (headElementType==='metadata') {
+        headElementType = theEditor.editor.doc.path(theEditor.editor.selection.head.path.slice(0,2)).type.name;
+    }
 
-	        _classCallCheck(this, UpdateUI);
+    if (anchorElementType==='metadata') {
+        anchorElementType = theEditor.editor.doc.path(theEditor.editor.selection.anchor.path.slice(0,2)).type.name;
+    }
 
-	        this.pm = pm;
+    if (headElementType !== anchorElementType) {
+        /* Selection goes across document parts */
+        jQuery('.editortoolbar button').addClass('disabled');
+        jQuery('#block-style-label').html('');
 
-	        this.mustUpdate = false;
-	        this.updateInfo = null;
-	        this.timeout = null;
-	        this.lastFlush = 0;
+    } else {
 
-	        this.events = events.split(" ");
-	        this.onEvent = this.onEvent.bind(this);
-	        this.force = this.force.bind(this);
-	        this.events.forEach(function (event) {
-	            return pm.on(event, _this.onEvent);
-	        });
-	        pm.on("flushed", this.onFlushed = this.onFlushed.bind(this));
-	        this.updateUI();
-	    }
+        switch (headElementType) {
+            case 'title':
+                jQuery('.edit-button').addClass('disabled');
+                jQuery('#block-style-label').html('Title');
+                break;
+            case 'metadatasubtitle':
+                jQuery('.edit-button').addClass('disabled');
+                jQuery('#block-style-label').html('Subtitle');
+                break;
+            case 'metadataauthors':
+                jQuery('.edit-button').addClass('disabled');
+                jQuery('#block-style-label').html('Authors');
+                break;
+            case 'metadatakeywords':
+                jQuery('.edit-button').addClass('disabled');
+                jQuery('#block-style-label').html('Keywords');
+                break;
+            case 'metadataabstract':
+                jQuery('.edit-button').removeClass('disabled');
+                jQuery('#button-figure').addClass('disabled');
 
-	    _createClass(UpdateUI, [{
-	        key: 'detach',
-	        value: function detach() {
-	            var _this2 = this;
+                var headPath = theEditor.editor.selection.head.path,
+                anchorPath = theEditor.editor.selection.anchor.path,
+                blockNodeType = true, blockNode, nextBlockNodeType;
 
-	            clearTimeout(this.timeout);
-	            this.events.forEach(function (event) {
-	                return _this2.pm.off(event, _this2.onEvent);
-	            });
-	            this.pm.off("flush", this.onFlush);
-	            this.pm.off("flushed", this.onFlushed);
-	        }
-	    }, {
-	        key: 'onFlushed',
-	        value: function onFlushed() {
-	            var now = Date.now();
-	            if (this.mustUpdate && now - this.lastFlush >= MIN_FLUSH_DELAY) {
-	                this.lastFlush = now;
-	                clearTimeout(this.timeout);
-	                this.mustUpdate = false;
-	                this.updateUI();
-	            }
-	        }
-	    }, {
-	        key: 'onEvent',
-	        value: function onEvent() {
-	            this.mustUpdate = true;
-	            clearTimeout(this.timeout);
-	            this.timeout = setTimeout(this.force, UPDATE_TIMEOUT);
-	        }
-	    }, {
-	        key: 'force',
-	        value: function force() {
-	            if (this.pm.operation) {
-	                this.onEvent();
-	            } else {
-	                this.mustUpdate = false;
-	                this.updateInfo = null;
-	                this.lastFlush = Date.now();
-	                clearTimeout(this.timeout);
-	                this.updateUI();
-	            }
-	        }
-	    }, {
-	        key: 'updateUI',
-	        value: function updateUI() {
-	            /* Fidus Writer code */
+                if (headPath[2]===anchorPath[2]) {
+                  // Selection within a single block.
+                  blockNode = theEditor.editor.doc.path(theEditor.editor.selection.anchor.path.slice(0,3));
+                  blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
+                  jQuery('#block-style-label').html('Abstract: ' + BLOCK_LABELS[blockNodeType]);
+                } else {
+                    var iterator = theEditor.editor.doc.path(theEditor.editor.selection.head.path.slice(0,2)).iter(
+                        _.min([headPath[2],anchorPath[2]]),
+                        _.max([headPath[2],anchorPath[2]])+1
+                    );
 
-	            var documentTitle = theEditor.editor.doc.firstChild.textContent;
-	            //editorHelpers.setDisplay.title = function (theValue) {
-	            if (documentTitle.length === 0) {
-	                documentTitle = gettext('Untitled Document');
-	            }
-	            jQuery('title').html('Fidus Writer - ' + documentTitle);
-	            jQuery('#header h1').html(documentTitle);
-	            //};
-
-	            var marks = theEditor.editor.activeMarks();
-	            var strong = marks.some(function (mark) {
-	                return mark.type.name === 'strong';
-	            });
-
-	            if (strong) {
-	                jQuery('#button-bold').addClass('ui-state-active');
-	            } else {
-	                jQuery('#button-bold').removeClass('ui-state-active');
-	            }
-
-	            var em = marks.some(function (mark) {
-	                return mark.type.name === 'em';
-	            });
-
-	            if (em) {
-	                jQuery('#button-italic').addClass('ui-state-active');
-	            } else {
-	                jQuery('#button-italic').removeClass('ui-state-active');
-	            }
-
-	            var link = marks.some(function (mark) {
-	                return mark.type.name === 'link';
-	            });
-
-	            if (link) {
-	                jQuery('#button-link').addClass('ui-state-active');
-	            } else {
-	                jQuery('#button-link').removeClass('ui-state-active');
-	            }
-
-	            /* Block level selector */
-	            var headElementType = theEditor.editor.doc.path([theEditor.editor.selection.head.path[0]]).type.name,
-	                anchorElementType = theEditor.editor.doc.path([theEditor.editor.selection.anchor.path[0]]).type.name;
-
-	            // For metadata, one has to look one level deeper.
-	            if (headElementType === 'metadata') {
-	                headElementType = theEditor.editor.doc.path(theEditor.editor.selection.head.path.slice(0, 2)).type.name;
-	            }
-
-	            if (anchorElementType === 'metadata') {
-	                anchorElementType = theEditor.editor.doc.path(theEditor.editor.selection.anchor.path.slice(0, 2)).type.name;
-	            }
-
-	            if (headElementType !== anchorElementType) {
-	                /* Selection goes across document parts */
-	                jQuery('.editortoolbar button').addClass('disabled');
-	                jQuery('#block-style-label').html('');
-	            } else {
-
-	                switch (headElementType) {
-	                    case 'title':
-	                        jQuery('.edit-button').addClass('disabled');
-	                        jQuery('#block-style-label').html('Title');
-	                        break;
-	                    case 'metadatasubtitle':
-	                        jQuery('.edit-button').addClass('disabled');
-	                        jQuery('#block-style-label').html('Subtitle');
-	                        break;
-	                    case 'metadataauthors':
-	                        jQuery('.edit-button').addClass('disabled');
-	                        jQuery('#block-style-label').html('Authors');
-	                        break;
-	                    case 'metadatakeywords':
-	                        jQuery('.edit-button').addClass('disabled');
-	                        jQuery('#block-style-label').html('Keywords');
-	                        break;
-	                    case 'metadataabstract':
-	                        jQuery('.edit-button').removeClass('disabled');
-	                        jQuery('#button-figure').addClass('disabled');
-
-	                        var headPath = theEditor.editor.selection.head.path,
-	                            anchorPath = theEditor.editor.selection.anchor.path,
-	                            blockNodeType = true,
-	                            blockNode,
-	                            nextBlockNodeType;
-
-	                        if (headPath[2] === anchorPath[2]) {
-	                            // Selection within a single block.
-	                            blockNode = theEditor.editor.doc.path(theEditor.editor.selection.anchor.path.slice(0, 3));
-	                            blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
-	                            jQuery('#block-style-label').html('Abstract: ' + BLOCK_LABELS[blockNodeType]);
-	                        } else {
-	                            var iterator = theEditor.editor.doc.path(theEditor.editor.selection.head.path.slice(0, 2)).iter(_.min([headPath[2], anchorPath[2]]), _.max([headPath[2], anchorPath[2]]) + 1);
-
-	                            while (!iterator.atEnd() && blockNodeType) {
-	                                nextBlockNode = iterator.next();
-	                                nextBlockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
-	                                if (blockNodeType === true) {
-	                                    blockNodeType = nextBlockNodeType;
-	                                }
-	                                if (blockNodeType !== nextBlockNodeType) {
-	                                    blockNodeType = false;
-	                                }
-	                            }
-
-	                            if (blockNodeType) {
-	                                jQuery('#block-style-label').html('Abstract: ' + BLOCK_LABELS[blockNodeType]);
-	                            } else {
-	                                jQuery('#block-style-label').html('Abstract');
-	                            }
-	                        }
-
-	                        break;
-	                    case 'documentcontents':
-	                        jQuery('.edit-button').removeClass('disabled');
-
-	                        var headPath = theEditor.editor.selection.head.path,
-	                            anchorPath = theEditor.editor.selection.anchor.path,
-	                            blockNodeType = true,
-	                            blockNode,
-	                            nextBlockNodeType;
-
-	                        if (headPath[1] === anchorPath[1]) {
-	                            // Selection within a single block.
-	                            blockNode = theEditor.editor.doc.path(theEditor.editor.selection.anchor.path.slice(0, 2));
-	                            blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
-	                            jQuery('#block-style-label').html('Body: ' + BLOCK_LABELS[blockNodeType]);
-	                        } else {
-	                            var iterator = theEditor.editor.doc.path(theEditor.editor.selection.head.path.slice(0, 1)).iter(_.min([headPath[1], anchorPath[1]]), _.max([headPath[1], anchorPath[1]]) + 1);
-
-	                            while (!iterator.atEnd() && blockNodeType) {
-	                                blockNode = iterator.next();
-	                                nextBlockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
-	                                if (blockNodeType === true) {
-	                                    blockNodeType = nextBlockNodeType;
-	                                }
-	                                if (blockNodeType !== nextBlockNodeType) {
-	                                    blockNodeType = false;
-	                                }
-	                            }
-
-	                            if (blockNodeType) {
-	                                jQuery('#block-style-label').html('Body: ' + BLOCK_LABELS[blockNodeType]);
-	                            } else {
-	                                jQuery('#block-style-label').html('Body');
-	                            }
-	                        }
-
-	                        break;
-	                }
-	            }
-
-	            return true;
-	        }
-	    }]);
-
-	    return UpdateUI;
-	})();
-
-	window.UpdateUI = UpdateUI;
+                    while(!iterator.atEnd() && blockNodeType) {
+                        nextBlockNode = iterator.next();
+                        nextBlockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
+                        if (blockNodeType===true) {
+                            blockNodeType = nextBlockNodeType;
+                        }
+                        if (blockNodeType !== nextBlockNodeType) {
+                            blockNodeType = false;
+                        }
+                    }
 
 
+                    if (blockNodeType) {
+                        jQuery('#block-style-label').html('Abstract: ' + BLOCK_LABELS[blockNodeType]);
+                    } else {
+                        jQuery('#block-style-label').html('Abstract');
+                    }
+                }
 
-/***/ }
-/******/ ]);
+                break;
+            case 'documentcontents':
+                jQuery('.edit-button').removeClass('disabled');
+
+                var headPath = theEditor.editor.selection.head.path,
+                anchorPath = theEditor.editor.selection.anchor.path,
+                blockNodeType = true, blockNode, nextBlockNodeType;
+
+                if (headPath[1]===anchorPath[1]) {
+                    // Selection within a single block.
+                    blockNode = theEditor.editor.doc.path(theEditor.editor.selection.anchor.path.slice(0,2));
+                    blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
+                    jQuery('#block-style-label').html('Body: ' + BLOCK_LABELS[blockNodeType]);
+                } else {
+                    var iterator = theEditor.editor.doc.path(theEditor.editor.selection.head.path.slice(0,1)).iter(
+                        _.min([headPath[1],anchorPath[1]]),
+                        _.max([headPath[1],anchorPath[1]])+1
+                    );
+
+                    while(!iterator.atEnd() && blockNodeType) {
+                        blockNode = iterator.next();
+                        nextBlockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
+                        if (blockNodeType===true) {
+                            blockNodeType = nextBlockNodeType;
+                        }
+                        if (blockNodeType !== nextBlockNodeType) {
+                            blockNodeType = false;
+                        }
+                    }
+
+                    if (blockNodeType) {
+                        jQuery('#block-style-label').html('Body: ' + BLOCK_LABELS[blockNodeType]);
+                    } else {
+                        jQuery('#block-style-label').html('Body');
+                    }
+                }
+
+                break;
+        }
+    }
+
+
+    return true;
+  }
+}

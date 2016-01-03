@@ -176,7 +176,7 @@ class DocumentWS(BaseWebSocketHandler):
             if self.document_id in DocumentWS.sessions:
                 document = DocumentWS.sessions[self.document_id]["document"]
                 if parsed["version"] == document.diff_version:
-                    DocumentWS.sessions[self.document_id]["last_diffs"].append(parsed["diff"])
+                    DocumentWS.sessions[self.document_id]["last_diffs"].extend(parsed["diff"])
                     # store 500 diffs or all the diffs from the last document version to the latest diff -- whatever is the greatest.
                     number_stored_diffs = max(500, document.diff_version - document.version)
                     DocumentWS.sessions[self.document_id]["last_diffs"] = DocumentWS.sessions[self.document_id]["last_diffs"][:number_stored_diffs]

@@ -678,12 +678,12 @@ var UpdateUI = exports.UpdateUI = (function () {
 
             // We count on the this precise order in all documents.
             var nodes = {
-                'title': theEditor.editor.doc.firstChild,
-                'subtitle': theEditor.editor.doc.child(1).firstChild,
-                'authors': theEditor.editor.doc.child(1).child(1),
-                'abstract': theEditor.editor.doc.child(1).child(2),
-                'keywords': theEditor.editor.doc.child(1).child(3),
-                'contents': theEditor.editor.doc.child(2)
+                'title': this.pm.doc.firstChild,
+                'subtitle': this.pm.doc.child(1).firstChild,
+                'authors': this.pm.doc.child(1).child(1),
+                'abstract': this.pm.doc.child(1).child(2),
+                'keywords': this.pm.doc.child(1).child(3),
+                'contents': this.pm.doc.child(2)
             };
 
             var documentTitle = nodes.title.textContent;
@@ -694,7 +694,7 @@ var UpdateUI = exports.UpdateUI = (function () {
             jQuery('title').html('Fidus Writer - ' + documentTitle);
             jQuery('#header h1').html(documentTitle);
 
-            var marks = theEditor.editor.activeMarks();
+            var marks = this.pm.activeMarks();
             var strong = marks.some(function (mark) {
                 return mark.type.name === 'strong';
             });
@@ -726,16 +726,16 @@ var UpdateUI = exports.UpdateUI = (function () {
             }
 
             /* Block level selector */
-            var headElement = theEditor.editor.doc.path([theEditor.editor.selection.head.path[0]]),
-                anchorElement = theEditor.editor.doc.path([theEditor.editor.selection.anchor.path[0]]);
+            var headElement = this.pm.doc.path([this.pm.selection.head.path[0]]),
+                anchorElement = this.pm.doc.path([this.pm.selection.anchor.path[0]]);
 
             // For metadata, one has to look one level deeper.
             if (headElement.type.name === 'metadata') {
-                headElement = theEditor.editor.doc.path(theEditor.editor.selection.head.path.slice(0, 2));
+                headElement = this.pm.doc.path(this.pm.selection.head.path.slice(0, 2));
             }
 
             if (anchorElement.type.name === 'metadata') {
-                anchorElement = theEditor.editor.doc.path(theEditor.editor.selection.anchor.path.slice(0, 2));
+                anchorElement = this.pm.doc.path(this.pm.selection.anchor.path.slice(0, 2));
             }
 
             this.calculatePlaceHolderCss(headElement, nodes);
@@ -767,19 +767,19 @@ var UpdateUI = exports.UpdateUI = (function () {
                         jQuery('.edit-button').removeClass('disabled');
                         jQuery('#button-figure').addClass('disabled');
 
-                        var headPath = theEditor.editor.selection.head.path,
-                            anchorPath = theEditor.editor.selection.anchor.path,
+                        var headPath = this.pm.selection.head.path,
+                            anchorPath = this.pm.selection.anchor.path,
                             blockNodeType = true,
                             blockNode,
                             nextBlockNodeType;
 
                         if (headPath[2] === anchorPath[2]) {
                             // Selection within a single block.
-                            blockNode = theEditor.editor.doc.path(theEditor.editor.selection.anchor.path.slice(0, 3));
+                            blockNode = this.pm.doc.path(this.pm.selection.anchor.path.slice(0, 3));
                             blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
                             jQuery('#block-style-label').html('Abstract: ' + BLOCK_LABELS[blockNodeType]);
                         } else {
-                            var iterator = theEditor.editor.doc.path(theEditor.editor.selection.head.path.slice(0, 2)).iter(_.min([headPath[2], anchorPath[2]]), _.max([headPath[2], anchorPath[2]]) + 1);
+                            var iterator = this.pm.doc.path(this.pm.selection.head.path.slice(0, 2)).iter(_.min([headPath[2], anchorPath[2]]), _.max([headPath[2], anchorPath[2]]) + 1);
 
                             while (!iterator.atEnd() && blockNodeType) {
                                 nextBlockNode = iterator.next();
@@ -803,19 +803,19 @@ var UpdateUI = exports.UpdateUI = (function () {
                     case nodes.contents:
                         jQuery('.edit-button').removeClass('disabled');
 
-                        var headPath = theEditor.editor.selection.head.path,
-                            anchorPath = theEditor.editor.selection.anchor.path,
+                        var headPath = this.pm.selection.head.path,
+                            anchorPath = this.pm.selection.anchor.path,
                             blockNodeType = true,
                             blockNode,
                             nextBlockNodeType;
 
                         if (headPath[1] === anchorPath[1]) {
                             // Selection within a single block.
-                            blockNode = theEditor.editor.doc.path(theEditor.editor.selection.anchor.path.slice(0, 2));
+                            blockNode = this.pm.doc.path(this.pm.selection.anchor.path.slice(0, 2));
                             blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
                             jQuery('#block-style-label').html('Body: ' + BLOCK_LABELS[blockNodeType]);
                         } else {
-                            var iterator = theEditor.editor.doc.path(theEditor.editor.selection.head.path.slice(0, 1)).iter(_.min([headPath[1], anchorPath[1]]), _.max([headPath[1], anchorPath[1]]) + 1);
+                            var iterator = this.pm.doc.path(this.pm.selection.head.path.slice(0, 1)).iter(_.min([headPath[1], anchorPath[1]]), _.max([headPath[1], anchorPath[1]]) + 1);
 
                             while (!iterator.atEnd() && blockNodeType) {
                                 blockNode = iterator.next();
@@ -841,6 +841,10 @@ var UpdateUI = exports.UpdateUI = (function () {
 
             return true;
         }
+
+        /** Show or hide placeholders ('Contents...', 'Title...', etc.) depending on
+        whether these elements are empty or not.*/
+
     }, {
         key: 'calculatePlaceHolderCss',
         value: function calculatePlaceHolderCss(headElement, nodes) {
@@ -848,7 +852,7 @@ var UpdateUI = exports.UpdateUI = (function () {
             var _arr = [{ 'type': 'title', 'selector': '#document-title', 'placeholder': gettext('Title...') }, { 'type': 'subtitle', 'selector': '#metadata-subtitle', 'placeholder': gettext('Subtitle...') }, { 'type': 'authors', 'selector': '#metadata-authors', 'placeholder': gettext('Authors...') }, { 'type': 'abstract', 'selector': '#metadata-abstract', 'placeholder': gettext('Abstract...') }, { 'type': 'keywords', 'selector': '#metadata-keywords', 'placeholder': gettext('Keywords...') }, { 'type': 'contents', 'selector': '#document-contents', 'placeholder': gettext('Body...') }];
             for (var _i = 0; _i < _arr.length; _i++) {
                 var elementType = _arr[_i];
-                if (nodes[elementType.type].textContent.length === 0 && (headElement != nodes[elementType.type] || !theEditor.editor.hasFocus())) {
+                if (nodes[elementType.type].textContent.length === 0 && (headElement != nodes[elementType.type] || !this.pm.hasFocus())) {
                     newPlaceHolderCss += elementType.selector + ':before {content: "' + elementType.placeholder + '"}\n';
                 }
             }

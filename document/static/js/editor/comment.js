@@ -1,6 +1,6 @@
 /*
 based on https://github.com/ProseMirror/website/blob/master/src/client/collab/comment.js
-
+*/
 import {Pos} from "prosemirror/dist/model"
 import {elt} from "prosemirror/dist/dom"
 import {defineCommand} from "prosemirror/dist/edit"
@@ -8,15 +8,6 @@ import {eventMixin} from "prosemirror/dist/util/event"
 import {MenuUpdate} from "prosemirror/dist/menu/update"
 
 import {Tooltip} from "prosemirror/dist/menu/tooltip"
-*/
-
-Pos = pm.Pos;
-elt = pm.elt;
-defineCommand = pm.defineCommand;
-eventMixin = pm.eventMixin;
-MenuUpdate = pm.MenuUpdate;
-Tooltip = pm.Tooltip;
-
 
 class Comment {
   constructor(text, id, range) {
@@ -26,7 +17,7 @@ class Comment {
   }
 }
 
-class CommentStore {
+export class CommentStore {
   constructor(pm, version) {
     pm.mod.comments = this
     this.pm = pm
@@ -146,7 +137,7 @@ defineCommand({
 
 // Comment UI
 
-class CommentUI {
+export class CommentUI {
   constructor(pm) {
     this.pm = pm
     pm.mod.commentUI = this

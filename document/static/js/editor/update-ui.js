@@ -22,6 +22,7 @@ export class UpdateUI {
     this.updateInfo = null
     this.timeout = null
     this.lastFlush = 0
+    this.placeHolderCss = ''
 
     this.events = events.split(" ")
     this.onEvent = this.onEvent.bind(this)
@@ -69,157 +70,192 @@ export class UpdateUI {
   updateUI() {
     /* Fidus Writer code */
 
-    var documentTitle = theEditor.editor.doc.firstChild.textContent;
-    //editorHelpers.setDisplay.title = function (theValue) {
-        if (documentTitle.length === 0) {
-            documentTitle = gettext('Untitled Document');
-        }
-        jQuery('title').html('Fidus Writer - ' + documentTitle);
-        jQuery('#header h1').html(documentTitle);
-    //};
+    // We count on the this precise order in all documents.
+    let nodes = {
+        'title': theEditor.editor.doc.firstChild,
+        'subtitle': theEditor.editor.doc.child(1).firstChild,
+        'authors': theEditor.editor.doc.child(1).child(1),
+        'abstract': theEditor.editor.doc.child(1).child(2),
+        'keywords': theEditor.editor.doc.child(1).child(3),
+        'contents': theEditor.editor.doc.child(2)
+    }
 
-    var marks = theEditor.editor.activeMarks();
-    var strong = marks.some(function(mark){return (mark.type.name==='strong')});
+    let documentTitle = nodes.title.textContent
+
+        if (documentTitle.length === 0) {
+            documentTitle = gettext('Untitled Document')
+        }
+        jQuery('title').html('Fidus Writer - ' + documentTitle)
+        jQuery('#header h1').html(documentTitle)
+
+    let marks = theEditor.editor.activeMarks()
+    let strong = marks.some(function(mark){return (mark.type.name==='strong')})
 
     if (strong) {
-        jQuery('#button-bold').addClass('ui-state-active');
+        jQuery('#button-bold').addClass('ui-state-active')
     } else {
-        jQuery('#button-bold').removeClass('ui-state-active');
+        jQuery('#button-bold').removeClass('ui-state-active')
     }
 
-    var em = marks.some(function(mark){return (mark.type.name==='em')});
+    let em = marks.some(function(mark){return (mark.type.name==='em')})
 
     if (em) {
-        jQuery('#button-italic').addClass('ui-state-active');
+        jQuery('#button-italic').addClass('ui-state-active')
     } else {
-        jQuery('#button-italic').removeClass('ui-state-active');
+        jQuery('#button-italic').removeClass('ui-state-active')
     }
 
-    var link = marks.some(function(mark){return (mark.type.name==='link')});
+    let link = marks.some(function(mark){return (mark.type.name==='link')})
 
     if (link) {
-        jQuery('#button-link').addClass('ui-state-active');
+        jQuery('#button-link').addClass('ui-state-active')
     } else {
-        jQuery('#button-link').removeClass('ui-state-active');
+        jQuery('#button-link').removeClass('ui-state-active')
     }
 
     /* Block level selector */
-    var headElementType = theEditor.editor.doc.path([theEditor.editor.selection.head.path[0]]).type.name,
-    anchorElementType = theEditor.editor.doc.path([theEditor.editor.selection.anchor.path[0]]).type.name;
+    let headElement = theEditor.editor.doc.path([theEditor.editor.selection.head.path[0]]),
+    anchorElement = theEditor.editor.doc.path([theEditor.editor.selection.anchor.path[0]])
 
     // For metadata, one has to look one level deeper.
-    if (headElementType==='metadata') {
-        headElementType = theEditor.editor.doc.path(theEditor.editor.selection.head.path.slice(0,2)).type.name;
+    if (headElement.type.name==='metadata') {
+        headElement = theEditor.editor.doc.path(theEditor.editor.selection.head.path.slice(0,2))
     }
 
-    if (anchorElementType==='metadata') {
-        anchorElementType = theEditor.editor.doc.path(theEditor.editor.selection.anchor.path.slice(0,2)).type.name;
+    if (anchorElement.type.name==='metadata') {
+        anchorElement = theEditor.editor.doc.path(theEditor.editor.selection.anchor.path.slice(0,2))
     }
 
-    if (headElementType !== anchorElementType) {
+    this.calculatePlaceHolderCss(headElement, nodes);
+
+    if (headElement !== anchorElement) {
         /* Selection goes across document parts */
-        jQuery('.editortoolbar button').addClass('disabled');
-        jQuery('#block-style-label').html('');
+        jQuery('.editortoolbar button').addClass('disabled')
+        jQuery('#block-style-label').html('')
 
     } else {
 
-        switch (headElementType) {
-            case 'title':
-                jQuery('.edit-button').addClass('disabled');
-                jQuery('#block-style-label').html('Title');
-                break;
-            case 'metadatasubtitle':
-                jQuery('.edit-button').addClass('disabled');
-                jQuery('#block-style-label').html('Subtitle');
-                break;
-            case 'metadataauthors':
-                jQuery('.edit-button').addClass('disabled');
-                jQuery('#block-style-label').html('Authors');
-                break;
-            case 'metadatakeywords':
-                jQuery('.edit-button').addClass('disabled');
-                jQuery('#block-style-label').html('Keywords');
-                break;
-            case 'metadataabstract':
-                jQuery('.edit-button').removeClass('disabled');
-                jQuery('#button-figure').addClass('disabled');
+        switch (headElement) {
+            case nodes.title:
+                jQuery('.edit-button').addClass('disabled')
+                jQuery('#block-style-label').html('Title')
+                break
+            case nodes.subtitle:
+                jQuery('.edit-button').addClass('disabled')
+                jQuery('#block-style-label').html('Subtitle')
+                break
+            case nodes.authors:
+                jQuery('.edit-button').addClass('disabled')
+                jQuery('#block-style-label').html('Authors')
+                break
+            case nodes.keywords:
+                jQuery('.edit-button').addClass('disabled')
+                jQuery('#block-style-label').html('Keywords')
+                break
+            case nodes.abstract:
+                jQuery('.edit-button').removeClass('disabled')
+                jQuery('#button-figure').addClass('disabled')
 
                 var headPath = theEditor.editor.selection.head.path,
                 anchorPath = theEditor.editor.selection.anchor.path,
-                blockNodeType = true, blockNode, nextBlockNodeType;
+                blockNodeType = true, blockNode, nextBlockNodeType
 
                 if (headPath[2]===anchorPath[2]) {
                   // Selection within a single block.
-                  blockNode = theEditor.editor.doc.path(theEditor.editor.selection.anchor.path.slice(0,3));
-                  blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
-                  jQuery('#block-style-label').html('Abstract: ' + BLOCK_LABELS[blockNodeType]);
+                  blockNode = theEditor.editor.doc.path(theEditor.editor.selection.anchor.path.slice(0,3))
+                  blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name
+                  jQuery('#block-style-label').html('Abstract: ' + BLOCK_LABELS[blockNodeType])
                 } else {
                     var iterator = theEditor.editor.doc.path(theEditor.editor.selection.head.path.slice(0,2)).iter(
                         _.min([headPath[2],anchorPath[2]]),
                         _.max([headPath[2],anchorPath[2]])+1
-                    );
+                    )
 
                     while(!iterator.atEnd() && blockNodeType) {
-                        nextBlockNode = iterator.next();
-                        nextBlockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
+                        nextBlockNode = iterator.next()
+                        nextBlockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name
                         if (blockNodeType===true) {
-                            blockNodeType = nextBlockNodeType;
+                            blockNodeType = nextBlockNodeType
                         }
                         if (blockNodeType !== nextBlockNodeType) {
-                            blockNodeType = false;
+                            blockNodeType = false
                         }
                     }
 
 
                     if (blockNodeType) {
-                        jQuery('#block-style-label').html('Abstract: ' + BLOCK_LABELS[blockNodeType]);
+                        jQuery('#block-style-label').html('Abstract: ' + BLOCK_LABELS[blockNodeType])
                     } else {
-                        jQuery('#block-style-label').html('Abstract');
+                        jQuery('#block-style-label').html('Abstract')
                     }
                 }
 
                 break;
-            case 'documentcontents':
-                jQuery('.edit-button').removeClass('disabled');
+            case nodes.contents:
+                jQuery('.edit-button').removeClass('disabled')
 
                 var headPath = theEditor.editor.selection.head.path,
                 anchorPath = theEditor.editor.selection.anchor.path,
-                blockNodeType = true, blockNode, nextBlockNodeType;
+                blockNodeType = true, blockNode, nextBlockNodeType
 
                 if (headPath[1]===anchorPath[1]) {
                     // Selection within a single block.
-                    blockNode = theEditor.editor.doc.path(theEditor.editor.selection.anchor.path.slice(0,2));
-                    blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
-                    jQuery('#block-style-label').html('Body: ' + BLOCK_LABELS[blockNodeType]);
+                    blockNode = theEditor.editor.doc.path(theEditor.editor.selection.anchor.path.slice(0,2))
+                    blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name
+                    jQuery('#block-style-label').html('Body: ' + BLOCK_LABELS[blockNodeType])
                 } else {
                     var iterator = theEditor.editor.doc.path(theEditor.editor.selection.head.path.slice(0,1)).iter(
                         _.min([headPath[1],anchorPath[1]]),
                         _.max([headPath[1],anchorPath[1]])+1
-                    );
+                    )
 
                     while(!iterator.atEnd() && blockNodeType) {
-                        blockNode = iterator.next();
-                        nextBlockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
+                        blockNode = iterator.next()
+                        nextBlockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name
                         if (blockNodeType===true) {
-                            blockNodeType = nextBlockNodeType;
+                            blockNodeType = nextBlockNodeType
                         }
                         if (blockNodeType !== nextBlockNodeType) {
-                            blockNodeType = false;
+                            blockNodeType = false
                         }
                     }
 
                     if (blockNodeType) {
-                        jQuery('#block-style-label').html('Body: ' + BLOCK_LABELS[blockNodeType]);
+                        jQuery('#block-style-label').html('Body: ' + BLOCK_LABELS[blockNodeType])
                     } else {
-                        jQuery('#block-style-label').html('Body');
+                        jQuery('#block-style-label').html('Body')
                     }
                 }
 
-                break;
+                break
         }
     }
 
 
     return true;
+  }
+
+  /** Show or hide placeholders ('Contents...', 'Title...', etc.) depending on
+  whether these elements are empty or not.*/
+  calculatePlaceHolderCss (headElement, nodes) {
+    var newPlaceHolderCss = ''
+    for (var elementType of [
+      {'type': 'title', 'selector': '#document-title', 'placeholder': gettext('Title...')},
+      {'type': 'subtitle', 'selector': '#metadata-subtitle', 'placeholder': gettext('Subtitle...')},
+      {'type': 'authors', 'selector': '#metadata-authors', 'placeholder': gettext('Authors...')},
+      {'type': 'abstract', 'selector': '#metadata-abstract', 'placeholder': gettext('Abstract...')},
+      {'type': 'keywords', 'selector': '#metadata-keywords', 'placeholder': gettext('Keywords...')},
+      {'type': 'contents', 'selector': '#document-contents', 'placeholder': gettext('Body...')}
+    ]) {
+      if (nodes[elementType.type].textContent.length === 0 &&
+          (headElement != nodes[elementType.type] || !theEditor.editor.hasFocus())) {
+          newPlaceHolderCss += elementType.selector + ':before {content: "' +
+              elementType.placeholder + '"}\n';
+      }
+    }
+    if (this.placeHolderCss !== newPlaceHolderCss) {
+      this.placeHolderCss = newPlaceHolderCss
+      jQuery('#placeholderStyles')[0].innerHTML = newPlaceHolderCss;
+    }
   }
 }

@@ -359,45 +359,9 @@
      * @function setPlaceholders
      * @memberof editorHelpers
      */
-    editorHelpers.setPlaceholders = function (currentElement) {
-        var placeHolderCss = '';
-        if (jQuery('#document-title')[0].textContent.length === 0 &&
-            currentElement != 'document-title') {
-            placeHolderCss += '#document-title:before {content: "' +
-                gettext('Title...') + '"}\n';
-        }
-        /*if (jQuery('#document-contents')[0].textContent.replace(
-                /(\r\n|\n|\r)/gm, "").length === 0 && currentElement !=
-            'document-contents') {
-            placeHolderCss += '#document-contents:before {content: "' +
-                gettext('Contents...') + '"}\n';
-        }*/
-        if (jQuery('#metadata-subtitle').length > 0 && jQuery(
-                '#metadata-subtitle')[0].textContent.length === 0 &&
-            currentElement != 'metadata-subtitle') {
-            placeHolderCss += '#metadata-subtitle:before {content: "' +
-                gettext('Subtitle...') + '"}\n';
-        }
-        if (jQuery('#metadata-abstract').length > 0 && jQuery(
-                '#metadata-abstract')[0].textContent.length === 0 &&
-            currentElement != 'metadata-abstract') {
-            placeHolderCss += '#metadata-abstract:before {content: "' +
-                gettext('Abstract...') + '"}\n';
-        }
-        if (jQuery('#metadata-authors').length > 0 && jQuery(
-                '#metadata-authors')[0].textContent.length === 0 &&
-            currentElement != 'metadata-authors') {
-            placeHolderCss += '#metadata-authors:before {content: "' +
-                gettext('Author(s)...') + '"}\n';
-        }
-        if (jQuery('#metadata-keywords').length > 0 && jQuery(
-                '#metadata-keywords')[0].textContent.length === 0 &&
-            currentElement != 'metadata-keywords') {
-            placeHolderCss += '#metadata-keywords:before {content: "' +
-                gettext('Keywords...') + '"}\n';
-        }
-        jQuery('#placeholderStyles')[0].innerHTML = placeHolderCss;
-    };
+    //editorHelpers.setPlaceholders = function (currentElement) {
+
+    //};
 
     exports.editorHelpers = editorHelpers;
 

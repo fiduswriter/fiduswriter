@@ -72,19 +72,9 @@ theEditor.initiate = function () {
       let doc = theEditor.createDoc(theDocument);
       theEditor.editor = makeEditor(document.getElementById('document-editable'), doc, theDocument.version);
       theDocument.hash = theEditor.getHash();
-      new UpdateUI(theEditor.editor, "selectionChange change activeMarkChange");
+      new UpdateUI(theEditor.editor, "selectionChange change activeMarkChange blur focus");
       theEditor.editor.on('change', editorHelpers.documentHasChanged);
       theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators);
-      editorHelpers.setPlaceholders();
-
-      theEditor.editor.on('blur',
-          function() {
-              editorHelpers.setPlaceholders();
-          });
-      theEditor.editor.on('focus',
-          function() {
-              editorHelpers.setPlaceholders(jQuery(this).attr('id'));
-          });
 };
 
 theEditor.update = function () {

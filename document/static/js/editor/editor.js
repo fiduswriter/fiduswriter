@@ -1,5 +1,5 @@
 /* This file has been automatically generated. DO NOT EDIT IT. 
- Changes will be overwritten. Edit connector.es6.js and run ./es6-compiler.sh */
+ Changes will be overwritten. Edit editor.es6.js and run ./es6-compiler.sh */
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 
@@ -77,17 +77,9 @@ theEditor.initiate = function () {
     var doc = theEditor.createDoc(theDocument);
     theEditor.editor = makeEditor(document.getElementById('document-editable'), doc, theDocument.version);
     theDocument.hash = theEditor.getHash();
-    new _updateUi.UpdateUI(theEditor.editor, "selectionChange change activeMarkChange");
+    new _updateUi.UpdateUI(theEditor.editor, "selectionChange change activeMarkChange blur focus");
     theEditor.editor.on('change', editorHelpers.documentHasChanged);
     theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators);
-    editorHelpers.setPlaceholders();
-
-    theEditor.editor.on('blur', function () {
-        editorHelpers.setPlaceholders();
-    });
-    theEditor.editor.on('focus', function () {
-        editorHelpers.setPlaceholders(jQuery(this).attr('id'));
-    });
 };
 
 theEditor.update = function () {
@@ -624,6 +616,7 @@ var UpdateUI = exports.UpdateUI = (function () {
         this.updateInfo = null;
         this.timeout = null;
         this.lastFlush = 0;
+        this.placeHolderCss = '';
 
         this.events = events.split(" ");
         this.onEvent = this.onEvent.bind(this);
@@ -683,14 +676,23 @@ var UpdateUI = exports.UpdateUI = (function () {
         value: function updateUI() {
             /* Fidus Writer code */
 
-            var documentTitle = theEditor.editor.doc.firstChild.textContent;
-            //editorHelpers.setDisplay.title = function (theValue) {
+            // We count on the this precise order in all documents.
+            var nodes = {
+                'title': theEditor.editor.doc.firstChild,
+                'subtitle': theEditor.editor.doc.child(1).firstChild,
+                'authors': theEditor.editor.doc.child(1).child(1),
+                'abstract': theEditor.editor.doc.child(1).child(2),
+                'keywords': theEditor.editor.doc.child(1).child(3),
+                'contents': theEditor.editor.doc.child(2)
+            };
+
+            var documentTitle = nodes.title.textContent;
+
             if (documentTitle.length === 0) {
                 documentTitle = gettext('Untitled Document');
             }
             jQuery('title').html('Fidus Writer - ' + documentTitle);
             jQuery('#header h1').html(documentTitle);
-            //};
 
             var marks = theEditor.editor.activeMarks();
             var strong = marks.some(function (mark) {
@@ -724,42 +726,44 @@ var UpdateUI = exports.UpdateUI = (function () {
             }
 
             /* Block level selector */
-            var headElementType = theEditor.editor.doc.path([theEditor.editor.selection.head.path[0]]).type.name,
-                anchorElementType = theEditor.editor.doc.path([theEditor.editor.selection.anchor.path[0]]).type.name;
+            var headElement = theEditor.editor.doc.path([theEditor.editor.selection.head.path[0]]),
+                anchorElement = theEditor.editor.doc.path([theEditor.editor.selection.anchor.path[0]]);
 
             // For metadata, one has to look one level deeper.
-            if (headElementType === 'metadata') {
-                headElementType = theEditor.editor.doc.path(theEditor.editor.selection.head.path.slice(0, 2)).type.name;
+            if (headElement.type.name === 'metadata') {
+                headElement = theEditor.editor.doc.path(theEditor.editor.selection.head.path.slice(0, 2));
             }
 
-            if (anchorElementType === 'metadata') {
-                anchorElementType = theEditor.editor.doc.path(theEditor.editor.selection.anchor.path.slice(0, 2)).type.name;
+            if (anchorElement.type.name === 'metadata') {
+                anchorElement = theEditor.editor.doc.path(theEditor.editor.selection.anchor.path.slice(0, 2));
             }
 
-            if (headElementType !== anchorElementType) {
+            this.calculatePlaceHolderCss(headElement, nodes);
+
+            if (headElement !== anchorElement) {
                 /* Selection goes across document parts */
                 jQuery('.editortoolbar button').addClass('disabled');
                 jQuery('#block-style-label').html('');
             } else {
 
-                switch (headElementType) {
-                    case 'title':
+                switch (headElement) {
+                    case nodes.title:
                         jQuery('.edit-button').addClass('disabled');
                         jQuery('#block-style-label').html('Title');
                         break;
-                    case 'metadatasubtitle':
+                    case nodes.subtitle:
                         jQuery('.edit-button').addClass('disabled');
                         jQuery('#block-style-label').html('Subtitle');
                         break;
-                    case 'metadataauthors':
+                    case nodes.authors:
                         jQuery('.edit-button').addClass('disabled');
                         jQuery('#block-style-label').html('Authors');
                         break;
-                    case 'metadatakeywords':
+                    case nodes.keywords:
                         jQuery('.edit-button').addClass('disabled');
                         jQuery('#block-style-label').html('Keywords');
                         break;
-                    case 'metadataabstract':
+                    case nodes.abstract:
                         jQuery('.edit-button').removeClass('disabled');
                         jQuery('#button-figure').addClass('disabled');
 
@@ -796,7 +800,7 @@ var UpdateUI = exports.UpdateUI = (function () {
                         }
 
                         break;
-                    case 'documentcontents':
+                    case nodes.contents:
                         jQuery('.edit-button').removeClass('disabled');
 
                         var headPath = theEditor.editor.selection.head.path,
@@ -836,6 +840,22 @@ var UpdateUI = exports.UpdateUI = (function () {
             }
 
             return true;
+        }
+    }, {
+        key: 'calculatePlaceHolderCss',
+        value: function calculatePlaceHolderCss(headElement, nodes) {
+            var newPlaceHolderCss = '';
+            var _arr = [{ 'type': 'title', 'selector': '#document-title', 'placeholder': gettext('Title...') }, { 'type': 'subtitle', 'selector': '#metadata-subtitle', 'placeholder': gettext('Subtitle...') }, { 'type': 'authors', 'selector': '#metadata-authors', 'placeholder': gettext('Authors...') }, { 'type': 'abstract', 'selector': '#metadata-abstract', 'placeholder': gettext('Abstract...') }, { 'type': 'keywords', 'selector': '#metadata-keywords', 'placeholder': gettext('Keywords...') }, { 'type': 'contents', 'selector': '#document-contents', 'placeholder': gettext('Body...') }];
+            for (var _i = 0; _i < _arr.length; _i++) {
+                var elementType = _arr[_i];
+                if (nodes[elementType.type].textContent.length === 0 && (headElement != nodes[elementType.type] || !theEditor.editor.hasFocus())) {
+                    newPlaceHolderCss += elementType.selector + ':before {content: "' + elementType.placeholder + '"}\n';
+                }
+            }
+            if (this.placeHolderCss !== newPlaceHolderCss) {
+                this.placeHolderCss = newPlaceHolderCss;
+                jQuery('#placeholderStyles')[0].innerHTML = newPlaceHolderCss;
+            }
         }
     }]);
 

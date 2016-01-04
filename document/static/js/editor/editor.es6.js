@@ -1,27 +1,14 @@
 /* Functions for ProseMirror integration.*/
 
 import {ProseMirror} from "prosemirror/dist/edit/main"
-
-import {fromDOM, fromHTML} from "prosemirror/dist/parse/dom"
-
-import {SchemaSpec, Schema, defaultSchema, Block, Textblock, Inline, Text,
-        Attribute, StyleType} from "prosemirror/dist/model"
-
+import {fromDOM} from "prosemirror/dist/parse/dom"
 import {serializeTo} from "prosemirror/dist/serialize"
-
 import {Step} from "prosemirror/dist/transform"
-
-import {defineCommand} from "prosemirror/dist/edit"
-import {eventMixin} from "prosemirror/dist/util/event"
-import {MenuUpdate} from "prosemirror/dist/menu/update"
-
-import {Tooltip} from "prosemirror/dist/menu/tooltip"
-
 import "prosemirror/dist/collab"
 
 import {fidusSchema} from "./schema"
-
 import {UpdateUI} from "./update-ui"
+import {CommentStore} from "./comment"
 
 var theEditor = {};
 
@@ -30,7 +17,6 @@ function makeEditor (where, doc, version) {
     place: where,
     schema: fidusSchema,
     doc: doc,
-    menuBar: true,
     collab: {version: version}
   })
 };
@@ -69,12 +55,18 @@ theEditor.createDoc = function (aDocument) {
 };
 
 theEditor.initiate = function () {
-      let doc = theEditor.createDoc(theDocument);
-      theEditor.editor = makeEditor(document.getElementById('document-editable'), doc, theDocument.version);
-      theDocument.hash = theEditor.getHash();
-      new UpdateUI(theEditor.editor, "selectionChange change activeMarkChange blur focus");
-      theEditor.editor.on('change', editorHelpers.documentHasChanged);
-      theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators);
+      let doc = theEditor.createDoc(theDocument)
+      theEditor.editor = makeEditor(document.getElementById('document-editable'), doc, theDocument.version)
+      theDocument.hash = theEditor.getHash()
+      new UpdateUI(theEditor.editor, "selectionChange change activeMarkChange blur focus")
+      theEditor.editor.on('change', editorHelpers.documentHasChanged)
+      theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators)
+      theEditor.comments = new CommentStore(theEditor.editor, theDocument.comment_version)
+      theEditor.comments.on("mustSend", theEditor.sendToCollaborators)
+      _.each(theDocument.comments, function (comment){
+        theEditor.comments.addLocalComment(comment.id, comment.user,
+          comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers)
+      })
 };
 
 theEditor.update = function () {
@@ -97,6 +89,7 @@ theEditor.getUpdates = function (callback) {
       theDocument.metadata.keywords = exporter.node2Obj(outputNode.getElementById('metadata-keywords'));
       theDocument.contents = exporter.node2Obj(outputNode.getElementById('document-contents'));
       theDocument.hash = theEditor.getHash();
+      theDocument.comments = theEditor.comments.comments;
       if (callback) {
           callback();
       }
@@ -112,22 +105,35 @@ theEditor.sendToCollaborators = function () {
       let request_id = confirmStepsRequestCounter++
       let aPackage = {
           type: 'diff',
-          version: theEditor.editor.mod.collab.version,
+          diff_version: theEditor.editor.mod.collab.version,
           diff: toSend.steps.map(s => s.toJSON()),
+          comments: theEditor.comments.unsentEvents(),
+          comment_version: theEditor.comments.version,
           request_id: request_id
       }
       serverCommunications.send(aPackage)
-      theEditor.unconfirmedSteps[request_id] = toSend
+      theEditor.unconfirmedSteps[request_id] = {
+          diffs: toSend,
+          comments: theEditor.comments.hasUnsentEvents()
+      }
+
 };
 
 theEditor.confirmDiff = function (request_id) {
     console.log('confirming steps')
-    let sentSteps = theEditor.unconfirmedSteps[request_id]
+    let sentSteps = theEditor.unconfirmedSteps[request_id]["diffs"]
     theEditor.editor.mod.collab.confirmSteps(sentSteps)
+
+    let sentComments = theEditor.unconfirmedSteps[request_id]["comments"]
+    theEditor.comments.eventsSent(sentComments)
 };
 
 theEditor.applyDiffs = function(diffs) {
     theEditor.editor.mod.collab.receive(diffs.map(j => Step.fromJSON(fidusSchema, j)));
+}
+
+theEditor.updateComments = function(comments, comment_version) {
+    theEditor.comments.receive(comments, comment_version)
 }
 
 
@@ -155,18 +161,18 @@ theEditor.checkHash = function(version, hash) {
     console.log('Verifying hash')
     if (version===theEditor.editor.mod.collab.version) {
       if(hash===theEditor.getHash()) {
-          console.log('Hash could be verified');
-          return;
+          console.log('Hash could be verified')
+          return
       }
-      console.log('Hash could not be verified, requesting document.');
-      serverCommunications.send({type: 'get_document_update'});
-      return;
+      console.log('Hash could not be verified, requesting document.')
+      serverCommunications.send({type: 'get_document_update'})
+      return
     } else {
       serverCommunications.send({
         type: 'check_version',
         version: theEditor.editor.mod.collab.version
       });
-      return;
+      return
     }
 }
 

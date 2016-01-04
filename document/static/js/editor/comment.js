@@ -10,10 +10,14 @@ import {MenuUpdate} from "prosemirror/dist/menu/update"
 import {Tooltip} from "prosemirror/dist/menu/tooltip"
 
 class Comment {
-  constructor(text, id, range) {
+  constructor(id, user, userName, userAvatar, date, comment, answers) {
     this.id = id
-    this.text = text
-    this.range = range
+    this.user = user
+    this.userName = userName
+    this.userAvatar = userAvatar
+    this.date = date
+    this.comment = comment
+    this.answers = answers
   }
 }
 
@@ -26,40 +30,93 @@ export class CommentStore {
     this.unsent = []
   }
 
-  createComment(text) {
+  addComment(user, userName, userAvatar, date, comment, answers) {
     let id = randomID()
-    let sel = this.pm.selection
-    this.addComment(sel.from, sel.to, text, id)
+    this.addLocalComment(id, user, userName, userAvatar, date, comment, answers)
     this.unsent.push({type: "create", id: id})
-    this.signal("mustSend")
+    this.pm.execCommand('schema:comment:set',[id]);
+//    this.signal("mustSend")
+    return id
   }
 
-  addComment(from, to, text, id) {
+  addLocalComment(id, user, userName, userAvatar, date, comment, answers) {
     if (!this.comments[id]) {
-      let range = this.pm.markRange(from, to, {className: "comment", id: id})
-      range.on("removed", () => this.removeComment(id))
-      this.comments[id] = new Comment(text, id, range)
+      //TODO: handle deletion somehow.
+//      range.on("removed", () => this.removeComment(id))
+      this.comments[id] = new Comment(id, user, userName, userAvatar, date, comment, answers)
     }
   }
 
-  addJSONComment(obj) {
-    this.addComment(Pos.fromJSON(obj.from), Pos.fromJSON(obj.to), obj.text, obj.id)
+  updateComment(id, comment) {
+    this.updateLocalComment(id, comment)
+    this.unsent.push({type: "update", id: id})
+    this.signal("mustSend")
   }
 
-  removeComment(id) {
+  updateLocalComment(id, comment) {
+    if (this.comments[id]) {
+      this.comments[id].comment = comment
+    }
+  }
+
+
+
+  deleteLocalComment(id) {
     let found = this.comments[id]
     if (found) {
-      this.pm.removeRange(found.range)
+//      this.pm.removeRange(found.range)
+      // TODO: We need to remove all instances of a mark with this ID.
       delete this.comments[id]
       return true
     }
   }
 
   deleteComment(id) {
-    if (this.removeComment(id)) {
+    if (this.deleteLocalComment(id)) {
       this.unsent.push({type: "delete", id: id})
       this.signal("mustSend")
     }
+  }
+
+  addLocalAnswer(id, answer) {
+    if (this.comments[id]) {
+      if(!this.comments[id].answers) {
+        this.comments[id].answers = []
+      }
+      this.comments[id].answers.push(answer)
+    }
+  }
+
+  addAnswer(id, answer) {
+    answer.id = randomID()
+    this.addLocalAnswer(id, answer)
+    this.unsent.push({type: "add_answer", id: id, answerId: answer.id})
+    this.signal("mustSend")
+  }
+
+  deleteLocalAnswer(commentId, answerId) {
+    if (this.comments[commentId] && this.comments[commentId].answers) {
+      this.comments[commentId].answers = _.reject(this.comments[commentId].answers, function (answer) {return answer.id===answerId})
+    }
+  }
+
+  deleteAnswer(commentId, answerId) {
+    this.deleteLocalAnswer(commentId, answerId)
+    this.unsent.push({type: "delete_answer", commentId: commentId, answerId: answerId})
+    this.signal("mustSend")
+  }
+
+  updateLocalAnswer(commentId, answerId, answerText) {
+    if (this.comments[commentId] && this.comments[commentId].answers) {
+      let answer = _.findWhere(this.comments[commentId].answers, {id: answerId})
+      answer.answer = answerText
+    }
+  }
+
+  updateAnswer(commentId, answerId, answerText) {
+    this.updateLocalAnswer(commentId, answerId, answerText)
+    this.unsent.push({type: "update_answer", commentId: commentId, answerId: answerId})
+    this.signal("mustSend")
   }
 
   hasUnsentEvents() {
@@ -72,14 +129,45 @@ export class CommentStore {
       let event = this.unsent[i]
       if (event.type == "delete") {
         result.push({type: "delete", id: event.id})
-      } else { // "create"
+      } else if (event.type == "update") {
         let found = this.comments[event.id]
-        if (!found || !found.range.from) continue
+        if (!found || !found.id) continue
+        result.push({type: "update", id: found.id, comment: found.comment})
+      } else if (event.type == "create") {
+        let found = this.comments[event.id]
+        if (!found || !found.id) continue
         result.push({type: "create",
-                     from: found.range.from,
-                     to: found.range.to,
                      id: found.id,
-                     text: found.text})
+                     user: found.user,
+                     userName: found.userName,
+                     userAvatar: found.userAvatar,
+                     date: found.date,
+                     comment: found.comment,
+                     answers: found.answers
+                     })
+      } else if (event.type == "add_answer") {
+        let found = this.comments[event.id]
+        if (!found || !found.id || !found.answers) continue
+        let foundAnswer = _.findWhere(found.answers, {id: event.answerId})
+        result.push({type: "add_answer",
+                     id: foundAnswer.id,
+                     commentId: foundAnswer.commentId,
+                     user: foundAnswer.user,
+                     userName: foundAnswer.userName,
+                     userAvatar: foundAnswer.userAvatar,
+                     date: foundAnswer.date,
+                     answer: foundAnswer.answer
+                     })
+      } else if (event.type == "delete_answer") {
+        result.push({type: "delete_answer",
+                     commentId: event.commentId,
+                     id: event.answerId
+                     })
+      } else if (event.type == "update_answer") {
+        let found = this.comments[event.commentId]
+        if (!found || !found.id || !found.answers) continue
+        let foundAnswer = _.findWhere(found.answers, {id: event.answerId})
+        result.push({type: "update_answer", id: foundAnswer.id, commentId: foundAnswer.commentId, answer: foundAnswer.answer})
       }
     }
     return result
@@ -87,24 +175,48 @@ export class CommentStore {
 
   eventsSent(n) {
     this.unsent = this.unsent.slice(n)
+    this.version += n
   }
 
   receive(events, version) {
+    var updateCommentLayout = false
     events.forEach(event => {
-      if (event.type == "delete")
-        this.removeComment(event.id)
-      else // "create"
-        this.addJSONComment(event)
+      if (event.type == "delete") {
+        this.deleteLocalComment(event.id)
+        updateCommentLayout = true
+      } else if (event.type == "create") {
+        this.addLocalComment(event.id, event.user, event.userName, event.userAvatar, event.date, event.comment)
+        if (event.comment.length > 0) {
+          updateCommentLayout = true
+        }
+      } else if (event.type == "update") {
+        this.updateLocalComment(event.id, event.comment)
+        updateCommentLayout = true
+      } else if (event.type == "add_answer") {
+        this.addLocalAnswer(event.commentId, event)
+        updateCommentLayout = true
+      } else if (event.type == "remove_answer") {
+        this.deleteLocalAnswer(event.commentId, event)
+        updateCommentLayout = true
+      } else if (event.type == "update_answer") {
+        this.updateLocalAnswer(event.commentId, event.id, event.answer)
+        updateCommentLayout = true
+      }
+      this.version++
     })
-    this.version = version
+    if (updateCommentLayout) {
+      commentHelpers.layoutComments()
+    }
+    //this.version = version
   }
 
   findCommentsAt(pos) {
-    let found = []
-    for (let id in this.comments) {
-      let comment = this.comments[id]
-      if (comment.range.from.cmp(pos) < 0 && comment.range.to.cmp(pos) > 0)
-        found.push(comment)
+    let found = [],
+      node = this.pm.doc.path(pos.path)
+
+    for (let mark in node.marks) {
+      if (mark.type.name==='comment' && mark.attrs.id in this.comments)
+        found.push(this.comments[mark.attrs.id])
     }
     return found
   }
@@ -115,98 +227,3 @@ eventMixin(CommentStore)
 function randomID() {
   return Math.floor(Math.random() * 0xffffffff)
 }
-
-// Inline menu item
-
-defineCommand({
-  name: "annotate",
-  label: "Add annotation",
-  select(pm) { return pm.mod.comments && !pm.selection.empty },
-  run(pm, text) {
-    pm.mod.comments.createComment(text)
-  },
-  params: [
-    {name: "Annotation text", type: "text"}
-  ],
-  menuGroup: "inline", menuRank: 99,
-  icon: {
-    width: 1024, height: 1024,
-    path: "M512 219q-116 0-218 39t-161 107-59 145q0 64 40 122t115 100l49 28-15 54q-13 52-40 98 86-36 157-97l24-21 32 3q39 4 74 4 116 0 218-39t161-107 59-145-59-145-161-107-218-39zM1024 512q0 99-68 183t-186 133-257 48q-40 0-82-4-113 100-262 138-28 8-65 12h-2q-8 0-15-6t-9-15v-0q-1-2-0-6t1-5 2-5l3-5t4-4 4-5q4-4 17-19t19-21 17-22 18-29 15-33 14-43q-89-50-141-125t-51-160q0-99 68-183t186-133 257-48 257 48 186 133 68 183z"
-  }
-})
-
-// Comment UI
-
-export class CommentUI {
-  constructor(pm) {
-    this.pm = pm
-    pm.mod.commentUI = this
-    this.update = new MenuUpdate(pm, "selectionChange change blur focus", () => this.prepareUpdate())
-    this.tooltip = new Tooltip(pm, "below")
-    this.highlighting = null
-    this.displaying = null
-  }
-
-  prepareUpdate() {
-    let sel = this.pm.selection, comments
-    if (!this.pm.mod.comments || !sel.empty || !this.pm.hasFocus() ||
-        (comments = this.pm.mod.comments.findCommentsAt(sel.head)).length == 0) {
-      return () => {
-        this.tooltip.close()
-        this.clearHighlight()
-        this.displaying = null
-      }
-    } else {
-      let id = comments.map(c => c.id).join(" ")
-      if (id != this.displaying) {
-        this.displaying = id
-        let coords = bottomCenterOfSelection()
-        return () => this.tooltip.open(this.renderComments(comments), coords)
-      }
-    }
-  }
-
-  highlightComment(comment) {
-    this.clearHighlight()
-    this.highlighting = this.pm.markRange(comment.range.from, comment.range.to,
-                                          {className: "currentComment"})
-  }
-
-  clearHighlight() {
-    if (this.highlighting) {
-      this.pm.removeRange(this.highlighting)
-      this.highlighting = null
-    }
-  }
-
-  renderComment(comment) {
-    let btn = elt("button", {class: "commentDelete", title: "Delete annotation"}, "×")
-    btn.addEventListener("click", () => {
-      this.clearHighlight()
-      this.pm.mod.comments.deleteComment(comment.id)
-      this.update()
-    })
-    let li = elt("li", {class: "commentText"}, comment.text, btn)
-    li.addEventListener("mouseover", e => {
-      if (!li.contains(e.relatedTarget)) this.highlightComment(comment)
-    })
-    li.addEventListener("mouseout", e => {
-      if (!li.contains(e.relatedTarget)) this.clearHighlight()
-    })
-    return li
-  }
-
-  renderComments(comments) {
-    let rendered = comments.map(c => this.renderComment(c))
-    return elt("ul", {class: "commentList"}, rendered)
-  }
-}
-
-function bottomCenterOfSelection() {
-  let rects = window.getSelection().getRangeAt(0).getClientRects()
-  let {left, right, bottom} = rects[rects.length - 1]
-  return {top: bottom, left: (left + right) / 2}
-}
-
-
-window.CommentStore = CommentStore;

@@ -1,4 +1,4 @@
-import {Schema, defaultSchema, Block, Textblock, Inline} from "prosemirror/dist/model"
+import {Schema, defaultSchema, Block, Textblock, Inline, Attribute, MarkType} from "prosemirror/dist/model"
 
 class Title extends Textblock {}
 
@@ -253,6 +253,65 @@ Figure.prototype.serializeDOM = (node, serializer) => {
   return dom;
 }
 
+/* From prosemirror/src/edit/commands.js */
+
+function markApplies(pm, type) {
+  let {from, to} = pm.selection
+  let relevant = false
+  pm.doc.nodesBetween(from, to, node => {
+    if (node.isTextblock) {
+      if (node.type.canContainMark(type)) relevant = true
+      return false
+    }
+  })
+  return relevant
+}
+
+function markActive(pm, type) {
+  let sel = pm.selection
+  if (sel.empty)
+    return type.isInSet(pm.activeMarks())
+  else
+    return pm.doc.rangeHasMark(sel.from, sel.to, type)
+}
+
+class CommentMark extends MarkType {
+  static get rank() { return 54 }
+}
+
+CommentMark.attributes = {
+  id: new Attribute,
+}
+
+CommentMark.register("parseDOM", {tag: "span", parse: function(dom, state) {
+  if (!dom.classList.contains('comment')) return false;
+  let id = dom.getAttribute("data-id")
+  if (!id) return false
+  state.wrapMark(dom, this.create({id}))
+}})
+
+CommentMark.prototype.serializeDOM = (mark, serializer) => {
+  return serializer.elt("span", {class: 'comment', 'data-id': mark.attrs.id})
+}
+
+CommentMark.register("command", {
+  name: "set",
+  label: "Add Comment",
+  run(pm, id) { pm.setMark(this, true, {id}) },
+  params: [
+    {label: "ID", type: "text"},
+  ],
+  select(pm) { return markApplies(pm, this) && !markActive(pm, this) },
+})
+
+CommentMark.register("command", {
+  name: "unset",
+  derive: true,
+  label: "Remove comment",
+  menuGroup: "inline(30)",
+  active() { return true }
+})
+
 export var fidusSchema = new Schema(defaultSchema.spec.update({
   title: Title,
   metadata: MetaData,
@@ -265,6 +324,8 @@ export var fidusSchema = new Schema(defaultSchema.spec.update({
   citation: Citation,
   equation: Equation,
   figure: Figure
+}, {
+  comment: CommentMark
 }));
 
 window.fidusSchema = fidusSchema;

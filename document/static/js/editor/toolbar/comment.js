@@ -19,72 +19,13 @@
  */
 // Toolbar comment
 jQuery(document).on('mousedown', '#button-comment:not(.disabled)', function (event) {
-  /*
-    var selection = rangy.getSelection(),
-        range,
-        insideComment,
-        commentNode, insideCitation, savedSel;
 
-
-    if (selection.rangeCount > 0) {
-        range = selection.getRangeAt(0);
-    } else {
+    if (!theEditor.editor.hasFocus()) {
         return false;
     }
 
-    insideComment = jQuery(range.startContainer).closest('.comment')[0];
-
     event.preventDefault();
 
-    if (insideComment) {
-        commentNode = insideComment;
-    } else {
+    commentHelpers.createNewComment();
 
-        insideCitation = jQuery(range.startContainer).closest('.citation')[0];
-
-        if (insideCitation) {
-            range.selectNode(insideCitation);
-        } else if (range.collapsed) {
-            // The range is collapsed, so instead we will use the word around the selection.
-            savedSel = rangy.saveSelection();
-            range.startContainer.parentElement.normalize();
-            rangy.restoreSelection(savedSel);
-            range = selection.getRangeAt(0);
-
-            // Using native range instead of rangy. This will be part of Rangy 1.3 text range module.
-            range.nativeRange.expand('word');
-            if (range.nativeRange.collapsed) {
-                // The range is still collapsed! We must have been some place where there was no word.
-                // We move the start of the range one character to the left and try again.
-                range.moveCharLeft(true, 1);
-                range.nativeRange.expand('word');
-
-                if (range.nativeRange.collapsed) {
-
-                    // We decide that no comment can be placed here.
-                    console.log('could not find word');
-                    return false;
-                }
-            }
-        }
-        commentNode = document.createElement('span');
-        commentNode.classList.add('comment');
-
-        if (!range.canSurroundContents()) {
-            // We cannot surround the current selection, so we grab something nearby instead
-            range.selectNode(selection.anchorNode);
-        }
-        if (range.canSurroundContents()) {
-            // A bug in rangy -- some times it claims that certain content can be surrounded, when this is not the case.
-            try {
-                range.surroundContents(commentNode);
-            } catch (err) {
-                // We give up placing a comment at the current place.
-                return false;
-            }
-        }
-        commentHelpers.createNewComment(commentNode);
-    }
-
-    commentHelpers.layoutComments();*/
 });

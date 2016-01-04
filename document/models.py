@@ -37,6 +37,8 @@ class Document(models.Model):
     owner = models.ForeignKey(User,related_name='owner')
     added = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    comments = models.TextField(default='{}')
+    comment_version = models.PositiveIntegerField(default=0)
 
     def __unicode__(self):
         return self.title

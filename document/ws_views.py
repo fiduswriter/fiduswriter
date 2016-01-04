@@ -34,6 +34,7 @@ def save_document(document_id,changes):
     document.settings = changes["settings"]
     document.version = changes["version"]
     document.last_diffs = json_encode(DocumentWS.sessions[document_id]['last_diffs'])
+    document.comments = json_encode(DocumentWS.sessions[document_id]['comments'])
     document.save()
 
 class DocumentWS(BaseWebSocketHandler):
@@ -73,6 +74,7 @@ class DocumentWS(BaseWebSocketHandler):
                 DocumentWS.sessions[document.id]['participants']=dict()
                 DocumentWS.sessions[document.id]['document'] = document
                 DocumentWS.sessions[document.id]['last_diffs'] = json_decode(document.last_diffs)
+                DocumentWS.sessions[document.id]['comments'] = json_decode(document.comments)
                 DocumentWS.sessions[document.id]['in_control'] = self.id
             else:
                 self.id = max(DocumentWS.sessions[document.id]['participants'])+1
@@ -100,6 +102,8 @@ class DocumentWS(BaseWebSocketHandler):
         response['document']['contents']=document.contents
         response['document']['metadata']=document.metadata
         response['document']['settings']=document.settings
+        response['document']['comments']=DocumentWS.sessions[self.document_id]["comments"]
+        response['document']['comment_version']=document.comment_version
         response['document']['access_rights'] = get_accessrights(AccessRight.objects.filter(document__owner=document.owner))
         response['document']['owner'] = dict()
         response['document']['owner']['id']=document.owner.id
@@ -140,6 +144,8 @@ class DocumentWS(BaseWebSocketHandler):
         response['document']['contents']=document.contents
         response['document']['metadata']=document.metadata
         response['document']['settings']=document.settings
+        response['document']['comments']=DocumentWS.sessions[self.document_id]["comments"]
+        response['document']['comment_version']=document.comment_version
         requested_diffs = document.diff_version - document.version
         response['last_diffs'] = DocumentWS.sessions[self.document_id]["last_diffs"][:requested_diffs]
         self.write_message(response)
@@ -175,12 +181,38 @@ class DocumentWS(BaseWebSocketHandler):
         elif parsed["type"]=='diff':
             if self.document_id in DocumentWS.sessions:
                 document = DocumentWS.sessions[self.document_id]["document"]
-                if parsed["version"] == document.diff_version:
+                if parsed["diff_version"] == document.diff_version and parsed["comment_version"] == document.comment_version:
                     DocumentWS.sessions[self.document_id]["last_diffs"].extend(parsed["diff"])
                     # store 500 diffs or all the diffs from the last document version to the latest diff -- whatever is the greatest.
                     number_stored_diffs = max(500, document.diff_version - document.version)
                     DocumentWS.sessions[self.document_id]["last_diffs"] = DocumentWS.sessions[self.document_id]["last_diffs"][:number_stored_diffs]
                     document.diff_version += len(parsed["diff"])
+                    for cd in parsed["comments"]:
+                        id = str(cd["id"])
+                        if cd["type"] == "create":
+                            del cd["type"]
+                            DocumentWS.sessions[self.document_id]["comments"][id] = cd
+                        elif cd["type"] == "delete":
+                            del DocumentWS.sessions[self.document_id]["comments"][id]
+                        elif cd["type"] == "update":
+                            DocumentWS.sessions[self.document_id]["comments"][id]["comment"] = cd["comment"]
+                        elif cd["type"] == "add_answer":
+                            comment_id = str(cd["commentId"])
+                            if not "answers" in DocumentWS.sessions[self.document_id]["comments"][comment_id]:
+                                DocumentWS.sessions[self.document_id]["comments"][comment_id]["answers"] = []
+                            del cd["type"]
+                            DocumentWS.sessions[self.document_id]["comments"][comment_id]["answers"].append(cd)
+                        elif cd["type"] == "delete_answer":
+                            comment_id = str(cd["commentId"])
+                            for answer in DocumentWS.sessions[self.document_id]["comments"][comment_id]["answers"]:
+                                if answer["id"] == cd["id"]:
+                                    DocumentWS.sessions[self.document_id]["comments"][comment_id]["answers"].remove(answer)
+                        elif cd["type"] == "update_answer":
+                            comment_id = str(cd["commentId"])
+                            for answer in DocumentWS.sessions[self.document_id]["comments"][comment_id]["answers"]:
+                                if answer["id"] == cd["id"]:
+                                    answer["answer"] = cd["answer"]
+                        document.comment_version += 1
                     self.confirm_diff(parsed["request_id"])
                     DocumentWS.send_updates(message, self.document_id, self.id)
         elif parsed["type"]=='check_version':
@@ -214,6 +246,7 @@ class DocumentWS(BaseWebSocketHandler):
                     DocumentWS.send_participant_list(self.document_id)
                 else:
                     DocumentWS.sessions[self.document_id]['document'].last_diffs = json_encode(DocumentWS.sessions[self.document_id]['last_diffs'])
+                    DocumentWS.sessions[self.document_id]['document'].comments = json_encode(DocumentWS.sessions[self.document_id]['comments'])
                     DocumentWS.sessions[self.document_id]['document'].save()
                     del DocumentWS.sessions[self.document_id]
                     print "noone left"

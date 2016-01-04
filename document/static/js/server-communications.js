@@ -96,7 +96,12 @@
             theEditor.applyDiffs(data.last_diffs);
             break;
         case 'diff':
-            theEditor.applyDiffs(data.diff);
+            if (data.diff && data.diff.length) {
+              theEditor.applyDiffs(data.diff);
+            }
+            if (data.comments && data.comments.length) {
+              theEditor.updateComments(data.comments, data.comments_version);
+            }
             break;
         case 'confirm_diff':
             theEditor.confirmDiff(data.request_id);

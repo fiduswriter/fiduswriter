@@ -84,8 +84,11 @@
         theDocument.settings = jQuery.parseJSON(aDocument.settings);
         theDocument.metadata = jQuery.parseJSON(aDocument.metadata);
         theDocument.contents = jQuery.parseJSON(aDocument.contents);
-
+        theDocument.comments = aDocument.comments;
+        theDocument.comment_version = aDocument.comment_version;
+        theDocument.version = aDocument.version;
         theEditor.update();
+        theEditor.applyDiffs(aDocument.last_diffs);
         mathHelpers.resetMath();
         citationHelpers.formatCitationsInDoc();
     };
@@ -100,22 +103,21 @@
      * that differ from session to session.
      */
     editorHelpers.fillEditorPage = function (aDocument, aDocumentValues) {
-        var DEFAULTS, i;
+        var DEFAULTS, i, theDocument, theDocumentValues;
         theDocument = aDocument;
         theDocumentValues = aDocumentValues;
         theDocumentValues.changed = false;
         theDocumentValues.virgin = true;
         theDocument.settings = jQuery.parseJSON(theDocument.settings);
         theDocument.metadata = jQuery.parseJSON(theDocument.metadata);
-
         theDocument.contents = jQuery.parseJSON(theDocument.contents);
+
         documentId = theDocument.id;
 
         DEFAULTS = [
             ['metadata.title', theDocument.title],
             ['settings.papersize', '1117'],
             ['settings.citationstyle', 'apa'],
-            ['settings.tracking', false],
             ['settings.documentstyle', defaultDocumentStyle],
             ['settings.metadata', {}]
         ];
@@ -141,6 +143,8 @@
                 "/");
             delete theDocumentValues.is_new;
         }
+        window.theDocument = theDocument;
+        window.theDocumentValues = theDocumentValues;
         theEditor.initiate();
 
         // Wait one second and then relayout the footnotes. At this time the fonts should have loaded.
@@ -355,13 +359,8 @@
         return true;
 
     };
-    /** Show or hide placeholders ('Contents...', 'Title...', etc.) depending on whether these elements are empty or not.
-     * @function setPlaceholders
-     * @memberof editorHelpers
-     */
-    //editorHelpers.setPlaceholders = function (currentElement) {
 
-    //};
+
 
     exports.editorHelpers = editorHelpers;
 

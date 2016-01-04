@@ -3,15 +3,16 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 
-var _main = require("prosemirror/dist/edit/main");
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
-var _dom = require("prosemirror/dist/parse/dom");
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CommentStore = undefined;
 
 var _model = require("prosemirror/dist/model");
 
-var _serialize = require("prosemirror/dist/serialize");
-
-var _transform = require("prosemirror/dist/transform");
+var _dom = require("prosemirror/dist/dom");
 
 var _edit = require("prosemirror/dist/edit");
 
@@ -21,11 +22,271 @@ var _update = require("prosemirror/dist/menu/update");
 
 var _tooltip = require("prosemirror/dist/menu/tooltip");
 
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /*
+                                                                                                                                                          based on https://github.com/ProseMirror/website/blob/master/src/client/collab/comment.js
+                                                                                                                                                          */
+
+var Comment = function Comment(id, user, userName, userAvatar, date, comment, answers) {
+  _classCallCheck(this, Comment);
+
+  this.id = id;
+  this.user = user;
+  this.userName = userName;
+  this.userAvatar = userAvatar;
+  this.date = date;
+  this.comment = comment;
+  this.answers = answers;
+};
+
+var CommentStore = exports.CommentStore = (function () {
+  function CommentStore(pm, version) {
+    _classCallCheck(this, CommentStore);
+
+    pm.mod.comments = this;
+    this.pm = pm;
+    this.comments = Object.create(null);
+    this.version = version;
+    this.unsent = [];
+  }
+
+  _createClass(CommentStore, [{
+    key: "addComment",
+    value: function addComment(user, userName, userAvatar, date, comment, answers) {
+      var id = randomID();
+      this.addLocalComment(id, user, userName, userAvatar, date, comment, answers);
+      this.unsent.push({ type: "create", id: id });
+      this.pm.execCommand('schema:comment:set', [id]);
+      //    this.signal("mustSend")
+      return id;
+    }
+  }, {
+    key: "addLocalComment",
+    value: function addLocalComment(id, user, userName, userAvatar, date, comment, answers) {
+      if (!this.comments[id]) {
+        //TODO: handle deletion somehow.
+        //      range.on("removed", () => this.removeComment(id))
+        this.comments[id] = new Comment(id, user, userName, userAvatar, date, comment, answers);
+      }
+    }
+  }, {
+    key: "updateComment",
+    value: function updateComment(id, comment) {
+      this.updateLocalComment(id, comment);
+      this.unsent.push({ type: "update", id: id });
+      this.signal("mustSend");
+    }
+  }, {
+    key: "updateLocalComment",
+    value: function updateLocalComment(id, comment) {
+      if (this.comments[id]) {
+        this.comments[id].comment = comment;
+      }
+    }
+  }, {
+    key: "deleteLocalComment",
+    value: function deleteLocalComment(id) {
+      var found = this.comments[id];
+      if (found) {
+        //      this.pm.removeRange(found.range)
+        // TODO: We need to remove all instances of a mark with this ID.
+        delete this.comments[id];
+        return true;
+      }
+    }
+  }, {
+    key: "deleteComment",
+    value: function deleteComment(id) {
+      if (this.deleteLocalComment(id)) {
+        this.unsent.push({ type: "delete", id: id });
+        this.signal("mustSend");
+      }
+    }
+  }, {
+    key: "addLocalAnswer",
+    value: function addLocalAnswer(id, answer) {
+      if (this.comments[id]) {
+        if (!this.comments[id].answers) {
+          this.comments[id].answers = [];
+        }
+        this.comments[id].answers.push(answer);
+      }
+    }
+  }, {
+    key: "addAnswer",
+    value: function addAnswer(id, answer) {
+      answer.id = randomID();
+      this.addLocalAnswer(id, answer);
+      this.unsent.push({ type: "add_answer", id: id, answerId: answer.id });
+      this.signal("mustSend");
+    }
+  }, {
+    key: "deleteLocalAnswer",
+    value: function deleteLocalAnswer(commentId, answerId) {
+      if (this.comments[commentId] && this.comments[commentId].answers) {
+        this.comments[commentId].answers = _.reject(this.comments[commentId].answers, function (answer) {
+          return answer.id === answerId;
+        });
+      }
+    }
+  }, {
+    key: "deleteAnswer",
+    value: function deleteAnswer(commentId, answerId) {
+      this.deleteLocalAnswer(commentId, answerId);
+      this.unsent.push({ type: "delete_answer", commentId: commentId, answerId: answerId });
+      this.signal("mustSend");
+    }
+  }, {
+    key: "updateLocalAnswer",
+    value: function updateLocalAnswer(commentId, answerId, answerText) {
+      if (this.comments[commentId] && this.comments[commentId].answers) {
+        var answer = _.findWhere(this.comments[commentId].answers, { id: answerId });
+        answer.answer = answerText;
+      }
+    }
+  }, {
+    key: "updateAnswer",
+    value: function updateAnswer(commentId, answerId, answerText) {
+      this.updateLocalAnswer(commentId, answerId, answerText);
+      this.unsent.push({ type: "update_answer", commentId: commentId, answerId: answerId });
+      this.signal("mustSend");
+    }
+  }, {
+    key: "hasUnsentEvents",
+    value: function hasUnsentEvents() {
+      return this.unsent.length;
+    }
+  }, {
+    key: "unsentEvents",
+    value: function unsentEvents() {
+      var result = [];
+      for (var i = 0; i < this.unsent.length; i++) {
+        var event = this.unsent[i];
+        if (event.type == "delete") {
+          result.push({ type: "delete", id: event.id });
+        } else if (event.type == "update") {
+          var found = this.comments[event.id];
+          if (!found || !found.id) continue;
+          result.push({ type: "update", id: found.id, comment: found.comment });
+        } else if (event.type == "create") {
+          var found = this.comments[event.id];
+          if (!found || !found.id) continue;
+          result.push({ type: "create",
+            id: found.id,
+            user: found.user,
+            userName: found.userName,
+            userAvatar: found.userAvatar,
+            date: found.date,
+            comment: found.comment,
+            answers: found.answers
+          });
+        } else if (event.type == "add_answer") {
+          var found = this.comments[event.id];
+          if (!found || !found.id || !found.answers) continue;
+          var foundAnswer = _.findWhere(found.answers, { id: event.answerId });
+          result.push({ type: "add_answer",
+            id: foundAnswer.id,
+            commentId: foundAnswer.commentId,
+            user: foundAnswer.user,
+            userName: foundAnswer.userName,
+            userAvatar: foundAnswer.userAvatar,
+            date: foundAnswer.date,
+            answer: foundAnswer.answer
+          });
+        } else if (event.type == "delete_answer") {
+          result.push({ type: "delete_answer",
+            commentId: event.commentId,
+            id: event.answerId
+          });
+        } else if (event.type == "update_answer") {
+          var found = this.comments[event.commentId];
+          if (!found || !found.id || !found.answers) continue;
+          var foundAnswer = _.findWhere(found.answers, { id: event.answerId });
+          result.push({ type: "update_answer", id: foundAnswer.id, commentId: foundAnswer.commentId, answer: foundAnswer.answer });
+        }
+      }
+      return result;
+    }
+  }, {
+    key: "eventsSent",
+    value: function eventsSent(n) {
+      this.unsent = this.unsent.slice(n);
+      this.version += n;
+    }
+  }, {
+    key: "receive",
+    value: function receive(events, version) {
+      var _this = this;
+
+      var updateCommentLayout = false;
+      events.forEach(function (event) {
+        if (event.type == "delete") {
+          _this.deleteLocalComment(event.id);
+          updateCommentLayout = true;
+        } else if (event.type == "create") {
+          _this.addLocalComment(event.id, event.user, event.userName, event.userAvatar, event.date, event.comment);
+          if (event.comment.length > 0) {
+            updateCommentLayout = true;
+          }
+        } else if (event.type == "update") {
+          _this.updateLocalComment(event.id, event.comment);
+          updateCommentLayout = true;
+        } else if (event.type == "add_answer") {
+          _this.addLocalAnswer(event.commentId, event);
+          updateCommentLayout = true;
+        } else if (event.type == "remove_answer") {
+          _this.deleteLocalAnswer(event.commentId, event);
+          updateCommentLayout = true;
+        } else if (event.type == "update_answer") {
+          _this.updateLocalAnswer(event.commentId, event.id, event.answer);
+          updateCommentLayout = true;
+        }
+        _this.version++;
+      });
+      if (updateCommentLayout) {
+        commentHelpers.layoutComments();
+      }
+      //this.version = version
+    }
+  }, {
+    key: "findCommentsAt",
+    value: function findCommentsAt(pos) {
+      var found = [],
+          node = this.pm.doc.path(pos.path);
+
+      for (var mark in node.marks) {
+        if (mark.type.name === 'comment' && mark.attrs.id in this.comments) found.push(this.comments[mark.attrs.id]);
+      }
+      return found;
+    }
+  }]);
+
+  return CommentStore;
+})();
+
+(0, _event.eventMixin)(CommentStore);
+
+function randomID() {
+  return Math.floor(Math.random() * 0xffffffff);
+}
+
+},{"prosemirror/dist/dom":7,"prosemirror/dist/edit":15,"prosemirror/dist/menu/tooltip":22,"prosemirror/dist/menu/update":23,"prosemirror/dist/model":27,"prosemirror/dist/util/event":49}],2:[function(require,module,exports){
+"use strict";
+
+var _main = require("prosemirror/dist/edit/main");
+
+var _dom = require("prosemirror/dist/parse/dom");
+
+var _serialize = require("prosemirror/dist/serialize");
+
+var _transform = require("prosemirror/dist/transform");
+
 require("prosemirror/dist/collab");
 
 var _schema = require("./schema");
 
 var _updateUi = require("./update-ui");
+
+var _comment = require("./comment");
 
 /* Functions for ProseMirror integration.*/
 
@@ -36,7 +297,6 @@ function makeEditor(where, doc, version) {
         place: where,
         schema: _schema.fidusSchema,
         doc: doc,
-        menuBar: true,
         collab: { version: version }
     });
 };
@@ -80,6 +340,11 @@ theEditor.initiate = function () {
     new _updateUi.UpdateUI(theEditor.editor, "selectionChange change activeMarkChange blur focus");
     theEditor.editor.on('change', editorHelpers.documentHasChanged);
     theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators);
+    theEditor.comments = new _comment.CommentStore(theEditor.editor, theDocument.comment_version);
+    theEditor.comments.on("mustSend", theEditor.sendToCollaborators);
+    _.each(theDocument.comments, function (comment) {
+        theEditor.comments.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers);
+    });
 };
 
 theEditor.update = function () {
@@ -102,6 +367,7 @@ theEditor.getUpdates = function (callback) {
     theDocument.metadata.keywords = exporter.node2Obj(outputNode.getElementById('metadata-keywords'));
     theDocument.contents = exporter.node2Obj(outputNode.getElementById('document-contents'));
     theDocument.hash = theEditor.getHash();
+    theDocument.comments = theEditor.comments.comments;
     if (callback) {
         callback();
     }
@@ -117,26 +383,38 @@ theEditor.sendToCollaborators = function () {
     var request_id = confirmStepsRequestCounter++;
     var aPackage = {
         type: 'diff',
-        version: theEditor.editor.mod.collab.version,
+        diff_version: theEditor.editor.mod.collab.version,
         diff: toSend.steps.map(function (s) {
             return s.toJSON();
         }),
+        comments: theEditor.comments.unsentEvents(),
+        comment_version: theEditor.comments.version,
         request_id: request_id
     };
     serverCommunications.send(aPackage);
-    theEditor.unconfirmedSteps[request_id] = toSend;
+    theEditor.unconfirmedSteps[request_id] = {
+        diffs: toSend,
+        comments: theEditor.comments.hasUnsentEvents()
+    };
 };
 
 theEditor.confirmDiff = function (request_id) {
     console.log('confirming steps');
-    var sentSteps = theEditor.unconfirmedSteps[request_id];
+    var sentSteps = theEditor.unconfirmedSteps[request_id]["diffs"];
     theEditor.editor.mod.collab.confirmSteps(sentSteps);
+
+    var sentComments = theEditor.unconfirmedSteps[request_id]["comments"];
+    theEditor.comments.eventsSent(sentComments);
 };
 
 theEditor.applyDiffs = function (diffs) {
     theEditor.editor.mod.collab.receive(diffs.map(function (j) {
         return _transform.Step.fromJSON(_schema.fidusSchema, j);
     }));
+};
+
+theEditor.updateComments = function (comments, comment_version) {
+    theEditor.comments.receive(comments, comment_version);
 };
 
 theEditor.startCollaborativeMode = function () {
@@ -182,8 +460,10 @@ theEditor.checkHash = function (version, hash) {
 
 window.theEditor = theEditor;
 
-},{"./schema":2,"./update-ui":3,"prosemirror/dist/collab":4,"prosemirror/dist/edit":14,"prosemirror/dist/edit/main":17,"prosemirror/dist/menu/tooltip":21,"prosemirror/dist/menu/update":22,"prosemirror/dist/model":26,"prosemirror/dist/parse/dom":31,"prosemirror/dist/serialize":35,"prosemirror/dist/transform":38,"prosemirror/dist/util/event":48}],2:[function(require,module,exports){
+},{"./comment":1,"./schema":3,"./update-ui":4,"prosemirror/dist/collab":5,"prosemirror/dist/edit/main":18,"prosemirror/dist/parse/dom":32,"prosemirror/dist/serialize":36,"prosemirror/dist/transform":39}],3:[function(require,module,exports){
 "use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
@@ -561,6 +841,85 @@ Figure.prototype.serializeDOM = function (node, serializer) {
   return dom;
 };
 
+/* From prosemirror/src/edit/commands.js */
+
+function markApplies(pm, type) {
+  var _pm$selection = pm.selection;
+  var from = _pm$selection.from;
+  var to = _pm$selection.to;
+
+  var relevant = false;
+  pm.doc.nodesBetween(from, to, function (node) {
+    if (node.isTextblock) {
+      if (node.type.canContainMark(type)) relevant = true;
+      return false;
+    }
+  });
+  return relevant;
+}
+
+function markActive(pm, type) {
+  var sel = pm.selection;
+  if (sel.empty) return type.isInSet(pm.activeMarks());else return pm.doc.rangeHasMark(sel.from, sel.to, type);
+}
+
+var CommentMark = (function (_MarkType) {
+  _inherits(CommentMark, _MarkType);
+
+  function CommentMark() {
+    _classCallCheck(this, CommentMark);
+
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(CommentMark).apply(this, arguments));
+  }
+
+  _createClass(CommentMark, null, [{
+    key: "rank",
+    get: function get() {
+      return 54;
+    }
+  }]);
+
+  return CommentMark;
+})(_model.MarkType);
+
+CommentMark.attributes = {
+  id: new _model.Attribute()
+};
+
+CommentMark.register("parseDOM", { tag: "span", parse: function parse(dom, state) {
+    if (!dom.classList.contains('comment')) return false;
+    var id = dom.getAttribute("data-id");
+    if (!id) return false;
+    state.wrapMark(dom, this.create({ id: id }));
+  } });
+
+CommentMark.prototype.serializeDOM = function (mark, serializer) {
+  return serializer.elt("span", { class: 'comment', 'data-id': mark.attrs.id });
+};
+
+CommentMark.register("command", {
+  name: "set",
+  label: "Add Comment",
+  run: function run(pm, id) {
+    pm.setMark(this, true, { id: id });
+  },
+
+  params: [{ label: "ID", type: "text" }],
+  select: function select(pm) {
+    return markApplies(pm, this) && !markActive(pm, this);
+  }
+});
+
+CommentMark.register("command", {
+  name: "unset",
+  derive: true,
+  label: "Remove comment",
+  menuGroup: "inline(30)",
+  active: function active() {
+    return true;
+  }
+});
+
 var fidusSchema = exports.fidusSchema = new _model.Schema(_model.defaultSchema.spec.update({
   title: Title,
   metadata: MetaData,
@@ -573,11 +932,13 @@ var fidusSchema = exports.fidusSchema = new _model.Schema(_model.defaultSchema.s
   citation: Citation,
   equation: Equation,
   figure: Figure
+}, {
+  comment: CommentMark
 }));
 
 window.fidusSchema = fidusSchema;
 
-},{"prosemirror/dist/model":26}],3:[function(require,module,exports){
+},{"prosemirror/dist/model":27}],4:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -866,7 +1227,7 @@ var UpdateUI = exports.UpdateUI = (function () {
     return UpdateUI;
 })();
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -979,7 +1340,7 @@ var Collab = (function () {
 })();
 
 (0, _utilEvent.eventMixin)(Collab);
-},{"../edit":14,"../util/event":48,"./rebase":5}],5:[function(require,module,exports){
+},{"../edit":15,"../util/event":49,"./rebase":6}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1007,7 +1368,7 @@ function rebaseSteps(doc, forward, steps, maps) {
   }
   return { doc: transform.doc, transform: transform, mapping: remap, positions: positions };
 }
-},{"../transform":38}],6:[function(require,module,exports){
+},{"../transform":39}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1093,7 +1454,7 @@ function insertCSS(css) {
   style.textContent = css;
   document.head.insertBefore(style, document.head.firstChild);
 }
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1157,7 +1518,7 @@ if (_dom.browser.mac) keys["Ctrl-F"] = keys["Ctrl-B"] = keys["Ctrl-P"] = keys["C
 
 var captureKeys = new _keys.Keymap(keys);
 exports.captureKeys = captureKeys;
-},{"../dom":6,"./keys":16,"./selection":20}],8:[function(require,module,exports){
+},{"../dom":7,"./keys":17,"./selection":21}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1191,7 +1552,7 @@ function charCategory(ch) {
 function isExtendingChar(ch) {
   return ch.charCodeAt(0) >= 768 && extendingChar.test(ch);
 }
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2778,13 +3139,13 @@ defineCommand({
   },
   keys: ["Mod-Y", "Shift-Mod-Z"]
 });
-},{"../dom":6,"../model":26,"../transform":38,"../util/sortedinsert":50,"./char":8,"./keys":16,"./selection":20}],10:[function(require,module,exports){
+},{"../dom":7,"../model":27,"../transform":39,"../util/sortedinsert":51,"./char":9,"./keys":17,"./selection":21}],11:[function(require,module,exports){
 "use strict";
 
 var _dom = require("../dom");
 
 (0, _dom.insertCSS)("\n\n.ProseMirror {\n  border: 1px solid silver;\n  position: relative;\n}\n\n.ProseMirror-content {\n  padding: 4px 8px 4px 14px;\n  white-space: pre-wrap;\n  line-height: 1.2;\n}\n\n.ProseMirror-drop-target {\n  position: absolute;\n  width: 1px;\n  background: #666;\n  display: none;\n}\n\n.ProseMirror-content ul.tight p, .ProseMirror-content ol.tight p {\n  margin: 0;\n}\n\n.ProseMirror-content ul, .ProseMirror-content ol {\n  padding-left: 30px;\n  cursor: default;\n}\n\n.ProseMirror-content blockquote {\n  padding-left: 1em;\n  border-left: 3px solid #eee;\n  margin-left: 0; margin-right: 0;\n}\n\n.ProseMirror-content pre {\n  white-space: pre-wrap;\n}\n\n.ProseMirror-selectednode {\n  outline: 2px solid #8cf;\n}\n\n.ProseMirror-content p:first-child,\n.ProseMirror-content h1:first-child,\n.ProseMirror-content h2:first-child,\n.ProseMirror-content h3:first-child,\n.ProseMirror-content h4:first-child,\n.ProseMirror-content h5:first-child,\n.ProseMirror-content h6:first-child {\n  margin-top: .3em;\n}\n\n/* Add space around the hr to make clicking it easier */\n\n.ProseMirror-content hr {\n  position: relative;\n  height: 6px;\n  border: none;\n}\n\n.ProseMirror-content hr:after {\n  content: \"\";\n  position: absolute;\n  left: 10px;\n  right: 10px;\n  top: 2px;\n  border-top: 2px solid silver;\n}\n\n.ProseMirror-content img {\n  cursor: default;\n}\n\n/* Make sure li selections wrap around markers */\n\n.ProseMirror-content li {\n  position: relative;\n  pointer-events: none; /* Don't do weird stuff with marker clicks */\n}\n.ProseMirror-content li > * {\n  pointer-events: auto;\n}\n\nli.ProseMirror-selectednode {\n  outline: none;\n}\n\nli.ProseMirror-selectednode:after {\n  content: \"\";\n  position: absolute;\n  left: -32px;\n  right: -2px; top: -2px; bottom: -2px;\n  border: 2px solid #8cf;\n  pointer-events: none;\n}\n\n");
-},{"../dom":6}],11:[function(require,module,exports){
+},{"../dom":7}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2964,7 +3325,7 @@ function scanText(start, end) {
     cur = cur.firstChild || nodeAfter(cur);
   }
 }
-},{"../model":26,"../parse/dom":31,"../transform/tree":46,"./selection":20}],12:[function(require,module,exports){
+},{"../model":27,"../parse/dom":32,"../transform/tree":47,"./selection":21}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3127,7 +3488,7 @@ function redraw(pm, dirty, doc, prev) {
   }
   scan(pm.content, doc, prev);
 }
-},{"../dom":6,"../model":26,"../serialize/dom":34,"./main":17}],13:[function(require,module,exports){
+},{"../dom":7,"../model":27,"../serialize/dom":35,"./main":18}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3609,7 +3970,7 @@ var History = (function () {
 })();
 
 exports.History = History;
-},{"../model":26,"../transform":38}],14:[function(require,module,exports){
+},{"../model":27,"../transform":39}],15:[function(require,module,exports){
 // !! This module implements the ProseMirror editor. It contains
 // functionality related to editing, selection, and integration with
 // the browser. `ProseMirror` is the class you'll want to instantiate
@@ -3698,7 +4059,7 @@ Object.defineProperty(exports, "Command", {
     return _commands.Command;
   }
 });
-},{"./commands":9,"./keys":16,"./main":17,"./options":18,"./range":19,"./selection":20}],15:[function(require,module,exports){
+},{"./commands":10,"./keys":17,"./main":18,"./options":19,"./range":20,"./selection":21}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4169,7 +4530,7 @@ handlers.blur = function (pm) {
   // Fired when the editor loses focus.
   pm.signal("blur");
 };
-},{"../dom":6,"../model":26,"../parse":32,"../parse/dom":31,"../parse/text":33,"../serialize/dom":34,"../serialize/text":36,"./capturekeys":7,"./domchange":11,"./keys":16,"./selection":20}],16:[function(require,module,exports){
+},{"../dom":7,"../model":27,"../parse":33,"../parse/dom":32,"../parse/text":34,"../serialize/dom":35,"../serialize/text":37,"./capturekeys":8,"./domchange":12,"./keys":17,"./selection":21}],17:[function(require,module,exports){
 // From CodeMirror, should be factored into its own NPM module
 
 // declare_global: navigator
@@ -4351,7 +4712,7 @@ var Keymap = (function () {
 })();
 
 exports.Keymap = Keymap;
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5107,7 +5468,7 @@ var EditorTransform = (function (_Transform) {
 
   return EditorTransform;
 })(_transform.Transform);
-},{"../dom":6,"../model":26,"../parse":32,"../parse/text":33,"../serialize":35,"../serialize/text":36,"../transform":38,"../util/event":48,"../util/map":49,"../util/sortedinsert":50,"./commands":9,"./css":10,"./draw":12,"./history":13,"./input":15,"./keys":16,"./options":18,"./range":19,"./selection":20}],18:[function(require,module,exports){
+},{"../dom":7,"../model":27,"../parse":33,"../parse/text":34,"../serialize":36,"../serialize/text":37,"../transform":39,"../util/event":49,"../util/map":50,"../util/sortedinsert":51,"./commands":10,"./css":11,"./draw":13,"./history":14,"./input":16,"./keys":17,"./options":19,"./range":20,"./selection":21}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5254,7 +5615,7 @@ function setOption(pm, name, value) {
   pm.options[name] = value;
   if (desc.update) desc.update(pm, value, old, false);
 }
-},{"../model":26}],19:[function(require,module,exports){
+},{"../model":27}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5456,7 +5817,7 @@ var RangeTracker = (function () {
 
   return RangeTracker;
 })();
-},{"../util/event":48}],20:[function(require,module,exports){
+},{"../util/event":49}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6252,7 +6613,7 @@ function setDOMSelectionToPos(pm, pos) {
   sel.removeAllRanges();
   sel.addRange(range);
 }
-},{"../dom":6,"../model":26}],21:[function(require,module,exports){
+},{"../dom":7,"../model":27}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6386,7 +6747,7 @@ var Tooltip = (function () {
 exports.Tooltip = Tooltip;
 
 (0, _dom.insertCSS)("\n\n.ProseMirror-tooltip {\n  position: absolute;\n  display: none;\n  box-sizing: border-box;\n  -moz-box-sizing: border- box;\n  overflow: hidden;\n\n  -webkit-transition: width 0.4s ease-out, height 0.4s ease-out, left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  -moz-transition: width 0.4s ease-out, height 0.4s ease-out, left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  transition: width 0.4s ease-out, height 0.4s ease-out, left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  opacity: 0;\n\n  border-radius: 5px;\n  padding: 3px 7px;\n  margin: 0;\n  background: #444;\n  border-color: #777;\n  color: white;\n\n  z-index: 11;\n}\n\n.ProseMirror-tooltip-pointer {\n  content: \"\";\n  position: absolute;\n  display: none;\n  width: 0; height: 0;\n\n  -webkit-transition: left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  -moz-transition: left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  transition: left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  opacity: 0;\n\n  z-index: 12;\n}\n\n.ProseMirror-tooltip-pointer-above {\n  border-left: 6px solid transparent;\n  border-right: 6px solid transparent;\n  border-top: 6px solid #444;\n}\n\n.ProseMirror-tooltip-pointer-below {\n  border-left: 6px solid transparent;\n  border-right: 6px solid transparent;\n  border-bottom: 6px solid #444;\n}\n\n.ProseMirror-tooltip-pointer-right {\n  border-top: 6px solid transparent;\n  border-bottom: 6px solid transparent;\n  border-right: 6px solid #444;\n}\n\n.ProseMirror-tooltip-pointer-left {\n  border-top: 6px solid transparent;\n  border-bottom: 6px solid transparent;\n  border-left: 6px solid #444;\n}\n\n.ProseMirror-tooltip input[type=\"text\"],\n.ProseMirror-tooltip textarea {\n  background: #666;\n  color: white;\n  border: none;\n  outline: none;\n}\n\n.ProseMirror-tooltip input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n");
-},{"../dom":6}],22:[function(require,module,exports){
+},{"../dom":7}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6482,7 +6843,7 @@ var MenuUpdate = (function () {
 })();
 
 exports.MenuUpdate = MenuUpdate;
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6907,7 +7268,7 @@ var defaultSpec = new _schema.SchemaSpec({
 // ProseMirror's default document schema.
 var defaultSchema = new _schema.Schema(defaultSpec);
 exports.defaultSchema = defaultSchema;
-},{"./schema":30}],24:[function(require,module,exports){
+},{"./schema":31}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7006,7 +7367,7 @@ function findDiffEnd(a, b) {
   }
   return { a: new _pos.Pos(pathA, offA), b: new _pos.Pos(pathB, offB) };
 }
-},{"./pos":29}],25:[function(require,module,exports){
+},{"./pos":30}],26:[function(require,module,exports){
 // ;; A fragment is an abstract type used to represent a node's
 // collection of child nodes. It tries to hide considerations about
 // the actual way in which the child nodes are stored, so that
@@ -7678,7 +8039,7 @@ if (typeof Symbol != "undefined") {
     return this;
   };
 }
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 // !!
 // This module defines ProseMirror's document model, the data
 // structure used to define and inspect content documents. It
@@ -7918,7 +8279,7 @@ Object.defineProperty(exports, "findDiffEnd", {
                 return _diff.findDiffEnd;
         }
 });
-},{"./defaultschema":23,"./diff":24,"./fragment":25,"./mark":27,"./node":28,"./pos":29,"./schema":30}],27:[function(require,module,exports){
+},{"./defaultschema":24,"./diff":25,"./fragment":26,"./mark":28,"./node":29,"./pos":30,"./schema":31}],28:[function(require,module,exports){
 // ;; A mark is a piece of information that can be attached to a node,
 // such as it being emphasized, in code font, or a link. It has a type
 // and optionally a set of attributes that provide further information
@@ -8044,7 +8405,7 @@ var Mark = (function () {
 exports.Mark = Mark;
 
 var empty = [];
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8618,7 +8979,7 @@ function wrapMarks(marks, str) {
     str = marks[i].type.name + "(" + str + ")";
   }return str;
 }
-},{"./fragment":25,"./mark":27,"./pos":29}],29:[function(require,module,exports){
+},{"./fragment":26,"./mark":28,"./pos":30}],30:[function(require,module,exports){
 // ;; Instances of the `Pos` class represent positions in a document.
 // A position an array of integers that describe a path to the target
 // node (see `Node.path`) and an integer offset into that target node.
@@ -8807,7 +9168,7 @@ var Pos = (function () {
 })();
 
 exports.Pos = Pos;
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9772,7 +10133,7 @@ var Schema = (function () {
 })();
 
 exports.Schema = Schema;
-},{"../util/error":47,"./fragment":25,"./mark":27,"./node":28}],31:[function(require,module,exports){
+},{"../util/error":48,"./fragment":26,"./mark":28,"./node":29}],32:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10146,7 +10507,7 @@ _model.StrongMark.register("parseDOM", { tag: "b", parse: "mark" });
 _model.StrongMark.register("parseDOM", { tag: "strong", parse: "mark" });
 
 _model.CodeMark.register("parseDOM", { tag: "code", parse: "mark" });
-},{"../model":26,"./index":32}],32:[function(require,module,exports){
+},{"../model":27,"./index":33}],33:[function(require,module,exports){
 // !! This module implements a way to register and access parsers from
 // various input formats to ProseMirror's [document format](#Node). To
 // load the actual parsers, you need to import parser modules like
@@ -10215,7 +10576,7 @@ function defineSource(format, func) {
 defineSource("json", function (schema, json) {
   return schema.nodeFromJSON(json);
 });
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10248,7 +10609,7 @@ function fromText(schema, text) {
 }
 
 (0, _index.defineSource)("text", fromText);
-},{"./index":32}],34:[function(require,module,exports){
+},{"./index":33}],35:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10543,7 +10904,7 @@ def(_model.LinkMark, function (mark, s) {
   return s.elt("a", { href: mark.attrs.href,
     title: mark.attrs.title });
 });
-},{"../model":26,"./index":35}],35:[function(require,module,exports){
+},{"../model":27,"./index":36}],36:[function(require,module,exports){
 // !! This module provides a way to register and access functions that
 // serialize ProseMirror [documents](#Node) to various formats. To
 // load the actual serializers, you need to include submodules of this
@@ -10608,7 +10969,7 @@ function defineTarget(format, func) {
 defineTarget("json", function (doc) {
   return doc.toJSON();
 });
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10653,7 +11014,7 @@ function toText(doc) {
 }
 
 (0, _index.defineTarget)("text", toText);
-},{"../model":26,"./index":35}],37:[function(require,module,exports){
+},{"../model":27,"./index":36}],38:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10938,7 +11299,7 @@ _transform.Transform.prototype.setNodeType = function (pos, type, attrs) {
   this.step("ancestor", new _model.Pos(path, 0), new _model.Pos(path, node.size), null, { depth: 1, types: [type], attrs: [attrs] });
   return this;
 };
-},{"../model":26,"./map":40,"./step":44,"./transform":45,"./tree":46}],38:[function(require,module,exports){
+},{"../model":27,"./map":41,"./step":45,"./transform":46,"./tree":47}],39:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11037,7 +11398,7 @@ Object.defineProperty(exports, "Remapping", {
     return _map.Remapping;
   }
 });
-},{"./ancestor":37,"./join":39,"./map":40,"./mark":41,"./replace":42,"./split":43,"./step":44,"./transform":45}],39:[function(require,module,exports){
+},{"./ancestor":38,"./join":40,"./map":41,"./mark":42,"./replace":43,"./split":44,"./step":45,"./transform":46}],40:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11121,7 +11482,7 @@ _transform.Transform.prototype.join = function (at) {
   this.step("join", new _model.Pos(at.path.concat(at.offset - 1), parent.child(at.offset - 1).size), new _model.Pos(at.path.concat(at.offset), 0));
   return this;
 };
-},{"../model":26,"./map":40,"./step":44,"./transform":45}],40:[function(require,module,exports){
+},{"../model":27,"./map":41,"./step":45,"./transform":46}],41:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11445,7 +11806,7 @@ var Remapping = (function () {
 })();
 
 exports.Remapping = Remapping;
-},{"../model":26}],41:[function(require,module,exports){
+},{"../model":27}],42:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -11624,7 +11985,7 @@ _transform.Transform.prototype.clearMarkup = function (from, to, newParent) {
     this.step(delSteps[i]);
   }return this;
 };
-},{"../model":26,"./step":44,"./transform":45,"./tree":46}],42:[function(require,module,exports){
+},{"../model":27,"./step":45,"./transform":46,"./tree":47}],43:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11944,7 +12305,7 @@ _transform.Transform.prototype.insertText = function (pos, text) {
 _transform.Transform.prototype.insertInline = function (pos, node) {
   return this.insert(pos, node.mark(this.doc.marksAt(pos)));
 };
-},{"../model":26,"./map":40,"./step":44,"./transform":45,"./tree":46}],43:[function(require,module,exports){
+},{"../model":27,"./map":41,"./step":45,"./transform":46,"./tree":47}],44:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -12030,7 +12391,7 @@ _transform.Transform.prototype.splitIfNeeded = function (pos) {
   }
   return this;
 };
-},{"../model":26,"./map":40,"./step":44,"./transform":45}],44:[function(require,module,exports){
+},{"../model":27,"./map":41,"./step":45,"./transform":46}],45:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12211,7 +12572,7 @@ var StepResult = function StepResult(doc) {
 exports.StepResult = StepResult;
 
 var steps = Object.create(null);
-},{"../model":26,"./map":40}],45:[function(require,module,exports){
+},{"../model":27,"./map":41}],46:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12311,7 +12672,7 @@ var Transform = (function () {
 })();
 
 exports.Transform = Transform;
-},{"./map":40,"./step":44}],46:[function(require,module,exports){
+},{"./map":41,"./step":45}],47:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12403,7 +12764,7 @@ function samePathDepth(a, b) {
     if (i == a.path.length || i == b.path.length || a.path[i] != b.path[i]) return i;
   }
 }
-},{"../model":26}],47:[function(require,module,exports){
+},{"../model":27}],48:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12452,7 +12813,7 @@ function functionName(f) {
   var match = /^function (\w+)/.exec(f.toString());
   return match && match[1];
 }
-},{}],48:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 // ;; #path=EventMixin #kind=interface
 // A set of methods for objects that emit events. Added by calling
 // `eventMixin` on a constructor.
@@ -12535,7 +12896,7 @@ function eventMixin(ctor) {
   var proto = ctor.prototype;
   for (var prop in methods) if (methods.hasOwnProperty(prop)) proto[prop] = methods[prop];
 }
-},{}],49:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12592,7 +12953,7 @@ var Map = window.Map || (function () {
   return _class;
 })();
 exports.Map = Map;
-},{}],50:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12607,4 +12968,4 @@ function sortedInsert(array, elt, compare) {
 }
 
 module.exports = exports["default"];
-},{}]},{},[1]);
+},{}]},{},[2]);

@@ -26,10 +26,7 @@ from tornado.wsgi import WSGIContainer
 
 from base.handlers import DjangoStaticFilesHandler, HelloHandler, RobotsHandler
 
-if settings.CACHES["default"]["BACKEND"] == "redis_cache.cache.RedisCache":
-    from document.ws_views_redis import DocumentWS
-else:
-    from document.ws_views import DocumentWS
+from document.ws_views import DocumentWS
 
 
 def make_tornado_server():

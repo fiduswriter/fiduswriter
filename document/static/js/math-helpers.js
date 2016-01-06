@@ -20,9 +20,9 @@
  */
 (function () {
     var exports = this,
-     /** Helper functions for MathJax. TODO 
+     /** Helper functions for MathJax. TODO
      * @namespace mathHelpers
-     */ 
+     */
         mathHelpers = {};
 
     mathHelpers.setMathNodeContents = function (node) {
@@ -36,7 +36,7 @@
         mathHelpers.setMathNodeContents(node);
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, node]);
     };
-    
+
     /** Queue a function to be executed after all other functions are done. */
     mathHelpers.queueExecution = function (callback) {
         MathJax.Hub.Queue(callback);
@@ -52,6 +52,18 @@
         // Layout a single display math node
         mathHelpers.setDisplayMathNodeContents(node);
         MathJax.Hub.Queue(["Typeset", MathJax.Hub, node]);
+    };
+
+    mathHelpers.layoutEmptyEquationNodes = function () {
+      // Layout all math nodes that currently don't have any content.
+      theEditor.editor.off('flushed', mathHelpers.layoutEmptyEquationNodes);
+      [].slice.call(jQuery('span.equation:empty')).forEach(mathHelpers.layoutMathNode);
+    };
+
+    mathHelpers.layoutEmptyDisplayEquationNodes = function () {
+      // Layout all math nodes in figures that currently don't have any content.
+      theEditor.editor.off('flushed', mathHelpers.layoutEmptyDisplayEquationNodes);
+      [].slice.call(jQuery('div.figure-equation:empty')).forEach(mathHelpers.layoutDisplayMathNode);
     };
 
     mathHelpers.resetMath = function (callback) {

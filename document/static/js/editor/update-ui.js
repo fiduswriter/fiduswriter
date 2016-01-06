@@ -114,17 +114,26 @@ export class UpdateUI {
     }
 
     /* Block level selector */
-    let headElement = this.pm.doc.path([this.pm.selection.head.path[0]]),
-    anchorElement = this.pm.doc.path([this.pm.selection.anchor.path[0]])
+    if (this.pm.selection.head) {
+        var headPath = this.pm.selection.head.path,
+        anchorPath = this.pm.selection.anchor.path
+    } else {
+        var headPath = this.pm.selection.from.path,
+        anchorPath = this.pm.selection.to.path
+    }
 
+    var headElement = this.pm.doc.path([headPath[0]]),
+    anchorElement = this.pm.doc.path([anchorPath[0]])
     // For metadata, one has to look one level deeper.
     if (headElement.type.name==='metadata') {
-        headElement = this.pm.doc.path(this.pm.selection.head.path.slice(0,2))
+        headElement = this.pm.doc.path(headPath.slice(0,2))
     }
 
     if (anchorElement.type.name==='metadata') {
-        anchorElement = this.pm.doc.path(this.pm.selection.anchor.path.slice(0,2))
+        anchorElement = this.pm.doc.path(anchorPath.slice(0,2))
     }
+
+
 
     this.calculatePlaceHolderCss(headElement, nodes);
 
@@ -156,17 +165,15 @@ export class UpdateUI {
                 jQuery('.edit-button').removeClass('disabled')
                 jQuery('#button-figure').addClass('disabled')
 
-                var headPath = this.pm.selection.head.path,
-                anchorPath = this.pm.selection.anchor.path,
-                blockNodeType = true, blockNode, nextBlockNodeType
+                var blockNodeType = true, blockNode, nextBlockNodeType
 
                 if (headPath[2]===anchorPath[2]) {
                   // Selection within a single block.
-                  blockNode = this.pm.doc.path(this.pm.selection.anchor.path.slice(0,3))
+                  blockNode = this.pm.doc.path(anchorPath.slice(0,3))
                   blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name
                   jQuery('#block-style-label').html('Abstract: ' + BLOCK_LABELS[blockNodeType])
                 } else {
-                    var iterator = this.pm.doc.path(this.pm.selection.head.path.slice(0,2)).iter(
+                    var iterator = this.pm.doc.path(headPath.slice(0,2)).iter(
                         _.min([headPath[2],anchorPath[2]]),
                         _.max([headPath[2],anchorPath[2]])+1
                     )
@@ -194,17 +201,15 @@ export class UpdateUI {
             case nodes.contents:
                 jQuery('.edit-button').removeClass('disabled')
 
-                var headPath = this.pm.selection.head.path,
-                anchorPath = this.pm.selection.anchor.path,
-                blockNodeType = true, blockNode, nextBlockNodeType
+                var blockNodeType = true, blockNode, nextBlockNodeType
 
                 if (headPath[1]===anchorPath[1]) {
                     // Selection within a single block.
-                    blockNode = this.pm.doc.path(this.pm.selection.anchor.path.slice(0,2))
+                    blockNode = this.pm.doc.path(anchorPath.slice(0,2))
                     blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name
                     jQuery('#block-style-label').html('Body: ' + BLOCK_LABELS[blockNodeType])
                 } else {
-                    var iterator = this.pm.doc.path(this.pm.selection.head.path.slice(0,1)).iter(
+                    var iterator = this.pm.doc.path(headPath.slice(0,1)).iter(
                         _.min([headPath[1],anchorPath[1]]),
                         _.max([headPath[1],anchorPath[1]])+1
                     )

@@ -1,27 +1,8 @@
-/**
- * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
- *
- * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
- *
- * @license This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
- *
- */
+
 // toolbar cite
-jQuery(document).on('mousedown', '#button-cite:not(.disabled), .citation', function(event) {
-/*
+jQuery(document).on('mousedown', '#button-cite:not(.disabled)', function(event) {
+
     var ids,
-        range = insertElement.findRange(),
         bibEntryStart,
         bibFormatStart = 'autocite',
         bibBeforeStart,
@@ -31,22 +12,17 @@ jQuery(document).on('mousedown', '#button-cite:not(.disabled), .citation', funct
         cited_ids = [],
         cited_prefixes,
         cited_pages,
-        citeSpan,
-        citationNode,
         diaButtons = [],
-        submit_button_text;
+        submit_button_text,
+        node = theEditor.editor.selection.node;
 
     event.preventDefault();
 
-
-    if (jQuery(this).is('.citation')) {
-        citationNode = this;
-        range.selectNode(citationNode);
-        range.collapse();
-        bibFormatStart = jQuery(citationNode).attr('data-bib-format');
-        bibEntryStart = jQuery(citationNode).attr('data-bib-entry');
-        bibBeforeStart = jQuery(citationNode).attr('data-bib-before');
-        bibPageStart = jQuery(citationNode).attr('data-bib-page');
+    if (node && node.type && node.type.name==='citation') {
+        bibFormatStart = node.attrs.bibFormat;
+        bibEntryStart = node.attrs.bibEntry;
+        bibBeforeStart = node.attrs.bibBefore;
+        bibPageStart = node.attrs.bibPage;
         cited_ids = bibEntryStart.split(',');
         cited_prefixes = bibBeforeStart.split(',,,');
         cited_pages = bibPageStart.split(',,,');
@@ -84,25 +60,8 @@ jQuery(document).on('mousedown', '#button-cite:not(.disabled), .citation', funct
             return true;
         }
 
-        if (citationNode) {
-            manualEdits.remove(citationNode, false);
-            citationNode = false;
-        }
-
-        citeSpan = nodeConverter.createCiteView();
-        citeSpan.setAttribute('data-bib-entry', bibEntry);
-        citeSpan.setAttribute('data-bib-before', bibBefore);
-        citeSpan.setAttribute('data-bib-page', bibPage);
-        citeSpan.setAttribute('data-bib-format', bibFormat);
-
-        // Make sure to get out of any track changes node if tracking is disabled.
-        range = dom.noTrackIfDisabled(range);
-        // Make sure to get out of any citation node.
-        range = dom.noCitationOrLinkNode(range);
-        // Insert the citation
-        manualEdits.insert(citeSpan, range);
-
-        citeSpan.parentNode.insertBefore(nodeConverter.afterNode(), citeSpan.nextSibling);
+        theEditor.editor.execCommand('schema:citation:insert', [bibFormat, bibEntry, bibBefore, bibPage]);
+        theEditor.editor.on("flushed", citationHelpers.formatCitationsInDoc);
         return true;
     };
 
@@ -135,29 +94,23 @@ jQuery(document).on('mousedown', '#button-cite:not(.disabled), .citation', funct
         class: 'fw-button fw-light fw-add-button'
     });
 
-    if (citationNode) {
+    if (node && node.type && node.type.name==='citation') {
         diaButtons.push({
             text: gettext('Remove'),
             click: function() {
-                manualEdits.remove(citationNode, range);
-                citationNode = false;
-                citeSpan = false;
+                theEditor.editor.execCommand('deleteSelection');
                 dialog.dialog('close');
-                var selection = rangy.getSelection();
-                selection.setSingleRange(range);
             },
             class: 'fw-button fw-orange'
         });
     }
 
-    submit_button_text = citationNode ? 'Update' : 'Insert';
+    submit_button_text = (node && node.type && node.type.name==='citation') ? 'Update' : 'Insert';
 
     diaButtons.push({
         text: gettext(submit_button_text),
         click: function() {
-            var selection = rangy.getSelection();
             if (dialogSubmit()) {
-                selection.setSingleRange(range);
                 dialog.dialog('close');
             }
         },
@@ -167,9 +120,7 @@ jQuery(document).on('mousedown', '#button-cite:not(.disabled), .citation', funct
     diaButtons.push({
         text: gettext('Cancel'),
         click: function() {
-            var selection = rangy.getSelection();
             dialog.dialog('close');
-            selection.setSingleRange(range);
         },
         class: 'fw-button fw-orange'
     });
@@ -268,5 +219,5 @@ jQuery(document).on('mousedown', '#button-cite:not(.disabled), .citation', funct
     jQuery('.fw-checkable').bind('click', function() {
         $.setCheckableLabel($(this));
     });
-    */
+
 });

@@ -724,15 +724,34 @@ var Citation = (function (_Inline2) {
   return Citation;
 })(_model.Inline);
 
+Citation.attributes = {
+  bibFormat: new _model.Attribute({ default: "" }),
+  bibEntry: new _model.Attribute({ default: "" }),
+  bibBefore: new _model.Attribute({ default: "" }),
+  bibPage: new _model.Attribute({ default: "" })
+};
+
 Citation.register("parseDOM", {
   tag: "span",
   parse: function parse(dom, state) {
     if (!dom.classList.contains('citation')) return false;
     state.insertFrom(dom, this, {
-      bibFormat: dom.getAttribute('data-bib-format'),
-      bibEntry: dom.getAttribute('data-bib-entry'),
-      bibBefore: dom.getAttribute('data-bib-before'),
-      bibPage: dom.getAttribute('data-bib-page')
+      bibFormat: dom.getAttribute('data-bib-format') || '',
+      bibEntry: dom.getAttribute('data-bib-entry') || '',
+      bibBefore: dom.getAttribute('data-bib-before') || '',
+      bibPage: dom.getAttribute('data-bib-page') || ''
+    });
+  }
+});
+
+Citation.register("parseDOM", {
+  tag: "cite",
+  parse: function parse(dom, state) {
+    state.insertFrom(dom, this, {
+      bibFormat: dom.getAttribute('data-bib-format') || '',
+      bibEntry: dom.getAttribute('data-bib-entry') || '',
+      bibBefore: dom.getAttribute('data-bib-before') || '',
+      bibPage: dom.getAttribute('data-bib-page') || ''
     });
   }
 });
@@ -740,13 +759,34 @@ Citation.register("parseDOM", {
 Citation.prototype.serializeDOM = function (node, serializer) {
   var dom = serializer.elt("span", {
     class: 'citation',
-    dataBibFormat: node.attrs.bibFormat,
-    dataBibEntry: node.attrs.bibEntry,
-    dataBibBefore: node.attrs.bibBefore,
-    dataBibPage: node.attrs.bibPage
+    'data-bib-format': node.attrs.bibFormat,
+    'data-bib-entry': node.attrs.bibEntry,
+    'data-bib-before': node.attrs.bibBefore,
+    'data-bib-page': node.attrs.bibPage
   });
   return dom;
 };
+
+Citation.register("command", {
+  name: "insert",
+  label: "Insert citation",
+  run: function run(pm, bibFormat, bibEntry, bibBefore, bibPage) {
+    return pm.tr.replaceSelection(this.create({ bibFormat: bibFormat, bibEntry: bibEntry, bibBefore: bibBefore, bibPage: bibPage })).apply({ scrollIntoView: true });
+  },
+
+  params: [{ label: "Bibliography Format", type: "text" }, { label: "Bibliography Entry", type: "text", default: "" }, { label: "Text Before", type: "text", default: "" }, { label: "Page number", type: "text", default: "" }],
+  select: function select(pm) {
+    return pm.doc.path(pm.selection.from.path).type.canContainType(this);
+  },
+
+  menuGroup: "inline(40)",
+  prefillParams: function prefillParams(pm) {
+    var node = pm.selection.node;
+
+    if (node && node.type == this) return [node.attrs.bibFormat, node.attrs.bibEntry, node.attrs.bibBefore, node.attrs.bibPage];
+    // FIXME else use the selected text as alt
+  }
+});
 
 var Equation = (function (_Inline3) {
   _inherits(Equation, _Inline3);
@@ -759,6 +799,10 @@ var Equation = (function (_Inline3) {
 
   return Equation;
 })(_model.Inline);
+
+Equation.attributes = {
+  equation: new _model.Attribute({ default: "" })
+};
 
 Equation.register("parseDOM", {
   tag: "span",
@@ -773,10 +817,31 @@ Equation.register("parseDOM", {
 Equation.prototype.serializeDOM = function (node, serializer) {
   var dom = serializer.elt("span", {
     class: 'equation',
-    dataEquation: node.attrs.equation
+    'data-equation': node.attrs.equation
   });
   return dom;
 };
+
+Equation.register("command", {
+  name: "insert",
+  label: "Insert equation",
+  run: function run(pm, equation) {
+    return pm.tr.replaceSelection(this.create({ equation: equation })).apply({ scrollIntoView: true });
+  },
+
+  params: [{ label: "Equation", type: "text" }],
+  select: function select(pm) {
+    return pm.doc.path(pm.selection.from.path).type.canContainType(this);
+  },
+
+  menuGroup: "inline(40)",
+  prefillParams: function prefillParams(pm) {
+    var node = pm.selection.node;
+
+    if (node && node.type == this) return [node.attrs.equation];
+    // FIXME else use the selected text as alt
+  }
+});
 
 var Figure = (function (_Block4) {
   _inherits(Figure, _Block4);
@@ -789,6 +854,13 @@ var Figure = (function (_Block4) {
 
   return Figure;
 })(_model.Block);
+
+Figure.attributes = {
+  equation: new _model.Attribute({ default: "" }),
+  image: new _model.Attribute({ default: "" }),
+  figureCategory: new _model.Attribute({ default: "" }),
+  caption: new _model.Attribute({ default: "" })
+};
 
 Figure.register("parseDOM", {
   tag: "figure",
@@ -804,12 +876,12 @@ Figure.register("parseDOM", {
 
 Figure.prototype.serializeDOM = function (node, serializer) {
   var dom = serializer.elt("figure", {
-    dataEquation: node.attrs.equation,
-    dataImage: node.attrs.image,
-    dataFigureCategory: node.attrs.figureCategory,
-    dataCaption: node.attrs.caption
+    'data-equation': node.attrs.equation,
+    'data-image': node.attrs.image,
+    'data-figure-category': node.attrs.figureCategory,
+    'data-caption': node.attrs.caption
   });
-  if (node.attrs.image.length > 0) {
+  if (node.attrs.image) {
     dom.appendChild(serializer.elt("div"));
     dom.firstChild.appendChild(serializer.elt("img", {
       "src": ImageDB[node.attrs.image].image
@@ -817,29 +889,50 @@ Figure.prototype.serializeDOM = function (node, serializer) {
   } else {
     dom.appendChild(serializer.elt("div", {
       class: 'figure-equation',
-      dataEquation: node.attrs.equation
+      'data-equation': node.attrs.equation
     }));
   }
   var captionNode = serializer.elt("figcaption");
   if (node.attrs.figureCategory !== 'none') {
     var figureCatNode = serializer.elt("span", {
       class: 'figure-cat-' + node.attrs.figureCategory,
-      dataFigureCategory: node.attrs.figureCategory
+      'data-figure-category': node.attrs.figureCategory
     });
     figureCatNode.innerHTML = node.attrs.figureCategory;
     captionNode.appendChild(figureCatNode);
   }
-  if (node.attrs.figureCaption !== '') {
+  if (node.attrs.caption !== '') {
     var captionTextNode = serializer.elt("span", {
-      dataCaption: node.attrs.figureCaption
+      'data-caption': node.attrs.caption
     });
-    captionTextNode.innerHTML = node.attrs.figureCaption;
+    captionTextNode.innerHTML = node.attrs.caption;
 
     captionNode.appendChild(captionTextNode);
   }
   dom.appendChild(captionNode);
   return dom;
 };
+
+Figure.register("command", {
+  name: "insert",
+  label: "Insert figure",
+  run: function run(pm, equation, image, figureCategory, caption) {
+    return pm.tr.replaceSelection(this.create({ equation: equation, image: image, figureCategory: figureCategory, caption: caption })).apply({ scrollIntoView: true });
+  },
+
+  params: [{ label: "Equation", type: "text" }, { label: "Image URL", type: "text", default: "" }, { label: "Category", type: "text", default: "" }, { label: "Caption", type: "text", default: "" }],
+  select: function select(pm) {
+    return pm.doc.path(pm.selection.from.path).type.canContainType(this);
+  },
+
+  menuGroup: "inline(40)",
+  prefillParams: function prefillParams(pm) {
+    var node = pm.selection.node;
+
+    if (node && node.type == this) return [node.attrs.equation, node.attrs.image, node.attrs.figureCategory, node.attrs.caption];
+    // FIXME else use the selected text as alt
+  }
+});
 
 /* From prosemirror/src/edit/commands.js */
 
@@ -1087,16 +1180,23 @@ var UpdateUI = exports.UpdateUI = (function () {
             }
 
             /* Block level selector */
-            var headElement = this.pm.doc.path([this.pm.selection.head.path[0]]),
-                anchorElement = this.pm.doc.path([this.pm.selection.anchor.path[0]]);
+            if (this.pm.selection.head) {
+                var headPath = this.pm.selection.head.path,
+                    anchorPath = this.pm.selection.anchor.path;
+            } else {
+                var headPath = this.pm.selection.from.path,
+                    anchorPath = this.pm.selection.to.path;
+            }
 
+            var headElement = this.pm.doc.path([headPath[0]]),
+                anchorElement = this.pm.doc.path([anchorPath[0]]);
             // For metadata, one has to look one level deeper.
             if (headElement.type.name === 'metadata') {
-                headElement = this.pm.doc.path(this.pm.selection.head.path.slice(0, 2));
+                headElement = this.pm.doc.path(headPath.slice(0, 2));
             }
 
             if (anchorElement.type.name === 'metadata') {
-                anchorElement = this.pm.doc.path(this.pm.selection.anchor.path.slice(0, 2));
+                anchorElement = this.pm.doc.path(anchorPath.slice(0, 2));
             }
 
             this.calculatePlaceHolderCss(headElement, nodes);
@@ -1128,19 +1228,17 @@ var UpdateUI = exports.UpdateUI = (function () {
                         jQuery('.edit-button').removeClass('disabled');
                         jQuery('#button-figure').addClass('disabled');
 
-                        var headPath = this.pm.selection.head.path,
-                            anchorPath = this.pm.selection.anchor.path,
-                            blockNodeType = true,
+                        var blockNodeType = true,
                             blockNode,
                             nextBlockNodeType;
 
                         if (headPath[2] === anchorPath[2]) {
                             // Selection within a single block.
-                            blockNode = this.pm.doc.path(this.pm.selection.anchor.path.slice(0, 3));
+                            blockNode = this.pm.doc.path(anchorPath.slice(0, 3));
                             blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
                             jQuery('#block-style-label').html('Abstract: ' + BLOCK_LABELS[blockNodeType]);
                         } else {
-                            var iterator = this.pm.doc.path(this.pm.selection.head.path.slice(0, 2)).iter(_.min([headPath[2], anchorPath[2]]), _.max([headPath[2], anchorPath[2]]) + 1);
+                            var iterator = this.pm.doc.path(headPath.slice(0, 2)).iter(_.min([headPath[2], anchorPath[2]]), _.max([headPath[2], anchorPath[2]]) + 1);
 
                             while (!iterator.atEnd() && blockNodeType) {
                                 nextBlockNode = iterator.next();
@@ -1164,19 +1262,17 @@ var UpdateUI = exports.UpdateUI = (function () {
                     case nodes.contents:
                         jQuery('.edit-button').removeClass('disabled');
 
-                        var headPath = this.pm.selection.head.path,
-                            anchorPath = this.pm.selection.anchor.path,
-                            blockNodeType = true,
+                        var blockNodeType = true,
                             blockNode,
                             nextBlockNodeType;
 
                         if (headPath[1] === anchorPath[1]) {
                             // Selection within a single block.
-                            blockNode = this.pm.doc.path(this.pm.selection.anchor.path.slice(0, 2));
+                            blockNode = this.pm.doc.path(anchorPath.slice(0, 2));
                             blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
                             jQuery('#block-style-label').html('Body: ' + BLOCK_LABELS[blockNodeType]);
                         } else {
-                            var iterator = this.pm.doc.path(this.pm.selection.head.path.slice(0, 1)).iter(_.min([headPath[1], anchorPath[1]]), _.max([headPath[1], anchorPath[1]]) + 1);
+                            var iterator = this.pm.doc.path(headPath.slice(0, 1)).iter(_.min([headPath[1], anchorPath[1]]), _.max([headPath[1], anchorPath[1]]) + 1);
 
                             while (!iterator.atEnd() && blockNodeType) {
                                 blockNode = iterator.next();

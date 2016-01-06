@@ -196,7 +196,7 @@
     };
 
     citationHelpers.formatCitationsInDoc = function () {
-        //console.log('formatting citations');
+        theEditor.editor.off("flushed", citationHelpers.formatCitationsInDoc);
         jQuery('#document-bibliography').html(
             citationHelpers.formatCitations(
                 jQuery('#document-editable')[0],
@@ -218,7 +218,7 @@
             citeproc_obj;
 
         allCitations.each(function(i) {
-            var entries = this.dataset.bibEntry.split(',');
+            var entries = this.dataset.bibEntry ? this.dataset.bibEntry.split(',') : [];
             allCitationsListed = true;
 
             len = entries.length;
@@ -229,8 +229,8 @@
             }
 
             if(allCitationsListed) {
-                var pages = this.dataset.bibPage.split(',,,'),
-                    prefixes = this.dataset.bibBefore.split(',,,'),
+                var pages = this.dataset.bibPage ? this.dataset.bibPage.split(',,,') : [],
+                    prefixes = this.dataset.bibBefore ? this.dataset.bibBefore.split(',,,'): [],
                     //suffixes = this.dataset.bibAfter.split(',,,'),
                     citation_item,
                     citation_items = [];

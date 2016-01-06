@@ -35,7 +35,7 @@
 
     toolbarTemplates.mathDialog = _.template('\
         <div title="' + gettext("Math") + '">\
-            <input style="width: 250px;" class="math" type="text" name="math" value="<%- formula %>" />\
+            <input style="width: 250px;" class="math" type="text" name="math" value="<%- equation %>" />\
         </div>\
     ');
 

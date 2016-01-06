@@ -155,32 +155,80 @@ Footnote.prototype.serializeDOM = (node, serializer) => {
 }
 
 class Citation extends Inline {}
+Citation.attributes = {
+  bibFormat: new Attribute({default: ""}),
+  bibEntry: new Attribute({default: ""}),
+  bibBefore: new Attribute({default: ""}),
+  bibPage: new Attribute({default: ""})
+}
+
 
 Citation.register("parseDOM", {
   tag: "span",
   parse: function(dom, state) {
     if (!dom.classList.contains('citation')) return false;
     state.insertFrom(dom, this, {
-        bibFormat: dom.getAttribute('data-bib-format'),
-        bibEntry: dom.getAttribute('data-bib-entry'),
-        bibBefore: dom.getAttribute('data-bib-before'),
-        bibPage: dom.getAttribute('data-bib-page')
+        bibFormat: dom.getAttribute('data-bib-format') || '',
+        bibEntry: dom.getAttribute('data-bib-entry') || '',
+        bibBefore: dom.getAttribute('data-bib-before') || '',
+        bibPage: dom.getAttribute('data-bib-page') || ''
     });
   }
 });
 
+Citation.register("parseDOM", {
+  tag: "cite",
+  parse: function(dom, state) {
+    state.insertFrom(dom, this, {
+        bibFormat: dom.getAttribute('data-bib-format') || '',
+        bibEntry: dom.getAttribute('data-bib-entry') || '',
+        bibBefore: dom.getAttribute('data-bib-before') || '',
+        bibPage: dom.getAttribute('data-bib-page') || ''
+    });
+  }
+});
+
+
 Citation.prototype.serializeDOM = (node, serializer) => {
   let dom = serializer.elt("span", {
     class: 'citation',
-    dataBibFormat: node.attrs.bibFormat,
-    dataBibEntry: node.attrs.bibEntry,
-    dataBibBefore: node.attrs.bibBefore,
-    dataBibPage: node.attrs.bibPage
+    'data-bib-format': node.attrs.bibFormat,
+    'data-bib-entry': node.attrs.bibEntry,
+    'data-bib-before': node.attrs.bibBefore,
+    'data-bib-page': node.attrs.bibPage
   })
-  return dom;
+  return dom
 }
 
+Citation.register("command", {
+  name: "insert",
+  label: "Insert citation",
+  run(pm, bibFormat, bibEntry, bibBefore, bibPage) {
+    return pm.tr.replaceSelection(this.create({bibFormat, bibEntry, bibBefore, bibPage})).apply({scrollIntoView: true})
+  },
+  params: [
+    {label: "Bibliography Format", type: "text"},
+    {label: "Bibliography Entry", type: "text", default: ""},
+    {label: "Text Before", type: "text", default: ""},
+    {label: "Page number", type: "text", default: ""}
+  ],
+  select(pm) {
+    return pm.doc.path(pm.selection.from.path).type.canContainType(this)
+  },
+  menuGroup: "inline(40)",
+  prefillParams(pm) {
+    let {node} = pm.selection
+    if (node && node.type == this)
+      return [node.attrs.bibFormat, node.attrs.bibEntry, node.attrs.bibBefore, node.attrs.bibPage]
+    // FIXME else use the selected text as alt
+  }
+})
+
 class Equation extends Inline {}
+Equation.attributes = {
+  equation: new Attribute({default: ""})
+}
+
 
 Equation.register("parseDOM", {
   tag: "span",
@@ -195,12 +243,39 @@ Equation.register("parseDOM", {
 Equation.prototype.serializeDOM = (node, serializer) => {
   let dom = serializer.elt("span", {
     class: 'equation',
-    dataEquation: node.attrs.equation
+    'data-equation': node.attrs.equation
   })
   return dom;
 }
 
+Equation.register("command", {
+  name: "insert",
+  label: "Insert equation",
+  run(pm, equation) {
+    return pm.tr.replaceSelection(this.create({equation})).apply({scrollIntoView: true})
+  },
+  params: [
+    {label: "Equation", type: "text"},
+  ],
+  select(pm) {
+    return pm.doc.path(pm.selection.from.path).type.canContainType(this)
+  },
+  menuGroup: "inline(40)",
+  prefillParams(pm) {
+    let {node} = pm.selection
+    if (node && node.type == this)
+      return [node.attrs.equation]
+    // FIXME else use the selected text as alt
+  }
+})
+
 class Figure extends Block {}
+Figure.attributes = {
+  equation: new Attribute({default: ""}),
+  image: new Attribute({default: ""}),
+  figureCategory: new Attribute({default: ""}),
+  caption: new Attribute({default: ""})
+}
 
 Figure.register("parseDOM", {
   tag: "figure",
@@ -216,12 +291,12 @@ Figure.register("parseDOM", {
 
 Figure.prototype.serializeDOM = (node, serializer) => {
   let dom = serializer.elt("figure", {
-    dataEquation: node.attrs.equation,
-    dataImage: node.attrs.image,
-    dataFigureCategory: node.attrs.figureCategory,
-    dataCaption: node.attrs.caption
+    'data-equation': node.attrs.equation,
+    'data-image': node.attrs.image,
+    'data-figure-category': node.attrs.figureCategory,
+    'data-caption': node.attrs.caption
   })
-  if (node.attrs.image.length > 0) {
+  if (node.attrs.image) {
       dom.appendChild(serializer.elt("div"));
       dom.firstChild.appendChild(serializer.elt("img", {
           "src": ImageDB[node.attrs.image].image
@@ -229,29 +304,53 @@ Figure.prototype.serializeDOM = (node, serializer) => {
   } else {
       dom.appendChild(serializer.elt("div", {
           class: 'figure-equation',
-          dataEquation: node.attrs.equation
+          'data-equation': node.attrs.equation
       }));
   }
   let captionNode = serializer.elt("figcaption");
   if (node.attrs.figureCategory !== 'none') {
       let figureCatNode = serializer.elt("span", {
           class: 'figure-cat-' + node.attrs.figureCategory,
-          dataFigureCategory: node.attrs.figureCategory
+          'data-figure-category': node.attrs.figureCategory
       });
       figureCatNode.innerHTML = node.attrs.figureCategory;
       captionNode.appendChild(figureCatNode);
   }
-  if (node.attrs.figureCaption !== '') {
+  if (node.attrs.caption !== '') {
       let captionTextNode = serializer.elt("span", {
-          dataCaption: node.attrs.figureCaption
+          'data-caption': node.attrs.caption
       });
-      captionTextNode.innerHTML = node.attrs.figureCaption;
+      captionTextNode.innerHTML = node.attrs.caption;
 
       captionNode.appendChild(captionTextNode);
   }
   dom.appendChild(captionNode);
   return dom;
 }
+
+Figure.register("command", {
+  name: "insert",
+  label: "Insert figure",
+  run(pm, equation, image, figureCategory, caption) {
+    return pm.tr.replaceSelection(this.create({equation, image, figureCategory, caption})).apply({scrollIntoView: true})
+  },
+  params: [
+    {label: "Equation", type: "text"},
+    {label: "Image URL", type: "text", default: ""},
+    {label: "Category", type: "text", default: ""},
+    {label: "Caption", type: "text", default: ""}
+  ],
+  select(pm) {
+    return pm.doc.path(pm.selection.from.path).type.canContainType(this)
+  },
+  menuGroup: "inline(40)",
+  prefillParams(pm) {
+    let {node} = pm.selection
+    if (node && node.type == this)
+      return [node.attrs.equation, node.attrs.image, node.attrs.figureCategory, node.attrs.caption]
+    // FIXME else use the selected text as alt
+  }
+})
 
 /* From prosemirror/src/edit/commands.js */
 

@@ -9,11 +9,14 @@
 #
 # Run this script every time you update an *.es6.js file.
 
-if ! hash node_modules/.bin/browserify 2>/dev/null;
+if [ ! -f node_modules/.bin/browserify ];
+then
+
+if ! hash nodeenv;
 then
 pip install nodeenv
 nodeenv -p
-
+fi
 npm install
 
 cd node_modules/prosemirror/

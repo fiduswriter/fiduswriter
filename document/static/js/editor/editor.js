@@ -10,17 +10,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.CommentStore = undefined;
 
-var _model = require("prosemirror/dist/model");
-
-var _dom = require("prosemirror/dist/dom");
-
-var _edit = require("prosemirror/dist/edit");
-
 var _event = require("prosemirror/dist/util/event");
-
-var _update = require("prosemirror/dist/menu/update");
-
-var _tooltip = require("prosemirror/dist/menu/tooltip");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /*
                                                                                                                                                           based on https://github.com/ProseMirror/website/blob/master/src/client/collab/comment.js
@@ -269,14 +259,12 @@ function randomID() {
   return Math.floor(Math.random() * 0xffffffff);
 }
 
-},{"prosemirror/dist/dom":7,"prosemirror/dist/edit":15,"prosemirror/dist/menu/tooltip":22,"prosemirror/dist/menu/update":23,"prosemirror/dist/model":27,"prosemirror/dist/util/event":49}],2:[function(require,module,exports){
+},{"prosemirror/dist/util/event":46}],2:[function(require,module,exports){
 "use strict";
 
 var _main = require("prosemirror/dist/edit/main");
 
-var _dom = require("prosemirror/dist/parse/dom");
-
-var _serialize = require("prosemirror/dist/serialize");
+var _format = require("prosemirror/dist/format");
 
 var _transform = require("prosemirror/dist/transform");
 
@@ -328,7 +316,7 @@ theEditor.createDoc = function (aDocument) {
     editorNode.appendChild(metadataNode);
     editorNode.appendChild(documentContentsNode);
 
-    doc = (0, _dom.fromDOM)(_schema.fidusSchema, editorNode);
+    doc = (0, _format.fromDOM)(_schema.fidusSchema, editorNode);
 
     return doc;
 };
@@ -357,7 +345,7 @@ theEditor.update = function () {
 };
 
 theEditor.getUpdates = function (callback) {
-    var outputNode = (0, _serialize.serializeTo)(theEditor.editor.mod.collab.versionDoc, 'dom');
+    var outputNode = (0, _format.serializeTo)(theEditor.editor.mod.collab.versionDoc, 'dom');
     theDocument.title = theEditor.editor.doc.firstChild.textContent;
     theDocument.version = theEditor.editor.mod.collab.version;
     theDocument.metadata.title = exporter.node2Obj(outputNode.getElementById('document-title'));
@@ -460,7 +448,7 @@ theEditor.checkHash = function (version, hash) {
 
 window.theEditor = theEditor;
 
-},{"./comment":1,"./schema":3,"./update-ui":4,"prosemirror/dist/collab":5,"prosemirror/dist/edit/main":18,"prosemirror/dist/parse/dom":32,"prosemirror/dist/serialize":36,"prosemirror/dist/transform":39}],3:[function(require,module,exports){
+},{"./comment":1,"./schema":3,"./update-ui":4,"prosemirror/dist/collab":5,"prosemirror/dist/edit/main":17,"prosemirror/dist/format":23,"prosemirror/dist/transform":36}],3:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1031,7 +1019,7 @@ var fidusSchema = exports.fidusSchema = new _model.Schema(_model.defaultSchema.s
 
 window.fidusSchema = fidusSchema;
 
-},{"prosemirror/dist/model":27}],4:[function(require,module,exports){
+},{"prosemirror/dist/model":30}],4:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1436,7 +1424,7 @@ var Collab = (function () {
 })();
 
 (0, _utilEvent.eventMixin)(Collab);
-},{"../edit":15,"../util/event":49,"./rebase":6}],6:[function(require,module,exports){
+},{"../edit":15,"../util/event":46,"./rebase":6}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1464,7 +1452,7 @@ function rebaseSteps(doc, forward, steps, maps) {
   }
   return { doc: transform.doc, transform: transform, mapping: remap, positions: positions };
 }
-},{"../transform":39}],7:[function(require,module,exports){
+},{"../transform":36}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1476,6 +1464,7 @@ exports.rmClass = rmClass;
 exports.addClass = addClass;
 exports.contains = contains;
 exports.insertCSS = insertCSS;
+exports.ensureCSSAdded = ensureCSSAdded;
 
 function elt(tag, attrs) {
   var result = document.createElement(tag);
@@ -1545,10 +1534,22 @@ function contains(parent, child) {
   return child && parent.contains(child);
 }
 
+var accumulatedCSS = "",
+    cssNode = null;
+
 function insertCSS(css) {
-  var style = document.createElement("style");
-  style.textContent = css;
-  document.head.insertBefore(style, document.head.firstChild);
+  if (cssNode) cssNode.textContent += css;else accumulatedCSS += css;
+}
+
+// This is called when a ProseMirror instance is created, to ensure
+// the CSS is in the DOM.
+
+function ensureCSSAdded() {
+  if (!cssNode) {
+    cssNode = document.createElement("style");
+    cssNode.textContent = "/* ProseMirror CSS */\n" + accumulatedCSS;
+    document.head.insertBefore(cssNode, document.head.firstChild);
+  }
 }
 },{}],8:[function(require,module,exports){
 "use strict";
@@ -1557,11 +1558,15 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+var _browserkeymap = require("browserkeymap");
+
+var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
+
 var _selection = require("./selection");
 
 var _dom = require("../dom");
-
-var _keys = require("./keys");
 
 function nothing() {}
 
@@ -1612,9 +1617,9 @@ var keys = {
 
 if (_dom.browser.mac) keys["Ctrl-F"] = keys["Ctrl-B"] = keys["Ctrl-P"] = keys["Ctrl-N"] = keys["Alt-F"] = keys["Alt-B"] = keys["Ctrl-A"] = keys["Ctrl-E"] = keys["Ctrl-V"] = keys["goPageUp"] = ensureSelection;
 
-var captureKeys = new _keys.Keymap(keys);
+var captureKeys = new _browserkeymap2["default"](keys);
 exports.captureKeys = captureKeys;
-},{"../dom":7,"./keys":17,"./selection":21}],9:[function(require,module,exports){
+},{"../dom":7,"./selection":20,"browserkeymap":49}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1670,6 +1675,10 @@ function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+var _browserkeymap = require("browserkeymap");
+
+var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
+
 var _model = require("../model");
 
 var _transform = require("../transform");
@@ -1682,8 +1691,6 @@ var _utilSortedinsert2 = _interopRequireDefault(_utilSortedinsert);
 
 var _char = require("./char");
 
-var _keys = require("./keys");
-
 var _selection = require("./selection");
 
 var commands = Object.create(null);
@@ -1692,7 +1699,7 @@ var paramHandlers = Object.create(null);
 
 // :: (CommandSpec)
 // Define a globally available command. Note that
-// [namespaces](#namespace) can still be used to prevent the command
+// [namespaces](#include) can still be used to prevent the command
 // from showing up in editor where you don't want it to show up.
 
 function defineCommand(spec) {
@@ -1707,7 +1714,7 @@ function defineCommand(spec) {
 // commands defined with `defineCommand`, and from
 // [specs](#CommandSpec) associated with node and mark types in the
 // editor's [schema](#Schema.registry). Use the
-// [`register`](#NodeType.register) method with `"command"` as the
+// [`register`](#SchemaItem.register) method with `"command"` as the
 // name and a `CommandSpec` as value to associate a command with a
 // node or mark.
 //
@@ -1808,7 +1815,7 @@ var empty = [];
 // The name of the command, which will be its key in
 // `ProseMirror.commands`, and the thing passed to
 // [`execCommand`](#ProseMirror.execCommand). Can be
-// [namespaced](#namespaces), (and probably should, for user-defined
+// [namespaced](#include), (and probably should, for user-defined
 // commands).
 
 // :: string #path=CommandSpec.label
@@ -1819,7 +1826,7 @@ var empty = [];
 // :: (pm: ProseMirror, ...params: [any]) → ?bool #path=CommandSpec.run
 // The function that executes the command. If the command has
 // [parameters](#CommandSpec.params), their values are passed as
-// arguments. For commands [registered](#NodeType.register) on node or
+// arguments. For commands [registered](#SchemaItem.register) on node or
 // mark types, `this` will be bound to the node or mark type when this
 // function is ran. Should return `false` when the command could not
 // be executed.
@@ -1854,8 +1861,6 @@ var empty = [];
 //
 // For mark types, you can derive `"set"`, `"unset"`, and `"toggle"`.
 
-// FIXME document menu and icon properties
-
 // ;; #path=CommandParam #kind=interface #toc=false
 // The parameters that a command can take are specified using objects
 // with the following properties:
@@ -1889,7 +1894,7 @@ function deriveCommands(pm) {
   var found = Object.create(null),
       config = pm.options.commands;
   function add(name, spec, self) {
-    if (!pm.isInNamespace(name)) return;
+    if (!pm.isIncluded(name)) return;
     if (found[name]) throw new Error("Duplicate definition of command " + name);
     found[name] = new Command(spec, self, name);
   }
@@ -1961,7 +1966,7 @@ function deriveKeymap(pm) {
     bindings[key] = bindings[key].map(function (b) {
       return b.command.name;
     });
-  }return new _keys.Keymap(bindings);
+  }return new _browserkeymap2["default"](bindings);
 }
 
 var andScroll = { scrollIntoView: true };
@@ -2062,14 +2067,15 @@ _model.StrongMark.register("command", { name: "unset", derive: true, label: "Uns
 //
 // **Keybindings:** Mod-B
 //
-// Registers itself in the inline [menu](#FIXME).
+// Registers itself in the inline [menu group](#CommandSpec.menuGroup).
 
 _model.StrongMark.register("command", {
   name: "toggle",
   derive: true,
   label: "Toggle strong",
   menuGroup: "inline(20)",
-  icon: {
+  display: {
+    type: "icon",
     width: 805, height: 1024,
     path: "M317 869q42 18 80 18 214 0 214-191 0-65-23-102-15-25-35-42t-38-26-46-14-48-6-54-1q-41 0-57 5 0 30-0 90t-0 90q0 4-0 38t-0 55 2 47 6 38zM309 442q24 4 62 4 46 0 81-7t62-25 42-51 14-81q0-40-16-70t-45-46-61-24-70-8q-28 0-74 7 0 28 2 86t2 86q0 15-0 45t-0 45q0 26 0 39zM0 950l1-53q8-2 48-9t60-15q4-6 7-15t4-19 3-18 1-21 0-19v-37q0-561-12-585-2-4-12-8t-25-6-28-4-27-2-17-1l-2-47q56-1 194-6t213-5q13 0 39 0t38 0q40 0 78 7t73 24 61 40 42 59 16 78q0 29-9 54t-22 41-36 32-41 25-48 22q88 20 146 76t58 141q0 57-20 102t-53 74-78 48-93 27-100 8q-25 0-75-1t-75-1q-60 0-175 6t-132 6z"
   },
@@ -2096,14 +2102,15 @@ _model.EmMark.register("command", { name: "unset", derive: true, label: "Remove 
 //
 // **Keybindings:** Mod-I
 //
-// Registers itself in the inline [menu](#FIXME).
+// Registers itself in the inline [menu group](#CommandSpec.menuGroup).
 
 _model.EmMark.register("command", {
   name: "toggle",
   derive: true,
   label: "Toggle emphasis",
   menuGroup: "inline(21)",
-  icon: {
+  display: {
+    type: "icon",
     width: 585, height: 1024,
     path: "M0 949l9-48q3-1 46-12t63-21q16-20 23-57 0-4 35-165t65-310 29-169v-14q-13-7-31-10t-39-4-33-3l10-58q18 1 68 3t85 4 68 1q27 0 56-1t69-4 56-3q-2 22-10 50-17 5-58 16t-62 19q-4 10-8 24t-5 22-4 26-3 24q-15 84-50 239t-44 203q-1 5-7 33t-11 51-9 47-3 32l0 10q9 2 105 17-1 25-9 56-6 0-18 0t-18 0q-16 0-49-5t-49-5q-78-1-117-1-29 0-81 5t-69 6z"
   },
@@ -2130,14 +2137,15 @@ _model.CodeMark.register("command", { name: "unset", derive: true, label: "Remov
 //
 // **Keybindings:** Mod-`
 //
-// Registers itself in the inline [menu](#FIXME).
+// Registers itself in the inline [menu group](#CommandSpec.menuGroup).
 
 _model.CodeMark.register("command", {
   name: "toggle",
   derive: true,
   label: "Toggle code style",
   menuGroup: "inline(22)",
-  icon: {
+  display: {
+    type: "icon",
     width: 896, height: 1024,
     path: "M608 192l-96 96 224 224-224 224 96 96 288-320-288-320zM288 192l-288 320 288 320 96-96-224-224 224-224-96-96z"
   },
@@ -2150,9 +2158,10 @@ _model.CodeMark.register("command", {
 // only [select](#Command.select) itself when there is a link in the
 // selection or active marks.
 //
-// Registers itself in the inline [menu](#FIXME).
+// Registers itself in the inline [menu group](#CommandSpec.menuGroup).
 
 var linkIcon = {
+  type: "icon",
   width: 951, height: 1024,
   path: "M832 694q0-22-16-38l-118-118q-16-16-38-16-24 0-41 18 1 1 10 10t12 12 8 10 7 14 2 15q0 22-16 38t-38 16q-8 0-15-2t-14-7-10-8-12-12-10-10q-18 17-18 41 0 22 16 38l117 118q15 15 38 15 22 0 38-14l84-83q16-16 16-38zM430 292q0-22-16-38l-117-118q-16-16-38-16-22 0-38 15l-84 83q-16 16-16 38 0 22 16 38l118 118q15 15 38 15 24 0 41-17-1-1-10-10t-12-12-8-10-7-14-2-15q0-22 16-38t38-16q8 0 15 2t14 7 10 8 12 12 10 10q18-17 18-41zM941 694q0 68-48 116l-84 83q-47 47-116 47-69 0-116-48l-117-118q-47-47-47-116 0-70 50-119l-50-50q-49 50-118 50-68 0-116-48l-118-118q-48-48-48-116t48-116l84-83q47-47 116-47 69 0 116 48l117 118q47 47 47 116 0 70-50 119l50 50q49-50 118-50 68 0 116 48l118 118q48 48 48 116z"
 };
@@ -2165,7 +2174,7 @@ _model.LinkMark.register("command", {
   active: function active() {
     return true;
   },
-  icon: linkIcon
+  display: linkIcon
 });
 
 // ;; #path=schema:link:set #kind=command
@@ -2179,7 +2188,7 @@ _model.LinkMark.register("command", {
 // **`title`**`: string`
 //   : The link's title.
 //
-// Adds itself to the inline [menu](#FIXME). Only selects itself when
+// Adds itself to the inline [menu group](#CommandSpec.menuGroup). Only selects itself when
 // `unlink` isn't selected, so that only one of the two is visible in
 // the menu at any time.
 
@@ -2194,7 +2203,7 @@ _model.LinkMark.register("command", {
     return markApplies(pm, this) && !markActive(pm, this);
   },
   menuGroup: "inline(30)",
-  icon: linkIcon
+  display: linkIcon
   // FIXME pre-fill params when a single link is selected
   // (If parameter pre-filling is going to continue working like that)
 });
@@ -2212,7 +2221,7 @@ _model.LinkMark.register("command", {
 // **`title`**`: string`
 //   : A title for the image.
 //
-// Registers itself in the inline [menu](#FIXME).
+// Registers itself in the inline [menu group](#CommandSpec.menuGroup).
 
 _model.Image.register("command", {
   name: "insert",
@@ -2225,7 +2234,8 @@ _model.Image.register("command", {
     return pm.doc.path(pm.selection.from.path).type.canContainType(this);
   },
   menuGroup: "inline(40)",
-  icon: {
+  display: {
+    type: "icon",
     width: 1097, height: 1024,
     path: "M365 329q0 45-32 77t-77 32-77-32-32-77 32-77 77-32 77 32 32 77zM950 548v256h-804v-109l182-182 91 91 292-292zM1005 146h-914q-7 0-12 5t-5 12v694q0 7 5 12t12 5h914q7 0 12-5t5-12v-694q0-7-5-12t-12-5zM1097 164v694q0 37-26 64t-64 26h-914q-37 0-64-26t-26-64v-694q0-37 26-64t64-26h914q37 0 64 26t26 64z"
   },
@@ -2536,7 +2546,7 @@ function joinPointAbove(pm) {
 //
 // **Keybindings:** Alt-Up
 //
-// Registers itself in the block [menu](#FIXME)
+// Registers itself in the block [menu group](#CommandSpec.menuGroup)
 
 defineCommand({
   name: "joinUp",
@@ -2552,7 +2562,8 @@ defineCommand({
     return joinPointAbove(pm);
   },
   menuGroup: "block(80)",
-  icon: {
+  display: {
+    type: "icon",
     width: 800, height: 900,
     path: "M0 75h800v125h-800z M0 825h800v-125h-800z M250 400h100v-100h100v100h100v100h-100v100h-100v-100h-100z"
   },
@@ -2595,7 +2606,7 @@ defineCommand({
 //
 // **Keybindings:** Alt-Left
 //
-// Registers itself in the block [menu](#FIXME).
+// Registers itself in the block [menu group](#CommandSpec.menuGroup).
 
 defineCommand({
   name: "lift",
@@ -2615,7 +2626,8 @@ defineCommand({
     return (0, _transform.canLift)(pm.doc, from, to);
   },
   menuGroup: "block(75)",
-  icon: {
+  display: {
+    type: "icon",
     width: 1024, height: 1024,
     path: "M219 310v329q0 7-5 12t-12 5q-8 0-13-5l-164-164q-5-5-5-13t5-13l164-164q5-5 13-5 7 0 12 5t5 12zM1024 749v109q0 7-5 12t-12 5h-987q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h987q7 0 12 5t5 12zM1024 530v109q0 7-5 12t-12 5h-621q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h621q7 0 12 5t5 12zM1024 310v109q0 7-5 12t-12 5h-621q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h621q7 0 12 5t5 12zM1024 91v109q0 7-5 12t-12 5h-987q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h987q7 0 12 5t5 12z"
   },
@@ -2659,14 +2671,15 @@ _model.NodeType.deriveableCommands.wrap = function (conf) {
 //
 // **Keybindings:** Alt-Right '*', Alt-Right '-'
 //
-// Registers itself in the block [menu](#FIXME).
+// Registers itself in the block [menu group](#CommandSpec.menuGroup).
 
 _model.BulletList.register("command", {
   name: "wrap",
   derive: true,
   labelName: "bullet list",
   menuGroup: "block(40)",
-  icon: {
+  display: {
+    type: "icon",
     width: 768, height: 896,
     path: "M0 512h128v-128h-128v128zM0 256h128v-128h-128v128zM0 768h128v-128h-128v128zM256 512h512v-128h-512v128zM256 256h512v-128h-512v128zM256 768h512v-128h-512v128z"
   },
@@ -2678,14 +2691,15 @@ _model.BulletList.register("command", {
 //
 // **Keybindings:** Alt-Right '1'
 //
-// Registers itself in the block [menu](#FIXME).
+// Registers itself in the block [menu group](#CommandSpec.menuGroup).
 
 _model.OrderedList.register("command", {
   name: "wrap",
   derive: true,
   labelName: "ordered list",
   menuGroup: "block(41)",
-  icon: {
+  display: {
+    type: "icon",
     width: 768, height: 896,
     path: "M320 512h448v-128h-448v128zM320 768h448v-128h-448v128zM320 128v128h448v-128h-448zM79 384h78v-256h-36l-85 23v50l43-2v185zM189 590c0-36-12-78-96-78-33 0-64 6-83 16l1 66c21-10 42-15 67-15s32 11 32 28c0 26-30 58-110 112v50h192v-67l-91 2c49-30 87-66 87-113l1-1z"
   },
@@ -2697,14 +2711,15 @@ _model.OrderedList.register("command", {
 //
 // **Keybindings:** Alt-Right '>', Alt-Right '"'
 //
-// Registers itself in the block [menu](#FIXME).
+// Registers itself in the block [menu group](#CommandSpec.menuGroup).
 
 _model.BlockQuote.register("command", {
   name: "wrap",
   derive: true,
   labelName: "block quote",
   menuGroup: "block(45)",
-  icon: {
+  display: {
+    type: "icon",
     width: 640, height: 896,
     path: "M0 448v256h256v-256h-128c0 0 0-128 128-128v-128c0 0-256 0-256 256zM640 320v-128c0 0-256 0-256 256v256h256v-256h-128c0 0 0-128 128-128z"
   },
@@ -2942,7 +2957,7 @@ _model.HorizontalRule.register("command", {
 // `type`, which should be a `{type: NodeType, attrs: ?Object}`
 // object, giving the new type and its attributes.
 //
-// Registers itself in the block [menu](#FIXME), where it creates the
+// Registers itself in the block [menu group](#CommandSpec.menuGroup), where it creates the
 // textblock type dropdown.
 
 defineCommand({
@@ -2961,7 +2976,9 @@ defineCommand({
     return !node || node.isTextblock;
   },
   params: [{ label: "Type", type: "select", options: listTextblockTypes, "default": currentTextblockType, defaultLabel: "Type..." }],
-  display: "select",
+  display: {
+    type: "param"
+  },
   menuGroup: "block(10)"
 });
 
@@ -3005,7 +3022,7 @@ function currentTextblockType(pm) {
   for (var i = 0; i < types.length; i++) {
     var tp = types[i],
         val = tp.value;
-    if (node.hasMarkup(val.type, val.attrs)) return tp;
+    if (node.hasMarkup(val.type, val.attrs)) return tp.value;
   }
 }
 
@@ -3023,7 +3040,7 @@ function nodeAboveSelection(pm) {
 //
 // **Keybindings:** Esc
 //
-// Registers itself in the block [menu](#FIXME).
+// Registers itself in the block [menu group](#CommandSpec.menuGroup).
 defineCommand({
   name: "selectParentNode",
   label: "Select parent node",
@@ -3036,7 +3053,7 @@ defineCommand({
     return nodeAboveSelection(pm);
   },
   menuGroup: "block(90)",
-  icon: { text: "⬚", style: "font-weight: bold; vertical-align: 20%" },
+  display: { type: "icon", text: "⬚", style: "font-weight: bold; vertical-align: 20%" },
   keys: ["Esc"]
 });
 
@@ -3193,7 +3210,7 @@ defineCommand({
 //
 // **Keybindings:** Mod-Z
 //
-// Registers itself in the history [menu](#FIXME).
+// Registers itself in the history [menu group](#CommandSpec.menuGroup).
 
 defineCommand({
   name: "undo",
@@ -3205,7 +3222,8 @@ defineCommand({
     return pm.history.canUndo();
   },
   menuGroup: "history(10)",
-  icon: {
+  display: {
+    type: "icon",
     width: 1024, height: 1024,
     path: "M761 1024c113-206 132-520-313-509v253l-384-384 384-384v248c534-13 594 472 313 775z"
   },
@@ -3217,7 +3235,7 @@ defineCommand({
 //
 // **Keybindings:** Mod-Y, Shift-Mod-Z
 //
-// Registers itself in the history [menu](#FIXME).
+// Registers itself in the history [menu group](#CommandSpec.menuGroup).
 
 defineCommand({
   name: "redo",
@@ -3229,13 +3247,14 @@ defineCommand({
     return pm.history.canRedo();
   },
   menuGroup: "history(20)",
-  icon: {
+  display: {
+    type: "icon",
     width: 1024, height: 1024,
     path: "M576 248v-248l384 384-384 384v-253c-446-10-427 303-313 509-280-303-221-789 313-775z"
   },
   keys: ["Mod-Y", "Shift-Mod-Z"]
 });
-},{"../dom":7,"../model":27,"../transform":39,"../util/sortedinsert":51,"./char":9,"./keys":17,"./selection":21}],11:[function(require,module,exports){
+},{"../dom":7,"../model":30,"../transform":36,"../util/sortedinsert":48,"./char":9,"./selection":20,"browserkeymap":49}],11:[function(require,module,exports){
 "use strict";
 
 var _dom = require("../dom");
@@ -3253,7 +3272,7 @@ exports.textInContext = textInContext;
 
 var _model = require("../model");
 
-var _parseDom = require("../parse/dom");
+var _format = require("../format");
 
 var _transformTree = require("../transform/tree");
 
@@ -3290,7 +3309,7 @@ function parseNearSelection(pm) {
       if (fromStart && startOffset > 0) startOffset--;
       var endOffset = depth == to.depth ? to.offset : to.path[depth] + 1;
       if (toEnd && endOffset < node.size - 1) endOffset++;
-      var parsed = (0, _parseDom.fromDOM)(pm.schema, dom, { topNode: node.copy(),
+      var parsed = (0, _format.fromDOM)(pm.schema, dom, { topNode: node.copy(),
         from: startOffset,
         to: dom.childNodes.length - (node.size - endOffset) });
       parsed = parsed.copy(node.content.slice(0, startOffset).append(parsed.content).append(node.content.slice(endOffset)));
@@ -3421,7 +3440,7 @@ function scanText(start, end) {
     cur = cur.firstChild || nodeAfter(cur);
   }
 }
-},{"../model":27,"../parse/dom":32,"../transform/tree":47,"./selection":21}],13:[function(require,module,exports){
+},{"../format":23,"../model":30,"../transform/tree":44,"./selection":20}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3432,7 +3451,7 @@ exports.redraw = redraw;
 
 var _model = require("../model");
 
-var _serializeDom = require("../serialize/dom");
+var _format = require("../format");
 
 var _dom = require("../dom");
 
@@ -3501,7 +3520,7 @@ function splitSpan(span, at) {
 
 function draw(pm, doc) {
   pm.content.textContent = "";
-  pm.content.appendChild((0, _serializeDom.toDOM)(doc, options([], pm.ranges.activeRangeTracker())));
+  pm.content.appendChild((0, _format.toDOM)(doc, options([], pm.ranges.activeRangeTracker())));
 }
 
 function adjustTrailingHacks(dom, node) {
@@ -3555,15 +3574,17 @@ function redraw(pm, dirty, doc, prev) {
         reuseDOM = true;
       } else if (pChild && !child.isText && child.sameMarkup(pChild) && dirty.get(pChild) != _main.DIRTY_REDRAW) {
         reuseDOM = true;
-        var contentNode = domPos;
-        for (;;) {
-          var first = contentNode.firstChild;
-          if (!first || first.hasAttribute("pm-ignore") || first.hasAttribute("pm-offset")) break;
-          contentNode = first;
+        if (pChild.type.contains) {
+          var contentNode = domPos;
+          for (;;) {
+            var first = contentNode.firstChild;
+            if (!first || first.hasAttribute("pm-ignore") || first.hasAttribute("pm-offset")) break;
+            contentNode = first;
+          }
+          scan(contentNode, child, pChild);
         }
-        scan(contentNode, child, pChild);
       } else {
-        var rendered = (0, _serializeDom.renderNodeToDOM)(child, opts, offset);
+        var rendered = (0, _format.nodeToDOM)(child, opts, offset);
         dom.insertBefore(rendered, domPos);
         reuseDOM = false;
       }
@@ -3584,7 +3605,7 @@ function redraw(pm, dirty, doc, prev) {
   }
   scan(pm.content, doc, prev);
 }
-},{"../dom":7,"../model":27,"../serialize/dom":35,"./main":18}],14:[function(require,module,exports){
+},{"../dom":7,"../format":23,"../model":30,"./main":17}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4066,7 +4087,7 @@ var History = (function () {
 })();
 
 exports.History = History;
-},{"../model":27,"../transform":39}],15:[function(require,module,exports){
+},{"../model":30,"../transform":36}],15:[function(require,module,exports){
 // !! This module implements the ProseMirror editor. It contains
 // functionality related to editing, selection, and integration with
 // the browser. `ProseMirror` is the class you'll want to instantiate
@@ -4077,6 +4098,12 @@ exports.History = History;
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
+var _browserkeymap = require("browserkeymap");
+
+var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
 
 var _main = require("./main");
 
@@ -4102,27 +4129,6 @@ Object.defineProperty(exports, "Range", {
   enumerable: true,
   get: function get() {
     return _selection.Range;
-  }
-});
-
-var _keys = require("./keys");
-
-Object.defineProperty(exports, "Keymap", {
-  enumerable: true,
-  get: function get() {
-    return _keys.Keymap;
-  }
-});
-Object.defineProperty(exports, "keyName", {
-  enumerable: true,
-  get: function get() {
-    return _keys.keyName;
-  }
-});
-Object.defineProperty(exports, "keyNames", {
-  enumerable: true,
-  get: function get() {
-    return _keys.keyNames;
   }
 });
 
@@ -4155,7 +4161,8 @@ Object.defineProperty(exports, "Command", {
     return _commands.Command;
   }
 });
-},{"./commands":10,"./keys":17,"./main":18,"./options":19,"./range":20,"./selection":21}],16:[function(require,module,exports){
+exports.Keymap = _browserkeymap2["default"];
+},{"./commands":10,"./main":17,"./options":18,"./range":19,"./selection":20,"browserkeymap":49}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4166,23 +4173,19 @@ var _createClass = (function () { function defineProperties(target, props) { for
 
 exports.dispatchKey = dispatchKey;
 
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { "default": obj }; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var _browserkeymap = require("browserkeymap");
+
+var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
 
 var _model = require("../model");
 
-var _parseDom = require("../parse/dom");
-
-var _parseText = require("../parse/text");
+var _format = require("../format");
 
 var _dom = require("../dom");
-
-var _serializeDom = require("../serialize/dom");
-
-var _serializeText = require("../serialize/text");
-
-var _parse = require("../parse");
-
-var _keys = require("./keys");
 
 var _capturekeys = require("./capturekeys");
 
@@ -4272,7 +4275,7 @@ function dispatchKey(pm, name, e) {
   var seq = pm.input.keySeq;
   // If the previous key should be used in sequence with this one, modify the name accordingly.
   if (seq) {
-    if ((0, _keys.isModifierKey)(name)) return true;
+    if (_browserkeymap2["default"].isModifierKey(name)) return true;
     clearTimeout(stopSeq);
     stopSeq = setTimeout(function () {
       if (pm.input.keySeq == seq) pm.input.keySeq = null;
@@ -4318,7 +4321,7 @@ function dispatchKey(pm, name, e) {
 handlers.keydown = function (pm, e) {
   if (e.keyCode == 16) pm.input.shiftKey = true;
   if (pm.input.composing) return;
-  var name = (0, _keys.keyName)(e);
+  var name = _browserkeymap2["default"].keyName(e);
   if (name && dispatchKey(pm, name, e)) return;
   pm.sel.pollForUpdate();
 };
@@ -4330,9 +4333,7 @@ handlers.keyup = function (pm, e) {
 function inputText(pm, range, text) {
   if (range.empty && !text) return false;
   var marks = pm.input.storedMarks || pm.doc.marksAt(range.from);
-  var tr = pm.tr;
-  tr.replaceWith(range.from, range.to, pm.schema.text(text, marks)).apply();
-  pm.scrollIntoView();
+  pm.tr.replaceWith(range.from, range.to, pm.schema.text(text, marks)).apply({ scrollIntoView: true });
   // :: () #path=ProseMirror#events#textInput
   // Fired when the user types text into the editor.
   pm.signal("textInput", text);
@@ -4340,14 +4341,13 @@ function inputText(pm, range, text) {
 
 handlers.keypress = function (pm, e) {
   if (pm.input.composing || !e.charCode || e.ctrlKey && !e.altKey || _dom.browser.mac && e.metaKey) return;
-  var ch = String.fromCharCode(e.charCode);
-  if (dispatchKey(pm, "'" + ch + "'", e)) return;
+  if (dispatchKey(pm, _browserkeymap2["default"].keyName(e))) return;
   var sel = pm.selection;
   if (sel.node && sel.node.contains == null) {
     pm.tr["delete"](sel.from, sel.to).apply();
     sel = pm.selection;
   }
-  inputText(pm, sel, ch);
+  inputText(pm, sel, String.fromCharCode(e.charCode));
   e.preventDefault();
 };
 
@@ -4398,17 +4398,16 @@ handlers.mousedown = function (pm, e) {
     }
     return;
   }
-  if (pm.input.shiftKey || doubleClick) return;
+  var leaveToBrowser = pm.input.shiftKey || doubleClick;
 
   var x = e.clientX,
-      y = e.clientY,
-      moved = false;
+      y = e.clientY;
   var up = function up() {
     removeEventListener("mouseup", up);
     removeEventListener("mousemove", move);
     if ((0, _selection.handleNodeClick)(pm, e)) return;
 
-    var pos = !moved && (0, _selection.selectableNodeAbove)(pm, e.target, { left: e.clientX, top: e.clientY });
+    var pos = !leaveToBrowser && (0, _selection.selectableNodeAbove)(pm, e.target, { left: e.clientX, top: e.clientY });
     if (pos) {
       pm.setNodeSelection(pos);
       pm.focus();
@@ -4417,7 +4416,7 @@ handlers.mousedown = function (pm, e) {
     }
   };
   var move = function move(e) {
-    if (!moved && (Math.abs(x - e.clientX) > 4 || Math.abs(y - e.clientY) > 4)) moved = true;
+    if (!leaveToBrowser && (Math.abs(x - e.clientX) > 4 || Math.abs(y - e.clientY) > 4)) leaveToBrowser = true;
     pm.sel.pollForUpdate();
   };
   addEventListener("mouseup", up);
@@ -4512,8 +4511,8 @@ handlers.copy = handlers.cut = function (pm, e) {
   if (empty) return;
   var fragment = pm.selectedDoc;
   lastCopied = { doc: pm.doc, from: from, to: to,
-    html: (0, _serializeDom.toHTML)(fragment),
-    text: (0, _serializeText.toText)(fragment) };
+    html: (0, _format.toHTML)(fragment),
+    text: (0, _format.toText)(fragment) };
 
   if (e.clipboardData) {
     e.preventDefault();
@@ -4535,16 +4534,16 @@ handlers.paste = function (pm, e) {
         from = undefined,
         to = undefined;
     if (pm.input.shiftKey && txt) {
-      doc = (0, _parseText.fromText)(pm.schema, txt);
+      doc = (0, _format.fromText)(pm.schema, txt);
     } else if (lastCopied && (lastCopied.html == html || lastCopied.text == txt)) {
       ;var _lastCopied = lastCopied;
       doc = _lastCopied.doc;
       from = _lastCopied.from;
       to = _lastCopied.to;
     } else if (html) {
-      doc = (0, _parseDom.fromHTML)(pm.schema, html);
+      doc = (0, _format.fromHTML)(pm.schema, html);
     } else {
-      doc = (0, _parse.parseFrom)(pm.schema, txt, (0, _parse.knownSource)("markdown") ? "markdown" : "text");
+      doc = (0, _format.parseFrom)(pm.schema, txt, (0, _format.knownSource)("markdown") ? "markdown" : "text");
     }
     pm.tr.replace(sel.from, sel.to, doc, from || (0, _selection.findSelectionAtStart)(doc).from, to || (0, _selection.findSelectionAtEnd)(doc).to).apply();
     pm.scrollIntoView();
@@ -4556,8 +4555,8 @@ handlers.dragstart = function (pm, e) {
 
   var fragment = pm.selectedDoc;
 
-  e.dataTransfer.setData("text/html", (0, _serializeDom.toHTML)(fragment));
-  e.dataTransfer.setData("text/plain", (0, _serializeText.toText)(fragment));
+  e.dataTransfer.setData("text/html", (0, _format.toHTML)(fragment));
+  e.dataTransfer.setData("text/plain", (0, _format.toText)(fragment));
   pm.input.draggingFrom = true;
 };
 
@@ -4596,7 +4595,7 @@ handlers.drop = function (pm, e) {
   var html = undefined,
       txt = undefined,
       doc = undefined;
-  if (html = e.dataTransfer.getData("text/html")) doc = (0, _parseDom.fromHTML)(pm.schema, html, { document: document });else if (txt = e.dataTransfer.getData("text/plain")) doc = (0, _parse.parseFrom)(pm.schema, txt, (0, _parse.knownSource)("markdown") ? "markdown" : "text");
+  if (html = e.dataTransfer.getData("text/html")) doc = (0, _format.fromHTML)(pm.schema, html, { document: document });else if (txt = e.dataTransfer.getData("text/plain")) doc = (0, _format.parseFrom)(pm.schema, txt, (0, _format.knownSource)("markdown") ? "markdown" : "text");
 
   if (doc) {
     e.preventDefault();
@@ -4626,189 +4625,7 @@ handlers.blur = function (pm) {
   // Fired when the editor loses focus.
   pm.signal("blur");
 };
-},{"../dom":7,"../model":27,"../parse":33,"../parse/dom":32,"../parse/text":34,"../serialize/dom":35,"../serialize/text":37,"./capturekeys":8,"./domchange":12,"./keys":17,"./selection":21}],17:[function(require,module,exports){
-// From CodeMirror, should be factored into its own NPM module
-
-// declare_global: navigator
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-exports.keyName = keyName;
-exports.isModifierKey = isModifierKey;
-exports.normalizeKeyName = normalizeKeyName;
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var mac = typeof navigator != "undefined" ? /Mac/.test(navigator.platform) : false;
-
-// :: Object<string>
-// A map from key codes to key names.
-var keyNames = {
-  3: "Enter", 8: "Backspace", 9: "Tab", 13: "Enter", 16: "Shift", 17: "Ctrl", 18: "Alt",
-  19: "Pause", 20: "CapsLock", 27: "Esc", 32: "Space", 33: "PageUp", 34: "PageDown", 35: "End",
-  36: "Home", 37: "Left", 38: "Up", 39: "Right", 40: "Down", 44: "PrintScrn", 45: "Insert",
-  46: "Delete", 59: ";", 61: "=", 91: "Mod", 92: "Mod", 93: "Mod",
-  106: "*", 107: "=", 109: "-", 110: ".", 111: "/", 127: "Delete",
-  173: "-", 186: ";", 187: "=", 188: ",", 189: "-", 190: ".", 191: "/", 192: "`", 219: "[", 220: "\\",
-  221: "]", 222: "'", 63232: "Up", 63233: "Down", 63234: "Left", 63235: "Right", 63272: "Delete",
-  63273: "Home", 63275: "End", 63276: "PageUp", 63277: "PageDown", 63302: "Insert"
-};
-
-exports.keyNames = keyNames;
-// Number keys
-for (var i = 0; i < 10; i++) {
-  keyNames[i + 48] = keyNames[i + 96] = String(i);
-} // Alphabetic keys
-for (var i = 65; i <= 90; i++) {
-  keyNames[i] = String.fromCharCode(i);
-} // Function keys
-for (var i = 1; i <= 12; i++) {
-  keyNames[i + 111] = keyNames[i + 63235] = "F" + i;
-} // :: (KeyboardEvent) → ?string
-// Find a name for the given keydown event. If the keycode in the
-// event is not known, this will return `null`. Otherwise, it will
-// return a string like `"Shift-Cmd-Ctrl-Alt-Home"`. The parts before
-// the dashes give the modifiers (always in that order, if present),
-// and the last word gives the key name, which one of the names in
-// `keyNames`.
-//
-// The convention for keypress events is to use the pressed character
-// between single quotes. Due to limitations in the browser API,
-// keypress events can not have modifiers.
-
-function keyName(event) {
-  var base = keyNames[event.keyCode],
-      name = base;
-  if (name == null || event.altGraphKey) return null;
-
-  if (event.altKey && base != "Alt") name = "Alt-" + name;
-  if (event.ctrlKey && base != "Ctrl") name = "Ctrl-" + name;
-  if (event.metaKey && base != "Cmd") name = "Cmd-" + name;
-  if (event.shiftKey && base != "Shift") name = "Shift-" + name;
-  return name;
-}
-
-// :: (string) → bool
-// Test whether the given key name refers to a modifier key.
-
-function isModifierKey(name) {
-  name = /[^-]*$/.exec(name)[0];
-  return name == "Ctrl" || name == "Alt" || name == "Shift" || name == "Mod";
-}
-
-// :: (string) → string
-// Normalize a sloppy key name, which may have modifiers in the wrong
-// order or use shorthands for modifiers, to a properly formed key
-// name. Used to normalize names provided in keymaps.
-//
-// Note that the modifier `mod` is a shorthand for `Cmd` on Mac, and
-// `Ctrl` on other platforms.
-
-function normalizeKeyName(name) {
-  var parts = name.split(/-(?!'?$)/),
-      result = parts[parts.length - 1];
-  var alt = undefined,
-      ctrl = undefined,
-      shift = undefined,
-      cmd = undefined;
-  for (var i = 0; i < parts.length - 1; i++) {
-    var mod = parts[i];
-    if (/^(cmd|meta|m)$/i.test(mod)) cmd = true;else if (/^a(lt)?$/i.test(mod)) alt = true;else if (/^(c|ctrl|control)$/i.test(mod)) ctrl = true;else if (/^s(hift)$/i.test(mod)) shift = true;else if (/^mod$/i.test(mod)) {
-      if (mac) cmd = true;else ctrl = true;
-    } else throw new Error("Unrecognized modifier name: " + mod);
-  }
-  if (alt) result = "Alt-" + result;
-  if (ctrl) result = "Ctrl-" + result;
-  if (cmd) result = "Cmd-" + result;
-  if (shift) result = "Shift-" + result;
-  return result;
-}
-
-// ;; A keymap binds a set of [key names](#keyName) to commands names
-// or functions.
-
-var Keymap = (function () {
-  // :: (Object, ?Object)
-  // Construct a keymap using the bindings in `keys`, whose properties
-  // should be [key names](#keyName) or space-separated sequences of
-  // key names. In the second case, the binding will be for a
-  // multi-stroke key combination.
-  //
-  // When `options` has a property `call`, this will be a programmatic
-  // keymap, meaning that instead of looking keys up in its set of
-  // bindings, it will pass the key name to `options.call`, and use
-  // the return value of that calls as the resolved binding.
-  //
-  // `options.name` can be used to give the keymap a name, making it
-  // easier to [remove](#ProseMirror.removeKeymap) from an editor.
-
-  function Keymap(keys, options) {
-    _classCallCheck(this, Keymap);
-
-    this.options = options || {};
-    this.bindings = Object.create(null);
-    if (keys) for (var keyname in keys) {
-      if (Object.prototype.hasOwnProperty.call(keys, keyname)) this.addBinding(keyname, keys[keyname]);
-    }
-  }
-
-  // :: (string, any)
-  // Add a binding for the given key or key sequence.
-
-  _createClass(Keymap, [{
-    key: "addBinding",
-    value: function addBinding(keyname, value) {
-      var keys = keyname.split(/ +(?!\'$)/).map(normalizeKeyName);
-      for (var i = 0; i < keys.length; i++) {
-        var _name = keys.slice(0, i + 1).join(" ");
-        var val = i == keys.length - 1 ? value : "...";
-        var prev = this.bindings[_name];
-        if (!prev) this.bindings[_name] = val;else if (prev != val) throw new Error("Inconsistent bindings for " + _name);
-      }
-    }
-
-    // :: (string)
-    // Remove the binding for the given key or key sequence.
-  }, {
-    key: "removeBinding",
-    value: function removeBinding(keyname) {
-      var keys = keyname.split(/ +(?!\'$)/).map(normalizeKeyName);
-      for (var i = keys.length - 1; i >= 0; i--) {
-        var _name2 = keys.slice(0, i).join(" ");
-        var val = this.bindings[_name2];
-        if (val == "..." && !this.unusedMulti(_name2)) break;else if (val) delete this.bindings[_name2];
-      }
-    }
-  }, {
-    key: "unusedMulti",
-    value: function unusedMulti(name) {
-      for (var binding in this.bindings) {
-        if (binding.length > name && binding.indexOf(name) == 0 && binding.charAt(name.length) == " ") return false;
-      }return true;
-    }
-
-    // :: (string, ?any) → any
-    // Looks up the given key or key sequence in this keymap. Returns
-    // the value the key is bound to (which may be undefined if it is
-    // not bound), or the string `"..."` if the key is a prefix of a
-    // multi-key sequence that is bound by this keymap.
-  }, {
-    key: "lookup",
-    value: function lookup(key, context) {
-      return this.options.call ? this.options.call(key, context) : this.bindings[key];
-    }
-  }]);
-
-  return Keymap;
-})();
-
-exports.Keymap = Keymap;
-},{}],18:[function(require,module,exports){
+},{"../dom":7,"../format":23,"../model":30,"./capturekeys":8,"./domchange":12,"./selection":20,"browserkeymap":49}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4827,6 +4644,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 require("./css");
 
+var _browserkeymap = require("browserkeymap");
+
+var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
+
 var _model = require("../model");
 
 var _transform = require("../transform");
@@ -4841,13 +4662,7 @@ var _utilEvent = require("../util/event");
 
 var _dom = require("../dom");
 
-var _serializeText = require("../serialize/text");
-
-require("../parse/text");
-
-var _parse = require("../parse");
-
-var _serialize = require("../serialize");
+var _format = require("../format");
 
 var _options = require("./options");
 
@@ -4862,8 +4677,6 @@ var _history = require("./history");
 var _commands = require("./commands");
 
 var _range = require("./range");
-
-var _keys = require("./keys");
 
 // ;; This is the class used to represent instances of the editor. A
 // ProseMirror editor holds a [document](#Node) and a
@@ -4882,6 +4695,8 @@ var ProseMirror = (function () {
   function ProseMirror(opts) {
     _classCallCheck(this, ProseMirror);
 
+    (0, _dom.ensureCSSAdded)();
+
     opts = this.options = (0, _options.parseOptions)(opts);
     // :: Schema
     // The schema for this editor's document.
@@ -4897,7 +4712,7 @@ var ProseMirror = (function () {
 
     if (opts.place && opts.place.appendChild) opts.place.appendChild(this.wrapper);else if (opts.place) opts.place(this.wrapper);
 
-    this.setDocInner(opts.docFormat ? (0, _parse.parseFrom)(this.schema, opts.doc, opts.docFormat) : opts.doc);
+    this.setDocInner(opts.docFormat ? (0, _format.parseFrom)(this.schema, opts.doc, opts.docFormat) : opts.doc);
     (0, _draw.draw)(this, this.doc);
     this.content.contentEditable = true;
     if (opts.label) this.content.setAttribute("aria-label", opts.label);
@@ -4957,13 +4772,13 @@ var ProseMirror = (function () {
 
     // :: (string) → bool
     // Test whether the given string corresponds to any of the
-    // [namespaces](#namespaces) enabled for this editor.
+    // [includes](#include) enabled for this editor.
   }, {
-    key: "isInNamespace",
-    value: function isInNamespace(name) {
-      for (var i = 0; i < this.options.namespaces.length; i++) {
-        var ns = this.options.namespaces[i];
-        var match = ns == "default" ? name.indexOf(":") == -1 : name.indexOf(ns) == 0 && name.charAt(ns.length) == ":";
+    key: "isIncluded",
+    value: function isIncluded(name) {
+      for (var i = 0; i < this.options.include.length; i++) {
+        var ns = this.options.include[i];
+        var match = ns == "default" ? name.indexOf(":") == -1 : name == ns || name.indexOf(ns) == 0 && name.charAt(ns.length) == ":";
         if (match) return true;
       }
     }
@@ -5023,7 +4838,7 @@ var ProseMirror = (function () {
   }, {
     key: "setContent",
     value: function setContent(value, format) {
-      if (format) value = (0, _parse.parseFrom)(this.schema, value, format);
+      if (format) value = (0, _format.parseFrom)(this.schema, value, format);
       this.setDoc(value);
     }
 
@@ -5034,7 +4849,7 @@ var ProseMirror = (function () {
   }, {
     key: "getContent",
     value: function getContent(format) {
-      return format ? (0, _serialize.serializeTo)(this.doc, format) : this.doc;
+      return format ? (0, _format.serializeTo)(this.doc, format) : this.doc;
     }
   }, {
     key: "setDocInner",
@@ -5380,7 +5195,7 @@ var ProseMirror = (function () {
       if (!cmd) return this.commandKeys[name] = null;
       var key = cmd.spec.key || (_dom.browser.mac ? cmd.spec.macKey : cmd.spec.pcKey);
       if (key) {
-        key = (0, _keys.normalizeKeyName)(Array.isArray(key) ? key[0] : key);
+        key = _browserkeymap2["default"].normalizeKeyName(Array.isArray(key) ? key[0] : key);
         var deflt = keymap.bindings[key];
         if (Array.isArray(deflt) ? deflt.indexOf(name) > -1 : deflt == name) return this.commandKeys[name] = key;
       }
@@ -5447,7 +5262,7 @@ var ProseMirror = (function () {
   }, {
     key: "selectedText",
     get: function get() {
-      return (0, _serializeText.toText)(this.selectedDoc);
+      return (0, _format.toText)(this.selectedDoc);
     }
   }]);
 
@@ -5564,7 +5379,7 @@ var EditorTransform = (function (_Transform) {
 
   return EditorTransform;
 })(_transform.Transform);
-},{"../dom":7,"../model":27,"../parse":33,"../parse/text":34,"../serialize":36,"../serialize/text":37,"../transform":39,"../util/event":49,"../util/map":50,"../util/sortedinsert":51,"./commands":10,"./css":11,"./draw":13,"./history":14,"./input":16,"./keys":17,"./options":19,"./range":20,"./selection":21}],19:[function(require,module,exports){
+},{"../dom":7,"../format":23,"../model":30,"../transform":36,"../util/event":46,"../util/map":47,"../util/sortedinsert":48,"./commands":10,"./css":11,"./draw":13,"./history":14,"./input":16,"./options":18,"./range":19,"./selection":20,"browserkeymap":49}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5648,26 +5463,26 @@ defineOption("commands", {}, function (pm) {
   return pm.updateCommands();
 }, false);
 
-// :: [string] #path=namespaces #kind=option
-// An array of namespaces that are enabled for this editor. These are
-// used to filter [commands](#defineCommand) and [input
-// rules](#defineInputRule) so that you can define these without
-// having them show up in every editor.
+// :: [string] #path=include #kind=option
+// An array of included names or namespaces that are enabled for this
+// editor. These are used to filter [commands](#defineCommand) and
+// [input rules](#defineInputRule) so that you can define these
+// without having them show up in every editor.
 //
-// A namespaced name looks like `"space:name"` or `"space:sub:name"`.
-// Those would, for example, only show up if the namespace `"space"`
-// is chosen. Names without a colon are considered part of the
-// `"default"` namespace. Commands and input rules associated with
-// schema [nodes](#NodeType) or [marks](#MarkType) will be namespaced
-// under `"schema:"` and then the name of the element they are
-// associated with, for example `"schema:horizontal_rule:insert"`.
+// An item named `"space:name"` would only be included in the editor
+// if either the namespace `"space"` is included, or the full name
+// `"space:name"` is. Item names without a colon are considered part
+// of the `"default"` namespace. Commands and input rules associated
+// with schema [nodes](#NodeType) or [marks](#MarkType) will be
+// namespaced under `"schema:"` and then the name of the element they
+// are associated with, for example `"schema:horizontal_rule:insert"`.
 //
 // This option's default value is `["default", "schema"]`, including
 // all the ‘top level’ items and those associated with schema
 // elements, but nothing else.
 //
 // See also `ProseMirror.isInNamespace`.
-defineOption("namespaces", ["default", "schema"], function (pm) {
+defineOption("include", ["default", "schema"], function (pm) {
   return pm.updateCommands();
 }, false);
 
@@ -5711,7 +5526,7 @@ function setOption(pm, name, value) {
   pm.options[name] = value;
   if (desc.update) desc.update(pm, value, old, false);
 }
-},{"../model":27}],20:[function(require,module,exports){
+},{"../model":30}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5913,7 +5728,7 @@ var RangeTracker = (function () {
 
   return RangeTracker;
 })();
-},{"../util/event":49}],21:[function(require,module,exports){
+},{"../util/event":46}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6709,7 +6524,7 @@ function setDOMSelectionToPos(pm, pos) {
   sel.removeAllRanges();
   sel.addRange(range);
 }
-},{"../dom":7,"../model":27}],22:[function(require,module,exports){
+},{"../dom":7,"../model":30}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6718,132 +6533,585 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
+exports.fromDOM = fromDOM;
+exports.fromHTML = fromHTML;
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _dom = require("../dom");
+var _model = require("../model");
 
-var prefix = "ProseMirror-tooltip";
+var _register = require("./register");
 
-var Tooltip = (function () {
-  function Tooltip(pm, dir) {
-    var _this = this;
+// :: (Schema, DOMNode, ?Object) → Node
+// Parse document from the content of a DOM node. To pass an explicit
+// parent document (for example, when not in a browser window
+// environment, where we simply use the global document), pass it as
+// the `document` property of `options`.
 
-    _classCallCheck(this, Tooltip);
+function fromDOM(schema, dom, options) {
+  if (!options) options = {};
+  var context = new DOMParseState(schema, options.topNode || schema.node("doc"), options);
+  var start = options.from ? dom.childNodes[options.from] : dom.firstChild;
+  var end = options.to != null && dom.childNodes[options.to] || null;
+  context.addAll(start, end, true);
+  var doc = undefined;
+  while (context.stack.length) doc = context.leave();
+  return doc;
+}
 
-    this.pm = pm;
-    this.dir = dir || "above";
-    this.pointer = pm.wrapper.appendChild((0, _dom.elt)("div", { "class": prefix + "-pointer-" + this.dir + " " + prefix + "-pointer" }));
-    this.pointerWidth = this.pointerHeight = null;
-    this.dom = pm.wrapper.appendChild((0, _dom.elt)("div", { "class": prefix }));
-    this.dom.addEventListener("transitionend", function () {
-      if (_this.dom.style.opacity == "0") _this.dom.style.display = _this.pointer.style.display = "";
-    });
+// ;; #path=DOMParseSpec #kind=interface #toc=false
+// To define the way [node](#NodeType) and [mark](#MarkType) types are
+// parsed, you can associate one or more DOM parsing specifications to
+// them using the [`register`](#SchemaItem.register) method with the
+// `parseDOM` property name. Each of them defines a parsing strategy
+// for a certain type of DOM node.
+//
+// Note that `Attribute`s may also contain a `parseDOM` property,
+// which should _not_ be a `DOMParseSpec`, but simply a function that
+// computes the attribute's value from a DOM node.
 
-    this.isOpen = false;
-    this.lastLeft = this.lastRight = null;
+// :: ?string #path=DOMParseSpec.tag
+// The (lower-case) tag name for which to activate this parser. When
+// not given, it is activated for all nodes.
+
+// :: ?number #path=DOMParseSpec.rank
+// The precedence of this parsing strategy. Should be a number between
+// 0 and 100, which determines when this parser gets a chance relative
+// to others that apply to the node (low ranks go first). Defaults to
+// 50.
+
+// :: union<string, (dom: DOMNode, state: DOMParseState) → ?bool> #path=DOMParseSpec.parse
+// The function that, given a DOM node, parses it, updating the parse
+// state. It should return (the exact value) `false` when it wants to
+// indicate that it was not able to parse this node. This function is
+// called in such a way that `this` is bound to the type that the
+// parse spec was associated with.
+//
+// When this is set to the string `"block"`, the content of the DOM
+// node is parsed as the content in a node of the type that this spec
+// was associated with.
+//
+// When set to the string `"mark"`, the content of the DOM node is
+// parsed with an instance of the mark that this spec was associated
+// with added to their marks.
+
+(0, _register.defineSource)("dom", fromDOM);
+
+// :: (Schema, string, ?Object) → Node
+// Parses the HTML into a DOM, and then calls through to `fromDOM`.
+
+function fromHTML(schema, html, options) {
+  var wrap = (options && options.document || window.document).createElement("div");
+  wrap.innerHTML = html;
+  return fromDOM(schema, wrap, options);
+}
+
+(0, _register.defineSource)("html", fromHTML);
+
+var blockElements = {
+  address: true, article: true, aside: true, blockquote: true, canvas: true,
+  dd: true, div: true, dl: true, fieldset: true, figcaption: true, figure: true,
+  footer: true, form: true, h1: true, h2: true, h3: true, h4: true, h5: true,
+  h6: true, header: true, hgroup: true, hr: true, li: true, noscript: true, ol: true,
+  output: true, p: true, pre: true, section: true, table: true, tfoot: true, ul: true
+};
+
+var noMarks = [];
+
+// ;; #toc=false A state object used to track context during a parse,
+// and to expose methods to custom parsing functions.
+
+var DOMParseState = (function () {
+  function DOMParseState(schema, topNode, options) {
+    _classCallCheck(this, DOMParseState);
+
+    // :: Object The options passed to this parse.
+    this.options = options || {};
+    // :: Schema The schema that we are parsing into.
+    this.schema = schema;
+    this.stack = [];
+    this.marks = noMarks;
+    this.closing = false;
+    this.enter(topNode.type, topNode.attrs);
+    this.nodeInfo = nodeInfo(schema);
   }
 
-  _createClass(Tooltip, [{
-    key: "detach",
-    value: function detach() {
-      this.dom.parentNode.removeChild(this.dom);
-      this.pointer.parentNode.removeChild(this.pointer);
-    }
-  }, {
-    key: "getSize",
-    value: function getSize(node) {
-      var wrap = this.pm.wrapper.appendChild((0, _dom.elt)("div", {
-        "class": prefix,
-        style: "display: block; position: absolute"
-      }, node));
-      var size = { width: wrap.offsetWidth, height: wrap.offsetHeight };
-      wrap.parentNode.removeChild(wrap);
-      return size;
-    }
-  }, {
-    key: "open",
-    value: function open(node, pos) {
-      var left = this.lastLeft = pos ? pos.left : this.lastLeft;
-      var top = this.lastTop = pos ? pos.top : this.lastTop;
-
-      var size = this.getSize(node);
-
-      var around = this.pm.wrapper.getBoundingClientRect();
-
-      for (var child = this.dom.firstChild, next = undefined; child; child = next) {
-        next = child.nextSibling;
-        if (child != this.pointer) this.dom.removeChild(child);
-      }
-      this.dom.appendChild(node);
-
-      this.dom.style.display = this.pointer.style.display = "block";
-
-      if (this.pointerWidth == null) {
-        this.pointerWidth = this.pointer.offsetWidth - 1;
-        this.pointerHeight = this.pointer.offsetHeight - 1;
-      }
-
-      this.dom.style.width = size.width + "px";
-      this.dom.style.height = size.height + "px";
-
-      var margin = 5;
-      if (this.dir == "above" || this.dir == "below") {
-        var tipLeft = Math.max(0, Math.min(left - size.width / 2, window.innerWidth - size.width));
-        this.dom.style.left = tipLeft - around.left + "px";
-        this.pointer.style.left = left - around.left - this.pointerWidth / 2 + "px";
-        if (this.dir == "above") {
-          var tipTop = top - around.top - margin - this.pointerHeight - size.height;
-          this.dom.style.top = tipTop + "px";
-          this.pointer.style.top = tipTop + size.height + "px";
-        } else {
-          // below
-          var tipTop = top - around.top + margin;
-          this.pointer.style.top = tipTop + "px";
-          this.dom.style.top = tipTop + this.pointerHeight + "px";
+  _createClass(DOMParseState, [{
+    key: "addDOM",
+    value: function addDOM(dom) {
+      if (dom.nodeType == 3) {
+        // FIXME define a coherent strategy for dealing with trailing, leading, and multiple spaces (this isn't one)
+        var value = dom.nodeValue;
+        var _top = this.top,
+            last = undefined;
+        if (/\S/.test(value) || _top.type.isTextblock) {
+          value = value.replace(/\s+/g, " ");
+          if (/^\s/.test(value) && (last = _top.content[_top.content.length - 1]) && last.type.name == "text" && /\s$/.test(last.text)) value = value.slice(1);
+          if (value) this.insertNode(this.schema.text(value, this.marks));
         }
-      } else if (this.dir == "left" || this.dir == "right") {
-        this.dom.style.top = top - around.top - size.height / 2 + "px";
-        this.pointer.style.top = top - this.pointerHeight / 2 - around.top + "px";
-        if (this.dir == "left") {
-          var pointerLeft = left - around.left - margin - this.pointerWidth;
-          this.dom.style.left = pointerLeft - size.width + "px";
-          this.pointer.style.left = pointerLeft + "px";
-        } else {
-          // right
-          var pointerLeft = left - around.left + margin;
-          this.dom.style.left = pointerLeft + this.pointerWidth + "px";
-          this.pointer.style.left = pointerLeft + "px";
+      } else if (dom.nodeType != 1 || dom.hasAttribute("pm-ignore")) {
+        // Ignore non-text non-element nodes
+      } else if (!this.parseNodeType(dom)) {
+          this.addAll(dom.firstChild, null);
+          var _name = dom.nodeName.toLowerCase();
+          if (blockElements.hasOwnProperty(_name) && this.top.type == this.schema.defaultTextblockType()) this.closing = true;
         }
-      } else if (this.dir == "center") {
-        var _top = Math.max(around.top, 0),
-            bottom = Math.min(around.bottom, window.innerHeight);
-        var fromTop = (bottom - _top - size.height) / 2;
-        this.dom.style.left = (around.width - size.width) / 2 + "px";
-        this.dom.style.top = _top - around.top + fromTop + "px";
-      }
-
-      getComputedStyle(this.dom).opacity;
-      getComputedStyle(this.pointer).opacity;
-      this.dom.style.opacity = this.pointer.style.opacity = 1;
-      this.isOpen = true;
     }
   }, {
-    key: "close",
-    value: function close() {
-      if (this.isOpen) {
-        this.isOpen = false;
-        this.dom.style.opacity = this.pointer.style.opacity = 0;
+    key: "tryParsers",
+    value: function tryParsers(parsers, dom) {
+      if (parsers) for (var i = 0; i < parsers.length; i++) {
+        var parser = parsers[i];
+        if (parser.parse.call(parser.type, dom, this) !== false) return true;
       }
+    }
+  }, {
+    key: "parseNodeType",
+    value: function parseNodeType(dom) {
+      return this.tryParsers(this.nodeInfo[dom.nodeName.toLowerCase()], dom) || this.tryParsers(this.nodeInfo._, dom);
+    }
+  }, {
+    key: "addAll",
+    value: function addAll(from, to, sync) {
+      var stack = sync && this.stack.slice();
+      for (var dom = from; dom != to; dom = dom.nextSibling) {
+        this.addDOM(dom);
+        if (sync && blockElements.hasOwnProperty(dom.nodeName.toLowerCase())) this.sync(stack);
+      }
+    }
+  }, {
+    key: "doClose",
+    value: function doClose() {
+      if (!this.closing || this.stack.length < 2) return;
+      var left = this.leave();
+      this.enter(left.type, left.attrs);
+      this.closing = false;
+    }
+  }, {
+    key: "insertNode",
+    value: function insertNode(node) {
+      if (this.top.type.canContain(node)) {
+        this.doClose();
+      } else {
+        for (var i = this.stack.length - 1; i >= 0; i--) {
+          var route = this.stack[i].type.findConnection(node.type);
+          if (!route) continue;
+          if (i == this.stack.length - 1) {
+            this.doClose();
+          } else {
+            while (this.stack.length > i + 1) this.leave();
+          }
+          for (var j = 0; j < route.length; j++) {
+            this.enter(route[j]);
+          }if (this.marks.length) this.marks = noMarks;
+          break;
+        }
+      }
+      this.top.content.push(node);
+      return node;
+    }
+
+    // :: (DOMNode, NodeType, ?Object, [Node]) → Node
+    // Insert a node of the given type, with the given content, based on
+    // `dom`, at the current position in the document.
+  }, {
+    key: "insert",
+    value: function insert(type, attrs, content) {
+      return this.insertNode(type.createAutoFill(attrs, content, this.marks));
+    }
+  }, {
+    key: "enter",
+    value: function enter(type, attrs) {
+      if (this.marks.length) this.marks = noMarks;
+      this.stack.push({ type: type, attrs: attrs, content: [] });
+    }
+  }, {
+    key: "leave",
+    value: function leave() {
+      var top = this.stack.pop();
+      var node = top.type.createAutoFill(top.attrs, top.content);
+      if (this.stack.length) this.insertNode(node);
+      return node;
+    }
+  }, {
+    key: "sync",
+    value: function sync(stack) {
+      while (this.stack.length > stack.length) this.leave();
+      for (;;) {
+        var n = this.stack.length - 1,
+            one = this.stack[n],
+            two = stack[n];
+        if (one.type == two.type && _model.Node.sameAttrs(one.attrs, two.attrs)) break;
+        this.leave();
+      }
+      while (stack.length > this.stack.length) {
+        var add = stack[this.stack.length];
+        this.enter(add.type, add.attrs);
+      }
+      if (this.marks.length) this.marks = noMarks;
+      this.closing = false;
+    }
+
+    // :: (DOMNode, NodeType, ?Object)
+    // Parse the contents of `dom` as children of a node of the given
+    // type.
+  }, {
+    key: "wrapIn",
+    value: function wrapIn(dom, type, attrs) {
+      this.enter(type, attrs);
+      this.addAll(dom.firstChild, null, true);
+      this.leave();
+    }
+
+    // :: (DOMNode, Mark)
+    // Parse the contents of `dom`, with `mark` added to the set of
+    // current marks.
+  }, {
+    key: "wrapMark",
+    value: function wrapMark(dom, mark) {
+      var old = this.marks;
+      this.marks = (mark.instance || mark).addToSet(old);
+      this.addAll(dom.firstChild, null);
+      this.marks = old;
+    }
+  }, {
+    key: "top",
+    get: function get() {
+      return this.stack[this.stack.length - 1];
     }
   }]);
 
-  return Tooltip;
+  return DOMParseState;
 })();
 
-exports.Tooltip = Tooltip;
+function nodeInfo(schema) {
+  return schema.cached.parseDOMNodes || (schema.cached.parseDOMNodes = summarizeNodeInfo(schema));
+}
 
-(0, _dom.insertCSS)("\n\n.ProseMirror-tooltip {\n  position: absolute;\n  display: none;\n  box-sizing: border-box;\n  -moz-box-sizing: border- box;\n  overflow: hidden;\n\n  -webkit-transition: width 0.4s ease-out, height 0.4s ease-out, left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  -moz-transition: width 0.4s ease-out, height 0.4s ease-out, left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  transition: width 0.4s ease-out, height 0.4s ease-out, left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  opacity: 0;\n\n  border-radius: 5px;\n  padding: 3px 7px;\n  margin: 0;\n  background: #444;\n  border-color: #777;\n  color: white;\n\n  z-index: 11;\n}\n\n.ProseMirror-tooltip-pointer {\n  content: \"\";\n  position: absolute;\n  display: none;\n  width: 0; height: 0;\n\n  -webkit-transition: left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  -moz-transition: left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  transition: left 0.4s ease-out, top 0.4s ease-out, opacity 0.2s;\n  opacity: 0;\n\n  z-index: 12;\n}\n\n.ProseMirror-tooltip-pointer-above {\n  border-left: 6px solid transparent;\n  border-right: 6px solid transparent;\n  border-top: 6px solid #444;\n}\n\n.ProseMirror-tooltip-pointer-below {\n  border-left: 6px solid transparent;\n  border-right: 6px solid transparent;\n  border-bottom: 6px solid #444;\n}\n\n.ProseMirror-tooltip-pointer-right {\n  border-top: 6px solid transparent;\n  border-bottom: 6px solid transparent;\n  border-right: 6px solid #444;\n}\n\n.ProseMirror-tooltip-pointer-left {\n  border-top: 6px solid transparent;\n  border-bottom: 6px solid transparent;\n  border-left: 6px solid #444;\n}\n\n.ProseMirror-tooltip input[type=\"text\"],\n.ProseMirror-tooltip textarea {\n  background: #666;\n  color: white;\n  border: none;\n  outline: none;\n}\n\n.ProseMirror-tooltip input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n");
-},{"../dom":7}],23:[function(require,module,exports){
+function summarizeNodeInfo(schema) {
+  var tags = Object.create(null);
+  tags._ = [];
+  schema.registry("parseDOM", function (info, type) {
+    var tag = info.tag || "_";
+    var parse = info.parse;
+    if (parse == "block") parse = function (dom, state) {
+      state.wrapIn(dom, this);
+    };else if (parse == "mark") parse = function (dom, state) {
+      state.wrapMark(dom, this);
+    };(tags[tag] || (tags[tag] = [])).push({
+      type: type, parse: parse,
+      rank: info.rank == null ? 50 : info.rank
+    });
+  });
+  for (var tag in tags) {
+    tags[tag].sort(function (a, b) {
+      return a.rank - b.rank;
+    });
+  }return tags;
+}
+
+_model.Paragraph.register("parseDOM", { tag: "p", parse: "block" });
+
+_model.BlockQuote.register("parseDOM", { tag: "blockquote", parse: "block" });
+
+var _loop = function (i) {
+  _model.Heading.register("parseDOM", {
+    tag: "h" + i,
+    parse: function parse(dom, state) {
+      state.wrapIn(dom, this, { level: i });
+    }
+  });
+};
+
+for (var i = 1; i <= 6; i++) {
+  _loop(i);
+}_model.HorizontalRule.register("parseDOM", { tag: "hr", parse: "block" });
+
+_model.CodeBlock.register("parseDOM", { tag: "pre", parse: function parse(dom, state) {
+    var params = dom.firstChild && /^code$/i.test(dom.firstChild.nodeName) && dom.firstChild.getAttribute("class");
+    if (params && /fence/.test(params)) {
+      var found = [],
+          re = /(?:^|\s)lang-(\S+)/g,
+          m = undefined;
+      while (m = re.test(params)) found.push(m[1]);
+      params = found.join(" ");
+    } else {
+      params = null;
+    }
+    var text = dom.textContent;
+    state.insert(this, { params: params }, text ? [state.schema.text(text)] : []);
+  } });
+
+_model.BulletList.register("parseDOM", { tag: "ul", parse: "block" });
+
+_model.OrderedList.register("parseDOM", { tag: "ol", parse: function parse(dom, state) {
+    var attrs = { order: dom.getAttribute("start") || 1 };
+    state.wrapIn(dom, this, attrs);
+  } });
+
+_model.ListItem.register("parseDOM", { tag: "li", parse: "block" });
+
+_model.HardBreak.register("parseDOM", { tag: "br", parse: function parse(_, state) {
+    state.insert(this);
+  } });
+
+_model.Image.register("parseDOM", { tag: "img", parse: function parse(dom, state) {
+    state.insert(this, {
+      src: dom.getAttribute("src"),
+      title: dom.getAttribute("title") || null,
+      alt: dom.getAttribute("alt") || null
+    });
+  } });
+
+// Inline style tokens
+
+_model.LinkMark.register("parseDOM", { tag: "a", parse: function parse(dom, state) {
+    var href = dom.getAttribute("href");
+    if (!href) return false;
+    state.wrapMark(dom, this.create({ href: href, title: dom.getAttribute("title") }));
+  } });
+
+_model.EmMark.register("parseDOM", { tag: "i", parse: "mark" });
+_model.EmMark.register("parseDOM", { tag: "em", parse: "mark" });
+
+_model.StrongMark.register("parseDOM", { tag: "b", parse: "mark" });
+_model.StrongMark.register("parseDOM", { tag: "strong", parse: "mark" });
+
+_model.CodeMark.register("parseDOM", { tag: "code", parse: "mark" });
+},{"../model":30,"./register":24}],22:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.fromText = fromText;
+
+var _register = require("./register");
+
+// FIXME is it meaningful to try and attach text-parsing information
+// to node types?
+
+// :: (Schema, string) → Node
+// Convert a string into a simple ProseMirror document.
+
+function fromText(schema, text) {
+  var blocks = text.trim().split(/\n{2,}/);
+  var nodes = [];
+  for (var i = 0; i < blocks.length; i++) {
+    var spans = [];
+    var parts = blocks[i].split("\n");
+    for (var j = 0; j < parts.length; j++) {
+      if (j) spans.push(schema.node("hard_break"));
+      if (parts[j]) spans.push(schema.text(parts[j]));
+    }
+    nodes.push(schema.node("paragraph", null, spans));
+  }
+  if (!nodes.length) nodes.push(schema.node("paragraph"));
+  return schema.node("doc", null, nodes);
+}
+
+(0, _register.defineSource)("text", fromText);
+},{"./register":24}],23:[function(require,module,exports){
+// !! This module provides a way to register and access functions that
+// serialize and parse ProseMirror [documents](#Node) to and from
+// various formats, along with the basic formats required to run the
+// editor.
+//
+// These are the formats defined by this module:
+//
+// **`"json"`**
+//   : Uses `Node.toJSON` and `Schema.nodeFromJSON` to convert a
+//     document to and from JSON.
+//
+// **`"dom"`**
+//   : Parses [DOM
+//     Nodes](https://developer.mozilla.org/en-US/docs/Web/API/Node),
+//     serializes to a [DOM
+//     fragment](https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment).
+//     See `toDOM` and `fromDOM`.
+//
+// **`"html"`**
+//   : Serialize to and parse from HTML text. See `toHTML` and `fromHTML`.
+//
+// **`"text"`**
+//   : Convert to and from plain text. See `toText` and `fromText`.
+//
+// The [`markdown`](#markdown) module in the distribution defines an additional format:
+//
+// **`"markdown"`**
+//   : Convert to and from [CommonMark](http://commonmark.org/) marked-up
+//     text. See `toMarkdown` and `fromMarkdown`.
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _register = require("./register");
+
+Object.defineProperty(exports, "serializeTo", {
+  enumerable: true,
+  get: function get() {
+    return _register.serializeTo;
+  }
+});
+Object.defineProperty(exports, "knownTarget", {
+  enumerable: true,
+  get: function get() {
+    return _register.knownTarget;
+  }
+});
+Object.defineProperty(exports, "defineTarget", {
+  enumerable: true,
+  get: function get() {
+    return _register.defineTarget;
+  }
+});
+Object.defineProperty(exports, "parseFrom", {
+  enumerable: true,
+  get: function get() {
+    return _register.parseFrom;
+  }
+});
+Object.defineProperty(exports, "knownSource", {
+  enumerable: true,
+  get: function get() {
+    return _register.knownSource;
+  }
+});
+Object.defineProperty(exports, "defineSource", {
+  enumerable: true,
+  get: function get() {
+    return _register.defineSource;
+  }
+});
+
+var _from_dom = require("./from_dom");
+
+Object.defineProperty(exports, "fromDOM", {
+  enumerable: true,
+  get: function get() {
+    return _from_dom.fromDOM;
+  }
+});
+Object.defineProperty(exports, "fromHTML", {
+  enumerable: true,
+  get: function get() {
+    return _from_dom.fromHTML;
+  }
+});
+
+var _to_dom = require("./to_dom");
+
+Object.defineProperty(exports, "toDOM", {
+  enumerable: true,
+  get: function get() {
+    return _to_dom.toDOM;
+  }
+});
+Object.defineProperty(exports, "toHTML", {
+  enumerable: true,
+  get: function get() {
+    return _to_dom.toHTML;
+  }
+});
+Object.defineProperty(exports, "nodeToDOM", {
+  enumerable: true,
+  get: function get() {
+    return _to_dom.nodeToDOM;
+  }
+});
+
+var _from_text = require("./from_text");
+
+Object.defineProperty(exports, "fromText", {
+  enumerable: true,
+  get: function get() {
+    return _from_text.fromText;
+  }
+});
+
+var _to_text = require("./to_text");
+
+Object.defineProperty(exports, "toText", {
+  enumerable: true,
+  get: function get() {
+    return _to_text.toText;
+  }
+});
+},{"./from_dom":21,"./from_text":22,"./register":24,"./to_dom":25,"./to_text":26}],24:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.serializeTo = serializeTo;
+exports.knownTarget = knownTarget;
+exports.defineTarget = defineTarget;
+exports.parseFrom = parseFrom;
+exports.knownSource = knownSource;
+exports.defineSource = defineSource;
+var serializers = Object.create(null);
+
+// :: (Node, string, ?Object) → any
+// Serialize the given document to the given format. If `options` is
+// given, it will be passed along to the serializer function.
+
+function serializeTo(doc, format, options) {
+  var converter = serializers[format];
+  if (!converter) throw new Error("Target format " + format + " not defined");
+  return converter(doc, options);
+}
+
+// :: (string) → bool
+// Query whether a given serialization format has been registered.
+
+function knownTarget(format) {
+  return !!serializers[format];
+}
+
+// :: (string, (Node, ?Object) → any)
+// Register a function as the serializer for `format`.
+
+function defineTarget(format, func) {
+  serializers[format] = func;
+}
+
+defineTarget("json", function (doc) {
+  return doc.toJSON();
+});
+
+var parsers = Object.create(null);
+
+// :: (Schema, any, string, ?Object) → Node
+// Parse document `value` from the format named by `format`. If
+// `options` is given, it is passed along to the parser function.
+
+function parseFrom(schema, value, format, options) {
+  var converter = parsers[format];
+  if (!converter) throw new Error("Source format " + format + " not defined");
+  return converter(schema, value, options);
+}
+
+// :: (string) → bool
+// Query whether a parser for the named format has been registered.
+
+function knownSource(format) {
+  return !!parsers[format];
+}
+
+// :: (string, (Schema, any, ?Object) → Node)
+// Register a parser function for `format`.
+
+function defineSource(format, func) {
+  parsers[format] = func;
+}
+
+defineSource("json", function (schema, json) {
+  return schema.nodeFromJSON(json);
+});
+},{}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6852,94 +7120,327 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
+exports.toDOM = toDOM;
+exports.nodeToDOM = nodeToDOM;
+exports.toHTML = toHTML;
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var MIN_FLUSH_DELAY = 200;
-var UPDATE_TIMEOUT = 200;
+var _model = require("../model");
 
-var MenuUpdate = (function () {
-  function MenuUpdate(pm, events, prepare) {
-    var _this = this;
+var _register = require("./register");
 
-    _classCallCheck(this, MenuUpdate);
+// ;; #toc=false Object used to to expose relevant values and methods
+// to DOM serializer functions.
 
-    this.pm = pm;
-    this.prepare = prepare;
+var DOMSerializer = (function () {
+  function DOMSerializer(options) {
+    _classCallCheck(this, DOMSerializer);
 
-    this.mustUpdate = false;
-    this.updateInfo = null;
-    this.timeout = null;
-    this.lastFlush = 0;
-
-    this.events = events.split(" ");
-    this.onEvent = this.onEvent.bind(this);
-    this.force = this.force.bind(this);
-    this.events.forEach(function (event) {
-      return pm.on(event, _this.onEvent);
-    });
-    pm.on("flush", this.onFlush = this.onFlush.bind(this));
-    pm.on("flushed", this.onFlushed = this.onFlushed.bind(this));
+    // :: Object The options passed to the serializer.
+    this.options = options || {};
+    // :: DOMDocument The DOM document in which we are working.
+    this.doc = this.options.document || window.document;
   }
 
-  _createClass(MenuUpdate, [{
-    key: "detach",
-    value: function detach() {
+  // :: (Node, ?Object) → DOMFragment
+  // Serialize the content of the given node to a DOM fragment. When not
+  // in the browser, the `document` option, containing a DOM document,
+  // should be passed so that the serialize can create nodes.
+  //
+  // To define rendering behavior for your own [node](#NodeType) and
+  // [mark](#MarkType) types, give them a `serializeDOM` method. This
+  // method is passed a `Node` and a `DOMSerializer`, and should return
+  // the [DOM
+  // node](https://developer.mozilla.org/en-US/docs/Web/API/Node) that
+  // represents this node and its content. For marks, that should be an
+  // inline wrapping node like `<a>` or `<strong>`.
+  //
+  // Individual attributes can also define serialization behavior. If an
+  // `Attribute` object has a `serializeDOM` method, that will be called
+  // with the DOM node representing the node that the attribute applies
+  // to and the atttribute's value, so that it can set additional DOM
+  // attributes on the DOM node.
+
+  // :: (string, ?Object, ...union<string, DOMNode>) → DOMNode
+  // Create a DOM node of the given type, with (optionally) the given
+  // attributes and content. Content elements may be strings (for text
+  // nodes) or other DOM nodes.
+
+  _createClass(DOMSerializer, [{
+    key: "elt",
+    value: function elt(type, attrs) {
+      var result = this.doc.createElement(type);
+      if (attrs) for (var _name in attrs) {
+        if (_name == "style") result.style.cssText = attrs[_name];else if (attrs[_name]) result.setAttribute(_name, attrs[_name]);
+      }
+
+      for (var _len = arguments.length, content = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+        content[_key - 2] = arguments[_key];
+      }
+
+      for (var i = 0; i < content.length; i++) {
+        result.appendChild(typeof content[i] == "string" ? this.doc.createTextNode(content[i]) : content[i]);
+      }return result;
+    }
+  }, {
+    key: "renderNode",
+    value: function renderNode(node, offset) {
+      var dom = node.type.serializeDOM(node, this);
+      if (this.options.onRender) dom = this.options.onRender(node, dom, offset) || dom;
+      return dom;
+    }
+  }, {
+    key: "renderContent",
+    value: function renderContent(node, where) {
+      if (!where) where = this.doc.createDocumentFragment();
+      if (!node.isTextblock) this.renderBlocksInto(node, where);else if (this.options.renderInlineFlat) this.renderInlineFlatInto(node, where);else this.renderInlineInto(node, where);
+      return where;
+    }
+  }, {
+    key: "renderBlocksInto",
+    value: function renderBlocksInto(parent, where) {
+      for (var i = parent.iter(), child = undefined; child = i.next().value;) {
+        if (this.options.path) this.options.path.push(i.offset - child.width);
+        where.appendChild(this.renderNode(child, i.offset - child.width));
+        if (this.options.path) this.options.path.pop();
+      }
+    }
+  }, {
+    key: "renderInlineInto",
+    value: function renderInlineInto(parent, where) {
+      var _this = this;
+
+      var top = where;
+      var active = [];
+      parent.forEach(function (node, offset) {
+        var keep = 0;
+        for (; keep < Math.min(active.length, node.marks.length); ++keep) if (!node.marks[keep].eq(active[keep])) break;
+        while (keep < active.length) {
+          active.pop();
+          top = top.parentNode;
+        }
+        while (active.length < node.marks.length) {
+          var add = node.marks[active.length];
+          active.push(add);
+          top = top.appendChild(_this.renderMark(add));
+        }
+        top.appendChild(_this.renderNode(node, offset));
+      });
+    }
+  }, {
+    key: "renderInlineFlatInto",
+    value: function renderInlineFlatInto(parent, where) {
       var _this2 = this;
 
-      clearTimeout(this.timeout);
-      this.events.forEach(function (event) {
-        return _this2.pm.off(event, _this2.onEvent);
+      parent.forEach(function (node, start) {
+        var dom = _this2.renderNode(node, start);
+        dom = _this2.wrapInlineFlat(dom, node.marks);
+        dom = _this2.options.renderInlineFlat(node, dom, start) || dom;
+        where.appendChild(dom);
       });
-      this.pm.off("flush", this.onFlush);
-      this.pm.off("flushed", this.onFlushed);
     }
   }, {
-    key: "onFlush",
-    value: function onFlush() {
-      var now = Date.now();
-      if (this.mustUpdate && now - this.lastFlush >= MIN_FLUSH_DELAY) {
-        this.lastFlush = now;
-        clearTimeout(this.timeout);
-        this.mustUpdate = false;
-        this.update = this.prepare();
+    key: "renderMark",
+    value: function renderMark(mark) {
+      return mark.type.serializeDOM(mark, this);
+    }
+  }, {
+    key: "wrapInlineFlat",
+    value: function wrapInlineFlat(dom, marks) {
+      for (var i = marks.length - 1; i >= 0; i--) {
+        var wrap = this.renderMark(marks[i]);
+        wrap.appendChild(dom);
+        dom = wrap;
       }
+      return dom;
     }
+
+    // :: (Node, string, ?Object) → DOMNode
+    // Render the content of ProseMirror node into a DOM node with the
+    // given tag name and attributes.
   }, {
-    key: "onFlushed",
-    value: function onFlushed() {
-      if (this.update) {
-        this.update();
-        this.update = null;
-      }
-    }
-  }, {
-    key: "onEvent",
-    value: function onEvent() {
-      this.mustUpdate = true;
-      clearTimeout(this.timeout);
-      this.timeout = setTimeout(this.force, UPDATE_TIMEOUT);
-    }
-  }, {
-    key: "force",
-    value: function force() {
-      if (this.pm.operation) {
-        this.onEvent();
-      } else {
-        this.mustUpdate = false;
-        this.updateInfo = null;
-        this.lastFlush = Date.now();
-        clearTimeout(this.timeout);
-        var update = this.prepare();
-        if (update) update();
-      }
+    key: "renderAs",
+    value: function renderAs(node, tagName, tagAttrs) {
+      return this.renderContent(node, this.elt(tagName, tagAttrs));
     }
   }]);
 
-  return MenuUpdate;
+  return DOMSerializer;
 })();
 
-exports.MenuUpdate = MenuUpdate;
-},{}],24:[function(require,module,exports){
+function toDOM(node, options) {
+  return new DOMSerializer(options).renderContent(node);
+}
+
+(0, _register.defineTarget)("dom", toDOM);
+
+// :: (Node, ?Object) → DOMNode
+// Serialize a given node to a DOM node. This is useful when you need
+// to serialize a part of a document, as opposed to the whole
+// document.
+
+function nodeToDOM(node, options, offset) {
+  var serializer = new DOMSerializer(options);
+  var dom = serializer.renderNode(node, offset);
+  if (node.isInline) {
+    dom = serializer.wrapInlineFlat(dom, node.marks);
+    if (serializer.options.renderInlineFlat) dom = options.renderInlineFlat(node, dom, offset) || dom;
+  }
+  return dom;
+}
+
+// :: (Node, ?Object) → string
+// Serialize a node as an HTML string. Goes through `toDOM` and then
+// serializes the result. Again, you must pass a `document` option
+// when not in the browser.
+
+function toHTML(node, options) {
+  var serializer = new DOMSerializer(options);
+  var wrap = serializer.elt("div");
+  wrap.appendChild(serializer.renderContent(node));
+  return wrap.innerHTML;
+}
+
+(0, _register.defineTarget)("html", toHTML);
+
+// Block nodes
+
+function def(cls, method) {
+  cls.prototype.serializeDOM = method;
+}
+
+def(_model.BlockQuote, function (node, s) {
+  return s.renderAs(node, "blockquote");
+});
+
+_model.BlockQuote.prototype.countCoordsAsChild = function (_, path, dom, coords) {
+  var childBox = dom.firstChild.getBoundingClientRect();
+  if (coords.left < childBox.left - 2) return _model.Pos.from(path);
+};
+
+def(_model.BulletList, function (node, s) {
+  return s.renderAs(node, "ul");
+});
+
+def(_model.OrderedList, function (node, s) {
+  return s.renderAs(node, "ol", { start: node.attrs.order != "1" && node.attrs.order });
+});
+
+_model.OrderedList.prototype.countCoordsAsChild = _model.BulletList.prototype.countCoordsAsChild = function (_, path, dom, coords) {
+  for (var i = 0; i < dom.childNodes.length; i++) {
+    var child = dom.childNodes[i];
+    if (!child.hasAttribute("pm-offset")) continue;
+    var childBox = child.getBoundingClientRect();
+    if (coords.left > childBox.left - 2) return null;
+    if (childBox.top <= coords.top && childBox.bottom >= coords.top) return new _model.Pos(path, i);
+  }
+};
+
+def(_model.ListItem, function (node, s) {
+  return s.renderAs(node, "li");
+});
+
+def(_model.HorizontalRule, function (_, s) {
+  return s.elt("hr");
+});
+
+def(_model.Paragraph, function (node, s) {
+  return s.renderAs(node, "p");
+});
+
+def(_model.Heading, function (node, s) {
+  return s.renderAs(node, "h" + node.attrs.level);
+});
+
+def(_model.CodeBlock, function (node, s) {
+  var code = s.renderAs(node, "code");
+  if (node.attrs.params != null) code.className = "fence " + node.attrs.params.replace(/(^|\s+)/g, "$&lang-");
+  return s.elt("pre", null, code);
+});
+
+// Inline content
+
+def(_model.Text, function (node, s) {
+  return s.doc.createTextNode(node.text);
+});
+
+def(_model.Image, function (node, s) {
+  return s.elt("img", {
+    src: node.attrs.src,
+    alt: node.attrs.alt,
+    title: node.attrs.title
+  });
+});
+
+def(_model.HardBreak, function (_, s) {
+  return s.elt("br");
+});
+
+// Inline styles
+
+def(_model.EmMark, function (_, s) {
+  return s.elt("em");
+});
+
+def(_model.StrongMark, function (_, s) {
+  return s.elt("strong");
+});
+
+def(_model.CodeMark, function (_, s) {
+  return s.elt("code");
+});
+
+def(_model.LinkMark, function (mark, s) {
+  return s.elt("a", { href: mark.attrs.href,
+    title: mark.attrs.title });
+});
+},{"../model":30,"./register":24}],26:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.toText = toText;
+
+var _model = require("../model");
+
+var _register = require("./register");
+
+_model.Block.prototype.serializeText = function (node) {
+  var accum = "";
+  node.forEach(function (child) {
+    return accum += child.type.serializeText(child);
+  });
+  return accum;
+};
+
+_model.Textblock.prototype.serializeText = function (node) {
+  var text = _model.Block.prototype.serializeText(node);
+  return text && text + "\n\n";
+};
+
+_model.Inline.prototype.serializeText = function () {
+  return "";
+};
+
+_model.HardBreak.prototype.serializeText = function () {
+  return "\n";
+};
+
+_model.Text.prototype.serializeText = function (node) {
+  return node.text;
+};
+
+// :: (Node) → string
+// Serialize a node as a plain text string.
+
+function toText(doc) {
+  return doc.type.serializeText(doc).trim();
+}
+
+(0, _register.defineTarget)("text", toText);
+},{"../model":30,"./register":24}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6970,9 +7471,9 @@ var Doc = (function (_Block) {
   // ;; #toc=false The default blockquote node type.
 
   _createClass(Doc, null, [{
-    key: "kind",
+    key: "kinds",
     get: function get() {
-      return ".";
+      return "doc";
     }
   }]);
 
@@ -7007,15 +7508,22 @@ var OrderedList = (function (_Block3) {
     _get(Object.getPrototypeOf(OrderedList.prototype), "constructor", this).apply(this, arguments);
   }
 
+  // ;; #toc=false The default bullet list node type.
+
   _createClass(OrderedList, [{
+    key: "contains",
+    get: function get() {
+      return "list_item";
+    }
+  }, {
     key: "isList",
     get: function get() {
       return true;
     }
-  }], [{
-    key: "contains",
+  }, {
+    key: "attrs",
     get: function get() {
-      return "list_item";
+      new _schema.Attribute({ "default": "1" });
     }
   }]);
 
@@ -7023,10 +7531,6 @@ var OrderedList = (function (_Block3) {
 })(_schema.Block);
 
 exports.OrderedList = OrderedList;
-
-OrderedList.attributes = { order: new _schema.Attribute({ "default": "1" }) };
-
-// ;; #toc=false The default bullet list node type.
 
 var BulletList = (function (_Block4) {
   _inherits(BulletList, _Block4);
@@ -7040,14 +7544,14 @@ var BulletList = (function (_Block4) {
   // ;; #toc=false The default list item node type.
 
   _createClass(BulletList, [{
-    key: "isList",
-    get: function get() {
-      return true;
-    }
-  }], [{
     key: "contains",
     get: function get() {
       return "list_item";
+    }
+  }, {
+    key: "isList",
+    get: function get() {
+      return true;
     }
   }]);
 
@@ -7068,9 +7572,9 @@ var ListItem = (function (_Block5) {
   // ;; #toc=false The default horizontal rule node type.
 
   _createClass(ListItem, null, [{
-    key: "kind",
+    key: "kinds",
     get: function get() {
-      return ".";
+      return "list_item";
     }
   }]);
 
@@ -7091,7 +7595,7 @@ var HorizontalRule = (function (_Block6) {
   // ;; #toc=false The default heading node type. Has a single attribute
   // `level`, which indicates the heading level, and defaults to 1.
 
-  _createClass(HorizontalRule, null, [{
+  _createClass(HorizontalRule, [{
     key: "contains",
     get: function get() {
       return null;
@@ -7112,15 +7616,20 @@ var Heading = (function (_Textblock) {
     _get(Object.getPrototypeOf(Heading.prototype), "constructor", this).apply(this, arguments);
   }
 
+  // ;; #toc=false The default code block / listing node type. Only
+  // allows unmarked text nodes inside of it.
+
+  _createClass(Heading, [{
+    key: "attrs",
+    get: function get() {
+      return { level: new _schema.Attribute({ "default": "1" }) };
+    }
+  }]);
+
   return Heading;
 })(_schema.Textblock);
 
 exports.Heading = Heading;
-
-Heading.attributes = { level: new _schema.Attribute({ "default": "1" }) };
-
-// ;; #toc=false The default code block / listing node type. Only
-// allows unmarked text nodes inside of it.
 
 var CodeBlock = (function (_Textblock2) {
   _inherits(CodeBlock, _Textblock2);
@@ -7134,6 +7643,11 @@ var CodeBlock = (function (_Textblock2) {
   // ;; #toc=false The default paragraph node type.
 
   _createClass(CodeBlock, [{
+    key: "contains",
+    get: function get() {
+      return "text";
+    }
+  }, {
     key: "containsMarks",
     get: function get() {
       return false;
@@ -7142,11 +7656,6 @@ var CodeBlock = (function (_Textblock2) {
     key: "isCode",
     get: function get() {
       return true;
-    }
-  }], [{
-    key: "contains",
-    get: function get() {
-      return "text";
     }
   }]);
 
@@ -7192,18 +7701,23 @@ var Image = (function (_Inline) {
     _get(Object.getPrototypeOf(Image.prototype), "constructor", this).apply(this, arguments);
   }
 
+  // ;; #toc=false The default hard break node type.
+
+  _createClass(Image, [{
+    key: "attrs",
+    get: function get() {
+      return {
+        src: new _schema.Attribute(),
+        alt: new _schema.Attribute({ "default": "" }),
+        title: new _schema.Attribute({ "default": "" })
+      };
+    }
+  }]);
+
   return Image;
 })(_schema.Inline);
 
 exports.Image = Image;
-
-Image.attributes = {
-  src: new _schema.Attribute(),
-  alt: new _schema.Attribute({ "default": "" }),
-  title: new _schema.Attribute({ "default": "" })
-};
-
-// ;; #toc=false The default hard break node type.
 
 var HardBreak = (function (_Inline2) {
   _inherits(HardBreak, _Inline2);
@@ -7291,7 +7805,17 @@ var LinkMark = (function (_MarkType3) {
     _get(Object.getPrototypeOf(LinkMark.prototype), "constructor", this).apply(this, arguments);
   }
 
-  _createClass(LinkMark, null, [{
+  // ;; #toc=false The default code font mark type.
+
+  _createClass(LinkMark, [{
+    key: "attrs",
+    get: function get() {
+      return {
+        href: new _schema.Attribute(),
+        title: new _schema.Attribute({ "default": "" })
+      };
+    }
+  }], [{
     key: "rank",
     get: function get() {
       return 53;
@@ -7302,13 +7826,6 @@ var LinkMark = (function (_MarkType3) {
 })(_schema.MarkType);
 
 exports.LinkMark = LinkMark;
-
-LinkMark.attributes = {
-  href: new _schema.Attribute(),
-  title: new _schema.Attribute({ "default": "" })
-};
-
-// ;; #toc=false The default code font mark type.
 
 var CodeMark = (function (_MarkType4) {
   _inherits(CodeMark, _MarkType4);
@@ -7364,7 +7881,7 @@ var defaultSpec = new _schema.SchemaSpec({
 // ProseMirror's default document schema.
 var defaultSchema = new _schema.Schema(defaultSpec);
 exports.defaultSchema = defaultSchema;
-},{"./schema":31}],25:[function(require,module,exports){
+},{"./schema":34}],28:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7463,7 +7980,7 @@ function findDiffEnd(a, b) {
   }
   return { a: new _pos.Pos(pathA, offA), b: new _pos.Pos(pathB, offB) };
 }
-},{"./pos":30}],26:[function(require,module,exports){
+},{"./pos":33}],29:[function(require,module,exports){
 // ;; A fragment is an abstract type used to represent a node's
 // collection of child nodes. It tries to hide considerations about
 // the actual way in which the child nodes are stored, so that
@@ -8135,7 +8652,7 @@ if (typeof Symbol != "undefined") {
     return this;
   };
 }
-},{}],27:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 // !!
 // This module defines ProseMirror's document model, the data
 // structure used to define and inspect content documents. It
@@ -8375,7 +8892,7 @@ Object.defineProperty(exports, "findDiffEnd", {
                 return _diff.findDiffEnd;
         }
 });
-},{"./defaultschema":24,"./diff":25,"./fragment":26,"./mark":28,"./node":29,"./pos":30,"./schema":31}],28:[function(require,module,exports){
+},{"./defaultschema":27,"./diff":28,"./fragment":29,"./mark":31,"./node":32,"./pos":33,"./schema":34}],31:[function(require,module,exports){
 // ;; A mark is a piece of information that can be attached to a node,
 // such as it being emphasized, in code font, or a link. It has a type
 // and optionally a set of attributes that provide further information
@@ -8501,7 +9018,7 @@ var Mark = (function () {
 exports.Mark = Mark;
 
 var empty = [];
-},{}],29:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9075,7 +9592,7 @@ function wrapMarks(marks, str) {
     str = marks[i].type.name + "(" + str + ")";
   }return str;
 }
-},{"./fragment":26,"./mark":28,"./pos":30}],30:[function(require,module,exports){
+},{"./fragment":29,"./mark":31,"./pos":33}],33:[function(require,module,exports){
 // ;; Instances of the `Pos` class represent positions in a document.
 // A position an array of integers that describe a path to the target
 // node (see `Node.path`) and an integer offset into that target node.
@@ -9264,14 +9781,12 @@ var Pos = (function () {
 })();
 
 exports.Pos = Pos;
-},{}],31:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-
-var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; })();
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
@@ -9301,75 +9816,122 @@ var SchemaError = (function (_ProseMirrorError) {
     _get(Object.getPrototypeOf(SchemaError.prototype), "constructor", this).apply(this, arguments);
   }
 
+  // ;; #toc=false The [node](#NodeType) and [mark](#MarkType) types
+  // that make up a schema have several things in common—they support
+  // attributes, and you can [register](#SchemaItem.register) values
+  // with them. This class implements this functionality, and acts as a
+  // superclass to those `NodeType` and `MarkType`.
   return SchemaError;
 })(_utilError.ProseMirrorError);
 
 exports.SchemaError = SchemaError;
 
-function findKinds(type, name, schema, override) {
-  function set(sub, sup) {
-    if (sub in schema.kinds) {
-      if (schema.kinds[sub] == sup) return;
-      SchemaError.raise("Inconsistent superkinds for kind " + sub + ": " + sup + " and " + schema.kinds[sub]);
-    }
-    if (schema.subKind(sub, sup)) SchemaError.raise("Conflicting kind hierarchy through " + sub + " and " + sup);
-    schema.kinds[sub] = sup;
+var SchemaItem = (function () {
+  function SchemaItem() {
+    _classCallCheck(this, SchemaItem);
   }
 
-  for (var cur = type;; cur = Object.getPrototypeOf(cur)) {
-    var curKind = override != null && cur == type ? override : cur.kind;
-    if (curKind != null) {
-      var _$$exec = /^(.*?)(\.)?$/.exec(curKind);
+  // ;; Node types are objects allocated once per `Schema`
+  // and used to tag `Node` instances with a type. They are
+  // instances of sub-types of this class, and contain information about
+  // the node type (its name, its allowed attributes, methods for
+  // serializing it to various formats, information to guide
+  // deserialization, and so on).
 
-      var _$$exec2 = _slicedToArray(_$$exec, 3);
+  _createClass(SchemaItem, [{
+    key: "getDefaultAttrs",
 
-      var _ = _$$exec2[0];
-      var kind = _$$exec2[1];
-      var end = _$$exec2[2];
-
-      if (kind) {
-        set(name, kind);
-        name = kind;
+    // For node types where all attrs have a default value (or which don't
+    // have any attributes), build up a single reusable default attribute
+    // object, and use it for all nodes that don't specify specific
+    // attributes.
+    value: function getDefaultAttrs() {
+      var defaults = Object.create(null);
+      for (var attrName in this.attrs) {
+        var attr = this.attrs[attrName];
+        if (attr["default"] == null) return null;
+        defaults[attrName] = attr["default"];
       }
-      if (end) {
-        set(name, null);
-        return;
-      }
+      return defaults;
     }
-  }
-}
+  }, {
+    key: "computeAttrs",
+    value: function computeAttrs(attrs, arg) {
+      var built = Object.create(null);
+      for (var _name in this.attrs) {
+        var value = attrs && attrs[_name];
+        if (value == null) {
+          var attr = this.attrs[_name];
+          if (attr["default"] != null) value = attr["default"];else if (attr.compute) value = attr.compute(this, arg);else SchemaError.raise("No value supplied for attribute " + _name);
+        }
+        built[_name] = value;
+      }
+      return built;
+    }
+  }, {
+    key: "freezeAttrs",
+    value: function freezeAttrs() {
+      var frozen = Object.create(null);
+      for (var _name2 in this.attrs) {
+        frozen[_name2] = this.attrs[_name2];
+      }Object.defineProperty(this, "attrs", { value: frozen });
+    }
 
-// ;; Node types are objects allocated once per `Schema`
-// and used to tag `Node` instances with a type. They are
-// instances of sub-types of this class, and contain information about
-// the node type (its name, its allowed attributes, methods for
-// serializing it to various formats, information to guide
-// deserialization, and so on).
+    // :: (string, *)
+    // Register an element in this type's registry. That is, add `value`
+    // to the array associated with `name` in the registry stored in
+    // type's `prototype`. This is mostly used to attach things like
+    // commands and parsing strategies to node types. See `Schema.registry`.
+  }, {
+    key: "attrs",
 
-var NodeType = (function () {
-  function NodeType(name, contains, attrs, schema) {
+    // :: Object<Attribute>
+    // The set of attributes to associate with each node or mark of this
+    // type.
+    get: function get() {
+      return {};
+    }
+
+    // :: (Object<?Attribute>)
+    // Add or remove attributes from this type. Expects an object
+    // mapping names to either attributes (to add) or null (to remove
+    // the attribute by that name).
+  }], [{
+    key: "updateAttrs",
+    value: function updateAttrs(attrs) {
+      this.prototype.attrs = overlayObj(this.prototype.attrs, attrs);
+    }
+  }, {
+    key: "register",
+    value: function register(name, value) {
+      var registry = this.prototype.hasOwnProperty("registry") ? this.prototype.registry : this.prototype.registry = Object.create(null);(registry[name] || (registry[name] = [])).push(value);
+    }
+  }]);
+
+  return SchemaItem;
+})();
+
+var NodeType = (function (_SchemaItem) {
+  _inherits(NodeType, _SchemaItem);
+
+  function NodeType(name, kind, schema) {
     _classCallCheck(this, NodeType);
 
+    _get(Object.getPrototypeOf(NodeType.prototype), "constructor", this).call(this);
     // :: string
     // The name the node type has in this schema.
     this.name = name;
-    // :: ?string
-    // The kind of nodes this node may contain. `null` means it's a
-    // leaf node.
-    this.contains = contains;
-    // :: Object<Attribute>
-    // The attributes allowed on this node type.
-    this.attrs = attrs;
+    this.kind = kind;
+    // Freeze the attributes, to avoid calling a potentially expensive
+    // getter all the time.
+    this.freezeAttrs();
+    this.defaultAttrs = this.getDefaultAttrs();
     // :: Schema
     // A link back to the `Schema` the node type belongs to.
     this.schema = schema;
-    this.defaultAttrs = getDefaultAttrs(attrs);
   }
 
-  // :: Object<Attribute>
-  // The default set of attributes to associate with a given type. Note
-  // that schemas may add additional attributes to instances of the
-  // type.
+  // ;; #toc=false Base type for block nodetypes.
 
   // :: bool
   // True if this is a block type.
@@ -9420,7 +9982,7 @@ var NodeType = (function () {
   }, {
     key: "canContainType",
     value: function canContainType(type) {
-      return this.schema.subKind(type.name, this.contains);
+      return this.schema.subKind(type.kind, this.contains);
     }
 
     // :: (NodeType) → bool
@@ -9447,8 +10009,8 @@ var NodeType = (function () {
       var active = [{ from: this, via: [] }];
       while (active.length) {
         var current = active.shift();
-        for (var _name in this.schema.nodes) {
-          var type = this.schema.nodes[_name];
+        for (var _name3 in this.schema.nodes) {
+          var type = this.schema.nodes[_name3];
           if (type.defaultAttrs && !(type.contains in seen) && current.from.canContainType(type)) {
             var via = current.via.concat(type);
             if (type.canContainType(other)) return via;
@@ -9459,9 +10021,9 @@ var NodeType = (function () {
       }
     }
   }, {
-    key: "buildAttrs",
-    value: function buildAttrs(attrs, content) {
-      if (!attrs && this.defaultAttrs) return this.defaultAttrs;else return _buildAttrs(this.attrs, attrs, this, content);
+    key: "computeAttrs",
+    value: function computeAttrs(attrs, content) {
+      if (!attrs && this.defaultAttrs) return this.defaultAttrs;else return _get(Object.getPrototypeOf(NodeType.prototype), "computeAttrs", this).call(this, attrs, content);
     }
 
     // :: (?Object, ?Fragment, ?[Mark]) → Node
@@ -9474,7 +10036,7 @@ var NodeType = (function () {
   }, {
     key: "create",
     value: function create(attrs, content, marks) {
-      return new _node.Node(this, this.buildAttrs(attrs, content), _fragment.Fragment.from(content), _mark.Mark.setFrom(marks));
+      return new _node.Node(this, this.computeAttrs(attrs, content), _fragment.Fragment.from(content), _mark.Mark.setFrom(marks));
     }
   }, {
     key: "createAutoFill",
@@ -9533,13 +10095,24 @@ var NodeType = (function () {
       return false;
     }
 
+    // :: ?string
+    // The kind of nodes this node may contain. `null` means it's a
+    // leaf node.
+  }, {
+    key: "contains",
+    get: function get() {
+      return null;
+    }
+
     // :: string
     // Controls the _kind_ of the node, which is used to determine valid
-    // parent/child relations. Can be a word, which adds that kind to
-    // the set of kinds of the superclass, a word followed by a dot, to
-    // ignore the kinds of the superclass and use only that word (along
-    // with the node's name) as kind, or only a dot, in which case the
-    // only kind the node has is its own name.
+    // parent/child [relations](#NodeType.contains). Should be a single
+    // name or space-separated string of kind names, where later names
+    // are considered to be sub-kinds of former ones (for example
+    // `"textblock paragraph"`). When you want to extend the superclass'
+    // set of kinds, you can do something like
+    //
+    //     static get kinds() { return super.kind + " mykind" }
   }, {
     key: "canBeEmpty",
     get: function get() {
@@ -9559,52 +10132,33 @@ var NodeType = (function () {
     key: "compile",
     value: function compile(types, schema) {
       var result = Object.create(null);
-      for (var _name2 in types) {
-        var info = types[_name2];
-        var type = info.type || SchemaError.raise("Missing node type for " + _name2);
-        findKinds(type, _name2, schema, info.kind);
-        var contains = "contains" in info ? info.contains : type.contains;
-        var attrs = type.attributes;
-        if (info.attributes) {
-          attrs = copyObj(attrs);
-          for (var aName in info.attributes) attrs[aName] = info.attributes[aName];
-        }
-        result[_name2] = new type(_name2, contains, attrs, schema);
+      for (var _name4 in types) {
+        var type = types[_name4];
+        var kinds = type.kinds.split(" ");
+        for (var i = 0; i < kinds.length; i++) {
+          schema.registerKind(kinds[i], i ? kinds[i - 1] : null);
+        }result[_name4] = new type(_name4, kinds[kinds.length - 1], schema);
       }
-      for (var _name3 in result) {
-        var contains = result[_name3].contains;
-        if (contains && !(contains in schema.kinds)) SchemaError.raise("Node type " + _name3 + " is specified to contain non-existing kind " + contains);
+      for (var _name5 in result) {
+        var contains = result[_name5].contains;
+        if (contains && !(contains in schema.kinds)) SchemaError.raise("Node type " + _name5 + " is specified to contain non-existing kind " + contains);
       }
       if (!result.doc) SchemaError.raise("Every schema needs a 'doc' type");
       if (!result.text) SchemaError.raise("Every schema needs a 'text' type");
 
       return result;
     }
-
-    // :: (string, *)
-    // Register an element in this type's registry. That is, add `value`
-    // to the array associated with `name` in the registry stored in
-    // type's `prototype`. This is mostly used to attach things like
-    // commands and parsing strategies to node types. See `Schema.registry`.
   }, {
-    key: "register",
-    value: function register(name, value) {
-      var registry = this.prototype.hasOwnProperty("registry") ? this.prototype.registry : this.prototype.registry = Object.create(null);(registry[name] || (registry[name] = [])).push(value);
-    }
-  }, {
-    key: "kind",
+    key: "kinds",
     get: function get() {
-      return ".";
+      return "node";
     }
   }]);
 
   return NodeType;
-})();
+})(SchemaItem);
 
 exports.NodeType = NodeType;
-NodeType.attributes = {};
-
-// ;; #toc=false Base type for block nodetypes.
 
 var Block = (function (_NodeType) {
   _inherits(Block, _NodeType);
@@ -9628,6 +10182,11 @@ var Block = (function (_NodeType) {
       }return _fragment.Fragment.from(inner);
     }
   }, {
+    key: "contains",
+    get: function get() {
+      return "block";
+    }
+  }, {
     key: "isBlock",
     get: function get() {
       return true;
@@ -9638,14 +10197,9 @@ var Block = (function (_NodeType) {
       return this.contains == null;
     }
   }], [{
-    key: "contains",
+    key: "kinds",
     get: function get() {
       return "block";
-    }
-  }, {
-    key: "kind",
-    get: function get() {
-      return "block.";
     }
   }]);
 
@@ -9666,6 +10220,11 @@ var Textblock = (function (_Block) {
   // ;; #toc=false Base type for inline node types.
 
   _createClass(Textblock, [{
+    key: "contains",
+    get: function get() {
+      return "inline";
+    }
+  }, {
     key: "containsMarks",
     get: function get() {
       return true;
@@ -9679,11 +10238,6 @@ var Textblock = (function (_Block) {
     key: "canBeEmpty",
     get: function get() {
       return true;
-    }
-  }], [{
-    key: "contains",
-    get: function get() {
-      return "inline";
     }
   }]);
 
@@ -9709,14 +10263,9 @@ var Inline = (function (_NodeType2) {
       return true;
     }
   }], [{
-    key: "contains",
+    key: "kinds",
     get: function get() {
-      return null;
-    }
-  }, {
-    key: "kind",
-    get: function get() {
-      return "inline.";
+      return "inline";
     }
   }]);
 
@@ -9743,7 +10292,7 @@ var Text = (function (_Inline) {
   _createClass(Text, [{
     key: "create",
     value: function create(attrs, content, marks) {
-      return new _node.TextNode(this, this.buildAttrs(attrs, content), content, marks);
+      return new _node.TextNode(this, this.computeAttrs(attrs, content), content, marks);
     }
   }, {
     key: "selectable",
@@ -9755,6 +10304,11 @@ var Text = (function (_Inline) {
     get: function get() {
       return true;
     }
+  }], [{
+    key: "kinds",
+    get: function get() {
+      return _get(Object.getPrototypeOf(Text), "kinds", this) + " text";
+    }
   }]);
 
   return Text;
@@ -9762,77 +10316,62 @@ var Text = (function (_Inline) {
 
 exports.Text = Text;
 
-var Attribute = (function () {
-  // :: (Object)
-  // Create an attribute. `options` is an object containing the
-  // settings for the attributes. The following settings are
-  // supported:
-  //
-  // **`default`**: `?string`
-  // : The default value for this attribute, to choose when no
-  //   explicit value is provided.
-  //
-  // **`compute`**: `?(Fragment) → string`
-  // : A function that computes a default value for the attribute from
-  //   the node's content.
-  //
-  // Attributes that have no default or compute property must be
-  // provided whenever a node or mark of a type that has them is
-  // created.
+var Attribute =
+// :: (Object)
+// Create an attribute. `options` is an object containing the
+// settings for the attributes. The following settings are
+// supported:
+//
+// **`default`**: `?string`
+// : The default value for this attribute, to choose when no
+//   explicit value is provided.
+//
+// **`compute`**: `?(Fragment) → string`
+// : A function that computes a default value for the attribute from
+//   the node's content.
+//
+// Attributes that have no default or compute property must be
+// provided whenever a node or mark of a type that has them is
+// created.
+function Attribute() {
+  var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
-  function Attribute() {
-    var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+  _classCallCheck(this, Attribute);
 
-    _classCallCheck(this, Attribute);
+  this["default"] = options["default"];
+  this.compute = options.compute;
+}
 
-    this["default"] = options["default"];
-    this.compute = options.compute;
-    this.registry = Object.create(null);
-  }
+// Marks
 
-  // Marks
-
-  // ;; Like nodes, marks (which are associated with nodes to signify
-  // things like emphasis or being part of a link) are tagged with type
-  // objects, which are instantiated once per `Schema`.
-
-  // :: (string, *)
-  // Register a value in this attribute's registry. See
-  // `NodeType.register` and `Schema.registry`.
-
-  _createClass(Attribute, [{
-    key: "register",
-    value: function register(name, value) {
-      ;(this.registry[name] || (this.registry[name] = [])).push(value);
-    }
-  }]);
-
-  return Attribute;
-})();
+// ;; Like nodes, marks (which are associated with nodes to signify
+// things like emphasis or being part of a link) are tagged with type
+// objects, which are instantiated once per `Schema`.
+;
 
 exports.Attribute = Attribute;
 
-var MarkType = (function () {
-  function MarkType(name, attrs, rank, schema) {
+var MarkType = (function (_SchemaItem2) {
+  _inherits(MarkType, _SchemaItem2);
+
+  function MarkType(name, rank, schema) {
     _classCallCheck(this, MarkType);
 
+    _get(Object.getPrototypeOf(MarkType.prototype), "constructor", this).call(this);
     // :: string
     // The name of the mark type.
     this.name = name;
-    // :: Object<Attribute>
-    // The attributes supported by this type of mark.
-    this.attrs = attrs;
+    this.freezeAttrs();
     this.rank = rank;
     // :: Schema
     // The schema that this mark type instance is part of.
     this.schema = schema;
-    var defaults = getDefaultAttrs(this.attrs);
+    var defaults = this.getDefaultAttrs();
     this.instance = defaults && new _mark.Mark(this, defaults);
   }
 
-  // :: Object<Attribute>
-  // The default set of attributes to associate with a mark type. By
-  // default, this returns an empty object.
+  // Schema specifications are data structures that specify a schema --
+  // a set of node types, their names, attributes, and nesting behavior.
 
   // :: number
   // Mark type ranks are used to determine the order in which mark
@@ -9849,7 +10388,7 @@ var MarkType = (function () {
     // they have defaults, will be added.
     value: function create(attrs) {
       if (!attrs && this.instance) return this.instance;
-      return new _mark.Mark(this, _buildAttrs(this.attrs, attrs, this));
+      return new _mark.Mark(this, this.computeAttrs(attrs));
     }
   }, {
     key: "removeFromSet",
@@ -9875,8 +10414,8 @@ var MarkType = (function () {
     key: "getOrder",
     value: function getOrder(marks) {
       var sorted = [];
-      for (var _name4 in marks) {
-        sorted.push({ name: _name4, rank: marks[_name4].type.rank });
+      for (var _name6 in marks) {
+        sorted.push({ name: _name6, rank: marks[_name6].rank });
       }sorted.sort(function (a, b) {
         return a.rank - b.rank;
       });
@@ -9890,12 +10429,9 @@ var MarkType = (function () {
     value: function compile(marks, schema) {
       var order = this.getOrder(marks);
       var result = Object.create(null);
-      for (var _name5 in marks) {
-        var info = marks[_name5];
-        var attrs = info.attributes || info.type.attributes;
-        result[_name5] = new info.type(_name5, attrs, order[_name5], schema);
-      }
-      return result;
+      for (var _name7 in marks) {
+        result[_name7] = new marks[_name7](_name7, order[_name7], schema);
+      }return result;
     }
   }, {
     key: "rank",
@@ -9905,19 +10441,9 @@ var MarkType = (function () {
   }]);
 
   return MarkType;
-})();
+})(SchemaItem);
 
 exports.MarkType = MarkType;
-MarkType.attributes = {};
-
-// :: (string, *)
-// Register a metadata element for this mark type. See also
-// `NodeType.register`.
-MarkType.register = NodeType.register;
-
-// Schema specifications are data structures that specify a schema --
-// a set of node types, their names, attributes, and nesting behavior.
-
 function copyObj(obj, f) {
   var result = Object.create(null);
   for (var prop in obj) {
@@ -9925,24 +10451,11 @@ function copyObj(obj, f) {
   }return result;
 }
 
-function ensureWrapped(obj) {
-  return obj instanceof Function ? { type: obj } : obj;
-}
-
 function overlayObj(obj, overlay) {
   var copy = copyObj(obj);
-  for (var _name6 in overlay) {
-    var info = ensureWrapped(overlay[_name6]);
-    if (info == null) {
-      delete copy[_name6];
-    } else if (info.type) {
-      copy[_name6] = info;
-    } else {
-      var existing = copy[_name6] = copyObj(copy[_name6]);
-      for (var prop in info) {
-        existing[prop] = info[prop];
-      }
-    }
+  for (var _name8 in overlay) {
+    var value = overlay[_name8];
+    if (value == null) delete copy[_name8];else copy[_name8] = value;
   }
   return copy;
 }
@@ -9952,86 +10465,43 @@ function overlayObj(obj, overlay) {
 // with extra information, such as additional attributes and changes
 // to node kinds and relations.
 //
-// A specification consists of an object that maps node names to node
-// type constructors and another similar object mapping mark names to
-// mark type constructors.
-//
-// For flexibility and reusability, node and mark type classes do not
-// declare their own name. Instead, each schema that includes them can
-// assign a name to them, as well as override their
-// [kind](#NodeType.kind) and [contained kind](#NodeType.contains), or
-// adding extra [attributes](#NodeType.attributes).
+// A specification consists of an object that associates node names
+// with node type constructors and another similar object associating
+// mark names with mark type constructors.
 
 var SchemaSpec = (function () {
-  // :: (?Object<{type: NodeType}>, ?Object<{type: MarkType}>)
+  // :: (?Object<NodeType>, ?Object<MarkType>)
   // Create a schema specification from scratch. The arguments map
   // node names to node type constructors and mark names to mark type
-  // constructors. Their property value should be either the type
-  // constructors themselves, or objects with a type constructor under
-  // their `type` property, and optionally these other properties:
-  //
-  // **`contains`**`: string`
-  //   : Only valid for `nodes`. The [kind](#NodeType.kind) of the
-  //     nodes that this node can contain in this schema.
-  //
-  // **`kind`**`: string`
-  //  : Only valid for `nodes`. Overrides the kind of this node in
-  //    this schema. Same format as `NodeType.kind`.
-  //
-  // **`attributes`**`: Object<Attribute>`
-  //   : Extra attributes to attach to this node in this schema.
+  // constructors.
 
   function SchemaSpec(nodes, marks) {
     _classCallCheck(this, SchemaSpec);
 
-    this.nodes = nodes ? copyObj(nodes, ensureWrapped) : Object.create(null);
-    this.marks = marks ? copyObj(marks, ensureWrapped) : Object.create(null);
+    this.nodes = nodes || {};
+    this.marks = marks || {};
   }
 
-  // For node types where all attrs have a default value (or which don't
-  // have any attributes), build up a single reusable default attribute
-  // object, and use it for all nodes that don't specify specific
-  // attributes.
+  // ;; Each document is based on a single schema, which provides the
+  // node and mark types that it is made up of (which, in turn,
+  // determine the structure it is allowed to have).
 
-  // :: (?Object<?{type: NodeType}>, ?Object<?{type: MarkType}>) → SchemaSpec
+  // :: (?Object<?NodeType>, ?Object<?MarkType>) → SchemaSpec
   // Base a new schema spec on this one by specifying nodes and marks
-  // to add, change, or remove.
+  // to add or remove.
   //
   // When `nodes` is passed, it should be an object mapping type names
-  // to either `null`, to delete the type of that name, to a
-  // `NodeType`, to add or replace the node type of that name, or to
-  // an object containing [extension
-  // properties](#SchemaSpec_constructor), to add to the existing
-  // description of that node type.
+  // to either `null`, to delete the type of that name, or to a
+  // `NodeType` subclass, to add or replace the node type of that
+  // name.
   //
   // Similarly, `marks` can be an object to add, change, or remove
-  // marks in the schema.
+  // [mark types](#MarkType) in the schema.
 
   _createClass(SchemaSpec, [{
     key: "update",
     value: function update(nodes, marks) {
       return new SchemaSpec(nodes ? overlayObj(this.nodes, nodes) : this.nodes, marks ? overlayObj(this.marks, marks) : this.marks);
-    }
-
-    // :: (?union<string, (name: string, type: NodeType) → bool>, string, Attribute) → SchemaSpec
-    // Create a new schema spec with attributes added to selected node
-    // types. `filter` can be `null`, to add the attribute to all node
-    // types, a string, to add it only to the named node type, or a
-    // predicate function, to add it to node types that pass the
-    // predicate.
-    //
-    // This attribute will be added alongside the node type's [default
-    // attributes](#NodeType.attributes).
-  }, {
-    key: "addAttribute",
-    value: function addAttribute(filter, attrName, attr) {
-      var copy = copyObj(this.nodes);
-      for (var _name7 in copy) {
-        if (typeof filter == "string" ? filter == _name7 : typeof filter == "function" ? filter(_name7, copy[_name7]) : filter ? filter == copy[_name7] : true) {
-          var info = copy[_name7] = copyObj(copy[_name7]);(info.attributes || (info.attributes = Object.create(null)))[attrName] = attr;
-        }
-      }
-      return new SchemaSpec(copy, this.marks);
     }
   }]);
 
@@ -10039,32 +10509,6 @@ var SchemaSpec = (function () {
 })();
 
 exports.SchemaSpec = SchemaSpec;
-function getDefaultAttrs(attrs) {
-  var defaults = Object.create(null);
-  for (var attrName in attrs) {
-    var attr = attrs[attrName];
-    if (attr["default"] == null) return null;
-    defaults[attrName] = attr["default"];
-  }
-  return defaults;
-}
-
-function _buildAttrs(attrSpec, attrs, arg1, arg2) {
-  var built = Object.create(null);
-  for (var _name8 in attrSpec) {
-    var value = attrs && attrs[_name8];
-    if (value == null) {
-      var attr = attrSpec[_name8];
-      if (attr["default"] != null) value = attr["default"];else if (attr.compute) value = attr.compute(arg1, arg2);else SchemaError.raise("No value supplied for attribute " + _name8);
-    }
-    built[_name8] = value;
-  }
-  return built;
-}
-
-// ;; Each document is based on a single schema, which provides the
-// node and mark types that it is made up of (which, in turn,
-// determine the structure it is allowed to have).
 
 var Schema = (function () {
   // :: (SchemaSpec)
@@ -10178,6 +10622,16 @@ var Schema = (function () {
     value: function nodeType(name) {
       return this.nodes[name] || SchemaError.raise("Unknown node type: " + name);
     }
+  }, {
+    key: "registerKind",
+    value: function registerKind(kind, sup) {
+      if (kind in this.kinds) {
+        if (this.kinds[kind] == sup) return;
+        SchemaError.raise("Inconsistent superkinds for kind " + kind + ": " + sup + " and " + this.kinds[kind]);
+      }
+      if (this.subKind(kind, sup)) SchemaError.raise("Conflicting kind hierarchy through " + kind + " and " + sup);
+      this.kinds[kind] = sup;
+    }
 
     // :: (string, string) → bool
     // Test whether a node kind is a sub-kind of another kind.
@@ -10191,15 +10645,14 @@ var Schema = (function () {
       }
     }
 
-    // :: (string, (value: *, source: union<NodeType, MarkType, Attribute>, name: string))
+    // :: (string, (value: *, source: union<NodeType, MarkType>, name: string))
     // Retrieve all registered items under the given name from this
     // schema. The given function will be called with each item, the
-    // element—node type, mark type, or attribute—that it was associated
-    // with, and that element's name in the schema.
+    // element—node type or mark type—that it was associated with, and
+    // that element's name in the schema.
   }, {
     key: "registry",
     value: function registry(name, f) {
-      var attrsSeen = [];
       for (var i = 0; i < 2; i++) {
         var obj = i ? this.marks : this.nodes;
         for (var tname in obj) {
@@ -10208,16 +10661,6 @@ var Schema = (function () {
             var reg = type.registry[name];
             if (reg) for (var j = 0; j < reg.length; j++) {
               f(reg[j], type, tname);
-            }
-          }
-          for (var aname in type.attrs) {
-            var attr = type.attrs[aname],
-                reg = attr.registry[name];
-            if (reg && attrsSeen.indexOf(attr) == -1) {
-              attrsSeen.push(attr);
-              for (var j = 0; j < reg.length; j++) {
-                f(reg[j], attr, aname);
-              }
             }
           }
         }
@@ -10229,888 +10672,7 @@ var Schema = (function () {
 })();
 
 exports.Schema = Schema;
-},{"../util/error":48,"./fragment":26,"./mark":28,"./node":29}],32:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-exports.fromDOM = fromDOM;
-exports.fromHTML = fromHTML;
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var _model = require("../model");
-
-var _index = require("./index");
-
-// :: (Schema, DOMNode, ?Object) → Node
-// Parse document from the content of a DOM node. To pass an explicit
-// parent document (for example, when not in a browser window
-// environment, where we simply use the global document), pass it as
-// the `document` property of `options`.
-
-function fromDOM(schema, dom, options) {
-  if (!options) options = {};
-  var context = new DOMParseState(schema, options.topNode || schema.node("doc"), options);
-  var start = options.from ? dom.childNodes[options.from] : dom.firstChild;
-  var end = options.to != null && dom.childNodes[options.to] || null;
-  context.addAll(start, end, true);
-  var doc = undefined;
-  while (context.stack.length) doc = context.leave();
-  return doc;
-}
-
-// ;; #path=DOMParseSpec #kind=interface #toc=false
-// To define the way [node](#NodeType) and [mark](#MarkType) types are
-// parsed, you can associate one or more DOM parsing specifications to
-// them using the [`register`](#NodeType.register) method with the
-// `parseDOM` property name. Each of them defines a parsing strategy
-// for a certain type of DOM node.
-//
-// Note that `Attribute`s may also contain a `parseDOM` property,
-// which should _not_ be a `DOMParseSpec`, but simply a function that
-// computes the attribute's value from a DOM node.
-
-// :: ?string #path=DOMParseSpec.tag
-// The (lower-case) tag name for which to activate this parser. When
-// not given, it is activated for all nodes.
-
-// :: ?number #path=DOMParseSpec.rank
-// The precedence of this parsing strategy. Should be a number between
-// 0 and 100, which determines when this parser gets a chance relative
-// to others that apply to the node (low ranks go first). Defaults to
-// 50.
-
-// :: union<string, (dom: DOMNode, state: DOMParseState) → ?bool> #path=DOMParseSpec.parse
-// The function that, given a DOM node, parses it, updating the parse
-// state. It should return (the exact value) `false` when it wants to
-// indicate that it was not able to parse this node. This function is
-// called in such a way that `this` is bound to the type that the
-// parse spec was associated with.
-//
-// When this is set to the string `"block"`, the content of the DOM
-// node is parsed as the content in a node of the type that this spec
-// was associated with.
-//
-// When set to the string `"mark"`, the content of the DOM node is
-// parsed with an instance of the mark that this spec was associated
-// with added to their marks.
-
-(0, _index.defineSource)("dom", fromDOM);
-
-// :: (Schema, string, ?Object) → Node
-// Parses the HTML into a DOM, and then calls through to `fromDOM`.
-
-function fromHTML(schema, html, options) {
-  var wrap = (options && options.document || window.document).createElement("div");
-  wrap.innerHTML = html;
-  return fromDOM(schema, wrap, options);
-}
-
-(0, _index.defineSource)("html", fromHTML);
-
-var blockElements = {
-  address: true, article: true, aside: true, blockquote: true, canvas: true,
-  dd: true, div: true, dl: true, fieldset: true, figcaption: true, figure: true,
-  footer: true, form: true, h1: true, h2: true, h3: true, h4: true, h5: true,
-  h6: true, header: true, hgroup: true, hr: true, li: true, noscript: true, ol: true,
-  output: true, p: true, pre: true, section: true, table: true, tfoot: true, ul: true
-};
-
-var noMarks = [];
-
-// ;; #toc=false A state object used to track context during a parse,
-// and to expose methods to custom parsing functions.
-
-var DOMParseState = (function () {
-  function DOMParseState(schema, topNode, options) {
-    _classCallCheck(this, DOMParseState);
-
-    // :: Object The options passed to this parse.
-    this.options = options || {};
-    // :: Schema The schema that we are parsing into.
-    this.schema = schema;
-    this.stack = [];
-    this.marks = noMarks;
-    this.closing = false;
-    this.enter(topNode.type, topNode.attrs);
-    this.nodeInfo = nodeInfo(schema);
-  }
-
-  _createClass(DOMParseState, [{
-    key: "parseAttrs",
-    value: function parseAttrs(dom, type, attrs) {
-      for (var attr in type.attrs) {
-        var desc = type.attrs[attr];
-        if (desc.parseDOM && (!attrs || !Object.prototype.hasOwnProperty.call(attrs, attr))) {
-          var value = desc.parseDOM(dom, this.options, desc, type);
-          if (value != null) {
-            if (!attrs) attrs = {};
-            attrs[attr] = value;
-          }
-        }
-      }
-      return attrs;
-    }
-  }, {
-    key: "addDOM",
-    value: function addDOM(dom) {
-      if (dom.nodeType == 3) {
-        // FIXME define a coherent strategy for dealing with trailing, leading, and multiple spaces (this isn't one)
-        var value = dom.nodeValue;
-        var _top = this.top,
-            last = undefined;
-        if (/\S/.test(value) || _top.type.isTextblock) {
-          value = value.replace(/\s+/g, " ");
-          if (/^\s/.test(value) && (last = _top.content[_top.content.length - 1]) && last.type.name == "text" && /\s$/.test(last.text)) value = value.slice(1);
-          if (value) this.insert(this.schema.text(value, this.marks));
-        }
-      } else if (dom.nodeType != 1 || dom.hasAttribute("pm-ignore")) {
-        // Ignore non-text non-element nodes
-      } else if (!this.parseNodeType(dom)) {
-          this.addAll(dom.firstChild, null);
-          var _name = dom.nodeName.toLowerCase();
-          if (blockElements.hasOwnProperty(_name) && this.top.type == this.schema.defaultTextblockType()) this.closing = true;
-        }
-    }
-  }, {
-    key: "tryParsers",
-    value: function tryParsers(parsers, dom) {
-      if (parsers) for (var i = 0; i < parsers.length; i++) {
-        var parser = parsers[i];
-        if (parser.parse.call(parser.type, dom, this) !== false) return true;
-      }
-    }
-  }, {
-    key: "parseNodeType",
-    value: function parseNodeType(dom) {
-      return this.tryParsers(this.nodeInfo[dom.nodeName.toLowerCase()], dom) || this.tryParsers(this.nodeInfo._, dom);
-    }
-  }, {
-    key: "addAll",
-    value: function addAll(from, to, sync) {
-      var stack = sync && this.stack.slice();
-      for (var dom = from; dom != to; dom = dom.nextSibling) {
-        this.addDOM(dom);
-        if (sync && blockElements.hasOwnProperty(dom.nodeName.toLowerCase())) this.sync(stack);
-      }
-    }
-  }, {
-    key: "doClose",
-    value: function doClose() {
-      if (!this.closing || this.stack.length < 2) return;
-      var left = this.leave();
-      this.enter(left.type, left.attrs);
-      this.closing = false;
-    }
-  }, {
-    key: "insert",
-    value: function insert(node) {
-      if (this.top.type.canContain(node)) {
-        this.doClose();
-      } else {
-        for (var i = this.stack.length - 1; i >= 0; i--) {
-          var route = this.stack[i].type.findConnection(node.type);
-          if (!route) continue;
-          if (i == this.stack.length - 1) {
-            this.doClose();
-          } else {
-            while (this.stack.length > i + 1) this.leave();
-          }
-          for (var j = 0; j < route.length; j++) {
-            this.enter(route[j]);
-          }if (this.marks.length) this.marks = noMarks;
-          break;
-        }
-      }
-      this.top.content.push(node);
-      return node;
-    }
-
-    // :: (DOMNode, NodeType, ?Object, [Node]) → Node
-    // Insert a node of the given type, with the given content, based on
-    // `dom`, at the current position in the document.
-  }, {
-    key: "insertFrom",
-    value: function insertFrom(dom, type, attrs, content) {
-      return this.insert(type.createAutoFill(this.parseAttrs(dom, type, attrs), content, this.marks));
-    }
-  }, {
-    key: "enter",
-    value: function enter(type, attrs) {
-      if (this.marks.length) this.marks = noMarks;
-      this.stack.push({ type: type, attrs: attrs, content: [] });
-    }
-  }, {
-    key: "enterFrom",
-    value: function enterFrom(dom, type, attrs) {
-      this.enter(type, this.parseAttrs(dom, type, attrs));
-    }
-  }, {
-    key: "leave",
-    value: function leave() {
-      var top = this.stack.pop();
-      var node = top.type.createAutoFill(top.attrs, top.content);
-      if (this.stack.length) this.insert(node);
-      return node;
-    }
-  }, {
-    key: "sync",
-    value: function sync(stack) {
-      while (this.stack.length > stack.length) this.leave();
-      for (;;) {
-        var n = this.stack.length - 1,
-            one = this.stack[n],
-            two = stack[n];
-        if (one.type == two.type && _model.Node.sameAttrs(one.attrs, two.attrs)) break;
-        this.leave();
-      }
-      while (stack.length > this.stack.length) {
-        var add = stack[this.stack.length];
-        this.enter(add.type, add.attrs);
-      }
-      if (this.marks.length) this.marks = noMarks;
-      this.closing = false;
-    }
-
-    // :: (DOMNode, NodeType, ?Object)
-    // Parse the contents of `dom` as children of a node of the given
-    // type.
-  }, {
-    key: "wrapIn",
-    value: function wrapIn(dom, type, attrs) {
-      this.enterFrom(dom, type, attrs);
-      this.addAll(dom.firstChild, null, true);
-      this.leave();
-    }
-
-    // :: (DOMNode, Mark)
-    // Parse the contents of `dom`, with `mark` added to the set of
-    // current marks.
-  }, {
-    key: "wrapMark",
-    value: function wrapMark(dom, mark) {
-      var old = this.marks;
-      this.marks = (mark.instance || mark).addToSet(old);
-      this.addAll(dom.firstChild, null);
-      this.marks = old;
-    }
-  }, {
-    key: "top",
-    get: function get() {
-      return this.stack[this.stack.length - 1];
-    }
-  }]);
-
-  return DOMParseState;
-})();
-
-function nodeInfo(schema) {
-  return schema.cached.parseDOMNodes || (schema.cached.parseDOMNodes = summarizeNodeInfo(schema));
-}
-
-function summarizeNodeInfo(schema) {
-  var tags = Object.create(null);
-  tags._ = [];
-  schema.registry("parseDOM", function (info, type) {
-    var tag = info.tag || "_";
-    var parse = info.parse;
-    if (parse == "block") parse = function (dom, state) {
-      state.wrapIn(dom, this);
-    };else if (parse == "mark") parse = function (dom, state) {
-      state.wrapMark(dom, this);
-    };(tags[tag] || (tags[tag] = [])).push({
-      type: type, parse: parse,
-      rank: info.rank == null ? 50 : info.rank
-    });
-  });
-  for (var tag in tags) {
-    tags[tag].sort(function (a, b) {
-      return a.rank - b.rank;
-    });
-  }return tags;
-}
-
-_model.Paragraph.register("parseDOM", { tag: "p", parse: "block" });
-
-_model.BlockQuote.register("parseDOM", { tag: "blockquote", parse: "block" });
-
-var _loop = function (i) {
-  _model.Heading.register("parseDOM", {
-    tag: "h" + i,
-    parse: function parse(dom, state) {
-      state.wrapIn(dom, this, { level: i });
-    }
-  });
-};
-
-for (var i = 1; i <= 6; i++) {
-  _loop(i);
-}_model.HorizontalRule.register("parseDOM", { tag: "hr", parse: "block" });
-
-_model.CodeBlock.register("parseDOM", { tag: "pre", parse: function parse(dom, state) {
-    var params = dom.firstChild && /^code$/i.test(dom.firstChild.nodeName) && dom.firstChild.getAttribute("class");
-    if (params && /fence/.test(params)) {
-      var found = [],
-          re = /(?:^|\s)lang-(\S+)/g,
-          m = undefined;
-      while (m = re.test(params)) found.push(m[1]);
-      params = found.join(" ");
-    } else {
-      params = null;
-    }
-    var text = dom.textContent;
-    state.insertFrom(dom, this, { params: params }, text ? [state.schema.text(text)] : []);
-  } });
-
-_model.BulletList.register("parseDOM", { tag: "ul", parse: "block" });
-
-_model.OrderedList.register("parseDOM", { tag: "ol", parse: function parse(dom, state) {
-    var attrs = { order: dom.getAttribute("start") || 1 };
-    state.wrapIn(dom, this, attrs);
-  } });
-
-_model.ListItem.register("parseDOM", { tag: "li", parse: "block" });
-
-_model.HardBreak.register("parseDOM", { tag: "br", parse: function parse(dom, state) {
-    state.insertFrom(dom, this);
-  } });
-
-_model.Image.register("parseDOM", { tag: "img", parse: function parse(dom, state) {
-    state.insertFrom(dom, this, {
-      src: dom.getAttribute("src"),
-      title: dom.getAttribute("title") || null,
-      alt: dom.getAttribute("alt") || null
-    });
-  } });
-
-// Inline style tokens
-
-_model.LinkMark.register("parseDOM", { tag: "a", parse: function parse(dom, state) {
-    var href = dom.getAttribute("href");
-    if (!href) return false;
-    state.wrapMark(dom, this.create({ href: href, title: dom.getAttribute("title") }));
-  } });
-
-_model.EmMark.register("parseDOM", { tag: "i", parse: "mark" });
-_model.EmMark.register("parseDOM", { tag: "em", parse: "mark" });
-
-_model.StrongMark.register("parseDOM", { tag: "b", parse: "mark" });
-_model.StrongMark.register("parseDOM", { tag: "strong", parse: "mark" });
-
-_model.CodeMark.register("parseDOM", { tag: "code", parse: "mark" });
-},{"../model":27,"./index":33}],33:[function(require,module,exports){
-// !! This module implements a way to register and access parsers from
-// various input formats to ProseMirror's [document format](#Node). To
-// load the actual parsers, you need to import parser modules like
-// `parse/dom` or `parse/markdown`, which will then register
-// themselves here, as well as export special-purpose parsing
-// functions.
-//
-// These are the parses in the distribution:
-//
-// **`"json"`**
-//   : The top-level module defines a single parser `"json"`, which
-//     uses `Node.fromJSON` to parse JSON data.
-//
-// **`"dom"`**
-//   : Parses [DOM
-//     nodes](https://developer.mozilla.org/en-US/docs/Web/API/Node).
-//     Defined in `parse/dom`. See `fromDOM`.
-//
-// **`"html"`**
-//   : Parses strings of HTML content. Defined in `parse/dom`.
-//
-// **`"markdown"`**
-//   : Parses strings of
-//     [CommonMark](http://commonmark.org/)-formatted text. Defined in
-//     `parse/markdown`. See `fromMarkdown`.
-//
-// **`"text"`**
-//   : Simply splits a string of text on blank lines and creates a
-//     document containing those lines as paragraphs. Defined in
-//     `parse/text`. See `fromText`.
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.parseFrom = parseFrom;
-exports.knownSource = knownSource;
-exports.defineSource = defineSource;
-var parsers = Object.create(null);
-
-// :: (Schema, any, string, ?Object) → Node
-// Parse document `value` from the format named by `format`. If
-// `options` is given, it is passed along to the parser function.
-
-function parseFrom(schema, value, format, options) {
-  var converter = parsers[format];
-  if (!converter) throw new Error("Source format " + format + " not defined");
-  return converter(schema, value, options);
-}
-
-// :: (string) → bool
-// Query whether a parser for the named format has been registered.
-
-function knownSource(format) {
-  return !!parsers[format];
-}
-
-// :: (string, (Schema, any, ?Object) → Node)
-// Register a parser function for `format`.
-
-function defineSource(format, func) {
-  parsers[format] = func;
-}
-
-defineSource("json", function (schema, json) {
-  return schema.nodeFromJSON(json);
-});
-},{}],34:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.fromText = fromText;
-
-var _index = require("./index");
-
-// FIXME is it meaningful to try and attach text-parsing information
-// to node types?
-
-// :: (Schema, string) → Node
-// Convert a string into a simple ProseMirror document.
-
-function fromText(schema, text) {
-  var blocks = text.trim().split(/\n{2,}/);
-  var nodes = [];
-  for (var i = 0; i < blocks.length; i++) {
-    var spans = [];
-    var parts = blocks[i].split("\n");
-    for (var j = 0; j < parts.length; j++) {
-      if (j) spans.push(schema.node("hard_break"));
-      if (parts[j]) spans.push(schema.text(parts[j]));
-    }
-    nodes.push(schema.node("paragraph", null, spans));
-  }
-  if (!nodes.length) nodes.push(schema.node("paragraph"));
-  return schema.node("doc", null, nodes);
-}
-
-(0, _index.defineSource)("text", fromText);
-},{"./index":33}],35:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-
-exports.toDOM = toDOM;
-exports.renderNodeToDOM = renderNodeToDOM;
-exports.toHTML = toHTML;
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var _model = require("../model");
-
-var _index = require("./index");
-
-// ;; #toc=false Object used to to expose relevant values and methods
-// to DOM serializer functions.
-
-var DOMSerializer = (function () {
-  function DOMSerializer(options) {
-    _classCallCheck(this, DOMSerializer);
-
-    // :: Object The options passed to the serializer.
-    this.options = options || {};
-    // :: DOMDocument The DOM document in which we are working.
-    this.doc = this.options.document || window.document;
-  }
-
-  // :: (Node, ?Object) → DOMFragment
-  // Serialize the content of the given node to a DOM fragment. When not
-  // in the browser, the `document` option, containing a DOM document,
-  // should be passed so that the serialize can create nodes.
-  //
-  // To define rendering behavior for your own [node](#NodeType) and
-  // [mark](#MarkType) types, give them a `serializeDOM` method. This
-  // method is passed a `Node` and a `DOMSerializer`, and should return
-  // the [DOM
-  // node](https://developer.mozilla.org/en-US/docs/Web/API/Node) that
-  // represents this node and its content. For marks, that should be an
-  // inline wrapping node like `<a>` or `<strong>`.
-  //
-  // Individual attributes can also define serialization behavior. If an
-  // `Attribute` object has a `serializeDOM` method, that will be called
-  // with the DOM node representing the node that the attribute applies
-  // to and the atttribute's value, so that it can set additional DOM
-  // attributes on the DOM node.
-
-  // :: (string, ?Object, ...union<string, DOMNode>) → DOMNode
-  // Create a DOM node of the given type, with (optionally) the given
-  // attributes and content. Content elements may be strings (for text
-  // nodes) or other DOM nodes.
-
-  _createClass(DOMSerializer, [{
-    key: "elt",
-    value: function elt(type, attrs) {
-      var result = this.doc.createElement(type);
-      if (attrs) for (var _name in attrs) {
-        if (_name == "style") result.style.cssText = attrs[_name];else if (attrs[_name]) result.setAttribute(_name, attrs[_name]);
-      }
-
-      for (var _len = arguments.length, content = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
-        content[_key - 2] = arguments[_key];
-      }
-
-      for (var i = 0; i < content.length; i++) {
-        result.appendChild(typeof content[i] == "string" ? this.doc.createTextNode(content[i]) : content[i]);
-      }return result;
-    }
-  }, {
-    key: "renderNode",
-    value: function renderNode(node, offset) {
-      var dom = node.type.serializeDOM(node, this);
-      for (var attr in node.type.attrs) {
-        var desc = node.type.attrs[attr];
-        if (desc.serializeDOM) desc.serializeDOM(dom, node.attrs[attr], this, node);
-      }
-      if (this.options.onRender) dom = this.options.onRender(node, dom, offset) || dom;
-      return dom;
-    }
-  }, {
-    key: "renderContent",
-    value: function renderContent(node, where) {
-      if (!where) where = this.doc.createDocumentFragment();
-      if (!node.isTextblock) this.renderBlocksInto(node, where);else if (this.options.renderInlineFlat) this.renderInlineFlatInto(node, where);else this.renderInlineInto(node, where);
-      return where;
-    }
-  }, {
-    key: "renderBlocksInto",
-    value: function renderBlocksInto(parent, where) {
-      for (var i = parent.iter(), child = undefined; child = i.next().value;) {
-        if (this.options.path) this.options.path.push(i.offset - child.width);
-        where.appendChild(this.renderNode(child, i.offset - child.width));
-        if (this.options.path) this.options.path.pop();
-      }
-    }
-  }, {
-    key: "renderInlineInto",
-    value: function renderInlineInto(parent, where) {
-      var _this = this;
-
-      var top = where;
-      var active = [];
-      parent.forEach(function (node, offset) {
-        var keep = 0;
-        for (; keep < Math.min(active.length, node.marks.length); ++keep) if (!node.marks[keep].eq(active[keep])) break;
-        while (keep < active.length) {
-          active.pop();
-          top = top.parentNode;
-        }
-        while (active.length < node.marks.length) {
-          var add = node.marks[active.length];
-          active.push(add);
-          top = top.appendChild(_this.renderMark(add));
-        }
-        top.appendChild(_this.renderNode(node, offset));
-      });
-    }
-  }, {
-    key: "renderInlineFlatInto",
-    value: function renderInlineFlatInto(parent, where) {
-      var _this2 = this;
-
-      parent.forEach(function (node, start) {
-        var dom = _this2.renderNode(node, start);
-        dom = _this2.wrapInlineFlat(dom, node.marks);
-        dom = _this2.options.renderInlineFlat(node, dom, start) || dom;
-        where.appendChild(dom);
-      });
-    }
-  }, {
-    key: "renderMark",
-    value: function renderMark(mark) {
-      var dom = mark.type.serializeDOM(mark, this);
-      for (var attr in mark.type.attrs) {
-        var desc = mark.type.attrs[attr];
-        if (desc.serializeDOM) desc.serializeDOM(dom, mark.attrs[attr], this);
-      }
-      return dom;
-    }
-  }, {
-    key: "wrapInlineFlat",
-    value: function wrapInlineFlat(dom, marks) {
-      for (var i = marks.length - 1; i >= 0; i--) {
-        var wrap = this.renderMark(marks[i]);
-        wrap.appendChild(dom);
-        dom = wrap;
-      }
-      return dom;
-    }
-
-    // :: (Node, string, ?Object) → DOMNode
-    // Render the content of ProseMirror node into a DOM node with the
-    // given tag name and attributes.
-  }, {
-    key: "renderAs",
-    value: function renderAs(node, tagName, tagAttrs) {
-      return this.renderContent(node, this.elt(tagName, tagAttrs));
-    }
-  }]);
-
-  return DOMSerializer;
-})();
-
-function toDOM(node) {
-  var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-
-  return new DOMSerializer(options).renderContent(node);
-}
-
-(0, _index.defineTarget)("dom", toDOM);
-
-// :: (Node, ?Object) → DOMNode
-// Serialize a given node to a DOM node. This is useful when you need
-// to serialize a part of a document, as opposed to the whole
-// document.
-
-function renderNodeToDOM(node, options, offset) {
-  var serializer = new DOMSerializer(options);
-  var dom = serializer.renderNode(node, offset);
-  if (node.isInline) {
-    dom = serializer.wrapInlineFlat(dom, node.marks);
-    if (serializer.options.renderInlineFlat) dom = options.renderInlineFlat(node, dom, offset) || dom;
-  }
-  return dom;
-}
-
-// :: (Node, ?Object) → string
-// Serialize a node as an HTML string. Goes through `toDOM` and then
-// serializes the result. Again, you must pass a `document` option
-// when not in the browser.
-
-function toHTML(node, options) {
-  var serializer = new DOMSerializer(options);
-  var wrap = serializer.elt("div");
-  wrap.appendChild(serializer.renderContent(node));
-  return wrap.innerHTML;
-}
-
-(0, _index.defineTarget)("html", toHTML);
-
-// Block nodes
-
-function def(cls, method) {
-  cls.prototype.serializeDOM = method;
-}
-
-def(_model.BlockQuote, function (node, s) {
-  return s.renderAs(node, "blockquote");
-});
-
-_model.BlockQuote.prototype.countCoordsAsChild = function (_, path, dom, coords) {
-  var childBox = dom.firstChild.getBoundingClientRect();
-  if (coords.left < childBox.left - 2) return _model.Pos.from(path);
-};
-
-def(_model.BulletList, function (node, s) {
-  return s.renderAs(node, "ul");
-});
-
-def(_model.OrderedList, function (node, s) {
-  return s.renderAs(node, "ol", { start: node.attrs.order != "1" && node.attrs.order });
-});
-
-_model.OrderedList.prototype.countCoordsAsChild = _model.BulletList.prototype.countCoordsAsChild = function (_, path, dom, coords) {
-  for (var i = 0; i < dom.childNodes.length; i++) {
-    var child = dom.childNodes[i];
-    if (!child.hasAttribute("pm-offset")) continue;
-    var childBox = child.getBoundingClientRect();
-    if (coords.left > childBox.left - 2) return null;
-    if (childBox.top <= coords.top && childBox.bottom >= coords.top) return new _model.Pos(path, i);
-  }
-};
-
-def(_model.ListItem, function (node, s) {
-  return s.renderAs(node, "li");
-});
-
-def(_model.HorizontalRule, function (_, s) {
-  return s.elt("hr");
-});
-
-def(_model.Paragraph, function (node, s) {
-  return s.renderAs(node, "p");
-});
-
-def(_model.Heading, function (node, s) {
-  return s.renderAs(node, "h" + node.attrs.level);
-});
-
-def(_model.CodeBlock, function (node, s) {
-  var code = s.renderAs(node, "code");
-  if (node.attrs.params != null) code.className = "fence " + node.attrs.params.replace(/(^|\s+)/g, "$&lang-");
-  return s.elt("pre", null, code);
-});
-
-// Inline content
-
-def(_model.Text, function (node, s) {
-  return s.doc.createTextNode(node.text);
-});
-
-def(_model.Image, function (node, s) {
-  return s.elt("img", {
-    src: node.attrs.src,
-    alt: node.attrs.alt,
-    title: node.attrs.title
-  });
-});
-
-def(_model.HardBreak, function (_, s) {
-  return s.elt("br");
-});
-
-// Inline styles
-
-def(_model.EmMark, function (_, s) {
-  return s.elt("em");
-});
-
-def(_model.StrongMark, function (_, s) {
-  return s.elt("strong");
-});
-
-def(_model.CodeMark, function (_, s) {
-  return s.elt("code");
-});
-
-def(_model.LinkMark, function (mark, s) {
-  return s.elt("a", { href: mark.attrs.href,
-    title: mark.attrs.title });
-});
-},{"../model":27,"./index":36}],36:[function(require,module,exports){
-// !! This module provides a way to register and access functions that
-// serialize ProseMirror [documents](#Node) to various formats. To
-// load the actual serializers, you need to include submodules of this
-// module (or 3rd party serialization modules), which will register
-// themselves to this module.
-//
-// These are the serializers defined:
-//
-// **`"json"`**
-//   : Use `Node.toJSON` to serialize the node as JSON. Defined by the
-//     top-level `serialize` module.
-//
-// **`"dom"`**
-//   : Serialize to a [DOM
-//     fragment](https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment).
-//     Defined in `serialize/dom`. See `toDOM`.
-//
-// **`"html"`**
-//   : Serialize to HTML text. Defined in `serialize/dom`. See `toHTML`.
-//
-// **`"markdown"`**
-//   : Serialize to [CommonMark](http://commonmark.org/) marked-up
-//     text. Defined in `serialize/markdown`. See `toMarkdown`.
-//
-// **`"text"`**
-//   : Serialize to plain text. Defined in `serialize/text`. See `toText`.
-
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.serializeTo = serializeTo;
-exports.knownTarget = knownTarget;
-exports.defineTarget = defineTarget;
-var serializers = Object.create(null);
-
-// :: (Node, string, ?Object) → any
-// Serialize the given document to the given format. If `options` is
-// given, it will be passed along to the serializer function.
-
-function serializeTo(doc, format, options) {
-  var converter = serializers[format];
-  if (!converter) throw new Error("Target format " + format + " not defined");
-  return converter(doc, options);
-}
-
-// :: (string) → bool
-// Query whether a given serialization format has been registered.
-
-function knownTarget(format) {
-  return !!serializers[format];
-}
-
-// :: (string, (Node, ?Object) → any)
-// Register a function as the serializer for `format`.
-
-function defineTarget(format, func) {
-  serializers[format] = func;
-}
-
-defineTarget("json", function (doc) {
-  return doc.toJSON();
-});
-},{}],37:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.toText = toText;
-
-var _model = require("../model");
-
-var _index = require("./index");
-
-_model.Block.prototype.serializeText = function (node) {
-  var accum = "";
-  node.forEach(function (child) {
-    return accum += child.type.serializeText(child);
-  });
-  return accum;
-};
-
-_model.Textblock.prototype.serializeText = function (node) {
-  var text = _model.Block.prototype.serializeText(node);
-  return text && text + "\n\n";
-};
-
-_model.Inline.prototype.serializeText = function () {
-  return "";
-};
-
-_model.HardBreak.prototype.serializeText = function () {
-  return "\n";
-};
-
-_model.Text.prototype.serializeText = function (node) {
-  return node.text;
-};
-
-// :: (Node) → string
-// Serialize a node as a plain text string.
-
-function toText(doc) {
-  return doc.type.serializeText(doc).trim();
-}
-
-(0, _index.defineTarget)("text", toText);
-},{"../model":27,"./index":36}],38:[function(require,module,exports){
+},{"../util/error":45,"./fragment":29,"./mark":31,"./node":32}],35:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11395,7 +10957,7 @@ _transform.Transform.prototype.setNodeType = function (pos, type, attrs) {
   this.step("ancestor", new _model.Pos(path, 0), new _model.Pos(path, node.size), null, { depth: 1, types: [type], attrs: [attrs] });
   return this;
 };
-},{"../model":27,"./map":41,"./step":45,"./transform":46,"./tree":47}],39:[function(require,module,exports){
+},{"../model":30,"./map":38,"./step":42,"./transform":43,"./tree":44}],36:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11494,7 +11056,7 @@ Object.defineProperty(exports, "Remapping", {
     return _map.Remapping;
   }
 });
-},{"./ancestor":38,"./join":40,"./map":41,"./mark":42,"./replace":43,"./split":44,"./step":45,"./transform":46}],40:[function(require,module,exports){
+},{"./ancestor":35,"./join":37,"./map":38,"./mark":39,"./replace":40,"./split":41,"./step":42,"./transform":43}],37:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11578,7 +11140,7 @@ _transform.Transform.prototype.join = function (at) {
   this.step("join", new _model.Pos(at.path.concat(at.offset - 1), parent.child(at.offset - 1).size), new _model.Pos(at.path.concat(at.offset), 0));
   return this;
 };
-},{"../model":27,"./map":41,"./step":45,"./transform":46}],41:[function(require,module,exports){
+},{"../model":30,"./map":38,"./step":42,"./transform":43}],38:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11902,7 +11464,7 @@ var Remapping = (function () {
 })();
 
 exports.Remapping = Remapping;
-},{"../model":27}],42:[function(require,module,exports){
+},{"../model":30}],39:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -12081,7 +11643,7 @@ _transform.Transform.prototype.clearMarkup = function (from, to, newParent) {
     this.step(delSteps[i]);
   }return this;
 };
-},{"../model":27,"./step":45,"./transform":46,"./tree":47}],43:[function(require,module,exports){
+},{"../model":30,"./step":42,"./transform":43,"./tree":44}],40:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12372,13 +11934,11 @@ _transform.Transform.prototype.replace = function (from, to, source, start, end)
 };
 
 // :: (Pos, Pos, union<Fragment, Node, [Node]>) → Transform
-// Replace the given sibling range (position ponting into the same
-// parent) with the given content, which may be a fragment, node, or
-// array of nodes.
+// Replace the given range with the given content, which may be a
+// fragment, node, or array of nodes.
 _transform.Transform.prototype.replaceWith = function (from, to, content) {
   if (!(content instanceof _model.Fragment)) content = _model.Fragment.from(content);
-  if (!_model.Pos.samePath(from.path, to.path)) return this;
-  this.step("replace", from, to, from, { content: content, openLeft: 0, openRight: 0 });
+  if (_model.Pos.samePath(from.path, to.path)) this.step("replace", from, to, from, { content: content, openLeft: 0, openRight: 0 });else this["delete"](from, to).step("replace", from, from, from, { content: content, openLeft: 0, openRight: 0 });
   return this;
 };
 
@@ -12401,7 +11961,7 @@ _transform.Transform.prototype.insertText = function (pos, text) {
 _transform.Transform.prototype.insertInline = function (pos, node) {
   return this.insert(pos, node.mark(this.doc.marksAt(pos)));
 };
-},{"../model":27,"./map":41,"./step":45,"./transform":46,"./tree":47}],44:[function(require,module,exports){
+},{"../model":30,"./map":38,"./step":42,"./transform":43,"./tree":44}],41:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -12487,7 +12047,7 @@ _transform.Transform.prototype.splitIfNeeded = function (pos) {
   }
   return this;
 };
-},{"../model":27,"./map":41,"./step":45,"./transform":46}],45:[function(require,module,exports){
+},{"../model":30,"./map":38,"./step":42,"./transform":43}],42:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12668,7 +12228,7 @@ var StepResult = function StepResult(doc) {
 exports.StepResult = StepResult;
 
 var steps = Object.create(null);
-},{"../model":27,"./map":41}],46:[function(require,module,exports){
+},{"../model":30,"./map":38}],43:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12768,7 +12328,7 @@ var Transform = (function () {
 })();
 
 exports.Transform = Transform;
-},{"./map":41,"./step":45}],47:[function(require,module,exports){
+},{"./map":38,"./step":42}],44:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12860,7 +12420,7 @@ function samePathDepth(a, b) {
     if (i == a.path.length || i == b.path.length || a.path[i] != b.path[i]) return i;
   }
 }
-},{"../model":27}],48:[function(require,module,exports){
+},{"../model":30}],45:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12909,7 +12469,7 @@ function functionName(f) {
   var match = /^function (\w+)/.exec(f.toString());
   return match && match[1];
 }
-},{}],49:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 // ;; #path=EventMixin #kind=interface
 // A set of methods for objects that emit events. Added by calling
 // `eventMixin` on a constructor.
@@ -12992,7 +12552,7 @@ function eventMixin(ctor) {
   var proto = ctor.prototype;
   for (var prop in methods) if (methods.hasOwnProperty(prop)) proto[prop] = methods[prop];
 }
-},{}],50:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13049,7 +12609,7 @@ var Map = window.Map || (function () {
   return _class;
 })();
 exports.Map = Map;
-},{}],51:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13064,4 +12624,176 @@ function sortedInsert(array, elt, compare) {
 }
 
 module.exports = exports["default"];
+},{}],49:[function(require,module,exports){
+(function(mod) {
+  if (typeof exports == "object" && typeof module == "object") // CommonJS
+    module.exports = mod()
+  else if (typeof define == "function" && define.amd) // AMD
+    return define([], mod)
+  else // Plain browser env
+    (this || window).browserKeymap = mod()
+})(function() {
+  "use strict"
+
+  var mac = typeof navigator != "undefined" ? /Mac/.test(navigator.platform)
+          : typeof os != "undefined" ? os.platform() == "darwin" : false
+
+  // :: Object<string>
+  // A map from key codes to key names.
+  var keyNames = {
+    3: "Enter", 8: "Backspace", 9: "Tab", 13: "Enter", 16: "Shift", 17: "Ctrl", 18: "Alt",
+    19: "Pause", 20: "CapsLock", 27: "Esc", 32: "Space", 33: "PageUp", 34: "PageDown", 35: "End",
+    36: "Home", 37: "Left", 38: "Up", 39: "Right", 40: "Down", 44: "PrintScrn", 45: "Insert",
+    46: "Delete", 59: ";", 61: "=", 91: "Mod", 92: "Mod", 93: "Mod",
+    106: "*", 107: "=", 109: "-", 110: ".", 111: "/", 127: "Delete",
+    173: "-", 186: ";", 187: "=", 188: ",", 189: "-", 190: ".", 191: "/", 192: "`", 219: "[", 220: "\\",
+    221: "]", 222: "'", 63232: "Up", 63233: "Down", 63234: "Left", 63235: "Right", 63272: "Delete",
+    63273: "Home", 63275: "End", 63276: "PageUp", 63277: "PageDown", 63302: "Insert"
+  }
+
+  // Number keys
+  for (var i = 0; i < 10; i++) keyNames[i + 48] = keyNames[i + 96] = String(i)
+  // Alphabetic keys
+  for (var i = 65; i <= 90; i++) keyNames[i] = String.fromCharCode(i)
+  // Function keys
+  for (var i = 1; i <= 12; i++) keyNames[i + 111] = keyNames[i + 63235] = "F" + i
+
+  // :: (KeyboardEvent) → ?string
+  // Find a name for the given keydown event. If the keycode in the
+  // event is not known, this will return `null`. Otherwise, it will
+  // return a string like `"Shift-Cmd-Ctrl-Alt-Home"`. The parts before
+  // the dashes give the modifiers (always in that order, if present),
+  // and the last word gives the key name, which one of the names in
+  // `keyNames`.
+  //
+  // The convention for keypress events is to use the pressed character
+  // between single quotes. Due to limitations in the browser API,
+  // keypress events can not have modifiers.
+  function keyName(event) {
+    if (event.type == "keypress") return "'" + String.fromCharCode(event.charCode) + "'"
+
+    var base = keyNames[event.keyCode], name = base
+    if (name == null || event.altGraphKey) return null
+
+    if (event.altKey && base != "Alt") name = "Alt-" + name
+    if (event.ctrlKey && base != "Ctrl") name = "Ctrl-" + name
+    if (event.metaKey && base != "Cmd") name = "Cmd-" + name
+    if (event.shiftKey && base != "Shift") name = "Shift-" + name
+    return name
+  }
+
+  // :: (string) → bool
+  // Test whether the given key name refers to a modifier key.
+  function isModifierKey(name) {
+    name = /[^-]*$/.exec(name)[0]
+    return name == "Ctrl" || name == "Alt" || name == "Shift" || name == "Mod"
+  }
+
+  // :: (string) → string
+  // Normalize a sloppy key name, which may have modifiers in the wrong
+  // order or use shorthands for modifiers, to a properly formed key
+  // name. Used to normalize names provided in keymaps.
+  //
+  // Note that the modifier `mod` is a shorthand for `Cmd` on Mac, and
+  // `Ctrl` on other platforms.
+  function normalizeKeyName(name) {
+    var parts = name.split(/-(?!'?$)/), result = parts[parts.length - 1]
+    var alt, ctrl, shift, cmd
+    for (var i = 0; i < parts.length - 1; i++) {
+      var mod = parts[i]
+      if (/^(cmd|meta|m)$/i.test(mod)) cmd = true
+      else if (/^a(lt)?$/i.test(mod)) alt = true
+      else if (/^(c|ctrl|control)$/i.test(mod)) ctrl = true
+      else if (/^s(hift)$/i.test(mod)) shift = true
+      else if (/^mod$/i.test(mod)) { if (mac) cmd = true; else ctrl = true }
+      else throw new Error("Unrecognized modifier name: " + mod)
+    }
+    if (alt) result = "Alt-" + result
+    if (ctrl) result = "Ctrl-" + result
+    if (cmd) result = "Cmd-" + result
+    if (shift) result = "Shift-" + result
+    return result
+  }
+
+  // :: (Object, ?Object)
+  // A keymap binds a set of [key names](#keyName) to commands names
+  // or functions.
+  //
+  // Construct a keymap using the bindings in `keys`, whose properties
+  // should be [key names](#keyName) or space-separated sequences of
+  // key names. In the second case, the binding will be for a
+  // multi-stroke key combination.
+  //
+  // When `options` has a property `call`, this will be a programmatic
+  // keymap, meaning that instead of looking keys up in its set of
+  // bindings, it will pass the key name to `options.call`, and use
+  // the return value of that calls as the resolved binding.
+  //
+  // `options.name` can be used to give the keymap a name, making it
+  // easier to [remove](#ProseMirror.removeKeymap) from an editor.
+  function Keymap(keys, options) {
+    this.options = options || {}
+    this.bindings = Object.create(null)
+    if (keys) for (var keyname in keys) if (Object.prototype.hasOwnProperty.call(keys, keyname))
+      this.addBinding(keyname, keys[keyname])
+  }
+
+  Keymap.prototype = {
+    normalize: function(name) {
+      return this.options.multi !== false ? name.split(/ +(?!\'$)/).map(normalizeKeyName) : [normalizeKeyName(name)]
+    },
+
+    // :: (string, any)
+    // Add a binding for the given key or key sequence.
+    addBinding: function(keyname, value) {
+      var keys = this.normalize(keyname)
+      for (var i = 0; i < keys.length; i++) {
+        var name = keys.slice(0, i + 1).join(" ")
+        var val = i == keys.length - 1 ? value : "..."
+        var prev = this.bindings[name]
+        if (!prev) this.bindings[name] = val
+        else if (prev != val) throw new Error("Inconsistent bindings for " + name)
+      }
+    },
+
+    // :: (string)
+    // Remove the binding for the given key or key sequence.
+    removeBinding: function(keyname) {
+      var keys = this.normalize(keyname)
+      for (var i = keys.length - 1; i >= 0; i--) {
+        var name = keys.slice(0, i).join(" ")
+        var val = this.bindings[name]
+        if (val == "..." && !this.unusedMulti(name))
+          break
+        else if (val)
+          delete this.bindings[name]
+      }
+    },
+
+    unusedMulti: function(name) {
+      for (var binding in this.bindings)
+        if (binding.length > name && binding.indexOf(name) == 0 && binding.charAt(name.length) == " ")
+          return false
+      return true
+    },
+
+    // :: (string, ?any) → any
+    // Looks up the given key or key sequence in this keymap. Returns
+    // the value the key is bound to (which may be undefined if it is
+    // not bound), or the string `"..."` if the key is a prefix of a
+    // multi-key sequence that is bound by this keymap.
+    lookup: function(key, context) {
+      return this.options.call ? this.options.call(key, context) : this.bindings[key]
+    },
+
+    constructor: Keymap
+  }
+
+  Keymap.keyName = keyName
+  Keymap.isModifierKey = isModifierKey
+  Keymap.normalizeKeyName = normalizeKeyName
+
+  return Keymap
+})
+
 },{}]},{},[2]);

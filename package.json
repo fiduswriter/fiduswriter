@@ -4,13 +4,14 @@
   "description": "Install dependencies for ES6 compilation",
   "scripts": {
   },
-  "author": "",
-  "license": "BSD",
+  "author": "Johannes Wilm",
+  "license": "AGPL",
+  "private": true,
   "dependencies": {
     "browserify": "*",
     "babelify": "*",
     "babel-preset-es2015": "*",
-    "prosemirror": "git://github.com/prosemirror/prosemirror.git"
+    "prosemirror": "git://github.com/prosemirror/prosemirror.git#6f2110e901fc772825b3b6ab68c1296dea07a4f4"
   },
   "browserify": {
     "transform": [

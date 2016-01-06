@@ -1,13 +1,8 @@
 /*
 based on https://github.com/ProseMirror/website/blob/master/src/client/collab/comment.js
 */
-import {Pos} from "prosemirror/dist/model"
-import {elt} from "prosemirror/dist/dom"
-import {defineCommand} from "prosemirror/dist/edit"
 import {eventMixin} from "prosemirror/dist/util/event"
-import {MenuUpdate} from "prosemirror/dist/menu/update"
 
-import {Tooltip} from "prosemirror/dist/menu/tooltip"
 
 class Comment {
   constructor(id, user, userName, userAvatar, date, comment, answers) {

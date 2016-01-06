@@ -1,8 +1,8 @@
 /* Functions for ProseMirror integration.*/
 
 import {ProseMirror} from "prosemirror/dist/edit/main"
-import {fromDOM} from "prosemirror/dist/parse/dom"
-import {serializeTo} from "prosemirror/dist/serialize"
+import {fromDOM} from "prosemirror/dist/format"
+import {serializeTo} from "prosemirror/dist/format"
 import {Step} from "prosemirror/dist/transform"
 import "prosemirror/dist/collab"
 

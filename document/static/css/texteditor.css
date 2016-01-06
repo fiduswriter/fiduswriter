@@ -445,7 +445,7 @@ body {counter-reset: pagination-footnote pagination-footnote-reference;}
 #flow .pagination-footnote > * > *::before, .pagination-footnote::before {position: relative; top: -0.5em; font-size: 80%;}
 #flow .pagination-footnote > span {
     position: absolute;
-    right: 0in;
+    right: -1.6in;
     width: 1.5in;
 }
 

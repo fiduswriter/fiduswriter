@@ -154,14 +154,31 @@ Footnote.prototype.serializeDOM = (node, serializer) => {
   return dom;
 }
 
-class Citation extends Inline {}
-Citation.attributes = {
-  bibFormat: new Attribute({default: ""}),
-  bibEntry: new Attribute({default: ""}),
-  bibBefore: new Attribute({default: ""}),
-  bibPage: new Attribute({default: ""})
-}
+Footnote.register("command", {
+  name: "insert",
+  label: "Insert footnote",
+  run(pm) {
+    return pm.tr.replaceSelection(this.create()).apply({scrollIntoView: true})
+  },
+  params: [
+  ],
+  select(pm) {
+    return pm.doc.path(pm.selection.from.path).type.canContainType(this)
+  },
+  menuGroup: "inline(41)",
+})
 
+
+class Citation extends Inline {
+  get attrs() {
+    return {
+      bibFormat: new Attribute({default: ""}),
+      bibEntry: new Attribute,
+      bibBefore: new Attribute({default: ""}),
+      bibPage: new Attribute({default: ""})
+    }
+  }
+}
 
 Citation.register("parseDOM", {
   tag: "span",
@@ -215,7 +232,7 @@ Citation.register("command", {
   select(pm) {
     return pm.doc.path(pm.selection.from.path).type.canContainType(this)
   },
-  menuGroup: "inline(40)",
+  menuGroup: "inline(42)",
   prefillParams(pm) {
     let {node} = pm.selection
     if (node && node.type == this)
@@ -224,9 +241,12 @@ Citation.register("command", {
   }
 })
 
-class Equation extends Inline {}
-Equation.attributes = {
-  equation: new Attribute({default: ""})
+class Equation extends Inline {
+  get attrs() {
+    return {
+      equation: new Attribute({default: ""})
+    }
+  }
 }
 
 
@@ -269,12 +289,16 @@ Equation.register("command", {
   }
 })
 
-class Figure extends Block {}
-Figure.attributes = {
-  equation: new Attribute({default: ""}),
-  image: new Attribute({default: ""}),
-  figureCategory: new Attribute({default: ""}),
-  caption: new Attribute({default: ""})
+
+class Figure extends Block {
+  get attrs() {
+    return {
+      equation: new Attribute({default: ""}),
+      image: new Attribute({default: ""}),
+      figureCategory: new Attribute({default: ""}),
+      caption: new Attribute({default: ""})
+    }
+  }
 }
 
 Figure.register("parseDOM", {
@@ -375,12 +399,14 @@ function markActive(pm, type) {
 }
 
 class CommentMark extends MarkType {
+  get attrs() {
+    return {
+      id: new Attribute
+    }
+  }
   static get rank() { return 54 }
 }
 
-CommentMark.attributes = {
-  id: new Attribute,
-}
 
 CommentMark.register("parseDOM", {tag: "span", parse: function(dom, state) {
   if (!dom.classList.contains('comment')) return false;
@@ -426,5 +452,3 @@ export var fidusSchema = new Schema(defaultSchema.spec.update({
 }, {
   comment: CommentMark
 }));
-
-window.fidusSchema = fidusSchema;

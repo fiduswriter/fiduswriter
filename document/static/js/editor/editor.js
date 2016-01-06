@@ -700,6 +700,21 @@ Footnote.prototype.serializeDOM = function (node, serializer) {
   return dom;
 };
 
+Footnote.register("command", {
+  name: "insert",
+  label: "Insert footnote",
+  run: function run(pm) {
+    return pm.tr.replaceSelection(this.create()).apply({ scrollIntoView: true });
+  },
+
+  params: [],
+  select: function select(pm) {
+    return pm.doc.path(pm.selection.from.path).type.canContainType(this);
+  },
+
+  menuGroup: "inline(41)"
+});
+
 var Citation = (function (_Inline2) {
   _inherits(Citation, _Inline2);
 
@@ -709,15 +724,20 @@ var Citation = (function (_Inline2) {
     return _possibleConstructorReturn(this, Object.getPrototypeOf(Citation).apply(this, arguments));
   }
 
+  _createClass(Citation, [{
+    key: "attrs",
+    get: function get() {
+      return {
+        bibFormat: new _model.Attribute({ default: "" }),
+        bibEntry: new _model.Attribute(),
+        bibBefore: new _model.Attribute({ default: "" }),
+        bibPage: new _model.Attribute({ default: "" })
+      };
+    }
+  }]);
+
   return Citation;
 })(_model.Inline);
-
-Citation.attributes = {
-  bibFormat: new _model.Attribute({ default: "" }),
-  bibEntry: new _model.Attribute({ default: "" }),
-  bibBefore: new _model.Attribute({ default: "" }),
-  bibPage: new _model.Attribute({ default: "" })
-};
 
 Citation.register("parseDOM", {
   tag: "span",
@@ -767,7 +787,7 @@ Citation.register("command", {
     return pm.doc.path(pm.selection.from.path).type.canContainType(this);
   },
 
-  menuGroup: "inline(40)",
+  menuGroup: "inline(42)",
   prefillParams: function prefillParams(pm) {
     var node = pm.selection.node;
 
@@ -785,12 +805,17 @@ var Equation = (function (_Inline3) {
     return _possibleConstructorReturn(this, Object.getPrototypeOf(Equation).apply(this, arguments));
   }
 
+  _createClass(Equation, [{
+    key: "attrs",
+    get: function get() {
+      return {
+        equation: new _model.Attribute({ default: "" })
+      };
+    }
+  }]);
+
   return Equation;
 })(_model.Inline);
-
-Equation.attributes = {
-  equation: new _model.Attribute({ default: "" })
-};
 
 Equation.register("parseDOM", {
   tag: "span",
@@ -840,15 +865,20 @@ var Figure = (function (_Block4) {
     return _possibleConstructorReturn(this, Object.getPrototypeOf(Figure).apply(this, arguments));
   }
 
+  _createClass(Figure, [{
+    key: "attrs",
+    get: function get() {
+      return {
+        equation: new _model.Attribute({ default: "" }),
+        image: new _model.Attribute({ default: "" }),
+        figureCategory: new _model.Attribute({ default: "" }),
+        caption: new _model.Attribute({ default: "" })
+      };
+    }
+  }]);
+
   return Figure;
 })(_model.Block);
-
-Figure.attributes = {
-  equation: new _model.Attribute({ default: "" }),
-  image: new _model.Attribute({ default: "" }),
-  figureCategory: new _model.Attribute({ default: "" }),
-  caption: new _model.Attribute({ default: "" })
-};
 
 Figure.register("parseDOM", {
   tag: "figure",
@@ -953,7 +983,14 @@ var CommentMark = (function (_MarkType) {
     return _possibleConstructorReturn(this, Object.getPrototypeOf(CommentMark).apply(this, arguments));
   }
 
-  _createClass(CommentMark, null, [{
+  _createClass(CommentMark, [{
+    key: "attrs",
+    get: function get() {
+      return {
+        id: new _model.Attribute()
+      };
+    }
+  }], [{
     key: "rank",
     get: function get() {
       return 54;
@@ -962,10 +999,6 @@ var CommentMark = (function (_MarkType) {
 
   return CommentMark;
 })(_model.MarkType);
-
-CommentMark.attributes = {
-  id: new _model.Attribute()
-};
 
 CommentMark.register("parseDOM", { tag: "span", parse: function parse(dom, state) {
     if (!dom.classList.contains('comment')) return false;
@@ -1016,8 +1049,6 @@ var fidusSchema = exports.fidusSchema = new _model.Schema(_model.defaultSchema.s
 }, {
   comment: CommentMark
 }));
-
-window.fidusSchema = fidusSchema;
 
 },{"prosemirror/dist/model":30}],4:[function(require,module,exports){
 'use strict';

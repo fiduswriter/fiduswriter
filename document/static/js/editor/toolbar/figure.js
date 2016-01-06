@@ -11,7 +11,7 @@ jQuery(document).on('mousedown', '#button-figure:not(.disabled)', function (even
         caption = '',
         figureCategory = 'figure',
         equation = '',
-  //      previewImage,
+        previewImage,
         mathInput, captionInput,
         node = theEditor.editor.selection.node;;
     event.preventDefault();
@@ -142,7 +142,6 @@ jQuery(document).on('mousedown', '#button-figure:not(.disabled)', function (even
     }
 
     function layoutImagePreview() {
-        //var previewImage = ImageDB[image];
         jQuery('#inner-figure-preview')[0].innerHTML =
             '<img src="' +
             previewImage.image +

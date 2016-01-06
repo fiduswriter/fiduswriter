@@ -17,6 +17,7 @@ then
 pip install nodeenv
 nodeenv -p
 fi
+
 npm install
 
 cd node_modules/prosemirror/

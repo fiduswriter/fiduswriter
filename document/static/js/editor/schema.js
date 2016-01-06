@@ -126,7 +126,9 @@ DocumentContents.prototype.serializeDOM = (node, serializer) => {
   return dom;
 }
 
-class Footnote extends Inline {}
+class Footnote extends Inline {
+  get contains() { return "inline" }
+}
 
 Footnote.register("parseDOM", {
   tag: "span",

@@ -671,6 +671,13 @@ var Footnote = (function (_Inline) {
     return _possibleConstructorReturn(this, Object.getPrototypeOf(Footnote).apply(this, arguments));
   }
 
+  _createClass(Footnote, [{
+    key: "contains",
+    get: function get() {
+      return "inline";
+    }
+  }]);
+
   return Footnote;
 })(_model.Inline);
 

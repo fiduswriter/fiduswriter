@@ -70,7 +70,6 @@ export class CommentStore {
   deleteLocalComment(id) {
     let found = this.comments[id]
     if (found) {
-      this.removeCommentMarks(id)
       delete this.comments[id]
       return true
     }
@@ -79,7 +78,8 @@ export class CommentStore {
   deleteComment(id) {
     if (this.deleteLocalComment(id)) {
       this.unsent.push({type: "delete", id: id})
-      this.signal("mustSend")
+      this.removeCommentMarks(id)
+//      this.signal("mustSend")
     }
   }
 

@@ -78,8 +78,9 @@ theEditor.update = function () {
       theDocument.hash = theEditor.getHash();
 };
 
+
 theEditor.getUpdates = function (callback) {
-      var outputNode = serializeTo(theEditor.editor.mod.collab.versionDoc,'dom');
+      var outputNode = nodeConverter.viewToModelNode(serializeTo(theEditor.editor.mod.collab.versionDoc,'dom'));
       theDocument.title = theEditor.editor.doc.firstChild.textContent;
       theDocument.version = theEditor.editor.mod.collab.version;
       theDocument.metadata.title = exporter.node2Obj(outputNode.getElementById('document-title'));

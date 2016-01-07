@@ -2,6 +2,9 @@
 based on https://github.com/ProseMirror/website/blob/master/src/client/collab/comment.js
 */
 import {eventMixin} from "prosemirror/dist/util/event"
+import {Transform} from "prosemirror/dist/transform"
+import {Pos} from "prosemirror/dist/model"
+import {CommentMark} from "./schema"
 
 
 class Comment {
@@ -36,8 +39,6 @@ export class CommentStore {
 
   addLocalComment(id, user, userName, userAvatar, date, comment, answers) {
     if (!this.comments[id]) {
-      //TODO: handle deletion somehow.
-//      range.on("removed", () => this.removeComment(id))
       this.comments[id] = new Comment(id, user, userName, userAvatar, date, comment, answers)
     }
   }
@@ -54,13 +55,22 @@ export class CommentStore {
     }
   }
 
-
+  removeCommentMarks(id) {
+    this.pm.doc.inlineNodesBetween(false, false, ({marks}, path, start, end) => {
+      for (let mark of marks) {
+        if (mark.type.name==='comment' && parseInt(mark.attrs.id) === id) {
+          this.pm.apply(
+            this.pm.tr.removeMark(new Pos(path, start), new Pos(path, end), CommentMark.type)
+          )
+        }
+      }
+    })
+  }
 
   deleteLocalComment(id) {
     let found = this.comments[id]
     if (found) {
-//      this.pm.removeRange(found.range)
-      // TODO: We need to remove all instances of a mark with this ID.
+      this.removeCommentMarks(id)
       delete this.comments[id]
       return true
     }

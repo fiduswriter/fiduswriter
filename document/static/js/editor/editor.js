@@ -3,6 +3,197 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 
+var _main = require("prosemirror/dist/edit/main");
+
+var _format = require("prosemirror/dist/format");
+
+var _transform = require("prosemirror/dist/transform");
+
+require("prosemirror/dist/collab");
+
+var _schema = require("./es6_modules/schema");
+
+var _updateUi = require("./es6_modules/update-ui");
+
+var _comment = require("./es6_modules/comment");
+
+/* Functions for ProseMirror integration.*/
+
+var theEditor = {};
+
+function makeEditor(where, doc, version) {
+    return new _main.ProseMirror({
+        place: where,
+        schema: _schema.fidusSchema,
+        doc: doc,
+        collab: { version: version }
+    });
+};
+
+theEditor.createDoc = function (aDocument) {
+    var editorNode = document.createElement('div'),
+        titleNode = aDocument.metadata.title ? exporter.obj2Node(aDocument.metadata.title) : document.createElement('div'),
+        metadataNode = document.createElement('div'),
+        documentContentsNode = exporter.obj2Node(aDocument.contents),
+        metadataSubtitleNode = aDocument.metadata.subtitle ? exporter.obj2Node(aDocument.metadata.subtitle) : document.createElement('div'),
+        metadataAuthorsNode = aDocument.metadata.authors ? exporter.obj2Node(aDocument.metadata.authors) : document.createElement('div'),
+        metadataAbstractNode = aDocument.metadata.abstract ? exporter.obj2Node(aDocument.metadata.abstract) : document.createElement('div'),
+        metadataKeywordsNode = aDocument.metadata.keywords ? exporter.obj2Node(aDocument.metadata.keywords) : document.createElement('div'),
+        doc;
+
+    titleNode.id = 'document-title';
+    metadataNode.id = 'document-metadata';
+    metadataSubtitleNode.id = 'metadata-subtitle';
+    metadataAuthorsNode.id = 'metadata-authors';
+    metadataAbstractNode.id = 'metadata-abstract';
+    metadataKeywordsNode.id = 'metadata-keywords';
+    documentContentsNode.id = 'document-contents';
+
+    editorNode.appendChild(titleNode);
+    metadataNode.appendChild(metadataSubtitleNode);
+    metadataNode.appendChild(metadataAuthorsNode);
+    metadataNode.appendChild(metadataAbstractNode);
+    metadataNode.appendChild(metadataKeywordsNode);
+    editorNode.appendChild(metadataNode);
+    editorNode.appendChild(documentContentsNode);
+
+    doc = (0, _format.fromDOM)(_schema.fidusSchema, editorNode);
+
+    return doc;
+};
+
+theEditor.initiate = function () {
+    var doc = theEditor.createDoc(theDocument);
+    theEditor.editor = makeEditor(document.getElementById('document-editable'), doc, theDocument.version);
+    theDocument.hash = theEditor.getHash();
+    new _updateUi.UpdateUI(theEditor.editor, "selectionChange change activeMarkChange blur focus");
+    theEditor.editor.on('change', editorHelpers.documentHasChanged);
+    theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators);
+    theEditor.comments = new _comment.CommentStore(theEditor.editor, theDocument.comment_version);
+    theEditor.comments.on("mustSend", theEditor.sendToCollaborators);
+    _.each(theDocument.comments, function (comment) {
+        theEditor.comments.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers);
+    });
+};
+
+theEditor.update = function () {
+    var doc = theEditor.createDoc(theDocument);
+    theEditor.editor.setOption("collab", null);
+    theEditor.editor.setContent(doc);
+    theEditor.editor.setOption("collab", { version: theDocument.version });
+    theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators);
+    theDocument.hash = theEditor.getHash();
+};
+
+theEditor.getUpdates = function (callback) {
+    var outputNode = (0, _format.serializeTo)(theEditor.editor.mod.collab.versionDoc, 'dom');
+    theDocument.title = theEditor.editor.doc.firstChild.textContent;
+    theDocument.version = theEditor.editor.mod.collab.version;
+    theDocument.metadata.title = exporter.node2Obj(outputNode.getElementById('document-title'));
+    theDocument.metadata.subtitle = exporter.node2Obj(outputNode.getElementById('metadata-subtitle'));
+    theDocument.metadata.authors = exporter.node2Obj(outputNode.getElementById('metadata-authors'));
+    theDocument.metadata.abstract = exporter.node2Obj(outputNode.getElementById('metadata-abstract'));
+    theDocument.metadata.keywords = exporter.node2Obj(outputNode.getElementById('metadata-keywords'));
+    theDocument.contents = exporter.node2Obj(outputNode.getElementById('document-contents'));
+    theDocument.hash = theEditor.getHash();
+    theDocument.comments = theEditor.comments.comments;
+    if (callback) {
+        callback();
+    }
+};
+
+theEditor.unconfirmedSteps = {};
+
+var confirmStepsRequestCounter = 0;
+
+theEditor.sendToCollaborators = function () {
+    console.log('send to collabs');
+    var toSend = theEditor.editor.mod.collab.sendableSteps();
+    var request_id = confirmStepsRequestCounter++;
+    var aPackage = {
+        type: 'diff',
+        diff_version: theEditor.editor.mod.collab.version,
+        diff: toSend.steps.map(function (s) {
+            return s.toJSON();
+        }),
+        comments: theEditor.comments.unsentEvents(),
+        comment_version: theEditor.comments.version,
+        request_id: request_id
+    };
+    serverCommunications.send(aPackage);
+    theEditor.unconfirmedSteps[request_id] = {
+        diffs: toSend,
+        comments: theEditor.comments.hasUnsentEvents()
+    };
+};
+
+theEditor.confirmDiff = function (request_id) {
+    console.log('confirming steps');
+    var sentSteps = theEditor.unconfirmedSteps[request_id]["diffs"];
+    theEditor.editor.mod.collab.confirmSteps(sentSteps);
+
+    var sentComments = theEditor.unconfirmedSteps[request_id]["comments"];
+    theEditor.comments.eventsSent(sentComments);
+};
+
+theEditor.applyDiffs = function (diffs) {
+    theEditor.editor.on("flushed", mathHelpers.layoutEmptyEquationNodes);
+    theEditor.editor.on("flushed", citationHelpers.formatCitationsInDocIfNew);
+    theEditor.editor.mod.collab.receive(diffs.map(function (j) {
+        return _transform.Step.fromJSON(_schema.fidusSchema, j);
+    }));
+};
+
+theEditor.updateComments = function (comments, comment_version) {
+    theEditor.comments.receive(comments, comment_version);
+};
+
+theEditor.startCollaborativeMode = function () {
+    theDocumentValues.collaborativeMode = true;
+};
+
+theEditor.stopCollaborativeMode = function () {
+    theDocumentValues.collaborativeMode = false;
+};
+
+theEditor.getHash = function () {
+    var string = JSON.stringify(theEditor.editor.mod.collab.versionDoc);
+    var len = string.length;
+    var hash = 0,
+        char,
+        i;
+    if (len == 0) return hash;
+    for (i = 0; i < len; i++) {
+        char = string.charCodeAt(i);
+        hash = (hash << 5) - hash + char;
+        hash = hash & hash;
+    }
+    return hash;
+};
+theEditor.checkHash = function (version, hash) {
+    console.log('Verifying hash');
+    if (version === theEditor.editor.mod.collab.version) {
+        if (hash === theEditor.getHash()) {
+            console.log('Hash could be verified');
+            return;
+        }
+        console.log('Hash could not be verified, requesting document.');
+        serverCommunications.send({ type: 'get_document_update' });
+        return;
+    } else {
+        serverCommunications.send({
+            type: 'check_version',
+            version: theEditor.editor.mod.collab.version
+        });
+        return;
+    }
+};
+
+window.theEditor = theEditor;
+
+},{"./es6_modules/comment":2,"./es6_modules/schema":3,"./es6_modules/update-ui":4,"prosemirror/dist/collab":5,"prosemirror/dist/edit/main":17,"prosemirror/dist/format":23,"prosemirror/dist/transform":36}],2:[function(require,module,exports){
+"use strict";
+
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
@@ -11,6 +202,12 @@ Object.defineProperty(exports, "__esModule", {
 exports.CommentStore = undefined;
 
 var _event = require("prosemirror/dist/util/event");
+
+var _transform = require("prosemirror/dist/transform");
+
+var _model = require("prosemirror/dist/model");
+
+var _schema = require("./schema");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /*
                                                                                                                                                           based on https://github.com/ProseMirror/website/blob/master/src/client/collab/comment.js
@@ -53,6 +250,7 @@ var CommentStore = exports.CommentStore = (function () {
     key: "addLocalComment",
     value: function addLocalComment(id, user, userName, userAvatar, date, comment, answers) {
       if (!this.comments[id]) {
+
         //TODO: handle deletion somehow.
         //      range.on("removed", () => this.removeComment(id))
         this.comments[id] = new Comment(id, user, userName, userAvatar, date, comment, answers);
@@ -73,10 +271,50 @@ var CommentStore = exports.CommentStore = (function () {
       }
     }
   }, {
+    key: "removeCommentMarks",
+    value: function removeCommentMarks(id) {
+      var _this = this;
+
+      this.pm.doc.inlineNodesBetween(false, false, function (_ref, path, start, end) {
+        var marks = _ref.marks;
+
+        console.log(marks);
+        var _iteratorNormalCompletion = true;
+        var _didIteratorError = false;
+        var _iteratorError = undefined;
+
+        try {
+          for (var _iterator = marks[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+            var mark = _step.value;
+
+            console.log(['npnp', mark, id, mark.attrs.id, mark instanceof _schema.CommentMark]);
+            if (mark.type.name === 'comment' && parseInt(mark.attrs.id) === id) {
+              console.log(['true', mark, _schema.CommentMark, start, end]);
+              _this.pm.apply(_this.pm.tr.removeMark(new _model.Pos(path, start), new _model.Pos(path, end), _schema.CommentMark.type));
+            }
+          }
+        } catch (err) {
+          _didIteratorError = true;
+          _iteratorError = err;
+        } finally {
+          try {
+            if (!_iteratorNormalCompletion && _iterator.return) {
+              _iterator.return();
+            }
+          } finally {
+            if (_didIteratorError) {
+              throw _iteratorError;
+            }
+          }
+        }
+      });
+    }
+  }, {
     key: "deleteLocalComment",
     value: function deleteLocalComment(id) {
       var found = this.comments[id];
       if (found) {
+        this.removeCommentMarks(id);
         //      this.pm.removeRange(found.range)
         // TODO: We need to remove all instances of a mark with this ID.
         delete this.comments[id];
@@ -205,32 +443,32 @@ var CommentStore = exports.CommentStore = (function () {
   }, {
     key: "receive",
     value: function receive(events, version) {
-      var _this = this;
+      var _this2 = this;
 
       var updateCommentLayout = false;
       events.forEach(function (event) {
         if (event.type == "delete") {
-          _this.deleteLocalComment(event.id);
+          _this2.deleteLocalComment(event.id);
           updateCommentLayout = true;
         } else if (event.type == "create") {
-          _this.addLocalComment(event.id, event.user, event.userName, event.userAvatar, event.date, event.comment);
+          _this2.addLocalComment(event.id, event.user, event.userName, event.userAvatar, event.date, event.comment);
           if (event.comment.length > 0) {
             updateCommentLayout = true;
           }
         } else if (event.type == "update") {
-          _this.updateLocalComment(event.id, event.comment);
+          _this2.updateLocalComment(event.id, event.comment);
           updateCommentLayout = true;
         } else if (event.type == "add_answer") {
-          _this.addLocalAnswer(event.commentId, event);
+          _this2.addLocalAnswer(event.commentId, event);
           updateCommentLayout = true;
         } else if (event.type == "remove_answer") {
-          _this.deleteLocalAnswer(event.commentId, event);
+          _this2.deleteLocalAnswer(event.commentId, event);
           updateCommentLayout = true;
         } else if (event.type == "update_answer") {
-          _this.updateLocalAnswer(event.commentId, event.id, event.answer);
+          _this2.updateLocalAnswer(event.commentId, event.id, event.answer);
           updateCommentLayout = true;
         }
-        _this.version++;
+        _this2.version++;
       });
       if (updateCommentLayout) {
         commentHelpers.layoutComments();
@@ -259,196 +497,7 @@ function randomID() {
   return Math.floor(Math.random() * 0xffffffff);
 }
 
-},{"prosemirror/dist/util/event":46}],2:[function(require,module,exports){
-"use strict";
-
-var _main = require("prosemirror/dist/edit/main");
-
-var _format = require("prosemirror/dist/format");
-
-var _transform = require("prosemirror/dist/transform");
-
-require("prosemirror/dist/collab");
-
-var _schema = require("./schema");
-
-var _updateUi = require("./update-ui");
-
-var _comment = require("./comment");
-
-/* Functions for ProseMirror integration.*/
-
-var theEditor = {};
-
-function makeEditor(where, doc, version) {
-    return new _main.ProseMirror({
-        place: where,
-        schema: _schema.fidusSchema,
-        doc: doc,
-        collab: { version: version }
-    });
-};
-
-theEditor.createDoc = function (aDocument) {
-    var editorNode = document.createElement('div'),
-        titleNode = aDocument.metadata.title ? exporter.obj2Node(aDocument.metadata.title) : document.createElement('div'),
-        metadataNode = document.createElement('div'),
-        documentContentsNode = exporter.obj2Node(aDocument.contents),
-        metadataSubtitleNode = aDocument.metadata.subtitle ? exporter.obj2Node(aDocument.metadata.subtitle) : document.createElement('div'),
-        metadataAuthorsNode = aDocument.metadata.authors ? exporter.obj2Node(aDocument.metadata.authors) : document.createElement('div'),
-        metadataAbstractNode = aDocument.metadata.abstract ? exporter.obj2Node(aDocument.metadata.abstract) : document.createElement('div'),
-        metadataKeywordsNode = aDocument.metadata.keywords ? exporter.obj2Node(aDocument.metadata.keywords) : document.createElement('div'),
-        doc;
-
-    titleNode.id = 'document-title';
-    metadataNode.id = 'document-metadata';
-    metadataSubtitleNode.id = 'metadata-subtitle';
-    metadataAuthorsNode.id = 'metadata-authors';
-    metadataAbstractNode.id = 'metadata-abstract';
-    metadataKeywordsNode.id = 'metadata-keywords';
-    documentContentsNode.id = 'document-contents';
-
-    editorNode.appendChild(titleNode);
-    metadataNode.appendChild(metadataSubtitleNode);
-    metadataNode.appendChild(metadataAuthorsNode);
-    metadataNode.appendChild(metadataAbstractNode);
-    metadataNode.appendChild(metadataKeywordsNode);
-    editorNode.appendChild(metadataNode);
-    editorNode.appendChild(documentContentsNode);
-
-    doc = (0, _format.fromDOM)(_schema.fidusSchema, editorNode);
-
-    return doc;
-};
-
-theEditor.initiate = function () {
-    var doc = theEditor.createDoc(theDocument);
-    theEditor.editor = makeEditor(document.getElementById('document-editable'), doc, theDocument.version);
-    theDocument.hash = theEditor.getHash();
-    new _updateUi.UpdateUI(theEditor.editor, "selectionChange change activeMarkChange blur focus");
-    theEditor.editor.on('change', editorHelpers.documentHasChanged);
-    theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators);
-    theEditor.comments = new _comment.CommentStore(theEditor.editor, theDocument.comment_version);
-    theEditor.comments.on("mustSend", theEditor.sendToCollaborators);
-    _.each(theDocument.comments, function (comment) {
-        theEditor.comments.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers);
-    });
-};
-
-theEditor.update = function () {
-    var doc = theEditor.createDoc(theDocument);
-    theEditor.editor.setOption("collab", null);
-    theEditor.editor.setContent(doc);
-    theEditor.editor.setOption("collab", { version: theDocument.version });
-    theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators);
-    theDocument.hash = theEditor.getHash();
-};
-
-theEditor.getUpdates = function (callback) {
-    var outputNode = (0, _format.serializeTo)(theEditor.editor.mod.collab.versionDoc, 'dom');
-    theDocument.title = theEditor.editor.doc.firstChild.textContent;
-    theDocument.version = theEditor.editor.mod.collab.version;
-    theDocument.metadata.title = exporter.node2Obj(outputNode.getElementById('document-title'));
-    theDocument.metadata.subtitle = exporter.node2Obj(outputNode.getElementById('metadata-subtitle'));
-    theDocument.metadata.authors = exporter.node2Obj(outputNode.getElementById('metadata-authors'));
-    theDocument.metadata.abstract = exporter.node2Obj(outputNode.getElementById('metadata-abstract'));
-    theDocument.metadata.keywords = exporter.node2Obj(outputNode.getElementById('metadata-keywords'));
-    theDocument.contents = exporter.node2Obj(outputNode.getElementById('document-contents'));
-    theDocument.hash = theEditor.getHash();
-    theDocument.comments = theEditor.comments.comments;
-    if (callback) {
-        callback();
-    }
-};
-
-theEditor.unconfirmedSteps = {};
-
-var confirmStepsRequestCounter = 0;
-
-theEditor.sendToCollaborators = function () {
-    console.log('send to collabs');
-    var toSend = theEditor.editor.mod.collab.sendableSteps();
-    var request_id = confirmStepsRequestCounter++;
-    var aPackage = {
-        type: 'diff',
-        diff_version: theEditor.editor.mod.collab.version,
-        diff: toSend.steps.map(function (s) {
-            return s.toJSON();
-        }),
-        comments: theEditor.comments.unsentEvents(),
-        comment_version: theEditor.comments.version,
-        request_id: request_id
-    };
-    serverCommunications.send(aPackage);
-    theEditor.unconfirmedSteps[request_id] = {
-        diffs: toSend,
-        comments: theEditor.comments.hasUnsentEvents()
-    };
-};
-
-theEditor.confirmDiff = function (request_id) {
-    console.log('confirming steps');
-    var sentSteps = theEditor.unconfirmedSteps[request_id]["diffs"];
-    theEditor.editor.mod.collab.confirmSteps(sentSteps);
-
-    var sentComments = theEditor.unconfirmedSteps[request_id]["comments"];
-    theEditor.comments.eventsSent(sentComments);
-};
-
-theEditor.applyDiffs = function (diffs) {
-    theEditor.editor.mod.collab.receive(diffs.map(function (j) {
-        return _transform.Step.fromJSON(_schema.fidusSchema, j);
-    }));
-};
-
-theEditor.updateComments = function (comments, comment_version) {
-    theEditor.comments.receive(comments, comment_version);
-};
-
-theEditor.startCollaborativeMode = function () {
-    theDocumentValues.collaborativeMode = true;
-};
-
-theEditor.stopCollaborativeMode = function () {
-    theDocumentValues.collaborativeMode = false;
-};
-
-theEditor.getHash = function () {
-    var string = JSON.stringify(theEditor.editor.mod.collab.versionDoc);
-    var len = string.length;
-    var hash = 0,
-        char,
-        i;
-    if (len == 0) return hash;
-    for (i = 0; i < len; i++) {
-        char = string.charCodeAt(i);
-        hash = (hash << 5) - hash + char;
-        hash = hash & hash;
-    }
-    return hash;
-};
-theEditor.checkHash = function (version, hash) {
-    console.log('Verifying hash');
-    if (version === theEditor.editor.mod.collab.version) {
-        if (hash === theEditor.getHash()) {
-            console.log('Hash could be verified');
-            return;
-        }
-        console.log('Hash could not be verified, requesting document.');
-        serverCommunications.send({ type: 'get_document_update' });
-        return;
-    } else {
-        serverCommunications.send({
-            type: 'check_version',
-            version: theEditor.editor.mod.collab.version
-        });
-        return;
-    }
-};
-
-window.theEditor = theEditor;
-
-},{"./comment":1,"./schema":3,"./update-ui":4,"prosemirror/dist/collab":5,"prosemirror/dist/edit/main":17,"prosemirror/dist/format":23,"prosemirror/dist/transform":36}],3:[function(require,module,exports){
+},{"./schema":3,"prosemirror/dist/model":30,"prosemirror/dist/transform":36,"prosemirror/dist/util/event":46}],3:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -456,7 +505,7 @@ var _createClass = (function () { function defineProperties(target, props) { for
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.fidusSchema = undefined;
+exports.fidusSchema = exports.CommentMark = undefined;
 
 var _model = require("prosemirror/dist/model");
 
@@ -750,19 +799,21 @@ Citation.register("parseDOM", {
   tag: "span",
   parse: function parse(dom, state) {
     if (!dom.classList.contains('citation')) return false;
-    state.insertFrom(dom, this, {
+    console.log(state);
+    state.insert(this, {
       bibFormat: dom.getAttribute('data-bib-format') || '',
       bibEntry: dom.getAttribute('data-bib-entry') || '',
       bibBefore: dom.getAttribute('data-bib-before') || '',
       bibPage: dom.getAttribute('data-bib-page') || ''
     });
+    console.log(['ME', state, this]);
   }
 });
 
 Citation.register("parseDOM", {
   tag: "cite",
   parse: function parse(dom, state) {
-    state.insertFrom(dom, this, {
+    state.insert(this, {
       bibFormat: dom.getAttribute('data-bib-format') || '',
       bibEntry: dom.getAttribute('data-bib-entry') || '',
       bibBefore: dom.getAttribute('data-bib-before') || '',
@@ -828,7 +879,7 @@ Equation.register("parseDOM", {
   tag: "span",
   parse: function parse(dom, state) {
     if (!dom.classList.contains('equation')) return false;
-    state.insertFrom(dom, this, {
+    state.insert(this, {
       equation: dom.getAttribute('data-equation')
     });
   }
@@ -890,7 +941,7 @@ var Figure = (function (_Block4) {
 Figure.register("parseDOM", {
   tag: "figure",
   parse: function parse(dom, state) {
-    state.insertFrom(dom, this, {
+    state.insert(this, {
       equation: dom.getAttribute('data-equation'),
       image: dom.getAttribute('data-image'),
       figureCategory: dom.getAttribute('data-figure-category'),
@@ -981,7 +1032,7 @@ function markActive(pm, type) {
   if (sel.empty) return type.isInSet(pm.activeMarks());else return pm.doc.rangeHasMark(sel.from, sel.to, type);
 }
 
-var CommentMark = (function (_MarkType) {
+var CommentMark = exports.CommentMark = (function (_MarkType) {
   _inherits(CommentMark, _MarkType);
 
   function CommentMark() {
@@ -12834,4 +12885,4 @@ module.exports = exports["default"];
   return Keymap
 })
 
-},{}]},{},[2]);
+},{}]},{},[1]);

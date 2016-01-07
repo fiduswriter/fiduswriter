@@ -195,6 +195,16 @@
         }
     };
 
+    citationHelpers.formatCitationsInDocIfNew = function () {
+      // Formatt all citations in the doc, if there are new ones.
+      theEditor.editor.off("flushed", citationHelpers.formatCitationsInDocIfNew);
+      if (jQuery('span.citation:empty').length===0) {
+          return false;
+      } else {
+          citationHelpers.formatCitationsInDoc();
+      }
+    };
+
     citationHelpers.formatCitationsInDoc = function () {
         theEditor.editor.off("flushed", citationHelpers.formatCitationsInDoc);
         jQuery('#document-bibliography').html(

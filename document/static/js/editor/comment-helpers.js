@@ -271,6 +271,9 @@
             commentReferrer = commentHelpers.findComment(
                 theDocument.activeCommentId);
             initialCommentBox = commentHelpers.findCommentBox(theDocument.activeCommentId);
+            if (!initialCommentBox) {
+              return false;
+            }
             lastOffsetTop = initialCommentBox.offsetTop;
             previousComments = [];
             nextComments = jQuery.makeArray(jQuery('.comment'));

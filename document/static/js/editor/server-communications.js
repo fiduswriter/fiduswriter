@@ -77,8 +77,7 @@
             serverCommunications.activate_connection();
             break;
         case 'document_data':
-            editorHelpers.fillEditorPage(data.document, data.document_values);
-            theEditor.applyDiffs(data.last_diffs);
+            editorHelpers.copyDocumentValues(data.document, data.document_values);
             if (data.hasOwnProperty('user')) {
                 theUser = data.user;
             } else {
@@ -93,7 +92,7 @@
             break;
         case 'document_data_update':
             editorHelpers.updateEditorPage(data.document);
-            theEditor.applyDiffs(data.last_diffs);
+            theEditor.applyDiffs(data.document_values.last_diffs);
             break;
         case 'diff':
             if (data.diff && data.diff.length) {

@@ -186,19 +186,21 @@ Citation.register("parseDOM", {
   tag: "span",
   parse: function(dom, state) {
     if (!dom.classList.contains('citation')) return false;
-    state.insertFrom(dom, this, {
+    console.log(state)
+    state.insert(this, {
         bibFormat: dom.getAttribute('data-bib-format') || '',
         bibEntry: dom.getAttribute('data-bib-entry') || '',
         bibBefore: dom.getAttribute('data-bib-before') || '',
         bibPage: dom.getAttribute('data-bib-page') || ''
     });
+      console.log(['ME',state, this])
   }
 });
 
 Citation.register("parseDOM", {
   tag: "cite",
   parse: function(dom, state) {
-    state.insertFrom(dom, this, {
+    state.insert(this, {
         bibFormat: dom.getAttribute('data-bib-format') || '',
         bibEntry: dom.getAttribute('data-bib-entry') || '',
         bibBefore: dom.getAttribute('data-bib-before') || '',
@@ -256,7 +258,7 @@ Equation.register("parseDOM", {
   tag: "span",
   parse: function(dom, state) {
     if (!dom.classList.contains('equation')) return false;
-    state.insertFrom(dom, this, {
+    state.insert(this, {
         equation: dom.getAttribute('data-equation')
     });
   }
@@ -306,7 +308,7 @@ class Figure extends Block {
 Figure.register("parseDOM", {
   tag: "figure",
   parse: function(dom, state) {
-    state.insertFrom(dom, this, {
+    state.insert(this, {
         equation: dom.getAttribute('data-equation'),
         image: dom.getAttribute('data-image'),
         figureCategory: dom.getAttribute('data-figure-category'),
@@ -400,7 +402,7 @@ function markActive(pm, type) {
     return pm.doc.rangeHasMark(sel.from, sel.to, type)
 }
 
-class CommentMark extends MarkType {
+export class CommentMark extends MarkType {
   get attrs() {
     return {
       id: new Attribute

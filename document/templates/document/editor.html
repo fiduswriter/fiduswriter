@@ -190,8 +190,8 @@
             <!-- contact functions -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/contact-helpers.js"></script>
             <!-- tools functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/tools-templates.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/tools-helpers.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/tools-templates.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/tools-helpers.js"></script>
             <!-- Usermedia functions -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/usermedia-helpers.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/usermedia-template-dialogs.js"></script>
@@ -214,28 +214,27 @@
             <script type="text/javascript" src="{{ STATIC_URL }}js/document-accessrights-templates.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/document-accessrights-helpers.js"></script>
             <!-- Comment functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/comment-templates.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/comment-helpers.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/comment-templates.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/comment-helpers.js"></script>
             <!-- File export functions -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/export-templates.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.js"></script>
             <!-- File import -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/importer.js"></script>
             <!-- Chat functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/chat-helpers.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/chat-helpers.js"></script>
             <script type="text/javascript">
                 chatHelpers.bind();
             </script>
             <!-- Moving of footnotes-->
-            <script type="text/javascript"  src="{{ STATIC_URL }}js/editor-escapes.js"></script>
+            <script type="text/javascript"  src="{{ STATIC_URL }}js/editor/escapes.js"></script>
             <!-- Document related functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor-helpers.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor-setup.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/server-communications.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/setup.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/server-communications.js"></script>
             <script type="text/javascript">
                 serverCommunications.bind();
             </script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/node-converter.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/node-converter.js"></script>
         {% endcompress %}
 
     </head>

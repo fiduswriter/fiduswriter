@@ -2084,9 +2084,9 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                 break;
             }
         });
-
+        
         bibliographyHelpers.getBibDB(function () {
-            if (window.hasOwnProperty('theDocument')) {
+            if (window.hasOwnProperty('theDocument') && theEditor.editor) {
                 citationHelpers.formatCitationsInDoc();
             }
             jQuery(document).trigger("bibliography_ready");

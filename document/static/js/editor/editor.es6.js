@@ -6,9 +6,9 @@ import {serializeTo} from "prosemirror/dist/format"
 import {Step} from "prosemirror/dist/transform"
 import "prosemirror/dist/collab"
 
-import {fidusSchema} from "./schema"
-import {UpdateUI} from "./update-ui"
-import {CommentStore} from "./comment"
+import {fidusSchema} from "./es6_modules/schema"
+import {UpdateUI} from "./es6_modules/update-ui"
+import {CommentStore} from "./es6_modules/comment"
 
 var theEditor = {};
 
@@ -129,7 +129,10 @@ theEditor.confirmDiff = function (request_id) {
 };
 
 theEditor.applyDiffs = function(diffs) {
+    theEditor.editor.on("flushed", mathHelpers.layoutEmptyEquationNodes);
+    theEditor.editor.on("flushed", citationHelpers.formatCitationsInDocIfNew);
     theEditor.editor.mod.collab.receive(diffs.map(j => Step.fromJSON(fidusSchema, j)));
+
 }
 
 theEditor.updateComments = function(comments, comment_version) {

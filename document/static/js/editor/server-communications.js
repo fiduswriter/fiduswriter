@@ -95,11 +95,11 @@
             theEditor.applyDiffs(data.document_values.last_diffs);
             break;
         case 'diff':
-            if (data.diff && data.diff.length) {
-              theEditor.applyDiffs(data.diff);
-            }
             if (data.comments && data.comments.length) {
               theEditor.updateComments(data.comments, data.comments_version);
+            }
+            if (data.diff && data.diff.length) {
+              theEditor.applyDiffs(data.diff);
             }
             break;
         case 'confirm_diff':

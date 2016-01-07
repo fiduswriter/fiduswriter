@@ -5,9 +5,9 @@ const UPDATE_TIMEOUT = 200
 
 const BLOCK_LABELS = {
   'paragraph': gettext('Normal Text'),
-  'ordered_list': get('Numbered List'),
-  'bullet_list': get('Bulleted List'),
-  'blockquote': get('Block Quote'),
+  'ordered_list': gettext('Numbered List'),
+  'bullet_list': gettext('Bulleted List'),
+  'blockquote': gettext('Block Quote'),
   'heading_1': gettext('1st Heading'),
   'heading_2': gettext('2nd Heading'),
   'heading_3': gettext('3rd Heading'),

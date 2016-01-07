@@ -90,6 +90,7 @@
         // Find the comment that is currently opened.
         commentHelpers.deactivateAll();
         theDocument.activeCommentId = id;
+
     };
 
     commentHelpers.deactivateAll = function () {
@@ -322,12 +323,17 @@
     commentHelpers.layoutComments = function () {
         // Handle the layout of the comments on the screen.
         var theCommentPointers = [].slice.call(jQuery('.comment')),
-            activeCommentWrapper, theComments = [];
+            activeCommentWrapper, theComments = [], ids = [];
 
         theEditor.editor.off("flushed", commentHelpers.layoutComments);
 
         theCommentPointers.forEach(function(commentNode){
           var id = parseInt(commentNode.getAttribute("data-id"));
+          if (ids.indexOf(id) !== -1) {
+            // This is not the first occurence of this comment. So we ignore it.
+            return;
+          }
+          ids.push(id);
           if (theEditor.comments.comments[id]) {
             theComments.push({
               id: id,
@@ -353,8 +359,8 @@
             theDocument.activeCommentId = activeCommentWrapper.attr(
                 'data-id');
             jQuery('#activeCommentStyle').html(
-                '.comments-enabled #comment-' + theDocument.activeCommentId +
-                ' {background-color: #fffacf;}');
+                '.comments-enabled .comment[data-id="' + theDocument.activeCommentId + '"] ' +
+                '{background-color: #fffacf;}');
             activeCommentWrapper.find('.comment-answer-text').autoResize({
                 'extraSpace': 0
             });

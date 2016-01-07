@@ -33,7 +33,7 @@ export class CommentStore {
     this.addLocalComment(id, user, userName, userAvatar, date, comment, answers)
     this.unsent.push({type: "create", id: id})
     this.pm.execCommand('schema:comment:set',[id]);
-//    this.signal("mustSend")
+    this.signal("mustSend")
     return id
   }
 
@@ -79,7 +79,7 @@ export class CommentStore {
     if (this.deleteLocalComment(id)) {
       this.unsent.push({type: "delete", id: id})
       this.removeCommentMarks(id)
-//      this.signal("mustSend")
+      this.signal("mustSend")
     }
   }
 
@@ -210,7 +210,7 @@ export class CommentStore {
       this.version++
     })
     if (updateCommentLayout) {
-      commentHelpers.layoutComments()
+      this.pm.on('flushed', commentHelpers.layoutComments);
     }
     //this.version = version
   }

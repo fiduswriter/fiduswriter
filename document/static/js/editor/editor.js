@@ -243,16 +243,13 @@ var CommentStore = exports.CommentStore = (function () {
       this.addLocalComment(id, user, userName, userAvatar, date, comment, answers);
       this.unsent.push({ type: "create", id: id });
       this.pm.execCommand('schema:comment:set', [id]);
-      //    this.signal("mustSend")
+      this.signal("mustSend");
       return id;
     }
   }, {
     key: "addLocalComment",
     value: function addLocalComment(id, user, userName, userAvatar, date, comment, answers) {
       if (!this.comments[id]) {
-
-        //TODO: handle deletion somehow.
-        //      range.on("removed", () => this.removeComment(id))
         this.comments[id] = new Comment(id, user, userName, userAvatar, date, comment, answers);
       }
     }
@@ -277,8 +274,6 @@ var CommentStore = exports.CommentStore = (function () {
 
       this.pm.doc.inlineNodesBetween(false, false, function (_ref, path, start, end) {
         var marks = _ref.marks;
-
-        console.log(marks);
         var _iteratorNormalCompletion = true;
         var _didIteratorError = false;
         var _iteratorError = undefined;
@@ -287,9 +282,7 @@ var CommentStore = exports.CommentStore = (function () {
           for (var _iterator = marks[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
             var mark = _step.value;
 
-            console.log(['npnp', mark, id, mark.attrs.id, mark instanceof _schema.CommentMark]);
             if (mark.type.name === 'comment' && parseInt(mark.attrs.id) === id) {
-              console.log(['true', mark, _schema.CommentMark, start, end]);
               _this.pm.apply(_this.pm.tr.removeMark(new _model.Pos(path, start), new _model.Pos(path, end), _schema.CommentMark.type));
             }
           }
@@ -314,9 +307,6 @@ var CommentStore = exports.CommentStore = (function () {
     value: function deleteLocalComment(id) {
       var found = this.comments[id];
       if (found) {
-        this.removeCommentMarks(id);
-        //      this.pm.removeRange(found.range)
-        // TODO: We need to remove all instances of a mark with this ID.
         delete this.comments[id];
         return true;
       }
@@ -326,6 +316,7 @@ var CommentStore = exports.CommentStore = (function () {
     value: function deleteComment(id) {
       if (this.deleteLocalComment(id)) {
         this.unsent.push({ type: "delete", id: id });
+        this.removeCommentMarks(id);
         this.signal("mustSend");
       }
     }
@@ -471,7 +462,7 @@ var CommentStore = exports.CommentStore = (function () {
         _this2.version++;
       });
       if (updateCommentLayout) {
-        commentHelpers.layoutComments();
+        this.pm.on('flushed', commentHelpers.layoutComments);
       }
       //this.version = version
     }
@@ -1125,14 +1116,14 @@ var MIN_FLUSH_DELAY = 200;
 var UPDATE_TIMEOUT = 200;
 
 var BLOCK_LABELS = {
-    'paragraph': 'Normal Text',
-    'ordered_list': 'Numbered List',
-    'bullet_list': 'Bulleted List',
-    'blockquote': 'Block Quote',
-    'heading_1': '1st Heading',
-    'heading_2': '2nd Heading',
-    'heading_3': '3rd Heading',
-    'code_block': 'Code'
+    'paragraph': gettext('Normal Text'),
+    'ordered_list': gettext('Numbered List'),
+    'bullet_list': gettext('Bulleted List'),
+    'blockquote': gettext('Block Quote'),
+    'heading_1': gettext('1st Heading'),
+    'heading_2': gettext('2nd Heading'),
+    'heading_3': gettext('3rd Heading'),
+    'code_block': gettext('Code')
 };
 
 var UpdateUI = exports.UpdateUI = (function () {
@@ -1287,19 +1278,19 @@ var UpdateUI = exports.UpdateUI = (function () {
                 switch (headElement) {
                     case nodes.title:
                         jQuery('.edit-button').addClass('disabled');
-                        jQuery('#block-style-label').html('Title');
+                        jQuery('#block-style-label').html(gettext('Title'));
                         break;
                     case nodes.subtitle:
                         jQuery('.edit-button').addClass('disabled');
-                        jQuery('#block-style-label').html('Subtitle');
+                        jQuery('#block-style-label').html(gettext('Subtitle'));
                         break;
                     case nodes.authors:
                         jQuery('.edit-button').addClass('disabled');
-                        jQuery('#block-style-label').html('Authors');
+                        jQuery('#block-style-label').html(gettext('Authors'));
                         break;
                     case nodes.keywords:
                         jQuery('.edit-button').addClass('disabled');
-                        jQuery('#block-style-label').html('Keywords');
+                        jQuery('#block-style-label').html(gettext('Keywords'));
                         break;
                     case nodes.abstract:
                         jQuery('.edit-button').removeClass('disabled');
@@ -1313,7 +1304,7 @@ var UpdateUI = exports.UpdateUI = (function () {
                             // Selection within a single block.
                             blockNode = this.pm.doc.path(anchorPath.slice(0, 3));
                             blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
-                            jQuery('#block-style-label').html('Abstract: ' + BLOCK_LABELS[blockNodeType]);
+                            jQuery('#block-style-label').html(gettext('Abstract') + ': ' + BLOCK_LABELS[blockNodeType]);
                         } else {
                             var iterator = this.pm.doc.path(headPath.slice(0, 2)).iter(_.min([headPath[2], anchorPath[2]]), _.max([headPath[2], anchorPath[2]]) + 1);
 
@@ -1329,9 +1320,9 @@ var UpdateUI = exports.UpdateUI = (function () {
                             }
 
                             if (blockNodeType) {
-                                jQuery('#block-style-label').html('Abstract: ' + BLOCK_LABELS[blockNodeType]);
+                                jQuery('#block-style-label').html(gettext('Abstract') + ': ' + BLOCK_LABELS[blockNodeType]);
                             } else {
-                                jQuery('#block-style-label').html('Abstract');
+                                jQuery('#block-style-label').html(gettext('Abstract'));
                             }
                         }
 
@@ -1347,7 +1338,7 @@ var UpdateUI = exports.UpdateUI = (function () {
                             // Selection within a single block.
                             blockNode = this.pm.doc.path(anchorPath.slice(0, 2));
                             blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
-                            jQuery('#block-style-label').html('Body: ' + BLOCK_LABELS[blockNodeType]);
+                            jQuery('#block-style-label').html(gettext('Body') + ': ' + BLOCK_LABELS[blockNodeType]);
                         } else {
                             var iterator = this.pm.doc.path(headPath.slice(0, 1)).iter(_.min([headPath[1], anchorPath[1]]), _.max([headPath[1], anchorPath[1]]) + 1);
 
@@ -1363,9 +1354,9 @@ var UpdateUI = exports.UpdateUI = (function () {
                             }
 
                             if (blockNodeType) {
-                                jQuery('#block-style-label').html('Body: ' + BLOCK_LABELS[blockNodeType]);
+                                jQuery('#block-style-label').html(gettext('Body') + ': ' + BLOCK_LABELS[blockNodeType]);
                             } else {
-                                jQuery('#block-style-label').html('Body');
+                                jQuery('#block-style-label').html(gettext('Body'));
                             }
                         }
 

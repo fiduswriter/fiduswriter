@@ -41,12 +41,6 @@
         </p>
     {% endif %}
 
-    <p>
-        {% blocktrans %}
-        Please notice that Fidus Writer currently only works with the Google Chrome, Chromium or Apple Safari browsers.</p>
-        {% endblocktrans %}
-    </p>
-
     <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
         {% csrf_token %}
         <p class="submit-wrapper">

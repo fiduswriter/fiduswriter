@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-05-04 04:10-0500\n"
+"POT-Creation-Date: 2016-01-07 05:43-0600\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,345 +17,53 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: account/templates/account/base.html:7 base/templates/base.html:10
-#: document/templates/document/editor.html:9
+#: base/templates/base.html:9 document/templates/document/editor.html.py:9
+#: user/templates/account/base.html:7
 msgid "The all in one solution for collaborative academic writing."
 msgstr ""
 
-#: account/templates/account/base.html:65
-#: account/templates/account/login.html:7
-#: account/templates/account/signup.html:10
-msgid "Log In"
-msgstr ""
-
-#: account/templates/account/email_confirm.html:8
-msgid "Confirm E-mail Address"
-msgstr ""
-
-#: account/templates/account/email_confirm.html:17
-msgid "Confirm E-mail Address and Agree to Terms and Conditions"
-msgstr ""
-
-#: account/templates/account/email_confirm.html:22
-#, python-format
-msgid ""
-"\n"
-"        Please confirm that you own the email <a href=\"mailto:%(email)s\">"
-"%(email)s</a>,\n"
-"        that you apply for the username %(user_display)s, and that you have "
-"read and agree to the\n"
-"        <a href=\"/terms/\" target=\"_blank\">Terms and Conditions</a>.\n"
-"        "
-msgstr ""
-
-#: account/templates/account/email_confirm.html:31
-msgid ""
-"\n"
-"        I have read and agree to the <a href=\"/terms/\" target=\"_blank"
-"\">Terms and Conditions</a>.\n"
-"        "
-msgstr ""
-
-#: account/templates/account/email_confirm.html:39
-msgid ""
-"\n"
-"            I am aware that I am signing up for a test account and that "
-"service may be ended abruptly and without notice, leaving me without my "
-"files.\n"
-"            "
-msgstr ""
-
-#: account/templates/account/email_confirm.html:46
-msgid ""
-"\n"
-"        Please notice that Fidus Writer currently only works with the Google "
-"Chrome, Chromium or Apple Safari browsers.</p>\n"
-"        "
-msgstr ""
-
-#: account/templates/account/email_confirm.html:54
-msgid "Confirm"
-msgstr ""
-
-#: account/templates/account/email_confirm.html:62
-#, python-format
-msgid ""
-"\n"
-"        This e-mail confirmation link expired or is invalid.\n"
-"        Please <a href=\"%(email_url)s\">issue a new e-mail confirmation "
-"request</a>.\n"
-"        "
-msgstr ""
-
-#: account/templates/account/list_team_members.html:8
-msgid "Team members"
-msgstr ""
-
-#: account/templates/account/list_team_members.html:39
-msgid "Select action"
-msgstr ""
-
-#: account/templates/account/list_team_members.html:44
-#: bibliography/templates/bibliography/index.html:52
-#: book/templates/book/index.html:105
-#: document/templates/document/index.html:105
-#: usermedia/templates/usermedia/index.html:39
-msgid "Delete selected"
-msgstr ""
-
-#: account/templates/account/list_team_members.html:52
-msgid "Add new contact"
-msgstr ""
-
-#: account/templates/account/list_team_members.html:62
-#: base/templates/base.html:120
-msgid "Contacts"
-msgstr ""
-
-#: account/templates/account/list_team_members.html:63
-#: account/templates/account/password_reset.html:29
-#: account/templates/account/signup.html:45
-msgid "E-mail address"
-msgstr ""
-
-#: account/templates/account/list_team_members.html:64
-#: account/templates/account/show_profile.html:88
-#: bibliography/templates/bibliography/index.html:107
-#: book/templates/book/index.html:164
-#: document/templates/document/index.html:165
-#: usermedia/templates/usermedia/index.html:82
-msgid "Delete"
-msgstr ""
-
-#: account/templates/account/login.html:8
-#: account/templates/account/password_reset.html:8
-msgid "New here?"
-msgstr ""
-
-#: account/templates/account/login.html:10
-#: account/templates/account/password_reset.html:10
-#: account/templates/account/signup.html:14
-#: account/templates/account/signup.html:52
-msgid "Sign up"
-msgstr ""
-
-#: account/templates/account/login.html:28
-#: account/templates/account/login.html:78
-msgid "Log in"
-msgstr ""
-
-#: account/templates/account/login.html:32
-#, python-format
-msgid ""
-"\n"
-"        If you are new here, please <a href=\"%(signup_url)s\" title=\"Sign "
-"up for %(site_name)s\">sign up</a> or use one of the login options below to "
-"create an account.\n"
-"        "
-msgstr ""
-
-#: account/templates/account/login.html:44
-msgid "Login with"
-msgstr ""
-
-#: account/templates/account/login.html:53
-#, python-format
-msgid ""
-"\n"
-"        If you are new here, please <a href=\"%(signup_url)s\" title=\"Sign "
-"up for %(site_name)s\">sign up</a>.\n"
-"        "
-msgstr ""
-
-#: account/templates/account/login.html:67
-#: account/templates/account/show_profile.html:61
-#: account/templates/account/show_profile.html:139
-msgid "Username"
-msgstr ""
-
-#: account/templates/account/login.html:71
-#: account/templates/account/show_profile.html:73
-msgid "Password"
-msgstr ""
-
-#: account/templates/account/login.html:81
-msgid "Remember me"
-msgstr ""
-
-#: account/templates/account/login.html:83
-msgid "Forgot Password?"
-msgstr ""
-
-#: account/templates/account/logout.html:6
-#: account/templates/account/logout.html:10
-#: account/templates/account/logout.html:20
-msgid "Sign Out"
-msgstr ""
-
-#: account/templates/account/logout.html:12
-msgid "Are you sure you want to sign out?"
-msgstr ""
-
-#: account/templates/account/password_reset.html:7
-#: account/templates/account/password_reset.html:14
-msgid "Password reset"
-msgstr ""
-
-#: account/templates/account/password_reset.html:15
-#, python-format
-msgid ""
-"\n"
-"    <p>Forgotten your password? Enter your e-mail address below, and we'll "
-"send you an e-mail allowing you to reset it.</p>\n"
-"    <p>If you have any trouble resetting your password, please <a href="
-"\"mailto:%(CONTACT_EMAIL)s\">contact us</a>.</p>\n"
-"    "
-msgstr ""
-
-#: account/templates/account/password_reset.html:33
-msgid "Reset My Password"
-msgstr ""
-
-#: account/templates/account/show_profile.html:40
-msgid "Edit profile picture"
-msgstr ""
-
-#: account/templates/account/show_profile.html:46
-msgid "Change picture"
-msgstr ""
-
-#: account/templates/account/show_profile.html:51
-msgid "Delete picture"
-msgstr ""
-
-#: account/templates/account/show_profile.html:65
-#: account/templates/account/show_profile.html:143
-msgid "First name"
-msgstr ""
-
-#: account/templates/account/show_profile.html:69
-#: account/templates/account/show_profile.html:147
-msgid "Last name"
-msgstr ""
-
-#: account/templates/account/show_profile.html:80
-#: account/templates/account/show_profile.html:151
-msgid "Email"
-msgstr ""
-
-#: account/templates/account/show_profile.html:86
-msgid "Primary address"
-msgstr ""
-
-#: account/templates/account/show_profile.html:87
-msgid "Verified"
-msgstr ""
-
-#: account/templates/account/show_profile.html:123
-#: feedback/templates/feedback/feedback.html:165
-msgid "submit"
-msgstr ""
-
-#: account/templates/account/show_profile.html:126
-msgid "Delete account"
-msgstr ""
-
-#: account/templates/account/show_profile.html:165
-msgid "User does not exist."
-msgstr ""
-
-#: account/templates/account/signup.html:7
-msgid "Sign Up"
-msgstr ""
-
-#: account/templates/account/signup.html:8
-msgid "Already have an account"
-msgstr ""
-
-#: account/templates/account/signup.html:16
-#, python-format
-msgid ""
-"\n"
-"        Already have an account? Then please <a href=\"%(login_url)s\" title="
-"\"Login to %(site_name)s\">login</a>.\n"
-"        "
-msgstr ""
-
-#: account/templates/account/signup.html:30
-msgid "Choose your username"
-msgstr ""
-
-#: account/templates/account/signup.html:35
-msgid "Create a password"
-msgstr ""
-
-#: account/templates/account/signup.html:40
-msgid "Confirm your password"
-msgstr ""
-
-#: account/templates/account/signup_closed.html:6
-#: account/templates/account/signup_closed.html:10
-msgid "Sign Up Closed"
-msgstr ""
-
-#: account/templates/account/signup_closed.html:11
-msgid "We are sorry, but the sign up is currently closed."
-msgstr ""
-
-#: account/templates/account/verification_sent.html:5
-#: account/templates/account/verification_sent.html:9
-msgid "Verify Your E-mail Address"
-msgstr ""
-
-#: account/templates/account/verification_sent.html:12
-#, python-format
-msgid ""
-"\n"
-"        We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> "
-"for verification.\n"
-"        Follow the link provided to finalize the signup process.\n"
-"        <br />\n"
-"        Please contact us if you do not receive it within a few minutes.\n"
-"        "
-msgstr ""
-
-#: base/templates/base.html:84
+#: base/templates/base.html:75
 msgid "edit documents"
 msgstr ""
 
-#: base/templates/base.html:85
+#: base/templates/base.html:76
 msgid "Documents"
 msgstr ""
 
-#: base/templates/base.html:89
+#: base/templates/base.html:80
 msgid "manage bibliography library"
 msgstr ""
 
-#: base/templates/base.html:90
+#: base/templates/base.html:81
 msgid "Bibliography"
 msgstr ""
 
-#: base/templates/base.html:94
+#: base/templates/base.html:85
 msgid "manage image files"
 msgstr ""
 
-#: base/templates/base.html:95
+#: base/templates/base.html:86
 msgid "Images"
 msgstr ""
 
-#: base/templates/base.html:99
+#: base/templates/base.html:90
 msgid "compose books"
 msgstr ""
 
-#: base/templates/base.html:100
+#: base/templates/base.html:91
 msgid "Books"
 msgstr ""
 
-#: base/templates/base.html:115
+#: base/templates/base.html:106
 msgid "Edit profile"
 msgstr ""
 
-#: base/templates/base.html:126
+#: base/templates/base.html:111
+#: user/templates/account/list_team_members.html:61
+msgid "Contacts"
+msgstr ""
+
+#: base/templates/base.html:117
 msgid "Log out"
 msgstr ""
 
@@ -377,6 +85,14 @@ msgstr ""
 
 #: bibliography/templates/bibliography/index.html:5
 msgid "Bibliography Manager"
+msgstr ""
+
+#: bibliography/templates/bibliography/index.html:52
+#: book/templates/book/index.html:105
+#: document/templates/document/index.html:105
+#: user/templates/account/list_team_members.html:43
+#: usermedia/templates/usermedia/index.html:39
+msgid "Delete selected"
 msgstr ""
 
 #: bibliography/templates/bibliography/index.html:57
@@ -421,34 +137,13 @@ msgstr ""
 msgid "Published"
 msgstr ""
 
-#: book/views.py:306 document/views.py:187
-msgid "Untitled"
-msgstr ""
-
-#: book/views.py:311
-#, python-format
-msgid ""
-"Hey %(collaborator_name)s,\n"
-"%(owner)s has shared the book '%(book)s' on Fidus Writer with you and given "
-"you %(right)s access rights.\n"
-"Find the book in your book overview: %(link)s"
-msgstr ""
-
-#: book/views.py:312
-msgid "Book shared:"
-msgstr ""
-
-#: book/views.py:322
-#, python-format
-msgid ""
-"Hey %(collaborator_name)s,\n"
-"%(owner)s has given you write access rights to the book '%(book)s' on Fidus "
-"Writer.\n"
-"Find the book in your book overview: %(link)s"
-msgstr ""
-
-#: book/views.py:323
-msgid "Fidus Writer book write access"
+#: bibliography/templates/bibliography/index.html:107
+#: book/templates/book/index.html:164
+#: document/templates/document/index.html:165
+#: user/templates/account/list_team_members.html:63
+#: user/templates/account/show_profile.html:87
+#: usermedia/templates/usermedia/index.html:82
+msgid "Delete"
 msgstr ""
 
 #: book/templates/book/index.html:6
@@ -512,384 +207,385 @@ msgstr ""
 msgid "Rights"
 msgstr ""
 
-#: document/views.py:192
+#: book/views.py:299 document/views.py:181
+msgid "Untitled"
+msgstr ""
+
+#: book/views.py:304
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(owner)s has shared the document '%(document)s' with you and given you "
-"%(right)s access rights. \n"
-"Access the document through this link: %(link)s"
+"%(owner)s has shared the book '%(book)s' on Fidus Writer with you and given "
+"you %(right)s access rights.\n"
+"Find the book in your book overview: %(link)s"
 msgstr ""
 
-#: document/views.py:193
-msgid "Document shared:"
+#: book/views.py:305
+msgid "Book shared:"
 msgstr ""
 
-#: document/views.py:203
+#: book/views.py:315
 #, python-format
 msgid ""
 "Hey %(collaborator_name)s,\n"
-"%(owner)s has given you write access rights to a Fidus Writer document.\n"
-"Access the document through this link: %(link)s"
+"%(owner)s has given you write access rights to the book '%(book)s' on Fidus "
+"Writer.\n"
+"Find the book in your book overview: %(link)s"
 msgstr ""
 
-#: document/views.py:204
-msgid "Fidus Writer document write access"
+#: book/views.py:316
+msgid "Fidus Writer book write access"
 msgstr ""
 
-#: document/templates/document/editor.html:38
-#: document/templates/document/editor.html:375
+#: document/templates/document/editor.html:26
+#: document/templates/document/editor.html:329
 msgid "Subtitle"
 msgstr ""
 
-#: document/templates/document/editor.html:41
-#: document/templates/document/editor.html:378
+#: document/templates/document/editor.html:29
+#: document/templates/document/editor.html:332
 msgid "Abstract"
 msgstr ""
 
-#: document/templates/document/editor.html:44
+#: document/templates/document/editor.html:32
 msgid "Authors"
 msgstr ""
 
-#: document/templates/document/editor.html:47
-#: document/templates/document/editor.html:384
+#: document/templates/document/editor.html:35
+#: document/templates/document/editor.html:338
 msgid "Keywords"
 msgstr ""
 
-#: document/templates/document/editor.html:287
+#: document/templates/document/editor.html:241
 msgid "en"
 msgstr ""
 
-#: document/templates/document/editor.html:292
-#: document/templates/document/editor.html:304
+#: document/templates/document/editor.html:246
+#: document/templates/document/editor.html:258
 msgid "Close the document and return to the document overview menu."
 msgstr ""
 
-#: document/templates/document/editor.html:297
+#: document/templates/document/editor.html:251
 msgid "File handling"
 msgstr ""
 
-#: document/templates/document/editor.html:297
+#: document/templates/document/editor.html:251
 #: usermedia/templates/usermedia/index.html:79
 msgid "File"
 msgstr ""
 
-#: document/templates/document/editor.html:301
+#: document/templates/document/editor.html:255
 msgid "Share the document with other users."
 msgstr ""
 
-#: document/templates/document/editor.html:301
+#: document/templates/document/editor.html:255
 msgid "Share"
 msgstr ""
 
-#: document/templates/document/editor.html:304
+#: document/templates/document/editor.html:258
 msgid "Close"
 msgstr ""
 
-#: document/templates/document/editor.html:307
+#: document/templates/document/editor.html:261
 msgid "Save a revision of the current document"
 msgstr ""
 
-#: document/templates/document/editor.html:307
+#: document/templates/document/editor.html:261
 msgid "Save revision"
 msgstr ""
 
-#: document/templates/document/editor.html:310
+#: document/templates/document/editor.html:264
 msgid "Create copy of the current document"
 msgstr ""
 
-#: document/templates/document/editor.html:310
+#: document/templates/document/editor.html:264
 msgid "Create copy"
 msgstr ""
 
-#: document/templates/document/editor.html:313
+#: document/templates/document/editor.html:267
 msgid "Download the current document"
 msgstr ""
 
-#: document/templates/document/editor.html:313
+#: document/templates/document/editor.html:267
 msgid "Download"
 msgstr ""
 
-#: document/templates/document/editor.html:316
+#: document/templates/document/editor.html:270
 msgid "Either print or create a PDF using your browser's print dialog"
 msgstr ""
 
-#: document/templates/document/editor.html:316
+#: document/templates/document/editor.html:270
 msgid "Print/PDF"
 msgstr ""
 
-#: document/templates/document/editor.html:322
+#: document/templates/document/editor.html:276
 msgid "Export of the document contents"
 msgstr ""
 
-#: document/templates/document/editor.html:322
+#: document/templates/document/editor.html:276
 msgid "Export"
 msgstr ""
 
-#: document/templates/document/editor.html:326
+#: document/templates/document/editor.html:280
 msgid "Export the document to an HTML file"
 msgstr ""
 
-#: document/templates/document/editor.html:331
+#: document/templates/document/editor.html:285
 msgid "Export the document to an Epub electronic reader file."
 msgstr ""
 
-#: document/templates/document/editor.html:336
+#: document/templates/document/editor.html:290
 msgid ""
 "Export the document to a Latex file. This will also attach a BibTex file if "
 "you are using citations."
 msgstr ""
 
-#: document/templates/document/editor.html:344
+#: document/templates/document/editor.html:298
 msgid "Choose your preferred citation style."
 msgstr ""
 
-#: document/templates/document/editor.html:344
+#: document/templates/document/editor.html:298
 msgid "Citation Style"
 msgstr ""
 
-#: document/templates/document/editor.html:351
+#: document/templates/document/editor.html:305
 msgid "Choose a document style"
 msgstr ""
 
-#: document/templates/document/editor.html:351
+#: document/templates/document/editor.html:305
 msgid "Document Style"
 msgstr ""
 
-#: document/templates/document/editor.html:358
+#: document/templates/document/editor.html:312
 msgid "Choose a papersize for printing and PDF generation."
 msgstr ""
 
-#: document/templates/document/editor.html:358
+#: document/templates/document/editor.html:312
 msgid "Paper Size"
 msgstr ""
 
-#: document/templates/document/editor.html:362
+#: document/templates/document/editor.html:316
 msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
 msgstr ""
 
-#: document/templates/document/editor.html:362
+#: document/templates/document/editor.html:316
 msgid "DIN A4"
 msgstr ""
 
-#: document/templates/document/editor.html:365
+#: document/templates/document/editor.html:319
 msgid "The format used by the USA and some other American countries."
 msgstr ""
 
-#: document/templates/document/editor.html:365
+#: document/templates/document/editor.html:319
 msgid "US Letter"
 msgstr ""
 
-#: document/templates/document/editor.html:371
+#: document/templates/document/editor.html:325
 msgid "Choose which metadata to enable."
 msgstr ""
 
-#: document/templates/document/editor.html:371
+#: document/templates/document/editor.html:325
 msgid "Metadata"
 msgstr ""
 
-#: document/templates/document/editor.html:375
+#: document/templates/document/editor.html:329
 msgid "Define a subtitle in addition to the title of the document."
 msgstr ""
 
-#: document/templates/document/editor.html:378
+#: document/templates/document/editor.html:332
 msgid "Add an abstract to the document."
 msgstr ""
 
-#: document/templates/document/editor.html:381
+#: document/templates/document/editor.html:335
 msgid "Specify the authors of the document."
 msgstr ""
 
-#: document/templates/document/editor.html:381
+#: document/templates/document/editor.html:335
 msgid "Author(s)"
 msgstr ""
 
-#: document/templates/document/editor.html:384
+#: document/templates/document/editor.html:338
 msgid "Add keywords to facilitate categorization."
 msgstr ""
 
-#: document/templates/document/editor.html:390
+#: document/templates/document/editor.html:344
 msgid "Tools"
 msgstr ""
 
-#: document/templates/document/editor.html:394
-#: document/templates/document/editor.html:395
+#: document/templates/document/editor.html:348
+#: document/templates/document/editor.html:349
 msgid "Word counter"
 msgstr ""
 
-#: document/templates/document/editor.html:399
-#: document/templates/document/editor.html:400
+#: document/templates/document/editor.html:353
+#: document/templates/document/editor.html:354
 msgid "Keyboard shortcuts"
 msgstr ""
 
-#: document/templates/document/editor.html:411
+#: document/templates/document/editor.html:365
 msgid "Show/hide the top menu."
 msgstr ""
 
-#: document/templates/document/editor.html:415
+#: document/templates/document/editor.html:369
 msgid "Handle tracking of changes."
 msgstr ""
 
-#: document/templates/document/editor.html:416
+#: document/templates/document/editor.html:370
 msgid "Changes"
 msgstr ""
 
-#: document/templates/document/editor.html:421
+#: document/templates/document/editor.html:375
 msgid "Turn tracking of changes on."
 msgstr ""
 
-#: document/templates/document/editor.html:421
+#: document/templates/document/editor.html:375
 msgid "Track"
 msgstr ""
 
-#: document/templates/document/editor.html:424
+#: document/templates/document/editor.html:378
 msgid "Show all changes that have been tracked in the entire document."
 msgstr ""
 
-#: document/templates/document/editor.html:424
+#: document/templates/document/editor.html:378
 msgid "Show"
 msgstr ""
 
-#: document/templates/document/editor.html:427
+#: document/templates/document/editor.html:381
 msgid "Accept all changes that have been tracked in the entire document."
 msgstr ""
 
-#: document/templates/document/editor.html:427
+#: document/templates/document/editor.html:381
 msgid "Accept all"
 msgstr ""
 
-#: document/templates/document/editor.html:430
+#: document/templates/document/editor.html:384
 msgid "Reject all changes that have been tracked in the entire document."
 msgstr ""
 
-#: document/templates/document/editor.html:430
+#: document/templates/document/editor.html:384
 msgid "Reject all"
 msgstr ""
 
-#: document/templates/document/editor.html:435
+#: document/templates/document/editor.html:389
 msgid "Show/hide comments"
 msgstr ""
 
-#: document/templates/document/editor.html:436
+#: document/templates/document/editor.html:390
 msgid "Comments"
 msgstr ""
 
-#: document/templates/document/editor.html:440
-#: document/templates/document/editor.html:444
+#: document/templates/document/editor.html:394
+#: document/templates/document/editor.html:398
 msgid "Text that is part of a standard paragraph."
 msgstr ""
 
-#: document/templates/document/editor.html:440
-#: document/templates/document/editor.html:446
+#: document/templates/document/editor.html:394
+#: document/templates/document/editor.html:400
 msgid "Normal Text"
 msgstr ""
 
-#: document/templates/document/editor.html:450
+#: document/templates/document/editor.html:404
 msgid "A headline of the highest level (under title)."
 msgstr ""
 
-#: document/templates/document/editor.html:452
+#: document/templates/document/editor.html:406
 msgid "1st Headline"
 msgstr ""
 
-#: document/templates/document/editor.html:456
+#: document/templates/document/editor.html:410
 msgid "A headline of the 2nd highest level."
 msgstr ""
 
-#: document/templates/document/editor.html:458
+#: document/templates/document/editor.html:412
 msgid "2nd Headline"
 msgstr ""
 
-#: document/templates/document/editor.html:462
+#: document/templates/document/editor.html:416
 msgid "A headline of the 3rd highest level."
 msgstr ""
 
-#: document/templates/document/editor.html:464
+#: document/templates/document/editor.html:418
 msgid "3rd Headline"
 msgstr ""
 
-#: document/templates/document/editor.html:468
+#: document/templates/document/editor.html:422
 msgid "A longer quotation set as an indented block."
 msgstr ""
 
-#: document/templates/document/editor.html:470
+#: document/templates/document/editor.html:424
 msgid "Block quote"
 msgstr ""
 
-#: document/templates/document/editor.html:474
+#: document/templates/document/editor.html:428
 msgid "Computer Code."
 msgstr ""
 
-#: document/templates/document/editor.html:476
+#: document/templates/document/editor.html:430
 msgid "Code"
 msgstr ""
 
-#: document/templates/document/editor.html:480
+#: document/templates/document/editor.html:434
 msgid "An item in an ordered list."
 msgstr ""
 
-#: document/templates/document/editor.html:482
+#: document/templates/document/editor.html:436
 msgid "Numbered List"
 msgstr ""
 
-#: document/templates/document/editor.html:486
+#: document/templates/document/editor.html:440
 msgid "An item in an unordered list."
 msgstr ""
 
-#: document/templates/document/editor.html:488
+#: document/templates/document/editor.html:442
 msgid "Bulleted List"
 msgstr ""
 
-#: document/templates/document/editor.html:495
+#: document/templates/document/editor.html:449
 msgid "Bold"
 msgstr ""
 
-#: document/templates/document/editor.html:502
+#: document/templates/document/editor.html:456
 msgid "Italic"
 msgstr ""
 
-#: document/templates/document/editor.html:509
+#: document/templates/document/editor.html:463
 msgid "Numbered list"
 msgstr ""
 
-#: document/templates/document/editor.html:516
+#: document/templates/document/editor.html:470
 msgid "Bulleted list"
 msgstr ""
 
-#: document/templates/document/editor.html:523
+#: document/templates/document/editor.html:477
 msgid "Link"
 msgstr ""
 
-#: document/templates/document/editor.html:530
+#: document/templates/document/editor.html:484
 msgid "Footnote"
 msgstr ""
 
-#: document/templates/document/editor.html:537
+#: document/templates/document/editor.html:491
 msgid "Cite"
 msgstr ""
 
-#: document/templates/document/editor.html:544
+#: document/templates/document/editor.html:498
 msgid "Math"
 msgstr ""
 
-#: document/templates/document/editor.html:551
+#: document/templates/document/editor.html:505
 msgid "Figure"
 msgstr ""
 
-#: document/templates/document/editor.html:558
+#: document/templates/document/editor.html:512
 msgid "Undo"
 msgstr ""
 
-#: document/templates/document/editor.html:565
+#: document/templates/document/editor.html:519
 msgid "Redo"
 msgstr ""
 
-#: document/templates/document/editor.html:572
+#: document/templates/document/editor.html:526
 msgid "Comment"
-msgstr ""
-
-#: document/templates/document/editor.html:584
-msgid "The title of the document"
 msgstr ""
 
 #: document/templates/document/index.html:6
@@ -912,19 +608,29 @@ msgstr ""
 msgid "Revisions"
 msgstr ""
 
-#: feedback/templates/feedback/browser.html:7
-msgid "Browser check"
-msgstr ""
-
-#: feedback/templates/feedback/browser.html:11
-msgid "Hey there!"
-msgstr ""
-
-#: feedback/templates/feedback/browser.html:12
+#: document/views.py:186
+#, python-format
 msgid ""
-"Unfortunately, Fidus Writer currently only works on Google Chrome (29+) and "
-"Apple Safari (6.1+). We hope to provide support for Mozilla Firefox in the "
-"future."
+"Hey %(collaborator_name)s,\n"
+"%(owner)s has shared the document '%(document)s' with you and given you "
+"%(right)s access rights. \n"
+"Access the document through this link: %(link)s"
+msgstr ""
+
+#: document/views.py:187
+msgid "Document shared:"
+msgstr ""
+
+#: document/views.py:197
+#, python-format
+msgid ""
+"Hey %(collaborator_name)s,\n"
+"%(owner)s has given you write access rights to a Fidus Writer document.\n"
+"Access the document through this link: %(link)s"
+msgstr ""
+
+#: document/views.py:198
+msgid "Fidus Writer document write access"
 msgstr ""
 
 #: feedback/templates/feedback/feedback.html:157
@@ -932,28 +638,291 @@ msgstr ""
 msgid "Feedback"
 msgstr ""
 
+#: feedback/templates/feedback/feedback.html:165
+#: user/templates/account/show_profile.html:122
+msgid "submit"
+msgstr ""
+
 #: feedback/templates/feedback/feedback.html:169
 msgid "Thank you for your comment!"
 msgstr ""
 
-#: fiduswriter/settings.py:248
+#: fiduswriter/settings.py:253
 msgid "English"
 msgstr ""
 
-#: fiduswriter/settings.py:249
+#: fiduswriter/settings.py:254
 msgid "Bulgarian"
 msgstr ""
 
-#: fiduswriter/settings.py:250
+#: fiduswriter/settings.py:255
 msgid "German"
 msgstr ""
 
-#: fiduswriter/settings.py:251
+#: fiduswriter/settings.py:256
 msgid "Italian"
 msgstr ""
 
-#: fiduswriter/settings.py:252
+#: fiduswriter/settings.py:257
 msgid "Spanish"
+msgstr ""
+
+#: user/templates/account/base.html:55 user/templates/account/login.html:6
+#: user/templates/account/signup.html:9
+msgid "Log In"
+msgstr ""
+
+#: user/templates/account/email_confirm.html:7
+msgid "Confirm E-mail Address"
+msgstr ""
+
+#: user/templates/account/email_confirm.html:16
+msgid "Confirm E-mail Address and Agree to Terms and Conditions"
+msgstr ""
+
+#: user/templates/account/email_confirm.html:21
+#, python-format
+msgid ""
+"\n"
+"        Please confirm that you own the email <a href=\"mailto:%(email)s\">"
+"%(email)s</a>,\n"
+"        that you apply for the username %(user_display)s, and that you have "
+"read and agree to the\n"
+"        <a href=\"/terms/\" target=\"_blank\">Terms and Conditions</a>.\n"
+"        "
+msgstr ""
+
+#: user/templates/account/email_confirm.html:30
+msgid ""
+"\n"
+"        I have read and agree to the <a href=\"/terms/\" target=\"_blank"
+"\">Terms and Conditions</a>.\n"
+"        "
+msgstr ""
+
+#: user/templates/account/email_confirm.html:38
+msgid ""
+"\n"
+"            I am aware that I am signing up for a test account and that "
+"service may be ended abruptly and without notice, leaving me without my "
+"files.\n"
+"            "
+msgstr ""
+
+#: user/templates/account/email_confirm.html:47
+msgid "Confirm"
+msgstr ""
+
+#: user/templates/account/email_confirm.html:55
+#, python-format
+msgid ""
+"\n"
+"        This e-mail confirmation link expired or is invalid.\n"
+"        Please <a href=\"%(email_url)s\">issue a new e-mail confirmation "
+"request</a>.\n"
+"        "
+msgstr ""
+
+#: user/templates/account/list_team_members.html:7
+msgid "Team members"
+msgstr ""
+
+#: user/templates/account/list_team_members.html:38
+msgid "Select action"
+msgstr ""
+
+#: user/templates/account/list_team_members.html:51
+msgid "Add new contact"
+msgstr ""
+
+#: user/templates/account/list_team_members.html:62
+#: user/templates/account/password_reset.html:28
+#: user/templates/account/signup.html:44
+msgid "E-mail address"
+msgstr ""
+
+#: user/templates/account/login.html:7
+#: user/templates/account/password_reset.html:7
+msgid "New here?"
+msgstr ""
+
+#: user/templates/account/login.html:9
+#: user/templates/account/password_reset.html:9
+#: user/templates/account/signup.html:13 user/templates/account/signup.html:51
+msgid "Sign up"
+msgstr ""
+
+#: user/templates/account/login.html:27 user/templates/account/login.html:77
+msgid "Log in"
+msgstr ""
+
+#: user/templates/account/login.html:31
+#, python-format
+msgid ""
+"\n"
+"        If you are new here, please <a href=\"%(signup_url)s\" title=\"Sign "
+"up for %(site_name)s\">sign up</a> or use one of the login options below to "
+"create an account.\n"
+"        "
+msgstr ""
+
+#: user/templates/account/login.html:43
+msgid "Login with"
+msgstr ""
+
+#: user/templates/account/login.html:52
+#, python-format
+msgid ""
+"\n"
+"        If you are new here, please <a href=\"%(signup_url)s\" title=\"Sign "
+"up for %(site_name)s\">sign up</a>.\n"
+"        "
+msgstr ""
+
+#: user/templates/account/login.html:66
+#: user/templates/account/show_profile.html:60
+#: user/templates/account/show_profile.html:138
+msgid "Username"
+msgstr ""
+
+#: user/templates/account/login.html:70
+#: user/templates/account/show_profile.html:72
+msgid "Password"
+msgstr ""
+
+#: user/templates/account/login.html:80
+msgid "Remember me"
+msgstr ""
+
+#: user/templates/account/login.html:82
+msgid "Forgot Password?"
+msgstr ""
+
+#: user/templates/account/logout.html:5 user/templates/account/logout.html:9
+#: user/templates/account/logout.html:19
+msgid "Sign Out"
+msgstr ""
+
+#: user/templates/account/logout.html:11
+msgid "Are you sure you want to sign out?"
+msgstr ""
+
+#: user/templates/account/password_reset.html:6
+#: user/templates/account/password_reset.html:13
+msgid "Password reset"
+msgstr ""
+
+#: user/templates/account/password_reset.html:14
+#, python-format
+msgid ""
+"\n"
+"    <p>Forgotten your password? Enter your e-mail address below, and we'll "
+"send you an e-mail allowing you to reset it.</p>\n"
+"    <p>If you have any trouble resetting your password, please <a href="
+"\"mailto:%(CONTACT_EMAIL)s\">contact us</a>.</p>\n"
+"    "
+msgstr ""
+
+#: user/templates/account/password_reset.html:32
+msgid "Reset My Password"
+msgstr ""
+
+#: user/templates/account/show_profile.html:39
+msgid "Edit profile picture"
+msgstr ""
+
+#: user/templates/account/show_profile.html:45
+msgid "Change picture"
+msgstr ""
+
+#: user/templates/account/show_profile.html:50
+msgid "Delete picture"
+msgstr ""
+
+#: user/templates/account/show_profile.html:64
+#: user/templates/account/show_profile.html:142
+msgid "First name"
+msgstr ""
+
+#: user/templates/account/show_profile.html:68
+#: user/templates/account/show_profile.html:146
+msgid "Last name"
+msgstr ""
+
+#: user/templates/account/show_profile.html:79
+#: user/templates/account/show_profile.html:150
+msgid "Email"
+msgstr ""
+
+#: user/templates/account/show_profile.html:85
+msgid "Primary address"
+msgstr ""
+
+#: user/templates/account/show_profile.html:86
+msgid "Verified"
+msgstr ""
+
+#: user/templates/account/show_profile.html:125
+msgid "Delete account"
+msgstr ""
+
+#: user/templates/account/show_profile.html:164
+msgid "User does not exist."
+msgstr ""
+
+#: user/templates/account/signup.html:6
+msgid "Sign Up"
+msgstr ""
+
+#: user/templates/account/signup.html:7
+msgid "Already have an account"
+msgstr ""
+
+#: user/templates/account/signup.html:15
+#, python-format
+msgid ""
+"\n"
+"        Already have an account? Then please <a href=\"%(login_url)s\" title="
+"\"Login to %(site_name)s\">login</a>.\n"
+"        "
+msgstr ""
+
+#: user/templates/account/signup.html:29
+msgid "Choose your username"
+msgstr ""
+
+#: user/templates/account/signup.html:34
+msgid "Create a password"
+msgstr ""
+
+#: user/templates/account/signup.html:39
+msgid "Confirm your password"
+msgstr ""
+
+#: user/templates/account/signup_closed.html:5
+#: user/templates/account/signup_closed.html:9
+msgid "Sign Up Closed"
+msgstr ""
+
+#: user/templates/account/signup_closed.html:10
+msgid "We are sorry, but the sign up is currently closed."
+msgstr ""
+
+#: user/templates/account/verification_sent.html:5
+#: user/templates/account/verification_sent.html:9
+msgid "Verify Your E-mail Address"
+msgstr ""
+
+#: user/templates/account/verification_sent.html:12
+#, python-format
+msgid ""
+"\n"
+"        We have sent an e-mail to <a href=\"mailto:%(email)s\">%(email)s</a> "
+"for verification.\n"
+"        Follow the link provided to finalize the signup process.\n"
+"        <br />\n"
+"        Please contact us if you do not receive it within a few minutes.\n"
+"        "
 msgstr ""
 
 #: usermedia/templates/usermedia/index.html:5

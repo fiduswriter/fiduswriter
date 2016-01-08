@@ -92,7 +92,7 @@
                     }];
 
                     if(items[j].locator) {
-                       only_date_option[0].label = items[j].locator;
+                       only_date_option[0].locator = items[j].locator;
                     }
 
                     if(items[j].label) {

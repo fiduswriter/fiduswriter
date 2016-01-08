@@ -68,6 +68,7 @@ theEditor.initiate = function () {
     theDocument.hash = theEditor.getHash();
     new _updateUi.UpdateUI(theEditor.editor, "selectionChange change activeMarkChange blur focus");
     theEditor.editor.on('change', editorHelpers.documentHasChanged);
+    theEditor.editor.on('transform', theEditor.onTransform);
     theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators);
     theEditor.comments = new _comment.CommentStore(theEditor.editor, theDocument.comment_version);
     theEditor.comments.on("mustSend", theEditor.sendToCollaborators);
@@ -86,7 +87,7 @@ theEditor.update = function () {
 };
 
 theEditor.getUpdates = function (callback) {
-    var outputNode = (0, _format.serializeTo)(theEditor.editor.mod.collab.versionDoc, 'dom');
+    var outputNode = nodeConverter.viewToModelNode((0, _format.serializeTo)(theEditor.editor.mod.collab.versionDoc, 'dom'));
     theDocument.title = theEditor.editor.doc.firstChild.textContent;
     theDocument.version = theEditor.editor.mod.collab.version;
     theDocument.metadata.title = exporter.node2Obj(outputNode.getElementById('document-title'));
@@ -186,6 +187,26 @@ theEditor.checkHash = function (version, hash) {
             version: theEditor.editor.mod.collab.version
         });
         return;
+    }
+};
+
+// Things to be executed on every editor transform.
+theEditor.onTransform = function (transform) {
+    var updateBibliography = false;
+    // Check what area is affected
+    transform.steps.forEach(function (step, index) {
+        if (step.type === 'replace' && step.from.cmp(step.to) !== 0) {
+            transform.docs[index].inlineNodesBetween(step.from, step.to, function (node) {
+                if (node.type.name === 'citation') {
+                    // A citation was replaced
+                    updateBibliography = true;
+                }
+            });
+        }
+    });
+
+    if (updateBibliography) {
+        theEditor.editor.on('flushed', citationHelpers.formatCitationsInDoc);
     }
 };
 

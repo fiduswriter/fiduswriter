@@ -324,16 +324,16 @@
         // Handle the layout of the comments on the screen.
         var theCommentPointers = [].slice.call(jQuery('.comment')),
             activeCommentWrapper, theComments = [], ids = [];
-
         theEditor.editor.off("flushed", commentHelpers.layoutComments);
-
         theCommentPointers.forEach(function(commentNode){
           var id = parseInt(commentNode.getAttribute("data-id"));
           if (ids.indexOf(id) !== -1) {
             // This is not the first occurence of this comment. So we ignore it.
             return;
           }
+          console.log([id,ids])
           ids.push(id);
+          console.log([id,ids])
           if (theEditor.comments.comments[id]) {
             theComments.push({
               id: id,

@@ -30,7 +30,7 @@
 
     // In order to stick with the format used in Fidus Writer 1.1-2.0,
     // we do a few smaller modifications to the node before it is saved.
-    function nodeConverter.viewToModelNode (node) {
+    nodeConverter.viewToModelNode = function (node) {
         var fnNodes = node.querySelectorAll('.pagination-footnote'),
         strongNodes, emNodes, newNode, i;
 
@@ -43,7 +43,7 @@
             fnNodes[i].parentNode.replaceChild(newNode, fnNodes[i]);
         }
 
-        strongNodes = nodes.querySelectorAll('strong');
+        strongNodes = node.querySelectorAll('strong');
 
         for (i = 0; i < strongNodes.length; i++) {
             newNode = document.createElement('b');
@@ -53,7 +53,7 @@
             strongNodes[i].parentNode.replaceChild(newNode, strongNodes[i]);
         }
 
-        emNodes = nodes.querySelectorAll('em');
+        emNodes = node.querySelectorAll('em');
 
         for (i = 0; i < emNodes.length; i++) {
             newNode = document.createElement('i');

@@ -246,11 +246,6 @@ var FW_FILETYPE_VERSION = "1.1";
     exporter.cleanHTML = function(htmlCode) {
 
 
-        // Remove empty space characters
-        htmlCode.innerHTML = htmlCode.innerHTML.replace(
-            /[\u200b\u205f]/g,
-            '');
-
         // Replace nbsp spaces with normal ones
         htmlCode.innerHTML = htmlCode.innerHTML.replace(/&nbsp;/g, ' ');
 
@@ -495,12 +490,6 @@ var FW_FILETYPE_VERSION = "1.1";
                     '</div>' + htmlCode.innerHTML;
             }
         }
-
-
-        // Remove empty space characters
-        htmlCode.innerHTML = htmlCode.innerHTML.replace(
-            /[\u200b\u205f]/g,
-            '');
 
         // Replace nbsp spaces with normal ones
         htmlCode.innerHTML = htmlCode.innerHTML.replace(/&nbsp;/g, ' ');

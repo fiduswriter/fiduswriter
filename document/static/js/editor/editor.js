@@ -516,7 +516,7 @@ var _createClass = (function () { function defineProperties(target, props) { for
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.fidusSchema = exports.CommentMark = undefined;
+exports.fidusSchema = exports.CommentMark = exports.Doc = undefined;
 
 var _model = require("prosemirror/dist/model");
 
@@ -525,6 +525,40 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Doc = exports.Doc = (function (_Block) {
+  _inherits(Doc, _Block);
+
+  function Doc() {
+    _classCallCheck(this, Doc);
+
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(Doc).apply(this, arguments));
+  }
+
+  _createClass(Doc, [{
+    key: "locked",
+    get: function get() {
+      return true;
+    }
+  }, {
+    key: "selectable",
+    get: function get() {
+      return false;
+    }
+  }, {
+    key: "contains",
+    get: function get() {
+      return "text";
+    }
+  }], [{
+    key: "kinds",
+    get: function get() {
+      return "doc";
+    }
+  }]);
+
+  return Doc;
+})(_model.Block);
 
 var Title = (function (_Textblock) {
   _inherits(Title, _Textblock);
@@ -544,6 +578,11 @@ var Title = (function (_Textblock) {
     key: "selectable",
     get: function get() {
       return false;
+    }
+  }, {
+    key: "contains",
+    get: function get() {
+      return "text";
     }
   }]);
 
@@ -585,6 +624,11 @@ var MetaDataSubtitle = (function (_Textblock2) {
     get: function get() {
       return false;
     }
+  }, {
+    key: "contains",
+    get: function get() {
+      return "text";
+    }
   }]);
 
   return MetaDataSubtitle;
@@ -625,6 +669,11 @@ var MetaDataAuthors = (function (_Textblock3) {
     get: function get() {
       return false;
     }
+  }, {
+    key: "contains",
+    get: function get() {
+      return "text";
+    }
   }]);
 
   return MetaDataAuthors;
@@ -646,8 +695,8 @@ MetaDataAuthors.prototype.serializeDOM = function (node, serializer) {
   return dom;
 };
 
-var MetaDataAbstract = (function (_Block) {
-  _inherits(MetaDataAbstract, _Block);
+var MetaDataAbstract = (function (_Block2) {
+  _inherits(MetaDataAbstract, _Block2);
 
   function MetaDataAbstract() {
     _classCallCheck(this, MetaDataAbstract);
@@ -656,12 +705,9 @@ var MetaDataAbstract = (function (_Block) {
   }
 
   _createClass(MetaDataAbstract, [{
-    key: "locked",
-    get: function get() {
-      return true;
-    }
-  }, {
     key: "selectable",
+
+    //  get locked() { return true }
     get: function get() {
       return false;
     }
@@ -705,6 +751,11 @@ var MetaDataKeywords = (function (_Textblock4) {
     get: function get() {
       return false;
     }
+  }, {
+    key: "contains",
+    get: function get() {
+      return "text";
+    }
   }]);
 
   return MetaDataKeywords;
@@ -726,8 +777,8 @@ MetaDataKeywords.prototype.serializeDOM = function (node, serializer) {
   return dom;
 };
 
-var DocumentContents = (function (_Block2) {
-  _inherits(DocumentContents, _Block2);
+var DocumentContents = (function (_Block3) {
+  _inherits(DocumentContents, _Block3);
 
   function DocumentContents() {
     _classCallCheck(this, DocumentContents);
@@ -735,20 +786,11 @@ var DocumentContents = (function (_Block2) {
     return _possibleConstructorReturn(this, Object.getPrototypeOf(DocumentContents).apply(this, arguments));
   }
 
-  _createClass(DocumentContents, [{
-    key: "locked",
-    get: function get() {
-      return true;
-    }
-  }, {
-    key: "selectable",
-    get: function get() {
-      return false;
-    }
-  }]);
-
   return DocumentContents;
 })(_model.Block);
+
+//  get locked() { return true }
+//  get selectable() { return false }
 
 DocumentContents.register("parseDOM", {
   tag: "div",
@@ -958,8 +1000,8 @@ Equation.register("command", {
   display: equationIcon
 });
 
-var Figure = (function (_Block3) {
-  _inherits(Figure, _Block3);
+var Figure = (function (_Block4) {
+  _inherits(Figure, _Block4);
 
   function Figure() {
     _classCallCheck(this, Figure);
@@ -1143,6 +1185,7 @@ CommentMark.register("command", {
 });
 
 var fidusSchema = exports.fidusSchema = new _model.Schema(_model.defaultSchema.spec.update({
+  doc: Doc,
   title: Title,
   metadatasubtitle: MetaDataSubtitle,
   metadataauthors: MetaDataAuthors,
@@ -1335,23 +1378,28 @@ var UpdateUI = exports.UpdateUI = (function () {
                 switch (headElement) {
                     case nodes.title:
                         jQuery('.edit-button').addClass('disabled');
-                        jQuery('#block-style-label').html(gettext('Title'));
+                        jQuery('#block-style-label').html('');
+                        jQuery('#current-position').html(gettext('Title'));
                         break;
                     case nodes.subtitle:
                         jQuery('.edit-button').addClass('disabled');
-                        jQuery('#block-style-label').html(gettext('Subtitle'));
+                        jQuery('#block-style-label').html('');
+                        jQuery('#current-position').html(gettext('Subtitle'));
                         break;
                     case nodes.authors:
                         jQuery('.edit-button').addClass('disabled');
-                        jQuery('#block-style-label').html(gettext('Authors'));
+                        jQuery('#block-style-label').html('');
+                        jQuery('#current-position').html(gettext('Authors'));
                         break;
                     case nodes.keywords:
                         jQuery('.edit-button').addClass('disabled');
-                        jQuery('#block-style-label').html(gettext('Keywords'));
+                        jQuery('#block-style-label').html('');
+                        jQuery('#current-position').html(gettext('Keywords'));
                         break;
                     case nodes.abstract:
                         jQuery('.edit-button').removeClass('disabled');
                         jQuery('#button-figure').addClass('disabled');
+                        jQuery('#current-position').html(gettext('Abstract'));
 
                         var blockNodeType = true,
                             blockNode,
@@ -1361,7 +1409,7 @@ var UpdateUI = exports.UpdateUI = (function () {
                             // Selection within a single block.
                             blockNode = this.pm.doc.path(anchorPath.slice(0, 3));
                             blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
-                            jQuery('#block-style-label').html(gettext('Abstract') + ': ' + BLOCK_LABELS[blockNodeType]);
+                            jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType]);
                         } else {
                             var iterator = this.pm.doc.path(headPath.slice(0, 2)).iter(_.min([headPath[2], anchorPath[2]]), _.max([headPath[2], anchorPath[2]]) + 1);
 
@@ -1377,9 +1425,9 @@ var UpdateUI = exports.UpdateUI = (function () {
                             }
 
                             if (blockNodeType) {
-                                jQuery('#block-style-label').html(gettext('Abstract') + ': ' + BLOCK_LABELS[blockNodeType]);
+                                jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType]);
                             } else {
-                                jQuery('#block-style-label').html(gettext('Abstract'));
+                                jQuery('#block-style-label').html('');
                             }
                         }
 
@@ -1395,7 +1443,8 @@ var UpdateUI = exports.UpdateUI = (function () {
                             // Selection within a single block.
                             blockNode = this.pm.doc.path(anchorPath.slice(0, 2));
                             blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
-                            jQuery('#block-style-label').html(gettext('Body') + ': ' + BLOCK_LABELS[blockNodeType]);
+                            jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType]);
+                            jQuery('#current-position').html(gettext('Body'));
                         } else {
                             var iterator = this.pm.doc.path(headPath.slice(0, 1)).iter(_.min([headPath[1], anchorPath[1]]), _.max([headPath[1], anchorPath[1]]) + 1);
 
@@ -1409,11 +1458,12 @@ var UpdateUI = exports.UpdateUI = (function () {
                                     blockNodeType = false;
                                 }
                             }
+                            jQuery('#current-position').html(gettext('Body'));
 
                             if (blockNodeType) {
-                                jQuery('#block-style-label').html(gettext('Body') + ': ' + BLOCK_LABELS[blockNodeType]);
+                                jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType]);
                             } else {
-                                jQuery('#block-style-label').html(gettext('Body'));
+                                jQuery('#block-style-label').html('');
                             }
                         }
 

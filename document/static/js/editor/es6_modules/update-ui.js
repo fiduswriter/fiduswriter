@@ -147,23 +147,28 @@ export class UpdateUI {
         switch (headElement) {
             case nodes.title:
                 jQuery('.edit-button').addClass('disabled')
-                jQuery('#block-style-label').html(gettext('Title'))
+                jQuery('#block-style-label').html('')
+                jQuery('#current-position').html(gettext('Title'))
                 break
             case nodes.subtitle:
                 jQuery('.edit-button').addClass('disabled')
-                jQuery('#block-style-label').html(gettext('Subtitle'))
+                jQuery('#block-style-label').html('')
+                jQuery('#current-position').html(gettext('Subtitle'))
                 break
             case nodes.authors:
                 jQuery('.edit-button').addClass('disabled')
-                jQuery('#block-style-label').html(gettext('Authors'))
+                jQuery('#block-style-label').html('')
+                jQuery('#current-position').html(gettext('Authors'))
                 break
             case nodes.keywords:
                 jQuery('.edit-button').addClass('disabled')
-                jQuery('#block-style-label').html(gettext('Keywords'))
+                jQuery('#block-style-label').html('')
+                jQuery('#current-position').html(gettext('Keywords'))
                 break
             case nodes.abstract:
                 jQuery('.edit-button').removeClass('disabled')
                 jQuery('#button-figure').addClass('disabled')
+                jQuery('#current-position').html(gettext('Abstract'))
 
                 var blockNodeType = true, blockNode, nextBlockNodeType
 
@@ -171,7 +176,7 @@ export class UpdateUI {
                   // Selection within a single block.
                   blockNode = this.pm.doc.path(anchorPath.slice(0,3))
                   blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name
-                  jQuery('#block-style-label').html(gettext('Abstract') +': ' + BLOCK_LABELS[blockNodeType])
+                  jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType])
                 } else {
                     var iterator = this.pm.doc.path(headPath.slice(0,2)).iter(
                         _.min([headPath[2],anchorPath[2]]),
@@ -191,9 +196,9 @@ export class UpdateUI {
 
 
                     if (blockNodeType) {
-                        jQuery('#block-style-label').html(gettext('Abstract')+': ' + BLOCK_LABELS[blockNodeType])
+                        jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType])
                     } else {
-                        jQuery('#block-style-label').html(gettext('Abstract'))
+                        jQuery('#block-style-label').html('')
                     }
                 }
 
@@ -207,7 +212,8 @@ export class UpdateUI {
                     // Selection within a single block.
                     blockNode = this.pm.doc.path(anchorPath.slice(0,2))
                     blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name
-                    jQuery('#block-style-label').html(gettext('Body') + ': ' + BLOCK_LABELS[blockNodeType])
+                    jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType])
+                    jQuery('#current-position').html(gettext('Body'))
                 } else {
                     var iterator = this.pm.doc.path(headPath.slice(0,1)).iter(
                         _.min([headPath[1],anchorPath[1]]),
@@ -224,11 +230,12 @@ export class UpdateUI {
                             blockNodeType = false
                         }
                     }
+                    jQuery('#current-position').html(gettext('Body'))
 
                     if (blockNodeType) {
-                        jQuery('#block-style-label').html(gettext('Body') + ': ' + BLOCK_LABELS[blockNodeType])
+                        jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType])
                     } else {
-                        jQuery('#block-style-label').html(gettext('Body'))
+                        jQuery('#block-style-label').html('')
                     }
                 }
 

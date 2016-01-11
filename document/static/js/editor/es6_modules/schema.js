@@ -1,9 +1,16 @@
 import {Schema, defaultSchema, Block, Textblock, Inline, Attribute, MarkType} from "prosemirror/dist/model"
 
+export class Doc extends Block {
+  static get kinds() { return "doc" }
+  get locked() { return true }
+  get selectable() { return false }
+  get contains() { return "text" }
+}
 
 class Title extends Textblock {
   get locked() { return true }
   get selectable() { return false }
+  get contains() { return "text" }
 }
 
 Title.register("parseDOM", {
@@ -25,6 +32,7 @@ Title.prototype.serializeDOM = (node, serializer) => {
 class MetaDataSubtitle extends Textblock {
   get locked() { return true }
   get selectable() { return false }
+  get contains() { return "text" }
 }
 
 MetaDataSubtitle.register("parseDOM", {
@@ -46,6 +54,7 @@ MetaDataSubtitle.prototype.serializeDOM = (node, serializer) => {
 class MetaDataAuthors extends Textblock {
   get locked() { return true }
   get selectable() { return false }
+  get contains() { return "text" }
 }
 
 MetaDataAuthors.register("parseDOM", {
@@ -65,7 +74,7 @@ MetaDataAuthors.prototype.serializeDOM = (node, serializer) => {
 }
 
 class MetaDataAbstract extends Block {
-  get locked() { return true }
+//  get locked() { return true }
   get selectable() { return false }
 }
 
@@ -88,6 +97,7 @@ MetaDataAbstract.prototype.serializeDOM = (node, serializer) => {
 class MetaDataKeywords extends Textblock {
   get locked() { return true }
   get selectable() { return false }
+  get contains() { return "text" }
 }
 
 MetaDataKeywords.register("parseDOM", {
@@ -107,8 +117,8 @@ MetaDataKeywords.prototype.serializeDOM = (node, serializer) => {
 }
 
 class DocumentContents extends Block {
-  get locked() { return true }
-  get selectable() { return false }
+//  get locked() { return true }
+//  get selectable() { return false }
 }
 
 DocumentContents.register("parseDOM", {
@@ -449,6 +459,7 @@ CommentMark.register("command", {
 })
 
 export var fidusSchema = new Schema(defaultSchema.spec.update({
+  doc: Doc,
   title: Title,
   metadatasubtitle: MetaDataSubtitle,
   metadataauthors: MetaDataAuthors,

@@ -29,12 +29,12 @@ body {
     color: #fff;
     font-style: italic;
     padding-left: 108px;
-    background: url(../img/fidus_face.png) no-repeat 48px 0;
+    background: url(../img/fidus_face.png) no-repeat 68px 0;
     background-size: 17px 21px;
 }
 #header-navigation {
     position: relative;
-    margin: 20px 0 0 108px;
+    margin: 20px 0 0 68px;
     -webkit-user-select: none;
 }
 #header-navigation > div {
@@ -85,7 +85,7 @@ body {
 #editor-tools-wrapper {
     position: relative;
     padding: 12px 0;
-    width: 1000px;
+    width: 1112px;
 }
 #open-close-header,
 #ice-control,
@@ -94,7 +94,7 @@ body {
     z-index: 100;
 }
 #open-close-header {
-    left: 34px;
+    left: 14px;
     top: 12px;
     background: transparent;
     border-color: #f9f9f9;
@@ -126,7 +126,7 @@ body {
 }
 .editortoolbar {
     position: relative;
-    left: 108px;
+    left: 68px;
     width: auto !important;
 }
 .editortoolbar div.ui-buttonset {
@@ -171,7 +171,7 @@ body {
 }
 
 #flow {
-    margin: .5in 0 0 108px !important;
+    margin: .5in 0 0 68px !important;
 }
 
 div#statusarea {
@@ -403,7 +403,7 @@ span.delete {
     padding-right: 170px;
     position: relative;
     top: 200px;
-    width: 570px;
+    width: 870px;
     bottom: 50px;
 }
 

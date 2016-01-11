@@ -53,6 +53,7 @@
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/ui-dialogs.css" />
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/ui-autofill.css" />
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/buttons.css" />
+            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/editor.css" />
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/pulldown.css" />
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/loader.css" />
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/alerts.css" />
@@ -363,30 +364,8 @@
                 <i class="icon-angle-double-up"></i>
             </span>
             <div id="editor-tools-wrapper">
-                <div id="ice-control" class="fw-button fw-light fw-large disabled" title="{% trans "Handle tracking of changes." %}">
-                    {% trans "Changes" %}
-                    <i class="icon-down-dir"></i>
-                    <div class="fw-pulldown fw-left">
-                        <ul>
-                            <li>
-                                <span class="fw-pulldown-item ice-track icon-ok" title="{% trans "Turn tracking of changes on." %}">{% trans "Track" %}</span>
-                            </li>
-                            <li>
-                                <span class="fw-pulldown-item ice-display icon-eye" title="{% trans "Show all changes that have been tracked in the entire document." %}">{% trans "Show" %}</span>
-                            </li>
-                            <li>
-                                <span class="fw-pulldown-item ice-accept-all icon-acceptall" title="{% trans "Accept all changes that have been tracked in the entire document." %}">{% trans "Accept all" %}</span>
-                            </li>
-                            <li>
-                                <span class="fw-pulldown-item ice-reject-all icon-rejectall" title="{% trans "Reject all changes that have been tracked in the entire document." %}">{% trans "Reject all" %}</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div id="comments-display" class="fw-button fw-light fw-large" title="{% trans "Show/hide comments" %}">
-                    {% trans "Comments" %}
-                </div>
                 <div class="editortoolbar" style="display: block;">
+                    <div class="fw-position-info" id="current-position"></div>
                     <div class="toolbarheadings ui-buttonset multiButtons">
                         <span class="multibuttonsCover fw-button fw-light fw-large edit-button" title="{% trans "Text that is part of a standard paragraph." %}" id="block-style-label">{% trans "Normal Text" %}</span>
                         <div class="fw-pulldown fw-left" style="display: none;">
@@ -416,27 +395,27 @@
                                     </span>
                                 </li>
                                 <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-                                    <span class="ui-button-text" title="{% trans "A longer quotation set as an indented block." %}">
+                                    <span class="ui-button-text" title="{% trans "A headline of the 4th highest level." %}">
                                         <input type="radio">
-                                        <label id="blockquote_button" class="fw-pulldown-item">{% trans "Block quote" %}</label>
+                                        <label id="h4_button" class="fw-pulldown-item">{% trans "4th Headline" %}</label>
+                                    </span>
+                                </li>
+                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                                    <span class="ui-button-text" title="{% trans "A headline of the 5th highest level." %}">
+                                        <input type="radio">
+                                        <label id="h5_button" class="fw-pulldown-item">{% trans "5th Headline" %}</label>
+                                    </span>
+                                </li>
+                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                                    <span class="ui-button-text" title="{% trans "A headline of the 6th highest level." %}">
+                                        <input type="radio">
+                                        <label id="h6_button" class="fw-pulldown-item">{% trans "6th Headline" %}</label>
                                     </span>
                                 </li>
                                 <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
                                     <span class="ui-button-text" title="{% trans "Computer Code." %}">
                                         <input type="radio">
                                         <label id="code_button" class="fw-pulldown-item">{% trans "Code" %}</label>
-                                    </span>
-                                </li>
-                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-                                    <span class="ui-button-text" title="{% trans "An item in an ordered list." %}">
-                                        <input type="radio">
-                                        <label id="ol_button" class="fw-pulldown-item">{% trans "Numbered List" %}</label>
-                                    </span>
-                                </li>
-                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-                                    <span class="ui-button-text" title="{% trans "An item in an unordered list." %}">
-                                        <input type="radio">
-                                        <label id="ul_button" class="fw-pulldown-item">{% trans "Bulleted List" %}</label>
                                     </span>
                                 </li>
                             </ul>
@@ -467,6 +446,13 @@
                         <button class="fw-button fw-light fw-large fw-square edit-button" id="button-ul" title="{% trans "Bulleted list" %}">
                             <span class="ui-button-text">
                                 <i class="icon-list-bullet"></i>
+                            </span>
+                        </button>
+                    </div>
+                    <div class="toolbarblockquote ui-buttonset">
+                        <button class="fw-button fw-light fw-large fw-square edit-button" id="button-blockquote" title="{% trans "Blockquote" %}">
+                            <span class="ui-button-text">
+                                <i class="icon-list-blockquote"></i>
                             </span>
                         </button>
                     </div>
@@ -525,6 +511,29 @@
                                 <i class="icon-comment-empty"></i>
                             </span>
                         </button>
+                    </div>
+                    <div id="ice-control" class="fw-button fw-light fw-large disabled" title="{% trans "Handle tracking of changes." %}">
+                        {% trans "Changes" %}
+                        <i class="icon-down-dir"></i>
+                        <div class="fw-pulldown fw-left">
+                            <ul>
+                                <li>
+                                    <span class="fw-pulldown-item ice-track icon-ok" title="{% trans "Turn tracking of changes on." %}">{% trans "Track" %}</span>
+                                </li>
+                                <li>
+                                    <span class="fw-pulldown-item ice-display icon-eye" title="{% trans "Show all changes that have been tracked in the entire document." %}">{% trans "Show" %}</span>
+                                </li>
+                                <li>
+                                    <span class="fw-pulldown-item ice-accept-all icon-acceptall" title="{% trans "Accept all changes that have been tracked in the entire document." %}">{% trans "Accept all" %}</span>
+                                </li>
+                                <li>
+                                    <span class="fw-pulldown-item ice-reject-all icon-rejectall" title="{% trans "Reject all changes that have been tracked in the entire document." %}">{% trans "Reject all" %}</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div id="comments-display" class="fw-button fw-light fw-large" title="{% trans "Show/hide comments" %}">
+                        {% trans "Comments" %}
                     </div>
                 </div>
             </div>

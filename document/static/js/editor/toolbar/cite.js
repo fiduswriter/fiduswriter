@@ -59,8 +59,8 @@ jQuery(document).on('mousedown', '#button-cite:not(.disabled)', function(event) 
             // Nothing has been changed, so we just close the dialog again
             return true;
         }
-
-        theEditor.editor.execCommand('schema:citation:insert', [bibFormat, bibEntry, bibBefore, bibPage]);
+        
+        theEditor.editor.execCommand('citation:insert', [bibFormat, bibEntry, bibBefore, bibPage]);
         theEditor.editor.on("flushed", citationHelpers.formatCitationsInDoc);
         return true;
     };

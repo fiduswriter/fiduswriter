@@ -20,10 +20,6 @@
 // Toolbar comment
 jQuery(document).on('mousedown', '#button-comment:not(.disabled)', function (event) {
 
-    if (!theEditor.editor.hasFocus()) {
-        return false;
-    }
-
     event.preventDefault();
 
     commentHelpers.createNewComment();

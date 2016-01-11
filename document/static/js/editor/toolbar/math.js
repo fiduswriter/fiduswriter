@@ -44,7 +44,7 @@ jQuery(document).on('mousedown', '#button-math:not(.disabled), .equation', funct
                 return;
             }
 
-            theEditor.editor.execCommand('schema:equation:insert', [equation]);
+            theEditor.editor.execCommand('equation:insert', [equation]);
 
 
             theEditor.editor.on('flushed', mathHelpers.layoutEmptyEquationNodes);

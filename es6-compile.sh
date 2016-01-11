@@ -20,11 +20,6 @@ fi
 
 npm install
 
-cd node_modules/prosemirror/
-npm install
-npm run dist
-cd ../..
-
 fi
 
 IFS=$'\n';

@@ -160,7 +160,7 @@ class DocumentWS(BaseWebSocketHandler):
             self.get_document_update()
         elif parsed["type"]=='participant_update':
             DocumentWS.send_participant_list(self.document_id)
-        elif parsed["type"]=='save' and self.access_rights == 'w' and DocumentWS.sessions[self.document_id]['in_control'] == self.id:
+        elif parsed["type"]=='save' and self.access_rights == 'w':
             save_document(self.document_id, parsed["document"])
             DocumentWS.send_updates({
                 "type": 'check_hash',

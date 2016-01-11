@@ -73,11 +73,11 @@ export class UpdateUI {
     // We count on the this precise order in all documents.
     let nodes = {
         'title': this.pm.doc.firstChild,
-        'subtitle': this.pm.doc.child(1).firstChild,
-        'authors': this.pm.doc.child(1).child(1),
-        'abstract': this.pm.doc.child(1).child(2),
-        'keywords': this.pm.doc.child(1).child(3),
-        'contents': this.pm.doc.child(2)
+        'subtitle': this.pm.doc.child(1),
+        'authors': this.pm.doc.child(2),
+        'abstract': this.pm.doc.child(3),
+        'keywords': this.pm.doc.child(4),
+        'contents': this.pm.doc.child(5)
     }
 
     let documentTitle = nodes.title.textContent
@@ -124,14 +124,14 @@ export class UpdateUI {
 
     var headElement = this.pm.doc.path([headPath[0]]),
     anchorElement = this.pm.doc.path([anchorPath[0]])
-    // For metadata, one has to look one level deeper.
+  /*  // For metadata, one has to look one level deeper.
     if (headElement.type.name==='metadata') {
         headElement = this.pm.doc.path(headPath.slice(0,2))
     }
 
     if (anchorElement.type.name==='metadata') {
         anchorElement = this.pm.doc.path(anchorPath.slice(0,2))
-    }
+    }*/
 
 
 

@@ -5,6 +5,7 @@ import {fromDOM} from "prosemirror/dist/format"
 import {serializeTo} from "prosemirror/dist/format"
 import {Step} from "prosemirror/dist/transform"
 import "prosemirror/dist/collab"
+//import "prosemirror/dist/menu/menubar"
 
 import {fidusSchema} from "./es6_modules/schema"
 import {UpdateUI} from "./es6_modules/update-ui"
@@ -17,6 +18,7 @@ function makeEditor (where, doc, version) {
     place: where,
     schema: fidusSchema,
     doc: doc,
+//    menuBar: true,
     collab: {version: version}
   })
 };
@@ -25,7 +27,6 @@ function makeEditor (where, doc, version) {
 theEditor.createDoc = function (aDocument) {
     var editorNode = document.createElement('div'),
       titleNode = aDocument.metadata.title ? exporter.obj2Node(aDocument.metadata.title) : document.createElement('div'),
-      metadataNode = document.createElement('div'),
       documentContentsNode = exporter.obj2Node(aDocument.contents),
       metadataSubtitleNode = aDocument.metadata.subtitle ? exporter.obj2Node(aDocument.metadata.subtitle) : document.createElement('div'),
       metadataAuthorsNode = aDocument.metadata.authors ? exporter.obj2Node(aDocument.metadata.authors) : document.createElement('div'),
@@ -34,7 +35,6 @@ theEditor.createDoc = function (aDocument) {
       doc;
 
       titleNode.id = 'document-title';
-      metadataNode.id = 'document-metadata';
       metadataSubtitleNode.id = 'metadata-subtitle';
       metadataAuthorsNode.id = 'metadata-authors';
       metadataAbstractNode.id = 'metadata-abstract';
@@ -42,11 +42,10 @@ theEditor.createDoc = function (aDocument) {
       documentContentsNode.id = 'document-contents';
 
       editorNode.appendChild(titleNode);
-      metadataNode.appendChild(metadataSubtitleNode);
-      metadataNode.appendChild(metadataAuthorsNode);
-      metadataNode.appendChild(metadataAbstractNode);
-      metadataNode.appendChild(metadataKeywordsNode);
-      editorNode.appendChild(metadataNode);
+      editorNode.appendChild(metadataSubtitleNode);
+      editorNode.appendChild(metadataAuthorsNode);
+      editorNode.appendChild(metadataAbstractNode);
+      editorNode.appendChild(metadataKeywordsNode);
       editorNode.appendChild(documentContentsNode);
 
       doc = fromDOM(fidusSchema, editorNode)

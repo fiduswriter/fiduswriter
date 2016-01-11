@@ -77,7 +77,7 @@ jQuery(document).on('mousedown', '#button-figure:not(.disabled)', function (even
                 return false;
             }
 
-            theEditor.editor.execCommand('schema:figure:insert', [equation, image, figureCategory, caption]);
+            theEditor.editor.execCommand('figure:insert', [equation, image, figureCategory, caption]);
 
 
             dialog.dialog('close');

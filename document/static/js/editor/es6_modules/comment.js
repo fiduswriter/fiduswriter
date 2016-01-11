@@ -32,7 +32,7 @@ export class CommentStore {
     let id = randomID()
     this.addLocalComment(id, user, userName, userAvatar, date, comment, answers)
     this.unsent.push({type: "create", id: id})
-    this.pm.execCommand('schema:comment:set',[id]);
+    this.pm.execCommand('comment:set',[id]);
     this.signal("mustSend")
     return id
   }

@@ -170,10 +170,6 @@ body {
     overflow: hidden;
 }
 
-#flow {
-    margin: .5in 0 0 68px !important;
-}
-
 div#statusarea {
     position: absolute;
     right: 50%;
@@ -191,6 +187,14 @@ div#statusarea .saved {
 }
 div#statusarea .error {
     color: red;
+}
+#editor-content {
+    display: flex;
+    top: 200px;
+    bottom: 50px;
+    padding: .5in 0 0 68px !important;
+    position: relative;
+    max-width: 1600px;
 }
 #flow #document-bibliography {
     background-color: lightgrey;
@@ -402,8 +406,7 @@ span.delete {
     padding: 50px;
     padding-right: 170px;
     position: relative;
-    top: 200px;
-    width: 870px;
+    width: auto;
     bottom: 50px;
 }
 

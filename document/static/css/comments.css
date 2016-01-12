@@ -4,9 +4,9 @@
 }
 
 #comment-box-container {
-    position: absolute;
-    left: 1159px;
-    top: -20px;
+    position: relative;
+    width: 240px;
+    padding-left: 20px;
 }
 
 #comment-box-container.hide {
@@ -20,7 +20,7 @@
 .comment-box {
     background-color: #fbfbfb;
     border: 1px solid #ccc;
-    position: absolute;
+    position: relative;
     width: 200px;
     padding: 9px;
 }

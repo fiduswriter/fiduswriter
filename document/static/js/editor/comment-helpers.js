@@ -27,7 +27,7 @@
 
     commentHelpers.calculateCommentBoxOffset = function (comment) {
 
-        return comment.referrer.getBoundingClientRect()['top'] + window.pageYOffset;
+        return comment.referrer.getBoundingClientRect()['top'] + window.pageYOffset - 280;
     };
 
     commentHelpers.resetOffsetCalculator = function () {
@@ -331,9 +331,7 @@
             // This is not the first occurence of this comment. So we ignore it.
             return;
           }
-          console.log([id,ids])
           ids.push(id);
-          console.log([id,ids])
           if (theEditor.comments.comments[id]) {
             theComments.push({
               id: id,

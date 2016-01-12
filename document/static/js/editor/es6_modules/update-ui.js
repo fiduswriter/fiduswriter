@@ -1,4 +1,5 @@
 // Update UI (adapted from ProseMirror's src/menu/update.js)
+import {Pos} from "prosemirror/dist/model"
 
 const MIN_FLUSH_DELAY = 200
 const UPDATE_TIMEOUT = 200
@@ -11,7 +12,17 @@ const BLOCK_LABELS = {
   'heading_4': gettext('4th Heading'),
   'heading_5': gettext('5th Heading'),
   'heading_6': gettext('6th Heading'),
-  'code_block': gettext('Code')
+  'code_block': gettext('Code'),
+  'figure': gettext('Figure')
+}
+
+const PART_LABELS = {
+  'title': gettext('Title'),
+  'metadatasubtitle': gettext('Subtitle'),
+  'metadataauthors': gettext('Authors'),
+  'metadataabstract': gettext('Abstract'),
+  'metadatakeywords': gettext('Keywords'),
+  'documentcontents': gettext('Body')
 }
 
 export class UpdateUI {
@@ -70,23 +81,14 @@ export class UpdateUI {
   updateUI() {
     /* Fidus Writer code */
 
-    // We count on the this precise order in all documents.
-    let nodes = {
-        'title': this.pm.doc.firstChild,
-        'subtitle': this.pm.doc.child(1),
-        'authors': this.pm.doc.child(2),
-        'abstract': this.pm.doc.child(3),
-        'keywords': this.pm.doc.child(4),
-        'contents': this.pm.doc.child(5)
+    // We count on the the title node being the first one in the document
+    let documentTitle = this.pm.doc.firstChild.type.name === 'title' ? this.pm.doc.firstChild.textContent : ''
+
+    if (documentTitle.length === 0) {
+        documentTitle = gettext('Untitled Document')
     }
-
-    let documentTitle = nodes.title.textContent
-
-        if (documentTitle.length === 0) {
-            documentTitle = gettext('Untitled Document')
-        }
-        jQuery('title').html('Fidus Writer - ' + documentTitle)
-        jQuery('#header h1').html(documentTitle)
+    jQuery('title').html('Fidus Writer - ' + documentTitle)
+    jQuery('#header h1').html(documentTitle)
 
     let marks = this.pm.activeMarks()
     let strong = marks.some(function(mark){return (mark.type.name==='strong')})
@@ -113,63 +115,48 @@ export class UpdateUI {
         jQuery('#button-link').removeClass('ui-state-active')
     }
 
-    /* Block level selector */
-    if (this.pm.selection.head) {
-        var headPath = this.pm.selection.head.path,
-        anchorPath = this.pm.selection.anchor.path
-    } else {
-        var headPath = this.pm.selection.from.path,
-        anchorPath = this.pm.selection.to.path
-    }
+    let start = this.pm.selection.from.min(this.pm.selection.to),
+    end = this.pm.selection.from.max(this.pm.selection.to),
+    startElement = this.pm.doc.path([start.path[0]]),
+    endElement = this.pm.doc.path([end.path[0]])
 
-    var headElement = this.pm.doc.path([headPath[0]]),
-    anchorElement = this.pm.doc.path([anchorPath[0]])
-
-    this.calculatePlaceHolderCss(headElement, nodes);
-
-    if (headElement !== anchorElement) {
+    if (startElement !== endElement) {
         /* Selection goes across document parts */
+        this.calculatePlaceHolderCss();
         jQuery('.editortoolbar button').addClass('disabled')
         jQuery('#block-style-label').html('')
-
+        jQuery('#current-position').html('')
     } else {
+        this.calculatePlaceHolderCss(startElement);
+        jQuery('#current-position').html(PART_LABELS[startElement.type.name])
 
-        switch (headElement) {
-            case nodes.title:
+        switch (startElement.type.name) {
+            case 'title':
+            case 'metadatasubtitle':
+            case 'metadataauthors':
+            case 'metadatakeywords':
                 jQuery('.edit-button').addClass('disabled')
                 jQuery('#block-style-label').html('')
-                jQuery('#current-position').html(gettext('Title'))
                 break
-            case nodes.subtitle:
-                jQuery('.edit-button').addClass('disabled')
-                jQuery('#block-style-label').html('')
-                jQuery('#current-position').html(gettext('Subtitle'))
-                break
-            case nodes.authors:
-                jQuery('.edit-button').addClass('disabled')
-                jQuery('#block-style-label').html('')
-                jQuery('#current-position').html(gettext('Authors'))
-                break
-            case nodes.keywords:
-                jQuery('.edit-button').addClass('disabled')
-                jQuery('#block-style-label').html('')
-                jQuery('#current-position').html(gettext('Keywords'))
-                break
-            case nodes.abstract:
+            case 'metadataabstract':
+            case 'documentcontents':
                 jQuery('.edit-button').removeClass('disabled')
-                jQuery('#button-figure').addClass('disabled')
-                jQuery('#current-position').html(gettext('Abstract'))
+
+                if(startElement.type.name==='metadataabstract') {
+                    jQuery('#button-figure').addClass('disabled')
+                }
 
                 var blockNodeType = true, blockNode, nextBlockNodeType
 
-                if (_(headPath).isEqual(anchorPath)) {
+                if (_(start.path).isEqual(end.path)) {
                   // Selection within a single block.
-                  blockNode = this.pm.doc.path(anchorPath)
+                  blockNode = this.pm.doc.path(start.path)
                   blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name
                   jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType])
                 } else {
-                    this.pm.doc.nodesBetween({path:headPath,offset:0},{path:anchorPath,offset:0}, function(node, path, parent) {
-                      if (node.isBlock) {
+                  // The selection is crossing several blocks
+                    this.pm.doc.nodesBetween(start,end, function(node, path, parent) {
+                      if (node.isTextblock) {
                         nextBlockNodeType = node.type.name === 'heading' ? node.type.name + '_' + node.attrs.level : node.type.name
                         if (blockNodeType===true) {
                           blockNodeType = nextBlockNodeType
@@ -189,71 +176,37 @@ export class UpdateUI {
                         jQuery('#block-style-label').html('')
                     }
                 }
-
                 break
-            case nodes.contents:
-            jQuery('.edit-button').removeClass('disabled')
-            jQuery('#button-figure').addClass('disabled')
-            jQuery('#current-position').html(gettext('Body'))
-
-            var blockNodeType = true, blockNode, nextBlockNodeType
-
-            if (_(headPath).isEqual(anchorPath)) {
-              // Selection within a single block.
-              blockNode = this.pm.doc.path(anchorPath)
-              blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name
-              jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType])
-            } else {
-                this.pm.doc.nodesBetween({path:headPath,offset:0},{path:anchorPath,offset:0}, function(node, path, parent) {
-                  if (node.isBlock) {
-                    nextBlockNodeType = node.type.name === 'heading' ? node.type.name + '_' + node.attrs.level : node.type.name
-                    if (blockNodeType===true) {
-                      blockNodeType = nextBlockNodeType
-                    }
-                    if (blockNodeType!==nextBlockNodeType){
-                      blockNodeType = false
-                    }
-
-
-                  }
-                })
-
-
-                if (blockNodeType) {
-                    jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType])
-                } else {
-                    jQuery('#block-style-label').html('')
-                }
-            }
-
-            break
         }
     }
-
-
-    return true;
+    return true
   }
 
   /** Show or hide placeholders ('Contents...', 'Title...', etc.) depending on
   whether these elements are empty or not.*/
-  calculatePlaceHolderCss (headElement, nodes) {
-    var newPlaceHolderCss = ''
-    for (var elementType of [
+  calculatePlaceHolderCss (selectedElement) {
+    var newPlaceHolderCss = '', i = 0,  that = this,
+    placeholders = [
       {'type': 'title', 'selector': '#document-title', 'placeholder': gettext('Title...')},
-      {'type': 'subtitle', 'selector': '#metadata-subtitle', 'placeholder': gettext('Subtitle...')},
-      {'type': 'authors', 'selector': '#metadata-authors', 'placeholder': gettext('Authors...')},
-      {'type': 'abstract', 'selector': '#metadata-abstract', 'placeholder': gettext('Abstract...')},
-      {'type': 'keywords', 'selector': '#metadata-keywords', 'placeholder': gettext('Keywords...')},
-      {'type': 'contents', 'selector': '#document-contents', 'placeholder': gettext('Body...')}
-    ]) {
-      if (nodes[elementType.type].textContent.length === 0 &&
-          (headElement != nodes[elementType.type] || !this.pm.hasFocus())) {
+      {'type': 'metadatasubtitle', 'selector': '#metadata-subtitle', 'placeholder': gettext('Subtitle...')},
+      {'type': 'metadaauthors', 'selector': '#metadata-authors', 'placeholder': gettext('Authors...')},
+      {'type': 'metadataabstract', 'selector': '#metadata-abstract', 'placeholder': gettext('Abstract...')},
+      {'type': 'metadatakeywords', 'selector': '#metadata-keywords', 'placeholder': gettext('Keywords...')},
+      {'type': 'documentcontents', 'selector': '#document-contents', 'placeholder': gettext('Body...')}
+    ]
+
+    placeholders.forEach(function(elementType){
+      var partElement = that.pm.doc.child(i);
+      if (partElement.type.name==!elementType.type) { return false }
+      if (partElement.textContent.length === 0 &&
+          (selectedElement != partElement || !that.pm.hasFocus())) {
           newPlaceHolderCss += elementType.selector + ':before {content: "' +
               elementType.placeholder + '"}\n';
       }
-    }
-    if (this.placeHolderCss !== newPlaceHolderCss) {
-      this.placeHolderCss = newPlaceHolderCss
+      i++
+    })
+    if (that.placeHolderCss !== newPlaceHolderCss) {
+      that.placeHolderCss = newPlaceHolderCss
       jQuery('#placeholderStyles')[0].innerHTML = newPlaceHolderCss;
     }
   }

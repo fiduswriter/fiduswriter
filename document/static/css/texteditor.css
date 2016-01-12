@@ -394,9 +394,7 @@ span.delete {
 #document-contents {
     min-height: 400px;
 }
-#flow .pagination-footnote > span {
-    width: 150px;
-}
+
 .pagination-footnote-item {
     width: 100%;
 }
@@ -426,7 +424,7 @@ span.delete {
 
 #flow {
     padding: 50px;
-    padding-right: 170px;
+    padding-right: calc(20vw + 10px);
     position: relative;
     width: auto;
     bottom: 50px;
@@ -470,8 +468,8 @@ body {counter-reset: pagination-footnote pagination-footnote-reference;}
 #flow .pagination-footnote > * > *::before, .pagination-footnote::before {position: relative; top: -0.5em; font-size: 80%;}
 #flow .pagination-footnote > span {
     position: absolute;
-    right: -1.6in;
-    width: 1.5in;
+    right: calc(-20vw - 10px);
+    width: 20vw;
 }
 
 

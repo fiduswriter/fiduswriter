@@ -168,69 +168,30 @@ export class UpdateUI {
             case nodes.abstract:
                 jQuery('.edit-button').removeClass('disabled')
                 jQuery('#button-figure').addClass('disabled')
-                jQuery('#current-position').html(gettext('Abstract'))
+                jQuery('#current-position').html(gettext('Body'))
 
                 var blockNodeType = true, blockNode, nextBlockNodeType
 
-                if (headPath[2]===anchorPath[2]) {
+                if (_(headPath).isEqual(anchorPath)) {
                   // Selection within a single block.
-                  blockNode = this.pm.doc.path(anchorPath.slice(0,3))
+                  blockNode = this.pm.doc.path(anchorPath)
                   blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name
                   jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType])
                 } else {
-                    var iterator = this.pm.doc.path(headPath.slice(0,2)).iter(
-                        _.min([headPath[2],anchorPath[2]]),
-                        _.max([headPath[2],anchorPath[2]])+1
-                    )
-
-                    while(!iterator.atEnd() && blockNodeType) {
-                        nextBlockNode = iterator.next()
-                        nextBlockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name
+                    this.pm.doc.nodesBetween({path:headPath,offset:0},{path:anchorPath,offset:0}, function(node, path, parent) {
+                      if (node.isBlock) {
+                        nextBlockNodeType = node.type.name === 'heading' ? node.type.name + '_' + node.attrs.level : node.type.name
                         if (blockNodeType===true) {
-                            blockNodeType = nextBlockNodeType
+                          blockNodeType = nextBlockNodeType
                         }
-                        if (blockNodeType !== nextBlockNodeType) {
-                            blockNodeType = false
+                        if (blockNodeType!==nextBlockNodeType){
+                          blockNodeType = false
                         }
-                    }
 
 
-                    if (blockNodeType) {
-                        jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType])
-                    } else {
-                        jQuery('#block-style-label').html('')
-                    }
-                }
+                      }
+                    })
 
-                break;
-            case nodes.contents:
-                jQuery('.edit-button').removeClass('disabled')
-
-                var blockNodeType = true, blockNode, nextBlockNodeType
-
-                if (headPath[1]===anchorPath[1]) {
-                    // Selection within a single block.
-                    blockNode = this.pm.doc.path(anchorPath.slice(0,2))
-                    blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name
-                    jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType])
-                    jQuery('#current-position').html(gettext('Body'))
-                } else {
-                    var iterator = this.pm.doc.path(headPath.slice(0,1)).iter(
-                        _.min([headPath[1],anchorPath[1]]),
-                        _.max([headPath[1],anchorPath[1]])+1
-                    )
-
-                    while(!iterator.atEnd() && blockNodeType) {
-                        blockNode = iterator.next()
-                        nextBlockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name
-                        if (blockNodeType===true) {
-                            blockNodeType = nextBlockNodeType
-                        }
-                        if (blockNodeType !== nextBlockNodeType) {
-                            blockNodeType = false
-                        }
-                    }
-                    jQuery('#current-position').html(gettext('Body'))
 
                     if (blockNodeType) {
                         jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType])
@@ -240,6 +201,42 @@ export class UpdateUI {
                 }
 
                 break
+            case nodes.contents:
+            jQuery('.edit-button').removeClass('disabled')
+            jQuery('#button-figure').addClass('disabled')
+            jQuery('#current-position').html(gettext('Abstract'))
+
+            var blockNodeType = true, blockNode, nextBlockNodeType
+
+            if (_(headPath).isEqual(anchorPath)) {
+              // Selection within a single block.
+              blockNode = this.pm.doc.path(anchorPath)
+              blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name
+              jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType])
+            } else {
+                this.pm.doc.nodesBetween({path:headPath,offset:0},{path:anchorPath,offset:0}, function(node, path, parent) {
+                  if (node.isBlock) {
+                    nextBlockNodeType = node.type.name === 'heading' ? node.type.name + '_' + node.attrs.level : node.type.name
+                    if (blockNodeType===true) {
+                      blockNodeType = nextBlockNodeType
+                    }
+                    if (blockNodeType!==nextBlockNodeType){
+                      blockNodeType = false
+                    }
+
+
+                  }
+                })
+
+
+                if (blockNodeType) {
+                    jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType])
+                } else {
+                    jQuery('#block-style-label').html('')
+                }
+            }
+
+            break
         }
     }
 

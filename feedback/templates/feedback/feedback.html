@@ -32,7 +32,7 @@
 
       var data = {};
       data.message = message;
-      
+
       $('#closeFeedback').hide();
       $('#feedback-form').css('visibility', 'hidden');
 
@@ -60,7 +60,7 @@
     z-index: 1000;
     background-color: rgba(0,0,0,0.75);
     font-family: scalareg, "courier new", courier;
-    display: none;    
+    display: none;
   }
   #feedback-wrapper {
     position: absolute;
@@ -74,35 +74,25 @@
   }
   a.feedback-tab {
     position: fixed;
-    right: 0;
+    left: -28px;
     top: 270px;
     width: auto;
-    height: 56px;
-    padding: 0 60px 0 50px;
-    background: #ecdc9e url({{ STATIC_URL }}img/pencil.png) no-repeat right center;
+    padding: 0 10px 0 10px;
+    background: #ecdc9e;
     border-color: #eac642;
     border-style: solid;
     border-width: 1px;
     border-top-width: 0;
     text-decoration: none;
-    border-bottom-left-radius: 6px;
-    border-bottom-right-radius: 6px;
-    -webkit-transform-origin: right top;
-    -webkit-transform: rotate(90deg);
-    -moz-transform: rotate(90deg);
-    font-family: missionscript;
-    font-size: 27px;
-    color: #e1b642;
-    line-height: 63px;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    transform: rotate(90deg);
+    font-family: 'Lato', sans-serif;
+    font-size: 13px;
+    color: #d3421c;
+    line-height: 23px;
     z-index:100;
   }
-@-moz-document url-prefix() {
-/* Firefox only */
-    a.feedback-tab {
-        right: -65px;
-        margin-top: 43px !important;
-    }
-}
 
   a.feedback-tab:hover {
     background-color: #e6d180;
@@ -121,11 +111,10 @@
     position: absolute;
     left: 27px;
     top: 20px;
-    font-family: missionscript;
+    font-family: 'Lato', sans-serif;
     font-size: 27px;
-    color: #eac642;
+    color: #d3421c;
     padding-right: 60px;
-    background: url({{ STATIC_URL }}img/pencil.png) no-repeat right top;
   }
   #response-message {
     position: absolute;
@@ -151,7 +140,7 @@
     .feedback-tab, .feedback-panel {
       display: none;
     }
-  } 
+  }
 </style>
 
 <a class="feedback-tab" href="#">{% trans "Feedback" %}</a>

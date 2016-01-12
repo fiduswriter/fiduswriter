@@ -5,7 +5,7 @@
 
 #comment-box-container {
     position: absolute;
-    left: 914px;
+    left: 1159px;
     top: -20px;
 }
 
@@ -61,10 +61,10 @@
     background-position: center;
 }
 .comment-item.wait textarea {
-    background-size: 40px 40px;  
+    background-size: 40px 40px;
 }
 .comment-answer.wait .comment-answer-text {
-    background-size: 20px 20px;      
+    background-size: 20px 20px;
 }
 .comment-item.wait .submitComment, .comment-item.wait .cancelSubmitComment, .comment-answer.wait .comment-answer-btns {
     display: none;

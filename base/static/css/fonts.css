@@ -107,14 +107,14 @@
 .es .icon-italic:before { content: '\4e'; } /* 'K' */
 
 
-/* Animation for spinners 
- * 
- * TODO: make work with CSS Regions. Most likely just wait for a fix as browser code seems broken. 
- * 
+/* Animation for spinners
+ *
+ * TODO: make work with CSS Regions. Most likely just wait for a fix as browser code seems broken.
+ *
  * The animation caused for getBoundingClientRect not to work on elements inside the CSS Region.
- * 
+ *
  * Bug report: https://github.com/fiduswriter/fiduswriter/issues/40
- * 
+ *
  */
 /*
 .animate-spin {
@@ -183,15 +183,3 @@
   font-weight: 400;
   src: local('Lato Italic'), local('Lato-Italic'), url(../fonts/lato/Lato-Italic.woff) format('woff');
 } 
-
-/*
- * Style for missionscript (used only for feedback tab)
- */
-
-@font-face {
-  font-family: 'missionscript';
-  font-style: normal;
-  font-weight: 400;
-  src: url(../fonts/missionscript.woff) format('woff');
-}
-

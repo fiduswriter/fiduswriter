@@ -1218,12 +1218,12 @@ var UPDATE_TIMEOUT = 200;
 
 var BLOCK_LABELS = {
     'paragraph': gettext('Normal Text'),
-    'ordered_list': gettext('Numbered List'),
-    'bullet_list': gettext('Bulleted List'),
-    'blockquote': gettext('Block Quote'),
     'heading_1': gettext('1st Heading'),
     'heading_2': gettext('2nd Heading'),
     'heading_3': gettext('3rd Heading'),
+    'heading_4': gettext('4th Heading'),
+    'heading_5': gettext('5th Heading'),
+    'heading_6': gettext('6th Heading'),
     'code_block': gettext('Code')
 };
 
@@ -1359,13 +1359,6 @@ var UpdateUI = exports.UpdateUI = (function () {
 
             var headElement = this.pm.doc.path([headPath[0]]),
                 anchorElement = this.pm.doc.path([anchorPath[0]]);
-            /*  // For metadata, one has to look one level deeper.
-              if (headElement.type.name==='metadata') {
-                  headElement = this.pm.doc.path(headPath.slice(0,2))
-              }
-               if (anchorElement.type.name==='metadata') {
-                  anchorElement = this.pm.doc.path(anchorPath.slice(0,2))
-              }*/
 
             this.calculatePlaceHolderCss(headElement, nodes);
 
@@ -1399,7 +1392,7 @@ var UpdateUI = exports.UpdateUI = (function () {
                     case nodes.abstract:
                         jQuery('.edit-button').removeClass('disabled');
                         jQuery('#button-figure').addClass('disabled');
-                        jQuery('#current-position').html(gettext('Body'));
+                        jQuery('#current-position').html(gettext('Abstract'));
 
                         var blockNodeType = true,
                             blockNode,
@@ -1434,7 +1427,7 @@ var UpdateUI = exports.UpdateUI = (function () {
                     case nodes.contents:
                         jQuery('.edit-button').removeClass('disabled');
                         jQuery('#button-figure').addClass('disabled');
-                        jQuery('#current-position').html(gettext('Abstract'));
+                        jQuery('#current-position').html(gettext('Body'));
 
                         var blockNodeType = true,
                             blockNode,

@@ -87,9 +87,7 @@ body {
     padding: 12px 0;
     width: 1112px;
 }
-#open-close-header,
-#ice-control,
-#comments-display {
+#open-close-header {
     position: absolute;
     z-index: 100;
 }
@@ -137,13 +135,37 @@ body {
     margin-right: 7px;
 }
 
+.editortoolbar #current-position {
+  max-width: 90px;
+  min-width: 62px;
+  color: #000;
+  background-color: #f2f2f2;
+  text-shadow: none;
+  border-color: #c9c9c9;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 10px;
+  display: inline-block;
+  font-size: 14px;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 3px;
+  text-decoration: none;
+  box-shadow: none;
+  box-sizing: content-box;
+  white-space: nowrap;
+  margin-right: 7px;
+}
+
+
 .editortoolbar div.multiButtons {
     width: auto;
 }
 
 .editortoolbar div.multiButtons .multibuttonsCover {
     position: relative;
-    width: 120px;
+    min-width: 80px;
+    max-width: 120px;
     font-size: 11px;
     font-weight: 900;
 }
@@ -192,7 +214,7 @@ div#statusarea .error {
     display: flex;
     top: 200px;
     bottom: 50px;
-    padding: .5in 0 0 68px !important;
+    padding: .5in 68px 0 68px !important;
     position: relative;
     max-width: 1600px;
 }

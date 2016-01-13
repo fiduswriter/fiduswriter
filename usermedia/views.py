@@ -161,7 +161,8 @@ def images_js(request):
 @login_required
 def save_category_js(request):
     status = 405
-    response = []
+    response = {}
+    response['entries'] = []
     if request.is_ajax() and request.method == 'POST' :
         ids = request.POST.getlist('ids[]')
         titles = request.POST.getlist('titles[]')
@@ -178,7 +179,7 @@ def save_category_js(request):
                 the_cat = ImageCategory.objects.get(pk = the_id)
                 the_cat.category_title = the_title
             the_cat.save()
-            response.append({'id': the_cat.id, 'category_title': the_cat.category_title});
+            response['entries'].append({'id': the_cat.id, 'category_title': the_cat.category_title});
         status = 201
 
     return JsonResponse(

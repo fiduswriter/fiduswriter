@@ -779,11 +779,11 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             dataType: 'json',
             success: function (response, textStatus, jqXHR) {
                 if (jqXHR.status == 201) {
-                    var i, len = response.length;
+                    var i, len = response.entries.length;
 
                     BibCategories = [];
                     jQuery('#bib-category-list li').not(':first').remove();
-                    bibliographyHelpers.addBibCategoryList(response);
+                    bibliographyHelpers.addBibCategoryList(response.entries);
                     $.addAlert('success', gettext('The categories have been updated'));
                 }
             },
@@ -2084,7 +2084,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                 break;
             }
         });
-        
+
         bibliographyHelpers.getBibDB(function () {
             if (window.hasOwnProperty('theDocument') && theEditor.editor) {
                 citationHelpers.formatCitationsInDoc();

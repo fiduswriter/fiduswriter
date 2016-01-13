@@ -20,7 +20,7 @@
  */
 /** The current Fidus Writer filetype version. The importer will not import from a different version and the exporter will include this number in all exports.
  */
-var FW_FILETYPE_VERSION = "1.1";
+var FW_FILETYPE_VERSION = 1.2, MIN_FW_FILETYPE_VERSION = 1.1, MAX_FW_FILETYPE_VERSION = 1.2;
 
 (function () {
     var exports = this,
@@ -31,12 +31,14 @@ var FW_FILETYPE_VERSION = "1.1";
         importer = {};
 
     importer.processFidusFile = function (textFiles, entries) {
-        if (_.findWhere(textFiles, {
-                    filename: 'mimetype'
-                }).contents === 'application/fidus+zip' &&
-            _.findWhere(textFiles, {
-                    filename: 'filetype-version'
-                }).contents === FW_FILETYPE_VERSION) {
+
+        var filetypeVersion = parseFloat(_.findWhere(textFiles, {
+                filename: 'filetype-version'
+              }).contents, 10),
+            mimeType = _.findWhere(textFiles, {
+                        filename: 'mimetype'
+                    }).contents;
+        if (mimeType === 'application/fidus+zip' && filetypeVersion >= MIN_FW_FILETYPE_VERSION && filetypeVersion <= MAX_FW_FILETYPE_VERSION) {
             // This seems to be a valid fidus file with current version number.
             var shrunkBibDB = jQuery.parseJSON(
                 _.findWhere(
@@ -448,7 +450,6 @@ var FW_FILETYPE_VERSION = "1.1";
                 }
             }
         }
-        console.log(newBibEntries);
 
         // Remove the id values again
         for (key in BibDB) {

@@ -20,7 +20,7 @@
  */
 /** The current Fidus Writer filetype version. The importer will not import from a different version and the exporter will include this number in all exports.
  */
-var FW_FILETYPE_VERSION = "1.1";
+var FW_FILETYPE_VERSION = "1.2";
 
 (function() {
     var exports = this,

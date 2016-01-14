@@ -48,17 +48,17 @@ The following are instructions working on most *NIX systems and gives you a simp
 
   > python manage.py init
 
-8. Run the Fidus Writer server by typing:
+8. Set up an admin user by typing:
+
+  > python manage.py createsuperuser
+  
+9. Run the Fidus Writer server by typing:
 
   > python manage.py runserver
 
-9. Set up an admin user by typing:
+10. In your browser, navigate to http://localhost:8000/ and log in.
 
-  > python manage.py createsuperuser
-
-9. In your browser, navigate to http://localhost:8000/ and log in.
-
-10. Notice that emails sent to the user appear in the console until an SMTP backend is configured (see below).
+11. Notice that emails sent to the user appear in the console until an SMTP backend is configured (see below).
 
 Advanced options
 ----

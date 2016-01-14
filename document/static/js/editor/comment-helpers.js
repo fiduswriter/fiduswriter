@@ -99,9 +99,9 @@
         delete theDocument.activeCommentAnswerId;
     };
 
-    commentHelpers.updateComment = function (id, commentText) {
+    commentHelpers.updateComment = function (id, commentText, commentIsMajor) {
         // Save the change to a comment and mark that the document has been changed
-        theEditor.comments.updateComment(id, commentText);
+        theEditor.comments.updateComment(id, commentText, commentIsMajor);
         commentHelpers.deactivateAll();
         commentHelpers.layoutComments();
     };
@@ -110,10 +110,10 @@
         // Handle a click on the submit button of the comment submit form.
         var commentTextBox, commentText, commentId;
         commentTextBox = jQuery(this).siblings('.commentText')[0];
+        commentIsMajor = jQuery(this).siblings('.comment-is-major').prop('checked');
         commentText = commentTextBox.value;
         commentId = commentHelpers.getCommentId(commentTextBox);
-        commentHelpers.updateComment(commentId, commentText);
-
+        commentHelpers.updateComment(commentId, commentText, commentIsMajor);
     };
 
     commentHelpers.cancelSubmitComment = function () {
@@ -341,7 +341,8 @@
               userName: theEditor.comments.comments[id]['userName'],
               userAvatar: theEditor.comments.comments[id]['userAvatar'],
               date: theEditor.comments.comments[id]['date'],
-              answers: theEditor.comments.comments[id]['answers']
+              answers: theEditor.comments.comments[id]['answers'],
+              isMajor: theEditor.comments.comments[id]['isMajor']
             });
           }
 

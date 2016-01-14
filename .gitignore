@@ -10,3 +10,11 @@ local_settings.py
 .settings
 media
 .elasticbeanstalk/
+bibliography/static/js/bibliography-statics.js
+*.mo
+node_modules/
+style/static/
+venv/
+.idea/
+configuration.py
+fidus.db

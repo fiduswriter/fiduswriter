@@ -131,6 +131,7 @@ var tmp_first_comment = _.template(
         </div>\
         <div class="comment-text-wrapper">\
             <textarea class="commentText" data-id="<%= comment.id %>" rows="5"></textarea>\
+            <input class="comment-is-major" type="checkbox" name="isMajor" value="0" />Is major<br />\
             <span class="submitComment fw-button fw-dark">' +
     gettext("Submit") +
     '</span>\

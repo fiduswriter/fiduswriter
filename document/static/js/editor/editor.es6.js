@@ -67,7 +67,7 @@ theEditor.initiate = function () {
       theEditor.comments.on("mustSend", theEditor.sendToCollaborators)
       _.each(theDocument.comments, function (comment){
         theEditor.comments.addLocalComment(comment.id, comment.user,
-          comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers)
+          comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers, comment.isMajor)
       })
 };
 

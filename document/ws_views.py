@@ -197,6 +197,8 @@ class DocumentWS(BaseWebSocketHandler):
                             del DocumentWS.sessions[self.document_id]["comments"][id]
                         elif cd["type"] == "update":
                             DocumentWS.sessions[self.document_id]["comments"][id]["comment"] = cd["comment"]
+                            if "isMajor" in cd:
+                                DocumentWS.sessions[self.document_id]["comments"][id]["isMajor"] = cd["isMajor"]
                         elif cd["type"] == "add_answer":
                             comment_id = str(cd["commentId"])
                             if not "answers" in DocumentWS.sessions[self.document_id]["comments"][comment_id]:

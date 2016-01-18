@@ -68,6 +68,9 @@ theEditor.initiate = function () {
     new _updateUi.UpdateUI(theEditor.editor, "selectionChange change activeMarkChange blur focus");
     theEditor.editor.on('change', editorHelpers.documentHasChanged);
     theEditor.editor.on('transform', theEditor.onTransform);
+    theEditor.editor.on("flushed", mathHelpers.layoutEmptyEquationNodes);
+    theEditor.editor.on("flushed", mathHelpers.layoutEmptyDisplayEquationNodes);
+    theEditor.editor.on("flushed", citationHelpers.formatCitationsInDocIfNew);
     theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators);
     theEditor.comments = new _comment.CommentStore(theEditor.editor, theDocument.comment_version);
     theEditor.comments.on("mustSend", theEditor.sendToCollaborators);
@@ -137,8 +140,6 @@ theEditor.confirmDiff = function (request_id) {
 };
 
 theEditor.applyDiffs = function (diffs) {
-    theEditor.editor.on("flushed", mathHelpers.layoutEmptyEquationNodes);
-    theEditor.editor.on("flushed", citationHelpers.formatCitationsInDocIfNew);
     theEditor.editor.mod.collab.receive(diffs.map(function (j) {
         return _transform.Step.fromJSON(_schema.fidusSchema, j);
     }));

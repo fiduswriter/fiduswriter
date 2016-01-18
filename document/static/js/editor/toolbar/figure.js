@@ -67,7 +67,7 @@ jQuery(document).on('mousedown', '#button-figure:not(.disabled)', function (even
                 dialog.dialog('close');
                 return false;
             }
-            
+
             if (insideFigure && equation === node.attrs.equation &&
                 (image === node.attrs.image) &&
                 caption === node.attrs.caption &&
@@ -105,9 +105,9 @@ jQuery(document).on('mousedown', '#button-figure:not(.disabled)', function (even
         dialogClass: 'figure-dialog',
         close: function () {
 
-            if (!image) {
-                theEditor.editor.on('flushed', mathHelpers.layoutEmptyDisplayEquationNodes);
-            }
+          //  if (!image) {
+          //      theEditor.editor.on('flushed', mathHelpers.layoutEmptyDisplayEquationNodes);
+          //  }
             jQuery(this).dialog('destroy').remove();
         },
     };

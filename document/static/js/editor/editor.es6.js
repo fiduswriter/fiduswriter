@@ -61,6 +61,7 @@ theEditor.initiate = function () {
       theEditor.editor.on('change', editorHelpers.documentHasChanged)
       theEditor.editor.on('transform', theEditor.onTransform)
       theEditor.editor.on("flushed", mathHelpers.layoutEmptyEquationNodes);
+      theEditor.editor.on("flushed", mathHelpers.layoutEmptyDisplayEquationNodes);
       theEditor.editor.on("flushed", citationHelpers.formatCitationsInDocIfNew);
       theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators)
       theEditor.comments = new CommentStore(theEditor.editor, theDocument.comment_version)

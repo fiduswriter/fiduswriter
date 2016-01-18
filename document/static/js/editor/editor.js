@@ -1312,11 +1312,8 @@ var UpdateUI = exports.UpdateUI = (function () {
       /* Fidus Writer code */
 
       // We count on the the title node being the first one in the document
-      var documentTitle = this.pm.doc.firstChild.type.name === 'title' ? this.pm.doc.firstChild.textContent : '';
+      var documentTitle = this.pm.doc.firstChild.type.name === 'title' && this.pm.doc.firstChild.textContent.length > 0 ? this.pm.doc.firstChild.textContent : gettext('Untitled Document');
 
-      if (documentTitle.length === 0) {
-        documentTitle = gettext('Untitled Document');
-      }
       jQuery('title').html('Fidus Writer - ' + documentTitle);
       jQuery('#header h1').html(documentTitle);
 
@@ -1351,10 +1348,26 @@ var UpdateUI = exports.UpdateUI = (function () {
         jQuery('#button-link').removeClass('ui-state-active');
       }
 
-      var start = this.pm.selection.from.min(this.pm.selection.to),
-          end = this.pm.selection.from.max(this.pm.selection.to),
-          startElement = this.pm.doc.path([start.path[0]]),
-          endElement = this.pm.doc.path([end.path[0]]);
+      var canUndo = theEditor.editor.history.canUndo();
+
+      if (canUndo) {
+        jQuery('#button-undo').removeClass('disabled');
+      } else {
+        jQuery('#button-undo').addClass('disabled');
+      }
+
+      var canRedo = theEditor.editor.history.canRedo();
+
+      if (canRedo) {
+        jQuery('#button-redo').removeClass('disabled');
+      } else {
+        jQuery('#button-redo').addClass('disabled');
+      }
+
+      var start = this.pm.selection.from.min(this.pm.selection.to);
+      var end = this.pm.selection.from.max(this.pm.selection.to);
+      var startElement = this.pm.doc.path([start.path[0]]);
+      var endElement = this.pm.doc.path([end.path[0]]);
 
       if (startElement !== endElement) {
         /* Selection goes across document parts */

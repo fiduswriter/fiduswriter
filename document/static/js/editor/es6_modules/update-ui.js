@@ -82,16 +82,15 @@ export class UpdateUI {
     /* Fidus Writer code */
 
     // We count on the the title node being the first one in the document
-    let documentTitle = this.pm.doc.firstChild.type.name === 'title' ? this.pm.doc.firstChild.textContent : ''
+    const documentTitle = this.pm.doc.firstChild.type.name === 'title' &&
+      this.pm.doc.firstChild.textContent.length > 0 ?
+      this.pm.doc.firstChild.textContent : gettext('Untitled Document')
 
-    if (documentTitle.length === 0) {
-        documentTitle = gettext('Untitled Document')
-    }
     jQuery('title').html('Fidus Writer - ' + documentTitle)
     jQuery('#header h1').html(documentTitle)
 
-    let marks = this.pm.activeMarks()
-    let strong = marks.some(function(mark){return (mark.type.name==='strong')})
+    const marks = this.pm.activeMarks()
+    const strong = marks.some(function(mark){return (mark.type.name==='strong')})
 
     if (strong) {
         jQuery('#button-bold').addClass('ui-state-active')
@@ -99,7 +98,7 @@ export class UpdateUI {
         jQuery('#button-bold').removeClass('ui-state-active')
     }
 
-    let em = marks.some(function(mark){return (mark.type.name==='em')})
+    const em = marks.some(function(mark){return (mark.type.name==='em')})
 
     if (em) {
         jQuery('#button-italic').addClass('ui-state-active')
@@ -107,7 +106,7 @@ export class UpdateUI {
         jQuery('#button-italic').removeClass('ui-state-active')
     }
 
-    let link = marks.some(function(mark){return (mark.type.name==='link')})
+    const link = marks.some(function(mark){return (mark.type.name==='link')})
 
     if (link) {
         jQuery('#button-link').addClass('ui-state-active')
@@ -115,10 +114,26 @@ export class UpdateUI {
         jQuery('#button-link').removeClass('ui-state-active')
     }
 
-    let start = this.pm.selection.from.min(this.pm.selection.to),
-    end = this.pm.selection.from.max(this.pm.selection.to),
-    startElement = this.pm.doc.path([start.path[0]]),
-    endElement = this.pm.doc.path([end.path[0]])
+    const canUndo = theEditor.editor.history.canUndo()
+
+    if (canUndo) {
+        jQuery('#button-undo').removeClass('disabled')
+    } else {
+        jQuery('#button-undo').addClass('disabled')
+    }
+
+    const canRedo = theEditor.editor.history.canRedo()
+
+    if (canRedo) {
+        jQuery('#button-redo').removeClass('disabled')
+    } else {
+        jQuery('#button-redo').addClass('disabled')
+    }
+
+    const start = this.pm.selection.from.min(this.pm.selection.to)
+    const end = this.pm.selection.from.max(this.pm.selection.to)
+    const startElement = this.pm.doc.path([start.path[0]])
+    const endElement = this.pm.doc.path([end.path[0]])
 
     if (startElement !== endElement) {
         /* Selection goes across document parts */

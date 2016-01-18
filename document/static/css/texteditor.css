@@ -426,7 +426,7 @@ span.delete {
     padding: 50px;
     padding-right: calc(20vw + 10px);
     position: relative;
-    width: auto;
+    width: 100%;
     bottom: 50px;
 }
 

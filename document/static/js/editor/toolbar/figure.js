@@ -67,8 +67,8 @@ jQuery(document).on('mousedown', '#button-figure:not(.disabled)', function (even
                 dialog.dialog('close');
                 return false;
             }
-
-            if (insideFigure && equation === node.attr.equation &&
+            
+            if (insideFigure && equation === node.attrs.equation &&
                 (image === node.attrs.image) &&
                 caption === node.attrs.caption &&
                 figureCategory === node.attrs.figureCategory) {

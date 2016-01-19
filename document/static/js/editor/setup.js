@@ -246,6 +246,20 @@
          }
      };
 
+     editorHelpers.layoutMetadata = function (one,two) {
+        var metadataCss = '';
+        ['subtitle', 'abstract', 'authors', 'keywords'].forEach(function(metadataItem) {
+            if (!theDocument.settings.metadata[metadataItem]) {
+                metadataCss += '#metadata-' + metadataItem + ' {display: none;}\n'
+            } else {
+                metadataCss += 'span.metadata-' + metadataItem + ' {background-color: black; color: white;}\n'
+            }
+        });
+
+        jQuery('#metadata-styles')[0].innerHTML = metadataCss;
+
+     };
+
      /** A dictionary linking field names with set display functions.
       * @constant  FIELDS
       * @memberof editorHelpers.setDisplay
@@ -331,20 +345,6 @@
          return true;
      };
 
-
-     editorHelpers.layoutMetadata = function (one,two) {
-        var metadataCss = '';
-        ['subtitle', 'abstract', 'authors', 'keywords'].forEach(function(metadataItem) {
-            if (!theDocument.settings.metadata[metadataItem]) {
-                metadataCss += '#metadata-' + metadataItem + ' {display: none;}\n'
-            } else {
-                metadataCss += 'span.metadata-' + metadataItem + ' {background-color: black; color: white;}\n'
-            }
-        });
-
-        jQuery('#metadata-styles')[0].innerHTML = metadataCss;
-
-     };
 
      /** Will save the current Document to the server if theDocumentValues.control is true.
       * In collaborative mode, only the first client to connect will have theDocumentValues.control set to true.

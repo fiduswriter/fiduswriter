@@ -67,7 +67,8 @@ InsertionTestCase = namedtuple(
         'description',      # string with a short description of what is
                             #   being tested
         'givenContents',    # DocumentContents string
-        'givenCaret',       # position of caret at start of test
+        'givenCaretStart',  # start of selection at start of test
+        'givenCaretEnd',    # end of selection at start of test
         'expectedContents', # expected document contents at end of test
         'expectedCaret',    # expected caret position at end of test
     ]
@@ -169,7 +170,6 @@ class Manipulator(object):
 
     # execute javascript
     def injectHelpers(self):
-#        print 'window.testCaret = %s' % testCaretJS
         return DRIVER.execute_script(
             testCaretJS
         )
@@ -185,10 +185,16 @@ class Manipulator(object):
             caret
         )
 
+    def setSelection(self, caret_one, caret_two):
+        return DRIVER.execute_script(
+            'testCaret.setSelection(arguments[0], arguments[1]);',
+            caret_one, caret_two
+        )
+
     def caretIsAt(self, expectedCaret):
         return DRIVER.execute_script(
             '''
-            return testCaret.caretsMatch(
+            return testCaret.selectionsMatch(
                 arguments[0],
                 testCaret.getCaret()
             );
@@ -482,7 +488,8 @@ class MovementInSingleChildParagraph(CaretPositionTest):
             givenContents=Contents(Paragraph(
                 Link(
                     'your source of examples on the world-wide-web',
-                    'http://www.example.com'
+                    'http://www.example.com',
+                    'LinkTitle'
                 )
             )),
         )
@@ -523,23 +530,27 @@ class MovementInMultiChildParagraph(CaretTestCase):
 
 class InsertionOfLink(LiveTornadoTestCase, Manipulator):
     __metaclass__ = DataCasesToTestMethodsMeta
-    linkText = 'all the ipsums'
+    linkTitle = 'all the ipsums'
     linkAddressWithoutHTTP = 'www.example.com'
     linkAddress = 'http://' + linkAddressWithoutHTTP
-    expectedLink = Link(linkText, linkAddress)
+    expectedLink = Link('',linkAddress,linkTitle)
 
     cases = [
         InsertionTestCase(**{
             'name': 'atStartOfParagraph',
-            'description': 'caret at start of paragraph inserts link before'
-                           ' text',
+            'description': 'caret at start of paragraph turns start of text'
+            ' into link',
             'givenContents': Contents(Paragraph(Text(SHORT_LOREM))),
-            'givenCaret': Caret(
+            'givenCaretStart': Caret(
                 path = [5,0],
-                offset=0
+                offset = 0
+            ),
+            'givenCaretEnd': Caret(
+                path = [5,0],
+                offset = len('Lo')
             ),
             'expectedContents': Contents(
-                Paragraph(expectedLink, Text(SHORT_LOREM))
+                Paragraph(Link('Lo', linkAddress, linkTitle), Text(SHORT_LOREM[len('Lo'):]))
             ),
             'expectedCaret': Caret(
                 path = [5,0],
@@ -548,19 +559,22 @@ class InsertionOfLink(LiveTornadoTestCase, Manipulator):
         }),
         InsertionTestCase(**{
             'name': 'linkInsideBold',
-            'description': 'caret within Bold inserts Link between two'
-                           ' Bold',
+            'description': 'caret within Bold creates link within Bold',
             'givenContents': Contents(Paragraph(BoldText(SHORT_LOREM))),
-            'givenCaret': Caret(
+            'givenCaretStart': Caret(
                 path = [5,0],
                 offset=len('Lorem'),
+            ),
+            'givenCaretEnd': Caret(
+                path = [5,0],
+                offset=len('Lorem ipsum'),
             ),
             'expectedContents': Contents(
                 Paragraph(
                     Bold(
                         Text('Lorem'),
-                        expectedLink,
-                        Text(SHORT_LOREM[len('Lorem'):])
+                        Link(' ipsum', linkAddress, linkTitle),
+                        Text(SHORT_LOREM[len('Lorem ipsum'):])
                     ),
                 )
             ),
@@ -581,7 +595,7 @@ class InsertionOfLink(LiveTornadoTestCase, Manipulator):
 
         self.injectHelpers()
 
-        self.setCaret(case.givenCaret)
+        self.setSelection(case.givenCaretStart,case.givenCaretEnd)
 
         (DRIVER.find_element_by_id('button-link')
                .click())
@@ -595,7 +609,7 @@ class InsertionOfLink(LiveTornadoTestCase, Manipulator):
         )
 
         (DRIVER.find_element_by_css_selector('input.linktitle')
-               .send_keys(self.linkText))
+               .send_keys(self.linkTitle))
         (DRIVER.find_element_by_css_selector('input.link')
                .send_keys(self.linkAddressWithoutHTTP))
 

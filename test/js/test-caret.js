@@ -4341,11 +4341,9 @@ var _selection = require("prosemirror/dist/edit/selection");
 var testCaret = {};
 
 /**
- * Produces a caret referring to the starting position of the first range of
- * the given selection.
+ * Returns the current selection.
  * @function getCaret
  * @memberof testCaret
- * @param {Selection} selection Selection whose caret is to be gotten.
  * @returns {Caret}
  */
 testCaret.getCaret = function getCaret() {
@@ -4353,17 +4351,29 @@ testCaret.getCaret = function getCaret() {
 };
 
 /**
- * Sets the given selection to have a single collapsed range at the given
- * caret.
+ * Sets an empty selection to caret.
  * @function setCaret
  * @memberof testCaret
- * @param {Selection} selection Selection.
+ * @param {Selection} caret Selection.
  * @returns {Selection}
  */
 testCaret.setCaret = function setCaret(caret) {
-  var pos = new _model.Pos(caret.path, caret.offset);
+  return testCaret.setSelection(caret, caret);
+};
 
-  var selection = new _selection.TextSelection(pos);
+/**
+ * Sets the selection to be between two caret positions.
+ * @function setSelection
+ * @memberof testCaret
+ * @param {caretOne} caretOne The first caret.
+ * @param {caretTwo} caretTwo The second caret position.
+ * @returns {Selection}
+ */
+testCaret.setSelection = function setSelection(caretOne, caretTwo) {
+  var posOne = new _model.Pos(caretOne.path, caretOne.offset);
+  var posTwo = new _model.Pos(caretTwo.path, caretTwo.offset);
+
+  var selection = new _selection.TextSelection(posOne, posTwo);
 
   theEditor.editor.setSelection(selection);
   theEditor.editor.focus();
@@ -4372,14 +4382,14 @@ testCaret.setCaret = function setCaret(caret) {
 };
 
 /**
- * Compares if the given carets refer to the same node and offset.
+ * Checks if the given selections are equal.
  * @function caretsMatch
  * @memberof testCaret
  * @param {Selection} left Caret to be compared.
  * @param {Selection} right Caret to be compared.
  * @returns {Boolean}
  */
-testCaret.caretsMatch = function caretsMatch(left, right) {
+testCaret.selectionsMatch = function selectionsMatch(left, right) {
   return left.eq(right);
 };
 

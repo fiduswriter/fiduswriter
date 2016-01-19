@@ -8,11 +8,9 @@ let testCaret = {}
 
 
 /**
- * Produces a caret referring to the starting position of the first range of
- * the given selection.
+ * Returns the current selection.
  * @function getCaret
  * @memberof testCaret
- * @param {Selection} selection Selection whose caret is to be gotten.
  * @returns {Caret}
  */
 testCaret.getCaret = function getCaret() {
@@ -20,33 +18,45 @@ testCaret.getCaret = function getCaret() {
 }
 
 /**
- * Sets the given selection to have a single collapsed range at the given
- * caret.
+ * Sets an empty selection to caret.
  * @function setCaret
  * @memberof testCaret
- * @param {Selection} selection Selection.
+ * @param {Selection} caret Selection.
  * @returns {Selection}
  */
 testCaret.setCaret = function setCaret(caret) {
-    let pos = new Pos(caret.path, caret.offset)
+    return testCaret.setSelection(caret, caret)
+}
 
-    let selection = new TextSelection(pos)
+/**
+ * Sets the selection to be between two caret positions.
+ * @function setSelection
+ * @memberof testCaret
+ * @param {caretOne} caretOne The first caret.
+ * @param {caretTwo} caretTwo The second caret position.
+ * @returns {Selection}
+ */
+testCaret.setSelection = function setSelection(caretOne, caretTwo) {
+    let posOne = new Pos(caretOne.path, caretOne.offset)
+    let posTwo = new Pos(caretTwo.path, caretTwo.offset)
+
+    let selection = new TextSelection(posOne, posTwo)
 
     theEditor.editor.setSelection(selection)
     theEditor.editor.focus()
-    
+
     return selection
 }
 
 /**
- * Compares if the given carets refer to the same node and offset.
+ * Checks if the given selections are equal.
  * @function caretsMatch
  * @memberof testCaret
  * @param {Selection} left Caret to be compared.
  * @param {Selection} right Caret to be compared.
  * @returns {Boolean}
  */
-testCaret.caretsMatch = function caretsMatch(left, right) {
+testCaret.selectionsMatch = function selectionsMatch(left, right) {
     return left.eq(right)
 }
 

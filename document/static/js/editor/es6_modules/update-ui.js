@@ -114,7 +114,8 @@ export class UpdateUI {
         jQuery('#button-link').removeClass('ui-state-active')
     }
 
-    const canUndo = theEditor.editor.history.canUndo()
+
+    const canUndo = this.pm.history.canUndo()
 
     if (canUndo) {
         jQuery('#button-undo').removeClass('disabled')
@@ -122,7 +123,7 @@ export class UpdateUI {
         jQuery('#button-undo').addClass('disabled')
     }
 
-    const canRedo = theEditor.editor.history.canRedo()
+    const canRedo = this.pm.history.canRedo()
 
     if (canRedo) {
         jQuery('#button-redo').removeClass('disabled')
@@ -156,6 +157,10 @@ export class UpdateUI {
             case 'metadataabstract':
             case 'documentcontents':
                 jQuery('.edit-button').removeClass('disabled')
+
+                if (this.pm.selection.empty) {
+                    jQuery('#button-link').addClass('disabled')
+                }
 
                 if(startElement.type.name==='metadataabstract') {
                     jQuery('#button-figure').addClass('disabled')

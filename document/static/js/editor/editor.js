@@ -1348,7 +1348,7 @@ var UpdateUI = exports.UpdateUI = (function () {
         jQuery('#button-link').removeClass('ui-state-active');
       }
 
-      var canUndo = theEditor.editor.history.canUndo();
+      var canUndo = this.pm.history.canUndo();
 
       if (canUndo) {
         jQuery('#button-undo').removeClass('disabled');
@@ -1356,7 +1356,7 @@ var UpdateUI = exports.UpdateUI = (function () {
         jQuery('#button-undo').addClass('disabled');
       }
 
-      var canRedo = theEditor.editor.history.canRedo();
+      var canRedo = this.pm.history.canRedo();
 
       if (canRedo) {
         jQuery('#button-redo').removeClass('disabled');
@@ -1390,6 +1390,10 @@ var UpdateUI = exports.UpdateUI = (function () {
           case 'metadataabstract':
           case 'documentcontents':
             jQuery('.edit-button').removeClass('disabled');
+
+            if (this.pm.selection.empty) {
+              jQuery('#button-link').addClass('disabled');
+            }
 
             if (startElement.type.name === 'metadataabstract') {
               jQuery('#button-figure').addClass('disabled');

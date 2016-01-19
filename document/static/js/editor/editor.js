@@ -1,4 +1,4 @@
-/* This file has been automatically generated. DO NOT EDIT IT. 
+/* This file has been automatically generated. DO NOT EDIT IT.
  Changes will be overwritten. Edit editor.es6.js and run ./es6-compiler.sh */
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
@@ -2332,7 +2332,7 @@ baseCommands.liftEmptyBlock = {
     var _pm$selection13 = pm.selection;
     var head = _pm$selection13.head;
     var empty = _pm$selection13.empty;
-
+    console.log(['30',pm.doc.path(head.path),pm.doc.path(head.path).textContent,pm.doc.path(head.path).textContent.length,pm.doc.path(head.path).size,pm.doc.path(head.path)]);
     if (!empty || head.offset > 0 || pm.doc.path(head.path).size) return false;
     if (head.depth > 1) {
       var shorter = head.shorten();

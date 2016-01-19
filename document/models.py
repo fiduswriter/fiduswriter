@@ -28,7 +28,7 @@ MAX_SINCE_SAVE=timedelta(seconds=LOCK_TIMEOUT)
 
 class Document(models.Model):
     title = models.CharField(max_length=255, default='', blank=True)
-    contents = models.TextField(default='{"nn":"DIV","a":[],"c":[{"nn":"P","c":[{"nn":"BR"}]}]}')
+    contents = models.TextField(default='{"nn":"DIV","a":[],"c":[{"nn":"P","c":[]}]}')
     metadata = models.TextField(default='{}') #json object of metadata
     version = models.PositiveIntegerField(default=0)
     # The version number corresponds to the last full HTML/JSON copy of the
@@ -45,7 +45,7 @@ class Document(models.Model):
     # To obtain the very last approved version of the document, one needs to take
     # the HTML/JSON version of the document (in the fields title, contents,
     # metadata and version) and apply N of the last last_diffs, where N is
-    # diff_version - version. 
+    # diff_version - version.
     settings = models.TextField(default='{}') #json object of settings
     owner = models.ForeignKey(User,related_name='owner')
     added = models.DateTimeField(auto_now_add=True)

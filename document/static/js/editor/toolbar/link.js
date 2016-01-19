@@ -41,7 +41,7 @@ jQuery(document).on('mousedown', '#button-link:not(.disabled)', function(event) 
                 linkText = link;
             }*/
             dialog.dialog('close');
-            theEditor.editor.execCommand('schema:link:set',[newLink, linkTitle]);
+            theEditor.editor.execCommand('link:set',[newLink, linkTitle]);
 
         }
     });

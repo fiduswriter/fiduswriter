@@ -64,8 +64,17 @@
          editorHelpers.setDocumentData('settings.metadata.' + theMetadata, !
              theDocument.settings.metadata[
                  theMetadata]);
-         // TODO: Make metadata that is switched off not show. Possibly with CSS?
+         editorHelpers.setMetadataDisplay();
      };
+
+     /** Layout metadata and then mark the document as having changed.
+     * @function setMetadataDisplay
+     * @memberof editorHelpers
+     */
+    editorHelpers.setMetadataDisplay = function () {
+        editorHelpers.layoutMetadata();
+        editorHelpers.documentHasChanged();
+    };
 
      /** Update the editor page with the document data from the server.
       * This is done if it was detected that the local version of the document
@@ -307,7 +316,6 @@
          }
          if (editorHelpers.CONTENT_FIELDS.indexOf(theName) === -1) {
              if (currentValue === newValue) {
-                 // Don't create a history entry if nothing has changed
                  return false;
              }
 
@@ -324,7 +332,19 @@
      };
 
 
+     editorHelpers.layoutMetadata = function (one,two) {
+        var metadataCss = '';
+        ['subtitle', 'abstract', 'authors', 'keywords'].forEach(function(metadataItem) {
+            if (!theDocument.settings.metadata[metadataItem]) {
+                metadataCss += '#metadata-' + metadataItem + ' {display: none;}\n'
+            } else {
+                metadataCss += 'span.metadata-' + metadataItem + ' {background-color: black; color: white;}\n'
+            }
+        });
 
+        jQuery('#metadata-styles')[0].innerHTML = metadataCss;
+
+     };
 
      /** Will save the current Document to the server if theDocumentValues.control is true.
       * In collaborative mode, only the first client to connect will have theDocumentValues.control set to true.
@@ -520,7 +540,7 @@ jQuery(document).bind('documentDataLoaded', function() {
     });
 
 
-//    editorHelpers.layoutMetadata();
+    editorHelpers.layoutMetadata();
 
     if (theDocumentValues.rights === 'r') {
         jQuery('#editor-navigation').hide();

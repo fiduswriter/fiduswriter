@@ -227,7 +227,7 @@ export class UpdateUI {
     })
     if (that.placeHolderCss !== newPlaceHolderCss) {
       that.placeHolderCss = newPlaceHolderCss
-      jQuery('#placeholderStyles')[0].innerHTML = newPlaceHolderCss;
+      jQuery('#placeholder-styles')[0].innerHTML = newPlaceHolderCss;
     }
   }
 }

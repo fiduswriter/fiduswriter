@@ -351,12 +351,12 @@
             theComments: theComments
         }));
         commentHelpers.layoutCommentsAvoidOverlap();
-        jQuery('#activeCommentStyle').html('');
+        jQuery('#active-comment-style').html('');
         activeCommentWrapper = jQuery('.comment-box.active');
         if (0 < activeCommentWrapper.size()) {
             theDocument.activeCommentId = activeCommentWrapper.attr(
                 'data-id');
-            jQuery('#activeCommentStyle').html(
+            jQuery('#active-comment-style').html(
                 '.comments-enabled .comment[data-id="' + theDocument.activeCommentId + '"] ' +
                 '{background-color: #fffacf;}');
             activeCommentWrapper.find('.comment-answer-text').autoResize({

@@ -257,14 +257,14 @@ class BoldText(Text):
     BoldText is String
     interpretation: string formatted as bold text
     """
-    template = '{"nn":"B","c":[{"t":"%(contents)s"}]}'
+    template = '{"nn":"STRONG","c":[{"t":"%(contents)s"}]}'
 
 class ItalicText(Text):
     """
     ItalicText is String
     interpretation: string formatted as italic text
     """
-    template = '{"nn":"I","c":[{"t":"%(contents)s"}]}'
+    template = '{"nn":"EM","c":[{"t":"%(contents)s"}]}'
 
 
 class Link(FlatInlineContent):
@@ -345,26 +345,15 @@ class Comment(InlineContent, ListOfInlineContent):
         '{"nn":"SPAN",',
             '"a":[',
                 '["class","comment"],',
-                '["id","%(id)s"],',
                 '["data-id","%(dataId)s"],',
-                '["data-user","%(user)s"],',
-                '["data-user-name","%(userName)s"],',
-                '["data-user-avatar","%(userAvatar)s"],',
-                '["data-date","%(date)s"],',
-                '["data-comment","%(text)s"]',
             '],',
             '"c":[%(children)s]',
         '}',
     ])
 
-    def __init__(self, _id, dataId, user, userName, userAvatar, date, text, *children):
+    def __init__(self, _id, dataId, *children):
         self.id = _id
         self.dataId = dataId
-        self.user = user
-        self.userName = userName
-        self.userAvatar = userAvatar
-        self.date = date
-        self.text = text
         super(Comment, self).__init__(*children)
 
     def __str__(self):

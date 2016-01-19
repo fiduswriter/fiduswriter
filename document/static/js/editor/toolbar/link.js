@@ -36,12 +36,14 @@ jQuery(document).on('mousedown', '#button-link:not(.disabled)', function(event) 
                 return;
             }
 
-            /*if ((new RegExp(/^\s*$/)).test(linkTitle)) {
+            if ((new RegExp(/^\s*$/)).test(linkTitle)) {
                 // The link text is empty. Make it the same as the link itself.
                 linkText = link;
-            }*/
+            }
             dialog.dialog('close');
             theEditor.editor.execCommand('link:set',[newLink, linkTitle]);
+            theEditor.editor.focus();
+            return;
 
         }
     });

@@ -47,14 +47,14 @@ var tmp_book_print = _.template('\
     <% } %>\
     <div class="chapter">\
         <h1 class="title"><%= chapter.title %></h1>\
-        <% if (chapter.settings.metadata) { %>\
-            <% if (chapter.settings.metadata.subtitle && chapter.metadata.subtitle) { %>\
+        <% if (chapter.settings) { %>\
+            <% if (chapter.settings["metadata-subtitle"] && chapter.metadata.subtitle) { %>\
                 <% tempNode = exporter.obj2Node(chapter.metadata.subtitle) %>\
                 <% if (tempNode.textContent.length > 0) { %>\
                     <h2 class="metadata-subtitle"><%= tempNode.textContent %></h2>\
                 <% } %>\
             <% } %>\
-            <% if (chapter.settings.metadata.abstract && chapter.metadata.abstract ) { %>\
+            <% if (chapter.settings["metadata-abstract"] && chapter.metadata.abstract ) { %>\
                 <% tempNode = exporter.obj2Node(chapter.metadata.abstract) %>\
                 <% if (tempNode.textContent.length > 0) { %>\
                     <h2 class="metadata-abstract"><%= tempNode.textContent %></h2>\

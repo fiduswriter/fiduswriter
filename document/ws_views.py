@@ -31,7 +31,7 @@ def save_document(document_id,changes):
     document.title = changes["title"]
     document.contents = changes["contents"]
     document.metadata = changes["metadata"]
-    document.settings = changes["settings"]
+    document.settings = json_encode(DocumentWS.sessions[document_id]['settings'])
     document.version = changes["version"]
     document.last_diffs = json_encode(DocumentWS.sessions[document_id]['last_diffs'])
     document.comments = json_encode(DocumentWS.sessions[document_id]['comments'])
@@ -75,6 +75,7 @@ class DocumentWS(BaseWebSocketHandler):
                 DocumentWS.sessions[document.id]['document'] = document
                 DocumentWS.sessions[document.id]['last_diffs'] = json_decode(document.last_diffs)
                 DocumentWS.sessions[document.id]['comments'] = json_decode(document.comments)
+                DocumentWS.sessions[document.id]['settings'] = json_decode(document.settings)
                 DocumentWS.sessions[document.id]['in_control'] = self.id
             else:
                 self.id = max(DocumentWS.sessions[document.id]['participants'])+1
@@ -101,7 +102,7 @@ class DocumentWS(BaseWebSocketHandler):
         response['document']['title']=document.title
         response['document']['contents']=document.contents
         response['document']['metadata']=document.metadata
-        response['document']['settings']=document.settings
+        response['document']['settings']=DocumentWS.sessions[self.document_id]["settings"]
         response['document']['comments']=DocumentWS.sessions[self.document_id]["comments"]
         response['document']['comment_version']=document.comment_version
         response['document']['access_rights'] = get_accessrights(AccessRight.objects.filter(document__owner=document.owner))
@@ -143,7 +144,7 @@ class DocumentWS(BaseWebSocketHandler):
         response['document']['title']=document.title
         response['document']['contents']=document.contents
         response['document']['metadata']=document.metadata
-        response['document']['settings']=document.settings
+        response['document']['settings']=DocumentWS.sessions[self.document_id]["settings"]
         response['document']['comments']=DocumentWS.sessions[self.document_id]["comments"]
         response['document']['comment_version']=document.comment_version
         response['document_values'] = dict()
@@ -178,8 +179,7 @@ class DocumentWS(BaseWebSocketHandler):
                 DocumentWS.send_updates(chat, self.document_id)
         elif parsed["type"]=='setting_change':
             if self.document_id in DocumentWS.sessions:
-                document = DocumentWS.sessions[self.document_id]["document"]
-
+                DocumentWS.sessions[self.document_id]['settings'][parsed['variable']] = parsed['value']
                 DocumentWS.send_updates(message, self.document_id, self.id)
         elif parsed["type"]=='diff':
             if self.document_id in DocumentWS.sessions:

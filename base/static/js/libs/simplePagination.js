@@ -156,6 +156,9 @@
         .pagination-main-contents-container, .pagination-pagenumber, .pagination-header {\
             position: absolute;\
         }\
+        li.hide {\
+          list-style-type: none;\
+        }\
         ";
         document.head.appendChild(stylesheet);
     };
@@ -370,7 +373,7 @@
     // roman is the page counter used by the frontmatter.
 
     function countOLItemsAndFixLI (element, countList) {
-        var start = 1;
+        var start = 1, hideFirstLI = false;
         if (typeof countList==='undefined') {
           countList = [];
         }
@@ -380,10 +383,18 @@
             }
             if (element.lastElementChild.textContent.length===0) {
                 element.removeChild(element.lastElementChild);
+            } else {
+                start--;
+                hideFirstLI = true;
             }
-            countList.push(start + element.childElementCount);
-        } else if (element.nodeName === 'UL' && element.lastElementChild.textContent.length===0) {
-                  element.removeChild(element.lastElementChild);
+            countList.push({start: start + element.childElementCount, hideFirstLI: hideFirstLI});
+        } else if (element.nodeName === 'UL') {
+            if (element.lastElementChild.textContent.length===0) {
+                element.removeChild(element.lastElementChild);
+            } else {
+                hideFirstLI = true;
+            }
+            countList.push({hideFirstLI: hideFirstLI});
         }
 
         if (element.childElementCount > 0) {
@@ -395,11 +406,21 @@
     }
 
     function applyInitialOLcount (element, countList) {
+        var listCount;
         if (countList.length===0) {
             return;
         }
         if (element.nodeName === 'OL') {
-            element.setAttribute('start',countList.shift());
+            listCount = countList.shift();
+            element.setAttribute('start', listCount.start);
+            if (listCount.hideFirstLI) {
+                element.firstElementChild.classList.add('hide');
+            }
+        } else if (element.nodeName === 'UL') {
+            listCount = countList.shift();
+            if (listCount.hideFirstLI) {
+                element.firstElementChild.classList.add('hide');
+            }
         }
         if (element.childElementCount > 0) {
             applyInitialOLcount(element.firstElementChild, countList);
@@ -791,6 +812,7 @@
                             img.addEventListener('load', incrementCounter, false);
                         });
                         if (len === 0) {
+                            counter = -1;
                             incrementCounter();
                         }
                     }

@@ -433,7 +433,7 @@
     pagination.cutToFit = function (contents) {
 
 
-        var coordinates, range, overflow, manualPageBreak;
+        var coordinates, range, overflow, manualPageBreak, ignoreLastLIcut = false, cutLIs;
 
         contents.style.height = (contents.parentElement.clientHeight - contents.previousSibling.clientHeight - contents.nextSibling.clientHeight) + 'px';
         contents.style[pagination.columnWidthTerm] = contents.clientWidth + 'px';
@@ -452,9 +452,21 @@
             coordinates = contents.getBoundingClientRect();
             range = pagination.caretRange(coordinates.right + 1, coordinates.top);
         }
+        if(range.startContainer.nodeName==='OL' || range.startContainer.nodeName==='UL') {
+            // We are cutting from inside a List, don't touch the innermost list items.
+            ignoreLastLIcut = true;
+        }
         range.setEndAfter(contents.lastChild);
         overflow = range.extractContents();
-        applyInitialOLcount(overflow, countOLItemsAndFixLI(contents));
+        cutLIs = countOLItemsAndFixLI(contents);
+        if (ignoreLastLIcut) {
+          // Because the cut happened exactly between two LI items, don't try to unify the two lowest level LIs.
+          cutLIs[cutLIs.length-1].hideFirstLI = false;
+          if (cutLIs[cutLIs.length-1].start) {
+              cutLIs[cutLIs.length-1].start++;
+          }
+        }
+        applyInitialOLcount(overflow, cutLIs);
 
         if (!contents.lastChild || (contents.textContent.trim().length === 0 && contents.querySelectorAll('img,svg,canvas').length === 0)) {
             contents.appendChild(overflow);

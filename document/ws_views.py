@@ -176,7 +176,7 @@ class DocumentWS(BaseWebSocketHandler):
                 }
             if self.document_id in DocumentWS.sessions:
                 DocumentWS.send_updates(chat, self.document_id)
-        elif parsed["type"]=='transform':
+        elif parsed["type"]=='setting_change':
             if self.document_id in DocumentWS.sessions:
                 document = DocumentWS.sessions[self.document_id]["document"]
 

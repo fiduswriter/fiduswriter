@@ -178,6 +178,8 @@ class DocumentWS(BaseWebSocketHandler):
                 DocumentWS.send_updates(chat, self.document_id)
         elif parsed["type"]=='transform':
             if self.document_id in DocumentWS.sessions:
+                document = DocumentWS.sessions[self.document_id]["document"]
+
                 DocumentWS.send_updates(message, self.document_id, self.id)
         elif parsed["type"]=='diff':
             if self.document_id in DocumentWS.sessions:

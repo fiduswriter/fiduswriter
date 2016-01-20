@@ -291,18 +291,6 @@
          'metadata.subtitle', 'metadata.abstract', 'metadata.authors', 'metadata.keywords'
      ];
 
-     /** A list of elements containing HTML and allow inserting of complex HTML elements.
-      * @constant  HTML_ELEMENTS
-      * @memberof editorHelpers
-      */
-     editorHelpers.HTML_ELEMENTS = ['document-contents','metadata-abstract'];
-
-     /** A list of elements allowing only text and track changes nodes (no other, more complex HTML).
-      * @constant  TEXT_ELEMENTS
-      * @memberof editorHelpers
-      */
-     editorHelpers.TEXT_ELEMENTS = ['document-title','metadata-subtitle','metadata-authors','metadata-keywords'];
-
      /** Sets a variable in theDocument to a value and optionally sends a change notification to other editors.
       * This notification is used in case of simple fields (all fields that are not individually editable in the text editor
       * -- citation style, set tracking, etc. but not the document title) to make other clients copy the same values.

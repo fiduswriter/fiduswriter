@@ -112,38 +112,32 @@
       * that differ from session to session.
       */
      editorHelpers.copyDocumentValues = function (aDocument, aDocumentValues, lastDiffs) {
-         var DEFAULTS, i, theDocument, theDocumentValues;
+         var theDocument, theDocumentValues;
          theDocument = aDocument;
          theDocumentValues = aDocumentValues;
          theDocumentValues.changed = false;
-         theDocumentValues.virgin = true;
          theDocument.settings = theDocument.settings;
          theDocument.metadata = jQuery.parseJSON(theDocument.metadata);
          theDocument.contents = jQuery.parseJSON(theDocument.contents);
 
          documentId = theDocument.id;
 
-         DEFAULTS = [
-             ['metadata.title', theDocument.title],
-             ['settings.papersize', '1117'],
-             ['settings.citationstyle', 'apa'],
-             ['settings.documentstyle', defaultDocumentStyle]
-         ];
 
-         for (i = 0; i < DEFAULTS.length; i++) {
-             // TODO: Find a way to do this without eval.
-             if (eval("undefined===theDocument." + DEFAULTS[i][0])) {
-                 if ('string' === typeof (DEFAULTS[i][1])) {
-                     eval("theDocument." + DEFAULTS[i][0] + "=unescape('" +
-                         escape(DEFAULTS[i][1]) + "')");
-                 }
-                 else {
-                     eval("theDocument." + DEFAULTS[i][0] + "=" + JSON.stringify(
-                         DEFAULTS[i][1]));
-                 }
-             }
-
+         if (!theDocument.metadata.title) {
+            theDocument.metadata.title = theDocument.title;
          }
+
+
+         [
+             ['papersize', 1117],
+             ['citationstyle', 'apa'], // TODO: make this calculated. Not everyone will have apa installed
+             ['documentstyle', defaultDocumentStyle]
+         ].forEach(function(variable) {
+           if (theDocument.settings[variable[0]] === undefined) {
+              theDocument.settings[variable[0]] = variable[1];
+           }
+         });
+
 
          if (theDocumentValues.is_new) {
              // If the document is new, change the url. Then forget that the document is new.
@@ -282,13 +276,6 @@
          }
 
          theDocument.settings[variable] = newValue;
-      /*   if ('string' === typeof (newValue)) {
-             // TODO: Using eval and escaping-unescaping is not very beautiful. If possible this should be done differently.
-             theDocument.settings[theName]=unescape(escape(newValue));
-         }
-         else {
-             theDocument.settings[theName] = newValue;
-         }*/
 
          if (sendChange) {
              serverCommunications.send({

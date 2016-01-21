@@ -90,6 +90,7 @@
 
          jQuery('.toolbarundoredo button').addClass('disabled');
          theDocumentValues.changed = false;
+         theDocumentValues.titleChanged = false;
          theDocument.settings = aDocument.settings;
          theDocument.metadata = jQuery.parseJSON(aDocument.metadata);
          theDocument.contents = jQuery.parseJSON(aDocument.contents);
@@ -97,7 +98,6 @@
          theDocument.comment_version = aDocument.comment_version;
          theDocument.version = aDocument.version;
          theEditor.update();
-         theEditor.applyDiffs(aDocument.last_diffs);
          mathHelpers.resetMath();
          citationHelpers.formatCitationsInDoc();
      };
@@ -116,16 +116,11 @@
          theDocument = aDocument;
          theDocumentValues = aDocumentValues;
          theDocumentValues.changed = false;
+         theDocumentValues.titleChanged = false;
          theDocument.settings = theDocument.settings;
          theDocument.metadata = jQuery.parseJSON(theDocument.metadata);
          theDocument.contents = jQuery.parseJSON(theDocument.contents);
-
          documentId = theDocument.id;
-
-
-         if (!theDocument.metadata.title) {
-            theDocument.metadata.title = theDocument.title;
-         }
 
 
          [
@@ -164,6 +159,14 @@
       */
      editorHelpers.documentHasChanged = function () {
          theDocumentValues.changed = true; // For document saving
+     };
+
+     /** Called whenever the document title had changed. Makes sure that saving happens.
+      * @function titleHasChanged
+      * @memberof editorHelpers
+      */
+     editorHelpers.titleHasChanged = function () {
+         theDocumentValues.titleChanged = true; // For title saving
      };
 
      /** Functions related to taking document data from theDocument.* and displaying it (ie making it part of the DOM structure).
@@ -288,24 +291,23 @@
         return true;
      };
 
-     /** Will save the current Document to the server if theDocumentValues.control is true.
+     /** Will send an update of the current Document to the server if theDocumentValues.control is true.
       * In collaborative mode, only the first client to connect will have theDocumentValues.control set to true.
-      * @function saveDocument
+      * @function sendDocumentUpdate
       * @memberof editorHelpers
       * @param callback Callback to be called after copying data (optional).
       */
-     editorHelpers.saveDocument = function (callback) {
+     editorHelpers.sendDocumentUpdate = function (callback) {
          var documentData = {};
 
          if (theDocumentValues.control===true) {
              documentData.metadata = JSON.stringify(theDocument.metadata);
-             documentData.title = theDocument.title.substring(0, 255);
              documentData.contents = JSON.stringify(theDocument.contents);
              documentData.version = theDocument.version;
              documentData.hash = theDocument.hash;
              console.log('saving');
              serverCommunications.send({
-                 type: 'save',
+                 type: 'update_document',
                  document: documentData
              });
          } else {
@@ -372,7 +374,6 @@ jQuery(document).bind('documentDataLoaded', function() {
     usermediaHelpers.init(function(){
       theEditor.initiate();
       citationHelpers.formatCitationsInDoc();
-      theEditor.applyDiffs(theDocumentValues.last_diffs);
     });
 
 
@@ -426,32 +427,32 @@ jQuery(document).bind('documentDataLoaded', function() {
 
     jQuery(document).on('mousedown', '.savecopy:not(.disabled)', function() {
         theEditor.getUpdates(function() {
-            editorHelpers.saveDocument();
+            editorHelpers.sendDocumentUpdate();
         });
         exporter.savecopy(theDocument);
     });
 
     jQuery('.download').bind('mousedown', function() {
         theEditor.getUpdates(function() {
-            editorHelpers.saveDocument();
+            editorHelpers.sendDocumentUpdate();
         });
         exporter.downloadNative(theDocument);
     });
     jQuery('.latex').bind('mousedown', function() {
         theEditor.getUpdates(function() {
-            editorHelpers.saveDocument();
+            editorHelpers.sendDocumentUpdate();
         });
         exporter.downloadLatex(theDocument);
     });
     jQuery('.epub').bind('mousedown', function() {
         theEditor.getUpdates(function() {
-            editorHelpers.saveDocument();
+            editorHelpers.sendDocumentUpdate();
         });
         exporter.downloadEpub(theDocument);
     });
     jQuery('.html').bind('mousedown', function() {
         theEditor.getUpdates(function() {
-            editorHelpers.saveDocument();
+            editorHelpers.sendDocumentUpdate();
         });
         exporter.downloadHtml(theDocument);
     });
@@ -460,7 +461,7 @@ jQuery(document).bind('documentDataLoaded', function() {
     });
     jQuery('.close').bind('mousedown', function() {
         theEditor.getUpdates(function() {
-            editorHelpers.saveDocument();
+            editorHelpers.sendDocumentUpdate();
         });
         window.location.href = '/';
     });
@@ -485,14 +486,27 @@ jQuery(document).bind('documentDataLoaded', function() {
         mathHelpers.resetMath();
 
 
-        // Set Auto-save to save every two minutes
+        // Set Auto-save to send the document every two minutes, if it has changed.
         setInterval(function() {
             if (theDocumentValues.changed) {
                 theEditor.getUpdates(function() {
-                    editorHelpers.saveDocument();
+                    editorHelpers.sendDocumentUpdate();
                 });
             }
         }, 120000);
+
+        // Set Auto-save to send the title every 5 seconds, if it has changed.
+        setInterval(function() {
+            if (theDocumentValues.titleChanged) {
+                theDocumentValues.titleChanged = false;
+                if (theDocumentValues.control) {
+                    serverCommunications.send({
+                        type: 'update_title',
+                        title: theDocument.title
+                    });
+                }
+            }
+        }, 10000);
 
 
         // bind the share dialog to the button if the user is the document owner
@@ -510,7 +524,7 @@ jQuery(document).bind('documentDataLoaded', function() {
 
         jQuery('.save').bind('mousedown', function() {
             theEditor.getUpdates(function() {
-                editorHelpers.saveDocument();
+                editorHelpers.sendDocumentUpdate();
             });
             exporter.uploadNative(theDocument);
         });

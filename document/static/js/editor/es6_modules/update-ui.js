@@ -86,6 +86,14 @@ export class UpdateUI {
       this.pm.doc.firstChild.textContent.length > 0 ?
       this.pm.doc.firstChild.textContent : gettext('Untitled Document')
 
+
+    // The title has changed. We will update our document. Mark it as changed so
+    // that an update may be sent to the server.
+    if (documentTitle.substring(0, 255) !== theDocument.title) {
+        theDocument.title = documentTitle.substring(0, 255)
+        theDocumentValues.titleChanged = true
+    }
+
     jQuery('title').html('Fidus Writer - ' + documentTitle)
     jQuery('#header h1').html(documentTitle)
 
@@ -138,12 +146,12 @@ export class UpdateUI {
 
     if (startElement !== endElement) {
         /* Selection goes across document parts */
-        this.calculatePlaceHolderCss();
+        this.calculatePlaceHolderCss()
         jQuery('.editortoolbar button').addClass('disabled')
         jQuery('#block-style-label').html('')
         jQuery('#current-position').html('')
     } else {
-        this.calculatePlaceHolderCss(startElement);
+        this.calculatePlaceHolderCss(startElement)
         jQuery('#current-position').html(PART_LABELS[startElement.type.name])
 
         switch (startElement.type.name) {
@@ -202,32 +210,32 @@ export class UpdateUI {
     return true
   }
 
-  /** Show or hide placeholders ('Contents...', 'Title...', etc.) depending on
+  /** Show or hide placeHolders ('Contents...', 'Title...', etc.) depending on
   whether these elements are empty or not.*/
   calculatePlaceHolderCss (selectedElement) {
     var newPlaceHolderCss = '', i = 0,  that = this,
-    placeholders = [
-      {'type': 'title', 'selector': '#document-title', 'placeholder': gettext('Title...')},
-      {'type': 'metadatasubtitle', 'selector': '#metadata-subtitle', 'placeholder': gettext('Subtitle...')},
-      {'type': 'metadaauthors', 'selector': '#metadata-authors', 'placeholder': gettext('Authors...')},
-      {'type': 'metadataabstract', 'selector': '#metadata-abstract', 'placeholder': gettext('Abstract...')},
-      {'type': 'metadatakeywords', 'selector': '#metadata-keywords', 'placeholder': gettext('Keywords...')},
-      {'type': 'documentcontents', 'selector': '#document-contents', 'placeholder': gettext('Body...')}
+    placeHolders = [
+      {'type': 'title', 'selector': '#document-title', 'placeHolder': gettext('Title...')},
+      {'type': 'metadatasubtitle', 'selector': '#metadata-subtitle', 'placeHolder': gettext('Subtitle...')},
+      {'type': 'metadaauthors', 'selector': '#metadata-authors', 'placeHolder': gettext('Authors...')},
+      {'type': 'metadataabstract', 'selector': '#metadata-abstract', 'placeHolder': gettext('Abstract...')},
+      {'type': 'metadatakeywords', 'selector': '#metadata-keywords', 'placeHolder': gettext('Keywords...')},
+      {'type': 'documentcontents', 'selector': '#document-contents', 'placeHolder': gettext('Body...')}
     ]
 
-    placeholders.forEach(function(elementType){
-      var partElement = that.pm.doc.child(i);
-      if (partElement.type.name==!elementType.type) { return false }
-      if (partElement.textContent.length === 0 &&
-          (selectedElement != partElement || !that.pm.hasFocus())) {
-          newPlaceHolderCss += elementType.selector + ':before {content: "' +
-              elementType.placeholder + '"}\n';
-      }
-      i++
+    placeHolders.forEach(function(elementType, index){
+        var partElement = that.pm.doc.child(i)
+        if (partElement.type.name==!elementType.type) { return false }
+        if (partElement.textContent.length === 0 &&
+            (selectedElement != partElement || !that.pm.hasFocus())) {
+            newPlaceHolderCss += elementType.selector + ':before {content: "' +
+                elementType.placeHolder + '"}\n'
+        }
+        i++
     })
     if (that.placeHolderCss !== newPlaceHolderCss) {
-      that.placeHolderCss = newPlaceHolderCss
-      jQuery('#placeholder-styles')[0].innerHTML = newPlaceHolderCss;
+        that.placeHolderCss = newPlaceHolderCss
+        jQuery('#placeholder-styles')[0].innerHTML = newPlaceHolderCss
     }
   }
 }

@@ -143,11 +143,13 @@ class DocumentWS(BaseWebSocketHandler):
 
     def update_document(self, changes):
         document = DocumentWS.sessions[self.document_id]['document']
-        document.title = changes["title"]
         document.contents = changes["contents"]
         document.metadata = changes["metadata"]
         document.version = changes["version"]
 
+    def update_title(self, title):
+        document = DocumentWS.sessions[self.document_id]['document']
+        document.title = title
 
     def save_document(self):
         document = DocumentWS.sessions[self.document_id]['document']
@@ -166,7 +168,7 @@ class DocumentWS(BaseWebSocketHandler):
             self.get_document_update()
         elif parsed["type"]=='participant_update':
             DocumentWS.send_participant_list(self.document_id)
-        elif parsed["type"]=='save' and self.access_rights == 'w':
+        elif parsed["type"]=='update_document' and self.access_rights == 'w':
             self.update_document(parsed["document"])
             self.save_document()
             DocumentWS.send_updates({
@@ -174,6 +176,9 @@ class DocumentWS(BaseWebSocketHandler):
                 "version": parsed["document"]["version"],
                 "hash": parsed["document"]["hash"]
             }, self.document_id, self.id)
+        elif parsed["type"]=='update_title' and self.access_rights == 'w':
+            self.update_title(parsed["title"])
+            self.save_document()
         elif parsed["type"]=='chat':
             chat = {
                 "id": str(uuid.uuid4()),

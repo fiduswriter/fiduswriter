@@ -49,21 +49,21 @@ theEditor.createDoc = function (aDocument) {
       editorNode.appendChild(documentContentsNode);
 
       doc = fromDOM(fidusSchema, editorNode)
-
       return doc;
 };
 
 theEditor.initiate = function () {
       let doc = theEditor.createDoc(theDocument)
       theEditor.editor = makeEditor(document.getElementById('document-editable'), doc, theDocument.version)
-      theDocument.hash = theEditor.getHash()
+      theEditor.applyDiffs(theDocumentValues.last_diffs)
       new UpdateUI(theEditor.editor, "selectionChange change activeMarkChange blur focus")
-      theEditor.editor.on('change', editorHelpers.documentHasChanged)
+      theEditor.editor.on("change", editorHelpers.documentHasChanged)
       theEditor.editor.on('transform', theEditor.onTransform)
-      theEditor.editor.on("flushed", mathHelpers.layoutEmptyEquationNodes);
-      theEditor.editor.on("flushed", mathHelpers.layoutEmptyDisplayEquationNodes);
-      theEditor.editor.on("flushed", citationHelpers.formatCitationsInDocIfNew);
-      theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators)
+      theEditor.editor.on("flushed", mathHelpers.layoutEmptyEquationNodes)
+      theEditor.editor.on("flushed", mathHelpers.layoutEmptyDisplayEquationNodes)
+      theEditor.editor.on("flushed", citationHelpers.formatCitationsInDocIfNew)
+      theDocument.hash = theEditor.getHash()
+      theEditor.editor.mod.collab.on("mustSend", theEditor.sendToCollaborators)
       theEditor.comments = new CommentStore(theEditor.editor, theDocument.comment_version)
       theEditor.comments.on("mustSend", theEditor.sendToCollaborators)
       _.each(theDocument.comments, function (comment){
@@ -73,12 +73,13 @@ theEditor.initiate = function () {
 };
 
 theEditor.update = function () {
-      let doc = theEditor.createDoc(theDocument);
+      let doc = theEditor.createDoc(theDocument)
       theEditor.editor.setOption("collab", null)
-      theEditor.editor.setContent(doc);
+      theEditor.editor.setContent(doc)
+      theEditor.applyDiffs(theDocumentValues.last_diffs)
       theEditor.editor.setOption("collab", {version: theDocument.version})
-      theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators);
-      theDocument.hash = theEditor.getHash();
+      theDocument.hash = theEditor.getHash()
+      theEditor.editor.mod.collab.on("mustSend", theEditor.sendToCollaborators)
 };
 
 

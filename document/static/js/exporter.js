@@ -859,7 +859,7 @@ var FW_FILETYPE_VERSION = "1.2";
                 theDocument = aDocument;
                 jQuery('#header h1, #document-title').html(theDocument.title);
                 editorHelpers.documentHasChanged();
-                editorHelpers.saveDocument();
+                editorHelpers.sendDocumentUpdate();
             } else {
                 importer.createNewDocument(aDocument);
             }

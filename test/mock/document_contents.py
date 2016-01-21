@@ -27,9 +27,7 @@ class Contents(list):
     template = ''.join([
         '{"nn":"DIV",',
             '"a":[',
-                '["id","document-contents"],',
-                '["class","editable user-contents"],',
-                '["contenteditable","true"]',
+                '["id","document-contents"]',
             '],',
             '"c":[%s]',
         '}',
@@ -99,7 +97,7 @@ class Paragraph(BlockContent, ListOfInlineContent):
     ...     Footnote('also latin'),
     ...     Text('This was taken from'),
     ...     Citation(0, '', '122'),
-    ...     Link(text='about', address='/about/'),
+    ...     Link(text='about', address='/about/', title='About'),
     ... )) == Paragraph.template % ','.join([
     ...     Equation.template %  dict(formula='f(x) = x^2'),
     ...     BoldText.template %  dict(contents='Nemo enim ipsam voluptatem quia voluptas,'),
@@ -108,7 +106,7 @@ class Paragraph(BlockContent, ListOfInlineContent):
     ...     Footnote.template %  dict(text='also latin'),
     ...     Text.template %  dict(contents='This was taken from'),
     ...     Citation.template %  dict(bibliographyId=0, textBefore='', page='122'),
-    ...     Link.template %  dict(text='about', address='/about/'),
+    ...     Link.template %  dict(text='about', address='/about/', title='About'),
     ...     BR_ELEM_STRING,
     ... ])
     True
@@ -257,26 +255,27 @@ class BoldText(Text):
     BoldText is String
     interpretation: string formatted as bold text
     """
-    template = '{"nn":"B","c":[{"t":"%(contents)s"}]}'
+    template = '{"nn":"STRONG","c":[{"t":"%(contents)s"}]}'
 
 class ItalicText(Text):
     """
     ItalicText is String
     interpretation: string formatted as italic text
     """
-    template = '{"nn":"I","c":[{"t":"%(contents)s"}]}'
+    template = '{"nn":"EM","c":[{"t":"%(contents)s"}]}'
 
 
 class Link(FlatInlineContent):
     """
-    Link is (String, String)
+    Link is (String, String, String)
     interpretation: text formatted as a link, referencing the given address
     """
-    template = '{"nn":"A","a":[["href","%(address)s"]],"c":[{"t":"%(text)s"}]}'
+    template = '{"nn":"A","a":[["href","%(address)s"],["title","%(title)s"]],"c":[{"t":"%(text)s"}]}'
 
-    def __init__(self, text, address):
+    def __init__(self, text, address, title):
         self.text = text
         self.address = address
+        self.title = title
 
     def __str__(self):
         return self.template % self.__dict__
@@ -345,26 +344,15 @@ class Comment(InlineContent, ListOfInlineContent):
         '{"nn":"SPAN",',
             '"a":[',
                 '["class","comment"],',
-                '["id","%(id)s"],',
                 '["data-id","%(dataId)s"],',
-                '["data-user","%(user)s"],',
-                '["data-user-name","%(userName)s"],',
-                '["data-user-avatar","%(userAvatar)s"],',
-                '["data-date","%(date)s"],',
-                '["data-comment","%(text)s"]',
             '],',
             '"c":[%(children)s]',
         '}',
     ])
 
-    def __init__(self, _id, dataId, user, userName, userAvatar, date, text, *children):
+    def __init__(self, _id, dataId, *children):
         self.id = _id
         self.dataId = dataId
-        self.user = user
-        self.userName = userName
-        self.userAvatar = userAvatar
-        self.date = date
-        self.text = text
         super(Comment, self).__init__(*children)
 
     def __str__(self):

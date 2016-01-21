@@ -12,7 +12,7 @@
     //    var exports = this,
     var pagination = {};
 
-    /* pagination is the object that contains the namespace used by 
+    /* pagination is the object that contains the namespace used by
      * pagination.js.
      */
 
@@ -99,7 +99,7 @@
     pagination.pageStyleSheet = document.createElement('style');
 
     pagination.initiate = function () {
-        /* Initiate pagination.js by importing user set config options and 
+        /* Initiate pagination.js by importing user set config options and
          * setting basic CSS style.
          */
         this.setStyle();
@@ -155,6 +155,9 @@
         }\
         .pagination-main-contents-container, .pagination-pagenumber, .pagination-header {\
             position: absolute;\
+        }\
+        li.hide {\
+          list-style-type: none;\
         }\
         ";
         document.head.appendChild(stylesheet);
@@ -314,7 +317,7 @@
     };
 
     pagination.pageCounterCreator.prototype.incrementAndShow = function () {
-        /* Increment the page count by one and return the reuslt page count 
+        /* Increment the page count by one and return the reuslt page count
          * using the show function.
          */
         this.value++;
@@ -323,7 +326,7 @@
 
 
     pagination.pageCounterCreator.prototype.numberPages = function () {
-        /* If the pages associated with this page counter need to be updated, 
+        /* If the pages associated with this page counter need to be updated,
          * go through all of them from the start of the book and number them,
          * thereby potentially removing old page numbers.
          */
@@ -367,13 +370,70 @@
     pagination.pageCounters.roman = new pagination.pageCounterCreator(
         'roman',
         pagination.romanize);
-    // roman is the page counter used by the frontmatter.    
+    // roman is the page counter used by the frontmatter.
+
+    function countOLItemsAndFixLI (element, countList) {
+        var start = 1, hideFirstLI = false;
+        if (typeof countList==='undefined') {
+          countList = [];
+        }
+        if (element.nodeName === 'OL') {
+            if (element.hasAttribute('start')) {
+                start = parseInt(element.getAttribute('start'));
+            }
+            if (element.lastElementChild.textContent.length===0) {
+                element.removeChild(element.lastElementChild);
+            } else {
+                start--;
+                hideFirstLI = true;
+            }
+            countList.push({start: start + element.childElementCount, hideFirstLI: hideFirstLI});
+        } else if (element.nodeName === 'UL') {
+            if (element.lastElementChild.textContent.length===0) {
+                element.removeChild(element.lastElementChild);
+            } else {
+                hideFirstLI = true;
+            }
+            countList.push({hideFirstLI: hideFirstLI});
+        }
+
+        if (element.childElementCount > 0) {
+            return countOLItemsAndFixLI(element.lastElementChild, countList);
+        } else {
+            return countList;
+        }
+
+    }
+
+    function applyInitialOLcount (element, countList) {
+        var listCount;
+        if (countList.length===0) {
+            return;
+        }
+        if (element.nodeName === 'OL') {
+            listCount = countList.shift();
+            element.setAttribute('start', listCount.start);
+            if (listCount.hideFirstLI) {
+                element.firstElementChild.classList.add('hide');
+            }
+        } else if (element.nodeName === 'UL') {
+            listCount = countList.shift();
+            if (listCount.hideFirstLI) {
+                element.firstElementChild.classList.add('hide');
+            }
+        }
+        if (element.childElementCount > 0) {
+            applyInitialOLcount(element.firstElementChild, countList);
+        } else {
+            return;
+        }
+    }
 
 
     pagination.cutToFit = function (contents) {
 
 
-        var coordinates, range, overflow, manualPageBreak;
+        var coordinates, range, overflow, manualPageBreak, ignoreLastLIcut = false, cutLIs;
 
         contents.style.height = (contents.parentElement.clientHeight - contents.previousSibling.clientHeight - contents.nextSibling.clientHeight) + 'px';
         contents.style[pagination.columnWidthTerm] = contents.clientWidth + 'px';
@@ -392,8 +452,21 @@
             coordinates = contents.getBoundingClientRect();
             range = pagination.caretRange(coordinates.right + 1, coordinates.top);
         }
+        if(range.startContainer.nodeName==='OL' || range.startContainer.nodeName==='UL') {
+            // We are cutting from inside a List, don't touch the innermost list items.
+            ignoreLastLIcut = true;
+        }
         range.setEndAfter(contents.lastChild);
         overflow = range.extractContents();
+        cutLIs = countOLItemsAndFixLI(contents);
+        if (ignoreLastLIcut) {
+          // Because the cut happened exactly between two LI items, don't try to unify the two lowest level LIs.
+          cutLIs[cutLIs.length-1].hideFirstLI = false;
+          if (cutLIs[cutLIs.length-1].start) {
+              cutLIs[cutLIs.length-1].start++;
+          }
+        }
+        applyInitialOLcount(overflow, cutLIs);
 
         if (!contents.lastChild || (contents.textContent.trim().length === 0 && contents.querySelectorAll('img,svg,canvas').length === 0)) {
             contents.appendChild(overflow);
@@ -751,6 +824,7 @@
                             img.addEventListener('load', incrementCounter, false);
                         });
                         if (len === 0) {
+                            counter = -1;
                             incrementCounter();
                         }
                     }

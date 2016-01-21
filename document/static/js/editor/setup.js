@@ -61,11 +61,20 @@
       */
      editorHelpers.switchMetadata = function () {
          var theMetadata = jQuery(this).attr('data-metadata');
-         editorHelpers.setDocumentData('settings.metadata.' + theMetadata, !
-             theDocument.settings.metadata[
-                 theMetadata]);
-         // TODO: Make metadata that is switched off not show. Possibly with CSS?
+         editorHelpers.setSetting('metadata-'+theMetadata, !
+             theDocument.settings['metadata-'+
+                 theMetadata], true);
+         editorHelpers.setMetadataDisplay();
      };
+
+     /** Layout metadata and then mark the document as having changed.
+     * @function setMetadataDisplay
+     * @memberof editorHelpers
+     */
+    editorHelpers.setMetadataDisplay = function () {
+        editorHelpers.layoutMetadata();
+        editorHelpers.documentHasChanged();
+    };
 
      /** Update the editor page with the document data from the server.
       * This is done if it was detected that the local version of the document
@@ -81,7 +90,7 @@
 
          jQuery('.toolbarundoredo button').addClass('disabled');
          theDocumentValues.changed = false;
-         theDocument.settings = jQuery.parseJSON(aDocument.settings);
+         theDocument.settings = aDocument.settings;
          theDocument.metadata = jQuery.parseJSON(aDocument.metadata);
          theDocument.contents = jQuery.parseJSON(aDocument.contents);
          theDocument.comments = aDocument.comments;
@@ -103,39 +112,32 @@
       * that differ from session to session.
       */
      editorHelpers.copyDocumentValues = function (aDocument, aDocumentValues, lastDiffs) {
-         var DEFAULTS, i, theDocument, theDocumentValues;
+         var theDocument, theDocumentValues;
          theDocument = aDocument;
          theDocumentValues = aDocumentValues;
          theDocumentValues.changed = false;
-         theDocumentValues.virgin = true;
-         theDocument.settings = jQuery.parseJSON(theDocument.settings);
+         theDocument.settings = theDocument.settings;
          theDocument.metadata = jQuery.parseJSON(theDocument.metadata);
          theDocument.contents = jQuery.parseJSON(theDocument.contents);
 
          documentId = theDocument.id;
 
-         DEFAULTS = [
-             ['metadata.title', theDocument.title],
-             ['settings.papersize', '1117'],
-             ['settings.citationstyle', 'apa'],
-             ['settings.documentstyle', defaultDocumentStyle],
-             ['settings.metadata', {}]
-         ];
 
-         for (i = 0; i < DEFAULTS.length; i++) {
-             // TODO: Find a way to do this without eval.
-             if (eval("undefined===theDocument." + DEFAULTS[i][0])) {
-                 if ('string' === typeof (DEFAULTS[i][1])) {
-                     eval("theDocument." + DEFAULTS[i][0] + "=unescape('" +
-                         escape(DEFAULTS[i][1]) + "')");
-                 }
-                 else {
-                     eval("theDocument." + DEFAULTS[i][0] + "=" + JSON.stringify(
-                         DEFAULTS[i][1]));
-                 }
-             }
-
+         if (!theDocument.metadata.title) {
+            theDocument.metadata.title = theDocument.title;
          }
+
+
+         [
+             ['papersize', 1117],
+             ['citationstyle', 'apa'], // TODO: make this calculated. Not everyone will have apa installed
+             ['documentstyle', defaultDocumentStyle]
+         ].forEach(function(variable) {
+           if (theDocument.settings[variable[0]] === undefined) {
+              theDocument.settings[variable[0]] = variable[1];
+           }
+         });
+
 
          if (theDocumentValues.is_new) {
              // If the document is new, change the url. Then forget that the document is new.
@@ -162,19 +164,17 @@
       */
      editorHelpers.documentHasChanged = function () {
          theDocumentValues.changed = true; // For document saving
-       //  theDocumentValues.touched = true; // For synchronizing with other viewers
      };
 
      /** Functions related to taking document data from theDocument.* and displaying it (ie making it part of the DOM structure).
-      * @namespace editorHelpers.setDisplay
+      * @namespace editorHelpers.displaySetting
       */
-     editorHelpers.setDisplay = {};
+     editorHelpers.displaySetting = {};
 
      /** Set the document style.
-      * @function settingsDocumentstyle
-      * @memberof editorHelpers.setDisplay
-      * @param theValue The name of the document style to switch to.*/
-     editorHelpers.setDisplay.settingsDocumentstyle = function (theValue) {
+      * @function documentstyle
+      * @memberof editorHelpers.displaySetting*/
+     editorHelpers.displaySetting.documentstyle = function () {
 
          var documentStyleLink = document.getElementById('document-style-link');
 
@@ -182,13 +182,13 @@
          newDocumentStyleLink.setAttribute("rel", "stylesheet");
          newDocumentStyleLink.setAttribute("type", "text/css");
          newDocumentStyleLink.setAttribute("id", "document-style-link");
-         newDocumentStyleLink.setAttribute("href", staticUrl+'css/document/'+theValue+'.css');
+         newDocumentStyleLink.setAttribute("href", staticUrl+'css/document/'+theDocument.settings.documentstyle+'.css');
 
          documentStyleLink.parentElement.replaceChild(newDocumentStyleLink, documentStyleLink);
 
 
          jQuery("#header-navigation .style.selected").removeClass('selected');
-         jQuery('span[data-style=' + theValue + ']').addClass('selected');
+         jQuery('span[data-style=' + theDocument.settings.documentstyle + ']').addClass('selected');
 
          set_document_style_timer = setTimeout(function () {
              clearTimeout(set_document_style_timer);
@@ -198,13 +198,12 @@
      };
 
      /** Set the document style.
-      * @function settingsCitationstyle
-      * @memberof editorHelpers.setDisplay
-      * @param theValue The name of the citation style to switch to.*/
-     editorHelpers.setDisplay.settingsCitationstyle = function (theValue) {
+      * @function citationstyle
+      * @memberof editorHelpers.displaySetting*/
+     editorHelpers.displaySetting.citationstyle = function () {
          jQuery("#header-navigation .citationstyle.selected").removeClass(
              'selected');
-         jQuery('span[data-citationstyle=' + theValue + ']').addClass(
+         jQuery('span[data-citationstyle=' + theDocument.settings.citationstyle + ']').addClass(
              'selected');
          if (theEditor.editor) {
            citationHelpers.formatCitationsInDoc();
@@ -212,119 +211,82 @@
      };
 
      /** Set the document's paper size.
-      * @function settingsPapersize
-      * @memberof editorHelpers.setDisplay
-      * @param theValue The paper height number associated with the paper size (A4: 1117, US Letter: 1020). */
-     editorHelpers.setDisplay.settingsPapersize = function (theValue) {
+      * @function papersize
+      * @memberof editorHelpers.displaySetting*/
+     editorHelpers.displaySetting.papersize = function () {
          jQuery("#header-navigation .papersize.selected").removeClass(
              'selected');
-         jQuery('span[data-paperheight=' + theValue +
+         jQuery('span[data-paperheight=' + theDocument.settings.papersize +
              ']').addClass('selected');
-         paginationConfig['pageHeight'] = theValue;
+         paginationConfig['pageHeight'] = theDocument.settings.papersize;
 
      };
 
-     /** Set the document id.
-      * @function id
-      * @memberof editorHelpers.setDisplay
-      * @param theValue The id of the current document.*/
-     editorHelpers.setDisplay.id = function (theValue) {
-         if (0 === theValue) {
-             jQuery('.savecopy').addClass('disabled');
-         }
-         else {
-             jQuery('.savecopy').removeClass('disabled');
-         }
+
+     editorHelpers.layoutMetadata = function () {
+        var metadataCss = '';
+        ['subtitle', 'abstract', 'authors', 'keywords'].forEach(function(metadataItem) {
+            if (!theDocument.settings['metadata-'+metadataItem]) {
+                metadataCss += '#metadata-' + metadataItem + ' {display: none;}\n'
+            } else {
+                metadataCss += 'span.metadata-' + metadataItem + ' {background-color: black; color: white;}\n'
+            }
+        });
+
+        jQuery('#metadata-styles')[0].innerHTML = metadataCss;
+
      };
 
      /** A dictionary linking field names with set display functions.
       * @constant  FIELDS
-      * @memberof editorHelpers.setDisplay
+      * @memberof editorHelpers.displaySetting
       */
-     editorHelpers.setDisplay.FIELDS = {
-         // A list of the functions used to update various fields to be called by editorHelpers.setDisplay.document
-         'settings.papersize': editorHelpers.setDisplay.settingsPapersize,
-         'settings.citationstyle': editorHelpers.setDisplay.settingsCitationstyle,
-         'settings.documentstyle': editorHelpers.setDisplay.settingsDocumentstyle,
-         'settings.metadata.subtitle': editorHelpers.layoutMetadata,
-         'settings.metadata.abstract': editorHelpers.layoutMetadata,
-         'settings.metadata.authors': editorHelpers.layoutMetadata,
-         'settings.metadata.keywords': editorHelpers.layoutMetadata,
-         'id': editorHelpers.setDisplay.id
+     editorHelpers.displaySetting.FIELDS = {
+         // A list of the functions used to update various fields to be called by editorHelpers.displaySetting.set
+         'papersize': editorHelpers.displaySetting.papersize,
+         'citationstyle': editorHelpers.displaySetting.citationstyle,
+         'documentstyle': editorHelpers.displaySetting.documentstyle,
+         'metadata': editorHelpers.layoutMetadata
      };
      /** Set any field on the editor page
       * @function document
-      * @memberof editorHelpers.setDisplay
-      * @param theName The name of the field.
-      * @param theValue The value of the field.*/
-     editorHelpers.setDisplay.document = function (theName, theValue) {
-         editorHelpers.setDisplay.FIELDS[theName](theValue);
+      * @memberof editorHelpers.displaySetting
+      * @param theName The name of the field.*/
+     editorHelpers.displaySetting.set = function (theName) {
+         editorHelpers.displaySetting.FIELDS[theName.split('-')[0]]();
      };
-     /** A list of fields contain editable text/html.
-      * @constant  CONTENT_FIELDS
-      * @memberof editorHelpers
-      */
-     editorHelpers.CONTENT_FIELDS = ['contents', 'metadata.title',
-         'metadata.subtitle', 'metadata.abstract', 'metadata.authors', 'metadata.keywords'
-     ];
-
-     /** A list of elements containing HTML and allow inserting of complex HTML elements.
-      * @constant  HTML_ELEMENTS
-      * @memberof editorHelpers
-      */
-     editorHelpers.HTML_ELEMENTS = ['document-contents','metadata-abstract'];
-
-     /** A list of elements allowing only text and track changes nodes (no other, more complex HTML).
-      * @constant  TEXT_ELEMENTS
-      * @memberof editorHelpers
-      */
-     editorHelpers.TEXT_ELEMENTS = ['document-title','metadata-subtitle','metadata-authors','metadata-keywords'];
 
      /** Sets a variable in theDocument to a value and optionally sends a change notification to other editors.
       * This notification is used in case of simple fields (all fields that are not individually editable in the text editor
       * -- citation style, set tracking, etc. but not the document title) to make other clients copy the same values.
-      * @function setDocumentData
+      * @function setSetting
       * @memberof editorHelpers
       * @param theName The name of the variable.
       * @param newValue The value that the variable is to be set to.
       * @param sendChange Whether a change notification should be sent to other clients. Default is true.
       */
-     editorHelpers.setDocumentData = function (theName, newValue,
+     editorHelpers.setSetting = function (variable, newValue,
           sendChange) {
-         var theChange, currentValue;
-         if (undefined === sendChange) {
-             sendChange = true;
-         }
-         currentValue = eval('theDocument.' + theName);
+         var currentValue;
 
-         if ('string' === typeof (newValue)) {
-             // TODO: Using eval and escaping-unescaping is not very beautiful. If possible this should be done differently.
-             eval("theDocument." + theName + "=unescape('" + escape(newValue) +
-                 "')");
-         }
-         else {
-             eval("theDocument." + theName + "=" + JSON.stringify(newValue));
-         }
-         if (editorHelpers.CONTENT_FIELDS.indexOf(theName) === -1) {
-             if (currentValue === newValue) {
-                 // Don't create a history entry if nothing has changed
-                 return false;
-             }
+         currentValue = theDocument.settings[variable];
 
-             theChange = [theName, newValue, new Date().getTime()+window.clientOffsetTime];
+         if (currentValue === newValue) {
+             return false;
+         }
 
-             if (sendChange) {
-                 serverCommunications.send({
-                     type: 'transform',
-                     change: theChange
-                 });
-            }
-     }
-         return true;
+         theDocument.settings[variable] = newValue;
+
+         if (sendChange) {
+             serverCommunications.send({
+                 type: 'setting_change',
+                 variable: variable,
+                 value: newValue
+             });
+        }
+
+        return true;
      };
-
-
-
 
      /** Will save the current Document to the server if theDocumentValues.control is true.
       * In collaborative mode, only the first client to connect will have theDocumentValues.control set to true.
@@ -336,9 +298,7 @@
          var documentData = {};
 
          if (theDocumentValues.control===true) {
-             documentData.settings = JSON.stringify(theDocument.settings);
              documentData.metadata = JSON.stringify(theDocument.metadata);
-
              documentData.title = theDocument.title.substring(0, 255);
              documentData.contents = JSON.stringify(theDocument.contents);
              documentData.version = theDocument.version;
@@ -417,40 +377,30 @@ jQuery(document).bind('documentDataLoaded', function() {
 
 
 
-    var set_document_style_timer = setTimeout(function() {
-        clearTimeout(set_document_style_timer);
-        //setDocumentstyle();
-        editorHelpers.setDisplay.document('settings.documentstyle',
-            theDocument.settings.documentstyle);
-    }, 800);
+    editorHelpers.displaySetting.set('documentstyle');
 
     // Document Style switching
     jQuery("#header-navigation .style").bind('mousedown', function() {
-        if (editorHelpers.setDocumentData('settings.documentstyle',
-                jQuery(this).attr(
-                    'data-style'))) {
+        if (editorHelpers.setSetting('documentstyle',
+                jQuery(this).attr('data-style'), true)) {
 
-            editorHelpers.setDisplay.document('settings.documentstyle',
-                theDocument.settings.documentstyle);
+            editorHelpers.displaySetting.set('documentstyle');
             editorHelpers.documentHasChanged();
         }
         return false;
     });
 
 
-    editorHelpers.setDisplay.document('settings.citationstyle', theDocument
-        .settings.citationstyle);
+    editorHelpers.displaySetting.set('citationstyle');
 
     jQuery('span[data-citationstyle=' + theDocument.settings.citationstyle +
         ']').addClass('selected');
 
     // Citation Style switching
     jQuery("#header-navigation .citationstyle").bind('mousedown', function() {
-        if (editorHelpers.setDocumentData('settings.citationstyle',
-                jQuery(this).attr(
-                    'data-citationstyle'))) {
-            editorHelpers.setDisplay.document('settings.citationstyle',
-                theDocument.settings.citationstyle);
+        if (editorHelpers.setSetting('citationstyle',
+                jQuery(this).attr('data-citationstyle'),true)) {
+            editorHelpers.displaySetting.set('citationstyle');
             editorHelpers.documentHasChanged();
             commentHelpers.layoutComments();
         }
@@ -462,21 +412,17 @@ jQuery(document).bind('documentDataLoaded', function() {
         return false;
     });
 
-    editorHelpers.setDisplay.document('settings.papersize', theDocument.settings
-        .papersize);
+    editorHelpers.displaySetting.set('papersize');
 
     // Paper size switching
     jQuery("#header-navigation .papersize").bind('mousedown', function() {
-        if (editorHelpers.setDocumentData('settings.papersize',
-                parseInt(jQuery(this).attr('data-paperheight')))) {
-            editorHelpers.setDisplay.document('settings.papersize',
-                theDocument.settings.papersize);
+        if (editorHelpers.setSetting('papersize',
+                parseInt(jQuery(this).attr('data-paperheight')), true)) {
+            editorHelpers.displaySetting.set('papersize');
             editorHelpers.documentHasChanged();
         }
         return false;
     });
-
-    editorHelpers.setDisplay.document('id', theDocument.id);
 
     jQuery(document).on('mousedown', '.savecopy:not(.disabled)', function() {
         theEditor.getUpdates(function() {
@@ -520,7 +466,7 @@ jQuery(document).bind('documentDataLoaded', function() {
     });
 
 
-//    editorHelpers.layoutMetadata();
+    editorHelpers.layoutMetadata();
 
     if (theDocumentValues.rights === 'r') {
         jQuery('#editor-navigation').hide();

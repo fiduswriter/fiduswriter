@@ -18,8 +18,10 @@ from test.helpers import testCaretJS
 from test.testcases import LiveTornadoTestCase
 from test.mock.document_contents import *
 
+import time
 # GLOBALS
 global DRIVER
+
 
 # CONSTANTS
 SHORT_LOREM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
@@ -36,11 +38,9 @@ LONG_LOREM = (
 # DATA
 class Caret(dict):
     """
-    Caret is {parent: String, node: Integer, offset: Integer}
+    Caret is {path: List, offset: Integer}
     Represents the position of a caret in the document
-        parent is a jQuery selector uniquely identifying the parent element of
-               the caret
-        node is index of the caret containing node inside the parent element
+        path is the path of the node in which the caret resides, according to ProseMirror's definition.
         offset is position of the caret inside the node
     """
     # not using a namedtuple, because they don't get converted properly to
@@ -67,7 +67,8 @@ InsertionTestCase = namedtuple(
         'description',      # string with a short description of what is
                             #   being tested
         'givenContents',    # DocumentContents string
-        'givenCaret',       # position of caret at start of test
+        'givenCaretStart',  # start of selection at start of test
+        'givenCaretEnd',    # end of selection at start of test
         'expectedContents', # expected document contents at end of test
         'expectedCaret',    # expected caret position at end of test
     ]
@@ -170,26 +171,32 @@ class Manipulator(object):
     # execute javascript
     def injectHelpers(self):
         return DRIVER.execute_script(
-            'window.testCaret = %s' % testCaretJS
+            testCaretJS
         )
 
     def getCaret(self):
         return DRIVER.execute_script(
-            'return testCaret.getCaret(rangy.getSelection());'
+            'return testCaret.getCaret();'
         )
 
     def setCaret(self, caret):
         return DRIVER.execute_script(
-            'testCaret.setCaret(rangy.getSelection(), arguments[0]);',
+            'testCaret.setCaret(arguments[0]);',
             caret
+        )
+
+    def setSelection(self, caret_one, caret_two):
+        return DRIVER.execute_script(
+            'testCaret.setSelection(arguments[0], arguments[1]);',
+            caret_one, caret_two
         )
 
     def caretIsAt(self, expectedCaret):
         return DRIVER.execute_script(
             '''
-            return testCaret.caretsMatch(
+            return testCaret.selectionsMatch(
                 arguments[0],
-                testCaret.getCaret(rangy.getSelection())
+                testCaret.getCaret()
             );
             ''',
             expectedCaret
@@ -199,7 +206,7 @@ class Manipulator(object):
         return DRIVER.execute_script(
             """
             // refresh theDocument first
-            editorHelpers.getUpdatesFromInputFields();
+            theEditor.getUpdates();
 
             return JSON.stringify(theDocument.contents);
             """
@@ -220,17 +227,19 @@ class CaretPositionTest(LiveTornadoTestCase, Manipulator):
         )
 
         self.injectHelpers()
+
         self.setCaret(caretCase.givenCaret)
         (DRIVER.find_element_by_id('document-contents')
                .send_keys(caretCase.givenKeys))
         # grab caret from browser and compare in python,
         # to get more informative failure messages
+
         self.assertEqual(
             caretCase.expectedCaret,
             self.getCaret()
         )
         # test browser-side, in case caret grabbing is buggy
-        self.assertTrue(self.caretIsAt(caretCase.expectedCaret))
+        #self.assertTrue(self.caretIsAt(expectedCaret))
 
 
 # TEST MODULE SETUP
@@ -290,14 +299,12 @@ class MovementInSingleChildParagraph(CaretPositionTest):
             'description': "left arrow decrements caret offset",
             'givenContents': None,
             'givenCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
+                path= [5,0],
                 offset=1 + 0,
             ),
             'givenKeys': Keys.ARROW_LEFT,
             'expectedCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
+                path = [5,0],
                 offset=0,
             )
         }),
@@ -307,14 +314,12 @@ class MovementInSingleChildParagraph(CaretPositionTest):
                            " document",
             'givenContents': None,
             'givenCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
+                path = [5,0],
                 offset=0,
             ),
             'givenKeys': Keys.ARROW_LEFT,
             'expectedCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
+                path = [5,0],
                 offset=0,
             )
         }),
@@ -323,14 +328,12 @@ class MovementInSingleChildParagraph(CaretPositionTest):
             'description': "right arrow increments caret offset",
             'givenContents': None,
             'givenCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
+                path = [5,0],
                 offset=(-1) + len(SHORT_LOREM),
             ),
             'givenKeys': Keys.ARROW_RIGHT,
             'expectedCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
+                path = [5,0],
                 offset=len(SHORT_LOREM),
             )
         }),
@@ -340,14 +343,12 @@ class MovementInSingleChildParagraph(CaretPositionTest):
                            " document",
             'givenContents': None,
             'givenCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
+                path = [5,0],
                 offset=len(SHORT_LOREM),
             ),
             'givenKeys': Keys.ARROW_RIGHT,
             'expectedCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
+                path = [5,0],
                 offset=len(SHORT_LOREM),
             )
         }),
@@ -357,14 +358,12 @@ class MovementInSingleChildParagraph(CaretPositionTest):
                            " document to beginning of document",
             'givenContents': None,
             'givenCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
+                path = [5, 0],
                 offset=(5) + 0,
             ),
             'givenKeys': Keys.ARROW_UP,
             'expectedCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
+                path = [5, 0],
                 offset=0,
             )
         }),
@@ -374,14 +373,12 @@ class MovementInSingleChildParagraph(CaretPositionTest):
                            " document",
             'givenContents': None,
             'givenCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
+                path = [5,0],
                 offset=0,
             ),
             'givenKeys': Keys.ARROW_UP,
             'expectedCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
+                path = [5,0],
                 offset=0,
             )
         }),
@@ -391,14 +388,12 @@ class MovementInSingleChildParagraph(CaretPositionTest):
                            " document to end of document",
             'givenContents': None,
             'givenCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
+                path = [5,0],
                 offset=(-7) + len(SHORT_LOREM),
             ),
             'givenKeys': Keys.ARROW_DOWN,
             'expectedCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
+                path = [5,0],
                 offset=len(SHORT_LOREM),
             )
         }),
@@ -408,14 +403,12 @@ class MovementInSingleChildParagraph(CaretPositionTest):
                            " document",
             'givenContents': None,
             'givenCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
+                path = [5,0],
                 offset=len(SHORT_LOREM),
             ),
             'givenKeys': Keys.ARROW_DOWN,
             'expectedCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
+                path = [5,0],
                 offset=len(SHORT_LOREM),
             )
         }),
@@ -429,14 +422,12 @@ class MovementInSingleChildParagraph(CaretPositionTest):
                            " at equal offset relative to line start",
             'givenContents': None,
             'givenCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
+                path = [5,0],
                 offset=None,
             ),
             'givenKeys': Keys.ARROW_UP,
             'expectedCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
+                path = [5,0],
                 offset=None,
             )
         }),
@@ -448,14 +439,12 @@ class MovementInSingleChildParagraph(CaretPositionTest):
                            " at equal offset relative to line start",
             'givenContents': None,
             'givenCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
+                path = [5,0],
                 offset=None,
             ),
             'givenKeys': Keys.ARROW_DOWN,
             'expectedCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
+                path = [5,0],
                 offset=None,
             )
         }),
@@ -499,7 +488,8 @@ class MovementInSingleChildParagraph(CaretPositionTest):
             givenContents=Contents(Paragraph(
                 Link(
                     'your source of examples on the world-wide-web',
-                    'http://www.example.com'
+                    'http://www.example.com',
+                    'LinkTitle'
                 )
             )),
         )
@@ -540,53 +530,56 @@ class MovementInMultiChildParagraph(CaretTestCase):
 
 class InsertionOfLink(LiveTornadoTestCase, Manipulator):
     __metaclass__ = DataCasesToTestMethodsMeta
-    linkText = 'all the ipsums'
+    linkTitle = 'all the ipsums'
     linkAddressWithoutHTTP = 'www.example.com'
     linkAddress = 'http://' + linkAddressWithoutHTTP
-    expectedLink = Link(linkText, linkAddress)
+    expectedLink = Link('',linkAddress,linkTitle)
 
     cases = [
         InsertionTestCase(**{
             'name': 'atStartOfParagraph',
-            'description': 'caret at start of paragraph inserts link before'
-                           ' text',
+            'description': 'caret at start of paragraph turns start of text'
+            ' into link',
             'givenContents': Contents(Paragraph(Text(SHORT_LOREM))),
-            'givenCaret': Caret(
-                parent='#document-contents > :eq(0)',
-                node=0,
-                offset=0
+            'givenCaretStart': Caret(
+                path = [5,0],
+                offset = 0
+            ),
+            'givenCaretEnd': Caret(
+                path = [5,0],
+                offset = len('Lo')
             ),
             'expectedContents': Contents(
-                Paragraph(expectedLink, Text(SHORT_LOREM))
+                Paragraph(Link('Lo', linkAddress, linkTitle), Text(SHORT_LOREM[len('Lo'):]))
             ),
             'expectedCaret': Caret(
-                parent='#document-contents > :eq(0)',
-                node=0,
+                path = [5,0],
                 offset=0
             ),
         }),
         InsertionTestCase(**{
             'name': 'linkInsideBold',
-            'description': 'caret within Bold inserts Link between two'
-                           ' Bold',
+            'description': 'caret within Bold creates link within Bold',
             'givenContents': Contents(Paragraph(BoldText(SHORT_LOREM))),
-            'givenCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
+            'givenCaretStart': Caret(
+                path = [5,0],
                 offset=len('Lorem'),
+            ),
+            'givenCaretEnd': Caret(
+                path = [5,0],
+                offset=len('Lorem ipsum'),
             ),
             'expectedContents': Contents(
                 Paragraph(
                     Bold(
                         Text('Lorem'),
-                        expectedLink,
-                        Text(SHORT_LOREM[len('Lorem'):])
+                        Link(' ipsum', linkAddress, linkTitle),
+                        Text(SHORT_LOREM[len('Lorem ipsum'):])
                     ),
                 )
             ),
             'expectedCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
+                path = [5,0],
                 offset=len('Lorem'),
             ),
         }),
@@ -601,7 +594,8 @@ class InsertionOfLink(LiveTornadoTestCase, Manipulator):
         )
 
         self.injectHelpers()
-        self.setCaret(case.givenCaret)
+
+        self.setSelection(case.givenCaretStart,case.givenCaretEnd)
 
         (DRIVER.find_element_by_id('button-link')
                .click())
@@ -614,8 +608,8 @@ class InsertionOfLink(LiveTornadoTestCase, Manipulator):
             ))
         )
 
-        (DRIVER.find_element_by_css_selector('input.linktext')
-               .send_keys(self.linkText))
+        (DRIVER.find_element_by_css_selector('input.linktitle')
+               .send_keys(self.linkTitle))
         (DRIVER.find_element_by_css_selector('input.link')
                .send_keys(self.linkAddressWithoutHTTP))
 

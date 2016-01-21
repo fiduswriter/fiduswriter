@@ -64,9 +64,9 @@
 
     mathHelpers.layoutEmptyDisplayEquationNodes = function () {
       // Layout all math nodes in figures that currently don't have any content.
-      if (theEditor && theEditor.editor) {
-        theEditor.editor.off('flushed', mathHelpers.layoutEmptyDisplayEquationNodes);
-      }
+    //  if (theEditor && theEditor.editor) {
+    //    theEditor.editor.off('flushed', mathHelpers.layoutEmptyDisplayEquationNodes);
+    //  }
       [].slice.call(jQuery('div.figure-equation:empty')).forEach(mathHelpers.layoutDisplayMathNode);
     };
 

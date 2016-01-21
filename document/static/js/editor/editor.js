@@ -69,6 +69,7 @@ theEditor.initiate = function () {
     theEditor.editor.on('change', editorHelpers.documentHasChanged);
     theEditor.editor.on('transform', theEditor.onTransform);
     theEditor.editor.on("flushed", mathHelpers.layoutEmptyEquationNodes);
+    theEditor.editor.on("flushed", mathHelpers.layoutEmptyDisplayEquationNodes);
     theEditor.editor.on("flushed", citationHelpers.formatCitationsInDocIfNew);
     theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators);
     theEditor.comments = new _comment.CommentStore(theEditor.editor, theDocument.comment_version);
@@ -1314,11 +1315,8 @@ var UpdateUI = exports.UpdateUI = function () {
       /* Fidus Writer code */
 
       // We count on the the title node being the first one in the document
-      var documentTitle = this.pm.doc.firstChild.type.name === 'title' ? this.pm.doc.firstChild.textContent : '';
+      var documentTitle = this.pm.doc.firstChild.type.name === 'title' && this.pm.doc.firstChild.textContent.length > 0 ? this.pm.doc.firstChild.textContent : gettext('Untitled Document');
 
-      if (documentTitle.length === 0) {
-        documentTitle = gettext('Untitled Document');
-      }
       jQuery('title').html('Fidus Writer - ' + documentTitle);
       jQuery('#header h1').html(documentTitle);
 
@@ -1353,10 +1351,26 @@ var UpdateUI = exports.UpdateUI = function () {
         jQuery('#button-link').removeClass('ui-state-active');
       }
 
-      var start = this.pm.selection.from.min(this.pm.selection.to),
-          end = this.pm.selection.from.max(this.pm.selection.to),
-          startElement = this.pm.doc.path([start.path[0]]),
-          endElement = this.pm.doc.path([end.path[0]]);
+      var canUndo = this.pm.history.canUndo();
+
+      if (canUndo) {
+        jQuery('#button-undo').removeClass('disabled');
+      } else {
+        jQuery('#button-undo').addClass('disabled');
+      }
+
+      var canRedo = this.pm.history.canRedo();
+
+      if (canRedo) {
+        jQuery('#button-redo').removeClass('disabled');
+      } else {
+        jQuery('#button-redo').addClass('disabled');
+      }
+
+      var start = this.pm.selection.from.min(this.pm.selection.to);
+      var end = this.pm.selection.from.max(this.pm.selection.to);
+      var startElement = this.pm.doc.path([start.path[0]]);
+      var endElement = this.pm.doc.path([end.path[0]]);
 
       if (startElement !== endElement) {
         /* Selection goes across document parts */
@@ -1379,6 +1393,10 @@ var UpdateUI = exports.UpdateUI = function () {
           case 'metadataabstract':
           case 'documentcontents':
             jQuery('.edit-button').removeClass('disabled');
+
+            if (this.pm.selection.empty) {
+              jQuery('#button-link').addClass('disabled');
+            }
 
             if (startElement.type.name === 'metadataabstract') {
               jQuery('#button-figure').addClass('disabled');
@@ -1442,7 +1460,7 @@ var UpdateUI = exports.UpdateUI = function () {
       });
       if (that.placeHolderCss !== newPlaceHolderCss) {
         that.placeHolderCss = newPlaceHolderCss;
-        jQuery('#placeholderStyles')[0].innerHTML = newPlaceHolderCss;
+        jQuery('#placeholder-styles')[0].innerHTML = newPlaceHolderCss;
       }
     }
   }]);

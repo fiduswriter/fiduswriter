@@ -21,8 +21,8 @@
 
 (function () {
     var exports = this,
-   /** 
-  * Functions for exporting books (to epub, LaTeX, HTML). TODO 
+   /**
+  * Functions for exporting books (to epub, LaTeX, HTML). TODO
   * @namespace bookExporter
   */
         bookExporter = {};
@@ -145,17 +145,17 @@
         for (i = 0; i < aBook.chapters.length; i++) {
 
             aChapter = {};
-            
+
             aChapter.document = _.findWhere(theDocumentList, {
                 id: aBook.chapters[i].text
             });
-            
+
             tempNode = exporter.obj2Node(aChapter.document.contents);
-            
+
             console.log(tempNode);
-            
+
             contents = document.createElement('body');
-            
+
             while (tempNode.firstChild) {
                 contents.appendChild(tempNode.firstChild);
             }
@@ -172,16 +172,16 @@
 
             startHTML = '<h1 class="title">' + aChapter.document.title + '</h1>';
 
-            if (aChapter.document.settings.metadata && aChapter.document.settings.metadata.subtitle && aChapter.document.metadata.subtitle) {
+            if (aChapter.document.settings && aChapter.document.settings['metadata-subtitle'] && aChapter.document.metadata.subtitle) {
                 tempNode = exporter.obj2Node(aChapter.document.metadata.subtitle);
                 if (tempNode && tempNode.textContent.length > 0) {
                     startHTML += '<h2 class="subtitle">' + tempNode.textContent +
                         '</h2>';
                 }
             }
-            if (aChapter.document.settings.metadata && aChapter.document.settings.metadata.abstract && aChapter.document.metadata.abstract) {
+            if (aChapter.document.settings && aChapter.document.settings['metadata-abstract'] && aChapter.document.metadata.abstract) {
                 tempNode = exporter.obj2Node(aChapter.document.metadata.abstract);
-                if (tempNode && tempNode.textContent.length > 0) {                
+                if (tempNode && tempNode.textContent.length > 0) {
                     startHTML += '<div class="abstract">' + tempNode.textContent +
                         '</div>';
                 }
@@ -190,15 +190,15 @@
             contents.innerHTML = startHTML + contents.innerHTML;
 
             contents = exporter.cleanHTML(contents);
-            
+
             aChapter.number = aBook.chapters[i].number;
-            
+
             aChapter.part = aBook.chapters[i].part;
 
             equations = contents.querySelectorAll('.equation');
-           
+
             figureEquations = contents.querySelectorAll('.figure-equation');
-            
+
             if (equations.length > 0 || figureEquations.length > 0) {
                 aChapter.mathjax = true;
                 mathjax = true;
@@ -206,12 +206,12 @@
 
             for (j = 0; j < equations.length; j++) {
                 mathHelpers.layoutMathNode(equations[j]);
-            }            
+            }
 
-            
+
             for (j = 0; j < figureEquations.length; j++) {
                 mathHelpers.layoutDisplayMathNode(figureEquations[j]);
-            }                    
+            }
 
             if (aBook.chapters[i].part && aBook.chapters[i].part != '') {
                 contentItems.push({
@@ -227,51 +227,51 @@
             // Make links to all H1-3 and create a TOC list of them
             contentItems = contentItems.concat(exporter.setLinks(
                 contents, aChapter.number));
-            
+
          //   aChapter.contents = exporter.styleEpubFootnotes(contents);
-            
+
             aChapter.contents = contents;
-            
-            chapters.push(aChapter)            
+
+            chapters.push(aChapter)
 
         }
-        
+
         mathHelpers.queueExecution(function () {
             bookExporter.epub2(chapters, contentItems, images, coverImage, styleSheets, outputList, mathjax, aBook);
         });
     };
-    
-    
-    bookExporter.epub2 = function (chapters, contentItems, images, coverImage, styleSheets, outputList, mathjax, aBook) {   
+
+
+    bookExporter.epub2 = function (chapters, contentItems, images, coverImage, styleSheets, outputList, mathjax, aBook) {
         var includeZips = [],
             xhtmlCode, opfCode,
             httpOutputList = [],
             i;
-        
-            
+
+
         if (mathjax) {
             mathjax = exporter.getMathjaxHeader();
-        
-            if (mathjax) {    
+
+            if (mathjax) {
                 mathjax = exporter.obj2Node(exporter.node2Obj(mathjax), 'xhtml').outerHTML;
             }
         }
-            
-            
+
+
         for (i=0;i<chapters.length;i++) {
 
             chapters[i].contents = exporter.styleEpubFootnotes(chapters[i].contents);
-            
+
             if (chapters[i].mathjax) {
                 chapters[i].mathjax = mathjax;
             }
-            
+
             xhtmlCode = tmp_epub_xhtml({
                 part: chapters[i].part,
                 shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
                 title: chapters[i].document.title,
                 metadata: chapters[i].document.metadata,
-                metadataSettings: chapters[i].document.settings.metadata,
+                settings: chapters[i].document.settings,
                 styleSheets: styleSheets,
                 body: exporter.obj2Node(exporter.node2Obj(chapters[i].contents), 'xhtml').innerHTML,
                 mathjax: chapters[i].mathjax
@@ -426,55 +426,55 @@
             if (bibliography.length > 0) {
                 contents.innerHTML += bibliography;
             }
-            
+
             equations = contents.querySelectorAll('.equation');
-           
+
             figureEquations = contents.querySelectorAll('.figure-equation');
-            
+
             if (equations.length > 0 || figureEquations.length > 0) {
                 mathjax = true;
             }
 
             for (j = 0; j < equations.length; j++) {
                 mathHelpers.layoutMathNode(equations[j]);
-            }            
+            }
 
-            
+
             for (j = 0; j < figureEquations.length; j++) {
                 mathHelpers.layoutDisplayMathNode(figureEquations[j]);
-            }    
-            
+            }
+
             chapters.push({document:aDocument,contents:contents});
         }
         mathHelpers.queueExecution(function () {
             bookExporter.html2(chapters, mathjax, styleSheets, aBook);
         });
     };
-    
-    bookExporter.html2 = function (chapters, mathjax, styleSheets, aBook) {    
+
+    bookExporter.html2 = function (chapters, mathjax, styleSheets, aBook) {
         var title, contents, outputList = [],
             images = [],
             aDocument,
             contentItems = [],
             includeZips = [], i;
-            
+
         if (mathjax) {
             mathjax = exporter.getMathjaxHeader();
-        
-            if (mathjax) {    
+
+            if (mathjax) {
                 mathjax = mathjax.outerHTML;
             }
-        }    
-            
-            
+        }
+
+
         for (i=0; i < chapters.length; i++) {
-            
+
             contents = chapters[i].contents;
-            
+
             aDocument = chapters[i].document;
 
             title = aDocument.title;
-                        
+
             images = images.concat(exporter.findImages(contents));
 
             contents = exporter.cleanHTML(contents);
@@ -510,7 +510,7 @@
                 'part': aBook.chapters[i].part,
                 'title': title,
                 'metadata': aDocument.metadata,
-                'metadataSettings': aDocument.settings.metadata,
+                'settings': aDocument.settings,
                 'styleSheets': styleSheets,
                 'contents': contentsCode,
                 'mathjax': mathjax,
@@ -589,7 +589,7 @@
             images = images.concat(exporter.findImages(contents));
 
             latexCode = exporter.htmlToLatex(title, aDocument.owner.name, contents, aBibDB,
-                aDocument.settings.metadata, aDocument.metadata, true,
+                aDocument.settings, aDocument.metadata, true,
                 listedWorksList);
 
             listedWorksList = latexCode.listedWorksList;
@@ -608,8 +608,8 @@
         }
         documentFeatures = exporter.findLatexDocumentFeatures(
             allContent, aBook.title, author, aBook.metadata.subtitle, aBook.metadata.keywords, aBook.metadata.author, aBook.metadata, 'book');
- 
-        
+
+
         latexStart = documentFeatures.latexStart;
         latexEnd = documentFeatures.latexEnd;
 

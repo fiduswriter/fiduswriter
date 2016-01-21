@@ -449,7 +449,7 @@ var FW_FILETYPE_VERSION = "1.2";
     };
 
     exporter.htmlToLatex = function(title, author, htmlCode, aBibDB,
-        metadataSettings, metadata, isChapter, listedWorksList) {
+        settings, metadata, isChapter, listedWorksList) {
         var latexStart = '',
             latexEnd = '',
             documentFeatures,
@@ -467,7 +467,7 @@ var FW_FILETYPE_VERSION = "1.2";
         if (isChapter) {
             latexStart += '\\chapter{' + title + '}\n';
             //htmlCode.innerHTML =  '<div class="title">' + title + '</div>' + htmlCode.innerHTML;
-            if (metadataSettings.subtitle && metadata.subtitle) {
+            if (settings['metadata-subtitle'] && metadata.subtitle) {
                 tempNode = exporter.obj2Node(metadata.subtitle);
                 if (tempNode.textContent.length > 0) {
                     latexStart += '\\section{' + tempNode.textContent + '}\n';
@@ -475,14 +475,14 @@ var FW_FILETYPE_VERSION = "1.2";
             }
         } else {
             documentFeatures = exporter.findLatexDocumentFeatures(
-                htmlCode, title, author, metadataSettings.subtitle, metadataSettings.keywords, metadataSettings.authors, metadata,
+                htmlCode, title, author, settings['metadata-subtitle'], settings['metadata-keywords'], settings['metadata-authors'], metadata,
                 'article');
             latexStart += documentFeatures.latexStart;
             latexEnd += documentFeatures.latexEnd;
         }
 
 
-        if (metadataSettings.abstract && metadata.abstract) {
+        if (settings['metadata-abstract'] && metadata.abstract) {
             tempNode = exporter.obj2Node(metadata.abstract);
             if (tempNode.textContent.length > 0) {
 
@@ -1049,7 +1049,7 @@ var FW_FILETYPE_VERSION = "1.2";
         httpOutputList = exporter.findImages(contents);
 
         latexCode = exporter.htmlToLatex(title, aDocument.owner.name, contents, aBibDB,
-            aDocument.settings.metadata, aDocument.metadata);
+            aDocument.settings, aDocument.metadata);
 
         outputList = [{
             filename: 'document.tex',
@@ -1128,7 +1128,7 @@ var FW_FILETYPE_VERSION = "1.2";
 
         startHTML = '<h1 class="title">' + title + '</h1>';
 
-        if (aDocument.settings.metadata.subtitle && aDocument.metadata.subtitle) {
+        if (aDocument.settings['metadata-subtitle'] && aDocument.metadata.subtitle) {
             tempNode = exporter.obj2Node(aDocument.metadata.subtitle);
 
             if (tempNode.textContent.length > 0) {
@@ -1136,7 +1136,7 @@ var FW_FILETYPE_VERSION = "1.2";
                     '</h2>';
             }
         }
-        if (aDocument.settings.metadata.abstract && aDocument.metadata.abstract) {
+        if (aDocument.settings['metadata-abstract'] && aDocument.metadata.abstract) {
             tempNode = exporter.obj2Node(aDocument.metadata.abstract);
             if (tempNode.textContent.length > 0) {
                 startHTML += '<div class="abstract">' + tempNode.textContent +
@@ -1212,7 +1212,7 @@ var FW_FILETYPE_VERSION = "1.2";
 
         authors = [aDocument.owner.name];
 
-        if (aDocument.settings.metadata.authors && aDocument.metadata.authors) {
+        if (aDocument.settings['metadata-authors'] && aDocument.metadata.authors) {
             tempNode = exporter.obj2Node(aDocument.metadata.authors);
             if (tempNode.textContent.length > 0) {
                 authors = jQuery.map(tempNode.textContent.split(","), jQuery.trim);
@@ -1221,7 +1221,7 @@ var FW_FILETYPE_VERSION = "1.2";
 
         keywords = [];
 
-        if (aDocument.settings.metadata.keywords && aDocument.metadata.keywords) {
+        if (aDocument.settings['metadata-keywords'] && aDocument.metadata.keywords) {
             tempNode = exporter.obj2Node(aDocument.metadata.keywords);
             if (tempNode.textContent.length > 0) {
                 keywords = jQuery.map(tempNode.textContent.split(","), jQuery.trim);
@@ -1387,7 +1387,7 @@ var FW_FILETYPE_VERSION = "1.2";
             part: false,
             title: title,
             metadata: aDocument.metadata,
-            metadataSettings: aDocument.settings.metadata,
+            settings: aDocument.settings,
             styleSheets: styleSheets,
             contents: contentsCode,
             mathjax: mathjax,

@@ -105,9 +105,9 @@
         case 'confirm_diff':
             theEditor.confirmDiff(data.request_id);
             break;
-        case 'transform':
-            editorHelpers.setDocumentData(data.change[0], data.change[1], false);
-            editorHelpers.setDisplay.document(data.change[0], data.change[1]);
+        case 'setting_change':
+            editorHelpers.setSetting(data.variable, data.value, false);
+            editorHelpers.displaySetting.set(data.variable);
             break;
         case 'take_control':
             theDocumentValues.control = true;

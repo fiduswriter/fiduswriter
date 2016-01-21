@@ -1,5 +1,7 @@
 // blockstyle paragraph, h1 - h3, lists
 jQuery(document).on('mousedown', '.toolbarheadings label', function (event) {
+    event.preventDefault();
+
     switch (this.id.split('_')[0]) {
         case 'p':
           theEditor.editor.execCommand('paragraph:make');

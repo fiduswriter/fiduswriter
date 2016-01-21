@@ -22,23 +22,11 @@
                 var websocketServer = location.host.split(':')[0];
             {% endif %}
         </script>
-        <style>
-            #metadata-subtitle:empty:not(:focus)::before, #metadata-subtitle:not(:focus) > p:first-child:only-child > br::before {
-                content: "{% trans "Subtitle" %}...";
-            }
-            #metadata-abstract:empty:not(:focus)::before, #metadata-abstract:not(:focus) > p:first-child:only-child > br::before {
-                content: "{% trans "Abstract" %}...";
-            }
-            #metadata-authors:empty:not(:focus)::before, #metadata-authors:not(:focus) > p:first-child:only-child > br::before {
-                content: "{% trans "Authors" %}...";
-            }
-            #metadata-keywords:empty:not(:focus)::before, #metadata-keywords:not(:focus) > p:first-child:only-child > br::before {
-                content: "{% trans "Keywords" %}...";
-            }
+        <style type="text/css" id="metadata-styles">
         </style>
-        <style type="text/css" id="placeholderStyles">
+        <style type="text/css" id="placeholder-styles">
         </style>
-        <style type="text/css" id="activeCommentStyle">
+        <style type="text/css" id="active-comment-style">
         </style>
         <!--  Translations -->
         <script type="text/javascript" src="/jsi18n/"></script>

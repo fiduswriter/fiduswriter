@@ -23,6 +23,7 @@ var tmp_comments = _.template(
     '<% _.each(theComments,function(comment,key,list){ %>\
         <div id="comment-box-<%= comment.id %>" data-id="<%= comment.id %>" class="comment-box \
             <% if(comment.id===theDocument.activeCommentId) { %>active<% } else { %>inactive<% } %>\
+            <% if(comment.isMajor === true) { %>comment-is-major-bgc<% }%>\
             " style="top:<%= commentHelpers.calculateCommentBoxOffset(comment) %>px;">\
             <% if (comment.id===theDocument.activeCommentId || comment.comment.length > 0) { %>\
             <% if(0 === comment.comment.length) { %>\

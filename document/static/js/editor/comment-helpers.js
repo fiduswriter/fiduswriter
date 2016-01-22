@@ -244,8 +244,8 @@
             switch (filterType) {
                 case 'r':
                 case 'w':
-                case 'ed':
-                case 'rev':
+                case 'e':
+                case 'c':
                     commentHelpers.filterByUserType(filterType);
                     break;
                 case 'username':

@@ -59,15 +59,11 @@ class Document(models.Model):
     def get_absolute_url(self):
         return "/document/%i/" % self.id
 
-#r - reader
-#author - w
-#reviewer - rev
-#editor - ed
 RIGHTS_CHOICES  = (
     ('r', 'reader'),
     ('w', 'author'),
-    ('ed', 'editor'),
-    ('rev', 'reviewer')
+    ('e', 'editor'),
+    ('c', 'reviewer')
 )
 
 #TODO: AccessRights - EMPTY. add when create document

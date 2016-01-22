@@ -389,11 +389,26 @@
      * Filtering part. akorovin
      */
     commentHelpers.filterByUserType = function(userType) {
-        //TODO: filter by user type
+        //filter by user role (reader, editor, reviewer etc)
         console.log(userType);
-        var doc = theDocument;
-        //var acc = accessrightsHelpers;
-        //console.log()
+        var userRoles = theDocument.access_rights;
+        var idsOfNeededUsers = [];
+
+        jQuery.each(userRoles, function(index, user) {
+            if (user.rights == userType) {
+                idsOfNeededUsers.push(user.user_id);
+            }
+        });
+
+        $("#comment-box-container").children().each(function() {
+            var userId = parseInt($(this).attr("data-user-id"), 10);
+            if ($.inArray(userId, idsOfNeededUsers) !== -1) {
+                $(this).show();
+            }
+            else {
+                $(this).hide();
+            }
+        });
     };
 
     commentHelpers.filterByUserDialog = function () {
@@ -403,8 +418,6 @@
             user_name: theDocument.owner.name,
             user_id: theDocument.owner.id
         });
-
-        var userIdToFilter = -1;
 
         var users = {
             users: rolesCopy

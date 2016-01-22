@@ -140,3 +140,11 @@ var tmp_first_comment = _.template(
     gettext("Cancel") + '</span>\
         </div>\
     </div>');
+
+var tmp_filter_by_user_box = _.template('<div id="comment-filter-byuser-box" title="Filter by user">\
+        <select>\
+            <% _.each(users, function(user) { %>\
+                <option value="<%- user.id %>"><%- user.name %></option>\
+            <% }) %>\
+        </select>\
+    </div>');

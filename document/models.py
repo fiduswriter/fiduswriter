@@ -60,9 +60,15 @@ class Document(models.Model):
         return "/document/%i/" % self.id
 
 
+#r - reader
+#author - w
+#reviewer - rev
+#editor - ed
 RIGHTS_CHOICES  = (
     ('r', 'read'),
     ('w', 'read/write'),
+    ('ed', 'editor'),
+    ('rev', 'reviewer')
 )
 
 class AccessRight(models.Model):

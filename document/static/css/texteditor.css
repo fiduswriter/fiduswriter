@@ -85,7 +85,7 @@ body {
 #editor-tools-wrapper {
     position: relative;
     padding: 12px 0;
-    width: 1112px;
+    width: 1250px;
 }
 #open-close-header {
     position: absolute;
@@ -503,4 +503,8 @@ body {counter-reset: pagination-footnote pagination-footnote-reference;}
 .ProseMirror-content {
   padding: 0 !important;
   line-height: inherit !important;
+}
+
+#comments-filter {
+    margin-left: 7px;
 }

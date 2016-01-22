@@ -236,6 +236,24 @@
                 jQuery('#flow').toggleClass('comments-enabled');
                 jQuery('.toolbarcomment button').toggleClass('disabled');
             });
+
+        jQuery(document).on('mousedown', '#comments-filter label', function (event) {
+            event.preventDefault();
+            var filterType = $(this).attr("data-filter");
+
+            switch (filterType) {
+                case 'r':
+                case 'w':
+                case 'ed':
+                case 'rev':
+                    commentHelpers.filterByUserType(filterType);
+                    break;
+                case 'username':
+                    commentHelpers.filterByUserDialog();
+                    break;
+            }
+
+        });
     };
 
     commentHelpers.deleteComment = function (id) {
@@ -365,6 +383,55 @@
             });
         }
 
+    };
+
+    /**
+     * Filtering part. akorovin
+     */
+    commentHelpers.filterByUserType = function(userType) {
+        //TODO: filter by user type
+        console.log(userType);
+    };
+
+    commentHelpers.filterByUserDialog = function () {
+        var users = {
+            users:[{
+                "name": "akorovin",
+                "id": "12345"
+            },
+            {
+                "name": "akorovin2",
+                "id": "1234567"
+            }]
+        };
+
+        jQuery('body').append(tmp_filter_by_user_box(users));
+        diaButtons = {};
+        diaButtons[gettext('Filter')] = function () {
+            //TODO: filtering
+            jQuery(this).dialog("close");
+        };
+
+        diaButtons[gettext('Cancel')] = function () {
+            jQuery(this).dialog("close");
+        };
+
+        jQuery("#comment-filter-byuser-box").dialog({
+            resizable: false,
+            height: 180,
+            modal: true,
+            close: function () {
+                jQuery("#comment-filter-byuser-box").detach();
+            },
+            buttons: diaButtons,
+            create: function () {
+                var $the_dialog = jQuery(this).closest(".ui-dialog");
+                $the_dialog.find(".ui-button:first-child").addClass(
+                    "fw-button fw-dark");
+                $the_dialog.find(".ui-button:last").addClass(
+                    "fw-button fw-orange");
+            }
+        });
     };
 
     exports.commentHelpers = commentHelpers;

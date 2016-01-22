@@ -391,23 +391,36 @@
     commentHelpers.filterByUserType = function(userType) {
         //TODO: filter by user type
         console.log(userType);
+        var doc = theDocument;
+        //var acc = accessrightsHelpers;
+        //console.log()
     };
 
     commentHelpers.filterByUserDialog = function () {
+        //create array of roles + owner role
+        var rolesCopy = theDocument.access_rights.slice();
+        rolesCopy.push({
+            user_name: theDocument.owner.name,
+            user_id: theDocument.owner.id
+        });
+
+        var userIdToFilter = -1;
+
         var users = {
-            users:[{
-                "name": "akorovin",
-                "id": "12345"
-            },
-            {
-                "name": "akorovin2",
-                "id": "1234567"
-            }]
+            users: rolesCopy
         };
 
         jQuery('body').append(tmp_filter_by_user_box(users));
         diaButtons = {};
         diaButtons[gettext('Filter')] = function () {
+            var id = $(this).children("select").val();
+            if (id == undefined) {
+                return;
+            }
+
+            var boxesToHide = $("#comment-box-container").children("[data-user-id!='" + id + "']").hide();
+            var boxesToHide = $("#comment-box-container").children("[data-user-id='" + id + "']").show();
+
             //TODO: filtering
             jQuery(this).dialog("close");
         };

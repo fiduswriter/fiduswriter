@@ -21,7 +21,8 @@
 /** A template to display all the comments */
 var tmp_comments = _.template(
     '<% _.each(theComments,function(comment,key,list){ %>\
-        <div id="comment-box-<%= comment.id %>" data-id="<%= comment.id %>" class="comment-box \
+        <div id="comment-box-<%= comment.id %>" data-id="<%= comment.id %>"  data-user-id="<%= comment.user %>" \
+        class="comment-box \
             <% if(comment.id===theDocument.activeCommentId) { %>active<% } else { %>inactive<% } %>\
             <% if(comment.isMajor === true) { %>comment-is-major-bgc<% }%>\
             " style="top:<%= commentHelpers.calculateCommentBoxOffset(comment) %>px;">\
@@ -144,7 +145,7 @@ var tmp_first_comment = _.template(
 var tmp_filter_by_user_box = _.template('<div id="comment-filter-byuser-box" title="Filter by user">\
         <select>\
             <% _.each(users, function(user) { %>\
-                <option value="<%- user.id %>"><%- user.name %></option>\
+                <option value="<%- user.user_id %>"><%- user.user_name %></option>\
             <% }) %>\
         </select>\
     </div>');

@@ -100,6 +100,7 @@ class DocumentWS(BaseWebSocketHandler):
         response['document']['owner']['name']=document.owner.readable_name
         response['document']['owner']['avatar']=avatar_url(document.owner,80)
         response['document']['owner']['team_members']=[]
+
         for team_member in document.owner.leader.all():
             tm_object = dict()
             tm_object['id'] = team_member.member.id

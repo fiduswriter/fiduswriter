@@ -77,7 +77,7 @@
 
         var autocomplete_tags = [];
         jQuery('#book-table .fw-searchable').each(function() {
-            autocomplete_tags.push(this.textContent);
+            autocomplete_tags.push(this.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''));
         });
         autocomplete_tags = _.uniq(autocomplete_tags);
         jQuery("#book-table_filter input").autocomplete({

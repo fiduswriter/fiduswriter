@@ -1693,7 +1693,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
     bibliographyHelpers.importBibliography3 = function (bib_entries, callback) {
 
         var post_data = {
-            'bibs': $.toJSON(bib_entries)
+            'bibs': JSON.stringify(bib_entries)
         };
 
         $.ajax({
@@ -1998,7 +1998,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
 
         var autocomplete_tags = [];
         jQuery('#bibliography .fw-searchable').each(function () {
-            autocomplete_tags.push(this.textContent);
+            autocomplete_tags.push(this.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''));
         });
         autocomplete_tags = _.uniq(autocomplete_tags);
         jQuery("#bibliography_filter input").autocomplete({

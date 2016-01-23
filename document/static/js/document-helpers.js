@@ -21,8 +21,8 @@
 
 (function () {
     var exports = this,
-   /** 
-  * Helper functions for the document overview page. TODO 
+   /**
+  * Helper functions for the document overview page. TODO
   * @namespace documentHelpers
   */
         documentHelpers = {};
@@ -234,10 +234,10 @@
                         aDocument = _.findWhere(theDocumentList, {
                             id: response.documents[i].id
                         });
-                        aDocument.contents = jQuery.parseJSON(response.documents[i].contents);
-                        aDocument.metadata = jQuery.parseJSON(response.documents[
+                        aDocument.contents = JSON.parse(response.documents[i].contents);
+                        aDocument.metadata = JSON.parse(response.documents[
                             i].metadata);
-                        aDocument.settings = jQuery.parseJSON(response.documents[
+                        aDocument.settings = JSON.parse(response.documents[
                             i].settings);
                     }
                     if (callback) {

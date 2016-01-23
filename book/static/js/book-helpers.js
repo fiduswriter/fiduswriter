@@ -21,8 +21,8 @@
 
 (function () {
     var exports = this,
-    /** 
-  * Helper functions for the book overview page. TODO 
+    /**
+  * Helper functions for the book overview page. TODO
   * @namespace bookHelpers
   */
         bookHelpers = {};
@@ -124,9 +124,9 @@
     bookHelpers.unpackBooks = function (booksFromServer) {
         // metadata and settings are stored as a json stirng in a text field on the server, so they need to be unpacked before being available.
         for (var i = 0; i < booksFromServer.length; i++) {
-            booksFromServer[i].metadata = jQuery.parseJSON(booksFromServer[
+            booksFromServer[i].metadata = JSON.parse(booksFromServer[
                 i].metadata);
-            booksFromServer[i].settings = jQuery.parseJSON(booksFromServer[
+            booksFromServer[i].settings = JSON.parse(booksFromServer[
                 i].settings);
         }
         return booksFromServer;
@@ -699,9 +699,9 @@
 
         jQuery(document).bind('bookDataLoaded', function () {
             jQuery('#book-table tbody').html(tmp_book_list());
-            
+
             bookHelpers.startBookTable();
-            
+
         });
     };
 

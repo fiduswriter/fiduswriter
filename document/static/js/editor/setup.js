@@ -92,8 +92,8 @@
          theDocumentValues.changed = false;
          theDocumentValues.titleChanged = false;
          theDocument.settings = aDocument.settings;
-         theDocument.metadata = jQuery.parseJSON(aDocument.metadata);
-         theDocument.contents = jQuery.parseJSON(aDocument.contents);
+         theDocument.metadata = JSON.parse(aDocument.metadata);
+         theDocument.contents = JSON.parse(aDocument.contents);
          theDocument.comments = aDocument.comments;
          theDocument.comment_version = aDocument.comment_version;
          theDocument.version = aDocument.version;
@@ -113,13 +113,14 @@
       */
      editorHelpers.copyDocumentValues = function (aDocument, aDocumentValues, lastDiffs) {
          var theDocument, theDocumentValues;
+
          theDocument = aDocument;
          theDocumentValues = aDocumentValues;
          theDocumentValues.changed = false;
          theDocumentValues.titleChanged = false;
          theDocument.settings = theDocument.settings;
-         theDocument.metadata = jQuery.parseJSON(theDocument.metadata);
-         theDocument.contents = jQuery.parseJSON(theDocument.contents);
+         theDocument.metadata = JSON.parse(theDocument.metadata);
+         theDocument.contents = JSON.parse(theDocument.contents);
          documentId = theDocument.id;
 
 

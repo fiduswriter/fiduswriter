@@ -51,7 +51,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
      */
     bibliographyHelpers.serverBibItemToBibDB = function (item, aBibDB) {
         var id = item['id'];
-        aBibDB[id] = jQuery.parseJSON(item['fields']);
+        aBibDB[id] = JSON.parse(item['fields']);
         aBibDB[id]['entry_type'] = item['entry_type'];
         aBibDB[id]['entry_key'] = item['entry_key'];
         aBibDB[id]['entry_cat'] = item['entry_cat'];

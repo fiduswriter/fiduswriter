@@ -576,50 +576,51 @@ var FW_FILETYPE_VERSION = "1.2";
                 citationPage = this.hasAttribute('data-bib-page') ? this.getAttribute('data-bib-page').split(',') : [],
                 citationFormat = this.hasAttribute('data-bib-format') ? this.getAttribute('data-bib-format') : '',
                 citationCommand = '\\' + citationFormat,
-                i;
+                citationEntryKeys;
 
             if (citationEntries.length > 1 && citationBefore.join('').length === 0 && citationPage.join('').length === 0) {
                 // multi source citation without page numbers or text before.
-                citationCommand += '{';
+                var citationEntryKeys = [];
 
-                for (i = 0; i < citationEntries.length; i++) {
-                    citationCommand += aBibDB[citationEntries[i]].entry_key;
+                citationEntries.forEach(function(citationEntry) {
+                    if (aBibDB[citationEntry]) {
+                        citationEntryKeys.push(aBibDB[citationEntry].entry_key);
+                        if (listedWorksList.indexOf(citationEntry) === -1) {
+                            listedWorksList.push(citationEntry);
+                        }
+                    }
+                });
 
-                    if (i + 1 < citationEntries.length) {
-                        citationCommand += ',';
-                    }
-                    if (listedWorksList.indexOf(citationEntries[i]) === -
-                        1) {
-                        listedWorksList.push(citationEntries[i]);
-                    }
-                }
-                citationCommand += '}';
+                citationCommand += '{' + citationEntryKeys.join(',') + '}';
             } else {
                 if (citationEntries.length > 1) {
                     citationCommand += 's'; // Switching from \autocite to \autocites
                 }
-                for (i = 0; i < citationEntries.length; i++) {
 
-                    if (citationBefore[i] && citationBefore[i].length > 0) {
-                        citationCommand += '[' + citationBefore[i] + ']';
-                        if (!citationPage[i] || citationPage[i].length === 0) {
+                citationEntries.forEach(function(citationEntry, index) {
+                    if (!aBibDB[citationEntry]) {
+                        return false; // Not present in bibliography database, skip it.
+                    }
+
+                    if (citationBefore[index] && citationBefore[index].length > 0) {
+                        citationCommand += '[' + citationBefore[index] + ']';
+                        if (!citationPage[index] || citationPage[index].length === 0) {
                             citationCommand += '[]';
                         }
                     }
-                    if (citationPage[i] && citationPage[i].length > 0) {
-                        citationCommand += '[' + citationPage[i] + ']';
+                    if (citationPage[index] && citationPage[index].length > 0) {
+                        citationCommand += '[' + citationPage[index] + ']';
                     }
                     citationCommand += '{';
 
-                    citationCommand += aBibDB[citationEntries[i]].entry_key;
+                    citationCommand += aBibDB[citationEntry].entry_key;
 
-                    if (listedWorksList.indexOf(citationEntries[i]) === -
-                        1) {
-                        listedWorksList.push(citationEntries[i]);
+                    if (listedWorksList.indexOf(citationEntry) === -1) {
+                        listedWorksList.push(citationEntry);
                     }
                     citationCommand += '}';
 
-                }
+                });
             }
 
             jQuery(this).replaceWith(citationCommand);

@@ -571,14 +571,10 @@ var FW_FILETYPE_VERSION = "1.2";
                 '}');
         });
         jQuery(htmlCode).find('.citation').each(function() {
-            var citationEntries = jQuery(this).attr(
-                    'data-bib-entry').split(
-                    ','),
-                citationBefore = jQuery(this).attr(
-                    'data-bib-before').split(',,,'),
-                citationPage = jQuery(this).attr('data-bib-page').split(',,,'),
-                citationFormat = jQuery(this).attr(
-                    'data-bib-format'),
+            var citationEntries = this.hasAttribute('data-bib-entry') ? this.getAttribute('data-bib-entry').split(',') : [],
+                citationBefore = this.hasAttribute('data-bib-before') ? this.getAttribute('data-bib-before').split(',') : [],
+                citationPage = this.hasAttribute('data-bib-page') ? this.getAttribute('data-bib-page').split(',') : [],
+                citationFormat = this.hasAttribute('data-bib-format') ? this.getAttribute('data-bib-format') : '',
                 citationCommand = '\\' + citationFormat,
                 i;
 
@@ -604,13 +600,13 @@ var FW_FILETYPE_VERSION = "1.2";
                 }
                 for (i = 0; i < citationEntries.length; i++) {
 
-                    if (citationBefore[i].length > 0) {
+                    if (citationBefore[i] && citationBefore[i].length > 0) {
                         citationCommand += '[' + citationBefore[i] + ']';
-                        if (citationPage[i].length === 0) {
+                        if (!citationPage[i] || citationPage[i].length === 0) {
                             citationCommand += '[]';
                         }
                     }
-                    if (citationPage[i].length > 0) {
+                    if (citationPage[i] && citationPage[i].length > 0) {
                         citationCommand += '[' + citationPage[i] + ']';
                     }
                     citationCommand += '{';

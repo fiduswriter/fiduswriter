@@ -83,11 +83,11 @@
             } else {
                 theUser = theDocument.owner;
             }
-            jQuery.event.trigger({
-                type: "documentDataLoaded",
-            });
-            serverCommunications.send({
-                type: 'participant_update'
+            usermediaHelpers.init(function(){
+                theEditor.initiate();
+                serverCommunications.send({
+                    type: 'participant_update'
+                });
             });
             break;
         case 'document_data_update':

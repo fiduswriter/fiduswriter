@@ -77,6 +77,9 @@ theEditor.initiate = function () {
     _.each(theDocument.comments, function (comment) {
         theEditor.comments.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers);
     });
+    jQuery.event.trigger({
+        type: "documentDataLoaded"
+    });
 };
 
 theEditor.update = function () {

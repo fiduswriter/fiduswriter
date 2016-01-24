@@ -180,24 +180,21 @@
       * @memberof editorHelpers.displaySetting*/
      editorHelpers.displaySetting.documentstyle = function () {
 
-         var documentStyleLink = document.getElementById('document-style-link');
-
-         var newDocumentStyleLink = document.createElement('link');
-         newDocumentStyleLink.setAttribute("rel", "stylesheet");
-         newDocumentStyleLink.setAttribute("type", "text/css");
-         newDocumentStyleLink.setAttribute("id", "document-style-link");
-         newDocumentStyleLink.setAttribute("href", staticUrl+'css/document/'+theDocument.settings.documentstyle+'.css');
-
-         documentStyleLink.parentElement.replaceChild(newDocumentStyleLink, documentStyleLink);
-
+         var documentStyleLink, stylesheet;
 
          jQuery("#header-navigation .style.selected").removeClass('selected');
          jQuery('span[data-style=' + theDocument.settings.documentstyle + ']').addClass('selected');
 
-         set_document_style_timer = setTimeout(function () {
-             clearTimeout(set_document_style_timer);
-             commentHelpers.layoutComments();
-         }, 200);
+         documentStyleLink = document.getElementById('document-style-link');
+
+         // Remove previous style.
+         documentStyleLink.parentElement.removeChild(documentStyleLink.previousElementSibling);
+
+         stylesheet = loadCSS(staticUrl+'css/document/'+theDocument.settings.documentstyle+'.css', documentStyleLink);
+
+         onloadCSS( stylesheet, function() {
+            commentHelpers.layoutComments();
+         });
 
      };
 
@@ -366,18 +363,14 @@ jQuery(document).ready(function() {
 
 // Functions to be executed when document has loaded
 jQuery(document).bind('documentDataLoaded', function() {
-
+console.log('documentloaded')
     editorEscapes.initiate();
     // We cannot download BibDB and ImageDB before we know if we are the document owner or not.
     // But we cannot load the document before we have the ImageDB availabel because
     // figures need to be layouted with the ImageDB available.
     bibliographyHelpers.init();
-    usermediaHelpers.init(function(){
-      theEditor.initiate();
-      citationHelpers.formatCitationsInDoc();
-    });
 
-
+    citationHelpers.formatCitationsInDoc();
 
     editorHelpers.displaySetting.set('documentstyle');
 

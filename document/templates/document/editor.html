@@ -31,8 +31,8 @@
         <!--  Translations -->
         <script type="text/javascript" src="/jsi18n/"></script>
         <!-- document style -->
+        <link rel="stylesheet" type="text/css">
         <link id="document-style-link" rel="stylesheet" type="text/css">
-
         <!-- commons styles -->
         {% compress css %}
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/reset.css" />
@@ -74,7 +74,8 @@
 
         {% endcompress %}
 
-
+        <!-- loadCSS -->
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/loadCSS-0.2.4.js"></script>
         <!-- jQuery -->
         <script type="text/javascript" src="{{ JQUERY_URL }}"></script>
         <!-- JS error handling -->

@@ -70,6 +70,9 @@ theEditor.initiate = function () {
         theEditor.comments.addLocalComment(comment.id, comment.user,
           comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers)
       })
+      jQuery.event.trigger({
+          type: "documentDataLoaded",
+      });
 };
 
 theEditor.update = function () {

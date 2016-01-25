@@ -63,7 +63,10 @@ theEditor.createDoc = function (aDocument) {
 theEditor.initiate = function () {
     var doc = theEditor.createDoc(theDocument);
     theEditor.editor = makeEditor(document.getElementById('document-editable'), doc, theDocument.version);
-    theEditor.applyDiffs(theDocumentValues.last_diffs);
+    while (theDocumentValues.last_diffs.length > 0) {
+        var diff = theDocumentValues.last_diffs.shift();
+        theEditor.applyDiff(diff);
+    }
     new _updateUi.UpdateUI(theEditor.editor, "selectionChange change activeMarkChange blur focus");
     theEditor.editor.on("change", editorHelpers.documentHasChanged);
     theEditor.editor.on('transform', theEditor.onTransform);
@@ -86,7 +89,10 @@ theEditor.update = function () {
     var doc = theEditor.createDoc(theDocument);
     theEditor.editor.setOption("collab", null);
     theEditor.editor.setContent(doc);
-    theEditor.applyDiffs(theDocumentValues.last_diffs);
+    while (theDocumentValues.last_diffs.length > 0) {
+        var diff = theDocumentValues.last_diffs.shift();
+        theEditor.applyDiff(diff);
+    }
     theEditor.editor.setOption("collab", { version: theDocument.version });
     theDocument.hash = theEditor.getHash();
     theEditor.editor.mod.collab.on("mustSend", theEditor.sendToCollaborators);
@@ -143,8 +149,8 @@ theEditor.confirmDiff = function (request_id) {
     theEditor.comments.eventsSent(sentComments);
 };
 
-theEditor.applyDiffs = function (diffs) {
-    theEditor.editor.mod.collab.receive(diffs.map(function (j) {
+theEditor.applyDiff = function (diff) {
+    theEditor.editor.mod.collab.receive([diff].map(function (j) {
         return _transform.Step.fromJSON(_schema.fidusSchema, j);
     }));
 };

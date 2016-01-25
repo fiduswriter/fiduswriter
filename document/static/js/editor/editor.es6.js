@@ -34,12 +34,12 @@ theEditor.createDoc = function (aDocument) {
       metadataKeywordsNode = aDocument.metadata.keywords ? exporter.obj2Node(aDocument.metadata.keywords) : document.createElement('div'),
       doc;
 
-      titleNode.id = 'document-title';
-      metadataSubtitleNode.id = 'metadata-subtitle';
-      metadataAuthorsNode.id = 'metadata-authors';
-      metadataAbstractNode.id = 'metadata-abstract';
-      metadataKeywordsNode.id = 'metadata-keywords';
-      documentContentsNode.id = 'document-contents';
+      titleNode.id = 'document-title'
+      metadataSubtitleNode.id = 'metadata-subtitle'
+      metadataAuthorsNode.id = 'metadata-authors'
+      metadataAbstractNode.id = 'metadata-abstract'
+      metadataKeywordsNode.id = 'metadata-keywords'
+      documentContentsNode.id = 'document-contents'
 
       editorNode.appendChild(titleNode);
       editorNode.appendChild(metadataSubtitleNode);
@@ -49,13 +49,16 @@ theEditor.createDoc = function (aDocument) {
       editorNode.appendChild(documentContentsNode);
 
       doc = fromDOM(fidusSchema, editorNode)
-      return doc;
-};
+      return doc
+}
 
 theEditor.initiate = function () {
       let doc = theEditor.createDoc(theDocument)
       theEditor.editor = makeEditor(document.getElementById('document-editable'), doc, theDocument.version)
-      theEditor.applyDiffs(theDocumentValues.last_diffs)
+      while (theDocumentValues.last_diffs.length > 0) {
+          let diff = theDocumentValues.last_diffs.shift()
+          theEditor.applyDiff(diff)
+      }
       new UpdateUI(theEditor.editor, "selectionChange change activeMarkChange blur focus")
       theEditor.editor.on("change", editorHelpers.documentHasChanged)
       theEditor.editor.on('transform', theEditor.onTransform)
@@ -72,18 +75,21 @@ theEditor.initiate = function () {
       })
       jQuery.event.trigger({
           type: "documentDataLoaded",
-      });
-};
+      })
+}
 
 theEditor.update = function () {
       let doc = theEditor.createDoc(theDocument)
       theEditor.editor.setOption("collab", null)
       theEditor.editor.setContent(doc)
-      theEditor.applyDiffs(theDocumentValues.last_diffs)
+      while (theDocumentValues.last_diffs.length > 0) {
+          let diff = theDocumentValues.last_diffs.shift()
+          theEditor.applyDiff(diff)
+      }
       theEditor.editor.setOption("collab", {version: theDocument.version})
       theDocument.hash = theEditor.getHash()
       theEditor.editor.mod.collab.on("mustSend", theEditor.sendToCollaborators)
-};
+}
 
 
 theEditor.getUpdates = function (callback) {
@@ -136,8 +142,8 @@ theEditor.confirmDiff = function (request_id) {
     theEditor.comments.eventsSent(sentComments)
 };
 
-theEditor.applyDiffs = function(diffs) {
-    theEditor.editor.mod.collab.receive(diffs.map(j => Step.fromJSON(fidusSchema, j)));
+theEditor.applyDiff = function(diff) {
+    theEditor.editor.mod.collab.receive([diff].map(j => Step.fromJSON(fidusSchema, j)));
 }
 
 theEditor.updateComments = function(comments, comment_version) {

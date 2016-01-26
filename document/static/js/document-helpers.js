@@ -197,9 +197,7 @@
                 theTeamMembers = response.team_members;
                 theAccessRights = response.access_rights;
                 theUser = response.user;
-                jQuery.event.trigger({
-                    type: "documentDataLoaded",
-                });
+                documentHelpers.layoutTable();
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 $.addAlert('error', jqXHR.responseText);
@@ -269,10 +267,11 @@
             documentHelpers.getDocumentListData();
         });
 
-        jQuery(document).bind('documentDataLoaded', function () {
-            jQuery('#document-table tbody').html(tmp_documents_list());
-            documentHelpers.startDocumentTable();
-        });
+    };
+
+    documentHelpers.layoutTable = function () {
+        jQuery('#document-table tbody').html(tmp_documents_list());
+        documentHelpers.startDocumentTable();
     };
 
     exports.documentHelpers = documentHelpers;

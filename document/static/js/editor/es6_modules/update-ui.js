@@ -40,7 +40,6 @@ export class UpdateUI {
     this.force = this.force.bind(this)
     this.events.forEach(event => pm.on(event, this.onEvent))
     pm.on("flushed", this.onFlushed = this.onFlushed.bind(this))
-    this.updateUI()
   }
 
   detach() {

@@ -60,22 +60,17 @@
             break;
         case 'document_data':
             editorHelpers.copyDocumentValues(data.document, data.document_values);
-            if (theEditor.editor) {
-                // Editor exists already, this is merely an update
-                theEditor.update();
+            if (data.hasOwnProperty('user')) {
+                theUser = data.user;
             } else {
-                if (data.hasOwnProperty('user')) {
-                    theUser = data.user;
-                } else {
-                    theUser = theDocument.owner;
-                }
-                usermediaHelpers.init(function(){
-                    theEditor.initiate();
-                    serverCommunications.send({
-                        type: 'participant_update'
-                    });
-                });
+                theUser = theDocument.owner;
             }
+            usermediaHelpers.init(function(){
+                theEditor.update();
+                serverCommunications.send({
+                    type: 'participant_update'
+                });
+            });
             break;
         case 'diff':
             if (data.comments && data.comments.length) {

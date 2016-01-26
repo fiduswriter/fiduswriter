@@ -308,15 +308,38 @@ jQuery(document).ready(function() {
         citationStyleMenu = document.getElementById("citationstyle-list"),
         newMenuItem, i;
 
+    theEditor.initiate();
+
+    // Set Auto-save to send the document every two minutes, if it has changed.
+    setInterval(function() {
+        if (theDocumentValues && theDocumentValues.changed) {
+            theEditor.getUpdates(function() {
+                editorHelpers.sendDocumentUpdate();
+            });
+        }
+    }, 120000);
+
+    // Set Auto-save to send the title every 5 seconds, if it has changed.
+    setInterval(function() {
+        if (theDocumentValues && theDocumentValues.titleChanged) {
+            theDocumentValues.titleChanged = false;
+            if (theDocumentValues.control) {
+                serverCommunications.send({
+                    type: 'update_title',
+                    title: theDocument.title
+                });
+            }
+        }
+    }, 10000);
+
     // Enable toolbar menu
     jQuery('#menu1').ptMenu();
 
     //open dropdown for headermenu
-    jQuery('.header-nav-item').each(function() {
+    jQuery('.header-nav-item, .multibuttonsCover').each(function() {
         $.addDropdownBox(jQuery(this), jQuery(this).siblings(
             '.fw-pulldown'));
     });
-
 
     for (i = 0; i < documentStyleList.length; i++) {
         newMenuItem = document.createElement("li");
@@ -329,25 +352,57 @@ jQuery(document).ready(function() {
         citationStyleMenu.appendChild(newMenuItem);
     }
 
+    jQuery('.metadata-menu-item, #open-close-header, .save, .multibuttonsCover, \
+    .savecopy, .download, .latex, .epub, .html, .print, .style, .citationstyle, \
+    .tools-item, .papersize, .metadata-menu-item, .share, #open-close-header, \
+    .save, .papersize-menu, .metadata-menu, .documentstyle-menu, \
+    .citationstyle-menu, .exporter-menu').addClass('disabled');
 
+    jQuery('#editor-navigation').hide();
 
-});
+    jQuery(document).on('mousedown', '.savecopy:not(.disabled)', function() {
+        theEditor.getUpdates(function() {
+            editorHelpers.sendDocumentUpdate();
+        });
+        exporter.savecopy(theDocument);
+    });
 
-// Functions to be executed when document has loaded
-jQuery(document).bind('documentDataLoaded', function() {
-console.log('documentloaded')
-    editorEscapes.initiate();
-    // We cannot download BibDB and ImageDB before we know if we are the document owner or not.
-    // But we cannot load the document before we have the ImageDB availabel because
-    // figures need to be layouted with the ImageDB available.
-    bibliographyHelpers.init();
-
-    citationHelpers.formatCitationsInDoc();
-
-    editorHelpers.displaySetting.set('documentstyle');
+    jQuery(document).on('mousedown', '.download:not(.disabled)', function() {
+        theEditor.getUpdates(function() {
+            editorHelpers.sendDocumentUpdate();
+        });
+        exporter.downloadNative(theDocument);
+    });
+    jQuery(document).on('mousedown', '.latex:not(.disabled)', function() {
+        theEditor.getUpdates(function() {
+            editorHelpers.sendDocumentUpdate();
+        });
+        exporter.downloadLatex(theDocument);
+    });
+    jQuery(document).on('mousedown', '.epub:not(.disabled)', function() {
+        theEditor.getUpdates(function() {
+            editorHelpers.sendDocumentUpdate();
+        });
+        exporter.downloadEpub(theDocument);
+    });
+    jQuery(document).on('mousedown', '.html:not(.disabled)', function() {
+        theEditor.getUpdates(function() {
+            editorHelpers.sendDocumentUpdate();
+        });
+        exporter.downloadHtml(theDocument);
+    });
+    jQuery(document).on('mousedown', '.print:not(.disabled)', function() {
+        editorHelpers.print();
+    });
+    jQuery(document).on('mousedown', '.close:not(.disabled)', function() {
+        theEditor.getUpdates(function() {
+            editorHelpers.sendDocumentUpdate();
+        });
+        window.location.href = '/';
+    });
 
     // Document Style switching
-    jQuery("#header-navigation .style").bind('mousedown', function() {
+    jQuery(document).on('mousedown', "#header-navigation .style:not(.disabled)", function() {
         if (editorHelpers.setSetting('documentstyle',
                 jQuery(this).attr('data-style'), true)) {
 
@@ -357,14 +412,8 @@ console.log('documentloaded')
         return false;
     });
 
-
-    editorHelpers.displaySetting.set('citationstyle');
-
-    jQuery('span[data-citationstyle=' + theDocument.settings.citationstyle +
-        ']').addClass('selected');
-
     // Citation Style switching
-    jQuery("#header-navigation .citationstyle").bind('mousedown', function() {
+    jQuery(document).on('mousedown', "#header-navigation .citationstyle:not(.disabled)", function() {
         if (editorHelpers.setSetting('citationstyle',
                 jQuery(this).attr('data-citationstyle'),true)) {
             editorHelpers.displaySetting.set('citationstyle');
@@ -374,15 +423,13 @@ console.log('documentloaded')
         return false;
     });
     // Tools
-    jQuery("#header-navigation .tools-item").bind('mousedown', function() {
+    jQuery(document).on('mousedown', "#header-navigation .tools-item:not(.disabled)", function() {
         toolsHelpers.toolsEventHandler(jQuery(this).data('function'));
         return false;
     });
 
-    editorHelpers.displaySetting.set('papersize');
-
     // Paper size switching
-    jQuery("#header-navigation .papersize").bind('mousedown', function() {
+    jQuery(document).on('mousedown', "#header-navigation .papersize:not(.disabled)", function() {
         if (editorHelpers.setSetting('papersize',
                 parseInt(jQuery(this).attr('data-paperheight')), true)) {
             editorHelpers.displaySetting.set('papersize');
@@ -391,153 +438,58 @@ console.log('documentloaded')
         return false;
     });
 
-    jQuery(document).on('mousedown', '.savecopy:not(.disabled)', function() {
-        theEditor.getUpdates(function() {
-            editorHelpers.sendDocumentUpdate();
-        });
-        exporter.savecopy(theDocument);
+    jQuery(document).on('mousedown', '.metadata-menu-item:not(.disabled)', editorHelpers.switchMetadata);
+
+    jQuery(document).on('mousedown', '.share:not(.disabled)', function() {
+        accessrightsHelpers.createAccessRightsDialog([
+            theDocument.id
+        ]);
     });
 
-    jQuery('.download').bind('mousedown', function() {
-        theEditor.getUpdates(function() {
-            editorHelpers.sendDocumentUpdate();
-        });
-        exporter.downloadNative(theDocument);
-    });
-    jQuery('.latex').bind('mousedown', function() {
-        theEditor.getUpdates(function() {
-            editorHelpers.sendDocumentUpdate();
-        });
-        exporter.downloadLatex(theDocument);
-    });
-    jQuery('.epub').bind('mousedown', function() {
-        theEditor.getUpdates(function() {
-            editorHelpers.sendDocumentUpdate();
-        });
-        exporter.downloadEpub(theDocument);
-    });
-    jQuery('.html').bind('mousedown', function() {
-        theEditor.getUpdates(function() {
-            editorHelpers.sendDocumentUpdate();
-        });
-        exporter.downloadHtml(theDocument);
-    });
-    jQuery('.print').bind('mousedown', function() {
-        editorHelpers.print();
-    });
-    jQuery('.close').bind('mousedown', function() {
-        theEditor.getUpdates(function() {
-            editorHelpers.sendDocumentUpdate();
-        });
-        window.location.href = '/';
-    });
-
-
-    editorHelpers.layoutMetadata();
-
-    if (theDocumentValues.rights === 'r') {
-        jQuery('#editor-navigation').hide();
-        jQuery('.papersize-menu,.metadata-menu,.documentstyle-menu').addClass(
-            'disabled');
-    } else if (theDocumentValues.rights === 'w') {
-
-        jQuery('.metadata-menu-item').bind('mousedown', editorHelpers.switchMetadata);
-
-
-        if (!theDocumentValues.is_owner) {
-            jQuery('span.share').addClass('disabled');
+    //open and close header
+    jQuery(document).on('click', '#open-close-header:not(.disabled)', function() {
+        var header_top = -92,
+            toolnav_top = 0,
+            content_top = 108;
+        if (jQuery(this).hasClass('header-closed')) {
+            jQuery(this).removeClass('header-closed');
+            header_top = 0,
+                toolnav_top = 92,
+                content_top = 200;
+        } else {
+            jQuery(this).addClass('header-closed');
         }
-
-
-        mathHelpers.resetMath();
-
-
-        // Set Auto-save to send the document every two minutes, if it has changed.
-        setInterval(function() {
-            if (theDocumentValues.changed) {
-                theEditor.getUpdates(function() {
-                    editorHelpers.sendDocumentUpdate();
-                });
-            }
-        }, 120000);
-
-        // Set Auto-save to send the title every 5 seconds, if it has changed.
-        setInterval(function() {
-            if (theDocumentValues.titleChanged) {
-                theDocumentValues.titleChanged = false;
-                if (theDocumentValues.control) {
-                    serverCommunications.send({
-                        type: 'update_title',
-                        title: theDocument.title
-                    });
+        jQuery('#header').stop().animate({
+            'top': header_top
+        });
+        jQuery('#editor-navigation').stop().animate({
+            'top': toolnav_top
+        });
+        jQuery('#pagination-layout').stop()
+            .animate({
+                'top': content_top
+            }, {
+                'complete': function() {
+                    commentHelpers.layoutComments();
                 }
-            }
-        }, 10000);
-
-
-        // bind the share dialog to the button if the user is the document owner
-        if (theDocumentValues.is_owner) {
-            jQuery('.share').bind('mousedown', function() {
-                accessrightsHelpers.createAccessRightsDialog([
-                    theDocument.id
-                ]);
             });
-        }
+    });
 
-
-        // Bind comment functions
-        commentHelpers.bindEvents();
-
-        jQuery('.save').bind('mousedown', function() {
-            theEditor.getUpdates(function() {
-                editorHelpers.sendDocumentUpdate();
-            });
-            exporter.uploadNative(theDocument);
+    jQuery(document).on('mousedown', '.save:not(.disabled)', function() {
+        theEditor.getUpdates(function() {
+            editorHelpers.sendDocumentUpdate();
         });
+        exporter.uploadNative(theDocument);
+    });
 
-
-        jQuery('.multibuttonsCover').each(function() {
-            $.addDropdownBox(jQuery(this), jQuery(this).siblings(
-                '.fw-pulldown'));
-        });
-
-        //open and close header
-        jQuery('#open-close-header').bind('click', function() {
-            var header_top = -92,
-                toolnav_top = 0,
-                content_top = 108;
-            if (jQuery(this).hasClass('header-closed')) {
-                jQuery(this).removeClass('header-closed');
-                header_top = 0,
-                    toolnav_top = 92,
-                    content_top = 200;
-            } else {
-                jQuery(this).addClass('header-closed');
-            }
-            jQuery('#header').stop().animate({
-                'top': header_top
-            });
-            jQuery('#editor-navigation').stop().animate({
-                'top': toolnav_top
-            });
-            jQuery('#pagination-layout').stop()
-                .animate({
-                    'top': content_top
-                }, {
-                    'complete': function() {
-                        commentHelpers.layoutComments();
-                    }
-                });
-        });
-
-    }
+    // Bind comment functions
+    commentHelpers.bindEvents();
+    bibliographyHelpers.bindEvents();
 });
+
 
 jQuery(document).bind("bibliography_ready", function(event) {
     jQuery('.citationstyle-menu, .exporter-menu').each(function() {
-        jQuery.addDropdownBox(jQuery(this), jQuery(this).siblings('.fw-pulldown'));
         jQuery(this).removeClass('disabled');
-        jQuery(this).removeClass('header-nav-item-disabled');
-        jQuery(this).addClass('header-nav-item');
     });
 });

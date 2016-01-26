@@ -2009,7 +2009,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
      * @function init
      * @memberof bibliographyHelpers
      */
-    bibliographyHelpers.init = function () {
+    bibliographyHelpers.bindEvents = function () {
 
         jQuery(document).on('click', '.delete-bib', function () {
             var BookId = jQuery(this).attr('data-id');
@@ -2085,6 +2085,10 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             }
         });
 
+    };
+
+    bibliographyHelpers.initiate = function () {
+
         bibliographyHelpers.getBibDB(function () {
             if (window.hasOwnProperty('theDocument') && theEditor.editor) {
                 citationHelpers.formatCitationsInDoc();
@@ -2098,8 +2102,8 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
      */
     bibliographyHelpers.bind = function () {
         jQuery(document).ready(function () {
-
-            bibliographyHelpers.init();
+            bibliographyHelpers.bindEvents();
+            bibliographyHelpers.initiate();
 
         });
 

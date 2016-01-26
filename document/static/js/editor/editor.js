@@ -61,21 +61,12 @@ theEditor.createDoc = function (aDocument) {
 
 theEditor.initiate = function () {
     theEditor.editor = makeEditor(document.getElementById('document-editable'));
-    theEditor.update();
     new _updateUi.UpdateUI(theEditor.editor, "selectionChange change activeMarkChange blur focus");
     theEditor.editor.on("change", editorHelpers.documentHasChanged);
     theEditor.editor.on('transform', theEditor.onTransform);
     theEditor.editor.on("flushed", mathHelpers.layoutEmptyEquationNodes);
     theEditor.editor.on("flushed", mathHelpers.layoutEmptyDisplayEquationNodes);
     theEditor.editor.on("flushed", citationHelpers.formatCitationsInDocIfNew);
-    theEditor.comments = new _comment.CommentStore(theEditor.editor, theDocument.comment_version);
-    theEditor.comments.on("mustSend", theEditor.sendToCollaborators);
-    _.each(theDocument.comments, function (comment) {
-        theEditor.comments.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers);
-    });
-    jQuery.event.trigger({
-        type: "documentDataLoaded"
-    });
 };
 
 theEditor.update = function () {
@@ -90,6 +81,42 @@ theEditor.update = function () {
     }
     theDocument.hash = theEditor.getHash();
     theEditor.editor.mod.collab.on("mustSend", theEditor.sendToCollaborators);
+    theEditor.comments = new _comment.CommentStore(theEditor.editor, theDocument.comment_version);
+    _.each(theDocument.comments, function (comment) {
+        theEditor.comments.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers);
+    });
+    theEditor.comments.on("mustSend", theEditor.sendToCollaborators);
+    theEditor.enableUI();
+};
+
+theEditor.enableUI = function () {
+    editorEscapes.initiate();
+    bibliographyHelpers.initiate();
+
+    jQuery('.savecopy, .download, .latex, .epub, .html, .print, .style, \
+    .citationstyle, .tools-item, .papersize, .metadata-menu-item, \
+    #open-close-header').removeClass('disabled');
+
+    citationHelpers.formatCitationsInDoc();
+    editorHelpers.displaySetting.set('documentstyle');
+    editorHelpers.displaySetting.set('citationstyle');
+
+    jQuery('span[data-citationstyle=' + theDocument.settings.citationstyle + ']').addClass('selected');
+    editorHelpers.displaySetting.set('papersize');
+
+    editorHelpers.layoutMetadata();
+
+    if (theDocumentValues.rights === 'w') {
+        jQuery('#editor-navigation').show();
+        jQuery('.metadata-menu-item, #open-close-header, .save, \
+        .multibuttonsCover, .papersize-menu, .metadata-menu, \
+        .documentstyle-menu').removeClass('disabled');
+        if (theDocumentValues.is_owner) {
+            // bind the share dialog to the button if the user is the document owner
+            jQuery('.share').removeClass('disabled');
+        }
+        mathHelpers.resetMath();
+    }
 };
 
 theEditor.getUpdates = function (callback) {
@@ -1264,7 +1291,6 @@ var UpdateUI = exports.UpdateUI = (function () {
             return pm.on(event, _this.onEvent);
         });
         pm.on("flushed", this.onFlushed = this.onFlushed.bind(this));
-        this.updateUI();
     }
 
     _createClass(UpdateUI, [{

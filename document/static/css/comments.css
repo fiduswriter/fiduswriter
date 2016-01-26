@@ -20,7 +20,7 @@
 .comment-box {
     background-color: #fbfbfb;
     border: 1px solid #ccc;
-    position: relative;
+    position: absolute;
     width: 200px;
     padding: 9px;
 }

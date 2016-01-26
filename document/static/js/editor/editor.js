@@ -89,11 +89,11 @@ theEditor.update = function () {
     var doc = theEditor.createDoc(theDocument);
     theEditor.editor.setOption("collab", null);
     theEditor.editor.setContent(doc);
+    theEditor.editor.setOption("collab", { version: theDocument.version });
     while (theDocumentValues.last_diffs.length > 0) {
         var diff = theDocumentValues.last_diffs.shift();
         theEditor.applyDiff(diff);
     }
-    theEditor.editor.setOption("collab", { version: theDocument.version });
     theDocument.hash = theEditor.getHash();
     theEditor.editor.mod.collab.on("mustSend", theEditor.sendToCollaborators);
 };
@@ -189,7 +189,7 @@ theEditor.checkHash = function (version, hash) {
             return;
         }
         console.log('Hash could not be verified, requesting document.');
-        serverCommunications.send({ type: 'get_document_update' });
+        serverCommunications.send({ type: 'get_document' });
         return;
     } else {
         serverCommunications.send({

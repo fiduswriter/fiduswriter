@@ -59,21 +59,23 @@
             serverCommunications.activate_connection();
             break;
         case 'document_data':
-            editorHelpers.copyDocumentValues(data.document, data.document_values);
-            if (data.hasOwnProperty('user')) {
-                theUser = data.user;
+            if (theEditor.editor) {
+                // Editor exists already, this is merely an update
+                editorHelpers.updateEditorPage(data.document, data.document_values);
             } else {
-                theUser = theDocument.owner;
-            }
-            usermediaHelpers.init(function(){
-                theEditor.initiate();
-                serverCommunications.send({
-                    type: 'participant_update'
+                editorHelpers.copyDocumentValues(data.document, data.document_values);
+                if (data.hasOwnProperty('user')) {
+                    theUser = data.user;
+                } else {
+                    theUser = theDocument.owner;
+                }
+                usermediaHelpers.init(function(){
+                    theEditor.initiate();
+                    serverCommunications.send({
+                        type: 'participant_update'
+                    });
                 });
-            });
-            break;
-        case 'document_data_update':
-            editorHelpers.updateEditorPage(data.document, data.document_values);
+            }
             break;
         case 'diff':
             if (data.comments && data.comments.length) {

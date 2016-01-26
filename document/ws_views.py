@@ -130,33 +130,12 @@ class DocumentWS(BaseWebSocketHandler):
         response['document_values']['session_id']= self.id
         self.write_message(response)
 
-    def get_document_update(self):
-        document = DocumentWS.sessions[self.document_id]['document']
-        response = dict()
-        response['type'] = 'document_data_update'
-        response['document'] = dict()
-        response['document']['id']=document.id
-        response['document']['version']=document.version
-        response['document']['title']=document.title
-        response['document']['contents']=document.contents
-        response['document']['metadata']=document.metadata
-        response['document']['settings']=DocumentWS.sessions[self.document_id]["settings"]
-        response['document']['comments']=DocumentWS.sessions[self.document_id]["comments"]
-        response['document']['comment_version']=document.comment_version
-        response['document_values'] = dict()
-        requested_diffs = document.diff_version - document.version
-        if requested_diffs > 0:
-            response['document_values']['last_diffs'] = DocumentWS.sessions[self.document_id]["last_diffs"][-requested_diffs:]
-        else:
-            response['document_values']['last_diffs'] = []
-        self.write_message(response)
-
     def update_document(self, changes):
         document = DocumentWS.sessions[self.document_id]['document']
         if changes["version"] > document.diff_version:
             # The version number is too high. Possibly due to server restart.
             # Do not accept it, and send a document instead.
-            self.get_document_update()
+            self.get_document()
         else:
             document.contents = changes["contents"]
             document.metadata = changes["metadata"]
@@ -179,8 +158,6 @@ class DocumentWS(BaseWebSocketHandler):
         print parsed["type"]
         if parsed["type"]=='get_document':
             self.get_document()
-        elif parsed["type"]=='get_document_update':
-            self.get_document_update()
         elif parsed["type"]=='participant_update':
             DocumentWS.send_participant_list(self.document_id)
         elif parsed["type"]=='update_document' and self.access_rights == 'w':
@@ -257,7 +234,7 @@ class DocumentWS(BaseWebSocketHandler):
                 self.write_message(response)
             else:
                 # Client has a version that is too old
-                self.get_document_update()
+                self.get_document()
 
 
     def on_close(self):

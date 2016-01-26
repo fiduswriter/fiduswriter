@@ -91,6 +91,7 @@ class DocumentWS(BaseWebSocketHandler):
         if document.diff_version < document.version:
             print "!!!diff version issue!!!"
             document.diff_version = document.version
+            DocumentWS.sessions[self.document_id]["last_diffs"] = []
         response['document']['title']=document.title
         response['document']['contents']=document.contents
         response['document']['metadata']=document.metadata
@@ -152,9 +153,14 @@ class DocumentWS(BaseWebSocketHandler):
 
     def update_document(self, changes):
         document = DocumentWS.sessions[self.document_id]['document']
-        document.contents = changes["contents"]
-        document.metadata = changes["metadata"]
-        document.version = changes["version"]
+        if changes["version"] > document.diff_version:
+            # The version number is too high. Possibly due to server restart.
+            # Do not accept it, and send a document instead.
+            self.get_document_update()
+        else:
+            document.contents = changes["contents"]
+            document.metadata = changes["metadata"]
+            document.version = changes["version"]
 
     def update_title(self, title):
         document = DocumentWS.sessions[self.document_id]['document']

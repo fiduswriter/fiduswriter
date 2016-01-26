@@ -59,11 +59,11 @@
             serverCommunications.activate_connection();
             break;
         case 'document_data':
+            editorHelpers.copyDocumentValues(data.document, data.document_values);
             if (theEditor.editor) {
                 // Editor exists already, this is merely an update
-                editorHelpers.updateEditorPage(data.document, data.document_values);
+                theEditor.update();
             } else {
-                editorHelpers.copyDocumentValues(data.document, data.document_values);
                 if (data.hasOwnProperty('user')) {
                     theUser = data.user;
                 } else {

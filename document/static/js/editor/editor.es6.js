@@ -13,13 +13,12 @@ import {CommentStore} from "./es6_modules/comment"
 
 var theEditor = {};
 
-function makeEditor (where, doc, version) {
+function makeEditor (where) {
   return new ProseMirror({
     place: where,
     schema: fidusSchema,
-    doc: doc,
 //    menuBar: true,
-    collab: {version: version}
+    collab: {version: 0}
   })
 };
 
@@ -53,20 +52,14 @@ theEditor.createDoc = function (aDocument) {
 }
 
 theEditor.initiate = function () {
-      let doc = theEditor.createDoc(theDocument)
-      theEditor.editor = makeEditor(document.getElementById('document-editable'), doc, theDocument.version)
-      while (theDocumentValues.last_diffs.length > 0) {
-          let diff = theDocumentValues.last_diffs.shift()
-          theEditor.applyDiff(diff)
-      }
+      theEditor.editor = makeEditor(document.getElementById('document-editable'))
+      theEditor.update()
       new UpdateUI(theEditor.editor, "selectionChange change activeMarkChange blur focus")
       theEditor.editor.on("change", editorHelpers.documentHasChanged)
       theEditor.editor.on('transform', theEditor.onTransform)
       theEditor.editor.on("flushed", mathHelpers.layoutEmptyEquationNodes)
       theEditor.editor.on("flushed", mathHelpers.layoutEmptyDisplayEquationNodes)
       theEditor.editor.on("flushed", citationHelpers.formatCitationsInDocIfNew)
-      theDocument.hash = theEditor.getHash()
-      theEditor.editor.mod.collab.on("mustSend", theEditor.sendToCollaborators)
       theEditor.comments = new CommentStore(theEditor.editor, theDocument.comment_version)
       theEditor.comments.on("mustSend", theEditor.sendToCollaborators)
       _.each(theDocument.comments, function (comment){
@@ -79,6 +72,7 @@ theEditor.initiate = function () {
 }
 
 theEditor.update = function () {
+      console.log('Updating editor')
       let doc = theEditor.createDoc(theDocument)
       theEditor.editor.setOption("collab", null)
       theEditor.editor.setContent(doc)

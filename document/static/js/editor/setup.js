@@ -76,33 +76,6 @@
         editorHelpers.documentHasChanged();
     };
 
-     /** Update the editor page with the document data from the server.
-      * This is done if it was detected that the local version of the document
-      * doesn't correspond to the one on the server.
-      * @function updateEditorPage
-      * @memberof editorHelpers
-      * @param aDocument The document object as it comes from the server.
-      * @param aDocumentValues The document value object consists of variables
-      * that differ from session to session.
-      */
-     editorHelpers.updateEditorPage = function (aDocument, aDocumentValues) {
-         console.log('updating editor');
-
-         jQuery('.toolbarundoredo button').addClass('disabled');
-         theDocumentValues.changed = false;
-         theDocumentValues.titleChanged = false;
-         theDocumentValues.last_diffs = aDocumentValues.last_diffs;
-         theDocument.settings = aDocument.settings;
-         theDocument.metadata = JSON.parse(aDocument.metadata);
-         theDocument.contents = JSON.parse(aDocument.contents);
-         theDocument.comments = aDocument.comments;
-         theDocument.comment_version = aDocument.comment_version;
-         theDocument.version = aDocument.version;
-         theEditor.update();
-         mathHelpers.resetMath();
-         citationHelpers.formatCitationsInDoc();
-     };
-
 
      /** Fill the editor page with the document data from the server.
       * This is done after the document data is loaded from the server.
@@ -112,7 +85,7 @@
       * @param aDocumentValues The document value object consists of variables
       * that differ from session to session.
       */
-     editorHelpers.copyDocumentValues = function (aDocument, aDocumentValues, lastDiffs) {
+     editorHelpers.copyDocumentValues = function (aDocument, aDocumentValues) {
          var theDocument, theDocumentValues;
 
          theDocument = aDocument;
@@ -123,7 +96,6 @@
          theDocument.metadata = JSON.parse(theDocument.metadata);
          theDocument.contents = JSON.parse(theDocument.contents);
          documentId = theDocument.id;
-
 
          [
              ['papersize', 1117],
@@ -144,7 +116,6 @@
          }
          window.theDocument = theDocument;
          window.theDocumentValues = theDocumentValues;
-
 
          // Wait one second and then relayout the footnotes. At this time the fonts should have loaded.
 

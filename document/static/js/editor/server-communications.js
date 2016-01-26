@@ -1,23 +1,4 @@
-/**
- * @file Handles communications with the server (including document collaboration) over Websockets.
- * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
- *
- * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
- *
- * @license This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
- *
- */
+
 (function () {
     var exports = this,
         /** Sets up communicating with server (retrieving document, saving, collaboration, etc.). TODO
@@ -33,9 +14,6 @@
 
     serverCommunications.activate_connection = function () {
         serverCommunications.connected = true;
-        while (serverCommunications.messagesToSend.length > 0) {
-            serverCommunications.send(serverCommunications.messagesToSend.shift());
-        }
         if (serverCommunications.firstTimeConnection) {
             serverCommunications.send({
                 type: 'get_document'
@@ -48,6 +26,10 @@
             serverCommunications.send({
                 type: 'participant_update'
             });
+            while (serverCommunications.messagesToSend.length > 0) {
+                  serverCommunications.send(serverCommunications.messagesToSend.shift());
+            }
+            theEditor.sendToCollaborators();
 
         }
         serverCommunications.firstTimeConnection = false;
@@ -57,7 +39,7 @@
     serverCommunications.send = function (data) {
         if (serverCommunications.connected) {
             ws.send(JSON.stringify(data));
-        } else {
+        } else if (data.type !== 'diff') {
             serverCommunications.messagesToSend.push(data);
         }
     };
@@ -91,15 +73,17 @@
             });
             break;
         case 'document_data_update':
-            editorHelpers.updateEditorPage(data.document);
-            theEditor.applyDiffs(data.document_values.last_diffs);
+            editorHelpers.updateEditorPage(data.document, data.document_values);
             break;
         case 'diff':
             if (data.comments && data.comments.length) {
               theEditor.updateComments(data.comments, data.comments_version);
             }
             if (data.diff && data.diff.length) {
-              theEditor.applyDiffs(data.diff);
+              data.diff.forEach(function(diff) {
+                  theEditor.applyDiff(diff);
+              })
+
             }
             break;
         case 'confirm_diff':
@@ -132,48 +116,6 @@
         chatHelpers.updateParticipantList(participant_list);
     };
 
-
-    /** If the connection to the server has been lost, notify the user and ask to reload page. */
-    serverCommunications.noConnectionToServer = function () {
-
-        var noConnectionDialog = document.createElement('div');
-        noConnectionDialog.id = 'no-connection-dialog';
-        noConnectionDialog.innerHTML = '<p>' + gettext(
-            'Sorry, but the connection to the server has been lost. Please reload to ensure that no date is being lost.'
-        ) +
-            '</p>';
-
-        document.body.appendChild(noConnectionDialog);
-        diaButtons = {};
-
-        diaButtons[gettext('Ok')] = function () {
-            jQuery(this).dialog("close");
-        };
-
-
-        jQuery("#no-connection-dialog").dialog({
-            resizable: false,
-            width: 400,
-            height: 180,
-            modal: true,
-            buttons: diaButtons,
-            autoOpen: true,
-            title: gettext('No connection to server'),
-            create: function () {
-                var $the_dialog = jQuery(this).closest(".ui-dialog");
-                $the_dialog.find(".ui-button:first-child").addClass(
-                    "dark");
-            },
-            close: function () {
-                location.reload();
-            },
-        });
-
-        setTimeout(function () {
-            location.reload();
-        }, 20000);
-    };
-
     /** Whether the connection is established for the first time. */
     serverCommunications.firstTimeConnection = true;
 
@@ -192,20 +134,20 @@
 
         jQuery(document).ready(function () {
 
-            var wsConnectionAttempts = 0;
-
             function createWSConnection() {
-                var connectTime = new Date(),
-                    wsPinger;
+                var wsPinger;
 
-                window.ws = new WebSocket('ws://' + websocketServer + ':' + websocketPort +
-                    '/ws/doc/' + documentId);
+                try {
+                    window.ws = new WebSocket('ws://' + websocketServer + ':' + websocketPort +
+                      '/ws/doc/' + documentId);
+                    ws.onopen = function () {
+                      console.log('connection open');
+                      jQuery('#unobtrusive_messages').html('');
+                    };
+                } catch (err) {
+                    console.log(err)
+                }
 
-                wsPinger = setInterval(function () {
-                    serverCommunications.send({
-                        'type': 'ping'
-                    })
-                }, 50000);
 
                 ws.onmessage = function (event) {
                     var data = JSON.parse(event.data);
@@ -213,24 +155,18 @@
                 }
                 ws.onclose = function (event) {
                     serverCommunications.connected = false;
-
-                    var currentTime = new Date();
                     clearInterval(wsPinger);
-                    if (currentTime - connectTime > 10000) {
-                        wsConnectionAttempts = 0;
-                        createWSConnection();
-                    } else if (wsConnectionAttempts < 10) {
-                        wsConnectionAttempts++;
-                        setTimeout(createWSConnection, 2000);
-                        console.log('attempting to reconnect');
-                    } else {
-                        wsConnectionAttempts = 0;
-                        serverCommunications.noConnectionToServer();
-                    }
+                    setTimeout(createWSConnection, 2000);
+                    console.log('attempting to reconnect');
+                    jQuery('#unobtrusive_messages').html(gettext('Disconnected. Attempting to reconnect...'))
                 }
+                wsPinger = setInterval(function () {
+                    serverCommunications.send({
+                        'type': 'ping'
+                    })
+                }, 50000);
             }
             createWSConnection();
-
         });
 
 

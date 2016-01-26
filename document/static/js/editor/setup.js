@@ -85,12 +85,13 @@
       * @param aDocumentValues The document value object consists of variables
       * that differ from session to session.
       */
-     editorHelpers.updateEditorPage = function (aDocument) {
+     editorHelpers.updateEditorPage = function (aDocument, aDocumentValues) {
          console.log('updating editor');
 
          jQuery('.toolbarundoredo button').addClass('disabled');
          theDocumentValues.changed = false;
          theDocumentValues.titleChanged = false;
+         theDocumentValues.last_diffs = aDocumentValues.last_diffs;
          theDocument.settings = aDocument.settings;
          theDocument.metadata = JSON.parse(aDocument.metadata);
          theDocument.contents = JSON.parse(aDocument.contents);

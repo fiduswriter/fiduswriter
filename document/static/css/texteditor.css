@@ -504,3 +504,18 @@ body {counter-reset: pagination-footnote pagination-footnote-reference;}
   padding: 0 !important;
   line-height: inherit !important;
 }
+
+#unobtrusive_messages {
+  position: fixed;
+  bottom: 0;
+  left: 100px;
+  background-color: #f2f2f2;
+  border-top: 1px solid #c9c9c9;
+  border-right: 1px solid #c9c9c9;
+  border-left: 1px solid #c9c9c9;
+  padding: 4px;
+}
+
+#unobtrusive_messages:empty {
+  display: none;
+}

@@ -122,8 +122,7 @@
         commentTextBox = jQuery(this).siblings('.commentText')[0];
         if (commentTextBox) {
             id = commentHelpers.getCommentId(commentTextBox);
-            if (theEditor.comments.comments[id].comments
-                .length === 0) {
+            if (theEditor.comments.comments[id].comment.length === 0) {
                 commentHelpers.deleteComment(id);
             }
             else {

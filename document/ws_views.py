@@ -88,6 +88,9 @@ class DocumentWS(BaseWebSocketHandler):
         document = DocumentWS.sessions[self.document_id]['document']
         response['document']['id']=document.id
         response['document']['version']=document.version
+        if document.diff_version < document.version:
+            print "!!!diff version issue!!!"
+            document.diff_version = document.version
         response['document']['title']=document.title
         response['document']['contents']=document.contents
         response['document']['metadata']=document.metadata
@@ -205,7 +208,7 @@ class DocumentWS(BaseWebSocketHandler):
                     DocumentWS.sessions[self.document_id]["last_diffs"].extend(parsed["diff"])
                     # store 500 diffs or all the diffs from the last document version to the latest diff -- whatever is the greatest.
                     number_stored_diffs = max(500, document.diff_version - document.version)
-                    DocumentWS.sessions[self.document_id]["last_diffs"] = DocumentWS.sessions[self.document_id]["last_diffs"][:number_stored_diffs]
+                    DocumentWS.sessions[self.document_id]["last_diffs"] = DocumentWS.sessions[self.document_id]["last_diffs"][-number_stored_diffs:]
                     document.diff_version += len(parsed["diff"])
                     for cd in parsed["comments"]:
                         id = str(cd["id"])
@@ -242,7 +245,7 @@ class DocumentWS(BaseWebSocketHandler):
                 response = {
                     "type": "diff",
                     "version": parsed["version"],
-                    "diff": document_session["last_diffs"][:number_requested_diffs],
+                    "diff": document_session["last_diffs"][-number_requested_diffs:],
                     "request_id": 0
                 }
                 self.write_message(response)

@@ -150,6 +150,11 @@ export class UpdateUI {
         jQuery('.editortoolbar button').addClass('disabled')
         jQuery('#block-style-label').html('')
         jQuery('#current-position').html('')
+        if (this.pm.selection.empty) {
+            jQuery('#button-comment').addClass('disabled')
+        } else {
+            jQuery('#button-comment').removeClass('disabled')
+        }
     } else {
         this.calculatePlaceHolderCss(startElement)
         jQuery('#current-position').html(PART_LABELS[startElement.type.name])
@@ -161,6 +166,12 @@ export class UpdateUI {
             case 'metadatakeywords':
                 jQuery('.edit-button').addClass('disabled')
                 jQuery('#block-style-label').html('')
+                if (this.pm.selection.empty) {
+                    jQuery('#button-comment').addClass('disabled')
+                } else {
+                    jQuery('#button-comment').removeClass('disabled')
+                }
+
                 break
             case 'metadataabstract':
             case 'documentcontents':
@@ -168,6 +179,9 @@ export class UpdateUI {
 
                 if (this.pm.selection.empty) {
                     jQuery('#button-link').addClass('disabled')
+                    jQuery('#button-comment').addClass('disabled')
+                } else {
+                    jQuery('#button-comment').removeClass('disabled')
                 }
 
                 if(startElement.type.name==='metadataabstract') {

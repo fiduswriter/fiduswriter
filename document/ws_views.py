@@ -110,7 +110,10 @@ class DocumentWS(BaseWebSocketHandler):
         response['document_values']['is_owner']=self.is_owner
         response['document_values']['rights'] = self.access_rights
         requested_diffs = document.diff_version - document.version
-        response['document_values']['last_diffs'] = DocumentWS.sessions[self.document_id]["last_diffs"][-requested_diffs:]
+        if requested_diffs > 0:
+            response['document_values']['last_diffs'] = DocumentWS.sessions[self.document_id]["last_diffs"][-requested_diffs:]
+        else:
+            response['document_values']['last_diffs'] = []
         if self.is_new:
             response['document_values']['is_new'] = True
         if not self.is_owner:
@@ -138,7 +141,10 @@ class DocumentWS(BaseWebSocketHandler):
         response['document']['comment_version']=document.comment_version
         response['document_values'] = dict()
         requested_diffs = document.diff_version - document.version
-        response['document_values']['last_diffs'] = DocumentWS.sessions[self.document_id]["last_diffs"][-requested_diffs:]
+        if requested_diffs > 0:
+            response['document_values']['last_diffs'] = DocumentWS.sessions[self.document_id]["last_diffs"][-requested_diffs:]
+        else:
+            response['document_values']['last_diffs'] = []
         self.write_message(response)
 
     def update_document(self, changes):

@@ -67,12 +67,6 @@ theEditor.initiate = function () {
     theEditor.editor.on("flushed", mathHelpers.layoutEmptyEquationNodes);
     theEditor.editor.on("flushed", mathHelpers.layoutEmptyDisplayEquationNodes);
     theEditor.editor.on("flushed", citationHelpers.formatCitationsInDocIfNew);
-    theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators);
-    theEditor.comments = new _comment.CommentStore(theEditor.editor, theDocument.comment_version);
-    theEditor.comments.on("mustSend", theEditor.sendToCollaborators);
-    _.each(theDocument.comments, function (comment) {
-        theEditor.comments.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers);
-    });
 };
 
 theEditor.update = function () {
@@ -89,7 +83,7 @@ theEditor.update = function () {
     theEditor.editor.mod.collab.on("mustSend", theEditor.sendToCollaborators);
     theEditor.comments = new _comment.CommentStore(theEditor.editor, theDocument.comment_version);
     _.each(theDocument.comments, function (comment) {
-        theEditor.comments.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers);
+        theEditor.comments.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers, comment.isMajor);
     });
     theEditor.comments.on("mustSend", theEditor.sendToCollaborators);
     theEditor.enableUI();

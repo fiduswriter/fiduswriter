@@ -76,7 +76,7 @@ theEditor.update = function () {
       theEditor.comments = new CommentStore(theEditor.editor, theDocument.comment_version)
       _.each(theDocument.comments, function (comment){
         theEditor.comments.addLocalComment(comment.id, comment.user,
-          comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers, comment.isMajor)
+          comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers, comment['review:isMajor'])
       })
       theEditor.comments.on("mustSend", theEditor.sendToCollaborators)
       theEditor.enableUI()

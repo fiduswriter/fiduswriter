@@ -16,7 +16,7 @@ class Comment {
     this.date = date
     this.comment = comment
     this.answers = answers
-    this.isMajor = isMajor
+    this['review:isMajor'] = isMajor
   }
 }
 
@@ -53,7 +53,7 @@ export class CommentStore {
   updateLocalComment(id, comment, commentIsMajor) {
     if (this.comments[id]) {
       this.comments[id].comment = comment
-      this.comments[id].isMajor = commentIsMajor
+      this.comments[id]['review:isMajor'] = commentIsMajor
     }
   }
 
@@ -139,7 +139,7 @@ export class CommentStore {
       } else if (event.type == "update") {
         let found = this.comments[event.id]
         if (!found || !found.id) continue
-        result.push({type: "update", id: found.id, comment: found.comment, isMajor: found.isMajor})
+        result.push({type: "update", id: found.id, comment: found.comment, 'review:isMajor': found['review:isMajor']})
       } else if (event.type == "create") {
         let found = this.comments[event.id]
         if (!found || !found.id) continue
@@ -151,7 +151,7 @@ export class CommentStore {
                      date: found.date,
                      comment: found.comment,
                      answers: found.answers,
-                     isMajor: found.isMajor
+          'review:isMajor': found['review:isMajor']
                      })
       } else if (event.type == "add_answer") {
         let found = this.comments[event.id]
@@ -193,12 +193,12 @@ export class CommentStore {
         this.deleteLocalComment(event.id)
         updateCommentLayout = true
       } else if (event.type == "create") {
-        this.addLocalComment(event.id, event.user, event.userName, event.userAvatar, event.date, event.comment, event.isMajor)
+        this.addLocalComment(event.id, event.user, event.userName, event.userAvatar, event.date, event.comment, event['review:isMajor'])
         if (event.comment.length > 0) {
           updateCommentLayout = true
         }
       } else if (event.type == "update") {
-        this.updateLocalComment(event.id, event.comment, event.isMajor)
+        this.updateLocalComment(event.id, event.comment, event['review:isMajor'])
         updateCommentLayout = true
       } else if (event.type == "add_answer") {
         this.addLocalAnswer(event.commentId, event)

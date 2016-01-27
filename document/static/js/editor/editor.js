@@ -83,7 +83,7 @@ theEditor.update = function () {
     theEditor.editor.mod.collab.on("mustSend", theEditor.sendToCollaborators);
     theEditor.comments = new _comment.CommentStore(theEditor.editor, theDocument.comment_version);
     _.each(theDocument.comments, function (comment) {
-        theEditor.comments.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers, comment.isMajor);
+        theEditor.comments.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers, comment['review:isMajor']);
     });
     theEditor.comments.on("mustSend", theEditor.sendToCollaborators);
     theEditor.enableUI();
@@ -275,7 +275,7 @@ var Comment = function Comment(id, user, userName, userAvatar, date, comment, an
   this.date = date;
   this.comment = comment;
   this.answers = answers;
-  this.isMajor = isMajor;
+  this['review:isMajor'] = isMajor;
 };
 
 var CommentStore = exports.CommentStore = function () {
@@ -318,7 +318,7 @@ var CommentStore = exports.CommentStore = function () {
     value: function updateLocalComment(id, comment, commentIsMajor) {
       if (this.comments[id]) {
         this.comments[id].comment = comment;
-        this.comments[id].isMajor = commentIsMajor;
+        this.comments[id]['review:isMajor'] = commentIsMajor;
       }
     }
   }, {
@@ -439,7 +439,7 @@ var CommentStore = exports.CommentStore = function () {
         } else if (event.type == "update") {
           var found = this.comments[event.id];
           if (!found || !found.id) continue;
-          result.push({ type: "update", id: found.id, comment: found.comment, isMajor: found.isMajor });
+          result.push({ type: "update", id: found.id, comment: found.comment, 'review:isMajor': found['review:isMajor'] });
         } else if (event.type == "create") {
           var found = this.comments[event.id];
           if (!found || !found.id) continue;
@@ -451,7 +451,7 @@ var CommentStore = exports.CommentStore = function () {
             date: found.date,
             comment: found.comment,
             answers: found.answers,
-            isMajor: found.isMajor
+            'review:isMajor': found['review:isMajor']
           });
         } else if (event.type == "add_answer") {
           var found = this.comments[event.id];
@@ -497,12 +497,12 @@ var CommentStore = exports.CommentStore = function () {
           _this2.deleteLocalComment(event.id);
           updateCommentLayout = true;
         } else if (event.type == "create") {
-          _this2.addLocalComment(event.id, event.user, event.userName, event.userAvatar, event.date, event.comment, event.isMajor);
+          _this2.addLocalComment(event.id, event.user, event.userName, event.userAvatar, event.date, event.comment, event['review:isMajor']);
           if (event.comment.length > 0) {
             updateCommentLayout = true;
           }
         } else if (event.type == "update") {
-          _this2.updateLocalComment(event.id, event.comment, event.isMajor);
+          _this2.updateLocalComment(event.id, event.comment, event['review:isMajor']);
           updateCommentLayout = true;
         } else if (event.type == "add_answer") {
           _this2.addLocalAnswer(event.commentId, event);

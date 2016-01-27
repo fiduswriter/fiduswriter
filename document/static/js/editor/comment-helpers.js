@@ -359,7 +359,7 @@
               userAvatar: theEditor.comments.comments[id]['userAvatar'],
               date: theEditor.comments.comments[id]['date'],
               answers: theEditor.comments.comments[id]['answers'],
-              isMajor: theEditor.comments.comments[id]['isMajor']
+                'review:isMajor': theEditor.comments.comments[id]['review:isMajor']
             });
           }
 

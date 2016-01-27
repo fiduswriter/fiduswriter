@@ -51,7 +51,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
      */
     bibliographyHelpers.serverBibItemToBibDB = function (item, aBibDB) {
         var id = item['id'];
-        aBibDB[id] = jQuery.parseJSON(item['fields']);
+        aBibDB[id] = JSON.parse(item['fields']);
         aBibDB[id]['entry_type'] = item['entry_type'];
         aBibDB[id]['entry_key'] = item['entry_key'];
         aBibDB[id]['entry_cat'] = item['entry_cat'];
@@ -1693,7 +1693,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
     bibliographyHelpers.importBibliography3 = function (bib_entries, callback) {
 
         var post_data = {
-            'bibs': $.toJSON(bib_entries)
+            'bibs': JSON.stringify(bib_entries)
         };
 
         $.ajax({
@@ -1998,7 +1998,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
 
         var autocomplete_tags = [];
         jQuery('#bibliography .fw-searchable').each(function () {
-            autocomplete_tags.push(this.textContent);
+            autocomplete_tags.push(this.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''));
         });
         autocomplete_tags = _.uniq(autocomplete_tags);
         jQuery("#bibliography_filter input").autocomplete({
@@ -2009,7 +2009,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
      * @function init
      * @memberof bibliographyHelpers
      */
-    bibliographyHelpers.init = function () {
+    bibliographyHelpers.bindEvents = function () {
 
         jQuery(document).on('click', '.delete-bib', function () {
             var BookId = jQuery(this).attr('data-id');
@@ -2085,6 +2085,10 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             }
         });
 
+    };
+
+    bibliographyHelpers.initiate = function () {
+
         bibliographyHelpers.getBibDB(function () {
             if (window.hasOwnProperty('theDocument') && theEditor.editor) {
                 citationHelpers.formatCitationsInDoc();
@@ -2098,8 +2102,8 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
      */
     bibliographyHelpers.bind = function () {
         jQuery(document).ready(function () {
-
-            bibliographyHelpers.init();
+            bibliographyHelpers.bindEvents();
+            bibliographyHelpers.initiate();
 
         });
 

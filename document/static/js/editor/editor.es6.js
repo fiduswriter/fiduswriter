@@ -13,13 +13,12 @@ import {CommentStore} from "./es6_modules/comment"
 
 var theEditor = {};
 
-function makeEditor (where, doc, version) {
+function makeEditor (where) {
   return new ProseMirror({
     place: where,
     schema: fidusSchema,
-    doc: doc,
 //    menuBar: true,
-    collab: {version: version}
+    collab: {version: 0}
   })
 };
 
@@ -34,12 +33,12 @@ theEditor.createDoc = function (aDocument) {
       metadataKeywordsNode = aDocument.metadata.keywords ? exporter.obj2Node(aDocument.metadata.keywords) : document.createElement('div'),
       doc;
 
-      titleNode.id = 'document-title';
-      metadataSubtitleNode.id = 'metadata-subtitle';
-      metadataAuthorsNode.id = 'metadata-authors';
-      metadataAbstractNode.id = 'metadata-abstract';
-      metadataKeywordsNode.id = 'metadata-keywords';
-      documentContentsNode.id = 'document-contents';
+      titleNode.id = 'document-title'
+      metadataSubtitleNode.id = 'metadata-subtitle'
+      metadataAuthorsNode.id = 'metadata-authors'
+      metadataAbstractNode.id = 'metadata-abstract'
+      metadataKeywordsNode.id = 'metadata-keywords'
+      documentContentsNode.id = 'document-contents'
 
       editorNode.appendChild(titleNode);
       editorNode.appendChild(metadataSubtitleNode);
@@ -49,37 +48,70 @@ theEditor.createDoc = function (aDocument) {
       editorNode.appendChild(documentContentsNode);
 
       doc = fromDOM(fidusSchema, editorNode)
-
-      return doc;
-};
+      return doc
+}
 
 theEditor.initiate = function () {
-      let doc = theEditor.createDoc(theDocument)
-      theEditor.editor = makeEditor(document.getElementById('document-editable'), doc, theDocument.version)
-      theDocument.hash = theEditor.getHash()
+      theEditor.editor = makeEditor(document.getElementById('document-editable'))
       new UpdateUI(theEditor.editor, "selectionChange change activeMarkChange blur focus")
-      theEditor.editor.on('change', editorHelpers.documentHasChanged)
+      theEditor.editor.on("change", editorHelpers.documentHasChanged)
       theEditor.editor.on('transform', theEditor.onTransform)
-      theEditor.editor.on("flushed", mathHelpers.layoutEmptyEquationNodes);
-      theEditor.editor.on("flushed", mathHelpers.layoutEmptyDisplayEquationNodes);
-      theEditor.editor.on("flushed", citationHelpers.formatCitationsInDocIfNew);
-      theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators)
+      theEditor.editor.on("flushed", mathHelpers.layoutEmptyEquationNodes)
+      theEditor.editor.on("flushed", mathHelpers.layoutEmptyDisplayEquationNodes)
+      theEditor.editor.on("flushed", citationHelpers.formatCitationsInDocIfNew)
+}
+
+theEditor.update = function () {
+      console.log('Updating editor')
+      let doc = theEditor.createDoc(theDocument)
+      theEditor.editor.setOption("collab", null)
+      theEditor.editor.setContent(doc)
+      theEditor.editor.setOption("collab", {version: theDocument.version})
+      while (theDocumentValues.last_diffs.length > 0) {
+          let diff = theDocumentValues.last_diffs.shift()
+          theEditor.applyDiff(diff)
+      }
+      theDocument.hash = theEditor.getHash()
+      theEditor.editor.mod.collab.on("mustSend", theEditor.sendToCollaborators)
       theEditor.comments = new CommentStore(theEditor.editor, theDocument.comment_version)
-      theEditor.comments.on("mustSend", theEditor.sendToCollaborators)
       _.each(theDocument.comments, function (comment){
         theEditor.comments.addLocalComment(comment.id, comment.user,
           comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers, comment.isMajor)
       })
-};
+      theEditor.comments.on("mustSend", theEditor.sendToCollaborators)
+      theEditor.enableUI()
+}
 
-theEditor.update = function () {
-      let doc = theEditor.createDoc(theDocument);
-      theEditor.editor.setOption("collab", null)
-      theEditor.editor.setContent(doc);
-      theEditor.editor.setOption("collab", {version: theDocument.version})
-      theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators);
-      theDocument.hash = theEditor.getHash();
-};
+theEditor.enableUI = function () {
+    editorEscapes.initiate()
+    bibliographyHelpers.initiate()
+
+    jQuery('.savecopy, .download, .latex, .epub, .html, .print, .style, \
+    .citationstyle, .tools-item, .papersize, .metadata-menu-item, \
+    #open-close-header').removeClass('disabled')
+
+    citationHelpers.formatCitationsInDoc()
+    editorHelpers.displaySetting.set('documentstyle')
+    editorHelpers.displaySetting.set('citationstyle')
+
+    jQuery('span[data-citationstyle=' + theDocument.settings.citationstyle +
+        ']').addClass('selected')
+    editorHelpers.displaySetting.set('papersize')
+
+    editorHelpers.layoutMetadata()
+
+    if (theDocumentValues.rights === 'w') {
+        jQuery('#editor-navigation').show()
+        jQuery('.metadata-menu-item, #open-close-header, .save, \
+        .multibuttonsCover, .papersize-menu, .metadata-menu, \
+        .documentstyle-menu').removeClass('disabled')
+        if (theDocumentValues.is_owner) {
+            // bind the share dialog to the button if the user is the document owner
+            jQuery('.share').removeClass('disabled')
+        }
+        mathHelpers.resetMath()
+    }
+}
 
 
 theEditor.getUpdates = function (callback) {
@@ -132,8 +164,8 @@ theEditor.confirmDiff = function (request_id) {
     theEditor.comments.eventsSent(sentComments)
 };
 
-theEditor.applyDiffs = function(diffs) {
-    theEditor.editor.mod.collab.receive(diffs.map(j => Step.fromJSON(fidusSchema, j)));
+theEditor.applyDiff = function(diff) {
+    theEditor.editor.mod.collab.receive([diff].map(j => Step.fromJSON(fidusSchema, j)));
 }
 
 theEditor.updateComments = function(comments, comment_version) {
@@ -169,7 +201,7 @@ theEditor.checkHash = function(version, hash) {
           return
       }
       console.log('Hash could not be verified, requesting document.')
-      serverCommunications.send({type: 'get_document_update'})
+      serverCommunications.send({type: 'get_document'})
       return
     } else {
       serverCommunications.send({

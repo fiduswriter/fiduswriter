@@ -76,32 +76,6 @@
         editorHelpers.documentHasChanged();
     };
 
-     /** Update the editor page with the document data from the server.
-      * This is done if it was detected that the local version of the document
-      * doesn't correspond to the one on the server.
-      * @function updateEditorPage
-      * @memberof editorHelpers
-      * @param aDocument The document object as it comes from the server.
-      * @param aDocumentValues The document value object consists of variables
-      * that differ from session to session.
-      */
-     editorHelpers.updateEditorPage = function (aDocument) {
-         console.log('updating editor');
-
-         jQuery('.toolbarundoredo button').addClass('disabled');
-         theDocumentValues.changed = false;
-         theDocument.settings = aDocument.settings;
-         theDocument.metadata = jQuery.parseJSON(aDocument.metadata);
-         theDocument.contents = jQuery.parseJSON(aDocument.contents);
-         theDocument.comments = aDocument.comments;
-         theDocument.comment_version = aDocument.comment_version;
-         theDocument.version = aDocument.version;
-         theEditor.update();
-         theEditor.applyDiffs(aDocument.last_diffs);
-         mathHelpers.resetMath();
-         citationHelpers.formatCitationsInDoc();
-     };
-
 
      /** Fill the editor page with the document data from the server.
       * This is done after the document data is loaded from the server.
@@ -111,22 +85,17 @@
       * @param aDocumentValues The document value object consists of variables
       * that differ from session to session.
       */
-     editorHelpers.copyDocumentValues = function (aDocument, aDocumentValues, lastDiffs) {
+     editorHelpers.copyDocumentValues = function (aDocument, aDocumentValues) {
          var theDocument, theDocumentValues;
+
          theDocument = aDocument;
          theDocumentValues = aDocumentValues;
          theDocumentValues.changed = false;
+         theDocumentValues.titleChanged = false;
          theDocument.settings = theDocument.settings;
-         theDocument.metadata = jQuery.parseJSON(theDocument.metadata);
-         theDocument.contents = jQuery.parseJSON(theDocument.contents);
-
+         theDocument.metadata = JSON.parse(theDocument.metadata);
+         theDocument.contents = JSON.parse(theDocument.contents);
          documentId = theDocument.id;
-
-
-         if (!theDocument.metadata.title) {
-            theDocument.metadata.title = theDocument.title;
-         }
-
 
          [
              ['papersize', 1117],
@@ -148,7 +117,6 @@
          window.theDocument = theDocument;
          window.theDocumentValues = theDocumentValues;
 
-
          // Wait one second and then relayout the footnotes. At this time the fonts should have loaded.
 
          setTimeout(function() {
@@ -166,6 +134,14 @@
          theDocumentValues.changed = true; // For document saving
      };
 
+     /** Called whenever the document title had changed. Makes sure that saving happens.
+      * @function titleHasChanged
+      * @memberof editorHelpers
+      */
+     editorHelpers.titleHasChanged = function () {
+         theDocumentValues.titleChanged = true; // For title saving
+     };
+
      /** Functions related to taking document data from theDocument.* and displaying it (ie making it part of the DOM structure).
       * @namespace editorHelpers.displaySetting
       */
@@ -176,24 +152,21 @@
       * @memberof editorHelpers.displaySetting*/
      editorHelpers.displaySetting.documentstyle = function () {
 
-         var documentStyleLink = document.getElementById('document-style-link');
-
-         var newDocumentStyleLink = document.createElement('link');
-         newDocumentStyleLink.setAttribute("rel", "stylesheet");
-         newDocumentStyleLink.setAttribute("type", "text/css");
-         newDocumentStyleLink.setAttribute("id", "document-style-link");
-         newDocumentStyleLink.setAttribute("href", staticUrl+'css/document/'+theDocument.settings.documentstyle+'.css');
-
-         documentStyleLink.parentElement.replaceChild(newDocumentStyleLink, documentStyleLink);
-
+         var documentStyleLink, stylesheet;
 
          jQuery("#header-navigation .style.selected").removeClass('selected');
          jQuery('span[data-style=' + theDocument.settings.documentstyle + ']').addClass('selected');
 
-         set_document_style_timer = setTimeout(function () {
-             clearTimeout(set_document_style_timer);
-             commentHelpers.layoutComments();
-         }, 200);
+         documentStyleLink = document.getElementById('document-style-link');
+
+         // Remove previous style.
+         documentStyleLink.parentElement.removeChild(documentStyleLink.previousElementSibling);
+
+         stylesheet = loadCSS(staticUrl+'css/document/'+theDocument.settings.documentstyle+'.css', documentStyleLink);
+
+         onloadCSS( stylesheet, function() {
+            commentHelpers.layoutComments();
+         });
 
      };
 
@@ -288,24 +261,23 @@
         return true;
      };
 
-     /** Will save the current Document to the server if theDocumentValues.control is true.
+     /** Will send an update of the current Document to the server if theDocumentValues.control is true.
       * In collaborative mode, only the first client to connect will have theDocumentValues.control set to true.
-      * @function saveDocument
+      * @function sendDocumentUpdate
       * @memberof editorHelpers
       * @param callback Callback to be called after copying data (optional).
       */
-     editorHelpers.saveDocument = function (callback) {
+     editorHelpers.sendDocumentUpdate = function (callback) {
          var documentData = {};
 
          if (theDocumentValues.control===true) {
              documentData.metadata = JSON.stringify(theDocument.metadata);
-             documentData.title = theDocument.title.substring(0, 255);
              documentData.contents = JSON.stringify(theDocument.contents);
              documentData.version = theDocument.version;
              documentData.hash = theDocument.hash;
              console.log('saving');
              serverCommunications.send({
-                 type: 'save',
+                 type: 'update_document',
                  document: documentData
              });
          } else {
@@ -336,15 +308,38 @@ jQuery(document).ready(function() {
         citationStyleMenu = document.getElementById("citationstyle-list"),
         newMenuItem, i;
 
+    theEditor.initiate();
+
+    // Set Auto-save to send the document every two minutes, if it has changed.
+    setInterval(function() {
+        if (theDocumentValues && theDocumentValues.changed) {
+            theEditor.getUpdates(function() {
+                editorHelpers.sendDocumentUpdate();
+            });
+        }
+    }, 120000);
+
+    // Set Auto-save to send the title every 5 seconds, if it has changed.
+    setInterval(function() {
+        if (theDocumentValues && theDocumentValues.titleChanged) {
+            theDocumentValues.titleChanged = false;
+            if (theDocumentValues.control) {
+                serverCommunications.send({
+                    type: 'update_title',
+                    title: theDocument.title
+                });
+            }
+        }
+    }, 10000);
+
     // Enable toolbar menu
     jQuery('#menu1').ptMenu();
 
     //open dropdown for headermenu
-    jQuery('.header-nav-item').each(function() {
+    jQuery('.header-nav-item, .multibuttonsCover').each(function() {
         $.addDropdownBox(jQuery(this), jQuery(this).siblings(
             '.fw-pulldown'));
     });
-
 
     for (i = 0; i < documentStyleList.length; i++) {
         newMenuItem = document.createElement("li");
@@ -357,30 +352,57 @@ jQuery(document).ready(function() {
         citationStyleMenu.appendChild(newMenuItem);
     }
 
+    jQuery('.metadata-menu-item, #open-close-header, .save, .multibuttonsCover, \
+    .savecopy, .download, .latex, .epub, .html, .print, .style, .citationstyle, \
+    .tools-item, .papersize, .metadata-menu-item, .share, #open-close-header, \
+    .save, .papersize-menu, .metadata-menu, .documentstyle-menu, \
+    .citationstyle-menu, .exporter-menu').addClass('disabled');
 
+    jQuery('#editor-navigation').hide();
 
-});
-
-// Functions to be executed when document has loaded
-jQuery(document).bind('documentDataLoaded', function() {
-
-    editorEscapes.initiate();
-    // We cannot download BibDB and ImageDB before we know if we are the document owner or not.
-    // But we cannot load the document before we have the ImageDB availabel because
-    // figures need to be layouted with the ImageDB available.
-    bibliographyHelpers.init();
-    usermediaHelpers.init(function(){
-      theEditor.initiate();
-      citationHelpers.formatCitationsInDoc();
-      theEditor.applyDiffs(theDocumentValues.last_diffs);
+    jQuery(document).on('mousedown', '.savecopy:not(.disabled)', function() {
+        theEditor.getUpdates(function() {
+            editorHelpers.sendDocumentUpdate();
+        });
+        exporter.savecopy(theDocument);
     });
 
-
-
-    editorHelpers.displaySetting.set('documentstyle');
+    jQuery(document).on('mousedown', '.download:not(.disabled)', function() {
+        theEditor.getUpdates(function() {
+            editorHelpers.sendDocumentUpdate();
+        });
+        exporter.downloadNative(theDocument);
+    });
+    jQuery(document).on('mousedown', '.latex:not(.disabled)', function() {
+        theEditor.getUpdates(function() {
+            editorHelpers.sendDocumentUpdate();
+        });
+        exporter.downloadLatex(theDocument);
+    });
+    jQuery(document).on('mousedown', '.epub:not(.disabled)', function() {
+        theEditor.getUpdates(function() {
+            editorHelpers.sendDocumentUpdate();
+        });
+        exporter.downloadEpub(theDocument);
+    });
+    jQuery(document).on('mousedown', '.html:not(.disabled)', function() {
+        theEditor.getUpdates(function() {
+            editorHelpers.sendDocumentUpdate();
+        });
+        exporter.downloadHtml(theDocument);
+    });
+    jQuery(document).on('mousedown', '.print:not(.disabled)', function() {
+        editorHelpers.print();
+    });
+    jQuery(document).on('mousedown', '.close:not(.disabled)', function() {
+        theEditor.getUpdates(function() {
+            editorHelpers.sendDocumentUpdate();
+        });
+        window.location.href = '/';
+    });
 
     // Document Style switching
-    jQuery("#header-navigation .style").bind('mousedown', function() {
+    jQuery(document).on('mousedown', "#header-navigation .style:not(.disabled)", function() {
         if (editorHelpers.setSetting('documentstyle',
                 jQuery(this).attr('data-style'), true)) {
 
@@ -390,14 +412,8 @@ jQuery(document).bind('documentDataLoaded', function() {
         return false;
     });
 
-
-    editorHelpers.displaySetting.set('citationstyle');
-
-    jQuery('span[data-citationstyle=' + theDocument.settings.citationstyle +
-        ']').addClass('selected');
-
     // Citation Style switching
-    jQuery("#header-navigation .citationstyle").bind('mousedown', function() {
+    jQuery(document).on('mousedown', "#header-navigation .citationstyle:not(.disabled)", function() {
         if (editorHelpers.setSetting('citationstyle',
                 jQuery(this).attr('data-citationstyle'),true)) {
             editorHelpers.displaySetting.set('citationstyle');
@@ -407,15 +423,13 @@ jQuery(document).bind('documentDataLoaded', function() {
         return false;
     });
     // Tools
-    jQuery("#header-navigation .tools-item").bind('mousedown', function() {
+    jQuery(document).on('mousedown', "#header-navigation .tools-item:not(.disabled)", function() {
         toolsHelpers.toolsEventHandler(jQuery(this).data('function'));
         return false;
     });
 
-    editorHelpers.displaySetting.set('papersize');
-
     // Paper size switching
-    jQuery("#header-navigation .papersize").bind('mousedown', function() {
+    jQuery(document).on('mousedown', "#header-navigation .papersize:not(.disabled)", function() {
         if (editorHelpers.setSetting('papersize',
                 parseInt(jQuery(this).attr('data-paperheight')), true)) {
             editorHelpers.displaySetting.set('papersize');
@@ -424,140 +438,58 @@ jQuery(document).bind('documentDataLoaded', function() {
         return false;
     });
 
-    jQuery(document).on('mousedown', '.savecopy:not(.disabled)', function() {
-        theEditor.getUpdates(function() {
-            editorHelpers.saveDocument();
-        });
-        exporter.savecopy(theDocument);
+    jQuery(document).on('mousedown', '.metadata-menu-item:not(.disabled)', editorHelpers.switchMetadata);
+
+    jQuery(document).on('mousedown', '.share:not(.disabled)', function() {
+        accessrightsHelpers.createAccessRightsDialog([
+            theDocument.id
+        ]);
     });
 
-    jQuery('.download').bind('mousedown', function() {
-        theEditor.getUpdates(function() {
-            editorHelpers.saveDocument();
-        });
-        exporter.downloadNative(theDocument);
-    });
-    jQuery('.latex').bind('mousedown', function() {
-        theEditor.getUpdates(function() {
-            editorHelpers.saveDocument();
-        });
-        exporter.downloadLatex(theDocument);
-    });
-    jQuery('.epub').bind('mousedown', function() {
-        theEditor.getUpdates(function() {
-            editorHelpers.saveDocument();
-        });
-        exporter.downloadEpub(theDocument);
-    });
-    jQuery('.html').bind('mousedown', function() {
-        theEditor.getUpdates(function() {
-            editorHelpers.saveDocument();
-        });
-        exporter.downloadHtml(theDocument);
-    });
-    jQuery('.print').bind('mousedown', function() {
-        editorHelpers.print();
-    });
-    jQuery('.close').bind('mousedown', function() {
-        theEditor.getUpdates(function() {
-            editorHelpers.saveDocument();
-        });
-        window.location.href = '/';
-    });
-
-
-    editorHelpers.layoutMetadata();
-
-    if (theDocumentValues.rights === 'r') {
-        jQuery('#editor-navigation').hide();
-        jQuery('.papersize-menu,.metadata-menu,.documentstyle-menu').addClass(
-            'disabled');
-    } else if (theDocumentValues.rights === 'w') {
-
-        jQuery('.metadata-menu-item').bind('mousedown', editorHelpers.switchMetadata);
-
-
-        if (!theDocumentValues.is_owner) {
-            jQuery('span.share').addClass('disabled');
+    //open and close header
+    jQuery(document).on('click', '#open-close-header:not(.disabled)', function() {
+        var header_top = -92,
+            toolnav_top = 0,
+            content_top = 108;
+        if (jQuery(this).hasClass('header-closed')) {
+            jQuery(this).removeClass('header-closed');
+            header_top = 0,
+                toolnav_top = 92,
+                content_top = 200;
+        } else {
+            jQuery(this).addClass('header-closed');
         }
-
-
-        mathHelpers.resetMath();
-
-
-        // Set Auto-save to save every two minutes
-        setInterval(function() {
-            if (theDocumentValues.changed) {
-                theEditor.getUpdates(function() {
-                    editorHelpers.saveDocument();
-                });
-            }
-        }, 120000);
-
-
-        // bind the share dialog to the button if the user is the document owner
-        if (theDocumentValues.is_owner) {
-            jQuery('.share').bind('mousedown', function() {
-                accessrightsHelpers.createAccessRightsDialog([
-                    theDocument.id
-                ]);
-            });
-        }
-
-
-        // Bind comment functions
-        commentHelpers.bindEvents();
-
-        jQuery('.save').bind('mousedown', function() {
-            theEditor.getUpdates(function() {
-                editorHelpers.saveDocument();
-            });
-            exporter.uploadNative(theDocument);
+        jQuery('#header').stop().animate({
+            'top': header_top
         });
-
-
-        jQuery('.multibuttonsCover').each(function() {
-            $.addDropdownBox(jQuery(this), jQuery(this).siblings(
-                '.fw-pulldown'));
+        jQuery('#editor-navigation').stop().animate({
+            'top': toolnav_top
         });
+        jQuery('#pagination-layout').stop()
+            .animate({
+                'top': content_top
+            }, {
+                'complete': function() {
+                    commentHelpers.layoutComments();
+                }
+            });
+    });
 
-        //open and close header
-        jQuery('#open-close-header').bind('click', function() {
-            var header_top = -92,
-                toolnav_top = 0,
-                content_top = 108;
-            if (jQuery(this).hasClass('header-closed')) {
-                jQuery(this).removeClass('header-closed');
-                header_top = 0,
-                    toolnav_top = 92,
-                    content_top = 200;
-            } else {
-                jQuery(this).addClass('header-closed');
-            }
-            jQuery('#header').stop().animate({
-                'top': header_top
-            });
-            jQuery('#editor-navigation').stop().animate({
-                'top': toolnav_top
-            });
-            jQuery('#pagination-layout').stop()
-                .animate({
-                    'top': content_top
-                }, {
-                    'complete': function() {
-                        commentHelpers.layoutComments();
-                    }
-                });
+    jQuery(document).on('mousedown', '.save:not(.disabled)', function() {
+        theEditor.getUpdates(function() {
+            editorHelpers.sendDocumentUpdate();
         });
+        exporter.uploadNative(theDocument);
+    });
 
-    }
+    // Bind comment functions
+    commentHelpers.bindEvents();
+    bibliographyHelpers.bindEvents();
 });
+
 
 jQuery(document).bind("bibliography_ready", function(event) {
     jQuery('.citationstyle-menu, .exporter-menu').each(function() {
-        jQuery.addDropdownBox(jQuery(this), jQuery(this).siblings('.fw-pulldown'));
         jQuery(this).removeClass('disabled');
-        jQuery(this).removeClass('header-nav-item-disabled');
-        jQuery(this).addClass('header-nav-item');
     });
 });

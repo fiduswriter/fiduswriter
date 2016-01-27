@@ -321,11 +321,9 @@ AVATAR_MAX_AVATARS_PER_USER = 1
 
 # Location of commonly used Js libraries. Here the local version is given. For deployment a version on the net is better.
 JS_LOCATIONS = {
-    'JQUERY_URL': STATIC_URL + 'js/libs/jquery-2.0.3.js',
-    'JQUERYMIGRATE_URL': STATIC_URL + 'js/libs/jquery-migrate-1.2.1.js',
-    'JQUERYUI_URL': STATIC_URL + 'js/libs/jquery-ui-1.10.1.custom.js',
-    'UNDERSCOREJS_URL': STATIC_URL + 'js/libs/underscore-1.5.2.js',
-    'MODERNIZR_URL': STATIC_URL + 'js/libs/modernizr-2.6.3.js',
+    'JQUERY_URL': STATIC_URL + 'js/libs/jquery-2.2.0.js',
+    'JQUERYUI_URL': STATIC_URL + 'js/libs/jquery-ui-1.11.4.js',
+    'UNDERSCOREJS_URL': STATIC_URL + 'js/libs/underscore-1.8.3.js',
     'MATHJAX_URL': STATIC_URL + 'js/libs/mathjax/MathJax.js',
     }
 

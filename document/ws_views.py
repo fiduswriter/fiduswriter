@@ -88,6 +88,10 @@ class DocumentWS(BaseWebSocketHandler):
         document = DocumentWS.sessions[self.document_id]['document']
         response['document']['id']=document.id
         response['document']['version']=document.version
+        if document.diff_version < document.version:
+            print "!!!diff version issue!!!"
+            document.diff_version = document.version
+            DocumentWS.sessions[self.document_id]["last_diffs"] = []
         response['document']['title']=document.title
         response['document']['contents']=document.contents
         response['document']['metadata']=document.metadata
@@ -111,7 +115,10 @@ class DocumentWS(BaseWebSocketHandler):
         response['document_values']['is_owner']=self.is_owner
         response['document_values']['rights'] = self.access_rights
         requested_diffs = document.diff_version - document.version
-        response['document_values']['last_diffs'] = DocumentWS.sessions[self.document_id]["last_diffs"][:requested_diffs]
+        if requested_diffs > 0:
+            response['document_values']['last_diffs'] = DocumentWS.sessions[self.document_id]["last_diffs"][-requested_diffs:]
+        else:
+            response['document_values']['last_diffs'] = []
         if self.is_new:
             response['document_values']['is_new'] = True
         if not self.is_owner:
@@ -124,31 +131,20 @@ class DocumentWS(BaseWebSocketHandler):
         response['document_values']['session_id']= self.id
         self.write_message(response)
 
-    def get_document_update(self):
-        document = DocumentWS.sessions[self.document_id]['document']
-        response = dict()
-        response['type'] = 'document_data_update'
-        response['document'] = dict()
-        response['document']['id']=document.id
-        response['document']['version']=document.version
-        response['document']['title']=document.title
-        response['document']['contents']=document.contents
-        response['document']['metadata']=document.metadata
-        response['document']['settings']=DocumentWS.sessions[self.document_id]["settings"]
-        response['document']['comments']=DocumentWS.sessions[self.document_id]["comments"]
-        response['document']['comment_version']=document.comment_version
-        response['document_values'] = dict()
-        requested_diffs = document.diff_version - document.version
-        response['document_values']['last_diffs'] = DocumentWS.sessions[self.document_id]["last_diffs"][:requested_diffs]
-        self.write_message(response)
-
     def update_document(self, changes):
         document = DocumentWS.sessions[self.document_id]['document']
-        document.title = changes["title"]
-        document.contents = changes["contents"]
-        document.metadata = changes["metadata"]
-        document.version = changes["version"]
+        if changes["version"] > document.diff_version:
+            # The version number is too high. Possibly due to server restart.
+            # Do not accept it, and send a document instead.
+            self.get_document()
+        else:
+            document.contents = changes["contents"]
+            document.metadata = changes["metadata"]
+            document.version = changes["version"]
 
+    def update_title(self, title):
+        document = DocumentWS.sessions[self.document_id]['document']
+        document.title = title
 
     def save_document(self):
         document = DocumentWS.sessions[self.document_id]['document']
@@ -163,11 +159,9 @@ class DocumentWS(BaseWebSocketHandler):
         print parsed["type"]
         if parsed["type"]=='get_document':
             self.get_document()
-        elif parsed["type"]=='get_document_update':
-            self.get_document_update()
         elif parsed["type"]=='participant_update':
             DocumentWS.send_participant_list(self.document_id)
-        elif parsed["type"]=='save' and self.access_rights == 'w':
+        elif parsed["type"]=='update_document' and self.access_rights == 'w':
             self.update_document(parsed["document"])
             self.save_document()
             DocumentWS.send_updates({
@@ -175,6 +169,9 @@ class DocumentWS(BaseWebSocketHandler):
                 "version": parsed["document"]["version"],
                 "hash": parsed["document"]["hash"]
             }, self.document_id, self.id)
+        elif parsed["type"]=='update_title' and self.access_rights == 'w':
+            self.update_title(parsed["title"])
+            self.save_document()
         elif parsed["type"]=='chat':
             chat = {
                 "id": str(uuid.uuid4()),
@@ -195,7 +192,7 @@ class DocumentWS(BaseWebSocketHandler):
                     DocumentWS.sessions[self.document_id]["last_diffs"].extend(parsed["diff"])
                     # store 500 diffs or all the diffs from the last document version to the latest diff -- whatever is the greatest.
                     number_stored_diffs = max(500, document.diff_version - document.version)
-                    DocumentWS.sessions[self.document_id]["last_diffs"] = DocumentWS.sessions[self.document_id]["last_diffs"][:number_stored_diffs]
+                    DocumentWS.sessions[self.document_id]["last_diffs"] = DocumentWS.sessions[self.document_id]["last_diffs"][-number_stored_diffs:]
                     document.diff_version += len(parsed["diff"])
                     for cd in parsed["comments"]:
                         id = str(cd["id"])
@@ -234,13 +231,13 @@ class DocumentWS(BaseWebSocketHandler):
                 response = {
                     "type": "diff",
                     "version": parsed["version"],
-                    "diff": document_session["last_diffs"][:number_requested_diffs],
+                    "diff": document_session["last_diffs"][-number_requested_diffs:],
                     "request_id": 0
                 }
                 self.write_message(response)
             else:
                 # Client has a version that is too old
-                self.get_document_update()
+                self.get_document()
 
 
     def on_close(self):

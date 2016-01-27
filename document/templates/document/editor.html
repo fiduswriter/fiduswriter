@@ -28,12 +28,14 @@
         </style>
         <style type="text/css" id="active-comment-style">
         </style>
+        <style type="text/css" id="editor-escapes-style">
+        </style>
         <!--  Translations -->
         <script type="text/javascript" src="/jsi18n/"></script>
         <!-- document style -->
+        <link rel="stylesheet" type="text/css">
         <link id="document-style-link" rel="stylesheet" type="text/css">
 
-        <!-- commons styles -->
         {% compress css %}
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/reset.css" />
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fonts.css" />
@@ -74,10 +76,10 @@
 
         {% endcompress %}
 
-
+        <!-- loadCSS -->
+        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/loadCSS-0.2.4.js"></script>
         <!-- jQuery -->
         <script type="text/javascript" src="{{ JQUERY_URL }}"></script>
-        <script type="text/javascript" src="{{ JQUERYMIGRATE_URL }}"></script>
         <!-- JS error handling -->
         <script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
         <!-- jQuery UI -->
@@ -259,7 +261,7 @@
                     </div>
                 </div>
                 <div>
-                    <span class="header-nav-item-disabled exporter-menu" title="{% trans "Export of the document contents" %}">{% trans "Export" %}</span>
+                    <span class="header-nav-item exporter-menu" title="{% trans "Export of the document contents" %}">{% trans "Export" %}</span>
                     <div class="fw-pulldown fw-left">
                         <ul>
                             <li>
@@ -281,7 +283,7 @@
                     </div>
                 </div>
                 <div>
-                    <span class="header-nav-item-disabled citationstyle-menu" title="{% trans "Choose your preferred citation style." %}">{% trans "Citation Style" %}</span>
+                    <span class="header-nav-item citationstyle-menu" title="{% trans "Choose your preferred citation style." %}">{% trans "Citation Style" %}</span>
                     <div class="fw-pulldown fw-left">
                         <ul id="citationstyle-list">
                         </ul>
@@ -580,6 +582,7 @@
         </div>
         </div>
         <div id="print"></div>
+        <div id="unobtrusive_messages"></div>
         {% include "feedback/feedback.html" %}
     </body>
 </html>

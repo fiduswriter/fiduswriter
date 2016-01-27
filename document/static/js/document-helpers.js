@@ -21,8 +21,8 @@
 
 (function () {
     var exports = this,
-   /** 
-  * Helper functions for the document overview page. TODO 
+   /**
+  * Helper functions for the document overview page. TODO
   * @namespace documentHelpers
   */
         documentHelpers = {};
@@ -176,7 +176,7 @@
 
         var autocomplete_tags = [];
         jQuery('#document-table .fw-searchable').each(function() {
-            autocomplete_tags.push(this.textContent);
+            autocomplete_tags.push(this.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''));
         });
         autocomplete_tags = _.uniq(autocomplete_tags);
         $("#document-table_wrapper .dataTables_filter input").autocomplete({
@@ -197,9 +197,7 @@
                 theTeamMembers = response.team_members;
                 theAccessRights = response.access_rights;
                 theUser = response.user;
-                jQuery.event.trigger({
-                    type: "documentDataLoaded",
-                });
+                documentHelpers.layoutTable();
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 $.addAlert('error', jqXHR.responseText);
@@ -234,10 +232,10 @@
                         aDocument = _.findWhere(theDocumentList, {
                             id: response.documents[i].id
                         });
-                        aDocument.contents = jQuery.parseJSON(response.documents[i].contents);
-                        aDocument.metadata = jQuery.parseJSON(response.documents[
+                        aDocument.contents = JSON.parse(response.documents[i].contents);
+                        aDocument.metadata = JSON.parse(response.documents[
                             i].metadata);
-                        aDocument.settings = jQuery.parseJSON(response.documents[
+                        aDocument.settings = JSON.parse(response.documents[
                             i].settings);
                     }
                     if (callback) {
@@ -269,10 +267,11 @@
             documentHelpers.getDocumentListData();
         });
 
-        jQuery(document).bind('documentDataLoaded', function () {
-            jQuery('#document-table tbody').html(tmp_documents_list());
-            documentHelpers.startDocumentTable();
-        });
+    };
+
+    documentHelpers.layoutTable = function () {
+        jQuery('#document-table tbody').html(tmp_documents_list());
+        documentHelpers.startDocumentTable();
     };
 
     exports.documentHelpers = documentHelpers;

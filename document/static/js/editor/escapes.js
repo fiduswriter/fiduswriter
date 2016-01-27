@@ -5,14 +5,10 @@
         editorEscapes = {};
 
 
-      editorEscapes.stylesheet = document.createElement('style');
+      editorEscapes.stylesheet = document.getElementById('editor-escapes-style');
 
       editorEscapes.initiate = function () {
-        // Apply this alternative layout in case CSS Regions are not present
         var pageElement = document.getElementById('flow');
-
-
-        document.head.appendChild(editorEscapes.stylesheet);
 
         editorEscapes.reset();
 

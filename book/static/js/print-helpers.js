@@ -21,12 +21,12 @@
 
 (function () {
     var exports = this,
-    /** 
-    * Helper functions for the book print page. TODO 
+    /**
+    * Helper functions for the book print page. TODO
     * @namespace printHelpers
     */
         printHelpers = {}, documentOwners=[];
-        
+
     var pageSizes = {
         folio: {
             width:12,
@@ -44,7 +44,7 @@
             width:5.83,
             height:8.27
         },
-        a4: {            
+        a4: {
             width:8.27,
             height:11.69
         }
@@ -53,13 +53,13 @@
     printHelpers.setTheBook = function (aBook) {
         var i;
         theBook = aBook;
-        theBook.settings = jQuery.parseJSON(theBook.settings);
-        theBook.metadata = jQuery.parseJSON(theBook.metadata);
+        theBook.settings = JSON.parse(theBook.settings);
+        theBook.metadata = JSON.parse(theBook.metadata);
         printHelpers.setDocumentStyle(theBook.settings.documentstyle);
         for (i = 0; i < theBook.chapters.length; i++) {
-            theBook.chapters[i].metadata = jQuery.parseJSON(theBook.chapters[
+            theBook.chapters[i].metadata = JSON.parse(theBook.chapters[
                 i].metadata);
-            theBook.chapters[i].settings = jQuery.parseJSON(theBook.chapters[
+            theBook.chapters[i].settings = JSON.parse(theBook.chapters[
                 i].settings);
             if (documentOwners.indexOf(theBook.chapters[i].owner)===-1) {
                 documentOwners.push(theBook.chapters[i].owner);
@@ -70,11 +70,11 @@
 
         bibliographyHelpers.getABibDB(documentOwners.join(','), function (
                 aBibDB) {
-                
-            
+
+
                 printHelpers.fillPrintPage(aBibDB);
             });
-        
+
 
     };
 
@@ -99,20 +99,20 @@
     };
 
     printHelpers.fillPrintPage = function (aBibDB) {
-        
+
         var bibliography = jQuery('#bibliography');
         jQuery(document.body).addClass(theBook.settings.documentstyle);
         jQuery('#book')[0].outerHTML = tmp_book_print({
             theBook: theBook
         });
-        
-        
+
+
         jQuery(bibliography).html(citationHelpers.formatCitations(document.body, theBook.settings.citationstyle, aBibDB));
-        
+
         if (jQuery(bibliography).text().trim().length===0) {
             jQuery(bibliography).parent().remove();
         }
-        
+
         paginationConfig['frontmatterContents'] = tmp_book_print_start({
             theBook: theBook
         });
@@ -123,10 +123,10 @@
             jQuery("#pagination-contents").addClass('user-contents');
             jQuery('head title').html(jQuery('#document-title').text());
         });
-        
-        
+
+
     };
-    
+
     printHelpers.setDocumentStyle = function (theValue) {
         var documentStyleLink = document.getElementById('document-style-link'),
             newDocumentStyleLink = document.createElement('link');
@@ -134,8 +134,8 @@
         newDocumentStyleLink.setAttribute("type", "text/css");
         newDocumentStyleLink.setAttribute("id", "document-style-link");
         newDocumentStyleLink.setAttribute("href", staticUrl+'css/document/'+theValue+'.css');
-        
-        documentStyleLink.parentElement.replaceChild(newDocumentStyleLink, documentStyleLink);        
+
+        documentStyleLink.parentElement.replaceChild(newDocumentStyleLink, documentStyleLink);
     };
 
 

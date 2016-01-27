@@ -40,15 +40,15 @@ var FW_FILETYPE_VERSION = 1.2, MIN_FW_FILETYPE_VERSION = 1.1, MAX_FW_FILETYPE_VE
                     }).contents;
         if (mimeType === 'application/fidus+zip' && filetypeVersion >= MIN_FW_FILETYPE_VERSION && filetypeVersion <= MAX_FW_FILETYPE_VERSION) {
             // This seems to be a valid fidus file with current version number.
-            var shrunkBibDB = jQuery.parseJSON(
+            var shrunkBibDB = JSON.parse(
                 _.findWhere(
                     textFiles, {
                         filename: 'bibliography.json'
                     }).contents);
-            var shrunkImageDB = jQuery.parseJSON(_.findWhere(textFiles, {
+            var shrunkImageDB = JSON.parse(_.findWhere(textFiles, {
                         filename: 'images.json'
                     }).contents);
-            var aDocument = jQuery.parseJSON(_.findWhere(textFiles, {
+            var aDocument = JSON.parse(_.findWhere(textFiles, {
                         filename: 'document.json'
                     }).contents);
 

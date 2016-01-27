@@ -22,13 +22,12 @@ var _comment = require("./es6_modules/comment");
 var theEditor = {};
 //import "prosemirror/dist/menu/menubar"
 
-function makeEditor(where, doc, version) {
+function makeEditor(where) {
     return new _main.ProseMirror({
         place: where,
         schema: _schema.fidusSchema,
-        doc: doc,
         //    menuBar: true,
-        collab: { version: version }
+        collab: { version: 0 }
     });
 };
 
@@ -57,16 +56,13 @@ theEditor.createDoc = function (aDocument) {
     editorNode.appendChild(documentContentsNode);
 
     doc = (0, _format.fromDOM)(_schema.fidusSchema, editorNode);
-
     return doc;
 };
 
 theEditor.initiate = function () {
-    var doc = theEditor.createDoc(theDocument);
-    theEditor.editor = makeEditor(document.getElementById('document-editable'), doc, theDocument.version);
-    theDocument.hash = theEditor.getHash();
+    theEditor.editor = makeEditor(document.getElementById('document-editable'));
     new _updateUi.UpdateUI(theEditor.editor, "selectionChange change activeMarkChange blur focus");
-    theEditor.editor.on('change', editorHelpers.documentHasChanged);
+    theEditor.editor.on("change", editorHelpers.documentHasChanged);
     theEditor.editor.on('transform', theEditor.onTransform);
     theEditor.editor.on("flushed", mathHelpers.layoutEmptyEquationNodes);
     theEditor.editor.on("flushed", mathHelpers.layoutEmptyDisplayEquationNodes);
@@ -75,17 +71,58 @@ theEditor.initiate = function () {
     theEditor.comments = new _comment.CommentStore(theEditor.editor, theDocument.comment_version);
     theEditor.comments.on("mustSend", theEditor.sendToCollaborators);
     _.each(theDocument.comments, function (comment) {
-        theEditor.comments.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers, comment.isMajor);
+        theEditor.comments.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers);
     });
 };
 
 theEditor.update = function () {
+    console.log('Updating editor');
     var doc = theEditor.createDoc(theDocument);
     theEditor.editor.setOption("collab", null);
     theEditor.editor.setContent(doc);
     theEditor.editor.setOption("collab", { version: theDocument.version });
-    theEditor.editor.mod.collab.on('mustSend', theEditor.sendToCollaborators);
+    while (theDocumentValues.last_diffs.length > 0) {
+        var diff = theDocumentValues.last_diffs.shift();
+        theEditor.applyDiff(diff);
+    }
     theDocument.hash = theEditor.getHash();
+    theEditor.editor.mod.collab.on("mustSend", theEditor.sendToCollaborators);
+    theEditor.comments = new _comment.CommentStore(theEditor.editor, theDocument.comment_version);
+    _.each(theDocument.comments, function (comment) {
+        theEditor.comments.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers);
+    });
+    theEditor.comments.on("mustSend", theEditor.sendToCollaborators);
+    theEditor.enableUI();
+};
+
+theEditor.enableUI = function () {
+    editorEscapes.initiate();
+    bibliographyHelpers.initiate();
+
+    jQuery('.savecopy, .download, .latex, .epub, .html, .print, .style, \
+    .citationstyle, .tools-item, .papersize, .metadata-menu-item, \
+    #open-close-header').removeClass('disabled');
+
+    citationHelpers.formatCitationsInDoc();
+    editorHelpers.displaySetting.set('documentstyle');
+    editorHelpers.displaySetting.set('citationstyle');
+
+    jQuery('span[data-citationstyle=' + theDocument.settings.citationstyle + ']').addClass('selected');
+    editorHelpers.displaySetting.set('papersize');
+
+    editorHelpers.layoutMetadata();
+
+    if (theDocumentValues.rights === 'w') {
+        jQuery('#editor-navigation').show();
+        jQuery('.metadata-menu-item, #open-close-header, .save, \
+        .multibuttonsCover, .papersize-menu, .metadata-menu, \
+        .documentstyle-menu').removeClass('disabled');
+        if (theDocumentValues.is_owner) {
+            // bind the share dialog to the button if the user is the document owner
+            jQuery('.share').removeClass('disabled');
+        }
+        mathHelpers.resetMath();
+    }
 };
 
 theEditor.getUpdates = function (callback) {
@@ -139,8 +176,8 @@ theEditor.confirmDiff = function (request_id) {
     theEditor.comments.eventsSent(sentComments);
 };
 
-theEditor.applyDiffs = function (diffs) {
-    theEditor.editor.mod.collab.receive(diffs.map(function (j) {
+theEditor.applyDiff = function (diff) {
+    theEditor.editor.mod.collab.receive([diff].map(function (j) {
         return _transform.Step.fromJSON(_schema.fidusSchema, j);
     }));
 };
@@ -179,7 +216,7 @@ theEditor.checkHash = function (version, hash) {
             return;
         }
         console.log('Hash could not be verified, requesting document.');
-        serverCommunications.send({ type: 'get_document_update' });
+        serverCommunications.send({ type: 'get_document' });
         return;
     } else {
         serverCommunications.send({
@@ -1210,7 +1247,7 @@ var fidusSchema = exports.fidusSchema = new _model.Schema(_model.defaultSchema.s
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); // Update UI (adapted from ProseMirror's src/menu/update.js)
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 exports.UpdateUI = undefined;
 
@@ -1222,250 +1259,270 @@ var MIN_FLUSH_DELAY = 200;
 var UPDATE_TIMEOUT = 200;
 
 var BLOCK_LABELS = {
-  'paragraph': gettext('Normal Text'),
-  'heading_1': gettext('1st Heading'),
-  'heading_2': gettext('2nd Heading'),
-  'heading_3': gettext('3rd Heading'),
-  'heading_4': gettext('4th Heading'),
-  'heading_5': gettext('5th Heading'),
-  'heading_6': gettext('6th Heading'),
-  'code_block': gettext('Code'),
-  'figure': gettext('Figure')
+    'paragraph': gettext('Normal Text'),
+    'heading_1': gettext('1st Heading'),
+    'heading_2': gettext('2nd Heading'),
+    'heading_3': gettext('3rd Heading'),
+    'heading_4': gettext('4th Heading'),
+    'heading_5': gettext('5th Heading'),
+    'heading_6': gettext('6th Heading'),
+    'code_block': gettext('Code'),
+    'figure': gettext('Figure')
 };
 
 var PART_LABELS = {
-  'title': gettext('Title'),
-  'metadatasubtitle': gettext('Subtitle'),
-  'metadataauthors': gettext('Authors'),
-  'metadataabstract': gettext('Abstract'),
-  'metadatakeywords': gettext('Keywords'),
-  'documentcontents': gettext('Body')
+    'title': gettext('Title'),
+    'metadatasubtitle': gettext('Subtitle'),
+    'metadataauthors': gettext('Authors'),
+    'metadataabstract': gettext('Abstract'),
+    'metadatakeywords': gettext('Keywords'),
+    'documentcontents': gettext('Body')
 };
 
 var UpdateUI = exports.UpdateUI = function () {
-  function UpdateUI(pm, events) {
-    var _this = this;
+    function UpdateUI(pm, events) {
+        var _this = this;
 
-    _classCallCheck(this, UpdateUI);
+        _classCallCheck(this, UpdateUI);
 
-    this.pm = pm;
+        this.pm = pm;
 
-    this.mustUpdate = false;
-    this.updateInfo = null;
-    this.timeout = null;
-    this.lastFlush = 0;
-    this.placeHolderCss = '';
-
-    this.events = events.split(" ");
-    this.onEvent = this.onEvent.bind(this);
-    this.force = this.force.bind(this);
-    this.events.forEach(function (event) {
-      return pm.on(event, _this.onEvent);
-    });
-    pm.on("flushed", this.onFlushed = this.onFlushed.bind(this));
-    this.updateUI();
-  }
-
-  _createClass(UpdateUI, [{
-    key: 'detach',
-    value: function detach() {
-      var _this2 = this;
-
-      clearTimeout(this.timeout);
-      this.events.forEach(function (event) {
-        return _this2.pm.off(event, _this2.onEvent);
-      });
-      this.pm.off("flush", this.onFlush);
-      this.pm.off("flushed", this.onFlushed);
-    }
-  }, {
-    key: 'onFlushed',
-    value: function onFlushed() {
-      var now = Date.now();
-      if (this.mustUpdate && now - this.lastFlush >= MIN_FLUSH_DELAY) {
-        this.lastFlush = now;
-        clearTimeout(this.timeout);
-        this.mustUpdate = false;
-        this.updateUI();
-      }
-    }
-  }, {
-    key: 'onEvent',
-    value: function onEvent() {
-      this.mustUpdate = true;
-      clearTimeout(this.timeout);
-      this.timeout = setTimeout(this.force, UPDATE_TIMEOUT);
-    }
-  }, {
-    key: 'force',
-    value: function force() {
-      if (this.pm.operation) {
-        this.onEvent();
-      } else {
         this.mustUpdate = false;
         this.updateInfo = null;
-        this.lastFlush = Date.now();
-        clearTimeout(this.timeout);
-        this.updateUI();
-      }
+        this.timeout = null;
+        this.lastFlush = 0;
+        this.placeHolderCss = '';
+
+        this.events = events.split(" ");
+        this.onEvent = this.onEvent.bind(this);
+        this.force = this.force.bind(this);
+        this.events.forEach(function (event) {
+            return pm.on(event, _this.onEvent);
+        });
+        pm.on("flushed", this.onFlushed = this.onFlushed.bind(this));
     }
-  }, {
-    key: 'updateUI',
-    value: function updateUI() {
-      /* Fidus Writer code */
 
-      // We count on the the title node being the first one in the document
-      var documentTitle = this.pm.doc.firstChild.type.name === 'title' && this.pm.doc.firstChild.textContent.length > 0 ? this.pm.doc.firstChild.textContent : gettext('Untitled Document');
+    _createClass(UpdateUI, [{
+        key: 'detach',
+        value: function detach() {
+            var _this2 = this;
 
-      jQuery('title').html('Fidus Writer - ' + documentTitle);
-      jQuery('#header h1').html(documentTitle);
-
-      var marks = this.pm.activeMarks();
-      var strong = marks.some(function (mark) {
-        return mark.type.name === 'strong';
-      });
-
-      if (strong) {
-        jQuery('#button-bold').addClass('ui-state-active');
-      } else {
-        jQuery('#button-bold').removeClass('ui-state-active');
-      }
-
-      var em = marks.some(function (mark) {
-        return mark.type.name === 'em';
-      });
-
-      if (em) {
-        jQuery('#button-italic').addClass('ui-state-active');
-      } else {
-        jQuery('#button-italic').removeClass('ui-state-active');
-      }
-
-      var link = marks.some(function (mark) {
-        return mark.type.name === 'link';
-      });
-
-      if (link) {
-        jQuery('#button-link').addClass('ui-state-active');
-      } else {
-        jQuery('#button-link').removeClass('ui-state-active');
-      }
-
-      var canUndo = this.pm.history.canUndo();
-
-      if (canUndo) {
-        jQuery('#button-undo').removeClass('disabled');
-      } else {
-        jQuery('#button-undo').addClass('disabled');
-      }
-
-      var canRedo = this.pm.history.canRedo();
-
-      if (canRedo) {
-        jQuery('#button-redo').removeClass('disabled');
-      } else {
-        jQuery('#button-redo').addClass('disabled');
-      }
-
-      var start = this.pm.selection.from.min(this.pm.selection.to);
-      var end = this.pm.selection.from.max(this.pm.selection.to);
-      var startElement = this.pm.doc.path([start.path[0]]);
-      var endElement = this.pm.doc.path([end.path[0]]);
-
-      if (startElement !== endElement) {
-        /* Selection goes across document parts */
-        this.calculatePlaceHolderCss();
-        jQuery('.editortoolbar button').addClass('disabled');
-        jQuery('#block-style-label').html('');
-        jQuery('#current-position').html('');
-      } else {
-        this.calculatePlaceHolderCss(startElement);
-        jQuery('#current-position').html(PART_LABELS[startElement.type.name]);
-
-        switch (startElement.type.name) {
-          case 'title':
-          case 'metadatasubtitle':
-          case 'metadataauthors':
-          case 'metadatakeywords':
-            jQuery('.edit-button').addClass('disabled');
-            jQuery('#block-style-label').html('');
-            break;
-          case 'metadataabstract':
-          case 'documentcontents':
-            jQuery('.edit-button').removeClass('disabled');
-
-            if (this.pm.selection.empty) {
-              jQuery('#button-link').addClass('disabled');
+            clearTimeout(this.timeout);
+            this.events.forEach(function (event) {
+                return _this2.pm.off(event, _this2.onEvent);
+            });
+            this.pm.off("flush", this.onFlush);
+            this.pm.off("flushed", this.onFlushed);
+        }
+    }, {
+        key: 'onFlushed',
+        value: function onFlushed() {
+            var now = Date.now();
+            if (this.mustUpdate && now - this.lastFlush >= MIN_FLUSH_DELAY) {
+                this.lastFlush = now;
+                clearTimeout(this.timeout);
+                this.mustUpdate = false;
+                this.updateUI();
             }
-
-            if (startElement.type.name === 'metadataabstract') {
-              jQuery('#button-figure').addClass('disabled');
-            }
-
-            var blockNodeType = true,
-                blockNode,
-                nextBlockNodeType;
-
-            if (_(start.path).isEqual(end.path)) {
-              // Selection within a single block.
-              blockNode = this.pm.doc.path(start.path);
-              blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
-              jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType]);
+        }
+    }, {
+        key: 'onEvent',
+        value: function onEvent() {
+            this.mustUpdate = true;
+            clearTimeout(this.timeout);
+            this.timeout = setTimeout(this.force, UPDATE_TIMEOUT);
+        }
+    }, {
+        key: 'force',
+        value: function force() {
+            if (this.pm.operation) {
+                this.onEvent();
             } else {
-              // The selection is crossing several blocks
-              this.pm.doc.nodesBetween(start, end, function (node, path, parent) {
-                if (node.isTextblock) {
-                  nextBlockNodeType = node.type.name === 'heading' ? node.type.name + '_' + node.attrs.level : node.type.name;
-                  if (blockNodeType === true) {
-                    blockNodeType = nextBlockNodeType;
-                  }
-                  if (blockNodeType !== nextBlockNodeType) {
-                    blockNodeType = false;
-                  }
-                }
-              });
-
-              if (blockNodeType) {
-                jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType]);
-              } else {
-                jQuery('#block-style-label').html('');
-              }
+                this.mustUpdate = false;
+                this.updateInfo = null;
+                this.lastFlush = Date.now();
+                clearTimeout(this.timeout);
+                this.updateUI();
             }
-            break;
         }
-      }
-      return true;
-    }
+    }, {
+        key: 'updateUI',
+        value: function updateUI() {
+            /* Fidus Writer code */
 
-    /** Show or hide placeholders ('Contents...', 'Title...', etc.) depending on
-    whether these elements are empty or not.*/
+            // We count on the the title node being the first one in the document
+            var documentTitle = this.pm.doc.firstChild.type.name === 'title' && this.pm.doc.firstChild.textContent.length > 0 ? this.pm.doc.firstChild.textContent : gettext('Untitled Document');
 
-  }, {
-    key: 'calculatePlaceHolderCss',
-    value: function calculatePlaceHolderCss(selectedElement) {
-      var newPlaceHolderCss = '',
-          i = 0,
-          that = this,
-          placeholders = [{ 'type': 'title', 'selector': '#document-title', 'placeholder': gettext('Title...') }, { 'type': 'metadatasubtitle', 'selector': '#metadata-subtitle', 'placeholder': gettext('Subtitle...') }, { 'type': 'metadaauthors', 'selector': '#metadata-authors', 'placeholder': gettext('Authors...') }, { 'type': 'metadataabstract', 'selector': '#metadata-abstract', 'placeholder': gettext('Abstract...') }, { 'type': 'metadatakeywords', 'selector': '#metadata-keywords', 'placeholder': gettext('Keywords...') }, { 'type': 'documentcontents', 'selector': '#document-contents', 'placeholder': gettext('Body...') }];
+            // The title has changed. We will update our document. Mark it as changed so
+            // that an update may be sent to the server.
+            if (documentTitle.substring(0, 255) !== theDocument.title) {
+                theDocument.title = documentTitle.substring(0, 255);
+                theDocumentValues.titleChanged = true;
+            }
 
-      placeholders.forEach(function (elementType) {
-        var partElement = that.pm.doc.child(i);
-        if (partElement.type.name == !elementType.type) {
-          return false;
+            jQuery('title').html('Fidus Writer - ' + documentTitle);
+            jQuery('#header h1').html(documentTitle);
+
+            var marks = this.pm.activeMarks();
+            var strong = marks.some(function (mark) {
+                return mark.type.name === 'strong';
+            });
+
+            if (strong) {
+                jQuery('#button-bold').addClass('ui-state-active');
+            } else {
+                jQuery('#button-bold').removeClass('ui-state-active');
+            }
+
+            var em = marks.some(function (mark) {
+                return mark.type.name === 'em';
+            });
+
+            if (em) {
+                jQuery('#button-italic').addClass('ui-state-active');
+            } else {
+                jQuery('#button-italic').removeClass('ui-state-active');
+            }
+
+            var link = marks.some(function (mark) {
+                return mark.type.name === 'link';
+            });
+
+            if (link) {
+                jQuery('#button-link').addClass('ui-state-active');
+            } else {
+                jQuery('#button-link').removeClass('ui-state-active');
+            }
+
+            var canUndo = this.pm.history.canUndo();
+
+            if (canUndo) {
+                jQuery('#button-undo').removeClass('disabled');
+            } else {
+                jQuery('#button-undo').addClass('disabled');
+            }
+
+            var canRedo = this.pm.history.canRedo();
+
+            if (canRedo) {
+                jQuery('#button-redo').removeClass('disabled');
+            } else {
+                jQuery('#button-redo').addClass('disabled');
+            }
+
+            var start = this.pm.selection.from.min(this.pm.selection.to);
+            var end = this.pm.selection.from.max(this.pm.selection.to);
+            var startElement = this.pm.doc.path([start.path[0]]);
+            var endElement = this.pm.doc.path([end.path[0]]);
+
+            if (startElement !== endElement) {
+                /* Selection goes across document parts */
+                this.calculatePlaceHolderCss();
+                jQuery('.editortoolbar button').addClass('disabled');
+                jQuery('#block-style-label').html('');
+                jQuery('#current-position').html('');
+                if (this.pm.selection.empty) {
+                    jQuery('#button-comment').addClass('disabled');
+                } else {
+                    jQuery('#button-comment').removeClass('disabled');
+                }
+            } else {
+                this.calculatePlaceHolderCss(startElement);
+                jQuery('#current-position').html(PART_LABELS[startElement.type.name]);
+
+                switch (startElement.type.name) {
+                    case 'title':
+                    case 'metadatasubtitle':
+                    case 'metadataauthors':
+                    case 'metadatakeywords':
+                        jQuery('.edit-button').addClass('disabled');
+                        jQuery('#block-style-label').html('');
+                        if (this.pm.selection.empty) {
+                            jQuery('#button-comment').addClass('disabled');
+                        } else {
+                            jQuery('#button-comment').removeClass('disabled');
+                        }
+
+                        break;
+                    case 'metadataabstract':
+                    case 'documentcontents':
+                        jQuery('.edit-button').removeClass('disabled');
+
+                        if (this.pm.selection.empty) {
+                            jQuery('#button-link').addClass('disabled');
+                            jQuery('#button-comment').addClass('disabled');
+                        } else {
+                            jQuery('#button-comment').removeClass('disabled');
+                        }
+
+                        if (startElement.type.name === 'metadataabstract') {
+                            jQuery('#button-figure').addClass('disabled');
+                        }
+
+                        var blockNodeType = true,
+                            blockNode,
+                            nextBlockNodeType;
+
+                        if (_(start.path).isEqual(end.path)) {
+                            // Selection within a single block.
+                            blockNode = this.pm.doc.path(start.path);
+                            blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
+                            jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType]);
+                        } else {
+                            // The selection is crossing several blocks
+                            this.pm.doc.nodesBetween(start, end, function (node, path, parent) {
+                                if (node.isTextblock) {
+                                    nextBlockNodeType = node.type.name === 'heading' ? node.type.name + '_' + node.attrs.level : node.type.name;
+                                    if (blockNodeType === true) {
+                                        blockNodeType = nextBlockNodeType;
+                                    }
+                                    if (blockNodeType !== nextBlockNodeType) {
+                                        blockNodeType = false;
+                                    }
+                                }
+                            });
+
+                            if (blockNodeType) {
+                                jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType]);
+                            } else {
+                                jQuery('#block-style-label').html('');
+                            }
+                        }
+                        break;
+                }
+            }
+            return true;
         }
-        if (partElement.textContent.length === 0 && (selectedElement != partElement || !that.pm.hasFocus())) {
-          newPlaceHolderCss += elementType.selector + ':before {content: "' + elementType.placeholder + '"}\n';
-        }
-        i++;
-      });
-      if (that.placeHolderCss !== newPlaceHolderCss) {
-        that.placeHolderCss = newPlaceHolderCss;
-        jQuery('#placeholder-styles')[0].innerHTML = newPlaceHolderCss;
-      }
-    }
-  }]);
 
-  return UpdateUI;
+        /** Show or hide placeHolders ('Contents...', 'Title...', etc.) depending on
+        whether these elements are empty or not.*/
+
+    }, {
+        key: 'calculatePlaceHolderCss',
+        value: function calculatePlaceHolderCss(selectedElement) {
+            var newPlaceHolderCss = '',
+                i = 0,
+                that = this,
+                placeHolders = [{ 'type': 'title', 'selector': '#document-title', 'placeHolder': gettext('Title...') }, { 'type': 'metadatasubtitle', 'selector': '#metadata-subtitle', 'placeHolder': gettext('Subtitle...') }, { 'type': 'metadaauthors', 'selector': '#metadata-authors', 'placeHolder': gettext('Authors...') }, { 'type': 'metadataabstract', 'selector': '#metadata-abstract', 'placeHolder': gettext('Abstract...') }, { 'type': 'metadatakeywords', 'selector': '#metadata-keywords', 'placeHolder': gettext('Keywords...') }, { 'type': 'documentcontents', 'selector': '#document-contents', 'placeHolder': gettext('Body...') }];
+
+            placeHolders.forEach(function (elementType, index) {
+                var partElement = that.pm.doc.child(i);
+                if (partElement.type.name == !elementType.type) {
+                    return false;
+                }
+                if (partElement.textContent.length === 0 && (selectedElement != partElement || !that.pm.hasFocus())) {
+                    newPlaceHolderCss += elementType.selector + ':before {content: "' + elementType.placeHolder + '"}\n';
+                }
+                i++;
+            });
+            if (that.placeHolderCss !== newPlaceHolderCss) {
+                that.placeHolderCss = newPlaceHolderCss;
+                jQuery('#placeholder-styles')[0].innerHTML = newPlaceHolderCss;
+            }
+        }
+    }]);
+
+    return UpdateUI;
 }();
 
 },{"prosemirror/dist/model":33}],5:[function(require,module,exports){

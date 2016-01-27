@@ -161,7 +161,7 @@ class DocumentWS(BaseWebSocketHandler):
             self.get_document()
         elif parsed["type"]=='participant_update':
             DocumentWS.send_participant_list(self.document_id)
-        elif parsed["type"]=='update_document' and self.access_rights == 'w':
+        elif parsed["type"]=='update_document' and self.can_update_document():
             self.update_document(parsed["document"])
             self.save_document()
             DocumentWS.send_updates({
@@ -169,7 +169,7 @@ class DocumentWS(BaseWebSocketHandler):
                 "version": parsed["document"]["version"],
                 "hash": parsed["document"]["hash"]
             }, self.document_id, self.id)
-        elif parsed["type"]=='update_title' and self.access_rights == 'w':
+        elif parsed["type"]=='update_title' and self.can_update_document():
             self.update_title(parsed["title"])
             self.save_document()
         elif parsed["type"]=='chat':
@@ -284,3 +284,6 @@ class DocumentWS(BaseWebSocketHandler):
                     cls.sessions[document_id]['participants'][waiter].write_message(chat)
                 except WebSocketClosedError:
                     error("Error sending message", exc_info=True)
+
+    def can_update_document(self):
+        return self.access_rights == 'w' or self.access_rights == 'a'

@@ -88,10 +88,6 @@ class DocumentWS(BaseWebSocketHandler):
         document = DocumentWS.sessions[self.document_id]['document']
         response['document']['id']=document.id
         response['document']['version']=document.version
-        if document.diff_version < document.version:
-            print "!!!diff version issue!!!"
-            document.diff_version = document.version
-            DocumentWS.sessions[self.document_id]["last_diffs"] = []
         response['document']['title']=document.title
         response['document']['contents']=document.contents
         response['document']['metadata']=document.metadata
@@ -114,7 +110,12 @@ class DocumentWS(BaseWebSocketHandler):
         response['document_values']['is_owner']=self.is_owner
         response['document_values']['rights'] = self.access_rights
         requested_diffs = document.diff_version - document.version
-        if requested_diffs > 0:
+        if requested_diffs < 0:
+            print "!!!diff version issue!!!"
+            document.diff_version = document.version
+            document.last_diffs = "[]"
+            response['document_values']['last_diffs'] = []
+        elif requested_diffs > 0:
             response['document_values']['last_diffs'] = DocumentWS.sessions[self.document_id]["last_diffs"][-requested_diffs:]
         else:
             response['document_values']['last_diffs'] = []
@@ -189,10 +190,12 @@ class DocumentWS(BaseWebSocketHandler):
                 document = DocumentWS.sessions[self.document_id]["document"]
                 if parsed["diff_version"] == document.diff_version and parsed["comment_version"] == document.comment_version:
                     DocumentWS.sessions[self.document_id]["last_diffs"].extend(parsed["diff"])
+                    document.diff_version += len(parsed["diff"])
                     # store 500 diffs or all the diffs from the last document version to the latest diff -- whatever is the greatest.
                     number_stored_diffs = max(500, document.diff_version - document.version)
+                    if number_stored_diffs < len(DocumentWS.sessions[self.document_id]["last_diffs"]):
+                        print "Cutting from " + str(number_stored_diffs) + " to " + str(len(DocumentWS.sessions[self.document_id]["last_diffs"]))
                     DocumentWS.sessions[self.document_id]["last_diffs"] = DocumentWS.sessions[self.document_id]["last_diffs"][-number_stored_diffs:]
-                    document.diff_version += len(parsed["diff"])
                     for cd in parsed["comments"]:
                         id = str(cd["id"])
                         if cd["type"] == "create":

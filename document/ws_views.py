@@ -109,16 +109,11 @@ class DocumentWS(BaseWebSocketHandler):
         response['document_values'] = dict()
         response['document_values']['is_owner']=self.is_owner
         response['document_values']['rights'] = self.access_rights
-        requested_diffs = document.diff_version - document.version
-        if requested_diffs < 0:
+        if document.version > document.diff_version:
             print "!!!diff version issue!!!"
             document.diff_version = document.version
-            document.last_diffs = "[]"
-            response['document_values']['last_diffs'] = []
-        elif requested_diffs > 0:
-            response['document_values']['last_diffs'] = DocumentWS.sessions[self.document_id]["last_diffs"][-requested_diffs:]
-        else:
-            response['document_values']['last_diffs'] = []
+            DocumentWS.sessions[self.document_id]["last_diffs"] = []
+        response['document_values']['last_diffs'] = DocumentWS.sessions[self.document_id]["last_diffs"]
         if self.is_new:
             response['document_values']['is_new'] = True
         if not self.is_owner:
@@ -137,10 +132,16 @@ class DocumentWS(BaseWebSocketHandler):
             # The version number is too high. Possibly due to server restart.
             # Do not accept it, and send a document instead.
             self.get_document()
+            return
+        elif changes["version"] < document.diff_version:
+            # The saved version does not contain all accepted diffs, so we keep the remaining ones
+            remaining_diffs = document.diff_version - changes["version"]
+            DocumentWS.sessions[self.document_id]["last_diffs"] = DocumentWS.sessions[self.document_id]["last_diffs"][-remaining_diffs:]
         else:
-            document.contents = changes["contents"]
-            document.metadata = changes["metadata"]
-            document.version = changes["version"]
+            DocumentWS.sessions[self.document_id]["last_diffs"] = []
+        document.contents = changes["contents"]
+        document.metadata = changes["metadata"]
+        document.version = changes["version"]
 
     def update_title(self, title):
         document = DocumentWS.sessions[self.document_id]['document']
@@ -191,10 +192,6 @@ class DocumentWS(BaseWebSocketHandler):
                 if parsed["diff_version"] == document.diff_version and parsed["comment_version"] == document.comment_version:
                     DocumentWS.sessions[self.document_id]["last_diffs"].extend(parsed["diff"])
                     document.diff_version += len(parsed["diff"])
-                    if document.diff_version - document.version < 500 and len(DocumentWS.sessions[self.document_id]["last_diffs"]) >= 500:
-                        # store 500 diffs or all the diffs from the last document version to the latest diff -- whatever is the greatest.
-                        print "Cutting diffs: to 500 from " + str(len(DocumentWS.sessions[self.document_id]["last_diffs"]))
-                        DocumentWS.sessions[self.document_id]["last_diffs"] = DocumentWS.sessions[self.document_id]["last_diffs"][-500:]
                     for cd in parsed["comments"]:
                         id = str(cd["id"])
                         if cd["type"] == "create":

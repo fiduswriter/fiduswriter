@@ -191,11 +191,10 @@ class DocumentWS(BaseWebSocketHandler):
                 if parsed["diff_version"] == document.diff_version and parsed["comment_version"] == document.comment_version:
                     DocumentWS.sessions[self.document_id]["last_diffs"].extend(parsed["diff"])
                     document.diff_version += len(parsed["diff"])
-                    # store 500 diffs or all the diffs from the last document version to the latest diff -- whatever is the greatest.
-                    number_stored_diffs = max(500, document.diff_version - document.version)
-                    if number_stored_diffs < len(DocumentWS.sessions[self.document_id]["last_diffs"]):
-                        print "Cutting from " + str(number_stored_diffs) + " to " + str(len(DocumentWS.sessions[self.document_id]["last_diffs"]))
-                    DocumentWS.sessions[self.document_id]["last_diffs"] = DocumentWS.sessions[self.document_id]["last_diffs"][-number_stored_diffs:]
+                    if document.diff_version - document.version < 500 and len(DocumentWS.sessions[self.document_id]["last_diffs"]) >= 500:
+                        # store 500 diffs or all the diffs from the last document version to the latest diff -- whatever is the greatest.
+                        print "Cutting diffs: to 500 from " + str(len(DocumentWS.sessions[self.document_id]["last_diffs"]))
+                        DocumentWS.sessions[self.document_id]["last_diffs"] = DocumentWS.sessions[self.document_id]["last_diffs"][-500:]
                     for cd in parsed["comments"]:
                         id = str(cd["id"])
                         if cd["type"] == "create":
@@ -224,6 +223,12 @@ class DocumentWS(BaseWebSocketHandler):
                         document.comment_version += 1
                     self.confirm_diff(parsed["request_id"])
                     DocumentWS.send_updates(message, self.document_id, self.id)
+                else:
+                    print "diff_version/comment_version incorrect!"
+                    print parsed["diff_version"]
+                    print document.diff_version
+                    print parsed["comment_version"]
+                    print document.comment_version
         elif parsed["type"]=='check_version':
             document_session = DocumentWS.sessions[self.document_id]
             if parsed["version"] + len(document_session["last_diffs"]) >= document_session["document"].diff_version:

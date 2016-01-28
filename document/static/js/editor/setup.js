@@ -270,19 +270,15 @@
      editorHelpers.sendDocumentUpdate = function (callback) {
          var documentData = {};
 
-         if (theDocumentValues.control===true) {
-             documentData.metadata = JSON.stringify(theDocument.metadata);
-             documentData.contents = JSON.stringify(theDocument.contents);
-             documentData.version = theDocument.version;
-             documentData.hash = theDocument.hash;
-             console.log('saving');
-             serverCommunications.send({
-                 type: 'update_document',
-                 document: documentData
-             });
-         } else {
-             console.log('not saving');
-         }
+         documentData.metadata = JSON.stringify(theDocument.metadata);
+         documentData.contents = JSON.stringify(theDocument.contents);
+         documentData.version = theDocument.version;
+         documentData.hash = theDocument.hash;
+         console.log('saving');
+         serverCommunications.send({
+             type: 'update_document',
+             document: documentData
+         });
 
          theDocumentValues.changed = false;
 

@@ -846,48 +846,31 @@ var FW_FILETYPE_VERSION = "1.2";
 
 
     exporter.savecopy = function(aDocument) {
-        if (aDocument.is_owner) {
-            // If the current user of the document is also the owner, the copying is easy:
-            // we simply reset the id to zero, change the title and save the document.
-            aDocument = jQuery.extend(true, {}, aDocument);
-            aDocument.id = 0;
-            aDocument.title = gettext('Copy of ') + aDocument.title;
+        function importAsUser(aDocument, shrunkImageDB, shrunkBibDB,
+            images) {
+            // switch to user's own ImageDB and BibDB:
             if (window.hasOwnProperty('theDocument')) {
-                theDocument = aDocument;
-                jQuery('#header h1, #document-title').html(theDocument.title);
-                editorHelpers.documentHasChanged();
-                editorHelpers.sendDocumentUpdate();
-            } else {
-                importer.createNewDocument(aDocument);
+                theDocument.owner = theUser;
+                delete ImageDB;
+                delete BibDB;
             }
-        } else {
-            // The current user is not the document owner. This means we need to export the current document,
-            // then switch the ImageDB and BibDB to be those of the current user and import all the values.
-            function importAsUser(aDocument, shrunkImageDB, shrunkBibDB,
-                images) {
-                // switch to user's own ImageDB and BibDB:
-                if (window.hasOwnProperty('theDocument')) {
-                    theDocument.owner = theUser;
-                    delete ImageDB;
-                    delete BibDB;
-                }
-                importer.getDBs(aDocument, shrunkBibDB, shrunkImageDB,
-                    images);
+            importer.getDBs(aDocument, shrunkBibDB, shrunkImageDB,
+                images);
 
-            }
-            if (window.hasOwnProperty('theDocument')) {
-                exporter.native(aDocument, ImageDB, BibDB, importAsUser);
-            } else {
-                bibliographyHelpers.getABibDB(aDocument.owner, function(
-                    aBibDB) {
-                    usermediaHelpers.getAnImageDB(aDocument.owner,
-                        function(anImageDB) {
-                            exporter.native(aDocument, anImageDB,
-                                aBibDB, importAsUser);
-                        });
-                });
-            }
         }
+        if (window.hasOwnProperty('theDocument')) {
+            exporter.native(aDocument, ImageDB, BibDB, importAsUser);
+        } else {
+            bibliographyHelpers.getABibDB(aDocument.owner, function(
+                aBibDB) {
+                usermediaHelpers.getAnImageDB(aDocument.owner,
+                    function(anImageDB) {
+                        exporter.native(aDocument, anImageDB,
+                            aBibDB, importAsUser);
+                    });
+            });
+        }
+
     };
 
     /** Create a Fidus Writer document and upload it to the server as a backup.

@@ -26,9 +26,9 @@
 
 import os
 
-# If you want to show debug messages, set DEBUG to True.
+# If you don't want to show debug messages, set DEBUG to False.
 
-DEBUG = False
+DEBUG = True
 
 SERVER_INFO = {
     # This determines whether the server is used for testing and will let the users know

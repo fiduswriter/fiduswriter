@@ -88,6 +88,11 @@ INSTALLED_APPS += (
     #'allauth.socialaccount.providers.stackexchange',
 )
 
+# A list of allowed hostnames of this Fidus Writer installation
+ALLOWED_HOSTS = [
+    'localhost',
+]
+
 
 ## Location of commonly used Js libraries. Here the local version is given.
 # For deployment a version on the net is better.

@@ -113,8 +113,11 @@ class DocumentWS(BaseWebSocketHandler):
             print "!!!diff version issue!!!"
             document.diff_version = document.version
             DocumentWS.sessions[self.document_id]["last_diffs"] = []
-        needed_diffs = document.diff_version - document.version
-        response['document_values']['last_diffs'] = DocumentWS.sessions[self.document_id]["last_diffs"][-needed_diffs:]
+        elif document.diff_version > document.version:
+            needed_diffs = document.diff_version - document.version
+            response['document_values']['last_diffs'] = DocumentWS.sessions[self.document_id]["last_diffs"][-needed_diffs:]
+        else:
+            response['document_values']['last_diffs'] = []
         if self.is_new:
             response['document_values']['is_new'] = True
         if not self.is_owner:
@@ -269,13 +272,14 @@ class DocumentWS(BaseWebSocketHandler):
 
     def check_version(self, parsed):
         document_session = DocumentWS.sessions[self.document_id]
-        if parsed["version"] + len(document_session["last_diffs"]) >= document_session["document"].diff_version:
+        if parsed["version"] == document_session["document"].diff_version:
+            pass
+        elif parsed["version"] + len(document_session["last_diffs"]) >= document_session["document"].diff_version:
             number_requested_diffs = document_session["document"].diff_version - parsed["version"]
             response = {
                 "type": "diff",
                 "diff_version": parsed["version"],
                 "diff": document_session["last_diffs"][-number_requested_diffs:],
-                "request_id": 0
             }
             self.write_message(response)
         else:

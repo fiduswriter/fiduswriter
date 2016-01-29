@@ -166,8 +166,8 @@ class DocumentWS(BaseWebSocketHandler):
             self.handle_participant_update()
         elif parsed["type"]=='chat':
             self.handle_chat(parsed)
-        elif parsed["type"]=='check_version':
-            self.check_version(parsed)
+        elif parsed["type"]=='check_diff_version':
+            self.check_diff_version(parsed)
         elif parsed["type"]=='update_document' and self.access_rights == 'w':
             self.handle_document_update(parsed)
         elif parsed["type"]=='update_title' and self.access_rights == 'w':
@@ -270,15 +270,15 @@ class DocumentWS(BaseWebSocketHandler):
                 print parsed["comment_version"]
                 print document.comment_version
 
-    def check_version(self, parsed):
+    def check_diff_version(self, parsed):
         document_session = DocumentWS.sessions[self.document_id]
-        if parsed["version"] == document_session["document"].diff_version:
+        if parsed["diff_version"] == document_session["document"].diff_version:
             pass
-        elif parsed["version"] + len(document_session["last_diffs"]) >= document_session["document"].diff_version:
-            number_requested_diffs = document_session["document"].diff_version - parsed["version"]
+        elif parsed["diff_version"] + len(document_session["last_diffs"]) >= document_session["document"].diff_version:
+            number_requested_diffs = document_session["document"].diff_version - parsed["diff_version"]
             response = {
                 "type": "diff",
-                "diff_version": parsed["version"],
+                "diff_version": parsed["diff_version"],
                 "diff": document_session["last_diffs"][-number_requested_diffs:],
             }
             self.write_message(response)

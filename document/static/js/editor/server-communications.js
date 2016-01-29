@@ -19,10 +19,7 @@
                 type: 'get_document'
             });
         } else {
-            serverCommunications.send({
-                type: 'check_version',
-                version: theEditor.editor.mod.collab.version
-            });
+            theEditor.checkDiffVersion();
             serverCommunications.send({
                 type: 'participant_update'
             });
@@ -77,7 +74,7 @@
                 theEditor.updateComments(data.comments, data.comments_version);
             }
             if (data.diff_version !== theEditor.editor.mod.collab.version) {
-                theEditor.checkVersion();
+                theEditor.checkDiffVersion();
                 return;
             }
             if (data.diff && data.diff.length) {

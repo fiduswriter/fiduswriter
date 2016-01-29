@@ -113,7 +113,8 @@ class DocumentWS(BaseWebSocketHandler):
             print "!!!diff version issue!!!"
             document.diff_version = document.version
             DocumentWS.sessions[self.document_id]["last_diffs"] = []
-        response['document_values']['last_diffs'] = DocumentWS.sessions[self.document_id]["last_diffs"]
+        needed_diffs = document.diff_version - document.version
+        response['document_values']['last_diffs'] = DocumentWS.sessions[self.document_id]["last_diffs"][-needed_diffs:]
         if self.is_new:
             response['document_values']['is_new'] = True
         if not self.is_owner:
@@ -133,12 +134,10 @@ class DocumentWS(BaseWebSocketHandler):
             # Do not accept it, and send a document instead.
             self.send_document()
             return
-        elif changes["version"] < document.diff_version:
-            # The saved version does not contain all accepted diffs, so we keep the remaining ones
-            remaining_diffs = document.diff_version - changes["version"]
-            DocumentWS.sessions[self.document_id]["last_diffs"] = DocumentWS.sessions[self.document_id]["last_diffs"][-remaining_diffs:]
         else:
-            DocumentWS.sessions[self.document_id]["last_diffs"] = []
+            # The saved version does not contain all accepted diffs, so we keep the remaining ones + 1000
+            remaining_diffs = 1000 + document.diff_version - changes["version"]
+            DocumentWS.sessions[self.document_id]["last_diffs"] = DocumentWS.sessions[self.document_id]["last_diffs"][-remaining_diffs:]
         document.contents = changes["contents"]
         document.metadata = changes["metadata"]
         document.version = changes["version"]
@@ -245,7 +244,7 @@ class DocumentWS(BaseWebSocketHandler):
                 print parsed["diff_version"]
                 print document.diff_version
                 document_session = DocumentWS.sessions[self.document_id]
-                if parsed["diff_version"] < document_session["document"].version:
+                if parsed["diff_version"] < (document_session["document"].diff_version - len(document_session["last_diffs"])):
                     print "unfixable"
                     # Client has a version that is too old
                     self.send_document()

@@ -242,6 +242,8 @@ class DocumentWS(BaseWebSocketHandler):
                 DocumentWS.send_updates(message, self.document_id, self.id)
             elif parsed["diff_version"] != document.diff_version:
                 print "wrong diff_version!"
+                print parsed["diff_version"]
+                print document.diff_version
                 document_session = DocumentWS.sessions[self.document_id]
                 if parsed["diff_version"] + len(document_session["last_diffs"]) >= document_session["document"].diff_version:
                     print "can fix it"
@@ -250,7 +252,7 @@ class DocumentWS(BaseWebSocketHandler):
                         "type": "diff",
                         "diff_version": parsed["diff_version"],
                         "diff": document_session["last_diffs"][-number_requested_diffs:],
-                        "request_id": 0
+                        "reject_request_id": parsed["request_id"],
                         }
                     self.write_message(response)
                 else:
@@ -259,8 +261,6 @@ class DocumentWS(BaseWebSocketHandler):
                     self.send_document()
             else:
                 print "comment_version incorrect!"
-                print parsed["diff_version"]
-                print document.diff_version
                 print parsed["comment_version"]
                 print document.comment_version
 

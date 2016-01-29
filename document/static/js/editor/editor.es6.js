@@ -63,6 +63,8 @@ theEditor.initiate = function () {
 
 theEditor.update = function () {
       console.log('Updating editor')
+      theEditor.awaitingDiffResponse = false
+      clearTimeout(theEditor.checkVersionTimer)
       let doc = theEditor.createDoc(theDocument)
       theEditor.editor.setOption("collab", null)
       theEditor.editor.setContent(doc)
@@ -115,27 +117,36 @@ theEditor.enableUI = function () {
 
 
 theEditor.getUpdates = function (callback) {
-      var outputNode = nodeConverter.viewToModelNode(serializeTo(theEditor.editor.mod.collab.versionDoc,'dom'));
-      theDocument.title = theEditor.editor.doc.firstChild.textContent;
-      theDocument.version = theEditor.editor.mod.collab.version;
-      theDocument.metadata.title = exporter.node2Obj(outputNode.getElementById('document-title'));
-      theDocument.metadata.subtitle = exporter.node2Obj(outputNode.getElementById('metadata-subtitle'));
-      theDocument.metadata.authors = exporter.node2Obj(outputNode.getElementById('metadata-authors'));
-      theDocument.metadata.abstract = exporter.node2Obj(outputNode.getElementById('metadata-abstract'));
-      theDocument.metadata.keywords = exporter.node2Obj(outputNode.getElementById('metadata-keywords'));
-      theDocument.contents = exporter.node2Obj(outputNode.getElementById('document-contents'));
-      theDocument.hash = theEditor.getHash();
-      theDocument.comments = theEditor.comments.comments;
+      let outputNode = nodeConverter.viewToModelNode(serializeTo(theEditor.editor.mod.collab.versionDoc,'dom'))
+      theDocument.title = theEditor.editor.doc.firstChild.textContent
+      theDocument.version = theEditor.editor.mod.collab.version
+      theDocument.metadata.title = exporter.node2Obj(outputNode.getElementById('document-title'))
+      theDocument.metadata.subtitle = exporter.node2Obj(outputNode.getElementById('metadata-subtitle'))
+      theDocument.metadata.authors = exporter.node2Obj(outputNode.getElementById('metadata-authors'))
+      theDocument.metadata.abstract = exporter.node2Obj(outputNode.getElementById('metadata-abstract'))
+      theDocument.metadata.keywords = exporter.node2Obj(outputNode.getElementById('metadata-keywords'))
+      theDocument.contents = exporter.node2Obj(outputNode.getElementById('document-contents'))
+      theDocument.hash = theEditor.getHash()
+      theDocument.comments = theEditor.comments.comments
       if (callback) {
-          callback();
+          callback()
       }
 };
 
-theEditor.unconfirmedSteps = {};
+theEditor.unconfirmedSteps = {}
 
-var confirmStepsRequestCounter = 0;
+theEditor.awaitingDiffResponse = false
+
+var confirmStepsRequestCounter = 0
 
 theEditor.sendToCollaborators = function () {
+      if (theEditor.awaitingDiffResponse ||
+        !theEditor.editor.mod.collab.hasSendableSteps() &&
+        theEditor.comments.unsentEvents().length === 0) {
+          // We are waiting for the confirmation of previous steps, so don't
+          // send anything now, or there is nothing to send.
+          return;
+      }
       console.log('send to collabs')
       let toSend = theEditor.editor.mod.collab.sendableSteps()
       let request_id = confirmStepsRequestCounter++
@@ -152,17 +163,32 @@ theEditor.sendToCollaborators = function () {
           diffs: toSend,
           comments: theEditor.comments.hasUnsentEvents()
       }
-
-};
+      theEditor.awaitingDiffResponse = true
+      // If no answer has been received from the server within 10 seconds, check the version
+      theEditor.checkVersionTimer = setTimeout(function(){theEditor.checkVersion()}, 10000)
+}
 
 theEditor.confirmDiff = function (request_id) {
     console.log('confirming steps')
+    // Cancel version check
+    clearTimeout(theEditor.checkVersionTimer)
     let sentSteps = theEditor.unconfirmedSteps[request_id]["diffs"]
     theEditor.editor.mod.collab.confirmSteps(sentSteps)
 
     let sentComments = theEditor.unconfirmedSteps[request_id]["comments"]
     theEditor.comments.eventsSent(sentComments)
-};
+    theEditor.awaitingDiffResponse = false
+    theEditor.sendToCollaborators()
+}
+
+theEditor.rejectDiff = function (request_id) {
+    console.log('rejecting steps')
+    // Cancel version check
+    clearTimeout(theEditor.checkVersionTimer)
+    delete theEditor.unconfirmedSteps[request_id]
+    theEditor.awaitingDiffResponse = false
+    theEditor.sendToCollaborators()
+}
 
 theEditor.applyDiff = function(diff) {
     theEditor.editor.mod.collab.receive([diff].map(j => Step.fromJSON(fidusSchema, j)));
@@ -201,17 +227,21 @@ theEditor.checkHash = function(version, hash) {
           return
       }
       console.log('Hash could not be verified, requesting document.')
+      theEditor.awaitingDiffResponse = true
       serverCommunications.send({type: 'get_document'})
       return
     } else {
-      serverCommunications.send({
-        type: 'check_version',
-        version: theEditor.editor.mod.collab.version
-      });
-      return
+        theEditor.checkVersion()
     }
 }
 
+
+theEditor.checkVersion = function() {
+    serverCommunications.send({
+      type: 'check_version',
+      version: theEditor.editor.mod.collab.version
+    })
+}
 
 // Things to be executed on every editor transform.
 theEditor.onTransform = function(transform) {

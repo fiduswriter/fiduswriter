@@ -74,20 +74,19 @@
             break;
         case 'diff':
             if (data.comments && data.comments.length) {
-              theEditor.updateComments(data.comments, data.comments_version);
+                theEditor.updateComments(data.comments, data.comments_version);
             }
             if (data.diff_version !== theEditor.editor.mod.collab.version) {
-                serverCommunications.send({
-                    type: 'check_version',
-                    version: theEditor.editor.mod.collab.version
-                });
+                theEditor.checkVersion();
                 return;
             }
             if (data.diff && data.diff.length) {
               data.diff.forEach(function(diff) {
                   theEditor.applyDiff(diff);
               })
-
+            }
+            if (data.reject_request_id) {
+                theEditor.rejectDiff(data.reject_request_id);
             }
             break;
         case 'confirm_diff':

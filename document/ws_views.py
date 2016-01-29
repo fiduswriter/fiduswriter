@@ -185,7 +185,7 @@ class DocumentWS(BaseWebSocketHandler):
         self.save_document()
         DocumentWS.send_updates({
             "type": 'check_hash',
-            "version": parsed["document"]["version"],
+            "diff_version": parsed["document"]["version"],
             "hash": parsed["document"]["hash"]
         }, self.document_id, self.id)
 

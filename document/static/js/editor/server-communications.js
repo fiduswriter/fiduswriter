@@ -70,12 +70,17 @@
             });
             break;
         case 'diff':
-            if (data.comments && data.comments.length) {
-                theEditor.updateComments(data.comments, data.comments_version);
-            }
             if (data.diff_version !== theEditor.editor.mod.collab.version) {
                 theEditor.checkDiffVersion();
                 return;
+            }
+            if (data.hash) {
+                if (!theEditor.checkHash(data.diff_version, data.hash)) {
+                    return false;
+                }
+            }
+            if (data.comments && data.comments.length) {
+                theEditor.updateComments(data.comments, data.comments_version);
             }
             if (data.diff && data.diff.length) {
               data.diff.forEach(function(diff) {
@@ -98,7 +103,7 @@
             theDocumentValues.sentHash = false;
             break;
         case 'check_hash':
-            theEditor.checkHash(data.version,data.hash);
+            theEditor.checkHash(data.diff_version, data.hash);
             break;
         }
     };

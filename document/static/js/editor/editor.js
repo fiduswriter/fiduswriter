@@ -161,7 +161,8 @@ theEditor.sendToCollaborators = function () {
         }),
         comments: theEditor.comments.unsentEvents(),
         comment_version: theEditor.comments.version,
-        request_id: request_id
+        request_id: request_id,
+        hash: theEditor.getHash()
     };
     serverCommunications.send(aPackage);
     theEditor.unconfirmedSteps[request_id] = {
@@ -234,14 +235,15 @@ theEditor.checkHash = function (version, hash) {
     if (version === theEditor.editor.mod.collab.version) {
         if (hash === theEditor.getHash()) {
             console.log('Hash could be verified');
-            return;
+            return true;
         }
         console.log('Hash could not be verified, requesting document.');
         theEditor.awaitingDiffResponse = true;
         serverCommunications.send({ type: 'get_document' });
-        return;
+        return false;
     } else {
         theEditor.checkDiffVersion();
+        return false;
     }
 };
 

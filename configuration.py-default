@@ -89,13 +89,15 @@ INSTALLED_APPS += (
 )
 
 
-# Location of commonly used Js libraries. Here the local version is given. For deployment a version on the net is better.
-JS_LOCATIONS = {
-    'JQUERY_URL': STATIC_URL + 'js/libs/jquery-2.2.0.js',
-    'JQUERYUI_URL': STATIC_URL + 'js/libs/jquery-ui-1.11.4.js',
-    'UNDERSCOREJS_URL': STATIC_URL + 'js/libs/underscore-1.8.3.js',
-    'MATHJAX_URL': STATIC_URL + 'js/libs/mathjax/MathJax.js',
-    }
-
-CSS_LOCATIONS = {
-    }
+## Location of commonly used Js libraries. Here the local version is given.
+# For deployment a version on the net is better.
+# Only uncomment if you change any of these values!
+#JS_LOCATIONS = {
+#    'JQUERY_URL': STATIC_URL + 'js/libs/jquery-2.2.0.js',
+#    'JQUERYUI_URL': STATIC_URL + 'js/libs/jquery-ui-1.11.4.js',
+#    'UNDERSCOREJS_URL': STATIC_URL + 'js/libs/underscore-1.8.3.js',
+#    'MATHJAX_URL': STATIC_URL + 'js/libs/mathjax/MathJax.js',
+#    }
+#
+#CSS_LOCATIONS = {
+#    }

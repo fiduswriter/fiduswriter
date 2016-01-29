@@ -245,7 +245,11 @@ class DocumentWS(BaseWebSocketHandler):
                 print parsed["diff_version"]
                 print document.diff_version
                 document_session = DocumentWS.sessions[self.document_id]
-                if parsed["diff_version"] + len(document_session["last_diffs"]) >= document_session["document"].diff_version:
+                if parsed["diff_version"] < document_session["document"].version:
+                    print "unfixable"
+                    # Client has a version that is too old
+                    self.send_document()
+                elif parsed["diff_version"] < document_session["document"].diff_version:
                     print "can fix it"
                     number_requested_diffs = document_session["document"].diff_version - parsed["diff_version"]
                     response = {

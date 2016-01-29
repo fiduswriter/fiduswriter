@@ -131,7 +131,7 @@ class DocumentWS(BaseWebSocketHandler):
         if changes["version"] > document.diff_version:
             # The version number is too high. Possibly due to server restart.
             # Do not accept it, and send a document instead.
-            self.get_document()
+            self.send_document()
             return
         elif changes["version"] < document.diff_version:
             # The saved version does not contain all accepted diffs, so we keep the remaining ones
@@ -256,7 +256,7 @@ class DocumentWS(BaseWebSocketHandler):
                 else:
                     print "unfixable"
                     # Client has a version that is too old
-                    self.get_document()
+                    self.send_document()
             else:
                 print "comment_version incorrect!"
                 print parsed["diff_version"]
@@ -278,7 +278,7 @@ class DocumentWS(BaseWebSocketHandler):
         else:
             print "unfixable"
             # Client has a version that is too old
-            self.get_document()
+            self.send_document()
 
 
     def on_close(self):

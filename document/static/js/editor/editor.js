@@ -71,8 +71,9 @@ theEditor.initiate = function () {
 
 theEditor.update = function () {
     console.log('Updating editor');
-    theEditor.awaitingDiffResponse = false;
-    clearTimeout(theEditor.checkDiffVersionTimer);
+    if (theEditor.awaitingDiffResponse) {
+        theEditor.enableDiffSending();
+    }
     var doc = theEditor.createDoc(theDocument);
     theEditor.editor.setOption("collab", null);
     theEditor.editor.setContent(doc);
@@ -140,8 +141,6 @@ theEditor.getUpdates = function (callback) {
 
 theEditor.unconfirmedSteps = {};
 
-theEditor.awaitingDiffResponse = false;
-
 var confirmStepsRequestCounter = 0;
 
 theEditor.sendToCollaborators = function () {
@@ -169,32 +168,23 @@ theEditor.sendToCollaborators = function () {
         diffs: toSend,
         comments: theEditor.comments.hasUnsentEvents()
     };
-    theEditor.awaitingDiffResponse = true;
-    // If no answer has been received from the server within 10 seconds, check the version
-    theEditor.checkDiffVersionTimer = setTimeout(function () {
-        theEditor.checkDiffVersion();
-    }, 10000);
+    theEditor.disableDiffSending();
 };
 
 theEditor.confirmDiff = function (request_id) {
     console.log('confirming steps');
-    // Cancel version check
-    clearTimeout(theEditor.checkDiffVersionTimer);
     var sentSteps = theEditor.unconfirmedSteps[request_id]["diffs"];
     theEditor.editor.mod.collab.confirmSteps(sentSteps);
 
     var sentComments = theEditor.unconfirmedSteps[request_id]["comments"];
     theEditor.comments.eventsSent(sentComments);
-    theEditor.awaitingDiffResponse = false;
-    theEditor.sendToCollaborators();
+    theEditor.enableDiffSending();
 };
 
 theEditor.rejectDiff = function (request_id) {
     console.log('rejecting steps');
-    // Cancel version check
-    clearTimeout(theEditor.checkDiffVersionTimer);
+    theEditor.enableDiffSending();
     delete theEditor.unconfirmedSteps[request_id];
-    theEditor.awaitingDiffResponse = false;
     theEditor.sendToCollaborators();
 };
 
@@ -238,7 +228,7 @@ theEditor.checkHash = function (version, hash) {
             return true;
         }
         console.log('Hash could not be verified, requesting document.');
-        theEditor.awaitingDiffResponse = true;
+        theEditor.disableDiffSending();
         serverCommunications.send({ type: 'get_document' });
         return false;
     } else {
@@ -248,10 +238,29 @@ theEditor.checkHash = function (version, hash) {
 };
 
 theEditor.checkDiffVersion = function () {
+    if (theEditor.connected) {
+        theEditor.disableDiffSending();
+    }
     serverCommunications.send({
         type: 'check_diff_version',
         diff_version: theEditor.editor.mod.collab.version
     });
+};
+
+theEditor.awaitingDiffResponse = false;
+
+theEditor.disableDiffSending = function () {
+    theEditor.awaitingDiffResponse = true;
+    // If no answer has been received from the server within 10 seconds, check the version
+    theEditor.checkDiffVersionTimer = setTimeout(function () {
+        theEditor.checkDiffVersion();
+    }, 10000);
+};
+
+theEditor.enableDiffSending = function () {
+    clearTimeout(theEditor.checkDiffVersionTimer);
+    theEditor.awaitingDiffResponse = false;
+    theEditor.sendToCollaborators();
 };
 
 // Things to be executed on every editor transform.

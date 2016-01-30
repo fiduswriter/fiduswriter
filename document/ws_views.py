@@ -273,7 +273,11 @@ class DocumentWS(BaseWebSocketHandler):
     def check_diff_version(self, parsed):
         document_session = DocumentWS.sessions[self.document_id]
         if parsed["diff_version"] == document_session["document"].diff_version:
-            pass
+            response = {
+                "type": "confirm_diff_version",
+                "diff_version": parsed["diff_version"],
+            }
+            self.write_message(response)
         elif parsed["diff_version"] + len(document_session["last_diffs"]) >= document_session["document"].diff_version:
             number_requested_diffs = document_session["document"].diff_version - parsed["diff_version"]
             response = {

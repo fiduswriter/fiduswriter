@@ -26,8 +26,6 @@
             while (serverCommunications.messagesToSend.length > 0) {
                   serverCommunications.send(serverCommunications.messagesToSend.shift());
             }
-            theEditor.sendToCollaborators();
-
         }
         serverCommunications.firstTimeConnection = false;
     };
@@ -69,6 +67,12 @@
                 });
             });
             break;
+        case 'confirm_diff_version':
+            if (data.diff_version !== theEditor.editor.mod.collab.version) {
+                theEditor.checkDiffVersion();
+                return;
+            }
+            theEditor.enableDiffSending();
         case 'diff':
             if (data.diff_version !== theEditor.editor.mod.collab.version) {
                 theEditor.checkDiffVersion();
@@ -78,6 +82,9 @@
                 if (!theEditor.checkHash(data.diff_version, data.hash)) {
                     return false;
                 }
+            } else {
+                // No hash means this must have been created server side.
+                theEditor.enableDiffSending();
             }
             if (data.comments && data.comments.length) {
                 theEditor.updateComments(data.comments, data.comments_version);

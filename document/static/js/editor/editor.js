@@ -72,6 +72,7 @@ theEditor.initiate = function () {
 theEditor.update = function () {
     console.log('Updating editor');
     theEditor.currentlyCheckingVersion = false;
+    theEditor.unconfirmedSteps = {};
     if (theEditor.awaitingDiffResponse) {
         theEditor.enableDiffSending();
     }
@@ -87,7 +88,7 @@ theEditor.update = function () {
     theEditor.editor.mod.collab.on("mustSend", theEditor.sendToCollaborators);
     theEditor.comments = new _comment.CommentStore(theEditor.editor, theDocument.comment_version);
     _.each(theDocument.comments, function (comment) {
-        theEditor.comments.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers);
+        theEditor.comments.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers, comment['review:isMajor']);
     });
     theEditor.comments.on("mustSend", theEditor.sendToCollaborators);
     theEditor.enableUI();
@@ -318,7 +319,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                                                                                                                                                           based on https://github.com/ProseMirror/website/blob/master/src/client/collab/comment.js
                                                                                                                                                           */
 
-var Comment = function Comment(id, user, userName, userAvatar, date, comment, answers) {
+var Comment = function Comment(id, user, userName, userAvatar, date, comment, answers, isMajor) {
   _classCallCheck(this, Comment);
 
   this.id = id;
@@ -328,6 +329,7 @@ var Comment = function Comment(id, user, userName, userAvatar, date, comment, an
   this.date = date;
   this.comment = comment;
   this.answers = answers;
+  this['review:isMajor'] = isMajor;
 };
 
 var CommentStore = exports.CommentStore = (function () {
@@ -343,9 +345,9 @@ var CommentStore = exports.CommentStore = (function () {
 
   _createClass(CommentStore, [{
     key: "addComment",
-    value: function addComment(user, userName, userAvatar, date, comment, answers) {
+    value: function addComment(user, userName, userAvatar, date, comment, answers, isMajor) {
       var id = randomID();
-      this.addLocalComment(id, user, userName, userAvatar, date, comment, answers);
+      this.addLocalComment(id, user, userName, userAvatar, date, comment, answers, isMajor);
       this.unsent.push({ type: "create", id: id });
       this.pm.execCommand('comment:set', [id]);
       this.signal("mustSend");
@@ -353,23 +355,24 @@ var CommentStore = exports.CommentStore = (function () {
     }
   }, {
     key: "addLocalComment",
-    value: function addLocalComment(id, user, userName, userAvatar, date, comment, answers) {
+    value: function addLocalComment(id, user, userName, userAvatar, date, comment, answers, isMajor) {
       if (!this.comments[id]) {
-        this.comments[id] = new Comment(id, user, userName, userAvatar, date, comment, answers);
+        this.comments[id] = new Comment(id, user, userName, userAvatar, date, comment, answers, isMajor);
       }
     }
   }, {
     key: "updateComment",
-    value: function updateComment(id, comment) {
-      this.updateLocalComment(id, comment);
+    value: function updateComment(id, comment, commentIsMajor) {
+      this.updateLocalComment(id, comment, commentIsMajor);
       this.unsent.push({ type: "update", id: id });
       this.signal("mustSend");
     }
   }, {
     key: "updateLocalComment",
-    value: function updateLocalComment(id, comment) {
+    value: function updateLocalComment(id, comment, commentIsMajor) {
       if (this.comments[id]) {
         this.comments[id].comment = comment;
+        this.comments[id]['review:isMajor'] = commentIsMajor;
       }
     }
   }, {
@@ -490,7 +493,7 @@ var CommentStore = exports.CommentStore = (function () {
         } else if (event.type == "update") {
           var found = this.comments[event.id];
           if (!found || !found.id) continue;
-          result.push({ type: "update", id: found.id, comment: found.comment });
+          result.push({ type: "update", id: found.id, comment: found.comment, 'review:isMajor': found['review:isMajor'] });
         } else if (event.type == "create") {
           var found = this.comments[event.id];
           if (!found || !found.id) continue;
@@ -501,7 +504,8 @@ var CommentStore = exports.CommentStore = (function () {
             userAvatar: found.userAvatar,
             date: found.date,
             comment: found.comment,
-            answers: found.answers
+            answers: found.answers,
+            'review:isMajor': found['review:isMajor']
           });
         } else if (event.type == "add_answer") {
           var found = this.comments[event.id];
@@ -547,12 +551,12 @@ var CommentStore = exports.CommentStore = (function () {
           _this2.deleteLocalComment(event.id);
           updateCommentLayout = true;
         } else if (event.type == "create") {
-          _this2.addLocalComment(event.id, event.user, event.userName, event.userAvatar, event.date, event.comment);
+          _this2.addLocalComment(event.id, event.user, event.userName, event.userAvatar, event.date, event.comment, event['review:isMajor']);
           if (event.comment.length > 0) {
             updateCommentLayout = true;
           }
         } else if (event.type == "update") {
-          _this2.updateLocalComment(event.id, event.comment);
+          _this2.updateLocalComment(event.id, event.comment, event['review:isMajor']);
           updateCommentLayout = true;
         } else if (event.type == "add_answer") {
           _this2.addLocalAnswer(event.commentId, event);

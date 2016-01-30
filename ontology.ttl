@@ -1,0 +1,6 @@
+@prefix review: <http://eis.iai.uni-bonn.de/Projects/OSCOSS/reviews/> .
+
+review:isMajor a rdf:Property ;
+  rdfs:comment "whether or not an annotation raises a major issue" ;
+  rdfs:domain oa:Annotation ;
+  rdfs:range xsd:boolean .

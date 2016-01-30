@@ -8,7 +8,7 @@ import {CommentMark} from "./schema"
 
 
 class Comment {
-  constructor(id, user, userName, userAvatar, date, comment, answers) {
+  constructor(id, user, userName, userAvatar, date, comment, answers, isMajor) {
     this.id = id
     this.user = user
     this.userName = userName
@@ -16,6 +16,7 @@ class Comment {
     this.date = date
     this.comment = comment
     this.answers = answers
+    this['review:isMajor'] = isMajor
   }
 }
 
@@ -28,30 +29,31 @@ export class CommentStore {
     this.unsent = []
   }
 
-  addComment(user, userName, userAvatar, date, comment, answers) {
+  addComment(user, userName, userAvatar, date, comment, answers, isMajor) {
     let id = randomID()
-    this.addLocalComment(id, user, userName, userAvatar, date, comment, answers)
+    this.addLocalComment(id, user, userName, userAvatar, date, comment, answers, isMajor)
     this.unsent.push({type: "create", id: id})
     this.pm.execCommand('comment:set',[id]);
     this.signal("mustSend")
     return id
   }
 
-  addLocalComment(id, user, userName, userAvatar, date, comment, answers) {
+  addLocalComment(id, user, userName, userAvatar, date, comment, answers, isMajor) {
     if (!this.comments[id]) {
-      this.comments[id] = new Comment(id, user, userName, userAvatar, date, comment, answers)
+      this.comments[id] = new Comment(id, user, userName, userAvatar, date, comment, answers, isMajor)
     }
   }
 
-  updateComment(id, comment) {
-    this.updateLocalComment(id, comment)
+  updateComment(id, comment, commentIsMajor) {
+    this.updateLocalComment(id, comment, commentIsMajor)
     this.unsent.push({type: "update", id: id})
     this.signal("mustSend")
   }
 
-  updateLocalComment(id, comment) {
+  updateLocalComment(id, comment, commentIsMajor) {
     if (this.comments[id]) {
       this.comments[id].comment = comment
+      this.comments[id]['review:isMajor'] = commentIsMajor
     }
   }
 
@@ -137,7 +139,7 @@ export class CommentStore {
       } else if (event.type == "update") {
         let found = this.comments[event.id]
         if (!found || !found.id) continue
-        result.push({type: "update", id: found.id, comment: found.comment})
+        result.push({type: "update", id: found.id, comment: found.comment, 'review:isMajor': found['review:isMajor']})
       } else if (event.type == "create") {
         let found = this.comments[event.id]
         if (!found || !found.id) continue
@@ -148,7 +150,8 @@ export class CommentStore {
                      userAvatar: found.userAvatar,
                      date: found.date,
                      comment: found.comment,
-                     answers: found.answers
+                     answers: found.answers,
+          'review:isMajor': found['review:isMajor']
                      })
       } else if (event.type == "add_answer") {
         let found = this.comments[event.id]
@@ -190,12 +193,12 @@ export class CommentStore {
         this.deleteLocalComment(event.id)
         updateCommentLayout = true
       } else if (event.type == "create") {
-        this.addLocalComment(event.id, event.user, event.userName, event.userAvatar, event.date, event.comment)
+        this.addLocalComment(event.id, event.user, event.userName, event.userAvatar, event.date, event.comment, event['review:isMajor'])
         if (event.comment.length > 0) {
           updateCommentLayout = true
         }
       } else if (event.type == "update") {
-        this.updateLocalComment(event.id, event.comment)
+        this.updateLocalComment(event.id, event.comment, event['review:isMajor'])
         updateCommentLayout = true
       } else if (event.type == "add_answer") {
         this.addLocalAnswer(event.commentId, event)

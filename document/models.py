@@ -15,7 +15,7 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -59,12 +59,14 @@ class Document(models.Model):
     def get_absolute_url(self):
         return "/document/%i/" % self.id
 
-
 RIGHTS_CHOICES  = (
-    ('r', 'read'),
-    ('w', 'read/write'),
+    ('r', 'reader'),
+    ('w', 'author'),
+    ('e', 'editor'),
+    ('c', 'reviewer')
 )
 
+#TODO: AccessRights - EMPTY. add when create document
 class AccessRight(models.Model):
     document = models.ForeignKey(Document)
     user = models.ForeignKey(User)
@@ -73,8 +75,9 @@ class AccessRight(models.Model):
     class Meta:
         unique_together = (("document", "user"),)
 
-    def __unicode__(self):
-        return self.user.readable_name+' ('+self.rights+') on '+self.document.title
+    #def __unicode__(self):
+     #   return self.user.username+' ('+self.rights+') on '+self.document.title
+        #return self.user.readable_name+' ('+self.rights+') on '+self.document.title
 
 def revision_filename(instance, filename):
     return '/'.join(['revision', str(instance.document.id), filename])

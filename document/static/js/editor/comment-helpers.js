@@ -99,9 +99,9 @@
         delete theDocument.activeCommentAnswerId;
     };
 
-    commentHelpers.updateComment = function (id, commentText) {
+    commentHelpers.updateComment = function (id, commentText, commentIsMajor) {
         // Save the change to a comment and mark that the document has been changed
-        theEditor.comments.updateComment(id, commentText);
+        theEditor.comments.updateComment(id, commentText, commentIsMajor);
         commentHelpers.deactivateAll();
         commentHelpers.layoutComments();
     };
@@ -110,10 +110,10 @@
         // Handle a click on the submit button of the comment submit form.
         var commentTextBox, commentText, commentId;
         commentTextBox = jQuery(this).siblings('.commentText')[0];
+        commentIsMajor = jQuery(this).siblings('.comment-is-major').prop('checked');
         commentText = commentTextBox.value;
         commentId = commentHelpers.getCommentId(commentTextBox);
-        commentHelpers.updateComment(commentId, commentText);
-
+        commentHelpers.updateComment(commentId, commentText, commentIsMajor);
     };
 
     commentHelpers.cancelSubmitComment = function () {
@@ -235,6 +235,24 @@
                 jQuery('#flow').toggleClass('comments-enabled');
                 jQuery('.toolbarcomment button').toggleClass('disabled');
             });
+
+        jQuery(document).on('mousedown', '#comments-filter label', function (event) {
+            event.preventDefault();
+            var filterType = $(this).attr("data-filter");
+
+            switch (filterType) {
+                case 'r':
+                case 'w':
+                case 'e':
+                case 'c':
+                    commentHelpers.filterByUserType(filterType);
+                    break;
+                case 'username':
+                    commentHelpers.filterByUserDialog();
+                    break;
+            }
+
+        });
     };
 
     commentHelpers.deleteComment = function (id) {
@@ -340,7 +358,8 @@
               userName: theEditor.comments.comments[id]['userName'],
               userAvatar: theEditor.comments.comments[id]['userAvatar'],
               date: theEditor.comments.comments[id]['date'],
-              answers: theEditor.comments.comments[id]['answers']
+              answers: theEditor.comments.comments[id]['answers'],
+                'review:isMajor': theEditor.comments.comments[id]['review:isMajor']
             });
           }
 
@@ -363,6 +382,81 @@
             });
         }
 
+    };
+
+    /**
+     * Filtering part. akorovin
+     */
+    commentHelpers.filterByUserType = function(userType) {
+        //filter by user role (reader, editor, reviewer etc)
+        console.log(userType);
+        var userRoles = theDocument.access_rights;
+        var idsOfNeededUsers = [];
+
+        jQuery.each(userRoles, function(index, user) {
+            if (user.rights == userType) {
+                idsOfNeededUsers.push(user.user_id);
+            }
+        });
+
+        $("#comment-box-container").children().each(function() {
+            var userId = parseInt($(this).attr("data-user-id"), 10);
+            if ($.inArray(userId, idsOfNeededUsers) !== -1) {
+                $(this).show();
+            }
+            else {
+                $(this).hide();
+            }
+        });
+    };
+
+    commentHelpers.filterByUserDialog = function () {
+        //create array of roles + owner role
+        var rolesCopy = theDocument.access_rights.slice();
+        rolesCopy.push({
+            user_name: theDocument.owner.name,
+            user_id: theDocument.owner.id
+        });
+
+        var users = {
+            users: rolesCopy
+        };
+
+        jQuery('body').append(tmp_filter_by_user_box(users));
+        diaButtons = {};
+        diaButtons[gettext('Filter')] = function () {
+            var id = $(this).children("select").val();
+            if (id == undefined) {
+                return;
+            }
+
+            var boxesToHide = $("#comment-box-container").children("[data-user-id!='" + id + "']").hide();
+            var boxesToHide = $("#comment-box-container").children("[data-user-id='" + id + "']").show();
+
+            //TODO: filtering
+            jQuery(this).dialog("close");
+        };
+
+        diaButtons[gettext('Cancel')] = function () {
+            jQuery(this).dialog("close");
+        };
+
+        jQuery("#comment-filter-byuser-box").dialog({
+            resizable: false,
+            height: 180,
+            modal: true,
+            close: function () {
+                jQuery("#comment-filter-byuser-box").detach();
+            },
+            buttons: diaButtons,
+            create: function () {
+                var $the_dialog = jQuery(this).closest(".ui-dialog");
+                $the_dialog.find(".ui-button:first-child").addClass(
+                    "fw-button fw-dark");
+                $the_dialog.find(".ui-button:last").addClass(
+                    "fw-button fw-orange");
+            }
+        });
     };
 
     exports.commentHelpers = commentHelpers;

@@ -21,8 +21,10 @@
 /** A template to display all the comments */
 var tmp_comments = _.template(
     '<% _.each(theComments,function(comment,key,list){ %>\
-        <div id="comment-box-<%= comment.id %>" data-id="<%= comment.id %>" class="comment-box \
+        <div id="comment-box-<%= comment.id %>" data-id="<%= comment.id %>"  data-user-id="<%= comment.user %>" \
+        class="comment-box \
             <% if(comment.id===theDocument.activeCommentId) { %>active<% } else { %>inactive<% } %>\
+            <% if(comment["review:isMajor"] === true) { %>comment-is-major-bgc<% }%>\
             " style="top:<%= commentHelpers.calculateCommentBoxOffset(comment) %>px;">\
             <% if (comment.id===theDocument.activeCommentId || comment.comment.length > 0) { %>\
             <% if(0 === comment.comment.length) { %>\
@@ -131,10 +133,19 @@ var tmp_first_comment = _.template(
         </div>\
         <div class="comment-text-wrapper">\
             <textarea class="commentText" data-id="<%= comment.id %>" rows="5"></textarea>\
+            <input class="comment-is-major" type="checkbox" name="isMajor" value="0" />Is major<br />\
             <span class="submitComment fw-button fw-dark">' +
     gettext("Submit") +
     '</span>\
             <span class="cancelSubmitComment fw-button fw-orange">' +
     gettext("Cancel") + '</span>\
         </div>\
+    </div>');
+
+var tmp_filter_by_user_box = _.template('<div id="comment-filter-byuser-box" title="Filter by user">\
+        <select>\
+            <% _.each(users, function(user) { %>\
+                <option value="<%- user.user_id %>"><%- user.user_name %></option>\
+            <% }) %>\
+        </select>\
     </div>');

@@ -15,3 +15,6 @@ bibliography/static/js/bibliography-statics.js
 node_modules/
 style/static/
 venv/
+.idea/
+configuration.py
+fidus.db

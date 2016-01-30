@@ -168,14 +168,17 @@ class DocumentWS(BaseWebSocketHandler):
             self.handle_chat(parsed)
         elif parsed["type"]=='check_diff_version':
             self.check_diff_version(parsed)
-        elif parsed["type"]=='update_document' and self.access_rights == 'w':
+        elif parsed["type"]=='update_document' and self.can_update_document():
             self.handle_document_update(parsed)
-        elif parsed["type"]=='update_title' and self.access_rights == 'w':
+        elif parsed["type"]=='update_title' and self.can_update_document():
             self.handle_title_update(parsed)
-        elif parsed["type"]=='setting_change' and self.access_rights == 'w':
+        elif parsed["type"]=='setting_change' and self.can_update_document():
             self.handle_settings_change(parsed)
-        elif parsed["type"]=='diff' and self.access_rights == 'w':
+        elif parsed["type"]=='diff' and self.can_update_document():
             self.handle_diff(message, parsed)
+
+    def can_update_document(self):
+        return self.access_rights == 'w' or self.access_rights == 'a'
 
     def handle_participant_update(self):
         DocumentWS.send_participant_list(self.document_id)
@@ -223,6 +226,8 @@ class DocumentWS(BaseWebSocketHandler):
                         del DocumentWS.sessions[self.document_id]["comments"][id]
                     elif cd["type"] == "update":
                         DocumentWS.sessions[self.document_id]["comments"][id]["comment"] = cd["comment"]
+                        if "review:isMajor" in cd:
+                            DocumentWS.sessions[self.document_id]["comments"][id]["review:isMajor"] = cd["review:isMajor"]
                     elif cd["type"] == "add_answer":
                         comment_id = str(cd["commentId"])
                         if not "answers" in DocumentWS.sessions[self.document_id]["comments"][comment_id]:

@@ -82,9 +82,6 @@
                 if (!theEditor.checkHash(data.diff_version, data.hash)) {
                     return false;
                 }
-            } else {
-                // No hash means this must have been created server side.
-                theEditor.enableDiffSending();
             }
             if (data.comments && data.comments.length) {
                 theEditor.updateComments(data.comments, data.comments_version);
@@ -96,6 +93,10 @@
             }
             if (data.reject_request_id) {
                 theEditor.rejectDiff(data.reject_request_id);
+            }
+            if (!data.hash) {
+                // No hash means this must have been created server side.
+                theEditor.enableDiffSending();
             }
             break;
         case 'confirm_diff':

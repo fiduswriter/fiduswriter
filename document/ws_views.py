@@ -74,6 +74,32 @@ class DocumentWS(BaseWebSocketHandler):
             response['type'] = 'welcome'
             self.write_message(response)
 
+    def on_message(self, message):
+        if not self.document_id in DocumentWS.sessions:
+            print "receiving message for closed document"
+            return
+        parsed = json_decode(message)
+        print parsed["type"]
+        if parsed["type"]=='get_document':
+            self.send_document()
+        elif parsed["type"]=='participant_update':
+            self.handle_participant_update()
+        elif parsed["type"]=='chat':
+            self.handle_chat(parsed)
+        elif parsed["type"]=='check_diff_version':
+            self.check_diff_version(parsed)
+        elif parsed["type"]=='update_document' and self.can_update_document():
+            self.handle_document_update(parsed)
+        elif parsed["type"]=='update_title' and self.can_update_document():
+            self.handle_title_update(parsed)
+        elif parsed["type"]=='setting_change' and self.can_update_document():
+            self.handle_settings_change(message, parsed)
+        elif parsed["type"]=='diff' and self.can_update_document():
+            self.handle_diff(message, parsed)
+
+    def can_update_document(self):
+        return self.access_rights == 'w' or self.access_rights == 'a'
+
     def confirm_diff(self, request_id):
         response = dict()
         response['type'] = 'confirm_diff'
@@ -147,32 +173,6 @@ class DocumentWS(BaseWebSocketHandler):
     def update_title(self, title):
         document = DocumentWS.sessions[self.document_id]['document']
         document.title = title
-
-    def on_message(self, message):
-        if not self.document_id in DocumentWS.sessions:
-            print "receiving message for closed document"
-            return
-        parsed = json_decode(message)
-        print parsed["type"]
-        if parsed["type"]=='get_document':
-            self.send_document()
-        elif parsed["type"]=='participant_update':
-            self.handle_participant_update()
-        elif parsed["type"]=='chat':
-            self.handle_chat(parsed)
-        elif parsed["type"]=='check_diff_version':
-            self.check_diff_version(parsed)
-        elif parsed["type"]=='update_document' and self.can_update_document():
-            self.handle_document_update(parsed)
-        elif parsed["type"]=='update_title' and self.can_update_document():
-            self.handle_title_update(parsed)
-        elif parsed["type"]=='setting_change' and self.can_update_document():
-            self.handle_settings_change(message, parsed)
-        elif parsed["type"]=='diff' and self.can_update_document():
-            self.handle_diff(message, parsed)
-
-    def can_update_document(self):
-        return self.access_rights == 'w' or self.access_rights == 'a'
 
     def handle_participant_update(self):
         DocumentWS.send_participant_list(self.document_id)

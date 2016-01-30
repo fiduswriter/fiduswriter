@@ -149,6 +149,9 @@ class DocumentWS(BaseWebSocketHandler):
         document.title = title
 
     def on_message(self, message):
+        if not self.document_id in DocumentWS.sessions:
+            print "receiving message for closed document"
+            return
         parsed = json_decode(message)
         print parsed["type"]
         if parsed["type"]=='get_document':
@@ -164,7 +167,7 @@ class DocumentWS(BaseWebSocketHandler):
         elif parsed["type"]=='update_title' and self.can_update_document():
             self.handle_title_update(parsed)
         elif parsed["type"]=='setting_change' and self.can_update_document():
-            self.handle_settings_change(parsed)
+            self.handle_settings_change(message, parsed)
         elif parsed["type"]=='diff' and self.can_update_document():
             self.handle_diff(message, parsed)
 
@@ -177,11 +180,12 @@ class DocumentWS(BaseWebSocketHandler):
     def handle_document_update(self, parsed):
         self.update_document(parsed["document"])
         DocumentWS.save_document(self.document_id)
-        DocumentWS.send_updates({
+        message = {
             "type": 'check_hash',
             "diff_version": parsed["document"]["version"],
             "hash": parsed["document"]["hash"]
-        }, self.document_id, self.id)
+        }
+        DocumentWS.send_updates(message, self.document_id, self.id)
 
     def handle_title_update(self, parsed):
         self.update_title(parsed["title"])
@@ -190,14 +194,13 @@ class DocumentWS(BaseWebSocketHandler):
     def handle_chat(self, parsed):
         chat = {
             "id": str(uuid.uuid4()),
-            "body": parsed["body"],
+            "body": parsed['body'],
             "from": self.user.id,
             "type": 'chat'
             }
-        if self.document_id in DocumentWS.sessions:
-            DocumentWS.send_updates(chat, self.document_id)
+        DocumentWS.send_updates(chat, self.document_id)
 
-    def handle_settings_change(self, parsed):
+    def handle_settings_change(self, message, parsed):
         if self.document_id in DocumentWS.sessions:
             DocumentWS.sessions[self.document_id]['settings'][parsed['variable']] = parsed['value']
             DocumentWS.send_updates(message, self.document_id, self.id)
@@ -274,6 +277,7 @@ class DocumentWS(BaseWebSocketHandler):
                 "diff_version": parsed["diff_version"],
             }
             self.write_message(response)
+            return
         elif parsed["diff_version"] + len(document_session["last_diffs"]) >= document_session["document"].diff_version:
             number_requested_diffs = document_session["document"].diff_version - parsed["diff_version"]
             response = {
@@ -282,11 +286,12 @@ class DocumentWS(BaseWebSocketHandler):
                 "diff": document_session["last_diffs"][-number_requested_diffs:],
             }
             self.write_message(response)
+            return
         else:
             print "unfixable"
             # Client has a version that is too old
             self.send_document()
-
+            return
 
     def on_close(self):
         print "Websocket closing"

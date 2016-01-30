@@ -182,6 +182,7 @@ theEditor.confirmDiff = function (request_id) {
 
     var sentComments = theEditor.unconfirmedSteps[request_id]["comments"];
     theEditor.comments.eventsSent(sentComments);
+    delete theEditor.unconfirmedSteps[request_id];
     theEditor.enableDiffSending();
 };
 

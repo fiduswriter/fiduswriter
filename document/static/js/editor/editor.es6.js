@@ -64,6 +64,7 @@ theEditor.initiate = function () {
 theEditor.update = function () {
       console.log('Updating editor')
       theEditor.currentlyCheckingVersion = false
+      theEditor.unconfirmedSteps = {}
       if (theEditor.awaitingDiffResponse) {
           theEditor.enableDiffSending()
       }
@@ -177,6 +178,7 @@ theEditor.confirmDiff = function (request_id) {
 
     let sentComments = theEditor.unconfirmedSteps[request_id]["comments"]
     theEditor.comments.eventsSent(sentComments)
+    delete theEditor.unconfirmedSteps[request_id]
     theEditor.enableDiffSending()
 }
 

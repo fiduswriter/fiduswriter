@@ -108,12 +108,15 @@ theEditor.enableUI = function () {
         jQuery('#editor-navigation').show()
         jQuery('.metadata-menu-item, #open-close-header, .save, \
         .multibuttonsCover, .papersize-menu, .metadata-menu, \
-        .documentstyle-menu').removeClass('disabled')
+        .documentstyle-menu, .citationstyle-menu').removeClass('disabled')
         if (theDocumentValues.is_owner) {
             // bind the share dialog to the button if the user is the document owner
             jQuery('.share').removeClass('disabled')
         }
         mathHelpers.resetMath()
+    } else if (theDocumentValues.rights === 'r') {
+        // Try to disable contenteditable
+        jQuery('.ProseMirror-content').attr('contenteditable', 'false')
     }
 }
 

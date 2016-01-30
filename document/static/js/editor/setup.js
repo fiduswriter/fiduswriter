@@ -485,7 +485,7 @@ jQuery(document).ready(function() {
 
 
 jQuery(document).bind("bibliography_ready", function(event) {
-    jQuery('.citationstyle-menu, .exporter-menu').each(function() {
+    jQuery('.exporter-menu').each(function() {
         jQuery(this).removeClass('disabled');
     });
 });

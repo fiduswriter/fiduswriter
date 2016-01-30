@@ -63,6 +63,7 @@ theEditor.initiate = function () {
 
 theEditor.update = function () {
       console.log('Updating editor')
+      theEditor.currentlyCheckingVersion = false
       if (theEditor.awaitingDiffResponse) {
           theEditor.enableDiffSending()
       }
@@ -229,7 +230,13 @@ theEditor.checkHash = function(version, hash) {
     }
 }
 
+theEditor.currentlyCheckingVersion = false
+
 theEditor.checkDiffVersion = function() {
+    if (theEditor.currentlyCheckingVersion) {
+        return
+    }
+    theEditor.currentlyCheckingVersion = true
     if (theEditor.connected) {
         theEditor.disableDiffSending()
     }

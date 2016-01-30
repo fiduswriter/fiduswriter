@@ -17,6 +17,7 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import uuid
+import atexit
 
 from ws.base import BaseWebSocketHandler
 from logging import info, error
@@ -72,7 +73,7 @@ class DocumentWS(BaseWebSocketHandler):
             response = dict()
             response['type'] = 'welcome'
             self.write_message(response)
-
+            #atexit.register(self.save_document)
             #DocumentWS.send_participant_list(self.document.id)
 
     def confirm_diff(self, request_id):
@@ -341,3 +342,14 @@ class DocumentWS(BaseWebSocketHandler):
                     cls.sessions[document_id]['participants'][waiter].write_message(message)
                 except WebSocketClosedError:
                     error("Error sending message", exc_info=True)
+
+    @classmethod
+    def save_all_docs(cls):
+        for document_id in cls.sessions:
+            document = DocumentWS.sessions[document_id]['document']
+            document.settings = json_encode(DocumentWS.sessions[document_id]['settings'])
+            document.last_diffs = json_encode(DocumentWS.sessions[document_id]['last_diffs'])
+            document.comments = json_encode(DocumentWS.sessions[document_id]['comments'])
+            print "saving document"
+            document.save()
+atexit.register(DocumentWS.save_all_docs)

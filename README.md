@@ -19,18 +19,21 @@ All of Fidus Writer's original code is licensed under the GNU AFFERO GENERAL PUB
 Simple install
 ----
 
+The following are instructions working on Ubuntu 14.04. Make adjustments as needed for other systems.
 
-The following are instructions working on most *NIX systems and gives you a simple test installation.
+1. Install the development packages of libjpeg, gettext, zlib, python and the python virtual environment creator by running:
 
-1. Download the Fidus Writer sources to your computer. Unarchive if necessary.
+  > sudo apt-get install libjpeg-dev python-dev python-virtualenv gettext zlib1g-dev git
 
-2. Install the development packages of libjpeg, gettext, python and the python virtual environment creator. How you do this depends on your system. On Debian and Ubuntu the packages are called libjpeg-dev, python-dev and python-virtualenv. Install them with your favorite package manager, for example on the command line by running:
+2. Download the Fidus Writer sources to your computer from github by running:
 
-  > sudo apt-get install libjpeg-dev python-dev python-virtualenv gettext
+  > git clone https://github.com/fiduswriter/fiduswriter.git
 
-3. Cd to where you have your sources using your terminal/command line.
+3. Enter the fiduswriter folder:
 
-4. You can use the virtualenv command to create virtual environments. The following command will create an environment called "venv":
+  > cd fiduswriter
+
+4. Create a virtual environment. The following command will create an environment called "venv":
 
   > virtualenv  venv
 
@@ -51,7 +54,7 @@ The following are instructions working on most *NIX systems and gives you a simp
 8. Set up an admin user by typing:
 
   > python manage.py createsuperuser
-  
+
 9. Run the Fidus Writer server by typing:
 
   > python manage.py runserver

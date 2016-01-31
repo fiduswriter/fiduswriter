@@ -835,7 +835,9 @@ var FW_FILETYPE_VERSION = "1.2";
             if (node.childNodes && node.childNodes.length > 0) {
                 obj.c = [];
                 for (i = 0; i < node.childNodes.length; i++) {
-                    obj.c.push(exporter.node2Obj(node.childNodes[i]));
+                    if (node.childNodes[i]) {
+                        obj.c.push(exporter.node2Obj(node.childNodes[i]));
+                    }
                 }
             }
         }

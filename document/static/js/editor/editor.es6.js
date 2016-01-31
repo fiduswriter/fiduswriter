@@ -249,7 +249,7 @@ theEditor.checkDiffVersion = function() {
     theEditor.currentlyCheckingVersion = true
     theEditor.enableCheckDiffVersion = setTimeout(function(){
         theEditor.currentlyCheckingVersion = false
-    }, 5000)
+    }, 1000)
     if (theEditor.connected) {
         theEditor.disableDiffSending()
     }
@@ -263,12 +263,12 @@ theEditor.awaitingDiffResponse = false
 
 theEditor.disableDiffSending = function() {
     theEditor.awaitingDiffResponse = true
-    // If no answer has been received from the server within 10 seconds, check the version
+    // If no answer has been received from the server within 2 seconds, check the version
     theEditor.checkDiffVersionTimer = setTimeout(function(){
         theEditor.awaitingDiffResponse = false
         theEditor.sendToCollaborators()
         theEditor.checkDiffVersion()
-    }, 10000)
+    }, 2000)
 }
 
 theEditor.enableDiffSending = function() {

@@ -68,7 +68,7 @@
             });
             break;
         case 'confirm_diff_version':
-            theEditor.currentlyCheckingVersion = false;
+            theEditor.cancelCurrentlyCheckingVersion();
             if (data.diff_version !== theEditor.editor.mod.collab.version) {
                 theEditor.checkDiffVersion();
                 return;
@@ -97,7 +97,7 @@
             }
             if (!data.hash) {
                 // No hash means this must have been created server side.
-                theEditor.currentlyCheckingVersion = false;
+                theEditor.cancelCurrentlyCheckingVersion();
                 theEditor.enableDiffSending();
             }
             break;

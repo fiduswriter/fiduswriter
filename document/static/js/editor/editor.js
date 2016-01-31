@@ -71,7 +71,7 @@ theEditor.initiate = function () {
 
 theEditor.update = function () {
     console.log('Updating editor');
-    theEditor.currentlyCheckingVersion = false;
+    theEditor.cancelCurrentlyCheckingVersion();
     theEditor.unconfirmedSteps = {};
     if (theEditor.awaitingDiffResponse) {
         theEditor.enableDiffSending();
@@ -245,11 +245,19 @@ theEditor.checkHash = function (version, hash) {
 
 theEditor.currentlyCheckingVersion = false;
 
+theEditor.cancelCurrentlyCheckingVersion = function () {
+    theEditor.currentlyCheckingVersion = false;
+    clearTimeout(theEditor.enableCheckDiffVersion);
+};
+
 theEditor.checkDiffVersion = function () {
     if (theEditor.currentlyCheckingVersion) {
         return;
     }
     theEditor.currentlyCheckingVersion = true;
+    theEditor.enableCheckDiffVersion = setTimeout(function () {
+        theEditor.currentlyCheckingVersion = false;
+    }, 5000);
     if (theEditor.connected) {
         theEditor.disableDiffSending();
     }
@@ -265,6 +273,8 @@ theEditor.disableDiffSending = function () {
     theEditor.awaitingDiffResponse = true;
     // If no answer has been received from the server within 10 seconds, check the version
     theEditor.checkDiffVersionTimer = setTimeout(function () {
+        theEditor.awaitingDiffResponse = false;
+        theEditor.sendToCollaborators();
         theEditor.checkDiffVersion();
     }, 10000);
 };

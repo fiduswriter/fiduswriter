@@ -48,7 +48,8 @@ class DocumentWS(BaseWebSocketHandler):
         if self.is_owner == True:
             return comments
 
-        own_user_rights = rights[access_rights_dict[self.user.id]]
+        own_user_rights_code = access_rights_dict[self.user.id]['rights']
+        own_user_rights = rights[own_user_rights_code]
         own_user_visibility = visibility_role_dict[own_user_rights]
 
         #1) get from comment the role of user (rolename)
@@ -61,8 +62,14 @@ class DocumentWS(BaseWebSocketHandler):
                 filtered_comments[comment_id] = comment
                 continue
 
-            user_rights_code = access_rights_dict[user_id]['rights']
-            user_rights_str = rights[user_rights_code]
+            #TODO: no info about owner in AccessRights table => exception. remove this when resolve
+            try:
+                user_rights_dict = access_rights_dict[user_id]
+                user_rights_code = user_rights_dict['rights']
+                user_rights_str = rights[user_rights_code]
+            except:
+                filtered_comments[comment_id] = comment
+                continue
 
             # if comment of reader role and current phase publication - add to filtered comments.
             # readers can leave comments in publication phase
@@ -71,10 +78,11 @@ class DocumentWS(BaseWebSocketHandler):
                     filtered_comments[comment_id] = comment
                 continue
 
-            user_instructions = own_user_visibility[user_rights_str]
+            user_instructions = visibility_role_dict[user_rights_str]
             if 'always' in user_instructions or cur_phase in user_instructions:
                 filtered_comments[comment_id] = comment
 
+        return filtered_comments
 
     def open(self, document_id):
         print 'Websocket opened'
@@ -146,9 +154,10 @@ class DocumentWS(BaseWebSocketHandler):
         access_rights =  get_accessrights(AccessRight.objects.filter(document__owner=document.owner))
         response['document']['access_rights'] = access_rights
 
-        test_comments = self.filter_comments_by_role(DocumentWS.sessions[self.document_id]["comments"], access_rights, 'editing')
+        filtered_comments = self.filter_comments_by_role(DocumentWS.sessions[self.document_id]["comments"], access_rights, 'editing')
 
-        response['document']['comments']=DocumentWS.sessions[self.document_id]["comments"]
+        #response['document']['comments']=DocumentWS.sessions[self.document_id]["comments"]
+        response['document']['comments'] = filtered_comments
         response['document']['comment_version']=document.comment_version
 
         response['document']['owner'] = dict()

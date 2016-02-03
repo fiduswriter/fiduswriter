@@ -17,17 +17,64 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import uuid
+import json
 
 from ws.base import BaseWebSocketHandler
 from logging import info, error
 from tornado.escape import json_decode, json_encode
 from tornado.websocket import WebSocketClosedError
-from document.models import AccessRight, Document
+from document.models import AccessRight, Document, RIGHTS_CHOICES
 from document.views import get_accessrights
 from avatar.templatetags.avatar_tags import avatar_url
+from django.conf import settings
 
 class DocumentWS(BaseWebSocketHandler):
     sessions = dict()
+
+    #TODO: add phase tracking
+    def filter_comments_by_role(self, comments, access_rights, cur_phase):
+        access_right = self.access_rights
+        rights = dict((x, y) for x, y in RIGHTS_CHOICES)
+        right_name = rights[access_right]
+
+        visibility_role_dict = settings.VISIBILITY[right_name]
+        access_rights_dict = dict((x['user_id'], x) for x in access_rights)
+        #comments_dict = json.loads(comments)
+        comments_dict = comments
+
+        filtered_comments = dict()
+
+        #TODO: return all comments without filtering if owner????
+        if self.is_owner == True:
+            return comments
+
+        own_user_rights = rights[access_rights_dict[self.user.id]]
+        own_user_visibility = visibility_role_dict[own_user_rights]
+
+        #1) get from comment the role of user (rolename)
+        #2) get from visibility dict instructions what to do. if always - add to filtered comments
+        for comment_id, comment in comments_dict.iteritems():
+            user_id = comment['user']
+
+            #own user always can see his own comment
+            if self.user.id == user_id:
+                filtered_comments[comment_id] = comment
+                continue
+
+            user_rights_code = access_rights_dict[user_id]['rights']
+            user_rights_str = rights[user_rights_code]
+
+            # if comment of reader role and current phase publication - add to filtered comments.
+            # readers can leave comments in publication phase
+            if user_rights_str == 'reader':
+                if cur_phase == 'publication':
+                    filtered_comments[comment_id] = comment
+                continue
+
+            user_instructions = own_user_visibility[user_rights_str]
+            if 'always' in user_instructions or cur_phase in user_instructions:
+                filtered_comments[comment_id] = comment
+
 
     def open(self, document_id):
         print 'Websocket opened'
@@ -96,9 +143,14 @@ class DocumentWS(BaseWebSocketHandler):
         response['document']['contents']=document.contents
         response['document']['metadata']=document.metadata
         response['document']['settings']=DocumentWS.sessions[self.document_id]["settings"]
+        access_rights =  get_accessrights(AccessRight.objects.filter(document__owner=document.owner))
+        response['document']['access_rights'] = access_rights
+
+        test_comments = self.filter_comments_by_role(DocumentWS.sessions[self.document_id]["comments"], access_rights, 'editing')
+
         response['document']['comments']=DocumentWS.sessions[self.document_id]["comments"]
         response['document']['comment_version']=document.comment_version
-        response['document']['access_rights'] = get_accessrights(AccessRight.objects.filter(document__owner=document.owner))
+
         response['document']['owner'] = dict()
         response['document']['owner']['id']=document.owner.id
         response['document']['owner']['name']=document.owner.readable_name

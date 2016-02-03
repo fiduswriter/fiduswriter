@@ -133,7 +133,7 @@ var tmp_first_comment = _.template(
         </div>\
         <div class="comment-text-wrapper">\
             <textarea class="commentText" data-id="<%= comment.id %>" rows="5"></textarea>\
-            <input class="comment-is-major" type="checkbox" name="isMajor" value="0" />Is major<br />\
+            <input class="comment-is-major" type="checkbox" name="isMajor" value="0" />' + gettext("Is major") + '<br />\
             <span class="submitComment fw-button fw-dark">' +
     gettext("Submit") +
     '</span>\
@@ -142,7 +142,7 @@ var tmp_first_comment = _.template(
         </div>\
     </div>');
 
-var tmp_filter_by_user_box = _.template('<div id="comment-filter-byuser-box" title="Filter by user">\
+var tmp_filter_by_user_box = _.template('<div id="comment-filter-byuser-box" title="' + gettext("Filter by user") + '>\
         <select>\
             <% _.each(users, function(user) { %>\
                 <option value="<%- user.user_id %>"><%- user.user_name %></option>\

@@ -31,11 +31,12 @@ from django.conf import settings
 from django.core.mail import send_mail
 from document.helpers.session_user_info import SessionUserInfo
 from document.models import Document, AccessRight, DocumentRevision
+from document.helpers.filtering_comments import filter_comments_by_role
 from avatar.util import get_primary_avatar, get_default_avatar_url
 
 from avatar.templatetags.avatar_tags import avatar_url
 from rdflib import BNode, Literal, URIRef, Graph, plugin
-from rdflib.namespace import RDF, FOAF
+from rdflib.namespace import RDF, FOAF, DC, DCTERMS
 from rdflib.serializer import Serializer
 
 from django.core.serializers.python import Serializer
@@ -178,25 +179,34 @@ def get_rdf(request, content_type, document_id):
         return
 
     comments_content = json.loads(document.comments)
+    access_rights =  get_accessrights(AccessRight.objects.filter(document__owner=document.owner))
+    comments_content = filter_comments_by_role(comments_content, access_rights, 'editing', user_info)
 
     graph = Graph()
     document_node = URIRef(BASE_FIDUS_URI + "document/" + str(document_id))
     has_comments_predicate = URIRef(u'http://fiduswriter.org/hasComments/')
+    text_predicate = URIRef(u'http://purl.org/dc/dcmitype/Text')
+    is_major_predicate = URIRef(u'http://eis.iai.uni-bonn.de/Projects/OSCOSS/reviews/')
     comments_bnode_bag = BNode()
 
     graph.add((document_node, RDF.type, FOAF['Document']))
     graph.add((document_node, has_comments_predicate, comments_bnode_bag))
     graph.add((comments_bnode_bag, RDF.type, RDF.Bag))
 
-    for comment_index in comments_content:
+    for comment_index, cur_comment_json in comments_content.iteritems():
+        cur_comment_node = URIRef(BASE_FIDUS_URI + "document/" + str(document_id) + '/comments/' + comment_index)
+
         graph.add((comments_bnode_bag,
-               URIRef(u'http://www.w3.org/1999/02/22-rdf-syntax-ns#_' + comment_index),
-               URIRef(BASE_FIDUS_URI + "document/" + str(document_id) + '/comments/' + comment_index)))
+               URIRef(u'http://www.w3.org/1999/02/22-rdf-syntax-ns#_' + comment_index), cur_comment_node))
+
+        graph.add((cur_comment_node, text_predicate, Literal(cur_comment_json['comment'])))
+        graph.add((cur_comment_node, DCTERMS.creator, Literal(cur_comment_json['userName'])))
+        if 'review:isMajor' in cur_comment_json.keys():
+            graph.add((cur_comment_node, is_major_predicate, Literal(cur_comment_json['review:isMajor'])))
 
     context = {"@vocab": BASE_FIDUS_URI + "oscoss.jsonld", "@language": "en"}
     graph_json = graph.serialize(format='json-ld', context=context, indent=4)
     return HttpResponse(json.dumps(graph_json), content_type='application/json')
-    #return JsonResponse(json(graph_json))
 
 @login_required
 def delete_js(request):

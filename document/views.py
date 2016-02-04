@@ -34,6 +34,9 @@ from document.models import Document, AccessRight, DocumentRevision
 from avatar.util import get_primary_avatar, get_default_avatar_url
 
 from avatar.templatetags.avatar_tags import avatar_url
+from rdflib import BNode, Literal, URIRef, Graph, plugin
+from rdflib.namespace import RDF, FOAF
+from rdflib.serializer import Serializer
 
 from django.core.serializers.python import Serializer
 
@@ -157,7 +160,7 @@ def editor(request):
     document_id = 5
 
     if 'CONTENT_TYPE' in request.META.keys():
-        get_rdf(request, request.META['CONTENT_TYPE'], document_id)
+        return get_rdf(request, request.META['CONTENT_TYPE'], document_id)
 
     return render(request, 'document/editor.html',
         response)
@@ -166,14 +169,34 @@ def get_rdf(request, content_type, document_id):
     if content_type != 'application/rdf+turtle':
         raise Http404("Content type is not supported")
 
+    BASE_FIDUS_URI = 'http://fiduswriter.org/'
+
     user_info = SessionUserInfo()
 
     document, can_access = user_info.init_access(document_id, request.user)
     if not can_access:
         return
 
+    comments_content = json.loads(document.comments)
 
+    graph = Graph()
+    document_node = URIRef(BASE_FIDUS_URI + "document/" + str(document_id))
+    has_comments_predicate = URIRef(u'http://fiduswriter.org/hasComments/')
+    comments_bnode_bag = BNode()
 
+    graph.add((document_node, RDF.type, FOAF['Document']))
+    graph.add((document_node, has_comments_predicate, comments_bnode_bag))
+    graph.add((comments_bnode_bag, RDF.type, RDF.Bag))
+
+    for comment_index in comments_content:
+        graph.add((comments_bnode_bag,
+               URIRef(u'http://www.w3.org/1999/02/22-rdf-syntax-ns#_' + comment_index),
+               URIRef(BASE_FIDUS_URI + "document/" + str(document_id) + '/comments/' + comment_index)))
+
+    context = {"@vocab": BASE_FIDUS_URI + "oscoss.jsonld", "@language": "en"}
+    graph_json = graph.serialize(format='json-ld', context=context, indent=4)
+    return HttpResponse(json.dumps(graph_json), content_type='application/json')
+    #return JsonResponse(json(graph_json))
 
 @login_required
 def delete_js(request):

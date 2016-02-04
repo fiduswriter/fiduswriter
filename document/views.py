@@ -19,7 +19,7 @@
 import json
 
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse, HttpRequest
+from django.http import HttpResponse, JsonResponse, HttpRequest, Http404
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.template.context_processors import csrf
@@ -29,7 +29,7 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.core.mail import send_mail
-
+from document.helpers.session_user_info import SessionUserInfo
 from document.models import Document, AccessRight, DocumentRevision
 from avatar.util import get_primary_avatar, get_default_avatar_url
 
@@ -42,6 +42,7 @@ import dateutil.parser
 
 
 from django.core.serializers.python import Serializer
+
 
 class SimpleSerializer(Serializer):
     def end_object( self, obj ):
@@ -153,8 +154,26 @@ def get_documentlist_js(request):
 def editor(request):
     response = {}
 
+    document_id = 5
+
+    if 'CONTENT_TYPE' in request.META.keys():
+        get_rdf(request, request.META['CONTENT_TYPE'], document_id)
+
     return render(request, 'document/editor.html',
         response)
+
+def get_rdf(request, content_type, document_id):
+    if content_type != 'application/rdf+turtle':
+        raise Http404("Content type is not supported")
+
+    user_info = SessionUserInfo()
+
+    document, can_access = user_info.init_access(document_id, request.user)
+    if not can_access:
+        return
+
+
+
 
 @login_required
 def delete_js(request):

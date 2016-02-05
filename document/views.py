@@ -24,7 +24,7 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.template.context_processors import csrf
 from django.db import transaction
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.conf import settings
@@ -36,9 +36,9 @@ from avatar.util import get_primary_avatar, get_default_avatar_url
 
 from avatar.templatetags.avatar_tags import avatar_url
 from rdflib import BNode, Literal, URIRef, Graph, plugin
-from rdflib.namespace import RDF, FOAF, DC, DCTERMS
+from rdflib.namespace import RDF, FOAF, DC, DCTERMS, NamespaceManager, Namespace
 from rdflib.serializer import Serializer
-
+from datetime import datetime
 from django.core.serializers.python import Serializer
 
 from django.db.models import Q
@@ -166,47 +166,65 @@ def editor(request):
     return render(request, 'document/editor.html',
         response)
 
-def get_rdf(request, content_type, document_id):
-    if content_type != 'application/rdf+turtle':
-        raise Http404("Content type is not supported")
+def initialize_prefixes(graph):
+    ns_manger = NamespaceManager(graph)
 
-    BASE_FIDUS_URI = 'http://fiduswriter.org/'
+    oaNs = Namespace('http://www.w3.org/ns/oa#')
+    reviewNs = Namespace('http://eis.iai.uni-bonn.de/Projects/OSCOSS/reviews/')
 
+    ns_manger.bind('oa', oaNs)
+    ns_manger.bind('review', reviewNs)
+    ns_manger.bind('foaf', FOAF)
+
+    return ns_manger
+
+BASE_FIDUS_URI = 'http://fiduswriter.org/'
+
+def get_document_for_rdf(document_id, request):
     user_info = SessionUserInfo()
 
     document, can_access = user_info.init_access(document_id, request.user)
     if not can_access:
-        return
+        raise PermissionDenied('User does not have enough permissions')
 
     comments_content = json.loads(document.comments)
     access_rights =  get_accessrights(AccessRight.objects.filter(document__owner=document.owner))
-    comments_content = filter_comments_by_role(comments_content, access_rights, 'editing', user_info)
+    return filter_comments_by_role(comments_content, access_rights, 'editing', user_info)
 
-    graph = Graph()
-    document_node = URIRef(BASE_FIDUS_URI + "document/" + str(document_id))
-    has_comments_predicate = URIRef(u'http://fiduswriter.org/hasComments/')
-    text_predicate = URIRef(u'http://purl.org/dc/dcmitype/Text')
-    is_major_predicate = URIRef(u'http://eis.iai.uni-bonn.de/Projects/OSCOSS/reviews/')
-    comments_bnode_bag = BNode()
-
-    graph.add((document_node, RDF.type, FOAF['Document']))
-    graph.add((document_node, has_comments_predicate, comments_bnode_bag))
-    graph.add((comments_bnode_bag, RDF.type, RDF.Bag))
+def add_comments_to_rdf_graph(graph, namespaces, comments_content, document_node):
+    is_major_predicate = namespaces['review'].isMajor
+    oa_ns = namespaces['oa']
 
     for comment_index, cur_comment_json in comments_content.iteritems():
-        cur_comment_node = URIRef(BASE_FIDUS_URI + "document/" + str(document_id) + '/comments/' + comment_index)
-
-        graph.add((comments_bnode_bag,
-               URIRef(u'http://www.w3.org/1999/02/22-rdf-syntax-ns#_' + comment_index), cur_comment_node))
-
-        graph.add((cur_comment_node, text_predicate, Literal(cur_comment_json['comment'])))
-        graph.add((cur_comment_node, DCTERMS.creator, Literal(cur_comment_json['userName'])))
+        cur_comment_node = URIRef(document_node.toPython() + '/comments/' + comment_index)
+        graph.add((cur_comment_node, RDF.type, oa_ns.Annotation))
+        graph.add((cur_comment_node, oa_ns.annotateAt, Literal(datetime.fromtimestamp(cur_comment_json['date']/1000))))
+        graph.add((cur_comment_node, oa_ns.hasBody, Literal(cur_comment_json['comment'])))
+        graph.add((cur_comment_node, oa_ns.annotatedBy, Literal(cur_comment_json['userName'])))
+        graph.add((cur_comment_node, oa_ns.hasTarget, document_node)) #TODO: this is lazy solution. need to add range
         if 'review:isMajor' in cur_comment_json.keys():
             graph.add((cur_comment_node, is_major_predicate, Literal(cur_comment_json['review:isMajor'])))
 
-    context = {"@vocab": BASE_FIDUS_URI + "oscoss.jsonld", "@language": "en"}
-    graph_json = graph.serialize(format='json-ld', context=context, indent=4)
-    return HttpResponse(json.dumps(graph_json), content_type='application/json')
+def get_rdf(request, content_type, document_id):
+    if content_type != 'application/rdf+turtle':
+        raise Http404("Content type is not supported")
+
+    comments_content = get_document_for_rdf(document_id, request)
+
+    graph = Graph()
+    ns_manager = initialize_prefixes(graph)
+    namespaces = dict((x,Namespace(y)) for x, y in ns_manager.namespaces())
+    document_node = URIRef(BASE_FIDUS_URI + "document/" + str(document_id))
+
+    graph.add((document_node, RDF.type, FOAF.Document))
+    add_comments_to_rdf_graph(graph, namespaces, comments_content, document_node)
+
+    #TODO: support json -ld 
+    #context = {"@vocab": BASE_FIDUS_URI + "oscoss.jsonld", "@language": "en"}
+    #graph_json = graph.serialize(format='json-ld', context=context, indent=4)
+    graph_turtle = graph.serialize(format='turtle')
+    return HttpResponse(graph_turtle)
+    #return HttpResponse(json.dumps(graph_json), content_type='application/json')
 
 @login_required
 def delete_js(request):

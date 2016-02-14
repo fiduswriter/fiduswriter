@@ -257,7 +257,7 @@ theEditor.checkDiffVersion = function () {
     theEditor.currentlyCheckingVersion = true;
     theEditor.enableCheckDiffVersion = setTimeout(function () {
         theEditor.currentlyCheckingVersion = false;
-    }, 5000);
+    }, 1000);
     if (theEditor.connected) {
         theEditor.disableDiffSending();
     }
@@ -271,12 +271,12 @@ theEditor.awaitingDiffResponse = false;
 
 theEditor.disableDiffSending = function () {
     theEditor.awaitingDiffResponse = true;
-    // If no answer has been received from the server within 10 seconds, check the version
+    // If no answer has been received from the server within 2 seconds, check the version
     theEditor.checkDiffVersionTimer = setTimeout(function () {
         theEditor.awaitingDiffResponse = false;
         theEditor.sendToCollaborators();
         theEditor.checkDiffVersion();
-    }, 10000);
+    }, 2000);
 };
 
 theEditor.enableDiffSending = function () {
@@ -1149,9 +1149,27 @@ Figure.prototype.serializeDOM = function (node, serializer) {
   });
   if (node.attrs.image) {
     dom.appendChild(serializer.elt("div"));
-    dom.firstChild.appendChild(serializer.elt("img", {
-      "src": ImageDB[node.attrs.image].image
-    }));
+    if (ImageDB[node.attrs.image] && ImageDB[node.attrs.image].image) {
+      dom.firstChild.appendChild(serializer.elt("img", {
+        "src": ImageDB[node.attrs.image].image
+      }));
+    } else {
+      /* The image was not present in the ImageDB. Try to reload the
+      ImageDB, but only once. If the image cannot be found in the updated
+      ImageDB, do not attempt at reloaidng the ImageDB if an image cannot be
+      found. */
+      if (!theDocumentValues.imageDBBroken) {
+        usermediaHelpers.getImageDB(function () {
+          if (ImageDB[node.attrs.image] && ImageDB[node.attrs.image].image) {
+            dom.firstChild.appendChild(serializer.elt("img", {
+              "src": ImageDB[node.attrs.image].image
+            }));
+          } else {
+            theDocumentValues.imageDBBroken = true;
+          }
+        });
+      }
+    }
   } else {
     dom.appendChild(serializer.elt("div", {
       class: 'figure-equation',

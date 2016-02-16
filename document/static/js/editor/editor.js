@@ -93,9 +93,9 @@ theEditor.update = function () {
     theEditor.editor.mod.collab.on("mustSend", theEditor.sendToCollaborators);
     new _commentStore.CommentStore(theEditor.editor, theDocument.comment_version);
     _.each(theDocument.comments, function (comment) {
-        theEditor.comments.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers, comment['review:isMajor']);
+        theEditor.editor.mod.commentStore.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers, comment['review:isMajor']);
     });
-    theEditor.comments.on("mustSend", theEditor.sendToCollaborators);
+    theEditor.editor.mod.commentStore.on("mustSend", theEditor.sendToCollaborators);
     theEditor.enableUI();
 };
 
@@ -143,7 +143,7 @@ theEditor.getUpdates = function (callback) {
     theDocument.metadata.keywords = exporter.node2Obj(outputNode.getElementById('metadata-keywords'));
     theDocument.contents = exporter.node2Obj(outputNode.getElementById('document-contents'));
     theDocument.hash = theEditor.getHash();
-    theDocument.comments = theEditor.comments.comments;
+    theDocument.comments = theEditor.editor.mod.commentStore.comments;
     if (callback) {
         callback();
     }
@@ -154,7 +154,7 @@ theEditor.unconfirmedSteps = {};
 var confirmStepsRequestCounter = 0;
 
 theEditor.sendToCollaborators = function () {
-    if (theEditor.awaitingDiffResponse || !theEditor.editor.mod.collab.hasSendableSteps() && theEditor.comments.unsentEvents().length === 0) {
+    if (theEditor.awaitingDiffResponse || !theEditor.editor.mod.collab.hasSendableSteps() && theEditor.editor.mod.commentStore.unsentEvents().length === 0) {
         // We are waiting for the confirmation of previous steps, so don't
         // send anything now, or there is nothing to send.
         return;
@@ -168,15 +168,15 @@ theEditor.sendToCollaborators = function () {
         diff: toSend.steps.map(function (s) {
             return s.toJSON();
         }),
-        comments: theEditor.comments.unsentEvents(),
-        comment_version: theEditor.comments.version,
+        comments: theEditor.editor.mod.commentStore.unsentEvents(),
+        comment_version: theEditor.editor.mod.commentStore.version,
         request_id: request_id,
         hash: theEditor.getHash()
     };
     serverCommunications.send(aPackage);
     theEditor.unconfirmedSteps[request_id] = {
         diffs: toSend,
-        comments: theEditor.comments.hasUnsentEvents()
+        comments: theEditor.editor.mod.commentStore.hasUnsentEvents()
     };
     theEditor.disableDiffSending();
 };
@@ -187,7 +187,7 @@ theEditor.confirmDiff = function (request_id) {
     theEditor.editor.mod.collab.confirmSteps(sentSteps);
 
     var sentComments = theEditor.unconfirmedSteps[request_id]["comments"];
-    theEditor.comments.eventsSent(sentComments);
+    theEditor.editor.mod.commentStore.eventsSent(sentComments);
     delete theEditor.unconfirmedSteps[request_id];
     theEditor.enableDiffSending();
 };
@@ -206,7 +206,7 @@ theEditor.applyDiff = function (diff) {
 };
 
 theEditor.updateComments = function (comments, comment_version) {
-    theEditor.comments.receive(comments, comment_version);
+    theEditor.editor.mod.commentStore.receive(comments, comment_version);
 };
 
 theEditor.startCollaborativeMode = function () {
@@ -319,7 +319,7 @@ window.theEditor = theEditor;
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })(); /* Functions related to layouting of comments */
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 exports.CommentStoreLayout = undefined;
 
@@ -328,27 +328,27 @@ var _update = require("prosemirror/dist/ui/update");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var CommentStoreLayout = exports.CommentStoreLayout = (function () {
-  function CommentStoreLayout(commentStore) {
-    _classCallCheck(this, CommentStoreLayout);
+    function CommentStoreLayout(commentStore) {
+        _classCallCheck(this, CommentStoreLayout);
 
-    commentStore.layout = this;
-    this.commentStore = commentStore;
-  }
-
-  // Create a new comment as the current user, and mark it as active.
-
-  _createClass(CommentStoreLayout, [{
-    key: "createNewComment",
-    value: function createNewComment() {
-      var id = this.commentStore.addComment(theUser.id, theUser.name, theUser.avatar, new Date().getTime(), '');
-      commentHelpers.deactivateAll();
-      theDocument.activeCommentId = id;
-      editorHelpers.documentHasChanged();
-      (0, _update.scheduleDOMUpdate)(this.commentStore.pm, commentHelpers.layoutComments);
+        commentStore.layout = this;
+        this.commentStore = commentStore;
     }
-  }]);
 
-  return CommentStoreLayout;
+    // Create a new comment as the current user, and mark it as active.
+
+    _createClass(CommentStoreLayout, [{
+        key: "createNewComment",
+        value: function createNewComment() {
+            var id = this.commentStore.addComment(theUser.id, theUser.name, theUser.avatar, new Date().getTime(), '');
+            commentHelpers.deactivateAll();
+            theDocument.activeCommentId = id;
+            editorHelpers.documentHasChanged();
+            (0, _update.scheduleDOMUpdate)(this.commentStore.pm, commentHelpers.layoutComments);
+        }
+    }]);
+
+    return CommentStoreLayout;
 })();
 
 },{"prosemirror/dist/ui/update":51}],3:[function(require,module,exports){

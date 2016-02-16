@@ -82,10 +82,10 @@ theEditor.update = function () {
       theEditor.editor.mod.collab.on("mustSend", theEditor.sendToCollaborators)
       new CommentStore(theEditor.editor, theDocument.comment_version)
       _.each(theDocument.comments, function (comment){
-        theEditor.comments.addLocalComment(comment.id, comment.user,
+        theEditor.editor.mod.commentStore.addLocalComment(comment.id, comment.user,
           comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers, comment['review:isMajor'])
       })
-      theEditor.comments.on("mustSend", theEditor.sendToCollaborators)
+      theEditor.editor.mod.commentStore.on("mustSend", theEditor.sendToCollaborators)
       theEditor.enableUI()
 }
 
@@ -135,7 +135,7 @@ theEditor.getUpdates = function (callback) {
       theDocument.metadata.keywords = exporter.node2Obj(outputNode.getElementById('metadata-keywords'))
       theDocument.contents = exporter.node2Obj(outputNode.getElementById('document-contents'))
       theDocument.hash = theEditor.getHash()
-      theDocument.comments = theEditor.comments.comments
+      theDocument.comments = theEditor.editor.mod.commentStore.comments
       if (callback) {
           callback()
       }
@@ -148,7 +148,7 @@ var confirmStepsRequestCounter = 0
 theEditor.sendToCollaborators = function () {
       if (theEditor.awaitingDiffResponse ||
         !theEditor.editor.mod.collab.hasSendableSteps() &&
-        theEditor.comments.unsentEvents().length === 0) {
+        theEditor.editor.mod.commentStore.unsentEvents().length === 0) {
           // We are waiting for the confirmation of previous steps, so don't
           // send anything now, or there is nothing to send.
           return
@@ -160,15 +160,15 @@ theEditor.sendToCollaborators = function () {
           type: 'diff',
           diff_version: theEditor.editor.mod.collab.version,
           diff: toSend.steps.map(s => s.toJSON()),
-          comments: theEditor.comments.unsentEvents(),
-          comment_version: theEditor.comments.version,
+          comments: theEditor.editor.mod.commentStore.unsentEvents(),
+          comment_version: theEditor.editor.mod.commentStore.version,
           request_id: request_id,
           hash: theEditor.getHash()
       }
       serverCommunications.send(aPackage)
       theEditor.unconfirmedSteps[request_id] = {
           diffs: toSend,
-          comments: theEditor.comments.hasUnsentEvents()
+          comments: theEditor.editor.mod.commentStore.hasUnsentEvents()
       }
       theEditor.disableDiffSending()
 }
@@ -179,7 +179,7 @@ theEditor.confirmDiff = function (request_id) {
     theEditor.editor.mod.collab.confirmSteps(sentSteps)
 
     let sentComments = theEditor.unconfirmedSteps[request_id]["comments"]
-    theEditor.comments.eventsSent(sentComments)
+    theEditor.editor.mod.commentStore.eventsSent(sentComments)
     delete theEditor.unconfirmedSteps[request_id]
     theEditor.enableDiffSending()
 }
@@ -196,7 +196,7 @@ theEditor.applyDiff = function(diff) {
 }
 
 theEditor.updateComments = function(comments, comment_version) {
-    theEditor.comments.receive(comments, comment_version)
+    theEditor.editor.mod.commentStore.receive(comments, comment_version)
 }
 
 

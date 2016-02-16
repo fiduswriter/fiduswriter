@@ -46,9 +46,6 @@ jQuery(document).on('mousedown', '#button-math:not(.disabled), .equation', funct
 
             theEditor.editor.execCommand('equation:insert', [equation]);
 
-
-//            theEditor.editor.on('flushed', mathHelpers.layoutEmptyEquationNodes);
-
             dialog.dialog('close');
         }
     });

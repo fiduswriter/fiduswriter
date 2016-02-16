@@ -175,8 +175,7 @@
     };
 
     citationHelpers.formatCitationsInDocIfNew = function () {
-      // Formatt all citations in the doc, if there are new ones.
-      //theEditor.editor.off("flushed", citationHelpers.formatCitationsInDocIfNew);
+      // Format all citations in the doc, if there are new ones.
       if (jQuery('span.citation:empty').length===0) {
           return false;
       } else {
@@ -185,7 +184,6 @@
     };
 
     citationHelpers.formatCitationsInDoc = function () {
-        theEditor.editor.off("flushed", citationHelpers.formatCitationsInDoc);
         jQuery('#document-bibliography').html(
             citationHelpers.formatCitations(
                 jQuery('#document-editable')[0],

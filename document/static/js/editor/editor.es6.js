@@ -8,10 +8,12 @@ import "prosemirror/dist/collab"
 //import "prosemirror/dist/menu/menubar"
 
 import {fidusSchema} from "./es6_modules/schema"
-import {UpdateUI} from "./es6_modules/update-ui"
-import {CommentStore} from "./es6_modules/comment"
+import {updateUI} from "./es6_modules/update-ui"
+import {CommentStore} from "./es6_modules/comment-store"
 
-var theEditor = {};
+import {UpdateScheduler, scheduleDOMUpdate} from "prosemirror/dist/ui/update"
+
+var theEditor = {}
 
 function makeEditor (where) {
   return new ProseMirror({
@@ -20,7 +22,7 @@ function makeEditor (where) {
 //    menuBar: true,
     collab: {version: 0}
   })
-};
+}
 
 
 theEditor.createDoc = function (aDocument) {
@@ -31,7 +33,7 @@ theEditor.createDoc = function (aDocument) {
       metadataAuthorsNode = aDocument.metadata.authors ? exporter.obj2Node(aDocument.metadata.authors) : document.createElement('div'),
       metadataAbstractNode = aDocument.metadata.abstract ? exporter.obj2Node(aDocument.metadata.abstract) : document.createElement('div'),
       metadataKeywordsNode = aDocument.metadata.keywords ? exporter.obj2Node(aDocument.metadata.keywords) : document.createElement('div'),
-      doc;
+      doc
 
       titleNode.id = 'document-title'
       metadataSubtitleNode.id = 'metadata-subtitle'
@@ -40,12 +42,12 @@ theEditor.createDoc = function (aDocument) {
       metadataKeywordsNode.id = 'metadata-keywords'
       documentContentsNode.id = 'document-contents'
 
-      editorNode.appendChild(titleNode);
-      editorNode.appendChild(metadataSubtitleNode);
-      editorNode.appendChild(metadataAuthorsNode);
-      editorNode.appendChild(metadataAbstractNode);
-      editorNode.appendChild(metadataKeywordsNode);
-      editorNode.appendChild(documentContentsNode);
+      editorNode.appendChild(titleNode)
+      editorNode.appendChild(metadataSubtitleNode)
+      editorNode.appendChild(metadataAuthorsNode)
+      editorNode.appendChild(metadataAbstractNode)
+      editorNode.appendChild(metadataKeywordsNode)
+      editorNode.appendChild(documentContentsNode)
 
       doc = fromDOM(fidusSchema, editorNode)
       return doc
@@ -53,12 +55,12 @@ theEditor.createDoc = function (aDocument) {
 
 theEditor.initiate = function () {
       theEditor.editor = makeEditor(document.getElementById('document-editable'))
-      new UpdateUI(theEditor.editor, "selectionChange change activeMarkChange blur focus")
+      new UpdateScheduler(theEditor.editor, "selectionChange change activeMarkChange blur focus setDoc", function () {updateUI(theEditor.editor)})
       theEditor.editor.on("change", editorHelpers.documentHasChanged)
-      theEditor.editor.on('transform', theEditor.onTransform)
-      theEditor.editor.on("flushed", mathHelpers.layoutEmptyEquationNodes)
-      theEditor.editor.on("flushed", mathHelpers.layoutEmptyDisplayEquationNodes)
-      theEditor.editor.on("flushed", citationHelpers.formatCitationsInDocIfNew)
+      theEditor.editor.on("transform", (transform, options) => theEditor.onTransform(transform, options))
+      new UpdateScheduler(theEditor.editor, "flush setDoc", mathHelpers.layoutEmptyEquationNodes)
+      new UpdateScheduler(theEditor.editor, "flush setDoc", mathHelpers.layoutEmptyDisplayEquationNodes)
+      new UpdateScheduler(theEditor.editor, "flush setDoc", citationHelpers.formatCitationsInDocIfNew)
 }
 
 theEditor.update = function () {
@@ -78,7 +80,7 @@ theEditor.update = function () {
       }
       theDocument.hash = theEditor.getHash()
       theEditor.editor.mod.collab.on("mustSend", theEditor.sendToCollaborators)
-      theEditor.comments = new CommentStore(theEditor.editor, theDocument.comment_version)
+      new CommentStore(theEditor.editor, theDocument.comment_version)
       _.each(theDocument.comments, function (comment){
         theEditor.comments.addLocalComment(comment.id, comment.user,
           comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers, comment['review:isMajor'])
@@ -137,7 +139,7 @@ theEditor.getUpdates = function (callback) {
       if (callback) {
           callback()
       }
-};
+}
 
 theEditor.unconfirmedSteps = {}
 
@@ -149,7 +151,7 @@ theEditor.sendToCollaborators = function () {
         theEditor.comments.unsentEvents().length === 0) {
           // We are waiting for the confirmation of previous steps, so don't
           // send anything now, or there is nothing to send.
-          return;
+          return
       }
       console.log('send to collabs')
       let toSend = theEditor.editor.mod.collab.sendableSteps()
@@ -190,7 +192,7 @@ theEditor.rejectDiff = function (request_id) {
 }
 
 theEditor.applyDiff = function(diff) {
-    theEditor.editor.mod.collab.receive([diff].map(j => Step.fromJSON(fidusSchema, j)));
+    theEditor.editor.mod.collab.receive([diff].map(j => Step.fromJSON(fidusSchema, j)))
 }
 
 theEditor.updateComments = function(comments, comment_version) {
@@ -199,25 +201,25 @@ theEditor.updateComments = function(comments, comment_version) {
 
 
 theEditor.startCollaborativeMode = function () {
-    theDocumentValues.collaborativeMode = true;
-};
+    theDocumentValues.collaborativeMode = true
+}
 
 theEditor.stopCollaborativeMode = function () {
-    theDocumentValues.collaborativeMode = false;
-};
+    theDocumentValues.collaborativeMode = false
+}
 
 theEditor.getHash = function () {
     let string = JSON.stringify(theEditor.editor.mod.collab.versionDoc)
     let len = string.length
-    var hash = 0, char, i;
-    if (len == 0) return hash;
+    var hash = 0, char, i
+    if (len == 0) return hash
     for (i = 0; i < len; i++) {
-        char = string.charCodeAt(i);
-        hash = ((hash<<5)-hash)+char;
-        hash = hash & hash;
+        char = string.charCodeAt(i)
+        hash = ((hash << 5) - hash) + char
+        hash = hash & hash
     }
-    return hash;
-};
+    return hash
+}
 theEditor.checkHash = function(version, hash) {
     console.log('Verifying hash')
     if (version===theEditor.editor.mod.collab.version) {
@@ -293,10 +295,11 @@ theEditor.onTransform = function(transform) {
   })
 
   if (updateBibliography) {
-    theEditor.editor.on('flushed', citationHelpers.formatCitationsInDoc)
+      // Recreate the bibliography on next flush.
+      scheduleDOMUpdate(theEditor.editor, citationHelpers.formatCitationsInDoc)
   }
 
 
 }
 
-window.theEditor = theEditor;
+window.theEditor = theEditor

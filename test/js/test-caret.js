@@ -8,8 +8,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.elt = elt;
 exports.requestAnimationFrame = requestAnimationFrame;
-exports.rmClass = rmClass;
-exports.addClass = addClass;
 exports.contains = contains;
 exports.insertCSS = insertCSS;
 exports.ensureCSSAdded = ensureCSSAdded;
@@ -30,6 +28,7 @@ function elt(tag, attrs) {
 
 function add(value, target) {
   if (typeof value == "string") value = document.createTextNode(value);
+
   if (Array.isArray(value)) {
     for (var i = 0; i < value.length; i++) {
       add(value[i], target);
@@ -56,24 +55,8 @@ var browser = exports.browser = {
   gecko: /gecko\/\d/i.test(navigator.userAgent)
 };
 
-function classTest(cls) {
-  return new RegExp("(^|\\s)" + cls + "(?:$|\\s)\\s*");
-}
-
-function rmClass(node, cls) {
-  var current = node.className;
-  var match = classTest(cls).exec(current);
-  if (match) {
-    var after = current.slice(match.index + match[0].length);
-    node.className = current.slice(0, match.index) + (after ? match[1] + after : "");
-  }
-}
-
-function addClass(node, cls) {
-  var current = node.className;
-  if (!classTest(cls).test(current)) node.className += (current ? " " : "") + cls;
-}
-
+// : (DOMNode, DOMNode) → bool
+// Check whether a DOM node is an ancestor of another DOM node.
 function contains(parent, child) {
   // Android browser and IE will return false if child is a text node.
   if (child.nodeType != 1) child = child.parentNode;
@@ -99,412 +82,31 @@ function ensureCSSAdded() {
 },{}],2:[function(require,module,exports){
 "use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.NodeSelection = exports.TextSelection = exports.Selection = exports.SelectionState = exports.SelectionError = undefined;
+exports.pathFromDOM = pathFromDOM;
+exports.widthFromDOM = widthFromDOM;
 exports.posFromDOM = posFromDOM;
-exports.rangeFromDOMLoose = rangeFromDOMLoose;
 exports.findByPath = findByPath;
-exports.resolvePath = resolvePath;
-exports.hasFocus = hasFocus;
+exports.pathToDOM = pathToDOM;
+exports.childContainer = childContainer;
+exports.DOMFromPos = DOMFromPos;
+exports.scrollIntoView = scrollIntoView;
 exports.posAtCoords = posAtCoords;
 exports.coordsAtPos = coordsAtPos;
-exports.scrollIntoView = scrollIntoView;
-exports.findSelectionFrom = findSelectionFrom;
-exports.findSelectionNear = findSelectionNear;
-exports.findSelectionAtStart = findSelectionAtStart;
-exports.findSelectionAtEnd = findSelectionAtEnd;
+exports.setDOMSelectionToPos = setDOMSelectionToPos;
 exports.selectableNodeAbove = selectableNodeAbove;
 exports.handleNodeClick = handleNodeClick;
-exports.verticalMotionLeavesTextblock = verticalMotionLeavesTextblock;
-exports.setDOMSelectionToPos = setDOMSelectionToPos;
 
 var _model = require("../model");
 
-var _error = require("../util/error");
-
 var _dom = require("../dom");
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+var _error = require("../util/error");
 
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-// ;; Error type used to signal selection-related problems.
-
-var SelectionError = exports.SelectionError = function (_ProseMirrorError) {
-  _inherits(SelectionError, _ProseMirrorError);
-
-  function SelectionError() {
-    _classCallCheck(this, SelectionError);
-
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(SelectionError).apply(this, arguments));
-  }
-
-  return SelectionError;
-}(_error.ProseMirrorError);
-
-var SelectionState = exports.SelectionState = function () {
-  function SelectionState(pm) {
-    var _this2 = this;
-
-    _classCallCheck(this, SelectionState);
-
-    this.pm = pm;
-
-    this.range = findSelectionAtStart(pm.doc);
-    this.lastNonNodePos = null;
-
-    this.pollState = null;
-    this.pollTimeout = null;
-    this.lastAnchorNode = this.lastHeadNode = this.lastAnchorOffset = this.lastHeadOffset = null;
-    this.lastNode = null;
-
-    pm.content.addEventListener("focus", function () {
-      return _this2.receivedFocus();
-    });
-  }
-
-  _createClass(SelectionState, [{
-    key: "setAndSignal",
-    value: function setAndSignal(range, clearLast) {
-      this.set(range, clearLast);
-      // :: () #path=ProseMirror#events#selectionChange
-      // Indicates that the editor's selection has changed.
-      this.pm.signal("selectionChange");
-    }
-  }, {
-    key: "set",
-    value: function set(range, clearLast) {
-      this.range = range;
-      if (!range.node) this.lastNonNodePos = null;
-      if (clearLast !== false) this.lastAnchorNode = null;
-    }
-  }, {
-    key: "pollForUpdate",
-    value: function pollForUpdate() {
-      var _this3 = this;
-
-      if (this.pm.input.composing) return;
-      clearTimeout(this.pollTimeout);
-      this.pollState = "update";
-      var n = 0,
-          check = function check() {
-        if (_this3.pm.input.composing) {
-          // Abort
-        } else if (_this3.pm.operation) {
-            _this3.pollTimeout = setTimeout(check, 20);
-          } else if (!_this3.readUpdate() && ++n == 1) {
-            _this3.pollTimeout = setTimeout(check, 50);
-          } else {
-            _this3.stopPollingForUpdate();
-          }
-      };
-      this.pollTimeout = setTimeout(check, 20);
-    }
-  }, {
-    key: "stopPollingForUpdate",
-    value: function stopPollingForUpdate() {
-      if (this.pollState == "update") {
-        this.pollState = null;
-        this.pollToSync();
-      }
-    }
-  }, {
-    key: "domChanged",
-    value: function domChanged() {
-      var sel = getSelection();
-      return sel.anchorNode != this.lastAnchorNode || sel.anchorOffset != this.lastAnchorOffset || sel.focusNode != this.lastHeadNode || sel.focusOffset != this.lastHeadOffset;
-    }
-  }, {
-    key: "storeDOMState",
-    value: function storeDOMState() {
-      var sel = getSelection();
-      this.lastAnchorNode = sel.anchorNode;this.lastAnchorOffset = sel.anchorOffset;
-      this.lastHeadNode = sel.focusNode;this.lastHeadOffset = sel.focusOffset;
-    }
-  }, {
-    key: "readUpdate",
-    value: function readUpdate() {
-      if (this.pm.input.composing || !hasFocus(this.pm) || !this.domChanged()) return false;
-
-      var sel = getSelection(),
-          doc = this.pm.doc;
-      var anchor = posFromDOMInner(this.pm, sel.anchorNode, sel.anchorOffset);
-      var head = posFromDOMInner(this.pm, sel.focusNode, sel.focusOffset);
-      var newSel = findSelectionNear(doc, head, this.range.head && this.range.head.cmp(head) < 0 ? -1 : 1);
-      if (newSel instanceof TextSelection && doc.path(anchor.path).isTextblock) newSel = new TextSelection(anchor, newSel.head);
-      this.setAndSignal(newSel);
-      if (newSel instanceof NodeSelection || newSel.head.cmp(head) || newSel.anchor.cmp(anchor)) {
-        this.toDOM();
-      } else {
-        this.clearNode();
-        this.storeDOMState();
-      }
-      return true;
-    }
-  }, {
-    key: "pollToSync",
-    value: function pollToSync() {
-      var _this4 = this;
-
-      if (this.pollState) return;
-      this.pollState = "sync";
-      var sync = function sync() {
-        if (document.activeElement != _this4.pm.content) {
-          _this4.pollState = null;
-        } else {
-          if (!_this4.pm.operation && !_this4.pm.input.composing) _this4.syncDOM();
-          _this4.pollTimeout = setTimeout(sync, 200);
-        }
-      };
-      this.pollTimeout = setTimeout(sync, 200);
-    }
-  }, {
-    key: "syncDOM",
-    value: function syncDOM() {
-      if (!this.pm.input.composing && hasFocus(this.pm) && this.domChanged()) this.toDOM();
-    }
-  }, {
-    key: "toDOM",
-    value: function toDOM(takeFocus) {
-      if (this.range instanceof NodeSelection) this.nodeToDOM(takeFocus);else this.rangeToDOM(takeFocus);
-    }
-  }, {
-    key: "nodeToDOM",
-    value: function nodeToDOM(takeFocus) {
-      window.getSelection().removeAllRanges();
-      if (takeFocus) this.pm.content.focus();
-      var pos = this.range.from,
-          node = this.range.node;
-      var dom = resolvePath(this.pm.content, pos.toPath());
-      if (dom == this.lastNode) return;
-      this.clearNode();
-      addNodeSelection(node, dom);
-      this.lastNode = dom;
-    }
-  }, {
-    key: "clearNode",
-    value: function clearNode() {
-      if (this.lastNode) {
-        clearNodeSelection(this.lastNode);
-        this.lastNode = null;
-        return true;
-      }
-    }
-  }, {
-    key: "rangeToDOM",
-    value: function rangeToDOM(takeFocus) {
-      var sel = window.getSelection();
-      if (!this.clearNode() && !hasFocus(this.pm)) {
-        if (!takeFocus) return;
-        // See https://bugzilla.mozilla.org/show_bug.cgi?id=921444
-        else if (_dom.browser.gecko) this.pm.content.focus();
-      }
-      if (!this.domChanged()) return;
-
-      var range = document.createRange();
-      var content = this.pm.content;
-      var anchor = DOMFromPos(content, this.range.anchor);
-      var head = DOMFromPos(content, this.range.head);
-
-      if (sel.extend) {
-        range.setEnd(anchor.node, anchor.offset);
-        range.collapse(false);
-      } else {
-        if (this.range.anchor.cmp(this.range.head) > 0) {
-          var tmp = anchor;anchor = head;head = tmp;
-        }
-        range.setEnd(head.node, head.offset);
-        range.setStart(anchor.node, anchor.offset);
-      }
-      sel.removeAllRanges();
-      sel.addRange(range);
-      if (sel.extend) sel.extend(head.node, head.offset);
-      this.storeDOMState();
-    }
-  }, {
-    key: "receivedFocus",
-    value: function receivedFocus() {
-      if (!this.pollState) this.pollToSync();
-    }
-  }, {
-    key: "beforeStartOp",
-    value: function beforeStartOp() {
-      if (this.pollState == "update" && this.readUpdate()) {
-        clearTimeout(this.pollTimeout);
-        this.stopPollingForUpdate();
-      } else {
-        this.syncDOM();
-      }
-    }
-  }]);
-
-  return SelectionState;
-}();
-
-function clearNodeSelection(dom) {
-  dom.classList.remove("ProseMirror-selectednode");
-}
-
-function addNodeSelection(_node, dom) {
-  dom.classList.add("ProseMirror-selectednode");
-}
-
-function windowRect() {
-  return { left: 0, right: window.innerWidth,
-    top: 0, bottom: window.innerHeight };
-}
-
-// ;; An editor selection. Can be one of two selection types:
-// `TextSelection` and `NodeSelection`. Both have the properties
-// listed here, but also contain more information (such as the
-// selected [node](#NodeSelection.node) or the
-// [head](#TextSelection.head) and [anchor](#TextSelection.anchor)).
-
-var Selection = exports.Selection = function Selection() {
-  _classCallCheck(this, Selection);
-};
-
-// :: Pos #path=Selection.prototype.from
-// The start of the selection.
-
-// :: Pos #path=Selection.prototype.to
-// The end of the selection.
-
-// :: bool #path=Selection.empty
-// True if the selection is an empty text selection (head an anchor
-// are the same).
-
-// :: (other: Selection) → bool #path=Selection.eq
-// Test whether the selection is the same as another selection.
-
-// :: (doc: Node, mapping: Mappable) → Selection #path=Selection.map
-// Map this selection through a [mappable](#Mappable) thing. `doc`
-// should be the new document, to which we are mapping.
-
-// ;; A text selection represents a classical editor
-// selection, with a head (the moving side) and anchor (immobile
-// side), both of which point into textblock nodes. It can be empty (a
-// regular cursor position).
-
-var TextSelection = exports.TextSelection = function (_Selection) {
-  _inherits(TextSelection, _Selection);
-
-  // :: (Pos, ?Pos)
-  // Construct a text selection. When `head` is not given, it defaults
-  // to `anchor`.
-
-  function TextSelection(anchor, head) {
-    _classCallCheck(this, TextSelection);
-
-    // :: Pos
-    // The selection's immobile side (does not move when pressing
-    // shift-arrow).
-
-    var _this5 = _possibleConstructorReturn(this, Object.getPrototypeOf(TextSelection).call(this));
-
-    _this5.anchor = anchor;
-    // :: Pos
-    // The selection's mobile side (the side that moves when pressing
-    // shift-arrow).
-    _this5.head = head || anchor;
-    return _this5;
-  }
-
-  _createClass(TextSelection, [{
-    key: "eq",
-    value: function eq(other) {
-      return other instanceof TextSelection && !other.head.cmp(this.head) && !other.anchor.cmp(this.anchor);
-    }
-  }, {
-    key: "map",
-    value: function map(doc, mapping) {
-      var head = mapping.map(this.head).pos;
-      if (!doc.path(head.path).isTextblock) return findSelectionNear(doc, head);
-      var anchor = mapping.map(this.anchor).pos;
-      return new TextSelection(doc.path(anchor.path).isTextblock ? anchor : head, head);
-    }
-  }, {
-    key: "inverted",
-    get: function get() {
-      return this.anchor.cmp(this.head) > 0;
-    }
-  }, {
-    key: "from",
-    get: function get() {
-      return this.inverted ? this.head : this.anchor;
-    }
-  }, {
-    key: "to",
-    get: function get() {
-      return this.inverted ? this.anchor : this.head;
-    }
-  }, {
-    key: "empty",
-    get: function get() {
-      return this.anchor.cmp(this.head) == 0;
-    }
-  }]);
-
-  return TextSelection;
-}(Selection);
-
-// ;; A node selection is a selection that points at a
-// single node. All nodes marked [selectable](#NodeType.selectable)
-// can be the target of a node selection. In such an object, `from`
-// and `to` point directly before and after the selected node.
-
-var NodeSelection = exports.NodeSelection = function (_Selection2) {
-  _inherits(NodeSelection, _Selection2);
-
-  // :: (Pos, Pos, Node)
-  // Create a node selection. Does not verify the validity of its
-  // arguments. Use `ProseMirror.setNodeSelection` for an easier,
-  // error-checking way to create a node selection.
-
-  function NodeSelection(from, to, node) {
-    _classCallCheck(this, NodeSelection);
-
-    var _this6 = _possibleConstructorReturn(this, Object.getPrototypeOf(NodeSelection).call(this));
-
-    _this6.from = from;
-    _this6.to = to;
-    // :: Node The selected node.
-    _this6.node = node;
-    return _this6;
-  }
-
-  _createClass(NodeSelection, [{
-    key: "eq",
-    value: function eq(other) {
-      return other instanceof NodeSelection && !this.from.cmp(other.from);
-    }
-  }, {
-    key: "map",
-    value: function map(doc, mapping) {
-      var from = mapping.map(this.from, 1).pos;
-      var to = mapping.map(this.to, -1).pos;
-      if (_model.Pos.samePath(from.path, to.path) && from.offset == to.offset - 1) {
-        var node = doc.nodeAfter(from);
-        if (node.type.selectable) return new NodeSelection(from, to, node);
-      }
-      return findSelectionNear(doc, from);
-    }
-  }, {
-    key: "empty",
-    get: function get() {
-      return false;
-    }
-  }]);
-
-  return NodeSelection;
-}(Selection);
-
+// : (ProseMirror, DOMNode) → [number]
+// Get the path for a given a DOM node in a document.
 function pathFromDOM(pm, node) {
   var path = [];
   for (; node != pm.content;) {
@@ -520,8 +122,13 @@ function widthFromDOM(dom) {
   return attr && attr != "true" ? +attr : 1;
 }
 
-function posFromDOMInner(pm, dom, domOffset, loose) {
+function posFromDOM(pm, dom, domOffset, loose) {
   if (!loose && pm.operation && pm.doc != pm.operation.doc) _error.AssertionError.raise("Fetching a position from an outdated DOM structure");
+
+  if (domOffset == null) {
+    domOffset = Array.prototype.indexOf.call(dom.parentNode.childNodes, dom);
+    dom = dom.parentNode;
+  }
 
   var extraOffset = 0,
       tag = undefined;
@@ -529,7 +136,7 @@ function posFromDOMInner(pm, dom, domOffset, loose) {
     var adjust = 0;
     if (dom.nodeType == 3) {
       extraOffset += domOffset;
-    } else if (dom.hasAttribute("pm-offset") || dom == pm.content) {
+    } else if (dom.hasAttribute("pm-container")) {
       break;
     } else if (tag = dom.getAttribute("pm-inner-offset")) {
       extraOffset += +tag;
@@ -561,57 +168,40 @@ function posFromDOMInner(pm, dom, domOffset, loose) {
   return new _model.Pos(path, offset + extraOffset);
 }
 
-function posFromDOM(pm, node, offset) {
-  if (offset == null) {
-    offset = Array.prototype.indexOf.call(node.parentNode.childNodes, node);
-    node = node.parentNode;
-  }
-  return posFromDOMInner(pm, node, offset);
-}
-
-function rangeFromDOMLoose(pm) {
-  if (!hasFocus(pm)) return null;
-  var sel = getSelection();
-  return new TextSelection(posFromDOMInner(pm, sel.anchorNode, sel.anchorOffset, true), posFromDOMInner(pm, sel.focusNode, sel.focusOffset, true));
-}
-
+// : (DOMNode, number, ?bool)
+// Get a child node of a parent node at a given offset.
 function findByPath(node, n, fromEnd) {
-  for (var ch = fromEnd ? node.lastChild : node.firstChild; ch; ch = fromEnd ? ch.previousSibling : ch.nextSibling) {
+  var container = childContainer(node);
+  for (var ch = fromEnd ? container.lastChild : container.firstChild; ch; ch = fromEnd ? ch.previousSibling : ch.nextSibling) {
     if (ch.nodeType != 1) continue;
     var offset = ch.getAttribute("pm-offset");
-    if (!offset) {
-      var found = findByPath(ch, n);
-      if (found) return found;
-    } else if (+offset == n) {
-      return ch;
-    }
+    if (offset && +offset == n) return ch;
   }
 }
 
-function resolvePath(parent, path) {
+// : (DOMNode, [number]) → DOMNode
+// Get a descendant node at a path relative to an ancestor node.
+function pathToDOM(parent, path) {
   var node = parent;
   for (var i = 0; i < path.length; i++) {
     node = findByPath(node, path[i]);
-    if (!node) SelectionError.raise("Failed to resolve path " + path.join("/"));
+    if (!node) _error.AssertionError.raise("Failed to resolve path " + path.join("/"));
   }
   return node;
 }
 
+function childContainer(dom) {
+  return dom.hasAttribute("pm-container") ? dom : dom.querySelector("[pm-container]");
+}
+
 function findByOffset(node, offset, after) {
-  function search(node) {
-    for (var ch = node.firstChild, i = 0, attr; ch; ch = ch.nextSibling, i++) {
-      if (ch.nodeType != 1) continue;
-      if (attr = ch.getAttribute("pm-offset")) {
-        var diff = offset - +attr,
-            width = widthFromDOM(ch);
-        if (diff >= 0 && (after ? diff <= width : diff < width)) return { node: ch, offset: i, innerOffset: diff };
-      } else {
-        var result = search(ch);
-        if (result) return result;
-      }
+  for (var ch = node.firstChild, i = 0, attr; ch; ch = ch.nextSibling, i++) {
+    if (ch.nodeType == 1 && (attr = ch.getAttribute("pm-offset"))) {
+      var diff = offset - +attr,
+          width = widthFromDOM(ch);
+      if (diff >= 0 && (after ? diff <= width : diff < width)) return { node: ch, offset: i, innerOffset: diff };
     }
   }
-  return search(node);
 }
 
 function leafAt(node, offset) {
@@ -636,16 +226,38 @@ function leafAt(node, offset) {
 
 // Get a DOM element at a given position in the document.
 function DOMFromPos(parent, pos) {
-  var dom = resolvePath(parent, pos.path);
+  var dom = childContainer(pathToDOM(parent, pos.path));
   var found = findByOffset(dom, pos.offset, true),
       inner = undefined;
   if (!found) return { node: dom, offset: 0 };
   if (found.node.getAttribute("pm-leaf") == "true" || !(inner = leafAt(found.node, found.innerOffset))) return { node: found.node.parentNode, offset: found.offset + (found.innerOffset ? 1 : 0) };else return inner;
 }
 
-function hasFocus(pm) {
-  var sel = window.getSelection();
-  return sel.rangeCount && (0, _dom.contains)(pm.content, sel.anchorNode);
+function windowRect() {
+  return { left: 0, right: window.innerWidth,
+    top: 0, bottom: window.innerHeight };
+}
+
+var scrollMargin = 5;
+
+function scrollIntoView(pm, pos) {
+  if (!pos) pos = pm.sel.range.head || pm.sel.range.from;
+  var coords = coordsAtPos(pm, pos);
+  for (var parent = pm.content;; parent = parent.parentNode) {
+    var atBody = parent == document.body;
+    var rect = atBody ? windowRect() : parent.getBoundingClientRect();
+    var moveX = 0,
+        moveY = 0;
+    if (coords.top < rect.top) moveY = -(rect.top - coords.top + scrollMargin);else if (coords.bottom > rect.bottom) moveY = coords.bottom - rect.bottom + scrollMargin;
+    if (coords.left < rect.left) moveX = -(rect.left - coords.left + scrollMargin);else if (coords.right > rect.right) moveX = coords.right - rect.right + scrollMargin;
+    if (moveX || moveY) {
+      if (atBody) window.scrollBy(moveX, moveY);
+    } else {
+      if (moveY) parent.scrollTop += moveY;
+      if (moveX) parent.scrollLeft += moveX;
+    }
+    if (atBody) break;
+  }
 }
 
 function findOffsetInNode(node, coords) {
@@ -653,12 +265,12 @@ function findOffsetInNode(node, coords) {
       dyClosest = 1e8,
       coordsClosest = undefined,
       offset = 0;
-  for (var child = node.firstChild, i = 0; child; child = child.nextSibling, i++) {
+  for (var child = node.firstChild; child; child = child.nextSibling) {
     var rects = undefined;
     if (child.nodeType == 1) rects = child.getClientRects();else if (child.nodeType == 3) rects = textRects(child);else continue;
 
-    for (var _i = 0; _i < rects.length; _i++) {
-      var rect = rects[_i];
+    for (var i = 0; i < rects.length; i++) {
+      var rect = rects[i];
       if (rect.left <= coords.left && rect.right >= coords.left) {
         var dy = rect.top > coords.top ? rect.top - coords.top : rect.bottom < coords.top ? coords.top - rect.bottom : 0;
         if (dy < dyClosest) {
@@ -666,11 +278,11 @@ function findOffsetInNode(node, coords) {
           closest = child;
           dyClosest = dy;
           coordsClosest = dy ? { left: coords.left, top: rect.top } : coords;
-          if (child.nodeType == 1 && !child.firstChild) offset = _i + (coords.left >= (rect.left + rect.right) / 2 ? 1 : 0);
+          if (child.nodeType == 1 && !child.firstChild) offset = i + (coords.left >= (rect.left + rect.right) / 2 ? 1 : 0);
           continue;
         }
       }
-      if (!closest && (coords.top >= rect.bottom || coords.top >= rect.top && coords.left >= rect.right)) offset = _i + 1;
+      if (!closest && (coords.top >= rect.bottom || coords.top >= rect.top && coords.left >= rect.right)) offset = i + 1;
     }
   }
   if (!closest) return { node: node, offset: offset };
@@ -759,27 +371,463 @@ function coordsAtPos(pm, pos) {
   return { top: rect.top, bottom: rect.bottom, left: x, right: x };
 }
 
-var scrollMargin = 5;
+function setDOMSelectionToPos(pm, pos) {
+  var _DOMFromPos2 = DOMFromPos(pm.content, pos);
 
-function scrollIntoView(pm, pos) {
-  if (!pos) pos = pm.sel.range.head || pm.sel.range.from;
-  var coords = coordsAtPos(pm, pos);
-  for (var parent = pm.content;; parent = parent.parentNode) {
-    var atBody = parent == document.body;
-    var rect = atBody ? windowRect() : parent.getBoundingClientRect();
-    var moveX = 0,
-        moveY = 0;
-    if (coords.top < rect.top) moveY = -(rect.top - coords.top + scrollMargin);else if (coords.bottom > rect.bottom) moveY = coords.bottom - rect.bottom + scrollMargin;
-    if (coords.left < rect.left) moveX = -(rect.left - coords.left + scrollMargin);else if (coords.right > rect.right) moveX = coords.right - rect.right + scrollMargin;
-    if (moveX || moveY) {
-      if (atBody) window.scrollBy(moveX, moveY);
-    } else {
-      if (moveY) parent.scrollTop += moveY;
-      if (moveX) parent.scrollLeft += moveX;
+  var node = _DOMFromPos2.node;
+  var offset = _DOMFromPos2.offset;
+
+  var range = document.createRange();
+  range.setEnd(node, offset);
+  range.setStart(node, offset);
+  var sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+}
+
+// ;; #path=NodeType #kind=class #noAnchor
+// You can add several properties to [node types](#NodeType) to
+// influence the way the editor interacts with them.
+
+// :: (node: Node, path: [number], dom: DOMNode, coords: {left: number, top: number}) → ?Pos
+// #path=NodeType.prototype.countCoordsAsChild
+// Specifies that, if this node is clicked, a child node might
+// actually be meant. This is used to, for example, make clicking a
+// list marker (which, in the DOM, is part of the list node) select
+// the list item it belongs to. Should return null if the given
+// coordinates don't refer to a child node, or the [position](#Pos)
+// before the child otherwise.
+
+function selectableNodeAbove(pm, dom, coords, liberal) {
+  for (; dom && dom != pm.content; dom = dom.parentNode) {
+    if (dom.hasAttribute("pm-offset")) {
+      var path = pathFromDOM(pm, dom),
+          node = pm.doc.path(path);
+      if (node.type.countCoordsAsChild) {
+        var result = node.type.countCoordsAsChild(node, path, dom, coords);
+        if (result) return result;
+      }
+      // Leaf nodes are implicitly clickable
+      if ((liberal || node.type.contains == null) && node.type.selectable) return _model.Pos.from(path);
+      if (!liberal) return null;
     }
-    if (atBody) break;
   }
 }
+
+// :: (pm: ProseMirror, event: MouseEvent, path: [number], node: Node) → bool
+// #path=NodeType.prototype.handleClick
+// If a node is directly clicked (that is, the click didn't land in a
+// DOM node belonging to a child node), and its type has a
+// `handleClick` method, that method is given a chance to handle the
+// click. The method is called, and should return `false` if it did
+// _not_ handle the click.
+//
+// The `event` passed is the event for `"mousedown"`, but calling
+// `preventDefault` on it has no effect, since this method is only
+// called after a corresponding `"mouseup"` has occurred and
+// ProseMirror has determined that this is not a drag or multi-click
+// event.
+
+// :: (pm: ProseMirror, event: MouseEvent, path: [number], node: Node) → bool
+// #path=NodeType.prototype.handleContextMenu
+//
+// When the [context
+// menu](https://developer.mozilla.org/en-US/docs/Web/Events/contextmenu)
+// is activated in the editable context, nodes that the clicked
+// position falls inside of get a chance to react to it. Node types
+// may define a `handleContextMenu` method, which will be called when
+// present, first on inner nodes and then up the document tree, until
+// one of the methods returns something other than `false`.
+//
+// The handlers can inspect `event.target` to figure out whether they
+// were directly clicked, and may call `event.preventDefault()` to
+// prevent the native context menu.
+
+function handleNodeClick(pm, type, event, direct) {
+  for (var dom = event.target; dom && dom != pm.content; dom = dom.parentNode) {
+    if (dom.hasAttribute("pm-offset")) {
+      var path = pathFromDOM(pm, dom),
+          node = pm.doc.path(path);
+      var handled = node.type[type] && node.type[type](pm, event, path, node) !== false;
+      if (direct || handled) return handled;
+    }
+  }
+}
+},{"../dom":1,"../model":8,"../util/error":13}],3:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.NodeSelection = exports.TextSelection = exports.Selection = exports.SelectionState = exports.SelectionError = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+exports.rangeFromDOMLoose = rangeFromDOMLoose;
+exports.hasFocus = hasFocus;
+exports.findSelectionFrom = findSelectionFrom;
+exports.findSelectionNear = findSelectionNear;
+exports.findSelectionAtStart = findSelectionAtStart;
+exports.findSelectionAtEnd = findSelectionAtEnd;
+exports.verticalMotionLeavesTextblock = verticalMotionLeavesTextblock;
+
+var _model = require("../model");
+
+var _error = require("../util/error");
+
+var _dom = require("../dom");
+
+var _dompos = require("./dompos");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+// ;; Error type used to signal selection-related problems.
+
+var SelectionError = exports.SelectionError = function (_ProseMirrorError) {
+  _inherits(SelectionError, _ProseMirrorError);
+
+  function SelectionError() {
+    _classCallCheck(this, SelectionError);
+
+    return _possibleConstructorReturn(this, Object.getPrototypeOf(SelectionError).apply(this, arguments));
+  }
+
+  return SelectionError;
+}(_error.ProseMirrorError);
+
+var SelectionState = exports.SelectionState = function () {
+  function SelectionState(pm, range) {
+    var _this2 = this;
+
+    _classCallCheck(this, SelectionState);
+
+    this.pm = pm;
+    this.range = range;
+
+    this.lastNonNodePos = null;
+
+    this.polling = null;
+    this.lastAnchorNode = this.lastHeadNode = this.lastAnchorOffset = this.lastHeadOffset = null;
+    this.lastNode = null;
+
+    pm.content.addEventListener("focus", function () {
+      return _this2.receivedFocus();
+    });
+    this.poller = this.poller.bind(this);
+  }
+
+  _createClass(SelectionState, [{
+    key: "setAndSignal",
+    value: function setAndSignal(range, clearLast) {
+      this.set(range, clearLast);
+      // :: () #path=ProseMirror#events#selectionChange
+      // Indicates that the editor's selection has changed.
+      this.pm.signal("selectionChange");
+    }
+  }, {
+    key: "set",
+    value: function set(range, clearLast) {
+      this.range = range;
+      if (!range.node) this.lastNonNodePos = null;
+      if (clearLast !== false) this.lastAnchorNode = null;
+    }
+  }, {
+    key: "poller",
+    value: function poller() {
+      if (hasFocus(this.pm)) {
+        if (!this.pm.operation) this.readFromDOM();
+        this.polling = setTimeout(this.poller, 100);
+      } else {
+        this.polling = null;
+      }
+    }
+  }, {
+    key: "startPolling",
+    value: function startPolling() {
+      clearTimeout(this.polling);
+      this.polling = setTimeout(this.poller, 50);
+    }
+  }, {
+    key: "fastPoll",
+    value: function fastPoll() {
+      this.startPolling();
+    }
+  }, {
+    key: "stopPolling",
+    value: function stopPolling() {
+      clearTimeout(this.polling);
+      this.polling = null;
+    }
+  }, {
+    key: "domChanged",
+    value: function domChanged() {
+      var sel = window.getSelection();
+      return sel.anchorNode != this.lastAnchorNode || sel.anchorOffset != this.lastAnchorOffset || sel.focusNode != this.lastHeadNode || sel.focusOffset != this.lastHeadOffset;
+    }
+  }, {
+    key: "storeDOMState",
+    value: function storeDOMState() {
+      var sel = window.getSelection();
+      this.lastAnchorNode = sel.anchorNode;this.lastAnchorOffset = sel.anchorOffset;
+      this.lastHeadNode = sel.focusNode;this.lastHeadOffset = sel.focusOffset;
+    }
+  }, {
+    key: "readFromDOM",
+    value: function readFromDOM() {
+      if (this.pm.input.composing || !hasFocus(this.pm) || !this.domChanged()) return false;
+
+      var sel = window.getSelection(),
+          doc = this.pm.doc;
+      var anchor = (0, _dompos.posFromDOM)(this.pm, sel.anchorNode, sel.anchorOffset);
+      var head = sel.isCollapsed ? anchor : (0, _dompos.posFromDOM)(this.pm, sel.focusNode, sel.focusOffset);
+
+      var newRange = findSelectionNear(doc, head, this.range.head && this.range.head.cmp(head) < 0 ? -1 : 1);
+      if (newRange instanceof TextSelection && doc.path(anchor.path).isTextblock) newRange = new TextSelection(anchor, newRange.head);
+      this.setAndSignal(newRange);
+
+      if (newRange instanceof NodeSelection || newRange.head.cmp(head) || newRange.anchor.cmp(anchor)) {
+        this.toDOM();
+      } else {
+        this.clearNode();
+        this.storeDOMState();
+      }
+      return true;
+    }
+  }, {
+    key: "toDOM",
+    value: function toDOM(takeFocus) {
+      if (!hasFocus(this.pm)) {
+        if (!takeFocus) return;
+        // See https://bugzilla.mozilla.org/show_bug.cgi?id=921444
+        else if (_dom.browser.gecko) this.pm.content.focus();
+      }
+      if (this.range instanceof NodeSelection) this.nodeToDOM();else this.rangeToDOM();
+    }
+  }, {
+    key: "nodeToDOM",
+    value: function nodeToDOM() {
+      var dom = (0, _dompos.pathToDOM)(this.pm.content, this.range.from.toPath());
+      if (dom != this.lastNode) {
+        this.clearNode();
+        dom.classList.add("ProseMirror-selectednode");
+        this.pm.content.classList.add("ProseMirror-nodeselection");
+        this.lastNode = dom;
+      }
+      var range = document.createRange(),
+          sel = window.getSelection();
+      range.selectNode(dom);
+      sel.removeAllRanges();
+      sel.addRange(range);
+      this.storeDOMState();
+    }
+  }, {
+    key: "rangeToDOM",
+    value: function rangeToDOM() {
+      this.clearNode();
+
+      var anchor = (0, _dompos.DOMFromPos)(this.pm.content, this.range.anchor);
+      var head = (0, _dompos.DOMFromPos)(this.pm.content, this.range.head);
+
+      var sel = window.getSelection(),
+          range = document.createRange();
+      if (sel.extend) {
+        range.setEnd(anchor.node, anchor.offset);
+        range.collapse(false);
+      } else {
+        if (this.range.anchor.cmp(this.range.head) > 0) {
+          var tmp = anchor;anchor = head;head = tmp;
+        }
+        range.setEnd(head.node, head.offset);
+        range.setStart(anchor.node, anchor.offset);
+      }
+      sel.removeAllRanges();
+      sel.addRange(range);
+      if (sel.extend) sel.extend(head.node, head.offset);
+      this.storeDOMState();
+    }
+  }, {
+    key: "clearNode",
+    value: function clearNode() {
+      if (this.lastNode) {
+        this.lastNode.classList.remove("ProseMirror-selectednode");
+        this.pm.content.classList.remove("ProseMirror-nodeselection");
+        this.lastNode = null;
+        return true;
+      }
+    }
+  }, {
+    key: "receivedFocus",
+    value: function receivedFocus() {
+      if (this.polling == null) this.startPolling();
+    }
+  }]);
+
+  return SelectionState;
+}();
+
+// ;; An editor selection. Can be one of two selection types:
+// `TextSelection` and `NodeSelection`. Both have the properties
+// listed here, but also contain more information (such as the
+// selected [node](#NodeSelection.node) or the
+// [head](#TextSelection.head) and [anchor](#TextSelection.anchor)).
+
+
+var Selection = exports.Selection = function Selection() {
+  _classCallCheck(this, Selection);
+};
+
+// :: Pos #path=Selection.prototype.from
+// The start of the selection.
+
+// :: Pos #path=Selection.prototype.to
+// The end of the selection.
+
+// :: bool #path=Selection.empty
+// True if the selection is an empty text selection (head an anchor
+// are the same).
+
+// :: (other: Selection) → bool #path=Selection.eq
+// Test whether the selection is the same as another selection.
+
+// :: (doc: Node, mapping: Mappable) → Selection #path=Selection.map
+// Map this selection through a [mappable](#Mappable) thing. `doc`
+// should be the new document, to which we are mapping.
+
+
+// ;; A text selection represents a classical editor
+// selection, with a head (the moving side) and anchor (immobile
+// side), both of which point into textblock nodes. It can be empty (a
+// regular cursor position).
+
+var TextSelection = exports.TextSelection = function (_Selection) {
+  _inherits(TextSelection, _Selection);
+
+  // :: (Pos, ?Pos)
+  // Construct a text selection. When `head` is not given, it defaults
+  // to `anchor`.
+
+  function TextSelection(anchor, head) {
+    _classCallCheck(this, TextSelection);
+
+    // :: Pos
+    // The selection's immobile side (does not move when pressing
+    // shift-arrow).
+
+    var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(TextSelection).call(this));
+
+    _this3.anchor = anchor;
+    // :: Pos
+    // The selection's mobile side (the side that moves when pressing
+    // shift-arrow).
+    _this3.head = head || anchor;
+    return _this3;
+  }
+
+  _createClass(TextSelection, [{
+    key: "eq",
+    value: function eq(other) {
+      return other instanceof TextSelection && !other.head.cmp(this.head) && !other.anchor.cmp(this.anchor);
+    }
+  }, {
+    key: "map",
+    value: function map(doc, mapping) {
+      var head = mapping.map(this.head).pos;
+      if (!doc.path(head.path).isTextblock) return findSelectionNear(doc, head);
+      var anchor = mapping.map(this.anchor).pos;
+      return new TextSelection(doc.path(anchor.path).isTextblock ? anchor : head, head);
+    }
+  }, {
+    key: "inverted",
+    get: function get() {
+      return this.anchor.cmp(this.head) > 0;
+    }
+  }, {
+    key: "from",
+    get: function get() {
+      return this.inverted ? this.head : this.anchor;
+    }
+  }, {
+    key: "to",
+    get: function get() {
+      return this.inverted ? this.anchor : this.head;
+    }
+  }, {
+    key: "empty",
+    get: function get() {
+      return this.anchor.cmp(this.head) == 0;
+    }
+  }]);
+
+  return TextSelection;
+}(Selection);
+
+// ;; A node selection is a selection that points at a
+// single node. All nodes marked [selectable](#NodeType.selectable)
+// can be the target of a node selection. In such an object, `from`
+// and `to` point directly before and after the selected node.
+
+
+var NodeSelection = exports.NodeSelection = function (_Selection2) {
+  _inherits(NodeSelection, _Selection2);
+
+  // :: (Pos, Pos, Node)
+  // Create a node selection. Does not verify the validity of its
+  // arguments. Use `ProseMirror.setNodeSelection` for an easier,
+  // error-checking way to create a node selection.
+
+  function NodeSelection(from, to, node) {
+    _classCallCheck(this, NodeSelection);
+
+    var _this4 = _possibleConstructorReturn(this, Object.getPrototypeOf(NodeSelection).call(this));
+
+    _this4.from = from;
+    _this4.to = to;
+    // :: Node The selected node.
+    _this4.node = node;
+    return _this4;
+  }
+
+  _createClass(NodeSelection, [{
+    key: "eq",
+    value: function eq(other) {
+      return other instanceof NodeSelection && !this.from.cmp(other.from);
+    }
+  }, {
+    key: "map",
+    value: function map(doc, mapping) {
+      var from = mapping.map(this.from, 1).pos;
+      var to = mapping.map(this.to, -1).pos;
+      if (_model.Pos.samePath(from.path, to.path) && from.offset == to.offset - 1) {
+        var node = doc.nodeAfter(from);
+        if (node.type.selectable) return new NodeSelection(from, to, node);
+      }
+      return findSelectionNear(doc, from);
+    }
+  }, {
+    key: "empty",
+    get: function get() {
+      return false;
+    }
+  }]);
+
+  return NodeSelection;
+}(Selection);
+
+function rangeFromDOMLoose(pm) {
+  if (!hasFocus(pm)) return null;
+  var sel = window.getSelection();
+  return new TextSelection((0, _dompos.posFromDOM)(pm, sel.anchorNode, sel.anchorOffset, true), (0, _dompos.posFromDOM)(pm, sel.focusNode, sel.focusOffset, true));
+}
+
+function hasFocus(pm) {
+  var sel = window.getSelection();
+  return sel.rangeCount && (0, _dom.contains)(pm.content, sel.anchorNode);
+}
+
 function findSelectionIn(doc, path, offset, dir, text) {
   var node = doc.path(path);
   if (node.isTextblock) return new TextSelection(new _model.Pos(path, offset));
@@ -828,62 +876,9 @@ function findSelectionAtEnd(node) {
   return findSelectionIn(node, path.slice(), node.size, -1, text);
 }
 
-// ;; #path=NodeType #kind=class #noAnchor
-// You can add several properties to [node types](#NodeType) to
-// influence the way the editor interacts with them.
-
-// :: (node: Node, path: [number], dom: DOMNode, coords: {left: number, top: number}) → ?Pos
-// #path=NodeType.prototype.countCoordsAsChild
-// Specifies that, if this node is clicked, a child node might
-// actually be meant. This is used to, for example, make clicking a
-// list marker (which, in the DOM, is part of the list node) select
-// the list item it belongs to. Should return null if the given
-// coordinates don't refer to a child node, or the [position](#Pos)
-// before thechild otherwise.
-
-function selectableNodeAbove(pm, dom, coords, liberal) {
-  for (; dom && dom != pm.content; dom = dom.parentNode) {
-    if (dom.hasAttribute("pm-offset")) {
-      var path = pathFromDOM(pm, dom),
-          node = pm.doc.path(path);
-      if (node.type.countCoordsAsChild) {
-        var result = node.type.countCoordsAsChild(node, path, dom, coords);
-        if (result) return result;
-      }
-      // Leaf nodes are implicitly clickable
-      if ((liberal || node.type.contains == null) && node.type.selectable) return _model.Pos.from(path);
-      if (!liberal) return null;
-    }
-  }
-}
-
-// :: (pm: ProseMirror, event: MouseEvent, path: [number], node: Node) → bool
-// #path=NodeType.prototype.handleClick
-// If a node is directly clicked (that is, the click didn't land in a
-// DOM node belonging to a child node), and its type has a
-// `handleClick` method, that method is given a chance to handle the
-// click. The method is called, and should return `false` if it did
-// _not_ handle the click.
-//
-// The `event` passed is the event for `"mousedown"`, but calling
-// `preventDefault` on it has no effect, since this method is only
-// called after a corresponding `"mouseup"` has occurred and
-// ProseMirror has determined that this is not a drag or multi-click
-// event.
-
-function handleNodeClick(pm, event) {
-  for (var dom = event.target; dom && dom != pm.content; dom = dom.parentNode) {
-    if (dom.hasAttribute("pm-offset")) {
-      var path = pathFromDOM(pm, dom),
-          node = pm.doc.path(path);
-      return node.type.handleClick && node.type.handleClick(pm, event, path, node) !== false;
-    }
-  }
-}
-
 function verticalMotionLeavesTextblock(pm, pos, dir) {
-  var dom = resolvePath(pm.content, pos.path);
-  var coords = coordsAtPos(pm, pos);
+  var dom = (0, _dompos.pathToDOM)(pm.content, pos.path);
+  var coords = (0, _dompos.coordsAtPos)(pm, pos);
   for (var child = dom.firstChild; child; child = child.nextSibling) {
     if (child.nodeType != 1) continue;
     var boxes = child.getClientRects();
@@ -894,29 +889,15 @@ function verticalMotionLeavesTextblock(pm, pos, dir) {
   }
   return true;
 }
-
-function setDOMSelectionToPos(pm, pos) {
-  var _DOMFromPos2 = DOMFromPos(pm.content, pos);
-
-  var node = _DOMFromPos2.node;
-  var offset = _DOMFromPos2.offset;
-
-  var range = document.createRange();
-  range.setEnd(node, offset);
-  range.setStart(node, offset);
-  var sel = getSelection();
-  sel.removeAllRanges();
-  sel.addRange(range);
-}
-},{"../dom":1,"../model":7,"../util/error":12}],3:[function(require,module,exports){
+},{"../dom":1,"../model":8,"../util/error":13,"./dompos":2}],4:[function(require,module,exports){
 "use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.defaultSchema = exports.CodeMark = exports.LinkMark = exports.StrongMark = exports.EmMark = exports.HardBreak = exports.Image = exports.Paragraph = exports.CodeBlock = exports.Heading = exports.HorizontalRule = exports.ListItem = exports.BulletList = exports.OrderedList = exports.BlockQuote = exports.Doc = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _schema = require("./schema");
 
@@ -949,6 +930,7 @@ var Doc = exports.Doc = function (_Block) {
 
 // ;; The default blockquote node type.
 
+
 var BlockQuote = exports.BlockQuote = function (_Block2) {
   _inherits(BlockQuote, _Block2);
 
@@ -964,6 +946,7 @@ var BlockQuote = exports.BlockQuote = function (_Block2) {
 // ;; The default ordered list node type. Has a single attribute,
 // `order`, which determines the number at which the list starts
 // counting, and defaults to 1.
+
 
 var OrderedList = exports.OrderedList = function (_Block3) {
   _inherits(OrderedList, _Block3);
@@ -991,6 +974,7 @@ var OrderedList = exports.OrderedList = function (_Block3) {
 
 // ;; The default bullet list node type.
 
+
 var BulletList = exports.BulletList = function (_Block4) {
   _inherits(BulletList, _Block4);
 
@@ -1012,6 +996,7 @@ var BulletList = exports.BulletList = function (_Block4) {
 
 // ;; The default list item node type.
 
+
 var ListItem = exports.ListItem = function (_Block5) {
   _inherits(ListItem, _Block5);
 
@@ -1032,6 +1017,7 @@ var ListItem = exports.ListItem = function (_Block5) {
 }(_schema.Block);
 
 // ;; The default horizontal rule node type.
+
 
 var HorizontalRule = exports.HorizontalRule = function (_Block6) {
   _inherits(HorizontalRule, _Block6);
@@ -1055,6 +1041,7 @@ var HorizontalRule = exports.HorizontalRule = function (_Block6) {
 // ;; The default heading node type. Has a single attribute
 // `level`, which indicates the heading level, and defaults to 1.
 
+
 var Heading = exports.Heading = function (_Textblock) {
   _inherits(Heading, _Textblock);
 
@@ -1069,6 +1056,15 @@ var Heading = exports.Heading = function (_Textblock) {
     get: function get() {
       return { level: new _schema.Attribute({ default: "1" }) };
     }
+    // :: number
+    // Controls the maximum heading level. Has the value 6 in the
+    // `Heading` class, but you can override it in a subclass.
+
+  }, {
+    key: "maxLevel",
+    get: function get() {
+      return 6;
+    }
   }]);
 
   return Heading;
@@ -1076,6 +1072,7 @@ var Heading = exports.Heading = function (_Textblock) {
 
 // ;; The default code block / listing node type. Only
 // allows unmarked text nodes inside of it.
+
 
 var CodeBlock = exports.CodeBlock = function (_Textblock2) {
   _inherits(CodeBlock, _Textblock2);
@@ -1108,6 +1105,7 @@ var CodeBlock = exports.CodeBlock = function (_Textblock2) {
 
 // ;; The default paragraph node type.
 
+
 var Paragraph = exports.Paragraph = function (_Textblock3) {
   _inherits(Paragraph, _Textblock3);
 
@@ -1134,6 +1132,7 @@ var Paragraph = exports.Paragraph = function (_Textblock3) {
 // - **`alt`**: The alt text.
 // - **`title`**: The title of the image.
 
+
 var Image = exports.Image = function (_Inline) {
   _inherits(Image, _Inline);
 
@@ -1152,12 +1151,18 @@ var Image = exports.Image = function (_Inline) {
         title: new _schema.Attribute({ default: "" })
       };
     }
+  }, {
+    key: "draggable",
+    get: function get() {
+      return true;
+    }
   }]);
 
   return Image;
 }(_schema.Inline);
 
 // ;; The default hard break node type.
+
 
 var HardBreak = exports.HardBreak = function (_Inline2) {
   _inherits(HardBreak, _Inline2);
@@ -1185,6 +1190,7 @@ var HardBreak = exports.HardBreak = function (_Inline2) {
 
 // ;; The default emphasis mark type.
 
+
 var EmMark = exports.EmMark = function (_MarkType) {
   _inherits(EmMark, _MarkType);
 
@@ -1205,6 +1211,7 @@ var EmMark = exports.EmMark = function (_MarkType) {
 }(_schema.MarkType);
 
 // ;; The default strong mark type.
+
 
 var StrongMark = exports.StrongMark = function (_MarkType2) {
   _inherits(StrongMark, _MarkType2);
@@ -1230,6 +1237,7 @@ var StrongMark = exports.StrongMark = function (_MarkType2) {
 // - **`href`** (required): The link target.
 // - **`title`**: The link's title.
 
+
 var LinkMark = exports.LinkMark = function (_MarkType3) {
   _inherits(LinkMark, _MarkType3);
 
@@ -1250,7 +1258,7 @@ var LinkMark = exports.LinkMark = function (_MarkType3) {
   }], [{
     key: "rank",
     get: function get() {
-      return 53;
+      return 25;
     }
   }]);
 
@@ -1258,6 +1266,7 @@ var LinkMark = exports.LinkMark = function (_MarkType3) {
 }(_schema.MarkType);
 
 // ;; The default code font mark type.
+
 
 var CodeMark = exports.CodeMark = function (_MarkType4) {
   _inherits(CodeMark, _MarkType4);
@@ -1286,6 +1295,7 @@ var CodeMark = exports.CodeMark = function (_MarkType4) {
 // :: SchemaSpec
 // The specification for the default schema.
 
+
 var defaultSpec = new _schema.SchemaSpec({
   doc: Doc,
   blockquote: BlockQuote,
@@ -1311,7 +1321,7 @@ var defaultSpec = new _schema.SchemaSpec({
 // :: Schema
 // ProseMirror's default document schema.
 var defaultSchema = exports.defaultSchema = new _schema.Schema(defaultSpec);
-},{"./schema":11}],4:[function(require,module,exports){
+},{"./schema":12}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1408,7 +1418,7 @@ function findDiffEnd(a, b) {
   }
   return { a: new _pos.Pos(pathA, offA), b: new _pos.Pos(pathB, offB) };
 }
-},{"./pos":10}],5:[function(require,module,exports){
+},{"./pos":11}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1437,15 +1447,15 @@ var ModelError = exports.ModelError = function (_ProseMirrorError) {
 
   return ModelError;
 }(_error.ProseMirrorError);
-},{"../util/error":12}],6:[function(require,module,exports){
+},{"../util/error":13}],7:[function(require,module,exports){
 "use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.emptyFragment = exports.Fragment = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _error = require("./error");
 
@@ -1497,6 +1507,7 @@ var Fragment = exports.Fragment = function () {
   }, {
     key: "toString",
 
+
     // :: () → string
     // Return a debugging string that describes this fragment.
     value: function toString() {
@@ -1534,9 +1545,9 @@ var Fragment = exports.Fragment = function () {
       return Fragment.fromArray(this.toArray(undefined, undefined, f));
     }
 
-    // :: ((Node) → bool) → bool
-    // Returns `true` if the given function returned `true` for any of
-    // the fragment's children.
+    // :: ((Node) → bool) → ?Node
+    // Returns the first child node for which the given function returns
+    // `true`, or undefined otherwise.
 
   }, {
     key: "some",
@@ -1709,6 +1720,7 @@ var ReverseFlatIterator = function (_FlatIterator) {
 
 // ;; #forward=Fragment
 
+
 var FlatFragment = function (_Fragment) {
   _inherits(FlatFragment, _Fragment);
 
@@ -1727,6 +1739,7 @@ var FlatFragment = function (_Fragment) {
   // go over only part of the content. If an iteration bound falls
   // within a text node, only the part that is within the bounds is
   // yielded.
+
 
   _createClass(FlatFragment, [{
     key: "iter",
@@ -1757,6 +1770,7 @@ var FlatFragment = function (_Fragment) {
 
   }, {
     key: "child",
+
 
     // :: (number) → Node
     // Get the child at the given offset. Might return a text node that
@@ -1880,6 +1894,7 @@ var FlatFragment = function (_Fragment) {
 // An empty fragment. Intended to be reused whenever a node doesn't
 // contain anything (rather than allocating a new empty fragment for
 // each leaf node).
+
 
 var emptyFragment = exports.emptyFragment = new FlatFragment([]);
 
@@ -2039,9 +2054,9 @@ var TextFragment = function (_Fragment2) {
     value: function child(off) {
       if (off < 0 || off >= this.size) _error.ModelError.raise("Offset " + off + " out of range");
       for (var i = 0, curOff = 0; i < this.content.length; i++) {
-        var _child = this.content[i];
-        curOff += _child.width;
-        if (curOff > off) return _child;
+        var child = this.content[i];
+        curOff += child.width;
+        if (curOff > off) return child;
       }
     }
   }, {
@@ -2141,7 +2156,7 @@ if (typeof Symbol != "undefined") {
     return this;
   };
 }
-},{"./error":5}],7:[function(require,module,exports){
+},{"./error":6}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2375,14 +2390,14 @@ Object.defineProperty(exports, "ModelError", {
                 return _error.ModelError;
         }
 });
-},{"./defaultschema":3,"./diff":4,"./error":5,"./fragment":6,"./mark":8,"./node":9,"./pos":10,"./schema":11}],8:[function(require,module,exports){
+},{"./defaultschema":4,"./diff":5,"./error":6,"./fragment":7,"./mark":9,"./node":10,"./pos":11,"./schema":12}],9:[function(require,module,exports){
 "use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -2408,10 +2423,10 @@ var Mark = exports.Mark = function () {
   // :: () → Object
   // Convert this mark to a JSON-serializeable representation.
 
+
   _createClass(Mark, [{
     key: "toJSON",
     value: function toJSON() {
-      if (this.type.instance) return this.type.name;
       var obj = { _: this.type.name };
       for (var attr in this.attrs) {
         obj[attr] = this.attrs[attr];
@@ -2507,17 +2522,17 @@ var Mark = exports.Mark = function () {
 }();
 
 var empty = [];
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 "use strict";
-
-var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.TextNode = exports.Node = undefined;
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _fragment = require("./fragment");
 
@@ -2544,7 +2559,8 @@ var emptyArray = [],
 // structure between the old and new data as much as possible, which a
 // tree shape like this (without back pointers) makes easy.
 //
-// **Never** directly mutate the properties of a `Node` object.
+// **Never** directly mutate the properties of a `Node` object. See
+// [this guide](guide/doc.html) for more information.
 
 var Node = function () {
   function Node(type, attrs, content, marks) {
@@ -2575,8 +2591,10 @@ var Node = function () {
   // the node. For nodes that don't contain text, this is also the
   // number of child nodes that the node has.
 
+
   _createClass(Node, [{
     key: "child",
+
 
     // :: (number) → Node
     // Retrieve the child at the given offset. Note that this is **not**
@@ -2652,6 +2670,7 @@ var Node = function () {
   }, {
     key: "sameMarkup",
 
+
     // :: (Node) → bool
     // Compare the markup (type, attributes, and marks) of this node to
     // those of another. Returns `true` if both have the same markup.
@@ -2670,6 +2689,7 @@ var Node = function () {
     }
   }, {
     key: "copy",
+
 
     // :: (?Fragment) → Node
     // Create a new node with the same markup as this node, containing
@@ -2768,7 +2788,9 @@ var Node = function () {
 
     // :: ([number]) → Node
     // Get the descendant node at the given path, which is interpreted
-    // as a series of offsets into successively deeper nodes.
+    // as a series of offsets into successively deeper nodes. For example,
+    // if a node contains a paragraph and a list with 3 items, the path
+    // to the first item in the list would be [1, 0].
 
   }, {
     key: "path",
@@ -2777,14 +2799,19 @@ var Node = function () {
       return node;
     }
 
-    // :: (Pos) → Node
-    // Get the node after the given position.
+    // :: (Pos) → ?Node
+    // Get the node after the given position, if any.
 
   }, {
     key: "nodeAfter",
     value: function nodeAfter(pos) {
-      return this.path(pos.path).child(pos.offset);
+      var parent = this.path(pos.path);
+      return pos.offset < parent.size ? parent.child(pos.offset) : null;
     }
+
+    // :: ([number]) → [Node]
+    // Get an array of all nodes along a path.
+
   }, {
     key: "pathNodes",
     value: function pathNodes(path) {
@@ -2901,6 +2928,7 @@ var Node = function () {
 
   }, {
     key: "toString",
+
 
     // :: () → string
     // Return a string representation of this node for debugging
@@ -3036,6 +3064,7 @@ var Node = function () {
 
 exports.Node = Node;
 
+
 if (typeof Symbol != "undefined") {
   // :: () → Iterator<Node>
   // A fragment is iterable, in the ES6 sense.
@@ -3098,22 +3127,22 @@ function wrapMarks(marks, str) {
     str = marks[i].type.name + "(" + str + ")";
   }return str;
 }
-},{"./fragment":6,"./mark":8,"./pos":10}],10:[function(require,module,exports){
+},{"./fragment":7,"./mark":9,"./pos":11}],11:[function(require,module,exports){
 "use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Pos = undefined;
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _error = require("./error");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 // ;; Instances of the `Pos` class represent positions in a document.
-// A position an array of integers that describe a path to the target
+// A position is an array of integers that describe a path to the target
 // node (see `Node.path`) and an integer offset into that target node.
 
 var Pos = exports.Pos = function () {
@@ -3132,6 +3161,7 @@ var Pos = exports.Pos = function () {
   // `"0/2:10"`, where the numbers before the colon are the path, and
   // the number after it is the offset.
 
+
   _createClass(Pos, [{
     key: "toString",
     value: function toString() {
@@ -3143,6 +3173,7 @@ var Pos = exports.Pos = function () {
 
   }, {
     key: "max",
+
 
     // :: (Pos) → Pos
     // Return the greater of two positions.
@@ -3165,6 +3196,7 @@ var Pos = exports.Pos = function () {
   }, {
     key: "cmp",
 
+
     // :: (Pos) → number
     // Compares this position to another position, and returns a number.
     // Of this result number, only the sign is significant. It is
@@ -3176,6 +3208,7 @@ var Pos = exports.Pos = function () {
     }
   }, {
     key: "shorten",
+
 
     // :: (?number, ?number) → Pos
     // Create a position pointing into a parent of this position's
@@ -3189,7 +3222,9 @@ var Pos = exports.Pos = function () {
       var to = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
       var offset = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
 
-      if (to >= this.depth) return this;
+      if (to >= this.depth) {
+        if (to == this.depth && !offset) return new Pos(this.path, this.offset + offset);else _error.ModelError.raise("Invalid shorten depth " + to + " for " + this);
+      }
       return Pos.shorten(this.path, to, offset);
     }
 
@@ -3316,17 +3351,17 @@ var Pos = exports.Pos = function () {
 
   return Pos;
 }();
-},{"./error":5}],11:[function(require,module,exports){
+},{"./error":6}],12:[function(require,module,exports){
 "use strict";
-
-var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Schema = exports.SchemaSpec = exports.MarkType = exports.Attribute = exports.Text = exports.Inline = exports.Textblock = exports.Block = exports.NodeType = exports.SchemaError = undefined;
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _node = require("./node");
 
@@ -3365,6 +3400,7 @@ var SchemaError = exports.SchemaError = function (_ProseMirrorError) {
 // with them. This class implements this functionality, and acts as a
 // superclass to those `NodeType` and `MarkType`.
 
+
 var SchemaItem = function () {
   function SchemaItem() {
     _classCallCheck(this, SchemaItem);
@@ -3372,6 +3408,7 @@ var SchemaItem = function () {
 
   _createClass(SchemaItem, [{
     key: "getDefaultAttrs",
+
 
     // For node types where all attrs have a default value (or which don't
     // have any attributes), build up a single reusable default attribute
@@ -3408,13 +3445,6 @@ var SchemaItem = function () {
         frozen[name] = this.attrs[name];
       }Object.defineProperty(this, "attrs", { value: frozen });
     }
-
-    // :: (string, *)
-    // Register an element in this type's registry. That is, add `value`
-    // to the array associated with `name` in the registry stored in
-    // type's `prototype`. This is mostly used to attach things like
-    // commands and parsing strategies to node types. See `Schema.registry`.
-
   }, {
     key: "attrs",
 
@@ -3433,12 +3463,66 @@ var SchemaItem = function () {
   }], [{
     key: "updateAttrs",
     value: function updateAttrs(attrs) {
-      this.prototype.attrs = overlayObj(this.prototype.attrs, attrs);
+      Object.defineProperty(this.prototype, "attrs", { value: overlayObj(this.prototype.attrs, attrs) });
     }
   }, {
+    key: "getRegistry",
+    value: function getRegistry() {
+      if (this == SchemaItem) return null;
+      if (!this.prototype.hasOwnProperty("registry")) this.prototype.registry = Object.create(Object.getPrototypeOf(this).getRegistry());
+      return this.prototype.registry;
+    }
+  }, {
+    key: "getNamespace",
+    value: function getNamespace(name) {
+      if (this == SchemaItem) return null;
+      var reg = this.getRegistry();
+      if (!Object.prototype.hasOwnProperty.call(reg, name)) reg[name] = Object.create(Object.getPrototypeOf(this).getNamespace(name));
+      return reg[name];
+    }
+
+    // :: (string, string, *)
+    // Register a value in this type's registry. Various components use
+    // `Schema.registry` to query values from the marks and nodes that
+    // make up the schema. The `namespace`, for example
+    // [`"command"`](#commands), determines which component will see
+    // this value. `name` is a name specific to this value. Its meaning
+    // differs per namespace.
+    //
+    // Subtypes inherit the registered values from their supertypes.
+    // They can override individual values by calling this method to
+    // overwrite them with a new value, or with `null` to disable them.
+
+  }, {
     key: "register",
-    value: function register(name, value) {
-      var registry = this.prototype.hasOwnProperty("registry") ? this.prototype.registry : this.prototype.registry = Object.create(null);(registry[name] || (registry[name] = [])).push(value);
+    value: function register(namespace, name, value) {
+      this.getNamespace(namespace)[name] = function () {
+        return value;
+      };
+    }
+
+    // :: (string, string, (SchemaItem) → *)
+    // Register a value in this types's registry, like
+    // [`register`](#SchemaItem.register), but providing a function that
+    // will be called with the actual node or mark type, whose return
+    // value will be treated as the effective value (or will be ignored,
+    // if `null`).
+
+  }, {
+    key: "registerComputed",
+    value: function registerComputed(namespace, name, f) {
+      this.getNamespace(namespace)[name] = f;
+    }
+
+    // :: (string)
+    // By default, schema items inherit the
+    // [registered](#SchemaItem.register) items from their superclasses.
+    // Call this to disable that behavior for the given namespace.
+
+  }, {
+    key: "cleanNamespace",
+    value: function cleanNamespace(namespace) {
+      this.getNamespace(namespace).__proto__ = null;
     }
   }]);
 
@@ -3451,6 +3535,7 @@ var SchemaItem = function () {
 // the node type (its name, its allowed attributes, methods for
 // serializing it to various formats, information to guide
 // deserialization, and so on).
+
 
 var NodeType = exports.NodeType = function (_SchemaItem) {
   _inherits(NodeType, _SchemaItem);
@@ -3478,8 +3563,10 @@ var NodeType = exports.NodeType = function (_SchemaItem) {
   // :: bool
   // True if this is a block type.
 
+
   _createClass(NodeType, [{
     key: "canContainFragment",
+
 
     // :: (Fragment) → bool
     // Test whether the content of the given fragment could be contained
@@ -3506,9 +3593,9 @@ var NodeType = exports.NodeType = function (_SchemaItem) {
       }return true;
     }
 
-    // :: (Mark) → bool
+    // :: (MarkType) → bool
     // Test whether this node type can contain children with the given
-    // mark.
+    // mark type.
 
   }, {
     key: "canContainMark",
@@ -3572,7 +3659,7 @@ var NodeType = exports.NodeType = function (_SchemaItem) {
       if (!attrs && this.defaultAttrs) return this.defaultAttrs;else return _get(Object.getPrototypeOf(NodeType.prototype), "computeAttrs", this).call(this, attrs, content);
     }
 
-    // :: (?Object, ?Fragment, ?[Mark]) → Node
+    // :: (?Object, ?union<Fragment, Node, [Node]>, ?[Mark]) → Node
     // Create a `Node` of this type. The given attributes are
     // checked and defaulted (you can pass `null` to use the type's
     // defaults entirely, if no required attributes exist). `content`
@@ -3640,6 +3727,20 @@ var NodeType = exports.NodeType = function (_SchemaItem) {
     }
 
     // :: bool
+    // Determines whether nodes of this type can be dragged. Enabling it
+    // causes ProseMirror to set a `draggable` attribute on its DOM
+    // representation, and to put its HTML serialization into the drag
+    // event's [data
+    // transfer](https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer)
+    // when dragged.
+
+  }, {
+    key: "draggable",
+    get: function get() {
+      return false;
+    }
+
+    // :: bool
     // Controls whether this node type is locked.
 
   }, {
@@ -3675,6 +3776,7 @@ var NodeType = exports.NodeType = function (_SchemaItem) {
     }
   }, {
     key: "containsMarks",
+
 
     // :: union<bool, [string]>
     // The mark types that child nodes of this node may have. `false`
@@ -3714,6 +3816,7 @@ var NodeType = exports.NodeType = function (_SchemaItem) {
 }(SchemaItem);
 
 // ;; Base type for block nodetypes.
+
 
 var Block = exports.Block = function (_NodeType) {
   _inherits(Block, _NodeType);
@@ -3761,6 +3864,7 @@ var Block = exports.Block = function (_NodeType) {
 
 // ;; Base type for textblock node types.
 
+
 var Textblock = exports.Textblock = function (_Block) {
   _inherits(Textblock, _Block);
 
@@ -3797,6 +3901,7 @@ var Textblock = exports.Textblock = function (_Block) {
 
 // ;; Base type for inline node types.
 
+
 var Inline = exports.Inline = function (_NodeType2) {
   _inherits(Inline, _NodeType2);
 
@@ -3822,6 +3927,7 @@ var Inline = exports.Inline = function (_NodeType2) {
 }(NodeType);
 
 // ;; The text node type.
+
 
 var Text = exports.Text = function (_Inline) {
   _inherits(Text, _Inline);
@@ -3863,6 +3969,7 @@ var Text = exports.Text = function (_Inline) {
 // Each node type or mark type has a fixed set of attributes, which
 // instances of this class are used to control.
 
+
 var Attribute =
 // :: (Object)
 // Create an attribute. `options` is an object containing the
@@ -3899,6 +4006,7 @@ exports.Attribute = function Attribute() {
 // things like emphasis or being part of a link) are tagged with type
 // objects, which are instantiated once per `Schema`.
 
+
 var MarkType = exports.MarkType = function (_SchemaItem2) {
   _inherits(MarkType, _SchemaItem2);
 
@@ -3927,8 +4035,10 @@ var MarkType = exports.MarkType = function (_SchemaItem2) {
   // rank, they still get a fixed order in the schema, but there's no
   // guarantee what it will be.)
 
+
   _createClass(MarkType, [{
     key: "create",
+
 
     // :: (Object) → Mark
     // Create a mark of this type. `attrs` may be `null` or an object
@@ -3941,6 +4051,7 @@ var MarkType = exports.MarkType = function (_SchemaItem2) {
   }, {
     key: "removeFromSet",
 
+
     // :: ([Mark]) → [Mark]
     // When there is a mark of this type in the given set, a new set
     // without it is returned. Otherwise, the input set is returned.
@@ -3950,7 +4061,7 @@ var MarkType = exports.MarkType = function (_SchemaItem2) {
       }return set;
     }
 
-    // :: ([Mark]) → bool
+    // :: ([Mark]) → ?Mark
     // Tests whether there is a mark of this type in the given set.
 
   }, {
@@ -4005,6 +4116,7 @@ var MarkType = exports.MarkType = function (_SchemaItem2) {
 // with node type constructors and another similar object associating
 // mark names with mark type constructors.
 
+
 var SchemaSpec = exports.SchemaSpec = function () {
   // :: (?Object<NodeType>, ?Object<MarkType>)
   // Create a schema specification from scratch. The arguments map
@@ -4029,6 +4141,7 @@ var SchemaSpec = exports.SchemaSpec = function () {
   //
   // Similarly, `marks` can be an object to add, change, or remove
   // [mark types](#MarkType) in the schema.
+
 
   _createClass(SchemaSpec, [{
     key: "update",
@@ -4098,6 +4211,7 @@ var Schema = function () {
   // call it as a method, but can pass it to higher-order functions
   // and such.
 
+
   _createClass(Schema, [{
     key: "node",
     value: function node(type, attrs, content, marks) {
@@ -4158,8 +4272,14 @@ var Schema = function () {
   }, {
     key: "markFromJSON",
     value: function markFromJSON(json) {
-      if (typeof json == "string") return this.mark(json);
-      return this.mark(json._, json);
+      var type = this.marks[json._];
+      var attrs = null;
+      for (var prop in json) {
+        if (prop != "_") {
+          if (!attrs) attrs = Object.create(null);
+          attrs[prop] = json[prop];
+        }
+      }return attrs ? type.create(attrs) : type.instance;
     }
 
     // :: (string) → NodeType
@@ -4195,24 +4315,24 @@ var Schema = function () {
       }
     }
 
-    // :: (string, (value: *, source: union<NodeType, MarkType>, name: string))
+    // :: (string, (name: string, value: *, source: union<NodeType, MarkType>, name: string))
     // Retrieve all registered items under the given name from this
-    // schema. The given function will be called with each item, the
+    // schema. The given function will be called with the name, each item, the
     // element—node type or mark type—that it was associated with, and
     // that element's name in the schema.
 
   }, {
     key: "registry",
-    value: function registry(name, f) {
+    value: function registry(namespace, f) {
       for (var i = 0; i < 2; i++) {
         var obj = i ? this.marks : this.nodes;
         for (var tname in obj) {
-          var type = obj[tname];
-          if (type.constructor.prototype.hasOwnProperty("registry")) {
-            var reg = type.registry[name];
-            if (reg) for (var j = 0; j < reg.length; j++) {
-              f(reg[j], type, tname);
-            }
+          var type = obj[tname],
+              registry = type.registry,
+              ns = registry && registry[namespace];
+          if (ns) for (var prop in ns) {
+            var value = ns[prop](type);
+            if (value != null) f(prop, value, type, tname);
           }
         }
       }
@@ -4223,14 +4343,14 @@ var Schema = function () {
 }();
 
 exports.Schema = Schema;
-},{"../util/error":12,"../util/obj":13,"./fragment":6,"./mark":8,"./node":9}],12:[function(require,module,exports){
+},{"../util/error":13,"../util/obj":14,"./fragment":7,"./mark":9,"./node":10}],13:[function(require,module,exports){
 "use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -4283,6 +4403,7 @@ var ProseMirrorError = exports.ProseMirrorError = function (_Error) {
 
 // ;; Error type used to signal miscellaneous invariant violations.
 
+
 var AssertionError = exports.AssertionError = function (_ProseMirrorError) {
   _inherits(AssertionError, _ProseMirrorError);
 
@@ -4297,6 +4418,7 @@ var AssertionError = exports.AssertionError = function (_ProseMirrorError) {
 
 // ;; Error type used to report name clashes or other violations in
 // namespacing.
+
 
 var NamespaceError = exports.NamespaceError = function (_ProseMirrorError2) {
   _inherits(NamespaceError, _ProseMirrorError2);
@@ -4314,7 +4436,7 @@ function functionName(f) {
   var match = /^function (\w+)/.exec(f.toString());
   return match && match[1];
 }
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4327,7 +4449,7 @@ function copyObj(obj, base) {
     copy[prop] = obj[prop];
   }return copy;
 }
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 "use strict";
 
 var _model = require("prosemirror/dist/model");
@@ -4395,4 +4517,4 @@ testCaret.selectionsMatch = function selectionsMatch(left, right) {
 
 window.testCaret = testCaret;
 
-},{"prosemirror/dist/edit/selection":2,"prosemirror/dist/model":7}]},{},[14]);
+},{"prosemirror/dist/edit/selection":3,"prosemirror/dist/model":8}]},{},[15]);

@@ -1,11 +1,13 @@
 /*
+Functions related to the editing and sharing of comments.
 based on https://github.com/ProseMirror/website/blob/master/src/client/collab/comment.js
 */
 import {eventMixin} from "prosemirror/dist/util/event"
 import {Transform} from "prosemirror/dist/transform"
 import {Pos} from "prosemirror/dist/model"
 import {CommentMark} from "./schema"
-
+import {scheduleDOMUpdate} from "prosemirror/dist/ui/update"
+import {CommentStoreLayout} from "./comment-store-layout"
 
 class Comment {
   constructor(id, user, userName, userAvatar, date, comment, answers, isMajor) {
@@ -22,18 +24,20 @@ class Comment {
 
 export class CommentStore {
   constructor(pm, version) {
-    pm.mod.comments = this
+    pm.mod.commentStore = this
     this.pm = pm
     this.comments = Object.create(null)
     this.version = version
     this.unsent = []
+    new CommentStoreLayout(this)
   }
 
+  // Add a new comment to the comment database both remotely and locally.
   addComment(user, userName, userAvatar, date, comment, answers, isMajor) {
     let id = randomID()
     this.addLocalComment(id, user, userName, userAvatar, date, comment, answers, isMajor)
     this.unsent.push({type: "create", id: id})
-    this.pm.execCommand('comment:set',[id]);
+    this.pm.execCommand('comment:set',[id])
     this.signal("mustSend")
     return id
   }
@@ -213,7 +217,7 @@ export class CommentStore {
       this.version++
     })
     if (updateCommentLayout) {
-      this.pm.on('flushed', commentHelpers.layoutComments);
+      scheduleDOMUpdate(this.pm, commentHelpers.layoutComments)
     }
     //this.version = version
   }

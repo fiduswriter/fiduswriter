@@ -15,12 +15,13 @@ var _schema = require("./es6_modules/schema");
 
 var _updateUi = require("./es6_modules/update-ui");
 
-var _comment = require("./es6_modules/comment");
+var _commentStore = require("./es6_modules/comment-store");
 
-/* Functions for ProseMirror integration.*/
+var _update = require("prosemirror/dist/ui/update");
 
-var theEditor = {};
 //import "prosemirror/dist/menu/menubar"
+
+var theEditor = {}; /* Functions for ProseMirror integration.*/
 
 function makeEditor(where) {
     return new _main.ProseMirror({
@@ -29,7 +30,7 @@ function makeEditor(where) {
         //    menuBar: true,
         collab: { version: 0 }
     });
-};
+}
 
 theEditor.createDoc = function (aDocument) {
     var editorNode = document.createElement('div'),
@@ -61,12 +62,16 @@ theEditor.createDoc = function (aDocument) {
 
 theEditor.initiate = function () {
     theEditor.editor = makeEditor(document.getElementById('document-editable'));
-    new _updateUi.UpdateUI(theEditor.editor, "selectionChange change activeMarkChange blur focus");
+    new _update.UpdateScheduler(theEditor.editor, "selectionChange change activeMarkChange blur focus setDoc", function () {
+        (0, _updateUi.updateUI)(theEditor.editor);
+    });
     theEditor.editor.on("change", editorHelpers.documentHasChanged);
-    theEditor.editor.on('transform', theEditor.onTransform);
-    theEditor.editor.on("flushed", mathHelpers.layoutEmptyEquationNodes);
-    theEditor.editor.on("flushed", mathHelpers.layoutEmptyDisplayEquationNodes);
-    theEditor.editor.on("flushed", citationHelpers.formatCitationsInDocIfNew);
+    theEditor.editor.on("transform", function (transform, options) {
+        return theEditor.onTransform(transform, options);
+    });
+    new _update.UpdateScheduler(theEditor.editor, "flush setDoc", mathHelpers.layoutEmptyEquationNodes);
+    new _update.UpdateScheduler(theEditor.editor, "flush setDoc", mathHelpers.layoutEmptyDisplayEquationNodes);
+    new _update.UpdateScheduler(theEditor.editor, "flush setDoc", citationHelpers.formatCitationsInDocIfNew);
 };
 
 theEditor.update = function () {
@@ -86,7 +91,7 @@ theEditor.update = function () {
     }
     theDocument.hash = theEditor.getHash();
     theEditor.editor.mod.collab.on("mustSend", theEditor.sendToCollaborators);
-    theEditor.comments = new _comment.CommentStore(theEditor.editor, theDocument.comment_version);
+    new _commentStore.CommentStore(theEditor.editor, theDocument.comment_version);
     _.each(theDocument.comments, function (comment) {
         theEditor.comments.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers, comment['review:isMajor']);
     });
@@ -301,13 +306,52 @@ theEditor.onTransform = function (transform) {
     });
 
     if (updateBibliography) {
-        theEditor.editor.on('flushed', citationHelpers.formatCitationsInDoc);
+        // Recreate the bibliography on next flush.
+        (0, _update.scheduleDOMUpdate)(theEditor.editor, citationHelpers.formatCitationsInDoc);
     }
 };
 
 window.theEditor = theEditor;
 
-},{"./es6_modules/comment":2,"./es6_modules/schema":3,"./es6_modules/update-ui":4,"prosemirror/dist/collab":6,"prosemirror/dist/edit/main":19,"prosemirror/dist/format":26,"prosemirror/dist/transform":40}],2:[function(require,module,exports){
+},{"./es6_modules/comment-store":3,"./es6_modules/schema":4,"./es6_modules/update-ui":5,"prosemirror/dist/collab":6,"prosemirror/dist/edit/main":20,"prosemirror/dist/format":27,"prosemirror/dist/transform":41,"prosemirror/dist/ui/update":51}],2:[function(require,module,exports){
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })(); /* Functions related to layouting of comments */
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CommentStoreLayout = undefined;
+
+var _update = require("prosemirror/dist/ui/update");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var CommentStoreLayout = exports.CommentStoreLayout = (function () {
+  function CommentStoreLayout(commentStore) {
+    _classCallCheck(this, CommentStoreLayout);
+
+    commentStore.layout = this;
+    this.commentStore = commentStore;
+  }
+
+  // Create a new comment as the current user, and mark it as active.
+
+  _createClass(CommentStoreLayout, [{
+    key: "createNewComment",
+    value: function createNewComment() {
+      var id = this.commentStore.addComment(theUser.id, theUser.name, theUser.avatar, new Date().getTime(), '');
+      commentHelpers.deactivateAll();
+      theDocument.activeCommentId = id;
+      editorHelpers.documentHasChanged();
+      (0, _update.scheduleDOMUpdate)(this.commentStore.pm, commentHelpers.layoutComments);
+    }
+  }]);
+
+  return CommentStoreLayout;
+})();
+
+},{"prosemirror/dist/ui/update":51}],3:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -325,7 +369,12 @@ var _model = require("prosemirror/dist/model");
 
 var _schema = require("./schema");
 
+var _update = require("prosemirror/dist/ui/update");
+
+var _commentStoreLayout = require("./comment-store-layout");
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /*
+                                                                                                                                                          Functions related to the editing and sharing of comments.
                                                                                                                                                           based on https://github.com/ProseMirror/website/blob/master/src/client/collab/comment.js
                                                                                                                                                           */
 
@@ -346,12 +395,15 @@ var CommentStore = exports.CommentStore = (function () {
   function CommentStore(pm, version) {
     _classCallCheck(this, CommentStore);
 
-    pm.mod.comments = this;
+    pm.mod.commentStore = this;
     this.pm = pm;
     this.comments = Object.create(null);
     this.version = version;
     this.unsent = [];
+    new _commentStoreLayout.CommentStoreLayout(this);
   }
+
+  // Add a new comment to the comment database both remotely and locally.
 
   _createClass(CommentStore, [{
     key: "addComment",
@@ -581,7 +633,7 @@ var CommentStore = exports.CommentStore = (function () {
         _this2.version++;
       });
       if (updateCommentLayout) {
-        this.pm.on('flushed', commentHelpers.layoutComments);
+        (0, _update.scheduleDOMUpdate)(this.pm, commentHelpers.layoutComments);
       }
       //this.version = version
     }
@@ -607,7 +659,7 @@ function randomID() {
   return Math.floor(Math.random() * 0xffffffff);
 }
 
-},{"./schema":3,"prosemirror/dist/model":34,"prosemirror/dist/transform":40,"prosemirror/dist/util/event":50}],3:[function(require,module,exports){
+},{"./comment-store-layout":2,"./schema":4,"prosemirror/dist/model":35,"prosemirror/dist/transform":41,"prosemirror/dist/ui/update":51,"prosemirror/dist/util/event":53}],4:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -669,17 +721,10 @@ var Title = (function (_Textblock) {
   }
 
   _createClass(Title, [{
-    key: "locked",
-    get: function get() {
-      return true;
-    }
-  }, {
-    key: "selectable",
-    get: function get() {
-      return false;
-    }
-  }, {
     key: "contains",
+
+    //  get locked() { return true }
+    //  get selectable() { return false }
     get: function get() {
       return "text";
     }
@@ -688,20 +733,20 @@ var Title = (function (_Textblock) {
   return Title;
 })(_model.Textblock);
 
-Title.register("parseDOM", {
-  tag: "div",
+Title.register("parseDOM", "div", {
+  rank: 26,
   parse: function parse(dom, state) {
-    if (dom.id !== 'document-title') return false;
+    console.log('parsing');
+    var id = dom.id;
+    if (!id || id !== 'document-title') return false;
     state.wrapIn(dom, this);
   }
 });
 
+//import {elt} from "prosemirror/dist/dom"
+
 Title.prototype.serializeDOM = function (node, serializer) {
-  var dom = serializer.elt("div", {
-    id: 'document-title'
-  });
-  serializer.renderContent(node, dom);
-  return dom;
+  return serializer.renderAs(node, "div", { id: 'document-title' });
 };
 
 var MetaDataSubtitle = (function (_Textblock2) {
@@ -733,8 +778,7 @@ var MetaDataSubtitle = (function (_Textblock2) {
   return MetaDataSubtitle;
 })(_model.Textblock);
 
-MetaDataSubtitle.register("parseDOM", {
-  tag: "div",
+MetaDataSubtitle.register("parseDOM", "div", {
   parse: function parse(dom, state) {
     if (dom.id !== 'metadata-subtitle') return false;
     state.wrapIn(dom, this);
@@ -742,11 +786,7 @@ MetaDataSubtitle.register("parseDOM", {
 });
 
 MetaDataSubtitle.prototype.serializeDOM = function (node, serializer) {
-  var dom = serializer.elt("div", {
-    id: 'metadata-subtitle'
-  });
-  serializer.renderContent(node, dom);
-  return dom;
+  return serializer.renderAs(node, "div", { id: 'metadata-subtitle' });
 };
 
 var MetaDataAuthors = (function (_Textblock3) {
@@ -778,8 +818,7 @@ var MetaDataAuthors = (function (_Textblock3) {
   return MetaDataAuthors;
 })(_model.Textblock);
 
-MetaDataAuthors.register("parseDOM", {
-  tag: "div",
+MetaDataAuthors.register("parseDOM", "div", {
   parse: function parse(dom, state) {
     if (dom.id !== 'metadata-authors') return false;
     state.wrapIn(dom, this);
@@ -787,11 +826,7 @@ MetaDataAuthors.register("parseDOM", {
 });
 
 MetaDataAuthors.prototype.serializeDOM = function (node, serializer) {
-  var dom = serializer.elt("div", {
-    id: 'metadata-authors'
-  });
-  serializer.renderContent(node, dom);
-  return dom;
+  return serializer.renderAs(node, "div", { id: 'metadata-authors' });
 };
 
 var MetaDataAbstract = (function (_Block2) {
@@ -815,8 +850,7 @@ var MetaDataAbstract = (function (_Block2) {
   return MetaDataAbstract;
 })(_model.Block);
 
-MetaDataAbstract.register("parseDOM", {
-  tag: "div",
+MetaDataAbstract.register("parseDOM", "div", {
   parse: function parse(dom, state) {
     if (dom.id !== 'metadata-abstract') return false;
     state.wrapIn(dom, this);
@@ -824,11 +858,7 @@ MetaDataAbstract.register("parseDOM", {
 });
 
 MetaDataAbstract.prototype.serializeDOM = function (node, serializer) {
-  var dom = serializer.elt("div", {
-    id: 'metadata-abstract'
-  });
-  serializer.renderContent(node, dom);
-  return dom;
+  return serializer.renderAs(node, "div", { id: 'metadata-abstract' });
 };
 
 var MetaDataKeywords = (function (_Textblock4) {
@@ -860,8 +890,7 @@ var MetaDataKeywords = (function (_Textblock4) {
   return MetaDataKeywords;
 })(_model.Textblock);
 
-MetaDataKeywords.register("parseDOM", {
-  tag: "div",
+MetaDataKeywords.register("parseDOM", "div", {
   parse: function parse(dom, state) {
     if (dom.id !== 'metadata-keywords') return false;
     state.wrapIn(dom, this);
@@ -869,11 +898,7 @@ MetaDataKeywords.register("parseDOM", {
 });
 
 MetaDataKeywords.prototype.serializeDOM = function (node, serializer) {
-  var dom = serializer.elt("div", {
-    id: 'metadata-keywords'
-  });
-  serializer.renderContent(node, dom);
-  return dom;
+  return serializer.renderAs(node, "div", { id: 'metadata-keywords' });
 };
 
 var DocumentContents = (function (_Block3) {
@@ -891,8 +916,7 @@ var DocumentContents = (function (_Block3) {
 //  get locked() { return true }
 //  get selectable() { return false }
 
-DocumentContents.register("parseDOM", {
-  tag: "div",
+DocumentContents.register("parseDOM", "div", {
   parse: function parse(dom, state) {
     if (dom.id !== 'document-contents') return false;
     state.wrapIn(dom, this);
@@ -900,11 +924,7 @@ DocumentContents.register("parseDOM", {
 });
 
 DocumentContents.prototype.serializeDOM = function (node, serializer) {
-  var dom = serializer.elt("div", {
-    id: 'document-contents'
-  });
-  serializer.renderContent(node, dom);
-  return dom;
+  return serializer.renderAs(node, "div", { id: 'document-contents' });
 };
 
 var Footnote = (function (_Inline) {
@@ -926,16 +946,14 @@ var Footnote = (function (_Inline) {
   return Footnote;
 })(_model.Inline);
 
-Footnote.register("parseDOM", {
-  tag: "span",
+Footnote.register("parseDOM", "span", {
   parse: function parse(dom, state) {
     if (!dom.classList.contains('footnote')) return false;
     state.wrapIn(dom, this); // Doesn't currently work, see https://github.com/ProseMirror/prosemirror/issues/109
   }
 });
 
-Footnote.register("parseDOM", {
-  tag: "span",
+Footnote.register("parseDOM", "span", {
   parse: function parse(dom, state) {
     if (!dom.classList.contains('pagination-footnote')) return false;
     state.wrapIn(dom.firstChild.firstChild, this);
@@ -948,24 +966,20 @@ Footnote.prototype.serializeDOM = function (node, serializer) {
   });
   dom.appendChild(serializer.elt("span"));
   dom.firstChild.appendChild(serializer.elt("span"));
-  serializer.renderContent(node, dom.firstChild.firstChild);
-  return dom;
+  var domOuter = serializer.renderContent(node, dom.firstChild.firstChild);
+  if (undefined.options.onContainer) undefined.options.onContainer(domOuter);
+  return domOuter;
 };
 
-var footnoteIcon = {
-  type: "icon", // TODO: use real footnote icon
-  width: 951, height: 1024,
-  path: "M832 694q0-22-16-38l-118-118q-16-16-38-16-24 0-41 18 1 1 10 10t12 12 8 10 7 14 2 15q0 22-16 38t-38 16q-8 0-15-2t-14-7-10-8-12-12-10-10q-18 17-18 41 0 22 16 38l117 118q15 15 38 15 22 0 38-14l84-83q16-16 16-38zM430 292q0-22-16-38l-117-118q-16-16-38-16-22 0-38 15l-84 83q-16 16-16 38 0 22 16 38l118 118q15 15 38 15 24 0 41-17-1-1-10-10t-12-12-8-10-7-14-2-15q0-22 16-38t38-16q8 0 15 2t14 7 10 8 12 12 10 10q18-17 18-41zM941 694q0 68-48 116l-84 83q-47 47-116 47-69 0-116-48l-117-118q-47-47-47-116 0-70 50-119l-50-50q-49 50-118 50-68 0-116-48l-118-118q-48-48-48-116t48-116l84-83q47-47 116-47 69 0 116 48l117 118q47 47 47 116 0 70-50 119l50 50q49-50 118-50 68 0 116 48l118 118q48 48 48 116z"
-};
-
-Footnote.register("command", {
-  name: "insert",
-  label: "Insert footnote",
+Footnote.register("command", "insert", {
   derive: {
     params: []
   },
-  menuGroup: "inline(34)",
-  display: footnoteIcon
+  label: "Insert footnote",
+  menu: {
+    group: "insert", rank: 34,
+    display: { type: "label", label: "Footnote" }
+  }
 });
 
 var Citation = (function (_Inline2) {
@@ -992,8 +1006,7 @@ var Citation = (function (_Inline2) {
   return Citation;
 })(_model.Inline);
 
-Citation.register("parseDOM", {
-  tag: "span",
+Citation.register("parseDOM", "span", {
   parse: function parse(dom, state) {
     if (!dom.classList.contains('citation')) return false;
     state.insert(this, {
@@ -1005,8 +1018,7 @@ Citation.register("parseDOM", {
   }
 });
 
-Citation.register("parseDOM", {
-  tag: "cite",
+Citation.register("parseDOM", "cite", {
   parse: function parse(dom, state) {
     state.insert(this, {
       bibFormat: dom.getAttribute('data-bib-format') || '',
@@ -1018,30 +1030,24 @@ Citation.register("parseDOM", {
 });
 
 Citation.prototype.serializeDOM = function (node, serializer) {
-  var dom = serializer.elt("span", {
+  return serializer.renderAs(node, "span", {
     class: 'citation',
     'data-bib-format': node.attrs.bibFormat,
     'data-bib-entry': node.attrs.bibEntry,
     'data-bib-before': node.attrs.bibBefore,
     'data-bib-page': node.attrs.bibPage
   });
-  return dom;
 };
 
-var citationIcon = {
-  type: "icon", // TODO: use real citation icon
-  width: 951, height: 1024,
-  path: "M832 694q0-22-16-38l-118-118q-16-16-38-16-24 0-41 18 1 1 10 10t12 12 8 10 7 14 2 15q0 22-16 38t-38 16q-8 0-15-2t-14-7-10-8-12-12-10-10q-18 17-18 41 0 22 16 38l117 118q15 15 38 15 22 0 38-14l84-83q16-16 16-38zM430 292q0-22-16-38l-117-118q-16-16-38-16-22 0-38 15l-84 83q-16 16-16 38 0 22 16 38l118 118q15 15 38 15 24 0 41-17-1-1-10-10t-12-12-8-10-7-14-2-15q0-22 16-38t38-16q8 0 15 2t14 7 10 8 12 12 10 10q18-17 18-41zM941 694q0 68-48 116l-84 83q-47 47-116 47-69 0-116-48l-117-118q-47-47-47-116 0-70 50-119l-50-50q-49 50-118 50-68 0-116-48l-118-118q-48-48-48-116t48-116l84-83q47-47 116-47 69 0 116 48l117 118q47 47 47 116 0 70-50 119l50 50q49-50 118-50 68 0 116 48l118 118q48 48 48 116z"
-};
-
-Citation.register("command", {
-  name: "insert",
-  label: "Insert citation",
+Citation.register("command", "insert", {
   derive: {
-    params: [{ label: "Bibliography Format", type: "text", attr: "bibFormat" }, { label: "Bibliography Entry", type: "text", attr: "bibEntry" }, { label: "Text Before", type: "text", attr: "bibBefore" }, { label: "Page number", type: "text", attr: "bibPage" }]
+    params: [{ label: "Bibliography Format", attr: "bibFormat" }, { label: "Bibliography Entry", attr: "bibEntry" }, { label: "Text Before", attr: "bibBefore" }, { label: "Page number", attr: "bibPage" }]
   },
-  menuGroup: "inline(42)",
-  display: citationIcon
+  label: "Insert citation",
+  menu: {
+    group: "insert", rank: 42,
+    display: { type: "label", label: "Citation" }
+  }
 });
 
 var Equation = (function (_Inline3) {
@@ -1065,8 +1071,7 @@ var Equation = (function (_Inline3) {
   return Equation;
 })(_model.Inline);
 
-Equation.register("parseDOM", {
-  tag: "span",
+Equation.register("parseDOM", "span", {
   parse: function parse(dom, state) {
     if (!dom.classList.contains('equation')) return false;
     state.insert(this, {
@@ -1076,27 +1081,21 @@ Equation.register("parseDOM", {
 });
 
 Equation.prototype.serializeDOM = function (node, serializer) {
-  var dom = serializer.elt("span", {
+  return serializer.renderAs(node, "span", {
     class: 'equation',
     'data-equation': node.attrs.equation
   });
-  return dom;
 };
 
-var equationIcon = {
-  type: "icon", // TODO: use real equation icon
-  width: 951, height: 1024,
-  path: "M832 694q0-22-16-38l-118-118q-16-16-38-16-24 0-41 18 1 1 10 10t12 12 8 10 7 14 2 15q0 22-16 38t-38 16q-8 0-15-2t-14-7-10-8-12-12-10-10q-18 17-18 41 0 22 16 38l117 118q15 15 38 15 22 0 38-14l84-83q16-16 16-38zM430 292q0-22-16-38l-117-118q-16-16-38-16-22 0-38 15l-84 83q-16 16-16 38 0 22 16 38l118 118q15 15 38 15 24 0 41-17-1-1-10-10t-12-12-8-10-7-14-2-15q0-22 16-38t38-16q8 0 15 2t14 7 10 8 12 12 10 10q18-17 18-41zM941 694q0 68-48 116l-84 83q-47 47-116 47-69 0-116-48l-117-118q-47-47-47-116 0-70 50-119l-50-50q-49 50-118 50-68 0-116-48l-118-118q-48-48-48-116t48-116l84-83q47-47 116-47 69 0 116 48l117 118q47 47 47 116 0 70-50 119l50 50q49-50 118-50 68 0 116 48l118 118q48 48 48 116z"
-};
-
-Equation.register("command", {
-  name: "insert",
-  label: "Insert equation",
+Equation.register("command", "insert", {
   derive: {
     params: [{ label: "Equation", type: "text", attr: "equation" }]
   },
-  menuGroup: "inline(33)",
-  display: equationIcon
+  label: "Insert equation",
+  menu: {
+    group: "insert", rank: 33,
+    display: { type: "label", label: "Equation" }
+  }
 });
 
 var Figure = (function (_Block4) {
@@ -1128,8 +1127,7 @@ var Figure = (function (_Block4) {
   return Figure;
 })(_model.Block);
 
-Figure.register("parseDOM", {
-  tag: "figure",
+Figure.register("parseDOM", "figure", {
   parse: function parse(dom, state) {
     state.insert(this, {
       equation: dom.getAttribute('data-equation'),
@@ -1197,20 +1195,15 @@ Figure.prototype.serializeDOM = function (node, serializer) {
   return dom;
 };
 
-var figureIcon = {
-  type: "icon", // TODO: Use real figure icon
-  width: 1097, height: 1024,
-  path: "M365 329q0 45-32 77t-77 32-77-32-32-77 32-77 77-32 77 32 32 77zM950 548v256h-804v-109l182-182 91 91 292-292zM1005 146h-914q-7 0-12 5t-5 12v694q0 7 5 12t12 5h914q7 0 12-5t5-12v-694q0-7-5-12t-12-5zM1097 164v694q0 37-26 64t-64 26h-914q-37 0-64-26t-26-64v-694q0-37 26-64t64-26h914q37 0 64 26t26 64z"
-};
-
-Figure.register("command", {
-  name: "insert",
-  label: "Insert figure",
+Figure.register("command", "insert", {
   derive: {
-    params: [{ label: "Equation", type: "text", attr: "equation" }, { label: "Image PK", type: "text", attr: "image" }, { label: "Category", type: "text", attr: "figureCategory" }, { label: "Caption", type: "text", attr: "caption" }]
+    params: [{ label: "Equation", attr: "equation" }, { label: "Image PK", attr: "image" }, { label: "Category", attr: "figureCategory" }, { label: "Caption", attr: "caption" }]
   },
-  menuGroup: "inline(32)",
-  display: figureIcon
+  label: "Insert figure",
+  menu: {
+    group: "insert", rank: 32,
+    display: { type: "label", label: "Figure" }
+  }
 });
 
 /* From prosemirror/src/edit/commands.js */
@@ -1261,7 +1254,7 @@ var CommentMark = exports.CommentMark = (function (_MarkType) {
   return CommentMark;
 })(_model.MarkType);
 
-CommentMark.register("parseDOM", { tag: "span", parse: function parse(dom, state) {
+CommentMark.register("parseDOM", "span", { parse: function parse(dom, state) {
     if (!dom.classList.contains('comment')) return false;
     var id = dom.getAttribute("data-id");
     if (!id) return false;
@@ -1278,27 +1271,22 @@ var commentIcon = {
   path: "M832 694q0-22-16-38l-118-118q-16-16-38-16-24 0-41 18 1 1 10 10t12 12 8 10 7 14 2 15q0 22-16 38t-38 16q-8 0-15-2t-14-7-10-8-12-12-10-10q-18 17-18 41 0 22 16 38l117 118q15 15 38 15 22 0 38-14l84-83q16-16 16-38zM430 292q0-22-16-38l-117-118q-16-16-38-16-22 0-38 15l-84 83q-16 16-16 38 0 22 16 38l118 118q15 15 38 15 24 0 41-17-1-1-10-10t-12-12-8-10-7-14-2-15q0-22 16-38t38-16q8 0 15 2t14 7 10 8 12 12 10 10q18-17 18-41zM941 694q0 68-48 116l-84 83q-47 47-116 47-69 0-116-48l-117-118q-47-47-47-116 0-70 50-119l-50-50q-49 50-118 50-68 0-116-48l-118-118q-48-48-48-116t48-116l84-83q47-47 116-47 69 0 116 48l117 118q47 47 47 116 0 70-50 119l50 50q49-50 118-50 68 0 116 48l118 118q48 48 48 116z"
 };
 
-CommentMark.register("command", {
-  name: "set",
-  label: "Add Comment",
+CommentMark.register("command", "set", {
   derive: {
     inverseSelect: true,
-    params: [{ label: "ID", type: "text", attr: "id" }]
+    params: [{ label: "ID", attr: "id" }]
   },
-  menuGroup: "inline(35)",
-  display: commentIcon
+  label: "Add comment",
+  menu: { group: "inline", rank: 35, display: commentIcon }
 });
 
-CommentMark.register("command", {
-  name: "unset",
+CommentMark.register("command", "unset", {
   derive: true,
   label: "Remove comment",
-  menuGroup: "inline(35)",
+  menu: { group: "inline", rank: 35, display: commentIcon },
   active: function active() {
     return true;
-  },
-
-  display: commentIcon
+  }
 });
 
 var fidusSchema = exports.fidusSchema = new _model.Schema(_model.defaultSchema.spec.update({
@@ -1317,22 +1305,15 @@ var fidusSchema = exports.fidusSchema = new _model.Schema(_model.defaultSchema.s
   comment: CommentMark
 }));
 
-},{"prosemirror/dist/model":34}],4:[function(require,module,exports){
+},{"prosemirror/dist/model":35}],5:[function(require,module,exports){
 'use strict';
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })(); // Update UI (adapted from ProseMirror's src/menu/update.js)
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.UpdateUI = undefined;
+exports.updateUI = updateUI;
 
 var _model = require('prosemirror/dist/model');
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var MIN_FLUSH_DELAY = 200;
-var UPDATE_TIMEOUT = 200;
 
 var BLOCK_LABELS = {
     'paragraph': gettext('Normal Text'),
@@ -1344,7 +1325,7 @@ var BLOCK_LABELS = {
     'heading_6': gettext('6th Heading'),
     'code_block': gettext('Code'),
     'figure': gettext('Figure')
-};
+}; // Update UI (adapted from ProseMirror's src/menu/update.js)
 
 var PART_LABELS = {
     'title': gettext('Title'),
@@ -1355,433 +1336,184 @@ var PART_LABELS = {
     'documentcontents': gettext('Body')
 };
 
-var UpdateUI = exports.UpdateUI = (function () {
-    function UpdateUI(pm, events) {
-        var _this = this;
+function updateUI(pm) {
+    /* Fidus Writer code */
 
-        _classCallCheck(this, UpdateUI);
+    // We count on the the title node being the first one in the document
+    var documentTitle = pm.doc.firstChild.type.name === 'title' && pm.doc.firstChild.textContent.length > 0 ? pm.doc.firstChild.textContent : gettext('Untitled Document');
 
-        this.pm = pm;
-
-        this.mustUpdate = false;
-        this.updateInfo = null;
-        this.timeout = null;
-        this.lastFlush = 0;
-        this.placeHolderCss = '';
-
-        this.events = events.split(" ");
-        this.onEvent = this.onEvent.bind(this);
-        this.force = this.force.bind(this);
-        this.events.forEach(function (event) {
-            return pm.on(event, _this.onEvent);
-        });
-        pm.on("flushed", this.onFlushed = this.onFlushed.bind(this));
+    // The title has changed. We will update our document. Mark it as changed so
+    // that an update may be sent to the server.
+    if (documentTitle.substring(0, 255) !== theDocument.title) {
+        theDocument.title = documentTitle.substring(0, 255);
+        theDocumentValues.titleChanged = true;
     }
 
-    _createClass(UpdateUI, [{
-        key: 'detach',
-        value: function detach() {
-            var _this2 = this;
+    jQuery('title').html('Fidus Writer - ' + documentTitle);
+    jQuery('#header h1').html(documentTitle);
 
-            clearTimeout(this.timeout);
-            this.events.forEach(function (event) {
-                return _this2.pm.off(event, _this2.onEvent);
-            });
-            this.pm.off("flush", this.onFlush);
-            this.pm.off("flushed", this.onFlushed);
+    var marks = pm.activeMarks();
+    var strong = marks.some(function (mark) {
+        return mark.type.name === 'strong';
+    });
+
+    if (strong) {
+        jQuery('#button-bold').addClass('ui-state-active');
+    } else {
+        jQuery('#button-bold').removeClass('ui-state-active');
+    }
+
+    var em = marks.some(function (mark) {
+        return mark.type.name === 'em';
+    });
+
+    if (em) {
+        jQuery('#button-italic').addClass('ui-state-active');
+    } else {
+        jQuery('#button-italic').removeClass('ui-state-active');
+    }
+
+    var link = marks.some(function (mark) {
+        return mark.type.name === 'link';
+    });
+
+    if (link) {
+        jQuery('#button-link').addClass('ui-state-active');
+    } else {
+        jQuery('#button-link').removeClass('ui-state-active');
+    }
+
+    if (pm.history.undoDepth > 0) {
+        jQuery('#button-undo').removeClass('disabled');
+    } else {
+        jQuery('#button-undo').addClass('disabled');
+    }
+
+    if (pm.history.redoDepth > 0) {
+        jQuery('#button-redo').removeClass('disabled');
+    } else {
+        jQuery('#button-redo').addClass('disabled');
+    }
+
+    var start = pm.selection.from.min(pm.selection.to);
+    var end = pm.selection.from.max(pm.selection.to);
+    var startElement = pm.doc.path([start.path[0]]);
+    var endElement = pm.doc.path([end.path[0]]);
+
+    if (startElement !== endElement) {
+        /* Selection goes across document parts */
+        calculatePlaceHolderCss(pm);
+        jQuery('.editortoolbar button').addClass('disabled');
+        jQuery('#block-style-label').html('');
+        jQuery('#current-position').html('');
+        if (pm.selection.empty) {
+            jQuery('#button-comment').addClass('disabled');
+        } else {
+            jQuery('#button-comment').removeClass('disabled');
         }
-    }, {
-        key: 'onFlushed',
-        value: function onFlushed() {
-            var now = Date.now();
-            if (this.mustUpdate && now - this.lastFlush >= MIN_FLUSH_DELAY) {
-                this.lastFlush = now;
-                clearTimeout(this.timeout);
-                this.mustUpdate = false;
-                this.updateUI();
-            }
-        }
-    }, {
-        key: 'onEvent',
-        value: function onEvent() {
-            this.mustUpdate = true;
-            clearTimeout(this.timeout);
-            this.timeout = setTimeout(this.force, UPDATE_TIMEOUT);
-        }
-    }, {
-        key: 'force',
-        value: function force() {
-            if (this.pm.operation) {
-                this.onEvent();
-            } else {
-                this.mustUpdate = false;
-                this.updateInfo = null;
-                this.lastFlush = Date.now();
-                clearTimeout(this.timeout);
-                this.updateUI();
-            }
-        }
-    }, {
-        key: 'updateUI',
-        value: function updateUI() {
-            /* Fidus Writer code */
+    } else {
+        calculatePlaceHolderCss(pm, startElement);
+        jQuery('#current-position').html(PART_LABELS[startElement.type.name]);
 
-            // We count on the the title node being the first one in the document
-            var documentTitle = this.pm.doc.firstChild.type.name === 'title' && this.pm.doc.firstChild.textContent.length > 0 ? this.pm.doc.firstChild.textContent : gettext('Untitled Document');
-
-            // The title has changed. We will update our document. Mark it as changed so
-            // that an update may be sent to the server.
-            if (documentTitle.substring(0, 255) !== theDocument.title) {
-                theDocument.title = documentTitle.substring(0, 255);
-                theDocumentValues.titleChanged = true;
-            }
-
-            jQuery('title').html('Fidus Writer - ' + documentTitle);
-            jQuery('#header h1').html(documentTitle);
-
-            var marks = this.pm.activeMarks();
-            var strong = marks.some(function (mark) {
-                return mark.type.name === 'strong';
-            });
-
-            if (strong) {
-                jQuery('#button-bold').addClass('ui-state-active');
-            } else {
-                jQuery('#button-bold').removeClass('ui-state-active');
-            }
-
-            var em = marks.some(function (mark) {
-                return mark.type.name === 'em';
-            });
-
-            if (em) {
-                jQuery('#button-italic').addClass('ui-state-active');
-            } else {
-                jQuery('#button-italic').removeClass('ui-state-active');
-            }
-
-            var link = marks.some(function (mark) {
-                return mark.type.name === 'link';
-            });
-
-            if (link) {
-                jQuery('#button-link').addClass('ui-state-active');
-            } else {
-                jQuery('#button-link').removeClass('ui-state-active');
-            }
-
-            var canUndo = this.pm.history.canUndo();
-
-            if (canUndo) {
-                jQuery('#button-undo').removeClass('disabled');
-            } else {
-                jQuery('#button-undo').addClass('disabled');
-            }
-
-            var canRedo = this.pm.history.canRedo();
-
-            if (canRedo) {
-                jQuery('#button-redo').removeClass('disabled');
-            } else {
-                jQuery('#button-redo').addClass('disabled');
-            }
-
-            var start = this.pm.selection.from.min(this.pm.selection.to);
-            var end = this.pm.selection.from.max(this.pm.selection.to);
-            var startElement = this.pm.doc.path([start.path[0]]);
-            var endElement = this.pm.doc.path([end.path[0]]);
-
-            if (startElement !== endElement) {
-                /* Selection goes across document parts */
-                this.calculatePlaceHolderCss();
-                jQuery('.editortoolbar button').addClass('disabled');
+        switch (startElement.type.name) {
+            case 'title':
+            case 'metadatasubtitle':
+            case 'metadataauthors':
+            case 'metadatakeywords':
+                jQuery('.edit-button').addClass('disabled');
                 jQuery('#block-style-label').html('');
-                jQuery('#current-position').html('');
-                if (this.pm.selection.empty) {
+                if (pm.selection.empty) {
                     jQuery('#button-comment').addClass('disabled');
                 } else {
                     jQuery('#button-comment').removeClass('disabled');
                 }
-            } else {
-                this.calculatePlaceHolderCss(startElement);
-                jQuery('#current-position').html(PART_LABELS[startElement.type.name]);
 
-                switch (startElement.type.name) {
-                    case 'title':
-                    case 'metadatasubtitle':
-                    case 'metadataauthors':
-                    case 'metadatakeywords':
-                        jQuery('.edit-button').addClass('disabled');
-                        jQuery('#block-style-label').html('');
-                        if (this.pm.selection.empty) {
-                            jQuery('#button-comment').addClass('disabled');
-                        } else {
-                            jQuery('#button-comment').removeClass('disabled');
-                        }
+                break;
+            case 'metadataabstract':
+            case 'documentcontents':
+                jQuery('.edit-button').removeClass('disabled');
 
-                        break;
-                    case 'metadataabstract':
-                    case 'documentcontents':
-                        jQuery('.edit-button').removeClass('disabled');
+                if (pm.selection.empty) {
+                    jQuery('#button-link').addClass('disabled');
+                    jQuery('#button-comment').addClass('disabled');
+                } else {
+                    jQuery('#button-comment').removeClass('disabled');
+                }
 
-                        if (this.pm.selection.empty) {
-                            jQuery('#button-link').addClass('disabled');
-                            jQuery('#button-comment').addClass('disabled');
-                        } else {
-                            jQuery('#button-comment').removeClass('disabled');
-                        }
+                if (startElement.type.name === 'metadataabstract') {
+                    jQuery('#button-figure').addClass('disabled');
+                }
 
-                        if (startElement.type.name === 'metadataabstract') {
-                            jQuery('#button-figure').addClass('disabled');
-                        }
+                var blockNodeType = true,
+                    blockNode,
+                    nextBlockNodeType;
 
-                        var blockNodeType = true,
-                            blockNode,
-                            nextBlockNodeType;
-
-                        if (_(start.path).isEqual(end.path)) {
-                            // Selection within a single block.
-                            blockNode = this.pm.doc.path(start.path);
-                            blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
-                            jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType]);
-                        } else {
-                            // The selection is crossing several blocks
-                            this.pm.doc.nodesBetween(start, end, function (node, path, parent) {
-                                if (node.isTextblock) {
-                                    nextBlockNodeType = node.type.name === 'heading' ? node.type.name + '_' + node.attrs.level : node.type.name;
-                                    if (blockNodeType === true) {
-                                        blockNodeType = nextBlockNodeType;
-                                    }
-                                    if (blockNodeType !== nextBlockNodeType) {
-                                        blockNodeType = false;
-                                    }
-                                }
-                            });
-
-                            if (blockNodeType) {
-                                jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType]);
-                            } else {
-                                jQuery('#block-style-label').html('');
+                if (_(start.path).isEqual(end.path)) {
+                    // Selection within a single block.
+                    blockNode = pm.doc.path(start.path);
+                    blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
+                    jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType]);
+                } else {
+                    // The selection is crossing several blocks
+                    pm.doc.nodesBetween(start, end, function (node, path, parent) {
+                        if (node.isTextblock) {
+                            nextBlockNodeType = node.type.name === 'heading' ? node.type.name + '_' + node.attrs.level : node.type.name;
+                            if (blockNodeType === true) {
+                                blockNodeType = nextBlockNodeType;
+                            }
+                            if (blockNodeType !== nextBlockNodeType) {
+                                blockNodeType = false;
                             }
                         }
-                        break;
+                    });
+
+                    if (blockNodeType) {
+                        jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType]);
+                    } else {
+                        jQuery('#block-style-label').html('');
+                    }
                 }
-            }
-            return true;
+                break;
         }
-
-        /** Show or hide placeHolders ('Contents...', 'Title...', etc.) depending on
-        whether these elements are empty or not.*/
-
-    }, {
-        key: 'calculatePlaceHolderCss',
-        value: function calculatePlaceHolderCss(selectedElement) {
-            var newPlaceHolderCss = '',
-                i = 0,
-                that = this,
-                placeHolders = [{ 'type': 'title', 'selector': '#document-title', 'placeHolder': gettext('Title...') }, { 'type': 'metadatasubtitle', 'selector': '#metadata-subtitle', 'placeHolder': gettext('Subtitle...') }, { 'type': 'metadaauthors', 'selector': '#metadata-authors', 'placeHolder': gettext('Authors...') }, { 'type': 'metadataabstract', 'selector': '#metadata-abstract', 'placeHolder': gettext('Abstract...') }, { 'type': 'metadatakeywords', 'selector': '#metadata-keywords', 'placeHolder': gettext('Keywords...') }, { 'type': 'documentcontents', 'selector': '#document-contents', 'placeHolder': gettext('Body...') }];
-
-            placeHolders.forEach(function (elementType, index) {
-                var partElement = that.pm.doc.child(i);
-                if (partElement.type.name == !elementType.type) {
-                    return false;
-                }
-                if (partElement.textContent.length === 0 && (selectedElement != partElement || !that.pm.hasFocus())) {
-                    newPlaceHolderCss += elementType.selector + ':before {content: "' + elementType.placeHolder + '"}\n';
-                }
-                i++;
-            });
-            if (that.placeHolderCss !== newPlaceHolderCss) {
-                that.placeHolderCss = newPlaceHolderCss;
-                jQuery('#placeholder-styles')[0].innerHTML = newPlaceHolderCss;
-            }
-        }
-    }]);
-
-    return UpdateUI;
-})();
-
-},{"prosemirror/dist/model":34}],5:[function(require,module,exports){
-(function(mod) {
-  if (typeof exports == "object" && typeof module == "object") // CommonJS
-    module.exports = mod()
-  else if (typeof define == "function" && define.amd) // AMD
-    return define([], mod)
-  else // Plain browser env
-    (this || window).browserKeymap = mod()
-})(function() {
-  "use strict"
-
-  var mac = typeof navigator != "undefined" ? /Mac/.test(navigator.platform)
-          : typeof os != "undefined" ? os.platform() == "darwin" : false
-
-  // :: Object<string>
-  // A map from key codes to key names.
-  var keyNames = {
-    3: "Enter", 8: "Backspace", 9: "Tab", 13: "Enter", 16: "Shift", 17: "Ctrl", 18: "Alt",
-    19: "Pause", 20: "CapsLock", 27: "Esc", 32: "Space", 33: "PageUp", 34: "PageDown", 35: "End",
-    36: "Home", 37: "Left", 38: "Up", 39: "Right", 40: "Down", 44: "PrintScrn", 45: "Insert",
-    46: "Delete", 59: ";", 61: "=", 91: "Mod", 92: "Mod", 93: "Mod",
-    106: "*", 107: "=", 109: "-", 110: ".", 111: "/", 127: "Delete",
-    173: "-", 186: ";", 187: "=", 188: ",", 189: "-", 190: ".", 191: "/", 192: "`", 219: "[", 220: "\\",
-    221: "]", 222: "'", 63232: "Up", 63233: "Down", 63234: "Left", 63235: "Right", 63272: "Delete",
-    63273: "Home", 63275: "End", 63276: "PageUp", 63277: "PageDown", 63302: "Insert"
-  }
-
-  // Number keys
-  for (var i = 0; i < 10; i++) keyNames[i + 48] = keyNames[i + 96] = String(i)
-  // Alphabetic keys
-  for (var i = 65; i <= 90; i++) keyNames[i] = String.fromCharCode(i)
-  // Function keys
-  for (var i = 1; i <= 12; i++) keyNames[i + 111] = keyNames[i + 63235] = "F" + i
-
-  // :: (KeyboardEvent) → ?string
-  // Find a name for the given keydown event. If the keycode in the
-  // event is not known, this will return `null`. Otherwise, it will
-  // return a string like `"Shift-Cmd-Ctrl-Alt-Home"`. The parts before
-  // the dashes give the modifiers (always in that order, if present),
-  // and the last word gives the key name, which one of the names in
-  // `keyNames`.
-  //
-  // The convention for keypress events is to use the pressed character
-  // between single quotes. Due to limitations in the browser API,
-  // keypress events can not have modifiers.
-  function keyName(event) {
-    if (event.type == "keypress") return "'" + String.fromCharCode(event.charCode) + "'"
-
-    var base = keyNames[event.keyCode], name = base
-    if (name == null || event.altGraphKey) return null
-
-    if (event.altKey && base != "Alt") name = "Alt-" + name
-    if (event.ctrlKey && base != "Ctrl") name = "Ctrl-" + name
-    if (event.metaKey && base != "Cmd") name = "Cmd-" + name
-    if (event.shiftKey && base != "Shift") name = "Shift-" + name
-    return name
-  }
-
-  // :: (string) → bool
-  // Test whether the given key name refers to a modifier key.
-  function isModifierKey(name) {
-    name = /[^-]*$/.exec(name)[0]
-    return name == "Ctrl" || name == "Alt" || name == "Shift" || name == "Mod"
-  }
-
-  // :: (string) → string
-  // Normalize a sloppy key name, which may have modifiers in the wrong
-  // order or use shorthands for modifiers, to a properly formed key
-  // name. Used to normalize names provided in keymaps.
-  //
-  // Note that the modifier `mod` is a shorthand for `Cmd` on Mac, and
-  // `Ctrl` on other platforms.
-  function normalizeKeyName(name) {
-    var parts = name.split(/-(?!'?$)/), result = parts[parts.length - 1]
-    var alt, ctrl, shift, cmd
-    for (var i = 0; i < parts.length - 1; i++) {
-      var mod = parts[i]
-      if (/^(cmd|meta|m)$/i.test(mod)) cmd = true
-      else if (/^a(lt)?$/i.test(mod)) alt = true
-      else if (/^(c|ctrl|control)$/i.test(mod)) ctrl = true
-      else if (/^s(hift)$/i.test(mod)) shift = true
-      else if (/^mod$/i.test(mod)) { if (mac) cmd = true; else ctrl = true }
-      else throw new Error("Unrecognized modifier name: " + mod)
     }
-    if (alt) result = "Alt-" + result
-    if (ctrl) result = "Ctrl-" + result
-    if (cmd) result = "Cmd-" + result
-    if (shift) result = "Shift-" + result
-    return result
-  }
+    return true;
+}
 
-  // :: (Object, ?Object)
-  // A keymap binds a set of [key names](#keyName) to commands names
-  // or functions.
-  //
-  // Construct a keymap using the bindings in `keys`, whose properties
-  // should be [key names](#keyName) or space-separated sequences of
-  // key names. In the second case, the binding will be for a
-  // multi-stroke key combination.
-  //
-  // When `options` has a property `call`, this will be a programmatic
-  // keymap, meaning that instead of looking keys up in its set of
-  // bindings, it will pass the key name to `options.call`, and use
-  // the return value of that calls as the resolved binding.
-  //
-  // `options.name` can be used to give the keymap a name, making it
-  // easier to [remove](#ProseMirror.removeKeymap) from an editor.
-  function Keymap(keys, options) {
-    this.options = options || {}
-    this.bindings = Object.create(null)
-    if (keys) for (var keyname in keys) if (Object.prototype.hasOwnProperty.call(keys, keyname))
-      this.addBinding(keyname, keys[keyname])
-  }
+/** Show or hide placeHolders ('Contents...', 'Title...', etc.) depending on
+whether these elements are empty or not.*/
 
-  Keymap.prototype = {
-    normalize: function(name) {
-      return this.options.multi !== false ? name.split(/ +(?!\'$)/).map(normalizeKeyName) : [normalizeKeyName(name)]
-    },
+var placeHolderCss = '';
 
-    // :: (string, any)
-    // Add a binding for the given key or key sequence.
-    addBinding: function(keyname, value) {
-      var keys = this.normalize(keyname)
-      for (var i = 0; i < keys.length; i++) {
-        var name = keys.slice(0, i + 1).join(" ")
-        var val = i == keys.length - 1 ? value : "..."
-        var prev = this.bindings[name]
-        if (!prev) this.bindings[name] = val
-        else if (prev != val) throw new Error("Inconsistent bindings for " + name)
-      }
-    },
+function calculatePlaceHolderCss(pm, selectedElement) {
+    var newPlaceHolderCss = '',
+        i = 0,
+        placeHolders = [{ 'type': 'title', 'selector': '#document-title', 'placeHolder': gettext('Title...') }, { 'type': 'metadatasubtitle', 'selector': '#metadata-subtitle', 'placeHolder': gettext('Subtitle...') }, { 'type': 'metadaauthors', 'selector': '#metadata-authors', 'placeHolder': gettext('Authors...') }, { 'type': 'metadataabstract', 'selector': '#metadata-abstract', 'placeHolder': gettext('Abstract...') }, { 'type': 'metadatakeywords', 'selector': '#metadata-keywords', 'placeHolder': gettext('Keywords...') }, { 'type': 'documentcontents', 'selector': '#document-contents', 'placeHolder': gettext('Body...') }];
 
-    // :: (string)
-    // Remove the binding for the given key or key sequence.
-    removeBinding: function(keyname) {
-      var keys = this.normalize(keyname)
-      for (var i = keys.length - 1; i >= 0; i--) {
-        var name = keys.slice(0, i).join(" ")
-        var val = this.bindings[name]
-        if (val == "..." && !this.unusedMulti(name))
-          break
-        else if (val)
-          delete this.bindings[name]
-      }
-    },
+    placeHolders.forEach(function (elementType, index) {
+        var partElement = pm.doc.child(i);
+        if (partElement.type.name == !elementType.type) {
+            return false;
+        }
+        if (partElement.textContent.length === 0 && (selectedElement != partElement || !pm.hasFocus())) {
+            newPlaceHolderCss += elementType.selector + ':before {content: "' + elementType.placeHolder + '"}\n';
+        }
+        i++;
+    });
+    if (placeHolderCss !== newPlaceHolderCss) {
+        placeHolderCss = newPlaceHolderCss;
+        jQuery('#placeholder-styles')[0].innerHTML = newPlaceHolderCss;
+    }
+}
 
-    unusedMulti: function(name) {
-      for (var binding in this.bindings)
-        if (binding.length > name && binding.indexOf(name) == 0 && binding.charAt(name.length) == " ")
-          return false
-      return true
-    },
-
-    // :: (string, ?any) → any
-    // Looks up the given key or key sequence in this keymap. Returns
-    // the value the key is bound to (which may be undefined if it is
-    // not bound), or the string `"..."` if the key is a prefix of a
-    // multi-key sequence that is bound by this keymap.
-    lookup: function(key, context) {
-      return this.options.call ? this.options.call(key, context) : this.bindings[key]
-    },
-
-    constructor: Keymap
-  }
-
-  Keymap.keyName = keyName
-  Keymap.isModifierKey = isModifierKey
-  Keymap.normalizeKeyName = normalizeKeyName
-
-  return Keymap
-})
-
-},{}],6:[function(require,module,exports){
+},{"prosemirror/dist/model":35}],6:[function(require,module,exports){
 "use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.rebaseSteps = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _edit = require("../edit");
 
@@ -1795,6 +1527,19 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 exports.rebaseSteps = _rebase.rebaseSteps;
 
+// !! This module implements an API into which a communication channel
+// for collaborative editing can be hooked. See [this
+// guide](guide/collab.html) for more details and an example.
+
+// :: ?Object #path=collab #kind=option
+//
+// When given, enables the collaborative editing framework for the
+// editor. Will register itself of the `Collab` class as
+// `.mod.collab`.
+//
+// If the object given has a `version` property, that will determine
+// the starting version number of the collaborative editing.
+
 (0, _edit.defineOption)("collab", false, function (pm, value) {
   if (pm.mod.collab) {
     pm.mod.collab.detach();
@@ -1806,6 +1551,15 @@ exports.rebaseSteps = _rebase.rebaseSteps;
   }
 });
 
+// ;; This class accumulates changes that have to be sent to the
+// central authority in the collaborating group, signals an event when
+// it has something to send, and makes it possible to integrate
+// changes made by peers into our local document. It is created and
+// attached to the editor (under `.mod.collab`) by setting the
+// `collab` option.
+//
+// Includes the [event mixin](#EventMixin).
+
 var Collab = function () {
   function Collab(pm, options) {
     var _this = this;
@@ -1815,6 +1569,11 @@ var Collab = function () {
     this.pm = pm;
     this.options = options;
 
+    // :: number
+    // The version number of the last update received from the central
+    // authority. Starts at 0 or the value of the `version` property
+    // in the option object, for the editor's value when the option
+    // was enabled.
     this.version = options.version || 0;
     this.versionDoc = pm.doc;
 
@@ -1826,6 +1585,10 @@ var Collab = function () {
         _this.unconfirmedSteps.push(transform.steps[i]);
         _this.unconfirmedMaps.push(transform.maps[i]);
       }
+      // :: () #path=Collab#events#mustSend
+      // Fired when there are new steps to send to the central
+      // authority. Consumers should respond by calling
+      // `sendableSteps` and pushing those to the authority.
       _this.signal("mustSend");
     });
     pm.on("beforeSetDoc", this.onSetDoc = function () {
@@ -1841,11 +1604,22 @@ var Collab = function () {
       this.pm.off("beforeSetDoc", this.onSetDoc);
       this.pm.history.allowCollapsing = true;
     }
+
+    // :: () -> bool
+    // Reports whether the editor has any unsent steps.
+
   }, {
     key: "hasSendableSteps",
     value: function hasSendableSteps() {
       return this.unconfirmedSteps.length > 0;
     }
+
+    // :: () → {version: number, doc: Node, steps: [Step]}
+    // Provides the data describing the editor's unconfirmed steps. The
+    // version and array of steps are the things you'd send to the
+    // central authority. The whole return value must be passed to
+    // [`confirmSteps`](#Collab.confirmSteps) when the steps go through.
+
   }, {
     key: "sendableSteps",
     value: function sendableSteps() {
@@ -1855,6 +1629,12 @@ var Collab = function () {
         steps: this.unconfirmedSteps.slice()
       };
     }
+
+    // :: ({version: number, doc: Node, steps: [Step]})
+    // Tells the module that a set of unconfirmed steps have been
+    // accepted by the central authority, and can now be considered
+    // confirmed.
+
   }, {
     key: "confirmSteps",
     value: function confirmSteps(sendable) {
@@ -1863,6 +1643,15 @@ var Collab = function () {
       this.version += sendable.steps.length;
       this.versionDoc = sendable.doc;
     }
+
+    // :: ([Step]) → [PosMap]
+    // Pushes a set of steps (made by peers and received from the
+    // central authority) into the editor. This will rebase any
+    // unconfirmed steps over these steps.
+    //
+    // Returns the [position maps](#PosMap) produced by applying the
+    // steps.
+
   }, {
     key: "receive",
     value: function receive(steps) {
@@ -1889,7 +1678,7 @@ var Collab = function () {
 }();
 
 (0, _event.eventMixin)(Collab);
-},{"../edit":17,"../util/error":49,"../util/event":50,"./rebase":7}],7:[function(require,module,exports){
+},{"../edit":18,"../util/error":52,"../util/event":53,"./rebase":7}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1917,7 +1706,7 @@ function rebaseSteps(doc, forward, steps, maps) {
   }
   return { doc: transform.doc, transform: transform, mapping: remap, positions: positions };
 }
-},{"../transform":40}],8:[function(require,module,exports){
+},{"../transform":41}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1925,8 +1714,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.elt = elt;
 exports.requestAnimationFrame = requestAnimationFrame;
-exports.rmClass = rmClass;
-exports.addClass = addClass;
 exports.contains = contains;
 exports.insertCSS = insertCSS;
 exports.ensureCSSAdded = ensureCSSAdded;
@@ -1947,6 +1734,7 @@ function elt(tag, attrs) {
 
 function add(value, target) {
   if (typeof value == "string") value = document.createTextNode(value);
+
   if (Array.isArray(value)) {
     for (var i = 0; i < value.length; i++) {
       add(value[i], target);
@@ -1973,24 +1761,8 @@ var browser = exports.browser = {
   gecko: /gecko\/\d/i.test(navigator.userAgent)
 };
 
-function classTest(cls) {
-  return new RegExp("(^|\\s)" + cls + "(?:$|\\s)\\s*");
-}
-
-function rmClass(node, cls) {
-  var current = node.className;
-  var match = classTest(cls).exec(current);
-  if (match) {
-    var after = current.slice(match.index + match[0].length);
-    node.className = current.slice(0, match.index) + (after ? match[1] + after : "");
-  }
-}
-
-function addClass(node, cls) {
-  var current = node.className;
-  if (!classTest(cls).test(current)) node.className += (current ? " " : "") + cls;
-}
-
+// : (DOMNode, DOMNode) → bool
+// Check whether a DOM node is an ancestor of another DOM node.
 function contains(parent, child) {
   // Android browser and IE will return false if child is a text node.
   if (child.nodeType != 1) child = child.parentNode;
@@ -2025,17 +1797,13 @@ var _model = require("../model");
 
 var _transform = require("../transform");
 
-var _sortedinsert = require("../util/sortedinsert");
-
-var _sortedinsert2 = _interopRequireDefault(_sortedinsert);
-
 var _error = require("../util/error");
 
 var _char = require("./char");
 
 var _selection = require("./selection");
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _dompos = require("./dompos");
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
@@ -2335,8 +2103,6 @@ function joinPointAbove(pm) {
 // the sibling above it.
 //
 // **Keybindings:** Alt-Up
-//
-// Registers itself in the block [menu group](#CommandSpec.menuGroup)
 baseCommands.joinUp = {
   label: "Join with above block",
   run: function run(pm) {
@@ -2350,11 +2116,13 @@ baseCommands.joinUp = {
     return joinPointAbove(pm);
   },
 
-  menuGroup: "block(80)",
-  display: {
-    type: "icon",
-    width: 800, height: 900,
-    path: "M0 75h800v125h-800z M0 825h800v-125h-800z M250 400h100v-100h100v100h100v100h-100v100h-100v-100h-100z"
+  menu: {
+    group: "block", rank: 80,
+    display: {
+      type: "icon",
+      width: 800, height: 900,
+      path: "M0 75h800v125h-800z M0 825h800v-125h-800z M250 400h100v-100h100v100h100v100h-100v100h-100v-100h-100z"
+    }
   },
   keys: ["Alt-Up"]
 };
@@ -2393,8 +2161,6 @@ baseCommands.joinDown = {
 // selection that can be lifted, out of its parent node.
 //
 // **Keybindings:** Alt-Left
-//
-// Registers itself in the block [menu group](#CommandSpec.menuGroup).
 baseCommands.lift = {
   label: "Lift out of enclosing block",
   run: function run(pm) {
@@ -2412,11 +2178,13 @@ baseCommands.lift = {
     return (0, _transform.canLift)(pm.doc, from, to);
   },
 
-  menuGroup: "block(75)",
-  display: {
-    type: "icon",
-    width: 1024, height: 1024,
-    path: "M219 310v329q0 7-5 12t-12 5q-8 0-13-5l-164-164q-5-5-5-13t5-13l164-164q5-5 13-5 7 0 12 5t5 12zM1024 749v109q0 7-5 12t-12 5h-987q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h987q7 0 12 5t5 12zM1024 530v109q0 7-5 12t-12 5h-621q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h621q7 0 12 5t5 12zM1024 310v109q0 7-5 12t-12 5h-621q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h621q7 0 12 5t5 12zM1024 91v109q0 7-5 12t-12 5h-987q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h987q7 0 12 5t5 12z"
+  menu: {
+    group: "block", rank: 75,
+    display: {
+      type: "icon",
+      width: 1024, height: 1024,
+      path: "M219 310v329q0 7-5 12t-12 5q-8 0-13-5l-164-164q-5-5-5-13t5-13l164-164q5-5 13-5 7 0 12 5t5 12zM1024 749v109q0 7-5 12t-12 5h-987q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h987q7 0 12 5t5 12zM1024 530v109q0 7-5 12t-12 5h-621q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h621q7 0 12 5t5 12zM1024 310v109q0 7-5 12t-12 5h-621q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h621q7 0 12 5t5 12zM1024 91v109q0 7-5 12t-12 5h-987q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h987q7 0 12 5t5 12z"
+    }
   },
   keys: ["Alt-Left"]
 };
@@ -2500,88 +2268,16 @@ baseCommands.splitBlock = {
       if (!from.offset) return false;
       return pm.tr.split(from).apply(pm.apply.scroll);
     } else {
-      var type = to.offset == block.size ? pm.schema.defaultTextblockType() : null;
-      return pm.tr.delete(from, to).split(from, 1, type).apply(pm.apply.scroll);
+      var deflt = pm.schema.defaultTextblockType();
+      var type = to.offset == block.size ? deflt : null;
+      var tr = pm.tr.delete(from, to).split(from, 1, type);
+      if (to.offset < block.size && !from.offset && pm.doc.path(from.path).type != deflt) tr.setNodeType(from.shorten(), deflt);
+      return tr.apply(pm.apply.scroll);
     }
   },
 
   keys: ["Enter(60)"]
 };
-
-// ;; #kind=command
-// Change the type of the selected textblocks. Takes one parameter,
-// `type`, which should be a `{type: NodeType, attrs: ?Object}`
-// object, giving the new type and its attributes.
-//
-// Available types are determined by seaching the schema for node
-// types that have a `textBlockMenuOptions` property containing an array of
-// `{label: string, rank: ?number, attrs: ?Object}` options.
-//
-// Registers itself in the block [menu group](#CommandSpec.menuGroup), where it creates the
-// textblock type dropdown.
-baseCommands.textblockType = {
-  label: "Change block type",
-  run: function run(pm, value) {
-    var _pm$selection15 = pm.selection;
-    var from = _pm$selection15.from;
-    var to = _pm$selection15.to;
-
-    return pm.tr.setBlockType(from, to, value.type, value.info.attrs).apply();
-  },
-  select: function select(pm) {
-    var node = pm.selection.node;
-
-    return !node || node.isTextblock;
-  },
-
-  params: [{ label: "Type", type: "select", options: listTextblockTypes, prefill: currentTextblockType, defaultLabel: "Type..." }],
-  display: {
-    type: "param"
-  },
-  menuGroup: "block(10)"
-};
-
-function rank(obj) {
-  return obj.rank == null ? 50 : obj.rank;
-}
-
-function listTextblockTypes(pm) {
-  var cached = pm.schema.cached.textblockMenuOptions;
-  if (cached) return cached;
-
-  var found = [];
-  for (var name in pm.schema.nodes) {
-    var type = pm.schema.nodes[name];
-    if (!type.textblockMenuOptions) continue;
-    for (var i = 0; i < type.textblockMenuOptions.length; i++) {
-      var info = type.textblockMenuOptions[i];
-      (0, _sortedinsert2.default)(found, { label: info.label, value: { type: type, info: info } }, function (a, b) {
-        return rank(a.value.info) - rank(b.value.info);
-      });
-    }
-  }
-  return pm.schema.cached.textblockMenuOptions = found;
-}
-
-function currentTextblockType(pm) {
-  var _pm$selection16 = pm.selection;
-  var from = _pm$selection16.from;
-  var to = _pm$selection16.to;
-  var node = _pm$selection16.node;
-
-  if (!node || node.isInline) {
-    if (!_model.Pos.samePath(from.path, to.path)) return null;
-    node = pm.doc.path(from.path);
-  } else if (!node.isTextblock) {
-    return null;
-  }
-  var types = listTextblockTypes(pm);
-  for (var i = 0; i < types.length; i++) {
-    var tp = types[i],
-        val = tp.value;
-    if (node.hasMarkup(val.type, val.info.attrs)) return tp.value;
-  }
-}
 
 function nodeAboveSelection(pm) {
   var sel = pm.selection,
@@ -2593,75 +2289,10 @@ function nodeAboveSelection(pm) {
 }
 
 // ;; #kind=command
-// Replace the selection with a node chosen from a drop-down. Takes
-// its options from the `insertMenuOptions` properties of the node
-// types in the editor's schema, which, if present, should contain
-// arrays of `{label: string, rank: ?number, attrs: ?Object, command:
-// ?string}` object. `rank` deterimes the order in which the options
-// appear (lowest first). If a `command` property is given, the
-// command named by that string, prefixed with the node type name and
-// a colon, will be executed when the option is chosen. If not, a node
-// of type is created, with attributes from the `attrs` property, and
-// used to replace the selection.
-//
-// Registers itself in the insert [menu group](#CommandSpec.menuGroup)
-
-baseCommands.insert = {
-  label: "Insert an element",
-  run: function run(pm, value) {
-    if (value.info.command) return pm.execCommand(value.type.name + ":" + value.info.command);else return pm.tr.replaceSelection(value.type.create(value.info.attrs)).apply(pm.apply.scroll);
-  },
-  select: function select(pm) {
-    return currentInsertOptions(pm).length > 0;
-  },
-
-  params: [{ label: "Type", type: "select", options: currentInsertOptions, defaultLabel: "Insert" }],
-  display: {
-    type: "param"
-  },
-  menuGroup: "insert"
-};
-
-function listInsertOptions(pm) {
-  var cached = pm.schema.cached.insertMenuOptions;
-  if (cached) return cached;
-
-  var found = [];
-
-  var _loop = function _loop(name) {
-    var type = pm.schema.nodes[name];
-    if (type.insertMenuOptions) type.insertMenuOptions.forEach(function (info) {
-      (0, _sortedinsert2.default)(found, { label: info.label, value: { type: type, info: info } }, function (a, b) {
-        return rank(a.value.info) - rank(b.value.info);
-      });
-    });
-  };
-
-  for (var name in pm.schema.nodes) {
-    _loop(name);
-  }
-  return pm.schema.cached.inserMenuOptions = found;
-}
-
-function currentInsertOptions(pm) {
-  return listInsertOptions(pm).filter(function (option) {
-    var cmd = option.value.info.command;
-    if (cmd) {
-      var found = pm.commands[option.value.type.name + ":" + cmd];
-      return found && found.select(pm);
-    } else {
-      return option.value.type.isBlock || pm.doc.path(pm.selection.from.path).type.canContainType(option.value.type);
-    }
-  });
-}
-
-// ;; #kind=command
 // Move the selection to the node wrapping the current selection, if
 // any. (Will not select the document node.)
 //
 // **Keybindings:** Esc
-//
-// Registers itself in the block [menu group](#CommandSpec.menuGroup).
 baseCommands.selectParentNode = {
   label: "Select parent node",
   run: function run(pm) {
@@ -2673,27 +2304,29 @@ baseCommands.selectParentNode = {
     return nodeAboveSelection(pm);
   },
 
-  menuGroup: "block(90)",
-  display: { type: "icon", text: "⬚", style: "font-weight: bold; vertical-align: 20%" },
+  menu: {
+    group: "block", rank: 90,
+    display: { type: "icon", text: "⬚", style: "font-weight: bold; vertical-align: 20%" }
+  },
   keys: ["Esc"]
 };
 
 function moveSelectionBlock(pm, dir) {
-  var _pm$selection17 = pm.selection;
-  var from = _pm$selection17.from;
-  var to = _pm$selection17.to;
-  var node = _pm$selection17.node;
+  var _pm$selection15 = pm.selection;
+  var from = _pm$selection15.from;
+  var to = _pm$selection15.to;
+  var node = _pm$selection15.node;
 
   var side = dir > 0 ? to : from;
   return (0, _selection.findSelectionFrom)(pm.doc, node && node.isBlock ? side : side.shorten(null, dir > 0 ? 1 : 0), dir);
 }
 
 function selectNodeHorizontally(pm, dir) {
-  var _pm$selection18 = pm.selection;
-  var empty = _pm$selection18.empty;
-  var node = _pm$selection18.node;
-  var from = _pm$selection18.from;
-  var to = _pm$selection18.to;
+  var _pm$selection16 = pm.selection;
+  var empty = _pm$selection16.empty;
+  var node = _pm$selection16.node;
+  var from = _pm$selection16.from;
+  var to = _pm$selection16.to;
 
   if (!empty && !node) return false;
 
@@ -2755,11 +2388,11 @@ baseCommands.selectNodeRight = {
 };
 
 function selectNodeVertically(pm, dir) {
-  var _pm$selection19 = pm.selection;
-  var empty = _pm$selection19.empty;
-  var node = _pm$selection19.node;
-  var from = _pm$selection19.from;
-  var to = _pm$selection19.to;
+  var _pm$selection17 = pm.selection;
+  var empty = _pm$selection17.empty;
+  var node = _pm$selection17.node;
+  var from = _pm$selection17.from;
+  var to = _pm$selection17.to;
 
   if (!empty && !node) return false;
 
@@ -2778,14 +2411,14 @@ function selectNodeVertically(pm, dir) {
   if (!node) return false;
 
   if (node.isInline) {
-    (0, _selection.setDOMSelectionToPos)(pm, from);
+    (0, _dompos.setDOMSelectionToPos)(pm, from);
     return false;
   }
 
   var last = pm.sel.lastNonNodePos;
   var beyond = (0, _selection.findSelectionFrom)(pm.doc, dir < 0 ? from : to, dir);
   if (last && beyond && _model.Pos.samePath(last.path, beyond.from.path)) {
-    (0, _selection.setDOMSelectionToPos)(pm, last);
+    (0, _dompos.setDOMSelectionToPos)(pm, last);
     return false;
   }
   pm.setSelectionDirect(beyond);
@@ -2826,22 +2459,22 @@ baseCommands.selectNodeDown = {
 // Undo the most recent change event, if any.
 //
 // **Keybindings:** Mod-Z
-//
-// Registers itself in the history [menu group](#CommandSpec.menuGroup).
 baseCommands.undo = {
   label: "Undo last change",
   run: function run(pm) {
     pm.scrollIntoView();return pm.history.undo();
   },
   select: function select(pm) {
-    return pm.history.canUndo();
+    return pm.history.undoDepth > 0;
   },
 
-  menuGroup: "history(10)",
-  display: {
-    type: "icon",
-    width: 1024, height: 1024,
-    path: "M761 1024c113-206 132-520-313-509v253l-384-384 384-384v248c534-13 594 472 313 775z"
+  menu: {
+    group: "history", rank: 10,
+    display: {
+      type: "icon",
+      width: 1024, height: 1024,
+      path: "M761 1024c113-206 132-520-313-509v253l-384-384 384-384v248c534-13 594 472 313 775z"
+    }
   },
   keys: ["Mod-Z"]
 };
@@ -2850,26 +2483,26 @@ baseCommands.undo = {
 // Redo the most recently undone change event, if any.
 //
 // **Keybindings:** Mod-Y, Shift-Mod-Z
-//
-// Registers itself in the history [menu group](#CommandSpec.menuGroup).
 baseCommands.redo = {
   label: "Redo last undone change",
   run: function run(pm) {
     pm.scrollIntoView();return pm.history.redo();
   },
   select: function select(pm) {
-    return pm.history.canRedo();
+    return pm.history.redoDepth > 0;
   },
 
-  menuGroup: "history(20)",
-  display: {
-    type: "icon",
-    width: 1024, height: 1024,
-    path: "M576 248v-248l384 384-384 384v-253c-446-10-427 303-313 509-280-303-221-789 313-775z"
+  menu: {
+    group: "history", rank: 20,
+    display: {
+      type: "icon",
+      width: 1024, height: 1024,
+      path: "M576 248v-248l384 384-384 384v-253c-446-10-427 303-313 509-280-303-221-789 313-775z"
+    }
   },
   keys: ["Mod-Y", "Shift-Mod-Z"]
 };
-},{"../model":34,"../transform":40,"../util/error":49,"../util/sortedinsert":53,"./char":11,"./selection":23}],10:[function(require,module,exports){
+},{"../model":35,"../transform":41,"../util/error":52,"./char":11,"./dompos":15,"./selection":24}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2883,6 +2516,8 @@ var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
 
 var _selection = require("./selection");
 
+var _dompos = require("./dompos");
+
 var _dom = require("../dom");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -2892,7 +2527,7 @@ function nothing() {}
 function ensureSelection(pm) {
   if (pm.selection.node) {
     var found = (0, _selection.findSelectionNear)(pm.doc, pm.selection.from, 1, true);
-    if (found) (0, _selection.setDOMSelectionToPos)(pm, found.head);
+    if (found) (0, _dompos.setDOMSelectionToPos)(pm, found.head);
   }
   return false;
 }
@@ -2937,7 +2572,7 @@ var keys = {
 if (_dom.browser.mac) keys["Ctrl-F"] = keys["Ctrl-B"] = keys["Ctrl-P"] = keys["Ctrl-N"] = keys["Alt-F"] = keys["Alt-B"] = keys["Ctrl-A"] = keys["Ctrl-E"] = keys["Ctrl-V"] = keys["goPageUp"] = ensureSelection;
 
 var captureKeys = exports.captureKeys = new _browserkeymap2.default(keys);
-},{"../dom":8,"./selection":23,"browserkeymap":5}],11:[function(require,module,exports){
+},{"../dom":8,"./dompos":15,"./selection":24,"browserkeymap":57}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2973,17 +2608,17 @@ function isExtendingChar(ch) {
 },{}],12:[function(require,module,exports){
 "use strict";
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.CommandSet = exports.Command = undefined;
+
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }();
 
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-exports.CommandSet = exports.Command = undefined;
-exports.defineDefaultParamHandler = defineDefaultParamHandler;
 exports.updateCommands = updateCommands;
 exports.selectedNodeAttr = selectedNodeAttr;
 
@@ -3018,7 +2653,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 //
 // The commands available in a given editor are determined by the
 // `commands` option. By default, they come from the `baseCommands`
-// object and the commands [associated](#SchemaItem.register) with
+// object and the commands [registered](#SchemaItem.register) with
 // schema items. Registering a `CommandSpec` on a [node](#NodeType) or
 // [mark](#MarkType) type will cause that command to come into scope
 // in editors whose schema includes that item.
@@ -3038,27 +2673,25 @@ var Command = exports.Command = function () {
   // :: (ProseMirror, ?[any]) → ?bool
   // Execute this command. If the command takes
   // [parameters](#Command.params), they can be passed as second
-  // argument here, or omitted, in which case a [parameter
-  // handler](#commandParamHandler) will be called to prompt the user
-  // for values.
+  // argument here, or otherwise the user will be prompted for them
+  // using the value of the `commandParamPrompt` option.
   //
   // Returns the value returned by the command spec's [`run`
-  // method](#CommandSpec.run), or `false` if the command could not be
-  // ran.
+  // method](#CommandSpec.run), or a `ParamPrompt` instance if the
+  // command is ran asynchronously through a prompt.
+
 
   _createClass(Command, [{
     key: "exec",
     value: function exec(pm, params) {
-      var _this = this;
-
       var run = this.spec.run;
-      if (!this.params.length) return run.call(this.self, pm);
-      if (params) return run.call.apply(run, [this.self, pm].concat(_toConsumableArray(params)));
-      var handler = pm.options.commandParamHandler || defaultParamHandler;
-      if (!handler) return false;
-      handler(pm, this, function (params) {
-        if (params) run.call.apply(run, [_this.self, pm].concat(_toConsumableArray(params)));
-      });
+      if (!params) {
+        if (!this.params.length) return run.call(this.self, pm);
+        return new pm.options.commandParamPrompt(pm, this).open();
+      } else {
+        if (this.params.length != (params ? params.length : 0)) _error.AssertionError.raise("Invalid amount of parameters for command " + this.name);
+        return run.call.apply(run, [this.self, pm].concat(_toConsumableArray(params)));
+      }
     }
 
     // :: (ProseMirror) → bool
@@ -3109,10 +2742,10 @@ var Command = exports.Command = function () {
 
 var empty = [];
 
-function deriveCommandSpec(type, spec) {
+function deriveCommandSpec(type, spec, name) {
   if (!spec.derive) return spec;
   var conf = _typeof(spec.derive) == "object" ? spec.derive : {};
-  var dname = conf.name || spec.name;
+  var dname = conf.name || name;
   var derive = type.constructor.deriveableCommands[dname];
   if (!derive) _error.AssertionError.raise("Don't know how to derive command " + dname);
   var derived = derive.call(type, conf);
@@ -3142,6 +2775,7 @@ var CommandSet = function () {
   // A filter function can be given to add only the commands for which
   // the filter returns true.
 
+
   _createClass(CommandSet, [{
     key: "add",
     value: function add(set, filter) {
@@ -3154,8 +2788,8 @@ var CommandSet = function () {
         }
 
         if (set === "schema") {
-          schema.registry("command", function (spec, type, name) {
-            add(name + ":" + spec.name, deriveCommandSpec(type, spec), type);
+          schema.registry("command", function (name, spec, type, typeName) {
+            add(typeName + ":" + name, deriveCommandSpec(type, spec, name), type);
           });
         } else {
           for (var name in set) {
@@ -3204,6 +2838,7 @@ var CommandSet = function () {
 // :: CommandSet
 // A set without any commands.
 
+
 exports.CommandSet = CommandSet;
 CommandSet.empty = new CommandSet(null, function () {
   return null;
@@ -3219,14 +2854,6 @@ CommandSet.default = CommandSet.empty.add("schema").add(_base_commands.baseComma
 // the command. The only property that _must_ appear in a command spec
 // is [`run`](#CommandSpec.run). You should probably also give your
 // commands a `label`.
-
-// :: string #path=CommandSpec.name
-// Commands defined by [registering](#SchemaItem.register) them on
-// schema items should include a `name` in the spec object. The final
-// name of the command (the thing passed to
-// [`execCommand`](#ProseMirror.execCommand)) will be this name
-// prefixed by the node or mark name and a colon (for example
-// `"image:insert"`).
 
 // :: string #path=CommandSpec.label
 // A user-facing label for the command. This will be used, among other
@@ -3291,19 +2918,10 @@ CommandSet.default = CommandSet.empty.add("schema").add(_base_commands.baseComma
 // the command's source item), tries to derive an initial value for
 // the parameter, or return null if it can't.
 
-var defaultParamHandler = null;
-
-// :: ((pm: ProseMirror, cmd: Command, callback: (?[any])), bool)
-// Register a default [parameter handler](#commandParamHandler), which
-// is a function that prompts the user to enter values for a command's
-// [parameters](#CommandParam), and calls a callback with the values
-// received. If `override` is set to false, the new handler will be
-// ignored if another handler has already been defined.
-function defineDefaultParamHandler(handler) {
-  var override = arguments.length <= 1 || arguments[1] === undefined ? true : arguments[1];
-
-  if (!defaultParamHandler || override) defaultParamHandler = handler;
-}
+// :: (any) → ?string #path=CommandParam.validate
+// An optional function that is called to validate values provided for
+// this parameter. Should return a falsy value when the value is
+// valid, and an error message when it is not.
 
 function deriveKeymap(pm) {
   var bindings = {},
@@ -3415,16 +3033,16 @@ function selectedNodeAttr(pm, type, name) {
 function deriveParams(type, params) {
   return params && params.map(function (param) {
     var attr = type.attrs[param.attr];
-    return {
-      label: param.label,
-      type: param.type || "text",
-      default: param.default || attr.default,
-      prefill: param.prefill || (type instanceof _model.NodeType ? function (pm) {
+    var obj = { type: "text",
+      default: attr.default,
+      prefill: type instanceof _model.NodeType ? function (pm) {
         return selectedNodeAttr(pm, this, param.attr);
       } : function (pm) {
         return selectedMarkAttr(pm, this, param.attr);
-      })
-    };
+      } };
+    for (var prop in param) {
+      obj[prop] = param[prop];
+    }return obj;
   });
 }
 
@@ -3540,22 +3158,40 @@ function alreadyHasBlockType(doc, from, to, type, attrs) {
   return found;
 }
 
+function activeTextblockIs(pm, type, attrs) {
+  var _pm$selection6 = pm.selection;
+  var from = _pm$selection6.from;
+  var to = _pm$selection6.to;
+  var node = _pm$selection6.node;
+
+  if (!node || node.isInline) {
+    if (!_model.Pos.samePath(from.path, to.path)) return false;
+    node = pm.doc.path(from.path);
+  } else if (!node.isTextblock) {
+    return false;
+  }
+  return node.hasMarkup(type, attrs);
+}
+
 _model.NodeType.deriveableCommands.make = function (conf) {
   return {
     run: function run(pm) {
-      var _pm$selection6 = pm.selection;
-      var from = _pm$selection6.from;
-      var to = _pm$selection6.to;
+      var _pm$selection7 = pm.selection;
+      var from = _pm$selection7.from;
+      var to = _pm$selection7.to;
 
       return pm.tr.setBlockType(from, to, this, conf.attrs).apply(pm.apply.scroll);
     },
     select: function select(pm) {
-      var _pm$selection7 = pm.selection;
-      var from = _pm$selection7.from;
-      var to = _pm$selection7.to;
-      var node = _pm$selection7.node;
+      var _pm$selection8 = pm.selection;
+      var from = _pm$selection8.from;
+      var to = _pm$selection8.to;
+      var node = _pm$selection8.node;
 
       if (node) return node.isTextblock && !node.hasMarkup(this, conf.attrs);else return !alreadyHasBlockType(pm.doc, from, to, this, conf.attrs);
+    },
+    active: function active(pm) {
+      return activeTextblockIs(pm, this, conf.attrs);
     }
   };
 };
@@ -3576,12 +3212,12 @@ _model.NodeType.deriveableCommands.insert = function (conf) {
     params: deriveParams(this, conf.params)
   };
 };
-},{"../dom":8,"../model":34,"../transform":40,"../util/error":49,"../util/obj":52,"../util/sortedinsert":53,"./base_commands":9,"browserkeymap":5}],13:[function(require,module,exports){
+},{"../dom":8,"../model":35,"../transform":41,"../util/error":52,"../util/obj":55,"../util/sortedinsert":56,"./base_commands":9,"browserkeymap":57}],13:[function(require,module,exports){
 "use strict";
 
 var _dom = require("../dom");
 
-(0, _dom.insertCSS)("\n\n.ProseMirror {\n  border: 1px solid silver;\n  position: relative;\n}\n\n.ProseMirror-content {\n  padding: 4px 8px 4px 14px;\n  white-space: pre-wrap;\n  line-height: 1.2;\n}\n\n.ProseMirror-drop-target {\n  position: absolute;\n  width: 1px;\n  background: #666;\n  display: none;\n}\n\n.ProseMirror-content ul.tight p, .ProseMirror-content ol.tight p {\n  margin: 0;\n}\n\n.ProseMirror-content ul, .ProseMirror-content ol {\n  padding-left: 30px;\n  cursor: default;\n}\n\n.ProseMirror-content blockquote {\n  padding-left: 1em;\n  border-left: 3px solid #eee;\n  margin-left: 0; margin-right: 0;\n}\n\n.ProseMirror-content pre {\n  white-space: pre-wrap;\n}\n\n.ProseMirror-selectednode {\n  outline: 2px solid #8cf;\n}\n\n.ProseMirror-content p:first-child,\n.ProseMirror-content h1:first-child,\n.ProseMirror-content h2:first-child,\n.ProseMirror-content h3:first-child,\n.ProseMirror-content h4:first-child,\n.ProseMirror-content h5:first-child,\n.ProseMirror-content h6:first-child {\n  margin-top: .3em;\n}\n\n/* Add space around the hr to make clicking it easier */\n\n.ProseMirror-content hr {\n  position: relative;\n  height: 6px;\n  border: none;\n}\n\n.ProseMirror-content hr:after {\n  content: \"\";\n  position: absolute;\n  left: 10px;\n  right: 10px;\n  top: 2px;\n  border-top: 2px solid silver;\n}\n\n.ProseMirror-content img {\n  cursor: default;\n}\n\n/* Make sure li selections wrap around markers */\n\n.ProseMirror-content li {\n  position: relative;\n  pointer-events: none; /* Don't do weird stuff with marker clicks */\n}\n.ProseMirror-content li > * {\n  pointer-events: auto;\n}\n\nli.ProseMirror-selectednode {\n  outline: none;\n}\n\nli.ProseMirror-selectednode:after {\n  content: \"\";\n  position: absolute;\n  left: -32px;\n  right: -2px; top: -2px; bottom: -2px;\n  border: 2px solid #8cf;\n  pointer-events: none;\n}\n\n");
+(0, _dom.insertCSS)("\n\n.ProseMirror {\n  border: 1px solid silver;\n  position: relative;\n}\n\n.ProseMirror-content {\n  padding: 4px 8px 4px 14px;\n  white-space: pre-wrap;\n  line-height: 1.2;\n}\n\n.ProseMirror-drop-target {\n  position: absolute;\n  width: 1px;\n  background: #666;\n  display: none;\n}\n\n.ProseMirror-content ul.tight p, .ProseMirror-content ol.tight p {\n  margin: 0;\n}\n\n.ProseMirror-content ul, .ProseMirror-content ol {\n  padding-left: 30px;\n  cursor: default;\n}\n\n.ProseMirror-content blockquote {\n  padding-left: 1em;\n  border-left: 3px solid #eee;\n  margin-left: 0; margin-right: 0;\n}\n\n.ProseMirror-content pre {\n  white-space: pre-wrap;\n}\n\n.ProseMirror-selectednode {\n  outline: 2px solid #8cf;\n}\n\n.ProseMirror-nodeselection *::selection {\n  background: transparent;\n}\n\n.ProseMirror-content p:first-child,\n.ProseMirror-content h1:first-child,\n.ProseMirror-content h2:first-child,\n.ProseMirror-content h3:first-child,\n.ProseMirror-content h4:first-child,\n.ProseMirror-content h5:first-child,\n.ProseMirror-content h6:first-child {\n  margin-top: .3em;\n}\n\n/* Add space around the hr to make clicking it easier */\n\n.ProseMirror-content hr {\n  position: relative;\n  height: 6px;\n  border: none;\n}\n\n.ProseMirror-content hr:after {\n  content: \"\";\n  position: absolute;\n  left: 10px;\n  right: 10px;\n  top: 2px;\n  border-top: 2px solid silver;\n}\n\n.ProseMirror-content img {\n  cursor: default;\n}\n\n/* Make sure li selections wrap around markers */\n\n.ProseMirror-content li {\n  position: relative;\n  pointer-events: none; /* Don't do weird stuff with marker clicks */\n}\n.ProseMirror-content li > * {\n  pointer-events: auto;\n}\n\nli.ProseMirror-selectednode {\n  outline: none;\n}\n\nli.ProseMirror-selectednode:after {\n  content: \"\";\n  position: absolute;\n  left: -32px;\n  right: -2px; top: -2px; bottom: -2px;\n  border: 2px solid #8cf;\n  pointer-events: none;\n}\n\n");
 },{"../dom":8}],14:[function(require,module,exports){
 "use strict";
 
@@ -3598,7 +3234,7 @@ var _format = require("../format");
 
 var _tree = require("../transform/tree");
 
-var _selection = require("./selection");
+var _dompos = require("./dompos");
 
 function isAtEnd(node, pos, depth) {
   for (var i = depth || 0; i < pos.path.length; i++) {
@@ -3633,7 +3269,8 @@ function parseNearSelection(pm) {
       if (toEnd && endOffset < node.size - 1) endOffset++;
       var parsed = (0, _format.fromDOM)(pm.schema, dom, { topNode: node.copy(),
         from: startOffset,
-        to: dom.childNodes.length - (node.size - endOffset) });
+        to: dom.childNodes.length - (node.size - endOffset),
+        preserveWhitespace: true });
       parsed = parsed.copy(node.content.slice(0, startOffset).append(parsed.content).append(node.content.slice(endOffset)));
       for (var i = depth - 1; i >= 0; i--) {
         var wrap = pm.doc.path(from.path.slice(0, i));
@@ -3642,7 +3279,7 @@ function parseNearSelection(pm) {
       return parsed;
     }
     node = toNode;
-    dom = (0, _selection.findByPath)(dom, from.path[depth], false);
+    dom = (0, _dompos.findByPath)(dom, from.path[depth], false);
   }
 }
 
@@ -3652,7 +3289,7 @@ function applyDOMChange(pm) {
   if (changeStart) {
     var changeEnd = findDiffEndConstrained(pm.doc.content, updated.content, changeStart);
     // Mark nodes touched by this change as 'to be redrawn'
-    pm.markRangeDirty(pm.doc.siblingRange(changeStart, changeEnd.a));
+    markDirtyFor(pm, changeStart, changeEnd);
 
     pm.tr.replace(changeStart, changeEnd.a, updated, changeStart, changeEnd.b).apply();
     return true;
@@ -3678,10 +3315,27 @@ function findDiffEndConstrained(a, b, start) {
   return end;
 }
 
+function sameDepth(a, b) {
+  var max = Math.min(a.depth, b.depth);
+  for (var i = 0; i < max; i++) {
+    if (a.path[i] != b.path[i]) return i;
+  }return max;
+}
+
+function markDirtyFor(pm, start, end) {
+  var depth = Math.min(sameDepth(start, end.a), sameDepth(start, end.b));
+  if (depth == 0) {
+    pm.markAllDirty();
+  } else {
+    var pos = _model.Pos.from(start.path.slice(0, depth));
+    pm.markRangeDirty({ from: pos, to: pos.move(1) });
+  }
+}
+
 // Text-only queries for composition events
 
 function textContext(data) {
-  var range = getSelection().getRangeAt(0);
+  var range = window.getSelection().getRangeAt(0);
   var start = range.startContainer,
       end = range.endContainer;
   if (start == end && start.nodeType == 3) {
@@ -3766,7 +3420,381 @@ function scanText(start, end) {
     cur = cur.firstChild || nodeAfter(cur);
   }
 }
-},{"../format":26,"../model":34,"../transform/tree":48,"./selection":23}],15:[function(require,module,exports){
+},{"../format":27,"../model":35,"../transform/tree":49,"./dompos":15}],15:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.pathFromDOM = pathFromDOM;
+exports.widthFromDOM = widthFromDOM;
+exports.posFromDOM = posFromDOM;
+exports.findByPath = findByPath;
+exports.pathToDOM = pathToDOM;
+exports.childContainer = childContainer;
+exports.DOMFromPos = DOMFromPos;
+exports.scrollIntoView = scrollIntoView;
+exports.posAtCoords = posAtCoords;
+exports.coordsAtPos = coordsAtPos;
+exports.setDOMSelectionToPos = setDOMSelectionToPos;
+exports.selectableNodeAbove = selectableNodeAbove;
+exports.handleNodeClick = handleNodeClick;
+
+var _model = require("../model");
+
+var _dom = require("../dom");
+
+var _error = require("../util/error");
+
+// : (ProseMirror, DOMNode) → [number]
+// Get the path for a given a DOM node in a document.
+function pathFromDOM(pm, node) {
+  var path = [];
+  for (; node != pm.content;) {
+    var attr = node.getAttribute("pm-offset");
+    if (attr) path.unshift(+attr);
+    node = node.parentNode;
+  }
+  return path;
+}
+
+function widthFromDOM(dom) {
+  var attr = dom.getAttribute("pm-leaf");
+  return attr && attr != "true" ? +attr : 1;
+}
+
+function posFromDOM(pm, dom, domOffset, loose) {
+  if (!loose && pm.operation && pm.doc != pm.operation.doc) _error.AssertionError.raise("Fetching a position from an outdated DOM structure");
+
+  if (domOffset == null) {
+    domOffset = Array.prototype.indexOf.call(dom.parentNode.childNodes, dom);
+    dom = dom.parentNode;
+  }
+
+  var extraOffset = 0,
+      tag = undefined;
+  for (;;) {
+    var adjust = 0;
+    if (dom.nodeType == 3) {
+      extraOffset += domOffset;
+    } else if (dom.hasAttribute("pm-container")) {
+      break;
+    } else if (tag = dom.getAttribute("pm-inner-offset")) {
+      extraOffset += +tag;
+      adjust = -1;
+    } else if (domOffset && domOffset == dom.childNodes.length) {
+      adjust = 1;
+    }
+
+    var parent = dom.parentNode;
+    domOffset = adjust < 0 ? 0 : Array.prototype.indexOf.call(parent.childNodes, dom) + adjust;
+    dom = parent;
+  }
+
+  var path = pathFromDOM(pm, dom);
+  if (dom.hasAttribute("pm-leaf")) return _model.Pos.from(path, extraOffset + (domOffset ? 1 : 0));
+
+  var offset = 0;
+  for (var i = domOffset - 1; i >= 0; i--) {
+    var child = dom.childNodes[i];
+    if (child.nodeType == 3) {
+      if (loose) extraOffset += child.nodeValue.length;
+    } else if (tag = child.getAttribute("pm-offset")) {
+      offset = +tag + widthFromDOM(child);
+      break;
+    } else if (loose && !child.hasAttribute("pm-ignore")) {
+      extraOffset += child.textContent.length;
+    }
+  }
+  return new _model.Pos(path, offset + extraOffset);
+}
+
+// : (DOMNode, number, ?bool)
+// Get a child node of a parent node at a given offset.
+function findByPath(node, n, fromEnd) {
+  var container = childContainer(node);
+  for (var ch = fromEnd ? container.lastChild : container.firstChild; ch; ch = fromEnd ? ch.previousSibling : ch.nextSibling) {
+    if (ch.nodeType != 1) continue;
+    var offset = ch.getAttribute("pm-offset");
+    if (offset && +offset == n) return ch;
+  }
+}
+
+// : (DOMNode, [number]) → DOMNode
+// Get a descendant node at a path relative to an ancestor node.
+function pathToDOM(parent, path) {
+  var node = parent;
+  for (var i = 0; i < path.length; i++) {
+    node = findByPath(node, path[i]);
+    if (!node) _error.AssertionError.raise("Failed to resolve path " + path.join("/"));
+  }
+  return node;
+}
+
+function childContainer(dom) {
+  return dom.hasAttribute("pm-container") ? dom : dom.querySelector("[pm-container]");
+}
+
+function findByOffset(node, offset, after) {
+  for (var ch = node.firstChild, i = 0, attr; ch; ch = ch.nextSibling, i++) {
+    if (ch.nodeType == 1 && (attr = ch.getAttribute("pm-offset"))) {
+      var diff = offset - +attr,
+          width = widthFromDOM(ch);
+      if (diff >= 0 && (after ? diff <= width : diff < width)) return { node: ch, offset: i, innerOffset: diff };
+    }
+  }
+}
+
+function leafAt(node, offset) {
+  for (;;) {
+    var child = node.firstChild;
+    if (!child) return { node: node, offset: offset };
+    if (child.nodeType != 1) return { node: child, offset: offset };
+    if (child.hasAttribute("pm-inner-offset")) {
+      var nodeOffset = 0;
+      for (;;) {
+        var nextSib = child.nextSibling,
+            nextOffset = undefined;
+        if (!nextSib || (nextOffset = +nextSib.getAttribute("pm-inner-offset")) >= offset) break;
+        child = nextSib;
+        nodeOffset = nextOffset;
+      }
+      offset -= nodeOffset;
+    }
+    node = child;
+  }
+}
+
+// Get a DOM element at a given position in the document.
+function DOMFromPos(parent, pos) {
+  var dom = childContainer(pathToDOM(parent, pos.path));
+  var found = findByOffset(dom, pos.offset, true),
+      inner = undefined;
+  if (!found) return { node: dom, offset: 0 };
+  if (found.node.getAttribute("pm-leaf") == "true" || !(inner = leafAt(found.node, found.innerOffset))) return { node: found.node.parentNode, offset: found.offset + (found.innerOffset ? 1 : 0) };else return inner;
+}
+
+function windowRect() {
+  return { left: 0, right: window.innerWidth,
+    top: 0, bottom: window.innerHeight };
+}
+
+var scrollMargin = 5;
+
+function scrollIntoView(pm, pos) {
+  if (!pos) pos = pm.sel.range.head || pm.sel.range.from;
+  var coords = coordsAtPos(pm, pos);
+  for (var parent = pm.content;; parent = parent.parentNode) {
+    var atBody = parent == document.body;
+    var rect = atBody ? windowRect() : parent.getBoundingClientRect();
+    var moveX = 0,
+        moveY = 0;
+    if (coords.top < rect.top) moveY = -(rect.top - coords.top + scrollMargin);else if (coords.bottom > rect.bottom) moveY = coords.bottom - rect.bottom + scrollMargin;
+    if (coords.left < rect.left) moveX = -(rect.left - coords.left + scrollMargin);else if (coords.right > rect.right) moveX = coords.right - rect.right + scrollMargin;
+    if (moveX || moveY) {
+      if (atBody) window.scrollBy(moveX, moveY);
+    } else {
+      if (moveY) parent.scrollTop += moveY;
+      if (moveX) parent.scrollLeft += moveX;
+    }
+    if (atBody) break;
+  }
+}
+
+function findOffsetInNode(node, coords) {
+  var closest = undefined,
+      dyClosest = 1e8,
+      coordsClosest = undefined,
+      offset = 0;
+  for (var child = node.firstChild; child; child = child.nextSibling) {
+    var rects = undefined;
+    if (child.nodeType == 1) rects = child.getClientRects();else if (child.nodeType == 3) rects = textRects(child);else continue;
+
+    for (var i = 0; i < rects.length; i++) {
+      var rect = rects[i];
+      if (rect.left <= coords.left && rect.right >= coords.left) {
+        var dy = rect.top > coords.top ? rect.top - coords.top : rect.bottom < coords.top ? coords.top - rect.bottom : 0;
+        if (dy < dyClosest) {
+          // FIXME does not group by row
+          closest = child;
+          dyClosest = dy;
+          coordsClosest = dy ? { left: coords.left, top: rect.top } : coords;
+          if (child.nodeType == 1 && !child.firstChild) offset = i + (coords.left >= (rect.left + rect.right) / 2 ? 1 : 0);
+          continue;
+        }
+      }
+      if (!closest && (coords.top >= rect.bottom || coords.top >= rect.top && coords.left >= rect.right)) offset = i + 1;
+    }
+  }
+  if (!closest) return { node: node, offset: offset };
+  if (closest.nodeType == 3) return findOffsetInText(closest, coordsClosest);
+  if (closest.firstChild) return findOffsetInNode(closest, coordsClosest);
+  return { node: node, offset: offset };
+}
+
+function findOffsetInText(node, coords) {
+  var len = node.nodeValue.length;
+  var range = document.createRange();
+  for (var i = 0; i < len; i++) {
+    range.setEnd(node, i + 1);
+    range.setStart(node, i);
+    var rect = range.getBoundingClientRect();
+    if (rect.top == rect.bottom) continue;
+    if (rect.left <= coords.left && rect.right >= coords.left && rect.top <= coords.top && rect.bottom >= coords.top) return { node: node, offset: i + (coords.left >= (rect.left + rect.right) / 2 ? 1 : 0) };
+  }
+  return { node: node, offset: 0 };
+}
+
+// Given an x,y position on the editor, get the position in the document.
+function posAtCoords(pm, coords) {
+  var elt = document.elementFromPoint(coords.left, coords.top + 1);
+  if (!(0, _dom.contains)(pm.content, elt)) return null;
+
+  if (!elt.firstChild) elt = elt.parentNode;
+
+  var _findOffsetInNode = findOffsetInNode(elt, coords);
+
+  var node = _findOffsetInNode.node;
+  var offset = _findOffsetInNode.offset;
+
+  return posFromDOM(pm, node, offset);
+}
+
+function textRect(node, from, to) {
+  var range = document.createRange();
+  range.setEnd(node, to);
+  range.setStart(node, from);
+  return range.getBoundingClientRect();
+}
+
+function textRects(node) {
+  var range = document.createRange();
+  range.setEnd(node, node.nodeValue.length);
+  range.setStart(node, 0);
+  return range.getClientRects();
+}
+
+// Given a position in the document model, get a bounding box of the character at
+// that position, relative to the window.
+function coordsAtPos(pm, pos) {
+  var _DOMFromPos = DOMFromPos(pm.content, pos);
+
+  var node = _DOMFromPos.node;
+  var offset = _DOMFromPos.offset;
+
+  var side = undefined,
+      rect = undefined;
+  if (node.nodeType == 3) {
+    if (offset < node.nodeValue.length) {
+      rect = textRect(node, offset, offset + 1);
+      side = "left";
+    }
+    if ((!rect || rect.left == rect.right) && offset) {
+      rect = textRect(node, offset - 1, offset);
+      side = "right";
+    }
+  } else if (node.firstChild) {
+    if (offset < node.childNodes.length) {
+      var child = node.childNodes[offset];
+      rect = child.nodeType == 3 ? textRect(child, 0, child.nodeValue.length) : child.getBoundingClientRect();
+      side = "left";
+    }
+    if ((!rect || rect.left == rect.right) && offset) {
+      var child = node.childNodes[offset - 1];
+      rect = child.nodeType == 3 ? textRect(child, 0, child.nodeValue.length) : child.getBoundingClientRect();
+      side = "right";
+    }
+  } else {
+    rect = node.getBoundingClientRect();
+    side = "left";
+  }
+  var x = rect[side];
+  return { top: rect.top, bottom: rect.bottom, left: x, right: x };
+}
+
+function setDOMSelectionToPos(pm, pos) {
+  var _DOMFromPos2 = DOMFromPos(pm.content, pos);
+
+  var node = _DOMFromPos2.node;
+  var offset = _DOMFromPos2.offset;
+
+  var range = document.createRange();
+  range.setEnd(node, offset);
+  range.setStart(node, offset);
+  var sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+}
+
+// ;; #path=NodeType #kind=class #noAnchor
+// You can add several properties to [node types](#NodeType) to
+// influence the way the editor interacts with them.
+
+// :: (node: Node, path: [number], dom: DOMNode, coords: {left: number, top: number}) → ?Pos
+// #path=NodeType.prototype.countCoordsAsChild
+// Specifies that, if this node is clicked, a child node might
+// actually be meant. This is used to, for example, make clicking a
+// list marker (which, in the DOM, is part of the list node) select
+// the list item it belongs to. Should return null if the given
+// coordinates don't refer to a child node, or the [position](#Pos)
+// before the child otherwise.
+
+function selectableNodeAbove(pm, dom, coords, liberal) {
+  for (; dom && dom != pm.content; dom = dom.parentNode) {
+    if (dom.hasAttribute("pm-offset")) {
+      var path = pathFromDOM(pm, dom),
+          node = pm.doc.path(path);
+      if (node.type.countCoordsAsChild) {
+        var result = node.type.countCoordsAsChild(node, path, dom, coords);
+        if (result) return result;
+      }
+      // Leaf nodes are implicitly clickable
+      if ((liberal || node.type.contains == null) && node.type.selectable) return _model.Pos.from(path);
+      if (!liberal) return null;
+    }
+  }
+}
+
+// :: (pm: ProseMirror, event: MouseEvent, path: [number], node: Node) → bool
+// #path=NodeType.prototype.handleClick
+// If a node is directly clicked (that is, the click didn't land in a
+// DOM node belonging to a child node), and its type has a
+// `handleClick` method, that method is given a chance to handle the
+// click. The method is called, and should return `false` if it did
+// _not_ handle the click.
+//
+// The `event` passed is the event for `"mousedown"`, but calling
+// `preventDefault` on it has no effect, since this method is only
+// called after a corresponding `"mouseup"` has occurred and
+// ProseMirror has determined that this is not a drag or multi-click
+// event.
+
+// :: (pm: ProseMirror, event: MouseEvent, path: [number], node: Node) → bool
+// #path=NodeType.prototype.handleContextMenu
+//
+// When the [context
+// menu](https://developer.mozilla.org/en-US/docs/Web/Events/contextmenu)
+// is activated in the editable context, nodes that the clicked
+// position falls inside of get a chance to react to it. Node types
+// may define a `handleContextMenu` method, which will be called when
+// present, first on inner nodes and then up the document tree, until
+// one of the methods returns something other than `false`.
+//
+// The handlers can inspect `event.target` to figure out whether they
+// were directly clicked, and may call `event.preventDefault()` to
+// prevent the native context menu.
+
+function handleNodeClick(pm, type, event, direct) {
+  for (var dom = event.target; dom && dom != pm.content; dom = dom.parentNode) {
+    if (dom.hasAttribute("pm-offset")) {
+      var path = pathFromDOM(pm, dom),
+          node = pm.doc.path(path);
+      var handled = node.type[type] && node.type[type](pm, event, path, node) !== false;
+      if (direct || handled) return handled;
+    }
+  }
+}
+},{"../dom":8,"../model":35,"../util/error":52}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3783,6 +3811,8 @@ var _dom = require("../dom");
 
 var _main = require("./main");
 
+var _dompos = require("./dompos");
+
 // FIXME clean up threading of path and offset, maybe remove from DOM renderer entirely
 
 function options(path, ranges) {
@@ -3796,6 +3826,9 @@ function options(path, ranges) {
       if (node.isTextblock) adjustTrailingHacks(dom, node);
 
       return dom;
+    },
+    onContainer: function onContainer(node) {
+      node.setAttribute("pm-container", true);
     },
     renderInlineFlat: function renderInlineFlat(node, dom, offset) {
       ranges.advanceTo(new _model.Pos(path, offset));
@@ -3851,7 +3884,7 @@ function draw(pm, doc) {
 }
 
 function adjustTrailingHacks(dom, node) {
-  var needs = node.size == 0 || node.lastChild.type.isBR ? "br" : !node.lastChild.isText && node.lastChild.type.contains == null ? "text" : null;
+  var needs = node.size == 0 || node.lastChild.type.isBR || node.type.isCode && node.lastChild.isText && /\n$/.test(node.lastChild.text) ? "br" : !node.lastChild.isText && node.lastChild.type.contains == null ? "text" : null;
   var last = dom.lastChild;
   var has = !last || last.nodeType != 1 || !last.hasAttribute("pm-ignore") ? null : last.nodeName == "BR" ? "br" : "text";
   if (needs != has) {
@@ -3874,6 +3907,8 @@ function movePast(dom) {
 }
 
 function redraw(pm, dirty, doc, prev) {
+  if (dirty.get(prev) == _main.DIRTY_REDRAW) return draw(pm, doc);
+
   var opts = options([], pm.ranges.activeRangeTracker());
 
   function scan(dom, node, prev) {
@@ -3901,15 +3936,7 @@ function redraw(pm, dirty, doc, prev) {
         reuseDOM = true;
       } else if (pChild && !child.isText && child.sameMarkup(pChild) && dirty.get(pChild) != _main.DIRTY_REDRAW) {
         reuseDOM = true;
-        if (pChild.type.contains) {
-          var contentNode = domPos;
-          for (;;) {
-            var first = contentNode.firstChild;
-            if (!first || first.hasAttribute("pm-ignore") || first.hasAttribute("pm-offset")) break;
-            contentNode = first;
-          }
-          scan(contentNode, child, pChild);
-        }
+        if (pChild.type.contains) scan((0, _dompos.childContainer)(domPos), child, pChild);
       } else {
         var rendered = (0, _format.nodeToDOM)(child, opts, offset);
         dom.insertBefore(rendered, domPos);
@@ -3932,21 +3959,24 @@ function redraw(pm, dirty, doc, prev) {
   }
   scan(pm.content, doc, prev);
 }
-},{"../dom":8,"../format":26,"../model":34,"./main":19}],16:[function(require,module,exports){
+},{"../dom":8,"../format":27,"../model":35,"./dompos":15,"./main":20}],17:[function(require,module,exports){
 "use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.History = undefined;
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _model = require("../model");
 
 var _transform = require("../transform");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// Steps are stored in inverted form (so that they can be applied to
+// undo the original).
 
 var InvertedStep = function InvertedStep(step, version, id) {
   _classCallCheck(this, InvertedStep);
@@ -4101,6 +4131,9 @@ function isDelStep(step) {
 
 var compressStepCount = 150;
 
+// A branch is a history of steps. There'll be one for the undo and
+// one for the redo history.
+
 var Branch = function () {
   function Branch(maxDepth) {
     _classCallCheck(this, Branch);
@@ -4158,6 +4191,10 @@ var Branch = function () {
       if (id == null) id = this.nextStepID++;
       this.events[this.events.length - 1].push(new InvertedStep(step, this.version, id));
     }
+
+    // : (Transform, ?[number])
+    // Add a transform to the branch's history.
+
   }, {
     key: "addTransform",
     value: function addTransform(transform, ids) {
@@ -4167,6 +4204,11 @@ var Branch = function () {
         this.addStep(inverted, transform.maps[i], ids && ids[i]);
       }
     }
+
+    // : (Node, bool) → {transform: Transform, ids: [number]}
+    // Pop the latest event off the branch's history and apply it
+    // to a document transform, returning the transform and the step ID.
+
   }, {
     key: "popEvent",
     value: function popEvent(doc, allowCollapsing) {
@@ -4207,9 +4249,24 @@ var Branch = function () {
       return { transform: tr, ids: ids };
     }
   }, {
+    key: "lastStep",
+    value: function lastStep() {
+      for (var i = this.events.length - 1; i >= 0; i--) {
+        var event = this.events[i];
+        if (event.length) return event[event.length - 1];
+      }
+    }
+  }, {
     key: "getVersion",
     value: function getVersion() {
-      return { id: this.nextStepID, version: this.version };
+      var step = this.lastStep();
+      return { lastID: step && step.id, version: this.version };
+    }
+  }, {
+    key: "isAtVersion",
+    value: function isAtVersion(version) {
+      var step = this.lastStep();
+      return this.version == version.version && (step && step.id) == version.lastID;
     }
   }, {
     key: "findVersion",
@@ -4217,8 +4274,7 @@ var Branch = function () {
       for (var i = this.events.length - 1; i >= 0; i--) {
         var event = this.events[i];
         for (var j = event.length - 1; j >= 0; j--) {
-          var step = event[j];
-          if (step.id == version.id) return { event: i, step: j };else if (step.id < version.id) return { event: i, step: j + 1 };
+          if (event[j].id <= version.lastID) return { event: i, step: j + 1 };
         }
       }
     }
@@ -4287,6 +4343,8 @@ var Branch = function () {
 
 var compressDelay = 750;
 
+// ;; An undo/redo history manager for an editor instance.
+
 var History = exports.History = function () {
   function History(pm) {
     var _this3 = this;
@@ -4307,6 +4365,10 @@ var History = exports.History = function () {
       return _this3.recordTransform(transform, options);
     });
   }
+
+  // : (Transform, Object)
+  // Record a transformation in undo history.
+
 
   _createClass(History, [{
     key: "recordTransform",
@@ -4329,33 +4391,49 @@ var History = exports.History = function () {
       }
       this.maybeScheduleCompression();
     }
+
+    // :: () → bool
+    // Undo one history event. The return value indicates whether
+    // anything was actually undone. Note that in a collaborative
+    // context, or when changes are [applied](#ProseMirror.apply)
+    // without adding them to the history, it is possible for
+    // [`undoDepth`](#History.undoDepth) to have a positive value, but
+    // this method to still return `false`, when non-history changes
+    // overwrote all remaining changes in the history.
+
   }, {
     key: "undo",
     value: function undo() {
       return this.shift(this.done, this.undone);
     }
+
+    // :: () → bool
+    // Redo one history event. The return value indicates whether
+    // anything was actually redone.
+
   }, {
     key: "redo",
     value: function redo() {
       return this.shift(this.undone, this.done);
     }
-  }, {
-    key: "canUndo",
-    value: function canUndo() {
-      return this.done.events.length > 0;
-    }
-  }, {
-    key: "canRedo",
-    value: function canRedo() {
-      return this.undone.events.length > 0;
-    }
+
+    // :: number
+    // The amount of undoable events available.
+
   }, {
     key: "shift",
+
+
+    // : (Branch, Branch) → bool
+    // Apply the latest event from one branch to the document and shift
+    // the event onto the other branch. Returns true when an event could
+    // be shifted.
     value: function shift(from, to) {
       var event = from.popEvent(this.pm.doc, this.allowCollapsing);
       if (!event) return false;
       var transform = event.transform;
       var ids = event.ids;
+
 
       this.ignoreTransform = true;
       this.pm.apply(transform);
@@ -4371,17 +4449,43 @@ var History = exports.History = function () {
 
       return true;
     }
+
+    // :: () → Object
+    // Get the current ‘version’ of the editor content. This can be used
+    // to later [check](#History.isAtVersion) whether anything changed, or
+    // to [roll back](#History.backToVersion) to this version.
+
   }, {
     key: "getVersion",
     value: function getVersion() {
       return this.done.getVersion();
     }
+
+    // :: (Object) → bool
+    // Returns `true` when the editor history is in the state that it
+    // was when the given [version](#History.getVersion) was recorded.
+    // That means either no changes were made, or changes were
+    // done/undone and then undone/redone again.
+
+  }, {
+    key: "isAtVersion",
+    value: function isAtVersion(version) {
+      return this.done.isAtVersion(version);
+    }
+
+    // :: (Object) → bool
+    // Rolls back all changes made since the given
+    // [version](#History.getVersion) was recorded. Returns `false` if
+    // that version was no longer found in the history, and thus the
+    // action could not be completed.
+
   }, {
     key: "backToVersion",
     value: function backToVersion(version) {
       var found = this.done.findVersion(version);
       if (!found) return false;
       var event = this.done.events[found.event];
+      if (found.event == this.done.events.length - 1 && found.step == event.length) return true;
       var combined = this.done.events.slice(found.event + 1).reduce(function (comb, arr) {
         return comb.concat(arr);
       }, event.slice(found.step));
@@ -4389,6 +4493,7 @@ var History = exports.History = function () {
       this.done.events.push(combined);
 
       this.shift(this.done);
+      return true;
     }
   }, {
     key: "rebased",
@@ -4413,17 +4518,31 @@ var History = exports.History = function () {
         if (branch.needsCompression()) branch.startCompression(_this4.pm.doc);
       }, compressDelay);
     }
+  }, {
+    key: "undoDepth",
+    get: function get() {
+      return this.done.events.length;
+    }
+
+    // :: number
+    // The amount of redoable events available.
+
+  }, {
+    key: "redoDepth",
+    get: function get() {
+      return this.undone.events.length;
+    }
   }]);
 
   return History;
 }();
-},{"../model":34,"../transform":40}],17:[function(require,module,exports){
+},{"../model":35,"../transform":41}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Keymap = exports.baseCommands = exports.Command = exports.defineDefaultParamHandler = exports.CommandSet = exports.MarkedRange = exports.SelectionError = exports.Range = exports.defineOption = exports.ProseMirror = undefined;
+exports.Keymap = exports.baseCommands = exports.Command = exports.CommandSet = exports.MarkedRange = exports.SelectionError = exports.Range = exports.defineOption = exports.ProseMirror = undefined;
 
 var _main = require("./main");
 
@@ -4475,12 +4594,6 @@ Object.defineProperty(exports, "CommandSet", {
     return _command.CommandSet;
   }
 });
-Object.defineProperty(exports, "defineDefaultParamHandler", {
-  enumerable: true,
-  get: function get() {
-    return _command.defineDefaultParamHandler;
-  }
-});
 Object.defineProperty(exports, "Command", {
   enumerable: true,
   get: function get() {
@@ -4506,15 +4619,16 @@ var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.Keymap = _browserkeymap2.default;
-},{"./base_commands":9,"./command":12,"./main":19,"./options":20,"./range":21,"./schema_commands":22,"./selection":23,"browserkeymap":5}],18:[function(require,module,exports){
+},{"./base_commands":9,"./command":12,"./main":20,"./options":21,"./range":22,"./schema_commands":23,"./selection":24,"browserkeymap":57}],19:[function(require,module,exports){
 "use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Input = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 exports.dispatchKey = dispatchKey;
 
 var _browserkeymap = require("browserkeymap");
@@ -4525,13 +4639,15 @@ var _model = require("../model");
 
 var _format = require("../format");
 
-var _dom = require("../dom");
-
 var _capturekeys = require("./capturekeys");
+
+var _dom = require("../dom");
 
 var _domchange = require("./domchange");
 
 var _selection = require("./selection");
+
+var _dompos = require("./dompos");
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -4557,6 +4673,7 @@ var Input = exports.Input = function () {
     // When the user is creating a composed character,
     // this is set to a Composing instance.
     this.composing = null;
+    this.mouseDown = null;
     this.shiftKey = this.updatingComposition = false;
     this.skipInput = 0;
 
@@ -4595,7 +4712,7 @@ var Input = exports.Input = function () {
           // Toggle selection to force end of composition
           this.composing = null;
           this.skipInput++;
-          var sel = getSelection();
+          var sel = window.getSelection();
           if (sel.rangeCount) {
             var range = sel.getRangeAt(0);
             sel.removeAllRanges();
@@ -4612,6 +4729,7 @@ var Input = exports.Input = function () {
 
 // Dispatch a key press to the internal keymaps, which will override the default
 // DOM behavior.
+
 
 function dispatchKey(pm, name, e) {
   var seq = pm.input.keySeq;
@@ -4661,11 +4779,17 @@ function dispatchKey(pm, name, e) {
 }
 
 handlers.keydown = function (pm, e) {
+  // :: () #path=ProseMirror#events#interaction
+  // Fired when the user interacts with the editor, for example by
+  // clicking on it or pressing a key while it is focused. Mostly
+  // useful for closing or resetting transient UI state such as open
+  // menus.
+  pm.signal("interaction");
   if (e.keyCode == 16) pm.input.shiftKey = true;
   if (pm.input.composing) return;
   var name = _browserkeymap2.default.keyName(e);
   if (name && dispatchKey(pm, name, e)) return;
-  pm.sel.pollForUpdate();
+  pm.sel.fastPoll();
 };
 
 handlers.keyup = function (pm, e) {
@@ -4685,7 +4809,7 @@ function inputText(pm, range, text) {
 
 handlers.keypress = function (pm, e) {
   if (pm.input.composing || !e.charCode || e.ctrlKey && !e.altKey || _dom.browser.mac && e.metaKey) return;
-  if (dispatchKey(pm, _browserkeymap2.default.keyName(e))) return;
+  if (dispatchKey(pm, _browserkeymap2.default.keyName(e), e)) return;
   var sel = pm.selection;
   if (sel.node && sel.node.contains == null) {
     pm.tr.delete(sel.from, sel.to).apply();
@@ -4696,15 +4820,15 @@ handlers.keypress = function (pm, e) {
 };
 
 function selectClickedNode(pm, e) {
-  var pos = (0, _selection.selectableNodeAbove)(pm, e.target, { left: e.clientX, top: e.clientY }, true);
-  if (!pos) return pm.sel.pollForUpdate();
+  var pos = (0, _dompos.selectableNodeAbove)(pm, e.target, { left: e.clientX, top: e.clientY }, true);
+  if (!pos) return pm.sel.fastPoll();
 
   var _pm$selection = pm.selection;
   var node = _pm$selection.node;
   var from = _pm$selection.from;
 
   if (node && pos.depth >= from.depth && pos.shorten(from.depth).cmp(from) == 0) {
-    if (from.depth == 0) return pm.sel.pollForUpdate();
+    if (from.depth == 0) return pm.sel.fastPoll();
     pos = from.shorten();
   }
 
@@ -4716,59 +4840,102 @@ function selectClickedNode(pm, e) {
 var lastClick = 0,
     oneButLastClick = 0;
 
+function handleTripleClick(pm, e) {
+  e.preventDefault();
+  var pos = (0, _dompos.selectableNodeAbove)(pm, e.target, { left: e.clientX, top: e.clientY }, true);
+  if (pos) {
+    var node = pm.doc.nodeAfter(pos);
+    if (node.isBlock && !node.isTextblock) {
+      pm.setNodeSelection(pos);
+    } else {
+      var path = node.isInline ? pos.path : pos.toPath();
+      if (node.isInline) node = pm.doc.path(path);
+      pm.setTextSelection(new _model.Pos(path, 0), new _model.Pos(path, node.size));
+    }
+    pm.focus();
+  }
+}
+
 handlers.mousedown = function (pm, e) {
-  if (e.ctrlKey) return selectClickedNode(pm, e);
-
-  pm.sel.pollForUpdate();
-
+  pm.signal("interaction");
   var now = Date.now(),
       doubleClick = now - lastClick < 500,
       tripleClick = now - oneButLastClick < 600;
   oneButLastClick = lastClick;
   lastClick = now;
-  if (tripleClick) {
-    e.preventDefault();
-    var pos = (0, _selection.selectableNodeAbove)(pm, e.target, { left: e.clientX, top: e.clientY }, true);
-    if (pos) {
-      var node = pm.doc.nodeAfter(pos);
-      if (node.isBlock && !node.isTextblock) {
-        pm.setNodeSelection(pos);
-      } else {
-        var path = node.isInline ? pos.path : pos.toPath();
-        if (node.isInline) node = pm.doc.path(path);
-        pm.setTextSelection(new _model.Pos(path, 0), new _model.Pos(path, node.size));
-      }
-      pm.focus();
-    }
-    return;
-  }
-  var leaveToBrowser = pm.input.shiftKey || doubleClick;
 
-  var x = e.clientX,
-      y = e.clientY;
-  var up = function up() {
-    removeEventListener("mouseup", up);
-    removeEventListener("mousemove", move);
-    if ((0, _selection.handleNodeClick)(pm, e)) return;
-
-    var pos = !leaveToBrowser && (0, _selection.selectableNodeAbove)(pm, e.target, { left: e.clientX, top: e.clientY });
-    if (pos) {
-      pm.setNodeSelection(pos);
-      pm.focus();
-    } else {
-      pm.sel.pollForUpdate();
-    }
-  };
-  var move = function move(e) {
-    if (!leaveToBrowser && (Math.abs(x - e.clientX) > 4 || Math.abs(y - e.clientY) > 4)) leaveToBrowser = true;
-    pm.sel.pollForUpdate();
-  };
-  addEventListener("mouseup", up);
-  addEventListener("mousemove", move);
+  if (tripleClick) handleTripleClick(pm, e);else pm.input.mouseDown = new MouseDown(pm, e, doubleClick);
 };
 
+var MouseDown = function () {
+  function MouseDown(pm, event, doubleClick) {
+    _classCallCheck(this, MouseDown);
+
+    this.pm = pm;
+    this.event = event;
+    this.leaveToBrowser = pm.input.shiftKey || doubleClick;
+
+    var path = (0, _dompos.pathFromDOM)(pm, event.target),
+        node = pm.doc.path(path);
+    this.mightDrag = node.type.draggable || node == pm.sel.range.node ? path : null;
+    if (this.mightDrag) {
+      event.target.draggable = true;
+      if (_dom.browser.gecko && (this.setContentEditable = !event.target.hasAttribute("contentEditable"))) event.target.setAttribute("contentEditable", "false");
+    }
+
+    this.x = event.clientX;this.y = event.clientY;
+
+    window.addEventListener("mouseup", this.up = this.up.bind(this));
+    window.addEventListener("mousemove", this.move = this.move.bind(this));
+    pm.sel.fastPoll();
+  }
+
+  _createClass(MouseDown, [{
+    key: "done",
+    value: function done() {
+      window.removeEventListener("mouseup", this.up);
+      window.removeEventListener("mousemove", this.move);
+      if (this.mightDrag) {
+        this.event.target.draggable = false;
+        if (_dom.browser.gecko && this.setContentEditable) this.event.target.removeAttribute("contentEditable");
+      }
+    }
+  }, {
+    key: "up",
+    value: function up() {
+      this.done();
+
+      if (this.leaveToBrowser) {
+        this.pm.sel.fastPoll();
+      } else if (this.event.ctrlKey) {
+        selectClickedNode(this.pm, this.event);
+      } else if (!(0, _dompos.handleNodeClick)(this.pm, "handleClick", this.event, true)) {
+        var pos = (0, _dompos.selectableNodeAbove)(this.pm, this.event.target, { left: this.x, top: this.y });
+        if (pos) {
+          this.pm.setNodeSelection(pos);
+          this.pm.focus();
+        } else {
+          this.pm.sel.fastPoll();
+        }
+      }
+    }
+  }, {
+    key: "move",
+    value: function move(event) {
+      if (!this.leaveToBrowser && (Math.abs(this.x - event.clientX) > 4 || Math.abs(this.y - event.clientY) > 4)) this.leaveToBrowser = true;
+      this.pm.sel.fastPoll();
+    }
+  }]);
+
+  return MouseDown;
+}();
+
 handlers.touchdown = function (pm) {
-  pm.sel.pollForUpdate();
+  pm.sel.fastPoll();
+};
+
+handlers.contextmenu = function (pm, e) {
+  (0, _dompos.handleNodeClick)(pm, "handleContextMenu", e, false);
 };
 
 // A class to track state while creating a composed character.
@@ -4839,12 +5006,65 @@ handlers.input = function (pm) {
     return;
   }
 
-  pm.sel.stopPollingForUpdate();
+  pm.startOperation({ readSelection: false });
   (0, _domchange.applyDOMChange)(pm);
   pm.scrollIntoView();
 };
 
-var lastCopied = null;
+function toClipboard(doc, from, to, dataTransfer) {
+  var fragment = doc.sliceBetween(from, to);
+  var html = "<div pm-sides=\"" + from.depth + " " + to.depth + "\">" + (0, _format.toHTML)(fragment) + "</div>";
+  dataTransfer.clearData();
+  dataTransfer.setData("text/html", html);
+  dataTransfer.setData("text/plain", (0, _format.toText)(fragment));
+}
+
+function fromClipboard(pm, dataTransfer, plainText) {
+  var txt = dataTransfer.getData("text/plain");
+  var html = dataTransfer.getData("text/html");
+  if (!html && !txt) return null;
+  var doc = undefined,
+      from = undefined,
+      to = undefined;
+  if ((plainText || !html) && txt) {
+    doc = (0, _format.parseFrom)(pm.schema, pm.signalPipelined("transformPastedText", txt), !plainText && (0, _format.knownSource)("markdown") ? "markdown" : "text");
+  } else {
+    var dom = document.createElement("div");
+    dom.innerHTML = pm.signalPipelined("transformPastedHTML", html);
+    var wrap = dom.querySelector("[pm-sides]"),
+        depths = undefined;
+    if (wrap && (depths = /^(\d+) (\d+)$/.exec(wrap.getAttribute("pm-sides")))) {
+      doc = (0, _format.fromDOM)(pm.schema, wrap);
+      from = posAtLeft(doc, +depths[1]);
+      to = posAtRight(doc, +depths[2]);
+    } else {
+      doc = (0, _format.fromDOM)(pm.schema, dom);
+    }
+  }
+  return { doc: doc,
+    from: from || (0, _selection.findSelectionAtStart)(doc).from,
+    to: to || (0, _selection.findSelectionAtEnd)(doc).to };
+}
+
+function posAtLeft(doc, depth) {
+  var path = [];
+  for (var i = 0, node = doc; i < depth; i++) {
+    if (!(node = node.firstChild)) break;
+    path.push(0);
+  }
+  return new _model.Pos(path, 0);
+}
+
+function posAtRight(doc, depth) {
+  var path = [],
+      node = doc;
+  for (var i = 0; i < depth; i++) {
+    if (!node.size) break;
+    path.push(node.size - 1);
+    node = node.lastChild;
+  }
+  return new _model.Pos(path, node.size);
+}
 
 handlers.copy = handlers.cut = function (pm, e) {
   var _pm$selection2 = pm.selection;
@@ -4852,61 +5072,61 @@ handlers.copy = handlers.cut = function (pm, e) {
   var to = _pm$selection2.to;
   var empty = _pm$selection2.empty;
 
-  if (empty) return;
-  var fragment = pm.selectedDoc;
-  lastCopied = { doc: pm.doc, from: from, to: to,
-    html: (0, _format.toHTML)(fragment),
-    text: (0, _format.toText)(fragment) };
-
-  if (e.clipboardData) {
-    e.preventDefault();
-    e.clipboardData.clearData();
-    e.clipboardData.setData("text/html", lastCopied.html);
-    e.clipboardData.setData("text/plain", lastCopied.text);
-    if (e.type == "cut" && !empty) pm.tr.delete(from, to).apply();
-  }
+  if (empty || !e.clipboardData) return;
+  toClipboard(pm.doc, from, to, e.clipboardData);
+  e.preventDefault();
+  if (e.type == "cut" && !empty) pm.tr.delete(from, to).apply();
 };
+
+// :: (text: string) → string #path=ProseMirror#events#transformPastedText
+// Fired when plain text is pasted. Handlers must return the given
+// string or a [transformed](#EventMixin.signalPipelined) version of
+// it.
+
+// :: (html: string) → string #path=ProseMirror#events#transformPastedHTML
+// Fired when html content is pasted. Handlers must return the given
+// string or a [transformed](#EventMixin.signalPipelined) version of
+// it.
 
 handlers.paste = function (pm, e) {
   if (!e.clipboardData) return;
   var sel = pm.selection;
-  var txt = e.clipboardData.getData("text/plain");
-  var html = e.clipboardData.getData("text/html");
-  if (html || txt) {
+  var fragment = fromClipboard(pm, e.clipboardData, pm.input.shiftKey);
+  if (fragment) {
     e.preventDefault();
-    var doc = undefined,
-        from = undefined,
-        to = undefined;
-    if (pm.input.shiftKey && txt) {
-      doc = (0, _format.fromText)(pm.schema, txt);
-    } else if (lastCopied && (lastCopied.html == html || lastCopied.text == txt)) {
-      ;var _lastCopied = lastCopied;
-      doc = _lastCopied.doc;
-      from = _lastCopied.from;
-      to = _lastCopied.to;
-    } else if (html) {
-      doc = (0, _format.fromHTML)(pm.schema, html);
-    } else {
-      doc = (0, _format.parseFrom)(pm.schema, txt, (0, _format.knownSource)("markdown") ? "markdown" : "text");
-    }
-    pm.tr.replace(sel.from, sel.to, doc, from || (0, _selection.findSelectionAtStart)(doc).from, to || (0, _selection.findSelectionAtEnd)(doc).to).apply();
+    pm.tr.replace(sel.from, sel.to, fragment.doc, fragment.from, fragment.to).apply();
     pm.scrollIntoView();
   }
 };
 
 handlers.dragstart = function (pm, e) {
+  var mouseDown = pm.input.mouseDown;
+  if (mouseDown) mouseDown.done();
+
   if (!e.dataTransfer) return;
 
-  var fragment = pm.selectedDoc;
+  var _pm$selection3 = pm.selection;
+  var from = _pm$selection3.from;
+  var to = _pm$selection3.to;
+  var empty = _pm$selection3.empty;var fragment = undefined;
+  var pos = !empty && pm.posAtCoords({ left: e.clientX, top: e.clientY });
+  if (pos && pos.cmp(from) >= 0 && pos.cmp(to) <= 0) {
+    fragment = { from: from, to: to };
+  } else if (mouseDown && mouseDown.mightDrag) {
+    var _pos = _model.Pos.from(mouseDown.mightDrag);
+    fragment = { from: _pos, to: _pos.move(1) };
+  }
 
-  e.dataTransfer.setData("text/html", (0, _format.toHTML)(fragment));
-  e.dataTransfer.setData("text/plain", (0, _format.toText)(fragment));
-  pm.input.draggingFrom = true;
+  if (fragment) {
+    // FIXME the document could change during a drag, invalidating this range
+    pm.input.draggingFrom = fragment;
+    toClipboard(pm.doc, fragment.from, fragment.to, e.dataTransfer);
+  }
 };
 
 handlers.dragend = function (pm) {
   return window.setTimeout(function () {
-    return pm.input.dragginFrom = false;
+    return pm.input.draggingFrom = false;
   }, 50);
 };
 
@@ -4914,7 +5134,7 @@ handlers.dragover = handlers.dragenter = function (pm, e) {
   e.preventDefault();
   var cursorPos = pm.posAtCoords({ left: e.clientX, top: e.clientY });
   if (!cursorPos) return;
-  var coords = (0, _selection.coordsAtPos)(pm, cursorPos);
+  var coords = (0, _dompos.coordsAtPos)(pm, cursorPos);
   var rect = pm.wrapper.getBoundingClientRect();
   coords.top -= rect.top;
   coords.right -= rect.left;
@@ -4934,50 +5154,52 @@ handlers.dragleave = function (pm) {
 handlers.drop = function (pm, e) {
   pm.input.dropTarget.style.display = "";
 
-  if (!e.dataTransfer) return;
+  // :: (event: DOMEvent) #path=ProseMirror#events#drop
+  // Fired when a drop event occurs on the editor content. A handler
+  // may declare the event handled by calling `preventDefault` on it
+  // or returning a truthy value.
+  if (!e.dataTransfer || pm.signalDOM(e)) return;
 
-  var html = undefined,
-      txt = undefined,
-      doc = undefined;
-  if (html = e.dataTransfer.getData("text/html")) doc = (0, _format.fromHTML)(pm.schema, html, { document: document });else if (txt = e.dataTransfer.getData("text/plain")) doc = (0, _format.parseFrom)(pm.schema, txt, (0, _format.knownSource)("markdown") ? "markdown" : "text");
-
-  if (doc) {
+  var fragment = fromClipboard(pm, e.dataTransfer);
+  if (fragment) {
     e.preventDefault();
-    var insertPos = pm.posAtCoords({ left: e.clientX, top: e.clientY });
+    var insertPos = pm.posAtCoords({ left: e.clientX, top: e.clientY }),
+        origPos = insertPos;
     if (!insertPos) return;
     var tr = pm.tr;
     if (pm.input.draggingFrom && !e.ctrlKey) {
-      tr.deleteSelection();
+      tr.delete(pm.input.draggingFrom.from, pm.input.draggingFrom.to);
       insertPos = tr.map(insertPos).pos;
     }
-    tr.replace(insertPos, insertPos, doc, (0, _selection.findSelectionAtStart)(doc).from, (0, _selection.findSelectionAtEnd)(doc).to).apply();
-    pm.setTextSelection(insertPos, tr.map(insertPos).pos);
+    tr.replace(insertPos, insertPos, fragment.doc, fragment.from, fragment.to).apply();
+    var posAfter = tr.map(origPos).pos;
+    if (_model.Pos.samePath(insertPos.path, posAfter.path) && posAfter.offset == insertPos.offset + 1 && pm.doc.nodeAfter(insertPos).type.selectable) pm.setNodeSelection(insertPos);else pm.setTextSelection(insertPos, posAfter);
     pm.focus();
   }
 };
 
 handlers.focus = function (pm) {
-  (0, _dom.addClass)(pm.wrapper, "ProseMirror-focused");
+  pm.wrapper.classList.add("ProseMirror-focused");
   // :: () #path=ProseMirror#events#focus
   // Fired when the editor gains focus.
   pm.signal("focus");
 };
 
 handlers.blur = function (pm) {
-  (0, _dom.rmClass)(pm.wrapper, "ProseMirror-focused");
+  pm.wrapper.classList.remove("ProseMirror-focused");
   // :: () #path=ProseMirror#events#blur
   // Fired when the editor loses focus.
   pm.signal("blur");
 };
-},{"../dom":8,"../format":26,"../model":34,"./capturekeys":10,"./domchange":14,"./selection":23,"browserkeymap":5}],19:[function(require,module,exports){
+},{"../dom":8,"../format":27,"../model":35,"./capturekeys":10,"./domchange":14,"./dompos":15,"./selection":24,"browserkeymap":57}],20:[function(require,module,exports){
 "use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.DIRTY_REDRAW = exports.DIRTY_RESCAN = exports.ProseMirror = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 require("./css");
 
@@ -5006,6 +5228,8 @@ var _format = require("../format");
 var _options = require("./options");
 
 var _selection2 = require("./selection");
+
+var _dompos = require("./dompos");
 
 var _draw = require("./draw");
 
@@ -5049,7 +5273,7 @@ var ProseMirror = exports.ProseMirror = function () {
     if (opts.doc == null) opts.doc = this.schema.node("doc", null, [this.schema.node("paragraph")]);
     // :: DOMNode
     // The editable DOM node containing the document.
-    this.content = (0, _dom.elt)("div", { class: "ProseMirror-content" });
+    this.content = (0, _dom.elt)("div", { class: "ProseMirror-content", "pm-container": true });
     // :: DOMNode
     // The outer DOM element of the editor.
     this.wrapper = (0, _dom.elt)("div", { class: "ProseMirror" }, this.content);
@@ -5066,11 +5290,12 @@ var ProseMirror = exports.ProseMirror = function () {
     // A namespace where modules can store references to themselves
     // associated with this editor instance.
     this.mod = Object.create(null);
+    this.cached = Object.create(null);
     this.operation = null;
     this.dirtyNodes = new _map.Map(); // Maps node object to 1 (re-scan content) or 2 (redraw entirely)
     this.flushScheduled = false;
 
-    this.sel = new _selection2.SelectionState(this);
+    this.sel = new _selection2.SelectionState(this, (0, _selection2.findSelectionAtStart)(this.doc));
     this.accurateSelection = false;
     this.input = new _input.Input(this);
 
@@ -5083,6 +5308,7 @@ var ProseMirror = exports.ProseMirror = function () {
 
   // :: (string, any)
   // Update the value of the given [option](#edit_options).
+
 
   _createClass(ProseMirror, [{
     key: "setOption",
@@ -5107,6 +5333,7 @@ var ProseMirror = exports.ProseMirror = function () {
 
   }, {
     key: "setTextSelection",
+
 
     // :: (Pos, ?Pos)
     // Set the selection to a [text selection](#TextSelection) from
@@ -5182,6 +5409,7 @@ var ProseMirror = exports.ProseMirror = function () {
       // :: Node The current document.
       this.doc = doc;
       this.ranges = new _range.RangeStore(this);
+      // :: History The edit history for the editor.
       this.history = new _history.History(this);
     }
 
@@ -5225,6 +5453,7 @@ var ProseMirror = exports.ProseMirror = function () {
 
   }, {
     key: "apply",
+
 
     // :: (Transform, ?Object) → ?Transform
     // Apply a transformation (which you might want to create with the
@@ -5274,11 +5503,12 @@ var ProseMirror = exports.ProseMirror = function () {
     }
   }, {
     key: "startOperation",
-    value: function startOperation() {
+    value: function startOperation(options) {
       var _this = this;
 
-      this.sel.beforeStartOp();
       this.operation = new Operation(this);
+      if (!(options && options.readSelection === false) && this.sel.readFromDOM()) this.operation.sel = this.sel.range;
+
       if (!this.flushScheduled) {
         (0, _dom.requestAnimationFrame)(function () {
           _this.flushScheduled = false;
@@ -5321,22 +5551,16 @@ var ProseMirror = exports.ProseMirror = function () {
 
       if ((redrawn || !op.sel.eq(this.sel.range)) && !this.input.composing || op.focus) this.sel.toDOM(op.focus);
 
-      if (op.scrollIntoView !== false) (0, _selection2.scrollIntoView)(this, op.scrollIntoView);
+      // FIXME somehow schedule this relative to ui/update so that it
+      // doesn't cause extra layout
+      if (op.scrollIntoView !== false) (0, _dompos.scrollIntoView)(this, op.scrollIntoView);
       // :: () #path=ProseMirror#events#draw
       // Fired when the editor redrew its document in the DOM.
       if (docChanged) this.signal("draw");
       // :: () #path=ProseMirror#events#flush
       // Fired when the editor has finished
-      // [flushing](#ProseMirror.flush) an update to the DOM. If you
-      // need to respond to this with a DOM update of your own, use this
-      // event to read layout from the DOM, and
-      // [`flushed`](#ProseMirror.event_flushed) to update the DOM.
+      // [flushing](#ProseMirror.flush) an update to the DOM.
       this.signal("flush");
-      // :: () #path=ProseMirror#events#flushed
-      // Fired when the editor has finished
-      // [flushing](#ProseMirror.flush) an update to the DOM, after
-      // [`flush`](#ProseMirror.event_flush) has fired.
-      this.signal("flushed");
       this.accurateSelection = false;
     }
 
@@ -5472,19 +5696,16 @@ var ProseMirror = exports.ProseMirror = function () {
       if (this.sel.range instanceof _selection2.NodeSelection) return document.activeElement == this.content;else return (0, _selection2.hasFocus)(this);
     }
 
-    // :: () → Node
-    // Get the part of the document that falls within the selection.
-
-  }, {
-    key: "posAtCoords",
-
     // :: ({top: number, left: number}) → ?Pos
     // If the given coordinates (which should be relative to the top
     // left corner of the window—not the page) fall within the editable
     // content, this method will return the document position that
     // corresponds to those coordinates.
+
+  }, {
+    key: "posAtCoords",
     value: function posAtCoords(coords) {
-      return (0, _selection2.posAtCoords)(this, coords);
+      return (0, _dompos.posAtCoords)(this, coords);
     }
 
     // :: (Pos) → {top: number, left: number, bottom: number}
@@ -5495,7 +5716,7 @@ var ProseMirror = exports.ProseMirror = function () {
     key: "coordsAtPos",
     value: function coordsAtPos(pos) {
       this.checkPos(pos);
-      return (0, _selection2.coordsAtPos)(this, pos);
+      return (0, _dompos.coordsAtPos)(this, pos);
     }
 
     // :: (?Pos)
@@ -5514,8 +5735,7 @@ var ProseMirror = exports.ProseMirror = function () {
 
     // :: (string, ?[any]) → bool
     // Execute the named [command](#Command). If the command takes
-    // parameters and they are not passed here, the user will be
-    // prompted for them.
+    // parameters, they can be passed as an array.
 
   }, {
     key: "execCommand",
@@ -5584,6 +5804,11 @@ var ProseMirror = exports.ProseMirror = function () {
       }
     }
   }, {
+    key: "markAllDirty",
+    value: function markAllDirty() {
+      this.dirtyNodes.set(this.doc, DIRTY_REDRAW);
+    }
+  }, {
     key: "selection",
     get: function get() {
       if (!this.accurateSelection) this.ensureOperation();
@@ -5594,21 +5819,6 @@ var ProseMirror = exports.ProseMirror = function () {
     get: function get() {
       return new EditorTransform(this);
     }
-  }, {
-    key: "selectedDoc",
-    get: function get() {
-      var sel = this.selection;
-      return this.doc.sliceBetween(sel.from, sel.to);
-    }
-
-    // :: () → string
-    // Get the text that falls within the selection.
-
-  }, {
-    key: "selectedText",
-    get: function get() {
-      return (0, _format.toText)(this.selectedDoc);
-    }
   }]);
 
   return ProseMirror;
@@ -5617,6 +5827,7 @@ var ProseMirror = exports.ProseMirror = function () {
 // :: Object
 // The object `{scrollIntoView: true}`, which is a common argument to
 // pass to `ProseMirror.apply` or `EditorTransform.apply`.
+
 
 ProseMirror.prototype.apply.scroll = { scrollIntoView: true };
 
@@ -5640,6 +5851,7 @@ var Operation = function Operation(pm) {
 // ;; A selection-aware extension of `Transform`. Use
 // `ProseMirror.tr` to create an instance.
 
+
 var EditorTransform = function (_Transform) {
   _inherits(EditorTransform, _Transform);
 
@@ -5656,6 +5868,7 @@ var EditorTransform = function (_Transform) {
   // Apply the transformation. Returns the transform, or `false` it is
   // was empty.
 
+
   _createClass(EditorTransform, [{
     key: "apply",
     value: function apply(options) {
@@ -5668,6 +5881,7 @@ var EditorTransform = function (_Transform) {
 
   }, {
     key: "replaceSelection",
+
 
     // :: (?Node, ?bool) → EditorTransform
     // Replace the selection with the given node, or delete it if `node`
@@ -5731,7 +5945,7 @@ var EditorTransform = function (_Transform) {
 
   return EditorTransform;
 }(_transform.Transform);
-},{"../dom":8,"../format":26,"../model":34,"../transform":40,"../util/error":49,"../util/event":50,"../util/map":51,"../util/sortedinsert":53,"./css":13,"./draw":15,"./history":16,"./input":18,"./options":20,"./range":21,"./selection":23,"browserkeymap":5}],20:[function(require,module,exports){
+},{"../dom":8,"../format":27,"../model":35,"../transform":41,"../util/error":52,"../util/event":53,"../util/map":54,"../util/sortedinsert":56,"./css":13,"./dompos":15,"./draw":16,"./history":17,"./input":19,"./options":21,"./range":22,"./selection":24,"browserkeymap":57}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5745,6 +5959,8 @@ exports.setOption = setOption;
 var _model = require("../model");
 
 var _error = require("../util/error");
+
+var _prompt = require("../ui/prompt");
 
 var _command = require("./command");
 
@@ -5763,9 +5979,9 @@ var options = Object.create(null);
 // :: (string, any, (pm: ProseMirror, newValue: any, oldValue: any, init: bool), bool)
 // Define a new option. The `update` handler will be called with the
 // option's old and new value every time the option is
-// [changed](#ProseMirror.setOption). When `updateOnInit` is true, it
-// is also called on editor init, with null as the old value, and a fourth
-// argument of true.
+// [changed](#ProseMirror.setOption). When `updateOnInit` is false, it
+// will not be called on editor init, otherwise it is called with null as the old value,
+// and a fourth argument of true.
 function defineOption(name, defaultValue, update, updateOnInit) {
   options[name] = new Option(defaultValue, update, updateOnInit);
 }
@@ -5810,11 +6026,11 @@ defineOption("historyEventDelay", 500);
 // in the menus). Defaults to `CommandSet.default`.
 defineOption("commands", _command.CommandSet.default, _command.updateCommands);
 
-// :: (pm: ProseMirror, cmd: Command, callback: (?[any])) #path=commandParamHandler #kind=CommandParamHandler
-// The handler used to prompt the user for [command
-// parameters](#CommandParam). Null (the default) means to use the
-// [default handler](#defineDefaultParamHandler).
-defineOption("commandParamHandler", null);
+// :: ParamPrompt #path=commandParamPrompt #kind=option
+// A default [parameter prompting](#ui/prompt) class to use when a
+// command is [executed](#ProseMirror.execCommand) without providing
+// parameters.
+defineOption("commandParamPrompt", _prompt.ParamPrompt);
 
 // :: ?string #path=label #kind=option
 // The label of the editor. When set, the editable DOM node gets an
@@ -5845,20 +6061,21 @@ function initOptions(pm) {
 
 function setOption(pm, name, value) {
   var desc = options[name];
+  if (desc === undefined) _error.AssertionError.raise("Option '" + name + "' is not defined");
   if (desc.update === false) _error.AssertionError.raise("Option '" + name + "' can not be changed");
   var old = pm.options[name];
   pm.options[name] = value;
   if (desc.update) desc.update(pm, value, old, false);
 }
-},{"../model":34,"../util/error":49,"./command":12}],21:[function(require,module,exports){
+},{"../model":35,"../ui/prompt":50,"../util/error":52,"./command":12}],22:[function(require,module,exports){
 "use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.RangeStore = exports.MarkedRange = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _event = require("../util/event");
 
@@ -6050,24 +6267,24 @@ var RangeTracker = function () {
 
   return RangeTracker;
 }();
-},{"../util/event":50}],22:[function(require,module,exports){
+},{"../util/event":53}],23:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
 
 var _command = require("./command");
 
+var _format = require("../format");
+
 // # Mark types
 
 // ;; #path="strong:set" #kind=command
 // Add the [strong](#StrongMark) mark to the selected content.
-
-_model.StrongMark.register("command", { name: "set", derive: true, label: "Set strong" });
+_model.StrongMark.register("command", "set", { derive: true, label: "Set strong" });
 
 // ;; #path="strong:unset" #kind=command
 // Remove the [strong](#StrongMark) mark from the selected content.
-
-_model.StrongMark.register("command", { name: "unset", derive: true, label: "Unset strong" });
+_model.StrongMark.register("command", "unset", { derive: true, label: "Unset strong" });
 
 // ;; #path="strong:toggle" #kind=command
 // Toggle the [strong](#StrongMark) mark. If there is any strong
@@ -6078,31 +6295,27 @@ _model.StrongMark.register("command", { name: "unset", derive: true, label: "Uns
 // makes the selected content strong.
 //
 // **Keybindings:** Mod-B
-//
-// Registers itself in the inline [menu group](#CommandSpec.menuGroup).
-
-_model.StrongMark.register("command", {
-  name: "toggle",
+_model.StrongMark.register("command", "toggle", {
   derive: true,
   label: "Toggle strong",
-  menuGroup: "inline(20)",
-  display: {
-    type: "icon",
-    width: 805, height: 1024,
-    path: "M317 869q42 18 80 18 214 0 214-191 0-65-23-102-15-25-35-42t-38-26-46-14-48-6-54-1q-41 0-57 5 0 30-0 90t-0 90q0 4-0 38t-0 55 2 47 6 38zM309 442q24 4 62 4 46 0 81-7t62-25 42-51 14-81q0-40-16-70t-45-46-61-24-70-8q-28 0-74 7 0 28 2 86t2 86q0 15-0 45t-0 45q0 26 0 39zM0 950l1-53q8-2 48-9t60-15q4-6 7-15t4-19 3-18 1-21 0-19v-37q0-561-12-585-2-4-12-8t-25-6-28-4-27-2-17-1l-2-47q56-1 194-6t213-5q13 0 39 0t38 0q40 0 78 7t73 24 61 40 42 59 16 78q0 29-9 54t-22 41-36 32-41 25-48 22q88 20 146 76t58 141q0 57-20 102t-53 74-78 48-93 27-100 8q-25 0-75-1t-75-1q-60 0-175 6t-132 6z"
+  menu: {
+    group: "inline", rank: 20,
+    display: {
+      type: "icon",
+      width: 805, height: 1024,
+      path: "M317 869q42 18 80 18 214 0 214-191 0-65-23-102-15-25-35-42t-38-26-46-14-48-6-54-1q-41 0-57 5 0 30-0 90t-0 90q0 4-0 38t-0 55 2 47 6 38zM309 442q24 4 62 4 46 0 81-7t62-25 42-51 14-81q0-40-16-70t-45-46-61-24-70-8q-28 0-74 7 0 28 2 86t2 86q0 15-0 45t-0 45q0 26 0 39zM0 950l1-53q8-2 48-9t60-15q4-6 7-15t4-19 3-18 1-21 0-19v-37q0-561-12-585-2-4-12-8t-25-6-28-4-27-2-17-1l-2-47q56-1 194-6t213-5q13 0 39 0t38 0q40 0 78 7t73 24 61 40 42 59 16 78q0 29-9 54t-22 41-36 32-41 25-48 22q88 20 146 76t58 141q0 57-20 102t-53 74-78 48-93 27-100 8q-25 0-75-1t-75-1q-60 0-175 6t-132 6z"
+    }
   },
   keys: ["Mod-B"]
 });
 
 // ;; #path=em:set #kind=command
 // Add the [emphasis](#EmMark) mark to the selected content.
-
-_model.EmMark.register("command", { name: "set", derive: true, label: "Add emphasis" });
+_model.EmMark.register("command", "set", { derive: true, label: "Add emphasis" });
 
 // ;; #path=em:unset #kind=command
 // Remove the [emphasis](#EmMark) mark from the selected content.
-
-_model.EmMark.register("command", { name: "unset", derive: true, label: "Remove emphasis" });
+_model.EmMark.register("command", "unset", { derive: true, label: "Remove emphasis" });
 
 // ;; #path=em:toggle #kind=command
 // Toggle the [emphasis](#EmMark) mark. If there is any emphasized
@@ -6113,31 +6326,27 @@ _model.EmMark.register("command", { name: "unset", derive: true, label: "Remove 
 // makes the selected content emphasized.
 //
 // **Keybindings:** Mod-I
-//
-// Registers itself in the inline [menu group](#CommandSpec.menuGroup).
-
-_model.EmMark.register("command", {
-  name: "toggle",
+_model.EmMark.register("command", "toggle", {
   derive: true,
   label: "Toggle emphasis",
-  menuGroup: "inline(21)",
-  display: {
-    type: "icon",
-    width: 585, height: 1024,
-    path: "M0 949l9-48q3-1 46-12t63-21q16-20 23-57 0-4 35-165t65-310 29-169v-14q-13-7-31-10t-39-4-33-3l10-58q18 1 68 3t85 4 68 1q27 0 56-1t69-4 56-3q-2 22-10 50-17 5-58 16t-62 19q-4 10-8 24t-5 22-4 26-3 24q-15 84-50 239t-44 203q-1 5-7 33t-11 51-9 47-3 32l0 10q9 2 105 17-1 25-9 56-6 0-18 0t-18 0q-16 0-49-5t-49-5q-78-1-117-1-29 0-81 5t-69 6z"
+  menu: {
+    group: "inline", rank: 21,
+    display: {
+      type: "icon",
+      width: 585, height: 1024,
+      path: "M0 949l9-48q3-1 46-12t63-21q16-20 23-57 0-4 35-165t65-310 29-169v-14q-13-7-31-10t-39-4-33-3l10-58q18 1 68 3t85 4 68 1q27 0 56-1t69-4 56-3q-2 22-10 50-17 5-58 16t-62 19q-4 10-8 24t-5 22-4 26-3 24q-15 84-50 239t-44 203q-1 5-7 33t-11 51-9 47-3 32l0 10q9 2 105 17-1 25-9 56-6 0-18 0t-18 0q-16 0-49-5t-49-5q-78-1-117-1-29 0-81 5t-69 6z"
+    }
   },
   keys: ["Mod-I"]
 });
 
 // ;; #path=code:set #kind=command
 // Add the [code](#CodeMark) mark to the selected content.
-
-_model.CodeMark.register("command", { name: "set", derive: true, label: "Set code style" });
+_model.CodeMark.register("command", "set", { derive: true, label: "Set code style" });
 
 // ;; #path=code:unset #kind=command
 // Remove the [code](#CodeMark) mark from the selected content.
-
-_model.CodeMark.register("command", { name: "unset", derive: true, label: "Remove code style" });
+_model.CodeMark.register("command", "unset", { derive: true, label: "Remove code style" });
 
 // ;; #path=code:toggle #kind=command
 // Toggle the [code](#CodeMark) mark. If there is any code-styled
@@ -6148,29 +6357,19 @@ _model.CodeMark.register("command", { name: "unset", derive: true, label: "Remov
 // styles the selected content as code.
 //
 // **Keybindings:** Mod-`
-//
-// Registers itself in the inline [menu group](#CommandSpec.menuGroup).
-
-_model.CodeMark.register("command", {
-  name: "toggle",
+_model.CodeMark.register("command", "toggle", {
   derive: true,
   label: "Toggle code style",
-  menuGroup: "inline(22)",
-  display: {
-    type: "icon",
-    width: 896, height: 1024,
-    path: "M608 192l-96 96 224 224-224 224 96 96 288-320-288-320zM288 192l-288 320 288 320 96-96-224-224 224-224-96-96z"
+  menu: {
+    group: "inline", rank: 22,
+    display: {
+      type: "icon",
+      width: 896, height: 1024,
+      path: "M608 192l-96 96 224 224-224 224 96 96 288-320-288-320zM288 192l-288 320 288 320 96-96-224-224 224-224-96-96z"
+    }
   },
   keys: ["Mod-`"]
 });
-
-// ;; #path=link:unset #kind=command
-// Removes all links for the selected content, or, if there is no
-// selection, from the [active marks](#ProseMirror.activeMarks). Will
-// only [select](#Command.select) itself when there is a link in the
-// selection or active marks.
-//
-// Registers itself in the inline [menu group](#CommandSpec.menuGroup).
 
 var linkIcon = {
   type: "icon",
@@ -6178,16 +6377,18 @@ var linkIcon = {
   path: "M832 694q0-22-16-38l-118-118q-16-16-38-16-24 0-41 18 1 1 10 10t12 12 8 10 7 14 2 15q0 22-16 38t-38 16q-8 0-15-2t-14-7-10-8-12-12-10-10q-18 17-18 41 0 22 16 38l117 118q15 15 38 15 22 0 38-14l84-83q16-16 16-38zM430 292q0-22-16-38l-117-118q-16-16-38-16-22 0-38 15l-84 83q-16 16-16 38 0 22 16 38l118 118q15 15 38 15 24 0 41-17-1-1-10-10t-12-12-8-10-7-14-2-15q0-22 16-38t38-16q8 0 15 2t14 7 10 8 12 12 10 10q18-17 18-41zM941 694q0 68-48 116l-84 83q-47 47-116 47-69 0-116-48l-117-118q-47-47-47-116 0-70 50-119l-50-50q-49 50-118 50-68 0-116-48l-118-118q-48-48-48-116t48-116l84-83q47-47 116-47 69 0 116 48l117 118q47 47 47 116 0 70-50 119l50 50q49-50 118-50 68 0 116 48l118 118q48 48 48 116z"
 };
 
-_model.LinkMark.register("command", {
-  name: "unset",
+// ;; #path=link:unset #kind=command
+// Removes all links for the selected content, or, if there is no
+// selection, from the [active marks](#ProseMirror.activeMarks). Will
+// only [select](#Command.select) itself when there is a link in the
+// selection or active marks.
+_model.LinkMark.register("command", "unset", {
   derive: true,
   label: "Unlink",
-  menuGroup: "inline(30)",
+  menu: { group: "inline", rank: 30, display: linkIcon },
   active: function active() {
     return true;
-  },
-
-  display: linkIcon
+  }
 });
 
 // ;; #path=link:set #kind=command
@@ -6201,19 +6402,15 @@ _model.LinkMark.register("command", {
 // **`title`**`: string`
 //   : The link's title.
 //
-// Adds itself to the inline [menu group](#CommandSpec.menuGroup). Only selects itself when
-// `unlink` isn't selected, so that only one of the two is visible in
-// the menu at any time.
-
-_model.LinkMark.register("command", {
-  name: "set",
+// Only selects itself when `unlink` isn't selected, so that only one
+// of the two is visible in the menu at any time.
+_model.LinkMark.register("command", "set", {
   derive: {
     inverseSelect: true,
     params: [{ label: "Target", attr: "href" }, { label: "Title", attr: "title" }]
   },
   label: "Add link",
-  menuGroup: "inline(30)",
-  display: linkIcon
+  menu: { group: "inline", rank: 30, display: linkIcon }
 });
 
 // Node types
@@ -6230,22 +6427,17 @@ _model.LinkMark.register("command", {
 //
 // **`title`**`: string`
 //   : A title for the image.
-//
-// Registers itself in the inline [menu group](#CommandSpec.menuGroup).
-
-_model.Image.register("command", {
-  name: "insert",
+_model.Image.register("command", "insert", {
   derive: {
     params: [{ label: "Image URL", attr: "src" }, { label: "Description / alternative text", attr: "alt",
       prefill: function prefill(pm) {
-        return (0, _command.selectedNodeAttr)(pm, this, "alt") || pm.selectedText;
+        return (0, _command.selectedNodeAttr)(pm, this, "alt") || (0, _format.toText)(pm.doc.sliceBetween(pm.selection.from, pm.selection.to));
       } }, { label: "Title", attr: "title" }]
   },
   label: "Insert image",
-  display: {
-    type: "icon",
-    width: 1097, height: 1024,
-    path: "M365 329q0 45-32 77t-77 32-77-32-32-77 32-77 77-32 77 32 32 77zM950 548v256h-804v-109l182-182 91 91 292-292zM1005 146h-914q-7 0-12 5t-5 12v694q0 7 5 12t12 5h914q7 0 12-5t5-12v-694q0-7-5-12t-12-5zM1097 164v694q0 37-26 64t-64 26h-914q-37 0-64-26t-26-64v-694q0-37 26-64t64-26h914q37 0 64 26t26 64z"
+  menu: {
+    group: "insert", rank: 20,
+    display: { type: "label", label: "Image" }
   }
 });
 
@@ -6253,18 +6445,16 @@ _model.Image.register("command", {
 // Wrap the selection in a bullet list.
 //
 // **Keybindings:** Alt-Right '*', Alt-Right '-'
-//
-// Registers itself in the block [menu group](#CommandSpec.menuGroup).
-
-_model.BulletList.register("command", {
-  name: "wrap",
+_model.BulletList.register("command", "wrap", {
   derive: { list: true },
   label: "Wrap the selection in a bullet list",
-  menuGroup: "block(40)",
-  display: {
-    type: "icon",
-    width: 768, height: 896,
-    path: "M0 512h128v-128h-128v128zM0 256h128v-128h-128v128zM0 768h128v-128h-128v128zM256 512h512v-128h-512v128zM256 256h512v-128h-512v128zM256 768h512v-128h-512v128z"
+  menu: {
+    group: "block", rank: 40,
+    display: {
+      type: "icon",
+      width: 768, height: 896,
+      path: "M0 512h128v-128h-128v128zM0 256h128v-128h-128v128zM0 768h128v-128h-128v128zM256 512h512v-128h-512v128zM256 256h512v-128h-512v128zM256 768h512v-128h-512v128z"
+    }
   },
   keys: ["Alt-Right '*'", "Alt-Right '-'"]
 });
@@ -6273,18 +6463,16 @@ _model.BulletList.register("command", {
 // Wrap the selection in an ordered list.
 //
 // **Keybindings:** Alt-Right '1'
-//
-// Registers itself in the block [menu group](#CommandSpec.menuGroup).
-
-_model.OrderedList.register("command", {
-  name: "wrap",
+_model.OrderedList.register("command", "wrap", {
   derive: { list: true },
   label: "Wrap the selection in an ordered list",
-  menuGroup: "block(41)",
-  display: {
-    type: "icon",
-    width: 768, height: 896,
-    path: "M320 512h448v-128h-448v128zM320 768h448v-128h-448v128zM320 128v128h448v-128h-448zM79 384h78v-256h-36l-85 23v50l43-2v185zM189 590c0-36-12-78-96-78-33 0-64 6-83 16l1 66c21-10 42-15 67-15s32 11 32 28c0 26-30 58-110 112v50h192v-67l-91 2c49-30 87-66 87-113l1-1z"
+  menu: {
+    group: "block", rank: 41,
+    display: {
+      type: "icon",
+      width: 768, height: 896,
+      path: "M320 512h448v-128h-448v128zM320 768h448v-128h-448v128zM320 128v128h448v-128h-448zM79 384h78v-256h-36l-85 23v50l43-2v185zM189 590c0-36-12-78-96-78-33 0-64 6-83 16l1 66c21-10 42-15 67-15s32 11 32 28c0 26-30 58-110 112v50h192v-67l-91 2c49-30 87-66 87-113l1-1z"
+    }
   },
   keys: ["Alt-Right '1'"]
 });
@@ -6293,18 +6481,16 @@ _model.OrderedList.register("command", {
 // Wrap the selection in a block quote.
 //
 // **Keybindings:** Alt-Right '>', Alt-Right '"'
-//
-// Registers itself in the block [menu group](#CommandSpec.menuGroup).
-
-_model.BlockQuote.register("command", {
-  name: "wrap",
+_model.BlockQuote.register("command", "wrap", {
   derive: true,
   label: "Wrap the selection in a block quote",
-  menuGroup: "block(45)",
-  display: {
-    type: "icon",
-    width: 640, height: 896,
-    path: "M0 448v256h256v-256h-128c0 0 0-128 128-128v-128c0 0-256 0-256 256zM640 320v-128c0 0-256 0-256 256v256h256v-256h-128c0 0 0-128 128-128z"
+  menu: {
+    group: "block", rank: 45,
+    display: {
+      type: "icon",
+      width: 640, height: 896,
+      path: "M0 448v256h256v-256h-128c0 0 0-128 128-128v-128c0 0-256 0-256 256zM640 320v-128c0 0-256 0-256 256v256h256v-256h-128c0 0 0-128 128-128z"
+    }
   },
   keys: ["Alt-Right '>'", "Alt-Right '\"'"]
 });
@@ -6316,8 +6502,7 @@ _model.BlockQuote.register("command", {
 // inserted instead.
 //
 // **Keybindings:** Mod-Enter, Shift-Enter
-_model.HardBreak.register("command", {
-  name: "insert",
+_model.HardBreak.register("command", "insert", {
   label: "Insert hard break",
   run: function run(pm) {
     var _pm$selection = pm.selection;
@@ -6335,9 +6520,7 @@ _model.HardBreak.register("command", {
 // item, split that child and the list item, and delete the selection.
 //
 // **Keybindings:** Enter
-
-_model.ListItem.register("command", {
-  name: "split",
+_model.ListItem.register("command", "split", {
   label: "Split the current list item",
   run: function run(pm) {
     var _pm$selection2 = pm.selection;
@@ -6356,98 +6539,93 @@ _model.ListItem.register("command", {
   keys: ["Enter(50)"]
 });
 
-// ;; #path=:heading::make_ #kind=command
-// The commands `make1` to `make6` set the textblocks in the
-// selection to become headers with the given level.
-//
-// **Keybindings:** Mod-H '1' through Mod-H '6'
-
-for (var i = 1; i <= 6; i++) {
-  _model.Heading.register("command", {
-    name: "make" + i,
-    derive: { name: "make", attrs: { level: i } },
-    label: "Change to heading " + i,
-    keys: ["Mod-H '" + i + "'"]
+var _loop = function _loop(i) {
+  // ;; #path=:heading::make_ #kind=command
+  // The commands `make1` to `make6` set the textblocks in the
+  // selection to become headers with the given level.
+  //
+  // **Keybindings:** Mod-H '1' through Mod-H '6'
+  _model.Heading.registerComputed("command", "make" + i, function (type) {
+    if (i <= type.maxLevel) return {
+      derive: { name: "make", attrs: { level: i } },
+      label: "Change to heading " + i,
+      keys: ["Mod-H '" + i + "'"],
+      menu: {
+        group: "textblockHeading", rank: 30 + i,
+        display: { type: "label", label: "Level " + i },
+        activeDisplay: "Head " + i
+      }
+    };
   });
+};
+
+for (var i = 1; i <= 10; i++) {
+  _loop(i);
 } // ;; #path=paragraph:make #kind=command
 // Set the textblocks in the selection to be regular paragraphs.
 //
 // **Keybindings:** Mod-P
-
-_model.Paragraph.register("command", {
-  name: "make",
+_model.Paragraph.register("command", "make", {
   derive: true,
   label: "Change to paragraph",
-  keys: ["Mod-P"]
+  keys: ["Mod-P"],
+  menu: {
+    group: "textblock", rank: 10,
+    display: { type: "label", label: "Plain" },
+    activeDisplay: "Plain"
+  }
 });
 
 // ;; #path=code_block:make #kind=command
 // Set the textblocks in the selection to be code blocks.
 //
 // **Keybindings:** Mod-\
-
-_model.CodeBlock.register("command", {
-  name: "make",
+_model.CodeBlock.register("command", "make", {
   derive: true,
   label: "Change to code block",
-  keys: ["Mod-\\"]
+  keys: ["Mod-\\"],
+  menu: {
+    group: "textblock", rank: 20,
+    display: { type: "label", label: "Code" },
+    activeDisplay: "Code"
+  }
 });
 
 // ;; #path=horizontal_rule:insert #kind=command
 // Replace the selection with a horizontal rule.
 //
 // **Keybindings:** Mod-Shift-Minus
-
-_model.HorizontalRule.register("command", {
-  name: "insert",
+_model.HorizontalRule.register("command", "insert", {
   derive: true,
   label: "Insert horizontal rule",
-  keys: ["Mod-Shift--"]
+  keys: ["Mod-Shift--"],
+  menu: { group: "insert", rank: 70, display: { type: "label", label: "Horizontal rule" } }
 });
-
-// Used by the textblockType command
-
-_model.Paragraph.prototype.textblockMenuOptions = [{ label: "Normal", rank: 10 }];
-_model.CodeBlock.prototype.textblockMenuOptions = [{ label: "Code", rank: 20 }];
-_model.Heading.prototype.textblockMenuOptions = [1, 2, 3, 4, 5, 6].map(function (n) {
-  return { label: "Head " + n, attrs: { level: n }, rank: 30 + n };
-});
-
-// Used by the insert command
-
-_model.Image.prototype.insertMenuOptions = [{ label: "Image", command: "insert", rank: 20 }];
-_model.HorizontalRule.prototype.insertMenuOptions = [{ label: "Horizontal rule", command: "insert", rank: 70 }];
-},{"../model":34,"./command":12}],23:[function(require,module,exports){
+},{"../format":27,"../model":35,"./command":12}],24:[function(require,module,exports){
 "use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.NodeSelection = exports.TextSelection = exports.Selection = exports.SelectionState = exports.SelectionError = undefined;
-exports.posFromDOM = posFromDOM;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 exports.rangeFromDOMLoose = rangeFromDOMLoose;
-exports.findByPath = findByPath;
-exports.resolvePath = resolvePath;
 exports.hasFocus = hasFocus;
-exports.posAtCoords = posAtCoords;
-exports.coordsAtPos = coordsAtPos;
-exports.scrollIntoView = scrollIntoView;
 exports.findSelectionFrom = findSelectionFrom;
 exports.findSelectionNear = findSelectionNear;
 exports.findSelectionAtStart = findSelectionAtStart;
 exports.findSelectionAtEnd = findSelectionAtEnd;
-exports.selectableNodeAbove = selectableNodeAbove;
-exports.handleNodeClick = handleNodeClick;
 exports.verticalMotionLeavesTextblock = verticalMotionLeavesTextblock;
-exports.setDOMSelectionToPos = setDOMSelectionToPos;
 
 var _model = require("../model");
 
 var _error = require("../util/error");
 
 var _dom = require("../dom");
+
+var _dompos = require("./dompos");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -6470,24 +6648,24 @@ var SelectionError = exports.SelectionError = function (_ProseMirrorError) {
 }(_error.ProseMirrorError);
 
 var SelectionState = exports.SelectionState = function () {
-  function SelectionState(pm) {
+  function SelectionState(pm, range) {
     var _this2 = this;
 
     _classCallCheck(this, SelectionState);
 
     this.pm = pm;
+    this.range = range;
 
-    this.range = findSelectionAtStart(pm.doc);
     this.lastNonNodePos = null;
 
-    this.pollState = null;
-    this.pollTimeout = null;
+    this.polling = null;
     this.lastAnchorNode = this.lastHeadNode = this.lastAnchorOffset = this.lastHeadOffset = null;
     this.lastNode = null;
 
     pm.content.addEventListener("focus", function () {
       return _this2.receivedFocus();
     });
+    this.poller = this.poller.bind(this);
   }
 
   _createClass(SelectionState, [{
@@ -6506,61 +6684,60 @@ var SelectionState = exports.SelectionState = function () {
       if (clearLast !== false) this.lastAnchorNode = null;
     }
   }, {
-    key: "pollForUpdate",
-    value: function pollForUpdate() {
-      var _this3 = this;
-
-      if (this.pm.input.composing) return;
-      clearTimeout(this.pollTimeout);
-      this.pollState = "update";
-      var n = 0,
-          check = function check() {
-        if (_this3.pm.input.composing) {
-          // Abort
-        } else if (_this3.pm.operation) {
-            _this3.pollTimeout = setTimeout(check, 20);
-          } else if (!_this3.readUpdate() && ++n == 1) {
-            _this3.pollTimeout = setTimeout(check, 50);
-          } else {
-            _this3.stopPollingForUpdate();
-          }
-      };
-      this.pollTimeout = setTimeout(check, 20);
+    key: "poller",
+    value: function poller() {
+      if (hasFocus(this.pm)) {
+        if (!this.pm.operation) this.readFromDOM();
+        this.polling = setTimeout(this.poller, 100);
+      } else {
+        this.polling = null;
+      }
     }
   }, {
-    key: "stopPollingForUpdate",
-    value: function stopPollingForUpdate() {
-      if (this.pollState == "update") {
-        this.pollState = null;
-        this.pollToSync();
-      }
+    key: "startPolling",
+    value: function startPolling() {
+      clearTimeout(this.polling);
+      this.polling = setTimeout(this.poller, 50);
+    }
+  }, {
+    key: "fastPoll",
+    value: function fastPoll() {
+      this.startPolling();
+    }
+  }, {
+    key: "stopPolling",
+    value: function stopPolling() {
+      clearTimeout(this.polling);
+      this.polling = null;
     }
   }, {
     key: "domChanged",
     value: function domChanged() {
-      var sel = getSelection();
+      var sel = window.getSelection();
       return sel.anchorNode != this.lastAnchorNode || sel.anchorOffset != this.lastAnchorOffset || sel.focusNode != this.lastHeadNode || sel.focusOffset != this.lastHeadOffset;
     }
   }, {
     key: "storeDOMState",
     value: function storeDOMState() {
-      var sel = getSelection();
+      var sel = window.getSelection();
       this.lastAnchorNode = sel.anchorNode;this.lastAnchorOffset = sel.anchorOffset;
       this.lastHeadNode = sel.focusNode;this.lastHeadOffset = sel.focusOffset;
     }
   }, {
-    key: "readUpdate",
-    value: function readUpdate() {
+    key: "readFromDOM",
+    value: function readFromDOM() {
       if (this.pm.input.composing || !hasFocus(this.pm) || !this.domChanged()) return false;
 
-      var sel = getSelection(),
+      var sel = window.getSelection(),
           doc = this.pm.doc;
-      var anchor = posFromDOMInner(this.pm, sel.anchorNode, sel.anchorOffset);
-      var head = posFromDOMInner(this.pm, sel.focusNode, sel.focusOffset);
-      var newSel = findSelectionNear(doc, head, this.range.head && this.range.head.cmp(head) < 0 ? -1 : 1);
-      if (newSel instanceof TextSelection && doc.path(anchor.path).isTextblock) newSel = new TextSelection(anchor, newSel.head);
-      this.setAndSignal(newSel);
-      if (newSel instanceof NodeSelection || newSel.head.cmp(head) || newSel.anchor.cmp(anchor)) {
+      var anchor = (0, _dompos.posFromDOM)(this.pm, sel.anchorNode, sel.anchorOffset);
+      var head = sel.isCollapsed ? anchor : (0, _dompos.posFromDOM)(this.pm, sel.focusNode, sel.focusOffset);
+
+      var newRange = findSelectionNear(doc, head, this.range.head && this.range.head.cmp(head) < 0 ? -1 : 1);
+      if (newRange instanceof TextSelection && doc.path(anchor.path).isTextblock) newRange = new TextSelection(anchor, newRange.head);
+      this.setAndSignal(newRange);
+
+      if (newRange instanceof NodeSelection || newRange.head.cmp(head) || newRange.anchor.cmp(anchor)) {
         this.toDOM();
       } else {
         this.clearNode();
@@ -6569,70 +6746,42 @@ var SelectionState = exports.SelectionState = function () {
       return true;
     }
   }, {
-    key: "pollToSync",
-    value: function pollToSync() {
-      var _this4 = this;
-
-      if (this.pollState) return;
-      this.pollState = "sync";
-      var sync = function sync() {
-        if (document.activeElement != _this4.pm.content) {
-          _this4.pollState = null;
-        } else {
-          if (!_this4.pm.operation && !_this4.pm.input.composing) _this4.syncDOM();
-          _this4.pollTimeout = setTimeout(sync, 200);
-        }
-      };
-      this.pollTimeout = setTimeout(sync, 200);
-    }
-  }, {
-    key: "syncDOM",
-    value: function syncDOM() {
-      if (!this.pm.input.composing && hasFocus(this.pm) && this.domChanged()) this.toDOM();
-    }
-  }, {
     key: "toDOM",
     value: function toDOM(takeFocus) {
-      if (this.range instanceof NodeSelection) this.nodeToDOM(takeFocus);else this.rangeToDOM(takeFocus);
-    }
-  }, {
-    key: "nodeToDOM",
-    value: function nodeToDOM(takeFocus) {
-      window.getSelection().removeAllRanges();
-      if (takeFocus) this.pm.content.focus();
-      var pos = this.range.from,
-          node = this.range.node;
-      var dom = resolvePath(this.pm.content, pos.toPath());
-      if (dom == this.lastNode) return;
-      this.clearNode();
-      addNodeSelection(node, dom);
-      this.lastNode = dom;
-    }
-  }, {
-    key: "clearNode",
-    value: function clearNode() {
-      if (this.lastNode) {
-        clearNodeSelection(this.lastNode);
-        this.lastNode = null;
-        return true;
-      }
-    }
-  }, {
-    key: "rangeToDOM",
-    value: function rangeToDOM(takeFocus) {
-      var sel = window.getSelection();
-      if (!this.clearNode() && !hasFocus(this.pm)) {
+      if (!hasFocus(this.pm)) {
         if (!takeFocus) return;
         // See https://bugzilla.mozilla.org/show_bug.cgi?id=921444
         else if (_dom.browser.gecko) this.pm.content.focus();
       }
-      if (!this.domChanged()) return;
+      if (this.range instanceof NodeSelection) this.nodeToDOM();else this.rangeToDOM();
+    }
+  }, {
+    key: "nodeToDOM",
+    value: function nodeToDOM() {
+      var dom = (0, _dompos.pathToDOM)(this.pm.content, this.range.from.toPath());
+      if (dom != this.lastNode) {
+        this.clearNode();
+        dom.classList.add("ProseMirror-selectednode");
+        this.pm.content.classList.add("ProseMirror-nodeselection");
+        this.lastNode = dom;
+      }
+      var range = document.createRange(),
+          sel = window.getSelection();
+      range.selectNode(dom);
+      sel.removeAllRanges();
+      sel.addRange(range);
+      this.storeDOMState();
+    }
+  }, {
+    key: "rangeToDOM",
+    value: function rangeToDOM() {
+      this.clearNode();
 
-      var range = document.createRange();
-      var content = this.pm.content;
-      var anchor = DOMFromPos(content, this.range.anchor);
-      var head = DOMFromPos(content, this.range.head);
+      var anchor = (0, _dompos.DOMFromPos)(this.pm.content, this.range.anchor);
+      var head = (0, _dompos.DOMFromPos)(this.pm.content, this.range.head);
 
+      var sel = window.getSelection(),
+          range = document.createRange();
       if (sel.extend) {
         range.setEnd(anchor.node, anchor.offset);
         range.collapse(false);
@@ -6649,43 +6798,31 @@ var SelectionState = exports.SelectionState = function () {
       this.storeDOMState();
     }
   }, {
-    key: "receivedFocus",
-    value: function receivedFocus() {
-      if (!this.pollState) this.pollToSync();
+    key: "clearNode",
+    value: function clearNode() {
+      if (this.lastNode) {
+        this.lastNode.classList.remove("ProseMirror-selectednode");
+        this.pm.content.classList.remove("ProseMirror-nodeselection");
+        this.lastNode = null;
+        return true;
+      }
     }
   }, {
-    key: "beforeStartOp",
-    value: function beforeStartOp() {
-      if (this.pollState == "update" && this.readUpdate()) {
-        clearTimeout(this.pollTimeout);
-        this.stopPollingForUpdate();
-      } else {
-        this.syncDOM();
-      }
+    key: "receivedFocus",
+    value: function receivedFocus() {
+      if (this.polling == null) this.startPolling();
     }
   }]);
 
   return SelectionState;
 }();
 
-function clearNodeSelection(dom) {
-  dom.classList.remove("ProseMirror-selectednode");
-}
-
-function addNodeSelection(_node, dom) {
-  dom.classList.add("ProseMirror-selectednode");
-}
-
-function windowRect() {
-  return { left: 0, right: window.innerWidth,
-    top: 0, bottom: window.innerHeight };
-}
-
 // ;; An editor selection. Can be one of two selection types:
 // `TextSelection` and `NodeSelection`. Both have the properties
 // listed here, but also contain more information (such as the
 // selected [node](#NodeSelection.node) or the
 // [head](#TextSelection.head) and [anchor](#TextSelection.anchor)).
+
 
 var Selection = exports.Selection = function Selection() {
   _classCallCheck(this, Selection);
@@ -6708,6 +6845,7 @@ var Selection = exports.Selection = function Selection() {
 // Map this selection through a [mappable](#Mappable) thing. `doc`
 // should be the new document, to which we are mapping.
 
+
 // ;; A text selection represents a classical editor
 // selection, with a head (the moving side) and anchor (immobile
 // side), both of which point into textblock nodes. It can be empty (a
@@ -6727,14 +6865,14 @@ var TextSelection = exports.TextSelection = function (_Selection) {
     // The selection's immobile side (does not move when pressing
     // shift-arrow).
 
-    var _this5 = _possibleConstructorReturn(this, Object.getPrototypeOf(TextSelection).call(this));
+    var _this3 = _possibleConstructorReturn(this, Object.getPrototypeOf(TextSelection).call(this));
 
-    _this5.anchor = anchor;
+    _this3.anchor = anchor;
     // :: Pos
     // The selection's mobile side (the side that moves when pressing
     // shift-arrow).
-    _this5.head = head || anchor;
-    return _this5;
+    _this3.head = head || anchor;
+    return _this3;
   }
 
   _createClass(TextSelection, [{
@@ -6780,6 +6918,7 @@ var TextSelection = exports.TextSelection = function (_Selection) {
 // can be the target of a node selection. In such an object, `from`
 // and `to` point directly before and after the selected node.
 
+
 var NodeSelection = exports.NodeSelection = function (_Selection2) {
   _inherits(NodeSelection, _Selection2);
 
@@ -6791,13 +6930,13 @@ var NodeSelection = exports.NodeSelection = function (_Selection2) {
   function NodeSelection(from, to, node) {
     _classCallCheck(this, NodeSelection);
 
-    var _this6 = _possibleConstructorReturn(this, Object.getPrototypeOf(NodeSelection).call(this));
+    var _this4 = _possibleConstructorReturn(this, Object.getPrototypeOf(NodeSelection).call(this));
 
-    _this6.from = from;
-    _this6.to = to;
+    _this4.from = from;
+    _this4.to = to;
     // :: Node The selected node.
-    _this6.node = node;
-    return _this6;
+    _this4.node = node;
+    return _this4;
   }
 
   _createClass(NodeSelection, [{
@@ -6826,142 +6965,10 @@ var NodeSelection = exports.NodeSelection = function (_Selection2) {
   return NodeSelection;
 }(Selection);
 
-function pathFromDOM(pm, node) {
-  var path = [];
-  for (; node != pm.content;) {
-    var attr = node.getAttribute("pm-offset");
-    if (attr) path.unshift(+attr);
-    node = node.parentNode;
-  }
-  return path;
-}
-
-function widthFromDOM(dom) {
-  var attr = dom.getAttribute("pm-leaf");
-  return attr && attr != "true" ? +attr : 1;
-}
-
-function posFromDOMInner(pm, dom, domOffset, loose) {
-  if (!loose && pm.operation && pm.doc != pm.operation.doc) _error.AssertionError.raise("Fetching a position from an outdated DOM structure");
-
-  var extraOffset = 0,
-      tag = undefined;
-  for (;;) {
-    var adjust = 0;
-    if (dom.nodeType == 3) {
-      extraOffset += domOffset;
-    } else if (dom.hasAttribute("pm-offset") || dom == pm.content) {
-      break;
-    } else if (tag = dom.getAttribute("pm-inner-offset")) {
-      extraOffset += +tag;
-      adjust = -1;
-    } else if (domOffset && domOffset == dom.childNodes.length) {
-      adjust = 1;
-    }
-
-    var parent = dom.parentNode;
-    domOffset = adjust < 0 ? 0 : Array.prototype.indexOf.call(parent.childNodes, dom) + adjust;
-    dom = parent;
-  }
-
-  var path = pathFromDOM(pm, dom);
-  if (dom.hasAttribute("pm-leaf")) return _model.Pos.from(path, extraOffset + (domOffset ? 1 : 0));
-
-  var offset = 0;
-  for (var i = domOffset - 1; i >= 0; i--) {
-    var child = dom.childNodes[i];
-    if (child.nodeType == 3) {
-      if (loose) extraOffset += child.nodeValue.length;
-    } else if (tag = child.getAttribute("pm-offset")) {
-      offset = +tag + widthFromDOM(child);
-      break;
-    } else if (loose && !child.hasAttribute("pm-ignore")) {
-      extraOffset += child.textContent.length;
-    }
-  }
-  return new _model.Pos(path, offset + extraOffset);
-}
-
-function posFromDOM(pm, node, offset) {
-  if (offset == null) {
-    offset = Array.prototype.indexOf.call(node.parentNode.childNodes, node);
-    node = node.parentNode;
-  }
-  return posFromDOMInner(pm, node, offset);
-}
-
 function rangeFromDOMLoose(pm) {
   if (!hasFocus(pm)) return null;
-  var sel = getSelection();
-  return new TextSelection(posFromDOMInner(pm, sel.anchorNode, sel.anchorOffset, true), posFromDOMInner(pm, sel.focusNode, sel.focusOffset, true));
-}
-
-function findByPath(node, n, fromEnd) {
-  for (var ch = fromEnd ? node.lastChild : node.firstChild; ch; ch = fromEnd ? ch.previousSibling : ch.nextSibling) {
-    if (ch.nodeType != 1) continue;
-    var offset = ch.getAttribute("pm-offset");
-    if (!offset) {
-      var found = findByPath(ch, n);
-      if (found) return found;
-    } else if (+offset == n) {
-      return ch;
-    }
-  }
-}
-
-function resolvePath(parent, path) {
-  var node = parent;
-  for (var i = 0; i < path.length; i++) {
-    node = findByPath(node, path[i]);
-    if (!node) SelectionError.raise("Failed to resolve path " + path.join("/"));
-  }
-  return node;
-}
-
-function findByOffset(node, offset, after) {
-  function search(node) {
-    for (var ch = node.firstChild, i = 0, attr; ch; ch = ch.nextSibling, i++) {
-      if (ch.nodeType != 1) continue;
-      if (attr = ch.getAttribute("pm-offset")) {
-        var diff = offset - +attr,
-            width = widthFromDOM(ch);
-        if (diff >= 0 && (after ? diff <= width : diff < width)) return { node: ch, offset: i, innerOffset: diff };
-      } else {
-        var result = search(ch);
-        if (result) return result;
-      }
-    }
-  }
-  return search(node);
-}
-
-function leafAt(node, offset) {
-  for (;;) {
-    var child = node.firstChild;
-    if (!child) return { node: node, offset: offset };
-    if (child.nodeType != 1) return { node: child, offset: offset };
-    if (child.hasAttribute("pm-inner-offset")) {
-      var nodeOffset = 0;
-      for (;;) {
-        var nextSib = child.nextSibling,
-            nextOffset = undefined;
-        if (!nextSib || (nextOffset = +nextSib.getAttribute("pm-inner-offset")) >= offset) break;
-        child = nextSib;
-        nodeOffset = nextOffset;
-      }
-      offset -= nodeOffset;
-    }
-    node = child;
-  }
-}
-
-// Get a DOM element at a given position in the document.
-function DOMFromPos(parent, pos) {
-  var dom = resolvePath(parent, pos.path);
-  var found = findByOffset(dom, pos.offset, true),
-      inner = undefined;
-  if (!found) return { node: dom, offset: 0 };
-  if (found.node.getAttribute("pm-leaf") == "true" || !(inner = leafAt(found.node, found.innerOffset))) return { node: found.node.parentNode, offset: found.offset + (found.innerOffset ? 1 : 0) };else return inner;
+  var sel = window.getSelection();
+  return new TextSelection((0, _dompos.posFromDOM)(pm, sel.anchorNode, sel.anchorOffset, true), (0, _dompos.posFromDOM)(pm, sel.focusNode, sel.focusOffset, true));
 }
 
 function hasFocus(pm) {
@@ -6969,138 +6976,6 @@ function hasFocus(pm) {
   return sel.rangeCount && (0, _dom.contains)(pm.content, sel.anchorNode);
 }
 
-function findOffsetInNode(node, coords) {
-  var closest = undefined,
-      dyClosest = 1e8,
-      coordsClosest = undefined,
-      offset = 0;
-  for (var child = node.firstChild, i = 0; child; child = child.nextSibling, i++) {
-    var rects = undefined;
-    if (child.nodeType == 1) rects = child.getClientRects();else if (child.nodeType == 3) rects = textRects(child);else continue;
-
-    for (var _i = 0; _i < rects.length; _i++) {
-      var rect = rects[_i];
-      if (rect.left <= coords.left && rect.right >= coords.left) {
-        var dy = rect.top > coords.top ? rect.top - coords.top : rect.bottom < coords.top ? coords.top - rect.bottom : 0;
-        if (dy < dyClosest) {
-          // FIXME does not group by row
-          closest = child;
-          dyClosest = dy;
-          coordsClosest = dy ? { left: coords.left, top: rect.top } : coords;
-          if (child.nodeType == 1 && !child.firstChild) offset = _i + (coords.left >= (rect.left + rect.right) / 2 ? 1 : 0);
-          continue;
-        }
-      }
-      if (!closest && (coords.top >= rect.bottom || coords.top >= rect.top && coords.left >= rect.right)) offset = _i + 1;
-    }
-  }
-  if (!closest) return { node: node, offset: offset };
-  if (closest.nodeType == 3) return findOffsetInText(closest, coordsClosest);
-  if (closest.firstChild) return findOffsetInNode(closest, coordsClosest);
-  return { node: node, offset: offset };
-}
-
-function findOffsetInText(node, coords) {
-  var len = node.nodeValue.length;
-  var range = document.createRange();
-  for (var i = 0; i < len; i++) {
-    range.setEnd(node, i + 1);
-    range.setStart(node, i);
-    var rect = range.getBoundingClientRect();
-    if (rect.top == rect.bottom) continue;
-    if (rect.left <= coords.left && rect.right >= coords.left && rect.top <= coords.top && rect.bottom >= coords.top) return { node: node, offset: i + (coords.left >= (rect.left + rect.right) / 2 ? 1 : 0) };
-  }
-  return { node: node, offset: 0 };
-}
-
-// Given an x,y position on the editor, get the position in the document.
-function posAtCoords(pm, coords) {
-  var elt = document.elementFromPoint(coords.left, coords.top + 1);
-  if (!(0, _dom.contains)(pm.content, elt)) return null;
-
-  if (!elt.firstChild) elt = elt.parentNode;
-
-  var _findOffsetInNode = findOffsetInNode(elt, coords);
-
-  var node = _findOffsetInNode.node;
-  var offset = _findOffsetInNode.offset;
-
-  return posFromDOM(pm, node, offset);
-}
-
-function textRect(node, from, to) {
-  var range = document.createRange();
-  range.setEnd(node, to);
-  range.setStart(node, from);
-  return range.getBoundingClientRect();
-}
-
-function textRects(node) {
-  var range = document.createRange();
-  range.setEnd(node, node.nodeValue.length);
-  range.setStart(node, 0);
-  return range.getClientRects();
-}
-
-// Given a position in the document model, get a bounding box of the character at
-// that position, relative to the window.
-function coordsAtPos(pm, pos) {
-  var _DOMFromPos = DOMFromPos(pm.content, pos);
-
-  var node = _DOMFromPos.node;
-  var offset = _DOMFromPos.offset;
-
-  var side = undefined,
-      rect = undefined;
-  if (node.nodeType == 3) {
-    if (offset < node.nodeValue.length) {
-      rect = textRect(node, offset, offset + 1);
-      side = "left";
-    }
-    if ((!rect || rect.left == rect.right) && offset) {
-      rect = textRect(node, offset - 1, offset);
-      side = "right";
-    }
-  } else if (node.firstChild) {
-    if (offset < node.childNodes.length) {
-      var child = node.childNodes[offset];
-      rect = child.nodeType == 3 ? textRect(child, 0, child.nodeValue.length) : child.getBoundingClientRect();
-      side = "left";
-    }
-    if ((!rect || rect.left == rect.right) && offset) {
-      var child = node.childNodes[offset - 1];
-      rect = child.nodeType == 3 ? textRect(child, 0, child.nodeValue.length) : child.getBoundingClientRect();
-      side = "right";
-    }
-  } else {
-    rect = node.getBoundingClientRect();
-    side = "left";
-  }
-  var x = rect[side];
-  return { top: rect.top, bottom: rect.bottom, left: x, right: x };
-}
-
-var scrollMargin = 5;
-
-function scrollIntoView(pm, pos) {
-  if (!pos) pos = pm.sel.range.head || pm.sel.range.from;
-  var coords = coordsAtPos(pm, pos);
-  for (var parent = pm.content;; parent = parent.parentNode) {
-    var atBody = parent == document.body;
-    var rect = atBody ? windowRect() : parent.getBoundingClientRect();
-    var moveX = 0,
-        moveY = 0;
-    if (coords.top < rect.top) moveY = -(rect.top - coords.top + scrollMargin);else if (coords.bottom > rect.bottom) moveY = coords.bottom - rect.bottom + scrollMargin;
-    if (coords.left < rect.left) moveX = -(rect.left - coords.left + scrollMargin);else if (coords.right > rect.right) moveX = coords.right - rect.right + scrollMargin;
-    if (moveX || moveY) {
-      if (atBody) window.scrollBy(moveX, moveY);
-    } else {
-      if (moveY) parent.scrollTop += moveY;
-      if (moveX) parent.scrollLeft += moveX;
-    }
-    if (atBody) break;
-  }
-}
 function findSelectionIn(doc, path, offset, dir, text) {
   var node = doc.path(path);
   if (node.isTextblock) return new TextSelection(new _model.Pos(path, offset));
@@ -7149,62 +7024,9 @@ function findSelectionAtEnd(node) {
   return findSelectionIn(node, path.slice(), node.size, -1, text);
 }
 
-// ;; #path=NodeType #kind=class #noAnchor
-// You can add several properties to [node types](#NodeType) to
-// influence the way the editor interacts with them.
-
-// :: (node: Node, path: [number], dom: DOMNode, coords: {left: number, top: number}) → ?Pos
-// #path=NodeType.prototype.countCoordsAsChild
-// Specifies that, if this node is clicked, a child node might
-// actually be meant. This is used to, for example, make clicking a
-// list marker (which, in the DOM, is part of the list node) select
-// the list item it belongs to. Should return null if the given
-// coordinates don't refer to a child node, or the [position](#Pos)
-// before thechild otherwise.
-
-function selectableNodeAbove(pm, dom, coords, liberal) {
-  for (; dom && dom != pm.content; dom = dom.parentNode) {
-    if (dom.hasAttribute("pm-offset")) {
-      var path = pathFromDOM(pm, dom),
-          node = pm.doc.path(path);
-      if (node.type.countCoordsAsChild) {
-        var result = node.type.countCoordsAsChild(node, path, dom, coords);
-        if (result) return result;
-      }
-      // Leaf nodes are implicitly clickable
-      if ((liberal || node.type.contains == null) && node.type.selectable) return _model.Pos.from(path);
-      if (!liberal) return null;
-    }
-  }
-}
-
-// :: (pm: ProseMirror, event: MouseEvent, path: [number], node: Node) → bool
-// #path=NodeType.prototype.handleClick
-// If a node is directly clicked (that is, the click didn't land in a
-// DOM node belonging to a child node), and its type has a
-// `handleClick` method, that method is given a chance to handle the
-// click. The method is called, and should return `false` if it did
-// _not_ handle the click.
-//
-// The `event` passed is the event for `"mousedown"`, but calling
-// `preventDefault` on it has no effect, since this method is only
-// called after a corresponding `"mouseup"` has occurred and
-// ProseMirror has determined that this is not a drag or multi-click
-// event.
-
-function handleNodeClick(pm, event) {
-  for (var dom = event.target; dom && dom != pm.content; dom = dom.parentNode) {
-    if (dom.hasAttribute("pm-offset")) {
-      var path = pathFromDOM(pm, dom),
-          node = pm.doc.path(path);
-      return node.type.handleClick && node.type.handleClick(pm, event, path, node) !== false;
-    }
-  }
-}
-
 function verticalMotionLeavesTextblock(pm, pos, dir) {
-  var dom = resolvePath(pm.content, pos.path);
-  var coords = coordsAtPos(pm, pos);
+  var dom = (0, _dompos.pathToDOM)(pm.content, pos.path);
+  var coords = (0, _dompos.coordsAtPos)(pm, pos);
   for (var child = dom.firstChild; child; child = child.nextSibling) {
     if (child.nodeType != 1) continue;
     var boxes = child.getClientRects();
@@ -7215,34 +7037,27 @@ function verticalMotionLeavesTextblock(pm, pos, dir) {
   }
   return true;
 }
-
-function setDOMSelectionToPos(pm, pos) {
-  var _DOMFromPos2 = DOMFromPos(pm.content, pos);
-
-  var node = _DOMFromPos2.node;
-  var offset = _DOMFromPos2.offset;
-
-  var range = document.createRange();
-  range.setEnd(node, offset);
-  range.setStart(node, offset);
-  var sel = getSelection();
-  sel.removeAllRanges();
-  sel.addRange(range);
-}
-},{"../dom":8,"../model":34,"../util/error":49}],24:[function(require,module,exports){
+},{"../dom":8,"../model":35,"../util/error":52,"./dompos":15}],25:[function(require,module,exports){
 "use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 exports.fromDOM = fromDOM;
 exports.fromHTML = fromHTML;
 
 var _model = require("../model");
 
+var _sortedinsert = require("../util/sortedinsert");
+
+var _sortedinsert2 = _interopRequireDefault(_sortedinsert);
+
 var _register = require("./register");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -7258,25 +7073,20 @@ function fromDOM(schema, dom, options) {
   var end = options.to != null && dom.childNodes[options.to] || null;
   context.addAll(start, end, true);
   var doc = undefined;
-  while (context.stack.length) {
+  do {
     doc = context.leave();
-  }return doc;
+  } while (context.stack.length);
+  return doc;
 }
 
 // ;; #path=DOMParseSpec #kind=interface
 // To define the way [node](#NodeType) and [mark](#MarkType) types are
 // parsed, you can associate one or more DOM parsing specifications to
 // them using the [`register`](#SchemaItem.register) method with the
-// `parseDOM` property name. Each of them defines a parsing strategy
-// for a certain type of DOM node.
-//
-// Note that `Attribute`s may also contain a `parseDOM` property,
-// which should _not_ be a `DOMParseSpec`, but simply a function that
-// computes the attribute's value from a DOM node.
-
-// :: ?string #path=DOMParseSpec.tag
-// The (lower-case) tag name for which to activate this parser. When
-// not given, it is activated for all nodes.
+// `"parseDOM"` namespace, using the HTML node name (lowercase) as
+// value name. Each of them defines a parsing strategy for a certain
+// type of DOM node. When `"_"` is used as name, the parser is
+// activated for all nodes.
 
 // :: ?number #path=DOMParseSpec.rank
 // The precedence of this parsing strategy. Should be a number between
@@ -7319,6 +7129,10 @@ var blockElements = {
   output: true, p: true, pre: true, section: true, table: true, tfoot: true, ul: true
 };
 
+var ignoreElements = {
+  head: true, noscript: true, object: true, script: true, style: true, title: true
+};
+
 var noMarks = [];
 
 // ;; A state object used to track context during a parse,
@@ -7336,7 +7150,9 @@ var DOMParseState = function () {
     this.marks = noMarks;
     this.closing = false;
     this.enter(topNode.type, topNode.attrs);
-    this.nodeInfo = nodeInfo(schema);
+    var info = schemaInfo(schema);
+    this.tagInfo = info.tags;
+    this.styleInfo = info.styles;
   }
 
   _createClass(DOMParseState, [{
@@ -7347,20 +7163,53 @@ var DOMParseState = function () {
         var top = this.top,
             last = undefined;
         if (/\S/.test(value) || top.type.isTextblock) {
-          value = value.replace(/\s+/g, " ");
-          // If this starts with whitespace, and there is either no node
-          // before it or a node that ends with whitespace, strip the
-          // leading space.
-          if (/^\s/.test(value) && (!(last = top.content[top.content.length - 1]) || last.type.name == "text" && /\s$/.test(last.text))) value = value.slice(1);
+          if (!this.options.preserveWhitespace) {
+            value = value.replace(/\s+/g, " ");
+            // If this starts with whitespace, and there is either no node
+            // before it or a node that ends with whitespace, strip the
+            // leading space.
+            if (/^\s/.test(value) && (!(last = top.content[top.content.length - 1]) || last.type.name == "text" && /\s$/.test(last.text))) value = value.slice(1);
+          }
           if (value) this.insertNode(this.schema.text(value, this.marks));
         }
       } else if (dom.nodeType != 1 || dom.hasAttribute("pm-ignore")) {
         // Ignore non-text non-element nodes
-      } else if (!this.parseNodeType(dom)) {
-          this.addAll(dom.firstChild, null);
-          var name = dom.nodeName.toLowerCase();
-          if (blockElements.hasOwnProperty(name) && this.top.type == this.schema.defaultTextblockType()) this.closing = true;
+      } else {
+          var style = dom.getAttribute("style");
+          if (style) this.addElementWithStyles(parseStyles(style), dom);else this.addElement(dom);
         }
+    }
+  }, {
+    key: "addElement",
+    value: function addElement(dom) {
+      var name = dom.nodeName.toLowerCase();
+      if (!this.parseNodeType(name, dom) && !ignoreElements.hasOwnProperty(name)) {
+        this.addAll(dom.firstChild, null);
+        if (blockElements.hasOwnProperty(name) && this.top.type == this.schema.defaultTextblockType()) this.closing = true;
+      }
+    }
+  }, {
+    key: "addElementWithStyles",
+    value: function addElementWithStyles(styles, dom) {
+      var _this = this;
+
+      var wrappers = [];
+      for (var i = 0; i < styles.length; i += 2) {
+        var parsers = this.styleInfo[styles[i]],
+            value = styles[i + 1];
+        if (parsers) for (var j = 0; j < parsers.length; j++) {
+          wrappers.push(parsers[j], value);
+        }
+      }
+      var next = function next(i) {
+        if (i == wrappers.length) {
+          _this.addElement(dom);
+        } else {
+          var parser = wrappers[i];
+          parser.parse.call(parser.type, wrappers[i + 1], _this, next.bind(null, i + 2));
+        }
+      };
+      next(0);
     }
   }, {
     key: "tryParsers",
@@ -7372,8 +7221,8 @@ var DOMParseState = function () {
     }
   }, {
     key: "parseNodeType",
-    value: function parseNodeType(dom) {
-      return this.tryParsers(this.nodeInfo[dom.nodeName.toLowerCase()], dom) || this.tryParsers(this.nodeInfo._, dom);
+    value: function parseNodeType(name, dom) {
+      return this.tryParsers(this.tagInfo[name], dom) || this.tryParsers(this.tagInfo._, dom);
     }
   }, {
     key: "addAll",
@@ -7430,15 +7279,15 @@ var DOMParseState = function () {
   }, {
     key: "enter",
     value: function enter(type, attrs) {
-      if (this.marks.length) this.marks = noMarks;
       this.stack.push({ type: type, attrs: attrs, content: [] });
     }
   }, {
     key: "leave",
     value: function leave() {
+      if (this.marks.length) this.marks = noMarks;
       var top = this.stack.pop();
       var last = top.content[top.content.length - 1];
-      if (last && last.isText && /\s$/.test(last.text)) top.content[top.content.length - 1] = last.copy(last.text.slice(0, last.text.length - 1));
+      if (!this.options.preserveWhitespace && last && last.isText && /\s$/.test(last.text)) top.content[top.content.length - 1] = last.copy(last.text.slice(0, last.text.length - 1));
       var node = top.type.createAutoFill(top.attrs, top.content);
       if (this.stack.length) this.insertNode(node);
       return node;
@@ -7481,10 +7330,10 @@ var DOMParseState = function () {
 
   }, {
     key: "wrapMark",
-    value: function wrapMark(dom, mark) {
+    value: function wrapMark(inner, mark) {
       var old = this.marks;
       this.marks = (mark.instance || mark).addToSet(old);
-      this.addAll(dom.firstChild, null);
+      if (inner.call) inner();else this.addAll(inner.firstChild, null);
       this.marks = old;
     }
   }, {
@@ -7497,56 +7346,74 @@ var DOMParseState = function () {
   return DOMParseState;
 }();
 
-function nodeInfo(schema) {
-  return schema.cached.parseDOMNodes || (schema.cached.parseDOMNodes = summarizeNodeInfo(schema));
+function parseStyles(style) {
+  var re = /\s*([\w-]+)\s*:\s*([^;]+)/g,
+      m = undefined,
+      result = [];
+  while (m = re.exec(style)) {
+    result.push(m[1], m[2].trim());
+  }return result;
 }
 
-function summarizeNodeInfo(schema) {
-  var tags = Object.create(null);
+function schemaInfo(schema) {
+  return schema.cached.parseDOMInfo || (schema.cached.parseDOMInfo = summarizeSchemaInfo(schema));
+}
+
+function summarizeSchemaInfo(schema) {
+  var tags = Object.create(null),
+      styles = Object.create(null);
   tags._ = [];
-  schema.registry("parseDOM", function (info, type) {
-    var tag = info.tag || "_";
+  schema.registry("parseDOM", function (tag, info, type) {
     var parse = info.parse;
     if (parse == "block") parse = function parse(dom, state) {
       state.wrapIn(dom, this);
     };else if (parse == "mark") parse = function parse(dom, state) {
       state.wrapMark(dom, this);
-    };(tags[tag] || (tags[tag] = [])).push({
+    };
+    (0, _sortedinsert2.default)(tags[tag] || (tags[tag] = []), {
       type: type, parse: parse,
       rank: info.rank == null ? 50 : info.rank
-    });
-  });
-  for (var tag in tags) {
-    tags[tag].sort(function (a, b) {
+    }, function (a, b) {
       return a.rank - b.rank;
     });
-  }return tags;
+  });
+  schema.registry("parseDOMStyle", function (style, info, type) {
+    (0, _sortedinsert2.default)(styles[style] || (styles[style] = []), {
+      type: type,
+      parse: info.parse,
+      rank: info.rank == null ? 50 : info.rank
+    }, function (a, b) {
+      return a.rank - b.rank;
+    });
+  });
+  return { tags: tags, styles: styles };
 }
 
-_model.Paragraph.register("parseDOM", { tag: "p", parse: "block" });
+_model.Paragraph.register("parseDOM", "p", { parse: "block" });
 
-_model.BlockQuote.register("parseDOM", { tag: "blockquote", parse: "block" });
+_model.BlockQuote.register("parseDOM", "blockquote", { parse: "block" });
 
 var _loop = function _loop(i) {
-  _model.Heading.register("parseDOM", {
-    tag: "h" + i,
-    parse: function parse(dom, state) {
-      state.wrapIn(dom, this, { level: i });
-    }
+  _model.Heading.registerComputed("parseDOM", "h" + i, function (type) {
+    if (i <= type.maxLevel) return {
+      parse: function parse(dom, state) {
+        state.wrapIn(dom, this, { level: i });
+      }
+    };
   });
 };
 
 for (var i = 1; i <= 6; i++) {
   _loop(i);
-}_model.HorizontalRule.register("parseDOM", { tag: "hr", parse: "block" });
+}_model.HorizontalRule.register("parseDOM", "hr", { parse: "block" });
 
-_model.CodeBlock.register("parseDOM", { tag: "pre", parse: function parse(dom, state) {
+_model.CodeBlock.register("parseDOM", "pre", { parse: function parse(dom, state) {
     var params = dom.firstChild && /^code$/i.test(dom.firstChild.nodeName) && dom.firstChild.getAttribute("class");
     if (params && /fence/.test(params)) {
       var found = [],
           re = /(?:^|\s)lang-(\S+)/g,
           m = undefined;
-      while (m = re.test(params)) {
+      while (m = re.exec(params)) {
         found.push(m[1]);
       }params = found.join(" ");
     } else {
@@ -7556,20 +7423,20 @@ _model.CodeBlock.register("parseDOM", { tag: "pre", parse: function parse(dom, s
     state.insert(this, { params: params }, text ? [state.schema.text(text)] : []);
   } });
 
-_model.BulletList.register("parseDOM", { tag: "ul", parse: "block" });
+_model.BulletList.register("parseDOM", "ul", { parse: "block" });
 
-_model.OrderedList.register("parseDOM", { tag: "ol", parse: function parse(dom, state) {
+_model.OrderedList.register("parseDOM", "ol", { parse: function parse(dom, state) {
     var attrs = { order: dom.getAttribute("start") || 1 };
     state.wrapIn(dom, this, attrs);
   } });
 
-_model.ListItem.register("parseDOM", { tag: "li", parse: "block" });
+_model.ListItem.register("parseDOM", "li", { parse: "block" });
 
-_model.HardBreak.register("parseDOM", { tag: "br", parse: function parse(_, state) {
+_model.HardBreak.register("parseDOM", "br", { parse: function parse(_, state) {
     state.insert(this);
   } });
 
-_model.Image.register("parseDOM", { tag: "img", parse: function parse(dom, state) {
+_model.Image.register("parseDOM", "img", { parse: function parse(dom, state) {
     state.insert(this, {
       src: dom.getAttribute("src"),
       title: dom.getAttribute("title") || null,
@@ -7579,20 +7446,26 @@ _model.Image.register("parseDOM", { tag: "img", parse: function parse(dom, state
 
 // Inline style tokens
 
-_model.LinkMark.register("parseDOM", { tag: "a", parse: function parse(dom, state) {
+_model.LinkMark.register("parseDOM", "a", { parse: function parse(dom, state) {
     var href = dom.getAttribute("href");
     if (!href) return false;
     state.wrapMark(dom, this.create({ href: href, title: dom.getAttribute("title") }));
   } });
 
-_model.EmMark.register("parseDOM", { tag: "i", parse: "mark" });
-_model.EmMark.register("parseDOM", { tag: "em", parse: "mark" });
+_model.EmMark.register("parseDOM", "i", { parse: "mark" });
+_model.EmMark.register("parseDOM", "em", { parse: "mark" });
+_model.StrongMark.register("parseDOMStyle", "font-style", { parse: function parse(value, state, inner) {
+    if (value == "italic") state.wrapMark(inner, this);else inner();
+  } });
 
-_model.StrongMark.register("parseDOM", { tag: "b", parse: "mark" });
-_model.StrongMark.register("parseDOM", { tag: "strong", parse: "mark" });
+_model.StrongMark.register("parseDOM", "b", { parse: "mark" });
+_model.StrongMark.register("parseDOM", "strong", { parse: "mark" });
+_model.StrongMark.register("parseDOMStyle", "font-weight", { parse: function parse(value, state, inner) {
+    if (value == "bold" || value == "bolder" || !/\D/.test(value) && +value >= 500) state.wrapMark(inner, this);else inner();
+  } });
 
-_model.CodeMark.register("parseDOM", { tag: "code", parse: "mark" });
-},{"../model":34,"./register":27}],25:[function(require,module,exports){
+_model.CodeMark.register("parseDOM", "code", { parse: "mark" });
+},{"../model":35,"../util/sortedinsert":56,"./register":28}],26:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7624,7 +7497,7 @@ function fromText(schema, text) {
 }
 
 (0, _register.defineSource)("text", fromText);
-},{"./register":27}],26:[function(require,module,exports){
+},{"./register":28}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7723,7 +7596,7 @@ Object.defineProperty(exports, "toText", {
     return _to_text.toText;
   }
 });
-},{"./from_dom":24,"./from_text":25,"./register":27,"./to_dom":28,"./to_text":29}],27:[function(require,module,exports){
+},{"./from_dom":25,"./from_text":26,"./register":28,"./to_dom":29,"./to_text":30}],28:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7791,14 +7664,15 @@ function defineSource(format, func) {
 defineSource("json", function (schema, json) {
   return schema.nodeFromJSON(json);
 });
-},{"../util/error":49}],28:[function(require,module,exports){
+},{"../util/error":52}],29:[function(require,module,exports){
 "use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 exports.toDOM = toDOM;
 exports.nodeToDOM = nodeToDOM;
 exports.toHTML = toHTML;
@@ -7826,6 +7700,7 @@ var DOMSerializer = function () {
   // Create a DOM node of the given type, with (optionally) the given
   // attributes and content. Content elements may be strings (for text
   // nodes) or other DOM nodes.
+
 
   _createClass(DOMSerializer, [{
     key: "elt",
@@ -7924,7 +7799,9 @@ var DOMSerializer = function () {
   }, {
     key: "renderAs",
     value: function renderAs(node, tagName, tagAttrs) {
-      return this.renderContent(node, this.elt(tagName, tagAttrs));
+      var dom = this.renderContent(node, this.elt(tagName, tagAttrs));
+      if (this.options.onContainer) this.options.onContainer(dom);
+      return dom;
     }
   }]);
 
@@ -7949,6 +7826,7 @@ var DOMSerializer = function () {
 // with the DOM node representing the node that the attribute applies
 // to and the atttribute's value, so that it can set additional DOM
 // attributes on the DOM node.
+
 
 function toDOM(node, options) {
   return new DOMSerializer(options).renderContent(node);
@@ -8074,7 +7952,7 @@ def(_model.LinkMark, function (mark, s) {
   return s.elt("a", { href: mark.attrs.href,
     title: mark.attrs.title });
 });
-},{"../model":34,"./register":27}],29:[function(require,module,exports){
+},{"../model":35,"./register":28}],30:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8118,15 +7996,15 @@ function toText(doc) {
 }
 
 (0, _register.defineTarget)("text", toText);
-},{"../model":34,"./register":27}],30:[function(require,module,exports){
+},{"../model":35,"./register":28}],31:[function(require,module,exports){
 "use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.defaultSchema = exports.CodeMark = exports.LinkMark = exports.StrongMark = exports.EmMark = exports.HardBreak = exports.Image = exports.Paragraph = exports.CodeBlock = exports.Heading = exports.HorizontalRule = exports.ListItem = exports.BulletList = exports.OrderedList = exports.BlockQuote = exports.Doc = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _schema = require("./schema");
 
@@ -8159,6 +8037,7 @@ var Doc = exports.Doc = function (_Block) {
 
 // ;; The default blockquote node type.
 
+
 var BlockQuote = exports.BlockQuote = function (_Block2) {
   _inherits(BlockQuote, _Block2);
 
@@ -8174,6 +8053,7 @@ var BlockQuote = exports.BlockQuote = function (_Block2) {
 // ;; The default ordered list node type. Has a single attribute,
 // `order`, which determines the number at which the list starts
 // counting, and defaults to 1.
+
 
 var OrderedList = exports.OrderedList = function (_Block3) {
   _inherits(OrderedList, _Block3);
@@ -8201,6 +8081,7 @@ var OrderedList = exports.OrderedList = function (_Block3) {
 
 // ;; The default bullet list node type.
 
+
 var BulletList = exports.BulletList = function (_Block4) {
   _inherits(BulletList, _Block4);
 
@@ -8222,6 +8103,7 @@ var BulletList = exports.BulletList = function (_Block4) {
 
 // ;; The default list item node type.
 
+
 var ListItem = exports.ListItem = function (_Block5) {
   _inherits(ListItem, _Block5);
 
@@ -8242,6 +8124,7 @@ var ListItem = exports.ListItem = function (_Block5) {
 }(_schema.Block);
 
 // ;; The default horizontal rule node type.
+
 
 var HorizontalRule = exports.HorizontalRule = function (_Block6) {
   _inherits(HorizontalRule, _Block6);
@@ -8265,6 +8148,7 @@ var HorizontalRule = exports.HorizontalRule = function (_Block6) {
 // ;; The default heading node type. Has a single attribute
 // `level`, which indicates the heading level, and defaults to 1.
 
+
 var Heading = exports.Heading = function (_Textblock) {
   _inherits(Heading, _Textblock);
 
@@ -8279,6 +8163,15 @@ var Heading = exports.Heading = function (_Textblock) {
     get: function get() {
       return { level: new _schema.Attribute({ default: "1" }) };
     }
+    // :: number
+    // Controls the maximum heading level. Has the value 6 in the
+    // `Heading` class, but you can override it in a subclass.
+
+  }, {
+    key: "maxLevel",
+    get: function get() {
+      return 6;
+    }
   }]);
 
   return Heading;
@@ -8286,6 +8179,7 @@ var Heading = exports.Heading = function (_Textblock) {
 
 // ;; The default code block / listing node type. Only
 // allows unmarked text nodes inside of it.
+
 
 var CodeBlock = exports.CodeBlock = function (_Textblock2) {
   _inherits(CodeBlock, _Textblock2);
@@ -8318,6 +8212,7 @@ var CodeBlock = exports.CodeBlock = function (_Textblock2) {
 
 // ;; The default paragraph node type.
 
+
 var Paragraph = exports.Paragraph = function (_Textblock3) {
   _inherits(Paragraph, _Textblock3);
 
@@ -8344,6 +8239,7 @@ var Paragraph = exports.Paragraph = function (_Textblock3) {
 // - **`alt`**: The alt text.
 // - **`title`**: The title of the image.
 
+
 var Image = exports.Image = function (_Inline) {
   _inherits(Image, _Inline);
 
@@ -8362,12 +8258,18 @@ var Image = exports.Image = function (_Inline) {
         title: new _schema.Attribute({ default: "" })
       };
     }
+  }, {
+    key: "draggable",
+    get: function get() {
+      return true;
+    }
   }]);
 
   return Image;
 }(_schema.Inline);
 
 // ;; The default hard break node type.
+
 
 var HardBreak = exports.HardBreak = function (_Inline2) {
   _inherits(HardBreak, _Inline2);
@@ -8395,6 +8297,7 @@ var HardBreak = exports.HardBreak = function (_Inline2) {
 
 // ;; The default emphasis mark type.
 
+
 var EmMark = exports.EmMark = function (_MarkType) {
   _inherits(EmMark, _MarkType);
 
@@ -8415,6 +8318,7 @@ var EmMark = exports.EmMark = function (_MarkType) {
 }(_schema.MarkType);
 
 // ;; The default strong mark type.
+
 
 var StrongMark = exports.StrongMark = function (_MarkType2) {
   _inherits(StrongMark, _MarkType2);
@@ -8440,6 +8344,7 @@ var StrongMark = exports.StrongMark = function (_MarkType2) {
 // - **`href`** (required): The link target.
 // - **`title`**: The link's title.
 
+
 var LinkMark = exports.LinkMark = function (_MarkType3) {
   _inherits(LinkMark, _MarkType3);
 
@@ -8460,7 +8365,7 @@ var LinkMark = exports.LinkMark = function (_MarkType3) {
   }], [{
     key: "rank",
     get: function get() {
-      return 53;
+      return 25;
     }
   }]);
 
@@ -8468,6 +8373,7 @@ var LinkMark = exports.LinkMark = function (_MarkType3) {
 }(_schema.MarkType);
 
 // ;; The default code font mark type.
+
 
 var CodeMark = exports.CodeMark = function (_MarkType4) {
   _inherits(CodeMark, _MarkType4);
@@ -8496,6 +8402,7 @@ var CodeMark = exports.CodeMark = function (_MarkType4) {
 // :: SchemaSpec
 // The specification for the default schema.
 
+
 var defaultSpec = new _schema.SchemaSpec({
   doc: Doc,
   blockquote: BlockQuote,
@@ -8521,7 +8428,7 @@ var defaultSpec = new _schema.SchemaSpec({
 // :: Schema
 // ProseMirror's default document schema.
 var defaultSchema = exports.defaultSchema = new _schema.Schema(defaultSpec);
-},{"./schema":38}],31:[function(require,module,exports){
+},{"./schema":39}],32:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8618,7 +8525,7 @@ function findDiffEnd(a, b) {
   }
   return { a: new _pos.Pos(pathA, offA), b: new _pos.Pos(pathB, offB) };
 }
-},{"./pos":37}],32:[function(require,module,exports){
+},{"./pos":38}],33:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8647,15 +8554,15 @@ var ModelError = exports.ModelError = function (_ProseMirrorError) {
 
   return ModelError;
 }(_error.ProseMirrorError);
-},{"../util/error":49}],33:[function(require,module,exports){
+},{"../util/error":52}],34:[function(require,module,exports){
 "use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.emptyFragment = exports.Fragment = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _error = require("./error");
 
@@ -8707,6 +8614,7 @@ var Fragment = exports.Fragment = function () {
   }, {
     key: "toString",
 
+
     // :: () → string
     // Return a debugging string that describes this fragment.
     value: function toString() {
@@ -8744,9 +8652,9 @@ var Fragment = exports.Fragment = function () {
       return Fragment.fromArray(this.toArray(undefined, undefined, f));
     }
 
-    // :: ((Node) → bool) → bool
-    // Returns `true` if the given function returned `true` for any of
-    // the fragment's children.
+    // :: ((Node) → bool) → ?Node
+    // Returns the first child node for which the given function returns
+    // `true`, or undefined otherwise.
 
   }, {
     key: "some",
@@ -8919,6 +8827,7 @@ var ReverseFlatIterator = function (_FlatIterator) {
 
 // ;; #forward=Fragment
 
+
 var FlatFragment = function (_Fragment) {
   _inherits(FlatFragment, _Fragment);
 
@@ -8937,6 +8846,7 @@ var FlatFragment = function (_Fragment) {
   // go over only part of the content. If an iteration bound falls
   // within a text node, only the part that is within the bounds is
   // yielded.
+
 
   _createClass(FlatFragment, [{
     key: "iter",
@@ -8967,6 +8877,7 @@ var FlatFragment = function (_Fragment) {
 
   }, {
     key: "child",
+
 
     // :: (number) → Node
     // Get the child at the given offset. Might return a text node that
@@ -9090,6 +9001,7 @@ var FlatFragment = function (_Fragment) {
 // An empty fragment. Intended to be reused whenever a node doesn't
 // contain anything (rather than allocating a new empty fragment for
 // each leaf node).
+
 
 var emptyFragment = exports.emptyFragment = new FlatFragment([]);
 
@@ -9249,9 +9161,9 @@ var TextFragment = function (_Fragment2) {
     value: function child(off) {
       if (off < 0 || off >= this.size) _error.ModelError.raise("Offset " + off + " out of range");
       for (var i = 0, curOff = 0; i < this.content.length; i++) {
-        var _child = this.content[i];
-        curOff += _child.width;
-        if (curOff > off) return _child;
+        var child = this.content[i];
+        curOff += child.width;
+        if (curOff > off) return child;
       }
     }
   }, {
@@ -9351,7 +9263,7 @@ if (typeof Symbol != "undefined") {
     return this;
   };
 }
-},{"./error":32}],34:[function(require,module,exports){
+},{"./error":33}],35:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9585,14 +9497,14 @@ Object.defineProperty(exports, "ModelError", {
                 return _error.ModelError;
         }
 });
-},{"./defaultschema":30,"./diff":31,"./error":32,"./fragment":33,"./mark":35,"./node":36,"./pos":37,"./schema":38}],35:[function(require,module,exports){
+},{"./defaultschema":31,"./diff":32,"./error":33,"./fragment":34,"./mark":36,"./node":37,"./pos":38,"./schema":39}],36:[function(require,module,exports){
 "use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -9618,10 +9530,10 @@ var Mark = exports.Mark = function () {
   // :: () → Object
   // Convert this mark to a JSON-serializeable representation.
 
+
   _createClass(Mark, [{
     key: "toJSON",
     value: function toJSON() {
-      if (this.type.instance) return this.type.name;
       var obj = { _: this.type.name };
       for (var attr in this.attrs) {
         obj[attr] = this.attrs[attr];
@@ -9717,17 +9629,17 @@ var Mark = exports.Mark = function () {
 }();
 
 var empty = [];
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 "use strict";
-
-var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.TextNode = exports.Node = undefined;
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _fragment = require("./fragment");
 
@@ -9754,7 +9666,8 @@ var emptyArray = [],
 // structure between the old and new data as much as possible, which a
 // tree shape like this (without back pointers) makes easy.
 //
-// **Never** directly mutate the properties of a `Node` object.
+// **Never** directly mutate the properties of a `Node` object. See
+// [this guide](guide/doc.html) for more information.
 
 var Node = function () {
   function Node(type, attrs, content, marks) {
@@ -9785,8 +9698,10 @@ var Node = function () {
   // the node. For nodes that don't contain text, this is also the
   // number of child nodes that the node has.
 
+
   _createClass(Node, [{
     key: "child",
+
 
     // :: (number) → Node
     // Retrieve the child at the given offset. Note that this is **not**
@@ -9862,6 +9777,7 @@ var Node = function () {
   }, {
     key: "sameMarkup",
 
+
     // :: (Node) → bool
     // Compare the markup (type, attributes, and marks) of this node to
     // those of another. Returns `true` if both have the same markup.
@@ -9880,6 +9796,7 @@ var Node = function () {
     }
   }, {
     key: "copy",
+
 
     // :: (?Fragment) → Node
     // Create a new node with the same markup as this node, containing
@@ -9978,7 +9895,9 @@ var Node = function () {
 
     // :: ([number]) → Node
     // Get the descendant node at the given path, which is interpreted
-    // as a series of offsets into successively deeper nodes.
+    // as a series of offsets into successively deeper nodes. For example,
+    // if a node contains a paragraph and a list with 3 items, the path
+    // to the first item in the list would be [1, 0].
 
   }, {
     key: "path",
@@ -9987,14 +9906,19 @@ var Node = function () {
       return node;
     }
 
-    // :: (Pos) → Node
-    // Get the node after the given position.
+    // :: (Pos) → ?Node
+    // Get the node after the given position, if any.
 
   }, {
     key: "nodeAfter",
     value: function nodeAfter(pos) {
-      return this.path(pos.path).child(pos.offset);
+      var parent = this.path(pos.path);
+      return pos.offset < parent.size ? parent.child(pos.offset) : null;
     }
+
+    // :: ([number]) → [Node]
+    // Get an array of all nodes along a path.
+
   }, {
     key: "pathNodes",
     value: function pathNodes(path) {
@@ -10111,6 +10035,7 @@ var Node = function () {
 
   }, {
     key: "toString",
+
 
     // :: () → string
     // Return a string representation of this node for debugging
@@ -10246,6 +10171,7 @@ var Node = function () {
 
 exports.Node = Node;
 
+
 if (typeof Symbol != "undefined") {
   // :: () → Iterator<Node>
   // A fragment is iterable, in the ES6 sense.
@@ -10308,22 +10234,22 @@ function wrapMarks(marks, str) {
     str = marks[i].type.name + "(" + str + ")";
   }return str;
 }
-},{"./fragment":33,"./mark":35,"./pos":37}],37:[function(require,module,exports){
+},{"./fragment":34,"./mark":36,"./pos":38}],38:[function(require,module,exports){
 "use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Pos = undefined;
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _error = require("./error");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 // ;; Instances of the `Pos` class represent positions in a document.
-// A position an array of integers that describe a path to the target
+// A position is an array of integers that describe a path to the target
 // node (see `Node.path`) and an integer offset into that target node.
 
 var Pos = exports.Pos = function () {
@@ -10342,6 +10268,7 @@ var Pos = exports.Pos = function () {
   // `"0/2:10"`, where the numbers before the colon are the path, and
   // the number after it is the offset.
 
+
   _createClass(Pos, [{
     key: "toString",
     value: function toString() {
@@ -10353,6 +10280,7 @@ var Pos = exports.Pos = function () {
 
   }, {
     key: "max",
+
 
     // :: (Pos) → Pos
     // Return the greater of two positions.
@@ -10375,6 +10303,7 @@ var Pos = exports.Pos = function () {
   }, {
     key: "cmp",
 
+
     // :: (Pos) → number
     // Compares this position to another position, and returns a number.
     // Of this result number, only the sign is significant. It is
@@ -10386,6 +10315,7 @@ var Pos = exports.Pos = function () {
     }
   }, {
     key: "shorten",
+
 
     // :: (?number, ?number) → Pos
     // Create a position pointing into a parent of this position's
@@ -10399,7 +10329,9 @@ var Pos = exports.Pos = function () {
       var to = arguments.length <= 0 || arguments[0] === undefined ? null : arguments[0];
       var offset = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
 
-      if (to >= this.depth) return this;
+      if (to >= this.depth) {
+        if (to == this.depth && !offset) return new Pos(this.path, this.offset + offset);else _error.ModelError.raise("Invalid shorten depth " + to + " for " + this);
+      }
       return Pos.shorten(this.path, to, offset);
     }
 
@@ -10526,17 +10458,17 @@ var Pos = exports.Pos = function () {
 
   return Pos;
 }();
-},{"./error":32}],38:[function(require,module,exports){
+},{"./error":33}],39:[function(require,module,exports){
 "use strict";
-
-var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Schema = exports.SchemaSpec = exports.MarkType = exports.Attribute = exports.Text = exports.Inline = exports.Textblock = exports.Block = exports.NodeType = exports.SchemaError = undefined;
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _node = require("./node");
 
@@ -10575,6 +10507,7 @@ var SchemaError = exports.SchemaError = function (_ProseMirrorError) {
 // with them. This class implements this functionality, and acts as a
 // superclass to those `NodeType` and `MarkType`.
 
+
 var SchemaItem = function () {
   function SchemaItem() {
     _classCallCheck(this, SchemaItem);
@@ -10582,6 +10515,7 @@ var SchemaItem = function () {
 
   _createClass(SchemaItem, [{
     key: "getDefaultAttrs",
+
 
     // For node types where all attrs have a default value (or which don't
     // have any attributes), build up a single reusable default attribute
@@ -10618,13 +10552,6 @@ var SchemaItem = function () {
         frozen[name] = this.attrs[name];
       }Object.defineProperty(this, "attrs", { value: frozen });
     }
-
-    // :: (string, *)
-    // Register an element in this type's registry. That is, add `value`
-    // to the array associated with `name` in the registry stored in
-    // type's `prototype`. This is mostly used to attach things like
-    // commands and parsing strategies to node types. See `Schema.registry`.
-
   }, {
     key: "attrs",
 
@@ -10643,12 +10570,66 @@ var SchemaItem = function () {
   }], [{
     key: "updateAttrs",
     value: function updateAttrs(attrs) {
-      this.prototype.attrs = overlayObj(this.prototype.attrs, attrs);
+      Object.defineProperty(this.prototype, "attrs", { value: overlayObj(this.prototype.attrs, attrs) });
     }
   }, {
+    key: "getRegistry",
+    value: function getRegistry() {
+      if (this == SchemaItem) return null;
+      if (!this.prototype.hasOwnProperty("registry")) this.prototype.registry = Object.create(Object.getPrototypeOf(this).getRegistry());
+      return this.prototype.registry;
+    }
+  }, {
+    key: "getNamespace",
+    value: function getNamespace(name) {
+      if (this == SchemaItem) return null;
+      var reg = this.getRegistry();
+      if (!Object.prototype.hasOwnProperty.call(reg, name)) reg[name] = Object.create(Object.getPrototypeOf(this).getNamespace(name));
+      return reg[name];
+    }
+
+    // :: (string, string, *)
+    // Register a value in this type's registry. Various components use
+    // `Schema.registry` to query values from the marks and nodes that
+    // make up the schema. The `namespace`, for example
+    // [`"command"`](#commands), determines which component will see
+    // this value. `name` is a name specific to this value. Its meaning
+    // differs per namespace.
+    //
+    // Subtypes inherit the registered values from their supertypes.
+    // They can override individual values by calling this method to
+    // overwrite them with a new value, or with `null` to disable them.
+
+  }, {
     key: "register",
-    value: function register(name, value) {
-      var registry = this.prototype.hasOwnProperty("registry") ? this.prototype.registry : this.prototype.registry = Object.create(null);(registry[name] || (registry[name] = [])).push(value);
+    value: function register(namespace, name, value) {
+      this.getNamespace(namespace)[name] = function () {
+        return value;
+      };
+    }
+
+    // :: (string, string, (SchemaItem) → *)
+    // Register a value in this types's registry, like
+    // [`register`](#SchemaItem.register), but providing a function that
+    // will be called with the actual node or mark type, whose return
+    // value will be treated as the effective value (or will be ignored,
+    // if `null`).
+
+  }, {
+    key: "registerComputed",
+    value: function registerComputed(namespace, name, f) {
+      this.getNamespace(namespace)[name] = f;
+    }
+
+    // :: (string)
+    // By default, schema items inherit the
+    // [registered](#SchemaItem.register) items from their superclasses.
+    // Call this to disable that behavior for the given namespace.
+
+  }, {
+    key: "cleanNamespace",
+    value: function cleanNamespace(namespace) {
+      this.getNamespace(namespace).__proto__ = null;
     }
   }]);
 
@@ -10661,6 +10642,7 @@ var SchemaItem = function () {
 // the node type (its name, its allowed attributes, methods for
 // serializing it to various formats, information to guide
 // deserialization, and so on).
+
 
 var NodeType = exports.NodeType = function (_SchemaItem) {
   _inherits(NodeType, _SchemaItem);
@@ -10688,8 +10670,10 @@ var NodeType = exports.NodeType = function (_SchemaItem) {
   // :: bool
   // True if this is a block type.
 
+
   _createClass(NodeType, [{
     key: "canContainFragment",
+
 
     // :: (Fragment) → bool
     // Test whether the content of the given fragment could be contained
@@ -10716,9 +10700,9 @@ var NodeType = exports.NodeType = function (_SchemaItem) {
       }return true;
     }
 
-    // :: (Mark) → bool
+    // :: (MarkType) → bool
     // Test whether this node type can contain children with the given
-    // mark.
+    // mark type.
 
   }, {
     key: "canContainMark",
@@ -10782,7 +10766,7 @@ var NodeType = exports.NodeType = function (_SchemaItem) {
       if (!attrs && this.defaultAttrs) return this.defaultAttrs;else return _get(Object.getPrototypeOf(NodeType.prototype), "computeAttrs", this).call(this, attrs, content);
     }
 
-    // :: (?Object, ?Fragment, ?[Mark]) → Node
+    // :: (?Object, ?union<Fragment, Node, [Node]>, ?[Mark]) → Node
     // Create a `Node` of this type. The given attributes are
     // checked and defaulted (you can pass `null` to use the type's
     // defaults entirely, if no required attributes exist). `content`
@@ -10850,6 +10834,20 @@ var NodeType = exports.NodeType = function (_SchemaItem) {
     }
 
     // :: bool
+    // Determines whether nodes of this type can be dragged. Enabling it
+    // causes ProseMirror to set a `draggable` attribute on its DOM
+    // representation, and to put its HTML serialization into the drag
+    // event's [data
+    // transfer](https://developer.mozilla.org/en-US/docs/Web/API/DataTransfer)
+    // when dragged.
+
+  }, {
+    key: "draggable",
+    get: function get() {
+      return false;
+    }
+
+    // :: bool
     // Controls whether this node type is locked.
 
   }, {
@@ -10885,6 +10883,7 @@ var NodeType = exports.NodeType = function (_SchemaItem) {
     }
   }, {
     key: "containsMarks",
+
 
     // :: union<bool, [string]>
     // The mark types that child nodes of this node may have. `false`
@@ -10924,6 +10923,7 @@ var NodeType = exports.NodeType = function (_SchemaItem) {
 }(SchemaItem);
 
 // ;; Base type for block nodetypes.
+
 
 var Block = exports.Block = function (_NodeType) {
   _inherits(Block, _NodeType);
@@ -10971,6 +10971,7 @@ var Block = exports.Block = function (_NodeType) {
 
 // ;; Base type for textblock node types.
 
+
 var Textblock = exports.Textblock = function (_Block) {
   _inherits(Textblock, _Block);
 
@@ -11007,6 +11008,7 @@ var Textblock = exports.Textblock = function (_Block) {
 
 // ;; Base type for inline node types.
 
+
 var Inline = exports.Inline = function (_NodeType2) {
   _inherits(Inline, _NodeType2);
 
@@ -11032,6 +11034,7 @@ var Inline = exports.Inline = function (_NodeType2) {
 }(NodeType);
 
 // ;; The text node type.
+
 
 var Text = exports.Text = function (_Inline) {
   _inherits(Text, _Inline);
@@ -11073,6 +11076,7 @@ var Text = exports.Text = function (_Inline) {
 // Each node type or mark type has a fixed set of attributes, which
 // instances of this class are used to control.
 
+
 var Attribute =
 // :: (Object)
 // Create an attribute. `options` is an object containing the
@@ -11109,6 +11113,7 @@ exports.Attribute = function Attribute() {
 // things like emphasis or being part of a link) are tagged with type
 // objects, which are instantiated once per `Schema`.
 
+
 var MarkType = exports.MarkType = function (_SchemaItem2) {
   _inherits(MarkType, _SchemaItem2);
 
@@ -11137,8 +11142,10 @@ var MarkType = exports.MarkType = function (_SchemaItem2) {
   // rank, they still get a fixed order in the schema, but there's no
   // guarantee what it will be.)
 
+
   _createClass(MarkType, [{
     key: "create",
+
 
     // :: (Object) → Mark
     // Create a mark of this type. `attrs` may be `null` or an object
@@ -11151,6 +11158,7 @@ var MarkType = exports.MarkType = function (_SchemaItem2) {
   }, {
     key: "removeFromSet",
 
+
     // :: ([Mark]) → [Mark]
     // When there is a mark of this type in the given set, a new set
     // without it is returned. Otherwise, the input set is returned.
@@ -11160,7 +11168,7 @@ var MarkType = exports.MarkType = function (_SchemaItem2) {
       }return set;
     }
 
-    // :: ([Mark]) → bool
+    // :: ([Mark]) → ?Mark
     // Tests whether there is a mark of this type in the given set.
 
   }, {
@@ -11215,6 +11223,7 @@ var MarkType = exports.MarkType = function (_SchemaItem2) {
 // with node type constructors and another similar object associating
 // mark names with mark type constructors.
 
+
 var SchemaSpec = exports.SchemaSpec = function () {
   // :: (?Object<NodeType>, ?Object<MarkType>)
   // Create a schema specification from scratch. The arguments map
@@ -11239,6 +11248,7 @@ var SchemaSpec = exports.SchemaSpec = function () {
   //
   // Similarly, `marks` can be an object to add, change, or remove
   // [mark types](#MarkType) in the schema.
+
 
   _createClass(SchemaSpec, [{
     key: "update",
@@ -11308,6 +11318,7 @@ var Schema = function () {
   // call it as a method, but can pass it to higher-order functions
   // and such.
 
+
   _createClass(Schema, [{
     key: "node",
     value: function node(type, attrs, content, marks) {
@@ -11368,8 +11379,14 @@ var Schema = function () {
   }, {
     key: "markFromJSON",
     value: function markFromJSON(json) {
-      if (typeof json == "string") return this.mark(json);
-      return this.mark(json._, json);
+      var type = this.marks[json._];
+      var attrs = null;
+      for (var prop in json) {
+        if (prop != "_") {
+          if (!attrs) attrs = Object.create(null);
+          attrs[prop] = json[prop];
+        }
+      }return attrs ? type.create(attrs) : type.instance;
     }
 
     // :: (string) → NodeType
@@ -11405,24 +11422,24 @@ var Schema = function () {
       }
     }
 
-    // :: (string, (value: *, source: union<NodeType, MarkType>, name: string))
+    // :: (string, (name: string, value: *, source: union<NodeType, MarkType>, name: string))
     // Retrieve all registered items under the given name from this
-    // schema. The given function will be called with each item, the
+    // schema. The given function will be called with the name, each item, the
     // element—node type or mark type—that it was associated with, and
     // that element's name in the schema.
 
   }, {
     key: "registry",
-    value: function registry(name, f) {
+    value: function registry(namespace, f) {
       for (var i = 0; i < 2; i++) {
         var obj = i ? this.marks : this.nodes;
         for (var tname in obj) {
-          var type = obj[tname];
-          if (type.constructor.prototype.hasOwnProperty("registry")) {
-            var reg = type.registry[name];
-            if (reg) for (var j = 0; j < reg.length; j++) {
-              f(reg[j], type, tname);
-            }
+          var type = obj[tname],
+              registry = type.registry,
+              ns = registry && registry[namespace];
+          if (ns) for (var prop in ns) {
+            var value = ns[prop](type);
+            if (value != null) f(prop, value, type, tname);
           }
         }
       }
@@ -11433,14 +11450,15 @@ var Schema = function () {
 }();
 
 exports.Schema = Schema;
-},{"../util/error":49,"../util/obj":52,"./fragment":33,"./mark":35,"./node":36}],39:[function(require,module,exports){
+},{"../util/error":52,"../util/obj":55,"./fragment":34,"./mark":36,"./node":37}],40:[function(require,module,exports){
 "use strict";
-
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
 exports.canLift = canLift;
 exports.canWrap = canWrap;
 
@@ -11718,7 +11736,7 @@ _transform.Transform.prototype.setNodeType = function (pos, type, attrs) {
   this.step("ancestor", new _model.Pos(path, 0), new _model.Pos(path, node.size), null, { depth: 1, types: [type], attrs: [attrs] });
   return this;
 };
-},{"../model":34,"./map":42,"./step":46,"./transform":47,"./tree":48}],40:[function(require,module,exports){
+},{"../model":35,"./map":43,"./step":47,"./transform":48,"./tree":49}],41:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11806,7 +11824,7 @@ require("./mark");
 require("./split");
 
 require("./replace");
-},{"./ancestor":39,"./join":41,"./map":42,"./mark":43,"./replace":44,"./split":45,"./step":46,"./transform":47}],41:[function(require,module,exports){
+},{"./ancestor":40,"./join":42,"./map":43,"./mark":44,"./replace":45,"./split":46,"./step":47,"./transform":48}],42:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11888,21 +11906,21 @@ _transform.Transform.prototype.join = function (at) {
   this.step("join", new _model.Pos(at.path.concat(at.offset - 1), parent.child(at.offset - 1).size), new _model.Pos(at.path.concat(at.offset), 0));
   return this;
 };
-},{"../model":34,"./map":42,"./step":46,"./transform":47}],42:[function(require,module,exports){
+},{"../model":35,"./map":43,"./step":47,"./transform":48}],43:[function(require,module,exports){
 "use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Remapping = exports.nullMap = exports.MapResult = exports.PosMap = exports.ReplacedRange = exports.MovedRange = undefined;
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _model = require("../model");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-// ;; #kind=interface #path=Mappable
+// ;; #path=Mappable #kind=interface
 // There are various things that positions can be mapped through.
 // We'll denote those as 'mappable'. This is not an actual class in
 // the codebase, only an agreed-on interface.
@@ -12066,6 +12084,7 @@ var PosMap = exports.PosMap = function () {
 
 // ;; The return value of mapping a position.
 
+
 var MapResult = exports.MapResult = function MapResult(pos) {
   var deleted = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
   var recover = arguments.length <= 2 || arguments[2] === undefined ? null : arguments[2];
@@ -12148,6 +12167,7 @@ var Remapping = exports.Remapping = function () {
   // [`addToBack`](#Remapping.addToBack)) should be passed as a second
   // parameter to register the correspondence.
 
+
   _createClass(Remapping, [{
     key: "addToFront",
     value: function addToFront(map, corr) {
@@ -12186,8 +12206,8 @@ var Remapping = exports.Remapping = function () {
       var deleted = false;
 
       for (var i = -this.head.length; i < this.tail.length; i++) {
-        var _map = this.get(i);
-        var result = _map.map(pos, bias);
+        var map = this.get(i);
+        var result = map.map(pos, bias);
         if (result.recover) {
           var corr = this.mirror[i];
           if (corr != null) {
@@ -12206,7 +12226,7 @@ var Remapping = exports.Remapping = function () {
 
   return Remapping;
 }();
-},{"../model":34}],43:[function(require,module,exports){
+},{"../model":35}],44:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -12385,7 +12405,7 @@ _transform.Transform.prototype.clearMarkup = function (from, to, newParent) {
     this.step(delSteps[i]);
   }return this;
 };
-},{"../model":34,"./step":46,"./transform":47,"./tree":48}],44:[function(require,module,exports){
+},{"../model":35,"./step":47,"./transform":48,"./tree":49}],45:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12404,7 +12424,6 @@ var _map = require("./map");
 var _tree = require("./tree");
 
 // !! **`replace`**
-
 //   : Delete the part of the document between `from` and `to` and
 //     optionally replace it with another chunk of content. `pos` must
 //     point at the ‘root’ at which the cut starts—a position between
@@ -12506,12 +12525,16 @@ _step.Step.define("replace", {
 });
 
 function shiftFromStack(stack, depth) {
-  var shifted = stack[depth] = stack[depth].splice(0, 1, _model.emptyFragment);
+  var shifted = stack[depth] = stack[depth].slice(1);
   for (var i = depth - 1; i >= 0; i--) {
     shifted = stack[i] = stack[i].replace(0, shifted);
   }
 }
 
+// : ([Node], Node, Pos, Pos) → {repl: Node, depth: number}
+// Given a document that should be inserted into another document,
+// create a modified document that can be inserted into the other
+// based on schema context.
 // FIXME find a not so horribly confusing way to express this
 function buildInserted(nodesLeft, source, start, end) {
   var sliced = source.sliceBetween(start, end);
@@ -12530,11 +12553,13 @@ function buildInserted(nodesLeft, source, start, end) {
     shiftFromStack(nodesRight, searchRight);
   }
 
-  for (;;) {
+  for (;; searchRight--) {
     var node = nodesRight[searchRight],
         type = node.type,
         matched = null;
     var outside = searchRight <= same;
+    // Find the first node (searching from leaf to trunk) which can
+    // contain the content to be inserted.
     for (var i = searchLeft; i >= 0; i--) {
       var left = nodesLeft[i];
       if (outside ? left.type.canContainContent(node.type) : left.type == type) {
@@ -12557,9 +12582,8 @@ function buildInserted(nodesLeft, source, start, end) {
     }
     if (matched != null || node.size == 0) {
       if (outside) break;
-      if (searchRight) shiftFromStack(nodesRight, searchRight - 1);
+      shiftFromStack(nodesRight, searchRight - 1);
     }
-    searchRight--;
   }
 
   var repl = { content: result ? result.content : _model.emptyFragment,
@@ -12704,7 +12728,7 @@ _transform.Transform.prototype.insertText = function (pos, text) {
 _transform.Transform.prototype.insertInline = function (pos, node) {
   return this.insert(pos, node.mark(this.doc.marksAt(pos)));
 };
-},{"../model":34,"./map":42,"./step":46,"./transform":47,"./tree":48}],45:[function(require,module,exports){
+},{"../model":35,"./map":43,"./step":47,"./transform":48,"./tree":49}],46:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -12739,6 +12763,7 @@ _step.Step.define("split", {
 
     var typeAfter = _ref.type;
     var attrsAfter = _ref.attrs;
+
 
     var splitAt = pos.offset;
     if (splitAt == 0 && !target.type.canBeEmpty || target.type.locked || splitAt == target.size && !typeAfter.canBeEmpty) return null;
@@ -12792,15 +12817,15 @@ _transform.Transform.prototype.splitIfNeeded = function (pos) {
   }
   return this;
 };
-},{"../model":34,"./map":42,"./step":46,"./transform":47}],46:[function(require,module,exports){
+},{"../model":35,"./map":43,"./step":47,"./transform":48}],47:[function(require,module,exports){
 "use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.StepResult = exports.Step = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _model = require("../model");
 
@@ -12852,6 +12877,7 @@ var Step = exports.Step = function () {
   // containing the transformed document (the input document is not
   // changed) and a `PosMap`. If the step could not meaningfully be
   // applied to the given document, this returns `null`.
+
 
   _createClass(Step, [{
     key: "apply",
@@ -12963,6 +12989,7 @@ var Step = exports.Step = function () {
 // ;; Objects of this type are returned as the result of
 // applying a transform step to a document.
 
+
 var StepResult = exports.StepResult = function StepResult(doc) {
   var map = arguments.length <= 1 || arguments[1] === undefined ? _map.nullMap : arguments[1];
 
@@ -12977,15 +13004,15 @@ var StepResult = exports.StepResult = function StepResult(doc) {
 };
 
 var steps = Object.create(null);
-},{"../model":34,"../util/error":49,"./map":42}],47:[function(require,module,exports){
+},{"../model":35,"../util/error":52,"./map":43}],48:[function(require,module,exports){
 "use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.Transform = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _step2 = require("./step");
 
@@ -13025,8 +13052,10 @@ var Transform = function () {
   // :: Node
   // The current version of the transformed document.
 
+
   _createClass(Transform, [{
     key: "step",
+
 
     // :: (Step) → ?StepResult
     // Add a step to this transformation. If the step can be
@@ -13080,7 +13109,7 @@ var Transform = function () {
 }();
 
 exports.Transform = Transform;
-},{"./map":42,"./step":46}],48:[function(require,module,exports){
+},{"./map":43,"./step":47}],49:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13167,19 +13196,471 @@ function replaceHasEffect(doc, from, to) {
   }
 }
 
+// : (Pos, Pos) → number
+// Get the number of path levels that two positions have in common.
 function samePathDepth(a, b) {
   for (var i = 0;; i++) {
     if (i == a.path.length || i == b.path.length || a.path[i] != b.path[i]) return i;
   }
 }
-},{"../model":34}],49:[function(require,module,exports){
+},{"../model":35}],50:[function(require,module,exports){
 "use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+exports.ParamPrompt = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+exports.openPrompt = openPrompt;
+
+var _error = require("../util/error");
+
+var _dom = require("../dom");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+// !! The `ui/prompt` module implements functionality for prompting
+// the user for [command parameters](#CommandSpec.params).
+//
+// The default implementation gets the job done, roughly, but you'll
+// probably want to customize it in your own system (or submit patches
+// to improve this implementation).
+
+// ;; This class represents a dialog that prompts for [command
+// parameters](#CommandSpec.params). It is the default value of the
+// `commandParamPrompt` option. You can set this option to a subclass
+// (or a complete reimplementation) to customize the way in which
+// parameters are read.
+
+var ParamPrompt = exports.ParamPrompt = function () {
+  // :: (ProseMirror, Command)
+  // Construct a prompt. Note that this does not
+  // [open](#ParamPrompt.open) it yet.
+
+  function ParamPrompt(pm, command) {
+    var _this = this;
+
+    _classCallCheck(this, ParamPrompt);
+
+    // :: ProseMirror
+    this.pm = pm;
+    // :: Command
+    this.command = command;
+    this.doClose = null;
+    // :: [DOMNode]
+    // An array of fields, as created by `ParamTypeSpec.render`, for
+    // the command's parameters.
+    this.fields = command.params.map(function (param) {
+      if (!(param.type in _this.paramTypes)) _error.AssertionError.raise("Unsupported parameter type: " + param.type);
+      return _this.paramTypes[param.type].render.call(_this.pm, param, _this.defaultValue(param));
+    });
+    // :: DOMNode
+    // An HTML form wrapping the fields.
+    this.form = (0, _dom.elt)("form", null, this.fields.map(function (f) {
+      return (0, _dom.elt)("div", null, f);
+    }));
+  }
+
+  // :: ()
+  // Close the prompt.
+
+
+  _createClass(ParamPrompt, [{
+    key: "close",
+    value: function close() {
+      if (this.doClose) {
+        this.doClose();
+        this.doClose = null;
+      }
+    }
+
+    // :: ()
+    // Open the prompt's dialog.
+
+  }, {
+    key: "open",
+    value: function open() {
+      var _this2 = this;
+
+      this.close();
+      var prompt = this.prompt();
+      var hadFocus = this.pm.hasFocus();
+      this.doClose = function () {
+        prompt.close();
+        if (hadFocus) setTimeout(function () {
+          return _this2.pm.focus();
+        }, 50);
+      };
+
+      var submit = function submit() {
+        var params = _this2.values();
+        if (params) {
+          _this2.close();
+          _this2.command.exec(_this2.pm, params);
+        }
+      };
+
+      this.form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        submit();
+      });
+
+      this.form.addEventListener("keydown", function (e) {
+        if (e.keyCode == 27) prompt.close();else if (e.keyCode == 13 && !(e.ctrlKey || e.metaKey || e.shiftKey)) submit();
+      });
+
+      var input = this.form.querySelector("input, textarea");
+      if (input) input.focus();
+    }
+
+    // :: () → ?[any]
+    // Read the values from the form's field. Validate them, and when
+    // one isn't valid (either has a validate function that produced an
+    // error message, or has no validate function, no value, and no
+    // default value), show the problem to the user and return `null`.
+
+  }, {
+    key: "values",
+    value: function values() {
+      var result = [];
+      for (var i = 0; i < this.command.params.length; i++) {
+        var param = this.command.params[i],
+            dom = this.fields[i];
+        var type = this.paramTypes[param.type],
+            value = undefined,
+            bad = undefined;
+        if (type.validate) bad = type.validate(dom);
+        if (!bad) {
+          value = type.read.call(this.pm, dom);
+          if (param.validate) bad = param.validate(value);else if (!value && param.default == null) bad = "No default value available";
+        }
+
+        if (bad) {
+          if (type.reportInvalid) type.reportInvalid.call(this.pm, dom, bad);else this.reportInvalid(dom, bad);
+          return null;
+        }
+        result.push(value);
+      }
+      return result;
+    }
+
+    // :: (CommandParam) → ?any
+    // Get a parameter's default value, if any.
+
+  }, {
+    key: "defaultValue",
+    value: function defaultValue(param) {
+      if (param.prefill) {
+        var prefill = param.prefill.call(this.command.self, this.pm);
+        if (prefill != null) return prefill;
+      }
+      return param.default;
+    }
+
+    // :: () → {close: ()}
+    // Open a prompt with the parameter form in it. The default
+    // implementation calls `openPrompt`.
+
+  }, {
+    key: "prompt",
+    value: function prompt() {
+      var _this3 = this;
+
+      return openPrompt(this.pm, this.form, { onClose: function onClose() {
+          return _this3.close();
+        } });
+    }
+
+    // :: (DOMNode, string)
+    // Report a field as invalid, showing the given message to the user.
+
+  }, {
+    key: "reportInvalid",
+    value: function reportInvalid(dom, message) {
+      // FIXME this is awful and needs a lot more work
+      var parent = dom.parentNode;
+      var style = "left: " + (dom.offsetLeft + dom.offsetWidth + 2) + "px; top: " + (dom.offsetTop - 5) + "px";
+      var msg = parent.appendChild((0, _dom.elt)("div", { class: "ProseMirror-invalid", style: style }, message));
+      setTimeout(function () {
+        return parent.removeChild(msg);
+      }, 1500);
+    }
+  }]);
+
+  return ParamPrompt;
+}();
+
+// ;; #path=ParamTypeSpec #kind=interface
+// By default, the prompting interface only knows how to prompt for
+// parameters of type `text` and `select`. You can change the way
+// those are prompted for, and define new types, by writing to
+// `ParamPrompt.paramTypes`. All methods on these specs will be called
+// with `this` bound to the relevant `ProseMirror` instance.
+
+// :: (param: CommandParam, value: ?any) → DOMNode #path=ParamTypeSpec.render
+// Create the DOM structure for a parameter field of this type, and
+// pre-fill it with `value`, if given.
+
+// :: (field: DOMNode) → any #path=ParamTypeSpec.read
+// Read the value from the DOM field created by
+// [`render`](#ParamTypeSpec.render).
+
+// :: (field: DOMNode) → ?string #path=ParamTypeSpec.validate
+// Optional. Validate the value in the given field, and return a
+// string message if it is not a valid input for this type.
+
+// :: (field: DOMNode, message: string) #path=ParamTypeSpec.reportInvalid
+// Report the value in the given field as invalid, showing the given
+// error message. This property is optional, and the prompt
+// implementation will fall back to its own method of showing the
+// message when it is not provided.
+
+// :: Object<ParamTypeSpec>
+// A collection of default renderers and readers for [parameter
+// types](#CommandParam.type), which [parameter
+// handlers](#commandParamHandler) can optionally use to prompt for
+// parameters. `render` should create a form field for the parameter,
+// and `read` should, given that field, return its value.
+
+
+ParamPrompt.prototype.paramTypes = Object.create(null);
+
+ParamPrompt.prototype.paramTypes.text = {
+  render: function render(param, value) {
+    return (0, _dom.elt)("input", { type: "text",
+      placeholder: param.label,
+      value: value,
+      autocomplete: "off" });
+  },
+  read: function read(dom) {
+    return dom.value;
+  }
+};
+
+ParamPrompt.prototype.paramTypes.select = {
+  render: function render(param, value) {
+    var options = param.options.call ? param.options(this) : param.options;
+    return (0, _dom.elt)("select", null, options.map(function (o) {
+      return (0, _dom.elt)("option", { value: o.value, selected: o.value == value ? "true" : null }, o.label);
+    }));
+  },
+  read: function read(dom) {
+    return dom.value;
+  }
+};
+
+// :: (ProseMirror, DOMNode, ?Object) → {close: ()}
+// Open a dialog box for the given editor, putting `content` inside of
+// it. The `close` method on the return value can be used to
+// explicitly close the dialog again. The following options are
+// supported:
+//
+// **`pos`**`: {left: number, top: number}`
+//   : Provide an explicit position for the element. By default, it'll
+//     be placed in the center of the editor.
+//
+// **`onClose`**`: fn()`
+//   : A function to be called when the dialog is closed.
+function openPrompt(pm, content, options) {
+  var button = (0, _dom.elt)("button", { class: "ProseMirror-prompt-close" });
+  var wrapper = (0, _dom.elt)("div", { class: "ProseMirror-prompt" }, content, button);
+  var outerBox = pm.wrapper.getBoundingClientRect();
+
+  pm.wrapper.appendChild(wrapper);
+  if (options && options.pos) {
+    wrapper.style.left = options.pos.left - outerBox.left + "px";
+    wrapper.style.pos = options.pos.top - outerBox.top + "px";
+  } else {
+    var blockBox = wrapper.getBoundingClientRect();
+    var cX = Math.max(0, outerBox.left) + Math.min(window.innerWidth, outerBox.right) - blockBox.width;
+    var cY = Math.max(0, outerBox.top) + Math.min(window.innerHeight, outerBox.bottom) - blockBox.height;
+    wrapper.style.left = cX / 2 - outerBox.left + "px";
+    wrapper.style.top = cY / 2 - outerBox.top + "px";
+  }
+
+  var close = function close() {
+    pm.off("interaction", close);
+    if (wrapper.parentNode) {
+      wrapper.parentNode.removeChild(wrapper);
+      if (options && options.onClose) options.onClose();
+    }
+  };
+  button.addEventListener("click", close);
+  pm.on("interaction", close);
+  return { close: close };
+}
+
+(0, _dom.insertCSS)("\n.ProseMirror-prompt {\n  background: white;\n  padding: 2px 6px 2px 15px;\n  border: 1px solid silver;\n  position: absolute;\n  border-radius: 3px;\n  z-index: 11;\n}\n\n.ProseMirror-prompt input[type=\"text\"],\n.ProseMirror-prompt textarea {\n  background: #eee;\n  border: none;\n  outline: none;\n}\n\n.ProseMirror-prompt input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n.ProseMirror-prompt-close {\n  position: absolute;\n  left: 2px; top: 1px;\n  color: #666;\n  border: none; background: transparent; padding: 0;\n}\n\n.ProseMirror-prompt-close:after {\n  content: \"✕\";\n  font-size: 12px;\n}\n\n.ProseMirror-invalid {\n  background: #ffc;\n  border: 1px solid #cc7;\n  border-radius: 4px;\n  padding: 5px 10px;\n  position: absolute;\n  min-width: 10em;\n}\n");
+},{"../dom":8,"../util/error":52}],51:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+exports.scheduleDOMUpdate = scheduleDOMUpdate;
+exports.unscheduleDOMUpdate = unscheduleDOMUpdate;
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var UPDATE_TIMEOUT = 50;
+var MIN_FLUSH_DELAY = 100;
+
+var CentralScheduler = function () {
+  function CentralScheduler(pm) {
+    _classCallCheck(this, CentralScheduler);
+
+    this.waiting = [];
+    this.timeout = null;
+    this.lastForce = 0;
+    this.pm = pm;
+    this.force = this.force.bind(this);
+    pm.on("flush", this.onFlush.bind(this));
+  }
+
+  _createClass(CentralScheduler, [{
+    key: "set",
+    value: function set(f) {
+      if (this.waiting.length == 0) this.timeout = setTimeout(this.force, UPDATE_TIMEOUT);
+      if (this.waiting.indexOf(f) == -1) this.waiting.push(f);
+    }
+  }, {
+    key: "unset",
+    value: function unset(f) {
+      var index = this.waiting.indexOf(f);
+      if (index > -1) this.waiting.splice(index, 1);
+    }
+  }, {
+    key: "force",
+    value: function force() {
+      clearTimeout(this.timeout);
+      this.lastForce = Date.now();
+
+      while (this.waiting.length) {
+        for (var i = 0; i < this.waiting.length; i++) {
+          var result = this.waiting[i]();
+          if (result) this.waiting[i] = result;else this.waiting.splice(i--, 1);
+        }
+      }
+    }
+  }, {
+    key: "onFlush",
+    value: function onFlush() {
+      if (this.waiting.length && Date.now() - this.lastForce > MIN_FLUSH_DELAY) this.force();
+    }
+  }], [{
+    key: "get",
+    value: function get(pm) {
+      return pm.mod.centralScheduler || (pm.mod.centralScheduler = new this(pm));
+    }
+  }]);
+
+  return CentralScheduler;
+}();
+
+// :: (ProseMirror, () -> ?() -> ?())
+// Schedule a DOM update function to be called either the next time
+// the editor is [flushed](#ProseMirror.flush), or if no flush happens
+// immediately, after 200 milliseconds. This is used to synchronize
+// DOM updates and read to prevent [DOM layout
+// thrashing](http://eloquentjavascript.net/13_dom.html#p_nnTb9RktUT).
+//
+// Often, your updates will need to both read and write from the DOM.
+// To schedule such access in lockstep with other modules, the
+// function you give can return another function, which may return
+// another function, and so on. The first call should _write_ to the
+// DOM, and _not read_. If a _read_ needs to happen, that should be
+// done in the function returned from the first call. If that has to
+// be followed by another _write_, that should be done in a function
+// returned from the second function, and so on.
+
+
+function scheduleDOMUpdate(pm, f) {
+  CentralScheduler.get(pm).set(f);
+}
+
+// :: (ProseMirror, () -> ?() -> ?())
+// Cancel an update scheduled with `scheduleDOMUpdate`. Calling this with
+// a function that is not actually scheduled is harmless.
+function unscheduleDOMUpdate(pm, f) {
+  CentralScheduler.get(pm).unset(f);
+}
+
+// ;; Helper for scheduling updates whenever any of a series of events
+// happen.
+
+var UpdateScheduler = exports.UpdateScheduler = function () {
+  // :: (ProseMirror, string, () -> ?())
+  // Creates an update scheduler for the given editor. `events` should
+  // be a space-separated list of event names (for example
+  // `"selectionChange change"`). `start` should be a function as
+  // expected by `scheduleDOMUpdate`.
+
+  function UpdateScheduler(pm, events, start) {
+    var _this = this;
+
+    _classCallCheck(this, UpdateScheduler);
+
+    this.pm = pm;
+    this.start = start;
+
+    this.events = events.split(" ");
+    this.onEvent = this.onEvent.bind(this);
+    this.events.forEach(function (event) {
+      return pm.on(event, _this.onEvent);
+    });
+  }
+
+  // :: ()
+  // Detach the event handlers registered by this scheduler.
+
+
+  _createClass(UpdateScheduler, [{
+    key: "detach",
+    value: function detach() {
+      var _this2 = this;
+
+      unscheduleDOMUpdate(this.pm, this.start);
+      this.events.forEach(function (event) {
+        return _this2.pm.off(event, _this2.onEvent);
+      });
+    }
+  }, {
+    key: "onEvent",
+    value: function onEvent() {
+      scheduleDOMUpdate(this.pm, this.start);
+    }
+
+    // :: ()
+    // Force an update. Note that if the editor has scheduled a flush,
+    // the update is still delayed until the flush occurs.
+
+  }, {
+    key: "force",
+    value: function force() {
+      if (this.pm.operation) {
+        this.onEvent();
+      } else {
+        unscheduleDOMUpdate(this.pm, this.start);
+        for (var run = this.start; run; run = run()) {}
+      }
+    }
+  }]);
+
+  return UpdateScheduler;
+}();
+},{}],52:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -13232,6 +13713,7 @@ var ProseMirrorError = exports.ProseMirrorError = function (_Error) {
 
 // ;; Error type used to signal miscellaneous invariant violations.
 
+
 var AssertionError = exports.AssertionError = function (_ProseMirrorError) {
   _inherits(AssertionError, _ProseMirrorError);
 
@@ -13246,6 +13728,7 @@ var AssertionError = exports.AssertionError = function (_ProseMirrorError) {
 
 // ;; Error type used to report name clashes or other violations in
 // namespacing.
+
 
 var NamespaceError = exports.NamespaceError = function (_ProseMirrorError2) {
   _inherits(NamespaceError, _ProseMirrorError2);
@@ -13263,7 +13746,7 @@ function functionName(f) {
   var match = /^function (\w+)/.exec(f.toString());
   return match && match[1];
 }
-},{}],50:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13278,22 +13761,24 @@ var methods = {
   // :: (type: string, handler: (...args: [any])) #path=EventMixin.on
   // Register an event handler for the given event type.
 
-  on: function on(type, f) {
+  on: function on(type, handler) {
     var map = this._handlers || (this._handlers = {});
     var arr = map[type] || (map[type] = []);
-    arr.push(f);
+    arr.push(handler);
   },
+
 
   // :: (type: string, handler: (...args: [any])) #path=EventMixin.off
   // Unregister an event handler for the given event type.
-  off: function off(type, f) {
+  off: function off(type, handler) {
     var arr = this._handlers && this._handlers[type];
     if (arr) for (var i = 0; i < arr.length; ++i) {
-      if (arr[i] == f) {
+      if (arr[i] == handler) {
         arr.splice(i, 1);break;
       }
     }
   },
+
 
   // :: (type: string, ...args: [any]) #path=EventMixin.signal
   // Signal an event of the given type, passing any number of
@@ -13302,14 +13787,15 @@ var methods = {
   signal: function signal(type) {
     var arr = this._handlers && this._handlers[type];
 
-    for (var _len = arguments.length, values = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      values[_key - 1] = arguments[_key];
+    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      args[_key - 1] = arguments[_key];
     }
 
     if (arr) for (var i = 0; i < arr.length; ++i) {
-      arr[i].apply(arr, values);
+      arr[i].apply(arr, args);
     }
   },
+
 
   // :: (type: string, ...args: [any]) #path=EventMixin.signalHandleable
   // Signal a handleable event of the given type. All handlers for the
@@ -13320,16 +13806,45 @@ var methods = {
   signalHandleable: function signalHandleable(type) {
     var arr = this._handlers && this._handlers[type];
     if (arr) {
-      for (var _len2 = arguments.length, values = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-        values[_key2 - 1] = arguments[_key2];
+      for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+        args[_key2 - 1] = arguments[_key2];
       }
 
       for (var i = 0; i < arr.length; ++i) {
-        var result = arr[i].apply(arr, values);
+        var result = arr[i].apply(arr, args);
         if (result !== false) return result;
       }
     }return false;
   },
+
+
+  // :: (type: string, value: any)
+  // Give all handlers for an event a chance to transform a value. The
+  // value returned from a handler will be passed to the next handler.
+  // The method returns the value returned by the final handler (or
+  // the original value, if there are no handlers).
+  signalPipelined: function signalPipelined(type, value) {
+    var arr = this._handlers && this._handlers[type];
+    if (arr) for (var i = 0; i < arr.length; ++i) {
+      value = arr[i](value);
+    }return value;
+  },
+
+
+  // :: (DOMEvent, ?string) → bool
+  // Fire all handlers for `event.type` (or override the type name
+  // with the `type` parameter), until one of them calls
+  // `preventDefault` on the event or returns `true` to indicate it
+  // handled the event. Return `true` when one of the handlers handled
+  // the event.
+  signalDOM: function signalDOM(event, type) {
+    var arr = this._handlers && this._handlers[type || event.type];
+    if (arr) for (var i = 0; i < arr.length; ++i) {
+      if (arr[i](event) || event.defaultPrevented) return true;
+    }
+    return false;
+  },
+
 
   // :: (type: string) → bool #path=EventMixin.hasHandler
   // Query whether there are any handlers for this event type.
@@ -13348,14 +13863,14 @@ function eventMixin(ctor) {
     if (methods.hasOwnProperty(prop)) proto[prop] = methods[prop];
   }
 }
-},{}],51:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 "use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -13404,7 +13919,7 @@ var Map = exports.Map = window.Map || function () {
 
   return _class;
 }();
-},{}],52:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13417,7 +13932,7 @@ function copyObj(obj, base) {
     copy[prop] = obj[prop];
   }return copy;
 }
-},{}],53:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13430,4 +13945,176 @@ function sortedInsert(array, elt, compare) {
     if (compare(array[i], elt) > 0) break;
   }array.splice(i, 0, elt);
 }
+},{}],57:[function(require,module,exports){
+(function(mod) {
+  if (typeof exports == "object" && typeof module == "object") // CommonJS
+    module.exports = mod()
+  else if (typeof define == "function" && define.amd) // AMD
+    return define([], mod)
+  else // Plain browser env
+    (this || window).browserKeymap = mod()
+})(function() {
+  "use strict"
+
+  var mac = typeof navigator != "undefined" ? /Mac/.test(navigator.platform)
+          : typeof os != "undefined" ? os.platform() == "darwin" : false
+
+  // :: Object<string>
+  // A map from key codes to key names.
+  var keyNames = {
+    3: "Enter", 8: "Backspace", 9: "Tab", 13: "Enter", 16: "Shift", 17: "Ctrl", 18: "Alt",
+    19: "Pause", 20: "CapsLock", 27: "Esc", 32: "Space", 33: "PageUp", 34: "PageDown", 35: "End",
+    36: "Home", 37: "Left", 38: "Up", 39: "Right", 40: "Down", 44: "PrintScrn", 45: "Insert",
+    46: "Delete", 59: ";", 61: "=", 91: "Mod", 92: "Mod", 93: "Mod",
+    106: "*", 107: "=", 109: "-", 110: ".", 111: "/", 127: "Delete",
+    173: "-", 186: ";", 187: "=", 188: ",", 189: "-", 190: ".", 191: "/", 192: "`", 219: "[", 220: "\\",
+    221: "]", 222: "'", 63232: "Up", 63233: "Down", 63234: "Left", 63235: "Right", 63272: "Delete",
+    63273: "Home", 63275: "End", 63276: "PageUp", 63277: "PageDown", 63302: "Insert"
+  }
+
+  // Number keys
+  for (var i = 0; i < 10; i++) keyNames[i + 48] = keyNames[i + 96] = String(i)
+  // Alphabetic keys
+  for (var i = 65; i <= 90; i++) keyNames[i] = String.fromCharCode(i)
+  // Function keys
+  for (var i = 1; i <= 12; i++) keyNames[i + 111] = keyNames[i + 63235] = "F" + i
+
+  // :: (KeyboardEvent) → ?string
+  // Find a name for the given keydown event. If the keycode in the
+  // event is not known, this will return `null`. Otherwise, it will
+  // return a string like `"Shift-Cmd-Ctrl-Alt-Home"`. The parts before
+  // the dashes give the modifiers (always in that order, if present),
+  // and the last word gives the key name, which one of the names in
+  // `keyNames`.
+  //
+  // The convention for keypress events is to use the pressed character
+  // between single quotes. Due to limitations in the browser API,
+  // keypress events can not have modifiers.
+  function keyName(event) {
+    if (event.type == "keypress") return "'" + String.fromCharCode(event.charCode) + "'"
+
+    var base = keyNames[event.keyCode], name = base
+    if (name == null || event.altGraphKey) return null
+
+    if (event.altKey && base != "Alt") name = "Alt-" + name
+    if (event.ctrlKey && base != "Ctrl") name = "Ctrl-" + name
+    if (event.metaKey && base != "Cmd") name = "Cmd-" + name
+    if (event.shiftKey && base != "Shift") name = "Shift-" + name
+    return name
+  }
+
+  // :: (string) → bool
+  // Test whether the given key name refers to a modifier key.
+  function isModifierKey(name) {
+    name = /[^-]*$/.exec(name)[0]
+    return name == "Ctrl" || name == "Alt" || name == "Shift" || name == "Mod"
+  }
+
+  // :: (string) → string
+  // Normalize a sloppy key name, which may have modifiers in the wrong
+  // order or use shorthands for modifiers, to a properly formed key
+  // name. Used to normalize names provided in keymaps.
+  //
+  // Note that the modifier `mod` is a shorthand for `Cmd` on Mac, and
+  // `Ctrl` on other platforms.
+  function normalizeKeyName(name) {
+    var parts = name.split(/-(?!'?$)/), result = parts[parts.length - 1]
+    var alt, ctrl, shift, cmd
+    for (var i = 0; i < parts.length - 1; i++) {
+      var mod = parts[i]
+      if (/^(cmd|meta|m)$/i.test(mod)) cmd = true
+      else if (/^a(lt)?$/i.test(mod)) alt = true
+      else if (/^(c|ctrl|control)$/i.test(mod)) ctrl = true
+      else if (/^s(hift)$/i.test(mod)) shift = true
+      else if (/^mod$/i.test(mod)) { if (mac) cmd = true; else ctrl = true }
+      else throw new Error("Unrecognized modifier name: " + mod)
+    }
+    if (alt) result = "Alt-" + result
+    if (ctrl) result = "Ctrl-" + result
+    if (cmd) result = "Cmd-" + result
+    if (shift) result = "Shift-" + result
+    return result
+  }
+
+  // :: (Object, ?Object)
+  // A keymap binds a set of [key names](#keyName) to commands names
+  // or functions.
+  //
+  // Construct a keymap using the bindings in `keys`, whose properties
+  // should be [key names](#keyName) or space-separated sequences of
+  // key names. In the second case, the binding will be for a
+  // multi-stroke key combination.
+  //
+  // When `options` has a property `call`, this will be a programmatic
+  // keymap, meaning that instead of looking keys up in its set of
+  // bindings, it will pass the key name to `options.call`, and use
+  // the return value of that calls as the resolved binding.
+  //
+  // `options.name` can be used to give the keymap a name, making it
+  // easier to [remove](#ProseMirror.removeKeymap) from an editor.
+  function Keymap(keys, options) {
+    this.options = options || {}
+    this.bindings = Object.create(null)
+    if (keys) for (var keyname in keys) if (Object.prototype.hasOwnProperty.call(keys, keyname))
+      this.addBinding(keyname, keys[keyname])
+  }
+
+  Keymap.prototype = {
+    normalize: function(name) {
+      return this.options.multi !== false ? name.split(/ +(?!\'$)/).map(normalizeKeyName) : [normalizeKeyName(name)]
+    },
+
+    // :: (string, any)
+    // Add a binding for the given key or key sequence.
+    addBinding: function(keyname, value) {
+      var keys = this.normalize(keyname)
+      for (var i = 0; i < keys.length; i++) {
+        var name = keys.slice(0, i + 1).join(" ")
+        var val = i == keys.length - 1 ? value : "..."
+        var prev = this.bindings[name]
+        if (!prev) this.bindings[name] = val
+        else if (prev != val) throw new Error("Inconsistent bindings for " + name)
+      }
+    },
+
+    // :: (string)
+    // Remove the binding for the given key or key sequence.
+    removeBinding: function(keyname) {
+      var keys = this.normalize(keyname)
+      for (var i = keys.length - 1; i >= 0; i--) {
+        var name = keys.slice(0, i).join(" ")
+        var val = this.bindings[name]
+        if (val == "..." && !this.unusedMulti(name))
+          break
+        else if (val)
+          delete this.bindings[name]
+      }
+    },
+
+    unusedMulti: function(name) {
+      for (var binding in this.bindings)
+        if (binding.length > name && binding.indexOf(name) == 0 && binding.charAt(name.length) == " ")
+          return false
+      return true
+    },
+
+    // :: (string, ?any) → any
+    // Looks up the given key or key sequence in this keymap. Returns
+    // the value the key is bound to (which may be undefined if it is
+    // not bound), or the string `"..."` if the key is a prefix of a
+    // multi-key sequence that is bound by this keymap.
+    lookup: function(key, context) {
+      return this.options.call ? this.options.call(key, context) : this.bindings[key]
+    },
+
+    constructor: Keymap
+  }
+
+  Keymap.keyName = keyName
+  Keymap.isModifierKey = isModifierKey
+  Keymap.normalizeKeyName = normalizeKeyName
+
+  return Keymap
+})
+
 },{}]},{},[1]);

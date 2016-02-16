@@ -104,10 +104,6 @@ jQuery(document).on('mousedown', '#button-figure:not(.disabled)', function (even
         buttons: dialogButtons,
         dialogClass: 'figure-dialog',
         close: function () {
-
-          //  if (!image) {
-          //      theEditor.editor.on('flushed', mathHelpers.layoutEmptyDisplayEquationNodes);
-          //  }
             jQuery(this).dialog('destroy').remove();
         },
     };

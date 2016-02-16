@@ -56,18 +56,6 @@
         return parseInt(node.getAttribute('data-id'), 10);
     };
 
-    commentHelpers.createNewComment = function () {
-        // Create a new comment, and mark it as active.
-
-        var id = theEditor.comments.addComment(theUser.id, theUser.name, theUser.avatar, new Date().getTime(), '');
-
-        commentHelpers.deactivateAll();
-        theDocument.activeCommentId = id;
-        theEditor.editor.on("flushed", commentHelpers.layoutComments);
-        editorHelpers.documentHasChanged();
-    };
-
-
     commentHelpers.createNewAnswer = function (commentId, answerText) {
         var answer = {
           commentId: commentId,
@@ -78,7 +66,7 @@
           date: new Date().getTime()
         }
 
-        theEditor.comments.addAnswer(commentId, answer);
+        theEditor.editor.mod.commentStore.addAnswer(commentId, answer);
 
         commentHelpers.deactivateAll();
         commentHelpers.layoutComments();
@@ -101,7 +89,7 @@
 
     commentHelpers.updateComment = function (id, commentText, commentIsMajor) {
         // Save the change to a comment and mark that the document has been changed
-        theEditor.comments.updateComment(id, commentText, commentIsMajor);
+        theEditor.editor.mod.commentStore.updateComment(id, commentText, commentIsMajor);
         commentHelpers.deactivateAll();
         commentHelpers.layoutComments();
     };
@@ -122,7 +110,7 @@
         commentTextBox = jQuery(this).siblings('.commentText')[0];
         if (commentTextBox) {
             id = commentHelpers.getCommentId(commentTextBox);
-            if (theEditor.comments.comments[id].comment.length === 0) {
+            if (theEditor.editor.mod.commentStore.comments[id].comment.length === 0) {
                 commentHelpers.deleteComment(id);
             }
             else {
@@ -153,7 +141,7 @@
 
 
     commentHelpers.submitAnswerUpdate = function (commentId, answerId, commentText) {
-        theEditor.comments.updateAnswer(commentId, answerId, commentText);
+        theEditor.editor.mod.commentStore.updateAnswer(commentId, answerId, commentText);
 
         commentHelpers.deactivateAll();
         editorHelpers.documentHasChanged();
@@ -258,7 +246,7 @@
     commentHelpers.deleteComment = function (id) {
         // Handle the deletion of a comment.
         var comment = commentHelpers.findComment(id);
-        theEditor.comments.deleteComment(id);
+        theEditor.editor.mod.commentStore.deleteComment(id);
 //      TODO: make the markrange go away
         editorHelpers.documentHasChanged();
         commentHelpers.layoutComments();
@@ -267,7 +255,7 @@
 
     commentHelpers.deleteCommentAnswer = function (commentId, answerId) {
         // Handle the deletion of a comment answer.
-        theEditor.comments.deleteAnswer(commentId, answerId);
+        theEditor.editor.mod.commentStore.deleteAnswer(commentId, answerId);
         commentHelpers.deactivateAll();
         editorHelpers.documentHasChanged();
         commentHelpers.layoutComments();
@@ -341,7 +329,6 @@
         // Handle the layout of the comments on the screen.
         var theCommentPointers = [].slice.call(jQuery('.comment')),
             activeCommentWrapper, theComments = [], ids = [];
-        theEditor.editor.off("flushed", commentHelpers.layoutComments);
         theCommentPointers.forEach(function(commentNode){
           var id = parseInt(commentNode.getAttribute("data-id"));
           if (ids.indexOf(id) !== -1) {
@@ -349,17 +336,17 @@
             return;
           }
           ids.push(id);
-          if (theEditor.comments.comments[id]) {
+          if (theEditor.editor.mod.commentStore.comments[id]) {
             theComments.push({
               id: id,
               referrer: commentNode,
-              comment: theEditor.comments.comments[id]['comment'],
-              user: theEditor.comments.comments[id]['user'],
-              userName: theEditor.comments.comments[id]['userName'],
-              userAvatar: theEditor.comments.comments[id]['userAvatar'],
-              date: theEditor.comments.comments[id]['date'],
-              answers: theEditor.comments.comments[id]['answers'],
-                'review:isMajor': theEditor.comments.comments[id]['review:isMajor']
+              comment: theEditor.editor.mod.commentStore.comments[id]['comment'],
+              user: theEditor.editor.mod.commentStore.comments[id]['user'],
+              userName: theEditor.editor.mod.commentStore.comments[id]['userName'],
+              userAvatar: theEditor.editor.mod.commentStore.comments[id]['userAvatar'],
+              date: theEditor.editor.mod.commentStore.comments[id]['date'],
+              answers: theEditor.editor.mod.commentStore.comments[id]['answers'],
+                'review:isMajor': theEditor.editor.mod.commentStore.comments[id]['review:isMajor']
             });
           }
 

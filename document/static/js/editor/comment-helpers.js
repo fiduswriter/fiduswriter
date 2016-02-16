@@ -25,74 +25,8 @@
          */
         commentHelpers = {};
 
-    commentHelpers.calculateCommentBoxOffset = function (comment) {
-
-        return comment.referrer.getBoundingClientRect()['top'] + window.pageYOffset - 280;
-    };
-
-    commentHelpers.resetOffsetCalculator = function () {
-        delete commentHelpers.pageMeasures;
-    };
-
-    commentHelpers.findActive = function () {
-        // Go through the list of comments, and return the comment specified by the id
-        return theDocument.activeCommentId;
-    };
-
-    commentHelpers.findComment = function (id) {
-        // Go through the list of comments, and return the comment specified by the id
-        return jQuery('.comment[data-id=' + id + ']')[0];
-    };
-
-    commentHelpers.findCommentBox = function (id) {
-        // Go through the list of comments, and return the comment specified by the id
-        return jQuery('.comment-box[data-id=' + id + ']')[0];
-    };
 
 
-    commentHelpers.getCommentId = function (node) {
-        // Returns the value of the attributte data-id as an integer.
-        // This function can be used on both comment referrers and comment boxes.
-        return parseInt(node.getAttribute('data-id'), 10);
-    };
-
-    commentHelpers.createNewAnswer = function (commentId, answerText) {
-        var answer = {
-          commentId: commentId,
-          answer: answerText,
-          user: theUser.id,
-          userName: theUser.name,
-          userAvatar: theUser.avatar,
-          date: new Date().getTime()
-        }
-
-        theEditor.editor.mod.commentStore.addAnswer(commentId, answer);
-
-        commentHelpers.deactivateAll();
-        commentHelpers.layoutComments();
-        editorHelpers.documentHasChanged();
-    };
-
-
-    commentHelpers.activateComment = function (id) {
-        // Find the comment that is currently opened.
-        commentHelpers.deactivateAll();
-        theDocument.activeCommentId = id;
-
-    };
-
-    commentHelpers.deactivateAll = function () {
-        // Close the comment box and make sure no comment is marked as currently active.
-        delete theDocument.activeCommentId;
-        delete theDocument.activeCommentAnswerId;
-    };
-
-    commentHelpers.updateComment = function (id, commentText, commentIsMajor) {
-        // Save the change to a comment and mark that the document has been changed
-        theEditor.editor.mod.commentStore.updateComment(id, commentText, commentIsMajor);
-        commentHelpers.deactivateAll();
-        commentHelpers.layoutComments();
-    };
 
     commentHelpers.submitComment = function () {
         // Handle a click on the submit button of the comment submit form.
@@ -100,8 +34,8 @@
         commentTextBox = jQuery(this).siblings('.commentText')[0];
         commentIsMajor = jQuery(this).siblings('.comment-is-major').prop('checked');
         commentText = commentTextBox.value;
-        commentId = commentHelpers.getCommentId(commentTextBox);
-        commentHelpers.updateComment(commentId, commentText, commentIsMajor);
+        commentId = theEditor.editor.mod.commentStore.layout.getCommentId(commentTextBox);
+        theEditor.editor.mod.commentStore.layout.updateComment(commentId, commentText, commentIsMajor);
     };
 
     commentHelpers.cancelSubmitComment = function () {
@@ -109,44 +43,21 @@
         var commentTextBox, id;
         commentTextBox = jQuery(this).siblings('.commentText')[0];
         if (commentTextBox) {
-            id = commentHelpers.getCommentId(commentTextBox);
+            id = theEditor.editor.mod.commentStore.layout.getCommentId(commentTextBox);
             if (theEditor.editor.mod.commentStore.comments[id].comment.length === 0) {
-                commentHelpers.deleteComment(id);
+                theEditor.editor.mod.commentStore.layout.deleteComment(id);
             }
             else {
-                commentHelpers.deactivateAll();
+                theEditor.editor.mod.commentStore.layout.deactivateAll();
             }
         }
         else {
-            commentHelpers.deactivateAll();
+            theEditor.editor.mod.commentStore.layout.deactivateAll();
         }
-        commentHelpers.layoutComments();
-    };
-
-    commentHelpers.submitAnswer = function () {
-        // Submit the answer to a comment
-        var commentWrapper, answerTextBox, answerText, answerParent;
-        commentWrapper = jQuery('.comment-box.active');
-        answerTextBox = commentWrapper.find('.comment-answer-text')[0];
-        answerText = answerTextBox.value;
-        commentId = parseInt(commentWrapper.attr('data-id'));
-        commentHelpers.createNewAnswer(commentId, answerText);
-    };
-
-    commentHelpers.editAnswer = function (id, answerId) {
-        theDocument.activeCommentId = id;
-        theDocument.activeCommentAnswerId = answerId;
-        commentHelpers.layoutComments();
+        theEditor.editor.mod.commentStore.layout.layoutComments();
     };
 
 
-    commentHelpers.submitAnswerUpdate = function (commentId, answerId, commentText) {
-        theEditor.editor.mod.commentStore.updateAnswer(commentId, answerId, commentText);
-
-        commentHelpers.deactivateAll();
-        editorHelpers.documentHasChanged();
-        commentHelpers.layoutComments();
-    };
 
     commentHelpers.bindEvents = function () {
         // Bind all the click events related to comments
@@ -155,15 +66,15 @@
             .cancelSubmitComment);
         jQuery(document).on("click", ".comment-box.inactive", function () {
             var commentId;
-            commentId = commentHelpers.getCommentId(this);
-            commentHelpers.activateComment(commentId);
-            commentHelpers.layoutComments();
+            commentId = theEditor.editor.mod.commentStore.layout.getCommentId(this);
+            theEditor.editor.mod.commentStore.layout.activateComment(commentId);
+            theEditor.editor.mod.commentStore.layout.layoutComments();
         });
         jQuery(document).on("click", ".comments-enabled .comment", function () {
             var commentId;
-            commentId = commentHelpers.getCommentId(this);
-            commentHelpers.activateComment(commentId);
-            commentHelpers.layoutComments();
+            commentId = theEditor.editor.mod.commentStore.layout.getCommentId(this);
+            theEditor.editor.mod.commentStore.layout.activateComment(commentId);
+            theEditor.editor.mod.commentStore.layout.layoutComments();
         });
 
         jQuery(document).on('click', '.edit-comment', function () {
@@ -185,7 +96,7 @@
             commentForm.children('textarea').val(commentP.text());
         });
         jQuery(document).on('click', '.edit-comment-answer', function () {
-            commentHelpers.editAnswer(parseInt(jQuery(this).attr(
+            theEditor.editor.mod.commentStore.layout.editAnswer(parseInt(jQuery(this).attr(
                 'data-id')), parseInt(jQuery(this).attr(
                 'data-answer')));
         });
@@ -195,12 +106,12 @@
                     commentId = parseInt(textArea.attr('data-id')),
                     answerId = parseInt(textArea.attr('data-answer')),
                     theValue = textArea.val();
-                commentHelpers.submitAnswerUpdate(commentId, answerId,
+                theEditor.editor.mod.commentStore.layout.submitAnswerUpdate(commentId, answerId,
                     theValue);
 
             });
         jQuery(document).on("click", ".comment-answer-submit", function () {
-            commentHelpers.submitAnswer();
+            theEditor.editor.mod.commentStore.layout.submitAnswer();
         });
 
         jQuery(document).on('click', '.delete-comment', function () {
@@ -209,7 +120,7 @@
         });
 
         jQuery(document).on('click', '.delete-comment-answer', function () {
-            commentHelpers.deleteCommentAnswer(parseInt(jQuery(this).attr(
+            theEditor.editor.mod.commentStore.layout.deleteCommentAnswer(parseInt(jQuery(this).attr(
                 'data-id')), parseInt(jQuery(this).attr(
                 'data-answer')));
         });
@@ -243,133 +154,8 @@
         });
     };
 
-    commentHelpers.deleteComment = function (id) {
-        // Handle the deletion of a comment.
-        var comment = commentHelpers.findComment(id);
-        theEditor.editor.mod.commentStore.deleteComment(id);
-//      TODO: make the markrange go away
-        editorHelpers.documentHasChanged();
-        commentHelpers.layoutComments();
-
-    };
-
-    commentHelpers.deleteCommentAnswer = function (commentId, answerId) {
-        // Handle the deletion of a comment answer.
-        theEditor.editor.mod.commentStore.deleteAnswer(commentId, answerId);
-        commentHelpers.deactivateAll();
-        editorHelpers.documentHasChanged();
-        commentHelpers.layoutComments();
-    };
 
 
-    commentHelpers.layoutCommentsAvoidOverlap = function () {
-        // Avoid overlapping of comments.
-        var minOffsetTop,
-            commentReferrer,
-            lastOffsetTop,
-            previousComments,
-            nextComments,
-            commentBox,
-            initialCommentBox,
-            foundComment,
-            i;
-        if (undefined != theDocument.activeCommentId) {
-            commentReferrer = commentHelpers.findComment(
-                theDocument.activeCommentId);
-            initialCommentBox = commentHelpers.findCommentBox(theDocument.activeCommentId);
-            if (!initialCommentBox) {
-              return false;
-            }
-            lastOffsetTop = initialCommentBox.offsetTop;
-            previousComments = [];
-            nextComments = jQuery.makeArray(jQuery('.comment'));
-            while (nextComments.length > 0) {
-                foundComment = nextComments.shift();
-                if (foundComment === commentReferrer) {
-                    break;
-                }
-                else {
-                    previousComments.unshift(foundComment);
-                }
-            }
-
-            for (i = 0; i < previousComments.length; i++) {
-                commentBox = commentHelpers.findCommentBox(commentHelpers.getCommentId(
-                    previousComments[i]));
-                if (commentBox) {
-                  minOffsetTop = lastOffsetTop - commentBox.offsetHeight - 10;
-                  if (commentBox.offsetTop > minOffsetTop) {
-                    jQuery(commentBox).css('top', minOffsetTop + 'px');
-                  }
-                lastOffsetTop = commentBox.offsetTop;
-                }
-            }
-
-            minOffsetTop = initialCommentBox.offsetTop + initialCommentBox.offsetHeight +
-                10;
-        }
-        else {
-            minOffsetTop = 0;
-            nextComments = jQuery('.comment');
-        }
-        for (i = 0; i < nextComments.length; i++) {
-            commentBox = commentHelpers.findCommentBox(commentHelpers.getCommentId(
-                nextComments[i]));
-           if (commentBox) {
-                if (commentBox.offsetTop < minOffsetTop) {
-                    jQuery(commentBox).css('top', minOffsetTop + 'px');
-                }
-                minOffsetTop = commentBox.offsetTop + commentBox.offsetHeight +
-                    10;
-           }
-        }
-    };
-
-    commentHelpers.layoutComments = function () {
-        // Handle the layout of the comments on the screen.
-        var theCommentPointers = [].slice.call(jQuery('.comment')),
-            activeCommentWrapper, theComments = [], ids = [];
-        theCommentPointers.forEach(function(commentNode){
-          var id = parseInt(commentNode.getAttribute("data-id"));
-          if (ids.indexOf(id) !== -1) {
-            // This is not the first occurence of this comment. So we ignore it.
-            return;
-          }
-          ids.push(id);
-          if (theEditor.editor.mod.commentStore.comments[id]) {
-            theComments.push({
-              id: id,
-              referrer: commentNode,
-              comment: theEditor.editor.mod.commentStore.comments[id]['comment'],
-              user: theEditor.editor.mod.commentStore.comments[id]['user'],
-              userName: theEditor.editor.mod.commentStore.comments[id]['userName'],
-              userAvatar: theEditor.editor.mod.commentStore.comments[id]['userAvatar'],
-              date: theEditor.editor.mod.commentStore.comments[id]['date'],
-              answers: theEditor.editor.mod.commentStore.comments[id]['answers'],
-                'review:isMajor': theEditor.editor.mod.commentStore.comments[id]['review:isMajor']
-            });
-          }
-
-        });
-
-        jQuery('#comment-box-container').html(tmp_comments({
-            theComments: theComments
-        }));
-        commentHelpers.layoutCommentsAvoidOverlap();
-        jQuery('#active-comment-style').html('');
-        activeCommentWrapper = jQuery('.comment-box.active');
-        if (0 < activeCommentWrapper.size()) {
-            theDocument.activeCommentId = activeCommentWrapper.attr(
-                'data-id');
-            jQuery('#active-comment-style').html(
-                '.comments-enabled .comment[data-id="' + theDocument.activeCommentId + '"] ' +
-                '{background-color: #fffacf;}');
-            activeCommentWrapper.find('.comment-answer-text').autoResize({
-                'extraSpace': 0
-            });
-        }
-
-    };
 
     /**
      * Filtering part. akorovin

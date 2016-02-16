@@ -25,7 +25,7 @@ var tmp_comments = _.template(
         class="comment-box \
             <% if(comment.id===theDocument.activeCommentId) { %>active<% } else { %>inactive<% } %>\
             <% if(comment["review:isMajor"] === true) { %>comment-is-major-bgc<% }%>\
-            " style="top:<%= commentHelpers.calculateCommentBoxOffset(comment) %>px;">\
+            " style="top:<%= theEditor.editor.mod.commentStore.layout.calculateCommentBoxOffset(comment) %>px;">\
             <% if (comment.id===theDocument.activeCommentId || comment.comment.length > 0) { %>\
             <% if(0 === comment.comment.length) { %>\
                 <%= tmp_first_comment({"comment": comment}) %>\

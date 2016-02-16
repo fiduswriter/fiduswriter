@@ -217,9 +217,8 @@ export class CommentStore {
       this.version++
     })
     if (updateCommentLayout) {
-      scheduleDOMUpdate(this.pm, commentHelpers.layoutComments)
+      scheduleDOMUpdate(this.pm, this.layout.layoutComments)
     }
-    //this.version = version
   }
 
   findCommentsAt(pos) {

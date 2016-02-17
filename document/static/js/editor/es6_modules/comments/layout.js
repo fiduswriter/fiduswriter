@@ -2,10 +2,10 @@
 
 import {scheduleDOMUpdate} from "prosemirror/dist/ui/update"
 
-export class CommentStoreLayout {
-    constructor(commentStore) {
-        commentStore.layout = this
-        this.commentStore = commentStore
+export class ModCommentLayout {
+    constructor(mod) {
+        mod.layout = this
+        this.mod = mod
         this.bindEvents()
     }
 
@@ -104,17 +104,17 @@ export class CommentStoreLayout {
     // Create a new comment as the current user, and mark it as active.
     createNewComment() {
         let that = this
-        let id = this.commentStore.addComment(theUser.id, theUser.name, theUser.avatar, new Date().getTime(), '')
+        let id = this.mod.store.addComment(theUser.id, theUser.name, theUser.avatar, new Date().getTime(), '')
         this.deactivateAll()
         theDocument.activeCommentId = id
         editorHelpers.documentHasChanged()
-        scheduleDOMUpdate(this.commentStore.pm, function(){that.layoutComments()})
+        scheduleDOMUpdate(this.mod.pm, function(){that.layoutComments()})
     }
 
     deleteComment(id) {
         // Handle the deletion of a comment.
         var comment = this.findComment(id) // TODO: We don't use this for anything.
-        this.commentStore.deleteComment(id)
+        this.mod.store.deleteComment(id)
 //      TODO: make the markrange go away
         editorHelpers.documentHasChanged()
         this.layoutComments()
@@ -134,7 +134,7 @@ export class CommentStoreLayout {
 
     updateComment(id, commentText, commentIsMajor) {
         // Save the change to a comment and mark that the document has been changed
-        this.commentStore.updateComment(id, commentText, commentIsMajor)
+        this.mod.store.updateComment(id, commentText, commentIsMajor)
         this.deactivateAll()
         this.layoutComments()
     }
@@ -144,7 +144,7 @@ export class CommentStoreLayout {
         let commentTextBox = jQuery(submitButton).siblings('.commentText')[0]
         let commentText = commentTextBox.value
         let commentIsMajor = jQuery(submitButton).siblings('.comment-is-major').prop('checked')
-        let commentId = theEditor.editor.mod.commentStore.layout.getCommentId(commentTextBox)
+        let commentId = this.mod.layout.getCommentId(commentTextBox)
         this.updateComment(commentId, commentText, commentIsMajor)
     }
 
@@ -153,7 +153,7 @@ export class CommentStoreLayout {
         let commentTextBox = jQuery(cancelButton).siblings('.commentText')[0]
         if (commentTextBox) {
             let id = this.getCommentId(commentTextBox)
-            if (this.commentStore.comments[id].comment.length === 0) {
+            if (this.mod.store.comments[id].comment.length === 0) {
                 this.deleteComment(id)
             }
             else {
@@ -168,7 +168,7 @@ export class CommentStoreLayout {
 
     deleteCommentAnswer(commentId, answerId) {
         // Handle the deletion of a comment answer.
-        this.commentStore.deleteAnswer(commentId, answerId)
+        this.mod.store.deleteAnswer(commentId, answerId)
         this.deactivateAll()
         editorHelpers.documentHasChanged()
         this.layoutComments()
@@ -236,6 +236,7 @@ export class CommentStoreLayout {
 
     layoutComments() {
         // Handle the layout of the comments on the screen.
+        let that = this
         let theCommentPointers = [].slice.call(jQuery('.comment')), theComments = [], ids = []
 
         theCommentPointers.forEach(function(commentNode){
@@ -245,17 +246,17 @@ export class CommentStoreLayout {
                 return
             }
             ids.push(id)
-            if (theEditor.editor.mod.commentStore.comments[id]) {
+            if (that.mod.store.comments[id]) {
                 theComments.push({
                   id: id,
                   referrer: commentNode,
-                  comment: theEditor.editor.mod.commentStore.comments[id]['comment'],
-                  user: theEditor.editor.mod.commentStore.comments[id]['user'],
-                  userName: theEditor.editor.mod.commentStore.comments[id]['userName'],
-                  userAvatar: theEditor.editor.mod.commentStore.comments[id]['userAvatar'],
-                  date: theEditor.editor.mod.commentStore.comments[id]['date'],
-                  answers: theEditor.editor.mod.commentStore.comments[id]['answers'],
-                    'review:isMajor': theEditor.editor.mod.commentStore.comments[id]['review:isMajor']
+                  comment: that.mod.store.comments[id]['comment'],
+                  user: that.mod.store.comments[id]['user'],
+                  userName: that.mod.store.comments[id]['userName'],
+                  userAvatar: that.mod.store.comments[id]['userAvatar'],
+                  date: that.mod.store.comments[id]['date'],
+                  answers: that.mod.store.comments[id]['answers'],
+                    'review:isMajor': that.mod.store.comments[id]['review:isMajor']
                 })
             }
         })
@@ -281,12 +282,10 @@ export class CommentStoreLayout {
 
     submitAnswer() {
         // Submit the answer to a comment
-        var commentWrapper, answerTextBox, answerText, answerParent
-
-        commentWrapper = jQuery('.comment-box.active')
-        answerTextBox = commentWrapper.find('.comment-answer-text')[0]
-        answerText = answerTextBox.value
-        commentId = parseInt(commentWrapper.attr('data-id'))
+        let commentWrapper = jQuery('.comment-box.active')
+        let answerTextBox = commentWrapper.find('.comment-answer-text')[0]
+        let answerText = answerTextBox.value
+        let commentId = parseInt(commentWrapper.attr('data-id'))
         this.createNewAnswer(commentId, answerText)
     }
 
@@ -331,7 +330,7 @@ export class CommentStoreLayout {
           date: new Date().getTime()
         }
 
-        this.commentStore.addAnswer(commentId, answer)
+        this.mod.store.addAnswer(commentId, answer)
 
         this.deactivateAll()
         this.layoutComments()
@@ -339,8 +338,8 @@ export class CommentStoreLayout {
     }
 
     submitAnswerUpdate(commentId, answerId, commentText) {
-        this.commentStore.updateAnswer(commentId, answerId, commentText)
-        this.commentStore.layout.deactivateAll()
+        this.mod.store.updateAnswer(commentId, answerId, commentText)
+        this.mod.layout.deactivateAll()
         editorHelpers.documentHasChanged()
         this.layoutComments()
     }

@@ -9,7 +9,7 @@ import "prosemirror/dist/collab"
 
 import {fidusSchema} from "./es6_modules/schema"
 import {updateUI} from "./es6_modules/update-ui"
-import {CommentStore} from "./es6_modules/comment-store"
+import {ModComments} from "./es6_modules/comments/mod"
 
 import {UpdateScheduler, scheduleDOMUpdate} from "prosemirror/dist/ui/update"
 
@@ -80,12 +80,12 @@ theEditor.update = function () {
       }
       theDocument.hash = theEditor.getHash()
       theEditor.editor.mod.collab.on("mustSend", theEditor.sendToCollaborators)
-      new CommentStore(theEditor.editor, theDocument.comment_version)
+      new ModComments(theEditor.editor, theDocument.comment_version)
       _.each(theDocument.comments, function (comment){
-        theEditor.editor.mod.commentStore.addLocalComment(comment.id, comment.user,
+        theEditor.editor.mod.comments.store.addLocalComment(comment.id, comment.user,
           comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers, comment['review:isMajor'])
       })
-      theEditor.editor.mod.commentStore.on("mustSend", theEditor.sendToCollaborators)
+      theEditor.editor.mod.comments.store.on("mustSend", theEditor.sendToCollaborators)
       theEditor.enableUI()
 }
 
@@ -135,7 +135,7 @@ theEditor.getUpdates = function (callback) {
       theDocument.metadata.keywords = exporter.node2Obj(outputNode.getElementById('metadata-keywords'))
       theDocument.contents = exporter.node2Obj(outputNode.getElementById('document-contents'))
       theDocument.hash = theEditor.getHash()
-      theDocument.comments = theEditor.editor.mod.commentStore.comments
+      theDocument.comments = theEditor.editor.mod.comments.store.comments
       if (callback) {
           callback()
       }
@@ -148,7 +148,7 @@ var confirmStepsRequestCounter = 0
 theEditor.sendToCollaborators = function () {
       if (theEditor.awaitingDiffResponse ||
         !theEditor.editor.mod.collab.hasSendableSteps() &&
-        theEditor.editor.mod.commentStore.unsentEvents().length === 0) {
+        theEditor.editor.mod.comments.store.unsentEvents().length === 0) {
           // We are waiting for the confirmation of previous steps, so don't
           // send anything now, or there is nothing to send.
           return
@@ -160,15 +160,15 @@ theEditor.sendToCollaborators = function () {
           type: 'diff',
           diff_version: theEditor.editor.mod.collab.version,
           diff: toSend.steps.map(s => s.toJSON()),
-          comments: theEditor.editor.mod.commentStore.unsentEvents(),
-          comment_version: theEditor.editor.mod.commentStore.version,
+          comments: theEditor.editor.mod.comments.store.unsentEvents(),
+          comment_version: theEditor.editor.mod.comments.store.version,
           request_id: request_id,
           hash: theEditor.getHash()
       }
       serverCommunications.send(aPackage)
       theEditor.unconfirmedSteps[request_id] = {
           diffs: toSend,
-          comments: theEditor.editor.mod.commentStore.hasUnsentEvents()
+          comments: theEditor.editor.mod.comments.store.hasUnsentEvents()
       }
       theEditor.disableDiffSending()
 }
@@ -179,7 +179,7 @@ theEditor.confirmDiff = function (request_id) {
     theEditor.editor.mod.collab.confirmSteps(sentSteps)
 
     let sentComments = theEditor.unconfirmedSteps[request_id]["comments"]
-    theEditor.editor.mod.commentStore.eventsSent(sentComments)
+    theEditor.editor.mod.comments.store.eventsSent(sentComments)
     delete theEditor.unconfirmedSteps[request_id]
     theEditor.enableDiffSending()
 }
@@ -196,7 +196,7 @@ theEditor.applyDiff = function(diff) {
 }
 
 theEditor.updateComments = function(comments, comment_version) {
-    theEditor.editor.mod.commentStore.receive(comments, comment_version)
+    theEditor.editor.mod.comments.store.receive(comments, comment_version)
 }
 
 

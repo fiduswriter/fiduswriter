@@ -165,7 +165,7 @@
          stylesheet = loadCSS(staticUrl+'css/document/'+theDocument.settings.documentstyle+'.css', documentStyleLink);
 
          onloadCSS( stylesheet, function() {
-            theEditor.editor.mod.commentStore.layout.layoutComments();
+            theEditor.editor.mod.comments.layout.layoutComments();
          });
 
      };
@@ -414,7 +414,7 @@ jQuery(document).ready(function() {
                 jQuery(this).attr('data-citationstyle'),true)) {
             editorHelpers.displaySetting.set('citationstyle');
             editorHelpers.documentHasChanged();
-            theEditor.editor.mod.commentStore.layout.layoutComments();
+            theEditor.editor.mod.comments.layout.layoutComments();
         }
         return false;
     });
@@ -466,7 +466,7 @@ jQuery(document).ready(function() {
                 'top': content_top
             }, {
                 'complete': function() {
-                    theEditor.editor.mod.commentStore.layout.layoutComments();
+                    theEditor.editor.mod.comments.layout.layoutComments();
                 }
             });
     });

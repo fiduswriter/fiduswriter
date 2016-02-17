@@ -5,9 +5,8 @@ based on https://github.com/ProseMirror/website/blob/master/src/client/collab/co
 import {eventMixin} from "prosemirror/dist/util/event"
 import {Transform} from "prosemirror/dist/transform"
 import {Pos} from "prosemirror/dist/model"
-import {CommentMark} from "./schema"
+import {CommentMark} from "../schema"
 import {scheduleDOMUpdate} from "prosemirror/dist/ui/update"
-import {CommentStoreLayout} from "./comment-store-layout"
 
 class Comment {
   constructor(id, user, userName, userAvatar, date, comment, answers, isMajor) {
@@ -22,14 +21,13 @@ class Comment {
   }
 }
 
-export class CommentStore {
-  constructor(pm, version) {
-    pm.mod.commentStore = this
-    this.pm = pm
+export class ModCommentStore {
+  constructor(mod, version) {
+    mod.store = this
+    this.mod = mod
     this.comments = Object.create(null)
     this.version = version
     this.unsent = []
-    new CommentStoreLayout(this)
   }
 
   // Add a new comment to the comment database both remotely and locally.
@@ -37,7 +35,7 @@ export class CommentStore {
     let id = randomID()
     this.addLocalComment(id, user, userName, userAvatar, date, comment, answers, isMajor)
     this.unsent.push({type: "create", id: id})
-    this.pm.execCommand('comment:set',[id])
+    this.mod.pm.execCommand('comment:set',[id])
     this.signal("mustSend")
     return id
   }
@@ -62,11 +60,11 @@ export class CommentStore {
   }
 
   removeCommentMarks(id) {
-    this.pm.doc.inlineNodesBetween(false, false, ({marks}, path, start, end) => {
+    this.mod.pm.doc.inlineNodesBetween(false, false, ({marks}, path, start, end) => {
       for (let mark of marks) {
         if (mark.type.name==='comment' && parseInt(mark.attrs.id) === id) {
-          this.pm.apply(
-            this.pm.tr.removeMark(new Pos(path, start), new Pos(path, end), CommentMark.type)
+          this.mod.pm.apply(
+            this.mod.pm.tr.removeMark(new Pos(path, start), new Pos(path, end), CommentMark.type)
           )
         }
       }
@@ -218,13 +216,13 @@ export class CommentStore {
       this.version++
     })
     if (updateCommentLayout) {
-      scheduleDOMUpdate(this.pm, function(){that.layout.layoutComments()})
+      scheduleDOMUpdate(this.mod.pm, function(){that.mod.layout.layoutComments()})
     }
   }
 
   findCommentsAt(pos) {
     let found = [],
-      node = this.pm.doc.path(pos.path)
+      node = this.mod.pm.doc.path(pos.path)
 
     for (let mark in node.marks) {
       if (mark.type.name==='comment' && mark.attrs.id in this.comments)
@@ -234,7 +232,7 @@ export class CommentStore {
   }
 }
 
-eventMixin(CommentStore)
+eventMixin(ModCommentStore)
 
 function randomID() {
   return Math.floor(Math.random() * 0xffffffff)

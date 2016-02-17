@@ -22,6 +22,6 @@ jQuery(document).on('mousedown', '#button-comment:not(.disabled)', function (eve
 
     event.preventDefault();
 
-    theEditor.editor.mod.commentStore.layout.createNewComment();
+    theEditor.editor.mod.comments.layout.createNewComment();
 
 });

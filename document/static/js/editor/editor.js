@@ -15,7 +15,7 @@ var _schema = require("./es6_modules/schema");
 
 var _updateUi = require("./es6_modules/update-ui");
 
-var _commentStore = require("./es6_modules/comment-store");
+var _mod = require("./es6_modules/comments/mod");
 
 var _update = require("prosemirror/dist/ui/update");
 
@@ -91,11 +91,11 @@ theEditor.update = function () {
     }
     theDocument.hash = theEditor.getHash();
     theEditor.editor.mod.collab.on("mustSend", theEditor.sendToCollaborators);
-    new _commentStore.CommentStore(theEditor.editor, theDocument.comment_version);
+    new _mod.ModComments(theEditor.editor, theDocument.comment_version);
     _.each(theDocument.comments, function (comment) {
-        theEditor.editor.mod.commentStore.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers, comment['review:isMajor']);
+        theEditor.editor.mod.comments.store.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers, comment['review:isMajor']);
     });
-    theEditor.editor.mod.commentStore.on("mustSend", theEditor.sendToCollaborators);
+    theEditor.editor.mod.comments.store.on("mustSend", theEditor.sendToCollaborators);
     theEditor.enableUI();
 };
 
@@ -143,7 +143,7 @@ theEditor.getUpdates = function (callback) {
     theDocument.metadata.keywords = exporter.node2Obj(outputNode.getElementById('metadata-keywords'));
     theDocument.contents = exporter.node2Obj(outputNode.getElementById('document-contents'));
     theDocument.hash = theEditor.getHash();
-    theDocument.comments = theEditor.editor.mod.commentStore.comments;
+    theDocument.comments = theEditor.editor.mod.comments.store.comments;
     if (callback) {
         callback();
     }
@@ -154,7 +154,7 @@ theEditor.unconfirmedSteps = {};
 var confirmStepsRequestCounter = 0;
 
 theEditor.sendToCollaborators = function () {
-    if (theEditor.awaitingDiffResponse || !theEditor.editor.mod.collab.hasSendableSteps() && theEditor.editor.mod.commentStore.unsentEvents().length === 0) {
+    if (theEditor.awaitingDiffResponse || !theEditor.editor.mod.collab.hasSendableSteps() && theEditor.editor.mod.comments.store.unsentEvents().length === 0) {
         // We are waiting for the confirmation of previous steps, so don't
         // send anything now, or there is nothing to send.
         return;
@@ -168,15 +168,15 @@ theEditor.sendToCollaborators = function () {
         diff: toSend.steps.map(function (s) {
             return s.toJSON();
         }),
-        comments: theEditor.editor.mod.commentStore.unsentEvents(),
-        comment_version: theEditor.editor.mod.commentStore.version,
+        comments: theEditor.editor.mod.comments.store.unsentEvents(),
+        comment_version: theEditor.editor.mod.comments.store.version,
         request_id: request_id,
         hash: theEditor.getHash()
     };
     serverCommunications.send(aPackage);
     theEditor.unconfirmedSteps[request_id] = {
         diffs: toSend,
-        comments: theEditor.editor.mod.commentStore.hasUnsentEvents()
+        comments: theEditor.editor.mod.comments.store.hasUnsentEvents()
     };
     theEditor.disableDiffSending();
 };
@@ -187,7 +187,7 @@ theEditor.confirmDiff = function (request_id) {
     theEditor.editor.mod.collab.confirmSteps(sentSteps);
 
     var sentComments = theEditor.unconfirmedSteps[request_id]["comments"];
-    theEditor.editor.mod.commentStore.eventsSent(sentComments);
+    theEditor.editor.mod.comments.store.eventsSent(sentComments);
     delete theEditor.unconfirmedSteps[request_id];
     theEditor.enableDiffSending();
 };
@@ -206,7 +206,7 @@ theEditor.applyDiff = function (diff) {
 };
 
 theEditor.updateComments = function (comments, comment_version) {
-    theEditor.editor.mod.commentStore.receive(comments, comment_version);
+    theEditor.editor.mod.comments.store.receive(comments, comment_version);
 };
 
 theEditor.startCollaborativeMode = function () {
@@ -313,7 +313,23 @@ theEditor.onTransform = function (transform) {
 
 window.theEditor = theEditor;
 
-},{"./es6_modules/comment-store":3,"./es6_modules/schema":4,"./es6_modules/update-ui":5,"prosemirror/dist/collab":6,"prosemirror/dist/edit/main":20,"prosemirror/dist/format":27,"prosemirror/dist/transform":41,"prosemirror/dist/ui/update":51}],2:[function(require,module,exports){
+},{"./es6_modules/comments/mod":4,"./es6_modules/schema":6,"./es6_modules/update-ui":7,"prosemirror/dist/collab":8,"prosemirror/dist/edit/main":22,"prosemirror/dist/format":29,"prosemirror/dist/transform":43,"prosemirror/dist/ui/update":53}],2:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ModCommentInteractions = exports.ModCommentInteractions = function ModCommentInteractions(mod) {
+    _classCallCheck(this, ModCommentInteractions);
+
+    mod.interactions = this;
+    this.mod = mod;
+};
+
+},{}],3:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })(); /* Functions related to layouting of comments */
@@ -321,22 +337,22 @@ var _createClass = (function () { function defineProperties(target, props) { for
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.CommentStoreLayout = undefined;
+exports.ModCommentLayout = undefined;
 
 var _update = require("prosemirror/dist/ui/update");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var CommentStoreLayout = exports.CommentStoreLayout = (function () {
-    function CommentStoreLayout(commentStore) {
-        _classCallCheck(this, CommentStoreLayout);
+var ModCommentLayout = exports.ModCommentLayout = (function () {
+    function ModCommentLayout(mod) {
+        _classCallCheck(this, ModCommentLayout);
 
-        commentStore.layout = this;
-        this.commentStore = commentStore;
+        mod.layout = this;
+        this.mod = mod;
         this.bindEvents();
     }
 
-    _createClass(CommentStoreLayout, [{
+    _createClass(ModCommentLayout, [{
         key: "bindEvents",
         value: function bindEvents() {
             var that = this;
@@ -431,11 +447,11 @@ var CommentStoreLayout = exports.CommentStoreLayout = (function () {
         key: "createNewComment",
         value: function createNewComment() {
             var that = this;
-            var id = this.commentStore.addComment(theUser.id, theUser.name, theUser.avatar, new Date().getTime(), '');
+            var id = this.mod.store.addComment(theUser.id, theUser.name, theUser.avatar, new Date().getTime(), '');
             this.deactivateAll();
             theDocument.activeCommentId = id;
             editorHelpers.documentHasChanged();
-            (0, _update.scheduleDOMUpdate)(this.commentStore.pm, function () {
+            (0, _update.scheduleDOMUpdate)(this.mod.pm, function () {
                 that.layoutComments();
             });
         }
@@ -444,7 +460,7 @@ var CommentStoreLayout = exports.CommentStoreLayout = (function () {
         value: function deleteComment(id) {
             // Handle the deletion of a comment.
             var comment = this.findComment(id); // TODO: We don't use this for anything.
-            this.commentStore.deleteComment(id);
+            this.mod.store.deleteComment(id);
             //      TODO: make the markrange go away
             editorHelpers.documentHasChanged();
             this.layoutComments();
@@ -467,7 +483,7 @@ var CommentStoreLayout = exports.CommentStoreLayout = (function () {
         key: "updateComment",
         value: function updateComment(id, commentText, commentIsMajor) {
             // Save the change to a comment and mark that the document has been changed
-            this.commentStore.updateComment(id, commentText, commentIsMajor);
+            this.mod.store.updateComment(id, commentText, commentIsMajor);
             this.deactivateAll();
             this.layoutComments();
         }
@@ -478,7 +494,7 @@ var CommentStoreLayout = exports.CommentStoreLayout = (function () {
             var commentTextBox = jQuery(submitButton).siblings('.commentText')[0];
             var commentText = commentTextBox.value;
             var commentIsMajor = jQuery(submitButton).siblings('.comment-is-major').prop('checked');
-            var commentId = theEditor.editor.mod.commentStore.layout.getCommentId(commentTextBox);
+            var commentId = this.mod.layout.getCommentId(commentTextBox);
             this.updateComment(commentId, commentText, commentIsMajor);
         }
     }, {
@@ -488,7 +504,7 @@ var CommentStoreLayout = exports.CommentStoreLayout = (function () {
             var commentTextBox = jQuery(cancelButton).siblings('.commentText')[0];
             if (commentTextBox) {
                 var id = this.getCommentId(commentTextBox);
-                if (this.commentStore.comments[id].comment.length === 0) {
+                if (this.mod.store.comments[id].comment.length === 0) {
                     this.deleteComment(id);
                 } else {
                     this.deactivateAll();
@@ -502,7 +518,7 @@ var CommentStoreLayout = exports.CommentStoreLayout = (function () {
         key: "deleteCommentAnswer",
         value: function deleteCommentAnswer(commentId, answerId) {
             // Handle the deletion of a comment answer.
-            this.commentStore.deleteAnswer(commentId, answerId);
+            this.mod.store.deleteAnswer(commentId, answerId);
             this.deactivateAll();
             editorHelpers.documentHasChanged();
             this.layoutComments();
@@ -561,6 +577,7 @@ var CommentStoreLayout = exports.CommentStoreLayout = (function () {
         key: "layoutComments",
         value: function layoutComments() {
             // Handle the layout of the comments on the screen.
+            var that = this;
             var theCommentPointers = [].slice.call(jQuery('.comment')),
                 theComments = [],
                 ids = [];
@@ -572,17 +589,17 @@ var CommentStoreLayout = exports.CommentStoreLayout = (function () {
                     return;
                 }
                 ids.push(id);
-                if (theEditor.editor.mod.commentStore.comments[id]) {
+                if (that.mod.store.comments[id]) {
                     theComments.push({
                         id: id,
                         referrer: commentNode,
-                        comment: theEditor.editor.mod.commentStore.comments[id]['comment'],
-                        user: theEditor.editor.mod.commentStore.comments[id]['user'],
-                        userName: theEditor.editor.mod.commentStore.comments[id]['userName'],
-                        userAvatar: theEditor.editor.mod.commentStore.comments[id]['userAvatar'],
-                        date: theEditor.editor.mod.commentStore.comments[id]['date'],
-                        answers: theEditor.editor.mod.commentStore.comments[id]['answers'],
-                        'review:isMajor': theEditor.editor.mod.commentStore.comments[id]['review:isMajor']
+                        comment: that.mod.store.comments[id]['comment'],
+                        user: that.mod.store.comments[id]['user'],
+                        userName: that.mod.store.comments[id]['userName'],
+                        userAvatar: that.mod.store.comments[id]['userAvatar'],
+                        date: that.mod.store.comments[id]['date'],
+                        answers: that.mod.store.comments[id]['answers'],
+                        'review:isMajor': that.mod.store.comments[id]['review:isMajor']
                     });
                 }
             });
@@ -605,12 +622,10 @@ var CommentStoreLayout = exports.CommentStoreLayout = (function () {
         key: "submitAnswer",
         value: function submitAnswer() {
             // Submit the answer to a comment
-            var commentWrapper, answerTextBox, answerText, answerParent;
-
-            commentWrapper = jQuery('.comment-box.active');
-            answerTextBox = commentWrapper.find('.comment-answer-text')[0];
-            answerText = answerTextBox.value;
-            commentId = parseInt(commentWrapper.attr('data-id'));
+            var commentWrapper = jQuery('.comment-box.active');
+            var answerTextBox = commentWrapper.find('.comment-answer-text')[0];
+            var answerText = answerTextBox.value;
+            var commentId = parseInt(commentWrapper.attr('data-id'));
             this.createNewAnswer(commentId, answerText);
         }
     }, {
@@ -659,7 +674,7 @@ var CommentStoreLayout = exports.CommentStoreLayout = (function () {
                 date: new Date().getTime()
             };
 
-            this.commentStore.addAnswer(commentId, answer);
+            this.mod.store.addAnswer(commentId, answer);
 
             this.deactivateAll();
             this.layoutComments();
@@ -668,8 +683,8 @@ var CommentStoreLayout = exports.CommentStoreLayout = (function () {
     }, {
         key: "submitAnswerUpdate",
         value: function submitAnswerUpdate(commentId, answerId, commentText) {
-            this.commentStore.updateAnswer(commentId, answerId, commentText);
-            this.commentStore.layout.deactivateAll();
+            this.mod.store.updateAnswer(commentId, answerId, commentText);
+            this.mod.layout.deactivateAll();
             editorHelpers.documentHasChanged();
             this.layoutComments();
         }
@@ -750,10 +765,36 @@ var CommentStoreLayout = exports.CommentStoreLayout = (function () {
         }
     }]);
 
-    return CommentStoreLayout;
+    return ModCommentLayout;
 })();
 
-},{"prosemirror/dist/ui/update":51}],3:[function(require,module,exports){
+},{"prosemirror/dist/ui/update":53}],4:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.ModComments = undefined;
+
+var _store = require("./store");
+
+var _layout = require("./layout");
+
+var _interactions = require("./interactions");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ModComments = exports.ModComments = function ModComments(pm, version) {
+  _classCallCheck(this, ModComments);
+
+  pm.mod.comments = this;
+  this.pm = pm;
+  new _store.ModCommentStore(this, version);
+  new _layout.ModCommentLayout(this);
+  new _interactions.ModCommentInteractions(this);
+};
+
+},{"./interactions":2,"./layout":3,"./store":5}],5:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -761,7 +802,7 @@ var _createClass = (function () { function defineProperties(target, props) { for
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.CommentStore = undefined;
+exports.ModCommentStore = undefined;
 
 var _event = require("prosemirror/dist/util/event");
 
@@ -769,11 +810,9 @@ var _transform = require("prosemirror/dist/transform");
 
 var _model = require("prosemirror/dist/model");
 
-var _schema = require("./schema");
+var _schema = require("../schema");
 
 var _update = require("prosemirror/dist/ui/update");
-
-var _commentStoreLayout = require("./comment-store-layout");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /*
                                                                                                                                                           Functions related to the editing and sharing of comments.
@@ -793,27 +832,26 @@ var Comment = function Comment(id, user, userName, userAvatar, date, comment, an
   this['review:isMajor'] = isMajor;
 };
 
-var CommentStore = exports.CommentStore = (function () {
-  function CommentStore(pm, version) {
-    _classCallCheck(this, CommentStore);
+var ModCommentStore = exports.ModCommentStore = (function () {
+  function ModCommentStore(mod, version) {
+    _classCallCheck(this, ModCommentStore);
 
-    pm.mod.commentStore = this;
-    this.pm = pm;
+    mod.store = this;
+    this.mod = mod;
     this.comments = Object.create(null);
     this.version = version;
     this.unsent = [];
-    new _commentStoreLayout.CommentStoreLayout(this);
   }
 
   // Add a new comment to the comment database both remotely and locally.
 
-  _createClass(CommentStore, [{
+  _createClass(ModCommentStore, [{
     key: "addComment",
     value: function addComment(user, userName, userAvatar, date, comment, answers, isMajor) {
       var id = randomID();
       this.addLocalComment(id, user, userName, userAvatar, date, comment, answers, isMajor);
       this.unsent.push({ type: "create", id: id });
-      this.pm.execCommand('comment:set', [id]);
+      this.mod.pm.execCommand('comment:set', [id]);
       this.signal("mustSend");
       return id;
     }
@@ -844,7 +882,7 @@ var CommentStore = exports.CommentStore = (function () {
     value: function removeCommentMarks(id) {
       var _this = this;
 
-      this.pm.doc.inlineNodesBetween(false, false, function (_ref, path, start, end) {
+      this.mod.pm.doc.inlineNodesBetween(false, false, function (_ref, path, start, end) {
         var marks = _ref.marks;
         var _iteratorNormalCompletion = true;
         var _didIteratorError = false;
@@ -855,7 +893,7 @@ var CommentStore = exports.CommentStore = (function () {
             var mark = _step.value;
 
             if (mark.type.name === 'comment' && parseInt(mark.attrs.id) === id) {
-              _this.pm.apply(_this.pm.tr.removeMark(new _model.Pos(path, start), new _model.Pos(path, end), _schema.CommentMark.type));
+              _this.mod.pm.apply(_this.mod.pm.tr.removeMark(new _model.Pos(path, start), new _model.Pos(path, end), _schema.CommentMark.type));
             }
           }
         } catch (err) {
@@ -1036,8 +1074,8 @@ var CommentStore = exports.CommentStore = (function () {
         _this2.version++;
       });
       if (updateCommentLayout) {
-        (0, _update.scheduleDOMUpdate)(this.pm, function () {
-          that.layout.layoutComments();
+        (0, _update.scheduleDOMUpdate)(this.mod.pm, function () {
+          that.mod.layout.layoutComments();
         });
       }
     }
@@ -1045,7 +1083,7 @@ var CommentStore = exports.CommentStore = (function () {
     key: "findCommentsAt",
     value: function findCommentsAt(pos) {
       var found = [],
-          node = this.pm.doc.path(pos.path);
+          node = this.mod.pm.doc.path(pos.path);
 
       for (var mark in node.marks) {
         if (mark.type.name === 'comment' && mark.attrs.id in this.comments) found.push(this.comments[mark.attrs.id]);
@@ -1054,16 +1092,16 @@ var CommentStore = exports.CommentStore = (function () {
     }
   }]);
 
-  return CommentStore;
+  return ModCommentStore;
 })();
 
-(0, _event.eventMixin)(CommentStore);
+(0, _event.eventMixin)(ModCommentStore);
 
 function randomID() {
   return Math.floor(Math.random() * 0xffffffff);
 }
 
-},{"./comment-store-layout":2,"./schema":4,"prosemirror/dist/model":35,"prosemirror/dist/transform":41,"prosemirror/dist/ui/update":51,"prosemirror/dist/util/event":53}],4:[function(require,module,exports){
+},{"../schema":6,"prosemirror/dist/model":37,"prosemirror/dist/transform":43,"prosemirror/dist/ui/update":53,"prosemirror/dist/util/event":55}],6:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1709,7 +1747,7 @@ var fidusSchema = exports.fidusSchema = new _model.Schema(_model.defaultSchema.s
   comment: CommentMark
 }));
 
-},{"prosemirror/dist/model":35}],5:[function(require,module,exports){
+},{"prosemirror/dist/model":37}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1909,7 +1947,7 @@ function calculatePlaceHolderCss(pm, selectedElement) {
     }
 }
 
-},{"prosemirror/dist/model":35}],6:[function(require,module,exports){
+},{"prosemirror/dist/model":37}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2082,7 +2120,7 @@ var Collab = function () {
 }();
 
 (0, _event.eventMixin)(Collab);
-},{"../edit":18,"../util/error":52,"../util/event":53,"./rebase":7}],7:[function(require,module,exports){
+},{"../edit":20,"../util/error":54,"../util/event":55,"./rebase":9}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2110,7 +2148,7 @@ function rebaseSteps(doc, forward, steps, maps) {
   }
   return { doc: transform.doc, transform: transform, mapping: remap, positions: positions };
 }
-},{"../transform":41}],8:[function(require,module,exports){
+},{"../transform":43}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2189,7 +2227,7 @@ function ensureCSSAdded() {
     document.head.insertBefore(cssNode, document.head.firstChild);
   }
 }
-},{}],9:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2906,7 +2944,7 @@ baseCommands.redo = {
   },
   keys: ["Mod-Y", "Shift-Mod-Z"]
 };
-},{"../model":35,"../transform":41,"../util/error":52,"./char":11,"./dompos":15,"./selection":24}],10:[function(require,module,exports){
+},{"../model":37,"../transform":43,"../util/error":54,"./char":13,"./dompos":17,"./selection":26}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2976,7 +3014,7 @@ var keys = {
 if (_dom.browser.mac) keys["Ctrl-F"] = keys["Ctrl-B"] = keys["Ctrl-P"] = keys["Ctrl-N"] = keys["Alt-F"] = keys["Alt-B"] = keys["Ctrl-A"] = keys["Ctrl-E"] = keys["Ctrl-V"] = keys["goPageUp"] = ensureSelection;
 
 var captureKeys = exports.captureKeys = new _browserkeymap2.default(keys);
-},{"../dom":8,"./dompos":15,"./selection":24,"browserkeymap":57}],11:[function(require,module,exports){
+},{"../dom":10,"./dompos":17,"./selection":26,"browserkeymap":59}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3009,7 +3047,7 @@ function charCategory(ch) {
 function isExtendingChar(ch) {
   return ch.charCodeAt(0) >= 768 && extendingChar.test(ch);
 }
-},{}],12:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3616,13 +3654,13 @@ _model.NodeType.deriveableCommands.insert = function (conf) {
     params: deriveParams(this, conf.params)
   };
 };
-},{"../dom":8,"../model":35,"../transform":41,"../util/error":52,"../util/obj":55,"../util/sortedinsert":56,"./base_commands":9,"browserkeymap":57}],13:[function(require,module,exports){
+},{"../dom":10,"../model":37,"../transform":43,"../util/error":54,"../util/obj":57,"../util/sortedinsert":58,"./base_commands":11,"browserkeymap":59}],15:[function(require,module,exports){
 "use strict";
 
 var _dom = require("../dom");
 
 (0, _dom.insertCSS)("\n\n.ProseMirror {\n  border: 1px solid silver;\n  position: relative;\n}\n\n.ProseMirror-content {\n  padding: 4px 8px 4px 14px;\n  white-space: pre-wrap;\n  line-height: 1.2;\n}\n\n.ProseMirror-drop-target {\n  position: absolute;\n  width: 1px;\n  background: #666;\n  display: none;\n}\n\n.ProseMirror-content ul.tight p, .ProseMirror-content ol.tight p {\n  margin: 0;\n}\n\n.ProseMirror-content ul, .ProseMirror-content ol {\n  padding-left: 30px;\n  cursor: default;\n}\n\n.ProseMirror-content blockquote {\n  padding-left: 1em;\n  border-left: 3px solid #eee;\n  margin-left: 0; margin-right: 0;\n}\n\n.ProseMirror-content pre {\n  white-space: pre-wrap;\n}\n\n.ProseMirror-selectednode {\n  outline: 2px solid #8cf;\n}\n\n.ProseMirror-nodeselection *::selection {\n  background: transparent;\n}\n\n.ProseMirror-content p:first-child,\n.ProseMirror-content h1:first-child,\n.ProseMirror-content h2:first-child,\n.ProseMirror-content h3:first-child,\n.ProseMirror-content h4:first-child,\n.ProseMirror-content h5:first-child,\n.ProseMirror-content h6:first-child {\n  margin-top: .3em;\n}\n\n/* Add space around the hr to make clicking it easier */\n\n.ProseMirror-content hr {\n  position: relative;\n  height: 6px;\n  border: none;\n}\n\n.ProseMirror-content hr:after {\n  content: \"\";\n  position: absolute;\n  left: 10px;\n  right: 10px;\n  top: 2px;\n  border-top: 2px solid silver;\n}\n\n.ProseMirror-content img {\n  cursor: default;\n}\n\n/* Make sure li selections wrap around markers */\n\n.ProseMirror-content li {\n  position: relative;\n  pointer-events: none; /* Don't do weird stuff with marker clicks */\n}\n.ProseMirror-content li > * {\n  pointer-events: auto;\n}\n\nli.ProseMirror-selectednode {\n  outline: none;\n}\n\nli.ProseMirror-selectednode:after {\n  content: \"\";\n  position: absolute;\n  left: -32px;\n  right: -2px; top: -2px; bottom: -2px;\n  border: 2px solid #8cf;\n  pointer-events: none;\n}\n\n");
-},{"../dom":8}],14:[function(require,module,exports){
+},{"../dom":10}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3824,7 +3862,7 @@ function scanText(start, end) {
     cur = cur.firstChild || nodeAfter(cur);
   }
 }
-},{"../format":27,"../model":35,"../transform/tree":49,"./dompos":15}],15:[function(require,module,exports){
+},{"../format":29,"../model":37,"../transform/tree":51,"./dompos":17}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4198,7 +4236,7 @@ function handleNodeClick(pm, type, event, direct) {
     }
   }
 }
-},{"../dom":8,"../model":35,"../util/error":52}],16:[function(require,module,exports){
+},{"../dom":10,"../model":37,"../util/error":54}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4363,7 +4401,7 @@ function redraw(pm, dirty, doc, prev) {
   }
   scan(pm.content, doc, prev);
 }
-},{"../dom":8,"../format":27,"../model":35,"./dompos":15,"./main":20}],17:[function(require,module,exports){
+},{"../dom":10,"../format":29,"../model":37,"./dompos":17,"./main":22}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4940,7 +4978,7 @@ var History = exports.History = function () {
 
   return History;
 }();
-},{"../model":35,"../transform":41}],18:[function(require,module,exports){
+},{"../model":37,"../transform":43}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5023,7 +5061,7 @@ var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.Keymap = _browserkeymap2.default;
-},{"./base_commands":9,"./command":12,"./main":20,"./options":21,"./range":22,"./schema_commands":23,"./selection":24,"browserkeymap":57}],19:[function(require,module,exports){
+},{"./base_commands":11,"./command":14,"./main":22,"./options":23,"./range":24,"./schema_commands":25,"./selection":26,"browserkeymap":59}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5595,7 +5633,7 @@ handlers.blur = function (pm) {
   // Fired when the editor loses focus.
   pm.signal("blur");
 };
-},{"../dom":8,"../format":27,"../model":35,"./capturekeys":10,"./domchange":14,"./dompos":15,"./selection":24,"browserkeymap":57}],20:[function(require,module,exports){
+},{"../dom":10,"../format":29,"../model":37,"./capturekeys":12,"./domchange":16,"./dompos":17,"./selection":26,"browserkeymap":59}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6349,7 +6387,7 @@ var EditorTransform = function (_Transform) {
 
   return EditorTransform;
 }(_transform.Transform);
-},{"../dom":8,"../format":27,"../model":35,"../transform":41,"../util/error":52,"../util/event":53,"../util/map":54,"../util/sortedinsert":56,"./css":13,"./dompos":15,"./draw":16,"./history":17,"./input":19,"./options":21,"./range":22,"./selection":24,"browserkeymap":57}],21:[function(require,module,exports){
+},{"../dom":10,"../format":29,"../model":37,"../transform":43,"../util/error":54,"../util/event":55,"../util/map":56,"../util/sortedinsert":58,"./css":15,"./dompos":17,"./draw":18,"./history":19,"./input":21,"./options":23,"./range":24,"./selection":26,"browserkeymap":59}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6471,7 +6509,7 @@ function setOption(pm, name, value) {
   pm.options[name] = value;
   if (desc.update) desc.update(pm, value, old, false);
 }
-},{"../model":35,"../ui/prompt":50,"../util/error":52,"./command":12}],22:[function(require,module,exports){
+},{"../model":37,"../ui/prompt":52,"../util/error":54,"./command":14}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6671,7 +6709,7 @@ var RangeTracker = function () {
 
   return RangeTracker;
 }();
-},{"../util/event":53}],23:[function(require,module,exports){
+},{"../util/event":55}],25:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -7005,7 +7043,7 @@ _model.HorizontalRule.register("command", "insert", {
   keys: ["Mod-Shift--"],
   menu: { group: "insert", rank: 70, display: { type: "label", label: "Horizontal rule" } }
 });
-},{"../format":27,"../model":35,"./command":12}],24:[function(require,module,exports){
+},{"../format":29,"../model":37,"./command":14}],26:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7441,7 +7479,7 @@ function verticalMotionLeavesTextblock(pm, pos, dir) {
   }
   return true;
 }
-},{"../dom":8,"../model":35,"../util/error":52,"./dompos":15}],25:[function(require,module,exports){
+},{"../dom":10,"../model":37,"../util/error":54,"./dompos":17}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7869,7 +7907,7 @@ _model.StrongMark.register("parseDOMStyle", "font-weight", { parse: function par
   } });
 
 _model.CodeMark.register("parseDOM", "code", { parse: "mark" });
-},{"../model":35,"../util/sortedinsert":56,"./register":28}],26:[function(require,module,exports){
+},{"../model":37,"../util/sortedinsert":58,"./register":30}],28:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7901,7 +7939,7 @@ function fromText(schema, text) {
 }
 
 (0, _register.defineSource)("text", fromText);
-},{"./register":28}],27:[function(require,module,exports){
+},{"./register":30}],29:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8000,7 +8038,7 @@ Object.defineProperty(exports, "toText", {
     return _to_text.toText;
   }
 });
-},{"./from_dom":25,"./from_text":26,"./register":28,"./to_dom":29,"./to_text":30}],28:[function(require,module,exports){
+},{"./from_dom":27,"./from_text":28,"./register":30,"./to_dom":31,"./to_text":32}],30:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8068,7 +8106,7 @@ function defineSource(format, func) {
 defineSource("json", function (schema, json) {
   return schema.nodeFromJSON(json);
 });
-},{"../util/error":52}],29:[function(require,module,exports){
+},{"../util/error":54}],31:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8356,7 +8394,7 @@ def(_model.LinkMark, function (mark, s) {
   return s.elt("a", { href: mark.attrs.href,
     title: mark.attrs.title });
 });
-},{"../model":35,"./register":28}],30:[function(require,module,exports){
+},{"../model":37,"./register":30}],32:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8400,7 +8438,7 @@ function toText(doc) {
 }
 
 (0, _register.defineTarget)("text", toText);
-},{"../model":35,"./register":28}],31:[function(require,module,exports){
+},{"../model":37,"./register":30}],33:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8832,7 +8870,7 @@ var defaultSpec = new _schema.SchemaSpec({
 // :: Schema
 // ProseMirror's default document schema.
 var defaultSchema = exports.defaultSchema = new _schema.Schema(defaultSpec);
-},{"./schema":39}],32:[function(require,module,exports){
+},{"./schema":41}],34:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8929,7 +8967,7 @@ function findDiffEnd(a, b) {
   }
   return { a: new _pos.Pos(pathA, offA), b: new _pos.Pos(pathB, offB) };
 }
-},{"./pos":38}],33:[function(require,module,exports){
+},{"./pos":40}],35:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8958,7 +8996,7 @@ var ModelError = exports.ModelError = function (_ProseMirrorError) {
 
   return ModelError;
 }(_error.ProseMirrorError);
-},{"../util/error":52}],34:[function(require,module,exports){
+},{"../util/error":54}],36:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9667,7 +9705,7 @@ if (typeof Symbol != "undefined") {
     return this;
   };
 }
-},{"./error":33}],35:[function(require,module,exports){
+},{"./error":35}],37:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9901,7 +9939,7 @@ Object.defineProperty(exports, "ModelError", {
                 return _error.ModelError;
         }
 });
-},{"./defaultschema":31,"./diff":32,"./error":33,"./fragment":34,"./mark":36,"./node":37,"./pos":38,"./schema":39}],36:[function(require,module,exports){
+},{"./defaultschema":33,"./diff":34,"./error":35,"./fragment":36,"./mark":38,"./node":39,"./pos":40,"./schema":41}],38:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10033,7 +10071,7 @@ var Mark = exports.Mark = function () {
 }();
 
 var empty = [];
-},{}],37:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10638,7 +10676,7 @@ function wrapMarks(marks, str) {
     str = marks[i].type.name + "(" + str + ")";
   }return str;
 }
-},{"./fragment":34,"./mark":36,"./pos":38}],38:[function(require,module,exports){
+},{"./fragment":36,"./mark":38,"./pos":40}],40:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10862,7 +10900,7 @@ var Pos = exports.Pos = function () {
 
   return Pos;
 }();
-},{"./error":33}],39:[function(require,module,exports){
+},{"./error":35}],41:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11854,7 +11892,7 @@ var Schema = function () {
 }();
 
 exports.Schema = Schema;
-},{"../util/error":52,"../util/obj":55,"./fragment":34,"./mark":36,"./node":37}],40:[function(require,module,exports){
+},{"../util/error":54,"../util/obj":57,"./fragment":36,"./mark":38,"./node":39}],42:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12140,7 +12178,7 @@ _transform.Transform.prototype.setNodeType = function (pos, type, attrs) {
   this.step("ancestor", new _model.Pos(path, 0), new _model.Pos(path, node.size), null, { depth: 1, types: [type], attrs: [attrs] });
   return this;
 };
-},{"../model":35,"./map":43,"./step":47,"./transform":48,"./tree":49}],41:[function(require,module,exports){
+},{"../model":37,"./map":45,"./step":49,"./transform":50,"./tree":51}],43:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12228,7 +12266,7 @@ require("./mark");
 require("./split");
 
 require("./replace");
-},{"./ancestor":40,"./join":42,"./map":43,"./mark":44,"./replace":45,"./split":46,"./step":47,"./transform":48}],42:[function(require,module,exports){
+},{"./ancestor":42,"./join":44,"./map":45,"./mark":46,"./replace":47,"./split":48,"./step":49,"./transform":50}],44:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12310,7 +12348,7 @@ _transform.Transform.prototype.join = function (at) {
   this.step("join", new _model.Pos(at.path.concat(at.offset - 1), parent.child(at.offset - 1).size), new _model.Pos(at.path.concat(at.offset), 0));
   return this;
 };
-},{"../model":35,"./map":43,"./step":47,"./transform":48}],43:[function(require,module,exports){
+},{"../model":37,"./map":45,"./step":49,"./transform":50}],45:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12630,7 +12668,7 @@ var Remapping = exports.Remapping = function () {
 
   return Remapping;
 }();
-},{"../model":35}],44:[function(require,module,exports){
+},{"../model":37}],46:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -12809,7 +12847,7 @@ _transform.Transform.prototype.clearMarkup = function (from, to, newParent) {
     this.step(delSteps[i]);
   }return this;
 };
-},{"../model":35,"./step":47,"./transform":48,"./tree":49}],45:[function(require,module,exports){
+},{"../model":37,"./step":49,"./transform":50,"./tree":51}],47:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13132,7 +13170,7 @@ _transform.Transform.prototype.insertText = function (pos, text) {
 _transform.Transform.prototype.insertInline = function (pos, node) {
   return this.insert(pos, node.mark(this.doc.marksAt(pos)));
 };
-},{"../model":35,"./map":43,"./step":47,"./transform":48,"./tree":49}],46:[function(require,module,exports){
+},{"../model":37,"./map":45,"./step":49,"./transform":50,"./tree":51}],48:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -13221,7 +13259,7 @@ _transform.Transform.prototype.splitIfNeeded = function (pos) {
   }
   return this;
 };
-},{"../model":35,"./map":43,"./step":47,"./transform":48}],47:[function(require,module,exports){
+},{"../model":37,"./map":45,"./step":49,"./transform":50}],49:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13408,7 +13446,7 @@ var StepResult = exports.StepResult = function StepResult(doc) {
 };
 
 var steps = Object.create(null);
-},{"../model":35,"../util/error":52,"./map":43}],48:[function(require,module,exports){
+},{"../model":37,"../util/error":54,"./map":45}],50:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13513,7 +13551,7 @@ var Transform = function () {
 }();
 
 exports.Transform = Transform;
-},{"./map":43,"./step":47}],49:[function(require,module,exports){
+},{"./map":45,"./step":49}],51:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13607,7 +13645,7 @@ function samePathDepth(a, b) {
     if (i == a.path.length || i == b.path.length || a.path[i] != b.path[i]) return i;
   }
 }
-},{"../model":35}],50:[function(require,module,exports){
+},{"../model":37}],52:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13897,7 +13935,7 @@ function openPrompt(pm, content, options) {
 }
 
 (0, _dom.insertCSS)("\n.ProseMirror-prompt {\n  background: white;\n  padding: 2px 6px 2px 15px;\n  border: 1px solid silver;\n  position: absolute;\n  border-radius: 3px;\n  z-index: 11;\n}\n\n.ProseMirror-prompt input[type=\"text\"],\n.ProseMirror-prompt textarea {\n  background: #eee;\n  border: none;\n  outline: none;\n}\n\n.ProseMirror-prompt input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n.ProseMirror-prompt-close {\n  position: absolute;\n  left: 2px; top: 1px;\n  color: #666;\n  border: none; background: transparent; padding: 0;\n}\n\n.ProseMirror-prompt-close:after {\n  content: \"✕\";\n  font-size: 12px;\n}\n\n.ProseMirror-invalid {\n  background: #ffc;\n  border: 1px solid #cc7;\n  border-radius: 4px;\n  padding: 5px 10px;\n  position: absolute;\n  min-width: 10em;\n}\n");
-},{"../dom":8,"../util/error":52}],51:[function(require,module,exports){
+},{"../dom":10,"../util/error":54}],53:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14057,7 +14095,7 @@ var UpdateScheduler = exports.UpdateScheduler = function () {
 
   return UpdateScheduler;
 }();
-},{}],52:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14150,7 +14188,7 @@ function functionName(f) {
   var match = /^function (\w+)/.exec(f.toString());
   return match && match[1];
 }
-},{}],53:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14267,7 +14305,7 @@ function eventMixin(ctor) {
     if (methods.hasOwnProperty(prop)) proto[prop] = methods[prop];
   }
 }
-},{}],54:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14323,7 +14361,7 @@ var Map = exports.Map = window.Map || function () {
 
   return _class;
 }();
-},{}],55:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14336,7 +14374,7 @@ function copyObj(obj, base) {
     copy[prop] = obj[prop];
   }return copy;
 }
-},{}],56:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14349,7 +14387,7 @@ function sortedInsert(array, elt, compare) {
     if (compare(array[i], elt) > 0) break;
   }array.splice(i, 0, elt);
 }
-},{}],57:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
     module.exports = mod()

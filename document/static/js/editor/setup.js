@@ -165,7 +165,12 @@
          stylesheet = loadCSS(staticUrl+'css/document/'+theDocument.settings.documentstyle+'.css', documentStyleLink);
 
          onloadCSS( stylesheet, function() {
-            theEditor.editor.mod.comments.layout.layoutComments();
+            // We layout the comments 100 ms after the stylesheet has been loaded.
+            // This should usually be enough to make the layout work correctly.
+            //
+            // TODO: Find a way that is more reliable than a timeout to check
+            // for font loading.
+            setTimeout(function(){theEditor.editor.mod.comments.layout.layoutComments()}, 100);
          });
 
      };

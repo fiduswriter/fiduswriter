@@ -23,21 +23,21 @@ var tmp_comments = _.template(
     '<% _.each(theComments,function(comment,key,list){ %>\
         <div id="comment-box-<%= comment.id %>" data-id="<%= comment.id %>"  data-user-id="<%= comment.user %>" \
         class="comment-box \
-            <% if(comment.id===theDocument.activeCommentId) { %>active<% } else { %>inactive<% } %>\
+            <% if(comment.id===theEditor.editor.mod.comments.layout.activeCommentId) { %>active<% } else { %>inactive<% } %>\
             <% if(comment["review:isMajor"] === true) { %>comment-is-major-bgc<% }%>\
             " style="top:<%= theEditor.editor.mod.comments.layout.calculateCommentBoxOffset(comment) %>px;">\
-            <% if (comment.id===theDocument.activeCommentId || comment.comment.length > 0) { %>\
+            <% if (comment.id===theEditor.editor.mod.comments.layout.activeCommentId || comment.comment.length > 0) { %>\
             <% if(0 === comment.comment.length) { %>\
                 <%= tmp_first_comment({"comment": comment}) %>\
             <% } else { %>\
-            <%= tmp_single_comment({"comment": comment, active: (comment.id===theDocument.activeCommentId)}) %>\
+            <%= tmp_single_comment({"comment": comment, active: (comment.id===theEditor.editor.mod.comments.layout.activeCommentId)}) %>\
             <% } %>\
             <% if (comment.answers && comment.answers.length) {\
                for (var i=0;i < comment.answers.length; i++) { %>\
-                         <%= tmp_answer_comment({comment: comment, answer: comment.answers[i], active: (comment.id===theDocument.activeCommentId)}) %>\
+                         <%= tmp_answer_comment({comment: comment, answer: comment.answers[i], active: (comment.id===theEditor.editor.mod.comments.layout.activeCommentId)}) %>\
              <% }\
             } %>\
-            <% if(comment.id===theDocument.activeCommentId && 0 < comment.comment.length) { %>\
+            <% if(comment.id===theEditor.editor.mod.comments.layout.activeCommentId && 0 < comment.comment.length) { %>\
             <div class="comment-answer">\
                 <textarea class="comment-answer-text" rows="1"></textarea>\
                 <div class="comment-answer-btns">\
@@ -50,7 +50,7 @@ var tmp_comments = _.template(
                 </div>\
             </div>\
             <% } %>\
-            <% if(comment.id===theDocument.activeCommentId && (comment.user===theUser.id || theDocument.is_owner)) { %>\
+            <% if(comment.id===theEditor.editor.mod.comments.layout.activeCommentId && (comment.user===theUser.id || theDocument.is_owner)) { %>\
                 <span class="delete-comment-all delete-comment icon-cancel-circle" data-id="<%= comment.id %>"></span>\
             <% } %>\
             <% } %>\
@@ -95,7 +95,7 @@ var tmp_answer_comment = _.template(
             <h5 class="comment-user-name"><%= answer.userName %></h5>\
             <p class="comment-date"><%= jQuery.localizeDate(answer.date) %></p>\
         </div>\
-        <% if (active && answer.id===theDocument.activeCommentAnswerId) { %>\
+        <% if (active && answer.id===theEditor.editor.mod.comments.layout.activeCommentAnswerId) { %>\
             <div class="comment-text-wrapper">\
                 <div class="comment-answer-form">\
                     <textarea class="commentAnswerText" data-id="<%= answer.commentId %>" data-answer="<%= answer.id %>" rows="3">\

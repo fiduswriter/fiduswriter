@@ -407,7 +407,7 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
             var that = this;
             var id = this.mod.store.addComment(theUser.id, theUser.name, theUser.avatar, new Date().getTime(), '');
             this.mod.layout.deactivateAll();
-            theDocument.activeCommentId = id;
+            this.mod.layout.activeCommentId = id;
             editorHelpers.documentHasChanged();
             (0, _update.scheduleDOMUpdate)(this.mod.pm, function () {
                 that.mod.layout.layoutComments();
@@ -528,6 +528,8 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
 
         mod.layout = this;
         this.mod = mod;
+        this.activeCommentId = -1;
+        this.activeCommentAnswerId = -1;
         this.bindEvents();
     }
 
@@ -566,14 +568,14 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
         value: function activateComment(id) {
             // Deactivate all comments, then mark the one related to the id as active.
             this.deactivateAll();
-            theDocument.activeCommentId = id;
+            this.activeCommentId = id;
         }
     }, {
         key: 'deactivateAll',
         value: function deactivateAll() {
             // Close the comment box and make sure no comment is marked as currently active.
-            delete theDocument.activeCommentId;
-            delete theDocument.activeCommentAnswerId;
+            this.activeCommentId = -1;
+            this.activeCommentAnswerId = -1;
         }
     }, {
         key: 'layoutCommentsAvoidOverlap',
@@ -581,9 +583,9 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
             // Avoid overlapping of comments.
             var minOffsetTop, commentReferrer, lastOffsetTop, previousComments, nextComments, commentBox, initialCommentBox, foundComment, i;
 
-            if (undefined != theDocument.activeCommentId) {
-                commentReferrer = this.findComment(theDocument.activeCommentId);
-                initialCommentBox = this.findCommentBox(theDocument.activeCommentId);
+            if (-1 != this.activeCommentId) {
+                commentReferrer = this.findComment(this.activeCommentId);
+                initialCommentBox = this.findCommentBox(this.activeCommentId);
                 if (!initialCommentBox) {
                     return false;
                 }
@@ -663,8 +665,8 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
             jQuery('#active-comment-style').html('');
             var activeCommentWrapper = jQuery('.comment-box.active');
             if (0 < activeCommentWrapper.size()) {
-                theDocument.activeCommentId = activeCommentWrapper.attr('data-id');
-                jQuery('#active-comment-style').html('.comments-enabled .comment[data-id="' + theDocument.activeCommentId + '"] ' + '{background-color: #fffacf;}');
+                that.activeCommentId = activeCommentWrapper.attr('data-id');
+                jQuery('#active-comment-style').html('.comments-enabled .comment[data-id="' + that.activeCommentId + '"] {background-color: #fffacf;}');
                 activeCommentWrapper.find('.comment-answer-text').autoResize({
                     'extraSpace': 0
                 });
@@ -675,8 +677,8 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
         value: function editAnswer(id, answerId) {
             // Mark a specific answer to a comment as active, then layout the
             // comments, which will make that answer editable.
-            theDocument.activeCommentId = id;
-            theDocument.activeCommentAnswerId = answerId;
+            this.activeCommentId = id;
+            this.activeCommentAnswerId = answerId;
             this.layoutComments();
         }
     }, {

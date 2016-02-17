@@ -4,6 +4,8 @@ export class ModCommentLayout {
     constructor(mod) {
         mod.layout = this
         this.mod = mod
+        this.activeCommentId = -1
+        this.activeCommentAnswerId = -1
         this.bindEvents()
     }
 
@@ -42,13 +44,13 @@ export class ModCommentLayout {
     activateComment(id) {
         // Deactivate all comments, then mark the one related to the id as active.
         this.deactivateAll()
-        theDocument.activeCommentId = id
+        this.activeCommentId = id
     }
 
     deactivateAll() {
         // Close the comment box and make sure no comment is marked as currently active.
-        delete theDocument.activeCommentId
-        delete theDocument.activeCommentAnswerId
+        this.activeCommentId = -1
+        this.activeCommentAnswerId = -1
     }
 
 
@@ -64,9 +66,9 @@ export class ModCommentLayout {
             foundComment,
             i
 
-        if (undefined != theDocument.activeCommentId) {
-            commentReferrer = this.findComment(theDocument.activeCommentId)
-            initialCommentBox = this.findCommentBox(theDocument.activeCommentId)
+        if (-1 != this.activeCommentId) {
+            commentReferrer = this.findComment(this.activeCommentId)
+            initialCommentBox = this.findCommentBox(this.activeCommentId)
             if (!initialCommentBox) {
               return false
             }
@@ -145,11 +147,9 @@ export class ModCommentLayout {
         jQuery('#active-comment-style').html('')
         let activeCommentWrapper = jQuery('.comment-box.active')
         if (0 < activeCommentWrapper.size()) {
-            theDocument.activeCommentId = activeCommentWrapper.attr(
-                'data-id')
+            that.activeCommentId = activeCommentWrapper.attr('data-id')
             jQuery('#active-comment-style').html(
-                '.comments-enabled .comment[data-id="' + theDocument.activeCommentId + '"] ' +
-                '{background-color: #fffacf;}')
+                '.comments-enabled .comment[data-id="' + that.activeCommentId + '"] {background-color: #fffacf;}')
             activeCommentWrapper.find('.comment-answer-text').autoResize({
                 'extraSpace': 0
             })
@@ -161,8 +161,8 @@ export class ModCommentLayout {
     editAnswer(id, answerId) {
         // Mark a specific answer to a comment as active, then layout the
         // comments, which will make that answer editable.
-        theDocument.activeCommentId = id
-        theDocument.activeCommentAnswerId = answerId
+        this.activeCommentId = id
+        this.activeCommentAnswerId = answerId
         this.layoutComments()
     }
 

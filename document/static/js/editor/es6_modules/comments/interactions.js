@@ -80,7 +80,7 @@ export class ModCommentInteractions {
         let that = this
         let id = this.mod.store.addComment(theUser.id, theUser.name, theUser.avatar, new Date().getTime(), '')
         this.mod.layout.deactivateAll()
-        theDocument.activeCommentId = id
+        this.mod.layout.activeCommentId = id
         editorHelpers.documentHasChanged()
         scheduleDOMUpdate(this.mod.pm, function(){that.mod.layout.layoutComments()})
     }

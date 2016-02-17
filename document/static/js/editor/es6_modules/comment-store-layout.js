@@ -6,15 +6,109 @@ export class CommentStoreLayout {
     constructor(commentStore) {
         commentStore.layout = this
         this.commentStore = commentStore
+        this.bindEvents()
+    }
+
+    bindEvents() {
+        let that = this
+        // Bind all the click events related to comments
+        jQuery(document).on("click", ".submitComment", function(){that.submitComment(this)})
+        jQuery(document).on("click", ".cancelSubmitComment", function(){that.cancelSubmitComment(this)})
+        jQuery(document).on("click", ".comment-box.inactive", function () {
+            let commentId = that.getCommentId(this)
+            that.activateComment(commentId)
+            that.layoutComments()
+        })
+        jQuery(document).on("click", ".comments-enabled .comment", function () {
+            let commentId = that.getCommentId(this)
+            that.activateComment(commentId)
+            that.layoutComments()
+        })
+
+        jQuery(document).on('click', '.edit-comment', function () {
+            let activeWrapper = jQuery('.comment-box.active')
+            activeWrapper.find('.comment-p').show()
+            activeWrapper.find('.comment-form').hide()
+            activeWrapper.find('.comment-controls').show()
+            let btnParent = jQuery(this).parent()
+            let commentTextWrapper = btnParent.siblings(
+                '.comment-text-wrapper')
+            let commentP = commentTextWrapper.children('.comment-p')
+            let commentForm = commentTextWrapper.children('.comment-form')
+            btnParent.parent().siblings('.comment-answer').hide()
+            btnParent.hide()
+            commentP.hide()
+            commentForm.show()
+            commentForm.children('textarea').val(commentP.text())
+        })
+
+        jQuery(document).on('click', '.edit-comment-answer', function () {
+            that.editAnswer(parseInt(jQuery(this).attr(
+                'data-id')), parseInt(jQuery(this).attr(
+                'data-answer')))
+        })
+
+        jQuery(document).on('click', '.submit-comment-answer-edit',
+            function () {
+                let textArea = jQuery(this).prev()
+                let commentId = parseInt(textArea.attr('data-id'))
+                let answerId = parseInt(textArea.attr('data-answer'))
+                let theValue = textArea.val()
+                that.submitAnswerUpdate(commentId, answerId, theValue)
+            })
+
+        jQuery(document).on("click", ".comment-answer-submit", function () {
+            that.submitAnswer();
+        })
+
+        jQuery(document).on('click', '.delete-comment', function () {
+            that.deleteComment(parseInt(jQuery(this).attr(
+                'data-id')))
+        })
+
+        jQuery(document).on('click', '.delete-comment-answer', function () {
+            that.deleteCommentAnswer(parseInt(jQuery(this).attr(
+                'data-id')), parseInt(jQuery(this).attr(
+                'data-answer')))
+        })
+
+        // Handle comments show/hide
+
+        jQuery(document).on('click', '#comments-display:not(.disabled)',
+            function () {
+                jQuery(this).toggleClass('selected') // what should this look like? CSS needs to be defined
+                jQuery('#comment-box-container').toggleClass('hide')
+                jQuery('#flow').toggleClass('comments-enabled')
+                jQuery('.toolbarcomment button').toggleClass('disabled')
+            })
+
+        jQuery(document).on('mousedown', '#comments-filter label', function (event) {
+            event.preventDefault()
+            let filterType = jQuery(this).attr("data-filter")
+
+            switch (filterType) {
+                case 'r':
+                case 'w':
+                case 'e':
+                case 'c':
+                    that.filterByUserType(filterType)
+                    break
+                case 'username':
+                    that.filterByUserDialog()
+                    break
+            }
+
+        })
     }
 
     // Create a new comment as the current user, and mark it as active.
     createNewComment() {
+        let that = this
         let id = this.commentStore.addComment(theUser.id, theUser.name, theUser.avatar, new Date().getTime(), '')
         this.deactivateAll()
         theDocument.activeCommentId = id
         editorHelpers.documentHasChanged()
-        scheduleDOMUpdate(this.commentStore.pm, this.layoutComments)
+        scheduleDOMUpdate(this.commentStore.pm, function(){that.layoutComments()})
     }
 
     deleteComment(id) {
@@ -42,6 +136,33 @@ export class CommentStoreLayout {
         // Save the change to a comment and mark that the document has been changed
         this.commentStore.updateComment(id, commentText, commentIsMajor)
         this.deactivateAll()
+        this.layoutComments()
+    }
+
+    submitComment(submitButton) {
+        // Handle a click on the submit button of the comment submit form.
+        let commentTextBox = jQuery(submitButton).siblings('.commentText')[0]
+        let commentText = commentTextBox.value
+        let commentIsMajor = jQuery(submitButton).siblings('.comment-is-major').prop('checked')
+        let commentId = theEditor.editor.mod.commentStore.layout.getCommentId(commentTextBox)
+        this.updateComment(commentId, commentText, commentIsMajor)
+    }
+
+    cancelSubmitComment(cancelButton) {
+        // Handle a click on the cancel button of the comment submit form.
+        let commentTextBox = jQuery(cancelButton).siblings('.commentText')[0]
+        if (commentTextBox) {
+            let id = this.getCommentId(commentTextBox)
+            if (this.commentStore.comments[id].comment.length === 0) {
+                this.deleteComment(id)
+            }
+            else {
+                this.deactivateAll()
+            }
+        }
+        else {
+            this.deactivateAll()
+        }
         this.layoutComments()
     }
 
@@ -115,30 +236,28 @@ export class CommentStoreLayout {
 
     layoutComments() {
         // Handle the layout of the comments on the screen.
-        var theCommentPointers = [].slice.call(jQuery('.comment')),
-            activeCommentWrapper, theComments = [], ids = []
+        let theCommentPointers = [].slice.call(jQuery('.comment')), theComments = [], ids = []
 
         theCommentPointers.forEach(function(commentNode){
-          var id = parseInt(commentNode.getAttribute("data-id"))
-          if (ids.indexOf(id) !== -1) {
-            // This is not the first occurence of this comment. So we ignore it.
-            return
-          }
-          ids.push(id)
-          if (theEditor.editor.mod.commentStore.comments[id]) {
-            theComments.push({
-              id: id,
-              referrer: commentNode,
-              comment: theEditor.editor.mod.commentStore.comments[id]['comment'],
-              user: theEditor.editor.mod.commentStore.comments[id]['user'],
-              userName: theEditor.editor.mod.commentStore.comments[id]['userName'],
-              userAvatar: theEditor.editor.mod.commentStore.comments[id]['userAvatar'],
-              date: theEditor.editor.mod.commentStore.comments[id]['date'],
-              answers: theEditor.editor.mod.commentStore.comments[id]['answers'],
-                'review:isMajor': theEditor.editor.mod.commentStore.comments[id]['review:isMajor']
-            })
-          }
-
+            let id = parseInt(commentNode.getAttribute("data-id"))
+            if (ids.indexOf(id) !== -1) {
+              // This is not the first occurence of this comment. So we ignore it.
+                return
+            }
+            ids.push(id)
+            if (theEditor.editor.mod.commentStore.comments[id]) {
+                theComments.push({
+                  id: id,
+                  referrer: commentNode,
+                  comment: theEditor.editor.mod.commentStore.comments[id]['comment'],
+                  user: theEditor.editor.mod.commentStore.comments[id]['user'],
+                  userName: theEditor.editor.mod.commentStore.comments[id]['userName'],
+                  userAvatar: theEditor.editor.mod.commentStore.comments[id]['userAvatar'],
+                  date: theEditor.editor.mod.commentStore.comments[id]['date'],
+                  answers: theEditor.editor.mod.commentStore.comments[id]['answers'],
+                    'review:isMajor': theEditor.editor.mod.commentStore.comments[id]['review:isMajor']
+                })
+            }
         })
 
         jQuery('#comment-box-container').html(tmp_comments({
@@ -146,7 +265,7 @@ export class CommentStoreLayout {
         }))
         this.layoutCommentsAvoidOverlap()
         jQuery('#active-comment-style').html('')
-        activeCommentWrapper = jQuery('.comment-box.active')
+        let activeCommentWrapper = jQuery('.comment-box.active')
         if (0 < activeCommentWrapper.size()) {
             theDocument.activeCommentId = activeCommentWrapper.attr(
                 'data-id')
@@ -225,5 +344,78 @@ export class CommentStoreLayout {
         editorHelpers.documentHasChanged()
         this.layoutComments()
     }
+
+    /**
+     * Filtering part. akorovin
+     */
+    filterByUserType(userType) {
+        //filter by user role (reader, editor, reviewer etc)
+        let userRoles = theDocument.access_rights
+        let idsOfNeededUsers = []
+
+        jQuery.each(userRoles, function(index, user) {
+            if (user.rights == userType) {
+                idsOfNeededUsers.push(user.user_id)
+            }
+        })
+
+        jQuery("#comment-box-container").children().each(function() {
+            var userId = parseInt(jQuery(this).attr("data-user-id"), 10)
+            if ($.inArray(userId, idsOfNeededUsers) !== -1) {
+                jQuery(this).show()
+            }
+            else {
+                jQuery(this).hide()
+            }
+        })
+    }
+
+    filterByUserDialog() {
+        //create array of roles + owner role
+        let rolesCopy = theDocument.access_rights.slice()
+        rolesCopy.push({
+            user_name: theDocument.owner.name,
+            user_id: theDocument.owner.id
+        })
+
+        let users = {
+            users: rolesCopy
+        }
+
+        jQuery('body').append(tmp_filter_by_user_box(users))
+        let diaButtons = {}
+        diaButtons[gettext('Filter')] = function () {
+            let id = jQuery(this).children("select").val()
+            if (id == undefined) {
+                return
+            }
+
+            let boxesToHide = jQuery("#comment-box-container").children("[data-user-id!='" + id + "']").hide()
+            //let boxesToHide = jQuery("#comment-box-container").children("[data-user-id='" + id + "']").show()
+
+            //TODO: filtering
+            jQuery(this).dialog("close")
+        }
+
+        diaButtons[gettext('Cancel')] = function () {
+            jQuery(this).dialog("close")
+        }
+
+        jQuery("#comment-filter-byuser-box").dialog({
+            resizable: false,
+            height: 180,
+            modal: true,
+            close: function () {
+                jQuery("#comment-filter-byuser-box").detach()
+            },
+            buttons: diaButtons,
+            create: function () {
+                let $the_dialog = jQuery(this).closest(".ui-dialog");
+                $the_dialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
+                $the_dialog.find(".ui-button:last").addClass("fw-button fw-orange")
+            }
+        })
+    }
+
 
 }

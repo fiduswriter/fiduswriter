@@ -191,7 +191,8 @@ export class CommentStore {
   }
 
   receive(events, version) {
-    var updateCommentLayout = false
+    let that = this
+    let updateCommentLayout = false
     events.forEach(event => {
       if (event.type == "delete") {
         this.deleteLocalComment(event.id)
@@ -217,7 +218,7 @@ export class CommentStore {
       this.version++
     })
     if (updateCommentLayout) {
-      scheduleDOMUpdate(this.pm, this.layout.layoutComments)
+      scheduleDOMUpdate(this.pm, function(){that.layout.layoutComments()})
     }
   }
 

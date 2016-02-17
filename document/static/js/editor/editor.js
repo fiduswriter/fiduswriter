@@ -314,7 +314,7 @@ theEditor.onTransform = function (transform) {
 window.theEditor = theEditor;
 
 },{"./es6_modules/comment-store":3,"./es6_modules/schema":4,"./es6_modules/update-ui":5,"prosemirror/dist/collab":6,"prosemirror/dist/edit/main":20,"prosemirror/dist/format":27,"prosemirror/dist/transform":41,"prosemirror/dist/ui/update":51}],2:[function(require,module,exports){
-'use strict';
+"use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })(); /* Functions related to layouting of comments */
 
@@ -323,7 +323,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.CommentStoreLayout = undefined;
 
-var _update = require('prosemirror/dist/ui/update');
+var _update = require("prosemirror/dist/ui/update");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -333,21 +333,114 @@ var CommentStoreLayout = exports.CommentStoreLayout = (function () {
 
         commentStore.layout = this;
         this.commentStore = commentStore;
+        this.bindEvents();
     }
 
-    // Create a new comment as the current user, and mark it as active.
-
     _createClass(CommentStoreLayout, [{
-        key: 'createNewComment',
+        key: "bindEvents",
+        value: function bindEvents() {
+            var that = this;
+            // Bind all the click events related to comments
+            jQuery(document).on("click", ".submitComment", function () {
+                that.submitComment(this);
+            });
+            jQuery(document).on("click", ".cancelSubmitComment", function () {
+                that.cancelSubmitComment(this);
+            });
+            jQuery(document).on("click", ".comment-box.inactive", function () {
+                var commentId = that.getCommentId(this);
+                that.activateComment(commentId);
+                that.layoutComments();
+            });
+            jQuery(document).on("click", ".comments-enabled .comment", function () {
+                var commentId = that.getCommentId(this);
+                that.activateComment(commentId);
+                that.layoutComments();
+            });
+
+            jQuery(document).on('click', '.edit-comment', function () {
+                var activeWrapper = jQuery('.comment-box.active');
+                activeWrapper.find('.comment-p').show();
+                activeWrapper.find('.comment-form').hide();
+                activeWrapper.find('.comment-controls').show();
+                var btnParent = jQuery(this).parent();
+                var commentTextWrapper = btnParent.siblings('.comment-text-wrapper');
+                var commentP = commentTextWrapper.children('.comment-p');
+                var commentForm = commentTextWrapper.children('.comment-form');
+                btnParent.parent().siblings('.comment-answer').hide();
+                btnParent.hide();
+                commentP.hide();
+                commentForm.show();
+                commentForm.children('textarea').val(commentP.text());
+            });
+
+            jQuery(document).on('click', '.edit-comment-answer', function () {
+                that.editAnswer(parseInt(jQuery(this).attr('data-id')), parseInt(jQuery(this).attr('data-answer')));
+            });
+
+            jQuery(document).on('click', '.submit-comment-answer-edit', function () {
+                var textArea = jQuery(this).prev();
+                var commentId = parseInt(textArea.attr('data-id'));
+                var answerId = parseInt(textArea.attr('data-answer'));
+                var theValue = textArea.val();
+                that.submitAnswerUpdate(commentId, answerId, theValue);
+            });
+
+            jQuery(document).on("click", ".comment-answer-submit", function () {
+                that.submitAnswer();
+            });
+
+            jQuery(document).on('click', '.delete-comment', function () {
+                that.deleteComment(parseInt(jQuery(this).attr('data-id')));
+            });
+
+            jQuery(document).on('click', '.delete-comment-answer', function () {
+                that.deleteCommentAnswer(parseInt(jQuery(this).attr('data-id')), parseInt(jQuery(this).attr('data-answer')));
+            });
+
+            // Handle comments show/hide
+
+            jQuery(document).on('click', '#comments-display:not(.disabled)', function () {
+                jQuery(this).toggleClass('selected'); // what should this look like? CSS needs to be defined
+                jQuery('#comment-box-container').toggleClass('hide');
+                jQuery('#flow').toggleClass('comments-enabled');
+                jQuery('.toolbarcomment button').toggleClass('disabled');
+            });
+
+            jQuery(document).on('mousedown', '#comments-filter label', function (event) {
+                event.preventDefault();
+                var filterType = jQuery(this).attr("data-filter");
+
+                switch (filterType) {
+                    case 'r':
+                    case 'w':
+                    case 'e':
+                    case 'c':
+                        that.filterByUserType(filterType);
+                        break;
+                    case 'username':
+                        that.filterByUserDialog();
+                        break;
+                }
+            });
+        }
+
+        // Create a new comment as the current user, and mark it as active.
+
+    }, {
+        key: "createNewComment",
         value: function createNewComment() {
+            var that = this;
             var id = this.commentStore.addComment(theUser.id, theUser.name, theUser.avatar, new Date().getTime(), '');
             this.deactivateAll();
             theDocument.activeCommentId = id;
             editorHelpers.documentHasChanged();
-            (0, _update.scheduleDOMUpdate)(this.commentStore.pm, this.layoutComments);
+            (0, _update.scheduleDOMUpdate)(this.commentStore.pm, function () {
+                that.layoutComments();
+            });
         }
     }, {
-        key: 'deleteComment',
+        key: "deleteComment",
         value: function deleteComment(id) {
             // Handle the deletion of a comment.
             var comment = this.findComment(id); // TODO: We don't use this for anything.
@@ -357,21 +450,21 @@ var CommentStoreLayout = exports.CommentStoreLayout = (function () {
             this.layoutComments();
         }
     }, {
-        key: 'activateComment',
+        key: "activateComment",
         value: function activateComment(id) {
             // Deactivate all comments, then makr the one currently open as active.
             this.deactivateAll();
             theDocument.activeCommentId = id;
         }
     }, {
-        key: 'deactivateAll',
+        key: "deactivateAll",
         value: function deactivateAll() {
             // Close the comment box and make sure no comment is marked as currently active.
             delete theDocument.activeCommentId;
             delete theDocument.activeCommentAnswerId;
         }
     }, {
-        key: 'updateComment',
+        key: "updateComment",
         value: function updateComment(id, commentText, commentIsMajor) {
             // Save the change to a comment and mark that the document has been changed
             this.commentStore.updateComment(id, commentText, commentIsMajor);
@@ -379,7 +472,34 @@ var CommentStoreLayout = exports.CommentStoreLayout = (function () {
             this.layoutComments();
         }
     }, {
-        key: 'deleteCommentAnswer',
+        key: "submitComment",
+        value: function submitComment(submitButton) {
+            // Handle a click on the submit button of the comment submit form.
+            var commentTextBox = jQuery(submitButton).siblings('.commentText')[0];
+            var commentText = commentTextBox.value;
+            var commentIsMajor = jQuery(submitButton).siblings('.comment-is-major').prop('checked');
+            var commentId = theEditor.editor.mod.commentStore.layout.getCommentId(commentTextBox);
+            this.updateComment(commentId, commentText, commentIsMajor);
+        }
+    }, {
+        key: "cancelSubmitComment",
+        value: function cancelSubmitComment(cancelButton) {
+            // Handle a click on the cancel button of the comment submit form.
+            var commentTextBox = jQuery(cancelButton).siblings('.commentText')[0];
+            if (commentTextBox) {
+                var id = this.getCommentId(commentTextBox);
+                if (this.commentStore.comments[id].comment.length === 0) {
+                    this.deleteComment(id);
+                } else {
+                    this.deactivateAll();
+                }
+            } else {
+                this.deactivateAll();
+            }
+            this.layoutComments();
+        }
+    }, {
+        key: "deleteCommentAnswer",
         value: function deleteCommentAnswer(commentId, answerId) {
             // Handle the deletion of a comment answer.
             this.commentStore.deleteAnswer(commentId, answerId);
@@ -388,7 +508,7 @@ var CommentStoreLayout = exports.CommentStoreLayout = (function () {
             this.layoutComments();
         }
     }, {
-        key: 'layoutCommentsAvoidOverlap',
+        key: "layoutCommentsAvoidOverlap",
         value: function layoutCommentsAvoidOverlap() {
             // Avoid overlapping of comments.
             var minOffsetTop, commentReferrer, lastOffsetTop, previousComments, nextComments, commentBox, initialCommentBox, foundComment, i;
@@ -438,11 +558,10 @@ var CommentStoreLayout = exports.CommentStoreLayout = (function () {
             }
         }
     }, {
-        key: 'layoutComments',
+        key: "layoutComments",
         value: function layoutComments() {
             // Handle the layout of the comments on the screen.
             var theCommentPointers = [].slice.call(jQuery('.comment')),
-                activeCommentWrapper,
                 theComments = [],
                 ids = [];
 
@@ -473,7 +592,7 @@ var CommentStoreLayout = exports.CommentStoreLayout = (function () {
             }));
             this.layoutCommentsAvoidOverlap();
             jQuery('#active-comment-style').html('');
-            activeCommentWrapper = jQuery('.comment-box.active');
+            var activeCommentWrapper = jQuery('.comment-box.active');
             if (0 < activeCommentWrapper.size()) {
                 theDocument.activeCommentId = activeCommentWrapper.attr('data-id');
                 jQuery('#active-comment-style').html('.comments-enabled .comment[data-id="' + theDocument.activeCommentId + '"] ' + '{background-color: #fffacf;}');
@@ -483,7 +602,7 @@ var CommentStoreLayout = exports.CommentStoreLayout = (function () {
             }
         }
     }, {
-        key: 'submitAnswer',
+        key: "submitAnswer",
         value: function submitAnswer() {
             // Submit the answer to a comment
             var commentWrapper, answerTextBox, answerText, answerParent;
@@ -495,7 +614,7 @@ var CommentStoreLayout = exports.CommentStoreLayout = (function () {
             this.createNewAnswer(commentId, answerText);
         }
     }, {
-        key: 'editAnswer',
+        key: "editAnswer",
         value: function editAnswer(id, answerId) {
             // Mark a specific answer to a comment as active, then layout the
             // comments, which will make that answer editable.
@@ -504,31 +623,31 @@ var CommentStoreLayout = exports.CommentStoreLayout = (function () {
             this.layoutComments();
         }
     }, {
-        key: 'calculateCommentBoxOffset',
+        key: "calculateCommentBoxOffset",
         value: function calculateCommentBoxOffset(comment) {
             return comment.referrer.getBoundingClientRect()['top'] + window.pageYOffset - 280;
         }
     }, {
-        key: 'findComment',
+        key: "findComment",
         value: function findComment(id) {
             // Return the comment element specified by the id
             return jQuery('.comment[data-id=' + id + ']')[0];
         }
     }, {
-        key: 'findCommentBox',
+        key: "findCommentBox",
         value: function findCommentBox(id) {
             // Return the comment box specified by the id
             return jQuery('.comment-box[data-id=' + id + ']')[0];
         }
     }, {
-        key: 'getCommentId',
+        key: "getCommentId",
         value: function getCommentId(node) {
             // Returns the value of the attributte data-id as an integer.
             // This function can be used on both comment referrers and comment boxes.
             return parseInt(node.getAttribute('data-id'), 10);
         }
     }, {
-        key: 'createNewAnswer',
+        key: "createNewAnswer",
         value: function createNewAnswer(commentId, answerText) {
             // Create a new answer to add to the comment store
             var answer = {
@@ -547,12 +666,87 @@ var CommentStoreLayout = exports.CommentStoreLayout = (function () {
             editorHelpers.documentHasChanged();
         }
     }, {
-        key: 'submitAnswerUpdate',
+        key: "submitAnswerUpdate",
         value: function submitAnswerUpdate(commentId, answerId, commentText) {
             this.commentStore.updateAnswer(commentId, answerId, commentText);
             this.commentStore.layout.deactivateAll();
             editorHelpers.documentHasChanged();
             this.layoutComments();
+        }
+
+        /**
+         * Filtering part. akorovin
+         */
+
+    }, {
+        key: "filterByUserType",
+        value: function filterByUserType(userType) {
+            //filter by user role (reader, editor, reviewer etc)
+            var userRoles = theDocument.access_rights;
+            var idsOfNeededUsers = [];
+
+            jQuery.each(userRoles, function (index, user) {
+                if (user.rights == userType) {
+                    idsOfNeededUsers.push(user.user_id);
+                }
+            });
+
+            jQuery("#comment-box-container").children().each(function () {
+                var userId = parseInt(jQuery(this).attr("data-user-id"), 10);
+                if ($.inArray(userId, idsOfNeededUsers) !== -1) {
+                    jQuery(this).show();
+                } else {
+                    jQuery(this).hide();
+                }
+            });
+        }
+    }, {
+        key: "filterByUserDialog",
+        value: function filterByUserDialog() {
+            //create array of roles + owner role
+            var rolesCopy = theDocument.access_rights.slice();
+            rolesCopy.push({
+                user_name: theDocument.owner.name,
+                user_id: theDocument.owner.id
+            });
+
+            var users = {
+                users: rolesCopy
+            };
+
+            jQuery('body').append(tmp_filter_by_user_box(users));
+            var diaButtons = {};
+            diaButtons[gettext('Filter')] = function () {
+                var id = jQuery(this).children("select").val();
+                if (id == undefined) {
+                    return;
+                }
+
+                var boxesToHide = jQuery("#comment-box-container").children("[data-user-id!='" + id + "']").hide();
+                //let boxesToHide = jQuery("#comment-box-container").children("[data-user-id='" + id + "']").show()
+
+                //TODO: filtering
+                jQuery(this).dialog("close");
+            };
+
+            diaButtons[gettext('Cancel')] = function () {
+                jQuery(this).dialog("close");
+            };
+
+            jQuery("#comment-filter-byuser-box").dialog({
+                resizable: false,
+                height: 180,
+                modal: true,
+                close: function close() {
+                    jQuery("#comment-filter-byuser-box").detach();
+                },
+                buttons: diaButtons,
+                create: function create() {
+                    var $the_dialog = jQuery(this).closest(".ui-dialog");
+                    $the_dialog.find(".ui-button:first-child").addClass("fw-button fw-dark");
+                    $the_dialog.find(".ui-button:last").addClass("fw-button fw-orange");
+                }
+            });
         }
     }]);
 
@@ -815,6 +1009,7 @@ var CommentStore = exports.CommentStore = (function () {
     value: function receive(events, version) {
       var _this2 = this;
 
+      var that = this;
       var updateCommentLayout = false;
       events.forEach(function (event) {
         if (event.type == "delete") {
@@ -841,7 +1036,9 @@ var CommentStore = exports.CommentStore = (function () {
         _this2.version++;
       });
       if (updateCommentLayout) {
-        (0, _update.scheduleDOMUpdate)(this.pm, this.layout.layoutComments);
+        (0, _update.scheduleDOMUpdate)(this.pm, function () {
+          that.layout.layoutComments();
+        });
       }
     }
   }, {

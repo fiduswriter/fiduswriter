@@ -478,8 +478,6 @@ jQuery(document).ready(function() {
         exporter.uploadNative(theDocument);
     });
 
-    // Bind comment functions
-    commentHelpers.bindEvents();
     bibliographyHelpers.bindEvents();
 });
 

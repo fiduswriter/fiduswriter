@@ -316,43 +316,27 @@ window.theEditor = theEditor;
 },{"./es6_modules/comments/mod":4,"./es6_modules/schema":6,"./es6_modules/update-ui":7,"prosemirror/dist/collab":8,"prosemirror/dist/edit/main":22,"prosemirror/dist/format":29,"prosemirror/dist/transform":43,"prosemirror/dist/ui/update":53}],2:[function(require,module,exports){
 "use strict";
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var ModCommentInteractions = exports.ModCommentInteractions = function ModCommentInteractions(mod) {
-    _classCallCheck(this, ModCommentInteractions);
-
-    mod.interactions = this;
-    this.mod = mod;
-};
-
-},{}],3:[function(require,module,exports){
-"use strict";
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })(); /* Functions related to layouting of comments */
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })(); /* Functions related to user interactions with comments */
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.ModCommentLayout = undefined;
+exports.ModCommentInteractions = undefined;
 
 var _update = require("prosemirror/dist/ui/update");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ModCommentLayout = exports.ModCommentLayout = (function () {
-    function ModCommentLayout(mod) {
-        _classCallCheck(this, ModCommentLayout);
+var ModCommentInteractions = exports.ModCommentInteractions = (function () {
+    function ModCommentInteractions(mod) {
+        _classCallCheck(this, ModCommentInteractions);
 
-        mod.layout = this;
+        mod.interactions = this;
         this.mod = mod;
         this.bindEvents();
     }
 
-    _createClass(ModCommentLayout, [{
+    _createClass(ModCommentInteractions, [{
         key: "bindEvents",
         value: function bindEvents() {
             var that = this;
@@ -364,14 +348,14 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
                 that.cancelSubmitComment(this);
             });
             jQuery(document).on("click", ".comment-box.inactive", function () {
-                var commentId = that.getCommentId(this);
-                that.activateComment(commentId);
-                that.layoutComments();
+                var commentId = that.mod.layout.getCommentId(this);
+                that.mod.layout.activateComment(commentId);
+                that.mod.layout.layoutComments();
             });
             jQuery(document).on("click", ".comments-enabled .comment", function () {
-                var commentId = that.getCommentId(this);
-                that.activateComment(commentId);
-                that.layoutComments();
+                var commentId = that.mod.layout.getCommentId(this);
+                that.mod.layout.activateComment(commentId);
+                that.mod.layout.layoutComments();
             });
 
             jQuery(document).on('click', '.edit-comment', function () {
@@ -413,9 +397,146 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
             jQuery(document).on('click', '.delete-comment-answer', function () {
                 that.deleteCommentAnswer(parseInt(jQuery(this).attr('data-id')), parseInt(jQuery(this).attr('data-answer')));
             });
+        }
+
+        // Create a new comment as the current user, and mark it as active.
+
+    }, {
+        key: "createNewComment",
+        value: function createNewComment() {
+            var that = this;
+            var id = this.mod.store.addComment(theUser.id, theUser.name, theUser.avatar, new Date().getTime(), '');
+            this.mod.layout.deactivateAll();
+            theDocument.activeCommentId = id;
+            editorHelpers.documentHasChanged();
+            (0, _update.scheduleDOMUpdate)(this.mod.pm, function () {
+                that.mod.layout.layoutComments();
+            });
+        }
+    }, {
+        key: "deleteComment",
+        value: function deleteComment(id) {
+            // Handle the deletion of a comment.
+            var comment = this.mod.layout.findComment(id); // TODO: We don't use this for anything. Should we?
+            this.mod.store.deleteComment(id);
+            //      TODO: make the markrange go away
+            editorHelpers.documentHasChanged();
+            this.mod.layout.layoutComments();
+        }
+    }, {
+        key: "updateComment",
+        value: function updateComment(id, commentText, commentIsMajor) {
+            // Save the change to a comment and mark that the document has been changed
+            this.mod.store.updateComment(id, commentText, commentIsMajor);
+            this.mod.layout.deactivateAll();
+            this.mod.layout.layoutComments();
+        }
+    }, {
+        key: "submitComment",
+        value: function submitComment(submitButton) {
+            // Handle a click on the submit button of the comment submit form.
+            var commentTextBox = jQuery(submitButton).siblings('.commentText')[0];
+            var commentText = commentTextBox.value;
+            var commentIsMajor = jQuery(submitButton).siblings('.comment-is-major').prop('checked');
+            var commentId = this.mod.layout.getCommentId(commentTextBox);
+            this.updateComment(commentId, commentText, commentIsMajor);
+        }
+    }, {
+        key: "cancelSubmitComment",
+        value: function cancelSubmitComment(cancelButton) {
+            // Handle a click on the cancel button of the comment submit form.
+            var commentTextBox = jQuery(cancelButton).siblings('.commentText')[0];
+            if (commentTextBox) {
+                var id = this.mod.layout.getCommentId(commentTextBox);
+                if (this.mod.store.comments[id].comment.length === 0) {
+                    this.deleteComment(id);
+                } else {
+                    this.mod.layout.deactivateAll();
+                }
+            } else {
+                this.mod.layout.deactivateAll();
+            }
+            this.mod.layout.layoutComments();
+        }
+    }, {
+        key: "deleteCommentAnswer",
+        value: function deleteCommentAnswer(commentId, answerId) {
+            // Handle the deletion of a comment answer.
+            this.mod.store.deleteAnswer(commentId, answerId);
+            this.mod.layout.deactivateAll();
+            editorHelpers.documentHasChanged();
+            this.mod.layout.layoutComments();
+        }
+    }, {
+        key: "submitAnswer",
+        value: function submitAnswer() {
+            // Submit the answer to a comment
+            var commentWrapper = jQuery('.comment-box.active');
+            var answerTextBox = commentWrapper.find('.comment-answer-text')[0];
+            var answerText = answerTextBox.value;
+            var commentId = parseInt(commentWrapper.attr('data-id'));
+            this.createNewAnswer(commentId, answerText);
+        }
+    }, {
+        key: "createNewAnswer",
+        value: function createNewAnswer(commentId, answerText) {
+            // Create a new answer to add to the comment store
+            var answer = {
+                commentId: commentId,
+                answer: answerText,
+                user: theUser.id,
+                userName: theUser.name,
+                userAvatar: theUser.avatar,
+                date: new Date().getTime()
+            };
+
+            this.mod.store.addAnswer(commentId, answer);
+
+            this.mod.layout.deactivateAll();
+            this.mod.layout.layoutComments();
+            editorHelpers.documentHasChanged();
+        }
+    }, {
+        key: "submitAnswerUpdate",
+        value: function submitAnswerUpdate(commentId, answerId, commentText) {
+            this.mod.store.updateAnswer(commentId, answerId, commentText);
+            this.mod.layout.deactivateAll();
+            editorHelpers.documentHasChanged();
+            this.mod.layout.layoutComments();
+        }
+    }]);
+
+    return ModCommentInteractions;
+})();
+
+},{"prosemirror/dist/ui/update":53}],3:[function(require,module,exports){
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/* Functions related to layouting of comments */
+
+var ModCommentLayout = exports.ModCommentLayout = (function () {
+    function ModCommentLayout(mod) {
+        _classCallCheck(this, ModCommentLayout);
+
+        mod.layout = this;
+        this.mod = mod;
+        this.bindEvents();
+    }
+
+    _createClass(ModCommentLayout, [{
+        key: 'bindEvents',
+        value: function bindEvents() {
+            var that = this;
 
             // Handle comments show/hide
-
             jQuery(document).on('click', '#comments-display:not(.disabled)', function () {
                 jQuery(this).toggleClass('selected'); // what should this look like? CSS needs to be defined
                 jQuery('#comment-box-container').toggleClass('hide');
@@ -440,91 +561,22 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
                 }
             });
         }
-
-        // Create a new comment as the current user, and mark it as active.
-
     }, {
-        key: "createNewComment",
-        value: function createNewComment() {
-            var that = this;
-            var id = this.mod.store.addComment(theUser.id, theUser.name, theUser.avatar, new Date().getTime(), '');
-            this.deactivateAll();
-            theDocument.activeCommentId = id;
-            editorHelpers.documentHasChanged();
-            (0, _update.scheduleDOMUpdate)(this.mod.pm, function () {
-                that.layoutComments();
-            });
-        }
-    }, {
-        key: "deleteComment",
-        value: function deleteComment(id) {
-            // Handle the deletion of a comment.
-            var comment = this.findComment(id); // TODO: We don't use this for anything.
-            this.mod.store.deleteComment(id);
-            //      TODO: make the markrange go away
-            editorHelpers.documentHasChanged();
-            this.layoutComments();
-        }
-    }, {
-        key: "activateComment",
+        key: 'activateComment',
         value: function activateComment(id) {
-            // Deactivate all comments, then makr the one currently open as active.
+            // Deactivate all comments, then mark the one related to the id as active.
             this.deactivateAll();
             theDocument.activeCommentId = id;
         }
     }, {
-        key: "deactivateAll",
+        key: 'deactivateAll',
         value: function deactivateAll() {
             // Close the comment box and make sure no comment is marked as currently active.
             delete theDocument.activeCommentId;
             delete theDocument.activeCommentAnswerId;
         }
     }, {
-        key: "updateComment",
-        value: function updateComment(id, commentText, commentIsMajor) {
-            // Save the change to a comment and mark that the document has been changed
-            this.mod.store.updateComment(id, commentText, commentIsMajor);
-            this.deactivateAll();
-            this.layoutComments();
-        }
-    }, {
-        key: "submitComment",
-        value: function submitComment(submitButton) {
-            // Handle a click on the submit button of the comment submit form.
-            var commentTextBox = jQuery(submitButton).siblings('.commentText')[0];
-            var commentText = commentTextBox.value;
-            var commentIsMajor = jQuery(submitButton).siblings('.comment-is-major').prop('checked');
-            var commentId = this.mod.layout.getCommentId(commentTextBox);
-            this.updateComment(commentId, commentText, commentIsMajor);
-        }
-    }, {
-        key: "cancelSubmitComment",
-        value: function cancelSubmitComment(cancelButton) {
-            // Handle a click on the cancel button of the comment submit form.
-            var commentTextBox = jQuery(cancelButton).siblings('.commentText')[0];
-            if (commentTextBox) {
-                var id = this.getCommentId(commentTextBox);
-                if (this.mod.store.comments[id].comment.length === 0) {
-                    this.deleteComment(id);
-                } else {
-                    this.deactivateAll();
-                }
-            } else {
-                this.deactivateAll();
-            }
-            this.layoutComments();
-        }
-    }, {
-        key: "deleteCommentAnswer",
-        value: function deleteCommentAnswer(commentId, answerId) {
-            // Handle the deletion of a comment answer.
-            this.mod.store.deleteAnswer(commentId, answerId);
-            this.deactivateAll();
-            editorHelpers.documentHasChanged();
-            this.layoutComments();
-        }
-    }, {
-        key: "layoutCommentsAvoidOverlap",
+        key: 'layoutCommentsAvoidOverlap',
         value: function layoutCommentsAvoidOverlap() {
             // Avoid overlapping of comments.
             var minOffsetTop, commentReferrer, lastOffsetTop, previousComments, nextComments, commentBox, initialCommentBox, foundComment, i;
@@ -574,7 +626,7 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
             }
         }
     }, {
-        key: "layoutComments",
+        key: 'layoutComments',
         value: function layoutComments() {
             // Handle the layout of the comments on the screen.
             var that = this;
@@ -619,17 +671,7 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
             }
         }
     }, {
-        key: "submitAnswer",
-        value: function submitAnswer() {
-            // Submit the answer to a comment
-            var commentWrapper = jQuery('.comment-box.active');
-            var answerTextBox = commentWrapper.find('.comment-answer-text')[0];
-            var answerText = answerTextBox.value;
-            var commentId = parseInt(commentWrapper.attr('data-id'));
-            this.createNewAnswer(commentId, answerText);
-        }
-    }, {
-        key: "editAnswer",
+        key: 'editAnswer',
         value: function editAnswer(id, answerId) {
             // Mark a specific answer to a comment as active, then layout the
             // comments, which will make that answer editable.
@@ -638,55 +680,28 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
             this.layoutComments();
         }
     }, {
-        key: "calculateCommentBoxOffset",
+        key: 'calculateCommentBoxOffset',
         value: function calculateCommentBoxOffset(comment) {
             return comment.referrer.getBoundingClientRect()['top'] + window.pageYOffset - 280;
         }
     }, {
-        key: "findComment",
+        key: 'findComment',
         value: function findComment(id) {
             // Return the comment element specified by the id
             return jQuery('.comment[data-id=' + id + ']')[0];
         }
     }, {
-        key: "findCommentBox",
+        key: 'findCommentBox',
         value: function findCommentBox(id) {
             // Return the comment box specified by the id
             return jQuery('.comment-box[data-id=' + id + ']')[0];
         }
     }, {
-        key: "getCommentId",
+        key: 'getCommentId',
         value: function getCommentId(node) {
             // Returns the value of the attributte data-id as an integer.
             // This function can be used on both comment referrers and comment boxes.
             return parseInt(node.getAttribute('data-id'), 10);
-        }
-    }, {
-        key: "createNewAnswer",
-        value: function createNewAnswer(commentId, answerText) {
-            // Create a new answer to add to the comment store
-            var answer = {
-                commentId: commentId,
-                answer: answerText,
-                user: theUser.id,
-                userName: theUser.name,
-                userAvatar: theUser.avatar,
-                date: new Date().getTime()
-            };
-
-            this.mod.store.addAnswer(commentId, answer);
-
-            this.deactivateAll();
-            this.layoutComments();
-            editorHelpers.documentHasChanged();
-        }
-    }, {
-        key: "submitAnswerUpdate",
-        value: function submitAnswerUpdate(commentId, answerId, commentText) {
-            this.mod.store.updateAnswer(commentId, answerId, commentText);
-            this.mod.layout.deactivateAll();
-            editorHelpers.documentHasChanged();
-            this.layoutComments();
         }
 
         /**
@@ -694,7 +709,7 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
          */
 
     }, {
-        key: "filterByUserType",
+        key: 'filterByUserType',
         value: function filterByUserType(userType) {
             //filter by user role (reader, editor, reviewer etc)
             var userRoles = theDocument.access_rights;
@@ -716,7 +731,7 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
             });
         }
     }, {
-        key: "filterByUserDialog",
+        key: 'filterByUserDialog',
         value: function filterByUserDialog() {
             //create array of roles + owner role
             var rolesCopy = theDocument.access_rights.slice();
@@ -768,7 +783,7 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
     return ModCommentLayout;
 })();
 
-},{"prosemirror/dist/ui/update":53}],4:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

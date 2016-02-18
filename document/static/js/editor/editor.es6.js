@@ -196,6 +196,7 @@ theEditor.applyDiff = function(diff) {
 }
 
 theEditor.updateComments = function(comments, comment_version) {
+    console.log('receiving comment update')
     theEditor.editor.mod.comments.store.receive(comments, comment_version)
 }
 

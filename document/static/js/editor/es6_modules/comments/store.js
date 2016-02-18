@@ -216,7 +216,7 @@ export class ModCommentStore {
       this.version++
     })
     if (updateCommentLayout) {
-      scheduleDOMUpdate(this.mod.pm, function(){return function(){that.mod.layout.layoutComments()}})
+      scheduleDOMUpdate(this.mod.pm, function(){that.mod.layout.layoutComments()})
     }
   }
 

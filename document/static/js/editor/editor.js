@@ -206,6 +206,7 @@ theEditor.applyDiff = function (diff) {
 };
 
 theEditor.updateComments = function (comments, comment_version) {
+    console.log('receiving comment update');
     theEditor.editor.mod.comments.store.receive(comments, comment_version);
 };
 
@@ -2880,7 +2881,7 @@ function selectNodeVertically(pm, dir) {
     (0, _dompos.setDOMSelectionToPos)(pm, last);
     return false;
   }
-  pm.setSelectionDirect(beyond);
+  if (beyond) pm.setSelectionDirect(beyond);
   return true;
 }
 
@@ -4051,10 +4052,12 @@ function scrollIntoView(pm, pos) {
     if (coords.top < rect.top) moveY = -(rect.top - coords.top + scrollMargin);else if (coords.bottom > rect.bottom) moveY = coords.bottom - rect.bottom + scrollMargin;
     if (coords.left < rect.left) moveX = -(rect.left - coords.left + scrollMargin);else if (coords.right > rect.right) moveX = coords.right - rect.right + scrollMargin;
     if (moveX || moveY) {
-      if (atBody) window.scrollBy(moveX, moveY);
-    } else {
-      if (moveY) parent.scrollTop += moveY;
-      if (moveX) parent.scrollLeft += moveX;
+      if (atBody) {
+        window.scrollBy(moveX, moveY);
+      } else {
+        if (moveY) parent.scrollTop += moveY;
+        if (moveX) parent.scrollLeft += moveX;
+      }
     }
     if (atBody) break;
   }
@@ -7913,7 +7916,7 @@ _model.LinkMark.register("parseDOM", "a", { parse: function parse(dom, state) {
 
 _model.EmMark.register("parseDOM", "i", { parse: "mark" });
 _model.EmMark.register("parseDOM", "em", { parse: "mark" });
-_model.StrongMark.register("parseDOMStyle", "font-style", { parse: function parse(value, state, inner) {
+_model.EmMark.register("parseDOMStyle", "font-style", { parse: function parse(value, state, inner) {
     if (value == "italic") state.wrapMark(inner, this);else inner();
   } });
 
@@ -9195,9 +9198,11 @@ var Fragment = exports.Fragment = function () {
     value: function fromArray(array) {
       if (!array.length) return emptyFragment;
       var hasText = false,
-          joined = undefined;
+          joined = undefined,
+          size = 0;
       for (var i = 0; i < array.length; i++) {
         var node = array[i];
+        size += node.width;
         if (node.isText) {
           hasText = true;
           if (i && array[i - 1].sameMarkup(node)) {
@@ -9208,7 +9213,7 @@ var Fragment = exports.Fragment = function () {
         }
         if (joined) joined.push(node);
       }
-      return hasText ? new TextFragment(joined || array) : new FlatFragment(array);
+      return hasText ? new TextFragment(joined || array, size) : new FlatFragment(array);
     }
 
     // :: (?union<Fragment, Node, [Node]>) → Fragment
@@ -9662,7 +9667,7 @@ var TextFragment = function (_Fragment2) {
       var to = arguments.length <= 1 || arguments[1] === undefined ? this.size : arguments[1];
 
       if (from == to) return emptyFragment;
-      return new TextFragment(this.toArray(from, to));
+      return new TextFragment(this.toArray(from, to), to - from);
     }
   }, {
     key: "replace",
@@ -9677,7 +9682,7 @@ var TextFragment = function (_Fragment2) {
       if (curNode.isText) _error.ModelError.raise("Can not replace text content with replace method");
       var copy = this.content.slice();
       copy[index] = node;
-      return new TextFragment(copy);
+      return new TextFragment(copy, this.size);
     }
   }, {
     key: "appendInner",
@@ -13003,7 +13008,9 @@ function buildInserted(nodesLeft, source, start, end) {
   }var same = (0, _tree.samePathDepth)(start, end);
   var searchLeft = nodesLeft.length - 1,
       searchRight = nodesRight.length - 1;
-  var result = null;
+  var result = null,
+      dLeft = start.depth,
+      dRight = end.depth;
 
   var inner = nodesRight[searchRight];
   if (inner.isTextblock && inner.size && nodesLeft[searchLeft].isTextblock) {
@@ -13038,16 +13045,19 @@ function buildInserted(nodesLeft, source, start, end) {
           searchLeft--;
         }
       }
+      if (outside) break;
+    } else {
+      --dLeft;
     }
     if (matched != null || node.size == 0) {
-      if (outside) break;
+      if (outside && matched == null) --dRight;
       shiftFromStack(nodesRight, searchRight - 1);
     }
   }
 
   var repl = { content: result ? result.content : _model.emptyFragment,
-    openLeft: start.depth - searchRight,
-    openRight: end.depth - searchRight };
+    openLeft: dLeft - searchRight,
+    openRight: dRight - searchRight };
   return { repl: repl, depth: searchLeft + 1 };
 }
 

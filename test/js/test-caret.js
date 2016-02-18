@@ -251,10 +251,12 @@ function scrollIntoView(pm, pos) {
     if (coords.top < rect.top) moveY = -(rect.top - coords.top + scrollMargin);else if (coords.bottom > rect.bottom) moveY = coords.bottom - rect.bottom + scrollMargin;
     if (coords.left < rect.left) moveX = -(rect.left - coords.left + scrollMargin);else if (coords.right > rect.right) moveX = coords.right - rect.right + scrollMargin;
     if (moveX || moveY) {
-      if (atBody) window.scrollBy(moveX, moveY);
-    } else {
-      if (moveY) parent.scrollTop += moveY;
-      if (moveX) parent.scrollLeft += moveX;
+      if (atBody) {
+        window.scrollBy(moveX, moveY);
+      } else {
+        if (moveY) parent.scrollTop += moveY;
+        if (moveX) parent.scrollLeft += moveX;
+      }
     }
     if (atBody) break;
   }
@@ -1629,9 +1631,11 @@ var Fragment = exports.Fragment = function () {
     value: function fromArray(array) {
       if (!array.length) return emptyFragment;
       var hasText = false,
-          joined = undefined;
+          joined = undefined,
+          size = 0;
       for (var i = 0; i < array.length; i++) {
         var node = array[i];
+        size += node.width;
         if (node.isText) {
           hasText = true;
           if (i && array[i - 1].sameMarkup(node)) {
@@ -1642,7 +1646,7 @@ var Fragment = exports.Fragment = function () {
         }
         if (joined) joined.push(node);
       }
-      return hasText ? new TextFragment(joined || array) : new FlatFragment(array);
+      return hasText ? new TextFragment(joined || array, size) : new FlatFragment(array);
     }
 
     // :: (?union<Fragment, Node, [Node]>) → Fragment
@@ -2096,7 +2100,7 @@ var TextFragment = function (_Fragment2) {
       var to = arguments.length <= 1 || arguments[1] === undefined ? this.size : arguments[1];
 
       if (from == to) return emptyFragment;
-      return new TextFragment(this.toArray(from, to));
+      return new TextFragment(this.toArray(from, to), to - from);
     }
   }, {
     key: "replace",
@@ -2111,7 +2115,7 @@ var TextFragment = function (_Fragment2) {
       if (curNode.isText) _error.ModelError.raise("Can not replace text content with replace method");
       var copy = this.content.slice();
       copy[index] = node;
-      return new TextFragment(copy);
+      return new TextFragment(copy, this.size);
     }
   }, {
     key: "appendInner",

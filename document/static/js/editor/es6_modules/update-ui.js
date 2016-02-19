@@ -80,6 +80,11 @@ export function updateUI(pm) {
 
   const start = pm.selection.from.min(pm.selection.to)
   const end = pm.selection.from.max(pm.selection.to)
+  if (start.path.length === 0 || end.path.length ===0) {
+      // The selection must be outermost elements. Do not go any further in
+      // analyzing things. 
+      return
+  }
   const startElement = pm.doc.path([start.path[0]])
   const endElement = pm.doc.path([end.path[0]])
 

@@ -56,7 +56,9 @@ theEditor.createDoc = function (aDocument) {
     editorNode.appendChild(metadataKeywordsNode);
     editorNode.appendChild(documentContentsNode);
 
-    doc = (0, _format.fromDOM)(_schema.fidusSchema, editorNode);
+    doc = (0, _format.fromDOM)(_schema.fidusSchema, editorNode, {
+        preserveWhitespace: true
+    });
     return doc;
 };
 
@@ -97,6 +99,22 @@ theEditor.update = function () {
     });
     theEditor.editor.mod.comments.store.on("mustSend", theEditor.sendToCollaborators);
     theEditor.enableUI();
+    theEditor.waitingForDocument = false;
+};
+
+// Whether the editor is currently waitinf for a document update. Set to true
+// initially so that diffs that arrive before document has been loaded are not
+// dealt with.
+theEditor.waitingForDocument = true;
+
+theEditor.askForDocument = function () {
+    if (theEditor.waitingForDocument) {
+        return;
+    }
+    theEditor.waitingForDocument = true;
+    serverCommunications.send({
+        type: 'get_document'
+    });
 };
 
 theEditor.enableUI = function () {
@@ -134,7 +152,7 @@ theEditor.enableUI = function () {
 
 theEditor.getUpdates = function (callback) {
     var outputNode = nodeConverter.viewToModelNode((0, _format.serializeTo)(theEditor.editor.mod.collab.versionDoc, 'dom'));
-    theDocument.title = theEditor.editor.doc.firstChild.textContent;
+    theDocument.title = theEditor.editor.mod.collab.versionDoc.firstChild.textContent;
     theDocument.version = theEditor.editor.mod.collab.version;
     theDocument.metadata.title = exporter.node2Obj(outputNode.getElementById('document-title'));
     theDocument.metadata.subtitle = exporter.node2Obj(outputNode.getElementById('metadata-subtitle'));
@@ -210,13 +228,7 @@ theEditor.updateComments = function (comments, comment_version) {
     theEditor.editor.mod.comments.store.receive(comments, comment_version);
 };
 
-theEditor.startCollaborativeMode = function () {
-    theDocumentValues.collaborativeMode = true;
-};
-
-theEditor.stopCollaborativeMode = function () {
-    theDocumentValues.collaborativeMode = false;
-};
+theEditor.collaborativeMode = false;
 
 theEditor.getHash = function () {
     var string = JSON.stringify(theEditor.editor.mod.collab.versionDoc);
@@ -241,7 +253,7 @@ theEditor.checkHash = function (version, hash) {
         }
         console.log('Hash could not be verified, requesting document.');
         theEditor.disableDiffSending();
-        serverCommunications.send({ type: 'get_document' });
+        theEditor.askForDocument();
         return false;
     } else {
         theEditor.checkDiffVersion();
@@ -1857,6 +1869,11 @@ function updateUI(pm) {
 
     var start = pm.selection.from.min(pm.selection.to);
     var end = pm.selection.from.max(pm.selection.to);
+    if (start.path.length === 0 || end.path.length === 0) {
+        // The selection must be outermost elements. Do not go any further in
+        // analyzing things.
+        return;
+    }
     var startElement = pm.doc.path([start.path[0]]);
     var endElement = pm.doc.path([end.path[0]]);
 

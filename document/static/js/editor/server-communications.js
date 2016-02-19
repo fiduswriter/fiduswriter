@@ -15,9 +15,8 @@
     serverCommunications.activate_connection = function () {
         serverCommunications.connected = true;
         if (serverCommunications.firstTimeConnection) {
-            serverCommunications.send({
-                type: 'get_document'
-            });
+            theEditor.waitingForDocument = false;
+            theEditor.askForDocument();
         } else {
             theEditor.checkDiffVersion();
             serverCommunications.send({
@@ -75,14 +74,24 @@
             }
             theEditor.enableDiffSending();
         case 'diff':
-            if (data.diff_version !== theEditor.editor.mod.collab.version) {
-                theEditor.checkDiffVersion();
+            if (theEditor.waitingForDocument) {
+                // We are currently waiting for a complete editor update, so
+                // don't deal with incoming diffs.
                 return;
             }
-            if (data.hash) {
-                if (!theEditor.checkHash(data.diff_version, data.hash)) {
-                    return false;
-                }
+            var editorHash = theEditor.getHash();
+            console.log('Incoming diff: version: '+data.diff_version+', hash: '+data.hash);
+            console.log('Editor: version: '+theEditor.editor.mod.collab.version+', hash: '+editorHash);
+            if (data.diff_version !== theEditor.editor.mod.collab.version) {
+                console.warn('Something is not correct. The local and remote versions do not match.');
+                theEditor.checkDiffVersion();
+                return;
+            } else {
+                console.log('version OK')
+            }
+            if (data.hash && data.hash !== editorHash) {
+                console.warn('Something is not correct. The local and remote hash values do not match.');
+                return false;
             }
             if (data.comments && data.comments.length) {
                 theEditor.updateComments(data.comments, data.comments_version);
@@ -123,10 +132,10 @@
             'id'), function (entry) {
             return entry[0];
         });
-        if (participant_list.length > 1 && (!theDocumentValues.collaborativeMode)) {
-            theEditor.startCollaborativeMode();
-        } else if (participant_list.length === 1 && theDocumentValues.collaborativeMode) {
-            theEditor.stopCollaborativeMode();
+        if (participant_list.length > 1 && (!theEditor.collaborativeMode)) {
+            theEditor.collaborativeMode = true;
+        } else if (participant_list.length === 1 && theEditor.collaborativeMode) {
+            theEditor.collaborativeMode = false;
         }
         chatHelpers.updateParticipantList(participant_list);
     };

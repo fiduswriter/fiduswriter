@@ -49,7 +49,9 @@ theEditor.createDoc = function (aDocument) {
       editorNode.appendChild(metadataKeywordsNode)
       editorNode.appendChild(documentContentsNode)
 
-      doc = fromDOM(fidusSchema, editorNode)
+      doc = fromDOM(fidusSchema, editorNode, {
+          preserveWhitespace: true
+      })
       return doc
 }
 
@@ -62,6 +64,7 @@ theEditor.initiate = function () {
       new UpdateScheduler(theEditor.editor, "flush setDoc", mathHelpers.layoutEmptyDisplayEquationNodes)
       new UpdateScheduler(theEditor.editor, "flush setDoc", citationHelpers.formatCitationsInDocIfNew)
 }
+
 
 theEditor.update = function () {
       console.log('Updating editor')
@@ -87,6 +90,22 @@ theEditor.update = function () {
       })
       theEditor.editor.mod.comments.store.on("mustSend", theEditor.sendToCollaborators)
       theEditor.enableUI()
+      theEditor.waitingForDocument = false
+}
+
+// Whether the editor is currently waiting for a document update. Set to true
+// initially so that diffs that arrive before document has been loaded are not
+// dealt with.
+theEditor.waitingForDocument = true
+
+theEditor.askForDocument = function () {
+    if (theEditor.waitingForDocument) {
+        return;
+    }
+    theEditor.waitingForDocument = true
+    serverCommunications.send({
+        type: 'get_document'
+    })
 }
 
 theEditor.enableUI = function () {
@@ -126,7 +145,7 @@ theEditor.enableUI = function () {
 
 theEditor.getUpdates = function (callback) {
       let outputNode = nodeConverter.viewToModelNode(serializeTo(theEditor.editor.mod.collab.versionDoc,'dom'))
-      theDocument.title = theEditor.editor.doc.firstChild.textContent
+      theDocument.title = theEditor.editor.mod.collab.versionDoc.firstChild.textContent
       theDocument.version = theEditor.editor.mod.collab.version
       theDocument.metadata.title = exporter.node2Obj(outputNode.getElementById('document-title'))
       theDocument.metadata.subtitle = exporter.node2Obj(outputNode.getElementById('metadata-subtitle'))
@@ -200,14 +219,7 @@ theEditor.updateComments = function(comments, comment_version) {
     theEditor.editor.mod.comments.store.receive(comments, comment_version)
 }
 
-
-theEditor.startCollaborativeMode = function () {
-    theDocumentValues.collaborativeMode = true
-}
-
-theEditor.stopCollaborativeMode = function () {
-    theDocumentValues.collaborativeMode = false
-}
+theEditor.collaborativeMode = false
 
 theEditor.getHash = function () {
     let string = JSON.stringify(theEditor.editor.mod.collab.versionDoc)
@@ -230,7 +242,7 @@ theEditor.checkHash = function(version, hash) {
       }
       console.log('Hash could not be verified, requesting document.')
       theEditor.disableDiffSending()
-      serverCommunications.send({type: 'get_document'})
+      theEditor.askForDocument();
       return false
     } else {
         theEditor.checkDiffVersion()

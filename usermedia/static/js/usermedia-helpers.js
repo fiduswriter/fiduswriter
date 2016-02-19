@@ -185,6 +185,12 @@
 
         formValues.append('id', id);
 
+        if(theDocument && theDocument.owner && theDocument.owner.id) {
+            // If there is currently a document loaded, make the uploaded image
+            // belong to the owner of it.
+            formValues.append('owner_id', theDocument.owner.id);
+        }
+
         jQuery('.fw-media-form').each(function () {
             var $this = jQuery(this);
             var the_name = $this.attr('name') || $this.attr('data-field-name');

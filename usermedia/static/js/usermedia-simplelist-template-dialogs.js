@@ -23,7 +23,7 @@
 var tmp_usermedia_table = _.template('\
                 <tr id="Image_<%- pk %>" class="<% _.each(cats, function(cat) { %>cat_<%- cat %> <% }) %>" >\
                      <td class="type" style="width:100px;">\
-                        <% if (thumbnail) { %>\
+                        <% if (typeof thumbnail !== "undefined") { %>\
                             <img src="<%- thumbnail %>" style="max-heigth:30px;max-width:30px;">\
                         <% } else { %>\
                             <img src="<%- image %>" style="max-heigth:30px;max-width:30px;">\

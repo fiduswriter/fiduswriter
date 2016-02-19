@@ -50,6 +50,14 @@ def save_js(request):
     status = 403
     if request.is_ajax() and request.method == 'POST' :
         the_id    = int(request.POST['id'])
+        if 'owner_id' in request.POST:
+            owner_id = int(request.POST['owner_id'])
+            if owner_id != request.user.id:
+                if not check_access_rights(owner_id, request.user):
+                    return False
+        else:
+            owner_id = request.user.id
+
         image  = Image.objects.filter(pk = the_id, uploader = request.user)
         if image.exists():
             image = image[0]
@@ -57,6 +65,7 @@ def save_js(request):
         else:
             image = Image()
             image.uploader = request.user
+            image.owner_id = owner_id
             status = 201
             if 'checksum' in request.POST:
                 image.checksum = request.POST['checksum']
@@ -94,7 +103,7 @@ def delete_js(request):
     if request.is_ajax() and request.method == 'POST' :
         status = 201
         ids = request.POST.getlist('ids[]')
-        Image.objects.filter(pk__in = ids, uploader = request.user).delete()
+        Image.objects.filter(pk__in = ids, owner = request.user).delete()
     return JsonResponse(
         response,
         status=status
@@ -126,13 +135,13 @@ def images_js(request):
                 if check_access_rights(user_id, request.user) == False:
                     status = 403
             if status == 200:
-                images = Image.objects.filter(uploader__in = user_ids)
+                images = Image.objects.filter(owner__in = user_ids)
                 response['imageCategories']  = serializer.serialize(ImageCategory.objects.filter(category_owner__in = user_ids))
         else:
             if check_access_rights(user_id, request.user):
                 if int(user_id) == 0:
                     user_id = request.user.id
-                images = Image.objects.filter(uploader = user_id)
+                images = Image.objects.filter(owner = user_id)
                 status = 200
                 response['imageCategories']  = serializer.serialize(ImageCategory.objects.filter(category_owner = user_id))
         if status == 200:

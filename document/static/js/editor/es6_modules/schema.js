@@ -158,13 +158,13 @@ class FootnoteContainer extends Block {
 
 FootnoteContainer.register("parseDOM", "div", {
   parse: function(dom, state) {
-    if (dom.id !== 'footnote-container') return false
+    if (!dom.classList.contains('footnote-container')) return false
     state.wrapIn(dom, this)
   }
 })
 
 FootnoteContainer.prototype.serializeDOM = (node, serializer) =>
-  serializer.renderAs(node, "div", {id: 'footnote-container'})
+  serializer.renderAs(node, "div", {class: 'footnote-container'})
 
 class Citation extends Inline {
   get attrs() {

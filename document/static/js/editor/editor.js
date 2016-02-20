@@ -1148,6 +1148,8 @@ var _model = require("prosemirror/dist/model");
 
 var _format = require("prosemirror/dist/format");
 
+var _schema = require("../schema");
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /* Functions related to layouting of footnotes */
@@ -1159,23 +1161,25 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
         mod.layout = this;
         this.mod = mod;
         this.lastFootnotes = [];
-        this.renderFootnotes();
         this.bindEvents();
     }
 
     _createClass(ModFootnoteLayout, [{
         key: "bindEvents",
         value: function bindEvents() {
-
+            var that = this;
+            this.mod.pm.on('setDoc', function () {
+                that.renderFootnotes();
+            });
             this.mod.pm.on('transform', function (transform, object) {
                 if (transform.steps.some(function (step) {
                     return step.type === "replace";
                 })) {
-                    this.renderFootnotes();
+                    that.renderFootnotes();
                 }
             });
             this.mod.fnPm.on('transform', function (transform, object) {
-                this.updateFootnotes();
+                that.updateFootnotes();
             });
         }
     }, {
@@ -1234,7 +1238,8 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
             currentFootnotes.forEach(function (footnote) {
                 footnotesHTML += "<div class='footnote-container'>" + footnote.attrs.contents + "</div>";
             });
-            this.mod.fnPm.setContent((0, _format.fromHTML)(fidusFnSchema, footnotesHTML, { preserveWhitespace: true }));
+            console.log(footnotesHTML);
+            this.mod.fnPm.setContent((0, _format.fromHTML)(_schema.fidusFnSchema, footnotesHTML, { preserveWhitespace: true }));
 
             this.lastFootnotes = currentFootnotes;
         }
@@ -1257,13 +1262,13 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
                     // footnote.
                     var previousInstances = 0;
                     for (var i = 0; i < index; i++) {
-                        if (lastFootnotes[i] === lastFootnotes[index]) {
+                        if (_this.lastFootnotes[i] === _this.lastFootnotes[index]) {
                             previousInstances++;
                         }
                     }
-                    var nodePos = getNodePos(editor.doc, oldFootnote, previousInstances);
-                    lastFootnotes[index] = replacement;
-                    editor.tr.replaceWith(nodePos.from, nodePos.to, replacement).apply();
+                    var nodePos = _this.getNodePos(_this.mod.pm.doc, oldFootnote, previousInstances);
+                    _this.lastFootnotes[index] = replacement;
+                    _this.mod.pm.tr.replaceWith(nodePos.from, nodePos.to, replacement).apply();
                 }
             });
         }
@@ -1272,7 +1277,7 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
     return ModFootnoteLayout;
 })();
 
-},{"prosemirror/dist/format":31,"prosemirror/dist/model":39}],7:[function(require,module,exports){
+},{"../schema":8,"prosemirror/dist/format":31,"prosemirror/dist/model":39}],7:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1297,7 +1302,7 @@ var ModFootnotes = exports.ModFootnotes = (function () {
     pm.mod.footnotes = this;
     this.pm = pm;
     this.init();
-    new ModFootnotesLayout(this);
+    new _layout.ModFootnoteLayout(this);
   }
 
   _createClass(ModFootnotes, [{
@@ -1668,13 +1673,13 @@ var FootnoteContainer = (function (_Block4) {
 
 FootnoteContainer.register("parseDOM", "div", {
   parse: function parse(dom, state) {
-    if (dom.id !== 'footnote-container') return false;
+    if (!dom.classList.contains('footnote-container')) return false;
     state.wrapIn(dom, this);
   }
 });
 
 FootnoteContainer.prototype.serializeDOM = function (node, serializer) {
-  return serializer.renderAs(node, "div", { id: 'footnote-container' });
+  return serializer.renderAs(node, "div", { class: 'footnote-container' });
 };
 
 var Citation = (function (_Inline2) {

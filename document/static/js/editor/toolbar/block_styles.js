@@ -1,36 +1,18 @@
 // blockstyle paragraph, h1 - h3, lists
 jQuery(document).on('mousedown', '.toolbarheadings label', function (event) {
-    event.preventDefault();
-    var command;
+    var commands = {
+      'p': 'paragraph:make',
+      'h1': 'heading:make1',
+      'h2': 'heading:make2',
+      'h3': 'heading:make3',
+      'h4': 'heading:make4',
+      'h5': 'heading:make5',
+      'h6': 'heading:make6',
+      'code': 'code_block:make'
+    },
+    theCommand = commands[this.id.split('_')[0]];
 
-    switch (this.id.split('_')[0]) {
-        case 'p':
-          command = 'paragraph:make';
-          break;
-        case 'h1':
-          theEditor.editor.execCommand('heading:make1');
-          break;
-        case 'h2':
-          theEditor.editor.execCommand('heading:make2');
-          break;
-        case 'h3':
-          theEditor.editor.execCommand('heading:make3');
-          break;
-        case 'h4':
-          theEditor.editor.execCommand('heading:make4');
-          break;
-        case 'h5':
-          theEditor.editor.execCommand('heading:make5');
-          break;
-        case 'h6':
-          theEditor.editor.execCommand('heading:make6');
-          break;
-        case 'code':
-          theEditor.editor.execCommand('code_block:make');
-          break;
-    }
-
-    theEditor.editor.execCommand(command);
+    theEditor.editor.execCommand(theCommand);
 
 });
 

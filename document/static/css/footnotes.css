@@ -1,0 +1,30 @@
+/* Footnotes */
+#footnote-box-container {
+    /*position: relative;*/
+    width: 20vw;
+  /*  float:right;*/
+}
+
+#footnote-box-container .footnote-container > *:first-child::before {
+  counter-increment: footnote-counter;
+  content: counter(footnote-counter) ' ';
+}
+
+.ProseMirror {
+  counter-reset: footnote-counter;
+}
+
+/* footnotes in main editor */
+
+.footnote-marker::before {
+  counter-increment: footnote-counter;
+  content: counter(footnote-counter);
+}
+
+.footnote-marker {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+  top: -0.5em;
+}

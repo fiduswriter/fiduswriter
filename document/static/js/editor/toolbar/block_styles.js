@@ -1,10 +1,11 @@
 // blockstyle paragraph, h1 - h3, lists
 jQuery(document).on('mousedown', '.toolbarheadings label', function (event) {
     event.preventDefault();
+    var command;
 
     switch (this.id.split('_')[0]) {
         case 'p':
-          theEditor.editor.execCommand('paragraph:make');
+          command = 'paragraph:make';
           break;
         case 'h1':
           theEditor.editor.execCommand('heading:make1');
@@ -28,6 +29,8 @@ jQuery(document).on('mousedown', '.toolbarheadings label', function (event) {
           theEditor.editor.execCommand('code_block:make');
           break;
     }
+
+    theEditor.editor.execCommand(command);
 
 });
 

@@ -117,12 +117,6 @@
          window.theDocument = theDocument;
          window.theDocumentValues = theDocumentValues;
 
-         // Wait one second and then relayout the footnotes. At this time the fonts should have loaded.
-
-         setTimeout(function() {
-             editorEscapes.reset();
-         }, 1000);
-
      };
 
 

@@ -20,8 +20,8 @@
  */
 (function () {
     var exports = this,
-   /** 
-  * Functions for chat between users who access a document simultaneously. TODO 
+   /**
+  * Functions for chat between users who access a document simultaneously. TODO
   * @namespace chatHelpers
   */
         chatHelpers = {};
@@ -31,13 +31,21 @@
         notification.play();
     };
 
+    chatHelpers.currentlyFlashing = false;
+
     chatHelpers.flashtab = function (messageTitle) {
+        if (chatHelpers.currentlyFlashing) {
+            return false;
+        }
         var origTitle = document.title;
+
+        chatHelpers.currentlyFlashing = true;
 
         var changeDocumentTitle = setInterval(function () {
             if (theFocus) {
                 clearInterval(changeDocumentTitle);
                 document.title = origTitle;
+                chatHelpers.currentlyFlashing = false;
             }
             else {
                 document.title = (document.title === origTitle) ?

@@ -28,8 +28,6 @@
         </style>
         <style type="text/css" id="active-comment-style">
         </style>
-        <style type="text/css" id="editor-escapes-style">
-        </style>
         <!--  Translations -->
         <script type="text/javascript" src="/jsi18n/"></script>
         <!-- document style -->
@@ -187,9 +185,8 @@
             <!-- Math functions -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/math-helpers.js"></script>
             <!-- Editor toolbar buttons -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/blockstyles.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/bold.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/italic.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/block_styles.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/inline_styles.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/link.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/footnote.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/cite.js"></script>
@@ -213,8 +210,6 @@
             <script type="text/javascript">
                 chatHelpers.bind();
             </script>
-            <!-- Moving of footnotes-->
-            <script type="text/javascript"  src="{{ STATIC_URL }}js/editor/escapes.js"></script>
             <!-- Document related functions -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/editor/setup.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/editor/server-communications.js"></script>

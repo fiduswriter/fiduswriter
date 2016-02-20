@@ -102,7 +102,7 @@ theEditor.update = function () {
     theEditor.waitingForDocument = false;
 };
 
-// Whether the editor is currently waitinf for a document update. Set to true
+// Whether the editor is currently waiting for a document update. Set to true
 // initially so that diffs that arrive before document has been loaded are not
 // dealt with.
 theEditor.waitingForDocument = true;
@@ -118,7 +118,6 @@ theEditor.askForDocument = function () {
 };
 
 theEditor.enableUI = function () {
-    editorEscapes.initiate();
     bibliographyHelpers.initiate();
 
     jQuery('.savecopy, .download, .latex, .epub, .html, .print, .style, \
@@ -1208,14 +1207,11 @@ var Title = (function (_Textblock) {
 Title.register("parseDOM", "div", {
   rank: 26,
   parse: function parse(dom, state) {
-    console.log('parsing');
     var id = dom.id;
     if (!id || id !== 'document-title') return false;
     state.wrapIn(dom, this);
   }
 });
-
-//import {elt} from "prosemirror/dist/dom"
 
 Title.prototype.serializeDOM = function (node, serializer) {
   return serializer.renderAs(node, "div", { id: 'document-title' });

@@ -109,7 +109,6 @@ theEditor.askForDocument = function () {
 }
 
 theEditor.enableUI = function () {
-    editorEscapes.initiate()
     bibliographyHelpers.initiate()
 
     jQuery('.savecopy, .download, .latex, .epub, .html, .print, .style, \

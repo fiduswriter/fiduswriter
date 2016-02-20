@@ -256,7 +256,6 @@
             }
             allCitations[citations_ids[j]].innerHTML = citation_text;
         }
-        editorEscapes.reset();
 
         bibliographyHTML += '<h1>' + gettext('Bibliography') + '</h1>';
         // Add entry to bibliography

@@ -16,14 +16,12 @@ class Title extends Textblock {
 Title.register("parseDOM", "div", {
   rank: 26,
   parse: function(dom, state) {
-    console.log('parsing')
     let id = dom.id
     if (!id || id !== 'document-title') return false
     state.wrapIn(dom, this)
   }
 })
 
-//import {elt} from "prosemirror/dist/dom"
 
 Title.prototype.serializeDOM = (node, serializer) => serializer.renderAs(node, "div", {id: 'document-title'})
 

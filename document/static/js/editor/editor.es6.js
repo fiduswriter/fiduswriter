@@ -10,6 +10,7 @@ import "prosemirror/dist/collab"
 import {fidusSchema} from "./es6_modules/schema"
 import {updateUI} from "./es6_modules/update-ui"
 import {ModComments} from "./es6_modules/comments/mod"
+import {ModFootnotes} from "./es6_modules/footnotes/mod"
 
 import {UpdateScheduler, scheduleDOMUpdate} from "prosemirror/dist/ui/update"
 
@@ -57,6 +58,7 @@ theEditor.createDoc = function (aDocument) {
 
 theEditor.initiate = function () {
       theEditor.editor = makeEditor(document.getElementById('document-editable'))
+      new ModFootnotes(theEditor.editor)
       new UpdateScheduler(theEditor.editor, "selectionChange change activeMarkChange blur focus setDoc", function () {updateUI(theEditor.editor)})
       theEditor.editor.on("change", editorHelpers.documentHasChanged)
       theEditor.editor.on("transform", (transform, options) => theEditor.onTransform(transform, options))

@@ -424,7 +424,7 @@ span.delete {
 
 #flow {
     padding: 50px;
-    padding-right: calc(20vw + 10px);
+/*    padding-right: calc(20vw + 10px);*/
     position: relative;
     width: 100%;
     bottom: 50px;
@@ -521,4 +521,22 @@ body {counter-reset: pagination-footnote pagination-footnote-reference;}
 
 #unobtrusive_messages:empty {
   display: none;
+}
+
+/* footnotes in editor */
+.ProseMirror {
+  counter-reset: footnote-counter;
+}
+
+.footnote-marker::before {
+  counter-increment: footnote-counter;
+  content: counter(footnote-counter);
+}
+
+.footnote-marker {
+  font-size: 75%;
+  line-height: 0;
+  position: relative;
+  vertical-align: baseline;
+  top: -0.5em;
 }

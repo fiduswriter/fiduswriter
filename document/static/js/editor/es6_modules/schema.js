@@ -90,7 +90,7 @@ MetaDataKeywords.prototype.serializeDOM = (node, serializer) =>
 
 class DocumentContents extends Block {
 //  get locked() { return true }
-//  get selectable() { return false }
+  get selectable() { return false }
 }
 
 DocumentContents.register("parseDOM", "div", {
@@ -103,38 +103,45 @@ DocumentContents.register("parseDOM", "div", {
 DocumentContents.prototype.serializeDOM = (node, serializer) =>
   serializer.renderAs(node, "div", {id: 'document-contents'})
 
+
 class Footnote extends Inline {
-  get contains() { return "inline" }
+  get attrs() {
+    return {
+      contents: new Attribute({default: ""}),
+    }
+  }
 }
 
-Footnote.register("parseDOM", "span", {
+Footnote.register("parseDOM", "footnote", {
   parse: function(dom, state) {
-    if (!dom.classList.contains('footnote')) return false
-    state.wrapIn(dom, this) // Doesn't currently work, see https://github.com/ProseMirror/prosemirror/issues/109
+    state.insert(this, {
+        contents: dom.innerHTML,
+    })
   }
 })
 
 Footnote.register("parseDOM", "span", {
   parse: function(dom, state) {
-    if (!dom.classList.contains('pagination-footnote')) return false
-    state.wrapIn(dom.firstChild.firstChild, this)
+    if (!dom.classList.contains('footnote-marker')) return false
+    state.insert(this, {
+        contents: dom.getAttribute('contents'),
+    })
   }
 })
 
 Footnote.prototype.serializeDOM = (node, serializer) => {
   let dom = serializer.elt("span", {
-    class: 'pagination-footnote'
+    class: 'footnote-marker',
+    contents: node.attrs.contents
   })
-  dom.appendChild(serializer.elt("span"))
-  dom.firstChild.appendChild(serializer.elt("span"))
-  let domOuter = serializer.renderContent(node, dom.firstChild.firstChild)
-  if (this.options.onContainer) this.options.onContainer(domOuter)
-  return domOuter
+  dom.innerHTML = '&nbsp;' // Needed to make editing work correctly.
+  return dom
 }
 
 Footnote.register("command", "insert", {
   derive: {
     params: [
+      {label: "Contents", attr: "contents"},
     ]
   },
   label: "Insert footnote",
@@ -143,6 +150,21 @@ Footnote.register("command", "insert", {
     display: {type: "label", label: "Footnote"}
   }
 })
+
+class FootnoteContainer extends Block {
+  get locked() { return true }
+  get selectable() { return false }
+}
+
+FootnoteContainer.register("parseDOM", "div", {
+  parse: function(dom, state) {
+    if (dom.id !== 'footnote-container') return false
+    state.wrapIn(dom, this)
+  }
+})
+
+FootnoteContainer.prototype.serializeDOM = (node, serializer) =>
+  serializer.renderAs(node, "div", {id: 'footnote-container'})
 
 class Citation extends Inline {
   get attrs() {
@@ -416,6 +438,22 @@ export const fidusSchema = new Schema(defaultSchema.spec.update({
   metadatakeywords: MetaDataKeywords,
   documentcontents: DocumentContents,
   footnote: Footnote,
+  citation: Citation,
+  equation: Equation,
+  figure: Figure
+}, {
+  comment: CommentMark
+}))
+
+export const fidusFnSchema = new Schema(defaultSchema.spec.update({
+  doc: Doc,
+  title: Title,
+  metadatasubtitle: MetaDataSubtitle,
+  metadataauthors: MetaDataAuthors,
+  metadataabstract: MetaDataAbstract,
+  metadatakeywords: MetaDataKeywords,
+  documentcontents: DocumentContents,
+  footnotecontainer: FootnoteContainer,
   citation: Citation,
   equation: Equation,
   figure: Figure

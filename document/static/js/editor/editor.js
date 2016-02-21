@@ -1192,61 +1192,23 @@ var ModFootnoteChanges = exports.ModFootnoteChanges = (function () {
                     that.updateFootnote(updatedFootnote);
                 } else {
                     // TODO: Figure out if there are cases where this is really needed.
-                    that.updateFootnotes();
                 }
             });
         }
     }, {
         key: "getNodePos",
         value: function getNodePos(rootNode, searchedNode) {
-            //, searchedNumber) {
-            //let hits = 0
             var foundNode = false;
             rootNode.inlineNodesBetween(null, null, function (inlineNode, path, start, end, parent) {
                 if (inlineNode === searchedNode) {
-                    //if (searchedNumber === hits) {
                     foundNode = {
                         from: new _model.Pos(path, start),
                         to: new _model.Pos(path, end)
                     };
-                    //} else {
-                    //    hits++
-                    //}
                 }
             });
 
             return foundNode;
-        }
-    }, {
-        key: "updateFootnotes",
-        value: function updateFootnotes() {
-            var _this = this;
-
-            this.updating = true;
-            var currentFootnotesElement = this.mod.fnPm.getContent('dom');
-            var footnotes = [].slice.call(currentFootnotesElement.querySelectorAll('.footnote-container'));
-            footnotes.forEach(function (footnote, index) {
-                if (footnote.innerHTML != _this.lastFootnotes[index].attrs.contents) {
-                    var oldFootnote = _this.lastFootnotes[index];
-                    var replacement = oldFootnote.type.create({
-                        contents: footnote.innerHTML
-                    }, null, footnote.styles);
-                    // The editor.doc may sometimes contain the same node several times.
-                    // This happens after copying, for example. We therefore need to check
-                    // how many times the same footnote node shows up before the current
-                    // footnote.
-                    /*let previousInstances = 0
-                    for (let i = 0; i < index; i++) {
-                        if (this.lastFootnotes[i] === this.lastFootnotes[index]) {
-                            previousInstances++
-                        }
-                    }*/
-                    var nodePos = _this.getNodePos(_this.mod.pm.doc, oldFootnote); //, previousInstances)
-                    _this.lastFootnotes[index] = replacement;
-                    _this.mod.pm.tr.replaceWith(nodePos.from, nodePos.to, replacement).apply();
-                }
-            });
-            this.updating = false;
         }
     }, {
         key: "updateFootnote",
@@ -1254,6 +1216,7 @@ var ModFootnoteChanges = exports.ModFootnoteChanges = (function () {
             this.updating = true;
             var footnoteContents = (0, _format.toHTML)(this.mod.fnPm.doc.child(index));
             var oldFootnote = this.lastFootnotes[index];
+            console.log(_schema.Footnote);
             var replacement = oldFootnote.type.create({
                 contents: footnoteContents
             }, null, oldFootnote.styles);

@@ -115,7 +115,7 @@ class Footnote extends Inline {
 Footnote.register("parseDOM", "footnote", {
   parse: function(dom, state) {
     state.insert(this, {
-        contents: dom.innerHTML,
+        contents: dom.innerHTML
     })
   }
 })
@@ -124,7 +124,7 @@ Footnote.register("parseDOM", "span", {
   parse: function(dom, state) {
     if (!dom.classList.contains('footnote-marker')) return false
     state.insert(this, {
-        contents: dom.getAttribute('contents'),
+        contents: dom.getAttribute('contents')
     })
   }
 })

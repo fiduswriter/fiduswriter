@@ -10,27 +10,44 @@
     <span class="pagination-footnote"><span><span>...</span></span></span> as is
     needed by simplePagination.
     */
+    /*nodeConvert.modelToPrintNode = function (node) {
+      var fnNodes = node.querySelectorAll('.footnote'), newFn;
+
+      for (i = 0; i < fnNodes.length; i++) {
+
+          newFn = document.createDocumentFragment();
+          while(fnNodes[i].firstChild) {
+              newFn.appendChild(fnNodes[i].firstChild);
+          }
+          newFn = nodeConverter.createFootnoteView(newFn, i);
+
+          fnNodes[i].parentNode.replaceChild(newFn, fnNodes[i]);
+      }
+      return node;
+    };*/
+
     nodeConverter.modeltoViewNode = function (node) {
-        var fnNodes = node.querySelectorAll('.footnote'), newFn;
-
-        for (i = 0; i < fnNodes.length; i++) {
-
-            newFn = document.createDocumentFragment();
-            while(fnNodes[i].firstChild) {
-                newFn.appendChild(fnNodes[i].firstChild);
-            }
-            newFn = nodeConverter.createFootnoteView(newFn, i);
-
-            fnNodes[i].parentNode.replaceChild(newFn, fnNodes[i]);
-        }
-
         return node;
     };
 
 
+    nodeConverter.modelToEditorNode = function (node) {
+        var fnNodes = node.querySelectorAll('span.footnote'),
+          newNode, i;
+
+          for (i = 0; i < fnNodes.length; i++) {
+              newNode = document.createElement('span');
+              newNode.setAttribute('contents',fnNodes[i].innerHTML);
+              newNode.classList.add('footnote-marker');
+              fnNodes[i].parentNode.replaceChild(newNode, fnNodes[i]);
+          }
+
+          return node;
+    };
+
     // In order to stick with the format used in Fidus Writer 1.1-2.0,
     // we do a few smaller modifications to the node before it is saved.
-    nodeConverter.viewToModelNode = function (node) {
+    nodeConverter.editorToModelNode = function (node) {
         var fnNodes = node.querySelectorAll('.footnote-marker'),
         strongNodes, emNodes, newNode, i;
 

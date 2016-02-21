@@ -59,7 +59,7 @@ theEditor.createDoc = function (aDocument) {
     editorNode.appendChild(metadataKeywordsNode);
     editorNode.appendChild(documentContentsNode);
 
-    doc = (0, _format.fromDOM)(_schema.fidusSchema, editorNode, {
+    doc = (0, _format.fromDOM)(_schema.fidusSchema, nodeConverter.modelToEditorNode(editorNode), {
         preserveWhitespace: true
     });
     return doc;
@@ -97,6 +97,7 @@ theEditor.update = function () {
     }
     theDocument.hash = theEditor.getHash();
     theEditor.editor.mod.collab.on("mustSend", theEditor.sendToCollaborators);
+    theEditor.editor.signal("documentUpdated");
     new _mod.ModComments(theEditor.editor, theDocument.comment_version);
     _.each(theDocument.comments, function (comment) {
         theEditor.editor.mod.comments.store.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers, comment['review:isMajor']);
@@ -154,7 +155,7 @@ theEditor.enableUI = function () {
 };
 
 theEditor.getUpdates = function (callback) {
-    var outputNode = nodeConverter.viewToModelNode((0, _format.serializeTo)(theEditor.editor.mod.collab.versionDoc, 'dom'));
+    var outputNode = nodeConverter.editorToModelNode((0, _format.serializeTo)(theEditor.editor.mod.collab.versionDoc, 'dom'));
     theDocument.title = theEditor.editor.mod.collab.versionDoc.firstChild.textContent;
     theDocument.version = theEditor.editor.mod.collab.version;
     theDocument.metadata.title = exporter.node2Obj(outputNode.getElementById('document-title'));
@@ -182,11 +183,15 @@ theEditor.sendToCollaborators = function () {
     }
     console.log('send to collabs');
     var toSend = theEditor.editor.mod.collab.sendableSteps();
+    var fnToSend = theEditor.editor.mod.footnotes.fnPm.mod.collab.sendableSteps();
     var request_id = confirmStepsRequestCounter++;
     var aPackage = {
         type: 'diff',
         diff_version: theEditor.editor.mod.collab.version,
         diff: toSend.steps.map(function (s) {
+            return s.toJSON();
+        }),
+        footnote_diff: fnToSend.steps.map(function (s) {
             return s.toJSON();
         }),
         comments: theEditor.editor.mod.comments.store.unsentEvents(),
@@ -197,6 +202,7 @@ theEditor.sendToCollaborators = function () {
     serverCommunications.send(aPackage);
     theEditor.unconfirmedSteps[request_id] = {
         diffs: toSend,
+        footnote_diffs: fnToSend,
         comments: theEditor.editor.mod.comments.store.hasUnsentEvents()
     };
     theEditor.disableDiffSending();
@@ -207,8 +213,12 @@ theEditor.confirmDiff = function (request_id) {
     var sentSteps = theEditor.unconfirmedSteps[request_id]["diffs"];
     theEditor.editor.mod.collab.confirmSteps(sentSteps);
 
+    var sentFnSteps = theEditor.unconfirmedSteps[request_id]["footnote_diffs"];
+    theEditor.editor.mod.footnotes.fnPm.mod.collab.confirmSteps(sentFnSteps);
+
     var sentComments = theEditor.unconfirmedSteps[request_id]["comments"];
     theEditor.editor.mod.comments.store.eventsSent(sentComments);
+
     delete theEditor.unconfirmedSteps[request_id];
     theEditor.enableDiffSending();
 };
@@ -329,7 +339,7 @@ theEditor.onTransform = function (transform) {
 
 window.theEditor = theEditor;
 
-},{"./es6_modules/comments/mod":4,"./es6_modules/footnotes/mod":7,"./es6_modules/schema":8,"./es6_modules/update-ui":9,"prosemirror/dist/collab":10,"prosemirror/dist/edit/main":24,"prosemirror/dist/format":31,"prosemirror/dist/transform":45,"prosemirror/dist/ui/update":55}],2:[function(require,module,exports){
+},{"./es6_modules/comments/mod":4,"./es6_modules/footnotes/mod":8,"./es6_modules/schema":9,"./es6_modules/update-ui":10,"prosemirror/dist/collab":11,"prosemirror/dist/edit/main":25,"prosemirror/dist/format":32,"prosemirror/dist/transform":46,"prosemirror/dist/ui/update":56}],2:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })(); /* Functions related to user interactions with comments */
@@ -525,7 +535,7 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
     return ModCommentInteractions;
 })();
 
-},{"prosemirror/dist/ui/update":55}],3:[function(require,module,exports){
+},{"prosemirror/dist/ui/update":56}],3:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1134,7 +1144,117 @@ function randomID() {
   return Math.floor(Math.random() * 0xffffffff);
 }
 
-},{"../schema":8,"prosemirror/dist/model":39,"prosemirror/dist/transform":45,"prosemirror/dist/ui/update":55,"prosemirror/dist/util/event":57}],6:[function(require,module,exports){
+},{"../schema":9,"prosemirror/dist/model":40,"prosemirror/dist/transform":46,"prosemirror/dist/ui/update":56,"prosemirror/dist/util/event":58}],6:[function(require,module,exports){
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.ModFootnoteChanges = undefined;
+
+var _model = require("prosemirror/dist/model");
+
+var _format = require("prosemirror/dist/format");
+
+var _transform = require("prosemirror/dist/transform");
+
+var _schema = require("../schema");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/* Functions related to changes of footnotes */
+
+var ModFootnoteChanges = exports.ModFootnoteChanges = (function () {
+    function ModFootnoteChanges(mod) {
+        _classCallCheck(this, ModFootnoteChanges);
+
+        mod.changes = this;
+        this.mod = mod;
+        this.lastFootnotes = [];
+        this.updating = false;
+
+        this.bindEvents();
+    }
+
+    _createClass(ModFootnoteChanges, [{
+        key: "bindEvents",
+        value: function bindEvents() {
+            var that = this;
+
+            this.mod.fnPm.mod.collab.on("mustSend", function () {
+                console.log('update 2');
+                that.updateFootnotes();
+            });
+        }
+    }, {
+        key: "getNodePos",
+        value: function getNodePos(rootNode, searchedNode) {
+            //, searchedNumber) {
+            //let hits = 0
+            var foundNode = false;
+            //console.log(['searchedNumber',searchedNumber]);
+            rootNode.inlineNodesBetween(null, null, function (inlineNode, path, start, end, parent) {
+                if (inlineNode === searchedNode) {
+                    //if (searchedNumber === hits) {
+                    foundNode = {
+                        from: new _model.Pos(path, start),
+                        to: new _model.Pos(path, end)
+                    };
+                    //} else {
+                    //    hits++
+                    //}
+                }
+            });
+
+            return foundNode;
+        }
+    }, {
+        key: "updateFootnotes",
+        value: function updateFootnotes() {
+            var _this = this;
+
+            this.updating = true;
+            var currentFootnotesElement = this.mod.fnPm.getContent('dom');
+            var footnotes = [].slice.call(currentFootnotesElement.querySelectorAll('.footnote-container'));
+            footnotes.forEach(function (footnote, index) {
+                if (footnote.innerHTML != _this.lastFootnotes[index].attrs.contents) {
+                    var oldFootnote = _this.lastFootnotes[index];
+                    var replacement = oldFootnote.type.create({
+                        contents: footnote.innerHTML
+                    }, null, footnote.styles);
+                    // The editor.doc may sometimes contain the same node several times.
+                    // This happens after copying, for example. We therefore need to check
+                    // how many times the same footnote node shows up before the current
+                    // footnote.
+                    /*let previousInstances = 0
+                    for (let i = 0; i < index; i++) {
+                        if (this.lastFootnotes[i] === this.lastFootnotes[index]) {
+                            previousInstances++
+                        }
+                    }*/
+                    var nodePos = _this.getNodePos(_this.mod.pm.doc, oldFootnote); //, previousInstances)
+                    _this.lastFootnotes[index] = replacement;
+                    _this.mod.pm.tr.replaceWith(nodePos.from, nodePos.to, replacement).apply();
+                }
+            });
+            this.updating = false;
+        }
+    }, {
+        key: "applyDiffs",
+        value: function applyDiffs(diffs) {
+            console.log(diffs);
+            this.mod.fnPm.mod.collab.receive(diffs.map(function (j) {
+                return _transform.Step.fromJSON(_schema.fidusFnSchema, j);
+            }));
+        }
+    }]);
+
+    return ModFootnoteChanges;
+})();
+
+},{"../schema":9,"prosemirror/dist/format":32,"prosemirror/dist/model":40,"prosemirror/dist/transform":46}],7:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1143,8 +1263,6 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.ModFootnoteLayout = undefined;
-
-var _model = require("prosemirror/dist/model");
 
 var _format = require("prosemirror/dist/format");
 
@@ -1160,7 +1278,6 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
 
         mod.layout = this;
         this.mod = mod;
-        this.lastFootnotes = [];
         this.bindEvents();
     }
 
@@ -1168,31 +1285,21 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
         key: "bindEvents",
         value: function bindEvents() {
             var that = this;
-            this.mod.pm.on('setDoc', function () {
+            this.mod.pm.on('documentUpdated', function () {
                 that.renderFootnotes();
             });
-            //      this.mod.pm.on('change', function(){that.renderFootnotes()})
-            /* 'Change' means this happens in all connected editors, transform would be
-            only the one who made the change. 'change' is working, but not a good idea
-            overall, because it means only one person can be editing the footnote at a
-            time.*/
-
-            /* TODO: Make multiple users be able to edit the footnotes simultaneously.*/
-
             this.mod.pm.on('transform', function (transform, object) {
+                if (that.mod.changes.updating) {
+                    return false;
+                }
                 console.log('update 1');
                 console.log('transform');
-                console.log([transform, object]);
                 if (transform.steps.some(function (step) {
                     return step.type === "replace";
                 })) {
                     console.log('rerendering footnotes');
                     that.renderFootnotes();
                 }
-            });
-            this.mod.fnPm.on('transform', function (transform, object) {
-                console.log('update 2');
-                that.updateFootnotes();
             });
         }
     }, {
@@ -1209,27 +1316,6 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
             return footnotes;
         }
     }, {
-        key: "getNodePos",
-        value: function getNodePos(rootNode, searchedNode, searchedNumber) {
-            var hits = 0;
-            var foundNode = false;
-
-            rootNode.inlineNodesBetween(null, null, function (inlineNode, path, start, end, parent) {
-                if (inlineNode === searchedNode) {
-                    if (searchedNumber === hits) {
-                        foundNode = {
-                            from: new _model.Pos(path, start),
-                            to: new _model.Pos(path, end)
-                        };
-                    } else {
-                        hits++;
-                    }
-                }
-            });
-
-            return foundNode;
-        }
-    }, {
         key: "sameArrayContents",
         value: function sameArrayContents(arrayOne, arrayTwo) {
             if (arrayOne.length != arrayTwo.length) {
@@ -1243,7 +1329,7 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
         key: "renderFootnotes",
         value: function renderFootnotes() {
             var currentFootnotes = this.findFootnotes(this.mod.pm.doc);
-            if (this.sameArrayContents(currentFootnotes, this.lastFootnotes)) {
+            if (this.sameArrayContents(currentFootnotes, this.mod.changes.lastFootnotes)) {
                 return true;
             }
             var footnotesHTML = '';
@@ -1252,45 +1338,18 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
                 footnotesHTML += "<div class='footnote-container'>" + footnote.attrs.contents + "</div>";
             });
             console.log(footnotesHTML);
+            this.mod.fnPm.setOption("collab", null);
             this.mod.fnPm.setContent((0, _format.fromHTML)(_schema.fidusFnSchema, footnotesHTML, { preserveWhitespace: true }));
-
-            this.lastFootnotes = currentFootnotes;
-        }
-    }, {
-        key: "updateFootnotes",
-        value: function updateFootnotes() {
-            var _this = this;
-
-            var currentFootnotesElement = this.mod.fnPm.getContent('dom');
-            var footnotes = [].slice.call(currentFootnotesElement.querySelectorAll('.footnote-container'));
-            footnotes.forEach(function (footnote, index) {
-                if (footnote.innerHTML != _this.lastFootnotes[index].attrs.contents) {
-                    var oldFootnote = _this.lastFootnotes[index];
-                    var replacement = oldFootnote.type.create({
-                        contents: footnote.innerHTML
-                    }, null, footnote.styles);
-                    // The editor.doc may sometimes contain the same node several times.
-                    // This happens after copying, for example. We therefore need to check
-                    // how many times the same footnote node shows up before the current
-                    // footnote.
-                    var previousInstances = 0;
-                    for (var i = 0; i < index; i++) {
-                        if (_this.lastFootnotes[i] === _this.lastFootnotes[index]) {
-                            previousInstances++;
-                        }
-                    }
-                    var nodePos = _this.getNodePos(_this.mod.pm.doc, oldFootnote, previousInstances);
-                    _this.lastFootnotes[index] = replacement;
-                    _this.mod.pm.tr.replaceWith(nodePos.from, nodePos.to, replacement).apply();
-                }
-            });
+            this.mod.fnPm.setOption("collab", { version: 0 });
+            this.mod.changes.bindEvents();
+            this.mod.changes.lastFootnotes = currentFootnotes;
         }
     }]);
 
     return ModFootnoteLayout;
 })();
 
-},{"../schema":8,"prosemirror/dist/format":31,"prosemirror/dist/model":39}],7:[function(require,module,exports){
+},{"../schema":9,"prosemirror/dist/format":32}],8:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1304,7 +1363,11 @@ var _main = require("prosemirror/dist/edit/main");
 
 var _schema = require("../schema");
 
+require("prosemirror/dist/collab");
+
 var _layout = require("./layout");
+
+var _changes = require("./changes");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -1315,6 +1378,7 @@ var ModFootnotes = exports.ModFootnotes = (function () {
     pm.mod.footnotes = this;
     this.pm = pm;
     this.init();
+    new _changes.ModFootnoteChanges(this);
     new _layout.ModFootnoteLayout(this);
   }
 
@@ -1323,7 +1387,8 @@ var ModFootnotes = exports.ModFootnotes = (function () {
     value: function init() {
       this.fnPm = new _main.ProseMirror({
         place: document.getElementById('footnote-box-container'),
-        schema: _schema.fidusFnSchema
+        schema: _schema.fidusFnSchema,
+        collab: { version: 0 } // Version numberdoes not matter much, as we do not verify it between users.
       });
     }
   }]);
@@ -1331,7 +1396,7 @@ var ModFootnotes = exports.ModFootnotes = (function () {
   return ModFootnotes;
 })();
 
-},{"../schema":8,"./layout":6,"prosemirror/dist/edit/main":24}],8:[function(require,module,exports){
+},{"../schema":9,"./changes":6,"./layout":7,"prosemirror/dist/collab":11,"prosemirror/dist/edit/main":25}],9:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2034,7 +2099,7 @@ var fidusFnSchema = exports.fidusFnSchema = new _model.Schema(_model.defaultSche
   comment: CommentMark
 }));
 
-},{"prosemirror/dist/model":39}],9:[function(require,module,exports){
+},{"prosemirror/dist/model":40}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2239,7 +2304,7 @@ function calculatePlaceHolderCss(pm, selectedElement) {
     }
 }
 
-},{"prosemirror/dist/model":39}],10:[function(require,module,exports){
+},{"prosemirror/dist/model":40}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2412,7 +2477,7 @@ var Collab = function () {
 }();
 
 (0, _event.eventMixin)(Collab);
-},{"../edit":22,"../util/error":56,"../util/event":57,"./rebase":11}],11:[function(require,module,exports){
+},{"../edit":23,"../util/error":57,"../util/event":58,"./rebase":12}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2440,7 +2505,7 @@ function rebaseSteps(doc, forward, steps, maps) {
   }
   return { doc: transform.doc, transform: transform, mapping: remap, positions: positions };
 }
-},{"../transform":45}],12:[function(require,module,exports){
+},{"../transform":46}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2519,7 +2584,7 @@ function ensureCSSAdded() {
     document.head.insertBefore(cssNode, document.head.firstChild);
   }
 }
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3236,7 +3301,7 @@ baseCommands.redo = {
   },
   keys: ["Mod-Y", "Shift-Mod-Z"]
 };
-},{"../model":39,"../transform":45,"../util/error":56,"./char":15,"./dompos":19,"./selection":28}],14:[function(require,module,exports){
+},{"../model":40,"../transform":46,"../util/error":57,"./char":16,"./dompos":20,"./selection":29}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3306,7 +3371,7 @@ var keys = {
 if (_dom.browser.mac) keys["Ctrl-F"] = keys["Ctrl-B"] = keys["Ctrl-P"] = keys["Ctrl-N"] = keys["Alt-F"] = keys["Alt-B"] = keys["Ctrl-A"] = keys["Ctrl-E"] = keys["Ctrl-V"] = keys["goPageUp"] = ensureSelection;
 
 var captureKeys = exports.captureKeys = new _browserkeymap2.default(keys);
-},{"../dom":12,"./dompos":19,"./selection":28,"browserkeymap":61}],15:[function(require,module,exports){
+},{"../dom":13,"./dompos":20,"./selection":29,"browserkeymap":62}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3339,7 +3404,7 @@ function charCategory(ch) {
 function isExtendingChar(ch) {
   return ch.charCodeAt(0) >= 768 && extendingChar.test(ch);
 }
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3946,13 +4011,13 @@ _model.NodeType.deriveableCommands.insert = function (conf) {
     params: deriveParams(this, conf.params)
   };
 };
-},{"../dom":12,"../model":39,"../transform":45,"../util/error":56,"../util/obj":59,"../util/sortedinsert":60,"./base_commands":13,"browserkeymap":61}],17:[function(require,module,exports){
+},{"../dom":13,"../model":40,"../transform":46,"../util/error":57,"../util/obj":60,"../util/sortedinsert":61,"./base_commands":14,"browserkeymap":62}],18:[function(require,module,exports){
 "use strict";
 
 var _dom = require("../dom");
 
 (0, _dom.insertCSS)("\n\n.ProseMirror {\n  border: 1px solid silver;\n  position: relative;\n}\n\n.ProseMirror-content {\n  padding: 4px 8px 4px 14px;\n  white-space: pre-wrap;\n  line-height: 1.2;\n}\n\n.ProseMirror-drop-target {\n  position: absolute;\n  width: 1px;\n  background: #666;\n  display: none;\n}\n\n.ProseMirror-content ul.tight p, .ProseMirror-content ol.tight p {\n  margin: 0;\n}\n\n.ProseMirror-content ul, .ProseMirror-content ol {\n  padding-left: 30px;\n  cursor: default;\n}\n\n.ProseMirror-content blockquote {\n  padding-left: 1em;\n  border-left: 3px solid #eee;\n  margin-left: 0; margin-right: 0;\n}\n\n.ProseMirror-content pre {\n  white-space: pre-wrap;\n}\n\n.ProseMirror-selectednode {\n  outline: 2px solid #8cf;\n}\n\n.ProseMirror-nodeselection *::selection {\n  background: transparent;\n}\n\n.ProseMirror-content p:first-child,\n.ProseMirror-content h1:first-child,\n.ProseMirror-content h2:first-child,\n.ProseMirror-content h3:first-child,\n.ProseMirror-content h4:first-child,\n.ProseMirror-content h5:first-child,\n.ProseMirror-content h6:first-child {\n  margin-top: .3em;\n}\n\n/* Add space around the hr to make clicking it easier */\n\n.ProseMirror-content hr {\n  position: relative;\n  height: 6px;\n  border: none;\n}\n\n.ProseMirror-content hr:after {\n  content: \"\";\n  position: absolute;\n  left: 10px;\n  right: 10px;\n  top: 2px;\n  border-top: 2px solid silver;\n}\n\n.ProseMirror-content img {\n  cursor: default;\n}\n\n/* Make sure li selections wrap around markers */\n\n.ProseMirror-content li {\n  position: relative;\n  pointer-events: none; /* Don't do weird stuff with marker clicks */\n}\n.ProseMirror-content li > * {\n  pointer-events: auto;\n}\n\nli.ProseMirror-selectednode {\n  outline: none;\n}\n\nli.ProseMirror-selectednode:after {\n  content: \"\";\n  position: absolute;\n  left: -32px;\n  right: -2px; top: -2px; bottom: -2px;\n  border: 2px solid #8cf;\n  pointer-events: none;\n}\n\n");
-},{"../dom":12}],18:[function(require,module,exports){
+},{"../dom":13}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4154,7 +4219,7 @@ function scanText(start, end) {
     cur = cur.firstChild || nodeAfter(cur);
   }
 }
-},{"../format":31,"../model":39,"../transform/tree":53,"./dompos":19}],19:[function(require,module,exports){
+},{"../format":32,"../model":40,"../transform/tree":54,"./dompos":20}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4530,7 +4595,7 @@ function handleNodeClick(pm, type, event, direct) {
     }
   }
 }
-},{"../dom":12,"../model":39,"../util/error":56}],20:[function(require,module,exports){
+},{"../dom":13,"../model":40,"../util/error":57}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4695,7 +4760,7 @@ function redraw(pm, dirty, doc, prev) {
   }
   scan(pm.content, doc, prev);
 }
-},{"../dom":12,"../format":31,"../model":39,"./dompos":19,"./main":24}],21:[function(require,module,exports){
+},{"../dom":13,"../format":32,"../model":40,"./dompos":20,"./main":25}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5272,7 +5337,7 @@ var History = exports.History = function () {
 
   return History;
 }();
-},{"../model":39,"../transform":45}],22:[function(require,module,exports){
+},{"../model":40,"../transform":46}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5355,7 +5420,7 @@ var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.Keymap = _browserkeymap2.default;
-},{"./base_commands":13,"./command":16,"./main":24,"./options":25,"./range":26,"./schema_commands":27,"./selection":28,"browserkeymap":61}],23:[function(require,module,exports){
+},{"./base_commands":14,"./command":17,"./main":25,"./options":26,"./range":27,"./schema_commands":28,"./selection":29,"browserkeymap":62}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5927,7 +5992,7 @@ handlers.blur = function (pm) {
   // Fired when the editor loses focus.
   pm.signal("blur");
 };
-},{"../dom":12,"../format":31,"../model":39,"./capturekeys":14,"./domchange":18,"./dompos":19,"./selection":28,"browserkeymap":61}],24:[function(require,module,exports){
+},{"../dom":13,"../format":32,"../model":40,"./capturekeys":15,"./domchange":19,"./dompos":20,"./selection":29,"browserkeymap":62}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6681,7 +6746,7 @@ var EditorTransform = function (_Transform) {
 
   return EditorTransform;
 }(_transform.Transform);
-},{"../dom":12,"../format":31,"../model":39,"../transform":45,"../util/error":56,"../util/event":57,"../util/map":58,"../util/sortedinsert":60,"./css":17,"./dompos":19,"./draw":20,"./history":21,"./input":23,"./options":25,"./range":26,"./selection":28,"browserkeymap":61}],25:[function(require,module,exports){
+},{"../dom":13,"../format":32,"../model":40,"../transform":46,"../util/error":57,"../util/event":58,"../util/map":59,"../util/sortedinsert":61,"./css":18,"./dompos":20,"./draw":21,"./history":22,"./input":24,"./options":26,"./range":27,"./selection":29,"browserkeymap":62}],26:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6803,7 +6868,7 @@ function setOption(pm, name, value) {
   pm.options[name] = value;
   if (desc.update) desc.update(pm, value, old, false);
 }
-},{"../model":39,"../ui/prompt":54,"../util/error":56,"./command":16}],26:[function(require,module,exports){
+},{"../model":40,"../ui/prompt":55,"../util/error":57,"./command":17}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7003,7 +7068,7 @@ var RangeTracker = function () {
 
   return RangeTracker;
 }();
-},{"../util/event":57}],27:[function(require,module,exports){
+},{"../util/event":58}],28:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -7337,7 +7402,7 @@ _model.HorizontalRule.register("command", "insert", {
   keys: ["Mod-Shift--"],
   menu: { group: "insert", rank: 70, display: { type: "label", label: "Horizontal rule" } }
 });
-},{"../format":31,"../model":39,"./command":16}],28:[function(require,module,exports){
+},{"../format":32,"../model":40,"./command":17}],29:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7773,7 +7838,7 @@ function verticalMotionLeavesTextblock(pm, pos, dir) {
   }
   return true;
 }
-},{"../dom":12,"../model":39,"../util/error":56,"./dompos":19}],29:[function(require,module,exports){
+},{"../dom":13,"../model":40,"../util/error":57,"./dompos":20}],30:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8201,7 +8266,7 @@ _model.StrongMark.register("parseDOMStyle", "font-weight", { parse: function par
   } });
 
 _model.CodeMark.register("parseDOM", "code", { parse: "mark" });
-},{"../model":39,"../util/sortedinsert":60,"./register":32}],30:[function(require,module,exports){
+},{"../model":40,"../util/sortedinsert":61,"./register":33}],31:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8233,7 +8298,7 @@ function fromText(schema, text) {
 }
 
 (0, _register.defineSource)("text", fromText);
-},{"./register":32}],31:[function(require,module,exports){
+},{"./register":33}],32:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8332,7 +8397,7 @@ Object.defineProperty(exports, "toText", {
     return _to_text.toText;
   }
 });
-},{"./from_dom":29,"./from_text":30,"./register":32,"./to_dom":33,"./to_text":34}],32:[function(require,module,exports){
+},{"./from_dom":30,"./from_text":31,"./register":33,"./to_dom":34,"./to_text":35}],33:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8400,7 +8465,7 @@ function defineSource(format, func) {
 defineSource("json", function (schema, json) {
   return schema.nodeFromJSON(json);
 });
-},{"../util/error":56}],33:[function(require,module,exports){
+},{"../util/error":57}],34:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8688,7 +8753,7 @@ def(_model.LinkMark, function (mark, s) {
   return s.elt("a", { href: mark.attrs.href,
     title: mark.attrs.title });
 });
-},{"../model":39,"./register":32}],34:[function(require,module,exports){
+},{"../model":40,"./register":33}],35:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8732,7 +8797,7 @@ function toText(doc) {
 }
 
 (0, _register.defineTarget)("text", toText);
-},{"../model":39,"./register":32}],35:[function(require,module,exports){
+},{"../model":40,"./register":33}],36:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9164,7 +9229,7 @@ var defaultSpec = new _schema.SchemaSpec({
 // :: Schema
 // ProseMirror's default document schema.
 var defaultSchema = exports.defaultSchema = new _schema.Schema(defaultSpec);
-},{"./schema":43}],36:[function(require,module,exports){
+},{"./schema":44}],37:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9261,7 +9326,7 @@ function findDiffEnd(a, b) {
   }
   return { a: new _pos.Pos(pathA, offA), b: new _pos.Pos(pathB, offB) };
 }
-},{"./pos":42}],37:[function(require,module,exports){
+},{"./pos":43}],38:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9290,7 +9355,7 @@ var ModelError = exports.ModelError = function (_ProseMirrorError) {
 
   return ModelError;
 }(_error.ProseMirrorError);
-},{"../util/error":56}],38:[function(require,module,exports){
+},{"../util/error":57}],39:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10001,7 +10066,7 @@ if (typeof Symbol != "undefined") {
     return this;
   };
 }
-},{"./error":37}],39:[function(require,module,exports){
+},{"./error":38}],40:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10235,7 +10300,7 @@ Object.defineProperty(exports, "ModelError", {
                 return _error.ModelError;
         }
 });
-},{"./defaultschema":35,"./diff":36,"./error":37,"./fragment":38,"./mark":40,"./node":41,"./pos":42,"./schema":43}],40:[function(require,module,exports){
+},{"./defaultschema":36,"./diff":37,"./error":38,"./fragment":39,"./mark":41,"./node":42,"./pos":43,"./schema":44}],41:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10367,7 +10432,7 @@ var Mark = exports.Mark = function () {
 }();
 
 var empty = [];
-},{}],41:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10972,7 +11037,7 @@ function wrapMarks(marks, str) {
     str = marks[i].type.name + "(" + str + ")";
   }return str;
 }
-},{"./fragment":38,"./mark":40,"./pos":42}],42:[function(require,module,exports){
+},{"./fragment":39,"./mark":41,"./pos":43}],43:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11196,7 +11261,7 @@ var Pos = exports.Pos = function () {
 
   return Pos;
 }();
-},{"./error":37}],43:[function(require,module,exports){
+},{"./error":38}],44:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12188,7 +12253,7 @@ var Schema = function () {
 }();
 
 exports.Schema = Schema;
-},{"../util/error":56,"../util/obj":59,"./fragment":38,"./mark":40,"./node":41}],44:[function(require,module,exports){
+},{"../util/error":57,"../util/obj":60,"./fragment":39,"./mark":41,"./node":42}],45:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12474,7 +12539,7 @@ _transform.Transform.prototype.setNodeType = function (pos, type, attrs) {
   this.step("ancestor", new _model.Pos(path, 0), new _model.Pos(path, node.size), null, { depth: 1, types: [type], attrs: [attrs] });
   return this;
 };
-},{"../model":39,"./map":47,"./step":51,"./transform":52,"./tree":53}],45:[function(require,module,exports){
+},{"../model":40,"./map":48,"./step":52,"./transform":53,"./tree":54}],46:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12562,7 +12627,7 @@ require("./mark");
 require("./split");
 
 require("./replace");
-},{"./ancestor":44,"./join":46,"./map":47,"./mark":48,"./replace":49,"./split":50,"./step":51,"./transform":52}],46:[function(require,module,exports){
+},{"./ancestor":45,"./join":47,"./map":48,"./mark":49,"./replace":50,"./split":51,"./step":52,"./transform":53}],47:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12644,7 +12709,7 @@ _transform.Transform.prototype.join = function (at) {
   this.step("join", new _model.Pos(at.path.concat(at.offset - 1), parent.child(at.offset - 1).size), new _model.Pos(at.path.concat(at.offset), 0));
   return this;
 };
-},{"../model":39,"./map":47,"./step":51,"./transform":52}],47:[function(require,module,exports){
+},{"../model":40,"./map":48,"./step":52,"./transform":53}],48:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12964,7 +13029,7 @@ var Remapping = exports.Remapping = function () {
 
   return Remapping;
 }();
-},{"../model":39}],48:[function(require,module,exports){
+},{"../model":40}],49:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -13143,7 +13208,7 @@ _transform.Transform.prototype.clearMarkup = function (from, to, newParent) {
     this.step(delSteps[i]);
   }return this;
 };
-},{"../model":39,"./step":51,"./transform":52,"./tree":53}],49:[function(require,module,exports){
+},{"../model":40,"./step":52,"./transform":53,"./tree":54}],50:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13471,7 +13536,7 @@ _transform.Transform.prototype.insertText = function (pos, text) {
 _transform.Transform.prototype.insertInline = function (pos, node) {
   return this.insert(pos, node.mark(this.doc.marksAt(pos)));
 };
-},{"../model":39,"./map":47,"./step":51,"./transform":52,"./tree":53}],50:[function(require,module,exports){
+},{"../model":40,"./map":48,"./step":52,"./transform":53,"./tree":54}],51:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -13560,7 +13625,7 @@ _transform.Transform.prototype.splitIfNeeded = function (pos) {
   }
   return this;
 };
-},{"../model":39,"./map":47,"./step":51,"./transform":52}],51:[function(require,module,exports){
+},{"../model":40,"./map":48,"./step":52,"./transform":53}],52:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13747,7 +13812,7 @@ var StepResult = exports.StepResult = function StepResult(doc) {
 };
 
 var steps = Object.create(null);
-},{"../model":39,"../util/error":56,"./map":47}],52:[function(require,module,exports){
+},{"../model":40,"../util/error":57,"./map":48}],53:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13852,7 +13917,7 @@ var Transform = function () {
 }();
 
 exports.Transform = Transform;
-},{"./map":47,"./step":51}],53:[function(require,module,exports){
+},{"./map":48,"./step":52}],54:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13946,7 +14011,7 @@ function samePathDepth(a, b) {
     if (i == a.path.length || i == b.path.length || a.path[i] != b.path[i]) return i;
   }
 }
-},{"../model":39}],54:[function(require,module,exports){
+},{"../model":40}],55:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14236,7 +14301,7 @@ function openPrompt(pm, content, options) {
 }
 
 (0, _dom.insertCSS)("\n.ProseMirror-prompt {\n  background: white;\n  padding: 2px 6px 2px 15px;\n  border: 1px solid silver;\n  position: absolute;\n  border-radius: 3px;\n  z-index: 11;\n}\n\n.ProseMirror-prompt input[type=\"text\"],\n.ProseMirror-prompt textarea {\n  background: #eee;\n  border: none;\n  outline: none;\n}\n\n.ProseMirror-prompt input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n.ProseMirror-prompt-close {\n  position: absolute;\n  left: 2px; top: 1px;\n  color: #666;\n  border: none; background: transparent; padding: 0;\n}\n\n.ProseMirror-prompt-close:after {\n  content: \"✕\";\n  font-size: 12px;\n}\n\n.ProseMirror-invalid {\n  background: #ffc;\n  border: 1px solid #cc7;\n  border-radius: 4px;\n  padding: 5px 10px;\n  position: absolute;\n  min-width: 10em;\n}\n");
-},{"../dom":12,"../util/error":56}],55:[function(require,module,exports){
+},{"../dom":13,"../util/error":57}],56:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14396,7 +14461,7 @@ var UpdateScheduler = exports.UpdateScheduler = function () {
 
   return UpdateScheduler;
 }();
-},{}],56:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14489,7 +14554,7 @@ function functionName(f) {
   var match = /^function (\w+)/.exec(f.toString());
   return match && match[1];
 }
-},{}],57:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14606,7 +14671,7 @@ function eventMixin(ctor) {
     if (methods.hasOwnProperty(prop)) proto[prop] = methods[prop];
   }
 }
-},{}],58:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14662,7 +14727,7 @@ var Map = exports.Map = window.Map || function () {
 
   return _class;
 }();
-},{}],59:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14675,7 +14740,7 @@ function copyObj(obj, base) {
     copy[prop] = obj[prop];
   }return copy;
 }
-},{}],60:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14688,7 +14753,7 @@ function sortedInsert(array, elt, compare) {
     if (compare(array[i], elt) > 0) break;
   }array.splice(i, 0, elt);
 }
-},{}],61:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
     module.exports = mod()

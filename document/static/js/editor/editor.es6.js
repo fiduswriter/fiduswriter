@@ -50,7 +50,7 @@ theEditor.createDoc = function (aDocument) {
       editorNode.appendChild(metadataKeywordsNode)
       editorNode.appendChild(documentContentsNode)
 
-      doc = fromDOM(fidusSchema, editorNode, {
+      doc = fromDOM(fidusSchema, nodeConverter.modelToEditorNode(editorNode), {
           preserveWhitespace: true
       })
       return doc
@@ -85,6 +85,7 @@ theEditor.update = function () {
       }
       theDocument.hash = theEditor.getHash()
       theEditor.editor.mod.collab.on("mustSend", theEditor.sendToCollaborators)
+      theEditor.editor.signal("documentUpdated")
       new ModComments(theEditor.editor, theDocument.comment_version)
       _.each(theDocument.comments, function (comment){
         theEditor.editor.mod.comments.store.addLocalComment(comment.id, comment.user,
@@ -145,7 +146,7 @@ theEditor.enableUI = function () {
 
 
 theEditor.getUpdates = function (callback) {
-      let outputNode = nodeConverter.viewToModelNode(serializeTo(theEditor.editor.mod.collab.versionDoc,'dom'))
+      let outputNode = nodeConverter.editorToModelNode(serializeTo(theEditor.editor.mod.collab.versionDoc,'dom'))
       theDocument.title = theEditor.editor.mod.collab.versionDoc.firstChild.textContent
       theDocument.version = theEditor.editor.mod.collab.version
       theDocument.metadata.title = exporter.node2Obj(outputNode.getElementById('document-title'))
@@ -175,11 +176,13 @@ theEditor.sendToCollaborators = function () {
       }
       console.log('send to collabs')
       let toSend = theEditor.editor.mod.collab.sendableSteps()
+      let fnToSend = theEditor.editor.mod.footnotes.fnPm.mod.collab.sendableSteps()
       let request_id = confirmStepsRequestCounter++
       let aPackage = {
           type: 'diff',
           diff_version: theEditor.editor.mod.collab.version,
           diff: toSend.steps.map(s => s.toJSON()),
+          footnote_diff: fnToSend.steps.map(s => s.toJSON()),
           comments: theEditor.editor.mod.comments.store.unsentEvents(),
           comment_version: theEditor.editor.mod.comments.store.version,
           request_id: request_id,
@@ -188,6 +191,7 @@ theEditor.sendToCollaborators = function () {
       serverCommunications.send(aPackage)
       theEditor.unconfirmedSteps[request_id] = {
           diffs: toSend,
+          footnote_diffs: fnToSend,
           comments: theEditor.editor.mod.comments.store.hasUnsentEvents()
       }
       theEditor.disableDiffSending()
@@ -198,8 +202,12 @@ theEditor.confirmDiff = function (request_id) {
     let sentSteps = theEditor.unconfirmedSteps[request_id]["diffs"]
     theEditor.editor.mod.collab.confirmSteps(sentSteps)
 
+    let sentFnSteps = theEditor.unconfirmedSteps[request_id]["footnote_diffs"]
+    theEditor.editor.mod.footnotes.fnPm.mod.collab.confirmSteps(sentFnSteps)
+
     let sentComments = theEditor.unconfirmedSteps[request_id]["comments"]
     theEditor.editor.mod.comments.store.eventsSent(sentComments)
+
     delete theEditor.unconfirmedSteps[request_id]
     theEditor.enableDiffSending()
 }

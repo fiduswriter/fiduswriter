@@ -101,6 +101,9 @@
                   theEditor.applyDiff(diff);
               })
             }
+            if (data.footnote_diff && data.footnote_diff.length) {
+                theEditor.editor.mod.footnotes.changes.applyDiffs(data.footnote_diff);
+            }
             if (data.reject_request_id) {
                 theEditor.rejectDiff(data.reject_request_id);
             }

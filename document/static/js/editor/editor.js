@@ -1171,9 +1171,7 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
             this.mod.pm.on('setDoc', function () {
                 that.renderFootnotes();
             });
-            this.mod.pm.on('change', function () {
-                that.renderFootnotes();
-            });
+            //      this.mod.pm.on('change', function(){that.renderFootnotes()})
             /* 'Change' means this happens in all connected editors, transform would be
             only the one who made the change. 'change' is working, but not a good idea
             overall, because it means only one person can be editing the footnote at a
@@ -1181,17 +1179,19 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
 
             /* TODO: Make multiple users be able to edit the footnotes simultaneously.*/
 
-            /*this.mod.pm.on('transform', function(transform, object) {
-              console.log('transform')
-              console.log([transform,object])
-              if (transform.steps.some(function(step) {
-                      return step.type === "replace"
-                  })) {
-                  console.log('rerendering footnotes')
-                  that.renderFootnotes()
-              }
-            })*/
-            this.mod.fnPm.on('change', function () {
+            this.mod.pm.on('transform', function (transform, object) {
+                console.log('update 1');
+                console.log('transform');
+                console.log([transform, object]);
+                if (transform.steps.some(function (step) {
+                    return step.type === "replace";
+                })) {
+                    console.log('rerendering footnotes');
+                    that.renderFootnotes();
+                }
+            });
+            this.mod.fnPm.on('transform', function (transform, object) {
+                console.log('update 2');
                 that.updateFootnotes();
             });
         }

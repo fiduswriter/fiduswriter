@@ -1185,7 +1185,15 @@ var ModFootnoteChanges = exports.ModFootnoteChanges = (function () {
 
             this.mod.fnPm.mod.collab.on("mustSend", function () {
                 console.log('update 2');
-                that.updateFootnotes();
+                var length = that.mod.fnPm.mod.collab.unconfirmedSteps.length;
+                var lastStep = that.mod.fnPm.mod.collab.unconfirmedSteps[length - 1];
+                if (lastStep.from && lastStep.from.path && lastStep.from.path.length > 0) {
+                    var updatedFootnote = lastStep.from.path[0];
+                    that.updateFootnote(updatedFootnote);
+                } else {
+                    // TODO: Figure out if there are cases where this is really needed.
+                    that.updateFootnotes();
+                }
             });
         }
     }, {
@@ -1194,7 +1202,6 @@ var ModFootnoteChanges = exports.ModFootnoteChanges = (function () {
             //, searchedNumber) {
             //let hits = 0
             var foundNode = false;
-            //console.log(['searchedNumber',searchedNumber]);
             rootNode.inlineNodesBetween(null, null, function (inlineNode, path, start, end, parent) {
                 if (inlineNode === searchedNode) {
                     //if (searchedNumber === hits) {
@@ -1239,6 +1246,20 @@ var ModFootnoteChanges = exports.ModFootnoteChanges = (function () {
                     _this.mod.pm.tr.replaceWith(nodePos.from, nodePos.to, replacement).apply();
                 }
             });
+            this.updating = false;
+        }
+    }, {
+        key: "updateFootnote",
+        value: function updateFootnote(index) {
+            this.updating = true;
+            var footnoteContents = (0, _format.toHTML)(this.mod.fnPm.doc.child(index));
+            var oldFootnote = this.lastFootnotes[index];
+            var replacement = oldFootnote.type.create({
+                contents: footnoteContents
+            }, null, oldFootnote.styles);
+            var nodePos = this.getNodePos(this.mod.pm.doc, oldFootnote);
+            this.lastFootnotes[index] = replacement;
+            this.mod.pm.tr.replaceWith(nodePos.from, nodePos.to, replacement).apply();
             this.updating = false;
         }
     }, {

@@ -31,14 +31,12 @@
     // In order to stick with the format used in Fidus Writer 1.1-2.0,
     // we do a few smaller modifications to the node before it is saved.
     nodeConverter.viewToModelNode = function (node) {
-        var fnNodes = node.querySelectorAll('.pagination-footnote'),
+        var fnNodes = node.querySelectorAll('.footnote-marker'),
         strongNodes, emNodes, newNode, i;
 
         for (i = 0; i < fnNodes.length; i++) {
             newNode = document.createElement('span');
-            while (fnNodes[i].firstChild.firstChild.firstChild) {
-                newNode.appendChild(fnNodes[i].firstChild.firstChild.firstChild);
-            }
+            newNode.innerHTML = fnNodes[i].getAttribute('contents');
             newNode.classList.add('footnote');
             fnNodes[i].parentNode.replaceChild(newNode, fnNodes[i]);
         }

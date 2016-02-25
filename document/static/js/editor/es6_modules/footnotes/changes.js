@@ -18,7 +18,6 @@ export class ModFootnoteChanges {
       let that = this
 
       this.mod.fnPm.mod.collab.on("mustSend", function() {
-          console.log('update 2')
           let length = that.mod.fnPm.mod.collab.unconfirmedSteps.length
           let lastStep = that.mod.fnPm.mod.collab.unconfirmedSteps[length -1]
           if (lastStep.from && lastStep.from.path && lastStep.from.path.length > 0) {
@@ -39,7 +38,6 @@ export class ModFootnoteChanges {
                 contents: footnoteContents
             }, null, footnote.node.styles)
         let path = footnote.range.from.path, start = footnote.range.from.offset, end = footnote.range.to.offset
-
         this.mod.pm.tr.replaceWith(footnote.range.from, footnote.range.to, replacement).apply()
         footnote.node = replacement
         footnote.range = this.mod.pm.markRange(new Pos(path, start), new Pos(path, end))
@@ -47,7 +45,6 @@ export class ModFootnoteChanges {
     }
 
     applyDiffs(diffs) {
-        console.log(diffs)
         this.mod.fnPm.mod.collab.receive(diffs.map(j => Step.fromJSON(fidusFnSchema, j)))
     }
 

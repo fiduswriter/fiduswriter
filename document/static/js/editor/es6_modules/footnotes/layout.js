@@ -15,27 +15,32 @@ export class ModFootnoteLayout {
 
     bindEvents () {
       let that = this
-      this.mod.pm.on('documentUpdated', function(){that.renderFootnotes()})
-      this.mod.pm.on('transform', function(transform, object){
-        if (that.mod.changes.updating) {
+      this.mod.pm.on('documentUpdated', function(){that.renderAllFootnotes()})
+      this.mod.pm.on('transform', function(transform, object){that.scanForFootnotes(transform)})
+
+    }
+
+    scanForFootnotes(transform) {
+        let that = this
+        if (this.mod.changes.updating) {
             return false
         }
-        let ranges = that.replacedRanges(transform)
-        let newFootnotes = []
+        let ranges = this.replacedRanges(transform)
         ranges.forEach(function(range) {
-            newFootnotes = newFootnotes.concat(that.findFootnotes(that.mod.pm.doc, range.from, range.to))
+            let newFootnotes = that.findFootnotes(that.mod.pm.doc, range.from, range.to)
+            if (newFootnotes.length > 0) {
+                let firstFootNoteStart = newFootnotes[0].range.from
+                let index = 0
+                while(that.mod.footnotes.length > index && firstFootNoteStart.cmp(that.mod.footnotes[index].range.from) > 0) {
+                    index++
+                }
+                newFootnotes.forEach(function(footnote){
+                    that.mod.footnotes.splice(index, 0, footnote)
+                    that.renderFootnote(footnote.node.attrs.contents, index)
+                    index++
+                })
+            }
         })
-        if (newFootnotes.length > 0) {
-            that.renderFootnotes()
-        }
-
-        /*if (transform.steps.some(function(step) {
-                return step.type === "replace"
-            })) {
-            console.log('rerendering footnotes')
-            that.renderFootnotes()
-        }*/
-      })
 
     }
 
@@ -44,11 +49,30 @@ export class ModFootnoteLayout {
         for (let i = 0; i < transform.steps.length; i++) {
             let step = transform.steps[i], map = transform.maps[i]
             if (step.type == "replace") {
-                // Could write a more complicated algorithm to insert it in
-                // sorted order and join with overlapping ranges here. That way,
-                // you wouldn't have to worry about scanning nodes multiple
-                // times.
-                ranges.push({from: step.from, to: step.to})
+                let index = 0
+
+                while(index < (ranges.length -1) && step.from.cmp(ranges[index].from) < 0) {
+                    index++
+                }
+                if (ranges.length === 0) {
+                    ranges = [{from: step.from, to: step.to}]
+                } else {
+                    if (step.from.cmp(ranges[index].from) === 0) {
+                        if (step.to.cmp(ranges[index].to) > 0) {
+                            // This range has an endpoint further down than the
+                            // range that was found previosuly.
+                            // We replace the old range with the newly found
+                            // range.
+                            ranges[index] = {from: step.from, to: step.to}
+                        }
+                    } else {
+                        if (step.to.cmp(ranges[index].from) > -1) {
+                            ranges[index] = {from: step.from, to: ranges[index].to}
+                        } else {
+                            ranges.splice(index, 0, {from: step.from, to: step.to})
+                        }
+                    }
+                }
             }
             for (let j = 0; j < ranges.length; j++) {
                 let range = ranges[j]
@@ -76,31 +100,22 @@ export class ModFootnoteLayout {
         return footnotes
     }
 
-    sameFootnotes(arrayOne, arrayTwo) {
-        if (arrayOne.length != arrayTwo.length) {
-            return false
-        }
-        return arrayOne.every(function(element, index) {
-            return element.node === arrayTwo[index].node
-        })
+    renderFootnote(contents, index = 0) {
+        let footnoteHTML = "<div class='footnote-container'>" + contents + "</div>"
+        let node = fromHTML(fidusFnSchema, footnoteHTML, {preserveWhitespace: true}).firstChild
+        this.mod.fnPm.tr.insert(new Pos([], index), node).apply()
     }
 
-    renderFootnotes() {
-        let currentFootnotes = this.findFootnotes(this.mod.pm.doc)
-        if (this.sameFootnotes(currentFootnotes, this.mod.footnotes)) {
-            return true
-        }
-        let footnotesHTML = ''
-        console.log('redrawing footnotes')
-        currentFootnotes.forEach(footnote => {
-            footnotesHTML += "<div class='footnote-container'>" + footnote.node.attrs.contents + "</div>"
-        })
-        console.log(footnotesHTML)
+    renderAllFootnotes() {
+        this.mod.footnotes = this.findFootnotes(this.mod.pm.doc)
         this.mod.fnPm.setOption("collab", null)
-        this.mod.fnPm.setContent(fromHTML(fidusFnSchema, footnotesHTML, {preserveWhitespace: true}))
+        console.log('redrawing all footnotes')
+        this.mod.fnPm.setContent('','html')
+        this.mod.footnotes.forEach((footnote, index) => {
+            this.renderFootnote(footnote.node.attrs.contents, index)
+        })
         this.mod.fnPm.setOption("collab", {version: 0})
         this.mod.changes.bindEvents()
-        this.mod.footnotes = currentFootnotes
     }
 
 }

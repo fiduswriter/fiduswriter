@@ -1186,6 +1186,7 @@ var ModFootnoteChanges = exports.ModFootnoteChanges = (function () {
                 console.log('update 2');
                 var length = that.mod.fnPm.mod.collab.unconfirmedSteps.length;
                 var lastStep = that.mod.fnPm.mod.collab.unconfirmedSteps[length - 1];
+                console.log(lastStep);
                 if (lastStep.from && lastStep.from.path && lastStep.from.path.length > 0) {
                     var updatedFootnote = lastStep.from.path[0];
                     that.updateFootnote(updatedFootnote);
@@ -1194,25 +1195,12 @@ var ModFootnoteChanges = exports.ModFootnoteChanges = (function () {
                 }
             });
         }
-
-        /*getNodePos(rootNode, searchedNode) {
-            let foundNode = false
-            rootNode.inlineNodesBetween(null, null, function(inlineNode, path, start, end, parent) {
-                if (inlineNode === searchedNode) {
-                    foundNode = {
-                        from: new Pos(path, start),
-                        to: new Pos(path, end)
-                    }
-                }
-            })
-             return foundNode
-        }*/
-
     }, {
         key: "updateFootnote",
         value: function updateFootnote(index) {
             this.updating = true;
             var footnoteContents = (0, _format.toHTML)(this.mod.fnPm.doc.child(index));
+            console.log(footnoteContents);
             var footnote = this.mod.footnotes[index];
             var replacement = footnote.node.type.create({
                 contents: footnoteContents
@@ -1220,8 +1208,7 @@ var ModFootnoteChanges = exports.ModFootnoteChanges = (function () {
             var path = footnote.range.from.path,
                 start = footnote.range.from.offset,
                 end = footnote.range.to.offset;
-            //let nodePos = this.getNodePos(this.mod.pm.doc, oldFootnote
-
+            console.log([footnote.range.from, footnote.range.to, replacement]);
             this.mod.pm.tr.replaceWith(footnote.range.from, footnote.range.to, replacement).apply();
             footnote.node = replacement;
             footnote.range = this.mod.pm.markRange(new _model.Pos(path, start), new _model.Pos(path, end));
@@ -1258,6 +1245,7 @@ var _schema = require("../schema");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+window.Pos = _model.Pos;
 /* Functions related to layouting of footnotes */
 
 var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
@@ -1274,27 +1262,37 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
         value: function bindEvents() {
             var that = this;
             this.mod.pm.on('documentUpdated', function () {
-                that.renderFootnotes();
+                that.renderAllFootnotes();
             });
             this.mod.pm.on('transform', function (transform, object) {
-                if (that.mod.changes.updating) {
-                    return false;
-                }
-                var ranges = that.replacedRanges(transform);
-                var newFootnotes = [];
-                ranges.forEach(function (range) {
-                    newFootnotes = newFootnotes.concat(that.findFootnotes(that.mod.pm.doc, range.from, range.to));
-                });
+                that.scanForFootnotes(transform);
+            });
+        }
+    }, {
+        key: "scanForFootnotes",
+        value: function scanForFootnotes(transform) {
+            var that = this;
+            if (this.mod.changes.updating) {
+                return false;
+            }
+            var ranges = this.replacedRanges(transform);
+            ranges.forEach(function (range) {
+                var newFootnotes = that.findFootnotes(that.mod.pm.doc, range.from, range.to);
                 if (newFootnotes.length > 0) {
-                    that.renderFootnotes();
+                    (function () {
+                        var firstFootNoteStart = newFootnotes[0].range.from;
+                        var index = 0;
+                        while (that.mod.footnotes.length > index && firstFootNoteStart.cmp(that.mod.footnotes[index].range.from) > 0) {
+                            console.log([firstFootNoteStart, that.mod.footnotes[index].range.from, firstFootNoteStart.cmp(that.mod.footnotes[index].range.from)]);
+                            index++;
+                        }
+                        newFootnotes.forEach(function (footnote) {
+                            that.mod.footnotes.splice(index, 0, footnote);
+                            that.renderFootnote(footnote.node.attrs.contents, index);
+                            index++;
+                        });
+                    })();
                 }
-
-                /*if (transform.steps.some(function(step) {
-                        return step.type === "replace"
-                    })) {
-                    console.log('rerendering footnotes')
-                    that.renderFootnotes()
-                }*/
             });
         }
     }, {
@@ -1305,11 +1303,30 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
                 var step = transform.steps[i],
                     map = transform.maps[i];
                 if (step.type == "replace") {
-                    // Could write a more complicated algorithm to insert it in
-                    // sorted order and join with overlapping ranges here. That way,
-                    // you wouldn't have to worry about scanning nodes multiple
-                    // times.
-                    ranges.push({ from: step.from, to: step.to });
+                    var index = 0;
+
+                    while (index < ranges.length - 1 && step.from.cmp(ranges[index].from) < 0) {
+                        index++;
+                    }
+                    if (ranges.length === 0) {
+                        ranges = [{ from: step.from, to: step.to }];
+                    } else {
+                        if (step.from.cmp(ranges[index].from) === 0) {
+                            if (step.to.cmp(ranges[index].to) > 0) {
+                                // This range has an endpoint further down than the
+                                // range that was found previosuly.
+                                // We replace the old range with the newly found
+                                // range.
+                                ranges[index] = { from: step.from, to: step.to };
+                            }
+                        } else {
+                            if (step.to.cmp(ranges[index].from) > -1) {
+                                ranges[index] = { from: step.from, to: ranges[index].to };
+                            } else {
+                                ranges.splice(index, 0, { from: step.from, to: step.to });
+                            }
+                        }
+                    }
                 }
                 for (var j = 0; j < ranges.length; j++) {
                     var range = ranges[j];
@@ -1347,24 +1364,52 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
             });
         }
     }, {
-        key: "renderFootnotes",
-        value: function renderFootnotes() {
+        key: "renderFootnote",
+        value: function renderFootnote(contents) {
+            var index = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
+
+            var footnoteHTML = "<div class='footnote-container'>" + contents + "</div>";
+            var node = (0, _format.fromHTML)(_schema.fidusFnSchema, footnoteHTML, { preserveWhitespace: true }).firstChild;
+            this.mod.fnPm.tr.insert(new _model.Pos([], index), node).apply();
+        }
+    }, {
+        key: "renderAllFootnotes",
+        value: function renderAllFootnotes() {
+            var _this = this;
+
             var currentFootnotes = this.findFootnotes(this.mod.pm.doc);
             if (this.sameFootnotes(currentFootnotes, this.mod.footnotes)) {
                 return true;
             }
-            var footnotesHTML = '';
-            console.log('redrawing footnotes');
-            currentFootnotes.forEach(function (footnote) {
-                footnotesHTML += "<div class='footnote-container'>" + footnote.node.attrs.contents + "</div>";
-            });
-            console.log(footnotesHTML);
             this.mod.fnPm.setOption("collab", null);
-            this.mod.fnPm.setContent((0, _format.fromHTML)(_schema.fidusFnSchema, footnotesHTML, { preserveWhitespace: true }));
+            console.log('redrawing footnotes');
+            this.mod.fnPm.setContent('', 'html');
+            currentFootnotes.forEach(function (footnote, index) {
+                _this.renderFootnote(footnote.node.attrs.contents, index);
+            });
             this.mod.fnPm.setOption("collab", { version: 0 });
             this.mod.changes.bindEvents();
             this.mod.footnotes = currentFootnotes;
         }
+
+        /*  renderFootnotes() {
+              let currentFootnotes = this.findFootnotes(this.mod.pm.doc)
+              if (this.sameFootnotes(currentFootnotes, this.mod.footnotes)) {
+                  return true
+              }
+              this.mod.fnPm.setOption("collab", null)
+              let footnotesHTML = ''
+              console.log('redrawing footnotes')
+              currentFootnotes.forEach(footnote => {
+                  footnotesHTML += "<div class='footnote-container'>" + footnote.node.attrs.contents + "</div>"
+              })
+              console.log(footnotesHTML)
+               this.mod.fnPm.setContent(fromHTML(fidusFnSchema, footnotesHTML, {preserveWhitespace: true}))
+              this.mod.fnPm.setOption("collab", {version: 0})
+              this.mod.changes.bindEvents()
+              this.mod.footnotes = currentFootnotes
+          }*/
+
     }]);
 
     return ModFootnoteLayout;

@@ -1183,10 +1183,8 @@ var ModFootnoteChanges = exports.ModFootnoteChanges = (function () {
             var that = this;
 
             this.mod.fnPm.mod.collab.on("mustSend", function () {
-                console.log('update 2');
                 var length = that.mod.fnPm.mod.collab.unconfirmedSteps.length;
                 var lastStep = that.mod.fnPm.mod.collab.unconfirmedSteps[length - 1];
-                console.log(lastStep);
                 if (lastStep.from && lastStep.from.path && lastStep.from.path.length > 0) {
                     var updatedFootnote = lastStep.from.path[0];
                     that.updateFootnote(updatedFootnote);
@@ -1200,7 +1198,6 @@ var ModFootnoteChanges = exports.ModFootnoteChanges = (function () {
         value: function updateFootnote(index) {
             this.updating = true;
             var footnoteContents = (0, _format.toHTML)(this.mod.fnPm.doc.child(index));
-            console.log(footnoteContents);
             var footnote = this.mod.footnotes[index];
             var replacement = footnote.node.type.create({
                 contents: footnoteContents
@@ -1208,7 +1205,6 @@ var ModFootnoteChanges = exports.ModFootnoteChanges = (function () {
             var path = footnote.range.from.path,
                 start = footnote.range.from.offset,
                 end = footnote.range.to.offset;
-            console.log([footnote.range.from, footnote.range.to, replacement]);
             this.mod.pm.tr.replaceWith(footnote.range.from, footnote.range.to, replacement).apply();
             footnote.node = replacement;
             footnote.range = this.mod.pm.markRange(new _model.Pos(path, start), new _model.Pos(path, end));
@@ -1217,7 +1213,6 @@ var ModFootnoteChanges = exports.ModFootnoteChanges = (function () {
     }, {
         key: "applyDiffs",
         value: function applyDiffs(diffs) {
-            console.log(diffs);
             this.mod.fnPm.mod.collab.receive(diffs.map(function (j) {
                 return _transform.Step.fromJSON(_schema.fidusFnSchema, j);
             }));
@@ -1245,7 +1240,6 @@ var _schema = require("../schema");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-window.Pos = _model.Pos;
 /* Functions related to layouting of footnotes */
 
 var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
@@ -1283,7 +1277,6 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
                         var firstFootNoteStart = newFootnotes[0].range.from;
                         var index = 0;
                         while (that.mod.footnotes.length > index && firstFootNoteStart.cmp(that.mod.footnotes[index].range.from) > 0) {
-                            console.log([firstFootNoteStart, that.mod.footnotes[index].range.from, firstFootNoteStart.cmp(that.mod.footnotes[index].range.from)]);
                             index++;
                         }
                         newFootnotes.forEach(function (footnote) {
@@ -1354,16 +1347,6 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
             return footnotes;
         }
     }, {
-        key: "sameFootnotes",
-        value: function sameFootnotes(arrayOne, arrayTwo) {
-            if (arrayOne.length != arrayTwo.length) {
-                return false;
-            }
-            return arrayOne.every(function (element, index) {
-                return element.node === arrayTwo[index].node;
-            });
-        }
-    }, {
         key: "renderFootnote",
         value: function renderFootnote(contents) {
             var index = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
@@ -1377,39 +1360,16 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
         value: function renderAllFootnotes() {
             var _this = this;
 
-            var currentFootnotes = this.findFootnotes(this.mod.pm.doc);
-            if (this.sameFootnotes(currentFootnotes, this.mod.footnotes)) {
-                return true;
-            }
+            this.mod.footnotes = this.findFootnotes(this.mod.pm.doc);
             this.mod.fnPm.setOption("collab", null);
-            console.log('redrawing footnotes');
+            console.log('redrawing all footnotes');
             this.mod.fnPm.setContent('', 'html');
-            currentFootnotes.forEach(function (footnote, index) {
+            this.mod.footnotes.forEach(function (footnote, index) {
                 _this.renderFootnote(footnote.node.attrs.contents, index);
             });
             this.mod.fnPm.setOption("collab", { version: 0 });
             this.mod.changes.bindEvents();
-            this.mod.footnotes = currentFootnotes;
         }
-
-        /*  renderFootnotes() {
-              let currentFootnotes = this.findFootnotes(this.mod.pm.doc)
-              if (this.sameFootnotes(currentFootnotes, this.mod.footnotes)) {
-                  return true
-              }
-              this.mod.fnPm.setOption("collab", null)
-              let footnotesHTML = ''
-              console.log('redrawing footnotes')
-              currentFootnotes.forEach(footnote => {
-                  footnotesHTML += "<div class='footnote-container'>" + footnote.node.attrs.contents + "</div>"
-              })
-              console.log(footnotesHTML)
-               this.mod.fnPm.setContent(fromHTML(fidusFnSchema, footnotesHTML, {preserveWhitespace: true}))
-              this.mod.fnPm.setOption("collab", {version: 0})
-              this.mod.changes.bindEvents()
-              this.mod.footnotes = currentFootnotes
-          }*/
-
     }]);
 
     return ModFootnoteLayout;

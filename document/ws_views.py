@@ -242,9 +242,6 @@ class DocumentWS(BaseWebSocketHandler):
                 self.confirm_diff(parsed["request_id"])
                 DocumentWS.send_updates(message, self.document_id, self.id)
             elif parsed["diff_version"] != document.diff_version:
-                print "wrong diff_version!"
-                print parsed["diff_version"]
-                print document.diff_version
                 document_session = DocumentWS.sessions[self.document_id]
                 if parsed["diff_version"] < (document_session["document"].diff_version - len(document_session["last_diffs"])):
                     print "unfixable"

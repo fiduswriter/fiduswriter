@@ -11,7 +11,7 @@
     "browserify": "*",
     "babelify": "*",
     "babel-preset-es2015": "*",
-    "prosemirror": "git://github.com/prosemirror/prosemirror.git#9f2174190e5d8467dc936bf28710dfdb102de53d"
+    "prosemirror": "0.4.0"
   },
   "browserify": {
     "transform": [

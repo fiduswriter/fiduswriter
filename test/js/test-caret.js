@@ -123,7 +123,7 @@ function widthFromDOM(dom) {
 }
 
 function posFromDOM(pm, dom, domOffset, loose) {
-  if (!loose && pm.operation && pm.doc != pm.operation.doc) _error.AssertionError.raise("Fetching a position from an outdated DOM structure");
+  if (!loose && pm.operation && pm.doc != pm.operation.doc) throw new _error.AssertionError("Fetching a position from an outdated DOM structure");
 
   if (domOffset == null) {
     domOffset = Array.prototype.indexOf.call(dom.parentNode.childNodes, dom);
@@ -185,7 +185,7 @@ function pathToDOM(parent, path) {
   var node = parent;
   for (var i = 0; i < path.length; i++) {
     node = findByPath(node, path[i]);
-    if (!node) _error.AssertionError.raise("Failed to resolve path " + path.join("/"));
+    if (!node) throw new _error.AssertionError("Failed to resolve path " + path.join("/"));
   }
   return node;
 }
@@ -204,6 +204,7 @@ function findByOffset(node, offset, after) {
   }
 }
 
+// : (node: DOMNode, offset: number) → {node: DOMNode, offset: number}
 function leafAt(node, offset) {
   for (;;) {
     var child = node.firstChild;
@@ -501,6 +502,11 @@ var SelectionError = exports.SelectionError = function (_ProseMirrorError) {
   return SelectionError;
 }(_error.ProseMirrorError);
 
+// Track the state of the current editor selection. Keeps the editor
+// selection in sync with the DOM selection by polling for changes,
+// as there is no DOM event for DOM selection changes.
+
+
 var SelectionState = exports.SelectionState = function () {
   function SelectionState(pm, range) {
     var _this2 = this;
@@ -508,19 +514,28 @@ var SelectionState = exports.SelectionState = function () {
     _classCallCheck(this, SelectionState);
 
     this.pm = pm;
+    // The current editor selection.
     this.range = range;
 
     this.lastNonNodePos = null;
 
+    // The timeout ID for the poller when active.
     this.polling = null;
+    // Track the state of the DOM selection.
     this.lastAnchorNode = this.lastHeadNode = this.lastAnchorOffset = this.lastHeadOffset = null;
+    // The corresponding DOM node when a node selection is active.
     this.lastNode = null;
 
     pm.content.addEventListener("focus", function () {
       return _this2.receivedFocus();
     });
+
     this.poller = this.poller.bind(this);
   }
+
+  // : (Selection, boolean)
+  // Set the current selection and signal an event on the editor.
+
 
   _createClass(SelectionState, [{
     key: "setAndSignal",
@@ -530,9 +545,14 @@ var SelectionState = exports.SelectionState = function () {
       // Indicates that the editor's selection has changed.
       this.pm.signal("selectionChange");
     }
+
+    // : (Selection, boolean)
+    // Set the current selection.
+
   }, {
     key: "set",
     value: function set(range, clearLast) {
+      this.pm.ensureOperation({ readSelection: false });
       this.range = range;
       if (!range.node) this.lastNonNodePos = null;
       if (clearLast !== false) this.lastAnchorNode = null;
@@ -564,12 +584,19 @@ var SelectionState = exports.SelectionState = function () {
       clearTimeout(this.polling);
       this.polling = null;
     }
+
+    // : () → bool
+    // Whether the DOM selection has changed from the last known state.
+
   }, {
     key: "domChanged",
     value: function domChanged() {
       var sel = window.getSelection();
       return sel.anchorNode != this.lastAnchorNode || sel.anchorOffset != this.lastAnchorOffset || sel.focusNode != this.lastHeadNode || sel.focusOffset != this.lastHeadOffset;
     }
+
+    // Store the current state of the DOM selection.
+
   }, {
     key: "storeDOMState",
     value: function storeDOMState() {
@@ -577,6 +604,11 @@ var SelectionState = exports.SelectionState = function () {
       this.lastAnchorNode = sel.anchorNode;this.lastAnchorOffset = sel.anchorOffset;
       this.lastHeadNode = sel.focusNode;this.lastHeadOffset = sel.focusOffset;
     }
+
+    // : () → bool
+    // When the DOM selection changes in a notable manner, modify the
+    // current selection state to match.
+
   }, {
     key: "readFromDOM",
     value: function readFromDOM() {
@@ -609,6 +641,9 @@ var SelectionState = exports.SelectionState = function () {
       }
       if (this.range instanceof NodeSelection) this.nodeToDOM();else this.rangeToDOM();
     }
+
+    // Make changes to the DOM for a node selection.
+
   }, {
     key: "nodeToDOM",
     value: function nodeToDOM() {
@@ -626,6 +661,9 @@ var SelectionState = exports.SelectionState = function () {
       sel.addRange(range);
       this.storeDOMState();
     }
+
+    // Make changes to the DOM for a text selection.
+
   }, {
     key: "rangeToDOM",
     value: function rangeToDOM() {
@@ -651,6 +689,9 @@ var SelectionState = exports.SelectionState = function () {
       if (sel.extend) sel.extend(head.node, head.offset);
       this.storeDOMState();
     }
+
+    // Clear all DOM statefulness of the last node selection.
+
   }, {
     key: "clearNode",
     value: function clearNode() {
@@ -920,10 +961,10 @@ var Doc = exports.Doc = function (_Block) {
     return _possibleConstructorReturn(this, Object.getPrototypeOf(Doc).apply(this, arguments));
   }
 
-  _createClass(Doc, null, [{
-    key: "kinds",
+  _createClass(Doc, [{
+    key: "kind",
     get: function get() {
-      return "doc";
+      return null;
     }
   }]);
 
@@ -945,10 +986,15 @@ var BlockQuote = exports.BlockQuote = function (_Block2) {
   return BlockQuote;
 }(_schema.Block);
 
+// :: NodeKind The node kind used for list items in the default
+// schema.
+
+
+_schema.NodeKind.list_item = new _schema.NodeKind("list_item");
+
 // ;; The default ordered list node type. Has a single attribute,
 // `order`, which determines the number at which the list starts
 // counting, and defaults to 1.
-
 
 var OrderedList = exports.OrderedList = function (_Block3) {
   _inherits(OrderedList, _Block3);
@@ -962,7 +1008,7 @@ var OrderedList = exports.OrderedList = function (_Block3) {
   _createClass(OrderedList, [{
     key: "contains",
     get: function get() {
-      return "list_item";
+      return _schema.NodeKind.list_item;
     }
   }, {
     key: "attrs",
@@ -989,7 +1035,7 @@ var BulletList = exports.BulletList = function (_Block4) {
   _createClass(BulletList, [{
     key: "contains",
     get: function get() {
-      return "list_item";
+      return _schema.NodeKind.list_item;
     }
   }]);
 
@@ -1008,10 +1054,10 @@ var ListItem = exports.ListItem = function (_Block5) {
     return _possibleConstructorReturn(this, Object.getPrototypeOf(ListItem).apply(this, arguments));
   }
 
-  _createClass(ListItem, null, [{
-    key: "kinds",
+  _createClass(ListItem, [{
+    key: "kind",
     get: function get() {
-      return "list_item";
+      return _schema.NodeKind.list_item;
     }
   }]);
 
@@ -1088,7 +1134,7 @@ var CodeBlock = exports.CodeBlock = function (_Textblock2) {
   _createClass(CodeBlock, [{
     key: "contains",
     get: function get() {
-      return "text";
+      return _schema.NodeKind.text;
     }
   }, {
     key: "containsMarks",
@@ -1780,7 +1826,7 @@ var FlatFragment = function (_Fragment) {
     // Get the child at the given offset. Might return a text node that
     // stretches before and/or after the offset.
     value: function child(off) {
-      if (off < 0 || off >= this.content.length) _error.ModelError.raise("Offset " + off + " out of range");
+      if (off < 0 || off >= this.content.length) throw new _error.ModelError("Offset " + off + " out of range");
       return this.content[off];
     }
 
@@ -1840,7 +1886,7 @@ var FlatFragment = function (_Fragment) {
   }, {
     key: "replace",
     value: function replace(offset, node) {
-      if (node.isText) _error.ModelError.raise("Argument to replace should be a non-text node");
+      if (node.isText) throw new _error.ModelError("Argument to replace should be a non-text node");
       var copy = this.content.slice();
       copy[offset] = node;
       return new FlatFragment(copy);
@@ -2056,7 +2102,7 @@ var TextFragment = function (_Fragment2) {
   }, {
     key: "child",
     value: function child(off) {
-      if (off < 0 || off >= this.size) _error.ModelError.raise("Offset " + off + " out of range");
+      if (off < 0 || off >= this.size) throw new _error.ModelError("Offset " + off + " out of range");
       for (var i = 0, curOff = 0; i < this.content.length; i++) {
         var child = this.content[i];
         curOff += child.width;
@@ -2074,7 +2120,7 @@ var TextFragment = function (_Fragment2) {
   }, {
     key: "chunkBefore",
     value: function chunkBefore(off) {
-      if (!off) _error.ModelError.raise("No chunk before start of node");
+      if (!off) throw new _error.ModelError("No chunk before start of node");
       for (var i = 0, curOff = 0; i < this.content.length; i++) {
         var child = this.content[i],
             end = curOff + child.width;
@@ -2085,7 +2131,7 @@ var TextFragment = function (_Fragment2) {
   }, {
     key: "chunkAfter",
     value: function chunkAfter(off) {
-      if (off == this.size) _error.ModelError.raise("No chunk after end of node");
+      if (off == this.size) throw new _error.ModelError("No chunk after end of node");
       for (var i = 0, curOff = 0; i < this.content.length; i++) {
         var child = this.content[i],
             end = curOff + child.width;
@@ -2105,14 +2151,14 @@ var TextFragment = function (_Fragment2) {
   }, {
     key: "replace",
     value: function replace(off, node) {
-      if (node.isText) _error.ModelError.raise("Argument to replace should be a non-text node");
+      if (node.isText) throw new _error.ModelError("Argument to replace should be a non-text node");
       var curNode = undefined,
           index = undefined;
       for (var curOff = 0; curOff < off; index++) {
         curNode = this.content[index];
         curOff += curNode.width;
       }
-      if (curNode.isText) _error.ModelError.raise("Can not replace text content with replace method");
+      if (curNode.isText) throw new _error.ModelError("Can not replace text content with replace method");
       var copy = this.content.slice();
       copy[index] = node;
       return new TextFragment(copy, this.size);
@@ -2260,6 +2306,12 @@ Object.defineProperty(exports, "Attribute", {
         enumerable: true,
         get: function get() {
                 return _schema.Attribute;
+        }
+});
+Object.defineProperty(exports, "NodeKind", {
+        enumerable: true,
+        get: function get() {
+                return _schema.NodeKind;
         }
 });
 
@@ -3227,7 +3279,7 @@ var Pos = exports.Pos = function () {
       var offset = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
 
       if (to >= this.depth) {
-        if (to == this.depth && !offset) return new Pos(this.path, this.offset + offset);else _error.ModelError.raise("Invalid shorten depth " + to + " for " + this);
+        if (to == this.depth && !offset) return new Pos(this.path, this.offset + offset);else throw new _error.ModelError("Invalid shorten depth " + to + " for " + this);
       }
       return Pos.shorten(this.path, to, offset);
     }
@@ -3339,7 +3391,7 @@ var Pos = exports.Pos = function () {
     value: function from(array) {
       var move = arguments.length <= 1 || arguments[1] === undefined ? 0 : arguments[1];
 
-      if (!array.length) _error.ModelError.raise("Can't create a pos from an empty array");
+      if (!array.length) throw new _error.ModelError("Can't create a pos from an empty array");
       return new Pos(array.slice(0, array.length - 1), array[array.length - 1] + move);
     }
 
@@ -3361,7 +3413,7 @@ var Pos = exports.Pos = function () {
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Schema = exports.SchemaSpec = exports.MarkType = exports.Attribute = exports.Text = exports.Inline = exports.Textblock = exports.Block = exports.NodeType = exports.SchemaError = undefined;
+exports.Schema = exports.SchemaSpec = exports.MarkType = exports.Attribute = exports.Text = exports.Inline = exports.Textblock = exports.Block = exports.NodeKind = exports.NodeType = exports.SchemaError = undefined;
 
 var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
@@ -3435,7 +3487,7 @@ var SchemaItem = function () {
         var value = attrs && attrs[name];
         if (value == null) {
           var attr = this.attrs[name];
-          if (attr.default != null) value = attr.default;else if (attr.compute) value = attr.compute(this, arg);else SchemaError.raise("No value supplied for attribute " + name);
+          if (attr.default != null) value = attr.default;else if (attr.compute) value = attr.compute(this, arg);else throw new SchemaError("No value supplied for attribute " + name);
         }
         built[name] = value;
       }
@@ -3544,7 +3596,7 @@ var SchemaItem = function () {
 var NodeType = exports.NodeType = function (_SchemaItem) {
   _inherits(NodeType, _SchemaItem);
 
-  function NodeType(name, kind, schema) {
+  function NodeType(name, schema) {
     _classCallCheck(this, NodeType);
 
     // :: string
@@ -3553,7 +3605,6 @@ var NodeType = exports.NodeType = function (_SchemaItem) {
     var _this2 = _possibleConstructorReturn(this, Object.getPrototypeOf(NodeType).call(this));
 
     _this2.name = name;
-    _this2.kind = kind;
     // Freeze the attributes, to avoid calling a potentially expensive
     // getter all the time.
     _this2.freezeAttrs();
@@ -3618,7 +3669,7 @@ var NodeType = exports.NodeType = function (_SchemaItem) {
   }, {
     key: "canContainType",
     value: function canContainType(type) {
-      return this.schema.subKind(type.kind, this.contains);
+      return type.kind && type.kind.isSubKind(this.contains);
     }
 
     // :: (NodeType) → bool
@@ -3629,7 +3680,7 @@ var NodeType = exports.NodeType = function (_SchemaItem) {
   }, {
     key: "canContainContent",
     value: function canContainContent(type) {
-      return this.schema.subKind(type.contains, this.contains);
+      return type.contains && type.contains.isSubKind(this.contains);
     }
 
     // :: (NodeType) → ?[NodeType]
@@ -3648,11 +3699,11 @@ var NodeType = exports.NodeType = function (_SchemaItem) {
         var current = active.shift();
         for (var name in this.schema.nodes) {
           var type = this.schema.nodes[name];
-          if (type.defaultAttrs && !(type.contains in seen) && current.from.canContainType(type)) {
+          if (type.contains && type.defaultAttrs && !(type.contains.id in seen) && current.from.canContainType(type)) {
             var via = current.via.concat(type);
             if (type.canContainType(other)) return via;
             active.push({ from: type, via: via });
-            seen[type.contains] = true;
+            seen[type.contains.id] = true;
           }
         }
       }
@@ -3753,7 +3804,7 @@ var NodeType = exports.NodeType = function (_SchemaItem) {
       return false;
     }
 
-    // :: ?string
+    // :: ?NodeKind
     // The kind of nodes this node may contain. `null` means it's a
     // leaf node.
 
@@ -3763,16 +3814,16 @@ var NodeType = exports.NodeType = function (_SchemaItem) {
       return null;
     }
 
-    // :: string
-    // Controls the _kind_ of the node, which is used to determine valid
-    // parent/child [relations](#NodeType.contains). Should be a single
-    // name or space-separated string of kind names, where later names
-    // are considered to be sub-kinds of former ones (for example
-    // `"textblock paragraph"`). When you want to extend the superclass'
-    // set of kinds, you can do something like
-    //
-    //     static get kinds() { return super.kind + " mykind" }
+    // :: ?NodeKind Sets the _kind_ of the node, which is used to
+    // determine valid parent/child [relations](#NodeType.contains).
+    // Should only be `null` for nodes that can't be child nodes (i.e.
+    // the document top node).
 
+  }, {
+    key: "kind",
+    get: function get() {
+      return null;
+    }
   }, {
     key: "canBeEmpty",
     get: function get() {
@@ -3794,33 +3845,76 @@ var NodeType = exports.NodeType = function (_SchemaItem) {
     value: function compile(types, schema) {
       var result = Object.create(null);
       for (var name in types) {
-        var type = types[name];
-        var kinds = type.kinds.split(" ");
-        for (var i = 0; i < kinds.length; i++) {
-          schema.registerKind(kinds[i], i ? kinds[i - 1] : null);
-        }result[name] = new type(name, kinds[kinds.length - 1], schema);
-      }
-      for (var name in result) {
-        var contains = result[name].contains;
-        if (contains && !(contains in schema.kinds)) SchemaError.raise("Node type " + name + " is specified to contain non-existing kind " + contains);
-      }
-      if (!result.doc) SchemaError.raise("Every schema needs a 'doc' type");
-      if (!result.text) SchemaError.raise("Every schema needs a 'text' type");
+        result[name] = new types[name](name, schema);
+      }if (!result.doc) throw new SchemaError("Every schema needs a 'doc' type");
+      if (!result.text) throw new SchemaError("Every schema needs a 'text' type");
 
       return result;
-    }
-  }, {
-    key: "kinds",
-    get: function get() {
-      return "node";
     }
   }]);
 
   return NodeType;
 }(SchemaItem);
 
-// ;; Base type for block nodetypes.
+// ;; Class used to represent node [kind](#NodeType.kind).
 
+
+var NodeKind = exports.NodeKind = function () {
+  // :: (string, [NodeKind])
+  // Create a new node kind with the given set of superkinds (the new
+  // kind counts as a member of each of the superkinds). The `name`
+  // field is only for debugging purposes—kind equivalens is defined
+  // by identity.
+
+  function NodeKind(name) {
+    var _this4 = this;
+
+    _classCallCheck(this, NodeKind);
+
+    this.name = name;
+    this.supers = Object.create(null);
+    this.id = ++NodeKind.nextID;
+    this.supers[this.id] = true;
+
+    for (var _len = arguments.length, supers = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      supers[_key - 1] = arguments[_key];
+    }
+
+    supers.forEach(function (sup) {
+      for (var id in sup.supers) {
+        _this4.supers[id] = true;
+      }
+    });
+  }
+
+  // :: (NodeKind) → bool
+  // Test whether `other` is a subkind of this kind (or the same
+  // kind).
+
+
+  _createClass(NodeKind, [{
+    key: "isSubKind",
+    value: function isSubKind(other) {
+      return other && other.id in this.supers || false;
+    }
+  }]);
+
+  return NodeKind;
+}();
+
+NodeKind.nextID = 0;
+
+// :: NodeKind The node kind used for generic block nodes.
+NodeKind.block = new NodeKind("block");
+
+// :: NodeKind The node kind used for generic inline nodes.
+NodeKind.inline = new NodeKind("inline");
+
+// :: NodeKind The node kind used for text nodes. Subkind of
+// `NodeKind.inline`.
+NodeKind.text = new NodeKind("text", NodeKind.inline);
+
+// ;; Base type for block nodetypes.
 
 var Block = exports.Block = function (_NodeType) {
   _inherits(Block, _NodeType);
@@ -3836,7 +3930,7 @@ var Block = exports.Block = function (_NodeType) {
     value: function defaultContent() {
       var inner = this.schema.defaultTextblockType().create();
       var conn = this.findConnection(inner.type);
-      if (!conn) SchemaError.raise("Can't create default content for " + this.name);
+      if (!conn) throw new SchemaError("Can't create default content for " + this.name);
       for (var i = conn.length - 1; i >= 0; i--) {
         inner = conn[i].create(null, inner);
       }return _fragment.Fragment.from(inner);
@@ -3844,7 +3938,12 @@ var Block = exports.Block = function (_NodeType) {
   }, {
     key: "contains",
     get: function get() {
-      return "block";
+      return NodeKind.block;
+    }
+  }, {
+    key: "kind",
+    get: function get() {
+      return NodeKind.block;
     }
   }, {
     key: "isBlock",
@@ -3855,11 +3954,6 @@ var Block = exports.Block = function (_NodeType) {
     key: "canBeEmpty",
     get: function get() {
       return this.contains == null;
-    }
-  }], [{
-    key: "kinds",
-    get: function get() {
-      return "block";
     }
   }]);
 
@@ -3881,7 +3975,7 @@ var Textblock = exports.Textblock = function (_Block) {
   _createClass(Textblock, [{
     key: "contains",
     get: function get() {
-      return "inline";
+      return NodeKind.inline;
     }
   }, {
     key: "containsMarks",
@@ -3916,14 +4010,14 @@ var Inline = exports.Inline = function (_NodeType2) {
   }
 
   _createClass(Inline, [{
+    key: "kind",
+    get: function get() {
+      return NodeKind.inline;
+    }
+  }, {
     key: "isInline",
     get: function get() {
       return true;
-    }
-  }], [{
-    key: "kinds",
-    get: function get() {
-      return "inline";
     }
   }]);
 
@@ -3957,10 +4051,10 @@ var Text = exports.Text = function (_Inline) {
     get: function get() {
       return true;
     }
-  }], [{
-    key: "kinds",
+  }, {
+    key: "kind",
     get: function get() {
-      return _get(Object.getPrototypeOf(Text), "kinds", this) + " text";
+      return NodeKind.text;
     }
   }]);
 
@@ -4020,17 +4114,17 @@ var MarkType = exports.MarkType = function (_SchemaItem2) {
     // :: string
     // The name of the mark type.
 
-    var _this8 = _possibleConstructorReturn(this, Object.getPrototypeOf(MarkType).call(this));
+    var _this9 = _possibleConstructorReturn(this, Object.getPrototypeOf(MarkType).call(this));
 
-    _this8.name = name;
-    _this8.freezeAttrs();
-    _this8.rank = rank;
+    _this9.name = name;
+    _this9.freezeAttrs();
+    _this9.rank = rank;
     // :: Schema
     // The schema that this mark type instance is part of.
-    _this8.schema = schema;
-    var defaults = _this8.getDefaultAttrs();
-    _this8.instance = defaults && new _mark.Mark(_this8, defaults);
-    return _this8;
+    _this9.schema = schema;
+    var defaults = _this9.getDefaultAttrs();
+    _this9.instance = defaults && new _mark.Mark(_this9, defaults);
+    return _this9;
   }
 
   // :: number
@@ -4044,7 +4138,7 @@ var MarkType = exports.MarkType = function (_SchemaItem2) {
     key: "create",
 
 
-    // :: (Object) → Mark
+    // :: (?Object) → Mark
     // Create a mark of this type. `attrs` may be `null` or an object
     // containing only some of the mark's attributes. The others, if
     // they have defaults, will be added.
@@ -4112,9 +4206,7 @@ var MarkType = exports.MarkType = function (_SchemaItem2) {
 // a set of node types, their names, attributes, and nesting behavior.
 
 // ;; A schema specification is a blueprint for an actual
-// `Schema`. It maps names to node and mark types, along
-// with extra information, such as additional attributes and changes
-// to node kinds and relations.
+// `Schema`. It maps names to node and mark types.
 //
 // A specification consists of an object that associates node names
 // with node type constructors and another similar object associating
@@ -4122,7 +4214,7 @@ var MarkType = exports.MarkType = function (_SchemaItem2) {
 
 
 var SchemaSpec = exports.SchemaSpec = function () {
-  // :: (?Object<NodeType>, ?Object<MarkType>)
+  // :: (?Object<constructor<NodeType>>, ?Object<constructor<MarkType>>)
   // Create a schema specification from scratch. The arguments map
   // node names to node type constructors and mark names to mark type
   // constructors.
@@ -4180,7 +4272,6 @@ var Schema = function () {
     // :: SchemaSpec
     // The specification on which the schema is based.
     this.spec = spec;
-    this.kinds = Object.create(null);
 
     // :: Object<NodeType>
     // An object mapping the schema's node names to node type objects.
@@ -4189,7 +4280,7 @@ var Schema = function () {
     // A map from mark names to mark type objects.
     this.marks = MarkType.compile(spec.marks, this);
     for (var prop in this.nodes) {
-      if (prop in this.marks) SchemaError.raise(prop + " can not be both a node and a mark");
+      if (prop in this.marks) throw new SchemaError(prop + " can not be both a node and a mark");
     } // :: Object
     // An object for storing whatever values modules may want to
     // compute and cache per schema. (If you want to store something
@@ -4219,7 +4310,7 @@ var Schema = function () {
   _createClass(Schema, [{
     key: "node",
     value: function node(type, attrs, content, marks) {
-      if (typeof type == "string") type = this.nodeType(type);else if (!(type instanceof NodeType)) SchemaError.raise("Invalid node type: " + type);else if (type.schema != this) SchemaError.raise("Node type from different schema used (" + type.name + ")");
+      if (typeof type == "string") type = this.nodeType(type);else if (!(type instanceof NodeType)) throw new SchemaError("Invalid node type: " + type);else if (type.schema != this) throw new SchemaError("Node type from different schema used (" + type.name + ")");
 
       return type.create(attrs, content, marks);
     }
@@ -4255,7 +4346,8 @@ var Schema = function () {
   }, {
     key: "mark",
     value: function mark(name, attrs) {
-      var spec = this.marks[name] || SchemaError.raise("No mark named " + name);
+      var spec = this.marks[name];
+      if (!spec) throw new SchemaError("No mark named " + name);
       return spec.create(attrs);
     }
 
@@ -4293,30 +4385,9 @@ var Schema = function () {
   }, {
     key: "nodeType",
     value: function nodeType(name) {
-      return this.nodes[name] || SchemaError.raise("Unknown node type: " + name);
-    }
-  }, {
-    key: "registerKind",
-    value: function registerKind(kind, sup) {
-      if (kind in this.kinds) {
-        if (this.kinds[kind] == sup) return;
-        SchemaError.raise("Inconsistent superkinds for kind " + kind + ": " + sup + " and " + this.kinds[kind]);
-      }
-      if (this.subKind(kind, sup)) SchemaError.raise("Conflicting kind hierarchy through " + kind + " and " + sup);
-      this.kinds[kind] = sup;
-    }
-
-    // :: (string, string) → bool
-    // Test whether a node kind is a sub-kind of another kind.
-
-  }, {
-    key: "subKind",
-    value: function subKind(sub, sup) {
-      for (;;) {
-        if (sub == sup) return true;
-        sub = this.kinds[sub];
-        if (!sub) return false;
-      }
+      var found = this.nodes[name];
+      if (!found) throw new SchemaError("Unknown node type: " + name);
+      return found;
     }
 
     // :: (string, (name: string, value: *, source: union<NodeType, MarkType>, name: string))
@@ -4388,17 +4459,6 @@ var ProseMirrorError = exports.ProseMirrorError = function (_Error) {
     key: "name",
     get: function get() {
       return this.constructor.name || functionName(this.constructor) || "ProseMirrorError";
-    }
-
-    // :: (string)
-    // Raise an exception of this type, with the given message.
-    // (Somewhat shorter than `throw new ...`, and can appear in
-    // expression position.)
-
-  }], [{
-    key: "raise",
-    value: function raise(message) {
-      throw new this(message);
     }
   }]);
 

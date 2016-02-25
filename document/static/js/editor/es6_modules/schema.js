@@ -1,16 +1,15 @@
-import {Schema, defaultSchema, Block, Textblock, Inline, Attribute, MarkType} from "prosemirror/dist/model"
+import {Schema, defaultSchema, Block, Textblock, Inline, Attribute, MarkType, NodeKind} from "prosemirror/dist/model"
 
 export class Doc extends Block {
-  static get kinds() { return "doc" }
+  get kind() { return null }
   get locked() { return true }
   get selectable() { return false }
-  get contains() { return "text" }
 }
 
 class Title extends Textblock {
 //  get locked() { return true }
 //  get selectable() { return false }
-  get contains() { return "text" }
+  get contains() { return NodeKind.text }
 }
 
 Title.register("parseDOM", "div", {
@@ -28,7 +27,7 @@ Title.prototype.serializeDOM = (node, serializer) => serializer.renderAs(node, "
 class MetaDataSubtitle extends Textblock {
   get locked() { return true }
   get selectable() { return false }
-  get contains() { return "text" }
+  get contains() { return NodeKind.text }
 }
 
 MetaDataSubtitle.register("parseDOM", "div", {
@@ -44,7 +43,7 @@ MetaDataSubtitle.prototype.serializeDOM = (node, serializer) =>
 class MetaDataAuthors extends Textblock {
   get locked() { return true }
   get selectable() { return false }
-  get contains() { return "text" }
+  get contains() { return NodeKind.text }
 }
 
 MetaDataAuthors.register("parseDOM", "div", {
@@ -75,7 +74,7 @@ MetaDataAbstract.prototype.serializeDOM = (node, serializer) =>
 class MetaDataKeywords extends Textblock {
   get locked() { return true }
   get selectable() { return false }
-  get contains() { return "text" }
+  get contains() { return NodeKind.text }
 }
 
 MetaDataKeywords.register("parseDOM", "div", {
@@ -104,7 +103,7 @@ DocumentContents.prototype.serializeDOM = (node, serializer) =>
   serializer.renderAs(node, "div", {id: 'document-contents'})
 
 
-class Footnote extends Inline {
+export class Footnote extends Inline {
   get attrs() {
     return {
       contents: new Attribute({default: ""}),

@@ -16,24 +16,51 @@ export class ModFootnoteLayout {
       this.mod.pm.on('documentUpdated', function(){that.renderFootnotes()})
       this.mod.pm.on('transform', function(transform, object){
         if (that.mod.changes.updating) {
-            return false;
+            return false
         }
-        console.log('update 1')
-        console.log('transform')
-        if (transform.steps.some(function(step) {
+        let ranges = that.replacedRanges(transform)
+        let newFootnotes = []
+        ranges.forEach(function(range) {
+            newFootnotes = newFootnotes.concat(that.findFootnotes(that.mod.pm.doc, range.from, range.to))
+        })
+        if (newFootnotes.length > 0) {
+            that.renderFootnotes()
+        }
+
+        /*if (transform.steps.some(function(step) {
                 return step.type === "replace"
             })) {
             console.log('rerendering footnotes')
             that.renderFootnotes()
-        }
+        }*/
       })
 
     }
 
-    findFootnotes(rootNode) {
+    replacedRanges(transform) {
+        let ranges = []
+        for (let i = 0; i < transform.steps.length; i++) {
+            let step = transform.steps[i], map = transform.maps[i]
+            if (step.type == "replace") {
+                // Could write a more complicated algorithm to insert it in
+                // sorted order and join with overlapping ranges here. That way,
+                // you wouldn't have to worry about scanning nodes multiple
+                // times.
+                ranges.push({from: step.from, to: step.to})
+            }
+            for (let j = 0; j < ranges.length; j++) {
+                let range = ranges[j]
+                range.from = map.map(range.from, -1).pos
+                range.to = map.map(range.from, 1).pos
+            }
+        }
+        return ranges
+    }
+
+    findFootnotes(rootNode, fromPos, toPos) {
         var footnotes = []
 
-        rootNode.inlineNodesBetween(null, null, function(inlineNode, path, start, end, parent) {
+        rootNode.inlineNodesBetween(fromPos, toPos, function(inlineNode, path, start, end, parent) {
             if (inlineNode.type.name === 'footnote') {
                 footnotes.push(inlineNode)
             }

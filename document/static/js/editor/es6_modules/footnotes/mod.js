@@ -10,6 +10,7 @@ export class ModFootnotes {
     pm.mod.footnotes = this
     this.pm = pm
     this.init()
+    this.footnotes = []
     new ModFootnoteChanges(this)
     new ModFootnoteLayout(this)
   }

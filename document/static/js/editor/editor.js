@@ -1172,7 +1172,6 @@ var ModFootnoteChanges = exports.ModFootnoteChanges = (function () {
 
         mod.changes = this;
         this.mod = mod;
-        this.lastFootnotes = [];
         this.updating = false;
 
         this.bindEvents();
@@ -1195,33 +1194,37 @@ var ModFootnoteChanges = exports.ModFootnoteChanges = (function () {
                 }
             });
         }
-    }, {
-        key: "getNodePos",
-        value: function getNodePos(rootNode, searchedNode) {
-            var foundNode = false;
-            rootNode.inlineNodesBetween(null, null, function (inlineNode, path, start, end, parent) {
+
+        /*getNodePos(rootNode, searchedNode) {
+            let foundNode = false
+            rootNode.inlineNodesBetween(null, null, function(inlineNode, path, start, end, parent) {
                 if (inlineNode === searchedNode) {
                     foundNode = {
-                        from: new _model.Pos(path, start),
-                        to: new _model.Pos(path, end)
-                    };
+                        from: new Pos(path, start),
+                        to: new Pos(path, end)
+                    }
                 }
-            });
+            })
+             return foundNode
+        }*/
 
-            return foundNode;
-        }
     }, {
         key: "updateFootnote",
         value: function updateFootnote(index) {
             this.updating = true;
             var footnoteContents = (0, _format.toHTML)(this.mod.fnPm.doc.child(index));
-            var oldFootnote = this.lastFootnotes[index];
-            var replacement = oldFootnote.type.create({
+            var footnote = this.mod.footnotes[index];
+            var replacement = footnote.node.type.create({
                 contents: footnoteContents
-            }, null, oldFootnote.styles);
-            var nodePos = this.getNodePos(this.mod.pm.doc, oldFootnote);
-            this.lastFootnotes[index] = replacement;
-            this.mod.pm.tr.replaceWith(nodePos.from, nodePos.to, replacement).apply();
+            }, null, footnote.node.styles);
+            var path = footnote.range.from.path,
+                start = footnote.range.from.offset,
+                end = footnote.range.to.offset;
+            //let nodePos = this.getNodePos(this.mod.pm.doc, oldFootnote
+
+            this.mod.pm.tr.replaceWith(footnote.range.from, footnote.range.to, replacement).apply();
+            footnote.node = replacement;
+            footnote.range = this.mod.pm.markRange(new _model.Pos(path, start), new _model.Pos(path, end));
             this.updating = false;
         }
     }, {
@@ -1248,6 +1251,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.ModFootnoteLayout = undefined;
 
 var _format = require("prosemirror/dist/format");
+
+var _model = require("prosemirror/dist/model");
 
 var _schema = require("../schema");
 
@@ -1317,51 +1322,55 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
     }, {
         key: "findFootnotes",
         value: function findFootnotes(rootNode, fromPos, toPos) {
-            var footnotes = [];
+            var footnotes = [],
+                that = this;
 
             rootNode.inlineNodesBetween(fromPos, toPos, function (inlineNode, path, start, end, parent) {
                 if (inlineNode.type.name === 'footnote') {
-                    footnotes.push(inlineNode);
+                    footnotes.push({
+                        node: inlineNode,
+                        range: that.mod.pm.markRange(new _model.Pos(path, start), new _model.Pos(path, end))
+                    });
                 }
             });
 
             return footnotes;
         }
     }, {
-        key: "sameArrayContents",
-        value: function sameArrayContents(arrayOne, arrayTwo) {
+        key: "sameFootnotes",
+        value: function sameFootnotes(arrayOne, arrayTwo) {
             if (arrayOne.length != arrayTwo.length) {
                 return false;
             }
             return arrayOne.every(function (element, index) {
-                return element === arrayTwo[index];
+                return element.node === arrayTwo[index].node;
             });
         }
     }, {
         key: "renderFootnotes",
         value: function renderFootnotes() {
             var currentFootnotes = this.findFootnotes(this.mod.pm.doc);
-            if (this.sameArrayContents(currentFootnotes, this.mod.changes.lastFootnotes)) {
+            if (this.sameFootnotes(currentFootnotes, this.mod.footnotes)) {
                 return true;
             }
             var footnotesHTML = '';
             console.log('redrawing footnotes');
             currentFootnotes.forEach(function (footnote) {
-                footnotesHTML += "<div class='footnote-container'>" + footnote.attrs.contents + "</div>";
+                footnotesHTML += "<div class='footnote-container'>" + footnote.node.attrs.contents + "</div>";
             });
             console.log(footnotesHTML);
             this.mod.fnPm.setOption("collab", null);
             this.mod.fnPm.setContent((0, _format.fromHTML)(_schema.fidusFnSchema, footnotesHTML, { preserveWhitespace: true }));
             this.mod.fnPm.setOption("collab", { version: 0 });
             this.mod.changes.bindEvents();
-            this.mod.changes.lastFootnotes = currentFootnotes;
+            this.mod.footnotes = currentFootnotes;
         }
     }]);
 
     return ModFootnoteLayout;
 })();
 
-},{"../schema":9,"prosemirror/dist/format":33}],8:[function(require,module,exports){
+},{"../schema":9,"prosemirror/dist/format":33,"prosemirror/dist/model":41}],8:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1390,6 +1399,7 @@ var ModFootnotes = exports.ModFootnotes = (function () {
     pm.mod.footnotes = this;
     this.pm = pm;
     this.init();
+    this.footnotes = [];
     new _changes.ModFootnoteChanges(this);
     new _layout.ModFootnoteLayout(this);
   }

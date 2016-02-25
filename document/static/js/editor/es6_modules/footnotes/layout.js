@@ -1,7 +1,9 @@
 
-
 import {fromHTML} from "prosemirror/dist/format"
+import {Pos} from "prosemirror/dist/model"
+
 import {fidusFnSchema} from "../schema"
+
 
 /* Functions related to layouting of footnotes */
 export class ModFootnoteLayout {
@@ -58,42 +60,47 @@ export class ModFootnoteLayout {
     }
 
     findFootnotes(rootNode, fromPos, toPos) {
-        var footnotes = []
+        let footnotes = [], that = this
 
         rootNode.inlineNodesBetween(fromPos, toPos, function(inlineNode, path, start, end, parent) {
             if (inlineNode.type.name === 'footnote') {
-                footnotes.push(inlineNode)
+                footnotes.push({
+                  node: inlineNode,
+                  range: that.mod.pm.markRange(new Pos(path, start), new Pos(path, end))
+                })
+
+
             }
         })
 
         return footnotes
     }
 
-    sameArrayContents(arrayOne, arrayTwo) {
+    sameFootnotes(arrayOne, arrayTwo) {
         if (arrayOne.length != arrayTwo.length) {
             return false
         }
         return arrayOne.every(function(element, index) {
-            return element === arrayTwo[index]
+            return element.node === arrayTwo[index].node
         })
     }
 
     renderFootnotes() {
         let currentFootnotes = this.findFootnotes(this.mod.pm.doc)
-        if (this.sameArrayContents(currentFootnotes, this.mod.changes.lastFootnotes)) {
+        if (this.sameFootnotes(currentFootnotes, this.mod.footnotes)) {
             return true
         }
         let footnotesHTML = ''
         console.log('redrawing footnotes')
         currentFootnotes.forEach(footnote => {
-            footnotesHTML += "<div class='footnote-container'>" + footnote.attrs.contents + "</div>"
+            footnotesHTML += "<div class='footnote-container'>" + footnote.node.attrs.contents + "</div>"
         })
         console.log(footnotesHTML)
         this.mod.fnPm.setOption("collab", null)
         this.mod.fnPm.setContent(fromHTML(fidusFnSchema, footnotesHTML, {preserveWhitespace: true}))
         this.mod.fnPm.setOption("collab", {version: 0})
         this.mod.changes.bindEvents()
-        this.mod.changes.lastFootnotes = currentFootnotes
+        this.mod.footnotes = currentFootnotes
     }
 
 }

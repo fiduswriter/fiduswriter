@@ -9,7 +9,6 @@ export class ModFootnoteChanges {
     constructor(mod) {
         mod.changes = this
         this.mod = mod
-        this.lastFootnotes = []
         this.updating = false
 
         this.bindEvents()
@@ -32,30 +31,18 @@ export class ModFootnoteChanges {
 
     }
 
-    getNodePos(rootNode, searchedNode) {
-        let foundNode = false
-        rootNode.inlineNodesBetween(null, null, function(inlineNode, path, start, end, parent) {
-            if (inlineNode === searchedNode) {
-                foundNode = {
-                    from: new Pos(path, start),
-                    to: new Pos(path, end)
-                }
-            }
-        })
-
-        return foundNode
-    }
-
     updateFootnote(index) {
         this.updating = true
         let footnoteContents = toHTML(this.mod.fnPm.doc.child(index))
-        let oldFootnote = this.lastFootnotes[index]
-        let replacement = oldFootnote.type.create({
+        let footnote = this.mod.footnotes[index]
+        let replacement = footnote.node.type.create({
                 contents: footnoteContents
-            }, null, oldFootnote.styles)
-        let nodePos = this.getNodePos(this.mod.pm.doc, oldFootnote)
-        this.lastFootnotes[index] = replacement
-        this.mod.pm.tr.replaceWith(nodePos.from, nodePos.to, replacement).apply()
+            }, null, footnote.node.styles)
+        let path = footnote.range.from.path, start = footnote.range.from.offset, end = footnote.range.to.offset
+
+        this.mod.pm.tr.replaceWith(footnote.range.from, footnote.range.to, replacement).apply()
+        footnote.node = replacement
+        footnote.range = this.mod.pm.markRange(new Pos(path, start), new Pos(path, end))
         this.updating = false
     }
 

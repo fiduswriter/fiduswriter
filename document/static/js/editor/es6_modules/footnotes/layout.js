@@ -60,7 +60,7 @@ export class ModFootnoteLayout {
                     if (step.from.cmp(ranges[index].from) === 0) {
                         if (step.to.cmp(ranges[index].to) > 0) {
                             // This range has an endpoint further down than the
-                            // range that was found previosuly.
+                            // range that was found previously.
                             // We replace the old range with the newly found
                             // range.
                             ranges[index] = {from: step.from, to: step.to}
@@ -83,15 +83,29 @@ export class ModFootnoteLayout {
         return ranges
     }
 
+    removeFootnote(footnote) {
+        if (this.mod.changes.updating) {
+            return false
+        }
+        let index = 0
+        while(footnote != this.mod.footnotes[index] && this.mod.footnotes.length > index) {
+          index++
+        }
+        this.mod.footnotes.splice(index, 1)
+        this.mod.fnPm.tr.delete(new Pos([], index), new Pos([], index + 1)).apply()
+    }
+
     findFootnotes(rootNode, fromPos, toPos) {
         let footnotes = [], that = this
 
         rootNode.inlineNodesBetween(fromPos, toPos, function(inlineNode, path, start, end, parent) {
             if (inlineNode.type.name === 'footnote') {
-                footnotes.push({
+                let footnote = {
                   node: inlineNode,
                   range: that.mod.pm.markRange(new Pos(path, start), new Pos(path, end))
-                })
+                }
+                footnote.range.on('removed', function(){that.removeFootnote(footnote)})
+                footnotes.push(footnote)
 
 
             }

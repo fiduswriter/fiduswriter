@@ -1307,7 +1307,7 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
                         if (step.from.cmp(ranges[index].from) === 0) {
                             if (step.to.cmp(ranges[index].to) > 0) {
                                 // This range has an endpoint further down than the
-                                // range that was found previosuly.
+                                // range that was found previously.
                                 // We replace the old range with the newly found
                                 // range.
                                 ranges[index] = { from: step.from, to: step.to };
@@ -1330,6 +1330,19 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
             return ranges;
         }
     }, {
+        key: "removeFootnote",
+        value: function removeFootnote(footnote) {
+            if (this.mod.changes.updating) {
+                return false;
+            }
+            var index = 0;
+            while (footnote != this.mod.footnotes[index] && this.mod.footnotes.length > index) {
+                index++;
+            }
+            this.mod.footnotes.splice(index, 1);
+            this.mod.fnPm.tr.delete(new _model.Pos([], index), new _model.Pos([], index + 1)).apply();
+        }
+    }, {
         key: "findFootnotes",
         value: function findFootnotes(rootNode, fromPos, toPos) {
             var footnotes = [],
@@ -1337,10 +1350,16 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
 
             rootNode.inlineNodesBetween(fromPos, toPos, function (inlineNode, path, start, end, parent) {
                 if (inlineNode.type.name === 'footnote') {
-                    footnotes.push({
-                        node: inlineNode,
-                        range: that.mod.pm.markRange(new _model.Pos(path, start), new _model.Pos(path, end))
-                    });
+                    (function () {
+                        var footnote = {
+                            node: inlineNode,
+                            range: that.mod.pm.markRange(new _model.Pos(path, start), new _model.Pos(path, end))
+                        };
+                        footnote.range.on('removed', function () {
+                            that.removeFootnote(footnote);
+                        });
+                        footnotes.push(footnote);
+                    })();
                 }
             });
 

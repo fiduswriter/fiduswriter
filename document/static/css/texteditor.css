@@ -221,13 +221,23 @@ div#statusarea .error {
 #flow #document-bibliography {
     background-color: lightgrey;
 }
-#document-editable .citation, .equation {
+#paper-editable .citation, .equation {
     cursor: pointer;
     background-color: lightgrey;
 }
-#document-editable .citation:hover, .equation:hover {
+#paper-editable .citation:hover, .equation:hover {
     background-color: grey;
 }
+#paper-editable {
+    display: flex;
+}
+
+#document-editable {
+    flex: 1 0 auto;
+}
+
+
+
 #menu1 .selected:before {
     content: "✓ ";
 }

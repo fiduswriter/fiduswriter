@@ -111,6 +111,10 @@
                 // No hash means this must have been created server side.
                 theEditor.cancelCurrentlyCheckingVersion();
                 theEditor.enableDiffSending();
+                // Because the uypdate came directly from the sevrer, we may
+                // also have lost some collab updates to the footnote table.
+                // Re-render the footnote table if needed.
+                theEditor.editor.mod.footnotes.layout.renderAllFootnotes();
             }
             break;
         case 'confirm_diff':

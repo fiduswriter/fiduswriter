@@ -1271,7 +1271,7 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
             }
             var ranges = this.replacedRanges(transform);
             ranges.forEach(function (range) {
-                var newFootnotes = that.findFootnotes(that.mod.pm.doc, range.from, range.to);
+                var newFootnotes = that.findFootnotes(range.from, range.to);
                 if (newFootnotes.length > 0) {
                     (function () {
                         var firstFootNoteStart = newFootnotes[0].range.from;
@@ -1344,11 +1344,11 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
         }
     }, {
         key: "findFootnotes",
-        value: function findFootnotes(rootNode, fromPos, toPos) {
+        value: function findFootnotes(fromPos, toPos) {
             var footnotes = [],
                 that = this;
 
-            rootNode.inlineNodesBetween(fromPos, toPos, function (inlineNode, path, start, end, parent) {
+            this.mod.pm.doc.inlineNodesBetween(fromPos, toPos, function (inlineNode, path, start, end, parent) {
                 if (inlineNode.type.name === 'footnote') {
                     (function () {
                         var footnote = {
@@ -1365,6 +1365,42 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
 
             return footnotes;
         }
+
+        // Checks if the footnotes as we have them in the list of footnotes
+        // corresponds to the footnotes as they can be found in the document.
+
+    }, {
+        key: "checkFootnotes",
+        value: function checkFootnotes() {
+            var count = 0,
+                passed = true,
+                that = this;
+            this.mod.pm.doc.inlineNodesBetween(null, null, function (inlineNode, path, start, end, parent) {
+                if (inlineNode.type.name !== 'footnote') {
+                    return;
+                }
+                if (that.mod.footnotes.length <= count) {
+                    passed = false;
+                } else {
+                    var startPos = new _model.Pos(path, start);
+                    if (startPos.cmp(that.mod.footnotes[count].range.from) !== 0) {
+                        passed = false;
+                    }
+                    var endPos = new _model.Pos(path, end);
+                    if (endPos.cmp(that.mod.footnotes[count].range.to) !== 0) {
+                        passed = false;
+                    }
+                    if (that.mod.footnotes[count].node.attrs.contents !== inlineNode.attrs.contents) {
+                        passed = false;
+                    }
+                }
+                count++;
+            });
+            if (count !== that.mod.footnotes.length) {
+                passed = false;
+            }
+            return passed;
+        }
     }, {
         key: "renderFootnote",
         value: function renderFootnote(contents) {
@@ -1379,7 +1415,12 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
         value: function renderAllFootnotes() {
             var _this = this;
 
-            this.mod.footnotes = this.findFootnotes(this.mod.pm.doc);
+            if (this.checkFootnotes()) {
+                return false;
+            }
+            var footnotes = this.findFootnotes();
+
+            this.mod.footnotes = footnotes;
             this.mod.fnPm.setOption("collab", null);
             console.log('redrawing all footnotes');
             this.mod.fnPm.setContent('', 'html');

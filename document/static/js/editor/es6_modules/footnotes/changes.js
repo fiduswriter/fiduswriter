@@ -2,7 +2,7 @@
 import {Pos} from "prosemirror/dist/model"
 import {fromHTML, toHTML} from "prosemirror/dist/format"
 import {Step} from "prosemirror/dist/transform"
-import {fidusFnSchema} from "../schema"
+import {fidusFnSchema, Footnote} from "../schema"
 
 /* Functions related to changes of footnotes */
 export class ModFootnoteChanges {
@@ -34,13 +34,8 @@ export class ModFootnoteChanges {
         this.updating = true
         let footnoteContents = toHTML(this.mod.fnPm.doc.child(index))
         let footnote = this.mod.footnotes[index]
-        let replacement = footnote.node.type.create({
-                contents: footnoteContents
-            }, null, footnote.node.styles)
-        let path = footnote.range.from.path, start = footnote.range.from.offset, end = footnote.range.to.offset
-        this.mod.pm.tr.replaceWith(footnote.range.from, footnote.range.to, replacement).apply()
-        footnote.node = replacement
-        footnote.range = this.mod.pm.markRange(new Pos(path, start), new Pos(path, end))
+        let node = this.mod.pm.doc.nodeAfter(footnote.from)
+        this.mod.pm.tr.setNodeType(footnote.from, node.type, {contents: footnoteContents}).apply()
         this.updating = false
     }
 

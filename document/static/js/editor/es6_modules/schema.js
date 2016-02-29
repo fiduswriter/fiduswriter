@@ -103,7 +103,7 @@ DocumentContents.prototype.serializeDOM = (node, serializer) =>
   serializer.renderAs(node, "div", {id: 'document-contents'})
 
 
-export class Footnote extends Inline {
+class Footnote extends Inline {
   get attrs() {
     return {
       contents: new Attribute({default: ""}),

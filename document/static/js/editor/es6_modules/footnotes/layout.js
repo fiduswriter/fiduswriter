@@ -29,14 +29,15 @@ export class ModFootnoteLayout {
         ranges.forEach(function(range) {
             let newFootnotes = that.findFootnotes(range.from, range.to)
             if (newFootnotes.length > 0) {
-                let firstFootNoteStart = newFootnotes[0].range.from
+                let firstFootNoteStart = newFootnotes[0].from
                 let index = 0
-                while(that.mod.footnotes.length > index && firstFootNoteStart.cmp(that.mod.footnotes[index].range.from) > 0) {
+                while(that.mod.footnotes.length > index && firstFootNoteStart.cmp(that.mod.footnotes[index].from) > 0) {
                     index++
                 }
                 newFootnotes.forEach(function(footnote){
                     that.mod.footnotes.splice(index, 0, footnote)
-                    that.renderFootnote(footnote.node.attrs.contents, index)
+                    let node = that.mod.pm.doc.nodeAfter(footnote.from)
+                    that.renderFootnote(node.attrs.contents, index)
                     index++
                 })
             }
@@ -100,11 +101,8 @@ export class ModFootnoteLayout {
 
         this.mod.pm.doc.inlineNodesBetween(fromPos, toPos, function(inlineNode, path, start, end, parent) {
             if (inlineNode.type.name === 'footnote') {
-                let footnote = {
-                  node: inlineNode,
-                  range: that.mod.pm.markRange(new Pos(path, start), new Pos(path, end))
-                }
-                footnote.range.on('removed', function(){that.removeFootnote(footnote)})
+                let footnote = that.mod.pm.markRange(new Pos(path, start), new Pos(path, end))
+                footnote.on('removed', function(){that.removeFootnote(footnote)})
                 footnotes.push(footnote)
 
 
@@ -126,14 +124,11 @@ export class ModFootnoteLayout {
                 passed = false
             } else {
                 let startPos = new Pos(path, start)
-                if (startPos.cmp(that.mod.footnotes[count].range.from) !== 0) {
+                if (startPos.cmp(that.mod.footnotes[count].from) !== 0) {
                     passed = false
                 }
                 let endPos = new Pos(path, end)
-                if (endPos.cmp(that.mod.footnotes[count].range.to) !== 0) {
-                    passed = false
-                }
-                if (that.mod.footnotes[count].node.attrs.contents !== inlineNode.attrs.contents) {
+                if (endPos.cmp(that.mod.footnotes[count].to) !== 0) {
                     passed = false
                 }
             }
@@ -155,6 +150,7 @@ export class ModFootnoteLayout {
         if (this.checkFootnotes()) {
             return false
         }
+        let that = this
         let footnotes = this.findFootnotes()
 
         this.mod.footnotes = footnotes
@@ -162,7 +158,8 @@ export class ModFootnoteLayout {
         console.log('redrawing all footnotes')
         this.mod.fnPm.setContent('','html')
         this.mod.footnotes.forEach((footnote, index) => {
-            this.renderFootnote(footnote.node.attrs.contents, index)
+            let node = that.mod.pm.doc.nodeAfter(footnote.from)
+            that.renderFootnote(node.attrs.contents, index)
         })
         this.mod.fnPm.setOption("collab", {version: 0})
         this.mod.changes.bindEvents()

@@ -1199,15 +1199,8 @@ var ModFootnoteChanges = exports.ModFootnoteChanges = (function () {
             this.updating = true;
             var footnoteContents = (0, _format.toHTML)(this.mod.fnPm.doc.child(index));
             var footnote = this.mod.footnotes[index];
-            var replacement = footnote.node.type.create({
-                contents: footnoteContents
-            }, null, footnote.node.styles);
-            var path = footnote.range.from.path,
-                start = footnote.range.from.offset,
-                end = footnote.range.to.offset;
-            this.mod.pm.tr.replaceWith(footnote.range.from, footnote.range.to, replacement).apply();
-            footnote.node = replacement;
-            footnote.range = this.mod.pm.markRange(new _model.Pos(path, start), new _model.Pos(path, end));
+            var node = this.mod.pm.doc.nodeAfter(footnote.from);
+            this.mod.pm.tr.setNodeType(footnote.from, node.type, { contents: footnoteContents }).apply();
             this.updating = false;
         }
     }, {
@@ -1274,14 +1267,15 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
                 var newFootnotes = that.findFootnotes(range.from, range.to);
                 if (newFootnotes.length > 0) {
                     (function () {
-                        var firstFootNoteStart = newFootnotes[0].range.from;
+                        var firstFootNoteStart = newFootnotes[0].from;
                         var index = 0;
-                        while (that.mod.footnotes.length > index && firstFootNoteStart.cmp(that.mod.footnotes[index].range.from) > 0) {
+                        while (that.mod.footnotes.length > index && firstFootNoteStart.cmp(that.mod.footnotes[index].from) > 0) {
                             index++;
                         }
                         newFootnotes.forEach(function (footnote) {
                             that.mod.footnotes.splice(index, 0, footnote);
-                            that.renderFootnote(footnote.node.attrs.contents, index);
+                            var node = that.mod.pm.doc.nodeAfter(footnote.from);
+                            that.renderFootnote(node.attrs.contents, index);
                             index++;
                         });
                     })();
@@ -1351,11 +1345,8 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
             this.mod.pm.doc.inlineNodesBetween(fromPos, toPos, function (inlineNode, path, start, end, parent) {
                 if (inlineNode.type.name === 'footnote') {
                     (function () {
-                        var footnote = {
-                            node: inlineNode,
-                            range: that.mod.pm.markRange(new _model.Pos(path, start), new _model.Pos(path, end))
-                        };
-                        footnote.range.on('removed', function () {
+                        var footnote = that.mod.pm.markRange(new _model.Pos(path, start), new _model.Pos(path, end));
+                        footnote.on('removed', function () {
                             that.removeFootnote(footnote);
                         });
                         footnotes.push(footnote);
@@ -1383,14 +1374,11 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
                     passed = false;
                 } else {
                     var startPos = new _model.Pos(path, start);
-                    if (startPos.cmp(that.mod.footnotes[count].range.from) !== 0) {
+                    if (startPos.cmp(that.mod.footnotes[count].from) !== 0) {
                         passed = false;
                     }
                     var endPos = new _model.Pos(path, end);
-                    if (endPos.cmp(that.mod.footnotes[count].range.to) !== 0) {
-                        passed = false;
-                    }
-                    if (that.mod.footnotes[count].node.attrs.contents !== inlineNode.attrs.contents) {
+                    if (endPos.cmp(that.mod.footnotes[count].to) !== 0) {
                         passed = false;
                     }
                 }
@@ -1413,11 +1401,10 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
     }, {
         key: "renderAllFootnotes",
         value: function renderAllFootnotes() {
-            var _this = this;
-
             if (this.checkFootnotes()) {
                 return false;
             }
+            var that = this;
             var footnotes = this.findFootnotes();
 
             this.mod.footnotes = footnotes;
@@ -1425,7 +1412,8 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
             console.log('redrawing all footnotes');
             this.mod.fnPm.setContent('', 'html');
             this.mod.footnotes.forEach(function (footnote, index) {
-                _this.renderFootnote(footnote.node.attrs.contents, index);
+                var node = that.mod.pm.doc.nodeAfter(footnote.from);
+                that.renderFootnote(node.attrs.contents, index);
             });
             this.mod.fnPm.setOption("collab", { version: 0 });
             this.mod.changes.bindEvents();
@@ -1491,7 +1479,7 @@ var _createClass = (function () { function defineProperties(target, props) { for
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.fidusFnSchema = exports.fidusSchema = exports.CommentMark = exports.Footnote = exports.Doc = undefined;
+exports.fidusFnSchema = exports.fidusSchema = exports.CommentMark = exports.Doc = undefined;
 
 var _model = require("prosemirror/dist/model");
 
@@ -1749,7 +1737,7 @@ DocumentContents.prototype.serializeDOM = function (node, serializer) {
   return serializer.renderAs(node, "div", { id: 'document-contents' });
 };
 
-var Footnote = exports.Footnote = (function (_Inline) {
+var Footnote = (function (_Inline) {
   _inherits(Footnote, _Inline);
 
   function Footnote() {

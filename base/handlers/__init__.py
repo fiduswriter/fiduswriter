@@ -72,5 +72,9 @@ class DjangoStaticFilesHandler(StaticFileHandler):
         self.set_header('Cache-Control', 'no-cache, must-revalidate')
         self.set_header('Expires', '0')
         now = datetime.now()
-        expiration = datetime(now.year - 1, now.month, now.day)
+        if now.month == 2 and now.day == 29:
+            # leap year
+            expiration = datetime(now.year - 1, 3, 1)
+        else:
+            expiration = datetime(now.year - 1, now.month, now.day)
         self.set_header('Last-Modified', expiration)

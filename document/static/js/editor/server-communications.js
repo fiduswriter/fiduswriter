@@ -18,6 +18,7 @@
             theEditor.waitingForDocument = false;
             theEditor.askForDocument();
         } else {
+            theEditor.editor.mod.footnotes.editor.renderAllFootnotes();
             theEditor.checkDiffVersion();
             serverCommunications.send({
                 type: 'participant_update'

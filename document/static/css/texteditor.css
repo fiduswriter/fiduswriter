@@ -234,6 +234,7 @@ div#statusarea .error {
 
 #document-editable {
     flex: 1 0 auto;
+    max-width: 60vw;
 }
 
 

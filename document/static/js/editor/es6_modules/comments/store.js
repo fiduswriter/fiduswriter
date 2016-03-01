@@ -6,7 +6,7 @@ import {eventMixin} from "prosemirror/dist/util/event"
 import {Transform} from "prosemirror/dist/transform"
 import {Pos} from "prosemirror/dist/model"
 import {CommentMark} from "../schema"
-import {scheduleDOMUpdate} from "prosemirror/dist/ui/update"
+import {UpdateScheduler} from "prosemirror/dist/ui/update"
 
 class Comment {
   constructor(id, user, userName, userAvatar, date, comment, answers, isMajor) {
@@ -191,6 +191,7 @@ export class ModCommentStore {
   receive(events, version) {
     let that = this
     let updateCommentLayout = false
+    console.log(['comments update events',events])
     events.forEach(event => {
       if (event.type == "delete") {
         this.deleteLocalComment(event.id)
@@ -216,7 +217,10 @@ export class ModCommentStore {
       this.version++
     })
     if (updateCommentLayout) {
-      scheduleDOMUpdate(this.mod.pm, function(){that.mod.layout.layoutComments()})
+        let layoutComments = new UpdateScheduler(this.mod.pm, "flush", function(){
+            layoutComments.detach()
+            that.mod.layout.layoutComments()
+        })
     }
   }
 

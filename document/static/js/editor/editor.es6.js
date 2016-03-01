@@ -12,7 +12,7 @@ import {updateUI} from "./es6_modules/update-ui"
 import {ModComments} from "./es6_modules/comments/mod"
 import {ModFootnotes} from "./es6_modules/footnotes/mod"
 
-import {UpdateScheduler, scheduleDOMUpdate} from "prosemirror/dist/ui/update"
+import {UpdateScheduler} from "prosemirror/dist/ui/update"
 
 var theEditor = {}
 
@@ -330,7 +330,10 @@ theEditor.onTransform = function(transform) {
 
   if (updateBibliography) {
       // Recreate the bibliography on next flush.
-      scheduleDOMUpdate(theEditor.editor, citationHelpers.formatCitationsInDoc)
+      let formatCitations = new UpdateScheduler(this.mod.pm, "flush", function(){
+          formatCitations.detach()
+          citationHelpers.formatCitationsInDoc()
+      })
   }
 
 

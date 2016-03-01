@@ -144,15 +144,20 @@ export class ModCommentLayout {
             theComments: theComments
         }))
         this.layoutCommentsAvoidOverlap()
-        jQuery('#active-comment-style').html('')
+        let activeCommentStyle = ''
+        //jQuery('#active-comment-style').html('')
         let activeCommentWrapper = jQuery('.comment-box.active')
         if (0 < activeCommentWrapper.size()) {
             that.activeCommentId = activeCommentWrapper.attr('data-id')
-            jQuery('#active-comment-style').html(
-                '.comments-enabled .comment[data-id="' + that.activeCommentId + '"] {background-color: #fffacf;}')
+
+            activeCommentStyle = '.comments-enabled .comment[data-id="' + that.activeCommentId + '"] {background-color: #fffacf;}'
             activeCommentWrapper.find('.comment-answer-text').autoResize({
                 'extraSpace': 0
             })
+        }
+
+        if (jQuery('#active-comment-style').html() !=- activeCommentStyle) {
+            jQuery('#active-comment-style').html(activeCommentStyle)
         }
 
     }

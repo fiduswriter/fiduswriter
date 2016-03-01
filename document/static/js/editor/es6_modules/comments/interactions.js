@@ -1,6 +1,6 @@
 /* Functions related to user interactions with comments */
 
-import {scheduleDOMUpdate} from "prosemirror/dist/ui/update"
+import {UpdateScheduler} from "prosemirror/dist/ui/update"
 
 export class ModCommentInteractions {
     constructor(mod) {
@@ -82,7 +82,10 @@ export class ModCommentInteractions {
         this.mod.layout.deactivateAll()
         this.mod.layout.activeCommentId = id
         editorHelpers.documentHasChanged()
-        scheduleDOMUpdate(this.mod.pm, function(){that.mod.layout.layoutComments()})
+        let layoutComments = new UpdateScheduler(this.mod.pm, "flush", function(){
+            layoutComments.detach()
+            that.mod.layout.layoutComments()
+        })
     }
 
     deleteComment(id) {

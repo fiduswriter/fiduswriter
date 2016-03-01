@@ -330,6 +330,8 @@ theEditor.enableDiffSending = function () {
 
 // Things to be executed on every editor transform.
 theEditor.onTransform = function (transform) {
+    var _this = this;
+
     var updateBibliography = false;
     // Check what area is affected
     transform.steps.forEach(function (step, index) {
@@ -344,8 +346,13 @@ theEditor.onTransform = function (transform) {
     });
 
     if (updateBibliography) {
-        // Recreate the bibliography on next flush.
-        (0, _update.scheduleDOMUpdate)(theEditor.editor, citationHelpers.formatCitationsInDoc);
+        (function () {
+            // Recreate the bibliography on next flush.
+            var formatCitations = new _update.UpdateScheduler(_this.mod.pm, "flush", function () {
+                formatCitations.detach();
+                citationHelpers.formatCitationsInDoc();
+            });
+        })();
     }
 };
 
@@ -447,7 +454,8 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
             this.mod.layout.deactivateAll();
             this.mod.layout.activeCommentId = id;
             editorHelpers.documentHasChanged();
-            (0, _update.scheduleDOMUpdate)(this.mod.pm, function () {
+            var layoutComments = new _update.UpdateScheduler(this.mod.pm, "flush", function () {
+                layoutComments.detach();
                 that.mod.layout.layoutComments();
             });
         }
@@ -700,14 +708,20 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
                 theComments: theComments
             }));
             this.layoutCommentsAvoidOverlap();
-            jQuery('#active-comment-style').html('');
+            var activeCommentStyle = '';
+            //jQuery('#active-comment-style').html('')
             var activeCommentWrapper = jQuery('.comment-box.active');
             if (0 < activeCommentWrapper.size()) {
                 that.activeCommentId = activeCommentWrapper.attr('data-id');
-                jQuery('#active-comment-style').html('.comments-enabled .comment[data-id="' + that.activeCommentId + '"] {background-color: #fffacf;}');
+
+                activeCommentStyle = '.comments-enabled .comment[data-id="' + that.activeCommentId + '"] {background-color: #fffacf;}';
                 activeCommentWrapper.find('.comment-answer-text').autoResize({
                     'extraSpace': 0
                 });
+            }
+
+            if (jQuery('#active-comment-style').html() != -activeCommentStyle) {
+                jQuery('#active-comment-style').html(activeCommentStyle);
             }
         }
     }, {
@@ -1104,6 +1118,7 @@ var ModCommentStore = exports.ModCommentStore = (function () {
 
       var that = this;
       var updateCommentLayout = false;
+      console.log(['comments update events', events]);
       events.forEach(function (event) {
         if (event.type == "delete") {
           _this2.deleteLocalComment(event.id);
@@ -1129,9 +1144,12 @@ var ModCommentStore = exports.ModCommentStore = (function () {
         _this2.version++;
       });
       if (updateCommentLayout) {
-        (0, _update.scheduleDOMUpdate)(this.mod.pm, function () {
-          that.mod.layout.layoutComments();
-        });
+        (function () {
+          var layoutComments = new _update.UpdateScheduler(_this2.mod.pm, "flush", function () {
+            layoutComments.detach();
+            that.mod.layout.layoutComments();
+          });
+        })();
       }
     }
   }, {

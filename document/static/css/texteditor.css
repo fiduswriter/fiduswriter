@@ -229,12 +229,12 @@ div#statusarea .error {
     background-color: grey;
 }
 #paper-editable {
-    display: flex;
+    display: table;
+    width: 100%;
 }
 
 #document-editable {
-    flex: 1 0 auto;
-    max-width: 60vw;
+    display: table-cell;
 }
 
 

@@ -1,8 +1,7 @@
 /* Footnotes */
 #footnote-box-container {
-    /*position: relative;*/
+    display: table-cell;
     width: 20vw;
-  /*  float:right;*/
 }
 
 #footnote-box-container .footnote-container > *:first-child::before {

@@ -220,7 +220,19 @@ theEditor.rejectDiff = function (request_id) {
 }
 
 theEditor.applyDiff = function(diff) {
-    theEditor.editor.mod.collab.receive([diff].map(j => Step.fromJSON(fidusSchema, j)))
+    theEditor.editor.receiving = true
+    let steps = [diff].map(j => Step.fromJSON(fidusSchema, j))
+    let maps = theEditor.editor.mod.collab.receive(steps)
+    let unconfirmedMaps = theEditor.editor.mod.collab.unconfirmedMaps
+    maps = maps.concat(unconfirmedMaps)
+    unconfirmedMaps.forEach(function(map){
+        // We add pseudo steps for all the unconfirmed steps so that the
+        // unconfirmed maps will be applied when handling the transform
+        steps.push({type: 'unconfirmed'})
+    })
+    let transform = {steps,maps}
+    theEditor.editor.signal("receivedTransform", transform)
+    theEditor.editor.receiving = false
 }
 
 theEditor.updateComments = function(comments, comment_version) {

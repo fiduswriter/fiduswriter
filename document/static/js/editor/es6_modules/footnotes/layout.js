@@ -16,11 +16,11 @@ export class ModFootnoteLayout {
     bindEvents () {
       let that = this
       this.mod.pm.on('documentUpdated', function(){that.renderAllFootnotes()})
-      this.mod.pm.on('transform', function(transform, object){that.scanForFootnotes(transform)})
-
+      this.mod.pm.on('transform', function(transform, object){that.scanForFootnotes(transform, true)})
+      this.mod.pm.on('receivedTransform', function(transform, object){that.scanForFootnotes(transform, false)})
     }
 
-    scanForFootnotes(transform) {
+    scanForFootnotes(transform, renderFootnote) {
         let that = this
         if (this.mod.changes.updating) {
             return false
@@ -36,8 +36,10 @@ export class ModFootnoteLayout {
                 }
                 newFootnotes.forEach(function(footnote){
                     that.mod.footnotes.splice(index, 0, footnote)
-                    let node = that.mod.pm.doc.nodeAfter(footnote.from)
-                    that.renderFootnote(node.attrs.contents, index)
+                    if (renderFootnote) {
+                        let node = that.mod.pm.doc.nodeAfter(footnote.from)
+                        that.renderFootnote(node.attrs.contents, index)
+                    }
                     index++
                 })
             }
@@ -93,7 +95,9 @@ export class ModFootnoteLayout {
           index++
         }
         this.mod.footnotes.splice(index, 1)
-        this.mod.fnPm.tr.delete(new Pos([], index), new Pos([], index + 1)).apply()
+        if (!this.mod.pm.receiving) {
+            this.mod.fnPm.tr.delete(new Pos([], index), new Pos([], index + 1)).apply()
+        }
     }
 
     findFootnotes(fromPos, toPos) {

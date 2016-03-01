@@ -231,9 +231,21 @@ theEditor.rejectDiff = function (request_id) {
 };
 
 theEditor.applyDiff = function (diff) {
-    theEditor.editor.mod.collab.receive([diff].map(function (j) {
+    theEditor.editor.receiving = true;
+    var steps = [diff].map(function (j) {
         return _transform.Step.fromJSON(_schema.fidusSchema, j);
-    }));
+    });
+    var maps = theEditor.editor.mod.collab.receive(steps);
+    var unconfirmedMaps = theEditor.editor.mod.collab.unconfirmedMaps;
+    maps = maps.concat(unconfirmedMaps);
+    unconfirmedMaps.forEach(function (map) {
+        // We add pseudo steps for all the unconfirmed steps so that the
+        // unconfirmed maps will be applied when handling the transform
+        steps.push({ type: 'unconfirmed' });
+    });
+    var transform = { steps: steps, maps: maps };
+    theEditor.editor.signal("receivedTransform", transform);
+    theEditor.editor.receiving = false;
 };
 
 theEditor.updateComments = function (comments, comment_version) {
@@ -1183,9 +1195,12 @@ var ModFootnoteChanges = exports.ModFootnoteChanges = (function () {
             var that = this;
 
             this.mod.fnPm.mod.collab.on("mustSend", function () {
+                console.log('footnote update');
                 var length = that.mod.fnPm.mod.collab.unconfirmedSteps.length;
                 var lastStep = that.mod.fnPm.mod.collab.unconfirmedSteps[length - 1];
                 if (lastStep.from && lastStep.from.path && lastStep.from.path.length > 0) {
+                    // We find the num,ber of the last footnote that was updated by
+                    // looking at the last step and seeing what path that change referred to.
                     var updatedFootnote = lastStep.from.path[0];
                     that.updateFootnote(updatedFootnote);
                 } else {
@@ -1252,12 +1267,15 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
                 that.renderAllFootnotes();
             });
             this.mod.pm.on('transform', function (transform, object) {
-                that.scanForFootnotes(transform);
+                that.scanForFootnotes(transform, true);
+            });
+            this.mod.pm.on('receivedTransform', function (transform, object) {
+                that.scanForFootnotes(transform, false);
             });
         }
     }, {
         key: "scanForFootnotes",
-        value: function scanForFootnotes(transform) {
+        value: function scanForFootnotes(transform, renderFootnote) {
             var that = this;
             if (this.mod.changes.updating) {
                 return false;
@@ -1274,8 +1292,10 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
                         }
                         newFootnotes.forEach(function (footnote) {
                             that.mod.footnotes.splice(index, 0, footnote);
-                            var node = that.mod.pm.doc.nodeAfter(footnote.from);
-                            that.renderFootnote(node.attrs.contents, index);
+                            if (renderFootnote) {
+                                var node = that.mod.pm.doc.nodeAfter(footnote.from);
+                                that.renderFootnote(node.attrs.contents, index);
+                            }
                             index++;
                         });
                     })();
@@ -1334,7 +1354,9 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
                 index++;
             }
             this.mod.footnotes.splice(index, 1);
-            this.mod.fnPm.tr.delete(new _model.Pos([], index), new _model.Pos([], index + 1)).apply();
+            if (!this.mod.pm.receiving) {
+                this.mod.fnPm.tr.delete(new _model.Pos([], index), new _model.Pos([], index + 1)).apply();
+            }
         }
     }, {
         key: "findFootnotes",

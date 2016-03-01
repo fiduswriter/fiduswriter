@@ -18,9 +18,12 @@ export class ModFootnoteChanges {
       let that = this
 
       this.mod.fnPm.mod.collab.on("mustSend", function() {
+          console.log('footnote update')
           let length = that.mod.fnPm.mod.collab.unconfirmedSteps.length
           let lastStep = that.mod.fnPm.mod.collab.unconfirmedSteps[length -1]
           if (lastStep.from && lastStep.from.path && lastStep.from.path.length > 0) {
+              // We find the num,ber of the last footnote that was updated by
+              // looking at the last step and seeing what path that change referred to.
               let updatedFootnote = lastStep.from.path[0]
               that.updateFootnote(updatedFootnote)
           } else {

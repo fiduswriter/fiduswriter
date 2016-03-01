@@ -102,7 +102,7 @@
               })
             }
             if (data.footnote_diff && data.footnote_diff.length) {
-                theEditor.editor.mod.footnotes.changes.applyDiffs(data.footnote_diff);
+                theEditor.editor.mod.footnotes.editor.applyDiffs(data.footnote_diff);
             }
             if (data.reject_request_id) {
                 theEditor.rejectDiff(data.reject_request_id);
@@ -114,7 +114,7 @@
                 // Because the uypdate came directly from the sevrer, we may
                 // also have lost some collab updates to the footnote table.
                 // Re-render the footnote table if needed.
-                theEditor.editor.mod.footnotes.layout.renderAllFootnotes();
+                theEditor.editor.mod.footnotes.editor.renderAllFootnotes();
             }
             break;
         case 'confirm_diff':

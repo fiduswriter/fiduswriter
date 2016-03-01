@@ -2,8 +2,8 @@ import {ProseMirror} from "prosemirror/dist/edit/main"
 import {fidusFnSchema} from "../schema"
 import "prosemirror/dist/collab"
 
-import {ModFootnoteLayout} from "./layout"
-import {ModFootnoteChanges} from "./changes"
+import {ModFootnoteEditor} from "./editor"
+import {ModFootnoteMarkers} from "./markers"
 
 export class ModFootnotes {
   constructor(pm) {
@@ -11,8 +11,8 @@ export class ModFootnotes {
     this.pm = pm
     this.init()
     this.footnotes = []
-    new ModFootnoteChanges(this)
-    new ModFootnoteLayout(this)
+    new ModFootnoteEditor(this)
+    new ModFootnoteMarkers(this)
   }
 
   init() {

@@ -1,33 +1,33 @@
-
-import {fromHTML} from "prosemirror/dist/format"
 import {Pos} from "prosemirror/dist/model"
-
+import {fromHTML, toHTML} from "prosemirror/dist/format"
 import {fidusFnSchema} from "../schema"
 
 
-/* Functions related to layouting of footnotes */
-export class ModFootnoteLayout {
+/* Functions related to footnote markers in the main editor */
+export class ModFootnoteMarkers {
     constructor(mod) {
-        mod.layout = this
+        mod.markers = this
         this.mod = mod
+
+        this.updating = false
         this.bindEvents()
     }
 
     bindEvents () {
       let that = this
-      this.mod.pm.on('documentUpdated', function(){that.renderAllFootnotes()})
-      this.mod.pm.on('transform', function(transform, object){that.scanForFootnotes(transform, true)})
-      this.mod.pm.on('receivedTransform', function(transform, object){that.scanForFootnotes(transform, false)})
+      this.mod.pm.on('documentUpdated', function(){that.mod.editor.renderAllFootnotes()})
+      this.mod.pm.on('transform', function(transform, object){that.scanForFootnoteMarkers(transform, true)})
+      this.mod.pm.on('receivedTransform', function(transform, object){that.scanForFootnoteMarkers(transform, false)})
     }
 
-    scanForFootnotes(transform, renderFootnote) {
+    scanForFootnoteMarkers(transform, renderFootnote) {
         let that = this
-        if (this.mod.changes.updating) {
+        if (this.updating) {
             return false
         }
-        let ranges = this.replacedRanges(transform)
+        let ranges = this.getAddedRanges(transform)
         ranges.forEach(function(range) {
-            let newFootnotes = that.findFootnotes(range.from, range.to)
+            let newFootnotes = that.findFootnoteMarkers(range.from, range.to)
             if (newFootnotes.length > 0) {
                 let firstFootNoteStart = newFootnotes[0].from
                 let index = 0
@@ -38,7 +38,7 @@ export class ModFootnoteLayout {
                     that.mod.footnotes.splice(index, 0, footnote)
                     if (renderFootnote) {
                         let node = that.mod.pm.doc.nodeAfter(footnote.from)
-                        that.renderFootnote(node.attrs.contents, index)
+                        that.mod.editor.renderFootnote(node.attrs.contents, index)
                     }
                     index++
                 })
@@ -47,7 +47,7 @@ export class ModFootnoteLayout {
 
     }
 
-    replacedRanges(transform) {
+    getAddedRanges(transform) {
         let ranges = []
         for (let i = 0; i < transform.steps.length; i++) {
             let step = transform.steps[i], map = transform.maps[i]
@@ -86,39 +86,26 @@ export class ModFootnoteLayout {
         return ranges
     }
 
-    removeFootnote(footnote) {
-        if (this.mod.changes.updating) {
-            return false
-        }
-        let index = 0
-        while(footnote != this.mod.footnotes[index] && this.mod.footnotes.length > index) {
-          index++
-        }
-        this.mod.footnotes.splice(index, 1)
-        if (!this.mod.pm.receiving) {
-            this.mod.fnPm.tr.delete(new Pos([], index), new Pos([], index + 1)).apply()
-        }
-    }
 
-    findFootnotes(fromPos, toPos) {
-        let footnotes = [], that = this
+
+    findFootnoteMarkers(fromPos, toPos) {
+        let footnoteMarkers = [], that = this
 
         this.mod.pm.doc.inlineNodesBetween(fromPos, toPos, function(inlineNode, path, start, end, parent) {
             if (inlineNode.type.name === 'footnote') {
-                let footnote = that.mod.pm.markRange(new Pos(path, start), new Pos(path, end))
-                footnote.on('removed', function(){that.removeFootnote(footnote)})
-                footnotes.push(footnote)
+                let footnoteMarker = that.mod.pm.markRange(new Pos(path, start), new Pos(path, end))
+                footnoteMarker.on('removed', function(){that.mod.editor.removeFootnote(footnoteMarker)})
+                footnoteMarkers.push(footnoteMarker)
 
 
             }
         })
-
-        return footnotes
+        return footnoteMarkers
     }
 
     // Checks if the footnotes as we have them in the list of footnotes
     // corresponds to the footnotes as they can be found in the document.
-    checkFootnotes() {
+    checkFootnoteMarkers() {
         let count = 0, passed = true, that = this
         this.mod.pm.doc.inlineNodesBetween(null, null, function(inlineNode, path, start, end, parent) {
             if (inlineNode.type.name !== 'footnote') {
@@ -144,29 +131,12 @@ export class ModFootnoteLayout {
         return passed
     }
 
-    renderFootnote(contents, index = 0) {
-        let footnoteHTML = "<div class='footnote-container'>" + contents + "</div>"
-        let node = fromHTML(fidusFnSchema, footnoteHTML, {preserveWhitespace: true}).firstChild
-        this.mod.fnPm.tr.insert(new Pos([], index), node).apply()
+    updateFootnoteMarker(index) {
+        this.updating = true
+        let footnoteContents = toHTML(this.mod.fnPm.doc.child(index))
+        let footnote = this.mod.footnotes[index]
+        let node = this.mod.pm.doc.nodeAfter(footnote.from)
+        this.mod.pm.tr.setNodeType(footnote.from, node.type, {contents: footnoteContents}).apply()
+        this.updating = false
     }
-
-    renderAllFootnotes() {
-        if (this.checkFootnotes()) {
-            return false
-        }
-        let that = this
-        let footnotes = this.findFootnotes()
-
-        this.mod.footnotes = footnotes
-        this.mod.fnPm.setOption("collab", null)
-        console.log('redrawing all footnotes')
-        this.mod.fnPm.setContent('','html')
-        this.mod.footnotes.forEach((footnote, index) => {
-            let node = that.mod.pm.doc.nodeAfter(footnote.from)
-            that.renderFootnote(node.attrs.contents, index)
-        })
-        this.mod.fnPm.setOption("collab", {version: 0})
-        this.mod.changes.bindEvents()
-    }
-
 }

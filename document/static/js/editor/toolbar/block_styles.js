@@ -12,18 +12,18 @@ jQuery(document).on('mousedown', '.toolbarheadings label', function (event) {
     },
     theCommand = commands[this.id.split('_')[0]];
 
-    theEditor.editor.execCommand(theCommand);
+    theEditor.pm.execCommand(theCommand);
 
 });
 
 jQuery(document).on('mousedown', '#button-ol', function (event) {
-    theEditor.editor.execCommand('ordered_list:wrap');
+    theEditor.pm.execCommand('ordered_list:wrap');
 });
 
 jQuery(document).on('mousedown', '#button-ul', function (event) {
-    theEditor.editor.execCommand('bullet_list:wrap');
+    theEditor.pm.execCommand('bullet_list:wrap');
 });
 
 jQuery(document).on('mousedown', '#button-blockquote', function (event) {
-    theEditor.editor.execCommand('blockquote:wrap');
+    theEditor.pm.execCommand('blockquote:wrap');
 });

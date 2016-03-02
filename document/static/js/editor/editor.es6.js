@@ -30,16 +30,16 @@ export class Editor {
 
     init() {
         let that = this
-        this.editor = this.makeEditor(document.getElementById('document-editable'))
-        new ModFootnotes(this.editor)
-        new UpdateScheduler(this.editor, "selectionChange change activeMarkChange blur focus setDoc", function() {
-            updateUI(that.editor)
+        this.pm = this.makeEditor(document.getElementById('document-editable'))
+        new ModFootnotes(this.pm)
+        new UpdateScheduler(this.pm, "selectionChange change activeMarkChange blur focus setDoc", function() {
+            updateUI(that.pm)
         })
-        this.editor.on("change", editorHelpers.documentHasChanged)
-        this.editor.on("transform", (transform, options) => that.onTransform(transform, options))
-        new UpdateScheduler(this.editor, "flush setDoc", mathHelpers.layoutEmptyEquationNodes)
-        new UpdateScheduler(this.editor, "flush setDoc", mathHelpers.layoutEmptyDisplayEquationNodes)
-        new UpdateScheduler(this.editor, "flush setDoc", citationHelpers.formatCitationsInDocIfNew)
+        this.pm.on("change", editorHelpers.documentHasChanged)
+        this.pm.on("transform", (transform, options) => that.onTransform(transform, options))
+        new UpdateScheduler(this.pm, "flush setDoc", mathHelpers.layoutEmptyEquationNodes)
+        new UpdateScheduler(this.pm, "flush setDoc", mathHelpers.layoutEmptyDisplayEquationNodes)
+        new UpdateScheduler(this.pm, "flush setDoc", citationHelpers.formatCitationsInDocIfNew)
     }
 
     makeEditor(where) {
@@ -94,9 +94,9 @@ export class Editor {
         let theDocument = window.theDocument
         let theDocumentValues = window.theDocumentValues
         let doc = this.createDoc(theDocument)
-        this.editor.setOption("collab", null)
-        this.editor.setContent(doc)
-        this.editor.setOption("collab", {
+        this.pm.setOption("collab", null)
+        this.pm.setContent(doc)
+        this.pm.setOption("collab", {
             version: theDocument.version
         })
         while (theDocumentValues.last_diffs.length > 0) {
@@ -104,17 +104,17 @@ export class Editor {
             this.applyDiff(diff)
         }
         theDocument.hash = this.getHash()
-        this.editor.mod.collab.on("mustSend", function() {
+        this.pm.mod.collab.on("mustSend", function() {
             that.sendToCollaborators()
         })
-        this.editor.signal("documentUpdated")
-        new ModComments(this.editor, theDocument.comment_version)
+        this.pm.signal("documentUpdated")
+        new ModComments(this.pm, theDocument.comment_version)
         _.each(theDocument.comments, function(comment) {
-            this.editor.mod.comments.store.addLocalComment(comment.id, comment.user,
+            this.pm.mod.comments.store.addLocalComment(comment.id, comment.user,
                 comment.userName, comment.userAvatar, comment.date, comment.comment,
                 comment.answers, comment['review:isMajor'])
         })
-        this.editor.mod.comments.store.on("mustSend", function() {
+        this.pm.mod.comments.store.on("mustSend", function() {
             that.sendToCollaborators()
         })
         this.enableUI()
@@ -168,10 +168,10 @@ export class Editor {
 
 
     getUpdates(callback) {
-        let outputNode = nodeConverter.editorToModelNode(serializeTo(this.editor.mod.collab.versionDoc, 'dom'))
+        let outputNode = nodeConverter.editorToModelNode(serializeTo(this.pm.mod.collab.versionDoc, 'dom'))
         let theDocument = window.theDocument
-        theDocument.title = this.editor.mod.collab.versionDoc.firstChild.textContent
-        theDocument.version = this.editor.mod.collab.version
+        theDocument.title = this.pm.mod.collab.versionDoc.firstChild.textContent
+        theDocument.version = this.pm.mod.collab.version
         theDocument.metadata.title = exporter.node2Obj(outputNode.getElementById('document-title'))
         theDocument.metadata.subtitle = exporter.node2Obj(outputNode.getElementById('metadata-subtitle'))
         theDocument.metadata.authors = exporter.node2Obj(outputNode.getElementById('metadata-authors'))
@@ -179,7 +179,7 @@ export class Editor {
         theDocument.metadata.keywords = exporter.node2Obj(outputNode.getElementById('metadata-keywords'))
         theDocument.contents = exporter.node2Obj(outputNode.getElementById('document-contents'))
         theDocument.hash = this.getHash()
-        theDocument.comments = this.editor.mod.comments.store.comments
+        theDocument.comments = this.pm.mod.comments.store.comments
         if (callback) {
             callback()
         }
@@ -187,23 +187,23 @@ export class Editor {
 
     sendToCollaborators() {
         if (this.awaitingDiffResponse ||
-            !this.editor.mod.collab.hasSendableSteps() &&
-            this.editor.mod.comments.store.unsentEvents().length === 0) {
+            !this.pm.mod.collab.hasSendableSteps() &&
+            this.pm.mod.comments.store.unsentEvents().length === 0) {
             // We are waiting for the confirmation of previous steps, so don't
             // send anything now, or there is nothing to send.
             return
         }
         console.log('send to collabs')
-        let toSend = this.editor.mod.collab.sendableSteps()
-        let fnToSend = this.editor.mod.footnotes.fnPm.mod.collab.sendableSteps()
+        let toSend = this.pm.mod.collab.sendableSteps()
+        let fnToSend = this.pm.mod.footnotes.fnPm.mod.collab.sendableSteps()
         let request_id = this.confirmStepsRequestCounter++
             let aPackage = {
                 type: 'diff',
-                diff_version: this.editor.mod.collab.version,
+                diff_version: this.pm.mod.collab.version,
                 diff: toSend.steps.map(s => s.toJSON()),
                 footnote_diff: fnToSend.steps.map(s => s.toJSON()),
-                comments: this.editor.mod.comments.store.unsentEvents(),
-                comment_version: this.editor.mod.comments.store.version,
+                comments: this.pm.mod.comments.store.unsentEvents(),
+                comment_version: this.pm.mod.comments.store.version,
                 request_id: request_id,
                 hash: this.getHash()
             }
@@ -211,7 +211,7 @@ export class Editor {
         this.unconfirmedSteps[request_id] = {
             diffs: toSend,
             footnote_diffs: fnToSend,
-            comments: this.editor.mod.comments.store.hasUnsentEvents()
+            comments: this.pm.mod.comments.store.hasUnsentEvents()
         }
         this.disableDiffSending()
     }
@@ -219,13 +219,13 @@ export class Editor {
     confirmDiff(request_id) {
         console.log('confirming steps')
         let sentSteps = this.unconfirmedSteps[request_id]["diffs"]
-        this.editor.mod.collab.confirmSteps(sentSteps)
+        this.pm.mod.collab.confirmSteps(sentSteps)
 
         let sentFnSteps = this.unconfirmedSteps[request_id]["footnote_diffs"]
-        this.editor.mod.footnotes.fnPm.mod.collab.confirmSteps(sentFnSteps)
+        this.pm.mod.footnotes.fnPm.mod.collab.confirmSteps(sentFnSteps)
 
         let sentComments = this.unconfirmedSteps[request_id]["comments"]
-        this.editor.mod.comments.store.eventsSent(sentComments)
+        this.pm.mod.comments.store.eventsSent(sentComments)
 
         delete this.unconfirmedSteps[request_id]
         this.enableDiffSending()
@@ -239,10 +239,10 @@ export class Editor {
     }
 
     applyDiff(diff) {
-        this.editor.receiving = true
+        this.pm.receiving = true
         let steps = [diff].map(j => Step.fromJSON(fidusSchema, j))
-        let maps = this.editor.mod.collab.receive(steps)
-        let unconfirmedMaps = this.editor.mod.collab.unconfirmedMaps
+        let maps = this.pm.mod.collab.receive(steps)
+        let unconfirmedMaps = this.pm.mod.collab.unconfirmedMaps
         maps = maps.concat(unconfirmedMaps)
         unconfirmedMaps.forEach(function(map) {
             // We add pseudo steps for all the unconfirmed steps so that the
@@ -255,17 +255,17 @@ export class Editor {
             steps,
             maps
         }
-        this.editor.signal("receivedTransform", transform)
-        this.editor.receiving = false
+        this.pm.signal("receivedTransform", transform)
+        this.pm.receiving = false
     }
 
     updateComments(comments, comment_version) {
         console.log('receiving comment update')
-        this.editor.mod.comments.store.receive(comments, comment_version)
+        this.pm.mod.comments.store.receive(comments, comment_version)
     }
 
     getHash() {
-        let string = JSON.stringify(this.editor.mod.collab.versionDoc)
+        let string = JSON.stringify(this.pm.mod.collab.versionDoc)
         let len = string.length
         var hash = 0,
             char, i
@@ -279,7 +279,7 @@ export class Editor {
     }
     checkHash(version, hash) {
         console.log('Verifying hash')
-        if (version === this.editor.mod.collab.version) {
+        if (version === this.pm.mod.collab.version) {
             if (hash === this.getHash()) {
                 console.log('Hash could be verified')
                 return true
@@ -313,7 +313,7 @@ export class Editor {
         }
         serverCommunications.send({
             type: 'check_diff_version',
-            diff_version: this.editor.mod.collab.version
+            diff_version: this.pm.mod.collab.version
         })
     }
 
@@ -351,7 +351,7 @@ export class Editor {
 
         if (updateBibliography) {
             // Recreate the bibliography on next flush.
-            let formatCitations = new UpdateScheduler(this.editor, "flush", function() {
+            let formatCitations = new UpdateScheduler(this.pm, "flush", function() {
                 formatCitations.detach()
                 citationHelpers.formatCitationsInDoc()
             })

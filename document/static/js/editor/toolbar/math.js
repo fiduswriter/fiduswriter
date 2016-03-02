@@ -6,7 +6,7 @@ jQuery(document).on('mousedown', '#button-math:not(.disabled), .equation', funct
         submitMessage = gettext('Insert'),
         insideMath = false,
         equation = 'x=2*y',
-        node = theEditor.editor.selection.node;
+        node = theEditor.pm.selection.node;
 
     event.preventDefault();
 
@@ -35,7 +35,7 @@ jQuery(document).on('mousedown', '#button-math:not(.disabled), .equation', funct
             if ((new RegExp(/^\s*$/)).test(equation)) {
                 // The math input is empty. Delete a math node if it exist. Then close the dialog.
                 if (insideMath) {
-                    theEditor.editor.execCommand('deleteSelection');
+                    theEditor.pm.execCommand('deleteSelection');
                 }
                 dialog.dialog('close');
                 return;
@@ -44,7 +44,7 @@ jQuery(document).on('mousedown', '#button-math:not(.disabled), .equation', funct
                 return;
             }
 
-            theEditor.editor.execCommand('equation:insert', [equation]);
+            theEditor.pm.execCommand('equation:insert', [equation]);
 
             dialog.dialog('close');
         }

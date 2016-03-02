@@ -2090,7 +2090,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
     bibliographyHelpers.initiate = function () {
 
         bibliographyHelpers.getBibDB(function () {
-            if (window.hasOwnProperty('theDocument') && theEditor.editor) {
+            if (window.hasOwnProperty('theDocument') && theEditor.pm) {
                 citationHelpers.formatCitationsInDoc();
             }
             jQuery(document).trigger("bibliography_ready");

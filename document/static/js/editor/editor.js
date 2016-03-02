@@ -52,18 +52,18 @@ var Editor = exports.Editor = (function () {
         key: "init",
         value: function init() {
             var that = this;
-            this.editor = this.makeEditor(document.getElementById('document-editable'));
-            new _mod2.ModFootnotes(this.editor);
-            new _update.UpdateScheduler(this.editor, "selectionChange change activeMarkChange blur focus setDoc", function () {
-                (0, _updateUi.updateUI)(that.editor);
+            this.pm = this.makeEditor(document.getElementById('document-editable'));
+            new _mod2.ModFootnotes(this.pm);
+            new _update.UpdateScheduler(this.pm, "selectionChange change activeMarkChange blur focus setDoc", function () {
+                (0, _updateUi.updateUI)(that.pm);
             });
-            this.editor.on("change", editorHelpers.documentHasChanged);
-            this.editor.on("transform", function (transform, options) {
+            this.pm.on("change", editorHelpers.documentHasChanged);
+            this.pm.on("transform", function (transform, options) {
                 return that.onTransform(transform, options);
             });
-            new _update.UpdateScheduler(this.editor, "flush setDoc", mathHelpers.layoutEmptyEquationNodes);
-            new _update.UpdateScheduler(this.editor, "flush setDoc", mathHelpers.layoutEmptyDisplayEquationNodes);
-            new _update.UpdateScheduler(this.editor, "flush setDoc", citationHelpers.formatCitationsInDocIfNew);
+            new _update.UpdateScheduler(this.pm, "flush setDoc", mathHelpers.layoutEmptyEquationNodes);
+            new _update.UpdateScheduler(this.pm, "flush setDoc", mathHelpers.layoutEmptyDisplayEquationNodes);
+            new _update.UpdateScheduler(this.pm, "flush setDoc", citationHelpers.formatCitationsInDocIfNew);
         }
     }, {
         key: "makeEditor",
@@ -72,7 +72,9 @@ var Editor = exports.Editor = (function () {
                 place: where,
                 schema: _schema.fidusSchema,
                 //    menuBar: true,
-                collab: { version: 0 }
+                collab: {
+                    version: 0
+                }
             });
         }
     }, {
@@ -119,23 +121,25 @@ var Editor = exports.Editor = (function () {
             var theDocument = window.theDocument;
             var theDocumentValues = window.theDocumentValues;
             var doc = this.createDoc(theDocument);
-            this.editor.setOption("collab", null);
-            this.editor.setContent(doc);
-            this.editor.setOption("collab", { version: theDocument.version });
+            this.pm.setOption("collab", null);
+            this.pm.setContent(doc);
+            this.pm.setOption("collab", {
+                version: theDocument.version
+            });
             while (theDocumentValues.last_diffs.length > 0) {
                 var diff = theDocumentValues.last_diffs.shift();
                 this.applyDiff(diff);
             }
             theDocument.hash = this.getHash();
-            this.editor.mod.collab.on("mustSend", function () {
+            this.pm.mod.collab.on("mustSend", function () {
                 that.sendToCollaborators();
             });
-            this.editor.signal("documentUpdated");
-            new _mod.ModComments(this.editor, theDocument.comment_version);
+            this.pm.signal("documentUpdated");
+            new _mod.ModComments(this.pm, theDocument.comment_version);
             _.each(theDocument.comments, function (comment) {
-                this.editor.mod.comments.store.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers, comment['review:isMajor']);
+                this.pm.mod.comments.store.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers, comment['review:isMajor']);
             });
-            this.editor.mod.comments.store.on("mustSend", function () {
+            this.pm.mod.comments.store.on("mustSend", function () {
                 that.sendToCollaborators();
             });
             this.enableUI();
@@ -188,10 +192,10 @@ var Editor = exports.Editor = (function () {
     }, {
         key: "getUpdates",
         value: function getUpdates(callback) {
-            var outputNode = nodeConverter.editorToModelNode((0, _format.serializeTo)(this.editor.mod.collab.versionDoc, 'dom'));
+            var outputNode = nodeConverter.editorToModelNode((0, _format.serializeTo)(this.pm.mod.collab.versionDoc, 'dom'));
             var theDocument = window.theDocument;
-            theDocument.title = this.editor.mod.collab.versionDoc.firstChild.textContent;
-            theDocument.version = this.editor.mod.collab.version;
+            theDocument.title = this.pm.mod.collab.versionDoc.firstChild.textContent;
+            theDocument.version = this.pm.mod.collab.version;
             theDocument.metadata.title = exporter.node2Obj(outputNode.getElementById('document-title'));
             theDocument.metadata.subtitle = exporter.node2Obj(outputNode.getElementById('metadata-subtitle'));
             theDocument.metadata.authors = exporter.node2Obj(outputNode.getElementById('metadata-authors'));
@@ -199,7 +203,7 @@ var Editor = exports.Editor = (function () {
             theDocument.metadata.keywords = exporter.node2Obj(outputNode.getElementById('metadata-keywords'));
             theDocument.contents = exporter.node2Obj(outputNode.getElementById('document-contents'));
             theDocument.hash = this.getHash();
-            theDocument.comments = this.editor.mod.comments.store.comments;
+            theDocument.comments = this.pm.mod.comments.store.comments;
             if (callback) {
                 callback();
             }
@@ -207,26 +211,26 @@ var Editor = exports.Editor = (function () {
     }, {
         key: "sendToCollaborators",
         value: function sendToCollaborators() {
-            if (this.awaitingDiffResponse || !this.editor.mod.collab.hasSendableSteps() && this.editor.mod.comments.store.unsentEvents().length === 0) {
+            if (this.awaitingDiffResponse || !this.pm.mod.collab.hasSendableSteps() && this.pm.mod.comments.store.unsentEvents().length === 0) {
                 // We are waiting for the confirmation of previous steps, so don't
                 // send anything now, or there is nothing to send.
                 return;
             }
             console.log('send to collabs');
-            var toSend = this.editor.mod.collab.sendableSteps();
-            var fnToSend = this.editor.mod.footnotes.fnPm.mod.collab.sendableSteps();
+            var toSend = this.pm.mod.collab.sendableSteps();
+            var fnToSend = this.pm.mod.footnotes.fnPm.mod.collab.sendableSteps();
             var request_id = this.confirmStepsRequestCounter++;
             var aPackage = {
                 type: 'diff',
-                diff_version: this.editor.mod.collab.version,
+                diff_version: this.pm.mod.collab.version,
                 diff: toSend.steps.map(function (s) {
                     return s.toJSON();
                 }),
                 footnote_diff: fnToSend.steps.map(function (s) {
                     return s.toJSON();
                 }),
-                comments: this.editor.mod.comments.store.unsentEvents(),
-                comment_version: this.editor.mod.comments.store.version,
+                comments: this.pm.mod.comments.store.unsentEvents(),
+                comment_version: this.pm.mod.comments.store.version,
                 request_id: request_id,
                 hash: this.getHash()
             };
@@ -234,7 +238,7 @@ var Editor = exports.Editor = (function () {
             this.unconfirmedSteps[request_id] = {
                 diffs: toSend,
                 footnote_diffs: fnToSend,
-                comments: this.editor.mod.comments.store.hasUnsentEvents()
+                comments: this.pm.mod.comments.store.hasUnsentEvents()
             };
             this.disableDiffSending();
         }
@@ -243,13 +247,13 @@ var Editor = exports.Editor = (function () {
         value: function confirmDiff(request_id) {
             console.log('confirming steps');
             var sentSteps = this.unconfirmedSteps[request_id]["diffs"];
-            this.editor.mod.collab.confirmSteps(sentSteps);
+            this.pm.mod.collab.confirmSteps(sentSteps);
 
             var sentFnSteps = this.unconfirmedSteps[request_id]["footnote_diffs"];
-            this.editor.mod.footnotes.fnPm.mod.collab.confirmSteps(sentFnSteps);
+            this.pm.mod.footnotes.fnPm.mod.collab.confirmSteps(sentFnSteps);
 
             var sentComments = this.unconfirmedSteps[request_id]["comments"];
-            this.editor.mod.comments.store.eventsSent(sentComments);
+            this.pm.mod.comments.store.eventsSent(sentComments);
 
             delete this.unconfirmedSteps[request_id];
             this.enableDiffSending();
@@ -265,32 +269,37 @@ var Editor = exports.Editor = (function () {
     }, {
         key: "applyDiff",
         value: function applyDiff(diff) {
-            this.editor.receiving = true;
+            this.pm.receiving = true;
             var steps = [diff].map(function (j) {
                 return _transform.Step.fromJSON(_schema.fidusSchema, j);
             });
-            var maps = this.editor.mod.collab.receive(steps);
-            var unconfirmedMaps = this.editor.mod.collab.unconfirmedMaps;
+            var maps = this.pm.mod.collab.receive(steps);
+            var unconfirmedMaps = this.pm.mod.collab.unconfirmedMaps;
             maps = maps.concat(unconfirmedMaps);
             unconfirmedMaps.forEach(function (map) {
                 // We add pseudo steps for all the unconfirmed steps so that the
                 // unconfirmed maps will be applied when handling the transform
-                steps.push({ type: 'unconfirmed' });
+                steps.push({
+                    type: 'unconfirmed'
+                });
             });
-            var transform = { steps: steps, maps: maps };
-            this.editor.signal("receivedTransform", transform);
-            this.editor.receiving = false;
+            var transform = {
+                steps: steps,
+                maps: maps
+            };
+            this.pm.signal("receivedTransform", transform);
+            this.pm.receiving = false;
         }
     }, {
         key: "updateComments",
         value: function updateComments(comments, comment_version) {
             console.log('receiving comment update');
-            this.editor.mod.comments.store.receive(comments, comment_version);
+            this.pm.mod.comments.store.receive(comments, comment_version);
         }
     }, {
         key: "getHash",
         value: function getHash() {
-            var string = JSON.stringify(this.editor.mod.collab.versionDoc);
+            var string = JSON.stringify(this.pm.mod.collab.versionDoc);
             var len = string.length;
             var hash = 0,
                 char,
@@ -307,7 +316,7 @@ var Editor = exports.Editor = (function () {
         key: "checkHash",
         value: function checkHash(version, hash) {
             console.log('Verifying hash');
-            if (version === this.editor.mod.collab.version) {
+            if (version === this.pm.mod.collab.version) {
                 if (hash === this.getHash()) {
                     console.log('Hash could be verified');
                     return true;
@@ -343,7 +352,7 @@ var Editor = exports.Editor = (function () {
             }
             serverCommunications.send({
                 type: 'check_diff_version',
-                diff_version: this.editor.mod.collab.version
+                diff_version: this.pm.mod.collab.version
             });
         }
     }, {
@@ -389,7 +398,7 @@ var Editor = exports.Editor = (function () {
             if (updateBibliography) {
                 (function () {
                     // Recreate the bibliography on next flush.
-                    var formatCitations = new _update.UpdateScheduler(_this.editor, "flush", function () {
+                    var formatCitations = new _update.UpdateScheduler(_this.pm, "flush", function () {
                         formatCitations.detach();
                         citationHelpers.formatCitationsInDoc();
                     });
@@ -888,7 +897,7 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 exports.ModComments = undefined;
 
@@ -901,13 +910,13 @@ var _interactions = require("./interactions");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var ModComments = exports.ModComments = function ModComments(pm, version) {
-  _classCallCheck(this, ModComments);
+    _classCallCheck(this, ModComments);
 
-  pm.mod.comments = this;
-  this.pm = pm;
-  new _store.ModCommentStore(this, version);
-  new _layout.ModCommentLayout(this);
-  new _interactions.ModCommentInteractions(this);
+    pm.mod.comments = this;
+    this.pm = pm;
+    new _store.ModCommentStore(this, version);
+    new _layout.ModCommentLayout(this);
+    new _interactions.ModCommentInteractions(this);
 };
 
 },{"./interactions":2,"./layout":3,"./store":5}],5:[function(require,module,exports){
@@ -916,7 +925,7 @@ var ModComments = exports.ModComments = function ModComments(pm, version) {
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 exports.ModCommentStore = undefined;
 
@@ -936,289 +945,332 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                                                                                                                                                           */
 
 var Comment = function Comment(id, user, userName, userAvatar, date, comment, answers, isMajor) {
-  _classCallCheck(this, Comment);
+    _classCallCheck(this, Comment);
 
-  this.id = id;
-  this.user = user;
-  this.userName = userName;
-  this.userAvatar = userAvatar;
-  this.date = date;
-  this.comment = comment;
-  this.answers = answers;
-  this['review:isMajor'] = isMajor;
+    this.id = id;
+    this.user = user;
+    this.userName = userName;
+    this.userAvatar = userAvatar;
+    this.date = date;
+    this.comment = comment;
+    this.answers = answers;
+    this['review:isMajor'] = isMajor;
 };
 
 var ModCommentStore = exports.ModCommentStore = (function () {
-  function ModCommentStore(mod, version) {
-    _classCallCheck(this, ModCommentStore);
+    function ModCommentStore(mod, version) {
+        _classCallCheck(this, ModCommentStore);
 
-    mod.store = this;
-    this.mod = mod;
-    this.comments = Object.create(null);
-    this.version = version;
-    this.unsent = [];
-  }
-
-  // Add a new comment to the comment database both remotely and locally.
-
-  _createClass(ModCommentStore, [{
-    key: "addComment",
-    value: function addComment(user, userName, userAvatar, date, comment, answers, isMajor) {
-      var id = randomID();
-      this.addLocalComment(id, user, userName, userAvatar, date, comment, answers, isMajor);
-      this.unsent.push({ type: "create", id: id });
-      this.mod.pm.execCommand('comment:set', [id]);
-      this.signal("mustSend");
-      return id;
+        mod.store = this;
+        this.mod = mod;
+        this.comments = Object.create(null);
+        this.version = version;
+        this.unsent = [];
     }
-  }, {
-    key: "addLocalComment",
-    value: function addLocalComment(id, user, userName, userAvatar, date, comment, answers, isMajor) {
-      if (!this.comments[id]) {
-        this.comments[id] = new Comment(id, user, userName, userAvatar, date, comment, answers, isMajor);
-      }
-    }
-  }, {
-    key: "updateComment",
-    value: function updateComment(id, comment, commentIsMajor) {
-      this.updateLocalComment(id, comment, commentIsMajor);
-      this.unsent.push({ type: "update", id: id });
-      this.signal("mustSend");
-    }
-  }, {
-    key: "updateLocalComment",
-    value: function updateLocalComment(id, comment, commentIsMajor) {
-      if (this.comments[id]) {
-        this.comments[id].comment = comment;
-        this.comments[id]['review:isMajor'] = commentIsMajor;
-      }
-    }
-  }, {
-    key: "removeCommentMarks",
-    value: function removeCommentMarks(id) {
-      var _this = this;
 
-      this.mod.pm.doc.inlineNodesBetween(false, false, function (_ref, path, start, end) {
-        var marks = _ref.marks;
-        var _iteratorNormalCompletion = true;
-        var _didIteratorError = false;
-        var _iteratorError = undefined;
+    // Add a new comment to the comment database both remotely and locally.
 
-        try {
-          for (var _iterator = marks[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-            var mark = _step.value;
-
-            if (mark.type.name === 'comment' && parseInt(mark.attrs.id) === id) {
-              _this.mod.pm.apply(_this.mod.pm.tr.removeMark(new _model.Pos(path, start), new _model.Pos(path, end), _schema.CommentMark.type));
+    _createClass(ModCommentStore, [{
+        key: "addComment",
+        value: function addComment(user, userName, userAvatar, date, comment, answers, isMajor) {
+            var id = randomID();
+            this.addLocalComment(id, user, userName, userAvatar, date, comment, answers, isMajor);
+            this.unsent.push({
+                type: "create",
+                id: id
+            });
+            this.mod.pm.execCommand('comment:set', [id]);
+            this.signal("mustSend");
+            return id;
+        }
+    }, {
+        key: "addLocalComment",
+        value: function addLocalComment(id, user, userName, userAvatar, date, comment, answers, isMajor) {
+            if (!this.comments[id]) {
+                this.comments[id] = new Comment(id, user, userName, userAvatar, date, comment, answers, isMajor);
             }
-          }
-        } catch (err) {
-          _didIteratorError = true;
-          _iteratorError = err;
-        } finally {
-          try {
-            if (!_iteratorNormalCompletion && _iterator.return) {
-              _iterator.return();
+        }
+    }, {
+        key: "updateComment",
+        value: function updateComment(id, comment, commentIsMajor) {
+            this.updateLocalComment(id, comment, commentIsMajor);
+            this.unsent.push({
+                type: "update",
+                id: id
+            });
+            this.signal("mustSend");
+        }
+    }, {
+        key: "updateLocalComment",
+        value: function updateLocalComment(id, comment, commentIsMajor) {
+            if (this.comments[id]) {
+                this.comments[id].comment = comment;
+                this.comments[id]['review:isMajor'] = commentIsMajor;
             }
-          } finally {
-            if (_didIteratorError) {
-              throw _iteratorError;
+        }
+    }, {
+        key: "removeCommentMarks",
+        value: function removeCommentMarks(id) {
+            var _this = this;
+
+            this.mod.pm.doc.inlineNodesBetween(false, false, function (_ref, path, start, end) {
+                var marks = _ref.marks;
+                var _iteratorNormalCompletion = true;
+                var _didIteratorError = false;
+                var _iteratorError = undefined;
+
+                try {
+                    for (var _iterator = marks[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                        var mark = _step.value;
+
+                        if (mark.type.name === 'comment' && parseInt(mark.attrs.id) === id) {
+                            _this.mod.pm.apply(_this.mod.pm.tr.removeMark(new _model.Pos(path, start), new _model.Pos(path, end), _schema.CommentMark.type));
+                        }
+                    }
+                } catch (err) {
+                    _didIteratorError = true;
+                    _iteratorError = err;
+                } finally {
+                    try {
+                        if (!_iteratorNormalCompletion && _iterator.return) {
+                            _iterator.return();
+                        }
+                    } finally {
+                        if (_didIteratorError) {
+                            throw _iteratorError;
+                        }
+                    }
+                }
+            });
+        }
+    }, {
+        key: "deleteLocalComment",
+        value: function deleteLocalComment(id) {
+            var found = this.comments[id];
+            if (found) {
+                delete this.comments[id];
+                return true;
             }
-          }
         }
-      });
-    }
-  }, {
-    key: "deleteLocalComment",
-    value: function deleteLocalComment(id) {
-      var found = this.comments[id];
-      if (found) {
-        delete this.comments[id];
-        return true;
-      }
-    }
-  }, {
-    key: "deleteComment",
-    value: function deleteComment(id) {
-      if (this.deleteLocalComment(id)) {
-        this.unsent.push({ type: "delete", id: id });
-        this.removeCommentMarks(id);
-        this.signal("mustSend");
-      }
-    }
-  }, {
-    key: "addLocalAnswer",
-    value: function addLocalAnswer(id, answer) {
-      if (this.comments[id]) {
-        if (!this.comments[id].answers) {
-          this.comments[id].answers = [];
+    }, {
+        key: "deleteComment",
+        value: function deleteComment(id) {
+            if (this.deleteLocalComment(id)) {
+                this.unsent.push({
+                    type: "delete",
+                    id: id
+                });
+                this.removeCommentMarks(id);
+                this.signal("mustSend");
+            }
         }
-        this.comments[id].answers.push(answer);
-      }
-    }
-  }, {
-    key: "addAnswer",
-    value: function addAnswer(id, answer) {
-      answer.id = randomID();
-      this.addLocalAnswer(id, answer);
-      this.unsent.push({ type: "add_answer", id: id, answerId: answer.id });
-      this.signal("mustSend");
-    }
-  }, {
-    key: "deleteLocalAnswer",
-    value: function deleteLocalAnswer(commentId, answerId) {
-      if (this.comments[commentId] && this.comments[commentId].answers) {
-        this.comments[commentId].answers = _.reject(this.comments[commentId].answers, function (answer) {
-          return answer.id === answerId;
-        });
-      }
-    }
-  }, {
-    key: "deleteAnswer",
-    value: function deleteAnswer(commentId, answerId) {
-      this.deleteLocalAnswer(commentId, answerId);
-      this.unsent.push({ type: "delete_answer", commentId: commentId, answerId: answerId });
-      this.signal("mustSend");
-    }
-  }, {
-    key: "updateLocalAnswer",
-    value: function updateLocalAnswer(commentId, answerId, answerText) {
-      if (this.comments[commentId] && this.comments[commentId].answers) {
-        var answer = _.findWhere(this.comments[commentId].answers, { id: answerId });
-        answer.answer = answerText;
-      }
-    }
-  }, {
-    key: "updateAnswer",
-    value: function updateAnswer(commentId, answerId, answerText) {
-      this.updateLocalAnswer(commentId, answerId, answerText);
-      this.unsent.push({ type: "update_answer", commentId: commentId, answerId: answerId });
-      this.signal("mustSend");
-    }
-  }, {
-    key: "hasUnsentEvents",
-    value: function hasUnsentEvents() {
-      return this.unsent.length;
-    }
-  }, {
-    key: "unsentEvents",
-    value: function unsentEvents() {
-      var result = [];
-      for (var i = 0; i < this.unsent.length; i++) {
-        var event = this.unsent[i];
-        if (event.type == "delete") {
-          result.push({ type: "delete", id: event.id });
-        } else if (event.type == "update") {
-          var found = this.comments[event.id];
-          if (!found || !found.id) continue;
-          result.push({ type: "update", id: found.id, comment: found.comment, 'review:isMajor': found['review:isMajor'] });
-        } else if (event.type == "create") {
-          var found = this.comments[event.id];
-          if (!found || !found.id) continue;
-          result.push({ type: "create",
-            id: found.id,
-            user: found.user,
-            userName: found.userName,
-            userAvatar: found.userAvatar,
-            date: found.date,
-            comment: found.comment,
-            answers: found.answers,
-            'review:isMajor': found['review:isMajor']
-          });
-        } else if (event.type == "add_answer") {
-          var found = this.comments[event.id];
-          if (!found || !found.id || !found.answers) continue;
-          var foundAnswer = _.findWhere(found.answers, { id: event.answerId });
-          result.push({ type: "add_answer",
-            id: foundAnswer.id,
-            commentId: foundAnswer.commentId,
-            user: foundAnswer.user,
-            userName: foundAnswer.userName,
-            userAvatar: foundAnswer.userAvatar,
-            date: foundAnswer.date,
-            answer: foundAnswer.answer
-          });
-        } else if (event.type == "delete_answer") {
-          result.push({ type: "delete_answer",
-            commentId: event.commentId,
-            id: event.answerId
-          });
-        } else if (event.type == "update_answer") {
-          var found = this.comments[event.commentId];
-          if (!found || !found.id || !found.answers) continue;
-          var foundAnswer = _.findWhere(found.answers, { id: event.answerId });
-          result.push({ type: "update_answer", id: foundAnswer.id, commentId: foundAnswer.commentId, answer: foundAnswer.answer });
+    }, {
+        key: "addLocalAnswer",
+        value: function addLocalAnswer(id, answer) {
+            if (this.comments[id]) {
+                if (!this.comments[id].answers) {
+                    this.comments[id].answers = [];
+                }
+                this.comments[id].answers.push(answer);
+            }
         }
-      }
-      return result;
-    }
-  }, {
-    key: "eventsSent",
-    value: function eventsSent(n) {
-      this.unsent = this.unsent.slice(n);
-      this.version += n;
-    }
-  }, {
-    key: "receive",
-    value: function receive(events, version) {
-      var _this2 = this;
+    }, {
+        key: "addAnswer",
+        value: function addAnswer(id, answer) {
+            answer.id = randomID();
+            this.addLocalAnswer(id, answer);
+            this.unsent.push({
+                type: "add_answer",
+                id: id,
+                answerId: answer.id
+            });
+            this.signal("mustSend");
+        }
+    }, {
+        key: "deleteLocalAnswer",
+        value: function deleteLocalAnswer(commentId, answerId) {
+            if (this.comments[commentId] && this.comments[commentId].answers) {
+                this.comments[commentId].answers = _.reject(this.comments[commentId].answers, function (answer) {
+                    return answer.id === answerId;
+                });
+            }
+        }
+    }, {
+        key: "deleteAnswer",
+        value: function deleteAnswer(commentId, answerId) {
+            this.deleteLocalAnswer(commentId, answerId);
+            this.unsent.push({
+                type: "delete_answer",
+                commentId: commentId,
+                answerId: answerId
+            });
+            this.signal("mustSend");
+        }
+    }, {
+        key: "updateLocalAnswer",
+        value: function updateLocalAnswer(commentId, answerId, answerText) {
+            if (this.comments[commentId] && this.comments[commentId].answers) {
+                var answer = _.findWhere(this.comments[commentId].answers, {
+                    id: answerId
+                });
+                answer.answer = answerText;
+            }
+        }
+    }, {
+        key: "updateAnswer",
+        value: function updateAnswer(commentId, answerId, answerText) {
+            this.updateLocalAnswer(commentId, answerId, answerText);
+            this.unsent.push({
+                type: "update_answer",
+                commentId: commentId,
+                answerId: answerId
+            });
+            this.signal("mustSend");
+        }
+    }, {
+        key: "hasUnsentEvents",
+        value: function hasUnsentEvents() {
+            return this.unsent.length;
+        }
+    }, {
+        key: "unsentEvents",
+        value: function unsentEvents() {
+            var result = [];
+            for (var i = 0; i < this.unsent.length; i++) {
+                var event = this.unsent[i];
+                if (event.type == "delete") {
+                    result.push({
+                        type: "delete",
+                        id: event.id
+                    });
+                } else if (event.type == "update") {
+                    var found = this.comments[event.id];
+                    if (!found || !found.id) continue;
+                    result.push({
+                        type: "update",
+                        id: found.id,
+                        comment: found.comment,
+                        'review:isMajor': found['review:isMajor']
+                    });
+                } else if (event.type == "create") {
+                    var found = this.comments[event.id];
+                    if (!found || !found.id) continue;
+                    result.push({
+                        type: "create",
+                        id: found.id,
+                        user: found.user,
+                        userName: found.userName,
+                        userAvatar: found.userAvatar,
+                        date: found.date,
+                        comment: found.comment,
+                        answers: found.answers,
+                        'review:isMajor': found['review:isMajor']
+                    });
+                } else if (event.type == "add_answer") {
+                    var found = this.comments[event.id];
+                    if (!found || !found.id || !found.answers) continue;
+                    var foundAnswer = _.findWhere(found.answers, {
+                        id: event.answerId
+                    });
+                    result.push({
+                        type: "add_answer",
+                        id: foundAnswer.id,
+                        commentId: foundAnswer.commentId,
+                        user: foundAnswer.user,
+                        userName: foundAnswer.userName,
+                        userAvatar: foundAnswer.userAvatar,
+                        date: foundAnswer.date,
+                        answer: foundAnswer.answer
+                    });
+                } else if (event.type == "delete_answer") {
+                    result.push({
+                        type: "delete_answer",
+                        commentId: event.commentId,
+                        id: event.answerId
+                    });
+                } else if (event.type == "update_answer") {
+                    var found = this.comments[event.commentId];
+                    if (!found || !found.id || !found.answers) continue;
+                    var foundAnswer = _.findWhere(found.answers, {
+                        id: event.answerId
+                    });
+                    result.push({
+                        type: "update_answer",
+                        id: foundAnswer.id,
+                        commentId: foundAnswer.commentId,
+                        answer: foundAnswer.answer
+                    });
+                }
+            }
+            return result;
+        }
+    }, {
+        key: "eventsSent",
+        value: function eventsSent(n) {
+            this.unsent = this.unsent.slice(n);
+            this.version += n;
+        }
+    }, {
+        key: "receive",
+        value: function receive(events, version) {
+            var _this2 = this;
 
-      var that = this;
-      var updateCommentLayout = false;
-      console.log(['comments update events', events]);
-      events.forEach(function (event) {
-        if (event.type == "delete") {
-          _this2.deleteLocalComment(event.id);
-          updateCommentLayout = true;
-        } else if (event.type == "create") {
-          _this2.addLocalComment(event.id, event.user, event.userName, event.userAvatar, event.date, event.comment, event['review:isMajor']);
-          if (event.comment.length > 0) {
-            updateCommentLayout = true;
-          }
-        } else if (event.type == "update") {
-          _this2.updateLocalComment(event.id, event.comment, event['review:isMajor']);
-          updateCommentLayout = true;
-        } else if (event.type == "add_answer") {
-          _this2.addLocalAnswer(event.commentId, event);
-          updateCommentLayout = true;
-        } else if (event.type == "remove_answer") {
-          _this2.deleteLocalAnswer(event.commentId, event);
-          updateCommentLayout = true;
-        } else if (event.type == "update_answer") {
-          _this2.updateLocalAnswer(event.commentId, event.id, event.answer);
-          updateCommentLayout = true;
+            var that = this;
+            var updateCommentLayout = false;
+            console.log(['comments update events', events]);
+            events.forEach(function (event) {
+                if (event.type == "delete") {
+                    _this2.deleteLocalComment(event.id);
+                    updateCommentLayout = true;
+                } else if (event.type == "create") {
+                    _this2.addLocalComment(event.id, event.user, event.userName, event.userAvatar, event.date, event.comment, event['review:isMajor']);
+                    if (event.comment.length > 0) {
+                        updateCommentLayout = true;
+                    }
+                } else if (event.type == "update") {
+                    _this2.updateLocalComment(event.id, event.comment, event['review:isMajor']);
+                    updateCommentLayout = true;
+                } else if (event.type == "add_answer") {
+                    _this2.addLocalAnswer(event.commentId, event);
+                    updateCommentLayout = true;
+                } else if (event.type == "remove_answer") {
+                    _this2.deleteLocalAnswer(event.commentId, event);
+                    updateCommentLayout = true;
+                } else if (event.type == "update_answer") {
+                    _this2.updateLocalAnswer(event.commentId, event.id, event.answer);
+                    updateCommentLayout = true;
+                }
+                _this2.version++;
+            });
+            if (updateCommentLayout) {
+                (function () {
+                    var layoutComments = new _update.UpdateScheduler(_this2.mod.pm, "flush", function () {
+                        layoutComments.detach();
+                        that.mod.layout.layoutComments();
+                    });
+                })();
+            }
         }
-        _this2.version++;
-      });
-      if (updateCommentLayout) {
-        (function () {
-          var layoutComments = new _update.UpdateScheduler(_this2.mod.pm, "flush", function () {
-            layoutComments.detach();
-            that.mod.layout.layoutComments();
-          });
-        })();
-      }
-    }
-  }, {
-    key: "findCommentsAt",
-    value: function findCommentsAt(pos) {
-      var found = [],
-          node = this.mod.pm.doc.path(pos.path);
+    }, {
+        key: "findCommentsAt",
+        value: function findCommentsAt(pos) {
+            var found = [],
+                node = this.mod.pm.doc.path(pos.path);
 
-      for (var mark in node.marks) {
-        if (mark.type.name === 'comment' && mark.attrs.id in this.comments) found.push(this.comments[mark.attrs.id]);
-      }
-      return found;
-    }
-  }]);
+            for (var mark in node.marks) {
+                if (mark.type.name === 'comment' && mark.attrs.id in this.comments) found.push(this.comments[mark.attrs.id]);
+            }
+            return found;
+        }
+    }]);
 
-  return ModCommentStore;
+    return ModCommentStore;
 })();
 
 (0, _event.eventMixin)(ModCommentStore);
 
 function randomID() {
-  return Math.floor(Math.random() * 0xffffffff);
+    return Math.floor(Math.random() * 0xffffffff);
 }
 
 },{"../schema":9,"prosemirror/dist/model":41,"prosemirror/dist/transform":47,"prosemirror/dist/ui/update":57,"prosemirror/dist/util/event":59}],6:[function(require,module,exports){
@@ -1305,7 +1357,9 @@ var ModFootnoteEditor = exports.ModFootnoteEditor = (function () {
                 var node = that.mod.pm.doc.nodeAfter(footnote.from);
                 that.renderFootnote(node.attrs.contents, index);
             });
-            this.mod.fnPm.setOption("collab", { version: 0 });
+            this.mod.fnPm.setOption("collab", {
+                version: 0
+            });
             this.mod.editor.bindEvents();
         }
     }, {
@@ -1315,7 +1369,9 @@ var ModFootnoteEditor = exports.ModFootnoteEditor = (function () {
 
             this.rendering = true;
             var footnoteHTML = "<div class='footnote-container'>" + contents + "</div>";
-            var node = (0, _format.fromHTML)(_schema.fidusFnSchema, footnoteHTML, { preserveWhitespace: true }).firstChild;
+            var node = (0, _format.fromHTML)(_schema.fidusFnSchema, footnoteHTML, {
+                preserveWhitespace: true
+            }).firstChild;
             this.mod.fnPm.tr.insert(new _model.Pos([], index), node).apply();
             this.rendering = false;
         }
@@ -1426,7 +1482,10 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = (function () {
                         index++;
                     }
                     if (ranges.length === 0) {
-                        ranges = [{ from: step.from, to: step.to }];
+                        ranges = [{
+                            from: step.from,
+                            to: step.to
+                        }];
                     } else {
                         if (step.from.cmp(ranges[index].from) === 0) {
                             if (step.to.cmp(ranges[index].to) > 0) {
@@ -1434,13 +1493,22 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = (function () {
                                 // range that was found previously.
                                 // We replace the old range with the newly found
                                 // range.
-                                ranges[index] = { from: step.from, to: step.to };
+                                ranges[index] = {
+                                    from: step.from,
+                                    to: step.to
+                                };
                             }
                         } else {
                             if (step.to.cmp(ranges[index].from) > -1) {
-                                ranges[index] = { from: step.from, to: ranges[index].to };
+                                ranges[index] = {
+                                    from: step.from,
+                                    to: ranges[index].to
+                                };
                             } else {
-                                ranges.splice(index, 0, { from: step.from, to: step.to });
+                                ranges.splice(index, 0, {
+                                    from: step.from,
+                                    to: step.to
+                                });
                             }
                         }
                     }
@@ -1512,7 +1580,9 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = (function () {
             var footnoteContents = (0, _format.toHTML)(this.mod.fnPm.doc.child(index));
             var footnote = this.mod.footnotes[index];
             var node = this.mod.pm.doc.nodeAfter(footnote.from);
-            this.mod.pm.tr.setNodeType(footnote.from, node.type, { contents: footnoteContents }).apply();
+            this.mod.pm.tr.setNodeType(footnote.from, node.type, {
+                contents: footnoteContents
+            }).apply();
             this.updating = false;
         }
     }]);
@@ -1526,7 +1596,7 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = (function () {
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 exports.ModFootnotes = undefined;
 
@@ -1543,29 +1613,31 @@ var _markers = require("./markers");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var ModFootnotes = exports.ModFootnotes = (function () {
-  function ModFootnotes(pm) {
-    _classCallCheck(this, ModFootnotes);
+    function ModFootnotes(pm) {
+        _classCallCheck(this, ModFootnotes);
 
-    pm.mod.footnotes = this;
-    this.pm = pm;
-    this.init();
-    this.footnotes = [];
-    new _editor.ModFootnoteEditor(this);
-    new _markers.ModFootnoteMarkers(this);
-  }
-
-  _createClass(ModFootnotes, [{
-    key: "init",
-    value: function init() {
-      this.fnPm = new _main.ProseMirror({
-        place: document.getElementById('footnote-box-container'),
-        schema: _schema.fidusFnSchema,
-        collab: { version: 0 } // Version numberdoes not matter much, as we do not verify it between users.
-      });
+        pm.mod.footnotes = this;
+        this.pm = pm;
+        this.footnotes = [];
+        this.init();
+        new _editor.ModFootnoteEditor(this);
+        new _markers.ModFootnoteMarkers(this);
     }
-  }]);
 
-  return ModFootnotes;
+    _createClass(ModFootnotes, [{
+        key: "init",
+        value: function init() {
+            this.fnPm = new _main.ProseMirror({
+                place: document.getElementById('footnote-box-container'),
+                schema: _schema.fidusFnSchema,
+                collab: {
+                    version: 0
+                } // Version numberdoes not matter much, as we do not verify it between users.
+            });
+        }
+    }]);
+
+    return ModFootnotes;
 })();
 
 },{"../schema":9,"./editor":6,"./markers":7,"prosemirror/dist/collab":12,"prosemirror/dist/edit/main":26}],9:[function(require,module,exports){
@@ -1574,7 +1646,7 @@ var ModFootnotes = exports.ModFootnotes = (function () {
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 exports.fidusFnSchema = exports.fidusSchema = exports.CommentMark = exports.Doc = undefined;
 
@@ -1587,683 +1659,781 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var Doc = exports.Doc = (function (_Block) {
-  _inherits(Doc, _Block);
+    _inherits(Doc, _Block);
 
-  function Doc() {
-    _classCallCheck(this, Doc);
+    function Doc() {
+        _classCallCheck(this, Doc);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(Doc).apply(this, arguments));
-  }
-
-  _createClass(Doc, [{
-    key: "kind",
-    get: function get() {
-      return null;
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(Doc).apply(this, arguments));
     }
-  }, {
-    key: "locked",
-    get: function get() {
-      return true;
-    }
-  }, {
-    key: "selectable",
-    get: function get() {
-      return false;
-    }
-  }]);
 
-  return Doc;
+    _createClass(Doc, [{
+        key: "kind",
+        get: function get() {
+            return null;
+        }
+    }, {
+        key: "locked",
+        get: function get() {
+            return true;
+        }
+    }, {
+        key: "selectable",
+        get: function get() {
+            return false;
+        }
+    }]);
+
+    return Doc;
 })(_model.Block);
 
 var Title = (function (_Textblock) {
-  _inherits(Title, _Textblock);
+    _inherits(Title, _Textblock);
 
-  function Title() {
-    _classCallCheck(this, Title);
+    function Title() {
+        _classCallCheck(this, Title);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(Title).apply(this, arguments));
-  }
-
-  _createClass(Title, [{
-    key: "contains",
-
-    //  get locked() { return true }
-    //  get selectable() { return false }
-    get: function get() {
-      return _model.NodeKind.text;
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(Title).apply(this, arguments));
     }
-  }]);
 
-  return Title;
+    _createClass(Title, [{
+        key: "contains",
+
+        //  get locked() { return true }
+        //  get selectable() { return false }
+        get: function get() {
+            return _model.NodeKind.text;
+        }
+    }]);
+
+    return Title;
 })(_model.Textblock);
 
 Title.register("parseDOM", "div", {
-  rank: 26,
-  parse: function parse(dom, state) {
-    var id = dom.id;
-    if (!id || id !== 'document-title') return false;
-    state.wrapIn(dom, this);
-  }
+    rank: 26,
+    parse: function parse(dom, state) {
+        var id = dom.id;
+        if (!id || id !== 'document-title') return false;
+        state.wrapIn(dom, this);
+    }
 });
 
 Title.prototype.serializeDOM = function (node, serializer) {
-  return serializer.renderAs(node, "div", { id: 'document-title' });
+    return serializer.renderAs(node, "div", {
+        id: 'document-title'
+    });
 };
 
 var MetaDataSubtitle = (function (_Textblock2) {
-  _inherits(MetaDataSubtitle, _Textblock2);
+    _inherits(MetaDataSubtitle, _Textblock2);
 
-  function MetaDataSubtitle() {
-    _classCallCheck(this, MetaDataSubtitle);
+    function MetaDataSubtitle() {
+        _classCallCheck(this, MetaDataSubtitle);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(MetaDataSubtitle).apply(this, arguments));
-  }
-
-  _createClass(MetaDataSubtitle, [{
-    key: "locked",
-    get: function get() {
-      return true;
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(MetaDataSubtitle).apply(this, arguments));
     }
-  }, {
-    key: "selectable",
-    get: function get() {
-      return false;
-    }
-  }, {
-    key: "contains",
-    get: function get() {
-      return _model.NodeKind.text;
-    }
-  }]);
 
-  return MetaDataSubtitle;
+    _createClass(MetaDataSubtitle, [{
+        key: "locked",
+        get: function get() {
+            return true;
+        }
+    }, {
+        key: "selectable",
+        get: function get() {
+            return false;
+        }
+    }, {
+        key: "contains",
+        get: function get() {
+            return _model.NodeKind.text;
+        }
+    }]);
+
+    return MetaDataSubtitle;
 })(_model.Textblock);
 
 MetaDataSubtitle.register("parseDOM", "div", {
-  parse: function parse(dom, state) {
-    if (dom.id !== 'metadata-subtitle') return false;
-    state.wrapIn(dom, this);
-  }
+    parse: function parse(dom, state) {
+        if (dom.id !== 'metadata-subtitle') return false;
+        state.wrapIn(dom, this);
+    }
 });
 
 MetaDataSubtitle.prototype.serializeDOM = function (node, serializer) {
-  return serializer.renderAs(node, "div", { id: 'metadata-subtitle' });
+    return serializer.renderAs(node, "div", {
+        id: 'metadata-subtitle'
+    });
 };
 
 var MetaDataAuthors = (function (_Textblock3) {
-  _inherits(MetaDataAuthors, _Textblock3);
+    _inherits(MetaDataAuthors, _Textblock3);
 
-  function MetaDataAuthors() {
-    _classCallCheck(this, MetaDataAuthors);
+    function MetaDataAuthors() {
+        _classCallCheck(this, MetaDataAuthors);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(MetaDataAuthors).apply(this, arguments));
-  }
-
-  _createClass(MetaDataAuthors, [{
-    key: "locked",
-    get: function get() {
-      return true;
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(MetaDataAuthors).apply(this, arguments));
     }
-  }, {
-    key: "selectable",
-    get: function get() {
-      return false;
-    }
-  }, {
-    key: "contains",
-    get: function get() {
-      return _model.NodeKind.text;
-    }
-  }]);
 
-  return MetaDataAuthors;
+    _createClass(MetaDataAuthors, [{
+        key: "locked",
+        get: function get() {
+            return true;
+        }
+    }, {
+        key: "selectable",
+        get: function get() {
+            return false;
+        }
+    }, {
+        key: "contains",
+        get: function get() {
+            return _model.NodeKind.text;
+        }
+    }]);
+
+    return MetaDataAuthors;
 })(_model.Textblock);
 
 MetaDataAuthors.register("parseDOM", "div", {
-  parse: function parse(dom, state) {
-    if (dom.id !== 'metadata-authors') return false;
-    state.wrapIn(dom, this);
-  }
+    parse: function parse(dom, state) {
+        if (dom.id !== 'metadata-authors') return false;
+        state.wrapIn(dom, this);
+    }
 });
 
 MetaDataAuthors.prototype.serializeDOM = function (node, serializer) {
-  return serializer.renderAs(node, "div", { id: 'metadata-authors' });
+    return serializer.renderAs(node, "div", {
+        id: 'metadata-authors'
+    });
 };
 
 var MetaDataAbstract = (function (_Block2) {
-  _inherits(MetaDataAbstract, _Block2);
+    _inherits(MetaDataAbstract, _Block2);
 
-  function MetaDataAbstract() {
-    _classCallCheck(this, MetaDataAbstract);
+    function MetaDataAbstract() {
+        _classCallCheck(this, MetaDataAbstract);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(MetaDataAbstract).apply(this, arguments));
-  }
-
-  _createClass(MetaDataAbstract, [{
-    key: "selectable",
-
-    //  get locked() { return true }
-    get: function get() {
-      return false;
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(MetaDataAbstract).apply(this, arguments));
     }
-  }]);
 
-  return MetaDataAbstract;
+    _createClass(MetaDataAbstract, [{
+        key: "selectable",
+
+        //  get locked() { return true }
+        get: function get() {
+            return false;
+        }
+    }]);
+
+    return MetaDataAbstract;
 })(_model.Block);
 
 MetaDataAbstract.register("parseDOM", "div", {
-  parse: function parse(dom, state) {
-    if (dom.id !== 'metadata-abstract') return false;
-    state.wrapIn(dom, this);
-  }
+    parse: function parse(dom, state) {
+        if (dom.id !== 'metadata-abstract') return false;
+        state.wrapIn(dom, this);
+    }
 });
 
 MetaDataAbstract.prototype.serializeDOM = function (node, serializer) {
-  return serializer.renderAs(node, "div", { id: 'metadata-abstract' });
+    return serializer.renderAs(node, "div", {
+        id: 'metadata-abstract'
+    });
 };
 
 var MetaDataKeywords = (function (_Textblock4) {
-  _inherits(MetaDataKeywords, _Textblock4);
+    _inherits(MetaDataKeywords, _Textblock4);
 
-  function MetaDataKeywords() {
-    _classCallCheck(this, MetaDataKeywords);
+    function MetaDataKeywords() {
+        _classCallCheck(this, MetaDataKeywords);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(MetaDataKeywords).apply(this, arguments));
-  }
-
-  _createClass(MetaDataKeywords, [{
-    key: "locked",
-    get: function get() {
-      return true;
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(MetaDataKeywords).apply(this, arguments));
     }
-  }, {
-    key: "selectable",
-    get: function get() {
-      return false;
-    }
-  }, {
-    key: "contains",
-    get: function get() {
-      return _model.NodeKind.text;
-    }
-  }]);
 
-  return MetaDataKeywords;
+    _createClass(MetaDataKeywords, [{
+        key: "locked",
+        get: function get() {
+            return true;
+        }
+    }, {
+        key: "selectable",
+        get: function get() {
+            return false;
+        }
+    }, {
+        key: "contains",
+        get: function get() {
+            return _model.NodeKind.text;
+        }
+    }]);
+
+    return MetaDataKeywords;
 })(_model.Textblock);
 
 MetaDataKeywords.register("parseDOM", "div", {
-  parse: function parse(dom, state) {
-    if (dom.id !== 'metadata-keywords') return false;
-    state.wrapIn(dom, this);
-  }
+    parse: function parse(dom, state) {
+        if (dom.id !== 'metadata-keywords') return false;
+        state.wrapIn(dom, this);
+    }
 });
 
 MetaDataKeywords.prototype.serializeDOM = function (node, serializer) {
-  return serializer.renderAs(node, "div", { id: 'metadata-keywords' });
+    return serializer.renderAs(node, "div", {
+        id: 'metadata-keywords'
+    });
 };
 
 var DocumentContents = (function (_Block3) {
-  _inherits(DocumentContents, _Block3);
+    _inherits(DocumentContents, _Block3);
 
-  function DocumentContents() {
-    _classCallCheck(this, DocumentContents);
+    function DocumentContents() {
+        _classCallCheck(this, DocumentContents);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(DocumentContents).apply(this, arguments));
-  }
-
-  _createClass(DocumentContents, [{
-    key: "selectable",
-
-    //  get locked() { return true }
-    get: function get() {
-      return false;
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(DocumentContents).apply(this, arguments));
     }
-  }]);
 
-  return DocumentContents;
+    _createClass(DocumentContents, [{
+        key: "selectable",
+
+        //  get locked() { return true }
+        get: function get() {
+            return false;
+        }
+    }]);
+
+    return DocumentContents;
 })(_model.Block);
 
 DocumentContents.register("parseDOM", "div", {
-  parse: function parse(dom, state) {
-    if (dom.id !== 'document-contents') return false;
-    state.wrapIn(dom, this);
-  }
+    parse: function parse(dom, state) {
+        if (dom.id !== 'document-contents') return false;
+        state.wrapIn(dom, this);
+    }
 });
 
 DocumentContents.prototype.serializeDOM = function (node, serializer) {
-  return serializer.renderAs(node, "div", { id: 'document-contents' });
+    return serializer.renderAs(node, "div", {
+        id: 'document-contents'
+    });
 };
 
 var Footnote = (function (_Inline) {
-  _inherits(Footnote, _Inline);
+    _inherits(Footnote, _Inline);
 
-  function Footnote() {
-    _classCallCheck(this, Footnote);
+    function Footnote() {
+        _classCallCheck(this, Footnote);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(Footnote).apply(this, arguments));
-  }
-
-  _createClass(Footnote, [{
-    key: "attrs",
-    get: function get() {
-      return {
-        contents: new _model.Attribute({ default: "" })
-      };
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(Footnote).apply(this, arguments));
     }
-  }]);
 
-  return Footnote;
+    _createClass(Footnote, [{
+        key: "attrs",
+        get: function get() {
+            return {
+                contents: new _model.Attribute({
+                    default: ""
+                })
+            };
+        }
+    }]);
+
+    return Footnote;
 })(_model.Inline);
 
 Footnote.register("parseDOM", "footnote", {
-  parse: function parse(dom, state) {
-    state.insert(this, {
-      contents: dom.innerHTML
-    });
-  }
+    parse: function parse(dom, state) {
+        state.insert(this, {
+            contents: dom.innerHTML
+        });
+    }
 });
 
 Footnote.register("parseDOM", "span", {
-  parse: function parse(dom, state) {
-    if (!dom.classList.contains('footnote-marker')) return false;
-    state.insert(this, {
-      contents: dom.getAttribute('contents')
-    });
-  }
+    parse: function parse(dom, state) {
+        if (!dom.classList.contains('footnote-marker')) return false;
+        state.insert(this, {
+            contents: dom.getAttribute('contents')
+        });
+    }
 });
 
 Footnote.prototype.serializeDOM = function (node, serializer) {
-  var dom = serializer.elt("span", {
-    class: 'footnote-marker',
-    contents: node.attrs.contents
-  });
-  dom.innerHTML = '&nbsp;'; // Needed to make editing work correctly.
-  return dom;
+    var dom = serializer.elt("span", {
+        class: 'footnote-marker',
+        contents: node.attrs.contents
+    });
+    dom.innerHTML = '&nbsp;'; // Needed to make editing work correctly.
+    return dom;
 };
 
 Footnote.register("command", "insert", {
-  derive: {
-    params: [{ label: "Contents", attr: "contents" }]
-  },
-  label: "Insert footnote",
-  menu: {
-    group: "insert", rank: 34,
-    display: { type: "label", label: "Footnote" }
-  }
+    derive: {
+        params: [{
+            label: "Contents",
+            attr: "contents"
+        }]
+    },
+    label: "Insert footnote",
+    menu: {
+        group: "insert",
+        rank: 34,
+        display: {
+            type: "label",
+            label: "Footnote"
+        }
+    }
 });
 
 var FootnoteContainer = (function (_Block4) {
-  _inherits(FootnoteContainer, _Block4);
+    _inherits(FootnoteContainer, _Block4);
 
-  function FootnoteContainer() {
-    _classCallCheck(this, FootnoteContainer);
+    function FootnoteContainer() {
+        _classCallCheck(this, FootnoteContainer);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(FootnoteContainer).apply(this, arguments));
-  }
-
-  _createClass(FootnoteContainer, [{
-    key: "locked",
-    get: function get() {
-      return true;
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(FootnoteContainer).apply(this, arguments));
     }
-  }, {
-    key: "selectable",
-    get: function get() {
-      return false;
-    }
-  }]);
 
-  return FootnoteContainer;
+    _createClass(FootnoteContainer, [{
+        key: "locked",
+        get: function get() {
+            return true;
+        }
+    }, {
+        key: "selectable",
+        get: function get() {
+            return false;
+        }
+    }]);
+
+    return FootnoteContainer;
 })(_model.Block);
 
 FootnoteContainer.register("parseDOM", "div", {
-  parse: function parse(dom, state) {
-    if (!dom.classList.contains('footnote-container')) return false;
-    state.wrapIn(dom, this);
-  }
+    parse: function parse(dom, state) {
+        if (!dom.classList.contains('footnote-container')) return false;
+        state.wrapIn(dom, this);
+    }
 });
 
 FootnoteContainer.prototype.serializeDOM = function (node, serializer) {
-  return serializer.renderAs(node, "div", { class: 'footnote-container' });
+    return serializer.renderAs(node, "div", {
+        class: 'footnote-container'
+    });
 };
 
 var Citation = (function (_Inline2) {
-  _inherits(Citation, _Inline2);
+    _inherits(Citation, _Inline2);
 
-  function Citation() {
-    _classCallCheck(this, Citation);
+    function Citation() {
+        _classCallCheck(this, Citation);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(Citation).apply(this, arguments));
-  }
-
-  _createClass(Citation, [{
-    key: "attrs",
-    get: function get() {
-      return {
-        bibFormat: new _model.Attribute({ default: "" }),
-        bibEntry: new _model.Attribute(),
-        bibBefore: new _model.Attribute({ default: "" }),
-        bibPage: new _model.Attribute({ default: "" })
-      };
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(Citation).apply(this, arguments));
     }
-  }]);
 
-  return Citation;
+    _createClass(Citation, [{
+        key: "attrs",
+        get: function get() {
+            return {
+                bibFormat: new _model.Attribute({
+                    default: ""
+                }),
+                bibEntry: new _model.Attribute(),
+                bibBefore: new _model.Attribute({
+                    default: ""
+                }),
+                bibPage: new _model.Attribute({
+                    default: ""
+                })
+            };
+        }
+    }]);
+
+    return Citation;
 })(_model.Inline);
 
 Citation.register("parseDOM", "span", {
-  parse: function parse(dom, state) {
-    if (!dom.classList.contains('citation')) return false;
-    state.insert(this, {
-      bibFormat: dom.getAttribute('data-bib-format') || '',
-      bibEntry: dom.getAttribute('data-bib-entry') || '',
-      bibBefore: dom.getAttribute('data-bib-before') || '',
-      bibPage: dom.getAttribute('data-bib-page') || ''
-    });
-  }
+    parse: function parse(dom, state) {
+        if (!dom.classList.contains('citation')) return false;
+        state.insert(this, {
+            bibFormat: dom.getAttribute('data-bib-format') || '',
+            bibEntry: dom.getAttribute('data-bib-entry') || '',
+            bibBefore: dom.getAttribute('data-bib-before') || '',
+            bibPage: dom.getAttribute('data-bib-page') || ''
+        });
+    }
 });
 
 Citation.register("parseDOM", "cite", {
-  parse: function parse(dom, state) {
-    state.insert(this, {
-      bibFormat: dom.getAttribute('data-bib-format') || '',
-      bibEntry: dom.getAttribute('data-bib-entry') || '',
-      bibBefore: dom.getAttribute('data-bib-before') || '',
-      bibPage: dom.getAttribute('data-bib-page') || ''
-    });
-  }
+    parse: function parse(dom, state) {
+        state.insert(this, {
+            bibFormat: dom.getAttribute('data-bib-format') || '',
+            bibEntry: dom.getAttribute('data-bib-entry') || '',
+            bibBefore: dom.getAttribute('data-bib-before') || '',
+            bibPage: dom.getAttribute('data-bib-page') || ''
+        });
+    }
 });
 
 Citation.prototype.serializeDOM = function (node, serializer) {
-  return serializer.renderAs(node, "span", {
-    class: 'citation',
-    'data-bib-format': node.attrs.bibFormat,
-    'data-bib-entry': node.attrs.bibEntry,
-    'data-bib-before': node.attrs.bibBefore,
-    'data-bib-page': node.attrs.bibPage
-  });
+    return serializer.renderAs(node, "span", {
+        class: 'citation',
+        'data-bib-format': node.attrs.bibFormat,
+        'data-bib-entry': node.attrs.bibEntry,
+        'data-bib-before': node.attrs.bibBefore,
+        'data-bib-page': node.attrs.bibPage
+    });
 };
 
 Citation.register("command", "insert", {
-  derive: {
-    params: [{ label: "Bibliography Format", attr: "bibFormat" }, { label: "Bibliography Entry", attr: "bibEntry" }, { label: "Text Before", attr: "bibBefore" }, { label: "Page number", attr: "bibPage" }]
-  },
-  label: "Insert citation",
-  menu: {
-    group: "insert", rank: 42,
-    display: { type: "label", label: "Citation" }
-  }
+    derive: {
+        params: [{
+            label: "Bibliography Format",
+            attr: "bibFormat"
+        }, {
+            label: "Bibliography Entry",
+            attr: "bibEntry"
+        }, {
+            label: "Text Before",
+            attr: "bibBefore"
+        }, {
+            label: "Page number",
+            attr: "bibPage"
+        }]
+    },
+    label: "Insert citation",
+    menu: {
+        group: "insert",
+        rank: 42,
+        display: {
+            type: "label",
+            label: "Citation"
+        }
+    }
 });
 
 var Equation = (function (_Inline3) {
-  _inherits(Equation, _Inline3);
+    _inherits(Equation, _Inline3);
 
-  function Equation() {
-    _classCallCheck(this, Equation);
+    function Equation() {
+        _classCallCheck(this, Equation);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(Equation).apply(this, arguments));
-  }
-
-  _createClass(Equation, [{
-    key: "attrs",
-    get: function get() {
-      return {
-        equation: new _model.Attribute({ default: "" })
-      };
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(Equation).apply(this, arguments));
     }
-  }]);
 
-  return Equation;
+    _createClass(Equation, [{
+        key: "attrs",
+        get: function get() {
+            return {
+                equation: new _model.Attribute({
+                    default: ""
+                })
+            };
+        }
+    }]);
+
+    return Equation;
 })(_model.Inline);
 
 Equation.register("parseDOM", "span", {
-  parse: function parse(dom, state) {
-    if (!dom.classList.contains('equation')) return false;
-    state.insert(this, {
-      equation: dom.getAttribute('data-equation')
-    });
-  }
+    parse: function parse(dom, state) {
+        if (!dom.classList.contains('equation')) return false;
+        state.insert(this, {
+            equation: dom.getAttribute('data-equation')
+        });
+    }
 });
 
 Equation.prototype.serializeDOM = function (node, serializer) {
-  return serializer.renderAs(node, "span", {
-    class: 'equation',
-    'data-equation': node.attrs.equation
-  });
+    return serializer.renderAs(node, "span", {
+        class: 'equation',
+        'data-equation': node.attrs.equation
+    });
 };
 
 Equation.register("command", "insert", {
-  derive: {
-    params: [{ label: "Equation", type: "text", attr: "equation" }]
-  },
-  label: "Insert equation",
-  menu: {
-    group: "insert", rank: 33,
-    display: { type: "label", label: "Equation" }
-  }
+    derive: {
+        params: [{
+            label: "Equation",
+            type: "text",
+            attr: "equation"
+        }]
+    },
+    label: "Insert equation",
+    menu: {
+        group: "insert",
+        rank: 33,
+        display: {
+            type: "label",
+            label: "Equation"
+        }
+    }
 });
 
 var Figure = (function (_Block5) {
-  _inherits(Figure, _Block5);
+    _inherits(Figure, _Block5);
 
-  function Figure() {
-    _classCallCheck(this, Figure);
+    function Figure() {
+        _classCallCheck(this, Figure);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(Figure).apply(this, arguments));
-  }
-
-  _createClass(Figure, [{
-    key: "attrs",
-    get: function get() {
-      return {
-        equation: new _model.Attribute({ default: "" }),
-        image: new _model.Attribute({ default: "" }),
-        figureCategory: new _model.Attribute({ default: "" }),
-        caption: new _model.Attribute({ default: "" })
-      };
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(Figure).apply(this, arguments));
     }
-  }, {
-    key: "contains",
-    get: function get() {
-      return null;
-    }
-  }]);
 
-  return Figure;
+    _createClass(Figure, [{
+        key: "attrs",
+        get: function get() {
+            return {
+                equation: new _model.Attribute({
+                    default: ""
+                }),
+                image: new _model.Attribute({
+                    default: ""
+                }),
+                figureCategory: new _model.Attribute({
+                    default: ""
+                }),
+                caption: new _model.Attribute({
+                    default: ""
+                })
+            };
+        }
+    }, {
+        key: "contains",
+        get: function get() {
+            return null;
+        }
+    }]);
+
+    return Figure;
 })(_model.Block);
 
 Figure.register("parseDOM", "figure", {
-  parse: function parse(dom, state) {
-    state.insert(this, {
-      equation: dom.getAttribute('data-equation'),
-      image: dom.getAttribute('data-image'),
-      figureCategory: dom.getAttribute('data-figure-category'),
-      caption: dom.getAttribute('data-caption')
-    });
-  }
+    parse: function parse(dom, state) {
+        state.insert(this, {
+            equation: dom.getAttribute('data-equation'),
+            image: dom.getAttribute('data-image'),
+            figureCategory: dom.getAttribute('data-figure-category'),
+            caption: dom.getAttribute('data-caption')
+        });
+    }
 });
 
 Figure.prototype.serializeDOM = function (node, serializer) {
-  var dom = serializer.elt("figure", {
-    'data-equation': node.attrs.equation,
-    'data-image': node.attrs.image,
-    'data-figure-category': node.attrs.figureCategory,
-    'data-caption': node.attrs.caption
-  });
-  if (node.attrs.image) {
-    dom.appendChild(serializer.elt("div"));
-    if (ImageDB[node.attrs.image] && ImageDB[node.attrs.image].image) {
-      dom.firstChild.appendChild(serializer.elt("img", {
-        "src": ImageDB[node.attrs.image].image
-      }));
-    } else {
-      /* The image was not present in the ImageDB. Try to reload the
-      ImageDB, but only once. If the image cannot be found in the updated
-      ImageDB, do not attempt at reloaidng the ImageDB if an image cannot be
-      found. */
-      if (!theDocumentValues.imageDBBroken) {
-        usermediaHelpers.getImageDB(function () {
-          if (ImageDB[node.attrs.image] && ImageDB[node.attrs.image].image) {
+    var dom = serializer.elt("figure", {
+        'data-equation': node.attrs.equation,
+        'data-image': node.attrs.image,
+        'data-figure-category': node.attrs.figureCategory,
+        'data-caption': node.attrs.caption
+    });
+    if (node.attrs.image) {
+        dom.appendChild(serializer.elt("div"));
+        if (ImageDB[node.attrs.image] && ImageDB[node.attrs.image].image) {
             dom.firstChild.appendChild(serializer.elt("img", {
-              "src": ImageDB[node.attrs.image].image
+                "src": ImageDB[node.attrs.image].image
             }));
-          } else {
-            theDocumentValues.imageDBBroken = true;
-          }
-        });
-      }
+        } else {
+            /* The image was not present in the ImageDB. Try to reload the
+            ImageDB, but only once. If the image cannot be found in the updated
+            ImageDB, do not attempt at reloaidng the ImageDB if an image cannot be
+            found. */
+            if (!theDocumentValues.imageDBBroken) {
+                usermediaHelpers.getImageDB(function () {
+                    if (ImageDB[node.attrs.image] && ImageDB[node.attrs.image].image) {
+                        dom.firstChild.appendChild(serializer.elt("img", {
+                            "src": ImageDB[node.attrs.image].image
+                        }));
+                    } else {
+                        theDocumentValues.imageDBBroken = true;
+                    }
+                });
+            }
+        }
+    } else {
+        dom.appendChild(serializer.elt("div", {
+            class: 'figure-equation',
+            'data-equation': node.attrs.equation
+        }));
     }
-  } else {
-    dom.appendChild(serializer.elt("div", {
-      class: 'figure-equation',
-      'data-equation': node.attrs.equation
-    }));
-  }
-  var captionNode = serializer.elt("figcaption");
-  if (node.attrs.figureCategory !== 'none') {
-    var figureCatNode = serializer.elt("span", {
-      class: 'figure-cat-' + node.attrs.figureCategory,
-      'data-figure-category': node.attrs.figureCategory
-    });
-    figureCatNode.innerHTML = node.attrs.figureCategory;
-    captionNode.appendChild(figureCatNode);
-  }
-  if (node.attrs.caption !== '') {
-    var captionTextNode = serializer.elt("span", {
-      'data-caption': node.attrs.caption
-    });
-    captionTextNode.innerHTML = node.attrs.caption;
+    var captionNode = serializer.elt("figcaption");
+    if (node.attrs.figureCategory !== 'none') {
+        var figureCatNode = serializer.elt("span", {
+            class: 'figure-cat-' + node.attrs.figureCategory,
+            'data-figure-category': node.attrs.figureCategory
+        });
+        figureCatNode.innerHTML = node.attrs.figureCategory;
+        captionNode.appendChild(figureCatNode);
+    }
+    if (node.attrs.caption !== '') {
+        var captionTextNode = serializer.elt("span", {
+            'data-caption': node.attrs.caption
+        });
+        captionTextNode.innerHTML = node.attrs.caption;
 
-    captionNode.appendChild(captionTextNode);
-  }
-  dom.appendChild(captionNode);
-  return dom;
+        captionNode.appendChild(captionTextNode);
+    }
+    dom.appendChild(captionNode);
+    return dom;
 };
 
 Figure.register("command", "insert", {
-  derive: {
-    params: [{ label: "Equation", attr: "equation" }, { label: "Image PK", attr: "image" }, { label: "Category", attr: "figureCategory" }, { label: "Caption", attr: "caption" }]
-  },
-  label: "Insert figure",
-  menu: {
-    group: "insert", rank: 32,
-    display: { type: "label", label: "Figure" }
-  }
+    derive: {
+        params: [{
+            label: "Equation",
+            attr: "equation"
+        }, {
+            label: "Image PK",
+            attr: "image"
+        }, {
+            label: "Category",
+            attr: "figureCategory"
+        }, {
+            label: "Caption",
+            attr: "caption"
+        }]
+    },
+    label: "Insert figure",
+    menu: {
+        group: "insert",
+        rank: 32,
+        display: {
+            type: "label",
+            label: "Figure"
+        }
+    }
 });
 
 /* From prosemirror/src/edit/commands.js */
 
 function markApplies(pm, type) {
-  var _pm$selection = pm.selection;
-  var from = _pm$selection.from;
-  var to = _pm$selection.to;
+    var _pm$selection = pm.selection;
+    var from = _pm$selection.from;
+    var to = _pm$selection.to;
 
-  var relevant = false;
-  pm.doc.nodesBetween(from, to, function (node) {
-    if (node.isTextblock) {
-      if (node.type.canContainMark(type)) relevant = true;
-      return false;
-    }
-  });
-  return relevant;
+    var relevant = false;
+    pm.doc.nodesBetween(from, to, function (node) {
+        if (node.isTextblock) {
+            if (node.type.canContainMark(type)) relevant = true;
+            return false;
+        }
+    });
+    return relevant;
 }
 
 function markActive(pm, type) {
-  var sel = pm.selection;
-  if (sel.empty) return type.isInSet(pm.activeMarks());else return pm.doc.rangeHasMark(sel.from, sel.to, type);
+    var sel = pm.selection;
+    if (sel.empty) return type.isInSet(pm.activeMarks());else return pm.doc.rangeHasMark(sel.from, sel.to, type);
 }
 
 var CommentMark = exports.CommentMark = (function (_MarkType) {
-  _inherits(CommentMark, _MarkType);
+    _inherits(CommentMark, _MarkType);
 
-  function CommentMark() {
-    _classCallCheck(this, CommentMark);
+    function CommentMark() {
+        _classCallCheck(this, CommentMark);
 
-    return _possibleConstructorReturn(this, Object.getPrototypeOf(CommentMark).apply(this, arguments));
-  }
-
-  _createClass(CommentMark, [{
-    key: "attrs",
-    get: function get() {
-      return {
-        id: new _model.Attribute()
-      };
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(CommentMark).apply(this, arguments));
     }
-  }], [{
-    key: "rank",
-    get: function get() {
-      return 54;
-    }
-  }]);
 
-  return CommentMark;
+    _createClass(CommentMark, [{
+        key: "attrs",
+        get: function get() {
+            return {
+                id: new _model.Attribute()
+            };
+        }
+    }], [{
+        key: "rank",
+        get: function get() {
+            return 54;
+        }
+    }]);
+
+    return CommentMark;
 })(_model.MarkType);
 
-CommentMark.register("parseDOM", "span", { parse: function parse(dom, state) {
-    if (!dom.classList.contains('comment')) return false;
-    var id = dom.getAttribute("data-id");
-    if (!id) return false;
-    state.wrapMark(dom, this.create({ id: id }));
-  } });
+CommentMark.register("parseDOM", "span", {
+    parse: function parse(dom, state) {
+        if (!dom.classList.contains('comment')) return false;
+        var id = dom.getAttribute("data-id");
+        if (!id) return false;
+        state.wrapMark(dom, this.create({
+            id: id
+        }));
+    }
+});
 
 CommentMark.prototype.serializeDOM = function (mark, serializer) {
-  return serializer.elt("span", { class: 'comment', 'data-id': mark.attrs.id });
+    return serializer.elt("span", {
+        class: 'comment',
+        'data-id': mark.attrs.id
+    });
 };
 
 var commentIcon = {
-  type: "icon", // TODO: use real comment icon
-  width: 951, height: 1024,
-  path: "M832 694q0-22-16-38l-118-118q-16-16-38-16-24 0-41 18 1 1 10 10t12 12 8 10 7 14 2 15q0 22-16 38t-38 16q-8 0-15-2t-14-7-10-8-12-12-10-10q-18 17-18 41 0 22 16 38l117 118q15 15 38 15 22 0 38-14l84-83q16-16 16-38zM430 292q0-22-16-38l-117-118q-16-16-38-16-22 0-38 15l-84 83q-16 16-16 38 0 22 16 38l118 118q15 15 38 15 24 0 41-17-1-1-10-10t-12-12-8-10-7-14-2-15q0-22 16-38t38-16q8 0 15 2t14 7 10 8 12 12 10 10q18-17 18-41zM941 694q0 68-48 116l-84 83q-47 47-116 47-69 0-116-48l-117-118q-47-47-47-116 0-70 50-119l-50-50q-49 50-118 50-68 0-116-48l-118-118q-48-48-48-116t48-116l84-83q47-47 116-47 69 0 116 48l117 118q47 47 47 116 0 70-50 119l50 50q49-50 118-50 68 0 116 48l118 118q48 48 48 116z"
+    type: "icon", // TODO: use real comment icon
+    width: 951,
+    height: 1024,
+    path: "M832 694q0-22-16-38l-118-118q-16-16-38-16-24 0-41 18 1 1 10 10t12 12 8 10 7 14 2 15q0 22-16 38t-38 16q-8 0-15-2t-14-7-10-8-12-12-10-10q-18 17-18 41 0 22 16 38l117 118q15 15 38 15 22 0 38-14l84-83q16-16 16-38zM430 292q0-22-16-38l-117-118q-16-16-38-16-22 0-38 15l-84 83q-16 16-16 38 0 22 16 38l118 118q15 15 38 15 24 0 41-17-1-1-10-10t-12-12-8-10-7-14-2-15q0-22 16-38t38-16q8 0 15 2t14 7 10 8 12 12 10 10q18-17 18-41zM941 694q0 68-48 116l-84 83q-47 47-116 47-69 0-116-48l-117-118q-47-47-47-116 0-70 50-119l-50-50q-49 50-118 50-68 0-116-48l-118-118q-48-48-48-116t48-116l84-83q47-47 116-47 69 0 116 48l117 118q47 47 47 116 0 70-50 119l50 50q49-50 118-50 68 0 116 48l118 118q48 48 48 116z"
 };
 
 CommentMark.register("command", "set", {
-  derive: {
-    inverseSelect: true,
-    params: [{ label: "ID", attr: "id" }]
-  },
-  label: "Add comment",
-  menu: { group: "inline", rank: 35, display: commentIcon }
+    derive: {
+        inverseSelect: true,
+        params: [{
+            label: "ID",
+            attr: "id"
+        }]
+    },
+    label: "Add comment",
+    menu: {
+        group: "inline",
+        rank: 35,
+        display: commentIcon
+    }
 });
 
 CommentMark.register("command", "unset", {
-  derive: true,
-  label: "Remove comment",
-  menu: { group: "inline", rank: 35, display: commentIcon },
-  active: function active() {
-    return true;
-  }
+    derive: true,
+    label: "Remove comment",
+    menu: {
+        group: "inline",
+        rank: 35,
+        display: commentIcon
+    },
+    active: function active() {
+        return true;
+    }
 });
 
 var fidusSchema = exports.fidusSchema = new _model.Schema(_model.defaultSchema.spec.update({
-  doc: Doc,
-  title: Title,
-  metadatasubtitle: MetaDataSubtitle,
-  metadataauthors: MetaDataAuthors,
-  metadataabstract: MetaDataAbstract,
-  metadatakeywords: MetaDataKeywords,
-  documentcontents: DocumentContents,
-  footnote: Footnote,
-  citation: Citation,
-  equation: Equation,
-  figure: Figure
+    doc: Doc,
+    title: Title,
+    metadatasubtitle: MetaDataSubtitle,
+    metadataauthors: MetaDataAuthors,
+    metadataabstract: MetaDataAbstract,
+    metadatakeywords: MetaDataKeywords,
+    documentcontents: DocumentContents,
+    footnote: Footnote,
+    citation: Citation,
+    equation: Equation,
+    figure: Figure
 }, {
-  comment: CommentMark
+    comment: CommentMark
 }));
 
 var fidusFnSchema = exports.fidusFnSchema = new _model.Schema(_model.defaultSchema.spec.update({
-  doc: Doc,
-  title: Title,
-  metadatasubtitle: MetaDataSubtitle,
-  metadataauthors: MetaDataAuthors,
-  metadataabstract: MetaDataAbstract,
-  metadatakeywords: MetaDataKeywords,
-  documentcontents: DocumentContents,
-  footnotecontainer: FootnoteContainer,
-  citation: Citation,
-  equation: Equation,
-  figure: Figure
+    doc: Doc,
+    title: Title,
+    metadatasubtitle: MetaDataSubtitle,
+    metadataauthors: MetaDataAuthors,
+    metadataabstract: MetaDataAbstract,
+    metadatakeywords: MetaDataKeywords,
+    documentcontents: DocumentContents,
+    footnotecontainer: FootnoteContainer,
+    citation: Citation,
+    equation: Equation,
+    figure: Figure
 }, {
-  comment: CommentMark
+    comment: CommentMark
 }));
 
 },{"prosemirror/dist/model":41}],10:[function(require,module,exports){
@@ -2453,7 +2623,31 @@ var placeHolderCss = '';
 function calculatePlaceHolderCss(pm, selectedElement) {
     var newPlaceHolderCss = '',
         i = 0,
-        placeHolders = [{ 'type': 'title', 'selector': '#document-title', 'placeHolder': gettext('Title...') }, { 'type': 'metadatasubtitle', 'selector': '#metadata-subtitle', 'placeHolder': gettext('Subtitle...') }, { 'type': 'metadaauthors', 'selector': '#metadata-authors', 'placeHolder': gettext('Authors...') }, { 'type': 'metadataabstract', 'selector': '#metadata-abstract', 'placeHolder': gettext('Abstract...') }, { 'type': 'metadatakeywords', 'selector': '#metadata-keywords', 'placeHolder': gettext('Keywords...') }, { 'type': 'documentcontents', 'selector': '#document-contents', 'placeHolder': gettext('Body...') }];
+        placeHolders = [{
+        'type': 'title',
+        'selector': '#document-title',
+        'placeHolder': gettext('Title...')
+    }, {
+        'type': 'metadatasubtitle',
+        'selector': '#metadata-subtitle',
+        'placeHolder': gettext('Subtitle...')
+    }, {
+        'type': 'metadaauthors',
+        'selector': '#metadata-authors',
+        'placeHolder': gettext('Authors...')
+    }, {
+        'type': 'metadataabstract',
+        'selector': '#metadata-abstract',
+        'placeHolder': gettext('Abstract...')
+    }, {
+        'type': 'metadatakeywords',
+        'selector': '#metadata-keywords',
+        'placeHolder': gettext('Keywords...')
+    }, {
+        'type': 'documentcontents',
+        'selector': '#document-contents',
+        'placeHolder': gettext('Body...')
+    }];
 
     placeHolders.forEach(function (elementType, index) {
         var partElement = pm.doc.child(i);

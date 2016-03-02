@@ -1,7 +1,7 @@
 // toolbar link
 jQuery(document).on('mousedown', '#button-link:not(.disabled)', function(event) {
 
-    if (!theEditor.editor.hasFocus()) {
+    if (!theEditor.pm.hasFocus()) {
       return false;
     }
 
@@ -11,7 +11,7 @@ jQuery(document).on('mousedown', '#button-link:not(.disabled)', function(event) 
         linkTitle = '',
         defaultLink = 'http://',
         submitButtonText = 'Insert',
-        linkElement = _.find(theEditor.editor.activeMarks(),function(mark){return (mark.type.name==='link')});
+        linkElement = _.find(theEditor.pm.activeMarks(),function(mark){return (mark.type.name==='link')});
 
 
     if (linkElement) {
@@ -32,7 +32,7 @@ jQuery(document).on('mousedown', '#button-link:not(.disabled)', function(event) 
             if ((new RegExp(/^\s*$/)).test(newLink) || newLink === defaultLink) {
                 // The link input is empty or hasn't been changed from the default value. Just close the dialog.
                 dialog.dialog('close');
-                theEditor.editor.focus();
+                theEditor.pm.focus();
                 return;
             }
 
@@ -41,8 +41,8 @@ jQuery(document).on('mousedown', '#button-link:not(.disabled)', function(event) 
                 linkText = link;
             }
             dialog.dialog('close');
-            theEditor.editor.execCommand('link:set',[newLink, linkTitle]);
-            theEditor.editor.focus();
+            theEditor.pm.execCommand('link:set',[newLink, linkTitle]);
+            theEditor.pm.focus();
             return;
 
         }
@@ -53,7 +53,7 @@ jQuery(document).on('mousedown', '#button-link:not(.disabled)', function(event) 
         class: 'fw-button fw-orange',
         click: function() {
             dialog.dialog('close');
-            theEditor.editor.focus();
+            theEditor.pm.focus();
         }
     });
 

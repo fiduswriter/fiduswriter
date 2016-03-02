@@ -14,7 +14,7 @@ jQuery(document).on('mousedown', '#button-cite:not(.disabled)', function(event) 
         cited_pages,
         diaButtons = [],
         submit_button_text,
-        node = theEditor.editor.selection.node;
+        node = theEditor.pm.selection.node;
 
     event.preventDefault();
 
@@ -60,7 +60,7 @@ jQuery(document).on('mousedown', '#button-cite:not(.disabled)', function(event) 
             return true;
         }
 
-        theEditor.editor.execCommand('citation:insert', [bibFormat, bibEntry, bibBefore, bibPage]);
+        theEditor.pm.execCommand('citation:insert', [bibFormat, bibEntry, bibBefore, bibPage]);
         return true;
     };
 
@@ -97,7 +97,7 @@ jQuery(document).on('mousedown', '#button-cite:not(.disabled)', function(event) 
         diaButtons.push({
             text: gettext('Remove'),
             click: function() {
-                theEditor.editor.execCommand('deleteSelection');
+                theEditor.pm.execCommand('deleteSelection');
                 dialog.dialog('close');
             },
             class: 'fw-button fw-orange'

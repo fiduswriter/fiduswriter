@@ -164,7 +164,7 @@
             //
             // TODO: Find a way that is more reliable than a timeout to check
             // for font loading.
-            setTimeout(function(){theEditor.editor.mod.comments.layout.layoutComments()}, 100);
+            setTimeout(function(){theEditor.pm.mod.comments.layout.layoutComments()}, 100);
          });
 
      };
@@ -177,7 +177,7 @@
              'selected');
          jQuery('span[data-citationstyle=' + theDocument.settings.citationstyle + ']').addClass(
              'selected');
-         if (theEditor.editor) {
+         if (theEditor.pm) {
            citationHelpers.formatCitationsInDoc();
          }
      };
@@ -413,7 +413,7 @@ jQuery(document).ready(function() {
                 jQuery(this).attr('data-citationstyle'),true)) {
             editorHelpers.displaySetting.set('citationstyle');
             editorHelpers.documentHasChanged();
-            theEditor.editor.mod.comments.layout.layoutComments();
+            theEditor.pm.mod.comments.layout.layoutComments();
         }
         return false;
     });
@@ -465,7 +465,7 @@ jQuery(document).ready(function() {
                 'top': content_top
             }, {
                 'complete': function() {
-                    theEditor.editor.mod.comments.layout.layoutComments();
+                    theEditor.pm.mod.comments.layout.layoutComments();
                 }
             });
     });

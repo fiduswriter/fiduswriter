@@ -13,7 +13,7 @@ jQuery(document).on('mousedown', '#button-figure:not(.disabled)', function (even
         equation = '',
         previewImage,
         mathInput, captionInput,
-        node = theEditor.editor.selection.node;;
+        node = theEditor.pm.selection.node;;
     event.preventDefault();
 
 
@@ -37,7 +37,7 @@ jQuery(document).on('mousedown', '#button-figure:not(.disabled)', function (even
             text: gettext('Remove'),
             class: 'fw-button fw-orange',
             click: function () {
-                theEditor.editor.execCommand('deleteSelection');
+                theEditor.pm.execCommand('deleteSelection');
                 dialog.dialog('close');
             }
         });
@@ -62,7 +62,7 @@ jQuery(document).on('mousedown', '#button-figure:not(.disabled)', function (even
             if ((new RegExp(/^\s*$/)).test(equation) && (!image)) {
                 // The math input is empty. Delete a math node if it exist. Then close the dialog.
                 if (insideFigure) {
-                    theEditor.editor.execCommand('deleteSelection');
+                    theEditor.pm.execCommand('deleteSelection');
                 }
                 dialog.dialog('close');
                 return false;
@@ -77,7 +77,7 @@ jQuery(document).on('mousedown', '#button-figure:not(.disabled)', function (even
                 return false;
             }
 
-            theEditor.editor.execCommand('figure:insert', [equation, image, figureCategory, caption]);
+            theEditor.pm.execCommand('figure:insert', [equation, image, figureCategory, caption]);
 
 
             dialog.dialog('close');

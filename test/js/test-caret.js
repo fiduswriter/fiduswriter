@@ -4533,7 +4533,7 @@ var testCaret = {};
  * @returns {Caret}
  */
 testCaret.getCaret = function getCaret() {
-  return theEditor.editor.selection.from.toJSON();
+  return theEditor.pm.selection.from.toJSON();
 };
 
 /**
@@ -4561,8 +4561,8 @@ testCaret.setSelection = function setSelection(caretOne, caretTwo) {
 
   var selection = new _selection.TextSelection(posOne, posTwo);
 
-  theEditor.editor.setSelection(selection);
-  theEditor.editor.focus();
+  theEditor.pm.setSelection(selection);
+  theEditor.pm.focus();
 
   return selection;
 };

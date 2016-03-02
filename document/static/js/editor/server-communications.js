@@ -18,7 +18,7 @@
             theEditor.waitingForDocument = false;
             theEditor.askForDocument();
         } else {
-            theEditor.editor.mod.footnotes.editor.renderAllFootnotes();
+            theEditor.pm.mod.footnotes.editor.renderAllFootnotes();
             theEditor.checkDiffVersion();
             serverCommunications.send({
                 type: 'participant_update'
@@ -69,7 +69,7 @@
             break;
         case 'confirm_diff_version':
             theEditor.cancelCurrentlyCheckingVersion();
-            if (data.diff_version !== theEditor.editor.mod.collab.version) {
+            if (data.diff_version !== theEditor.pm.mod.collab.version) {
                 theEditor.checkDiffVersion();
                 return;
             }
@@ -82,8 +82,8 @@
             }
             var editorHash = theEditor.getHash();
             console.log('Incoming diff: version: '+data.diff_version+', hash: '+data.hash);
-            console.log('Editor: version: '+theEditor.editor.mod.collab.version+', hash: '+editorHash);
-            if (data.diff_version !== theEditor.editor.mod.collab.version) {
+            console.log('Editor: version: '+theEditor.pm.mod.collab.version+', hash: '+editorHash);
+            if (data.diff_version !== theEditor.pm.mod.collab.version) {
                 console.warn('Something is not correct. The local and remote versions do not match.');
                 theEditor.checkDiffVersion();
                 return;
@@ -103,7 +103,7 @@
               })
             }
             if (data.footnote_diff && data.footnote_diff.length) {
-                theEditor.editor.mod.footnotes.editor.applyDiffs(data.footnote_diff);
+                theEditor.pm.mod.footnotes.editor.applyDiffs(data.footnote_diff);
             }
             if (data.reject_request_id) {
                 theEditor.rejectDiff(data.reject_request_id);
@@ -115,7 +115,7 @@
                 // Because the uypdate came directly from the sevrer, we may
                 // also have lost some collab updates to the footnote table.
                 // Re-render the footnote table if needed.
-                theEditor.editor.mod.footnotes.editor.renderAllFootnotes();
+                theEditor.pm.mod.footnotes.editor.renderAllFootnotes();
             }
             break;
         case 'confirm_diff':

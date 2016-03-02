@@ -491,7 +491,7 @@ export class CommentMark extends MarkType {
             id: new Attribute
         }
     }
-    staticget rank() {
+    static get rank() {
         return 54
     }
 }

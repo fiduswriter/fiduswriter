@@ -1818,7 +1818,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         // Add edit options to bibliography table if the current user either is the owner of the
         // current document or he is accessing his bibliography manager directly.
 
-        if (typeof (theEditor) === 'undefined' || theEditor.doc.is_owner) {
+        if (typeof (theEditor) === 'undefined' || theEditor.documentValues.is_owner) {
             allowEdit = true;
         } else {
             allowEdit = false;

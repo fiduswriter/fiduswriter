@@ -18,7 +18,7 @@
             theEditor.waitingForDocument = false;
             theEditor.askForDocument();
         } else {
-            theEditor.mod.footnotes.editor.renderAllFootnotes();
+            theEditor.mod.footnotes.fnEditor.renderAllFootnotes();
             theEditor.checkDiffVersion();
             serverCommunications.send({
                 type: 'participant_update'
@@ -103,7 +103,7 @@
               })
             }
             if (data.footnote_diff && data.footnote_diff.length) {
-                theEditor.mod.footnotes.editor.applyDiffs(data.footnote_diff);
+                theEditor.mod.footnotes.fnEditor.applyDiffs(data.footnote_diff);
             }
             if (data.reject_request_id) {
                 theEditor.rejectDiff(data.reject_request_id);
@@ -115,7 +115,7 @@
                 // Because the uypdate came directly from the sevrer, we may
                 // also have lost some collab updates to the footnote table.
                 // Re-render the footnote table if needed.
-                theEditor.mod.footnotes.editor.renderAllFootnotes();
+                theEditor.mod.footnotes.fnEditor.renderAllFootnotes();
             }
             break;
         case 'confirm_diff':

@@ -86,8 +86,6 @@
         <script type="text/javascript" src="{{ JQUERYUI_URL }}"></script>
         <!-- Underscore -->
         <script type="text/javascript" src="{{ UNDERSCOREJS_URL }}"></script>
-        <!-- ProseMirror -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/editor/editor.js"></script>
         <!-- Mathjax -->
         <script type="text/x-mathjax-config">
             MathJax.Hub.Config({
@@ -212,14 +210,16 @@
             <script type="text/javascript">
                 chatHelpers.bind();
             </script>
-            <!-- Document related functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/setup.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/server-communications.js"></script>
-            <script type="text/javascript">
-                serverCommunications.bind();
-            </script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/node-converter.js"></script>
         {% endcompress %}
+        <!-- Editor related functions -->
+        <script type="text/javascript" src="{{ STATIC_URL }}js/editor/setup.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/editor/server-communications.js"></script>
+        <script type="text/javascript">
+            serverCommunications.bind();
+        </script>
+        <!-- ProseMirror -->
+        <script type="text/javascript" src="{{ STATIC_URL }}js/editor/editor.js"></script>
 
     </head>
     <body class="{% trans "en" %} tex2jax_ignore">

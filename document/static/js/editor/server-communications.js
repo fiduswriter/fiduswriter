@@ -12,7 +12,7 @@
     serverCommunications.messagesToSend = [];
 
 
-    serverCommunications.activate_connection = function () {
+    serverCommunications.activateConnection = function () {
         serverCommunications.connected = true;
         if (serverCommunications.firstTimeConnection) {
             theEditor.waitingForDocument = false;
@@ -51,7 +51,7 @@
             }
             break;
         case 'welcome':
-            serverCommunications.activate_connection();
+            serverCommunications.activateConnection();
             break;
         case 'document_data':
             editorHelpers.copyDocumentValues(data.document, data.document_values);

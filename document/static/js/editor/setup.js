@@ -303,7 +303,7 @@ jQuery(document).ready(function() {
         citationStyleMenu = document.getElementById("citationstyle-list"),
         newMenuItem, i;
 
-    theEditor.initiate();
+    theEditor.init();
 
     // Set Auto-save to send the document every two minutes, if it has changed.
     setInterval(function() {

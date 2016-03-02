@@ -220,6 +220,75 @@ export class Editor {
         this.disableDiffSending()
     }
 
+    receiveFromCollaborators(data) {
+        let that = this
+        if (this.waitingForDocument) {
+            // We are currently waiting for a complete editor update, so
+            // don't deal with incoming diffs.
+            return
+        }
+        let editorHash = this.getHash()
+        console.log('Incoming diff: version: '+data.diff_version+', hash: '+data.hash)
+        console.log('Editor: version: '+theEditor.pm.mod.collab.version+', hash: '+editorHash)
+        if (data.diff_version !== this.pm.mod.collab.version) {
+            console.warn('Something is not correct. The local and remote versions do not match.')
+            this.checkDiffVersion()
+            return
+        } else {
+            console.log('version OK')
+        }
+        if (data.hash && data.hash !== editorHash) {
+            console.warn('Something is not correct. The local and remote hash values do not match.')
+            return false
+        }
+        if (data.comments && data.comments.length) {
+            this.updateComments(data.comments, data.comments_version)
+        }
+        if (data.diff && data.diff.length) {
+            data.diff.forEach(function(diff) {
+                that.applyDiff(diff)
+            })
+        }
+        if (data.footnote_diff && data.footnote_diff.length) {
+            this.mod.footnotes.fnEditor.applyDiffs(data.footnote_diff)
+        }
+        if (data.reject_request_id) {
+            this.rejectDiff(data.reject_request_id)
+        }
+        if (!data.hash) {
+            // No hash means this must have been created server side.
+            this.cancelCurrentlyCheckingVersion()
+            this.enableDiffSending()
+            // Because the uypdate came directly from the sevrer, we may
+            // also have lost some collab updates to the footnote table.
+            // Re-render the footnote table if needed.
+            this.mod.footnotes.fnEditor.renderAllFootnotes()
+        }
+    }
+
+    receiveDocument(data) {
+        editorHelpers.copyDocumentValues(data.document, data.document_values)
+        if (data.hasOwnProperty('user')) {
+            theUser = data.user
+        } else {
+            theUser = window.theDocument.owner
+        }
+        usermediaHelpers.init(function(){
+            theEditor.update()
+            serverCommunications.send({
+                type: 'participant_update'
+            })
+        })
+    }
+
+    // This client was participating in collaborative editing of this document
+    // but not as the cleint that was in charge of saving. This has now changed
+    // so that the current user is being asked to save the document.
+    takeControl() {
+        theDocumentValues.control = true
+        theDocumentValues.sentHash = false
+    }
+
     confirmDiff(request_id) {
         console.log('confirming steps')
         let sentSteps = this.unconfirmedSteps[request_id]["diffs"]

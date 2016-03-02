@@ -54,18 +54,7 @@
             serverCommunications.activateConnection();
             break;
         case 'document_data':
-            editorHelpers.copyDocumentValues(data.document, data.document_values);
-            if (data.hasOwnProperty('user')) {
-                theUser = data.user;
-            } else {
-                theUser = theDocument.owner;
-            }
-            usermediaHelpers.init(function(){
-                theEditor.update();
-                serverCommunications.send({
-                    type: 'participant_update'
-                });
-            });
+            theEditor.receiveDocument(data);
             break;
         case 'confirm_diff_version':
             theEditor.cancelCurrentlyCheckingVersion();
@@ -74,49 +63,9 @@
                 return;
             }
             theEditor.enableDiffSending();
+            break;
         case 'diff':
-            if (theEditor.waitingForDocument) {
-                // We are currently waiting for a complete editor update, so
-                // don't deal with incoming diffs.
-                return;
-            }
-            var editorHash = theEditor.getHash();
-            console.log('Incoming diff: version: '+data.diff_version+', hash: '+data.hash);
-            console.log('Editor: version: '+theEditor.pm.mod.collab.version+', hash: '+editorHash);
-            if (data.diff_version !== theEditor.pm.mod.collab.version) {
-                console.warn('Something is not correct. The local and remote versions do not match.');
-                theEditor.checkDiffVersion();
-                return;
-            } else {
-                console.log('version OK')
-            }
-            if (data.hash && data.hash !== editorHash) {
-                console.warn('Something is not correct. The local and remote hash values do not match.');
-                return false;
-            }
-            if (data.comments && data.comments.length) {
-                theEditor.updateComments(data.comments, data.comments_version);
-            }
-            if (data.diff && data.diff.length) {
-              data.diff.forEach(function(diff) {
-                  theEditor.applyDiff(diff);
-              })
-            }
-            if (data.footnote_diff && data.footnote_diff.length) {
-                theEditor.mod.footnotes.fnEditor.applyDiffs(data.footnote_diff);
-            }
-            if (data.reject_request_id) {
-                theEditor.rejectDiff(data.reject_request_id);
-            }
-            if (!data.hash) {
-                // No hash means this must have been created server side.
-                theEditor.cancelCurrentlyCheckingVersion();
-                theEditor.enableDiffSending();
-                // Because the uypdate came directly from the sevrer, we may
-                // also have lost some collab updates to the footnote table.
-                // Re-render the footnote table if needed.
-                theEditor.mod.footnotes.fnEditor.renderAllFootnotes();
-            }
+            theEditor.receiveFromCollaborators(data);
             break;
         case 'confirm_diff':
             theEditor.confirmDiff(data.request_id);
@@ -126,8 +75,7 @@
             editorHelpers.displaySetting.set(data.variable);
             break;
         case 'take_control':
-            theDocumentValues.control = true;
-            theDocumentValues.sentHash = false;
+            theEditor.takeControl();
             break;
         case 'check_hash':
             theEditor.checkHash(data.diff_version, data.hash);

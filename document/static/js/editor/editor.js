@@ -36,6 +36,7 @@ var Editor = exports.Editor = (function () {
     function Editor() {
         _classCallCheck(this, Editor);
 
+        this.mod = {};
         // Whether the editor is currently waiting for a document update. Set to true
         // initially so that diffs that arrive before document has been loaded are not
         // dealt with.
@@ -45,6 +46,7 @@ var Editor = exports.Editor = (function () {
         this.collaborativeMode = false;
         this.currentlyCheckingVersion = false;
         this.awaitingDiffResponse = false;
+        this.receiving = false;
         //this.init()
     }
 
@@ -53,7 +55,7 @@ var Editor = exports.Editor = (function () {
         value: function init() {
             var that = this;
             this.pm = this.makeEditor(document.getElementById('document-editable'));
-            new _mod2.ModFootnotes(this.pm);
+            new _mod2.ModFootnotes(this);
             new _update.UpdateScheduler(this.pm, "selectionChange change activeMarkChange blur focus setDoc", function () {
                 (0, _updateUi.updateUI)(that.pm);
             });
@@ -68,7 +70,7 @@ var Editor = exports.Editor = (function () {
     }, {
         key: "makeEditor",
         value: function makeEditor(where) {
-            return new _main.ProseMirror({
+            var pm = new _main.ProseMirror({
                 place: where,
                 schema: _schema.fidusSchema,
                 //    menuBar: true,
@@ -76,6 +78,8 @@ var Editor = exports.Editor = (function () {
                     version: 0
                 }
             });
+            pm.editor = this;
+            return pm;
         }
     }, {
         key: "createDoc",
@@ -135,11 +139,11 @@ var Editor = exports.Editor = (function () {
                 that.sendToCollaborators();
             });
             this.pm.signal("documentUpdated");
-            new _mod.ModComments(this.pm, theDocument.comment_version);
+            new _mod.ModComments(this, theDocument.comment_version);
             _.each(theDocument.comments, function (comment) {
-                this.pm.mod.comments.store.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers, comment['review:isMajor']);
+                this.mod.comments.store.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers, comment['review:isMajor']);
             });
-            this.pm.mod.comments.store.on("mustSend", function () {
+            this.mod.comments.store.on("mustSend", function () {
                 that.sendToCollaborators();
             });
             this.enableUI();
@@ -203,7 +207,7 @@ var Editor = exports.Editor = (function () {
             theDocument.metadata.keywords = exporter.node2Obj(outputNode.getElementById('metadata-keywords'));
             theDocument.contents = exporter.node2Obj(outputNode.getElementById('document-contents'));
             theDocument.hash = this.getHash();
-            theDocument.comments = this.pm.mod.comments.store.comments;
+            theDocument.comments = this.mod.comments.store.comments;
             if (callback) {
                 callback();
             }
@@ -211,14 +215,14 @@ var Editor = exports.Editor = (function () {
     }, {
         key: "sendToCollaborators",
         value: function sendToCollaborators() {
-            if (this.awaitingDiffResponse || !this.pm.mod.collab.hasSendableSteps() && this.pm.mod.comments.store.unsentEvents().length === 0) {
+            if (this.awaitingDiffResponse || !this.pm.mod.collab.hasSendableSteps() && this.mod.comments.store.unsentEvents().length === 0) {
                 // We are waiting for the confirmation of previous steps, so don't
                 // send anything now, or there is nothing to send.
                 return;
             }
             console.log('send to collabs');
             var toSend = this.pm.mod.collab.sendableSteps();
-            var fnToSend = this.pm.mod.footnotes.fnPm.mod.collab.sendableSteps();
+            var fnToSend = this.mod.footnotes.fnPm.mod.collab.sendableSteps();
             var request_id = this.confirmStepsRequestCounter++;
             var aPackage = {
                 type: 'diff',
@@ -229,8 +233,8 @@ var Editor = exports.Editor = (function () {
                 footnote_diff: fnToSend.steps.map(function (s) {
                     return s.toJSON();
                 }),
-                comments: this.pm.mod.comments.store.unsentEvents(),
-                comment_version: this.pm.mod.comments.store.version,
+                comments: this.mod.comments.store.unsentEvents(),
+                comment_version: this.mod.comments.store.version,
                 request_id: request_id,
                 hash: this.getHash()
             };
@@ -238,7 +242,7 @@ var Editor = exports.Editor = (function () {
             this.unconfirmedSteps[request_id] = {
                 diffs: toSend,
                 footnote_diffs: fnToSend,
-                comments: this.pm.mod.comments.store.hasUnsentEvents()
+                comments: this.mod.comments.store.hasUnsentEvents()
             };
             this.disableDiffSending();
         }
@@ -250,10 +254,10 @@ var Editor = exports.Editor = (function () {
             this.pm.mod.collab.confirmSteps(sentSteps);
 
             var sentFnSteps = this.unconfirmedSteps[request_id]["footnote_diffs"];
-            this.pm.mod.footnotes.fnPm.mod.collab.confirmSteps(sentFnSteps);
+            this.mod.footnotes.fnPm.mod.collab.confirmSteps(sentFnSteps);
 
             var sentComments = this.unconfirmedSteps[request_id]["comments"];
-            this.pm.mod.comments.store.eventsSent(sentComments);
+            this.mod.comments.store.eventsSent(sentComments);
 
             delete this.unconfirmedSteps[request_id];
             this.enableDiffSending();
@@ -269,7 +273,7 @@ var Editor = exports.Editor = (function () {
     }, {
         key: "applyDiff",
         value: function applyDiff(diff) {
-            this.pm.receiving = true;
+            this.receiving = true;
             var steps = [diff].map(function (j) {
                 return _transform.Step.fromJSON(_schema.fidusSchema, j);
             });
@@ -288,13 +292,13 @@ var Editor = exports.Editor = (function () {
                 maps: maps
             };
             this.pm.signal("receivedTransform", transform);
-            this.pm.receiving = false;
+            this.receiving = false;
         }
     }, {
         key: "updateComments",
         value: function updateComments(comments, comment_version) {
             console.log('receiving comment update');
-            this.pm.mod.comments.store.receive(comments, comment_version);
+            this.mod.comments.store.receive(comments, comment_version);
         }
     }, {
         key: "getHash",
@@ -909,11 +913,11 @@ var _interactions = require("./interactions");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ModComments = exports.ModComments = function ModComments(pm, version) {
+var ModComments = exports.ModComments = function ModComments(editor, version) {
     _classCallCheck(this, ModComments);
 
-    pm.mod.comments = this;
-    this.pm = pm;
+    editor.mod.comments = this;
+    this.editor = editor;
     new _store.ModCommentStore(this, version);
     new _layout.ModCommentLayout(this);
     new _interactions.ModCommentInteractions(this);
@@ -979,7 +983,7 @@ var ModCommentStore = exports.ModCommentStore = (function () {
                 type: "create",
                 id: id
             });
-            this.mod.pm.execCommand('comment:set', [id]);
+            this.mod.editor.pm.execCommand('comment:set', [id]);
             this.signal("mustSend");
             return id;
         }
@@ -1013,7 +1017,7 @@ var ModCommentStore = exports.ModCommentStore = (function () {
         value: function removeCommentMarks(id) {
             var _this = this;
 
-            this.mod.pm.doc.inlineNodesBetween(false, false, function (_ref, path, start, end) {
+            this.mod.editor.pm.doc.inlineNodesBetween(false, false, function (_ref, path, start, end) {
                 var marks = _ref.marks;
                 var _iteratorNormalCompletion = true;
                 var _didIteratorError = false;
@@ -1024,7 +1028,7 @@ var ModCommentStore = exports.ModCommentStore = (function () {
                         var mark = _step.value;
 
                         if (mark.type.name === 'comment' && parseInt(mark.attrs.id) === id) {
-                            _this.mod.pm.apply(_this.mod.pm.tr.removeMark(new _model.Pos(path, start), new _model.Pos(path, end), _schema.CommentMark.type));
+                            _this.mod.editor.pm.apply(_this.mod.editor.pm.tr.removeMark(new _model.Pos(path, start), new _model.Pos(path, end), _schema.CommentMark.type));
                         }
                     }
                 } catch (err) {
@@ -1244,7 +1248,7 @@ var ModCommentStore = exports.ModCommentStore = (function () {
             });
             if (updateCommentLayout) {
                 (function () {
-                    var layoutComments = new _update.UpdateScheduler(_this2.mod.pm, "flush", function () {
+                    var layoutComments = new _update.UpdateScheduler(_this2.mod.editor.pm, "flush", function () {
                         layoutComments.detach();
                         that.mod.layout.layoutComments();
                     });
@@ -1255,7 +1259,7 @@ var ModCommentStore = exports.ModCommentStore = (function () {
         key: "findCommentsAt",
         value: function findCommentsAt(pos) {
             var found = [],
-                node = this.mod.pm.doc.path(pos.path);
+                node = this.mod.editor.pm.doc.path(pos.path);
 
             for (var mark in node.marks) {
                 if (mark.type.name === 'comment' && mark.attrs.id in this.comments) found.push(this.comments[mark.attrs.id]);
@@ -1299,7 +1303,7 @@ var ModFootnoteEditor = exports.ModFootnoteEditor = (function () {
     function ModFootnoteEditor(mod) {
         _classCallCheck(this, ModFootnoteEditor);
 
-        mod.editor = this;
+        mod.fnEditor = this;
         this.mod = mod;
         this.rendering = false;
         this.bindEvents();
@@ -1354,7 +1358,7 @@ var ModFootnoteEditor = exports.ModFootnoteEditor = (function () {
             console.log('redrawing all footnotes');
             this.mod.fnPm.setContent('', 'html');
             this.mod.footnotes.forEach(function (footnote, index) {
-                var node = that.mod.pm.doc.nodeAfter(footnote.from);
+                var node = that.mod.editor.pm.doc.nodeAfter(footnote.from);
                 that.renderFootnote(node.attrs.contents, index);
             });
             this.mod.fnPm.setOption("collab", {
@@ -1383,7 +1387,7 @@ var ModFootnoteEditor = exports.ModFootnoteEditor = (function () {
                 index++;
             }
             this.mod.footnotes.splice(index, 1);
-            if (!this.mod.pm.receiving) {
+            if (!this.mod.editor.receiving) {
                 this.rendering = true;
                 this.mod.fnPm.tr.delete(new _model.Pos([], index), new _model.Pos([], index + 1)).apply();
                 this.rendering = false;
@@ -1429,13 +1433,13 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = (function () {
         key: "bindEvents",
         value: function bindEvents() {
             var that = this;
-            this.mod.pm.on('documentUpdated', function () {
-                that.mod.editor.renderAllFootnotes();
+            this.mod.editor.pm.on('documentUpdated', function () {
+                that.mod.fnEditor.renderAllFootnotes();
             });
-            this.mod.pm.on('transform', function (transform, object) {
+            this.mod.editor.pm.on('transform', function (transform, object) {
                 that.scanForFootnoteMarkers(transform, true);
             });
-            this.mod.pm.on('receivedTransform', function (transform, object) {
+            this.mod.editor.pm.on('receivedTransform', function (transform, object) {
                 that.scanForFootnoteMarkers(transform, false);
             });
         }
@@ -1459,8 +1463,8 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = (function () {
                         newFootnotes.forEach(function (footnote) {
                             that.mod.footnotes.splice(index, 0, footnote);
                             if (renderFootnote) {
-                                var node = that.mod.pm.doc.nodeAfter(footnote.from);
-                                that.mod.editor.renderFootnote(node.attrs.contents, index);
+                                var node = that.mod.editor.pm.doc.nodeAfter(footnote.from);
+                                that.mod.fnEditor.renderFootnote(node.attrs.contents, index);
                             }
                             index++;
                         });
@@ -1527,12 +1531,12 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = (function () {
             var footnoteMarkers = [],
                 that = this;
 
-            this.mod.pm.doc.inlineNodesBetween(fromPos, toPos, function (inlineNode, path, start, end, parent) {
+            this.mod.editor.pm.doc.inlineNodesBetween(fromPos, toPos, function (inlineNode, path, start, end, parent) {
                 if (inlineNode.type.name === 'footnote') {
                     (function () {
-                        var footnoteMarker = that.mod.pm.markRange(new _model.Pos(path, start), new _model.Pos(path, end));
+                        var footnoteMarker = that.mod.editor.pm.markRange(new _model.Pos(path, start), new _model.Pos(path, end));
                         footnoteMarker.on('removed', function () {
-                            that.mod.editor.removeFootnote(footnoteMarker);
+                            that.mod.fnEditor.removeFootnote(footnoteMarker);
                         });
                         footnoteMarkers.push(footnoteMarker);
                     })();
@@ -1550,7 +1554,7 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = (function () {
             var count = 0,
                 passed = true,
                 that = this;
-            this.mod.pm.doc.inlineNodesBetween(null, null, function (inlineNode, path, start, end, parent) {
+            this.mod.editor.pm.doc.inlineNodesBetween(null, null, function (inlineNode, path, start, end, parent) {
                 if (inlineNode.type.name !== 'footnote') {
                     return;
                 }
@@ -1579,8 +1583,8 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = (function () {
             this.updating = true;
             var footnoteContents = (0, _format.toHTML)(this.mod.fnPm.doc.child(index));
             var footnote = this.mod.footnotes[index];
-            var node = this.mod.pm.doc.nodeAfter(footnote.from);
-            this.mod.pm.tr.setNodeType(footnote.from, node.type, {
+            var node = this.mod.editor.pm.doc.nodeAfter(footnote.from);
+            this.mod.editor.pm.tr.setNodeType(footnote.from, node.type, {
                 contents: footnoteContents
             }).apply();
             this.updating = false;
@@ -1613,11 +1617,11 @@ var _markers = require("./markers");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var ModFootnotes = exports.ModFootnotes = (function () {
-    function ModFootnotes(pm) {
+    function ModFootnotes(editor) {
         _classCallCheck(this, ModFootnotes);
 
-        pm.mod.footnotes = this;
-        this.pm = pm;
+        editor.mod.footnotes = this;
+        this.editor = editor;
         this.footnotes = [];
         this.init();
         new _editor.ModFootnoteEditor(this);

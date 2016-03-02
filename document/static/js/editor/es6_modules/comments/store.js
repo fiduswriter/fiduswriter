@@ -38,7 +38,7 @@ export class ModCommentStore {
             type: "create",
             id: id
         })
-        this.mod.pm.execCommand('comment:set', [id])
+        this.mod.editor.pm.execCommand('comment:set', [id])
         this.signal("mustSend")
         return id
     }
@@ -66,13 +66,13 @@ export class ModCommentStore {
     }
 
     removeCommentMarks(id) {
-        this.mod.pm.doc.inlineNodesBetween(false, false, ({
+        this.mod.editor.pm.doc.inlineNodesBetween(false, false, ({
             marks
         }, path, start, end) => {
             for (let mark of marks) {
                 if (mark.type.name === 'comment' && parseInt(mark.attrs.id) === id) {
-                    this.mod.pm.apply(
-                        this.mod.pm.tr.removeMark(new Pos(path, start), new Pos(path, end), CommentMark.type)
+                    this.mod.editor.pm.apply(
+                        this.mod.editor.pm.tr.removeMark(new Pos(path, start), new Pos(path, end), CommentMark.type)
                     )
                 }
             }
@@ -264,7 +264,7 @@ export class ModCommentStore {
             this.version++
         })
         if (updateCommentLayout) {
-            let layoutComments = new UpdateScheduler(this.mod.pm, "flush", function() {
+            let layoutComments = new UpdateScheduler(this.mod.editor.pm, "flush", function() {
                 layoutComments.detach()
                 that.mod.layout.layoutComments()
             })
@@ -273,7 +273,7 @@ export class ModCommentStore {
 
     findCommentsAt(pos) {
         let found = [],
-            node = this.mod.pm.doc.path(pos.path)
+            node = this.mod.editor.pm.doc.path(pos.path)
 
         for (let mark in node.marks) {
             if (mark.type.name === 'comment' && mark.attrs.id in this.comments)

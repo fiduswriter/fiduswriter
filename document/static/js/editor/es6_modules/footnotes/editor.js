@@ -6,7 +6,7 @@ import {fidusFnSchema, Footnote} from "../schema"
 /* Functions related to the footnote editor instance */
 export class ModFootnoteEditor {
     constructor(mod) {
-        mod.editor = this
+        mod.fnEditor = this
         this.mod = mod
         this.rendering = false
         this.bindEvents()
@@ -56,7 +56,7 @@ export class ModFootnoteEditor {
         console.log('redrawing all footnotes')
         this.mod.fnPm.setContent('', 'html')
         this.mod.footnotes.forEach((footnote, index) => {
-            let node = that.mod.pm.doc.nodeAfter(footnote.from)
+            let node = that.mod.editor.pm.doc.nodeAfter(footnote.from)
             that.renderFootnote(node.attrs.contents, index)
         })
         this.mod.fnPm.setOption("collab", {
@@ -83,7 +83,7 @@ export class ModFootnoteEditor {
             index++
         }
         this.mod.footnotes.splice(index, 1)
-        if (!this.mod.pm.receiving) {
+        if (!this.mod.editor.receiving) {
             this.rendering = true
             this.mod.fnPm.tr.delete(new Pos([], index), new Pos([], index + 1)).apply()
             this.rendering = false

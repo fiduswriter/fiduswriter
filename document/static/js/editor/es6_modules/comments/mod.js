@@ -3,9 +3,9 @@ import {ModCommentLayout} from "./layout"
 import {ModCommentInteractions} from "./interactions"
 
 export class ModComments {
-    constructor(pm, version) {
-        pm.mod.comments = this
-        this.pm = pm
+    constructor(editor, version) {
+        editor.mod.comments = this
+        this.editor = editor
         new ModCommentStore(this, version)
         new ModCommentLayout(this)
         new ModCommentInteractions(this)

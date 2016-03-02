@@ -16,6 +16,7 @@ import {UpdateScheduler} from "prosemirror/dist/ui/update"
 
 export class Editor {
     constructor() {
+        this.mod = {}
         // Whether the editor is currently waiting for a document update. Set to true
         // initially so that diffs that arrive before document has been loaded are not
         // dealt with.
@@ -25,13 +26,14 @@ export class Editor {
         this.collaborativeMode = false
         this.currentlyCheckingVersion = false
         this.awaitingDiffResponse = false
+        this.receiving = false
             //this.init()
     }
 
     init() {
         let that = this
         this.pm = this.makeEditor(document.getElementById('document-editable'))
-        new ModFootnotes(this.pm)
+        new ModFootnotes(this)
         new UpdateScheduler(this.pm, "selectionChange change activeMarkChange blur focus setDoc", function() {
             updateUI(that.pm)
         })
@@ -43,7 +45,7 @@ export class Editor {
     }
 
     makeEditor(where) {
-        return new ProseMirror({
+        let pm = new ProseMirror({
             place: where,
             schema: fidusSchema,
             //    menuBar: true,
@@ -51,6 +53,8 @@ export class Editor {
                 version: 0
             }
         })
+        pm.editor = this
+        return pm
     }
 
     createDoc(aDocument) {
@@ -108,13 +112,13 @@ export class Editor {
             that.sendToCollaborators()
         })
         this.pm.signal("documentUpdated")
-        new ModComments(this.pm, theDocument.comment_version)
+        new ModComments(this, theDocument.comment_version)
         _.each(theDocument.comments, function(comment) {
-            this.pm.mod.comments.store.addLocalComment(comment.id, comment.user,
+            this.mod.comments.store.addLocalComment(comment.id, comment.user,
                 comment.userName, comment.userAvatar, comment.date, comment.comment,
                 comment.answers, comment['review:isMajor'])
         })
-        this.pm.mod.comments.store.on("mustSend", function() {
+        this.mod.comments.store.on("mustSend", function() {
             that.sendToCollaborators()
         })
         this.enableUI()
@@ -179,7 +183,7 @@ export class Editor {
         theDocument.metadata.keywords = exporter.node2Obj(outputNode.getElementById('metadata-keywords'))
         theDocument.contents = exporter.node2Obj(outputNode.getElementById('document-contents'))
         theDocument.hash = this.getHash()
-        theDocument.comments = this.pm.mod.comments.store.comments
+        theDocument.comments = this.mod.comments.store.comments
         if (callback) {
             callback()
         }
@@ -188,22 +192,22 @@ export class Editor {
     sendToCollaborators() {
         if (this.awaitingDiffResponse ||
             !this.pm.mod.collab.hasSendableSteps() &&
-            this.pm.mod.comments.store.unsentEvents().length === 0) {
+            this.mod.comments.store.unsentEvents().length === 0) {
             // We are waiting for the confirmation of previous steps, so don't
             // send anything now, or there is nothing to send.
             return
         }
         console.log('send to collabs')
         let toSend = this.pm.mod.collab.sendableSteps()
-        let fnToSend = this.pm.mod.footnotes.fnPm.mod.collab.sendableSteps()
+        let fnToSend = this.mod.footnotes.fnPm.mod.collab.sendableSteps()
         let request_id = this.confirmStepsRequestCounter++
             let aPackage = {
                 type: 'diff',
                 diff_version: this.pm.mod.collab.version,
                 diff: toSend.steps.map(s => s.toJSON()),
                 footnote_diff: fnToSend.steps.map(s => s.toJSON()),
-                comments: this.pm.mod.comments.store.unsentEvents(),
-                comment_version: this.pm.mod.comments.store.version,
+                comments: this.mod.comments.store.unsentEvents(),
+                comment_version: this.mod.comments.store.version,
                 request_id: request_id,
                 hash: this.getHash()
             }
@@ -211,7 +215,7 @@ export class Editor {
         this.unconfirmedSteps[request_id] = {
             diffs: toSend,
             footnote_diffs: fnToSend,
-            comments: this.pm.mod.comments.store.hasUnsentEvents()
+            comments: this.mod.comments.store.hasUnsentEvents()
         }
         this.disableDiffSending()
     }
@@ -222,10 +226,10 @@ export class Editor {
         this.pm.mod.collab.confirmSteps(sentSteps)
 
         let sentFnSteps = this.unconfirmedSteps[request_id]["footnote_diffs"]
-        this.pm.mod.footnotes.fnPm.mod.collab.confirmSteps(sentFnSteps)
+        this.mod.footnotes.fnPm.mod.collab.confirmSteps(sentFnSteps)
 
         let sentComments = this.unconfirmedSteps[request_id]["comments"]
-        this.pm.mod.comments.store.eventsSent(sentComments)
+        this.mod.comments.store.eventsSent(sentComments)
 
         delete this.unconfirmedSteps[request_id]
         this.enableDiffSending()
@@ -239,7 +243,7 @@ export class Editor {
     }
 
     applyDiff(diff) {
-        this.pm.receiving = true
+        this.receiving = true
         let steps = [diff].map(j => Step.fromJSON(fidusSchema, j))
         let maps = this.pm.mod.collab.receive(steps)
         let unconfirmedMaps = this.pm.mod.collab.unconfirmedMaps
@@ -256,12 +260,12 @@ export class Editor {
             maps
         }
         this.pm.signal("receivedTransform", transform)
-        this.pm.receiving = false
+        this.receiving = false
     }
 
     updateComments(comments, comment_version) {
         console.log('receiving comment update')
-        this.pm.mod.comments.store.receive(comments, comment_version)
+        this.mod.comments.store.receive(comments, comment_version)
     }
 
     getHash() {

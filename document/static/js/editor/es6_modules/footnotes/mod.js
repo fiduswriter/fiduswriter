@@ -6,9 +6,9 @@ import {ModFootnoteEditor} from "./editor"
 import {ModFootnoteMarkers} from "./markers"
 
 export class ModFootnotes {
-    constructor(pm) {
-        pm.mod.footnotes = this
-        this.pm = pm
+    constructor(editor) {
+        editor.mod.footnotes = this
+        this.editor = editor
         this.footnotes = []
         this.init()
         new ModFootnoteEditor(this)

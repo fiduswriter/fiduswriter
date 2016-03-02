@@ -15,13 +15,13 @@ export class ModFootnoteMarkers {
 
     bindEvents() {
         let that = this
-        this.mod.pm.on('documentUpdated', function() {
-            that.mod.editor.renderAllFootnotes()
+        this.mod.editor.pm.on('documentUpdated', function() {
+            that.mod.fnEditor.renderAllFootnotes()
         })
-        this.mod.pm.on('transform', function(transform, object) {
+        this.mod.editor.pm.on('transform', function(transform, object) {
             that.scanForFootnoteMarkers(transform, true)
         })
-        this.mod.pm.on('receivedTransform', function(transform, object) {
+        this.mod.editor.pm.on('receivedTransform', function(transform, object) {
             that.scanForFootnoteMarkers(transform, false)
         })
     }
@@ -43,8 +43,8 @@ export class ModFootnoteMarkers {
                 newFootnotes.forEach(function(footnote) {
                     that.mod.footnotes.splice(index, 0, footnote)
                     if (renderFootnote) {
-                        let node = that.mod.pm.doc.nodeAfter(footnote.from)
-                        that.mod.editor.renderFootnote(node.attrs.contents, index)
+                        let node = that.mod.editor.pm.doc.nodeAfter(footnote.from)
+                        that.mod.fnEditor.renderFootnote(node.attrs.contents, index)
                     }
                     index++
                 })
@@ -111,11 +111,11 @@ export class ModFootnoteMarkers {
         let footnoteMarkers = [],
             that = this
 
-        this.mod.pm.doc.inlineNodesBetween(fromPos, toPos, function(inlineNode, path, start, end, parent) {
+        this.mod.editor.pm.doc.inlineNodesBetween(fromPos, toPos, function(inlineNode, path, start, end, parent) {
             if (inlineNode.type.name === 'footnote') {
-                let footnoteMarker = that.mod.pm.markRange(new Pos(path, start), new Pos(path, end))
+                let footnoteMarker = that.mod.editor.pm.markRange(new Pos(path, start), new Pos(path, end))
                 footnoteMarker.on('removed', function() {
-                    that.mod.editor.removeFootnote(footnoteMarker)
+                    that.mod.fnEditor.removeFootnote(footnoteMarker)
                 })
                 footnoteMarkers.push(footnoteMarker)
 
@@ -131,7 +131,7 @@ export class ModFootnoteMarkers {
         let count = 0,
             passed = true,
             that = this
-        this.mod.pm.doc.inlineNodesBetween(null, null, function(inlineNode, path, start, end, parent) {
+        this.mod.editor.pm.doc.inlineNodesBetween(null, null, function(inlineNode, path, start, end, parent) {
             if (inlineNode.type.name !== 'footnote') {
                 return
             }
@@ -159,8 +159,8 @@ export class ModFootnoteMarkers {
         this.updating = true
         let footnoteContents = toHTML(this.mod.fnPm.doc.child(index))
         let footnote = this.mod.footnotes[index]
-        let node = this.mod.pm.doc.nodeAfter(footnote.from)
-        this.mod.pm.tr.setNodeType(footnote.from, node.type, {
+        let node = this.mod.editor.pm.doc.nodeAfter(footnote.from)
+        this.mod.editor.pm.tr.setNodeType(footnote.from, node.type, {
             contents: footnoteContents
         }).apply()
         this.updating = false

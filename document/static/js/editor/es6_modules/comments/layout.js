@@ -1,5 +1,4 @@
 /* Functions related to layouting of comments */
-
 export class ModCommentLayout {
     constructor(mod) {
         mod.layout = this
@@ -9,19 +8,19 @@ export class ModCommentLayout {
         this.bindEvents()
     }
 
-    bindEvents () {
+    bindEvents() {
         let that = this
 
         // Handle comments show/hide
         jQuery(document).on('click', '#comments-display:not(.disabled)',
-            function () {
+            function() {
                 jQuery(this).toggleClass('selected') // what should this look like? CSS needs to be defined
                 jQuery('#comment-box-container').toggleClass('hide')
                 jQuery('#flow').toggleClass('comments-enabled')
                 jQuery('.toolbarcomment button').toggleClass('disabled')
             })
 
-        jQuery(document).on('mousedown', '#comments-filter label', function (event) {
+        jQuery(document).on('mousedown', '#comments-filter label', function(event) {
             event.preventDefault()
             let filterType = jQuery(this).attr("data-filter")
 
@@ -70,7 +69,7 @@ export class ModCommentLayout {
             commentReferrer = this.findComment(this.activeCommentId)
             initialCommentBox = this.findCommentBox(this.activeCommentId)
             if (!initialCommentBox) {
-              return false
+                return false
             }
             lastOffsetTop = initialCommentBox.offsetTop
             previousComments = []
@@ -79,8 +78,7 @@ export class ModCommentLayout {
                 foundComment = nextComments.shift()
                 if (foundComment === commentReferrer) {
                     break
-                }
-                else {
+                } else {
                     previousComments.unshift(foundComment)
                 }
             }
@@ -97,44 +95,45 @@ export class ModCommentLayout {
             }
 
             minOffsetTop = initialCommentBox.offsetTop + initialCommentBox.offsetHeight + 10
-        }
-        else {
+        } else {
             minOffsetTop = 0
             nextComments = jQuery('.comment')
         }
         for (i = 0; i < nextComments.length; i++) {
             commentBox = this.findCommentBox(this.getCommentId(nextComments[i]))
-           if (commentBox) {
+            if (commentBox) {
                 if (commentBox.offsetTop < minOffsetTop) {
                     jQuery(commentBox).css('top', minOffsetTop + 'px')
                 }
                 minOffsetTop = commentBox.offsetTop + commentBox.offsetHeight + 10
-           }
+            }
         }
     }
 
     layoutComments() {
         // Handle the layout of the comments on the screen.
         let that = this
-        let theCommentPointers = [].slice.call(jQuery('.comment')), theComments = [], ids = []
+        let theCommentPointers = [].slice.call(jQuery('.comment')),
+            theComments = [],
+            ids = []
 
-        theCommentPointers.forEach(function(commentNode){
+        theCommentPointers.forEach(function(commentNode) {
             let id = parseInt(commentNode.getAttribute("data-id"))
             if (ids.indexOf(id) !== -1) {
-              // This is not the first occurence of this comment. So we ignore it.
+                // This is not the first occurence of this comment. So we ignore it.
                 return
             }
             ids.push(id)
             if (that.mod.store.comments[id]) {
                 theComments.push({
-                  id: id,
-                  referrer: commentNode,
-                  comment: that.mod.store.comments[id]['comment'],
-                  user: that.mod.store.comments[id]['user'],
-                  userName: that.mod.store.comments[id]['userName'],
-                  userAvatar: that.mod.store.comments[id]['userAvatar'],
-                  date: that.mod.store.comments[id]['date'],
-                  answers: that.mod.store.comments[id]['answers'],
+                    id: id,
+                    referrer: commentNode,
+                    comment: that.mod.store.comments[id]['comment'],
+                    user: that.mod.store.comments[id]['user'],
+                    userName: that.mod.store.comments[id]['userName'],
+                    userAvatar: that.mod.store.comments[id]['userAvatar'],
+                    date: that.mod.store.comments[id]['date'],
+                    answers: that.mod.store.comments[id]['answers'],
                     'review:isMajor': that.mod.store.comments[id]['review:isMajor']
                 })
             }
@@ -145,7 +144,7 @@ export class ModCommentLayout {
         }))
         this.layoutCommentsAvoidOverlap()
         let activeCommentStyle = ''
-        //jQuery('#active-comment-style').html('')
+            //jQuery('#active-comment-style').html('')
         let activeCommentWrapper = jQuery('.comment-box.active')
         if (0 < activeCommentWrapper.size()) {
             that.activeCommentId = activeCommentWrapper.attr('data-id')
@@ -156,7 +155,7 @@ export class ModCommentLayout {
             })
         }
 
-        if (jQuery('#active-comment-style').html() !=- activeCommentStyle) {
+        if (jQuery('#active-comment-style').html() != -activeCommentStyle) {
             jQuery('#active-comment-style').html(activeCommentStyle)
         }
 
@@ -213,8 +212,7 @@ export class ModCommentLayout {
             var userId = parseInt(jQuery(this).attr("data-user-id"), 10)
             if ($.inArray(userId, idsOfNeededUsers) !== -1) {
                 jQuery(this).show()
-            }
-            else {
+            } else {
                 jQuery(this).hide()
             }
         })
@@ -234,20 +232,20 @@ export class ModCommentLayout {
 
         jQuery('body').append(tmp_filter_by_user_box(users))
         let diaButtons = {}
-        diaButtons[gettext('Filter')] = function () {
+        diaButtons[gettext('Filter')] = function() {
             let id = jQuery(this).children("select").val()
             if (id == undefined) {
                 return
             }
 
             let boxesToHide = jQuery("#comment-box-container").children("[data-user-id!='" + id + "']").hide()
-            //let boxesToHide = jQuery("#comment-box-container").children("[data-user-id='" + id + "']").show()
+                //let boxesToHide = jQuery("#comment-box-container").children("[data-user-id='" + id + "']").show()
 
             //TODO: filtering
             jQuery(this).dialog("close")
         }
 
-        diaButtons[gettext('Cancel')] = function () {
+        diaButtons[gettext('Cancel')] = function() {
             jQuery(this).dialog("close")
         }
 
@@ -255,11 +253,11 @@ export class ModCommentLayout {
             resizable: false,
             height: 180,
             modal: true,
-            close: function () {
+            close: function() {
                 jQuery("#comment-filter-byuser-box").detach()
             },
             buttons: diaButtons,
-            create: function () {
+            create: function() {
                 let $the_dialog = jQuery(this).closest(".ui-dialog");
                 $the_dialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
                 $the_dialog.find(".ui-button:last").addClass("fw-button fw-orange")

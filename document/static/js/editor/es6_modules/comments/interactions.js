@@ -11,21 +11,25 @@ export class ModCommentInteractions {
 
     bindEvents() {
         let that = this
-        // Bind all the click events related to comments
-        jQuery(document).on("click", ".submitComment", function(){that.submitComment(this)})
-        jQuery(document).on("click", ".cancelSubmitComment", function(){that.cancelSubmitComment(this)})
-        jQuery(document).on("click", ".comment-box.inactive", function () {
+            // Bind all the click events related to comments
+        jQuery(document).on("click", ".submitComment", function() {
+            that.submitComment(this)
+        })
+        jQuery(document).on("click", ".cancelSubmitComment", function() {
+            that.cancelSubmitComment(this)
+        })
+        jQuery(document).on("click", ".comment-box.inactive", function() {
             let commentId = that.mod.layout.getCommentId(this)
             that.mod.layout.activateComment(commentId)
             that.mod.layout.layoutComments()
         })
-        jQuery(document).on("click", ".comments-enabled .comment", function () {
+        jQuery(document).on("click", ".comments-enabled .comment", function() {
             let commentId = that.mod.layout.getCommentId(this)
             that.mod.layout.activateComment(commentId)
             that.mod.layout.layoutComments()
         })
 
-        jQuery(document).on('click', '.edit-comment', function () {
+        jQuery(document).on('click', '.edit-comment', function() {
             let activeWrapper = jQuery('.comment-box.active')
             activeWrapper.find('.comment-p').show()
             activeWrapper.find('.comment-form').hide()
@@ -42,14 +46,14 @@ export class ModCommentInteractions {
             commentForm.children('textarea').val(commentP.text())
         })
 
-        jQuery(document).on('click', '.edit-comment-answer', function () {
+        jQuery(document).on('click', '.edit-comment-answer', function() {
             that.editAnswer(parseInt(jQuery(this).attr(
                 'data-id')), parseInt(jQuery(this).attr(
                 'data-answer')))
         })
 
         jQuery(document).on('click', '.submit-comment-answer-edit',
-            function () {
+            function() {
                 let textArea = jQuery(this).prev()
                 let commentId = parseInt(textArea.attr('data-id'))
                 let answerId = parseInt(textArea.attr('data-answer'))
@@ -57,16 +61,16 @@ export class ModCommentInteractions {
                 that.submitAnswerUpdate(commentId, answerId, theValue)
             })
 
-        jQuery(document).on("click", ".comment-answer-submit", function () {
+        jQuery(document).on("click", ".comment-answer-submit", function() {
             that.submitAnswer();
         })
 
-        jQuery(document).on('click', '.delete-comment', function () {
+        jQuery(document).on('click', '.delete-comment', function() {
             that.deleteComment(parseInt(jQuery(this).attr(
                 'data-id')))
         })
 
-        jQuery(document).on('click', '.delete-comment-answer', function () {
+        jQuery(document).on('click', '.delete-comment-answer', function() {
             that.deleteCommentAnswer(parseInt(jQuery(this).attr(
                 'data-id')), parseInt(jQuery(this).attr(
                 'data-answer')))
@@ -82,7 +86,7 @@ export class ModCommentInteractions {
         this.mod.layout.deactivateAll()
         this.mod.layout.activeCommentId = id
         editorHelpers.documentHasChanged()
-        let layoutComments = new UpdateScheduler(this.mod.pm, "flush", function(){
+        let layoutComments = new UpdateScheduler(this.mod.pm, "flush", function() {
             layoutComments.detach()
             that.mod.layout.layoutComments()
         })
@@ -92,7 +96,7 @@ export class ModCommentInteractions {
         // Handle the deletion of a comment.
         let comment = this.mod.layout.findComment(id) // TODO: We don't use this for anything. Should we?
         this.mod.store.deleteComment(id)
-//      TODO: make the markrange go away
+            //      TODO: make the markrange go away
         editorHelpers.documentHasChanged()
         this.mod.layout.layoutComments()
     }
@@ -120,12 +124,10 @@ export class ModCommentInteractions {
             let id = this.mod.layout.getCommentId(commentTextBox)
             if (this.mod.store.comments[id].comment.length === 0) {
                 this.deleteComment(id)
-            }
-            else {
+            } else {
                 this.mod.layout.deactivateAll()
             }
-        }
-        else {
+        } else {
             this.mod.layout.deactivateAll()
         }
         this.mod.layout.layoutComments()
@@ -151,12 +153,12 @@ export class ModCommentInteractions {
     createNewAnswer(commentId, answerText) {
         // Create a new answer to add to the comment store
         let answer = {
-          commentId: commentId,
-          answer: answerText,
-          user: theUser.id,
-          userName: theUser.name,
-          userAvatar: theUser.avatar,
-          date: new Date().getTime()
+            commentId: commentId,
+            answer: answerText,
+            user: theUser.id,
+            userName: theUser.name,
+            userAvatar: theUser.avatar,
+            date: new Date().getTime()
         }
 
         this.mod.store.addAnswer(commentId, answer)

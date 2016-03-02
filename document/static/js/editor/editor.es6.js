@@ -15,24 +15,24 @@ import {ModFootnotes} from "./es6_modules/footnotes/mod"
 import {UpdateScheduler} from "prosemirror/dist/ui/update"
 
 export class Editor {
-  constructor() {
-      // Whether the editor is currently waiting for a document update. Set to true
-      // initially so that diffs that arrive before document has been loaded are not
-      // dealt with.
-      this.waitingForDocument = true
-      this.unconfirmedSteps = {}
-      this.confirmStepsRequestCounter = 0
-      this.collaborativeMode = false
-      this.currentlyCheckingVersion = false
-      this.awaitingDiffResponse = false
-      //this.init()
-  }
+    constructor() {
+        // Whether the editor is currently waiting for a document update. Set to true
+        // initially so that diffs that arrive before document has been loaded are not
+        // dealt with.
+        this.waitingForDocument = true
+        this.unconfirmedSteps = {}
+        this.confirmStepsRequestCounter = 0
+        this.collaborativeMode = false
+        this.currentlyCheckingVersion = false
+        this.awaitingDiffResponse = false
+            //this.init()
+    }
 
-  init() {
+    init() {
         let that = this
         this.editor = this.makeEditor(document.getElementById('document-editable'))
         new ModFootnotes(this.editor)
-        new UpdateScheduler(this.editor, "selectionChange change activeMarkChange blur focus setDoc", function () {
+        new UpdateScheduler(this.editor, "selectionChange change activeMarkChange blur focus setDoc", function() {
             updateUI(that.editor)
         })
         this.editor.on("change", editorHelpers.documentHasChanged)
@@ -40,26 +40,28 @@ export class Editor {
         new UpdateScheduler(this.editor, "flush setDoc", mathHelpers.layoutEmptyEquationNodes)
         new UpdateScheduler(this.editor, "flush setDoc", mathHelpers.layoutEmptyDisplayEquationNodes)
         new UpdateScheduler(this.editor, "flush setDoc", citationHelpers.formatCitationsInDocIfNew)
-  }
+    }
 
-  makeEditor(where) {
-      return new ProseMirror({
-          place: where,
-          schema: fidusSchema,
-      //    menuBar: true,
-          collab: {version: 0}
-      })
-  }
+    makeEditor(where) {
+        return new ProseMirror({
+            place: where,
+            schema: fidusSchema,
+            //    menuBar: true,
+            collab: {
+                version: 0
+            }
+        })
+    }
 
-  createDoc(aDocument) {
-      let editorNode = document.createElement('div'),
-        titleNode = aDocument.metadata.title ? exporter.obj2Node(aDocument.metadata.title) : document.createElement('div'),
-        documentContentsNode = exporter.obj2Node(aDocument.contents),
-        metadataSubtitleNode = aDocument.metadata.subtitle ? exporter.obj2Node(aDocument.metadata.subtitle) : document.createElement('div'),
-        metadataAuthorsNode = aDocument.metadata.authors ? exporter.obj2Node(aDocument.metadata.authors) : document.createElement('div'),
-        metadataAbstractNode = aDocument.metadata.abstract ? exporter.obj2Node(aDocument.metadata.abstract) : document.createElement('div'),
-        metadataKeywordsNode = aDocument.metadata.keywords ? exporter.obj2Node(aDocument.metadata.keywords) : document.createElement('div'),
-        doc
+    createDoc(aDocument) {
+        let editorNode = document.createElement('div'),
+            titleNode = aDocument.metadata.title ? exporter.obj2Node(aDocument.metadata.title) : document.createElement('div'),
+            documentContentsNode = exporter.obj2Node(aDocument.contents),
+            metadataSubtitleNode = aDocument.metadata.subtitle ? exporter.obj2Node(aDocument.metadata.subtitle) : document.createElement('div'),
+            metadataAuthorsNode = aDocument.metadata.authors ? exporter.obj2Node(aDocument.metadata.authors) : document.createElement('div'),
+            metadataAbstractNode = aDocument.metadata.abstract ? exporter.obj2Node(aDocument.metadata.abstract) : document.createElement('div'),
+            metadataKeywordsNode = aDocument.metadata.keywords ? exporter.obj2Node(aDocument.metadata.keywords) : document.createElement('div'),
+            doc
 
         titleNode.id = 'document-title'
         metadataSubtitleNode.id = 'metadata-subtitle'
@@ -79,9 +81,9 @@ export class Editor {
             preserveWhitespace: true
         })
         return doc
-  }
+    }
 
-  update() {
+    update() {
         console.log('Updating editor')
         let that = this
         this.cancelCurrentlyCheckingVersion()
@@ -94,73 +96,79 @@ export class Editor {
         let doc = this.createDoc(theDocument)
         this.editor.setOption("collab", null)
         this.editor.setContent(doc)
-        this.editor.setOption("collab", {version: theDocument.version})
+        this.editor.setOption("collab", {
+            version: theDocument.version
+        })
         while (theDocumentValues.last_diffs.length > 0) {
             let diff = theDocumentValues.last_diffs.shift()
             this.applyDiff(diff)
         }
         theDocument.hash = this.getHash()
-        this.editor.mod.collab.on("mustSend", function(){that.sendToCollaborators()})
+        this.editor.mod.collab.on("mustSend", function() {
+            that.sendToCollaborators()
+        })
         this.editor.signal("documentUpdated")
         new ModComments(this.editor, theDocument.comment_version)
-        _.each(theDocument.comments, function (comment){
-          this.editor.mod.comments.store.addLocalComment(comment.id, comment.user,
-            comment.userName, comment.userAvatar, comment.date, comment.comment,
-            comment.answers, comment['review:isMajor'])
+        _.each(theDocument.comments, function(comment) {
+            this.editor.mod.comments.store.addLocalComment(comment.id, comment.user,
+                comment.userName, comment.userAvatar, comment.date, comment.comment,
+                comment.answers, comment['review:isMajor'])
         })
-        this.editor.mod.comments.store.on("mustSend", function(){that.sendToCollaborators()})
+        this.editor.mod.comments.store.on("mustSend", function() {
+            that.sendToCollaborators()
+        })
         this.enableUI()
         this.waitingForDocument = false
-  }
+    }
 
 
 
-  askForDocument() {
-      if (this.waitingForDocument) {
-          return;
-      }
-      this.waitingForDocument = true
-      serverCommunications.send({
-          type: 'get_document'
-      })
-  }
+    askForDocument() {
+        if (this.waitingForDocument) {
+            return;
+        }
+        this.waitingForDocument = true
+        serverCommunications.send({
+            type: 'get_document'
+        })
+    }
 
-  enableUI() {
-      bibliographyHelpers.initiate()
+    enableUI() {
+        bibliographyHelpers.initiate()
 
-      jQuery('.savecopy, .download, .latex, .epub, .html, .print, .style, \
+        jQuery('.savecopy, .download, .latex, .epub, .html, .print, .style, \
       .citationstyle, .tools-item, .papersize, .metadata-menu-item, \
       #open-close-header').removeClass('disabled')
 
-      citationHelpers.formatCitationsInDoc()
-      editorHelpers.displaySetting.set('documentstyle')
-      editorHelpers.displaySetting.set('citationstyle')
+        citationHelpers.formatCitationsInDoc()
+        editorHelpers.displaySetting.set('documentstyle')
+        editorHelpers.displaySetting.set('citationstyle')
 
-      jQuery('span[data-citationstyle=' + theDocument.settings.citationstyle +
-          ']').addClass('selected')
-      editorHelpers.displaySetting.set('papersize')
+        jQuery('span[data-citationstyle=' + theDocument.settings.citationstyle +
+            ']').addClass('selected')
+        editorHelpers.displaySetting.set('papersize')
 
-      editorHelpers.layoutMetadata()
+        editorHelpers.layoutMetadata()
 
-      if (theDocumentValues.rights === 'w') {
-          jQuery('#editor-navigation').show()
-          jQuery('.metadata-menu-item, #open-close-header, .save, \
+        if (theDocumentValues.rights === 'w') {
+            jQuery('#editor-navigation').show()
+            jQuery('.metadata-menu-item, #open-close-header, .save, \
           .multibuttonsCover, .papersize-menu, .metadata-menu, \
           .documentstyle-menu, .citationstyle-menu').removeClass('disabled')
-          if (theDocumentValues.is_owner) {
-              // bind the share dialog to the button if the user is the document owner
-              jQuery('.share').removeClass('disabled')
-          }
-          mathHelpers.resetMath()
-      } else if (theDocumentValues.rights === 'r') {
-          // Try to disable contenteditable
-          jQuery('.ProseMirror-content').attr('contenteditable', 'false')
-      }
-  }
+            if (theDocumentValues.is_owner) {
+                // bind the share dialog to the button if the user is the document owner
+                jQuery('.share').removeClass('disabled')
+            }
+            mathHelpers.resetMath()
+        } else if (theDocumentValues.rights === 'r') {
+            // Try to disable contenteditable
+            jQuery('.ProseMirror-content').attr('contenteditable', 'false')
+        }
+    }
 
 
-  getUpdates(callback) {
-        let outputNode = nodeConverter.editorToModelNode(serializeTo(this.editor.mod.collab.versionDoc,'dom'))
+    getUpdates(callback) {
+        let outputNode = nodeConverter.editorToModelNode(serializeTo(this.editor.mod.collab.versionDoc, 'dom'))
         let theDocument = window.theDocument
         theDocument.title = this.editor.mod.collab.versionDoc.firstChild.textContent
         theDocument.version = this.editor.mod.collab.version
@@ -175,12 +183,12 @@ export class Editor {
         if (callback) {
             callback()
         }
-  }
+    }
 
-  sendToCollaborators() {
+    sendToCollaborators() {
         if (this.awaitingDiffResponse ||
-          !this.editor.mod.collab.hasSendableSteps() &&
-          this.editor.mod.comments.store.unsentEvents().length === 0) {
+            !this.editor.mod.collab.hasSendableSteps() &&
+            this.editor.mod.comments.store.unsentEvents().length === 0) {
             // We are waiting for the confirmation of previous steps, so don't
             // send anything now, or there is nothing to send.
             return
@@ -189,16 +197,16 @@ export class Editor {
         let toSend = this.editor.mod.collab.sendableSteps()
         let fnToSend = this.editor.mod.footnotes.fnPm.mod.collab.sendableSteps()
         let request_id = this.confirmStepsRequestCounter++
-        let aPackage = {
-            type: 'diff',
-            diff_version: this.editor.mod.collab.version,
-            diff: toSend.steps.map(s => s.toJSON()),
-            footnote_diff: fnToSend.steps.map(s => s.toJSON()),
-            comments: this.editor.mod.comments.store.unsentEvents(),
-            comment_version: this.editor.mod.comments.store.version,
-            request_id: request_id,
-            hash: this.getHash()
-        }
+            let aPackage = {
+                type: 'diff',
+                diff_version: this.editor.mod.collab.version,
+                diff: toSend.steps.map(s => s.toJSON()),
+                footnote_diff: fnToSend.steps.map(s => s.toJSON()),
+                comments: this.editor.mod.comments.store.unsentEvents(),
+                comment_version: this.editor.mod.comments.store.version,
+                request_id: request_id,
+                hash: this.getHash()
+            }
         serverCommunications.send(aPackage)
         this.unconfirmedSteps[request_id] = {
             diffs: toSend,
@@ -206,144 +214,150 @@ export class Editor {
             comments: this.editor.mod.comments.store.hasUnsentEvents()
         }
         this.disableDiffSending()
-  }
+    }
 
-  confirmDiff(request_id) {
-      console.log('confirming steps')
-      let sentSteps = this.unconfirmedSteps[request_id]["diffs"]
-      this.editor.mod.collab.confirmSteps(sentSteps)
+    confirmDiff(request_id) {
+        console.log('confirming steps')
+        let sentSteps = this.unconfirmedSteps[request_id]["diffs"]
+        this.editor.mod.collab.confirmSteps(sentSteps)
 
-      let sentFnSteps = this.unconfirmedSteps[request_id]["footnote_diffs"]
-      this.editor.mod.footnotes.fnPm.mod.collab.confirmSteps(sentFnSteps)
+        let sentFnSteps = this.unconfirmedSteps[request_id]["footnote_diffs"]
+        this.editor.mod.footnotes.fnPm.mod.collab.confirmSteps(sentFnSteps)
 
-      let sentComments = this.unconfirmedSteps[request_id]["comments"]
-      this.editor.mod.comments.store.eventsSent(sentComments)
+        let sentComments = this.unconfirmedSteps[request_id]["comments"]
+        this.editor.mod.comments.store.eventsSent(sentComments)
 
-      delete this.unconfirmedSteps[request_id]
-      this.enableDiffSending()
-  }
+        delete this.unconfirmedSteps[request_id]
+        this.enableDiffSending()
+    }
 
-  rejectDiff(request_id) {
-      console.log('rejecting steps')
-      this.enableDiffSending()
-      delete this.unconfirmedSteps[request_id]
-      this.sendToCollaborators()
-  }
+    rejectDiff(request_id) {
+        console.log('rejecting steps')
+        this.enableDiffSending()
+        delete this.unconfirmedSteps[request_id]
+        this.sendToCollaborators()
+    }
 
-  applyDiff(diff) {
-      this.editor.receiving = true
-      let steps = [diff].map(j => Step.fromJSON(fidusSchema, j))
-      let maps = this.editor.mod.collab.receive(steps)
-      let unconfirmedMaps = this.editor.mod.collab.unconfirmedMaps
-      maps = maps.concat(unconfirmedMaps)
-      unconfirmedMaps.forEach(function(map){
-          // We add pseudo steps for all the unconfirmed steps so that the
-          // unconfirmed maps will be applied when handling the transform
-          steps.push({type: 'unconfirmed'})
-      })
-      let transform = {steps,maps}
-      this.editor.signal("receivedTransform", transform)
-      this.editor.receiving = false
-  }
-
-  updateComments(comments, comment_version) {
-      console.log('receiving comment update')
-      this.editor.mod.comments.store.receive(comments, comment_version)
-  }
-
-  getHash() {
-      let string = JSON.stringify(this.editor.mod.collab.versionDoc)
-      let len = string.length
-      var hash = 0, char, i
-      if (len == 0) return hash
-      for (i = 0; i < len; i++) {
-          char = string.charCodeAt(i)
-          hash = ((hash << 5) - hash) + char
-          hash = hash & hash
-      }
-      return hash
-  }
-  checkHash(version, hash) {
-      console.log('Verifying hash')
-      if (version===this.editor.mod.collab.version) {
-        if(hash===this.getHash()) {
-            console.log('Hash could be verified')
-            return true
-        }
-        console.log('Hash could not be verified, requesting document.')
-        this.disableDiffSending()
-        this.askForDocument();
-        return false
-      } else {
-          this.checkDiffVersion()
-          return false
-      }
-  }
-
-  cancelCurrentlyCheckingVersion() {
-      this.currentlyCheckingVersion = false
-      clearTimeout(this.enableCheckDiffVersion)
-  }
-
-  checkDiffVersion() {
-      let that = this
-      if (this.currentlyCheckingVersion) {
-          return
-      }
-      this.currentlyCheckingVersion = true
-      this.enableCheckDiffVersion = setTimeout(function(){
-          that.currentlyCheckingVersion = false
-      }, 1000)
-      if (this.connected) {
-          this.disableDiffSending()
-      }
-      serverCommunications.send({
-        type: 'check_diff_version',
-        diff_version: this.editor.mod.collab.version
-      })
-  }
-
-  disableDiffSending() {
-    let that = this
-      this.awaitingDiffResponse = true
-      // If no answer has been received from the server within 2 seconds, check the version
-      this.checkDiffVersionTimer = setTimeout(function(){
-          that.awaitingDiffResponse = false
-          that.sendToCollaborators()
-          that.checkDiffVersion()
-      }, 2000)
-  }
-
-  enableDiffSending() {
-      clearTimeout(this.checkDiffVersionTimer)
-      this.awaitingDiffResponse = false
-      this.sendToCollaborators()
-  }
-
-  // Things to be executed on every editor transform.
-  onTransform(transform) {
-    var updateBibliography = false
-    // Check what area is affected
-    transform.steps.forEach(function(step, index){
-        if (step.type==='replace' && step.from.cmp(step.to) !== 0) {
-            transform.docs[index].inlineNodesBetween(step.from, step.to, function(node) {
-                if (node.type.name==='citation') {
-                    // A citation was replaced
-                    updateBibliography = true
-                }
+    applyDiff(diff) {
+        this.editor.receiving = true
+        let steps = [diff].map(j => Step.fromJSON(fidusSchema, j))
+        let maps = this.editor.mod.collab.receive(steps)
+        let unconfirmedMaps = this.editor.mod.collab.unconfirmedMaps
+        maps = maps.concat(unconfirmedMaps)
+        unconfirmedMaps.forEach(function(map) {
+            // We add pseudo steps for all the unconfirmed steps so that the
+            // unconfirmed maps will be applied when handling the transform
+            steps.push({
+                type: 'unconfirmed'
             })
+        })
+        let transform = {
+            steps,
+            maps
         }
-    })
+        this.editor.signal("receivedTransform", transform)
+        this.editor.receiving = false
+    }
 
-    if (updateBibliography) {
-        // Recreate the bibliography on next flush.
-        let formatCitations = new UpdateScheduler(this.editor, "flush", function(){
-            formatCitations.detach()
-            citationHelpers.formatCitationsInDoc()
+    updateComments(comments, comment_version) {
+        console.log('receiving comment update')
+        this.editor.mod.comments.store.receive(comments, comment_version)
+    }
+
+    getHash() {
+        let string = JSON.stringify(this.editor.mod.collab.versionDoc)
+        let len = string.length
+        var hash = 0,
+            char, i
+        if (len == 0) return hash
+        for (i = 0; i < len; i++) {
+            char = string.charCodeAt(i)
+            hash = ((hash << 5) - hash) + char
+            hash = hash & hash
+        }
+        return hash
+    }
+    checkHash(version, hash) {
+        console.log('Verifying hash')
+        if (version === this.editor.mod.collab.version) {
+            if (hash === this.getHash()) {
+                console.log('Hash could be verified')
+                return true
+            }
+            console.log('Hash could not be verified, requesting document.')
+            this.disableDiffSending()
+            this.askForDocument();
+            return false
+        } else {
+            this.checkDiffVersion()
+            return false
+        }
+    }
+
+    cancelCurrentlyCheckingVersion() {
+        this.currentlyCheckingVersion = false
+        clearTimeout(this.enableCheckDiffVersion)
+    }
+
+    checkDiffVersion() {
+        let that = this
+        if (this.currentlyCheckingVersion) {
+            return
+        }
+        this.currentlyCheckingVersion = true
+        this.enableCheckDiffVersion = setTimeout(function() {
+            that.currentlyCheckingVersion = false
+        }, 1000)
+        if (this.connected) {
+            this.disableDiffSending()
+        }
+        serverCommunications.send({
+            type: 'check_diff_version',
+            diff_version: this.editor.mod.collab.version
         })
     }
 
-  }
+    disableDiffSending() {
+        let that = this
+        this.awaitingDiffResponse = true
+            // If no answer has been received from the server within 2 seconds, check the version
+        this.checkDiffVersionTimer = setTimeout(function() {
+            that.awaitingDiffResponse = false
+            that.sendToCollaborators()
+            that.checkDiffVersion()
+        }, 2000)
+    }
+
+    enableDiffSending() {
+        clearTimeout(this.checkDiffVersionTimer)
+        this.awaitingDiffResponse = false
+        this.sendToCollaborators()
+    }
+
+    // Things to be executed on every editor transform.
+    onTransform(transform) {
+        var updateBibliography = false
+            // Check what area is affected
+        transform.steps.forEach(function(step, index) {
+            if (step.type === 'replace' && step.from.cmp(step.to) !== 0) {
+                transform.docs[index].inlineNodesBetween(step.from, step.to, function(node) {
+                    if (node.type.name === 'citation') {
+                        // A citation was replaced
+                        updateBibliography = true
+                    }
+                })
+            }
+        })
+
+        if (updateBibliography) {
+            // Recreate the bibliography on next flush.
+            let formatCitations = new UpdateScheduler(this.editor, "flush", function() {
+                formatCitations.detach()
+                citationHelpers.formatCitationsInDoc()
+            })
+        }
+
+    }
 
 }
 

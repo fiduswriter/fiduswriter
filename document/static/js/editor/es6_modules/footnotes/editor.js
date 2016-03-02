@@ -1,4 +1,3 @@
-
 import {Pos} from "prosemirror/dist/model"
 import {fromHTML} from "prosemirror/dist/format"
 import {Step} from "prosemirror/dist/transform"
@@ -13,9 +12,11 @@ export class ModFootnoteEditor {
         this.bindEvents()
     }
 
-    bindEvents () {
-      let that = this
-      this.mod.fnPm.mod.collab.on("mustSend", function(){that.footnoteEdit()})
+    bindEvents() {
+        let that = this
+        this.mod.fnPm.mod.collab.on("mustSend", function() {
+            that.footnoteEdit()
+        })
 
     }
 
@@ -28,7 +29,7 @@ export class ModFootnoteEditor {
         }
         console.log('footnote update')
         let length = this.mod.fnPm.mod.collab.unconfirmedSteps.length
-        let lastStep = this.mod.fnPm.mod.collab.unconfirmedSteps[length -1]
+        let lastStep = this.mod.fnPm.mod.collab.unconfirmedSteps[length - 1]
         if (lastStep.from && lastStep.from.path && lastStep.from.path.length > 0) {
             // We find the number of the last footnote that was updated by
             // looking at the last step and seeing what path that change referred to.
@@ -53,12 +54,14 @@ export class ModFootnoteEditor {
         this.mod.footnotes = footnotes
         this.mod.fnPm.setOption("collab", null)
         console.log('redrawing all footnotes')
-        this.mod.fnPm.setContent('','html')
+        this.mod.fnPm.setContent('', 'html')
         this.mod.footnotes.forEach((footnote, index) => {
             let node = that.mod.pm.doc.nodeAfter(footnote.from)
             that.renderFootnote(node.attrs.contents, index)
         })
-        this.mod.fnPm.setOption("collab", {version: 0})
+        this.mod.fnPm.setOption("collab", {
+            version: 0
+        })
         this.mod.editor.bindEvents()
     }
 
@@ -67,15 +70,17 @@ export class ModFootnoteEditor {
     renderFootnote(contents, index = 0) {
         this.rendering = true
         let footnoteHTML = "<div class='footnote-container'>" + contents + "</div>"
-        let node = fromHTML(fidusFnSchema, footnoteHTML, {preserveWhitespace: true}).firstChild
+        let node = fromHTML(fidusFnSchema, footnoteHTML, {
+            preserveWhitespace: true
+        }).firstChild
         this.mod.fnPm.tr.insert(new Pos([], index), node).apply()
         this.rendering = false
     }
 
     removeFootnote(footnote) {
         let index = 0
-        while(footnote != this.mod.footnotes[index] && this.mod.footnotes.length > index) {
-          index++
+        while (footnote != this.mod.footnotes[index] && this.mod.footnotes.length > index) {
+            index++
         }
         this.mod.footnotes.splice(index, 1)
         if (!this.mod.pm.receiving) {

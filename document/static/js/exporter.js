@@ -63,7 +63,7 @@ var FW_FILETYPE_VERSION = "1.2";
 
             data.append('note', jQuery(this).find('.revision-note').val());
             data.append('file', blob, zipFilename);
-            data.append('document_id', theDocument.id);
+            data.append('document_id', theEditor.doc.id);
 
             jQuery.ajax({
                 url: '/document/upload/',
@@ -851,8 +851,8 @@ var FW_FILETYPE_VERSION = "1.2";
         function importAsUser(aDocument, shrunkImageDB, shrunkBibDB,
             images) {
             // switch to user's own ImageDB and BibDB:
-            if (window.hasOwnProperty('theDocument')) {
-                theDocument.owner = theUser;
+            if (window.hasOwnProperty('theEditor')) {
+                theEditor.doc.owner = theUser;
                 delete ImageDB;
                 delete BibDB;
             }
@@ -860,7 +860,7 @@ var FW_FILETYPE_VERSION = "1.2";
                 images);
 
         }
-        if (window.hasOwnProperty('theDocument')) {
+        if (window.hasOwnProperty('theEditor')) {
             exporter.native(aDocument, ImageDB, BibDB, importAsUser);
         } else {
             bibliographyHelpers.getABibDB(aDocument.owner, function(
@@ -887,7 +887,7 @@ var FW_FILETYPE_VERSION = "1.2";
     };
 
     exporter.downloadNative = function(aDocument) {
-        if (window.hasOwnProperty('theDocument')) {
+        if (window.hasOwnProperty('theEditor')) {
             exporter.native(aDocument, ImageDB, BibDB, exporter.nativeFile);
         } else {
             if (aDocument.is_owner) {
@@ -996,7 +996,7 @@ var FW_FILETYPE_VERSION = "1.2";
     };
 
     exporter.downloadLatex = function(aDocument) {
-        if (window.hasOwnProperty('theDocument') || (window.hasOwnProperty(
+        if (window.hasOwnProperty('theEditor') || (window.hasOwnProperty(
                 'BibDB') && aDocument.is_owner)) {
             exporter.latex(aDocument, BibDB);
         } else if (aDocument.is_owner) {
@@ -1051,7 +1051,7 @@ var FW_FILETYPE_VERSION = "1.2";
     };
 
     exporter.downloadEpub = function(aDocument) {
-        if (window.hasOwnProperty('theDocument') || (window.hasOwnProperty(
+        if (window.hasOwnProperty('theEditor') || (window.hasOwnProperty(
                 'BibDB') && aDocument.is_owner)) {
             exporter.epub(aDocument, BibDB);
         } else if (aDocument.is_owner) {
@@ -1285,7 +1285,7 @@ var FW_FILETYPE_VERSION = "1.2";
     };
 
     exporter.downloadHtml = function(aDocument) {
-        if (window.hasOwnProperty('theDocument') || (window.hasOwnProperty(
+        if (window.hasOwnProperty('theEditor') || (window.hasOwnProperty(
                 'BibDB') && aDocument.is_owner)) {
             exporter.html(aDocument, BibDB);
         } else if (aDocument.is_owner) {

@@ -59,6 +59,7 @@ var Editor = exports.Editor = (function () {
             'titleChanged': false,
             'changed': false
         };
+        this.doc = {};
         //this.init()
     }
 
@@ -134,24 +135,23 @@ var Editor = exports.Editor = (function () {
             if (this.awaitingDiffResponse) {
                 this.enableDiffSending();
             }
-            var theDocument = window.theDocument;
-            var doc = this.createDoc(theDocument);
+            var doc = this.createDoc(this.doc);
             this.pm.setOption("collab", null);
             this.pm.setContent(doc);
             this.pm.setOption("collab", {
-                version: theDocument.version
+                version: this.doc.version
             });
             while (this.documentValues.last_diffs.length > 0) {
                 var diff = this.documentValues.last_diffs.shift();
                 this.applyDiff(diff);
             }
-            theDocument.hash = this.getHash();
+            this.doc.hash = this.getHash();
             this.pm.mod.collab.on("mustSend", function () {
                 that.sendToCollaborators();
             });
             this.pm.signal("documentUpdated");
-            new _mod.ModComments(this, theDocument.comment_version);
-            _.each(theDocument.comments, function (comment) {
+            new _mod.ModComments(this, this.doc.comment_version);
+            _.each(this.doc.comments, function (comment) {
                 this.mod.comments.store.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers, comment['review:isMajor']);
             });
             this.mod.comments.store.on("mustSend", function () {
@@ -184,7 +184,7 @@ var Editor = exports.Editor = (function () {
             editorHelpers.displaySetting.set('documentstyle');
             editorHelpers.displaySetting.set('citationstyle');
 
-            jQuery('span[data-citationstyle=' + theDocument.settings.citationstyle + ']').addClass('selected');
+            jQuery('span[data-citationstyle=' + this.doc.settings.citationstyle + ']').addClass('selected');
             editorHelpers.displaySetting.set('papersize');
 
             editorHelpers.layoutMetadata();
@@ -208,17 +208,16 @@ var Editor = exports.Editor = (function () {
         key: "getUpdates",
         value: function getUpdates(callback) {
             var outputNode = nodeConverter.editorToModelNode((0, _format.serializeTo)(this.pm.mod.collab.versionDoc, 'dom'));
-            var theDocument = window.theDocument;
-            theDocument.title = this.pm.mod.collab.versionDoc.firstChild.textContent;
-            theDocument.version = this.pm.mod.collab.version;
-            theDocument.metadata.title = exporter.node2Obj(outputNode.getElementById('document-title'));
-            theDocument.metadata.subtitle = exporter.node2Obj(outputNode.getElementById('metadata-subtitle'));
-            theDocument.metadata.authors = exporter.node2Obj(outputNode.getElementById('metadata-authors'));
-            theDocument.metadata.abstract = exporter.node2Obj(outputNode.getElementById('metadata-abstract'));
-            theDocument.metadata.keywords = exporter.node2Obj(outputNode.getElementById('metadata-keywords'));
-            theDocument.contents = exporter.node2Obj(outputNode.getElementById('document-contents'));
-            theDocument.hash = this.getHash();
-            theDocument.comments = this.mod.comments.store.comments;
+            this.doc.title = this.pm.mod.collab.versionDoc.firstChild.textContent;
+            this.doc.version = this.pm.mod.collab.version;
+            this.doc.metadata.title = exporter.node2Obj(outputNode.getElementById('document-title'));
+            this.doc.metadata.subtitle = exporter.node2Obj(outputNode.getElementById('metadata-subtitle'));
+            this.doc.metadata.authors = exporter.node2Obj(outputNode.getElementById('metadata-authors'));
+            this.doc.metadata.abstract = exporter.node2Obj(outputNode.getElementById('metadata-abstract'));
+            this.doc.metadata.keywords = exporter.node2Obj(outputNode.getElementById('metadata-keywords'));
+            this.doc.contents = exporter.node2Obj(outputNode.getElementById('document-contents'));
+            this.doc.hash = this.getHash();
+            this.doc.comments = this.mod.comments.store.comments;
             if (callback) {
                 callback();
             }
@@ -311,7 +310,7 @@ var Editor = exports.Editor = (function () {
             if (data.hasOwnProperty('user')) {
                 theUser = data.user;
             } else {
-                theUser = window.theDocument.owner;
+                theUser = this.doc.owner;
             }
             usermediaHelpers.init(function () {
                 theEditor.update();
@@ -911,7 +910,7 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
         key: 'filterByUserType',
         value: function filterByUserType(userType) {
             //filter by user role (reader, editor, reviewer etc)
-            var userRoles = theDocument.access_rights;
+            var userRoles = this.mod.editor.doc.access_rights;
             var idsOfNeededUsers = [];
 
             jQuery.each(userRoles, function (index, user) {
@@ -933,10 +932,10 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
         key: 'filterByUserDialog',
         value: function filterByUserDialog() {
             //create array of roles + owner role
-            var rolesCopy = theDocument.access_rights.slice();
+            var rolesCopy = this.mod.editor.doc.access_rights.slice();
             rolesCopy.push({
-                user_name: theDocument.owner.name,
-                user_id: theDocument.owner.id
+                user_name: this.mod.editor.doc.owner.name,
+                user_id: this.mod.editor.doc.owner.id
             });
 
             var users = {
@@ -2566,8 +2565,9 @@ function updateUI(editor) {
 
     // The title has changed. We will update our document. Mark it as changed so
     // that an update may be sent to the server.
-    if (documentTitle.substring(0, 255) !== theDocument.title) {
-        theDocument.title = documentTitle.substring(0, 255);
+    // TODO: This will create problems if the title is longer than 255 characters. FIX!
+    if (documentTitle.substring(0, 255) !== editor.doc.title) {
+        editor.doc.title = documentTitle.substring(0, 255);
         editor.documentValues.titleChanged = true;
     }
 

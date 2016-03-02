@@ -62,7 +62,7 @@
      editorHelpers.switchMetadata = function () {
          var theMetadata = jQuery(this).attr('data-metadata');
          editorHelpers.setSetting('metadata-'+theMetadata, !
-             theDocument.settings['metadata-'+
+             theEditor.doc.settings['metadata-'+
                  theMetadata], true);
          editorHelpers.setMetadataDisplay();
      };
@@ -86,35 +86,36 @@
       * that differ from session to session.
       */
      editorHelpers.copyDocumentValues = function (aDocument, aDocumentValues) {
-         var theDocument, documentValues;
+         var doc, documentValues;
 
-         theDocument = aDocument;
          documentValues = aDocumentValues;
          documentValues.changed = false;
          documentValues.titleChanged = false;
-         theDocument.settings = theDocument.settings;
-         theDocument.metadata = JSON.parse(theDocument.metadata);
-         theDocument.contents = JSON.parse(theDocument.contents);
-         documentId = theDocument.id;
+
+         doc = aDocument;
+         doc.settings = doc.settings;
+         doc.metadata = JSON.parse(doc.metadata);
+         doc.contents = JSON.parse(doc.contents);
+         documentId = doc.id;
 
          [
              ['papersize', 1117],
              ['citationstyle', 'apa'], // TODO: make this calculated. Not everyone will have apa installed
              ['documentstyle', defaultDocumentStyle]
          ].forEach(function(variable) {
-           if (theDocument.settings[variable[0]] === undefined) {
-              theDocument.settings[variable[0]] = variable[1];
+           if (doc.settings[variable[0]] === undefined) {
+              doc.settings[variable[0]] = variable[1];
            }
          });
 
 
          if (documentValues.is_new) {
              // If the document is new, change the url. Then forget that the document is new.
-             window.history.replaceState("", "", "/document/" + theDocument.id +
+             window.history.replaceState("", "", "/document/" + doc.id +
                  "/");
              delete documentValues.is_new;
          }
-         window.theDocument = theDocument;
+         window.theEditor.doc = doc;
          window.theEditor.documentValues = documentValues;
 
      };
@@ -136,7 +137,7 @@
          theEditor.documentValues.titleChanged = true; // For title saving
      };
 
-     /** Functions related to taking document data from theDocument.* and displaying it (ie making it part of the DOM structure).
+     /** Functions related to taking document data from theEditor.document.* and displaying it (ie making it part of the DOM structure).
       * @namespace editorHelpers.displaySetting
       */
      editorHelpers.displaySetting = {};
@@ -149,14 +150,14 @@
          var documentStyleLink, stylesheet;
 
          jQuery("#header-navigation .style.selected").removeClass('selected');
-         jQuery('span[data-style=' + theDocument.settings.documentstyle + ']').addClass('selected');
+         jQuery('span[data-style=' + theEditor.doc.settings.documentstyle + ']').addClass('selected');
 
          documentStyleLink = document.getElementById('document-style-link');
 
          // Remove previous style.
          documentStyleLink.parentElement.removeChild(documentStyleLink.previousElementSibling);
 
-         stylesheet = loadCSS(staticUrl+'css/document/'+theDocument.settings.documentstyle+'.css', documentStyleLink);
+         stylesheet = loadCSS(staticUrl+'css/document/'+theEditor.doc.settings.documentstyle+'.css', documentStyleLink);
 
          onloadCSS( stylesheet, function() {
             // We layout the comments 100 ms after the stylesheet has been loaded.
@@ -175,7 +176,7 @@
      editorHelpers.displaySetting.citationstyle = function () {
          jQuery("#header-navigation .citationstyle.selected").removeClass(
              'selected');
-         jQuery('span[data-citationstyle=' + theDocument.settings.citationstyle + ']').addClass(
+         jQuery('span[data-citationstyle=' + theEditor.doc.settings.citationstyle + ']').addClass(
              'selected');
          if (theEditor.pm) {
            citationHelpers.formatCitationsInDoc();
@@ -188,9 +189,9 @@
      editorHelpers.displaySetting.papersize = function () {
          jQuery("#header-navigation .papersize.selected").removeClass(
              'selected');
-         jQuery('span[data-paperheight=' + theDocument.settings.papersize +
+         jQuery('span[data-paperheight=' + theEditor.doc.settings.papersize +
              ']').addClass('selected');
-         paginationConfig['pageHeight'] = theDocument.settings.papersize;
+         paginationConfig['pageHeight'] = theEditor.doc.settings.papersize;
 
      };
 
@@ -198,7 +199,7 @@
      editorHelpers.layoutMetadata = function () {
         var metadataCss = '';
         ['subtitle', 'abstract', 'authors', 'keywords'].forEach(function(metadataItem) {
-            if (!theDocument.settings['metadata-'+metadataItem]) {
+            if (!theEditor.doc.settings['metadata-'+metadataItem]) {
                 metadataCss += '#metadata-' + metadataItem + ' {display: none;}\n'
             } else {
                 metadataCss += 'span.metadata-' + metadataItem + ' {background-color: black; color: white;}\n'
@@ -228,7 +229,7 @@
          editorHelpers.displaySetting.FIELDS[theName.split('-')[0]]();
      };
 
-     /** Sets a variable in theDocument to a value and optionally sends a change notification to other editors.
+     /** Sets a variable in theEditor.doc to a value and optionally sends a change notification to other editors.
       * This notification is used in case of simple fields (all fields that are not individually editable in the text editor
       * -- citation style, set tracking, etc. but not the document title) to make other clients copy the same values.
       * @function setSetting
@@ -241,13 +242,13 @@
           sendChange) {
          var currentValue;
 
-         currentValue = theDocument.settings[variable];
+         currentValue = theEditor.doc.settings[variable];
 
          if (currentValue === newValue) {
              return false;
          }
 
-         theDocument.settings[variable] = newValue;
+         theEditor.doc.settings[variable] = newValue;
 
          if (sendChange) {
              serverCommunications.send({
@@ -268,10 +269,10 @@
      editorHelpers.sendDocumentUpdate = function (callback) {
          var documentData = {};
 
-         documentData.metadata = JSON.stringify(theDocument.metadata);
-         documentData.contents = JSON.stringify(theDocument.contents);
-         documentData.version = theDocument.version;
-         documentData.hash = theDocument.hash;
+         documentData.metadata = JSON.stringify(theEditor.doc.metadata);
+         documentData.contents = JSON.stringify(theEditor.doc.contents);
+         documentData.version = theEditor.doc.version;
+         documentData.hash = theEditor.doc.hash;
          console.log('saving');
          serverCommunications.send({
              type: 'update_document',
@@ -320,7 +321,7 @@ jQuery(document).ready(function() {
             if (theEditor.documentValues.control) {
                 serverCommunications.send({
                     type: 'update_title',
-                    title: theDocument.title
+                    title: theEditor.doc.title
                 });
             }
         }
@@ -358,32 +359,32 @@ jQuery(document).ready(function() {
         theEditor.getUpdates(function() {
             editorHelpers.sendDocumentUpdate();
         });
-        exporter.savecopy(theDocument);
+        exporter.savecopy(theEditor.doc);
     });
 
     jQuery(document).on('mousedown', '.download:not(.disabled)', function() {
         theEditor.getUpdates(function() {
             editorHelpers.sendDocumentUpdate();
         });
-        exporter.downloadNative(theDocument);
+        exporter.downloadNative(theEditor.doc);
     });
     jQuery(document).on('mousedown', '.latex:not(.disabled)', function() {
         theEditor.getUpdates(function() {
             editorHelpers.sendDocumentUpdate();
         });
-        exporter.downloadLatex(theDocument);
+        exporter.downloadLatex(theEditor.doc);
     });
     jQuery(document).on('mousedown', '.epub:not(.disabled)', function() {
         theEditor.getUpdates(function() {
             editorHelpers.sendDocumentUpdate();
         });
-        exporter.downloadEpub(theDocument);
+        exporter.downloadEpub(theEditor.doc);
     });
     jQuery(document).on('mousedown', '.html:not(.disabled)', function() {
         theEditor.getUpdates(function() {
             editorHelpers.sendDocumentUpdate();
         });
-        exporter.downloadHtml(theDocument);
+        exporter.downloadHtml(theEditor.doc);
     });
     jQuery(document).on('mousedown', '.print:not(.disabled)', function() {
         editorHelpers.print();
@@ -436,7 +437,7 @@ jQuery(document).ready(function() {
 
     jQuery(document).on('mousedown', '.share:not(.disabled)', function() {
         accessrightsHelpers.createAccessRightsDialog([
-            theDocument.id
+            theEditor.doc.id
         ]);
     });
 
@@ -473,7 +474,7 @@ jQuery(document).ready(function() {
         theEditor.getUpdates(function() {
             editorHelpers.sendDocumentUpdate();
         });
-        exporter.uploadNative(theDocument);
+        exporter.uploadNative(theEditor.doc);
     });
 
     bibliographyHelpers.bindEvents();

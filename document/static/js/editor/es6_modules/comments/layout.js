@@ -199,7 +199,7 @@ export class ModCommentLayout {
      */
     filterByUserType(userType) {
         //filter by user role (reader, editor, reviewer etc)
-        let userRoles = theDocument.access_rights
+        let userRoles = this.mod.editor.doc.access_rights
         let idsOfNeededUsers = []
 
         jQuery.each(userRoles, function(index, user) {
@@ -220,10 +220,10 @@ export class ModCommentLayout {
 
     filterByUserDialog() {
         //create array of roles + owner role
-        let rolesCopy = theDocument.access_rights.slice()
+        let rolesCopy = this.mod.editor.doc.access_rights.slice()
         rolesCopy.push({
-            user_name: theDocument.owner.name,
-            user_id: theDocument.owner.id
+            user_name: this.mod.editor.doc.owner.name,
+            user_id: this.mod.editor.doc.owner.id
         })
 
         let users = {

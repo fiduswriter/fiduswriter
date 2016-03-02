@@ -1018,7 +1018,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         };
 
         if (window.hasOwnProperty('theEditor') && !(theEditor.documentValues.is_owner)) {
-            formValues['owner_id'] = theDocument.owner.id;
+            formValues['owner_id'] = theEditor.doc.owner.id;
         }
         jQuery('.entryForm').each(function () {
             var $this = jQuery(this);
@@ -1814,11 +1814,11 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         // TODO: Such entries should likely not be accepted by the importer.
         if (typeof bib_info.title === 'undefined') bib_info.title = '';
 
-        // theDocument will be undefined (on the bibliography index page).
+        // theEditor will be undefined (on the bibliography index page).
         // Add edit options to bibliography table if the current user either is the owner of the
         // current document or he is accessing his bibliography manager directly.
 
-        if (typeof (theDocument) === 'undefined' || theDocument.is_owner) {
+        if (typeof (theEditor) === 'undefined' || theEditor.doc.is_owner) {
             allowEdit = true;
         } else {
             allowEdit = false;
@@ -1898,10 +1898,10 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         // A dictionary to look up bib fields by their fw type name. Needed for translation to CSL and Biblatex.
         //jQuery('#bibliography').dataTable().fnDestroy();
         //Fill BibDB
-        if (typeof (theDocument) === 'undefined') {
+        if (typeof (theEditor) === 'undefined') {
             documentOwnerId = 0;
         } else {
-            documentOwnerId = theDocument.owner.id;
+            documentOwnerId = theEditor.doc.owner.id;
         }
 
         if (_.isNaN(lastModified)) {
@@ -2090,7 +2090,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
     bibliographyHelpers.initiate = function () {
 
         bibliographyHelpers.getBibDB(function () {
-            if (window.hasOwnProperty('theDocument') && theEditor.pm) {
+            if (window.hasOwnProperty('theEditor') && theEditor.pm) {
                 citationHelpers.formatCitationsInDoc();
             }
             jQuery(document).trigger("bibliography_ready");

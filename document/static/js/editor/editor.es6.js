@@ -39,7 +39,8 @@ export class Editor {
             'titleChanged': false,
             'changed': false
         }
-            //this.init()
+        this.doc = {}
+        //this.init()
     }
 
     init() {
@@ -107,24 +108,23 @@ export class Editor {
         if (this.awaitingDiffResponse) {
             this.enableDiffSending()
         }
-        let theDocument = window.theDocument
-        let doc = this.createDoc(theDocument)
+        let doc = this.createDoc(this.doc)
         this.pm.setOption("collab", null)
         this.pm.setContent(doc)
         this.pm.setOption("collab", {
-            version: theDocument.version
+            version: this.doc.version
         })
         while (this.documentValues.last_diffs.length > 0) {
             let diff = this.documentValues.last_diffs.shift()
             this.applyDiff(diff)
         }
-        theDocument.hash = this.getHash()
+        this.doc.hash = this.getHash()
         this.pm.mod.collab.on("mustSend", function() {
             that.sendToCollaborators()
         })
         this.pm.signal("documentUpdated")
-        new ModComments(this, theDocument.comment_version)
-        _.each(theDocument.comments, function(comment) {
+        new ModComments(this, this.doc.comment_version)
+        _.each(this.doc.comments, function(comment) {
             this.mod.comments.store.addLocalComment(comment.id, comment.user,
                 comment.userName, comment.userAvatar, comment.date, comment.comment,
                 comment.answers, comment['review:isMajor'])
@@ -159,7 +159,7 @@ export class Editor {
         editorHelpers.displaySetting.set('documentstyle')
         editorHelpers.displaySetting.set('citationstyle')
 
-        jQuery('span[data-citationstyle=' + theDocument.settings.citationstyle +
+        jQuery('span[data-citationstyle=' + this.doc.settings.citationstyle +
             ']').addClass('selected')
         editorHelpers.displaySetting.set('papersize')
 
@@ -184,17 +184,16 @@ export class Editor {
 
     getUpdates(callback) {
         let outputNode = nodeConverter.editorToModelNode(serializeTo(this.pm.mod.collab.versionDoc, 'dom'))
-        let theDocument = window.theDocument
-        theDocument.title = this.pm.mod.collab.versionDoc.firstChild.textContent
-        theDocument.version = this.pm.mod.collab.version
-        theDocument.metadata.title = exporter.node2Obj(outputNode.getElementById('document-title'))
-        theDocument.metadata.subtitle = exporter.node2Obj(outputNode.getElementById('metadata-subtitle'))
-        theDocument.metadata.authors = exporter.node2Obj(outputNode.getElementById('metadata-authors'))
-        theDocument.metadata.abstract = exporter.node2Obj(outputNode.getElementById('metadata-abstract'))
-        theDocument.metadata.keywords = exporter.node2Obj(outputNode.getElementById('metadata-keywords'))
-        theDocument.contents = exporter.node2Obj(outputNode.getElementById('document-contents'))
-        theDocument.hash = this.getHash()
-        theDocument.comments = this.mod.comments.store.comments
+        this.doc.title = this.pm.mod.collab.versionDoc.firstChild.textContent
+        this.doc.version = this.pm.mod.collab.version
+        this.doc.metadata.title = exporter.node2Obj(outputNode.getElementById('document-title'))
+        this.doc.metadata.subtitle = exporter.node2Obj(outputNode.getElementById('metadata-subtitle'))
+        this.doc.metadata.authors = exporter.node2Obj(outputNode.getElementById('metadata-authors'))
+        this.doc.metadata.abstract = exporter.node2Obj(outputNode.getElementById('metadata-abstract'))
+        this.doc.metadata.keywords = exporter.node2Obj(outputNode.getElementById('metadata-keywords'))
+        this.doc.contents = exporter.node2Obj(outputNode.getElementById('document-contents'))
+        this.doc.hash = this.getHash()
+        this.doc.comments = this.mod.comments.store.comments
         if (callback) {
             callback()
         }
@@ -282,7 +281,7 @@ export class Editor {
         if (data.hasOwnProperty('user')) {
             theUser = data.user
         } else {
-            theUser = window.theDocument.owner
+            theUser = this.doc.owner
         }
         usermediaHelpers.init(function(){
             theEditor.update()

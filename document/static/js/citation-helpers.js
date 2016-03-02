@@ -187,7 +187,7 @@
         jQuery('#document-bibliography').html(
             citationHelpers.formatCitations(
                 jQuery('#document-editable')[0],
-                theDocument.settings.citationstyle,
+                theEditor.doc.settings.citationstyle,
                 BibDB
             )
         );

@@ -33,8 +33,9 @@ export function updateUI(editor) {
 
     // The title has changed. We will update our document. Mark it as changed so
     // that an update may be sent to the server.
-    if (documentTitle.substring(0, 255) !== theDocument.title) {
-        theDocument.title = documentTitle.substring(0, 255)
+    // TODO: This will create problems if the title is longer than 255 characters. FIX!
+    if (documentTitle.substring(0, 255) !== editor.doc.title) {
+        editor.doc.title = documentTitle.substring(0, 255)
         editor.documentValues.titleChanged = true
     }
 

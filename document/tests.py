@@ -205,10 +205,10 @@ class Manipulator(object):
     def getDocumentContents(self):
         return DRIVER.execute_script(
             """
-            // refresh theDocument first
+            // refresh theEditor.doc first
             theEditor.getUpdates();
 
-            return JSON.stringify(theDocument.contents);
+            return JSON.stringify(theEditor.doc.contents);
             """
         )
 

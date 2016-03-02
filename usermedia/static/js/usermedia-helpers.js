@@ -185,10 +185,10 @@
 
         formValues.append('id', id);
 
-        if(theDocument && theDocument.owner && theDocument.owner.id) {
+        if(theEditor && theEditor.doc && theEditor.doc.owner && theEditor.doc.owner.id) {
             // If there is currently a document loaded, make the uploaded image
             // belong to the owner of it.
-            formValues.append('owner_id', theDocument.owner.id);
+            formValues.append('owner_id', theEditor.doc.owner.id);
         }
 
         jQuery('.fw-media-form').each(function () {
@@ -513,10 +513,10 @@
         window.ImageDB = {};
         window.imageCategories = [];
         //Fill ImageDB
-        if (typeof (theDocument) === 'undefined') {
+        if (typeof (theEditor) === 'undefined') {
             documentOwnerId = 0;
         } else {
-            documentOwnerId = theDocument.owner.id;
+            documentOwnerId = theEditor.doc.owner.id;
         }
 
         $.activateWait();

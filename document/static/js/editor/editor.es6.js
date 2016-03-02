@@ -27,6 +27,18 @@ export class Editor {
         this.currentlyCheckingVersion = false
         this.awaitingDiffResponse = false
         this.receiving = false
+        this.documentValues = {
+            'sentHash': false,
+            'rights': '',
+            // In collaborative mode, only the first client to connect will have
+            // theEditor.documentValues.control set to true.
+            'control': false,
+            'last_diffs': [],
+            'is_owner': false,
+            'is_new': false,
+            'titleChanged': false,
+            'changed': false
+        }
             //this.init()
     }
 
@@ -35,7 +47,7 @@ export class Editor {
         this.pm = this.makeEditor(document.getElementById('document-editable'))
         new ModFootnotes(this)
         new UpdateScheduler(this.pm, "selectionChange change activeMarkChange blur focus setDoc", function() {
-            updateUI(that.pm)
+            updateUI(that)
         })
         this.pm.on("change", editorHelpers.documentHasChanged)
         this.pm.on("transform", (transform, options) => that.onTransform(transform, options))
@@ -96,15 +108,14 @@ export class Editor {
             this.enableDiffSending()
         }
         let theDocument = window.theDocument
-        let theDocumentValues = window.theDocumentValues
         let doc = this.createDoc(theDocument)
         this.pm.setOption("collab", null)
         this.pm.setContent(doc)
         this.pm.setOption("collab", {
             version: theDocument.version
         })
-        while (theDocumentValues.last_diffs.length > 0) {
-            let diff = theDocumentValues.last_diffs.shift()
+        while (this.documentValues.last_diffs.length > 0) {
+            let diff = this.documentValues.last_diffs.shift()
             this.applyDiff(diff)
         }
         theDocument.hash = this.getHash()
@@ -154,17 +165,17 @@ export class Editor {
 
         editorHelpers.layoutMetadata()
 
-        if (theDocumentValues.rights === 'w') {
+        if (this.documentValues.rights === 'w') {
             jQuery('#editor-navigation').show()
             jQuery('.metadata-menu-item, #open-close-header, .save, \
           .multibuttonsCover, .papersize-menu, .metadata-menu, \
           .documentstyle-menu, .citationstyle-menu').removeClass('disabled')
-            if (theDocumentValues.is_owner) {
+            if (this.documentValues.is_owner) {
                 // bind the share dialog to the button if the user is the document owner
                 jQuery('.share').removeClass('disabled')
             }
             mathHelpers.resetMath()
-        } else if (theDocumentValues.rights === 'r') {
+        } else if (this.documentValues.rights === 'r') {
             // Try to disable contenteditable
             jQuery('.ProseMirror-content').attr('contenteditable', 'false')
         }
@@ -285,8 +296,8 @@ export class Editor {
     // but not as the cleint that was in charge of saving. This has now changed
     // so that the current user is being asked to save the document.
     takeControl() {
-        theDocumentValues.control = true
-        theDocumentValues.sentHash = false
+        this.documentValues.control = true
+        this.documentValues.sentHash = false
     }
 
     confirmDiff(request_id) {

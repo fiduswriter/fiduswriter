@@ -46,8 +46,8 @@
             break;
         case 'connections':
             serverCommunications.updateParticipantList(data.participant_list);
-            if (theDocumentValues.control) {
-                theDocumentValues.sentHash = false;
+            if (theEditor.documentValues.control) {
+                theEditor.documentValues.sentHash = false;
             }
             break;
         case 'welcome':
@@ -102,9 +102,7 @@
     serverCommunications.bind = function () {
         var pathnameParts = window.location.pathname.split('/');
         window.theDocument = undefined;
-        window.theDocumentValues = {};
         window.theUser = undefined;
-        window.clientOffsetTime = 0;
         window.documentId = parseInt(pathnameParts[pathnameParts.length -
             2], 10);
 

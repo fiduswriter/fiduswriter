@@ -47,6 +47,18 @@ var Editor = exports.Editor = (function () {
         this.currentlyCheckingVersion = false;
         this.awaitingDiffResponse = false;
         this.receiving = false;
+        this.documentValues = {
+            'sentHash': false,
+            'rights': '',
+            // In collaborative mode, only the first client to connect will have
+            // theEditor.documentValues.control set to true.
+            'control': false,
+            'last_diffs': [],
+            'is_owner': false,
+            'is_new': false,
+            'titleChanged': false,
+            'changed': false
+        };
         //this.init()
     }
 
@@ -57,7 +69,7 @@ var Editor = exports.Editor = (function () {
             this.pm = this.makeEditor(document.getElementById('document-editable'));
             new _mod2.ModFootnotes(this);
             new _update.UpdateScheduler(this.pm, "selectionChange change activeMarkChange blur focus setDoc", function () {
-                (0, _updateUi.updateUI)(that.pm);
+                (0, _updateUi.updateUI)(that);
             });
             this.pm.on("change", editorHelpers.documentHasChanged);
             this.pm.on("transform", function (transform, options) {
@@ -123,15 +135,14 @@ var Editor = exports.Editor = (function () {
                 this.enableDiffSending();
             }
             var theDocument = window.theDocument;
-            var theDocumentValues = window.theDocumentValues;
             var doc = this.createDoc(theDocument);
             this.pm.setOption("collab", null);
             this.pm.setContent(doc);
             this.pm.setOption("collab", {
                 version: theDocument.version
             });
-            while (theDocumentValues.last_diffs.length > 0) {
-                var diff = theDocumentValues.last_diffs.shift();
+            while (this.documentValues.last_diffs.length > 0) {
+                var diff = this.documentValues.last_diffs.shift();
                 this.applyDiff(diff);
             }
             theDocument.hash = this.getHash();
@@ -178,17 +189,17 @@ var Editor = exports.Editor = (function () {
 
             editorHelpers.layoutMetadata();
 
-            if (theDocumentValues.rights === 'w') {
+            if (this.documentValues.rights === 'w') {
                 jQuery('#editor-navigation').show();
                 jQuery('.metadata-menu-item, #open-close-header, .save, \
           .multibuttonsCover, .papersize-menu, .metadata-menu, \
           .documentstyle-menu, .citationstyle-menu').removeClass('disabled');
-                if (theDocumentValues.is_owner) {
+                if (this.documentValues.is_owner) {
                     // bind the share dialog to the button if the user is the document owner
                     jQuery('.share').removeClass('disabled');
                 }
                 mathHelpers.resetMath();
-            } else if (theDocumentValues.rights === 'r') {
+            } else if (this.documentValues.rights === 'r') {
                 // Try to disable contenteditable
                 jQuery('.ProseMirror-content').attr('contenteditable', 'false');
             }
@@ -317,8 +328,8 @@ var Editor = exports.Editor = (function () {
     }, {
         key: "takeControl",
         value: function takeControl() {
-            theDocumentValues.control = true;
-            theDocumentValues.sentHash = false;
+            this.documentValues.control = true;
+            this.documentValues.sentHash = false;
         }
     }, {
         key: "confirmDiff",
@@ -2296,6 +2307,8 @@ Figure.register("parseDOM", "figure", {
     }
 });
 
+var imageDBBroken = false;
+
 Figure.prototype.serializeDOM = function (node, serializer) {
     var dom = serializer.elt("figure", {
         'data-equation': node.attrs.equation,
@@ -2312,16 +2325,16 @@ Figure.prototype.serializeDOM = function (node, serializer) {
         } else {
             /* The image was not present in the ImageDB. Try to reload the
             ImageDB, but only once. If the image cannot be found in the updated
-            ImageDB, do not attempt at reloaidng the ImageDB if an image cannot be
+            ImageDB, do not attempt at reloading the ImageDB if an image cannot be
             found. */
-            if (!theDocumentValues.imageDBBroken) {
+            if (!imageDBBroken) {
                 usermediaHelpers.getImageDB(function () {
                     if (ImageDB[node.attrs.image] && ImageDB[node.attrs.image].image) {
                         dom.firstChild.appendChild(serializer.elt("img", {
                             "src": ImageDB[node.attrs.image].image
                         }));
                     } else {
-                        theDocumentValues.imageDBBroken = true;
+                        imageDBBroken = true;
                     }
                 });
             }
@@ -2545,8 +2558,8 @@ var PART_LABELS = {
     'documentcontents': gettext('Body')
 };
 
-function updateUI(pm) {
-    /* Fidus Writer code */
+function updateUI(editor) {
+    var pm = editor.pm;
 
     // We count on the the title node being the first one in the document
     var documentTitle = pm.doc.firstChild.type.name === 'title' && pm.doc.firstChild.textContent.length > 0 ? pm.doc.firstChild.textContent : gettext('Untitled Document');
@@ -2555,7 +2568,7 @@ function updateUI(pm) {
     // that an update may be sent to the server.
     if (documentTitle.substring(0, 255) !== theDocument.title) {
         theDocument.title = documentTitle.substring(0, 255);
-        theDocumentValues.titleChanged = true;
+        editor.documentValues.titleChanged = true;
     }
 
     jQuery('title').html('Fidus Writer - ' + documentTitle);

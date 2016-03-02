@@ -22,8 +22,8 @@ const PART_LABELS = {
     'documentcontents': gettext('Body')
 }
 
-export function updateUI(pm) {
-    /* Fidus Writer code */
+export function updateUI(editor) {
+    let pm = editor.pm
 
     // We count on the the title node being the first one in the document
     const documentTitle = pm.doc.firstChild.type.name === 'title' &&
@@ -35,7 +35,7 @@ export function updateUI(pm) {
     // that an update may be sent to the server.
     if (documentTitle.substring(0, 255) !== theDocument.title) {
         theDocument.title = documentTitle.substring(0, 255)
-        theDocumentValues.titleChanged = true
+        editor.documentValues.titleChanged = true
     }
 
     jQuery('title').html('Fidus Writer - ' + documentTitle)

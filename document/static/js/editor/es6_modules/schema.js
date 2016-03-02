@@ -375,6 +375,7 @@ Figure.register("parseDOM", "figure", {
     }
 })
 
+let imageDBBroken = false
 
 Figure.prototype.serializeDOM = (node, serializer) => {
     let dom = serializer.elt("figure", {
@@ -392,16 +393,16 @@ Figure.prototype.serializeDOM = (node, serializer) => {
         } else {
             /* The image was not present in the ImageDB. Try to reload the
             ImageDB, but only once. If the image cannot be found in the updated
-            ImageDB, do not attempt at reloaidng the ImageDB if an image cannot be
+            ImageDB, do not attempt at reloading the ImageDB if an image cannot be
             found. */
-            if (!theDocumentValues.imageDBBroken) {
+            if (!imageDBBroken) {
                 usermediaHelpers.getImageDB(function() {
                     if (ImageDB[node.attrs.image] && ImageDB[node.attrs.image].image) {
                         dom.firstChild.appendChild(serializer.elt("img", {
                             "src": ImageDB[node.attrs.image].image
                         }))
                     } else {
-                        theDocumentValues.imageDBBroken = true
+                        imageDBBroken = true
                     }
                 })
             }

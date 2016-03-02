@@ -1017,7 +1017,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             'entrytype': jQuery('#id_entrytype').val()
         };
 
-        if (window.hasOwnProperty('theDocumentValues') && !(theDocumentValues.is_owner)) {
+        if (window.hasOwnProperty('theEditor') && !(theEditor.documentValues.is_owner)) {
             formValues['owner_id'] = theDocument.owner.id;
         }
         jQuery('.entryForm').each(function () {

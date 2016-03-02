@@ -86,12 +86,12 @@
       * that differ from session to session.
       */
      editorHelpers.copyDocumentValues = function (aDocument, aDocumentValues) {
-         var theDocument, theDocumentValues;
+         var theDocument, documentValues;
 
          theDocument = aDocument;
-         theDocumentValues = aDocumentValues;
-         theDocumentValues.changed = false;
-         theDocumentValues.titleChanged = false;
+         documentValues = aDocumentValues;
+         documentValues.changed = false;
+         documentValues.titleChanged = false;
          theDocument.settings = theDocument.settings;
          theDocument.metadata = JSON.parse(theDocument.metadata);
          theDocument.contents = JSON.parse(theDocument.contents);
@@ -108,14 +108,14 @@
          });
 
 
-         if (theDocumentValues.is_new) {
+         if (documentValues.is_new) {
              // If the document is new, change the url. Then forget that the document is new.
              window.history.replaceState("", "", "/document/" + theDocument.id +
                  "/");
-             delete theDocumentValues.is_new;
+             delete documentValues.is_new;
          }
          window.theDocument = theDocument;
-         window.theDocumentValues = theDocumentValues;
+         window.theEditor.documentValues = documentValues;
 
      };
 
@@ -125,7 +125,7 @@
       * @memberof editorHelpers
       */
      editorHelpers.documentHasChanged = function () {
-         theDocumentValues.changed = true; // For document saving
+         theEditor.documentValues.changed = true; // For document saving
      };
 
      /** Called whenever the document title had changed. Makes sure that saving happens.
@@ -133,7 +133,7 @@
       * @memberof editorHelpers
       */
      editorHelpers.titleHasChanged = function () {
-         theDocumentValues.titleChanged = true; // For title saving
+         theEditor.documentValues.titleChanged = true; // For title saving
      };
 
      /** Functions related to taking document data from theDocument.* and displaying it (ie making it part of the DOM structure).
@@ -260,8 +260,7 @@
         return true;
      };
 
-     /** Will send an update of the current Document to the server if theDocumentValues.control is true.
-      * In collaborative mode, only the first client to connect will have theDocumentValues.control set to true.
+     /** Will send an update of the current Document to the server if theEditor.documentValues.control is true.
       * @function sendDocumentUpdate
       * @memberof editorHelpers
       * @param callback Callback to be called after copying data (optional).
@@ -279,7 +278,7 @@
              document: documentData
          });
 
-         theDocumentValues.changed = false;
+         theEditor.documentValues.changed = false;
 
          if (callback) {
              callback();
@@ -307,7 +306,7 @@ jQuery(document).ready(function() {
 
     // Set Auto-save to send the document every two minutes, if it has changed.
     setInterval(function() {
-        if (theDocumentValues && theDocumentValues.changed) {
+        if (theEditor.documentValues && theEditor.documentValues.changed) {
             theEditor.getUpdates(function() {
                 editorHelpers.sendDocumentUpdate();
             });
@@ -316,9 +315,9 @@ jQuery(document).ready(function() {
 
     // Set Auto-save to send the title every 5 seconds, if it has changed.
     setInterval(function() {
-        if (theDocumentValues && theDocumentValues.titleChanged) {
-            theDocumentValues.titleChanged = false;
-            if (theDocumentValues.control) {
+        if (theEditor.documentValues && theEditor.documentValues.titleChanged) {
+            theEditor.documentValues.titleChanged = false;
+            if (theEditor.documentValues.control) {
                 serverCommunications.send({
                     type: 'update_title',
                     title: theDocument.title

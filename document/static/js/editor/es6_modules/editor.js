@@ -200,7 +200,7 @@ export class Editor {
 
     receiveDocument(data) {
         let that = this
-        editorHelpers.copyDocumentValues(data.document, data.document_values)
+        this.receiveDocumentValues(data.document, data.document_values)
         if (data.hasOwnProperty('user')) {
             this.user = data.user
         } else {
@@ -212,6 +212,35 @@ export class Editor {
                 type: 'participant_update'
             })
         })
+    }
+
+    receiveDocumentValues(dataDoc, dataDocInfo) {
+        let that = this
+        this.doc = dataDoc
+        this.docInfo = dataDocInfo
+        this.docInfo.changed = false
+        this.docInfo.titleChanged = false
+
+        let defaultSettings = [
+            ['papersize', 1117],
+            ['citationstyle', 'apa'], // TODO: make this calculated. Not everyone will have apa installed
+            ['documentstyle', window.defaultDocumentStyle]
+        ]
+
+
+        defaultSettings.forEach(function(variable) {
+            if (that.doc.settings[variable[0]] === undefined) {
+                that.doc.settings[variable[0]] = variable[1]
+            }
+        })
+
+
+        if (this.docInfo.is_new) {
+            // If the document is new, change the url. Then forget that the document is new.
+            window.history.replaceState("", "", "/document/" + this.doc.id +
+                "/");
+            delete this.docInfo.is_new
+        }
     }
 
     // This client was participating in collaborative editing of this document
@@ -239,6 +268,27 @@ export class Editor {
             hash = hash & hash
         }
         return hash
+    }
+
+    sendDocumentUpdate(callback) {
+        let documentData = {
+            metadata: this.doc.metadata,
+            contents: this.doc.contents,
+            version: this.doc.version,
+            hash: this.doc.hash
+        }
+
+        this.mod.serverCommunications.send({
+            type: 'update_document',
+            document: documentData
+        })
+
+        this.docInfo.changed = false
+
+        if (callback) {
+            callback()
+        }
+        return true
     }
 
     // Things to be executed on every editor transform.

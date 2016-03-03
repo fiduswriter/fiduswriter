@@ -1693,7 +1693,7 @@ var Editor = exports.Editor = (function () {
         key: "receiveDocument",
         value: function receiveDocument(data) {
             var that = this;
-            editorHelpers.copyDocumentValues(data.document, data.document_values);
+            this.receiveDocumentValues(data.document, data.document_values);
             if (data.hasOwnProperty('user')) {
                 this.user = data.user;
             } else {
@@ -1705,6 +1705,30 @@ var Editor = exports.Editor = (function () {
                     type: 'participant_update'
                 });
             });
+        }
+    }, {
+        key: "receiveDocumentValues",
+        value: function receiveDocumentValues(dataDoc, dataDocInfo) {
+            var that = this;
+            this.doc = dataDoc;
+            this.docInfo = dataDocInfo;
+            this.docInfo.changed = false;
+            this.docInfo.titleChanged = false;
+
+            var defaultSettings = [['papersize', 1117], ['citationstyle', 'apa'], // TODO: make this calculated. Not everyone will have apa installed
+            ['documentstyle', window.defaultDocumentStyle]];
+
+            defaultSettings.forEach(function (variable) {
+                if (that.doc.settings[variable[0]] === undefined) {
+                    that.doc.settings[variable[0]] = variable[1];
+                }
+            });
+
+            if (this.docInfo.is_new) {
+                // If the document is new, change the url. Then forget that the document is new.
+                window.history.replaceState("", "", "/document/" + this.doc.id + "/");
+                delete this.docInfo.is_new;
+            }
         }
 
         // This client was participating in collaborative editing of this document
@@ -1738,6 +1762,28 @@ var Editor = exports.Editor = (function () {
                 hash = hash & hash;
             }
             return hash;
+        }
+    }, {
+        key: "sendDocumentUpdate",
+        value: function sendDocumentUpdate(callback) {
+            var documentData = {
+                metadata: this.doc.metadata,
+                contents: this.doc.contents,
+                version: this.doc.version,
+                hash: this.doc.hash
+            };
+
+            this.mod.serverCommunications.send({
+                type: 'update_document',
+                document: documentData
+            });
+
+            this.docInfo.changed = false;
+
+            if (callback) {
+                callback();
+            }
+            return true;
         }
 
         // Things to be executed on every editor transform.
@@ -3525,40 +3571,6 @@ editorHelpers.setMetadataDisplay = function () {
     theEditor.docInfo.changed = true;
 };
 
-/** Fill the editor page with the document data from the server.
- * This is done after the document data is loaded from the server.
- * @function fillEditorPage
- * @memberof editorHelpers
- * @param aDocument The document object as it comes from the server.
- * @param aDocumentValues The document value object consists of variables
- * that differ from session to session.
- */
-editorHelpers.copyDocumentValues = function (aDocument, aDocumentValues) {
-    var doc, docInfo;
-
-    docInfo = aDocumentValues;
-    docInfo.changed = false;
-    docInfo.titleChanged = false;
-
-    doc = aDocument;
-    documentId = doc.id;
-
-    [['papersize', 1117], ['citationstyle', 'apa'], // TODO: make this calculated. Not everyone will have apa installed
-    ['documentstyle', defaultDocumentStyle]].forEach(function (variable) {
-        if (doc.settings[variable[0]] === undefined) {
-            doc.settings[variable[0]] = variable[1];
-        }
-    });
-
-    if (docInfo.is_new) {
-        // If the document is new, change the url. Then forget that the document is new.
-        window.history.replaceState("", "", "/document/" + doc.id + "/");
-        delete docInfo.is_new;
-    }
-    window.theEditor.doc = doc;
-    window.theEditor.docInfo = docInfo;
-};
-
 /** Functions related to taking document data from theEditor.document.* and displaying it (ie making it part of the DOM structure).
  * @namespace editorHelpers.displaySetting
  */
@@ -3676,33 +3688,6 @@ editorHelpers.setSetting = function (variable, newValue, sendChange) {
     return true;
 };
 
-/** Will send an update of the current Document to the server if theEditor.docInfo.control is true.
- * @function sendDocumentUpdate
- * @memberof editorHelpers
- * @param callback Callback to be called after copying data (optional).
- */
-editorHelpers.sendDocumentUpdate = function (callback) {
-    var documentData = {};
-
-    documentData.metadata = theEditor.doc.metadata;
-    documentData.contents = theEditor.doc.contents;
-    documentData.version = theEditor.doc.version;
-    documentData.hash = theEditor.doc.hash;
-    console.log('saving');
-    theEditor.mod.serverCommunications.send({
-        type: 'update_document',
-        document: documentData
-    });
-
-    theEditor.docInfo.changed = false;
-
-    if (callback) {
-        callback();
-    }
-
-    return true;
-};
-
 window.editorHelpers = editorHelpers;
 
 // Functions to be executed at startup
@@ -3719,7 +3704,7 @@ jQuery(document).ready(function () {
     setInterval(function () {
         if (theEditor.docInfo && theEditor.docInfo.changed) {
             theEditor.getUpdates(function () {
-                editorHelpers.sendDocumentUpdate();
+                theEditor.sendDocumentUpdate();
             });
         }
     }, 120000);
@@ -3766,32 +3751,32 @@ jQuery(document).ready(function () {
 
     jQuery(document).on('mousedown', '.savecopy:not(.disabled)', function () {
         theEditor.getUpdates(function () {
-            editorHelpers.sendDocumentUpdate();
+            theEditor.sendDocumentUpdate();
         });
         exporter.savecopy(theEditor.doc);
     });
 
     jQuery(document).on('mousedown', '.download:not(.disabled)', function () {
         theEditor.getUpdates(function () {
-            editorHelpers.sendDocumentUpdate();
+            theEditor.sendDocumentUpdate();
         });
         exporter.downloadNative(theEditor.doc);
     });
     jQuery(document).on('mousedown', '.latex:not(.disabled)', function () {
         theEditor.getUpdates(function () {
-            editorHelpers.sendDocumentUpdate();
+            theEditor.sendDocumentUpdate();
         });
         exporter.downloadLatex(theEditor.doc);
     });
     jQuery(document).on('mousedown', '.epub:not(.disabled)', function () {
         theEditor.getUpdates(function () {
-            editorHelpers.sendDocumentUpdate();
+            theEditor.sendDocumentUpdate();
         });
         exporter.downloadEpub(theEditor.doc);
     });
     jQuery(document).on('mousedown', '.html:not(.disabled)', function () {
         theEditor.getUpdates(function () {
-            editorHelpers.sendDocumentUpdate();
+            theEditor.sendDocumentUpdate();
         });
         exporter.downloadHtml(theEditor.doc);
     });
@@ -3800,7 +3785,7 @@ jQuery(document).ready(function () {
     });
     jQuery(document).on('mousedown', '.close:not(.disabled)', function () {
         theEditor.getUpdates(function () {
-            editorHelpers.sendDocumentUpdate();
+            theEditor.sendDocumentUpdate();
         });
         window.location.href = '/';
     });
@@ -3882,7 +3867,7 @@ jQuery(document).ready(function () {
 
     jQuery(document).on('mousedown', '.save:not(.disabled)', function () {
         theEditor.getUpdates(function () {
-            editorHelpers.sendDocumentUpdate();
+            theEditor.sendDocumentUpdate();
         });
         exporter.uploadNative(theEditor.doc);
     });

@@ -52,7 +52,8 @@ export class Editor {
             updateUI(that)
         })
         this.pm.on("change", editorHelpers.documentHasChanged)
-        this.pm.on("transform", (transform, options) => that.onTransform(transform, options))
+        this.pm.on("transform", (transform, options) => {that.onTransform(transform, true)})
+        this.pm.on("remoteTransform", (transform, options) => {that.onTransform(transform, false)})
         new UpdateScheduler(this.pm, "flush setDoc", mathHelpers.layoutEmptyEquationNodes)
         new UpdateScheduler(this.pm, "flush setDoc", mathHelpers.layoutEmptyDisplayEquationNodes)
         new UpdateScheduler(this.pm, "flush setDoc", citationHelpers.formatCitationsInDocIfNew)
@@ -325,21 +326,37 @@ export class Editor {
     applyDiff(diff) {
         this.receiving = true
         let steps = [diff].map(j => Step.fromJSON(fidusSchema, j))
-        let maps = this.pm.mod.collab.receive(steps)
+        let docs = []
+        let doc = this.pm.mod.collab.versionDoc
+        docs.push(doc)
+        let maps = steps.map(step => {
+            let result = step.apply(doc)
+            doc = result.doc
+            docs.push(doc)
+            return result.map
+        })
+
         let unconfirmedMaps = this.pm.mod.collab.unconfirmedMaps
+        let unconfirmedSteps = this.pm.mod.collab.unconfirmedSteps
         maps = maps.concat(unconfirmedMaps)
-        unconfirmedMaps.forEach(function(map) {
+        unconfirmedSteps.forEach(function(step) {
             // We add pseudo steps for all the unconfirmed steps so that the
             // unconfirmed maps will be applied when handling the transform
             steps.push({
                 type: 'unconfirmed'
             })
+            // We add real docs
+            let result = step.apply(doc)
+            doc = result.doc
+            docs.push(doc)
         })
         let transform = {
             steps,
-            maps
+            maps,
+            docs
         }
-        this.pm.signal("receivedTransform", transform)
+        this.pm.mod.collab.receive(steps)
+        this.pm.signal("remoteTransform", transform)
         this.receiving = false
     }
 
@@ -419,17 +436,23 @@ export class Editor {
     }
 
     // Things to be executed on every editor transform.
-    onTransform(transform) {
-        var updateBibliography = false
+    onTransform(transform, local) {
+        let updateBibliography = false, updateTitle = false
             // Check what area is affected
         transform.steps.forEach(function(step, index) {
-            if (step.type === 'replace' && step.from.cmp(step.to) !== 0) {
-                transform.docs[index].inlineNodesBetween(step.from, step.to, function(node) {
-                    if (node.type.name === 'citation') {
-                        // A citation was replaced
-                        updateBibliography = true
-                    }
-                })
+            if (step.type === 'replace') {
+                if (step.from.cmp(step.to) !== 0) {
+                    transform.docs[index].inlineNodesBetween(step.from, step.to, function(node) {
+                        if (node.type.name === 'citation') {
+                            // A citation was replaced
+                            updateBibliography = true
+                        }
+                    })
+                }
+
+                if (step.from.path[0] === 0) {
+                    updateTitle = true
+                }
             }
         })
 
@@ -439,6 +462,18 @@ export class Editor {
                 formatCitations.detach()
                 citationHelpers.formatCitationsInDoc()
             })
+        }
+
+        if (updateTitle) {
+            let documentTitle = this.pm.doc.firstChild.textContent
+            // The title has changed. We will update our document. Mark it as changed so
+            // that an update may be sent to the server.
+            if (documentTitle.substring(0, 255) !== this.doc.title) {
+                this.doc.title = documentTitle.substring(0, 255)
+                if (local) {
+                    this.docInfo.titleChanged = true
+                }
+            }
         }
 
     }

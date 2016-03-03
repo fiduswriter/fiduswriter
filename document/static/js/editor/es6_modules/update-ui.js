@@ -31,14 +31,6 @@ export function updateUI(editor) {
         pm.doc.firstChild.textContent : gettext('Untitled Document')
 
 
-    // The title has changed. We will update our document. Mark it as changed so
-    // that an update may be sent to the server.
-    // TODO: This will create problems if the title is longer than 255 characters. FIX!
-    if (documentTitle.substring(0, 255) !== editor.doc.title) {
-        editor.doc.title = documentTitle.substring(0, 255)
-        editor.docInfo.titleChanged = true
-    }
-
     jQuery('title').html('Fidus Writer - ' + documentTitle)
     jQuery('#header h1').html(documentTitle)
 

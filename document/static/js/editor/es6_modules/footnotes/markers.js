@@ -21,7 +21,7 @@ export class ModFootnoteMarkers {
         this.mod.editor.pm.on('transform', function(transform, object) {
             that.scanForFootnoteMarkers(transform, true)
         })
-        this.mod.editor.pm.on('receivedTransform', function(transform, object) {
+        this.mod.editor.pm.on('remoteTransform', function(transform, object) {
             that.scanForFootnoteMarkers(transform, false)
         })
     }

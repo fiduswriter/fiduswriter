@@ -75,7 +75,10 @@ var Editor = exports.Editor = (function () {
             });
             this.pm.on("change", editorHelpers.documentHasChanged);
             this.pm.on("transform", function (transform, options) {
-                return that.onTransform(transform, options);
+                that.onTransform(transform, true);
+            });
+            this.pm.on("remoteTransform", function (transform, options) {
+                that.onTransform(transform, false);
             });
             new _update.UpdateScheduler(this.pm, "flush setDoc", mathHelpers.layoutEmptyEquationNodes);
             new _update.UpdateScheduler(this.pm, "flush setDoc", mathHelpers.layoutEmptyDisplayEquationNodes);
@@ -362,21 +365,37 @@ var Editor = exports.Editor = (function () {
             var steps = [diff].map(function (j) {
                 return _transform.Step.fromJSON(_schema.fidusSchema, j);
             });
-            var maps = this.pm.mod.collab.receive(steps);
+            var docs = [];
+            var doc = this.pm.mod.collab.versionDoc;
+            docs.push(doc);
+            var maps = steps.map(function (step) {
+                var result = step.apply(doc);
+                doc = result.doc;
+                docs.push(doc);
+                return result.map;
+            });
+
             var unconfirmedMaps = this.pm.mod.collab.unconfirmedMaps;
+            var unconfirmedSteps = this.pm.mod.collab.unconfirmedSteps;
             maps = maps.concat(unconfirmedMaps);
-            unconfirmedMaps.forEach(function (map) {
+            unconfirmedSteps.forEach(function (step) {
                 // We add pseudo steps for all the unconfirmed steps so that the
                 // unconfirmed maps will be applied when handling the transform
                 steps.push({
                     type: 'unconfirmed'
                 });
+                // We add real docs
+                var result = step.apply(doc);
+                doc = result.doc;
+                docs.push(doc);
             });
             var transform = {
                 steps: steps,
-                maps: maps
+                maps: maps,
+                docs: docs
             };
-            this.pm.signal("receivedTransform", transform);
+            this.pm.mod.collab.receive(steps);
+            this.pm.signal("remoteTransform", transform);
             this.receiving = false;
         }
     }, {
@@ -468,19 +487,26 @@ var Editor = exports.Editor = (function () {
 
     }, {
         key: "onTransform",
-        value: function onTransform(transform) {
+        value: function onTransform(transform, local) {
             var _this = this;
 
-            var updateBibliography = false;
+            var updateBibliography = false,
+                updateTitle = false;
             // Check what area is affected
             transform.steps.forEach(function (step, index) {
-                if (step.type === 'replace' && step.from.cmp(step.to) !== 0) {
-                    transform.docs[index].inlineNodesBetween(step.from, step.to, function (node) {
-                        if (node.type.name === 'citation') {
-                            // A citation was replaced
-                            updateBibliography = true;
-                        }
-                    });
+                if (step.type === 'replace') {
+                    if (step.from.cmp(step.to) !== 0) {
+                        transform.docs[index].inlineNodesBetween(step.from, step.to, function (node) {
+                            if (node.type.name === 'citation') {
+                                // A citation was replaced
+                                updateBibliography = true;
+                            }
+                        });
+                    }
+
+                    if (step.from.path[0] === 0) {
+                        updateTitle = true;
+                    }
                 }
             });
 
@@ -492,6 +518,18 @@ var Editor = exports.Editor = (function () {
                         citationHelpers.formatCitationsInDoc();
                     });
                 })();
+            }
+
+            if (updateTitle) {
+                var documentTitle = this.pm.doc.firstChild.textContent;
+                // The title has changed. We will update our document. Mark it as changed so
+                // that an update may be sent to the server.
+                if (documentTitle.substring(0, 255) !== this.doc.title) {
+                    this.doc.title = documentTitle.substring(0, 255);
+                    if (local) {
+                        this.docInfo.titleChanged = true;
+                    }
+                }
             }
         }
     }]);
@@ -1524,7 +1562,7 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = (function () {
             this.mod.editor.pm.on('transform', function (transform, object) {
                 that.scanForFootnoteMarkers(transform, true);
             });
-            this.mod.editor.pm.on('receivedTransform', function (transform, object) {
+            this.mod.editor.pm.on('remoteTransform', function (transform, object) {
                 that.scanForFootnoteMarkers(transform, false);
             });
         }
@@ -2563,14 +2601,6 @@ function updateUI(editor) {
 
     // We count on the the title node being the first one in the document
     var documentTitle = pm.doc.firstChild.type.name === 'title' && pm.doc.firstChild.textContent.length > 0 ? pm.doc.firstChild.textContent : gettext('Untitled Document');
-
-    // The title has changed. We will update our document. Mark it as changed so
-    // that an update may be sent to the server.
-    // TODO: This will create problems if the title is longer than 255 characters. FIX!
-    if (documentTitle.substring(0, 255) !== editor.doc.title) {
-        editor.doc.title = documentTitle.substring(0, 255);
-        editor.docInfo.titleChanged = true;
-    }
 
     jQuery('title').html('Fidus Writer - ' + documentTitle);
     jQuery('#header h1').html(documentTitle);

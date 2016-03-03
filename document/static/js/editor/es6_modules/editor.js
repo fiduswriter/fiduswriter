@@ -13,6 +13,7 @@ import {ModComments} from "./comments/mod"
 import {ModFootnotes} from "./footnotes/mod"
 import {ModCollab} from "./collab/mod"
 import {ModTools} from "./tools/mod"
+import {ModSettings} from "./settings/mod"
 import {ModServerCommunications} from "./server-communications"
 
 export class Editor {
@@ -37,6 +38,7 @@ export class Editor {
         }
         this.doc = {}
         this.user = false
+        new ModSettings(this)
         new ModServerCommunications(this)
         //this.init()
     }
@@ -155,14 +157,14 @@ export class Editor {
       #open-close-header').removeClass('disabled')
 
         citationHelpers.formatCitationsInDoc()
-        editorHelpers.displaySetting.set('documentstyle')
-        editorHelpers.displaySetting.set('citationstyle')
+        this.mod.settings.layout.displayDocumentstyle()
+        this.mod.settings.layout.displayCitationstyle()
 
         jQuery('span[data-citationstyle=' + this.doc.settings.citationstyle +
             ']').addClass('selected')
-        editorHelpers.displaySetting.set('papersize')
+        this.mod.settings.layout.displayPapersize()
 
-        editorHelpers.layoutMetadata()
+        this.mod.settings.layout.layoutMetadata()
 
         if (this.docInfo.rights === 'w') {
             jQuery('#editor-navigation').show()

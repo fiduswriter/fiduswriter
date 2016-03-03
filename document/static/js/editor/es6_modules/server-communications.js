@@ -126,9 +126,8 @@ export class ModServerCommunications {
                 this.editor.mod.collab.docChanges.confirmDiff(data.request_id)
                 break
             case 'setting_change':
-                editorHelpers.setSetting(data.variable, data.value, false)
-                editorHelpers.displaySetting.set(data.variable)
-                break;
+                this.editor.mod.settings.set.setSetting(data.variable, data.value, false)
+                break
             case 'take_control':
                 this.editor.takeControl()
                 break

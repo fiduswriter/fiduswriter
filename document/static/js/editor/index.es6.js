@@ -6,7 +6,6 @@ import {Editor} from "./es6_modules/editor"
  */
 var editorHelpers = {};
 
-
 /** Call printing dialog and destroy print view after printing. (step 2 of printing process)
  * @function print
  * @memberof editorHelpers
@@ -35,154 +34,6 @@ editorHelpers.print = function() {
     pagination.applyBookLayoutWithoutDivision();
 };
 
-
-/** Turn enabled metadata off and disabled metadata on, Function is bound to clicking option in metadata menu.
- * @function switchMetadata
- * @memberof editorHelpers
- */
-editorHelpers.switchMetadata = function() {
-    var theMetadata = jQuery(this).attr('data-metadata');
-    editorHelpers.setSetting('metadata-' + theMetadata, !
-        theEditor.doc.settings['metadata-' +
-            theMetadata], true);
-    editorHelpers.setMetadataDisplay();
-};
-
-/** Layout metadata and then mark the document as having changed.
- * @function setMetadataDisplay
- * @memberof editorHelpers
- */
-editorHelpers.setMetadataDisplay = function() {
-    editorHelpers.layoutMetadata();
-    theEditor.docInfo.changed = true;
-};
-
-
-/** Functions related to taking document data from theEditor.document.* and displaying it (ie making it part of the DOM structure).
- * @namespace editorHelpers.displaySetting
- */
-editorHelpers.displaySetting = {};
-
-/** Set the document style.
- * @function documentstyle
- * @memberof editorHelpers.displaySetting*/
-editorHelpers.displaySetting.documentstyle = function() {
-
-    var documentStyleLink, stylesheet;
-
-    jQuery("#header-navigation .style.selected").removeClass('selected');
-    jQuery('span[data-style=' + theEditor.doc.settings.documentstyle + ']').addClass('selected');
-
-    documentStyleLink = document.getElementById('document-style-link');
-
-    // Remove previous style.
-    documentStyleLink.parentElement.removeChild(documentStyleLink.previousElementSibling);
-
-    stylesheet = loadCSS(staticUrl + 'css/document/' + theEditor.doc.settings.documentstyle + '.css', documentStyleLink);
-
-    onloadCSS(stylesheet, function() {
-        // We layout the comments 100 ms after the stylesheet has been loaded.
-        // This should usually be enough to make the layout work correctly.
-        //
-        // TODO: Find a way that is more reliable than a timeout to check
-        // for font loading.
-        setTimeout(function() {
-            theEditor.mod.comments.layout.layoutComments()
-        }, 100);
-    });
-
-};
-
-/** Set the document style.
- * @function citationstyle
- * @memberof editorHelpers.displaySetting*/
-editorHelpers.displaySetting.citationstyle = function() {
-    jQuery("#header-navigation .citationstyle.selected").removeClass(
-        'selected');
-    jQuery('span[data-citationstyle=' + theEditor.doc.settings.citationstyle + ']').addClass(
-        'selected');
-    if (theEditor.pm) {
-        citationHelpers.formatCitationsInDoc();
-    }
-};
-
-/** Set the document's paper size.
- * @function papersize
- * @memberof editorHelpers.displaySetting*/
-editorHelpers.displaySetting.papersize = function() {
-    jQuery("#header-navigation .papersize.selected").removeClass(
-        'selected');
-    jQuery('span[data-paperheight=' + theEditor.doc.settings.papersize +
-        ']').addClass('selected');
-    paginationConfig['pageHeight'] = theEditor.doc.settings.papersize;
-
-};
-
-
-editorHelpers.layoutMetadata = function() {
-    var metadataCss = '';
-    ['subtitle', 'abstract', 'authors', 'keywords'].forEach(function(metadataItem) {
-        if (!theEditor.doc.settings['metadata-' + metadataItem]) {
-            metadataCss += '#metadata-' + metadataItem + ' {display: none;}\n'
-        } else {
-            metadataCss += 'span.metadata-' + metadataItem + ' {background-color: black; color: white;}\n'
-        }
-    });
-
-    jQuery('#metadata-styles')[0].innerHTML = metadataCss;
-
-};
-
-/** A dictionary linking field names with set display functions.
- * @constant  FIELDS
- * @memberof editorHelpers.displaySetting
- */
-editorHelpers.displaySetting.FIELDS = {
-    // A list of the functions used to update various fields to be called by editorHelpers.displaySetting.set
-    'papersize': editorHelpers.displaySetting.papersize,
-    'citationstyle': editorHelpers.displaySetting.citationstyle,
-    'documentstyle': editorHelpers.displaySetting.documentstyle,
-    'metadata': editorHelpers.layoutMetadata
-};
-/** Set any field on the editor page
- * @function document
- * @memberof editorHelpers.displaySetting
- * @param theName The name of the field.*/
-editorHelpers.displaySetting.set = function(theName) {
-    editorHelpers.displaySetting.FIELDS[theName.split('-')[0]]();
-};
-
-/** Sets a variable in theEditor.doc to a value and optionally sends a change notification to other editors.
- * This notification is used in case of simple fields (all fields that are not individually editable in the text editor
- * -- citation style, set tracking, etc. but not the document title) to make other clients copy the same values.
- * @function setSetting
- * @memberof editorHelpers
- * @param theName The name of the variable.
- * @param newValue The value that the variable is to be set to.
- * @param sendChange Whether a change notification should be sent to other clients. Default is true.
- */
-editorHelpers.setSetting = function(variable, newValue,
-    sendChange) {
-    var currentValue;
-
-    currentValue = theEditor.doc.settings[variable];
-
-    if (currentValue === newValue) {
-        return false;
-    }
-
-    theEditor.doc.settings[variable] = newValue;
-
-    if (sendChange) {
-        theEditor.mod.serverCommunications.send({
-            type: 'setting_change',
-            variable: variable,
-            value: newValue
-        });
-    }
-
-    return true;
-};
 
 
 window.editorHelpers = editorHelpers;
@@ -290,10 +141,8 @@ jQuery(document).ready(function() {
 
     // Document Style switching
     jQuery(document).on('mousedown', "#header-navigation .style:not(.disabled)", function() {
-        if (editorHelpers.setSetting('documentstyle',
+        if (theEditor.mod.settings.set.setSetting('documentstyle',
                 jQuery(this).attr('data-style'), true)) {
-
-            editorHelpers.displaySetting.set('documentstyle');
             theEditor.docInfo.changed = true;
         }
         return false;
@@ -301,9 +150,8 @@ jQuery(document).ready(function() {
 
     // Citation Style switching
     jQuery(document).on('mousedown', "#header-navigation .citationstyle:not(.disabled)", function() {
-        if (editorHelpers.setSetting('citationstyle',
+        if (theEditor.mod.settings.set.setSetting('citationstyle',
                 jQuery(this).attr('data-citationstyle'), true)) {
-            editorHelpers.displaySetting.set('citationstyle');
             theEditor.docInfo.changed = true;
             theEditor.mod.comments.layout.layoutComments();
         }
@@ -326,15 +174,21 @@ jQuery(document).ready(function() {
 
     // Paper size switching
     jQuery(document).on('mousedown', "#header-navigation .papersize:not(.disabled)", function() {
-        if (editorHelpers.setSetting('papersize',
+        if (theEditor.mod.settings.set.setSetting('papersize',
                 parseInt(jQuery(this).attr('data-paperheight')), true)) {
-            editorHelpers.displaySetting.set('papersize');
             theEditor.docInfo.changed = true;
         }
         return false;
     });
+    /** Turn enabled metadata off and disabled metadata on, Function is bound to clicking option in metadata menu.
+     */
+    jQuery(document).on('mousedown', '.metadata-menu-item:not(.disabled)', function () {
+        let theMetadata = jQuery(this).attr('data-metadata')
 
-    jQuery(document).on('mousedown', '.metadata-menu-item:not(.disabled)', editorHelpers.switchMetadata);
+        theEditor.mod.settings.set.setSetting('metadata-' + theMetadata,
+            !theEditor.doc.settings['metadata-' +
+                theMetadata], true);
+    });
 
     jQuery(document).on('mousedown', '.share:not(.disabled)', function() {
         accessrightsHelpers.createAccessRightsDialog([

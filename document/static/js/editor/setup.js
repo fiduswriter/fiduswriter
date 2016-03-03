@@ -86,11 +86,11 @@
       * that differ from session to session.
       */
      editorHelpers.copyDocumentValues = function (aDocument, aDocumentValues) {
-         var doc, documentValues;
+         var doc, docInfo;
 
-         documentValues = aDocumentValues;
-         documentValues.changed = false;
-         documentValues.titleChanged = false;
+         docInfo = aDocumentValues;
+         docInfo.changed = false;
+         docInfo.titleChanged = false;
 
          doc = aDocument;
          doc.settings = doc.settings;
@@ -109,14 +109,14 @@
          });
 
 
-         if (documentValues.is_new) {
+         if (docInfo.is_new) {
              // If the document is new, change the url. Then forget that the document is new.
              window.history.replaceState("", "", "/document/" + doc.id +
                  "/");
-             delete documentValues.is_new;
+             delete docInfo.is_new;
          }
          window.theEditor.doc = doc;
-         window.theEditor.documentValues = documentValues;
+         window.theEditor.docInfo = docInfo;
 
      };
 
@@ -126,7 +126,7 @@
       * @memberof editorHelpers
       */
      editorHelpers.documentHasChanged = function () {
-         theEditor.documentValues.changed = true; // For document saving
+         theEditor.docInfo.changed = true; // For document saving
      };
 
      /** Called whenever the document title had changed. Makes sure that saving happens.
@@ -134,7 +134,7 @@
       * @memberof editorHelpers
       */
      editorHelpers.titleHasChanged = function () {
-         theEditor.documentValues.titleChanged = true; // For title saving
+         theEditor.docInfo.titleChanged = true; // For title saving
      };
 
      /** Functions related to taking document data from theEditor.document.* and displaying it (ie making it part of the DOM structure).
@@ -261,7 +261,7 @@
         return true;
      };
 
-     /** Will send an update of the current Document to the server if theEditor.documentValues.control is true.
+     /** Will send an update of the current Document to the server if theEditor.docInfo.control is true.
       * @function sendDocumentUpdate
       * @memberof editorHelpers
       * @param callback Callback to be called after copying data (optional).
@@ -279,7 +279,7 @@
              document: documentData
          });
 
-         theEditor.documentValues.changed = false;
+         theEditor.docInfo.changed = false;
 
          if (callback) {
              callback();
@@ -307,7 +307,7 @@ jQuery(document).ready(function() {
 
     // Set Auto-save to send the document every two minutes, if it has changed.
     setInterval(function() {
-        if (theEditor.documentValues && theEditor.documentValues.changed) {
+        if (theEditor.docInfo && theEditor.docInfo.changed) {
             theEditor.getUpdates(function() {
                 editorHelpers.sendDocumentUpdate();
             });
@@ -316,9 +316,9 @@ jQuery(document).ready(function() {
 
     // Set Auto-save to send the title every 5 seconds, if it has changed.
     setInterval(function() {
-        if (theEditor.documentValues && theEditor.documentValues.titleChanged) {
-            theEditor.documentValues.titleChanged = false;
-            if (theEditor.documentValues.control) {
+        if (theEditor.docInfo && theEditor.docInfo.titleChanged) {
+            theEditor.docInfo.titleChanged = false;
+            if (theEditor.docInfo.control) {
                 serverCommunications.send({
                     type: 'update_title',
                     title: theEditor.doc.title

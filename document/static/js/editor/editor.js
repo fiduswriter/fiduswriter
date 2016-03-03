@@ -47,11 +47,11 @@ var Editor = exports.Editor = (function () {
         this.currentlyCheckingVersion = false;
         this.awaitingDiffResponse = false;
         this.receiving = false;
-        this.documentValues = {
+        this.docInfo = {
             'sentHash': false,
             'rights': '',
             // In collaborative mode, only the first client to connect will have
-            // theEditor.documentValues.control set to true.
+            // theEditor.docInfo.control set to true.
             'control': false,
             'last_diffs': [],
             'is_owner': false,
@@ -142,8 +142,8 @@ var Editor = exports.Editor = (function () {
             this.pm.setOption("collab", {
                 version: this.doc.version
             });
-            while (this.documentValues.last_diffs.length > 0) {
-                var diff = this.documentValues.last_diffs.shift();
+            while (this.docInfo.last_diffs.length > 0) {
+                var diff = this.docInfo.last_diffs.shift();
                 this.applyDiff(diff);
             }
             this.doc.hash = this.getHash();
@@ -190,17 +190,17 @@ var Editor = exports.Editor = (function () {
 
             editorHelpers.layoutMetadata();
 
-            if (this.documentValues.rights === 'w') {
+            if (this.docInfo.rights === 'w') {
                 jQuery('#editor-navigation').show();
                 jQuery('.metadata-menu-item, #open-close-header, .save, \
           .multibuttonsCover, .papersize-menu, .metadata-menu, \
           .documentstyle-menu, .citationstyle-menu').removeClass('disabled');
-                if (this.documentValues.is_owner) {
+                if (this.docInfo.is_owner) {
                     // bind the share dialog to the button if the user is the document owner
                     jQuery('.share').removeClass('disabled');
                 }
                 mathHelpers.resetMath();
-            } else if (this.documentValues.rights === 'r') {
+            } else if (this.docInfo.rights === 'r') {
                 // Try to disable contenteditable
                 jQuery('.ProseMirror-content').attr('contenteditable', 'false');
             }
@@ -328,8 +328,8 @@ var Editor = exports.Editor = (function () {
     }, {
         key: "takeControl",
         value: function takeControl() {
-            this.documentValues.control = true;
-            this.documentValues.sentHash = false;
+            this.docInfo.control = true;
+            this.docInfo.sentHash = false;
         }
     }, {
         key: "confirmDiff",
@@ -2569,7 +2569,7 @@ function updateUI(editor) {
     // TODO: This will create problems if the title is longer than 255 characters. FIX!
     if (documentTitle.substring(0, 255) !== editor.doc.title) {
         editor.doc.title = documentTitle.substring(0, 255);
-        editor.documentValues.titleChanged = true;
+        editor.docInfo.titleChanged = true;
     }
 
     jQuery('title').html('Fidus Writer - ' + documentTitle);

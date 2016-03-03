@@ -46,8 +46,8 @@
             break;
         case 'connections':
             serverCommunications.updateParticipantList(data.participant_list);
-            if (theEditor.documentValues.control) {
-                theEditor.documentValues.sentHash = false;
+            if (theEditor.docInfo.control) {
+                theEditor.docInfo.sentHash = false;
             }
             break;
         case 'welcome':

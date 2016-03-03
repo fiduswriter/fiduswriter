@@ -27,11 +27,11 @@ export class Editor {
         this.currentlyCheckingVersion = false
         this.awaitingDiffResponse = false
         this.receiving = false
-        this.documentValues = {
+        this.docInfo = {
             'sentHash': false,
             'rights': '',
             // In collaborative mode, only the first client to connect will have
-            // theEditor.documentValues.control set to true.
+            // theEditor.docInfo.control set to true.
             'control': false,
             'last_diffs': [],
             'is_owner': false,
@@ -115,8 +115,8 @@ export class Editor {
         this.pm.setOption("collab", {
             version: this.doc.version
         })
-        while (this.documentValues.last_diffs.length > 0) {
-            let diff = this.documentValues.last_diffs.shift()
+        while (this.docInfo.last_diffs.length > 0) {
+            let diff = this.docInfo.last_diffs.shift()
             this.applyDiff(diff)
         }
         this.doc.hash = this.getHash()
@@ -166,17 +166,17 @@ export class Editor {
 
         editorHelpers.layoutMetadata()
 
-        if (this.documentValues.rights === 'w') {
+        if (this.docInfo.rights === 'w') {
             jQuery('#editor-navigation').show()
             jQuery('.metadata-menu-item, #open-close-header, .save, \
           .multibuttonsCover, .papersize-menu, .metadata-menu, \
           .documentstyle-menu, .citationstyle-menu').removeClass('disabled')
-            if (this.documentValues.is_owner) {
+            if (this.docInfo.is_owner) {
                 // bind the share dialog to the button if the user is the document owner
                 jQuery('.share').removeClass('disabled')
             }
             mathHelpers.resetMath()
-        } else if (this.documentValues.rights === 'r') {
+        } else if (this.docInfo.rights === 'r') {
             // Try to disable contenteditable
             jQuery('.ProseMirror-content').attr('contenteditable', 'false')
         }
@@ -296,8 +296,8 @@ export class Editor {
     // but not as the cleint that was in charge of saving. This has now changed
     // so that the current user is being asked to save the document.
     takeControl() {
-        this.documentValues.control = true
-        this.documentValues.sentHash = false
+        this.docInfo.control = true
+        this.docInfo.sentHash = false
     }
 
     confirmDiff(request_id) {

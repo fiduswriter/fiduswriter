@@ -404,12 +404,12 @@ var FW_FILETYPE_VERSION = 1.2, MIN_FW_FILETYPE_VERSION = 1.1, MAX_FW_FILETYPE_VE
                                 }));
                         documentHelpers.startDocumentTable();
                     } else if (typeof (theEditor) !== 'undefined') {
-                        if (theEditor.documentValues.rights ==='r') {
+                        if (theEditor.docInfo.rights ==='r') {
                             // We only had right access to the document, so the editing elements won't show. We therefore need to reload the page to get them.
                             window.location = '/document/'+aDocument.id+'/';
                         } else {
                             window.theEditor.doc = aDocument;
-                            window.theEditor.documentValues = aDocumentValues;
+                            window.theEditor.docInfo = aDocumentValues;
                             window.history.pushState("", "", "/document/"+theEditor.doc.id+"/");
                         }
                     }

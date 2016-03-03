@@ -36,7 +36,7 @@ export function updateUI(editor) {
     // TODO: This will create problems if the title is longer than 255 characters. FIX!
     if (documentTitle.substring(0, 255) !== editor.doc.title) {
         editor.doc.title = documentTitle.substring(0, 255)
-        editor.documentValues.titleChanged = true
+        editor.docInfo.titleChanged = true
     }
 
     jQuery('title').html('Fidus Writer - ' + documentTitle)

@@ -50,7 +50,7 @@ export class Editor {
         new UpdateScheduler(this.pm, "selectionChange change activeMarkChange blur focus setDoc", function() {
             updateUI(that)
         })
-        this.pm.on("change", editorHelpers.documentHasChanged)
+        this.pm.on("change", function(){that.docInfo.changed = true})
         this.pm.on("transform", (transform, options) => {that.onTransform(transform, true)})
         this.pm.on("remoteTransform", (transform, options) => {that.onTransform(transform, false)})
         new UpdateScheduler(this.pm, "flush setDoc", mathHelpers.layoutEmptyEquationNodes)

@@ -66,6 +66,8 @@ class DocumentWS(BaseWebSocketHandler):
                 DocumentWS.sessions[document.id]['last_diffs'] = json_decode(document.last_diffs)
                 DocumentWS.sessions[document.id]['comments'] = json_decode(document.comments)
                 DocumentWS.sessions[document.id]['settings'] = json_decode(document.settings)
+                DocumentWS.sessions[document.id]['contents'] = json_decode(document.contents)
+                DocumentWS.sessions[document.id]['metadata'] = json_decode(document.metadata)
                 DocumentWS.sessions[document.id]['in_control'] = self.id
             else:
                 self.id = max(DocumentWS.sessions[document.id]['participants'])+1
@@ -114,10 +116,10 @@ class DocumentWS(BaseWebSocketHandler):
         response['document']['id']=document.id
         response['document']['version']=document.version
         response['document']['title']=document.title
-        response['document']['contents']=document.contents
-        response['document']['metadata']=document.metadata
-        response['document']['settings']=DocumentWS.sessions[self.document_id]["settings"]
-        response['document']['comments']=DocumentWS.sessions[self.document_id]["comments"]
+        response['document']['contents']=DocumentWS.sessions[self.document_id]['contents']
+        response['document']['metadata']=DocumentWS.sessions[self.document_id]['metadata']
+        response['document']['settings']=DocumentWS.sessions[self.document_id]['settings']
+        response['document']['comments']=DocumentWS.sessions[self.document_id]['comments']
         response['document']['comment_version']=document.comment_version
         response['document']['access_rights'] = get_accessrights(AccessRight.objects.filter(document__owner=document.owner))
         response['document']['owner'] = dict()
@@ -166,8 +168,8 @@ class DocumentWS(BaseWebSocketHandler):
             # The saved version does not contain all accepted diffs, so we keep the remaining ones + 1000
             remaining_diffs = 1000 + document.diff_version - changes["version"]
             DocumentWS.sessions[self.document_id]["last_diffs"] = DocumentWS.sessions[self.document_id]["last_diffs"][-remaining_diffs:]
-        document.contents = changes["contents"]
-        document.metadata = changes["metadata"]
+        DocumentWS.sessions[self.document_id]["contents"] = changes["contents"]
+        DocumentWS.sessions[self.document_id]["metadata"] = changes["metadata"]
         document.version = changes["version"]
 
     def update_title(self, title):
@@ -338,6 +340,8 @@ class DocumentWS(BaseWebSocketHandler):
     @classmethod
     def save_document(cls, document_id):
         document = cls.sessions[document_id]['document']
+        document.contents = json_encode(DocumentWS.sessions[document_id]['contents'])
+        document.metadata = json_encode(DocumentWS.sessions[document_id]['metadata'])
         document.settings = json_encode(DocumentWS.sessions[document_id]['settings'])
         document.last_diffs = json_encode(DocumentWS.sessions[document_id]['last_diffs'])
         document.comments = json_encode(DocumentWS.sessions[document_id]['comments'])

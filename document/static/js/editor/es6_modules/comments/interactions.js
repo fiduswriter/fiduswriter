@@ -85,12 +85,12 @@ export class ModCommentInteractions {
         let id = this.mod.store.addComment(
             this.mod.editor.user.id,
             this.mod.editor.user.name,
-            this.mod.editor.user.avatar, 
+            this.mod.editor.user.avatar,
             new Date().getTime(),
             '')
         this.mod.layout.deactivateAll()
         this.mod.layout.activeCommentId = id
-        editorHelpers.documentHasChanged()
+        this.mod.editor.docInfo.changed = true
         let layoutComments = new UpdateScheduler(this.mod.editor.pm, "flush", function() {
             layoutComments.detach()
             that.mod.layout.layoutComments()
@@ -102,7 +102,7 @@ export class ModCommentInteractions {
         let comment = this.mod.layout.findComment(id) // TODO: We don't use this for anything. Should we?
         this.mod.store.deleteComment(id)
             //      TODO: make the markrange go away
-        editorHelpers.documentHasChanged()
+        this.mod.editor.docInfo.changed = true
         this.mod.layout.layoutComments()
     }
 
@@ -142,7 +142,7 @@ export class ModCommentInteractions {
         // Handle the deletion of a comment answer.
         this.mod.store.deleteAnswer(commentId, answerId)
         this.mod.layout.deactivateAll()
-        editorHelpers.documentHasChanged()
+        this.mod.editor.docInfo.changed = true
         this.mod.layout.layoutComments()
     }
 
@@ -170,13 +170,13 @@ export class ModCommentInteractions {
 
         this.mod.layout.deactivateAll()
         this.mod.layout.layoutComments()
-        editorHelpers.documentHasChanged()
+        this.mod.editor.docInfo.changed = true
     }
 
     submitAnswerUpdate(commentId, answerId, commentText) {
         this.mod.store.updateAnswer(commentId, answerId, commentText)
         this.mod.layout.deactivateAll()
-        editorHelpers.documentHasChanged()
+        this.mod.editor.docInfo.changed = true
         this.mod.layout.layoutComments()
     }
 }

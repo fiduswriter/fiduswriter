@@ -580,7 +580,7 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
             var id = this.mod.store.addComment(this.mod.editor.user.id, this.mod.editor.user.name, this.mod.editor.user.avatar, new Date().getTime(), '');
             this.mod.layout.deactivateAll();
             this.mod.layout.activeCommentId = id;
-            editorHelpers.documentHasChanged();
+            this.mod.editor.docInfo.changed = true;
             var layoutComments = new _update.UpdateScheduler(this.mod.editor.pm, "flush", function () {
                 layoutComments.detach();
                 that.mod.layout.layoutComments();
@@ -593,7 +593,7 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
             var comment = this.mod.layout.findComment(id); // TODO: We don't use this for anything. Should we?
             this.mod.store.deleteComment(id);
             //      TODO: make the markrange go away
-            editorHelpers.documentHasChanged();
+            this.mod.editor.docInfo.changed = true;
             this.mod.layout.layoutComments();
         }
     }, {
@@ -637,7 +637,7 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
             // Handle the deletion of a comment answer.
             this.mod.store.deleteAnswer(commentId, answerId);
             this.mod.layout.deactivateAll();
-            editorHelpers.documentHasChanged();
+            this.mod.editor.docInfo.changed = true;
             this.mod.layout.layoutComments();
         }
     }, {
@@ -667,14 +667,14 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
 
             this.mod.layout.deactivateAll();
             this.mod.layout.layoutComments();
-            editorHelpers.documentHasChanged();
+            this.mod.editor.docInfo.changed = true;
         }
     }, {
         key: "submitAnswerUpdate",
         value: function submitAnswerUpdate(commentId, answerId, commentText) {
             this.mod.store.updateAnswer(commentId, answerId, commentText);
             this.mod.layout.deactivateAll();
-            editorHelpers.documentHasChanged();
+            this.mod.editor.docInfo.changed = true;
             this.mod.layout.layoutComments();
         }
     }]);
@@ -1534,7 +1534,9 @@ var Editor = exports.Editor = (function () {
             new _update.UpdateScheduler(this.pm, "selectionChange change activeMarkChange blur focus setDoc", function () {
                 (0, _updateUi.updateUI)(that);
             });
-            this.pm.on("change", editorHelpers.documentHasChanged);
+            this.pm.on("change", function () {
+                that.docInfo.changed = true;
+            });
             this.pm.on("transform", function (transform, options) {
                 that.onTransform(transform, true);
             });
@@ -3473,8 +3475,8 @@ function calculatePlaceHolderCss(pm, selectedElement) {
 var _editor = require('./es6_modules/editor');
 
 /** Helper functions for the editor.
-* @namespace editorHelpers
-*/
+ * @namespace editorHelpers
+ */
 var editorHelpers = {};
 
 /** Call printing dialog and destroy print view after printing. (step 2 of printing process)
@@ -3515,12 +3517,12 @@ editorHelpers.switchMetadata = function () {
 };
 
 /** Layout metadata and then mark the document as having changed.
-* @function setMetadataDisplay
-* @memberof editorHelpers
-*/
+ * @function setMetadataDisplay
+ * @memberof editorHelpers
+ */
 editorHelpers.setMetadataDisplay = function () {
     editorHelpers.layoutMetadata();
-    editorHelpers.documentHasChanged();
+    theEditor.docInfo.changed = true;
 };
 
 /** Fill the editor page with the document data from the server.
@@ -3539,9 +3541,6 @@ editorHelpers.copyDocumentValues = function (aDocument, aDocumentValues) {
     docInfo.titleChanged = false;
 
     doc = aDocument;
-    doc.settings = doc.settings;
-    doc.metadata = JSON.parse(doc.metadata);
-    doc.contents = JSON.parse(doc.contents);
     documentId = doc.id;
 
     [['papersize', 1117], ['citationstyle', 'apa'], // TODO: make this calculated. Not everyone will have apa installed
@@ -3558,22 +3557,6 @@ editorHelpers.copyDocumentValues = function (aDocument, aDocumentValues) {
     }
     window.theEditor.doc = doc;
     window.theEditor.docInfo = docInfo;
-};
-
-/** Called whenever anything has changed in the document text. Makes sure that saving and synchronizing with peers happens.
- * @function documentHasChanged
- * @memberof editorHelpers
- */
-editorHelpers.documentHasChanged = function () {
-    theEditor.docInfo.changed = true; // For document saving
-};
-
-/** Called whenever the document title had changed. Makes sure that saving happens.
- * @function titleHasChanged
- * @memberof editorHelpers
- */
-editorHelpers.titleHasChanged = function () {
-    theEditor.docInfo.titleChanged = true; // For title saving
 };
 
 /** Functions related to taking document data from theEditor.document.* and displaying it (ie making it part of the DOM structure).
@@ -3701,8 +3684,8 @@ editorHelpers.setSetting = function (variable, newValue, sendChange) {
 editorHelpers.sendDocumentUpdate = function (callback) {
     var documentData = {};
 
-    documentData.metadata = JSON.stringify(theEditor.doc.metadata);
-    documentData.contents = JSON.stringify(theEditor.doc.contents);
+    documentData.metadata = theEditor.doc.metadata;
+    documentData.contents = theEditor.doc.contents;
     documentData.version = theEditor.doc.version;
     documentData.hash = theEditor.doc.hash;
     console.log('saving');
@@ -3827,7 +3810,7 @@ jQuery(document).ready(function () {
         if (editorHelpers.setSetting('documentstyle', jQuery(this).attr('data-style'), true)) {
 
             editorHelpers.displaySetting.set('documentstyle');
-            editorHelpers.documentHasChanged();
+            theEditor.docInfo.changed = true;
         }
         return false;
     });
@@ -3836,7 +3819,7 @@ jQuery(document).ready(function () {
     jQuery(document).on('mousedown', "#header-navigation .citationstyle:not(.disabled)", function () {
         if (editorHelpers.setSetting('citationstyle', jQuery(this).attr('data-citationstyle'), true)) {
             editorHelpers.displaySetting.set('citationstyle');
-            editorHelpers.documentHasChanged();
+            theEditor.docInfo.changed = true;
             theEditor.mod.comments.layout.layoutComments();
         }
         return false;
@@ -3860,7 +3843,7 @@ jQuery(document).ready(function () {
     jQuery(document).on('mousedown', "#header-navigation .papersize:not(.disabled)", function () {
         if (editorHelpers.setSetting('papersize', parseInt(jQuery(this).attr('data-paperheight')), true)) {
             editorHelpers.displaySetting.set('papersize');
-            editorHelpers.documentHasChanged();
+            theEditor.docInfo.changed = true;
         }
         return false;
     });

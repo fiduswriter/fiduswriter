@@ -54,7 +54,7 @@ editorHelpers.switchMetadata = function() {
  */
 editorHelpers.setMetadataDisplay = function() {
     editorHelpers.layoutMetadata();
-    editorHelpers.documentHasChanged();
+    theEditor.docInfo.changed = true;
 };
 
 
@@ -74,9 +74,6 @@ editorHelpers.copyDocumentValues = function(aDocument, aDocumentValues) {
     docInfo.titleChanged = false;
 
     doc = aDocument;
-    doc.settings = doc.settings;
-    doc.metadata = JSON.parse(doc.metadata);
-    doc.contents = JSON.parse(doc.contents);
     documentId = doc.id;
 
     [
@@ -101,22 +98,6 @@ editorHelpers.copyDocumentValues = function(aDocument, aDocumentValues) {
 
 };
 
-
-/** Called whenever anything has changed in the document text. Makes sure that saving and synchronizing with peers happens.
- * @function documentHasChanged
- * @memberof editorHelpers
- */
-editorHelpers.documentHasChanged = function() {
-    theEditor.docInfo.changed = true; // For document saving
-};
-
-/** Called whenever the document title had changed. Makes sure that saving happens.
- * @function titleHasChanged
- * @memberof editorHelpers
- */
-editorHelpers.titleHasChanged = function() {
-    theEditor.docInfo.titleChanged = true; // For title saving
-};
 
 /** Functions related to taking document data from theEditor.document.* and displaying it (ie making it part of the DOM structure).
  * @namespace editorHelpers.displaySetting
@@ -252,8 +233,8 @@ editorHelpers.setSetting = function(variable, newValue,
 editorHelpers.sendDocumentUpdate = function(callback) {
     var documentData = {};
 
-    documentData.metadata = JSON.stringify(theEditor.doc.metadata);
-    documentData.contents = JSON.stringify(theEditor.doc.contents);
+    documentData.metadata = theEditor.doc.metadata;
+    documentData.contents = theEditor.doc.contents;
     documentData.version = theEditor.doc.version;
     documentData.hash = theEditor.doc.hash;
     console.log('saving');
@@ -273,8 +254,6 @@ editorHelpers.sendDocumentUpdate = function(callback) {
 };
 
 window.editorHelpers = editorHelpers;
-
-
 
 
 // Functions to be executed at startup
@@ -383,7 +362,7 @@ jQuery(document).ready(function() {
                 jQuery(this).attr('data-style'), true)) {
 
             editorHelpers.displaySetting.set('documentstyle');
-            editorHelpers.documentHasChanged();
+            theEditor.docInfo.changed = true;
         }
         return false;
     });
@@ -393,7 +372,7 @@ jQuery(document).ready(function() {
         if (editorHelpers.setSetting('citationstyle',
                 jQuery(this).attr('data-citationstyle'), true)) {
             editorHelpers.displaySetting.set('citationstyle');
-            editorHelpers.documentHasChanged();
+            theEditor.docInfo.changed = true;
             theEditor.mod.comments.layout.layoutComments();
         }
         return false;
@@ -418,7 +397,7 @@ jQuery(document).ready(function() {
         if (editorHelpers.setSetting('papersize',
                 parseInt(jQuery(this).attr('data-paperheight')), true)) {
             editorHelpers.displaySetting.set('papersize');
-            editorHelpers.documentHasChanged();
+            theEditor.docInfo.changed = true;
         }
         return false;
     });

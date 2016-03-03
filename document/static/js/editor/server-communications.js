@@ -19,7 +19,7 @@
             theEditor.askForDocument();
         } else {
             theEditor.mod.footnotes.fnEditor.renderAllFootnotes();
-            theEditor.checkDiffVersion();
+            theEditor.mod.collab.docChanges.checkDiffVersion();
             serverCommunications.send({
                 type: 'participant_update'
             });
@@ -57,18 +57,18 @@
             theEditor.receiveDocument(data);
             break;
         case 'confirm_diff_version':
-            theEditor.cancelCurrentlyCheckingVersion();
+            theEditor.mod.collab.docChanges.cancelCurrentlyCheckingVersion();
             if (data.diff_version !== theEditor.pm.mod.collab.version) {
-                theEditor.checkDiffVersion();
+                theEditor.docInfo();
                 return;
             }
-            theEditor.enableDiffSending();
+            theEditor.mod.collab.docChanges.enableDiffSending();
             break;
         case 'diff':
-            theEditor.receiveFromCollaborators(data);
+            theEditor.mod.collab.docChanges.receiveFromCollaborators(data);
             break;
         case 'confirm_diff':
-            theEditor.confirmDiff(data.request_id);
+            theEditor.mod.collab.docChanges.confirmDiff(data.request_id);
             break;
         case 'setting_change':
             editorHelpers.setSetting(data.variable, data.value, false);
@@ -88,10 +88,10 @@
             'id'), function (entry) {
             return entry[0];
         });
-        if (participant_list.length > 1 && (!theEditor.collaborativeMode)) {
-            theEditor.collaborativeMode = true;
-        } else if (participant_list.length === 1 && theEditor.collaborativeMode) {
-            theEditor.collaborativeMode = false;
+        if (participant_list.length > 1 && (!theEditor.mod.collab.docChanges.collaborativeMode)) {
+            theEditor.mod.collab.docChanges.collaborativeMode = true;
+        } else if (participant_list.length === 1 && theEditor.mod.collab.docChanges.collaborativeMode) {
+            theEditor.mod.collab.docChanges.collaborativeMode = false;
         }
         chatHelpers.updateParticipantList(participant_list);
     };

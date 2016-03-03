@@ -62,7 +62,7 @@ export class ModFootnoteEditor {
         this.mod.fnPm.setOption("collab", {
             version: 0
         })
-        this.mod.editor.bindEvents()
+        this.bindEvents()
     }
 
 
@@ -83,7 +83,7 @@ export class ModFootnoteEditor {
             index++
         }
         this.mod.footnotes.splice(index, 1)
-        if (!this.mod.editor.receiving) {
+        if (!this.mod.editor.mod.collab.docChanges.receiving) {
             this.rendering = true
             this.mod.fnPm.tr.delete(new Pos([], index), new Pos([], index + 1)).apply()
             this.rendering = false

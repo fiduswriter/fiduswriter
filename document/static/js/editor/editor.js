@@ -16,8 +16,6 @@ var _main = require("prosemirror/dist/edit/main");
 
 var _format = require("prosemirror/dist/format");
 
-var _transform = require("prosemirror/dist/transform");
-
 require("prosemirror/dist/collab");
 
 var _schema = require("./es6_modules/schema");
@@ -27,6 +25,8 @@ var _updateUi = require("./es6_modules/update-ui");
 var _mod = require("./es6_modules/comments/mod");
 
 var _mod2 = require("./es6_modules/footnotes/mod");
+
+var _mod3 = require("./es6_modules/collab/mod");
 
 var _update = require("prosemirror/dist/ui/update");
 
@@ -41,12 +41,7 @@ var Editor = exports.Editor = (function () {
         // initially so that diffs that arrive before document has been loaded are not
         // dealt with.
         this.waitingForDocument = true;
-        this.unconfirmedSteps = {};
-        this.confirmStepsRequestCounter = 0;
-        this.collaborativeMode = false;
-        this.currentlyCheckingVersion = false;
-        this.awaitingDiffResponse = false;
-        this.receiving = false;
+
         this.docInfo = {
             'sentHash': false,
             'rights': '',
@@ -70,6 +65,7 @@ var Editor = exports.Editor = (function () {
             var that = this;
             this.pm = this.makeEditor(document.getElementById('document-editable'));
             new _mod2.ModFootnotes(this);
+            new _mod3.ModCollab(this);
             new _update.UpdateScheduler(this.pm, "selectionChange change activeMarkChange blur focus setDoc", function () {
                 (0, _updateUi.updateUI)(that);
             });
@@ -134,10 +130,10 @@ var Editor = exports.Editor = (function () {
         value: function update() {
             console.log('Updating editor');
             var that = this;
-            this.cancelCurrentlyCheckingVersion();
-            this.unconfirmedSteps = {};
-            if (this.awaitingDiffResponse) {
-                this.enableDiffSending();
+            this.mod.collab.docChanges.cancelCurrentlyCheckingVersion();
+            this.mod.collab.docChanges.unconfirmedSteps = {};
+            if (this.mod.collab.docChanges.awaitingDiffResponse) {
+                this.mod.collab.docChanges.enableDiffSending();
             }
             var doc = this.createDoc(this.doc);
             this.pm.setOption("collab", null);
@@ -147,11 +143,11 @@ var Editor = exports.Editor = (function () {
             });
             while (this.docInfo.last_diffs.length > 0) {
                 var diff = this.docInfo.last_diffs.shift();
-                this.applyDiff(diff);
+                this.mod.collab.docChanges.applyDiff(diff);
             }
             this.doc.hash = this.getHash();
             this.pm.mod.collab.on("mustSend", function () {
-                that.sendToCollaborators();
+                that.mod.collab.docChanges.sendToCollaborators();
             });
             this.pm.signal("documentUpdated");
             new _mod.ModComments(this, this.doc.comment_version);
@@ -159,7 +155,7 @@ var Editor = exports.Editor = (function () {
                 this.mod.comments.store.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers, comment['review:isMajor']);
             });
             this.mod.comments.store.on("mustSend", function () {
-                that.sendToCollaborators();
+                that.mod.collab.docChanges.sendToCollaborators();
             });
             this.enableUI();
             this.waitingForDocument = false;
@@ -227,87 +223,6 @@ var Editor = exports.Editor = (function () {
             }
         }
     }, {
-        key: "sendToCollaborators",
-        value: function sendToCollaborators() {
-            if (this.awaitingDiffResponse || !this.pm.mod.collab.hasSendableSteps() && this.mod.comments.store.unsentEvents().length === 0) {
-                // We are waiting for the confirmation of previous steps, so don't
-                // send anything now, or there is nothing to send.
-                return;
-            }
-            console.log('send to collabs');
-            var toSend = this.pm.mod.collab.sendableSteps();
-            var fnToSend = this.mod.footnotes.fnPm.mod.collab.sendableSteps();
-            var request_id = this.confirmStepsRequestCounter++;
-            var aPackage = {
-                type: 'diff',
-                diff_version: this.pm.mod.collab.version,
-                diff: toSend.steps.map(function (s) {
-                    return s.toJSON();
-                }),
-                footnote_diff: fnToSend.steps.map(function (s) {
-                    return s.toJSON();
-                }),
-                comments: this.mod.comments.store.unsentEvents(),
-                comment_version: this.mod.comments.store.version,
-                request_id: request_id,
-                hash: this.getHash()
-            };
-            serverCommunications.send(aPackage);
-            this.unconfirmedSteps[request_id] = {
-                diffs: toSend,
-                footnote_diffs: fnToSend,
-                comments: this.mod.comments.store.hasUnsentEvents()
-            };
-            this.disableDiffSending();
-        }
-    }, {
-        key: "receiveFromCollaborators",
-        value: function receiveFromCollaborators(data) {
-            var that = this;
-            if (this.waitingForDocument) {
-                // We are currently waiting for a complete editor update, so
-                // don't deal with incoming diffs.
-                return;
-            }
-            var editorHash = this.getHash();
-            console.log('Incoming diff: version: ' + data.diff_version + ', hash: ' + data.hash);
-            console.log('Editor: version: ' + theEditor.pm.mod.collab.version + ', hash: ' + editorHash);
-            if (data.diff_version !== this.pm.mod.collab.version) {
-                console.warn('Something is not correct. The local and remote versions do not match.');
-                this.checkDiffVersion();
-                return;
-            } else {
-                console.log('version OK');
-            }
-            if (data.hash && data.hash !== editorHash) {
-                console.warn('Something is not correct. The local and remote hash values do not match.');
-                return false;
-            }
-            if (data.comments && data.comments.length) {
-                this.updateComments(data.comments, data.comments_version);
-            }
-            if (data.diff && data.diff.length) {
-                data.diff.forEach(function (diff) {
-                    that.applyDiff(diff);
-                });
-            }
-            if (data.footnote_diff && data.footnote_diff.length) {
-                this.mod.footnotes.fnEditor.applyDiffs(data.footnote_diff);
-            }
-            if (data.reject_request_id) {
-                this.rejectDiff(data.reject_request_id);
-            }
-            if (!data.hash) {
-                // No hash means this must have been created server side.
-                this.cancelCurrentlyCheckingVersion();
-                this.enableDiffSending();
-                // Because the uypdate came directly from the sevrer, we may
-                // also have lost some collab updates to the footnote table.
-                // Re-render the footnote table if needed.
-                this.mod.footnotes.fnEditor.renderAllFootnotes();
-            }
-        }
-    }, {
         key: "receiveDocument",
         value: function receiveDocument(data) {
             editorHelpers.copyDocumentValues(data.document, data.document_values);
@@ -335,70 +250,6 @@ var Editor = exports.Editor = (function () {
             this.docInfo.sentHash = false;
         }
     }, {
-        key: "confirmDiff",
-        value: function confirmDiff(request_id) {
-            console.log('confirming steps');
-            var sentSteps = this.unconfirmedSteps[request_id]["diffs"];
-            this.pm.mod.collab.confirmSteps(sentSteps);
-
-            var sentFnSteps = this.unconfirmedSteps[request_id]["footnote_diffs"];
-            this.mod.footnotes.fnPm.mod.collab.confirmSteps(sentFnSteps);
-
-            var sentComments = this.unconfirmedSteps[request_id]["comments"];
-            this.mod.comments.store.eventsSent(sentComments);
-
-            delete this.unconfirmedSteps[request_id];
-            this.enableDiffSending();
-        }
-    }, {
-        key: "rejectDiff",
-        value: function rejectDiff(request_id) {
-            console.log('rejecting steps');
-            this.enableDiffSending();
-            delete this.unconfirmedSteps[request_id];
-            this.sendToCollaborators();
-        }
-    }, {
-        key: "applyDiff",
-        value: function applyDiff(diff) {
-            this.receiving = true;
-            var steps = [diff].map(function (j) {
-                return _transform.Step.fromJSON(_schema.fidusSchema, j);
-            });
-            var docs = [];
-            var doc = this.pm.mod.collab.versionDoc;
-            docs.push(doc);
-            var maps = steps.map(function (step) {
-                var result = step.apply(doc);
-                doc = result.doc;
-                docs.push(doc);
-                return result.map;
-            });
-
-            var unconfirmedMaps = this.pm.mod.collab.unconfirmedMaps;
-            var unconfirmedSteps = this.pm.mod.collab.unconfirmedSteps;
-            maps = maps.concat(unconfirmedMaps);
-            unconfirmedSteps.forEach(function (step) {
-                // We add pseudo steps for all the unconfirmed steps so that the
-                // unconfirmed maps will be applied when handling the transform
-                steps.push({
-                    type: 'unconfirmed'
-                });
-                // We add real docs
-                var result = step.apply(doc);
-                doc = result.doc;
-                docs.push(doc);
-            });
-            var transform = {
-                steps: steps,
-                maps: maps,
-                docs: docs
-            };
-            this.pm.mod.collab.receive(steps);
-            this.pm.signal("remoteTransform", transform);
-            this.receiving = false;
-        }
-    }, {
         key: "updateComments",
         value: function updateComments(comments, comment_version) {
             console.log('receiving comment update');
@@ -419,68 +270,6 @@ var Editor = exports.Editor = (function () {
                 hash = hash & hash;
             }
             return hash;
-        }
-    }, {
-        key: "checkHash",
-        value: function checkHash(version, hash) {
-            console.log('Verifying hash');
-            if (version === this.pm.mod.collab.version) {
-                if (hash === this.getHash()) {
-                    console.log('Hash could be verified');
-                    return true;
-                }
-                console.log('Hash could not be verified, requesting document.');
-                this.disableDiffSending();
-                this.askForDocument();
-                return false;
-            } else {
-                this.checkDiffVersion();
-                return false;
-            }
-        }
-    }, {
-        key: "cancelCurrentlyCheckingVersion",
-        value: function cancelCurrentlyCheckingVersion() {
-            this.currentlyCheckingVersion = false;
-            clearTimeout(this.enableCheckDiffVersion);
-        }
-    }, {
-        key: "checkDiffVersion",
-        value: function checkDiffVersion() {
-            var that = this;
-            if (this.currentlyCheckingVersion) {
-                return;
-            }
-            this.currentlyCheckingVersion = true;
-            this.enableCheckDiffVersion = setTimeout(function () {
-                that.currentlyCheckingVersion = false;
-            }, 1000);
-            if (this.connected) {
-                this.disableDiffSending();
-            }
-            serverCommunications.send({
-                type: 'check_diff_version',
-                diff_version: this.pm.mod.collab.version
-            });
-        }
-    }, {
-        key: "disableDiffSending",
-        value: function disableDiffSending() {
-            var that = this;
-            this.awaitingDiffResponse = true;
-            // If no answer has been received from the server within 2 seconds, check the version
-            this.checkDiffVersionTimer = setTimeout(function () {
-                that.awaitingDiffResponse = false;
-                that.sendToCollaborators();
-                that.checkDiffVersion();
-            }, 2000);
-        }
-    }, {
-        key: "enableDiffSending",
-        value: function enableDiffSending() {
-            clearTimeout(this.checkDiffVersionTimer);
-            this.awaitingDiffResponse = false;
-            this.sendToCollaborators();
         }
 
         // Things to be executed on every editor transform.
@@ -541,7 +330,270 @@ var theEditor = new Editor();
 
 window.theEditor = theEditor;
 
-},{"./es6_modules/comments/mod":4,"./es6_modules/footnotes/mod":8,"./es6_modules/schema":9,"./es6_modules/update-ui":10,"prosemirror/dist/collab":12,"prosemirror/dist/edit/main":26,"prosemirror/dist/format":33,"prosemirror/dist/transform":47,"prosemirror/dist/ui/update":57}],2:[function(require,module,exports){
+},{"./es6_modules/collab/mod":3,"./es6_modules/comments/mod":6,"./es6_modules/footnotes/mod":10,"./es6_modules/schema":11,"./es6_modules/update-ui":12,"prosemirror/dist/collab":14,"prosemirror/dist/edit/main":28,"prosemirror/dist/format":35,"prosemirror/dist/ui/update":59}],2:[function(require,module,exports){
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.ModCollabDocChanges = undefined;
+
+var _transform = require("prosemirror/dist/transform");
+
+var _schema = require("../schema");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ModCollabDocChanges = exports.ModCollabDocChanges = (function () {
+    function ModCollabDocChanges(mod) {
+        _classCallCheck(this, ModCollabDocChanges);
+
+        mod.docChanges = this;
+        this.mod = mod;
+
+        this.unconfirmedSteps = {};
+        this.confirmStepsRequestCounter = 0;
+        this.collaborativeMode = false;
+        this.awaitingDiffResponse = false;
+        this.receiving = false;
+        this.currentlyCheckingVersion = false;
+    }
+
+    _createClass(ModCollabDocChanges, [{
+        key: "checkHash",
+        value: function checkHash(version, hash) {
+            console.log('Verifying hash');
+            if (version === this.mod.editor.pm.mod.collab.version) {
+                if (hash === this.getHash()) {
+                    console.log('Hash could be verified');
+                    return true;
+                }
+                console.log('Hash could not be verified, requesting document.');
+                this.mod.collab.docChanges.disableDiffSending();
+                this.mod.editor.askForDocument();
+                return false;
+            } else {
+                this.checkDiffVersion();
+                return false;
+            }
+        }
+    }, {
+        key: "cancelCurrentlyCheckingVersion",
+        value: function cancelCurrentlyCheckingVersion() {
+            this.currentlyCheckingVersion = false;
+            clearTimeout(this.enableCheckDiffVersion);
+        }
+    }, {
+        key: "checkDiffVersion",
+        value: function checkDiffVersion() {
+            var that = this;
+            if (this.currentlyCheckingVersion) {
+                return;
+            }
+            this.currentlyCheckingVersion = true;
+            this.enableCheckDiffVersion = setTimeout(function () {
+                that.currentlyCheckingVersion = false;
+            }, 1000);
+            /*if (this.mod.editor.mod.serverCommunications.connected) {
+                this.mod.collab.docChanges.disableDiffSending()
+            }*/ // OBS! requires serverCommunications mod
+            serverCommunications.send({
+                type: 'check_diff_version',
+                diff_version: this.mod.editor.pm.mod.collab.version
+            });
+        }
+    }, {
+        key: "disableDiffSending",
+        value: function disableDiffSending() {
+            var that = this;
+            this.awaitingDiffResponse = true;
+            // If no answer has been received from the server within 2 seconds, check the version
+            this.checkDiffVersionTimer = setTimeout(function () {
+                that.awaitingDiffResponse = false;
+                that.sendToCollaborators();
+                that.checkDiffVersion();
+            }, 2000);
+        }
+    }, {
+        key: "enableDiffSending",
+        value: function enableDiffSending() {
+            clearTimeout(this.checkDiffVersionTimer);
+            this.awaitingDiffResponse = false;
+            this.sendToCollaborators();
+        }
+    }, {
+        key: "sendToCollaborators",
+        value: function sendToCollaborators() {
+            if (this.awaitingDiffResponse || !this.mod.editor.pm.mod.collab.hasSendableSteps() && this.mod.editor.mod.comments.store.unsentEvents().length === 0) {
+                // We are waiting for the confirmation of previous steps, so don't
+                // send anything now, or there is nothing to send.
+                return;
+            }
+            console.log('send to collabs');
+            var toSend = this.mod.editor.pm.mod.collab.sendableSteps();
+            var fnToSend = this.mod.editor.mod.footnotes.fnPm.mod.collab.sendableSteps();
+            var request_id = this.confirmStepsRequestCounter++;
+            var aPackage = {
+                type: 'diff',
+                diff_version: this.mod.editor.pm.mod.collab.version,
+                diff: toSend.steps.map(function (s) {
+                    return s.toJSON();
+                }),
+                footnote_diff: fnToSend.steps.map(function (s) {
+                    return s.toJSON();
+                }),
+                comments: this.mod.editor.mod.comments.store.unsentEvents(),
+                comment_version: this.mod.editor.mod.comments.store.version,
+                request_id: request_id,
+                hash: this.mod.editor.getHash()
+            };
+            serverCommunications.send(aPackage);
+            this.unconfirmedSteps[request_id] = {
+                diffs: toSend,
+                footnote_diffs: fnToSend,
+                comments: this.mod.editor.mod.comments.store.hasUnsentEvents()
+            };
+            this.disableDiffSending();
+        }
+    }, {
+        key: "receiveFromCollaborators",
+        value: function receiveFromCollaborators(data) {
+            var that = this;
+            if (this.mod.editor.waitingForDocument) {
+                // We are currently waiting for a complete editor update, so
+                // don't deal with incoming diffs.
+                return;
+            }
+            var editorHash = this.mod.editor.getHash();
+            console.log('Incoming diff: version: ' + data.diff_version + ', hash: ' + data.hash);
+            console.log('Editor: version: ' + theEditor.pm.mod.collab.version + ', hash: ' + editorHash);
+            if (data.diff_version !== this.mod.editor.pm.mod.collab.version) {
+                console.warn('Something is not correct. The local and remote versions do not match.');
+                this.checkDiffVersion();
+                return;
+            } else {
+                console.log('version OK');
+            }
+            if (data.hash && data.hash !== editorHash) {
+                console.warn('Something is not correct. The local and remote hash values do not match.');
+                return false;
+            }
+            if (data.comments && data.comments.length) {
+                this.mod.editor.updateComments(data.comments, data.comments_version);
+            }
+            if (data.diff && data.diff.length) {
+                data.diff.forEach(function (diff) {
+                    that.applyDiff(diff);
+                });
+            }
+            if (data.footnote_diff && data.footnote_diff.length) {
+                this.mod.editor.modfootnotes.fnEditor.applyDiffs(data.footnote_diff);
+            }
+            if (data.reject_request_id) {
+                this.rejectDiff(data.reject_request_id);
+            }
+            if (!data.hash) {
+                // No hash means this must have been created server side.
+                this.cancelCurrentlyCheckingVersion();
+                this.enableDiffSending();
+                // Because the uypdate came directly from the sevrer, we may
+                // also have lost some collab updates to the footnote table.
+                // Re-render the footnote table if needed.
+                this.mod.editor.mod.footnotes.fnEditor.renderAllFootnotes();
+            }
+        }
+    }, {
+        key: "confirmDiff",
+        value: function confirmDiff(request_id) {
+            console.log('confirming steps');
+            var sentSteps = this.unconfirmedSteps[request_id]["diffs"];
+            this.mod.editor.pm.mod.collab.confirmSteps(sentSteps);
+
+            var sentFnSteps = this.unconfirmedSteps[request_id]["footnote_diffs"];
+            this.mod.editor.mod.footnotes.fnPm.mod.collab.confirmSteps(sentFnSteps);
+
+            var sentComments = this.unconfirmedSteps[request_id]["comments"];
+            this.mod.editor.mod.comments.store.eventsSent(sentComments);
+
+            delete this.unconfirmedSteps[request_id];
+            this.enableDiffSending();
+        }
+    }, {
+        key: "rejectDiff",
+        value: function rejectDiff(request_id) {
+            console.log('rejecting steps');
+            this.enableDiffSending();
+            delete this.unconfirmedSteps[request_id];
+            this.sendToCollaborators();
+        }
+    }, {
+        key: "applyDiff",
+        value: function applyDiff(diff) {
+            this.receiving = true;
+            var steps = [diff].map(function (j) {
+                return _transform.Step.fromJSON(_schema.fidusSchema, j);
+            });
+            var docs = [];
+            var doc = this.mod.editor.pm.mod.collab.versionDoc;
+            docs.push(doc);
+            var maps = steps.map(function (step) {
+                var result = step.apply(doc);
+                doc = result.doc;
+                docs.push(doc);
+                return result.map;
+            });
+
+            var unconfirmedMaps = this.mod.editor.pm.mod.collab.unconfirmedMaps;
+            var unconfirmedSteps = this.mod.editor.pm.mod.collab.unconfirmedSteps;
+            maps = maps.concat(unconfirmedMaps);
+            unconfirmedSteps.forEach(function (step) {
+                // We add pseudo steps for all the unconfirmed steps so that the
+                // unconfirmed maps will be applied when handling the transform
+                steps.push({
+                    type: 'unconfirmed'
+                });
+                // We add real docs
+                var result = step.apply(doc);
+                doc = result.doc;
+                docs.push(doc);
+            });
+            var transform = {
+                steps: steps,
+                maps: maps,
+                docs: docs
+            };
+            this.mod.editor.pm.mod.collab.receive(steps);
+            this.mod.editor.pm.signal("remoteTransform", transform);
+            this.receiving = false;
+        }
+    }]);
+
+    return ModCollabDocChanges;
+})();
+
+},{"../schema":11,"prosemirror/dist/transform":49}],3:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.ModCollab = undefined;
+
+var _docChanges = require("./doc-changes");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ModCollab = exports.ModCollab = function ModCollab(editor) {
+    _classCallCheck(this, ModCollab);
+
+    editor.mod.collab = this;
+    this.editor = editor;
+    new _docChanges.ModCollabDocChanges(this);
+};
+
+},{"./doc-changes":2}],4:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })(); /* Functions related to user interactions with comments */
@@ -738,7 +790,7 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
     return ModCommentInteractions;
 })();
 
-},{"prosemirror/dist/ui/update":57}],3:[function(require,module,exports){
+},{"prosemirror/dist/ui/update":59}],5:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1020,7 +1072,7 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
     return ModCommentLayout;
 })();
 
-},{}],4:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1046,7 +1098,7 @@ var ModComments = exports.ModComments = function ModComments(editor, version) {
     new _interactions.ModCommentInteractions(this);
 };
 
-},{"./interactions":2,"./layout":3,"./store":5}],5:[function(require,module,exports){
+},{"./interactions":4,"./layout":5,"./store":7}],7:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1400,7 +1452,7 @@ function randomID() {
     return Math.floor(Math.random() * 0xffffffff);
 }
 
-},{"../schema":9,"prosemirror/dist/model":41,"prosemirror/dist/transform":47,"prosemirror/dist/ui/update":57,"prosemirror/dist/util/event":59}],6:[function(require,module,exports){
+},{"../schema":11,"prosemirror/dist/model":43,"prosemirror/dist/transform":49,"prosemirror/dist/ui/update":59,"prosemirror/dist/util/event":61}],8:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1487,7 +1539,7 @@ var ModFootnoteEditor = exports.ModFootnoteEditor = (function () {
             this.mod.fnPm.setOption("collab", {
                 version: 0
             });
-            this.mod.editor.bindEvents();
+            this.bindEvents();
         }
     }, {
         key: "renderFootnote",
@@ -1510,7 +1562,7 @@ var ModFootnoteEditor = exports.ModFootnoteEditor = (function () {
                 index++;
             }
             this.mod.footnotes.splice(index, 1);
-            if (!this.mod.editor.receiving) {
+            if (!this.mod.editor.mod.collab.docChanges.receiving) {
                 this.rendering = true;
                 this.mod.fnPm.tr.delete(new _model.Pos([], index), new _model.Pos([], index + 1)).apply();
                 this.rendering = false;
@@ -1521,7 +1573,7 @@ var ModFootnoteEditor = exports.ModFootnoteEditor = (function () {
     return ModFootnoteEditor;
 })();
 
-},{"../schema":9,"prosemirror/dist/format":33,"prosemirror/dist/model":41,"prosemirror/dist/transform":47}],7:[function(require,module,exports){
+},{"../schema":11,"prosemirror/dist/format":35,"prosemirror/dist/model":43,"prosemirror/dist/transform":49}],9:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1717,7 +1769,7 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = (function () {
     return ModFootnoteMarkers;
 })();
 
-},{"../schema":9,"prosemirror/dist/format":33,"prosemirror/dist/model":41}],8:[function(require,module,exports){
+},{"../schema":11,"prosemirror/dist/format":35,"prosemirror/dist/model":43}],10:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1767,7 +1819,7 @@ var ModFootnotes = exports.ModFootnotes = (function () {
     return ModFootnotes;
 })();
 
-},{"../schema":9,"./editor":6,"./markers":7,"prosemirror/dist/collab":12,"prosemirror/dist/edit/main":26}],9:[function(require,module,exports){
+},{"../schema":11,"./editor":8,"./markers":9,"prosemirror/dist/collab":14,"prosemirror/dist/edit/main":28}],11:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2565,7 +2617,7 @@ var fidusFnSchema = exports.fidusFnSchema = new _model.Schema(_model.defaultSche
     comment: CommentMark
 }));
 
-},{"prosemirror/dist/model":41}],10:[function(require,module,exports){
+},{"prosemirror/dist/model":43}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2787,7 +2839,7 @@ function calculatePlaceHolderCss(pm, selectedElement) {
     }
 }
 
-},{"prosemirror/dist/model":41}],11:[function(require,module,exports){
+},{"prosemirror/dist/model":43}],13:[function(require,module,exports){
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
     module.exports = mod()
@@ -2959,7 +3011,7 @@ function calculatePlaceHolderCss(pm, selectedElement) {
   return Keymap
 })
 
-},{}],12:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3132,7 +3184,7 @@ var Collab = function () {
 }();
 
 (0, _event.eventMixin)(Collab);
-},{"../edit":24,"../util/error":58,"../util/event":59,"./rebase":13}],13:[function(require,module,exports){
+},{"../edit":26,"../util/error":60,"../util/event":61,"./rebase":15}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3160,7 +3212,7 @@ function rebaseSteps(doc, forward, steps, maps) {
   }
   return { doc: transform.doc, transform: transform, mapping: remap, positions: positions };
 }
-},{"../transform":47}],14:[function(require,module,exports){
+},{"../transform":49}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3239,7 +3291,7 @@ function ensureCSSAdded() {
     document.head.insertBefore(cssNode, document.head.firstChild);
   }
 }
-},{}],15:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3956,7 +4008,7 @@ baseCommands.redo = {
   },
   keys: ["Mod-Y", "Shift-Mod-Z"]
 };
-},{"../model":41,"../transform":47,"../util/error":58,"./char":17,"./dompos":21,"./selection":30}],16:[function(require,module,exports){
+},{"../model":43,"../transform":49,"../util/error":60,"./char":19,"./dompos":23,"./selection":32}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4026,7 +4078,7 @@ var keys = {
 if (_dom.browser.mac) keys["Ctrl-F"] = keys["Ctrl-B"] = keys["Ctrl-P"] = keys["Ctrl-N"] = keys["Alt-F"] = keys["Alt-B"] = keys["Ctrl-A"] = keys["Ctrl-E"] = keys["Ctrl-V"] = keys["goPageUp"] = ensureSelection;
 
 var captureKeys = exports.captureKeys = new _browserkeymap2.default(keys);
-},{"../dom":14,"./dompos":21,"./selection":30,"browserkeymap":11}],17:[function(require,module,exports){
+},{"../dom":16,"./dompos":23,"./selection":32,"browserkeymap":13}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4059,7 +4111,7 @@ function charCategory(ch) {
 function isExtendingChar(ch) {
   return ch.charCodeAt(0) >= 768 && extendingChar.test(ch);
 }
-},{}],18:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4668,13 +4720,13 @@ _model.NodeType.derivableCommands.insert = function (conf) {
     params: deriveParams(this, conf.params)
   };
 };
-},{"../dom":14,"../model":41,"../transform":47,"../util/error":58,"../util/obj":61,"../util/sortedinsert":62,"./base_commands":15,"browserkeymap":11}],19:[function(require,module,exports){
+},{"../dom":16,"../model":43,"../transform":49,"../util/error":60,"../util/obj":63,"../util/sortedinsert":64,"./base_commands":17,"browserkeymap":13}],21:[function(require,module,exports){
 "use strict";
 
 var _dom = require("../dom");
 
 (0, _dom.insertCSS)("\n\n.ProseMirror {\n  border: 1px solid silver;\n  position: relative;\n}\n\n.ProseMirror-content {\n  padding: 4px 8px 4px 14px;\n  white-space: pre-wrap;\n  line-height: 1.2;\n}\n\n.ProseMirror-drop-target {\n  position: absolute;\n  width: 1px;\n  background: #666;\n  display: none;\n}\n\n.ProseMirror-content ul.tight p, .ProseMirror-content ol.tight p {\n  margin: 0;\n}\n\n.ProseMirror-content ul, .ProseMirror-content ol {\n  padding-left: 30px;\n  cursor: default;\n}\n\n.ProseMirror-content blockquote {\n  padding-left: 1em;\n  border-left: 3px solid #eee;\n  margin-left: 0; margin-right: 0;\n}\n\n.ProseMirror-content pre {\n  white-space: pre-wrap;\n}\n\n.ProseMirror-selectednode {\n  outline: 2px solid #8cf;\n}\n\n.ProseMirror-nodeselection *::selection { background: transparent; }\n.ProseMirror-nodeselection *::-moz-selection { background: transparent; }\n\n.ProseMirror-content p:first-child,\n.ProseMirror-content h1:first-child,\n.ProseMirror-content h2:first-child,\n.ProseMirror-content h3:first-child,\n.ProseMirror-content h4:first-child,\n.ProseMirror-content h5:first-child,\n.ProseMirror-content h6:first-child {\n  margin-top: .3em;\n}\n\n/* Add space around the hr to make clicking it easier */\n\n.ProseMirror-content hr {\n  position: relative;\n  height: 6px;\n  border: none;\n}\n\n.ProseMirror-content hr:after {\n  content: \"\";\n  position: absolute;\n  left: 10px;\n  right: 10px;\n  top: 2px;\n  border-top: 2px solid silver;\n}\n\n.ProseMirror-content img {\n  cursor: default;\n}\n\n/* Make sure li selections wrap around markers */\n\n.ProseMirror-content li {\n  position: relative;\n  pointer-events: none; /* Don't do weird stuff with marker clicks */\n}\n.ProseMirror-content li > * {\n  pointer-events: auto;\n}\n\nli.ProseMirror-selectednode {\n  outline: none;\n}\n\nli.ProseMirror-selectednode:after {\n  content: \"\";\n  position: absolute;\n  left: -32px;\n  right: -2px; top: -2px; bottom: -2px;\n  border: 2px solid #8cf;\n  pointer-events: none;\n}\n\n");
-},{"../dom":14}],20:[function(require,module,exports){
+},{"../dom":16}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4876,7 +4928,7 @@ function scanText(start, end) {
     cur = cur.firstChild || nodeAfter(cur);
   }
 }
-},{"../format":33,"../model":41,"../transform/tree":55,"./dompos":21}],21:[function(require,module,exports){
+},{"../format":35,"../model":43,"../transform/tree":57,"./dompos":23}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5253,7 +5305,7 @@ function handleNodeClick(pm, type, event, direct) {
     }
   }
 }
-},{"../dom":14,"../model":41,"../util/error":58}],22:[function(require,module,exports){
+},{"../dom":16,"../model":43,"../util/error":60}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5420,7 +5472,7 @@ function redraw(pm, dirty, doc, prev) {
   }
   scan(pm.content, doc, prev);
 }
-},{"../dom":14,"../format":33,"../model":41,"./dompos":21,"./main":26}],23:[function(require,module,exports){
+},{"../dom":16,"../format":35,"../model":43,"./dompos":23,"./main":28}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5998,7 +6050,7 @@ var History = exports.History = function () {
 
   return History;
 }();
-},{"../model":41,"../transform":47}],24:[function(require,module,exports){
+},{"../model":43,"../transform":49}],26:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6093,7 +6145,7 @@ var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.Keymap = _browserkeymap2.default;
-},{"./base_commands":15,"./command":18,"./main":26,"./options":27,"./range":28,"./schema_commands":29,"./selection":30,"browserkeymap":11}],25:[function(require,module,exports){
+},{"./base_commands":17,"./command":20,"./main":28,"./options":29,"./range":30,"./schema_commands":31,"./selection":32,"browserkeymap":13}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6694,7 +6746,7 @@ handlers.blur = function (pm) {
   // Fired when the editor loses focus.
   pm.signal("blur");
 };
-},{"../dom":14,"../format":33,"../model":41,"./capturekeys":16,"./domchange":20,"./dompos":21,"./selection":30,"browserkeymap":11}],26:[function(require,module,exports){
+},{"../dom":16,"../format":35,"../model":43,"./capturekeys":18,"./domchange":22,"./dompos":23,"./selection":32,"browserkeymap":13}],28:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7473,7 +7525,7 @@ var EditorTransform = function (_Transform) {
 
   return EditorTransform;
 }(_transform.Transform);
-},{"../dom":14,"../format":33,"../model":41,"../transform":47,"../util/error":58,"../util/event":59,"../util/map":60,"../util/sortedinsert":62,"./css":19,"./dompos":21,"./draw":22,"./history":23,"./input":25,"./options":27,"./range":28,"./selection":30,"browserkeymap":11}],27:[function(require,module,exports){
+},{"../dom":16,"../format":35,"../model":43,"../transform":49,"../util/error":60,"../util/event":61,"../util/map":62,"../util/sortedinsert":64,"./css":21,"./dompos":23,"./draw":24,"./history":25,"./input":27,"./options":29,"./range":30,"./selection":32,"browserkeymap":13}],29:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7595,7 +7647,7 @@ function setOption(pm, name, value) {
   pm.options[name] = value;
   if (desc.update) desc.update(pm, value, old, false);
 }
-},{"../model":41,"../ui/prompt":56,"../util/error":58,"./command":18}],28:[function(require,module,exports){
+},{"../model":43,"../ui/prompt":58,"../util/error":60,"./command":20}],30:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7795,7 +7847,7 @@ var RangeTracker = function () {
 
   return RangeTracker;
 }();
-},{"../util/event":59}],29:[function(require,module,exports){
+},{"../util/event":61}],31:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -8129,7 +8181,7 @@ _model.HorizontalRule.register("command", "insert", {
   keys: ["Mod-Shift--"],
   menu: { group: "insert", rank: 70, display: { type: "label", label: "Horizontal rule" } }
 });
-},{"../format":33,"../model":41,"./command":18}],30:[function(require,module,exports){
+},{"../format":35,"../model":43,"./command":20}],32:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8605,7 +8657,7 @@ function verticalMotionLeavesTextblock(pm, pos, dir) {
   }
   return true;
 }
-},{"../dom":14,"../model":41,"../util/error":58,"./dompos":21}],31:[function(require,module,exports){
+},{"../dom":16,"../model":43,"../util/error":60,"./dompos":23}],33:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9062,7 +9114,7 @@ _model.StrongMark.register("parseDOMStyle", "font-weight", {
 });
 
 _model.CodeMark.register("parseDOM", "code", { parse: "mark" });
-},{"../model":41,"../util/sortedinsert":62,"./register":34}],32:[function(require,module,exports){
+},{"../model":43,"../util/sortedinsert":64,"./register":36}],34:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9094,7 +9146,7 @@ function fromText(schema, text) {
 }
 
 (0, _register.defineSource)("text", fromText);
-},{"./register":34}],33:[function(require,module,exports){
+},{"./register":36}],35:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9193,7 +9245,7 @@ Object.defineProperty(exports, "toText", {
     return _to_text.toText;
   }
 });
-},{"./from_dom":31,"./from_text":32,"./register":34,"./to_dom":35,"./to_text":36}],34:[function(require,module,exports){
+},{"./from_dom":33,"./from_text":34,"./register":36,"./to_dom":37,"./to_text":38}],36:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9261,7 +9313,7 @@ function defineSource(format, func) {
 defineSource("json", function (schema, json) {
   return schema.nodeFromJSON(json);
 });
-},{"../util/error":58}],35:[function(require,module,exports){
+},{"../util/error":60}],37:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9549,7 +9601,7 @@ def(_model.LinkMark, function (mark, s) {
   return s.elt("a", { href: mark.attrs.href,
     title: mark.attrs.title });
 });
-},{"../model":41,"./register":34}],36:[function(require,module,exports){
+},{"../model":43,"./register":36}],38:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9593,7 +9645,7 @@ function toText(doc) {
 }
 
 (0, _register.defineTarget)("text", toText);
-},{"../model":41,"./register":34}],37:[function(require,module,exports){
+},{"../model":43,"./register":36}],39:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10030,7 +10082,7 @@ var defaultSpec = new _schema.SchemaSpec({
 // :: Schema
 // ProseMirror's default document schema.
 var defaultSchema = exports.defaultSchema = new _schema.Schema(defaultSpec);
-},{"./schema":45}],38:[function(require,module,exports){
+},{"./schema":47}],40:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10127,7 +10179,7 @@ function findDiffEnd(a, b) {
   }
   return { a: new _pos.Pos(pathA, offA), b: new _pos.Pos(pathB, offB) };
 }
-},{"./pos":44}],39:[function(require,module,exports){
+},{"./pos":46}],41:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10156,7 +10208,7 @@ var ModelError = exports.ModelError = function (_ProseMirrorError) {
 
   return ModelError;
 }(_error.ProseMirrorError);
-},{"../util/error":58}],40:[function(require,module,exports){
+},{"../util/error":60}],42:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10867,7 +10919,7 @@ if (typeof Symbol != "undefined") {
     return this;
   };
 }
-},{"./error":39}],41:[function(require,module,exports){
+},{"./error":41}],43:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11107,7 +11159,7 @@ Object.defineProperty(exports, "ModelError", {
                 return _error.ModelError;
         }
 });
-},{"./defaultschema":37,"./diff":38,"./error":39,"./fragment":40,"./mark":42,"./node":43,"./pos":44,"./schema":45}],42:[function(require,module,exports){
+},{"./defaultschema":39,"./diff":40,"./error":41,"./fragment":42,"./mark":44,"./node":45,"./pos":46,"./schema":47}],44:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11239,7 +11291,7 @@ var Mark = exports.Mark = function () {
 }();
 
 var empty = [];
-},{}],43:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11844,7 +11896,7 @@ function wrapMarks(marks, str) {
     str = marks[i].type.name + "(" + str + ")";
   }return str;
 }
-},{"./fragment":40,"./mark":42,"./pos":44}],44:[function(require,module,exports){
+},{"./fragment":42,"./mark":44,"./pos":46}],46:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12068,7 +12120,7 @@ var Pos = exports.Pos = function () {
 
   return Pos;
 }();
-},{"./error":39}],45:[function(require,module,exports){
+},{"./error":41}],47:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13079,7 +13131,7 @@ var Schema = function () {
 }();
 
 exports.Schema = Schema;
-},{"../util/error":58,"../util/obj":61,"./fragment":40,"./mark":42,"./node":43}],46:[function(require,module,exports){
+},{"../util/error":60,"../util/obj":63,"./fragment":42,"./mark":44,"./node":45}],48:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13365,7 +13417,7 @@ _transform.Transform.prototype.setNodeType = function (pos, type, attrs) {
   this.step("ancestor", new _model.Pos(path, 0), new _model.Pos(path, node.size), null, { depth: 1, types: [type], attrs: [attrs] });
   return this;
 };
-},{"../model":41,"./map":49,"./step":53,"./transform":54,"./tree":55}],47:[function(require,module,exports){
+},{"../model":43,"./map":51,"./step":55,"./transform":56,"./tree":57}],49:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13453,7 +13505,7 @@ require("./mark");
 require("./split");
 
 require("./replace");
-},{"./ancestor":46,"./join":48,"./map":49,"./mark":50,"./replace":51,"./split":52,"./step":53,"./transform":54}],48:[function(require,module,exports){
+},{"./ancestor":48,"./join":50,"./map":51,"./mark":52,"./replace":53,"./split":54,"./step":55,"./transform":56}],50:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13535,7 +13587,7 @@ _transform.Transform.prototype.join = function (at) {
   this.step("join", new _model.Pos(at.path.concat(at.offset - 1), parent.child(at.offset - 1).size), new _model.Pos(at.path.concat(at.offset), 0));
   return this;
 };
-},{"../model":41,"./map":49,"./step":53,"./transform":54}],49:[function(require,module,exports){
+},{"../model":43,"./map":51,"./step":55,"./transform":56}],51:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13855,7 +13907,7 @@ var Remapping = exports.Remapping = function () {
 
   return Remapping;
 }();
-},{"../model":41}],50:[function(require,module,exports){
+},{"../model":43}],52:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -14034,7 +14086,7 @@ _transform.Transform.prototype.clearMarkup = function (from, to, newParent) {
     this.step(delSteps[i]);
   }return this;
 };
-},{"../model":41,"./step":53,"./transform":54,"./tree":55}],51:[function(require,module,exports){
+},{"../model":43,"./step":55,"./transform":56,"./tree":57}],53:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14362,7 +14414,7 @@ _transform.Transform.prototype.insertText = function (pos, text) {
 _transform.Transform.prototype.insertInline = function (pos, node) {
   return this.insert(pos, node.mark(this.doc.marksAt(pos)));
 };
-},{"../model":41,"./map":49,"./step":53,"./transform":54,"./tree":55}],52:[function(require,module,exports){
+},{"../model":43,"./map":51,"./step":55,"./transform":56,"./tree":57}],54:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -14451,7 +14503,7 @@ _transform.Transform.prototype.splitIfNeeded = function (pos) {
   }
   return this;
 };
-},{"../model":41,"./map":49,"./step":53,"./transform":54}],53:[function(require,module,exports){
+},{"../model":43,"./map":51,"./step":55,"./transform":56}],55:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14638,7 +14690,7 @@ var StepResult = exports.StepResult = function StepResult(doc) {
 };
 
 var steps = Object.create(null);
-},{"../model":41,"../util/error":58,"./map":49}],54:[function(require,module,exports){
+},{"../model":43,"../util/error":60,"./map":51}],56:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14743,7 +14795,7 @@ var Transform = function () {
 }();
 
 exports.Transform = Transform;
-},{"./map":49,"./step":53}],55:[function(require,module,exports){
+},{"./map":51,"./step":55}],57:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14837,7 +14889,7 @@ function samePathDepth(a, b) {
     if (i == a.path.length || i == b.path.length || a.path[i] != b.path[i]) return i;
   }
 }
-},{"../model":41}],56:[function(require,module,exports){
+},{"../model":43}],58:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15133,7 +15185,7 @@ function openPrompt(pm, content, options) {
 }
 
 (0, _dom.insertCSS)("\n.ProseMirror-prompt {\n  background: white;\n  padding: 2px 6px 2px 15px;\n  border: 1px solid silver;\n  position: absolute;\n  border-radius: 3px;\n  z-index: 11;\n}\n\n.ProseMirror-prompt input[type=\"text\"],\n.ProseMirror-prompt textarea {\n  background: #eee;\n  border: none;\n  outline: none;\n}\n\n.ProseMirror-prompt input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n.ProseMirror-prompt-close {\n  position: absolute;\n  left: 2px; top: 1px;\n  color: #666;\n  border: none; background: transparent; padding: 0;\n}\n\n.ProseMirror-prompt-close:after {\n  content: \"✕\";\n  font-size: 12px;\n}\n\n.ProseMirror-invalid {\n  background: #ffc;\n  border: 1px solid #cc7;\n  border-radius: 4px;\n  padding: 5px 10px;\n  position: absolute;\n  min-width: 10em;\n}\n");
-},{"../dom":14,"../util/error":58}],57:[function(require,module,exports){
+},{"../dom":16,"../util/error":60}],59:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15293,7 +15345,7 @@ var UpdateScheduler = exports.UpdateScheduler = function () {
 
   return UpdateScheduler;
 }();
-},{}],58:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15375,7 +15427,7 @@ function functionName(f) {
   var match = /^function (\w+)/.exec(f.toString());
   return match && match[1];
 }
-},{}],59:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15492,7 +15544,7 @@ function eventMixin(ctor) {
     if (methods.hasOwnProperty(prop)) proto[prop] = methods[prop];
   }
 }
-},{}],60:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15548,7 +15600,7 @@ var Map = exports.Map = window.Map || function () {
 
   return _class;
 }();
-},{}],61:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15561,7 +15613,7 @@ function copyObj(obj, base) {
     copy[prop] = obj[prop];
   }return copy;
 }
-},{}],62:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

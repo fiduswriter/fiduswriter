@@ -1,343 +1,6 @@
 /* This file has been automatically generated. DO NOT EDIT IT. 
- Changes will be overwritten. Edit editor.es6.js and run ./es6-compiler.sh */
+ Changes will be overwritten. Edit index.es6.js and run ./es6-compiler.sh */
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-"use strict";
-
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })(); /* Functions for ProseMirror integration.*/
-
-//import "prosemirror/dist/menu/menubar"
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.Editor = undefined;
-
-var _main = require("prosemirror/dist/edit/main");
-
-var _format = require("prosemirror/dist/format");
-
-require("prosemirror/dist/collab");
-
-var _update = require("prosemirror/dist/ui/update");
-
-var _schema = require("./es6_modules/schema");
-
-var _updateUi = require("./es6_modules/update-ui");
-
-var _mod = require("./es6_modules/comments/mod");
-
-var _mod2 = require("./es6_modules/footnotes/mod");
-
-var _mod3 = require("./es6_modules/collab/mod");
-
-var _mod4 = require("./es6_modules/tools/mod");
-
-var _serverCommunications = require("./es6_modules/server-communications");
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-var Editor = exports.Editor = (function () {
-    function Editor() {
-        _classCallCheck(this, Editor);
-
-        this.mod = {};
-        // Whether the editor is currently waiting for a document update. Set to true
-        // initially so that diffs that arrive before document has been loaded are not
-        // dealt with.
-        this.waitingForDocument = true;
-
-        this.docInfo = {
-            'sentHash': false,
-            'rights': '',
-            // In collaborative mode, only the first client to connect will have
-            // theEditor.docInfo.control set to true.
-            'control': false,
-            'last_diffs': [],
-            'is_owner': false,
-            'is_new': false,
-            'titleChanged': false,
-            'changed': false
-        };
-        this.doc = {};
-        this.user = false;
-        new _serverCommunications.ModServerCommunications(this);
-        //this.init()
-    }
-
-    _createClass(Editor, [{
-        key: "init",
-        value: function init() {
-            var that = this;
-            this.pm = this.makeEditor(document.getElementById('document-editable'));
-            new _mod2.ModFootnotes(this);
-            new _mod3.ModCollab(this);
-            new _mod4.ModTools(this);
-            new _update.UpdateScheduler(this.pm, "selectionChange change activeMarkChange blur focus setDoc", function () {
-                (0, _updateUi.updateUI)(that);
-            });
-            this.pm.on("change", editorHelpers.documentHasChanged);
-            this.pm.on("transform", function (transform, options) {
-                that.onTransform(transform, true);
-            });
-            this.pm.on("remoteTransform", function (transform, options) {
-                that.onTransform(transform, false);
-            });
-            new _update.UpdateScheduler(this.pm, "flush setDoc", mathHelpers.layoutEmptyEquationNodes);
-            new _update.UpdateScheduler(this.pm, "flush setDoc", mathHelpers.layoutEmptyDisplayEquationNodes);
-            new _update.UpdateScheduler(this.pm, "flush setDoc", citationHelpers.formatCitationsInDocIfNew);
-        }
-    }, {
-        key: "makeEditor",
-        value: function makeEditor(where) {
-            var pm = new _main.ProseMirror({
-                place: where,
-                schema: _schema.fidusSchema,
-                //    menuBar: true,
-                collab: {
-                    version: 0
-                }
-            });
-            pm.editor = this;
-            return pm;
-        }
-    }, {
-        key: "createDoc",
-        value: function createDoc(aDocument) {
-            var editorNode = document.createElement('div'),
-                titleNode = aDocument.metadata.title ? exporter.obj2Node(aDocument.metadata.title) : document.createElement('div'),
-                documentContentsNode = exporter.obj2Node(aDocument.contents),
-                metadataSubtitleNode = aDocument.metadata.subtitle ? exporter.obj2Node(aDocument.metadata.subtitle) : document.createElement('div'),
-                metadataAuthorsNode = aDocument.metadata.authors ? exporter.obj2Node(aDocument.metadata.authors) : document.createElement('div'),
-                metadataAbstractNode = aDocument.metadata.abstract ? exporter.obj2Node(aDocument.metadata.abstract) : document.createElement('div'),
-                metadataKeywordsNode = aDocument.metadata.keywords ? exporter.obj2Node(aDocument.metadata.keywords) : document.createElement('div'),
-                doc = undefined;
-
-            titleNode.id = 'document-title';
-            metadataSubtitleNode.id = 'metadata-subtitle';
-            metadataAuthorsNode.id = 'metadata-authors';
-            metadataAbstractNode.id = 'metadata-abstract';
-            metadataKeywordsNode.id = 'metadata-keywords';
-            documentContentsNode.id = 'document-contents';
-
-            editorNode.appendChild(titleNode);
-            editorNode.appendChild(metadataSubtitleNode);
-            editorNode.appendChild(metadataAuthorsNode);
-            editorNode.appendChild(metadataAbstractNode);
-            editorNode.appendChild(metadataKeywordsNode);
-            editorNode.appendChild(documentContentsNode);
-
-            doc = (0, _format.fromDOM)(_schema.fidusSchema, nodeConverter.modelToEditorNode(editorNode), {
-                preserveWhitespace: true
-            });
-            return doc;
-        }
-    }, {
-        key: "update",
-        value: function update() {
-            console.log('Updating editor');
-            var that = this;
-            this.mod.collab.docChanges.cancelCurrentlyCheckingVersion();
-            this.mod.collab.docChanges.unconfirmedSteps = {};
-            if (this.mod.collab.docChanges.awaitingDiffResponse) {
-                this.mod.collab.docChanges.enableDiffSending();
-            }
-            var doc = this.createDoc(this.doc);
-            this.pm.setOption("collab", null);
-            this.pm.setContent(doc);
-            this.pm.setOption("collab", {
-                version: this.doc.version
-            });
-            while (this.docInfo.last_diffs.length > 0) {
-                var diff = this.docInfo.last_diffs.shift();
-                this.mod.collab.docChanges.applyDiff(diff);
-            }
-            this.doc.hash = this.getHash();
-            this.pm.mod.collab.on("mustSend", function () {
-                that.mod.collab.docChanges.sendToCollaborators();
-            });
-            this.pm.signal("documentUpdated");
-            new _mod.ModComments(this, this.doc.comment_version);
-            _.each(this.doc.comments, function (comment) {
-                that.mod.comments.store.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers, comment['review:isMajor']);
-            });
-            this.mod.comments.store.on("mustSend", function () {
-                that.mod.collab.docChanges.sendToCollaborators();
-            });
-            this.enableUI();
-            this.waitingForDocument = false;
-        }
-    }, {
-        key: "askForDocument",
-        value: function askForDocument() {
-            if (this.waitingForDocument) {
-                return;
-            }
-            this.waitingForDocument = true;
-            this.mod.serverCommunications.send({
-                type: 'get_document'
-            });
-        }
-    }, {
-        key: "enableUI",
-        value: function enableUI() {
-            bibliographyHelpers.initiate();
-
-            jQuery('.savecopy, .download, .latex, .epub, .html, .print, .style, \
-      .citationstyle, .tools-item, .papersize, .metadata-menu-item, \
-      #open-close-header').removeClass('disabled');
-
-            citationHelpers.formatCitationsInDoc();
-            editorHelpers.displaySetting.set('documentstyle');
-            editorHelpers.displaySetting.set('citationstyle');
-
-            jQuery('span[data-citationstyle=' + this.doc.settings.citationstyle + ']').addClass('selected');
-            editorHelpers.displaySetting.set('papersize');
-
-            editorHelpers.layoutMetadata();
-
-            if (this.docInfo.rights === 'w') {
-                jQuery('#editor-navigation').show();
-                jQuery('.metadata-menu-item, #open-close-header, .save, \
-          .multibuttonsCover, .papersize-menu, .metadata-menu, \
-          .documentstyle-menu, .citationstyle-menu').removeClass('disabled');
-                if (this.docInfo.is_owner) {
-                    // bind the share dialog to the button if the user is the document owner
-                    jQuery('.share').removeClass('disabled');
-                }
-                mathHelpers.resetMath();
-            } else if (this.docInfo.rights === 'r') {
-                // Try to disable contenteditable
-                jQuery('.ProseMirror-content').attr('contenteditable', 'false');
-            }
-        }
-    }, {
-        key: "getUpdates",
-        value: function getUpdates(callback) {
-            var outputNode = nodeConverter.editorToModelNode((0, _format.serializeTo)(this.pm.mod.collab.versionDoc, 'dom'));
-            this.doc.title = this.pm.mod.collab.versionDoc.firstChild.textContent;
-            this.doc.version = this.pm.mod.collab.version;
-            this.doc.metadata.title = exporter.node2Obj(outputNode.getElementById('document-title'));
-            this.doc.metadata.subtitle = exporter.node2Obj(outputNode.getElementById('metadata-subtitle'));
-            this.doc.metadata.authors = exporter.node2Obj(outputNode.getElementById('metadata-authors'));
-            this.doc.metadata.abstract = exporter.node2Obj(outputNode.getElementById('metadata-abstract'));
-            this.doc.metadata.keywords = exporter.node2Obj(outputNode.getElementById('metadata-keywords'));
-            this.doc.contents = exporter.node2Obj(outputNode.getElementById('document-contents'));
-            this.doc.hash = this.getHash();
-            this.doc.comments = this.mod.comments.store.comments;
-            if (callback) {
-                callback();
-            }
-        }
-    }, {
-        key: "receiveDocument",
-        value: function receiveDocument(data) {
-            var that = this;
-            editorHelpers.copyDocumentValues(data.document, data.document_values);
-            if (data.hasOwnProperty('user')) {
-                this.user = data.user;
-            } else {
-                this.user = this.doc.owner;
-            }
-            usermediaHelpers.init(function () {
-                that.update();
-                that.mod.serverCommunications.send({
-                    type: 'participant_update'
-                });
-            });
-        }
-
-        // This client was participating in collaborative editing of this document
-        // but not as the cleint that was in charge of saving. This has now changed
-        // so that the current user is being asked to save the document.
-
-    }, {
-        key: "takeControl",
-        value: function takeControl() {
-            this.docInfo.control = true;
-            this.docInfo.sentHash = false;
-        }
-    }, {
-        key: "updateComments",
-        value: function updateComments(comments, comment_version) {
-            console.log('receiving comment update');
-            this.mod.comments.store.receive(comments, comment_version);
-        }
-    }, {
-        key: "getHash",
-        value: function getHash() {
-            var string = JSON.stringify(this.pm.mod.collab.versionDoc);
-            var len = string.length;
-            var hash = 0,
-                char,
-                i;
-            if (len == 0) return hash;
-            for (i = 0; i < len; i++) {
-                char = string.charCodeAt(i);
-                hash = (hash << 5) - hash + char;
-                hash = hash & hash;
-            }
-            return hash;
-        }
-
-        // Things to be executed on every editor transform.
-
-    }, {
-        key: "onTransform",
-        value: function onTransform(transform, local) {
-            var _this = this;
-
-            var updateBibliography = false,
-                updateTitle = false;
-            // Check what area is affected
-            transform.steps.forEach(function (step, index) {
-                if (step.type === 'replace') {
-                    if (step.from.cmp(step.to) !== 0) {
-                        transform.docs[index].inlineNodesBetween(step.from, step.to, function (node) {
-                            if (node.type.name === 'citation') {
-                                // A citation was replaced
-                                updateBibliography = true;
-                            }
-                        });
-                    }
-
-                    if (step.from.path[0] === 0) {
-                        updateTitle = true;
-                    }
-                }
-            });
-
-            if (updateBibliography) {
-                (function () {
-                    // Recreate the bibliography on next flush.
-                    var formatCitations = new _update.UpdateScheduler(_this.pm, "flush", function () {
-                        formatCitations.detach();
-                        citationHelpers.formatCitationsInDoc();
-                    });
-                })();
-            }
-
-            if (updateTitle) {
-                var documentTitle = this.pm.doc.firstChild.textContent;
-                // The title has changed. We will update our document. Mark it as changed so
-                // that an update may be sent to the server.
-                if (documentTitle.substring(0, 255) !== this.doc.title) {
-                    this.doc.title = documentTitle.substring(0, 255);
-                    if (local) {
-                        this.docInfo.titleChanged = true;
-                    }
-                }
-            }
-        }
-    }]);
-
-    return Editor;
-})();
-
-var theEditor = new Editor();
-
-window.theEditor = theEditor;
-
-},{"./es6_modules/collab/mod":4,"./es6_modules/comments/mod":8,"./es6_modules/footnotes/mod":13,"./es6_modules/schema":14,"./es6_modules/server-communications":15,"./es6_modules/tools/mod":16,"./es6_modules/update-ui":19,"prosemirror/dist/collab":21,"prosemirror/dist/edit/main":35,"prosemirror/dist/format":42,"prosemirror/dist/ui/update":66}],2:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -514,7 +177,7 @@ var ModCollabChat = exports.ModCollabChat = (function () {
     return ModCollabChat;
 })();
 
-},{"./templates":5}],3:[function(require,module,exports){
+},{"./templates":4}],2:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -756,7 +419,7 @@ var ModCollabDocChanges = exports.ModCollabDocChanges = (function () {
     return ModCollabDocChanges;
 })();
 
-},{"../schema":14,"prosemirror/dist/transform":56}],4:[function(require,module,exports){
+},{"../schema":14,"prosemirror/dist/transform":57}],3:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -802,7 +465,7 @@ var ModCollab = exports.ModCollab = (function () {
     return ModCollab;
 })();
 
-},{"./chat":2,"./doc-changes":3}],5:[function(require,module,exports){
+},{"./chat":1,"./doc-changes":2}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -822,7 +485,7 @@ var messageTemplate = exports.messageTemplate = _.template('\
 
 var participantListTemplate = exports.participantListTemplate = _.template('<% _.each(participants, function(participant) { %><img src="<%= participant.avatar %>" alt="<%- participant.name %>" title="<%- participant.name %>"><% }); %>');
 
-},{}],6:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })(); /* Functions related to user interactions with comments */
@@ -1019,7 +682,7 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
     return ModCommentInteractions;
 })();
 
-},{"prosemirror/dist/ui/update":66}],7:[function(require,module,exports){
+},{"prosemirror/dist/ui/update":67}],6:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1304,7 +967,7 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
     return ModCommentLayout;
 })();
 
-},{"./templates":10}],8:[function(require,module,exports){
+},{"./templates":9}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1330,7 +993,7 @@ var ModComments = exports.ModComments = function ModComments(editor, version) {
     new _interactions.ModCommentInteractions(this);
 };
 
-},{"./interactions":6,"./layout":7,"./store":9}],9:[function(require,module,exports){
+},{"./interactions":5,"./layout":6,"./store":8}],8:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1684,7 +1347,7 @@ function randomID() {
     return Math.floor(Math.random() * 0xffffffff);
 }
 
-},{"../schema":14,"prosemirror/dist/model":50,"prosemirror/dist/transform":56,"prosemirror/dist/ui/update":66,"prosemirror/dist/util/event":68}],10:[function(require,module,exports){
+},{"../schema":14,"prosemirror/dist/model":51,"prosemirror/dist/transform":57,"prosemirror/dist/ui/update":67,"prosemirror/dist/util/event":69}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1796,7 +1459,340 @@ var filterByUserBoxTemplate = exports.filterByUserBoxTemplate = _.template('<div
         </select>\
     </div>');
 
-},{}],11:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })(); /* Functions for ProseMirror integration.*/
+
+//import "prosemirror/dist/menu/menubar"
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.Editor = undefined;
+
+var _main = require("prosemirror/dist/edit/main");
+
+var _format = require("prosemirror/dist/format");
+
+require("prosemirror/dist/collab");
+
+var _update = require("prosemirror/dist/ui/update");
+
+var _schema = require("./schema");
+
+var _updateUi = require("./update-ui");
+
+var _mod = require("./comments/mod");
+
+var _mod2 = require("./footnotes/mod");
+
+var _mod3 = require("./collab/mod");
+
+var _mod4 = require("./tools/mod");
+
+var _serverCommunications = require("./server-communications");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Editor = exports.Editor = (function () {
+    function Editor() {
+        _classCallCheck(this, Editor);
+
+        this.mod = {};
+        // Whether the editor is currently waiting for a document update. Set to true
+        // initially so that diffs that arrive before document has been loaded are not
+        // dealt with.
+        this.waitingForDocument = true;
+
+        this.docInfo = {
+            'sentHash': false,
+            'rights': '',
+            // In collaborative mode, only the first client to connect will have
+            // theEditor.docInfo.control set to true.
+            'control': false,
+            'last_diffs': [],
+            'is_owner': false,
+            'is_new': false,
+            'titleChanged': false,
+            'changed': false
+        };
+        this.doc = {};
+        this.user = false;
+        new _serverCommunications.ModServerCommunications(this);
+        //this.init()
+    }
+
+    _createClass(Editor, [{
+        key: "init",
+        value: function init() {
+            var that = this;
+            this.pm = this.makeEditor(document.getElementById('document-editable'));
+            new _mod2.ModFootnotes(this);
+            new _mod3.ModCollab(this);
+            new _mod4.ModTools(this);
+            new _update.UpdateScheduler(this.pm, "selectionChange change activeMarkChange blur focus setDoc", function () {
+                (0, _updateUi.updateUI)(that);
+            });
+            this.pm.on("change", editorHelpers.documentHasChanged);
+            this.pm.on("transform", function (transform, options) {
+                that.onTransform(transform, true);
+            });
+            this.pm.on("remoteTransform", function (transform, options) {
+                that.onTransform(transform, false);
+            });
+            new _update.UpdateScheduler(this.pm, "flush setDoc", mathHelpers.layoutEmptyEquationNodes);
+            new _update.UpdateScheduler(this.pm, "flush setDoc", mathHelpers.layoutEmptyDisplayEquationNodes);
+            new _update.UpdateScheduler(this.pm, "flush setDoc", citationHelpers.formatCitationsInDocIfNew);
+        }
+    }, {
+        key: "makeEditor",
+        value: function makeEditor(where) {
+            var pm = new _main.ProseMirror({
+                place: where,
+                schema: _schema.fidusSchema,
+                //    menuBar: true,
+                collab: {
+                    version: 0
+                }
+            });
+            pm.editor = this;
+            return pm;
+        }
+    }, {
+        key: "createDoc",
+        value: function createDoc(aDocument) {
+            var editorNode = document.createElement('div'),
+                titleNode = aDocument.metadata.title ? exporter.obj2Node(aDocument.metadata.title) : document.createElement('div'),
+                documentContentsNode = exporter.obj2Node(aDocument.contents),
+                metadataSubtitleNode = aDocument.metadata.subtitle ? exporter.obj2Node(aDocument.metadata.subtitle) : document.createElement('div'),
+                metadataAuthorsNode = aDocument.metadata.authors ? exporter.obj2Node(aDocument.metadata.authors) : document.createElement('div'),
+                metadataAbstractNode = aDocument.metadata.abstract ? exporter.obj2Node(aDocument.metadata.abstract) : document.createElement('div'),
+                metadataKeywordsNode = aDocument.metadata.keywords ? exporter.obj2Node(aDocument.metadata.keywords) : document.createElement('div'),
+                doc = undefined;
+
+            titleNode.id = 'document-title';
+            metadataSubtitleNode.id = 'metadata-subtitle';
+            metadataAuthorsNode.id = 'metadata-authors';
+            metadataAbstractNode.id = 'metadata-abstract';
+            metadataKeywordsNode.id = 'metadata-keywords';
+            documentContentsNode.id = 'document-contents';
+
+            editorNode.appendChild(titleNode);
+            editorNode.appendChild(metadataSubtitleNode);
+            editorNode.appendChild(metadataAuthorsNode);
+            editorNode.appendChild(metadataAbstractNode);
+            editorNode.appendChild(metadataKeywordsNode);
+            editorNode.appendChild(documentContentsNode);
+
+            doc = (0, _format.fromDOM)(_schema.fidusSchema, nodeConverter.modelToEditorNode(editorNode), {
+                preserveWhitespace: true
+            });
+            return doc;
+        }
+    }, {
+        key: "update",
+        value: function update() {
+            console.log('Updating editor');
+            var that = this;
+            this.mod.collab.docChanges.cancelCurrentlyCheckingVersion();
+            this.mod.collab.docChanges.unconfirmedSteps = {};
+            if (this.mod.collab.docChanges.awaitingDiffResponse) {
+                this.mod.collab.docChanges.enableDiffSending();
+            }
+            var doc = this.createDoc(this.doc);
+            this.pm.setOption("collab", null);
+            this.pm.setContent(doc);
+            this.pm.setOption("collab", {
+                version: this.doc.version
+            });
+            while (this.docInfo.last_diffs.length > 0) {
+                var diff = this.docInfo.last_diffs.shift();
+                this.mod.collab.docChanges.applyDiff(diff);
+            }
+            this.doc.hash = this.getHash();
+            this.pm.mod.collab.on("mustSend", function () {
+                that.mod.collab.docChanges.sendToCollaborators();
+            });
+            this.pm.signal("documentUpdated");
+            new _mod.ModComments(this, this.doc.comment_version);
+            _.each(this.doc.comments, function (comment) {
+                that.mod.comments.store.addLocalComment(comment.id, comment.user, comment.userName, comment.userAvatar, comment.date, comment.comment, comment.answers, comment['review:isMajor']);
+            });
+            this.mod.comments.store.on("mustSend", function () {
+                that.mod.collab.docChanges.sendToCollaborators();
+            });
+            this.enableUI();
+            this.waitingForDocument = false;
+        }
+    }, {
+        key: "askForDocument",
+        value: function askForDocument() {
+            if (this.waitingForDocument) {
+                return;
+            }
+            this.waitingForDocument = true;
+            this.mod.serverCommunications.send({
+                type: 'get_document'
+            });
+        }
+    }, {
+        key: "enableUI",
+        value: function enableUI() {
+            bibliographyHelpers.initiate();
+
+            jQuery('.savecopy, .download, .latex, .epub, .html, .print, .style, \
+      .citationstyle, .tools-item, .papersize, .metadata-menu-item, \
+      #open-close-header').removeClass('disabled');
+
+            citationHelpers.formatCitationsInDoc();
+            editorHelpers.displaySetting.set('documentstyle');
+            editorHelpers.displaySetting.set('citationstyle');
+
+            jQuery('span[data-citationstyle=' + this.doc.settings.citationstyle + ']').addClass('selected');
+            editorHelpers.displaySetting.set('papersize');
+
+            editorHelpers.layoutMetadata();
+
+            if (this.docInfo.rights === 'w') {
+                jQuery('#editor-navigation').show();
+                jQuery('.metadata-menu-item, #open-close-header, .save, \
+          .multibuttonsCover, .papersize-menu, .metadata-menu, \
+          .documentstyle-menu, .citationstyle-menu').removeClass('disabled');
+                if (this.docInfo.is_owner) {
+                    // bind the share dialog to the button if the user is the document owner
+                    jQuery('.share').removeClass('disabled');
+                }
+                mathHelpers.resetMath();
+            } else if (this.docInfo.rights === 'r') {
+                // Try to disable contenteditable
+                jQuery('.ProseMirror-content').attr('contenteditable', 'false');
+            }
+        }
+    }, {
+        key: "getUpdates",
+        value: function getUpdates(callback) {
+            var outputNode = nodeConverter.editorToModelNode((0, _format.serializeTo)(this.pm.mod.collab.versionDoc, 'dom'));
+            this.doc.title = this.pm.mod.collab.versionDoc.firstChild.textContent;
+            this.doc.version = this.pm.mod.collab.version;
+            this.doc.metadata.title = exporter.node2Obj(outputNode.getElementById('document-title'));
+            this.doc.metadata.subtitle = exporter.node2Obj(outputNode.getElementById('metadata-subtitle'));
+            this.doc.metadata.authors = exporter.node2Obj(outputNode.getElementById('metadata-authors'));
+            this.doc.metadata.abstract = exporter.node2Obj(outputNode.getElementById('metadata-abstract'));
+            this.doc.metadata.keywords = exporter.node2Obj(outputNode.getElementById('metadata-keywords'));
+            this.doc.contents = exporter.node2Obj(outputNode.getElementById('document-contents'));
+            this.doc.hash = this.getHash();
+            this.doc.comments = this.mod.comments.store.comments;
+            if (callback) {
+                callback();
+            }
+        }
+    }, {
+        key: "receiveDocument",
+        value: function receiveDocument(data) {
+            var that = this;
+            editorHelpers.copyDocumentValues(data.document, data.document_values);
+            if (data.hasOwnProperty('user')) {
+                this.user = data.user;
+            } else {
+                this.user = this.doc.owner;
+            }
+            usermediaHelpers.init(function () {
+                that.update();
+                that.mod.serverCommunications.send({
+                    type: 'participant_update'
+                });
+            });
+        }
+
+        // This client was participating in collaborative editing of this document
+        // but not as the cleint that was in charge of saving. This has now changed
+        // so that the current user is being asked to save the document.
+
+    }, {
+        key: "takeControl",
+        value: function takeControl() {
+            this.docInfo.control = true;
+            this.docInfo.sentHash = false;
+        }
+    }, {
+        key: "updateComments",
+        value: function updateComments(comments, comment_version) {
+            console.log('receiving comment update');
+            this.mod.comments.store.receive(comments, comment_version);
+        }
+    }, {
+        key: "getHash",
+        value: function getHash() {
+            var string = JSON.stringify(this.pm.mod.collab.versionDoc);
+            var len = string.length;
+            var hash = 0,
+                char,
+                i;
+            if (len == 0) return hash;
+            for (i = 0; i < len; i++) {
+                char = string.charCodeAt(i);
+                hash = (hash << 5) - hash + char;
+                hash = hash & hash;
+            }
+            return hash;
+        }
+
+        // Things to be executed on every editor transform.
+
+    }, {
+        key: "onTransform",
+        value: function onTransform(transform, local) {
+            var _this = this;
+
+            var updateBibliography = false,
+                updateTitle = false;
+            // Check what area is affected
+            transform.steps.forEach(function (step, index) {
+                if (step.type === 'replace') {
+                    if (step.from.cmp(step.to) !== 0) {
+                        transform.docs[index].inlineNodesBetween(step.from, step.to, function (node) {
+                            if (node.type.name === 'citation') {
+                                // A citation was replaced
+                                updateBibliography = true;
+                            }
+                        });
+                    }
+
+                    if (step.from.path[0] === 0) {
+                        updateTitle = true;
+                    }
+                }
+            });
+
+            if (updateBibliography) {
+                (function () {
+                    // Recreate the bibliography on next flush.
+                    var formatCitations = new _update.UpdateScheduler(_this.pm, "flush", function () {
+                        formatCitations.detach();
+                        citationHelpers.formatCitationsInDoc();
+                    });
+                })();
+            }
+
+            if (updateTitle) {
+                var documentTitle = this.pm.doc.firstChild.textContent;
+                // The title has changed. We will update our document. Mark it as changed so
+                // that an update may be sent to the server.
+                if (documentTitle.substring(0, 255) !== this.doc.title) {
+                    this.doc.title = documentTitle.substring(0, 255);
+                    if (local) {
+                        this.docInfo.titleChanged = true;
+                    }
+                }
+            }
+        }
+    }]);
+
+    return Editor;
+})();
+
+},{"./collab/mod":3,"./comments/mod":7,"./footnotes/mod":13,"./schema":14,"./server-communications":15,"./tools/mod":16,"./update-ui":19,"prosemirror/dist/collab":22,"prosemirror/dist/edit/main":36,"prosemirror/dist/format":43,"prosemirror/dist/ui/update":67}],11:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1917,7 +1913,7 @@ var ModFootnoteEditor = exports.ModFootnoteEditor = (function () {
     return ModFootnoteEditor;
 })();
 
-},{"../schema":14,"prosemirror/dist/format":42,"prosemirror/dist/model":50,"prosemirror/dist/transform":56}],12:[function(require,module,exports){
+},{"../schema":14,"prosemirror/dist/format":43,"prosemirror/dist/model":51,"prosemirror/dist/transform":57}],12:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2113,7 +2109,7 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = (function () {
     return ModFootnoteMarkers;
 })();
 
-},{"../schema":14,"prosemirror/dist/format":42,"prosemirror/dist/model":50}],13:[function(require,module,exports){
+},{"../schema":14,"prosemirror/dist/format":43,"prosemirror/dist/model":51}],13:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2163,7 +2159,7 @@ var ModFootnotes = exports.ModFootnotes = (function () {
     return ModFootnotes;
 })();
 
-},{"../schema":14,"./editor":11,"./markers":12,"prosemirror/dist/collab":21,"prosemirror/dist/edit/main":35}],14:[function(require,module,exports){
+},{"../schema":14,"./editor":11,"./markers":12,"prosemirror/dist/collab":22,"prosemirror/dist/edit/main":36}],14:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2961,7 +2957,7 @@ var fidusFnSchema = exports.fidusFnSchema = new _model.Schema(_model.defaultSche
     comment: CommentMark
 }));
 
-},{"prosemirror/dist/model":50}],15:[function(require,module,exports){
+},{"prosemirror/dist/model":51}],15:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -3471,7 +3467,456 @@ function calculatePlaceHolderCss(pm, selectedElement) {
     }
 }
 
-},{"prosemirror/dist/model":50}],20:[function(require,module,exports){
+},{"prosemirror/dist/model":51}],20:[function(require,module,exports){
+'use strict';
+
+var _editor = require('./es6_modules/editor');
+
+/** Helper functions for the editor.
+* @namespace editorHelpers
+*/
+var editorHelpers = {};
+
+/** Call printing dialog and destroy print view after printing. (step 2 of printing process)
+ * @function print
+ * @memberof editorHelpers
+ */
+
+editorHelpers.printReady = function () {
+    var flowTo = document.getElementById('print');
+    window.print();
+    jQuery(flowTo).hide();
+    jQuery(flowTo).html('');
+    delete window.flowCopy;
+};
+
+document.addEventListener('layoutFlowFinished', editorHelpers.printReady, false);
+
+/** Initiate printing using simplePagination. (step 1 of printing process)
+ * @function print
+ * @memberof editorHelpers
+ */
+
+editorHelpers.print = function () {
+    var flowTo = document.getElementById('print');
+    window.flowCopy = document.getElementById('flow').cloneNode(true);
+    jQuery(flowTo).show();
+    pagination.applyBookLayoutWithoutDivision();
+};
+
+/** Turn enabled metadata off and disabled metadata on, Function is bound to clicking option in metadata menu.
+ * @function switchMetadata
+ * @memberof editorHelpers
+ */
+editorHelpers.switchMetadata = function () {
+    var theMetadata = jQuery(this).attr('data-metadata');
+    editorHelpers.setSetting('metadata-' + theMetadata, !theEditor.doc.settings['metadata-' + theMetadata], true);
+    editorHelpers.setMetadataDisplay();
+};
+
+/** Layout metadata and then mark the document as having changed.
+* @function setMetadataDisplay
+* @memberof editorHelpers
+*/
+editorHelpers.setMetadataDisplay = function () {
+    editorHelpers.layoutMetadata();
+    editorHelpers.documentHasChanged();
+};
+
+/** Fill the editor page with the document data from the server.
+ * This is done after the document data is loaded from the server.
+ * @function fillEditorPage
+ * @memberof editorHelpers
+ * @param aDocument The document object as it comes from the server.
+ * @param aDocumentValues The document value object consists of variables
+ * that differ from session to session.
+ */
+editorHelpers.copyDocumentValues = function (aDocument, aDocumentValues) {
+    var doc, docInfo;
+
+    docInfo = aDocumentValues;
+    docInfo.changed = false;
+    docInfo.titleChanged = false;
+
+    doc = aDocument;
+    doc.settings = doc.settings;
+    doc.metadata = JSON.parse(doc.metadata);
+    doc.contents = JSON.parse(doc.contents);
+    documentId = doc.id;
+
+    [['papersize', 1117], ['citationstyle', 'apa'], // TODO: make this calculated. Not everyone will have apa installed
+    ['documentstyle', defaultDocumentStyle]].forEach(function (variable) {
+        if (doc.settings[variable[0]] === undefined) {
+            doc.settings[variable[0]] = variable[1];
+        }
+    });
+
+    if (docInfo.is_new) {
+        // If the document is new, change the url. Then forget that the document is new.
+        window.history.replaceState("", "", "/document/" + doc.id + "/");
+        delete docInfo.is_new;
+    }
+    window.theEditor.doc = doc;
+    window.theEditor.docInfo = docInfo;
+};
+
+/** Called whenever anything has changed in the document text. Makes sure that saving and synchronizing with peers happens.
+ * @function documentHasChanged
+ * @memberof editorHelpers
+ */
+editorHelpers.documentHasChanged = function () {
+    theEditor.docInfo.changed = true; // For document saving
+};
+
+/** Called whenever the document title had changed. Makes sure that saving happens.
+ * @function titleHasChanged
+ * @memberof editorHelpers
+ */
+editorHelpers.titleHasChanged = function () {
+    theEditor.docInfo.titleChanged = true; // For title saving
+};
+
+/** Functions related to taking document data from theEditor.document.* and displaying it (ie making it part of the DOM structure).
+ * @namespace editorHelpers.displaySetting
+ */
+editorHelpers.displaySetting = {};
+
+/** Set the document style.
+ * @function documentstyle
+ * @memberof editorHelpers.displaySetting*/
+editorHelpers.displaySetting.documentstyle = function () {
+
+    var documentStyleLink, stylesheet;
+
+    jQuery("#header-navigation .style.selected").removeClass('selected');
+    jQuery('span[data-style=' + theEditor.doc.settings.documentstyle + ']').addClass('selected');
+
+    documentStyleLink = document.getElementById('document-style-link');
+
+    // Remove previous style.
+    documentStyleLink.parentElement.removeChild(documentStyleLink.previousElementSibling);
+
+    stylesheet = loadCSS(staticUrl + 'css/document/' + theEditor.doc.settings.documentstyle + '.css', documentStyleLink);
+
+    onloadCSS(stylesheet, function () {
+        // We layout the comments 100 ms after the stylesheet has been loaded.
+        // This should usually be enough to make the layout work correctly.
+        //
+        // TODO: Find a way that is more reliable than a timeout to check
+        // for font loading.
+        setTimeout(function () {
+            theEditor.mod.comments.layout.layoutComments();
+        }, 100);
+    });
+};
+
+/** Set the document style.
+ * @function citationstyle
+ * @memberof editorHelpers.displaySetting*/
+editorHelpers.displaySetting.citationstyle = function () {
+    jQuery("#header-navigation .citationstyle.selected").removeClass('selected');
+    jQuery('span[data-citationstyle=' + theEditor.doc.settings.citationstyle + ']').addClass('selected');
+    if (theEditor.pm) {
+        citationHelpers.formatCitationsInDoc();
+    }
+};
+
+/** Set the document's paper size.
+ * @function papersize
+ * @memberof editorHelpers.displaySetting*/
+editorHelpers.displaySetting.papersize = function () {
+    jQuery("#header-navigation .papersize.selected").removeClass('selected');
+    jQuery('span[data-paperheight=' + theEditor.doc.settings.papersize + ']').addClass('selected');
+    paginationConfig['pageHeight'] = theEditor.doc.settings.papersize;
+};
+
+editorHelpers.layoutMetadata = function () {
+    var metadataCss = '';
+    ['subtitle', 'abstract', 'authors', 'keywords'].forEach(function (metadataItem) {
+        if (!theEditor.doc.settings['metadata-' + metadataItem]) {
+            metadataCss += '#metadata-' + metadataItem + ' {display: none;}\n';
+        } else {
+            metadataCss += 'span.metadata-' + metadataItem + ' {background-color: black; color: white;}\n';
+        }
+    });
+
+    jQuery('#metadata-styles')[0].innerHTML = metadataCss;
+};
+
+/** A dictionary linking field names with set display functions.
+ * @constant  FIELDS
+ * @memberof editorHelpers.displaySetting
+ */
+editorHelpers.displaySetting.FIELDS = {
+    // A list of the functions used to update various fields to be called by editorHelpers.displaySetting.set
+    'papersize': editorHelpers.displaySetting.papersize,
+    'citationstyle': editorHelpers.displaySetting.citationstyle,
+    'documentstyle': editorHelpers.displaySetting.documentstyle,
+    'metadata': editorHelpers.layoutMetadata
+};
+/** Set any field on the editor page
+ * @function document
+ * @memberof editorHelpers.displaySetting
+ * @param theName The name of the field.*/
+editorHelpers.displaySetting.set = function (theName) {
+    editorHelpers.displaySetting.FIELDS[theName.split('-')[0]]();
+};
+
+/** Sets a variable in theEditor.doc to a value and optionally sends a change notification to other editors.
+ * This notification is used in case of simple fields (all fields that are not individually editable in the text editor
+ * -- citation style, set tracking, etc. but not the document title) to make other clients copy the same values.
+ * @function setSetting
+ * @memberof editorHelpers
+ * @param theName The name of the variable.
+ * @param newValue The value that the variable is to be set to.
+ * @param sendChange Whether a change notification should be sent to other clients. Default is true.
+ */
+editorHelpers.setSetting = function (variable, newValue, sendChange) {
+    var currentValue;
+
+    currentValue = theEditor.doc.settings[variable];
+
+    if (currentValue === newValue) {
+        return false;
+    }
+
+    theEditor.doc.settings[variable] = newValue;
+
+    if (sendChange) {
+        theEditor.mod.serverCommunications.send({
+            type: 'setting_change',
+            variable: variable,
+            value: newValue
+        });
+    }
+
+    return true;
+};
+
+/** Will send an update of the current Document to the server if theEditor.docInfo.control is true.
+ * @function sendDocumentUpdate
+ * @memberof editorHelpers
+ * @param callback Callback to be called after copying data (optional).
+ */
+editorHelpers.sendDocumentUpdate = function (callback) {
+    var documentData = {};
+
+    documentData.metadata = JSON.stringify(theEditor.doc.metadata);
+    documentData.contents = JSON.stringify(theEditor.doc.contents);
+    documentData.version = theEditor.doc.version;
+    documentData.hash = theEditor.doc.hash;
+    console.log('saving');
+    theEditor.mod.serverCommunications.send({
+        type: 'update_document',
+        document: documentData
+    });
+
+    theEditor.docInfo.changed = false;
+
+    if (callback) {
+        callback();
+    }
+
+    return true;
+};
+
+window.editorHelpers = editorHelpers;
+
+// Functions to be executed at startup
+jQuery(document).ready(function () {
+
+    var documentStyleMenu = document.getElementById("documentstyle-list"),
+        citationStyleMenu = document.getElementById("citationstyle-list"),
+        newMenuItem,
+        i;
+
+    theEditor.init();
+
+    // Set Auto-save to send the document every two minutes, if it has changed.
+    setInterval(function () {
+        if (theEditor.docInfo && theEditor.docInfo.changed) {
+            theEditor.getUpdates(function () {
+                editorHelpers.sendDocumentUpdate();
+            });
+        }
+    }, 120000);
+
+    // Set Auto-save to send the title every 5 seconds, if it has changed.
+    setInterval(function () {
+        if (theEditor.docInfo && theEditor.docInfo.titleChanged) {
+            theEditor.docInfo.titleChanged = false;
+            if (theEditor.docInfo.control) {
+                theEditor.mod.serverCommunications.send({
+                    type: 'update_title',
+                    title: theEditor.doc.title
+                });
+            }
+        }
+    }, 10000);
+
+    // Enable toolbar menu
+    jQuery('#menu1').ptMenu();
+
+    //open dropdown for headermenu
+    jQuery('.header-nav-item, .multibuttonsCover').each(function () {
+        $.addDropdownBox(jQuery(this), jQuery(this).siblings('.fw-pulldown'));
+    });
+
+    for (i = 0; i < documentStyleList.length; i++) {
+        newMenuItem = document.createElement("li");
+        newMenuItem.innerHTML = "<span class='fw-pulldown-item style' data-style='" + documentStyleList[i].filename + "' title='" + documentStyleList[i].title + "'>" + documentStyleList[i].title + "</span>";
+        documentStyleMenu.appendChild(newMenuItem);
+    }
+    for (i in citeproc.styles) {
+        newMenuItem = document.createElement("li");
+        newMenuItem.innerHTML = "<span class='fw-pulldown-item citationstyle' data-citationstyle='" + i + "' title='" + citeproc.styles[i].name + "'>" + citeproc.styles[i].name + "</span>";
+        citationStyleMenu.appendChild(newMenuItem);
+    }
+
+    jQuery('.metadata-menu-item, #open-close-header, .save, .multibuttonsCover, \
+    .savecopy, .download, .latex, .epub, .html, .print, .style, .citationstyle, \
+    .tools-item, .papersize, .metadata-menu-item, .share, #open-close-header, \
+    .save, .papersize-menu, .metadata-menu, .documentstyle-menu, \
+    .citationstyle-menu, .exporter-menu').addClass('disabled');
+
+    jQuery('#editor-navigation').hide();
+
+    jQuery(document).on('mousedown', '.savecopy:not(.disabled)', function () {
+        theEditor.getUpdates(function () {
+            editorHelpers.sendDocumentUpdate();
+        });
+        exporter.savecopy(theEditor.doc);
+    });
+
+    jQuery(document).on('mousedown', '.download:not(.disabled)', function () {
+        theEditor.getUpdates(function () {
+            editorHelpers.sendDocumentUpdate();
+        });
+        exporter.downloadNative(theEditor.doc);
+    });
+    jQuery(document).on('mousedown', '.latex:not(.disabled)', function () {
+        theEditor.getUpdates(function () {
+            editorHelpers.sendDocumentUpdate();
+        });
+        exporter.downloadLatex(theEditor.doc);
+    });
+    jQuery(document).on('mousedown', '.epub:not(.disabled)', function () {
+        theEditor.getUpdates(function () {
+            editorHelpers.sendDocumentUpdate();
+        });
+        exporter.downloadEpub(theEditor.doc);
+    });
+    jQuery(document).on('mousedown', '.html:not(.disabled)', function () {
+        theEditor.getUpdates(function () {
+            editorHelpers.sendDocumentUpdate();
+        });
+        exporter.downloadHtml(theEditor.doc);
+    });
+    jQuery(document).on('mousedown', '.print:not(.disabled)', function () {
+        editorHelpers.print();
+    });
+    jQuery(document).on('mousedown', '.close:not(.disabled)', function () {
+        theEditor.getUpdates(function () {
+            editorHelpers.sendDocumentUpdate();
+        });
+        window.location.href = '/';
+    });
+
+    // Document Style switching
+    jQuery(document).on('mousedown', "#header-navigation .style:not(.disabled)", function () {
+        if (editorHelpers.setSetting('documentstyle', jQuery(this).attr('data-style'), true)) {
+
+            editorHelpers.displaySetting.set('documentstyle');
+            editorHelpers.documentHasChanged();
+        }
+        return false;
+    });
+
+    // Citation Style switching
+    jQuery(document).on('mousedown', "#header-navigation .citationstyle:not(.disabled)", function () {
+        if (editorHelpers.setSetting('citationstyle', jQuery(this).attr('data-citationstyle'), true)) {
+            editorHelpers.displaySetting.set('citationstyle');
+            editorHelpers.documentHasChanged();
+            theEditor.mod.comments.layout.layoutComments();
+        }
+        return false;
+    });
+    // Tools
+    jQuery(document).on('mousedown', "#header-navigation .tools-item:not(.disabled)", function () {
+
+        switch (jQuery(this).data('function')) {
+            case 'wordcounter':
+                theEditor.mod.tools.wordCount.wordCountDialog();
+                break;
+            case 'showshortcuts':
+                $().showShortcuts();
+                break;
+        };
+
+        return false;
+    });
+
+    // Paper size switching
+    jQuery(document).on('mousedown', "#header-navigation .papersize:not(.disabled)", function () {
+        if (editorHelpers.setSetting('papersize', parseInt(jQuery(this).attr('data-paperheight')), true)) {
+            editorHelpers.displaySetting.set('papersize');
+            editorHelpers.documentHasChanged();
+        }
+        return false;
+    });
+
+    jQuery(document).on('mousedown', '.metadata-menu-item:not(.disabled)', editorHelpers.switchMetadata);
+
+    jQuery(document).on('mousedown', '.share:not(.disabled)', function () {
+        accessrightsHelpers.createAccessRightsDialog([theEditor.doc.id]);
+    });
+
+    //open and close header
+    jQuery(document).on('click', '#open-close-header:not(.disabled)', function () {
+        var header_top = -92,
+            toolnav_top = 0,
+            content_top = 108;
+        if (jQuery(this).hasClass('header-closed')) {
+            jQuery(this).removeClass('header-closed');
+            header_top = 0, toolnav_top = 92, content_top = 200;
+        } else {
+            jQuery(this).addClass('header-closed');
+        }
+        jQuery('#header').stop().animate({
+            'top': header_top
+        });
+        jQuery('#editor-navigation').stop().animate({
+            'top': toolnav_top
+        });
+        jQuery('#pagination-layout').stop().animate({
+            'top': content_top
+        }, {
+            'complete': function complete() {
+                theEditor.mod.comments.layout.layoutComments();
+            }
+        });
+    });
+
+    jQuery(document).on('mousedown', '.save:not(.disabled)', function () {
+        theEditor.getUpdates(function () {
+            editorHelpers.sendDocumentUpdate();
+        });
+        exporter.uploadNative(theEditor.doc);
+    });
+
+    bibliographyHelpers.bindEvents();
+});
+
+jQuery(document).bind("bibliography_ready", function (event) {
+    jQuery('.exporter-menu').each(function () {
+        jQuery(this).removeClass('disabled');
+    });
+});
+
+var theEditor = new _editor.Editor();
+window.theEditor = theEditor;
+
+},{"./es6_modules/editor":10}],21:[function(require,module,exports){
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
     module.exports = mod()
@@ -3643,7 +4088,7 @@ function calculatePlaceHolderCss(pm, selectedElement) {
   return Keymap
 })
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3816,7 +4261,7 @@ var Collab = function () {
 }();
 
 (0, _event.eventMixin)(Collab);
-},{"../edit":33,"../util/error":67,"../util/event":68,"./rebase":22}],22:[function(require,module,exports){
+},{"../edit":34,"../util/error":68,"../util/event":69,"./rebase":23}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3844,7 +4289,7 @@ function rebaseSteps(doc, forward, steps, maps) {
   }
   return { doc: transform.doc, transform: transform, mapping: remap, positions: positions };
 }
-},{"../transform":56}],23:[function(require,module,exports){
+},{"../transform":57}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3923,7 +4368,7 @@ function ensureCSSAdded() {
     document.head.insertBefore(cssNode, document.head.firstChild);
   }
 }
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4640,7 +5085,7 @@ baseCommands.redo = {
   },
   keys: ["Mod-Y", "Shift-Mod-Z"]
 };
-},{"../model":50,"../transform":56,"../util/error":67,"./char":26,"./dompos":30,"./selection":39}],25:[function(require,module,exports){
+},{"../model":51,"../transform":57,"../util/error":68,"./char":27,"./dompos":31,"./selection":40}],26:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4710,7 +5155,7 @@ var keys = {
 if (_dom.browser.mac) keys["Ctrl-F"] = keys["Ctrl-B"] = keys["Ctrl-P"] = keys["Ctrl-N"] = keys["Alt-F"] = keys["Alt-B"] = keys["Ctrl-A"] = keys["Ctrl-E"] = keys["Ctrl-V"] = keys["goPageUp"] = ensureSelection;
 
 var captureKeys = exports.captureKeys = new _browserkeymap2.default(keys);
-},{"../dom":23,"./dompos":30,"./selection":39,"browserkeymap":20}],26:[function(require,module,exports){
+},{"../dom":24,"./dompos":31,"./selection":40,"browserkeymap":21}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4743,7 +5188,7 @@ function charCategory(ch) {
 function isExtendingChar(ch) {
   return ch.charCodeAt(0) >= 768 && extendingChar.test(ch);
 }
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5352,13 +5797,13 @@ _model.NodeType.derivableCommands.insert = function (conf) {
     params: deriveParams(this, conf.params)
   };
 };
-},{"../dom":23,"../model":50,"../transform":56,"../util/error":67,"../util/obj":70,"../util/sortedinsert":71,"./base_commands":24,"browserkeymap":20}],28:[function(require,module,exports){
+},{"../dom":24,"../model":51,"../transform":57,"../util/error":68,"../util/obj":71,"../util/sortedinsert":72,"./base_commands":25,"browserkeymap":21}],29:[function(require,module,exports){
 "use strict";
 
 var _dom = require("../dom");
 
 (0, _dom.insertCSS)("\n\n.ProseMirror {\n  border: 1px solid silver;\n  position: relative;\n}\n\n.ProseMirror-content {\n  padding: 4px 8px 4px 14px;\n  white-space: pre-wrap;\n  line-height: 1.2;\n}\n\n.ProseMirror-drop-target {\n  position: absolute;\n  width: 1px;\n  background: #666;\n  display: none;\n}\n\n.ProseMirror-content ul.tight p, .ProseMirror-content ol.tight p {\n  margin: 0;\n}\n\n.ProseMirror-content ul, .ProseMirror-content ol {\n  padding-left: 30px;\n  cursor: default;\n}\n\n.ProseMirror-content blockquote {\n  padding-left: 1em;\n  border-left: 3px solid #eee;\n  margin-left: 0; margin-right: 0;\n}\n\n.ProseMirror-content pre {\n  white-space: pre-wrap;\n}\n\n.ProseMirror-selectednode {\n  outline: 2px solid #8cf;\n}\n\n.ProseMirror-nodeselection *::selection { background: transparent; }\n.ProseMirror-nodeselection *::-moz-selection { background: transparent; }\n\n.ProseMirror-content p:first-child,\n.ProseMirror-content h1:first-child,\n.ProseMirror-content h2:first-child,\n.ProseMirror-content h3:first-child,\n.ProseMirror-content h4:first-child,\n.ProseMirror-content h5:first-child,\n.ProseMirror-content h6:first-child {\n  margin-top: .3em;\n}\n\n/* Add space around the hr to make clicking it easier */\n\n.ProseMirror-content hr {\n  position: relative;\n  height: 6px;\n  border: none;\n}\n\n.ProseMirror-content hr:after {\n  content: \"\";\n  position: absolute;\n  left: 10px;\n  right: 10px;\n  top: 2px;\n  border-top: 2px solid silver;\n}\n\n.ProseMirror-content img {\n  cursor: default;\n}\n\n/* Make sure li selections wrap around markers */\n\n.ProseMirror-content li {\n  position: relative;\n  pointer-events: none; /* Don't do weird stuff with marker clicks */\n}\n.ProseMirror-content li > * {\n  pointer-events: auto;\n}\n\nli.ProseMirror-selectednode {\n  outline: none;\n}\n\nli.ProseMirror-selectednode:after {\n  content: \"\";\n  position: absolute;\n  left: -32px;\n  right: -2px; top: -2px; bottom: -2px;\n  border: 2px solid #8cf;\n  pointer-events: none;\n}\n\n");
-},{"../dom":23}],29:[function(require,module,exports){
+},{"../dom":24}],30:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5560,7 +6005,7 @@ function scanText(start, end) {
     cur = cur.firstChild || nodeAfter(cur);
   }
 }
-},{"../format":42,"../model":50,"../transform/tree":64,"./dompos":30}],30:[function(require,module,exports){
+},{"../format":43,"../model":51,"../transform/tree":65,"./dompos":31}],31:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5937,7 +6382,7 @@ function handleNodeClick(pm, type, event, direct) {
     }
   }
 }
-},{"../dom":23,"../model":50,"../util/error":67}],31:[function(require,module,exports){
+},{"../dom":24,"../model":51,"../util/error":68}],32:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6104,7 +6549,7 @@ function redraw(pm, dirty, doc, prev) {
   }
   scan(pm.content, doc, prev);
 }
-},{"../dom":23,"../format":42,"../model":50,"./dompos":30,"./main":35}],32:[function(require,module,exports){
+},{"../dom":24,"../format":43,"../model":51,"./dompos":31,"./main":36}],33:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6682,7 +7127,7 @@ var History = exports.History = function () {
 
   return History;
 }();
-},{"../model":50,"../transform":56}],33:[function(require,module,exports){
+},{"../model":51,"../transform":57}],34:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6777,7 +7222,7 @@ var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.Keymap = _browserkeymap2.default;
-},{"./base_commands":24,"./command":27,"./main":35,"./options":36,"./range":37,"./schema_commands":38,"./selection":39,"browserkeymap":20}],34:[function(require,module,exports){
+},{"./base_commands":25,"./command":28,"./main":36,"./options":37,"./range":38,"./schema_commands":39,"./selection":40,"browserkeymap":21}],35:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7378,7 +7823,7 @@ handlers.blur = function (pm) {
   // Fired when the editor loses focus.
   pm.signal("blur");
 };
-},{"../dom":23,"../format":42,"../model":50,"./capturekeys":25,"./domchange":29,"./dompos":30,"./selection":39,"browserkeymap":20}],35:[function(require,module,exports){
+},{"../dom":24,"../format":43,"../model":51,"./capturekeys":26,"./domchange":30,"./dompos":31,"./selection":40,"browserkeymap":21}],36:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8157,7 +8602,7 @@ var EditorTransform = function (_Transform) {
 
   return EditorTransform;
 }(_transform.Transform);
-},{"../dom":23,"../format":42,"../model":50,"../transform":56,"../util/error":67,"../util/event":68,"../util/map":69,"../util/sortedinsert":71,"./css":28,"./dompos":30,"./draw":31,"./history":32,"./input":34,"./options":36,"./range":37,"./selection":39,"browserkeymap":20}],36:[function(require,module,exports){
+},{"../dom":24,"../format":43,"../model":51,"../transform":57,"../util/error":68,"../util/event":69,"../util/map":70,"../util/sortedinsert":72,"./css":29,"./dompos":31,"./draw":32,"./history":33,"./input":35,"./options":37,"./range":38,"./selection":40,"browserkeymap":21}],37:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8279,7 +8724,7 @@ function setOption(pm, name, value) {
   pm.options[name] = value;
   if (desc.update) desc.update(pm, value, old, false);
 }
-},{"../model":50,"../ui/prompt":65,"../util/error":67,"./command":27}],37:[function(require,module,exports){
+},{"../model":51,"../ui/prompt":66,"../util/error":68,"./command":28}],38:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8479,7 +8924,7 @@ var RangeTracker = function () {
 
   return RangeTracker;
 }();
-},{"../util/event":68}],38:[function(require,module,exports){
+},{"../util/event":69}],39:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -8813,7 +9258,7 @@ _model.HorizontalRule.register("command", "insert", {
   keys: ["Mod-Shift--"],
   menu: { group: "insert", rank: 70, display: { type: "label", label: "Horizontal rule" } }
 });
-},{"../format":42,"../model":50,"./command":27}],39:[function(require,module,exports){
+},{"../format":43,"../model":51,"./command":28}],40:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9289,7 +9734,7 @@ function verticalMotionLeavesTextblock(pm, pos, dir) {
   }
   return true;
 }
-},{"../dom":23,"../model":50,"../util/error":67,"./dompos":30}],40:[function(require,module,exports){
+},{"../dom":24,"../model":51,"../util/error":68,"./dompos":31}],41:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9746,7 +10191,7 @@ _model.StrongMark.register("parseDOMStyle", "font-weight", {
 });
 
 _model.CodeMark.register("parseDOM", "code", { parse: "mark" });
-},{"../model":50,"../util/sortedinsert":71,"./register":43}],41:[function(require,module,exports){
+},{"../model":51,"../util/sortedinsert":72,"./register":44}],42:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9778,7 +10223,7 @@ function fromText(schema, text) {
 }
 
 (0, _register.defineSource)("text", fromText);
-},{"./register":43}],42:[function(require,module,exports){
+},{"./register":44}],43:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9877,7 +10322,7 @@ Object.defineProperty(exports, "toText", {
     return _to_text.toText;
   }
 });
-},{"./from_dom":40,"./from_text":41,"./register":43,"./to_dom":44,"./to_text":45}],43:[function(require,module,exports){
+},{"./from_dom":41,"./from_text":42,"./register":44,"./to_dom":45,"./to_text":46}],44:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9945,7 +10390,7 @@ function defineSource(format, func) {
 defineSource("json", function (schema, json) {
   return schema.nodeFromJSON(json);
 });
-},{"../util/error":67}],44:[function(require,module,exports){
+},{"../util/error":68}],45:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10233,7 +10678,7 @@ def(_model.LinkMark, function (mark, s) {
   return s.elt("a", { href: mark.attrs.href,
     title: mark.attrs.title });
 });
-},{"../model":50,"./register":43}],45:[function(require,module,exports){
+},{"../model":51,"./register":44}],46:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10277,7 +10722,7 @@ function toText(doc) {
 }
 
 (0, _register.defineTarget)("text", toText);
-},{"../model":50,"./register":43}],46:[function(require,module,exports){
+},{"../model":51,"./register":44}],47:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10714,7 +11159,7 @@ var defaultSpec = new _schema.SchemaSpec({
 // :: Schema
 // ProseMirror's default document schema.
 var defaultSchema = exports.defaultSchema = new _schema.Schema(defaultSpec);
-},{"./schema":54}],47:[function(require,module,exports){
+},{"./schema":55}],48:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10811,7 +11256,7 @@ function findDiffEnd(a, b) {
   }
   return { a: new _pos.Pos(pathA, offA), b: new _pos.Pos(pathB, offB) };
 }
-},{"./pos":53}],48:[function(require,module,exports){
+},{"./pos":54}],49:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10840,7 +11285,7 @@ var ModelError = exports.ModelError = function (_ProseMirrorError) {
 
   return ModelError;
 }(_error.ProseMirrorError);
-},{"../util/error":67}],49:[function(require,module,exports){
+},{"../util/error":68}],50:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11551,7 +11996,7 @@ if (typeof Symbol != "undefined") {
     return this;
   };
 }
-},{"./error":48}],50:[function(require,module,exports){
+},{"./error":49}],51:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11791,7 +12236,7 @@ Object.defineProperty(exports, "ModelError", {
                 return _error.ModelError;
         }
 });
-},{"./defaultschema":46,"./diff":47,"./error":48,"./fragment":49,"./mark":51,"./node":52,"./pos":53,"./schema":54}],51:[function(require,module,exports){
+},{"./defaultschema":47,"./diff":48,"./error":49,"./fragment":50,"./mark":52,"./node":53,"./pos":54,"./schema":55}],52:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11923,7 +12368,7 @@ var Mark = exports.Mark = function () {
 }();
 
 var empty = [];
-},{}],52:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12528,7 +12973,7 @@ function wrapMarks(marks, str) {
     str = marks[i].type.name + "(" + str + ")";
   }return str;
 }
-},{"./fragment":49,"./mark":51,"./pos":53}],53:[function(require,module,exports){
+},{"./fragment":50,"./mark":52,"./pos":54}],54:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12752,7 +13197,7 @@ var Pos = exports.Pos = function () {
 
   return Pos;
 }();
-},{"./error":48}],54:[function(require,module,exports){
+},{"./error":49}],55:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13763,7 +14208,7 @@ var Schema = function () {
 }();
 
 exports.Schema = Schema;
-},{"../util/error":67,"../util/obj":70,"./fragment":49,"./mark":51,"./node":52}],55:[function(require,module,exports){
+},{"../util/error":68,"../util/obj":71,"./fragment":50,"./mark":52,"./node":53}],56:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14049,7 +14494,7 @@ _transform.Transform.prototype.setNodeType = function (pos, type, attrs) {
   this.step("ancestor", new _model.Pos(path, 0), new _model.Pos(path, node.size), null, { depth: 1, types: [type], attrs: [attrs] });
   return this;
 };
-},{"../model":50,"./map":58,"./step":62,"./transform":63,"./tree":64}],56:[function(require,module,exports){
+},{"../model":51,"./map":59,"./step":63,"./transform":64,"./tree":65}],57:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14137,7 +14582,7 @@ require("./mark");
 require("./split");
 
 require("./replace");
-},{"./ancestor":55,"./join":57,"./map":58,"./mark":59,"./replace":60,"./split":61,"./step":62,"./transform":63}],57:[function(require,module,exports){
+},{"./ancestor":56,"./join":58,"./map":59,"./mark":60,"./replace":61,"./split":62,"./step":63,"./transform":64}],58:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14219,7 +14664,7 @@ _transform.Transform.prototype.join = function (at) {
   this.step("join", new _model.Pos(at.path.concat(at.offset - 1), parent.child(at.offset - 1).size), new _model.Pos(at.path.concat(at.offset), 0));
   return this;
 };
-},{"../model":50,"./map":58,"./step":62,"./transform":63}],58:[function(require,module,exports){
+},{"../model":51,"./map":59,"./step":63,"./transform":64}],59:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14539,7 +14984,7 @@ var Remapping = exports.Remapping = function () {
 
   return Remapping;
 }();
-},{"../model":50}],59:[function(require,module,exports){
+},{"../model":51}],60:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -14718,7 +15163,7 @@ _transform.Transform.prototype.clearMarkup = function (from, to, newParent) {
     this.step(delSteps[i]);
   }return this;
 };
-},{"../model":50,"./step":62,"./transform":63,"./tree":64}],60:[function(require,module,exports){
+},{"../model":51,"./step":63,"./transform":64,"./tree":65}],61:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15046,7 +15491,7 @@ _transform.Transform.prototype.insertText = function (pos, text) {
 _transform.Transform.prototype.insertInline = function (pos, node) {
   return this.insert(pos, node.mark(this.doc.marksAt(pos)));
 };
-},{"../model":50,"./map":58,"./step":62,"./transform":63,"./tree":64}],61:[function(require,module,exports){
+},{"../model":51,"./map":59,"./step":63,"./transform":64,"./tree":65}],62:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -15135,7 +15580,7 @@ _transform.Transform.prototype.splitIfNeeded = function (pos) {
   }
   return this;
 };
-},{"../model":50,"./map":58,"./step":62,"./transform":63}],62:[function(require,module,exports){
+},{"../model":51,"./map":59,"./step":63,"./transform":64}],63:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15322,7 +15767,7 @@ var StepResult = exports.StepResult = function StepResult(doc) {
 };
 
 var steps = Object.create(null);
-},{"../model":50,"../util/error":67,"./map":58}],63:[function(require,module,exports){
+},{"../model":51,"../util/error":68,"./map":59}],64:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15427,7 +15872,7 @@ var Transform = function () {
 }();
 
 exports.Transform = Transform;
-},{"./map":58,"./step":62}],64:[function(require,module,exports){
+},{"./map":59,"./step":63}],65:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15521,7 +15966,7 @@ function samePathDepth(a, b) {
     if (i == a.path.length || i == b.path.length || a.path[i] != b.path[i]) return i;
   }
 }
-},{"../model":50}],65:[function(require,module,exports){
+},{"../model":51}],66:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15817,7 +16262,7 @@ function openPrompt(pm, content, options) {
 }
 
 (0, _dom.insertCSS)("\n.ProseMirror-prompt {\n  background: white;\n  padding: 2px 6px 2px 15px;\n  border: 1px solid silver;\n  position: absolute;\n  border-radius: 3px;\n  z-index: 11;\n}\n\n.ProseMirror-prompt input[type=\"text\"],\n.ProseMirror-prompt textarea {\n  background: #eee;\n  border: none;\n  outline: none;\n}\n\n.ProseMirror-prompt input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n.ProseMirror-prompt-close {\n  position: absolute;\n  left: 2px; top: 1px;\n  color: #666;\n  border: none; background: transparent; padding: 0;\n}\n\n.ProseMirror-prompt-close:after {\n  content: \"✕\";\n  font-size: 12px;\n}\n\n.ProseMirror-invalid {\n  background: #ffc;\n  border: 1px solid #cc7;\n  border-radius: 4px;\n  padding: 5px 10px;\n  position: absolute;\n  min-width: 10em;\n}\n");
-},{"../dom":23,"../util/error":67}],66:[function(require,module,exports){
+},{"../dom":24,"../util/error":68}],67:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15977,7 +16422,7 @@ var UpdateScheduler = exports.UpdateScheduler = function () {
 
   return UpdateScheduler;
 }();
-},{}],67:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16059,7 +16504,7 @@ function functionName(f) {
   var match = /^function (\w+)/.exec(f.toString());
   return match && match[1];
 }
-},{}],68:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16176,7 +16621,7 @@ function eventMixin(ctor) {
     if (methods.hasOwnProperty(prop)) proto[prop] = methods[prop];
   }
 }
-},{}],69:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16232,7 +16677,7 @@ var Map = exports.Map = window.Map || function () {
 
   return _class;
 }();
-},{}],70:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16245,7 +16690,7 @@ function copyObj(obj, base) {
     copy[prop] = obj[prop];
   }return copy;
 }
-},{}],71:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16258,4 +16703,4 @@ function sortedInsert(array, elt, compare) {
     if (compare(array[i], elt) > 0) break;
   }array.splice(i, 0, elt);
 }
-},{}]},{},[1]);
+},{}]},{},[20]);

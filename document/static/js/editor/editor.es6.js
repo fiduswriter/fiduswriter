@@ -12,6 +12,7 @@ import {updateUI} from "./es6_modules/update-ui"
 import {ModComments} from "./es6_modules/comments/mod"
 import {ModFootnotes} from "./es6_modules/footnotes/mod"
 import {ModCollab} from "./es6_modules/collab/mod"
+import {ModTools} from "./es6_modules/tools/mod"
 import {ModServerCommunications} from "./es6_modules/server-communications"
 
 export class Editor {
@@ -45,6 +46,7 @@ export class Editor {
         this.pm = this.makeEditor(document.getElementById('document-editable'))
         new ModFootnotes(this)
         new ModCollab(this)
+        new ModTools(this)
         new UpdateScheduler(this.pm, "selectionChange change activeMarkChange blur focus setDoc", function() {
             updateUI(that)
         })

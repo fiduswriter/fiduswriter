@@ -419,7 +419,16 @@ jQuery(document).ready(function() {
     });
     // Tools
     jQuery(document).on('mousedown', "#header-navigation .tools-item:not(.disabled)", function() {
-        toolsHelpers.toolsEventHandler(jQuery(this).data('function'));
+
+          switch(jQuery(this).data('function')) {
+              case 'wordcounter':
+                  theEditor.mod.tools.wordCount.wordCountDialog();
+                  break;
+              case 'showshortcuts':
+                  $().showShortcuts();
+                  break;
+          };
+
         return false;
     });
 

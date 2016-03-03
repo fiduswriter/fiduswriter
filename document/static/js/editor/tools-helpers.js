@@ -28,37 +28,46 @@
         toolsHelpers = {};
 
 
+    toolsHelpers.countWords = function () {
+        var textContent = theEditor.pm.doc.textContent,
+            footnoteContent = theEditor.mod.footnotes.fnPm.doc.textContent
+            bibliographyContent = document.getElementById('document-bibliography').textContent,
+            wholeContent = textContent + ' ' + footnoteContent + ' ' + bibliographyContent,
+            numChars = wholeContent.length - 2; // Subtract two for added spaces
+
+        wholeContent = wholeContent.replace(/(^\s*)|(\s*$)/gi,"");
+        wholeContent = wholeContent.replace(/[ ]{2,}/gi," ");
+        wholeContent = wholeContent.replace(/\n /,"\n");
+        wholeContent = wholeContent.split(' ');
+
+        var numWords = wholeContent.length;
+        var numNoSpace = wholeContent.join('').length;
+
+        return {
+            numWords: numWords,
+            numNoSpace: numNoSpace,
+            numChars: numChars
+        }
+    }
+
   /** Calculates words and characters of document and displays a dialog with the results.
    * @function wordCounter
   * @memberof toolsHelpers
   */
     toolsHelpers.wordCounter = function() {
-        var text_content = document.getElementById('document-editable').textContent,
-            bibliography_content = document.getElementById('document-bibliography').textContent,
-            whole_content = text_content + ' ' + bibliography_content,
-            num_pages = jQuery('#pagination-layout .pagination-page').size(),
-            num_words,
-            num_chars = text_content.length + bibliography_content.length,
-            num_no_space;
 
-        whole_content = whole_content.replace(/(^\s*)|(\s*$)/gi,"");
-        whole_content = whole_content.replace(/[ ]{2,}/gi," ");
-        whole_content = whole_content.replace(/\n /,"\n");
-        whole_content = whole_content.split(' ');
 
-        num_words = whole_content.length;
-        num_no_space = whole_content.join('').length;
+        var stats = toolsHelpers.countWords()
 
-        var diaButtons = {'Close': function() {
+        diaButtons = {'Close': function() {
             jQuery('#word-counter-dialog').dialog('close');
         }};
 
         jQuery('body').append(tmp_tools_word_counter({
             'dialogHeader': gettext('Word counter'),
-            'pages': num_pages,
-            'words': num_words,
-            'chars_no_space': num_no_space,
-            'chars': num_chars
+            'words': stats.numWords,
+            'chars_no_space': stats.numNoSpace,
+            'chars': stats.numChars
         }));
 
         jQuery('#word-counter-dialog').dialog({
@@ -67,8 +76,8 @@
             modal : true,
             buttons : diaButtons,
             create : function () {
-                var $the_dialog = $(this).closest(".ui-dialog");
-                $the_dialog.find(".ui-dialog-buttonset .ui-button:eq(0)").addClass("fw-button fw-orange");
+                var theDialog = $(this).closest(".ui-dialog");
+                theDialog.find(".ui-dialog-buttonset .ui-button:eq(0)").addClass("fw-button fw-orange");
             },
 
             close : function() {

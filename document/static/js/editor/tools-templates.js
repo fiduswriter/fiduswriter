@@ -31,10 +31,6 @@ var tmp_tools_word_counter = _.template('<div id="word-counter-dialog" title="<%
             </tr></thead>\
             <tbody class="fw-word-counter-tbody">\
                 <tr>\
-                    <td>' + gettext('Pages') + '</td>\
-                    <td><%= pages %></td>\
-                </tr>\
-                <tr>\
                     <td>' + gettext('Words') + '</td>\
                     <td><%= words %></td>\
                 </tr>\

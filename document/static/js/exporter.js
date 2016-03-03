@@ -852,7 +852,7 @@ var FW_FILETYPE_VERSION = "1.2";
             images) {
             // switch to user's own ImageDB and BibDB:
             if (window.hasOwnProperty('theEditor')) {
-                theEditor.doc.owner = theUser;
+                theEditor.doc.owner = theEditor.user;
                 delete ImageDB;
                 delete BibDB;
             }

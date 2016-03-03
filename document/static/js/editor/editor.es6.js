@@ -40,6 +40,7 @@ export class Editor {
             'changed': false
         }
         this.doc = {}
+        this.user = false
         //this.init()
     }
 
@@ -279,9 +280,9 @@ export class Editor {
     receiveDocument(data) {
         editorHelpers.copyDocumentValues(data.document, data.document_values)
         if (data.hasOwnProperty('user')) {
-            theUser = data.user
+            this.user = data.user
         } else {
-            theUser = this.doc.owner
+            this.user = this.doc.owner
         }
         usermediaHelpers.init(function(){
             theEditor.update()

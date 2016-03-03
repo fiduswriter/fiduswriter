@@ -101,7 +101,6 @@
 
     serverCommunications.bind = function () {
         var pathnameParts = window.location.pathname.split('/');
-        window.theUser = undefined;
         window.documentId = parseInt(pathnameParts[pathnameParts.length -
             2], 10);
 

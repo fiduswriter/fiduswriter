@@ -82,11 +82,16 @@ export class ModCommentInteractions {
     // Create a new comment as the current user, and mark it as active.
     createNewComment() {
         let that = this
-        let id = this.mod.store.addComment(theUser.id, theUser.name, theUser.avatar, new Date().getTime(), '')
+        let id = this.mod.store.addComment(
+            this.mod.editor.user.id,
+            this.mod.editor.user.name,
+            this.mod.editor.user.avatar, 
+            new Date().getTime(),
+            '')
         this.mod.layout.deactivateAll()
         this.mod.layout.activeCommentId = id
         editorHelpers.documentHasChanged()
-        let layoutComments = new UpdateScheduler(this.mod.pm, "flush", function() {
+        let layoutComments = new UpdateScheduler(this.mod.editor.pm, "flush", function() {
             layoutComments.detach()
             that.mod.layout.layoutComments()
         })
@@ -155,9 +160,9 @@ export class ModCommentInteractions {
         let answer = {
             commentId: commentId,
             answer: answerText,
-            user: theUser.id,
-            userName: theUser.name,
-            userAvatar: theUser.avatar,
+            user: this.mod.editor.user.id,
+            userName: this.mod.editor.user.name,
+            userAvatar: this.mod.editor.user.avatar,
             date: new Date().getTime()
         }
 

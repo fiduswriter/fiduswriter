@@ -50,7 +50,7 @@ var tmp_comments = _.template(
                 </div>\
             </div>\
             <% } %>\
-            <% if(comment.id===theEditor.mod.comments.layout.activeCommentId && (comment.user===theUser.id || theEditor.documentValues.is_owner)) { %>\
+            <% if(comment.id===theEditor.mod.comments.layout.activeCommentId && (comment.user===theEditor.user.id || theEditor.documentValues.is_owner)) { %>\
                 <span class="delete-comment-all delete-comment icon-cancel-circle" data-id="<%= comment.id %>"></span>\
             <% } %>\
             <% } %>\
@@ -77,7 +77,7 @@ var tmp_single_comment = _.template(
     '</span>\
             </div>\
         </div>\
-        <% if(active && comment.user===theUser.id) { %>\
+        <% if(active && comment.user===theEditor.user.id) { %>\
         <p class="comment-controls">\
             <span class="edit-comment">' +
     gettext("Edit") +
@@ -112,7 +112,7 @@ var tmp_answer_comment = _.template(
                 <div class="comment-text-wrapper">\
                     <p class="comment-p"><%= answer.answer %></p>\
                 </div>\
-            <% if(active && (answer.user===theUser.id || theEditor.documentValues.is_owner)) { %>\
+            <% if(active && (answer.user===theEditor.user.id || theEditor.documentValues.is_owner)) { %>\
                 <p class="comment-controls">\
                     <span class="edit-comment-answer" data-id="<%= answer.commentId %>" data-answer="<%= answer.id %>">' + gettext("Edit") +'</span>\
                     <span class="delete-comment-answer" data-id="<%= answer.commentId %>" data-answer="<%= answer.id %>">' +

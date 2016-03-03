@@ -377,11 +377,19 @@ var FW_FILETYPE_VERSION = 1.2, MIN_FW_FILETYPE_VERSION = 1.1, MAX_FW_FILETYPE_VE
                         titleChanged: false
                     }
                     aDocument.id = data['document_id'];
-                    aDocument.owner = {
-                        id: theUser.id,
-                        name: theUser.name,
-                        avatar: theUser.avatar
-                    },
+                    if (window.theEditor) {
+                        aDocument.owner = {
+                            id: theEditor.user.id,
+                            name: theEditor.user.name,
+                            avatar: theEditor.user.avatar
+                        };
+                    } else {
+                        aDocument.owner = {
+                            id: theUser.id,
+                            name: theUser.name,
+                            avatar: theUser.avatar
+                        };
+                    }
                     aDocument.version = 0;
                     aDocument.comment_version = 0;
                     aDocument.added = data['added'];

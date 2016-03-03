@@ -60,6 +60,7 @@ var Editor = exports.Editor = (function () {
             'changed': false
         };
         this.doc = {};
+        this.user = false;
         //this.init()
     }
 
@@ -308,9 +309,9 @@ var Editor = exports.Editor = (function () {
         value: function receiveDocument(data) {
             editorHelpers.copyDocumentValues(data.document, data.document_values);
             if (data.hasOwnProperty('user')) {
-                theUser = data.user;
+                this.user = data.user;
             } else {
-                theUser = this.doc.owner;
+                this.user = this.doc.owner;
             }
             usermediaHelpers.init(function () {
                 theEditor.update();
@@ -594,11 +595,11 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
         key: "createNewComment",
         value: function createNewComment() {
             var that = this;
-            var id = this.mod.store.addComment(theUser.id, theUser.name, theUser.avatar, new Date().getTime(), '');
+            var id = this.mod.store.addComment(this.mod.editor.user.id, this.mod.editor.user.name, this.mod.editor.user.avatar, new Date().getTime(), '');
             this.mod.layout.deactivateAll();
             this.mod.layout.activeCommentId = id;
             editorHelpers.documentHasChanged();
-            var layoutComments = new _update.UpdateScheduler(this.mod.pm, "flush", function () {
+            var layoutComments = new _update.UpdateScheduler(this.mod.editor.pm, "flush", function () {
                 layoutComments.detach();
                 that.mod.layout.layoutComments();
             });
@@ -674,9 +675,9 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
             var answer = {
                 commentId: commentId,
                 answer: answerText,
-                user: theUser.id,
-                userName: theUser.name,
-                userAvatar: theUser.avatar,
+                user: this.mod.editor.user.id,
+                userName: this.mod.editor.user.name,
+                userAvatar: this.mod.editor.user.avatar,
                 date: new Date().getTime()
             };
 

@@ -97,7 +97,7 @@ export class ModServerCommunications {
     receive(data) {
         switch (data.type) {
             case 'chat':
-                chatHelpers.newMessage(data)
+                this.editor.mod.collab.chat.newMessage(data)
                 break
             case 'connections':
                 this.editor.mod.collab.updateParticipantList(data.participant_list)

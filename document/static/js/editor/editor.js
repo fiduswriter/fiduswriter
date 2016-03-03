@@ -334,7 +334,184 @@ var theEditor = new Editor();
 
 window.theEditor = theEditor;
 
-},{"./es6_modules/collab/mod":3,"./es6_modules/comments/mod":6,"./es6_modules/footnotes/mod":10,"./es6_modules/schema":11,"./es6_modules/server-communications":12,"./es6_modules/update-ui":13,"prosemirror/dist/collab":15,"prosemirror/dist/edit/main":29,"prosemirror/dist/format":36,"prosemirror/dist/ui/update":60}],2:[function(require,module,exports){
+},{"./es6_modules/collab/mod":4,"./es6_modules/comments/mod":8,"./es6_modules/footnotes/mod":12,"./es6_modules/schema":13,"./es6_modules/server-communications":14,"./es6_modules/update-ui":15,"prosemirror/dist/collab":17,"prosemirror/dist/edit/main":31,"prosemirror/dist/format":38,"prosemirror/dist/ui/update":62}],2:[function(require,module,exports){
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.ModCollabChat = undefined;
+
+var _templates = require("./templates");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/*
+* Functions for chat between users who access a document simultaneously.
+*/
+
+var ModCollabChat = exports.ModCollabChat = (function () {
+    function ModCollabChat(mod) {
+        _classCallCheck(this, ModCollabChat);
+
+        mod.chat = this;
+        this.mod = mod;
+        this.currentlyFlashing = false;
+        this.focus = true;
+        this.init();
+    }
+
+    _createClass(ModCollabChat, [{
+        key: "beep",
+        value: function beep() {
+            var notification = jQuery('#chat-notification')[0];
+            notification.play();
+        }
+    }, {
+        key: "flashtab",
+        value: function flashtab(messageTitle) {
+            if (this.currentlyFlashing) {
+                return false;
+            }
+            var origTitle = document.title,
+                that = this;
+
+            this.currentlyFlashing = true;
+
+            var changeDocumentTitle = setInterval(function () {
+                if (this.focus) {
+                    clearInterval(changeDocumentTitle);
+                    document.title = origTitle;
+                    that.currentlyFlashing = false;
+                } else {
+                    document.title = document.title === origTitle ? messageTitle : origTitle;
+                }
+            }, 500);
+        }
+    }, {
+        key: "newMessage",
+        value: function newMessage(message) {
+            var existing = jQuery("#m" + message.id);
+            if (existing.length > 0) return;
+            var node = jQuery((0, _templates.messageTemplate)({
+                message: message,
+                participants: this.mod.participants
+            }));
+            node.hide();
+
+            var chatContainer = jQuery("#chat-container");
+            chatContainer.append(node);
+            if (!this.focus) {
+                this.beep();
+                this.flashtab(message.from + ': ' + message.body);
+            }
+            if (chatContainer.css('display') === 'none') {
+                jQuery("#chat").addClass('highlighted');
+            }
+            node.slideDown({
+                progress: function progress() {
+                    chatContainer[0].scrollTop = chatContainer[0].scrollHeight;
+                }
+            });
+        }
+    }, {
+        key: "updateParticipantList",
+        value: function updateParticipantList(participants) {
+
+            // If only one machine is connected and nothing has been chatted, don't show chat
+            if (participants.length === 1 && jQuery('#chat-container .message').length === 0) {
+                jQuery('#chat').css('display', 'none');
+                jQuery('#current-editors').css('display', 'none');
+            } else {
+                jQuery('#current-editors').html((0, _templates.participantListTemplate)({
+                    participants: this.mod.participants
+                }));
+                jQuery('#chat').css('display', 'block');
+                jQuery('#current-editors').css('display', 'block');
+            }
+        }
+    }, {
+        key: "sendMessage",
+        value: function sendMessage(messageText) {
+            this.mod.editor.mod.serverCommunications.send({
+                type: 'chat',
+                body: messageText
+            });
+        }
+    }, {
+        key: "init",
+        value: function init() {
+            var that = this;
+
+            jQuery(document.head).append('<style>\n#messageform.empty:before{content:"' + gettext('Send a message...') + '"}\n</style>');
+
+            jQuery(document).ready(function () {
+                jQuery('#chat-container').css('max-height', jQuery(window).height() - 200 + 'px');
+
+                jQuery('#chat .resize-button').on("click", function () {
+                    if (jQuery(this).hasClass('icon-angle-double-down')) {
+                        jQuery(this).removeClass('icon-angle-double-down');
+                        jQuery(this).addClass('icon-angle-double-up');
+                        jQuery('#chat-container,#messageform').slideUp();
+                    } else {
+                        jQuery(this).removeClass('icon-angle-double-up');
+                        jQuery(this).addClass('icon-angle-double-down');
+                        jQuery('#chat-container,#messageform').slideDown();
+                        if (jQuery(this).parent().hasClass('highlighted')) {
+                            jQuery(this).parent().animate({
+                                backgroundColor: "#fff"
+                            }, 1000, 'swing', function () {
+                                jQuery(this).removeClass('highlighted').css('background-color', '');
+                            });
+                        }
+                    }
+                });
+
+                jQuery("#messageform").on("focus", function () {
+                    jQuery(this).removeClass('empty');
+                });
+
+                jQuery("#messageform").on("blur", function () {
+                    if (jQuery(this).text().length === 0) {
+                        jQuery(this).addClass('empty');
+                    }
+                });
+
+                jQuery("#messageform").on("keypress", function (e) {
+                    if (e.keyCode == 13) {
+                        that.sendMessage(jQuery(this).text());
+                        jQuery(this).empty();
+                        return false;
+                    }
+                });
+            });
+
+            jQuery(window).on("blur focus", function (e) {
+                var prevType = jQuery(this).data("prevType");
+
+                if (prevType != e.type) {
+                    //  reduce double fire issues
+                    switch (e.type) {
+                        case "blur":
+                            that.focus = false;
+                            break;
+                        case "focus":
+                            that.focus = true;
+                            break;
+                    }
+                }
+
+                jQuery(this).data("prevType", e.type);
+            });
+        }
+    }]);
+
+    return ModCollabChat;
+})();
+
+},{"./templates":5}],3:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -576,7 +753,7 @@ var ModCollabDocChanges = exports.ModCollabDocChanges = (function () {
     return ModCollabDocChanges;
 })();
 
-},{"../schema":11,"prosemirror/dist/transform":50}],3:[function(require,module,exports){
+},{"../schema":13,"prosemirror/dist/transform":52}],4:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -587,6 +764,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.ModCollab = undefined;
 
 var _docChanges = require("./doc-changes");
+
+var _chat = require("./chat");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -599,27 +778,48 @@ var ModCollab = exports.ModCollab = (function () {
         this.participants = [];
         this.collaborativeMode = false;
         new _docChanges.ModCollabDocChanges(this);
+        new _chat.ModCollabChat(this);
     }
 
     _createClass(ModCollab, [{
         key: "updateParticipantList",
-        value: function updateParticipantList(participant_list) {
-            this.participants = _.map(_.groupBy(participant_list, 'id'), function (entry) {
+        value: function updateParticipantList(participants) {
+            this.participants = _.map(_.groupBy(participants, 'id'), function (entry) {
                 return entry[0];
             });
-            if (participant_list.length > 1) {
+            if (participants.length > 1) {
                 this.collaborativeMode = true;
-            } else if (participant_list.length === 1) {
+            } else if (participants.length === 1) {
                 this.collaborativeMode = false;
             }
-            chatHelpers.updateParticipantList(participant_list);
+            this.chat.updateParticipantList(participants);
         }
     }]);
 
     return ModCollab;
 })();
 
-},{"./doc-changes":2}],4:[function(require,module,exports){
+},{"./chat":2,"./doc-changes":3}],5:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var messageTemplate = exports.messageTemplate = _.template('\
+    <div class="message" id="m<%= message.id %>">\
+        <div class="comment-user">\
+            <% var theChatter = _.findWhere(participants, {id:message.from})%>\
+            <img class="comment-user-avatar" src="<%= theChatter.avatar %>">\
+            <h5 class="comment-user-name"><%= theChatter.name %></h5>\
+            <p class="comment-date"><%= jQuery.localizeDate(new Date()) %></p>\
+        </div>\
+        <%- message.body %>\
+    </div>\
+');
+
+var participantListTemplate = exports.participantListTemplate = _.template('<% _.each(participants, function(participant) { %><img src="<%= participant.avatar %>" alt="<%- participant.name %>" title="<%- participant.name %>"><% }); %>');
+
+},{}],6:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })(); /* Functions related to user interactions with comments */
@@ -816,7 +1016,7 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
     return ModCommentInteractions;
 })();
 
-},{"prosemirror/dist/ui/update":60}],5:[function(require,module,exports){
+},{"prosemirror/dist/ui/update":62}],7:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1098,7 +1298,7 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
     return ModCommentLayout;
 })();
 
-},{}],6:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1124,7 +1324,7 @@ var ModComments = exports.ModComments = function ModComments(editor, version) {
     new _interactions.ModCommentInteractions(this);
 };
 
-},{"./interactions":4,"./layout":5,"./store":7}],7:[function(require,module,exports){
+},{"./interactions":6,"./layout":7,"./store":9}],9:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1478,7 +1678,7 @@ function randomID() {
     return Math.floor(Math.random() * 0xffffffff);
 }
 
-},{"../schema":11,"prosemirror/dist/model":44,"prosemirror/dist/transform":50,"prosemirror/dist/ui/update":60,"prosemirror/dist/util/event":62}],8:[function(require,module,exports){
+},{"../schema":13,"prosemirror/dist/model":46,"prosemirror/dist/transform":52,"prosemirror/dist/ui/update":62,"prosemirror/dist/util/event":64}],10:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1599,7 +1799,7 @@ var ModFootnoteEditor = exports.ModFootnoteEditor = (function () {
     return ModFootnoteEditor;
 })();
 
-},{"../schema":11,"prosemirror/dist/format":36,"prosemirror/dist/model":44,"prosemirror/dist/transform":50}],9:[function(require,module,exports){
+},{"../schema":13,"prosemirror/dist/format":38,"prosemirror/dist/model":46,"prosemirror/dist/transform":52}],11:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1795,7 +1995,7 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = (function () {
     return ModFootnoteMarkers;
 })();
 
-},{"../schema":11,"prosemirror/dist/format":36,"prosemirror/dist/model":44}],10:[function(require,module,exports){
+},{"../schema":13,"prosemirror/dist/format":38,"prosemirror/dist/model":46}],12:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1845,7 +2045,7 @@ var ModFootnotes = exports.ModFootnotes = (function () {
     return ModFootnotes;
 })();
 
-},{"../schema":11,"./editor":8,"./markers":9,"prosemirror/dist/collab":15,"prosemirror/dist/edit/main":29}],11:[function(require,module,exports){
+},{"../schema":13,"./editor":10,"./markers":11,"prosemirror/dist/collab":17,"prosemirror/dist/edit/main":31}],13:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2643,7 +2843,7 @@ var fidusFnSchema = exports.fidusFnSchema = new _model.Schema(_model.defaultSche
     comment: CommentMark
 }));
 
-},{"prosemirror/dist/model":44}],12:[function(require,module,exports){
+},{"prosemirror/dist/model":46}],14:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2758,7 +2958,7 @@ var ModServerCommunications = exports.ModServerCommunications = (function () {
         value: function receive(data) {
             switch (data.type) {
                 case 'chat':
-                    chatHelpers.newMessage(data);
+                    this.editor.mod.collab.chat.newMessage(data);
                     break;
                 case 'connections':
                     this.editor.mod.collab.updateParticipantList(data.participant_list);
@@ -2803,7 +3003,7 @@ var ModServerCommunications = exports.ModServerCommunications = (function () {
     return ModServerCommunications;
 })();
 
-},{}],13:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3025,7 +3225,7 @@ function calculatePlaceHolderCss(pm, selectedElement) {
     }
 }
 
-},{"prosemirror/dist/model":44}],14:[function(require,module,exports){
+},{"prosemirror/dist/model":46}],16:[function(require,module,exports){
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
     module.exports = mod()
@@ -3197,7 +3397,7 @@ function calculatePlaceHolderCss(pm, selectedElement) {
   return Keymap
 })
 
-},{}],15:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3370,7 +3570,7 @@ var Collab = function () {
 }();
 
 (0, _event.eventMixin)(Collab);
-},{"../edit":27,"../util/error":61,"../util/event":62,"./rebase":16}],16:[function(require,module,exports){
+},{"../edit":29,"../util/error":63,"../util/event":64,"./rebase":18}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3398,7 +3598,7 @@ function rebaseSteps(doc, forward, steps, maps) {
   }
   return { doc: transform.doc, transform: transform, mapping: remap, positions: positions };
 }
-},{"../transform":50}],17:[function(require,module,exports){
+},{"../transform":52}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3477,7 +3677,7 @@ function ensureCSSAdded() {
     document.head.insertBefore(cssNode, document.head.firstChild);
   }
 }
-},{}],18:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4194,7 +4394,7 @@ baseCommands.redo = {
   },
   keys: ["Mod-Y", "Shift-Mod-Z"]
 };
-},{"../model":44,"../transform":50,"../util/error":61,"./char":20,"./dompos":24,"./selection":33}],19:[function(require,module,exports){
+},{"../model":46,"../transform":52,"../util/error":63,"./char":22,"./dompos":26,"./selection":35}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4264,7 +4464,7 @@ var keys = {
 if (_dom.browser.mac) keys["Ctrl-F"] = keys["Ctrl-B"] = keys["Ctrl-P"] = keys["Ctrl-N"] = keys["Alt-F"] = keys["Alt-B"] = keys["Ctrl-A"] = keys["Ctrl-E"] = keys["Ctrl-V"] = keys["goPageUp"] = ensureSelection;
 
 var captureKeys = exports.captureKeys = new _browserkeymap2.default(keys);
-},{"../dom":17,"./dompos":24,"./selection":33,"browserkeymap":14}],20:[function(require,module,exports){
+},{"../dom":19,"./dompos":26,"./selection":35,"browserkeymap":16}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4297,7 +4497,7 @@ function charCategory(ch) {
 function isExtendingChar(ch) {
   return ch.charCodeAt(0) >= 768 && extendingChar.test(ch);
 }
-},{}],21:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4906,13 +5106,13 @@ _model.NodeType.derivableCommands.insert = function (conf) {
     params: deriveParams(this, conf.params)
   };
 };
-},{"../dom":17,"../model":44,"../transform":50,"../util/error":61,"../util/obj":64,"../util/sortedinsert":65,"./base_commands":18,"browserkeymap":14}],22:[function(require,module,exports){
+},{"../dom":19,"../model":46,"../transform":52,"../util/error":63,"../util/obj":66,"../util/sortedinsert":67,"./base_commands":20,"browserkeymap":16}],24:[function(require,module,exports){
 "use strict";
 
 var _dom = require("../dom");
 
 (0, _dom.insertCSS)("\n\n.ProseMirror {\n  border: 1px solid silver;\n  position: relative;\n}\n\n.ProseMirror-content {\n  padding: 4px 8px 4px 14px;\n  white-space: pre-wrap;\n  line-height: 1.2;\n}\n\n.ProseMirror-drop-target {\n  position: absolute;\n  width: 1px;\n  background: #666;\n  display: none;\n}\n\n.ProseMirror-content ul.tight p, .ProseMirror-content ol.tight p {\n  margin: 0;\n}\n\n.ProseMirror-content ul, .ProseMirror-content ol {\n  padding-left: 30px;\n  cursor: default;\n}\n\n.ProseMirror-content blockquote {\n  padding-left: 1em;\n  border-left: 3px solid #eee;\n  margin-left: 0; margin-right: 0;\n}\n\n.ProseMirror-content pre {\n  white-space: pre-wrap;\n}\n\n.ProseMirror-selectednode {\n  outline: 2px solid #8cf;\n}\n\n.ProseMirror-nodeselection *::selection { background: transparent; }\n.ProseMirror-nodeselection *::-moz-selection { background: transparent; }\n\n.ProseMirror-content p:first-child,\n.ProseMirror-content h1:first-child,\n.ProseMirror-content h2:first-child,\n.ProseMirror-content h3:first-child,\n.ProseMirror-content h4:first-child,\n.ProseMirror-content h5:first-child,\n.ProseMirror-content h6:first-child {\n  margin-top: .3em;\n}\n\n/* Add space around the hr to make clicking it easier */\n\n.ProseMirror-content hr {\n  position: relative;\n  height: 6px;\n  border: none;\n}\n\n.ProseMirror-content hr:after {\n  content: \"\";\n  position: absolute;\n  left: 10px;\n  right: 10px;\n  top: 2px;\n  border-top: 2px solid silver;\n}\n\n.ProseMirror-content img {\n  cursor: default;\n}\n\n/* Make sure li selections wrap around markers */\n\n.ProseMirror-content li {\n  position: relative;\n  pointer-events: none; /* Don't do weird stuff with marker clicks */\n}\n.ProseMirror-content li > * {\n  pointer-events: auto;\n}\n\nli.ProseMirror-selectednode {\n  outline: none;\n}\n\nli.ProseMirror-selectednode:after {\n  content: \"\";\n  position: absolute;\n  left: -32px;\n  right: -2px; top: -2px; bottom: -2px;\n  border: 2px solid #8cf;\n  pointer-events: none;\n}\n\n");
-},{"../dom":17}],23:[function(require,module,exports){
+},{"../dom":19}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5114,7 +5314,7 @@ function scanText(start, end) {
     cur = cur.firstChild || nodeAfter(cur);
   }
 }
-},{"../format":36,"../model":44,"../transform/tree":58,"./dompos":24}],24:[function(require,module,exports){
+},{"../format":38,"../model":46,"../transform/tree":60,"./dompos":26}],26:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5491,7 +5691,7 @@ function handleNodeClick(pm, type, event, direct) {
     }
   }
 }
-},{"../dom":17,"../model":44,"../util/error":61}],25:[function(require,module,exports){
+},{"../dom":19,"../model":46,"../util/error":63}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5658,7 +5858,7 @@ function redraw(pm, dirty, doc, prev) {
   }
   scan(pm.content, doc, prev);
 }
-},{"../dom":17,"../format":36,"../model":44,"./dompos":24,"./main":29}],26:[function(require,module,exports){
+},{"../dom":19,"../format":38,"../model":46,"./dompos":26,"./main":31}],28:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6236,7 +6436,7 @@ var History = exports.History = function () {
 
   return History;
 }();
-},{"../model":44,"../transform":50}],27:[function(require,module,exports){
+},{"../model":46,"../transform":52}],29:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6331,7 +6531,7 @@ var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.Keymap = _browserkeymap2.default;
-},{"./base_commands":18,"./command":21,"./main":29,"./options":30,"./range":31,"./schema_commands":32,"./selection":33,"browserkeymap":14}],28:[function(require,module,exports){
+},{"./base_commands":20,"./command":23,"./main":31,"./options":32,"./range":33,"./schema_commands":34,"./selection":35,"browserkeymap":16}],30:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6932,7 +7132,7 @@ handlers.blur = function (pm) {
   // Fired when the editor loses focus.
   pm.signal("blur");
 };
-},{"../dom":17,"../format":36,"../model":44,"./capturekeys":19,"./domchange":23,"./dompos":24,"./selection":33,"browserkeymap":14}],29:[function(require,module,exports){
+},{"../dom":19,"../format":38,"../model":46,"./capturekeys":21,"./domchange":25,"./dompos":26,"./selection":35,"browserkeymap":16}],31:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7711,7 +7911,7 @@ var EditorTransform = function (_Transform) {
 
   return EditorTransform;
 }(_transform.Transform);
-},{"../dom":17,"../format":36,"../model":44,"../transform":50,"../util/error":61,"../util/event":62,"../util/map":63,"../util/sortedinsert":65,"./css":22,"./dompos":24,"./draw":25,"./history":26,"./input":28,"./options":30,"./range":31,"./selection":33,"browserkeymap":14}],30:[function(require,module,exports){
+},{"../dom":19,"../format":38,"../model":46,"../transform":52,"../util/error":63,"../util/event":64,"../util/map":65,"../util/sortedinsert":67,"./css":24,"./dompos":26,"./draw":27,"./history":28,"./input":30,"./options":32,"./range":33,"./selection":35,"browserkeymap":16}],32:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7833,7 +8033,7 @@ function setOption(pm, name, value) {
   pm.options[name] = value;
   if (desc.update) desc.update(pm, value, old, false);
 }
-},{"../model":44,"../ui/prompt":59,"../util/error":61,"./command":21}],31:[function(require,module,exports){
+},{"../model":46,"../ui/prompt":61,"../util/error":63,"./command":23}],33:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8033,7 +8233,7 @@ var RangeTracker = function () {
 
   return RangeTracker;
 }();
-},{"../util/event":62}],32:[function(require,module,exports){
+},{"../util/event":64}],34:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -8367,7 +8567,7 @@ _model.HorizontalRule.register("command", "insert", {
   keys: ["Mod-Shift--"],
   menu: { group: "insert", rank: 70, display: { type: "label", label: "Horizontal rule" } }
 });
-},{"../format":36,"../model":44,"./command":21}],33:[function(require,module,exports){
+},{"../format":38,"../model":46,"./command":23}],35:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8843,7 +9043,7 @@ function verticalMotionLeavesTextblock(pm, pos, dir) {
   }
   return true;
 }
-},{"../dom":17,"../model":44,"../util/error":61,"./dompos":24}],34:[function(require,module,exports){
+},{"../dom":19,"../model":46,"../util/error":63,"./dompos":26}],36:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9300,7 +9500,7 @@ _model.StrongMark.register("parseDOMStyle", "font-weight", {
 });
 
 _model.CodeMark.register("parseDOM", "code", { parse: "mark" });
-},{"../model":44,"../util/sortedinsert":65,"./register":37}],35:[function(require,module,exports){
+},{"../model":46,"../util/sortedinsert":67,"./register":39}],37:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9332,7 +9532,7 @@ function fromText(schema, text) {
 }
 
 (0, _register.defineSource)("text", fromText);
-},{"./register":37}],36:[function(require,module,exports){
+},{"./register":39}],38:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9431,7 +9631,7 @@ Object.defineProperty(exports, "toText", {
     return _to_text.toText;
   }
 });
-},{"./from_dom":34,"./from_text":35,"./register":37,"./to_dom":38,"./to_text":39}],37:[function(require,module,exports){
+},{"./from_dom":36,"./from_text":37,"./register":39,"./to_dom":40,"./to_text":41}],39:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9499,7 +9699,7 @@ function defineSource(format, func) {
 defineSource("json", function (schema, json) {
   return schema.nodeFromJSON(json);
 });
-},{"../util/error":61}],38:[function(require,module,exports){
+},{"../util/error":63}],40:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9787,7 +9987,7 @@ def(_model.LinkMark, function (mark, s) {
   return s.elt("a", { href: mark.attrs.href,
     title: mark.attrs.title });
 });
-},{"../model":44,"./register":37}],39:[function(require,module,exports){
+},{"../model":46,"./register":39}],41:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9831,7 +10031,7 @@ function toText(doc) {
 }
 
 (0, _register.defineTarget)("text", toText);
-},{"../model":44,"./register":37}],40:[function(require,module,exports){
+},{"../model":46,"./register":39}],42:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10268,7 +10468,7 @@ var defaultSpec = new _schema.SchemaSpec({
 // :: Schema
 // ProseMirror's default document schema.
 var defaultSchema = exports.defaultSchema = new _schema.Schema(defaultSpec);
-},{"./schema":48}],41:[function(require,module,exports){
+},{"./schema":50}],43:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10365,7 +10565,7 @@ function findDiffEnd(a, b) {
   }
   return { a: new _pos.Pos(pathA, offA), b: new _pos.Pos(pathB, offB) };
 }
-},{"./pos":47}],42:[function(require,module,exports){
+},{"./pos":49}],44:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10394,7 +10594,7 @@ var ModelError = exports.ModelError = function (_ProseMirrorError) {
 
   return ModelError;
 }(_error.ProseMirrorError);
-},{"../util/error":61}],43:[function(require,module,exports){
+},{"../util/error":63}],45:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11105,7 +11305,7 @@ if (typeof Symbol != "undefined") {
     return this;
   };
 }
-},{"./error":42}],44:[function(require,module,exports){
+},{"./error":44}],46:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11345,7 +11545,7 @@ Object.defineProperty(exports, "ModelError", {
                 return _error.ModelError;
         }
 });
-},{"./defaultschema":40,"./diff":41,"./error":42,"./fragment":43,"./mark":45,"./node":46,"./pos":47,"./schema":48}],45:[function(require,module,exports){
+},{"./defaultschema":42,"./diff":43,"./error":44,"./fragment":45,"./mark":47,"./node":48,"./pos":49,"./schema":50}],47:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11477,7 +11677,7 @@ var Mark = exports.Mark = function () {
 }();
 
 var empty = [];
-},{}],46:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12082,7 +12282,7 @@ function wrapMarks(marks, str) {
     str = marks[i].type.name + "(" + str + ")";
   }return str;
 }
-},{"./fragment":43,"./mark":45,"./pos":47}],47:[function(require,module,exports){
+},{"./fragment":45,"./mark":47,"./pos":49}],49:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12306,7 +12506,7 @@ var Pos = exports.Pos = function () {
 
   return Pos;
 }();
-},{"./error":42}],48:[function(require,module,exports){
+},{"./error":44}],50:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13317,7 +13517,7 @@ var Schema = function () {
 }();
 
 exports.Schema = Schema;
-},{"../util/error":61,"../util/obj":64,"./fragment":43,"./mark":45,"./node":46}],49:[function(require,module,exports){
+},{"../util/error":63,"../util/obj":66,"./fragment":45,"./mark":47,"./node":48}],51:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13603,7 +13803,7 @@ _transform.Transform.prototype.setNodeType = function (pos, type, attrs) {
   this.step("ancestor", new _model.Pos(path, 0), new _model.Pos(path, node.size), null, { depth: 1, types: [type], attrs: [attrs] });
   return this;
 };
-},{"../model":44,"./map":52,"./step":56,"./transform":57,"./tree":58}],50:[function(require,module,exports){
+},{"../model":46,"./map":54,"./step":58,"./transform":59,"./tree":60}],52:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13691,7 +13891,7 @@ require("./mark");
 require("./split");
 
 require("./replace");
-},{"./ancestor":49,"./join":51,"./map":52,"./mark":53,"./replace":54,"./split":55,"./step":56,"./transform":57}],51:[function(require,module,exports){
+},{"./ancestor":51,"./join":53,"./map":54,"./mark":55,"./replace":56,"./split":57,"./step":58,"./transform":59}],53:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13773,7 +13973,7 @@ _transform.Transform.prototype.join = function (at) {
   this.step("join", new _model.Pos(at.path.concat(at.offset - 1), parent.child(at.offset - 1).size), new _model.Pos(at.path.concat(at.offset), 0));
   return this;
 };
-},{"../model":44,"./map":52,"./step":56,"./transform":57}],52:[function(require,module,exports){
+},{"../model":46,"./map":54,"./step":58,"./transform":59}],54:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14093,7 +14293,7 @@ var Remapping = exports.Remapping = function () {
 
   return Remapping;
 }();
-},{"../model":44}],53:[function(require,module,exports){
+},{"../model":46}],55:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -14272,7 +14472,7 @@ _transform.Transform.prototype.clearMarkup = function (from, to, newParent) {
     this.step(delSteps[i]);
   }return this;
 };
-},{"../model":44,"./step":56,"./transform":57,"./tree":58}],54:[function(require,module,exports){
+},{"../model":46,"./step":58,"./transform":59,"./tree":60}],56:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14600,7 +14800,7 @@ _transform.Transform.prototype.insertText = function (pos, text) {
 _transform.Transform.prototype.insertInline = function (pos, node) {
   return this.insert(pos, node.mark(this.doc.marksAt(pos)));
 };
-},{"../model":44,"./map":52,"./step":56,"./transform":57,"./tree":58}],55:[function(require,module,exports){
+},{"../model":46,"./map":54,"./step":58,"./transform":59,"./tree":60}],57:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -14689,7 +14889,7 @@ _transform.Transform.prototype.splitIfNeeded = function (pos) {
   }
   return this;
 };
-},{"../model":44,"./map":52,"./step":56,"./transform":57}],56:[function(require,module,exports){
+},{"../model":46,"./map":54,"./step":58,"./transform":59}],58:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14876,7 +15076,7 @@ var StepResult = exports.StepResult = function StepResult(doc) {
 };
 
 var steps = Object.create(null);
-},{"../model":44,"../util/error":61,"./map":52}],57:[function(require,module,exports){
+},{"../model":46,"../util/error":63,"./map":54}],59:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14981,7 +15181,7 @@ var Transform = function () {
 }();
 
 exports.Transform = Transform;
-},{"./map":52,"./step":56}],58:[function(require,module,exports){
+},{"./map":54,"./step":58}],60:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15075,7 +15275,7 @@ function samePathDepth(a, b) {
     if (i == a.path.length || i == b.path.length || a.path[i] != b.path[i]) return i;
   }
 }
-},{"../model":44}],59:[function(require,module,exports){
+},{"../model":46}],61:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15371,7 +15571,7 @@ function openPrompt(pm, content, options) {
 }
 
 (0, _dom.insertCSS)("\n.ProseMirror-prompt {\n  background: white;\n  padding: 2px 6px 2px 15px;\n  border: 1px solid silver;\n  position: absolute;\n  border-radius: 3px;\n  z-index: 11;\n}\n\n.ProseMirror-prompt input[type=\"text\"],\n.ProseMirror-prompt textarea {\n  background: #eee;\n  border: none;\n  outline: none;\n}\n\n.ProseMirror-prompt input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n.ProseMirror-prompt-close {\n  position: absolute;\n  left: 2px; top: 1px;\n  color: #666;\n  border: none; background: transparent; padding: 0;\n}\n\n.ProseMirror-prompt-close:after {\n  content: \"✕\";\n  font-size: 12px;\n}\n\n.ProseMirror-invalid {\n  background: #ffc;\n  border: 1px solid #cc7;\n  border-radius: 4px;\n  padding: 5px 10px;\n  position: absolute;\n  min-width: 10em;\n}\n");
-},{"../dom":17,"../util/error":61}],60:[function(require,module,exports){
+},{"../dom":19,"../util/error":63}],62:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15531,7 +15731,7 @@ var UpdateScheduler = exports.UpdateScheduler = function () {
 
   return UpdateScheduler;
 }();
-},{}],61:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15613,7 +15813,7 @@ function functionName(f) {
   var match = /^function (\w+)/.exec(f.toString());
   return match && match[1];
 }
-},{}],62:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15730,7 +15930,7 @@ function eventMixin(ctor) {
     if (methods.hasOwnProperty(prop)) proto[prop] = methods[prop];
   }
 }
-},{}],63:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15786,7 +15986,7 @@ var Map = exports.Map = window.Map || function () {
 
   return _class;
 }();
-},{}],64:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15799,7 +15999,7 @@ function copyObj(obj, base) {
     copy[prop] = obj[prop];
   }return copy;
 }
-},{}],65:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

@@ -45,7 +45,7 @@
             chatHelpers.newMessage(data);
             break;
         case 'connections':
-            serverCommunications.updateParticipantList(data.participant_list);
+            theEditor.mod.collab.updateParticipantList(data.participant_list);
             if (theEditor.docInfo.control) {
                 theEditor.docInfo.sentHash = false;
             }
@@ -81,19 +81,6 @@
             theEditor.checkHash(data.diff_version, data.hash);
             break;
         }
-    };
-
-    serverCommunications.updateParticipantList = function (participant_list) {
-        window.uniqueParticipantList = _.map(_.groupBy(participant_list,
-            'id'), function (entry) {
-            return entry[0];
-        });
-        if (participant_list.length > 1 && (!theEditor.mod.collab.docChanges.collaborativeMode)) {
-            theEditor.mod.collab.docChanges.collaborativeMode = true;
-        } else if (participant_list.length === 1 && theEditor.mod.collab.docChanges.collaborativeMode) {
-            theEditor.mod.collab.docChanges.collaborativeMode = false;
-        }
-        chatHelpers.updateParticipantList(participant_list);
     };
 
     /** Whether the connection is established for the first time. */

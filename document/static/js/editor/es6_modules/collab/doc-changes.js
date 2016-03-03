@@ -8,7 +8,6 @@ export class ModCollabDocChanges {
 
         this.unconfirmedSteps = {}
         this.confirmStepsRequestCounter = 0
-        this.collaborativeMode = false
         this.awaitingDiffResponse = false
         this.receiving = false
         this.currentlyCheckingVersion = false

@@ -61,7 +61,7 @@
         '\
         <div class="message" id="m<%= id %>">\
             <div class="comment-user">\
-                <% var theChatter = _.findWhere(uniqueParticipantList, {id:from})%>\
+                <% var theChatter = _.findWhere(theEditor.mod.collab.participants, {id:from})%>\
                 <img class="comment-user-avatar" src="<%= theChatter.avatar %>">\
                 <h5 class="comment-user-name"><%= theChatter.name %></h5>\
                 <p class="comment-date"><%= jQuery.localizeDate(new Date()) %></p>\
@@ -108,7 +108,7 @@
         }
         else {
             jQuery('#current-editors').html(chatHelpers.participantListTemplate({
-                participants: window.uniqueParticipantList
+                participants: window.theEditor.mod.collab.participants
             }));
             jQuery('#chat').css('display', 'block');
             jQuery('#current-editors').css('display', 'block');

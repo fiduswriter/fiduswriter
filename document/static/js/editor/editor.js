@@ -355,7 +355,6 @@ var ModCollabDocChanges = exports.ModCollabDocChanges = (function () {
 
         this.unconfirmedSteps = {};
         this.confirmStepsRequestCounter = 0;
-        this.collaborativeMode = false;
         this.awaitingDiffResponse = false;
         this.receiving = false;
         this.currentlyCheckingVersion = false;
@@ -576,6 +575,8 @@ var ModCollabDocChanges = exports.ModCollabDocChanges = (function () {
 },{"../schema":11,"prosemirror/dist/transform":49}],3:[function(require,module,exports){
 "use strict";
 
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
@@ -585,13 +586,34 @@ var _docChanges = require("./doc-changes");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ModCollab = exports.ModCollab = function ModCollab(editor) {
-    _classCallCheck(this, ModCollab);
+var ModCollab = exports.ModCollab = (function () {
+    function ModCollab(editor) {
+        _classCallCheck(this, ModCollab);
 
-    editor.mod.collab = this;
-    this.editor = editor;
-    new _docChanges.ModCollabDocChanges(this);
-};
+        editor.mod.collab = this;
+        this.editor = editor;
+        this.participants = [];
+        this.collaborativeMode = false;
+        new _docChanges.ModCollabDocChanges(this);
+    }
+
+    _createClass(ModCollab, [{
+        key: "updateParticipantList",
+        value: function updateParticipantList(participant_list) {
+            this.participants = _.map(_.groupBy(participant_list, 'id'), function (entry) {
+                return entry[0];
+            });
+            if (participant_list.length > 1) {
+                this.collaborativeMode = true;
+            } else if (participant_list.length === 1) {
+                this.collaborativeMode = false;
+            }
+            chatHelpers.updateParticipantList(participant_list);
+        }
+    }]);
+
+    return ModCollab;
+})();
 
 },{"./doc-changes":2}],4:[function(require,module,exports){
 "use strict";

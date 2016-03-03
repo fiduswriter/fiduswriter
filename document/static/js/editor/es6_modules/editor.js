@@ -14,6 +14,7 @@ import {ModFootnotes} from "./footnotes/mod"
 import {ModCollab} from "./collab/mod"
 import {ModTools} from "./tools/mod"
 import {ModSettings} from "./settings/mod"
+import {ModMenus} from "./menus/mod"
 import {ModServerCommunications} from "./server-communications"
 
 export class Editor {
@@ -40,13 +41,23 @@ export class Editor {
         this.user = false
         new ModSettings(this)
         new ModServerCommunications(this)
-        //this.init()
+        this.init()
     }
 
     init() {
         let that = this
+
+        jQuery(document).ready(function() {
+            that.startEditor()
+            bibliographyHelpers.bindEvents()
+        })
+    }
+
+    startEditor() {
+        let that = this
         this.pm = this.makeEditor(document.getElementById('document-editable'))
         new ModFootnotes(this)
+        new ModMenus(this)
         new ModCollab(this)
         new ModTools(this)
         new UpdateScheduler(this.pm, "selectionChange change activeMarkChange blur focus setDoc", function() {
@@ -58,6 +69,32 @@ export class Editor {
         new UpdateScheduler(this.pm, "flush setDoc", mathHelpers.layoutEmptyEquationNodes)
         new UpdateScheduler(this.pm, "flush setDoc", mathHelpers.layoutEmptyDisplayEquationNodes)
         new UpdateScheduler(this.pm, "flush setDoc", citationHelpers.formatCitationsInDocIfNew)
+        this.setSaveTimers()
+    }
+
+    setSaveTimers() {
+        let that = this
+        // Set Auto-save to send the document every two minutes, if it has changed.
+        this.sendDocumentTimer = setInterval(function() {
+            if (that.docInfo && that.docInfo.changed) {
+                that.getUpdates(function() {
+                    that.sendDocumentUpdate()
+                })
+            }
+        }, 120000)
+
+        // Set Auto-save to send the title every 5 seconds, if it has changed.
+        this.sendDocumentTitleTimer = setInterval(function() {
+            if (that.docInfo && that.docInfo.titleChanged) {
+                that.docInfo.titleChanged = false
+                if (that.docInfo.control) {
+                    that.mod.serverCommunications.send({
+                        type: 'update_title',
+                        title: that.doc.title
+                    });
+                }
+            }
+        }, 10000)
     }
 
     makeEditor(where) {

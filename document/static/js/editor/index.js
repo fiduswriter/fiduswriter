@@ -419,7 +419,7 @@ var ModCollabDocChanges = exports.ModCollabDocChanges = (function () {
     return ModCollabDocChanges;
 })();
 
-},{"../schema":14,"prosemirror/dist/transform":60}],3:[function(require,module,exports){
+},{"../schema":17,"prosemirror/dist/transform":63}],3:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -682,7 +682,7 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
     return ModCommentInteractions;
 })();
 
-},{"prosemirror/dist/ui/update":70}],6:[function(require,module,exports){
+},{"prosemirror/dist/ui/update":73}],6:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1347,7 +1347,7 @@ function randomID() {
     return Math.floor(Math.random() * 0xffffffff);
 }
 
-},{"../schema":14,"prosemirror/dist/model":54,"prosemirror/dist/transform":60,"prosemirror/dist/ui/update":70,"prosemirror/dist/util/event":72}],9:[function(require,module,exports){
+},{"../schema":17,"prosemirror/dist/model":57,"prosemirror/dist/transform":63,"prosemirror/dist/ui/update":73,"prosemirror/dist/util/event":75}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1493,6 +1493,8 @@ var _mod4 = require("./tools/mod");
 
 var _mod5 = require("./settings/mod");
 
+var _mod6 = require("./menus/mod");
+
 var _serverCommunications = require("./server-communications");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1523,15 +1525,26 @@ var Editor = exports.Editor = (function () {
         this.user = false;
         new _mod5.ModSettings(this);
         new _serverCommunications.ModServerCommunications(this);
-        //this.init()
+        this.init();
     }
 
     _createClass(Editor, [{
         key: "init",
         value: function init() {
             var that = this;
+
+            jQuery(document).ready(function () {
+                that.startEditor();
+                bibliographyHelpers.bindEvents();
+            });
+        }
+    }, {
+        key: "startEditor",
+        value: function startEditor() {
+            var that = this;
             this.pm = this.makeEditor(document.getElementById('document-editable'));
             new _mod2.ModFootnotes(this);
+            new _mod6.ModMenus(this);
             new _mod3.ModCollab(this);
             new _mod4.ModTools(this);
             new _update.UpdateScheduler(this.pm, "selectionChange change activeMarkChange blur focus setDoc", function () {
@@ -1549,6 +1562,33 @@ var Editor = exports.Editor = (function () {
             new _update.UpdateScheduler(this.pm, "flush setDoc", mathHelpers.layoutEmptyEquationNodes);
             new _update.UpdateScheduler(this.pm, "flush setDoc", mathHelpers.layoutEmptyDisplayEquationNodes);
             new _update.UpdateScheduler(this.pm, "flush setDoc", citationHelpers.formatCitationsInDocIfNew);
+            this.setSaveTimers();
+        }
+    }, {
+        key: "setSaveTimers",
+        value: function setSaveTimers() {
+            var that = this;
+            // Set Auto-save to send the document every two minutes, if it has changed.
+            this.sendDocumentTimer = setInterval(function () {
+                if (that.docInfo && that.docInfo.changed) {
+                    that.getUpdates(function () {
+                        that.sendDocumentUpdate();
+                    });
+                }
+            }, 120000);
+
+            // Set Auto-save to send the title every 5 seconds, if it has changed.
+            this.sendDocumentTitleTimer = setInterval(function () {
+                if (that.docInfo && that.docInfo.titleChanged) {
+                    that.docInfo.titleChanged = false;
+                    if (that.docInfo.control) {
+                        that.mod.serverCommunications.send({
+                            type: 'update_title',
+                            title: that.doc.title
+                        });
+                    }
+                }
+            }, 10000);
         }
     }, {
         key: "makeEditor",
@@ -1843,7 +1883,7 @@ var Editor = exports.Editor = (function () {
     return Editor;
 })();
 
-},{"./collab/mod":3,"./comments/mod":7,"./footnotes/mod":13,"./schema":14,"./server-communications":15,"./settings/mod":17,"./tools/mod":19,"./update-ui":22,"prosemirror/dist/collab":25,"prosemirror/dist/edit/main":39,"prosemirror/dist/format":46,"prosemirror/dist/ui/update":70}],11:[function(require,module,exports){
+},{"./collab/mod":3,"./comments/mod":7,"./footnotes/mod":13,"./menus/mod":15,"./schema":17,"./server-communications":18,"./settings/mod":20,"./tools/mod":22,"./update-ui":25,"prosemirror/dist/collab":28,"prosemirror/dist/edit/main":42,"prosemirror/dist/format":49,"prosemirror/dist/ui/update":73}],11:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1964,7 +2004,7 @@ var ModFootnoteEditor = exports.ModFootnoteEditor = (function () {
     return ModFootnoteEditor;
 })();
 
-},{"../schema":14,"prosemirror/dist/format":46,"prosemirror/dist/model":54,"prosemirror/dist/transform":60}],12:[function(require,module,exports){
+},{"../schema":17,"prosemirror/dist/format":49,"prosemirror/dist/model":57,"prosemirror/dist/transform":63}],12:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2160,7 +2200,7 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = (function () {
     return ModFootnoteMarkers;
 })();
 
-},{"../schema":14,"prosemirror/dist/format":46,"prosemirror/dist/model":54}],13:[function(require,module,exports){
+},{"../schema":17,"prosemirror/dist/format":49,"prosemirror/dist/model":57}],13:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2202,7 +2242,7 @@ var ModFootnotes = exports.ModFootnotes = (function () {
                 schema: _schema.fidusFnSchema,
                 collab: {
                     version: 0
-                } // Version numberdoes not matter much, as we do not verify it between users.
+                } // Version number does not matter much, as we do not verify it between users.
             });
         }
     }]);
@@ -2210,7 +2250,255 @@ var ModFootnotes = exports.ModFootnotes = (function () {
     return ModFootnotes;
 })();
 
-},{"../schema":14,"./editor":11,"./markers":12,"prosemirror/dist/collab":25,"prosemirror/dist/edit/main":39}],14:[function(require,module,exports){
+},{"../schema":17,"./editor":11,"./markers":12,"prosemirror/dist/collab":28,"prosemirror/dist/edit/main":42}],14:[function(require,module,exports){
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/* Bindings for the header menu */
+
+var ModMenusHeader = exports.ModMenusHeader = (function () {
+    function ModMenusHeader(mod) {
+        _classCallCheck(this, ModMenusHeader);
+
+        mod.header = this;
+        this.mod = mod;
+        this.bindEvents();
+    }
+
+    _createClass(ModMenusHeader, [{
+        key: "bindEvents",
+        value: function bindEvents() {
+            var that = this;
+            var documentStyleMenu = document.getElementById("documentstyle-list"),
+                citationStyleMenu = document.getElementById("citationstyle-list");
+
+            // Enable toolbar menu
+            jQuery('#menu1').ptMenu();
+
+            //open dropdown for headermenu
+            jQuery('.header-nav-item, .multibuttonsCover').each(function () {
+                $.addDropdownBox(jQuery(this), jQuery(this).siblings('.fw-pulldown'));
+            });
+
+            for (var i = 0; i < documentStyleList.length; i++) {
+                var newMenuItem = document.createElement("li");
+                newMenuItem.innerHTML = "<span class='fw-pulldown-item style' data-style='" + documentStyleList[i].filename + "' title='" + documentStyleList[i].title + "'>" + documentStyleList[i].title + "</span>";
+
+                documentStyleMenu.appendChild(newMenuItem);
+            }
+            for (var j in citeproc.styles) {
+                var newMenuItem = document.createElement("li");
+                newMenuItem.innerHTML = "<span class='fw-pulldown-item citationstyle' data-citationstyle='" + j + "' title='" + citeproc.styles[j].name + "'>" + citeproc.styles[j].name + "</span>";
+
+                citationStyleMenu.appendChild(newMenuItem);
+            }
+
+            jQuery('.metadata-menu-item, #open-close-header, .save, .multibuttonsCover, \
+          .savecopy, .download, .latex, .epub, .html, .print, .style, .citationstyle, \
+          .tools-item, .papersize, .metadata-menu-item, .share, #open-close-header, \
+          .save, .papersize-menu, .metadata-menu, .documentstyle-menu, \
+          .citationstyle-menu, .exporter-menu').addClass('disabled');
+
+            jQuery('#editor-navigation').hide();
+
+            jQuery(document).on('mousedown', '.savecopy:not(.disabled)', function () {
+                that.mod.editor.getUpdates(function () {
+                    that.mod.editor.sendDocumentUpdate();
+                });
+                exporter.savecopy(that.mod.editor.doc);
+            });
+
+            jQuery(document).on('mousedown', '.download:not(.disabled)', function () {
+                that.mod.editor.getUpdates(function () {
+                    that.mod.editor.sendDocumentUpdate();
+                });
+                exporter.downloadNative(that.mod.editor.doc);
+            });
+            jQuery(document).on('mousedown', '.latex:not(.disabled)', function () {
+                that.mod.editor.getUpdates(function () {
+                    that.mod.editor.sendDocumentUpdate();
+                });
+                exporter.downloadLatex(that.mod.editor.doc);
+            });
+            jQuery(document).on('mousedown', '.epub:not(.disabled)', function () {
+                that.mod.editor.getUpdates(function () {
+                    that.mod.editor.sendDocumentUpdate();
+                });
+                exporter.downloadEpub(that.mod.editor.doc);
+            });
+            jQuery(document).on('mousedown', '.html:not(.disabled)', function () {
+                that.mod.editor.getUpdates(function () {
+                    that.mod.editor.sendDocumentUpdate();
+                });
+                exporter.downloadHtml(that.mod.editor.doc);
+            });
+            jQuery(document).on('mousedown', '.print:not(.disabled)', function () {
+                editorHelpers.print();
+            });
+            jQuery(document).on('mousedown', '.close:not(.disabled)', function () {
+                that.mod.editor.getUpdates(function () {
+                    that.mod.editor.sendDocumentUpdate();
+                });
+                window.location.href = '/';
+            });
+
+            // Document Style switching
+            jQuery(document).on('mousedown', "#header-navigation .style:not(.disabled)", function () {
+                if (that.mod.editor.mod.settings.set.setSetting('documentstyle', jQuery(this).attr('data-style'), true)) {
+                    that.mod.editor.docInfo.changed = true;
+                }
+                return false;
+            });
+
+            // Citation Style switching
+            jQuery(document).on('mousedown', "#header-navigation .citationstyle:not(.disabled)", function () {
+                if (that.mod.editor.mod.settings.set.setSetting('citationstyle', jQuery(this).attr('data-citationstyle'), true)) {
+                    that.mod.editor.docInfo.changed = true;
+                    that.mod.editor.mod.comments.layout.layoutComments();
+                }
+                return false;
+            });
+            // Tools
+            jQuery(document).on('mousedown', "#header-navigation .tools-item:not(.disabled)", function () {
+
+                switch (jQuery(this).data('function')) {
+                    case 'wordcounter':
+                        that.mod.editor.mod.tools.wordCount.wordCountDialog();
+                        break;
+                    case 'showshortcuts':
+                        $().showShortcuts();
+                        break;
+                }
+
+                return false;
+            });
+
+            // Paper size switching
+            jQuery(document).on('mousedown', "#header-navigation .papersize:not(.disabled)", function () {
+                if (that.mod.editor.mod.settings.set.setSetting('papersize', parseInt(jQuery(this).attr('data-paperheight')), true)) {
+                    that.mod.editor.docInfo.changed = true;
+                }
+                return false;
+            });
+            /** Turn enabled metadata off and disabled metadata on, Function is bound to clicking option in metadata menu.
+             */
+            jQuery(document).on('mousedown', '.metadata-menu-item:not(.disabled)', function () {
+                var theMetadata = jQuery(this).attr('data-metadata');
+
+                that.mod.editor.mod.settings.set.setSetting('metadata-' + theMetadata, !that.mod.editor.doc.settings['metadata-' + theMetadata], true);
+            });
+
+            jQuery(document).on('mousedown', '.share:not(.disabled)', function () {
+                accessrightsHelpers.createAccessRightsDialog([that.mod.editor.doc.id]);
+            });
+
+            //open and close header
+            jQuery(document).on('click', '#open-close-header:not(.disabled)', function () {
+                var header_top = -92,
+                    toolnav_top = 0,
+                    content_top = 108;
+                if (jQuery(this).hasClass('header-closed')) {
+                    jQuery(this).removeClass('header-closed');
+                    header_top = 0, toolnav_top = 92, content_top = 200;
+                } else {
+                    jQuery(this).addClass('header-closed');
+                }
+                jQuery('#header').stop().animate({
+                    'top': header_top
+                });
+                jQuery('#editor-navigation').stop().animate({
+                    'top': toolnav_top
+                });
+                jQuery('#pagination-layout').stop().animate({
+                    'top': content_top
+                }, {
+                    'complete': function complete() {
+                        that.mod.editor.mod.comments.layout.layoutComments();
+                    }
+                });
+            });
+
+            jQuery(document).on('mousedown', '.save:not(.disabled)', function () {
+                that.mod.editor.getUpdates(function () {
+                    that.mod.editor.sendDocumentUpdate();
+                });
+                exporter.uploadNative(that.mod.editor.doc);
+            });
+
+            jQuery(document).bind("bibliography_ready", function (event) {
+                jQuery('.exporter-menu').each(function () {
+                    jQuery(this).removeClass('disabled');
+                });
+            });
+        }
+    }]);
+
+    return ModMenusHeader;
+})();
+
+},{}],15:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.ModMenus = undefined;
+
+var _header = require("./header");
+
+var _toolbar = require("./toolbar");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/* Bindings for menus. */
+
+var ModMenus = exports.ModMenus = function ModMenus(editor) {
+    _classCallCheck(this, ModMenus);
+
+    editor.mod.menus = this;
+    this.editor = editor;
+    new _header.ModMenusHeader(this);
+    new _toolbar.ModMenusToolbar(this);
+};
+
+},{"./header":14,"./toolbar":16}],16:[function(require,module,exports){
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/* Bindings for the toolbar menu */
+
+var ModMenusToolbar = exports.ModMenusToolbar = (function () {
+    function ModMenusToolbar(mod) {
+        _classCallCheck(this, ModMenusToolbar);
+
+        mod.toolbar = this;
+        this.mod = mod;
+        this.bindEvents();
+    }
+
+    _createClass(ModMenusToolbar, [{
+        key: "bindEvents",
+        value: function bindEvents() {}
+    }]);
+
+    return ModMenusToolbar;
+})();
+
+},{}],17:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -3008,7 +3296,7 @@ var fidusFnSchema = exports.fidusFnSchema = new _model.Schema(_model.defaultSche
     comment: CommentMark
 }));
 
-},{"prosemirror/dist/model":54}],15:[function(require,module,exports){
+},{"prosemirror/dist/model":57}],18:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -3167,7 +3455,7 @@ var ModServerCommunications = exports.ModServerCommunications = (function () {
     return ModServerCommunications;
 })();
 
-},{}],16:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -3276,7 +3564,7 @@ var ModSettingsLayout = exports.ModSettingsLayout = (function () {
     return ModSettingsLayout;
 })();
 
-},{}],17:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3302,7 +3590,7 @@ var ModSettings = exports.ModSettings = function ModSettings(editor) {
     new _layout.ModSettingsLayout(this);
 };
 
-},{"./layout":16,"./set":18}],18:[function(require,module,exports){
+},{"./layout":19,"./set":21}],21:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -3367,7 +3655,7 @@ var ModSettingsSet = exports.ModSettingsSet = (function () {
     return ModSettingsSet;
 })();
 
-},{}],19:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3387,7 +3675,7 @@ var ModTools = exports.ModTools = function ModTools(editor) {
     new _wordCount.ModToolsWordCount(this);
 };
 
-},{"./word-count":21}],20:[function(require,module,exports){
+},{"./word-count":24}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3416,7 +3704,7 @@ var wordCounterDialogTemplate = exports.wordCounterDialogTemplate = _.template('
         </table>\
     </div>');
 
-},{}],21:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -3495,7 +3783,7 @@ var ModToolsWordCount = exports.ModToolsWordCount = (function () {
     return ModToolsWordCount;
 })();
 
-},{"./templates":20}],22:[function(require,module,exports){
+},{"./templates":23}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3717,7 +4005,7 @@ function calculatePlaceHolderCss(pm, selectedElement) {
     }
 }
 
-},{"prosemirror/dist/model":54}],23:[function(require,module,exports){
+},{"prosemirror/dist/model":57}],26:[function(require,module,exports){
 'use strict';
 
 var _editor = require('./es6_modules/editor');
@@ -3733,11 +4021,11 @@ var editorHelpers = {};
  */
 
 editorHelpers.printReady = function () {
-    var flowTo = document.getElementById('print');
-    window.print();
-    jQuery(flowTo).hide();
-    jQuery(flowTo).html('');
-    delete window.flowCopy;
+  var flowTo = document.getElementById('print');
+  window.print();
+  jQuery(flowTo).hide();
+  jQuery(flowTo).html('');
+  delete window.flowCopy;
 };
 
 document.addEventListener('layoutFlowFinished', editorHelpers.printReady, false);
@@ -3748,210 +4036,18 @@ document.addEventListener('layoutFlowFinished', editorHelpers.printReady, false)
  */
 
 editorHelpers.print = function () {
-    var flowTo = document.getElementById('print');
-    window.flowCopy = document.getElementById('flow').cloneNode(true);
-    jQuery(flowTo).show();
-    pagination.applyBookLayoutWithoutDivision();
+  var flowTo = document.getElementById('print');
+  window.flowCopy = document.getElementById('flow').cloneNode(true);
+  jQuery(flowTo).show();
+  pagination.applyBookLayoutWithoutDivision();
 };
 
 window.editorHelpers = editorHelpers;
 
-// Functions to be executed at startup
-jQuery(document).ready(function () {
-
-    var documentStyleMenu = document.getElementById("documentstyle-list"),
-        citationStyleMenu = document.getElementById("citationstyle-list"),
-        newMenuItem,
-        i;
-
-    theEditor.init();
-
-    // Set Auto-save to send the document every two minutes, if it has changed.
-    setInterval(function () {
-        if (theEditor.docInfo && theEditor.docInfo.changed) {
-            theEditor.getUpdates(function () {
-                theEditor.sendDocumentUpdate();
-            });
-        }
-    }, 120000);
-
-    // Set Auto-save to send the title every 5 seconds, if it has changed.
-    setInterval(function () {
-        if (theEditor.docInfo && theEditor.docInfo.titleChanged) {
-            theEditor.docInfo.titleChanged = false;
-            if (theEditor.docInfo.control) {
-                theEditor.mod.serverCommunications.send({
-                    type: 'update_title',
-                    title: theEditor.doc.title
-                });
-            }
-        }
-    }, 10000);
-
-    // Enable toolbar menu
-    jQuery('#menu1').ptMenu();
-
-    //open dropdown for headermenu
-    jQuery('.header-nav-item, .multibuttonsCover').each(function () {
-        $.addDropdownBox(jQuery(this), jQuery(this).siblings('.fw-pulldown'));
-    });
-
-    for (i = 0; i < documentStyleList.length; i++) {
-        newMenuItem = document.createElement("li");
-        newMenuItem.innerHTML = "<span class='fw-pulldown-item style' data-style='" + documentStyleList[i].filename + "' title='" + documentStyleList[i].title + "'>" + documentStyleList[i].title + "</span>";
-        documentStyleMenu.appendChild(newMenuItem);
-    }
-    for (i in citeproc.styles) {
-        newMenuItem = document.createElement("li");
-        newMenuItem.innerHTML = "<span class='fw-pulldown-item citationstyle' data-citationstyle='" + i + "' title='" + citeproc.styles[i].name + "'>" + citeproc.styles[i].name + "</span>";
-        citationStyleMenu.appendChild(newMenuItem);
-    }
-
-    jQuery('.metadata-menu-item, #open-close-header, .save, .multibuttonsCover, \
-    .savecopy, .download, .latex, .epub, .html, .print, .style, .citationstyle, \
-    .tools-item, .papersize, .metadata-menu-item, .share, #open-close-header, \
-    .save, .papersize-menu, .metadata-menu, .documentstyle-menu, \
-    .citationstyle-menu, .exporter-menu').addClass('disabled');
-
-    jQuery('#editor-navigation').hide();
-
-    jQuery(document).on('mousedown', '.savecopy:not(.disabled)', function () {
-        theEditor.getUpdates(function () {
-            theEditor.sendDocumentUpdate();
-        });
-        exporter.savecopy(theEditor.doc);
-    });
-
-    jQuery(document).on('mousedown', '.download:not(.disabled)', function () {
-        theEditor.getUpdates(function () {
-            theEditor.sendDocumentUpdate();
-        });
-        exporter.downloadNative(theEditor.doc);
-    });
-    jQuery(document).on('mousedown', '.latex:not(.disabled)', function () {
-        theEditor.getUpdates(function () {
-            theEditor.sendDocumentUpdate();
-        });
-        exporter.downloadLatex(theEditor.doc);
-    });
-    jQuery(document).on('mousedown', '.epub:not(.disabled)', function () {
-        theEditor.getUpdates(function () {
-            theEditor.sendDocumentUpdate();
-        });
-        exporter.downloadEpub(theEditor.doc);
-    });
-    jQuery(document).on('mousedown', '.html:not(.disabled)', function () {
-        theEditor.getUpdates(function () {
-            theEditor.sendDocumentUpdate();
-        });
-        exporter.downloadHtml(theEditor.doc);
-    });
-    jQuery(document).on('mousedown', '.print:not(.disabled)', function () {
-        editorHelpers.print();
-    });
-    jQuery(document).on('mousedown', '.close:not(.disabled)', function () {
-        theEditor.getUpdates(function () {
-            theEditor.sendDocumentUpdate();
-        });
-        window.location.href = '/';
-    });
-
-    // Document Style switching
-    jQuery(document).on('mousedown', "#header-navigation .style:not(.disabled)", function () {
-        if (theEditor.mod.settings.set.setSetting('documentstyle', jQuery(this).attr('data-style'), true)) {
-            theEditor.docInfo.changed = true;
-        }
-        return false;
-    });
-
-    // Citation Style switching
-    jQuery(document).on('mousedown', "#header-navigation .citationstyle:not(.disabled)", function () {
-        if (theEditor.mod.settings.set.setSetting('citationstyle', jQuery(this).attr('data-citationstyle'), true)) {
-            theEditor.docInfo.changed = true;
-            theEditor.mod.comments.layout.layoutComments();
-        }
-        return false;
-    });
-    // Tools
-    jQuery(document).on('mousedown', "#header-navigation .tools-item:not(.disabled)", function () {
-
-        switch (jQuery(this).data('function')) {
-            case 'wordcounter':
-                theEditor.mod.tools.wordCount.wordCountDialog();
-                break;
-            case 'showshortcuts':
-                $().showShortcuts();
-                break;
-        };
-
-        return false;
-    });
-
-    // Paper size switching
-    jQuery(document).on('mousedown', "#header-navigation .papersize:not(.disabled)", function () {
-        if (theEditor.mod.settings.set.setSetting('papersize', parseInt(jQuery(this).attr('data-paperheight')), true)) {
-            theEditor.docInfo.changed = true;
-        }
-        return false;
-    });
-    /** Turn enabled metadata off and disabled metadata on, Function is bound to clicking option in metadata menu.
-     */
-    jQuery(document).on('mousedown', '.metadata-menu-item:not(.disabled)', function () {
-        var theMetadata = jQuery(this).attr('data-metadata');
-
-        theEditor.mod.settings.set.setSetting('metadata-' + theMetadata, !theEditor.doc.settings['metadata-' + theMetadata], true);
-    });
-
-    jQuery(document).on('mousedown', '.share:not(.disabled)', function () {
-        accessrightsHelpers.createAccessRightsDialog([theEditor.doc.id]);
-    });
-
-    //open and close header
-    jQuery(document).on('click', '#open-close-header:not(.disabled)', function () {
-        var header_top = -92,
-            toolnav_top = 0,
-            content_top = 108;
-        if (jQuery(this).hasClass('header-closed')) {
-            jQuery(this).removeClass('header-closed');
-            header_top = 0, toolnav_top = 92, content_top = 200;
-        } else {
-            jQuery(this).addClass('header-closed');
-        }
-        jQuery('#header').stop().animate({
-            'top': header_top
-        });
-        jQuery('#editor-navigation').stop().animate({
-            'top': toolnav_top
-        });
-        jQuery('#pagination-layout').stop().animate({
-            'top': content_top
-        }, {
-            'complete': function complete() {
-                theEditor.mod.comments.layout.layoutComments();
-            }
-        });
-    });
-
-    jQuery(document).on('mousedown', '.save:not(.disabled)', function () {
-        theEditor.getUpdates(function () {
-            theEditor.sendDocumentUpdate();
-        });
-        exporter.uploadNative(theEditor.doc);
-    });
-
-    bibliographyHelpers.bindEvents();
-});
-
-jQuery(document).bind("bibliography_ready", function (event) {
-    jQuery('.exporter-menu').each(function () {
-        jQuery(this).removeClass('disabled');
-    });
-});
-
 var theEditor = new _editor.Editor();
 window.theEditor = theEditor;
 
-},{"./es6_modules/editor":10}],24:[function(require,module,exports){
+},{"./es6_modules/editor":10}],27:[function(require,module,exports){
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
     module.exports = mod()
@@ -4123,7 +4219,7 @@ window.theEditor = theEditor;
   return Keymap
 })
 
-},{}],25:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4296,7 +4392,7 @@ var Collab = function () {
 }();
 
 (0, _event.eventMixin)(Collab);
-},{"../edit":37,"../util/error":71,"../util/event":72,"./rebase":26}],26:[function(require,module,exports){
+},{"../edit":40,"../util/error":74,"../util/event":75,"./rebase":29}],29:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4324,7 +4420,7 @@ function rebaseSteps(doc, forward, steps, maps) {
   }
   return { doc: transform.doc, transform: transform, mapping: remap, positions: positions };
 }
-},{"../transform":60}],27:[function(require,module,exports){
+},{"../transform":63}],30:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4403,7 +4499,7 @@ function ensureCSSAdded() {
     document.head.insertBefore(cssNode, document.head.firstChild);
   }
 }
-},{}],28:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5120,7 +5216,7 @@ baseCommands.redo = {
   },
   keys: ["Mod-Y", "Shift-Mod-Z"]
 };
-},{"../model":54,"../transform":60,"../util/error":71,"./char":30,"./dompos":34,"./selection":43}],29:[function(require,module,exports){
+},{"../model":57,"../transform":63,"../util/error":74,"./char":33,"./dompos":37,"./selection":46}],32:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5190,7 +5286,7 @@ var keys = {
 if (_dom.browser.mac) keys["Ctrl-F"] = keys["Ctrl-B"] = keys["Ctrl-P"] = keys["Ctrl-N"] = keys["Alt-F"] = keys["Alt-B"] = keys["Ctrl-A"] = keys["Ctrl-E"] = keys["Ctrl-V"] = keys["goPageUp"] = ensureSelection;
 
 var captureKeys = exports.captureKeys = new _browserkeymap2.default(keys);
-},{"../dom":27,"./dompos":34,"./selection":43,"browserkeymap":24}],30:[function(require,module,exports){
+},{"../dom":30,"./dompos":37,"./selection":46,"browserkeymap":27}],33:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5223,7 +5319,7 @@ function charCategory(ch) {
 function isExtendingChar(ch) {
   return ch.charCodeAt(0) >= 768 && extendingChar.test(ch);
 }
-},{}],31:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5832,13 +5928,13 @@ _model.NodeType.derivableCommands.insert = function (conf) {
     params: deriveParams(this, conf.params)
   };
 };
-},{"../dom":27,"../model":54,"../transform":60,"../util/error":71,"../util/obj":74,"../util/sortedinsert":75,"./base_commands":28,"browserkeymap":24}],32:[function(require,module,exports){
+},{"../dom":30,"../model":57,"../transform":63,"../util/error":74,"../util/obj":77,"../util/sortedinsert":78,"./base_commands":31,"browserkeymap":27}],35:[function(require,module,exports){
 "use strict";
 
 var _dom = require("../dom");
 
 (0, _dom.insertCSS)("\n\n.ProseMirror {\n  border: 1px solid silver;\n  position: relative;\n}\n\n.ProseMirror-content {\n  padding: 4px 8px 4px 14px;\n  white-space: pre-wrap;\n  line-height: 1.2;\n}\n\n.ProseMirror-drop-target {\n  position: absolute;\n  width: 1px;\n  background: #666;\n  display: none;\n}\n\n.ProseMirror-content ul.tight p, .ProseMirror-content ol.tight p {\n  margin: 0;\n}\n\n.ProseMirror-content ul, .ProseMirror-content ol {\n  padding-left: 30px;\n  cursor: default;\n}\n\n.ProseMirror-content blockquote {\n  padding-left: 1em;\n  border-left: 3px solid #eee;\n  margin-left: 0; margin-right: 0;\n}\n\n.ProseMirror-content pre {\n  white-space: pre-wrap;\n}\n\n.ProseMirror-selectednode {\n  outline: 2px solid #8cf;\n}\n\n.ProseMirror-nodeselection *::selection { background: transparent; }\n.ProseMirror-nodeselection *::-moz-selection { background: transparent; }\n\n.ProseMirror-content p:first-child,\n.ProseMirror-content h1:first-child,\n.ProseMirror-content h2:first-child,\n.ProseMirror-content h3:first-child,\n.ProseMirror-content h4:first-child,\n.ProseMirror-content h5:first-child,\n.ProseMirror-content h6:first-child {\n  margin-top: .3em;\n}\n\n/* Add space around the hr to make clicking it easier */\n\n.ProseMirror-content hr {\n  position: relative;\n  height: 6px;\n  border: none;\n}\n\n.ProseMirror-content hr:after {\n  content: \"\";\n  position: absolute;\n  left: 10px;\n  right: 10px;\n  top: 2px;\n  border-top: 2px solid silver;\n}\n\n.ProseMirror-content img {\n  cursor: default;\n}\n\n/* Make sure li selections wrap around markers */\n\n.ProseMirror-content li {\n  position: relative;\n  pointer-events: none; /* Don't do weird stuff with marker clicks */\n}\n.ProseMirror-content li > * {\n  pointer-events: auto;\n}\n\nli.ProseMirror-selectednode {\n  outline: none;\n}\n\nli.ProseMirror-selectednode:after {\n  content: \"\";\n  position: absolute;\n  left: -32px;\n  right: -2px; top: -2px; bottom: -2px;\n  border: 2px solid #8cf;\n  pointer-events: none;\n}\n\n");
-},{"../dom":27}],33:[function(require,module,exports){
+},{"../dom":30}],36:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6040,7 +6136,7 @@ function scanText(start, end) {
     cur = cur.firstChild || nodeAfter(cur);
   }
 }
-},{"../format":46,"../model":54,"../transform/tree":68,"./dompos":34}],34:[function(require,module,exports){
+},{"../format":49,"../model":57,"../transform/tree":71,"./dompos":37}],37:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6417,7 +6513,7 @@ function handleNodeClick(pm, type, event, direct) {
     }
   }
 }
-},{"../dom":27,"../model":54,"../util/error":71}],35:[function(require,module,exports){
+},{"../dom":30,"../model":57,"../util/error":74}],38:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6584,7 +6680,7 @@ function redraw(pm, dirty, doc, prev) {
   }
   scan(pm.content, doc, prev);
 }
-},{"../dom":27,"../format":46,"../model":54,"./dompos":34,"./main":39}],36:[function(require,module,exports){
+},{"../dom":30,"../format":49,"../model":57,"./dompos":37,"./main":42}],39:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7162,7 +7258,7 @@ var History = exports.History = function () {
 
   return History;
 }();
-},{"../model":54,"../transform":60}],37:[function(require,module,exports){
+},{"../model":57,"../transform":63}],40:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7257,7 +7353,7 @@ var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.Keymap = _browserkeymap2.default;
-},{"./base_commands":28,"./command":31,"./main":39,"./options":40,"./range":41,"./schema_commands":42,"./selection":43,"browserkeymap":24}],38:[function(require,module,exports){
+},{"./base_commands":31,"./command":34,"./main":42,"./options":43,"./range":44,"./schema_commands":45,"./selection":46,"browserkeymap":27}],41:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7858,7 +7954,7 @@ handlers.blur = function (pm) {
   // Fired when the editor loses focus.
   pm.signal("blur");
 };
-},{"../dom":27,"../format":46,"../model":54,"./capturekeys":29,"./domchange":33,"./dompos":34,"./selection":43,"browserkeymap":24}],39:[function(require,module,exports){
+},{"../dom":30,"../format":49,"../model":57,"./capturekeys":32,"./domchange":36,"./dompos":37,"./selection":46,"browserkeymap":27}],42:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8637,7 +8733,7 @@ var EditorTransform = function (_Transform) {
 
   return EditorTransform;
 }(_transform.Transform);
-},{"../dom":27,"../format":46,"../model":54,"../transform":60,"../util/error":71,"../util/event":72,"../util/map":73,"../util/sortedinsert":75,"./css":32,"./dompos":34,"./draw":35,"./history":36,"./input":38,"./options":40,"./range":41,"./selection":43,"browserkeymap":24}],40:[function(require,module,exports){
+},{"../dom":30,"../format":49,"../model":57,"../transform":63,"../util/error":74,"../util/event":75,"../util/map":76,"../util/sortedinsert":78,"./css":35,"./dompos":37,"./draw":38,"./history":39,"./input":41,"./options":43,"./range":44,"./selection":46,"browserkeymap":27}],43:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8759,7 +8855,7 @@ function setOption(pm, name, value) {
   pm.options[name] = value;
   if (desc.update) desc.update(pm, value, old, false);
 }
-},{"../model":54,"../ui/prompt":69,"../util/error":71,"./command":31}],41:[function(require,module,exports){
+},{"../model":57,"../ui/prompt":72,"../util/error":74,"./command":34}],44:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8959,7 +9055,7 @@ var RangeTracker = function () {
 
   return RangeTracker;
 }();
-},{"../util/event":72}],42:[function(require,module,exports){
+},{"../util/event":75}],45:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -9293,7 +9389,7 @@ _model.HorizontalRule.register("command", "insert", {
   keys: ["Mod-Shift--"],
   menu: { group: "insert", rank: 70, display: { type: "label", label: "Horizontal rule" } }
 });
-},{"../format":46,"../model":54,"./command":31}],43:[function(require,module,exports){
+},{"../format":49,"../model":57,"./command":34}],46:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9769,7 +9865,7 @@ function verticalMotionLeavesTextblock(pm, pos, dir) {
   }
   return true;
 }
-},{"../dom":27,"../model":54,"../util/error":71,"./dompos":34}],44:[function(require,module,exports){
+},{"../dom":30,"../model":57,"../util/error":74,"./dompos":37}],47:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10226,7 +10322,7 @@ _model.StrongMark.register("parseDOMStyle", "font-weight", {
 });
 
 _model.CodeMark.register("parseDOM", "code", { parse: "mark" });
-},{"../model":54,"../util/sortedinsert":75,"./register":47}],45:[function(require,module,exports){
+},{"../model":57,"../util/sortedinsert":78,"./register":50}],48:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10258,7 +10354,7 @@ function fromText(schema, text) {
 }
 
 (0, _register.defineSource)("text", fromText);
-},{"./register":47}],46:[function(require,module,exports){
+},{"./register":50}],49:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10357,7 +10453,7 @@ Object.defineProperty(exports, "toText", {
     return _to_text.toText;
   }
 });
-},{"./from_dom":44,"./from_text":45,"./register":47,"./to_dom":48,"./to_text":49}],47:[function(require,module,exports){
+},{"./from_dom":47,"./from_text":48,"./register":50,"./to_dom":51,"./to_text":52}],50:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10425,7 +10521,7 @@ function defineSource(format, func) {
 defineSource("json", function (schema, json) {
   return schema.nodeFromJSON(json);
 });
-},{"../util/error":71}],48:[function(require,module,exports){
+},{"../util/error":74}],51:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10713,7 +10809,7 @@ def(_model.LinkMark, function (mark, s) {
   return s.elt("a", { href: mark.attrs.href,
     title: mark.attrs.title });
 });
-},{"../model":54,"./register":47}],49:[function(require,module,exports){
+},{"../model":57,"./register":50}],52:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10757,7 +10853,7 @@ function toText(doc) {
 }
 
 (0, _register.defineTarget)("text", toText);
-},{"../model":54,"./register":47}],50:[function(require,module,exports){
+},{"../model":57,"./register":50}],53:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11194,7 +11290,7 @@ var defaultSpec = new _schema.SchemaSpec({
 // :: Schema
 // ProseMirror's default document schema.
 var defaultSchema = exports.defaultSchema = new _schema.Schema(defaultSpec);
-},{"./schema":58}],51:[function(require,module,exports){
+},{"./schema":61}],54:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11291,7 +11387,7 @@ function findDiffEnd(a, b) {
   }
   return { a: new _pos.Pos(pathA, offA), b: new _pos.Pos(pathB, offB) };
 }
-},{"./pos":57}],52:[function(require,module,exports){
+},{"./pos":60}],55:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11320,7 +11416,7 @@ var ModelError = exports.ModelError = function (_ProseMirrorError) {
 
   return ModelError;
 }(_error.ProseMirrorError);
-},{"../util/error":71}],53:[function(require,module,exports){
+},{"../util/error":74}],56:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12031,7 +12127,7 @@ if (typeof Symbol != "undefined") {
     return this;
   };
 }
-},{"./error":52}],54:[function(require,module,exports){
+},{"./error":55}],57:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12271,7 +12367,7 @@ Object.defineProperty(exports, "ModelError", {
                 return _error.ModelError;
         }
 });
-},{"./defaultschema":50,"./diff":51,"./error":52,"./fragment":53,"./mark":55,"./node":56,"./pos":57,"./schema":58}],55:[function(require,module,exports){
+},{"./defaultschema":53,"./diff":54,"./error":55,"./fragment":56,"./mark":58,"./node":59,"./pos":60,"./schema":61}],58:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12403,7 +12499,7 @@ var Mark = exports.Mark = function () {
 }();
 
 var empty = [];
-},{}],56:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13008,7 +13104,7 @@ function wrapMarks(marks, str) {
     str = marks[i].type.name + "(" + str + ")";
   }return str;
 }
-},{"./fragment":53,"./mark":55,"./pos":57}],57:[function(require,module,exports){
+},{"./fragment":56,"./mark":58,"./pos":60}],60:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13232,7 +13328,7 @@ var Pos = exports.Pos = function () {
 
   return Pos;
 }();
-},{"./error":52}],58:[function(require,module,exports){
+},{"./error":55}],61:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14243,7 +14339,7 @@ var Schema = function () {
 }();
 
 exports.Schema = Schema;
-},{"../util/error":71,"../util/obj":74,"./fragment":53,"./mark":55,"./node":56}],59:[function(require,module,exports){
+},{"../util/error":74,"../util/obj":77,"./fragment":56,"./mark":58,"./node":59}],62:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14529,7 +14625,7 @@ _transform.Transform.prototype.setNodeType = function (pos, type, attrs) {
   this.step("ancestor", new _model.Pos(path, 0), new _model.Pos(path, node.size), null, { depth: 1, types: [type], attrs: [attrs] });
   return this;
 };
-},{"../model":54,"./map":62,"./step":66,"./transform":67,"./tree":68}],60:[function(require,module,exports){
+},{"../model":57,"./map":65,"./step":69,"./transform":70,"./tree":71}],63:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14617,7 +14713,7 @@ require("./mark");
 require("./split");
 
 require("./replace");
-},{"./ancestor":59,"./join":61,"./map":62,"./mark":63,"./replace":64,"./split":65,"./step":66,"./transform":67}],61:[function(require,module,exports){
+},{"./ancestor":62,"./join":64,"./map":65,"./mark":66,"./replace":67,"./split":68,"./step":69,"./transform":70}],64:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14699,7 +14795,7 @@ _transform.Transform.prototype.join = function (at) {
   this.step("join", new _model.Pos(at.path.concat(at.offset - 1), parent.child(at.offset - 1).size), new _model.Pos(at.path.concat(at.offset), 0));
   return this;
 };
-},{"../model":54,"./map":62,"./step":66,"./transform":67}],62:[function(require,module,exports){
+},{"../model":57,"./map":65,"./step":69,"./transform":70}],65:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15019,7 +15115,7 @@ var Remapping = exports.Remapping = function () {
 
   return Remapping;
 }();
-},{"../model":54}],63:[function(require,module,exports){
+},{"../model":57}],66:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -15198,7 +15294,7 @@ _transform.Transform.prototype.clearMarkup = function (from, to, newParent) {
     this.step(delSteps[i]);
   }return this;
 };
-},{"../model":54,"./step":66,"./transform":67,"./tree":68}],64:[function(require,module,exports){
+},{"../model":57,"./step":69,"./transform":70,"./tree":71}],67:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15526,7 +15622,7 @@ _transform.Transform.prototype.insertText = function (pos, text) {
 _transform.Transform.prototype.insertInline = function (pos, node) {
   return this.insert(pos, node.mark(this.doc.marksAt(pos)));
 };
-},{"../model":54,"./map":62,"./step":66,"./transform":67,"./tree":68}],65:[function(require,module,exports){
+},{"../model":57,"./map":65,"./step":69,"./transform":70,"./tree":71}],68:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -15615,7 +15711,7 @@ _transform.Transform.prototype.splitIfNeeded = function (pos) {
   }
   return this;
 };
-},{"../model":54,"./map":62,"./step":66,"./transform":67}],66:[function(require,module,exports){
+},{"../model":57,"./map":65,"./step":69,"./transform":70}],69:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15802,7 +15898,7 @@ var StepResult = exports.StepResult = function StepResult(doc) {
 };
 
 var steps = Object.create(null);
-},{"../model":54,"../util/error":71,"./map":62}],67:[function(require,module,exports){
+},{"../model":57,"../util/error":74,"./map":65}],70:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15907,7 +16003,7 @@ var Transform = function () {
 }();
 
 exports.Transform = Transform;
-},{"./map":62,"./step":66}],68:[function(require,module,exports){
+},{"./map":65,"./step":69}],71:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16001,7 +16097,7 @@ function samePathDepth(a, b) {
     if (i == a.path.length || i == b.path.length || a.path[i] != b.path[i]) return i;
   }
 }
-},{"../model":54}],69:[function(require,module,exports){
+},{"../model":57}],72:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16297,7 +16393,7 @@ function openPrompt(pm, content, options) {
 }
 
 (0, _dom.insertCSS)("\n.ProseMirror-prompt {\n  background: white;\n  padding: 2px 6px 2px 15px;\n  border: 1px solid silver;\n  position: absolute;\n  border-radius: 3px;\n  z-index: 11;\n}\n\n.ProseMirror-prompt input[type=\"text\"],\n.ProseMirror-prompt textarea {\n  background: #eee;\n  border: none;\n  outline: none;\n}\n\n.ProseMirror-prompt input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n.ProseMirror-prompt-close {\n  position: absolute;\n  left: 2px; top: 1px;\n  color: #666;\n  border: none; background: transparent; padding: 0;\n}\n\n.ProseMirror-prompt-close:after {\n  content: \"✕\";\n  font-size: 12px;\n}\n\n.ProseMirror-invalid {\n  background: #ffc;\n  border: 1px solid #cc7;\n  border-radius: 4px;\n  padding: 5px 10px;\n  position: absolute;\n  min-width: 10em;\n}\n");
-},{"../dom":27,"../util/error":71}],70:[function(require,module,exports){
+},{"../dom":30,"../util/error":74}],73:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16457,7 +16553,7 @@ var UpdateScheduler = exports.UpdateScheduler = function () {
 
   return UpdateScheduler;
 }();
-},{}],71:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16539,7 +16635,7 @@ function functionName(f) {
   var match = /^function (\w+)/.exec(f.toString());
   return match && match[1];
 }
-},{}],72:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16656,7 +16752,7 @@ function eventMixin(ctor) {
     if (methods.hasOwnProperty(prop)) proto[prop] = methods[prop];
   }
 }
-},{}],73:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16712,7 +16808,7 @@ var Map = exports.Map = window.Map || function () {
 
   return _class;
 }();
-},{}],74:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16725,7 +16821,7 @@ function copyObj(obj, base) {
     copy[prop] = obj[prop];
   }return copy;
 }
-},{}],75:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16738,4 +16834,4 @@ function sortedInsert(array, elt, compare) {
     if (compare(array[i], elt) > 0) break;
   }array.splice(i, 0, elt);
 }
-},{}]},{},[23]);
+},{}]},{},[26]);

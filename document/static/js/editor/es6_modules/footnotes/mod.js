@@ -21,7 +21,7 @@ export class ModFootnotes {
             schema: fidusFnSchema,
             collab: {
                 version: 0
-            } // Version numberdoes not matter much, as we do not verify it between users.
+            } // Version number does not matter much, as we do not verify it between users.
         })
     }
 }

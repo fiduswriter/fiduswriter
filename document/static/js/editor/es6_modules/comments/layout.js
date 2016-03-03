@@ -1,3 +1,5 @@
+import {commentsTemplate, filterByUserBoxTemplate} from "./templates"
+
 /* Functions related to layouting of comments */
 export class ModCommentLayout {
     constructor(mod) {
@@ -139,7 +141,7 @@ export class ModCommentLayout {
             }
         })
 
-        jQuery('#comment-box-container').html(tmp_comments({
+        jQuery('#comment-box-container').html(commentsTemplate({
             theComments: theComments
         }))
         this.layoutCommentsAvoidOverlap()
@@ -230,7 +232,7 @@ export class ModCommentLayout {
             users: rolesCopy
         }
 
-        jQuery('body').append(tmp_filter_by_user_box(users))
+        jQuery('body').append(filterByUserBoxTemplate(users))
         let diaButtons = {}
         diaButtons[gettext('Filter')] = function() {
             let id = jQuery(this).children("select").val()

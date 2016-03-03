@@ -133,7 +133,7 @@ export class ModServerCommunications {
                 this.editor.takeControl()
                 break
             case 'check_hash':
-                this.editor.checkHash(data.diff_version, data.hash)
+                this.editor.mod.collab.docChanges.checkHash(data.diff_version, data.hash)
                 break
         }
     }

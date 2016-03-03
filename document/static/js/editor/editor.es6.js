@@ -124,7 +124,7 @@ export class Editor {
         this.pm.signal("documentUpdated")
         new ModComments(this, this.doc.comment_version)
         _.each(this.doc.comments, function(comment) {
-            this.mod.comments.store.addLocalComment(comment.id, comment.user,
+            that.mod.comments.store.addLocalComment(comment.id, comment.user,
                 comment.userName, comment.userAvatar, comment.date, comment.comment,
                 comment.answers, comment['review:isMajor'])
         })

@@ -16,7 +16,7 @@ export class ModCollabDocChanges {
     checkHash(version, hash) {
         console.log('Verifying hash')
         if (version === this.mod.editor.pm.mod.collab.version) {
-            if (hash === this.getHash()) {
+            if (hash === this.mod.editor.getHash()) {
                 console.log('Hash could be verified')
                 return true
             }

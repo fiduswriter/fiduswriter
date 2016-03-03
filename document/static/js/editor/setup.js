@@ -251,7 +251,7 @@
          theEditor.doc.settings[variable] = newValue;
 
          if (sendChange) {
-             serverCommunications.send({
+             theEditor.mod.serverCommunications.send({
                  type: 'setting_change',
                  variable: variable,
                  value: newValue
@@ -274,7 +274,7 @@
          documentData.version = theEditor.doc.version;
          documentData.hash = theEditor.doc.hash;
          console.log('saving');
-         serverCommunications.send({
+         theEditor.mod.serverCommunications.send({
              type: 'update_document',
              document: documentData
          });
@@ -319,7 +319,7 @@ jQuery(document).ready(function() {
         if (theEditor.docInfo && theEditor.docInfo.titleChanged) {
             theEditor.docInfo.titleChanged = false;
             if (theEditor.docInfo.control) {
-                serverCommunications.send({
+                theEditor.mod.serverCommunications.send({
                     type: 'update_title',
                     title: theEditor.doc.title
                 });

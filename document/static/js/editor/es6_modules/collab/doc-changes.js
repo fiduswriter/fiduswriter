@@ -21,7 +21,7 @@ export class ModCollabDocChanges {
                 return true
             }
             console.log('Hash could not be verified, requesting document.')
-            this.mod.collab.docChanges.disableDiffSending()
+            this.disableDiffSending()
             this.mod.editor.askForDocument();
             return false
         } else {
@@ -44,10 +44,10 @@ export class ModCollabDocChanges {
         this.enableCheckDiffVersion = setTimeout(function() {
             that.currentlyCheckingVersion = false
         }, 1000)
-        /*if (this.mod.editor.mod.serverCommunications.connected) {
-            this.mod.collab.docChanges.disableDiffSending()
-        }*/ // OBS! requires serverCommunications mod
-        serverCommunications.send({
+        if (this.mod.editor.mod.serverCommunications.connected) {
+            this.disableDiffSending()
+        }
+        this.mod.editor.mod.serverCommunications.send({
             type: 'check_diff_version',
             diff_version: this.mod.editor.pm.mod.collab.version
         })
@@ -92,7 +92,7 @@ export class ModCollabDocChanges {
                 request_id: request_id,
                 hash: this.mod.editor.getHash()
             }
-        serverCommunications.send(aPackage)
+        this.mod.editor.mod.serverCommunications.send(aPackage)
         this.unconfirmedSteps[request_id] = {
             diffs: toSend,
             footnote_diffs: fnToSend,

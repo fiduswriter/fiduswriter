@@ -4,6 +4,7 @@ import {ProseMirror} from "prosemirror/dist/edit/main"
 import {fromDOM} from "prosemirror/dist/format"
 import {serializeTo} from "prosemirror/dist/format"
 import "prosemirror/dist/collab"
+import {UpdateScheduler} from "prosemirror/dist/ui/update"
 //import "prosemirror/dist/menu/menubar"
 
 import {fidusSchema} from "./es6_modules/schema"
@@ -11,8 +12,7 @@ import {updateUI} from "./es6_modules/update-ui"
 import {ModComments} from "./es6_modules/comments/mod"
 import {ModFootnotes} from "./es6_modules/footnotes/mod"
 import {ModCollab} from "./es6_modules/collab/mod"
-
-import {UpdateScheduler} from "prosemirror/dist/ui/update"
+import {ModServerCommunications} from "./es6_modules/server-communications"
 
 export class Editor {
     constructor() {
@@ -36,6 +36,7 @@ export class Editor {
         }
         this.doc = {}
         this.user = false
+        new ModServerCommunications(this)
         //this.init()
     }
 
@@ -134,14 +135,12 @@ export class Editor {
         this.waitingForDocument = false
     }
 
-
-
     askForDocument() {
         if (this.waitingForDocument) {
-            return;
+            return
         }
         this.waitingForDocument = true
-        serverCommunications.send({
+        this.mod.serverCommunications.send({
             type: 'get_document'
         })
     }
@@ -198,6 +197,7 @@ export class Editor {
     }
 
     receiveDocument(data) {
+        let that = this
         editorHelpers.copyDocumentValues(data.document, data.document_values)
         if (data.hasOwnProperty('user')) {
             this.user = data.user
@@ -205,8 +205,8 @@ export class Editor {
             this.user = this.doc.owner
         }
         usermediaHelpers.init(function(){
-            theEditor.update()
-            serverCommunications.send({
+            that.update()
+            that.mod.serverCommunications.send({
                 type: 'participant_update'
             })
         })

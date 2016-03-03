@@ -116,7 +116,7 @@
     };
 
     chatHelpers.sendMessage = function (messageText) {
-        serverCommunications.send({
+        theEditor.mod.serverCommunications.send({
             type: 'chat',
             body: messageText
         });

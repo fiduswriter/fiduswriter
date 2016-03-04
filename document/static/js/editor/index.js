@@ -4707,7 +4707,20 @@ var ModToolsPrint = exports.ModToolsPrint = (function () {
             var flowTo = document.getElementById('print'),
                 that = this;
 
-            window.flowCopy = document.getElementById('flow').cloneNode(true);
+            var flowCopy = document.getElementById('flow').cloneNode(true);
+            var footnoteBox = flowCopy.querySelector('#footnote-box-container');
+            footnoteBox.parentElement.removeChild(footnoteBox);
+
+            var footnotes = footnoteBox.querySelectorAll('.footnote-container');
+            var footnoteMarkers = [].slice.call(flowCopy.querySelectorAll('.footnote-marker'));
+
+            footnoteMarkers.forEach(function (fnMarker, index) {
+                while (footnotes[index].firstChild) {
+                    fnMarker.appendChild(footnotes[index].firstChild);
+                }
+            });
+
+            window.flowCopy = flowCopy;
             jQuery(flowTo).show();
             document.addEventListener('layoutFlowFinished', function () {
                 that.printReady();

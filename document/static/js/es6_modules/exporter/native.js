@@ -1,0 +1,128 @@
+import {obj2Node} from "./json"
+import {createSlug, findImages} from "./tools"
+import {zipFileCreator} from "./zip"
+
+/** The current Fidus Writer filetype version.
+ * The importer will not import from a different version and the exporter
+  * will include this number in all exports.
+ */
+let FW_FILETYPE_VERSION = "1.2";
+
+/** Create a Fidus Writer document and upload it to the server as a backup.
+ * @function uploadNative
+ * @param aDocument The document to turn into a Fidus Writer document and upload.
+ */
+export let uploadNative = function(aDocument) {
+    exportNative(aDocument, ImageDB, BibDB, function(aDocument, shrunkImageDB, shrunkBibDB, images) {
+        exportNativeFile(aDocument, shrunkImageDB, shrunkBibDB, images, true);
+    });
+};
+
+export let downloadNative = function(aDocument) {
+    if (window.hasOwnProperty('theEditor')) {
+        exportNative(aDocument, ImageDB, BibDB, exportNativeFile);
+    } else {
+        if (aDocument.is_owner) {
+            if ('undefined' === typeof(BibDB)) {
+                bibliographyHelpers.getBibDB(function() {
+                    if ('undefined' === typeof(ImageDB)) {
+                        usermediaHelpers.getImageDB(function() {
+                            exportNative(aDocument,
+                                ImageDB,
+                                BibDB, exportNativeFile);
+                        });
+                    } else {
+                        exportNative(aDocument, ImageDB,
+                            BibDB,
+                            exportNativeFile);
+                    }
+                });
+            } else if ('undefined' === typeof(ImageDB)) {
+                usermediaHelpers.getImageDB(function() {
+                    exportNative(aDocument, ImageDB, BibDB,
+                        exportNativeFile);
+                });
+            } else {
+                exportNative(aDocument, ImageDB, BibDB, exporter
+                    .nativeFile);
+            }
+        } else {
+            bibliographyHelpers.getABibDB(aDocument.owner, function(
+                aBibDB) {
+                usermediaHelpers.getAnImageDB(aDocument.owner,
+                    function(anImageDB) {
+                        exportNative(aDocument, anImageDB,
+                            aBibDB, exportNativeFile);
+                    });
+            });
+        }
+    }
+};
+
+export let exportNative = function(aDocument, anImageDB, aBibDB, callback) {
+    var contents, outputList, httpOutputList, images, shrunkImageDB,
+        shrunkBibDB = {},
+        imageUrls = [],
+        citeList = [],
+        i;
+
+    $.addAlert('info', gettext('File export has been initiated.'));
+
+    contents = obj2Node(aDocument.contents);
+
+    images = findImages(contents);
+
+    imageUrls = _.pluck(images, 'url');
+
+
+    shrunkImageDB = _.filter(anImageDB, function(image) {
+        return (imageUrls.indexOf(image.image.split('?').shift()) !== -
+            1);
+    });
+
+    jQuery(contents).find('.citation').each(function() {
+        citeList.push(jQuery(this).attr('data-bib-entry'))
+    });
+
+    citeList = _.uniq(citeList.join(',').split(','));
+
+    if (citeList.length === 1 && citeList[0] === '') {
+        citeList = [];
+    }
+
+    for (i in citeList) {
+        shrunkBibDB[citeList[i]] = aBibDB[citeList[i]];
+    }
+
+    callback(aDocument, shrunkImageDB, shrunkBibDB, images);
+
+};
+
+let exportNativeFile = function(aDocument, shrunkImageDB,
+    shrunkBibDB,
+    images, upload) {
+
+    if ('undefined' === typeof upload) {
+        upload = false;
+    }
+
+    let httpOutputList = images;
+
+    let outputList = [{
+        filename: 'document.json',
+        contents: JSON.stringify(aDocument),
+    }, {
+        filename: 'images.json',
+        contents: JSON.stringify(shrunkImageDB)
+    }, {
+        filename: 'bibliography.json',
+        contents: JSON.stringify(shrunkBibDB)
+    }, {
+        filename: 'filetype-version',
+        contents: FW_FILETYPE_VERSION
+    }];
+
+    zipFileCreator(outputList, httpOutputList, createSlug(
+            aDocument.title) +
+        '.fidus', 'application/fidus+zip', false, upload);
+};

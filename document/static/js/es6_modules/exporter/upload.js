@@ -1,0 +1,56 @@
+/** Uploads a Fidus Writer document to the server.
+ * @function uploadFile
+ * @param {string} zipFileName The name of the file.
+ * @param {blob} blob The contents of the file.
+ */
+export let uploadFile = function(zipFilename, blob) {
+
+
+    var diaButtons = {};
+
+    diaButtons[gettext("Save")] = function() {
+        var data = new FormData();
+
+        data.append('note', jQuery(this).find('.revision-note').val());
+        data.append('file', blob, zipFilename);
+        data.append('document_id', theEditor.doc.id);
+
+        jQuery.ajax({
+            url: '/document/upload/',
+            data: data,
+            type: 'POST',
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function() {
+                jQuery.addAlert('success', gettext('Revision saved'));
+            },
+            error: function() {
+                jQuery.addAlert('error', gettext('Revision could not be saved.'));
+            }
+        });
+        jQuery(this).dialog("close");
+
+    };
+
+    diaButtons[gettext("Cancel")] = function() {
+        jQuery(this).dialog("close");
+    };
+
+    jQuery(tmp_revision_dialog()).dialog({
+        autoOpen: true,
+        height: 180,
+        width: 300,
+        modal: true,
+        buttons: diaButtons,
+        create: function() {
+            var $the_dialog = jQuery(this).closest(".ui-dialog");
+            $the_dialog.find(".ui-button:first-child").addClass(
+                "fw-button fw-dark");
+            $the_dialog.find(".ui-button:last").addClass(
+                "fw-button fw-orange");
+        },
+    });
+
+
+};

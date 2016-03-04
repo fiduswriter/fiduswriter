@@ -80,7 +80,7 @@ export class ModMenusHeader {
               exporter.downloadHtml(that.mod.editor.doc)
           })
           jQuery(document).on('mousedown', '.print:not(.disabled)', function() {
-              editorHelpers.print()
+              that.mod.editor.mod.tools.print.print()
           })
           jQuery(document).on('mousedown', '.close:not(.disabled)', function() {
               that.mod.editor.getUpdates(function() {

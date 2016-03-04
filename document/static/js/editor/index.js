@@ -419,7 +419,7 @@ var ModCollabDocChanges = exports.ModCollabDocChanges = (function () {
     return ModCollabDocChanges;
 })();
 
-},{"../schema":28,"prosemirror/dist/transform":74}],3:[function(require,module,exports){
+},{"../schema":28,"prosemirror/dist/transform":75}],3:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -682,7 +682,7 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
     return ModCommentInteractions;
 })();
 
-},{"prosemirror/dist/ui/update":84}],6:[function(require,module,exports){
+},{"prosemirror/dist/ui/update":85}],6:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1347,7 +1347,7 @@ function randomID() {
     return Math.floor(Math.random() * 0xffffffff);
 }
 
-},{"../schema":28,"prosemirror/dist/model":68,"prosemirror/dist/transform":74,"prosemirror/dist/ui/update":84,"prosemirror/dist/util/event":86}],9:[function(require,module,exports){
+},{"../schema":28,"prosemirror/dist/model":69,"prosemirror/dist/transform":75,"prosemirror/dist/ui/update":85,"prosemirror/dist/util/event":87}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1883,7 +1883,7 @@ var Editor = exports.Editor = (function () {
     return Editor;
 })();
 
-},{"./collab/mod":3,"./comments/mod":7,"./footnotes/mod":13,"./menus/mod":16,"./schema":28,"./server-communications":29,"./settings/mod":31,"./tools/mod":33,"./update-ui":36,"prosemirror/dist/collab":39,"prosemirror/dist/edit/main":53,"prosemirror/dist/format":60,"prosemirror/dist/ui/update":84}],11:[function(require,module,exports){
+},{"./collab/mod":3,"./comments/mod":7,"./footnotes/mod":13,"./menus/mod":16,"./schema":28,"./server-communications":29,"./settings/mod":31,"./tools/mod":33,"./update-ui":37,"prosemirror/dist/collab":40,"prosemirror/dist/edit/main":54,"prosemirror/dist/format":61,"prosemirror/dist/ui/update":85}],11:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2004,7 +2004,7 @@ var ModFootnoteEditor = exports.ModFootnoteEditor = (function () {
     return ModFootnoteEditor;
 })();
 
-},{"../schema":28,"prosemirror/dist/format":60,"prosemirror/dist/model":68,"prosemirror/dist/transform":74}],12:[function(require,module,exports){
+},{"../schema":28,"prosemirror/dist/format":61,"prosemirror/dist/model":69,"prosemirror/dist/transform":75}],12:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2200,7 +2200,7 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = (function () {
     return ModFootnoteMarkers;
 })();
 
-},{"../schema":28,"prosemirror/dist/format":60,"prosemirror/dist/model":68}],13:[function(require,module,exports){
+},{"../schema":28,"prosemirror/dist/format":61,"prosemirror/dist/model":69}],13:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2250,7 +2250,7 @@ var ModFootnotes = exports.ModFootnotes = (function () {
     return ModFootnotes;
 })();
 
-},{"../schema":28,"./editor":11,"./markers":12,"prosemirror/dist/collab":39,"prosemirror/dist/edit/main":53}],14:[function(require,module,exports){
+},{"../schema":28,"./editor":11,"./markers":12,"prosemirror/dist/collab":40,"prosemirror/dist/edit/main":54}],14:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2406,7 +2406,7 @@ var ModMenusHeader = exports.ModMenusHeader = (function () {
                 exporter.downloadHtml(that.mod.editor.doc);
             });
             jQuery(document).on('mousedown', '.print:not(.disabled)', function () {
-                editorHelpers.print();
+                that.mod.editor.mod.tools.print.print();
             });
             jQuery(document).on('mousedown', '.close:not(.disabled)', function () {
                 that.mod.editor.getUpdates(function () {
@@ -4291,7 +4291,7 @@ var fidusFnSchema = exports.fidusFnSchema = new _model.Schema(_model.defaultSche
     comment: CommentMark
 }));
 
-},{"prosemirror/dist/model":68}],29:[function(require,module,exports){
+},{"prosemirror/dist/model":69}],29:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -4660,6 +4660,8 @@ exports.ModTools = undefined;
 
 var _wordCount = require("./word-count");
 
+var _print = require("./print");
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var ModTools = exports.ModTools = function ModTools(editor) {
@@ -4668,9 +4670,56 @@ var ModTools = exports.ModTools = function ModTools(editor) {
     editor.mod.tools = this;
     this.editor = editor;
     new _wordCount.ModToolsWordCount(this);
+    new _print.ModToolsPrint(this);
 };
 
-},{"./word-count":35}],34:[function(require,module,exports){
+},{"./print":34,"./word-count":36}],34:[function(require,module,exports){
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ModToolsPrint = exports.ModToolsPrint = (function () {
+    function ModToolsPrint(mod) {
+        _classCallCheck(this, ModToolsPrint);
+
+        mod.print = this;
+        this.mod = mod;
+    }
+
+    _createClass(ModToolsPrint, [{
+        key: 'printReady',
+        value: function printReady() {
+            var flowTo = document.getElementById('print');
+            window.print();
+            jQuery(flowTo).hide();
+            jQuery(flowTo).html('');
+            delete window.flowCopy;
+        }
+    }, {
+        key: 'print',
+        value: function print() {
+            var flowTo = document.getElementById('print'),
+                that = this;
+
+            window.flowCopy = document.getElementById('flow').cloneNode(true);
+            jQuery(flowTo).show();
+            document.addEventListener('layoutFlowFinished', function () {
+                that.printReady();
+            }, false);
+            pagination.applyBookLayoutWithoutDivision();
+        }
+    }]);
+
+    return ModToolsPrint;
+})();
+
+},{}],35:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4699,7 +4748,7 @@ var wordCounterDialogTemplate = exports.wordCounterDialogTemplate = _.template('
         </table>\
     </div>');
 
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -4778,7 +4827,7 @@ var ModToolsWordCount = exports.ModToolsWordCount = (function () {
     return ModToolsWordCount;
 })();
 
-},{"./templates":34}],36:[function(require,module,exports){
+},{"./templates":35}],37:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5000,49 +5049,19 @@ function calculatePlaceHolderCss(pm, selectedElement) {
     }
 }
 
-},{"prosemirror/dist/model":68}],37:[function(require,module,exports){
-'use strict';
+},{"prosemirror/dist/model":69}],38:[function(require,module,exports){
+"use strict";
 
-var _editor = require('./es6_modules/editor');
+var _editor = require("./es6_modules/editor");
 
-/** Helper functions for the editor.
- * @namespace editorHelpers
- */
-var editorHelpers = {};
-
-/** Call printing dialog and destroy print view after printing. (step 2 of printing process)
- * @function print
- * @memberof editorHelpers
- */
-
-editorHelpers.printReady = function () {
-  var flowTo = document.getElementById('print');
-  window.print();
-  jQuery(flowTo).hide();
-  jQuery(flowTo).html('');
-  delete window.flowCopy;
-};
-
-document.addEventListener('layoutFlowFinished', editorHelpers.printReady, false);
-
-/** Initiate printing using simplePagination. (step 1 of printing process)
- * @function print
- * @memberof editorHelpers
- */
-
-editorHelpers.print = function () {
-  var flowTo = document.getElementById('print');
-  window.flowCopy = document.getElementById('flow').cloneNode(true);
-  jQuery(flowTo).show();
-  pagination.applyBookLayoutWithoutDivision();
-};
-
-window.editorHelpers = editorHelpers;
+/* Create theEditor and make it available to the general namespace, so that all
+the non-editor-specific pieces of JavaScript that are not written in ES6 can get
+access to it.*/
 
 var theEditor = new _editor.Editor();
 window.theEditor = theEditor;
 
-},{"./es6_modules/editor":10}],38:[function(require,module,exports){
+},{"./es6_modules/editor":10}],39:[function(require,module,exports){
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
     module.exports = mod()
@@ -5214,7 +5233,7 @@ window.theEditor = theEditor;
   return Keymap
 })
 
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5387,7 +5406,7 @@ var Collab = function () {
 }();
 
 (0, _event.eventMixin)(Collab);
-},{"../edit":51,"../util/error":85,"../util/event":86,"./rebase":40}],40:[function(require,module,exports){
+},{"../edit":52,"../util/error":86,"../util/event":87,"./rebase":41}],41:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5415,7 +5434,7 @@ function rebaseSteps(doc, forward, steps, maps) {
   }
   return { doc: transform.doc, transform: transform, mapping: remap, positions: positions };
 }
-},{"../transform":74}],41:[function(require,module,exports){
+},{"../transform":75}],42:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5494,7 +5513,7 @@ function ensureCSSAdded() {
     document.head.insertBefore(cssNode, document.head.firstChild);
   }
 }
-},{}],42:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6211,7 +6230,7 @@ baseCommands.redo = {
   },
   keys: ["Mod-Y", "Shift-Mod-Z"]
 };
-},{"../model":68,"../transform":74,"../util/error":85,"./char":44,"./dompos":48,"./selection":57}],43:[function(require,module,exports){
+},{"../model":69,"../transform":75,"../util/error":86,"./char":45,"./dompos":49,"./selection":58}],44:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6281,7 +6300,7 @@ var keys = {
 if (_dom.browser.mac) keys["Ctrl-F"] = keys["Ctrl-B"] = keys["Ctrl-P"] = keys["Ctrl-N"] = keys["Alt-F"] = keys["Alt-B"] = keys["Ctrl-A"] = keys["Ctrl-E"] = keys["Ctrl-V"] = keys["goPageUp"] = ensureSelection;
 
 var captureKeys = exports.captureKeys = new _browserkeymap2.default(keys);
-},{"../dom":41,"./dompos":48,"./selection":57,"browserkeymap":38}],44:[function(require,module,exports){
+},{"../dom":42,"./dompos":49,"./selection":58,"browserkeymap":39}],45:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6314,7 +6333,7 @@ function charCategory(ch) {
 function isExtendingChar(ch) {
   return ch.charCodeAt(0) >= 768 && extendingChar.test(ch);
 }
-},{}],45:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6923,13 +6942,13 @@ _model.NodeType.derivableCommands.insert = function (conf) {
     params: deriveParams(this, conf.params)
   };
 };
-},{"../dom":41,"../model":68,"../transform":74,"../util/error":85,"../util/obj":88,"../util/sortedinsert":89,"./base_commands":42,"browserkeymap":38}],46:[function(require,module,exports){
+},{"../dom":42,"../model":69,"../transform":75,"../util/error":86,"../util/obj":89,"../util/sortedinsert":90,"./base_commands":43,"browserkeymap":39}],47:[function(require,module,exports){
 "use strict";
 
 var _dom = require("../dom");
 
 (0, _dom.insertCSS)("\n\n.ProseMirror {\n  border: 1px solid silver;\n  position: relative;\n}\n\n.ProseMirror-content {\n  padding: 4px 8px 4px 14px;\n  white-space: pre-wrap;\n  line-height: 1.2;\n}\n\n.ProseMirror-drop-target {\n  position: absolute;\n  width: 1px;\n  background: #666;\n  display: none;\n}\n\n.ProseMirror-content ul.tight p, .ProseMirror-content ol.tight p {\n  margin: 0;\n}\n\n.ProseMirror-content ul, .ProseMirror-content ol {\n  padding-left: 30px;\n  cursor: default;\n}\n\n.ProseMirror-content blockquote {\n  padding-left: 1em;\n  border-left: 3px solid #eee;\n  margin-left: 0; margin-right: 0;\n}\n\n.ProseMirror-content pre {\n  white-space: pre-wrap;\n}\n\n.ProseMirror-selectednode {\n  outline: 2px solid #8cf;\n}\n\n.ProseMirror-nodeselection *::selection { background: transparent; }\n.ProseMirror-nodeselection *::-moz-selection { background: transparent; }\n\n.ProseMirror-content p:first-child,\n.ProseMirror-content h1:first-child,\n.ProseMirror-content h2:first-child,\n.ProseMirror-content h3:first-child,\n.ProseMirror-content h4:first-child,\n.ProseMirror-content h5:first-child,\n.ProseMirror-content h6:first-child {\n  margin-top: .3em;\n}\n\n/* Add space around the hr to make clicking it easier */\n\n.ProseMirror-content hr {\n  position: relative;\n  height: 6px;\n  border: none;\n}\n\n.ProseMirror-content hr:after {\n  content: \"\";\n  position: absolute;\n  left: 10px;\n  right: 10px;\n  top: 2px;\n  border-top: 2px solid silver;\n}\n\n.ProseMirror-content img {\n  cursor: default;\n}\n\n/* Make sure li selections wrap around markers */\n\n.ProseMirror-content li {\n  position: relative;\n  pointer-events: none; /* Don't do weird stuff with marker clicks */\n}\n.ProseMirror-content li > * {\n  pointer-events: auto;\n}\n\nli.ProseMirror-selectednode {\n  outline: none;\n}\n\nli.ProseMirror-selectednode:after {\n  content: \"\";\n  position: absolute;\n  left: -32px;\n  right: -2px; top: -2px; bottom: -2px;\n  border: 2px solid #8cf;\n  pointer-events: none;\n}\n\n");
-},{"../dom":41}],47:[function(require,module,exports){
+},{"../dom":42}],48:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7131,7 +7150,7 @@ function scanText(start, end) {
     cur = cur.firstChild || nodeAfter(cur);
   }
 }
-},{"../format":60,"../model":68,"../transform/tree":82,"./dompos":48}],48:[function(require,module,exports){
+},{"../format":61,"../model":69,"../transform/tree":83,"./dompos":49}],49:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7508,7 +7527,7 @@ function handleNodeClick(pm, type, event, direct) {
     }
   }
 }
-},{"../dom":41,"../model":68,"../util/error":85}],49:[function(require,module,exports){
+},{"../dom":42,"../model":69,"../util/error":86}],50:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7675,7 +7694,7 @@ function redraw(pm, dirty, doc, prev) {
   }
   scan(pm.content, doc, prev);
 }
-},{"../dom":41,"../format":60,"../model":68,"./dompos":48,"./main":53}],50:[function(require,module,exports){
+},{"../dom":42,"../format":61,"../model":69,"./dompos":49,"./main":54}],51:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8253,7 +8272,7 @@ var History = exports.History = function () {
 
   return History;
 }();
-},{"../model":68,"../transform":74}],51:[function(require,module,exports){
+},{"../model":69,"../transform":75}],52:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8348,7 +8367,7 @@ var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.Keymap = _browserkeymap2.default;
-},{"./base_commands":42,"./command":45,"./main":53,"./options":54,"./range":55,"./schema_commands":56,"./selection":57,"browserkeymap":38}],52:[function(require,module,exports){
+},{"./base_commands":43,"./command":46,"./main":54,"./options":55,"./range":56,"./schema_commands":57,"./selection":58,"browserkeymap":39}],53:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8949,7 +8968,7 @@ handlers.blur = function (pm) {
   // Fired when the editor loses focus.
   pm.signal("blur");
 };
-},{"../dom":41,"../format":60,"../model":68,"./capturekeys":43,"./domchange":47,"./dompos":48,"./selection":57,"browserkeymap":38}],53:[function(require,module,exports){
+},{"../dom":42,"../format":61,"../model":69,"./capturekeys":44,"./domchange":48,"./dompos":49,"./selection":58,"browserkeymap":39}],54:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9728,7 +9747,7 @@ var EditorTransform = function (_Transform) {
 
   return EditorTransform;
 }(_transform.Transform);
-},{"../dom":41,"../format":60,"../model":68,"../transform":74,"../util/error":85,"../util/event":86,"../util/map":87,"../util/sortedinsert":89,"./css":46,"./dompos":48,"./draw":49,"./history":50,"./input":52,"./options":54,"./range":55,"./selection":57,"browserkeymap":38}],54:[function(require,module,exports){
+},{"../dom":42,"../format":61,"../model":69,"../transform":75,"../util/error":86,"../util/event":87,"../util/map":88,"../util/sortedinsert":90,"./css":47,"./dompos":49,"./draw":50,"./history":51,"./input":53,"./options":55,"./range":56,"./selection":58,"browserkeymap":39}],55:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9850,7 +9869,7 @@ function setOption(pm, name, value) {
   pm.options[name] = value;
   if (desc.update) desc.update(pm, value, old, false);
 }
-},{"../model":68,"../ui/prompt":83,"../util/error":85,"./command":45}],55:[function(require,module,exports){
+},{"../model":69,"../ui/prompt":84,"../util/error":86,"./command":46}],56:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10050,7 +10069,7 @@ var RangeTracker = function () {
 
   return RangeTracker;
 }();
-},{"../util/event":86}],56:[function(require,module,exports){
+},{"../util/event":87}],57:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -10384,7 +10403,7 @@ _model.HorizontalRule.register("command", "insert", {
   keys: ["Mod-Shift--"],
   menu: { group: "insert", rank: 70, display: { type: "label", label: "Horizontal rule" } }
 });
-},{"../format":60,"../model":68,"./command":45}],57:[function(require,module,exports){
+},{"../format":61,"../model":69,"./command":46}],58:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10860,7 +10879,7 @@ function verticalMotionLeavesTextblock(pm, pos, dir) {
   }
   return true;
 }
-},{"../dom":41,"../model":68,"../util/error":85,"./dompos":48}],58:[function(require,module,exports){
+},{"../dom":42,"../model":69,"../util/error":86,"./dompos":49}],59:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11317,7 +11336,7 @@ _model.StrongMark.register("parseDOMStyle", "font-weight", {
 });
 
 _model.CodeMark.register("parseDOM", "code", { parse: "mark" });
-},{"../model":68,"../util/sortedinsert":89,"./register":61}],59:[function(require,module,exports){
+},{"../model":69,"../util/sortedinsert":90,"./register":62}],60:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11349,7 +11368,7 @@ function fromText(schema, text) {
 }
 
 (0, _register.defineSource)("text", fromText);
-},{"./register":61}],60:[function(require,module,exports){
+},{"./register":62}],61:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11448,7 +11467,7 @@ Object.defineProperty(exports, "toText", {
     return _to_text.toText;
   }
 });
-},{"./from_dom":58,"./from_text":59,"./register":61,"./to_dom":62,"./to_text":63}],61:[function(require,module,exports){
+},{"./from_dom":59,"./from_text":60,"./register":62,"./to_dom":63,"./to_text":64}],62:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11516,7 +11535,7 @@ function defineSource(format, func) {
 defineSource("json", function (schema, json) {
   return schema.nodeFromJSON(json);
 });
-},{"../util/error":85}],62:[function(require,module,exports){
+},{"../util/error":86}],63:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11804,7 +11823,7 @@ def(_model.LinkMark, function (mark, s) {
   return s.elt("a", { href: mark.attrs.href,
     title: mark.attrs.title });
 });
-},{"../model":68,"./register":61}],63:[function(require,module,exports){
+},{"../model":69,"./register":62}],64:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11848,7 +11867,7 @@ function toText(doc) {
 }
 
 (0, _register.defineTarget)("text", toText);
-},{"../model":68,"./register":61}],64:[function(require,module,exports){
+},{"../model":69,"./register":62}],65:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12285,7 +12304,7 @@ var defaultSpec = new _schema.SchemaSpec({
 // :: Schema
 // ProseMirror's default document schema.
 var defaultSchema = exports.defaultSchema = new _schema.Schema(defaultSpec);
-},{"./schema":72}],65:[function(require,module,exports){
+},{"./schema":73}],66:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12382,7 +12401,7 @@ function findDiffEnd(a, b) {
   }
   return { a: new _pos.Pos(pathA, offA), b: new _pos.Pos(pathB, offB) };
 }
-},{"./pos":71}],66:[function(require,module,exports){
+},{"./pos":72}],67:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12411,7 +12430,7 @@ var ModelError = exports.ModelError = function (_ProseMirrorError) {
 
   return ModelError;
 }(_error.ProseMirrorError);
-},{"../util/error":85}],67:[function(require,module,exports){
+},{"../util/error":86}],68:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13122,7 +13141,7 @@ if (typeof Symbol != "undefined") {
     return this;
   };
 }
-},{"./error":66}],68:[function(require,module,exports){
+},{"./error":67}],69:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13362,7 +13381,7 @@ Object.defineProperty(exports, "ModelError", {
                 return _error.ModelError;
         }
 });
-},{"./defaultschema":64,"./diff":65,"./error":66,"./fragment":67,"./mark":69,"./node":70,"./pos":71,"./schema":72}],69:[function(require,module,exports){
+},{"./defaultschema":65,"./diff":66,"./error":67,"./fragment":68,"./mark":70,"./node":71,"./pos":72,"./schema":73}],70:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13494,7 +13513,7 @@ var Mark = exports.Mark = function () {
 }();
 
 var empty = [];
-},{}],70:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14099,7 +14118,7 @@ function wrapMarks(marks, str) {
     str = marks[i].type.name + "(" + str + ")";
   }return str;
 }
-},{"./fragment":67,"./mark":69,"./pos":71}],71:[function(require,module,exports){
+},{"./fragment":68,"./mark":70,"./pos":72}],72:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14323,7 +14342,7 @@ var Pos = exports.Pos = function () {
 
   return Pos;
 }();
-},{"./error":66}],72:[function(require,module,exports){
+},{"./error":67}],73:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15334,7 +15353,7 @@ var Schema = function () {
 }();
 
 exports.Schema = Schema;
-},{"../util/error":85,"../util/obj":88,"./fragment":67,"./mark":69,"./node":70}],73:[function(require,module,exports){
+},{"../util/error":86,"../util/obj":89,"./fragment":68,"./mark":70,"./node":71}],74:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15620,7 +15639,7 @@ _transform.Transform.prototype.setNodeType = function (pos, type, attrs) {
   this.step("ancestor", new _model.Pos(path, 0), new _model.Pos(path, node.size), null, { depth: 1, types: [type], attrs: [attrs] });
   return this;
 };
-},{"../model":68,"./map":76,"./step":80,"./transform":81,"./tree":82}],74:[function(require,module,exports){
+},{"../model":69,"./map":77,"./step":81,"./transform":82,"./tree":83}],75:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15708,7 +15727,7 @@ require("./mark");
 require("./split");
 
 require("./replace");
-},{"./ancestor":73,"./join":75,"./map":76,"./mark":77,"./replace":78,"./split":79,"./step":80,"./transform":81}],75:[function(require,module,exports){
+},{"./ancestor":74,"./join":76,"./map":77,"./mark":78,"./replace":79,"./split":80,"./step":81,"./transform":82}],76:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15790,7 +15809,7 @@ _transform.Transform.prototype.join = function (at) {
   this.step("join", new _model.Pos(at.path.concat(at.offset - 1), parent.child(at.offset - 1).size), new _model.Pos(at.path.concat(at.offset), 0));
   return this;
 };
-},{"../model":68,"./map":76,"./step":80,"./transform":81}],76:[function(require,module,exports){
+},{"../model":69,"./map":77,"./step":81,"./transform":82}],77:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16110,7 +16129,7 @@ var Remapping = exports.Remapping = function () {
 
   return Remapping;
 }();
-},{"../model":68}],77:[function(require,module,exports){
+},{"../model":69}],78:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -16289,7 +16308,7 @@ _transform.Transform.prototype.clearMarkup = function (from, to, newParent) {
     this.step(delSteps[i]);
   }return this;
 };
-},{"../model":68,"./step":80,"./transform":81,"./tree":82}],78:[function(require,module,exports){
+},{"../model":69,"./step":81,"./transform":82,"./tree":83}],79:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16617,7 +16636,7 @@ _transform.Transform.prototype.insertText = function (pos, text) {
 _transform.Transform.prototype.insertInline = function (pos, node) {
   return this.insert(pos, node.mark(this.doc.marksAt(pos)));
 };
-},{"../model":68,"./map":76,"./step":80,"./transform":81,"./tree":82}],79:[function(require,module,exports){
+},{"../model":69,"./map":77,"./step":81,"./transform":82,"./tree":83}],80:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -16706,7 +16725,7 @@ _transform.Transform.prototype.splitIfNeeded = function (pos) {
   }
   return this;
 };
-},{"../model":68,"./map":76,"./step":80,"./transform":81}],80:[function(require,module,exports){
+},{"../model":69,"./map":77,"./step":81,"./transform":82}],81:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16893,7 +16912,7 @@ var StepResult = exports.StepResult = function StepResult(doc) {
 };
 
 var steps = Object.create(null);
-},{"../model":68,"../util/error":85,"./map":76}],81:[function(require,module,exports){
+},{"../model":69,"../util/error":86,"./map":77}],82:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16998,7 +17017,7 @@ var Transform = function () {
 }();
 
 exports.Transform = Transform;
-},{"./map":76,"./step":80}],82:[function(require,module,exports){
+},{"./map":77,"./step":81}],83:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17092,7 +17111,7 @@ function samePathDepth(a, b) {
     if (i == a.path.length || i == b.path.length || a.path[i] != b.path[i]) return i;
   }
 }
-},{"../model":68}],83:[function(require,module,exports){
+},{"../model":69}],84:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17388,7 +17407,7 @@ function openPrompt(pm, content, options) {
 }
 
 (0, _dom.insertCSS)("\n.ProseMirror-prompt {\n  background: white;\n  padding: 2px 6px 2px 15px;\n  border: 1px solid silver;\n  position: absolute;\n  border-radius: 3px;\n  z-index: 11;\n}\n\n.ProseMirror-prompt input[type=\"text\"],\n.ProseMirror-prompt textarea {\n  background: #eee;\n  border: none;\n  outline: none;\n}\n\n.ProseMirror-prompt input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n.ProseMirror-prompt-close {\n  position: absolute;\n  left: 2px; top: 1px;\n  color: #666;\n  border: none; background: transparent; padding: 0;\n}\n\n.ProseMirror-prompt-close:after {\n  content: \"✕\";\n  font-size: 12px;\n}\n\n.ProseMirror-invalid {\n  background: #ffc;\n  border: 1px solid #cc7;\n  border-radius: 4px;\n  padding: 5px 10px;\n  position: absolute;\n  min-width: 10em;\n}\n");
-},{"../dom":41,"../util/error":85}],84:[function(require,module,exports){
+},{"../dom":42,"../util/error":86}],85:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17548,7 +17567,7 @@ var UpdateScheduler = exports.UpdateScheduler = function () {
 
   return UpdateScheduler;
 }();
-},{}],85:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17630,7 +17649,7 @@ function functionName(f) {
   var match = /^function (\w+)/.exec(f.toString());
   return match && match[1];
 }
-},{}],86:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17747,7 +17766,7 @@ function eventMixin(ctor) {
     if (methods.hasOwnProperty(prop)) proto[prop] = methods[prop];
   }
 }
-},{}],87:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17803,7 +17822,7 @@ var Map = exports.Map = window.Map || function () {
 
   return _class;
 }();
-},{}],88:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17816,7 +17835,7 @@ function copyObj(obj, base) {
     copy[prop] = obj[prop];
   }return copy;
 }
-},{}],89:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17829,4 +17848,4 @@ function sortedInsert(array, elt, compare) {
     if (compare(array[i], elt) > 0) break;
   }array.splice(i, 0, elt);
 }
-},{}]},{},[37]);
+},{}]},{},[38]);

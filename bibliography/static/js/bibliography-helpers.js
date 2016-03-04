@@ -78,9 +78,10 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             bibliographyHelpers.startBibliographyTable();
         }
 
-        if (0 < jQuery('#add-cite-book').size()) {
+        if (window.theEditor && 0 < jQuery('#add-cite-book').size()) {
+            // We are in the editor view
             for (i = 0; i < pks.length; i++) {
-                citationHelpers.appendToCitationDialog(pks[i], BibDB[pks[i]]);
+                theEditor.mod.menus.citation.appendToCitationDialog(pks[i], BibDB[pks[i]]);
             }
             jQuery("#cite-source-table").trigger("update");
         }

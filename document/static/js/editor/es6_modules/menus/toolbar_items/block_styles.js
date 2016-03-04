@@ -1,3 +1,5 @@
+export let bindBlockStyles = function (editor) {
+
 // blockstyle paragraph, h1 - h3, lists
 jQuery(document).on('mousedown', '.toolbarheadings label', function (event) {
     var commands = {
@@ -10,20 +12,22 @@ jQuery(document).on('mousedown', '.toolbarheadings label', function (event) {
       'h6': 'heading:make6',
       'code': 'code_block:make'
     },
-    theCommand = commands[this.id.split('_')[0]];
+    theCommand = commands[this.id.split('_')[0]]
 
-    theEditor.pm.execCommand(theCommand);
+    editor.pm.execCommand(theCommand)
 
-});
+})
 
 jQuery(document).on('mousedown', '#button-ol', function (event) {
-    theEditor.pm.execCommand('ordered_list:wrap');
-});
+    editor.pm.execCommand('ordered_list:wrap')
+})
 
 jQuery(document).on('mousedown', '#button-ul', function (event) {
-    theEditor.pm.execCommand('bullet_list:wrap');
-});
+    editor.pm.execCommand('bullet_list:wrap')
+})
 
 jQuery(document).on('mousedown', '#button-blockquote', function (event) {
-    theEditor.pm.execCommand('blockquote:wrap');
-});
+    editor.pm.execCommand('blockquote:wrap')
+})
+
+}

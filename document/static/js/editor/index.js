@@ -419,7 +419,7 @@ var ModCollabDocChanges = exports.ModCollabDocChanges = (function () {
     return ModCollabDocChanges;
 })();
 
-},{"../schema":17,"prosemirror/dist/transform":63}],3:[function(require,module,exports){
+},{"../schema":28,"prosemirror/dist/transform":74}],3:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -682,7 +682,7 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
     return ModCommentInteractions;
 })();
 
-},{"prosemirror/dist/ui/update":73}],6:[function(require,module,exports){
+},{"prosemirror/dist/ui/update":84}],6:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1347,7 +1347,7 @@ function randomID() {
     return Math.floor(Math.random() * 0xffffffff);
 }
 
-},{"../schema":17,"prosemirror/dist/model":57,"prosemirror/dist/transform":63,"prosemirror/dist/ui/update":73,"prosemirror/dist/util/event":75}],9:[function(require,module,exports){
+},{"../schema":28,"prosemirror/dist/model":68,"prosemirror/dist/transform":74,"prosemirror/dist/ui/update":84,"prosemirror/dist/util/event":86}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1883,7 +1883,7 @@ var Editor = exports.Editor = (function () {
     return Editor;
 })();
 
-},{"./collab/mod":3,"./comments/mod":7,"./footnotes/mod":13,"./menus/mod":15,"./schema":17,"./server-communications":18,"./settings/mod":20,"./tools/mod":22,"./update-ui":25,"prosemirror/dist/collab":28,"prosemirror/dist/edit/main":42,"prosemirror/dist/format":49,"prosemirror/dist/ui/update":73}],11:[function(require,module,exports){
+},{"./collab/mod":3,"./comments/mod":7,"./footnotes/mod":13,"./menus/mod":16,"./schema":28,"./server-communications":29,"./settings/mod":31,"./tools/mod":33,"./update-ui":36,"prosemirror/dist/collab":39,"prosemirror/dist/edit/main":53,"prosemirror/dist/format":60,"prosemirror/dist/ui/update":84}],11:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2004,7 +2004,7 @@ var ModFootnoteEditor = exports.ModFootnoteEditor = (function () {
     return ModFootnoteEditor;
 })();
 
-},{"../schema":17,"prosemirror/dist/format":49,"prosemirror/dist/model":57,"prosemirror/dist/transform":63}],12:[function(require,module,exports){
+},{"../schema":28,"prosemirror/dist/format":60,"prosemirror/dist/model":68,"prosemirror/dist/transform":74}],12:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2200,7 +2200,7 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = (function () {
     return ModFootnoteMarkers;
 })();
 
-},{"../schema":17,"prosemirror/dist/format":49,"prosemirror/dist/model":57}],13:[function(require,module,exports){
+},{"../schema":28,"prosemirror/dist/format":60,"prosemirror/dist/model":68}],13:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2250,7 +2250,73 @@ var ModFootnotes = exports.ModFootnotes = (function () {
     return ModFootnotes;
 })();
 
-},{"../schema":17,"./editor":11,"./markers":12,"prosemirror/dist/collab":28,"prosemirror/dist/edit/main":42}],14:[function(require,module,exports){
+},{"../schema":28,"./editor":11,"./markers":12,"prosemirror/dist/collab":39,"prosemirror/dist/edit/main":53}],14:[function(require,module,exports){
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.ModMenusCitation = undefined;
+
+var _templates = require('./toolbar_items/templates');
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/* Functions for the Citation add dialog */
+
+var ModMenusCitation = exports.ModMenusCitation = (function () {
+    function ModMenusCitation(mod) {
+        _classCallCheck(this, ModMenusCitation);
+
+        mod.citation = this;
+        this.mod = mod;
+    }
+
+    _createClass(ModMenusCitation, [{
+        key: 'appendToCitationDialog',
+        value: function appendToCitationDialog(pk, bib_info) {
+            // If neither author nor editor were registered, use an empty string instead of nothing.
+            // TODO: Such entries should likely not be accepted by the importer.
+            var bibauthor = bib_info.editor || bib_info.author || '';
+
+            // If title is undefined, set it to an empty string.
+            // TODO: Such entries should likely not be accepted by the importer.
+            if (typeof bib_info.title === 'undefined') bib_info.title = '';
+
+            var citeItemData = {
+                'id': pk,
+                'type': bib_info.entry_type,
+                'title': bib_info.title.replace(/[{}]/g, ''),
+                'author': bibauthor.replace(/[{}]/g, '')
+            };
+
+            jQuery('#cite-source-table > tbody').append((0, _templates.citationItemTemplate)(citeItemData));
+            jQuery('#cite-source-table').trigger('update');
+            this.appendToCitedItems([citeItemData]);
+        }
+    }, {
+        key: 'appendToCitedItems',
+        value: function appendToCitedItems(books) {
+            var len = books.length;
+            for (var i = 0; i < len; i++) {
+                $('#selected-cite-source-table .fw-document-table-body').append((0, _templates.selectedCitationTemplate)({
+                    'id': books[i].id,
+                    'type': books[i].type,
+                    'title': books[i].title,
+                    'author': books[i].author,
+                    'page': '',
+                    'prefix': ''
+                }));
+            }
+        }
+    }]);
+
+    return ModMenusCitation;
+})();
+
+},{"./toolbar_items/templates":26}],15:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2443,7 +2509,7 @@ var ModMenusHeader = exports.ModMenusHeader = (function () {
     return ModMenusHeader;
 })();
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2454,6 +2520,8 @@ exports.ModMenus = undefined;
 var _header = require("./header");
 
 var _toolbar = require("./toolbar");
+
+var _citation = require("./citation");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -2466,9 +2534,10 @@ var ModMenus = exports.ModMenus = function ModMenus(editor) {
     this.editor = editor;
     new _header.ModMenusHeader(this);
     new _toolbar.ModMenusToolbar(this);
+    new _citation.ModMenusCitation(this);
 };
 
-},{"./header":14,"./toolbar":16}],16:[function(require,module,exports){
+},{"./citation":14,"./header":15,"./toolbar":17}],17:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2476,6 +2545,25 @@ var _createClass = (function () { function defineProperties(target, props) { for
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.ModMenusToolbar = undefined;
+
+var _block_styles = require("./toolbar_items/block_styles");
+
+var _cite = require("./toolbar_items/cite");
+
+var _comment = require("./toolbar_items/comment");
+
+var _figure = require("./toolbar_items/figure");
+
+var _footnote = require("./toolbar_items/footnote");
+
+var _inline_styles = require("./toolbar_items/inline_styles");
+
+var _link = require("./toolbar_items/link");
+
+var _math = require("./toolbar_items/math");
+
+var _undo_redo = require("./toolbar_items/undo_redo");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -2492,13 +2580,920 @@ var ModMenusToolbar = exports.ModMenusToolbar = (function () {
 
     _createClass(ModMenusToolbar, [{
         key: "bindEvents",
-        value: function bindEvents() {}
+        value: function bindEvents() {
+            (0, _block_styles.bindBlockStyles)(this.mod.editor);
+            (0, _cite.bindCite)(this.mod);
+            (0, _comment.bindComment)(this.mod.editor);
+            (0, _figure.bindFigure)(this.mod.editor);
+            (0, _footnote.bindFootnote)(this.mod.editor);
+            (0, _inline_styles.bindInlineStyles)(this.mod.editor);
+            (0, _link.bindLink)(this.mod.editor);
+            (0, _math.bindMath)(this.mod.editor);
+            (0, _undo_redo.bindHistory)(this.mod.editor);
+        }
     }]);
 
     return ModMenusToolbar;
 })();
 
-},{}],17:[function(require,module,exports){
+},{"./toolbar_items/block_styles":18,"./toolbar_items/cite":19,"./toolbar_items/comment":20,"./toolbar_items/figure":21,"./toolbar_items/footnote":22,"./toolbar_items/inline_styles":23,"./toolbar_items/link":24,"./toolbar_items/math":25,"./toolbar_items/undo_redo":27}],18:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var bindBlockStyles = exports.bindBlockStyles = function bindBlockStyles(editor) {
+
+    // blockstyle paragraph, h1 - h3, lists
+    jQuery(document).on('mousedown', '.toolbarheadings label', function (event) {
+        var commands = {
+            'p': 'paragraph:make',
+            'h1': 'heading:make1',
+            'h2': 'heading:make2',
+            'h3': 'heading:make3',
+            'h4': 'heading:make4',
+            'h5': 'heading:make5',
+            'h6': 'heading:make6',
+            'code': 'code_block:make'
+        },
+            theCommand = commands[this.id.split('_')[0]];
+
+        editor.pm.execCommand(theCommand);
+    });
+
+    jQuery(document).on('mousedown', '#button-ol', function (event) {
+        editor.pm.execCommand('ordered_list:wrap');
+    });
+
+    jQuery(document).on('mousedown', '#button-ul', function (event) {
+        editor.pm.execCommand('bullet_list:wrap');
+    });
+
+    jQuery(document).on('mousedown', '#button-blockquote', function (event) {
+        editor.pm.execCommand('blockquote:wrap');
+    });
+};
+
+},{}],19:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.bindCite = undefined;
+
+var _templates = require('./templates');
+
+var bindCite = exports.bindCite = function bindCite(mod) {
+
+    var editor = mod.editor;
+    // toolbar cite
+    jQuery(document).on('mousedown', '#button-cite:not(.disabled)', function (event) {
+
+        var ids = undefined,
+            bibEntryStart = undefined,
+            bibFormatStart = 'autocite',
+            bibBeforeStart = undefined,
+            bibPageStart = undefined,
+            citableItemsHTML = '',
+            citedItemsHTML = '',
+            cited_ids = [],
+            cited_prefixes = undefined,
+            cited_pages = undefined,
+            diaButtons = [],
+            submit_button_text = undefined,
+            node = editor.pm.selection.node;
+
+        if (node && node.type && node.type.name === 'citation') {
+            bibFormatStart = node.attrs.bibFormat;
+            bibEntryStart = node.attrs.bibEntry;
+            bibBeforeStart = node.attrs.bibBefore;
+            bibPageStart = node.attrs.bibPage;
+            cited_ids = bibEntryStart.split(',');
+            cited_prefixes = bibBeforeStart.split(',,,');
+            cited_pages = bibPageStart.split(',,,');
+        }
+
+        function dialogSubmit() {
+            var cite_items = jQuery('#selected-cite-source-table .fw-cite-parts-table'),
+                cite_ids = [],
+                cite_prefixes = [],
+                cite_pages = [],
+                bibFormat = undefined,
+                bibEntry = undefined,
+                bibPage = undefined,
+                bibBefore = undefined,
+                emptySpaceNode = undefined;
+
+            if (0 === cite_items.size()) {
+                alert(gettext('Please select at least one citation source!'));
+                return false;
+            }
+
+            cite_items.each(function () {
+                cite_ids.push(jQuery(this).find('.delete').data('id'));
+                cite_pages.push(jQuery(this).find('.fw-cite-page').val());
+                cite_prefixes.push(jQuery(this).find('.fw-cite-text').val());
+            });
+
+            bibFormat = jQuery('#citation-style-label').data('style');
+            bibEntry = cite_ids.join(',');
+            bibPage = cite_pages.join(',,,');
+            bibBefore = cite_prefixes.join(',,,');
+
+            if (bibEntry === bibEntryStart && bibBefore === bibBeforeStart && bibPage == bibPageStart && bibFormat == bibFormatStart) {
+                // Nothing has been changed, so we just close the dialog again
+                return true;
+            }
+
+            editor.pm.execCommand('citation:insert', [bibFormat, bibEntry, bibBefore, bibPage]);
+            return true;
+        }
+
+        _.each(BibDB, function (bib, index) {
+            var bibEntry = {
+                'id': index,
+                'type': bib.entry_type,
+                'title': bib.title || '',
+                'author': bib.author || bib.editor || ''
+            },
+                cited_id = undefined;
+
+            bibEntry.title = bibEntry.title.replace(/[{}]/g, '');
+            bibEntry.author = bibEntry.author.replace(/[{}]/g, '');
+            citableItemsHTML += (0, _templates.citationItemTemplate)(bibEntry);
+
+            cited_id = _.indexOf(cited_ids, index);
+            if (-1 < cited_id) {
+                bibEntry.prefix = cited_prefixes[cited_id];
+                bibEntry.page = cited_pages[cited_id];
+                citedItemsHTML += (0, _templates.selectedCitationTemplate)(bibEntry);
+            }
+        });
+
+        diaButtons.push({
+            text: gettext('Register new source'),
+            click: function click() {
+                bibliographyHelpers.createBibEntryDialog();
+            },
+            class: 'fw-button fw-light fw-add-button'
+        });
+
+        if (node && node.type && node.type.name === 'citation') {
+            diaButtons.push({
+                text: gettext('Remove'),
+                click: function click() {
+                    editor.pm.execCommand('deleteSelection');
+                    dialog.dialog('close');
+                },
+                class: 'fw-button fw-orange'
+            });
+        }
+
+        submit_button_text = node && node.type && node.type.name === 'citation' ? 'Update' : 'Insert';
+
+        diaButtons.push({
+            text: gettext(submit_button_text),
+            click: function click() {
+                if (dialogSubmit()) {
+                    dialog.dialog('close');
+                }
+            },
+            class: "fw-button fw-dark"
+        });
+
+        diaButtons.push({
+            text: gettext('Cancel'),
+            click: function click() {
+                dialog.dialog('close');
+            },
+            class: 'fw-button fw-orange'
+        });
+
+        var dialog = jQuery((0, _templates.configureCitationTemplate)({
+            'citableItemsHTML': citableItemsHTML,
+            'citedItemsHTML': citedItemsHTML,
+            'citeFormat': bibFormatStart
+        }));
+
+        dialog.dialog({
+            draggable: false,
+            resizable: false,
+            top: 10,
+            width: 820,
+            height: 540,
+            modal: true,
+            buttons: diaButtons,
+            create: function create() {
+                var theDialog = jQuery(this).closest(".ui-dialog");
+
+                jQuery('#cite-source-table').bind('update', function () {
+                    var autocomplete_tags = [];
+                    if (jQuery(this).hasClass('dataTable')) {
+                        jQuery(this).dataTable({
+                            "bRetrieve": true
+                        });
+                    } else {
+                        jQuery(this).dataTable({
+                            "bPaginate": false,
+                            "bLengthChange": false,
+                            "bFilter": true,
+                            "bInfo": false,
+                            "bAutoWidth": false,
+                            "oLanguage": {
+                                "sSearch": ''
+                            }
+                        });
+                    }
+                    jQuery('#cite-source-table_filter input').attr('placeholder', gettext('Search bibliography'));
+
+                    jQuery('#cite-source-table .fw-searchable').each(function () {
+                        autocomplete_tags.push(this.textContent);
+                    });
+                    autocomplete_tags = _.uniq(autocomplete_tags);
+                    jQuery("#cite-source-table_filter input").autocomplete({
+                        source: autocomplete_tags
+                    });
+                });
+
+                jQuery('#cite-source-table').trigger('update');
+
+                $.addDropdownBox(jQuery('#citation-style-label'), jQuery('#citation-style-pulldown'));
+                jQuery('#citation-style-pulldown .fw-pulldown-item').bind('mousedown', function () {
+                    jQuery('#citation-style-label label').html(jQuery(this).html());
+                    jQuery('#citation-style-label').attr('data-style', jQuery(this).data('style'));
+                });
+
+                jQuery('#add-cite-book').bind('click', function () {
+                    var checkedElements = jQuery('#cite-source-table .fw-checkable.checked'),
+                        selectedItems = [];
+                    checkedElements.each(function () {
+                        var id = jQuery(this).data('id');
+                        if (jQuery('#selected-source-' + id).size()) {
+                            return;
+                        }
+                        selectedItems.push({
+                            'id': id,
+                            'type': jQuery(this).data('type'),
+                            'title': jQuery(this).data('title'),
+                            'author': jQuery(this).data('author')
+                        });
+                    });
+                    checkedElements.removeClass('checked');
+                    mod.citation.appendToCitedItems(selectedItems);
+                });
+
+                jQuery(theDialog).on('click', '.selected-source .delete', function () {
+                    var sourceWrapperId = '#selected-source-' + jQuery(this).data('id');
+                    jQuery(sourceWrapperId).remove();
+                });
+            },
+
+            close: function close() {
+                jQuery(this).dialog('destroy').remove();
+            }
+        });
+
+        jQuery('input').blur();
+
+        jQuery('.fw-checkable').bind('click', function () {
+            $.setCheckableLabel($(this));
+        });
+    });
+};
+
+},{"./templates":26}],20:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var bindComment = exports.bindComment = function bindComment(editor) {
+    // Toolbar comment
+    jQuery(document).on('mousedown', '#button-comment:not(.disabled)', function (event) {
+
+        editor.mod.comments.interactions.createNewComment();
+    });
+};
+
+},{}],21:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.bindFigure = undefined;
+
+var _templates = require('./templates');
+
+var bindFigure = exports.bindFigure = function bindFigure(editor) {
+    // toolbar figure
+    jQuery(document).on('mousedown', '#button-figure:not(.disabled)', function (event) {
+
+        var dialog = undefined,
+            submitMessage = gettext('Insert'),
+            dialogButtons = [],
+            insideFigure = false,
+            figureNode = false,
+            contentNode = false,
+            image = false,
+            caption = '',
+            figureCategory = 'figure',
+            equation = '',
+            previewImage = undefined,
+            mathInput = undefined,
+            captionInput = undefined,
+            node = editor.pm.selection.node;
+
+        event.preventDefault();
+
+        if (node && node.type && node.type.name === 'figure') {
+            insideFigure = true;
+            submitMessage = gettext('Update');
+            equation = node.attrs.equation;
+            image = node.attrs.image;
+            figureCategory = node.attrs.figureCategory;
+            caption = node.attrs.caption;
+
+            if ('' === image) {
+                image = false;
+            } else {
+                previewImage = ImageDB[image];
+                //TODO: Figure out what to do if the image has been deleted from ImageDB in the meantime.
+            }
+            dialogButtons.push({
+                text: gettext('Remove'),
+                class: 'fw-button fw-orange',
+                click: function click() {
+                    editor.pm.execCommand('deleteSelection');
+                    dialog.dialog('close');
+                }
+            });
+        }
+
+        dialog = jQuery((0, _templates.configureFigureTemplate)({
+            equation: equation,
+            caption: caption,
+            image: image
+        }));
+
+        dialogButtons.push({
+            text: submitMessage,
+            class: 'fw-button fw-dark',
+            mousedown: function mousedown(event) {
+                var figureCatNode = undefined,
+                    captionTextNode = undefined,
+                    captionNode = undefined;
+                event.preventDefault();
+                equation = mathInput.val();
+                caption = captionInput.val();
+
+                if (new RegExp(/^\s*$/).test(equation) && !image) {
+                    // The math input is empty. Delete a math node if it exist. Then close the dialog.
+                    if (insideFigure) {
+                        editor.pm.execCommand('deleteSelection');
+                    }
+                    dialog.dialog('close');
+                    return false;
+                }
+
+                if (insideFigure && equation === node.attrs.equation && image === node.attrs.image && caption === node.attrs.caption && figureCategory === node.attrs.figureCategory) {
+                    // the figure has not been changed, just close the dialog
+                    dialog.dialog('close');
+                    return false;
+                }
+
+                editor.pm.execCommand('figure:insert', [equation, image, figureCategory, caption]);
+
+                dialog.dialog('close');
+                return false;
+            }
+        });
+
+        dialogButtons.push({
+            text: gettext('Cancel'),
+            class: 'fw-button fw-orange',
+            click: function click(event) {
+                dialog.dialog('close');
+            }
+        });
+
+        var dialogOpts = {
+            width: 'auto',
+            height: 585,
+            title: gettext("Enter latex math or insert an image"),
+            modal: true,
+            resizable: false,
+            draggable: false,
+            buttons: dialogButtons,
+            dialogClass: 'figure-dialog',
+            close: function close() {
+                jQuery(this).dialog('destroy').remove();
+            }
+        };
+
+        dialog.dialog(dialogOpts);
+
+        mathInput = jQuery('input[name=figure-math]', dialog);
+        captionInput = jQuery('input[name=figure-caption]', dialog).focus(function (e) {
+            return this.select();
+        });
+
+        captionInput.focus();
+
+        function setFigureLabel() {
+            jQuery('#figure-category-btn label', dialog).html(jQuery('#figure-category-' + figureCategory).text());
+        }
+        setFigureLabel();
+
+        function layoutMathPreview() {
+            jQuery('#inner-figure-preview')[0].innerHTML = '<p>[DMATH]' + equation + '[/DMATH]</p>';
+            MathJax.Hub.Queue(["Typeset", MathJax.Hub, "inner-figure-preview"]);
+        }
+
+        function layoutImagePreview() {
+            jQuery('#inner-figure-preview')[0].innerHTML = '<img src="' + previewImage.image + '" style="max-width: 400px;max-height:220px">';
+        }
+
+        if (equation) {
+            layoutMathPreview();
+        } else if (image) {
+            layoutImagePreview();
+        }
+
+        $.addDropdownBox(jQuery('#figure-category-btn'), jQuery('#figure-category-pulldown'));
+
+        jQuery('#figure-category-pulldown li span').bind('mousedown', function (event) {
+            event.preventDefault();
+            figureCategory = this.id.split('-')[2];
+            setFigureLabel();
+        });
+
+        jQuery('input[name=figure-math]').bind('focus', function () {
+            // If a figure is being entered, disable the image button
+            jQuery('#insertFigureImage').addClass('disabled').attr('disabled', 'disabled');
+        });
+
+        jQuery('input[name=figure-math]').bind('blur', function () {
+            if (jQuery(this).val() === '') {
+                jQuery('#inner-figure-preview')[0].innerHTML = '';
+                // enable image button
+                jQuery('#insertFigureImage').removeClass('disabled').removeAttr('disabled');
+            } else {
+                equation = jQuery(this).val();
+                layoutMathPreview();
+            }
+        });
+
+        jQuery('#insertFigureImage').bind('click', function () {
+            if (jQuery(this).hasClass('disabled')) {
+                return;
+            }
+            var imageDialog = jQuery((0, _templates.figureImageTemplate)()).dialog({
+                width: 'auto',
+                height: 'auto',
+                title: gettext("Images"),
+                modal: true,
+                resizable: false,
+                draggable: false,
+                dialogClass: 'figureimage-dialog',
+                close: function close() {
+                    jQuery(this).dialog('destroy').remove();
+                }
+            });
+
+            usermediaHelpers.startUsermediaTable();
+
+            if (image) {
+                jQuery('#Image_' + image).addClass('checked');
+            }
+
+            jQuery('#selectImageFigureButton').bind('click', function () {
+                var checkedImage = jQuery('#imagelist tr.checked');
+                if (0 === checkedImage.length) {
+                    image = false;
+                    jQuery('#inner-figure-preview')[0].innerHTML = '';
+                    jQuery('input[name=figure-math]').removeAttr('disabled');
+                } else {
+                    previewImage = ImageDB[checkedImage[0].id.split('_')[1]];
+                    image = previewImage.pk;
+                    layoutImagePreview();
+                    jQuery('input[name=figure-math]').attr('disabled', 'disabled');
+                }
+                imageDialog.dialog('close');
+            });
+
+            jQuery('#cancelImageFigureButton').bind('click', function () {
+                imageDialog.dialog('close');
+            });
+        });
+    });
+
+    // functions for the image selection dialog
+    jQuery(document).on('click', '#imagelist tr', function () {
+        var checkedImage = jQuery('#imagelist tr.checked'),
+            selecting = true;
+        if (checkedImage.length > 0 && this == checkedImage[0]) {
+            selecting = false;
+        }
+        checkedImage.removeClass('checked');
+        if (selecting) {
+            jQuery(this).addClass('checked');
+        }
+    });
+};
+
+},{"./templates":26}],22:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var bindFootnote = exports.bindFootnote = function bindFootnote(editor) {
+    // toolbar footnote
+    jQuery(document).on('mousedown', '#button-footnote:not(.disabled)', function (event) {
+        editor.pm.execCommand('footnote:insert', ['']);
+    });
+};
+
+},{}],23:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var bindInlineStyles = exports.bindInlineStyles = function bindInlineStyles(editor) {
+
+    // inlinestyles
+    // strong
+    jQuery(document).on('mousedown', '#button-bold:not(.disabled)', function () {
+        editor.pm.execCommand('strong:toggle');
+    });
+    // emph
+    jQuery(document).on('mousedown', '#button-italic:not(.disabled)', function (event) {
+        editor.pm.execCommand('em:toggle');
+    });
+};
+
+},{}],24:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.bindLink = undefined;
+
+var _templates = require('./templates');
+
+var bindLink = exports.bindLink = function bindLink(editor) {
+
+    // toolbar link
+    jQuery(document).on('mousedown', '#button-link:not(.disabled)', function (event) {
+
+        if (!editor.pm.hasFocus()) {
+            return false;
+        }
+
+        var dialogButtons = [],
+            dialog = undefined,
+            link = 'http://',
+            linkTitle = '',
+            defaultLink = 'http://',
+            submitButtonText = 'Insert',
+            linkElement = _.find(editor.pm.activeMarks(), function (mark) {
+            return mark.type.name === 'link';
+        });
+
+        if (linkElement) {
+            submitButtonText = 'Update';
+            linkTitle = linkElement.attrs.title;
+            link = linkElement.attrs.href;
+        }
+
+        dialogButtons.push({
+            text: gettext(submitButtonText),
+            class: 'fw-button fw-dark',
+            click: function click() {
+
+                var newLink = dialog.find('input.link').val(),
+                    linkTitle = dialog.find('input.linktitle').val(),
+                    linkNode = undefined;
+
+                if (new RegExp(/^\s*$/).test(newLink) || newLink === defaultLink) {
+                    // The link input is empty or hasn't been changed from the default value. Just close the dialog.
+                    dialog.dialog('close');
+                    editor.pm.focus();
+                    return;
+                }
+
+                if (new RegExp(/^\s*$/).test(linkTitle)) {
+                    // The link text is empty. Make it the same as the link itself.
+                    linkText = link;
+                }
+                dialog.dialog('close');
+                editor.pm.execCommand('link:set', [newLink, linkTitle]);
+                editor.pm.focus();
+                return;
+            }
+        });
+
+        dialogButtons.push({
+            text: gettext('Cancel'),
+            class: 'fw-button fw-orange',
+            click: function click() {
+                dialog.dialog('close');
+                editor.pm.focus();
+            }
+        });
+
+        dialog = jQuery((0, _templates.linkDialogTemplate)({
+            linkTitle: linkTitle,
+            link: link
+        }));
+
+        dialog.dialog({
+            buttons: dialogButtons,
+            modal: true,
+            close: function close() {
+                jQuery(this).dialog('destroy').remove();
+            }
+        });
+    });
+};
+
+},{"./templates":26}],25:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.bindMath = undefined;
+
+var _templates = require('./templates');
+
+var bindMath = exports.bindMath = function bindMath(editor) {
+
+    // toolbar math
+    jQuery(document).on('mousedown', '#button-math:not(.disabled), .equation', function (event) {
+
+        var dialog = undefined,
+            dialogButtons = [],
+            submitMessage = gettext('Insert'),
+            insideMath = false,
+            equation = 'x=2*y',
+            node = editor.pm.selection.node;
+
+        event.preventDefault();
+
+        if (node && node.type && node.type.name === 'citation') {
+            insideMath = true;
+            equation = node.attrs.equation;
+            submitMessage = gettext('Update');
+            dialogButtons.push({
+                text: gettext('Remove'),
+                class: 'fw-button fw-orange',
+                click: function click() {
+                    insideMath = false;
+                    dialog.dialog('close');
+                }
+            });
+        }
+
+        dialogButtons.push({
+            text: submitMessage,
+            class: 'fw-button fw-dark',
+            click: function click() {
+
+                equation = dialog.find('input').val();
+
+                if (new RegExp(/^\s*$/).test(equation)) {
+                    // The math input is empty. Delete a math node if it exist. Then close the dialog.
+                    if (insideMath) {
+                        editor.pm.execCommand('deleteSelection');
+                    }
+                    dialog.dialog('close');
+                    return;
+                } else if (insideMath && equation === node.attrs.equation) {
+                    dialog.dialog('close');
+                    return;
+                }
+
+                editor.pm.execCommand('equation:insert', [equation]);
+
+                dialog.dialog('close');
+            }
+        });
+
+        dialogButtons.push({
+            text: gettext('Cancel'),
+            class: 'fw-button fw-orange',
+            click: function click() {
+                dialog.dialog('close');
+            }
+        });
+
+        dialog = jQuery((0, _templates.mathDialogTemplate)({ equation: equation }));
+
+        dialog.dialog({
+            buttons: dialogButtons,
+            title: gettext('Latex equation'),
+            modal: true,
+            close: function close() {
+                jQuery(this).dialog('destroy').remove();
+            }
+        });
+    });
+};
+
+},{"./templates":26}],26:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var linkDialogTemplate = exports.linkDialogTemplate = _.template('\
+    <div title="' + gettext("Link") + '">\
+        <p><input class="linktitle" type="text" value="<%- linkTitle %>" placeholder="' + gettext("Link text (optional") + '"/></p>\
+        <p><input class="link" type="text" value="<%- link  %>" placeholder="' + gettext("Link") + '"/></p>\
+    </div>\
+');
+
+var mathDialogTemplate = exports.mathDialogTemplate = _.template('\
+    <div title="' + gettext("Math") + '">\
+        <input style="width: 250px;" class="math" type="text" name="math" value="<%- equation %>" />\
+    </div>\
+');
+
+/** A template to select images inside the figure configuration dialog in the editor. */
+var figureImageTemplate = exports.figureImageTemplate = _.template('\
+    <div>\
+        <table id="imagelist" class="tablesorter fw-document-table" style="width:342px;">\
+            <thead class="fw-document-table-header">\
+                <tr>\
+                    <th width="50">' + gettext('Image') + '</th>\
+                    <th width="150">' + gettext('Title') + '</th>\
+                </tr>\
+            </thead>\
+            <tbody class="fw-document-table-body fw-small">\
+                <% _.each(ImageDB, function (anImage) { %> <%= tmp_usermedia_table(anImage) %> <% }); %>\
+            </tbody>\
+        </table>\
+        <div class="dialogSubmit">\
+            <button class="edit-image createNew fw-button fw-light">' + gettext('Upload new image') + '<span class="icon-plus-circle"></span>\
+            </button>\
+            <button type="button" id="selectImageFigureButton" class="fw-button fw-dark">' + gettext('Insert image') + '</button>\
+             <button type="button" id="cancelImageFigureButton" class="fw-button fw-orange">' + gettext('Cancel') + '</button>\
+        </div>\
+    </div>\
+');
+
+/** A template to configure the display of a figure in the editor. */
+var configureFigureTemplate = exports.configureFigureTemplate = _.template('\
+    <div class="fw-media-uploader">\
+            <div>\
+                <input class="fw-media-title figure-math" type="text" name="figure-math" placeholder="' + gettext('Insert formula') + '" value="<%- equation %>" <%if (image) {%>disabled=disabled<%} %>/>\
+                <button type="button" id="insertFigureImage" class="fw-button fw-light<%if (equation!=="") {%> disabled<%} %>">' + gettext('Insert image') + ' <i class="icon-figure"></i>\
+                </button>\
+            </div>\
+            <input type="hidden" id="figure-category">\
+            <div style="margin-top: 10px;">\
+                <div id="figure-category-btn" class="fw-button fw-light fw-large">\
+                    <input type="hidden" id="figure-category" />\
+                    <label></label>\
+                    <span class="icon-down-dir"></span>\
+                </div>\
+                <div id="figure-category-pulldown" class="fw-pulldown fw-left" style="left: 10px;">\
+                    <ul id="figure-category-list">\
+                        <li><span class="fw-pulldown-item" id="figure-category-none">' + gettext('None') + '</span></li>\
+                        <li><span class="fw-pulldown-item" id="figure-category-figure">' + gettext('Figure') + '</span></li>\
+                        <li><span class="fw-pulldown-item" id="figure-category-photo">' + gettext('Photo') + '</span></li>\
+                        <li><span class="fw-pulldown-item" id="figure-category-table">' + gettext('Table') + '</span></li>\
+                    </ul>\
+                </div>\
+            </div>\
+            <div class="figure-preview">\
+                <div id="inner-figure-preview"></div>\
+            </div>\
+            <div style="margin-top: 10px;"><input style="width: 402px;" class="caption" type="text" name="figure-caption" value="<%- caption %>" placeholder="' + gettext('Insert caption') + '" /></div>\
+        </div>');
+
+/** A template to configure citations in the editor */
+var configureCitationTemplate = exports.configureCitationTemplate = _.template('\
+    <div title="' + gettext('Configure Citation') + '">\
+        <div id="my-sources" class="fw-ar-container">\
+            <h3 class="fw-green-title">' + gettext("My sources") + '</h3>\
+            <table id="cite-source-table" class="fw-document-table">\
+                <thead class="fw-document-table-header"><tr>\
+                    <th width="161">' + gettext("Title") + '</th>\
+                    <th width="161">' + gettext("Author") + '</th>\
+                </tr></thead>\
+                <tbody class="fw-document-table-body fw-min">\
+                    <%= citableItemsHTML %>\
+                </tbody>\
+            </table>\
+        </div>\
+        <span id="add-cite-book" class="fw-button fw-large fw-square fw-light fw-ar-button"><i class="icon-right"></i></span>\
+        <div id="cite-books" class="fw-ar-container">\
+            <h3 class="fw-green-title">' + gettext("Citation format") + '</h3>\
+            <div id="citation-style-selector" class="fw-pulldown-select">\
+                <div id="citation-style-label" class="fw-pulldown-select-label" data-style="<%= citeFormat %>"><label>\
+                <% if("textcite" == citeFormat){ %>' + gettext("Author (1998)") + '<% } else { %>' + gettext("(Author, 1998)") + '<% } %>\
+                </label></div>\
+                <div id="citation-style-pulldown" class="fw-pulldown fw-left">\
+                    <ul>\
+                        <li>\
+                            <span class="fw-pulldown-item" data-style="autocite">' + gettext("(Author, 1998)") + '</span>\
+                        </li>\
+                        <li>\
+                            <span class="fw-pulldown-item" data-style="textcite">' + gettext("Author (1998)") + '</span>\
+                        </li>\
+                    </ul>\
+                </div>\
+            </div>\
+            <table id="selected-cite-source-table" class="fw-document-table tablesorter">\
+                <thead class="fw-document-table-header"><tr>\
+                    <th width="135">' + gettext("Title") + '</th>\
+                    <th width="135">' + gettext("Author") + '</th>\
+                    <td width="50" align="center">' + gettext("Remove") + '</td>\
+                </tr></thead>\
+                <tbody class="fw-document-table-body fw-min">\
+                  <%= citedItemsHTML %>\
+                </tbody>\
+            </table>\
+        </div>\
+    </div>');
+
+/** A template for each item that can be cited inside the citation configuration dialog of the editor. */
+var citationItemTemplate = exports.citationItemTemplate = _.template('<tr class="fw-checkable fw-checkable-tr" data-id="<%- id %>" data-type="<%- type %>" data-title="<%= title %>" data-author="<%= author %>">\
+        <td width="162">\
+            <span class="fw-document-table-title fw-inline">\
+                <i class="icon-book"></i>\
+                <span class="fw-searchable"><%- title %></span>\
+            </span>\
+        </td>\
+        <td width="163">\
+            <span class="fw-inline fw-searchable"><%- author %></span>\
+        </td>\
+    </tr>');
+
+/** A template for each selected citation item inside the citation configuration dialog of the editor. */
+var selectedCitationTemplate = exports.selectedCitationTemplate = _.template('<tr id="selected-source-<%= id %>" class="selected-source"><td colspan="3" width="335">\
+      <table class="fw-cite-parts-table">\
+          <tr>\
+              <td width="135">\
+                  <span class="fw-document-table-title fw-inline">\
+                      <i class="icon-book"></i>\
+                      <span data-id="<%- id %>" data-type="<%- type %>">\
+                          <%- title %>\
+                      </span>\
+                  </span>\
+              </td>\
+              <td width="135">\
+                  <span class="fw-inline">\
+                      <%- author %>\
+                  </span>\
+              </td>\
+              <td width="50" align="center">\
+                  <span class="delete fw-inline fw-link-text" data-id="<%- id %>">\
+                      <i class="icon-trash"></i>\
+                  </span>\
+              </td>\
+          </tr>\
+          <tr>\
+              <td class="cite-extra-fields" colspan="3" width="335">\
+                  <div>\
+                      <label>' + gettext('Page') + '</label>\
+                      <input class="fw-cite-page" type="text" value="<%= page %>" />\
+                  </div>\
+                  <div>\
+                      <label>' + gettext('Text before') + '</label>\
+                      <input class="fw-cite-text" type="text" value="<%= prefix %>" />\
+                  </div>\
+              </td>\
+          </tr>\
+      </table>\
+  </td></tr>');
+
+},{}],27:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var bindHistory = exports.bindHistory = function bindHistory(editor) {
+
+    // toolbar undo / redo
+
+    jQuery(document).on('mousedown', '#button-undo:not(.disabled)', function (event) {
+        editor.pm.execCommand("undo");
+    });
+
+    jQuery(document).on('mousedown', '#button-redo:not(.disabled)', function (event) {
+        editor.pm.execCommand("redo");
+    });
+};
+
+},{}],28:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -3296,7 +4291,7 @@ var fidusFnSchema = exports.fidusFnSchema = new _model.Schema(_model.defaultSche
     comment: CommentMark
 }));
 
-},{"prosemirror/dist/model":57}],18:[function(require,module,exports){
+},{"prosemirror/dist/model":68}],29:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -3455,7 +4450,7 @@ var ModServerCommunications = exports.ModServerCommunications = (function () {
     return ModServerCommunications;
 })();
 
-},{}],19:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -3564,7 +4559,7 @@ var ModSettingsLayout = exports.ModSettingsLayout = (function () {
     return ModSettingsLayout;
 })();
 
-},{}],20:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3590,7 +4585,7 @@ var ModSettings = exports.ModSettings = function ModSettings(editor) {
     new _layout.ModSettingsLayout(this);
 };
 
-},{"./layout":19,"./set":21}],21:[function(require,module,exports){
+},{"./layout":30,"./set":32}],32:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -3655,7 +4650,7 @@ var ModSettingsSet = exports.ModSettingsSet = (function () {
     return ModSettingsSet;
 })();
 
-},{}],22:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3675,7 +4670,7 @@ var ModTools = exports.ModTools = function ModTools(editor) {
     new _wordCount.ModToolsWordCount(this);
 };
 
-},{"./word-count":24}],23:[function(require,module,exports){
+},{"./word-count":35}],34:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3704,7 +4699,7 @@ var wordCounterDialogTemplate = exports.wordCounterDialogTemplate = _.template('
         </table>\
     </div>');
 
-},{}],24:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -3783,7 +4778,7 @@ var ModToolsWordCount = exports.ModToolsWordCount = (function () {
     return ModToolsWordCount;
 })();
 
-},{"./templates":23}],25:[function(require,module,exports){
+},{"./templates":34}],36:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4005,7 +5000,7 @@ function calculatePlaceHolderCss(pm, selectedElement) {
     }
 }
 
-},{"prosemirror/dist/model":57}],26:[function(require,module,exports){
+},{"prosemirror/dist/model":68}],37:[function(require,module,exports){
 'use strict';
 
 var _editor = require('./es6_modules/editor');
@@ -4047,7 +5042,7 @@ window.editorHelpers = editorHelpers;
 var theEditor = new _editor.Editor();
 window.theEditor = theEditor;
 
-},{"./es6_modules/editor":10}],27:[function(require,module,exports){
+},{"./es6_modules/editor":10}],38:[function(require,module,exports){
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
     module.exports = mod()
@@ -4219,7 +5214,7 @@ window.theEditor = theEditor;
   return Keymap
 })
 
-},{}],28:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4392,7 +5387,7 @@ var Collab = function () {
 }();
 
 (0, _event.eventMixin)(Collab);
-},{"../edit":40,"../util/error":74,"../util/event":75,"./rebase":29}],29:[function(require,module,exports){
+},{"../edit":51,"../util/error":85,"../util/event":86,"./rebase":40}],40:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4420,7 +5415,7 @@ function rebaseSteps(doc, forward, steps, maps) {
   }
   return { doc: transform.doc, transform: transform, mapping: remap, positions: positions };
 }
-},{"../transform":63}],30:[function(require,module,exports){
+},{"../transform":74}],41:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4499,7 +5494,7 @@ function ensureCSSAdded() {
     document.head.insertBefore(cssNode, document.head.firstChild);
   }
 }
-},{}],31:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5216,7 +6211,7 @@ baseCommands.redo = {
   },
   keys: ["Mod-Y", "Shift-Mod-Z"]
 };
-},{"../model":57,"../transform":63,"../util/error":74,"./char":33,"./dompos":37,"./selection":46}],32:[function(require,module,exports){
+},{"../model":68,"../transform":74,"../util/error":85,"./char":44,"./dompos":48,"./selection":57}],43:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5286,7 +6281,7 @@ var keys = {
 if (_dom.browser.mac) keys["Ctrl-F"] = keys["Ctrl-B"] = keys["Ctrl-P"] = keys["Ctrl-N"] = keys["Alt-F"] = keys["Alt-B"] = keys["Ctrl-A"] = keys["Ctrl-E"] = keys["Ctrl-V"] = keys["goPageUp"] = ensureSelection;
 
 var captureKeys = exports.captureKeys = new _browserkeymap2.default(keys);
-},{"../dom":30,"./dompos":37,"./selection":46,"browserkeymap":27}],33:[function(require,module,exports){
+},{"../dom":41,"./dompos":48,"./selection":57,"browserkeymap":38}],44:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5319,7 +6314,7 @@ function charCategory(ch) {
 function isExtendingChar(ch) {
   return ch.charCodeAt(0) >= 768 && extendingChar.test(ch);
 }
-},{}],34:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5928,13 +6923,13 @@ _model.NodeType.derivableCommands.insert = function (conf) {
     params: deriveParams(this, conf.params)
   };
 };
-},{"../dom":30,"../model":57,"../transform":63,"../util/error":74,"../util/obj":77,"../util/sortedinsert":78,"./base_commands":31,"browserkeymap":27}],35:[function(require,module,exports){
+},{"../dom":41,"../model":68,"../transform":74,"../util/error":85,"../util/obj":88,"../util/sortedinsert":89,"./base_commands":42,"browserkeymap":38}],46:[function(require,module,exports){
 "use strict";
 
 var _dom = require("../dom");
 
 (0, _dom.insertCSS)("\n\n.ProseMirror {\n  border: 1px solid silver;\n  position: relative;\n}\n\n.ProseMirror-content {\n  padding: 4px 8px 4px 14px;\n  white-space: pre-wrap;\n  line-height: 1.2;\n}\n\n.ProseMirror-drop-target {\n  position: absolute;\n  width: 1px;\n  background: #666;\n  display: none;\n}\n\n.ProseMirror-content ul.tight p, .ProseMirror-content ol.tight p {\n  margin: 0;\n}\n\n.ProseMirror-content ul, .ProseMirror-content ol {\n  padding-left: 30px;\n  cursor: default;\n}\n\n.ProseMirror-content blockquote {\n  padding-left: 1em;\n  border-left: 3px solid #eee;\n  margin-left: 0; margin-right: 0;\n}\n\n.ProseMirror-content pre {\n  white-space: pre-wrap;\n}\n\n.ProseMirror-selectednode {\n  outline: 2px solid #8cf;\n}\n\n.ProseMirror-nodeselection *::selection { background: transparent; }\n.ProseMirror-nodeselection *::-moz-selection { background: transparent; }\n\n.ProseMirror-content p:first-child,\n.ProseMirror-content h1:first-child,\n.ProseMirror-content h2:first-child,\n.ProseMirror-content h3:first-child,\n.ProseMirror-content h4:first-child,\n.ProseMirror-content h5:first-child,\n.ProseMirror-content h6:first-child {\n  margin-top: .3em;\n}\n\n/* Add space around the hr to make clicking it easier */\n\n.ProseMirror-content hr {\n  position: relative;\n  height: 6px;\n  border: none;\n}\n\n.ProseMirror-content hr:after {\n  content: \"\";\n  position: absolute;\n  left: 10px;\n  right: 10px;\n  top: 2px;\n  border-top: 2px solid silver;\n}\n\n.ProseMirror-content img {\n  cursor: default;\n}\n\n/* Make sure li selections wrap around markers */\n\n.ProseMirror-content li {\n  position: relative;\n  pointer-events: none; /* Don't do weird stuff with marker clicks */\n}\n.ProseMirror-content li > * {\n  pointer-events: auto;\n}\n\nli.ProseMirror-selectednode {\n  outline: none;\n}\n\nli.ProseMirror-selectednode:after {\n  content: \"\";\n  position: absolute;\n  left: -32px;\n  right: -2px; top: -2px; bottom: -2px;\n  border: 2px solid #8cf;\n  pointer-events: none;\n}\n\n");
-},{"../dom":30}],36:[function(require,module,exports){
+},{"../dom":41}],47:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6136,7 +7131,7 @@ function scanText(start, end) {
     cur = cur.firstChild || nodeAfter(cur);
   }
 }
-},{"../format":49,"../model":57,"../transform/tree":71,"./dompos":37}],37:[function(require,module,exports){
+},{"../format":60,"../model":68,"../transform/tree":82,"./dompos":48}],48:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6513,7 +7508,7 @@ function handleNodeClick(pm, type, event, direct) {
     }
   }
 }
-},{"../dom":30,"../model":57,"../util/error":74}],38:[function(require,module,exports){
+},{"../dom":41,"../model":68,"../util/error":85}],49:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6680,7 +7675,7 @@ function redraw(pm, dirty, doc, prev) {
   }
   scan(pm.content, doc, prev);
 }
-},{"../dom":30,"../format":49,"../model":57,"./dompos":37,"./main":42}],39:[function(require,module,exports){
+},{"../dom":41,"../format":60,"../model":68,"./dompos":48,"./main":53}],50:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7258,7 +8253,7 @@ var History = exports.History = function () {
 
   return History;
 }();
-},{"../model":57,"../transform":63}],40:[function(require,module,exports){
+},{"../model":68,"../transform":74}],51:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7353,7 +8348,7 @@ var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.Keymap = _browserkeymap2.default;
-},{"./base_commands":31,"./command":34,"./main":42,"./options":43,"./range":44,"./schema_commands":45,"./selection":46,"browserkeymap":27}],41:[function(require,module,exports){
+},{"./base_commands":42,"./command":45,"./main":53,"./options":54,"./range":55,"./schema_commands":56,"./selection":57,"browserkeymap":38}],52:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7954,7 +8949,7 @@ handlers.blur = function (pm) {
   // Fired when the editor loses focus.
   pm.signal("blur");
 };
-},{"../dom":30,"../format":49,"../model":57,"./capturekeys":32,"./domchange":36,"./dompos":37,"./selection":46,"browserkeymap":27}],42:[function(require,module,exports){
+},{"../dom":41,"../format":60,"../model":68,"./capturekeys":43,"./domchange":47,"./dompos":48,"./selection":57,"browserkeymap":38}],53:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8733,7 +9728,7 @@ var EditorTransform = function (_Transform) {
 
   return EditorTransform;
 }(_transform.Transform);
-},{"../dom":30,"../format":49,"../model":57,"../transform":63,"../util/error":74,"../util/event":75,"../util/map":76,"../util/sortedinsert":78,"./css":35,"./dompos":37,"./draw":38,"./history":39,"./input":41,"./options":43,"./range":44,"./selection":46,"browserkeymap":27}],43:[function(require,module,exports){
+},{"../dom":41,"../format":60,"../model":68,"../transform":74,"../util/error":85,"../util/event":86,"../util/map":87,"../util/sortedinsert":89,"./css":46,"./dompos":48,"./draw":49,"./history":50,"./input":52,"./options":54,"./range":55,"./selection":57,"browserkeymap":38}],54:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8855,7 +9850,7 @@ function setOption(pm, name, value) {
   pm.options[name] = value;
   if (desc.update) desc.update(pm, value, old, false);
 }
-},{"../model":57,"../ui/prompt":72,"../util/error":74,"./command":34}],44:[function(require,module,exports){
+},{"../model":68,"../ui/prompt":83,"../util/error":85,"./command":45}],55:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9055,7 +10050,7 @@ var RangeTracker = function () {
 
   return RangeTracker;
 }();
-},{"../util/event":75}],45:[function(require,module,exports){
+},{"../util/event":86}],56:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -9389,7 +10384,7 @@ _model.HorizontalRule.register("command", "insert", {
   keys: ["Mod-Shift--"],
   menu: { group: "insert", rank: 70, display: { type: "label", label: "Horizontal rule" } }
 });
-},{"../format":49,"../model":57,"./command":34}],46:[function(require,module,exports){
+},{"../format":60,"../model":68,"./command":45}],57:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9865,7 +10860,7 @@ function verticalMotionLeavesTextblock(pm, pos, dir) {
   }
   return true;
 }
-},{"../dom":30,"../model":57,"../util/error":74,"./dompos":37}],47:[function(require,module,exports){
+},{"../dom":41,"../model":68,"../util/error":85,"./dompos":48}],58:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10322,7 +11317,7 @@ _model.StrongMark.register("parseDOMStyle", "font-weight", {
 });
 
 _model.CodeMark.register("parseDOM", "code", { parse: "mark" });
-},{"../model":57,"../util/sortedinsert":78,"./register":50}],48:[function(require,module,exports){
+},{"../model":68,"../util/sortedinsert":89,"./register":61}],59:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10354,7 +11349,7 @@ function fromText(schema, text) {
 }
 
 (0, _register.defineSource)("text", fromText);
-},{"./register":50}],49:[function(require,module,exports){
+},{"./register":61}],60:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10453,7 +11448,7 @@ Object.defineProperty(exports, "toText", {
     return _to_text.toText;
   }
 });
-},{"./from_dom":47,"./from_text":48,"./register":50,"./to_dom":51,"./to_text":52}],50:[function(require,module,exports){
+},{"./from_dom":58,"./from_text":59,"./register":61,"./to_dom":62,"./to_text":63}],61:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10521,7 +11516,7 @@ function defineSource(format, func) {
 defineSource("json", function (schema, json) {
   return schema.nodeFromJSON(json);
 });
-},{"../util/error":74}],51:[function(require,module,exports){
+},{"../util/error":85}],62:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10809,7 +11804,7 @@ def(_model.LinkMark, function (mark, s) {
   return s.elt("a", { href: mark.attrs.href,
     title: mark.attrs.title });
 });
-},{"../model":57,"./register":50}],52:[function(require,module,exports){
+},{"../model":68,"./register":61}],63:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10853,7 +11848,7 @@ function toText(doc) {
 }
 
 (0, _register.defineTarget)("text", toText);
-},{"../model":57,"./register":50}],53:[function(require,module,exports){
+},{"../model":68,"./register":61}],64:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11290,7 +12285,7 @@ var defaultSpec = new _schema.SchemaSpec({
 // :: Schema
 // ProseMirror's default document schema.
 var defaultSchema = exports.defaultSchema = new _schema.Schema(defaultSpec);
-},{"./schema":61}],54:[function(require,module,exports){
+},{"./schema":72}],65:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11387,7 +12382,7 @@ function findDiffEnd(a, b) {
   }
   return { a: new _pos.Pos(pathA, offA), b: new _pos.Pos(pathB, offB) };
 }
-},{"./pos":60}],55:[function(require,module,exports){
+},{"./pos":71}],66:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11416,7 +12411,7 @@ var ModelError = exports.ModelError = function (_ProseMirrorError) {
 
   return ModelError;
 }(_error.ProseMirrorError);
-},{"../util/error":74}],56:[function(require,module,exports){
+},{"../util/error":85}],67:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12127,7 +13122,7 @@ if (typeof Symbol != "undefined") {
     return this;
   };
 }
-},{"./error":55}],57:[function(require,module,exports){
+},{"./error":66}],68:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12367,7 +13362,7 @@ Object.defineProperty(exports, "ModelError", {
                 return _error.ModelError;
         }
 });
-},{"./defaultschema":53,"./diff":54,"./error":55,"./fragment":56,"./mark":58,"./node":59,"./pos":60,"./schema":61}],58:[function(require,module,exports){
+},{"./defaultschema":64,"./diff":65,"./error":66,"./fragment":67,"./mark":69,"./node":70,"./pos":71,"./schema":72}],69:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12499,7 +13494,7 @@ var Mark = exports.Mark = function () {
 }();
 
 var empty = [];
-},{}],59:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13104,7 +14099,7 @@ function wrapMarks(marks, str) {
     str = marks[i].type.name + "(" + str + ")";
   }return str;
 }
-},{"./fragment":56,"./mark":58,"./pos":60}],60:[function(require,module,exports){
+},{"./fragment":67,"./mark":69,"./pos":71}],71:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13328,7 +14323,7 @@ var Pos = exports.Pos = function () {
 
   return Pos;
 }();
-},{"./error":55}],61:[function(require,module,exports){
+},{"./error":66}],72:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14339,7 +15334,7 @@ var Schema = function () {
 }();
 
 exports.Schema = Schema;
-},{"../util/error":74,"../util/obj":77,"./fragment":56,"./mark":58,"./node":59}],62:[function(require,module,exports){
+},{"../util/error":85,"../util/obj":88,"./fragment":67,"./mark":69,"./node":70}],73:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14625,7 +15620,7 @@ _transform.Transform.prototype.setNodeType = function (pos, type, attrs) {
   this.step("ancestor", new _model.Pos(path, 0), new _model.Pos(path, node.size), null, { depth: 1, types: [type], attrs: [attrs] });
   return this;
 };
-},{"../model":57,"./map":65,"./step":69,"./transform":70,"./tree":71}],63:[function(require,module,exports){
+},{"../model":68,"./map":76,"./step":80,"./transform":81,"./tree":82}],74:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14713,7 +15708,7 @@ require("./mark");
 require("./split");
 
 require("./replace");
-},{"./ancestor":62,"./join":64,"./map":65,"./mark":66,"./replace":67,"./split":68,"./step":69,"./transform":70}],64:[function(require,module,exports){
+},{"./ancestor":73,"./join":75,"./map":76,"./mark":77,"./replace":78,"./split":79,"./step":80,"./transform":81}],75:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14795,7 +15790,7 @@ _transform.Transform.prototype.join = function (at) {
   this.step("join", new _model.Pos(at.path.concat(at.offset - 1), parent.child(at.offset - 1).size), new _model.Pos(at.path.concat(at.offset), 0));
   return this;
 };
-},{"../model":57,"./map":65,"./step":69,"./transform":70}],65:[function(require,module,exports){
+},{"../model":68,"./map":76,"./step":80,"./transform":81}],76:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15115,7 +16110,7 @@ var Remapping = exports.Remapping = function () {
 
   return Remapping;
 }();
-},{"../model":57}],66:[function(require,module,exports){
+},{"../model":68}],77:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -15294,7 +16289,7 @@ _transform.Transform.prototype.clearMarkup = function (from, to, newParent) {
     this.step(delSteps[i]);
   }return this;
 };
-},{"../model":57,"./step":69,"./transform":70,"./tree":71}],67:[function(require,module,exports){
+},{"../model":68,"./step":80,"./transform":81,"./tree":82}],78:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15622,7 +16617,7 @@ _transform.Transform.prototype.insertText = function (pos, text) {
 _transform.Transform.prototype.insertInline = function (pos, node) {
   return this.insert(pos, node.mark(this.doc.marksAt(pos)));
 };
-},{"../model":57,"./map":65,"./step":69,"./transform":70,"./tree":71}],68:[function(require,module,exports){
+},{"../model":68,"./map":76,"./step":80,"./transform":81,"./tree":82}],79:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -15711,7 +16706,7 @@ _transform.Transform.prototype.splitIfNeeded = function (pos) {
   }
   return this;
 };
-},{"../model":57,"./map":65,"./step":69,"./transform":70}],69:[function(require,module,exports){
+},{"../model":68,"./map":76,"./step":80,"./transform":81}],80:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15898,7 +16893,7 @@ var StepResult = exports.StepResult = function StepResult(doc) {
 };
 
 var steps = Object.create(null);
-},{"../model":57,"../util/error":74,"./map":65}],70:[function(require,module,exports){
+},{"../model":68,"../util/error":85,"./map":76}],81:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16003,7 +16998,7 @@ var Transform = function () {
 }();
 
 exports.Transform = Transform;
-},{"./map":65,"./step":69}],71:[function(require,module,exports){
+},{"./map":76,"./step":80}],82:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16097,7 +17092,7 @@ function samePathDepth(a, b) {
     if (i == a.path.length || i == b.path.length || a.path[i] != b.path[i]) return i;
   }
 }
-},{"../model":57}],72:[function(require,module,exports){
+},{"../model":68}],83:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16393,7 +17388,7 @@ function openPrompt(pm, content, options) {
 }
 
 (0, _dom.insertCSS)("\n.ProseMirror-prompt {\n  background: white;\n  padding: 2px 6px 2px 15px;\n  border: 1px solid silver;\n  position: absolute;\n  border-radius: 3px;\n  z-index: 11;\n}\n\n.ProseMirror-prompt input[type=\"text\"],\n.ProseMirror-prompt textarea {\n  background: #eee;\n  border: none;\n  outline: none;\n}\n\n.ProseMirror-prompt input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n.ProseMirror-prompt-close {\n  position: absolute;\n  left: 2px; top: 1px;\n  color: #666;\n  border: none; background: transparent; padding: 0;\n}\n\n.ProseMirror-prompt-close:after {\n  content: \"✕\";\n  font-size: 12px;\n}\n\n.ProseMirror-invalid {\n  background: #ffc;\n  border: 1px solid #cc7;\n  border-radius: 4px;\n  padding: 5px 10px;\n  position: absolute;\n  min-width: 10em;\n}\n");
-},{"../dom":30,"../util/error":74}],73:[function(require,module,exports){
+},{"../dom":41,"../util/error":85}],84:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16553,7 +17548,7 @@ var UpdateScheduler = exports.UpdateScheduler = function () {
 
   return UpdateScheduler;
 }();
-},{}],74:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16635,7 +17630,7 @@ function functionName(f) {
   var match = /^function (\w+)/.exec(f.toString());
   return match && match[1];
 }
-},{}],75:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16752,7 +17747,7 @@ function eventMixin(ctor) {
     if (methods.hasOwnProperty(prop)) proto[prop] = methods[prop];
   }
 }
-},{}],76:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16808,7 +17803,7 @@ var Map = exports.Map = window.Map || function () {
 
   return _class;
 }();
-},{}],77:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16821,7 +17816,7 @@ function copyObj(obj, base) {
     copy[prop] = obj[prop];
   }return copy;
 }
-},{}],78:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16834,4 +17829,4 @@ function sortedInsert(array, elt, compare) {
     if (compare(array[i], elt) > 0) break;
   }array.splice(i, 0, elt);
 }
-},{}]},{},[26]);
+},{}]},{},[37]);

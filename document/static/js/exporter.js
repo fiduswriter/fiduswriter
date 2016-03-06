@@ -1599,8 +1599,11 @@ var findImages = exports.findImages = function findImages(htmlCode) {
 },{}],11:[function(require,module,exports){
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
 /** Dialog to add a note to a revision before saving. */
-revisionDialogTemplate = _.template('\
+var revisionDialogTemplate = exports.revisionDialogTemplate = _.template('\
 <div title="' + gettext('Revision description') + '"><p><input type="text" class="revision-note" placeholder="' + gettext('Description (optional)') + '"></p></div>');
 
 },{}],12:[function(require,module,exports){

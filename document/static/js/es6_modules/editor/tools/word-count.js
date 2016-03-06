@@ -1,4 +1,4 @@
-import {wordCounterDialogTemplate} from "./templates"
+import {wordCounterDialogTemplate} from "./word-count-templates"
 
 export class ModToolsWordCount {
     constructor(mod) {

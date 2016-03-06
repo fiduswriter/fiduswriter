@@ -1,8 +1,3 @@
-import {savecopy} from "../../exporter/copy"
-import {downloadNative, uploadNative} from "../../exporter/native"
-import {downloadLatex} from "../../exporter/latex"
-import {downloadHtml} from "../../exporter/html"
-import {downloadEpub} from "../../exporter/epub"
 
 /* Bindings for the header menu */
 export class ModMenusHeader {
@@ -46,7 +41,7 @@ export class ModMenusHeader {
               citationStyleMenu.appendChild(newMenuItem)
           }
 
-          jQuery('.metadata-menu-item, #open-close-header, .save, .multibuttonsCover, \
+          jQuery('.metadata-menu-item, #open-close-header, .saverevision, .multibuttonsCover, \
           .savecopy, .download, .latex, .epub, .html, .print, .style, .citationstyle, \
           .tools-item, .papersize, .metadata-menu-item, .share, #open-close-header, \
           .save, .papersize-menu, .metadata-menu, .documentstyle-menu, \
@@ -55,44 +50,25 @@ export class ModMenusHeader {
           jQuery('#editor-navigation').hide()
 
           jQuery(document).on('mousedown', '.savecopy:not(.disabled)', function() {
-              that.mod.editor.getUpdates(function() {
-                  that.mod.editor.sendDocumentUpdate()
-              });
-              savecopy(that.mod.editor.doc)
+              that.mod.actions.saveCopy()
           })
-
           jQuery(document).on('mousedown', '.download:not(.disabled)', function() {
-              that.mod.editor.getUpdates(function() {
-                  that.mod.editor.sendDocumentUpdate()
-              })
-              downloadNative(that.mod.editor.doc)
+              that.mod.actions.download()
           })
           jQuery(document).on('mousedown', '.latex:not(.disabled)', function() {
-              that.mod.editor.getUpdates(function() {
-                    that.mod.editor.sendDocumentUpdate()
-              })
-              downloadLatex(that.mod.editor.doc)
+              that.mod.actions.downloadLatex()
           })
           jQuery(document).on('mousedown', '.epub:not(.disabled)', function() {
-              that.mod.editor.getUpdates(function() {
-                  that.mod.editor.sendDocumentUpdate()
-              })
-              downloadEpub(that.mod.editor.doc)
+              that.mod.actions.downloadEpub()
           })
           jQuery(document).on('mousedown', '.html:not(.disabled)', function() {
-              that.mod.editor.getUpdates(function() {
-                  that.mod.editor.sendDocumentUpdate()
-              })
-              downloadHtml(that.mod.editor.doc)
+              that.mod.actions.downloadHtml()
           })
           jQuery(document).on('mousedown', '.print:not(.disabled)', function() {
-              that.mod.editor.mod.tools.print.print()
+              that.mod.actions.print()
           })
           jQuery(document).on('mousedown', '.close:not(.disabled)', function() {
-              that.mod.editor.getUpdates(function() {
-                  that.mod.editor.sendDocumentUpdate()
-              })
-              window.location.href = '/'
+              that.mod.actions.close()
           })
 
           // Document Style switching
@@ -118,10 +94,10 @@ export class ModMenusHeader {
 
               switch (jQuery(this).data('function')) {
                   case 'wordcounter':
-                      that.mod.editor.mod.tools.wordCount.wordCountDialog()
+                      that.mod.actions.wordCounter()
                       break
                   case 'showshortcuts':
-                      $().showShortcuts()
+                      that.mod.actions.showKeyBindings()
                       break
               }
 
@@ -181,11 +157,8 @@ export class ModMenusHeader {
                   })
           })
 
-          jQuery(document).on('mousedown', '.save:not(.disabled)', function() {
-              that.mod.editor.getUpdates(function() {
-                  that.mod.editor.sendDocumentUpdate()
-              })
-              uploadNative(that.mod.editor.doc)
+          jQuery(document).on('mousedown', '.saverevision:not(.disabled)', function() {
+              that.mod.actions.saveRevision()
           })
 
 

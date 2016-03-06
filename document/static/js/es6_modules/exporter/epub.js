@@ -2,6 +2,7 @@ import {cleanHTML, replaceImgSrc, getMathjaxHeader} from "./html"
 import {obj2Node, node2Obj} from "./json"
 import {createSlug, findImages} from "./tools"
 import {zipFileCreator} from "./zip"
+import {opfTemplate, containerTemplate, ncxTemplate, navTemplate, xhtmlTemplate} from "./epub-templates"
 
 export let styleEpubFootnotes = function(htmlCode) {
     let footnotesCode = '', footnoteCounter = 0
@@ -165,7 +166,7 @@ let export2 = function(aDocument, contentsBody, images, title, styleSheets, math
     contentsBodyEpubPrepared = styleEpubFootnotes(
         contentsBody)
 
-    xhtmlCode = tmp_epub_xhtml({
+    xhtmlCode = xhtmlTemplate({
         part: false,
         shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
         title: title,
@@ -176,7 +177,7 @@ let export2 = function(aDocument, contentsBody, images, title, styleSheets, math
 
     xhtmlCode = replaceImgSrc(xhtmlCode)
 
-    containerCode = tmp_epub_container({})
+    containerCode = containerTemplate({})
 
     timestamp = getTimestamp()
 
@@ -199,7 +200,7 @@ let export2 = function(aDocument, contentsBody, images, title, styleSheets, math
     }
 
 
-    opfCode = tmp_epub_opf({
+    opfCode = opfTemplate({
         language: gettext('en-US'), // TODO: specify a document language rather than using the current users UI language
         title: title,
         authors: authors,
@@ -213,7 +214,7 @@ let export2 = function(aDocument, contentsBody, images, title, styleSheets, math
         images: images
     })
 
-    ncxCode = tmp_epub_ncx({
+    ncxCode = ncxTemplate({
         shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
         title: title,
         idType: 'fidus',
@@ -221,7 +222,7 @@ let export2 = function(aDocument, contentsBody, images, title, styleSheets, math
         contentItems: contentItems
     })
 
-    navCode = tmp_epub_nav({
+    navCode = navTemplate({
         shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
         contentItems: contentItems
     })

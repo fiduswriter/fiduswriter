@@ -266,7 +266,7 @@
                 chapters[i].mathjax = mathjax;
             }
 
-            xhtmlCode = tmp_epub_xhtml({
+            xhtmlCode = exporter.xhtmlTemplate({
                 part: chapters[i].part,
                 shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
                 title: chapters[i].document.title,
@@ -321,7 +321,7 @@
             coverImage: coverImage
         });
 
-        ncxCode = tmp_epub_ncx({
+        ncxCode = exporter.ncxTemplate({
             shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
             title: aBook.title,
             idType: 'fidus',
@@ -329,14 +329,14 @@
             contentItems: contentItems
         });
 
-        navCode = tmp_epub_nav({
+        navCode = exporter.navTemplate({
             shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
             contentItems: contentItems
         });
 
         outputList = outputList.concat([{
             filename: 'META-INF/container.xml',
-            contents: tmp_epub_container({})
+            contents: exporter.containerTemplate({})
         }, {
             filename: 'EPUB/document.opf',
             contents: opfCode

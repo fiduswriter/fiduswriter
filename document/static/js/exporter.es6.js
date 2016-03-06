@@ -8,11 +8,29 @@ import {uploadNative, downloadNative} from "./es6_modules/exporter/native"
 import {createSlug, findImages} from "./es6_modules/exporter/tools"
 import {zipFileCreator} from "./es6_modules/exporter/zip"
 
+import {opfMathjaxItemsTemplatePart, opfCssItemTemplatePart,
+  opfImageItemTemplatePart, opfTemplate, containerTemplate, ncxTemplate,
+  ncxItemTemplate, xhtmlTemplate, navTemplate, navItemTemplate
+  } from "./es6_modules/exporter/epub-templates"
+
+import {mathjaxHtmlHeaderTemplatePart, htmlExportTemplate} from "./es6_modules/exporter/html-templates"
+
 /**
  * Functions to export the Fidus Writer document.
  */
-let exporter = {};
-
+let exporter = {}
+exporter.opfMathjaxItemsTemplatePart = opfMathjaxItemsTemplatePart
+exporter.opfCssItemTemplatePart = opfCssItemTemplatePart
+exporter.opfImageItemTemplatePart = opfImageItemTemplatePart
+exporter.opfTemplate = opfTemplate
+exporter.containerTemplate = containerTemplate
+exporter.ncxTemplate = ncxTemplate
+exporter.ncxItemTemplate = ncxItemTemplate
+exporter.xhtmlTemplate = xhtmlTemplate
+exporter.navTemplate = navTemplate
+exporter.navItemTemplate = navItemTemplate
+exporter.mathjaxHtmlHeaderTemplatePart = mathjaxHtmlHeaderTemplatePart
+exporter.htmlExportTemplate = htmlExportTemplate
 exporter.savecopy = savecopy
 exporter.downloadFile = downloadFile
 exporter.styleEpubFootnotes = styleEpubFootnotes
@@ -35,4 +53,4 @@ exporter.createSlug = createSlug
 exporter.findImages = findImages
 exporter.zipFileCreator = zipFileCreator
 
-window.exporter = exporter;
+window.exporter = exporter

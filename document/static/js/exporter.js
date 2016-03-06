@@ -31,7 +31,7 @@ var savecopy = exports.savecopy = function savecopy(aDocument) {
     }
 };
 
-},{"./native":7}],2:[function(require,module,exports){
+},{"./native":9}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -53,6 +53,356 @@ var downloadFile = exports.downloadFile = function downloadFile(zipFilename, blo
 };
 
 },{}],3:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.navItemTemplate = exports.navTemplate = exports.xhtmlTemplate = exports.ncxItemTemplate = exports.ncxTemplate = exports.containerTemplate = exports.opfTemplate = exports.opfImageItemTemplatePart = exports.opfCssItemTemplatePart = exports.opfMathjaxItemsTemplatePart = undefined;
+
+var _htmlTemplates = require('./html-templates');
+
+/** A template to include MathJax in an Epub's OPF file. */
+var opfMathjaxItemsTemplatePart = exports.opfMathjaxItemsTemplatePart = '\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/BasicLatin.js" id="id0" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/MiscMathSymbolsB.js" id="id1" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/d.js" id="id2" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/element/mml/jax.js" id="id3" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/TeX/cancel.js" id="id4" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/a.js" id="id5" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/AsciiMath/jax.js" id="id6" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/autoload/ms.js" id="id7" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/TeX/mathchoice.js" id="id8" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Script/Regular/Main.js" id="id9" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/TeX/extpfeil.js" id="id10" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/AsciiMath/config.js" id="id11" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/Arrows.js" id="id12" media-type="application/x-javascript"/>\
+        <item href="mathjax/images/CloseX-31.png" id="id13" media-type="image/png"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Italic/LatinExtendedA.js" id="id14" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/SansSerif/Italic/Other.js" id="id15" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Size3/Regular/Main.js" id="id16" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Size2/Regular/Main.js" id="id17" media-type="application/x-javascript"/>\
+        <item href="mathjax/images/MenuArrow-15.png" id="id18" media-type="image/png"/>\
+        <item href="mathjax/jax/input/TeX/jax.js" id="id19" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Size1/Regular/Main.js" id="id20" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/h.js" id="id21" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/l.js" id="id22" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Fraktur/Bold/PUA.js" id="id23" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/TeX/AMSsymbols.js" id="id24" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/CombDiacritMarks.js" id="id25" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Fraktur/Regular/PUA.js" id="id26" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/GreekAndCoptic.js" id="id27" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Italic/LatinExtendedB.js" id="id28" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/LatinExtendedA.js" id="id29" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/MiscSymbols.js" id="id30" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/scr.js" id="id31" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/MiscSymbols.js" id="id32" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/element/mml/optable/MiscTechnical.js" id="id33" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/TeX/newcommand.js" id="id34" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/autoload/mmultiscripts.js" id="id35" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/p.js" id="id36" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Typewriter/Regular/Main.js" id="id37" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/o.js" id="id38" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/autoload/annotation-xml.js" id="id39" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/u.js" id="id40" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Fraktur/Bold/BasicLatin.js" id="id41" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Fraktur/Regular/BasicLatin.js" id="id42" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Size4/Regular/Main.js" id="id43" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/TeX/noUndefined.js" id="id44" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/k.js" id="id45" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/LetterlikeSymbols.js" id="id46" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/TeX/HTML.js" id="id47" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Fraktur/Regular/Main.js" id="id49" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/element/mml/optable/MiscSymbolsAndArrows.js" id="id50" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/SansSerif/Bold/BasicLatin.js" id="id51" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/element/mml/optable/GeometricShapes.js" id="id52" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/GeometricShapes.js" id="id53" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/config.js" id="id54" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/TeX/enclose.js" id="id55" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/EnclosedAlphanum.js" id="id56" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/TeX/mhchem.js" id="id57" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/TeX/verb.js" id="id58" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/element/mml/optable/GeneralPunctuation.js" id="id59" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/MathMenu.js" id="id60" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/GeometricShapes.js" id="id61" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/PUA.js" id="id62" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Italic/LetterlikeSymbols.js" id="id63" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/z.js" id="id64" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Fraktur/Bold/Main.js" id="id65" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/SpacingModLetters.js" id="id66" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Fraktur/Bold/Other.js" id="id67" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/TeX/autoload-all.js" id="id68" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/SansSerif/Bold/CombDiacritMarks.js" id="id69" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/TeX/noErrors.js" id="id70" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/g.js" id="id71" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/SansSerif/Regular/BasicLatin.js" id="id72" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/SpacingModLetters.js" id="id73" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/MiscSymbols.js" id="id74" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/GreekAndCoptic.js" id="id75" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Italic/Main.js" id="id76" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/mml2jax.js" id="id77" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/GeometricShapes.js" id="id78" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/i.js" id="id79" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/q.js" id="id80" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/toMathML.js" id="id81" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/NativeMML/config.js" id="id82" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/element/mml/optable/BasicLatin.js" id="id83" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/TeX/boldsymbol.js" id="id84" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Typewriter/Regular/Other.js" id="id85" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/BoxDrawing.js" id="id86" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/TeX/begingroup.js" id="id87" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/v.js" id="id88" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/element/mml/optable/MiscMathSymbolsA.js" id="id89" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Math/BoldItalic/Main.js" id="id90" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/SansSerif/Bold/Other.js" id="id91" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/autoload/menclose.js" id="id92" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/LetterlikeSymbols.js" id="id93" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Typewriter/Regular/CombDiacritMarks.js" id="id94" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Italic/GeneralPunctuation.js" id="id95" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/element/mml/optable/MiscMathSymbolsB.js" id="id96" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/x.js" id="id97" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/SansSerif/Regular/Other.js" id="id98" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/j.js" id="id99" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/MathZoom.js" id="id100" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/MiscMathSymbolsA.js" id="id101" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/TeX/unicode.js" id="id102" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/c.js" id="id103" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/NativeMML/jax.js" id="id104" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/element/mml/optable/SupplementalArrowsB.js" id="id105" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/TeX/autobold.js" id="id106" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/SuppMathOperators.js" id="id107" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/SansSerif/Regular/Main.js" id="id108" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/TeX/action.js" id="id109" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/fr.js" id="id110" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/element/mml/optable/Dingbats.js" id="id111" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/Dingbats.js" id="id112" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/SansSerif/Italic/CombDiacritMarks.js" id="id113" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/element/mml/optable/Arrows.js" id="id114" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/MathEvents.js" id="id115" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Italic/MathOperators.js" id="id116" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Caligraphic/Bold/Main.js" id="id117" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/MathOperators.js" id="id118" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/Latin1Supplement.js" id="id119" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/CombDiacritMarks.js" id="id120" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/f.js" id="id121" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/Main.js" id="id122" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/TeX/bbox.js" id="id123" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/config.js" id="id124" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/element/mml/optable/CombDiactForSymbols.js" id="id125" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/SansSerif/Regular/CombDiacritMarks.js" id="id126" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/Arrows.js" id="id127" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/element/mml/optable/SupplementalArrowsA.js" id="id128" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/r.js" id="id129" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/GeneralPunctuation.js" id="id130" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/SansSerif/Italic/BasicLatin.js" id="id131" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/element/mml/optable/SuppMathOperators.js" id="id132" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/opf.js" id="id133" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/fontdata.js" id="id134" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/SpacingModLetters.js" id="id135" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/autoload/mglyph.js" id="id136" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/element/mml/optable/MathOperators.js" id="id137" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Italic/GreekAndCoptic.js" id="id138" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/CombDiactForSymbols.js" id="id139" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/SansSerif/Bold/Main.js" id="id140" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/w.js" id="id141" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/MiscTechnical.js" id="id142" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/element/mml/optable/Latin1Supplement.js" id="id143" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/MathOperators.js" id="id144" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/LetterlikeSymbols.js" id="id146" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/m.js" id="id147" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/GeneralPunctuation.js" id="id148" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/autoload/multiline.js" id="id149" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/LatinExtendedA.js" id="id150" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/autoload/mtable.js" id="id151" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/LatinExtendedA.js" id="id152" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/SansSerif/Italic/Main.js" id="id153" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/asciimath2jax.js" id="id154" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/jax.js" id="id155" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/TeX/AMSmath.js" id="id156" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/b.js" id="id157" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/fontdata-extra.js" id="id158" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/SuppMathOperators.js" id="id159" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/MathOperators.js" id="id160" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/s.js" id="id161" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Script/Regular/BasicLatin.js" id="id162" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Caligraphic/Regular/Main.js" id="id163" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/element/mml/optable/SpacingModLetters.js" id="id164" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/element/mml/optable/GreekAndCoptic.js" id="id165" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Italic/BasicLatin.js" id="id166" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/SupplementalArrowsA.js" id="id167" media-type="application/x-javascript"/>\
+        <item href="mathjax/MathJax.js" id="id168" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/TeX/config.js" id="id169" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/BasicLatin.js" id="id170" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/CombDiacritMarks.js" id="id171" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/TeX/color.js" id="id172" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/Main.js" id="id173" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/LatinExtendedB.js" id="id174" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Italic/CombDiacritMarks.js" id="id175" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Fraktur/Regular/Other.js" id="id176" media-type="application/x-javascript"/>\
+        <item href="mathjax/extensions/tex2jax.js" id="id177" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/MiscTechnical.js" id="id178" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/autoload/maction.js" id="id179" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/GreekAndCoptic.js" id="id180" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/LatinExtendedB.js" id="id181" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/n.js" id="id182" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/t.js" id="id183" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Typewriter/Regular/BasicLatin.js" id="id184" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/SuppMathOperators.js" id="id185" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/y.js" id="id186" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/jax.js" id="id187" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/input/MathML/entities/e.js" id="id188" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/element/mml/optable/LetterlikeSymbols.js" id="id189" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/Latin1Supplement.js" id="id190" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/element/mml/optable/CombDiacritMarks.js" id="id191" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Math/Italic/Main.js" id="id192" media-type="application/x-javascript"/>\
+        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/Main.js" id="id193" media-type="application/x-javascript"/>';
+
+/** A template for each CSS item of an epub's OPF file. */
+var opfCssItemTemplatePart = exports.opfCssItemTemplatePart = '\t\t\t<item id="css<%= index %>" href="<%= item.filename %>" media-type="text/css" />\n';
+
+/** A template for each image in an epub's OPF file. */
+var opfImageItemTemplatePart = exports.opfImageItemTemplatePart = '\t\t\t<item <% if (item.coverImage) { %>id="cover-image" properties="cover-image"<% } else { %>id="img<%= index %>"<% } %> href="<%= item.filename %>" media-type="image/<% if (item.filename.split(".")[1]==="png") { %>png<% } else if (item.filename.split(".")[1]==="svg") { %>svg+xml<% } else { %>jpeg<% } %>" />\n';
+
+/** A template for the OPF file of an epub. */
+var opfTemplate = exports.opfTemplate = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
+    <package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="<%= idType %>" xml:lang="<%= language %>" prefix="cc: http://creativecommons.org/ns#">\n\
+    \t<metadata xmlns:dc="http://purl.org/dc/elements/1.1/">\n\
+    \t\t<dc:identifier id="<%= idType %>"><%= id %></dc:identifier>\n\
+    \t\t<dc:title><%= title %></dc:title>\n\
+    <% _.each(authors,function(author){ %>\
+        \t\t<dc:creator><%= author %></dc:creator>\n\
+    <% }); %>\
+    <% _.each(keywords,function(keyword){ %>\
+        \t\t<dc:subject><%= keyword %></dc:subject>\n\
+    <% }); %>\
+    \t\t<dc:language><%= language %></dc:language>\n\
+    \t\t<dc:date><%= date %></dc:date>\n\
+    \t\t<meta property="dcterms:modified"><%= modified %></meta>\n\
+    \t</metadata>\n\
+    \t<manifest>\n\
+    \t\t<item id="t1" href="document.xhtml" <% if (mathjax) { %>properties="scripted svg" <% } %>media-type="application/xhtml+xml" />\n\
+    \t\t<item id="nav" href="document-nav.xhtml" properties="nav" media-type="application/xhtml+xml" />\n\
+        <% _.each(images,function(item, index){ %>' + opfImageItemTemplatePart + '<% }); %>\
+        <% _.each(styleSheets,function(item, index){ %>' + opfCssItemTemplatePart + '<% }); %>\
+        <% if (mathjax) {%>' + opfMathjaxItemsTemplatePart + '<% }%>\
+    \t\t<!-- ncx included for 2.0 reading system compatibility: -->\n\
+    \t\t<item id="ncx" href="document.ncx" media-type="application/x-dtbncx+xml" />\n\
+    \t</manifest>\n\
+    \t<spine toc="ncx">\n\
+    \t\t<itemref idref="t1" />\n\
+    \t</spine>\n\
+    </package>');
+
+/** A template for the contianer XML of an epub file. */
+var containerTemplate = exports.containerTemplate = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
+    <container xmlns="urn:oasis:names:tc:opendocument:xmlns:container" version="1.0">\n\
+    \t<rootfiles>\n\
+    \t\t<rootfile full-path="EPUB/document.opf" media-type="application/oebps-package+xml"/>\n\
+    \t</rootfiles>\n\
+    </container>');
+
+/** A template of the NCX file of an epub. */
+var ncxTemplate = exports.ncxTemplate = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
+    <ncx xmlns:ncx="http://www.daisy.org/z3986/2005/ncx/" xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1" xml:lang="<%= shortLang %>">\n\
+        \t<head>\n\
+                \t\t<meta name="dtb:<%= idType %>" content="<%= id %>"/>\n\
+        \t</head>\n\
+        \t<docTitle>\n\
+            \t\t<text><%= title %></text>\n\
+        \t</docTitle>\n\
+        \t<navMap>\n\
+                \t\t<!-- 2.01 NCX: playOrder is optional -->\n\
+            <% _.each(contentItems,function(item){ %>\
+               <%= exporter.ncxItemTemplate({"item":item})%>\
+            <% }); %>\
+        \t</navMap>\n\
+    </ncx>');
+
+/** A template for each list item in the navMap of an epub's NCX file. */
+var ncxItemTemplate = exports.ncxItemTemplate = _.template('\
+\t\t<navPoint id="<%= item.id %><% if (item.docNum) {print("-"+item.docNum);}%>">\n\
+        \t\t\t<navLabel>\n\
+            \t\t\t\t<text><%= item.title %></text>\n\
+        \t\t\t</navLabel>\n\
+        \t\t\t<content src="<% if (item.link) {print(item.link);} else { %>document<% if (item.docNum) {print("-"+item.docNum);}%>.xhtml#<% print(item.id) } %>"/>\n\
+        <% _.each(item.subItems, function(item) { %>\
+            <%= exporter.ncxItemTemplate({"item":item})%>\
+        <% }); %>\
+    \t\t</navPoint>\n');
+
+/** A template for each CSS item in an epub document file. */
+var xhtmlCssItemTemplatePart = '\t<link rel="stylesheet" type="text/css" href="<%= item.filename %>" />';
+
+/** A template to initiate MathJax execution in the header of an XHTML document if it includes MathJax. */
+var mathjaxXhtmlHeaderStarterTemplatePart = '\
+    <script type="text/javascript">\
+        <![CDATA[\
+            document.addEventListener("DOMContentLoaded", function () {\
+                if (window.hasOwnProperty("MathJax")) {\
+                    var mjQueue = MathJax.Hub.queue;\
+                    var equations = document.body.querySelectorAll(".equation");\
+                    for (var i = 0; i < equations.length; i++) {\
+                        equations[i].innerHTML = "[MATH]"+equations[i].getAttribute("data-equation")+"[/MATH]";\
+                        mjQueue.Push(["Typeset",MathJax.Hub,equations[i]]);\
+                    }\
+                    var fequations = document.body.querySelectorAll(".figure-equation");\
+                    for (var i = 0; i < fequations.length; i++) {\
+                        fequations[i].innerHTML = "[DMATH]"+fequations[i].getAttribute("data-equation")+"[/DMATH]";\
+                        mjQueue.Push(["Typeset",MathJax.Hub,fequations[i[]);\
+                    }\
+                }\
+            });\
+        ]]>\
+    </script>\
+    ';
+
+/** A template for a document in an epub. */
+var xhtmlTemplate = exports.xhtmlTemplate = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
+    <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<%= shortLang %>" lang="<%= shortLang %>"\
+        xmlns:epub="http://www.idpf.org/2007/ops">\n<head><title><%= title %></title>\
+        <% _.each(styleSheets,function(item){ %>' + xhtmlCssItemTemplatePart + '<% }); %>\
+        <% if (mathjax) { %>' + _htmlTemplates.mathjaxHtmlHeaderTemplatePart + +mathjaxXhtmlHeaderStarterTemplatePart + '<% } %>\
+        </head><body \
+        <% if (mathjax) { %>\
+            class="tex2jax_ignore">\
+            <%= mathjax %>\
+        <% } else { %>\
+            >\
+        <% } %>\
+        <% if (part && part !="") {%>\
+            <h1 class="part"><%= part %></h1>\
+        <% } %>\
+        <%= body %></body></html>');
+
+/** A template for an epub's navigation document. */
+var navTemplate = exports.navTemplate = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
+    <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<%= shortLang %>" lang="<%= shortLang %>" xmlns:epub="http://www.idpf.org/2007/ops">\n\
+    \t<head>\n\
+    \t\t<meta charset="utf-8"></meta>\n\
+    \t</head>\n\
+    \t<body>\n\
+    \t\t<nav epub:type="toc" id="toc">\n\
+    \t\t\t<ol>\n\
+        <% _.each(contentItems,function(item){ %>\
+            <%= exporter.navItemTemplate({"item":item})%>\
+        <% }); %>\
+    \t\t\t</ol>\n\
+    \t\t</nav>\n\
+    \t</body>\n\
+    </html>');
+
+/** A template for each item in an epub's navigation document. */
+var navItemTemplate = exports.navItemTemplate = _.template('\t\t\t\t<li><a href="<% if (item.link) {print(item.link);} else { %>document<% if (item.docNum) {print("-"+item.docNum);}%>.xhtml#<% print(item.id); } %>"><%= item.title %></a>\
+    <% if (item.subItems.length > 0) { %>\
+        <ol>\
+            <% _.each(item.subItems,function(item){ %>\
+                <%= exporter.navItemTemplate({"item":item})%>\
+            <% }); %>\
+        </ol>\
+    <% } %>\
+</li>\n');
+
+},{"./html-templates":5}],4:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -67,6 +417,8 @@ var _json = require("./json");
 var _tools = require("./tools");
 
 var _zip = require("./zip");
+
+var _epubTemplates = require("./epub-templates");
 
 var styleEpubFootnotes = exports.styleEpubFootnotes = function styleEpubFootnotes(htmlCode) {
     var footnotesCode = '',
@@ -234,7 +586,7 @@ var export2 = function export2(aDocument, contentsBody, images, title, styleShee
 
     contentsBodyEpubPrepared = styleEpubFootnotes(contentsBody);
 
-    xhtmlCode = tmp_epub_xhtml({
+    xhtmlCode = (0, _epubTemplates.xhtmlTemplate)({
         part: false,
         shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
         title: title,
@@ -245,7 +597,7 @@ var export2 = function export2(aDocument, contentsBody, images, title, styleShee
 
     xhtmlCode = (0, _html.replaceImgSrc)(xhtmlCode);
 
-    containerCode = tmp_epub_container({});
+    containerCode = (0, _epubTemplates.containerTemplate)({});
 
     timestamp = getTimestamp();
 
@@ -267,7 +619,7 @@ var export2 = function export2(aDocument, contentsBody, images, title, styleShee
         }
     }
 
-    opfCode = tmp_epub_opf({
+    opfCode = (0, _epubTemplates.opfTemplate)({
         language: gettext('en-US'), // TODO: specify a document language rather than using the current users UI language
         title: title,
         authors: authors,
@@ -281,7 +633,7 @@ var export2 = function export2(aDocument, contentsBody, images, title, styleShee
         images: images
     });
 
-    ncxCode = tmp_epub_ncx({
+    ncxCode = (0, _epubTemplates.ncxTemplate)({
         shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
         title: title,
         idType: 'fidus',
@@ -289,7 +641,7 @@ var export2 = function export2(aDocument, contentsBody, images, title, styleShee
         contentItems: contentItems
     });
 
-    navCode = tmp_epub_nav({
+    navCode = (0, _epubTemplates.navTemplate)({
         shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
         contentItems: contentItems
     });
@@ -383,7 +735,99 @@ var orderLinks = exports.orderLinks = function orderLinks(contentItems) {
     return contentItems;
 };
 
-},{"./html":4,"./json":5,"./tools":8,"./zip":10}],4:[function(require,module,exports){
+},{"./epub-templates":3,"./html":6,"./json":7,"./tools":10,"./zip":12}],5:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+/** A template for each item in an HTML export of a Fidus Writer document. */
+var cssItemTemplatePart = '\t<link rel="stylesheet" type="text/css" href="<%= item.filename %>" />';
+
+/** A template for the MathJax parts to include in the header of a HTML/XHTML document if it includes MathJax. */
+var mathjaxHtmlHeaderTemplatePart = exports.mathjaxHtmlHeaderTemplatePart = '\
+    <script type="text/x-mathjax-config">\
+        MathJax.Hub.Config({\
+            jax: ["input/TeX","output/SVG"],\
+            tex2jax: {\
+                    inlineMath: [ ["[MATH]","[/MATH]"]],\
+                    displayMath: [ ["[DMATH]","[/DMATH]"]],\
+                processEscapes: true\
+            },\
+            extensions: ["tex2jax.js"],\
+            TeX: {\
+                extensions: ["noErrors.js","noUndefined.js","autoload-all.js"]\
+            },\
+            showMathMenu: false,\
+            messageStyle: "none"\
+        });\
+    </script>\
+    <script type="text/javascript" src="mathjax/MathJax.js">\
+    </script>\
+    ';
+/** A template to initiate MathJax execution in the header of a HTML document if it includes MathJax. */
+var mathjaxHtmlHeaderStarterTemplatePart = '\
+    <script type="text/javascript">\
+            document.addEventListener("DOMContentLoaded", function () {\
+                if (window.hasOwnProperty("MathJax")) {\
+                    var mjQueue = MathJax.Hub.queue;\
+                    var equations = document.body.querySelectorAll(".equation");\
+                    for (var i = 0; i < equations.length; i++) {\
+                        equations[i].innerHTML = "[MATH]"+equations[i].getAttribute("data-equation")+"[/MATH]";\
+                        mjQueue.Push(["Typeset",MathJax.Hub,equations[i]]);\
+                    }\
+                    var fequations = document.body.querySelectorAll(".figure-equation");\
+                    for (var i = 0; i < fequations.length; i++) {\
+                        fequations[i].innerHTML = "[DMATH]"+fequations[i].getAttribute("data-equation")+"[/DMATH]";\
+                        mjQueue.Push(["Typeset",MathJax.Hub,fequations[i]]);\
+                    }\
+                }\
+            });\
+    </script>\
+    ';
+
+/** A template for HTML export of a document. */
+var htmlExportTemplate = exports.htmlExportTemplate = _.template('<!DOCTYPE html>\n\
+    <html>\n<head><title><%= title %></title>\
+        <% var tempNode; %>\
+        <% _.each(styleSheets,function(item){ %>' + cssItemTemplatePart + '<% }); %>\
+        <% if (mathjax) { %>' + mathjaxHtmlHeaderTemplatePart + +mathjaxHtmlHeaderStarterTemplatePart + '<% } %>\
+        </head><body \
+        class="tex2jax_ignore">\
+        <% if (mathjax) { %>\
+            <%= mathjax %>\
+        <% } %>\
+        <% if (part && part !="") { %>\
+            <h1 class="part"><%= part %></h1>\
+        <% } %>\
+        <h1 class="title"><%= title %></h1>\
+        <% if (settings["metadata-subtitle"] && metadata.subtitle) { %>\
+            <% tempNode = exporter.obj2Node(metadata.subtitle); %>\
+            <% if (tempNode.textContent.length > 0) { %>\
+                <h2 class="subtitle"><%= tempNode.textContent %></h2>\
+            <% } %>\
+        <% } %>\
+        <% if (settings["metadata-abstract"] && metadata.abstract) { %>\
+            <% tempNode = exporter.obj2Node(metadata.abstract); %>\
+            <% if (tempNode.textContent.length > 0) { %>\
+                <div class="abstract"><%= tempNode.textContent %></div>\
+            <% } %>\
+        <% } %>\
+        <% if (settings["metadata-authors"] && metadata.authors) { %>\
+            <% tempNode = exporter.obj2Node(metadata.authors); %>\
+            <% if (tempNode.textContent.length > 0) { %>\
+                <div class="authors"><%= tempNode.textContent %></div>\
+            <% } %>\
+        <% } %>\
+        <% if (settings["metadata-keywords"] && metadata.keywords) { %>\
+            <% tempNode = exporter.obj2Node(metadata.keywords); %>\
+            <% if (tempNode.textContent.length > 0) { %>\
+                <div class="keywords"><%= tempNode.textContent %></div>\
+            <% } %>\
+        <% } %>\
+        <%= contents %></body></html>');
+
+},{}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -396,6 +840,8 @@ var _json = require("./json");
 var _tools = require("./tools");
 
 var _zip = require("./zip");
+
+var _htmlTemplates = require("./html-templates");
 
 var downloadHtml = exports.downloadHtml = function downloadHtml(aDocument) {
     if (window.hasOwnProperty('theEditor') || window.hasOwnProperty('BibDB') && aDocument.is_owner) {
@@ -471,7 +917,7 @@ var export2 = function export2(aDocument, aBibDB, styleSheets, title, contents, 
 
     var contentsCode = replaceImgSrc(contents.innerHTML);
 
-    var htmlCode = tmp_html_export({
+    var htmlCode = (0, _htmlTemplates.htmlExportTemplate)({
         part: false,
         title: title,
         metadata: aDocument.metadata,
@@ -542,7 +988,7 @@ var getMathjaxHeader = exports.getMathjaxHeader = function getMathjaxHeader() {
     }
 };
 
-},{"./json":5,"./tools":8,"./zip":10}],5:[function(require,module,exports){
+},{"./html-templates":5,"./json":7,"./tools":10,"./zip":12}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -620,7 +1066,7 @@ var node2Obj = exports.node2Obj = function node2Obj(node) {
     return obj;
 };
 
-},{}],6:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -986,7 +1432,7 @@ var export1 = function export1(aDocument, aBibDB) {
     (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools.createSlug)(title) + '.latex.zip');
 };
 
-},{"./json":5,"./tools":8,"./zip":10}],7:[function(require,module,exports){
+},{"./json":7,"./tools":10,"./zip":12}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1113,7 +1559,7 @@ var exportNativeFile = function exportNativeFile(aDocument, shrunkImageDB, shrun
     (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools.createSlug)(aDocument.title) + '.fidus', 'application/fidus+zip', false, upload);
 };
 
-},{"./json":5,"./tools":8,"./zip":10}],8:[function(require,module,exports){
+},{"./json":7,"./tools":10,"./zip":12}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1159,7 +1605,7 @@ var findImages = exports.findImages = function findImages(htmlCode) {
     return images;
 };
 
-},{}],9:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1216,7 +1662,7 @@ var uploadFile = exports.uploadFile = function uploadFile(zipFilename, blob) {
     });
 };
 
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1342,7 +1788,7 @@ var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles,
     }
 };
 
-},{"./download":2,"./upload":9}],11:[function(require,module,exports){
+},{"./download":2,"./upload":11}],13:[function(require,module,exports){
 "use strict";
 
 var _copy = require("./es6_modules/exporter/copy");
@@ -1363,11 +1809,26 @@ var _tools = require("./es6_modules/exporter/tools");
 
 var _zip = require("./es6_modules/exporter/zip");
 
+var _epubTemplates = require("./es6_modules/exporter/epub-templates");
+
+var _htmlTemplates = require("./es6_modules/exporter/html-templates");
+
 /**
  * Functions to export the Fidus Writer document.
  */
 var exporter = {};
-
+exporter.opfMathjaxItemsTemplatePart = _epubTemplates.opfMathjaxItemsTemplatePart;
+exporter.opfCssItemTemplatePart = _epubTemplates.opfCssItemTemplatePart;
+exporter.opfImageItemTemplatePart = _epubTemplates.opfImageItemTemplatePart;
+exporter.opfTemplate = _epubTemplates.opfTemplate;
+exporter.containerTemplate = _epubTemplates.containerTemplate;
+exporter.ncxTemplate = _epubTemplates.ncxTemplate;
+exporter.ncxItemTemplate = _epubTemplates.ncxItemTemplate;
+exporter.xhtmlTemplate = _epubTemplates.xhtmlTemplate;
+exporter.navTemplate = _epubTemplates.navTemplate;
+exporter.navItemTemplate = _epubTemplates.navItemTemplate;
+exporter.mathjaxHtmlHeaderTemplatePart = _htmlTemplates.mathjaxHtmlHeaderTemplatePart;
+exporter.htmlExportTemplate = _htmlTemplates.htmlExportTemplate;
 exporter.savecopy = _copy.savecopy;
 exporter.downloadFile = _download.downloadFile;
 exporter.styleEpubFootnotes = _epub.styleEpubFootnotes;
@@ -1392,4 +1853,4 @@ exporter.zipFileCreator = _zip.zipFileCreator;
 
 window.exporter = exporter;
 
-},{"./es6_modules/exporter/copy":1,"./es6_modules/exporter/download":2,"./es6_modules/exporter/epub":3,"./es6_modules/exporter/html":4,"./es6_modules/exporter/json":5,"./es6_modules/exporter/latex":6,"./es6_modules/exporter/native":7,"./es6_modules/exporter/tools":8,"./es6_modules/exporter/zip":10}]},{},[11]);
+},{"./es6_modules/exporter/copy":1,"./es6_modules/exporter/download":2,"./es6_modules/exporter/epub":4,"./es6_modules/exporter/epub-templates":3,"./es6_modules/exporter/html":6,"./es6_modules/exporter/html-templates":5,"./es6_modules/exporter/json":7,"./es6_modules/exporter/latex":8,"./es6_modules/exporter/native":9,"./es6_modules/exporter/tools":10,"./es6_modules/exporter/zip":12}]},{},[13]);

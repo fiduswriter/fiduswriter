@@ -1,6 +1,7 @@
 import {obj2Node} from "./json"
 import {createSlug, findImages} from "./tools"
 import {zipFileCreator} from "./zip"
+import {htmlExportTemplate} from "./html-templates"
 
 export let downloadHtml = function(aDocument) {
     if (window.hasOwnProperty('theEditor') || (window.hasOwnProperty(
@@ -80,7 +81,7 @@ let export2 = function(aDocument, aBibDB, styleSheets, title, contents, mathjax)
 
     let contentsCode = replaceImgSrc(contents.innerHTML)
 
-    let htmlCode = tmp_html_export({
+    let htmlCode = htmlExportTemplate({
         part: false,
         title: title,
         metadata: aDocument.metadata,

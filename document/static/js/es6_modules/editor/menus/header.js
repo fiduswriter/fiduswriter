@@ -1,3 +1,9 @@
+import {savecopy} from "../../exporter/copy"
+import {downloadNative, uploadNative} from "../../exporter/native"
+import {downloadLatex} from "../../exporter/latex"
+import {downloadHtml} from "../../exporter/html"
+import {downloadEpub} from "../../exporter/epub"
+
 /* Bindings for the header menu */
 export class ModMenusHeader {
     constructor(mod) {
@@ -52,32 +58,32 @@ export class ModMenusHeader {
               that.mod.editor.getUpdates(function() {
                   that.mod.editor.sendDocumentUpdate()
               });
-              exporter.savecopy(that.mod.editor.doc)
+              savecopy(that.mod.editor.doc)
           })
 
           jQuery(document).on('mousedown', '.download:not(.disabled)', function() {
               that.mod.editor.getUpdates(function() {
                   that.mod.editor.sendDocumentUpdate()
               })
-              exporter.downloadNative(that.mod.editor.doc)
+              downloadNative(that.mod.editor.doc)
           })
           jQuery(document).on('mousedown', '.latex:not(.disabled)', function() {
               that.mod.editor.getUpdates(function() {
                     that.mod.editor.sendDocumentUpdate()
               })
-              exporter.downloadLatex(that.mod.editor.doc)
+              downloadLatex(that.mod.editor.doc)
           })
           jQuery(document).on('mousedown', '.epub:not(.disabled)', function() {
               that.mod.editor.getUpdates(function() {
                   that.mod.editor.sendDocumentUpdate()
               })
-              exporter.downloadEpub(that.mod.editor.doc)
+              downloadEpub(that.mod.editor.doc)
           })
           jQuery(document).on('mousedown', '.html:not(.disabled)', function() {
               that.mod.editor.getUpdates(function() {
                   that.mod.editor.sendDocumentUpdate()
               })
-              exporter.downloadHtml(that.mod.editor.doc)
+              downloadHtml(that.mod.editor.doc)
           })
           jQuery(document).on('mousedown', '.print:not(.disabled)', function() {
               that.mod.editor.mod.tools.print.print()
@@ -179,7 +185,7 @@ export class ModMenusHeader {
               that.mod.editor.getUpdates(function() {
                   that.mod.editor.sendDocumentUpdate()
               })
-              exporter.uploadNative(that.mod.editor.doc)
+              uploadNative(that.mod.editor.doc)
           })
 
 

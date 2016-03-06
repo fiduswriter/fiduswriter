@@ -17,6 +17,8 @@ import {ModSettings} from "./settings/mod"
 import {ModMenus} from "./menus/mod"
 import {ModServerCommunications} from "./server-communications"
 
+import {node2Obj, obj2Node} from "../exporter/json"
+
 export class Editor {
     constructor() {
         this.mod = {}
@@ -29,7 +31,7 @@ export class Editor {
             'sentHash': false,
             'rights': '',
             // In collaborative mode, only the first client to connect will have
-            // theEditor.docInfo.control set to true.
+            // this.editor.docInfo.control set to true.
             'control': false,
             'last_diffs': [],
             'is_owner': false,
@@ -112,12 +114,12 @@ export class Editor {
 
     createDoc(aDocument) {
         let editorNode = document.createElement('div'),
-            titleNode = aDocument.metadata.title ? exporter.obj2Node(aDocument.metadata.title) : document.createElement('div'),
-            documentContentsNode = exporter.obj2Node(aDocument.contents),
-            metadataSubtitleNode = aDocument.metadata.subtitle ? exporter.obj2Node(aDocument.metadata.subtitle) : document.createElement('div'),
-            metadataAuthorsNode = aDocument.metadata.authors ? exporter.obj2Node(aDocument.metadata.authors) : document.createElement('div'),
-            metadataAbstractNode = aDocument.metadata.abstract ? exporter.obj2Node(aDocument.metadata.abstract) : document.createElement('div'),
-            metadataKeywordsNode = aDocument.metadata.keywords ? exporter.obj2Node(aDocument.metadata.keywords) : document.createElement('div'),
+            titleNode = aDocument.metadata.title ? obj2Node(aDocument.metadata.title) : document.createElement('div'),
+            documentContentsNode = obj2Node(aDocument.contents),
+            metadataSubtitleNode = aDocument.metadata.subtitle ? obj2Node(aDocument.metadata.subtitle) : document.createElement('div'),
+            metadataAuthorsNode = aDocument.metadata.authors ? obj2Node(aDocument.metadata.authors) : document.createElement('div'),
+            metadataAbstractNode = aDocument.metadata.abstract ? obj2Node(aDocument.metadata.abstract) : document.createElement('div'),
+            metadataKeywordsNode = aDocument.metadata.keywords ? obj2Node(aDocument.metadata.keywords) : document.createElement('div'),
             doc
 
         titleNode.id = 'document-title'
@@ -224,12 +226,12 @@ export class Editor {
         let outputNode = nodeConverter.editorToModelNode(serializeTo(this.pm.mod.collab.versionDoc, 'dom'))
         this.doc.title = this.pm.mod.collab.versionDoc.firstChild.textContent
         this.doc.version = this.pm.mod.collab.version
-        this.doc.metadata.title = exporter.node2Obj(outputNode.getElementById('document-title'))
-        this.doc.metadata.subtitle = exporter.node2Obj(outputNode.getElementById('metadata-subtitle'))
-        this.doc.metadata.authors = exporter.node2Obj(outputNode.getElementById('metadata-authors'))
-        this.doc.metadata.abstract = exporter.node2Obj(outputNode.getElementById('metadata-abstract'))
-        this.doc.metadata.keywords = exporter.node2Obj(outputNode.getElementById('metadata-keywords'))
-        this.doc.contents = exporter.node2Obj(outputNode.getElementById('document-contents'))
+        this.doc.metadata.title = node2Obj(outputNode.getElementById('document-title'))
+        this.doc.metadata.subtitle = node2Obj(outputNode.getElementById('metadata-subtitle'))
+        this.doc.metadata.authors = node2Obj(outputNode.getElementById('metadata-authors'))
+        this.doc.metadata.abstract = node2Obj(outputNode.getElementById('metadata-abstract'))
+        this.doc.metadata.keywords = node2Obj(outputNode.getElementById('metadata-keywords'))
+        this.doc.contents = node2Obj(outputNode.getElementById('document-contents'))
         this.doc.hash = this.getHash()
         this.doc.comments = this.mod.comments.store.comments
         if (callback) {

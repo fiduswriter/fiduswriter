@@ -1058,7 +1058,7 @@ var node2Obj = exports.node2Obj = function node2Obj(node) {
             obj.c = [];
             for (i = 0; i < node.childNodes.length; i++) {
                 if (node.childNodes[i]) {
-                    obj.c.push(exporter.node2Obj(node.childNodes[i]));
+                    obj.c.push(node2Obj(node.childNodes[i]));
                 }
             }
         }
@@ -1207,7 +1207,7 @@ var htmlToLatex = exports.htmlToLatex = function htmlToLatex(title, author, html
             }
         }
     } else {
-        documentFeatures = exporter.findLatexDocumentFeatures(htmlCode, title, author, settings['metadata-subtitle'], settings['metadata-keywords'], settings['metadata-authors'], metadata, 'article');
+        documentFeatures = findLatexDocumentFeatures(htmlCode, title, author, settings['metadata-subtitle'], settings['metadata-keywords'], settings['metadata-authors'], metadata, 'article');
         latexStart += documentFeatures.latexStart;
         latexEnd += documentFeatures.latexEnd;
     }
@@ -1415,7 +1415,7 @@ var export1 = function export1(aDocument, aBibDB) {
 
     httpOutputList = (0, _tools.findImages)(contents);
 
-    latexCode = exporter.htmlToLatex(title, aDocument.owner.name, contents, aBibDB, aDocument.settings, aDocument.metadata);
+    latexCode = htmlToLatex(title, aDocument.owner.name, contents, aBibDB, aDocument.settings, aDocument.metadata);
 
     outputList = [{
         filename: 'document.tex',
@@ -1829,6 +1829,7 @@ exporter.navTemplate = _epubTemplates.navTemplate;
 exporter.navItemTemplate = _epubTemplates.navItemTemplate;
 exporter.mathjaxHtmlHeaderTemplatePart = _htmlTemplates.mathjaxHtmlHeaderTemplatePart;
 exporter.htmlExportTemplate = _htmlTemplates.htmlExportTemplate;
+
 exporter.savecopy = _copy.savecopy;
 exporter.downloadFile = _download.downloadFile;
 exporter.styleEpubFootnotes = _epub.styleEpubFootnotes;
@@ -1845,7 +1846,6 @@ exporter.node2Obj = _json.node2Obj;
 exporter.findLatexDocumentFeatures = _latex.findLatexDocumentFeatures;
 exporter.htmlToLatex = _latex.htmlToLatex;
 exporter.downloadLatex = _latex.downloadLatex;
-exporter.uploadNative = _native.uploadNative;
 exporter.downloadNative = _native.downloadNative;
 exporter.createSlug = _tools.createSlug;
 exporter.findImages = _tools.findImages;

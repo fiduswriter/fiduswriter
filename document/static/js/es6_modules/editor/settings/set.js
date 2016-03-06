@@ -5,7 +5,7 @@ export class ModSettingsSet {
     }
 
 
-    /** Sets a variable in theEditor.doc.settings to a value and sends
+    /** Sets a variable in this.mod.editor.doc.settings to a value and sends
      * a change notification to other editors.
      */
 

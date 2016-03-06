@@ -1,5 +1,5 @@
 
-/* Functions related to taking document data from theEditor.doc.* and displaying
+/* Functions related to taking document data from this.mod.editor.doc.* and displaying
  * it (ie making it part of the DOM structure).
  */
 export class ModSettingsLayout {
@@ -29,7 +29,7 @@ export class ModSettingsLayout {
         // Remove previous style.
         documentStyleLink.parentElement.removeChild(documentStyleLink.previousElementSibling)
 
-        stylesheet = loadCSS(staticUrl + 'css/document/' + theEditor.doc.settings.documentstyle + '.css', documentStyleLink)
+        stylesheet = loadCSS(staticUrl + 'css/document/' + this.mod.editor.doc.settings.documentstyle + '.css', documentStyleLink)
 
         onloadCSS(stylesheet, function() {
             // We layout the comments 100 ms after the stylesheet has been loaded.
@@ -49,7 +49,7 @@ export class ModSettingsLayout {
     displayCitationstyle() {
         jQuery("#header-navigation .citationstyle.selected").removeClass(
             'selected')
-        jQuery('span[data-citationstyle=' + theEditor.doc.settings.citationstyle + ']').addClass(
+        jQuery('span[data-citationstyle=' + this.mod.editor.doc.settings.citationstyle + ']').addClass(
             'selected')
         citationHelpers.formatCitationsInDoc()
     }

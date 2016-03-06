@@ -4,7 +4,7 @@ import {styleEpubFootnotes, getTimestamp, downloadEpub, setLinks, orderLinks} fr
 import {downloadHtml, cleanHTML, replaceImgSrc, getMathjaxHeader} from "./es6_modules/exporter/html"
 import {obj2Node, node2Obj} from "./es6_modules/exporter/json"
 import {findLatexDocumentFeatures, htmlToLatex, downloadLatex} from "./es6_modules/exporter/latex"
-import {uploadNative, downloadNative} from "./es6_modules/exporter/native"
+import {downloadNative} from "./es6_modules/exporter/native"
 import {createSlug, findImages} from "./es6_modules/exporter/tools"
 import {zipFileCreator} from "./es6_modules/exporter/zip"
 
@@ -31,6 +31,7 @@ exporter.navTemplate = navTemplate
 exporter.navItemTemplate = navItemTemplate
 exporter.mathjaxHtmlHeaderTemplatePart = mathjaxHtmlHeaderTemplatePart
 exporter.htmlExportTemplate = htmlExportTemplate
+
 exporter.savecopy = savecopy
 exporter.downloadFile = downloadFile
 exporter.styleEpubFootnotes = styleEpubFootnotes
@@ -47,7 +48,6 @@ exporter.node2Obj = node2Obj
 exporter.findLatexDocumentFeatures = findLatexDocumentFeatures
 exporter.htmlToLatex = htmlToLatex
 exporter.downloadLatex = downloadLatex
-exporter.uploadNative = uploadNative
 exporter.downloadNative = downloadNative
 exporter.createSlug = createSlug
 exporter.findImages = findImages

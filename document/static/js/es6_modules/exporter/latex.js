@@ -158,7 +158,7 @@ export let htmlToLatex = function(title, author, htmlCode, aBibDB,
             }
         }
     } else {
-        documentFeatures = exporter.findLatexDocumentFeatures(
+        documentFeatures = findLatexDocumentFeatures(
             htmlCode, title, author, settings['metadata-subtitle'], settings['metadata-keywords'], settings['metadata-authors'], metadata,
             'article');
         latexStart += documentFeatures.latexStart;
@@ -404,7 +404,7 @@ let export1 = function(aDocument, aBibDB) {
 
     httpOutputList = findImages(contents);
 
-    latexCode = exporter.htmlToLatex(title, aDocument.owner.name, contents, aBibDB,
+    latexCode = htmlToLatex(title, aDocument.owner.name, contents, aBibDB,
         aDocument.settings, aDocument.metadata);
 
     outputList = [{

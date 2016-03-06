@@ -62,7 +62,7 @@ export let node2Obj = function(node) {
             obj.c = [];
             for (i = 0; i < node.childNodes.length; i++) {
                 if (node.childNodes[i]) {
-                    obj.c.push(exporter.node2Obj(node.childNodes[i]));
+                    obj.c.push(node2Obj(node.childNodes[i]));
                 }
             }
         }

@@ -431,7 +431,7 @@ var ModCollabDocChanges = exports.ModCollabDocChanges = (function () {
     return ModCollabDocChanges;
 })();
 
-},{"../schema":29,"prosemirror/dist/transform":87}],4:[function(require,module,exports){
+},{"../schema":29,"prosemirror/dist/transform":88}],4:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -694,7 +694,7 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
     return ModCommentInteractions;
 })();
 
-},{"prosemirror/dist/ui/update":97}],7:[function(require,module,exports){
+},{"prosemirror/dist/ui/update":98}],7:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1359,7 +1359,7 @@ function randomID() {
     return Math.floor(Math.random() * 0xffffffff);
 }
 
-},{"../schema":29,"prosemirror/dist/model":81,"prosemirror/dist/transform":87,"prosemirror/dist/ui/update":97,"prosemirror/dist/util/event":99}],10:[function(require,module,exports){
+},{"../schema":29,"prosemirror/dist/model":82,"prosemirror/dist/transform":88,"prosemirror/dist/ui/update":98,"prosemirror/dist/util/event":100}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1897,7 +1897,7 @@ var Editor = exports.Editor = (function () {
     return Editor;
 })();
 
-},{"../exporter/json":45,"./collab/mod":4,"./comments/mod":8,"./footnotes/mod":14,"./menus/mod":17,"./schema":29,"./server-communications":30,"./settings/mod":32,"./tools/mod":34,"./update-ui":38,"prosemirror/dist/collab":52,"prosemirror/dist/edit/main":66,"prosemirror/dist/format":73,"prosemirror/dist/ui/update":97}],12:[function(require,module,exports){
+},{"../exporter/json":45,"./collab/mod":4,"./comments/mod":8,"./footnotes/mod":14,"./menus/mod":17,"./schema":29,"./server-communications":30,"./settings/mod":32,"./tools/mod":34,"./update-ui":38,"prosemirror/dist/collab":53,"prosemirror/dist/edit/main":67,"prosemirror/dist/format":74,"prosemirror/dist/ui/update":98}],12:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2018,7 +2018,7 @@ var ModFootnoteEditor = exports.ModFootnoteEditor = (function () {
     return ModFootnoteEditor;
 })();
 
-},{"../schema":29,"prosemirror/dist/format":73,"prosemirror/dist/model":81,"prosemirror/dist/transform":87}],13:[function(require,module,exports){
+},{"../schema":29,"prosemirror/dist/format":74,"prosemirror/dist/model":82,"prosemirror/dist/transform":88}],13:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2214,7 +2214,7 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = (function () {
     return ModFootnoteMarkers;
 })();
 
-},{"../schema":29,"prosemirror/dist/format":73,"prosemirror/dist/model":81}],14:[function(require,module,exports){
+},{"../schema":29,"prosemirror/dist/format":74,"prosemirror/dist/model":82}],14:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2264,7 +2264,7 @@ var ModFootnotes = exports.ModFootnotes = (function () {
     return ModFootnotes;
 })();
 
-},{"../schema":29,"./editor":12,"./markers":13,"prosemirror/dist/collab":52,"prosemirror/dist/edit/main":66}],15:[function(require,module,exports){
+},{"../schema":29,"./editor":12,"./markers":13,"prosemirror/dist/collab":53,"prosemirror/dist/edit/main":67}],15:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -4316,7 +4316,7 @@ var fidusFnSchema = exports.fidusFnSchema = new _model.Schema(_model.defaultSche
     comment: CommentMark
 }));
 
-},{"prosemirror/dist/model":81}],30:[function(require,module,exports){
+},{"prosemirror/dist/model":82}],30:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -5087,7 +5087,7 @@ function calculatePlaceHolderCss(pm, selectedElement) {
     }
 }
 
-},{"prosemirror/dist/model":81}],39:[function(require,module,exports){
+},{"prosemirror/dist/model":82}],39:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5822,7 +5822,7 @@ var orderLinks = exports.orderLinks = function orderLinks(contentItems) {
     return contentItems;
 };
 
-},{"./epub-templates":41,"./html":44,"./json":45,"./tools":48,"./zip":50}],43:[function(require,module,exports){
+},{"./epub-templates":41,"./html":44,"./json":45,"./tools":48,"./zip":51}],43:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6075,7 +6075,7 @@ var getMathjaxHeader = exports.getMathjaxHeader = function getMathjaxHeader() {
     }
 };
 
-},{"./html-templates":43,"./json":45,"./tools":48,"./zip":50}],45:[function(require,module,exports){
+},{"./html-templates":43,"./json":45,"./tools":48,"./zip":51}],45:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6094,7 +6094,7 @@ var obj2Node = exports.obj2Node = function obj2Node(obj, docType) {
     }
 
     function inner(obj, insideSvg) {
-        var node, i;
+        var node = undefined;
         if (obj.hasOwnProperty('t')) {
             node = parser.createTextNode(obj.t);
         } else if (obj.hasOwnProperty('co')) {
@@ -6110,12 +6110,12 @@ var obj2Node = exports.obj2Node = function obj2Node(obj, docType) {
                 node = parser.createElement(obj.nn);
             }
             if (obj.a) {
-                for (i = 0; i < obj.a.length; i++) {
+                for (var i = 0; i < obj.a.length; i++) {
                     node.setAttribute(obj.a[i][0], obj.a[i][1]);
                 }
             }
             if (obj.c) {
-                for (i = 0; i < obj.c.length; i++) {
+                for (var i = 0; i < obj.c.length; i++) {
                     node.appendChild(inner(obj.c[i], insideSvg));
                 }
             }
@@ -6126,8 +6126,7 @@ var obj2Node = exports.obj2Node = function obj2Node(obj, docType) {
 };
 
 var node2Obj = exports.node2Obj = function node2Obj(node) {
-    var obj = {},
-        i;
+    var obj = {};
 
     if (node.nodeType === 3) {
         obj.t = node.data;
@@ -6137,13 +6136,13 @@ var node2Obj = exports.node2Obj = function node2Obj(node) {
         obj.nn = node.nodeName;
         if (node.attributes && node.attributes.length > 0) {
             obj.a = [];
-            for (i = 0; i < node.attributes.length; i++) {
+            for (var i = 0; i < node.attributes.length; i++) {
                 obj.a.push([node.attributes[i].name, node.attributes[i].value]);
             }
         }
         if (node.childNodes && node.childNodes.length > 0) {
             obj.c = [];
-            for (i = 0; i < node.childNodes.length; i++) {
+            for (var i = 0; i < node.childNodes.length; i++) {
                 if (node.childNodes[i]) {
                     obj.c.push(node2Obj(node.childNodes[i]));
                 }
@@ -6168,13 +6167,12 @@ var _tools = require("./tools");
 var _zip = require("./zip");
 
 var findLatexDocumentFeatures = exports.findLatexDocumentFeatures = function findLatexDocumentFeatures(htmlCode, title, author, subtitle, keywords, specifiedAuthors, metadata, documentClass) {
-    var includePackages,
-        documentEndCommands = '',
+    var documentEndCommands = '',
         latexStart,
         latexEnd,
         tempNode;
 
-    includePackages = "\\usepackage[utf8]{luainputenc}";
+    var includePackages = "\\usepackage[utf8]{luainputenc}";
 
     if (subtitle && metadata.subtitle) {
         tempNode = (0, _json.obj2Node)(metadata.subtitle);
@@ -6278,15 +6276,15 @@ var htmlToLatex = exports.htmlToLatex = function htmlToLatex(title, author, html
     if (!listedWorksList) {
         listedWorksList = [];
     }
-    console.log(htmlCode.outerHTML);
+
     // Remove sections that are marked as deleted
     /*jQuery(htmlCode).find('.del').each(function() {
-        this.outerHTML = '';
-    });*/
+        this.outerHTML = ''
+    })*/
 
     if (isChapter) {
         latexStart += '\\chapter{' + title + '}\n';
-        //htmlCode.innerHTML =  '<div class="title">' + title + '</div>' + htmlCode.innerHTML;
+        //htmlCode.innerHTML =  '<div class="title">' + title + '</div>' + htmlCode.innerHTML
         if (settings['metadata-subtitle'] && metadata.subtitle) {
             tempNode = (0, _json.obj2Node)(metadata.subtitle);
             if (tempNode.textContent.length > 0) {
@@ -6382,23 +6380,24 @@ var htmlToLatex = exports.htmlToLatex = function htmlToLatex(title, author, html
             citationBefore = this.hasAttribute('data-bib-before') ? this.getAttribute('data-bib-before').split(',') : [],
             citationPage = this.hasAttribute('data-bib-page') ? this.getAttribute('data-bib-page').split(',') : [],
             citationFormat = this.hasAttribute('data-bib-format') ? this.getAttribute('data-bib-format') : '',
-            citationCommand = '\\' + citationFormat,
-            citationEntryKeys;
+            citationCommand = '\\' + citationFormat;
 
         if (citationEntries.length > 1 && citationBefore.join('').length === 0 && citationPage.join('').length === 0) {
-            // multi source citation without page numbers or text before.
-            var citationEntryKeys = [];
+            (function () {
+                // multi source citation without page numbers or text before.
+                var citationEntryKeys = [];
 
-            citationEntries.forEach(function (citationEntry) {
-                if (aBibDB[citationEntry]) {
-                    citationEntryKeys.push(aBibDB[citationEntry].entry_key);
-                    if (listedWorksList.indexOf(citationEntry) === -1) {
-                        listedWorksList.push(citationEntry);
+                citationEntries.forEach(function (citationEntry) {
+                    if (aBibDB[citationEntry]) {
+                        citationEntryKeys.push(aBibDB[citationEntry].entry_key);
+                        if (listedWorksList.indexOf(citationEntry) === -1) {
+                            listedWorksList.push(citationEntry);
+                        }
                     }
-                }
-            });
+                });
 
-            citationCommand += '{' + citationEntryKeys.join(',') + '}';
+                citationCommand += '{' + citationEntryKeys.join(',') + '}';
+            })();
         } else {
             if (citationEntries.length > 1) {
                 citationCommand += 's'; // Switching from \autocite to \autocites
@@ -6433,12 +6432,12 @@ var htmlToLatex = exports.htmlToLatex = function htmlToLatex(title, author, html
     });
 
     jQuery(htmlCode).find('figure').each(function () {
-        var caption, figureType, filename, latexPackage, filenameList;
-        figureType = jQuery(this).find('figcaption')[0].firstChild.innerHTML;
+        var latexPackage;
+        var figureType = jQuery(this).find('figcaption')[0].firstChild.innerHTML;
         // TODO: make use of figure type
-        caption = jQuery(this).find('figcaption')[0].lastChild.innerHTML;
-        filename = jQuery(this).find('img').attr('data-src');
-        filenameList = filename.split('.');
+        var caption = jQuery(this).find('figcaption')[0].lastChild.innerHTML;
+        var filename = jQuery(this).find('img').attr('data-src');
+        var filenameList = filename.split('.');
         if (filenameList[filenameList.length - 1] === 'svg') {
             latexPackage = 'includesvg';
         } else {
@@ -6455,7 +6454,6 @@ var htmlToLatex = exports.htmlToLatex = function htmlToLatex(title, author, html
     });
 
     jQuery(htmlCode).find('.footnote').each(function () {
-        console.log(['footnote', this, this.outerHTML]);
         jQuery(this).replaceWith('\\footnote{' + this.innerHTML + '}');
     });
 
@@ -6486,15 +6484,15 @@ var downloadLatex = exports.downloadLatex = function downloadLatex(aDocument) {
 };
 
 var export1 = function export1(aDocument, aBibDB) {
-    var contents, latexCode, htmlCode, title, outputList, httpOutputList, tempNode;
+    var latexCode, htmlCode, outputList, httpOutputList;
 
-    title = aDocument.title;
+    var title = aDocument.title;
 
     $.addAlert('info', title + ': ' + gettext('Latex export has been initiated.'));
 
-    contents = document.createElement('div');
+    var contents = document.createElement('div');
 
-    tempNode = (0, _json.obj2Node)(aDocument.contents);
+    var tempNode = (0, _json.obj2Node)(aDocument.contents);
 
     while (tempNode.firstChild) {
         contents.appendChild(tempNode.firstChild);
@@ -6519,7 +6517,7 @@ var export1 = function export1(aDocument, aBibDB) {
     (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools.createSlug)(title) + '.latex.zip');
 };
 
-},{"./json":45,"./tools":48,"./zip":50}],47:[function(require,module,exports){
+},{"./json":45,"./tools":48,"./zip":51}],47:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6582,25 +6580,18 @@ var downloadNative = exports.downloadNative = function downloadNative(aDocument)
 };
 
 var exportNative = exports.exportNative = function exportNative(aDocument, anImageDB, aBibDB, callback) {
-    var contents,
-        outputList,
-        httpOutputList,
-        images,
-        shrunkImageDB,
-        shrunkBibDB = {},
-        imageUrls = [],
-        citeList = [],
-        i;
+    var shrunkBibDB = {},
+        citeList = [];
 
     $.addAlert('info', gettext('File export has been initiated.'));
 
-    contents = (0, _json.obj2Node)(aDocument.contents);
+    var contents = (0, _json.obj2Node)(aDocument.contents);
 
-    images = (0, _tools.findImages)(contents);
+    var images = (0, _tools.findImages)(contents);
 
-    imageUrls = _.pluck(images, 'url');
+    var imageUrls = _.pluck(images, 'url');
 
-    shrunkImageDB = _.filter(anImageDB, function (image) {
+    var shrunkImageDB = _.filter(anImageDB, function (image) {
         return imageUrls.indexOf(image.image.split('?').shift()) !== -1;
     });
 
@@ -6614,7 +6605,7 @@ var exportNative = exports.exportNative = function exportNative(aDocument, anIma
         citeList = [];
     }
 
-    for (i in citeList) {
+    for (var i in citeList) {
         shrunkBibDB[citeList[i]] = aBibDB[citeList[i]];
     }
 
@@ -6646,7 +6637,7 @@ var exportNativeFile = function exportNativeFile(aDocument, shrunkImageDB, shrun
     (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools.createSlug)(aDocument.title) + '.fidus', 'application/fidus+zip', false, upload);
 };
 
-},{"./json":45,"./tools":48,"./zip":50}],48:[function(require,module,exports){
+},{"./json":45,"./tools":48,"./zip":51}],48:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6695,9 +6686,20 @@ var findImages = exports.findImages = function findImages(htmlCode) {
 },{}],49:[function(require,module,exports){
 'use strict';
 
+/** Dialog to add a note to a revision before saving. */
+revisionDialogTemplate = _.template('\
+<div title="' + gettext('Revision description') + '"><p><input type="text" class="revision-note" placeholder="' + gettext('Description (optional)') + '"></p></div>');
+
+},{}],50:[function(require,module,exports){
+"use strict";
+
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.uploadFile = undefined;
+
+var _uploadTemplates = require("./upload-templates");
+
 /** Uploads a Fidus Writer document to the server.
  * @function uploadFile
  * @param {string} zipFileName The name of the file.
@@ -6735,7 +6737,7 @@ var uploadFile = exports.uploadFile = function uploadFile(zipFilename, blob) {
         jQuery(this).dialog("close");
     };
 
-    jQuery(tmp_revision_dialog()).dialog({
+    jQuery((0, _uploadTemplates.revisionDialogTemplate)()).dialog({
         autoOpen: true,
         height: 180,
         width: 300,
@@ -6749,7 +6751,7 @@ var uploadFile = exports.uploadFile = function uploadFile(zipFilename, blob) {
     });
 };
 
-},{}],50:[function(require,module,exports){
+},{"./upload-templates":49}],51:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6875,7 +6877,7 @@ var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles,
     }
 };
 
-},{"./download":40,"./upload":49}],51:[function(require,module,exports){
+},{"./download":40,"./upload":50}],52:[function(require,module,exports){
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
     module.exports = mod()
@@ -7047,7 +7049,7 @@ var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles,
   return Keymap
 })
 
-},{}],52:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7220,7 +7222,7 @@ var Collab = function () {
 }();
 
 (0, _event.eventMixin)(Collab);
-},{"../edit":64,"../util/error":98,"../util/event":99,"./rebase":53}],53:[function(require,module,exports){
+},{"../edit":65,"../util/error":99,"../util/event":100,"./rebase":54}],54:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7248,7 +7250,7 @@ function rebaseSteps(doc, forward, steps, maps) {
   }
   return { doc: transform.doc, transform: transform, mapping: remap, positions: positions };
 }
-},{"../transform":87}],54:[function(require,module,exports){
+},{"../transform":88}],55:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7327,7 +7329,7 @@ function ensureCSSAdded() {
     document.head.insertBefore(cssNode, document.head.firstChild);
   }
 }
-},{}],55:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8044,7 +8046,7 @@ baseCommands.redo = {
   },
   keys: ["Mod-Y", "Shift-Mod-Z"]
 };
-},{"../model":81,"../transform":87,"../util/error":98,"./char":57,"./dompos":61,"./selection":70}],56:[function(require,module,exports){
+},{"../model":82,"../transform":88,"../util/error":99,"./char":58,"./dompos":62,"./selection":71}],57:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8114,7 +8116,7 @@ var keys = {
 if (_dom.browser.mac) keys["Ctrl-F"] = keys["Ctrl-B"] = keys["Ctrl-P"] = keys["Ctrl-N"] = keys["Alt-F"] = keys["Alt-B"] = keys["Ctrl-A"] = keys["Ctrl-E"] = keys["Ctrl-V"] = keys["goPageUp"] = ensureSelection;
 
 var captureKeys = exports.captureKeys = new _browserkeymap2.default(keys);
-},{"../dom":54,"./dompos":61,"./selection":70,"browserkeymap":51}],57:[function(require,module,exports){
+},{"../dom":55,"./dompos":62,"./selection":71,"browserkeymap":52}],58:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8147,7 +8149,7 @@ function charCategory(ch) {
 function isExtendingChar(ch) {
   return ch.charCodeAt(0) >= 768 && extendingChar.test(ch);
 }
-},{}],58:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8756,13 +8758,13 @@ _model.NodeType.derivableCommands.insert = function (conf) {
     params: deriveParams(this, conf.params)
   };
 };
-},{"../dom":54,"../model":81,"../transform":87,"../util/error":98,"../util/obj":101,"../util/sortedinsert":102,"./base_commands":55,"browserkeymap":51}],59:[function(require,module,exports){
+},{"../dom":55,"../model":82,"../transform":88,"../util/error":99,"../util/obj":102,"../util/sortedinsert":103,"./base_commands":56,"browserkeymap":52}],60:[function(require,module,exports){
 "use strict";
 
 var _dom = require("../dom");
 
 (0, _dom.insertCSS)("\n\n.ProseMirror {\n  border: 1px solid silver;\n  position: relative;\n}\n\n.ProseMirror-content {\n  padding: 4px 8px 4px 14px;\n  white-space: pre-wrap;\n  line-height: 1.2;\n}\n\n.ProseMirror-drop-target {\n  position: absolute;\n  width: 1px;\n  background: #666;\n  display: none;\n}\n\n.ProseMirror-content ul.tight p, .ProseMirror-content ol.tight p {\n  margin: 0;\n}\n\n.ProseMirror-content ul, .ProseMirror-content ol {\n  padding-left: 30px;\n  cursor: default;\n}\n\n.ProseMirror-content blockquote {\n  padding-left: 1em;\n  border-left: 3px solid #eee;\n  margin-left: 0; margin-right: 0;\n}\n\n.ProseMirror-content pre {\n  white-space: pre-wrap;\n}\n\n.ProseMirror-selectednode {\n  outline: 2px solid #8cf;\n}\n\n.ProseMirror-nodeselection *::selection { background: transparent; }\n.ProseMirror-nodeselection *::-moz-selection { background: transparent; }\n\n.ProseMirror-content p:first-child,\n.ProseMirror-content h1:first-child,\n.ProseMirror-content h2:first-child,\n.ProseMirror-content h3:first-child,\n.ProseMirror-content h4:first-child,\n.ProseMirror-content h5:first-child,\n.ProseMirror-content h6:first-child {\n  margin-top: .3em;\n}\n\n/* Add space around the hr to make clicking it easier */\n\n.ProseMirror-content hr {\n  position: relative;\n  height: 6px;\n  border: none;\n}\n\n.ProseMirror-content hr:after {\n  content: \"\";\n  position: absolute;\n  left: 10px;\n  right: 10px;\n  top: 2px;\n  border-top: 2px solid silver;\n}\n\n.ProseMirror-content img {\n  cursor: default;\n}\n\n/* Make sure li selections wrap around markers */\n\n.ProseMirror-content li {\n  position: relative;\n  pointer-events: none; /* Don't do weird stuff with marker clicks */\n}\n.ProseMirror-content li > * {\n  pointer-events: auto;\n}\n\nli.ProseMirror-selectednode {\n  outline: none;\n}\n\nli.ProseMirror-selectednode:after {\n  content: \"\";\n  position: absolute;\n  left: -32px;\n  right: -2px; top: -2px; bottom: -2px;\n  border: 2px solid #8cf;\n  pointer-events: none;\n}\n\n");
-},{"../dom":54}],60:[function(require,module,exports){
+},{"../dom":55}],61:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8964,7 +8966,7 @@ function scanText(start, end) {
     cur = cur.firstChild || nodeAfter(cur);
   }
 }
-},{"../format":73,"../model":81,"../transform/tree":95,"./dompos":61}],61:[function(require,module,exports){
+},{"../format":74,"../model":82,"../transform/tree":96,"./dompos":62}],62:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9341,7 +9343,7 @@ function handleNodeClick(pm, type, event, direct) {
     }
   }
 }
-},{"../dom":54,"../model":81,"../util/error":98}],62:[function(require,module,exports){
+},{"../dom":55,"../model":82,"../util/error":99}],63:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9508,7 +9510,7 @@ function redraw(pm, dirty, doc, prev) {
   }
   scan(pm.content, doc, prev);
 }
-},{"../dom":54,"../format":73,"../model":81,"./dompos":61,"./main":66}],63:[function(require,module,exports){
+},{"../dom":55,"../format":74,"../model":82,"./dompos":62,"./main":67}],64:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10086,7 +10088,7 @@ var History = exports.History = function () {
 
   return History;
 }();
-},{"../model":81,"../transform":87}],64:[function(require,module,exports){
+},{"../model":82,"../transform":88}],65:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10181,7 +10183,7 @@ var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.Keymap = _browserkeymap2.default;
-},{"./base_commands":55,"./command":58,"./main":66,"./options":67,"./range":68,"./schema_commands":69,"./selection":70,"browserkeymap":51}],65:[function(require,module,exports){
+},{"./base_commands":56,"./command":59,"./main":67,"./options":68,"./range":69,"./schema_commands":70,"./selection":71,"browserkeymap":52}],66:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10782,7 +10784,7 @@ handlers.blur = function (pm) {
   // Fired when the editor loses focus.
   pm.signal("blur");
 };
-},{"../dom":54,"../format":73,"../model":81,"./capturekeys":56,"./domchange":60,"./dompos":61,"./selection":70,"browserkeymap":51}],66:[function(require,module,exports){
+},{"../dom":55,"../format":74,"../model":82,"./capturekeys":57,"./domchange":61,"./dompos":62,"./selection":71,"browserkeymap":52}],67:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11561,7 +11563,7 @@ var EditorTransform = function (_Transform) {
 
   return EditorTransform;
 }(_transform.Transform);
-},{"../dom":54,"../format":73,"../model":81,"../transform":87,"../util/error":98,"../util/event":99,"../util/map":100,"../util/sortedinsert":102,"./css":59,"./dompos":61,"./draw":62,"./history":63,"./input":65,"./options":67,"./range":68,"./selection":70,"browserkeymap":51}],67:[function(require,module,exports){
+},{"../dom":55,"../format":74,"../model":82,"../transform":88,"../util/error":99,"../util/event":100,"../util/map":101,"../util/sortedinsert":103,"./css":60,"./dompos":62,"./draw":63,"./history":64,"./input":66,"./options":68,"./range":69,"./selection":71,"browserkeymap":52}],68:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11683,7 +11685,7 @@ function setOption(pm, name, value) {
   pm.options[name] = value;
   if (desc.update) desc.update(pm, value, old, false);
 }
-},{"../model":81,"../ui/prompt":96,"../util/error":98,"./command":58}],68:[function(require,module,exports){
+},{"../model":82,"../ui/prompt":97,"../util/error":99,"./command":59}],69:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11883,7 +11885,7 @@ var RangeTracker = function () {
 
   return RangeTracker;
 }();
-},{"../util/event":99}],69:[function(require,module,exports){
+},{"../util/event":100}],70:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -12217,7 +12219,7 @@ _model.HorizontalRule.register("command", "insert", {
   keys: ["Mod-Shift--"],
   menu: { group: "insert", rank: 70, display: { type: "label", label: "Horizontal rule" } }
 });
-},{"../format":73,"../model":81,"./command":58}],70:[function(require,module,exports){
+},{"../format":74,"../model":82,"./command":59}],71:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12693,7 +12695,7 @@ function verticalMotionLeavesTextblock(pm, pos, dir) {
   }
   return true;
 }
-},{"../dom":54,"../model":81,"../util/error":98,"./dompos":61}],71:[function(require,module,exports){
+},{"../dom":55,"../model":82,"../util/error":99,"./dompos":62}],72:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13150,7 +13152,7 @@ _model.StrongMark.register("parseDOMStyle", "font-weight", {
 });
 
 _model.CodeMark.register("parseDOM", "code", { parse: "mark" });
-},{"../model":81,"../util/sortedinsert":102,"./register":74}],72:[function(require,module,exports){
+},{"../model":82,"../util/sortedinsert":103,"./register":75}],73:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13182,7 +13184,7 @@ function fromText(schema, text) {
 }
 
 (0, _register.defineSource)("text", fromText);
-},{"./register":74}],73:[function(require,module,exports){
+},{"./register":75}],74:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13281,7 +13283,7 @@ Object.defineProperty(exports, "toText", {
     return _to_text.toText;
   }
 });
-},{"./from_dom":71,"./from_text":72,"./register":74,"./to_dom":75,"./to_text":76}],74:[function(require,module,exports){
+},{"./from_dom":72,"./from_text":73,"./register":75,"./to_dom":76,"./to_text":77}],75:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13349,7 +13351,7 @@ function defineSource(format, func) {
 defineSource("json", function (schema, json) {
   return schema.nodeFromJSON(json);
 });
-},{"../util/error":98}],75:[function(require,module,exports){
+},{"../util/error":99}],76:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13637,7 +13639,7 @@ def(_model.LinkMark, function (mark, s) {
   return s.elt("a", { href: mark.attrs.href,
     title: mark.attrs.title });
 });
-},{"../model":81,"./register":74}],76:[function(require,module,exports){
+},{"../model":82,"./register":75}],77:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13681,7 +13683,7 @@ function toText(doc) {
 }
 
 (0, _register.defineTarget)("text", toText);
-},{"../model":81,"./register":74}],77:[function(require,module,exports){
+},{"../model":82,"./register":75}],78:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14118,7 +14120,7 @@ var defaultSpec = new _schema.SchemaSpec({
 // :: Schema
 // ProseMirror's default document schema.
 var defaultSchema = exports.defaultSchema = new _schema.Schema(defaultSpec);
-},{"./schema":85}],78:[function(require,module,exports){
+},{"./schema":86}],79:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14215,7 +14217,7 @@ function findDiffEnd(a, b) {
   }
   return { a: new _pos.Pos(pathA, offA), b: new _pos.Pos(pathB, offB) };
 }
-},{"./pos":84}],79:[function(require,module,exports){
+},{"./pos":85}],80:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14244,7 +14246,7 @@ var ModelError = exports.ModelError = function (_ProseMirrorError) {
 
   return ModelError;
 }(_error.ProseMirrorError);
-},{"../util/error":98}],80:[function(require,module,exports){
+},{"../util/error":99}],81:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14955,7 +14957,7 @@ if (typeof Symbol != "undefined") {
     return this;
   };
 }
-},{"./error":79}],81:[function(require,module,exports){
+},{"./error":80}],82:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15195,7 +15197,7 @@ Object.defineProperty(exports, "ModelError", {
                 return _error.ModelError;
         }
 });
-},{"./defaultschema":77,"./diff":78,"./error":79,"./fragment":80,"./mark":82,"./node":83,"./pos":84,"./schema":85}],82:[function(require,module,exports){
+},{"./defaultschema":78,"./diff":79,"./error":80,"./fragment":81,"./mark":83,"./node":84,"./pos":85,"./schema":86}],83:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15327,7 +15329,7 @@ var Mark = exports.Mark = function () {
 }();
 
 var empty = [];
-},{}],83:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15932,7 +15934,7 @@ function wrapMarks(marks, str) {
     str = marks[i].type.name + "(" + str + ")";
   }return str;
 }
-},{"./fragment":80,"./mark":82,"./pos":84}],84:[function(require,module,exports){
+},{"./fragment":81,"./mark":83,"./pos":85}],85:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16156,7 +16158,7 @@ var Pos = exports.Pos = function () {
 
   return Pos;
 }();
-},{"./error":79}],85:[function(require,module,exports){
+},{"./error":80}],86:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17167,7 +17169,7 @@ var Schema = function () {
 }();
 
 exports.Schema = Schema;
-},{"../util/error":98,"../util/obj":101,"./fragment":80,"./mark":82,"./node":83}],86:[function(require,module,exports){
+},{"../util/error":99,"../util/obj":102,"./fragment":81,"./mark":83,"./node":84}],87:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17453,7 +17455,7 @@ _transform.Transform.prototype.setNodeType = function (pos, type, attrs) {
   this.step("ancestor", new _model.Pos(path, 0), new _model.Pos(path, node.size), null, { depth: 1, types: [type], attrs: [attrs] });
   return this;
 };
-},{"../model":81,"./map":89,"./step":93,"./transform":94,"./tree":95}],87:[function(require,module,exports){
+},{"../model":82,"./map":90,"./step":94,"./transform":95,"./tree":96}],88:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17541,7 +17543,7 @@ require("./mark");
 require("./split");
 
 require("./replace");
-},{"./ancestor":86,"./join":88,"./map":89,"./mark":90,"./replace":91,"./split":92,"./step":93,"./transform":94}],88:[function(require,module,exports){
+},{"./ancestor":87,"./join":89,"./map":90,"./mark":91,"./replace":92,"./split":93,"./step":94,"./transform":95}],89:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17623,7 +17625,7 @@ _transform.Transform.prototype.join = function (at) {
   this.step("join", new _model.Pos(at.path.concat(at.offset - 1), parent.child(at.offset - 1).size), new _model.Pos(at.path.concat(at.offset), 0));
   return this;
 };
-},{"../model":81,"./map":89,"./step":93,"./transform":94}],89:[function(require,module,exports){
+},{"../model":82,"./map":90,"./step":94,"./transform":95}],90:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17943,7 +17945,7 @@ var Remapping = exports.Remapping = function () {
 
   return Remapping;
 }();
-},{"../model":81}],90:[function(require,module,exports){
+},{"../model":82}],91:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -18122,7 +18124,7 @@ _transform.Transform.prototype.clearMarkup = function (from, to, newParent) {
     this.step(delSteps[i]);
   }return this;
 };
-},{"../model":81,"./step":93,"./transform":94,"./tree":95}],91:[function(require,module,exports){
+},{"../model":82,"./step":94,"./transform":95,"./tree":96}],92:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -18450,7 +18452,7 @@ _transform.Transform.prototype.insertText = function (pos, text) {
 _transform.Transform.prototype.insertInline = function (pos, node) {
   return this.insert(pos, node.mark(this.doc.marksAt(pos)));
 };
-},{"../model":81,"./map":89,"./step":93,"./transform":94,"./tree":95}],92:[function(require,module,exports){
+},{"../model":82,"./map":90,"./step":94,"./transform":95,"./tree":96}],93:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -18539,7 +18541,7 @@ _transform.Transform.prototype.splitIfNeeded = function (pos) {
   }
   return this;
 };
-},{"../model":81,"./map":89,"./step":93,"./transform":94}],93:[function(require,module,exports){
+},{"../model":82,"./map":90,"./step":94,"./transform":95}],94:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -18726,7 +18728,7 @@ var StepResult = exports.StepResult = function StepResult(doc) {
 };
 
 var steps = Object.create(null);
-},{"../model":81,"../util/error":98,"./map":89}],94:[function(require,module,exports){
+},{"../model":82,"../util/error":99,"./map":90}],95:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -18831,7 +18833,7 @@ var Transform = function () {
 }();
 
 exports.Transform = Transform;
-},{"./map":89,"./step":93}],95:[function(require,module,exports){
+},{"./map":90,"./step":94}],96:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -18925,7 +18927,7 @@ function samePathDepth(a, b) {
     if (i == a.path.length || i == b.path.length || a.path[i] != b.path[i]) return i;
   }
 }
-},{"../model":81}],96:[function(require,module,exports){
+},{"../model":82}],97:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19221,7 +19223,7 @@ function openPrompt(pm, content, options) {
 }
 
 (0, _dom.insertCSS)("\n.ProseMirror-prompt {\n  background: white;\n  padding: 2px 6px 2px 15px;\n  border: 1px solid silver;\n  position: absolute;\n  border-radius: 3px;\n  z-index: 11;\n}\n\n.ProseMirror-prompt input[type=\"text\"],\n.ProseMirror-prompt textarea {\n  background: #eee;\n  border: none;\n  outline: none;\n}\n\n.ProseMirror-prompt input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n.ProseMirror-prompt-close {\n  position: absolute;\n  left: 2px; top: 1px;\n  color: #666;\n  border: none; background: transparent; padding: 0;\n}\n\n.ProseMirror-prompt-close:after {\n  content: \"✕\";\n  font-size: 12px;\n}\n\n.ProseMirror-invalid {\n  background: #ffc;\n  border: 1px solid #cc7;\n  border-radius: 4px;\n  padding: 5px 10px;\n  position: absolute;\n  min-width: 10em;\n}\n");
-},{"../dom":54,"../util/error":98}],97:[function(require,module,exports){
+},{"../dom":55,"../util/error":99}],98:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19381,7 +19383,7 @@ var UpdateScheduler = exports.UpdateScheduler = function () {
 
   return UpdateScheduler;
 }();
-},{}],98:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19463,7 +19465,7 @@ function functionName(f) {
   var match = /^function (\w+)/.exec(f.toString());
   return match && match[1];
 }
-},{}],99:[function(require,module,exports){
+},{}],100:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19580,7 +19582,7 @@ function eventMixin(ctor) {
     if (methods.hasOwnProperty(prop)) proto[prop] = methods[prop];
   }
 }
-},{}],100:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19636,7 +19638,7 @@ var Map = exports.Map = window.Map || function () {
 
   return _class;
 }();
-},{}],101:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19649,7 +19651,7 @@ function copyObj(obj, base) {
     copy[prop] = obj[prop];
   }return copy;
 }
-},{}],102:[function(require,module,exports){
+},{}],103:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

@@ -6,7 +6,7 @@ import {zipFileCreator} from "./zip"
  * The importer will not import from a different version and the exporter
   * will include this number in all exports.
  */
-let FW_FILETYPE_VERSION = "1.2";
+let FW_FILETYPE_VERSION = "1.2"
 
 /** Create a Fidus Writer document and upload it to the server as a backup.
  * @function uploadNative
@@ -14,13 +14,13 @@ let FW_FILETYPE_VERSION = "1.2";
  */
 export let uploadNative = function(aDocument) {
     exportNative(aDocument, ImageDB, BibDB, function(aDocument, shrunkImageDB, shrunkBibDB, images) {
-        exportNativeFile(aDocument, shrunkImageDB, shrunkBibDB, images, true);
-    });
-};
+        exportNativeFile(aDocument, shrunkImageDB, shrunkBibDB, images, true)
+    })
+}
 
 export let downloadNative = function(aDocument) {
     if (window.hasOwnProperty('theEditor')) {
-        exportNative(aDocument, ImageDB, BibDB, exportNativeFile);
+        exportNative(aDocument, ImageDB, BibDB, exportNativeFile)
     } else {
         if (aDocument.is_owner) {
             if ('undefined' === typeof(BibDB)) {
@@ -29,22 +29,22 @@ export let downloadNative = function(aDocument) {
                         usermediaHelpers.getImageDB(function() {
                             exportNative(aDocument,
                                 ImageDB,
-                                BibDB, exportNativeFile);
-                        });
+                                BibDB, exportNativeFile)
+                        })
                     } else {
                         exportNative(aDocument, ImageDB,
                             BibDB,
-                            exportNativeFile);
+                            exportNativeFile)
                     }
-                });
+                })
             } else if ('undefined' === typeof(ImageDB)) {
                 usermediaHelpers.getImageDB(function() {
                     exportNative(aDocument, ImageDB, BibDB,
-                        exportNativeFile);
-                });
+                        exportNativeFile)
+                })
             } else {
                 exportNative(aDocument, ImageDB, BibDB, exporter
-                    .nativeFile);
+                    .nativeFile)
             }
         } else {
             bibliographyHelpers.getABibDB(aDocument.owner, function(
@@ -52,61 +52,58 @@ export let downloadNative = function(aDocument) {
                 usermediaHelpers.getAnImageDB(aDocument.owner,
                     function(anImageDB) {
                         exportNative(aDocument, anImageDB,
-                            aBibDB, exportNativeFile);
-                    });
-            });
+                            aBibDB, exportNativeFile)
+                    })
+            })
         }
     }
-};
+}
 
 export let exportNative = function(aDocument, anImageDB, aBibDB, callback) {
-    var contents, outputList, httpOutputList, images, shrunkImageDB,
-        shrunkBibDB = {},
-        imageUrls = [],
-        citeList = [],
-        i;
+    let shrunkBibDB = {},
+        citeList = []
 
-    $.addAlert('info', gettext('File export has been initiated.'));
+    $.addAlert('info', gettext('File export has been initiated.'))
 
-    contents = obj2Node(aDocument.contents);
+    let contents = obj2Node(aDocument.contents)
 
-    images = findImages(contents);
+    let images = findImages(contents)
 
-    imageUrls = _.pluck(images, 'url');
+    let imageUrls = _.pluck(images, 'url')
 
 
-    shrunkImageDB = _.filter(anImageDB, function(image) {
+    let shrunkImageDB = _.filter(anImageDB, function(image) {
         return (imageUrls.indexOf(image.image.split('?').shift()) !== -
-            1);
-    });
+            1)
+    })
 
     jQuery(contents).find('.citation').each(function() {
         citeList.push(jQuery(this).attr('data-bib-entry'))
-    });
+    })
 
-    citeList = _.uniq(citeList.join(',').split(','));
+    citeList = _.uniq(citeList.join(',').split(','))
 
     if (citeList.length === 1 && citeList[0] === '') {
-        citeList = [];
+        citeList = []
     }
 
-    for (i in citeList) {
-        shrunkBibDB[citeList[i]] = aBibDB[citeList[i]];
+    for (let i in citeList) {
+        shrunkBibDB[citeList[i]] = aBibDB[citeList[i]]
     }
 
-    callback(aDocument, shrunkImageDB, shrunkBibDB, images);
+    callback(aDocument, shrunkImageDB, shrunkBibDB, images)
 
-};
+}
 
 let exportNativeFile = function(aDocument, shrunkImageDB,
     shrunkBibDB,
     images, upload) {
 
     if ('undefined' === typeof upload) {
-        upload = false;
+        upload = false
     }
 
-    let httpOutputList = images;
+    let httpOutputList = images
 
     let outputList = [{
         filename: 'document.json',
@@ -120,9 +117,9 @@ let exportNativeFile = function(aDocument, shrunkImageDB,
     }, {
         filename: 'filetype-version',
         contents: FW_FILETYPE_VERSION
-    }];
+    }]
 
     zipFileCreator(outputList, httpOutputList, createSlug(
             aDocument.title) +
-        '.fidus', 'application/fidus+zip', false, upload);
-};
+        '.fidus', 'application/fidus+zip', false, upload)
+}

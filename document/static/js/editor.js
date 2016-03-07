@@ -624,7 +624,11 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
             var commentText = commentTextBox.value;
             var commentIsMajor = jQuery(submitButton).siblings('.comment-is-major').prop('checked');
             var commentId = this.mod.layout.getCommentId(commentTextBox);
-            this.updateComment(commentId, commentText, commentIsMajor);
+            if (commentText.length > 0) {
+                this.updateComment(commentId, commentText, commentIsMajor);
+            } else {
+                this.deleteComment(commentId);
+            }
         }
     }, {
         key: "cancelSubmitComment",
@@ -1075,6 +1079,7 @@ var ModCommentStore = exports.ModCommentStore = (function () {
             if (!this.comments[id]) {
                 this.comments[id] = new Comment(id, user, userName, userAvatar, date, comment, answers, isMajor);
             }
+            //this.updateDisplay(true)
         }
     }, {
         key: "updateComment",
@@ -1093,6 +1098,7 @@ var ModCommentStore = exports.ModCommentStore = (function () {
                 this.comments[id].comment = comment;
                 this.comments[id]['review:isMajor'] = commentIsMajor;
             }
+            this.updateDisplay(true);
         }
     }, {
         key: "removeCommentMarks",
@@ -1137,6 +1143,7 @@ var ModCommentStore = exports.ModCommentStore = (function () {
                 delete this.comments[id];
                 return true;
             }
+            this.updateDisplay(true);
         }
     }, {
         key: "deleteComment",
@@ -1159,6 +1166,7 @@ var ModCommentStore = exports.ModCommentStore = (function () {
                 }
                 this.comments[id].answers.push(answer);
             }
+            this.updateDisplay(false);
         }
     }, {
         key: "addAnswer",
@@ -1180,6 +1188,7 @@ var ModCommentStore = exports.ModCommentStore = (function () {
                     return answer.id === answerId;
                 });
             }
+            this.updateDisplay(false);
         }
     }, {
         key: "deleteAnswer",
@@ -1201,6 +1210,7 @@ var ModCommentStore = exports.ModCommentStore = (function () {
                 });
                 answer.answer = answerText;
             }
+            this.updateDisplay(false);
         }
     }, {
         key: "updateAnswer",
@@ -1301,40 +1311,40 @@ var ModCommentStore = exports.ModCommentStore = (function () {
         value: function receive(events, version) {
             var _this2 = this;
 
-            var that = this;
-            var updateCommentLayout = false;
-            console.log(['comments update events', events]);
             events.forEach(function (event) {
                 if (event.type == "delete") {
                     _this2.deleteLocalComment(event.id);
-                    updateCommentLayout = true;
                 } else if (event.type == "create") {
                     _this2.addLocalComment(event.id, event.user, event.userName, event.userAvatar, event.date, event.comment, event['review:isMajor']);
-                    if (event.comment.length > 0) {
-                        updateCommentLayout = true;
-                    }
                 } else if (event.type == "update") {
                     _this2.updateLocalComment(event.id, event.comment, event['review:isMajor']);
-                    updateCommentLayout = true;
                 } else if (event.type == "add_answer") {
                     _this2.addLocalAnswer(event.commentId, event);
-                    updateCommentLayout = true;
                 } else if (event.type == "remove_answer") {
                     _this2.deleteLocalAnswer(event.commentId, event);
-                    updateCommentLayout = true;
                 } else if (event.type == "update_answer") {
                     _this2.updateLocalAnswer(event.commentId, event.id, event.answer);
-                    updateCommentLayout = true;
                 }
                 _this2.version++;
             });
-            if (updateCommentLayout) {
+        }
+    }, {
+        key: "updateDisplay",
+        value: function updateDisplay(waitForFlush) {
+            var _this3 = this;
+
+            console.log('yuyu');
+            var that = this;
+            if (waitForFlush) {
                 (function () {
-                    var layoutComments = new _update.UpdateScheduler(_this2.mod.editor.pm, "flush", function () {
+                    var layoutComments = new _update.UpdateScheduler(_this3.mod.editor.pm, "flush", function () {
                         layoutComments.detach();
+                        console.log('layouting comments');
                         that.mod.layout.layoutComments();
                     });
                 })();
+            } else {
+                that.mod.layout.layoutComments();
             }
         }
     }, {

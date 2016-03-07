@@ -47,6 +47,7 @@ export class ModCommentStore {
         if (!this.comments[id]) {
             this.comments[id] = new Comment(id, user, userName, userAvatar, date, comment, answers, isMajor)
         }
+        //this.updateDisplay(true)
     }
 
     updateComment(id, comment, commentIsMajor) {
@@ -63,6 +64,7 @@ export class ModCommentStore {
             this.comments[id].comment = comment
             this.comments[id]['review:isMajor'] = commentIsMajor
         }
+        this.updateDisplay(true)
     }
 
     removeCommentMarks(id) {
@@ -85,6 +87,7 @@ export class ModCommentStore {
             delete this.comments[id]
             return true
         }
+        this.updateDisplay(true)
     }
 
     deleteComment(id) {
@@ -105,6 +108,7 @@ export class ModCommentStore {
             }
             this.comments[id].answers.push(answer)
         }
+        this.updateDisplay(false)
     }
 
     addAnswer(id, answer) {
@@ -124,6 +128,7 @@ export class ModCommentStore {
                 return answer.id === answerId
             })
         }
+        this.updateDisplay(false)
     }
 
     deleteAnswer(commentId, answerId) {
@@ -143,6 +148,7 @@ export class ModCommentStore {
             })
             answer.answer = answerText
         }
+        this.updateDisplay(false)
     }
 
     updateAnswer(commentId, answerId, answerText) {
@@ -236,38 +242,36 @@ export class ModCommentStore {
     }
 
     receive(events, version) {
-        let that = this
-        let updateCommentLayout = false
-        console.log(['comments update events', events])
         events.forEach(event => {
             if (event.type == "delete") {
                 this.deleteLocalComment(event.id)
-                updateCommentLayout = true
             } else if (event.type == "create") {
                 this.addLocalComment(event.id, event.user, event.userName, event.userAvatar, event.date, event.comment, event['review:isMajor'])
-                if (event.comment.length > 0) {
-                    updateCommentLayout = true
-                }
             } else if (event.type == "update") {
                 this.updateLocalComment(event.id, event.comment, event['review:isMajor'])
-                updateCommentLayout = true
             } else if (event.type == "add_answer") {
                 this.addLocalAnswer(event.commentId, event)
-                updateCommentLayout = true
             } else if (event.type == "remove_answer") {
                 this.deleteLocalAnswer(event.commentId, event)
-                updateCommentLayout = true
             } else if (event.type == "update_answer") {
                 this.updateLocalAnswer(event.commentId, event.id, event.answer)
-                updateCommentLayout = true
             }
             this.version++
         })
-        if (updateCommentLayout) {
+
+    }
+
+    updateDisplay(waitForFlush) {
+        console.log('yuyu')
+        let that = this
+        if (waitForFlush) {
             let layoutComments = new UpdateScheduler(this.mod.editor.pm, "flush", function() {
                 layoutComments.detach()
+                console.log('layouting comments')
                 that.mod.layout.layoutComments()
             })
+        } else {
+            that.mod.layout.layoutComments()
         }
     }
 

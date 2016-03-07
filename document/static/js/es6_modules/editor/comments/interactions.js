@@ -119,7 +119,12 @@ export class ModCommentInteractions {
         let commentText = commentTextBox.value
         let commentIsMajor = jQuery(submitButton).siblings('.comment-is-major').prop('checked')
         let commentId = this.mod.layout.getCommentId(commentTextBox)
-        this.updateComment(commentId, commentText, commentIsMajor)
+        if (commentText.length > 0) {
+            this.updateComment(commentId, commentText, commentIsMajor)
+        } else {
+            this.deleteComment(commentId)
+        }
+
     }
 
     cancelSubmitComment(cancelButton) {

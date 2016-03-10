@@ -161,11 +161,11 @@ export class Editor {
             this.mod.collab.docChanges.applyDiff(diff)
         }
         this.doc.hash = this.getHash()
+        new ModComments(this, this.doc.comment_version)
         this.pm.mod.collab.on("mustSend", function() {
             that.mod.collab.docChanges.sendToCollaborators()
         })
         this.pm.signal("documentUpdated")
-        new ModComments(this, this.doc.comment_version)
         _.each(this.doc.comments, function(comment) {
             that.mod.comments.store.addLocalComment(comment.id, comment.user,
                 comment.userName, comment.userAvatar, comment.date, comment.comment,

@@ -47,6 +47,8 @@ class DocumentWS(BaseWebSocketHandler):
                 DocumentWS.sessions[document.id]['last_diffs'] = json_decode(document.last_diffs)
                 DocumentWS.sessions[document.id]['comments'] = json_decode(document.comments)
                 DocumentWS.sessions[document.id]['settings'] = json_decode(document.settings)
+                DocumentWS.sessions[document.id]['contents'] = json_decode(document.contents)
+                DocumentWS.sessions[document.id]['metadata'] = json_decode(document.metadata)
                 DocumentWS.sessions[document.id]['in_control'] = self.id
             else:
                 self.id = max(DocumentWS.sessions[document.id]['participants'])+1
@@ -75,9 +77,15 @@ class DocumentWS(BaseWebSocketHandler):
             document.diff_version = document.version
             DocumentWS.sessions[self.user_info.document_id]["last_diffs"] = []
         response['document']['title']=document.title
-        response['document']['contents']=document.contents
-        response['document']['metadata']=document.metadata
-        response['document']['settings']=DocumentWS.sessions[self.user_info.document_id]["settings"]
+        #response['document']['contents']=document.contents
+        response['document']['contents']=DocumentWS.sessions[self.user_info.document_id]['contents']
+        response['document']['metadata']=DocumentWS.sessions[self.user_info.document_id]['metadata']
+        response['document']['settings']=DocumentWS.sessions[self.user_info.document_id]['settings']
+        #response['document']['comments']=DocumentWS.sessions[self.user_info.document_id]['comments']
+
+        #response['document']['contents']=DocumentWS.sessions[self.user_info.document_id]['contents']
+        #response['document']['metadata']=document.metadata
+        #response['document']['settings']=DocumentWS.sessions[self.user_info.document_id]["settings"]
         access_rights =  get_accessrights(AccessRight.objects.filter(document__owner=document.owner))
         response['document']['access_rights'] = access_rights
 
@@ -123,6 +131,29 @@ class DocumentWS(BaseWebSocketHandler):
             response['document_values']['control']=True
         response['document_values']['session_id']= self.id
         self.write_message(response)
+
+    def on_message(self, message):
+        if not self.user_info.document_id in DocumentWS.sessions:
+            print "receiving message for closed document"
+            return
+        parsed = json_decode(message)
+        print parsed["type"]
+        if parsed["type"]=='get_document':
+            self.send_document()
+        elif parsed["type"]=='participant_update':
+            self.handle_participant_update()
+        elif parsed["type"]=='chat':
+            self.handle_chat(parsed)
+        elif parsed["type"]=='check_diff_version':
+            self.check_diff_version(parsed)
+        elif parsed["type"]=='update_document' and self.can_update_document():
+            self.handle_document_update(parsed)
+        elif parsed["type"]=='update_title' and self.can_update_document():
+            self.handle_title_update(parsed)
+        elif parsed["type"]=='setting_change' and self.can_update_document():
+            self.handle_settings_change(message, parsed)
+        elif parsed["type"]=='diff' and self.can_update_document():
+            self.handle_diff(message, parsed)
 
     def update_document(self, changes):
         document = DocumentWS.sessions[self.user_info.document_id]['document']
@@ -258,6 +289,9 @@ class DocumentWS(BaseWebSocketHandler):
             # Client has a version that is too old
             self.send_document()
             return
+
+    def can_update_document(self):
+        return self.user_info.access_rights == 'w' or self.user_info.access_rights == 'a'
 
     def on_close(self):
         print "Websocket closing"

@@ -1764,12 +1764,12 @@ var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles,
     };
 
     if (includeZips) {
-        var includeZipLoop;
+        var _includeZipLoop;
 
         (function () {
             var i = 0;
 
-            includeZipLoop = function () {
+            _includeZipLoop = function includeZipLoop() {
                 // for (i = 0; i < includeZips.length; i++) {
                 if (i === includeZips.length) {
                     createZip();
@@ -1781,12 +1781,12 @@ var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles,
                     }
                     zipDir.importHttpContent(includeZips[i].url, false, function () {
                         i++;
-                        includeZipLoop();
+                        _includeZipLoop();
                     });
                 }
             };
 
-            includeZipLoop();
+            _includeZipLoop();
         })();
     } else {
         createZip();

@@ -369,15 +369,29 @@ var FW_FILETYPE_VERSION = 1.2, MIN_FW_FILETYPE_VERSION = 1.1, MAX_FW_FILETYPE_VE
                     var tempNode;
                     jQuery.addAlert('info', aDocument.title + gettext(
                             ' successfully imported.'));
+                    aDocumentValues = {
+                        last_diffs: [],
+                        is_owner: true,
+                        rights: 'w',
+                        changed: false,
+                        titleChanged: false
+                    }
                     aDocument.id = data['document_id'];
-                    aDocument.owner = {
-                        id: theUser.id,
-                        name: theUser.name,
-                        avatar: theUser.avatar
-                    },
-                    aDocument.rights = 'w';
-                    aDocument.is_locked = false;
-                    aDocument.is_owner = true;
+                    if (window.theEditor) {
+                        aDocument.owner = {
+                            id: theEditor.user.id,
+                            name: theEditor.user.name,
+                            avatar: theEditor.user.avatar
+                        };
+                    } else {
+                        aDocument.owner = {
+                            id: theUser.id,
+                            name: theUser.name,
+                            avatar: theUser.avatar
+                        };
+                    }
+                    aDocument.version = 0;
+                    aDocument.comment_version = 0;
                     aDocument.added = data['added'];
                     aDocument.updated = data['updated'];
                     aDocument.revisions = [];
@@ -389,17 +403,14 @@ var FW_FILETYPE_VERSION = 1.2, MIN_FW_FILETYPE_VERSION = 1.1, MAX_FW_FILETYPE_VE
                                     aDocument: aDocument
                                 }));
                         documentHelpers.startDocumentTable();
-                    } else if (typeof (theDocument) !== 'undefined') {
-                        if (theDocument.rights ==='r' || theDocument.is_locked === true) {
+                    } else if (typeof (theEditor) !== 'undefined') {
+                        if (theEditor.docInfo.rights ==='r') {
                             // We only had right access to the document, so the editing elements won't show. We therefore need to reload the page to get them.
                             window.location = '/document/'+aDocument.id+'/';
                         } else {
-                            theDocument = aDocument;
-                            tempNode = exporter.obj2Node(aDocument.contents);
-                            while (tempNode.firstChild) {
-                                document.getElementById('document-contents').appendChild(tempNode.firstChild);
-                            }
-                            window.history.pushState("", "", "/document/"+theDocument.id+"/");
+                            window.theEditor.doc = aDocument;
+                            window.theEditor.docInfo = aDocumentValues;
+                            window.history.pushState("", "", "/document/"+theEditor.doc.id+"/");
                         }
                     }
                 },

@@ -7,7 +7,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
+<<<<<<< HEAD
 "POT-Creation-Date: 2016-02-03 03:34-0600\n"
+=======
+"POT-Creation-Date: 2016-02-05 09:39-0600\n"
+>>>>>>> upstream/3.0
 "PO-Revision-Date: 2013-09-18 08:54+0200\n"
 "Last-Translator: Vladimir Vitkov <vvitkov@linux-bg.org>\n"
 "Language-Team: Bulgarian <vvitkov@linux-bg.org>\n"
@@ -78,8 +82,8 @@ msgstr "Формули и Уравнения от mathjax"
 msgid "Citations with Citation Style Language"
 msgstr "Цитати с Citation Style Language"
 
-#: base/templates/footer.html:21
-msgid "Requires Chrome/Chromium/Safari"
+#: base/templates/footer.html:22
+msgid "Text editing with ProseMirror"
 msgstr ""
 
 #: bibliography/templates/bibliography/index.html:5
@@ -604,6 +608,7 @@ msgstr "Покажи/Скрий коментарите"
 msgid "Comments"
 msgstr "Коментари"
 
+<<<<<<< HEAD
 #: document/templates/document/editor.html:528
 #: document/templates/document/editor.html:529
 #, fuzzy
@@ -634,6 +639,8 @@ msgstr ""
 msgid "By username"
 msgstr "Потребител"
 
+=======
+>>>>>>> upstream/3.0
 #: document/templates/document/index.html:6
 msgid "Document Overview"
 msgstr "Преглед на документа"
@@ -1048,6 +1055,7 @@ msgstr "Размер (px)"
 msgid "Updated"
 msgstr "Обновен"
 
+<<<<<<< HEAD
 #: venv/lib/python2.7/site-packages/django/contrib/messages/apps.py:7
 msgid "Messages"
 msgstr ""
@@ -2982,6 +2990,11 @@ msgstr ""
 msgctxt "stick"
 msgid "club"
 msgstr ""
+=======
+#, fuzzy
+#~ msgid "Authors"
+#~ msgstr "Автор"
+>>>>>>> upstream/3.0
 
 #~ msgid "The title of the document"
 #~ msgstr "Заглавие на документа"

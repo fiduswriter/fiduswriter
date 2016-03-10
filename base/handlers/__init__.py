@@ -16,7 +16,7 @@
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.conf import settings
 
@@ -71,6 +71,5 @@ class DjangoStaticFilesHandler(StaticFileHandler):
     def set_extra_headers(self, path):
         self.set_header('Cache-Control', 'no-cache, must-revalidate')
         self.set_header('Expires', '0')
-        now = datetime.now()
-        expiration = datetime(now.year - 1, now.month, now.day)
+        expiration = datetime.now() - timedelta(days = 366)
         self.set_header('Last-Modified', expiration)

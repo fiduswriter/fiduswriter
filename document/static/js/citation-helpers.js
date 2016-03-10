@@ -175,8 +175,7 @@
     };
 
     citationHelpers.formatCitationsInDocIfNew = function () {
-      // Formatt all citations in the doc, if there are new ones.
-      //theEditor.editor.off("flushed", citationHelpers.formatCitationsInDocIfNew);
+      // Format all citations in the doc, if there are new ones.
       if (jQuery('span.citation:empty').length===0) {
           return false;
       } else {
@@ -185,11 +184,10 @@
     };
 
     citationHelpers.formatCitationsInDoc = function () {
-        theEditor.editor.off("flushed", citationHelpers.formatCitationsInDoc);
         jQuery('#document-bibliography').html(
             citationHelpers.formatCitations(
                 jQuery('#document-editable')[0],
-                theDocument.settings.citationstyle,
+                theEditor.doc.settings.citationstyle,
                 BibDB
             )
         );
@@ -258,7 +256,6 @@
             }
             allCitations[citations_ids[j]].innerHTML = citation_text;
         }
-        editorEscapes.reset();
 
         bibliographyHTML += '<h1>' + gettext('Bibliography') + '</h1>';
         // Add entry to bibliography
@@ -273,40 +270,6 @@
         return bibliographyHTML.replace(/<\/div>/g, '</p>');
      };
 
-    citationHelpers.appendToCitedItems = function(books) {
-        var i, len = books.length;
-        for(i = 0; i < len; i ++) {
-            $('#selected-cite-source-table .fw-document-table-body').append(toolbarTemplates.selectedCitation({
-                'id': books[i].id,
-                'type': books[i].type,
-                'title': books[i].title,
-                'author': books[i].author,
-                'page': '',
-                'prefix': ''
-            }));
-        }
-    }
-
-    citationHelpers.appendToCitationDialog = function(pk, bib_info) {
-        // If neither author nor editor were registered, use an empty string instead of nothing.
-        // TODO: Such entries should likely not be accepted by the importer.
-        var bibauthor = bib_info.editor || bib_info.author || '';
-
-        // If title is undefined, set it to an empty string.
-        // TODO: Such entries should likely not be accepted by the importer.
-        if (typeof bib_info.title === 'undefined') bib_info.title = '';
-
-        var citeItemData = {
-            'id': pk,
-            'type': bib_info.entry_type,
-            'title': bib_info.title.replace(/[{}]/g, ''),
-            'author': bibauthor.replace(/[{}]/g, '')
-        };
-
-        $('#cite-source-table > tbody').append(toolbarTemplates.citationItem(citeItemData));
-        $('#cite-source-table').trigger('update');
-        citationHelpers.appendToCitedItems([citeItemData]);
-    }
 
     exports.citationHelpers = citationHelpers;
 }).call(this);

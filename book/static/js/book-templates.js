@@ -413,15 +413,15 @@ var tmp_epub_book_opf = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
     <% }); %>\
     \t\t<item id="nav" href="document-nav.xhtml" properties="nav" media-type="application/xhtml+xml" />\n\
         <item id="copyright" href="copyright.xhtml" media-type="application/xhtml+xml"/>\
-        <% _.each(images,function(item, index){ %>\
-            <%= tmp_epub_opf_image_item({"item":item, "index": index})%>\
-        <% }); %>\
-        <% _.each(styleSheets,function(item, index){ %>\
-            <%= tmp_epub_opf_css_item({"item":item, "index": index})%>\
-        <% }); %>\
-        <% if (mathjax) {%>\
-            <%= tmp_epub_opf_mathjax_items({})%>\
-        <% }%>\
+        <% _.each(images,function(item, index){ %>'
+            + exporter.opfImageItemTemplatePart +
+        '<% }); %>\
+        <% _.each(styleSheets,function(item, index){ %>'
+            + exporter.opfCssItemTemplatePart +
+        '<% }); %>\
+        <% if (mathjax) {%>'
+            + exporter.opfMathjaxItemsTemplatePart +
+        '<% }%>\
     \t\t<!-- ncx included for 2.0 reading system compatibility: -->\n\
     \t\t<item id="ncx" href="document.ncx" media-type="application/x-dtbncx+xml" />\n\
     \t</manifest>\n\

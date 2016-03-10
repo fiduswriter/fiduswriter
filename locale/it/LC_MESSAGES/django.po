@@ -8,7 +8,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
+<<<<<<< HEAD
 "POT-Creation-Date: 2016-02-03 03:34-0600\n"
+=======
+"POT-Creation-Date: 2016-02-05 09:39-0600\n"
+>>>>>>> upstream/3.0
 "PO-Revision-Date: 2013-10-08 04:30-0500\n"
 "Last-Translator: Eugenio Battaglia <contafinoasette@gmail.com>\n"
 "Language-Team: Italian <contafinoasette@gmail.com>\n"
@@ -79,8 +83,8 @@ msgstr "Equazioni e matematica by mathjax"
 msgid "Citations with Citation Style Language"
 msgstr "Citazioni con Linguaggio Stile di Citazione"
 
-#: base/templates/footer.html:21
-msgid "Requires Chrome/Chromium/Safari"
+#: base/templates/footer.html:22
+msgid "Text editing with ProseMirror"
 msgstr ""
 
 #: bibliography/templates/bibliography/index.html:5
@@ -599,6 +603,7 @@ msgstr "Mostra/Nascondi i commenti"
 msgid "Comments"
 msgstr "Commenti"
 
+<<<<<<< HEAD
 #: document/templates/document/editor.html:528
 #: document/templates/document/editor.html:529
 #, fuzzy
@@ -629,6 +634,8 @@ msgstr ""
 msgid "By username"
 msgstr "Nome Utente"
 
+=======
+>>>>>>> upstream/3.0
 #: document/templates/document/index.html:6
 msgid "Document Overview"
 msgstr "Panoramica Documento"
@@ -1038,6 +1045,7 @@ msgstr "Dimensione (px)"
 msgid "Updated"
 msgstr "Aggiornamento effettuato!"
 
+<<<<<<< HEAD
 #: venv/lib/python2.7/site-packages/django/contrib/messages/apps.py:7
 msgid "Messages"
 msgstr ""
@@ -2972,6 +2980,11 @@ msgstr ""
 msgctxt "stick"
 msgid "club"
 msgstr ""
+=======
+#, fuzzy
+#~ msgid "Authors"
+#~ msgstr "Autore"
+>>>>>>> upstream/3.0
 
 #~ msgid "The title of the document"
 #~ msgstr "Il titolo del docuemnto"

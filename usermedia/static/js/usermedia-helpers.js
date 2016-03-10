@@ -185,6 +185,12 @@
 
         formValues.append('id', id);
 
+        if(theEditor && theEditor.doc && theEditor.doc.owner && theEditor.doc.owner.id) {
+            // If there is currently a document loaded, make the uploaded image
+            // belong to the owner of it.
+            formValues.append('owner_id', theEditor.doc.owner.id);
+        }
+
         jQuery('.fw-media-form').each(function () {
             var $this = jQuery(this);
             var the_name = $this.attr('name') || $this.attr('data-field-name');
@@ -507,10 +513,10 @@
         window.ImageDB = {};
         window.imageCategories = [];
         //Fill ImageDB
-        if (typeof (theDocument) === 'undefined') {
+        if (typeof (theEditor) === 'undefined') {
             documentOwnerId = 0;
         } else {
-            documentOwnerId = theDocument.owner.id;
+            documentOwnerId = theEditor.doc.owner.id;
         }
 
         $.activateWait();

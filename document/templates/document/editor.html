@@ -28,8 +28,6 @@
         </style>
         <style type="text/css" id="active-comment-style">
         </style>
-        <style type="text/css" id="editor-escapes-style">
-        </style>
         <!--  Translations -->
         <script type="text/javascript" src="/jsi18n/"></script>
         <!-- document style -->
@@ -55,9 +53,6 @@
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/add-remove-dialog.css" />
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/figure.css" />
 
-            <!-- question.mark.js -->
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/question.mark.css" />
-
             <!-- layout styles -->
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/common.css" />
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/header-menu.css" />
@@ -67,6 +62,8 @@
             <link rel="stylesheet" href="{{ STATIC_URL }}css/texteditor.css" type="text/css">
             <!-- Comments -->
             <link rel="stylesheet" href="{{ STATIC_URL }}css/comments.css" type="text/css">
+            <!-- Footnotes -->
+            <link rel="stylesheet" href="{{ STATIC_URL }}css/footnotes.css" type="text/css">
             <!-- Chat -->
             <link rel="stylesheet" href="{{ STATIC_URL }}css/chat.css" type="text/css">
             <!-- Access rights -->
@@ -86,8 +83,6 @@
         <script type="text/javascript" src="{{ JQUERYUI_URL }}"></script>
         <!-- Underscore -->
         <script type="text/javascript" src="{{ UNDERSCOREJS_URL }}"></script>
-        <!-- ProseMirror -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/editor/editor.js"></script>
         <!-- Mathjax -->
         <script type="text/x-mathjax-config">
             MathJax.Hub.Config({
@@ -142,6 +137,7 @@
                     'headerTopMargin': 80,
                     'contentsBottomMargin': 80,
                     'pagenumberBottomMargin': 50,
+                    'footnoteSelector': '.footnote-marker',
                     'lengthUnit': 'px',
                     'flowTo': 'document.getElementById("print")'
                 };
@@ -167,63 +163,30 @@
                 zip.useWebWorkers = false;
             </script>
 
-            <!-- Question Mark -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/question.mark.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/question.mark.templates.js"></script>
-
             <!-- Functions to modify bibliography -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-statics.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-helpers.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-template-dialogs.js"></script>
             <!-- contact functions -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/contact-helpers.js"></script>
-            <!-- tools functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/tools-templates.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/tools-helpers.js"></script>
             <!-- Usermedia functions -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/usermedia-helpers.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/usermedia-template-dialogs.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/usermedia-simplelist-template-dialogs.js"></script>
             <!-- Math functions -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/math-helpers.js"></script>
-            <!-- Editor toolbar buttons -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/blockstyles.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/bold.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/italic.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/link.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/footnote.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/cite.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/math.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/figure.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/undo_redo.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/comment.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/toolbar/templates.js"></script>
             <!-- Access rights dialog -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/document-accessrights-templates.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/document-accessrights-helpers.js"></script>
-            <!-- Comment functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/comment-templates.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/comment-helpers.js"></script>
             <!-- File export functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/export-templates.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.js"></script>
             <!-- File import -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/importer.js"></script>
-            <!-- Chat functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/chat-helpers.js"></script>
-            <script type="text/javascript">
-                chatHelpers.bind();
-            </script>
-            <!-- Moving of footnotes-->
-            <script type="text/javascript"  src="{{ STATIC_URL }}js/editor/escapes.js"></script>
-            <!-- Document related functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/setup.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor/server-communications.js"></script>
-            <script type="text/javascript">
-                serverCommunications.bind();
-            </script>
+            <!-- Node conversion -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/node-converter.js"></script>
         {% endcompress %}
+        <!-- Editor  -->
+        <script type="text/javascript" src="{{ STATIC_URL }}js/editor.js"></script>
 
     </head>
     <body class="{% trans "en" %} tex2jax_ignore">
@@ -246,7 +209,7 @@
                                 <span class="fw-pulldown-item close icon-cancel-circle" title="{% trans "Close the document and return to the document overview menu." %}"> {% trans "Close" %} </span>
                             </li>
                             <li>
-                                <span class="fw-pulldown-item save icon-floppy" title="{% trans "Save a revision of the current document" %}"> {% trans "Save revision" %} </span>
+                                <span class="fw-pulldown-item saverevision icon-floppy" title="{% trans "Save a revision of the current document" %}"> {% trans "Save revision" %} </span>
                             </li>
                             <li>
                                 <span class="fw-pulldown-item savecopy disabled icon-floppy" title="{% trans "Create copy of the current document" %}"> {% trans "Create copy" %} </span>
@@ -567,10 +530,15 @@
         </nav>
         <div id="editor-content">
             <div id="flow" class="comments-enabled CT-hide">
-                <div id="document-editable" class="user-contents"></div>
+                <div id="paper-editable">
+                    <div id="document-editable" class="user-contents"></div>
+                    <div id="footnote-box-container"></div>
+                </div>
                 <div id="document-bibliography" class="user-contents"></div>
             </div>
-            <div id="comment-box-container"></div><div id="tracking-box-container"></div>
+
+            <div id="comment-box-container"></div>
+            <div id="tracking-box-container"></div>
         </div>
         <div id="chat">
             <i class="resize-button icon-angle-double-down"></i>

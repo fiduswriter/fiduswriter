@@ -81,7 +81,7 @@ class BaseWebSocketHandler(WebSocketHandler):
 
       # try basic auth
 
-            if not self.request.headers.has_key('Authorization'):
+            if not 'Authorization' in self.request.headers:
                 return None
             (kind, data) = self.request.headers['Authorization'
                     ].split(' ')

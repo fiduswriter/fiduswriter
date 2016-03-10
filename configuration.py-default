@@ -26,9 +26,9 @@
 
 import os
 
-# If you want to show debug messages, set DEBUG to True.
+# If you don't want to show debug messages, set DEBUG to False.
 
-DEBUG = False
+DEBUG = True
 
 SERVER_INFO = {
     # This determines whether the server is used for testing and will let the users know
@@ -98,14 +98,21 @@ INSTALLED_APPS += (
     #'allauth.socialaccount.providers.stackexchange',
 )
 
+# A list of allowed hostnames of this Fidus Writer installation
+ALLOWED_HOSTS = [
+    'localhost',
+]
 
-# Location of commonly used Js libraries. Here the local version is given. For deployment a version on the net is better.
-JS_LOCATIONS = {
-    'JQUERY_URL': STATIC_URL + 'js/libs/jquery-2.2.0.js',
-    'JQUERYUI_URL': STATIC_URL + 'js/libs/jquery-ui-1.11.4.js',
-    'UNDERSCOREJS_URL': STATIC_URL + 'js/libs/underscore-1.8.3.js',
-    'MATHJAX_URL': STATIC_URL + 'js/libs/mathjax/MathJax.js',
-    }
 
-CSS_LOCATIONS = {
-    }
+## Location of commonly used Js libraries. Here the local version is given.
+# For deployment a version on the net is better.
+# Only uncomment if you change any of these values!
+#JS_LOCATIONS = {
+#    'JQUERY_URL': STATIC_URL + 'js/libs/jquery-2.2.0.js',
+#    'JQUERYUI_URL': STATIC_URL + 'js/libs/jquery-ui-1.11.4.js',
+#    'UNDERSCOREJS_URL': STATIC_URL + 'js/libs/underscore-1.8.3.js',
+#    'MATHJAX_URL': STATIC_URL + 'js/libs/mathjax/MathJax.js',
+#    }
+#
+#CSS_LOCATIONS = {
+#    }

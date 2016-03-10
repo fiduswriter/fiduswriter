@@ -21,8 +21,8 @@
 
 (function () {
     var exports = this,
-   /** 
-  * Functions for the document access rights dialog. TODO 
+   /**
+  * Functions for the document access rights dialog. TODO
   * @namespace accessrightsHelpers
   */
         accessrightsHelpers = {};
@@ -36,7 +36,7 @@
 
         // In case this is accessed from the the editor
         if (typeof (window.theAccessRights) === 'undefined') {
-            theAccessRights = theDocument.access_rights;
+            theAccessRights = theEditor.doc.access_rights;
         } else {
             theAccessRights = window.theAccessRights;
         }
@@ -44,7 +44,7 @@
         len = theAccessRights.length
 
         if (typeof (window.theTeamMembers) === 'undefined') {
-            theTeamMembers = theDocument.owner.team_members;
+            theTeamMembers = theEditor.doc.owner.team_members;
         } else {
             theTeamMembers = window.theTeamMembers;
         }

@@ -70,7 +70,7 @@ RIGHTS_CHOICES  = (
 class AccessRight(models.Model):
     document = models.ForeignKey(Document)
     user = models.ForeignKey(User)
-    rights = models.CharField(max_length=3, choices=RIGHTS_CHOICES, blank=False)
+    rights = models.CharField(max_length=1, choices=RIGHTS_CHOICES, blank=False)
 
     class Meta:
         unique_together = (("document", "user"),)

@@ -36,7 +36,8 @@ def get_file_path(instance, filename):
 
 class Image(models.Model):
     title = models.CharField(max_length=128)
-    uploader = models.ForeignKey(User,related_name='uploader')
+    uploader = models.ForeignKey(User,related_name='image_uploader')
+    owner = models.ForeignKey(User,related_name='image_owner',blank=True,null=True)
     added = models.DateTimeField(auto_now_add=True)
     image = models.FileField(upload_to=get_file_path)
     thumbnail = models.ImageField(upload_to='image_thumbnails',max_length=500,blank=True,null=True)

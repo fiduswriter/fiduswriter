@@ -219,7 +219,7 @@ def get_rdf(request, content_type, document_id):
     graph.add((document_node, RDF.type, FOAF.Document))
     add_comments_to_rdf_graph(graph, namespaces, comments_content, document_node)
 
-    #TODO: support json -ld 
+    #TODO: support json -ld
     #context = {"@vocab": BASE_FIDUS_URI + "oscoss.jsonld", "@language": "en"}
     #graph_json = graph.serialize(format='json-ld', context=context, indent=4)
     graph_turtle = graph.serialize(format='turtle')

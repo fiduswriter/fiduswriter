@@ -63,7 +63,7 @@ class DocumentWS(BaseWebSocketHandler):
         response['request_id'] = request_id
         self.write_message(response)
 
-    def get_document(self):
+    def send_document(self):
         response = dict()
         response['type'] = 'document_data'
         response['document'] = dict()
@@ -101,15 +101,15 @@ class DocumentWS(BaseWebSocketHandler):
             tm_object['avatar'] = avatar_url(team_member.member,80)
             response['document']['owner']['team_members'].append(tm_object)
         response['document_values'] = dict()
-        response['document_values']['is_owner']=self.is_owner
-        response['document_values']['rights'] = self.access_rights
+        response['document_values']['is_owner']=self.user_info.is_owner
+        response['document_values']['rights'] = self.user_info.access_rights
         if document.version > document.diff_version:
             print "!!!diff version issue!!!"
             document.diff_version = document.version
-            DocumentWS.sessions[self.document_id]["last_diffs"] = []
+            DocumentWS.sessions[self.user_info.document_id]["last_diffs"] = []
         elif document.diff_version > document.version:
             needed_diffs = document.diff_version - document.version
-            response['document_values']['last_diffs'] = DocumentWS.sessions[self.document_id]["last_diffs"][-needed_diffs:]
+            response['document_values']['last_diffs'] = DocumentWS.sessions[self.user_info.document_id]["last_diffs"][-needed_diffs:]
         else:
             response['document_values']['last_diffs'] = []
         if self.user_info.is_new:
@@ -134,31 +134,31 @@ class DocumentWS(BaseWebSocketHandler):
         else:
             # The saved version does not contain all accepted diffs, so we keep the remaining ones + 1000
             remaining_diffs = 1000 + document.diff_version - changes["version"]
-            DocumentWS.sessions[self.document_id]["last_diffs"] = DocumentWS.sessions[self.document_id]["last_diffs"][-remaining_diffs:]
-        DocumentWS.sessions[self.document_id]["contents"] = changes["contents"]
-        DocumentWS.sessions[self.document_id]["metadata"] = changes["metadata"]
+            DocumentWS.sessions[self.user_info.document_id]["last_diffs"] = DocumentWS.sessions[self.user_info.document_id]["last_diffs"][-remaining_diffs:]
+        DocumentWS.sessions[self.user_info.document_id]["contents"] = changes["contents"]
+        DocumentWS.sessions[self.user_info.document_id]["metadata"] = changes["metadata"]
         document.version = changes["version"]
 
     def update_title(self, title):
-        document = DocumentWS.sessions[self.document_id]['document']
+        document = DocumentWS.sessions[self.user_info.document_id]['document']
         document.title = title
 
     def handle_participant_update(self):
-        DocumentWS.send_participant_list(self.document_id)
+        DocumentWS.send_participant_list(self.user_info.document_id)
 
     def handle_document_update(self, parsed):
         self.update_document(parsed["document"])
-        DocumentWS.save_document(self.document_id)
+        DocumentWS.save_document(self.user_info.document_id)
         message = {
             "type": 'check_hash',
             "diff_version": parsed["document"]["version"],
             "hash": parsed["document"]["hash"]
         }
-        DocumentWS.send_updates(message, self.document_id, self.id)
+        DocumentWS.send_updates(message, self.user_info.document_id, self.id)
 
     def handle_title_update(self, parsed):
         self.update_title(parsed["title"])
-        DocumentWS.save_document(self.document_id)
+        DocumentWS.save_document(self.user_info.document_id)
 
     def handle_chat(self, parsed):
         chat = {
@@ -167,51 +167,51 @@ class DocumentWS(BaseWebSocketHandler):
             "from": self.user.id,
             "type": 'chat'
             }
-        DocumentWS.send_updates(chat, self.document_id)
+        DocumentWS.send_updates(chat, self.user_info.document_id)
 
     def handle_settings_change(self, message, parsed):
-        if self.document_id in DocumentWS.sessions:
-            DocumentWS.sessions[self.document_id]['settings'][parsed['variable']] = parsed['value']
-            DocumentWS.send_updates(message, self.document_id, self.id)
+        if self.user_info.document_id in DocumentWS.sessions:
+            DocumentWS.sessions[self.user_info.document_id]['settings'][parsed['variable']] = parsed['value']
+            DocumentWS.send_updates(message, self.user_info.document_id, self.id)
 
     def handle_diff(self, message, parsed):
-        if self.document_id in DocumentWS.sessions:
-            document = DocumentWS.sessions[self.document_id]["document"]
+        if self.user_info.document_id in DocumentWS.sessions:
+            document = DocumentWS.sessions[self.user_info.document_id]["document"]
             if parsed["diff_version"] == document.diff_version and parsed["comment_version"] == document.comment_version:
-                DocumentWS.sessions[self.document_id]["last_diffs"].extend(parsed["diff"])
+                DocumentWS.sessions[self.user_info.document_id]["last_diffs"].extend(parsed["diff"])
                 document.diff_version += len(parsed["diff"])
                 for cd in parsed["comments"]:
                     id = str(cd["id"])
                     if cd["type"] == "create":
                         del cd["type"]
-                        DocumentWS.sessions[self.document_id]["comments"][id] = cd
+                        DocumentWS.sessions[self.user_info.document_id]["comments"][id] = cd
                     elif cd["type"] == "delete":
-                        del DocumentWS.sessions[self.document_id]["comments"][id]
+                        del DocumentWS.sessions[self.user_info.document_id]["comments"][id]
                     elif cd["type"] == "update":
-                        DocumentWS.sessions[self.document_id]["comments"][id]["comment"] = cd["comment"]
+                        DocumentWS.sessions[self.user_info.document_id]["comments"][id]["comment"] = cd["comment"]
                         if "review:isMajor" in cd:
-                            DocumentWS.sessions[self.document_id]["comments"][id]["review:isMajor"] = cd["review:isMajor"]
+                            DocumentWS.sessions[self.user_info.document_id]["comments"][id]["review:isMajor"] = cd["review:isMajor"]
                     elif cd["type"] == "add_answer":
                         comment_id = str(cd["commentId"])
-                        if not "answers" in DocumentWS.sessions[self.document_id]["comments"][comment_id]:
-                            DocumentWS.sessions[self.document_id]["comments"][comment_id]["answers"] = []
+                        if not "answers" in DocumentWS.sessions[self.user_info.document_id]["comments"][comment_id]:
+                            DocumentWS.sessions[self.user_info.document_id]["comments"][comment_id]["answers"] = []
                         del cd["type"]
-                        DocumentWS.sessions[self.document_id]["comments"][comment_id]["answers"].append(cd)
+                        DocumentWS.sessions[self.user_info.document_id]["comments"][comment_id]["answers"].append(cd)
                     elif cd["type"] == "delete_answer":
                         comment_id = str(cd["commentId"])
-                        for answer in DocumentWS.sessions[self.document_id]["comments"][comment_id]["answers"]:
+                        for answer in DocumentWS.sessions[self.user_info.document_id]["comments"][comment_id]["answers"]:
                             if answer["id"] == cd["id"]:
-                                DocumentWS.sessions[self.document_id]["comments"][comment_id]["answers"].remove(answer)
+                                DocumentWS.sessions[self.user_info.document_id]["comments"][comment_id]["answers"].remove(answer)
                     elif cd["type"] == "update_answer":
                         comment_id = str(cd["commentId"])
-                        for answer in DocumentWS.sessions[self.document_id]["comments"][comment_id]["answers"]:
+                        for answer in DocumentWS.sessions[self.user_info.document_id]["comments"][comment_id]["answers"]:
                             if answer["id"] == cd["id"]:
                                 answer["answer"] = cd["answer"]
                     document.comment_version += 1
                 self.confirm_diff(parsed["request_id"])
-                DocumentWS.send_updates(message, self.document_id, self.id)
+                DocumentWS.send_updates(message, self.user_info.document_id, self.id)
             elif parsed["diff_version"] != document.diff_version:
-                document_session = DocumentWS.sessions[self.document_id]
+                document_session = DocumentWS.sessions[self.user_info.document_id]
                 if parsed["diff_version"] < (document_session["document"].diff_version - len(document_session["last_diffs"])):
                     print "unfixable"
                     # Client has a version that is too old
@@ -236,7 +236,7 @@ class DocumentWS(BaseWebSocketHandler):
                 print document.comment_version
 
     def check_diff_version(self, parsed):
-        document_session = DocumentWS.sessions[self.document_id]
+        document_session = DocumentWS.sessions[self.user_info.document_id]
         if parsed["diff_version"] == document_session["document"].diff_version:
             response = {
                 "type": "confirm_diff_version",
@@ -261,20 +261,20 @@ class DocumentWS(BaseWebSocketHandler):
 
     def on_close(self):
         print "Websocket closing"
-        if hasattr(self, 'document_id') and self.document_id in DocumentWS.sessions and self.id in DocumentWS.sessions[self.document_id]['participants']:
-            del DocumentWS.sessions[self.document_id]['participants'][self.id]
-            if DocumentWS.sessions[self.document_id]['in_control']==self.id:
-                if len(DocumentWS.sessions[self.document_id]['participants'].keys()) > 0:
+        if hasattr(self, 'document_id') and self.user_info.document_id in DocumentWS.sessions and self.id in DocumentWS.sessions[self.user_info.document_id]['participants']:
+            del DocumentWS.sessions[self.user_info.document_id]['participants'][self.id]
+            if DocumentWS.sessions[self.user_info.document_id]['in_control']==self.id:
+                if len(DocumentWS.sessions[self.user_info.document_id]['participants'].keys()) > 0:
                     message = {
                         "type": 'take_control'
                         }
-                    new_controller = DocumentWS.sessions[self.document_id]['participants'][min(DocumentWS.sessions[self.document_id]['participants'])]
-                    DocumentWS.sessions[self.document_id]['in_control'] = new_controller.id
+                    new_controller = DocumentWS.sessions[self.user_info.document_id]['participants'][min(DocumentWS.sessions[self.user_info.document_id]['participants'])]
+                    DocumentWS.sessions[self.user_info.document_id]['in_control'] = new_controller.id
                     new_controller.write_message(message)
-                    DocumentWS.send_participant_list(self.document_id)
+                    DocumentWS.send_participant_list(self.user_info.document_id)
                 else:
-                    DocumentWS.save_document(self.document_id)
-                    del DocumentWS.sessions[self.document_id]
+                    DocumentWS.save_document(self.user_info.document_id)
+                    del DocumentWS.sessions[self.user_info.document_id]
                     print "noone left"
 
     @classmethod
@@ -300,7 +300,7 @@ class DocumentWS(BaseWebSocketHandler):
         for waiter in cls.sessions[document_id]['participants'].keys():
             if cls.sessions[document_id]['participants'][waiter].id != sender_id:
                 try:
-                    cls.sessions[document_id]['participants'][waiter].write_message(chat)
+                    cls.sessions[document_id]['participants'][waiter].write_message(message)
                 except WebSocketClosedError:
                     error("Error sending message", exc_info=True)
 

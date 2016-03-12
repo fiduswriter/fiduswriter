@@ -54,8 +54,8 @@ export let getTimestamp = function() {
         minute + ':' + second + 'Z'
 }
 
-export let downloadEpub = function(aDocument) {
-    if (window.hasOwnProperty('theEditor') || (window.hasOwnProperty(
+export let downloadEpub = function(aDocument, inEditor) {
+    if (inEditor || (window.hasOwnProperty(
             'BibDB') && aDocument.is_owner)) {
         export1(aDocument, BibDB)
     } else if (aDocument.is_owner) {

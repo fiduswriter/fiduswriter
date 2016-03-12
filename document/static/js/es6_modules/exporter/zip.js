@@ -9,11 +9,12 @@ import {uploadFile} from "./upload"
  * @param {string} [mimeType=application/zip] The mimetype of the file that is to be created.
  * @param {list} includeZips A list of zip files to be merged into the output zip file.
  * @param {boolean} [upload=false] Whether to upload rather than downloading the Zip file once finished.
+ * @param {object} editor An editor instance (only for upload=true).
  */
 
 export let zipFileCreator = function(textFiles, httpFiles, zipFileName,
     mimeType,
-    includeZips, upload) {
+    includeZips, upload, editor) {
     let zipFs = new zip.fs.FS(),
         zipDir
 
@@ -92,7 +93,7 @@ export let zipFileCreator = function(textFiles, httpFiles, zipFileName,
             process(writer, zipFs.root, function() {
                 writer.close(function(blob) {
                     if (upload) {
-                        uploadFile(zipFileName, blob)
+                        uploadFile(zipFileName, blob, editor)
                     } else {
                         downloadFile(zipFileName, blob)
                     }

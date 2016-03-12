@@ -12,14 +12,15 @@ let FW_FILETYPE_VERSION = "1.2"
  * @function uploadNative
  * @param aDocument The document to turn into a Fidus Writer document and upload.
  */
-export let uploadNative = function(aDocument) {
-    exportNative(aDocument, ImageDB, BibDB, function(aDocument, shrunkImageDB, shrunkBibDB, images) {
-        exportNativeFile(aDocument, shrunkImageDB, shrunkBibDB, images, true)
+export let uploadNative = function(editor) {
+    let doc = editor.doc
+    exportNative(doc, ImageDB, BibDB, function(doc, shrunkImageDB, shrunkBibDB, images) {
+        exportNativeFile(editor.doc, shrunkImageDB, shrunkBibDB, images, true, editor)
     })
 }
 
-export let downloadNative = function(aDocument) {
-    if (window.hasOwnProperty('theEditor')) {
+export let downloadNative = function(aDocument, inEditor) {
+    if (inEditor) {
         exportNative(aDocument, ImageDB, BibDB, exportNativeFile)
     } else {
         if (aDocument.is_owner) {
@@ -96,7 +97,7 @@ export let exportNative = function(aDocument, anImageDB, aBibDB, callback) {
 
 let exportNativeFile = function(aDocument, shrunkImageDB,
     shrunkBibDB,
-    images, upload) {
+    images, upload, editor) {
 
     if ('undefined' === typeof upload) {
         upload = false
@@ -120,5 +121,5 @@ let exportNativeFile = function(aDocument, shrunkImageDB,
 
     zipFileCreator(outputList, httpOutputList, createSlug(
             aDocument.title) +
-        '.fidus', 'application/fidus+zip', false, upload)
+        '.fidus', 'application/fidus+zip', false, upload, editor)
 }

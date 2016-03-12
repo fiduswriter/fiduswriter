@@ -29,23 +29,23 @@ jQuery(document).ready(function () {
         var documentId = parseInt(jQuery(this).attr('data-id'));
         accessrightsHelpers.createAccessRightsDialog([documentId]);
     });
-    
+
     jQuery(document).on('mousedown', '.revisions', function () {
         var documentId = parseInt(jQuery(this).attr('data-id'));
         documentrevisionsHelpers.createDialog(documentId);
     });
-    
+
     jQuery(document).on('mousedown', '.download-revision', function () {
         var revisionId = parseInt(jQuery(this).attr('data-id'));
         var revisionFilename = jQuery(this).attr('data-filename');
         documentrevisionsHelpers.download(revisionId, revisionFilename);
     });
-    
+
     jQuery(document).on('mousedown', '.recreate-revision', function () {
         var revisionId = parseInt(jQuery(this).attr('data-id'));
         documentrevisionsHelpers.recreate(revisionId);
     });
-    
+
     jQuery(document).on('mousedown', '.delete-revision', function () {
         var revisionId = parseInt(jQuery(this).attr('data-id'));
         documentrevisionsHelpers.delete(revisionId);
@@ -103,7 +103,7 @@ jQuery(document).ready(function () {
                         exporter.downloadEpub(_.findWhere(
                             theDocumentList, {
                                 id: ids[i]
-                            }));
+                            }), false);
                     }
                 });
                 break;
@@ -113,7 +113,7 @@ jQuery(document).ready(function () {
                         exporter.downloadLatex(_.findWhere(
                             theDocumentList, {
                                 id: ids[i]
-                            }));
+                            }), false);
                     }
                 });
                 break;
@@ -123,7 +123,7 @@ jQuery(document).ready(function () {
                         exporter.downloadHtml(_.findWhere(
                             theDocumentList, {
                                 id: ids[i]
-                            }));
+                            }), false);
                     }
                 });
                 break;
@@ -133,7 +133,7 @@ jQuery(document).ready(function () {
                         exporter.downloadNative(_.findWhere(
                             theDocumentList, {
                                 id: ids[i]
-                            }));
+                            }), false);
                     }
                 });
                 break;
@@ -142,7 +142,7 @@ jQuery(document).ready(function () {
                     for (i = 0; i < ids.length; i++) {
                         exporter.savecopy(_.findWhere(theDocumentList, {
                             id: ids[i]
-                        }));
+                        }), false);
                     }
                 });
                 break;

@@ -3,8 +3,8 @@ import {createSlug, findImages} from "./tools"
 import {zipFileCreator} from "./zip"
 import {htmlExportTemplate} from "./html-templates"
 
-export let downloadHtml = function(aDocument) {
-    if (window.hasOwnProperty('theEditor') || (window.hasOwnProperty(
+export let downloadHtml = function(aDocument, inEditor) {
+    if (inEditor || (window.hasOwnProperty(
             'BibDB') && aDocument.is_owner)) {
         export1(aDocument, BibDB)
     } else if (aDocument.is_owner) {

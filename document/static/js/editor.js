@@ -2311,7 +2311,7 @@ var ModMenusActions = exports.ModMenusActions = (function () {
             var that = this;
             that.mod.editor.getUpdates(function () {
                 that.mod.editor.sendDocumentUpdate(function () {
-                    (0, _native.uploadNative)(that.mod.editor.doc);
+                    (0, _native.uploadNative)(that.mod.editor);
                 });
             });
         }
@@ -2321,7 +2321,7 @@ var ModMenusActions = exports.ModMenusActions = (function () {
             var that = this;
             that.mod.editor.getUpdates(function () {
                 that.mod.editor.sendDocumentUpdate(function () {
-                    (0, _copy.savecopy)(that.mod.editor.doc);
+                    (0, _copy.savecopy)(that.mod.editor.doc, that.mod.editor);
                 });
             });
         }
@@ -2331,7 +2331,7 @@ var ModMenusActions = exports.ModMenusActions = (function () {
             var that = this;
             that.mod.editor.getUpdates(function () {
                 that.mod.editor.sendDocumentUpdate(function () {
-                    (0, _native.downloadNative)(that.mod.editor.doc);
+                    (0, _native.downloadNative)(that.mod.editor.doc, true);
                 });
             });
         }
@@ -2341,7 +2341,7 @@ var ModMenusActions = exports.ModMenusActions = (function () {
             var that = this;
             that.mod.editor.getUpdates(function () {
                 that.mod.editor.sendDocumentUpdate(function () {
-                    (0, _latex.downloadLatex)(that.mod.editor.doc);
+                    (0, _latex.downloadLatex)(that.mod.editor.doc, true);
                 });
             });
         }
@@ -2351,7 +2351,7 @@ var ModMenusActions = exports.ModMenusActions = (function () {
             var that = this;
             that.mod.editor.getUpdates(function () {
                 that.mod.editor.sendDocumentUpdate(function () {
-                    (0, _epub.downloadEpub)(that.mod.editor.doc);
+                    (0, _epub.downloadEpub)(that.mod.editor.doc, true);
                 });
             });
         }
@@ -2361,7 +2361,7 @@ var ModMenusActions = exports.ModMenusActions = (function () {
             var that = this;
             that.mod.editor.getUpdates(function () {
                 that.mod.editor.sendDocumentUpdate(function () {
-                    (0, _html.downloadHtml)(that.mod.editor.doc);
+                    (0, _html.downloadHtml)(that.mod.editor.doc, true);
                 });
             });
         }
@@ -5355,26 +5355,26 @@ function calculatePlaceHolderCss(pm, selectedElement) {
 }
 
 },{"prosemirror/dist/model":86}],43:[function(require,module,exports){
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.savecopy = undefined;
 
-var _native = require('./native');
+var _native = require("./native");
 
-var savecopy = exports.savecopy = function savecopy(aDocument) {
+var savecopy = exports.savecopy = function savecopy(aDocument, editor) {
     function importAsUser(aDocument, shrunkImageDB, shrunkBibDB, images) {
         // switch to user's own ImageDB and BibDB:
-        if (window.hasOwnProperty('theEditor')) {
-            theEditor.doc.owner = theEditor.user;
+        if (editor) {
+            editor.doc.owner = editor.user;
             delete window.ImageDB;
             delete window.BibDB;
         }
         importer.getDBs(aDocument, shrunkBibDB, shrunkImageDB, images);
     }
-    if (window.hasOwnProperty('theEditor')) {
+    if (editor) {
         (0, _native.exportNative)(aDocument, ImageDB, BibDB, importAsUser);
     } else {
         bibliographyHelpers.getABibDB(aDocument.owner, function (aBibDB) {
@@ -5817,8 +5817,8 @@ var getTimestamp = exports.getTimestamp = function getTimestamp() {
     return year + '-' + month + '-' + day + 'T' + hour + ':' + minute + ':' + second + 'Z';
 };
 
-var downloadEpub = exports.downloadEpub = function downloadEpub(aDocument) {
-    if (window.hasOwnProperty('theEditor') || window.hasOwnProperty('BibDB') && aDocument.is_owner) {
+var downloadEpub = exports.downloadEpub = function downloadEpub(aDocument, inEditor) {
+    if (inEditor || window.hasOwnProperty('BibDB') && aDocument.is_owner) {
         export1(aDocument, BibDB);
     } else if (aDocument.is_owner) {
         bibliographyHelpers.getBibDB(function () {
@@ -6121,8 +6121,8 @@ var _zip = require("./zip");
 
 var _htmlTemplates = require("./html-templates");
 
-var downloadHtml = exports.downloadHtml = function downloadHtml(aDocument) {
-    if (window.hasOwnProperty('theEditor') || window.hasOwnProperty('BibDB') && aDocument.is_owner) {
+var downloadHtml = exports.downloadHtml = function downloadHtml(aDocument, inEditor) {
+    if (inEditor || window.hasOwnProperty('BibDB') && aDocument.is_owner) {
         export1(aDocument, BibDB);
     } else if (aDocument.is_owner) {
         bibliographyHelpers.getBibDB(function () {
@@ -6791,8 +6791,8 @@ var htmlToLatex = exports.htmlToLatex = function htmlToLatex(title, author, html
     return returnObject;
 };
 
-var downloadLatex = exports.downloadLatex = function downloadLatex(aDocument) {
-    if (window.hasOwnProperty('theEditor') || window.hasOwnProperty('BibDB') && aDocument.is_owner) {
+var downloadLatex = exports.downloadLatex = function downloadLatex(aDocument, inEditor) {
+    if (inEditor || window.hasOwnProperty('BibDB') && aDocument.is_owner) {
         export1(aDocument, BibDB);
     } else if (aDocument.is_owner) {
         bibliographyHelpers.getBibDB(function () {
@@ -6861,14 +6861,15 @@ var FW_FILETYPE_VERSION = "1.2";
  * @function uploadNative
  * @param aDocument The document to turn into a Fidus Writer document and upload.
  */
-var uploadNative = exports.uploadNative = function uploadNative(aDocument) {
-    exportNative(aDocument, ImageDB, BibDB, function (aDocument, shrunkImageDB, shrunkBibDB, images) {
-        exportNativeFile(aDocument, shrunkImageDB, shrunkBibDB, images, true);
+var uploadNative = exports.uploadNative = function uploadNative(editor) {
+    var doc = editor.doc;
+    exportNative(doc, ImageDB, BibDB, function (doc, shrunkImageDB, shrunkBibDB, images) {
+        exportNativeFile(editor.doc, shrunkImageDB, shrunkBibDB, images, true, editor);
     });
 };
 
-var downloadNative = exports.downloadNative = function downloadNative(aDocument) {
-    if (window.hasOwnProperty('theEditor')) {
+var downloadNative = exports.downloadNative = function downloadNative(aDocument, inEditor) {
+    if (inEditor) {
         exportNative(aDocument, ImageDB, BibDB, exportNativeFile);
     } else {
         if (aDocument.is_owner) {
@@ -6932,7 +6933,7 @@ var exportNative = exports.exportNative = function exportNative(aDocument, anIma
     callback(aDocument, shrunkImageDB, shrunkBibDB, images);
 };
 
-var exportNativeFile = function exportNativeFile(aDocument, shrunkImageDB, shrunkBibDB, images, upload) {
+var exportNativeFile = function exportNativeFile(aDocument, shrunkImageDB, shrunkBibDB, images, upload, editor) {
 
     if ('undefined' === typeof upload) {
         upload = false;
@@ -6954,7 +6955,7 @@ var exportNativeFile = function exportNativeFile(aDocument, shrunkImageDB, shrun
         contents: FW_FILETYPE_VERSION
     }];
 
-    (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools.createSlug)(aDocument.title) + '.fidus', 'application/fidus+zip', false, upload);
+    (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools.createSlug)(aDocument.title) + '.fidus', 'application/fidus+zip', false, upload, editor);
 };
 
 },{"./json":49,"./tools":52,"./zip":55}],52:[function(require,module,exports){
@@ -7027,7 +7028,7 @@ var _uploadTemplates = require("./upload-templates");
  * @param {string} zipFileName The name of the file.
  * @param {blob} blob The contents of the file.
  */
-var uploadFile = exports.uploadFile = function uploadFile(zipFilename, blob) {
+var uploadFile = exports.uploadFile = function uploadFile(zipFilename, blob, editor) {
 
     var diaButtons = {};
 
@@ -7036,7 +7037,7 @@ var uploadFile = exports.uploadFile = function uploadFile(zipFilename, blob) {
 
         data.append('note', jQuery(this).find('.revision-note').val());
         data.append('file', blob, zipFilename);
-        data.append('document_id', theEditor.doc.id);
+        data.append('document_id', editor.doc.id);
 
         jQuery.ajax({
             url: '/document/upload/',
@@ -7093,9 +7094,10 @@ var _upload = require("./upload");
  * @param {string} [mimeType=application/zip] The mimetype of the file that is to be created.
  * @param {list} includeZips A list of zip files to be merged into the output zip file.
  * @param {boolean} [upload=false] Whether to upload rather than downloading the Zip file once finished.
+ * @param {object} editor An editor instance (only for upload=true).
  */
 
-var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles, httpFiles, zipFileName, mimeType, includeZips, upload) {
+var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles, httpFiles, zipFileName, mimeType, includeZips, upload, editor) {
     var zipFs = new zip.fs.FS(),
         zipDir = undefined;
 
@@ -7160,7 +7162,7 @@ var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles,
             process(writer, zipFs.root, function () {
                 writer.close(function (blob) {
                     if (upload) {
-                        (0, _upload.uploadFile)(zipFileName, blob);
+                        (0, _upload.uploadFile)(zipFileName, blob, editor);
                     } else {
                         (0, _download.downloadFile)(zipFileName, blob);
                     }

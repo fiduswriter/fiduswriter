@@ -410,8 +410,8 @@ export let htmlToLatex = function(title, author, htmlCode, aBibDB,
     return returnObject
 }
 
-export let downloadLatex = function(aDocument) {
-    if (window.hasOwnProperty('theEditor') || (window.hasOwnProperty(
+export let downloadLatex = function(aDocument, inEditor) {
+    if (inEditor || (window.hasOwnProperty(
             'BibDB') && aDocument.is_owner)) {
         export1(aDocument, BibDB)
     } else if (aDocument.is_owner) {

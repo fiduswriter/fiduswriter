@@ -24,7 +24,7 @@ export let zipFileCreator = function(textFiles, httpFiles, zipFileName,
     }
 
 
-    var createZip = function() {
+    let createZip = function() {
         for (let i = 0; i < textFiles.length; i++) {
 
             zipFs.root.addText(textFiles[i].filename, textFiles[i].contents)
@@ -105,7 +105,7 @@ export let zipFileCreator = function(textFiles, httpFiles, zipFileName,
 
     if (includeZips) {
         let i = 0
-        var includeZipLoop = function() {
+        let includeZipLoop = function() {
             // for (i = 0; i < includeZips.length; i++) {
             if (i === includeZips.length) {
                 createZip()

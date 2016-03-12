@@ -151,7 +151,7 @@ export let replaceImgSrc = function(htmlString) {
 
 // Mathjax automatically adds some elements to the current document after making SVGs. We need these elements.
 export let getMathjaxHeader = function() {
-    var mathjax = document.getElementById('MathJax_SVG_Hidden')
+    let mathjax = document.getElementById('MathJax_SVG_Hidden')
     if (mathjax === undefined || mathjax === null) {
         return false
     } else {

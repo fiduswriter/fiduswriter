@@ -1,6 +1,6 @@
 /** Same functionality as objToNode/nodeToObj in diffDOM.js, but also offers output in XHTML format (obj2Node) and without form support. */
 export let obj2Node = function(obj, docType) {
-    var parser
+    let parser
     if (obj === undefined) {
         return false
     }

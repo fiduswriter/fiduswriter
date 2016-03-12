@@ -23,13 +23,13 @@ export let styleEpubFootnotes = function(htmlCode) {
 }
 
 export let getTimestamp = function() {
-    var today = new Date()
-    var second = today.getUTCSeconds()
-    var minute = today.getUTCMinutes()
-    var hour = today.getUTCHours()
-    var day = today.getUTCDate()
-    var month = today.getUTCMonth() + 1 //January is 0!
-    var year = today.getUTCFullYear()
+    let today = new Date()
+    let second = today.getUTCSeconds()
+    let minute = today.getUTCMinutes()
+    let hour = today.getUTCHours()
+    let day = today.getUTCDate()
+    let month = today.getUTCMonth() + 1 //January is 0!
+    let year = today.getUTCFullYear()
 
     if (second < 10) {
         second = '0' + second
@@ -68,27 +68,25 @@ export let downloadEpub = function(aDocument) {
 }
 
 let export1 = function(aDocument, aBibDB) {
-    var title, contents, contentsBody, images,
-        bibliography, equations, figureEquations,
-        styleSheets = [], //TODO: fill style sheets with somethign meaningful.
-        tempNode, mathjax,
-        startHTML
-
-    title = aDocument.title
+    let styleSheets = [] //TODO: fill style sheets with something meaningful.
+    let title = aDocument.title
 
     $.addAlert('info', title + ': ' + gettext(
         'Epub export has been initiated.'))
 
 
-    contents = document.createElement('div')
+    let contents = document.createElement('div')
 
-    tempNode = obj2Node(aDocument.contents)
+    if (aDocument.contents) {
+        let tempNode = obj2Node(aDocument.contents)
 
-    while (tempNode.firstChild) {
-        contents.appendChild(tempNode.firstChild)
+        while (tempNode.firstChild) {
+            contents.appendChild(tempNode.firstChild)
+        }
     }
 
-    bibliography = citationHelpers.formatCitations(contents,
+
+    let bibliography = citationHelpers.formatCitations(contents,
         aDocument.settings.citationstyle,
         aBibDB)
 
@@ -96,12 +94,12 @@ let export1 = function(aDocument, aBibDB) {
         contents.innerHTML += bibliography
     }
 
-    images = findImages(contents)
+    let images = findImages(contents)
 
-    startHTML = '<h1 class="title">' + title + '</h1>'
+    let startHTML = '<h1 class="title">' + title + '</h1>'
 
     if (aDocument.settings['metadata-subtitle'] && aDocument.metadata.subtitle) {
-        tempNode = obj2Node(aDocument.metadata.subtitle)
+        let tempNode = obj2Node(aDocument.metadata.subtitle)
 
         if (tempNode.textContent.length > 0) {
             startHTML += '<h2 class="subtitle">' + tempNode.textContent +
@@ -109,7 +107,7 @@ let export1 = function(aDocument, aBibDB) {
         }
     }
     if (aDocument.settings['metadata-abstract'] && aDocument.metadata.abstract) {
-        tempNode = obj2Node(aDocument.metadata.abstract)
+        let tempNode = obj2Node(aDocument.metadata.abstract)
         if (tempNode.textContent.length > 0) {
             startHTML += '<div class="abstract">' + tempNode.textContent +
                 '</div>'
@@ -120,15 +118,17 @@ let export1 = function(aDocument, aBibDB) {
 
     contents = cleanHTML(contents)
 
-    contentsBody = document.createElement('body')
+    let contentsBody = document.createElement('body')
 
     while (contents.firstChild) {
         contentsBody.appendChild(contents.firstChild)
     }
 
-    equations = contentsBody.querySelectorAll('.equation')
+    let equations = contentsBody.querySelectorAll('.equation')
 
-    figureEquations = contentsBody.querySelectorAll('.figure-equation')
+    let figureEquations = contentsBody.querySelectorAll('.figure-equation')
+
+    let mathjax = false
 
     if (equations.length > 0 || figureEquations.length > 0) {
         mathjax = true

@@ -46,10 +46,10 @@ export let uploadFile = function(zipFilename, blob) {
         modal: true,
         buttons: diaButtons,
         create: function() {
-            var $the_dialog = jQuery(this).closest(".ui-dialog")
-            $the_dialog.find(".ui-button:first-child").addClass(
+            let theDialog = jQuery(this).closest(".ui-dialog")
+            theDialog.find(".ui-button:first-child").addClass(
                 "fw-button fw-dark")
-            $the_dialog.find(".ui-button:last").addClass(
+            theDialog.find(".ui-button:last").addClass(
                 "fw-button fw-orange")
         },
     })

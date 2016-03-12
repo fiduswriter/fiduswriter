@@ -476,51 +476,40 @@ var downloadEpub = exports.downloadEpub = function downloadEpub(aDocument) {
 };
 
 var export1 = function export1(aDocument, aBibDB) {
-    var title,
-        contents,
-        contentsBody,
-        images,
-        bibliography,
-        equations,
-        figureEquations,
-        styleSheets = [],
-
-    //TODO: fill style sheets with somethign meaningful.
-    tempNode,
-        mathjax,
-        startHTML;
-
-    title = aDocument.title;
+    var styleSheets = []; //TODO: fill style sheets with something meaningful.
+    var title = aDocument.title;
 
     $.addAlert('info', title + ': ' + gettext('Epub export has been initiated.'));
 
-    contents = document.createElement('div');
+    var contents = document.createElement('div');
 
-    tempNode = (0, _json.obj2Node)(aDocument.contents);
+    if (aDocument.contents) {
+        var tempNode = (0, _json.obj2Node)(aDocument.contents);
 
-    while (tempNode.firstChild) {
-        contents.appendChild(tempNode.firstChild);
+        while (tempNode.firstChild) {
+            contents.appendChild(tempNode.firstChild);
+        }
     }
 
-    bibliography = citationHelpers.formatCitations(contents, aDocument.settings.citationstyle, aBibDB);
+    var bibliography = citationHelpers.formatCitations(contents, aDocument.settings.citationstyle, aBibDB);
 
     if (bibliography.length > 0) {
         contents.innerHTML += bibliography;
     }
 
-    images = (0, _tools.findImages)(contents);
+    var images = (0, _tools.findImages)(contents);
 
-    startHTML = '<h1 class="title">' + title + '</h1>';
+    var startHTML = '<h1 class="title">' + title + '</h1>';
 
     if (aDocument.settings['metadata-subtitle'] && aDocument.metadata.subtitle) {
-        tempNode = (0, _json.obj2Node)(aDocument.metadata.subtitle);
+        var tempNode = (0, _json.obj2Node)(aDocument.metadata.subtitle);
 
         if (tempNode.textContent.length > 0) {
             startHTML += '<h2 class="subtitle">' + tempNode.textContent + '</h2>';
         }
     }
     if (aDocument.settings['metadata-abstract'] && aDocument.metadata.abstract) {
-        tempNode = (0, _json.obj2Node)(aDocument.metadata.abstract);
+        var tempNode = (0, _json.obj2Node)(aDocument.metadata.abstract);
         if (tempNode.textContent.length > 0) {
             startHTML += '<div class="abstract">' + tempNode.textContent + '</div>';
         }
@@ -530,15 +519,17 @@ var export1 = function export1(aDocument, aBibDB) {
 
     contents = (0, _html.cleanHTML)(contents);
 
-    contentsBody = document.createElement('body');
+    var contentsBody = document.createElement('body');
 
     while (contents.firstChild) {
         contentsBody.appendChild(contents.firstChild);
     }
 
-    equations = contentsBody.querySelectorAll('.equation');
+    var equations = contentsBody.querySelectorAll('.equation');
 
-    figureEquations = contentsBody.querySelectorAll('.figure-equation');
+    var figureEquations = contentsBody.querySelectorAll('.figure-equation');
+
+    var mathjax = false;
 
     if (equations.length > 0 || figureEquations.length > 0) {
         mathjax = true;
@@ -996,7 +987,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 /** Same functionality as objToNode/nodeToObj in diffDOM.js, but also offers output in XHTML format (obj2Node) and without form support. */
 var obj2Node = exports.obj2Node = function obj2Node(obj, docType) {
-    var parser;
+    var parser = undefined;
     if (obj === undefined) {
         return false;
     }
@@ -1602,16 +1593,15 @@ var findImages = exports.findImages = function findImages(htmlCode) {
         images = [];
 
     imageLinks.each(function (index) {
-        var src, name, newImg;
-        src = jQuery(this).attr('src').split('?')[0];
-        name = src.split('/').pop();
+        var src = jQuery(this).attr('src').split('?')[0];
+        var name = src.split('/').pop();
         // JPGs are output as PNG elements as well.
         if (name === '') {
             // name was not retrievable so we give the image a unique numerical name like 1.png, 2.jpg, 3.svg, etc. .
             name = index;
         }
 
-        newImg = document.createElement('img');
+        var newImg = document.createElement('img');
         // We set the src of the image as "data-src" for now so that the browser won't try to load the file immediately
         newImg.setAttribute('data-src', name);
         this.parentNode.replaceChild(newImg, this);
@@ -1694,9 +1684,9 @@ var uploadFile = exports.uploadFile = function uploadFile(zipFilename, blob) {
         modal: true,
         buttons: diaButtons,
         create: function create() {
-            var $the_dialog = jQuery(this).closest(".ui-dialog");
-            $the_dialog.find(".ui-button:first-child").addClass("fw-button fw-dark");
-            $the_dialog.find(".ui-button:last").addClass("fw-button fw-orange");
+            var theDialog = jQuery(this).closest(".ui-dialog");
+            theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark");
+            theDialog.find(".ui-button:last").addClass("fw-button fw-orange");
         }
     });
 };
@@ -1798,12 +1788,9 @@ var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles,
     };
 
     if (includeZips) {
-        var includeZipLoop;
-
         (function () {
             var i = 0;
-
-            includeZipLoop = function () {
+            var includeZipLoop = function includeZipLoop() {
                 // for (i = 0; i < includeZips.length; i++) {
                 if (i === includeZips.length) {
                     createZip();
@@ -1819,7 +1806,6 @@ var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles,
                     });
                 }
             };
-
             includeZipLoop();
         })();
     } else {

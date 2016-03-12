@@ -851,7 +851,8 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
             });
 
             jQuery('#comment-box-container').html((0, _templates.commentsTemplate)({
-                theComments: theComments
+                theComments: theComments,
+                that: that
             }));
             this.layoutCommentsAvoidOverlap();
             var activeCommentStyle = '';
@@ -1382,7 +1383,7 @@ var answerCommentTemplatePart = '<div class="comment-item">\
             <h5 class="comment-user-name"><%= answer.userName %></h5>\
             <p class="comment-date"><%= jQuery.localizeDate(answer.date) %></p>\
         </div>\
-        <% if (active && answer.id===theEditor.mod.comments.layout.activeCommentAnswerId) { %>\
+        <% if (active && answer.id===that.activeCommentAnswerId) { %>\
             <div class="comment-text-wrapper">\
                 <div class="comment-answer-form">\
                     <textarea class="commentAnswerText" data-id="<%= answer.commentId %>" data-answer="<%= answer.id %>" rows="3">\
@@ -1395,7 +1396,7 @@ var answerCommentTemplatePart = '<div class="comment-item">\
                 <div class="comment-text-wrapper">\
                     <p class="comment-p"><%= answer.answer %></p>\
                 </div>\
-            <% if(active && (answer.user===theEditor.user.id || theEditor.docInfo.is_owner)) { %>\
+            <% if(active && (answer.user===that.mod.editor.user.id || that.mod.editor.docInfo.is_owner)) { %>\
                 <p class="comment-controls">\
                     <span class="edit-comment-answer" data-id="<%= answer.commentId %>" data-answer="<%= answer.id %>">' + gettext("Edit") + '</span>\
                     <span class="delete-comment-answer" data-id="<%= answer.commentId %>" data-answer="<%= answer.id %>">' + gettext("Delete") + '</span>\
@@ -1419,7 +1420,7 @@ var singleCommentTemplatePart = '<div class="comment-item">\
                 <span class="cancelSubmitComment fw-button fw-orange">' + gettext("Cancel") + '</span>\
             </div>\
         </div>\
-        <% if(active && comment.user===theEditor.user.id) { %>\
+        <% if(active && comment.user===that.mod.editor.user.id) { %>\
         <p class="comment-controls">\
             <span class="edit-comment">' + gettext("Edit") + '</span>\
             <span class="delete-comment" data-id="<%= comment.id %>">' + gettext("Delete") + '</span>\
@@ -1446,18 +1447,18 @@ var firstCommentTemplatePart = '<div class="comment-item">\
 var commentsTemplate = exports.commentsTemplate = _.template('<% _.each(theComments,function(comment,key,list){ %>\
         <div id="comment-box-<%= comment.id %>" data-id="<%= comment.id %>"  data-user-id="<%= comment.user %>" \
         class="comment-box \
-            <% if(comment.id===theEditor.mod.comments.layout.activeCommentId) { %>active<% } else { %>inactive<% } %>\
+            <% if(comment.id===that.activeCommentId) { %>active<% } else { %>inactive<% } %>\
             <% if(comment["review:isMajor"] === true) { %>comment-is-major-bgc<% }%>\
-            " style="top:<%= theEditor.mod.comments.layout.calculateCommentBoxOffset(comment) %>px;">\
-            <% if (comment.id===theEditor.mod.comments.layout.activeCommentId || comment.comment.length > 0) { %>\
+            " style="top:<%= that.calculateCommentBoxOffset(comment) %>px;">\
+            <% if (comment.id===that.activeCommentId || comment.comment.length > 0) { %>\
             <% if(0 === comment.comment.length) { %>' + firstCommentTemplatePart + '<% } else { \
-               var active = (comment.id===theEditor.mod.comments.layout.activeCommentId);\
+               var active = (comment.id===that.activeCommentId);\
               %>' + singleCommentTemplatePart + '<% } %>\
             <% if (comment.answers && comment.answers.length) {\
                for (var i=0;i < comment.answers.length; i++) { \
-                 var answer = comment.answers[i], active = (comment.id===theEditor.mod.comments.layout.activeCommentId)%>' + answerCommentTemplatePart + '<% }\
+                 var answer = comment.answers[i], active = (comment.id===that.activeCommentId)%>' + answerCommentTemplatePart + '<% }\
             } %>\
-            <% if(comment.id===theEditor.mod.comments.layout.activeCommentId && 0 < comment.comment.length) { %>\
+            <% if(comment.id===that.activeCommentId && 0 < comment.comment.length) { %>\
             <div class="comment-answer">\
                 <textarea class="comment-answer-text" rows="1"></textarea>\
                 <div class="comment-answer-btns">\
@@ -1466,7 +1467,7 @@ var commentsTemplate = exports.commentsTemplate = _.template('<% _.each(theComme
                 </div>\
             </div>\
             <% } %>\
-            <% if(comment.id===theEditor.mod.comments.layout.activeCommentId && (comment.user===theEditor.user.id || theEditor.docInfo.is_owner)) { %>\
+            <% if(comment.id===that.activeCommentId && (comment.user===that.mod.editor.user.id || that.mod.editor.docInfo.is_owner)) { %>\
                 <span class="delete-comment-all delete-comment icon-cancel-circle" data-id="<%= comment.id %>"></span>\
             <% } %>\
             <% } %>\

@@ -8,19 +8,32 @@ import {opfTemplate, containerTemplate, ncxTemplate, ncxItemTemplate, navTemplat
 let templates = {ncxTemplate, ncxItemTemplate, navTemplate, navItemTemplate}
 
 export let styleEpubFootnotes = function(htmlCode) {
-    let footnotesCode = '', footnoteCounter = 0
-    jQuery(htmlCode).find('.footnote').each(function() {
+    // Converts RASH style footnotes into epub footnotes.
+    let footnotes = [].slice.call(htmlCode.querySelectorAll('section#fnlist section[role=doc-footnote]'))
+    let footnoteCounter = 1
+    footnotes.forEach(function(footnote){
+        let newFootnote = document.createElement('aside')
+        newFootnote.setAttribute('epub:type', 'footnote')
+        newFootnote.id = footnote.id
+        while(footnote.firstChild) {
+            newFootnote.appendChild(footnote.firstChild)
+        }
+        newFootnote.firstChild.innerHTML = footnoteCounter + ' ' + newFootnote.firstChild.innerHTML
+        footnote.parentNode.replaceChild(newFootnote, footnote)
         footnoteCounter++
-        footnotesCode += '<aside epub:type="footnote" id="n' +
-            footnoteCounter + '"><p>' + footnoteCounter + ' ' +
-            this.innerHTML + '</p></aside>'
-        jQuery(this).replaceWith(
-            '<sup><a epub:type="noteref" href="#n' +
-            footnoteCounter + '">' + footnoteCounter +
-            '</a></sup>'
-        )
     })
-    htmlCode.innerHTML += footnotesCode
+    let footnoteMarkers = [].slice.call(htmlCode.querySelectorAll('a.fn'))
+    let footnoteMarkerCounter = 1
+    footnoteMarkers.forEach(function(fnMarker){
+        let newFnMarker = document.createElement('sup')
+        let newFnMarkerLink = document.createElement('a')
+        newFnMarkerLink.setAttribute('epub:type', 'noteref')
+        newFnMarkerLink.setAttribute('href', fnMarker.getAttribute('href'))
+        newFnMarkerLink.innerHTML = footnoteMarkerCounter
+        newFnMarker.appendChild(newFnMarkerLink)
+        fnMarker.parentNode.replaceChild(newFnMarker, fnMarker)
+        footnoteMarkerCounter++
+    })
 
     return htmlCode
 }

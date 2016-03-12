@@ -1,4 +1,5 @@
 import {exportNative} from "./native"
+import {getDBs} from "../importer/get-extra-data"
 
 export let savecopy = function(aDocument, editor) {
     function importAsUser(aDocument, shrunkImageDB, shrunkBibDB,
@@ -9,7 +10,7 @@ export let savecopy = function(aDocument, editor) {
             delete window.ImageDB
             delete window.BibDB
         }
-        importer.getDBs(aDocument, shrunkBibDB, shrunkImageDB,
+        getDBs(aDocument, shrunkBibDB, shrunkImageDB,
             images)
 
     }

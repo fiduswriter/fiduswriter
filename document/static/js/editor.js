@@ -431,7 +431,7 @@ var ModCollabDocChanges = exports.ModCollabDocChanges = (function () {
     return ModCollabDocChanges;
 })();
 
-},{"../schema":31,"prosemirror/dist/transform":92}],4:[function(require,module,exports){
+},{"../schema":31,"prosemirror/dist/transform":97}],4:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -698,7 +698,7 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
     return ModCommentInteractions;
 })();
 
-},{"prosemirror/dist/ui/update":102}],7:[function(require,module,exports){
+},{"prosemirror/dist/ui/update":107}],7:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1370,7 +1370,7 @@ function randomID() {
     return Math.floor(Math.random() * 0xffffffff);
 }
 
-},{"../schema":31,"prosemirror/dist/model":86,"prosemirror/dist/transform":92,"prosemirror/dist/ui/update":102,"prosemirror/dist/util/event":104}],10:[function(require,module,exports){
+},{"../schema":31,"prosemirror/dist/model":91,"prosemirror/dist/transform":97,"prosemirror/dist/ui/update":107,"prosemirror/dist/util/event":109}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1908,7 +1908,7 @@ var Editor = exports.Editor = (function () {
     return Editor;
 })();
 
-},{"../exporter/json":49,"./collab/mod":4,"./comments/mod":8,"./footnotes/mod":14,"./menus/mod":19,"./schema":31,"./server-communications":32,"./settings/mod":34,"./tools/mod":36,"./update-ui":42,"prosemirror/dist/collab":57,"prosemirror/dist/edit/main":71,"prosemirror/dist/format":78,"prosemirror/dist/ui/update":102}],12:[function(require,module,exports){
+},{"../exporter/json":49,"./collab/mod":4,"./comments/mod":8,"./footnotes/mod":14,"./menus/mod":19,"./schema":31,"./server-communications":32,"./settings/mod":34,"./tools/mod":36,"./update-ui":42,"prosemirror/dist/collab":62,"prosemirror/dist/edit/main":76,"prosemirror/dist/format":83,"prosemirror/dist/ui/update":107}],12:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2029,7 +2029,7 @@ var ModFootnoteEditor = exports.ModFootnoteEditor = (function () {
     return ModFootnoteEditor;
 })();
 
-},{"../schema":31,"prosemirror/dist/format":78,"prosemirror/dist/model":86,"prosemirror/dist/transform":92}],13:[function(require,module,exports){
+},{"../schema":31,"prosemirror/dist/format":83,"prosemirror/dist/model":91,"prosemirror/dist/transform":97}],13:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2225,7 +2225,7 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = (function () {
     return ModFootnoteMarkers;
 })();
 
-},{"../schema":31,"prosemirror/dist/format":78,"prosemirror/dist/model":86}],14:[function(require,module,exports){
+},{"../schema":31,"prosemirror/dist/format":83,"prosemirror/dist/model":91}],14:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2275,7 +2275,7 @@ var ModFootnotes = exports.ModFootnotes = (function () {
     return ModFootnotes;
 })();
 
-},{"../schema":31,"./editor":12,"./markers":13,"prosemirror/dist/collab":57,"prosemirror/dist/edit/main":71}],15:[function(require,module,exports){
+},{"../schema":31,"./editor":12,"./markers":13,"prosemirror/dist/collab":62,"prosemirror/dist/edit/main":76}],15:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2696,7 +2696,7 @@ var ModMenusKeyBindings = exports.ModMenusKeyBindings = (function () {
     return ModMenusKeyBindings;
 })();
 
-},{"prosemirror/dist/edit":69}],19:[function(require,module,exports){
+},{"prosemirror/dist/edit":74}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4484,7 +4484,7 @@ var fidusFnSchema = exports.fidusFnSchema = new _model.Schema(_model.defaultSche
     comment: CommentMark
 }));
 
-},{"prosemirror/dist/model":86}],32:[function(require,module,exports){
+},{"prosemirror/dist/model":91}],32:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -5354,7 +5354,7 @@ function calculatePlaceHolderCss(pm, selectedElement) {
     }
 }
 
-},{"prosemirror/dist/model":86}],43:[function(require,module,exports){
+},{"prosemirror/dist/model":91}],43:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5364,6 +5364,8 @@ exports.savecopy = undefined;
 
 var _native = require("./native");
 
+var _getExtraData = require("../importer/get-extra-data");
+
 var savecopy = exports.savecopy = function savecopy(aDocument, editor) {
     function importAsUser(aDocument, shrunkImageDB, shrunkBibDB, images) {
         // switch to user's own ImageDB and BibDB:
@@ -5372,7 +5374,7 @@ var savecopy = exports.savecopy = function savecopy(aDocument, editor) {
             delete window.ImageDB;
             delete window.BibDB;
         }
-        importer.getDBs(aDocument, shrunkBibDB, shrunkImageDB, images);
+        (0, _getExtraData.getDBs)(aDocument, shrunkBibDB, shrunkImageDB, images);
     }
     if (editor) {
         (0, _native.exportNative)(aDocument, ImageDB, BibDB, importAsUser);
@@ -5385,7 +5387,7 @@ var savecopy = exports.savecopy = function savecopy(aDocument, editor) {
     }
 };
 
-},{"./native":51}],44:[function(require,module,exports){
+},{"../importer/get-extra-data":57,"./native":51}],44:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7198,6 +7200,468 @@ var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles,
 };
 
 },{"./download":44,"./upload":54}],56:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.importNative = exports.translateReferenceIds = undefined;
+
+var _processFile = require("./process-file");
+
+var _save = require("./save");
+
+var _json = require("../exporter/json");
+
+var translateReferenceIds = exports.translateReferenceIds = function translateReferenceIds(aDocument, BibTranslationTable, ImageTranslationTable) {
+    var contents = (0, _json.obj2Node)(aDocument.contents);
+    jQuery(contents).find('img').each(function () {
+        var translationEntry = _.findWhere(ImageTranslationTable, {
+            oldUrl: jQuery(this).attr('src')
+        });
+        if (translationEntry) {
+            jQuery(this).attr('src', translationEntry.newUrl);
+        }
+    });
+    jQuery(contents).find('figure').each(function () {
+        var translationEntry = _.findWhere(ImageTranslationTable, {
+            oldId: parseInt(jQuery(this).attr('data-image'))
+        });
+        if (translationEntry) {
+            jQuery(this).attr('data-image', translationEntry.newId);
+        }
+    });
+    jQuery(contents).find('.citation').each(function () {
+        var citekeys = jQuery(this).attr('data-bib-entry').split(',');
+        for (var i = 0; i < citekeys.length; i++) {
+            if (citekeys[i] in BibTranslationTable) {
+                citekeys[i] = BibTranslationTable[citekeys[i]];
+            }
+        }
+        jQuery(this).attr('data-bib-entry', citekeys.join(','));
+    });
+
+    aDocument.contents = (0, _json.node2Obj)(contents);
+
+    (0, _save.createNewDocument)(aDocument);
+};
+
+var importNative = exports.importNative = function importNative(aDocument, shrunkBibDB, shrunkImageDB, entries) {
+    var BibTranslationTable = {},
+        newBibEntries = [],
+        shrunkImageDBObject = {},
+        ImageTranslationTable = [],
+        newImageEntries = [],
+        simplifiedShrunkImageDB = [];
+
+    // Add the id to each object in the BibDB to be able to look it up when comparing to shrunkBibDB below
+    for (var key in BibDB) {
+        BibDB[key]['id'] = key;
+    }
+    for (var key in shrunkBibDB) {
+        //shrunkBibDB[key]['entry_type']=_.findWhere(BibEntryTypes,{name:shrunkBibDB[key]['bibtype']}).id
+        //delete shrunkBibDB[key].bibtype
+        var matchEntries = _.where(BibDB, shrunkBibDB[key]);
+
+        if (0 === matchEntries.length) {
+            //create new
+            newBibEntries.push({
+                oldId: key,
+                oldEntryKey: shrunkBibDB[key].entry_key,
+                entry: shrunkBibDB[key]
+            });
+        } else if (1 === matchEntries.length && parseInt(key) !== matchEntries[0].id) {
+            BibTranslationTable[parseInt(key)] = matchEntries[0].id;
+        } else if (1 < matchEntries.length) {
+            if (!_.findWhere(matchEntries, {
+                id: parseInt(key)
+            })) {
+                // There are several matches, and none of the matches have the same id as the key in shrunkBibDB.
+                // We now pick the first match.
+                // TODO: Figure out if this behavior is correct.
+                BibTranslationTable[parseInt(key)] = matchEntries[0].id;
+            }
+        }
+    }
+
+    // Remove the id values again
+    for (var key in BibDB) {
+        delete BibDB[key].id;
+    }
+
+    // We need to remove the pk from the entry in the shrunkImageDB so that we also get matches with entries with other pk values.
+    // We therefore convert to an associative array/object.
+    for (var key in shrunkImageDB) {
+        simplifiedShrunkImageDB.push(_.omit(shrunkImageDB[key], 'image', 'thumbnail', 'cats', 'added'));
+    }
+
+    for (var image in simplifiedShrunkImageDB) {
+        shrunkImageDBObject[simplifiedShrunkImageDB[image].pk] = simplifiedShrunkImageDB[image];
+        delete shrunkImageDBObject[simplifiedShrunkImageDB[image].pk].pk;
+    }
+
+    for (var key in shrunkImageDBObject) {
+        var matchEntries = _.where(ImageDB, shrunkImageDBObject[key]);
+        if (0 === matchEntries.length) {
+            //create new
+            var sIDBEntry = _.findWhere(shrunkImageDB, {
+                pk: parseInt(key)
+            });
+            newImageEntries.push({
+                oldId: parseInt(key),
+                oldUrl: sIDBEntry.image,
+                title: sIDBEntry.title,
+                file_type: sIDBEntry.file_type,
+                checksum: sIDBEntry.checksum
+            });
+        } else if (1 === matchEntries.length && parseInt(key) !== matchEntries[0].pk) {
+            ImageTranslationTable.push({
+                oldId: parseInt(key),
+                newId: matchEntries[0].pk,
+                oldUrl: _.findWhere(shrunkImageDB, {
+                    pk: parseInt(key)
+                }).image,
+                newUrl: matchEntries[0].image
+            });
+        } else if (1 < matchEntries.length) {
+            if (!_.findWhere(matchEntries, {
+                pk: parseInt(key)
+            })) {
+                // There are several matches, and none of the matches have the same id as the key in shrunkImageDB.
+                // We now pick the first match.
+                // TODO: Figure out if this behavior is correct.
+                ImageTranslationTable.push({
+                    oldId: key,
+                    newId: matchEntries[0].pk,
+                    oldUrl: _.findWhere(shrunkImageDB, {
+                        pk: parseInt(key)
+                    }).image,
+                    newUrl: matchEntries[0].image
+                });
+            }
+        }
+    }
+
+    if (newBibEntries.length !== 0 || newImageEntries.length !== 0) {
+        // We need to create new entries in the DB for images and/or bibliography items.
+        (0, _processFile.getImageData)(aDocument, BibTranslationTable, ImageTranslationTable, newBibEntries, newImageEntries, entries);
+    } else if (!jQuery.isEmptyObject(BibTranslationTable) || !jQuery.isEmptyObject(ImageTranslationTable)) {
+        // We need to change some reference numbers in the document contents
+        translateReferenceIds(aDocument, BibTranslationTable, ImageTranslationTable);
+    } else {
+        // We are good to go. All the used images and bibliography entries exist in the DB for this user with the same numbers.
+        // We can go ahead and create the new document entry in the bibliography without any changes.
+        (0, _save.createNewDocument)(aDocument);
+    }
+};
+
+},{"../exporter/json":49,"./process-file":58,"./save":59}],57:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.getDBs = undefined;
+
+var _compareDBs = require('./compare-DBs');
+
+var getDBs = exports.getDBs = function getDBs(aDocument, shrunkBibDB, shrunkImageDB, entries) {
+    // get BibDB and ImageDB if we don't have them already. Then invoke the native importer.
+    if ('undefined' === typeof BibDB) {
+        bibliographyHelpers.getBibDB(function () {
+            if ('undefined' === typeof ImageDB) {
+                usermediaHelpers.getImageDB(function () {
+                    (0, _compareDBs.importNative)(aDocument, shrunkBibDB, shrunkImageDB, entries);
+                });
+            } else {
+                (0, _compareDBs.importNative)(aDocument, shrunkBibDB, shrunkImageDB, entries);
+            }
+        });
+    } else if ('undefined' === typeof ImageDB) {
+        usermediaHelpers.getImageDB(function () {
+            (0, _compareDBs.importNative)(aDocument, shrunkBibDB, shrunkImageDB, entries);
+        });
+    } else {
+        (0, _compareDBs.importNative)(aDocument, shrunkBibDB, shrunkImageDB, entries);
+    }
+};
+
+},{"./compare-DBs":56}],58:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.getImageData = exports.processFidusFile = undefined;
+
+var _getExtraData = require("./get-extra-data");
+
+var _sendExtraData = require("./send-extra-data");
+
+/** The current Fidus Writer filetype version. The importer will not import from
+ * a different version and the exporter will include this number in all exports.
+ */
+var FW_FILETYPE_VERSION = 1.2,
+    MIN_FW_FILETYPE_VERSION = 1.1,
+    MAX_FW_FILETYPE_VERSION = 1.2;
+
+var processFidusFile = exports.processFidusFile = function processFidusFile(textFiles, entries) {
+
+    var filetypeVersion = parseFloat(_.findWhere(textFiles, {
+        filename: 'filetype-version'
+    }).contents, 10),
+        mimeType = _.findWhere(textFiles, {
+        filename: 'mimetype'
+    }).contents;
+    if (mimeType === 'application/fidus+zip' && filetypeVersion >= MIN_FW_FILETYPE_VERSION && filetypeVersion <= MAX_FW_FILETYPE_VERSION) {
+        // This seems to be a valid fidus file with current version number.
+        var shrunkBibDB = JSON.parse(_.findWhere(textFiles, {
+            filename: 'bibliography.json'
+        }).contents);
+        var shrunkImageDB = JSON.parse(_.findWhere(textFiles, {
+            filename: 'images.json'
+        }).contents);
+        var aDocument = JSON.parse(_.findWhere(textFiles, {
+            filename: 'document.json'
+        }).contents);
+
+        (0, _getExtraData.getDBs)(aDocument, shrunkBibDB, shrunkImageDB, entries);
+    } else {
+        // The file is not a Fidus Writer file.
+        $.deactivateWait();
+        $.addAlert('error', gettext('The uploaded file does not appear to be of the version used on this server: ') + FW_FILETYPE_VERSION);
+        return;
+    }
+};
+
+var getImageData = exports.getImageData = function getImageData(aDocument, BibTranslationTable, ImageTranslationTable, newBibEntries, newImageEntries, entries) {
+    var counter = 0;
+
+    function getImageZipEntry() {
+        if (counter < newImageEntries.length) {
+            _.findWhere(entries, {
+                filename: newImageEntries[counter].oldUrl.split('/').pop()
+            }).getData(new zip.BlobWriter(newImageEntries[counter].file_type), function (file) {
+                newImageEntries[counter]['file'] = file;
+                counter++;
+                getImageZipEntry();
+            });
+        } else {
+            (0, _sendExtraData.sendNewImageAndBibEntries)(aDocument, BibTranslationTable, ImageTranslationTable, newBibEntries, newImageEntries);
+        }
+    }
+
+    function getImageUrlEntry() {
+        if (counter < newImageEntries.length) {
+            var getUrl = _.findWhere(entries, {
+                filename: newImageEntries[counter].oldUrl.split('/').pop()
+            }).url;
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', getUrl, true);
+            xhr.responseType = 'blob';
+
+            xhr.onload = function (e) {
+                if (this.status == 200) {
+                    // Note: .response instead of .responseText
+                    newImageEntries[counter]['file'] = new Blob([this.response], {
+                        type: newImageEntries[counter].file_type
+                    });
+                    counter++;
+                    getImageUrlEntry();
+                }
+            };
+
+            xhr.send();
+        } else {
+            (0, _sendExtraData.sendNewImageAndBibEntries)(aDocument, BibTranslationTable, ImageTranslationTable, newBibEntries, newImageEntries);
+        }
+    }
+    if (entries.length > 0) {
+        if (entries[0].hasOwnProperty('url')) {
+            getImageUrlEntry();
+        } else {
+            getImageZipEntry();
+        }
+    }
+};
+
+},{"./get-extra-data":57,"./send-extra-data":60}],59:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var createNewDocument = exports.createNewDocument = function createNewDocument(aDocument) {
+    var postData = {
+        title: aDocument.title,
+        contents: JSON.stringify(aDocument.contents),
+        settings: JSON.stringify(aDocument.settings),
+        metadata: JSON.stringify(aDocument.metadata)
+    };
+    jQuery.ajax({
+        url: '/document/import/',
+        data: postData,
+        type: 'POST',
+        dataType: 'json',
+        success: function success(data, textStatus, jqXHR) {
+            jQuery.addAlert('info', aDocument.title + gettext(' successfully imported.'));
+            var aDocumentValues = {
+                last_diffs: [],
+                is_owner: true,
+                rights: 'w',
+                changed: false,
+                titleChanged: false
+            };
+            aDocument.id = data['document_id'];
+            if (window.theEditor) {
+                aDocument.owner = {
+                    id: theEditor.user.id,
+                    name: theEditor.user.name,
+                    avatar: theEditor.user.avatar
+                };
+            } else {
+                aDocument.owner = {
+                    id: theUser.id,
+                    name: theUser.name,
+                    avatar: theUser.avatar
+                };
+            }
+            aDocument.version = 0;
+            aDocument.comment_version = 0;
+            aDocument.added = data['added'];
+            aDocument.updated = data['updated'];
+            aDocument.revisions = [];
+            if (typeof theDocumentList !== 'undefined') {
+                theDocumentList.push(aDocument);
+                documentHelpers.stopDocumentTable();
+                jQuery('#document-table tbody').append(tmp_documents_list_item({
+                    aDocument: aDocument
+                }));
+                documentHelpers.startDocumentTable();
+            } else if (typeof theEditor !== 'undefined') {
+                if (theEditor.docInfo.rights === 'r') {
+                    // We only had right access to the document, so the editing elements won't show. We therefore need to reload the page to get them.
+                    window.location = '/document/' + aDocument.id + '/';
+                } else {
+                    window.theEditor.doc = aDocument;
+                    window.theEditor.docInfo = aDocumentValues;
+                    window.history.pushState("", "", "/document/" + theEditor.doc.id + "/");
+                }
+            }
+        },
+        error: function error() {
+            jQuery.addAlert('error', gettext('Could not save ') + aDocument.title);
+        },
+        complete: function complete() {
+            jQuery.deactivateWait();
+        }
+    });
+};
+
+},{}],60:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.sendNewImageAndBibEntries = undefined;
+
+var _compareDBs = require('./compare-DBs');
+
+var sendNewImageAndBibEntries = exports.sendNewImageAndBibEntries = function sendNewImageAndBibEntries(aDocument, BibTranslationTable, ImageTranslationTable, newBibEntries, newImageEntries) {
+    var counter = 0;
+
+    function sendImage() {
+        if (counter < newImageEntries.length) {
+            var formValues = new FormData();
+            formValues.append('id', 0);
+            formValues.append('title', newImageEntries[counter].title);
+            formValues.append('imageCats', '');
+            formValues.append('image', newImageEntries[counter].file, newImageEntries[counter].oldUrl.split('/').pop());
+            formValues.append('checksum', newImageEntries[counter].checksum), jQuery.ajax({
+                url: '/usermedia/save/',
+                data: formValues,
+                type: 'POST',
+                dataType: 'json',
+                success: function success(response, textStatus, jqXHR) {
+                    ImageDB[response.values.pk] = response.values;
+                    var imageTranslation = {};
+                    imageTranslation.oldUrl = newImageEntries[counter].oldUrl;
+                    imageTranslation.oldId = newImageEntries[counter].oldId;
+                    imageTranslation.newUrl = response.values.image;
+                    imageTranslation.newId = response.values.pk;
+                    ImageTranslationTable.push(imageTranslation);
+                    counter++;
+                    sendImage();
+                },
+                error: function error() {
+                    jQuery.addAlert('error', gettext('Could not save ') + newImageEntries[counter].title);
+                },
+                complete: function complete() {},
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+        } else {
+            sendBibItems();
+        }
+    }
+
+    function sendBibItems() {
+
+        if (newBibEntries.length > 0) {
+            var bibEntries = _.pluck(newBibEntries, 'entry'),
+                bibDict = {};
+
+            for (var i = 0; i < bibEntries.length; i++) {
+                bibEntries[i]['bibtype'] = BibEntryTypes[bibEntries[i]['entry_type']].name;
+                bibDict[bibEntries[i]['entry_key']] = bibEntries[i];
+                delete bibDict[bibEntries[i]['entry_key']].entry_type;
+
+                delete bibDict[bibEntries[i]['entry_key']].entry_cat;
+                delete bibDict[bibEntries[i]['entry_key']].entry_key;
+            }
+            jQuery.ajax({
+                url: '/bibliography/import_bibtex/',
+                data: {
+                    bibs: JSON.stringify(bibDict)
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function success(response, textStatus, jqXHR) {
+                    var errors = response.errors,
+                        warnings = response.warning,
+                        len = errors.length;
+
+                    for (var i = 0; i < len; i++) {
+                        $.addAlert('error', errors[i]);
+                    }
+                    len = warnings.length;
+                    for (var i = 0; i < len; i++) {
+                        $.addAlert('warning', warnings[i]);
+                    }
+                    _.each(response.key_translations, function (newKey, oldKey) {
+                        var newID = _.findWhere(response.bibs, { entry_key: newKey }).id,
+                            oldID = _.findWhere(newBibEntries, { oldEntryKey: oldKey }).oldId;
+                        BibTranslationTable[oldID] = newID;
+                    });
+                    bibliographyHelpers.addBibList(response.bibs);
+                    (0, _compareDBs.translateReferenceIds)(aDocument, BibTranslationTable, ImageTranslationTable);
+                },
+                error: function error() {
+                    console.log(jqXHR.responseText);
+                },
+                complete: function complete() {}
+            });
+        } else {
+            (0, _compareDBs.translateReferenceIds)(aDocument, BibTranslationTable, ImageTranslationTable);
+        }
+    }
+
+    sendImage();
+};
+
+},{"./compare-DBs":56}],61:[function(require,module,exports){
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
     module.exports = mod()
@@ -7369,7 +7833,7 @@ var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles,
   return Keymap
 })
 
-},{}],57:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7542,7 +8006,7 @@ var Collab = function () {
 }();
 
 (0, _event.eventMixin)(Collab);
-},{"../edit":69,"../util/error":103,"../util/event":104,"./rebase":58}],58:[function(require,module,exports){
+},{"../edit":74,"../util/error":108,"../util/event":109,"./rebase":63}],63:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7570,7 +8034,7 @@ function rebaseSteps(doc, forward, steps, maps) {
   }
   return { doc: transform.doc, transform: transform, mapping: remap, positions: positions };
 }
-},{"../transform":92}],59:[function(require,module,exports){
+},{"../transform":97}],64:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7649,7 +8113,7 @@ function ensureCSSAdded() {
     document.head.insertBefore(cssNode, document.head.firstChild);
   }
 }
-},{}],60:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8366,7 +8830,7 @@ baseCommands.redo = {
   },
   keys: ["Mod-Y", "Shift-Mod-Z"]
 };
-},{"../model":86,"../transform":92,"../util/error":103,"./char":62,"./dompos":66,"./selection":75}],61:[function(require,module,exports){
+},{"../model":91,"../transform":97,"../util/error":108,"./char":67,"./dompos":71,"./selection":80}],66:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8436,7 +8900,7 @@ var keys = {
 if (_dom.browser.mac) keys["Ctrl-F"] = keys["Ctrl-B"] = keys["Ctrl-P"] = keys["Ctrl-N"] = keys["Alt-F"] = keys["Alt-B"] = keys["Ctrl-A"] = keys["Ctrl-E"] = keys["Ctrl-V"] = keys["goPageUp"] = ensureSelection;
 
 var captureKeys = exports.captureKeys = new _browserkeymap2.default(keys);
-},{"../dom":59,"./dompos":66,"./selection":75,"browserkeymap":56}],62:[function(require,module,exports){
+},{"../dom":64,"./dompos":71,"./selection":80,"browserkeymap":61}],67:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8469,7 +8933,7 @@ function charCategory(ch) {
 function isExtendingChar(ch) {
   return ch.charCodeAt(0) >= 768 && extendingChar.test(ch);
 }
-},{}],63:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9078,13 +9542,13 @@ _model.NodeType.derivableCommands.insert = function (conf) {
     params: deriveParams(this, conf.params)
   };
 };
-},{"../dom":59,"../model":86,"../transform":92,"../util/error":103,"../util/obj":106,"../util/sortedinsert":107,"./base_commands":60,"browserkeymap":56}],64:[function(require,module,exports){
+},{"../dom":64,"../model":91,"../transform":97,"../util/error":108,"../util/obj":111,"../util/sortedinsert":112,"./base_commands":65,"browserkeymap":61}],69:[function(require,module,exports){
 "use strict";
 
 var _dom = require("../dom");
 
 (0, _dom.insertCSS)("\n\n.ProseMirror {\n  border: 1px solid silver;\n  position: relative;\n}\n\n.ProseMirror-content {\n  padding: 4px 8px 4px 14px;\n  white-space: pre-wrap;\n  line-height: 1.2;\n}\n\n.ProseMirror-drop-target {\n  position: absolute;\n  width: 1px;\n  background: #666;\n  display: none;\n}\n\n.ProseMirror-content ul.tight p, .ProseMirror-content ol.tight p {\n  margin: 0;\n}\n\n.ProseMirror-content ul, .ProseMirror-content ol {\n  padding-left: 30px;\n  cursor: default;\n}\n\n.ProseMirror-content blockquote {\n  padding-left: 1em;\n  border-left: 3px solid #eee;\n  margin-left: 0; margin-right: 0;\n}\n\n.ProseMirror-content pre {\n  white-space: pre-wrap;\n}\n\n.ProseMirror-selectednode {\n  outline: 2px solid #8cf;\n}\n\n.ProseMirror-nodeselection *::selection { background: transparent; }\n.ProseMirror-nodeselection *::-moz-selection { background: transparent; }\n\n.ProseMirror-content p:first-child,\n.ProseMirror-content h1:first-child,\n.ProseMirror-content h2:first-child,\n.ProseMirror-content h3:first-child,\n.ProseMirror-content h4:first-child,\n.ProseMirror-content h5:first-child,\n.ProseMirror-content h6:first-child {\n  margin-top: .3em;\n}\n\n/* Add space around the hr to make clicking it easier */\n\n.ProseMirror-content hr {\n  position: relative;\n  height: 6px;\n  border: none;\n}\n\n.ProseMirror-content hr:after {\n  content: \"\";\n  position: absolute;\n  left: 10px;\n  right: 10px;\n  top: 2px;\n  border-top: 2px solid silver;\n}\n\n.ProseMirror-content img {\n  cursor: default;\n}\n\n/* Make sure li selections wrap around markers */\n\n.ProseMirror-content li {\n  position: relative;\n  pointer-events: none; /* Don't do weird stuff with marker clicks */\n}\n.ProseMirror-content li > * {\n  pointer-events: auto;\n}\n\nli.ProseMirror-selectednode {\n  outline: none;\n}\n\nli.ProseMirror-selectednode:after {\n  content: \"\";\n  position: absolute;\n  left: -32px;\n  right: -2px; top: -2px; bottom: -2px;\n  border: 2px solid #8cf;\n  pointer-events: none;\n}\n\n");
-},{"../dom":59}],65:[function(require,module,exports){
+},{"../dom":64}],70:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9286,7 +9750,7 @@ function scanText(start, end) {
     cur = cur.firstChild || nodeAfter(cur);
   }
 }
-},{"../format":78,"../model":86,"../transform/tree":100,"./dompos":66}],66:[function(require,module,exports){
+},{"../format":83,"../model":91,"../transform/tree":105,"./dompos":71}],71:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9663,7 +10127,7 @@ function handleNodeClick(pm, type, event, direct) {
     }
   }
 }
-},{"../dom":59,"../model":86,"../util/error":103}],67:[function(require,module,exports){
+},{"../dom":64,"../model":91,"../util/error":108}],72:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -9830,7 +10294,7 @@ function redraw(pm, dirty, doc, prev) {
   }
   scan(pm.content, doc, prev);
 }
-},{"../dom":59,"../format":78,"../model":86,"./dompos":66,"./main":71}],68:[function(require,module,exports){
+},{"../dom":64,"../format":83,"../model":91,"./dompos":71,"./main":76}],73:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10408,7 +10872,7 @@ var History = exports.History = function () {
 
   return History;
 }();
-},{"../model":86,"../transform":92}],69:[function(require,module,exports){
+},{"../model":91,"../transform":97}],74:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -10503,7 +10967,7 @@ var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.Keymap = _browserkeymap2.default;
-},{"./base_commands":60,"./command":63,"./main":71,"./options":72,"./range":73,"./schema_commands":74,"./selection":75,"browserkeymap":56}],70:[function(require,module,exports){
+},{"./base_commands":65,"./command":68,"./main":76,"./options":77,"./range":78,"./schema_commands":79,"./selection":80,"browserkeymap":61}],75:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11104,7 +11568,7 @@ handlers.blur = function (pm) {
   // Fired when the editor loses focus.
   pm.signal("blur");
 };
-},{"../dom":59,"../format":78,"../model":86,"./capturekeys":61,"./domchange":65,"./dompos":66,"./selection":75,"browserkeymap":56}],71:[function(require,module,exports){
+},{"../dom":64,"../format":83,"../model":91,"./capturekeys":66,"./domchange":70,"./dompos":71,"./selection":80,"browserkeymap":61}],76:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -11883,7 +12347,7 @@ var EditorTransform = function (_Transform) {
 
   return EditorTransform;
 }(_transform.Transform);
-},{"../dom":59,"../format":78,"../model":86,"../transform":92,"../util/error":103,"../util/event":104,"../util/map":105,"../util/sortedinsert":107,"./css":64,"./dompos":66,"./draw":67,"./history":68,"./input":70,"./options":72,"./range":73,"./selection":75,"browserkeymap":56}],72:[function(require,module,exports){
+},{"../dom":64,"../format":83,"../model":91,"../transform":97,"../util/error":108,"../util/event":109,"../util/map":110,"../util/sortedinsert":112,"./css":69,"./dompos":71,"./draw":72,"./history":73,"./input":75,"./options":77,"./range":78,"./selection":80,"browserkeymap":61}],77:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12005,7 +12469,7 @@ function setOption(pm, name, value) {
   pm.options[name] = value;
   if (desc.update) desc.update(pm, value, old, false);
 }
-},{"../model":86,"../ui/prompt":101,"../util/error":103,"./command":63}],73:[function(require,module,exports){
+},{"../model":91,"../ui/prompt":106,"../util/error":108,"./command":68}],78:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -12205,7 +12669,7 @@ var RangeTracker = function () {
 
   return RangeTracker;
 }();
-},{"../util/event":104}],74:[function(require,module,exports){
+},{"../util/event":109}],79:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -12539,7 +13003,7 @@ _model.HorizontalRule.register("command", "insert", {
   keys: ["Mod-Shift--"],
   menu: { group: "insert", rank: 70, display: { type: "label", label: "Horizontal rule" } }
 });
-},{"../format":78,"../model":86,"./command":63}],75:[function(require,module,exports){
+},{"../format":83,"../model":91,"./command":68}],80:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13015,7 +13479,7 @@ function verticalMotionLeavesTextblock(pm, pos, dir) {
   }
   return true;
 }
-},{"../dom":59,"../model":86,"../util/error":103,"./dompos":66}],76:[function(require,module,exports){
+},{"../dom":64,"../model":91,"../util/error":108,"./dompos":71}],81:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13472,7 +13936,7 @@ _model.StrongMark.register("parseDOMStyle", "font-weight", {
 });
 
 _model.CodeMark.register("parseDOM", "code", { parse: "mark" });
-},{"../model":86,"../util/sortedinsert":107,"./register":79}],77:[function(require,module,exports){
+},{"../model":91,"../util/sortedinsert":112,"./register":84}],82:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13504,7 +13968,7 @@ function fromText(schema, text) {
 }
 
 (0, _register.defineSource)("text", fromText);
-},{"./register":79}],78:[function(require,module,exports){
+},{"./register":84}],83:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13603,7 +14067,7 @@ Object.defineProperty(exports, "toText", {
     return _to_text.toText;
   }
 });
-},{"./from_dom":76,"./from_text":77,"./register":79,"./to_dom":80,"./to_text":81}],79:[function(require,module,exports){
+},{"./from_dom":81,"./from_text":82,"./register":84,"./to_dom":85,"./to_text":86}],84:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13671,7 +14135,7 @@ function defineSource(format, func) {
 defineSource("json", function (schema, json) {
   return schema.nodeFromJSON(json);
 });
-},{"../util/error":103}],80:[function(require,module,exports){
+},{"../util/error":108}],85:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -13959,7 +14423,7 @@ def(_model.LinkMark, function (mark, s) {
   return s.elt("a", { href: mark.attrs.href,
     title: mark.attrs.title });
 });
-},{"../model":86,"./register":79}],81:[function(require,module,exports){
+},{"../model":91,"./register":84}],86:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14003,7 +14467,7 @@ function toText(doc) {
 }
 
 (0, _register.defineTarget)("text", toText);
-},{"../model":86,"./register":79}],82:[function(require,module,exports){
+},{"../model":91,"./register":84}],87:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14440,7 +14904,7 @@ var defaultSpec = new _schema.SchemaSpec({
 // :: Schema
 // ProseMirror's default document schema.
 var defaultSchema = exports.defaultSchema = new _schema.Schema(defaultSpec);
-},{"./schema":90}],83:[function(require,module,exports){
+},{"./schema":95}],88:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14537,7 +15001,7 @@ function findDiffEnd(a, b) {
   }
   return { a: new _pos.Pos(pathA, offA), b: new _pos.Pos(pathB, offB) };
 }
-},{"./pos":89}],84:[function(require,module,exports){
+},{"./pos":94}],89:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -14566,7 +15030,7 @@ var ModelError = exports.ModelError = function (_ProseMirrorError) {
 
   return ModelError;
 }(_error.ProseMirrorError);
-},{"../util/error":103}],85:[function(require,module,exports){
+},{"../util/error":108}],90:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15277,7 +15741,7 @@ if (typeof Symbol != "undefined") {
     return this;
   };
 }
-},{"./error":84}],86:[function(require,module,exports){
+},{"./error":89}],91:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15517,7 +15981,7 @@ Object.defineProperty(exports, "ModelError", {
                 return _error.ModelError;
         }
 });
-},{"./defaultschema":82,"./diff":83,"./error":84,"./fragment":85,"./mark":87,"./node":88,"./pos":89,"./schema":90}],87:[function(require,module,exports){
+},{"./defaultschema":87,"./diff":88,"./error":89,"./fragment":90,"./mark":92,"./node":93,"./pos":94,"./schema":95}],92:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -15649,7 +16113,7 @@ var Mark = exports.Mark = function () {
 }();
 
 var empty = [];
-},{}],88:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16254,7 +16718,7 @@ function wrapMarks(marks, str) {
     str = marks[i].type.name + "(" + str + ")";
   }return str;
 }
-},{"./fragment":85,"./mark":87,"./pos":89}],89:[function(require,module,exports){
+},{"./fragment":90,"./mark":92,"./pos":94}],94:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -16478,7 +16942,7 @@ var Pos = exports.Pos = function () {
 
   return Pos;
 }();
-},{"./error":84}],90:[function(require,module,exports){
+},{"./error":89}],95:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17489,7 +17953,7 @@ var Schema = function () {
 }();
 
 exports.Schema = Schema;
-},{"../util/error":103,"../util/obj":106,"./fragment":85,"./mark":87,"./node":88}],91:[function(require,module,exports){
+},{"../util/error":108,"../util/obj":111,"./fragment":90,"./mark":92,"./node":93}],96:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17775,7 +18239,7 @@ _transform.Transform.prototype.setNodeType = function (pos, type, attrs) {
   this.step("ancestor", new _model.Pos(path, 0), new _model.Pos(path, node.size), null, { depth: 1, types: [type], attrs: [attrs] });
   return this;
 };
-},{"../model":86,"./map":94,"./step":98,"./transform":99,"./tree":100}],92:[function(require,module,exports){
+},{"../model":91,"./map":99,"./step":103,"./transform":104,"./tree":105}],97:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17863,7 +18327,7 @@ require("./mark");
 require("./split");
 
 require("./replace");
-},{"./ancestor":91,"./join":93,"./map":94,"./mark":95,"./replace":96,"./split":97,"./step":98,"./transform":99}],93:[function(require,module,exports){
+},{"./ancestor":96,"./join":98,"./map":99,"./mark":100,"./replace":101,"./split":102,"./step":103,"./transform":104}],98:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -17945,7 +18409,7 @@ _transform.Transform.prototype.join = function (at) {
   this.step("join", new _model.Pos(at.path.concat(at.offset - 1), parent.child(at.offset - 1).size), new _model.Pos(at.path.concat(at.offset), 0));
   return this;
 };
-},{"../model":86,"./map":94,"./step":98,"./transform":99}],94:[function(require,module,exports){
+},{"../model":91,"./map":99,"./step":103,"./transform":104}],99:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -18265,7 +18729,7 @@ var Remapping = exports.Remapping = function () {
 
   return Remapping;
 }();
-},{"../model":86}],95:[function(require,module,exports){
+},{"../model":91}],100:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -18444,7 +18908,7 @@ _transform.Transform.prototype.clearMarkup = function (from, to, newParent) {
     this.step(delSteps[i]);
   }return this;
 };
-},{"../model":86,"./step":98,"./transform":99,"./tree":100}],96:[function(require,module,exports){
+},{"../model":91,"./step":103,"./transform":104,"./tree":105}],101:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -18772,7 +19236,7 @@ _transform.Transform.prototype.insertText = function (pos, text) {
 _transform.Transform.prototype.insertInline = function (pos, node) {
   return this.insert(pos, node.mark(this.doc.marksAt(pos)));
 };
-},{"../model":86,"./map":94,"./step":98,"./transform":99,"./tree":100}],97:[function(require,module,exports){
+},{"../model":91,"./map":99,"./step":103,"./transform":104,"./tree":105}],102:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -18861,7 +19325,7 @@ _transform.Transform.prototype.splitIfNeeded = function (pos) {
   }
   return this;
 };
-},{"../model":86,"./map":94,"./step":98,"./transform":99}],98:[function(require,module,exports){
+},{"../model":91,"./map":99,"./step":103,"./transform":104}],103:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19048,7 +19512,7 @@ var StepResult = exports.StepResult = function StepResult(doc) {
 };
 
 var steps = Object.create(null);
-},{"../model":86,"../util/error":103,"./map":94}],99:[function(require,module,exports){
+},{"../model":91,"../util/error":108,"./map":99}],104:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19153,7 +19617,7 @@ var Transform = function () {
 }();
 
 exports.Transform = Transform;
-},{"./map":94,"./step":98}],100:[function(require,module,exports){
+},{"./map":99,"./step":103}],105:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19247,7 +19711,7 @@ function samePathDepth(a, b) {
     if (i == a.path.length || i == b.path.length || a.path[i] != b.path[i]) return i;
   }
 }
-},{"../model":86}],101:[function(require,module,exports){
+},{"../model":91}],106:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19543,7 +20007,7 @@ function openPrompt(pm, content, options) {
 }
 
 (0, _dom.insertCSS)("\n.ProseMirror-prompt {\n  background: white;\n  padding: 2px 6px 2px 15px;\n  border: 1px solid silver;\n  position: absolute;\n  border-radius: 3px;\n  z-index: 11;\n}\n\n.ProseMirror-prompt input[type=\"text\"],\n.ProseMirror-prompt textarea {\n  background: #eee;\n  border: none;\n  outline: none;\n}\n\n.ProseMirror-prompt input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n.ProseMirror-prompt-close {\n  position: absolute;\n  left: 2px; top: 1px;\n  color: #666;\n  border: none; background: transparent; padding: 0;\n}\n\n.ProseMirror-prompt-close:after {\n  content: \"✕\";\n  font-size: 12px;\n}\n\n.ProseMirror-invalid {\n  background: #ffc;\n  border: 1px solid #cc7;\n  border-radius: 4px;\n  padding: 5px 10px;\n  position: absolute;\n  min-width: 10em;\n}\n");
-},{"../dom":59,"../util/error":103}],102:[function(require,module,exports){
+},{"../dom":64,"../util/error":108}],107:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19703,7 +20167,7 @@ var UpdateScheduler = exports.UpdateScheduler = function () {
 
   return UpdateScheduler;
 }();
-},{}],103:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19785,7 +20249,7 @@ function functionName(f) {
   var match = /^function (\w+)/.exec(f.toString());
   return match && match[1];
 }
-},{}],104:[function(require,module,exports){
+},{}],109:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19902,7 +20366,7 @@ function eventMixin(ctor) {
     if (methods.hasOwnProperty(prop)) proto[prop] = methods[prop];
   }
 }
-},{}],105:[function(require,module,exports){
+},{}],110:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19958,7 +20422,7 @@ var Map = exports.Map = window.Map || function () {
 
   return _class;
 }();
-},{}],106:[function(require,module,exports){
+},{}],111:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19971,7 +20435,7 @@ function copyObj(obj, base) {
     copy[prop] = obj[prop];
   }return copy;
 }
-},{}],107:[function(require,module,exports){
+},{}],112:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

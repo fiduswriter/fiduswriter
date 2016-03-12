@@ -481,44 +481,10 @@ var export1 = function export1(aDocument, aBibDB) {
 
     $.addAlert('info', title + ': ' + gettext('Epub export has been initiated.'));
 
-    var contents = document.createElement('div');
-
-    if (aDocument.contents) {
-        var tempNode = (0, _json.obj2Node)(aDocument.contents);
-
-        while (tempNode.firstChild) {
-            contents.appendChild(tempNode.firstChild);
-        }
-    }
-
-    var bibliography = citationHelpers.formatCitations(contents, aDocument.settings.citationstyle, aBibDB);
-
-    if (bibliography.length > 0) {
-        contents.innerHTML += bibliography;
-    }
+    var contents = (0, _html.joinDocumentParts)(aDocument, aBibDB);
+    contents = (0, _html.addFigureNumbers)(contents);
 
     var images = (0, _tools.findImages)(contents);
-
-    var startHTML = '<h1 class="title">' + title + '</h1>';
-
-    if (aDocument.settings['metadata-subtitle'] && aDocument.metadata.subtitle) {
-        var tempNode = (0, _json.obj2Node)(aDocument.metadata.subtitle);
-
-        if (tempNode.textContent.length > 0) {
-            startHTML += '<h2 class="subtitle">' + tempNode.textContent + '</h2>';
-        }
-    }
-    if (aDocument.settings['metadata-abstract'] && aDocument.metadata.abstract) {
-        var tempNode = (0, _json.obj2Node)(aDocument.metadata.abstract);
-        if (tempNode.textContent.length > 0) {
-            startHTML += '<div class="abstract">' + tempNode.textContent + '</div>';
-        }
-    }
-
-    contents.innerHTML = startHTML + contents.innerHTML;
-
-    contents = (0, _html.cleanHTML)(contents);
-    contents = (0, _html.addFigureNumbers)(contents);
 
     var contentsBody = document.createElement('body');
 
@@ -550,20 +516,6 @@ var export1 = function export1(aDocument, aBibDB) {
 };
 
 var export2 = function export2(aDocument, contentsBody, images, title, styleSheets, mathjax) {
-    var contentsBodyEpubPrepared = undefined,
-        xhtmlCode = undefined,
-        containerCode = undefined,
-        timestamp = undefined,
-        keywords = undefined,
-        contentItems = undefined,
-        authors = undefined,
-        tempNode = undefined,
-        outputList = undefined,
-        includeZips = [],
-        opfCode = undefined,
-        ncxCode = undefined,
-        navCode = undefined,
-        httpOutputList = [];
 
     if (mathjax) {
         mathjax = (0, _html.getMathjaxHeader)();
@@ -574,11 +526,11 @@ var export2 = function export2(aDocument, contentsBody, images, title, styleShee
     }
 
     // Make links to all H1-3 and create a TOC list of them
-    contentItems = orderLinks(setLinks(contentsBody));
+    var contentItems = orderLinks(setLinks(contentsBody));
 
-    contentsBodyEpubPrepared = styleEpubFootnotes(contentsBody);
+    var contentsBodyEpubPrepared = styleEpubFootnotes(contentsBody);
 
-    xhtmlCode = (0, _epubTemplates.xhtmlTemplate)({
+    var xhtmlCode = (0, _epubTemplates.xhtmlTemplate)({
         part: false,
         shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
         title: title,
@@ -589,29 +541,29 @@ var export2 = function export2(aDocument, contentsBody, images, title, styleShee
 
     xhtmlCode = (0, _html.replaceImgSrc)(xhtmlCode);
 
-    containerCode = (0, _epubTemplates.containerTemplate)({});
+    var containerCode = (0, _epubTemplates.containerTemplate)({});
 
-    timestamp = getTimestamp();
+    var timestamp = getTimestamp();
 
-    authors = [aDocument.owner.name];
+    var authors = [aDocument.owner.name];
 
     if (aDocument.settings['metadata-authors'] && aDocument.metadata.authors) {
-        tempNode = (0, _json.obj2Node)(aDocument.metadata.authors);
+        var tempNode = (0, _json.obj2Node)(aDocument.metadata.authors);
         if (tempNode.textContent.length > 0) {
             authors = jQuery.map(tempNode.textContent.split(","), jQuery.trim);
         }
     }
 
-    keywords = [];
+    var keywords = [];
 
     if (aDocument.settings['metadata-keywords'] && aDocument.metadata.keywords) {
-        tempNode = (0, _json.obj2Node)(aDocument.metadata.keywords);
+        var tempNode = (0, _json.obj2Node)(aDocument.metadata.keywords);
         if (tempNode.textContent.length > 0) {
             keywords = jQuery.map(tempNode.textContent.split(","), jQuery.trim);
         }
     }
 
-    opfCode = (0, _epubTemplates.opfTemplate)({
+    var opfCode = (0, _epubTemplates.opfTemplate)({
         language: gettext('en-US'), // TODO: specify a document language rather than using the current users UI language
         title: title,
         authors: authors,
@@ -625,7 +577,7 @@ var export2 = function export2(aDocument, contentsBody, images, title, styleShee
         images: images
     });
 
-    ncxCode = (0, _epubTemplates.ncxTemplate)({
+    var ncxCode = (0, _epubTemplates.ncxTemplate)({
         shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
         title: title,
         idType: 'fidus',
@@ -633,12 +585,12 @@ var export2 = function export2(aDocument, contentsBody, images, title, styleShee
         contentItems: contentItems
     });
 
-    navCode = (0, _epubTemplates.navTemplate)({
+    var navCode = (0, _epubTemplates.navTemplate)({
         shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
         contentItems: contentItems
     });
 
-    outputList = [{
+    var outputList = [{
         filename: 'META-INF/container.xml',
         contents: containerCode
     }, {
@@ -662,13 +614,14 @@ var export2 = function export2(aDocument, contentsBody, images, title, styleShee
         });
     }
 
+    var httpOutputList = [];
     for (var i = 0; i < images.length; i++) {
         httpOutputList.push({
             filename: 'EPUB/' + images[i].filename,
             url: images[i].url
         });
     }
-
+    var includeZips = [];
     if (mathjax) {
         includeZips.push({
             'directory': 'EPUB',
@@ -800,7 +753,7 @@ var htmlExportTemplate = exports.htmlExportTemplate = _.template('<!DOCTYPE html
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.getMathjaxHeader = exports.replaceImgSrc = exports.addFigureNumbers = exports.cleanHTML = exports.downloadHtml = undefined;
+exports.getMathjaxHeader = exports.replaceImgSrc = exports.addFigureNumbers = exports.cleanHTML = exports.joinDocumentParts = exports.downloadHtml = undefined;
 
 var _json = require("./json");
 
@@ -824,6 +777,71 @@ var downloadHtml = exports.downloadHtml = function downloadHtml(aDocument) {
     }
 };
 
+var joinDocumentParts = exports.joinDocumentParts = function joinDocumentParts(aDocument, aBibDB) {
+
+    var contents = document.createElement('div');
+
+    if (aDocument.contents) {
+        var tempNode = (0, _json.obj2Node)(aDocument.contents);
+
+        while (tempNode.firstChild) {
+            contents.appendChild(tempNode.firstChild);
+        }
+    }
+
+    if (aDocument.settings['metadata-keywords'] && aDocument.metadata.keywords) {
+        var tempNode = (0, _json.obj2Node)(aDocument.metadata.keywords);
+        if (tempNode.textContent.length > 0) {
+            tempNode.id = 'keywords';
+            contents.insertBefore(tempNode, contents.firstChild);
+        }
+    }
+
+    if (aDocument.settings['metadata-authors'] && aDocument.metadata.authors) {
+        var tempNode = (0, _json.obj2Node)(aDocument.metadata.authors);
+        if (tempNode.textContent.length > 0) {
+            tempNode.id = 'authors';
+            contents.insertBefore(tempNode, contents.firstChild);
+        }
+    }
+
+    if (aDocument.settings['metadata-abstract'] && aDocument.metadata.abstract) {
+        var tempNode = (0, _json.obj2Node)(aDocument.metadata.abstract);
+        if (tempNode.textContent.length > 0) {
+            tempNode.id = 'abstract';
+            contents.insertBefore(tempNode, contents.firstChild);
+        }
+    }
+
+    if (aDocument.settings['metadata-subtitle'] && aDocument.metadata.subtitle) {
+        var tempNode = (0, _json.obj2Node)(aDocument.metadata.subtitle);
+        if (tempNode.textContent.length > 0) {
+            tempNode.id = 'subtitle';
+            contents.insertBefore(tempNode, contents.firstChild);
+        }
+    }
+
+    if (aDocument.title) {
+        var tempNode = document.createElement('h1');
+        tempNode.classList.add('title');
+        tempNode.textContent = aDocument.title;
+        contents.insertBefore(tempNode, contents.firstChild);
+    }
+
+    var bibliography = citationHelpers.formatCitations(contents, aDocument.settings.citationstyle, aBibDB);
+
+    if (bibliography.length > 0) {
+        var tempNode = document.createElement('div');
+        tempNode.innerHTML = bibliography;
+        while (tempNode.firstChild) {
+            contents.appendChild(tempNode.firstChild);
+        }
+    }
+
+    contents = cleanHTML(contents);
+    return contents;
+};
+
 var export1 = function export1(aDocument, aBibDB) {
     var styleSheets = [],
         mathjax = false;
@@ -832,52 +850,7 @@ var export1 = function export1(aDocument, aBibDB) {
 
     $.addAlert('info', title + ': ' + gettext('HTML export has been initiated.'));
 
-    var contents = document.createElement('div');
-
-    var tempNode = (0, _json.obj2Node)(aDocument.contents);
-
-    while (tempNode.firstChild) {
-        contents.appendChild(tempNode.firstChild);
-    }
-
-    if (aDocument.settings['metadata-keywords'] && aDocument.metadata.keywords) {
-        var _tempNode = (0, _json.obj2Node)(aDocument.metadata.keywords);
-        if (_tempNode.textContent.length > 0) {
-            _tempNode.id = 'keywords';
-            contents.insertBefore(_tempNode, contents.firstChild);
-        }
-    }
-
-    if (aDocument.settings['metadata-authors'] && aDocument.metadata.authors) {
-        var _tempNode2 = (0, _json.obj2Node)(aDocument.metadata.authors);
-        if (_tempNode2.textContent.length > 0) {
-            _tempNode2.id = 'authors';
-            contents.insertBefore(_tempNode2, contents.firstChild);
-        }
-    }
-
-    if (aDocument.settings['metadata-abstract'] && aDocument.metadata.abstract) {
-        var _tempNode3 = (0, _json.obj2Node)(aDocument.metadata.abstract);
-        if (_tempNode3.textContent.length > 0) {
-            _tempNode3.id = 'abstract';
-            contents.insertBefore(_tempNode3, contents.firstChild);
-        }
-    }
-
-    if (aDocument.settings['metadata-subtitle'] && aDocument.metadata.subtitle) {
-        var _tempNode4 = (0, _json.obj2Node)(aDocument.metadata.subtitle);
-        if (_tempNode4.textContent.length > 0) {
-            _tempNode4.id = 'subtitle';
-            contents.insertBefore(_tempNode4, contents.firstChild);
-        }
-    }
-
-    if (title) {
-        var _tempNode5 = document.createElement('h1');
-        _tempNode5.classList.add('title');
-        _tempNode5.textContent = title;
-        contents.insertBefore(_tempNode5, contents.firstChild);
-    }
+    var contents = joinDocumentParts(aDocument, aBibDB);
 
     var equations = contents.querySelectorAll('.equation');
 
@@ -895,11 +868,11 @@ var export1 = function export1(aDocument, aBibDB) {
     }
 
     mathHelpers.queueExecution(function () {
-        export2(aDocument, aBibDB, styleSheets, title, contents, mathjax);
+        export2(aDocument, styleSheets, title, contents, mathjax);
     });
 };
 
-var export2 = function export2(aDocument, aBibDB, styleSheets, title, contents, mathjax) {
+var export2 = function export2(aDocument, styleSheets, title, contents, mathjax) {
 
     var includeZips = [];
 
@@ -911,19 +884,8 @@ var export2 = function export2(aDocument, aBibDB, styleSheets, title, contents, 
         }
     }
 
-    var bibliography = citationHelpers.formatCitations(contents, aDocument.settings.citationstyle, aBibDB);
-
-    if (bibliography.length > 0) {
-        var tempNode = document.createElement('div');
-        tempNode.innerHTML = bibliography;
-        while (tempNode.firstChild) {
-            contents.appendChild(tempNode.firstChild);
-        }
-    }
-
     var httpOutputList = (0, _tools.findImages)(contents);
 
-    contents = cleanHTML(contents);
     contents = addFigureNumbers(contents);
 
     var contentsCode = replaceImgSrc(contents.innerHTML);

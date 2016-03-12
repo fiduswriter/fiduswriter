@@ -18,3 +18,4 @@ venv/
 .idea/
 configuration.py
 fidus.db
+deploy

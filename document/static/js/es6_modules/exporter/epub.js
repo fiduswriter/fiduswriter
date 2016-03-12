@@ -1,4 +1,4 @@
-import {cleanHTML, addFigureNumbers, replaceImgSrc, getMathjaxHeader} from "./html"
+import {joinDocumentParts, addFigureNumbers, replaceImgSrc, getMathjaxHeader} from "./html"
 import {obj2Node, node2Obj} from "./json"
 import {createSlug, findImages} from "./tools"
 import {zipFileCreator} from "./zip"
@@ -75,49 +75,10 @@ let export1 = function(aDocument, aBibDB) {
         'Epub export has been initiated.'))
 
 
-    let contents = document.createElement('div')
-
-    if (aDocument.contents) {
-        let tempNode = obj2Node(aDocument.contents)
-
-        while (tempNode.firstChild) {
-            contents.appendChild(tempNode.firstChild)
-        }
-    }
-
-
-    let bibliography = citationHelpers.formatCitations(contents,
-        aDocument.settings.citationstyle,
-        aBibDB)
-
-    if (bibliography.length > 0) {
-        contents.innerHTML += bibliography
-    }
+    let contents = joinDocumentParts(aDocument, aBibDB)
+    contents = addFigureNumbers(contents)
 
     let images = findImages(contents)
-
-    let startHTML = '<h1 class="title">' + title + '</h1>'
-
-    if (aDocument.settings['metadata-subtitle'] && aDocument.metadata.subtitle) {
-        let tempNode = obj2Node(aDocument.metadata.subtitle)
-
-        if (tempNode.textContent.length > 0) {
-            startHTML += '<h2 class="subtitle">' + tempNode.textContent +
-                '</h2>'
-        }
-    }
-    if (aDocument.settings['metadata-abstract'] && aDocument.metadata.abstract) {
-        let tempNode = obj2Node(aDocument.metadata.abstract)
-        if (tempNode.textContent.length > 0) {
-            startHTML += '<div class="abstract">' + tempNode.textContent +
-                '</div>'
-        }
-    }
-
-    contents.innerHTML = startHTML + contents.innerHTML
-
-    contents = cleanHTML(contents)
-    contents = addFigureNumbers(contents)
 
     let contentsBody = document.createElement('body')
 
@@ -149,8 +110,6 @@ let export1 = function(aDocument, aBibDB) {
 }
 
 let export2 = function(aDocument, contentsBody, images, title, styleSheets, mathjax) {
-    let contentsBodyEpubPrepared, xhtmlCode, containerCode, timestamp, keywords, contentItems, authors, tempNode, outputList, includeZips = [],
-        opfCode, ncxCode, navCode, httpOutputList = []
 
     if (mathjax) {
         mathjax = getMathjaxHeader()
@@ -161,13 +120,13 @@ let export2 = function(aDocument, contentsBody, images, title, styleSheets, math
     }
 
     // Make links to all H1-3 and create a TOC list of them
-    contentItems = orderLinks(setLinks(
+    let contentItems = orderLinks(setLinks(
         contentsBody))
 
-    contentsBodyEpubPrepared = styleEpubFootnotes(
+    let contentsBodyEpubPrepared = styleEpubFootnotes(
         contentsBody)
 
-    xhtmlCode = xhtmlTemplate({
+    let xhtmlCode = xhtmlTemplate({
         part: false,
         shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
         title: title,
@@ -178,30 +137,30 @@ let export2 = function(aDocument, contentsBody, images, title, styleSheets, math
 
     xhtmlCode = replaceImgSrc(xhtmlCode)
 
-    containerCode = containerTemplate({})
+    let containerCode = containerTemplate({})
 
-    timestamp = getTimestamp()
+    let timestamp = getTimestamp()
 
-    authors = [aDocument.owner.name]
+    let authors = [aDocument.owner.name]
 
     if (aDocument.settings['metadata-authors'] && aDocument.metadata.authors) {
-        tempNode = obj2Node(aDocument.metadata.authors)
+        let tempNode = obj2Node(aDocument.metadata.authors)
         if (tempNode.textContent.length > 0) {
             authors = jQuery.map(tempNode.textContent.split(","), jQuery.trim)
         }
     }
 
-    keywords = []
+    let keywords = []
 
     if (aDocument.settings['metadata-keywords'] && aDocument.metadata.keywords) {
-        tempNode = obj2Node(aDocument.metadata.keywords)
+        let tempNode = obj2Node(aDocument.metadata.keywords)
         if (tempNode.textContent.length > 0) {
             keywords = jQuery.map(tempNode.textContent.split(","), jQuery.trim)
         }
     }
 
 
-    opfCode = opfTemplate({
+    let opfCode = opfTemplate({
         language: gettext('en-US'), // TODO: specify a document language rather than using the current users UI language
         title: title,
         authors: authors,
@@ -215,7 +174,7 @@ let export2 = function(aDocument, contentsBody, images, title, styleSheets, math
         images: images
     })
 
-    ncxCode = ncxTemplate({
+    let ncxCode = ncxTemplate({
         shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
         title: title,
         idType: 'fidus',
@@ -223,12 +182,12 @@ let export2 = function(aDocument, contentsBody, images, title, styleSheets, math
         contentItems: contentItems
     })
 
-    navCode = navTemplate({
+    let navCode = navTemplate({
         shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
         contentItems: contentItems
     })
 
-    outputList = [{
+    let outputList = [{
         filename: 'META-INF/container.xml',
         contents: containerCode
     }, {
@@ -255,13 +214,14 @@ let export2 = function(aDocument, contentsBody, images, title, styleSheets, math
         })
     }
 
+    let httpOutputList = []
     for (let i = 0; i < images.length; i++) {
         httpOutputList.push({
             filename: 'EPUB/' + images[i].filename,
             url: images[i].url
         })
     }
-
+    let includeZips = []
     if (mathjax) {
         includeZips.push({
             'directory': 'EPUB',

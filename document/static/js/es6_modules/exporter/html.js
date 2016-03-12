@@ -19,20 +19,16 @@ export let downloadHtml = function(aDocument) {
     }
 }
 
-let export1 = function(aDocument, aBibDB) {
-    let styleSheets = [], mathjax = false
-
-    let title = aDocument.title
-
-    $.addAlert('info', title + ': ' + gettext(
-        'HTML export has been initiated.'))
+export let joinDocumentParts = function(aDocument, aBibDB) {
 
     let contents = document.createElement('div')
 
-    let tempNode = obj2Node(aDocument.contents)
+    if (aDocument.contents) {
+        let tempNode = obj2Node(aDocument.contents)
 
-    while (tempNode.firstChild) {
-        contents.appendChild(tempNode.firstChild)
+        while (tempNode.firstChild) {
+            contents.appendChild(tempNode.firstChild)
+        }
     }
 
     if (aDocument.settings['metadata-keywords'] && aDocument.metadata.keywords) {
@@ -67,12 +63,38 @@ let export1 = function(aDocument, aBibDB) {
         }
     }
 
-    if (title) {
+    if (aDocument.title) {
         let tempNode = document.createElement('h1')
         tempNode.classList.add('title')
-        tempNode.textContent = title
+        tempNode.textContent = aDocument.title
         contents.insertBefore(tempNode, contents.firstChild)
     }
+
+    let bibliography = citationHelpers.formatCitations(contents,
+        aDocument.settings.citationstyle,
+        aBibDB)
+
+    if (bibliography.length > 0) {
+        let tempNode = document.createElement('div')
+        tempNode.innerHTML = bibliography
+        while (tempNode.firstChild) {
+            contents.appendChild(tempNode.firstChild)
+        }
+    }
+
+    contents = cleanHTML(contents)
+    return contents
+}
+
+let export1 = function(aDocument, aBibDB) {
+    let styleSheets = [], mathjax = false
+
+    let title = aDocument.title
+
+    $.addAlert('info', title + ': ' + gettext(
+        'HTML export has been initiated.'))
+
+    let contents = joinDocumentParts(aDocument, aBibDB)
 
     let equations = contents.querySelectorAll('.equation')
 
@@ -90,11 +112,11 @@ let export1 = function(aDocument, aBibDB) {
     }
 
     mathHelpers.queueExecution(function() {
-        export2(aDocument, aBibDB, styleSheets, title, contents, mathjax)
+        export2(aDocument, styleSheets, title, contents, mathjax)
     })
 }
 
-let export2 = function(aDocument, aBibDB, styleSheets, title, contents, mathjax) {
+let export2 = function(aDocument, styleSheets, title, contents, mathjax) {
 
     let includeZips = []
 
@@ -106,21 +128,8 @@ let export2 = function(aDocument, aBibDB, styleSheets, title, contents, mathjax)
         }
     }
 
-    let bibliography = citationHelpers.formatCitations(contents,
-        aDocument.settings.citationstyle,
-        aBibDB)
-
-    if (bibliography.length > 0) {
-        let tempNode = document.createElement('div')
-        tempNode.innerHTML = bibliography
-        while (tempNode.firstChild) {
-            contents.appendChild(tempNode.firstChild)
-        }
-    }
-
     let httpOutputList = findImages(contents)
 
-    contents = cleanHTML(contents)
     contents = addFigureNumbers(contents)
 
     let contentsCode = replaceImgSrc(contents.innerHTML)

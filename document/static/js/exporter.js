@@ -1080,22 +1080,19 @@ var _tools = require("./tools");
 var _zip = require("./zip");
 
 var findLatexDocumentFeatures = exports.findLatexDocumentFeatures = function findLatexDocumentFeatures(htmlCode, title, author, subtitle, keywords, specifiedAuthors, metadata, documentClass) {
-    var documentEndCommands = '',
-        latexStart,
-        latexEnd,
-        tempNode;
+    var documentEndCommands = '';
 
     var includePackages = "\\usepackage[utf8]{luainputenc}";
 
     if (subtitle && metadata.subtitle) {
-        tempNode = (0, _json.obj2Node)(metadata.subtitle);
+        var tempNode = (0, _json.obj2Node)(metadata.subtitle);
         if (tempNode.textContent.length > 0) {
             includePackages += "\n\\usepackage{titling}                \n\\newcommand{\\subtitle}[1]{%                \n\t\\posttitle{%                \n\t\t\\par\\end{center}                \n\t\t\\begin{center}\\large#1\\end{center}                \n\t\t\\vskip 0.5em}%                \n}";
         }
     }
 
     if (keywords && metadata.keywords) {
-        tempNode = (0, _json.obj2Node)(metadata.keywords);
+        var tempNode = (0, _json.obj2Node)(metadata.keywords);
         if (tempNode.textContent.length > 0) {
             includePackages += '\n\\def\\keywords{\\vspace{.5em}\
                 \n{\\textit{Keywords}:\\,\\relax%\
@@ -1127,10 +1124,10 @@ var findLatexDocumentFeatures = exports.findLatexDocumentFeatures = function fin
         includePackages += '\n\\newenvironment{abstract}{\\rightskip1in\\itshape}{}';
     }
 
-    latexStart = '\\documentclass{' + documentClass + '}\n' + includePackages + '\n\\begin{document}\n\n\\title{' + title + '}';
+    var latexStart = '\\documentclass{' + documentClass + '}\n' + includePackages + '\n\\begin{document}\n\n\\title{' + title + '}';
 
     if (specifiedAuthors && metadata.authors) {
-        tempNode = (0, _json.obj2Node)(metadata.authors);
+        var tempNode = (0, _json.obj2Node)(metadata.authors);
         if (tempNode.textContent.length > 0) {
             author = tempNode.textContent;
         }
@@ -1139,7 +1136,7 @@ var findLatexDocumentFeatures = exports.findLatexDocumentFeatures = function fin
     latexStart += '\n\\author{' + author + '}\n';
 
     if (subtitle && metadata.subtitle) {
-        tempNode = (0, _json.obj2Node)(metadata.subtitle);
+        var tempNode = (0, _json.obj2Node)(metadata.subtitle);
         if (tempNode.textContent.length > 0) {
             latexStart += '\\subtitle{' + tempNode.textContent + '}\n';
         }
@@ -1148,7 +1145,7 @@ var findLatexDocumentFeatures = exports.findLatexDocumentFeatures = function fin
     latexStart += '\n\\maketitle\n\n';
 
     if (keywords && metadata.keywords) {
-        tempNode = (0, _json.obj2Node)(metadata.keywords);
+        var tempNode = (0, _json.obj2Node)(metadata.keywords);
         if (tempNode.textContent.length > 0) {
             latexStart += '\\begin{keywords}\n' + tempNode.textContent + '\\end{keywords}\n';
         }
@@ -1156,14 +1153,14 @@ var findLatexDocumentFeatures = exports.findLatexDocumentFeatures = function fin
 
     if (documentClass === 'book') {
         if (metadata.publisher) {
-            tempNode = (0, _json.obj2Node)(metadata.publisher);
+            var tempNode = (0, _json.obj2Node)(metadata.publisher);
             if (tempNode.textContent.length > 0) {
                 latexStart += tempNode.textContent + '\n\n';
             }
         }
 
         if (metadata.copyright) {
-            tempNode = (0, _json.obj2Node)(metadata.copyright);
+            var tempNode = (0, _json.obj2Node)(metadata.copyright);
             if (tempNode.textContent.length > 0) {
                 latexStart += tempNode.textContent + '\n\n';
             }
@@ -1172,7 +1169,7 @@ var findLatexDocumentFeatures = exports.findLatexDocumentFeatures = function fin
         latexStart += '\n\\tableofcontents';
     }
 
-    latexEnd = documentEndCommands + '\n\n\\end{document}';
+    var latexEnd = documentEndCommands + '\n\n\\end{document}';
 
     return {
         latexStart: latexStart,
@@ -1182,10 +1179,7 @@ var findLatexDocumentFeatures = exports.findLatexDocumentFeatures = function fin
 
 var htmlToLatex = exports.htmlToLatex = function htmlToLatex(title, author, htmlCode, aBibDB, settings, metadata, isChapter, listedWorksList) {
     var latexStart = '',
-        latexEnd = '',
-        documentFeatures,
-        bibExport,
-        returnObject;
+        latexEnd = '';
     if (!listedWorksList) {
         listedWorksList = [];
     }
@@ -1199,39 +1193,52 @@ var htmlToLatex = exports.htmlToLatex = function htmlToLatex(title, author, html
         latexStart += '\\chapter{' + title + '}\n';
         //htmlCode.innerHTML =  '<div class="title">' + title + '</div>' + htmlCode.innerHTML
         if (settings['metadata-subtitle'] && metadata.subtitle) {
-            tempNode = (0, _json.obj2Node)(metadata.subtitle);
+            var tempNode = (0, _json.obj2Node)(metadata.subtitle);
             if (tempNode.textContent.length > 0) {
                 latexStart += '\\section{' + tempNode.textContent + '}\n';
             }
         }
     } else {
-        documentFeatures = findLatexDocumentFeatures(htmlCode, title, author, settings['metadata-subtitle'], settings['metadata-keywords'], settings['metadata-authors'], metadata, 'article');
+        var documentFeatures = findLatexDocumentFeatures(htmlCode, title, author, settings['metadata-subtitle'], settings['metadata-keywords'], settings['metadata-authors'], metadata, 'article');
         latexStart += documentFeatures.latexStart;
         latexEnd += documentFeatures.latexEnd;
     }
 
     if (settings['metadata-abstract'] && metadata.abstract) {
-        tempNode = (0, _json.obj2Node)(metadata.abstract);
+        var tempNode = (0, _json.obj2Node)(metadata.abstract);
         if (tempNode.textContent.length > 0) {
 
             htmlCode.innerHTML = '<div class="abstract">' + tempNode.innerHTML + '</div>' + htmlCode.innerHTML;
         }
     }
-    console.log(['2', htmlCode.outerHTML]);
+    // Replace the footnotes with markers and the footnotes to the back of the
+    // document, so they can survive the normalization that happens when
+    // assigning innerHTML.
+    var footnotes = [].slice.call(htmlCode.querySelectorAll('.footnote'));
+    var footnotesContainer = document.createElement('div');
+    footnotesContainer.id = 'footnotes-container';
 
-    var footnotes = htmlCode.querySelectorAll('.footnote');
-
-    jQuery(htmlCode).find('.footnote').each(function () {
-        console.log(['footnote', this, this.outerHTML]);
-        jQuery(this).replaceWith('\\footnote{' + this.innerHTML + '}');
+    footnotes.forEach(function (footnote) {
+        var footnoteMarker = document.createElement('span');
+        footnoteMarker.classList.add('footnote-marker');
+        footnote.parentNode.replaceChild(footnoteMarker, footnote);
+        footnotesContainer.appendChild(footnote);
     });
+    htmlCode.appendChild(footnotesContainer);
+
+    /*let footnoteMarkersInHeaders = [].slice.call(htmlCode.querySelectorAll(
+      'h1 .footnote-marker, h2 .footnote-marker, h3 .footnote-marker, ul .footnote-marker, ol .footnote-marker'
+    )
+     footnoteMarkersInHeaders.forEach(function (marker) {
+        marker.classList.add('keep')
+    })*/
+
     // Replace nbsp spaces with normal ones
     htmlCode.innerHTML = htmlCode.innerHTML.replace(/&nbsp;/g, ' ');
 
     // Remove line breaks
     htmlCode.innerHTML = htmlCode.innerHTML.replace(/(\r\n|\n|\r)/gm, '');
 
-    console.log(['3', htmlCode.outerHTML]);
     // Escape characters that are protected in some way.
     htmlCode.innerHTML = htmlCode.innerHTML.replace(/\\/g, '\\\\');
     htmlCode.innerHTML = htmlCode.innerHTML.replace(/\{/g, '\{');
@@ -1239,8 +1246,6 @@ var htmlToLatex = exports.htmlToLatex = function htmlToLatex(title, author, html
     htmlCode.innerHTML = htmlCode.innerHTML.replace(/\$/g, '\\\$');
     htmlCode.innerHTML = htmlCode.innerHTML.replace(/\#/g, '\\\#');
     htmlCode.innerHTML = htmlCode.innerHTML.replace(/\%/g, '\\\%');
-
-    console.log(htmlCode.outerHTML);
 
     jQuery(htmlCode).find('i').each(function () {
         jQuery(this).replaceWith('\\emph{' + this.innerHTML + '}');
@@ -1251,13 +1256,13 @@ var htmlToLatex = exports.htmlToLatex = function htmlToLatex(title, author, html
     });
 
     jQuery(htmlCode).find('h1').each(function () {
-        jQuery(this).replaceWith('\n\n\\section{' + this.textContent + '}\n');
+        jQuery(this).replaceWith('<h1>\n\n\\section{' + this.innerHTML + '}\n</h1>');
     });
     jQuery(htmlCode).find('h2').each(function () {
-        jQuery(this).replaceWith('\n\n\\subsection{' + this.textContent + '}\n');
+        jQuery(this).replaceWith('<h2>\n\n\\subsection{' + this.innerHTML + '}\n</h2>');
     });
     jQuery(htmlCode).find('h3').each(function () {
-        jQuery(this).replaceWith('\n\n\\subsubsection{' + this.textContent + '}\n');
+        jQuery(this).replaceWith('<h3>\n\n\\subsubsection{' + this.textHTML + '}\n</h3>');
     });
     jQuery(htmlCode).find('p').each(function () {
         jQuery(this).replaceWith('\n\n' + this.innerHTML + '\n');
@@ -1266,10 +1271,10 @@ var htmlToLatex = exports.htmlToLatex = function htmlToLatex(title, author, html
         jQuery(this).replaceWith('\n\\item ' + this.innerHTML + '\n');
     });
     jQuery(htmlCode).find('ul').each(function () {
-        jQuery(this).replaceWith('\n\\begin{itemize}' + this.innerHTML + '\\end{itemize}\n');
+        jQuery(this).replaceWith('<ul>\n\\begin{itemize}' + this.innerHTML + '\\end{itemize}\n</ul>');
     });
     jQuery(htmlCode).find('ol').each(function () {
-        jQuery(this).replaceWith('\n\\begin{enumerated}' + this.innerHTML + '\\end{enumerated}\n');
+        jQuery(this).replaceWith('<ol>\n\\begin{enumerated}' + this.innerHTML + '\\end{enumerated}\n</ol>');
     });
     jQuery(htmlCode).find('code').each(function () {
         jQuery(this).replaceWith('\n\\begin{code}\n\n' + this.innerHTML + '\n\n\\end{code}\n');
@@ -1345,7 +1350,7 @@ var htmlToLatex = exports.htmlToLatex = function htmlToLatex(title, author, html
     });
 
     jQuery(htmlCode).find('figure').each(function () {
-        var latexPackage;
+        var latexPackage = undefined;
         var figureType = jQuery(this).find('figcaption')[0].firstChild.innerHTML;
         // TODO: make use of figure type
         var caption = jQuery(this).find('figcaption')[0].lastChild.innerHTML;
@@ -1366,17 +1371,48 @@ var htmlToLatex = exports.htmlToLatex = function htmlToLatex(title, author, html
         this.outerHTML = '$' + equation + '$';
     });
 
-    jQuery(htmlCode).find('.footnote').each(function () {
-        jQuery(this).replaceWith('\\footnote{' + this.innerHTML + '}');
+    footnotes = [].slice.call(htmlCode.querySelectorAll('.footnote'));
+    var footnoteMarkers = [].slice.call(htmlCode.querySelectorAll('.footnote-marker'));
+
+    footnoteMarkers.forEach(function (marker, index) {
+        // if the footnote is in one of these containers, we have to put the
+        // footnotetext after the containers. If there is no container, we put the
+        // footnote where the footnote marker is.
+        var containers = [].slice.call(jQuery(marker).parents('h1, h2, h3, ul, ol'));
+        if (containers.length > 0) {
+            jQuery(marker).html('\\protect\\footnotemark');
+            var lastContainer = containers.pop();
+            if (!lastContainer.nextSibling || !jQuery(lastContainer.nextSibling).hasClass('footnote-counter-reset')) {
+                var fnCounterReset = document.createElement('span');
+                fnCounterReset.classList.add('footnote-counter-reset');
+                lastContainer.parentNode.insertBefore(fnCounterReset, lastContainer.nextSibling);
+            }
+            var fnCounter = 1;
+            var searchNode = lastContainer.nextSibling.nextSibling;
+            while (searchNode && searchNode.nodeType === 1 && jQuery(searchNode).hasClass('footnote')) {
+                searchNode = searchNode.nextSibling;
+                fnCounter++;
+            }
+            footnotes[index].innerHTML = "\\stepcounter{footnote}\\footnotetext{" + footnotes[index].innerHTML.trim() + "}";
+            lastContainer.parentNode.insertBefore(footnotes[index], searchNode);
+            lastContainer.nextSibling.innerHTML = "\\addtocounter{footnote}{-" + fnCounter + "}";
+        } else {
+            footnotes[index].innerHTML = "\\footnote{" + footnotes[index].innerHTML.trim() + "}";
+            marker.appendChild(footnotes[index]);
+        }
     });
 
-    returnObject = {
+    /*jQuery(htmlCode).find('.footnote').each(function() {
+        jQuery(this).replaceWith('\\footnotext{' + this.innerHTML + '}')
+    })*/
+
+    var returnObject = {
         latex: latexStart + htmlCode.textContent + latexEnd
     };
     if (isChapter) {
         returnObject.listedWorksList = listedWorksList;
     } else {
-        bibExport = new bibliographyHelpers.bibLatexExport(listedWorksList, aBibDB);
+        var bibExport = new bibliographyHelpers.bibLatexExport(listedWorksList, aBibDB);
         returnObject.bibtex = bibExport.bibtex_str;
     }
     return returnObject;
@@ -1397,8 +1433,6 @@ var downloadLatex = exports.downloadLatex = function downloadLatex(aDocument) {
 };
 
 var export1 = function export1(aDocument, aBibDB) {
-    var latexCode, htmlCode, outputList, httpOutputList;
-
     var title = aDocument.title;
 
     $.addAlert('info', title + ': ' + gettext('Latex export has been initiated.'));
@@ -1411,11 +1445,11 @@ var export1 = function export1(aDocument, aBibDB) {
         contents.appendChild(tempNode.firstChild);
     }
 
-    httpOutputList = (0, _tools.findImages)(contents);
+    var httpOutputList = (0, _tools.findImages)(contents);
 
-    latexCode = htmlToLatex(title, aDocument.owner.name, contents, aBibDB, aDocument.settings, aDocument.metadata);
+    var latexCode = htmlToLatex(title, aDocument.owner.name, contents, aBibDB, aDocument.settings, aDocument.metadata);
 
-    outputList = [{
+    var outputList = [{
         filename: 'document.tex',
         contents: latexCode.latex
     }];

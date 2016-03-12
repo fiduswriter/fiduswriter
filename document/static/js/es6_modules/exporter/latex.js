@@ -5,13 +5,12 @@ import {zipFileCreator} from "./zip"
 export let findLatexDocumentFeatures = function(htmlCode, title, author,
     subtitle, keywords, specifiedAuthors,
     metadata, documentClass) {
-    var documentEndCommands = '',
-        latexStart, latexEnd, tempNode
+    let documentEndCommands = ''
 
     let includePackages = '\\usepackage[utf8]{luainputenc}'
 
     if (subtitle && metadata.subtitle) {
-        tempNode = obj2Node(metadata.subtitle)
+        let tempNode = obj2Node(metadata.subtitle)
         if (tempNode.textContent.length > 0) {
             includePackages +=
                 '\n\\usepackage{titling}\
@@ -25,7 +24,7 @@ export let findLatexDocumentFeatures = function(htmlCode, title, author,
     }
 
     if (keywords && metadata.keywords) {
-        tempNode = obj2Node(metadata.keywords)
+        let tempNode = obj2Node(metadata.keywords)
         if (tempNode.textContent.length > 0) {
             includePackages +=
                 '\n\\def\\keywords{\\vspace{.5em}\
@@ -73,12 +72,12 @@ export let findLatexDocumentFeatures = function(htmlCode, title, author,
             '\n\\newenvironment{abstract}{\\rightskip1in\\itshape}{}'
     }
 
-    latexStart = '\\documentclass{' + documentClass + '}\n' +
+    let latexStart = '\\documentclass{' + documentClass + '}\n' +
         includePackages +
         '\n\\begin{document}\n\n\\title{' + title + '}'
 
     if (specifiedAuthors && metadata.authors) {
-        tempNode = obj2Node(metadata.authors)
+        let tempNode = obj2Node(metadata.authors)
         if (tempNode.textContent.length > 0) {
             author = tempNode.textContent
         }
@@ -87,7 +86,7 @@ export let findLatexDocumentFeatures = function(htmlCode, title, author,
     latexStart += '\n\\author{' + author + '}\n'
 
     if (subtitle && metadata.subtitle) {
-        tempNode = obj2Node(metadata.subtitle)
+        let tempNode = obj2Node(metadata.subtitle)
         if (tempNode.textContent.length > 0) {
             latexStart += '\\subtitle{' + tempNode.textContent + '}\n'
         }
@@ -96,7 +95,7 @@ export let findLatexDocumentFeatures = function(htmlCode, title, author,
     latexStart += '\n\\maketitle\n\n'
 
     if (keywords && metadata.keywords) {
-        tempNode = obj2Node(metadata.keywords)
+        let tempNode = obj2Node(metadata.keywords)
         if (tempNode.textContent.length > 0) {
             latexStart += '\\begin{keywords}\n' + tempNode.textContent + '\\end{keywords}\n'
         }
@@ -105,14 +104,14 @@ export let findLatexDocumentFeatures = function(htmlCode, title, author,
 
     if (documentClass === 'book') {
         if (metadata.publisher) {
-            tempNode = obj2Node(metadata.publisher)
+            let tempNode = obj2Node(metadata.publisher)
             if (tempNode.textContent.length > 0) {
                 latexStart += tempNode.textContent + '\n\n'
             }
         }
 
         if (metadata.copyright) {
-            tempNode = obj2Node(metadata.copyright)
+            let tempNode = obj2Node(metadata.copyright)
             if (tempNode.textContent.length > 0) {
                 latexStart += tempNode.textContent + '\n\n'
             }
@@ -121,7 +120,7 @@ export let findLatexDocumentFeatures = function(htmlCode, title, author,
         latexStart += '\n\\tableofcontents'
     }
 
-    latexEnd = documentEndCommands + '\n\n\\end{document}'
+    let latexEnd = documentEndCommands + '\n\n\\end{document}'
 
 
 
@@ -134,10 +133,8 @@ export let findLatexDocumentFeatures = function(htmlCode, title, author,
 
 export let htmlToLatex = function(title, author, htmlCode, aBibDB,
     settings, metadata, isChapter, listedWorksList) {
-    var latexStart = '',
-        latexEnd = '',
-        documentFeatures,
-        bibExport, returnObject
+    let latexStart = '',
+        latexEnd = ''
     if (!listedWorksList) {
         listedWorksList = []
     }
@@ -152,13 +149,13 @@ export let htmlToLatex = function(title, author, htmlCode, aBibDB,
         latexStart += '\\chapter{' + title + '}\n'
         //htmlCode.innerHTML =  '<div class="title">' + title + '</div>' + htmlCode.innerHTML
         if (settings['metadata-subtitle'] && metadata.subtitle) {
-            tempNode = obj2Node(metadata.subtitle)
+            let tempNode = obj2Node(metadata.subtitle)
             if (tempNode.textContent.length > 0) {
                 latexStart += '\\section{' + tempNode.textContent + '}\n'
             }
         }
     } else {
-        documentFeatures = findLatexDocumentFeatures(
+        let documentFeatures = findLatexDocumentFeatures(
             htmlCode, title, author, settings['metadata-subtitle'], settings['metadata-keywords'], settings['metadata-authors'], metadata,
             'article')
         latexStart += documentFeatures.latexStart
@@ -167,21 +164,36 @@ export let htmlToLatex = function(title, author, htmlCode, aBibDB,
 
 
     if (settings['metadata-abstract'] && metadata.abstract) {
-        tempNode = obj2Node(metadata.abstract)
+        let tempNode = obj2Node(metadata.abstract)
         if (tempNode.textContent.length > 0) {
 
             htmlCode.innerHTML = '<div class="abstract">' + tempNode.innerHTML +
                 '</div>' + htmlCode.innerHTML
         }
     }
-    console.log(['2',htmlCode.outerHTML])
+    // Replace the footnotes with markers and the footnotes to the back of the
+    // document, so they can survive the normalization that happens when
+    // assigning innerHTML.
+    let footnotes = [].slice.call(htmlCode.querySelectorAll('.footnote'))
+    let footnotesContainer = document.createElement('div')
+    footnotesContainer.id = 'footnotes-container'
 
-    var footnotes = htmlCode.querySelectorAll('.footnote')
-
-    jQuery(htmlCode).find('.footnote').each(function() {
-        console.log(['footnote',this, this.outerHTML])
-        jQuery(this).replaceWith('\\footnote{' + this.innerHTML + '}')
+    footnotes.forEach(function(footnote) {
+        let footnoteMarker = document.createElement('span')
+        footnoteMarker.classList.add('footnote-marker')
+        footnote.parentNode.replaceChild(footnoteMarker, footnote)
+        footnotesContainer.appendChild(footnote)
     })
+    htmlCode.appendChild(footnotesContainer)
+
+    /*let footnoteMarkersInHeaders = [].slice.call(htmlCode.querySelectorAll(
+      'h1 .footnote-marker, h2 .footnote-marker, h3 .footnote-marker, ul .footnote-marker, ol .footnote-marker'
+    )
+
+    footnoteMarkersInHeaders.forEach(function (marker) {
+        marker.classList.add('keep')
+    })*/
+
     // Replace nbsp spaces with normal ones
     htmlCode.innerHTML = htmlCode.innerHTML.replace(/&nbsp;/g, ' ')
 
@@ -190,7 +202,6 @@ export let htmlToLatex = function(title, author, htmlCode, aBibDB,
         /(\r\n|\n|\r)/gm,
         '')
 
-    console.log(['3',htmlCode.outerHTML])
     // Escape characters that are protected in some way.
     htmlCode.innerHTML = htmlCode.innerHTML.replace(/\\/g, '\\\\')
     htmlCode.innerHTML = htmlCode.innerHTML.replace(/\{/g, '\{')
@@ -198,9 +209,6 @@ export let htmlToLatex = function(title, author, htmlCode, aBibDB,
     htmlCode.innerHTML = htmlCode.innerHTML.replace(/\$/g, '\\\$')
     htmlCode.innerHTML = htmlCode.innerHTML.replace(/\#/g, '\\\#')
     htmlCode.innerHTML = htmlCode.innerHTML.replace(/\%/g, '\\\%')
-
-    console.log(htmlCode.outerHTML)
-
 
     jQuery(htmlCode).find('i').each(function() {
         jQuery(this).replaceWith('\\emph{' + this.innerHTML +
@@ -213,16 +221,16 @@ export let htmlToLatex = function(title, author, htmlCode, aBibDB,
     })
 
     jQuery(htmlCode).find('h1').each(function() {
-        jQuery(this).replaceWith('\n\n\\section{' + this.textContent +
-            '}\n')
+        jQuery(this).replaceWith('<h1>\n\n\\section{' + this.innerHTML +
+            '}\n</h1>')
     })
     jQuery(htmlCode).find('h2').each(function() {
-        jQuery(this).replaceWith('\n\n\\subsection{' + this.textContent +
-            '}\n')
+        jQuery(this).replaceWith('<h2>\n\n\\subsection{' + this.innerHTML +
+            '}\n</h2>')
     })
     jQuery(htmlCode).find('h3').each(function() {
-        jQuery(this).replaceWith('\n\n\\subsubsection{' + this.textContent +
-            '}\n')
+        jQuery(this).replaceWith('<h3>\n\n\\subsubsection{' + this.textHTML +
+            '}\n</h3>')
     })
     jQuery(htmlCode).find('p').each(function() {
         jQuery(this).replaceWith('\n\n' + this.innerHTML + '\n')
@@ -232,13 +240,13 @@ export let htmlToLatex = function(title, author, htmlCode, aBibDB,
             '\n')
     })
     jQuery(htmlCode).find('ul').each(function() {
-        jQuery(this).replaceWith('\n\\begin{itemize}' + this.innerHTML +
-            '\\end{itemize}\n')
+        jQuery(this).replaceWith('<ul>\n\\begin{itemize}' + this.innerHTML +
+            '\\end{itemize}\n</ul>')
     })
     jQuery(htmlCode).find('ol').each(function() {
-        jQuery(this).replaceWith('\n\\begin{enumerated}' + this
+        jQuery(this).replaceWith('<ol>\n\\begin{enumerated}' + this
             .innerHTML +
-            '\\end{enumerated}\n')
+            '\\end{enumerated}\n</ol>')
     })
     jQuery(htmlCode).find('code').each(function() {
         jQuery(this).replaceWith('\n\\begin{code}\n\n' + this.innerHTML +
@@ -322,7 +330,7 @@ export let htmlToLatex = function(title, author, htmlCode, aBibDB,
     })
 
     jQuery(htmlCode).find('figure').each(function() {
-        var latexPackage
+        let latexPackage
         let figureType = jQuery(this).find('figcaption')[0].firstChild
             .innerHTML
         // TODO: make use of figure type
@@ -341,7 +349,7 @@ export let htmlToLatex = function(title, author, htmlCode, aBibDB,
 
     jQuery(htmlCode).find('.equation, .figure-equation').each(
         function() {
-            var equation = jQuery(this).attr('data-equation')
+            let equation = jQuery(this).attr('data-equation')
             // TODO: The string is for some reason escaped. The following line removes this.
             equation = equation.replace(/\\/g, "*BACKSLASH*").replace(
                 /\*BACKSLASH\*\*BACKSLASH\*/g, "\\").replace(
@@ -349,17 +357,49 @@ export let htmlToLatex = function(title, author, htmlCode, aBibDB,
             this.outerHTML = '$' + equation + '$'
         })
 
-    jQuery(htmlCode).find('.footnote').each(function() {
-        jQuery(this).replaceWith('\\footnote{' + this.innerHTML + '}')
+    footnotes = [].slice.call(htmlCode.querySelectorAll('.footnote'))
+    let footnoteMarkers = [].slice.call(htmlCode.querySelectorAll('.footnote-marker'))
+
+    footnoteMarkers.forEach(function(marker, index) {
+        // if the footnote is in one of these containers, we have to put the
+        // footnotetext after the containers. If there is no container, we put the
+        // footnote where the footnote marker is.
+        let containers = [].slice.call(jQuery(marker).parents('h1, h2, h3, ul, ol'))
+        if (containers.length > 0) {
+            jQuery(marker).html('\\protect\\footnotemark')
+            let lastContainer = containers.pop()
+            if (!lastContainer.nextSibling || !jQuery(lastContainer.nextSibling).hasClass('footnote-counter-reset')) {
+                let fnCounterReset = document.createElement('span')
+                fnCounterReset.classList.add('footnote-counter-reset')
+                lastContainer.parentNode.insertBefore(fnCounterReset, lastContainer.nextSibling)
+            }
+            let fnCounter = 1
+            let searchNode = lastContainer.nextSibling.nextSibling
+            while(searchNode && searchNode.nodeType === 1 && jQuery(searchNode).hasClass('footnote')) {
+                searchNode = searchNode.nextSibling
+                fnCounter++
+            }
+            footnotes[index].innerHTML = "\\stepcounter{footnote}\\footnotetext{" + footnotes[index].innerHTML.trim() + "}"
+            lastContainer.parentNode.insertBefore(footnotes[index],searchNode)
+            lastContainer.nextSibling.innerHTML = "\\addtocounter{footnote}{-"+fnCounter+"}"
+
+        } else {
+            footnotes[index].innerHTML = "\\footnote{" + footnotes[index].innerHTML.trim() + "}"
+            marker.appendChild(footnotes[index])
+        }
     })
 
-    returnObject = {
+    /*jQuery(htmlCode).find('.footnote').each(function() {
+        jQuery(this).replaceWith('\\footnotext{' + this.innerHTML + '}')
+    })*/
+
+    let returnObject = {
         latex: latexStart + htmlCode.textContent + latexEnd,
     }
     if (isChapter) {
         returnObject.listedWorksList = listedWorksList
     } else {
-        bibExport = new bibliographyHelpers.bibLatexExport(
+        let bibExport = new bibliographyHelpers.bibLatexExport(
             listedWorksList, aBibDB)
         returnObject.bibtex = bibExport.bibtex_str
     }
@@ -383,9 +423,6 @@ export let downloadLatex = function(aDocument) {
 }
 
 let export1 = function(aDocument, aBibDB) {
-    var latexCode, htmlCode, outputList,
-        httpOutputList
-
     let title = aDocument.title
 
     $.addAlert('info', title + ': ' + gettext(
@@ -399,12 +436,12 @@ let export1 = function(aDocument, aBibDB) {
         contents.appendChild(tempNode.firstChild)
     }
 
-    httpOutputList = findImages(contents)
+    let httpOutputList = findImages(contents)
 
-    latexCode = htmlToLatex(title, aDocument.owner.name, contents, aBibDB,
+    let latexCode = htmlToLatex(title, aDocument.owner.name, contents, aBibDB,
         aDocument.settings, aDocument.metadata)
 
-    outputList = [{
+    let outputList = [{
         filename: 'document.tex',
         contents: latexCode.latex
     }]

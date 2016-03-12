@@ -1,6 +1,7 @@
 import {obj2Node} from "./json"
 import {createSlug, findImages} from "./tools"
 import {zipFileCreator} from "./zip"
+import {cleanHTML} from "./html"
 
 export let findLatexDocumentFeatures = function(htmlCode, title, author,
     subtitle, keywords, specifiedAuthors,
@@ -170,10 +171,12 @@ export let htmlToLatex = function(title, author, htmlCode, aBibDB,
             htmlCode.insertBefore(tempNode, htmlCode.firstChild)
         }
     }
+
+    htmlCode = cleanHTML(htmlCode)
     // Replace the footnotes with markers and the footnotes to the back of the
     // document, so they can survive the normalization that happens when
     // assigning innerHTML.
-    let footnotes = [].slice.call(htmlCode.querySelectorAll('.footnote'))
+    /*let footnotes = [].slice.call(htmlCode.querySelectorAll('.footnote'))
     let footnotesContainer = document.createElement('div')
     footnotesContainer.id = 'footnotes-container'
 
@@ -183,7 +186,7 @@ export let htmlToLatex = function(title, author, htmlCode, aBibDB,
         footnote.parentNode.replaceChild(footnoteMarker, footnote)
         footnotesContainer.appendChild(footnote)
     })
-    htmlCode.appendChild(footnotesContainer)
+    htmlCode.appendChild(footnotesContainer)*/
 
     /*let footnoteMarkersInHeaders = [].slice.call(htmlCode.querySelectorAll(
       'h1 .footnote-marker, h2 .footnote-marker, h3 .footnote-marker, ul .footnote-marker, ol .footnote-marker'
@@ -194,7 +197,7 @@ export let htmlToLatex = function(title, author, htmlCode, aBibDB,
     })*/
 
     // Replace nbsp spaces with normal ones
-    htmlCode.innerHTML = htmlCode.innerHTML.replace(/&nbsp;/g, ' ')
+    //htmlCode.innerHTML = htmlCode.innerHTML.replace(/&nbsp;/g, ' ')
 
     // Remove line breaks
     htmlCode.innerHTML = htmlCode.innerHTML.replace(
@@ -267,7 +270,8 @@ export let htmlToLatex = function(title, author, htmlCode, aBibDB,
     // join quote paragraphs that follow oneanother
     htmlCode.innerHTML = htmlCode.innerHTML.replace(
         /\\end{quote}\n\n\\begin{quote}\n\n/g, '')
-    jQuery(htmlCode).find('a').each(function() {
+    // Replace links, except those for footnotes.
+    jQuery(htmlCode).find('a:not(.fn)').each(function() {
         jQuery(this).replaceWith('\\href{' + this.href + '}{' +
             this.innerHTML +
             '}')
@@ -356,8 +360,8 @@ export let htmlToLatex = function(title, author, htmlCode, aBibDB,
             this.outerHTML = '$' + equation + '$'
         })
 
-    footnotes = [].slice.call(htmlCode.querySelectorAll('.footnote'))
-    let footnoteMarkers = [].slice.call(htmlCode.querySelectorAll('.footnote-marker'))
+    let footnotes = [].slice.call(htmlCode.querySelectorAll('section#fnlist section[role=doc-footnote]'))
+    let footnoteMarkers = [].slice.call(htmlCode.querySelectorAll('a.fn'))
 
     footnoteMarkers.forEach(function(marker, index) {
         // if the footnote is in one of these containers, we have to put the
@@ -374,7 +378,8 @@ export let htmlToLatex = function(title, author, htmlCode, aBibDB,
             }
             let fnCounter = 1
             let searchNode = lastContainer.nextSibling.nextSibling
-            while(searchNode && searchNode.nodeType === 1 && jQuery(searchNode).hasClass('footnote')) {
+            while(searchNode && searchNode.nodeType === 1
+              && searchNode.hasAttribute('role') && searchNode.getAttribute('role') === 'doc-footnote') {
                 searchNode = searchNode.nextSibling
                 fnCounter++
             }

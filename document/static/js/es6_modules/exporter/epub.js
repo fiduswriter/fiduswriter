@@ -1,4 +1,4 @@
-import {cleanHTML, replaceImgSrc, getMathjaxHeader} from "./html"
+import {cleanHTML, addFigureNumbers, replaceImgSrc, getMathjaxHeader} from "./html"
 import {obj2Node, node2Obj} from "./json"
 import {createSlug, findImages} from "./tools"
 import {zipFileCreator} from "./zip"
@@ -117,6 +117,7 @@ let export1 = function(aDocument, aBibDB) {
     contents.innerHTML = startHTML + contents.innerHTML
 
     contents = cleanHTML(contents)
+    contents = addFigureNumbers(contents)
 
     let contentsBody = document.createElement('body')
 

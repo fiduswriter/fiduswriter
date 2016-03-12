@@ -518,6 +518,7 @@ var export1 = function export1(aDocument, aBibDB) {
     contents.innerHTML = startHTML + contents.innerHTML;
 
     contents = (0, _html.cleanHTML)(contents);
+    contents = (0, _html.addFigureNumbers)(contents);
 
     var contentsBody = document.createElement('body');
 
@@ -791,31 +792,6 @@ var htmlExportTemplate = exports.htmlExportTemplate = _.template('<!DOCTYPE html
         <% if (part && part !="") { %>\
             <h1 class="part"><%= part %></h1>\
         <% } %>\
-        <h1 class="title"><%= title %></h1>\
-        <% if (settings["metadata-subtitle"] && metadata.subtitle) { %>\
-            <% tempNode = exporter.obj2Node(metadata.subtitle); %>\
-            <% if (tempNode.textContent.length > 0) { %>\
-                <h2 class="subtitle"><%= tempNode.textContent %></h2>\
-            <% } %>\
-        <% } %>\
-        <% if (settings["metadata-abstract"] && metadata.abstract) { %>\
-            <% tempNode = exporter.obj2Node(metadata.abstract); %>\
-            <% if (tempNode.textContent.length > 0) { %>\
-                <div class="abstract"><%= tempNode.textContent %></div>\
-            <% } %>\
-        <% } %>\
-        <% if (settings["metadata-authors"] && metadata.authors) { %>\
-            <% tempNode = exporter.obj2Node(metadata.authors); %>\
-            <% if (tempNode.textContent.length > 0) { %>\
-                <div class="authors"><%= tempNode.textContent %></div>\
-            <% } %>\
-        <% } %>\
-        <% if (settings["metadata-keywords"] && metadata.keywords) { %>\
-            <% tempNode = exporter.obj2Node(metadata.keywords); %>\
-            <% if (tempNode.textContent.length > 0) { %>\
-                <div class="keywords"><%= tempNode.textContent %></div>\
-            <% } %>\
-        <% } %>\
         <%= contents %></body></html>');
 
 },{}],6:[function(require,module,exports){
@@ -824,7 +800,7 @@ var htmlExportTemplate = exports.htmlExportTemplate = _.template('<!DOCTYPE html
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.getMathjaxHeader = exports.replaceImgSrc = exports.cleanHTML = exports.downloadHtml = undefined;
+exports.getMathjaxHeader = exports.replaceImgSrc = exports.addFigureNumbers = exports.cleanHTML = exports.downloadHtml = undefined;
 
 var _json = require("./json");
 
@@ -864,6 +840,45 @@ var export1 = function export1(aDocument, aBibDB) {
         contents.appendChild(tempNode.firstChild);
     }
 
+    if (aDocument.settings['metadata-keywords'] && aDocument.metadata.keywords) {
+        var _tempNode = (0, _json.obj2Node)(aDocument.metadata.keywords);
+        if (_tempNode.textContent.length > 0) {
+            _tempNode.id = 'keywords';
+            contents.insertBefore(_tempNode, contents.firstChild);
+        }
+    }
+
+    if (aDocument.settings['metadata-authors'] && aDocument.metadata.authors) {
+        var _tempNode2 = (0, _json.obj2Node)(aDocument.metadata.authors);
+        if (_tempNode2.textContent.length > 0) {
+            _tempNode2.id = 'authors';
+            contents.insertBefore(_tempNode2, contents.firstChild);
+        }
+    }
+
+    if (aDocument.settings['metadata-abstract'] && aDocument.metadata.abstract) {
+        var _tempNode3 = (0, _json.obj2Node)(aDocument.metadata.abstract);
+        if (_tempNode3.textContent.length > 0) {
+            _tempNode3.id = 'abstract';
+            contents.insertBefore(_tempNode3, contents.firstChild);
+        }
+    }
+
+    if (aDocument.settings['metadata-subtitle'] && aDocument.metadata.subtitle) {
+        var _tempNode4 = (0, _json.obj2Node)(aDocument.metadata.subtitle);
+        if (_tempNode4.textContent.length > 0) {
+            _tempNode4.id = 'subtitle';
+            contents.insertBefore(_tempNode4, contents.firstChild);
+        }
+    }
+
+    if (title) {
+        var _tempNode5 = document.createElement('h1');
+        _tempNode5.classList.add('title');
+        _tempNode5.textContent = title;
+        contents.insertBefore(_tempNode5, contents.firstChild);
+    }
+
     var equations = contents.querySelectorAll('.equation');
 
     var figureEquations = contents.querySelectorAll('.figure-equation');
@@ -899,12 +914,17 @@ var export2 = function export2(aDocument, aBibDB, styleSheets, title, contents, 
     var bibliography = citationHelpers.formatCitations(contents, aDocument.settings.citationstyle, aBibDB);
 
     if (bibliography.length > 0) {
-        contents.innerHTML += bibliography;
+        var tempNode = document.createElement('div');
+        tempNode.innerHTML = bibliography;
+        while (tempNode.firstChild) {
+            contents.appendChild(tempNode.firstChild);
+        }
     }
 
     var httpOutputList = (0, _tools.findImages)(contents);
 
     contents = cleanHTML(contents);
+    contents = addFigureNumbers(contents);
 
     var contentsCode = replaceImgSrc(contents.innerHTML);
 
@@ -935,20 +955,58 @@ var export2 = function export2(aDocument, aBibDB, styleSheets, title, contents, 
 };
 
 var cleanHTML = exports.cleanHTML = function cleanHTML(htmlCode) {
+
+    // Replace the footnotes with markers and the footnotes to the back of the
+    // document, so they can survive the normalization that happens when
+    // assigning innerHTML.
+    // Also link the footnote marker with the footnote according to
+    // https://rawgit.com/essepuntato/rash/master/documentation/index.html#footnotes.
+    var footnotes = [].slice.call(htmlCode.querySelectorAll('.footnote'));
+    var footnotesContainer = document.createElement('section');
+    footnotesContainer.id = 'fnlist';
+    footnotesContainer.setAttribute('role', 'doc-footnotes');
+
+    footnotes.forEach(function (footnote, index) {
+        var footnoteMarker = document.createElement('a');
+        var counter = index + 1;
+        footnoteMarker.setAttribute('href', '#fn' + counter);
+        // RASH 0.5 doesn't mark the footnote markers, so we add this class
+        footnoteMarker.classList.add('fn');
+        footnote.parentNode.replaceChild(footnoteMarker, footnote);
+        var newFootnote = document.createElement('section');
+        newFootnote.id = 'fn' + counter;
+        newFootnote.setAttribute('role', 'doc-footnote');
+        while (footnote.firstChild) {
+            newFootnote.appendChild(footnote.firstChild);
+        }
+        footnotesContainer.appendChild(newFootnote);
+    });
+    htmlCode.appendChild(footnotesContainer);
+
     // Replace nbsp spaces with normal ones
     htmlCode.innerHTML = htmlCode.innerHTML.replace(/&nbsp;/g, ' ');
 
-    jQuery(htmlCode).find('.del').each(function () {
-        this.outerHTML = '';
-    });
+    /* Related to tracked changes
+    jQuery(htmlCode).find('.del').each(function() {
+        this.outerHTML = ''
+    })
+     jQuery(htmlCode).find('.ins').each(function() {
+        this.outerHTML = this.innerHTML
+    })
+     END tracked changes */
 
-    jQuery(htmlCode).find('.citation,.ins').each(function () {
+    jQuery(htmlCode).find('.comment').each(function () {
         this.outerHTML = this.innerHTML;
     });
 
     jQuery(htmlCode).find('script').each(function () {
         this.outerHTML = '';
     });
+
+    return htmlCode;
+};
+
+var addFigureNumbers = exports.addFigureNumbers = function addFigureNumbers(htmlCode) {
 
     jQuery(htmlCode).find('figcaption .figure-cat-figure').each(function (index) {
         this.innerHTML += ' ' + (index + 1) + ': ';
@@ -1069,6 +1127,8 @@ var _json = require("./json");
 var _tools = require("./tools");
 
 var _zip = require("./zip");
+
+var _html = require("./html");
 
 var findLatexDocumentFeatures = exports.findLatexDocumentFeatures = function findLatexDocumentFeatures(htmlCode, title, author, subtitle, keywords, specifiedAuthors, metadata, documentClass) {
     var documentEndCommands = '';
@@ -1202,20 +1262,21 @@ var htmlToLatex = exports.htmlToLatex = function htmlToLatex(title, author, html
             htmlCode.insertBefore(tempNode, htmlCode.firstChild);
         }
     }
+
+    htmlCode = (0, _html.cleanHTML)(htmlCode);
     // Replace the footnotes with markers and the footnotes to the back of the
     // document, so they can survive the normalization that happens when
     // assigning innerHTML.
-    var footnotes = [].slice.call(htmlCode.querySelectorAll('.footnote'));
-    var footnotesContainer = document.createElement('div');
-    footnotesContainer.id = 'footnotes-container';
-
-    footnotes.forEach(function (footnote) {
-        var footnoteMarker = document.createElement('span');
-        footnoteMarker.classList.add('footnote-marker');
-        footnote.parentNode.replaceChild(footnoteMarker, footnote);
-        footnotesContainer.appendChild(footnote);
-    });
-    htmlCode.appendChild(footnotesContainer);
+    /*let footnotes = [].slice.call(htmlCode.querySelectorAll('.footnote'))
+    let footnotesContainer = document.createElement('div')
+    footnotesContainer.id = 'footnotes-container'
+     footnotes.forEach(function(footnote) {
+        let footnoteMarker = document.createElement('span')
+        footnoteMarker.classList.add('footnote-marker')
+        footnote.parentNode.replaceChild(footnoteMarker, footnote)
+        footnotesContainer.appendChild(footnote)
+    })
+    htmlCode.appendChild(footnotesContainer)*/
 
     /*let footnoteMarkersInHeaders = [].slice.call(htmlCode.querySelectorAll(
       'h1 .footnote-marker, h2 .footnote-marker, h3 .footnote-marker, ul .footnote-marker, ol .footnote-marker'
@@ -1225,7 +1286,7 @@ var htmlToLatex = exports.htmlToLatex = function htmlToLatex(title, author, html
     })*/
 
     // Replace nbsp spaces with normal ones
-    htmlCode.innerHTML = htmlCode.innerHTML.replace(/&nbsp;/g, ' ');
+    //htmlCode.innerHTML = htmlCode.innerHTML.replace(/&nbsp;/g, ' ')
 
     // Remove line breaks
     htmlCode.innerHTML = htmlCode.innerHTML.replace(/(\r\n|\n|\r)/gm, '');
@@ -1281,7 +1342,8 @@ var htmlToLatex = exports.htmlToLatex = function htmlToLatex(title, author, html
     });
     // join quote paragraphs that follow oneanother
     htmlCode.innerHTML = htmlCode.innerHTML.replace(/\\end{quote}\n\n\\begin{quote}\n\n/g, '');
-    jQuery(htmlCode).find('a').each(function () {
+    // Replace links, except those for footnotes.
+    jQuery(htmlCode).find('a:not(.fn)').each(function () {
         jQuery(this).replaceWith('\\href{' + this.href + '}{' + this.innerHTML + '}');
     });
     jQuery(htmlCode).find('.citation').each(function () {
@@ -1362,8 +1424,8 @@ var htmlToLatex = exports.htmlToLatex = function htmlToLatex(title, author, html
         this.outerHTML = '$' + equation + '$';
     });
 
-    footnotes = [].slice.call(htmlCode.querySelectorAll('.footnote'));
-    var footnoteMarkers = [].slice.call(htmlCode.querySelectorAll('.footnote-marker'));
+    var footnotes = [].slice.call(htmlCode.querySelectorAll('section#fnlist section[role=doc-footnote]'));
+    var footnoteMarkers = [].slice.call(htmlCode.querySelectorAll('a.fn'));
 
     footnoteMarkers.forEach(function (marker, index) {
         // if the footnote is in one of these containers, we have to put the
@@ -1380,7 +1442,7 @@ var htmlToLatex = exports.htmlToLatex = function htmlToLatex(title, author, html
             }
             var fnCounter = 1;
             var searchNode = lastContainer.nextSibling.nextSibling;
-            while (searchNode && searchNode.nodeType === 1 && jQuery(searchNode).hasClass('footnote')) {
+            while (searchNode && searchNode.nodeType === 1 && searchNode.hasAttribute('role') && searchNode.getAttribute('role') === 'doc-footnote') {
                 searchNode = searchNode.nextSibling;
                 fnCounter++;
             }
@@ -1455,7 +1517,7 @@ var export1 = function export1(aDocument, aBibDB) {
     (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools.createSlug)(title) + '.latex.zip');
 };
 
-},{"./json":7,"./tools":10,"./zip":13}],9:[function(require,module,exports){
+},{"./html":6,"./json":7,"./tools":10,"./zip":13}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1836,8 +1898,6 @@ var _zip = require("./es6_modules/exporter/zip");
 
 var _epubTemplates = require("./es6_modules/exporter/epub-templates");
 
-var _htmlTemplates = require("./es6_modules/exporter/html-templates");
-
 /**
  * Functions to export the Fidus Writer document.
  */
@@ -1852,9 +1912,6 @@ exporter.ncxItemTemplate = _epubTemplates.ncxItemTemplate;
 exporter.xhtmlTemplate = _epubTemplates.xhtmlTemplate;
 exporter.navTemplate = _epubTemplates.navTemplate;
 exporter.navItemTemplate = _epubTemplates.navItemTemplate;
-exporter.mathjaxHtmlHeaderTemplatePart = _htmlTemplates.mathjaxHtmlHeaderTemplatePart;
-exporter.htmlExportTemplate = _htmlTemplates.htmlExportTemplate;
-
 exporter.savecopy = _copy.savecopy;
 exporter.downloadFile = _download.downloadFile;
 exporter.styleEpubFootnotes = _epub.styleEpubFootnotes;
@@ -1864,6 +1921,7 @@ exporter.setLinks = _epub.setLinks;
 exporter.orderLinks = _epub.orderLinks;
 exporter.downloadHtml = _html.downloadHtml;
 exporter.cleanHTML = _html.cleanHTML;
+exporter.addFigureNumbers = _html.addFigureNumbers;
 exporter.replaceImgSrc = _html.replaceImgSrc;
 exporter.getMathjaxHeader = _html.getMathjaxHeader;
 exporter.obj2Node = _json.obj2Node;
@@ -1878,4 +1936,4 @@ exporter.zipFileCreator = _zip.zipFileCreator;
 
 window.exporter = exporter;
 
-},{"./es6_modules/exporter/copy":1,"./es6_modules/exporter/download":2,"./es6_modules/exporter/epub":4,"./es6_modules/exporter/epub-templates":3,"./es6_modules/exporter/html":6,"./es6_modules/exporter/html-templates":5,"./es6_modules/exporter/json":7,"./es6_modules/exporter/latex":8,"./es6_modules/exporter/native":9,"./es6_modules/exporter/tools":10,"./es6_modules/exporter/zip":13}]},{},[14]);
+},{"./es6_modules/exporter/copy":1,"./es6_modules/exporter/download":2,"./es6_modules/exporter/epub":4,"./es6_modules/exporter/epub-templates":3,"./es6_modules/exporter/html":6,"./es6_modules/exporter/json":7,"./es6_modules/exporter/latex":8,"./es6_modules/exporter/native":9,"./es6_modules/exporter/tools":10,"./es6_modules/exporter/zip":13}]},{},[14]);

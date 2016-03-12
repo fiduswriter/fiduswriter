@@ -166,9 +166,8 @@ export let htmlToLatex = function(title, author, htmlCode, aBibDB,
     if (settings['metadata-abstract'] && metadata.abstract) {
         let tempNode = obj2Node(metadata.abstract)
         if (tempNode.textContent.length > 0) {
-
-            htmlCode.innerHTML = '<div class="abstract">' + tempNode.innerHTML +
-                '</div>' + htmlCode.innerHTML
+            tempNode.id = 'abstract'
+            htmlCode.insertBefore(tempNode, htmlCode.firstChild)
         }
     }
     // Replace the footnotes with markers and the footnotes to the back of the
@@ -252,7 +251,7 @@ export let htmlToLatex = function(title, author, htmlCode, aBibDB,
         jQuery(this).replaceWith('\n\\begin{code}\n\n' + this.innerHTML +
             '\n\n\\end{code}\n')
     })
-    jQuery(htmlCode).find('div.abstract').each(function() {
+    jQuery(htmlCode).find('div#abstract').each(function() {
         jQuery(this).replaceWith('\n\\begin{abstract}\n\n' +
             this.innerHTML +
             '\n\n\\end{abstract}\n')

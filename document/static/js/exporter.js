@@ -1198,8 +1198,8 @@ var htmlToLatex = exports.htmlToLatex = function htmlToLatex(title, author, html
     if (settings['metadata-abstract'] && metadata.abstract) {
         var tempNode = (0, _json.obj2Node)(metadata.abstract);
         if (tempNode.textContent.length > 0) {
-
-            htmlCode.innerHTML = '<div class="abstract">' + tempNode.innerHTML + '</div>' + htmlCode.innerHTML;
+            tempNode.id = 'abstract';
+            htmlCode.insertBefore(tempNode, htmlCode.firstChild);
         }
     }
     // Replace the footnotes with markers and the footnotes to the back of the
@@ -1270,7 +1270,7 @@ var htmlToLatex = exports.htmlToLatex = function htmlToLatex(title, author, html
     jQuery(htmlCode).find('code').each(function () {
         jQuery(this).replaceWith('\n\\begin{code}\n\n' + this.innerHTML + '\n\n\\end{code}\n');
     });
-    jQuery(htmlCode).find('div.abstract').each(function () {
+    jQuery(htmlCode).find('div#abstract').each(function () {
         jQuery(this).replaceWith('\n\\begin{abstract}\n\n' + this.innerHTML + '\n\n\\end{abstract}\n');
     });
 

@@ -2,7 +2,10 @@ import {joinDocumentParts, addFigureNumbers, replaceImgSrc, getMathjaxHeader} fr
 import {obj2Node, node2Obj} from "./json"
 import {createSlug, findImages} from "./tools"
 import {zipFileCreator} from "./zip"
-import {opfTemplate, containerTemplate, ncxTemplate, navTemplate, xhtmlTemplate} from "./epub-templates"
+import {opfTemplate, containerTemplate, ncxTemplate, ncxItemTemplate, navTemplate,
+  navItemTemplate, xhtmlTemplate} from "./epub-templates"
+
+let templates = {ncxTemplate, ncxItemTemplate, navTemplate, navItemTemplate}
 
 export let styleEpubFootnotes = function(htmlCode) {
     let footnotesCode = '', footnoteCounter = 0
@@ -179,12 +182,14 @@ let export2 = function(aDocument, contentsBody, images, title, styleSheets, math
         title: title,
         idType: 'fidus',
         id: aDocument.id,
-        contentItems: contentItems
+        contentItems: contentItems,
+        templates
     })
 
     let navCode = navTemplate({
         shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
-        contentItems: contentItems
+        contentItems: contentItems,
+        templates
     })
 
     let outputList = [{

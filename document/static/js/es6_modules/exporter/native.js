@@ -43,8 +43,7 @@ export let downloadNative = function(aDocument) {
                         exportNativeFile)
                 })
             } else {
-                exportNative(aDocument, ImageDB, BibDB, exporter
-                    .nativeFile)
+                exportNative(aDocument, ImageDB, BibDB, exportNativeFile)
             }
         } else {
             bibliographyHelpers.getABibDB(aDocument.owner, function(

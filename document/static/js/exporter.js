@@ -313,7 +313,7 @@ var ncxTemplate = exports.ncxTemplate = _.template('<?xml version="1.0" encoding
         \t<navMap>\n\
                 \t\t<!-- 2.01 NCX: playOrder is optional -->\n\
             <% _.each(contentItems,function(item){ %>\
-               <%= exporter.ncxItemTemplate({"item":item})%>\
+               <%= templates.ncxItemTemplate({"item":item,"templates":templates})%>\
             <% }); %>\
         \t</navMap>\n\
     </ncx>');
@@ -326,7 +326,7 @@ var ncxItemTemplate = exports.ncxItemTemplate = _.template('\
         \t\t\t</navLabel>\n\
         \t\t\t<content src="<% if (item.link) {print(item.link);} else { %>document<% if (item.docNum) {print("-"+item.docNum);}%>.xhtml#<% print(item.id) } %>"/>\n\
         <% _.each(item.subItems, function(item) { %>\
-            <%= exporter.ncxItemTemplate({"item":item})%>\
+            <%= templates.ncxItemTemplate({"item":item,"templates":templates})%>\
         <% }); %>\
     \t\t</navPoint>\n');
 
@@ -384,7 +384,7 @@ var navTemplate = exports.navTemplate = _.template('<?xml version="1.0" encoding
     \t\t<nav epub:type="toc" id="toc">\n\
     \t\t\t<ol>\n\
         <% _.each(contentItems,function(item){ %>\
-            <%= exporter.navItemTemplate({"item":item})%>\
+            <%= templates.navItemTemplate({"item":item, "templates":templates})%>\
         <% }); %>\
     \t\t\t</ol>\n\
     \t\t</nav>\n\
@@ -396,7 +396,7 @@ var navItemTemplate = exports.navItemTemplate = _.template('\t\t\t\t<li><a href=
     <% if (item.subItems.length > 0) { %>\
         <ol>\
             <% _.each(item.subItems,function(item){ %>\
-                <%= exporter.navItemTemplate({"item":item})%>\
+                <%= templates.navItemTemplate({"item":item, "templates": templates})%>\
             <% }); %>\
         </ol>\
     <% } %>\
@@ -419,6 +419,8 @@ var _tools = require("./tools");
 var _zip = require("./zip");
 
 var _epubTemplates = require("./epub-templates");
+
+var templates = { ncxTemplate: _epubTemplates.ncxTemplate, ncxItemTemplate: _epubTemplates.ncxItemTemplate, navTemplate: _epubTemplates.navTemplate, navItemTemplate: _epubTemplates.navItemTemplate };
 
 var styleEpubFootnotes = exports.styleEpubFootnotes = function styleEpubFootnotes(htmlCode) {
     var footnotesCode = '',
@@ -582,12 +584,14 @@ var export2 = function export2(aDocument, contentsBody, images, title, styleShee
         title: title,
         idType: 'fidus',
         id: aDocument.id,
-        contentItems: contentItems
+        contentItems: contentItems,
+        templates: templates
     });
 
     var navCode = (0, _epubTemplates.navTemplate)({
         shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
-        contentItems: contentItems
+        contentItems: contentItems,
+        templates: templates
     });
 
     var outputList = [{
@@ -1529,7 +1533,7 @@ var downloadNative = exports.downloadNative = function downloadNative(aDocument)
                     exportNative(aDocument, ImageDB, BibDB, exportNativeFile);
                 });
             } else {
-                exportNative(aDocument, ImageDB, BibDB, exporter.nativeFile);
+                exportNative(aDocument, ImageDB, BibDB, exportNativeFile);
             }
         } else {
             bibliographyHelpers.getABibDB(aDocument.owner, function (aBibDB) {

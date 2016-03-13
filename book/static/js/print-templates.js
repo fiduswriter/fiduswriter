@@ -61,7 +61,7 @@ var tmp_book_print = _.template('\
                 <% } %>\
             <% } %>\
         <% } %>\
-        <%= nodeConverter.modelToViewNode(exporter.obj2Node(JSON.parse(chapter.contents))).innerHTML %>\
+        <%= printHelpers.modelToViewNode(exporter.obj2Node(JSON.parse(chapter.contents))).innerHTML %>\
     </div>\
 <% }); %>\
 ');

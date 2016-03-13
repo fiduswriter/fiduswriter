@@ -12,8 +12,8 @@ export class ModToolsPrint {
         delete window.flowCopy
     }
 
-    print() {
-        let flowTo = document.getElementById('print'), that = this
+    preparePrint() {
+        let flowTo = document.getElementById('print')
 
         let flowCopy = document.getElementById('flow').cloneNode(true)
         let footnoteBox = flowCopy.querySelector('#footnote-box-container')
@@ -30,8 +30,17 @@ export class ModToolsPrint {
 
         window.flowCopy = flowCopy
         jQuery(flowTo).show()
-        document.addEventListener('layoutFlowFinished', function () {that.printReady()}, false)
         pagination.applyBookLayoutWithoutDivision()
+    }
+
+    print() {
+        let that = this
+        let listener = function(event) {
+            that.printReady()
+            document.removeEventListener('layoutFlowFinished', listener, false)
+        }
+        document.addEventListener('layoutFlowFinished', listener, false)
+        this.preparePrint()
     }
 
 }

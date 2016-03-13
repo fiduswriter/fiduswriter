@@ -4974,10 +4974,9 @@ var ModToolsPrint = exports.ModToolsPrint = (function () {
             delete window.flowCopy;
         }
     }, {
-        key: 'print',
-        value: function print() {
-            var flowTo = document.getElementById('print'),
-                that = this;
+        key: 'preparePrint',
+        value: function preparePrint() {
+            var flowTo = document.getElementById('print');
 
             var flowCopy = document.getElementById('flow').cloneNode(true);
             var footnoteBox = flowCopy.querySelector('#footnote-box-container');
@@ -4994,10 +4993,18 @@ var ModToolsPrint = exports.ModToolsPrint = (function () {
 
             window.flowCopy = flowCopy;
             jQuery(flowTo).show();
-            document.addEventListener('layoutFlowFinished', function () {
-                that.printReady();
-            }, false);
             pagination.applyBookLayoutWithoutDivision();
+        }
+    }, {
+        key: 'print',
+        value: function print() {
+            var that = this;
+            var listener = function listener(event) {
+                that.printReady();
+                document.removeEventListener('layoutFlowFinished', listener, false);
+            };
+            document.addEventListener('layoutFlowFinished', listener, false);
+            this.preparePrint();
         }
     }]);
 

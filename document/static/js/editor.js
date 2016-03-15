@@ -4973,12 +4973,30 @@ var ModToolsPrint = exports.ModToolsPrint = (function () {
             delete window.flowCopy;
         }
     }, {
+        key: 'changeAllIds',
+        value: function changeAllIds(node) {
+            if (node.id) {
+                node.id = node.id + '-print';
+            }
+            if (node.children) {
+                for (var i = 0; i < node.children.length; i++) {
+                    this.changeAllIds(node.children[i]);
+                }
+            }
+        }
+    }, {
         key: 'preparePrint',
         value: function preparePrint() {
             var flowTo = document.getElementById('print');
 
+            // This is a quick and dirty way of creating a cloned version of the node.
+            // We only do this because it is faster and mathjax would be slow in rendering a second time.
+
             var flowCopy = document.getElementById('flow').cloneNode(true);
-            var footnoteBox = flowCopy.querySelector('#footnote-box-container');
+
+            this.changeAllIds(flowCopy);
+
+            var footnoteBox = flowCopy.querySelector('#footnote-box-container-print');
             footnoteBox.parentElement.removeChild(footnoteBox);
 
             var footnotes = footnoteBox.querySelectorAll('.footnote-container');

@@ -12,11 +12,28 @@ export class ModToolsPrint {
         delete window.flowCopy
     }
 
+    changeAllIds(node) {
+        if (node.id) {
+            node.id = node.id + '-print'
+        }
+        if (node.children) {
+            for (let i=0;i<node.children.length;i++) {
+                this.changeAllIds(node.children[i])
+            }
+        }
+    }
+
     preparePrint() {
         let flowTo = document.getElementById('print')
 
+        // This is a quick and dirty way of creating a cloned version of the node.
+        // We only do this because it is faster and mathjax would be slow in rendering a second time.
+
         let flowCopy = document.getElementById('flow').cloneNode(true)
-        let footnoteBox = flowCopy.querySelector('#footnote-box-container')
+
+        this.changeAllIds(flowCopy)
+
+        let footnoteBox = flowCopy.querySelector('#footnote-box-container-print')
         footnoteBox.parentElement.removeChild(footnoteBox)
 
         let footnotes = footnoteBox.querySelectorAll('.footnote-container')

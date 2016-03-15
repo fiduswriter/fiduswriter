@@ -402,7 +402,7 @@ var ModCollabDocChanges = exports.ModCollabDocChanges = (function () {
                 docs.push(doc);
                 return result.map;
             });
-
+            this.mod.editor.pm.mod.collab.receive(steps);
             var unconfirmedMaps = this.mod.editor.pm.mod.collab.unconfirmedMaps;
             var unconfirmedSteps = this.mod.editor.pm.mod.collab.unconfirmedSteps;
             maps = maps.concat(unconfirmedMaps);
@@ -422,7 +422,6 @@ var ModCollabDocChanges = exports.ModCollabDocChanges = (function () {
                 maps: maps,
                 docs: docs
             };
-            this.mod.editor.pm.mod.collab.receive(steps);
             this.mod.editor.pm.signal("remoteTransform", transform);
             this.receiving = false;
         }

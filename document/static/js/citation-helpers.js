@@ -264,10 +264,11 @@
             bibliographyHTML += citeproc_obj.bibliography[1][j];
         }
 
+        return bibliographyHTML
         // Delete entries that are exactly the same
         //bibliographyHTML = _.unique(bibliographyHTML.split('<p>')).join('<p>')
-        bibliographyHTML = bibliographyHTML.replace(/<div class="csl-entry">/g, '<p>');
-        return bibliographyHTML.replace(/<\/div>/g, '</p>');
+        //bibliographyHTML = bibliographyHTML.replace(/<div class="csl-entry">/g, '<p>');
+        //return bibliographyHTML.replace(/<\/div>/g, '</p>');
      };
 
 

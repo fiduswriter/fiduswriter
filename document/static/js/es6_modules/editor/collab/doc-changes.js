@@ -181,7 +181,7 @@ export class ModCollabDocChanges {
             docs.push(doc)
             return result.map
         })
-
+        this.mod.editor.pm.mod.collab.receive(steps)
         let unconfirmedMaps = this.mod.editor.pm.mod.collab.unconfirmedMaps
         let unconfirmedSteps = this.mod.editor.pm.mod.collab.unconfirmedSteps
         maps = maps.concat(unconfirmedMaps)
@@ -201,7 +201,6 @@ export class ModCollabDocChanges {
             maps,
             docs
         }
-        this.mod.editor.pm.mod.collab.receive(steps)
         this.mod.editor.pm.signal("remoteTransform", transform)
         this.receiving = false
     }

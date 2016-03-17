@@ -14,7 +14,7 @@ export class ModMenusActions {
         let that = this
         that.mod.editor.getUpdates(function() {
             that.mod.editor.sendDocumentUpdate(function() {
-                uploadNative(that.mod.editor.doc)
+                uploadNative(that.mod.editor)
             })
         })
     }
@@ -23,7 +23,7 @@ export class ModMenusActions {
         let that = this
         that.mod.editor.getUpdates(function() {
             that.mod.editor.sendDocumentUpdate(function (){
-                savecopy(that.mod.editor.doc)
+                savecopy(that.mod.editor.doc, that.mod.editor)
             })
         })
     }
@@ -32,7 +32,7 @@ export class ModMenusActions {
         let that = this
         that.mod.editor.getUpdates(function() {
             that.mod.editor.sendDocumentUpdate(function (){
-                downloadNative(that.mod.editor.doc)
+                downloadNative(that.mod.editor.doc, true)
             })
         })
     }
@@ -41,7 +41,7 @@ export class ModMenusActions {
         let that = this
         that.mod.editor.getUpdates(function() {
               that.mod.editor.sendDocumentUpdate(function () {
-                  downloadLatex(that.mod.editor.doc)
+                  downloadLatex(that.mod.editor.doc, true)
               })
         })
     }
@@ -50,7 +50,7 @@ export class ModMenusActions {
         let that = this
         that.mod.editor.getUpdates(function() {
             that.mod.editor.sendDocumentUpdate(function () {
-                downloadEpub(that.mod.editor.doc)
+                downloadEpub(that.mod.editor.doc, true)
             })
         })
     }
@@ -59,7 +59,7 @@ export class ModMenusActions {
         let that = this
         that.mod.editor.getUpdates(function() {
             that.mod.editor.sendDocumentUpdate(function () {
-                downloadHtml(that.mod.editor.doc)
+                downloadHtml(that.mod.editor.doc, true)
             })
         })
     }

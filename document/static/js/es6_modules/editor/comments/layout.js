@@ -142,7 +142,8 @@ export class ModCommentLayout {
         })
 
         jQuery('#comment-box-container').html(commentsTemplate({
-            theComments: theComments
+            theComments,
+            that
         }))
         this.layoutCommentsAvoidOverlap()
         let activeCommentStyle = ''

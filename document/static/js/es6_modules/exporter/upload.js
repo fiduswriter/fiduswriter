@@ -5,7 +5,7 @@ import {revisionDialogTemplate} from "./upload-templates"
  * @param {string} zipFileName The name of the file.
  * @param {blob} blob The contents of the file.
  */
-export let uploadFile = function(zipFilename, blob) {
+export let uploadFile = function(zipFilename, blob, editor) {
 
 
     let diaButtons = {}
@@ -15,7 +15,7 @@ export let uploadFile = function(zipFilename, blob) {
 
         data.append('note', jQuery(this).find('.revision-note').val())
         data.append('file', blob, zipFilename)
-        data.append('document_id', theEditor.doc.id)
+        data.append('document_id', editor.doc.id)
 
         jQuery.ajax({
             url: '/document/upload/',
@@ -46,10 +46,10 @@ export let uploadFile = function(zipFilename, blob) {
         modal: true,
         buttons: diaButtons,
         create: function() {
-            var $the_dialog = jQuery(this).closest(".ui-dialog")
-            $the_dialog.find(".ui-button:first-child").addClass(
+            let theDialog = jQuery(this).closest(".ui-dialog")
+            theDialog.find(".ui-button:first-child").addClass(
                 "fw-button fw-dark")
-            $the_dialog.find(".ui-button:last").addClass(
+            theDialog.find(".ui-button:last").addClass(
                 "fw-button fw-orange")
         },
     })

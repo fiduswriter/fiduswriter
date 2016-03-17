@@ -1,19 +1,20 @@
 import {exportNative} from "./native"
+import {getDBs} from "../importer/get-extra-data"
 
-export let savecopy = function(aDocument) {
+export let savecopy = function(aDocument, editor) {
     function importAsUser(aDocument, shrunkImageDB, shrunkBibDB,
         images) {
         // switch to user's own ImageDB and BibDB:
-        if (window.hasOwnProperty('theEditor')) {
-            theEditor.doc.owner = theEditor.user
+        if (editor) {
+            editor.doc.owner = editor.user
             delete window.ImageDB
             delete window.BibDB
         }
-        importer.getDBs(aDocument, shrunkBibDB, shrunkImageDB,
+        getDBs(aDocument, shrunkBibDB, shrunkImageDB,
             images)
 
     }
-    if (window.hasOwnProperty('theEditor')) {
+    if (editor) {
         exportNative(aDocument, ImageDB, BibDB, importAsUser)
     } else {
         bibliographyHelpers.getABibDB(aDocument.owner, function(

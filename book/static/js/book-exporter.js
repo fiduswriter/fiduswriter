@@ -191,6 +191,8 @@
 
             contents = exporter.cleanHTML(contents);
 
+            contents = exporter.addFigureNumbers(contents);
+
             aChapter.number = aBook.chapters[i].number;
 
             aChapter.part = aBook.chapters[i].part;

@@ -16,6 +16,7 @@ import {ModTools} from "./tools/mod"
 import {ModSettings} from "./settings/mod"
 import {ModMenus} from "./menus/mod"
 import {ModServerCommunications} from "./server-communications"
+import {ModNodeConvert} from "./node-convert"
 
 import {node2Obj, obj2Node} from "../exporter/json"
 
@@ -42,6 +43,7 @@ export class Editor {
         this.doc = {}
         this.user = false
         new ModSettings(this)
+        new ModNodeConvert(this)
         new ModServerCommunications(this)
         this.init()
     }
@@ -136,7 +138,7 @@ export class Editor {
         editorNode.appendChild(metadataKeywordsNode)
         editorNode.appendChild(documentContentsNode)
 
-        doc = fromDOM(fidusSchema, nodeConverter.modelToEditorNode(editorNode), {
+        doc = fromDOM(fidusSchema, this.mod.nodeConvert.modelToEditorNode(editorNode), {
             preserveWhitespace: true
         })
         return doc
@@ -223,7 +225,7 @@ export class Editor {
 
 
     getUpdates(callback) {
-        let outputNode = nodeConverter.editorToModelNode(serializeTo(this.pm.mod.collab.versionDoc, 'dom'))
+        let outputNode = this.mod.nodeConvert.editorToModelNode(serializeTo(this.pm.mod.collab.versionDoc, 'dom'))
         this.doc.title = this.pm.mod.collab.versionDoc.firstChild.textContent
         this.doc.version = this.pm.mod.collab.version
         this.doc.metadata.title = node2Obj(outputNode.getElementById('document-title'))

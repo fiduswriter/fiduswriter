@@ -259,7 +259,7 @@ export let ncxTemplate = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
         \t<navMap>\n\
                 \t\t<!-- 2.01 NCX: playOrder is optional -->\n\
             <% _.each(contentItems,function(item){ %>\
-               <%= exporter.ncxItemTemplate({"item":item})%>\
+               <%= templates.ncxItemTemplate({"item":item,"templates":templates})%>\
             <% }); %>\
         \t</navMap>\n\
     </ncx>')
@@ -272,7 +272,7 @@ export let ncxItemTemplate = _.template('\
         \t\t\t</navLabel>\n\
         \t\t\t<content src="<% if (item.link) {print(item.link);} else { %>document<% if (item.docNum) {print("-"+item.docNum);}%>.xhtml#<% print(item.id) } %>"/>\n\
         <% _.each(item.subItems, function(item) { %>\
-            <%= exporter.ncxItemTemplate({"item":item})%>\
+            <%= templates.ncxItemTemplate({"item":item,"templates":templates})%>\
         <% }); %>\
     \t\t</navPoint>\n')
 
@@ -336,7 +336,7 @@ export let navTemplate = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
     \t\t<nav epub:type="toc" id="toc">\n\
     \t\t\t<ol>\n\
         <% _.each(contentItems,function(item){ %>\
-            <%= exporter.navItemTemplate({"item":item})%>\
+            <%= templates.navItemTemplate({"item":item, "templates":templates})%>\
         <% }); %>\
     \t\t\t</ol>\n\
     \t\t</nav>\n\
@@ -348,7 +348,7 @@ export let navItemTemplate = _.template('\t\t\t\t<li><a href="<% if (item.link) 
     <% if (item.subItems.length > 0) { %>\
         <ol>\
             <% _.each(item.subItems,function(item){ %>\
-                <%= exporter.navItemTemplate({"item":item})%>\
+                <%= templates.navItemTemplate({"item":item, "templates": templates})%>\
             <% }); %>\
         </ol>\
     <% } %>\

@@ -63,29 +63,4 @@ export let htmlExportTemplate = _.template('<!DOCTYPE html>\n\
         <% if (part && part !="") { %>\
             <h1 class="part"><%= part %></h1>\
         <% } %>\
-        <h1 class="title"><%= title %></h1>\
-        <% if (settings["metadata-subtitle"] && metadata.subtitle) { %>\
-            <% tempNode = exporter.obj2Node(metadata.subtitle); %>\
-            <% if (tempNode.textContent.length > 0) { %>\
-                <h2 class="subtitle"><%= tempNode.textContent %></h2>\
-            <% } %>\
-        <% } %>\
-        <% if (settings["metadata-abstract"] && metadata.abstract) { %>\
-            <% tempNode = exporter.obj2Node(metadata.abstract); %>\
-            <% if (tempNode.textContent.length > 0) { %>\
-                <div class="abstract"><%= tempNode.textContent %></div>\
-            <% } %>\
-        <% } %>\
-        <% if (settings["metadata-authors"] && metadata.authors) { %>\
-            <% tempNode = exporter.obj2Node(metadata.authors); %>\
-            <% if (tempNode.textContent.length > 0) { %>\
-                <div class="authors"><%= tempNode.textContent %></div>\
-            <% } %>\
-        <% } %>\
-        <% if (settings["metadata-keywords"] && metadata.keywords) { %>\
-            <% tempNode = exporter.obj2Node(metadata.keywords); %>\
-            <% if (tempNode.textContent.length > 0) { %>\
-                <div class="keywords"><%= tempNode.textContent %></div>\
-            <% } %>\
-        <% } %>\
         <%= contents %></body></html>')

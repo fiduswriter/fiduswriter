@@ -50,6 +50,31 @@
         }
     };
 
+    printHelpers.modeltoViewNode = function (node) {
+        return node;
+    };
+
+    /* TODO: IS this still useful? Should it be part of the modeltoViewNode?
+    printHelpers.createFootnoteView = function (htmlFragment, number) {
+        var fn = document.createElement('span'), id;
+        fn.classList.add('pagination-footnote');
+
+        fn.appendChild(document.createElement('span'));
+        fn.firstChild.appendChild(document.createElement('span'));
+        fn.firstChild.firstChild.appendChild(htmlFragment);
+
+        if (typeof number === 'undefined') {
+            number = document.getElementById('flow').querySelectorAll('.pagination-footnote').length;
+
+            while (document.getElementById('pagination-footnote-'+number)) {
+                number++;
+            }
+        }
+
+        fn.id = 'pagination-footnote-'+ number;
+        return fn;
+    };*/
+
     printHelpers.setTheBook = function (aBook) {
         var i;
         theBook = aBook;
@@ -126,6 +151,8 @@
 
 
     };
+
+
 
     printHelpers.setDocumentStyle = function (theValue) {
         var documentStyleLink = document.getElementById('document-style-link'),

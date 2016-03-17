@@ -77,23 +77,16 @@ class DocumentWS(BaseWebSocketHandler):
             document.diff_version = document.version
             DocumentWS.sessions[self.user_info.document_id]["last_diffs"] = []
         response['document']['title']=document.title
-        #response['document']['contents']=document.contents
         response['document']['contents']=DocumentWS.sessions[self.user_info.document_id]['contents']
         response['document']['metadata']=DocumentWS.sessions[self.user_info.document_id]['metadata']
         response['document']['settings']=DocumentWS.sessions[self.user_info.document_id]['settings']
-        #response['document']['comments']=DocumentWS.sessions[self.user_info.document_id]['comments']
-
-        #response['document']['contents']=DocumentWS.sessions[self.user_info.document_id]['contents']
-        #response['document']['metadata']=document.metadata
-        #response['document']['settings']=DocumentWS.sessions[self.user_info.document_id]["settings"]
         access_rights =  get_accessrights(AccessRight.objects.filter(document__owner=document.owner))
         response['document']['access_rights'] = access_rights
 
-        filtered_comments = filter_comments_by_role(DocumentWS.sessions[self.user_info.document_id]["comments"], access_rights, 'editing', self.user_info)
-
-
-        #response['document']['comments']=DocumentWS.sessions[self.user_info.document_id]["comments"]
-        response['document']['comments'] = filtered_comments
+        #TODO: switch on filtering when choose workflow and have UI for assigning roles to users
+        #filtered_comments = filter_comments_by_role(DocumentWS.sessions[self.user_info.document_id]["comments"], access_rights, 'editing', self.user_info)
+        response['document']['comments']=DocumentWS.sessions[self.user_info.document_id]["comments"]
+        #response['document']['comments'] = filtered_comments
         response['document']['comment_version']=document.comment_version
         response['document']['access_rights'] = get_accessrights(AccessRight.objects.filter(document__owner=document.owner))
         response['document']['owner'] = dict()

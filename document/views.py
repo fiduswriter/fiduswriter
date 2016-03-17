@@ -15,37 +15,37 @@
 #
 # You should have received a copy of the GNU Affero General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
+import re
+from django.contrib.sites.models import Site
 
-import json
-
+from django.contrib.sites.shortcuts import get_current_site
+from django.http.response import Http404
 from django.shortcuts import render
-from django.http import HttpResponse, JsonResponse, HttpRequest, Http404
-from django.utils import timezone
+from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.contrib.auth.decorators import login_required
 from django.template.context_processors import csrf
 from django.db import transaction
-from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
+from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.core.mail import send_mail
-from document.helpers.session_user_info import SessionUserInfo
 from document.models import Document, AccessRight, DocumentRevision
-from document.helpers.filtering_comments import filter_comments_by_role
-from avatar.util import get_primary_avatar, get_default_avatar_url
 
+from avatar.util import get_primary_avatar, get_default_avatar_url
 from avatar.templatetags.avatar_tags import avatar_url
-from rdflib import BNode, Literal, URIRef, Graph, plugin
-from rdflib.namespace import RDF, FOAF, DC, DCTERMS, NamespaceManager, Namespace
-from rdflib.serializer import Serializer
-from datetime import datetime
-from django.core.serializers.python import Serializer
 
 from django.db.models import Q
-import dateutil.parser
-
 
 from django.core.serializers.python import Serializer
+from document.rdf import RDFBuilder
+from document.helpers.filtering_comments import filter_comments_by_role
+from document.helpers.session_user_info import SessionUserInfo
+
+import json
+import urlparse
+
+from django.core.exceptions import PermissionDenied
 
 
 class SimpleSerializer(Serializer):
@@ -53,6 +53,27 @@ class SimpleSerializer(Serializer):
         self._current['id'] = obj._get_pk_val()
         self.objects.append( self._current )
 serializer = SimpleSerializer()
+
+def get_document__and_comments(document_id, user):
+    """
+    Function for getting document and filtered comments info
+    :param document_id: Id of document
+    :type document_id: int
+    :param user: Information about user
+    :type user: dict
+    :return document and filtered comments:
+    :rtype: tuple
+    """
+    user_info = SessionUserInfo()
+
+    document, can_access = user_info.init_access(document_id, user)
+    if not can_access:
+        raise PermissionDenied('User does not have enough permissions')
+
+    comments_content = json.loads(document.comments)
+    access_rights =  get_accessrights(AccessRight.objects.filter(document__owner=document.owner))
+    filtered = filter_comments_by_role(comments_content, access_rights, 'editing', user_info)
+    return (document, filtered)
 
 def get_accessrights(ars):
     ret = []
@@ -153,78 +174,32 @@ def get_documentlist_js(request):
         status=status
     )
 
+def get_rdf_comments(request):
+    """
+    Getting rdf comments from RDF Builder
+    :param request:
+    :type request:
+    :return:
+    :rtype:
+    """
+
+    host_url = request.scheme + '://' + request.META['SERVER_NAME'] + '/'
+    res_url_match = re.match('\/document\/(\d+)\/', request.get_full_path())
+    document_id = int(res_url_match.group(1))
+
+    document, comments_content = get_document__and_comments(document_id, request.user)
+    rdf = RDFBuilder(host_url)
+    return HttpResponse(rdf.get_comments_by_document(document, comments_content))
 
 @login_required
 def editor(request):
     response = {}
 
-    document_id = 5
-
-    if 'CONTENT_TYPE' in request.META.keys():
-        return get_rdf(request, request.META['CONTENT_TYPE'], document_id)
+    if 'CONTENT_TYPE' in request.META.keys() and request.META['CONTENT_TYPE'] == 'application/rdf+turtle':
+        return get_rdf_comments(request)
 
     return render(request, 'document/editor.html',
         response)
-
-def initialize_prefixes(graph):
-    ns_manger = NamespaceManager(graph)
-
-    oaNs = Namespace('http://www.w3.org/ns/oa#')
-    reviewNs = Namespace('http://eis.iai.uni-bonn.de/Projects/OSCOSS/reviews/')
-
-    ns_manger.bind('oa', oaNs)
-    ns_manger.bind('review', reviewNs)
-    ns_manger.bind('foaf', FOAF)
-
-    return ns_manger
-
-BASE_FIDUS_URI = 'http://fiduswriter.org/'
-
-def get_document_for_rdf(document_id, request):
-    user_info = SessionUserInfo()
-
-    document, can_access = user_info.init_access(document_id, request.user)
-    if not can_access:
-        raise PermissionDenied('User does not have enough permissions')
-
-    comments_content = json.loads(document.comments)
-    access_rights =  get_accessrights(AccessRight.objects.filter(document__owner=document.owner))
-    return filter_comments_by_role(comments_content, access_rights, 'editing', user_info)
-
-def add_comments_to_rdf_graph(graph, namespaces, comments_content, document_node):
-    is_major_predicate = namespaces['review'].isMajor
-    oa_ns = namespaces['oa']
-
-    for comment_index, cur_comment_json in comments_content.iteritems():
-        cur_comment_node = URIRef(document_node.toPython() + '/comments/' + comment_index)
-        graph.add((cur_comment_node, RDF.type, oa_ns.Annotation))
-        graph.add((cur_comment_node, oa_ns.annotateAt, Literal(datetime.fromtimestamp(cur_comment_json['date']/1000))))
-        graph.add((cur_comment_node, oa_ns.hasBody, Literal(cur_comment_json['comment'])))
-        graph.add((cur_comment_node, oa_ns.annotatedBy, Literal(cur_comment_json['userName'])))
-        graph.add((cur_comment_node, oa_ns.hasTarget, document_node)) #TODO: this is lazy solution. need to add range
-        if 'review:isMajor' in cur_comment_json.keys():
-            graph.add((cur_comment_node, is_major_predicate, Literal(cur_comment_json['review:isMajor'])))
-
-def get_rdf(request, content_type, document_id):
-    if content_type != 'application/rdf+turtle':
-        raise Http404("Content type is not supported")
-
-    comments_content = get_document_for_rdf(document_id, request)
-
-    graph = Graph()
-    ns_manager = initialize_prefixes(graph)
-    namespaces = dict((x,Namespace(y)) for x, y in ns_manager.namespaces())
-    document_node = URIRef(BASE_FIDUS_URI + "document/" + str(document_id))
-
-    graph.add((document_node, RDF.type, FOAF.Document))
-    add_comments_to_rdf_graph(graph, namespaces, comments_content, document_node)
-
-    #TODO: support json -ld
-    #context = {"@vocab": BASE_FIDUS_URI + "oscoss.jsonld", "@language": "en"}
-    #graph_json = graph.serialize(format='json-ld', context=context, indent=4)
-    graph_turtle = graph.serialize(format='turtle')
-    return HttpResponse(graph_turtle)
-    #return HttpResponse(json.dumps(graph_json), content_type='application/json')
 
 @login_required
 def delete_js(request):

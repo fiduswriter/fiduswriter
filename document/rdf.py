@@ -35,7 +35,7 @@ class RDFBuilder(object):
         self._ns_manager.bind('review', reviewNs)
         self._ns_manager.bind('foaf', FOAF)
 
-    def _add_comments_to_rdf_graph(self, comments_content, document_node):
+    def _add_comments_to_rdf_graph(self, comments_content, document_node, document):
         """
         Private method for adding comments to graph
         :param comments_content: Filtered comments
@@ -54,9 +54,27 @@ class RDFBuilder(object):
             self._graph.add((cur_comment_node, oa_ns.annotateAt, Literal(datetime.fromtimestamp(cur_comment_json['date']/1000))))
             self._graph.add((cur_comment_node, oa_ns.hasBody, Literal(cur_comment_json['comment'])))
             self._graph.add((cur_comment_node, oa_ns.annotatedBy, Literal(cur_comment_json['userName'])))
-            self._graph.add((cur_comment_node, oa_ns.hasTarget, document_node)) #TODO: this is lazy solution. need to add range
+
+            self._add_target_for_comment(cur_comment_node, document_node, oa_ns, document)
             if 'review:isMajor' in cur_comment_json.keys():
                 self._graph.add((cur_comment_node, is_major_predicate, Literal(cur_comment_json['review:isMajor'])))
+
+    def _add_target_for_comment(self, cur_comment_node, document_node, oa_ns, document):
+        target_bnode = BNode()
+
+        self._graph.add((cur_comment_node, oa_ns.hasTarget, target_bnode)) #TODO: this is lazy solution. need to add range
+
+        self._graph.add((target_bnode, RDF.type, oa_ns.SpecificResource))
+        self._graph.add((target_bnode, oa_ns.hasSource, document_node))
+        selector_bnode = BNode()
+
+        self._graph.add((target_bnode, oa_ns.hasSelector, selector_bnode))
+
+        self._graph.add((selector_bnode, RDF.type, oa_ns.TextPositionSelector))
+        #TODO: add real start and end. Probably not possible to implement Text Position Selector.
+        self._graph.add((selector_bnode, oa_ns.end, Literal(7)))
+        self._graph.add((selector_bnode, oa_ns.start, Literal(4)))
+
 
     def get_comments_by_document(self, document, comments_content, format='turtle'):
         """
@@ -77,7 +95,7 @@ class RDFBuilder(object):
         document_node = URIRef(self._host_url + "document/" + str(document_id))
 
         self._graph.add((document_node, RDF.type, FOAF.Document))
-        self._add_comments_to_rdf_graph(comments_content, document_node)
+        self._add_comments_to_rdf_graph(comments_content, document_node, document)
 
         #TODO: support json -ld
         #context = {"@vocab": BASE_FIDUS_URI + "oscoss.jsonld", "@language": "en"}

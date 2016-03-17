@@ -270,7 +270,7 @@ class DocumentWS(BaseWebSocketHandler):
 
     def on_close(self):
         print "Websocket closing"
-        if hasattr(self, 'document_id') and self.user_info.document_id in DocumentWS.sessions and self.id in DocumentWS.sessions[self.user_info.document_id]['participants']:
+        if hasattr(self.user_info, 'document_id') and self.user_info.document_id in DocumentWS.sessions and self.id in DocumentWS.sessions[self.user_info.document_id]['participants']:
             del DocumentWS.sessions[self.user_info.document_id]['participants'][self.id]
             if DocumentWS.sessions[self.user_info.document_id]['in_control']==self.id:
                 if len(DocumentWS.sessions[self.user_info.document_id]['participants'].keys()) > 0:

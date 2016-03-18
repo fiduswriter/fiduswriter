@@ -23,5 +23,5 @@ stripe==1.27.1
 tornado==4.3
 wsgiref==0.1.2
 setuptools==19.2
-git+git://github.com/fiduswriter/django-js-error-hook.git@0.4dev1#egg=django-js-error-hook
+django-js-error-hook==0.4
 rdflib-jsonld==0.3

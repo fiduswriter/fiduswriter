@@ -12,27 +12,10 @@
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/book.css" />
 
     {% endcompress %}
-    <!-- Mathjax -->
-    <script type="text/x-mathjax-config">
-            MathJax.Hub.Config({
-                extensions: ["tex2jax.js"],
-                jax: ["input/TeX", "output/SVG"],
-                tex2jax: {
-                    inlineMath: [ ['[MATH]','[/MATH]']],
-                    displayMath: [ ['[DMATH]','[/DMATH]']],
-                    processEscapes: true
-                },
-                showMathMenu: false,
-                "SVG": {
-                    scale: 120
-                },
-                errorSettings: {
-                    message: ["[Math Processing Error]"]
-                }
-            });
-    </script>
-    <script type="text/javascript" src="{{ MATHJAX_URL }}"></script>
     {% compress js %}
+        <script type="text/javascript">
+            var staticUrl = '{{ STATIC_URL }}';
+        </script>
         <!-- document styles -->
         <script type="text/javascript" src="{{ STATIC_URL }}js/document/stylelist.js"></script>
         <!-- jQuery Dropkick -->
@@ -42,7 +25,7 @@
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dataTables.min.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/document-helpers.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/book-helpers.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/book-exporter.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/book-exporter.es5.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/book-templates.js"></script>
         <script type="text/javascript">
             bookHelpers.bind();
@@ -77,14 +60,9 @@
         <!-- Citation definitions -->
         <script type="text/javascript" src="{{ STATIC_URL }}js/citation/definitions.js"></script>
         <!-- File export functions -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.js"></script>
-        <!-- Math functions -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/math-helpers.js"></script>
-        <script type="text/javascript">
-        var mathjaxZipUrl = '{{ STATIC_URL }}zip/mathjax.zip';
-        </script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.es5.js"></script>
         <!-- File import -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/importer.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/importer.es5.js"></script>
 
     {% endcompress %}
 

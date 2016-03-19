@@ -1,4 +1,5 @@
 import {figureImageTemplate, configureFigureTemplate} from "./templates"
+import {render as katexRender} from "katex"
 
 export let bindFigure = function (editor) {
 // toolbar figure
@@ -14,7 +15,6 @@ export let bindFigure = function (editor) {
             figureCategory = 'figure',
             equation = '',
             previewImage,
-            mathInput, captionInput,
             node = editor.pm.selection.node
 
         event.preventDefault()
@@ -114,8 +114,8 @@ export let bindFigure = function (editor) {
 
         dialog.dialog(dialogOpts)
 
-        mathInput = jQuery('input[name=figure-math]', dialog)
-        captionInput = jQuery('input[name=figure-caption]', dialog)
+        let mathInput = jQuery('input[name=figure-math]', dialog)
+        let captionInput = jQuery('input[name=figure-caption]', dialog)
             .focus(function (
                 e) {
                 return this.select()
@@ -131,17 +131,14 @@ export let bindFigure = function (editor) {
         setFigureLabel()
 
         function layoutMathPreview() {
-            jQuery('#inner-figure-preview')[0].innerHTML =
-                '<p>[DMATH]' + equation +
-                '[/DMATH]</p>'
-            MathJax.Hub.Queue(["Typeset",
-                MathJax.Hub,
-                "inner-figure-preview"
-            ])
+            let previewNode = document.getElementById('inner-figure-preview')
+            katexRender(equation, previewNode, {
+                displayMode: true
+            })
         }
 
         function layoutImagePreview() {
-            jQuery('#inner-figure-preview')[0].innerHTML =
+            document.getElementById('inner-figure-preview').innerHTML =
                 '<img src="' +
                 previewImage.image +
                 '" style="max-width: 400px;max-height:220px">'

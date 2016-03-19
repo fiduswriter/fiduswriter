@@ -1,1 +1,1 @@
-testCaretJS = open('test/js/test-caret.js', 'r').read()
+testCaretJS = open('test/js/test-caret.es5.js', 'r').read()

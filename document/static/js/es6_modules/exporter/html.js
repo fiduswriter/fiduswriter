@@ -2,6 +2,7 @@ import {obj2Node} from "./json"
 import {createSlug, findImages} from "./tools"
 import {zipFileCreator} from "./zip"
 import {htmlExportTemplate} from "./html-templates"
+import {render as katexRender} from "katex"
 
 export let downloadHtml = function(aDocument, inEditor) {
     if (inEditor || (window.hasOwnProperty(
@@ -87,7 +88,7 @@ export let joinDocumentParts = function(aDocument, aBibDB) {
 }
 
 let export1 = function(aDocument, aBibDB) {
-    let styleSheets = [], mathjax = false
+    let styleSheets = [], math = false
 
     let title = aDocument.title
 
@@ -101,32 +102,24 @@ let export1 = function(aDocument, aBibDB) {
     let figureEquations = contents.querySelectorAll('.figure-equation')
 
     if (equations.length > 0 || figureEquations.length > 0) {
-        mathjax = true
+        math = true
+        styleSheets.push({filename: 'katex.min.css'})
     }
 
     for (let i = 0; i < equations.length; i++) {
-        mathHelpers.layoutMathNode(equations[i])
+        let node = equations[i]
+        let formula = node.getAttribute('data-equation')
+        katexRender(formula, node)
     }
     for (let i = 0; i < figureEquations.length; i++) {
-        mathHelpers.layoutDisplayMathNode(figureEquations[i])
+        let node = figureEquations[i]
+        let formula = node.getAttribute('data-equation')
+        katexRender(formula, node, {
+            displayMode: true
+        })
     }
-
-    mathHelpers.queueExecution(function() {
-        export2(aDocument, styleSheets, title, contents, mathjax)
-    })
-}
-
-let export2 = function(aDocument, styleSheets, title, contents, mathjax) {
 
     let includeZips = []
-
-    if (mathjax) {
-        mathjax = getMathjaxHeader()
-
-        if (mathjax) {
-            mathjax = mathjax.outerHTML
-        }
-    }
 
     let httpOutputList = findImages(contents)
 
@@ -136,12 +129,11 @@ let export2 = function(aDocument, styleSheets, title, contents, mathjax) {
 
     let htmlCode = htmlExportTemplate({
         part: false,
-        title: title,
+        title,
         metadata: aDocument.metadata,
         settings: aDocument.settings,
-        styleSheets: styleSheets,
-        contents: contentsCode,
-        mathjax: mathjax,
+        styleSheets,
+        contents: contentsCode
     })
 
     let outputList = [{
@@ -149,12 +141,17 @@ let export2 = function(aDocument, styleSheets, title, contents, mathjax) {
         contents: htmlCode
     }]
 
-    outputList = outputList.concat(styleSheets)
+    for (let i = 0; i < styleSheets.length; i++) {
+        let styleSheet = styleSheets[i]
+        if (styleSheet.contents) {
+            outputList.push(styleSheet)
+        }
+    }
 
-    if (mathjax) {
+    if (math) {
         includeZips.push({
             'directory': '',
-            'url': mathjaxZipUrl,
+            'url': staticUrl + 'zip/katex-style.zip',
         })
     }
     zipFileCreator(outputList, httpOutputList, createSlug(
@@ -239,14 +236,4 @@ export let replaceImgSrc = function(htmlString) {
     htmlString = htmlString.replace(/<(img|IMG) data-src([^>]+)>/gm,
         "<$1 src$2>")
     return htmlString
-}
-
-// Mathjax automatically adds some elements to the current document after making SVGs. We need these elements.
-export let getMathjaxHeader = function() {
-    let mathjax = document.getElementById('MathJax_SVG_Hidden')
-    if (mathjax === undefined || mathjax === null) {
-        return false
-    } else {
-        return mathjax.parentElement
-    }
 }

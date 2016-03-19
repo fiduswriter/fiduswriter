@@ -10,23 +10,6 @@
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/access-rights-dialog.css" />
     {% endcompress %}
 
-    <!-- Mathjax -->
-    <script type="text/x-mathjax-config">
-            MathJax.Hub.Config({
-                extensions: ["tex2jax.js"],
-                jax: ["input/TeX", "output/SVG"],
-                tex2jax: {
-                    inlineMath: [ ['[MATH]','[/MATH]']],
-                    displayMath: [ ['[DMATH]','[/DMATH]']],
-                    processEscapes: true
-                },
-                showMathMenu: false,
-                "SVG": {
-                    scale: 120
-                }
-            });
-    </script>
-    <script type="text/javascript" src="{{ MATHJAX_URL }}"></script>
     <!-- citeproc -->
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/xmldom.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/citeproc.js"></script>
@@ -48,9 +31,6 @@
         <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-statics.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-helpers.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-template-dialogs.js"></script>
-
-        <!-- Math functions -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/math-helpers.js"></script>
 
         <!-- document revisions -->
         <script type="text/javascript" src="{{ STATIC_URL }}js/document-revisions-helpers.js"></script>
@@ -82,11 +62,11 @@
         <script type="text/javascript" src="{{ STATIC_URL }}js/citation/definitions.js"></script>
         <!-- File export functions -->
         <script type="text/javascript">
-            var mathjaxZipUrl = '{{ STATIC_URL }}zip/mathjax.zip';
+            var staticUrl = '{{ STATIC_URL }}';
         </script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.es5.js"></script>
         <!-- File import -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/importer.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/importer.es5.js"></script>
     {% endcompress %}
 {% endblock %}
 

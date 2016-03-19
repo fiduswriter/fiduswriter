@@ -1,7 +1,5 @@
-import {mathjaxHtmlHeaderTemplatePart} from "./html-templates"
-
 /** A template to include MathJax in an Epub's OPF file. */
-export let opfMathjaxItemsTemplatePart = '\
+export let opfKatexItemsTemplatePart = '\
         <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/BasicLatin.js" id="id0" media-type="application/x-javascript"/>\
         <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/MiscMathSymbolsB.js" id="id1" media-type="application/x-javascript"/>\
         <item href="mathjax/jax/input/MathML/entities/d.js" id="id2" media-type="application/x-javascript"/>\
@@ -219,7 +217,7 @@ export let opfTemplate = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
     \t\t<meta property="dcterms:modified"><%= modified %></meta>\n\
     \t</metadata>\n\
     \t<manifest>\n\
-    \t\t<item id="t1" href="document.xhtml" <% if (mathjax) { %>properties="scripted svg" <% } %>media-type="application/xhtml+xml" />\n\
+    \t\t<item id="t1" href="document.xhtml" %>media-type="application/xhtml+xml" />\n\
     \t\t<item id="nav" href="document-nav.xhtml" properties="nav" media-type="application/xhtml+xml" />\n\
         <% _.each(images,function(item, index){ %>'
             + opfImageItemTemplatePart +
@@ -227,8 +225,8 @@ export let opfTemplate = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
         <% _.each(styleSheets,function(item, index){ %>'
             + opfCssItemTemplatePart +
         '<% }); %>\
-        <% if (mathjax) {%>'
-            + opfMathjaxItemsTemplatePart +
+        <% if (math) {%>'
+            + opfKatexItemsTemplatePart +
         '<% }%>\
     \t\t<!-- ncx included for 2.0 reading system compatibility: -->\n\
     \t\t<item id="ncx" href="document.ncx" media-type="application/x-dtbncx+xml" />\n\
@@ -279,29 +277,6 @@ export let ncxItemTemplate = _.template('\
 /** A template for each CSS item in an epub document file. */
 let xhtmlCssItemTemplatePart = '\t<link rel="stylesheet" type="text/css" href="<%= item.filename %>" />'
 
-/** A template to initiate MathJax execution in the header of an XHTML document if it includes MathJax. */
-let mathjaxXhtmlHeaderStarterTemplatePart = '\
-    <script type="text/javascript">\
-        <![CDATA[\
-            document.addEventListener("DOMContentLoaded", function () {\
-                if (window.hasOwnProperty("MathJax")) {\
-                    var mjQueue = MathJax.Hub.queue;\
-                    var equations = document.body.querySelectorAll(".equation");\
-                    for (var i = 0; i < equations.length; i++) {\
-                        equations[i].innerHTML = "[MATH]"+equations[i].getAttribute("data-equation")+"[/MATH]";\
-                        mjQueue.Push(["Typeset",MathJax.Hub,equations[i]]);\
-                    }\
-                    var fequations = document.body.querySelectorAll(".figure-equation");\
-                    for (var i = 0; i < fequations.length; i++) {\
-                        fequations[i].innerHTML = "[DMATH]"+fequations[i].getAttribute("data-equation")+"[/DMATH]";\
-                        mjQueue.Push(["Typeset",MathJax.Hub,fequations[i[]);\
-                    }\
-                }\
-            });\
-        ]]>\
-    </script>\
-    '
-
 /** A template for a document in an epub. */
 export let xhtmlTemplate = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
     <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<%= shortLang %>" lang="<%= shortLang %>"\
@@ -309,17 +284,7 @@ export let xhtmlTemplate = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
         <% _.each(styleSheets,function(item){ %>'
             + xhtmlCssItemTemplatePart +
         '<% }); %>\
-        <% if (mathjax) { %>'
-            + mathjaxHtmlHeaderTemplatePart +
-            + mathjaxXhtmlHeaderStarterTemplatePart +
-        '<% } %>\
-        </head><body \
-        <% if (mathjax) { %>\
-            class="tex2jax_ignore">\
-            <%= mathjax %>\
-        <% } else { %>\
-            >\
-        <% } %>\
+        </head><body>\
         <% if (part && part !="") {%>\
             <h1 class="part"><%= part %></h1>\
         <% } %>\

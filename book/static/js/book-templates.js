@@ -26,15 +26,7 @@
          <% _.each(styleSheets,function(item){ %>\
              <%= tmp_html_css_item({"item":item})%>\
          <% }); %>\
-         <% if (mathjax) { %>\
-             <%= tmp_mathjax_html_header({})%>\
-             <%= tmp_mathjax_html_header_starter({})%>\
-         <% } %>\
-         </head><body \
-         class="tex2jax_ignore">\
-         <% if (mathjax) { %>\
-             <%= mathjax %>\
-         <% } %>\
+         </head><body>\
          <% if (part && part !="") { %>\
              <h1 class="part"><%= part %></h1>\
          <% } %>\
@@ -66,47 +58,8 @@
          <%= contents %></body></html>');
  /** A template for each item in an HTML export of a Fidus Writer document. */
  var tmp_html_css_item = _.template('\t<link rel="stylesheet" type="text/css" href="<%= item.filename %>" />');
- /** A template for the MathJax parts to include in the header of a HTML/XHTML document if it includes MathJax. */
- var tmp_mathjax_html_header = _.template('\
-     <script type="text/x-mathjax-config">\
-         MathJax.Hub.Config({\
-             jax: ["input/TeX","output/SVG"],\
-             tex2jax: {\
-                     inlineMath: [ ["[MATH]","[/MATH]"]],\
-                     displayMath: [ ["[DMATH]","[/DMATH]"]],\
-                 processEscapes: true\
-             },\
-             extensions: ["tex2jax.js"],\
-             TeX: {\
-                 extensions: ["noErrors.js","noUndefined.js","autoload-all.js"]\
-             },\
-             showMathMenu: false,\
-             messageStyle: "none"\
-         });\
-     </script>\
-     <script type="text/javascript" src="mathjax/MathJax.js">\
-     </script>\
-     ');
- /** A template to initiate MathJax execution in the header of a HTML document if it includes MathJax. */
- var tmp_mathjax_html_header_starter = _.template('\
-     <script type="text/javascript">\
-             document.addEventListener("DOMContentLoaded", function () {\
-                 if (window.hasOwnProperty("MathJax")) {\
-                     var mjQueue = MathJax.Hub.queue;\
-                     var equations = document.body.querySelectorAll(".equation");\
-                     for (var i = 0; i < equations.length; i++) {\
-                         equations[i].innerHTML = "[MATH]"+equations[i].getAttribute("data-equation")+"[/MATH]";\
-                         mjQueue.Push(["Typeset",MathJax.Hub,equations[i]]);\
-                     }\
-                     var fequations = document.body.querySelectorAll(".figure-equation");\
-                     for (var i = 0; i < fequations.length; i++) {\
-                         fequations[i].innerHTML = "[DMATH]"+fequations[i].getAttribute("data-equation")+"[/DMATH]";\
-                         mjQueue.Push(["Typeset",MathJax.Hub,fequations[i]]);\
-                     }\
-                 }\
-             });\
-     </script>\
-     ');
+
+
 /** A template for the list of books */
 var tmp_book_list = _.template('\
 <% _.each(theBookList,function(aBook,key,list){%><%= tmp_book_list_item({aBook:aBook})%><% }); %>');
@@ -498,7 +451,7 @@ var tmp_epub_book_opf = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
     <% } %>\
     <item id="titlepage" href="titlepage.xhtml" media-type="application/xhtml+xml"/>\
     <% _.each(chapters, function (aChapter) { %>\
-        \t\t<item id="t<%- aChapter.number %>" href="document-<%- aChapter.number %>.xhtml" <% if (aChapter.mathjax) { %>properties="scripted svg" <% } %>media-type="application/xhtml+xml" />\n\
+        \t\t<item id="t<%- aChapter.number %>" href="document-<%- aChapter.number %>.xhtml" media-type="application/xhtml+xml" />\n\
     <% }); %>\
     \t\t<item id="nav" href="document-nav.xhtml" properties="nav" media-type="application/xhtml+xml" />\n\
         <item id="copyright" href="copyright.xhtml" media-type="application/xhtml+xml"/>\
@@ -508,8 +461,8 @@ var tmp_epub_book_opf = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
         <% _.each(styleSheets,function(item, index){ %>'
             + exporter.opfCssItemTemplatePart +
         '<% }); %>\
-        <% if (mathjax) {%>'
-            + exporter.opfMathjaxItemsTemplatePart +
+        <% if (math) {%>'
+            + exporter.opfKatexItemsTemplatePart +
         '<% }%>\
     \t\t<!-- ncx included for 2.0 reading system compatibility: -->\n\
     \t\t<item id="ncx" href="document.ncx" media-type="application/x-dtbncx+xml" />\n\

@@ -111,7 +111,6 @@ ALLOWED_HOSTS = [
 #    'JQUERY_URL': STATIC_URL + 'js/libs/jquery-2.2.0.js',
 #    'JQUERYUI_URL': STATIC_URL + 'js/libs/jquery-ui-1.11.4.js',
 #    'UNDERSCOREJS_URL': STATIC_URL + 'js/libs/underscore-1.8.3.js',
-#    'MATHJAX_URL': STATIC_URL + 'js/libs/mathjax/MathJax.js',
 #    }
 #
 #CSS_LOCATIONS = {

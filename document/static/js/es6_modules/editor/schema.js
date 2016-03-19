@@ -1,4 +1,5 @@
 import {Schema, defaultSchema, Block, Textblock, Inline, Attribute, MarkType, NodeKind} from "prosemirror/dist/model"
+import {render as katexRender} from "katex"
 
 export class Doc extends Block {
     get kind() {
@@ -316,11 +317,14 @@ Equation.register("parseDOM", "span", {
     }
 })
 
-Equation.prototype.serializeDOM = (node, serializer) =>
-    serializer.renderAs(node, "span", {
+Equation.prototype.serializeDOM = (node, serializer) => {
+    let dom = serializer.renderAs(node, "span", {
         class: 'equation',
         'data-equation': node.attrs.equation
     })
+    katexRender(node.attrs.equation, dom)
+    return dom
+}
 
 Equation.register("command", "insert", {
     derive: {
@@ -408,10 +412,14 @@ Figure.prototype.serializeDOM = (node, serializer) => {
             }
         }
     } else {
-        dom.appendChild(serializer.elt("div", {
+        let domEquation = serializer.elt("div", {
             class: 'figure-equation',
             'data-equation': node.attrs.equation
-        }))
+        })
+        katexRender(node.attrs.equation, domEquation, {
+            displayMode: true
+        })
+        dom.appendChild(domEquation)
     }
     let captionNode = serializer.elt("figcaption")
     if (node.attrs.figureCategory !== 'none') {

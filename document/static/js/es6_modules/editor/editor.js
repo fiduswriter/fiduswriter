@@ -1,5 +1,4 @@
 /* Functions for ProseMirror integration.*/
-
 import {ProseMirror} from "prosemirror/dist/edit/main"
 import {fromDOM} from "prosemirror/dist/format"
 import {serializeTo} from "prosemirror/dist/format"
@@ -70,8 +69,6 @@ export class Editor {
         this.pm.on("change", function(){that.docInfo.changed = true})
         this.pm.on("transform", (transform, options) => {that.onTransform(transform, true)})
         this.pm.on("remoteTransform", (transform, options) => {that.onTransform(transform, false)})
-        new UpdateScheduler(this.pm, "flush setDoc", mathHelpers.layoutEmptyEquationNodes)
-        new UpdateScheduler(this.pm, "flush setDoc", mathHelpers.layoutEmptyDisplayEquationNodes)
         new UpdateScheduler(this.pm, "flush setDoc", citationHelpers.formatCitationsInDocIfNew)
         this.setSaveTimers()
     }
@@ -216,7 +213,6 @@ export class Editor {
                 // bind the share dialog to the button if the user is the document owner
                 jQuery('.share').removeClass('disabled')
             }
-            mathHelpers.resetMath()
         } else if (this.docInfo.rights === 'r') {
             // Try to disable contenteditable
             jQuery('.ProseMirror-content').attr('contenteditable', 'false')

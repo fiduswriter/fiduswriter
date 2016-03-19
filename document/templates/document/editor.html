@@ -9,7 +9,6 @@
         <meta name="description" content="{% trans "The all in one solution for collaborative academic writing." %}">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script type="text/javascript">
-            var mathjaxZipUrl = '{{ STATIC_URL }}zip/mathjax.zip';
             var staticUrl = '{{ STATIC_URL }}';
             {% if WS_PORT %}
                 var websocketPort = {{WS_PORT}};
@@ -28,6 +27,8 @@
         </style>
         <style type="text/css" id="active-comment-style">
         </style>
+        <!-- KaTeX -->
+        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/libs/katex/katex.min.css" />
         <!--  Translations -->
         <script type="text/javascript" src="/jsi18n/"></script>
         <!-- document style -->
@@ -83,23 +84,6 @@
         <script type="text/javascript" src="{{ JQUERYUI_URL }}"></script>
         <!-- Underscore -->
         <script type="text/javascript" src="{{ UNDERSCOREJS_URL }}"></script>
-        <!-- Mathjax -->
-        <script type="text/x-mathjax-config">
-            MathJax.Hub.Config({
-                extensions: ["tex2jax.js"],
-                jax: ["input/TeX", "output/SVG"],
-                tex2jax: {
-                    inlineMath: [ ['[MATH]','[/MATH]']],
-                    displayMath: [ ['[DMATH]','[/DMATH]']],
-                    processEscapes: true
-                },
-                showMathMenu: false,
-                "SVG": {
-                    scale: 120
-                }
-            });
-        </script>
-        <script type="text/javascript" src="{{ MATHJAX_URL }}"></script>
         <!-- citeproc -->
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/xmldom.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/citeproc.js"></script>
@@ -173,18 +157,16 @@
             <script type="text/javascript" src="{{ STATIC_URL }}js/usermedia-helpers.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/usermedia-template-dialogs.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/usermedia-simplelist-template-dialogs.js"></script>
-            <!-- Math functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/math-helpers.js"></script>
             <!-- Access rights dialog -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/document-accessrights-templates.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/document-accessrights-helpers.js"></script>
             <!-- File export functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.es5.js"></script>
             <!-- File import -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/importer.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/importer.es5.js"></script>
         {% endcompress %}
         <!-- Editor  -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/editor.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/editor.es5.js"></script>
 
     </head>
     <body class="{% trans "en" %} tex2jax_ignore">

@@ -19,3 +19,5 @@ venv/
 configuration.py
 fidus.db
 deploy
+chromedriver
+testing.py

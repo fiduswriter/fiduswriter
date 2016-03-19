@@ -3534,9 +3534,9 @@ var figureImageTemplate = exports.figureImageTemplate = _.template('\
             </tbody>\
         </table>\
         <div class="dialogSubmit">\
-            <button class="edit-image createNew fw-button fw-light">' + gettext('Upload new image') + '<span class="icon-plus-circle"></span>\
+            <button class="edit-image createNew fw-button fw-light">' + gettext('Upload') + '<span class="icon-plus-circle"></span>\
             </button>\
-            <button type="button" id="selectImageFigureButton" class="fw-button fw-dark">' + gettext('Insert image') + '</button>\
+            <button type="button" id="selectImageFigureButton" class="fw-button fw-dark">' + gettext('Insert') + '</button>\
              <button type="button" id="cancelImageFigureButton" class="fw-button fw-orange">' + gettext('Cancel') + '</button>\
         </div>\
     </div>\

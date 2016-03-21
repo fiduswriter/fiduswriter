@@ -1,3 +1,8 @@
+import {bookListTemplate, bookBasicInfoTemplate, bookPrintDataTemplate,
+    bookCoverImageSelectionTemplate, bookDialogChaptersTemplate,
+    bookChapterListTemplate, bookDocumentListTemplate, bookChapterDialogTemplate
+  } from "./templates"
+
 let deleteBook = function (id) {
     let postData = {}
     postData['id'] = id
@@ -132,7 +137,7 @@ export let getBookListData = function (id) {
 
 let selectCoverImageDialog = function (theBook,anImageDB) {
     let dialogHeader = gettext('Select cover image'),
-        dialogBody = tmp_book_cover_image_selection({
+        dialogBody = bookCoverImageSelectionTemplate({
             theBook: theBook,
             anImageDB: anImageDB
         })
@@ -163,7 +168,7 @@ let selectCoverImageDialog = function (theBook,anImageDB) {
         } else {
             theBook.cover_image = parseInt(jQuery('#imagelist tr.checked')[0].id.substring(6))
         }
-        jQuery('#figure-preview-row').html(tmp_book_epub_data_cover({
+        jQuery('#figure-preview-row').html(bookEpubDataCoverTemplate({
             'anImageDB': anImageDB,
             'theBook': theBook
         }))
@@ -201,7 +206,7 @@ let editChapterDialog = function (aChapter, theBook) {
     }
     dialogHeader = gettext('Edit Chapter') + ': ' + aChapter.number +
         '. ' + documentTitle
-    dialogBody = tmp_book_chapter_dialog({
+    dialogBody = bookChapterDialogTemplate({
         'dialogHeader': dialogHeader,
         'aChapter': aChapter
     })
@@ -210,7 +215,7 @@ let editChapterDialog = function (aChapter, theBook) {
     let diaButtons = {}
     diaButtons[gettext('Submit')] = function () {
         aChapter.part = jQuery('#book-chapter-part').val()
-        jQuery('#book-chapter-list').html(tmp_book_chapter_list({
+        jQuery('#book-chapter-list').html(bookChapterListTemplate({
             theBook: theBook
         }))
         jQuery(this).dialog('close')
@@ -262,7 +267,7 @@ let saveBook = function (theBook, theOldBook, currentDialog) {
             }
             theBookList.push(theBook)
             stopBookTable()
-            jQuery('#book-table tbody').html(tmp_book_list())
+            jQuery('#book-table tbody').html(bookListTemplate())
             startBookTable()
             if ((typeof (currentDialog) != 'undefined')) {
                 jQuery(currentDialog).dialog('close')
@@ -446,29 +451,29 @@ export let createBookDialog = function (bookId, anImageDB) {
 
     let dialogBody = tmp_book_dialog({
         dialogHeader: dialogHeader,
-        basicInfo: tmp_book_basic_info({
+        basicInfo: bookBasicInfoTemplate({
             theBook: theBook
         }),
-        chapters: tmp_book_dialog_chapters({
+        chapters: bookDialogChaptersTemplate({
             theBook: theBook,
-            chapters: tmp_book_chapter_list({
+            chapters: bookChapterListTemplate({
                 theBook: theBook,
             }),
-            documents: tmp_book_document_list({
+            documents: bookDocumentListTemplate({
                 theBook: theBook,
                 theDocumentList: theDocumentList
             })
         }),
-        bibliographyData: tmp_book_bibliography_data({
+        bibliographyData: bookBibliographyDataTemplate({
             theBook: theBook
         }),
-        printData: tmp_book_print_data({
+        printData: bookPrintDataTemplate({
             theBook: theBook
         }),
-        epubData: tmp_book_epub_data({
+        epubData: bookEpubDataTemplate({
             theBook: theBook,
 
-            coverImage: tmp_book_epub_data_cover({
+            coverImage: bookEpubDataCoverTemplate({
                 theBook: theBook,
                 anImageDB: anImageDB
             })
@@ -484,7 +489,7 @@ export let createBookDialog = function (bookId, anImageDB) {
         })
         chapter.number--
         higherChapter.number++
-        jQuery('#book-chapter-list').html(tmp_book_chapter_list({
+        jQuery('#book-chapter-list').html(bookChapterListTemplate({
             theBook: theBook
         }))
     })
@@ -497,7 +502,7 @@ export let createBookDialog = function (bookId, anImageDB) {
         })
         chapter.number++
         lowerChapter.number--
-        jQuery('#book-chapter-list').html(tmp_book_chapter_list({
+        jQuery('#book-chapter-list').html(bookChapterListTemplate({
             theBook: theBook
         }))
     })
@@ -515,10 +520,10 @@ export let createBookDialog = function (bookId, anImageDB) {
             chapter) {
             return (chapter !== thisChapter)
         })
-        jQuery('#book-chapter-list').html(tmp_book_chapter_list({
+        jQuery('#book-chapter-list').html(bookChapterListTemplate({
             theBook: theBook
         }))
-        jQuery('#book-document-list').html(tmp_book_document_list({
+        jQuery('#book-document-list').html(bookDocumentListTemplate({
             theDocumentList: theDocumentList,
             theBook: theBook
         }))
@@ -546,10 +551,10 @@ export let createBookDialog = function (bookId, anImageDB) {
                 part: ''
             })
         })
-        jQuery('#book-chapter-list').html(tmp_book_chapter_list({
+        jQuery('#book-chapter-list').html(bookChapterListTemplate({
             theBook: theBook
         }))
-        jQuery('#book-document-list').html(tmp_book_document_list({
+        jQuery('#book-document-list').html(bookDocumentListTemplate({
             theDocumentList: theDocumentList,
             theBook: theBook
         }))
@@ -570,7 +575,7 @@ export let createBookDialog = function (bookId, anImageDB) {
 
     jQuery(document).on('click', '#remove-cover-image-button', function () {
         delete theBook.cover_image
-        jQuery('#figure-preview-row').html(tmp_book_epub_data_cover({
+        jQuery('#figure-preview-row').html(bookEpubDataCoverTemplate({
             'theBook': theBook
         }))
     })

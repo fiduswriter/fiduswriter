@@ -183,16 +183,16 @@ let export1 = function(aDocument, aBibDB) {
 
     let ncxCode = ncxTemplate({
         shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
-        title: title,
+        title,
         idType: 'fidus',
         id: aDocument.id,
-        contentItems: contentItems,
+        contentItems,
         templates
     })
 
     let navCode = navTemplate({
         shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
-        contentItems: contentItems,
+        contentItems,
         templates
     })
 

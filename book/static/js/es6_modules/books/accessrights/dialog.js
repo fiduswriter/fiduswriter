@@ -1,43 +1,22 @@
+import {bookCollaboratorsTemplate, bookAccessRightOverviewTemplate} from "./templates"
+
+
 /**
- * @file Helper functions to deal with access rights for books.
- * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
- *
- * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
- *
- * @license This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
- *
- */
+* Helper functions to deal with the book access rights dialog.
+*/
 
-(function () {
-    var exports = this,
-    /** 
-  * Helper functions to deal with book access rights. TODO 
-  * @namespace bookaccessrightsHelpers
-  */
-        bookaccessrightsHelpers = {};
 
-    bookaccessrightsHelpers.createAccessRightsDialog = function (bookIds) {
+export let createAccessRightsDialog = function (bookIds) {
         var dialogHeader = gettext('Share your book with others');
         var book_collaborators = {}, theAccessRights, theTeamMembers, i,
                 len;
 
         theAccessRights = window.theAccessRights;
-        
+
         len = theAccessRights.length
 
         theTeamMembers = window.theTeamMembers;
-        
+
 
 
         for (i = 0; i < len; i++) {
@@ -64,10 +43,10 @@
 
 
 
-        var dialogBody = tmp_book_access_right_overview({
+        var dialogBody = bookAccessRightOverviewTemplate({
             'dialogHeader': dialogHeader,
             'contacts': theTeamMembers,
-            'collaborators': tmp_book_collaborators({
+            'collaborators': bookCollaboratorsTemplate({
                 'collaborators': book_collaborators
             })
         });
@@ -82,7 +61,7 @@
                     'data-id');
                 rights[rights.length] = $(this).attr('data-right');
             });
-            bookaccessrightsHelpers.submitAccessRight(bookIds,
+            submitAccessRight(bookIds,
                 collaborators, rights);
             $(this).dialog('close');
         };
@@ -135,13 +114,13 @@
             $('#share-member table tbody').append(tmp_book_collaborators({
                 'collaborators': selected_data
             }));
-            bookaccessrightsHelpers.collaboratorFunctionsEvent();
+            collaboratorFunctionsEvent();
         });
-        bookaccessrightsHelpers.collaboratorFunctionsEvent();
+        collaboratorFunctionsEvent();
     };
 
 
-    bookaccessrightsHelpers.collaboratorFunctionsEvent = function () {
+    let collaboratorFunctionsEvent = function () {
         $('.edit-right').unbind('click');
         $('.edit-right').each(function () {
             $.addDropdownBox($(this), $(this).siblings('.fw-pulldown'));
@@ -158,7 +137,7 @@
         });
     };
 
-    bookaccessrightsHelpers.submitAccessRight = function (books,
+    let submitAccessRight = function (books,
         collaborators, rights) {
         var post_data = {
             'books[]': books,
@@ -180,7 +159,3 @@
             }
         });
     };
-
-    exports.bookaccessrightsHelpers = bookaccessrightsHelpers;
-
-}).call(this);

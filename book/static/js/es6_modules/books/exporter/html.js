@@ -1,6 +1,11 @@
 import {render as katexRender} from "katex"
 
 import {getMissingChapterData, getImageAndBibDB, uniqueObjects} from "./tools"
+import {htmlBookExportTemplate, htmlBookIndexTemplate, htmlBookIndexItemTemplate} from "./html-templates"
+
+// Some templates need to be able to refer to these templates, so we hand the templates variable to such
+// templates.
+let templates = {htmlBookIndexItemTemplate}
 
 export let downloadHtml = function (aBook) {
     getMissingChapterData(aBook, function () {
@@ -105,7 +110,7 @@ let htmlBookExport = function (aBook, anImageDB, aBibDB) {
 
         let contentsCode = exporter.replaceImgSrc(contents.innerHTML)
 
-        let htmlCode = tmp_html_export({
+        let htmlCode = htmlBookExportTemplate({
             'part': aBook.chapters[i].part,
             'title': title,
             'metadata': aDocument.metadata,
@@ -124,17 +129,16 @@ let htmlBookExport = function (aBook, anImageDB, aBibDB) {
 
     contentItems = exporter.orderLinks(contentItems)
 
-
-
     outputList = outputList.concat(styleSheets)
 
     outputList.push({
         filename: 'index.html',
-        contents: tmp_html_book_index({
-            contentItems: contentItems,
-            aBook: aBook,
+        contents: htmlBookIndexTemplate({
+            contentItems,
+            aBook,
             creator: theUser.name,
-            language: gettext('English') //TODO: specify a book language rather than using the current users UI language
+            language: gettext('English'), //TODO: specify a book language rather than using the current users UI language
+            templates
         })
     })
 

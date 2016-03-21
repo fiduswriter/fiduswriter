@@ -2,6 +2,9 @@ import {downloadHtml} from "./exporter/html"
 import {downloadLatex} from "./exporter/latex"
 import {downloadEpub} from "./exporter/epub"
 import {deleteBookDialog, createBookDialog, copyBook, getBookListData, startBookTable} from "./actions"
+import {createAccessRightsDialog} from "./accessrights/dialog"
+import {bookListTemplate, bookBibliographyDataTemplate} from "./templates"
+
 
 export class Books {
     // A class that contains everything that happens on the books page.
@@ -22,7 +25,7 @@ export class Books {
         })
 
         jQuery(document).bind('bookDataLoaded', function () {
-            jQuery('#book-table tbody').html(tmp_book_list())
+            jQuery('#book-table tbody').html(bookListTemplate())
             startBookTable()
         })
 
@@ -35,7 +38,7 @@ export class Books {
 
             jQuery(document).on('click', '.owned-by-user .rights', function () {
                 let BookId = parseInt(jQuery(this).attr('data-id'))
-                bookaccessrightsHelpers.createAccessRightsDialog([BookId])
+                createAccessRightsDialog([BookId])
             })
 
             //select all entries

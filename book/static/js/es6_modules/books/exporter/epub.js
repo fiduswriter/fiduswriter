@@ -1,6 +1,8 @@
 import {render as katexRender} from "katex"
 
 import {getMissingChapterData, getImageAndBibDB, uniqueObjects} from "./tools"
+import {epubBookOpfTemplate, epubBookCoverTemplate, epubBookTitlepageTemplate,
+  epubBookCopyrightTemplate} from "./epub-templates"
 
 export let downloadEpub = function (aBook) {
     getMissingChapterData(aBook, function () {
@@ -42,7 +44,7 @@ let epubBookExport = function (aBook, anImageDB, aBibDB) {
 
         outputList.push({
             filename: 'EPUB/cover.xhtml',
-            contents: tmp_epub_book_cover({aBook, coverImage})
+            contents: epubBookCoverTemplate({aBook, coverImage})
         })
         contentItems.push({
             link: 'cover.xhtml#cover',
@@ -213,7 +215,7 @@ let epubBookExport = function (aBook, anImageDB, aBibDB) {
         }).coverImage = true
     }
 
-    let opfCode = tmp_epub_book_opf({
+    let opfCode = epubBookOpfTemplate({
         language: gettext('en-US'), // TODO: specify a document language rather than using the current users UI language
         aBook,
         theUser,
@@ -256,12 +258,12 @@ let epubBookExport = function (aBook, anImageDB, aBibDB) {
         contents: navCode
     }, {
         filename: 'EPUB/titlepage.xhtml',
-        contents: tmp_epub_book_titlepage({
+        contents: epubBookTitlepageTemplate({
             aBook: aBook
         })
     }, {
         filename: 'EPUB/copyright.xhtml',
-        contents: tmp_epub_book_copyright({
+        contents: epubBookCopyrightTemplate({
             aBook: aBook,
             creator: theUser.name,
             language: gettext('English') //TODO: specify a book language rather than using the current users UI language

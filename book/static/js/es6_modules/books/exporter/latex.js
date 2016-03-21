@@ -1,4 +1,5 @@
 import {getMissingChapterData, getImageAndBibDB, uniqueObjects} from "./tools"
+import {latexBookIndexTemplate} from "./latex-templates"
 
 export let downloadLatex = function (aBook) {
     getMissingChapterData(aBook, function () {
@@ -61,7 +62,7 @@ let latexBookExport = function (aBook, anImageDB, aBibDB) {
     outputList.push({
         filename: exporter.createSlug(
             aBook.title) + '.tex',
-        contents: tmp_latex_book_index({
+        contents: latexBookIndexTemplate({
             aBook: aBook,
             latexStart: latexStart,
             latexEnd: latexEnd

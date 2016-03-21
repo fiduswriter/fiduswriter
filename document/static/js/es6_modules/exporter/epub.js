@@ -235,7 +235,7 @@ let export1 = function(aDocument, aBibDB) {
     if (math) {
         includeZips.push({
             'directory': 'EPUB',
-            'url': staticUrl + 'zip/katex-style.zip',
+            'url': staticUrl + 'zip/katex-style.zip'
         })
     }
 

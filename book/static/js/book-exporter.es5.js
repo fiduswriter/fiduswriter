@@ -5,70 +5,41 @@
 
 var _katex = require("katex");
 
+var _html = require("./es6_modules/book-exporter/html");
+
+var _latex = require("./es6_modules/book-exporter/latex");
+
+var _epub = require("./es6_modules/book-exporter/epub");
+
 /**
 * Functions for exporting books (to epub, LaTeX, HTML).
 * @namespace bookExporter
 */
-var bookExporter = {};
-
-bookExporter.getMissingChapterData = function (aBook, callback) {
-    var bookDocuments = [];
-
-    for (var i = 0; i < aBook.chapters.length; i++) {
-        if (!_.findWhere(theDocumentList, { id: aBook.chapters[i].text })) {
-            $.addAlert('error', "Cannot produce book as you lack access rights to its chapters.");
-            return;
-        }
-        bookDocuments.push(aBook.chapters[i].text);
-    }
-    documentHelpers.getMissingDocumentListData(bookDocuments, callback);
+var bookExporter = {
+  downloadHtml: _html.downloadHtml, downloadLatex: _latex.downloadLatex, downloadEpub: _epub.downloadEpub
 };
 
-bookExporter.getImageAndBibDB = function (aBook, callback) {
-    var documentOwners = [];
-    for (var i = 0; i < aBook.chapters.length; i++) {
-        documentOwners.push(_.findWhere(theDocumentList, {
-            id: aBook.chapters[i].text
-        }).owner.id);
-    }
+window.bookExporter = bookExporter;
 
-    documentOwners = _.unique(documentOwners).join(',');
+},{"./es6_modules/book-exporter/epub":2,"./es6_modules/book-exporter/html":3,"./es6_modules/book-exporter/latex":4,"katex":6}],2:[function(require,module,exports){
+'use strict';
 
-    usermediaHelpers.getAnImageDB(documentOwners, function (anImageDB) {
-        bibliographyHelpers.getABibDB(documentOwners, function (aBibDB) {
-            callback(anImageDB, aBibDB);
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.downloadEpub = undefined;
+
+var _tools = require('./tools');
+
+var downloadEpub = exports.downloadEpub = function downloadEpub(aBook) {
+    (0, _tools.getMissingChapterData)(aBook, function () {
+        (0, _tools.getImageAndBibDB)(aBook, function (anImageDB, aBibDB) {
+            epubBookExport(aBook, anImageDB, aBibDB);
         });
     });
 };
 
-bookExporter.uniqueObjects = function (array) {
-    var results = [];
-
-    for (var i = 0; i < array.length; i++) {
-        var willCopy = true;
-        for (var j = 0; j < i; j++) {
-            if (_.isEqual(array[i], array[j])) {
-                willCopy = false;
-                break;
-            }
-        }
-        if (willCopy) {
-            results.push(array[i]);
-        }
-    }
-
-    return results;
-};
-
-bookExporter.downloadEpub = function (aBook) {
-    bookExporter.getMissingChapterData(aBook, function () {
-        bookExporter.getImageAndBibDB(aBook, function (anImageDB, aBibDB) {
-            bookExporter.epub(aBook, anImageDB, aBibDB);
-        });
-    });
-};
-
-bookExporter.epub = function (aBook, anImageDB, aBibDB) {
+var epubBookExport = function epubBookExport(aBook, anImageDB, aBibDB) {
     var coverImage = false,
         contentItems = [],
         images = [],
@@ -161,24 +132,24 @@ bookExporter.epub = function (aBook, anImageDB, aBibDB) {
 
         aChapter.part = aBook.chapters[i].part;
 
-        var _equations = contents.querySelectorAll('.equation');
+        var equations = contents.querySelectorAll('.equation');
 
-        var _figureEquations = contents.querySelectorAll('.figure-equation');
+        var figureEquations = contents.querySelectorAll('.figure-equation');
 
-        if (_equations.length > 0 || _figureEquations.length > 0) {
+        if (equations.length > 0 || figureEquations.length > 0) {
             aChapter.math = true;
             math = true;
         }
 
-        for (var _i = 0; _i < _equations.length; _i++) {
-            var node = _equations[_i];
+        for (var _i = 0; _i < equations.length; _i++) {
+            var node = equations[_i];
             var formula = node.getAttribute('data-equation');
-            (0, _katex.render)(formula, node);
+            katexRender(formula, node);
         }
-        for (var _i2 = 0; _i2 < _figureEquations.length; _i2++) {
-            var node = _figureEquations[_i2];
+        for (var _i2 = 0; _i2 < figureEquations.length; _i2++) {
+            var node = figureEquations[_i2];
             var formula = node.getAttribute('data-equation');
-            (0, _katex.render)(formula, node, {
+            katexRender(formula, node, {
                 displayMode: true
             });
         }
@@ -243,7 +214,7 @@ bookExporter.epub = function (aBook, anImageDB, aBibDB) {
 
     timestamp = exporter.getTimestamp();
 
-    images = bookExporter.uniqueObjects(images);
+    images = (0, _tools.uniqueObjects)(images);
 
     // mark cover image
     if (typeof coverImage != 'undefined') {
@@ -329,15 +300,25 @@ bookExporter.epub = function (aBook, anImageDB, aBibDB) {
     exporter.zipFileCreator(outputList, httpOutputList, exporter.createSlug(aBook.title) + '.epub', 'application/epub+zip', includeZips);
 };
 
-bookExporter.downloadHtml = function (aBook) {
-    bookExporter.getMissingChapterData(aBook, function () {
-        bookExporter.getImageAndBibDB(aBook, function (anImageDB, aBibDB) {
-            bookExporter.html(aBook, anImageDB, aBibDB);
+},{"./tools":5}],3:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.downloadHtml = undefined;
+
+var _tools = require('./tools');
+
+var downloadHtml = exports.downloadHtml = function downloadHtml(aBook) {
+    (0, _tools.getMissingChapterData)(aBook, function () {
+        (0, _tools.getImageAndBibDB)(aBook, function (anImageDB, aBibDB) {
+            htmlBookExport(aBook, anImageDB, aBibDB);
         });
     });
 };
 
-bookExporter.html = function (aBook, anImageDB, aBibDB) {
+var htmlBookExport = function htmlBookExport(aBook, anImageDB, aBibDB) {
     var math = false,
         styleSheets = [],
         chapters = [];
@@ -371,12 +352,12 @@ bookExporter.html = function (aBook, anImageDB, aBibDB) {
         for (var j = 0; j < equations.length; j++) {
             var node = equations[j];
             var formula = node.getAttribute('data-equation');
-            (0, _katex.render)(formula, node);
+            katexRender(formula, node);
         }
         for (var j = 0; j < figureEquations.length; j++) {
             var node = figureEquations[j];
             var formula = node.getAttribute('data-equation');
-            (0, _katex.render)(formula, node, {
+            katexRender(formula, node, {
                 displayMode: true
             });
         }
@@ -463,20 +444,30 @@ bookExporter.html = function (aBook, anImageDB, aBibDB) {
         });
     }
 
-    images = bookExporter.uniqueObjects(images);
+    images = (0, _tools.uniqueObjects)(images);
 
     exporter.zipFileCreator(outputList, images, exporter.createSlug(aBook.title) + '.html.zip', false, includeZips);
 };
 
-bookExporter.downloadLatex = function (aBook) {
-    bookExporter.getMissingChapterData(aBook, function () {
-        bookExporter.getImageAndBibDB(aBook, function (anImageDB, aBibDB) {
-            bookExporter.latex(aBook, anImageDB, aBibDB);
+},{"./tools":5}],4:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.downloadLatex = undefined;
+
+var _tools = require('./tools');
+
+var downloadLatex = exports.downloadLatex = function downloadLatex(aBook) {
+    (0, _tools.getMissingChapterData)(aBook, function () {
+        (0, _tools.getImageAndBibDB)(aBook, function (anImageDB, aBibDB) {
+            latexBookExport(aBook, anImageDB, aBibDB);
         });
     });
 };
 
-bookExporter.latex = function (aBook, anImageDB, aBibDB) {
+var latexBookExpprt = function latexBookExpprt(aBook, anImageDB, aBibDB) {
     var htmlCode = undefined,
         outputList = [],
         images = [],
@@ -538,14 +529,67 @@ bookExporter.latex = function (aBook, anImageDB, aBibDB) {
         });
     }
 
-    images = bookExporter.uniqueObjects(images);
+    images = (0, _tools.uniqueObjects)(images);
 
     exporter.zipFileCreator(outputList, images, exporter.createSlug(aBook.title) + '.latex.zip');
 };
 
-window.bookExporter = bookExporter;
+},{"./tools":5}],5:[function(require,module,exports){
+'use strict';
 
-},{"katex":2}],2:[function(require,module,exports){
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var getMissingChapterData = exports.getMissingChapterData = function getMissingChapterData(aBook, callback) {
+    var bookDocuments = [];
+
+    for (var i = 0; i < aBook.chapters.length; i++) {
+        if (!_.findWhere(theDocumentList, { id: aBook.chapters[i].text })) {
+            $.addAlert('error', "Cannot produce book as you lack access rights to its chapters.");
+            return;
+        }
+        bookDocuments.push(aBook.chapters[i].text);
+    }
+    documentHelpers.getMissingDocumentListData(bookDocuments, callback);
+};
+
+var getImageAndBibDB = exports.getImageAndBibDB = function getImageAndBibDB(aBook, callback) {
+    var documentOwners = [];
+    for (var i = 0; i < aBook.chapters.length; i++) {
+        documentOwners.push(_.findWhere(theDocumentList, {
+            id: aBook.chapters[i].text
+        }).owner.id);
+    }
+
+    documentOwners = _.unique(documentOwners).join(',');
+
+    usermediaHelpers.getAnImageDB(documentOwners, function (anImageDB) {
+        bibliographyHelpers.getABibDB(documentOwners, function (aBibDB) {
+            callback(anImageDB, aBibDB);
+        });
+    });
+};
+
+var uniqueObjects = exports.uniqueObjects = function uniqueObjects(array) {
+    var results = [];
+
+    for (var i = 0; i < array.length; i++) {
+        var willCopy = true;
+        for (var j = 0; j < i; j++) {
+            if (_.isEqual(array[i], array[j])) {
+                willCopy = false;
+                break;
+            }
+        }
+        if (willCopy) {
+            results.push(array[i]);
+        }
+    }
+
+    return results;
+};
+
+},{}],6:[function(require,module,exports){
 /**
  * This is the main entry point for KaTeX. Here, we expose functions for
  * rendering expressions either to DOM nodes or to markup strings.
@@ -620,7 +664,7 @@ module.exports = {
     ParseError: ParseError
 };
 
-},{"./src/ParseError":5,"./src/Settings":7,"./src/buildTree":12,"./src/parseTree":21,"./src/utils":23}],3:[function(require,module,exports){
+},{"./src/ParseError":9,"./src/Settings":11,"./src/buildTree":16,"./src/parseTree":25,"./src/utils":27}],7:[function(require,module,exports){
 /**
  * The Lexer class handles tokenizing the input in various ways. Since our
  * parser expects us to be able to backtrack, the lexer allows lexing from any
@@ -816,7 +860,7 @@ Lexer.prototype.lex = function(pos, mode) {
 
 module.exports = Lexer;
 
-},{"./ParseError":5,"match-at":24}],4:[function(require,module,exports){
+},{"./ParseError":9,"match-at":28}],8:[function(require,module,exports){
 /**
  * This file contains information about the options that the Parser carries
  * around with it while parsing. Data is held in an `Options` object, and when
@@ -1007,7 +1051,7 @@ Options.prototype.getColor = function() {
 
 module.exports = Options;
 
-},{}],5:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 /**
  * This is the ParseError class, which is the main error thrown by KaTeX
  * functions when something has gone wrong. This is used to distinguish internal
@@ -1049,7 +1093,7 @@ ParseError.prototype.__proto__ = Error.prototype;
 
 module.exports = ParseError;
 
-},{}],6:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 var functions = require("./functions");
 var environments = require("./environments");
 var Lexer = require("./Lexer");
@@ -1771,7 +1815,7 @@ Parser.prototype.ParseNode = ParseNode;
 
 module.exports = Parser;
 
-},{"./Lexer":3,"./ParseError":5,"./environments":15,"./functions":18,"./parseData":20,"./symbols":22,"./utils":23}],7:[function(require,module,exports){
+},{"./Lexer":7,"./ParseError":9,"./environments":19,"./functions":22,"./parseData":24,"./symbols":26,"./utils":27}],11:[function(require,module,exports){
 /**
  * This is a module for storing settings passed into KaTeX. It correctly handles
  * default settings.
@@ -1801,7 +1845,7 @@ function Settings(options) {
 
 module.exports = Settings;
 
-},{}],8:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 /**
  * This file contains information and classes for the various kinds of styles
  * used in TeX. It provides a generic `Style` class, which holds information
@@ -1929,7 +1973,7 @@ module.exports = {
     SCRIPTSCRIPT: styles[SS]
 };
 
-},{}],9:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 /**
  * This module contains general functions that can be used for building
  * different kinds of domTree nodes in a consistent manner.
@@ -2378,7 +2422,7 @@ module.exports = {
     spacingFunctions: spacingFunctions
 };
 
-},{"./domTree":14,"./fontMetrics":16,"./symbols":22,"./utils":23}],10:[function(require,module,exports){
+},{"./domTree":18,"./fontMetrics":20,"./symbols":26,"./utils":27}],14:[function(require,module,exports){
 /**
  * This file does the main work of building a domTree structure from a parse
  * tree. The entry point is the `buildHTML` function, which takes a parse tree.
@@ -3742,7 +3786,7 @@ var buildHTML = function(tree, options) {
 
 module.exports = buildHTML;
 
-},{"./ParseError":5,"./Style":8,"./buildCommon":9,"./delimiter":13,"./domTree":14,"./fontMetrics":16,"./utils":23}],11:[function(require,module,exports){
+},{"./ParseError":9,"./Style":12,"./buildCommon":13,"./delimiter":17,"./domTree":18,"./fontMetrics":20,"./utils":27}],15:[function(require,module,exports){
 /**
  * This file converts a parse tree into a cooresponding MathML tree. The main
  * entry point is the `buildMathML` function, which takes a parse tree from the
@@ -4263,7 +4307,7 @@ var buildMathML = function(tree, texExpression, options) {
 
 module.exports = buildMathML;
 
-},{"./ParseError":5,"./buildCommon":9,"./fontMetrics":16,"./mathMLTree":19,"./symbols":22,"./utils":23}],12:[function(require,module,exports){
+},{"./ParseError":9,"./buildCommon":13,"./fontMetrics":20,"./mathMLTree":23,"./symbols":26,"./utils":27}],16:[function(require,module,exports){
 var buildHTML = require("./buildHTML");
 var buildMathML = require("./buildMathML");
 var buildCommon = require("./buildCommon");
@@ -4305,7 +4349,7 @@ var buildTree = function(tree, expression, settings) {
 
 module.exports = buildTree;
 
-},{"./Options":4,"./Settings":7,"./Style":8,"./buildCommon":9,"./buildHTML":10,"./buildMathML":11}],13:[function(require,module,exports){
+},{"./Options":8,"./Settings":11,"./Style":12,"./buildCommon":13,"./buildHTML":14,"./buildMathML":15}],17:[function(require,module,exports){
 /**
  * This file deals with creating delimiters of various sizes. The TeXbook
  * discusses these routines on page 441-442, in the "Another subroutine sets box
@@ -4846,7 +4890,7 @@ module.exports = {
     leftRightDelim: makeLeftRightDelim
 };
 
-},{"./ParseError":5,"./Style":8,"./buildCommon":9,"./fontMetrics":16,"./symbols":22,"./utils":23}],14:[function(require,module,exports){
+},{"./ParseError":9,"./Style":12,"./buildCommon":13,"./fontMetrics":20,"./symbols":26,"./utils":27}],18:[function(require,module,exports){
 /**
  * These objects store the data about the DOM nodes we create, as well as some
  * extra data. They can then be transformed into real DOM nodes with the
@@ -5117,7 +5161,7 @@ module.exports = {
     symbolNode: symbolNode
 };
 
-},{"./utils":23}],15:[function(require,module,exports){
+},{"./utils":27}],19:[function(require,module,exports){
 var fontMetrics = require("./fontMetrics");
 var parseData = require("./parseData");
 var ParseError = require("./ParseError");
@@ -5297,7 +5341,7 @@ module.exports = (function() {
     return exports;
 })();
 
-},{"./ParseError":5,"./fontMetrics":16,"./parseData":20}],16:[function(require,module,exports){
+},{"./ParseError":9,"./fontMetrics":20,"./parseData":24}],20:[function(require,module,exports){
 /* jshint unused:false */
 
 var Style = require("./Style");
@@ -5434,7 +5478,7 @@ module.exports = {
     getCharacterMetrics: getCharacterMetrics
 };
 
-},{"./Style":8,"./fontMetricsData":17}],17:[function(require,module,exports){
+},{"./Style":12,"./fontMetricsData":21}],21:[function(require,module,exports){
 module.exports = {
 "AMS-Regular": {
   "65": {"depth": 0.0, "height": 0.68889, "italic": 0.0, "skew": 0.0},
@@ -7187,7 +7231,7 @@ module.exports = {
   "8242": {"depth": 0.0, "height": 0.61111, "italic": 0.0, "skew": 0.0}
 }};
 
-},{}],18:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 var utils = require("./utils");
 var ParseError = require("./ParseError");
 
@@ -7818,7 +7862,7 @@ module.exports = {
     funcs: functions
 };
 
-},{"./ParseError":5,"./utils":23}],19:[function(require,module,exports){
+},{"./ParseError":9,"./utils":27}],23:[function(require,module,exports){
 /**
  * These objects store data about MathML nodes. This is the MathML equivalent
  * of the types in domTree.js. Since MathML handles its own rendering, and
@@ -7922,7 +7966,7 @@ module.exports = {
     TextNode: TextNode
 };
 
-},{"./utils":23}],20:[function(require,module,exports){
+},{"./utils":27}],24:[function(require,module,exports){
 /**
  * The resulting parse tree nodes of the parse tree.
  */
@@ -7947,7 +7991,7 @@ module.exports = {
 };
 
 
-},{}],21:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 /**
  * Provides a single function for parsing an expression using a Parser
  * TODO(emily): Remove this
@@ -7966,7 +8010,7 @@ var parseTree = function(toParse, settings) {
 
 module.exports = parseTree;
 
-},{"./Parser":6}],22:[function(require,module,exports){
+},{"./Parser":10}],26:[function(require,module,exports){
 /**
  * This file holds a list of all no-argument functions and single-character
  * symbols (like 'a' or ';').
@@ -10553,7 +10597,7 @@ for (var i = 0; i < letters.length; i++) {
 
 module.exports = symbols;
 
-},{}],23:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 /**
  * This file contains a list of utility functions which are useful in other
  * files.
@@ -10660,7 +10704,7 @@ module.exports = {
     clearNode: clearNode
 };
 
-},{}],24:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 /** @flow */
 
 "use strict";

@@ -9,7 +9,7 @@ export let downloadLatex = function (aBook) {
     })
 }
 
-let latexBookExpprt = function (aBook, anImageDB, aBibDB) {
+let latexBookExport = function (aBook, anImageDB, aBibDB) {
     let htmlCode, outputList = [],
         images = [],
         listedWorksList = [],

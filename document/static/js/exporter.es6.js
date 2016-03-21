@@ -16,36 +16,14 @@ import {opfKatexItemsTemplatePart, opfCssItemTemplatePart,
 /**
  * Functions to export the Fidus Writer document.
  */
-let exporter = {}
-exporter.opfKatexItemsTemplatePart = opfKatexItemsTemplatePart
-exporter.opfCssItemTemplatePart = opfCssItemTemplatePart
-exporter.opfImageItemTemplatePart = opfImageItemTemplatePart
-exporter.opfTemplate = opfTemplate
-exporter.containerTemplate = containerTemplate
-exporter.ncxTemplate = ncxTemplate
-exporter.ncxItemTemplate = ncxItemTemplate
-exporter.xhtmlTemplate = xhtmlTemplate
-exporter.navTemplate = navTemplate
-exporter.navItemTemplate = navItemTemplate
-exporter.savecopy = savecopy
-exporter.downloadFile = downloadFile
-exporter.styleEpubFootnotes = styleEpubFootnotes
-exporter.getTimestamp = getTimestamp
-exporter.downloadEpub = downloadEpub
-exporter.setLinks = setLinks
-exporter.orderLinks = orderLinks
-exporter.downloadHtml = downloadHtml
-exporter.cleanHTML = cleanHTML
-exporter.addFigureNumbers = addFigureNumbers
-exporter.replaceImgSrc = replaceImgSrc
-exporter.obj2Node = obj2Node
-exporter.node2Obj = node2Obj
-exporter.findLatexDocumentFeatures = findLatexDocumentFeatures
-exporter.htmlToLatex = htmlToLatex
-exporter.downloadLatex = downloadLatex
-exporter.downloadNative = downloadNative
-exporter.createSlug = createSlug
-exporter.findImages = findImages
-exporter.zipFileCreator = zipFileCreator
+let exporter = {
+    opfKatexItemsTemplatePart, opfCssItemTemplatePart, opfImageItemTemplatePart,
+    opfTemplate, containerTemplate, ncxTemplate, ncxItemTemplate, xhtmlTemplate,
+    navTemplate, navItemTemplate, savecopy, downloadFile, styleEpubFootnotes,
+    getTimestamp, downloadEpub, setLinks, orderLinks, downloadHtml, cleanHTML,
+    addFigureNumbers, replaceImgSrc, obj2Node, node2Obj, downloadLatex,
+    findLatexDocumentFeatures, htmlToLatex, downloadNative, createSlug,
+    findImages, zipFileCreator
+}
 
 window.exporter = exporter

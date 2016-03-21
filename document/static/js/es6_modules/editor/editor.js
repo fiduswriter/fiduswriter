@@ -20,6 +20,9 @@ import {ModNodeConvert} from "./node-convert"
 import {node2Obj, obj2Node} from "../exporter/json"
 
 export class Editor {
+    // A class that contains everything that happens on the editor page.
+    // It is currently not possible to initialize more thna one editor class, as it
+    // contains bindings to menu items, etc. that are uniquely defined.
     constructor() {
         this.mod = {}
         // Whether the editor is currently waiting for a document update. Set to true

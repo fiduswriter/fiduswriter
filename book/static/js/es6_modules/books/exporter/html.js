@@ -1,3 +1,5 @@
+import {render as katexRender} from "katex"
+
 import {getMissingChapterData, getImageAndBibDB, uniqueObjects} from "./tools"
 
 export let downloadHtml = function (aBook) {
@@ -35,9 +37,9 @@ let htmlBookExport = function (aBook, anImageDB, aBibDB) {
             contents.innerHTML += bibliography
         }
 
-        equations = contents.querySelectorAll('.equation')
+        let equations = contents.querySelectorAll('.equation')
 
-        figureEquations = contents.querySelectorAll('.figure-equation')
+        let figureEquations = contents.querySelectorAll('.figure-equation')
 
         if (equations.length > 0 || figureEquations.length > 0) {
             math = true
@@ -101,9 +103,9 @@ let htmlBookExport = function (aBook, anImageDB, aBibDB) {
             aBook.chapters[i].number))
 
 
-        contentsCode = exporter.replaceImgSrc(contents.innerHTML)
+        let contentsCode = exporter.replaceImgSrc(contents.innerHTML)
 
-        htmlCode = tmp_html_export({
+        let htmlCode = tmp_html_export({
             'part': aBook.chapters[i].part,
             'title': title,
             'metadata': aDocument.metadata,

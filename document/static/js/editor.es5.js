@@ -1526,6 +1526,10 @@ var _json = require("../exporter/json");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var Editor = exports.Editor = (function () {
+    // A class that contains everything that happens on the editor page.
+    // It is currently not possible to initialize more thna one editor class, as it
+    // contains bindings to menu items, etc. that are uniquely defined.
+
     function Editor() {
         _classCallCheck(this, Editor);
 
@@ -6756,13 +6760,16 @@ var htmlToLatex = exports.htmlToLatex = function htmlToLatex(title, author, html
         // TODO: make use of figure type
         var caption = jQuery(this).find('figcaption')[0].lastChild.innerHTML;
         var filename = jQuery(this).find('img').attr('data-src');
-        var filenameList = filename.split('.');
-        if (filenameList[filenameList.length - 1] === 'svg') {
-            latexPackage = 'includesvg';
-        } else {
-            latexPackage = 'scaledgraphics';
+        if (filename) {
+            // TODO: handle formula figures
+            var filenameList = filename.split('.');
+            if (filenameList[filenameList.length - 1] === 'svg') {
+                latexPackage = 'includesvg';
+            } else {
+                latexPackage = 'scaledgraphics';
+            }
+            this.outerHTML = '\n\\begin{figure}\n\\' + latexPackage + '{' + filename + '}\n\\caption{' + caption + '}\n\\end{figure}\n';
         }
-        this.outerHTML = '\n\\begin{figure}\n\\' + latexPackage + '{' + filename + '}\n\\caption{' + caption + '}\n\\end{figure}\n';
     });
 
     jQuery(htmlCode).find('.equation, .figure-equation').each(function () {

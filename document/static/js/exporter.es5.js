@@ -1295,13 +1295,16 @@ var htmlToLatex = exports.htmlToLatex = function htmlToLatex(title, author, html
         // TODO: make use of figure type
         var caption = jQuery(this).find('figcaption')[0].lastChild.innerHTML;
         var filename = jQuery(this).find('img').attr('data-src');
-        var filenameList = filename.split('.');
-        if (filenameList[filenameList.length - 1] === 'svg') {
-            latexPackage = 'includesvg';
-        } else {
-            latexPackage = 'scaledgraphics';
+        if (filename) {
+            // TODO: handle formula figures
+            var filenameList = filename.split('.');
+            if (filenameList[filenameList.length - 1] === 'svg') {
+                latexPackage = 'includesvg';
+            } else {
+                latexPackage = 'scaledgraphics';
+            }
+            this.outerHTML = '\n\\begin{figure}\n\\' + latexPackage + '{' + filename + '}\n\\caption{' + caption + '}\n\\end{figure}\n';
         }
-        this.outerHTML = '\n\\begin{figure}\n\\' + latexPackage + '{' + filename + '}\n\\caption{' + caption + '}\n\\end{figure}\n';
     });
 
     jQuery(htmlCode).find('.equation, .figure-equation').each(function () {
@@ -2252,37 +2255,15 @@ var _epubTemplates = require("./es6_modules/exporter/epub-templates");
 /**
  * Functions to export the Fidus Writer document.
  */
-var exporter = {};
-exporter.opfKatexItemsTemplatePart = _epubTemplates.opfKatexItemsTemplatePart;
-exporter.opfCssItemTemplatePart = _epubTemplates.opfCssItemTemplatePart;
-exporter.opfImageItemTemplatePart = _epubTemplates.opfImageItemTemplatePart;
-exporter.opfTemplate = _epubTemplates.opfTemplate;
-exporter.containerTemplate = _epubTemplates.containerTemplate;
-exporter.ncxTemplate = _epubTemplates.ncxTemplate;
-exporter.ncxItemTemplate = _epubTemplates.ncxItemTemplate;
-exporter.xhtmlTemplate = _epubTemplates.xhtmlTemplate;
-exporter.navTemplate = _epubTemplates.navTemplate;
-exporter.navItemTemplate = _epubTemplates.navItemTemplate;
-exporter.savecopy = _copy.savecopy;
-exporter.downloadFile = _download.downloadFile;
-exporter.styleEpubFootnotes = _epub.styleEpubFootnotes;
-exporter.getTimestamp = _epub.getTimestamp;
-exporter.downloadEpub = _epub.downloadEpub;
-exporter.setLinks = _epub.setLinks;
-exporter.orderLinks = _epub.orderLinks;
-exporter.downloadHtml = _html.downloadHtml;
-exporter.cleanHTML = _html.cleanHTML;
-exporter.addFigureNumbers = _html.addFigureNumbers;
-exporter.replaceImgSrc = _html.replaceImgSrc;
-exporter.obj2Node = _json.obj2Node;
-exporter.node2Obj = _json.node2Obj;
-exporter.findLatexDocumentFeatures = _latex.findLatexDocumentFeatures;
-exporter.htmlToLatex = _latex.htmlToLatex;
-exporter.downloadLatex = _latex.downloadLatex;
-exporter.downloadNative = _native.downloadNative;
-exporter.createSlug = _tools.createSlug;
-exporter.findImages = _tools.findImages;
-exporter.zipFileCreator = _zip.zipFileCreator;
+var exporter = {
+    opfKatexItemsTemplatePart: _epubTemplates.opfKatexItemsTemplatePart, opfCssItemTemplatePart: _epubTemplates.opfCssItemTemplatePart, opfImageItemTemplatePart: _epubTemplates.opfImageItemTemplatePart,
+    opfTemplate: _epubTemplates.opfTemplate, containerTemplate: _epubTemplates.containerTemplate, ncxTemplate: _epubTemplates.ncxTemplate, ncxItemTemplate: _epubTemplates.ncxItemTemplate, xhtmlTemplate: _epubTemplates.xhtmlTemplate,
+    navTemplate: _epubTemplates.navTemplate, navItemTemplate: _epubTemplates.navItemTemplate, savecopy: _copy.savecopy, downloadFile: _download.downloadFile, styleEpubFootnotes: _epub.styleEpubFootnotes,
+    getTimestamp: _epub.getTimestamp, downloadEpub: _epub.downloadEpub, setLinks: _epub.setLinks, orderLinks: _epub.orderLinks, downloadHtml: _html.downloadHtml, cleanHTML: _html.cleanHTML,
+    addFigureNumbers: _html.addFigureNumbers, replaceImgSrc: _html.replaceImgSrc, obj2Node: _json.obj2Node, node2Obj: _json.node2Obj, downloadLatex: _latex.downloadLatex,
+    findLatexDocumentFeatures: _latex.findLatexDocumentFeatures, htmlToLatex: _latex.htmlToLatex, downloadNative: _native.downloadNative, createSlug: _tools.createSlug,
+    findImages: _tools.findImages, zipFileCreator: _zip.zipFileCreator
+};
 
 window.exporter = exporter;
 

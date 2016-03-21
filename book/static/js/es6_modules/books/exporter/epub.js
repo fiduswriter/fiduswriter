@@ -1,3 +1,5 @@
+import {render as katexRender} from "katex"
+
 import {getMissingChapterData, getImageAndBibDB, uniqueObjects} from "./tools"
 
 export let downloadEpub = function (aBook) {
@@ -7,6 +9,13 @@ export let downloadEpub = function (aBook) {
             epubBookExport(aBook, anImageDB, aBibDB)
         })
     })
+}
+
+let templates = {
+  ncxTemplate: exporter.ncxTemplate,
+  ncxItemTemplate: exporter.ncxItemTemplate,
+  navTemplate: exporter.navTemplate,
+  navItemTemplate: exporter.navItemTemplate
 }
 
 let epubBookExport = function (aBook, anImageDB, aBibDB) {
@@ -193,12 +202,12 @@ let epubBookExport = function (aBook, anImageDB, aBibDB) {
 
     contentItems = exporter.orderLinks(contentItems)
 
-    timestamp = exporter.getTimestamp()
+    let timestamp = exporter.getTimestamp()
 
     images = uniqueObjects(images)
 
     // mark cover image
-    if (typeof(coverImage) != 'undefined') {
+    if (coverImage) {
         _.findWhere(images, {
             url: coverImage.image.split('?')[0]
         }).coverImage = true
@@ -218,17 +227,19 @@ let epubBookExport = function (aBook, anImageDB, aBibDB) {
         coverImage
     })
 
-    ncxCode = exporter.ncxTemplate({
+    let ncxCode = exporter.ncxTemplate({
         shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
         title: aBook.title,
         idType: 'fidus',
         id: aBook.id,
-        contentItems: contentItems
+        contentItems,
+        templates
     })
 
-    navCode = exporter.navTemplate({
+    let navCode = exporter.navTemplate({
         shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
-        contentItems: contentItems
+        contentItems,
+        templates
     })
 
     outputList = outputList.concat([{

@@ -31,7 +31,7 @@ export class PrintBook {
                 height:11.69
             }
         }
-      //  this.documentOwners = []
+        this.documentOwners = []
         this.bindEvents()
     }
 
@@ -47,14 +47,14 @@ export class PrintBook {
                 i].metadata)
             theBook.chapters[i].settings = JSON.parse(theBook.chapters[
                 i].settings)
-            if (documentOwners.indexOf(theBook.chapters[i].owner)===-1) {
-                documentOwners.push(theBook.chapters[i].owner)
+            if (this.documentOwners.indexOf(theBook.chapters[i].owner)===-1) {
+                this.documentOwners.push(theBook.chapters[i].owner)
             }
         }
         paginationConfig['pageHeight'] = this.pageSizes[theBook.settings.papersize].height
         paginationConfig['pageWidth'] = this.pageSizes[theBook.settings.papersize].width
 
-        bibliographyHelpers.getABibDB(documentOwners.join(','), function (
+        bibliographyHelpers.getABibDB(this.documentOwners.join(','), function (
                 aBibDB) {
                 that.fillPrintPage(aBibDB)
             })
@@ -62,12 +62,13 @@ export class PrintBook {
 
     }
 
-    //modeltoViewNode(node) {
+    modelToViewNode(node) {
         // TODO: add needed changes
-    //    return node
+        return node
+    }
 
         /* TODO: IS this still useful? Should it be part of the modeltoViewNode?
-        printHelpers.createFootnoteView = function (htmlFragment, number) {
+        createFootnoteView = function (htmlFragment, number) {
             let fn = document.createElement('span'), id
             fn.classList.add('pagination-footnote')
 
@@ -86,7 +87,6 @@ export class PrintBook {
             fn.id = 'pagination-footnote-'+ number
             return fn
         }*/
-    //}
 
     getBookData(id) {
         let that = this
@@ -114,7 +114,8 @@ export class PrintBook {
         let bibliography = jQuery('#bibliography')
         jQuery(document.body).addClass(theBook.settings.documentstyle)
         jQuery('#book')[0].outerHTML = bookPrintTemplate({
-            theBook: theBook
+            theBook,
+            modelToViewNode: this.modelToViewNode
         })
 
 
@@ -128,12 +129,13 @@ export class PrintBook {
             theBook: theBook
         })
 
-        mathHelpers.resetMath(function () {
-            pagination.initiate()
-            pagination.applyBookLayout()
-            jQuery("#pagination-contents").addClass('user-contents')
-            jQuery('head title').html(jQuery('#document-title').text())
-        })
+
+        // TODO: render equations
+        pagination.initiate()
+        pagination.applyBookLayout()
+        jQuery("#pagination-contents").addClass('user-contents')
+        jQuery('head title').html(jQuery('#document-title').text())
+
 
 
     }

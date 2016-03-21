@@ -48,7 +48,7 @@ var PrintBook = exports.PrintBook = (function () {
                 height: 11.69
             }
         };
-        //  this.documentOwners = []
+        this.documentOwners = [];
         this.bindEvents();
     }
 
@@ -64,24 +64,26 @@ var PrintBook = exports.PrintBook = (function () {
             for (var i = 0; i < theBook.chapters.length; i++) {
                 theBook.chapters[i].metadata = JSON.parse(theBook.chapters[i].metadata);
                 theBook.chapters[i].settings = JSON.parse(theBook.chapters[i].settings);
-                if (documentOwners.indexOf(theBook.chapters[i].owner) === -1) {
-                    documentOwners.push(theBook.chapters[i].owner);
+                if (this.documentOwners.indexOf(theBook.chapters[i].owner) === -1) {
+                    this.documentOwners.push(theBook.chapters[i].owner);
                 }
             }
             paginationConfig['pageHeight'] = this.pageSizes[theBook.settings.papersize].height;
             paginationConfig['pageWidth'] = this.pageSizes[theBook.settings.papersize].width;
 
-            bibliographyHelpers.getABibDB(documentOwners.join(','), function (aBibDB) {
+            bibliographyHelpers.getABibDB(this.documentOwners.join(','), function (aBibDB) {
                 that.fillPrintPage(aBibDB);
             });
         }
-
-        //modeltoViewNode(node) {
-        // TODO: add needed changes
-        //    return node
+    }, {
+        key: 'modelToViewNode',
+        value: function modelToViewNode(node) {
+            // TODO: add needed changes
+            return node;
+        }
 
         /* TODO: IS this still useful? Should it be part of the modeltoViewNode?
-        printHelpers.createFootnoteView = function (htmlFragment, number) {
+        createFootnoteView = function (htmlFragment, number) {
             let fn = document.createElement('span'), id
             fn.classList.add('pagination-footnote')
              fn.appendChild(document.createElement('span'))
@@ -96,7 +98,6 @@ var PrintBook = exports.PrintBook = (function () {
              fn.id = 'pagination-footnote-'+ number
             return fn
         }*/
-        //}
 
     }, {
         key: 'getBookData',
@@ -127,7 +128,8 @@ var PrintBook = exports.PrintBook = (function () {
             var bibliography = jQuery('#bibliography');
             jQuery(document.body).addClass(theBook.settings.documentstyle);
             jQuery('#book')[0].outerHTML = (0, _templates.bookPrintTemplate)({
-                theBook: theBook
+                theBook: theBook,
+                modelToViewNode: this.modelToViewNode
             });
 
             jQuery(bibliography).html(citationHelpers.formatCitations(document.body, theBook.settings.citationstyle, aBibDB));
@@ -140,12 +142,10 @@ var PrintBook = exports.PrintBook = (function () {
                 theBook: theBook
             });
 
-            mathHelpers.resetMath(function () {
-                pagination.initiate();
-                pagination.applyBookLayout();
-                jQuery("#pagination-contents").addClass('user-contents');
-                jQuery('head title').html(jQuery('#document-title').text());
-            });
+            pagination.initiate();
+            pagination.applyBookLayout();
+            jQuery("#pagination-contents").addClass('user-contents');
+            jQuery('head title').html(jQuery('#document-title').text());
         }
     }, {
         key: 'setDocumentStyle',
@@ -226,7 +226,7 @@ var bookPrintTemplate = exports.bookPrintTemplate = _.template('\
                 <% } %>\
             <% } %>\
         <% } %>\
-        <%= printHelpers.modelToViewNode(exporter.obj2Node(JSON.parse(chapter.contents))).innerHTML %>\
+        <%= modelToViewNode(exporter.obj2Node(JSON.parse(chapter.contents))).innerHTML %>\
     </div>\
 <% }); %>\
 ');
@@ -239,7 +239,7 @@ var _printBook = require("./es6_modules/print-book/print-book");
 /* Create thePrintBook and make it available to the general namespace for debugging
 purposes.*/
 
-var thePrintBook = new PrintBook();
+var thePrintBook = new _printBook.PrintBook();
 window.thePrintBook = thePrintBook;
 
 },{"./es6_modules/print-book/print-book":1}]},{},[3]);

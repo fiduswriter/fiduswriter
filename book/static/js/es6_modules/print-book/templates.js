@@ -42,7 +42,7 @@ export let bookPrintTemplate = _.template('\
                 <% } %>\
             <% } %>\
         <% } %>\
-        <%= printHelpers.modelToViewNode(exporter.obj2Node(JSON.parse(chapter.contents))).innerHTML %>\
+        <%= modelToViewNode(exporter.obj2Node(JSON.parse(chapter.contents))).innerHTML %>\
     </div>\
 <% }); %>\
 ')

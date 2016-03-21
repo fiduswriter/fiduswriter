@@ -17,7 +17,7 @@
             <script type="text/javascript">
                 var staticUrl = '{{ STATIC_URL }}';
             </script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.js"></script>
+            <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.es5.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/csrf.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/common.js"></script>
             <script type="text/javascript">
@@ -51,9 +51,6 @@
             <!-- Moving of footnotes-->
             <script type="text/javascript"  src="{{ STATIC_URL }}js/editor-escapes.js"></script>
             <script type="text/javascript"  src="{{ STATIC_URL }}js/print-book.es5.js"></script>
-            <script type="text/javascript">
-                printHelpers.bind();
-            </script>
     {% endcompress %}
 </head>
 <body class="tex2jax_ignore">

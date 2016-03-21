@@ -1,5 +1,5 @@
 /** A template to create the latex book index. */
-let latexBookIndexTemplate = _.template('\
+export let latexBookIndexTemplate = _.template('\
     <%= latexStart %>\
     <% _.each(aBook.chapters,function(chapter){ %>\
         <% if(chapter.part && chapter.part != "") { %>\

@@ -1,5 +1,5 @@
 /** A template to create the OPF file of book epubs. */
-let epubBookOpfTemplate = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
+export let epubBookOpfTemplate = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
     <package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="<%= idType %>" xml:lang="<%= language %>" prefix="cc: http://creativecommons.org/ns#">\n\
     \t<metadata xmlns:dc="http://purl.org/dc/elements/1.1/">\n\
     \t\t<dc:identifier id="<%= idType %>"><%= aBook.id %></dc:identifier>\n\
@@ -59,7 +59,7 @@ let epubBookOpfTemplate = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
     </package>\
     ')
 /** A template to create the book epub cover XML. */
-let epubBookCoverTemplate = _.template('\
+export let epubBookCoverTemplate = _.template('\
 <?xml version="1.0" encoding="UTF-8"?>\
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">\
     <head>\
@@ -75,7 +75,7 @@ let epubBookCoverTemplate = _.template('\
 ')
 
 /** A template to create the book epub titlepage XML. */
-let epubBookTitlepageTemplate = _.template('\
+export let epubBookTitlepageTemplate = _.template('\
 <?xml version="1.0" encoding="UTF-8"?>\
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">\
    <head>\
@@ -97,7 +97,7 @@ let epubBookTitlepageTemplate = _.template('\
 ')
 
 /** A template to create the book epub copyright page XML. */
-let epubBookCopyrightTemplate = _.template('\
+export let epubBookCopyrightTemplate = _.template('\
 <?xml version="1.0" encoding="UTF-8"?>\
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">\
     <head>\

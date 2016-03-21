@@ -1020,8 +1020,11 @@ var Books = exports.Books = (function () {
 },{"./accessrights/dialog":2,"./actions":4,"./exporter/epub":7,"./exporter/html":9,"./exporter/latex":11,"./templates":13}],6:[function(require,module,exports){
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 /** A template to create the OPF file of book epubs. */
-var epubBookOpfTemplate = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
+var epubBookOpfTemplate = exports.epubBookOpfTemplate = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
     <package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="<%= idType %>" xml:lang="<%= language %>" prefix="cc: http://creativecommons.org/ns#">\n\
     \t<metadata xmlns:dc="http://purl.org/dc/elements/1.1/">\n\
     \t\t<dc:identifier id="<%= idType %>"><%= aBook.id %></dc:identifier>\n\
@@ -1075,7 +1078,7 @@ var epubBookOpfTemplate = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
     </package>\
     ');
 /** A template to create the book epub cover XML. */
-var epubBookCoverTemplate = _.template('\
+var epubBookCoverTemplate = exports.epubBookCoverTemplate = _.template('\
 <?xml version="1.0" encoding="UTF-8"?>\
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">\
     <head>\
@@ -1091,7 +1094,7 @@ var epubBookCoverTemplate = _.template('\
 ');
 
 /** A template to create the book epub titlepage XML. */
-var epubBookTitlepageTemplate = _.template('\
+var epubBookTitlepageTemplate = exports.epubBookTitlepageTemplate = _.template('\
 <?xml version="1.0" encoding="UTF-8"?>\
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">\
    <head>\
@@ -1113,7 +1116,7 @@ var epubBookTitlepageTemplate = _.template('\
 ');
 
 /** A template to create the book epub copyright page XML. */
-var epubBookCopyrightTemplate = _.template('\
+var epubBookCopyrightTemplate = exports.epubBookCopyrightTemplate = _.template('\
 <?xml version="1.0" encoding="UTF-8"?>\
 <html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">\
     <head>\
@@ -1688,8 +1691,11 @@ var htmlBookExport = function htmlBookExport(aBook, anImageDB, aBibDB) {
 },{"./html-templates":8,"./tools":12,"katex":14}],10:[function(require,module,exports){
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 /** A template to create the latex book index. */
-var latexBookIndexTemplate = _.template('\
+var latexBookIndexTemplate = exports.latexBookIndexTemplate = _.template('\
     <%= latexStart %>\
     <% _.each(aBook.chapters,function(chapter){ %>\
         <% if(chapter.part && chapter.part != "") { %>\

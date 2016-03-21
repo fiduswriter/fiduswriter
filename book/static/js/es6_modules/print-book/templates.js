@@ -1,25 +1,5 @@
-/**
- * @ Templates for printing of books.
- * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
- *
- * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
- *
- * @license This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
- *
- */
 /** A template for the initial pages of a book before the contents begin. */
-var tmp_book_print_start = _.template('\
+export let bookPrintStartTemplate = _.template('\
     <h1 id="document-title"><%= theBook.title %></h1>\
     <% if (theBook.metadata.subtitle && theBook.metadata.subtitle != "" ) { %>\
         <h2 id="metadata-subtitle"><%= theBook.metadata.subtitle %></h2>\
@@ -35,9 +15,10 @@ var tmp_book_print_start = _.template('\
         <div class="copyright"><%= theBook.metadata.copyright %></div>\
     <% } %>\
 <div class="pagination-pagebreak">\
-');
+')
+
 /** A template for the print view of a book. */
-var tmp_book_print = _.template('\
+export let bookPrintTemplate = _.template('\
 <% _.each(theBook.chapters, function (chapter) { %>\
     <% var tempNode; %>\
     <% if (chapter.part && chapter.part != "") { %>\
@@ -64,4 +45,4 @@ var tmp_book_print = _.template('\
         <%= printHelpers.modelToViewNode(exporter.obj2Node(JSON.parse(chapter.contents))).innerHTML %>\
     </div>\
 <% }); %>\
-');
+')

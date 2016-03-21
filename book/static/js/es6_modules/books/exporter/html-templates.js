@@ -1,5 +1,5 @@
 /** A template for HTML export of a book. */
-export let htmlBookExportTemplate = _.template('\n
+export let htmlBookExportTemplate = _.template('\
 <!DOCTYPE html>\n\
 <html>\n<head><title><%= title %></title>\
     <% var tempNode; %>\
@@ -69,7 +69,8 @@ export let htmlBookIndexTemplate = _.template('\
     </html>'
 )
 /** A template to create the book index item. */
-export let htmlBookIndexItemTemplate = _.template('\t\t\t\t<li><a href="<% if (item.link) {print(item.link);} else { %>document<% if (item.docNum) {print("-"+item.docNum);}%>.html#<% print(item.id); } %>"><%= item.title %></a>\
+export let htmlBookIndexItemTemplate = _.template('\
+\t\t\t\t<li><a href="<% if (item.link) {print(item.link);} else { %>document<% if (item.docNum) {print("-"+item.docNum);}%>.html#<% print(item.id); } %>"><%= item.title %></a>\
     <% if (item.subItems.length > 0) { %>\
         <ol>\
             <% _.each(item.subItems,function(item){ %>\

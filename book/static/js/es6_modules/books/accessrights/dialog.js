@@ -7,19 +7,18 @@ import {bookCollaboratorsTemplate, bookAccessRightOverviewTemplate} from "./temp
 
 
 export let createAccessRightsDialog = function (bookIds) {
-        var dialogHeader = gettext('Share your book with others');
-        var book_collaborators = {}, theAccessRights, theTeamMembers, i,
-                len;
+        let dialogHeader = gettext('Share your book with others');
+        var book_collaborators = {}
 
-        theAccessRights = window.theAccessRights;
+        let theAccessRights = window.theAccessRights;
 
-        len = theAccessRights.length
+        let len = theAccessRights.length
 
-        theTeamMembers = window.theTeamMembers;
-
+        let theTeamMembers = window.theTeamMembers;
 
 
-        for (i = 0; i < len; i++) {
+
+        for (let i = 0; i < len; i++) {
             if (_.include(bookIds, theAccessRights[i].book_id)) {
                 if ('undefined' == typeof (book_collaborators[
                     theAccessRights[i].user_id])) {

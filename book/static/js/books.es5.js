@@ -5,19 +5,240 @@
 
 var _books = require("./es6_modules/books/books");
 
-/* Create theEditor and make it available to the general namespace, so that all
-the non-editor-specific pieces of JavaScript that are not written in ES6 can get
-access to it.*/
+/* Create theBooks and make it available to the general namespace for debugging
+purposes.*/
 
 var theBooks = new _books.Books();
 window.theBooks = theBooks;
 
-},{"./es6_modules/books/books":3}],2:[function(require,module,exports){
+},{"./es6_modules/books/books":5}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.createAccessRightsDialog = undefined;
+
+var _templates = require('./templates');
+
+/**
+* Helper functions to deal with the book access rights dialog.
+*/
+
+var createAccessRightsDialog = exports.createAccessRightsDialog = function createAccessRightsDialog(bookIds) {
+    var dialogHeader = gettext('Share your book with others');
+    var book_collaborators = {};
+
+    var theAccessRights = window.theAccessRights;
+
+    var len = theAccessRights.length;
+
+    var theTeamMembers = window.theTeamMembers;
+
+    for (var i = 0; i < len; i++) {
+        if (_.include(bookIds, theAccessRights[i].book_id)) {
+            if ('undefined' == typeof book_collaborators[theAccessRights[i].user_id]) {
+                book_collaborators[theAccessRights[i].user_id] = theAccessRights[i];
+                book_collaborators[theAccessRights[i].user_id].count = 1;
+            } else {
+                if (book_collaborators[theAccessRights[i].user_id].rights != theAccessRights[i].rights) ;
+                book_collaborators[theAccessRights[i].user_id].rights = 'r';
+                book_collaborators[theAccessRights[i].user_id].count += 1;
+            }
+        }
+    }
+    book_collaborators = _.select(book_collaborators, function (obj) {
+        return obj.count == bookIds.length;
+    });
+
+    var dialogBody = (0, _templates.bookAccessRightOverviewTemplate)({
+        'dialogHeader': dialogHeader,
+        'contacts': theTeamMembers,
+        'collaborators': (0, _templates.bookCollaboratorsTemplate)({
+            'collaborators': book_collaborators
+        })
+    });
+    $('body').append(dialogBody);
+    var diaButtons = {};
+    diaButtons[gettext('Submit')] = function () {
+        //apply the current state to server
+        var collaborators = [],
+            rights = [];
+        $('#share-member .collaborator-tr').each(function () {
+            collaborators[collaborators.length] = $(this).attr('data-id');
+            rights[rights.length] = $(this).attr('data-right');
+        });
+        submitAccessRight(bookIds, collaborators, rights);
+        $(this).dialog('close');
+    };
+    diaButtons[gettext('Cancel')] = function () {
+        $(this).dialog("close");
+    };
+    $('#access-rights-dialog').dialog({
+        draggable: false,
+        resizable: false,
+        top: 10,
+        width: 820,
+        height: 540,
+        modal: true,
+        buttons: diaButtons,
+        create: function create() {
+            var $the_dialog = $(this).closest(".ui-dialog");
+            $the_dialog.find(".ui-button:first-child").addClass("fw-button fw-dark");
+            $the_dialog.find(".ui-button:last").addClass("fw-button fw-orange");
+        },
+        close: function close() {
+            $('#access-rights-dialog').dialog('destroy').remove();
+        }
+    });
+    $('.fw-checkable').bind('click', function () {
+        $.setCheckableLabel($(this));
+    });
+    $('#add-share-member').bind('click', function () {
+        var $selected_members = $('#my-contacts .fw-checkable.checked');
+        var selected_data = [];
+        $selected_members.each(function () {
+            var member_id = $(this).attr('data-id');
+            var $collaborator = $('#collaborator-' + member_id);
+            if (0 == $collaborator.size()) {
+                selected_data[selected_data.length] = {
+                    'user_id': member_id,
+                    'user_name': $(this).attr('data-name'),
+                    'avatar': $(this).attr('data-avatar'),
+                    'rights': 'r'
+                };
+            } else if ('d' == $collaborator.attr('data-right')) {
+                $collaborator.removeClass('d').addClass('r').attr('data-right', 'r');
+            }
+        });
+        $('#my-contacts .checkable-label.checked').removeClass('checked');
+        $('#share-member table tbody').append(tmp_book_collaborators({
+            'collaborators': selected_data
+        }));
+        collaboratorFunctionsEvent();
+    });
+    collaboratorFunctionsEvent();
+};
+
+var collaboratorFunctionsEvent = function collaboratorFunctionsEvent() {
+    $('.edit-right').unbind('click');
+    $('.edit-right').each(function () {
+        $.addDropdownBox($(this), $(this).siblings('.fw-pulldown'));
+    });
+    var $spans = $('.edit-right-wrapper .fw-pulldown-item, .delete-collaborator');
+    $spans.unbind('mousedown');
+    $spans.bind('mousedown', function () {
+        var new_right = $(this).attr('data-right');
+        $(this).closest('.collaborator-tr').attr('class', 'collaborator-tr ' + new_right);
+        $(this).closest('.collaborator-tr').attr('data-right', new_right);
+    });
+};
+
+var submitAccessRight = function submitAccessRight(books, collaborators, rights) {
+    var post_data = {
+        'books[]': books,
+        'collaborators[]': collaborators,
+        'rights[]': rights
+    };
+    $.ajax({
+        url: '/book/accessright/save/',
+        data: post_data,
+        type: 'POST',
+        dataType: 'json',
+        success: function success(response) {
+            theAccessRights = response.access_rights;
+            $.addAlert('success', gettext('Access rights have been saved'));
+        },
+        error: function error(jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR.responseText);
+        }
+    });
+};
+
+},{"./templates":3}],3:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+/** A template for the book access rights overview */
+var bookAccessRightOverviewTemplate = exports.bookAccessRightOverviewTemplate = _.template('\
+    <div id="access-rights-dialog" title="<%- dialogHeader %>">\
+        <div id="my-contacts" class="fw-ar-container">\
+            <h3 class="fw-green-title">' + gettext("My contacts") + '</h3>\
+            <table class="fw-document-table">\
+                <thead class="fw-document-table-header"><tr><th width="332">' + gettext("Contacts") + '</th></tr></thead>\
+                <tbody class="fw-document-table-body fw-small"><% _.each(contacts, function(contact) { %>\
+                    <tr>\
+                        <td width="332" data-id="<%- contact.id %>" data-avatar="<%- contact.avatar %>" data-name="<%- contact.name %>" class="fw-checkable fw-checkable-td">\
+                            <span><img class="fw-avatar" src="<%- contact.avatar %>" /></span>\
+                            <span class="fw-inline"><%= contact.name %></span>\
+                        </td>\
+                    </tr>\
+                <% }) %></tbody>\
+            </table>\
+        </div>\
+        <span id="add-share-member" class="fw-button fw-large fw-square fw-light fw-ar-button"><i class="icon-right"></i></span>\
+        <div id="share-member" class="fw-ar-container">\
+            <h3 class="fw-green-title">' + gettext("My collaborators") + '</h3>\
+            <table class="fw-document-table tablesorter">\
+                <thead class="fw-document-table-header"><tr>\
+                        <th width="212">' + gettext("Collaborators") + '</th>\
+                        <th width="50" align="center">' + gettext("Rights") + '</th>\
+                        <th width="50" align="center">' + gettext("Delete") + '</th>\
+                </tr></thead>\
+                <tbody class="fw-document-table-body fw-small"><%= collaborators %></tbody>\
+            </table>\
+        </div>\
+    </div>');
+
+/** A template for the book collaboration pane */
+var bookCollaboratorsTemplate = exports.bookCollaboratorsTemplate = _.template('\
+    <% _.each(collaborators, function(collaborator) { %>\
+        <tr id="collaborator-<%- collaborator.user_id %>" data-id="<%- collaborator.user_id %>"\
+        class="collaborator-tr <%- collaborator.rights %>" data-right="<%- collaborator.rights %>">\
+            <td width="212">\
+                <span><img class="fw-avatar" src="<%- collaborator.avatar %>" /></span>\
+                <span class="fw-inline"><%= collaborator.user_name %></span>\
+            </td>\
+            <td width="50" align="center">\
+                <div class="fw-inline edit-right-wrapper">\
+                    <i class="icon-access-right"></i>\
+                    <i class="icon-down-dir edit-right"></i>\
+                    <div class="fw-pulldown fw-left">\
+                        <ul>\
+                            <li>\
+                                <span class="fw-pulldown-item" data-right="w">\
+                                    <i class="icon-pencil" >' + gettext("Editor") + '</i>\
+                                </span>\
+                            </li>\
+                            <li>\
+                                <span class="fw-pulldown-item" data-right="r">\
+                                    <i class="icon-eye">' + gettext("Read only") + '</i>\
+                                </span>\
+                            </li>\
+                        </ul>\
+                    </div>\
+                </div>\
+            </td>\
+            <td width="50" align="center">\
+                <span class="delete-collaborator fw-inline" data-right="d">\
+                    <i class="icon-trash fw-link-text"></i>\
+                </span>\
+            </td>\
+        </tr>\
+    <% }) %>');
+
+},{}],4:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.createBookDialog = exports.copyBook = exports.getBookListData = exports.deleteBookDialog = exports.startBookTable = undefined;
+
+var _templates = require('./templates');
+
 var deleteBook = function deleteBook(id) {
     var postData = {};
     postData['id'] = id;
@@ -143,7 +364,7 @@ var getBookListData = exports.getBookListData = function getBookListData(id) {
 
 var selectCoverImageDialog = function selectCoverImageDialog(theBook, anImageDB) {
     var dialogHeader = gettext('Select cover image'),
-        dialogBody = tmp_book_cover_image_selection({
+        dialogBody = (0, _templates.bookCoverImageSelectionTemplate)({
         theBook: theBook,
         anImageDB: anImageDB
     });
@@ -173,7 +394,7 @@ var selectCoverImageDialog = function selectCoverImageDialog(theBook, anImageDB)
         } else {
             theBook.cover_image = parseInt(jQuery('#imagelist tr.checked')[0].id.substring(6));
         }
-        jQuery('#figure-preview-row').html(tmp_book_epub_data_cover({
+        jQuery('#figure-preview-row').html(bookEpubDataCoverTemplate({
             'anImageDB': anImageDB,
             'theBook': theBook
         }));
@@ -209,7 +430,7 @@ var editChapterDialog = function editChapterDialog(aChapter, theBook) {
         documentTitle = gettext('Untitled');
     }
     dialogHeader = gettext('Edit Chapter') + ': ' + aChapter.number + '. ' + documentTitle;
-    dialogBody = tmp_book_chapter_dialog({
+    dialogBody = (0, _templates.bookChapterDialogTemplate)({
         'dialogHeader': dialogHeader,
         'aChapter': aChapter
     });
@@ -218,7 +439,7 @@ var editChapterDialog = function editChapterDialog(aChapter, theBook) {
     var diaButtons = {};
     diaButtons[gettext('Submit')] = function () {
         aChapter.part = jQuery('#book-chapter-part').val();
-        jQuery('#book-chapter-list').html(tmp_book_chapter_list({
+        jQuery('#book-chapter-list').html((0, _templates.bookChapterListTemplate)({
             theBook: theBook
         }));
         jQuery(this).dialog('close');
@@ -266,7 +487,7 @@ var saveBook = function saveBook(theBook, theOldBook, currentDialog) {
             }
             theBookList.push(theBook);
             stopBookTable();
-            jQuery('#book-table tbody').html(tmp_book_list());
+            jQuery('#book-table tbody').html((0, _templates.bookListTemplate)());
             startBookTable();
             if (typeof currentDialog != 'undefined') {
                 jQuery(currentDialog).dialog('close');
@@ -440,29 +661,29 @@ var createBookDialog = exports.createBookDialog = function createBookDialog(book
 
     var dialogBody = tmp_book_dialog({
         dialogHeader: dialogHeader,
-        basicInfo: tmp_book_basic_info({
+        basicInfo: (0, _templates.bookBasicInfoTemplate)({
             theBook: theBook
         }),
-        chapters: tmp_book_dialog_chapters({
+        chapters: (0, _templates.bookDialogChaptersTemplate)({
             theBook: theBook,
-            chapters: tmp_book_chapter_list({
+            chapters: (0, _templates.bookChapterListTemplate)({
                 theBook: theBook
             }),
-            documents: tmp_book_document_list({
+            documents: (0, _templates.bookDocumentListTemplate)({
                 theBook: theBook,
                 theDocumentList: theDocumentList
             })
         }),
-        bibliographyData: tmp_book_bibliography_data({
+        bibliographyData: bookBibliographyDataTemplate({
             theBook: theBook
         }),
-        printData: tmp_book_print_data({
+        printData: (0, _templates.bookPrintDataTemplate)({
             theBook: theBook
         }),
-        epubData: tmp_book_epub_data({
+        epubData: bookEpubDataTemplate({
             theBook: theBook,
 
-            coverImage: tmp_book_epub_data_cover({
+            coverImage: bookEpubDataCoverTemplate({
                 theBook: theBook,
                 anImageDB: anImageDB
             })
@@ -478,7 +699,7 @@ var createBookDialog = exports.createBookDialog = function createBookDialog(book
         });
         chapter.number--;
         higherChapter.number++;
-        jQuery('#book-chapter-list').html(tmp_book_chapter_list({
+        jQuery('#book-chapter-list').html((0, _templates.bookChapterListTemplate)({
             theBook: theBook
         }));
     });
@@ -491,7 +712,7 @@ var createBookDialog = exports.createBookDialog = function createBookDialog(book
         });
         chapter.number++;
         lowerChapter.number--;
-        jQuery('#book-chapter-list').html(tmp_book_chapter_list({
+        jQuery('#book-chapter-list').html((0, _templates.bookChapterListTemplate)({
             theBook: theBook
         }));
     });
@@ -508,10 +729,10 @@ var createBookDialog = exports.createBookDialog = function createBookDialog(book
         theBook.chapters = _.filter(theBook.chapters, function (chapter) {
             return chapter !== thisChapter;
         });
-        jQuery('#book-chapter-list').html(tmp_book_chapter_list({
+        jQuery('#book-chapter-list').html((0, _templates.bookChapterListTemplate)({
             theBook: theBook
         }));
-        jQuery('#book-document-list').html(tmp_book_document_list({
+        jQuery('#book-document-list').html((0, _templates.bookDocumentListTemplate)({
             theDocumentList: theDocumentList,
             theBook: theBook
         }));
@@ -537,10 +758,10 @@ var createBookDialog = exports.createBookDialog = function createBookDialog(book
                 part: ''
             });
         });
-        jQuery('#book-chapter-list').html(tmp_book_chapter_list({
+        jQuery('#book-chapter-list').html((0, _templates.bookChapterListTemplate)({
             theBook: theBook
         }));
-        jQuery('#book-document-list').html(tmp_book_document_list({
+        jQuery('#book-document-list').html((0, _templates.bookDocumentListTemplate)({
             theDocumentList: theDocumentList,
             theBook: theBook
         }));
@@ -560,7 +781,7 @@ var createBookDialog = exports.createBookDialog = function createBookDialog(book
 
     jQuery(document).on('click', '#remove-cover-image-button', function () {
         delete theBook.cover_image;
-        jQuery('#figure-preview-row').html(tmp_book_epub_data_cover({
+        jQuery('#figure-preview-row').html(bookEpubDataCoverTemplate({
             'theBook': theBook
         }));
     });
@@ -638,7 +859,7 @@ var createBookDialog = exports.createBookDialog = function createBookDialog(book
     jQuery('#bookoptionsTab').tabs();
 };
 
-},{}],3:[function(require,module,exports){
+},{"./templates":13}],5:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -655,6 +876,10 @@ var _latex = require("./exporter/latex");
 var _epub = require("./exporter/epub");
 
 var _actions = require("./actions");
+
+var _dialog = require("./accessrights/dialog");
+
+var _templates = require("./templates");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -682,7 +907,7 @@ var Books = exports.Books = (function () {
             });
 
             jQuery(document).bind('bookDataLoaded', function () {
-                jQuery('#book-table tbody').html(tmp_book_list());
+                jQuery('#book-table tbody').html((0, _templates.bookListTemplate)());
                 (0, _actions.startBookTable)();
             });
 
@@ -694,7 +919,7 @@ var Books = exports.Books = (function () {
 
                 jQuery(document).on('click', '.owned-by-user .rights', function () {
                     var BookId = parseInt(jQuery(this).attr('data-id'));
-                    bookaccessrightsHelpers.createAccessRightsDialog([BookId]);
+                    (0, _dialog.createAccessRightsDialog)([BookId]);
                 });
 
                 //select all entries
@@ -792,7 +1017,139 @@ var Books = exports.Books = (function () {
     return Books;
 })();
 
-},{"./actions":2,"./exporter/epub":4,"./exporter/html":5,"./exporter/latex":6}],4:[function(require,module,exports){
+},{"./accessrights/dialog":2,"./actions":4,"./exporter/epub":7,"./exporter/html":9,"./exporter/latex":11,"./templates":13}],6:[function(require,module,exports){
+'use strict';
+
+/** A template to create the OPF file of book epubs. */
+var epubBookOpfTemplate = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
+    <package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="<%= idType %>" xml:lang="<%= language %>" prefix="cc: http://creativecommons.org/ns#">\n\
+    \t<metadata xmlns:dc="http://purl.org/dc/elements/1.1/">\n\
+    \t\t<dc:identifier id="<%= idType %>"><%= aBook.id %></dc:identifier>\n\
+    \t\t<dc:title><%= aBook.title %></dc:title>\n\
+    \t\t<dc:creator><% if (aBook.metadata.author && aBook.metadata.author != "") {\
+            print(aBook.metadata.author);\
+        } else {\
+            print(theUser.name);\
+        } %></dc:creator>\n\
+    \t\t<dc:language><%= language %></dc:language>\n\
+    \t\t<dc:date><%= date %></dc:date>\n\
+    <% if (aBook.metadata.copyright && aBook.metadata.copyright != "") { %>\
+    \t\t<dc:rights><%- aBook.metadata.copyright %></dc:rights>\
+    <% } %>\
+    <% if (aBook.metadata.publisher && aBook.metadata.publisher != "") { %>\
+    \t\t<dc:publisher><%- aBook.metadata.publisher %></dc:publisher>\
+    <% } %>\
+    \t\t<meta property="dcterms:modified"><%= modified %></meta>\n\
+    <% if (aBook.metadata.keywords && aBook.metadata.keywords != "") {\
+        _.each(aBook.metadata.keywords.split(","),function(keyword) { %>\
+            <dc:subject><%- jQuery.trim(keyword) %></dc:subject>\
+    <% }); } %>\
+    \t</metadata>\n\
+    \t<manifest>\n\
+    <% if (coverImage) { %>\
+        <item id="cover" href="cover.xhtml" media-type="application/xhtml+xml"/>\
+    <% } %>\
+    <item id="titlepage" href="titlepage.xhtml" media-type="application/xhtml+xml"/>\
+    <% _.each(chapters, function (aChapter) { %>\
+        \t\t<item id="t<%- aChapter.number %>" href="document-<%- aChapter.number %>.xhtml" media-type="application/xhtml+xml" />\n\
+    <% }); %>\
+    \t\t<item id="nav" href="document-nav.xhtml" properties="nav" media-type="application/xhtml+xml" />\n\
+        <item id="copyright" href="copyright.xhtml" media-type="application/xhtml+xml"/>\
+        <% _.each(images,function(item, index){ %>' + exporter.opfImageItemTemplatePart + '<% }); %>\
+        <% _.each(styleSheets,function(item, index){ %>' + exporter.opfCssItemTemplatePart + '<% }); %>\
+        <% if (math) {%>' + exporter.opfKatexItemsTemplatePart + '<% }%>\
+    \t\t<!-- ncx included for 2.0 reading system compatibility: -->\n\
+    \t\t<item id="ncx" href="document.ncx" media-type="application/x-dtbncx+xml" />\n\
+    \t</manifest>\n\
+    \t<spine toc="ncx">\n\
+        <% if (coverImage) { %>\
+            \t\t<itemref idref="cover" linear="no"/>\
+        <% } %>\
+        <itemref idref="titlepage" linear="yes"/>\
+        <% _.each(chapters, function (aChapter) { %>\
+            \t\t<itemref idref="t<%- aChapter.number %>" linear="yes" />\n\
+        <% }); %>\
+        <itemref idref="copyright" linear="yes"/>\
+        <itemref idref="nav" linear="no"/>\
+    \t</spine>\n\
+    </package>\
+    ');
+/** A template to create the book epub cover XML. */
+var epubBookCoverTemplate = _.template('\
+<?xml version="1.0" encoding="UTF-8"?>\
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">\
+    <head>\
+        <title><%- aBook.title %></title>\
+        <meta charset="utf-8"/>\
+    </head>\
+    <body>\
+        <div id="cover">\
+            <img src="<%= coverImage.image.split("/").pop().split("?")[0] %>" alt="' + gettext('Cover Image') + '" title="Cover Image"/>\
+        </div>\
+    </body>\
+</html>\
+');
+
+/** A template to create the book epub titlepage XML. */
+var epubBookTitlepageTemplate = _.template('\
+<?xml version="1.0" encoding="UTF-8"?>\
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">\
+   <head>\
+      <title><%- aBook.title %></title>\
+      <meta charset="utf-8"/>\
+   </head>\
+   <body style="text-align: center;">\
+      <div id="title" epub:type="frontmatter titlepage">\
+          <h1><%- aBook.title %></h1>\
+          <% if (aBook.metadata.subtitle !="") { %>\
+            <h2><%- aBook.metadata.subtitle %></h2>\
+          <% } %>\
+          <% if (aBook.metadata.author !="") { %>\
+            <h3>' + gettext('by') + ' <%- aBook.metadata.author %></h3>\
+          <% } %>\
+      </div>\
+   </body>\
+</html>\
+');
+
+/** A template to create the book epub copyright page XML. */
+var epubBookCopyrightTemplate = _.template('\
+<?xml version="1.0" encoding="UTF-8"?>\
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops">\
+    <head>\
+        <title><%- aBook.title %></title>\
+        <meta charset="utf-8"/>\
+    </head>\
+    <body>\
+        <section epub:type="frontmatter copyright-page">\
+            <div id="copyright">\
+                <p>\
+                    <%- aBook.title %>\
+                    <% if (aBook.metadata.author !="") { %>\
+                        ' + gettext('by') + ' <%- aBook.metadata.author %>\
+                    <% } %>\
+                </p>\
+                <% if (aBook.metadata.copyright !="") { %>\
+                    <p><%- aBook.metadata.copyright %></p>\
+                <% } %>\
+                <p>' + gettext('Title') + ': <% aBook.title %></p>\
+                <% if (aBook.metadata.author && aBook.metadata.author !="") { %>\
+                    <p>' + gettext('Author') + ': <%- aBook.metadata.author %></p>\
+                <% } %>\
+                <% if (aBook.metadata.publisher && aBook.metadata.publisher !="") { %>\
+                    <p>' + gettext('Published by') + ': <%- aBook.metadata.publisher %></p>\
+                <% } %>\
+                <p>' + gettext('Last Updated') + ': <%= aBook.updated %></p>\
+                <p>' + gettext('Created') + ': <%= aBook.added %></p>\
+                <p>' + gettext('Language') + ': <%= language %></p>\
+                <p>' + gettext('Created by') + ': <%= creator %></p>\
+            </div>\
+        </section>\
+    </body>\
+</html>\
+');
+
+},{}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -803,6 +1160,8 @@ exports.downloadEpub = undefined;
 var _katex = require("katex");
 
 var _tools = require("./tools");
+
+var _epubTemplates = require("./epub-templates");
 
 var downloadEpub = exports.downloadEpub = function downloadEpub(aBook) {
     (0, _tools.getMissingChapterData)(aBook, function () {
@@ -843,7 +1202,7 @@ var epubBookExport = function epubBookExport(aBook, anImageDB, aBibDB) {
 
         outputList.push({
             filename: 'EPUB/cover.xhtml',
-            contents: tmp_epub_book_cover({ aBook: aBook, coverImage: coverImage })
+            contents: (0, _epubTemplates.epubBookCoverTemplate)({ aBook: aBook, coverImage: coverImage })
         });
         contentItems.push({
             link: 'cover.xhtml#cover',
@@ -1003,7 +1362,7 @@ var epubBookExport = function epubBookExport(aBook, anImageDB, aBibDB) {
         }).coverImage = true;
     }
 
-    var opfCode = tmp_epub_book_opf({
+    var opfCode = (0, _epubTemplates.epubBookOpfTemplate)({
         language: gettext('en-US'), // TODO: specify a document language rather than using the current users UI language
         aBook: aBook,
         theUser: theUser,
@@ -1046,12 +1405,12 @@ var epubBookExport = function epubBookExport(aBook, anImageDB, aBibDB) {
         contents: navCode
     }, {
         filename: 'EPUB/titlepage.xhtml',
-        contents: tmp_epub_book_titlepage({
+        contents: (0, _epubTemplates.epubBookTitlepageTemplate)({
             aBook: aBook
         })
     }, {
         filename: 'EPUB/copyright.xhtml',
-        contents: tmp_epub_book_copyright({
+        contents: (0, _epubTemplates.epubBookCopyrightTemplate)({
             aBook: aBook,
             creator: theUser.name,
             language: gettext('English') //TODO: specify a book language rather than using the current users UI language
@@ -1082,7 +1441,93 @@ var epubBookExport = function epubBookExport(aBook, anImageDB, aBibDB) {
     exporter.zipFileCreator(outputList, httpOutputList, exporter.createSlug(aBook.title) + '.epub', 'application/epub+zip', includeZips);
 };
 
-},{"./tools":7,"katex":8}],5:[function(require,module,exports){
+},{"./epub-templates":6,"./tools":12,"katex":14}],8:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+/** A template for HTML export of a book. */
+var htmlBookExportTemplate = exports.htmlBookExportTemplate = _.template('\
+<!DOCTYPE html>\n\
+<html>\n<head><title><%= title %></title>\
+    <% var tempNode; %>\
+    <% _.each(styleSheets,function(item){ %>\
+        \t<link rel="stylesheet" type="text/css" href="<%= item.filename %>" />\
+    <% }); %>\
+    </head><body>\
+    <% if (part && part !="") { %>\
+        <h1 class="part"><%= part %></h1>\
+    <% } %>\
+    <h1 class="title"><%= title %></h1>\
+    <% if (settings["metadata-subtitle"] && metadata.subtitle) { %>\
+        <% tempNode = exporter.obj2Node(metadata.subtitle); %>\
+        <% if (tempNode.textContent.length > 0) { %>\
+            <h2 class="subtitle"><%= tempNode.textContent %></h2>\
+        <% } %>\
+    <% } %>\
+    <% if (settings["metadata-abstract"] && metadata.abstract) { %>\
+        <% tempNode = exporter.obj2Node(metadata.abstract); %>\
+        <% if (tempNode.textContent.length > 0) { %>\
+            <div class="abstract"><%= tempNode.textContent %></div>\
+        <% } %>\
+    <% } %>\
+    <% if (settings["metadata-authors"] && metadata.authors) { %>\
+        <% tempNode = exporter.obj2Node(metadata.authors); %>\
+        <% if (tempNode.textContent.length > 0) { %>\
+            <div class="authors"><%= tempNode.textContent %></div>\
+        <% } %>\
+    <% } %>\
+    <% if (settings["metadata-keywords"] && metadata.keywords) { %>\
+        <% tempNode = exporter.obj2Node(metadata.keywords); %>\
+        <% if (tempNode.textContent.length > 0) { %>\
+            <div class="keywords"><%= tempNode.textContent %></div>\
+        <% } %>\
+    <% } %>\
+    <%= contents %></body></html>');
+
+/** A template to create the book index. */
+var htmlBookIndexTemplate = exports.htmlBookIndexTemplate = _.template('\
+    <html>\n\
+    \t<head>\n\
+    \t\t<meta charset="utf-8"></meta>\n\
+    \t\t<title><%- aBook.title %></title>\n\
+    \t</head>\n\
+    \t<body>\n\
+    \t\t<h1><%- aBook.title %></h1>\
+    <% if (aBook.metadata.subtitle !="") { %>\
+        \t\t<h2><%- aBook.metadata.subtitle %></h2>\
+    <% } %>\
+    <% if (aBook.metadata.author !="") { %>\
+        \t\t<h3>' + gettext('by') + ' <%- aBook.metadata.author %></h3>\
+    <% } %>\
+    \t\t<ol>\n\
+        <% _.each(contentItems,function(item){ %>\
+            <%= templates.htmlBookIndexItemTemplate({"item":item, "templates": templates})%>\
+        <% }); %>\
+    \t\t</ol>\n\
+    <% if (aBook.metadata.publisher && aBook.metadata.publisher !="") { %>\
+        \t\t<p>' + gettext('Published by') + ': <%- aBook.metadata.publisher %></p>\
+    <% } %>\
+    \t\t<p>' + gettext('Last Updated') + ': <%= aBook.updated %></p>\
+    \t\t<p>' + gettext('Created') + ': <%= aBook.added %></p>\
+    \t\t<p>' + gettext('Language') + ': <%= language %></p>\
+    \t\t<p>' + gettext('Created by') + ': <%= creator %></p>\
+    \t</body>\n\
+    </html>');
+/** A template to create the book index item. */
+var htmlBookIndexItemTemplate = exports.htmlBookIndexItemTemplate = _.template('\
+\t\t\t\t<li><a href="<% if (item.link) {print(item.link);} else { %>document<% if (item.docNum) {print("-"+item.docNum);}%>.html#<% print(item.id); } %>"><%= item.title %></a>\
+    <% if (item.subItems.length > 0) { %>\
+        <ol>\
+            <% _.each(item.subItems,function(item){ %>\
+                <%= templates.htmlBookIndexItemTemplate({"item":item, "templates": templates})%>\
+            <% }); %>\
+        </ol>\
+    <% } %>\
+</li>\n');
+
+},{}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1093,6 +1538,12 @@ exports.downloadHtml = undefined;
 var _katex = require("katex");
 
 var _tools = require("./tools");
+
+var _htmlTemplates = require("./html-templates");
+
+// Some templates need to be able to refer to these templates, so we hand the templates variable to such
+// templates.
+var templates = { htmlBookIndexItemTemplate: _htmlTemplates.htmlBookIndexItemTemplate };
 
 var downloadHtml = exports.downloadHtml = function downloadHtml(aBook) {
     (0, _tools.getMissingChapterData)(aBook, function () {
@@ -1191,7 +1642,7 @@ var htmlBookExport = function htmlBookExport(aBook, anImageDB, aBibDB) {
 
         var contentsCode = exporter.replaceImgSrc(contents.innerHTML);
 
-        var htmlCode = tmp_html_export({
+        var htmlCode = (0, _htmlTemplates.htmlBookExportTemplate)({
             'part': aBook.chapters[i].part,
             'title': title,
             'metadata': aDocument.metadata,
@@ -1213,11 +1664,12 @@ var htmlBookExport = function htmlBookExport(aBook, anImageDB, aBibDB) {
 
     outputList.push({
         filename: 'index.html',
-        contents: tmp_html_book_index({
+        contents: (0, _htmlTemplates.htmlBookIndexTemplate)({
             contentItems: contentItems,
             aBook: aBook,
             creator: theUser.name,
-            language: gettext('English') //TODO: specify a book language rather than using the current users UI language
+            language: gettext('English'), //TODO: specify a book language rather than using the current users UI language
+            templates: templates
         })
     });
 
@@ -1233,15 +1685,32 @@ var htmlBookExport = function htmlBookExport(aBook, anImageDB, aBibDB) {
     exporter.zipFileCreator(outputList, images, exporter.createSlug(aBook.title) + '.html.zip', false, includeZips);
 };
 
-},{"./tools":7,"katex":8}],6:[function(require,module,exports){
+},{"./html-templates":8,"./tools":12,"katex":14}],10:[function(require,module,exports){
 'use strict';
+
+/** A template to create the latex book index. */
+var latexBookIndexTemplate = _.template('\
+    <%= latexStart %>\
+    <% _.each(aBook.chapters,function(chapter){ %>\
+        <% if(chapter.part && chapter.part != "") { %>\
+            \n\t\\part{<%= chapter.part %>}\
+         <% } %>\
+        \n\t\\include{chapter-<%= chapter.number%>}\
+    <% }); %>\
+    <%= latexEnd %>\
+');
+
+},{}],11:[function(require,module,exports){
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.downloadLatex = undefined;
 
-var _tools = require('./tools');
+var _tools = require("./tools");
+
+var _latexTemplates = require("./latex-templates");
 
 var downloadLatex = exports.downloadLatex = function downloadLatex(aBook) {
     (0, _tools.getMissingChapterData)(aBook, function () {
@@ -1297,7 +1766,7 @@ var latexBookExport = function latexBookExport(aBook, anImageDB, aBibDB) {
 
     outputList.push({
         filename: exporter.createSlug(aBook.title) + '.tex',
-        contents: tmp_latex_book_index({
+        contents: (0, _latexTemplates.latexBookIndexTemplate)({
             aBook: aBook,
             latexStart: latexStart,
             latexEnd: latexEnd
@@ -1318,7 +1787,7 @@ var latexBookExport = function latexBookExport(aBook, anImageDB, aBibDB) {
     exporter.zipFileCreator(outputList, images, exporter.createSlug(aBook.title) + '.latex.zip');
 };
 
-},{"./tools":7}],7:[function(require,module,exports){
+},{"./latex-templates":10,"./tools":12}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1373,7 +1842,366 @@ var uniqueObjects = exports.uniqueObjects = function uniqueObjects(array) {
     return results;
 };
 
-},{}],8:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+/** A template for the list of books */
+var bookListTemplate = exports.bookListTemplate = _.template('\
+<% _.each(theBookList,function(aBook,key,list){%>\
+    <tr id="Book_<%- aBook.id %>" <% if (theUser.id == aBook.owner) { %>class="owned-by-user"<% } %> >\
+       <td width="20">\
+           <span class="fw-inline">\
+               <input type="checkbox" class="entry-select"\
+                   data-id="<%- aBook.id %>"\
+                   data-owner="<%- aBook.owner %>"/>\
+           </span>\
+       </td>\
+       <td width="225">\
+           <span class="fw-document-table-title fw-inline">\
+               <i class="icon-book"></i>\
+               <span class="book-title fw-link-text fw-searchable" data-id="<%- aBook.id %>">\
+                   <%  if (aBook.title.length > 0) { %>\
+                       <%- aBook.title %>\
+                   <% } else { %>\
+                       ' + gettext('Untitled') + '\
+                   <% } %>\
+               </span>\
+           </span>\
+       </td>\
+       <td width="115">\
+           <span class="fw-inline"><%- aBook.added %></span>\
+       </td>\
+       <td width="115">\
+           <span class="fw-inline"><%- aBook.updated %></span>\
+       </td>\
+       <td width="170">\
+           <span>\
+               <img class="fw-avatar" src="<%- aBook.owner_avatar %>" />\
+           </span>\
+           <span class="fw-inline fw-searchable"><%- aBook.owner_name %></span>\
+       </td>\
+       <td width="60" align="center">\
+           <span class="rights fw-inline" data-id="<%- aBook.id %>">\
+               <i data-id="<%- aBook.id %>" class="icon-access-right <%- aBook.rights %>"></i>\
+           </span>\
+       </td>\
+        <td width="40" align="center">\
+           <span class="delete-book fw-inline fw-link-text" data-id="<%- aBook.id %>" data-title="<%- aBook.title %>">\
+               <% if (theUser.id === aBook.owner) { %><i class="icon-trash"></i><% } %>\
+           </span>\
+       </td>\
+   </tr>\
+<% }); %>');
+
+/** A template for the Fidus Writer document file uploader. */
+/*var tmp_import_fidus = _.template('<div id="importfidus" title="' + gettext('Import a Fidus file') + '">\
+        <form id="import-fidus-form" method="post" enctype="multipart/form-data" class="ajax-upload">\
+            <input type="file" id="fidus-uploader" name="fidus" required />\
+            <span id="import-fidus-btn" class="fw-button fw-white fw-large">' + gettext('Select a file') + '</span>\
+            <label id="import-fidus-name" class="ajax-upload-label"></label>\
+        </form>\
+    </div>');*/
+
+/** A template for the basic info book template pane */
+var bookBasicInfoTemplate = exports.bookBasicInfoTemplate = _.template('\
+    <tr>\
+        <th>\
+            <h4 class="fw-tablerow-title">' + gettext("Title") + '</h4>\
+        </th>\
+        <td>\
+            <input class="entryForm" type="text" id="book-title" value="<%- theBook.title %>" <% if (theBook.rights==="r") {print("disabled=disabled")} %> >\
+        </td>\
+    </tr>\
+    <tr>\
+        <th>\
+            <h4 class="fw-tablerow-title">' + gettext("Author") + '</h4>\
+        </th>\
+        <td>\
+            <input class="entryForm" type="text" id="book-metadata-author" value="<%- theBook.metadata.author %>" <% if (theBook.rights==="r") {print("disabled=disabled")} %> >\
+        </td>\
+    </tr>\
+    <tr>\
+        <th>\
+            <h4 class="fw-tablerow-title">' + gettext("Subtitle") + '</h4>\
+        </th>\
+        <td>\
+            <input class="entryForm" type="text" id="book-metadata-subtitle" value="<%- theBook.metadata.subtitle %>" <% if (theBook.rights==="r") {print("disabled=disabled")} %> >\
+        </td>\
+    </tr>\
+    <tr>\
+        <th>\
+            <h4 class="fw-tablerow-title">' + gettext("Publisher") + '</h4>\
+        </th>\
+        <td>\
+            <input class="entryForm" type="text" id="book-metadata-publisher" value="<%- theBook.metadata.publisher %>" <% if (theBook.rights==="r") {print("disabled=disabled")} %> >\
+        </td>\
+    </tr>\
+    <tr>\
+        <th>\
+            <h4 class="fw-tablerow-title">' + gettext("Copyright notice") + '</h4>\
+        </th>\
+        <td>\
+            <input class="entryForm" type="text" id="book-metadata-copyright" value="<%- theBook.metadata.copyright %>" <% if (theBook.rights==="r") {print("disabled=disabled")} %> >\
+        </td>\
+    </tr>\
+    <tr>\
+        <th>\
+            <h4 class="fw-tablerow-title" title="' + gettext("Comma separated keywords") + '">' + gettext("Keywords") + '</h4>\
+        </th>\
+        <td>\
+            <input class="entryForm" type="text" id="book-metadata-keywords" value="<%- theBook.metadata.keywords %>" <% if (theBook.rights==="r") {print("disabled=disabled")} %> >\
+        </td>\
+    </tr>\
+');
+
+/** A template for the citation style pane of the book dialog */
+var bookBibliographyDataTemplate = exports.bookBibliographyDataTemplate = _.template('\
+    <tr>\
+        <th>\
+            <h4 class="fw-tablerow-title">' + gettext("Citation style") + '</h4>\
+        </th>\
+        <td>\
+        <select class="entryForm dk" name="book-settings-citationstyle" id="book-settings-citationstyle" <% if (theBook.rights==="r") {print("disabled=disabled")} %> >\
+            <% _.each(citeproc.styles, function(citationstyle, key) { %>\
+                <option value="<%= key %>"<% if(key == theBook.settings.citationstyle) { %> selected<%} %>><%= citeproc.styles[key].name %></option>\
+            <% }) %>\
+        </select>\
+        </td>\
+    </tr>\
+');
+
+/** A template for the print related data pane of the book dialog */
+var bookPrintDataTemplate = exports.bookPrintDataTemplate = _.template('\
+    <tr>\
+        <th>\
+            <h4 class="fw-tablerow-title">' + gettext("Document style") + '</h4>\
+        </th>\
+        <td>\
+        <select class="entryForm dk" name="book-settings-documentstyle" id="book-settings-documentstyle" <% if (theBook.rights==="r") {print("disabled=disabled")} %> >\
+            <% _.each(documentStyleList, function(documentstyle) { %>\
+                <option value="<%= documentstyle.filename %>"<% if(documentstyle.filename == theBook.settings.documentstyle) { %> selected<%} %>><%= documentstyle.title %></option>\
+            <% }) %>\
+        </select>\
+        </td>\
+    </tr>\
+    <tr>\
+        <th>\
+            <h4 class="fw-tablerow-title">' + gettext("Paper size") + '</h4>\
+        </th>\
+        <td>\
+        <select class="entryForm dk" name="book-settings-papersize" id="book-settings-papersize" <% if (theBook.rights==="r") {print("disabled=disabled")} %> >\
+            <% _.each([["folio","' + gettext("Folio (15 x 12 inch)") + '"],["quarto","' + gettext("Quarto (12 × 9 inch)") + '"],["octavo","' + gettext("Octavo (9 x 6 inch)") + '"],["a5","' + gettext("A5") + '"],["a4","' + gettext("A4") + '"]], function(papersize) { %>\
+                <option value="<%= papersize[0] %>"<% if(papersize[0] == theBook.settings.papersize) { %> selected<%} %>><%= papersize[1] %></option>\
+            <% }) %>\
+        </select>\
+        </td>\
+    </tr>\
+');
+/** A template for the epub related data pane of the book dialog */
+var bookEpubDataTemplate = exports.bookEpubDataTemplate = _.template('\
+    <tr id="figure-preview-row">\
+        <%= coverImage %>\
+    </tr>\
+    ');
+
+/** A template for the cover image input on the epub pane of the book dialog. */
+var bookEpubDataCover = exports.bookEpubDataCover = _.template('\
+        <th class="figure-preview-row">\
+            <h4 class="fw-tablerow-title">' + gettext("Cover image") + '</h4>\
+        </th>\
+        <td>\
+            <div class="figure-preview">\
+                <div id="inner-figure-preview">\
+                    <% if (theBook.cover_image) {%>\
+                        <img src="<%= anImageDB[theBook.cover_image].image %>">\
+                    <% } %>\
+                </div>\
+            </div>\
+        </td>\
+        <% if (theBook.rights==="w") { %>\
+            <td class="figure-preview-row">\
+                <button type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only fw-button fw-dark" id="select-cover-image-button" role="button" aria-disabled="false">\
+                    <span class="ui-button-text">' + gettext('Select Image') + '</span>\
+                </button>\
+                <% if (theBook.cover_image) {%>\
+                    <button type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only fw-button fw-orange" id="remove-cover-image-button" role="button" aria-disabled="false">\
+                        <span class="ui-button-text">' + gettext('Remove Image') + '</span>\
+                    </button>\
+                <% } %>\
+            </td>\
+        <% } %>\
+');
+
+/** A template for the cover image selection for the epub version of a book. */
+var bookCoverImageSelectionTemplate = exports.bookCoverImageSelectionTemplate = _.template('\
+    <div id="book-cover-image-selection">\
+        <table id="imagelist" class="tablesorter fw-document-table" style="width:342px;">\
+            <thead class="fw-document-table-header">\
+                <tr>\
+                    <th width="50">' + gettext('Image') + '</th>\
+                    <th width="150">' + gettext('Title') + '</th>\
+                </tr>\
+            </thead>\
+            <tbody class="fw-document-table-body fw-small">\
+                <% _.each(anImageDB, function (image) { %>\
+                    <tr id="Image_<%- image.pk %>">\
+                        <td class="type" style="width:100px;">\
+                            <img src="<%- image.thumbnail %>" style="max-heigth:30px;max-width:30px;">\
+                        </td>\
+                        <td class="title" style="width:212px;">\
+                            <span class="fw-inline">\
+                                <span class="edit-image fw-link-text icon-figure" data-id="<%- image.pk %>">\
+                                    <%- image.title %>\
+                                </span>\
+                            </span>\
+                        </td>\
+                        <td class="checkable" style="width:30px;">\
+                        </td>\
+                    </tr>\
+                <% }) %>\
+            </tbody>\
+        </table>\
+        <div class="dialogSubmit">\
+            <button class="edit-image createNew fw-button fw-light">' + gettext('Upload new image') + '<span class="icon-plus-circle"></span>\
+            </button>\
+            <button type="button" id="selectImageFigureButton" class="fw-button fw-dark">' + gettext('Use selected image') + '</button>\
+                        <button type="button" id="cancelImageFigureButton" class="fw-button fw-orange">' + gettext('Cancel') + '</button>\
+        </div>\
+    </div>\
+');
+
+/** A template for the book dialog. */
+var tmp_book_dialog = _.template('\
+    <div id="book-dialog" title="<%- dialogHeader %>">\
+        <div id="bookoptionsTab">\
+            <ul>\
+                <li><a href="#optionTab1" class="fw-button fw-large">' + gettext('Basic info') + '</a></li>\
+                <li><a href="#optionTab2" class="fw-button fw-large">' + gettext('Chapters') + '</a></li>\
+                <li><a href="#optionTab3" class="fw-button fw-large">' + gettext('Bibliography') + '</a></li>\
+                <li><a href="#optionTab4" class="fw-button fw-large">' + gettext('Epub') + '</a></li>\
+                <li><a href="#optionTab5" class="fw-button fw-large">' + gettext('Print/PDF') + '</a></li>\
+            </ul>\
+            <div id="optionTab1"><table class="fw-dialog-table"><tbody><%= basicInfo %></tbody></table></div>\
+            <div id="optionTab2"><%= chapters %></div>\
+            <div id="optionTab3"><table class="fw-dialog-table"><tbody><%= bibliographyData %></tbody></table></div>\
+            <div id="optionTab4"><table class="fw-dialog-table fw-media-uploader"><tbody><%= epubData %></tbody></table></div>\
+            <div id="optionTab5"><table class="fw-dialog-table"><tbody><%= printData %></tbody></table></div>\
+        </div>\
+    </div>');
+
+/** A template for the chapter pane of the book dialog. */
+var bookDialogChaptersTemplate = _.template('\
+    <% if (theBook.rights==="w") { %>\
+        <div class="fw-ar-container">\
+            <h3 class="fw-green-title">' + gettext("My documents") + '</h3>\
+            <table class="fw-document-table">\
+                <thead class="fw-document-table-header"><tr><th width="332">' + gettext("Documents") + '</th></tr></thead>\
+                <tbody class="fw-document-table-body fw-small" id="book-document-list">\
+                    <%= documents %>\
+                </tbody>\
+            </table>\
+        </div>\
+        <span id="add-chapter" class="fw-button fw-large fw-square fw-light fw-ar-button"><i class="icon-right"></i></span>\
+    <% } %>\
+        <div class="fw-ar-container">\
+            <h3 class="fw-green-title">' + gettext("Book chapters") + '</h3>\
+            <table class="fw-document-table">\
+                <thead class="fw-document-table-header"><tr><th width="242">' + gettext("Title") + '</th>\
+                <% if (theBook.rights==="w") { %>\
+                    <th width="30">' + gettext("Sort") + '</th><th width="50">' + gettext("Delete") + '</th></tr></thead>\
+                <% } %>\
+                <tbody class="fw-document-table-body fw-small" id="book-chapter-list">\
+                    <%= chapters %>\
+                </tbody>\
+            </table>\
+        </div>\
+    ');
+
+/** A template for the chapter list on the chapter pane the book dialog. */
+var bookChapterListTemplate = exports.bookChapterListTemplate = _.template('\
+    <% var partCounter = 1; %>\
+    <% _.each(_.sortBy(theBook.chapters, function (chapter) {return chapter.number;}), function(aChapter,index,list) { %>\
+        <% var aDocument = _.findWhere(theDocumentList, {id: aChapter.text});%>\
+            <tr class="<% if(typeof(aDocument) === "undefined") {print("noaccess")} %>" >\
+                <td width="222" data-id="<%- aChapter.text %>" class="fw-checkable-td">\
+                    <span class="fw-inline">\
+                        <% if(typeof(aDocument) === "undefined") {%>\
+                            <i class="icon-minus-circle"></i>\
+                        <% } %>\
+                        <% if (aChapter.part!="") { %>\
+                            <b class="part"><%- partCounter++ %>. ' + gettext('Book part') + ': <%- aChapter.part %></b><br>\
+                        <% } %>\
+                        <%- aChapter.number %>. \
+                        <% var documentTitle; if (0===aDocument.title.length) {documentTitle="' + gettext('Untitled') + '";} else {documentTitle=aDocument.title;} %>\
+                        <%- documentTitle %>\
+                    </span>\
+                </td>\
+                <% if (theBook.rights==="w") { %>\
+                    <td width="30" data-id="<%- aChapter.text %>" class="edit-chapter">\
+                        <i class="icon-edit fw-link-text"></i>\
+                    </td>\
+                        <% if (index!=0) { %>\
+                            <td width="10" class="book-sort-up" data-id="<%- aChapter.text %>">\
+                                <i class="icon-sort-up fw-link-text"></i>\
+                            </td>\
+                        <% } else { %>\
+                            <td width="10"></td>\
+                        <% } %>\
+                        <% if ((index+1)!=list.length) { %>\
+                            <td width="10" class="book-sort-down" data-id="<%- aChapter.text %>">\
+                                <i class="icon-sort-down fw-link-text"></i>\
+                            </td>\
+                        <% } else { %>\
+                            <td width="10"></td>\
+                        <% } %>\
+                        <td width="50" align="center">\
+                            <span class="delete-chapter fw-inline" data-id="<%- aChapter.text %>"><i class="icon-trash fw-link-text"></i></span>\
+                        </td>\
+                    <% } else { %>\
+                        <td width="30"></td>\
+                        <td width="10"></td>\
+                        <td width="10"></td>\
+                        <td width="50"></td>\
+                    <% } %>\
+            </tr>\
+    <% }) %>\
+    ');
+/** A template for the document list on the chapter pane of the book dialog */
+var bookDocumentListTemplate = exports.bookDocumentListTemplate = _.template('\
+      <% _.each(theDocumentList, function(aDocument) { %>\
+          <% var documentTitle; if (0===aDocument.title.length) {documentTitle="' + gettext('Untitled') + '";} else {documentTitle=aDocument.title;} %>\
+          <% if (!(_.findWhere(theBook.chapters, {text:aDocument.id}))) { %>\
+              <tr>\
+                  <td width="332" data-id="<%- aDocument.id %>" class="fw-checkable fw-checkable-td">\
+                      <span class="fw-inline">\
+                          <%- documentTitle %>\
+                      </span>\
+                  </td>\
+              </tr>\
+          <% } %>\
+      <% }) %>\
+      ');
+
+/** A template for the chapter dialog for books */
+var bookChapterDialogTemplate = exports.bookChapterDialogTemplate = _.template('\
+    <div id="book-chapter-dialog" title="<%- dialogHeader %>">\
+        <table class="fw-dialog-table">\
+            <tr>\
+                <th>\
+                    <h4 title="' + gettext('If this chapter starts a part of the book, specify the title of that part here') + '">' + gettext('Book part title') + '</h4>\
+                </th>\
+                <td>\
+                    <input type="text" id="book-chapter-part" value="<%- aChapter.part %>">\
+                </td>\
+           </tr>\
+       </table>\
+    </div>\
+    ');
+
+},{}],14:[function(require,module,exports){
 /**
  * This is the main entry point for KaTeX. Here, we expose functions for
  * rendering expressions either to DOM nodes or to markup strings.
@@ -1448,7 +2276,7 @@ module.exports = {
     ParseError: ParseError
 };
 
-},{"./src/ParseError":11,"./src/Settings":13,"./src/buildTree":18,"./src/parseTree":27,"./src/utils":29}],9:[function(require,module,exports){
+},{"./src/ParseError":17,"./src/Settings":19,"./src/buildTree":24,"./src/parseTree":33,"./src/utils":35}],15:[function(require,module,exports){
 /**
  * The Lexer class handles tokenizing the input in various ways. Since our
  * parser expects us to be able to backtrack, the lexer allows lexing from any
@@ -1644,7 +2472,7 @@ Lexer.prototype.lex = function(pos, mode) {
 
 module.exports = Lexer;
 
-},{"./ParseError":11,"match-at":30}],10:[function(require,module,exports){
+},{"./ParseError":17,"match-at":36}],16:[function(require,module,exports){
 /**
  * This file contains information about the options that the Parser carries
  * around with it while parsing. Data is held in an `Options` object, and when
@@ -1835,7 +2663,7 @@ Options.prototype.getColor = function() {
 
 module.exports = Options;
 
-},{}],11:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 /**
  * This is the ParseError class, which is the main error thrown by KaTeX
  * functions when something has gone wrong. This is used to distinguish internal
@@ -1877,7 +2705,7 @@ ParseError.prototype.__proto__ = Error.prototype;
 
 module.exports = ParseError;
 
-},{}],12:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 var functions = require("./functions");
 var environments = require("./environments");
 var Lexer = require("./Lexer");
@@ -2599,7 +3427,7 @@ Parser.prototype.ParseNode = ParseNode;
 
 module.exports = Parser;
 
-},{"./Lexer":9,"./ParseError":11,"./environments":21,"./functions":24,"./parseData":26,"./symbols":28,"./utils":29}],13:[function(require,module,exports){
+},{"./Lexer":15,"./ParseError":17,"./environments":27,"./functions":30,"./parseData":32,"./symbols":34,"./utils":35}],19:[function(require,module,exports){
 /**
  * This is a module for storing settings passed into KaTeX. It correctly handles
  * default settings.
@@ -2629,7 +3457,7 @@ function Settings(options) {
 
 module.exports = Settings;
 
-},{}],14:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 /**
  * This file contains information and classes for the various kinds of styles
  * used in TeX. It provides a generic `Style` class, which holds information
@@ -2757,7 +3585,7 @@ module.exports = {
     SCRIPTSCRIPT: styles[SS]
 };
 
-},{}],15:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 /**
  * This module contains general functions that can be used for building
  * different kinds of domTree nodes in a consistent manner.
@@ -3206,7 +4034,7 @@ module.exports = {
     spacingFunctions: spacingFunctions
 };
 
-},{"./domTree":20,"./fontMetrics":22,"./symbols":28,"./utils":29}],16:[function(require,module,exports){
+},{"./domTree":26,"./fontMetrics":28,"./symbols":34,"./utils":35}],22:[function(require,module,exports){
 /**
  * This file does the main work of building a domTree structure from a parse
  * tree. The entry point is the `buildHTML` function, which takes a parse tree.
@@ -4570,7 +5398,7 @@ var buildHTML = function(tree, options) {
 
 module.exports = buildHTML;
 
-},{"./ParseError":11,"./Style":14,"./buildCommon":15,"./delimiter":19,"./domTree":20,"./fontMetrics":22,"./utils":29}],17:[function(require,module,exports){
+},{"./ParseError":17,"./Style":20,"./buildCommon":21,"./delimiter":25,"./domTree":26,"./fontMetrics":28,"./utils":35}],23:[function(require,module,exports){
 /**
  * This file converts a parse tree into a cooresponding MathML tree. The main
  * entry point is the `buildMathML` function, which takes a parse tree from the
@@ -5091,7 +5919,7 @@ var buildMathML = function(tree, texExpression, options) {
 
 module.exports = buildMathML;
 
-},{"./ParseError":11,"./buildCommon":15,"./fontMetrics":22,"./mathMLTree":25,"./symbols":28,"./utils":29}],18:[function(require,module,exports){
+},{"./ParseError":17,"./buildCommon":21,"./fontMetrics":28,"./mathMLTree":31,"./symbols":34,"./utils":35}],24:[function(require,module,exports){
 var buildHTML = require("./buildHTML");
 var buildMathML = require("./buildMathML");
 var buildCommon = require("./buildCommon");
@@ -5133,7 +5961,7 @@ var buildTree = function(tree, expression, settings) {
 
 module.exports = buildTree;
 
-},{"./Options":10,"./Settings":13,"./Style":14,"./buildCommon":15,"./buildHTML":16,"./buildMathML":17}],19:[function(require,module,exports){
+},{"./Options":16,"./Settings":19,"./Style":20,"./buildCommon":21,"./buildHTML":22,"./buildMathML":23}],25:[function(require,module,exports){
 /**
  * This file deals with creating delimiters of various sizes. The TeXbook
  * discusses these routines on page 441-442, in the "Another subroutine sets box
@@ -5674,7 +6502,7 @@ module.exports = {
     leftRightDelim: makeLeftRightDelim
 };
 
-},{"./ParseError":11,"./Style":14,"./buildCommon":15,"./fontMetrics":22,"./symbols":28,"./utils":29}],20:[function(require,module,exports){
+},{"./ParseError":17,"./Style":20,"./buildCommon":21,"./fontMetrics":28,"./symbols":34,"./utils":35}],26:[function(require,module,exports){
 /**
  * These objects store the data about the DOM nodes we create, as well as some
  * extra data. They can then be transformed into real DOM nodes with the
@@ -5945,7 +6773,7 @@ module.exports = {
     symbolNode: symbolNode
 };
 
-},{"./utils":29}],21:[function(require,module,exports){
+},{"./utils":35}],27:[function(require,module,exports){
 var fontMetrics = require("./fontMetrics");
 var parseData = require("./parseData");
 var ParseError = require("./ParseError");
@@ -6125,7 +6953,7 @@ module.exports = (function() {
     return exports;
 })();
 
-},{"./ParseError":11,"./fontMetrics":22,"./parseData":26}],22:[function(require,module,exports){
+},{"./ParseError":17,"./fontMetrics":28,"./parseData":32}],28:[function(require,module,exports){
 /* jshint unused:false */
 
 var Style = require("./Style");
@@ -6262,7 +7090,7 @@ module.exports = {
     getCharacterMetrics: getCharacterMetrics
 };
 
-},{"./Style":14,"./fontMetricsData":23}],23:[function(require,module,exports){
+},{"./Style":20,"./fontMetricsData":29}],29:[function(require,module,exports){
 module.exports = {
 "AMS-Regular": {
   "65": {"depth": 0.0, "height": 0.68889, "italic": 0.0, "skew": 0.0},
@@ -8015,7 +8843,7 @@ module.exports = {
   "8242": {"depth": 0.0, "height": 0.61111, "italic": 0.0, "skew": 0.0}
 }};
 
-},{}],24:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 var utils = require("./utils");
 var ParseError = require("./ParseError");
 
@@ -8646,7 +9474,7 @@ module.exports = {
     funcs: functions
 };
 
-},{"./ParseError":11,"./utils":29}],25:[function(require,module,exports){
+},{"./ParseError":17,"./utils":35}],31:[function(require,module,exports){
 /**
  * These objects store data about MathML nodes. This is the MathML equivalent
  * of the types in domTree.js. Since MathML handles its own rendering, and
@@ -8750,7 +9578,7 @@ module.exports = {
     TextNode: TextNode
 };
 
-},{"./utils":29}],26:[function(require,module,exports){
+},{"./utils":35}],32:[function(require,module,exports){
 /**
  * The resulting parse tree nodes of the parse tree.
  */
@@ -8775,7 +9603,7 @@ module.exports = {
 };
 
 
-},{}],27:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 /**
  * Provides a single function for parsing an expression using a Parser
  * TODO(emily): Remove this
@@ -8794,7 +9622,7 @@ var parseTree = function(toParse, settings) {
 
 module.exports = parseTree;
 
-},{"./Parser":12}],28:[function(require,module,exports){
+},{"./Parser":18}],34:[function(require,module,exports){
 /**
  * This file holds a list of all no-argument functions and single-character
  * symbols (like 'a' or ';').
@@ -11381,7 +12209,7 @@ for (var i = 0; i < letters.length; i++) {
 
 module.exports = symbols;
 
-},{}],29:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /**
  * This file contains a list of utility functions which are useful in other
  * files.
@@ -11488,7 +12316,7 @@ module.exports = {
     clearNode: clearNode
 };
 
-},{}],30:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 /** @flow */
 
 "use strict";

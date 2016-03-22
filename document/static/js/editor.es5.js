@@ -1558,7 +1558,7 @@ var Editor = exports.Editor = (function () {
             this.pm.on("transform", function (transform, options) {
                 that.onTransform(transform, true);
             });
-            this.pm.on("remoteTransform", function (transform, options) {
+            this.pm.mod.collab.on("collabTransform", function (transform, options) {
                 that.onTransform(transform, false);
             });
             new _update.UpdateScheduler(this.pm, "flush setDoc", citationHelpers.formatCitationsInDocIfNew);

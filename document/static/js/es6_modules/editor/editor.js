@@ -71,7 +71,7 @@ export class Editor {
         })
         this.pm.on("change", function(){that.docInfo.changed = true})
         this.pm.on("transform", (transform, options) => {that.onTransform(transform, true)})
-        this.pm.on("remoteTransform", (transform, options) => {that.onTransform(transform, false)})
+        this.pm.mod.collab.on("collabTransform", (transform, options) => {that.onTransform(transform, false)})
         new UpdateScheduler(this.pm, "flush setDoc", citationHelpers.formatCitationsInDocIfNew)
         this.setSaveTimers()
     }

@@ -347,7 +347,7 @@ var ModCollabDocChanges = exports.ModCollabDocChanges = (function () {
                 });
             }
             if (data.footnote_diff && data.footnote_diff.length) {
-                this.mod.editor.modfootnotes.fnEditor.applyDiffs(data.footnote_diff);
+                this.mod.editor.mod.footnotes.fnEditor.applyDiffs(data.footnote_diff);
             }
             if (data.reject_request_id) {
                 this.rejectDiff(data.reject_request_id);
@@ -393,36 +393,7 @@ var ModCollabDocChanges = exports.ModCollabDocChanges = (function () {
             var steps = [diff].map(function (j) {
                 return _transform.Step.fromJSON(_schema.fidusSchema, j);
             });
-            var docs = [];
-            var doc = this.mod.editor.pm.mod.collab.versionDoc;
-            docs.push(doc);
-            var maps = steps.map(function (step) {
-                var result = step.apply(doc);
-                doc = result.doc;
-                docs.push(doc);
-                return result.map;
-            });
             this.mod.editor.pm.mod.collab.receive(steps);
-            var unconfirmedMaps = this.mod.editor.pm.mod.collab.unconfirmedMaps;
-            var unconfirmedSteps = this.mod.editor.pm.mod.collab.unconfirmedSteps;
-            maps = maps.concat(unconfirmedMaps);
-            unconfirmedSteps.forEach(function (step) {
-                // We add pseudo steps for all the unconfirmed steps so that the
-                // unconfirmed maps will be applied when handling the transform
-                steps.push({
-                    type: 'unconfirmed'
-                });
-                // We add real docs
-                var result = step.apply(doc);
-                doc = result.doc;
-                docs.push(doc);
-            });
-            var transform = {
-                steps: steps,
-                maps: maps,
-                docs: docs
-            };
-            this.mod.editor.pm.signal("remoteTransform", transform);
             this.receiving = false;
         }
     }]);
@@ -1954,6 +1925,7 @@ var ModFootnoteEditor = exports.ModFootnoteEditor = (function () {
     }, {
         key: "footnoteEdit",
         value: function footnoteEdit() {
+            // Handle an edit in the footnote editor.
             if (this.rendering) {
                 // We are currently adding or removing footnotes in the footnote editor
                 // due to changes at the footnote marker level, so abort.
@@ -1974,6 +1946,7 @@ var ModFootnoteEditor = exports.ModFootnoteEditor = (function () {
     }, {
         key: "applyDiffs",
         value: function applyDiffs(diffs) {
+            console.log('applying footnote diff');
             this.mod.fnPm.mod.collab.receive(diffs.map(function (j) {
                 return _transform.Step.fromJSON(_schema.fidusFnSchema, j);
             }));
@@ -2073,13 +2046,35 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = (function () {
             this.mod.editor.pm.on('transform', function (transform, object) {
                 that.scanForFootnoteMarkers(transform, true);
             });
-            this.mod.editor.pm.on('remoteTransform', function (transform, object) {
-                that.scanForFootnoteMarkers(transform, false);
+            this.mod.editor.pm.mod.collab.on('collabTransform', function (transform, object) {
+                that.remoteScanForFootnoteMarkers(transform);
             });
+        }
+    }, {
+        key: "remoteScanForFootnoteMarkers",
+        value: function remoteScanForFootnoteMarkers(transform) {
+            // We add unconfirmed local steps to the remote steps to make sure we map the ranges to current ranges.
+            var unconfirmedMaps = this.mod.editor.pm.mod.collab.unconfirmedMaps;
+            var unconfirmedSteps = this.mod.editor.pm.mod.collab.unconfirmedSteps;
+            var doc = this.mod.editor.pm.mod.versionDoc;
+            maps = transform.maps.concat(unconfirmedMaps);
+            unconfirmedSteps.forEach(function (step) {
+                // We add pseudo steps for all the unconfirmed steps so that the
+                // unconfirmed maps will be applied when handling the transform
+                transform.steps.push({
+                    type: 'unconfirmed'
+                });
+                // We add real docs
+                var result = step.apply(doc);
+                doc = result.doc;
+                transform.docs.push(doc);
+            });
+            this.scanForFootnoteMarkers(transform, false);
         }
     }, {
         key: "scanForFootnoteMarkers",
         value: function scanForFootnoteMarkers(transform, renderFootnote) {
+            /* Look through the ranges added through a transform for the presence of one or more footnote markers */
             var that = this;
             if (this.updating) {
                 return false;
@@ -2109,6 +2104,7 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = (function () {
     }, {
         key: "getAddedRanges",
         value: function getAddedRanges(transform) {
+            /* find ranges of the current document that have been added by means of a transformation. */
             var ranges = [];
             for (var i = 0; i < transform.steps.length; i++) {
                 var step = transform.steps[i],
@@ -18040,6 +18036,8 @@ var _event = require("../util/event");
 
 var _error = require("../util/error");
 
+var _transform = require("../transform");
+
 var _rebase = require("./rebase");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -18174,22 +18172,25 @@ var Collab = function () {
   }, {
     key: "receive",
     value: function receive(steps) {
-      var doc = this.versionDoc;
-      var maps = steps.map(function (step) {
-        var result = step.apply(doc);
-        doc = result.doc;
-        return result.map;
+      var transform = new _transform.Transform(this.versionDoc);
+      steps.forEach(function (step) {
+        return transform.step(step);
       });
       this.version += steps.length;
-      this.versionDoc = doc;
+      this.versionDoc = transform.doc;
 
-      var rebased = (0, _rebase.rebaseSteps)(doc, maps, this.unconfirmedSteps, this.unconfirmedMaps);
+      var rebased = (0, _rebase.rebaseSteps)(transform.doc, transform.maps, this.unconfirmedSteps, this.unconfirmedMaps);
       this.unconfirmedSteps = rebased.transform.steps.slice();
       this.unconfirmedMaps = rebased.transform.maps.slice();
 
+      var selectionBefore = this.pm.selection;
       this.pm.updateDoc(rebased.doc, rebased.mapping);
-      this.pm.history.rebased(maps, rebased.transform, rebased.positions);
-      return maps;
+      this.pm.history.rebased(transform.maps, rebased.transform, rebased.positions);
+      // :: (transform: Transform, selectionBeforeTransform: Selection) #path=Collab#events#collabTransform
+      // Signals that a transformation has been aplied to the editor. Passes the `Transform` and the selection
+      // before the transform as arguments to the handler.
+      this.signal("collabTransform", transform, selectionBefore);
+      return transform.maps;
     }
   }]);
 
@@ -18197,7 +18198,7 @@ var Collab = function () {
 }();
 
 (0, _event.eventMixin)(Collab);
-},{"../edit":98,"../util/error":132,"../util/event":133,"./rebase":87}],87:[function(require,module,exports){
+},{"../edit":98,"../transform":121,"../util/error":132,"../util/event":133,"./rebase":87}],87:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -18388,7 +18389,11 @@ function deleteBarrier(pm, cut) {
   var around = pm.doc.path(cut.path);
   var before = around.child(cut.offset - 1),
       after = around.child(cut.offset);
-  if (before.type.canContainContent(after.type) && pm.tr.join(cut).apply(pm.apply.scroll) !== false) return;
+  if (before.type.canContainContent(after.type)) {
+    var tr = pm.tr.join(cut);
+    if (tr.steps.length && before.size == 0 && !before.sameMarkup(after)) tr.setNodeType(cut.move(-1), after.type, after.attrs);
+    if (tr.apply(pm.apply.scroll) !== false) return;
+  }
 
   var conn = undefined;
   if (after.isTextblock && (conn = before.type.findConnection(after.type))) {
@@ -18434,6 +18439,14 @@ baseCommands.joinBackward = {
       }
     } // If there is no node before this, try to lift
     if (!before) return pm.tr.lift(head).apply(pm.apply.scroll);
+
+    // If the node below has no content and the node above is
+    // selectable, delete the node below and select the one above.
+    if (before.type.contains == null && before.type.selectable && pm.doc.path(head.path).size == 0) {
+      var tr = pm.tr.delete(cut, cut.move(1)).apply(pm.apply.scroll);
+      pm.setNodeSelection(cut.move(-1));
+      return tr;
+    }
 
     // If the node doesn't allow children, delete it
     if (before.type.contains == null) return pm.tr.delete(cut.move(-1), cut).apply(pm.apply.scroll);
@@ -18679,7 +18692,7 @@ baseCommands.joinDown = {
 // Lift the selected block, or the closest ancestor block of the
 // selection that can be lifted, out of its parent node.
 //
-// **Keybindings:** Alt-Left
+// **Keybindings:** Ctrl-[
 baseCommands.lift = {
   label: "Lift out of enclosing block",
   run: function run(pm) {
@@ -18705,7 +18718,7 @@ baseCommands.lift = {
       path: "M219 310v329q0 7-5 12t-12 5q-8 0-13-5l-164-164q-5-5-5-13t5-13l164-164q5-5 13-5 7 0 12 5t5 12zM1024 749v109q0 7-5 12t-12 5h-987q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h987q7 0 12 5t5 12zM1024 530v109q0 7-5 12t-12 5h-621q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h621q7 0 12 5t5 12zM1024 310v109q0 7-5 12t-12 5h-621q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h621q7 0 12 5t5 12zM1024 91v109q0 7-5 12t-12 5h-987q-7 0-12-5t-5-12v-109q0-7 5-12t12-5h987q7 0 12 5t5 12z"
     }
   },
-  keys: ["Alt-Left"]
+  keys: ["Mod-["]
 };
 
 // ;; #kind=command
@@ -18888,7 +18901,10 @@ baseCommands.selectNodeLeft = {
     return done;
   },
 
-  keys: ["Left", "Mod-Left"]
+  keys: {
+    all: ["Left", "Mod-Left"],
+    mac: ["Alt-Left"]
+  }
 };
 
 // ;; #kind=command
@@ -18903,9 +18919,16 @@ baseCommands.selectNodeRight = {
     return done;
   },
 
-  keys: ["Right", "Mod-Right"]
+  keys: {
+    all: ["Right", "Mod-Right"],
+    mac: ["Alt-Left"]
+  }
 };
 
+// : (ProseMirror, number)
+// Check whether vertical selection motion would involve node
+// selections. If so, apply it (if not, the result is left to the
+// browser)
 function selectNodeVertically(pm, dir) {
   var _pm$selection17 = pm.selection;
   var empty = _pm$selection17.empty;
@@ -19745,7 +19768,10 @@ var _dom = require("../dom");
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.applyDOMChange = applyDOMChange;
+
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj; };
+
+exports.readDOMChange = readDOMChange;
 exports.textContext = textContext;
 exports.textInContext = textInContext;
 
@@ -19754,6 +19780,8 @@ var _model = require("../model");
 var _format = require("../format");
 
 var _tree = require("../transform/tree");
+
+var _selection = require("./selection");
 
 var _dompos = require("./dompos");
 
@@ -19804,19 +19832,35 @@ function parseNearSelection(pm) {
   }
 }
 
-function applyDOMChange(pm) {
+function readDOMChange(pm) {
   var updated = parseNearSelection(pm);
   var changeStart = (0, _model.findDiffStart)(pm.doc.content, updated.content);
   if (changeStart) {
-    var changeEnd = findDiffEndConstrained(pm.doc.content, updated.content, changeStart);
-    // Mark nodes touched by this change as 'to be redrawn'
-    markDirtyFor(pm, changeStart, changeEnd);
+    var _ret = function () {
+      var changeEnd = findDiffEndConstrained(pm.doc.content, updated.content, changeStart);
+      // Mark nodes touched by this change as 'to be redrawn'
+      markDirtyFor(pm, changeStart, changeEnd);
 
-    pm.tr.replace(changeStart, changeEnd.a, updated, changeStart, changeEnd.b).apply();
-    return true;
+      var near = undefined;
+      // FIXME when we have a Slice type, just return replace info, & let caller inspect it
+      if (pm.doc.path(changeStart.path).isTextblock && _model.Pos.samePath(changeStart.path, changeEnd.a.path) && !_model.Pos.samePath(changeStart.path, changeEnd.b.path) && (near = (0, _selection.findSelectionFrom)(updated, after(updated, changeStart), 1, true)) && !near.head.cmp(changeEnd.b)) return {
+          v: { type: "enter" }
+        };else return {
+          v: { type: "replace",
+            run: function run() {
+              return pm.tr.replace(changeStart, changeEnd.a, updated, changeStart, changeEnd.b).apply();
+            } }
+        };
+    }();
+
+    if ((typeof _ret === "undefined" ? "undefined" : _typeof(_ret)) === "object") return _ret.v;
   } else {
     return false;
   }
+}
+
+function after(doc, pos) {
+  if (pos.offset < doc.path(pos.path).size) return pos.move(1);else return pos.shorten(null, 1);
 }
 
 function offsetBy(first, second, pos) {
@@ -19941,7 +19985,7 @@ function scanText(start, end) {
     cur = cur.firstChild || nodeAfter(cur);
   }
 }
-},{"../format":107,"../model":115,"../transform/tree":129,"./dompos":95}],95:[function(require,module,exports){
+},{"../format":107,"../model":115,"../transform/tree":129,"./dompos":95,"./selection":104}],95:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20294,6 +20338,11 @@ function selectableNodeAbove(pm, dom, coords, liberal) {
 // event.
 
 // :: (pm: ProseMirror, event: MouseEvent, path: [number], node: Node) → bool
+// #path=NodeType.prototype.handleDoubleClick
+// This works like [`handleClick`](#NodeType.handleClick), but is
+// called for double clicks instead.
+
+// :: (pm: ProseMirror, event: MouseEvent, path: [number], node: Node) → bool
 // #path=NodeType.prototype.handleContextMenu
 //
 // When the [context
@@ -20342,12 +20391,12 @@ var _dompos = require("./dompos");
 function options(path, ranges) {
   return {
     onRender: function onRender(node, dom, offset) {
-      if (!node.isText && node.type.contains == null) {
-        dom.contentEditable = false;
-        if (node.isBlock) dom.setAttribute("pm-leaf", "true");
+      if (node.isBlock) {
+        if (node.type.contains == null) dom.setAttribute("pm-leaf", "true");
+        if (offset != null) dom.setAttribute("pm-offset", offset);
+        if (node.isTextblock) adjustTrailingHacks(dom, node);
+        if (dom.contentEditable == "false") dom = (0, _dom.elt)("div", dom);
       }
-      if (node.isBlock && offset != null) dom.setAttribute("pm-offset", offset);
-      if (node.isTextblock) adjustTrailingHacks(dom, node);
 
       return dom;
     },
@@ -20512,15 +20561,32 @@ var InvertedStep = function InvertedStep(step, version, id) {
   this.id = id;
 };
 
+var HistoryEvent = function HistoryEvent(steps, selection) {
+  _classCallCheck(this, HistoryEvent);
+
+  this.steps = steps;
+  this.selection = selection;
+};
+
+// Assists with remapping a step with other changes that have been
+// made since the step was first applied.
+
+
 var BranchRemapping = function () {
   function BranchRemapping(branch) {
     _classCallCheck(this, BranchRemapping);
 
     this.branch = branch;
     this.remap = new _transform.Remapping();
+    // Track the internal version of what step the current remapping collection
+    // would put the content at.
     this.version = branch.version;
     this.mirrorBuffer = Object.create(null);
   }
+
+  // Add all position maps between the current version
+  // and the desired version to the remapping collection.
+
 
   _createClass(BranchRemapping, [{
     key: "moveToVersion",
@@ -20529,6 +20595,10 @@ var BranchRemapping = function () {
         this.addNextMap();
       }
     }
+
+    // Add the next map at the current version to the
+    // remapping collection.
+
   }, {
     key: "addNextMap",
     value: function addNextMap() {
@@ -20550,8 +20620,16 @@ var BranchRemapping = function () {
   return BranchRemapping;
 }();
 
-var workTime = 100,
-    pauseTime = 150;
+// The number of milliseconds the compression worker has to compress.
+
+
+var workTime = 100;
+
+// The number of milliseconds to pause compression worker if it uses
+// all its work time.
+var pauseTime = 150;
+
+// Help compress steps in events for a branch.
 
 var CompressionWorker = function () {
   function CompressionWorker(doc, branch, callback) {
@@ -20571,6 +20649,9 @@ var CompressionWorker = function () {
     this.aborted = false;
   }
 
+  // Compress steps in all events in the branch.
+
+
   _createClass(CompressionWorker, [{
     key: "work",
     value: function work() {
@@ -20582,22 +20663,25 @@ var CompressionWorker = function () {
 
       for (;;) {
         if (this.i == 0) return this.finish();
-        var event = this.branch.events[--this.i],
-            outEvent = [];
-        for (var j = event.length - 1; j >= 0; j--) {
-          var _event$j = event[j];
-          var step = _event$j.step;
-          var stepVersion = _event$j.version;
-          var stepID = _event$j.id;
+        var event = this.branch.events[--this.i];
+        var mappedSelection = event.selection && event.selection.map(this.doc, this.remap.remap);
+        var outEvent = new HistoryEvent([], mappedSelection);
+        for (var j = event.steps.length - 1; j >= 0; j--) {
+          var _event$steps$j = event.steps[j];
+          var step = _event$steps$j.step;
+          var stepVersion = _event$steps$j.version;
+          var stepID = _event$steps$j.id;
 
           this.remap.moveToVersion(stepVersion);
 
           var mappedStep = step.map(this.remap.remap);
+
+          // Combine contiguous delete steps.
           if (mappedStep && isDelStep(step)) {
             var extra = 0,
                 start = step.from;
             while (j > 0) {
-              var next = event[j - 1];
+              var next = event.steps[j - 1];
               if (next.version != stepVersion - 1 || !isDelStep(next.step) || start.cmp(next.step.to)) break;
               extra += next.step.to.offset - next.step.from.offset;
               start = next.step.from;
@@ -20614,13 +20698,13 @@ var CompressionWorker = function () {
           if (result) {
             this.doc = result.doc;
             this.maps.push(result.map.invert());
-            outEvent.push(new InvertedStep(mappedStep, this.version, stepID));
+            outEvent.steps.push(new InvertedStep(mappedStep, this.version, stepID));
             this.version--;
           }
           this.remap.movePastStep(result);
         }
-        if (outEvent.length) {
-          outEvent.reverse();
+        if (outEvent.steps.length) {
+          outEvent.steps.reverse();
           this.events.push(outEvent);
         }
         if (Date.now() > endTime) {
@@ -20655,6 +20739,7 @@ function isDelStep(step) {
   return step.type == "replace" && step.from.offset < step.to.offset && _model.Pos.samePath(step.from.path, step.to.path) && (!step.param || step.param.content.size == 0);
 }
 
+// The minimum number of new steps before a compression is started.
 var compressStepCount = 150;
 
 // A branch is a history of steps. There'll be one for the undo and
@@ -20686,15 +20771,26 @@ var Branch = function () {
         this.abortCompression();
       }
     }
+
+    // : (Selection)
+    // Create a new history event at tip of the branch.
+
   }, {
     key: "newEvent",
-    value: function newEvent() {
+    value: function newEvent(currentSelection) {
       this.abortCompression();
-      this.events.push([]);
+      this.events.push(new HistoryEvent([], currentSelection));
+
       while (this.events.length > this.maxDepth) {
         this.events.shift();
       }
     }
+
+    // : (PosMap)
+    // Add a position map to the branch, either representing one of the
+    // changes recorded in the branch, or representing a non-history
+    // change that the branch's changes must be mapped through.
+
   }, {
     key: "addMap",
     value: function addMap(map) {
@@ -20705,6 +20801,10 @@ var Branch = function () {
         return true;
       }
     }
+
+    // : () → bool
+    // Whether the branch is empty (has no history events).
+
   }, {
     key: "empty",
     value: function empty() {
@@ -20715,7 +20815,7 @@ var Branch = function () {
     value: function addStep(step, map, id) {
       this.addMap(map);
       if (id == null) id = this.nextStepID++;
-      this.events[this.events.length - 1].push(new InvertedStep(step, this.version, id));
+      this.events[this.events.length - 1].steps.push(new InvertedStep(step, this.version, id));
     }
 
     // : (Transform, ?[number])
@@ -20731,7 +20831,7 @@ var Branch = function () {
       }
     }
 
-    // : (Node, bool) → ?{transform: Transform, ids: [number]}
+    // : (Node, bool) → ?{transform: Transform, ids: [number], selection: Selection}
     // Pop the latest event off the branch's history and apply it
     // to a document transform, returning the transform and the step ID.
 
@@ -20747,21 +20847,23 @@ var Branch = function () {
       var tr = new _transform.Transform(doc);
       var ids = [];
 
-      for (var i = event.length - 1; i >= 0; i--) {
-        var invertedStep = event[i],
+      for (var i = event.steps.length - 1; i >= 0; i--) {
+        var invertedStep = event.steps[i],
             step = invertedStep.step;
         if (!collapsing || invertedStep.version != remap.version) {
           collapsing = false;
+          // Remap the step through any position mappings unrelated to
+          // history (e.g. collaborative edits).
           remap.moveToVersion(invertedStep.version);
-
           step = step.map(remap.remap);
+
           var result = step && tr.step(step);
           if (result) {
             ids.push(invertedStep.id);
             if (this.addMap(result.map)) this.mirror[this.version] = invertedStep.version;
           }
 
-          if (i > 0) remap.movePastStep(result);
+          remap.movePastStep(result);
         } else {
           this.version--;
           delete this.mirror[this.version];
@@ -20771,15 +20873,17 @@ var Branch = function () {
           --remap.version;
         }
       }
+      var selection = event.selection && event.selection.map(tr.doc, remap.remap);
+
       if (this.empty()) this.clear(true);
-      return { transform: tr, ids: ids };
+      return { transform: tr, ids: ids, selection: selection };
     }
   }, {
     key: "lastStep",
     value: function lastStep() {
       for (var i = this.events.length - 1; i >= 0; i--) {
         var event = this.events[i];
-        if (event.length) return event[event.length - 1];
+        if (event.steps.length) return event.steps[event.steps.length - 1];
       }
     }
   }, {
@@ -20797,10 +20901,14 @@ var Branch = function () {
   }, {
     key: "findVersion",
     value: function findVersion(version) {
+      // FIXME this is not accurate when the actual revision has fallen
+      // off the end of the history. Current representation of versions
+      // does not allow us to recognize that case.
+      if (version.lastID == null) return { event: 0, step: 0 };
       for (var i = this.events.length - 1; i >= 0; i--) {
         var event = this.events[i];
-        for (var j = event.length - 1; j >= 0; j--) {
-          if (event[j].id <= version.lastID) return { event: i, step: j + 1 };
+        for (var j = event.steps.length - 1; j >= 0; j--) {
+          if (event.steps[j].id <= version.lastID) return { event: i, step: j + 1 };
         }
       }
     }
@@ -20815,15 +20923,15 @@ var Branch = function () {
       // Update and clean up the events
       out: for (var i = this.events.length - 1; i >= 0; i--) {
         var event = this.events[i];
-        for (var j = event.length - 1; j >= 0; j--) {
-          var step = event[j];
+        for (var j = event.steps.length - 1; j >= 0; j--) {
+          var step = event.steps[j];
           if (step.version <= startVersion) break out;
           var off = positions[step.version - startVersion - 1];
           if (off == -1) {
-            event.splice(j--, 1);
+            event.steps.splice(j--, 1);
           } else {
             var inv = rebasedTransform.steps[off].invert(rebasedTransform.docs[off], rebasedTransform.maps[off]);
-            event[j] = new InvertedStep(inv, startVersion + newMaps.length + off + 1, step.id);
+            event.steps[j] = new InvertedStep(inv, startVersion + newMaps.length + off + 1, step.id);
           }
         }
       }
@@ -20867,6 +20975,9 @@ var Branch = function () {
   return Branch;
 }();
 
+// Delay between transforms required to compress steps.
+
+
 var compressDelay = 750;
 
 // ;; An undo/redo history manager for an editor instance.
@@ -20887,8 +20998,8 @@ var History = exports.History = function () {
 
     this.allowCollapsing = true;
 
-    pm.on("transform", function (transform, options) {
-      return _this3.recordTransform(transform, options);
+    pm.on("transform", function (transform, selection, options) {
+      return _this3.recordTransform(transform, selection, options);
     });
   }
 
@@ -20898,7 +21009,7 @@ var History = exports.History = function () {
 
   _createClass(History, [{
     key: "recordTransform",
-    value: function recordTransform(transform, options) {
+    value: function recordTransform(transform, selection, options) {
       if (this.ignoreTransform) return;
 
       if (options.addToHistory == false) {
@@ -20911,7 +21022,7 @@ var History = exports.History = function () {
         this.undone.clear();
         var now = Date.now();
         // Group transforms that occur in quick succession into one event.
-        if (now > this.lastAddedAt + this.pm.options.historyEventDelay) this.done.newEvent();
+        if (now > this.lastAddedAt + this.pm.options.historyEventDelay) this.done.newEvent(selection);
 
         this.done.addTransform(transform);
         this.lastAddedAt = now;
@@ -20960,16 +21071,22 @@ var History = exports.History = function () {
       if (!event) return false;
       var transform = event.transform;
       var ids = event.ids;
+      var selection = event.selection;
 
+      var selectionBeforeTransform = this.pm.selection;
 
       this.ignoreTransform = true;
-      this.pm.apply(transform);
+      this.pm.apply(transform, { selection: selection });
       this.ignoreTransform = false;
 
       if (!transform.steps.length) return this.shift(from, to);
 
       if (to) {
-        to.newEvent();
+        // Store the selection before transform on the event so that
+        // it can be reapplied if the event is undone or redone (e.g.
+        // redoing a character addition should place the cursor after
+        // the character).
+        to.newEvent(selectionBeforeTransform);
         to.addTransform(transform, ids);
       }
       this.lastAddedAt = 0;
@@ -21012,12 +21129,14 @@ var History = exports.History = function () {
       var found = this.done.findVersion(version);
       if (!found) return false;
       var event = this.done.events[found.event];
-      if (found.event == this.done.events.length - 1 && found.step == event.length) return true;
-      var combined = this.done.events.slice(found.event + 1).reduce(function (comb, arr) {
-        return comb.concat(arr);
-      }, event.slice(found.step));
-      this.done.events.length = found.event + ((event.length = found.step) ? 1 : 0);
-      this.done.events.push(combined);
+      if (found.event == this.done.events.length - 1 && found.step == event.steps.length) return true;
+      // Combine all steps past the verion to rollback to into
+      // one event, and then "undo" that event.
+      var combinedSteps = this.done.events.slice(found.event + 1).reduce(function (comb, arr) {
+        return comb.concat(arr.steps);
+      }, event.steps.slice(found.step));
+      this.done.events.length = found.event + ((event.steps.length = found.step) ? 1 : 0);
+      this.done.events.push(new HistoryEvent(combinedSteps, null));
 
       this.shift(this.done);
       return true;
@@ -21035,6 +21154,10 @@ var History = exports.History = function () {
       this.maybeScheduleCompressionForBranch(this.done);
       this.maybeScheduleCompressionForBranch(this.undone);
     }
+
+    // : (Branch)
+    // Schedule compression for a branch if it needs compressing.
+
   }, {
     key: "maybeScheduleCompressionForBranch",
     value: function maybeScheduleCompressionForBranch(branch) {
@@ -21323,6 +21446,7 @@ handlers.keydown = function (pm, e) {
   // clicking on it or pressing a key while it is focused. Mostly
   // useful for closing or resetting transient UI state such as open
   // menus.
+  if (!(0, _selection.hasFocus)(pm)) return;
   pm.signal("interaction");
   if (e.keyCode == 16) pm.input.shiftKey = true;
   if (pm.input.composing) return;
@@ -21347,7 +21471,7 @@ function inputText(pm, range, text) {
 }
 
 handlers.keypress = function (pm, e) {
-  if (pm.input.composing || !e.charCode || e.ctrlKey && !e.altKey || _dom.browser.mac && e.metaKey) return;
+  if (!(0, _selection.hasFocus)(pm) || pm.input.composing || !e.charCode || e.ctrlKey && !e.altKey || _dom.browser.mac && e.metaKey) return;
   if (dispatchKey(pm, _browserkeymap2.default.keyName(e), e)) return;
   var sel = pm.selection;
   if (sel.node && sel.node.contains == null) {
@@ -21403,7 +21527,7 @@ handlers.mousedown = function (pm, e) {
   oneButLastClick = lastClick;
   lastClick = now;
 
-  if (tripleClick) handleTripleClick(pm, e);else pm.input.mouseDown = new MouseDown(pm, e, doubleClick);
+  if (tripleClick) handleTripleClick(pm, e);else if (doubleClick && (0, _dompos.handleNodeClick)(pm, "handleDoubleClick", e, true)) {} else pm.input.mouseDown = new MouseDown(pm, e, doubleClick);
 };
 
 var MouseDown = function () {
@@ -21441,15 +21565,15 @@ var MouseDown = function () {
     }
   }, {
     key: "up",
-    value: function up() {
+    value: function up(event) {
       this.done();
 
-      if (this.leaveToBrowser) {
+      if (this.leaveToBrowser || !(0, _dom.contains)(this.pm.content, event.target)) {
         this.pm.sel.fastPoll();
       } else if (this.event.ctrlKey) {
-        selectClickedNode(this.pm, this.event);
-      } else if (!(0, _dompos.handleNodeClick)(this.pm, "handleClick", this.event, true)) {
-        var pos = (0, _dompos.selectableNodeAbove)(this.pm, this.event.target, { left: this.x, top: this.y });
+        selectClickedNode(this.pm, event);
+      } else if (!(0, _dompos.handleNodeClick)(this.pm, "handleClick", event, true)) {
+        var pos = (0, _dompos.selectableNodeAbove)(this.pm, event.target, { left: this.x, top: this.y });
         if (pos) {
           this.pm.setNodeSelection(pos);
           this.pm.focus();
@@ -21497,7 +21621,7 @@ var Composing = function Composing(pm, data) {
 };
 
 handlers.compositionstart = function (pm, e) {
-  if (pm.input.maybeAbortComposition()) return;
+  if (!(0, _selection.hasFocus)(pm) || pm.input.maybeAbortComposition()) return;
 
   pm.flush();
   pm.input.composing = new Composing(pm, e.data);
@@ -21506,6 +21630,7 @@ handlers.compositionstart = function (pm, e) {
 };
 
 handlers.compositionupdate = function (pm, e) {
+  if (!(0, _selection.hasFocus)(pm)) return;
   var info = pm.input.composing;
   if (info && info.data != e.data) {
     info.data = e.data;
@@ -21517,6 +21642,7 @@ handlers.compositionupdate = function (pm, e) {
 };
 
 handlers.compositionend = function (pm, e) {
+  if (!(0, _selection.hasFocus)(pm)) return;
   var info = pm.input.composing;
   if (info) {
     pm.input.composing.finished = true;
@@ -21537,7 +21663,8 @@ function finishComposing(pm) {
   if (range && !range.eq(pm.sel.range)) pm.setSelectionDirect(range);
 }
 
-handlers.input = function (pm) {
+handlers.input = function (pm, e) {
+  if (!(0, _selection.hasFocus)(pm)) return;
   if (pm.input.skipInput) return --pm.input.skipInput;
 
   if (pm.input.composing) {
@@ -21546,7 +21673,10 @@ handlers.input = function (pm) {
   }
 
   pm.startOperation({ readSelection: false });
-  (0, _domchange.applyDOMChange)(pm);
+  var change = (0, _domchange.readDOMChange)(pm);
+  if (change) {
+    if (change.type == "enter") dispatchKey(pm, "Enter", e);else change.run();
+  }
   pm.scrollIntoView();
 };
 
@@ -21657,6 +21787,7 @@ handlers.copy = handlers.cut = function (pm, e) {
 // it.
 
 handlers.paste = function (pm, e) {
+  if (!(0, _selection.hasFocus)(pm)) return;
   if (!e.clipboardData) return;
   var sel = pm.selection;
   var fragment = fromClipboard(pm, e.clipboardData, pm.input.shiftKey);
@@ -22035,6 +22166,11 @@ var ProseMirror = exports.ProseMirror = function () {
     //   : When true, scroll the selection into view on the next
     //     [redraw](#ProseMirror.flush).
     //
+    // **`filter`**: ?bool
+    //   : When set to false, suppresses the ability of the
+    //     [`"filterTransform"` event](#ProseMirror.event_beforeTransform)
+    //     to cancel this transform.
+    //
     // Returns the transform, or `false` if there were no steps in it.
     //
     // Has the following property:
@@ -22044,6 +22180,14 @@ var ProseMirror = exports.ProseMirror = function () {
       if (transform.doc == this.doc) return false;
       if (transform.docs[0] != this.doc && (0, _model.findDiffStart)(transform.docs[0], this.doc)) throw new _error.AssertionError("Applying a transform that does not start with the current document");
 
+      // :: (transform: Transform) #path=ProseMirror#events#filterTransform
+      // Fired before a transform (applied without `filter: false`) is
+      // applied. The handler can return a truthy value to cancel the
+      // transform.
+      if (options.filter !== false && this.signalHandleable("filterTransform", transform)) return false;
+
+      var selectionBeforeTransform = this.selection;
+
       // :: (transform: Transform, options: Object) #path=ProseMirror#events#beforeTransform
       // Indicates that the given transform is about to be
       // [applied](#ProseMirror.apply). The handler may add additional
@@ -22051,11 +22195,12 @@ var ProseMirror = exports.ProseMirror = function () {
       // interfere with the editor's state.
       this.signal("beforeTransform", transform, options);
       this.updateDoc(transform.doc, transform, options.selection);
-      // :: (transfom: Transform, options: Object) #path=ProseMirror#events#transform
+      // :: (transform: Transform, selectionBeforeTransform: Selection, options: Object) #path=ProseMirror#events#transform
       // Signals that a (non-empty) transformation has been aplied to
-      // the editor. Passes the `Transform` and the options given to
-      // [`apply`](#ProseMirror.apply) as arguments to the handler.
-      this.signal("transform", transform, options);
+      // the editor. Passes the `Transform`, the selection before the
+      // transform, and the options given to [`apply`](#ProseMirror.apply)
+      // as arguments to the handler.
+      this.signal("transform", transform, selectionBeforeTransform, options);
       if (options.scrollIntoView) this.scrollIntoView();
       return transform;
     }
@@ -22391,6 +22536,17 @@ var ProseMirror = exports.ProseMirror = function () {
     value: function markAllDirty() {
       this.dirtyNodes.set(this.doc, DIRTY_REDRAW);
     }
+
+    // :: (string) → string
+    // Return a translated string, if a translate function has been supplied,
+    // or the original string.
+
+  }, {
+    key: "translate",
+    value: function translate(string) {
+      var trans = this.options.translate;
+      return trans ? trans(string) : string;
+    }
   }, {
     key: "selection",
     get: function get() {
@@ -22559,10 +22715,17 @@ var _command = require("./command");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+// An option encapsulates functionality for an editor instance,
+// e.g. the amount of history events that the editor should hold
+// onto or the document's schema.
+
 var Option = function Option(defaultValue, update, updateOnInit) {
   _classCallCheck(this, Option);
 
   this.defaultValue = defaultValue;
+  // A function that will be invoked with the option's old and new
+  // value every time the option is [set](#ProseMirror.setOption).
+  // This function should bootstrap option functionality.
   this.update = update;
   this.updateOnInit = updateOnInit !== false;
 };
@@ -22629,6 +22792,12 @@ defineOption("commandParamPrompt", _prompt.ParamPrompt);
 // The label of the editor. When set, the editable DOM node gets an
 // `aria-label` attribute with this value.
 defineOption("label", null);
+
+// :: ?(string) → string #path=translate #kind=option
+// Optional function to translate strings such as menu labels and prompts.
+// When set, should be a function that takes a string as argument and returns
+// a string, i.e. :: (string) → string
+defineOption("translate", null); // FIXME create a way to explicitly force a menu redraw
 
 function parseOptions(obj) {
   var result = Object.create(null);
@@ -23037,7 +23206,7 @@ _model.Image.register("command", "insert", {
 // ;; #path=bullet_list:wrap #kind=command
 // Wrap the selection in a bullet list.
 //
-// **Keybindings:** Alt-Right '*', Alt-Right '-'
+// **Keybindings:** Shift-Mod-8
 _model.BulletList.register("command", "wrap", {
   derive: { list: true },
   label: "Wrap the selection in a bullet list",
@@ -23049,13 +23218,13 @@ _model.BulletList.register("command", "wrap", {
       path: "M0 512h128v-128h-128v128zM0 256h128v-128h-128v128zM0 768h128v-128h-128v128zM256 512h512v-128h-512v128zM256 256h512v-128h-512v128zM256 768h512v-128h-512v128z"
     }
   },
-  keys: ["Alt-Right '*'", "Alt-Right '-'"]
+  keys: ["Shift-Mod-8"]
 });
 
 // ;; #path=ordered_list:wrap #kind=command
 // Wrap the selection in an ordered list.
 //
-// **Keybindings:** Alt-Right '1'
+// **Keybindings:** Shift-Mod-8
 _model.OrderedList.register("command", "wrap", {
   derive: { list: true },
   label: "Wrap the selection in an ordered list",
@@ -23067,13 +23236,13 @@ _model.OrderedList.register("command", "wrap", {
       path: "M320 512h448v-128h-448v128zM320 768h448v-128h-448v128zM320 128v128h448v-128h-448zM79 384h78v-256h-36l-85 23v50l43-2v185zM189 590c0-36-12-78-96-78-33 0-64 6-83 16l1 66c21-10 42-15 67-15s32 11 32 28c0 26-30 58-110 112v50h192v-67l-91 2c49-30 87-66 87-113l1-1z"
     }
   },
-  keys: ["Alt-Right '1'"]
+  keys: ["Shift-Mod-9"]
 });
 
 // ;; #path=blockquote:wrap #kind=command
 // Wrap the selection in a block quote.
 //
-// **Keybindings:** Alt-Right '>', Alt-Right '"'
+// **Keybindings:** Shift-Mod-.
 _model.BlockQuote.register("command", "wrap", {
   derive: true,
   label: "Wrap the selection in a block quote",
@@ -23085,7 +23254,7 @@ _model.BlockQuote.register("command", "wrap", {
       path: "M0 448v256h256v-256h-128c0 0 0-128 128-128v-128c0 0-256 0-256 256zM640 320v-128c0 0-256 0-256 256v256h256v-256h-128c0 0 0-128 128-128z"
     }
   },
-  keys: ["Alt-Right '>'", "Alt-Right '\"'"]
+  keys: ["Shift-Mod-."]
 });
 
 // ;; #path=hard_break:insert #kind=command
@@ -23137,12 +23306,12 @@ var _loop = function _loop(i) {
   // The commands `make1` to `make6` set the textblocks in the
   // selection to become headers with the given level.
   //
-  // **Keybindings:** Mod-1 through Mod-6
+  // **Keybindings:** Shift-Mod-1 through Shift-Mod-6
   _model.Heading.registerComputed("command", "make" + i, function (type) {
     if (i <= type.maxLevel) return {
       derive: { name: "make", attrs: { level: i } },
       label: "Change to heading " + i,
-      keys: i < 10 && ["Mod-" + i],
+      keys: i <= 6 && ["Shift-Mod-" + i],
       menu: {
         group: "textblockHeading", rank: 30 + i,
         display: { type: "label", label: "Level " + i },
@@ -23157,11 +23326,11 @@ for (var i = 1; i <= 10; i++) {
 } // ;; #path=paragraph:make #kind=command
 // Set the textblocks in the selection to be regular paragraphs.
 //
-// **Keybindings:** Mod-0
+// **Keybindings:** Shift-Mod-0
 _model.Paragraph.register("command", "make", {
   derive: true,
   label: "Change to paragraph",
-  keys: ["Mod-0"],
+  keys: ["Shift-Mod-0"],
   menu: {
     group: "textblock", rank: 10,
     display: { type: "label", label: "Plain" },
@@ -23172,11 +23341,11 @@ _model.Paragraph.register("command", "make", {
 // ;; #path=code_block:make #kind=command
 // Set the textblocks in the selection to be code blocks.
 //
-// **Keybindings:** Mod-\
+// **Keybindings:** Shift-Mod-\
 _model.CodeBlock.register("command", "make", {
   derive: true,
   label: "Change to code block",
-  keys: ["Mod-\\"],
+  keys: ["Shift-Mod-\\"],
   menu: {
     group: "textblock", rank: 20,
     display: { type: "label", label: "Code" },
@@ -23358,7 +23527,14 @@ var SelectionState = exports.SelectionState = function () {
       var head = sel.isCollapsed ? anchor : (0, _dompos.posFromDOM)(this.pm, sel.focusNode, sel.focusOffset);
 
       var newRange = findSelectionNear(doc, head, this.range.head && this.range.head.cmp(head) < 0 ? -1 : 1);
-      if (newRange instanceof TextSelection && doc.path(anchor.path).isTextblock) newRange = new TextSelection(anchor, newRange.head);
+      if (newRange instanceof TextSelection && doc.path(anchor.path).isTextblock) {
+        newRange = new TextSelection(anchor, newRange.head);
+      } else if (newRange instanceof NodeSelection && (anchor.cmp(newRange.from) < 0 || anchor.cmp(newRange.to) > 0)) {
+        // If head falls on a node, but anchor falls outside of it,
+        // create a text selection between them
+        var inv = anchor.cmp(newRange.to) > 0;
+        newRange = new TextSelection(findSelectionNear(doc, anchor, inv ? -1 : 1, true).anchor, findSelectionNear(doc, inv ? newRange.from : newRange.to, inv ? 1 : -1, true).head);
+      }
       this.setAndSignal(newRange);
 
       if (newRange instanceof NodeSelection || newRange.head.cmp(head) || newRange.anchor.cmp(anchor)) {
@@ -23462,10 +23638,10 @@ var Selection = exports.Selection = function Selection() {
 };
 
 // :: Pos #path=Selection.prototype.from
-// The start of the selection.
+// The left-bound of the selection.
 
 // :: Pos #path=Selection.prototype.to
-// The end of the selection.
+// The right-bound of the selection.
 
 // :: bool #path=Selection.empty
 // True if the selection is an empty text selection (head an anchor
@@ -23605,14 +23781,19 @@ function rangeFromDOMLoose(pm) {
 }
 
 function hasFocus(pm) {
+  if (document.activeElement != pm.content) return false;
   var sel = window.getSelection();
   return sel.rangeCount && (0, _dom.contains)(pm.content, sel.anchorNode);
 }
 
+// Try to find a selection inside the node at the given path coming
+// from a given direction.
 function findSelectionIn(doc, path, offset, dir, text) {
   var node = doc.path(path);
   if (node.isTextblock) return new TextSelection(new _model.Pos(path, offset));
 
+  // Iterate over child nodes recursively coming from the given
+  // direction and return the first viable selection.
   for (var i = offset + (dir > 0 ? 0 : -1); dir > 0 ? i < node.size : i >= 0; i += dir) {
     var child = node.child(i);
     if (!text && child.type.contains == null && child.type.selectable) return new NodeSelection(new _model.Pos(path, i), new _model.Pos(path, i + 1), child);
@@ -23625,6 +23806,10 @@ function findSelectionIn(doc, path, offset, dir, text) {
 
 // FIXME we'll need some awareness of bidi motion when determining block start and end
 
+// Create a selection which is moved relative to a position in a
+// given direction. When a selection isn't found at the given position,
+// walks up the document tree one level and one step in the
+// desired direction.
 function findSelectionFrom(doc, pos, dir, text) {
   for (var path = pos.path.slice(), offset = pos.offset;;) {
     var found = findSelectionIn(doc, path, offset, dir, text);
@@ -23643,6 +23828,7 @@ function findSelectionNear(doc, pos) {
   return result;
 }
 
+// Find the selection closes to the start of the given node.
 function findSelectionAtStart(node) {
   var path = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
   var text = arguments[2];
@@ -23650,6 +23836,7 @@ function findSelectionAtStart(node) {
   return findSelectionIn(node, path.slice(), 0, 1, text);
 }
 
+// Find the selection closes to the end of the given node.
 function findSelectionAtEnd(node) {
   var path = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
   var text = arguments[2];
@@ -23657,6 +23844,9 @@ function findSelectionAtEnd(node) {
   return findSelectionIn(node, path.slice(), node.size, -1, text);
 }
 
+// : (ProseMirror, Pos, number)
+// Whether vertical position motion in a given direction
+// from a position would leave a text block.
 function verticalMotionLeavesTextblock(pm, pos, dir) {
   var dom = (0, _dompos.pathToDOM)(pm.content, pos.path);
   var coords = (0, _dompos.coordsAtPos)(pm, pos);
@@ -24561,7 +24751,7 @@ def(_model.ListItem, function (node, s) {
 });
 
 def(_model.HorizontalRule, function (_, s) {
-  return s.elt("hr");
+  return s.elt("div", null, s.elt("hr"));
 });
 
 def(_model.Paragraph, function (node, s) {
@@ -24977,7 +25167,7 @@ var EmMark = exports.EmMark = function (_MarkType) {
   _createClass(EmMark, null, [{
     key: "rank",
     get: function get() {
-      return 51;
+      return 31;
     }
   }]);
 
@@ -24999,7 +25189,7 @@ var StrongMark = exports.StrongMark = function (_MarkType2) {
   _createClass(StrongMark, null, [{
     key: "rank",
     get: function get() {
-      return 52;
+      return 32;
     }
   }]);
 
@@ -25032,7 +25222,7 @@ var LinkMark = exports.LinkMark = function (_MarkType3) {
   }], [{
     key: "rank",
     get: function get() {
-      return 25;
+      return 60;
     }
   }]);
 
@@ -25728,12 +25918,13 @@ var TextIterator = function () {
             end = offset + node.width;
         if (end == this.offset) break;
         if (end > this.offset) {
-          var sliceEnd = node.width;
+          var sliceEnd = node.width,
+              sliceStart = this.offset - offset;
           if (end > this.endOffset) {
             sliceEnd = this.endOffset - offset;
             end = this.endOffset;
           }
-          node = node.copy(node.text.slice(this.offset - offset, sliceEnd));
+          node = sliceEnd > sliceStart ? node.copy(node.text.slice(this.offset - offset, sliceEnd)) : null;
           this.offset = end;
           return node;
         }
@@ -26322,6 +26513,8 @@ var _mark = require("./mark");
 
 var _pos = require("./pos");
 
+var _schema = require("./schema");
+
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
@@ -26863,11 +27056,12 @@ var TextNode = exports.TextNode = function (_Node) {
   function TextNode(type, attrs, content, marks) {
     _classCallCheck(this, TextNode);
 
-    // :: ?string
-    // For text nodes, this contains the node's text content.
-
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(TextNode).call(this, type, attrs, null, marks));
 
+    if (!content) throw new _schema.SchemaError("Empty text nodes are not allowed");
+
+    // :: ?string
+    // For text nodes, this contains the node's text content.
     _this.text = content;
     return _this;
   }
@@ -26909,7 +27103,7 @@ function wrapMarks(marks, str) {
     str = marks[i].type.name + "(" + str + ")";
   }return str;
 }
-},{"./fragment":114,"./mark":116,"./pos":118}],118:[function(require,module,exports){
+},{"./fragment":114,"./mark":116,"./pos":118,"./schema":119}],118:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -27586,39 +27780,62 @@ var NodeType = exports.NodeType = function (_SchemaItem) {
 
 
 var NodeKind = exports.NodeKind = function () {
-  // :: (string, [NodeKind])
+  // :: (string, ?[NodeKind], ?[NodeKind])
   // Create a new node kind with the given set of superkinds (the new
-  // kind counts as a member of each of the superkinds). The `name`
-  // field is only for debugging purposes—kind equivalens is defined
-  // by identity.
+  // kind counts as a member of each of the superkinds) and subkinds
+  // (which will count as a member of this new kind). The `name` field
+  // is only for debugging purposes—kind equivalens is defined by
+  // identity.
 
-  function NodeKind(name) {
+  function NodeKind(name, supers, subs) {
     var _this4 = this;
 
     _classCallCheck(this, NodeKind);
 
     this.name = name;
-    this.supers = Object.create(null);
-    this.id = ++NodeKind.nextID;
-    this.supers[this.id] = true;
-
-    for (var _len = arguments.length, supers = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      supers[_key - 1] = arguments[_key];
+    // FIXME temporary backwards-compatibility kludge
+    if (supers && supers instanceof NodeKind) {
+      supers = Array.prototype.slice.call(arguments, 1);
+      subs = null;
     }
+    this.id = ++NodeKind.nextID;
+    this.supers = Object.create(null);
+    this.supers[this.id] = true;
+    this.subs = subs || [];
 
-    supers.forEach(function (sup) {
-      for (var id in sup.supers) {
-        _this4.supers[id] = true;
-      }
+    if (supers) supers.forEach(function (sup) {
+      return _this4.addSuper(sup);
+    });
+    if (subs) subs.forEach(function (sub) {
+      return _this4.addSub(sub);
     });
   }
 
-  // :: (NodeKind) → bool
-  // Test whether `other` is a subkind of this kind (or the same
-  // kind).
-
-
   _createClass(NodeKind, [{
+    key: "addSuper",
+    value: function addSuper(sup) {
+      for (var id in sup.supers) {
+        this.supers[id] = true;
+        sup.subs.push(this);
+      }
+    }
+  }, {
+    key: "addSub",
+    value: function addSub(sub) {
+      var _this5 = this;
+
+      if (this.supers[sub.id]) throw new SchemaError("Circular subkind relation");
+      sub.supers[this.id] = true;
+      sub.subs.forEach(function (next) {
+        return _this5.addSub(next);
+      });
+    }
+
+    // :: (NodeKind) → bool
+    // Test whether `other` is a subkind of this kind (or the same
+    // kind).
+
+  }, {
     key: "isSubKind",
     value: function isSubKind(other) {
       return other && other.id in this.supers || false;
@@ -27638,7 +27855,7 @@ NodeKind.inline = new NodeKind("inline");
 
 // :: NodeKind The node kind used for text nodes. Subkind of
 // `NodeKind.inline`.
-NodeKind.text = new NodeKind("text", NodeKind.inline);
+NodeKind.text = new NodeKind("text", [NodeKind.inline]);
 
 // ;; Base type for block nodetypes.
 
@@ -27840,17 +28057,17 @@ var MarkType = exports.MarkType = function (_SchemaItem2) {
     // :: string
     // The name of the mark type.
 
-    var _this9 = _possibleConstructorReturn(this, Object.getPrototypeOf(MarkType).call(this));
+    var _this10 = _possibleConstructorReturn(this, Object.getPrototypeOf(MarkType).call(this));
 
-    _this9.name = name;
-    _this9.freezeAttrs();
-    _this9.rank = rank;
+    _this10.name = name;
+    _this10.freezeAttrs();
+    _this10.rank = rank;
     // :: Schema
     // The schema that this mark type instance is part of.
-    _this9.schema = schema;
-    var defaults = _this9.getDefaultAttrs();
-    _this9.instance = defaults && new _mark.Mark(_this9, defaults);
-    return _this9;
+    _this10.schema = schema;
+    var defaults = _this10.getDefaultAttrs();
+    _this10.instance = defaults && new _mark.Mark(_this10, defaults);
+    return _this10;
   }
 
   // :: number
@@ -28042,7 +28259,8 @@ var Schema = function () {
     }
 
     // :: (string, ?[Mark]) → Node
-    // Create a text node in the schema. This method is bound to the Schema.
+    // Create a text node in the schema. This method is bound to the
+    // Schema. Empty text nodes are not allowed.
 
   }, {
     key: "text",
@@ -28943,7 +29161,7 @@ var _tree = require("./tree");
 _step.Step.define("addMark", {
   apply: function apply(doc, step) {
     return new _step.StepResult((0, _tree.copyStructure)(doc, step.from, step.to, function (node, from, to) {
-      if (!node.type.canContainMark(step.param)) return node;
+      if (!node.type.canContainMark(step.param.type)) return node;
       return (0, _tree.copyInline)(node, from, to, function (node) {
         return node.mark(step.param.addToSet(node.marks));
       });
@@ -29955,11 +30173,17 @@ var ParamPrompt = exports.ParamPrompt = function () {
       if (!(param.type in _this.paramTypes)) throw new _error.AssertionError("Unsupported parameter type: " + param.type);
       return _this.paramTypes[param.type].render.call(_this.pm, param, _this.defaultValue(param));
     });
+    var promptTitle = (0, _dom.elt)("h5", {}, command.spec && command.spec.label ? pm.translate(command.spec.label) : "");
+    var submitButton = (0, _dom.elt)("button", { type: "submit", class: "ProseMirror-prompt-submit" }, "Ok");
+    var cancelButton = (0, _dom.elt)("button", { type: "button", class: "ProseMirror-prompt-cancel" }, "Cancel");
+    cancelButton.addEventListener("click", function () {
+      return _this.close();
+    });
     // :: DOMNode
     // An HTML form wrapping the fields.
-    this.form = (0, _dom.elt)("form", null, this.fields.map(function (f) {
+    this.form = (0, _dom.elt)("form", null, promptTitle, this.fields.map(function (f) {
       return (0, _dom.elt)("div", null, f);
-    }));
+    }), (0, _dom.elt)("div", { class: "ProseMirror-prompt-buttons" }, submitButton, " ", cancelButton));
   }
 
   // :: ()
@@ -30135,7 +30359,7 @@ ParamPrompt.prototype.paramTypes = Object.create(null);
 ParamPrompt.prototype.paramTypes.text = {
   render: function render(param, value) {
     return (0, _dom.elt)("input", { type: "text",
-      placeholder: param.label,
+      placeholder: this.translate(param.label),
       value: value,
       autocomplete: "off" });
   },
@@ -30146,9 +30370,11 @@ ParamPrompt.prototype.paramTypes.text = {
 
 ParamPrompt.prototype.paramTypes.select = {
   render: function render(param, value) {
+    var _this4 = this;
+
     var options = param.options.call ? param.options(this) : param.options;
     return (0, _dom.elt)("select", null, options.map(function (o) {
-      return (0, _dom.elt)("option", { value: o.value, selected: o.value == value ? "true" : null }, o.label);
+      return (0, _dom.elt)("option", { value: o.value, selected: o.value == value ? "true" : null }, _this4.translate(o.label));
     }));
   },
   read: function read(dom) {
@@ -30176,7 +30402,7 @@ function openPrompt(pm, content, options) {
   pm.wrapper.appendChild(wrapper);
   if (options && options.pos) {
     wrapper.style.left = options.pos.left - outerBox.left + "px";
-    wrapper.style.pos = options.pos.top - outerBox.top + "px";
+    wrapper.style.top = options.pos.top - outerBox.top + "px";
   } else {
     var blockBox = wrapper.getBoundingClientRect();
     var cX = Math.max(0, outerBox.left) + Math.min(window.innerWidth, outerBox.right) - blockBox.width;
@@ -30197,7 +30423,7 @@ function openPrompt(pm, content, options) {
   return { close: close };
 }
 
-(0, _dom.insertCSS)("\n.ProseMirror-prompt {\n  background: white;\n  padding: 2px 6px 2px 15px;\n  border: 1px solid silver;\n  position: absolute;\n  border-radius: 3px;\n  z-index: 11;\n}\n\n.ProseMirror-prompt input[type=\"text\"],\n.ProseMirror-prompt textarea {\n  background: #eee;\n  border: none;\n  outline: none;\n}\n\n.ProseMirror-prompt input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n.ProseMirror-prompt-close {\n  position: absolute;\n  left: 2px; top: 1px;\n  color: #666;\n  border: none; background: transparent; padding: 0;\n}\n\n.ProseMirror-prompt-close:after {\n  content: \"✕\";\n  font-size: 12px;\n}\n\n.ProseMirror-invalid {\n  background: #ffc;\n  border: 1px solid #cc7;\n  border-radius: 4px;\n  padding: 5px 10px;\n  position: absolute;\n  min-width: 10em;\n}\n");
+(0, _dom.insertCSS)("\n.ProseMirror-prompt {\n  background: white;\n  padding: 2px 6px 2px 15px;\n  border: 1px solid silver;\n  position: absolute;\n  border-radius: 3px;\n  z-index: 11;\n}\n\n.ProseMirror-prompt h5 {\n  margin: 0;\n  font-weight: normal;\n  font-size: 100%;\n  color: #444;\n}\n\n.ProseMirror-prompt input[type=\"text\"],\n.ProseMirror-prompt textarea {\n  background: #eee;\n  border: none;\n  outline: none;\n}\n\n.ProseMirror-prompt input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n.ProseMirror-prompt-close {\n  position: absolute;\n  left: 2px; top: 1px;\n  color: #666;\n  border: none; background: transparent; padding: 0;\n}\n\n.ProseMirror-prompt-close:after {\n  content: \"✕\";\n  font-size: 12px;\n}\n\n.ProseMirror-invalid {\n  background: #ffc;\n  border: 1px solid #cc7;\n  border-radius: 4px;\n  padding: 5px 10px;\n  position: absolute;\n  min-width: 10em;\n}\n\n.ProseMirror-prompt-buttons {\n  margin-top: 5px;\n  display: none;\n}\n\n");
 },{"../dom":88,"../util/error":132}],131:[function(require,module,exports){
 "use strict";
 
@@ -30451,6 +30677,14 @@ exports.eventMixin = eventMixin;
 // A set of methods for objects that emit events. Added by calling
 // `eventMixin` on a constructor.
 
+var noHandlers = [];
+
+function getHandlers(obj, type, copy) {
+  var arr = obj._handlers && obj._handlers[type];
+  if (!arr) return noHandlers;
+  return !copy || arr.length < 2 ? arr : arr.slice();
+}
+
 var methods = {
   // :: (type: string, handler: (...args: [any])) #path=EventMixin.on
   // Register an event handler for the given event type.
@@ -30465,8 +30699,8 @@ var methods = {
   // :: (type: string, handler: (...args: [any])) #path=EventMixin.off
   // Unregister an event handler for the given event type.
   off: function off(type, handler) {
-    var arr = this._handlers && this._handlers[type];
-    if (arr) for (var i = 0; i < arr.length; ++i) {
+    var arr = getHandlers(this, type, false);
+    for (var i = 0; i < arr.length; ++i) {
       if (arr[i] == handler) {
         arr.splice(i, 1);break;
       }
@@ -30479,36 +30713,36 @@ var methods = {
   // arguments. Will call the handlers for the event, passing them the
   // arguments.
   signal: function signal(type) {
-    var arr = this._handlers && this._handlers[type];
+    var arr = getHandlers(this, type, true);
 
     for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
       args[_key - 1] = arguments[_key];
     }
 
-    if (arr) for (var i = 0; i < arr.length; ++i) {
+    for (var i = 0; i < arr.length; ++i) {
       arr[i].apply(arr, args);
     }
   },
 
 
-  // :: (type: string, ...args: [any]) → any #path=EventMixin.signalHandleable
-  // Signal a handleable event of the given type. All handlers for the
-  // event will be called with the given arguments, until one of them
-  // returns something that is not the value `false`. When that
-  // happens, the return value of that handler is returned. If that
-  // does not happen, `false` is returned.
+  // :: (type: string, ...args: [any]) → any
+  // #path=EventMixin.signalHandleable Signal a handleable event of
+  // the given type. All handlers for the event will be called with
+  // the given arguments, until one of them returns something that is
+  // not the value `null` or `undefined`. When that happens, the
+  // return value of that handler is returned. If that does not
+  // happen, `undefined` is returned.
   signalHandleable: function signalHandleable(type) {
-    var arr = this._handlers && this._handlers[type];
-    if (arr) {
-      for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-        args[_key2 - 1] = arguments[_key2];
-      }
+    var arr = getHandlers(this, type, true);
 
-      for (var i = 0; i < arr.length; ++i) {
-        var result = arr[i].apply(arr, args);
-        if (result !== false) return result;
-      }
-    }return false;
+    for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+      args[_key2 - 1] = arguments[_key2];
+    }
+
+    for (var i = 0; i < arr.length; ++i) {
+      var result = arr[i].apply(arr, args);
+      if (result != null) return result;
+    }
   },
 
 
@@ -30518,8 +30752,8 @@ var methods = {
   // The method returns the value returned by the final handler (or
   // the original value, if there are no handlers).
   signalPipelined: function signalPipelined(type, value) {
-    var arr = this._handlers && this._handlers[type];
-    if (arr) for (var i = 0; i < arr.length; ++i) {
+    var arr = getHandlers(this, type, true);
+    for (var i = 0; i < arr.length; ++i) {
       value = arr[i](value);
     }return value;
   },
@@ -30532,19 +30766,17 @@ var methods = {
   // handled the event. Return `true` when one of the handlers handled
   // the event.
   signalDOM: function signalDOM(event, type) {
-    var arr = this._handlers && this._handlers[type || event.type];
-    if (arr) for (var i = 0; i < arr.length; ++i) {
+    var arr = getHandlers(this, type || event.type, true);
+    for (var i = 0; i < arr.length; ++i) {
       if (arr[i](event) || event.defaultPrevented) return true;
-    }
-    return false;
+    }return false;
   },
 
 
   // :: (type: string) → bool #path=EventMixin.hasHandler
   // Query whether there are any handlers for this event type.
   hasHandler: function hasHandler(type) {
-    var arr = this._handlers && this._handlers[type];
-    return arr && arr.length > 0;
+    return getHandlers(this, type, false).length > 0;
   }
 };
 

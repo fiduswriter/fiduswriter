@@ -432,6 +432,11 @@ function selectableNodeAbove(pm, dom, coords, liberal) {
 // event.
 
 // :: (pm: ProseMirror, event: MouseEvent, path: [number], node: Node) → bool
+// #path=NodeType.prototype.handleDoubleClick
+// This works like [`handleClick`](#NodeType.handleClick), but is
+// called for double clicks instead.
+
+// :: (pm: ProseMirror, event: MouseEvent, path: [number], node: Node) → bool
 // #path=NodeType.prototype.handleContextMenu
 //
 // When the [context
@@ -620,7 +625,14 @@ var SelectionState = exports.SelectionState = function () {
       var head = sel.isCollapsed ? anchor : (0, _dompos.posFromDOM)(this.pm, sel.focusNode, sel.focusOffset);
 
       var newRange = findSelectionNear(doc, head, this.range.head && this.range.head.cmp(head) < 0 ? -1 : 1);
-      if (newRange instanceof TextSelection && doc.path(anchor.path).isTextblock) newRange = new TextSelection(anchor, newRange.head);
+      if (newRange instanceof TextSelection && doc.path(anchor.path).isTextblock) {
+        newRange = new TextSelection(anchor, newRange.head);
+      } else if (newRange instanceof NodeSelection && (anchor.cmp(newRange.from) < 0 || anchor.cmp(newRange.to) > 0)) {
+        // If head falls on a node, but anchor falls outside of it,
+        // create a text selection between them
+        var inv = anchor.cmp(newRange.to) > 0;
+        newRange = new TextSelection(findSelectionNear(doc, anchor, inv ? -1 : 1, true).anchor, findSelectionNear(doc, inv ? newRange.from : newRange.to, inv ? 1 : -1, true).head);
+      }
       this.setAndSignal(newRange);
 
       if (newRange instanceof NodeSelection || newRange.head.cmp(head) || newRange.anchor.cmp(anchor)) {
@@ -724,10 +736,10 @@ var Selection = exports.Selection = function Selection() {
 };
 
 // :: Pos #path=Selection.prototype.from
-// The start of the selection.
+// The left-bound of the selection.
 
 // :: Pos #path=Selection.prototype.to
-// The end of the selection.
+// The right-bound of the selection.
 
 // :: bool #path=Selection.empty
 // True if the selection is an empty text selection (head an anchor
@@ -867,14 +879,19 @@ function rangeFromDOMLoose(pm) {
 }
 
 function hasFocus(pm) {
+  if (document.activeElement != pm.content) return false;
   var sel = window.getSelection();
   return sel.rangeCount && (0, _dom.contains)(pm.content, sel.anchorNode);
 }
 
+// Try to find a selection inside the node at the given path coming
+// from a given direction.
 function findSelectionIn(doc, path, offset, dir, text) {
   var node = doc.path(path);
   if (node.isTextblock) return new TextSelection(new _model.Pos(path, offset));
 
+  // Iterate over child nodes recursively coming from the given
+  // direction and return the first viable selection.
   for (var i = offset + (dir > 0 ? 0 : -1); dir > 0 ? i < node.size : i >= 0; i += dir) {
     var child = node.child(i);
     if (!text && child.type.contains == null && child.type.selectable) return new NodeSelection(new _model.Pos(path, i), new _model.Pos(path, i + 1), child);
@@ -887,6 +904,10 @@ function findSelectionIn(doc, path, offset, dir, text) {
 
 // FIXME we'll need some awareness of bidi motion when determining block start and end
 
+// Create a selection which is moved relative to a position in a
+// given direction. When a selection isn't found at the given position,
+// walks up the document tree one level and one step in the
+// desired direction.
 function findSelectionFrom(doc, pos, dir, text) {
   for (var path = pos.path.slice(), offset = pos.offset;;) {
     var found = findSelectionIn(doc, path, offset, dir, text);
@@ -905,6 +926,7 @@ function findSelectionNear(doc, pos) {
   return result;
 }
 
+// Find the selection closes to the start of the given node.
 function findSelectionAtStart(node) {
   var path = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
   var text = arguments[2];
@@ -912,6 +934,7 @@ function findSelectionAtStart(node) {
   return findSelectionIn(node, path.slice(), 0, 1, text);
 }
 
+// Find the selection closes to the end of the given node.
 function findSelectionAtEnd(node) {
   var path = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
   var text = arguments[2];
@@ -919,6 +942,9 @@ function findSelectionAtEnd(node) {
   return findSelectionIn(node, path.slice(), node.size, -1, text);
 }
 
+// : (ProseMirror, Pos, number)
+// Whether vertical position motion in a given direction
+// from a position would leave a text block.
 function verticalMotionLeavesTextblock(pm, pos, dir) {
   var dom = (0, _dompos.pathToDOM)(pm.content, pos.path);
   var coords = (0, _dompos.coordsAtPos)(pm, pos);
@@ -1251,7 +1277,7 @@ var EmMark = exports.EmMark = function (_MarkType) {
   _createClass(EmMark, null, [{
     key: "rank",
     get: function get() {
-      return 51;
+      return 31;
     }
   }]);
 
@@ -1273,7 +1299,7 @@ var StrongMark = exports.StrongMark = function (_MarkType2) {
   _createClass(StrongMark, null, [{
     key: "rank",
     get: function get() {
-      return 52;
+      return 32;
     }
   }]);
 
@@ -1306,7 +1332,7 @@ var LinkMark = exports.LinkMark = function (_MarkType3) {
   }], [{
     key: "rank",
     get: function get() {
-      return 25;
+      return 60;
     }
   }]);
 
@@ -2002,12 +2028,13 @@ var TextIterator = function () {
             end = offset + node.width;
         if (end == this.offset) break;
         if (end > this.offset) {
-          var sliceEnd = node.width;
+          var sliceEnd = node.width,
+              sliceStart = this.offset - offset;
           if (end > this.endOffset) {
             sliceEnd = this.endOffset - offset;
             end = this.endOffset;
           }
-          node = node.copy(node.text.slice(this.offset - offset, sliceEnd));
+          node = sliceEnd > sliceStart ? node.copy(node.text.slice(this.offset - offset, sliceEnd)) : null;
           this.offset = end;
           return node;
         }
@@ -2596,6 +2623,8 @@ var _mark = require("./mark");
 
 var _pos = require("./pos");
 
+var _schema = require("./schema");
+
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
@@ -3137,11 +3166,12 @@ var TextNode = exports.TextNode = function (_Node) {
   function TextNode(type, attrs, content, marks) {
     _classCallCheck(this, TextNode);
 
-    // :: ?string
-    // For text nodes, this contains the node's text content.
-
     var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(TextNode).call(this, type, attrs, null, marks));
 
+    if (!content) throw new _schema.SchemaError("Empty text nodes are not allowed");
+
+    // :: ?string
+    // For text nodes, this contains the node's text content.
     _this.text = content;
     return _this;
   }
@@ -3183,7 +3213,7 @@ function wrapMarks(marks, str) {
     str = marks[i].type.name + "(" + str + ")";
   }return str;
 }
-},{"./fragment":7,"./mark":9,"./pos":11}],11:[function(require,module,exports){
+},{"./fragment":7,"./mark":9,"./pos":11,"./schema":12}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3860,39 +3890,62 @@ var NodeType = exports.NodeType = function (_SchemaItem) {
 
 
 var NodeKind = exports.NodeKind = function () {
-  // :: (string, [NodeKind])
+  // :: (string, ?[NodeKind], ?[NodeKind])
   // Create a new node kind with the given set of superkinds (the new
-  // kind counts as a member of each of the superkinds). The `name`
-  // field is only for debugging purposes—kind equivalens is defined
-  // by identity.
+  // kind counts as a member of each of the superkinds) and subkinds
+  // (which will count as a member of this new kind). The `name` field
+  // is only for debugging purposes—kind equivalens is defined by
+  // identity.
 
-  function NodeKind(name) {
+  function NodeKind(name, supers, subs) {
     var _this4 = this;
 
     _classCallCheck(this, NodeKind);
 
     this.name = name;
-    this.supers = Object.create(null);
-    this.id = ++NodeKind.nextID;
-    this.supers[this.id] = true;
-
-    for (var _len = arguments.length, supers = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-      supers[_key - 1] = arguments[_key];
+    // FIXME temporary backwards-compatibility kludge
+    if (supers && supers instanceof NodeKind) {
+      supers = Array.prototype.slice.call(arguments, 1);
+      subs = null;
     }
+    this.id = ++NodeKind.nextID;
+    this.supers = Object.create(null);
+    this.supers[this.id] = true;
+    this.subs = subs || [];
 
-    supers.forEach(function (sup) {
-      for (var id in sup.supers) {
-        _this4.supers[id] = true;
-      }
+    if (supers) supers.forEach(function (sup) {
+      return _this4.addSuper(sup);
+    });
+    if (subs) subs.forEach(function (sub) {
+      return _this4.addSub(sub);
     });
   }
 
-  // :: (NodeKind) → bool
-  // Test whether `other` is a subkind of this kind (or the same
-  // kind).
-
-
   _createClass(NodeKind, [{
+    key: "addSuper",
+    value: function addSuper(sup) {
+      for (var id in sup.supers) {
+        this.supers[id] = true;
+        sup.subs.push(this);
+      }
+    }
+  }, {
+    key: "addSub",
+    value: function addSub(sub) {
+      var _this5 = this;
+
+      if (this.supers[sub.id]) throw new SchemaError("Circular subkind relation");
+      sub.supers[this.id] = true;
+      sub.subs.forEach(function (next) {
+        return _this5.addSub(next);
+      });
+    }
+
+    // :: (NodeKind) → bool
+    // Test whether `other` is a subkind of this kind (or the same
+    // kind).
+
+  }, {
     key: "isSubKind",
     value: function isSubKind(other) {
       return other && other.id in this.supers || false;
@@ -3912,7 +3965,7 @@ NodeKind.inline = new NodeKind("inline");
 
 // :: NodeKind The node kind used for text nodes. Subkind of
 // `NodeKind.inline`.
-NodeKind.text = new NodeKind("text", NodeKind.inline);
+NodeKind.text = new NodeKind("text", [NodeKind.inline]);
 
 // ;; Base type for block nodetypes.
 
@@ -4114,17 +4167,17 @@ var MarkType = exports.MarkType = function (_SchemaItem2) {
     // :: string
     // The name of the mark type.
 
-    var _this9 = _possibleConstructorReturn(this, Object.getPrototypeOf(MarkType).call(this));
+    var _this10 = _possibleConstructorReturn(this, Object.getPrototypeOf(MarkType).call(this));
 
-    _this9.name = name;
-    _this9.freezeAttrs();
-    _this9.rank = rank;
+    _this10.name = name;
+    _this10.freezeAttrs();
+    _this10.rank = rank;
     // :: Schema
     // The schema that this mark type instance is part of.
-    _this9.schema = schema;
-    var defaults = _this9.getDefaultAttrs();
-    _this9.instance = defaults && new _mark.Mark(_this9, defaults);
-    return _this9;
+    _this10.schema = schema;
+    var defaults = _this10.getDefaultAttrs();
+    _this10.instance = defaults && new _mark.Mark(_this10, defaults);
+    return _this10;
   }
 
   // :: number
@@ -4316,7 +4369,8 @@ var Schema = function () {
     }
 
     // :: (string, ?[Mark]) → Node
-    // Create a text node in the schema. This method is bound to the Schema.
+    // Create a text node in the schema. This method is bound to the
+    // Schema. Empty text nodes are not allowed.
 
   }, {
     key: "text",

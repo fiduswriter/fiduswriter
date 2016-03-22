@@ -21,12 +21,33 @@ export class ModFootnoteMarkers {
         this.mod.editor.pm.on('transform', function(transform, object) {
             that.scanForFootnoteMarkers(transform, true)
         })
-        this.mod.editor.pm.on('remoteTransform', function(transform, object) {
-            that.scanForFootnoteMarkers(transform, false)
+        this.mod.editor.pm.mod.collab.on('collabTransform', function(transform, object) {
+            that.remoteScanForFootnoteMarkers(transform)
         })
     }
 
+    remoteScanForFootnoteMarkers(transform) {
+        // We add unconfirmed local steps to the remote steps to make sure we map the ranges to current ranges.
+        let unconfirmedMaps = this.mod.editor.pm.mod.collab.unconfirmedMaps
+        let unconfirmedSteps = this.mod.editor.pm.mod.collab.unconfirmedSteps
+        let doc = this.mod.editor.pm.mod.versionDoc
+        maps = transform.maps.concat(unconfirmedMaps)
+        unconfirmedSteps.forEach(function(step) {
+            // We add pseudo steps for all the unconfirmed steps so that the
+            // unconfirmed maps will be applied when handling the transform
+            transform.steps.push({
+                type: 'unconfirmed'
+            })
+            // We add real docs
+            let result = step.apply(doc)
+            doc = result.doc
+            transform.docs.push(doc)
+        })
+        this.scanForFootnoteMarkers(transform, false)
+    }
+
     scanForFootnoteMarkers(transform, renderFootnote) {
+        /* Look through the ranges added through a transform for the presence of one or more footnote markers */
         let that = this
         if (this.updating) {
             return false
@@ -54,6 +75,7 @@ export class ModFootnoteMarkers {
     }
 
     getAddedRanges(transform) {
+        /* find ranges of the current document that have been added by means of a transformation. */
         let ranges = []
         for (let i = 0; i < transform.steps.length; i++) {
             let step = transform.steps[i],

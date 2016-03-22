@@ -22,6 +22,7 @@ export class ModFootnoteEditor {
 
 
     footnoteEdit() {
+        // Handle an edit in the footnote editor.
         if (this.rendering) {
             // We are currently adding or removing footnotes in the footnote editor
             // due to changes at the footnote marker level, so abort.
@@ -41,6 +42,7 @@ export class ModFootnoteEditor {
     }
 
     applyDiffs(diffs) {
+        console.log('applying footnote diff')
         this.mod.fnPm.mod.collab.receive(diffs.map(j => Step.fromJSON(fidusFnSchema, j)))
     }
 

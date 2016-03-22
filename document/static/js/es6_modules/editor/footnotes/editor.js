@@ -17,6 +17,9 @@ export class ModFootnoteEditor {
         this.mod.fnPm.mod.collab.on("mustSend", function() {
             that.footnoteEdit()
         })
+        this.mod.fnPm.on("filterTransform", (transform) => {
+            return that.mod.editor.onFilterTransform(transform)
+        })
 
     }
 
@@ -75,7 +78,7 @@ export class ModFootnoteEditor {
         let node = fromHTML(fidusFnSchema, footnoteHTML, {
             preserveWhitespace: true
         }).firstChild
-        this.mod.fnPm.tr.insert(new Pos([], index), node).apply()
+        this.mod.fnPm.tr.insert(new Pos([], index), node).apply({filter:false})
         this.rendering = false
     }
 
@@ -87,7 +90,7 @@ export class ModFootnoteEditor {
         this.mod.footnotes.splice(index, 1)
         if (!this.mod.editor.mod.collab.docChanges.receiving) {
             this.rendering = true
-            this.mod.fnPm.tr.delete(new Pos([], index), new Pos([], index + 1)).apply()
+            this.mod.fnPm.tr.delete(new Pos([], index), new Pos([], index + 1)).apply({filter:false})
             this.rendering = false
         }
     }

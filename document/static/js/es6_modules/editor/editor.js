@@ -70,6 +70,7 @@ export class Editor {
             updateUI(that)
         })
         this.pm.on("change", function(){that.docInfo.changed = true})
+        this.pm.on("filterTransform", (transform) => {return that.onFilterTransform(transform)})
         this.pm.on("transform", (transform, options) => {that.onTransform(transform, true)})
         this.pm.mod.collab.on("collabTransform", (transform, options) => {that.onTransform(transform, false)})
         new UpdateScheduler(this.pm, "flush setDoc", citationHelpers.formatCitationsInDocIfNew)
@@ -331,6 +332,18 @@ export class Editor {
             callback()
         }
         return true
+    }
+
+    // filter transformations, disallowing all transformations going across document parts/footnotes.
+    onFilterTransform(transform) {
+        let prohibited = false
+        transform.steps.forEach(function(step, index) {
+            if(step.from && step.to && (step.from.path.length === 0 ||
+              step.to.path.length === 0 || step.from.path[0] !== step.to.path[0])) {
+                prohibited = true
+            }
+        })
+        return prohibited
     }
 
     // Things to be executed on every editor transform.

@@ -1555,6 +1555,9 @@ var Editor = exports.Editor = (function () {
             this.pm.on("change", function () {
                 that.docInfo.changed = true;
             });
+            this.pm.on("filterTransform", function (transform) {
+                return that.onFilterTransform(transform);
+            });
             this.pm.on("transform", function (transform, options) {
                 that.onTransform(transform, true);
             });
@@ -1828,6 +1831,20 @@ var Editor = exports.Editor = (function () {
             return true;
         }
 
+        // filter transformations, disallowing all transformations going across document parts/footnotes.
+
+    }, {
+        key: "onFilterTransform",
+        value: function onFilterTransform(transform) {
+            var prohibited = false;
+            transform.steps.forEach(function (step, index) {
+                if (step.from && step.to && (step.from.path.length === 0 || step.to.path.length === 0 || step.from.path[0] !== step.to.path[0])) {
+                    prohibited = true;
+                }
+            });
+            return prohibited;
+        }
+
         // Things to be executed on every editor transform.
 
     }, {
@@ -1921,6 +1938,9 @@ var ModFootnoteEditor = exports.ModFootnoteEditor = (function () {
             this.mod.fnPm.mod.collab.on("mustSend", function () {
                 that.footnoteEdit();
             });
+            this.mod.fnPm.on("filterTransform", function (transform) {
+                return that.mod.editor.onFilterTransform(transform);
+            });
         }
     }, {
         key: "footnoteEdit",
@@ -1983,7 +2003,7 @@ var ModFootnoteEditor = exports.ModFootnoteEditor = (function () {
             var node = (0, _format.fromHTML)(_schema.fidusFnSchema, footnoteHTML, {
                 preserveWhitespace: true
             }).firstChild;
-            this.mod.fnPm.tr.insert(new _model.Pos([], index), node).apply();
+            this.mod.fnPm.tr.insert(new _model.Pos([], index), node).apply({ filter: false });
             this.rendering = false;
         }
     }, {
@@ -1996,7 +2016,7 @@ var ModFootnoteEditor = exports.ModFootnoteEditor = (function () {
             this.mod.footnotes.splice(index, 1);
             if (!this.mod.editor.mod.collab.docChanges.receiving) {
                 this.rendering = true;
-                this.mod.fnPm.tr.delete(new _model.Pos([], index), new _model.Pos([], index + 1)).apply();
+                this.mod.fnPm.tr.delete(new _model.Pos([], index), new _model.Pos([], index + 1)).apply({ filter: false });
                 this.rendering = false;
             }
         }

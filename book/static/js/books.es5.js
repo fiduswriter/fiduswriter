@@ -27,7 +27,7 @@ var _templates = require('./templates');
 
 var createAccessRightsDialog = exports.createAccessRightsDialog = function createAccessRightsDialog(bookIds) {
     var dialogHeader = gettext('Share your book with others');
-    var book_collaborators = {};
+    var bookCollaborators = {};
 
     var theAccessRights = window.theAccessRights;
 
@@ -37,17 +37,16 @@ var createAccessRightsDialog = exports.createAccessRightsDialog = function creat
 
     for (var i = 0; i < len; i++) {
         if (_.include(bookIds, theAccessRights[i].book_id)) {
-            if ('undefined' == typeof book_collaborators[theAccessRights[i].user_id]) {
-                book_collaborators[theAccessRights[i].user_id] = theAccessRights[i];
-                book_collaborators[theAccessRights[i].user_id].count = 1;
+            if (!(theAccessRights[i].user_id in bookCollaborators)) {
+                bookCollaborators[theAccessRights[i].user_id] = theAccessRights[i];
+                bookCollaborators[theAccessRights[i].user_id].count = 1;
             } else {
-                if (book_collaborators[theAccessRights[i].user_id].rights != theAccessRights[i].rights) ;
-                book_collaborators[theAccessRights[i].user_id].rights = 'r';
-                book_collaborators[theAccessRights[i].user_id].count += 1;
+                if (bookCollaborators[theAccessRights[i].user_id].rights != theAccessRights[i].rights) bookCollaborators[theAccessRights[i].user_id].rights = 'r';
+                bookCollaborators[theAccessRights[i].user_id].count += 1;
             }
         }
     }
-    book_collaborators = _.select(book_collaborators, function (obj) {
+    bookCollaborators = _.select(bookCollaborators, function (obj) {
         return obj.count == bookIds.length;
     });
 
@@ -55,26 +54,26 @@ var createAccessRightsDialog = exports.createAccessRightsDialog = function creat
         'dialogHeader': dialogHeader,
         'contacts': theTeamMembers,
         'collaborators': (0, _templates.bookCollaboratorsTemplate)({
-            'collaborators': book_collaborators
+            'collaborators': bookCollaborators
         })
     });
-    $('body').append(dialogBody);
+    jQuery('body').append(dialogBody);
     var diaButtons = {};
     diaButtons[gettext('Submit')] = function () {
         //apply the current state to server
         var collaborators = [],
             rights = [];
-        $('#share-member .collaborator-tr').each(function () {
-            collaborators[collaborators.length] = $(this).attr('data-id');
-            rights[rights.length] = $(this).attr('data-right');
+        jQuery('#share-member .collaborator-tr').each(function () {
+            collaborators[collaborators.length] = jQuery(this).attr('data-id');
+            rights[rights.length] = jQuery(this).attr('data-right');
         });
         submitAccessRight(bookIds, collaborators, rights);
-        $(this).dialog('close');
+        jQuery(this).dialog('close');
     };
     diaButtons[gettext('Cancel')] = function () {
-        $(this).dialog("close");
+        jQuery(this).dialog("close");
     };
-    $('#access-rights-dialog').dialog({
+    jQuery('#access-rights-dialog').dialog({
         draggable: false,
         resizable: false,
         top: 10,
@@ -83,37 +82,37 @@ var createAccessRightsDialog = exports.createAccessRightsDialog = function creat
         modal: true,
         buttons: diaButtons,
         create: function create() {
-            var $the_dialog = $(this).closest(".ui-dialog");
-            $the_dialog.find(".ui-button:first-child").addClass("fw-button fw-dark");
-            $the_dialog.find(".ui-button:last").addClass("fw-button fw-orange");
+            var theDialog = jQuery(this).closest(".ui-dialog");
+            theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark");
+            theDialog.find(".ui-button:last").addClass("fw-button fw-orange");
         },
         close: function close() {
-            $('#access-rights-dialog').dialog('destroy').remove();
+            jQuery('#access-rights-dialog').dialog('destroy').remove();
         }
     });
-    $('.fw-checkable').bind('click', function () {
-        $.setCheckableLabel($(this));
+    jQuery('.fw-checkable').bind('click', function () {
+        $.setCheckableLabel(jQuery(this));
     });
-    $('#add-share-member').bind('click', function () {
-        var $selected_members = $('#my-contacts .fw-checkable.checked');
-        var selected_data = [];
-        $selected_members.each(function () {
-            var member_id = $(this).attr('data-id');
-            var $collaborator = $('#collaborator-' + member_id);
-            if (0 == $collaborator.size()) {
-                selected_data[selected_data.length] = {
-                    'user_id': member_id,
-                    'user_name': $(this).attr('data-name'),
-                    'avatar': $(this).attr('data-avatar'),
+    jQuery('#add-share-member').bind('click', function () {
+        var selectedMembers = jQuery('#my-contacts .fw-checkable.checked');
+        var selectedData = [];
+        selectedMembers.each(function () {
+            var memberId = jQuery(this).attr('data-id');
+            var collaborator = jQuery('#collaborator-' + memberId);
+            if (0 == collaborator.size()) {
+                selectedData[selectedData.length] = {
+                    'user_id': memberId,
+                    'user_name': jQuery(this).attr('data-name'),
+                    'avatar': jQuery(this).attr('data-avatar'),
                     'rights': 'r'
                 };
-            } else if ('d' == $collaborator.attr('data-right')) {
-                $collaborator.removeClass('d').addClass('r').attr('data-right', 'r');
+            } else if ('d' == collaborator.attr('data-right')) {
+                collaborator.removeClass('d').addClass('r').attr('data-right', 'r');
             }
         });
-        $('#my-contacts .checkable-label.checked').removeClass('checked');
-        $('#share-member table tbody').append(tmp_book_collaborators({
-            'collaborators': selected_data
+        jQuery('#my-contacts .checkable-label.checked').removeClass('checked');
+        jQuery('#share-member table tbody').append((0, _templates.bookCollaboratorsTemplate)({
+            'collaborators': selectedData
         }));
         collaboratorFunctionsEvent();
     });
@@ -121,28 +120,28 @@ var createAccessRightsDialog = exports.createAccessRightsDialog = function creat
 };
 
 var collaboratorFunctionsEvent = function collaboratorFunctionsEvent() {
-    $('.edit-right').unbind('click');
-    $('.edit-right').each(function () {
-        $.addDropdownBox($(this), $(this).siblings('.fw-pulldown'));
+    jQuery('.edit-right').unbind('click');
+    jQuery('.edit-right').each(function () {
+        $.addDropdownBox(jQuery(this), jQuery(this).siblings('.fw-pulldown'));
     });
-    var $spans = $('.edit-right-wrapper .fw-pulldown-item, .delete-collaborator');
-    $spans.unbind('mousedown');
-    $spans.bind('mousedown', function () {
-        var new_right = $(this).attr('data-right');
-        $(this).closest('.collaborator-tr').attr('class', 'collaborator-tr ' + new_right);
-        $(this).closest('.collaborator-tr').attr('data-right', new_right);
+    var spans = jQuery('.edit-right-wrapper .fw-pulldown-item, .delete-collaborator');
+    spans.unbind('mousedown');
+    spans.bind('mousedown', function () {
+        var newRight = jQuery(this).attr('data-right');
+        jQuery(this).closest('.collaborator-tr').attr('class', 'collaborator-tr ' + newRight);
+        jQuery(this).closest('.collaborator-tr').attr('data-right', newRight);
     });
 };
 
 var submitAccessRight = function submitAccessRight(books, collaborators, rights) {
-    var post_data = {
+    var postData = {
         'books[]': books,
         'collaborators[]': collaborators,
         'rights[]': rights
     };
     $.ajax({
         url: '/book/accessright/save/',
-        data: post_data,
+        data: postData,
         type: 'POST',
         dataType: 'json',
         success: function success(response) {

@@ -142,6 +142,7 @@ var PrintBook = exports.PrintBook = (function () {
                 theBook: theBook
             });
 
+            // TODO: render equations
             pagination.initiate();
             pagination.applyBookLayout();
             jQuery("#pagination-contents").addClass('user-contents');

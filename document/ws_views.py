@@ -13,11 +13,11 @@ from avatar.templatetags.avatar_tags import avatar_url
 
 class DocumentWS(BaseWebSocketHandler):
     sessions = dict()
-    user_info = SessionUserInfo()
 
     def open(self, document_id):
         print 'Websocket opened'
         current_user = self.get_current_user()
+        self.user_info = SessionUserInfo()
         doc_db, can_access = self.user_info.init_access(document_id, current_user)
 
         if can_access:
@@ -331,8 +331,7 @@ class DocumentWS(BaseWebSocketHandler):
         doc_db.settings = json_encode(doc['settings'])
         doc_db.last_diffs = json_encode(doc['last_diffs'])
         doc_db.comments = json_encode(doc['comments'])
-        print "saving document"
-        print doc_db.version
+        print "saving document #"+str(doc_db.id)+", version "+str(doc_db.version)
         doc_db.save()
 
     @classmethod

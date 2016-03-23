@@ -339,15 +339,17 @@ export let htmlToLatex = function(title, author, htmlCode, aBibDB,
         // TODO: make use of figure type
         let caption = jQuery(this).find('figcaption')[0].lastChild.innerHTML
         let filename = jQuery(this).find('img').attr('data-src')
-        let filenameList = filename.split('.')
-        if (filenameList[filenameList.length - 1] === 'svg') {
-            latexPackage = 'includesvg'
-        } else {
-            latexPackage = 'scaledgraphics'
+        if (filename) { // TODO: handle formula figures
+            let filenameList = filename.split('.')
+            if (filenameList[filenameList.length - 1] === 'svg') {
+                latexPackage = 'includesvg'
+            } else {
+                latexPackage = 'scaledgraphics'
+            }
+            this.outerHTML = '\n\\begin{figure}\n\\' + latexPackage +
+                '{' + filename + '}\n\\caption{' + caption +
+                '}\n\\end{figure}\n'
         }
-        this.outerHTML = '\n\\begin{figure}\n\\' + latexPackage +
-            '{' + filename + '}\n\\caption{' + caption +
-            '}\n\\end{figure}\n'
     })
 
     jQuery(htmlCode).find('.equation, .figure-equation').each(

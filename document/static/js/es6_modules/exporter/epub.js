@@ -1,9 +1,10 @@
-import {joinDocumentParts, addFigureNumbers, replaceImgSrc, getMathjaxHeader} from "./html"
+import {joinDocumentParts, addFigureNumbers, replaceImgSrc} from "./html"
 import {obj2Node, node2Obj} from "./json"
 import {createSlug, findImages} from "./tools"
 import {zipFileCreator} from "./zip"
 import {opfTemplate, containerTemplate, ncxTemplate, ncxItemTemplate, navTemplate,
   navItemTemplate, xhtmlTemplate} from "./epub-templates"
+import {render as katexRender} from "katex"
 
 let templates = {ncxTemplate, ncxItemTemplate, navTemplate, navItemTemplate}
 
@@ -106,33 +107,24 @@ let export1 = function(aDocument, aBibDB) {
 
     let figureEquations = contentsBody.querySelectorAll('.figure-equation')
 
-    let mathjax = false
+    let math = false
 
     if (equations.length > 0 || figureEquations.length > 0) {
-        mathjax = true
+        math = true
+        styleSheets.push({filename: 'katex.min.css'})
     }
 
     for (let i = 0; i < equations.length; i++) {
-        mathHelpers.layoutMathNode(equations[i])
+        let node = equations[i]
+        let formula = node.getAttribute('data-equation')
+        katexRender(formula, node)
     }
     for (let i = 0; i < figureEquations.length; i++) {
-        mathHelpers.layoutDisplayMathNode(figureEquations[i])
-    }
-    mathHelpers.queueExecution(function() {
-        setTimeout(function() {
-            export2(aDocument, contentsBody, images, title, styleSheets, mathjax)
-        }, 2000)
-    })
-}
-
-let export2 = function(aDocument, contentsBody, images, title, styleSheets, mathjax) {
-
-    if (mathjax) {
-        mathjax = getMathjaxHeader()
-
-        if (mathjax) {
-            mathjax = obj2Node(node2Obj(mathjax), 'xhtml').outerHTML
-        }
+        let node = figureEquations[i]
+        let formula = node.getAttribute('data-equation')
+        katexRender(formula, node, {
+            displayMode: true
+        })
     }
 
     // Make links to all H1-3 and create a TOC list of them
@@ -147,8 +139,7 @@ let export2 = function(aDocument, contentsBody, images, title, styleSheets, math
         shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
         title: title,
         styleSheets: styleSheets,
-        body: obj2Node(node2Obj(contentsBodyEpubPrepared), 'xhtml').innerHTML,
-        mathjax: mathjax,
+        body: obj2Node(node2Obj(contentsBodyEpubPrepared), 'xhtml').innerHTML
     })
 
     xhtmlCode = replaceImgSrc(xhtmlCode)
@@ -178,30 +169,30 @@ let export2 = function(aDocument, contentsBody, images, title, styleSheets, math
 
     let opfCode = opfTemplate({
         language: gettext('en-US'), // TODO: specify a document language rather than using the current users UI language
-        title: title,
-        authors: authors,
-        keywords: keywords,
+        title,
+        authors,
+        keywords,
         idType: 'fidus',
         id: aDocument.id,
         date: timestamp.slice(0, 10), // TODO: the date should probably be the original document creation date instead
         modified: timestamp,
-        styleSheets: styleSheets,
-        mathjax: mathjax,
-        images: images
+        styleSheets,
+        math,
+        images
     })
 
     let ncxCode = ncxTemplate({
         shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
-        title: title,
+        title,
         idType: 'fidus',
         id: aDocument.id,
-        contentItems: contentItems,
+        contentItems,
         templates
     })
 
     let navCode = navTemplate({
         shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
-        contentItems: contentItems,
+        contentItems,
         templates
     })
 
@@ -223,13 +214,14 @@ let export2 = function(aDocument, contentsBody, images, title, styleSheets, math
     }]
 
 
-
-
     for (let i = 0; i < styleSheets.length; i++) {
-        outputList.push({
-            filename: 'EPUB/' + styleSheets[i].filename,
-            contents: styleSheets[i].contents
-        })
+        let styleSheet = styleSheets[i]
+        if (styleSheet.contents) {
+            outputList.push({
+                filename: 'EPUB/' + styleSheet.filename,
+                contents: styleSheet.contents
+            })
+        }
     }
 
     let httpOutputList = []
@@ -240,10 +232,10 @@ let export2 = function(aDocument, contentsBody, images, title, styleSheets, math
         })
     }
     let includeZips = []
-    if (mathjax) {
+    if (math) {
         includeZips.push({
             'directory': 'EPUB',
-            'url': mathjaxZipUrl,
+            'url': staticUrl + 'zip/katex-style.zip'
         })
     }
 

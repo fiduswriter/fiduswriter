@@ -14,7 +14,7 @@ export let bindMath = function (editor) {
         event.preventDefault()
 
 
-        if (node && node.type && node.type.name==='citation') {
+        if (node && node.type && node.type.name==='equation') {
             insideMath = true
             equation = node.attrs.equation
             submitMessage = gettext('Update')

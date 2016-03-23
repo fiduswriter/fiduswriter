@@ -131,7 +131,7 @@ export class ModCollabDocChanges {
             })
         }
         if (data.footnote_diff && data.footnote_diff.length) {
-            this.mod.editor.modfootnotes.fnEditor.applyDiffs(data.footnote_diff)
+            this.mod.editor.mod.footnotes.fnEditor.applyDiffs(data.footnote_diff)
         }
         if (data.reject_request_id) {
             this.rejectDiff(data.reject_request_id)
@@ -172,36 +172,7 @@ export class ModCollabDocChanges {
     applyDiff(diff) {
         this.receiving = true
         let steps = [diff].map(j => Step.fromJSON(fidusSchema, j))
-        let docs = []
-        let doc = this.mod.editor.pm.mod.collab.versionDoc
-        docs.push(doc)
-        let maps = steps.map(step => {
-            let result = step.apply(doc)
-            doc = result.doc
-            docs.push(doc)
-            return result.map
-        })
         this.mod.editor.pm.mod.collab.receive(steps)
-        let unconfirmedMaps = this.mod.editor.pm.mod.collab.unconfirmedMaps
-        let unconfirmedSteps = this.mod.editor.pm.mod.collab.unconfirmedSteps
-        maps = maps.concat(unconfirmedMaps)
-        unconfirmedSteps.forEach(function(step) {
-            // We add pseudo steps for all the unconfirmed steps so that the
-            // unconfirmed maps will be applied when handling the transform
-            steps.push({
-                type: 'unconfirmed'
-            })
-            // We add real docs
-            let result = step.apply(doc)
-            doc = result.doc
-            docs.push(doc)
-        })
-        let transform = {
-            steps,
-            maps,
-            docs
-        }
-        this.mod.editor.pm.signal("remoteTransform", transform)
         this.receiving = false
     }
 

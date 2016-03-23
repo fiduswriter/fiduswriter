@@ -1,5 +1,4 @@
 /* Functions for ProseMirror integration.*/
-
 import {ProseMirror} from "prosemirror/dist/edit/main"
 import {fromDOM} from "prosemirror/dist/format"
 import {serializeTo} from "prosemirror/dist/format"
@@ -21,6 +20,9 @@ import {ModNodeConvert} from "./node-convert"
 import {node2Obj, obj2Node} from "../exporter/json"
 
 export class Editor {
+    // A class that contains everything that happens on the editor page.
+    // It is currently not possible to initialize more thna one editor class, as it
+    // contains bindings to menu items, etc. that are uniquely defined.
     constructor() {
         this.mod = {}
         // Whether the editor is currently waiting for a document update. Set to true
@@ -68,10 +70,9 @@ export class Editor {
             updateUI(that)
         })
         this.pm.on("change", function(){that.docInfo.changed = true})
+        this.pm.on("filterTransform", (transform) => {return that.onFilterTransform(transform)})
         this.pm.on("transform", (transform, options) => {that.onTransform(transform, true)})
-        this.pm.on("remoteTransform", (transform, options) => {that.onTransform(transform, false)})
-        new UpdateScheduler(this.pm, "flush setDoc", mathHelpers.layoutEmptyEquationNodes)
-        new UpdateScheduler(this.pm, "flush setDoc", mathHelpers.layoutEmptyDisplayEquationNodes)
+        this.pm.mod.collab.on("collabTransform", (transform, options) => {that.onTransform(transform, false)})
         new UpdateScheduler(this.pm, "flush setDoc", citationHelpers.formatCitationsInDocIfNew)
         this.setSaveTimers()
     }
@@ -216,7 +217,6 @@ export class Editor {
                 // bind the share dialog to the button if the user is the document owner
                 jQuery('.share').removeClass('disabled')
             }
-            mathHelpers.resetMath()
         } else if (this.docInfo.rights === 'r') {
             // Try to disable contenteditable
             jQuery('.ProseMirror-content').attr('contenteditable', 'false')
@@ -332,6 +332,18 @@ export class Editor {
             callback()
         }
         return true
+    }
+
+    // filter transformations, disallowing all transformations going across document parts/footnotes.
+    onFilterTransform(transform) {
+        let prohibited = false
+        transform.steps.forEach(function(step, index) {
+            if(step.from && step.to && (step.from.path.length === 0 ||
+              step.to.path.length === 0 || step.from.path[0] !== step.to.path[0])) {
+                prohibited = true
+            }
+        })
+        return prohibited
     }
 
     // Things to be executed on every editor transform.

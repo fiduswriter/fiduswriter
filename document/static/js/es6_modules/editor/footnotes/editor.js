@@ -17,11 +17,15 @@ export class ModFootnoteEditor {
         this.mod.fnPm.mod.collab.on("mustSend", function() {
             that.footnoteEdit()
         })
+        this.mod.fnPm.on("filterTransform", (transform) => {
+            return that.mod.editor.onFilterTransform(transform)
+        })
 
     }
 
 
     footnoteEdit() {
+        // Handle an edit in the footnote editor.
         if (this.rendering) {
             // We are currently adding or removing footnotes in the footnote editor
             // due to changes at the footnote marker level, so abort.
@@ -41,6 +45,7 @@ export class ModFootnoteEditor {
     }
 
     applyDiffs(diffs) {
+        console.log('applying footnote diff')
         this.mod.fnPm.mod.collab.receive(diffs.map(j => Step.fromJSON(fidusFnSchema, j)))
     }
 
@@ -73,7 +78,7 @@ export class ModFootnoteEditor {
         let node = fromHTML(fidusFnSchema, footnoteHTML, {
             preserveWhitespace: true
         }).firstChild
-        this.mod.fnPm.tr.insert(new Pos([], index), node).apply()
+        this.mod.fnPm.tr.insert(new Pos([], index), node).apply({filter:false})
         this.rendering = false
     }
 
@@ -85,7 +90,7 @@ export class ModFootnoteEditor {
         this.mod.footnotes.splice(index, 1)
         if (!this.mod.editor.mod.collab.docChanges.receiving) {
             this.rendering = true
-            this.mod.fnPm.tr.delete(new Pos([], index), new Pos([], index + 1)).apply()
+            this.mod.fnPm.tr.delete(new Pos([], index), new Pos([], index + 1)).apply({filter:false})
             this.rendering = false
         }
     }

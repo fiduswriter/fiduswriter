@@ -21,3 +21,5 @@ fidus.db
 deploy
 base/static/zip/katex-style.zip
 base/static/zip/katex-style-contents.txt
+chromedriver
+testing.py

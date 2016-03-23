@@ -10,30 +10,62 @@ exports.savecopy = undefined;
 
 var _native = require("./native");
 
-var _getExtraData = require("../importer/get-extra-data");
+var _native2 = require("../importer/native");
 
-var savecopy = exports.savecopy = function savecopy(aDocument, editor) {
-    function importAsUser(aDocument, shrunkImageDB, shrunkBibDB, images) {
-        // switch to user's own ImageDB and BibDB:
+var afterCopy = function afterCopy(noErrors, returnValue, editor, callback) {
+    $.deactivateWait();
+    if (noErrors) {
+        var aDocument = returnValue.aDocument;
+        var aDocInfo = returnValue.aDocumentValues;
+        jQuery.addAlert('info', aDocument.title + gettext(' successfully copied.'));
         if (editor) {
-            editor.doc.owner = editor.user;
-            delete window.ImageDB;
-            delete window.BibDB;
+            if (editor.docInfo.rights === 'r') {
+                // We only had right access to the document, so the editing elements won't show. We therefore need to reload the page to get them.
+                window.location = '/document/' + aDocument.id + '/';
+            } else {
+                editor.doc = aDocument;
+                editor.docInfo = aDocInfo;
+                window.history.pushState("", "", "/document/" + editor.doc.id + "/");
+            }
         }
-        (0, _getExtraData.getDBs)(aDocument, shrunkBibDB, shrunkImageDB, images);
+        if (callback) {
+            callback(returnValue);
+        }
+    } else {
+        jQuery.addAlert('error', returnValue);
     }
+};
+
+var importAsUser = function importAsUser(aDocument, shrunkImageDB, shrunkBibDB, images, editor, user, callback) {
+    // switch to user's own ImageDB and BibDB:
     if (editor) {
-        (0, _native.exportNative)(aDocument, ImageDB, BibDB, importAsUser);
+        editor.doc.owner = editor.user;
+        delete window.ImageDB;
+        delete window.BibDB;
+    }
+
+    new _native2.ImportNative(aDocument, shrunkBibDB, shrunkImageDB, images, user, function (noErrors, returnValue) {
+        afterCopy(noErrors, returnValue, editor, callback);
+    });
+};
+
+var savecopy = exports.savecopy = function savecopy(aDocument, editor, user, callback) {
+    if (editor) {
+        (0, _native.exportNative)(aDocument, ImageDB, BibDB, function (aDocument, shrunkImageDB, shrunkBibDB, images) {
+            importAsUser(aDocument, shrunkImageDB, shrunkBibDB, images, editor, user, callback);
+        });
     } else {
         bibliographyHelpers.getABibDB(aDocument.owner, function (aBibDB) {
             usermediaHelpers.getAnImageDB(aDocument.owner, function (anImageDB) {
-                (0, _native.exportNative)(aDocument, anImageDB, aBibDB, importAsUser);
+                (0, _native.exportNative)(aDocument, anImageDB, aBibDB, function (aDocument, shrunkImageDB, shrunkBibDB, images) {
+                    importAsUser(aDocument, shrunkImageDB, shrunkBibDB, images, false, user, callback);
+                });
             });
         });
     }
 };
 
-},{"../importer/get-extra-data":15,"./native":9}],2:[function(require,module,exports){
+},{"../importer/native":14,"./native":9}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -665,7 +697,7 @@ var orderLinks = exports.orderLinks = function orderLinks(contentItems) {
     return contentItems;
 };
 
-},{"./epub-templates":3,"./html":6,"./json":7,"./tools":10,"./zip":13,"katex":20}],5:[function(require,module,exports){
+},{"./epub-templates":3,"./html":6,"./json":7,"./tools":10,"./zip":13,"katex":16}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -924,7 +956,7 @@ var replaceImgSrc = exports.replaceImgSrc = function replaceImgSrc(htmlString) {
     return htmlString;
 };
 
-},{"./html-templates":5,"./json":7,"./tools":10,"./zip":13,"katex":20}],7:[function(require,module,exports){
+},{"./html-templates":5,"./json":7,"./tools":10,"./zip":13,"katex":16}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1768,468 +1800,398 @@ var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles,
 };
 
 },{"./download":2,"./upload":12}],14:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.importNative = exports.translateReferenceIds = undefined;
-
-var _processFile = require("./process-file");
-
-var _save = require("./save");
-
-var _json = require("../exporter/json");
-
-var translateReferenceIds = exports.translateReferenceIds = function translateReferenceIds(aDocument, BibTranslationTable, ImageTranslationTable) {
-    var contents = (0, _json.obj2Node)(aDocument.contents);
-    jQuery(contents).find('img').each(function () {
-        var translationEntry = _.findWhere(ImageTranslationTable, {
-            oldUrl: jQuery(this).attr('src')
-        });
-        if (translationEntry) {
-            jQuery(this).attr('src', translationEntry.newUrl);
-        }
-    });
-    jQuery(contents).find('figure').each(function () {
-        var translationEntry = _.findWhere(ImageTranslationTable, {
-            oldId: parseInt(jQuery(this).attr('data-image'))
-        });
-        if (translationEntry) {
-            jQuery(this).attr('data-image', translationEntry.newId);
-        }
-    });
-    jQuery(contents).find('.citation').each(function () {
-        var citekeys = jQuery(this).attr('data-bib-entry').split(',');
-        for (var i = 0; i < citekeys.length; i++) {
-            if (citekeys[i] in BibTranslationTable) {
-                citekeys[i] = BibTranslationTable[citekeys[i]];
-            }
-        }
-        jQuery(this).attr('data-bib-entry', citekeys.join(','));
-    });
-
-    aDocument.contents = (0, _json.node2Obj)(contents);
-
-    (0, _save.createNewDocument)(aDocument);
-};
-
-var importNative = exports.importNative = function importNative(aDocument, shrunkBibDB, shrunkImageDB, entries) {
-    var BibTranslationTable = {},
-        newBibEntries = [],
-        shrunkImageDBObject = {},
-        ImageTranslationTable = [],
-        newImageEntries = [],
-        simplifiedShrunkImageDB = [];
-
-    // Add the id to each object in the BibDB to be able to look it up when comparing to shrunkBibDB below
-    for (var key in BibDB) {
-        BibDB[key]['id'] = key;
-    }
-    for (var key in shrunkBibDB) {
-        //shrunkBibDB[key]['entry_type']=_.findWhere(BibEntryTypes,{name:shrunkBibDB[key]['bibtype']}).id
-        //delete shrunkBibDB[key].bibtype
-        var matchEntries = _.where(BibDB, shrunkBibDB[key]);
-
-        if (0 === matchEntries.length) {
-            //create new
-            newBibEntries.push({
-                oldId: key,
-                oldEntryKey: shrunkBibDB[key].entry_key,
-                entry: shrunkBibDB[key]
-            });
-        } else if (1 === matchEntries.length && parseInt(key) !== matchEntries[0].id) {
-            BibTranslationTable[parseInt(key)] = matchEntries[0].id;
-        } else if (1 < matchEntries.length) {
-            if (!_.findWhere(matchEntries, {
-                id: parseInt(key)
-            })) {
-                // There are several matches, and none of the matches have the same id as the key in shrunkBibDB.
-                // We now pick the first match.
-                // TODO: Figure out if this behavior is correct.
-                BibTranslationTable[parseInt(key)] = matchEntries[0].id;
-            }
-        }
-    }
-
-    // Remove the id values again
-    for (var key in BibDB) {
-        delete BibDB[key].id;
-    }
-
-    // We need to remove the pk from the entry in the shrunkImageDB so that we also get matches with entries with other pk values.
-    // We therefore convert to an associative array/object.
-    for (var key in shrunkImageDB) {
-        simplifiedShrunkImageDB.push(_.omit(shrunkImageDB[key], 'image', 'thumbnail', 'cats', 'added'));
-    }
-
-    for (var image in simplifiedShrunkImageDB) {
-        shrunkImageDBObject[simplifiedShrunkImageDB[image].pk] = simplifiedShrunkImageDB[image];
-        delete shrunkImageDBObject[simplifiedShrunkImageDB[image].pk].pk;
-    }
-
-    for (var key in shrunkImageDBObject) {
-        var matchEntries = _.where(ImageDB, shrunkImageDBObject[key]);
-        if (0 === matchEntries.length) {
-            //create new
-            var sIDBEntry = _.findWhere(shrunkImageDB, {
-                pk: parseInt(key)
-            });
-            newImageEntries.push({
-                oldId: parseInt(key),
-                oldUrl: sIDBEntry.image,
-                title: sIDBEntry.title,
-                file_type: sIDBEntry.file_type,
-                checksum: sIDBEntry.checksum
-            });
-        } else if (1 === matchEntries.length && parseInt(key) !== matchEntries[0].pk) {
-            ImageTranslationTable.push({
-                oldId: parseInt(key),
-                newId: matchEntries[0].pk,
-                oldUrl: _.findWhere(shrunkImageDB, {
-                    pk: parseInt(key)
-                }).image,
-                newUrl: matchEntries[0].image
-            });
-        } else if (1 < matchEntries.length) {
-            if (!_.findWhere(matchEntries, {
-                pk: parseInt(key)
-            })) {
-                // There are several matches, and none of the matches have the same id as the key in shrunkImageDB.
-                // We now pick the first match.
-                // TODO: Figure out if this behavior is correct.
-                ImageTranslationTable.push({
-                    oldId: key,
-                    newId: matchEntries[0].pk,
-                    oldUrl: _.findWhere(shrunkImageDB, {
-                        pk: parseInt(key)
-                    }).image,
-                    newUrl: matchEntries[0].image
-                });
-            }
-        }
-    }
-
-    if (newBibEntries.length !== 0 || newImageEntries.length !== 0) {
-        // We need to create new entries in the DB for images and/or bibliography items.
-        (0, _processFile.getImageData)(aDocument, BibTranslationTable, ImageTranslationTable, newBibEntries, newImageEntries, entries);
-    } else if (!jQuery.isEmptyObject(BibTranslationTable) || !jQuery.isEmptyObject(ImageTranslationTable)) {
-        // We need to change some reference numbers in the document contents
-        translateReferenceIds(aDocument, BibTranslationTable, ImageTranslationTable);
-    } else {
-        // We are good to go. All the used images and bibliography entries exist in the DB for this user with the same numbers.
-        // We can go ahead and create the new document entry in the bibliography without any changes.
-        (0, _save.createNewDocument)(aDocument);
-    }
-};
-
-},{"../exporter/json":7,"./process-file":16,"./save":17}],15:[function(require,module,exports){
 'use strict';
 
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.getDBs = undefined;
+exports.ImportNative = undefined;
 
-var _compareDBs = require('./compare-DBs');
+var _json = require('../exporter/json');
 
-var getDBs = exports.getDBs = function getDBs(aDocument, shrunkBibDB, shrunkImageDB, entries) {
-    // get BibDB and ImageDB if we don't have them already. Then invoke the native importer.
-    if ('undefined' === typeof BibDB) {
-        bibliographyHelpers.getBibDB(function () {
-            if ('undefined' === typeof ImageDB) {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ImportNative = exports.ImportNative = (function () {
+    function ImportNative(aDocument, aBibDB, anImageDB, entries, user, callback) {
+        _classCallCheck(this, ImportNative);
+
+        this.aDocument = aDocument;
+        this.aBibDB = aBibDB;
+        this.anImageDB = anImageDB;
+        this.entries = entries;
+        this.user = user;
+        this.callback = callback;
+        this.getDBs();
+    }
+
+    _createClass(ImportNative, [{
+        key: 'getDBs',
+        value: function getDBs() {
+            var that = this;
+            // get BibDB and ImageDB if we don't have them already. Then invoke the native importer.
+            if ('undefined' === typeof BibDB) {
+                bibliographyHelpers.getBibDB(function () {
+                    if ('undefined' === typeof ImageDB) {
+                        usermediaHelpers.getImageDB(function () {
+                            that.importNative();
+                        });
+                    } else {
+                        that.importNative();
+                    }
+                });
+            } else if ('undefined' === typeof ImageDB) {
                 usermediaHelpers.getImageDB(function () {
-                    (0, _compareDBs.importNative)(aDocument, shrunkBibDB, shrunkImageDB, entries);
+                    that.importNative();
                 });
             } else {
-                (0, _compareDBs.importNative)(aDocument, shrunkBibDB, shrunkImageDB, entries);
+                that.importNative();
             }
-        });
-    } else if ('undefined' === typeof ImageDB) {
-        usermediaHelpers.getImageDB(function () {
-            (0, _compareDBs.importNative)(aDocument, shrunkBibDB, shrunkImageDB, entries);
-        });
-    } else {
-        (0, _compareDBs.importNative)(aDocument, shrunkBibDB, shrunkImageDB, entries);
-    }
-};
-
-},{"./compare-DBs":14}],16:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.getImageData = exports.processFidusFile = undefined;
-
-var _getExtraData = require("./get-extra-data");
-
-var _sendExtraData = require("./send-extra-data");
-
-/** The current Fidus Writer filetype version. The importer will not import from
- * a different version and the exporter will include this number in all exports.
- */
-var FW_FILETYPE_VERSION = 1.2,
-    MIN_FW_FILETYPE_VERSION = 1.1,
-    MAX_FW_FILETYPE_VERSION = 1.2;
-
-var processFidusFile = exports.processFidusFile = function processFidusFile(textFiles, entries) {
-
-    var filetypeVersion = parseFloat(_.findWhere(textFiles, {
-        filename: 'filetype-version'
-    }).contents, 10),
-        mimeType = _.findWhere(textFiles, {
-        filename: 'mimetype'
-    }).contents;
-    if (mimeType === 'application/fidus+zip' && filetypeVersion >= MIN_FW_FILETYPE_VERSION && filetypeVersion <= MAX_FW_FILETYPE_VERSION) {
-        // This seems to be a valid fidus file with current version number.
-        var shrunkBibDB = JSON.parse(_.findWhere(textFiles, {
-            filename: 'bibliography.json'
-        }).contents);
-        var shrunkImageDB = JSON.parse(_.findWhere(textFiles, {
-            filename: 'images.json'
-        }).contents);
-        var aDocument = JSON.parse(_.findWhere(textFiles, {
-            filename: 'document.json'
-        }).contents);
-
-        (0, _getExtraData.getDBs)(aDocument, shrunkBibDB, shrunkImageDB, entries);
-    } else {
-        // The file is not a Fidus Writer file.
-        $.deactivateWait();
-        $.addAlert('error', gettext('The uploaded file does not appear to be of the version used on this server: ') + FW_FILETYPE_VERSION);
-        return;
-    }
-};
-
-var getImageData = exports.getImageData = function getImageData(aDocument, BibTranslationTable, ImageTranslationTable, newBibEntries, newImageEntries, entries) {
-    var counter = 0;
-
-    function getImageZipEntry() {
-        if (counter < newImageEntries.length) {
-            _.findWhere(entries, {
-                filename: newImageEntries[counter].oldUrl.split('/').pop()
-            }).getData(new zip.BlobWriter(newImageEntries[counter].file_type), function (file) {
-                newImageEntries[counter]['file'] = file;
-                counter++;
-                getImageZipEntry();
-            });
-        } else {
-            (0, _sendExtraData.sendNewImageAndBibEntries)(aDocument, BibTranslationTable, ImageTranslationTable, newBibEntries, newImageEntries);
         }
-    }
+    }, {
+        key: 'importNative',
+        value: function importNative() {
+            var that = this;
+            var BibTranslationTable = {},
+                newBibEntries = [],
+                shrunkImageDBObject = {},
+                ImageTranslationTable = [],
+                newImageEntries = [],
+                simplifiedShrunkImageDB = [];
 
-    function getImageUrlEntry() {
-        if (counter < newImageEntries.length) {
-            var getUrl = _.findWhere(entries, {
-                filename: newImageEntries[counter].oldUrl.split('/').pop()
-            }).url;
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', getUrl, true);
-            xhr.responseType = 'blob';
+            // Add the id to each object in the BibDB to be able to look it up when comparing to this.aBibDB below
+            for (var key in BibDB) {
+                BibDB[key]['id'] = key;
+            }
+            for (var key in this.aBibDB) {
+                //this.aBibDB[key]['entry_type']=_.findWhere(BibEntryTypes,{name:this.aBibDB[key]['bibtype']}).id
+                //delete this.aBibDB[key].bibtype
+                var matchEntries = _.where(BibDB, this.aBibDB[key]);
 
-            xhr.onload = function (e) {
-                if (this.status == 200) {
-                    // Note: .response instead of .responseText
-                    newImageEntries[counter]['file'] = new Blob([this.response], {
-                        type: newImageEntries[counter].file_type
+                if (0 === matchEntries.length) {
+                    //create new
+                    newBibEntries.push({
+                        oldId: key,
+                        oldEntryKey: this.aBibDB[key].entry_key,
+                        entry: this.aBibDB[key]
                     });
-                    counter++;
-                    getImageUrlEntry();
+                } else if (1 === matchEntries.length && parseInt(key) !== matchEntries[0].id) {
+                    BibTranslationTable[parseInt(key)] = matchEntries[0].id;
+                } else if (1 < matchEntries.length) {
+                    if (!_.findWhere(matchEntries, {
+                        id: parseInt(key)
+                    })) {
+                        // There are several matches, and none of the matches have the same id as the key in this.aBibDB.
+                        // We now pick the first match.
+                        // TODO: Figure out if this behavior is correct.
+                        BibTranslationTable[parseInt(key)] = matchEntries[0].id;
+                    }
                 }
-            };
+            }
 
-            xhr.send();
-        } else {
-            (0, _sendExtraData.sendNewImageAndBibEntries)(aDocument, BibTranslationTable, ImageTranslationTable, newBibEntries, newImageEntries);
-        }
-    }
-    if (entries.length > 0) {
-        if (entries[0].hasOwnProperty('url')) {
-            getImageUrlEntry();
-        } else {
-            getImageZipEntry();
-        }
-    }
-};
+            // Remove the id values again
+            for (var key in BibDB) {
+                delete BibDB[key].id;
+            }
 
-},{"./get-extra-data":15,"./send-extra-data":18}],17:[function(require,module,exports){
-'use strict';
+            // We need to remove the pk from the entry in the this.anImageDB so that we also get matches with this.entries with other pk values.
+            // We therefore convert to an associative array/object.
+            for (var key in this.anImageDB) {
+                simplifiedShrunkImageDB.push(_.omit(this.anImageDB[key], 'image', 'thumbnail', 'cats', 'added'));
+            }
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-var createNewDocument = exports.createNewDocument = function createNewDocument(aDocument) {
-    var postData = {
-        title: aDocument.title,
-        contents: JSON.stringify(aDocument.contents),
-        settings: JSON.stringify(aDocument.settings),
-        metadata: JSON.stringify(aDocument.metadata)
-    };
-    jQuery.ajax({
-        url: '/document/import/',
-        data: postData,
-        type: 'POST',
-        dataType: 'json',
-        success: function success(data, textStatus, jqXHR) {
-            jQuery.addAlert('info', aDocument.title + gettext(' successfully imported.'));
-            var aDocumentValues = {
-                last_diffs: [],
-                is_owner: true,
-                rights: 'w',
-                changed: false,
-                titleChanged: false
-            };
-            aDocument.id = data['document_id'];
-            if (window.theEditor) {
-                aDocument.owner = {
-                    id: theEditor.user.id,
-                    name: theEditor.user.name,
-                    avatar: theEditor.user.avatar
-                };
+            for (var image in simplifiedShrunkImageDB) {
+                shrunkImageDBObject[simplifiedShrunkImageDB[image].pk] = simplifiedShrunkImageDB[image];
+                delete shrunkImageDBObject[simplifiedShrunkImageDB[image].pk].pk;
+            }
+
+            for (var key in shrunkImageDBObject) {
+                var matchEntries = _.where(ImageDB, shrunkImageDBObject[key]);
+                if (0 === matchEntries.length) {
+                    //create new
+                    var sIDBEntry = _.findWhere(this.anImageDB, {
+                        pk: parseInt(key)
+                    });
+                    newImageEntries.push({
+                        oldId: parseInt(key),
+                        oldUrl: sIDBEntry.image,
+                        title: sIDBEntry.title,
+                        file_type: sIDBEntry.file_type,
+                        checksum: sIDBEntry.checksum
+                    });
+                } else if (1 === matchEntries.length && parseInt(key) !== matchEntries[0].pk) {
+                    ImageTranslationTable.push({
+                        oldId: parseInt(key),
+                        newId: matchEntries[0].pk,
+                        oldUrl: _.findWhere(this.anImageDB, {
+                            pk: parseInt(key)
+                        }).image,
+                        newUrl: matchEntries[0].image
+                    });
+                } else if (1 < matchEntries.length) {
+                    if (!_.findWhere(matchEntries, {
+                        pk: parseInt(key)
+                    })) {
+                        // There are several matches, and none of the matches have the same id as the key in this.anImageDB.
+                        // We now pick the first match.
+                        // TODO: Figure out if this behavior is correct.
+                        ImageTranslationTable.push({
+                            oldId: key,
+                            newId: matchEntries[0].pk,
+                            oldUrl: _.findWhere(this.anImageDB, {
+                                pk: parseInt(key)
+                            }).image,
+                            newUrl: matchEntries[0].image
+                        });
+                    }
+                }
+            }
+
+            if (newBibEntries.length !== 0 || newImageEntries.length !== 0) {
+                // We need to create new entries in the DB for images and/or bibliography items.
+                getImageData(that.aDocument, BibTranslationTable, ImageTranslationTable, newBibEntries, newImageEntries, this.entries);
+            } else if (!jQuery.isEmptyObject(BibTranslationTable) || !jQuery.isEmptyObject(ImageTranslationTable)) {
+                // We need to change some reference numbers in the document contents
+                translateReferenceIds(BibTranslationTable, ImageTranslationTable);
             } else {
-                aDocument.owner = {
-                    id: theUser.id,
-                    name: theUser.name,
-                    avatar: theUser.avatar
-                };
+                // We are good to go. All the used images and bibliography entries exist in the DB for this user with the same numbers.
+                // We can go ahead and create the new document entry in the bibliography without any changes.
+                this.createNewDocument();
             }
-            aDocument.version = 0;
-            aDocument.comment_version = 0;
-            aDocument.added = data['added'];
-            aDocument.updated = data['updated'];
-            aDocument.revisions = [];
-            if (typeof theDocumentList !== 'undefined') {
-                theDocumentList.push(aDocument);
-                documentHelpers.stopDocumentTable();
-                jQuery('#document-table tbody').append(tmp_documents_list_item({
-                    aDocument: aDocument
-                }));
-                documentHelpers.startDocumentTable();
-            } else if (typeof theEditor !== 'undefined') {
-                if (theEditor.docInfo.rights === 'r') {
-                    // We only had right access to the document, so the editing elements won't show. We therefore need to reload the page to get them.
-                    window.location = '/document/' + aDocument.id + '/';
+        }
+    }, {
+        key: 'getImageData',
+        value: function getImageData(BibTranslationTable, ImageTranslationTable, newBibEntries, newImageEntries, entries) {
+            var that = this,
+                counter = 0;
+
+            function getImageZipEntry() {
+                if (counter < newImageEntries.length) {
+                    _.findWhere(entries, {
+                        filename: newImageEntries[counter].oldUrl.split('/').pop()
+                    }).getData(new zip.BlobWriter(newImageEntries[counter].file_type), function (file) {
+                        newImageEntries[counter]['file'] = file;
+                        counter++;
+                        getImageZipEntry();
+                    });
                 } else {
-                    window.theEditor.doc = aDocument;
-                    window.theEditor.docInfo = aDocumentValues;
-                    window.history.pushState("", "", "/document/" + theEditor.doc.id + "/");
+                    that.sendNewImageAndBibEntries(BibTranslationTable, ImageTranslationTable, newBibEntries, newImageEntries);
                 }
             }
-        },
-        error: function error() {
-            jQuery.addAlert('error', gettext('Could not save ') + aDocument.title);
-        },
-        complete: function complete() {
-            jQuery.deactivateWait();
-        }
-    });
-};
 
-},{}],18:[function(require,module,exports){
-'use strict';
+            function getImageUrlEntry() {
+                if (counter < newImageEntries.length) {
+                    var getUrl = _.findWhere(entries, {
+                        filename: newImageEntries[counter].oldUrl.split('/').pop()
+                    }).url;
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('GET', getUrl, true);
+                    xhr.responseType = 'blob';
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.sendNewImageAndBibEntries = undefined;
+                    xhr.onload = function (e) {
+                        if (this.status == 200) {
+                            // Note: .response instead of .responseText
+                            newImageEntries[counter]['file'] = new Blob([this.response], {
+                                type: newImageEntries[counter].file_type
+                            });
+                            counter++;
+                            getImageUrlEntry();
+                        }
+                    };
 
-var _compareDBs = require('./compare-DBs');
-
-var sendNewImageAndBibEntries = exports.sendNewImageAndBibEntries = function sendNewImageAndBibEntries(aDocument, BibTranslationTable, ImageTranslationTable, newBibEntries, newImageEntries) {
-    var counter = 0;
-
-    function sendImage() {
-        if (counter < newImageEntries.length) {
-            var formValues = new FormData();
-            formValues.append('id', 0);
-            formValues.append('title', newImageEntries[counter].title);
-            formValues.append('imageCats', '');
-            formValues.append('image', newImageEntries[counter].file, newImageEntries[counter].oldUrl.split('/').pop());
-            formValues.append('checksum', newImageEntries[counter].checksum), jQuery.ajax({
-                url: '/usermedia/save/',
-                data: formValues,
-                type: 'POST',
-                dataType: 'json',
-                success: function success(response, textStatus, jqXHR) {
-                    ImageDB[response.values.pk] = response.values;
-                    var imageTranslation = {};
-                    imageTranslation.oldUrl = newImageEntries[counter].oldUrl;
-                    imageTranslation.oldId = newImageEntries[counter].oldId;
-                    imageTranslation.newUrl = response.values.image;
-                    imageTranslation.newId = response.values.pk;
-                    ImageTranslationTable.push(imageTranslation);
-                    counter++;
-                    sendImage();
-                },
-                error: function error() {
-                    jQuery.addAlert('error', gettext('Could not save ') + newImageEntries[counter].title);
-                },
-                complete: function complete() {},
-                cache: false,
-                contentType: false,
-                processData: false
-            });
-        } else {
-            sendBibItems();
-        }
-    }
-
-    function sendBibItems() {
-
-        if (newBibEntries.length > 0) {
-            var bibEntries = _.pluck(newBibEntries, 'entry'),
-                bibDict = {};
-
-            for (var i = 0; i < bibEntries.length; i++) {
-                bibEntries[i]['bibtype'] = BibEntryTypes[bibEntries[i]['entry_type']].name;
-                bibDict[bibEntries[i]['entry_key']] = bibEntries[i];
-                delete bibDict[bibEntries[i]['entry_key']].entry_type;
-
-                delete bibDict[bibEntries[i]['entry_key']].entry_cat;
-                delete bibDict[bibEntries[i]['entry_key']].entry_key;
+                    xhr.send();
+                } else {
+                    that.sendNewImageAndBibEntries(BibTranslationTable, ImageTranslationTable, newBibEntries, newImageEntries);
+                }
             }
+            if (entries.length > 0) {
+                if (entries[0].hasOwnProperty('url')) {
+                    getImageUrlEntry();
+                } else {
+                    getImageZipEntry();
+                }
+            }
+        }
+    }, {
+        key: 'translateReferenceIds',
+        value: function translateReferenceIds(BibTranslationTable, ImageTranslationTable) {
+            var contents = (0, _json.obj2Node)(this.aDocument.contents);
+            jQuery(contents).find('img').each(function () {
+                var translationEntry = _.findWhere(ImageTranslationTable, {
+                    oldUrl: jQuery(this).attr('src')
+                });
+                if (translationEntry) {
+                    jQuery(this).attr('src', translationEntry.newUrl);
+                }
+            });
+            jQuery(contents).find('figure').each(function () {
+                var translationEntry = _.findWhere(ImageTranslationTable, {
+                    oldId: parseInt(jQuery(this).attr('data-image'))
+                });
+                if (translationEntry) {
+                    jQuery(this).attr('data-image', translationEntry.newId);
+                }
+            });
+            jQuery(contents).find('.citation').each(function () {
+                var citekeys = jQuery(this).attr('data-bib-entry').split(',');
+                for (var i = 0; i < citekeys.length; i++) {
+                    if (citekeys[i] in BibTranslationTable) {
+                        citekeys[i] = BibTranslationTable[citekeys[i]];
+                    }
+                }
+                jQuery(this).attr('data-bib-entry', citekeys.join(','));
+            });
+
+            this.aDocument.contents = (0, _json.node2Obj)(contents);
+
+            this.createNewDocument();
+        }
+    }, {
+        key: 'sendNewImageAndBibEntries',
+        value: function sendNewImageAndBibEntries(BibTranslationTable, ImageTranslationTable, newBibEntries, newImageEntries) {
+            var that = this,
+                counter = 0;
+
+            function sendImage() {
+                if (counter < newImageEntries.length) {
+                    var formValues = new FormData();
+                    formValues.append('id', 0);
+                    formValues.append('title', newImageEntries[counter].title);
+                    formValues.append('imageCats', '');
+                    formValues.append('image', newImageEntries[counter].file, newImageEntries[counter].oldUrl.split('/').pop());
+                    formValues.append('checksum', newImageEntries[counter].checksum), jQuery.ajax({
+                        url: '/usermedia/save/',
+                        data: formValues,
+                        type: 'POST',
+                        dataType: 'json',
+                        success: function success(response, textStatus, jqXHR) {
+                            ImageDB[response.values.pk] = response.values;
+                            var imageTranslation = {};
+                            imageTranslation.oldUrl = newImageEntries[counter].oldUrl;
+                            imageTranslation.oldId = newImageEntries[counter].oldId;
+                            imageTranslation.newUrl = response.values.image;
+                            imageTranslation.newId = response.values.pk;
+                            ImageTranslationTable.push(imageTranslation);
+                            counter++;
+                            sendImage();
+                        },
+                        error: function error() {
+                            jQuery.addAlert('error', gettext('Could not save ') + newImageEntries[counter].title);
+                        },
+                        complete: function complete() {},
+                        cache: false,
+                        contentType: false,
+                        processData: false
+                    });
+                } else {
+                    sendBibItems();
+                }
+            }
+
+            function sendBibItems() {
+
+                if (newBibEntries.length > 0) {
+                    var bibEntries = _.pluck(newBibEntries, 'entry'),
+                        bibDict = {};
+
+                    for (var i = 0; i < bibEntries.length; i++) {
+                        bibEntries[i]['bibtype'] = BibEntryTypes[bibEntries[i]['entry_type']].name;
+                        bibDict[bibEntries[i]['entry_key']] = bibEntries[i];
+                        delete bibDict[bibEntries[i]['entry_key']].entry_type;
+
+                        delete bibDict[bibEntries[i]['entry_key']].entry_cat;
+                        delete bibDict[bibEntries[i]['entry_key']].entry_key;
+                    }
+                    jQuery.ajax({
+                        url: '/bibliography/import_bibtex/',
+                        data: {
+                            bibs: JSON.stringify(bibDict)
+                        },
+                        type: 'POST',
+                        dataType: 'json',
+                        success: function success(response, textStatus, jqXHR) {
+                            var errors = response.errors,
+                                warnings = response.warning,
+                                len = errors.length;
+
+                            for (var i = 0; i < len; i++) {
+                                $.addAlert('error', errors[i]);
+                            }
+                            len = warnings.length;
+                            for (var i = 0; i < len; i++) {
+                                $.addAlert('warning', warnings[i]);
+                            }
+                            _.each(response.key_translations, function (newKey, oldKey) {
+                                var newID = _.findWhere(response.bibs, { entry_key: newKey }).id,
+                                    oldID = _.findWhere(newBibEntries, { oldEntryKey: oldKey }).oldId;
+                                BibTranslationTable[oldID] = newID;
+                            });
+                            bibliographyHelpers.addBibList(response.bibs);
+                            that.translateReferenceIds(BibTranslationTable, ImageTranslationTable);
+                        },
+                        error: function error() {
+                            console.log(jqXHR.responseText);
+                        },
+                        complete: function complete() {}
+                    });
+                } else {
+                    that.translateReferenceIds(BibTranslationTable, ImageTranslationTable);
+                }
+            }
+
+            sendImage();
+        }
+    }, {
+        key: 'createNewDocument',
+        value: function createNewDocument() {
+            var that = this;
+            var postData = {
+                title: this.aDocument.title,
+                contents: JSON.stringify(this.aDocument.contents),
+                settings: JSON.stringify(this.aDocument.settings),
+                metadata: JSON.stringify(this.aDocument.metadata)
+            };
             jQuery.ajax({
-                url: '/bibliography/import_bibtex/',
-                data: {
-                    bibs: JSON.stringify(bibDict)
-                },
+                url: '/document/import/',
+                data: postData,
                 type: 'POST',
                 dataType: 'json',
-                success: function success(response, textStatus, jqXHR) {
-                    var errors = response.errors,
-                        warnings = response.warning,
-                        len = errors.length;
-
-                    for (var i = 0; i < len; i++) {
-                        $.addAlert('error', errors[i]);
-                    }
-                    len = warnings.length;
-                    for (var i = 0; i < len; i++) {
-                        $.addAlert('warning', warnings[i]);
-                    }
-                    _.each(response.key_translations, function (newKey, oldKey) {
-                        var newID = _.findWhere(response.bibs, { entry_key: newKey }).id,
-                            oldID = _.findWhere(newBibEntries, { oldEntryKey: oldKey }).oldId;
-                        BibTranslationTable[oldID] = newID;
+                success: function success(data, textStatus, jqXHR) {
+                    var aDocumentValues = {
+                        last_diffs: [],
+                        is_owner: true,
+                        rights: 'w',
+                        changed: false,
+                        titleChanged: false
+                    };
+                    that.aDocument.owner = {
+                        id: that.user.id,
+                        name: that.user.name,
+                        avatar: that.user.avatar
+                    };
+                    that.aDocument.id = data['document_id'];
+                    that.aDocument.version = 0;
+                    that.aDocument.comment_version = 0;
+                    that.aDocument.added = data['added'];
+                    that.aDocument.updated = data['updated'];
+                    that.aDocument.revisions = [];
+                    return that.callback(true, {
+                        aDocument: that.aDocument,
+                        aDocumentValues: aDocumentValues
                     });
-                    bibliographyHelpers.addBibList(response.bibs);
-                    (0, _compareDBs.translateReferenceIds)(aDocument, BibTranslationTable, ImageTranslationTable);
                 },
                 error: function error() {
-                    console.log(jqXHR.responseText);
-                },
-                complete: function complete() {}
+                    that.callback(false, gettext('Could not save ') + that.aDocument.title);
+                }
             });
-        } else {
-            (0, _compareDBs.translateReferenceIds)(aDocument, BibTranslationTable, ImageTranslationTable);
         }
-    }
+    }]);
 
-    sendImage();
-};
+    return ImportNative;
+})();
 
-},{"./compare-DBs":14}],19:[function(require,module,exports){
+},{"../exporter/json":7}],15:[function(require,module,exports){
 "use strict";
 
 var _copy = require("./es6_modules/exporter/copy");
@@ -2267,7 +2229,7 @@ var exporter = {
 
 window.exporter = exporter;
 
-},{"./es6_modules/exporter/copy":1,"./es6_modules/exporter/download":2,"./es6_modules/exporter/epub":4,"./es6_modules/exporter/epub-templates":3,"./es6_modules/exporter/html":6,"./es6_modules/exporter/json":7,"./es6_modules/exporter/latex":8,"./es6_modules/exporter/native":9,"./es6_modules/exporter/tools":10,"./es6_modules/exporter/zip":13}],20:[function(require,module,exports){
+},{"./es6_modules/exporter/copy":1,"./es6_modules/exporter/download":2,"./es6_modules/exporter/epub":4,"./es6_modules/exporter/epub-templates":3,"./es6_modules/exporter/html":6,"./es6_modules/exporter/json":7,"./es6_modules/exporter/latex":8,"./es6_modules/exporter/native":9,"./es6_modules/exporter/tools":10,"./es6_modules/exporter/zip":13}],16:[function(require,module,exports){
 /**
  * This is the main entry point for KaTeX. Here, we expose functions for
  * rendering expressions either to DOM nodes or to markup strings.
@@ -2342,7 +2304,7 @@ module.exports = {
     ParseError: ParseError
 };
 
-},{"./src/ParseError":23,"./src/Settings":25,"./src/buildTree":30,"./src/parseTree":39,"./src/utils":41}],21:[function(require,module,exports){
+},{"./src/ParseError":19,"./src/Settings":21,"./src/buildTree":26,"./src/parseTree":35,"./src/utils":37}],17:[function(require,module,exports){
 /**
  * The Lexer class handles tokenizing the input in various ways. Since our
  * parser expects us to be able to backtrack, the lexer allows lexing from any
@@ -2538,7 +2500,7 @@ Lexer.prototype.lex = function(pos, mode) {
 
 module.exports = Lexer;
 
-},{"./ParseError":23,"match-at":42}],22:[function(require,module,exports){
+},{"./ParseError":19,"match-at":38}],18:[function(require,module,exports){
 /**
  * This file contains information about the options that the Parser carries
  * around with it while parsing. Data is held in an `Options` object, and when
@@ -2729,7 +2691,7 @@ Options.prototype.getColor = function() {
 
 module.exports = Options;
 
-},{}],23:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 /**
  * This is the ParseError class, which is the main error thrown by KaTeX
  * functions when something has gone wrong. This is used to distinguish internal
@@ -2771,7 +2733,7 @@ ParseError.prototype.__proto__ = Error.prototype;
 
 module.exports = ParseError;
 
-},{}],24:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 var functions = require("./functions");
 var environments = require("./environments");
 var Lexer = require("./Lexer");
@@ -3493,7 +3455,7 @@ Parser.prototype.ParseNode = ParseNode;
 
 module.exports = Parser;
 
-},{"./Lexer":21,"./ParseError":23,"./environments":33,"./functions":36,"./parseData":38,"./symbols":40,"./utils":41}],25:[function(require,module,exports){
+},{"./Lexer":17,"./ParseError":19,"./environments":29,"./functions":32,"./parseData":34,"./symbols":36,"./utils":37}],21:[function(require,module,exports){
 /**
  * This is a module for storing settings passed into KaTeX. It correctly handles
  * default settings.
@@ -3523,7 +3485,7 @@ function Settings(options) {
 
 module.exports = Settings;
 
-},{}],26:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 /**
  * This file contains information and classes for the various kinds of styles
  * used in TeX. It provides a generic `Style` class, which holds information
@@ -3651,7 +3613,7 @@ module.exports = {
     SCRIPTSCRIPT: styles[SS]
 };
 
-},{}],27:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 /**
  * This module contains general functions that can be used for building
  * different kinds of domTree nodes in a consistent manner.
@@ -4100,7 +4062,7 @@ module.exports = {
     spacingFunctions: spacingFunctions
 };
 
-},{"./domTree":32,"./fontMetrics":34,"./symbols":40,"./utils":41}],28:[function(require,module,exports){
+},{"./domTree":28,"./fontMetrics":30,"./symbols":36,"./utils":37}],24:[function(require,module,exports){
 /**
  * This file does the main work of building a domTree structure from a parse
  * tree. The entry point is the `buildHTML` function, which takes a parse tree.
@@ -5464,7 +5426,7 @@ var buildHTML = function(tree, options) {
 
 module.exports = buildHTML;
 
-},{"./ParseError":23,"./Style":26,"./buildCommon":27,"./delimiter":31,"./domTree":32,"./fontMetrics":34,"./utils":41}],29:[function(require,module,exports){
+},{"./ParseError":19,"./Style":22,"./buildCommon":23,"./delimiter":27,"./domTree":28,"./fontMetrics":30,"./utils":37}],25:[function(require,module,exports){
 /**
  * This file converts a parse tree into a cooresponding MathML tree. The main
  * entry point is the `buildMathML` function, which takes a parse tree from the
@@ -5985,7 +5947,7 @@ var buildMathML = function(tree, texExpression, options) {
 
 module.exports = buildMathML;
 
-},{"./ParseError":23,"./buildCommon":27,"./fontMetrics":34,"./mathMLTree":37,"./symbols":40,"./utils":41}],30:[function(require,module,exports){
+},{"./ParseError":19,"./buildCommon":23,"./fontMetrics":30,"./mathMLTree":33,"./symbols":36,"./utils":37}],26:[function(require,module,exports){
 var buildHTML = require("./buildHTML");
 var buildMathML = require("./buildMathML");
 var buildCommon = require("./buildCommon");
@@ -6027,7 +5989,7 @@ var buildTree = function(tree, expression, settings) {
 
 module.exports = buildTree;
 
-},{"./Options":22,"./Settings":25,"./Style":26,"./buildCommon":27,"./buildHTML":28,"./buildMathML":29}],31:[function(require,module,exports){
+},{"./Options":18,"./Settings":21,"./Style":22,"./buildCommon":23,"./buildHTML":24,"./buildMathML":25}],27:[function(require,module,exports){
 /**
  * This file deals with creating delimiters of various sizes. The TeXbook
  * discusses these routines on page 441-442, in the "Another subroutine sets box
@@ -6568,7 +6530,7 @@ module.exports = {
     leftRightDelim: makeLeftRightDelim
 };
 
-},{"./ParseError":23,"./Style":26,"./buildCommon":27,"./fontMetrics":34,"./symbols":40,"./utils":41}],32:[function(require,module,exports){
+},{"./ParseError":19,"./Style":22,"./buildCommon":23,"./fontMetrics":30,"./symbols":36,"./utils":37}],28:[function(require,module,exports){
 /**
  * These objects store the data about the DOM nodes we create, as well as some
  * extra data. They can then be transformed into real DOM nodes with the
@@ -6839,7 +6801,7 @@ module.exports = {
     symbolNode: symbolNode
 };
 
-},{"./utils":41}],33:[function(require,module,exports){
+},{"./utils":37}],29:[function(require,module,exports){
 var fontMetrics = require("./fontMetrics");
 var parseData = require("./parseData");
 var ParseError = require("./ParseError");
@@ -7019,7 +6981,7 @@ module.exports = (function() {
     return exports;
 })();
 
-},{"./ParseError":23,"./fontMetrics":34,"./parseData":38}],34:[function(require,module,exports){
+},{"./ParseError":19,"./fontMetrics":30,"./parseData":34}],30:[function(require,module,exports){
 /* jshint unused:false */
 
 var Style = require("./Style");
@@ -7156,7 +7118,7 @@ module.exports = {
     getCharacterMetrics: getCharacterMetrics
 };
 
-},{"./Style":26,"./fontMetricsData":35}],35:[function(require,module,exports){
+},{"./Style":22,"./fontMetricsData":31}],31:[function(require,module,exports){
 module.exports = {
 "AMS-Regular": {
   "65": {"depth": 0.0, "height": 0.68889, "italic": 0.0, "skew": 0.0},
@@ -8909,7 +8871,7 @@ module.exports = {
   "8242": {"depth": 0.0, "height": 0.61111, "italic": 0.0, "skew": 0.0}
 }};
 
-},{}],36:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 var utils = require("./utils");
 var ParseError = require("./ParseError");
 
@@ -9540,7 +9502,7 @@ module.exports = {
     funcs: functions
 };
 
-},{"./ParseError":23,"./utils":41}],37:[function(require,module,exports){
+},{"./ParseError":19,"./utils":37}],33:[function(require,module,exports){
 /**
  * These objects store data about MathML nodes. This is the MathML equivalent
  * of the types in domTree.js. Since MathML handles its own rendering, and
@@ -9644,7 +9606,7 @@ module.exports = {
     TextNode: TextNode
 };
 
-},{"./utils":41}],38:[function(require,module,exports){
+},{"./utils":37}],34:[function(require,module,exports){
 /**
  * The resulting parse tree nodes of the parse tree.
  */
@@ -9669,7 +9631,7 @@ module.exports = {
 };
 
 
-},{}],39:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /**
  * Provides a single function for parsing an expression using a Parser
  * TODO(emily): Remove this
@@ -9688,7 +9650,7 @@ var parseTree = function(toParse, settings) {
 
 module.exports = parseTree;
 
-},{"./Parser":24}],40:[function(require,module,exports){
+},{"./Parser":20}],36:[function(require,module,exports){
 /**
  * This file holds a list of all no-argument functions and single-character
  * symbols (like 'a' or ';').
@@ -12275,7 +12237,7 @@ for (var i = 0; i < letters.length; i++) {
 
 module.exports = symbols;
 
-},{}],41:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 /**
  * This file contains a list of utility functions which are useful in other
  * files.
@@ -12382,7 +12344,7 @@ module.exports = {
     clearNode: clearNode
 };
 
-},{}],42:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 /** @flow */
 
 "use strict";
@@ -12425,4 +12387,4 @@ function matchAt(re, str, pos) {
 }
 
 module.exports = matchAt;
-},{}]},{},[19]);
+},{}]},{},[15]);

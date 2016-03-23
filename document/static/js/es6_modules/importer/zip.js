@@ -49,10 +49,9 @@ export let initZipFileRead = function (file) {
 }
 
 export let init = function (file) { // use a BlobReader to read the zip from a Blob object
-
     let reader = new FileReader()
     reader.onloadend = function() {
-        if (reader.result.length > 60 && reader.result.substring(0,2) == 'PK' && reader.result.substring(38,59) == 'application/fidus+zip') {
+        if (reader.result.length > 60 && reader.result.substring(0,2) == 'PK') {
             initZipFileRead(file)
         } else {
             // The file is not a Fidus Writer file.

@@ -595,10 +595,10 @@ var initZipFileRead = exports.initZipFileRead = function initZipFileRead(file) {
 
 var init = exports.init = function init(file) {
     // use a BlobReader to read the zip from a Blob object
-
     var reader = new FileReader();
     reader.onloadend = function () {
-        if (reader.result.length > 60 && reader.result.substring(0, 2) == 'PK' && reader.result.substring(38, 59) == 'application/fidus+zip') {
+        console.log([reader, reader.result]);
+        if (reader.result.length > 60 && reader.result.substring(0, 2) == 'PK') {
             initZipFileRead(file);
         } else {
             // The file is not a Fidus Writer file.

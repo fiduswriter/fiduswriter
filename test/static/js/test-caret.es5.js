@@ -3,6 +3,74 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 
+var _model = require("prosemirror/dist/model");
+
+var _selection = require("prosemirror/dist/edit/selection");
+
+/**
+ * Helper functions for testing FidusWriter with Selenium.
+ * @namespace testCaret
+ */
+var testCaret = {};
+
+/**
+ * Returns the current selection.
+ * @function getCaret
+ * @memberof testCaret
+ * @returns {Caret}
+ */
+testCaret.getCaret = function getCaret() {
+  return theEditor.pm.selection.from.toJSON();
+};
+
+/**
+ * Sets an empty selection to caret.
+ * @function setCaret
+ * @memberof testCaret
+ * @param {Selection} caret Selection.
+ * @returns {Selection}
+ */
+testCaret.setCaret = function setCaret(caret) {
+  return testCaret.setSelection(caret, caret);
+};
+
+/**
+ * Sets the selection to be between two caret positions.
+ * @function setSelection
+ * @memberof testCaret
+ * @param {caretOne} caretOne The first caret.
+ * @param {caretTwo} caretTwo The second caret position.
+ * @returns {Selection}
+ */
+testCaret.setSelection = function setSelection(caretOne, caretTwo) {
+  var posOne = new _model.Pos(caretOne.path, caretOne.offset);
+  var posTwo = new _model.Pos(caretTwo.path, caretTwo.offset);
+
+  var selection = new _selection.TextSelection(posOne, posTwo);
+
+  theEditor.pm.setSelection(selection);
+  theEditor.pm.focus();
+
+  return selection;
+};
+
+/**
+ * Checks if the given selections are equal.
+ * @function caretsMatch
+ * @memberof testCaret
+ * @param {Selection} left Caret to be compared.
+ * @param {Selection} right Caret to be compared.
+ * @returns {Boolean}
+ */
+testCaret.selectionsMatch = function selectionsMatch(left, right) {
+  return left.eq(right);
+};
+
+window.testCaret = testCaret;
+
+},{"prosemirror/dist/edit/selection":4,"prosemirror/dist/model":9}],2:[function(require,module,exports){
+"use strict";
+
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -79,7 +147,7 @@ function ensureCSSAdded() {
     document.head.insertBefore(cssNode, document.head.firstChild);
   }
 }
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -461,7 +529,7 @@ function handleNodeClick(pm, type, event, direct) {
     }
   }
 }
-},{"../dom":1,"../model":8,"../util/error":13}],3:[function(require,module,exports){
+},{"../dom":2,"../model":9,"../util/error":14}],4:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -958,7 +1026,7 @@ function verticalMotionLeavesTextblock(pm, pos, dir) {
   }
   return true;
 }
-},{"../dom":1,"../model":8,"../util/error":13,"./dompos":2}],4:[function(require,module,exports){
+},{"../dom":2,"../model":9,"../util/error":14,"./dompos":3}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1395,7 +1463,7 @@ var defaultSpec = new _schema.SchemaSpec({
 // :: Schema
 // ProseMirror's default document schema.
 var defaultSchema = exports.defaultSchema = new _schema.Schema(defaultSpec);
-},{"./schema":12}],5:[function(require,module,exports){
+},{"./schema":13}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1492,7 +1560,7 @@ function findDiffEnd(a, b) {
   }
   return { a: new _pos.Pos(pathA, offA), b: new _pos.Pos(pathB, offB) };
 }
-},{"./pos":11}],6:[function(require,module,exports){
+},{"./pos":12}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1521,7 +1589,7 @@ var ModelError = exports.ModelError = function (_ProseMirrorError) {
 
   return ModelError;
 }(_error.ProseMirrorError);
-},{"../util/error":13}],7:[function(require,module,exports){
+},{"../util/error":14}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2233,7 +2301,7 @@ if (typeof Symbol != "undefined") {
     return this;
   };
 }
-},{"./error":6}],8:[function(require,module,exports){
+},{"./error":7}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2473,7 +2541,7 @@ Object.defineProperty(exports, "ModelError", {
                 return _error.ModelError;
         }
 });
-},{"./defaultschema":4,"./diff":5,"./error":6,"./fragment":7,"./mark":9,"./node":10,"./pos":11,"./schema":12}],9:[function(require,module,exports){
+},{"./defaultschema":5,"./diff":6,"./error":7,"./fragment":8,"./mark":10,"./node":11,"./pos":12,"./schema":13}],10:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2605,7 +2673,7 @@ var Mark = exports.Mark = function () {
 }();
 
 var empty = [];
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3213,7 +3281,7 @@ function wrapMarks(marks, str) {
     str = marks[i].type.name + "(" + str + ")";
   }return str;
 }
-},{"./fragment":7,"./mark":9,"./pos":11,"./schema":12}],11:[function(require,module,exports){
+},{"./fragment":8,"./mark":10,"./pos":12,"./schema":13}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3437,7 +3505,7 @@ var Pos = exports.Pos = function () {
 
   return Pos;
 }();
-},{"./error":6}],12:[function(require,module,exports){
+},{"./error":7}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4472,7 +4540,7 @@ var Schema = function () {
 }();
 
 exports.Schema = Schema;
-},{"../util/error":13,"../util/obj":14,"./fragment":7,"./mark":9,"./node":10}],13:[function(require,module,exports){
+},{"../util/error":14,"../util/obj":15,"./fragment":8,"./mark":10,"./node":11}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4554,7 +4622,7 @@ function functionName(f) {
   var match = /^function (\w+)/.exec(f.toString());
   return match && match[1];
 }
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4567,72 +4635,4 @@ function copyObj(obj, base) {
     copy[prop] = obj[prop];
   }return copy;
 }
-},{}],15:[function(require,module,exports){
-"use strict";
-
-var _model = require("prosemirror/dist/model");
-
-var _selection = require("prosemirror/dist/edit/selection");
-
-/**
- * Helper functions for testing FidusWriter with Selenium.
- * @namespace testCaret
- */
-var testCaret = {};
-
-/**
- * Returns the current selection.
- * @function getCaret
- * @memberof testCaret
- * @returns {Caret}
- */
-testCaret.getCaret = function getCaret() {
-  return theEditor.pm.selection.from.toJSON();
-};
-
-/**
- * Sets an empty selection to caret.
- * @function setCaret
- * @memberof testCaret
- * @param {Selection} caret Selection.
- * @returns {Selection}
- */
-testCaret.setCaret = function setCaret(caret) {
-  return testCaret.setSelection(caret, caret);
-};
-
-/**
- * Sets the selection to be between two caret positions.
- * @function setSelection
- * @memberof testCaret
- * @param {caretOne} caretOne The first caret.
- * @param {caretTwo} caretTwo The second caret position.
- * @returns {Selection}
- */
-testCaret.setSelection = function setSelection(caretOne, caretTwo) {
-  var posOne = new _model.Pos(caretOne.path, caretOne.offset);
-  var posTwo = new _model.Pos(caretTwo.path, caretTwo.offset);
-
-  var selection = new _selection.TextSelection(posOne, posTwo);
-
-  theEditor.pm.setSelection(selection);
-  theEditor.pm.focus();
-
-  return selection;
-};
-
-/**
- * Checks if the given selections are equal.
- * @function caretsMatch
- * @memberof testCaret
- * @param {Selection} left Caret to be compared.
- * @param {Selection} right Caret to be compared.
- * @returns {Boolean}
- */
-testCaret.selectionsMatch = function selectionsMatch(left, right) {
-  return left.eq(right);
-};
-
-window.testCaret = testCaret;
-
-},{"prosemirror/dist/edit/selection":3,"prosemirror/dist/model":8}]},{},[15]);
+},{}]},{},[1]);

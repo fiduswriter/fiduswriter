@@ -8,7 +8,7 @@
 # Delete also node_modules, and run
 # pip uninstall nodeenv.
 #
-# Run this script every time you update an *.es6.js file.
+# Run this script every time you update an *.es6.js file or any of the modules it loads.
 
 if [ ! -f node_modules/.bin/browserify ];
 then
@@ -32,13 +32,30 @@ fi
 
 IFS=$'\n';
 
-for file in $(find . -path ./node_modules -prune -o  -type f -name "*.es6.js" -print)
+sourcefiles=$(find . -path ./node_modules -prune -o  -type f -name "*.es6.js" -print)
+
+# Collect all javascript in a temporary dir (similar to ./manage.py collectstatic).
+# This allows for the modules to import from oneanother, across Django Apps.
+# The temporary dir is a subfolder in the current directory and not a folder in
+# /tmp, because browserify doesn't allow operations in higher level folders.
+mkdir es6-tmp
+tmp_dir='./es6-tmp/'
+for directory in $(find . -type d -wholename '*static/js')
+do
+  cp -R $directory/. $tmp_dir
+done
+
+for file in $sourcefiles
 do
   dirname=$(dirname "$file")
   basename=$(basename "$file")
   outfilename="${basename%.es6.js}"
+  relative_dir=$(echo $dirname | awk 'BEGIN {FS="static/js"} {print $2}')
+  infile="$tmp_dir$relative_dir$basename"
   outfile="$dirname/$outfilename.es5.js"
   echo "Converting $file to $outfile"
-  node_modules/.bin/browserify --outfile $outfile -t babelify $file
+  node_modules/.bin/browserify --outfile $outfile -t babelify $infile
   sed -i "1i /* This file has been automatically generated. DO NOT EDIT IT. \n Changes will be overwritten. Edit $basename and run ./es6-compiler.sh */"  "$outfile"
 done
+
+rm -r es6-tmp

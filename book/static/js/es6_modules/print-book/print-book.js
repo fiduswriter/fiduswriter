@@ -1,4 +1,5 @@
 import {bookPrintStartTemplate, bookPrintTemplate} from "./templates"
+import {obj2Node} from "../exporter/json"
 
 /**
 * Helper functions for the book print page.
@@ -115,7 +116,8 @@ export class PrintBook {
         jQuery(document.body).addClass(theBook.settings.documentstyle)
         jQuery('#book')[0].outerHTML = bookPrintTemplate({
             theBook,
-            modelToViewNode: this.modelToViewNode
+            modelToViewNode: this.modelToViewNode,
+            obj2Node
         })
 
 

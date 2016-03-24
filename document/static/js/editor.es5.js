@@ -401,7 +401,7 @@ var ModCollabDocChanges = exports.ModCollabDocChanges = (function () {
     return ModCollabDocChanges;
 })();
 
-},{"../schema":32,"prosemirror/dist/transform":117}],4:[function(require,module,exports){
+},{"../schema":32,"prosemirror/dist/transform":118}],4:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -668,7 +668,7 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
     return ModCommentInteractions;
 })();
 
-},{"prosemirror/dist/ui/update":127}],7:[function(require,module,exports){
+},{"prosemirror/dist/ui/update":128}],7:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1340,7 +1340,7 @@ function randomID() {
     return Math.floor(Math.random() * 0xffffffff);
 }
 
-},{"../schema":32,"prosemirror/dist/model":111,"prosemirror/dist/transform":117,"prosemirror/dist/ui/update":127,"prosemirror/dist/util/event":129}],10:[function(require,module,exports){
+},{"../schema":32,"prosemirror/dist/model":112,"prosemirror/dist/transform":118,"prosemirror/dist/ui/update":128,"prosemirror/dist/util/event":130}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1899,7 +1899,7 @@ var Editor = exports.Editor = (function () {
     return Editor;
 })();
 
-},{"../exporter/json":50,"./collab/mod":4,"./comments/mod":8,"./footnotes/mod":14,"./menus/mod":19,"./node-convert":31,"./schema":32,"./server-communications":33,"./settings/mod":35,"./tools/mod":37,"./update-ui":43,"prosemirror/dist/collab":82,"prosemirror/dist/edit/main":96,"prosemirror/dist/format":103,"prosemirror/dist/ui/update":127}],12:[function(require,module,exports){
+},{"../exporter/json":50,"./collab/mod":4,"./comments/mod":8,"./footnotes/mod":14,"./menus/mod":19,"./node-convert":31,"./schema":32,"./server-communications":33,"./settings/mod":35,"./tools/mod":37,"./update-ui":43,"prosemirror/dist/collab":83,"prosemirror/dist/edit/main":97,"prosemirror/dist/format":104,"prosemirror/dist/ui/update":128}],12:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2025,7 +2025,7 @@ var ModFootnoteEditor = exports.ModFootnoteEditor = (function () {
     return ModFootnoteEditor;
 })();
 
-},{"../schema":32,"prosemirror/dist/format":103,"prosemirror/dist/model":111,"prosemirror/dist/transform":117}],13:[function(require,module,exports){
+},{"../schema":32,"prosemirror/dist/format":104,"prosemirror/dist/model":112,"prosemirror/dist/transform":118}],13:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2244,7 +2244,7 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = (function () {
     return ModFootnoteMarkers;
 })();
 
-},{"../schema":32,"prosemirror/dist/format":103,"prosemirror/dist/model":111}],14:[function(require,module,exports){
+},{"../schema":32,"prosemirror/dist/format":104,"prosemirror/dist/model":112}],14:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2294,7 +2294,7 @@ var ModFootnotes = exports.ModFootnotes = (function () {
     return ModFootnotes;
 })();
 
-},{"../schema":32,"./editor":12,"./markers":13,"prosemirror/dist/collab":82,"prosemirror/dist/edit/main":96}],15:[function(require,module,exports){
+},{"../schema":32,"./editor":12,"./markers":13,"prosemirror/dist/collab":83,"prosemirror/dist/edit/main":97}],15:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2715,7 +2715,7 @@ var ModMenusKeyBindings = exports.ModMenusKeyBindings = (function () {
     return ModMenusKeyBindings;
 })();
 
-},{"prosemirror/dist/edit":94}],19:[function(require,module,exports){
+},{"prosemirror/dist/edit":95}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3317,7 +3317,7 @@ var bindFigure = exports.bindFigure = function bindFigure(editor) {
     });
 };
 
-},{"./templates":29,"katex":59}],25:[function(require,module,exports){
+},{"./templates":29,"katex":60}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4586,7 +4586,7 @@ var fidusFnSchema = exports.fidusFnSchema = new _model.Schema(_model.defaultSche
     comment: CommentMark
 }));
 
-},{"katex":59,"prosemirror/dist/model":111}],33:[function(require,module,exports){
+},{"katex":60,"prosemirror/dist/model":112}],33:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -5481,7 +5481,7 @@ function calculatePlaceHolderCss(pm, selectedElement) {
     }
 }
 
-},{"prosemirror/dist/model":111}],44:[function(require,module,exports){
+},{"prosemirror/dist/model":112}],44:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5574,201 +5574,6 @@ var downloadFile = exports.downloadFile = function downloadFile(zipFilename, blo
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-/** A template to include MathJax in an Epub's OPF file. */
-var opfKatexItemsTemplatePart = exports.opfKatexItemsTemplatePart = '\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/BasicLatin.js" id="id0" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/MiscMathSymbolsB.js" id="id1" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/d.js" id="id2" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/element/mml/jax.js" id="id3" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/TeX/cancel.js" id="id4" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/a.js" id="id5" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/AsciiMath/jax.js" id="id6" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/autoload/ms.js" id="id7" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/TeX/mathchoice.js" id="id8" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Script/Regular/Main.js" id="id9" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/TeX/extpfeil.js" id="id10" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/AsciiMath/config.js" id="id11" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/Arrows.js" id="id12" media-type="application/x-javascript"/>\
-        <item href="mathjax/images/CloseX-31.png" id="id13" media-type="image/png"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Italic/LatinExtendedA.js" id="id14" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/SansSerif/Italic/Other.js" id="id15" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Size3/Regular/Main.js" id="id16" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Size2/Regular/Main.js" id="id17" media-type="application/x-javascript"/>\
-        <item href="mathjax/images/MenuArrow-15.png" id="id18" media-type="image/png"/>\
-        <item href="mathjax/jax/input/TeX/jax.js" id="id19" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Size1/Regular/Main.js" id="id20" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/h.js" id="id21" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/l.js" id="id22" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Fraktur/Bold/PUA.js" id="id23" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/TeX/AMSsymbols.js" id="id24" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/CombDiacritMarks.js" id="id25" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Fraktur/Regular/PUA.js" id="id26" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/GreekAndCoptic.js" id="id27" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Italic/LatinExtendedB.js" id="id28" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/LatinExtendedA.js" id="id29" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/MiscSymbols.js" id="id30" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/scr.js" id="id31" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/MiscSymbols.js" id="id32" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/element/mml/optable/MiscTechnical.js" id="id33" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/TeX/newcommand.js" id="id34" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/autoload/mmultiscripts.js" id="id35" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/p.js" id="id36" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Typewriter/Regular/Main.js" id="id37" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/o.js" id="id38" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/autoload/annotation-xml.js" id="id39" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/u.js" id="id40" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Fraktur/Bold/BasicLatin.js" id="id41" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Fraktur/Regular/BasicLatin.js" id="id42" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Size4/Regular/Main.js" id="id43" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/TeX/noUndefined.js" id="id44" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/k.js" id="id45" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/LetterlikeSymbols.js" id="id46" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/TeX/HTML.js" id="id47" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Fraktur/Regular/Main.js" id="id49" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/element/mml/optable/MiscSymbolsAndArrows.js" id="id50" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/SansSerif/Bold/BasicLatin.js" id="id51" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/element/mml/optable/GeometricShapes.js" id="id52" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/GeometricShapes.js" id="id53" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/config.js" id="id54" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/TeX/enclose.js" id="id55" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/EnclosedAlphanum.js" id="id56" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/TeX/mhchem.js" id="id57" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/TeX/verb.js" id="id58" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/element/mml/optable/GeneralPunctuation.js" id="id59" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/MathMenu.js" id="id60" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/GeometricShapes.js" id="id61" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/PUA.js" id="id62" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Italic/LetterlikeSymbols.js" id="id63" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/z.js" id="id64" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Fraktur/Bold/Main.js" id="id65" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/SpacingModLetters.js" id="id66" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Fraktur/Bold/Other.js" id="id67" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/TeX/autoload-all.js" id="id68" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/SansSerif/Bold/CombDiacritMarks.js" id="id69" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/TeX/noErrors.js" id="id70" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/g.js" id="id71" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/SansSerif/Regular/BasicLatin.js" id="id72" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/SpacingModLetters.js" id="id73" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/MiscSymbols.js" id="id74" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/GreekAndCoptic.js" id="id75" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Italic/Main.js" id="id76" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/mml2jax.js" id="id77" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/GeometricShapes.js" id="id78" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/i.js" id="id79" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/q.js" id="id80" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/toMathML.js" id="id81" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/NativeMML/config.js" id="id82" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/element/mml/optable/BasicLatin.js" id="id83" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/TeX/boldsymbol.js" id="id84" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Typewriter/Regular/Other.js" id="id85" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/BoxDrawing.js" id="id86" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/TeX/begingroup.js" id="id87" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/v.js" id="id88" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/element/mml/optable/MiscMathSymbolsA.js" id="id89" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Math/BoldItalic/Main.js" id="id90" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/SansSerif/Bold/Other.js" id="id91" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/autoload/menclose.js" id="id92" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/LetterlikeSymbols.js" id="id93" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Typewriter/Regular/CombDiacritMarks.js" id="id94" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Italic/GeneralPunctuation.js" id="id95" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/element/mml/optable/MiscMathSymbolsB.js" id="id96" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/x.js" id="id97" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/SansSerif/Regular/Other.js" id="id98" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/j.js" id="id99" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/MathZoom.js" id="id100" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/MiscMathSymbolsA.js" id="id101" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/TeX/unicode.js" id="id102" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/c.js" id="id103" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/NativeMML/jax.js" id="id104" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/element/mml/optable/SupplementalArrowsB.js" id="id105" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/TeX/autobold.js" id="id106" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/SuppMathOperators.js" id="id107" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/SansSerif/Regular/Main.js" id="id108" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/TeX/action.js" id="id109" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/fr.js" id="id110" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/element/mml/optable/Dingbats.js" id="id111" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/Dingbats.js" id="id112" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/SansSerif/Italic/CombDiacritMarks.js" id="id113" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/element/mml/optable/Arrows.js" id="id114" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/MathEvents.js" id="id115" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Italic/MathOperators.js" id="id116" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Caligraphic/Bold/Main.js" id="id117" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/MathOperators.js" id="id118" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/Latin1Supplement.js" id="id119" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/CombDiacritMarks.js" id="id120" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/f.js" id="id121" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/Main.js" id="id122" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/TeX/bbox.js" id="id123" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/config.js" id="id124" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/element/mml/optable/CombDiactForSymbols.js" id="id125" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/SansSerif/Regular/CombDiacritMarks.js" id="id126" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/Arrows.js" id="id127" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/element/mml/optable/SupplementalArrowsA.js" id="id128" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/r.js" id="id129" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/GeneralPunctuation.js" id="id130" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/SansSerif/Italic/BasicLatin.js" id="id131" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/element/mml/optable/SuppMathOperators.js" id="id132" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/opf.js" id="id133" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/fontdata.js" id="id134" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/SpacingModLetters.js" id="id135" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/autoload/mglyph.js" id="id136" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/element/mml/optable/MathOperators.js" id="id137" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Italic/GreekAndCoptic.js" id="id138" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/CombDiactForSymbols.js" id="id139" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/SansSerif/Bold/Main.js" id="id140" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/w.js" id="id141" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/MiscTechnical.js" id="id142" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/element/mml/optable/Latin1Supplement.js" id="id143" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/MathOperators.js" id="id144" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/LetterlikeSymbols.js" id="id146" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/m.js" id="id147" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/GeneralPunctuation.js" id="id148" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/autoload/multiline.js" id="id149" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/LatinExtendedA.js" id="id150" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/autoload/mtable.js" id="id151" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/LatinExtendedA.js" id="id152" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/SansSerif/Italic/Main.js" id="id153" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/asciimath2jax.js" id="id154" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/jax.js" id="id155" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/TeX/AMSmath.js" id="id156" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/b.js" id="id157" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/fontdata-extra.js" id="id158" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/SuppMathOperators.js" id="id159" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/MathOperators.js" id="id160" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/s.js" id="id161" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Script/Regular/BasicLatin.js" id="id162" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Caligraphic/Regular/Main.js" id="id163" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/element/mml/optable/SpacingModLetters.js" id="id164" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/element/mml/optable/GreekAndCoptic.js" id="id165" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Italic/BasicLatin.js" id="id166" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/SupplementalArrowsA.js" id="id167" media-type="application/x-javascript"/>\
-        <item href="mathjax/MathJax.js" id="id168" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/TeX/config.js" id="id169" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/BasicLatin.js" id="id170" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/CombDiacritMarks.js" id="id171" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/TeX/color.js" id="id172" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/Main.js" id="id173" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/LatinExtendedB.js" id="id174" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Italic/CombDiacritMarks.js" id="id175" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Fraktur/Regular/Other.js" id="id176" media-type="application/x-javascript"/>\
-        <item href="mathjax/extensions/tex2jax.js" id="id177" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/MiscTechnical.js" id="id178" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/autoload/maction.js" id="id179" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/GreekAndCoptic.js" id="id180" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Bold/LatinExtendedB.js" id="id181" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/n.js" id="id182" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/t.js" id="id183" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Typewriter/Regular/BasicLatin.js" id="id184" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/SuppMathOperators.js" id="id185" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/y.js" id="id186" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/jax.js" id="id187" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/input/MathML/entities/e.js" id="id188" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/element/mml/optable/LetterlikeSymbols.js" id="id189" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/AMS/Regular/Latin1Supplement.js" id="id190" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/element/mml/optable/CombDiacritMarks.js" id="id191" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Math/Italic/Main.js" id="id192" media-type="application/x-javascript"/>\
-        <item href="mathjax/jax/output/SVG/fonts/TeX/Main/Regular/Main.js" id="id193" media-type="application/x-javascript"/>';
-
 /** A template for each CSS item of an epub's OPF file. */
 var opfCssItemTemplatePart = exports.opfCssItemTemplatePart = '\t\t\t<item id="css<%= index %>" href="<%= item.filename %>" media-type="text/css" />\n';
 
@@ -5792,11 +5597,11 @@ var opfTemplate = exports.opfTemplate = _.template('<?xml version="1.0" encoding
     \t\t<meta property="dcterms:modified"><%= modified %></meta>\n\
     \t</metadata>\n\
     \t<manifest>\n\
-    \t\t<item id="t1" href="document.xhtml" %>media-type="application/xhtml+xml" />\n\
+    \t\t<item id="t1" href="document.xhtml" media-type="application/xhtml+xml" />\n\
     \t\t<item id="nav" href="document-nav.xhtml" properties="nav" media-type="application/xhtml+xml" />\n\
         <% _.each(images,function(item, index){ %>' + opfImageItemTemplatePart + '<% }); %>\
         <% _.each(styleSheets,function(item, index){ %>' + opfCssItemTemplatePart + '<% }); %>\
-        <% if (math) {%>' + opfKatexItemsTemplatePart + '<% }%>\
+        <% if (math) {%> <%= katexOpfIncludes %><% } %>\
     \t\t<!-- ncx included for 2.0 reading system compatibility: -->\n\
     \t\t<item id="ncx" href="document.ncx" media-type="application/x-dtbncx+xml" />\n\
     \t</manifest>\n\
@@ -5849,6 +5654,7 @@ var xhtmlCssItemTemplatePart = '\t<link rel="stylesheet" type="text/css" href="<
 var xhtmlTemplate = exports.xhtmlTemplate = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
     <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<%= shortLang %>" lang="<%= shortLang %>"\
         xmlns:epub="http://www.idpf.org/2007/ops">\n<head><title><%= title %></title>\
+        <% if(math){ %><link rel="stylesheet" type="text/css" href="katex.min.css" /><% } %>\
         <% _.each(styleSheets,function(item){ %>' + xhtmlCssItemTemplatePart + '<% }); %>\
         </head><body>\
         <% if (part && part !="") {%>\
@@ -5901,6 +5707,8 @@ var _tools = require("./tools");
 var _zip = require("./zip");
 
 var _epubTemplates = require("./epub-templates");
+
+var _opfIncludes = require("../katex/opf-includes");
 
 var _katex = require("katex");
 
@@ -6004,7 +5812,6 @@ var export1 = function export1(aDocument, aBibDB) {
 
     if (equations.length > 0 || figureEquations.length > 0) {
         math = true;
-        styleSheets.push({ filename: 'katex.min.css' });
     }
 
     for (var i = 0; i < equations.length; i++) {
@@ -6030,6 +5837,7 @@ var export1 = function export1(aDocument, aBibDB) {
         shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
         title: title,
         styleSheets: styleSheets,
+        math: math,
         body: (0, _json.obj2Node)((0, _json.node2Obj)(contentsBodyEpubPrepared), 'xhtml').innerHTML
     });
 
@@ -6068,7 +5876,8 @@ var export1 = function export1(aDocument, aBibDB) {
         modified: timestamp,
         styleSheets: styleSheets,
         math: math,
-        images: images
+        images: images,
+        katexOpfIncludes: _opfIncludes.katexOpfIncludes
     });
 
     var ncxCode = (0, _epubTemplates.ncxTemplate)({
@@ -6105,12 +5914,10 @@ var export1 = function export1(aDocument, aBibDB) {
 
     for (var i = 0; i < styleSheets.length; i++) {
         var styleSheet = styleSheets[i];
-        if (styleSheet.contents) {
-            outputList.push({
-                filename: 'EPUB/' + styleSheet.filename,
-                contents: styleSheet.contents
-            });
-        }
+        outputList.push({
+            filename: 'EPUB/' + styleSheet.filename,
+            contents: styleSheet.contents
+        });
     }
 
     var httpOutputList = [];
@@ -6179,7 +5986,7 @@ var orderLinks = exports.orderLinks = function orderLinks(contentItems) {
     return contentItems;
 };
 
-},{"./epub-templates":46,"./html":49,"./json":50,"./tools":53,"./zip":56,"katex":59}],48:[function(require,module,exports){
+},{"../katex/opf-includes":58,"./epub-templates":46,"./html":49,"./json":50,"./tools":53,"./zip":56,"katex":60}],48:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6438,7 +6245,7 @@ var replaceImgSrc = exports.replaceImgSrc = function replaceImgSrc(htmlString) {
     return htmlString;
 };
 
-},{"./html-templates":48,"./json":50,"./tools":53,"./zip":56,"katex":59}],50:[function(require,module,exports){
+},{"./html-templates":48,"./json":50,"./tools":53,"./zip":56,"katex":60}],50:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7680,6 +7487,15 @@ var ImportNative = exports.ImportNative = (function () {
 })();
 
 },{"../exporter/json":50}],58:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+// This file is auto-generated. CHANGES WILL BE OVERWRITTEN! Re-generate by running ./manage.py bundle_katex.
+var katexOpfIncludes = exports.katexOpfIncludes = "\n<item id=\"katex-0\" href=\"katex.min.css\" media-type=\"text/plain\" />\n<item id=\"katex-1\" href=\"fonts/KaTeX_Typewriter-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-2\" href=\"fonts/KaTeX_Main-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-3\" href=\"fonts/KaTeX_Fraktur-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-4\" href=\"fonts/KaTeX_SansSerif-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-5\" href=\"fonts/KaTeX_Main-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-6\" href=\"fonts/KaTeX_Main-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-7\" href=\"fonts/KaTeX_SansSerif-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-8\" href=\"fonts/KaTeX_AMS-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-9\" href=\"fonts/KaTeX_Caligraphic-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-10\" href=\"fonts/KaTeX_Size4-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-11\" href=\"fonts/KaTeX_Math-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-12\" href=\"fonts/KaTeX_Size1-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-13\" href=\"fonts/KaTeX_Math-BoldItalic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-14\" href=\"fonts/KaTeX_Script-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-15\" href=\"fonts/KaTeX_Main-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-16\" href=\"fonts/KaTeX_Math-BoldItalic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-17\" href=\"fonts/KaTeX_Fraktur-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-18\" href=\"fonts/KaTeX_Main-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-19\" href=\"fonts/KaTeX_Size1-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-20\" href=\"fonts/KaTeX_SansSerif-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-21\" href=\"fonts/KaTeX_Math-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-22\" href=\"fonts/KaTeX_Fraktur-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-23\" href=\"fonts/KaTeX_Script-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-24\" href=\"fonts/KaTeX_Fraktur-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-25\" href=\"fonts/KaTeX_Main-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-26\" href=\"fonts/KaTeX_Size1-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-27\" href=\"fonts/KaTeX_Size3-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-28\" href=\"fonts/KaTeX_SansSerif-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-29\" href=\"fonts/KaTeX_Script-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-30\" href=\"fonts/KaTeX_Main-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-31\" href=\"fonts/KaTeX_Math-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-32\" href=\"fonts/KaTeX_Main-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-33\" href=\"fonts/KaTeX_Typewriter-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-34\" href=\"fonts/KaTeX_Math-BoldItalic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-35\" href=\"fonts/KaTeX_AMS-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-36\" href=\"fonts/KaTeX_Size2-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-37\" href=\"fonts/KaTeX_Caligraphic-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-38\" href=\"fonts/KaTeX_Fraktur-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-39\" href=\"fonts/KaTeX_Typewriter-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-40\" href=\"fonts/KaTeX_Math-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-41\" href=\"fonts/KaTeX_SansSerif-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-42\" href=\"fonts/KaTeX_Script-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-43\" href=\"fonts/KaTeX_Caligraphic-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-44\" href=\"fonts/KaTeX_SansSerif-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-45\" href=\"fonts/KaTeX_AMS-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-46\" href=\"fonts/KaTeX_Caligraphic-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-47\" href=\"fonts/KaTeX_Fraktur-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-48\" href=\"fonts/KaTeX_Main-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-49\" href=\"fonts/KaTeX_SansSerif-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-50\" href=\"fonts/KaTeX_Size4-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-51\" href=\"fonts/KaTeX_Math-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-52\" href=\"fonts/KaTeX_SansSerif-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-53\" href=\"fonts/KaTeX_Size2-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-54\" href=\"fonts/KaTeX_Fraktur-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-55\" href=\"fonts/KaTeX_Size2-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-56\" href=\"fonts/KaTeX_SansSerif-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-57\" href=\"fonts/KaTeX_AMS-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-58\" href=\"fonts/KaTeX_Math-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-59\" href=\"fonts/KaTeX_SansSerif-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-60\" href=\"fonts/KaTeX_Main-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-61\" href=\"fonts/KaTeX_Typewriter-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-62\" href=\"fonts/KaTeX_Size3-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-63\" href=\"fonts/KaTeX_Main-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-64\" href=\"fonts/KaTeX_Caligraphic-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-65\" href=\"fonts/KaTeX_SansSerif-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-66\" href=\"fonts/KaTeX_Caligraphic-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-67\" href=\"fonts/KaTeX_Size4-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-68\" href=\"fonts/KaTeX_Main-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-69\" href=\"fonts/KaTeX_Math-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-70\" href=\"fonts/KaTeX_Size3-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-71\" href=\"fonts/KaTeX_Fraktur-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-72\" href=\"fonts/KaTeX_Caligraphic-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-73\" href=\"fonts/KaTeX_Size2-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-74\" href=\"fonts/KaTeX_Size1-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-75\" href=\"fonts/KaTeX_SansSerif-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-76\" href=\"fonts/KaTeX_Size4-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-77\" href=\"fonts/KaTeX_Size3-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-78\" href=\"fonts/KaTeX_Caligraphic-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-79\" href=\"fonts/KaTeX_Math-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-80\" href=\"fonts/KaTeX_Math-BoldItalic.woff\" media-type=\"application/octet-stream\" />\n";
+
+},{}],59:[function(require,module,exports){
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
     module.exports = mod()
@@ -7851,7 +7667,7 @@ var ImportNative = exports.ImportNative = (function () {
   return Keymap
 })
 
-},{}],59:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 /**
  * This is the main entry point for KaTeX. Here, we expose functions for
  * rendering expressions either to DOM nodes or to markup strings.
@@ -7926,7 +7742,7 @@ module.exports = {
     ParseError: ParseError
 };
 
-},{"./src/ParseError":62,"./src/Settings":64,"./src/buildTree":69,"./src/parseTree":78,"./src/utils":80}],60:[function(require,module,exports){
+},{"./src/ParseError":63,"./src/Settings":65,"./src/buildTree":70,"./src/parseTree":79,"./src/utils":81}],61:[function(require,module,exports){
 /**
  * The Lexer class handles tokenizing the input in various ways. Since our
  * parser expects us to be able to backtrack, the lexer allows lexing from any
@@ -8122,7 +7938,7 @@ Lexer.prototype.lex = function(pos, mode) {
 
 module.exports = Lexer;
 
-},{"./ParseError":62,"match-at":81}],61:[function(require,module,exports){
+},{"./ParseError":63,"match-at":82}],62:[function(require,module,exports){
 /**
  * This file contains information about the options that the Parser carries
  * around with it while parsing. Data is held in an `Options` object, and when
@@ -8313,7 +8129,7 @@ Options.prototype.getColor = function() {
 
 module.exports = Options;
 
-},{}],62:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 /**
  * This is the ParseError class, which is the main error thrown by KaTeX
  * functions when something has gone wrong. This is used to distinguish internal
@@ -8355,7 +8171,7 @@ ParseError.prototype.__proto__ = Error.prototype;
 
 module.exports = ParseError;
 
-},{}],63:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 var functions = require("./functions");
 var environments = require("./environments");
 var Lexer = require("./Lexer");
@@ -9077,7 +8893,7 @@ Parser.prototype.ParseNode = ParseNode;
 
 module.exports = Parser;
 
-},{"./Lexer":60,"./ParseError":62,"./environments":72,"./functions":75,"./parseData":77,"./symbols":79,"./utils":80}],64:[function(require,module,exports){
+},{"./Lexer":61,"./ParseError":63,"./environments":73,"./functions":76,"./parseData":78,"./symbols":80,"./utils":81}],65:[function(require,module,exports){
 /**
  * This is a module for storing settings passed into KaTeX. It correctly handles
  * default settings.
@@ -9107,7 +8923,7 @@ function Settings(options) {
 
 module.exports = Settings;
 
-},{}],65:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 /**
  * This file contains information and classes for the various kinds of styles
  * used in TeX. It provides a generic `Style` class, which holds information
@@ -9235,7 +9051,7 @@ module.exports = {
     SCRIPTSCRIPT: styles[SS]
 };
 
-},{}],66:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 /**
  * This module contains general functions that can be used for building
  * different kinds of domTree nodes in a consistent manner.
@@ -9684,7 +9500,7 @@ module.exports = {
     spacingFunctions: spacingFunctions
 };
 
-},{"./domTree":71,"./fontMetrics":73,"./symbols":79,"./utils":80}],67:[function(require,module,exports){
+},{"./domTree":72,"./fontMetrics":74,"./symbols":80,"./utils":81}],68:[function(require,module,exports){
 /**
  * This file does the main work of building a domTree structure from a parse
  * tree. The entry point is the `buildHTML` function, which takes a parse tree.
@@ -11048,7 +10864,7 @@ var buildHTML = function(tree, options) {
 
 module.exports = buildHTML;
 
-},{"./ParseError":62,"./Style":65,"./buildCommon":66,"./delimiter":70,"./domTree":71,"./fontMetrics":73,"./utils":80}],68:[function(require,module,exports){
+},{"./ParseError":63,"./Style":66,"./buildCommon":67,"./delimiter":71,"./domTree":72,"./fontMetrics":74,"./utils":81}],69:[function(require,module,exports){
 /**
  * This file converts a parse tree into a cooresponding MathML tree. The main
  * entry point is the `buildMathML` function, which takes a parse tree from the
@@ -11569,7 +11385,7 @@ var buildMathML = function(tree, texExpression, options) {
 
 module.exports = buildMathML;
 
-},{"./ParseError":62,"./buildCommon":66,"./fontMetrics":73,"./mathMLTree":76,"./symbols":79,"./utils":80}],69:[function(require,module,exports){
+},{"./ParseError":63,"./buildCommon":67,"./fontMetrics":74,"./mathMLTree":77,"./symbols":80,"./utils":81}],70:[function(require,module,exports){
 var buildHTML = require("./buildHTML");
 var buildMathML = require("./buildMathML");
 var buildCommon = require("./buildCommon");
@@ -11611,7 +11427,7 @@ var buildTree = function(tree, expression, settings) {
 
 module.exports = buildTree;
 
-},{"./Options":61,"./Settings":64,"./Style":65,"./buildCommon":66,"./buildHTML":67,"./buildMathML":68}],70:[function(require,module,exports){
+},{"./Options":62,"./Settings":65,"./Style":66,"./buildCommon":67,"./buildHTML":68,"./buildMathML":69}],71:[function(require,module,exports){
 /**
  * This file deals with creating delimiters of various sizes. The TeXbook
  * discusses these routines on page 441-442, in the "Another subroutine sets box
@@ -12152,7 +11968,7 @@ module.exports = {
     leftRightDelim: makeLeftRightDelim
 };
 
-},{"./ParseError":62,"./Style":65,"./buildCommon":66,"./fontMetrics":73,"./symbols":79,"./utils":80}],71:[function(require,module,exports){
+},{"./ParseError":63,"./Style":66,"./buildCommon":67,"./fontMetrics":74,"./symbols":80,"./utils":81}],72:[function(require,module,exports){
 /**
  * These objects store the data about the DOM nodes we create, as well as some
  * extra data. They can then be transformed into real DOM nodes with the
@@ -12423,7 +12239,7 @@ module.exports = {
     symbolNode: symbolNode
 };
 
-},{"./utils":80}],72:[function(require,module,exports){
+},{"./utils":81}],73:[function(require,module,exports){
 var fontMetrics = require("./fontMetrics");
 var parseData = require("./parseData");
 var ParseError = require("./ParseError");
@@ -12603,7 +12419,7 @@ module.exports = (function() {
     return exports;
 })();
 
-},{"./ParseError":62,"./fontMetrics":73,"./parseData":77}],73:[function(require,module,exports){
+},{"./ParseError":63,"./fontMetrics":74,"./parseData":78}],74:[function(require,module,exports){
 /* jshint unused:false */
 
 var Style = require("./Style");
@@ -12740,7 +12556,7 @@ module.exports = {
     getCharacterMetrics: getCharacterMetrics
 };
 
-},{"./Style":65,"./fontMetricsData":74}],74:[function(require,module,exports){
+},{"./Style":66,"./fontMetricsData":75}],75:[function(require,module,exports){
 module.exports = {
 "AMS-Regular": {
   "65": {"depth": 0.0, "height": 0.68889, "italic": 0.0, "skew": 0.0},
@@ -14493,7 +14309,7 @@ module.exports = {
   "8242": {"depth": 0.0, "height": 0.61111, "italic": 0.0, "skew": 0.0}
 }};
 
-},{}],75:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 var utils = require("./utils");
 var ParseError = require("./ParseError");
 
@@ -15124,7 +14940,7 @@ module.exports = {
     funcs: functions
 };
 
-},{"./ParseError":62,"./utils":80}],76:[function(require,module,exports){
+},{"./ParseError":63,"./utils":81}],77:[function(require,module,exports){
 /**
  * These objects store data about MathML nodes. This is the MathML equivalent
  * of the types in domTree.js. Since MathML handles its own rendering, and
@@ -15228,7 +15044,7 @@ module.exports = {
     TextNode: TextNode
 };
 
-},{"./utils":80}],77:[function(require,module,exports){
+},{"./utils":81}],78:[function(require,module,exports){
 /**
  * The resulting parse tree nodes of the parse tree.
  */
@@ -15253,7 +15069,7 @@ module.exports = {
 };
 
 
-},{}],78:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 /**
  * Provides a single function for parsing an expression using a Parser
  * TODO(emily): Remove this
@@ -15272,7 +15088,7 @@ var parseTree = function(toParse, settings) {
 
 module.exports = parseTree;
 
-},{"./Parser":63}],79:[function(require,module,exports){
+},{"./Parser":64}],80:[function(require,module,exports){
 /**
  * This file holds a list of all no-argument functions and single-character
  * symbols (like 'a' or ';').
@@ -17859,7 +17675,7 @@ for (var i = 0; i < letters.length; i++) {
 
 module.exports = symbols;
 
-},{}],80:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 /**
  * This file contains a list of utility functions which are useful in other
  * files.
@@ -17966,7 +17782,7 @@ module.exports = {
     clearNode: clearNode
 };
 
-},{}],81:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 /** @flow */
 
 "use strict";
@@ -18009,7 +17825,7 @@ function matchAt(re, str, pos) {
 }
 
 module.exports = matchAt;
-},{}],82:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -18187,7 +18003,7 @@ var Collab = function () {
 }();
 
 (0, _event.eventMixin)(Collab);
-},{"../edit":94,"../transform":117,"../util/error":128,"../util/event":129,"./rebase":83}],83:[function(require,module,exports){
+},{"../edit":95,"../transform":118,"../util/error":129,"../util/event":130,"./rebase":84}],84:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -18215,7 +18031,7 @@ function rebaseSteps(doc, forward, steps, maps) {
   }
   return { doc: transform.doc, transform: transform, mapping: remap, positions: positions };
 }
-},{"../transform":117}],84:[function(require,module,exports){
+},{"../transform":118}],85:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -18294,7 +18110,7 @@ function ensureCSSAdded() {
     document.head.insertBefore(cssNode, document.head.firstChild);
   }
 }
-},{}],85:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19033,7 +18849,7 @@ baseCommands.redo = {
   },
   keys: ["Mod-Y", "Shift-Mod-Z"]
 };
-},{"../model":111,"../transform":117,"../util/error":128,"./char":87,"./dompos":91,"./selection":100}],86:[function(require,module,exports){
+},{"../model":112,"../transform":118,"../util/error":129,"./char":88,"./dompos":92,"./selection":101}],87:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19103,7 +18919,7 @@ var keys = {
 if (_dom.browser.mac) keys["Ctrl-F"] = keys["Ctrl-B"] = keys["Ctrl-P"] = keys["Ctrl-N"] = keys["Alt-F"] = keys["Alt-B"] = keys["Ctrl-A"] = keys["Ctrl-E"] = keys["Ctrl-V"] = keys["goPageUp"] = ensureSelection;
 
 var captureKeys = exports.captureKeys = new _browserkeymap2.default(keys);
-},{"../dom":84,"./dompos":91,"./selection":100,"browserkeymap":58}],87:[function(require,module,exports){
+},{"../dom":85,"./dompos":92,"./selection":101,"browserkeymap":59}],88:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19136,7 +18952,7 @@ function charCategory(ch) {
 function isExtendingChar(ch) {
   return ch.charCodeAt(0) >= 768 && extendingChar.test(ch);
 }
-},{}],88:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19745,13 +19561,13 @@ _model.NodeType.derivableCommands.insert = function (conf) {
     params: deriveParams(this, conf.params)
   };
 };
-},{"../dom":84,"../model":111,"../transform":117,"../util/error":128,"../util/obj":131,"../util/sortedinsert":132,"./base_commands":85,"browserkeymap":58}],89:[function(require,module,exports){
+},{"../dom":85,"../model":112,"../transform":118,"../util/error":129,"../util/obj":132,"../util/sortedinsert":133,"./base_commands":86,"browserkeymap":59}],90:[function(require,module,exports){
 "use strict";
 
 var _dom = require("../dom");
 
 (0, _dom.insertCSS)("\n\n.ProseMirror {\n  border: 1px solid silver;\n  position: relative;\n}\n\n.ProseMirror-content {\n  padding: 4px 8px 4px 14px;\n  white-space: pre-wrap;\n  line-height: 1.2;\n}\n\n.ProseMirror-drop-target {\n  position: absolute;\n  width: 1px;\n  background: #666;\n  display: none;\n}\n\n.ProseMirror-content ul.tight p, .ProseMirror-content ol.tight p {\n  margin: 0;\n}\n\n.ProseMirror-content ul, .ProseMirror-content ol {\n  padding-left: 30px;\n  cursor: default;\n}\n\n.ProseMirror-content blockquote {\n  padding-left: 1em;\n  border-left: 3px solid #eee;\n  margin-left: 0; margin-right: 0;\n}\n\n.ProseMirror-content pre {\n  white-space: pre-wrap;\n}\n\n.ProseMirror-selectednode {\n  outline: 2px solid #8cf;\n}\n\n.ProseMirror-nodeselection *::selection { background: transparent; }\n.ProseMirror-nodeselection *::-moz-selection { background: transparent; }\n\n.ProseMirror-content p:first-child,\n.ProseMirror-content h1:first-child,\n.ProseMirror-content h2:first-child,\n.ProseMirror-content h3:first-child,\n.ProseMirror-content h4:first-child,\n.ProseMirror-content h5:first-child,\n.ProseMirror-content h6:first-child {\n  margin-top: .3em;\n}\n\n/* Add space around the hr to make clicking it easier */\n\n.ProseMirror-content hr {\n  position: relative;\n  height: 6px;\n  border: none;\n}\n\n.ProseMirror-content hr:after {\n  content: \"\";\n  position: absolute;\n  left: 10px;\n  right: 10px;\n  top: 2px;\n  border-top: 2px solid silver;\n}\n\n.ProseMirror-content img {\n  cursor: default;\n}\n\n/* Make sure li selections wrap around markers */\n\n.ProseMirror-content li {\n  position: relative;\n  pointer-events: none; /* Don't do weird stuff with marker clicks */\n}\n.ProseMirror-content li > * {\n  pointer-events: auto;\n}\n\nli.ProseMirror-selectednode {\n  outline: none;\n}\n\nli.ProseMirror-selectednode:after {\n  content: \"\";\n  position: absolute;\n  left: -32px;\n  right: -2px; top: -2px; bottom: -2px;\n  border: 2px solid #8cf;\n  pointer-events: none;\n}\n\n");
-},{"../dom":84}],90:[function(require,module,exports){
+},{"../dom":85}],91:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19974,7 +19790,7 @@ function scanText(start, end) {
     cur = cur.firstChild || nodeAfter(cur);
   }
 }
-},{"../format":103,"../model":111,"../transform/tree":125,"./dompos":91,"./selection":100}],91:[function(require,module,exports){
+},{"../format":104,"../model":112,"../transform/tree":126,"./dompos":92,"./selection":101}],92:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20356,7 +20172,7 @@ function handleNodeClick(pm, type, event, direct) {
     }
   }
 }
-},{"../dom":84,"../model":111,"../util/error":128}],92:[function(require,module,exports){
+},{"../dom":85,"../model":112,"../util/error":129}],93:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20523,7 +20339,7 @@ function redraw(pm, dirty, doc, prev) {
   }
   scan(pm.content, doc, prev);
 }
-},{"../dom":84,"../format":103,"../model":111,"./dompos":91,"./main":96}],93:[function(require,module,exports){
+},{"../dom":85,"../format":104,"../model":112,"./dompos":92,"./main":97}],94:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -21175,7 +20991,7 @@ var History = exports.History = function () {
 
   return History;
 }();
-},{"../model":111,"../transform":117}],94:[function(require,module,exports){
+},{"../model":112,"../transform":118}],95:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -21270,7 +21086,7 @@ var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.Keymap = _browserkeymap2.default;
-},{"./base_commands":85,"./command":88,"./main":96,"./options":97,"./range":98,"./schema_commands":99,"./selection":100,"browserkeymap":58}],95:[function(require,module,exports){
+},{"./base_commands":86,"./command":89,"./main":97,"./options":98,"./range":99,"./schema_commands":100,"./selection":101,"browserkeymap":59}],96:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -21879,7 +21695,7 @@ handlers.blur = function (pm) {
   // Fired when the editor loses focus.
   pm.signal("blur");
 };
-},{"../dom":84,"../format":103,"../model":111,"./capturekeys":86,"./domchange":90,"./dompos":91,"./selection":100,"browserkeymap":58}],96:[function(require,module,exports){
+},{"../dom":85,"../format":104,"../model":112,"./capturekeys":87,"./domchange":91,"./dompos":92,"./selection":101,"browserkeymap":59}],97:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -22683,7 +22499,7 @@ var EditorTransform = function (_Transform) {
 
   return EditorTransform;
 }(_transform.Transform);
-},{"../dom":84,"../format":103,"../model":111,"../transform":117,"../util/error":128,"../util/event":129,"../util/map":130,"../util/sortedinsert":132,"./css":89,"./dompos":91,"./draw":92,"./history":93,"./input":95,"./options":97,"./range":98,"./selection":100,"browserkeymap":58}],97:[function(require,module,exports){
+},{"../dom":85,"../format":104,"../model":112,"../transform":118,"../util/error":129,"../util/event":130,"../util/map":131,"../util/sortedinsert":133,"./css":90,"./dompos":92,"./draw":93,"./history":94,"./input":96,"./options":98,"./range":99,"./selection":101,"browserkeymap":59}],98:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -22818,7 +22634,7 @@ function setOption(pm, name, value) {
   pm.options[name] = value;
   if (desc.update) desc.update(pm, value, old, false);
 }
-},{"../model":111,"../ui/prompt":126,"../util/error":128,"./command":88}],98:[function(require,module,exports){
+},{"../model":112,"../ui/prompt":127,"../util/error":129,"./command":89}],99:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -23018,7 +22834,7 @@ var RangeTracker = function () {
 
   return RangeTracker;
 }();
-},{"../util/event":129}],99:[function(require,module,exports){
+},{"../util/event":130}],100:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -23352,7 +23168,7 @@ _model.HorizontalRule.register("command", "insert", {
   keys: ["Mod-Shift--"],
   menu: { group: "insert", rank: 70, display: { type: "label", label: "Horizontal rule" } }
 });
-},{"../format":103,"../model":111,"./command":88}],100:[function(require,module,exports){
+},{"../format":104,"../model":112,"./command":89}],101:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -23849,7 +23665,7 @@ function verticalMotionLeavesTextblock(pm, pos, dir) {
   }
   return true;
 }
-},{"../dom":84,"../model":111,"../util/error":128,"./dompos":91}],101:[function(require,module,exports){
+},{"../dom":85,"../model":112,"../util/error":129,"./dompos":92}],102:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24306,7 +24122,7 @@ _model.StrongMark.register("parseDOMStyle", "font-weight", {
 });
 
 _model.CodeMark.register("parseDOM", "code", { parse: "mark" });
-},{"../model":111,"../util/sortedinsert":132,"./register":104}],102:[function(require,module,exports){
+},{"../model":112,"../util/sortedinsert":133,"./register":105}],103:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24338,7 +24154,7 @@ function fromText(schema, text) {
 }
 
 (0, _register.defineSource)("text", fromText);
-},{"./register":104}],103:[function(require,module,exports){
+},{"./register":105}],104:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24437,7 +24253,7 @@ Object.defineProperty(exports, "toText", {
     return _to_text.toText;
   }
 });
-},{"./from_dom":101,"./from_text":102,"./register":104,"./to_dom":105,"./to_text":106}],104:[function(require,module,exports){
+},{"./from_dom":102,"./from_text":103,"./register":105,"./to_dom":106,"./to_text":107}],105:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24505,7 +24321,7 @@ function defineSource(format, func) {
 defineSource("json", function (schema, json) {
   return schema.nodeFromJSON(json);
 });
-},{"../util/error":128}],105:[function(require,module,exports){
+},{"../util/error":129}],106:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24793,7 +24609,7 @@ def(_model.LinkMark, function (mark, s) {
   return s.elt("a", { href: mark.attrs.href,
     title: mark.attrs.title });
 });
-},{"../model":111,"./register":104}],106:[function(require,module,exports){
+},{"../model":112,"./register":105}],107:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24837,7 +24653,7 @@ function toText(doc) {
 }
 
 (0, _register.defineTarget)("text", toText);
-},{"../model":111,"./register":104}],107:[function(require,module,exports){
+},{"../model":112,"./register":105}],108:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25274,7 +25090,7 @@ var defaultSpec = new _schema.SchemaSpec({
 // :: Schema
 // ProseMirror's default document schema.
 var defaultSchema = exports.defaultSchema = new _schema.Schema(defaultSpec);
-},{"./schema":115}],108:[function(require,module,exports){
+},{"./schema":116}],109:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25371,7 +25187,7 @@ function findDiffEnd(a, b) {
   }
   return { a: new _pos.Pos(pathA, offA), b: new _pos.Pos(pathB, offB) };
 }
-},{"./pos":114}],109:[function(require,module,exports){
+},{"./pos":115}],110:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25400,7 +25216,7 @@ var ModelError = exports.ModelError = function (_ProseMirrorError) {
 
   return ModelError;
 }(_error.ProseMirrorError);
-},{"../util/error":128}],110:[function(require,module,exports){
+},{"../util/error":129}],111:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -26112,7 +25928,7 @@ if (typeof Symbol != "undefined") {
     return this;
   };
 }
-},{"./error":109}],111:[function(require,module,exports){
+},{"./error":110}],112:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -26352,7 +26168,7 @@ Object.defineProperty(exports, "ModelError", {
                 return _error.ModelError;
         }
 });
-},{"./defaultschema":107,"./diff":108,"./error":109,"./fragment":110,"./mark":112,"./node":113,"./pos":114,"./schema":115}],112:[function(require,module,exports){
+},{"./defaultschema":108,"./diff":109,"./error":110,"./fragment":111,"./mark":113,"./node":114,"./pos":115,"./schema":116}],113:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -26484,7 +26300,7 @@ var Mark = exports.Mark = function () {
 }();
 
 var empty = [];
-},{}],113:[function(require,module,exports){
+},{}],114:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -27092,7 +26908,7 @@ function wrapMarks(marks, str) {
     str = marks[i].type.name + "(" + str + ")";
   }return str;
 }
-},{"./fragment":110,"./mark":112,"./pos":114,"./schema":115}],114:[function(require,module,exports){
+},{"./fragment":111,"./mark":113,"./pos":115,"./schema":116}],115:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -27316,7 +27132,7 @@ var Pos = exports.Pos = function () {
 
   return Pos;
 }();
-},{"./error":109}],115:[function(require,module,exports){
+},{"./error":110}],116:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -28351,7 +28167,7 @@ var Schema = function () {
 }();
 
 exports.Schema = Schema;
-},{"../util/error":128,"../util/obj":131,"./fragment":110,"./mark":112,"./node":113}],116:[function(require,module,exports){
+},{"../util/error":129,"../util/obj":132,"./fragment":111,"./mark":113,"./node":114}],117:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -28637,7 +28453,7 @@ _transform.Transform.prototype.setNodeType = function (pos, type, attrs) {
   this.step("ancestor", new _model.Pos(path, 0), new _model.Pos(path, node.size), null, { depth: 1, types: [type], attrs: [attrs] });
   return this;
 };
-},{"../model":111,"./map":119,"./step":123,"./transform":124,"./tree":125}],117:[function(require,module,exports){
+},{"../model":112,"./map":120,"./step":124,"./transform":125,"./tree":126}],118:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -28725,7 +28541,7 @@ require("./mark");
 require("./split");
 
 require("./replace");
-},{"./ancestor":116,"./join":118,"./map":119,"./mark":120,"./replace":121,"./split":122,"./step":123,"./transform":124}],118:[function(require,module,exports){
+},{"./ancestor":117,"./join":119,"./map":120,"./mark":121,"./replace":122,"./split":123,"./step":124,"./transform":125}],119:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -28807,7 +28623,7 @@ _transform.Transform.prototype.join = function (at) {
   this.step("join", new _model.Pos(at.path.concat(at.offset - 1), parent.child(at.offset - 1).size), new _model.Pos(at.path.concat(at.offset), 0));
   return this;
 };
-},{"../model":111,"./map":119,"./step":123,"./transform":124}],119:[function(require,module,exports){
+},{"../model":112,"./map":120,"./step":124,"./transform":125}],120:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29127,7 +28943,7 @@ var Remapping = exports.Remapping = function () {
 
   return Remapping;
 }();
-},{"../model":111}],120:[function(require,module,exports){
+},{"../model":112}],121:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -29306,7 +29122,7 @@ _transform.Transform.prototype.clearMarkup = function (from, to, newParent) {
     this.step(delSteps[i]);
   }return this;
 };
-},{"../model":111,"./step":123,"./transform":124,"./tree":125}],121:[function(require,module,exports){
+},{"../model":112,"./step":124,"./transform":125,"./tree":126}],122:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29634,7 +29450,7 @@ _transform.Transform.prototype.insertText = function (pos, text) {
 _transform.Transform.prototype.insertInline = function (pos, node) {
   return this.insert(pos, node.mark(this.doc.marksAt(pos)));
 };
-},{"../model":111,"./map":119,"./step":123,"./transform":124,"./tree":125}],122:[function(require,module,exports){
+},{"../model":112,"./map":120,"./step":124,"./transform":125,"./tree":126}],123:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -29723,7 +29539,7 @@ _transform.Transform.prototype.splitIfNeeded = function (pos) {
   }
   return this;
 };
-},{"../model":111,"./map":119,"./step":123,"./transform":124}],123:[function(require,module,exports){
+},{"../model":112,"./map":120,"./step":124,"./transform":125}],124:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29910,7 +29726,7 @@ var StepResult = exports.StepResult = function StepResult(doc) {
 };
 
 var steps = Object.create(null);
-},{"../model":111,"../util/error":128,"./map":119}],124:[function(require,module,exports){
+},{"../model":112,"../util/error":129,"./map":120}],125:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30015,7 +29831,7 @@ var Transform = function () {
 }();
 
 exports.Transform = Transform;
-},{"./map":119,"./step":123}],125:[function(require,module,exports){
+},{"./map":120,"./step":124}],126:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30109,7 +29925,7 @@ function samePathDepth(a, b) {
     if (i == a.path.length || i == b.path.length || a.path[i] != b.path[i]) return i;
   }
 }
-},{"../model":111}],126:[function(require,module,exports){
+},{"../model":112}],127:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30413,7 +30229,7 @@ function openPrompt(pm, content, options) {
 }
 
 (0, _dom.insertCSS)("\n.ProseMirror-prompt {\n  background: white;\n  padding: 2px 6px 2px 15px;\n  border: 1px solid silver;\n  position: absolute;\n  border-radius: 3px;\n  z-index: 11;\n}\n\n.ProseMirror-prompt h5 {\n  margin: 0;\n  font-weight: normal;\n  font-size: 100%;\n  color: #444;\n}\n\n.ProseMirror-prompt input[type=\"text\"],\n.ProseMirror-prompt textarea {\n  background: #eee;\n  border: none;\n  outline: none;\n}\n\n.ProseMirror-prompt input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n.ProseMirror-prompt-close {\n  position: absolute;\n  left: 2px; top: 1px;\n  color: #666;\n  border: none; background: transparent; padding: 0;\n}\n\n.ProseMirror-prompt-close:after {\n  content: \"✕\";\n  font-size: 12px;\n}\n\n.ProseMirror-invalid {\n  background: #ffc;\n  border: 1px solid #cc7;\n  border-radius: 4px;\n  padding: 5px 10px;\n  position: absolute;\n  min-width: 10em;\n}\n\n.ProseMirror-prompt-buttons {\n  margin-top: 5px;\n  display: none;\n}\n\n");
-},{"../dom":84,"../util/error":128}],127:[function(require,module,exports){
+},{"../dom":85,"../util/error":129}],128:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30573,7 +30389,7 @@ var UpdateScheduler = exports.UpdateScheduler = function () {
 
   return UpdateScheduler;
 }();
-},{}],128:[function(require,module,exports){
+},{}],129:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30655,7 +30471,7 @@ function functionName(f) {
   var match = /^function (\w+)/.exec(f.toString());
   return match && match[1];
 }
-},{}],129:[function(require,module,exports){
+},{}],130:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30778,7 +30594,7 @@ function eventMixin(ctor) {
     if (methods.hasOwnProperty(prop)) proto[prop] = methods[prop];
   }
 }
-},{}],130:[function(require,module,exports){
+},{}],131:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30834,7 +30650,7 @@ var Map = exports.Map = window.Map || function () {
 
   return _class;
 }();
-},{}],131:[function(require,module,exports){
+},{}],132:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30847,7 +30663,7 @@ function copyObj(obj, base) {
     copy[prop] = obj[prop];
   }return copy;
 }
-},{}],132:[function(require,module,exports){
+},{}],133:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

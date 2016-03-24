@@ -1,3 +1,6 @@
+import {opfImageItemTemplatePart, opfCssItemTemplatePart} from "../../exporter/epub-templates"
+
+
 /** A template to create the OPF file of book epubs. */
 export let epubBookOpfTemplate = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
     <package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="<%= idType %>" xml:lang="<%= language %>" prefix="cc: http://creativecommons.org/ns#">\n\
@@ -34,14 +37,12 @@ export let epubBookOpfTemplate = _.template('<?xml version="1.0" encoding="UTF-8
     \t\t<item id="nav" href="document-nav.xhtml" properties="nav" media-type="application/xhtml+xml" />\n\
         <item id="copyright" href="copyright.xhtml" media-type="application/xhtml+xml"/>\
         <% _.each(images,function(item, index){ %>'
-            + exporter.opfImageItemTemplatePart +
+            + opfImageItemTemplatePart +
         '<% }); %>\
         <% _.each(styleSheets,function(item, index){ %>'
-            + exporter.opfCssItemTemplatePart +
+            + opfCssItemTemplatePart +
         '<% }); %>\
-        <% if (math) {%>'
-            + exporter.opfKatexItemsTemplatePart +
-        '<% }%>\
+        <% if (math) { %> <%= katexOpfIncludes %><% }%>\
     \t\t<!-- ncx included for 2.0 reading system compatibility: -->\n\
     \t\t<item id="ncx" href="document.ncx" media-type="application/x-dtbncx+xml" />\n\
     \t</manifest>\n\

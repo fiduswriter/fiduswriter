@@ -4,7 +4,4 @@ let importer = {
     ImportFidusFile
 }
 
-//importer.initZipFileRead = initZipFileRead
-//importer.init = init
-
 window.importer = importer

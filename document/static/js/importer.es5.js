@@ -622,9 +622,6 @@ var importer = {
     ImportFidusFile: _file.ImportFidusFile
 };
 
-//importer.initZipFileRead = initZipFileRead
-//importer.init = init
-
 window.importer = importer;
 
 },{"./es6_modules/importer/file":2}]},{},[4]);

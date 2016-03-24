@@ -1,5 +1,9 @@
 import {getMissingChapterData, getImageAndBibDB, uniqueObjects} from "./tools"
 import {latexBookIndexTemplate} from "./latex-templates"
+import {obj2Node} from "../../exporter/json"
+import {findLatexDocumentFeatures, htmlToLatex} from "../../exporter/latex"
+import {createSlug, findImages} from "../../exporter/tools"
+import {zipFileCreator} from "../../exporter/zip"
 
 export let downloadLatex = function (aBook) {
     getMissingChapterData(aBook, function () {
@@ -29,13 +33,13 @@ let latexBookExport = function (aBook, anImageDB, aBibDB) {
 
         let title = aDocument.title
 
-        let contents = exporter.obj2Node(aDocument.contents)
+        let contents = obj2Node(aDocument.contents)
 
         allContent.innerHTML += contents.innerHTML
 
-        images = images.concat(exporter.findImages(contents))
+        images = images.concat(findImages(contents))
 
-        let latexCode = exporter.htmlToLatex(title, aDocument.owner.name, contents, aBibDB,
+        let latexCode = htmlToLatex(title, aDocument.owner.name, contents, aBibDB,
             aDocument.settings, aDocument.metadata, true,
             listedWorksList)
 
@@ -52,7 +56,7 @@ let latexBookExport = function (aBook, anImageDB, aBibDB) {
         author = aBook.metadata.author
     }
 
-    let documentFeatures = exporter.findLatexDocumentFeatures(
+    let documentFeatures = findLatexDocumentFeatures(
         allContent, aBook.title, author, aBook.metadata.subtitle, aBook.metadata.keywords, aBook.metadata.author, aBook.metadata, 'book')
 
 
@@ -60,7 +64,7 @@ let latexBookExport = function (aBook, anImageDB, aBibDB) {
     let latexEnd = documentFeatures.latexEnd
 
     outputList.push({
-        filename: exporter.createSlug(
+        filename: createSlug(
             aBook.title) + '.tex',
         contents: latexBookIndexTemplate({
             aBook: aBook,
@@ -81,7 +85,7 @@ let latexBookExport = function (aBook, anImageDB, aBibDB) {
 
     images = uniqueObjects(images)
 
-    exporter.zipFileCreator(outputList, images, exporter.createSlug(
+    zipFileCreator(outputList, images, createSlug(
             aBook.title) +
         '.latex.zip')
 }

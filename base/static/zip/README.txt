@@ -2,6 +2,6 @@ The file base/static/zip/katex-style.zip contains a copy of the base/static/css/
 
 To regenerate katex-style.zip, run:
 
-python manage.py create_katex_zip
+python manage.py bundle_katex
 
 katex-style.zip is included in EPUB and HTML exports.

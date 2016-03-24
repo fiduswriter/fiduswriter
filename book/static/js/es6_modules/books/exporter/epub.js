@@ -3,6 +3,15 @@ import {render as katexRender} from "katex"
 import {getMissingChapterData, getImageAndBibDB, uniqueObjects} from "./tools"
 import {epubBookOpfTemplate, epubBookCoverTemplate, epubBookTitlepageTemplate,
   epubBookCopyrightTemplate} from "./epub-templates"
+import {katexOpfIncludes} from "../../katex/opf-includes"
+
+import {styleEpubFootnotes, getTimestamp, setLinks, orderLinks} from "../../exporter/epub"
+import {cleanHTML, addFigureNumbers, replaceImgSrc} from "../../exporter/html"
+import {ncxTemplate, ncxItemTemplate, navTemplate, navItemTemplate,
+  containerTemplate, xhtmlTemplate} from "../../exporter/epub-templates"
+import {node2Obj, obj2Node} from "../../exporter/json"
+import {createSlug, findImages} from "../../exporter/tools"
+import {zipFileCreator} from "../../exporter/zip"
 
 export let downloadEpub = function (aBook) {
     getMissingChapterData(aBook, function () {
@@ -13,12 +22,7 @@ export let downloadEpub = function (aBook) {
     })
 }
 
-let templates = {
-  ncxTemplate: exporter.ncxTemplate,
-  ncxItemTemplate: exporter.ncxItemTemplate,
-  navTemplate: exporter.navTemplate,
-  navItemTemplate: exporter.navItemTemplate
-}
+let templates = {ncxTemplate, ncxItemTemplate, navTemplate, navItemTemplate}
 
 let epubBookExport = function (aBook, anImageDB, aBibDB) {
     let coverImage = false, contentItems = [],
@@ -75,7 +79,7 @@ let epubBookExport = function (aBook, anImageDB, aBibDB) {
             id: aBook.chapters[i].text
         })
 
-        let tempNode = exporter.obj2Node(aChapter.document.contents)
+        let tempNode = obj2Node(aChapter.document.contents)
 
         let contents = document.createElement('body')
 
@@ -91,19 +95,19 @@ let epubBookExport = function (aBook, anImageDB, aBibDB) {
             contents.innerHTML += bibliography
         }
 
-        images = images.concat(exporter.findImages(contents))
+        images = images.concat(findImages(contents))
 
         let startHTML = '<h1 class="title">' + aChapter.document.title + '</h1>'
 
         if (aChapter.document.settings && aChapter.document.settings['metadata-subtitle'] && aChapter.document.metadata.subtitle) {
-            tempNode = exporter.obj2Node(aChapter.document.metadata.subtitle)
+            tempNode = obj2Node(aChapter.document.metadata.subtitle)
             if (tempNode && tempNode.textContent.length > 0) {
                 startHTML += '<h2 class="subtitle">' + tempNode.textContent +
                     '</h2>'
             }
         }
         if (aChapter.document.settings && aChapter.document.settings['metadata-abstract'] && aChapter.document.metadata.abstract) {
-            tempNode = exporter.obj2Node(aChapter.document.metadata.abstract)
+            tempNode = obj2Node(aChapter.document.metadata.abstract)
             if (tempNode && tempNode.textContent.length > 0) {
                 startHTML += '<div class="abstract">' + tempNode.textContent +
                     '</div>'
@@ -112,9 +116,9 @@ let epubBookExport = function (aBook, anImageDB, aBibDB) {
 
         contents.innerHTML = startHTML + contents.innerHTML
 
-        contents = exporter.cleanHTML(contents)
+        contents = cleanHTML(contents)
 
-        contents = exporter.addFigureNumbers(contents)
+        contents = addFigureNumbers(contents)
 
         aChapter.number = aBook.chapters[i].number
 
@@ -154,10 +158,10 @@ let epubBookExport = function (aBook, anImageDB, aBibDB) {
         }
 
         // Make links to all H1-3 and create a TOC list of them
-        contentItems = contentItems.concat(exporter.setLinks(
+        contentItems = contentItems.concat(setLinks(
             contents, aChapter.number))
 
-     //   aChapter.contents = exporter.styleEpubFootnotes(contents)
+     //   aChapter.contents = styleEpubFootnotes(contents)
 
         aChapter.contents = contents
 
@@ -171,21 +175,21 @@ let epubBookExport = function (aBook, anImageDB, aBibDB) {
 
     for (let i=0;i<chapters.length;i++) {
 
-        chapters[i].contents = exporter.styleEpubFootnotes(chapters[i].contents)
+        chapters[i].contents = styleEpubFootnotes(chapters[i].contents)
 
 
-        let xhtmlCode = exporter.xhtmlTemplate({
+        let xhtmlCode = xhtmlTemplate({
             part: chapters[i].part,
             shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
             title: chapters[i].document.title,
             metadata: chapters[i].document.metadata,
             settings: chapters[i].document.settings,
             styleSheets,
-            body: exporter.obj2Node(exporter.node2Obj(chapters[i].contents), 'xhtml').innerHTML,
+            body: obj2Node(node2Obj(chapters[i].contents), 'xhtml').innerHTML,
             math: chapters[i].math
         })
 
-        xhtmlCode = exporter.replaceImgSrc(xhtmlCode)
+        xhtmlCode = replaceImgSrc(xhtmlCode)
 
         outputList.push({
             filename: 'EPUB/document-' + chapters[i].number + '.xhtml',
@@ -202,9 +206,9 @@ let epubBookExport = function (aBook, anImageDB, aBibDB) {
         subItems: [],
     })
 
-    contentItems = exporter.orderLinks(contentItems)
+    contentItems = orderLinks(contentItems)
 
-    let timestamp = exporter.getTimestamp()
+    let timestamp = getTimestamp()
 
     images = uniqueObjects(images)
 
@@ -226,10 +230,11 @@ let epubBookExport = function (aBook, anImageDB, aBibDB) {
         math,
         images,
         chapters,
-        coverImage
+        coverImage,
+        katexOpfIncludes
     })
 
-    let ncxCode = exporter.ncxTemplate({
+    let ncxCode = ncxTemplate({
         shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
         title: aBook.title,
         idType: 'fidus',
@@ -238,7 +243,7 @@ let epubBookExport = function (aBook, anImageDB, aBibDB) {
         templates
     })
 
-    let navCode = exporter.navTemplate({
+    let navCode = navTemplate({
         shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
         contentItems,
         templates
@@ -246,7 +251,7 @@ let epubBookExport = function (aBook, anImageDB, aBibDB) {
 
     outputList = outputList.concat([{
         filename: 'META-INF/container.xml',
-        contents: exporter.containerTemplate({})
+        contents: containerTemplate({})
     }, {
         filename: 'EPUB/document.opf',
         contents: opfCode
@@ -296,7 +301,7 @@ let epubBookExport = function (aBook, anImageDB, aBibDB) {
         })
     }
 
-    exporter.zipFileCreator(outputList, httpOutputList, exporter.createSlug(
+    zipFileCreator(outputList, httpOutputList, createSlug(
             aBook.title) +
         '.epub', 'application/epub+zip', includeZips)
 }

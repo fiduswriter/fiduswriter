@@ -3,6 +3,83 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+/** Same functionality as objToNode/nodeToObj in diffDOM.js, but also offers output in XHTML format (obj2Node) and without form support. */
+var obj2Node = exports.obj2Node = function obj2Node(obj, docType) {
+    var parser = undefined;
+    if (obj === undefined) {
+        return false;
+    }
+    if (docType === 'xhtml') {
+        parser = new DOMParser().parseFromString('<xml/>', "text/xml");
+    } else {
+        parser = document;
+    }
+
+    function inner(obj, insideSvg) {
+        var node = undefined;
+        if (obj.hasOwnProperty('t')) {
+            node = parser.createTextNode(obj.t);
+        } else if (obj.hasOwnProperty('co')) {
+            node = parser.createComment(obj.co);
+        } else {
+            if (obj.nn === 'svg' || insideSvg) {
+                node = parser.createElementNS('http://www.w3.org/2000/svg', obj.nn);
+                insideSvg = true;
+            } else if (obj.nn === 'script') {
+                // Do not allow scripts
+                return parser.createTextNode('');
+            } else {
+                node = parser.createElement(obj.nn);
+            }
+            if (obj.a) {
+                for (var i = 0; i < obj.a.length; i++) {
+                    node.setAttribute(obj.a[i][0], obj.a[i][1]);
+                }
+            }
+            if (obj.c) {
+                for (var i = 0; i < obj.c.length; i++) {
+                    node.appendChild(inner(obj.c[i], insideSvg));
+                }
+            }
+        }
+        return node;
+    }
+    return inner(obj);
+};
+
+var node2Obj = exports.node2Obj = function node2Obj(node) {
+    var obj = {};
+
+    if (node.nodeType === 3) {
+        obj.t = node.data;
+    } else if (node.nodeType === 8) {
+        obj.co = node.data;
+    } else {
+        obj.nn = node.nodeName;
+        if (node.attributes && node.attributes.length > 0) {
+            obj.a = [];
+            for (var i = 0; i < node.attributes.length; i++) {
+                obj.a.push([node.attributes[i].name, node.attributes[i].value]);
+            }
+        }
+        if (node.childNodes && node.childNodes.length > 0) {
+            obj.c = [];
+            for (var i = 0; i < node.childNodes.length; i++) {
+                if (node.childNodes[i]) {
+                    obj.c.push(node2Obj(node.childNodes[i]));
+                }
+            }
+        }
+    }
+    return obj;
+};
+
+},{}],2:[function(require,module,exports){
+"use strict";
+
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
@@ -10,7 +87,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.PrintBook = undefined;
 
-var _templates = require('./templates');
+var _templates = require("./templates");
+
+var _json = require("../exporter/json");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -53,7 +132,7 @@ var PrintBook = exports.PrintBook = (function () {
     }
 
     _createClass(PrintBook, [{
-        key: 'setTheBook',
+        key: "setTheBook",
         value: function setTheBook(aBook) {
             var that = this;
 
@@ -76,7 +155,7 @@ var PrintBook = exports.PrintBook = (function () {
             });
         }
     }, {
-        key: 'modelToViewNode',
+        key: "modelToViewNode",
         value: function modelToViewNode(node) {
             // TODO: add needed changes
             return node;
@@ -100,7 +179,7 @@ var PrintBook = exports.PrintBook = (function () {
         }*/
 
     }, {
-        key: 'getBookData',
+        key: "getBookData",
         value: function getBookData(id) {
             var that = this;
             $.ajax({
@@ -122,14 +201,15 @@ var PrintBook = exports.PrintBook = (function () {
             });
         }
     }, {
-        key: 'fillPrintPage',
+        key: "fillPrintPage",
         value: function fillPrintPage(aBibDB) {
 
             var bibliography = jQuery('#bibliography');
             jQuery(document.body).addClass(theBook.settings.documentstyle);
             jQuery('#book')[0].outerHTML = (0, _templates.bookPrintTemplate)({
                 theBook: theBook,
-                modelToViewNode: this.modelToViewNode
+                modelToViewNode: this.modelToViewNode,
+                obj2Node: _json.obj2Node
             });
 
             jQuery(bibliography).html(citationHelpers.formatCitations(document.body, theBook.settings.citationstyle, aBibDB));
@@ -149,7 +229,7 @@ var PrintBook = exports.PrintBook = (function () {
             jQuery('head title').html(jQuery('#document-title').text());
         }
     }, {
-        key: 'setDocumentStyle',
+        key: "setDocumentStyle",
         value: function setDocumentStyle(theValue) {
             var documentStyleLink = document.getElementById('document-style-link'),
                 newDocumentStyleLink = document.createElement('link');
@@ -161,7 +241,7 @@ var PrintBook = exports.PrintBook = (function () {
             documentStyleLink.parentElement.replaceChild(newDocumentStyleLink, documentStyleLink);
         }
     }, {
-        key: 'bindEvents',
+        key: "bindEvents",
         value: function bindEvents() {
             var that = this;
             window.theBook = undefined;
@@ -177,7 +257,7 @@ var PrintBook = exports.PrintBook = (function () {
     return PrintBook;
 })();
 
-},{"./templates":2}],2:[function(require,module,exports){
+},{"../exporter/json":1,"./templates":3}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -215,24 +295,24 @@ var bookPrintTemplate = exports.bookPrintTemplate = _.template('\
         <h1 class="title"><%= chapter.title %></h1>\
         <% if (chapter.settings) { %>\
             <% if (chapter.settings["metadata-subtitle"] && chapter.metadata.subtitle) { %>\
-                <% tempNode = exporter.obj2Node(chapter.metadata.subtitle) %>\
+                <% tempNode = obj2Node(chapter.metadata.subtitle) %>\
                 <% if (tempNode.textContent.length > 0) { %>\
                     <h2 class="metadata-subtitle"><%= tempNode.textContent %></h2>\
                 <% } %>\
             <% } %>\
             <% if (chapter.settings["metadata-abstract"] && chapter.metadata.abstract ) { %>\
-                <% tempNode = exporter.obj2Node(chapter.metadata.abstract) %>\
+                <% tempNode = obj2Node(chapter.metadata.abstract) %>\
                 <% if (tempNode.textContent.length > 0) { %>\
                     <h2 class="metadata-abstract"><%= tempNode.textContent %></h2>\
                 <% } %>\
             <% } %>\
         <% } %>\
-        <%= modelToViewNode(exporter.obj2Node(JSON.parse(chapter.contents))).innerHTML %>\
+        <%= modelToViewNode(obj2Node(JSON.parse(chapter.contents))).innerHTML %>\
     </div>\
 <% }); %>\
 ');
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 "use strict";
 
 var _printBook = require("./es6_modules/print-book/print-book");
@@ -243,4 +323,4 @@ purposes.*/
 var thePrintBook = new _printBook.PrintBook();
 window.thePrintBook = thePrintBook;
 
-},{"./es6_modules/print-book/print-book":1}]},{},[3]);
+},{"./es6_modules/print-book/print-book":2}]},{},[4]);

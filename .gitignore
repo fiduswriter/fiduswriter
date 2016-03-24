@@ -20,7 +20,7 @@ configuration.py
 fidus.db
 deploy
 base/static/zip/katex-style.zip
-base/static/zip/katex-opf-includes.txt
+base/static/js/es6_modules/katex/opf-includes.js
 chromedriver
 testing.py
 es6-tmp/

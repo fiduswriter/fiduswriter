@@ -4,7 +4,10 @@ import {createSlug, findImages} from "./tools"
 import {zipFileCreator} from "./zip"
 import {opfTemplate, containerTemplate, ncxTemplate, ncxItemTemplate, navTemplate,
   navItemTemplate, xhtmlTemplate} from "./epub-templates"
+import {katexOpfIncludes} from "../katex/opf-includes"
+
 import {render as katexRender} from "katex"
+
 
 let templates = {ncxTemplate, ncxItemTemplate, navTemplate, navItemTemplate}
 
@@ -111,7 +114,6 @@ let export1 = function(aDocument, aBibDB) {
 
     if (equations.length > 0 || figureEquations.length > 0) {
         math = true
-        styleSheets.push({filename: 'katex.min.css'})
     }
 
     for (let i = 0; i < equations.length; i++) {
@@ -137,8 +139,9 @@ let export1 = function(aDocument, aBibDB) {
     let xhtmlCode = xhtmlTemplate({
         part: false,
         shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
-        title: title,
-        styleSheets: styleSheets,
+        title,
+        styleSheets,
+        math,
         body: obj2Node(node2Obj(contentsBodyEpubPrepared), 'xhtml').innerHTML
     })
 
@@ -178,7 +181,8 @@ let export1 = function(aDocument, aBibDB) {
         modified: timestamp,
         styleSheets,
         math,
-        images
+        images,
+        katexOpfIncludes
     })
 
     let ncxCode = ncxTemplate({
@@ -216,12 +220,10 @@ let export1 = function(aDocument, aBibDB) {
 
     for (let i = 0; i < styleSheets.length; i++) {
         let styleSheet = styleSheets[i]
-        if (styleSheet.contents) {
-            outputList.push({
-                filename: 'EPUB/' + styleSheet.filename,
-                contents: styleSheet.contents
-            })
-        }
+        outputList.push({
+            filename: 'EPUB/' + styleSheet.filename,
+            contents: styleSheet.contents
+        })
     }
 
     let httpOutputList = []

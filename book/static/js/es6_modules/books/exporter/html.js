@@ -2,6 +2,11 @@ import {render as katexRender} from "katex"
 
 import {getMissingChapterData, getImageAndBibDB, uniqueObjects} from "./tools"
 import {htmlBookExportTemplate, htmlBookIndexTemplate, htmlBookIndexItemTemplate} from "./html-templates"
+import {obj2Node} from "../../exporter/json"
+import {setLinks, orderLinks} from "../../exporter/epub"
+import {cleanHTML, replaceImgSrc} from "../../exporter/html"
+import {createSlug, findImages} from "../../exporter/tools"
+import {zipFileCreator} from "../../exporter/zip"
 
 // Some templates need to be able to refer to these templates, so we hand the templates variable to such
 // templates.
@@ -32,7 +37,7 @@ let htmlBookExport = function (aBook, anImageDB, aBibDB) {
             id: aBook.chapters[i].text
         })
 
-        let contents = exporter.obj2Node(aDocument.contents)
+        let contents = obj2Node(aDocument.contents)
 
         let bibliography = citationHelpers.formatCitations(contents,
             aBook.settings.citationstyle,
@@ -79,9 +84,9 @@ let htmlBookExport = function (aBook, anImageDB, aBibDB) {
 
         let title = aDocument.title
 
-        images = images.concat(exporter.findImages(contents))
+        images = images.concat(findImages(contents))
 
-        contents = exporter.cleanHTML(contents)
+        contents = cleanHTML(contents)
 
         if (aBook.chapters[i].part && aBook.chapters[i].part != '') {
             contentItems.push({
@@ -104,20 +109,21 @@ let htmlBookExport = function (aBook, anImageDB, aBibDB) {
         })
 
         // Make links to all H1-3 and create a TOC list of them
-        contentItems = contentItems.concat(exporter.setLinks(contents,
+        contentItems = contentItems.concat(setLinks(contents,
             aBook.chapters[i].number))
 
 
-        let contentsCode = exporter.replaceImgSrc(contents.innerHTML)
+        let contentsCode = replaceImgSrc(contents.innerHTML)
 
         let htmlCode = htmlBookExportTemplate({
-            'part': aBook.chapters[i].part,
-            'title': title,
-            'metadata': aDocument.metadata,
-            'settings': aDocument.settings,
-            'styleSheets': styleSheets,
-            'contents': contentsCode,
-            'math': math,
+            part: aBook.chapters[i].part,
+            title,
+            metadata: aDocument.metadata,
+            settings: aDocument.settings,
+            styleSheets,
+            contents: contentsCode,
+            math,
+            obj2Node
         })
 
         outputList.push({
@@ -127,7 +133,7 @@ let htmlBookExport = function (aBook, anImageDB, aBibDB) {
 
     }
 
-    contentItems = exporter.orderLinks(contentItems)
+    contentItems = orderLinks(contentItems)
 
     outputList = outputList.concat(styleSheets)
 
@@ -151,7 +157,7 @@ let htmlBookExport = function (aBook, anImageDB, aBibDB) {
 
     images = uniqueObjects(images)
 
-    exporter.zipFileCreator(outputList, images, exporter.createSlug(
+    zipFileCreator(outputList, images, createSlug(
             aBook.title) +
         '.html.zip', false, includeZips)
 }

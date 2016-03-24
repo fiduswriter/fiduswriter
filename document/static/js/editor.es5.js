@@ -7296,6 +7296,8 @@ var _json = require('../exporter/json');
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var ImportNative = exports.ImportNative = (function () {
+    /* Save document information into the database */
+
     function ImportNative(aDocument, aBibDB, anImageDB, entries, user, callback) {
         _classCallCheck(this, ImportNative);
 
@@ -7605,8 +7607,12 @@ var ImportNative = exports.ImportNative = (function () {
                                 $.addAlert('warning', warnings[i]);
                             }
                             _.each(response.key_translations, function (newKey, oldKey) {
-                                var newID = _.findWhere(response.bibs, { entry_key: newKey }).id,
-                                    oldID = _.findWhere(newBibEntries, { oldEntryKey: oldKey }).oldId;
+                                var newID = _.findWhere(response.bibs, {
+                                    entry_key: newKey
+                                }).id,
+                                    oldID = _.findWhere(newBibEntries, {
+                                    oldEntryKey: oldKey
+                                }).oldId;
                                 BibTranslationTable[oldID] = newID;
                             });
                             bibliographyHelpers.addBibList(response.bibs);

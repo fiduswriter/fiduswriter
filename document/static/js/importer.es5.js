@@ -116,6 +116,7 @@ var ImportFidusFile = exports.ImportFidusFile = (function () {
     _createClass(ImportFidusFile, [{
         key: 'init',
         value: function init() {
+            // Check whether the file is a ZIP-file if check is not disabled.
             var that = this;
             if (this.check === false) {
                 this.initZipFileRead();
@@ -136,6 +137,7 @@ var ImportFidusFile = exports.ImportFidusFile = (function () {
     }, {
         key: 'initZipFileRead',
         value: function initZipFileRead() {
+            // Extract all the files that can be found in every fidus-file (not images)
             var that = this;
 
             zip.createReader(new zip.BlobReader(that.file), function (reader) {
@@ -228,6 +230,8 @@ var _json = require('../exporter/json');
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var ImportNative = exports.ImportNative = (function () {
+    /* Save document information into the database */
+
     function ImportNative(aDocument, aBibDB, anImageDB, entries, user, callback) {
         _classCallCheck(this, ImportNative);
 
@@ -537,8 +541,12 @@ var ImportNative = exports.ImportNative = (function () {
                                 $.addAlert('warning', warnings[i]);
                             }
                             _.each(response.key_translations, function (newKey, oldKey) {
-                                var newID = _.findWhere(response.bibs, { entry_key: newKey }).id,
-                                    oldID = _.findWhere(newBibEntries, { oldEntryKey: oldKey }).oldId;
+                                var newID = _.findWhere(response.bibs, {
+                                    entry_key: newKey
+                                }).id,
+                                    oldID = _.findWhere(newBibEntries, {
+                                    oldEntryKey: oldKey
+                                }).oldId;
                                 BibTranslationTable[oldID] = newID;
                             });
                             bibliographyHelpers.addBibList(response.bibs);

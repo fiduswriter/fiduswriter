@@ -401,7 +401,7 @@ var ModCollabDocChanges = exports.ModCollabDocChanges = (function () {
     return ModCollabDocChanges;
 })();
 
-},{"../schema":32,"prosemirror/dist/transform":121}],4:[function(require,module,exports){
+},{"../schema":32,"prosemirror/dist/transform":117}],4:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -668,7 +668,7 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
     return ModCommentInteractions;
 })();
 
-},{"prosemirror/dist/ui/update":131}],7:[function(require,module,exports){
+},{"prosemirror/dist/ui/update":127}],7:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1340,7 +1340,7 @@ function randomID() {
     return Math.floor(Math.random() * 0xffffffff);
 }
 
-},{"../schema":32,"prosemirror/dist/model":115,"prosemirror/dist/transform":121,"prosemirror/dist/ui/update":131,"prosemirror/dist/util/event":133}],10:[function(require,module,exports){
+},{"../schema":32,"prosemirror/dist/model":111,"prosemirror/dist/transform":117,"prosemirror/dist/ui/update":127,"prosemirror/dist/util/event":129}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1899,7 +1899,7 @@ var Editor = exports.Editor = (function () {
     return Editor;
 })();
 
-},{"../exporter/json":50,"./collab/mod":4,"./comments/mod":8,"./footnotes/mod":14,"./menus/mod":19,"./node-convert":31,"./schema":32,"./server-communications":33,"./settings/mod":35,"./tools/mod":37,"./update-ui":43,"prosemirror/dist/collab":86,"prosemirror/dist/edit/main":100,"prosemirror/dist/format":107,"prosemirror/dist/ui/update":131}],12:[function(require,module,exports){
+},{"../exporter/json":50,"./collab/mod":4,"./comments/mod":8,"./footnotes/mod":14,"./menus/mod":19,"./node-convert":31,"./schema":32,"./server-communications":33,"./settings/mod":35,"./tools/mod":37,"./update-ui":43,"prosemirror/dist/collab":82,"prosemirror/dist/edit/main":96,"prosemirror/dist/format":103,"prosemirror/dist/ui/update":127}],12:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2025,7 +2025,7 @@ var ModFootnoteEditor = exports.ModFootnoteEditor = (function () {
     return ModFootnoteEditor;
 })();
 
-},{"../schema":32,"prosemirror/dist/format":107,"prosemirror/dist/model":115,"prosemirror/dist/transform":121}],13:[function(require,module,exports){
+},{"../schema":32,"prosemirror/dist/format":103,"prosemirror/dist/model":111,"prosemirror/dist/transform":117}],13:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2244,7 +2244,7 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = (function () {
     return ModFootnoteMarkers;
 })();
 
-},{"../schema":32,"prosemirror/dist/format":107,"prosemirror/dist/model":115}],14:[function(require,module,exports){
+},{"../schema":32,"prosemirror/dist/format":103,"prosemirror/dist/model":111}],14:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2294,7 +2294,7 @@ var ModFootnotes = exports.ModFootnotes = (function () {
     return ModFootnotes;
 })();
 
-},{"../schema":32,"./editor":12,"./markers":13,"prosemirror/dist/collab":86,"prosemirror/dist/edit/main":100}],15:[function(require,module,exports){
+},{"../schema":32,"./editor":12,"./markers":13,"prosemirror/dist/collab":82,"prosemirror/dist/edit/main":96}],15:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2340,7 +2340,7 @@ var ModMenusActions = exports.ModMenusActions = (function () {
             var that = this;
             that.mod.editor.getUpdates(function () {
                 that.mod.editor.sendDocumentUpdate(function () {
-                    (0, _copy.savecopy)(that.mod.editor.doc, that.mod.editor);
+                    (0, _copy.savecopy)(that.mod.editor.doc, that.mod.editor, that.mod.editor.user, false);
                 });
             });
         }
@@ -2715,7 +2715,7 @@ var ModMenusKeyBindings = exports.ModMenusKeyBindings = (function () {
     return ModMenusKeyBindings;
 })();
 
-},{"prosemirror/dist/edit":98}],19:[function(require,module,exports){
+},{"prosemirror/dist/edit":94}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3317,7 +3317,7 @@ var bindFigure = exports.bindFigure = function bindFigure(editor) {
     });
 };
 
-},{"./templates":29,"katex":63}],25:[function(require,module,exports){
+},{"./templates":29,"katex":59}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4586,7 +4586,7 @@ var fidusFnSchema = exports.fidusFnSchema = new _model.Schema(_model.defaultSche
     comment: CommentMark
 }));
 
-},{"katex":63,"prosemirror/dist/model":115}],33:[function(require,module,exports){
+},{"katex":59,"prosemirror/dist/model":111}],33:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -5481,7 +5481,7 @@ function calculatePlaceHolderCss(pm, selectedElement) {
     }
 }
 
-},{"prosemirror/dist/model":115}],44:[function(require,module,exports){
+},{"prosemirror/dist/model":111}],44:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5491,30 +5491,63 @@ exports.savecopy = undefined;
 
 var _native = require("./native");
 
-var _getExtraData = require("../importer/get-extra-data");
+var _native2 = require("../importer/native");
 
-var savecopy = exports.savecopy = function savecopy(aDocument, editor) {
-    function importAsUser(aDocument, shrunkImageDB, shrunkBibDB, images) {
-        // switch to user's own ImageDB and BibDB:
+var afterCopy = function afterCopy(noErrors, returnValue, editor, callback) {
+    $.deactivateWait();
+    if (noErrors) {
+        var aDocument = returnValue.aDocument;
+        var aDocInfo = returnValue.aDocumentValues;
+        jQuery.addAlert('info', aDocument.title + gettext(' successfully copied.'));
         if (editor) {
-            editor.doc.owner = editor.user;
-            delete window.ImageDB;
-            delete window.BibDB;
+            if (editor.docInfo.rights === 'r') {
+                // We only had right access to the document, so the editing elements won't show. We therefore need to reload the page to get them.
+                window.location = '/document/' + aDocument.id + '/';
+            } else {
+                editor.doc = aDocument;
+                editor.docInfo = aDocInfo;
+                window.history.pushState("", "", "/document/" + editor.doc.id + "/");
+            }
         }
-        (0, _getExtraData.getDBs)(aDocument, shrunkBibDB, shrunkImageDB, images);
-    }
-    if (editor) {
-        (0, _native.exportNative)(aDocument, ImageDB, BibDB, importAsUser);
+        if (callback) {
+            callback(returnValue);
+        }
     } else {
-        bibliographyHelpers.getABibDB(aDocument.owner, function (aBibDB) {
-            usermediaHelpers.getAnImageDB(aDocument.owner, function (anImageDB) {
-                (0, _native.exportNative)(aDocument, anImageDB, aBibDB, importAsUser);
+        jQuery.addAlert('error', returnValue);
+    }
+};
+
+var importAsUser = function importAsUser(aDocument, shrunkImageDB, shrunkBibDB, images, editor, user, callback) {
+    // switch to user's own ImageDB and BibDB:
+    if (editor) {
+        editor.doc.owner = editor.user;
+        delete window.ImageDB;
+        delete window.BibDB;
+    }
+
+    new _native2.ImportNative(aDocument, shrunkBibDB, shrunkImageDB, images, user, function (noErrors, returnValue) {
+        afterCopy(noErrors, returnValue, editor, callback);
+    });
+};
+
+var savecopy = exports.savecopy = function savecopy(aDocument, editor, user, callback) {
+    if (editor) {
+        (0, _native.exportNative)(aDocument, ImageDB, BibDB, function (aDocument, shrunkImageDB, shrunkBibDB, images) {
+            importAsUser(aDocument, shrunkImageDB, shrunkBibDB, images, editor, user, callback);
+        });
+    } else {
+
+        bibliographyHelpers.getABibDB(aDocument.owner.id, function (aBibDB) {
+            usermediaHelpers.getAnImageDB(aDocument.owner.id, function (anImageDB) {
+                (0, _native.exportNative)(aDocument, anImageDB, aBibDB, function (aDocument, shrunkImageDB, shrunkBibDB, images) {
+                    importAsUser(aDocument, shrunkImageDB, shrunkBibDB, images, false, user, callback);
+                });
             });
         });
     }
 };
 
-},{"../importer/get-extra-data":58,"./native":52}],45:[function(require,module,exports){
+},{"../importer/native":57,"./native":52}],45:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6146,7 +6179,7 @@ var orderLinks = exports.orderLinks = function orderLinks(contentItems) {
     return contentItems;
 };
 
-},{"./epub-templates":46,"./html":49,"./json":50,"./tools":53,"./zip":56,"katex":63}],48:[function(require,module,exports){
+},{"./epub-templates":46,"./html":49,"./json":50,"./tools":53,"./zip":56,"katex":59}],48:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6405,7 +6438,7 @@ var replaceImgSrc = exports.replaceImgSrc = function replaceImgSrc(htmlString) {
     return htmlString;
 };
 
-},{"./html-templates":48,"./json":50,"./tools":53,"./zip":56,"katex":63}],50:[function(require,module,exports){
+},{"./html-templates":48,"./json":50,"./tools":53,"./zip":56,"katex":59}],50:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7249,468 +7282,404 @@ var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles,
 };
 
 },{"./download":45,"./upload":55}],57:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.importNative = exports.translateReferenceIds = undefined;
-
-var _processFile = require("./process-file");
-
-var _save = require("./save");
-
-var _json = require("../exporter/json");
-
-var translateReferenceIds = exports.translateReferenceIds = function translateReferenceIds(aDocument, BibTranslationTable, ImageTranslationTable) {
-    var contents = (0, _json.obj2Node)(aDocument.contents);
-    jQuery(contents).find('img').each(function () {
-        var translationEntry = _.findWhere(ImageTranslationTable, {
-            oldUrl: jQuery(this).attr('src')
-        });
-        if (translationEntry) {
-            jQuery(this).attr('src', translationEntry.newUrl);
-        }
-    });
-    jQuery(contents).find('figure').each(function () {
-        var translationEntry = _.findWhere(ImageTranslationTable, {
-            oldId: parseInt(jQuery(this).attr('data-image'))
-        });
-        if (translationEntry) {
-            jQuery(this).attr('data-image', translationEntry.newId);
-        }
-    });
-    jQuery(contents).find('.citation').each(function () {
-        var citekeys = jQuery(this).attr('data-bib-entry').split(',');
-        for (var i = 0; i < citekeys.length; i++) {
-            if (citekeys[i] in BibTranslationTable) {
-                citekeys[i] = BibTranslationTable[citekeys[i]];
-            }
-        }
-        jQuery(this).attr('data-bib-entry', citekeys.join(','));
-    });
-
-    aDocument.contents = (0, _json.node2Obj)(contents);
-
-    (0, _save.createNewDocument)(aDocument);
-};
-
-var importNative = exports.importNative = function importNative(aDocument, shrunkBibDB, shrunkImageDB, entries) {
-    var BibTranslationTable = {},
-        newBibEntries = [],
-        shrunkImageDBObject = {},
-        ImageTranslationTable = [],
-        newImageEntries = [],
-        simplifiedShrunkImageDB = [];
-
-    // Add the id to each object in the BibDB to be able to look it up when comparing to shrunkBibDB below
-    for (var key in BibDB) {
-        BibDB[key]['id'] = key;
-    }
-    for (var key in shrunkBibDB) {
-        //shrunkBibDB[key]['entry_type']=_.findWhere(BibEntryTypes,{name:shrunkBibDB[key]['bibtype']}).id
-        //delete shrunkBibDB[key].bibtype
-        var matchEntries = _.where(BibDB, shrunkBibDB[key]);
-
-        if (0 === matchEntries.length) {
-            //create new
-            newBibEntries.push({
-                oldId: key,
-                oldEntryKey: shrunkBibDB[key].entry_key,
-                entry: shrunkBibDB[key]
-            });
-        } else if (1 === matchEntries.length && parseInt(key) !== matchEntries[0].id) {
-            BibTranslationTable[parseInt(key)] = matchEntries[0].id;
-        } else if (1 < matchEntries.length) {
-            if (!_.findWhere(matchEntries, {
-                id: parseInt(key)
-            })) {
-                // There are several matches, and none of the matches have the same id as the key in shrunkBibDB.
-                // We now pick the first match.
-                // TODO: Figure out if this behavior is correct.
-                BibTranslationTable[parseInt(key)] = matchEntries[0].id;
-            }
-        }
-    }
-
-    // Remove the id values again
-    for (var key in BibDB) {
-        delete BibDB[key].id;
-    }
-
-    // We need to remove the pk from the entry in the shrunkImageDB so that we also get matches with entries with other pk values.
-    // We therefore convert to an associative array/object.
-    for (var key in shrunkImageDB) {
-        simplifiedShrunkImageDB.push(_.omit(shrunkImageDB[key], 'image', 'thumbnail', 'cats', 'added'));
-    }
-
-    for (var image in simplifiedShrunkImageDB) {
-        shrunkImageDBObject[simplifiedShrunkImageDB[image].pk] = simplifiedShrunkImageDB[image];
-        delete shrunkImageDBObject[simplifiedShrunkImageDB[image].pk].pk;
-    }
-
-    for (var key in shrunkImageDBObject) {
-        var matchEntries = _.where(ImageDB, shrunkImageDBObject[key]);
-        if (0 === matchEntries.length) {
-            //create new
-            var sIDBEntry = _.findWhere(shrunkImageDB, {
-                pk: parseInt(key)
-            });
-            newImageEntries.push({
-                oldId: parseInt(key),
-                oldUrl: sIDBEntry.image,
-                title: sIDBEntry.title,
-                file_type: sIDBEntry.file_type,
-                checksum: sIDBEntry.checksum
-            });
-        } else if (1 === matchEntries.length && parseInt(key) !== matchEntries[0].pk) {
-            ImageTranslationTable.push({
-                oldId: parseInt(key),
-                newId: matchEntries[0].pk,
-                oldUrl: _.findWhere(shrunkImageDB, {
-                    pk: parseInt(key)
-                }).image,
-                newUrl: matchEntries[0].image
-            });
-        } else if (1 < matchEntries.length) {
-            if (!_.findWhere(matchEntries, {
-                pk: parseInt(key)
-            })) {
-                // There are several matches, and none of the matches have the same id as the key in shrunkImageDB.
-                // We now pick the first match.
-                // TODO: Figure out if this behavior is correct.
-                ImageTranslationTable.push({
-                    oldId: key,
-                    newId: matchEntries[0].pk,
-                    oldUrl: _.findWhere(shrunkImageDB, {
-                        pk: parseInt(key)
-                    }).image,
-                    newUrl: matchEntries[0].image
-                });
-            }
-        }
-    }
-
-    if (newBibEntries.length !== 0 || newImageEntries.length !== 0) {
-        // We need to create new entries in the DB for images and/or bibliography items.
-        (0, _processFile.getImageData)(aDocument, BibTranslationTable, ImageTranslationTable, newBibEntries, newImageEntries, entries);
-    } else if (!jQuery.isEmptyObject(BibTranslationTable) || !jQuery.isEmptyObject(ImageTranslationTable)) {
-        // We need to change some reference numbers in the document contents
-        translateReferenceIds(aDocument, BibTranslationTable, ImageTranslationTable);
-    } else {
-        // We are good to go. All the used images and bibliography entries exist in the DB for this user with the same numbers.
-        // We can go ahead and create the new document entry in the bibliography without any changes.
-        (0, _save.createNewDocument)(aDocument);
-    }
-};
-
-},{"../exporter/json":50,"./process-file":59,"./save":60}],58:[function(require,module,exports){
 'use strict';
 
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.getDBs = undefined;
+exports.ImportNative = undefined;
 
-var _compareDBs = require('./compare-DBs');
+var _json = require('../exporter/json');
 
-var getDBs = exports.getDBs = function getDBs(aDocument, shrunkBibDB, shrunkImageDB, entries) {
-    // get BibDB and ImageDB if we don't have them already. Then invoke the native importer.
-    if ('undefined' === typeof BibDB) {
-        bibliographyHelpers.getBibDB(function () {
-            if ('undefined' === typeof ImageDB) {
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ImportNative = exports.ImportNative = (function () {
+    /* Save document information into the database */
+
+    function ImportNative(aDocument, aBibDB, anImageDB, entries, user, callback) {
+        _classCallCheck(this, ImportNative);
+
+        this.aDocument = aDocument;
+        this.aBibDB = aBibDB;
+        this.anImageDB = anImageDB;
+        this.entries = entries;
+        this.user = user;
+        this.callback = callback;
+        this.getDBs();
+    }
+
+    _createClass(ImportNative, [{
+        key: 'getDBs',
+        value: function getDBs() {
+            var that = this;
+            // get BibDB and ImageDB if we don't have them already. Then invoke the native importer.
+            if ('undefined' === typeof BibDB) {
+                bibliographyHelpers.getBibDB(function () {
+                    if ('undefined' === typeof ImageDB) {
+                        usermediaHelpers.getImageDB(function () {
+                            that.importNative();
+                        });
+                    } else {
+                        that.importNative();
+                    }
+                });
+            } else if ('undefined' === typeof ImageDB) {
                 usermediaHelpers.getImageDB(function () {
-                    (0, _compareDBs.importNative)(aDocument, shrunkBibDB, shrunkImageDB, entries);
+                    that.importNative();
                 });
             } else {
-                (0, _compareDBs.importNative)(aDocument, shrunkBibDB, shrunkImageDB, entries);
+                that.importNative();
             }
-        });
-    } else if ('undefined' === typeof ImageDB) {
-        usermediaHelpers.getImageDB(function () {
-            (0, _compareDBs.importNative)(aDocument, shrunkBibDB, shrunkImageDB, entries);
-        });
-    } else {
-        (0, _compareDBs.importNative)(aDocument, shrunkBibDB, shrunkImageDB, entries);
-    }
-};
-
-},{"./compare-DBs":57}],59:[function(require,module,exports){
-"use strict";
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.getImageData = exports.processFidusFile = undefined;
-
-var _getExtraData = require("./get-extra-data");
-
-var _sendExtraData = require("./send-extra-data");
-
-/** The current Fidus Writer filetype version. The importer will not import from
- * a different version and the exporter will include this number in all exports.
- */
-var FW_FILETYPE_VERSION = 1.2,
-    MIN_FW_FILETYPE_VERSION = 1.1,
-    MAX_FW_FILETYPE_VERSION = 1.2;
-
-var processFidusFile = exports.processFidusFile = function processFidusFile(textFiles, entries) {
-
-    var filetypeVersion = parseFloat(_.findWhere(textFiles, {
-        filename: 'filetype-version'
-    }).contents, 10),
-        mimeType = _.findWhere(textFiles, {
-        filename: 'mimetype'
-    }).contents;
-    if (mimeType === 'application/fidus+zip' && filetypeVersion >= MIN_FW_FILETYPE_VERSION && filetypeVersion <= MAX_FW_FILETYPE_VERSION) {
-        // This seems to be a valid fidus file with current version number.
-        var shrunkBibDB = JSON.parse(_.findWhere(textFiles, {
-            filename: 'bibliography.json'
-        }).contents);
-        var shrunkImageDB = JSON.parse(_.findWhere(textFiles, {
-            filename: 'images.json'
-        }).contents);
-        var aDocument = JSON.parse(_.findWhere(textFiles, {
-            filename: 'document.json'
-        }).contents);
-
-        (0, _getExtraData.getDBs)(aDocument, shrunkBibDB, shrunkImageDB, entries);
-    } else {
-        // The file is not a Fidus Writer file.
-        $.deactivateWait();
-        $.addAlert('error', gettext('The uploaded file does not appear to be of the version used on this server: ') + FW_FILETYPE_VERSION);
-        return;
-    }
-};
-
-var getImageData = exports.getImageData = function getImageData(aDocument, BibTranslationTable, ImageTranslationTable, newBibEntries, newImageEntries, entries) {
-    var counter = 0;
-
-    function getImageZipEntry() {
-        if (counter < newImageEntries.length) {
-            _.findWhere(entries, {
-                filename: newImageEntries[counter].oldUrl.split('/').pop()
-            }).getData(new zip.BlobWriter(newImageEntries[counter].file_type), function (file) {
-                newImageEntries[counter]['file'] = file;
-                counter++;
-                getImageZipEntry();
-            });
-        } else {
-            (0, _sendExtraData.sendNewImageAndBibEntries)(aDocument, BibTranslationTable, ImageTranslationTable, newBibEntries, newImageEntries);
         }
-    }
+    }, {
+        key: 'importNative',
+        value: function importNative() {
+            var that = this;
+            var BibTranslationTable = {},
+                newBibEntries = [],
+                shrunkImageDBObject = {},
+                ImageTranslationTable = [],
+                newImageEntries = [],
+                simplifiedShrunkImageDB = [];
 
-    function getImageUrlEntry() {
-        if (counter < newImageEntries.length) {
-            var getUrl = _.findWhere(entries, {
-                filename: newImageEntries[counter].oldUrl.split('/').pop()
-            }).url;
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', getUrl, true);
-            xhr.responseType = 'blob';
+            // Add the id to each object in the BibDB to be able to look it up when comparing to this.aBibDB below
+            for (var key in BibDB) {
+                BibDB[key]['id'] = key;
+            }
+            for (var key in this.aBibDB) {
+                //this.aBibDB[key]['entry_type']=_.findWhere(BibEntryTypes,{name:this.aBibDB[key]['bibtype']}).id
+                //delete this.aBibDB[key].bibtype
+                var matchEntries = _.where(BibDB, this.aBibDB[key]);
 
-            xhr.onload = function (e) {
-                if (this.status == 200) {
-                    // Note: .response instead of .responseText
-                    newImageEntries[counter]['file'] = new Blob([this.response], {
-                        type: newImageEntries[counter].file_type
+                if (0 === matchEntries.length) {
+                    //create new
+                    newBibEntries.push({
+                        oldId: key,
+                        oldEntryKey: this.aBibDB[key].entry_key,
+                        entry: this.aBibDB[key]
                     });
-                    counter++;
-                    getImageUrlEntry();
+                } else if (1 === matchEntries.length && parseInt(key) !== matchEntries[0].id) {
+                    BibTranslationTable[parseInt(key)] = matchEntries[0].id;
+                } else if (1 < matchEntries.length) {
+                    if (!_.findWhere(matchEntries, {
+                        id: parseInt(key)
+                    })) {
+                        // There are several matches, and none of the matches have the same id as the key in this.aBibDB.
+                        // We now pick the first match.
+                        // TODO: Figure out if this behavior is correct.
+                        BibTranslationTable[parseInt(key)] = matchEntries[0].id;
+                    }
                 }
-            };
+            }
 
-            xhr.send();
-        } else {
-            (0, _sendExtraData.sendNewImageAndBibEntries)(aDocument, BibTranslationTable, ImageTranslationTable, newBibEntries, newImageEntries);
-        }
-    }
-    if (entries.length > 0) {
-        if (entries[0].hasOwnProperty('url')) {
-            getImageUrlEntry();
-        } else {
-            getImageZipEntry();
-        }
-    }
-};
+            // Remove the id values again
+            for (var key in BibDB) {
+                delete BibDB[key].id;
+            }
 
-},{"./get-extra-data":58,"./send-extra-data":61}],60:[function(require,module,exports){
-'use strict';
+            // We need to remove the pk from the entry in the this.anImageDB so that we also get matches with this.entries with other pk values.
+            // We therefore convert to an associative array/object.
+            for (var key in this.anImageDB) {
+                simplifiedShrunkImageDB.push(_.omit(this.anImageDB[key], 'image', 'thumbnail', 'cats', 'added'));
+            }
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-var createNewDocument = exports.createNewDocument = function createNewDocument(aDocument) {
-    var postData = {
-        title: aDocument.title,
-        contents: JSON.stringify(aDocument.contents),
-        settings: JSON.stringify(aDocument.settings),
-        metadata: JSON.stringify(aDocument.metadata)
-    };
-    jQuery.ajax({
-        url: '/document/import/',
-        data: postData,
-        type: 'POST',
-        dataType: 'json',
-        success: function success(data, textStatus, jqXHR) {
-            jQuery.addAlert('info', aDocument.title + gettext(' successfully imported.'));
-            var aDocumentValues = {
-                last_diffs: [],
-                is_owner: true,
-                rights: 'w',
-                changed: false,
-                titleChanged: false
-            };
-            aDocument.id = data['document_id'];
-            if (window.theEditor) {
-                aDocument.owner = {
-                    id: theEditor.user.id,
-                    name: theEditor.user.name,
-                    avatar: theEditor.user.avatar
-                };
+            for (var image in simplifiedShrunkImageDB) {
+                shrunkImageDBObject[simplifiedShrunkImageDB[image].pk] = simplifiedShrunkImageDB[image];
+                delete shrunkImageDBObject[simplifiedShrunkImageDB[image].pk].pk;
+            }
+
+            for (var key in shrunkImageDBObject) {
+                var matchEntries = _.where(ImageDB, shrunkImageDBObject[key]);
+                if (0 === matchEntries.length) {
+                    //create new
+                    var sIDBEntry = _.findWhere(this.anImageDB, {
+                        pk: parseInt(key)
+                    });
+                    newImageEntries.push({
+                        oldId: parseInt(key),
+                        oldUrl: sIDBEntry.image,
+                        title: sIDBEntry.title,
+                        file_type: sIDBEntry.file_type,
+                        checksum: sIDBEntry.checksum
+                    });
+                } else if (1 === matchEntries.length && parseInt(key) !== matchEntries[0].pk) {
+                    ImageTranslationTable.push({
+                        oldId: parseInt(key),
+                        newId: matchEntries[0].pk,
+                        oldUrl: _.findWhere(this.anImageDB, {
+                            pk: parseInt(key)
+                        }).image,
+                        newUrl: matchEntries[0].image
+                    });
+                } else if (1 < matchEntries.length) {
+                    if (!_.findWhere(matchEntries, {
+                        pk: parseInt(key)
+                    })) {
+                        // There are several matches, and none of the matches have the same id as the key in this.anImageDB.
+                        // We now pick the first match.
+                        // TODO: Figure out if this behavior is correct.
+                        ImageTranslationTable.push({
+                            oldId: key,
+                            newId: matchEntries[0].pk,
+                            oldUrl: _.findWhere(this.anImageDB, {
+                                pk: parseInt(key)
+                            }).image,
+                            newUrl: matchEntries[0].image
+                        });
+                    }
+                }
+            }
+
+            if (newBibEntries.length !== 0 || newImageEntries.length !== 0) {
+                // We need to create new entries in the DB for images and/or bibliography items.
+                getImageData(that.aDocument, BibTranslationTable, ImageTranslationTable, newBibEntries, newImageEntries, this.entries);
+            } else if (!jQuery.isEmptyObject(BibTranslationTable) || !jQuery.isEmptyObject(ImageTranslationTable)) {
+                // We need to change some reference numbers in the document contents
+                translateReferenceIds(BibTranslationTable, ImageTranslationTable);
             } else {
-                aDocument.owner = {
-                    id: theUser.id,
-                    name: theUser.name,
-                    avatar: theUser.avatar
-                };
+                // We are good to go. All the used images and bibliography entries exist in the DB for this user with the same numbers.
+                // We can go ahead and create the new document entry in the bibliography without any changes.
+                this.createNewDocument();
             }
-            aDocument.version = 0;
-            aDocument.comment_version = 0;
-            aDocument.added = data['added'];
-            aDocument.updated = data['updated'];
-            aDocument.revisions = [];
-            if (typeof theDocumentList !== 'undefined') {
-                theDocumentList.push(aDocument);
-                documentHelpers.stopDocumentTable();
-                jQuery('#document-table tbody').append(tmp_documents_list_item({
-                    aDocument: aDocument
-                }));
-                documentHelpers.startDocumentTable();
-            } else if (typeof theEditor !== 'undefined') {
-                if (theEditor.docInfo.rights === 'r') {
-                    // We only had right access to the document, so the editing elements won't show. We therefore need to reload the page to get them.
-                    window.location = '/document/' + aDocument.id + '/';
+        }
+    }, {
+        key: 'getImageData',
+        value: function getImageData(BibTranslationTable, ImageTranslationTable, newBibEntries, newImageEntries, entries) {
+            var that = this,
+                counter = 0;
+
+            function getImageZipEntry() {
+                if (counter < newImageEntries.length) {
+                    _.findWhere(entries, {
+                        filename: newImageEntries[counter].oldUrl.split('/').pop()
+                    }).getData(new zip.BlobWriter(newImageEntries[counter].file_type), function (file) {
+                        newImageEntries[counter]['file'] = file;
+                        counter++;
+                        getImageZipEntry();
+                    });
                 } else {
-                    window.theEditor.doc = aDocument;
-                    window.theEditor.docInfo = aDocumentValues;
-                    window.history.pushState("", "", "/document/" + theEditor.doc.id + "/");
+                    that.sendNewImageAndBibEntries(BibTranslationTable, ImageTranslationTable, newBibEntries, newImageEntries);
                 }
             }
-        },
-        error: function error() {
-            jQuery.addAlert('error', gettext('Could not save ') + aDocument.title);
-        },
-        complete: function complete() {
-            jQuery.deactivateWait();
-        }
-    });
-};
 
-},{}],61:[function(require,module,exports){
-'use strict';
+            function getImageUrlEntry() {
+                if (counter < newImageEntries.length) {
+                    var getUrl = _.findWhere(entries, {
+                        filename: newImageEntries[counter].oldUrl.split('/').pop()
+                    }).url;
+                    var xhr = new XMLHttpRequest();
+                    xhr.open('GET', getUrl, true);
+                    xhr.responseType = 'blob';
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.sendNewImageAndBibEntries = undefined;
+                    xhr.onload = function (e) {
+                        if (this.status == 200) {
+                            // Note: .response instead of .responseText
+                            newImageEntries[counter]['file'] = new Blob([this.response], {
+                                type: newImageEntries[counter].file_type
+                            });
+                            counter++;
+                            getImageUrlEntry();
+                        }
+                    };
 
-var _compareDBs = require('./compare-DBs');
-
-var sendNewImageAndBibEntries = exports.sendNewImageAndBibEntries = function sendNewImageAndBibEntries(aDocument, BibTranslationTable, ImageTranslationTable, newBibEntries, newImageEntries) {
-    var counter = 0;
-
-    function sendImage() {
-        if (counter < newImageEntries.length) {
-            var formValues = new FormData();
-            formValues.append('id', 0);
-            formValues.append('title', newImageEntries[counter].title);
-            formValues.append('imageCats', '');
-            formValues.append('image', newImageEntries[counter].file, newImageEntries[counter].oldUrl.split('/').pop());
-            formValues.append('checksum', newImageEntries[counter].checksum), jQuery.ajax({
-                url: '/usermedia/save/',
-                data: formValues,
-                type: 'POST',
-                dataType: 'json',
-                success: function success(response, textStatus, jqXHR) {
-                    ImageDB[response.values.pk] = response.values;
-                    var imageTranslation = {};
-                    imageTranslation.oldUrl = newImageEntries[counter].oldUrl;
-                    imageTranslation.oldId = newImageEntries[counter].oldId;
-                    imageTranslation.newUrl = response.values.image;
-                    imageTranslation.newId = response.values.pk;
-                    ImageTranslationTable.push(imageTranslation);
-                    counter++;
-                    sendImage();
-                },
-                error: function error() {
-                    jQuery.addAlert('error', gettext('Could not save ') + newImageEntries[counter].title);
-                },
-                complete: function complete() {},
-                cache: false,
-                contentType: false,
-                processData: false
-            });
-        } else {
-            sendBibItems();
-        }
-    }
-
-    function sendBibItems() {
-
-        if (newBibEntries.length > 0) {
-            var bibEntries = _.pluck(newBibEntries, 'entry'),
-                bibDict = {};
-
-            for (var i = 0; i < bibEntries.length; i++) {
-                bibEntries[i]['bibtype'] = BibEntryTypes[bibEntries[i]['entry_type']].name;
-                bibDict[bibEntries[i]['entry_key']] = bibEntries[i];
-                delete bibDict[bibEntries[i]['entry_key']].entry_type;
-
-                delete bibDict[bibEntries[i]['entry_key']].entry_cat;
-                delete bibDict[bibEntries[i]['entry_key']].entry_key;
+                    xhr.send();
+                } else {
+                    that.sendNewImageAndBibEntries(BibTranslationTable, ImageTranslationTable, newBibEntries, newImageEntries);
+                }
             }
+            if (entries.length > 0) {
+                if (entries[0].hasOwnProperty('url')) {
+                    getImageUrlEntry();
+                } else {
+                    getImageZipEntry();
+                }
+            }
+        }
+    }, {
+        key: 'translateReferenceIds',
+        value: function translateReferenceIds(BibTranslationTable, ImageTranslationTable) {
+            var contents = (0, _json.obj2Node)(this.aDocument.contents);
+            jQuery(contents).find('img').each(function () {
+                var translationEntry = _.findWhere(ImageTranslationTable, {
+                    oldUrl: jQuery(this).attr('src')
+                });
+                if (translationEntry) {
+                    jQuery(this).attr('src', translationEntry.newUrl);
+                }
+            });
+            jQuery(contents).find('figure').each(function () {
+                var translationEntry = _.findWhere(ImageTranslationTable, {
+                    oldId: parseInt(jQuery(this).attr('data-image'))
+                });
+                if (translationEntry) {
+                    jQuery(this).attr('data-image', translationEntry.newId);
+                }
+            });
+            jQuery(contents).find('.citation').each(function () {
+                var citekeys = jQuery(this).attr('data-bib-entry').split(',');
+                for (var i = 0; i < citekeys.length; i++) {
+                    if (citekeys[i] in BibTranslationTable) {
+                        citekeys[i] = BibTranslationTable[citekeys[i]];
+                    }
+                }
+                jQuery(this).attr('data-bib-entry', citekeys.join(','));
+            });
+
+            this.aDocument.contents = (0, _json.node2Obj)(contents);
+
+            this.createNewDocument();
+        }
+    }, {
+        key: 'sendNewImageAndBibEntries',
+        value: function sendNewImageAndBibEntries(BibTranslationTable, ImageTranslationTable, newBibEntries, newImageEntries) {
+            var that = this,
+                counter = 0;
+
+            function sendImage() {
+                if (counter < newImageEntries.length) {
+                    var formValues = new FormData();
+                    formValues.append('id', 0);
+                    formValues.append('title', newImageEntries[counter].title);
+                    formValues.append('imageCats', '');
+                    formValues.append('image', newImageEntries[counter].file, newImageEntries[counter].oldUrl.split('/').pop());
+                    formValues.append('checksum', newImageEntries[counter].checksum), jQuery.ajax({
+                        url: '/usermedia/save/',
+                        data: formValues,
+                        type: 'POST',
+                        dataType: 'json',
+                        success: function success(response, textStatus, jqXHR) {
+                            ImageDB[response.values.pk] = response.values;
+                            var imageTranslation = {};
+                            imageTranslation.oldUrl = newImageEntries[counter].oldUrl;
+                            imageTranslation.oldId = newImageEntries[counter].oldId;
+                            imageTranslation.newUrl = response.values.image;
+                            imageTranslation.newId = response.values.pk;
+                            ImageTranslationTable.push(imageTranslation);
+                            counter++;
+                            sendImage();
+                        },
+                        error: function error() {
+                            jQuery.addAlert('error', gettext('Could not save ') + newImageEntries[counter].title);
+                        },
+                        complete: function complete() {},
+                        cache: false,
+                        contentType: false,
+                        processData: false
+                    });
+                } else {
+                    sendBibItems();
+                }
+            }
+
+            function sendBibItems() {
+
+                if (newBibEntries.length > 0) {
+                    var bibEntries = _.pluck(newBibEntries, 'entry'),
+                        bibDict = {};
+
+                    for (var i = 0; i < bibEntries.length; i++) {
+                        bibEntries[i]['bibtype'] = BibEntryTypes[bibEntries[i]['entry_type']].name;
+                        bibDict[bibEntries[i]['entry_key']] = bibEntries[i];
+                        delete bibDict[bibEntries[i]['entry_key']].entry_type;
+
+                        delete bibDict[bibEntries[i]['entry_key']].entry_cat;
+                        delete bibDict[bibEntries[i]['entry_key']].entry_key;
+                    }
+                    jQuery.ajax({
+                        url: '/bibliography/import_bibtex/',
+                        data: {
+                            bibs: JSON.stringify(bibDict)
+                        },
+                        type: 'POST',
+                        dataType: 'json',
+                        success: function success(response, textStatus, jqXHR) {
+                            var errors = response.errors,
+                                warnings = response.warning,
+                                len = errors.length;
+
+                            for (var i = 0; i < len; i++) {
+                                $.addAlert('error', errors[i]);
+                            }
+                            len = warnings.length;
+                            for (var i = 0; i < len; i++) {
+                                $.addAlert('warning', warnings[i]);
+                            }
+                            _.each(response.key_translations, function (newKey, oldKey) {
+                                var newID = _.findWhere(response.bibs, {
+                                    entry_key: newKey
+                                }).id,
+                                    oldID = _.findWhere(newBibEntries, {
+                                    oldEntryKey: oldKey
+                                }).oldId;
+                                BibTranslationTable[oldID] = newID;
+                            });
+                            bibliographyHelpers.addBibList(response.bibs);
+                            that.translateReferenceIds(BibTranslationTable, ImageTranslationTable);
+                        },
+                        error: function error() {
+                            console.log(jqXHR.responseText);
+                        },
+                        complete: function complete() {}
+                    });
+                } else {
+                    that.translateReferenceIds(BibTranslationTable, ImageTranslationTable);
+                }
+            }
+
+            sendImage();
+        }
+    }, {
+        key: 'createNewDocument',
+        value: function createNewDocument() {
+            var that = this;
+            var postData = {
+                title: this.aDocument.title,
+                contents: JSON.stringify(this.aDocument.contents),
+                settings: JSON.stringify(this.aDocument.settings),
+                metadata: JSON.stringify(this.aDocument.metadata)
+            };
             jQuery.ajax({
-                url: '/bibliography/import_bibtex/',
-                data: {
-                    bibs: JSON.stringify(bibDict)
-                },
+                url: '/document/import/',
+                data: postData,
                 type: 'POST',
                 dataType: 'json',
-                success: function success(response, textStatus, jqXHR) {
-                    var errors = response.errors,
-                        warnings = response.warning,
-                        len = errors.length;
-
-                    for (var i = 0; i < len; i++) {
-                        $.addAlert('error', errors[i]);
-                    }
-                    len = warnings.length;
-                    for (var i = 0; i < len; i++) {
-                        $.addAlert('warning', warnings[i]);
-                    }
-                    _.each(response.key_translations, function (newKey, oldKey) {
-                        var newID = _.findWhere(response.bibs, { entry_key: newKey }).id,
-                            oldID = _.findWhere(newBibEntries, { oldEntryKey: oldKey }).oldId;
-                        BibTranslationTable[oldID] = newID;
+                success: function success(data, textStatus, jqXHR) {
+                    var aDocumentValues = {
+                        last_diffs: [],
+                        is_owner: true,
+                        rights: 'w',
+                        changed: false,
+                        titleChanged: false
+                    };
+                    that.aDocument.owner = {
+                        id: that.user.id,
+                        name: that.user.name,
+                        avatar: that.user.avatar
+                    };
+                    that.aDocument.id = data['document_id'];
+                    that.aDocument.version = 0;
+                    that.aDocument.comment_version = 0;
+                    that.aDocument.added = data['added'];
+                    that.aDocument.updated = data['updated'];
+                    that.aDocument.revisions = [];
+                    return that.callback(true, {
+                        aDocument: that.aDocument,
+                        aDocumentValues: aDocumentValues
                     });
-                    bibliographyHelpers.addBibList(response.bibs);
-                    (0, _compareDBs.translateReferenceIds)(aDocument, BibTranslationTable, ImageTranslationTable);
                 },
                 error: function error() {
-                    console.log(jqXHR.responseText);
-                },
-                complete: function complete() {}
+                    that.callback(false, gettext('Could not save ') + that.aDocument.title);
+                }
             });
-        } else {
-            (0, _compareDBs.translateReferenceIds)(aDocument, BibTranslationTable, ImageTranslationTable);
         }
-    }
+    }]);
 
-    sendImage();
-};
+    return ImportNative;
+})();
 
-},{"./compare-DBs":57}],62:[function(require,module,exports){
+},{"../exporter/json":50}],58:[function(require,module,exports){
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
     module.exports = mod()
@@ -7882,7 +7851,7 @@ var sendNewImageAndBibEntries = exports.sendNewImageAndBibEntries = function sen
   return Keymap
 })
 
-},{}],63:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 /**
  * This is the main entry point for KaTeX. Here, we expose functions for
  * rendering expressions either to DOM nodes or to markup strings.
@@ -7957,7 +7926,7 @@ module.exports = {
     ParseError: ParseError
 };
 
-},{"./src/ParseError":66,"./src/Settings":68,"./src/buildTree":73,"./src/parseTree":82,"./src/utils":84}],64:[function(require,module,exports){
+},{"./src/ParseError":62,"./src/Settings":64,"./src/buildTree":69,"./src/parseTree":78,"./src/utils":80}],60:[function(require,module,exports){
 /**
  * The Lexer class handles tokenizing the input in various ways. Since our
  * parser expects us to be able to backtrack, the lexer allows lexing from any
@@ -8153,7 +8122,7 @@ Lexer.prototype.lex = function(pos, mode) {
 
 module.exports = Lexer;
 
-},{"./ParseError":66,"match-at":85}],65:[function(require,module,exports){
+},{"./ParseError":62,"match-at":81}],61:[function(require,module,exports){
 /**
  * This file contains information about the options that the Parser carries
  * around with it while parsing. Data is held in an `Options` object, and when
@@ -8344,7 +8313,7 @@ Options.prototype.getColor = function() {
 
 module.exports = Options;
 
-},{}],66:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 /**
  * This is the ParseError class, which is the main error thrown by KaTeX
  * functions when something has gone wrong. This is used to distinguish internal
@@ -8386,7 +8355,7 @@ ParseError.prototype.__proto__ = Error.prototype;
 
 module.exports = ParseError;
 
-},{}],67:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 var functions = require("./functions");
 var environments = require("./environments");
 var Lexer = require("./Lexer");
@@ -9108,7 +9077,7 @@ Parser.prototype.ParseNode = ParseNode;
 
 module.exports = Parser;
 
-},{"./Lexer":64,"./ParseError":66,"./environments":76,"./functions":79,"./parseData":81,"./symbols":83,"./utils":84}],68:[function(require,module,exports){
+},{"./Lexer":60,"./ParseError":62,"./environments":72,"./functions":75,"./parseData":77,"./symbols":79,"./utils":80}],64:[function(require,module,exports){
 /**
  * This is a module for storing settings passed into KaTeX. It correctly handles
  * default settings.
@@ -9138,7 +9107,7 @@ function Settings(options) {
 
 module.exports = Settings;
 
-},{}],69:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 /**
  * This file contains information and classes for the various kinds of styles
  * used in TeX. It provides a generic `Style` class, which holds information
@@ -9266,7 +9235,7 @@ module.exports = {
     SCRIPTSCRIPT: styles[SS]
 };
 
-},{}],70:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 /**
  * This module contains general functions that can be used for building
  * different kinds of domTree nodes in a consistent manner.
@@ -9715,7 +9684,7 @@ module.exports = {
     spacingFunctions: spacingFunctions
 };
 
-},{"./domTree":75,"./fontMetrics":77,"./symbols":83,"./utils":84}],71:[function(require,module,exports){
+},{"./domTree":71,"./fontMetrics":73,"./symbols":79,"./utils":80}],67:[function(require,module,exports){
 /**
  * This file does the main work of building a domTree structure from a parse
  * tree. The entry point is the `buildHTML` function, which takes a parse tree.
@@ -11079,7 +11048,7 @@ var buildHTML = function(tree, options) {
 
 module.exports = buildHTML;
 
-},{"./ParseError":66,"./Style":69,"./buildCommon":70,"./delimiter":74,"./domTree":75,"./fontMetrics":77,"./utils":84}],72:[function(require,module,exports){
+},{"./ParseError":62,"./Style":65,"./buildCommon":66,"./delimiter":70,"./domTree":71,"./fontMetrics":73,"./utils":80}],68:[function(require,module,exports){
 /**
  * This file converts a parse tree into a cooresponding MathML tree. The main
  * entry point is the `buildMathML` function, which takes a parse tree from the
@@ -11600,7 +11569,7 @@ var buildMathML = function(tree, texExpression, options) {
 
 module.exports = buildMathML;
 
-},{"./ParseError":66,"./buildCommon":70,"./fontMetrics":77,"./mathMLTree":80,"./symbols":83,"./utils":84}],73:[function(require,module,exports){
+},{"./ParseError":62,"./buildCommon":66,"./fontMetrics":73,"./mathMLTree":76,"./symbols":79,"./utils":80}],69:[function(require,module,exports){
 var buildHTML = require("./buildHTML");
 var buildMathML = require("./buildMathML");
 var buildCommon = require("./buildCommon");
@@ -11642,7 +11611,7 @@ var buildTree = function(tree, expression, settings) {
 
 module.exports = buildTree;
 
-},{"./Options":65,"./Settings":68,"./Style":69,"./buildCommon":70,"./buildHTML":71,"./buildMathML":72}],74:[function(require,module,exports){
+},{"./Options":61,"./Settings":64,"./Style":65,"./buildCommon":66,"./buildHTML":67,"./buildMathML":68}],70:[function(require,module,exports){
 /**
  * This file deals with creating delimiters of various sizes. The TeXbook
  * discusses these routines on page 441-442, in the "Another subroutine sets box
@@ -12183,7 +12152,7 @@ module.exports = {
     leftRightDelim: makeLeftRightDelim
 };
 
-},{"./ParseError":66,"./Style":69,"./buildCommon":70,"./fontMetrics":77,"./symbols":83,"./utils":84}],75:[function(require,module,exports){
+},{"./ParseError":62,"./Style":65,"./buildCommon":66,"./fontMetrics":73,"./symbols":79,"./utils":80}],71:[function(require,module,exports){
 /**
  * These objects store the data about the DOM nodes we create, as well as some
  * extra data. They can then be transformed into real DOM nodes with the
@@ -12454,7 +12423,7 @@ module.exports = {
     symbolNode: symbolNode
 };
 
-},{"./utils":84}],76:[function(require,module,exports){
+},{"./utils":80}],72:[function(require,module,exports){
 var fontMetrics = require("./fontMetrics");
 var parseData = require("./parseData");
 var ParseError = require("./ParseError");
@@ -12634,7 +12603,7 @@ module.exports = (function() {
     return exports;
 })();
 
-},{"./ParseError":66,"./fontMetrics":77,"./parseData":81}],77:[function(require,module,exports){
+},{"./ParseError":62,"./fontMetrics":73,"./parseData":77}],73:[function(require,module,exports){
 /* jshint unused:false */
 
 var Style = require("./Style");
@@ -12771,7 +12740,7 @@ module.exports = {
     getCharacterMetrics: getCharacterMetrics
 };
 
-},{"./Style":69,"./fontMetricsData":78}],78:[function(require,module,exports){
+},{"./Style":65,"./fontMetricsData":74}],74:[function(require,module,exports){
 module.exports = {
 "AMS-Regular": {
   "65": {"depth": 0.0, "height": 0.68889, "italic": 0.0, "skew": 0.0},
@@ -14524,7 +14493,7 @@ module.exports = {
   "8242": {"depth": 0.0, "height": 0.61111, "italic": 0.0, "skew": 0.0}
 }};
 
-},{}],79:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 var utils = require("./utils");
 var ParseError = require("./ParseError");
 
@@ -15155,7 +15124,7 @@ module.exports = {
     funcs: functions
 };
 
-},{"./ParseError":66,"./utils":84}],80:[function(require,module,exports){
+},{"./ParseError":62,"./utils":80}],76:[function(require,module,exports){
 /**
  * These objects store data about MathML nodes. This is the MathML equivalent
  * of the types in domTree.js. Since MathML handles its own rendering, and
@@ -15259,7 +15228,7 @@ module.exports = {
     TextNode: TextNode
 };
 
-},{"./utils":84}],81:[function(require,module,exports){
+},{"./utils":80}],77:[function(require,module,exports){
 /**
  * The resulting parse tree nodes of the parse tree.
  */
@@ -15284,7 +15253,7 @@ module.exports = {
 };
 
 
-},{}],82:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 /**
  * Provides a single function for parsing an expression using a Parser
  * TODO(emily): Remove this
@@ -15303,7 +15272,7 @@ var parseTree = function(toParse, settings) {
 
 module.exports = parseTree;
 
-},{"./Parser":67}],83:[function(require,module,exports){
+},{"./Parser":63}],79:[function(require,module,exports){
 /**
  * This file holds a list of all no-argument functions and single-character
  * symbols (like 'a' or ';').
@@ -17890,7 +17859,7 @@ for (var i = 0; i < letters.length; i++) {
 
 module.exports = symbols;
 
-},{}],84:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 /**
  * This file contains a list of utility functions which are useful in other
  * files.
@@ -17997,7 +17966,7 @@ module.exports = {
     clearNode: clearNode
 };
 
-},{}],85:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 /** @flow */
 
 "use strict";
@@ -18040,7 +18009,7 @@ function matchAt(re, str, pos) {
 }
 
 module.exports = matchAt;
-},{}],86:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -18218,7 +18187,7 @@ var Collab = function () {
 }();
 
 (0, _event.eventMixin)(Collab);
-},{"../edit":98,"../transform":121,"../util/error":132,"../util/event":133,"./rebase":87}],87:[function(require,module,exports){
+},{"../edit":94,"../transform":117,"../util/error":128,"../util/event":129,"./rebase":83}],83:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -18246,7 +18215,7 @@ function rebaseSteps(doc, forward, steps, maps) {
   }
   return { doc: transform.doc, transform: transform, mapping: remap, positions: positions };
 }
-},{"../transform":121}],88:[function(require,module,exports){
+},{"../transform":117}],84:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -18325,7 +18294,7 @@ function ensureCSSAdded() {
     document.head.insertBefore(cssNode, document.head.firstChild);
   }
 }
-},{}],89:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19064,7 +19033,7 @@ baseCommands.redo = {
   },
   keys: ["Mod-Y", "Shift-Mod-Z"]
 };
-},{"../model":115,"../transform":121,"../util/error":132,"./char":91,"./dompos":95,"./selection":104}],90:[function(require,module,exports){
+},{"../model":111,"../transform":117,"../util/error":128,"./char":87,"./dompos":91,"./selection":100}],86:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19134,7 +19103,7 @@ var keys = {
 if (_dom.browser.mac) keys["Ctrl-F"] = keys["Ctrl-B"] = keys["Ctrl-P"] = keys["Ctrl-N"] = keys["Alt-F"] = keys["Alt-B"] = keys["Ctrl-A"] = keys["Ctrl-E"] = keys["Ctrl-V"] = keys["goPageUp"] = ensureSelection;
 
 var captureKeys = exports.captureKeys = new _browserkeymap2.default(keys);
-},{"../dom":88,"./dompos":95,"./selection":104,"browserkeymap":62}],91:[function(require,module,exports){
+},{"../dom":84,"./dompos":91,"./selection":100,"browserkeymap":58}],87:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19167,7 +19136,7 @@ function charCategory(ch) {
 function isExtendingChar(ch) {
   return ch.charCodeAt(0) >= 768 && extendingChar.test(ch);
 }
-},{}],92:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19776,13 +19745,13 @@ _model.NodeType.derivableCommands.insert = function (conf) {
     params: deriveParams(this, conf.params)
   };
 };
-},{"../dom":88,"../model":115,"../transform":121,"../util/error":132,"../util/obj":135,"../util/sortedinsert":136,"./base_commands":89,"browserkeymap":62}],93:[function(require,module,exports){
+},{"../dom":84,"../model":111,"../transform":117,"../util/error":128,"../util/obj":131,"../util/sortedinsert":132,"./base_commands":85,"browserkeymap":58}],89:[function(require,module,exports){
 "use strict";
 
 var _dom = require("../dom");
 
 (0, _dom.insertCSS)("\n\n.ProseMirror {\n  border: 1px solid silver;\n  position: relative;\n}\n\n.ProseMirror-content {\n  padding: 4px 8px 4px 14px;\n  white-space: pre-wrap;\n  line-height: 1.2;\n}\n\n.ProseMirror-drop-target {\n  position: absolute;\n  width: 1px;\n  background: #666;\n  display: none;\n}\n\n.ProseMirror-content ul.tight p, .ProseMirror-content ol.tight p {\n  margin: 0;\n}\n\n.ProseMirror-content ul, .ProseMirror-content ol {\n  padding-left: 30px;\n  cursor: default;\n}\n\n.ProseMirror-content blockquote {\n  padding-left: 1em;\n  border-left: 3px solid #eee;\n  margin-left: 0; margin-right: 0;\n}\n\n.ProseMirror-content pre {\n  white-space: pre-wrap;\n}\n\n.ProseMirror-selectednode {\n  outline: 2px solid #8cf;\n}\n\n.ProseMirror-nodeselection *::selection { background: transparent; }\n.ProseMirror-nodeselection *::-moz-selection { background: transparent; }\n\n.ProseMirror-content p:first-child,\n.ProseMirror-content h1:first-child,\n.ProseMirror-content h2:first-child,\n.ProseMirror-content h3:first-child,\n.ProseMirror-content h4:first-child,\n.ProseMirror-content h5:first-child,\n.ProseMirror-content h6:first-child {\n  margin-top: .3em;\n}\n\n/* Add space around the hr to make clicking it easier */\n\n.ProseMirror-content hr {\n  position: relative;\n  height: 6px;\n  border: none;\n}\n\n.ProseMirror-content hr:after {\n  content: \"\";\n  position: absolute;\n  left: 10px;\n  right: 10px;\n  top: 2px;\n  border-top: 2px solid silver;\n}\n\n.ProseMirror-content img {\n  cursor: default;\n}\n\n/* Make sure li selections wrap around markers */\n\n.ProseMirror-content li {\n  position: relative;\n  pointer-events: none; /* Don't do weird stuff with marker clicks */\n}\n.ProseMirror-content li > * {\n  pointer-events: auto;\n}\n\nli.ProseMirror-selectednode {\n  outline: none;\n}\n\nli.ProseMirror-selectednode:after {\n  content: \"\";\n  position: absolute;\n  left: -32px;\n  right: -2px; top: -2px; bottom: -2px;\n  border: 2px solid #8cf;\n  pointer-events: none;\n}\n\n");
-},{"../dom":88}],94:[function(require,module,exports){
+},{"../dom":84}],90:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20005,7 +19974,7 @@ function scanText(start, end) {
     cur = cur.firstChild || nodeAfter(cur);
   }
 }
-},{"../format":107,"../model":115,"../transform/tree":129,"./dompos":95,"./selection":104}],95:[function(require,module,exports){
+},{"../format":103,"../model":111,"../transform/tree":125,"./dompos":91,"./selection":100}],91:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20387,7 +20356,7 @@ function handleNodeClick(pm, type, event, direct) {
     }
   }
 }
-},{"../dom":88,"../model":115,"../util/error":132}],96:[function(require,module,exports){
+},{"../dom":84,"../model":111,"../util/error":128}],92:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20554,7 +20523,7 @@ function redraw(pm, dirty, doc, prev) {
   }
   scan(pm.content, doc, prev);
 }
-},{"../dom":88,"../format":107,"../model":115,"./dompos":95,"./main":100}],97:[function(require,module,exports){
+},{"../dom":84,"../format":103,"../model":111,"./dompos":91,"./main":96}],93:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -21206,7 +21175,7 @@ var History = exports.History = function () {
 
   return History;
 }();
-},{"../model":115,"../transform":121}],98:[function(require,module,exports){
+},{"../model":111,"../transform":117}],94:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -21301,7 +21270,7 @@ var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.Keymap = _browserkeymap2.default;
-},{"./base_commands":89,"./command":92,"./main":100,"./options":101,"./range":102,"./schema_commands":103,"./selection":104,"browserkeymap":62}],99:[function(require,module,exports){
+},{"./base_commands":85,"./command":88,"./main":96,"./options":97,"./range":98,"./schema_commands":99,"./selection":100,"browserkeymap":58}],95:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -21910,7 +21879,7 @@ handlers.blur = function (pm) {
   // Fired when the editor loses focus.
   pm.signal("blur");
 };
-},{"../dom":88,"../format":107,"../model":115,"./capturekeys":90,"./domchange":94,"./dompos":95,"./selection":104,"browserkeymap":62}],100:[function(require,module,exports){
+},{"../dom":84,"../format":103,"../model":111,"./capturekeys":86,"./domchange":90,"./dompos":91,"./selection":100,"browserkeymap":58}],96:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -22714,7 +22683,7 @@ var EditorTransform = function (_Transform) {
 
   return EditorTransform;
 }(_transform.Transform);
-},{"../dom":88,"../format":107,"../model":115,"../transform":121,"../util/error":132,"../util/event":133,"../util/map":134,"../util/sortedinsert":136,"./css":93,"./dompos":95,"./draw":96,"./history":97,"./input":99,"./options":101,"./range":102,"./selection":104,"browserkeymap":62}],101:[function(require,module,exports){
+},{"../dom":84,"../format":103,"../model":111,"../transform":117,"../util/error":128,"../util/event":129,"../util/map":130,"../util/sortedinsert":132,"./css":89,"./dompos":91,"./draw":92,"./history":93,"./input":95,"./options":97,"./range":98,"./selection":100,"browserkeymap":58}],97:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -22849,7 +22818,7 @@ function setOption(pm, name, value) {
   pm.options[name] = value;
   if (desc.update) desc.update(pm, value, old, false);
 }
-},{"../model":115,"../ui/prompt":130,"../util/error":132,"./command":92}],102:[function(require,module,exports){
+},{"../model":111,"../ui/prompt":126,"../util/error":128,"./command":88}],98:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -23049,7 +23018,7 @@ var RangeTracker = function () {
 
   return RangeTracker;
 }();
-},{"../util/event":133}],103:[function(require,module,exports){
+},{"../util/event":129}],99:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -23383,7 +23352,7 @@ _model.HorizontalRule.register("command", "insert", {
   keys: ["Mod-Shift--"],
   menu: { group: "insert", rank: 70, display: { type: "label", label: "Horizontal rule" } }
 });
-},{"../format":107,"../model":115,"./command":92}],104:[function(require,module,exports){
+},{"../format":103,"../model":111,"./command":88}],100:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -23880,7 +23849,7 @@ function verticalMotionLeavesTextblock(pm, pos, dir) {
   }
   return true;
 }
-},{"../dom":88,"../model":115,"../util/error":132,"./dompos":95}],105:[function(require,module,exports){
+},{"../dom":84,"../model":111,"../util/error":128,"./dompos":91}],101:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24337,7 +24306,7 @@ _model.StrongMark.register("parseDOMStyle", "font-weight", {
 });
 
 _model.CodeMark.register("parseDOM", "code", { parse: "mark" });
-},{"../model":115,"../util/sortedinsert":136,"./register":108}],106:[function(require,module,exports){
+},{"../model":111,"../util/sortedinsert":132,"./register":104}],102:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24369,7 +24338,7 @@ function fromText(schema, text) {
 }
 
 (0, _register.defineSource)("text", fromText);
-},{"./register":108}],107:[function(require,module,exports){
+},{"./register":104}],103:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24468,7 +24437,7 @@ Object.defineProperty(exports, "toText", {
     return _to_text.toText;
   }
 });
-},{"./from_dom":105,"./from_text":106,"./register":108,"./to_dom":109,"./to_text":110}],108:[function(require,module,exports){
+},{"./from_dom":101,"./from_text":102,"./register":104,"./to_dom":105,"./to_text":106}],104:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24536,7 +24505,7 @@ function defineSource(format, func) {
 defineSource("json", function (schema, json) {
   return schema.nodeFromJSON(json);
 });
-},{"../util/error":132}],109:[function(require,module,exports){
+},{"../util/error":128}],105:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24824,7 +24793,7 @@ def(_model.LinkMark, function (mark, s) {
   return s.elt("a", { href: mark.attrs.href,
     title: mark.attrs.title });
 });
-},{"../model":115,"./register":108}],110:[function(require,module,exports){
+},{"../model":111,"./register":104}],106:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24868,7 +24837,7 @@ function toText(doc) {
 }
 
 (0, _register.defineTarget)("text", toText);
-},{"../model":115,"./register":108}],111:[function(require,module,exports){
+},{"../model":111,"./register":104}],107:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25305,7 +25274,7 @@ var defaultSpec = new _schema.SchemaSpec({
 // :: Schema
 // ProseMirror's default document schema.
 var defaultSchema = exports.defaultSchema = new _schema.Schema(defaultSpec);
-},{"./schema":119}],112:[function(require,module,exports){
+},{"./schema":115}],108:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25402,7 +25371,7 @@ function findDiffEnd(a, b) {
   }
   return { a: new _pos.Pos(pathA, offA), b: new _pos.Pos(pathB, offB) };
 }
-},{"./pos":118}],113:[function(require,module,exports){
+},{"./pos":114}],109:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25431,7 +25400,7 @@ var ModelError = exports.ModelError = function (_ProseMirrorError) {
 
   return ModelError;
 }(_error.ProseMirrorError);
-},{"../util/error":132}],114:[function(require,module,exports){
+},{"../util/error":128}],110:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -26143,7 +26112,7 @@ if (typeof Symbol != "undefined") {
     return this;
   };
 }
-},{"./error":113}],115:[function(require,module,exports){
+},{"./error":109}],111:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -26383,7 +26352,7 @@ Object.defineProperty(exports, "ModelError", {
                 return _error.ModelError;
         }
 });
-},{"./defaultschema":111,"./diff":112,"./error":113,"./fragment":114,"./mark":116,"./node":117,"./pos":118,"./schema":119}],116:[function(require,module,exports){
+},{"./defaultschema":107,"./diff":108,"./error":109,"./fragment":110,"./mark":112,"./node":113,"./pos":114,"./schema":115}],112:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -26515,7 +26484,7 @@ var Mark = exports.Mark = function () {
 }();
 
 var empty = [];
-},{}],117:[function(require,module,exports){
+},{}],113:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -27123,7 +27092,7 @@ function wrapMarks(marks, str) {
     str = marks[i].type.name + "(" + str + ")";
   }return str;
 }
-},{"./fragment":114,"./mark":116,"./pos":118,"./schema":119}],118:[function(require,module,exports){
+},{"./fragment":110,"./mark":112,"./pos":114,"./schema":115}],114:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -27347,7 +27316,7 @@ var Pos = exports.Pos = function () {
 
   return Pos;
 }();
-},{"./error":113}],119:[function(require,module,exports){
+},{"./error":109}],115:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -28382,7 +28351,7 @@ var Schema = function () {
 }();
 
 exports.Schema = Schema;
-},{"../util/error":132,"../util/obj":135,"./fragment":114,"./mark":116,"./node":117}],120:[function(require,module,exports){
+},{"../util/error":128,"../util/obj":131,"./fragment":110,"./mark":112,"./node":113}],116:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -28668,7 +28637,7 @@ _transform.Transform.prototype.setNodeType = function (pos, type, attrs) {
   this.step("ancestor", new _model.Pos(path, 0), new _model.Pos(path, node.size), null, { depth: 1, types: [type], attrs: [attrs] });
   return this;
 };
-},{"../model":115,"./map":123,"./step":127,"./transform":128,"./tree":129}],121:[function(require,module,exports){
+},{"../model":111,"./map":119,"./step":123,"./transform":124,"./tree":125}],117:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -28756,7 +28725,7 @@ require("./mark");
 require("./split");
 
 require("./replace");
-},{"./ancestor":120,"./join":122,"./map":123,"./mark":124,"./replace":125,"./split":126,"./step":127,"./transform":128}],122:[function(require,module,exports){
+},{"./ancestor":116,"./join":118,"./map":119,"./mark":120,"./replace":121,"./split":122,"./step":123,"./transform":124}],118:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -28838,7 +28807,7 @@ _transform.Transform.prototype.join = function (at) {
   this.step("join", new _model.Pos(at.path.concat(at.offset - 1), parent.child(at.offset - 1).size), new _model.Pos(at.path.concat(at.offset), 0));
   return this;
 };
-},{"../model":115,"./map":123,"./step":127,"./transform":128}],123:[function(require,module,exports){
+},{"../model":111,"./map":119,"./step":123,"./transform":124}],119:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29158,7 +29127,7 @@ var Remapping = exports.Remapping = function () {
 
   return Remapping;
 }();
-},{"../model":115}],124:[function(require,module,exports){
+},{"../model":111}],120:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -29337,7 +29306,7 @@ _transform.Transform.prototype.clearMarkup = function (from, to, newParent) {
     this.step(delSteps[i]);
   }return this;
 };
-},{"../model":115,"./step":127,"./transform":128,"./tree":129}],125:[function(require,module,exports){
+},{"../model":111,"./step":123,"./transform":124,"./tree":125}],121:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29665,7 +29634,7 @@ _transform.Transform.prototype.insertText = function (pos, text) {
 _transform.Transform.prototype.insertInline = function (pos, node) {
   return this.insert(pos, node.mark(this.doc.marksAt(pos)));
 };
-},{"../model":115,"./map":123,"./step":127,"./transform":128,"./tree":129}],126:[function(require,module,exports){
+},{"../model":111,"./map":119,"./step":123,"./transform":124,"./tree":125}],122:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -29754,7 +29723,7 @@ _transform.Transform.prototype.splitIfNeeded = function (pos) {
   }
   return this;
 };
-},{"../model":115,"./map":123,"./step":127,"./transform":128}],127:[function(require,module,exports){
+},{"../model":111,"./map":119,"./step":123,"./transform":124}],123:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29941,7 +29910,7 @@ var StepResult = exports.StepResult = function StepResult(doc) {
 };
 
 var steps = Object.create(null);
-},{"../model":115,"../util/error":132,"./map":123}],128:[function(require,module,exports){
+},{"../model":111,"../util/error":128,"./map":119}],124:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30046,7 +30015,7 @@ var Transform = function () {
 }();
 
 exports.Transform = Transform;
-},{"./map":123,"./step":127}],129:[function(require,module,exports){
+},{"./map":119,"./step":123}],125:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30140,7 +30109,7 @@ function samePathDepth(a, b) {
     if (i == a.path.length || i == b.path.length || a.path[i] != b.path[i]) return i;
   }
 }
-},{"../model":115}],130:[function(require,module,exports){
+},{"../model":111}],126:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30444,7 +30413,7 @@ function openPrompt(pm, content, options) {
 }
 
 (0, _dom.insertCSS)("\n.ProseMirror-prompt {\n  background: white;\n  padding: 2px 6px 2px 15px;\n  border: 1px solid silver;\n  position: absolute;\n  border-radius: 3px;\n  z-index: 11;\n}\n\n.ProseMirror-prompt h5 {\n  margin: 0;\n  font-weight: normal;\n  font-size: 100%;\n  color: #444;\n}\n\n.ProseMirror-prompt input[type=\"text\"],\n.ProseMirror-prompt textarea {\n  background: #eee;\n  border: none;\n  outline: none;\n}\n\n.ProseMirror-prompt input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n.ProseMirror-prompt-close {\n  position: absolute;\n  left: 2px; top: 1px;\n  color: #666;\n  border: none; background: transparent; padding: 0;\n}\n\n.ProseMirror-prompt-close:after {\n  content: \"✕\";\n  font-size: 12px;\n}\n\n.ProseMirror-invalid {\n  background: #ffc;\n  border: 1px solid #cc7;\n  border-radius: 4px;\n  padding: 5px 10px;\n  position: absolute;\n  min-width: 10em;\n}\n\n.ProseMirror-prompt-buttons {\n  margin-top: 5px;\n  display: none;\n}\n\n");
-},{"../dom":88,"../util/error":132}],131:[function(require,module,exports){
+},{"../dom":84,"../util/error":128}],127:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30604,7 +30573,7 @@ var UpdateScheduler = exports.UpdateScheduler = function () {
 
   return UpdateScheduler;
 }();
-},{}],132:[function(require,module,exports){
+},{}],128:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30686,7 +30655,7 @@ function functionName(f) {
   var match = /^function (\w+)/.exec(f.toString());
   return match && match[1];
 }
-},{}],133:[function(require,module,exports){
+},{}],129:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30809,7 +30778,7 @@ function eventMixin(ctor) {
     if (methods.hasOwnProperty(prop)) proto[prop] = methods[prop];
   }
 }
-},{}],134:[function(require,module,exports){
+},{}],130:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30865,7 +30834,7 @@ var Map = exports.Map = window.Map || function () {
 
   return _class;
 }();
-},{}],135:[function(require,module,exports){
+},{}],131:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30878,7 +30847,7 @@ function copyObj(obj, base) {
     copy[prop] = obj[prop];
   }return copy;
 }
-},{}],136:[function(require,module,exports){
+},{}],132:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

@@ -142,7 +142,16 @@ jQuery(document).ready(function () {
                     for (i = 0; i < ids.length; i++) {
                         exporter.savecopy(_.findWhere(theDocumentList, {
                             id: ids[i]
-                        }), false);
+                        }), false, window.theUser, function (returnValue) {
+                            var aDocument = returnValue.aDocument;
+                            theDocumentList.push(aDocument);
+                            documentHelpers.stopDocumentTable();
+                            jQuery('#document-table tbody').append(
+                                tmp_documents_list_item({
+                                        aDocument: aDocument
+                                    }));
+                            documentHelpers.startDocumentTable();
+                        });
                     }
                 });
                 break;

@@ -20,7 +20,7 @@
  */
 (function () {
     var exports = this,
-        /** 
+        /**
          * Functions for the recovering previously created document revisions.
          * @namespace documentrevisionsHelpers
          */
@@ -76,7 +76,31 @@
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function () {
             if (this.readyState == 4 && this.status == 200) {
-                importer.initZipFileRead(this.response);
+                var fidus_file = this.response;
+
+                new importer.InputFidusFile(
+                    fidus_file,
+                    theUser,
+                    true,
+                    function(noErrors, returnValue) {
+                        $.deactivateWait();
+                        if (noErrors) {
+                            var aDocument = returnValue.aDocument;
+                            jQuery.addAlert('info', aDocument.title + gettext(
+                                    ' successfully imported.'));
+                            theDocumentList.push(aDocument);
+                            documentHelpers.stopDocumentTable();
+                            jQuery('#document-table tbody').append(
+                                tmp_documents_list_item({
+                                        aDocument: aDocument
+                                    }));
+                            documentHelpers.startDocumentTable()
+
+                        } else {
+                            jQuery.addAlert('error', returnValue)
+                        }
+                    }
+                );
             }
         }
 
@@ -99,7 +123,7 @@
 
     documentrevisionsHelpers.download = function (id, filename) {
         // Have to use XMLHttpRequest rather than jQuery.ajax as it's the only way to receive a blob.
-        
+
         console.log([id,filename]);
         var xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function () {

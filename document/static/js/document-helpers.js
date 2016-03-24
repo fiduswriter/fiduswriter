@@ -106,7 +106,48 @@
             reader.onerror = function (e) {
                 console.log('error', e.target.error.code);
             };
-            importer.init(fidus_file);
+            var user;
+            if (window.theEditor) {
+                user = theEditor.user;
+
+            } else {
+                user = theUser;
+            }
+
+            new importer.ImportFidusFile(
+                fidus_file,
+                user,
+                true,
+                function(noErrors, returnValue) {
+                    $.deactivateWait();
+                    if (noErrors) {
+                        var aDocument = returnValue.aDocument;
+                        var aDocumentValues = returnValue.aDocumentValues;
+                        jQuery.addAlert('info', aDocument.title + gettext(
+                                ' successfully imported.'));
+                        if (typeof (theDocumentList) !== 'undefined') {
+                            theDocumentList.push(aDocument);
+                            documentHelpers.stopDocumentTable();
+                            jQuery('#document-table tbody').append(
+                                tmp_documents_list_item({
+                                        aDocument: aDocument
+                                    }));
+                            documentHelpers.startDocumentTable();
+                        } else if (typeof (theEditor) !== 'undefined') {
+                            if (theEditor.docInfo.rights ==='r') {
+                                // We only had right access to the document, so the editing elements won't show. We therefore need to reload the page to get them.
+                                window.location = '/document/'+aDocument.id+'/'
+                            } else {
+                                window.theEditor.doc = aDocument
+                                window.theEditor.docInfo = aDocumentValues
+                                window.history.pushState("", "", "/document/"+theEditor.doc.id+"/")
+                            }
+                        }
+                    } else {
+                        jQuery.addAlert('error', returnValue)
+                    }
+                }
+            );
             //reader.onload = importer.unzip;
             //reader.readAsText(fidus_file);
             jQuery(this).dialog('close');

@@ -23,7 +23,7 @@ export class ModMenusActions {
         let that = this
         that.mod.editor.getUpdates(function() {
             that.mod.editor.sendDocumentUpdate(function (){
-                savecopy(that.mod.editor.doc, that.mod.editor)
+                savecopy(that.mod.editor.doc, that.mod.editor, that.mod.editor.user, false)
             })
         })
     }

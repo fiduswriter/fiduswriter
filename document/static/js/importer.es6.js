@@ -1,8 +1,10 @@
-import {initZipFileRead, init} from "./es6_modules/importer/zip"
+import {ImportFidusFile} from "./es6_modules/importer/file"
 
-let importer = {}
+let importer = {
+    ImportFidusFile
+}
 
-importer.initZipFileRead = initZipFileRead
-importer.init = init
+//importer.initZipFileRead = initZipFileRead
+//importer.init = init
 
 window.importer = importer

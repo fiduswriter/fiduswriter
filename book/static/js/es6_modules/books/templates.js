@@ -1,6 +1,6 @@
 /** A template for the list of books */
 export let bookListTemplate = _.template('\
-<% _.each(theBookList,function(aBook,key,list){%>\
+<% _.each(bookList,function(aBook,key,list){%>\
     <tr id="Book_<%- aBook.id %>" <% if (theUser.id == aBook.owner) { %>class="owned-by-user"<% } %> >\
        <td width="20">\
            <span class="fw-inline">\

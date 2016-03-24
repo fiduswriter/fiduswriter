@@ -264,7 +264,7 @@ var BookActions = exports.BookActions = (function () {
                 success: function success(data, textStatus, jqXHR) {
                     that.stopBookTable();
                     jQuery('#Book_' + id).detach();
-                    theBookList = _.reject(theBookList, function (book) {
+                    that.bookList.bookList = _.reject(that.bookList.bookList, function (book) {
                         return book.id == id;
                     });
                     that.startBookTable();
@@ -365,7 +365,7 @@ var BookActions = exports.BookActions = (function () {
                 type: 'POST',
                 dataType: 'json',
                 success: function success(response, textStatus, jqXHR) {
-                    theBookList = that.unpackBooks(response.books);
+                    that.bookList.bookList = that.unpackBooks(response.books);
                     theDocumentList = response.documents;
                     theTeamMembers = response.team_members;
                     theAccessRights = response.access_rights;
@@ -506,13 +506,13 @@ var BookActions = exports.BookActions = (function () {
                     }
                     theBook.updated = response.updated;
                     if (typeof theOldBook != 'undefined') {
-                        theBookList = _.reject(theBookList, function (book) {
+                        that.bookList.bookList = _.reject(that.bookList.bookList, function (book) {
                             return book === theOldBook;
                         });
                     }
-                    theBookList.push(theBook);
+                    that.bookList.bookList.push(theBook);
                     that.stopBookTable();
-                    jQuery('#book-table tbody').html((0, _templates.bookListTemplate)());
+                    jQuery('#book-table tbody').html((0, _templates.bookListTemplate)({ bookList: that.bookList.bookList }));
                     that.startBookTable();
                     if (typeof currentDialog != 'undefined') {
                         jQuery(currentDialog).dialog('close');
@@ -667,7 +667,7 @@ var BookActions = exports.BookActions = (function () {
                     }
                 };
             } else {
-                theOldBook = _.findWhere(theBookList, {
+                theOldBook = _.findWhere(that.bookList.bookList, {
                     id: bookId
                 });
                 theBook = jQuery.extend(true, {}, theOldBook);
@@ -931,6 +931,12 @@ var BookList = exports.BookList = (function () {
 
         this.mod = {};
         new _actions.BookActions(this);
+
+        this.bookList = [];
+        //        this.documentList = []
+        //        this.teamMembers = []
+        //        this.accessRights = []
+        //        this.user = {}
         this.bindEvents();
     }
 
@@ -938,7 +944,6 @@ var BookList = exports.BookList = (function () {
         key: "bindEvents",
         value: function bindEvents() {
             var that = this;
-            window.theBookList = undefined;
             window.theDocumentList = undefined;
             window.theTeamMembers = undefined;
             window.theAccessRights = undefined;
@@ -948,7 +953,7 @@ var BookList = exports.BookList = (function () {
             });
 
             jQuery(document).bind('bookDataLoaded', function () {
-                jQuery('#book-table tbody').html((0, _templates.bookListTemplate)());
+                jQuery('#book-table tbody').html((0, _templates.bookListTemplate)({ bookList: that.bookList }));
                 that.mod.actions.startBookTable();
             });
 
@@ -1001,7 +1006,7 @@ var BookList = exports.BookList = (function () {
                             break;
                         case 'epub':
                             for (var i = 0; i < ids.length; i++) {
-                                aBook = _.findWhere(theBookList, {
+                                aBook = _.findWhere(that.bookList, {
                                     id: ids[i]
                                 });
                                 $.addAlert('info', aBook.title + ': ' + gettext('Epub export has been initiated.'));
@@ -1010,7 +1015,7 @@ var BookList = exports.BookList = (function () {
                             break;
                         case 'latex':
                             for (var i = 0; i < ids.length; i++) {
-                                aBook = _.findWhere(theBookList, {
+                                aBook = _.findWhere(that.bookList, {
                                     id: ids[i]
                                 });
                                 $.addAlert('info', aBook.title + ': ' + gettext('Latex export has been initiated.'));
@@ -1019,7 +1024,7 @@ var BookList = exports.BookList = (function () {
                             break;
                         case 'html':
                             for (var i = 0; i < ids.length; i++) {
-                                aBook = _.findWhere(theBookList, {
+                                aBook = _.findWhere(that.bookList, {
                                     id: ids[i]
                                 });
                                 $.addAlert('info', aBook.title + ': ' + gettext('HTML export has been initiated.'));
@@ -1028,14 +1033,14 @@ var BookList = exports.BookList = (function () {
                             break;
                         case 'copy':
                             for (var i = 0; i < ids.length; i++) {
-                                that.mod.actions.copyBook(_.findWhere(theBookList, {
+                                that.mod.actions.copyBook(_.findWhere(that.bookList, {
                                     id: ids[i]
                                 }));
                             }
                             break;
                         case 'print':
                             for (var i = 0; i < ids.length; i++) {
-                                window.open('/book/print/' + _.findWhere(theBookList, {
+                                window.open('/book/print/' + _.findWhere(that.bookList, {
                                     id: ids[i]
                                 }).id + '/');
                             }
@@ -1934,7 +1939,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 /** A template for the list of books */
 var bookListTemplate = exports.bookListTemplate = _.template('\
-<% _.each(theBookList,function(aBook,key,list){%>\
+<% _.each(bookList,function(aBook,key,list){%>\
     <tr id="Book_<%- aBook.id %>" <% if (theUser.id == aBook.owner) { %>class="owned-by-user"<% } %> >\
        <td width="20">\
            <span class="fw-inline">\

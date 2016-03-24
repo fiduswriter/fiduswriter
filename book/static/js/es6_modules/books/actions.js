@@ -23,7 +23,7 @@ export class BookActions {
             success: function (data, textStatus, jqXHR) {
                 that.stopBookTable()
                 jQuery('#Book_' + id).detach()
-                theBookList = _.reject(theBookList, function (book) {
+                that.bookList.bookList = _.reject(that.bookList.bookList, function (book) {
                     return book.id == id
                 })
                 that.startBookTable()
@@ -127,7 +127,7 @@ export class BookActions {
             type: 'POST',
             dataType: 'json',
             success: function (response, textStatus, jqXHR) {
-                theBookList = that.unpackBooks(response.books)
+                that.bookList.bookList = that.unpackBooks(response.books)
                 theDocumentList = response.documents
                 theTeamMembers = response.team_members
                 theAccessRights = response.access_rights
@@ -273,13 +273,13 @@ export class BookActions {
                 }
                 theBook.updated = response.updated
                 if (typeof (theOldBook) != 'undefined') {
-                    theBookList = _.reject(theBookList, function (book) {
+                    that.bookList.bookList = _.reject(that.bookList.bookList, function (book) {
                         return (book === theOldBook)
                     })
                 }
-                theBookList.push(theBook)
+                that.bookList.bookList.push(theBook)
                 that.stopBookTable()
-                jQuery('#book-table tbody').html(bookListTemplate())
+                jQuery('#book-table tbody').html(bookListTemplate({bookList: that.bookList.bookList}))
                 that.startBookTable()
                 if ((typeof (currentDialog) != 'undefined')) {
                     jQuery(currentDialog).dialog('close')
@@ -436,7 +436,7 @@ export class BookActions {
                 }
             }
         } else {
-            theOldBook = _.findWhere(theBookList, {
+            theOldBook = _.findWhere(that.bookList.bookList, {
                 id: bookId
             })
             theBook = jQuery.extend(true, {}, theOldBook)

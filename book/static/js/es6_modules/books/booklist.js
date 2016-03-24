@@ -14,12 +14,17 @@ export class BookList {
     constructor() {
         this.mod = {}
         new BookActions(this)
+
+        this.bookList = []
+//        this.documentList = []
+//        this.teamMembers = []
+//        this.accessRights = []
+//        this.user = {}
         this.bindEvents()
     }
 
     bindEvents() {
         let that = this
-        window.theBookList = undefined
         window.theDocumentList = undefined
         window.theTeamMembers = undefined
         window.theAccessRights = undefined
@@ -29,7 +34,7 @@ export class BookList {
         })
 
         jQuery(document).bind('bookDataLoaded', function () {
-            jQuery('#book-table tbody').html(bookListTemplate())
+            jQuery('#book-table tbody').html(bookListTemplate({bookList: that.bookList}))
             that.mod.actions.startBookTable()
         })
 
@@ -95,7 +100,7 @@ export class BookList {
                     case 'epub':
                         for (let i = 0; i < ids.length; i++) {
                             aBook = _.findWhere(
-                                theBookList, {
+                                that.bookList, {
                                     id: ids[i]
                                 })
                             $.addAlert('info', aBook.title + ': ' + gettext(
@@ -106,7 +111,7 @@ export class BookList {
                     case 'latex':
                         for (let i = 0; i < ids.length; i++) {
                             aBook = _.findWhere(
-                                theBookList, {
+                                that.bookList, {
                                     id: ids[i]
                                 })
                             $.addAlert('info', aBook.title + ': ' + gettext(
@@ -117,7 +122,7 @@ export class BookList {
                     case 'html':
                         for (let i = 0; i < ids.length; i++) {
                             aBook = _.findWhere(
-                                theBookList, {
+                                that.bookList, {
                                     id: ids[i]
                                 })
                             $.addAlert('info', aBook.title + ': ' + gettext(
@@ -128,7 +133,7 @@ export class BookList {
                     case 'copy':
                         for (let i = 0; i < ids.length; i++) {
                             that.mod.actions.copyBook(_.findWhere(
-                                theBookList, {
+                                that.bookList, {
                                     id: ids[i]
                                 }))
                         }
@@ -136,7 +141,7 @@ export class BookList {
                     case 'print':
                         for (let i = 0; i < ids.length; i++) {
                             window.open('/book/print/'+_.findWhere(
-                                theBookList, {
+                                that.bookList, {
                                     id: ids[i]
                                 }).id+'/')
                         }

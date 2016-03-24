@@ -47,9 +47,10 @@ export let savecopy = function(aDocument, editor, user, callback) {
             importAsUser(aDocument, shrunkImageDB, shrunkBibDB, images, editor, user, callback)
         })
     } else {
-        bibliographyHelpers.getABibDB(aDocument.owner, function(
+
+        bibliographyHelpers.getABibDB(aDocument.owner.id, function(
             aBibDB) {
-            usermediaHelpers.getAnImageDB(aDocument.owner,
+            usermediaHelpers.getAnImageDB(aDocument.owner.id,
                 function(anImageDB) {
                     exportNative(aDocument, anImageDB,
                         aBibDB, function(aDocument, shrunkImageDB, shrunkBibDB, images){

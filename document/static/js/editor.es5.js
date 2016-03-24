@@ -5536,8 +5536,9 @@ var savecopy = exports.savecopy = function savecopy(aDocument, editor, user, cal
             importAsUser(aDocument, shrunkImageDB, shrunkBibDB, images, editor, user, callback);
         });
     } else {
-        bibliographyHelpers.getABibDB(aDocument.owner, function (aBibDB) {
-            usermediaHelpers.getAnImageDB(aDocument.owner, function (anImageDB) {
+
+        bibliographyHelpers.getABibDB(aDocument.owner.id, function (aBibDB) {
+            usermediaHelpers.getAnImageDB(aDocument.owner.id, function (anImageDB) {
                 (0, _native.exportNative)(aDocument, anImageDB, aBibDB, function (aDocument, shrunkImageDB, shrunkBibDB, images) {
                     importAsUser(aDocument, shrunkImageDB, shrunkBibDB, images, false, user, callback);
                 });

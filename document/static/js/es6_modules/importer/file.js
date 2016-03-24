@@ -1,6 +1,5 @@
 import {ImportNative} from "./native"
 
-
 /** The current Fidus Writer filetype version. The importer will not import from
  * a different version and the exporter will include this number in all exports.
  */
@@ -8,11 +7,14 @@ const FW_FILETYPE_VERSION = 1.2, MIN_FW_FILETYPE_VERSION = 1.1, MAX_FW_FILETYPE_
 
 export class ImportFidusFile {
 
+    /* Process a packaged Fidus File, either through user upload, or by reloading
+      a saved revision which was saved in the same ZIP-baseformat. */
+
     constructor(file, user, check, callback) {
         this.file = file
         this.user = user
         this.callback = callback
-        this.check = check
+        this.check = check // Whether the file needs to be checked for compliance with ZIP-format
         this.init()
     }
 

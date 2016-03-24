@@ -40,25 +40,27 @@ export class PrintBook {
     setTheBook(aBook) {
         let that = this
 
-        window.theBook = aBook
-        theBook.settings = JSON.parse(theBook.settings)
-        theBook.metadata = JSON.parse(theBook.metadata)
-        this.setDocumentStyle(theBook.settings.documentstyle)
-        for (let i = 0; i < theBook.chapters.length; i++) {
-            theBook.chapters[i].metadata = JSON.parse(theBook.chapters[
+        aBook.settings = JSON.parse(aBook.settings)
+        aBook.metadata = JSON.parse(aBook.metadata)
+        for (let i = 0; i < aBook.chapters.length; i++) {
+            aBook.chapters[i].metadata = JSON.parse(aBook.chapters[
                 i].metadata)
-            theBook.chapters[i].settings = JSON.parse(theBook.chapters[
+            aBook.chapters[i].settings = JSON.parse(aBook.chapters[
                 i].settings)
-            if (this.documentOwners.indexOf(theBook.chapters[i].owner)===-1) {
-                this.documentOwners.push(theBook.chapters[i].owner)
+            if (this.documentOwners.indexOf(aBook.chapters[i].owner)===-1) {
+                this.documentOwners.push(aBook.chapters[i].owner)
             }
         }
-        paginationConfig['pageHeight'] = this.pageSizes[theBook.settings.papersize].height
-        paginationConfig['pageWidth'] = this.pageSizes[theBook.settings.papersize].width
+        this.theBook = aBook
+        this.setDocumentStyle(this.theBook.settings.documentstyle)
+
+        paginationConfig['pageHeight'] = this.pageSizes[this.theBook.settings.papersize].height
+        paginationConfig['pageWidth'] = this.pageSizes[this.theBook.settings.papersize].width
 
         bibliographyHelpers.getABibDB(this.documentOwners.join(','), function (
                 aBibDB) {
-                that.fillPrintPage(aBibDB)
+                that.bibDB = aBibDB
+                that.fillPrintPage()
             })
 
 
@@ -111,26 +113,23 @@ export class PrintBook {
         })
     }
 
-    fillPrintPage(aBibDB) {
-
+    fillPrintPage() {
         let bibliography = jQuery('#bibliography')
-        jQuery(document.body).addClass(theBook.settings.documentstyle)
+        jQuery(document.body).addClass(this.theBook.settings.documentstyle)
         jQuery('#book')[0].outerHTML = bookPrintTemplate({
-            theBook,
+            theBook: this.theBook,
             modelToViewNode: this.modelToViewNode,
             obj2Node
         })
 
 
-        jQuery(bibliography).html(formatCitations(document.body, theBook.settings.citationstyle, aBibDB))
+        jQuery(bibliography).html(formatCitations(document.body, this.theBook.settings.citationstyle, this.bibDB))
 
         if (jQuery(bibliography).text().trim().length===0) {
             jQuery(bibliography).parent().remove()
         }
 
-        paginationConfig['frontmatterContents'] = bookPrintStartTemplate({
-            theBook: theBook
-        })
+        paginationConfig['frontmatterContents'] = bookPrintStartTemplate({theBook: this.theBook})
 
 
         // TODO: render equations
@@ -140,10 +139,10 @@ export class PrintBook {
         jQuery('head title').html(jQuery('#document-title').text())
 
 
-
     }
 
-    setDocumentStyle(theValue) {
+    setDocumentStyle() {
+        let theValue = this.theBook.settings.documentstyle
         let documentStyleLink = document.getElementById('document-style-link'),
             newDocumentStyleLink = document.createElement('link')
         newDocumentStyleLink.setAttribute("rel", "stylesheet")
@@ -157,8 +156,7 @@ export class PrintBook {
 
     bindEvents() {
         let that = this
-        window.theBook = undefined
-        $(document).ready(function () {
+        jQuery(document).ready(function () {
             let pathnameParts = window.location.pathname.split('/'),
                 bookId = parseInt(pathnameParts[pathnameParts.length -
                     2], 10)

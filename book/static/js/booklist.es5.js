@@ -1,17 +1,17 @@
 /* This file has been automatically generated. DO NOT EDIT IT. 
- Changes will be overwritten. Edit books.es6.js and run ./es6-compiler.sh */
+ Changes will be overwritten. Edit booklist.es6.js and run ./es6-compiler.sh */
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 
-var _books = require("./es6_modules/books/books");
+var _booklist = require("./es6_modules/books/booklist");
 
 /* Create theBooks and make it available to the general namespace for debugging
 purposes.*/
 
-var theBooks = new _books.Books();
-window.theBooks = theBooks;
+var theBookList = new _booklist.BookList();
+window.theBookList = theBookList;
 
-},{"./es6_modules/books/books":5}],2:[function(require,module,exports){
+},{"./es6_modules/books/booklist":5}],2:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -231,642 +231,681 @@ var bookCollaboratorsTemplate = exports.bookCollaboratorsTemplate = _.template('
 },{}],4:[function(require,module,exports){
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.createBookDialog = exports.copyBook = exports.getBookListData = exports.deleteBookDialog = exports.startBookTable = undefined;
-
-var _templates = require('./templates');
-
-var deleteBook = function deleteBook(id) {
-    var postData = {};
-    postData['id'] = id;
-    $.ajax({
-        url: '/book/delete/',
-        data: postData,
-        type: 'POST',
-        dataType: 'json',
-        success: function success(data, textStatus, jqXHR) {
-            stopBookTable();
-            jQuery('#Book_' + id).detach();
-            theBookList = _.reject(theBookList, function (book) {
-                return book.id == id;
-            });
-            startBookTable();
-        }
-    });
-};
-var stopBookTable = function stopBookTable() {
-    jQuery('#book-table').dataTable().fnDestroy();
-};
-
-var startBookTable = exports.startBookTable = function startBookTable() {
-    // The sortable table seems not to have an option to accept new data added to the DOM. Instead we destroy and recreate it.
-    jQuery('#book-table').dataTable({
-        "bPaginate": false,
-        "bLengthChange": false,
-        "bFilter": true,
-        "bInfo": false,
-        "bAutoWidth": false,
-        "oLanguage": {
-            "sSearch": ''
-        },
-        "aoColumnDefs": [{
-            "bSortable": false,
-            "aTargets": [0, 5, 6]
-        }]
-    });
-
-    jQuery('#book-table_filter input').attr('placeholder', gettext('Search for Book Title'));
-    jQuery('#book-table_filter input').unbind('focus, blur');
-    jQuery('#book-table_filter input').bind('focus', function () {
-        jQuery(this).parent().addClass('focus');
-    });
-    jQuery('#book-table_filter input').bind('blur', function () {
-        jQuery(this).parent().removeClass('focus');
-    });
-
-    var autocompleteTags = [];
-    jQuery('#book-table .fw-searchable').each(function () {
-        autocompleteTags.push(this.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''));
-    });
-    autocompleteTags = _.uniq(autocompleteTags);
-    jQuery("#book-table_filter input").autocomplete({
-        source: autocompleteTags
-    });
-};
-
-var deleteBookDialog = exports.deleteBookDialog = function deleteBookDialog(ids) {
-    jQuery('body').append('<div id="confirmdeletion" title="' + gettext('Confirm deletion') + '"><p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>' + gettext('Delete the book(s)?') + '</p></div>');
-    diaButtons = {};
-    diaButtons[gettext('Delete')] = function () {
-        for (var i = 0; i < ids.length; i++) {
-            deleteBook(ids[i]);
-        }
-        jQuery(this).dialog("close");
-        $.addAlert('success', gettext('The book(s) have been deleted'));
-    };
-
-    diaButtons[gettext('Cancel')] = function () {
-        jQuery(this).dialog("close");
-    };
-
-    jQuery("#confirmdeletion").dialog({
-        resizable: false,
-        height: 180,
-        modal: true,
-        close: function close() {
-            jQuery("#confirmdeletion").detach();
-        },
-        buttons: diaButtons,
-        create: function create() {
-            var theDialog = jQuery(this).closest(".ui-dialog");
-            theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark");
-            theDialog.find(".ui-button:last").addClass("fw-button fw-orange");
-        }
-    });
-};
-
-var unpackBooks = function unpackBooks(booksFromServer) {
-    // metadata and settings are stored as a json stirng in a text field on the server, so they need to be unpacked before being available.
-    for (var i = 0; i < booksFromServer.length; i++) {
-        booksFromServer[i].metadata = JSON.parse(booksFromServer[i].metadata);
-        booksFromServer[i].settings = JSON.parse(booksFromServer[i].settings);
-    }
-    return booksFromServer;
-};
-
-var getBookListData = exports.getBookListData = function getBookListData(id) {
-    $.ajax({
-        url: '/book/booklist/',
-        data: {},
-        type: 'POST',
-        dataType: 'json',
-        success: function success(response, textStatus, jqXHR) {
-            theBookList = unpackBooks(response.books);
-            theDocumentList = response.documents;
-            theTeamMembers = response.team_members;
-            theAccessRights = response.access_rights;
-            theUser = response.user;
-            jQuery.event.trigger({
-                type: "bookDataLoaded"
-            });
-        },
-        error: function error(jqXHR, textStatus, errorThrown) {
-            $.addAlert('error', jqXHR.responseText);
-        },
-        complete: function complete() {
-            $.deactivateWait();
-        }
-    });
-};
-
-var selectCoverImageDialog = function selectCoverImageDialog(theBook, anImageDB) {
-    var dialogHeader = gettext('Select cover image'),
-        dialogBody = (0, _templates.bookCoverImageSelectionTemplate)({
-        theBook: theBook,
-        anImageDB: anImageDB
-    });
-
-    jQuery(document).on('click', '#imagelist tr', function () {
-        if (jQuery(this).hasClass('checked')) {
-            jQuery(this).removeClass('checked');
-        } else {
-            jQuery('#imagelist tr.checked').removeClass('checked');
-            jQuery(this).addClass('checked');
-        }
-    });
-
-    jQuery('body').append(dialogBody);
-
-    if (theBook.cover_image) {
-        jQuery('#Image_' + theBook.cover_image).addClass('checked');
-    }
-
-    jQuery('#cancelImageFigureButton').bind('click', function () {
-        jQuery('#book-cover-image-selection').dialog('close');
-    });
-
-    jQuery('#selectImageFigureButton').bind('click', function () {
-        if (jQuery('#imagelist tr.checked').length === 0) {
-            delete theBook.cover_image;
-        } else {
-            theBook.cover_image = parseInt(jQuery('#imagelist tr.checked')[0].id.substring(6));
-        }
-        jQuery('#figure-preview-row').html(bookEpubDataCoverTemplate({
-            'anImageDB': anImageDB,
-            'theBook': theBook
-        }));
-        jQuery('#book-cover-image-selection').dialog('close');
-    });
-
-    jQuery('#book-cover-image-selection').dialog({
-        draggable: false,
-        resizable: false,
-        top: 10,
-        width: 'auto',
-        height: 'auto',
-        modal: true,
-        buttons: {},
-        create: function create() {},
-        close: function close() {
-            jQuery(document).off('click', '#imagelist tr');
-            jQuery('#selectImageFigureButton').unbind('click');
-            jQuery('#cancelImageFigureButton').unbind('click');
-            jQuery('#book-cover-image-selection').dialog('destroy').remove();
-        }
-    });
-};
-
-var editChapterDialog = function editChapterDialog(aChapter, theBook) {
-    var aDocument = _.findWhere(theDocumentList, {
-        id: aChapter.text
-    }),
-        documentTitle = aDocument.title,
-        dialogHeader = undefined,
-        dialogBody = undefined;
-    if (documentTitle.length < 0) {
-        documentTitle = gettext('Untitled');
-    }
-    dialogHeader = gettext('Edit Chapter') + ': ' + aChapter.number + '. ' + documentTitle;
-    dialogBody = (0, _templates.bookChapterDialogTemplate)({
-        'dialogHeader': dialogHeader,
-        'aChapter': aChapter
-    });
-
-    jQuery('body').append(dialogBody);
-    var diaButtons = {};
-    diaButtons[gettext('Submit')] = function () {
-        aChapter.part = jQuery('#book-chapter-part').val();
-        jQuery('#book-chapter-list').html((0, _templates.bookChapterListTemplate)({
-            theBook: theBook
-        }));
-        jQuery(this).dialog('close');
-    };
-    diaButtons[gettext('Cancel')] = function () {
-        jQuery(this).dialog("close");
-    };
-    jQuery('#book-chapter-dialog').dialog({
-        draggable: false,
-        resizable: false,
-        top: 10,
-        width: 300,
-        height: 200,
-        modal: true,
-        buttons: diaButtons,
-        create: function create() {
-            var theDialog = jQuery(this).closest(".ui-dialog");
-            theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark");
-            theDialog.find(".ui-button:last").addClass("fw-button fw-orange");
-        },
-        close: function close() {
-            jQuery('#book-chapter-dialog').dialog('destroy').remove();
-        }
-    });
-};
-
-var saveBook = function saveBook(theBook, theOldBook, currentDialog) {
-    $.ajax({
-        url: '/book/save/',
-        data: {
-            the_book: JSON.stringify(theBook)
-        },
-        type: 'POST',
-        dataType: 'json',
-        success: function success(response, textStatus, jqXHR) {
-            if (jqXHR.status == 201) {
-                theBook.id = response.id;
-                theBook.added = response.added;
-            }
-            theBook.updated = response.updated;
-            if (typeof theOldBook != 'undefined') {
-                theBookList = _.reject(theBookList, function (book) {
-                    return book === theOldBook;
-                });
-            }
-            theBookList.push(theBook);
-            stopBookTable();
-            jQuery('#book-table tbody').html((0, _templates.bookListTemplate)());
-            startBookTable();
-            if (typeof currentDialog != 'undefined') {
-                jQuery(currentDialog).dialog('close');
-            }
-        },
-        error: function error(jqXHR, textStatus, errorThrown) {
-            $.addAlert('error', jqXHR.responseText);
-        },
-        complete: function complete() {}
-    });
-};
-
-var copyBook = exports.copyBook = function copyBook(theOldBook) {
-    var theBook = jQuery.extend(true, {}, theOldBook);
-    theBook.id = 0;
-    theBook.is_owner = true;
-    theBook.owner_avatar = theUser.avatar;
-    theBook.owner_name = theUser.name;
-    theBook.owner = theUser.id;
-    theBook.rights = 'w';
-    if (theOldBook.owner != theBook.owner) {
-        var setCoverImage = function setCoverImage(id) {
-            theBook.cover_image = id;
-            saveBook(theBook);
-        };
-
-        prepareCopyCoverImage(theBook.cover_image, theOldBook.owner, setCoverImage);
-    } else {
-        saveBook(theBook);
-    }
-};
-
-var prepareCopyCoverImage = function prepareCopyCoverImage(coverImage, userId, callback) {
-    if ('undefined' === typeof ImageDB) {
-        usermediaHelpers.getImageDB(function () {
-            prepareCopyCoverImage(coverImage, userId, callback);
-            return;
-        });
-    } else {
-        usermediaHelpers.getAnImageDB(userId, function (anImageDB) {
-            copyCoverImage(anImageDB[coverImage], callback);
-        });
-    }
-};
-
-var copyCoverImage = function copyCoverImage(oldImageObject, callback) {
-    var newImageEntry = false,
-        imageTranslation = false;
-
-    matchEntries = _.where(ImageDB, {
-        checksum: oldImageObject.checksum
-    });
-    if (0 === matchEntries.length) {
-        //create new
-        newImageEntry = {
-            oldUrl: oldImageObject.image,
-            title: oldImageObject.title,
-            file_type: oldImageObject.file_type,
-            checksum: oldImageObject.checksum
-        };
-    } else if (1 === matchEntries.length && oldImageObject.pk !== matchEntries[0].pk) {
-        imageTranslation = matchEntries[0].pk;
-    } else if (1 < matchEntries.length) {
-        if (!_.findWhere(matchEntries, {
-            pk: oldImageObject.pk
-        })) {
-            // There are several matches, and none of the matches have the same id as the key in shrunkImageDB.
-            // We now pick the first match.
-            // TODO: Figure out if this behavior is correct.
-            imageTranslation = matchEntries[0].pk;
-        }
-    }
-
-    if (imageTranslation) {
-        callback(imageTranslation);
-    } else if (newImageEntry) {
-        createNewImage(newImageEntry, callback);
-    } else {
-        callback(oldImageObject.pk);
-    }
-};
-
-var createNewImage = function createNewImage(imageEntry, callback) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', imageEntry.oldUrl, true);
-    xhr.responseType = 'blob';
-
-    xhr.onload = function (e) {
-        if (this.status == 200) {
-            // Note: .response instead of .responseText
-            var imageFile = new Blob([this.response], {
-                type: imageEntry.file_type
-            });
-            var formValues = new FormData();
-            formValues.append('id', 0);
-            formValues.append('title', imageEntry.title);
-            formValues.append('imageCats', '');
-            formValues.append('image', imageFile, imageEntry.oldUrl.split('/').pop());
-            formValues.append('checksum', imageEntry.checksum), jQuery.ajax({
-                url: '/usermedia/save/',
-                data: formValues,
-                type: 'POST',
-                dataType: 'json',
-                success: function success(response, textStatus, jqXHR) {
-                    ImageDB[response.values.pk] = response.values;
-                    callback(response.values.pk);
-                },
-                error: function error() {
-                    jQuery.addAlert('error', gettext('Could not save ') + imageEntry.title);
-                },
-                complete: function complete() {},
-                cache: false,
-                contentType: false,
-                processData: false
-            });
-            return;
-        }
-    };
-
-    xhr.send();
-};
-
-var createBookDialog = exports.createBookDialog = function createBookDialog(bookId, anImageDB) {
-    var dialogHeader = undefined,
-        theBook = undefined,
-        theOldBook = undefined;
-
-    if (bookId === 0) {
-        dialogHeader = gettext('Create Book');
-        theBook = {
-            title: '',
-            id: 0,
-            chapters: [],
-            is_owner: true,
-            owner_avatar: theUser.avatar,
-            owner_name: theUser.name,
-            owner: theUser.id,
-            rights: 'w',
-            metadata: {},
-            settings: {
-                citationstyle: 'apa',
-                documentstyle: defaultDocumentStyle,
-                papersize: 'octavo'
-            }
-        };
-    } else {
-        theOldBook = _.findWhere(theBookList, {
-            id: bookId
-        });
-        theBook = jQuery.extend(true, {}, theOldBook);
-        dialogHeader = gettext('Edit Book');
-    }
-
-    if ('undefined' === typeof anImageDB) {
-        if ('undefined' === typeof ImageDB && theBook.is_owner) {
-            // load the ImageDB if it is not available yet. Once done, load this function.
-            usermediaHelpers.init(function () {
-                createBookDialog(bookId, ImageDB);
-            });
-            return;
-        } else if (!theBook.is_owner) {
-            usermediaHelpers.getAnImageDB(theBook.owner, function (anImageDB) {
-                createBookDialog(bookId, anImageDB);
-            });
-            return;
-        } else {
-            createBookDialog(bookId, ImageDB);
-            return;
-        }
-    }
-
-    var dialogBody = tmp_book_dialog({
-        dialogHeader: dialogHeader,
-        basicInfo: (0, _templates.bookBasicInfoTemplate)({
-            theBook: theBook
-        }),
-        chapters: (0, _templates.bookDialogChaptersTemplate)({
-            theBook: theBook,
-            chapters: (0, _templates.bookChapterListTemplate)({
-                theBook: theBook
-            }),
-            documents: (0, _templates.bookDocumentListTemplate)({
-                theBook: theBook,
-                theDocumentList: theDocumentList
-            })
-        }),
-        bibliographyData: bookBibliographyDataTemplate({
-            theBook: theBook
-        }),
-        printData: (0, _templates.bookPrintDataTemplate)({
-            theBook: theBook
-        }),
-        epubData: bookEpubDataTemplate({
-            theBook: theBook,
-
-            coverImage: bookEpubDataCoverTemplate({
-                theBook: theBook,
-                anImageDB: anImageDB
-            })
-        })
-
-    });
-    jQuery(document).on('click', '.book-sort-up', function () {
-        var chapter = _.findWhere(theBook.chapters, {
-            text: parseInt(jQuery(this).attr('data-id'))
-        });
-        var higherChapter = _.findWhere(theBook.chapters, {
-            number: chapter.number - 1
-        });
-        chapter.number--;
-        higherChapter.number++;
-        jQuery('#book-chapter-list').html((0, _templates.bookChapterListTemplate)({
-            theBook: theBook
-        }));
-    });
-    jQuery(document).on('click', '.book-sort-down', function () {
-        var chapter = _.findWhere(theBook.chapters, {
-            text: parseInt(jQuery(this).attr('data-id'))
-        });
-        var lowerChapter = _.findWhere(theBook.chapters, {
-            number: chapter.number + 1
-        });
-        chapter.number++;
-        lowerChapter.number--;
-        jQuery('#book-chapter-list').html((0, _templates.bookChapterListTemplate)({
-            theBook: theBook
-        }));
-    });
-
-    jQuery(document).on('click', '.delete-chapter', function () {
-        var thisChapter = _.findWhere(theBook.chapters, {
-            text: parseInt(jQuery(this).attr('data-id'))
-        });
-        _.each(theBook.chapters, function (chapter) {
-            if (chapter.number > thisChapter.number) {
-                chapter.number--;
-            }
-        });
-        theBook.chapters = _.filter(theBook.chapters, function (chapter) {
-            return chapter !== thisChapter;
-        });
-        jQuery('#book-chapter-list').html((0, _templates.bookChapterListTemplate)({
-            theBook: theBook
-        }));
-        jQuery('#book-document-list').html((0, _templates.bookDocumentListTemplate)({
-            theDocumentList: theDocumentList,
-            theBook: theBook
-        }));
-    });
-
-    jQuery(document).on('click', '#book-document-list td', function () {
-        jQuery(this).toggleClass('checked');
-    });
-
-    jQuery(document).on('click', '#add-chapter', function () {
-        jQuery('#book-document-list td.checked').each(function () {
-            var documentId = parseInt(jQuery(this).attr('data-id')),
-                lastChapterNumber = _.max(theBook.chapters, function (chapter) {
-                return chapter.number;
-            }).number;
-            if (isNaN(lastChapterNumber)) {
-                lastChapterNumber = 0;
-            }
-            theBook.chapters.push({
-                text: documentId,
-                title: jQuery.trim(this.textContent),
-                number: lastChapterNumber + 1,
-                part: ''
-            });
-        });
-        jQuery('#book-chapter-list').html((0, _templates.bookChapterListTemplate)({
-            theBook: theBook
-        }));
-        jQuery('#book-document-list').html((0, _templates.bookDocumentListTemplate)({
-            theDocumentList: theDocumentList,
-            theBook: theBook
-        }));
-    });
-
-    jQuery(document).on('click', '.edit-chapter', function () {
-        var thisChapter = _.findWhere(theBook.chapters, {
-            text: parseInt(jQuery(this).attr('data-id'))
-        });
-        editChapterDialog(thisChapter, theBook);
-    });
-
-    jQuery(document).on('click', '#select-cover-image-button', function () {
-        selectCoverImageDialog(theBook, anImageDB);
-        usermediaHelpers.startUsermediaTable();
-    });
-
-    jQuery(document).on('click', '#remove-cover-image-button', function () {
-        delete theBook.cover_image;
-        jQuery('#figure-preview-row').html(bookEpubDataCoverTemplate({
-            'theBook': theBook
-        }));
-    });
-
-    function getFormData() {
-        theBook.title = jQuery('#book-title').val();
-        theBook.metadata.author = jQuery('#book-metadata-author').val();
-        theBook.metadata.subtitle = jQuery('#book-metadata-subtitle').val();
-        theBook.metadata.copyright = jQuery('#book-metadata-copyright').val();
-        theBook.metadata.publisher = jQuery('#book-metadata-publisher').val();
-        theBook.metadata.keywords = jQuery('#book-metadata-keywords').val();
-    }
-
-    jQuery('body').append(dialogBody);
-
-    jQuery('#book-settings-citationstyle').dropkick({
-        change: function change(value, label) {
-            theBook.settings.citationstyle = value;
-        }
-    });
-
-    jQuery('#book-settings-documentstyle').dropkick({
-        change: function change(value, label) {
-            theBook.settings.documentstyle = value;
-        }
-    });
-
-    jQuery('#book-settings-papersize').dropkick({
-        change: function change(value, label) {
-            theBook.settings.papersize = value;
-        }
-    });
-    var diaButtons = {};
-    if (theBook.rights === "w") {
-        diaButtons[gettext('Submit')] = function () {
-            getFormData();
-
-            saveBook(theBook, theOldBook, this);
-        };
-        diaButtons[gettext('Cancel')] = function () {
-            jQuery(this).dialog("close");
-        };
-    } else {
-        diaButtons[gettext('Close')] = function () {
-            jQuery(this).dialog("close");
-        };
-    }
-    jQuery('#book-dialog').dialog({
-        draggable: false,
-        resizable: false,
-        top: 10,
-        width: 820,
-        height: 590,
-        modal: true,
-        buttons: diaButtons,
-        create: function create() {
-            var theDialog = jQuery(this).closest(".ui-dialog");
-            theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark");
-            theDialog.find(".ui-button:last").addClass("fw-button fw-orange");
-        },
-        close: function close() {
-            jQuery(document).off('click', '#add-chapter');
-            jQuery(document).off('click', '.book-sort-up');
-            jQuery(document).off('click', '.book-sort-down');
-            jQuery(document).off('click', '#add-chapter');
-            jQuery(document).off('click', '#book-document-list td');
-            jQuery(document).off('click', '.delete-chapter');
-            jQuery(document).off('click', '.edit-chapter');
-            jQuery(document).off('click', '#select-cover-image-button');
-            jQuery(document).off('click', '#remove-cover-image-button');
-            jQuery('#book-dialog').dialog('destroy').remove();
-        }
-    });
-
-    jQuery('#bookoptionsTab').tabs();
-};
-
-},{"./templates":13}],5:[function(require,module,exports){
-"use strict";
-
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.Books = undefined;
+exports.BookActions = undefined;
+
+var _templates = require('./templates');
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var BookActions = exports.BookActions = (function () {
+    function BookActions(bookList) {
+        _classCallCheck(this, BookActions);
+
+        bookList.mod.actions = this;
+        this.bookList = bookList;
+    }
+
+    _createClass(BookActions, [{
+        key: 'deleteBook',
+        value: function deleteBook(id) {
+            var that = this;
+            var postData = {};
+            postData['id'] = id;
+            $.ajax({
+                url: '/book/delete/',
+                data: postData,
+                type: 'POST',
+                dataType: 'json',
+                success: function success(data, textStatus, jqXHR) {
+                    that.stopBookTable();
+                    jQuery('#Book_' + id).detach();
+                    theBookList = _.reject(theBookList, function (book) {
+                        return book.id == id;
+                    });
+                    that.startBookTable();
+                }
+            });
+        }
+    }, {
+        key: 'stopBookTable',
+        value: function stopBookTable() {
+            jQuery('#book-table').dataTable().fnDestroy();
+        }
+    }, {
+        key: 'startBookTable',
+        value: function startBookTable() {
+            // The sortable table seems not to have an option to accept new data added to the DOM. Instead we destroy and recreate it.
+            jQuery('#book-table').dataTable({
+                "bPaginate": false,
+                "bLengthChange": false,
+                "bFilter": true,
+                "bInfo": false,
+                "bAutoWidth": false,
+                "oLanguage": {
+                    "sSearch": ''
+                },
+                "aoColumnDefs": [{
+                    "bSortable": false,
+                    "aTargets": [0, 5, 6]
+                }]
+            });
+
+            jQuery('#book-table_filter input').attr('placeholder', gettext('Search for Book Title'));
+            jQuery('#book-table_filter input').unbind('focus, blur');
+            jQuery('#book-table_filter input').bind('focus', function () {
+                jQuery(this).parent().addClass('focus');
+            });
+            jQuery('#book-table_filter input').bind('blur', function () {
+                jQuery(this).parent().removeClass('focus');
+            });
+
+            var autocompleteTags = [];
+            jQuery('#book-table .fw-searchable').each(function () {
+                autocompleteTags.push(this.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''));
+            });
+            autocompleteTags = _.uniq(autocompleteTags);
+            jQuery("#book-table_filter input").autocomplete({
+                source: autocompleteTags
+            });
+        }
+    }, {
+        key: 'deleteBookDialog',
+        value: function deleteBookDialog(ids) {
+            jQuery('body').append('<div id="confirmdeletion" title="' + gettext('Confirm deletion') + '"><p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>' + gettext('Delete the book(s)?') + '</p></div>');
+            diaButtons = {};
+            diaButtons[gettext('Delete')] = function () {
+                for (var i = 0; i < ids.length; i++) {
+                    deleteBook(ids[i]);
+                }
+                jQuery(this).dialog("close");
+                $.addAlert('success', gettext('The book(s) have been deleted'));
+            };
+
+            diaButtons[gettext('Cancel')] = function () {
+                jQuery(this).dialog("close");
+            };
+
+            jQuery("#confirmdeletion").dialog({
+                resizable: false,
+                height: 180,
+                modal: true,
+                close: function close() {
+                    jQuery("#confirmdeletion").detach();
+                },
+                buttons: diaButtons,
+                create: function create() {
+                    var theDialog = jQuery(this).closest(".ui-dialog");
+                    theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark");
+                    theDialog.find(".ui-button:last").addClass("fw-button fw-orange");
+                }
+            });
+        }
+    }, {
+        key: 'unpackBooks',
+        value: function unpackBooks(booksFromServer) {
+            // metadata and settings are stored as a json stirng in a text field on the server, so they need to be unpacked before being available.
+            for (var i = 0; i < booksFromServer.length; i++) {
+                booksFromServer[i].metadata = JSON.parse(booksFromServer[i].metadata);
+                booksFromServer[i].settings = JSON.parse(booksFromServer[i].settings);
+            }
+            return booksFromServer;
+        }
+    }, {
+        key: 'getBookListData',
+        value: function getBookListData(id) {
+            var that = this;
+            $.ajax({
+                url: '/book/booklist/',
+                data: {},
+                type: 'POST',
+                dataType: 'json',
+                success: function success(response, textStatus, jqXHR) {
+                    theBookList = that.unpackBooks(response.books);
+                    theDocumentList = response.documents;
+                    theTeamMembers = response.team_members;
+                    theAccessRights = response.access_rights;
+                    theUser = response.user;
+                    jQuery.event.trigger({
+                        type: "bookDataLoaded"
+                    });
+                },
+                error: function error(jqXHR, textStatus, errorThrown) {
+                    $.addAlert('error', jqXHR.responseText);
+                },
+                complete: function complete() {
+                    $.deactivateWait();
+                }
+            });
+        }
+    }, {
+        key: 'selectCoverImageDialog',
+        value: function selectCoverImageDialog(theBook, anImageDB) {
+            var dialogHeader = gettext('Select cover image'),
+                dialogBody = (0, _templates.bookCoverImageSelectionTemplate)({
+                theBook: theBook,
+                anImageDB: anImageDB
+            });
+
+            jQuery(document).on('click', '#imagelist tr', function () {
+                if (jQuery(this).hasClass('checked')) {
+                    jQuery(this).removeClass('checked');
+                } else {
+                    jQuery('#imagelist tr.checked').removeClass('checked');
+                    jQuery(this).addClass('checked');
+                }
+            });
+
+            jQuery('body').append(dialogBody);
+
+            if (theBook.cover_image) {
+                jQuery('#Image_' + theBook.cover_image).addClass('checked');
+            }
+
+            jQuery('#cancelImageFigureButton').bind('click', function () {
+                jQuery('#book-cover-image-selection').dialog('close');
+            });
+
+            jQuery('#selectImageFigureButton').bind('click', function () {
+                if (jQuery('#imagelist tr.checked').length === 0) {
+                    delete theBook.cover_image;
+                } else {
+                    theBook.cover_image = parseInt(jQuery('#imagelist tr.checked')[0].id.substring(6));
+                }
+                jQuery('#figure-preview-row').html((0, _templates.bookEpubDataCoverTemplate)({
+                    'anImageDB': anImageDB,
+                    'theBook': theBook
+                }));
+                jQuery('#book-cover-image-selection').dialog('close');
+            });
+
+            jQuery('#book-cover-image-selection').dialog({
+                draggable: false,
+                resizable: false,
+                top: 10,
+                width: 'auto',
+                height: 'auto',
+                modal: true,
+                buttons: {},
+                create: function create() {},
+                close: function close() {
+                    jQuery(document).off('click', '#imagelist tr');
+                    jQuery('#selectImageFigureButton').unbind('click');
+                    jQuery('#cancelImageFigureButton').unbind('click');
+                    jQuery('#book-cover-image-selection').dialog('destroy').remove();
+                }
+            });
+        }
+    }, {
+        key: 'editChapterDialog',
+        value: function editChapterDialog(aChapter, theBook) {
+            var aDocument = _.findWhere(theDocumentList, {
+                id: aChapter.text
+            }),
+                documentTitle = aDocument.title,
+                dialogHeader = undefined,
+                dialogBody = undefined;
+            if (documentTitle.length < 0) {
+                documentTitle = gettext('Untitled');
+            }
+            dialogHeader = gettext('Edit Chapter') + ': ' + aChapter.number + '. ' + documentTitle;
+            dialogBody = (0, _templates.bookChapterDialogTemplate)({
+                'dialogHeader': dialogHeader,
+                'aChapter': aChapter
+            });
+
+            jQuery('body').append(dialogBody);
+            var diaButtons = {};
+            diaButtons[gettext('Submit')] = function () {
+                aChapter.part = jQuery('#book-chapter-part').val();
+                jQuery('#book-chapter-list').html((0, _templates.bookChapterListTemplate)({
+                    theBook: theBook
+                }));
+                jQuery(this).dialog('close');
+            };
+            diaButtons[gettext('Cancel')] = function () {
+                jQuery(this).dialog("close");
+            };
+            jQuery('#book-chapter-dialog').dialog({
+                draggable: false,
+                resizable: false,
+                top: 10,
+                width: 300,
+                height: 200,
+                modal: true,
+                buttons: diaButtons,
+                create: function create() {
+                    var theDialog = jQuery(this).closest(".ui-dialog");
+                    theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark");
+                    theDialog.find(".ui-button:last").addClass("fw-button fw-orange");
+                },
+                close: function close() {
+                    jQuery('#book-chapter-dialog').dialog('destroy').remove();
+                }
+            });
+        }
+    }, {
+        key: 'saveBook',
+        value: function saveBook(theBook, theOldBook, currentDialog) {
+            var that = this;
+            $.ajax({
+                url: '/book/save/',
+                data: {
+                    the_book: JSON.stringify(theBook)
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function success(response, textStatus, jqXHR) {
+                    if (jqXHR.status == 201) {
+                        theBook.id = response.id;
+                        theBook.added = response.added;
+                    }
+                    theBook.updated = response.updated;
+                    if (typeof theOldBook != 'undefined') {
+                        theBookList = _.reject(theBookList, function (book) {
+                            return book === theOldBook;
+                        });
+                    }
+                    theBookList.push(theBook);
+                    that.stopBookTable();
+                    jQuery('#book-table tbody').html((0, _templates.bookListTemplate)());
+                    that.startBookTable();
+                    if (typeof currentDialog != 'undefined') {
+                        jQuery(currentDialog).dialog('close');
+                    }
+                },
+                error: function error(jqXHR, textStatus, errorThrown) {
+                    $.addAlert('error', jqXHR.responseText);
+                },
+                complete: function complete() {}
+            });
+        }
+    }, {
+        key: 'copyBook',
+        value: function copyBook(theOldBook) {
+            var that = this;
+            var theBook = jQuery.extend(true, {}, theOldBook);
+            theBook.id = 0;
+            theBook.is_owner = true;
+            theBook.owner_avatar = theUser.avatar;
+            theBook.owner_name = theUser.name;
+            theBook.owner = theUser.id;
+            theBook.rights = 'w';
+            if (theOldBook.owner != theBook.owner) {
+                var setCoverImage = function setCoverImage(id) {
+                    theBook.cover_image = id;
+                    that.saveBook(theBook);
+                };
+
+                that.prepareCopyCoverImage(theBook.cover_image, theOldBook.owner, setCoverImage);
+            } else {
+                that.saveBook(theBook);
+            }
+        }
+    }, {
+        key: 'prepareCopyCoverImage',
+        value: function prepareCopyCoverImage(coverImage, userId, callback) {
+            var that = this;
+            if ('undefined' === typeof ImageDB) {
+                usermediaHelpers.getImageDB(function () {
+                    that.prepareCopyCoverImage(coverImage, userId, callback);
+                    return;
+                });
+            } else {
+                usermediaHelpers.getAnImageDB(userId, function (anImageDB) {
+                    that.copyCoverImage(anImageDB[coverImage], callback);
+                });
+            }
+        }
+    }, {
+        key: 'copyCoverImage',
+        value: function copyCoverImage(oldImageObject, callback) {
+            var newImageEntry = false,
+                imageTranslation = false;
+
+            matchEntries = _.where(ImageDB, {
+                checksum: oldImageObject.checksum
+            });
+            if (0 === matchEntries.length) {
+                //create new
+                newImageEntry = {
+                    oldUrl: oldImageObject.image,
+                    title: oldImageObject.title,
+                    file_type: oldImageObject.file_type,
+                    checksum: oldImageObject.checksum
+                };
+            } else if (1 === matchEntries.length && oldImageObject.pk !== matchEntries[0].pk) {
+                imageTranslation = matchEntries[0].pk;
+            } else if (1 < matchEntries.length) {
+                if (!_.findWhere(matchEntries, {
+                    pk: oldImageObject.pk
+                })) {
+                    // There are several matches, and none of the matches have the same id as the key in shrunkImageDB.
+                    // We now pick the first match.
+                    // TODO: Figure out if this behavior is correct.
+                    imageTranslation = matchEntries[0].pk;
+                }
+            }
+
+            if (imageTranslation) {
+                callback(imageTranslation);
+            } else if (newImageEntry) {
+                this.createNewImage(newImageEntry, callback);
+            } else {
+                callback(oldImageObject.pk);
+            }
+        }
+    }, {
+        key: 'createNewImage',
+        value: function createNewImage(imageEntry, callback) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', imageEntry.oldUrl, true);
+            xhr.responseType = 'blob';
+
+            xhr.onload = function (e) {
+                if (this.status == 200) {
+                    // Note: .response instead of .responseText
+                    var imageFile = new Blob([this.response], {
+                        type: imageEntry.file_type
+                    });
+                    var formValues = new FormData();
+                    formValues.append('id', 0);
+                    formValues.append('title', imageEntry.title);
+                    formValues.append('imageCats', '');
+                    formValues.append('image', imageFile, imageEntry.oldUrl.split('/').pop());
+                    formValues.append('checksum', imageEntry.checksum), jQuery.ajax({
+                        url: '/usermedia/save/',
+                        data: formValues,
+                        type: 'POST',
+                        dataType: 'json',
+                        success: function success(response, textStatus, jqXHR) {
+                            ImageDB[response.values.pk] = response.values;
+                            callback(response.values.pk);
+                        },
+                        error: function error() {
+                            jQuery.addAlert('error', gettext('Could not save ') + imageEntry.title);
+                        },
+                        complete: function complete() {},
+                        cache: false,
+                        contentType: false,
+                        processData: false
+                    });
+                    return;
+                }
+            };
+
+            xhr.send();
+        }
+    }, {
+        key: 'createBookDialog',
+        value: function createBookDialog(bookId, anImageDB) {
+            var dialogHeader = undefined,
+                theBook = undefined,
+                theOldBook = undefined,
+                that = this;
+
+            if (bookId === 0) {
+                dialogHeader = gettext('Create Book');
+                theBook = {
+                    title: '',
+                    id: 0,
+                    chapters: [],
+                    is_owner: true,
+                    owner_avatar: theUser.avatar,
+                    owner_name: theUser.name,
+                    owner: theUser.id,
+                    rights: 'w',
+                    metadata: {},
+                    settings: {
+                        citationstyle: 'apa',
+                        documentstyle: defaultDocumentStyle,
+                        papersize: 'octavo'
+                    }
+                };
+            } else {
+                theOldBook = _.findWhere(theBookList, {
+                    id: bookId
+                });
+                theBook = jQuery.extend(true, {}, theOldBook);
+                dialogHeader = gettext('Edit Book');
+            }
+
+            if ('undefined' === typeof anImageDB) {
+                if ('undefined' === typeof ImageDB && theBook.is_owner) {
+                    // load the ImageDB if it is not available yet. Once done, load this function.
+                    usermediaHelpers.init(function () {
+                        that.createBookDialog(bookId, ImageDB);
+                    });
+                    return;
+                } else if (!theBook.is_owner) {
+                    usermediaHelpers.getAnImageDB(theBook.owner, function (anImageDB) {
+                        that.createBookDialog(bookId, anImageDB);
+                    });
+                    return;
+                } else {
+                    that.createBookDialog(bookId, ImageDB);
+                    return;
+                }
+            }
+
+            var dialogBody = (0, _templates.bookDialogTemplate)({
+                dialogHeader: dialogHeader,
+                basicInfo: (0, _templates.bookBasicInfoTemplate)({
+                    theBook: theBook
+                }),
+                chapters: (0, _templates.bookDialogChaptersTemplate)({
+                    theBook: theBook,
+                    chapters: (0, _templates.bookChapterListTemplate)({
+                        theBook: theBook
+                    }),
+                    documents: (0, _templates.bookDocumentListTemplate)({
+                        theBook: theBook,
+                        theDocumentList: theDocumentList
+                    })
+                }),
+                bibliographyData: (0, _templates.bookBibliographyDataTemplate)({
+                    theBook: theBook
+                }),
+                printData: (0, _templates.bookPrintDataTemplate)({
+                    theBook: theBook
+                }),
+                epubData: (0, _templates.bookEpubDataTemplate)({
+                    theBook: theBook,
+
+                    coverImage: (0, _templates.bookEpubDataCoverTemplate)({
+                        theBook: theBook,
+                        anImageDB: anImageDB
+                    })
+                })
+
+            });
+            jQuery(document).on('click', '.book-sort-up', function () {
+                var chapter = _.findWhere(theBook.chapters, {
+                    text: parseInt(jQuery(this).attr('data-id'))
+                });
+                var higherChapter = _.findWhere(theBook.chapters, {
+                    number: chapter.number - 1
+                });
+                chapter.number--;
+                higherChapter.number++;
+                jQuery('#book-chapter-list').html((0, _templates.bookChapterListTemplate)({
+                    theBook: theBook
+                }));
+            });
+            jQuery(document).on('click', '.book-sort-down', function () {
+                var chapter = _.findWhere(theBook.chapters, {
+                    text: parseInt(jQuery(this).attr('data-id'))
+                });
+                var lowerChapter = _.findWhere(theBook.chapters, {
+                    number: chapter.number + 1
+                });
+                chapter.number++;
+                lowerChapter.number--;
+                jQuery('#book-chapter-list').html((0, _templates.bookChapterListTemplate)({
+                    theBook: theBook
+                }));
+            });
+
+            jQuery(document).on('click', '.delete-chapter', function () {
+                var thisChapter = _.findWhere(theBook.chapters, {
+                    text: parseInt(jQuery(this).attr('data-id'))
+                });
+                _.each(theBook.chapters, function (chapter) {
+                    if (chapter.number > thisChapter.number) {
+                        chapter.number--;
+                    }
+                });
+                theBook.chapters = _.filter(theBook.chapters, function (chapter) {
+                    return chapter !== thisChapter;
+                });
+                jQuery('#book-chapter-list').html((0, _templates.bookChapterListTemplate)({
+                    theBook: theBook
+                }));
+                jQuery('#book-document-list').html((0, _templates.bookDocumentListTemplate)({
+                    theDocumentList: theDocumentList,
+                    theBook: theBook
+                }));
+            });
+
+            jQuery(document).on('click', '#book-document-list td', function () {
+                jQuery(this).toggleClass('checked');
+            });
+
+            jQuery(document).on('click', '#add-chapter', function () {
+                jQuery('#book-document-list td.checked').each(function () {
+                    var documentId = parseInt(jQuery(this).attr('data-id')),
+                        lastChapterNumber = _.max(theBook.chapters, function (chapter) {
+                        return chapter.number;
+                    }).number;
+                    if (isNaN(lastChapterNumber)) {
+                        lastChapterNumber = 0;
+                    }
+                    theBook.chapters.push({
+                        text: documentId,
+                        title: jQuery.trim(this.textContent),
+                        number: lastChapterNumber + 1,
+                        part: ''
+                    });
+                });
+                jQuery('#book-chapter-list').html((0, _templates.bookChapterListTemplate)({
+                    theBook: theBook
+                }));
+                jQuery('#book-document-list').html((0, _templates.bookDocumentListTemplate)({
+                    theDocumentList: theDocumentList,
+                    theBook: theBook
+                }));
+            });
+
+            jQuery(document).on('click', '.edit-chapter', function () {
+                var thisChapter = _.findWhere(theBook.chapters, {
+                    text: parseInt(jQuery(this).attr('data-id'))
+                });
+                that.editChapterDialog(thisChapter, theBook);
+            });
+
+            jQuery(document).on('click', '#select-cover-image-button', function () {
+                that.selectCoverImageDialog(theBook, anImageDB);
+                usermediaHelpers.startUsermediaTable();
+            });
+
+            jQuery(document).on('click', '#remove-cover-image-button', function () {
+                delete theBook.cover_image;
+                jQuery('#figure-preview-row').html((0, _templates.bookEpubDataCoverTemplate)({
+                    'theBook': theBook
+                }));
+            });
+
+            function getFormData() {
+                theBook.title = jQuery('#book-title').val();
+                theBook.metadata.author = jQuery('#book-metadata-author').val();
+                theBook.metadata.subtitle = jQuery('#book-metadata-subtitle').val();
+                theBook.metadata.copyright = jQuery('#book-metadata-copyright').val();
+                theBook.metadata.publisher = jQuery('#book-metadata-publisher').val();
+                theBook.metadata.keywords = jQuery('#book-metadata-keywords').val();
+            }
+
+            jQuery('body').append(dialogBody);
+
+            jQuery('#book-settings-citationstyle').dropkick({
+                change: function change(value, label) {
+                    theBook.settings.citationstyle = value;
+                }
+            });
+
+            jQuery('#book-settings-documentstyle').dropkick({
+                change: function change(value, label) {
+                    theBook.settings.documentstyle = value;
+                }
+            });
+
+            jQuery('#book-settings-papersize').dropkick({
+                change: function change(value, label) {
+                    theBook.settings.papersize = value;
+                }
+            });
+            var diaButtons = {};
+            if (theBook.rights === "w") {
+                diaButtons[gettext('Submit')] = function () {
+                    getFormData();
+
+                    that.saveBook(theBook, theOldBook, this);
+                };
+                diaButtons[gettext('Cancel')] = function () {
+                    jQuery(this).dialog("close");
+                };
+            } else {
+                diaButtons[gettext('Close')] = function () {
+                    jQuery(this).dialog("close");
+                };
+            }
+            jQuery('#book-dialog').dialog({
+                draggable: false,
+                resizable: false,
+                top: 10,
+                width: 820,
+                height: 590,
+                modal: true,
+                buttons: diaButtons,
+                create: function create() {
+                    var theDialog = jQuery(this).closest(".ui-dialog");
+                    theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark");
+                    theDialog.find(".ui-button:last").addClass("fw-button fw-orange");
+                },
+                close: function close() {
+                    jQuery(document).off('click', '#add-chapter');
+                    jQuery(document).off('click', '.book-sort-up');
+                    jQuery(document).off('click', '.book-sort-down');
+                    jQuery(document).off('click', '#add-chapter');
+                    jQuery(document).off('click', '#book-document-list td');
+                    jQuery(document).off('click', '.delete-chapter');
+                    jQuery(document).off('click', '.edit-chapter');
+                    jQuery(document).off('click', '#select-cover-image-button');
+                    jQuery(document).off('click', '#remove-cover-image-button');
+                    jQuery('#book-dialog').dialog('destroy').remove();
+                }
+            });
+
+            jQuery('#bookoptionsTab').tabs();
+        }
+    }]);
+
+    return BookActions;
+})();
+
+},{"./templates":13}],5:[function(require,module,exports){
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+//import {deleteBookDialog, createBookDialog, copyBook, getBookListData, startBookTable} from "./actions"
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.BookList = undefined;
 
 var _html = require("./exporter/html");
 
@@ -882,38 +921,41 @@ var _templates = require("./templates");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Books = exports.Books = (function () {
+var BookList = exports.BookList = (function () {
     // A class that contains everything that happens on the books page.
     // It is currently not possible to initialize more thna one editor class, as it
     // contains bindings to menu items, etc. that are uniquely defined.
 
-    function Books() {
-        _classCallCheck(this, Books);
+    function BookList() {
+        _classCallCheck(this, BookList);
 
+        this.mod = {};
+        new _actions.BookActions(this);
         this.bindEvents();
     }
 
-    _createClass(Books, [{
+    _createClass(BookList, [{
         key: "bindEvents",
         value: function bindEvents() {
+            var that = this;
             window.theBookList = undefined;
             window.theDocumentList = undefined;
             window.theTeamMembers = undefined;
             window.theAccessRights = undefined;
             window.theUser = undefined;
             jQuery(document).ready(function () {
-                (0, _actions.getBookListData)();
+                that.mod.actions.getBookListData();
             });
 
             jQuery(document).bind('bookDataLoaded', function () {
                 jQuery('#book-table tbody').html((0, _templates.bookListTemplate)());
-                (0, _actions.startBookTable)();
+                that.mod.actions.startBookTable();
             });
 
             jQuery(document).ready(function () {
                 jQuery(document).on('click', '.delete-book', function () {
                     var BookId = jQuery(this).attr('data-id');
-                    (0, _actions.deleteBookDialog)([BookId]);
+                    that.mod.actions.deleteBookDialog([BookId]);
                 });
 
                 jQuery(document).on('click', '.owned-by-user .rights', function () {
@@ -952,10 +994,10 @@ var Books = exports.Books = (function () {
                     if (0 == ids.length) return;
                     switch (actionName) {
                         case 'delete':
-                            (0, _actions.deleteBookDialog)(ids);
+                            that.mod.actions.deleteBookDialog(ids);
                             break;
                         case 'share':
-                            bookaccessrightsHelpers.createAccessRightsDialog(ids);
+                            (0, _dialog.createAccessRightsDialog)(ids);
                             break;
                         case 'epub':
                             for (var i = 0; i < ids.length; i++) {
@@ -986,7 +1028,7 @@ var Books = exports.Books = (function () {
                             break;
                         case 'copy':
                             for (var i = 0; i < ids.length; i++) {
-                                (0, _actions.copyBook)(_.findWhere(theBookList, {
+                                that.mod.actions.copyBook(_.findWhere(theBookList, {
                                     id: ids[i]
                                 }));
                             }
@@ -1002,18 +1044,18 @@ var Books = exports.Books = (function () {
                 });
 
                 jQuery('.create-new-book').bind('click', function () {
-                    (0, _actions.createBookDialog)(0);
+                    that.mod.actions.createBookDialog(0);
                 });
 
                 jQuery(document).on('click', '.book-title', function () {
                     var bookId = parseInt(jQuery(this).attr('data-id'));
-                    (0, _actions.createBookDialog)(bookId);
+                    that.mod.actions.createBookDialog(bookId);
                 });
             });
         }
     }]);
 
-    return Books;
+    return BookList;
 })();
 
 },{"./accessrights/dialog":2,"./actions":4,"./exporter/epub":7,"./exporter/html":9,"./exporter/latex":11,"./templates":13}],6:[function(require,module,exports){
@@ -2042,6 +2084,7 @@ var bookPrintDataTemplate = exports.bookPrintDataTemplate = _.template('\
         </td>\
     </tr>\
 ');
+
 /** A template for the epub related data pane of the book dialog */
 var bookEpubDataTemplate = exports.bookEpubDataTemplate = _.template('\
     <tr id="figure-preview-row">\
@@ -2050,7 +2093,7 @@ var bookEpubDataTemplate = exports.bookEpubDataTemplate = _.template('\
     ');
 
 /** A template for the cover image input on the epub pane of the book dialog. */
-var bookEpubDataCover = exports.bookEpubDataCover = _.template('\
+var bookEpubDataCoverTemplate = exports.bookEpubDataCoverTemplate = _.template('\
         <th class="figure-preview-row">\
             <h4 class="fw-tablerow-title">' + gettext("Cover image") + '</h4>\
         </th>\
@@ -2116,7 +2159,7 @@ var bookCoverImageSelectionTemplate = exports.bookCoverImageSelectionTemplate = 
 ');
 
 /** A template for the book dialog. */
-var tmp_book_dialog = _.template('\
+var bookDialogTemplate = exports.bookDialogTemplate = _.template('\
     <div id="book-dialog" title="<%- dialogHeader %>">\
         <div id="bookoptionsTab">\
             <ul>\
@@ -2135,7 +2178,7 @@ var tmp_book_dialog = _.template('\
     </div>');
 
 /** A template for the chapter pane of the book dialog. */
-var bookDialogChaptersTemplate = _.template('\
+var bookDialogChaptersTemplate = exports.bookDialogChaptersTemplate = _.template('\
     <% if (theBook.rights==="w") { %>\
         <div class="fw-ar-container">\
             <h3 class="fw-green-title">' + gettext("My documents") + '</h3>\

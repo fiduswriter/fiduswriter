@@ -156,7 +156,8 @@ export let bookPrintDataTemplate = _.template('\
         </select>\
         </td>\
     </tr>\
-');
+')
+
 /** A template for the epub related data pane of the book dialog */
 export let bookEpubDataTemplate = _.template('\
     <tr id="figure-preview-row">\
@@ -165,7 +166,7 @@ export let bookEpubDataTemplate = _.template('\
     ')
 
 /** A template for the cover image input on the epub pane of the book dialog. */
-export let bookEpubDataCover = _.template('\
+export let bookEpubDataCoverTemplate = _.template('\
         <th class="figure-preview-row">\
             <h4 class="fw-tablerow-title">'+gettext("Cover image")+'</h4>\
         </th>\
@@ -234,10 +235,10 @@ export let bookCoverImageSelectionTemplate = _.template('\
             '</button>\
         </div>\
     </div>\
-');
+')
 
 /** A template for the book dialog. */
-var tmp_book_dialog = _.template('\
+export let bookDialogTemplate = _.template('\
     <div id="book-dialog" title="<%- dialogHeader %>">\
         <div id="bookoptionsTab">\
             <ul>\
@@ -253,10 +254,10 @@ var tmp_book_dialog = _.template('\
             <div id="optionTab4"><table class="fw-dialog-table fw-media-uploader"><tbody><%= epubData %></tbody></table></div>\
             <div id="optionTab5"><table class="fw-dialog-table"><tbody><%= printData %></tbody></table></div>\
         </div>\
-    </div>');
+    </div>')
 
 /** A template for the chapter pane of the book dialog. */
-let bookDialogChaptersTemplate = _.template('\
+export let bookDialogChaptersTemplate = _.template('\
     <% if (theBook.rights==="w") { %>\
         <div class="fw-ar-container">\
             <h3 class="fw-green-title">' + gettext("My documents") + '</h3>\

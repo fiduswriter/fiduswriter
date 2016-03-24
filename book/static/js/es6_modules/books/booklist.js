@@ -1,39 +1,43 @@
 import {downloadHtml} from "./exporter/html"
 import {downloadLatex} from "./exporter/latex"
 import {downloadEpub} from "./exporter/epub"
-import {deleteBookDialog, createBookDialog, copyBook, getBookListData, startBookTable} from "./actions"
+import {BookActions} from "./actions"
+//import {deleteBookDialog, createBookDialog, copyBook, getBookListData, startBookTable} from "./actions"
 import {createAccessRightsDialog} from "./accessrights/dialog"
 import {bookListTemplate, bookBibliographyDataTemplate} from "./templates"
 
 
-export class Books {
+export class BookList {
     // A class that contains everything that happens on the books page.
     // It is currently not possible to initialize more thna one editor class, as it
     // contains bindings to menu items, etc. that are uniquely defined.
     constructor() {
+        this.mod = {}
+        new BookActions(this)
         this.bindEvents()
     }
 
     bindEvents() {
+        let that = this
         window.theBookList = undefined
         window.theDocumentList = undefined
         window.theTeamMembers = undefined
         window.theAccessRights = undefined
         window.theUser = undefined
         jQuery(document).ready(function () {
-            getBookListData()
+            that.mod.actions.getBookListData()
         })
 
         jQuery(document).bind('bookDataLoaded', function () {
             jQuery('#book-table tbody').html(bookListTemplate())
-            startBookTable()
+            that.mod.actions.startBookTable()
         })
 
 
         jQuery(document).ready(function () {
             jQuery(document).on('click', '.delete-book', function () {
                 let BookId = jQuery(this).attr('data-id')
-                deleteBookDialog([BookId])
+                that.mod.actions.deleteBookDialog([BookId])
             })
 
             jQuery(document).on('click', '.owned-by-user .rights', function () {
@@ -83,10 +87,10 @@ export class Books {
                         return
                     switch (actionName) {
                     case 'delete':
-                        deleteBookDialog(ids)
+                        that.mod.actions.deleteBookDialog(ids)
                         break
                     case 'share':
-                        bookaccessrightsHelpers.createAccessRightsDialog(ids)
+                        createAccessRightsDialog(ids)
                         break
                     case 'epub':
                         for (let i = 0; i < ids.length; i++) {
@@ -123,7 +127,7 @@ export class Books {
                         break
                     case 'copy':
                         for (let i = 0; i < ids.length; i++) {
-                            copyBook(_.findWhere(
+                            that.mod.actions.copyBook(_.findWhere(
                                 theBookList, {
                                     id: ids[i]
                                 }))
@@ -142,12 +146,12 @@ export class Books {
                 })
 
             jQuery('.create-new-book').bind('click', function () {
-                createBookDialog(0)
+                that.mod.actions.createBookDialog(0)
             })
 
             jQuery(document).on('click', '.book-title', function () {
                 let bookId = parseInt(jQuery(this).attr('data-id'))
-                createBookDialog(bookId)
+                that.mod.actions.createBookDialog(bookId)
             })
         })
     }

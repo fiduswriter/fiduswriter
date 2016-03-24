@@ -99,13 +99,17 @@ var FW_FILETYPE_VERSION = 1.2,
     MAX_FW_FILETYPE_VERSION = 1.2;
 
 var ImportFidusFile = exports.ImportFidusFile = (function () {
+
+    /* Process a packaged Fidus File, either through user upload, or by reloading
+      a saved revision which was saved in the same ZIP-baseformat. */
+
     function ImportFidusFile(file, user, check, callback) {
         _classCallCheck(this, ImportFidusFile);
 
         this.file = file;
         this.user = user;
         this.callback = callback;
-        this.check = check;
+        this.check = check; // Whether the file needs to be checked for compliance with ZIP-format
         this.init();
     }
 

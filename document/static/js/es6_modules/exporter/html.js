@@ -2,6 +2,8 @@ import {obj2Node} from "./json"
 import {createSlug, findImages} from "./tools"
 import {zipFileCreator} from "./zip"
 import {htmlExportTemplate} from "./html-templates"
+import {formatCitations} from "../citations/format"
+
 import {render as katexRender} from "katex"
 
 export let downloadHtml = function(aDocument, inEditor) {
@@ -71,7 +73,7 @@ export let joinDocumentParts = function(aDocument, aBibDB) {
         contents.insertBefore(tempNode, contents.firstChild)
     }
 
-    let bibliography = citationHelpers.formatCitations(contents,
+    let bibliography = formatCitations(contents,
         aDocument.settings.citationstyle,
         aBibDB)
 

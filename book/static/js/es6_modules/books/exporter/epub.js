@@ -12,6 +12,7 @@ import {ncxTemplate, ncxItemTemplate, navTemplate, navItemTemplate,
 import {node2Obj, obj2Node} from "../../exporter/json"
 import {createSlug, findImages} from "../../exporter/tools"
 import {zipFileCreator} from "../../exporter/zip"
+import {formatCitations} from "../../citations/format"
 
 export let downloadEpub = function (aBook) {
     getMissingChapterData(aBook, function () {
@@ -87,7 +88,7 @@ let epubBookExport = function (aBook, anImageDB, aBibDB) {
             contents.appendChild(tempNode.firstChild)
         }
 
-        let bibliography = citationHelpers.formatCitations(contents,
+        let bibliography = formatCitations(contents,
             aBook.settings.citationstyle,
             aBibDB)
 

@@ -30,6 +30,35 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         bibliographyHelpers = {};
 
 
+    var formatDateString = function(dateString) {
+        // This mirrors the formatting of the date as returned by Python in bibliography/models.py
+        if ('undefined' == typeof(dateString)) return '';
+        var dates = dateString.split('/');
+        var newValue = [];
+        var x, i, dataParts;
+        for (x = 0; x < dates.length; x++) {
+            dateParts = dates[x].split('-');
+            newValue.push('');
+            for (i = 0; i < dateParts.length; i++) {
+                if (isNaN(dateParts[i])) {
+                    break;
+                }
+                if (i > 0) {
+                    newValue[x] += '/';
+                }
+                newValue[x] += dateParts[i];
+            }
+        }
+        if (newValue[0] === '') {
+            return '';
+        } else if (newValue.length === 1) {
+            return newValue[0];
+        } else {
+            return newValue[0] + '-' + newValue[1];
+        }
+    };
+
+
     /** Dictionary of date selection options for bibliography item editor (localized).
      * @constant date_format
      * @memberof bibliographyHelpers
@@ -1376,7 +1405,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         var field_name = 'eField' + the_id;
         switch (the_type) {
         case 'f_date':
-            the_value = citationHelpers.formatDateString(the_value);
+            the_value = formatDateString(the_value);
             var dates = the_value.split('-'),
                 y_val = ['', ''],
                 m_val = ['', ''],
@@ -1833,7 +1862,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                 'typetitle': BibEntryTypes[bib_info.entry_type]['title'],
                 'title': bib_info.title.replace(/[{}]/g, ''),
                 'author': bibauthor,
-                'published': citationHelpers.formatDateString(bib_info.date),
+                'published': formatDateString(bib_info.date),
                 'allowEdit': allowEdit
             }));
         } else { //if this is the new entry, append
@@ -1844,7 +1873,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                 'typetitle': BibEntryTypes[bib_info.entry_type]['title'],
                 'title': bib_info.title.replace(/[{}]/g, ''),
                 'author': bibauthor,
-                'published': citationHelpers.formatDateString(bib_info.date),
+                'published': formatDateString(bib_info.date),
                 'allowEdit': allowEdit
             }));
         }
@@ -2092,7 +2121,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
 
         bibliographyHelpers.getBibDB(function () {
             if (window.hasOwnProperty('theEditor') && theEditor.pm) {
-                citationHelpers.formatCitationsInDoc();
+                theEditor.layoutCitations();
             }
             jQuery(document).trigger("bibliography_ready");
         });

@@ -3,6 +3,261 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
 
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Functions to display citations and the bibliography.
+ */
+
+var formatCitations = exports.formatCitations = function formatCitations(contentElement, citationstyle, aBibDB) {
+    var bibliographyHTML = '',
+        allCitations = jQuery(contentElement).find('.citation'),
+        listedWorksCounter = 0,
+        citeprocParams = [],
+        bibFormats = [],
+        citationsIds = [];
+
+    allCitations.each(function (i) {
+        var entries = this.dataset.bibEntry ? this.dataset.bibEntry.split(',') : [];
+        var allCitationsListed = true;
+
+        var len = entries.length;
+        for (var j = 0; j < len; j++) {
+            if (aBibDB.hasOwnProperty(entries[j])) {
+                continue;
+            }
+            allCitationsListed = false;
+            break;
+        }
+
+        if (allCitationsListed) {
+            var pages = this.dataset.bibPage ? this.dataset.bibPage.split(',,,') : [],
+                prefixes = this.dataset.bibBefore ? this.dataset.bibBefore.split(',,,') : [],
+
+            //suffixes = this.dataset.bibAfter.split(',,,'),
+            citationItem = undefined,
+                citationItems = [];
+
+            listedWorksCounter += entries.length;
+
+            for (var j = 0; j < len; j++) {
+                citationItem = {
+                    id: entries[j]
+                };
+                if ('' != pages[j]) {
+                    citationItem.locator = pages[j];
+                }
+                if ('' != prefixes[j]) {
+                    citationItem.prefix = prefixes[j];
+                }
+                //if('' != suffixes[j]) { citationItem.suffix = pages[j] }
+                citationItems.push(citationItem);
+            }
+
+            //            bibFormats.push(i)
+            bibFormats.push(this.dataset.bibFormat);
+            citeprocParams.push({
+                citationItems: citationItems,
+                properties: {
+                    noteIndex: bibFormats.length
+                }
+            });
+        }
+    });
+
+    if (listedWorksCounter == 0) {
+        return '';
+    }
+
+    var citeprocObj = getFormattedCitations(citeprocParams, citationstyle, bibFormats, aBibDB);
+
+    for (var j = 0; j < citeprocObj.citations.length; j++) {
+        var citationText = citeprocObj.citations[j][0][1];
+        if ('note' == citeprocObj.citationtype) {
+            citationText = '<span class="pagination-footnote"><span><span>' + citationText + '</span></span></span>';
+        }
+        allCitations[j].innerHTML = citationText;
+    }
+
+    bibliographyHTML += '<h1>' + gettext('Bibliography') + '</h1>';
+    // Add entry to bibliography
+
+    for (var j = 0; j < citeprocObj.bibliography[1].length; j++) {
+        bibliographyHTML += citeprocObj.bibliography[1][j];
+    }
+
+    return bibliographyHTML;
+    // Delete entries that are exactly the same
+    //bibliographyHTML = _.unique(bibliographyHTML.split('<p>')).join('<p>')
+    //bibliographyHTML = bibliographyHTML.replace(/<div class="csl-entry">/g, '<p>')
+    //return bibliographyHTML.replace(/<\/div>/g, '</p>')
+};
+
+var citeprocSys = (function () {
+    function citeprocSys() {
+        _classCallCheck(this, citeprocSys);
+
+        this.abbreviations = {
+            "default": {}
+        };
+        this.abbrevsname = "default";
+    }
+
+    _createClass(citeprocSys, [{
+        key: 'retrieveItem',
+        value: function retrieveItem(id) {
+            return CSLDB[id];
+        }
+    }, {
+        key: 'retrieveLocale',
+        value: function retrieveLocale(lang) {
+            return citeproc.locals[lang];
+        }
+    }, {
+        key: 'getAbbreviation',
+        value: function getAbbreviation(dummy, obj, jurisdiction, vartype, key) {
+            try {
+                if (this.abbreviations[this.abbrevsname][vartype][key]) {
+                    obj["default"][vartype][key] = this.abbreviations[this.abbrevsname][vartype][key];
+                } else {
+                    obj["default"][vartype][key] = "";
+                }
+            } catch (e) {
+                // There is breakage here that needs investigating.
+            }
+        }
+    }]);
+
+    return citeprocSys;
+})();
+
+var getFormattedCitations = function getFormattedCitations(citations, citationStyle, citationFormats, aBibDB) {
+    bibliographyHelpers.setCSLDB(aBibDB);
+
+    if (citeproc.styles.hasOwnProperty(citationStyle)) {
+        citationStyle = citeproc.styles[citationStyle];
+    } else {
+        for (styleName in citeproc.styles) {
+            citationStyle = citeproc.styles[styleName];
+            break;
+        }
+    }
+
+    var citeprocInstance = new CSL.Engine(new citeprocSys(), citationStyle.definition);
+
+    var inText = citeprocInstance.cslXml.className === 'in-text';
+
+    var len = citations.length;
+
+    var citationTexts = [];
+
+    for (var i = 0; i < len; i++) {
+        var citation = citations[i],
+            citationText = citeprocInstance.appendCitationCluster(citation);
+
+        if (inText && 'textcite' == citationFormats[i]) {
+            var newCiteText = '',
+                items = citation.citationItems,
+                len2 = items.length;
+
+            for (var j = 0; j < len2; j++) {
+                var onlyNameOption = [{
+                    id: items[j].id,
+                    "author-only": 1
+                }];
+
+                var onlyDateOption = [{
+                    id: items[j].id,
+                    "suppress-author": 1
+                }];
+
+                if (items[j].locator) {
+                    onlyDateOption[0].locator = items[j].locator;
+                }
+
+                if (items[j].label) {
+                    onlyDateOption[0].label = items[j].label;
+                }
+
+                if (items[j].prefix) {
+                    onlyDateOption[0].prefix = items[j].prefix;
+                }
+
+                if (items[j].suffix) {
+                    onlyDateOption[0].suffix = items[j].suffix;
+                }
+
+                if (0 < j) {
+                    newCiteText += '; ';
+                }
+                newCiteText += citeprocInstance.makeCitationCluster(onlyNameOption);
+                newCiteText += ' ' + citeprocInstance.makeCitationCluster(onlyDateOption);
+            }
+
+            citationText[0][1] = newCiteText;
+        }
+
+        citationTexts.push(citationText);
+    }
+
+    return {
+        'citations': citationTexts,
+        'bibliography': citeprocInstance.makeBibliography(),
+        'citationtype': citeprocInstance.cslXml.className
+    };
+};
+
+var stripValues = function stripValues(bibValue) {
+    return bibValue.replace(/[\{\}]/g, '');
+};
+
+var getAuthor = function getAuthor(bibData) {
+    var author = bibData.author,
+        returnObject = {};
+    if ('' == author || 'undefined' == typeof author) {
+        author = bibData.editor;
+    }
+    var splitAuthor = author.split("{");
+    if (splitAuthor.length > 2) {
+        returnObject.firstName = author.split("{")[1].replace(/[\{\}]/g, '').replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+        returnObject.lastName = author.split("{")[2].replace(/[\{\}]/g, '').replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+    } else {
+        returnObject.firstName = '';
+        returnObject.lastName = author.split("{")[1].replace(/[\{\}]/g, '').replace(/^\s\s*/, '').replace(/\s\s*$/, '');
+    }
+    return returnObject;
+};
+
+var yearFromDateString = function yearFromDateString(dateString) {
+    // This mirrors the formatting of the date as returned by Python in bibliography/models.py
+    var dates = dateString.split('/');
+    var newValue = [];
+    for (var x = 0; x < dates.length; x++) {
+        var dateParts = dates[x].split('-');
+        // Only make use of the first value (to/from years), discarding month and day values
+        if (isNaN(dateParts[0])) {
+            break;
+        }
+        newValue.push(dateParts[0]);
+    }
+    if (newValue.length === 0) {
+        return 'Unpublished';
+    } else if (newValue.length === 1) {
+        return newValue[0];
+    } else {
+        return newValue[0] + '-' + newValue[1];
+    }
+};
+
+},{}],2:[function(require,module,exports){
+'use strict';
+
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
@@ -77,7 +332,7 @@ var node2Obj = exports.node2Obj = function node2Obj(node) {
     return obj;
 };
 
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -90,6 +345,8 @@ exports.PrintBook = undefined;
 var _templates = require("./templates");
 
 var _json = require("../exporter/json");
+
+var _format = require("../citations/format");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -212,7 +469,7 @@ var PrintBook = exports.PrintBook = (function () {
                 obj2Node: _json.obj2Node
             });
 
-            jQuery(bibliography).html(citationHelpers.formatCitations(document.body, theBook.settings.citationstyle, aBibDB));
+            jQuery(bibliography).html((0, _format.formatCitations)(document.body, theBook.settings.citationstyle, aBibDB));
 
             if (jQuery(bibliography).text().trim().length === 0) {
                 jQuery(bibliography).parent().remove();
@@ -257,7 +514,7 @@ var PrintBook = exports.PrintBook = (function () {
     return PrintBook;
 })();
 
-},{"../exporter/json":1,"./templates":3}],3:[function(require,module,exports){
+},{"../citations/format":1,"../exporter/json":2,"./templates":4}],4:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -312,7 +569,7 @@ var bookPrintTemplate = exports.bookPrintTemplate = _.template('\
 <% }); %>\
 ');
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 "use strict";
 
 var _printBook = require("./es6_modules/print-book/print-book");
@@ -323,4 +580,4 @@ purposes.*/
 var thePrintBook = new _printBook.PrintBook();
 window.thePrintBook = thePrintBook;
 
-},{"./es6_modules/print-book/print-book":2}]},{},[4]);
+},{"./es6_modules/print-book/print-book":3}]},{},[5]);

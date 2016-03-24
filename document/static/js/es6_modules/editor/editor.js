@@ -16,7 +16,7 @@ import {ModSettings} from "./settings/mod"
 import {ModMenus} from "./menus/mod"
 import {ModServerCommunications} from "./server-communications"
 import {ModNodeConvert} from "./node-convert"
-
+import {formatCitations} from "../citations/format"
 import {node2Obj, obj2Node} from "../exporter/json"
 
 export class Editor {
@@ -73,7 +73,7 @@ export class Editor {
         this.pm.on("filterTransform", (transform) => {return that.onFilterTransform(transform)})
         this.pm.on("transform", (transform, options) => {that.onTransform(transform, true)})
         this.pm.mod.collab.on("collabTransform", (transform, options) => {that.onTransform(transform, false)})
-        new UpdateScheduler(this.pm, "flush setDoc", citationHelpers.formatCitationsInDocIfNew)
+        new UpdateScheduler(this.pm, "change setDoc", () => {that.layoutCitations()})
         this.setSaveTimers()
     }
 
@@ -191,14 +191,29 @@ export class Editor {
         })
     }
 
+    layoutCitations() {
+        let emptyCitations = document.querySelectorAll('#document-editable span.citation:empty')
+        if (emptyCitations.length > 0) {
+            let bibliographyHTML = formatCitations(
+                document.getElementById('document-editable'), // TODO: Should we point this to somewhere else?
+                this.doc.settings.citationstyle,
+                window.BibDB
+            )
+            document.getElementById('document-bibliography').innerHTML = bibliographyHTML
+        }
+
+    }
+
     enableUI() {
         bibliographyHelpers.initiate()
+
+        this.layoutCitations()
 
         jQuery('.savecopy, .download, .latex, .epub, .html, .print, .style, \
       .citationstyle, .tools-item, .papersize, .metadata-menu-item, \
       #open-close-header').removeClass('disabled')
 
-        citationHelpers.formatCitationsInDoc()
+
         this.mod.settings.layout.displayDocumentstyle()
         this.mod.settings.layout.displayCitationstyle()
 
@@ -348,7 +363,7 @@ export class Editor {
 
     // Things to be executed on every editor transform.
     onTransform(transform, local) {
-        let updateBibliography = false, updateTitle = false
+        let updateBibliography = false, updateTitle = false, that = this
             // Check what area is affected
         transform.steps.forEach(function(step, index) {
             if (step.type === 'replace') {
@@ -371,7 +386,7 @@ export class Editor {
             // Recreate the bibliography on next flush.
             let formatCitations = new UpdateScheduler(this.pm, "flush", function() {
                 formatCitations.detach()
-                citationHelpers.formatCitationsInDoc()
+                this.layoutCitations()
             })
         }
 

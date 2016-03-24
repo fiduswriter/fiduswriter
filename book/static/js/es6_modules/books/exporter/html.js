@@ -7,6 +7,7 @@ import {setLinks, orderLinks} from "../../exporter/epub"
 import {cleanHTML, replaceImgSrc} from "../../exporter/html"
 import {createSlug, findImages} from "../../exporter/tools"
 import {zipFileCreator} from "../../exporter/zip"
+import {formatCitations} from "../../citations/format"
 
 // Some templates need to be able to refer to these templates, so we hand the templates variable to such
 // templates.
@@ -39,7 +40,7 @@ let htmlBookExport = function (aBook, anImageDB, aBibDB) {
 
         let contents = obj2Node(aDocument.contents)
 
-        let bibliography = citationHelpers.formatCitations(contents,
+        let bibliography = formatCitations(contents,
             aBook.settings.citationstyle,
             aBibDB)
 

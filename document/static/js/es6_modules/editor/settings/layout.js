@@ -51,7 +51,7 @@ export class ModSettingsLayout {
             'selected')
         jQuery('span[data-citationstyle=' + this.mod.editor.doc.settings.citationstyle + ']').addClass(
             'selected')
-        citationHelpers.formatCitationsInDoc()
+        this.mod.editor.layoutCitations()
     }
 
     /** Display the document's paper size.

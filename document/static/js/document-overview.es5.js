@@ -814,10 +814,10 @@ var DocumentOverviewMenus = exports.DocumentOverviewMenus = (function () {
 
                 //select all entries
                 jQuery('#select-all-entry').bind('change', function () {
-                    var new_bool = false;
-                    if (jQuery(this).prop("checked")) new_bool = true;
+                    var newBool = false;
+                    if (jQuery(this).prop("checked")) newBool = true;
                     jQuery('.entry-select').not(':disabled').each(function () {
-                        this.checked = new_bool;
+                        this.checked = newBool;
                     });
                 });
 
@@ -826,21 +826,21 @@ var DocumentOverviewMenus = exports.DocumentOverviewMenus = (function () {
 
                 //submit action for selected document
                 jQuery('#action-selection-pulldown-documents li > span').bind('mousedown', function () {
-                    var action_name = jQuery(this).attr('data-action'),
+                    var actionName = jQuery(this).attr('data-action'),
                         ids = [];
-                    if ('' == action_name || 'undefined' == typeof action_name) return;
+                    if ('' == actionName || 'undefined' == typeof actionName) return;
                     jQuery('.entry-select:checked').not(':disabled').each(function () {
-                        if (that.documentOverview.user.id != jQuery(this).attr('data-owner') && (action_name === 'delete' || action_name === 'share')) {
+                        if (that.documentOverview.user.id != jQuery(this).attr('data-owner') && (actionName === 'delete' || actionName === 'share')) {
                             var theTitle = jQuery(this).parent().parent().parent().find('.doc-title').text();
                             theTitle = $.trim(theTitle).replace(/[\t\n]/g, '');
                             $.addAlert('error', gettext('You cannot delete or share: ') + theTitle);
-                            //return true;
+                            //return true
                         } else {
                                 ids[ids.length] = parseInt(jQuery(this).attr('data-id'));
                             }
                     });
                     if (0 == ids.length) return;
-                    switch (action_name) {
+                    switch (actionName) {
                         case 'delete':
                             that.documentOverview.mod.actions.deleteDocumentDialog(ids);
                             break;
@@ -986,13 +986,13 @@ var DocumentOverview = exports.DocumentOverview = (function () {
                 jQuery(this).parent().removeClass('focus');
             });
 
-            var autocomplete_tags = [];
+            var autocompleteTags = [];
             jQuery('#document-table .fw-searchable').each(function () {
-                autocomplete_tags.push(this.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''));
+                autocompleteTags.push(this.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''));
             });
-            autocomplete_tags = _.uniq(autocomplete_tags);
+            autocompleteTags = _.uniq(autocompleteTags);
             jQuery("#document-table_wrapper .dataTables_filter input").autocomplete({
-                source: autocomplete_tags
+                source: autocompleteTags
             });
         }
     }, {

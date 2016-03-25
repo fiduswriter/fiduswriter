@@ -36,7 +36,7 @@ export class DocumentOverview {
             type: 'POST',
             dataType: 'json',
             success: function (response, textStatus, jqXHR) {
-                that.documentList = _.uniq(response.documents, true, function(obj) { return obj.id; })
+                that.documentList = _.uniq(response.documents, true, function(obj) { return obj.id })
                 that.teamMembers = response.team_members
                 that.accessRights = response.access_rights
                 that.user = response.user
@@ -76,26 +76,26 @@ export class DocumentOverview {
                 "bSortable": false,
                 "aTargets": [0, 2, 6, 7]
             }],
-        });
+        })
 
-        jQuery('#document-table_wrapper .dataTables_filter input').attr('placeholder', gettext('Search for Document'));
+        jQuery('#document-table_wrapper .dataTables_filter input').attr('placeholder', gettext('Search for Document'))
         jQuery('#document-table_wrapper .dataTables_filter input').unbind('focus, blur')
         jQuery('#document-table_wrapper .dataTables_filter input').bind('focus', function() {
-            jQuery(this).parent().addClass('focus');
-        });
+            jQuery(this).parent().addClass('focus')
+        })
         jQuery('#document-table_wrapper .dataTables_filter input').bind('blur', function() {
-            jQuery(this).parent().removeClass('focus');
-        });
+            jQuery(this).parent().removeClass('focus')
+        })
 
-        var autocomplete_tags = [];
+        let autocompleteTags = []
         jQuery('#document-table .fw-searchable').each(function() {
-            autocomplete_tags.push(this.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''));
-        });
-        autocomplete_tags = _.uniq(autocomplete_tags);
+            autocompleteTags.push(this.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''))
+        })
+        autocompleteTags = _.uniq(autocompleteTags)
         jQuery("#document-table_wrapper .dataTables_filter input").autocomplete({
-            source: autocomplete_tags
-        });
-    };
+            source: autocompleteTags
+        })
+    }
 
     stopDocumentTable() {
         jQuery('#document-table').dataTable().fnDestroy()

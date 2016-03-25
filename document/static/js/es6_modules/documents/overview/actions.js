@@ -216,7 +216,7 @@ export class DocumentOverviewActions {
                 downloadEpub(_.findWhere(
                     that.documentOverview.documentList, {
                         id: ids[i]
-                    }), false);
+                    }), false)
             }
         })
     }
@@ -242,7 +242,7 @@ export class DocumentOverviewActions {
                     if (actionObject.doc.revisions.length === 0) {
                         jQuery('#Text_' + actionObject.doc.id + ' .revisions').detach()
                     }
-                    break;
+                    break
             }
 
         })

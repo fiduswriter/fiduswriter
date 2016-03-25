@@ -1,6 +1,15 @@
 /* This file has been automatically generated. DO NOT EDIT IT. 
- Changes will be overwritten. Edit exporter.es6.js and run ./es6-compiler.sh */
+ Changes will be overwritten. Edit document-overview.es6.js and run ./es6-compiler.sh */
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+"use strict";
+
+var _overview = require("./es6_modules/documents/overview/overview");
+
+var theDocumentOverview = new _overview.DocumentOverview();
+
+window.theDocumentOverview = theDocumentOverview;
+
+},{"./es6_modules/documents/overview/overview":7}],2:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -255,7 +264,1137 @@ var yearFromDateString = function yearFromDateString(dateString) {
     }
 };
 
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.DocumentAccessRightsDialog = undefined;
+
+var _templates = require('./templates');
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+* Functions for the document access rights dialog.
+*/
+
+var DocumentAccessRightsDialog = exports.DocumentAccessRightsDialog = (function () {
+    function DocumentAccessRightsDialog(documentIds, accessRights, teamMembers) {
+        _classCallCheck(this, DocumentAccessRightsDialog);
+
+        this.documentIds = documentIds;
+        this.accessRights = accessRights;
+        this.teamMembers = teamMembers;
+        this.createAccessRightsDialog();
+    }
+
+    _createClass(DocumentAccessRightsDialog, [{
+        key: 'createAccessRightsDialog',
+        value: function createAccessRightsDialog() {
+            var that = this;
+            var dialogHeader = gettext('Share your document with others');
+            var documentCollaborators = {};
+            var len = this.accessRights.length;
+
+            for (var i = 0; i < len; i++) {
+                if (_.include(that.documentIds, that.accessRights[i].document_id)) {
+                    if ('undefined' == typeof documentCollaborators[that.accessRights[i].user_id]) {
+                        documentCollaborators[that.accessRights[i].user_id] = that.accessRights[i];
+                        documentCollaborators[that.accessRights[i].user_id].count = 1;
+                    } else {
+                        if (documentCollaborators[that.accessRights[i].user_id].rights != that.accessRights[i].rights) documentCollaborators[that.accessRights[i].user_id].rights = 'r';
+                        documentCollaborators[that.accessRights[i].user_id].count += 1;
+                    }
+                }
+            }
+            documentCollaborators = _.select(documentCollaborators, function (obj) {
+                return obj.count == that.documentIds.length;
+            });
+
+            var dialogBody = (0, _templates.accessRightOverviewTemplate)({
+                'dialogHeader': dialogHeader,
+                'contacts': (0, _templates.accessRightTrTemplate)({ 'contacts': that.teamMembers }),
+                'collaborators': (0, _templates.collaboratorsTemplate)({
+                    'collaborators': documentCollaborators
+                })
+            });
+            jQuery('body').append(dialogBody);
+
+            var diaButtons = {};
+            diaButtons[gettext('Add new contact')] = function () {
+                contactHelpers.addMemberDialog();
+            };
+            diaButtons[gettext('Submit')] = function () {
+                //apply the current state to server
+                var collaborators = [],
+                    rights = [];
+                jQuery('#share-member .collaborator-tr').each(function () {
+                    collaborators[collaborators.length] = jQuery(this).attr('data-id');
+                    rights[rights.length] = jQuery(this).attr('data-right');
+                });
+                that.submitAccessRight(collaborators, rights);
+                jQuery(this).dialog('close');
+            };
+            diaButtons[gettext('Cancel')] = function () {
+                jQuery(this).dialog("close");
+            };
+
+            jQuery('#access-rights-dialog').dialog({
+                draggable: false,
+                resizable: false,
+                top: 10,
+                width: 820,
+                height: 540,
+                modal: true,
+                buttons: diaButtons,
+                create: function create() {
+                    var theDialog = jQuery(this).closest(".ui-dialog");
+                    theDialog.find(".ui-dialog-buttonset .ui-button:eq(0)").addClass("fw-button fw-light fw-add-button");
+                    theDialog.find(".ui-dialog-buttonset .ui-button:eq(1)").addClass("fw-button fw-dark");
+                    theDialog.find(".ui-dialog-buttonset .ui-button:eq(2)").addClass("fw-button fw-orange");
+                },
+                close: function close() {
+                    jQuery('#access-rights-dialog').dialog('destroy').remove();
+                }
+            });
+            jQuery('.fw-checkable').bind('click', function () {
+                $.setCheckableLabel(jQuery(this));
+            });
+            jQuery('#add-share-member').bind('click', function () {
+                var selectedMembers = jQuery('#my-contacts .fw-checkable.checked');
+                var selectedData = [];
+                selectedMembers.each(function () {
+                    var memberId = jQuery(this).attr('data-id');
+                    var collaborator = jQuery('#collaborator-' + memberId);
+                    if (0 == collaborator.size()) {
+                        selectedData[selectedData.length] = {
+                            'user_id': memberId,
+                            'user_name': jQuery(this).attr('data-name'),
+                            'avatar': jQuery(this).attr('data-avatar'),
+                            'rights': 'r'
+                        };
+                    } else if ('d' == collaborator.attr('data-right')) {
+                        collaborator.removeClass('d').addClass('r').attr('data-right', 'r');
+                    }
+                });
+                jQuery('#my-contacts .checkable-label.checked').removeClass('checked');
+                jQuery('#share-member table tbody').append((0, _templates.collaboratorsTemplate)({
+                    'collaborators': selectedData
+                }));
+                that.collaboratorFunctionsEvent();
+            });
+            that.collaboratorFunctionsEvent();
+        }
+    }, {
+        key: 'collaboratorFunctionsEvent',
+        value: function collaboratorFunctionsEvent() {
+            jQuery('.edit-right').unbind('click');
+            jQuery('.edit-right').each(function () {
+                $.addDropdownBox(jQuery(this), jQuery(this).siblings('.fw-pulldown'));
+            });
+            var spans = jQuery('.edit-right-wrapper .fw-pulldown-item, .delete-collaborator');
+            spans.unbind('mousedown');
+            spans.bind('mousedown', function () {
+                var newRight = jQuery(this).attr('data-right');
+                jQuery(this).closest('.collaborator-tr').attr('class', 'collaborator-tr ' + newRight);
+                jQuery(this).closest('.collaborator-tr').attr('data-right', newRight);
+            });
+        }
+    }, {
+        key: 'submitAccessRight',
+        value: function submitAccessRight(newCollaborators, newAccessRights) {
+            var that = this;
+            var postData = {
+                'documents[]': that.documentIds,
+                'collaborators[]': newCollaborators,
+                'rights[]': newAccessRights
+            };
+            $.ajax({
+                url: '/document/accessright/save/',
+                data: postData,
+                type: 'POST',
+                dataType: 'json',
+                success: function success(response) {
+                    that.accessRights = response.access_rights;
+                    $.addAlert('success', gettext('Access rights have been saved'));
+                },
+                error: function error(jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR.responseText);
+                }
+            });
+        }
+    }]);
+
+    return DocumentAccessRightsDialog;
+})();
+
+},{"./templates":4}],4:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+/** The access rights dialogue template */
+var accessRightOverviewTemplate = exports.accessRightOverviewTemplate = _.template('\
+    <div id="access-rights-dialog" title="<%- dialogHeader %>">\
+        <div id="my-contacts" class="fw-ar-container">\
+            <h3 class="fw-green-title">' + gettext("My contacts") + '</h3>\
+            <table class="fw-document-table">\
+                <thead class="fw-document-table-header"><tr><th width="337">' + gettext("Contacts") + '</th></tr></thead>\
+                <tbody class="fw-document-table-body fw-small"><%= contacts %></tbody>\
+            </table>\
+        </div>\
+        <span id="add-share-member" class="fw-button fw-large fw-square fw-light fw-ar-button"><i class="icon-right"></i></span>\
+        <div id="share-member" class="fw-ar-container">\
+            <h3 class="fw-green-title">' + gettext("My collaborators") + '</h3>\
+            <table class="fw-document-table tablesorter">\
+                <thead class="fw-document-table-header"><tr>\
+                        <th width="217">' + gettext("Collaborators") + '</th>\
+                        <th width="50" align="center">' + gettext("Rights") + '</th>\
+                        <th width="50" align="center">' + gettext("Delete") + '</th>\
+                </tr></thead>\
+                <tbody class="fw-document-table-body fw-small"><%= collaborators %></tbody>\
+            </table>\
+        </div>\
+    </div>');
+
+/** The template for an individual row in the right hand side list of users (all contacts) of the access rights dialogue. */
+var accessRightTrTemplate = exports.accessRightTrTemplate = _.template('<% _.each(contacts, function(contact) { %>\
+        <tr>\
+            <td width="337" data-id="<%- contact.id %>" data-avatar="<%- contact.avatar %>" data-name="<%- contact.name %>" class="fw-checkable fw-checkable-td">\
+                <span><img class="fw-avatar" src="<%- contact.avatar %>" /></span>\
+                <span class="fw-inline"><%= contact.name %></span>\
+            </td>\
+        </tr>\
+    <% }) %>');
+
+/** The template for an individual row in the left hand side list of users (the collaborators of the current document) of the access rights dialogue. */
+var collaboratorsTemplate = exports.collaboratorsTemplate = _.template('<% _.each(collaborators, function(collaborator) { %>\
+        <tr id="collaborator-<%- collaborator.user_id %>" data-id="<%- collaborator.user_id %>"\
+        class="collaborator-tr <%- collaborator.rights %>" data-right="<%- collaborator.rights %>">\
+            <td width="215">\
+                <span><img class="fw-avatar" src="<%- collaborator.avatar %>" /></span>\
+                <span class="fw-inline"><%= collaborator.user_name %></span>\
+            </td>\
+            <td width="50" align="center">\
+                <div class="fw-inline edit-right-wrapper">\
+                    <i class="icon-access-right"></i>\
+                    <i class="icon-down-dir edit-right"></i>\
+                    <div class="fw-pulldown fw-left">\
+                        <ul>\
+                            <li>\
+                                <span class="fw-pulldown-item" data-right="w">\
+                                    <i class="icon-pencil" >' + gettext("Editor") + '</i>\
+                                </span>\
+                            </li>\
+                            <li>\
+                                <span class="fw-pulldown-item" data-right="r">\
+                                    <i class="icon-eye">' + gettext("Read only") + '</i>\
+                                </span>\
+                            </li>\
+                        </ul>\
+                    </div>\
+                </div>\
+            </td>\
+            <td width="50" align="center">\
+                <span class="delete-collaborator fw-inline" data-right="d">\
+                    <i class="icon-trash fw-link-text"></i>\
+                </span>\
+            </td>\
+        </tr>\
+    <% }) %>');
+
+},{}],5:[function(require,module,exports){
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.DocumentOverviewActions = undefined;
+
+var _tools = require("../tools");
+
+var _templates = require("./templates");
+
+var _copy = require("../../exporter/copy");
+
+var _epub = require("../../exporter/epub");
+
+var _html = require("../../exporter/html");
+
+var _latex = require("../../exporter/latex");
+
+var _native = require("../../exporter/native");
+
+var _file = require("../../importer/file");
+
+var _dialog = require("../revisions/dialog");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var DocumentOverviewActions = exports.DocumentOverviewActions = (function () {
+    function DocumentOverviewActions(documentOverview) {
+        _classCallCheck(this, DocumentOverviewActions);
+
+        documentOverview.mod.actions = this;
+        this.documentOverview = documentOverview;
+    }
+
+    _createClass(DocumentOverviewActions, [{
+        key: "deleteDocument",
+        value: function deleteDocument(id) {
+            var that = this;
+            var postData = { id: id };
+
+            $.ajax({
+                url: '/document/delete/',
+                data: postData,
+                type: 'POST',
+                dataType: 'json',
+                success: function success(data, textStatus, jqXHR) {
+                    that.documentOverview.stopDocumentTable();
+                    jQuery('#Text_' + id).detach();
+                    that.documentOverview.documentList = _.reject(that.documentOverview.documentList, function (document) {
+                        return document.id == id;
+                    });
+                    that.documentOverview.startDocumentTable();
+                }
+            });
+        }
+    }, {
+        key: "deleteDocumentDialog",
+        value: function deleteDocumentDialog(ids) {
+            var that = this;
+            jQuery('body').append('<div id="confirmdeletion" title="' + gettext('Confirm deletion') + '"><p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>' + gettext('Delete the document(s)?') + '</p></div>');
+            var diaButtons = {};
+            diaButtons[gettext('Delete')] = function () {
+                for (var i = 0; i < ids.length; i++) {
+                    that.deleteDocument(ids[i]);
+                }
+                jQuery(this).dialog("close");
+                $.addAlert('success', gettext('The document(s) have been deleted'));
+            };
+
+            diaButtons[gettext('Cancel')] = function () {
+                jQuery(this).dialog("close");
+            };
+
+            jQuery("#confirmdeletion").dialog({
+                resizable: false,
+                height: 180,
+                modal: true,
+                close: function close() {
+                    jQuery("#confirmdeletion").detach();
+                },
+                buttons: diaButtons,
+                create: function create() {
+                    var theDialog = jQuery(this).closest(".ui-dialog");
+                    theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark");
+                    theDialog.find(".ui-button:last").addClass("fw-button fw-orange");
+                }
+            });
+        }
+    }, {
+        key: "importFidus",
+        value: function importFidus() {
+            var that = this;
+            jQuery('body').append((0, _templates.importFidusTemplate)());
+            diaButtons = {};
+            diaButtons[gettext('Import')] = function () {
+                var fidusFile = jQuery('#fidus-uploader')[0].files;
+                if (0 == fidusFile.length) {
+                    console.log('no file found');
+                    return false;
+                }
+                fidusFile = fidusFile[0];
+                if (104857600 < fidusFile.size) {
+                    //TODO: This is an arbitrary size. What should be done with huge import files?
+                    console.log('file too big');
+                    return false;
+                }
+                $.activateWait();
+                var reader = new FileReader();
+                reader.onerror = function (e) {
+                    console.log('error', e.target.error.code);
+                };
+
+                new _file.ImportFidusFile(fidusFile, that.documentOverview.user, true, function (noErrors, returnValue) {
+                    $.deactivateWait();
+                    if (noErrors) {
+                        var aDocument = returnValue.aDocument;
+                        var aDocumentValues = returnValue.aDocumentValues;
+                        jQuery.addAlert('info', aDocument.title + gettext(' successfully imported.'));
+                        that.documentOverview.documentList.push(aDocument);
+                        that.documentOverview.stopDocumentTable();
+                        jQuery('#document-table tbody').append((0, _templates.documentsListItemTemplate)({
+                            aDocument: aDocument,
+                            user: that.documentOverview.user
+                        }));
+                        that.documentOverview.startDocumentTable();
+                    } else {
+                        jQuery.addAlert('error', returnValue);
+                    }
+                });
+                //reader.onload = unzip
+                //reader.readAsText(fidusFile)
+                jQuery(this).dialog('close');
+            };
+            diaButtons[gettext('Cancel')] = function () {
+                jQuery(this).dialog('close');
+            };
+            jQuery("#importfidus").dialog({
+                resizable: false,
+                height: 180,
+                modal: true,
+                buttons: diaButtons,
+                create: function create() {
+                    var theDialog = jQuery(this).closest(".ui-dialog");
+                    theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark");
+                    theDialog.find(".ui-button:last").addClass("fw-button fw-orange");
+                    jQuery('#fidus-uploader').bind('change', function () {
+                        jQuery('#import-fidus-name').html(jQuery(this).val().replace(/C:\\fakepath\\/i, ''));
+                    });
+                    jQuery('#import-fidus-btn').bind('mousedown', function () {
+                        console.log('triggering');
+                        jQuery('#fidus-uploader').trigger('click');
+                    });
+                },
+                close: function close() {
+                    jQuery("#importfidus").dialog('destroy').remove();
+                }
+            });
+        }
+    }, {
+        key: "copyFiles",
+        value: function copyFiles(ids) {
+            var that = this;
+            (0, _tools.getMissingDocumentListData)(ids, that.documentOverview.documentList, function () {
+                for (var i = 0; i < ids.length; i++) {
+                    (0, _copy.savecopy)(_.findWhere(that.documentOverview.documentList, {
+                        id: ids[i]
+                    }), false, that.documentOverview.user, function (returnValue) {
+                        var aDocument = returnValue.aDocument;
+                        that.documentOverview.documentList.push(aDocument);
+                        that.documentOverview.stopDocumentTable();
+                        jQuery('#document-table tbody').append((0, _templates.documentsListItemTemplate)({ aDocument: aDocument, user: that.documentOverview.user }));
+                        that.documentOverview.startDocumentTable();
+                    });
+                }
+            });
+        }
+    }, {
+        key: "downloadNativeFiles",
+        value: function downloadNativeFiles(ids) {
+            var that = this;
+            (0, _tools.getMissingDocumentListData)(ids, that.documentOverview.documentList, function () {
+                for (var i = 0; i < ids.length; i++) {
+                    (0, _native.downloadNative)(_.findWhere(that.documentOverview.documentList, {
+                        id: ids[i]
+                    }), false);
+                }
+            });
+        }
+    }, {
+        key: "downloadHtmlFiles",
+        value: function downloadHtmlFiles(ids) {
+            var that = this;
+            (0, _tools.getMissingDocumentListData)(ids, that.documentOverview.documentList, function () {
+                for (var i = 0; i < ids.length; i++) {
+                    (0, _html.downloadHtml)(_.findWhere(that.documentOverview.documentList, {
+                        id: ids[i]
+                    }), false);
+                }
+            });
+        }
+    }, {
+        key: "downloadLatexFiles",
+        value: function downloadLatexFiles(ids) {
+            var that = this;
+            (0, _tools.getMissingDocumentListData)(ids, that.documentOverview.documentList, function () {
+                for (var i = 0; i < ids.length; i++) {
+                    (0, _latex.downloadLatex)(_.findWhere(that.documentOverview.documentList, {
+                        id: ids[i]
+                    }), false);
+                }
+            });
+        }
+    }, {
+        key: "downloadEpubFiles",
+        value: function downloadEpubFiles(ids) {
+            var that = this;
+            (0, _tools.getMissingDocumentListData)(ids, that.documentOverview.documentList, function () {
+                for (var i = 0; i < ids.length; i++) {
+                    (0, _epub.downloadEpub)(_.findWhere(that.documentOverview.documentList, {
+                        id: ids[i]
+                    }), false);
+                }
+            });
+        }
+    }, {
+        key: "revisionsDialog",
+        value: function revisionsDialog(documentId) {
+            var that = this;
+            new _dialog.DocumentRevisionsDialog(documentId, that.documentOverview.documentList, that.documentOverview.user, function (actionObject) {
+                switch (actionObject.action) {
+                    case 'added-document':
+                        that.documentOverview.documentList.push(actionObject.doc);
+                        that.documentOverview.stopDocumentTable();
+                        jQuery('#document-table tbody').append((0, _templates.documentsListItemTemplate)({
+                            aDocument: actionObject.doc,
+                            user: that.documentOverview.user
+                        }));
+                        that.documentOverview.startDocumentTable();
+                        break;
+                    case 'deleted-revision':
+                        actionObject.doc.revisions = _.reject(actionObject.doc.revisions, function (revision) {
+                            return revision.pk == actionObject.id;
+                        });
+                        if (actionObject.doc.revisions.length === 0) {
+                            jQuery('#Text_' + actionObject.doc.id + ' .revisions').detach();
+                        }
+                        break;
+                }
+            });
+        }
+    }]);
+
+    return DocumentOverviewActions;
+})();
+
+},{"../../exporter/copy":12,"../../exporter/epub":15,"../../exporter/html":17,"../../exporter/latex":19,"../../exporter/native":20,"../../importer/file":25,"../revisions/dialog":9,"../tools":11,"./templates":8}],6:[function(require,module,exports){
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.DocumentOverviewMenus = undefined;
+
+var _dialog = require("../access-rights/dialog");
+
+var _dialog2 = require("../revisions/dialog");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var DocumentOverviewMenus = exports.DocumentOverviewMenus = (function () {
+    function DocumentOverviewMenus(documentOverview) {
+        _classCallCheck(this, DocumentOverviewMenus);
+
+        documentOverview.mod.menus = this;
+        this.documentOverview = documentOverview;
+        this.bind();
+    }
+
+    _createClass(DocumentOverviewMenus, [{
+        key: "bind",
+        value: function bind() {
+            var that = this;
+            jQuery(document).ready(function () {
+                jQuery(document).on('mousedown', '.delete-document', function () {
+                    var DocumentId = jQuery(this).attr('data-id');
+                    that.documentOverview.mod.actions.deleteDocumentDialog([DocumentId]);
+                });
+
+                jQuery(document).on('mousedown', '.owned-by-user .rights', function () {
+                    var documentId = parseInt(jQuery(this).attr('data-id'));
+                    new _dialog.DocumentAccessRightsDialog([documentId], that.documentOverview.accessRights, that.documentOverview.teamMembers);
+                });
+
+                jQuery(document).on('mousedown', '.revisions', function () {
+                    var documentId = parseInt(jQuery(this).attr('data-id'));
+                    that.documentOverview.mod.actions.revisionsDialog(documentId);
+                });
+
+                //select all entries
+                jQuery('#select-all-entry').bind('change', function () {
+                    var new_bool = false;
+                    if (jQuery(this).prop("checked")) new_bool = true;
+                    jQuery('.entry-select').not(':disabled').each(function () {
+                        this.checked = new_bool;
+                    });
+                });
+
+                //open dropdown for selecting action
+                $.addDropdownBox(jQuery('#select-action-dropdown-documents'), jQuery('#action-selection-pulldown-documents'));
+
+                //submit action for selected document
+                jQuery('#action-selection-pulldown-documents li > span').bind('mousedown', function () {
+                    var action_name = jQuery(this).attr('data-action'),
+                        ids = [];
+                    if ('' == action_name || 'undefined' == typeof action_name) return;
+                    jQuery('.entry-select:checked').not(':disabled').each(function () {
+                        if (that.documentOverview.user.id != jQuery(this).attr('data-owner') && (action_name === 'delete' || action_name === 'share')) {
+                            var theTitle = jQuery(this).parent().parent().parent().find('.doc-title').text();
+                            theTitle = $.trim(theTitle).replace(/[\t\n]/g, '');
+                            $.addAlert('error', gettext('You cannot delete or share: ') + theTitle);
+                            //return true;
+                        } else {
+                                ids[ids.length] = parseInt(jQuery(this).attr('data-id'));
+                            }
+                    });
+                    if (0 == ids.length) return;
+                    switch (action_name) {
+                        case 'delete':
+                            that.documentOverview.mod.actions.deleteDocumentDialog(ids);
+                            break;
+                        case 'share':
+                            new _dialog.DocumentAccessRightsDialog(ids, that.documentOverview.accessRights, that.documentOverview.teamMembers);
+                            break;
+                        case 'epub':
+                            that.documentOverview.mod.actions.downloadEpubFiles(ids);
+                            break;
+                        case 'latex':
+                            that.documentOverview.mod.actions.downloadLatexFiles(ids);
+                            break;
+                        case 'html':
+                            that.documentOverview.mod.actions.downloadHtmlFiles(ids);
+                            break;
+                        case 'native':
+                            that.documentOverview.mod.actions.downloadNativeFiles(ids);
+                            break;
+                        case 'copy':
+                            that.documentOverview.mod.actions.copyFiles(ids);
+                            break;
+                    }
+                });
+
+                //import a fidus filw
+                jQuery('.import-fidus').bind('mousedown', function () {
+                    that.documentOverview.mod.actions.importFidus();
+                });
+            });
+        }
+    }]);
+
+    return DocumentOverviewMenus;
+})();
+
+},{"../access-rights/dialog":3,"../revisions/dialog":9}],7:[function(require,module,exports){
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.DocumentOverview = undefined;
+
+var _actions = require("./actions");
+
+var _menus = require("./menus");
+
+var _templates = require("./templates");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/*
+* Helper functions for the document overview page.
+*/
+
+var DocumentOverview = exports.DocumentOverview = (function () {
+    function DocumentOverview() {
+        _classCallCheck(this, DocumentOverview);
+
+        this.documentList = [];
+        this.user = false;
+        this.teamMembers = [];
+        this.accessRights = [];
+        this.mod = {};
+        new _actions.DocumentOverviewActions(this);
+        new _menus.DocumentOverviewMenus(this);
+        this.bind();
+    }
+
+    _createClass(DocumentOverview, [{
+        key: "bind",
+        value: function bind() {
+            var that = this;
+            jQuery(document).ready(function () {
+                that.getDocumentListData();
+            });
+        }
+    }, {
+        key: "getDocumentListData",
+        value: function getDocumentListData(id) {
+            var that = this;
+            $.activateWait();
+            $.ajax({
+                url: '/document/documentlist/',
+                data: {},
+                type: 'POST',
+                dataType: 'json',
+                success: function success(response, textStatus, jqXHR) {
+                    that.documentList = _.uniq(response.documents, true, function (obj) {
+                        return obj.id;
+                    });
+                    that.teamMembers = response.team_members;
+                    that.accessRights = response.access_rights;
+                    that.user = response.user;
+                    that.layoutTable();
+                },
+                error: function error(jqXHR, textStatus, errorThrown) {
+                    $.addAlert('error', jqXHR.responseText);
+                },
+                complete: function complete() {
+                    $.deactivateWait();
+                }
+            });
+        }
+    }, {
+        key: "layoutTable",
+        value: function layoutTable() {
+            jQuery('#document-table tbody').html((0, _templates.documentsListTemplate)({
+                documentList: this.documentList,
+                user: this.user,
+                documentsListItemTemplate: _templates.documentsListItemTemplate
+            }));
+            this.startDocumentTable();
+        }
+    }, {
+        key: "startDocumentTable",
+        value: function startDocumentTable() {
+            // The document table seems not to have an option to accept new data added to the DOM. Instead we destroy and recreate it.
+
+            jQuery('#document-table').dataTable({
+                "bPaginate": false,
+                "bLengthChange": false,
+                "bFilter": true,
+                "bInfo": false,
+                "bAutoWidth": false,
+                "oLanguage": {
+                    "sSearch": ''
+                },
+                "aoColumnDefs": [{
+                    "bSortable": false,
+                    "aTargets": [0, 2, 6, 7]
+                }]
+            });
+
+            jQuery('#document-table_wrapper .dataTables_filter input').attr('placeholder', gettext('Search for Document'));
+            jQuery('#document-table_wrapper .dataTables_filter input').unbind('focus, blur');
+            jQuery('#document-table_wrapper .dataTables_filter input').bind('focus', function () {
+                jQuery(this).parent().addClass('focus');
+            });
+            jQuery('#document-table_wrapper .dataTables_filter input').bind('blur', function () {
+                jQuery(this).parent().removeClass('focus');
+            });
+
+            var autocomplete_tags = [];
+            jQuery('#document-table .fw-searchable').each(function () {
+                autocomplete_tags.push(this.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''));
+            });
+            autocomplete_tags = _.uniq(autocomplete_tags);
+            jQuery("#document-table_wrapper .dataTables_filter input").autocomplete({
+                source: autocomplete_tags
+            });
+        }
+    }, {
+        key: "stopDocumentTable",
+        value: function stopDocumentTable() {
+            jQuery('#document-table').dataTable().fnDestroy();
+        }
+    }]);
+
+    return DocumentOverview;
+})();
+
+},{"./actions":5,"./menus":6,"./templates":8}],8:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+var documentsListTemplate = exports.documentsListTemplate = _.template('\
+<% _.each(documentList,function(aDocument,key,list){%><%= documentsListItemTemplate({aDocument:aDocument, user:user})%><% }); %>');
+
+/** A template for each document overview list item. */
+var documentsListItemTemplate = exports.documentsListItemTemplate = _.template('\
+ <% var documentTitle; if (0===aDocument.title.length) {documentTitle="' + gettext('Untitled') + '";} else {documentTitle=aDocument.title;} %>\
+ <tr id="Text_<%- aDocument.id %>" <% if (user.id == aDocument.owner.id) { %>class="owned-by-user"<% } %> >\
+                <td width="20">\
+                    <span class="fw-inline">\
+                        <input type="checkbox" class="entry-select"\
+                            data-id="<%- aDocument.id %>"\
+                            data-owner="<%- aDocument.owner.id %>"/>\
+                    </span>\
+                </td>\
+                <td width="220">\
+                    <span class="fw-document-table-title fw-inline">\
+                        <i class="icon-doc"></i>\
+                        <a class="doc-title fw-link-text fw-searchable" href="/document/<%- aDocument.id %>/">\
+                            <%- documentTitle %>\
+                        </a>\
+                    </span>\
+                </td>\
+                <td width="80" class="td-icon">\
+                    <% if (aDocument.revisions.length > 0) { %>\
+                        <span class="fw-inline revisions" data-id="<%- aDocument.id %>">\
+                            <i class="icon-clock"></i>\
+                        </span>\
+                    <% } %>\
+                </td>\
+                <td width="80">\
+                    <span class="fw-inline"><%- jQuery.localizeDate(aDocument.added*1000, true) %></span>\
+                </td>\
+                <td width="80">\
+                    <span class="fw-inline"><%- jQuery.localizeDate(aDocument.updated*1000, true) %></span>\
+                </td>\
+                <td width="170">\
+                    <span>\
+                        <img class="fw-avatar" src="<%- aDocument.owner.avatar %>" />\
+                    </span>\
+                    <span class="fw-inline fw-searchable"><%- aDocument.owner.name %></span>\
+                </td>\
+                <td width="60"  class="td-icon">\
+                    <span class="rights fw-inline" data-id="<%- aDocument.id %>">\
+                        <i data-id="<%- aDocument.id %>" class="icon-access-right <%- aDocument.rights %>"></i>\
+                    </span>\
+                </td>\
+                 <td width="40"  class="td-icon">\
+                    <span class="delete-document fw-inline fw-link-text" data-id="<%- aDocument.id %>" data-title="<%- aDocument.title %>">\
+                        <% if (user.id === aDocument.owner.id) { %><i class="icon-trash"></i><% } %>\
+                    </span>\
+                </td>\
+            </tr>\
+');
+
+/** A template for the Fidus Writer document import dialog */
+var importFidusTemplate = exports.importFidusTemplate = _.template('<div id="importfidus" title="' + gettext('Import a Fidus file') + '">\
+        <form id="import-fidus-form" method="post" enctype="multipart/form-data" class="ajax-upload">\
+            <input type="file" id="fidus-uploader" name="fidus" required />\
+            <span id="import-fidus-btn" class="fw-button fw-white fw-large">' + gettext('Select a file') + '</span>\
+            <label id="import-fidus-name" class="ajax-upload-label"></label>\
+        </form>\
+    </div>');
+
+},{}],9:[function(require,module,exports){
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.DocumentRevisionsDialog = undefined;
+
+var _templates = require("./templates");
+
+var _file = require("../../importer/file");
+
+var _download = require("../../exporter/download");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/**
+ * Functions for the recovering previously created document revisions.
+ */
+
+var DocumentRevisionsDialog = exports.DocumentRevisionsDialog = (function () {
+    function DocumentRevisionsDialog(documentId, documentList, user, callback) {
+        _classCallCheck(this, DocumentRevisionsDialog);
+
+        this.documentId = documentId; // documentId The id in documentList.
+        this.documentList = documentList;
+        this.user = user;
+        this.callback = callback;
+        this.createDialog();
+    }
+
+    /**
+     * Create a dialog showing the existing revisions for a certain document.
+     * @function createDialog
+     * @param {number}
+     */
+
+    _createClass(DocumentRevisionsDialog, [{
+        key: "createDialog",
+        value: function createDialog() {
+            var that = this;
+            var diaButtons = {};
+
+            diaButtons[gettext('Close')] = function () {
+                jQuery(this).dialog("close");
+            };
+            var aDocument = _.findWhere(that.documentList, {
+                id: that.documentId
+            });
+
+            jQuery((0, _templates.documentrevisionsTemplate)({
+                aDocument: aDocument
+            })).dialog({
+                draggable: false,
+                resizable: false,
+                top: 10,
+                width: 620,
+                height: 480,
+                modal: true,
+                buttons: diaButtons,
+                create: function create() {
+                    var theDialog = jQuery(this).closest(".ui-dialog");
+                    theDialog.find(".ui-dialog-buttonset .ui-button:eq(0)").addClass("fw-button fw-dark");
+                },
+                close: function close() {
+                    jQuery(this).dialog('destroy').remove();
+                }
+            });
+            this.bind();
+        }
+    }, {
+        key: "bind",
+        value: function bind() {
+            var that = this;
+            jQuery('.download-revision').on('mousedown', function () {
+                var revisionId = parseInt(jQuery(this).attr('data-id'));
+                var revisionFilename = jQuery(this).attr('data-filename');
+                that.download(revisionId, revisionFilename);
+            });
+
+            jQuery('.recreate-revision').on('mousedown', function () {
+                var revisionId = parseInt(jQuery(this).attr('data-id'));
+                that.recreate(revisionId, that.documentList, that.user);
+            });
+
+            jQuery('.delete-revision').on('mousedown', function () {
+                var revisionId = parseInt(jQuery(this).attr('data-id'));
+                that.delete(revisionId, that.documentList);
+            });
+        }
+
+        /**
+         * Recreate a revision.
+         * @function recreate
+         * @param {number} id The pk value of the document revision.
+         */
+
+    }, {
+        key: "recreate",
+        value: function recreate(id, user) {
+            var that = this;
+            // Have to use XMLHttpRequest rather than jQuery.ajax as it's the only way to receive a blob.
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    var fidusFile = this.response;
+
+                    new _file.ImportFidusFile(fidusFile, user, true, function (noErrors, returnValue) {
+                        $.deactivateWait();
+                        if (noErrors) {
+                            var aDocument = returnValue.aDocument;
+                            jQuery.addAlert('info', aDocument.title + gettext(' successfully imported.'));
+                            that.callback({
+                                action: 'added-document',
+                                doc: aDocument
+                            });
+                        } else {
+                            jQuery.addAlert('error', returnValue);
+                        }
+                    });
+                }
+            };
+
+            xhr.open('POST', '/document/download/');
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+            xhr.setRequestHeader("X-CSRFToken", jQuery("input[name='csrfmiddlewaretoken']").val());
+            xhr.responseType = 'blob';
+            xhr.send("id=" + id);
+        }
+
+        /**
+         * Download a revision.
+         * @function download
+         * @param {number} id The pk value of the document revision.
+         */
+
+    }, {
+        key: "download",
+        value: function download(id, filename) {
+            // Have to use XMLHttpRequest rather than jQuery.ajax as it's the only way to receive a blob.
+
+            var xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    (0, _download.downloadFile)(filename, this.response);
+                }
+            };
+
+            xhr.open('POST', '/document/download/');
+            xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+            xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+            xhr.setRequestHeader("X-CSRFToken", jQuery("input[name='csrfmiddlewaretoken']").val());
+            xhr.responseType = 'blob';
+            xhr.send("id=" + id);
+        }
+
+        /**
+         * Delete a revision.
+         * @function delete
+         * @param {number} id The pk value of the document revision.
+         */
+
+    }, {
+        key: "delete",
+        value: function _delete(id) {
+            var that = this;
+
+            var diaButtons = {},
+                deleteRevision = function deleteRevision() {
+                jQuery.ajax({
+                    url: '/document/delete_revision/',
+                    data: {
+                        id: id
+                    },
+                    type: 'POST',
+                    success: function success() {
+                        var thisTr = jQuery('tr.revision-' + id),
+                            documentId = jQuery(thisTr).attr('data-document'),
+                            aDocument = _.findWhere(that.documentList, {
+                            id: parseInt(documentId)
+                        });
+                        jQuery(thisTr).remove();
+                        jQuery.addAlert('success', gettext('Revision deleted'));
+                        that.callback({
+                            action: 'deleted-revision',
+                            id: id,
+                            doc: aDocument
+                        });
+                    },
+                    error: function error() {
+                        jQuery.addAlert('error', gettext('Could not delete revision.'));
+                    }
+                });
+            };
+            diaButtons[gettext('Delete')] = function () {
+                jQuery(this).dialog("close");
+                deleteRevision();
+            };
+
+            diaButtons[gettext('Cancel')] = function () {
+                jQuery(this).dialog("close");
+            };
+
+            jQuery((0, _templates.documentrevisionsConfirmDeleteTemplate)()).dialog({
+                resizable: false,
+                height: 180,
+                modal: true,
+                appendTo: "#revisions-dialog",
+                close: function close() {
+                    jQuery(this).dialog('destroy').remove();
+                },
+                buttons: diaButtons,
+                create: function create() {
+                    var theDialog = jQuery(this).closest(".ui-dialog");
+                    theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark");
+                    theDialog.find(".ui-button:last").addClass("fw-button fw-orange");
+                }
+            });
+        }
+    }]);
+
+    return DocumentRevisionsDialog;
+})();
+
+},{"../../exporter/download":13,"../../importer/file":25,"./templates":10}],10:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+/** A template for listing the templates of a certain document */
+var documentrevisionsTemplate = exports.documentrevisionsTemplate = _.template('\
+<div id="revisions-dialog" title="' + gettext('Saved revisions of') + ' <%= aDocument.title%>">\
+<table class="fw-document-table" style="width:342px;">\
+    <thead class="fw-document-table-header">\
+        <th width="80">' + gettext('Time') + '</th>\
+        <th width="300">' + gettext('Description') + '</th>\
+        <th width="50">' + gettext('Recreate') + '</th>\
+        <th width="50">' + gettext('Download') + '</th>\
+        <% if (aDocument.is_owner) {%>\
+            <th width="50">' + gettext('Delete') + '</th>\
+        <% } %>\
+    </thead>\
+    <tbody class="fw-document-table-body fw-middle">\
+        <%_.each(_.sortBy(aDocument.revisions, function(revision){return 0-revision.date;}), function(revision) { %>\
+            <tr class="revision-<%- revision.pk%>" data-document="<%= aDocument.id %>">\
+                <td width="80"><span class="fw-inline"><%- jQuery.localizeDate(revision.date*1000) %></span></td>\
+                <td width="300"><span class="fw-inline"><%- revision.note %></span></td>\
+                <td width="50"><span class="fw-inline recreate-revision" data-id="<%- revision.pk%>"><i class="icon-download"></i></span></td>\
+                <td width="50"><span class="fw-inline download-revision" data-id="<%- revision.pk%>" data-filename="<%- revision.file_name %>"><i class="icon-download"></i></span></td>\
+                <% if (aDocument.is_owner) {%>\
+                    <td width="50">\
+                        <span class="fw-inline delete-revision" data-id="<%- revision.pk%>">\
+                            <i class="icon-trash"></i>\
+                        </span>\
+                    </td>\
+                <% } %>\
+            </tr>\
+        <% }); %>\
+    </tbody>\
+</table>\
+</div>\
+');
+
+var documentrevisionsConfirmDeleteTemplate = exports.documentrevisionsConfirmDeleteTemplate = _.template('\
+<div id="confirmdeletion" title="' + gettext('Confirm deletion') + '">\
+    <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>' + gettext('Do you really want to delete the revision?') + '</p></div>');
+
+},{}],11:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+//USED IN Books + documents list
+var getMissingDocumentListData = exports.getMissingDocumentListData = function getMissingDocumentListData(ids, documentList, callback) {
+    // get extra data for the documents identified by the ids and updates the
+    // documentList correspondingly.
+    var incompleteIds = [];
+
+    for (var i = 0; i < ids.length; i++) {
+        if (!_.findWhere(documentList, {
+            id: parseInt(ids[i])
+        }).hasOwnProperty('contents')) {
+            incompleteIds.push(parseInt(ids[i]));
+        }
+    }
+    if (incompleteIds.length > 0) {
+        $.ajax({
+            url: '/document/documentlist/extra/',
+            data: {
+                ids: incompleteIds.join(',')
+            },
+            type: 'POST',
+            dataType: 'json',
+            success: function success(response, textStatus, jqXHR) {
+                for (var i = 0; i < response.documents.length; i++) {
+                    var aDocument = _.findWhere(documentList, {
+                        id: response.documents[i].id
+                    });
+                    aDocument.contents = JSON.parse(response.documents[i].contents);
+                    aDocument.metadata = JSON.parse(response.documents[i].metadata);
+                    aDocument.settings = JSON.parse(response.documents[i].settings);
+                }
+                if (callback) {
+                    callback();
+                }
+            },
+            error: function error(jqXHR, textStatus, errorThrown) {
+                $.addAlert('error', jqXHR.responseText);
+            }
+        });
+    } else {
+        callback();
+    }
+};
+
+},{}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -321,7 +1460,7 @@ var savecopy = exports.savecopy = function savecopy(aDocument, editor, user, cal
     }
 };
 
-},{"../importer/native":15,"./native":10}],3:[function(require,module,exports){
+},{"../importer/native":26,"./native":20}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -342,7 +1481,7 @@ var downloadFile = exports.downloadFile = function downloadFile(zipFilename, blo
     fakeDownloadLink.dispatchEvent(clickEvent);
 };
 
-},{}],4:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -464,7 +1603,7 @@ var navItemTemplate = exports.navItemTemplate = _.template('\t\t\t\t<li><a href=
     <% } %>\
 </li>\n');
 
-},{}],5:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -760,7 +1899,7 @@ var orderLinks = exports.orderLinks = function orderLinks(contentItems) {
     return contentItems;
 };
 
-},{"../katex/opf-includes":16,"./epub-templates":4,"./html":7,"./json":8,"./tools":11,"./zip":14,"katex":18}],6:[function(require,module,exports){
+},{"../katex/opf-includes":27,"./epub-templates":14,"./html":17,"./json":18,"./tools":21,"./zip":24,"katex":28}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -779,7 +1918,7 @@ var htmlExportTemplate = exports.htmlExportTemplate = _.template('<!DOCTYPE html
         <% } %>\
         <%= contents %></body></html>');
 
-},{}],7:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1021,7 +2160,7 @@ var replaceImgSrc = exports.replaceImgSrc = function replaceImgSrc(htmlString) {
     return htmlString;
 };
 
-},{"../citations/format":1,"./html-templates":6,"./json":8,"./tools":11,"./zip":14,"katex":18}],8:[function(require,module,exports){
+},{"../citations/format":2,"./html-templates":16,"./json":18,"./tools":21,"./zip":24,"katex":28}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1098,7 +2237,7 @@ var node2Obj = exports.node2Obj = function node2Obj(node) {
     return obj;
 };
 
-},{}],9:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1504,7 +2643,7 @@ var export1 = function export1(aDocument, aBibDB) {
     (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools.createSlug)(title) + '.latex.zip');
 };
 
-},{"./html":7,"./json":8,"./tools":11,"./zip":14}],10:[function(require,module,exports){
+},{"./html":17,"./json":18,"./tools":21,"./zip":24}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1625,7 +2764,7 @@ var exportNativeFile = function exportNativeFile(aDocument, shrunkImageDB, shrun
     (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools.createSlug)(aDocument.title) + '.fidus', 'application/fidus+zip', false, upload, editor);
 };
 
-},{"./json":8,"./tools":11,"./zip":14}],11:[function(require,module,exports){
+},{"./json":18,"./tools":21,"./zip":24}],21:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1670,7 +2809,7 @@ var findImages = exports.findImages = function findImages(htmlCode) {
     return images;
 };
 
-},{}],12:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1680,7 +2819,7 @@ Object.defineProperty(exports, "__esModule", {
 var revisionDialogTemplate = exports.revisionDialogTemplate = _.template('\
 <div title="' + gettext('Revision description') + '"><p><input type="text" class="revision-note" placeholder="' + gettext('Description (optional)') + '"></p></div>');
 
-},{}],13:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1741,7 +2880,7 @@ var uploadFile = exports.uploadFile = function uploadFile(zipFilename, blob, edi
     });
 };
 
-},{"./upload-templates":12}],14:[function(require,module,exports){
+},{"./upload-templates":22}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1864,7 +3003,145 @@ var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles,
     }
 };
 
-},{"./download":3,"./upload":13}],15:[function(require,module,exports){
+},{"./download":13,"./upload":23}],25:[function(require,module,exports){
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.ImportFidusFile = undefined;
+
+var _native = require('./native');
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/** The current Fidus Writer filetype version. The importer will not import from
+ * a different version and the exporter will include this number in all exports.
+ */
+var FW_FILETYPE_VERSION = 1.2,
+    MIN_FW_FILETYPE_VERSION = 1.1,
+    MAX_FW_FILETYPE_VERSION = 1.2;
+
+var ImportFidusFile = exports.ImportFidusFile = (function () {
+
+    /* Process a packaged Fidus File, either through user upload, or by reloading
+      a saved revision which was saved in the same ZIP-baseformat. */
+
+    function ImportFidusFile(file, user, check, callback) {
+        _classCallCheck(this, ImportFidusFile);
+
+        this.file = file;
+        this.user = user;
+        this.callback = callback;
+        this.check = check; // Whether the file needs to be checked for compliance with ZIP-format
+        this.init();
+    }
+
+    _createClass(ImportFidusFile, [{
+        key: 'init',
+        value: function init() {
+            // Check whether the file is a ZIP-file if check is not disabled.
+            var that = this;
+            if (this.check === false) {
+                this.initZipFileRead();
+            }
+            // use a BlobReader to read the zip from a Blob object
+            var reader = new FileReader();
+            reader.onloadend = function () {
+                if (reader.result.length > 60 && reader.result.substring(0, 2) == 'PK') {
+                    that.initZipFileRead();
+                } else {
+                    // The file is not a Fidus Writer file.
+                    that.callback(false, gettext('The uploaded file does not appear to be a Fidus Writer file.'));
+                    return;
+                }
+            };
+            reader.readAsText(this.file);
+        }
+    }, {
+        key: 'initZipFileRead',
+        value: function initZipFileRead() {
+            // Extract all the files that can be found in every fidus-file (not images)
+            var that = this;
+
+            zip.createReader(new zip.BlobReader(that.file), function (reader) {
+                // get all entries from the zip
+
+                reader.getEntries(function (entries) {
+
+                    if (entries.length) {
+                        (function () {
+                            var getEntry = function getEntry() {
+                                if (counter < that.textFiles.length) {
+                                    _.findWhere(entries, that.textFiles[counter]).getData(new zip.TextWriter(), function (text) {
+                                        that.textFiles[counter]['contents'] = text;
+                                        counter++;
+                                        getEntry();
+                                    });
+                                } else {
+                                    that.processFidusFile();
+                                }
+                            };
+
+                            that.entries = entries;
+
+                            that.textFiles = [{
+                                filename: 'mimetype'
+                            }, {
+                                filename: 'filetype-version'
+                            }, {
+                                filename: 'document.json'
+                            }, {
+                                filename: 'images.json'
+                            }, {
+                                filename: 'bibliography.json'
+                            }];
+
+                            var counter = 0;
+
+                            getEntry();
+                        })();
+                    }
+                });
+            }, function (error) {
+                this.callback(false, gettext('An error occured during file read.'));
+            });
+        }
+    }, {
+        key: 'processFidusFile',
+        value: function processFidusFile() {
+            var filetypeVersion = parseFloat(_.findWhere(this.textFiles, {
+                filename: 'filetype-version'
+            }).contents, 10),
+                mimeType = _.findWhere(this.textFiles, {
+                filename: 'mimetype'
+            }).contents;
+            if (mimeType === 'application/fidus+zip' && filetypeVersion >= MIN_FW_FILETYPE_VERSION && filetypeVersion <= MAX_FW_FILETYPE_VERSION) {
+                // This seems to be a valid fidus file with current version number.
+                var shrunkBibDB = JSON.parse(_.findWhere(this.textFiles, {
+                    filename: 'bibliography.json'
+                }).contents);
+                var shrunkImageDB = JSON.parse(_.findWhere(this.textFiles, {
+                    filename: 'images.json'
+                }).contents);
+                var aDocument = JSON.parse(_.findWhere(this.textFiles, {
+                    filename: 'document.json'
+                }).contents);
+
+                return new _native.ImportNative(aDocument, shrunkBibDB, shrunkImageDB, this.entries, this.user, this.callback);
+            } else {
+                // The file is not a Fidus Writer file.
+                this.callback(false, gettext('The uploaded file does not appear to be of the version used on this server: ') + FW_FILETYPE_VERSION);
+            }
+        }
+    }]);
+
+    return ImportFidusFile;
+})();
+
+},{"./native":26}],26:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2262,7 +3539,7 @@ var ImportNative = exports.ImportNative = (function () {
     return ImportNative;
 })();
 
-},{"../exporter/json":8}],16:[function(require,module,exports){
+},{"../exporter/json":18}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2271,38 +3548,7 @@ Object.defineProperty(exports, "__esModule", {
 // This file is auto-generated. CHANGES WILL BE OVERWRITTEN! Re-generate by running ./manage.py bundle_katex.
 var katexOpfIncludes = exports.katexOpfIncludes = "\n<item id=\"katex-0\" href=\"katex.min.css\" media-type=\"text/plain\" />\n<item id=\"katex-1\" href=\"fonts/KaTeX_Typewriter-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-2\" href=\"fonts/KaTeX_Main-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-3\" href=\"fonts/KaTeX_Fraktur-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-4\" href=\"fonts/KaTeX_SansSerif-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-5\" href=\"fonts/KaTeX_Main-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-6\" href=\"fonts/KaTeX_Main-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-7\" href=\"fonts/KaTeX_SansSerif-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-8\" href=\"fonts/KaTeX_AMS-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-9\" href=\"fonts/KaTeX_Caligraphic-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-10\" href=\"fonts/KaTeX_Size4-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-11\" href=\"fonts/KaTeX_Math-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-12\" href=\"fonts/KaTeX_Size1-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-13\" href=\"fonts/KaTeX_Math-BoldItalic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-14\" href=\"fonts/KaTeX_Script-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-15\" href=\"fonts/KaTeX_Main-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-16\" href=\"fonts/KaTeX_Math-BoldItalic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-17\" href=\"fonts/KaTeX_Fraktur-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-18\" href=\"fonts/KaTeX_Main-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-19\" href=\"fonts/KaTeX_Size1-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-20\" href=\"fonts/KaTeX_SansSerif-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-21\" href=\"fonts/KaTeX_Math-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-22\" href=\"fonts/KaTeX_Fraktur-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-23\" href=\"fonts/KaTeX_Script-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-24\" href=\"fonts/KaTeX_Fraktur-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-25\" href=\"fonts/KaTeX_Main-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-26\" href=\"fonts/KaTeX_Size1-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-27\" href=\"fonts/KaTeX_Size3-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-28\" href=\"fonts/KaTeX_SansSerif-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-29\" href=\"fonts/KaTeX_Script-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-30\" href=\"fonts/KaTeX_Main-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-31\" href=\"fonts/KaTeX_Math-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-32\" href=\"fonts/KaTeX_Main-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-33\" href=\"fonts/KaTeX_Typewriter-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-34\" href=\"fonts/KaTeX_Math-BoldItalic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-35\" href=\"fonts/KaTeX_AMS-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-36\" href=\"fonts/KaTeX_Size2-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-37\" href=\"fonts/KaTeX_Caligraphic-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-38\" href=\"fonts/KaTeX_Fraktur-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-39\" href=\"fonts/KaTeX_Typewriter-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-40\" href=\"fonts/KaTeX_Math-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-41\" href=\"fonts/KaTeX_SansSerif-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-42\" href=\"fonts/KaTeX_Script-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-43\" href=\"fonts/KaTeX_Caligraphic-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-44\" href=\"fonts/KaTeX_SansSerif-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-45\" href=\"fonts/KaTeX_AMS-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-46\" href=\"fonts/KaTeX_Caligraphic-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-47\" href=\"fonts/KaTeX_Fraktur-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-48\" href=\"fonts/KaTeX_Main-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-49\" href=\"fonts/KaTeX_SansSerif-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-50\" href=\"fonts/KaTeX_Size4-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-51\" href=\"fonts/KaTeX_Math-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-52\" href=\"fonts/KaTeX_SansSerif-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-53\" href=\"fonts/KaTeX_Size2-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-54\" href=\"fonts/KaTeX_Fraktur-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-55\" href=\"fonts/KaTeX_Size2-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-56\" href=\"fonts/KaTeX_SansSerif-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-57\" href=\"fonts/KaTeX_AMS-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-58\" href=\"fonts/KaTeX_Math-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-59\" href=\"fonts/KaTeX_SansSerif-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-60\" href=\"fonts/KaTeX_Main-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-61\" href=\"fonts/KaTeX_Typewriter-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-62\" href=\"fonts/KaTeX_Size3-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-63\" href=\"fonts/KaTeX_Main-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-64\" href=\"fonts/KaTeX_Caligraphic-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-65\" href=\"fonts/KaTeX_SansSerif-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-66\" href=\"fonts/KaTeX_Caligraphic-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-67\" href=\"fonts/KaTeX_Size4-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-68\" href=\"fonts/KaTeX_Main-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-69\" href=\"fonts/KaTeX_Math-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-70\" href=\"fonts/KaTeX_Size3-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-71\" href=\"fonts/KaTeX_Fraktur-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-72\" href=\"fonts/KaTeX_Caligraphic-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-73\" href=\"fonts/KaTeX_Size2-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-74\" href=\"fonts/KaTeX_Size1-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-75\" href=\"fonts/KaTeX_SansSerif-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-76\" href=\"fonts/KaTeX_Size4-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-77\" href=\"fonts/KaTeX_Size3-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-78\" href=\"fonts/KaTeX_Caligraphic-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-79\" href=\"fonts/KaTeX_Math-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-80\" href=\"fonts/KaTeX_Math-BoldItalic.woff\" media-type=\"application/octet-stream\" />\n";
 
-},{}],17:[function(require,module,exports){
-"use strict";
-
-var _copy = require("./es6_modules/exporter/copy");
-
-var _download = require("./es6_modules/exporter/download");
-
-var _epub = require("./es6_modules/exporter/epub");
-
-var _html = require("./es6_modules/exporter/html");
-
-var _latex = require("./es6_modules/exporter/latex");
-
-var _native = require("./es6_modules/exporter/native");
-
-var _tools = require("./es6_modules/exporter/tools");
-
-var _zip = require("./es6_modules/exporter/zip");
-
-/**
- * Functions to export the Fidus Writer document.
- */
-var exporter = {
-    savecopy: _copy.savecopy, downloadFile: _download.downloadFile,
-    downloadEpub: _epub.downloadEpub, downloadHtml: _html.downloadHtml, downloadLatex: _latex.downloadLatex,
-    downloadNative: _native.downloadNative, createSlug: _tools.createSlug,
-    findImages: _tools.findImages, zipFileCreator: _zip.zipFileCreator
-};
-
-window.exporter = exporter;
-
-},{"./es6_modules/exporter/copy":2,"./es6_modules/exporter/download":3,"./es6_modules/exporter/epub":5,"./es6_modules/exporter/html":7,"./es6_modules/exporter/latex":9,"./es6_modules/exporter/native":10,"./es6_modules/exporter/tools":11,"./es6_modules/exporter/zip":14}],18:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 /**
  * This is the main entry point for KaTeX. Here, we expose functions for
  * rendering expressions either to DOM nodes or to markup strings.
@@ -2377,7 +3623,7 @@ module.exports = {
     ParseError: ParseError
 };
 
-},{"./src/ParseError":21,"./src/Settings":23,"./src/buildTree":28,"./src/parseTree":37,"./src/utils":39}],19:[function(require,module,exports){
+},{"./src/ParseError":31,"./src/Settings":33,"./src/buildTree":38,"./src/parseTree":47,"./src/utils":49}],29:[function(require,module,exports){
 /**
  * The Lexer class handles tokenizing the input in various ways. Since our
  * parser expects us to be able to backtrack, the lexer allows lexing from any
@@ -2573,7 +3819,7 @@ Lexer.prototype.lex = function(pos, mode) {
 
 module.exports = Lexer;
 
-},{"./ParseError":21,"match-at":40}],20:[function(require,module,exports){
+},{"./ParseError":31,"match-at":50}],30:[function(require,module,exports){
 /**
  * This file contains information about the options that the Parser carries
  * around with it while parsing. Data is held in an `Options` object, and when
@@ -2764,7 +4010,7 @@ Options.prototype.getColor = function() {
 
 module.exports = Options;
 
-},{}],21:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 /**
  * This is the ParseError class, which is the main error thrown by KaTeX
  * functions when something has gone wrong. This is used to distinguish internal
@@ -2806,7 +4052,7 @@ ParseError.prototype.__proto__ = Error.prototype;
 
 module.exports = ParseError;
 
-},{}],22:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 var functions = require("./functions");
 var environments = require("./environments");
 var Lexer = require("./Lexer");
@@ -3528,7 +4774,7 @@ Parser.prototype.ParseNode = ParseNode;
 
 module.exports = Parser;
 
-},{"./Lexer":19,"./ParseError":21,"./environments":31,"./functions":34,"./parseData":36,"./symbols":38,"./utils":39}],23:[function(require,module,exports){
+},{"./Lexer":29,"./ParseError":31,"./environments":41,"./functions":44,"./parseData":46,"./symbols":48,"./utils":49}],33:[function(require,module,exports){
 /**
  * This is a module for storing settings passed into KaTeX. It correctly handles
  * default settings.
@@ -3558,7 +4804,7 @@ function Settings(options) {
 
 module.exports = Settings;
 
-},{}],24:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 /**
  * This file contains information and classes for the various kinds of styles
  * used in TeX. It provides a generic `Style` class, which holds information
@@ -3686,7 +4932,7 @@ module.exports = {
     SCRIPTSCRIPT: styles[SS]
 };
 
-},{}],25:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /**
  * This module contains general functions that can be used for building
  * different kinds of domTree nodes in a consistent manner.
@@ -4135,7 +5381,7 @@ module.exports = {
     spacingFunctions: spacingFunctions
 };
 
-},{"./domTree":30,"./fontMetrics":32,"./symbols":38,"./utils":39}],26:[function(require,module,exports){
+},{"./domTree":40,"./fontMetrics":42,"./symbols":48,"./utils":49}],36:[function(require,module,exports){
 /**
  * This file does the main work of building a domTree structure from a parse
  * tree. The entry point is the `buildHTML` function, which takes a parse tree.
@@ -5499,7 +6745,7 @@ var buildHTML = function(tree, options) {
 
 module.exports = buildHTML;
 
-},{"./ParseError":21,"./Style":24,"./buildCommon":25,"./delimiter":29,"./domTree":30,"./fontMetrics":32,"./utils":39}],27:[function(require,module,exports){
+},{"./ParseError":31,"./Style":34,"./buildCommon":35,"./delimiter":39,"./domTree":40,"./fontMetrics":42,"./utils":49}],37:[function(require,module,exports){
 /**
  * This file converts a parse tree into a cooresponding MathML tree. The main
  * entry point is the `buildMathML` function, which takes a parse tree from the
@@ -6020,7 +7266,7 @@ var buildMathML = function(tree, texExpression, options) {
 
 module.exports = buildMathML;
 
-},{"./ParseError":21,"./buildCommon":25,"./fontMetrics":32,"./mathMLTree":35,"./symbols":38,"./utils":39}],28:[function(require,module,exports){
+},{"./ParseError":31,"./buildCommon":35,"./fontMetrics":42,"./mathMLTree":45,"./symbols":48,"./utils":49}],38:[function(require,module,exports){
 var buildHTML = require("./buildHTML");
 var buildMathML = require("./buildMathML");
 var buildCommon = require("./buildCommon");
@@ -6062,7 +7308,7 @@ var buildTree = function(tree, expression, settings) {
 
 module.exports = buildTree;
 
-},{"./Options":20,"./Settings":23,"./Style":24,"./buildCommon":25,"./buildHTML":26,"./buildMathML":27}],29:[function(require,module,exports){
+},{"./Options":30,"./Settings":33,"./Style":34,"./buildCommon":35,"./buildHTML":36,"./buildMathML":37}],39:[function(require,module,exports){
 /**
  * This file deals with creating delimiters of various sizes. The TeXbook
  * discusses these routines on page 441-442, in the "Another subroutine sets box
@@ -6603,7 +7849,7 @@ module.exports = {
     leftRightDelim: makeLeftRightDelim
 };
 
-},{"./ParseError":21,"./Style":24,"./buildCommon":25,"./fontMetrics":32,"./symbols":38,"./utils":39}],30:[function(require,module,exports){
+},{"./ParseError":31,"./Style":34,"./buildCommon":35,"./fontMetrics":42,"./symbols":48,"./utils":49}],40:[function(require,module,exports){
 /**
  * These objects store the data about the DOM nodes we create, as well as some
  * extra data. They can then be transformed into real DOM nodes with the
@@ -6874,7 +8120,7 @@ module.exports = {
     symbolNode: symbolNode
 };
 
-},{"./utils":39}],31:[function(require,module,exports){
+},{"./utils":49}],41:[function(require,module,exports){
 var fontMetrics = require("./fontMetrics");
 var parseData = require("./parseData");
 var ParseError = require("./ParseError");
@@ -7054,7 +8300,7 @@ module.exports = (function() {
     return exports;
 })();
 
-},{"./ParseError":21,"./fontMetrics":32,"./parseData":36}],32:[function(require,module,exports){
+},{"./ParseError":31,"./fontMetrics":42,"./parseData":46}],42:[function(require,module,exports){
 /* jshint unused:false */
 
 var Style = require("./Style");
@@ -7191,7 +8437,7 @@ module.exports = {
     getCharacterMetrics: getCharacterMetrics
 };
 
-},{"./Style":24,"./fontMetricsData":33}],33:[function(require,module,exports){
+},{"./Style":34,"./fontMetricsData":43}],43:[function(require,module,exports){
 module.exports = {
 "AMS-Regular": {
   "65": {"depth": 0.0, "height": 0.68889, "italic": 0.0, "skew": 0.0},
@@ -8944,7 +10190,7 @@ module.exports = {
   "8242": {"depth": 0.0, "height": 0.61111, "italic": 0.0, "skew": 0.0}
 }};
 
-},{}],34:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 var utils = require("./utils");
 var ParseError = require("./ParseError");
 
@@ -9575,7 +10821,7 @@ module.exports = {
     funcs: functions
 };
 
-},{"./ParseError":21,"./utils":39}],35:[function(require,module,exports){
+},{"./ParseError":31,"./utils":49}],45:[function(require,module,exports){
 /**
  * These objects store data about MathML nodes. This is the MathML equivalent
  * of the types in domTree.js. Since MathML handles its own rendering, and
@@ -9679,7 +10925,7 @@ module.exports = {
     TextNode: TextNode
 };
 
-},{"./utils":39}],36:[function(require,module,exports){
+},{"./utils":49}],46:[function(require,module,exports){
 /**
  * The resulting parse tree nodes of the parse tree.
  */
@@ -9704,7 +10950,7 @@ module.exports = {
 };
 
 
-},{}],37:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 /**
  * Provides a single function for parsing an expression using a Parser
  * TODO(emily): Remove this
@@ -9723,7 +10969,7 @@ var parseTree = function(toParse, settings) {
 
 module.exports = parseTree;
 
-},{"./Parser":22}],38:[function(require,module,exports){
+},{"./Parser":32}],48:[function(require,module,exports){
 /**
  * This file holds a list of all no-argument functions and single-character
  * symbols (like 'a' or ';').
@@ -12310,7 +13556,7 @@ for (var i = 0; i < letters.length; i++) {
 
 module.exports = symbols;
 
-},{}],39:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 /**
  * This file contains a list of utility functions which are useful in other
  * files.
@@ -12417,7 +13663,7 @@ module.exports = {
     clearNode: clearNode
 };
 
-},{}],40:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 /** @flow */
 
 "use strict";
@@ -12460,4 +13706,4 @@ function matchAt(re, str, pos) {
 }
 
 module.exports = matchAt;
-},{}]},{},[17]);
+},{}]},{},[1]);

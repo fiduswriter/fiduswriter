@@ -14,22 +14,15 @@
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/xmldom.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/citeproc.js"></script>
     {% compress js %}
-        <script type="text/javascript" src="{{ STATIC_URL }}js/document-accessrights-helpers.es5.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/document-overview.es5.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dataTables.min.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/document-helpers.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/document-templates.js"></script>
-        <script type="text/javascript">
-            documentHelpers.bind();
-        </script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/documentlist-setup.js"></script>
 
         <!-- bibliography -->
         <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-statics.js"></script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.es5.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-helpers.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-template-dialogs.js"></script>
 
-        <!-- document revisions -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/document-revisions-helpers.es5.js"></script>
 
         <!-- contact -->
         <script type="text/javascript" src="{{ STATIC_URL }}js/contact-helpers.js"></script>
@@ -48,18 +41,14 @@
         <script type="text/javascript">
             zip.useWebWorkers = false;
         </script>
-        <!-- citeproc -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/xmldom.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/citeproc.js"></script>
+
         <!-- Citation definitions -->
         <script type="text/javascript" src="{{ STATIC_URL }}js/citation/definitions.js"></script>
         <!-- File export functions -->
         <script type="text/javascript">
             var staticUrl = '{{ STATIC_URL }}';
         </script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.es5.js"></script>
-        <!-- File import -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/importer.es5.js"></script>
+
     {% endcompress %}
 {% endblock %}
 

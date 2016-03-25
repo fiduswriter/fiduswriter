@@ -1202,7 +1202,7 @@ var epubBookCopyrightTemplate = exports.epubBookCopyrightTemplate = _.template('
 </html>\
 ');
 
-},{"../../exporter/epub-templates":16}],7:[function(require,module,exports){
+},{"../../exporter/epub-templates":17}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1506,7 +1506,7 @@ var epubBookExport = function epubBookExport(aBook, anImageDB, aBibDB) {
     (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools2.createSlug)(aBook.title) + '.epub', 'application/epub+zip', includeZips);
 };
 
-},{"../../citations/format":14,"../../exporter/epub":17,"../../exporter/epub-templates":16,"../../exporter/html":19,"../../exporter/json":20,"../../exporter/tools":22,"../../exporter/zip":25,"../../katex/opf-includes":26,"./epub-templates":6,"./tools":12,"katex":27}],8:[function(require,module,exports){
+},{"../../citations/format":14,"../../exporter/epub":18,"../../exporter/epub-templates":17,"../../exporter/html":20,"../../exporter/json":21,"../../exporter/tools":23,"../../exporter/zip":26,"../../katex/opf-includes":27,"./epub-templates":6,"./tools":12,"katex":28}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1763,7 +1763,7 @@ var htmlBookExport = function htmlBookExport(aBook, anImageDB, aBibDB) {
     (0, _zip.zipFileCreator)(outputList, images, (0, _tools2.createSlug)(aBook.title) + '.html.zip', false, includeZips);
 };
 
-},{"../../citations/format":14,"../../exporter/epub":17,"../../exporter/html":19,"../../exporter/json":20,"../../exporter/tools":22,"../../exporter/zip":25,"./html-templates":8,"./tools":12,"katex":27}],10:[function(require,module,exports){
+},{"../../citations/format":14,"../../exporter/epub":18,"../../exporter/html":20,"../../exporter/json":21,"../../exporter/tools":23,"../../exporter/zip":26,"./html-templates":8,"./tools":12,"katex":28}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1876,12 +1876,16 @@ var latexBookExport = function latexBookExport(aBook, anImageDB, aBibDB) {
     (0, _zip.zipFileCreator)(outputList, images, (0, _tools2.createSlug)(aBook.title) + '.latex.zip');
 };
 
-},{"../../exporter/json":20,"../../exporter/latex":21,"../../exporter/tools":22,"../../exporter/zip":25,"./latex-templates":10,"./tools":12}],12:[function(require,module,exports){
-'use strict';
+},{"../../exporter/json":21,"../../exporter/latex":22,"../../exporter/tools":23,"../../exporter/zip":26,"./latex-templates":10,"./tools":12}],12:[function(require,module,exports){
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+exports.uniqueObjects = exports.getImageAndBibDB = exports.getMissingChapterData = undefined;
+
+var _tools = require("../../documents/tools");
+
 var getMissingChapterData = exports.getMissingChapterData = function getMissingChapterData(aBook, callback) {
     var bookDocuments = [];
 
@@ -1892,7 +1896,7 @@ var getMissingChapterData = exports.getMissingChapterData = function getMissingC
         }
         bookDocuments.push(aBook.chapters[i].text);
     }
-    documentHelpers.getMissingDocumentListData(bookDocuments, callback);
+    (0, _tools.getMissingDocumentListData)(bookDocuments, theDocumentList, callback);
 };
 
 var getImageAndBibDB = exports.getImageAndBibDB = function getImageAndBibDB(aBook, callback) {
@@ -1931,7 +1935,7 @@ var uniqueObjects = exports.uniqueObjects = function uniqueObjects(array) {
     return results;
 };
 
-},{}],13:[function(require,module,exports){
+},{"../../documents/tools":15}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2547,6 +2551,55 @@ var yearFromDateString = function yearFromDateString(dateString) {
 };
 
 },{}],15:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+//USED IN Books + documents list
+var getMissingDocumentListData = exports.getMissingDocumentListData = function getMissingDocumentListData(ids, documentList, callback) {
+    // get extra data for the documents identified by the ids and updates the
+    // documentList correspondingly.
+    var incompleteIds = [];
+
+    for (var i = 0; i < ids.length; i++) {
+        if (!_.findWhere(documentList, {
+            id: parseInt(ids[i])
+        }).hasOwnProperty('contents')) {
+            incompleteIds.push(parseInt(ids[i]));
+        }
+    }
+    if (incompleteIds.length > 0) {
+        $.ajax({
+            url: '/document/documentlist/extra/',
+            data: {
+                ids: incompleteIds.join(',')
+            },
+            type: 'POST',
+            dataType: 'json',
+            success: function success(response, textStatus, jqXHR) {
+                for (var i = 0; i < response.documents.length; i++) {
+                    var aDocument = _.findWhere(documentList, {
+                        id: response.documents[i].id
+                    });
+                    aDocument.contents = JSON.parse(response.documents[i].contents);
+                    aDocument.metadata = JSON.parse(response.documents[i].metadata);
+                    aDocument.settings = JSON.parse(response.documents[i].settings);
+                }
+                if (callback) {
+                    callback();
+                }
+            },
+            error: function error(jqXHR, textStatus, errorThrown) {
+                $.addAlert('error', jqXHR.responseText);
+            }
+        });
+    } else {
+        callback();
+    }
+};
+
+},{}],16:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2567,7 +2620,7 @@ var downloadFile = exports.downloadFile = function downloadFile(zipFilename, blo
     fakeDownloadLink.dispatchEvent(clickEvent);
 };
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2689,7 +2742,7 @@ var navItemTemplate = exports.navItemTemplate = _.template('\t\t\t\t<li><a href=
     <% } %>\
 </li>\n');
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2985,7 +3038,7 @@ var orderLinks = exports.orderLinks = function orderLinks(contentItems) {
     return contentItems;
 };
 
-},{"../katex/opf-includes":26,"./epub-templates":16,"./html":19,"./json":20,"./tools":22,"./zip":25,"katex":27}],18:[function(require,module,exports){
+},{"../katex/opf-includes":27,"./epub-templates":17,"./html":20,"./json":21,"./tools":23,"./zip":26,"katex":28}],19:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3004,7 +3057,7 @@ var htmlExportTemplate = exports.htmlExportTemplate = _.template('<!DOCTYPE html
         <% } %>\
         <%= contents %></body></html>');
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3246,7 +3299,7 @@ var replaceImgSrc = exports.replaceImgSrc = function replaceImgSrc(htmlString) {
     return htmlString;
 };
 
-},{"../citations/format":14,"./html-templates":18,"./json":20,"./tools":22,"./zip":25,"katex":27}],20:[function(require,module,exports){
+},{"../citations/format":14,"./html-templates":19,"./json":21,"./tools":23,"./zip":26,"katex":28}],21:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3323,7 +3376,7 @@ var node2Obj = exports.node2Obj = function node2Obj(node) {
     return obj;
 };
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3729,7 +3782,7 @@ var export1 = function export1(aDocument, aBibDB) {
     (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools.createSlug)(title) + '.latex.zip');
 };
 
-},{"./html":19,"./json":20,"./tools":22,"./zip":25}],22:[function(require,module,exports){
+},{"./html":20,"./json":21,"./tools":23,"./zip":26}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3774,7 +3827,7 @@ var findImages = exports.findImages = function findImages(htmlCode) {
     return images;
 };
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3784,7 +3837,7 @@ Object.defineProperty(exports, "__esModule", {
 var revisionDialogTemplate = exports.revisionDialogTemplate = _.template('\
 <div title="' + gettext('Revision description') + '"><p><input type="text" class="revision-note" placeholder="' + gettext('Description (optional)') + '"></p></div>');
 
-},{}],24:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3845,7 +3898,7 @@ var uploadFile = exports.uploadFile = function uploadFile(zipFilename, blob, edi
     });
 };
 
-},{"./upload-templates":23}],25:[function(require,module,exports){
+},{"./upload-templates":24}],26:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3968,7 +4021,7 @@ var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles,
     }
 };
 
-},{"./download":15,"./upload":24}],26:[function(require,module,exports){
+},{"./download":16,"./upload":25}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3977,7 +4030,7 @@ Object.defineProperty(exports, "__esModule", {
 // This file is auto-generated. CHANGES WILL BE OVERWRITTEN! Re-generate by running ./manage.py bundle_katex.
 var katexOpfIncludes = exports.katexOpfIncludes = "\n<item id=\"katex-0\" href=\"katex.min.css\" media-type=\"text/plain\" />\n<item id=\"katex-1\" href=\"fonts/KaTeX_Typewriter-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-2\" href=\"fonts/KaTeX_Main-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-3\" href=\"fonts/KaTeX_Fraktur-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-4\" href=\"fonts/KaTeX_SansSerif-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-5\" href=\"fonts/KaTeX_Main-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-6\" href=\"fonts/KaTeX_Main-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-7\" href=\"fonts/KaTeX_SansSerif-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-8\" href=\"fonts/KaTeX_AMS-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-9\" href=\"fonts/KaTeX_Caligraphic-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-10\" href=\"fonts/KaTeX_Size4-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-11\" href=\"fonts/KaTeX_Math-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-12\" href=\"fonts/KaTeX_Size1-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-13\" href=\"fonts/KaTeX_Math-BoldItalic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-14\" href=\"fonts/KaTeX_Script-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-15\" href=\"fonts/KaTeX_Main-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-16\" href=\"fonts/KaTeX_Math-BoldItalic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-17\" href=\"fonts/KaTeX_Fraktur-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-18\" href=\"fonts/KaTeX_Main-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-19\" href=\"fonts/KaTeX_Size1-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-20\" href=\"fonts/KaTeX_SansSerif-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-21\" href=\"fonts/KaTeX_Math-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-22\" href=\"fonts/KaTeX_Fraktur-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-23\" href=\"fonts/KaTeX_Script-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-24\" href=\"fonts/KaTeX_Fraktur-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-25\" href=\"fonts/KaTeX_Main-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-26\" href=\"fonts/KaTeX_Size1-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-27\" href=\"fonts/KaTeX_Size3-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-28\" href=\"fonts/KaTeX_SansSerif-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-29\" href=\"fonts/KaTeX_Script-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-30\" href=\"fonts/KaTeX_Main-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-31\" href=\"fonts/KaTeX_Math-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-32\" href=\"fonts/KaTeX_Main-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-33\" href=\"fonts/KaTeX_Typewriter-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-34\" href=\"fonts/KaTeX_Math-BoldItalic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-35\" href=\"fonts/KaTeX_AMS-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-36\" href=\"fonts/KaTeX_Size2-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-37\" href=\"fonts/KaTeX_Caligraphic-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-38\" href=\"fonts/KaTeX_Fraktur-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-39\" href=\"fonts/KaTeX_Typewriter-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-40\" href=\"fonts/KaTeX_Math-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-41\" href=\"fonts/KaTeX_SansSerif-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-42\" href=\"fonts/KaTeX_Script-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-43\" href=\"fonts/KaTeX_Caligraphic-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-44\" href=\"fonts/KaTeX_SansSerif-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-45\" href=\"fonts/KaTeX_AMS-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-46\" href=\"fonts/KaTeX_Caligraphic-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-47\" href=\"fonts/KaTeX_Fraktur-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-48\" href=\"fonts/KaTeX_Main-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-49\" href=\"fonts/KaTeX_SansSerif-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-50\" href=\"fonts/KaTeX_Size4-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-51\" href=\"fonts/KaTeX_Math-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-52\" href=\"fonts/KaTeX_SansSerif-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-53\" href=\"fonts/KaTeX_Size2-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-54\" href=\"fonts/KaTeX_Fraktur-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-55\" href=\"fonts/KaTeX_Size2-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-56\" href=\"fonts/KaTeX_SansSerif-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-57\" href=\"fonts/KaTeX_AMS-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-58\" href=\"fonts/KaTeX_Math-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-59\" href=\"fonts/KaTeX_SansSerif-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-60\" href=\"fonts/KaTeX_Main-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-61\" href=\"fonts/KaTeX_Typewriter-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-62\" href=\"fonts/KaTeX_Size3-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-63\" href=\"fonts/KaTeX_Main-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-64\" href=\"fonts/KaTeX_Caligraphic-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-65\" href=\"fonts/KaTeX_SansSerif-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-66\" href=\"fonts/KaTeX_Caligraphic-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-67\" href=\"fonts/KaTeX_Size4-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-68\" href=\"fonts/KaTeX_Main-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-69\" href=\"fonts/KaTeX_Math-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-70\" href=\"fonts/KaTeX_Size3-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-71\" href=\"fonts/KaTeX_Fraktur-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-72\" href=\"fonts/KaTeX_Caligraphic-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-73\" href=\"fonts/KaTeX_Size2-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-74\" href=\"fonts/KaTeX_Size1-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-75\" href=\"fonts/KaTeX_SansSerif-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-76\" href=\"fonts/KaTeX_Size4-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-77\" href=\"fonts/KaTeX_Size3-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-78\" href=\"fonts/KaTeX_Caligraphic-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-79\" href=\"fonts/KaTeX_Math-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-80\" href=\"fonts/KaTeX_Math-BoldItalic.woff\" media-type=\"application/octet-stream\" />\n";
 
-},{}],27:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 /**
  * This is the main entry point for KaTeX. Here, we expose functions for
  * rendering expressions either to DOM nodes or to markup strings.
@@ -4052,7 +4105,7 @@ module.exports = {
     ParseError: ParseError
 };
 
-},{"./src/ParseError":30,"./src/Settings":32,"./src/buildTree":37,"./src/parseTree":46,"./src/utils":48}],28:[function(require,module,exports){
+},{"./src/ParseError":31,"./src/Settings":33,"./src/buildTree":38,"./src/parseTree":47,"./src/utils":49}],29:[function(require,module,exports){
 /**
  * The Lexer class handles tokenizing the input in various ways. Since our
  * parser expects us to be able to backtrack, the lexer allows lexing from any
@@ -4248,7 +4301,7 @@ Lexer.prototype.lex = function(pos, mode) {
 
 module.exports = Lexer;
 
-},{"./ParseError":30,"match-at":49}],29:[function(require,module,exports){
+},{"./ParseError":31,"match-at":50}],30:[function(require,module,exports){
 /**
  * This file contains information about the options that the Parser carries
  * around with it while parsing. Data is held in an `Options` object, and when
@@ -4439,7 +4492,7 @@ Options.prototype.getColor = function() {
 
 module.exports = Options;
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 /**
  * This is the ParseError class, which is the main error thrown by KaTeX
  * functions when something has gone wrong. This is used to distinguish internal
@@ -4481,7 +4534,7 @@ ParseError.prototype.__proto__ = Error.prototype;
 
 module.exports = ParseError;
 
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 var functions = require("./functions");
 var environments = require("./environments");
 var Lexer = require("./Lexer");
@@ -5203,7 +5256,7 @@ Parser.prototype.ParseNode = ParseNode;
 
 module.exports = Parser;
 
-},{"./Lexer":28,"./ParseError":30,"./environments":40,"./functions":43,"./parseData":45,"./symbols":47,"./utils":48}],32:[function(require,module,exports){
+},{"./Lexer":29,"./ParseError":31,"./environments":41,"./functions":44,"./parseData":46,"./symbols":48,"./utils":49}],33:[function(require,module,exports){
 /**
  * This is a module for storing settings passed into KaTeX. It correctly handles
  * default settings.
@@ -5233,7 +5286,7 @@ function Settings(options) {
 
 module.exports = Settings;
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 /**
  * This file contains information and classes for the various kinds of styles
  * used in TeX. It provides a generic `Style` class, which holds information
@@ -5361,7 +5414,7 @@ module.exports = {
     SCRIPTSCRIPT: styles[SS]
 };
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /**
  * This module contains general functions that can be used for building
  * different kinds of domTree nodes in a consistent manner.
@@ -5810,7 +5863,7 @@ module.exports = {
     spacingFunctions: spacingFunctions
 };
 
-},{"./domTree":39,"./fontMetrics":41,"./symbols":47,"./utils":48}],35:[function(require,module,exports){
+},{"./domTree":40,"./fontMetrics":42,"./symbols":48,"./utils":49}],36:[function(require,module,exports){
 /**
  * This file does the main work of building a domTree structure from a parse
  * tree. The entry point is the `buildHTML` function, which takes a parse tree.
@@ -7174,7 +7227,7 @@ var buildHTML = function(tree, options) {
 
 module.exports = buildHTML;
 
-},{"./ParseError":30,"./Style":33,"./buildCommon":34,"./delimiter":38,"./domTree":39,"./fontMetrics":41,"./utils":48}],36:[function(require,module,exports){
+},{"./ParseError":31,"./Style":34,"./buildCommon":35,"./delimiter":39,"./domTree":40,"./fontMetrics":42,"./utils":49}],37:[function(require,module,exports){
 /**
  * This file converts a parse tree into a cooresponding MathML tree. The main
  * entry point is the `buildMathML` function, which takes a parse tree from the
@@ -7695,7 +7748,7 @@ var buildMathML = function(tree, texExpression, options) {
 
 module.exports = buildMathML;
 
-},{"./ParseError":30,"./buildCommon":34,"./fontMetrics":41,"./mathMLTree":44,"./symbols":47,"./utils":48}],37:[function(require,module,exports){
+},{"./ParseError":31,"./buildCommon":35,"./fontMetrics":42,"./mathMLTree":45,"./symbols":48,"./utils":49}],38:[function(require,module,exports){
 var buildHTML = require("./buildHTML");
 var buildMathML = require("./buildMathML");
 var buildCommon = require("./buildCommon");
@@ -7737,7 +7790,7 @@ var buildTree = function(tree, expression, settings) {
 
 module.exports = buildTree;
 
-},{"./Options":29,"./Settings":32,"./Style":33,"./buildCommon":34,"./buildHTML":35,"./buildMathML":36}],38:[function(require,module,exports){
+},{"./Options":30,"./Settings":33,"./Style":34,"./buildCommon":35,"./buildHTML":36,"./buildMathML":37}],39:[function(require,module,exports){
 /**
  * This file deals with creating delimiters of various sizes. The TeXbook
  * discusses these routines on page 441-442, in the "Another subroutine sets box
@@ -8278,7 +8331,7 @@ module.exports = {
     leftRightDelim: makeLeftRightDelim
 };
 
-},{"./ParseError":30,"./Style":33,"./buildCommon":34,"./fontMetrics":41,"./symbols":47,"./utils":48}],39:[function(require,module,exports){
+},{"./ParseError":31,"./Style":34,"./buildCommon":35,"./fontMetrics":42,"./symbols":48,"./utils":49}],40:[function(require,module,exports){
 /**
  * These objects store the data about the DOM nodes we create, as well as some
  * extra data. They can then be transformed into real DOM nodes with the
@@ -8549,7 +8602,7 @@ module.exports = {
     symbolNode: symbolNode
 };
 
-},{"./utils":48}],40:[function(require,module,exports){
+},{"./utils":49}],41:[function(require,module,exports){
 var fontMetrics = require("./fontMetrics");
 var parseData = require("./parseData");
 var ParseError = require("./ParseError");
@@ -8729,7 +8782,7 @@ module.exports = (function() {
     return exports;
 })();
 
-},{"./ParseError":30,"./fontMetrics":41,"./parseData":45}],41:[function(require,module,exports){
+},{"./ParseError":31,"./fontMetrics":42,"./parseData":46}],42:[function(require,module,exports){
 /* jshint unused:false */
 
 var Style = require("./Style");
@@ -8866,7 +8919,7 @@ module.exports = {
     getCharacterMetrics: getCharacterMetrics
 };
 
-},{"./Style":33,"./fontMetricsData":42}],42:[function(require,module,exports){
+},{"./Style":34,"./fontMetricsData":43}],43:[function(require,module,exports){
 module.exports = {
 "AMS-Regular": {
   "65": {"depth": 0.0, "height": 0.68889, "italic": 0.0, "skew": 0.0},
@@ -10619,7 +10672,7 @@ module.exports = {
   "8242": {"depth": 0.0, "height": 0.61111, "italic": 0.0, "skew": 0.0}
 }};
 
-},{}],43:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 var utils = require("./utils");
 var ParseError = require("./ParseError");
 
@@ -11250,7 +11303,7 @@ module.exports = {
     funcs: functions
 };
 
-},{"./ParseError":30,"./utils":48}],44:[function(require,module,exports){
+},{"./ParseError":31,"./utils":49}],45:[function(require,module,exports){
 /**
  * These objects store data about MathML nodes. This is the MathML equivalent
  * of the types in domTree.js. Since MathML handles its own rendering, and
@@ -11354,7 +11407,7 @@ module.exports = {
     TextNode: TextNode
 };
 
-},{"./utils":48}],45:[function(require,module,exports){
+},{"./utils":49}],46:[function(require,module,exports){
 /**
  * The resulting parse tree nodes of the parse tree.
  */
@@ -11379,7 +11432,7 @@ module.exports = {
 };
 
 
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 /**
  * Provides a single function for parsing an expression using a Parser
  * TODO(emily): Remove this
@@ -11398,7 +11451,7 @@ var parseTree = function(toParse, settings) {
 
 module.exports = parseTree;
 
-},{"./Parser":31}],47:[function(require,module,exports){
+},{"./Parser":32}],48:[function(require,module,exports){
 /**
  * This file holds a list of all no-argument functions and single-character
  * symbols (like 'a' or ';').
@@ -13985,7 +14038,7 @@ for (var i = 0; i < letters.length; i++) {
 
 module.exports = symbols;
 
-},{}],48:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 /**
  * This file contains a list of utility functions which are useful in other
  * files.
@@ -14092,7 +14145,7 @@ module.exports = {
     clearNode: clearNode
 };
 
-},{}],49:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 /** @flow */
 
 "use strict";

@@ -21,7 +21,7 @@
 
 (function () {
     var exports = this,
-    /** 
+    /**
   * Helper functions for adding and removing contacts. TODO
   * @namespace contactHelpers
   */
@@ -80,7 +80,7 @@
 
                         jQuery('#my-contacts .fw-document-table-body').append(tmp_access_right_tr({'contacts': [response.member]}));
                         jQuery('#share-member table tbody').append(tmp_collaborators({'collaborators': [member_data]}));
-                        accessrightsHelpers.collaboratorFunctionsEvent();
+                        //accessrightsHelpers.collaboratorFunctionsEvent(); TODO: FIgure out what is happening here. This event disappeared with conversion to ES6.
                     } else {
                         jQuery('#team-table tbody').append(
                             contactHelpers.tmp_teammember({
@@ -91,7 +91,7 @@
                     jQuery("#add-new-member").dialog('close');
                 } else {//user not found
 		    var responseHtml;
-		  
+
 		    if (response.error === 1) {
 			responseHtml = gettext('You cannot add yourself to your contacts!');
 		    } else if (response.error === 2) {

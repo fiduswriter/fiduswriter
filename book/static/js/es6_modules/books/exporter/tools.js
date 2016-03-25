@@ -1,3 +1,5 @@
+import {getMissingDocumentListData} from "../../documents/tools"
+
 export let getMissingChapterData = function (aBook, callback) {
     let bookDocuments = []
 
@@ -8,7 +10,7 @@ export let getMissingChapterData = function (aBook, callback) {
         }
         bookDocuments.push(aBook.chapters[i].text)
     }
-    documentHelpers.getMissingDocumentListData(bookDocuments, callback)
+    getMissingDocumentListData(bookDocuments, theDocumentList, callback)
 }
 
 export let getImageAndBibDB = function (aBook, callback) {

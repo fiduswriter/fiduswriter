@@ -1,5 +1,6 @@
 import {documentrevisionsTemplate, documentrevisionsConfirmDeleteTemplate} from "./templates"
 import {ImportFidusFile} from "../../importer/file"
+import {downloadFile} from "../../exporter/download"
 
 /**
  * Functions for the recovering previously created document revisions.
@@ -63,12 +64,12 @@ export class DocumentRevisionsDialog {
 
         jQuery('.recreate-revision').on('mousedown', function() {
             let revisionId = parseInt(jQuery(this).attr('data-id'))
-            that.recreate(revisionId, theDocumentList, that.user)
+            that.recreate(revisionId, that.documentList, that.user)
         })
 
         jQuery('.delete-revision').on('mousedown', function() {
             let revisionId = parseInt(jQuery(this).attr('data-id'))
-            that.delete(revisionId, theDocumentList)
+            that.delete(revisionId, that.documentList)
         })
     }
 
@@ -130,7 +131,7 @@ export class DocumentRevisionsDialog {
         let xhr = new XMLHttpRequest()
         xhr.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
-                exporter.downloadFile(filename, this.response)
+                downloadFile(filename, this.response)
             }
         }
 
@@ -165,7 +166,7 @@ export class DocumentRevisionsDialog {
                             aDocument = _.findWhere(that.documentList, {
                                 id: parseInt(documentId)
                             })
-                        console.log([documentId, aDocument])
+                        jQuery(thisTr).remove()
                         jQuery.addAlert('success', gettext('Revision deleted'))
                         that.callback({
                             action: 'deleted-revision',

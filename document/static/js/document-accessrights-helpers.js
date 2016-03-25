@@ -27,42 +27,27 @@
   */
         accessrightsHelpers = {};
 
-    accessrightsHelpers.createAccessRightsDialog = function (documentIds) {
+    accessrightsHelpers.createAccessRightsDialog = function (documentIds, accessRights, teamMembers) {
         var dialogHeader = gettext('Share your document with others');
         var document_collaborators = {},
-            theAccessRights,
-            theTeamMembers,
             i, len;
 
-        // In case this is accessed from the the editor
-        if (typeof (window.theAccessRights) === 'undefined') {
-            theAccessRights = theEditor.doc.access_rights;
-        } else {
-            theAccessRights = window.theAccessRights;
-        }
-
-        len = theAccessRights.length
-
-        if (typeof (window.theTeamMembers) === 'undefined') {
-            theTeamMembers = theEditor.doc.owner.team_members;
-        } else {
-            theTeamMembers = window.theTeamMembers;
-        }
+        len = accessRights.length
 
         for (i = 0; i < len; i++) {
-            if (_.include(documentIds, theAccessRights[i].document_id)) {
+            if (_.include(documentIds, accessRights[i].document_id)) {
                 if ('undefined' == typeof (document_collaborators[
-                    theAccessRights[i].user_id])) {
-                    document_collaborators[theAccessRights[i].user_id] =
-                        theAccessRights[i];
-                    document_collaborators[theAccessRights[i].user_id].count =
+                    accessRights[i].user_id])) {
+                    document_collaborators[accessRights[i].user_id] =
+                        accessRights[i];
+                    document_collaborators[accessRights[i].user_id].count =
                         1;
                 } else {
-                    if (document_collaborators[theAccessRights[i].user_id].rights !=
-                        theAccessRights[i].rights);
-                    document_collaborators[theAccessRights[i].user_id].rights =
+                    if (document_collaborators[accessRights[i].user_id].rights !=
+                        accessRights[i].rights);
+                    document_collaborators[accessRights[i].user_id].rights =
                         'r';
-                    document_collaborators[theAccessRights[i].user_id].count +=
+                    document_collaborators[accessRights[i].user_id].count +=
                         1;
                 }
             }
@@ -73,7 +58,7 @@
 
         var dialogBody = tmp_access_right_overview({
             'dialogHeader': dialogHeader,
-            'contacts': tmp_access_right_tr({'contacts': theTeamMembers}),
+            'contacts': tmp_access_right_tr({'contacts': teamMembers}),
             'collaborators': tmp_collaborators({
                 'collaborators': document_collaborators
             })
@@ -180,7 +165,7 @@
             type: 'POST',
             dataType: 'json',
             success: function (response) {
-                theAccessRights = response.access_rights;
+                accessRights = response.access_rights;
                 $.addAlert('success', gettext(
                     'Access rights have been saved'));
             },

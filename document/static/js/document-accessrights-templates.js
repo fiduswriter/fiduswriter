@@ -42,7 +42,7 @@ var tmp_access_right_overview = _.template('\
             </table>\
         </div>\
     </div>');
-/** The template for an individual row in the right hand side list of users (all contacts) of the access rights dialogue. */ 
+/** The template for an individual row in the right hand side list of users (all contacts) of the access rights dialogue. */
 var tmp_access_right_tr = _.template('<% _.each(contacts, function(contact) { %>\
         <tr>\
             <td width="337" data-id="<%- contact.id %>" data-avatar="<%- contact.avatar %>" data-name="<%- contact.name %>" class="fw-checkable fw-checkable-td">\
@@ -51,7 +51,7 @@ var tmp_access_right_tr = _.template('<% _.each(contacts, function(contact) { %>
             </td>\
         </tr>\
     <% }) %>');
-/** The template for an individual row in the left hand side list of users (the collaborators of the current document) of the access rights dialogue. */ 
+/** The template for an individual row in the left hand side list of users (the collaborators of the current document) of the access rights dialogue. */
 var tmp_collaborators = _.template('<% _.each(collaborators, function(collaborator) { %>\
         <tr id="collaborator-<%- collaborator.user_id %>" data-id="<%- collaborator.user_id %>"\
         class="collaborator-tr <%- collaborator.rights %>" data-right="<%- collaborator.rights %>">\

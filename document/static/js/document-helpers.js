@@ -106,13 +106,7 @@
             reader.onerror = function (e) {
                 console.log('error', e.target.error.code);
             };
-            var user;
-            if (window.theEditor) {
-                user = theEditor.user;
-
-            } else {
-                user = theUser;
-            }
+            var user = window.theUser;
 
             new importer.ImportFidusFile(
                 fidus_file,
@@ -125,24 +119,13 @@
                         var aDocumentValues = returnValue.aDocumentValues;
                         jQuery.addAlert('info', aDocument.title + gettext(
                                 ' successfully imported.'));
-                        if (typeof (theDocumentList) !== 'undefined') {
-                            theDocumentList.push(aDocument);
-                            documentHelpers.stopDocumentTable();
-                            jQuery('#document-table tbody').append(
-                                tmp_documents_list_item({
-                                        aDocument: aDocument
-                                    }));
-                            documentHelpers.startDocumentTable();
-                        } else if (typeof (theEditor) !== 'undefined') {
-                            if (theEditor.docInfo.rights ==='r') {
-                                // We only had right access to the document, so the editing elements won't show. We therefore need to reload the page to get them.
-                                window.location = '/document/'+aDocument.id+'/'
-                            } else {
-                                window.theEditor.doc = aDocument
-                                window.theEditor.docInfo = aDocumentValues
-                                window.history.pushState("", "", "/document/"+theEditor.doc.id+"/")
-                            }
-                        }
+                        window.theDocumentList.push(aDocument);
+                        documentHelpers.stopDocumentTable();
+                        jQuery('#document-table tbody').append(
+                            tmp_documents_list_item({
+                                    aDocument: aDocument
+                                }));
+                        documentHelpers.startDocumentTable();
                     } else {
                         jQuery.addAlert('error', returnValue)
                     }
@@ -249,6 +232,7 @@
         });
     };
 
+    //USED IN Books + documents list
     documentHelpers.getMissingDocumentListData = function (ids, callback) {
         // get extra data for the documents identified by the ids.
         var i, incompleteIds = [],

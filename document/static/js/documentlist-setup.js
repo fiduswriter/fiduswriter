@@ -27,7 +27,7 @@ jQuery(document).ready(function () {
 
     jQuery(document).on('mousedown', '.owned-by-user .rights', function () {
         var documentId = parseInt(jQuery(this).attr('data-id'));
-        accessrightsHelpers.createAccessRightsDialog([documentId]);
+        accessrightsHelpers.createAccessRightsDialog([documentId], window.theAccessRights, window.theTeamMembers);
     });
 
     jQuery(document).on('mousedown', '.revisions', function () {

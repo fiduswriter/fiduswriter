@@ -1,3 +1,4 @@
+import {DocumentAccessRightsDialog} from "../../documents/access-rights/dialog"
 
 /* Bindings for the header menu */
 export class ModMenusHeader {
@@ -123,7 +124,7 @@ export class ModMenusHeader {
           })
 
           jQuery(document).on('mousedown', '.share:not(.disabled)', function() {
-              accessrightsHelpers.createAccessRightsDialog([
+              new DocumentAccessRightsDialog([
                   that.mod.editor.doc.id
               ], that.mod.editor.doc.access_rights, that.mod.editor.doc.owner.team_members)
           })

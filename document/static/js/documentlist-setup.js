@@ -27,7 +27,7 @@ jQuery(document).ready(function () {
 
     jQuery(document).on('mousedown', '.owned-by-user .rights', function () {
         var documentId = parseInt(jQuery(this).attr('data-id'));
-        accessrightsHelpers.createAccessRightsDialog([documentId], window.theAccessRights, window.theTeamMembers);
+        new accessrightsHelpers.DocumentAccessRightsDialog([documentId], window.theAccessRights, window.theTeamMembers);
     });
 
     jQuery(document).on('mousedown', '.revisions', function () {
@@ -95,7 +95,7 @@ jQuery(document).ready(function () {
                 documentHelpers.deleteDocumentDialog(ids);
                 break;
             case 'share':
-                accessrightsHelpers.createAccessRightsDialog(ids);
+                new accessrightsHelpers.DocumentAccessRightsDialog(ids, window.theAccessRights, window.theTeamMembers);
                 break;
             case 'epub':
                 documentHelpers.getMissingDocumentListData(ids, function () {

@@ -1,7 +1,7 @@
 /** A template for the list of books */
 export let bookListTemplate = _.template('\
 <% _.each(bookList,function(aBook,key,list){%>\
-    <tr id="Book_<%- aBook.id %>" <% if (theUser.id == aBook.owner) { %>class="owned-by-user"<% } %> >\
+    <tr id="Book_<%- aBook.id %>" <% if (user.id == aBook.owner) { %>class="owned-by-user"<% } %> >\
        <td width="20">\
            <span class="fw-inline">\
                <input type="checkbox" class="entry-select"\
@@ -40,7 +40,7 @@ export let bookListTemplate = _.template('\
        </td>\
         <td width="40" align="center">\
            <span class="delete-book fw-inline fw-link-text" data-id="<%- aBook.id %>" data-title="<%- aBook.title %>">\
-               <% if (theUser.id === aBook.owner) { %><i class="icon-trash"></i><% } %>\
+               <% if (user.id === aBook.owner) { %><i class="icon-trash"></i><% } %>\
            </span>\
        </td>\
    </tr>\
@@ -289,7 +289,7 @@ export let bookDialogChaptersTemplate = _.template('\
 export let bookChapterListTemplate = _.template('\
     <% var partCounter = 1; %>\
     <% _.each(_.sortBy(theBook.chapters, function (chapter) {return chapter.number;}), function(aChapter,index,list) { %>\
-        <% var aDocument = _.findWhere(theDocumentList, {id: aChapter.text});%>\
+        <% var aDocument = _.findWhere(documentList, {id: aChapter.text});%>\
             <tr class="<% if(typeof(aDocument) === "undefined") {print("noaccess")} %>" >\
                 <td width="222" data-id="<%- aChapter.text %>" class="fw-checkable-td">\
                     <span class="fw-inline">\
@@ -337,7 +337,7 @@ export let bookChapterListTemplate = _.template('\
 )
 /** A template for the document list on the chapter pane of the book dialog */
 export let bookDocumentListTemplate = _.template('\
-      <% _.each(theDocumentList, function(aDocument) { %>\
+      <% _.each(documentList, function(aDocument) { %>\
           <% var documentTitle; if (0===aDocument.title.length) {documentTitle="'+gettext('Untitled')+'";} else {documentTitle=aDocument.title;} %>\
           <% if (!(_.findWhere(theBook.chapters, {text:aDocument.id}))) { %>\
               <tr>\

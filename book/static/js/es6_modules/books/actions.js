@@ -128,10 +128,10 @@ export class BookActions {
             dataType: 'json',
             success: function (response, textStatus, jqXHR) {
                 that.bookList.bookList = that.unpackBooks(response.books)
-                theDocumentList = response.documents
-                theTeamMembers = response.team_members
-                theAccessRights = response.access_rights
-                theUser = response.user
+                that.bookList.documentList = response.documents
+                that.bookList.teamMembers = response.team_members
+                that.bookList.accessRights = response.access_rights
+                that.bookList.user = response.user
                 jQuery.event.trigger({
                     type: "bookDataLoaded",
                 })
@@ -207,7 +207,8 @@ export class BookActions {
     }
 
     editChapterDialog(aChapter, theBook) {
-        let aDocument = _.findWhere(theDocumentList, {
+        let that = this
+        let aDocument = _.findWhere(that.bookList.documentList, {
             id: aChapter.text
         }),
             documentTitle = aDocument.title,
@@ -227,7 +228,7 @@ export class BookActions {
         diaButtons[gettext('Submit')] = function () {
             aChapter.part = jQuery('#book-chapter-part').val()
             jQuery('#book-chapter-list').html(bookChapterListTemplate({
-                theBook: theBook
+                theBook, documentList: that.bookList.documentList
             }))
             jQuery(this).dialog('close')
         }
@@ -279,7 +280,7 @@ export class BookActions {
                 }
                 that.bookList.bookList.push(theBook)
                 that.stopBookTable()
-                jQuery('#book-table tbody').html(bookListTemplate({bookList: that.bookList.bookList}))
+                jQuery('#book-table tbody').html(bookListTemplate({bookList: that.bookList.bookList, user: that.bookList.user}))
                 that.startBookTable()
                 if ((typeof (currentDialog) != 'undefined')) {
                     jQuery(currentDialog).dialog('close')
@@ -297,9 +298,9 @@ export class BookActions {
         let theBook = jQuery.extend(true, {}, theOldBook)
         theBook.id = 0
         theBook.is_owner = true
-        theBook.owner_avatar = theUser.avatar
-        theBook.owner_name = theUser.name
-        theBook.owner = theUser.id
+        theBook.owner_avatar = that.bookList.user.avatar
+        theBook.owner_name = that.bookList.user.name
+        theBook.owner = that.bookList.user.id
         theBook.rights = 'w'
         if (theOldBook.owner != theBook.owner) {
             function setCoverImage(id) {
@@ -424,9 +425,9 @@ export class BookActions {
                 id: 0,
                 chapters: [],
                 is_owner: true,
-                owner_avatar: theUser.avatar,
-                owner_name: theUser.name,
-                owner: theUser.id,
+                owner_avatar: that.bookList.user.avatar,
+                owner_name: that.bookList.user.name,
+                owner: that.bookList.user.id,
                 rights: 'w',
                 metadata: {},
                 settings: {
@@ -470,11 +471,11 @@ export class BookActions {
             chapters: bookDialogChaptersTemplate({
                 theBook: theBook,
                 chapters: bookChapterListTemplate({
-                    theBook: theBook,
+                    theBook, documentList: that.bookList.documentList
                 }),
                 documents: bookDocumentListTemplate({
-                    theBook: theBook,
-                    theDocumentList: theDocumentList
+                    theBook,
+                    documentList: that.bookList.documentList
                 })
             }),
             bibliographyData: bookBibliographyDataTemplate({
@@ -503,7 +504,7 @@ export class BookActions {
             chapter.number--
             higherChapter.number++
             jQuery('#book-chapter-list').html(bookChapterListTemplate({
-                theBook: theBook
+                theBook, documentList: that.bookList.documentList
             }))
         })
         jQuery(document).on('click', '.book-sort-down', function () {
@@ -516,7 +517,7 @@ export class BookActions {
             chapter.number++
             lowerChapter.number--
             jQuery('#book-chapter-list').html(bookChapterListTemplate({
-                theBook: theBook
+                theBook, documentList: that.bookList.documentList
             }))
         })
 
@@ -534,11 +535,11 @@ export class BookActions {
                 return (chapter !== thisChapter)
             })
             jQuery('#book-chapter-list').html(bookChapterListTemplate({
-                theBook: theBook
+                theBook, documentList: that.bookList.documentList
             }))
             jQuery('#book-document-list').html(bookDocumentListTemplate({
-                theDocumentList: theDocumentList,
-                theBook: theBook
+                documentList: that.bookList.documentList,
+                theBook
             }))
         })
 
@@ -565,11 +566,11 @@ export class BookActions {
                 })
             })
             jQuery('#book-chapter-list').html(bookChapterListTemplate({
-                theBook: theBook
+                theBook, documentList: that.bookList.documentList
             }))
             jQuery('#book-document-list').html(bookDocumentListTemplate({
-                theDocumentList: theDocumentList,
-                theBook: theBook
+                documentList: that.bookList.documentList,
+                theBook
             }))
         })
 

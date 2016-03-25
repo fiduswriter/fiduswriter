@@ -1,22 +1,22 @@
 import {getMissingDocumentListData} from "../../documents/tools"
 
-export let getMissingChapterData = function (aBook, callback) {
+export let getMissingChapterData = function (aBook, documentList, callback) {
     let bookDocuments = []
 
     for (let i = 0; i < aBook.chapters.length; i++) {
-        if (!_.findWhere(theDocumentList, {id: aBook.chapters[i].text})) {
+        if (!_.findWhere(documentList, {id: aBook.chapters[i].text})) {
             $.addAlert('error', "Cannot produce book as you lack access rights to its chapters.")
             return
         }
         bookDocuments.push(aBook.chapters[i].text)
     }
-    getMissingDocumentListData(bookDocuments, theDocumentList, callback)
+    getMissingDocumentListData(bookDocuments, documentList, callback)
 }
 
-export let getImageAndBibDB = function (aBook, callback) {
+export let getImageAndBibDB = function (aBook, documentList, callback) {
     let documentOwners = []
     for (let i = 0; i < aBook.chapters.length; i++) {
-        documentOwners.push(_.findWhere(theDocumentList, {
+        documentOwners.push(_.findWhere(documentList, {
             id: aBook.chapters[i].text
         }).owner.id)
     }

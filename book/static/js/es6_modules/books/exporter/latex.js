@@ -5,16 +5,16 @@ import {findLatexDocumentFeatures, htmlToLatex} from "../../exporter/latex"
 import {createSlug, findImages} from "../../exporter/tools"
 import {zipFileCreator} from "../../exporter/zip"
 
-export let downloadLatex = function (aBook) {
-    getMissingChapterData(aBook, function () {
-        getImageAndBibDB(aBook, function (anImageDB,
+export let downloadLatexBook = function (aBook, documentList) {
+    getMissingChapterData(aBook, documentList, function () {
+        getImageAndBibDB(aBook, documentList, function (anImageDB,
             aBibDB) {
-            latexBookExport(aBook, anImageDB, aBibDB)
+            latexBookExport(aBook, anImageDB, aBibDB, documentList)
         })
     })
 }
 
-let latexBookExport = function (aBook, anImageDB, aBibDB) {
+let latexBookExport = function (aBook, anImageDB, aBibDB, documentList) {
     let htmlCode, outputList = [],
         images = [],
         listedWorksList = [],
@@ -27,7 +27,7 @@ let latexBookExport = function (aBook, anImageDB, aBibDB) {
 
     for (let i = 0; i < aBook.chapters.length; i++) {
 
-        let aDocument = _.findWhere(theDocumentList, {
+        let aDocument = _.findWhere(documentList, {
             id: aBook.chapters[i].text
         })
 

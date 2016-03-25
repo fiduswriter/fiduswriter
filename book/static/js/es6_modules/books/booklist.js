@@ -1,9 +1,9 @@
-import {downloadHtml} from "./exporter/html"
-import {downloadLatex} from "./exporter/latex"
-import {downloadEpub} from "./exporter/epub"
+import {downloadHtmlBook} from "./exporter/html"
+import {downloadLatexBook} from "./exporter/latex"
+import {downloadEpubBook} from "./exporter/epub"
 import {BookActions} from "./actions"
 //import {deleteBookDialog, createBookDialog, copyBook, getBookListData, startBookTable} from "./actions"
-import {createAccessRightsDialog} from "./accessrights/dialog"
+import {BookAccessRightsDialog} from "./accessrights/dialog"
 import {bookListTemplate, bookBibliographyDataTemplate} from "./templates"
 
 
@@ -16,25 +16,21 @@ export class BookList {
         new BookActions(this)
 
         this.bookList = []
-//        this.documentList = []
-//        this.teamMembers = []
-//        this.accessRights = []
-//        this.user = {}
+        this.documentList = []
+        this.teamMembers = []
+        this.accessRights = []
+        this.user = {}
         this.bindEvents()
     }
 
     bindEvents() {
         let that = this
-        window.theDocumentList = undefined
-        window.theTeamMembers = undefined
-        window.theAccessRights = undefined
-        window.theUser = undefined
         jQuery(document).ready(function () {
             that.mod.actions.getBookListData()
         })
 
         jQuery(document).bind('bookDataLoaded', function () {
-            jQuery('#book-table tbody').html(bookListTemplate({bookList: that.bookList}))
+            jQuery('#book-table tbody').html(bookListTemplate({bookList: that.bookList, user: that.user}))
             that.mod.actions.startBookTable()
         })
 
@@ -47,7 +43,9 @@ export class BookList {
 
             jQuery(document).on('click', '.owned-by-user .rights', function () {
                 let BookId = parseInt(jQuery(this).attr('data-id'))
-                createAccessRightsDialog([BookId])
+                new BookAccessRightsDialog([BookId], that.teamMembers, that.accessRights, function (accessRights) {
+                    that.accessRights = accessRights
+                })
             })
 
             //select all entries
@@ -68,12 +66,11 @@ export class BookList {
             jQuery('#action-selection-pulldown-books li > span').bind('mousedown',
                 function () {
                     let actionName = jQuery(this).attr('data-action'),
-                        ids = [],
-                        aBook
+                        ids = []
                     if ('' == actionName || 'undefined' == typeof (actionName))
                         return
                     jQuery('.entry-select:checked').not(':disabled').each(function () {
-                        if (theUser.id != jQuery(this).attr('data-owner') && (
+                        if (that.user.id != jQuery(this).attr('data-owner') && (
                             actionName === 'delete' || actionName ===
                             'share')) {
                             let theTitle = jQuery(this).parent().parent().parent()
@@ -95,39 +92,41 @@ export class BookList {
                         that.mod.actions.deleteBookDialog(ids)
                         break
                     case 'share':
-                        createAccessRightsDialog(ids)
+                        new BookAccessRightsDialog(ids, that.teamMembers, that.accessRights, function (accessRights) {
+                            that.accessRights = accessRights
+                        })
                         break
                     case 'epub':
                         for (let i = 0; i < ids.length; i++) {
-                            aBook = _.findWhere(
+                            let aBook = _.findWhere(
                                 that.bookList, {
                                     id: ids[i]
                                 })
                             $.addAlert('info', aBook.title + ': ' + gettext(
                                 'Epub export has been initiated.'))
-                            downloadEpub(aBook)
+                            downloadEpubBook(aBook, that.user, that.documentList)
                         }
                         break
                     case 'latex':
                         for (let i = 0; i < ids.length; i++) {
-                            aBook = _.findWhere(
+                            let aBook = _.findWhere(
                                 that.bookList, {
                                     id: ids[i]
                                 })
                             $.addAlert('info', aBook.title + ': ' + gettext(
                                 'Latex export has been initiated.'))
-                            downloadLatex(aBook)
+                            downloadLatexBook(aBook, that.documentList)
                         }
                         break
                     case 'html':
                         for (let i = 0; i < ids.length; i++) {
-                            aBook = _.findWhere(
+                            let aBook = _.findWhere(
                                 that.bookList, {
                                     id: ids[i]
                                 })
                             $.addAlert('info', aBook.title + ': ' + gettext(
                                 'HTML export has been initiated.'))
-                            downloadHtml(aBook)
+                            downloadHtmlBook(aBook, that.user, that.documentList)
                         }
                         break
                     case 'copy':

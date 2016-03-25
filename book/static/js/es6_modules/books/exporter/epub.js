@@ -14,18 +14,18 @@ import {createSlug, findImages} from "../../exporter/tools"
 import {zipFileCreator} from "../../exporter/zip"
 import {formatCitations} from "../../citations/format"
 
-export let downloadEpub = function (aBook) {
-    getMissingChapterData(aBook, function () {
-        getImageAndBibDB(aBook, function (anImageDB,
+export let downloadEpubBook = function (aBook, user, documentList) {
+    getMissingChapterData(aBook, documentList, function () {
+        getImageAndBibDB(aBook, documentList, function (anImageDB,
             aBibDB) {
-            epubBookExport(aBook, anImageDB, aBibDB)
+            epubBookExport(aBook, anImageDB, aBibDB, user, documentList)
         })
     })
 }
 
 let templates = {ncxTemplate, ncxItemTemplate, navTemplate, navItemTemplate}
 
-let epubBookExport = function (aBook, anImageDB, aBibDB) {
+let epubBookExport = function (aBook, anImageDB, aBibDB, user, documentList) {
     let coverImage = false, contentItems = [],
         images = [],
         chapters = [],
@@ -76,7 +76,7 @@ let epubBookExport = function (aBook, anImageDB, aBibDB) {
 
         let aChapter = {}
 
-        aChapter.document = _.findWhere(theDocumentList, {
+        aChapter.document = _.findWhere(documentList, {
             id: aBook.chapters[i].text
         })
 
@@ -223,7 +223,6 @@ let epubBookExport = function (aBook, anImageDB, aBibDB) {
     let opfCode = epubBookOpfTemplate({
         language: gettext('en-US'), // TODO: specify a document language rather than using the current users UI language
         aBook,
-        theUser,
         idType: 'fidus',
         date: timestamp.slice(0, 10), // TODO: the date should probably be the original document creation date instead
         modified: timestamp,
@@ -232,7 +231,8 @@ let epubBookExport = function (aBook, anImageDB, aBibDB) {
         images,
         chapters,
         coverImage,
-        katexOpfIncludes
+        katexOpfIncludes,
+        user
     })
 
     let ncxCode = ncxTemplate({
@@ -271,7 +271,7 @@ let epubBookExport = function (aBook, anImageDB, aBibDB) {
         filename: 'EPUB/copyright.xhtml',
         contents: epubBookCopyrightTemplate({
             aBook: aBook,
-            creator: theUser.name,
+            creator: user.name,
             language: gettext('English') //TODO: specify a book language rather than using the current users UI language
         })
     }])

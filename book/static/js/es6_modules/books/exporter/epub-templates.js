@@ -10,7 +10,7 @@ export let epubBookOpfTemplate = _.template('<?xml version="1.0" encoding="UTF-8
     \t\t<dc:creator><% if (aBook.metadata.author && aBook.metadata.author != "") {\
             print(aBook.metadata.author);\
         } else {\
-            print(theUser.name);\
+            print(user.name);\
         } %></dc:creator>\n\
     \t\t<dc:language><%= language %></dc:language>\n\
     \t\t<dc:date><%= date %></dc:date>\n\

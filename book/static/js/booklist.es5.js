@@ -14,145 +14,160 @@ window.theBookList = theBookList;
 },{"./es6_modules/books/booklist":5}],2:[function(require,module,exports){
 'use strict';
 
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.createAccessRightsDialog = undefined;
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 var _templates = require('./templates');
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /**
 * Helper functions to deal with the book access rights dialog.
 */
 
-var createAccessRightsDialog = exports.createAccessRightsDialog = function createAccessRightsDialog(bookIds) {
-    var dialogHeader = gettext('Share your book with others');
-    var bookCollaborators = {};
+var BookAccessRightsDialog = (function () {
+    function BookAccessRightsDialog(bookIds, accessRights, callback) {
+        _classCallCheck(this, BookAccessRightsDialog);
 
-    var theAccessRights = window.theAccessRights;
-
-    var len = theAccessRights.length;
-
-    var theTeamMembers = window.theTeamMembers;
-
-    for (var i = 0; i < len; i++) {
-        if (_.include(bookIds, theAccessRights[i].book_id)) {
-            if (!(theAccessRights[i].user_id in bookCollaborators)) {
-                bookCollaborators[theAccessRights[i].user_id] = theAccessRights[i];
-                bookCollaborators[theAccessRights[i].user_id].count = 1;
-            } else {
-                if (bookCollaborators[theAccessRights[i].user_id].rights != theAccessRights[i].rights) bookCollaborators[theAccessRights[i].user_id].rights = 'r';
-                bookCollaborators[theAccessRights[i].user_id].count += 1;
-            }
-        }
+        this.bookIds = bookIds;
+        this.accessRights = accessRights;
+        this.callback = callback;
+        this.createAccessRightsDialog();
     }
-    bookCollaborators = _.select(bookCollaborators, function (obj) {
-        return obj.count == bookIds.length;
-    });
 
-    var dialogBody = (0, _templates.bookAccessRightOverviewTemplate)({
-        'dialogHeader': dialogHeader,
-        'contacts': theTeamMembers,
-        'collaborators': (0, _templates.bookCollaboratorsTemplate)({
-            'collaborators': bookCollaborators
-        })
-    });
-    jQuery('body').append(dialogBody);
-    var diaButtons = {};
-    diaButtons[gettext('Submit')] = function () {
-        //apply the current state to server
-        var collaborators = [],
-            rights = [];
-        jQuery('#share-member .collaborator-tr').each(function () {
-            collaborators[collaborators.length] = jQuery(this).attr('data-id');
-            rights[rights.length] = jQuery(this).attr('data-right');
-        });
-        submitAccessRight(bookIds, collaborators, rights);
-        jQuery(this).dialog('close');
-    };
-    diaButtons[gettext('Cancel')] = function () {
-        jQuery(this).dialog("close");
-    };
-    jQuery('#access-rights-dialog').dialog({
-        draggable: false,
-        resizable: false,
-        top: 10,
-        width: 820,
-        height: 540,
-        modal: true,
-        buttons: diaButtons,
-        create: function create() {
-            var theDialog = jQuery(this).closest(".ui-dialog");
-            theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark");
-            theDialog.find(".ui-button:last").addClass("fw-button fw-orange");
-        },
-        close: function close() {
-            jQuery('#access-rights-dialog').dialog('destroy').remove();
-        }
-    });
-    jQuery('.fw-checkable').bind('click', function () {
-        $.setCheckableLabel(jQuery(this));
-    });
-    jQuery('#add-share-member').bind('click', function () {
-        var selectedMembers = jQuery('#my-contacts .fw-checkable.checked');
-        var selectedData = [];
-        selectedMembers.each(function () {
-            var memberId = jQuery(this).attr('data-id');
-            var collaborator = jQuery('#collaborator-' + memberId);
-            if (0 == collaborator.size()) {
-                selectedData[selectedData.length] = {
-                    'user_id': memberId,
-                    'user_name': jQuery(this).attr('data-name'),
-                    'avatar': jQuery(this).attr('data-avatar'),
-                    'rights': 'r'
-                };
-            } else if ('d' == collaborator.attr('data-right')) {
-                collaborator.removeClass('d').addClass('r').attr('data-right', 'r');
+    _createClass(BookAccessRightsDialog, [{
+        key: 'createAccessRightsDialog',
+        value: function createAccessRightsDialog() {
+            var that = this;
+            var dialogHeader = gettext('Share your book with others');
+            var bookCollaborators = {};
+
+            var len = this.accessRights.length;
+
+            for (var i = 0; i < len; i++) {
+                if (_.include(this.bookIds, this.accessRights[i].book_id)) {
+                    if (!(this.accessRights[i].user_id in bookCollaborators)) {
+                        bookCollaborators[this.accessRights[i].user_id] = this.accessRights[i];
+                        bookCollaborators[this.accessRights[i].user_id].count = 1;
+                    } else {
+                        if (bookCollaborators[this.accessRights[i].user_id].rights != this.accessRights[i].rights) bookCollaborators[this.accessRights[i].user_id].rights = 'r';
+                        bookCollaborators[this.accessRights[i].user_id].count += 1;
+                    }
+                }
             }
-        });
-        jQuery('#my-contacts .checkable-label.checked').removeClass('checked');
-        jQuery('#share-member table tbody').append((0, _templates.bookCollaboratorsTemplate)({
-            'collaborators': selectedData
-        }));
-        collaboratorFunctionsEvent();
-    });
-    collaboratorFunctionsEvent();
-};
+            bookCollaborators = _.select(bookCollaborators, function (obj) {
+                return obj.count == that.bookIds.length;
+            });
 
-var collaboratorFunctionsEvent = function collaboratorFunctionsEvent() {
-    jQuery('.edit-right').unbind('click');
-    jQuery('.edit-right').each(function () {
-        $.addDropdownBox(jQuery(this), jQuery(this).siblings('.fw-pulldown'));
-    });
-    var spans = jQuery('.edit-right-wrapper .fw-pulldown-item, .delete-collaborator');
-    spans.unbind('mousedown');
-    spans.bind('mousedown', function () {
-        var newRight = jQuery(this).attr('data-right');
-        jQuery(this).closest('.collaborator-tr').attr('class', 'collaborator-tr ' + newRight);
-        jQuery(this).closest('.collaborator-tr').attr('data-right', newRight);
-    });
-};
-
-var submitAccessRight = function submitAccessRight(books, collaborators, rights) {
-    var postData = {
-        'books[]': books,
-        'collaborators[]': collaborators,
-        'rights[]': rights
-    };
-    $.ajax({
-        url: '/book/accessright/save/',
-        data: postData,
-        type: 'POST',
-        dataType: 'json',
-        success: function success(response) {
-            theAccessRights = response.access_rights;
-            $.addAlert('success', gettext('Access rights have been saved'));
-        },
-        error: function error(jqXHR, textStatus, errorThrown) {
-            console.log(jqXHR.responseText);
+            var dialogBody = (0, _templates.bookAccessRightOverviewTemplate)({
+                'dialogHeader': dialogHeader,
+                'contacts': that.teamMembers,
+                'collaborators': (0, _templates.bookCollaboratorsTemplate)({
+                    'collaborators': bookCollaborators
+                })
+            });
+            jQuery('body').append(dialogBody);
+            var diaButtons = {};
+            diaButtons[gettext('Submit')] = function () {
+                //apply the current state to server
+                var collaborators = [],
+                    rights = [];
+                jQuery('#share-member .collaborator-tr').each(function () {
+                    collaborators[collaborators.length] = jQuery(this).attr('data-id');
+                    rights[rights.length] = jQuery(this).attr('data-right');
+                });
+                that.submitAccessRight(that.bookIds, collaborators, rights);
+                jQuery(this).dialog('close');
+            };
+            diaButtons[gettext('Cancel')] = function () {
+                jQuery(this).dialog("close");
+            };
+            jQuery('#access-rights-dialog').dialog({
+                draggable: false,
+                resizable: false,
+                top: 10,
+                width: 820,
+                height: 540,
+                modal: true,
+                buttons: diaButtons,
+                create: function create() {
+                    var theDialog = jQuery(this).closest(".ui-dialog");
+                    theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark");
+                    theDialog.find(".ui-button:last").addClass("fw-button fw-orange");
+                },
+                close: function close() {
+                    jQuery('#access-rights-dialog').dialog('destroy').remove();
+                }
+            });
+            jQuery('.fw-checkable').bind('click', function () {
+                $.setCheckableLabel(jQuery(this));
+            });
+            jQuery('#add-share-member').bind('click', function () {
+                var selectedMembers = jQuery('#my-contacts .fw-checkable.checked');
+                var selectedData = [];
+                selectedMembers.each(function () {
+                    var memberId = jQuery(this).attr('data-id');
+                    var collaborator = jQuery('#collaborator-' + memberId);
+                    if (0 == collaborator.size()) {
+                        selectedData[selectedData.length] = {
+                            'user_id': memberId,
+                            'user_name': jQuery(this).attr('data-name'),
+                            'avatar': jQuery(this).attr('data-avatar'),
+                            'rights': 'r'
+                        };
+                    } else if ('d' == collaborator.attr('data-right')) {
+                        collaborator.removeClass('d').addClass('r').attr('data-right', 'r');
+                    }
+                });
+                jQuery('#my-contacts .checkable-label.checked').removeClass('checked');
+                jQuery('#share-member table tbody').append((0, _templates.bookCollaboratorsTemplate)({
+                    'collaborators': selectedData
+                }));
+                that.collaboratorFunctionsEvent();
+            });
+            that.collaboratorFunctionsEvent();
         }
-    });
-};
+    }, {
+        key: 'collaboratorFunctionsEvent',
+        value: function collaboratorFunctionsEvent() {
+            jQuery('.edit-right').unbind('click');
+            jQuery('.edit-right').each(function () {
+                $.addDropdownBox(jQuery(this), jQuery(this).siblings('.fw-pulldown'));
+            });
+            var spans = jQuery('.edit-right-wrapper .fw-pulldown-item, .delete-collaborator');
+            spans.unbind('mousedown');
+            spans.bind('mousedown', function () {
+                var newRight = jQuery(this).attr('data-right');
+                jQuery(this).closest('.collaborator-tr').attr('class', 'collaborator-tr ' + newRight);
+                jQuery(this).closest('.collaborator-tr').attr('data-right', newRight);
+            });
+        }
+    }, {
+        key: 'submitAccessRight',
+        value: function submitAccessRight(books, collaborators, rights) {
+            var that = this;
+            var postData = {
+                'books[]': books,
+                'collaborators[]': collaborators,
+                'rights[]': rights
+            };
+            $.ajax({
+                url: '/book/accessright/save/',
+                data: postData,
+                type: 'POST',
+                dataType: 'json',
+                success: function success(response) {
+                    that.callback(response.access_rights);
+                    $.addAlert('success', gettext('Access rights have been saved'));
+                },
+                error: function error(jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR.responseText);
+                }
+            });
+        }
+    }]);
+
+    return BookAccessRightsDialog;
+})();
 
 },{"./templates":3}],3:[function(require,module,exports){
 'use strict';
@@ -366,10 +381,10 @@ var BookActions = exports.BookActions = (function () {
                 dataType: 'json',
                 success: function success(response, textStatus, jqXHR) {
                     that.bookList.bookList = that.unpackBooks(response.books);
-                    theDocumentList = response.documents;
-                    theTeamMembers = response.team_members;
-                    theAccessRights = response.access_rights;
-                    theUser = response.user;
+                    that.bookList.documentList = response.documents;
+                    that.bookList.teamMembers = response.team_members;
+                    that.bookList.accessRights = response.access_rights;
+                    that.bookList.user = response.user;
                     jQuery.event.trigger({
                         type: "bookDataLoaded"
                     });
@@ -443,7 +458,8 @@ var BookActions = exports.BookActions = (function () {
     }, {
         key: 'editChapterDialog',
         value: function editChapterDialog(aChapter, theBook) {
-            var aDocument = _.findWhere(theDocumentList, {
+            var that = this;
+            var aDocument = _.findWhere(that.bookList.documentList, {
                 id: aChapter.text
             }),
                 documentTitle = aDocument.title,
@@ -463,7 +479,7 @@ var BookActions = exports.BookActions = (function () {
             diaButtons[gettext('Submit')] = function () {
                 aChapter.part = jQuery('#book-chapter-part').val();
                 jQuery('#book-chapter-list').html((0, _templates.bookChapterListTemplate)({
-                    theBook: theBook
+                    theBook: theBook, documentList: that.bookList.documentList
                 }));
                 jQuery(this).dialog('close');
             };
@@ -512,7 +528,7 @@ var BookActions = exports.BookActions = (function () {
                     }
                     that.bookList.bookList.push(theBook);
                     that.stopBookTable();
-                    jQuery('#book-table tbody').html((0, _templates.bookListTemplate)({ bookList: that.bookList.bookList }));
+                    jQuery('#book-table tbody').html((0, _templates.bookListTemplate)({ bookList: that.bookList.bookList, user: that.bookList.user }));
                     that.startBookTable();
                     if (typeof currentDialog != 'undefined') {
                         jQuery(currentDialog).dialog('close');
@@ -531,9 +547,9 @@ var BookActions = exports.BookActions = (function () {
             var theBook = jQuery.extend(true, {}, theOldBook);
             theBook.id = 0;
             theBook.is_owner = true;
-            theBook.owner_avatar = theUser.avatar;
-            theBook.owner_name = theUser.name;
-            theBook.owner = theUser.id;
+            theBook.owner_avatar = that.bookList.user.avatar;
+            theBook.owner_name = that.bookList.user.name;
+            theBook.owner = that.bookList.user.id;
             theBook.rights = 'w';
             if (theOldBook.owner != theBook.owner) {
                 var setCoverImage = function setCoverImage(id) {
@@ -655,9 +671,9 @@ var BookActions = exports.BookActions = (function () {
                     id: 0,
                     chapters: [],
                     is_owner: true,
-                    owner_avatar: theUser.avatar,
-                    owner_name: theUser.name,
-                    owner: theUser.id,
+                    owner_avatar: that.bookList.user.avatar,
+                    owner_name: that.bookList.user.name,
+                    owner: that.bookList.user.id,
                     rights: 'w',
                     metadata: {},
                     settings: {
@@ -700,11 +716,11 @@ var BookActions = exports.BookActions = (function () {
                 chapters: (0, _templates.bookDialogChaptersTemplate)({
                     theBook: theBook,
                     chapters: (0, _templates.bookChapterListTemplate)({
-                        theBook: theBook
+                        theBook: theBook, documentList: that.bookList.documentList
                     }),
                     documents: (0, _templates.bookDocumentListTemplate)({
                         theBook: theBook,
-                        theDocumentList: theDocumentList
+                        documentList: that.bookList.documentList
                     })
                 }),
                 bibliographyData: (0, _templates.bookBibliographyDataTemplate)({
@@ -733,7 +749,7 @@ var BookActions = exports.BookActions = (function () {
                 chapter.number--;
                 higherChapter.number++;
                 jQuery('#book-chapter-list').html((0, _templates.bookChapterListTemplate)({
-                    theBook: theBook
+                    theBook: theBook, documentList: that.bookList.documentList
                 }));
             });
             jQuery(document).on('click', '.book-sort-down', function () {
@@ -746,7 +762,7 @@ var BookActions = exports.BookActions = (function () {
                 chapter.number++;
                 lowerChapter.number--;
                 jQuery('#book-chapter-list').html((0, _templates.bookChapterListTemplate)({
-                    theBook: theBook
+                    theBook: theBook, documentList: that.bookList.documentList
                 }));
             });
 
@@ -763,10 +779,10 @@ var BookActions = exports.BookActions = (function () {
                     return chapter !== thisChapter;
                 });
                 jQuery('#book-chapter-list').html((0, _templates.bookChapterListTemplate)({
-                    theBook: theBook
+                    theBook: theBook, documentList: that.bookList.documentList
                 }));
                 jQuery('#book-document-list').html((0, _templates.bookDocumentListTemplate)({
-                    theDocumentList: theDocumentList,
+                    documentList: that.bookList.documentList,
                     theBook: theBook
                 }));
             });
@@ -792,10 +808,10 @@ var BookActions = exports.BookActions = (function () {
                     });
                 });
                 jQuery('#book-chapter-list').html((0, _templates.bookChapterListTemplate)({
-                    theBook: theBook
+                    theBook: theBook, documentList: that.bookList.documentList
                 }));
                 jQuery('#book-document-list').html((0, _templates.bookDocumentListTemplate)({
-                    theDocumentList: theDocumentList,
+                    documentList: that.bookList.documentList,
                     theBook: theBook
                 }));
             });
@@ -933,10 +949,10 @@ var BookList = exports.BookList = (function () {
         new _actions.BookActions(this);
 
         this.bookList = [];
-        //        this.documentList = []
-        //        this.teamMembers = []
-        //        this.accessRights = []
-        //        this.user = {}
+        this.documentList = [];
+        this.teamMembers = [];
+        this.accessRights = [];
+        this.user = {};
         this.bindEvents();
     }
 
@@ -944,16 +960,12 @@ var BookList = exports.BookList = (function () {
         key: "bindEvents",
         value: function bindEvents() {
             var that = this;
-            window.theDocumentList = undefined;
-            window.theTeamMembers = undefined;
-            window.theAccessRights = undefined;
-            window.theUser = undefined;
             jQuery(document).ready(function () {
                 that.mod.actions.getBookListData();
             });
 
             jQuery(document).bind('bookDataLoaded', function () {
-                jQuery('#book-table tbody').html((0, _templates.bookListTemplate)({ bookList: that.bookList }));
+                jQuery('#book-table tbody').html((0, _templates.bookListTemplate)({ bookList: that.bookList, user: that.user }));
                 that.mod.actions.startBookTable();
             });
 
@@ -965,7 +977,9 @@ var BookList = exports.BookList = (function () {
 
                 jQuery(document).on('click', '.owned-by-user .rights', function () {
                     var BookId = parseInt(jQuery(this).attr('data-id'));
-                    (0, _dialog.createAccessRightsDialog)([BookId]);
+                    new _dialog.BookAccessRightsDialog([BookId], that.teamMembers, that.accessRights, function (accessRights) {
+                        that.accessRights = accessRights;
+                    });
                 });
 
                 //select all entries
@@ -983,11 +997,10 @@ var BookList = exports.BookList = (function () {
                 //submit action for selected document
                 jQuery('#action-selection-pulldown-books li > span').bind('mousedown', function () {
                     var actionName = jQuery(this).attr('data-action'),
-                        ids = [],
-                        aBook = undefined;
+                        ids = [];
                     if ('' == actionName || 'undefined' == typeof actionName) return;
                     jQuery('.entry-select:checked').not(':disabled').each(function () {
-                        if (theUser.id != jQuery(this).attr('data-owner') && (actionName === 'delete' || actionName === 'share')) {
+                        if (that.user.id != jQuery(this).attr('data-owner') && (actionName === 'delete' || actionName === 'share')) {
                             var theTitle = jQuery(this).parent().parent().parent().find('.book-title').text();
                             theTitle = $.trim(the_title).replace(/[\t\n]/g, '');
                             $.addAlert('error', gettext('You cannot delete or share: ') + theTitle);
@@ -1002,33 +1015,35 @@ var BookList = exports.BookList = (function () {
                             that.mod.actions.deleteBookDialog(ids);
                             break;
                         case 'share':
-                            (0, _dialog.createAccessRightsDialog)(ids);
+                            new _dialog.BookAccessRightsDialog(ids, that.teamMembers, that.accessRights, function (accessRights) {
+                                that.accessRights = accessRights;
+                            });
                             break;
                         case 'epub':
                             for (var i = 0; i < ids.length; i++) {
-                                aBook = _.findWhere(that.bookList, {
+                                var aBook = _.findWhere(that.bookList, {
                                     id: ids[i]
                                 });
                                 $.addAlert('info', aBook.title + ': ' + gettext('Epub export has been initiated.'));
-                                (0, _epub.downloadEpub)(aBook);
+                                (0, _epub.downloadEpubBook)(aBook, that.user, that.documentList);
                             }
                             break;
                         case 'latex':
                             for (var i = 0; i < ids.length; i++) {
-                                aBook = _.findWhere(that.bookList, {
+                                var aBook = _.findWhere(that.bookList, {
                                     id: ids[i]
                                 });
                                 $.addAlert('info', aBook.title + ': ' + gettext('Latex export has been initiated.'));
-                                (0, _latex.downloadLatex)(aBook);
+                                (0, _latex.downloadLatexBook)(aBook, that.documentList);
                             }
                             break;
                         case 'html':
                             for (var i = 0; i < ids.length; i++) {
-                                aBook = _.findWhere(that.bookList, {
+                                var aBook = _.findWhere(that.bookList, {
                                     id: ids[i]
                                 });
                                 $.addAlert('info', aBook.title + ': ' + gettext('HTML export has been initiated.'));
-                                (0, _html.downloadHtml)(aBook);
+                                (0, _html.downloadHtmlBook)(aBook, that.user, that.documentList);
                             }
                             break;
                         case 'copy':
@@ -1082,7 +1097,7 @@ var epubBookOpfTemplate = exports.epubBookOpfTemplate = _.template('<?xml versio
     \t\t<dc:creator><% if (aBook.metadata.author && aBook.metadata.author != "") {\
             print(aBook.metadata.author);\
         } else {\
-            print(theUser.name);\
+            print(user.name);\
         } %></dc:creator>\n\
     \t\t<dc:language><%= language %></dc:language>\n\
     \t\t<dc:date><%= date %></dc:date>\n\
@@ -1208,7 +1223,7 @@ var epubBookCopyrightTemplate = exports.epubBookCopyrightTemplate = _.template('
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.downloadEpub = undefined;
+exports.downloadEpubBook = undefined;
 
 var _katex = require("katex");
 
@@ -1232,17 +1247,17 @@ var _zip = require("../../exporter/zip");
 
 var _format = require("../../citations/format");
 
-var downloadEpub = exports.downloadEpub = function downloadEpub(aBook) {
-    (0, _tools.getMissingChapterData)(aBook, function () {
-        (0, _tools.getImageAndBibDB)(aBook, function (anImageDB, aBibDB) {
-            epubBookExport(aBook, anImageDB, aBibDB);
+var downloadEpubBook = exports.downloadEpubBook = function downloadEpubBook(aBook, user, documentList) {
+    (0, _tools.getMissingChapterData)(aBook, documentList, function () {
+        (0, _tools.getImageAndBibDB)(aBook, documentList, function (anImageDB, aBibDB) {
+            epubBookExport(aBook, anImageDB, aBibDB, user, documentList);
         });
     });
 };
 
 var templates = { ncxTemplate: _epubTemplates2.ncxTemplate, ncxItemTemplate: _epubTemplates2.ncxItemTemplate, navTemplate: _epubTemplates2.navTemplate, navItemTemplate: _epubTemplates2.navItemTemplate };
 
-var epubBookExport = function epubBookExport(aBook, anImageDB, aBibDB) {
+var epubBookExport = function epubBookExport(aBook, anImageDB, aBibDB, user, documentList) {
     var coverImage = false,
         contentItems = [],
         images = [],
@@ -1290,7 +1305,7 @@ var epubBookExport = function epubBookExport(aBook, anImageDB, aBibDB) {
 
         var aChapter = {};
 
-        aChapter.document = _.findWhere(theDocumentList, {
+        aChapter.document = _.findWhere(documentList, {
             id: aBook.chapters[i].text
         });
 
@@ -1429,7 +1444,6 @@ var epubBookExport = function epubBookExport(aBook, anImageDB, aBibDB) {
     var opfCode = (0, _epubTemplates.epubBookOpfTemplate)({
         language: gettext('en-US'), // TODO: specify a document language rather than using the current users UI language
         aBook: aBook,
-        theUser: theUser,
         idType: 'fidus',
         date: timestamp.slice(0, 10), // TODO: the date should probably be the original document creation date instead
         modified: timestamp,
@@ -1438,7 +1452,8 @@ var epubBookExport = function epubBookExport(aBook, anImageDB, aBibDB) {
         images: images,
         chapters: chapters,
         coverImage: coverImage,
-        katexOpfIncludes: _opfIncludes.katexOpfIncludes
+        katexOpfIncludes: _opfIncludes.katexOpfIncludes,
+        user: user
     });
 
     var ncxCode = (0, _epubTemplates2.ncxTemplate)({
@@ -1477,7 +1492,7 @@ var epubBookExport = function epubBookExport(aBook, anImageDB, aBibDB) {
         filename: 'EPUB/copyright.xhtml',
         contents: (0, _epubTemplates.epubBookCopyrightTemplate)({
             aBook: aBook,
-            creator: theUser.name,
+            creator: user.name,
             language: gettext('English') //TODO: specify a book language rather than using the current users UI language
         })
     }]);
@@ -1598,7 +1613,7 @@ var htmlBookIndexItemTemplate = exports.htmlBookIndexItemTemplate = _.template('
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.downloadHtml = undefined;
+exports.downloadHtmlBook = undefined;
 
 var _katex = require("katex");
 
@@ -1622,15 +1637,15 @@ var _format = require("../../citations/format");
 // templates.
 var templates = { htmlBookIndexItemTemplate: _htmlTemplates.htmlBookIndexItemTemplate };
 
-var downloadHtml = exports.downloadHtml = function downloadHtml(aBook) {
-    (0, _tools.getMissingChapterData)(aBook, function () {
-        (0, _tools.getImageAndBibDB)(aBook, function (anImageDB, aBibDB) {
-            htmlBookExport(aBook, anImageDB, aBibDB);
+var downloadHtmlBook = exports.downloadHtmlBook = function downloadHtmlBook(aBook, user, documentList) {
+    (0, _tools.getMissingChapterData)(aBook, documentList, function () {
+        (0, _tools.getImageAndBibDB)(aBook, documentList, function (anImageDB, aBibDB) {
+            htmlBookExport(aBook, anImageDB, aBibDB, user, documentList);
         });
     });
 };
 
-var htmlBookExport = function htmlBookExport(aBook, anImageDB, aBibDB) {
+var htmlBookExport = function htmlBookExport(aBook, anImageDB, aBibDB, user, documentList) {
     var math = false,
         styleSheets = [],
         chapters = [];
@@ -1641,7 +1656,7 @@ var htmlBookExport = function htmlBookExport(aBook, anImageDB, aBibDB) {
 
     for (var i = 0; i < aBook.chapters.length; i++) {
 
-        var aDocument = _.findWhere(theDocumentList, {
+        var aDocument = _.findWhere(documentList, {
             id: aBook.chapters[i].text
         });
 
@@ -1745,7 +1760,7 @@ var htmlBookExport = function htmlBookExport(aBook, anImageDB, aBibDB) {
         contents: (0, _htmlTemplates.htmlBookIndexTemplate)({
             contentItems: contentItems,
             aBook: aBook,
-            creator: theUser.name,
+            creator: user.name,
             language: gettext('English'), //TODO: specify a book language rather than using the current users UI language
             templates: templates
         })
@@ -1787,7 +1802,7 @@ var latexBookIndexTemplate = exports.latexBookIndexTemplate = _.template('\
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.downloadLatex = undefined;
+exports.downloadLatexBook = undefined;
 
 var _tools = require("./tools");
 
@@ -1801,15 +1816,15 @@ var _tools2 = require("../../exporter/tools");
 
 var _zip = require("../../exporter/zip");
 
-var downloadLatex = exports.downloadLatex = function downloadLatex(aBook) {
-    (0, _tools.getMissingChapterData)(aBook, function () {
-        (0, _tools.getImageAndBibDB)(aBook, function (anImageDB, aBibDB) {
-            latexBookExport(aBook, anImageDB, aBibDB);
+var downloadLatexBook = exports.downloadLatexBook = function downloadLatexBook(aBook, documentList) {
+    (0, _tools.getMissingChapterData)(aBook, documentList, function () {
+        (0, _tools.getImageAndBibDB)(aBook, documentList, function (anImageDB, aBibDB) {
+            latexBookExport(aBook, anImageDB, aBibDB, documentList);
         });
     });
 };
 
-var latexBookExport = function latexBookExport(aBook, anImageDB, aBibDB) {
+var latexBookExport = function latexBookExport(aBook, anImageDB, aBibDB, documentList) {
     var htmlCode = undefined,
         outputList = [],
         images = [],
@@ -1822,7 +1837,7 @@ var latexBookExport = function latexBookExport(aBook, anImageDB, aBibDB) {
 
     for (var i = 0; i < aBook.chapters.length; i++) {
 
-        var aDocument = _.findWhere(theDocumentList, {
+        var aDocument = _.findWhere(documentList, {
             id: aBook.chapters[i].text
         });
 
@@ -1886,23 +1901,23 @@ exports.uniqueObjects = exports.getImageAndBibDB = exports.getMissingChapterData
 
 var _tools = require("../../documents/tools");
 
-var getMissingChapterData = exports.getMissingChapterData = function getMissingChapterData(aBook, callback) {
+var getMissingChapterData = exports.getMissingChapterData = function getMissingChapterData(aBook, documentList, callback) {
     var bookDocuments = [];
 
     for (var i = 0; i < aBook.chapters.length; i++) {
-        if (!_.findWhere(theDocumentList, { id: aBook.chapters[i].text })) {
+        if (!_.findWhere(documentList, { id: aBook.chapters[i].text })) {
             $.addAlert('error', "Cannot produce book as you lack access rights to its chapters.");
             return;
         }
         bookDocuments.push(aBook.chapters[i].text);
     }
-    (0, _tools.getMissingDocumentListData)(bookDocuments, theDocumentList, callback);
+    (0, _tools.getMissingDocumentListData)(bookDocuments, documentList, callback);
 };
 
-var getImageAndBibDB = exports.getImageAndBibDB = function getImageAndBibDB(aBook, callback) {
+var getImageAndBibDB = exports.getImageAndBibDB = function getImageAndBibDB(aBook, documentList, callback) {
     var documentOwners = [];
     for (var i = 0; i < aBook.chapters.length; i++) {
-        documentOwners.push(_.findWhere(theDocumentList, {
+        documentOwners.push(_.findWhere(documentList, {
             id: aBook.chapters[i].text
         }).owner.id);
     }
@@ -1944,7 +1959,7 @@ Object.defineProperty(exports, "__esModule", {
 /** A template for the list of books */
 var bookListTemplate = exports.bookListTemplate = _.template('\
 <% _.each(bookList,function(aBook,key,list){%>\
-    <tr id="Book_<%- aBook.id %>" <% if (theUser.id == aBook.owner) { %>class="owned-by-user"<% } %> >\
+    <tr id="Book_<%- aBook.id %>" <% if (user.id == aBook.owner) { %>class="owned-by-user"<% } %> >\
        <td width="20">\
            <span class="fw-inline">\
                <input type="checkbox" class="entry-select"\
@@ -1983,7 +1998,7 @@ var bookListTemplate = exports.bookListTemplate = _.template('\
        </td>\
         <td width="40" align="center">\
            <span class="delete-book fw-inline fw-link-text" data-id="<%- aBook.id %>" data-title="<%- aBook.title %>">\
-               <% if (theUser.id === aBook.owner) { %><i class="icon-trash"></i><% } %>\
+               <% if (user.id === aBook.owner) { %><i class="icon-trash"></i><% } %>\
            </span>\
        </td>\
    </tr>\
@@ -2218,7 +2233,7 @@ var bookDialogChaptersTemplate = exports.bookDialogChaptersTemplate = _.template
 var bookChapterListTemplate = exports.bookChapterListTemplate = _.template('\
     <% var partCounter = 1; %>\
     <% _.each(_.sortBy(theBook.chapters, function (chapter) {return chapter.number;}), function(aChapter,index,list) { %>\
-        <% var aDocument = _.findWhere(theDocumentList, {id: aChapter.text});%>\
+        <% var aDocument = _.findWhere(documentList, {id: aChapter.text});%>\
             <tr class="<% if(typeof(aDocument) === "undefined") {print("noaccess")} %>" >\
                 <td width="222" data-id="<%- aChapter.text %>" class="fw-checkable-td">\
                     <span class="fw-inline">\
@@ -2265,7 +2280,7 @@ var bookChapterListTemplate = exports.bookChapterListTemplate = _.template('\
     ');
 /** A template for the document list on the chapter pane of the book dialog */
 var bookDocumentListTemplate = exports.bookDocumentListTemplate = _.template('\
-      <% _.each(theDocumentList, function(aDocument) { %>\
+      <% _.each(documentList, function(aDocument) { %>\
           <% var documentTitle; if (0===aDocument.title.length) {documentTitle="' + gettext('Untitled') + '";} else {documentTitle=aDocument.title;} %>\
           <% if (!(_.findWhere(theBook.chapters, {text:aDocument.id}))) { %>\
               <tr>\

@@ -13,16 +13,16 @@ import {formatCitations} from "../../citations/format"
 // templates.
 let templates = {htmlBookIndexItemTemplate}
 
-export let downloadHtml = function (aBook) {
-    getMissingChapterData(aBook, function () {
-        getImageAndBibDB(aBook, function (anImageDB,
+export let downloadHtmlBook = function (aBook, user, documentList) {
+    getMissingChapterData(aBook, documentList, function () {
+        getImageAndBibDB(aBook, documentList, function (anImageDB,
             aBibDB) {
-            htmlBookExport(aBook, anImageDB, aBibDB)
+            htmlBookExport(aBook, anImageDB, aBibDB, user, documentList)
         })
     })
 }
 
-let htmlBookExport = function (aBook, anImageDB, aBibDB) {
+let htmlBookExport = function (aBook, anImageDB, aBibDB, user, documentList) {
     let math = false,
         styleSheets = [],
         chapters = []
@@ -34,7 +34,7 @@ let htmlBookExport = function (aBook, anImageDB, aBibDB) {
 
     for (let i = 0; i < aBook.chapters.length; i++) {
 
-        let aDocument = _.findWhere(theDocumentList, {
+        let aDocument = _.findWhere(documentList, {
             id: aBook.chapters[i].text
         })
 
@@ -143,7 +143,7 @@ let htmlBookExport = function (aBook, anImageDB, aBibDB) {
         contents: htmlBookIndexTemplate({
             contentItems,
             aBook,
-            creator: theUser.name,
+            creator: user.name,
             language: gettext('English'), //TODO: specify a book language rather than using the current users UI language
             templates
         })

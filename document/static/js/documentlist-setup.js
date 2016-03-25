@@ -32,23 +32,29 @@ jQuery(document).ready(function () {
 
     jQuery(document).on('mousedown', '.revisions', function () {
         var documentId = parseInt(jQuery(this).attr('data-id'));
-        documentrevisionsHelpers.createDialog(documentId);
-    });
+        new documentrevisionsHelpers.DocumentRevisionsDialog(documentId, theDocumentList, theUser, function (actionObject) {
+            switch(actionObject.action) {
+                case 'added-document':
+                    theDocumentList.push(actionObject.doc);
+                    documentHelpers.stopDocumentTable();
+                    jQuery('#document-table tbody').append(
+                        tmp_documents_list_item({
+                            aDocument: actionObject.doc
+                        }));
+                    documentHelpers.startDocumentTable();
+                    break;
+                case 'deleted-revision':
+                    actionObject.doc.revisions = _.reject(actionObject.doc.revisions, function(revision) {
+                        return (revision.pk == actionObject.id)
+                    })
+                    if (actionObject.doc.revisions.length === 0) {
+                        jQuery('#Text_' + actionObject.doc.id + ' .revisions').detach()
+                    }
+                    jQuery('tr.revision-' + actionObject.id).remove();
+                    break;
+            }
 
-    jQuery(document).on('mousedown', '.download-revision', function () {
-        var revisionId = parseInt(jQuery(this).attr('data-id'));
-        var revisionFilename = jQuery(this).attr('data-filename');
-        documentrevisionsHelpers.download(revisionId, revisionFilename);
-    });
-
-    jQuery(document).on('mousedown', '.recreate-revision', function () {
-        var revisionId = parseInt(jQuery(this).attr('data-id'));
-        documentrevisionsHelpers.recreate(revisionId);
-    });
-
-    jQuery(document).on('mousedown', '.delete-revision', function () {
-        var revisionId = parseInt(jQuery(this).attr('data-id'));
-        documentrevisionsHelpers.delete(revisionId);
+        });
     });
 
     //select all entries

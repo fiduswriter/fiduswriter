@@ -210,174 +210,6 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         return cslOutput;
     };
 
-    /** Exports bibliography to BibLaTeX format
-     * @function bibLatexExport
-     * @memberof bibliographyHelpers
-     * @param pks A list of pk values of the bibliography items to be exported.
-     * @param aBibDB The bibliography database to export from.
-     */
-    bibliographyHelpers.bibLatexExport = function (pks, aBibDB) {
-        this.bibtex_array = [];
-        this.bibtex_str = '';
-        if (typeof (aBibDB) === 'undefined' && typeof (window.BibDB) != 'undefined') {
-            aBibDB = BibDB
-        }
-
-        this._reformDate = function (the_value, type_name) {
-            //reform date-field
-            var dates = the_value.split('/'),
-                dates_value = [],
-                i, len = dates.length,
-                j, len2,
-                each_date, date_parts, date_value, date_part;
-            for (i = 0; i < len; i++) {
-                each_date = dates[i];
-                date_parts = each_date.split('-');
-                date_value = [];
-                len2 = date_parts.length;
-                for (j = 0; j < len2; j++) {
-                    date_part = date_parts[j];
-                    if (date_part != parseInt(date_part))
-                        break;
-                    date_value[date_value.length] = date_part;
-                }
-                dates_value[dates_value.length] = date_value;
-            }
-            var value_list = {};
-            var date_len = dates_value[0].length;
-            if (1 < dates_value.length)
-                date_len = Math.min(date_len, dates_value[1].length);
-            if (3 == date_len) {
-                the_value = dates_value[0].join('-');
-                if (1 < dates_value.length)
-                    the_value += '/' + dates_value[1].join('-');
-                value_list[type_name] = the_value;
-            } else if ('date' == type_name) {
-                var year = dates_value[0][0];
-                if (1 < dates_value.length)
-                    year += '/' + dates_value[1][0];
-                value_list.year = year;
-                if (2 == date_len) {
-                    var month = dates_value[0][1];
-                    if (1 < dates_value.length)
-                        month += '/' + dates_value[1][1];
-                    value_list.month = month;
-                }
-            } else {
-                if (date_len < dates_value[0].length)
-                    dates_value[0].splice(date_len);
-                the_value = dates_value[0].join('-');
-                if (1 < dates_value.length) {
-                    if (date_len < dates_value[1].length)
-                        dates_value[1].splice(date_len);
-                    the_value += '/' + dates_value[1].join('-');
-                }
-                value_list[type_name] = the_value;
-            }
-            return value_list;
-        };
-
-        this._escapeTexSpecialChars = function (the_value, pk) {
-            if ('string' != typeof (the_value)) {
-                console.log(the_value, pk);
-            }
-            var i, len = tex_special_chars.length;
-            for (i = 0; i < len; i++) {
-                the_value = the_value.replace(tex_special_chars[i].unicode,
-                    tex_special_chars[i].tex);
-            }
-            return the_value;
-        };
-
-        this._cleanBraces = function (the_value, pk) {
-            var openBraces = ((the_value.match(/\{/g) || []).length),
-                closeBraces = ((the_value.match(/\}/g) || []).length), braceLevel, len, i;
-            if (openBraces === 0 && closeBraces === 0) {
-                // There are no braces, return the original value;
-                return the_value;
-            } else if (openBraces != closeBraces) {
-                // There are different amount of open and close braces, so we delete them all.
-                the_value = the_value.replace(/}/g, '');
-                the_value = the_value.replace(/{/g, '');
-                return the_value;
-            } else {
-                // There are the same amount of open and close braces, but we don't know if they are in the right order.
-                braceLevel = 0, len = the_value.length;
-                for (i = 0; i < len; i++) {
-                    if (the_value[i] === '{') {
-                        braceLevel++;
-                    }
-                    if (the_value[i] === '}') {
-                        braceLevel--;
-                    }
-                    if (braceLevel < 0) {
-                        // A brace was closed before it was opened. Abort and remove all the braces.
-                        the_value = the_value.replace(/\}/g, '');
-                        the_value = the_value.replace(/\{/g, '');
-                        return the_value;
-                    }
-                }
-                // Braces were accurate.
-                return the_value;
-            }
-        };
-
-        this._getBibtexString = function (biblist) {
-            var i, len = biblist.length,
-                str = '',
-                data, v_key;
-            for (i = 0; i < len; i++) {
-                if (0 < i) {
-                    str += '\r\n\r\n';
-                }
-                data = biblist[i];
-                str += '@' + data.type + '{' + data.key;
-                for (v_key in data.values) {
-                    str += ',\r\n' + v_key + ' = {' + data.values[v_key] + '}';
-                }
-                str += "\r\n}"
-            }
-            return str;
-        };
-
-        var i, len = pks.length,
-            pk, bib, f_values,
-            bib_entry, f_key, f_value, f_type;
-
-        for (i = 0; i < len; i++) {
-            pk = pks[i];
-            bib = aBibDB[pk];
-            bib_entry = {
-                'type': BibEntryTypes[bib['entry_type']]['biblatex'],
-                'key': bib['entry_key']
-            };
-            f_values = {};
-            for (f_key in bib) {
-                if ('entry_key' == f_key || 'id' == f_key || 'entry_type' ==
-                    f_key || 'entry_owner' == f_key || 0 == f_key.indexOf(
-                        'bibtype') ||
-                    'entry_cat' == f_key)
-                    continue;
-                f_value = bib[f_key];
-                if ("" == f_value)
-                    continue;
-                f_type = BibFieldTypes[f_key]['type'];
-                if ('f_date' == f_type) {
-                    var date_parts = this._reformDate(f_value, f_key);
-                    for (var date_part in date_parts) {
-                        f_values[date_part] = date_parts[date_part];
-                    }
-                    continue;
-                }
-                //f_value = this._escapeTexSpecialChars(f_value, pk);
-                f_value = this._cleanBraces(f_value, pk);
-                f_values[BibFieldTypes[f_key]['biblatex']] = f_value;
-            }
-            bib_entry.values = f_values;
-            this.bibtex_array[this.bibtex_array.length] = bib_entry;
-        }
-        this.bibtex_str = this._getBibtexString(this.bibtex_array);
-    };
 
     /** Parses files in BibTeX/BibLaTeX format
      * @function bibTexParser
@@ -1661,19 +1493,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             }
         });
     };
-    /** Export a list of bibliography items to bibLateX and serve the file to the user as a ZIP-file.
-     * @function exportBibliographyBL
-     * @memberof bibliographyHelpers
-     * @param ids A list of ids of the bibliography items that are to be exported.
-     */
-    bibliographyHelpers.exportBibliographyBL = function (ids) {
-        var bib_export = new bibliographyHelpers.bibLatexExport(ids),
-            export_obj = [{
-                'filename': 'bibliography.bib',
-                'contents': bib_export.bibtex_str
-            }];
-        exporter.zipFileCreator(export_obj, [], 'bibliography.zip')
-    };
+
     /** Second step of the BibTeX file import. Takes a BibTeX file object, processes client side and cuts into chunks to be uploaded to the server.
      * @function importBibliography2
      * @memberof bibliographyHelpers
@@ -2110,7 +1930,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
                 bibliographyHelpers.deleteBibEntryDialog(ids);
                 break;
             case 'export':
-                bibliographyHelpers.exportBibliographyBL(ids);
+                new BibLatexExporter(ids, window.BibDB, true);
                 break;
             }
         });

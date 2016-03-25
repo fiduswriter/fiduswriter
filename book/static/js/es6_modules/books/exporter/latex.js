@@ -4,6 +4,7 @@ import {obj2Node} from "../../exporter/json"
 import {findLatexDocumentFeatures, htmlToLatex} from "../../exporter/latex"
 import {createSlug, findImages} from "../../exporter/tools"
 import {zipFileCreator} from "../../exporter/zip"
+import {BibLatexExporter} from "../../bibliography/exporter/biblatex"
 
 export let downloadLatexBook = function (aBook, documentList) {
     getMissingChapterData(aBook, documentList, function () {
@@ -73,8 +74,8 @@ let latexBookExport = function (aBook, anImageDB, aBibDB, documentList) {
         })
     })
 
-    let bibtex = new bibliographyHelpers.bibLatexExport(listedWorksList,
-        aBibDB)
+    let bibtex = new BibLatexExporter(listedWorksList,
+        aBibDB, false)
 
     if (bibtex.bibtex_str.length > 0) {
         outputList.push({

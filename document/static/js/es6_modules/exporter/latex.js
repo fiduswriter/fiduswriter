@@ -2,6 +2,7 @@ import {obj2Node} from "./json"
 import {createSlug, findImages} from "./tools"
 import {zipFileCreator} from "./zip"
 import {cleanHTML} from "./html"
+import {BibLatexExporter} from "../bibliography/exporter/biblatex"
 
 export let findLatexDocumentFeatures = function(htmlCode, title, author,
     subtitle, keywords, specifiedAuthors,
@@ -405,8 +406,8 @@ export let htmlToLatex = function(title, author, htmlCode, aBibDB,
     if (isChapter) {
         returnObject.listedWorksList = listedWorksList
     } else {
-        let bibExport = new bibliographyHelpers.bibLatexExport(
-            listedWorksList, aBibDB)
+        let bibExport = new BibLatexExporter(
+            listedWorksList, aBibDB, false)
         returnObject.bibtex = bibExport.bibtex_str
     }
     return returnObject

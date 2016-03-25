@@ -1,6 +1,204 @@
 /* This file has been automatically generated. DO NOT EDIT IT. 
  Changes will be overwritten. Edit exporter.es6.js and run ./es6-compiler.sh */
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.BibLatexExporter = undefined;
+
+var _zip = require('../../exporter/zip');
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/** Export a list of bibliography items to bibLateX and serve the file to the user as a ZIP-file.
+ * @class BibLatexExporter
+ * @param pks A list of pks of the bibliography items that are to be exported.
+ */
+
+var BibLatexExporter = exports.BibLatexExporter = (function () {
+    function BibLatexExporter(pks, aBibDB, asZip) {
+        _classCallCheck(this, BibLatexExporter);
+
+        this.pks = pks; // A list of pk values of the bibliography items to be exported.
+        this.aBibDB = aBibDB; // The bibliography database to export from.
+        this.asZip = asZip; // Whether or not to send a zipfile to the user.
+        this.init();
+    }
+
+    _createClass(BibLatexExporter, [{
+        key: 'init',
+        value: function init() {
+            this.bibLatexExport();
+
+            if (this.asZip) {
+                var exportObj = [{
+                    'filename': 'bibliography.bib',
+                    'contents': this.bibtex_str
+                }];
+                (0, _zip.zipFileCreator)(exportObj, [], 'bibliography.zip');
+            }
+        }
+    }, {
+        key: 'bibLatexExport',
+        value: function bibLatexExport() {
+            this.bibtex_array = [];
+            this.bibtex_str = '';
+
+            var len = this.pks.length;
+
+            for (var i = 0; i < len; i++) {
+                var pk = this.pks[i];
+                var bib = this.aBibDB[pk];
+                var bib_entry = {
+                    'type': BibEntryTypes[bib['entry_type']]['biblatex'],
+                    'key': bib['entry_key']
+                };
+                var f_values = {};
+                for (var f_key in bib) {
+                    if ('entry_key' == f_key || 'id' == f_key || 'entry_type' == f_key || 'entry_owner' == f_key || 0 == f_key.indexOf('bibtype') || 'entry_cat' == f_key) continue;
+                    var f_value = bib[f_key];
+                    if ("" == f_value) continue;
+                    var f_type = BibFieldTypes[f_key]['type'];
+                    if ('f_date' == f_type) {
+                        var date_parts = this._reformDate(f_value, f_key);
+                        for (var date_part in date_parts) {
+                            f_values[date_part] = date_parts[date_part];
+                        }
+                        continue;
+                    }
+                    //f_value = this._escapeTexSpecialChars(f_value, pk)
+                    f_value = this._cleanBraces(f_value, pk);
+                    f_values[BibFieldTypes[f_key]['biblatex']] = f_value;
+                }
+                bib_entry.values = f_values;
+                this.bibtex_array[this.bibtex_array.length] = bib_entry;
+            }
+            this.bibtex_str = this._getBibtexString(this.bibtex_array);
+        }
+    }, {
+        key: '_reformDate',
+        value: function _reformDate(the_value, type_name) {
+            //reform date-field
+            var dates = the_value.split('/'),
+                dates_value = [],
+                len = dates.length;
+
+            for (var i = 0; i < len; i++) {
+                var each_date = dates[i];
+                var date_parts = each_date.split('-');
+                var date_value = [];
+                var len2 = date_parts.length;
+                for (var j = 0; j < len2; j++) {
+                    var date_part = date_parts[j];
+                    if (date_part != parseInt(date_part)) {
+                        break;
+                    }
+                    date_value[date_value.length] = date_part;
+                }
+                dates_value[dates_value.length] = date_value;
+            }
+            var value_list = {};
+            var date_len = dates_value[0].length;
+            if (1 < dates_value.length) date_len = Math.min(date_len, dates_value[1].length);
+            if (3 == date_len) {
+                the_value = dates_value[0].join('-');
+                if (1 < dates_value.length) the_value += '/' + dates_value[1].join('-');
+                value_list[type_name] = the_value;
+            } else if ('date' == type_name) {
+                var year = dates_value[0][0];
+                if (1 < dates_value.length) year += '/' + dates_value[1][0];
+                value_list.year = year;
+                if (2 == date_len) {
+                    var month = dates_value[0][1];
+                    if (1 < dates_value.length) month += '/' + dates_value[1][1];
+                    value_list.month = month;
+                }
+            } else {
+                if (date_len < dates_value[0].length) dates_value[0].splice(date_len);
+                the_value = dates_value[0].join('-');
+                if (1 < dates_value.length) {
+                    if (date_len < dates_value[1].length) dates_value[1].splice(date_len);
+                    the_value += '/' + dates_value[1].join('-');
+                }
+                value_list[type_name] = the_value;
+            }
+            return value_list;
+        }
+    }, {
+        key: '_escapeTexSpecialChars',
+        value: function _escapeTexSpecialChars(the_value, pk) {
+            if ('string' != typeof the_value) {
+                console.log(the_value, pk);
+            }
+            var len = tex_special_chars.length;
+            for (var i = 0; i < len; i++) {
+                the_value = the_value.replace(tex_special_chars[i].unicode, tex_special_chars[i].tex);
+            }
+            return the_value;
+        }
+    }, {
+        key: '_cleanBraces',
+        value: function _cleanBraces(the_value, pk) {
+            var openBraces = (the_value.match(/\{/g) || []).length,
+                closeBraces = (the_value.match(/\}/g) || []).length;
+            if (openBraces === 0 && closeBraces === 0) {
+                // There are no braces, return the original value
+                return the_value;
+            } else if (openBraces != closeBraces) {
+                // There are different amount of open and close braces, so we delete them all.
+                the_value = the_value.replace(/}/g, '');
+                the_value = the_value.replace(/{/g, '');
+                return the_value;
+            } else {
+                // There are the same amount of open and close braces, but we don't know if they are in the right order.
+                var braceLevel = 0,
+                    len = the_value.length;
+                for (var i = 0; i < len; i++) {
+                    if (the_value[i] === '{') {
+                        braceLevel++;
+                    }
+                    if (the_value[i] === '}') {
+                        braceLevel--;
+                    }
+                    if (braceLevel < 0) {
+                        // A brace was closed before it was opened. Abort and remove all the braces.
+                        the_value = the_value.replace(/\}/g, '');
+                        the_value = the_value.replace(/\{/g, '');
+                        return the_value;
+                    }
+                }
+                // Braces were accurate.
+                return the_value;
+            }
+        }
+    }, {
+        key: '_getBibtexString',
+        value: function _getBibtexString(biblist) {
+            var len = biblist.length,
+                str = '';
+            for (var i = 0; i < len; i++) {
+                if (0 < i) {
+                    str += '\r\n\r\n';
+                }
+                var data = biblist[i];
+                str += '@' + data.type + '{' + data.key;
+                for (var v_key in data.values) {
+                    str += ',\r\n' + v_key + ' = {' + data.values[v_key] + '}';
+                }
+                str += "\r\n}";
+            }
+            return str;
+        }
+    }]);
+
+    return BibLatexExporter;
+})();
+
+},{"../../exporter/zip":5}],2:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -21,7 +219,7 @@ var downloadFile = exports.downloadFile = function downloadFile(zipFilename, blo
     fakeDownloadLink.dispatchEvent(clickEvent);
 };
 
-},{}],2:[function(require,module,exports){
+},{}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -31,7 +229,7 @@ Object.defineProperty(exports, "__esModule", {
 var revisionDialogTemplate = exports.revisionDialogTemplate = _.template('\
 <div title="' + gettext('Revision description') + '"><p><input type="text" class="revision-note" placeholder="' + gettext('Description (optional)') + '"></p></div>');
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -92,7 +290,7 @@ var uploadFile = exports.uploadFile = function uploadFile(zipFilename, blob, edi
     });
 };
 
-},{"./upload-templates":2}],4:[function(require,module,exports){
+},{"./upload-templates":3}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -215,18 +413,11 @@ var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles,
     }
 };
 
-},{"./download":1,"./upload":3}],5:[function(require,module,exports){
+},{"./download":2,"./upload":4}],6:[function(require,module,exports){
 "use strict";
 
-var _zip = require("./es6_modules/exporter/zip");
+var _biblatex = require("./es6_modules/bibliography/exporter/biblatex");
 
-/**
- * Functions to export the Fidus Writer document.
- */
-var exporter = {
-  zipFileCreator: _zip.zipFileCreator
-};
+window.BibLatexExporter = _biblatex.BibLatexExporter;
 
-window.exporter = exporter;
-
-},{"./es6_modules/exporter/zip":4}]},{},[5]);
+},{"./es6_modules/bibliography/exporter/biblatex":1}]},{},[6]);

@@ -2,7 +2,6 @@ import {downloadHtmlBook} from "./exporter/html"
 import {downloadLatexBook} from "./exporter/latex"
 import {downloadEpubBook} from "./exporter/epub"
 import {BookActions} from "./actions"
-//import {deleteBookDialog, createBookDialog, copyBook, getBookListData, startBookTable} from "./actions"
 import {BookAccessRightsDialog} from "./accessrights/dialog"
 import {bookListTemplate, bookBibliographyDataTemplate} from "./templates"
 

@@ -1,11 +1,3 @@
-import {zipFileCreator} from "./es6_modules/exporter/zip"
+import {BibLatexExporter} from "./es6_modules/bibliography/exporter/biblatex"
 
-
-/**
- * Functions to export the Fidus Writer document.
- */
-let exporter = {
-    zipFileCreator
-}
-
-window.exporter = exporter
+window.BibLatexExporter = BibLatexExporter

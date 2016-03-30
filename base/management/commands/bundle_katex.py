@@ -14,7 +14,7 @@ def zip_folder(path, zip_file):
             zip_file.write(out_file, relative_out_file)
             mimetype = magic.from_file(out_file, mime=True)
             # Override mimetype for CSS files
-            if out_file.split(.)[-1].lower()== 'css':
+            if out_file.split('.')[-1].lower()== 'css':
                 mimetype = 'text/css'
             file_paths.append({
                 'path': relative_out_file,

@@ -91,7 +91,7 @@ Advanced options
 
   1. Install the PostgreSQL development package. On Debian/Ubuntu, you can do this by executing:
 
-    > `sudo apt-get install postgresql-devel`
+    > `sudo apt-get install libpq-dev`
 
   2. While inside your Fidus Writer virtualenv, install the python requirements specific to PostgreSQL:  
 

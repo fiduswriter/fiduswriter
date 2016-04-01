@@ -383,16 +383,23 @@ export class Editor {
 
     // Things to be executed on every editor transform.
     onTransform(transform, local) {
-        let updateBibliography = false, updateTitle = false, that = this
+        let updateBibliography = false, updateTitle = false, commentIds = [], that = this
             // Check what area is affected
         transform.steps.forEach(function(step, index) {
             if (step.type === 'replace') {
                 if (step.from.cmp(step.to) !== 0) {
-                    transform.docs[index].nodesBetween(step.from, step.to, function(node) {
+                    transform.docs[index].nodesBetween(step.from, step.to, function(node, path) {
                         if (node.type.name === 'citation') {
                             // A citation was replaced
                             updateBibliography = true
                         }
+                        if (local) {
+                            let commentId = that.mod.comments.layout.findCommentId(node)
+                            if (commentId !== false && commentIds.indexOf(commentId)===-1) {
+                                commentIds.push(commentId)
+                            }
+                        }
+
                     })
                 }
 
@@ -417,6 +424,12 @@ export class Editor {
                     this.docInfo.titleChanged = true
                 }
             }
+        }
+        if (local && commentIds.length > 0) {
+            // Check if the deleted comment referrers still are somewhere else in the doc.
+            // If not, delete them.
+            // TODO: Is a timeout/scheduleDOMUpdate really needed here?
+            scheduleDOMUpdate(this.pm, () => {return that.mod.comments.store.checkAndDelete(commentIds)})
         }
 
     }

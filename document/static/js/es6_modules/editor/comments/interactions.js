@@ -95,11 +95,11 @@ export class ModCommentInteractions {
 
     deleteComment(id) {
         // Handle the deletion of a comment.
-        this.mod.store.deleteComment(id)
-            //      TODO: make the markrange go away
+        this.mod.store.deleteComment(id, true)
         this.mod.editor.docInfo.changed = true
         this.mod.layout.layoutComments()
     }
+
 
     updateComment(id, commentText, commentIsMajor) {
         // Save the change to a comment and mark that the document has been changed

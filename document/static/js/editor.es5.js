@@ -1266,8 +1266,7 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
         key: "deleteComment",
         value: function deleteComment(id) {
             // Handle the deletion of a comment.
-            this.mod.store.deleteComment(id);
-            //      TODO: make the markrange go away
+            this.mod.store.deleteComment(id, true);
             this.mod.editor.docInfo.changed = true;
             this.mod.layout.layoutComments();
         }
@@ -1846,17 +1845,41 @@ var ModCommentStore = exports.ModCommentStore = (function () {
             }
             this.mod.layout.layoutComments();
         }
+
+        // Removes the comment from store, optionally also removes marks from document.
+
     }, {
         key: "deleteComment",
-        value: function deleteComment(id) {
+        value: function deleteComment(id, removeMarks) {
             if (this.deleteLocalComment(id)) {
                 this.unsent.push({
                     type: "delete",
                     id: id
                 });
-                this.removeCommentMarks(id);
+                if (removeMarks) {
+                    this.removeCommentMarks(id);
+                }
                 this.signal("mustSend");
             }
+        }
+    }, {
+        key: "checkAndDelete",
+        value: function checkAndDelete(ids) {
+            var that = this;
+            // Check if there is still a node referring to the comment IDs that were in the deleted content.
+            this.mod.editor.pm.doc.nodesBetween(null, null, function (node, path, parent) {
+                if (!node.isInline) {
+                    return;
+                }
+                var id = that.mod.layout.findCommentId(node);
+                if (id && ids.indexOf(id) !== -1) {
+                    ids.splice(ids.indexOf(id), 1);
+                }
+            });
+            // Remove all the comments that could not be found.
+            ids.forEach(function (id) {
+                that.deleteComment(id, false); // Delete comment from store
+            });
         }
     }, {
         key: "addLocalAnswer",
@@ -2497,15 +2520,22 @@ var Editor = exports.Editor = (function () {
         value: function onTransform(transform, local) {
             var updateBibliography = false,
                 updateTitle = false,
+                commentIds = [],
                 that = this;
             // Check what area is affected
             transform.steps.forEach(function (step, index) {
                 if (step.type === 'replace') {
                     if (step.from.cmp(step.to) !== 0) {
-                        transform.docs[index].nodesBetween(step.from, step.to, function (node) {
+                        transform.docs[index].nodesBetween(step.from, step.to, function (node, path) {
                             if (node.type.name === 'citation') {
                                 // A citation was replaced
                                 updateBibliography = true;
+                            }
+                            if (local) {
+                                var commentId = that.mod.comments.layout.findCommentId(node);
+                                if (commentId !== false && commentIds.indexOf(commentId) === -1) {
+                                    commentIds.push(commentId);
+                                }
                             }
                         });
                     }
@@ -2533,6 +2563,14 @@ var Editor = exports.Editor = (function () {
                         this.docInfo.titleChanged = true;
                     }
                 }
+            }
+            if (local && commentIds.length > 0) {
+                // Check if the deleted comment referrers still are somewhere else in the doc.
+                // If not, delete them.
+                // TODO: Is a timeout/scheduleDOMUpdate really needed here?
+                (0, _update.scheduleDOMUpdate)(this.pm, function () {
+                    return that.mod.comments.store.checkAndDelete(commentIds);
+                });
             }
         }
     }]);

@@ -95,16 +95,38 @@ export class ModCommentStore {
         this.mod.layout.layoutComments()
     }
 
-    deleteComment(id) {
+    // Removes the comment from store, optionally also removes marks from document.
+    deleteComment(id, removeMarks) {
         if (this.deleteLocalComment(id)) {
             this.unsent.push({
                 type: "delete",
                 id: id
             })
-            this.removeCommentMarks(id)
+            if (removeMarks) {
+                this.removeCommentMarks(id)
+            }
             this.signal("mustSend")
         }
     }
+
+    checkAndDelete(ids) {
+        let that = this
+        // Check if there is still a node referring to the comment IDs that were in the deleted content.
+        this.mod.editor.pm.doc.nodesBetween(null, null, function(node, path, parent) {
+            if (!node.isInline) {
+                return
+            }
+            let id = that.mod.layout.findCommentId(node)
+            if (id && ids.indexOf(id) !== -1) {
+                ids.splice(ids.indexOf(id),1)
+            }
+        })
+        // Remove all the comments that could not be found.
+        ids.forEach(function(id) {
+            that.deleteComment(id, false) // Delete comment from store
+        })
+    }
+
 
     addLocalAnswer(id, answer) {
         if (this.comments[id]) {

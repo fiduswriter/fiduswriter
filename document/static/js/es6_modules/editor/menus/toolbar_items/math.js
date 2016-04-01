@@ -3,7 +3,7 @@ import {mathDialogTemplate} from "./templates"
 export let bindMath = function (editor) {
 
     // toolbar math
-    jQuery(document).on('mousedown', '#button-math:not(.disabled), .equation', function (event) {
+    jQuery(document).on('mousedown', '#button-math:not(.disabled)', function (event) {
 
         let dialog, dialogButtons = [],
             submitMessage = gettext('Insert'),

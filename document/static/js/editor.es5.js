@@ -4099,7 +4099,7 @@ var _templates = require('./templates');
 var bindMath = exports.bindMath = function bindMath(editor) {
 
     // toolbar math
-    jQuery(document).on('mousedown', '#button-math:not(.disabled), .equation', function (event) {
+    jQuery(document).on('mousedown', '#button-math:not(.disabled)', function (event) {
 
         var dialog = undefined,
             dialogButtons = [],

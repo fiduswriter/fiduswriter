@@ -1,13 +1,28 @@
 import {commentsTemplate, filterByUserBoxTemplate} from "./templates"
+import {UpdateScheduler, scheduleDOMUpdate} from "prosemirror/dist/ui/update"
+import {Pos} from "prosemirror/dist/model"
+
 
 /* Functions related to layouting of comments */
 export class ModCommentLayout {
     constructor(mod) {
         mod.layout = this
         this.mod = mod
-        this.activeCommentId = -1
-        this.activeCommentAnswerId = -1
+        this.activeCommentId = false
+        this.activeCommentAnswerId = false
+        this.setup()
         this.bindEvents()
+    }
+
+    setup() {
+        // Add two elements to hold dynamic CSS info about comments.
+        let styleContainers = document.createElement('temp')
+        styleContainers.innerHTML = `
+        <style type="text/css" id="active-comment-style"></style>
+        <style type="text/css" id="comment-placement-style"></style>`
+        while (styleContainers.firstElementChild) {
+            document.head.appendChild(styleContainers.firstElementChild)
+        }
     }
 
     bindEvents() {
@@ -40,6 +55,9 @@ export class ModCommentLayout {
 
         })
 
+        new UpdateScheduler(this.mod.editor.pm, "change setDoc", () => {return that.updateDOM()})
+        new UpdateScheduler(this.mod.editor.pm, "selectionChange", () => {return that.onSelectionChange()})
+
     }
 
     activateComment(id) {
@@ -50,152 +68,127 @@ export class ModCommentLayout {
 
     deactivateAll() {
         // Close the comment box and make sure no comment is marked as currently active.
-        this.activeCommentId = -1
-        this.activeCommentAnswerId = -1
+        this.activeCommentId = false
+        this.activeCommentAnswerId = false
     }
 
-
-    layoutCommentsAvoidOverlap() {
-        // Avoid overlapping of comments.
-        var minOffsetTop,
-            commentReferrer,
-            lastOffsetTop,
-            previousComments,
-            nextComments,
-            commentBox,
-            initialCommentBox,
-            foundComment,
-            i
-
-        if (-1 != this.activeCommentId) {
-            commentReferrer = this.findComment(this.activeCommentId)
-            initialCommentBox = this.findCommentBox(this.activeCommentId)
-            if (!initialCommentBox) {
-                return false
-            }
-            lastOffsetTop = initialCommentBox.offsetTop
-            previousComments = []
-            nextComments = jQuery.makeArray(jQuery('.comment'))
-            while (nextComments.length > 0) {
-                foundComment = nextComments.shift()
-                if (foundComment === commentReferrer) {
-                    break
-                } else {
-                    previousComments.unshift(foundComment)
-                }
-            }
-
-            for (i = 0; i < previousComments.length; i++) {
-                commentBox = this.findCommentBox(this.getCommentId(previousComments[i]))
-                if (commentBox) {
-                    minOffsetTop = lastOffsetTop - commentBox.offsetHeight - 10
-                    if (commentBox.offsetTop > minOffsetTop) {
-                        jQuery(commentBox).css('top', minOffsetTop + 'px')
-                    }
-                    lastOffsetTop = commentBox.offsetTop;
-                }
-            }
-
-            minOffsetTop = initialCommentBox.offsetTop + initialCommentBox.offsetHeight + 10
-        } else {
-            minOffsetTop = 0
-            nextComments = jQuery('.comment')
+    findCommentsAt(node) {
+        let found = false
+        for (let i = 0; i < node.marks.length; i++) {
+            let mark = node.marks[i]
+            if (mark.type.name === 'comment' && mark.attrs.id in this.mod.store.comments)
+                found = this.mod.store.comments[mark.attrs.id]
         }
-        for (i = 0; i < nextComments.length; i++) {
-            commentBox = this.findCommentBox(this.getCommentId(nextComments[i]))
-            if (commentBox) {
-                if (commentBox.offsetTop < minOffsetTop) {
-                    jQuery(commentBox).css('top', minOffsetTop + 'px')
-                }
-                minOffsetTop = commentBox.offsetTop + commentBox.offsetHeight + 10
-            }
-        }
+        return found
     }
+
 
     layoutComments() {
-        // Handle the layout of the comments on the screen.
         let that = this
-        let theCommentPointers = [].slice.call(jQuery('.comment')),
-            theComments = [],
-            ids = []
+        scheduleDOMUpdate(this.mod.editor.pm, () => {return that.updateDOM()})
+    }
 
-        theCommentPointers.forEach(function(commentNode) {
-            let id = parseInt(commentNode.getAttribute("data-id"))
-            if (ids.indexOf(id) !== -1) {
-                // This is not the first occurence of this comment. So we ignore it.
-                return
-            }
-            ids.push(id)
-            if (that.mod.store.comments[id]) {
-                theComments.push({
-                    id: id,
-                    referrer: commentNode,
-                    comment: that.mod.store.comments[id]['comment'],
-                    user: that.mod.store.comments[id]['user'],
-                    userName: that.mod.store.comments[id]['userName'],
-                    userAvatar: that.mod.store.comments[id]['userAvatar'],
-                    date: that.mod.store.comments[id]['date'],
-                    answers: that.mod.store.comments[id]['answers'],
-                    'review:isMajor': that.mod.store.comments[id]['review:isMajor']
-                })
-            }
-        })
+    onSelectionChange() {
+        this.activateSelectedComment()
+        return this.updateDOM()
+    }
 
-        jQuery('#comment-box-container').html(commentsTemplate({
-            theComments,
-            that
-        }))
-        this.layoutCommentsAvoidOverlap()
-        let activeCommentStyle = ''
-            //jQuery('#active-comment-style').html('')
-        let activeCommentWrapper = jQuery('.comment-box.active')
-        if (0 < activeCommentWrapper.size()) {
-            that.activeCommentId = activeCommentWrapper.attr('data-id')
+    activateSelectedComment() {
+        let selection = this.mod.editor.pm.selection, comment = false, that = this
 
-            activeCommentStyle = '.comments-enabled .comment[data-id="' + that.activeCommentId + '"] {background-color: #fffacf;}'
-            activeCommentWrapper.find('.comment-answer-text').autoResize({
-                'extraSpace': 0
+        if (selection.empty) {
+            let node = this.mod.editor.pm.doc.path(selection.from.path.concat(selection.from.offset))
+            comment = this.findCommentsAt(node)
+        } else {
+            this.mod.editor.pm.doc.nodesBetween(selection.from, selection.to, function(node, path, parent) {
+                if (!node.isInline) {
+                    return
+                }
+                comment = comment ? comment : that.findCommentsAt(node)
             })
         }
 
-        if (jQuery('#active-comment-style').html() != -activeCommentStyle) {
-            jQuery('#active-comment-style').html(activeCommentStyle)
+        if (comment) {
+            if (this.activeCommentId !== comment.id) {
+              that.activateComment(comment.id)
+            }
+        } else {
+            that.deactivateAll()
+        }
+    }
+
+    updateDOM() {
+        // Handle the layout of the comments on the screen.
+
+        // DOM write phase
+
+        let that = this
+
+        let theComments = [], referrers = []
+
+        this.mod.editor.pm.doc.nodesBetween(null, null, function(node, path, parent) {
+            if (!node.isInline) {
+                return
+            }
+            let comment = that.findCommentsAt(node)
+            if (!comment || theComments.indexOf(comment) !== -1) {
+                // no comment found or comment already place
+                return
+            }
+            theComments.push(comment)
+            referrers.push(path.slice()) // TODO: Check whether cloning is still needed with ProseMirror 0.6.0+
+        })
+
+
+        let commentsTemplateHTML = commentsTemplate({
+            theComments,
+            that
+        })
+        if (document.getElementById('comment-box-container').innerHTML !== commentsTemplateHTML) {
+            document.getElementById('comment-box-container').innerHTML = commentsTemplateHTML
+        }
+
+        let activeCommentStyle = ''
+
+        if (false !== this.activeCommentId) {
+            activeCommentStyle = '.comments-enabled .comment[data-id="' + that.activeCommentId + '"] {background-color: #fffacf;}'
+        }
+
+
+        if (document.getElementById('active-comment-style').innerHTML != activeCommentStyle) {
+            document.getElementById('active-comment-style').innerHTML = activeCommentStyle
+        }
+
+        return function () {
+            // DOM read phase
+            let totalOffset = document.getElementById('comment-box-container').getBoundingClientRect().top + 10,
+              commentBoxes = document.querySelectorAll('#comment-box-container .comment-box'),
+              commentPlacementStyle = ''
+            referrers.forEach(function(referrer, index) {
+                let commentBox = commentBoxes[index],
+                  commentBoxCoords = commentBox.getBoundingClientRect(),
+                  commentBoxHeight = commentBoxCoords.height,
+                  nodeOffset = referrer.pop(),
+                  commentPos = new Pos(referrer, nodeOffset),
+                  referrerTop = that.mod.editor.pm.coordsAtPos(commentPos).top,
+                  topMargin = 10
+
+                if (referrerTop > totalOffset) {
+                    topMargin = parseInt(referrerTop - totalOffset)
+                    commentPlacementStyle += '.comment-box:nth-of-type('+(index+1)+') {margin-top: ' + topMargin + 'px;}\n'
+                }
+                totalOffset += commentBoxHeight + topMargin
+            })
+            return function () {
+                //DOM write phase
+                if (document.getElementById('comment-placement-style').innerHTML != commentPlacementStyle) {
+                    document.getElementById('comment-placement-style').innerHTML = commentPlacementStyle
+                }
+            }
+
         }
 
     }
-
-
-    editAnswer(id, answerId) {
-        // Mark a specific answer to a comment as active, then layout the
-        // comments, which will make that answer editable.
-        this.activeCommentId = id
-        this.activeCommentAnswerId = answerId
-        this.layoutComments()
-    }
-
-
-    calculateCommentBoxOffset(comment) {
-        return comment.referrer.getBoundingClientRect()['top'] + window.pageYOffset - 280
-    }
-
-
-    findComment(id) {
-        // Return the comment element specified by the id
-        return jQuery('.comment[data-id=' + id + ']')[0]
-    }
-
-    findCommentBox(id) {
-        // Return the comment box specified by the id
-        return jQuery('.comment-box[data-id=' + id + ']')[0]
-    }
-
-
-    getCommentId(node) {
-        // Returns the value of the attributte data-id as an integer.
-        // This function can be used on both comment referrers and comment boxes.
-        return parseInt(node.getAttribute('data-id'), 10)
-    }
-
 
     /**
      * Filtering part. akorovin

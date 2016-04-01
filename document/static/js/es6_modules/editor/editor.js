@@ -66,6 +66,7 @@ export class Editor {
         new ModMenus(this)
         new ModCollab(this)
         new ModTools(this)
+        new ModComments(this)
         new UpdateScheduler(this.pm, "selectionChange change activeMarkChange blur focus setDoc", function() {
             updateUI(that)
         })
@@ -74,6 +75,7 @@ export class Editor {
         this.pm.on("transform", (transform, options) => {that.onTransform(transform, true)})
         this.pm.mod.collab.on("collabTransform", (transform, options) => {that.onTransform(transform, false)})
         new UpdateScheduler(this.pm, "change setDoc", () => {that.layoutCitations()})
+
         this.setSaveTimers()
     }
 
@@ -113,6 +115,16 @@ export class Editor {
         })
         pm.editor = this
         return pm
+    }
+
+    testingReturns() {
+        console.log('this is the first')
+        return function () {
+            console.log('this is the second')
+            return function () {
+                console.log('this is the third')
+            }
+        }
     }
 
     createDoc(aDocument) {
@@ -164,7 +176,7 @@ export class Editor {
             this.mod.collab.docChanges.applyDiff(diff)
         }
         this.doc.hash = this.getHash()
-        new ModComments(this, this.doc.comment_version)
+        this.mod.comments.store.setVersion(this.doc.comment_version)
         this.pm.mod.collab.on("mustSend", function() {
             that.mod.collab.docChanges.sendToCollaborators()
         })

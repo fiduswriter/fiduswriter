@@ -6,7 +6,6 @@ import {eventMixin} from "prosemirror/dist/util/event"
 import {Transform} from "prosemirror/dist/transform"
 import {Pos} from "prosemirror/dist/model"
 import {CommentMark} from "../schema"
-import {UpdateScheduler} from "prosemirror/dist/ui/update"
 
 class Comment {
     constructor(id, user, userName, userAvatar, date, comment, answers, isMajor) {
@@ -22,11 +21,15 @@ class Comment {
 }
 
 export class ModCommentStore {
-    constructor(mod, version) {
+    constructor(mod) {
         mod.store = this
         this.mod = mod
-        this.comments = Object.create(null)
+        this.setVersion(0)
+    }
+
+    setVersion(version) {
         this.version = version
+        this.comments = Object.create(null)
         this.unsent = []
     }
 
@@ -47,7 +50,7 @@ export class ModCommentStore {
         if (!this.comments[id]) {
             this.comments[id] = new Comment(id, user, userName, userAvatar, date, comment, answers, isMajor)
         }
-        //this.updateDisplay(true)
+        this.mod.layout.layoutComments()
     }
 
     updateComment(id, comment, commentIsMajor) {
@@ -64,7 +67,7 @@ export class ModCommentStore {
             this.comments[id].comment = comment
             this.comments[id]['review:isMajor'] = commentIsMajor
         }
-        this.updateDisplay(true)
+        this.mod.layout.layoutComments()
     }
 
     removeCommentMarks(id) {
@@ -87,7 +90,7 @@ export class ModCommentStore {
             delete this.comments[id]
             return true
         }
-        this.updateDisplay(true)
+        this.mod.layout.layoutComments()
     }
 
     deleteComment(id) {
@@ -108,7 +111,7 @@ export class ModCommentStore {
             }
             this.comments[id].answers.push(answer)
         }
-        this.updateDisplay(false)
+        this.mod.layout.layoutComments()
     }
 
     addAnswer(id, answer) {
@@ -128,7 +131,7 @@ export class ModCommentStore {
                 return answer.id === answerId
             })
         }
-        this.updateDisplay(false)
+        this.mod.layout.layoutComments()
     }
 
     deleteAnswer(commentId, answerId) {
@@ -148,7 +151,7 @@ export class ModCommentStore {
             })
             answer.answer = answerText
         }
-        this.updateDisplay(false)
+        this.mod.layout.layoutComments()
     }
 
     updateAnswer(commentId, answerId, answerText) {
@@ -261,30 +264,6 @@ export class ModCommentStore {
 
     }
 
-    updateDisplay(waitForFlush) {
-        console.log('yuyu')
-        let that = this
-        if (waitForFlush) {
-            let layoutComments = new UpdateScheduler(this.mod.editor.pm, "flush", function() {
-                layoutComments.detach()
-                console.log('layouting comments')
-                that.mod.layout.layoutComments()
-            })
-        } else {
-            that.mod.layout.layoutComments()
-        }
-    }
-
-    findCommentsAt(pos) {
-        let found = [],
-            node = this.mod.editor.pm.doc.path(pos.path)
-
-        for (let mark in node.marks) {
-            if (mark.type.name === 'comment' && mark.attrs.id in this.comments)
-                found.push(this.comments[mark.attrs.id])
-        }
-        return found
-    }
 }
 
 eventMixin(ModCommentStore)

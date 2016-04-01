@@ -1167,16 +1167,15 @@ var participantListTemplate = exports.participantListTemplate = _.template('<% _
 },{}],10:[function(require,module,exports){
 "use strict";
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })(); /* Functions related to user interactions with comments */
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.ModCommentInteractions = undefined;
-
-var _update = require("prosemirror/dist/ui/update");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/* Functions related to user interactions with comments */
 
 var ModCommentInteractions = exports.ModCommentInteractions = (function () {
     function ModCommentInteractions(mod) {
@@ -1199,12 +1198,7 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
                 that.cancelSubmitComment(this);
             });
             jQuery(document).on("click", ".comment-box.inactive", function () {
-                var commentId = that.mod.layout.getCommentId(this);
-                that.mod.layout.activateComment(commentId);
-                that.mod.layout.layoutComments();
-            });
-            jQuery(document).on("click", ".comments-enabled .comment", function () {
-                var commentId = that.mod.layout.getCommentId(this);
+                var commentId = that.getCommentId(this);
                 that.mod.layout.activateComment(commentId);
                 that.mod.layout.layoutComments();
             });
@@ -1255,21 +1249,23 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
     }, {
         key: "createNewComment",
         value: function createNewComment() {
-            var that = this;
             var id = this.mod.store.addComment(this.mod.editor.user.id, this.mod.editor.user.name, this.mod.editor.user.avatar, new Date().getTime(), '');
             this.mod.layout.deactivateAll();
             this.mod.layout.activeCommentId = id;
             this.mod.editor.docInfo.changed = true;
-            var layoutComments = new _update.UpdateScheduler(this.mod.editor.pm, "flush", function () {
-                layoutComments.detach();
-                that.mod.layout.layoutComments();
-            });
+            this.mod.layout.layoutComments();
+        }
+    }, {
+        key: "getCommentId",
+        value: function getCommentId(node) {
+            // Returns the value of the attributte data-id as an integer.
+            // This function can be used on both comment referrers and comment boxes.
+            return parseInt(node.getAttribute('data-id'), 10);
         }
     }, {
         key: "deleteComment",
         value: function deleteComment(id) {
             // Handle the deletion of a comment.
-            var comment = this.mod.layout.findComment(id); // TODO: We don't use this for anything. Should we?
             this.mod.store.deleteComment(id);
             //      TODO: make the markrange go away
             this.mod.editor.docInfo.changed = true;
@@ -1290,7 +1286,7 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
             var commentTextBox = jQuery(submitButton).siblings('.commentText')[0];
             var commentText = commentTextBox.value;
             var commentIsMajor = jQuery(submitButton).siblings('.comment-is-major').prop('checked');
-            var commentId = this.mod.layout.getCommentId(commentTextBox);
+            var commentId = this.getCommentId(commentTextBox);
             if (commentText.length > 0) {
                 this.updateComment(commentId, commentText, commentIsMajor);
             } else {
@@ -1303,7 +1299,7 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
             // Handle a click on the cancel button of the comment submit form.
             var commentTextBox = jQuery(cancelButton).siblings('.commentText')[0];
             if (commentTextBox) {
-                var id = this.mod.layout.getCommentId(commentTextBox);
+                var id = this.getCommentId(commentTextBox);
                 if (this.mod.store.comments[id].comment.length === 0) {
                     this.deleteComment(id);
                 } else {
@@ -1332,6 +1328,15 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
             var answerText = answerTextBox.value;
             var commentId = parseInt(commentWrapper.attr('data-id'));
             this.createNewAnswer(commentId, answerText);
+        }
+    }, {
+        key: "editAnswer",
+        value: function editAnswer(id, answerId) {
+            // Mark a specific answer to a comment as active, then layout the
+            // comments, which will make that answer editable.
+            this.activeCommentId = id;
+            this.activeCommentAnswerId = answerId;
+            this.layoutComments();
         }
     }, {
         key: "createNewAnswer",
@@ -1365,8 +1370,8 @@ var ModCommentInteractions = exports.ModCommentInteractions = (function () {
     return ModCommentInteractions;
 })();
 
-},{"prosemirror/dist/ui/update":132}],11:[function(require,module,exports){
-'use strict';
+},{}],11:[function(require,module,exports){
+"use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
@@ -1375,7 +1380,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.ModCommentLayout = undefined;
 
-var _templates = require('./templates');
+var _templates = require("./templates");
+
+var _update = require("prosemirror/dist/ui/update");
+
+var _model = require("prosemirror/dist/model");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -1387,13 +1396,24 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
 
         mod.layout = this;
         this.mod = mod;
-        this.activeCommentId = -1;
-        this.activeCommentAnswerId = -1;
+        this.activeCommentId = false;
+        this.activeCommentAnswerId = false;
+        this.setup();
         this.bindEvents();
     }
 
     _createClass(ModCommentLayout, [{
-        key: 'bindEvents',
+        key: "setup",
+        value: function setup() {
+            // Add two elements to hold dynamic CSS info about comments.
+            var styleContainers = document.createElement('temp');
+            styleContainers.innerHTML = "\n        <style type=\"text/css\" id=\"active-comment-style\"></style>\n        <style type=\"text/css\" id=\"comment-placement-style\"></style>";
+            while (styleContainers.firstElementChild) {
+                document.head.appendChild(styleContainers.firstElementChild);
+            }
+        }
+    }, {
+        key: "bindEvents",
         value: function bindEvents() {
             var that = this;
 
@@ -1421,155 +1441,149 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
                         break;
                 }
             });
+
+            new _update.UpdateScheduler(this.mod.editor.pm, "change setDoc", function () {
+                return that.updateDOM();
+            });
+            new _update.UpdateScheduler(this.mod.editor.pm, "selectionChange", function () {
+                return that.onSelectionChange();
+            });
         }
     }, {
-        key: 'activateComment',
+        key: "activateComment",
         value: function activateComment(id) {
             // Deactivate all comments, then mark the one related to the id as active.
             this.deactivateAll();
             this.activeCommentId = id;
         }
     }, {
-        key: 'deactivateAll',
+        key: "deactivateAll",
         value: function deactivateAll() {
             // Close the comment box and make sure no comment is marked as currently active.
-            this.activeCommentId = -1;
-            this.activeCommentAnswerId = -1;
+            this.activeCommentId = false;
+            this.activeCommentAnswerId = false;
         }
     }, {
-        key: 'layoutCommentsAvoidOverlap',
-        value: function layoutCommentsAvoidOverlap() {
-            // Avoid overlapping of comments.
-            var minOffsetTop, commentReferrer, lastOffsetTop, previousComments, nextComments, commentBox, initialCommentBox, foundComment, i;
-
-            if (-1 != this.activeCommentId) {
-                commentReferrer = this.findComment(this.activeCommentId);
-                initialCommentBox = this.findCommentBox(this.activeCommentId);
-                if (!initialCommentBox) {
-                    return false;
-                }
-                lastOffsetTop = initialCommentBox.offsetTop;
-                previousComments = [];
-                nextComments = jQuery.makeArray(jQuery('.comment'));
-                while (nextComments.length > 0) {
-                    foundComment = nextComments.shift();
-                    if (foundComment === commentReferrer) {
-                        break;
-                    } else {
-                        previousComments.unshift(foundComment);
-                    }
-                }
-
-                for (i = 0; i < previousComments.length; i++) {
-                    commentBox = this.findCommentBox(this.getCommentId(previousComments[i]));
-                    if (commentBox) {
-                        minOffsetTop = lastOffsetTop - commentBox.offsetHeight - 10;
-                        if (commentBox.offsetTop > minOffsetTop) {
-                            jQuery(commentBox).css('top', minOffsetTop + 'px');
-                        }
-                        lastOffsetTop = commentBox.offsetTop;
-                    }
-                }
-
-                minOffsetTop = initialCommentBox.offsetTop + initialCommentBox.offsetHeight + 10;
-            } else {
-                minOffsetTop = 0;
-                nextComments = jQuery('.comment');
+        key: "findCommentsAt",
+        value: function findCommentsAt(node) {
+            var found = false;
+            for (var i = 0; i < node.marks.length; i++) {
+                var mark = node.marks[i];
+                if (mark.type.name === 'comment' && mark.attrs.id in this.mod.store.comments) found = this.mod.store.comments[mark.attrs.id];
             }
-            for (i = 0; i < nextComments.length; i++) {
-                commentBox = this.findCommentBox(this.getCommentId(nextComments[i]));
-                if (commentBox) {
-                    if (commentBox.offsetTop < minOffsetTop) {
-                        jQuery(commentBox).css('top', minOffsetTop + 'px');
-                    }
-                    minOffsetTop = commentBox.offsetTop + commentBox.offsetHeight + 10;
-                }
-            }
+            return found;
         }
     }, {
-        key: 'layoutComments',
+        key: "layoutComments",
         value: function layoutComments() {
-            // Handle the layout of the comments on the screen.
             var that = this;
-            var theCommentPointers = [].slice.call(jQuery('.comment')),
-                theComments = [],
-                ids = [];
-
-            theCommentPointers.forEach(function (commentNode) {
-                var id = parseInt(commentNode.getAttribute("data-id"));
-                if (ids.indexOf(id) !== -1) {
-                    // This is not the first occurence of this comment. So we ignore it.
-                    return;
-                }
-                ids.push(id);
-                if (that.mod.store.comments[id]) {
-                    theComments.push({
-                        id: id,
-                        referrer: commentNode,
-                        comment: that.mod.store.comments[id]['comment'],
-                        user: that.mod.store.comments[id]['user'],
-                        userName: that.mod.store.comments[id]['userName'],
-                        userAvatar: that.mod.store.comments[id]['userAvatar'],
-                        date: that.mod.store.comments[id]['date'],
-                        answers: that.mod.store.comments[id]['answers'],
-                        'review:isMajor': that.mod.store.comments[id]['review:isMajor']
-                    });
-                }
+            (0, _update.scheduleDOMUpdate)(this.mod.editor.pm, function () {
+                return that.updateDOM();
             });
+        }
+    }, {
+        key: "onSelectionChange",
+        value: function onSelectionChange() {
+            this.activateSelectedComment();
+            return this.updateDOM();
+        }
+    }, {
+        key: "activateSelectedComment",
+        value: function activateSelectedComment() {
+            var selection = this.mod.editor.pm.selection,
+                comment = false,
+                that = this;
 
-            jQuery('#comment-box-container').html((0, _templates.commentsTemplate)({
-                theComments: theComments,
-                that: that
-            }));
-            this.layoutCommentsAvoidOverlap();
-            var activeCommentStyle = '';
-            //jQuery('#active-comment-style').html('')
-            var activeCommentWrapper = jQuery('.comment-box.active');
-            if (0 < activeCommentWrapper.size()) {
-                that.activeCommentId = activeCommentWrapper.attr('data-id');
-
-                activeCommentStyle = '.comments-enabled .comment[data-id="' + that.activeCommentId + '"] {background-color: #fffacf;}';
-                activeCommentWrapper.find('.comment-answer-text').autoResize({
-                    'extraSpace': 0
+            if (selection.empty) {
+                var node = this.mod.editor.pm.doc.path(selection.from.path.concat(selection.from.offset));
+                comment = this.findCommentsAt(node);
+            } else {
+                this.mod.editor.pm.doc.nodesBetween(selection.from, selection.to, function (node, path, parent) {
+                    if (!node.isInline) {
+                        return;
+                    }
+                    comment = comment ? comment : that.findCommentsAt(node);
                 });
             }
 
-            if (jQuery('#active-comment-style').html() != -activeCommentStyle) {
-                jQuery('#active-comment-style').html(activeCommentStyle);
+            if (comment) {
+                if (this.activeCommentId !== comment.id) {
+                    that.activateComment(comment.id);
+                }
+            } else {
+                that.deactivateAll();
             }
         }
     }, {
-        key: 'editAnswer',
-        value: function editAnswer(id, answerId) {
-            // Mark a specific answer to a comment as active, then layout the
-            // comments, which will make that answer editable.
-            this.activeCommentId = id;
-            this.activeCommentAnswerId = answerId;
-            this.layoutComments();
-        }
-    }, {
-        key: 'calculateCommentBoxOffset',
-        value: function calculateCommentBoxOffset(comment) {
-            return comment.referrer.getBoundingClientRect()['top'] + window.pageYOffset - 280;
-        }
-    }, {
-        key: 'findComment',
-        value: function findComment(id) {
-            // Return the comment element specified by the id
-            return jQuery('.comment[data-id=' + id + ']')[0];
-        }
-    }, {
-        key: 'findCommentBox',
-        value: function findCommentBox(id) {
-            // Return the comment box specified by the id
-            return jQuery('.comment-box[data-id=' + id + ']')[0];
-        }
-    }, {
-        key: 'getCommentId',
-        value: function getCommentId(node) {
-            // Returns the value of the attributte data-id as an integer.
-            // This function can be used on both comment referrers and comment boxes.
-            return parseInt(node.getAttribute('data-id'), 10);
+        key: "updateDOM",
+        value: function updateDOM() {
+            // Handle the layout of the comments on the screen.
+
+            // DOM write phase
+
+            var that = this;
+
+            var theComments = [],
+                referrers = [];
+
+            this.mod.editor.pm.doc.nodesBetween(null, null, function (node, path, parent) {
+                if (!node.isInline) {
+                    return;
+                }
+                var comment = that.findCommentsAt(node);
+                if (!comment || theComments.indexOf(comment) !== -1) {
+                    // no comment found or comment already place
+                    return;
+                }
+                theComments.push(comment);
+                referrers.push(path.slice()); // TODO: Check whether cloning is still needed with ProseMirror 0.6.0+
+            });
+
+            var commentsTemplateHTML = (0, _templates.commentsTemplate)({
+                theComments: theComments,
+                that: that
+            });
+            if (document.getElementById('comment-box-container').innerHTML !== commentsTemplateHTML) {
+                document.getElementById('comment-box-container').innerHTML = commentsTemplateHTML;
+            }
+
+            var activeCommentStyle = '';
+
+            if (false !== this.activeCommentId) {
+                activeCommentStyle = '.comments-enabled .comment[data-id="' + that.activeCommentId + '"] {background-color: #fffacf;}';
+            }
+
+            if (document.getElementById('active-comment-style').innerHTML != activeCommentStyle) {
+                document.getElementById('active-comment-style').innerHTML = activeCommentStyle;
+            }
+
+            return function () {
+                // DOM read phase
+                var totalOffset = document.getElementById('comment-box-container').getBoundingClientRect().top + 10,
+                    commentBoxes = document.querySelectorAll('#comment-box-container .comment-box'),
+                    commentPlacementStyle = '';
+                referrers.forEach(function (referrer, index) {
+                    var commentBox = commentBoxes[index],
+                        commentBoxCoords = commentBox.getBoundingClientRect(),
+                        commentBoxHeight = commentBoxCoords.height,
+                        nodeOffset = referrer.pop(),
+                        commentPos = new _model.Pos(referrer, nodeOffset),
+                        referrerTop = that.mod.editor.pm.coordsAtPos(commentPos).top,
+                        topMargin = 10;
+
+                    if (referrerTop > totalOffset) {
+                        topMargin = parseInt(referrerTop - totalOffset);
+                        commentPlacementStyle += '.comment-box:nth-of-type(' + (index + 1) + ') {margin-top: ' + topMargin + 'px;}\n';
+                    }
+                    totalOffset += commentBoxHeight + topMargin;
+                });
+                return function () {
+                    //DOM write phase
+                    if (document.getElementById('comment-placement-style').innerHTML != commentPlacementStyle) {
+                        document.getElementById('comment-placement-style').innerHTML = commentPlacementStyle;
+                    }
+                };
+            };
         }
 
         /**
@@ -1577,7 +1591,7 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
          */
 
     }, {
-        key: 'filterByUserType',
+        key: "filterByUserType",
         value: function filterByUserType(userType) {
             //filter by user role (reader, editor, reviewer etc)
             var userRoles = this.mod.editor.doc.access_rights;
@@ -1599,7 +1613,7 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
             });
         }
     }, {
-        key: 'filterByUserDialog',
+        key: "filterByUserDialog",
         value: function filterByUserDialog() {
             //create array of roles + owner role
             var rolesCopy = this.mod.editor.doc.access_rights.slice();
@@ -1651,7 +1665,7 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
     return ModCommentLayout;
 })();
 
-},{"./templates":14}],12:[function(require,module,exports){
+},{"./templates":14,"prosemirror/dist/model":116,"prosemirror/dist/ui/update":132}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1667,12 +1681,12 @@ var _interactions = require("./interactions");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ModComments = exports.ModComments = function ModComments(editor, version) {
+var ModComments = exports.ModComments = function ModComments(editor) {
     _classCallCheck(this, ModComments);
 
     editor.mod.comments = this;
     this.editor = editor;
-    new _store.ModCommentStore(this, version);
+    new _store.ModCommentStore(this);
     new _layout.ModCommentLayout(this);
     new _interactions.ModCommentInteractions(this);
 };
@@ -1695,8 +1709,6 @@ var _model = require("prosemirror/dist/model");
 
 var _schema = require("../schema");
 
-var _update = require("prosemirror/dist/ui/update");
-
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /*
                                                                                                                                                           Functions related to the editing and sharing of comments.
                                                                                                                                                           based on https://github.com/ProseMirror/website/blob/master/src/client/collab/comment.js
@@ -1716,19 +1728,25 @@ var Comment = function Comment(id, user, userName, userAvatar, date, comment, an
 };
 
 var ModCommentStore = exports.ModCommentStore = (function () {
-    function ModCommentStore(mod, version) {
+    function ModCommentStore(mod) {
         _classCallCheck(this, ModCommentStore);
 
         mod.store = this;
         this.mod = mod;
-        this.comments = Object.create(null);
-        this.version = version;
-        this.unsent = [];
+        this.setVersion(0);
     }
 
-    // Add a new comment to the comment database both remotely and locally.
-
     _createClass(ModCommentStore, [{
+        key: "setVersion",
+        value: function setVersion(version) {
+            this.version = version;
+            this.comments = Object.create(null);
+            this.unsent = [];
+        }
+
+        // Add a new comment to the comment database both remotely and locally.
+
+    }, {
         key: "addComment",
         value: function addComment(user, userName, userAvatar, date, comment, answers, isMajor) {
             var id = randomID();
@@ -1747,7 +1765,7 @@ var ModCommentStore = exports.ModCommentStore = (function () {
             if (!this.comments[id]) {
                 this.comments[id] = new Comment(id, user, userName, userAvatar, date, comment, answers, isMajor);
             }
-            //this.updateDisplay(true)
+            this.mod.layout.layoutComments();
         }
     }, {
         key: "updateComment",
@@ -1766,7 +1784,7 @@ var ModCommentStore = exports.ModCommentStore = (function () {
                 this.comments[id].comment = comment;
                 this.comments[id]['review:isMajor'] = commentIsMajor;
             }
-            this.updateDisplay(true);
+            this.mod.layout.layoutComments();
         }
     }, {
         key: "removeCommentMarks",
@@ -1811,7 +1829,7 @@ var ModCommentStore = exports.ModCommentStore = (function () {
                 delete this.comments[id];
                 return true;
             }
-            this.updateDisplay(true);
+            this.mod.layout.layoutComments();
         }
     }, {
         key: "deleteComment",
@@ -1834,7 +1852,7 @@ var ModCommentStore = exports.ModCommentStore = (function () {
                 }
                 this.comments[id].answers.push(answer);
             }
-            this.updateDisplay(false);
+            this.mod.layout.layoutComments();
         }
     }, {
         key: "addAnswer",
@@ -1856,7 +1874,7 @@ var ModCommentStore = exports.ModCommentStore = (function () {
                     return answer.id === answerId;
                 });
             }
-            this.updateDisplay(false);
+            this.mod.layout.layoutComments();
         }
     }, {
         key: "deleteAnswer",
@@ -1878,7 +1896,7 @@ var ModCommentStore = exports.ModCommentStore = (function () {
                 });
                 answer.answer = answerText;
             }
-            this.updateDisplay(false);
+            this.mod.layout.layoutComments();
         }
     }, {
         key: "updateAnswer",
@@ -1996,36 +2014,6 @@ var ModCommentStore = exports.ModCommentStore = (function () {
                 _this2.version++;
             });
         }
-    }, {
-        key: "updateDisplay",
-        value: function updateDisplay(waitForFlush) {
-            var _this3 = this;
-
-            console.log('yuyu');
-            var that = this;
-            if (waitForFlush) {
-                (function () {
-                    var layoutComments = new _update.UpdateScheduler(_this3.mod.editor.pm, "flush", function () {
-                        layoutComments.detach();
-                        console.log('layouting comments');
-                        that.mod.layout.layoutComments();
-                    });
-                })();
-            } else {
-                that.mod.layout.layoutComments();
-            }
-        }
-    }, {
-        key: "findCommentsAt",
-        value: function findCommentsAt(pos) {
-            var found = [],
-                node = this.mod.editor.pm.doc.path(pos.path);
-
-            for (var mark in node.marks) {
-                if (mark.type.name === 'comment' && mark.attrs.id in this.comments) found.push(this.comments[mark.attrs.id]);
-            }
-            return found;
-        }
     }]);
 
     return ModCommentStore;
@@ -2037,7 +2025,7 @@ function randomID() {
     return Math.floor(Math.random() * 0xffffffff);
 }
 
-},{"../schema":36,"prosemirror/dist/model":116,"prosemirror/dist/transform":122,"prosemirror/dist/ui/update":132,"prosemirror/dist/util/event":134}],14:[function(require,module,exports){
+},{"../schema":36,"prosemirror/dist/model":116,"prosemirror/dist/transform":122,"prosemirror/dist/util/event":134}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2093,7 +2081,7 @@ var singleCommentTemplatePart = '<div class="comment-item">\
             <span class="delete-comment" data-id="<%= comment.id %>">' + gettext("Delete") + '</span>\
         </p>\
         <% } %>\
-    </div>';
+    ';
 
 /** A template for the editor of a first comment before it has been saved (not an answer to a comment). */
 var firstCommentTemplatePart = '<div class="comment-item">\
@@ -2107,16 +2095,16 @@ var firstCommentTemplatePart = '<div class="comment-item">\
             <input class="comment-is-major" type="checkbox" name="isMajor" value="0" />' + gettext("Is major") + '<br />\
             <span class="submitComment fw-button fw-dark">' + gettext("Submit") + '</span>\
             <span class="cancelSubmitComment fw-button fw-orange">' + gettext("Cancel") + '</span>\
-        </div>\
+        </div>EEEE\
     </div>';
 
 /** A template to display all the comments */
-var commentsTemplate = exports.commentsTemplate = _.template('<% _.each(theComments,function(comment,key,list){ %>\
-        <div id="comment-box-<%= comment.id %>" data-id="<%= comment.id %>"  data-user-id="<%= comment.user %>" \
+var commentsTemplate = exports.commentsTemplate = _.template('<% theComments.forEach(function(comment,index){ %>\
+      <div id="comment-box-<%= comment.id %>" data-id="<%= comment.id %>"  data-user-id="<%= comment.user %>" \
         class="comment-box \
             <% if(comment.id===that.activeCommentId) { %>active<% } else { %>inactive<% } %>\
             <% if(comment["review:isMajor"] === true) { %>comment-is-major-bgc<% }%>\
-            " style="top:<%= that.calculateCommentBoxOffset(comment) %>px;">\
+        >\
             <% if (comment.id===that.activeCommentId || comment.comment.length > 0) { %>\
             <% if(0 === comment.comment.length) { %>' + firstCommentTemplatePart + '<% } else { \
                var active = (comment.id===that.activeCommentId);\
@@ -2124,7 +2112,7 @@ var commentsTemplate = exports.commentsTemplate = _.template('<% _.each(theComme
             <% if (comment.answers && comment.answers.length) {\
                for (var i=0;i < comment.answers.length; i++) { \
                  var answer = comment.answers[i], active = (comment.id===that.activeCommentId)%>' + answerCommentTemplatePart + '<% }\
-            } %>\
+           } %>\
             <% if(comment.id===that.activeCommentId && 0 < comment.comment.length) { %>\
             <div class="comment-answer">\
                 <textarea class="comment-answer-text" rows="1"></textarea>\
@@ -2248,6 +2236,7 @@ var Editor = exports.Editor = (function () {
             new _mod6.ModMenus(this);
             new _mod3.ModCollab(this);
             new _mod4.ModTools(this);
+            new _mod.ModComments(this);
             new _update.UpdateScheduler(this.pm, "selectionChange change activeMarkChange blur focus setDoc", function () {
                 (0, _updateUi.updateUI)(that);
             });
@@ -2266,6 +2255,7 @@ var Editor = exports.Editor = (function () {
             new _update.UpdateScheduler(this.pm, "change setDoc", function () {
                 that.layoutCitations();
             });
+
             this.setSaveTimers();
         }
     }, {
@@ -2307,6 +2297,17 @@ var Editor = exports.Editor = (function () {
             });
             pm.editor = this;
             return pm;
+        }
+    }, {
+        key: "testingReturns",
+        value: function testingReturns() {
+            console.log('this is the first');
+            return function () {
+                console.log('this is the second');
+                return function () {
+                    console.log('this is the third');
+                };
+            };
         }
     }, {
         key: "createDoc",
@@ -2360,7 +2361,7 @@ var Editor = exports.Editor = (function () {
                 this.mod.collab.docChanges.applyDiff(diff);
             }
             this.doc.hash = this.getHash();
-            new _mod.ModComments(this, this.doc.comment_version);
+            this.mod.comments.store.setVersion(this.doc.comment_version);
             this.pm.mod.collab.on("mustSend", function () {
                 that.mod.collab.docChanges.sendToCollaborators();
             });
@@ -8213,7 +8214,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 // This file is auto-generated. CHANGES WILL BE OVERWRITTEN! Re-generate by running ./manage.py bundle_katex.
-var katexOpfIncludes = exports.katexOpfIncludes = "\n<item id=\"katex-0\" href=\"katex.min.css\" media-type=\"text/plain\" />\n<item id=\"katex-1\" href=\"fonts/KaTeX_Typewriter-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-2\" href=\"fonts/KaTeX_Main-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-3\" href=\"fonts/KaTeX_Fraktur-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-4\" href=\"fonts/KaTeX_SansSerif-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-5\" href=\"fonts/KaTeX_Main-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-6\" href=\"fonts/KaTeX_Main-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-7\" href=\"fonts/KaTeX_SansSerif-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-8\" href=\"fonts/KaTeX_AMS-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-9\" href=\"fonts/KaTeX_Caligraphic-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-10\" href=\"fonts/KaTeX_Size4-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-11\" href=\"fonts/KaTeX_Math-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-12\" href=\"fonts/KaTeX_Size1-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-13\" href=\"fonts/KaTeX_Math-BoldItalic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-14\" href=\"fonts/KaTeX_Script-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-15\" href=\"fonts/KaTeX_Main-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-16\" href=\"fonts/KaTeX_Math-BoldItalic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-17\" href=\"fonts/KaTeX_Fraktur-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-18\" href=\"fonts/KaTeX_Main-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-19\" href=\"fonts/KaTeX_Size1-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-20\" href=\"fonts/KaTeX_SansSerif-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-21\" href=\"fonts/KaTeX_Math-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-22\" href=\"fonts/KaTeX_Fraktur-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-23\" href=\"fonts/KaTeX_Script-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-24\" href=\"fonts/KaTeX_Fraktur-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-25\" href=\"fonts/KaTeX_Main-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-26\" href=\"fonts/KaTeX_Size1-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-27\" href=\"fonts/KaTeX_Size3-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-28\" href=\"fonts/KaTeX_SansSerif-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-29\" href=\"fonts/KaTeX_Script-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-30\" href=\"fonts/KaTeX_Main-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-31\" href=\"fonts/KaTeX_Math-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-32\" href=\"fonts/KaTeX_Main-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-33\" href=\"fonts/KaTeX_Typewriter-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-34\" href=\"fonts/KaTeX_Math-BoldItalic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-35\" href=\"fonts/KaTeX_AMS-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-36\" href=\"fonts/KaTeX_Size2-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-37\" href=\"fonts/KaTeX_Caligraphic-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-38\" href=\"fonts/KaTeX_Fraktur-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-39\" href=\"fonts/KaTeX_Typewriter-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-40\" href=\"fonts/KaTeX_Math-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-41\" href=\"fonts/KaTeX_SansSerif-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-42\" href=\"fonts/KaTeX_Script-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-43\" href=\"fonts/KaTeX_Caligraphic-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-44\" href=\"fonts/KaTeX_SansSerif-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-45\" href=\"fonts/KaTeX_AMS-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-46\" href=\"fonts/KaTeX_Caligraphic-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-47\" href=\"fonts/KaTeX_Fraktur-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-48\" href=\"fonts/KaTeX_Main-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-49\" href=\"fonts/KaTeX_SansSerif-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-50\" href=\"fonts/KaTeX_Size4-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-51\" href=\"fonts/KaTeX_Math-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-52\" href=\"fonts/KaTeX_SansSerif-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-53\" href=\"fonts/KaTeX_Size2-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-54\" href=\"fonts/KaTeX_Fraktur-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-55\" href=\"fonts/KaTeX_Size2-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-56\" href=\"fonts/KaTeX_SansSerif-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-57\" href=\"fonts/KaTeX_AMS-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-58\" href=\"fonts/KaTeX_Math-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-59\" href=\"fonts/KaTeX_SansSerif-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-60\" href=\"fonts/KaTeX_Main-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-61\" href=\"fonts/KaTeX_Typewriter-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-62\" href=\"fonts/KaTeX_Size3-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-63\" href=\"fonts/KaTeX_Main-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-64\" href=\"fonts/KaTeX_Caligraphic-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-65\" href=\"fonts/KaTeX_SansSerif-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-66\" href=\"fonts/KaTeX_Caligraphic-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-67\" href=\"fonts/KaTeX_Size4-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-68\" href=\"fonts/KaTeX_Main-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-69\" href=\"fonts/KaTeX_Math-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-70\" href=\"fonts/KaTeX_Size3-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-71\" href=\"fonts/KaTeX_Fraktur-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-72\" href=\"fonts/KaTeX_Caligraphic-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-73\" href=\"fonts/KaTeX_Size2-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-74\" href=\"fonts/KaTeX_Size1-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-75\" href=\"fonts/KaTeX_SansSerif-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-76\" href=\"fonts/KaTeX_Size4-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-77\" href=\"fonts/KaTeX_Size3-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-78\" href=\"fonts/KaTeX_Caligraphic-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-79\" href=\"fonts/KaTeX_Math-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-80\" href=\"fonts/KaTeX_Math-BoldItalic.woff\" media-type=\"application/octet-stream\" />\n";
+var katexOpfIncludes = exports.katexOpfIncludes = "\n<item id=\"katex-0\" href=\"katex.min.css\" media-type=\"text/css\" />\n<item id=\"katex-1\" href=\"fonts/KaTeX_Typewriter-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-2\" href=\"fonts/KaTeX_Main-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-3\" href=\"fonts/KaTeX_Fraktur-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-4\" href=\"fonts/KaTeX_SansSerif-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-5\" href=\"fonts/KaTeX_Main-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-6\" href=\"fonts/KaTeX_Main-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-7\" href=\"fonts/KaTeX_SansSerif-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-8\" href=\"fonts/KaTeX_AMS-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-9\" href=\"fonts/KaTeX_Caligraphic-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-10\" href=\"fonts/KaTeX_Size4-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-11\" href=\"fonts/KaTeX_Math-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-12\" href=\"fonts/KaTeX_Size1-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-13\" href=\"fonts/KaTeX_Math-BoldItalic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-14\" href=\"fonts/KaTeX_Script-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-15\" href=\"fonts/KaTeX_Main-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-16\" href=\"fonts/KaTeX_Math-BoldItalic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-17\" href=\"fonts/KaTeX_Fraktur-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-18\" href=\"fonts/KaTeX_Main-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-19\" href=\"fonts/KaTeX_Size1-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-20\" href=\"fonts/KaTeX_SansSerif-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-21\" href=\"fonts/KaTeX_Math-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-22\" href=\"fonts/KaTeX_Fraktur-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-23\" href=\"fonts/KaTeX_Script-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-24\" href=\"fonts/KaTeX_Fraktur-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-25\" href=\"fonts/KaTeX_Main-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-26\" href=\"fonts/KaTeX_Size1-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-27\" href=\"fonts/KaTeX_Size3-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-28\" href=\"fonts/KaTeX_SansSerif-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-29\" href=\"fonts/KaTeX_Script-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-30\" href=\"fonts/KaTeX_Main-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-31\" href=\"fonts/KaTeX_Math-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-32\" href=\"fonts/KaTeX_Main-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-33\" href=\"fonts/KaTeX_Typewriter-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-34\" href=\"fonts/KaTeX_Math-BoldItalic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-35\" href=\"fonts/KaTeX_AMS-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-36\" href=\"fonts/KaTeX_Size2-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-37\" href=\"fonts/KaTeX_Caligraphic-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-38\" href=\"fonts/KaTeX_Fraktur-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-39\" href=\"fonts/KaTeX_Typewriter-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-40\" href=\"fonts/KaTeX_Math-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-41\" href=\"fonts/KaTeX_SansSerif-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-42\" href=\"fonts/KaTeX_Script-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-43\" href=\"fonts/KaTeX_Caligraphic-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-44\" href=\"fonts/KaTeX_SansSerif-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-45\" href=\"fonts/KaTeX_AMS-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-46\" href=\"fonts/KaTeX_Caligraphic-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-47\" href=\"fonts/KaTeX_Fraktur-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-48\" href=\"fonts/KaTeX_Main-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-49\" href=\"fonts/KaTeX_SansSerif-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-50\" href=\"fonts/KaTeX_Size4-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-51\" href=\"fonts/KaTeX_Math-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-52\" href=\"fonts/KaTeX_SansSerif-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-53\" href=\"fonts/KaTeX_Size2-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-54\" href=\"fonts/KaTeX_Fraktur-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-55\" href=\"fonts/KaTeX_Size2-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-56\" href=\"fonts/KaTeX_SansSerif-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-57\" href=\"fonts/KaTeX_AMS-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-58\" href=\"fonts/KaTeX_Math-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-59\" href=\"fonts/KaTeX_SansSerif-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-60\" href=\"fonts/KaTeX_Main-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-61\" href=\"fonts/KaTeX_Typewriter-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-62\" href=\"fonts/KaTeX_Size3-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-63\" href=\"fonts/KaTeX_Main-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-64\" href=\"fonts/KaTeX_Caligraphic-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-65\" href=\"fonts/KaTeX_SansSerif-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-66\" href=\"fonts/KaTeX_Caligraphic-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-67\" href=\"fonts/KaTeX_Size4-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-68\" href=\"fonts/KaTeX_Main-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-69\" href=\"fonts/KaTeX_Math-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-70\" href=\"fonts/KaTeX_Size3-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-71\" href=\"fonts/KaTeX_Fraktur-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-72\" href=\"fonts/KaTeX_Caligraphic-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-73\" href=\"fonts/KaTeX_Size2-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-74\" href=\"fonts/KaTeX_Size1-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-75\" href=\"fonts/KaTeX_SansSerif-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-76\" href=\"fonts/KaTeX_Size4-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-77\" href=\"fonts/KaTeX_Size3-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-78\" href=\"fonts/KaTeX_Caligraphic-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-79\" href=\"fonts/KaTeX_Math-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-80\" href=\"fonts/KaTeX_Math-BoldItalic.woff\" media-type=\"application/octet-stream\" />\n";
 
 },{}],63:[function(require,module,exports){
 (function(mod) {

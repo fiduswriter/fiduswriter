@@ -63,7 +63,7 @@ let singleCommentTemplatePart =
     gettext("Delete") + '</span>\
         </p>\
         <% } %>\
-    </div>'
+    '
 
 
 /** A template for the editor of a first comment before it has been saved (not an answer to a comment). */
@@ -82,17 +82,17 @@ let firstCommentTemplatePart =
     '</span>\
             <span class="cancelSubmitComment fw-button fw-orange">' +
     gettext("Cancel") + '</span>\
-        </div>\
+        </div>EEEE\
     </div>'
 
 /** A template to display all the comments */
 export let commentsTemplate = _.template(
-    '<% _.each(theComments,function(comment,key,list){ %>\
-        <div id="comment-box-<%= comment.id %>" data-id="<%= comment.id %>"  data-user-id="<%= comment.user %>" \
+    '<% theComments.forEach(function(comment,index){ %>\
+      <div id="comment-box-<%= comment.id %>" data-id="<%= comment.id %>"  data-user-id="<%= comment.user %>" \
         class="comment-box \
             <% if(comment.id===that.activeCommentId) { %>active<% } else { %>inactive<% } %>\
             <% if(comment["review:isMajor"] === true) { %>comment-is-major-bgc<% }%>\
-            " style="top:<%= that.calculateCommentBoxOffset(comment) %>px;">\
+        >\
             <% if (comment.id===that.activeCommentId || comment.comment.length > 0) { %>\
             <% if(0 === comment.comment.length) { %>'
                 + firstCommentTemplatePart +
@@ -106,7 +106,7 @@ export let commentsTemplate = _.template(
                  var answer = comment.answers[i], active = (comment.id===that.activeCommentId)%>'
                 + answerCommentTemplatePart +
              '<% }\
-            } %>\
+           } %>\
             <% if(comment.id===that.activeCommentId && 0 < comment.comment.length) { %>\
             <div class="comment-answer">\
                 <textarea class="comment-answer-text" rows="1"></textarea>\

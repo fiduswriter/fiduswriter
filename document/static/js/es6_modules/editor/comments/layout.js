@@ -1,7 +1,7 @@
 import {commentsTemplate, filterByUserBoxTemplate} from "./templates"
 import {UpdateScheduler, scheduleDOMUpdate} from "prosemirror/dist/ui/update"
 import {Pos} from "prosemirror/dist/model"
-
+import {Comment} from "./store"
 
 /* Functions related to layouting of comments */
 export class ModCommentLayout {
@@ -72,14 +72,28 @@ export class ModCommentLayout {
         this.activeCommentAnswerId = false
     }
 
-    findCommentsAt(node) {
+    findCommentId(node) {
         let found = false
         for (let i = 0; i < node.marks.length; i++) {
             let mark = node.marks[i]
-            if (mark.type.name === 'comment' && mark.attrs.id in this.mod.store.comments)
-                found = this.mod.store.comments[mark.attrs.id]
+            if (mark.type.name === 'comment' && mark.attrs.id)
+                found = mark.attrs.id
         }
         return found
+    }
+
+    findComment(id) {
+        let found = false
+        if (id in this.mod.store.comments) {
+            found = this.mod.store.comments[id]
+        }
+        return found
+    }
+
+    findCommentsAt(node) {
+        let found = false
+        let id = this.findCommentId(node)
+        return this.findComment(id)
     }
 
 
@@ -133,20 +147,29 @@ export class ModCommentLayout {
             if (!node.isInline) {
                 return
             }
-            let comment = that.findCommentsAt(node)
-            if (!comment || theComments.indexOf(comment) !== -1) {
-                // no comment found or comment already place
+            let commentId = that.findCommentId(node)
+            if (!commentId) {
                 return
             }
-            theComments.push(comment)
-            referrers.push(path.slice()) // TODO: Check whether cloning is still needed with ProseMirror 0.6.0+
-            if (comment.id === that.activeCommentId) {
+            let comment = that.findComment(commentId)
+            if (!comment) {
+                comment = new Comment(that.findCommentId(node))
+                comment.hidden = true // Comment is likely still being edited somewhere else. Don't show it.
+            }
+            if (theComments.indexOf(comment) !== -1) {
+                // comment already placed
+                return
+            }
+            if (comment.hidden) {
+                // Comment will not show by default.
+            } else if (comment.id === that.activeCommentId) {
                 activeCommentStyle += '.comments-enabled .comment[data-id="' + comment.id + '"] {background-color: #fffacf;}'
             } else {
                 activeCommentStyle += '.comments-enabled .comment[data-id="' + comment.id + '"] {background-color: #f2f2f2;}'
             }
+            theComments.push(comment)
+            referrers.push(path.slice()) // TODO: Check whether cloning is still needed with ProseMirror 0.6.0+
         })
-
 
         let commentsTemplateHTML = commentsTemplate({
             theComments,
@@ -167,8 +190,11 @@ export class ModCommentLayout {
               commentBoxes = document.querySelectorAll('#comment-box-container .comment-box'),
               commentPlacementStyle = ''
             referrers.forEach(function(referrer, index) {
-                let commentBox = commentBoxes[index],
-                  commentBoxCoords = commentBox.getBoundingClientRect(),
+                let commentBox = commentBoxes[index]
+                if (commentBox.classList.contains("hidden")) {
+                    return
+                }
+                let commentBoxCoords = commentBox.getBoundingClientRect(),
                   commentBoxHeight = commentBoxCoords.height,
                   nodeOffset = referrer.pop(),
                   commentPos = new Pos(referrer, nodeOffset),

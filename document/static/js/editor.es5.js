@@ -1386,6 +1386,8 @@ var _update = require("prosemirror/dist/ui/update");
 
 var _model = require("prosemirror/dist/model");
 
+var _store = require("./store");
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /* Functions related to layouting of comments */
@@ -1464,14 +1466,30 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
             this.activeCommentAnswerId = false;
         }
     }, {
-        key: "findCommentsAt",
-        value: function findCommentsAt(node) {
+        key: "findCommentId",
+        value: function findCommentId(node) {
             var found = false;
             for (var i = 0; i < node.marks.length; i++) {
                 var mark = node.marks[i];
-                if (mark.type.name === 'comment' && mark.attrs.id in this.mod.store.comments) found = this.mod.store.comments[mark.attrs.id];
+                if (mark.type.name === 'comment' && mark.attrs.id) found = mark.attrs.id;
             }
             return found;
+        }
+    }, {
+        key: "findComment",
+        value: function findComment(id) {
+            var found = false;
+            if (id in this.mod.store.comments) {
+                found = this.mod.store.comments[id];
+            }
+            return found;
+        }
+    }, {
+        key: "findCommentsAt",
+        value: function findCommentsAt(node) {
+            var found = false;
+            var id = this.findCommentId(node);
+            return this.findComment(id);
         }
     }, {
         key: "layoutComments",
@@ -1533,18 +1551,28 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
                 if (!node.isInline) {
                     return;
                 }
-                var comment = that.findCommentsAt(node);
-                if (!comment || theComments.indexOf(comment) !== -1) {
-                    // no comment found or comment already place
+                var commentId = that.findCommentId(node);
+                if (!commentId) {
                     return;
                 }
+                var comment = that.findComment(commentId);
+                if (!comment) {
+                    comment = new _store.Comment(that.findCommentId(node));
+                    comment.hidden = true; // Comment is likely still being edited somewhere else. Don't show it.
+                }
+                if (theComments.indexOf(comment) !== -1) {
+                    // comment already placed
+                    return;
+                }
+                if (comment.hidden) {
+                    // Comment will not show by default.
+                } else if (comment.id === that.activeCommentId) {
+                        activeCommentStyle += '.comments-enabled .comment[data-id="' + comment.id + '"] {background-color: #fffacf;}';
+                    } else {
+                        activeCommentStyle += '.comments-enabled .comment[data-id="' + comment.id + '"] {background-color: #f2f2f2;}';
+                    }
                 theComments.push(comment);
                 referrers.push(path.slice()); // TODO: Check whether cloning is still needed with ProseMirror 0.6.0+
-                if (comment.id === that.activeCommentId) {
-                    activeCommentStyle += '.comments-enabled .comment[data-id="' + comment.id + '"] {background-color: #fffacf;}';
-                } else {
-                    activeCommentStyle += '.comments-enabled .comment[data-id="' + comment.id + '"] {background-color: #f2f2f2;}';
-                }
             });
 
             var commentsTemplateHTML = (0, _templates.commentsTemplate)({
@@ -1565,8 +1593,11 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
                     commentBoxes = document.querySelectorAll('#comment-box-container .comment-box'),
                     commentPlacementStyle = '';
                 referrers.forEach(function (referrer, index) {
-                    var commentBox = commentBoxes[index],
-                        commentBoxCoords = commentBox.getBoundingClientRect(),
+                    var commentBox = commentBoxes[index];
+                    if (commentBox.classList.contains("hidden")) {
+                        return;
+                    }
+                    var commentBoxCoords = commentBox.getBoundingClientRect(),
                         commentBoxHeight = commentBoxCoords.height,
                         nodeOffset = referrer.pop(),
                         commentPos = new _model.Pos(referrer, nodeOffset),
@@ -1667,7 +1698,7 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
     return ModCommentLayout;
 })();
 
-},{"./templates":14,"prosemirror/dist/model":116,"prosemirror/dist/ui/update":132}],12:[function(require,module,exports){
+},{"./store":13,"./templates":14,"prosemirror/dist/model":116,"prosemirror/dist/ui/update":132}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1701,7 +1732,7 @@ var _createClass = (function () { function defineProperties(target, props) { for
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.ModCommentStore = undefined;
+exports.ModCommentStore = exports.Comment = undefined;
 
 var _event = require("prosemirror/dist/util/event");
 
@@ -1716,7 +1747,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                                                                                                                                                           based on https://github.com/ProseMirror/website/blob/master/src/client/collab/comment.js
                                                                                                                                                           */
 
-var Comment = function Comment(id, user, userName, userAvatar, date, comment, answers, isMajor) {
+var Comment = exports.Comment = function Comment(id, user, userName, userAvatar, date, comment, answers, isMajor) {
     _classCallCheck(this, Comment);
 
     this.id = id;
@@ -1727,6 +1758,7 @@ var Comment = function Comment(id, user, userName, userAvatar, date, comment, an
     this.comment = comment;
     this.answers = answers;
     this['review:isMajor'] = isMajor;
+    this.hidden = false;
 };
 
 var ModCommentStore = exports.ModCommentStore = (function () {
@@ -1793,32 +1825,13 @@ var ModCommentStore = exports.ModCommentStore = (function () {
         value: function removeCommentMarks(id) {
             var _this = this;
 
-            this.mod.editor.pm.doc.inlineNodesBetween(false, false, function (_ref, path, start, end) {
-                var marks = _ref.marks;
-                var _iteratorNormalCompletion = true;
-                var _didIteratorError = false;
-                var _iteratorError = undefined;
-
-                try {
-                    for (var _iterator = marks[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                        var mark = _step.value;
-
-                        if (mark.type.name === 'comment' && parseInt(mark.attrs.id) === id) {
-                            _this.mod.editor.pm.apply(_this.mod.editor.pm.tr.removeMark(new _model.Pos(path, start), new _model.Pos(path, end), _schema.CommentMark.type));
-                        }
-                    }
-                } catch (err) {
-                    _didIteratorError = true;
-                    _iteratorError = err;
-                } finally {
-                    try {
-                        if (!_iteratorNormalCompletion && _iterator.return) {
-                            _iterator.return();
-                        }
-                    } finally {
-                        if (_didIteratorError) {
-                            throw _iteratorError;
-                        }
+            this.mod.editor.pm.doc.nodesBetween(false, false, function (node, path, parent) {
+                var nodePath = path.slice(); // Keep original
+                var nodeOffset = nodePath.pop();
+                for (var i = 0; i < node.marks.length; i++) {
+                    var mark = node.marks[i];
+                    if (mark.type.name === 'comment' && parseInt(mark.attrs.id) === id) {
+                        _this.mod.editor.pm.apply(_this.mod.editor.pm.tr.removeMark(new _model.Pos(nodePath, nodeOffset), new _model.Pos(nodePath, nodeOffset + node.width), _schema.CommentMark.type));
                     }
                 }
             });
@@ -2028,116 +2041,24 @@ function randomID() {
 }
 
 },{"../schema":36,"prosemirror/dist/model":116,"prosemirror/dist/transform":122,"prosemirror/dist/util/event":134}],14:[function(require,module,exports){
-'use strict';
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 /** A template for an answer to a comment */
-var answerCommentTemplatePart = '<div class="comment-item">\
-        <div class="comment-user">\
-            <img class="comment-user-avatar" src="<%= answer.userAvatar %>">\
-            <h5 class="comment-user-name"><%= answer.userName %></h5>\
-            <p class="comment-date"><%= jQuery.localizeDate(answer.date) %></p>\
-        </div>\
-        <% if (active && answer.id===that.activeCommentAnswerId) { %>\
-            <div class="comment-text-wrapper">\
-                <div class="comment-answer-form">\
-                    <textarea class="commentAnswerText" data-id="<%= answer.commentId %>" data-answer="<%= answer.id %>" rows="3">\
-                    <%= answer.answer %></textarea>\
-                    <span class="submit-comment-answer-edit fw-button fw-dark">' + gettext("Edit") + '</span>\
-                    <span class="cancelSubmitComment fw-button fw-orange">' + gettext("Cancel") + '</span>\
-                </div>\
-           </div>\
-        <% } else { %>\
-                <div class="comment-text-wrapper">\
-                    <p class="comment-p"><%= answer.answer %></p>\
-                </div>\
-            <% if(active && (answer.user===that.mod.editor.user.id || that.mod.editor.docInfo.is_owner)) { %>\
-                <p class="comment-controls">\
-                    <span class="edit-comment-answer" data-id="<%= answer.commentId %>" data-answer="<%= answer.id %>">' + gettext("Edit") + '</span>\
-                    <span class="delete-comment-answer" data-id="<%= answer.commentId %>" data-answer="<%= answer.id %>">' + gettext("Delete") + '</span>\
-                </p>\
-            <% } %>\
-        <% } %>\
-    </div>';
+var answerCommentTemplatePart = "\n    <div class=\"comment-item\">\n        <div class=\"comment-user\">\n            <img class=\"comment-user-avatar\" src=\"<%= answer.userAvatar %>\">\n            <h5 class=\"comment-user-name\"><%= answer.userName %></h5>\n            <p class=\"comment-date\"><%= jQuery.localizeDate(answer.date) %></p>\n        </div>\n        <% if (active && answer.id===that.activeCommentAnswerId) { %>\n            <div class=\"comment-text-wrapper\">\n                <div class=\"comment-answer-form\">\n                    <textarea class=\"commentAnswerText\" data-id=\"<%= answer.commentId %>\" data-answer=\"<%= answer.id %>\" rows=\"3\">\n                    <%= answer.answer %></textarea>\n                    <span class=\"submit-comment-answer-edit fw-button fw-dark\">" + gettext("Edit") + "</span>\n                    <span class=\"cancelSubmitComment fw-button fw-orange\">" + gettext("Cancel") + "</span>\n                </div>\n           </div>\n        <% } else { %>\n                <div class=\"comment-text-wrapper\">\n                    <p class=\"comment-p\"><%= answer.answer %></p>\n                </div>\n            <% if(active && (answer.user===that.mod.editor.user.id || that.mod.editor.docInfo.is_owner)) { %>\n                <p class=\"comment-controls\">\n                    <span class=\"edit-comment-answer\" data-id=\"<%= answer.commentId %>\" data-answer=\"<%= answer.id %>\">" + gettext("Edit") + "</span>\n                    <span class=\"delete-comment-answer\" data-id=\"<%= answer.commentId %>\" data-answer=\"<%= answer.id %>\">" + gettext("Delete") + "</span>\n                </p>\n            <% } %>\n        <% } %>\n    </div>\n  ";
 
 /** A template to show one individual comment */
-var singleCommentTemplatePart = '<div class="comment-item">\
-        <div class="comment-user">\
-            <img class="comment-user-avatar" src="<%= comment.userAvatar %>">\
-            <h5 class="comment-user-name"><%= comment.userName %></h5>\
-            <p class="comment-date"><%= jQuery.localizeDate(comment.date) %></p>\
-        </div>\
-        <div class="comment-text-wrapper">\
-            <p class="comment-p"><%= comment.comment %></p>\
-            <div class="comment-form">\
-                <textarea class="commentText" data-id="<%= comment.id %>" rows="5"></textarea>\
-                <span class="submitComment fw-button fw-dark">' + gettext("Edit") + '</span>\
-                <span class="cancelSubmitComment fw-button fw-orange">' + gettext("Cancel") + '</span>\
-            </div>\
-        </div>\
-        <% if(active && comment.user===that.mod.editor.user.id) { %>\
-        <p class="comment-controls">\
-            <span class="edit-comment">' + gettext("Edit") + '</span>\
-            <span class="delete-comment" data-id="<%= comment.id %>">' + gettext("Delete") + '</span>\
-        </p>\
-        <% } %>\
-    ';
+var singleCommentTemplatePart = "\n    <div class=\"comment-item\">\n        <div class=\"comment-user\">\n            <img class=\"comment-user-avatar\" src=\"<%= comment.userAvatar %>\">\n            <h5 class=\"comment-user-name\"><%= comment.userName %></h5>\n            <p class=\"comment-date\"><%= jQuery.localizeDate(comment.date) %></p>\n        </div>\n        <div class=\"comment-text-wrapper\">\n            <p class=\"comment-p\"><%= comment.comment %></p>\n            <div class=\"comment-form\">\n                <textarea class=\"commentText\" data-id=\"<%= comment.id %>\" rows=\"5\"></textarea>\n                <span class=\"submitComment fw-button fw-dark\">" + gettext("Edit") + "</span>\n                <span class=\"cancelSubmitComment fw-button fw-orange\">" + gettext("Cancel") + "</span>\n            </div>\n        </div>\n        <% if(active && comment.user===that.mod.editor.user.id) { %>\n        <p class=\"comment-controls\">\n            <span class=\"edit-comment\">" + gettext("Edit") + "</span>\n            <span class=\"delete-comment\" data-id=\"<%= comment.id %>\">" + gettext("Delete") + "</span>\n        </p>\n        <% } %>\n    </div>\n    ";
 
 /** A template for the editor of a first comment before it has been saved (not an answer to a comment). */
-var firstCommentTemplatePart = '<div class="comment-item">\
-        <div class="comment-user">\
-            <img class="comment-user-avatar" src="<%= comment.userAvatar %>">\
-            <h5 class="comment-user-name"><%= comment.userName %></h5>\
-            <p class="comment-date"><%= jQuery.localizeDate(comment.date) %></p>\
-        </div>\
-        <div class="comment-text-wrapper">\
-            <textarea class="commentText" data-id="<%= comment.id %>" rows="5"></textarea>\
-            <input class="comment-is-major" type="checkbox" name="isMajor" value="0" />' + gettext("Is major") + '<br />\
-            <span class="submitComment fw-button fw-dark">' + gettext("Submit") + '</span>\
-            <span class="cancelSubmitComment fw-button fw-orange">' + gettext("Cancel") + '</span>\
-        </div>\
-    </div>';
+var firstCommentTemplatePart = "\n    <div class=\"comment-item\">\n        <div class=\"comment-user\">\n            <img class=\"comment-user-avatar\" src=\"<%= comment.userAvatar %>\">\n            <h5 class=\"comment-user-name\"><%= comment.userName %></h5>\n            <p class=\"comment-date\"><%= jQuery.localizeDate(comment.date) %></p>\n        </div>\n        <div class=\"comment-text-wrapper\">\n            <textarea class=\"commentText\" data-id=\"<%= comment.id %>\" rows=\"5\"></textarea>\n            <input class=\"comment-is-major\" type=\"checkbox\" name=\"isMajor\" value=\"0\" />" + gettext("Is major") + "<br />\n            <span class=\"submitComment fw-button fw-dark\">" + gettext("Submit") + "</span>\n            <span class=\"cancelSubmitComment fw-button fw-orange\">" + gettext("Cancel") + "</span>\n        </div>\n    </div>\n  ";
 
 /** A template to display all the comments */
-var commentsTemplate = exports.commentsTemplate = _.template('<% theComments.forEach(function(comment,index){ %>\
-      <div id="comment-box-<%= comment.id %>" data-id="<%= comment.id %>"  data-user-id="<%= comment.user %>" \
-        class="comment-box \
-            <% if(comment.id===that.activeCommentId) { %>active<% } else { %>inactive<% } %>\
-            <% if(comment["review:isMajor"] === true) { %>comment-is-major-bgc<% }%>\
-        >\
-            <% if (comment.id===that.activeCommentId || comment.comment.length > 0) { %>\
-            <% if(0 === comment.comment.length) { %>' + firstCommentTemplatePart + '<% } else { \
-               var active = (comment.id===that.activeCommentId);\
-              %>' + singleCommentTemplatePart + '<% } %>\
-            <% if (comment.answers && comment.answers.length) {\
-               for (var i=0;i < comment.answers.length; i++) { \
-                 var answer = comment.answers[i], active = (comment.id===that.activeCommentId)%>' + answerCommentTemplatePart + '<% }\
-           } %>\
-            <% if(comment.id===that.activeCommentId && 0 < comment.comment.length) { %>\
-            <div class="comment-answer">\
-                <textarea class="comment-answer-text" rows="1"></textarea>\
-                <div class="comment-answer-btns">\
-                    <button class="comment-answer-submit fw-button fw-dark" type="submit">' + gettext("Submit") + '</button>\
-                    <button class="cancelSubmitComment fw-button fw-orange" type="submit">' + gettext("Cancel") + '</button>\
-                </div>\
-            </div>\
-            <% } %>\
-            <% if(comment.id===that.activeCommentId && (comment.user===that.mod.editor.user.id || that.mod.editor.docInfo.is_owner)) { %>\
-                <span class="delete-comment-all delete-comment icon-cancel-circle" data-id="<%= comment.id %>"></span>\
-            <% } %>\
-            <% } %>\
-        </div>\
-    <% }); %>');
+var commentsTemplate = exports.commentsTemplate = _.template("\n    <% theComments.forEach(function(comment,index){ %>\n      <% if (comment.hidden) { %><div id=\"comment-box-<%= comment.id %>\" class=\"comment-box hidden\"></div><% } else { %>\n          <div id=\"comment-box-<%= comment.id %>\" data-id=\"<%= comment.id %>\"  data-user-id=\"<%= comment.user %>\"\n            class=\"comment-box\n                <% if(comment.id===that.activeCommentId) { %>active<% } else { %>inactive<% } %>\n                <% if(comment[\"review:isMajor\"] === true) { %>comment-is-major-bgc<% }%>\"\n            >\n                <% if(0 === comment.comment.length) { %>" + firstCommentTemplatePart + "<% } else {\n                   var active = (comment.id===that.activeCommentId);\n                  %>" + singleCommentTemplatePart + "<% } %>\n                <% if (comment.answers && comment.answers.length) {\n                   for (var i=0;i < comment.answers.length; i++) {\n                     var answer = comment.answers[i], active = (comment.id===that.activeCommentId)%>" + answerCommentTemplatePart + "<% }\n               } %>\n                <% if(comment.id===that.activeCommentId && 0 < comment.comment.length) { %>\n                <div class=\"comment-answer\">\n                    <textarea class=\"comment-answer-text\" rows=\"1\"></textarea>\n                    <div class=\"comment-answer-btns\">\n                        <button class=\"comment-answer-submit fw-button fw-dark\" type=\"submit\">" + gettext("Submit") + "</button>\n                        <button class=\"cancelSubmitComment fw-button fw-orange\" type=\"submit\">" + gettext("Cancel") + "</button>\n                    </div>\n                </div>\n                <% } %>\n                <% if(comment.id===that.activeCommentId && (comment.user===that.mod.editor.user.id\n                  || that.mod.editor.docInfo.is_owner)) { %>\n                    <span class=\"delete-comment-all delete-comment icon-cancel-circle\" data-id=\"<%= comment.id %>\"></span>\n                <% } %>\n            </div>\n        <% } %>\n    <% }); %>\n  ");
 
-var filterByUserBoxTemplate = exports.filterByUserBoxTemplate = _.template('<div id="comment-filter-byuser-box" title="' + gettext("Filter by user") + '">\
-        <select>\
-            <% _.each(users, function(user) { %>\
-                <option value="<%- user.user_id %>"><%- user.user_name %></option>\
-            <% }) %>\
-        </select>\
-    </div>');
+var filterByUserBoxTemplate = exports.filterByUserBoxTemplate = _.template("\n  <div id=\"comment-filter-byuser-box\" title=\"" + gettext("Filter by user") + "\">\n        <select>\n            <% _.each(users, function(user) { %>\n                <option value=\"<%- user.user_id %>\"><%- user.user_name %></option>\n            <% }) %>\n        </select>\n    </div>\n");
 
 },{}],15:[function(require,module,exports){
 "use strict";
@@ -2581,7 +2502,7 @@ var Editor = exports.Editor = (function () {
             transform.steps.forEach(function (step, index) {
                 if (step.type === 'replace') {
                     if (step.from.cmp(step.to) !== 0) {
-                        transform.docs[index].inlineNodesBetween(step.from, step.to, function (node) {
+                        transform.docs[index].nodesBetween(step.from, step.to, function (node) {
                             if (node.type.name === 'citation') {
                                 // A citation was replaced
                                 updateBibliography = true;
@@ -2901,10 +2822,15 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = (function () {
             var footnoteMarkers = [],
                 that = this;
 
-            this.mod.editor.pm.doc.inlineNodesBetween(fromPos, toPos, function (inlineNode, path, start, end, parent) {
-                if (inlineNode.type.name === 'footnote') {
+            this.mod.editor.pm.doc.nodesBetween(fromPos, toPos, function (node, path, parent) {
+                if (!node.isInline) {
+                    return;
+                }
+                if (node.type.name === 'footnote') {
                     (function () {
-                        var footnoteMarker = that.mod.editor.pm.markRange(new _model.Pos(path, start), new _model.Pos(path, end));
+                        var nodePath = path.slice(); // Make a copy to preserve original.
+                        var nodeOffset = nodePath.pop();
+                        var footnoteMarker = that.mod.editor.pm.markRange(new _model.Pos(nodePath, nodeOffset), new _model.Pos(nodePath, nodeOffset + node.width));
                         footnoteMarker.on('removed', function () {
                             that.mod.fnEditor.removeFootnote(footnoteMarker);
                         });
@@ -2924,18 +2850,20 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = (function () {
             var count = 0,
                 passed = true,
                 that = this;
-            this.mod.editor.pm.doc.inlineNodesBetween(null, null, function (inlineNode, path, start, end, parent) {
-                if (inlineNode.type.name !== 'footnote') {
+            this.mod.editor.pm.doc.nodesBetween(null, null, function (node, path, parent) {
+                if (!node.isInline || node.type.name !== 'footnote') {
                     return;
                 }
                 if (that.mod.footnotes.length <= count) {
                     passed = false;
                 } else {
-                    var startPos = new _model.Pos(path, start);
+                    var nodePath = path.slice(); // Preserve original
+                    var nodeOffset = nodePath.pop();
+                    var startPos = new _model.Pos(nodePath, nodeOffset);
                     if (startPos.cmp(that.mod.footnotes[count].from) !== 0) {
                         passed = false;
                     }
-                    var endPos = new _model.Pos(path, end);
+                    var endPos = new _model.Pos(nodePath, nodeOffset + node.width);
                     if (endPos.cmp(that.mod.footnotes[count].to) !== 0) {
                         passed = false;
                     }

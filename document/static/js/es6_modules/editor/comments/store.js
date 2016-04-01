@@ -7,7 +7,7 @@ import {Transform} from "prosemirror/dist/transform"
 import {Pos} from "prosemirror/dist/model"
 import {CommentMark} from "../schema"
 
-class Comment {
+export class Comment {
     constructor(id, user, userName, userAvatar, date, comment, answers, isMajor) {
         this.id = id
         this.user = user
@@ -17,6 +17,7 @@ class Comment {
         this.comment = comment
         this.answers = answers
         this['review:isMajor'] = isMajor
+        this.hidden = false
     }
 }
 
@@ -71,13 +72,14 @@ export class ModCommentStore {
     }
 
     removeCommentMarks(id) {
-        this.mod.editor.pm.doc.inlineNodesBetween(false, false, ({
-            marks
-        }, path, start, end) => {
-            for (let mark of marks) {
+        this.mod.editor.pm.doc.nodesBetween(false, false, (node, path, parent) => {
+            let nodePath = path.slice()// Keep original
+            let nodeOffset = nodePath.pop()
+            for (let i =0; i < node.marks.length; i++) {
+                let mark = node.marks[i]
                 if (mark.type.name === 'comment' && parseInt(mark.attrs.id) === id) {
                     this.mod.editor.pm.apply(
-                        this.mod.editor.pm.tr.removeMark(new Pos(path, start), new Pos(path, end), CommentMark.type)
+                        this.mod.editor.pm.tr.removeMark(new Pos(nodePath, nodeOffset), new Pos(nodePath, nodeOffset + node.width), CommentMark.type)
                     )
                 }
             }

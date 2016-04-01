@@ -388,7 +388,7 @@ export class Editor {
         transform.steps.forEach(function(step, index) {
             if (step.type === 'replace') {
                 if (step.from.cmp(step.to) !== 0) {
-                    transform.docs[index].inlineNodesBetween(step.from, step.to, function(node) {
+                    transform.docs[index].nodesBetween(step.from, step.to, function(node) {
                         if (node.type.name === 'citation') {
                             // A citation was replaced
                             updateBibliography = true

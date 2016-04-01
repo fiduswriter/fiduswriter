@@ -18,6 +18,7 @@
     width: 200px;
     padding: 9px;
     margin-top: 10px;
+    position: relative;
 }
 .comment-box.active {
     background-color: #fffacf;
@@ -36,7 +37,9 @@
     color: #fffacf;
     text-shadow: -1px 0 1px #ccc;
 }
-
+.comment-box.hidden {
+    display: none;
+}
 .comment-item {
     margin-top: 10px;
     padding-top: 10px;

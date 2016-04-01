@@ -1495,8 +1495,10 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
                 that = this;
 
             if (selection.empty) {
-                var node = this.mod.editor.pm.doc.path(selection.from.path.concat(selection.from.offset));
-                comment = this.findCommentsAt(node);
+                var node = this.mod.editor.pm.doc.nodeAfter(selection.from);
+                if (node) {
+                    comment = this.findCommentsAt(node);
+                }
             } else {
                 this.mod.editor.pm.doc.nodesBetween(selection.from, selection.to, function (node, path, parent) {
                     if (!node.isInline) {
@@ -1524,7 +1526,8 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
             var that = this;
 
             var theComments = [],
-                referrers = [];
+                referrers = [],
+                activeCommentStyle = '';
 
             this.mod.editor.pm.doc.nodesBetween(null, null, function (node, path, parent) {
                 if (!node.isInline) {
@@ -1537,6 +1540,11 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
                 }
                 theComments.push(comment);
                 referrers.push(path.slice()); // TODO: Check whether cloning is still needed with ProseMirror 0.6.0+
+                if (comment.id === that.activeCommentId) {
+                    activeCommentStyle += '.comments-enabled .comment[data-id="' + comment.id + '"] {background-color: #fffacf;}';
+                } else {
+                    activeCommentStyle += '.comments-enabled .comment[data-id="' + comment.id + '"] {background-color: #f2f2f2;}';
+                }
             });
 
             var commentsTemplateHTML = (0, _templates.commentsTemplate)({
@@ -1545,12 +1553,6 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
             });
             if (document.getElementById('comment-box-container').innerHTML !== commentsTemplateHTML) {
                 document.getElementById('comment-box-container').innerHTML = commentsTemplateHTML;
-            }
-
-            var activeCommentStyle = '';
-
-            if (false !== this.activeCommentId) {
-                activeCommentStyle = '.comments-enabled .comment[data-id="' + that.activeCommentId + '"] {background-color: #fffacf;}';
             }
 
             if (document.getElementById('active-comment-style').innerHTML != activeCommentStyle) {

@@ -97,8 +97,10 @@ export class ModCommentLayout {
         let selection = this.mod.editor.pm.selection, comment = false, that = this
 
         if (selection.empty) {
-            let node = this.mod.editor.pm.doc.path(selection.from.path.concat(selection.from.offset))
-            comment = this.findCommentsAt(node)
+            let node = this.mod.editor.pm.doc.nodeAfter(selection.from)
+            if (node) {
+                comment = this.findCommentsAt(node)
+            }
         } else {
             this.mod.editor.pm.doc.nodesBetween(selection.from, selection.to, function(node, path, parent) {
                 if (!node.isInline) {
@@ -124,7 +126,8 @@ export class ModCommentLayout {
 
         let that = this
 
-        let theComments = [], referrers = []
+        let theComments = [], referrers = [], activeCommentStyle = ''
+
 
         this.mod.editor.pm.doc.nodesBetween(null, null, function(node, path, parent) {
             if (!node.isInline) {
@@ -137,6 +140,11 @@ export class ModCommentLayout {
             }
             theComments.push(comment)
             referrers.push(path.slice()) // TODO: Check whether cloning is still needed with ProseMirror 0.6.0+
+            if (comment.id === that.activeCommentId) {
+                activeCommentStyle += '.comments-enabled .comment[data-id="' + comment.id + '"] {background-color: #fffacf;}'
+            } else {
+                activeCommentStyle += '.comments-enabled .comment[data-id="' + comment.id + '"] {background-color: #f2f2f2;}'
+            }
         })
 
 
@@ -146,12 +154,6 @@ export class ModCommentLayout {
         })
         if (document.getElementById('comment-box-container').innerHTML !== commentsTemplateHTML) {
             document.getElementById('comment-box-container').innerHTML = commentsTemplateHTML
-        }
-
-        let activeCommentStyle = ''
-
-        if (false !== this.activeCommentId) {
-            activeCommentStyle = '.comments-enabled .comment[data-id="' + that.activeCommentId + '"] {background-color: #fffacf;}'
         }
 
 

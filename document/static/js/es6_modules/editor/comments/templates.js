@@ -82,7 +82,7 @@ let firstCommentTemplatePart =
     '</span>\
             <span class="cancelSubmitComment fw-button fw-orange">' +
     gettext("Cancel") + '</span>\
-        </div>EEEE\
+        </div>\
     </div>'
 
 /** A template to display all the comments */

@@ -2097,7 +2097,7 @@ var firstCommentTemplatePart = '<div class="comment-item">\
             <input class="comment-is-major" type="checkbox" name="isMajor" value="0" />' + gettext("Is major") + '<br />\
             <span class="submitComment fw-button fw-dark">' + gettext("Submit") + '</span>\
             <span class="cancelSubmitComment fw-button fw-orange">' + gettext("Cancel") + '</span>\
-        </div>EEEE\
+        </div>\
     </div>';
 
 /** A template to display all the comments */

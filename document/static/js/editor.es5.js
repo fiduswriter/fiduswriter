@@ -2389,6 +2389,15 @@ var Editor = exports.Editor = (function () {
             });
         }
     }, {
+        key: "resetCitations",
+        value: function resetCitations() {
+            var citations = [].slice.call(document.querySelectorAll('#document-editable span.citation'));
+            citations.forEach(function (citation) {
+                citation.innerHTML = '';
+            });
+            this.layoutCitations();
+        }
+    }, {
         key: "layoutCitations",
         value: function layoutCitations() {
             var emptyCitations = document.querySelectorAll('#document-editable span.citation:empty');
@@ -2565,8 +2574,6 @@ var Editor = exports.Editor = (function () {
     }, {
         key: "onTransform",
         value: function onTransform(transform, local) {
-            var _this = this;
-
             var updateBibliography = false,
                 updateTitle = false,
                 that = this;
@@ -2589,13 +2596,10 @@ var Editor = exports.Editor = (function () {
             });
 
             if (updateBibliography) {
-                (function () {
-                    // Recreate the bibliography on next flush.
-                    var formatCitations = new _update.UpdateScheduler(_this.pm, "flush", function () {
-                        formatCitations.detach();
-                        this.layoutCitations();
-                    });
-                })();
+                // Recreate the bibliography on next flush.
+                (0, _update.scheduleDOMUpdate)(this.pm, function () {
+                    return that.resetCitations();
+                });
             }
 
             if (updateTitle) {
@@ -4937,13 +4941,15 @@ Citation.register("parseDOM", "cite", {
 });
 
 Citation.prototype.serializeDOM = function (node, serializer) {
-    return serializer.renderAs(node, "span", {
+    var dom = serializer.renderAs(node, "span", {
         class: 'citation',
         'data-bib-format': node.attrs.bibFormat,
         'data-bib-entry': node.attrs.bibEntry,
         'data-bib-before': node.attrs.bibBefore,
         'data-bib-page': node.attrs.bibPage
     });
+    // TODO: Do the citation formatting here rather than centrally, maybe?
+    return dom;
 };
 
 Citation.register("command", "insert", {

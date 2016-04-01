@@ -3,7 +3,7 @@ import {ProseMirror} from "prosemirror/dist/edit/main"
 import {fromDOM} from "prosemirror/dist/format"
 import {serializeTo} from "prosemirror/dist/format"
 import "prosemirror/dist/collab"
-import {UpdateScheduler} from "prosemirror/dist/ui/update"
+import {UpdateScheduler, scheduleDOMUpdate} from "prosemirror/dist/ui/update"
 //import "prosemirror/dist/menu/menubar"
 
 import {fidusSchema} from "./schema"
@@ -203,6 +203,14 @@ export class Editor {
         })
     }
 
+    resetCitations() {
+        let citations = [].slice.call(document.querySelectorAll('#document-editable span.citation'))
+        citations.forEach(function(citation){
+            citation.innerHTML = ''
+        })
+        this.layoutCitations()
+    }
+
     layoutCitations() {
         let emptyCitations = document.querySelectorAll('#document-editable span.citation:empty')
         if (emptyCitations.length > 0) {
@@ -396,10 +404,7 @@ export class Editor {
 
         if (updateBibliography) {
             // Recreate the bibliography on next flush.
-            let formatCitations = new UpdateScheduler(this.pm, "flush", function() {
-                formatCitations.detach()
-                this.layoutCitations()
-            })
+            scheduleDOMUpdate(this.pm, () => {return that.resetCitations()})
         }
 
         if (updateTitle) {

@@ -20895,7 +20895,7 @@ function options(path, ranges) {
         if (node.type.contains == null) dom.setAttribute("pm-leaf", "true");
         if (offset != null) dom.setAttribute("pm-offset", offset);
         if (node.isTextblock) adjustTrailingHacks(dom, node);
-        if (dom.contentEditable == "false") dom = (0, _dom.elt)("div", dom);
+        if (dom.contentEditable == "false") dom = (0, _dom.elt)("div", null, dom);
       }
 
       return dom;

@@ -39,7 +39,9 @@ export class ModSettingsLayout {
             // for font loading.
             setTimeout(function() {
                 that.mod.editor.mod.comments.layout.layoutComments()
-            }, 100)
+
+              //  that.mod.editor.mod.footnotes.layout.layoutFootnotes()
+            }, 500)
         })
 
     }

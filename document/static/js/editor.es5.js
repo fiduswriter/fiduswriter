@@ -210,7 +210,7 @@ var BibLatexExporter = exports.BibLatexExporter = (function () {
     return BibLatexExporter;
 })();
 
-},{"../../exporter/zip":60}],3:[function(require,module,exports){
+},{"../../exporter/zip":61}],3:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1098,7 +1098,7 @@ var ModCollabDocChanges = exports.ModCollabDocChanges = (function () {
     return ModCollabDocChanges;
 })();
 
-},{"../schema":36,"prosemirror/dist/transform":122}],8:[function(require,module,exports){
+},{"../schema":37,"prosemirror/dist/transform":123}],8:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1697,7 +1697,7 @@ var ModCommentLayout = exports.ModCommentLayout = (function () {
     return ModCommentLayout;
 })();
 
-},{"./store":13,"./templates":14,"prosemirror/dist/model":116,"prosemirror/dist/ui/update":132}],12:[function(require,module,exports){
+},{"./store":13,"./templates":14,"prosemirror/dist/model":117,"prosemirror/dist/ui/update":133}],12:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2063,7 +2063,7 @@ function randomID() {
     return Math.floor(Math.random() * 0xffffffff);
 }
 
-},{"../schema":36,"prosemirror/dist/model":116,"prosemirror/dist/transform":122,"prosemirror/dist/util/event":134}],14:[function(require,module,exports){
+},{"../schema":37,"prosemirror/dist/model":117,"prosemirror/dist/transform":123,"prosemirror/dist/util/event":135}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2184,7 +2184,7 @@ var Editor = exports.Editor = (function () {
             new _mod4.ModTools(this);
             new _mod.ModComments(this);
             new _update.UpdateScheduler(this.pm, "selectionChange change activeMarkChange blur focus setDoc", function () {
-                (0, _updateUi.updateUI)(that);
+                return (0, _updateUi.updateUI)(that);
             });
             this.pm.on("change", function () {
                 that.docInfo.changed = true;
@@ -2578,7 +2578,7 @@ var Editor = exports.Editor = (function () {
     return Editor;
 })();
 
-},{"../citations/format":3,"../exporter/json":54,"./collab/mod":8,"./comments/mod":12,"./footnotes/mod":18,"./menus/mod":23,"./node-convert":35,"./schema":36,"./server-communications":37,"./settings/mod":39,"./tools/mod":41,"./update-ui":47,"prosemirror/dist/collab":87,"prosemirror/dist/edit/main":101,"prosemirror/dist/format":108,"prosemirror/dist/ui/update":132}],16:[function(require,module,exports){
+},{"../citations/format":3,"../exporter/json":55,"./collab/mod":8,"./comments/mod":12,"./footnotes/mod":19,"./menus/mod":24,"./node-convert":36,"./schema":37,"./server-communications":38,"./settings/mod":40,"./tools/mod":42,"./update-ui":48,"prosemirror/dist/collab":88,"prosemirror/dist/edit/main":102,"prosemirror/dist/format":109,"prosemirror/dist/ui/update":133}],16:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2704,7 +2704,104 @@ var ModFootnoteEditor = exports.ModFootnoteEditor = (function () {
     return ModFootnoteEditor;
 })();
 
-},{"../schema":36,"prosemirror/dist/format":108,"prosemirror/dist/model":116,"prosemirror/dist/transform":122}],17:[function(require,module,exports){
+},{"../schema":37,"prosemirror/dist/format":109,"prosemirror/dist/model":117,"prosemirror/dist/transform":123}],17:[function(require,module,exports){
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.ModFootnoteLayout = undefined;
+
+var _update = require('prosemirror/dist/ui/update');
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/* A class to make footnotes appear correctly off the side of their referrer. */
+
+var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
+    function ModFootnoteLayout(mod) {
+        _classCallCheck(this, ModFootnoteLayout);
+
+        mod.layout = this;
+        this.mod = mod;
+        this.setup();
+        this.bindEvents();
+    }
+
+    _createClass(ModFootnoteLayout, [{
+        key: 'setup',
+        value: function setup() {
+            // Add two elements to hold dynamic CSS info about comments.
+            var styleContainers = document.createElement('temp');
+            styleContainers.innerHTML = '<style type="text/css" id="footnote-placement-style"></style>';
+            while (styleContainers.firstElementChild) {
+                document.head.appendChild(styleContainers.firstElementChild);
+            }
+        }
+    }, {
+        key: 'bindEvents',
+        value: function bindEvents() {
+            var that = this;
+            //        new UpdateScheduler(this.mod.editor.pm, "change setDoc", () => {return that.updateDOM()})
+            //  new UpdateScheduler(this.mod.fnPm, "change setDoc", () => {return that.updateDOM()})
+        }
+
+        /*  layoutFootnotes() {
+              let that = this
+              console.log('hans')
+              scheduleDOMUpdate(this.mod.editor.pm, () => {console.log('fish');return that.updateDOM()})
+          }*/
+
+    }, {
+        key: 'updateDOM',
+        value: function updateDOM() {
+            // Handle the CSS layout of the footnotes on the screen.
+            console.log('something something');
+            // DOM write phase
+
+            var that = this;
+
+            return function () {
+                // DOM read phase
+                var totalOffset = document.getElementById('footnote-box-container').getBoundingClientRect().top + 10,
+                    footnoteBoxes = document.querySelectorAll('#footnote-box-container .footnote-container'),
+                    footnotePlacementStyle = '',
+                    referrers = that.mod.footnotes;
+                console.log([referrers.length, footnoteBoxes.length]);
+                if (referrers.length !== footnoteBoxes.length) {
+                    // Apparently not all footnote boxes have been drawn. Abort for now.
+                    return;
+                }
+                referrers.forEach(function (referrer, index) {
+                    var footnoteBox = footnoteBoxes[index];
+
+                    var footnoteBoxCoords = footnoteBox.getBoundingClientRect(),
+                        footnoteBoxHeight = footnoteBoxCoords.height,
+                        referrerTop = that.mod.editor.pm.coordsAtPos(referrer.from).top,
+                        topMargin = 10;
+
+                    if (referrerTop > totalOffset) {
+                        topMargin = parseInt(referrerTop - totalOffset);
+                        footnotePlacementStyle += '.footnote-container:nth-of-type(' + (index + 1) + ') {margin-top: ' + topMargin + 'px;}\n';
+                    }
+                    totalOffset += footnoteBoxHeight + topMargin;
+                });
+                return function () {
+                    //DOM write phase
+                    if (document.getElementById('footnote-placement-style').innerHTML != footnotePlacementStyle) {
+                        document.getElementById('footnote-placement-style').innerHTML = footnotePlacementStyle;
+                    }
+                };
+            };
+        }
+    }]);
+
+    return ModFootnoteLayout;
+})();
+
+},{"prosemirror/dist/ui/update":133}],18:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2930,7 +3027,7 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = (function () {
     return ModFootnoteMarkers;
 })();
 
-},{"../schema":36,"prosemirror/dist/format":108,"prosemirror/dist/model":116}],18:[function(require,module,exports){
+},{"../schema":37,"prosemirror/dist/format":109,"prosemirror/dist/model":117}],19:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2950,6 +3047,8 @@ var _editor = require("./editor");
 
 var _markers = require("./markers");
 
+var _layout = require("./layout");
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var ModFootnotes = exports.ModFootnotes = (function () {
@@ -2962,6 +3061,7 @@ var ModFootnotes = exports.ModFootnotes = (function () {
         this.init();
         new _editor.ModFootnoteEditor(this);
         new _markers.ModFootnoteMarkers(this);
+        new _layout.ModFootnoteLayout(this);
     }
 
     _createClass(ModFootnotes, [{
@@ -2980,7 +3080,7 @@ var ModFootnotes = exports.ModFootnotes = (function () {
     return ModFootnotes;
 })();
 
-},{"../schema":36,"./editor":16,"./markers":17,"prosemirror/dist/collab":87,"prosemirror/dist/edit/main":101}],19:[function(require,module,exports){
+},{"../schema":37,"./editor":16,"./layout":17,"./markers":18,"prosemirror/dist/collab":88,"prosemirror/dist/edit/main":102}],20:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -3100,7 +3200,7 @@ var ModMenusActions = exports.ModMenusActions = (function () {
     return ModMenusActions;
 })();
 
-},{"../../exporter/copy":48,"../../exporter/epub":51,"../../exporter/html":53,"../../exporter/latex":55,"../../exporter/native":56}],20:[function(require,module,exports){
+},{"../../exporter/copy":49,"../../exporter/epub":52,"../../exporter/html":54,"../../exporter/latex":56,"../../exporter/native":57}],21:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -3166,7 +3266,7 @@ var ModMenusCitation = exports.ModMenusCitation = (function () {
     return ModMenusCitation;
 })();
 
-},{"./toolbar_items/templates":33}],21:[function(require,module,exports){
+},{"./toolbar_items/templates":34}],22:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -3340,7 +3440,7 @@ var ModMenusHeader = exports.ModMenusHeader = (function () {
     return ModMenusHeader;
 })();
 
-},{"../../documents/access-rights/dialog":4}],22:[function(require,module,exports){
+},{"../../documents/access-rights/dialog":4}],23:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -3404,7 +3504,7 @@ var ModMenusKeyBindings = exports.ModMenusKeyBindings = (function () {
     return ModMenusKeyBindings;
 })();
 
-},{"prosemirror/dist/edit":99}],23:[function(require,module,exports){
+},{"prosemirror/dist/edit":100}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3438,7 +3538,7 @@ var ModMenus = exports.ModMenus = function ModMenus(editor) {
     new _keyBindings.ModMenusKeyBindings(this);
 };
 
-},{"./actions":19,"./citation":20,"./header":21,"./key-bindings":22,"./toolbar":24}],24:[function(require,module,exports){
+},{"./actions":20,"./citation":21,"./header":22,"./key-bindings":23,"./toolbar":25}],25:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -3497,7 +3597,7 @@ var ModMenusToolbar = exports.ModMenusToolbar = (function () {
     return ModMenusToolbar;
 })();
 
-},{"./toolbar_items/block_styles":25,"./toolbar_items/cite":26,"./toolbar_items/comment":27,"./toolbar_items/figure":28,"./toolbar_items/footnote":29,"./toolbar_items/inline_styles":30,"./toolbar_items/link":31,"./toolbar_items/math":32,"./toolbar_items/undo_redo":34}],25:[function(require,module,exports){
+},{"./toolbar_items/block_styles":26,"./toolbar_items/cite":27,"./toolbar_items/comment":28,"./toolbar_items/figure":29,"./toolbar_items/footnote":30,"./toolbar_items/inline_styles":31,"./toolbar_items/link":32,"./toolbar_items/math":33,"./toolbar_items/undo_redo":35}],26:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3535,7 +3635,7 @@ var bindBlockStyles = exports.bindBlockStyles = function bindBlockStyles(editor)
     });
 };
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3763,7 +3863,7 @@ var bindCite = exports.bindCite = function bindCite(mod) {
     });
 };
 
-},{"./templates":33}],27:[function(require,module,exports){
+},{"./templates":34}],28:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3777,7 +3877,7 @@ var bindComment = exports.bindComment = function bindComment(editor) {
     });
 };
 
-},{}],28:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4006,7 +4106,7 @@ var bindFigure = exports.bindFigure = function bindFigure(editor) {
     });
 };
 
-},{"./templates":33,"katex":64}],29:[function(require,module,exports){
+},{"./templates":34,"katex":65}],30:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4019,7 +4119,7 @@ var bindFootnote = exports.bindFootnote = function bindFootnote(editor) {
     });
 };
 
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4038,7 +4138,7 @@ var bindInlineStyles = exports.bindInlineStyles = function bindInlineStyles(edit
     });
 };
 
-},{}],31:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4124,7 +4224,7 @@ var bindLink = exports.bindLink = function bindLink(editor) {
     });
 };
 
-},{"./templates":33}],32:[function(require,module,exports){
+},{"./templates":34}],33:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4208,7 +4308,7 @@ var bindMath = exports.bindMath = function bindMath(editor) {
     });
 };
 
-},{"./templates":33}],33:[function(require,module,exports){
+},{"./templates":34}],34:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4377,7 +4477,7 @@ var selectedCitationTemplate = exports.selectedCitationTemplate = _.template('<t
       </table>\
   </td></tr>');
 
-},{}],34:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4396,7 +4496,7 @@ var bindHistory = exports.bindHistory = function bindHistory(editor) {
     });
 };
 
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -4469,7 +4569,7 @@ var ModNodeConvert = exports.ModNodeConvert = (function () {
     return ModNodeConvert;
 })();
 
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -5277,7 +5377,7 @@ var fidusFnSchema = exports.fidusFnSchema = new _model.Schema(_model.defaultSche
     comment: CommentMark
 }));
 
-},{"katex":64,"prosemirror/dist/model":116}],37:[function(require,module,exports){
+},{"katex":65,"prosemirror/dist/model":117}],38:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -5436,7 +5536,7 @@ var ModServerCommunications = exports.ModServerCommunications = (function () {
     return ModServerCommunications;
 })();
 
-},{}],38:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -5498,7 +5598,9 @@ var ModSettingsLayout = exports.ModSettingsLayout = (function () {
                 // for font loading.
                 setTimeout(function () {
                     that.mod.editor.mod.comments.layout.layoutComments();
-                }, 100);
+
+                    //  that.mod.editor.mod.footnotes.layout.layoutFootnotes()
+                }, 500);
             });
         }
 
@@ -5545,7 +5647,7 @@ var ModSettingsLayout = exports.ModSettingsLayout = (function () {
     return ModSettingsLayout;
 })();
 
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5571,7 +5673,7 @@ var ModSettings = exports.ModSettings = function ModSettings(editor) {
     new _layout.ModSettingsLayout(this);
 };
 
-},{"./layout":38,"./set":40}],40:[function(require,module,exports){
+},{"./layout":39,"./set":41}],41:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -5636,7 +5738,7 @@ var ModSettingsSet = exports.ModSettingsSet = (function () {
     return ModSettingsSet;
 })();
 
-},{}],41:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5662,7 +5764,7 @@ var ModTools = exports.ModTools = function ModTools(editor) {
     new _showKeyBindings.ModToolsShowKeyBindings(this);
 };
 
-},{"./print":42,"./show-key-bindings":44,"./word-count":46}],42:[function(require,module,exports){
+},{"./print":43,"./show-key-bindings":45,"./word-count":47}],43:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -5746,7 +5848,7 @@ var ModToolsPrint = exports.ModToolsPrint = (function () {
     return ModToolsPrint;
 })();
 
-},{}],43:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5791,7 +5893,7 @@ var showKeyBindingsTemplate = exports.showKeyBindingsTemplate = _.template('\
 </div>\
 ');
 
-},{}],44:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -5842,7 +5944,7 @@ var ModToolsShowKeyBindings = exports.ModToolsShowKeyBindings = (function () {
     return ModToolsShowKeyBindings;
 })();
 
-},{"./show-key-bindings-templates":43}],45:[function(require,module,exports){
+},{"./show-key-bindings-templates":44}],46:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5871,7 +5973,7 @@ var wordCounterDialogTemplate = exports.wordCounterDialogTemplate = _.template('
         </table>\
     </div>');
 
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -5950,7 +6052,7 @@ var ModToolsWordCount = exports.ModToolsWordCount = (function () {
     return ModToolsWordCount;
 })();
 
-},{"./word-count-templates":45}],47:[function(require,module,exports){
+},{"./word-count-templates":46}],48:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6172,7 +6274,7 @@ function calculatePlaceHolderCss(pm, selectedElement) {
     }
 }
 
-},{"prosemirror/dist/model":116}],48:[function(require,module,exports){
+},{"prosemirror/dist/model":117}],49:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6238,7 +6340,7 @@ var savecopy = exports.savecopy = function savecopy(aDocument, editor, user, cal
     }
 };
 
-},{"../importer/native":61,"./native":56}],49:[function(require,module,exports){
+},{"../importer/native":62,"./native":57}],50:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6259,7 +6361,7 @@ var downloadFile = exports.downloadFile = function downloadFile(zipFilename, blo
     fakeDownloadLink.dispatchEvent(clickEvent);
 };
 
-},{}],50:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6381,7 +6483,7 @@ var navItemTemplate = exports.navItemTemplate = _.template('\t\t\t\t<li><a href=
     <% } %>\
 </li>\n');
 
-},{}],51:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6677,7 +6779,7 @@ var orderLinks = exports.orderLinks = function orderLinks(contentItems) {
     return contentItems;
 };
 
-},{"../katex/opf-includes":62,"./epub-templates":50,"./html":53,"./json":54,"./tools":57,"./zip":60,"katex":64}],52:[function(require,module,exports){
+},{"../katex/opf-includes":63,"./epub-templates":51,"./html":54,"./json":55,"./tools":58,"./zip":61,"katex":65}],53:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6696,7 +6798,7 @@ var htmlExportTemplate = exports.htmlExportTemplate = _.template('<!DOCTYPE html
         <% } %>\
         <%= contents %></body></html>');
 
-},{}],53:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6938,7 +7040,7 @@ var replaceImgSrc = exports.replaceImgSrc = function replaceImgSrc(htmlString) {
     return htmlString;
 };
 
-},{"../citations/format":3,"./html-templates":52,"./json":54,"./tools":57,"./zip":60,"katex":64}],54:[function(require,module,exports){
+},{"../citations/format":3,"./html-templates":53,"./json":55,"./tools":58,"./zip":61,"katex":65}],55:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7015,7 +7117,7 @@ var node2Obj = exports.node2Obj = function node2Obj(node) {
     return obj;
 };
 
-},{}],55:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7423,7 +7525,7 @@ var export1 = function export1(aDocument, aBibDB) {
     (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools.createSlug)(title) + '.latex.zip');
 };
 
-},{"../bibliography/exporter/biblatex":2,"./html":53,"./json":54,"./tools":57,"./zip":60}],56:[function(require,module,exports){
+},{"../bibliography/exporter/biblatex":2,"./html":54,"./json":55,"./tools":58,"./zip":61}],57:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7544,7 +7646,7 @@ var exportNativeFile = function exportNativeFile(aDocument, shrunkImageDB, shrun
     (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools.createSlug)(aDocument.title) + '.fidus', 'application/fidus+zip', false, upload, editor);
 };
 
-},{"./json":54,"./tools":57,"./zip":60}],57:[function(require,module,exports){
+},{"./json":55,"./tools":58,"./zip":61}],58:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7589,7 +7691,7 @@ var findImages = exports.findImages = function findImages(htmlCode) {
     return images;
 };
 
-},{}],58:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7599,7 +7701,7 @@ Object.defineProperty(exports, "__esModule", {
 var revisionDialogTemplate = exports.revisionDialogTemplate = _.template('\
 <div title="' + gettext('Revision description') + '"><p><input type="text" class="revision-note" placeholder="' + gettext('Description (optional)') + '"></p></div>');
 
-},{}],59:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7660,7 +7762,7 @@ var uploadFile = exports.uploadFile = function uploadFile(zipFilename, blob, edi
     });
 };
 
-},{"./upload-templates":58}],60:[function(require,module,exports){
+},{"./upload-templates":59}],61:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7783,7 +7885,7 @@ var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles,
     }
 };
 
-},{"./download":49,"./upload":59}],61:[function(require,module,exports){
+},{"./download":50,"./upload":60}],62:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -8181,7 +8283,7 @@ var ImportNative = exports.ImportNative = (function () {
     return ImportNative;
 })();
 
-},{"../exporter/json":54}],62:[function(require,module,exports){
+},{"../exporter/json":55}],63:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8190,7 +8292,7 @@ Object.defineProperty(exports, "__esModule", {
 // This file is auto-generated. CHANGES WILL BE OVERWRITTEN! Re-generate by running ./manage.py bundle_katex.
 var katexOpfIncludes = exports.katexOpfIncludes = "\n<item id=\"katex-0\" href=\"katex.min.css\" media-type=\"text/css\" />\n<item id=\"katex-1\" href=\"fonts/KaTeX_Typewriter-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-2\" href=\"fonts/KaTeX_Main-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-3\" href=\"fonts/KaTeX_Fraktur-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-4\" href=\"fonts/KaTeX_SansSerif-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-5\" href=\"fonts/KaTeX_Main-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-6\" href=\"fonts/KaTeX_Main-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-7\" href=\"fonts/KaTeX_SansSerif-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-8\" href=\"fonts/KaTeX_AMS-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-9\" href=\"fonts/KaTeX_Caligraphic-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-10\" href=\"fonts/KaTeX_Size4-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-11\" href=\"fonts/KaTeX_Math-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-12\" href=\"fonts/KaTeX_Size1-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-13\" href=\"fonts/KaTeX_Math-BoldItalic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-14\" href=\"fonts/KaTeX_Script-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-15\" href=\"fonts/KaTeX_Main-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-16\" href=\"fonts/KaTeX_Math-BoldItalic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-17\" href=\"fonts/KaTeX_Fraktur-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-18\" href=\"fonts/KaTeX_Main-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-19\" href=\"fonts/KaTeX_Size1-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-20\" href=\"fonts/KaTeX_SansSerif-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-21\" href=\"fonts/KaTeX_Math-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-22\" href=\"fonts/KaTeX_Fraktur-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-23\" href=\"fonts/KaTeX_Script-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-24\" href=\"fonts/KaTeX_Fraktur-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-25\" href=\"fonts/KaTeX_Main-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-26\" href=\"fonts/KaTeX_Size1-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-27\" href=\"fonts/KaTeX_Size3-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-28\" href=\"fonts/KaTeX_SansSerif-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-29\" href=\"fonts/KaTeX_Script-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-30\" href=\"fonts/KaTeX_Main-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-31\" href=\"fonts/KaTeX_Math-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-32\" href=\"fonts/KaTeX_Main-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-33\" href=\"fonts/KaTeX_Typewriter-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-34\" href=\"fonts/KaTeX_Math-BoldItalic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-35\" href=\"fonts/KaTeX_AMS-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-36\" href=\"fonts/KaTeX_Size2-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-37\" href=\"fonts/KaTeX_Caligraphic-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-38\" href=\"fonts/KaTeX_Fraktur-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-39\" href=\"fonts/KaTeX_Typewriter-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-40\" href=\"fonts/KaTeX_Math-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-41\" href=\"fonts/KaTeX_SansSerif-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-42\" href=\"fonts/KaTeX_Script-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-43\" href=\"fonts/KaTeX_Caligraphic-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-44\" href=\"fonts/KaTeX_SansSerif-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-45\" href=\"fonts/KaTeX_AMS-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-46\" href=\"fonts/KaTeX_Caligraphic-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-47\" href=\"fonts/KaTeX_Fraktur-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-48\" href=\"fonts/KaTeX_Main-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-49\" href=\"fonts/KaTeX_SansSerif-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-50\" href=\"fonts/KaTeX_Size4-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-51\" href=\"fonts/KaTeX_Math-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-52\" href=\"fonts/KaTeX_SansSerif-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-53\" href=\"fonts/KaTeX_Size2-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-54\" href=\"fonts/KaTeX_Fraktur-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-55\" href=\"fonts/KaTeX_Size2-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-56\" href=\"fonts/KaTeX_SansSerif-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-57\" href=\"fonts/KaTeX_AMS-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-58\" href=\"fonts/KaTeX_Math-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-59\" href=\"fonts/KaTeX_SansSerif-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-60\" href=\"fonts/KaTeX_Main-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-61\" href=\"fonts/KaTeX_Typewriter-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-62\" href=\"fonts/KaTeX_Size3-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-63\" href=\"fonts/KaTeX_Main-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-64\" href=\"fonts/KaTeX_Caligraphic-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-65\" href=\"fonts/KaTeX_SansSerif-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-66\" href=\"fonts/KaTeX_Caligraphic-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-67\" href=\"fonts/KaTeX_Size4-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-68\" href=\"fonts/KaTeX_Main-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-69\" href=\"fonts/KaTeX_Math-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-70\" href=\"fonts/KaTeX_Size3-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-71\" href=\"fonts/KaTeX_Fraktur-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-72\" href=\"fonts/KaTeX_Caligraphic-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-73\" href=\"fonts/KaTeX_Size2-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-74\" href=\"fonts/KaTeX_Size1-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-75\" href=\"fonts/KaTeX_SansSerif-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-76\" href=\"fonts/KaTeX_Size4-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-77\" href=\"fonts/KaTeX_Size3-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-78\" href=\"fonts/KaTeX_Caligraphic-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-79\" href=\"fonts/KaTeX_Math-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-80\" href=\"fonts/KaTeX_Math-BoldItalic.woff\" media-type=\"application/octet-stream\" />\n";
 
-},{}],63:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
     module.exports = mod()
@@ -8362,7 +8464,7 @@ var katexOpfIncludes = exports.katexOpfIncludes = "\n<item id=\"katex-0\" href=\
   return Keymap
 })
 
-},{}],64:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
 /**
  * This is the main entry point for KaTeX. Here, we expose functions for
  * rendering expressions either to DOM nodes or to markup strings.
@@ -8437,7 +8539,7 @@ module.exports = {
     ParseError: ParseError
 };
 
-},{"./src/ParseError":67,"./src/Settings":69,"./src/buildTree":74,"./src/parseTree":83,"./src/utils":85}],65:[function(require,module,exports){
+},{"./src/ParseError":68,"./src/Settings":70,"./src/buildTree":75,"./src/parseTree":84,"./src/utils":86}],66:[function(require,module,exports){
 /**
  * The Lexer class handles tokenizing the input in various ways. Since our
  * parser expects us to be able to backtrack, the lexer allows lexing from any
@@ -8633,7 +8735,7 @@ Lexer.prototype.lex = function(pos, mode) {
 
 module.exports = Lexer;
 
-},{"./ParseError":67,"match-at":86}],66:[function(require,module,exports){
+},{"./ParseError":68,"match-at":87}],67:[function(require,module,exports){
 /**
  * This file contains information about the options that the Parser carries
  * around with it while parsing. Data is held in an `Options` object, and when
@@ -8824,7 +8926,7 @@ Options.prototype.getColor = function() {
 
 module.exports = Options;
 
-},{}],67:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 /**
  * This is the ParseError class, which is the main error thrown by KaTeX
  * functions when something has gone wrong. This is used to distinguish internal
@@ -8866,7 +8968,7 @@ ParseError.prototype.__proto__ = Error.prototype;
 
 module.exports = ParseError;
 
-},{}],68:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 var functions = require("./functions");
 var environments = require("./environments");
 var Lexer = require("./Lexer");
@@ -9588,7 +9690,7 @@ Parser.prototype.ParseNode = ParseNode;
 
 module.exports = Parser;
 
-},{"./Lexer":65,"./ParseError":67,"./environments":77,"./functions":80,"./parseData":82,"./symbols":84,"./utils":85}],69:[function(require,module,exports){
+},{"./Lexer":66,"./ParseError":68,"./environments":78,"./functions":81,"./parseData":83,"./symbols":85,"./utils":86}],70:[function(require,module,exports){
 /**
  * This is a module for storing settings passed into KaTeX. It correctly handles
  * default settings.
@@ -9618,7 +9720,7 @@ function Settings(options) {
 
 module.exports = Settings;
 
-},{}],70:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 /**
  * This file contains information and classes for the various kinds of styles
  * used in TeX. It provides a generic `Style` class, which holds information
@@ -9746,7 +9848,7 @@ module.exports = {
     SCRIPTSCRIPT: styles[SS]
 };
 
-},{}],71:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 /**
  * This module contains general functions that can be used for building
  * different kinds of domTree nodes in a consistent manner.
@@ -10195,7 +10297,7 @@ module.exports = {
     spacingFunctions: spacingFunctions
 };
 
-},{"./domTree":76,"./fontMetrics":78,"./symbols":84,"./utils":85}],72:[function(require,module,exports){
+},{"./domTree":77,"./fontMetrics":79,"./symbols":85,"./utils":86}],73:[function(require,module,exports){
 /**
  * This file does the main work of building a domTree structure from a parse
  * tree. The entry point is the `buildHTML` function, which takes a parse tree.
@@ -11559,7 +11661,7 @@ var buildHTML = function(tree, options) {
 
 module.exports = buildHTML;
 
-},{"./ParseError":67,"./Style":70,"./buildCommon":71,"./delimiter":75,"./domTree":76,"./fontMetrics":78,"./utils":85}],73:[function(require,module,exports){
+},{"./ParseError":68,"./Style":71,"./buildCommon":72,"./delimiter":76,"./domTree":77,"./fontMetrics":79,"./utils":86}],74:[function(require,module,exports){
 /**
  * This file converts a parse tree into a cooresponding MathML tree. The main
  * entry point is the `buildMathML` function, which takes a parse tree from the
@@ -12080,7 +12182,7 @@ var buildMathML = function(tree, texExpression, options) {
 
 module.exports = buildMathML;
 
-},{"./ParseError":67,"./buildCommon":71,"./fontMetrics":78,"./mathMLTree":81,"./symbols":84,"./utils":85}],74:[function(require,module,exports){
+},{"./ParseError":68,"./buildCommon":72,"./fontMetrics":79,"./mathMLTree":82,"./symbols":85,"./utils":86}],75:[function(require,module,exports){
 var buildHTML = require("./buildHTML");
 var buildMathML = require("./buildMathML");
 var buildCommon = require("./buildCommon");
@@ -12122,7 +12224,7 @@ var buildTree = function(tree, expression, settings) {
 
 module.exports = buildTree;
 
-},{"./Options":66,"./Settings":69,"./Style":70,"./buildCommon":71,"./buildHTML":72,"./buildMathML":73}],75:[function(require,module,exports){
+},{"./Options":67,"./Settings":70,"./Style":71,"./buildCommon":72,"./buildHTML":73,"./buildMathML":74}],76:[function(require,module,exports){
 /**
  * This file deals with creating delimiters of various sizes. The TeXbook
  * discusses these routines on page 441-442, in the "Another subroutine sets box
@@ -12663,7 +12765,7 @@ module.exports = {
     leftRightDelim: makeLeftRightDelim
 };
 
-},{"./ParseError":67,"./Style":70,"./buildCommon":71,"./fontMetrics":78,"./symbols":84,"./utils":85}],76:[function(require,module,exports){
+},{"./ParseError":68,"./Style":71,"./buildCommon":72,"./fontMetrics":79,"./symbols":85,"./utils":86}],77:[function(require,module,exports){
 /**
  * These objects store the data about the DOM nodes we create, as well as some
  * extra data. They can then be transformed into real DOM nodes with the
@@ -12934,7 +13036,7 @@ module.exports = {
     symbolNode: symbolNode
 };
 
-},{"./utils":85}],77:[function(require,module,exports){
+},{"./utils":86}],78:[function(require,module,exports){
 var fontMetrics = require("./fontMetrics");
 var parseData = require("./parseData");
 var ParseError = require("./ParseError");
@@ -13114,7 +13216,7 @@ module.exports = (function() {
     return exports;
 })();
 
-},{"./ParseError":67,"./fontMetrics":78,"./parseData":82}],78:[function(require,module,exports){
+},{"./ParseError":68,"./fontMetrics":79,"./parseData":83}],79:[function(require,module,exports){
 /* jshint unused:false */
 
 var Style = require("./Style");
@@ -13251,7 +13353,7 @@ module.exports = {
     getCharacterMetrics: getCharacterMetrics
 };
 
-},{"./Style":70,"./fontMetricsData":79}],79:[function(require,module,exports){
+},{"./Style":71,"./fontMetricsData":80}],80:[function(require,module,exports){
 module.exports = {
 "AMS-Regular": {
   "65": {"depth": 0.0, "height": 0.68889, "italic": 0.0, "skew": 0.0},
@@ -15004,7 +15106,7 @@ module.exports = {
   "8242": {"depth": 0.0, "height": 0.61111, "italic": 0.0, "skew": 0.0}
 }};
 
-},{}],80:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 var utils = require("./utils");
 var ParseError = require("./ParseError");
 
@@ -15635,7 +15737,7 @@ module.exports = {
     funcs: functions
 };
 
-},{"./ParseError":67,"./utils":85}],81:[function(require,module,exports){
+},{"./ParseError":68,"./utils":86}],82:[function(require,module,exports){
 /**
  * These objects store data about MathML nodes. This is the MathML equivalent
  * of the types in domTree.js. Since MathML handles its own rendering, and
@@ -15739,7 +15841,7 @@ module.exports = {
     TextNode: TextNode
 };
 
-},{"./utils":85}],82:[function(require,module,exports){
+},{"./utils":86}],83:[function(require,module,exports){
 /**
  * The resulting parse tree nodes of the parse tree.
  */
@@ -15764,7 +15866,7 @@ module.exports = {
 };
 
 
-},{}],83:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 /**
  * Provides a single function for parsing an expression using a Parser
  * TODO(emily): Remove this
@@ -15783,7 +15885,7 @@ var parseTree = function(toParse, settings) {
 
 module.exports = parseTree;
 
-},{"./Parser":68}],84:[function(require,module,exports){
+},{"./Parser":69}],85:[function(require,module,exports){
 /**
  * This file holds a list of all no-argument functions and single-character
  * symbols (like 'a' or ';').
@@ -18370,7 +18472,7 @@ for (var i = 0; i < letters.length; i++) {
 
 module.exports = symbols;
 
-},{}],85:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 /**
  * This file contains a list of utility functions which are useful in other
  * files.
@@ -18477,7 +18579,7 @@ module.exports = {
     clearNode: clearNode
 };
 
-},{}],86:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 /** @flow */
 
 "use strict";
@@ -18520,7 +18622,7 @@ function matchAt(re, str, pos) {
 }
 
 module.exports = matchAt;
-},{}],87:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -18698,7 +18800,7 @@ var Collab = function () {
 }();
 
 (0, _event.eventMixin)(Collab);
-},{"../edit":99,"../transform":122,"../util/error":133,"../util/event":134,"./rebase":88}],88:[function(require,module,exports){
+},{"../edit":100,"../transform":123,"../util/error":134,"../util/event":135,"./rebase":89}],89:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -18726,7 +18828,7 @@ function rebaseSteps(doc, forward, steps, maps) {
   }
   return { doc: transform.doc, transform: transform, mapping: remap, positions: positions };
 }
-},{"../transform":122}],89:[function(require,module,exports){
+},{"../transform":123}],90:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -18805,7 +18907,7 @@ function ensureCSSAdded() {
     document.head.insertBefore(cssNode, document.head.firstChild);
   }
 }
-},{}],90:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19544,7 +19646,7 @@ baseCommands.redo = {
   },
   keys: ["Mod-Y", "Shift-Mod-Z"]
 };
-},{"../model":116,"../transform":122,"../util/error":133,"./char":92,"./dompos":96,"./selection":105}],91:[function(require,module,exports){
+},{"../model":117,"../transform":123,"../util/error":134,"./char":93,"./dompos":97,"./selection":106}],92:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19614,7 +19716,7 @@ var keys = {
 if (_dom.browser.mac) keys["Ctrl-F"] = keys["Ctrl-B"] = keys["Ctrl-P"] = keys["Ctrl-N"] = keys["Alt-F"] = keys["Alt-B"] = keys["Ctrl-A"] = keys["Ctrl-E"] = keys["Ctrl-V"] = keys["goPageUp"] = ensureSelection;
 
 var captureKeys = exports.captureKeys = new _browserkeymap2.default(keys);
-},{"../dom":89,"./dompos":96,"./selection":105,"browserkeymap":63}],92:[function(require,module,exports){
+},{"../dom":90,"./dompos":97,"./selection":106,"browserkeymap":64}],93:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19647,7 +19749,7 @@ function charCategory(ch) {
 function isExtendingChar(ch) {
   return ch.charCodeAt(0) >= 768 && extendingChar.test(ch);
 }
-},{}],93:[function(require,module,exports){
+},{}],94:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20256,13 +20358,13 @@ _model.NodeType.derivableCommands.insert = function (conf) {
     params: deriveParams(this, conf.params)
   };
 };
-},{"../dom":89,"../model":116,"../transform":122,"../util/error":133,"../util/obj":136,"../util/sortedinsert":137,"./base_commands":90,"browserkeymap":63}],94:[function(require,module,exports){
+},{"../dom":90,"../model":117,"../transform":123,"../util/error":134,"../util/obj":137,"../util/sortedinsert":138,"./base_commands":91,"browserkeymap":64}],95:[function(require,module,exports){
 "use strict";
 
 var _dom = require("../dom");
 
 (0, _dom.insertCSS)("\n\n.ProseMirror {\n  border: 1px solid silver;\n  position: relative;\n}\n\n.ProseMirror-content {\n  padding: 4px 8px 4px 14px;\n  white-space: pre-wrap;\n  line-height: 1.2;\n}\n\n.ProseMirror-drop-target {\n  position: absolute;\n  width: 1px;\n  background: #666;\n  display: none;\n}\n\n.ProseMirror-content ul.tight p, .ProseMirror-content ol.tight p {\n  margin: 0;\n}\n\n.ProseMirror-content ul, .ProseMirror-content ol {\n  padding-left: 30px;\n  cursor: default;\n}\n\n.ProseMirror-content blockquote {\n  padding-left: 1em;\n  border-left: 3px solid #eee;\n  margin-left: 0; margin-right: 0;\n}\n\n.ProseMirror-content pre {\n  white-space: pre-wrap;\n}\n\n.ProseMirror-selectednode {\n  outline: 2px solid #8cf;\n}\n\n.ProseMirror-nodeselection *::selection { background: transparent; }\n.ProseMirror-nodeselection *::-moz-selection { background: transparent; }\n\n.ProseMirror-content p:first-child,\n.ProseMirror-content h1:first-child,\n.ProseMirror-content h2:first-child,\n.ProseMirror-content h3:first-child,\n.ProseMirror-content h4:first-child,\n.ProseMirror-content h5:first-child,\n.ProseMirror-content h6:first-child {\n  margin-top: .3em;\n}\n\n/* Add space around the hr to make clicking it easier */\n\n.ProseMirror-content hr {\n  position: relative;\n  height: 6px;\n  border: none;\n}\n\n.ProseMirror-content hr:after {\n  content: \"\";\n  position: absolute;\n  left: 10px;\n  right: 10px;\n  top: 2px;\n  border-top: 2px solid silver;\n}\n\n.ProseMirror-content img {\n  cursor: default;\n}\n\n/* Make sure li selections wrap around markers */\n\n.ProseMirror-content li {\n  position: relative;\n  pointer-events: none; /* Don't do weird stuff with marker clicks */\n}\n.ProseMirror-content li > * {\n  pointer-events: auto;\n}\n\nli.ProseMirror-selectednode {\n  outline: none;\n}\n\nli.ProseMirror-selectednode:after {\n  content: \"\";\n  position: absolute;\n  left: -32px;\n  right: -2px; top: -2px; bottom: -2px;\n  border: 2px solid #8cf;\n  pointer-events: none;\n}\n\n");
-},{"../dom":89}],95:[function(require,module,exports){
+},{"../dom":90}],96:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20485,7 +20587,7 @@ function scanText(start, end) {
     cur = cur.firstChild || nodeAfter(cur);
   }
 }
-},{"../format":108,"../model":116,"../transform/tree":130,"./dompos":96,"./selection":105}],96:[function(require,module,exports){
+},{"../format":109,"../model":117,"../transform/tree":131,"./dompos":97,"./selection":106}],97:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20867,7 +20969,7 @@ function handleNodeClick(pm, type, event, direct) {
     }
   }
 }
-},{"../dom":89,"../model":116,"../util/error":133}],97:[function(require,module,exports){
+},{"../dom":90,"../model":117,"../util/error":134}],98:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -21034,7 +21136,7 @@ function redraw(pm, dirty, doc, prev) {
   }
   scan(pm.content, doc, prev);
 }
-},{"../dom":89,"../format":108,"../model":116,"./dompos":96,"./main":101}],98:[function(require,module,exports){
+},{"../dom":90,"../format":109,"../model":117,"./dompos":97,"./main":102}],99:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -21686,7 +21788,7 @@ var History = exports.History = function () {
 
   return History;
 }();
-},{"../model":116,"../transform":122}],99:[function(require,module,exports){
+},{"../model":117,"../transform":123}],100:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -21781,7 +21883,7 @@ var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.Keymap = _browserkeymap2.default;
-},{"./base_commands":90,"./command":93,"./main":101,"./options":102,"./range":103,"./schema_commands":104,"./selection":105,"browserkeymap":63}],100:[function(require,module,exports){
+},{"./base_commands":91,"./command":94,"./main":102,"./options":103,"./range":104,"./schema_commands":105,"./selection":106,"browserkeymap":64}],101:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -22390,7 +22492,7 @@ handlers.blur = function (pm) {
   // Fired when the editor loses focus.
   pm.signal("blur");
 };
-},{"../dom":89,"../format":108,"../model":116,"./capturekeys":91,"./domchange":95,"./dompos":96,"./selection":105,"browserkeymap":63}],101:[function(require,module,exports){
+},{"../dom":90,"../format":109,"../model":117,"./capturekeys":92,"./domchange":96,"./dompos":97,"./selection":106,"browserkeymap":64}],102:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -23194,7 +23296,7 @@ var EditorTransform = function (_Transform) {
 
   return EditorTransform;
 }(_transform.Transform);
-},{"../dom":89,"../format":108,"../model":116,"../transform":122,"../util/error":133,"../util/event":134,"../util/map":135,"../util/sortedinsert":137,"./css":94,"./dompos":96,"./draw":97,"./history":98,"./input":100,"./options":102,"./range":103,"./selection":105,"browserkeymap":63}],102:[function(require,module,exports){
+},{"../dom":90,"../format":109,"../model":117,"../transform":123,"../util/error":134,"../util/event":135,"../util/map":136,"../util/sortedinsert":138,"./css":95,"./dompos":97,"./draw":98,"./history":99,"./input":101,"./options":103,"./range":104,"./selection":106,"browserkeymap":64}],103:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -23329,7 +23431,7 @@ function setOption(pm, name, value) {
   pm.options[name] = value;
   if (desc.update) desc.update(pm, value, old, false);
 }
-},{"../model":116,"../ui/prompt":131,"../util/error":133,"./command":93}],103:[function(require,module,exports){
+},{"../model":117,"../ui/prompt":132,"../util/error":134,"./command":94}],104:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -23529,7 +23631,7 @@ var RangeTracker = function () {
 
   return RangeTracker;
 }();
-},{"../util/event":134}],104:[function(require,module,exports){
+},{"../util/event":135}],105:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -23863,7 +23965,7 @@ _model.HorizontalRule.register("command", "insert", {
   keys: ["Mod-Shift--"],
   menu: { group: "insert", rank: 70, display: { type: "label", label: "Horizontal rule" } }
 });
-},{"../format":108,"../model":116,"./command":93}],105:[function(require,module,exports){
+},{"../format":109,"../model":117,"./command":94}],106:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24360,7 +24462,7 @@ function verticalMotionLeavesTextblock(pm, pos, dir) {
   }
   return true;
 }
-},{"../dom":89,"../model":116,"../util/error":133,"./dompos":96}],106:[function(require,module,exports){
+},{"../dom":90,"../model":117,"../util/error":134,"./dompos":97}],107:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24817,7 +24919,7 @@ _model.StrongMark.register("parseDOMStyle", "font-weight", {
 });
 
 _model.CodeMark.register("parseDOM", "code", { parse: "mark" });
-},{"../model":116,"../util/sortedinsert":137,"./register":109}],107:[function(require,module,exports){
+},{"../model":117,"../util/sortedinsert":138,"./register":110}],108:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24849,7 +24951,7 @@ function fromText(schema, text) {
 }
 
 (0, _register.defineSource)("text", fromText);
-},{"./register":109}],108:[function(require,module,exports){
+},{"./register":110}],109:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24948,7 +25050,7 @@ Object.defineProperty(exports, "toText", {
     return _to_text.toText;
   }
 });
-},{"./from_dom":106,"./from_text":107,"./register":109,"./to_dom":110,"./to_text":111}],109:[function(require,module,exports){
+},{"./from_dom":107,"./from_text":108,"./register":110,"./to_dom":111,"./to_text":112}],110:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25016,7 +25118,7 @@ function defineSource(format, func) {
 defineSource("json", function (schema, json) {
   return schema.nodeFromJSON(json);
 });
-},{"../util/error":133}],110:[function(require,module,exports){
+},{"../util/error":134}],111:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25304,7 +25406,7 @@ def(_model.LinkMark, function (mark, s) {
   return s.elt("a", { href: mark.attrs.href,
     title: mark.attrs.title });
 });
-},{"../model":116,"./register":109}],111:[function(require,module,exports){
+},{"../model":117,"./register":110}],112:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25348,7 +25450,7 @@ function toText(doc) {
 }
 
 (0, _register.defineTarget)("text", toText);
-},{"../model":116,"./register":109}],112:[function(require,module,exports){
+},{"../model":117,"./register":110}],113:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25785,7 +25887,7 @@ var defaultSpec = new _schema.SchemaSpec({
 // :: Schema
 // ProseMirror's default document schema.
 var defaultSchema = exports.defaultSchema = new _schema.Schema(defaultSpec);
-},{"./schema":120}],113:[function(require,module,exports){
+},{"./schema":121}],114:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25882,7 +25984,7 @@ function findDiffEnd(a, b) {
   }
   return { a: new _pos.Pos(pathA, offA), b: new _pos.Pos(pathB, offB) };
 }
-},{"./pos":119}],114:[function(require,module,exports){
+},{"./pos":120}],115:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25911,7 +26013,7 @@ var ModelError = exports.ModelError = function (_ProseMirrorError) {
 
   return ModelError;
 }(_error.ProseMirrorError);
-},{"../util/error":133}],115:[function(require,module,exports){
+},{"../util/error":134}],116:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -26623,7 +26725,7 @@ if (typeof Symbol != "undefined") {
     return this;
   };
 }
-},{"./error":114}],116:[function(require,module,exports){
+},{"./error":115}],117:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -26863,7 +26965,7 @@ Object.defineProperty(exports, "ModelError", {
                 return _error.ModelError;
         }
 });
-},{"./defaultschema":112,"./diff":113,"./error":114,"./fragment":115,"./mark":117,"./node":118,"./pos":119,"./schema":120}],117:[function(require,module,exports){
+},{"./defaultschema":113,"./diff":114,"./error":115,"./fragment":116,"./mark":118,"./node":119,"./pos":120,"./schema":121}],118:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -26995,7 +27097,7 @@ var Mark = exports.Mark = function () {
 }();
 
 var empty = [];
-},{}],118:[function(require,module,exports){
+},{}],119:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -27603,7 +27705,7 @@ function wrapMarks(marks, str) {
     str = marks[i].type.name + "(" + str + ")";
   }return str;
 }
-},{"./fragment":115,"./mark":117,"./pos":119,"./schema":120}],119:[function(require,module,exports){
+},{"./fragment":116,"./mark":118,"./pos":120,"./schema":121}],120:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -27827,7 +27929,7 @@ var Pos = exports.Pos = function () {
 
   return Pos;
 }();
-},{"./error":114}],120:[function(require,module,exports){
+},{"./error":115}],121:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -28862,7 +28964,7 @@ var Schema = function () {
 }();
 
 exports.Schema = Schema;
-},{"../util/error":133,"../util/obj":136,"./fragment":115,"./mark":117,"./node":118}],121:[function(require,module,exports){
+},{"../util/error":134,"../util/obj":137,"./fragment":116,"./mark":118,"./node":119}],122:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29148,7 +29250,7 @@ _transform.Transform.prototype.setNodeType = function (pos, type, attrs) {
   this.step("ancestor", new _model.Pos(path, 0), new _model.Pos(path, node.size), null, { depth: 1, types: [type], attrs: [attrs] });
   return this;
 };
-},{"../model":116,"./map":124,"./step":128,"./transform":129,"./tree":130}],122:[function(require,module,exports){
+},{"../model":117,"./map":125,"./step":129,"./transform":130,"./tree":131}],123:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29236,7 +29338,7 @@ require("./mark");
 require("./split");
 
 require("./replace");
-},{"./ancestor":121,"./join":123,"./map":124,"./mark":125,"./replace":126,"./split":127,"./step":128,"./transform":129}],123:[function(require,module,exports){
+},{"./ancestor":122,"./join":124,"./map":125,"./mark":126,"./replace":127,"./split":128,"./step":129,"./transform":130}],124:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29318,7 +29420,7 @@ _transform.Transform.prototype.join = function (at) {
   this.step("join", new _model.Pos(at.path.concat(at.offset - 1), parent.child(at.offset - 1).size), new _model.Pos(at.path.concat(at.offset), 0));
   return this;
 };
-},{"../model":116,"./map":124,"./step":128,"./transform":129}],124:[function(require,module,exports){
+},{"../model":117,"./map":125,"./step":129,"./transform":130}],125:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29638,7 +29740,7 @@ var Remapping = exports.Remapping = function () {
 
   return Remapping;
 }();
-},{"../model":116}],125:[function(require,module,exports){
+},{"../model":117}],126:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -29817,7 +29919,7 @@ _transform.Transform.prototype.clearMarkup = function (from, to, newParent) {
     this.step(delSteps[i]);
   }return this;
 };
-},{"../model":116,"./step":128,"./transform":129,"./tree":130}],126:[function(require,module,exports){
+},{"../model":117,"./step":129,"./transform":130,"./tree":131}],127:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30145,7 +30247,7 @@ _transform.Transform.prototype.insertText = function (pos, text) {
 _transform.Transform.prototype.insertInline = function (pos, node) {
   return this.insert(pos, node.mark(this.doc.marksAt(pos)));
 };
-},{"../model":116,"./map":124,"./step":128,"./transform":129,"./tree":130}],127:[function(require,module,exports){
+},{"../model":117,"./map":125,"./step":129,"./transform":130,"./tree":131}],128:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -30234,7 +30336,7 @@ _transform.Transform.prototype.splitIfNeeded = function (pos) {
   }
   return this;
 };
-},{"../model":116,"./map":124,"./step":128,"./transform":129}],128:[function(require,module,exports){
+},{"../model":117,"./map":125,"./step":129,"./transform":130}],129:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30421,7 +30523,7 @@ var StepResult = exports.StepResult = function StepResult(doc) {
 };
 
 var steps = Object.create(null);
-},{"../model":116,"../util/error":133,"./map":124}],129:[function(require,module,exports){
+},{"../model":117,"../util/error":134,"./map":125}],130:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30526,7 +30628,7 @@ var Transform = function () {
 }();
 
 exports.Transform = Transform;
-},{"./map":124,"./step":128}],130:[function(require,module,exports){
+},{"./map":125,"./step":129}],131:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30620,7 +30722,7 @@ function samePathDepth(a, b) {
     if (i == a.path.length || i == b.path.length || a.path[i] != b.path[i]) return i;
   }
 }
-},{"../model":116}],131:[function(require,module,exports){
+},{"../model":117}],132:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30924,7 +31026,7 @@ function openPrompt(pm, content, options) {
 }
 
 (0, _dom.insertCSS)("\n.ProseMirror-prompt {\n  background: white;\n  padding: 2px 6px 2px 15px;\n  border: 1px solid silver;\n  position: absolute;\n  border-radius: 3px;\n  z-index: 11;\n}\n\n.ProseMirror-prompt h5 {\n  margin: 0;\n  font-weight: normal;\n  font-size: 100%;\n  color: #444;\n}\n\n.ProseMirror-prompt input[type=\"text\"],\n.ProseMirror-prompt textarea {\n  background: #eee;\n  border: none;\n  outline: none;\n}\n\n.ProseMirror-prompt input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n.ProseMirror-prompt-close {\n  position: absolute;\n  left: 2px; top: 1px;\n  color: #666;\n  border: none; background: transparent; padding: 0;\n}\n\n.ProseMirror-prompt-close:after {\n  content: \"✕\";\n  font-size: 12px;\n}\n\n.ProseMirror-invalid {\n  background: #ffc;\n  border: 1px solid #cc7;\n  border-radius: 4px;\n  padding: 5px 10px;\n  position: absolute;\n  min-width: 10em;\n}\n\n.ProseMirror-prompt-buttons {\n  margin-top: 5px;\n  display: none;\n}\n\n");
-},{"../dom":89,"../util/error":133}],132:[function(require,module,exports){
+},{"../dom":90,"../util/error":134}],133:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31084,7 +31186,7 @@ var UpdateScheduler = exports.UpdateScheduler = function () {
 
   return UpdateScheduler;
 }();
-},{}],133:[function(require,module,exports){
+},{}],134:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31166,7 +31268,7 @@ function functionName(f) {
   var match = /^function (\w+)/.exec(f.toString());
   return match && match[1];
 }
-},{}],134:[function(require,module,exports){
+},{}],135:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31289,7 +31391,7 @@ function eventMixin(ctor) {
     if (methods.hasOwnProperty(prop)) proto[prop] = methods[prop];
   }
 }
-},{}],135:[function(require,module,exports){
+},{}],136:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31345,7 +31447,7 @@ var Map = exports.Map = window.Map || function () {
 
   return _class;
 }();
-},{}],136:[function(require,module,exports){
+},{}],137:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31358,7 +31460,7 @@ function copyObj(obj, base) {
     copy[prop] = obj[prop];
   }return copy;
 }
-},{}],137:[function(require,module,exports){
+},{}],138:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {

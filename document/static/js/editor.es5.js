@@ -1,5 +1,5 @@
 /* This file has been automatically generated. DO NOT EDIT IT. 
- Changes will be overwritten. Edit editor.es6.js and run ./es6-compiler.sh */
+ Changes will be overwritten. Edit editor.es6.js and run ./es6-transpile.sh */
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 
@@ -2705,7 +2705,7 @@ var ModFootnoteEditor = exports.ModFootnoteEditor = (function () {
 })();
 
 },{"../schema":37,"prosemirror/dist/format":109,"prosemirror/dist/model":117,"prosemirror/dist/transform":123}],17:[function(require,module,exports){
-'use strict';
+"use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
@@ -2714,7 +2714,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.ModFootnoteLayout = undefined;
 
-var _update = require('prosemirror/dist/ui/update');
+var _update = require("prosemirror/dist/ui/update");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -2731,36 +2731,39 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
     }
 
     _createClass(ModFootnoteLayout, [{
-        key: 'setup',
+        key: "setup",
         value: function setup() {
             // Add two elements to hold dynamic CSS info about comments.
             var styleContainers = document.createElement('temp');
-            styleContainers.innerHTML = '<style type="text/css" id="footnote-placement-style"></style>';
+            styleContainers.innerHTML = "<style type=\"text/css\" id=\"footnote-placement-style\"></style>";
             while (styleContainers.firstElementChild) {
                 document.head.appendChild(styleContainers.firstElementChild);
             }
         }
     }, {
-        key: 'bindEvents',
+        key: "bindEvents",
         value: function bindEvents() {
             var that = this;
-            //        new UpdateScheduler(this.mod.editor.pm, "change setDoc", () => {return that.updateDOM()})
-            //  new UpdateScheduler(this.mod.fnPm, "change setDoc", () => {return that.updateDOM()})
+            new _update.UpdateScheduler(this.mod.editor.pm, "change setDoc", function () {
+                return that.updateDOM();
+            });
+            new _update.UpdateScheduler(this.mod.fnPm, "change setDoc", function () {
+                return that.updateDOM();
+            });
         }
-
-        /*  layoutFootnotes() {
-              let that = this
-              console.log('hans')
-              scheduleDOMUpdate(this.mod.editor.pm, () => {console.log('fish');return that.updateDOM()})
-          }*/
-
     }, {
-        key: 'updateDOM',
+        key: "layoutFootnotes",
+        value: function layoutFootnotes() {
+            var that = this;
+            (0, _update.scheduleDOMUpdate)(this.mod.editor.pm, function () {
+                return that.updateDOM();
+            });
+        }
+    }, {
+        key: "updateDOM",
         value: function updateDOM() {
             // Handle the CSS layout of the footnotes on the screen.
-            console.log('something something');
-            // DOM write phase
-
+            // DOM write phase - nothing to do.
             var that = this;
 
             return function () {
@@ -2769,7 +2772,6 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = (function () {
                     footnoteBoxes = document.querySelectorAll('#footnote-box-container .footnote-container'),
                     footnotePlacementStyle = '',
                     referrers = that.mod.footnotes;
-                console.log([referrers.length, footnoteBoxes.length]);
                 if (referrers.length !== footnoteBoxes.length) {
                     // Apparently not all footnote boxes have been drawn. Abort for now.
                     return;
@@ -5599,8 +5601,8 @@ var ModSettingsLayout = exports.ModSettingsLayout = (function () {
                 setTimeout(function () {
                     that.mod.editor.mod.comments.layout.layoutComments();
 
-                    //  that.mod.editor.mod.footnotes.layout.layoutFootnotes()
-                }, 500);
+                    that.mod.editor.mod.footnotes.layout.layoutFootnotes();
+                }, 250);
             });
         }
 
@@ -6221,7 +6223,7 @@ function updateUI(editor) {
                 break;
         }
     }
-    return true;
+    return;
 }
 
 /** Show or hide placeHolders ('Contents...', 'Title...', etc.) depending on
@@ -6270,7 +6272,7 @@ function calculatePlaceHolderCss(pm, selectedElement) {
     });
     if (placeHolderCss !== newPlaceHolderCss) {
         placeHolderCss = newPlaceHolderCss;
-        jQuery('#placeholder-styles')[0].innerHTML = newPlaceHolderCss;
+        document.getElementById('placeholder-styles').innerHTML = newPlaceHolderCss;
     }
 }
 

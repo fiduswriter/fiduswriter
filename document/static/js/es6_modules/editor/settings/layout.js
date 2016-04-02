@@ -40,8 +40,8 @@ export class ModSettingsLayout {
             setTimeout(function() {
                 that.mod.editor.mod.comments.layout.layoutComments()
 
-              //  that.mod.editor.mod.footnotes.layout.layoutFootnotes()
-            }, 500)
+                that.mod.editor.mod.footnotes.layout.layoutFootnotes()
+            }, 250)
         })
 
     }

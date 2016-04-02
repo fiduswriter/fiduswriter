@@ -68,7 +68,7 @@ export class Editor {
         new ModTools(this)
         new ModComments(this)
         new UpdateScheduler(this.pm, "selectionChange change activeMarkChange blur focus setDoc", function() {
-            updateUI(that)
+            return updateUI(that)
         })
         this.pm.on("change", function(){that.docInfo.changed = true})
         this.pm.on("filterTransform", (transform) => {return that.onFilterTransform(transform)})

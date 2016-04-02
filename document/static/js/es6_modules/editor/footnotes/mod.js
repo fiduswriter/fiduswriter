@@ -4,6 +4,7 @@ import "prosemirror/dist/collab"
 
 import {ModFootnoteEditor} from "./editor"
 import {ModFootnoteMarkers} from "./markers"
+import {ModFootnoteLayout} from "./layout"
 
 export class ModFootnotes {
     constructor(editor) {
@@ -13,6 +14,7 @@ export class ModFootnotes {
         this.init()
         new ModFootnoteEditor(this)
         new ModFootnoteMarkers(this)
+        new ModFootnoteLayout(this)
     }
 
     init() {

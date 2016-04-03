@@ -10,13 +10,13 @@ import {fidusSchema} from "./schema"
 import {updateUI} from "./update-ui"
 import {ModComments} from "./comments/mod"
 import {ModFootnotes} from "./footnotes/mod"
+import {ModCitations} from "./citations/mod"
 import {ModCollab} from "./collab/mod"
 import {ModTools} from "./tools/mod"
 import {ModSettings} from "./settings/mod"
 import {ModMenus} from "./menus/mod"
 import {ModServerCommunications} from "./server-communications"
 import {ModNodeConvert} from "./node-convert"
-import {formatCitations} from "../citations/format"
 import {node2Obj, obj2Node} from "../exporter/json"
 
 export class Editor {
@@ -63,6 +63,7 @@ export class Editor {
         let that = this
         this.pm = this.makeEditor(document.getElementById('document-editable'))
         new ModFootnotes(this)
+        new ModCitations(this)
         new ModMenus(this)
         new ModCollab(this)
         new ModTools(this)
@@ -74,8 +75,6 @@ export class Editor {
         this.pm.on("filterTransform", (transform) => {return that.onFilterTransform(transform)})
         this.pm.on("transform", (transform, options) => {that.onTransform(transform, true)})
         this.pm.mod.collab.on("collabTransform", (transform, options) => {that.onTransform(transform, false)})
-        new UpdateScheduler(this.pm, "change setDoc", () => {that.layoutCitations()})
-
         this.setSaveTimers()
     }
 
@@ -203,31 +202,12 @@ export class Editor {
         })
     }
 
-    resetCitations() {
-        let citations = [].slice.call(document.querySelectorAll('#document-editable span.citation'))
-        citations.forEach(function(citation){
-            citation.innerHTML = ''
-        })
-        this.layoutCitations()
-    }
 
-    layoutCitations() {
-        let emptyCitations = document.querySelectorAll('#document-editable span.citation:empty')
-        if (emptyCitations.length > 0) {
-            let bibliographyHTML = formatCitations(
-                document.getElementById('document-editable'), // TODO: Should we point this to somewhere else?
-                this.doc.settings.citationstyle,
-                window.BibDB
-            )
-            document.getElementById('document-bibliography').innerHTML = bibliographyHTML
-        }
-
-    }
 
     enableUI() {
         bibliographyHelpers.initiate()
 
-        this.layoutCitations()
+        this.mod.citations.layoutCitations()
 
         jQuery('.savecopy, .download, .latex, .epub, .html, .print, .style, \
       .citationstyle, .tools-item, .papersize, .metadata-menu-item, \
@@ -411,7 +391,7 @@ export class Editor {
 
         if (updateBibliography) {
             // Recreate the bibliography on next flush.
-            scheduleDOMUpdate(this.pm, () => {return that.resetCitations()})
+            scheduleDOMUpdate(this.pm, () => {return that.mod.citations.resetCitations()})
         }
 
         if (updateTitle) {

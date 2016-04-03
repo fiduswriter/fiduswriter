@@ -1941,7 +1941,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
 
         bibliographyHelpers.getBibDB(function () {
             if (window.hasOwnProperty('theEditor') && theEditor.pm) {
-                theEditor.layoutCitations();
+                theEditor.mod.citations.layoutCitations();
             }
             jQuery(document).trigger("bibliography_ready");
         });

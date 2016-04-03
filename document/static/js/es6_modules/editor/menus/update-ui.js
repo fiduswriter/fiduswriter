@@ -37,10 +37,14 @@ export class ModMenusUpdateUI {
         new UpdateScheduler(this.mod.editor.pm, "selectionChange change activeMarkChange blur focus setDoc", function() {
             return that.updateUI()
         })
+        new UpdateScheduler(this.mod.editor.mod.footnotes.fnPm, "selectionChange change activeMarkChange blur focus setDoc", function() {
+            return that.updateUI()
+        })
     }
 
     updateUI() {
-        let pm = this.mod.editor.pm
+        let pm = this.mod.editor.pm, fnPm = this.mod.editor.mod.footnotes.fnPm,
+          currentPm = this.mod.editor.currentPm
 
         // We count on the the title node being the first one in the document
         const documentTitle = pm.doc.firstChild.type.name === 'title' &&
@@ -51,7 +55,7 @@ export class ModMenusUpdateUI {
         jQuery('title').html('Fidus Writer - ' + documentTitle)
         jQuery('#header h1').html(documentTitle)
 
-        const marks = pm.activeMarks()
+        const marks = currentPm.activeMarks()
         const strong = marks.some(function(mark) {
             return (mark.type.name === 'strong')
         })
@@ -94,18 +98,18 @@ export class ModMenusUpdateUI {
             jQuery('#button-redo').addClass('disabled')
         }
 
-        const start = pm.selection.from.min(pm.selection.to)
-        const end = pm.selection.from.max(pm.selection.to)
+        const start = currentPm.selection.from.min(currentPm.selection.to)
+        const end = currentPm.selection.from.max(currentPm.selection.to)
         if (start.path.length === 0 || end.path.length === 0) {
             // The selection must be outermost elements. Do not go any further in
             // analyzing things.
             return
         }
-        const startElement = pm.doc.path([start.path[0]])
-        const endElement = pm.doc.path([end.path[0]])
+        const startElement = currentPm.doc.path([start.path[0]])
+        const endElement = currentPm.doc.path([end.path[0]])
 
         if (startElement !== endElement) {
-            /* Selection goes across document parts */
+            /* Selection goes across document parts or across footnotes */
             this.calculatePlaceHolderCss(pm)
             jQuery('.editortoolbar button').addClass('disabled')
             jQuery('#block-style-label').html('')
@@ -116,71 +120,84 @@ export class ModMenusUpdateUI {
                 jQuery('#button-comment').removeClass('disabled')
             }
         } else {
-            this.calculatePlaceHolderCss(pm, startElement)
-            jQuery('#current-position').html(PART_LABELS[startElement.type.name])
+            if (currentPm === pm) {
+                this.calculatePlaceHolderCss(pm, startElement)
+                jQuery('#current-position').html(PART_LABELS[startElement.type.name])
 
-            switch (startElement.type.name) {
-                case 'title':
-                case 'metadatasubtitle':
-                case 'metadataauthors':
-                case 'metadatakeywords':
-                    jQuery('.edit-button').addClass('disabled')
-                    jQuery('#block-style-label').html('')
-                    if (pm.selection.empty) {
-                        jQuery('#button-comment').addClass('disabled')
-                    } else {
-                        jQuery('#button-comment').removeClass('disabled')
-                    }
+                switch (startElement.type.name) {
+                    case 'title':
+                    case 'metadatasubtitle':
+                    case 'metadataauthors':
+                    case 'metadatakeywords':
+                        jQuery('.edit-button').addClass('disabled')
+                        jQuery('#block-style-label').html('')
+                        if (pm.selection.empty) {
+                            jQuery('#button-comment').addClass('disabled')
+                        } else {
+                            jQuery('#button-comment').removeClass('disabled')
+                        }
 
-                    break
-                case 'metadataabstract':
-                case 'documentcontents':
-                    jQuery('.edit-button').removeClass('disabled')
+                        break
+                    case 'metadataabstract':
+                    case 'documentcontents':
+                        jQuery('.edit-button').removeClass('disabled')
 
-                    if (pm.selection.empty) {
-                        jQuery('#button-link').addClass('disabled')
-                        jQuery('#button-comment').addClass('disabled')
-                    } else {
-                        jQuery('#button-comment').removeClass('disabled')
-                    }
+                        if (pm.selection.empty) {
+                            jQuery('#button-link').addClass('disabled')
+                            jQuery('#button-comment').addClass('disabled')
+                        } else {
+                            jQuery('#button-comment').removeClass('disabled')
+                        }
 
-                    if (startElement.type.name === 'metadataabstract') {
-                        jQuery('#button-figure').addClass('disabled')
-                    }
+                        if (startElement.type.name === 'metadataabstract') {
+                            jQuery('#button-figure').addClass('disabled')
+                        }
 
-                    var blockNodeType = true,
-                        blockNode, nextBlockNodeType
+                        let blockNodeType = true
 
-                    if (_(start.path).isEqual(end.path)) {
-                        // Selection within a single block.
-                        blockNode = pm.doc.path(start.path)
-                        blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name
-                        jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType])
-                    } else {
-                        // The selection is crossing several blocks
-                        pm.doc.nodesBetween(start, end, function(node, path, parent) {
-                            if (node.isTextblock) {
-                                nextBlockNodeType = node.type.name === 'heading' ? node.type.name + '_' + node.attrs.level : node.type.name
-                                if (blockNodeType === true) {
-                                    blockNodeType = nextBlockNodeType
-                                }
-                                if (blockNodeType !== nextBlockNodeType) {
-                                    blockNodeType = false
-                                }
-
-
-                            }
-                        })
-
-
-                        if (blockNodeType) {
+                        if (_(start.path).isEqual(end.path)) {
+                            // Selection within a single block.
+                            let blockNode = pm.doc.path(start.path)
+                            blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name
                             jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType])
                         } else {
-                            jQuery('#block-style-label').html('')
+                            // The selection is crossing several blocks
+                            pm.doc.nodesBetween(start, end, function(node, path, parent) {
+                                if (node.isTextblock) {
+                                    let nextBlockNodeType = node.type.name === 'heading' ? node.type.name + '_' + node.attrs.level : node.type.name
+                                    if (blockNodeType === true) {
+                                        blockNodeType = nextBlockNodeType
+                                    }
+                                    if (blockNodeType !== nextBlockNodeType) {
+                                        blockNodeType = false
+                                    }
+
+
+                                }
+                            })
+
+
+                            if (blockNodeType) {
+                                jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType])
+                            } else {
+                                jQuery('#block-style-label').html('')
+                            }
                         }
-                    }
-                    break
+                        break
+                }
+            } else {
+                // In footnote editor
+                jQuery('#current-position').html(gettext('Footnote'))
+                let blockNode = fnPm.doc.path(start.path)
+                blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name
+                jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType])
+
+                // Enable all editing buttons, except comment and footnote
+                jQuery('.edit-button').removeClass('disabled')
+                jQuery('#button-comment').addClass('disabled')
+                jQuery('#button-footnote').addClass('disabled')
             }
+
         }
         return
     }

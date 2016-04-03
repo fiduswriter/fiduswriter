@@ -757,7 +757,7 @@ var ModCitations = exports.ModCitations = (function () {
     }, {
         key: "resetCitations",
         value: function resetCitations() {
-            var citations = [].slice.call(document.querySelectorAll('#document-editable span.citation'));
+            var citations = [].slice.call(document.querySelectorAll('#paper-editable span.citation'));
             citations.forEach(function (citation) {
                 citation.innerHTML = '';
             });
@@ -766,9 +766,9 @@ var ModCitations = exports.ModCitations = (function () {
     }, {
         key: "layoutCitations",
         value: function layoutCitations() {
-            var emptyCitations = document.querySelectorAll('#document-editable span.citation:empty');
+            var emptyCitations = document.querySelectorAll('#paper-editable span.citation:empty');
             if (emptyCitations.length > 0) {
-                var bibliographyHTML = (0, _format.formatCitations)(document.getElementById('document-editable'), // TODO: Should we point this to somewhere else?
+                var bibliographyHTML = (0, _format.formatCitations)(document.getElementById('paper-editable'), // TODO: Should we point this to somewhere else?
                 this.editor.doc.settings.citationstyle, window.BibDB);
                 document.getElementById('document-bibliography').innerHTML = bibliographyHTML;
             }
@@ -2256,6 +2256,7 @@ var Editor = exports.Editor = (function () {
         value: function startEditor() {
             var that = this;
             this.pm = this.makeEditor(document.getElementById('document-editable'));
+            this.currentPm = this.pm; // The editor that is currently being edited in -- main or footnote editor
             new _mod2.ModFootnotes(this);
             new _mod3.ModCitations(this);
             new _mod7.ModMenus(this);
@@ -3114,6 +3115,7 @@ var ModFootnotes = exports.ModFootnotes = (function () {
         this.editor = editor;
         this.footnotes = [];
         this.init();
+        this.bindEvents();
         new _editor.ModFootnoteEditor(this);
         new _markers.ModFootnoteMarkers(this);
         new _layout.ModFootnoteLayout(this);
@@ -3128,6 +3130,18 @@ var ModFootnotes = exports.ModFootnotes = (function () {
                 collab: {
                     version: 0
                 } // Version number does not matter much, as we do not verify it between users.
+            });
+        }
+    }, {
+        key: "bindEvents",
+        value: function bindEvents() {
+            var that = this;
+            // Set the current editor depending on where the focus currently is.
+            this.fnPm.on("focus", function () {
+                that.editor.currentPm = that.fnPm;
+            });
+            this.editor.pm.on("focus", function () {
+                that.editor.currentPm = that.editor.pm;
             });
         }
     }]);
@@ -3677,15 +3691,15 @@ var bindBlockStyles = exports.bindBlockStyles = function bindBlockStyles(editor)
         },
             theCommand = commands[this.id.split('_')[0]];
 
-        editor.pm.execCommand(theCommand);
+        editor.currentPm.execCommand(theCommand);
     });
 
     jQuery(document).on('mousedown', '#button-ol', function (event) {
-        editor.pm.execCommand('ordered_list:wrap');
+        editor.currentPm.execCommand('ordered_list:wrap');
     });
 
     jQuery(document).on('mousedown', '#button-ul', function (event) {
-        editor.pm.execCommand('bullet_list:wrap');
+        editor.currentPm.execCommand('bullet_list:wrap');
     });
 
     jQuery(document).on('mousedown', '#button-blockquote', function (event) {
@@ -3721,7 +3735,7 @@ var bindCite = exports.bindCite = function bindCite(mod) {
             cited_pages = undefined,
             diaButtons = [],
             submit_button_text = undefined,
-            node = editor.pm.selection.node;
+            node = editor.currentPm.selection.node;
 
         if (node && node.type && node.type.name === 'citation') {
             bibFormatStart = node.attrs.bibFormat;
@@ -3765,7 +3779,7 @@ var bindCite = exports.bindCite = function bindCite(mod) {
                 return true;
             }
 
-            editor.pm.execCommand('citation:insert', [bibFormat, bibEntry, bibBefore, bibPage]);
+            editor.currentPm.execCommand('citation:insert', [bibFormat, bibEntry, bibBefore, bibPage]);
             return true;
         }
 
@@ -3802,7 +3816,7 @@ var bindCite = exports.bindCite = function bindCite(mod) {
             diaButtons.push({
                 text: gettext('Remove'),
                 click: function click() {
-                    editor.pm.execCommand('deleteSelection');
+                    editor.currentPm.execCommand('deleteSelection');
                     dialog.dialog('close');
                 },
                 class: 'fw-button fw-orange'
@@ -3962,7 +3976,7 @@ var bindFigure = exports.bindFigure = function bindFigure(editor) {
             figureCategory = 'figure',
             equation = '',
             previewImage = undefined,
-            node = editor.pm.selection.node;
+            node = editor.currentPm.selection.node;
 
         event.preventDefault();
 
@@ -3984,7 +3998,7 @@ var bindFigure = exports.bindFigure = function bindFigure(editor) {
                 text: gettext('Remove'),
                 class: 'fw-button fw-orange',
                 click: function click() {
-                    editor.pm.execCommand('deleteSelection');
+                    editor.currentPm.execCommand('deleteSelection');
                     dialog.dialog('close');
                 }
             });
@@ -4010,7 +4024,7 @@ var bindFigure = exports.bindFigure = function bindFigure(editor) {
                 if (new RegExp(/^\s*$/).test(equation) && !image) {
                     // The math input is empty. Delete a math node if it exist. Then close the dialog.
                     if (insideFigure) {
-                        editor.pm.execCommand('deleteSelection');
+                        editor.currentPm.execCommand('deleteSelection');
                     }
                     dialog.dialog('close');
                     return false;
@@ -4022,7 +4036,7 @@ var bindFigure = exports.bindFigure = function bindFigure(editor) {
                     return false;
                 }
 
-                editor.pm.execCommand('figure:insert', [equation, image, figureCategory, caption]);
+                editor.currentPm.execCommand('figure:insert', [equation, image, figureCategory, caption]);
 
                 dialog.dialog('close');
                 return false;
@@ -4188,11 +4202,11 @@ var bindInlineStyles = exports.bindInlineStyles = function bindInlineStyles(edit
     // inlinestyles
     // strong
     jQuery(document).on('mousedown', '#button-bold:not(.disabled)', function () {
-        editor.pm.execCommand('strong:toggle');
+        editor.currentPm.execCommand('strong:toggle');
     });
     // emph
     jQuery(document).on('mousedown', '#button-italic:not(.disabled)', function (event) {
-        editor.pm.execCommand('em:toggle');
+        editor.currentPm.execCommand('em:toggle');
     });
 };
 
@@ -4211,7 +4225,7 @@ var bindLink = exports.bindLink = function bindLink(editor) {
     // toolbar link
     jQuery(document).on('mousedown', '#button-link:not(.disabled)', function (event) {
 
-        if (!editor.pm.hasFocus()) {
+        if (!editor.currentPm.hasFocus()) {
             return false;
         }
 
@@ -4221,7 +4235,7 @@ var bindLink = exports.bindLink = function bindLink(editor) {
             linkTitle = '',
             defaultLink = 'http://',
             submitButtonText = 'Insert',
-            linkElement = _.find(editor.pm.activeMarks(), function (mark) {
+            linkElement = _.find(editor.currentPm.activeMarks(), function (mark) {
             return mark.type.name === 'link';
         });
 
@@ -4243,7 +4257,7 @@ var bindLink = exports.bindLink = function bindLink(editor) {
                 if (new RegExp(/^\s*$/).test(newLink) || newLink === defaultLink) {
                     // The link input is empty or hasn't been changed from the default value. Just close the dialog.
                     dialog.dialog('close');
-                    editor.pm.focus();
+                    editor.currentPm.focus();
                     return;
                 }
 
@@ -4252,8 +4266,8 @@ var bindLink = exports.bindLink = function bindLink(editor) {
                     linkText = link;
                 }
                 dialog.dialog('close');
-                editor.pm.execCommand('link:set', [newLink, linkTitle]);
-                editor.pm.focus();
+                editor.currentPm.execCommand('link:set', [newLink, linkTitle]);
+                editor.currentPm.focus();
                 return;
             }
         });
@@ -4263,7 +4277,7 @@ var bindLink = exports.bindLink = function bindLink(editor) {
             class: 'fw-button fw-orange',
             click: function click() {
                 dialog.dialog('close');
-                editor.pm.focus();
+                editor.currentPm.focus();
             }
         });
 
@@ -4302,7 +4316,7 @@ var bindMath = exports.bindMath = function bindMath(editor) {
             submitMessage = gettext('Insert'),
             insideMath = false,
             equation = 'x=2*y',
-            node = editor.pm.selection.node;
+            node = editor.currentPm.selection.node;
 
         event.preventDefault();
 
@@ -4330,7 +4344,7 @@ var bindMath = exports.bindMath = function bindMath(editor) {
                 if (new RegExp(/^\s*$/).test(equation)) {
                     // The math input is empty. Delete a math node if it exist. Then close the dialog.
                     if (insideMath) {
-                        editor.pm.execCommand('deleteSelection');
+                        editor.currentPm.execCommand('deleteSelection');
                     }
                     dialog.dialog('close');
                     return;
@@ -4339,7 +4353,7 @@ var bindMath = exports.bindMath = function bindMath(editor) {
                     return;
                 }
 
-                editor.pm.execCommand('equation:insert', [equation]);
+                editor.currentPm.execCommand('equation:insert', [equation]);
 
                 dialog.dialog('close');
             }
@@ -4608,11 +4622,16 @@ var ModMenusUpdateUI = exports.ModMenusUpdateUI = (function () {
             new _update.UpdateScheduler(this.mod.editor.pm, "selectionChange change activeMarkChange blur focus setDoc", function () {
                 return that.updateUI();
             });
+            new _update.UpdateScheduler(this.mod.editor.mod.footnotes.fnPm, "selectionChange change activeMarkChange blur focus setDoc", function () {
+                return that.updateUI();
+            });
         }
     }, {
         key: "updateUI",
         value: function updateUI() {
-            var pm = this.mod.editor.pm;
+            var pm = this.mod.editor.pm,
+                fnPm = this.mod.editor.mod.footnotes.fnPm,
+                currentPm = this.mod.editor.currentPm;
 
             // We count on the the title node being the first one in the document
             var documentTitle = pm.doc.firstChild.type.name === 'title' && pm.doc.firstChild.textContent.length > 0 ? pm.doc.firstChild.textContent : gettext('Untitled Document');
@@ -4620,7 +4639,7 @@ var ModMenusUpdateUI = exports.ModMenusUpdateUI = (function () {
             jQuery('title').html('Fidus Writer - ' + documentTitle);
             jQuery('#header h1').html(documentTitle);
 
-            var marks = pm.activeMarks();
+            var marks = currentPm.activeMarks();
             var strong = marks.some(function (mark) {
                 return mark.type.name === 'strong';
             });
@@ -4663,18 +4682,18 @@ var ModMenusUpdateUI = exports.ModMenusUpdateUI = (function () {
                 jQuery('#button-redo').addClass('disabled');
             }
 
-            var start = pm.selection.from.min(pm.selection.to);
-            var end = pm.selection.from.max(pm.selection.to);
+            var start = currentPm.selection.from.min(currentPm.selection.to);
+            var end = currentPm.selection.from.max(currentPm.selection.to);
             if (start.path.length === 0 || end.path.length === 0) {
                 // The selection must be outermost elements. Do not go any further in
                 // analyzing things.
                 return;
             }
-            var startElement = pm.doc.path([start.path[0]]);
-            var endElement = pm.doc.path([end.path[0]]);
+            var startElement = currentPm.doc.path([start.path[0]]);
+            var endElement = currentPm.doc.path([end.path[0]]);
 
             if (startElement !== endElement) {
-                /* Selection goes across document parts */
+                /* Selection goes across document parts or across footnotes */
                 this.calculatePlaceHolderCss(pm);
                 jQuery('.editortoolbar button').addClass('disabled');
                 jQuery('#block-style-label').html('');
@@ -4685,68 +4704,79 @@ var ModMenusUpdateUI = exports.ModMenusUpdateUI = (function () {
                     jQuery('#button-comment').removeClass('disabled');
                 }
             } else {
-                this.calculatePlaceHolderCss(pm, startElement);
-                jQuery('#current-position').html(PART_LABELS[startElement.type.name]);
+                if (currentPm === pm) {
+                    this.calculatePlaceHolderCss(pm, startElement);
+                    jQuery('#current-position').html(PART_LABELS[startElement.type.name]);
 
-                switch (startElement.type.name) {
-                    case 'title':
-                    case 'metadatasubtitle':
-                    case 'metadataauthors':
-                    case 'metadatakeywords':
-                        jQuery('.edit-button').addClass('disabled');
-                        jQuery('#block-style-label').html('');
-                        if (pm.selection.empty) {
-                            jQuery('#button-comment').addClass('disabled');
-                        } else {
-                            jQuery('#button-comment').removeClass('disabled');
-                        }
+                    switch (startElement.type.name) {
+                        case 'title':
+                        case 'metadatasubtitle':
+                        case 'metadataauthors':
+                        case 'metadatakeywords':
+                            jQuery('.edit-button').addClass('disabled');
+                            jQuery('#block-style-label').html('');
+                            if (pm.selection.empty) {
+                                jQuery('#button-comment').addClass('disabled');
+                            } else {
+                                jQuery('#button-comment').removeClass('disabled');
+                            }
 
-                        break;
-                    case 'metadataabstract':
-                    case 'documentcontents':
-                        jQuery('.edit-button').removeClass('disabled');
+                            break;
+                        case 'metadataabstract':
+                        case 'documentcontents':
+                            jQuery('.edit-button').removeClass('disabled');
 
-                        if (pm.selection.empty) {
-                            jQuery('#button-link').addClass('disabled');
-                            jQuery('#button-comment').addClass('disabled');
-                        } else {
-                            jQuery('#button-comment').removeClass('disabled');
-                        }
+                            if (pm.selection.empty) {
+                                jQuery('#button-link').addClass('disabled');
+                                jQuery('#button-comment').addClass('disabled');
+                            } else {
+                                jQuery('#button-comment').removeClass('disabled');
+                            }
 
-                        if (startElement.type.name === 'metadataabstract') {
-                            jQuery('#button-figure').addClass('disabled');
-                        }
+                            if (startElement.type.name === 'metadataabstract') {
+                                jQuery('#button-figure').addClass('disabled');
+                            }
 
-                        var blockNodeType = true,
-                            blockNode,
-                            nextBlockNodeType;
+                            var blockNodeType = true;
 
-                        if (_(start.path).isEqual(end.path)) {
-                            // Selection within a single block.
-                            blockNode = pm.doc.path(start.path);
-                            blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
-                            jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType]);
-                        } else {
-                            // The selection is crossing several blocks
-                            pm.doc.nodesBetween(start, end, function (node, path, parent) {
-                                if (node.isTextblock) {
-                                    nextBlockNodeType = node.type.name === 'heading' ? node.type.name + '_' + node.attrs.level : node.type.name;
-                                    if (blockNodeType === true) {
-                                        blockNodeType = nextBlockNodeType;
-                                    }
-                                    if (blockNodeType !== nextBlockNodeType) {
-                                        blockNodeType = false;
-                                    }
-                                }
-                            });
-
-                            if (blockNodeType) {
+                            if (_(start.path).isEqual(end.path)) {
+                                // Selection within a single block.
+                                var blockNode = pm.doc.path(start.path);
+                                blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
                                 jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType]);
                             } else {
-                                jQuery('#block-style-label').html('');
+                                // The selection is crossing several blocks
+                                pm.doc.nodesBetween(start, end, function (node, path, parent) {
+                                    if (node.isTextblock) {
+                                        var nextBlockNodeType = node.type.name === 'heading' ? node.type.name + '_' + node.attrs.level : node.type.name;
+                                        if (blockNodeType === true) {
+                                            blockNodeType = nextBlockNodeType;
+                                        }
+                                        if (blockNodeType !== nextBlockNodeType) {
+                                            blockNodeType = false;
+                                        }
+                                    }
+                                });
+
+                                if (blockNodeType) {
+                                    jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType]);
+                                } else {
+                                    jQuery('#block-style-label').html('');
+                                }
                             }
-                        }
-                        break;
+                            break;
+                    }
+                } else {
+                    // In footnote editor
+                    jQuery('#current-position').html(gettext('Footnote'));
+                    var blockNode = fnPm.doc.path(start.path);
+                    blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
+                    jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType]);
+
+                    // Enable all editing buttons, except comment and footnote
+                    jQuery('.edit-button').removeClass('disabled');
+                    jQuery('#button-comment').addClass('disabled');
+                    jQuery('#button-footnote').addClass('disabled');
                 }
             }
             return;

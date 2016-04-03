@@ -9,7 +9,7 @@ export let bindMath = function (editor) {
             submitMessage = gettext('Insert'),
             insideMath = false,
             equation = 'x=2*y',
-            node = editor.pm.selection.node
+            node = editor.currentPm.selection.node
 
         event.preventDefault()
 
@@ -38,7 +38,7 @@ export let bindMath = function (editor) {
                 if ((new RegExp(/^\s*$/)).test(equation)) {
                     // The math input is empty. Delete a math node if it exist. Then close the dialog.
                     if (insideMath) {
-                        editor.pm.execCommand('deleteSelection')
+                        editor.currentPm.execCommand('deleteSelection')
                     }
                     dialog.dialog('close')
                     return
@@ -47,7 +47,7 @@ export let bindMath = function (editor) {
                     return
                 }
 
-                editor.pm.execCommand('equation:insert', [equation])
+                editor.currentPm.execCommand('equation:insert', [equation])
 
                 dialog.dialog('close')
             }

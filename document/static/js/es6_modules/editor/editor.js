@@ -61,6 +61,7 @@ export class Editor {
     startEditor() {
         let that = this
         this.pm = this.makeEditor(document.getElementById('document-editable'))
+        this.currentPm = this.pm // The editor that is currently being edited in -- main or footnote editor 
         new ModFootnotes(this)
         new ModCitations(this)
         new ModMenus(this)

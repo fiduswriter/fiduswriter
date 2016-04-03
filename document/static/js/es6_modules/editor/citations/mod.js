@@ -14,7 +14,7 @@ export class ModCitations {
     }
 
     resetCitations() {
-        let citations = [].slice.call(document.querySelectorAll('#document-editable span.citation'))
+        let citations = [].slice.call(document.querySelectorAll('#paper-editable span.citation'))
         citations.forEach(function(citation){
             citation.innerHTML = ''
         })
@@ -22,10 +22,10 @@ export class ModCitations {
     }
 
     layoutCitations() {
-        let emptyCitations = document.querySelectorAll('#document-editable span.citation:empty')
+        let emptyCitations = document.querySelectorAll('#paper-editable span.citation:empty')
         if (emptyCitations.length > 0) {
             let bibliographyHTML = formatCitations(
-                document.getElementById('document-editable'), // TODO: Should we point this to somewhere else?
+                document.getElementById('paper-editable'), // TODO: Should we point this to somewhere else?
                 this.editor.doc.settings.citationstyle,
                 window.BibDB
             )
@@ -33,6 +33,5 @@ export class ModCitations {
         }
 
     }
-
 
 }

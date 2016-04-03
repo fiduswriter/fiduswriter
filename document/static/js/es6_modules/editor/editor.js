@@ -3,11 +3,10 @@ import {ProseMirror} from "prosemirror/dist/edit/main"
 import {fromDOM} from "prosemirror/dist/format"
 import {serializeTo} from "prosemirror/dist/format"
 import "prosemirror/dist/collab"
-import {UpdateScheduler, scheduleDOMUpdate} from "prosemirror/dist/ui/update"
+import {scheduleDOMUpdate} from "prosemirror/dist/ui/update"
 //import "prosemirror/dist/menu/menubar"
 
 import {fidusSchema} from "./schema"
-import {updateUI} from "./update-ui"
 import {ModComments} from "./comments/mod"
 import {ModFootnotes} from "./footnotes/mod"
 import {ModCitations} from "./citations/mod"
@@ -68,9 +67,6 @@ export class Editor {
         new ModCollab(this)
         new ModTools(this)
         new ModComments(this)
-        new UpdateScheduler(this.pm, "selectionChange change activeMarkChange blur focus setDoc", function() {
-            return updateUI(that)
-        })
         this.pm.on("change", function(){that.docInfo.changed = true})
         this.pm.on("filterTransform", (transform) => {return that.onFilterTransform(transform)})
         this.pm.on("transform", (transform, options) => {that.onTransform(transform, true)})

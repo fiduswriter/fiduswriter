@@ -39,14 +39,7 @@ var tmp_categoryforms = _.template('\
             <span class="fw-add-input icon-addremove"></span>\
         </td>\
     </tr>');
-/** a template for the BibTeX import dialog */
-var tmp_import_bib = _.template('<div id="importbibtex" title="' + gettext('Import a BibTex library') + '">\
-        <form id="import-bib-form" method="post" enctype="multipart/form-data" class="ajax-upload">\
-            <input type="file" id="bib-uploader" name="bib" required />\
-            <span id="import-bib-btn" class="fw-button fw-white fw-large">' + gettext('Select a file') + '</span>\
-            <label id="import-bib-name" class="ajax-upload-label"></label>\
-        </form>\
-    </div>');
+
 /** A template for the bibliography item edit dialog. */
 var tmp_create_bibitem = _.template('\
     <div id="createbook" title="<%- dialogHeader %>">\
@@ -75,7 +68,7 @@ var tmp_sourcetype = _.template('<div id="source-type-selection" class="fw-butto
             <% }) %></ul>\
         </div>\
     </div>');
-/* A template to show the category selection pane of the bibliography item edit dialog. */ 
+/* A template to show the category selection pane of the bibliography item edit dialog. */
 var tmp_category = _.template('\
     <tr>\
         <th><h4 class="fw-tablerow-title"><%- fieldTitle %></h4></th>\

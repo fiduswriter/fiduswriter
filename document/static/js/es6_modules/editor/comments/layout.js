@@ -1,7 +1,7 @@
 import {commentsTemplate, filterByUserBoxTemplate} from "./templates"
 import {UpdateScheduler, scheduleDOMUpdate} from "prosemirror/dist/ui/update"
 import {Pos} from "prosemirror/dist/model"
-import {Comment} from "./store"
+import {Comment} from "./comment"
 
 /* Functions related to layouting of comments */
 export class ModCommentLayout {

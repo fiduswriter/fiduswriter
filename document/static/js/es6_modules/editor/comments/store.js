@@ -6,20 +6,7 @@ import {eventMixin} from "prosemirror/dist/util/event"
 import {Transform} from "prosemirror/dist/transform"
 import {Pos} from "prosemirror/dist/model"
 import {CommentMark} from "../schema"
-
-export class Comment {
-    constructor(id, user, userName, userAvatar, date, comment, answers, isMajor) {
-        this.id = id
-        this.user = user
-        this.userName = userName
-        this.userAvatar = userAvatar
-        this.date = date
-        this.comment = comment
-        this.answers = answers
-        this['review:isMajor'] = isMajor
-        this.hidden = false
-    }
-}
+import {Comment} from "./comment"
 
 export class ModCommentStore {
     constructor(mod) {

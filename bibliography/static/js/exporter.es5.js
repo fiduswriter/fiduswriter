@@ -8,6 +8,334 @@ var _createClass = (function () { function defineProperties(target, props) { for
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var FW_LOCALSTORAGE_VERSION = "1.0";
+
+var BibliographyDB = exports.BibliographyDB = (function () {
+    function BibliographyDB(docOwnerId, useLocalStorage, oldBibDB, oldBibCats) {
+        _classCallCheck(this, BibliographyDB);
+
+        this.docOwnerId = docOwnerId; // theEditor.doc.owner.id || 0
+        this.useLocalStorage = useLocalStorage; // Whether to use local storage to cache result
+        if (oldBibDB) {
+            this.bibDB = oldBibDB;
+        } else {
+            this.bibDB = {};
+        }
+        if (oldBibCats) {
+            this.bibCats = oldBibCats;
+        } else {
+            this.bibCats = [];
+        }
+    }
+
+    // EXPORT
+    /** Get the bibliography from the server and create as window.BibDB.
+     * @function getBibDB
+     * @param callback Will be called afterward.
+     */
+
+    _createClass(BibliographyDB, [{
+        key: 'getBibDB',
+        value: function getBibDB(callback) {
+
+            var lastModified = -1,
+                numberOfEntries = -1,
+                that = this;
+
+            if (this.useLocalStorage) {
+                var _lastModified = parseInt(localStorage.getItem('last_modified_biblist')),
+                    _numberOfEntries = parseInt(localStorage.getItem('number_of_entries')),
+                    localStorageVersion = localStorage.getItem('version'),
+                    localStorageOwnerId = parseInt(localStorage.getItem('owner_id'));
+                that = this;
+
+                // A dictionary to look up bib fields by their fw type name. Needed for translation to CSL and Biblatex.
+                //jQuery('#bibliography').dataTable().fnDestroy()
+                //Fill BibDB
+
+                if (_.isNaN(_lastModified)) {
+                    _lastModified = -1;
+                }
+
+                if (_.isNaN(_numberOfEntries)) {
+                    _numberOfEntries = -1;
+                }
+
+                if (localStorageVersion != FW_LOCALSTORAGE_VERSION || localStorageOwnerId != this.docOwnerId) {
+                    _lastModified = -1;
+                    _numberOfEntries = -1;
+                }
+            }
+
+            $.activateWait();
+
+            $.ajax({
+                url: '/bibliography/biblist/',
+                data: {
+                    'owner_id': that.docOwnerId,
+                    'last_modified': lastModified,
+                    'number_of_entries': numberOfEntries
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function success(response, textStatus, jqXHR) {
+
+                    var newBibCats = response.bibCategories;
+                    newBibCats.forEach(function (bibCat) {
+                        that.bibCats.push(bibCat);
+                    });
+
+                    var bibList = [];
+
+                    if (that.useLocalStorage) {
+                        if (response.hasOwnProperty('bibList')) {
+                            bibList = response.bibList;
+                            try {
+                                localStorage.setItem('biblist', JSON.stringify(response.bibList));
+                                localStorage.setItem('last_modified_biblist', response.last_modified);
+                                localStorage.setItem('number_of_entries', response.number_of_entries);
+                                localStorage.setItem('owner_id', response.that.docOwnerId);
+                                localStorage.setItem('version', FW_LOCALSTORAGE_VERSION);
+                            } catch (error) {
+                                // The local storage was likely too small
+                            }
+                        } else {
+                                bibList = JSON.parse(localStorage.getItem('biblist'));
+                            }
+                    } else {
+                        bibList = response.bibList;
+                    }
+                    var newBibPks = [];
+                    for (var i = 0; i < bibList.length; i++) {
+                        newBibPks.push(that.serverBibItemToBibDB(bibList[i]));
+                    }
+                    if (callback) {
+                        callback(newBibPks, newBibCats);
+                    }
+                },
+                error: function error(jqXHR, textStatus, errorThrown) {
+                    $.addAlert('error', jqXHR.responseText);
+                },
+                complete: function complete() {
+                    $.deactivateWait();
+                }
+            });
+        }
+
+        /** Converts a bibliography item as it arrives from the server to a BibDB object.
+         * @function serverBibItemToBibDB
+         * @param item The bibliography item from the server.
+         */
+        // NO EXPORT!
+
+    }, {
+        key: 'serverBibItemToBibDB',
+        value: function serverBibItemToBibDB(item) {
+            var id = item['id'];
+            var aBibDBEntry = JSON.parse(item['fields']);
+            aBibDBEntry['entry_type'] = item['entry_type'];
+            aBibDBEntry['entry_key'] = item['entry_key'];
+            aBibDBEntry['entry_cat'] = item['entry_cat'];
+            this.bibDB[id] = aBibDBEntry;
+            return id;
+        }
+
+        /** Saves a bibliography entry to the database on the server.
+         * @function createBibEntry
+         * @param post_data The bibliography data to send to the server.
+         */
+
+    }, {
+        key: 'createBibEntry',
+        value: function createBibEntry(postData, callback) {
+            var that = this;
+            $.activateWait();
+            $.ajax({
+                url: '/bibliography/save/',
+                data: postData,
+                type: 'POST',
+                dataType: 'json',
+                success: function success(response, textStatus, jqXHR) {
+                    if (that.displayCreateBibEntryError(response.errormsg)) {
+                        $.addAlert('success', gettext('The bibliography has been updated'));
+                        var newBibPks = [];
+                        var bibList = response.values;
+                        for (var i = 0; i < bibList.length; i++) {
+                            newBibPks.push(that.serverBibItemToBibDB(bibList[i]));
+                        }
+                        if (callback) {
+                            callback(newBibPks);
+                        }
+                    } else {
+                        $.addAlert('error', gettext('Some errors are found. Please examine the form.'));
+                    }
+                },
+                error: function error(jqXHR, textStatus, errorThrown) {
+                    $.addAlert('error', errorThrown);
+                },
+                complete: function complete() {
+                    $.deactivateWait();
+                }
+            });
+        }
+
+        /** Displays an error on bibliography entry creation
+         * @function displayCreateBibEntryError
+         * @param errors Errors to be displayed
+         */
+
+    }, {
+        key: 'displayCreateBibEntryError',
+        value: function displayCreateBibEntryError(errors) {
+            var noError = true,
+                e_key;
+            for (e_key in errors) {
+                e_msg = '<div class="warning">' + errors[e_key] + '</div>';
+                if ('error' == e_key) {
+                    jQuery('#createbook').prepend(e_msg);
+                } else {
+                    jQuery('#id_' + e_key).after(e_msg);
+                }
+                noError = false;
+            }
+            return noError;
+        }
+
+        /** Update or create new category
+         * @function createCategory
+         * @param cats The category objects to add.
+         */
+
+    }, {
+        key: 'createCategory',
+        value: function createCategory(cats, callback) {
+            var that = this;
+            var postData = {
+                'ids[]': cats.ids,
+                'titles[]': cats.titles
+            };
+            $.activateWait();
+            $.ajax({
+                url: '/bibliography/save_category/',
+                data: postData,
+                type: 'POST',
+                dataType: 'json',
+                success: function success(response, textStatus, jqXHR) {
+                    if (jqXHR.status == 201) {
+                        var bibCats = response.entries; // We receive both existing and new categories.
+                        // Replace the old with the new categories, but don't lose the link to the array (so delete each, then add each).
+                        while (that.bibCats.length > 0) {
+                            that.bibCats.pop();
+                        }
+                        while (bibCats.length > 0) {
+                            that.bibCats.push(bibCats.pop());
+                        }
+
+                        $.addAlert('success', gettext('The categories have been updated'));
+                        if (callback) {
+                            callback(that.bibCats);
+                        }
+                    }
+                },
+                error: function error(jqXHR, textStatus, errorThrown) {
+                    $.addAlert('error', jqXHR.responseText);
+                },
+                complete: function complete() {
+                    $.deactivateWait();
+                }
+            });
+        }
+
+        /** Delete a categories
+         * @function deleteCategory
+         * @param ids A list of ids to delete.
+         */
+
+    }, {
+        key: 'deleteCategory',
+        value: function deleteCategory(ids, callback) {
+
+            var postData = {
+                'ids[]': ids
+            },
+                that = this;
+            $.ajax({
+                url: '/bibliography/delete_category/',
+                data: postData,
+                type: 'POST',
+                dataType: 'json',
+                success: function success(response, textStatus, jqXHR) {
+                    var deletedPks = ids.slice();
+                    var deletedBibCats = [];
+                    that.bibCats.forEach(function (bibCat) {
+                        if (ids.indexOf(bibCat.id) !== -1) {
+                            deletedBibCats.push(bibCat);
+                        }
+                    });
+                    deletedBibCats.forEach(function (bibCat) {
+                        var index = that.bibCats.indexOf(bibCat);
+                        that.bibCats.splice(index, 1);
+                    });
+                    if (callback) {
+                        callback(deletedPks);
+                    }
+                }
+            });
+        }
+
+        /** Delete a list of bibliography items both locally and on the server.
+         * @function deleteBibEntry
+         * @param ids A list of bibliography item ids that are to be deleted.
+         */
+
+    }, {
+        key: 'deleteBibEntry',
+        value: function deleteBibEntry(ids, callback) {
+            var that = this;
+            for (var i = 0; i < ids.length; i++) {
+                ids[i] = parseInt(ids[i]);
+            }
+            var postData = {
+                'ids[]': ids
+            };
+            $.activateWait();
+            $.ajax({
+                url: '/bibliography/delete/',
+                data: postData,
+                type: 'POST',
+                success: function success(response, textStatus, jqXHR) {
+                    for (var i = 0; i < ids.length; i++) {
+                        delete that.bibDB[ids[i]];
+                    }
+                    $.addAlert('success', gettext('The bibliography item(s) have been deleted'));
+                    if (callback) {
+                        callback(ids);
+                    }
+                },
+                error: function error(jqXHR, textStatus, errorThrown) {
+                    $.addAlert('error', jqXHR.responseText);
+                },
+                complete: function complete() {
+                    $.deactivateWait();
+                }
+            });
+        }
+    }]);
+
+    return BibliographyDB;
+})();
+
+},{}],2:[function(require,module,exports){
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
 exports.BibLatexExporter = undefined;
 
 var _zip = require('../../exporter/zip');
@@ -198,7 +526,7 @@ var BibLatexExporter = exports.BibLatexExporter = (function () {
     return BibLatexExporter;
 })();
 
-},{"../../exporter/zip":8}],2:[function(require,module,exports){
+},{"../../exporter/zip":9}],3:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -573,7 +901,7 @@ var BibLatexParser = exports.BibLatexParser = (function () {
     return BibLatexParser;
 })();
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -740,7 +1068,7 @@ var BibLatexImporter = exports.BibLatexImporter = (function () {
     return BibLatexImporter;
 })();
 
-},{"./biblatex-parser":2,"./templates":4}],4:[function(require,module,exports){
+},{"./biblatex-parser":3,"./templates":5}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -755,7 +1083,7 @@ var importBibTemplate = exports.importBibTemplate = _.template('<div id="importb
         </form>\
     </div>');
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -776,7 +1104,7 @@ var downloadFile = exports.downloadFile = function downloadFile(zipFilename, blo
     fakeDownloadLink.dispatchEvent(clickEvent);
 };
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -786,7 +1114,7 @@ Object.defineProperty(exports, "__esModule", {
 var revisionDialogTemplate = exports.revisionDialogTemplate = _.template('\
 <div title="' + gettext('Revision description') + '"><p><input type="text" class="revision-note" placeholder="' + gettext('Description (optional)') + '"></p></div>');
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -847,7 +1175,7 @@ var uploadFile = exports.uploadFile = function uploadFile(zipFilename, blob, edi
     });
 };
 
-},{"./upload-templates":6}],8:[function(require,module,exports){
+},{"./upload-templates":7}],9:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -970,14 +1298,17 @@ var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles,
     }
 };
 
-},{"./download":5,"./upload":7}],9:[function(require,module,exports){
+},{"./download":6,"./upload":8}],10:[function(require,module,exports){
 "use strict";
 
 var _biblatex = require("./es6_modules/bibliography/exporter/biblatex");
 
 var _biblatex2 = require("./es6_modules/bibliography/importer/biblatex");
 
+var _bibliographyDB = require("./es6_modules/bibliography/bibliographyDB");
+
 window.BibLatexExporter = _biblatex.BibLatexExporter;
 window.BibLatexImporter = _biblatex2.BibLatexImporter;
+window.BibliographyDB = _bibliographyDB.BibliographyDB;
 
-},{"./es6_modules/bibliography/exporter/biblatex":1,"./es6_modules/bibliography/importer/biblatex":3}]},{},[9]);
+},{"./es6_modules/bibliography/bibliographyDB":1,"./es6_modules/bibliography/exporter/biblatex":2,"./es6_modules/bibliography/importer/biblatex":4}]},{},[10]);

@@ -19,7 +19,7 @@
  *
  */
 /** The version number of Bibliography local storage. Needs to be increased when large changes are made to force reload. */
-var FW_LOCALSTORAGE_VERSION = "1.0";
+
 
 (function () {
     var exports = this,
@@ -72,49 +72,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         'mdy/mdy': gettext('M/D/Y - M/D/Y')
     };
 
-    /** Converts a bibliography item as it arrives from the server to a BibDB object.
-     * @function serverBibItemToBibDB
-     * @memberof bibliographyHelpers
-     * @param item The bibliography item from the server.
-     * @param aBibDB The BibDB to add the item to.
-     */
-    bibliographyHelpers.serverBibItemToBibDB = function (item, aBibDB) {
-        var id = item['id'];
-        aBibDB[id] = JSON.parse(item['fields']);
-        aBibDB[id]['entry_type'] = item['entry_type'];
-        aBibDB[id]['entry_key'] = item['entry_key'];
-        aBibDB[id]['entry_cat'] = item['entry_cat'];
-        return id;
-    };
 
-    /** This takes a list of new bib entries and adds them to BibDB and the bibliography table
-     * @function addBibList
-     * @memberof bibliographyHelpers
-     * @param bibList The list of bibliography items from the server.
-     */
-    bibliographyHelpers.addBibList = function (bibList) {
-
-        var i, pks = [];
-        for (i = 0; i < bibList.length; i++) {
-            pks.push(bibliographyHelpers.serverBibItemToBibDB(bibList[i], BibDB));
-        }
-
-        if (jQuery('#bibliography').length > 0) {
-            bibliographyHelpers.stopBibliographyTable();
-            for (i = 0; i < pks.length; i++) {
-                bibliographyHelpers.appendToBibTable(pks[i], BibDB[pks[i]]);
-            }
-            bibliographyHelpers.startBibliographyTable();
-        }
-
-        if (window.theEditor && 0 < jQuery('#add-cite-book').size()) {
-            // We are in the editor view
-            for (i = 0; i < pks.length; i++) {
-                theEditor.mod.menus.citation.appendToCitationDialog(pks[i], BibDB[pks[i]]);
-            }
-            jQuery("#cite-source-table").trigger("update");
-        }
-    };
     /** Converts a BibDB to a DB of the CSL type. The output is written to window.CSLDB.
      * @function setCSLDB
      * @memberof bibliographyHelpers
@@ -212,107 +170,51 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
 
 
 
-
-    /** Saves a bibliography entry to the database on the server.
-     * @function createBibEntry
-     * @memberof bibliographyHelpers
-     * @param post_data The bibliography data to send to the server.
+    // EXPORT
+    /** Adds a list of bibliography categories to current list of bibliography categories.
+     * @function addBibCategoryList
+     * @param newBibCategories The new categories which will be added to the existing ones.
      */
-    bibliographyHelpers.createBibEntry = function (post_data) {
-        $.activateWait();
-        $.ajax({
-            url: '/bibliography/save/',
-            data: post_data,
-            type: 'POST',
-            dataType: 'json',
-            success: function (response, textStatus, jqXHR) {
-                if (bibliographyHelpers.displayCreateBibEntryError(response.errormsg)) {
-                    bibliographyHelpers.addBibList(response.values);
-                    $.addAlert('success', gettext('The bibliography has been updated'));
-                    jQuery("#createbook").dialog('close');
-                } else {
-                    $.addAlert('error', gettext('Some errors are found. Please examine the form.'));
-                }
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                $.addAlert('error', errorThrown);
-            },
-            complete: function () {
-                $.deactivateWait();
-            }
-        });
-    };
-
-    /** Displays an error on bibliography entry creation
-     * @function displayCreateBibEntryError
-     * @memberof bibliographyHelpers
-     * @param errors Errors to be displayed
-     */
-    bibliographyHelpers.displayCreateBibEntryError = function (errors) {
-        var noError = true,
-            e_key;
-        for (e_key in errors) {
-            e_msg = '<div class="warning">' + errors[e_key] + '</div>';
-            if ('error' == e_key) {
-                jQuery('#createbook').prepend(e_msg);
-            } else {
-                jQuery('#id_' + e_key).after(e_msg);
-            }
-            noError = false;
+    bibliographyHelpers.addBibCategoryList = function(newBibCategories) {
+        for (let i = 0; i < newBibCategories.length; i++) {
+            bibliographyHelpers.appendToBibCatList(newBibCategories[i]);
         }
-        return noError;
     };
 
-    /** Update or create new category
-     * @function createCategory
-     * @memberof bibliographyHelpers
-     * @param cats The category objects to add.
+    /** Add an item to the HTML list of bibliography categories.
+     * @function appendToBibCatList
+     * @param bCat Category to be appended.
      */
-    bibliographyHelpers.createCategory = function (cats) {
-        var post_data = {
-            'ids[]': cats.ids,
-            'titles[]': cats.titles
-        };
-        $.activateWait();
-        $.ajax({
-            url: '/bibliography/save_category/',
-            data: post_data,
-            type: 'POST',
-            dataType: 'json',
-            success: function (response, textStatus, jqXHR) {
-                if (jqXHR.status == 201) {
-                    var i, len = response.entries.length;
+    // NO EXPORT
+    bibliographyHelpers.appendToBibCatList = function(bCat) {
+        jQuery('#bib-category-list').append(tmp_bibliography_category_list_item({
+            'bCat': bCat
+        }));
+    };
 
-                    BibCategories = [];
-                    jQuery('#bib-category-list li').not(':first').remove();
-                    bibliographyHelpers.addBibCategoryList(response.entries);
-                    $.addAlert('success', gettext('The categories have been updated'));
-                }
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                $.addAlert('error', jqXHR.responseText);
-            },
-            complete: function () {
-                $.deactivateWait();
+    /** This takes a list of new bib entries and adds them to BibDB and the bibliography table
+     * @function addBibList
+     * @memberof bibliographyHelpers
+     * @param bibList The list of bibliography items from the server.
+     */
+    // EXPORT
+    bibliographyHelpers.addBibList = function(pks) {
+
+        if (jQuery('#bibliography').length > 0) {
+            bibliographyHelpers.stopBibliographyTable(); // KEEP
+            for (let i = 0; i < pks.length; i++) {
+                bibliographyHelpers.appendToBibTable(pks[i], BibDB[pks[i]]); // KEEP
             }
-        });
-    };
+            bibliographyHelpers.startBibliographyTable(); // KEEP
+        }
 
-    /** Delete a categories
-     * @function deleteCategory
-     * @memberof bibliographyHelpers
-     * @param ids A list of ids to delete.
-     */
-    bibliographyHelpers.deleteCategory = function (ids) {
-        var post_data = {
-            'ids[]': ids
-        };
-        $.ajax({
-            url: '/bibliography/delete_category/',
-            data: post_data,
-            type: 'POST',
-            dataType: 'json'
-        });
+        if (window.theEditor && 0 < jQuery('#add-cite-book').size()) {
+            // We are in the editor view
+            for (let i = 0; i < pks.length; i++) {
+                theEditor.mod.menus.citation.appendToCitationDialog(pks[i], BibDB[pks[i]]);
+            }
+            jQuery("#cite-source-table").trigger("update");
+        }
     };
 
     /** Opens a dialog for editing categories.
@@ -687,30 +589,6 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         jQuery('#createbook .warning').detach();
     };
 
-    /** Adds a list of bibliography categories to current list of bibliography categories.
-     * @function addBibCategoryList
-     * @memberof bibliographyHelpers
-     * @param newBibCategories The new categories which will be added to the existing ones.
-     */
-    bibliographyHelpers.addBibCategoryList = function (newBibCategories) {
-        var i;
-        BibCategories = BibCategories.concat(newBibCategories);
-        for (i = 0; i < newBibCategories.length; i++) {
-            bibliographyHelpers.appendToBibCatList(newBibCategories[i]);
-        }
-    };
-
-    /** Add an item to the HTML list of bibliography categories.
-     * @function appendToBibCatList
-     * @memberof bibliographyHelpers
-     * @param bCat Category to be appended.
-     */
-    bibliographyHelpers.appendToBibCatList = function (bCat) {
-        jQuery('#bib-category-list').append(tmp_bibliography_category_list_item({
-            'bCat': bCat
-        }));
-    };
-
     /** Add and remove name list field.
      * @function addRemoveListHandler
      * @memberof bibliographyHelpers
@@ -1061,44 +939,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
 
         bibliographyHelpers.addRemoveListHandler();
     };
-    /** Delete a list of bibliography items both locally and on the server.
-     * @function deleteBibEntry
-     * @memberof bibliographyHelpers
-     * @param ids A list of bibliography item ids that are to be deleted.
-     */
-    bibliographyHelpers.deleteBibEntry = function (ids) {
-        for (var i = 0; i < ids.length; i++) {
-            ids[i] = parseInt(ids[i]);
-        }
-        var post_data = {
-            'ids[]': ids
-        };
-        $.activateWait();
-        $.ajax({
-            url: '/bibliography/delete/',
-            data: post_data,
-            type: 'POST',
-            success: function (response, textStatus, jqXHR) {
-                var i, len = ids.length,
-                    j, len2;
-                bibliographyHelpers.stopBibliographyTable();
-                for (i = 0; i < len; i++) {
-                    delete BibDB[ids[i]];
-                }
-                var elements_id = '#Entry_' + ids.join(', #Entry_');
-                jQuery(elements_id).detach();
-                bibliographyHelpers.startBibliographyTable();
-                $.addAlert('success', gettext(
-                    'The bibliography item(s) have been deleted'));
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                $.addAlert('error', jqXHR.responseText);
-            },
-            complete: function () {
-                $.deactivateWait();
-            }
-        });
-    };
+
     /** Dialog to confirm deletion of bibliography items.
      * @function deleteBibEntryDialog
      * @memberof bibliographyHelpers
@@ -1204,117 +1045,7 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
             }));
         }
     };
-    /** Get a bibliography from the server.
-     * @function getABibDB
-     * @memberof bibliographyHelpers
-     * @param ownerId The id of the person who's bibliography will be returned.
-     * @param callback Will be called when process has finished with the new bibliography as an argument.
-     */
-    bibliographyHelpers.getABibDB = function (ownerId, callback) {
-        // Get the BibDB of one specific user and call the callback with it.
-        var aBibDB = {};
-        $.ajax({
-            url: '/bibliography/biblist/',
-            data: {
-                'owner_id': ownerId
-            },
-            type: 'POST',
-            dataType: 'json',
-            success: function (response, textStatus, jqXHR) {
-                for (i = 0; i < response.bibList.length; i++) {
-                    bibliographyHelpers.serverBibItemToBibDB(response.bibList[i], aBibDB);
-                }
-                if (callback) {
-                    callback(aBibDB);
-                }
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                $.addAlert('error', jqXHR.responseText);
-            },
-            complete: function () {
-                $.deactivateWait();
-            }
-        });
 
-    };
-    /** Get the bibliography of the current user from the server and create as window.BibDB.
-     * @function getBibDB
-     * @memberof bibliographyHelpers
-     * @param callback Will be called afterward.
-     */
-    bibliographyHelpers.getBibDB = function (callback) {
-
-        var documentOwnerId, lastModified = parseInt(localStorage.getItem('last_modified_biblist')),
-            numberOfEntries = parseInt(localStorage.getItem('number_of_entries')),
-            localStorageVersion = localStorage.getItem('version');
-
-        window.BibDB = {};
-        window.BibCategories = [];
-        window.BibFieldTranslations = {};
-        // A dictionary to look up bib fields by their fw type name. Needed for translation to CSL and Biblatex.
-        //jQuery('#bibliography').dataTable().fnDestroy();
-        //Fill BibDB
-        if (typeof (theEditor) === 'undefined') {
-            documentOwnerId = 0;
-        } else {
-            documentOwnerId = theEditor.doc.owner.id;
-        }
-
-        if (_.isNaN(lastModified)) {
-            lastModified = -1;
-        }
-
-        if (_.isNaN(numberOfEntries)) {
-            numberOfEntries = -1;
-        }
-
-        if (localStorageVersion != FW_LOCALSTORAGE_VERSION) {
-            lastModified = -1;
-            numberOfEntries = -1;
-        }
-
-        $.activateWait();
-
-        $.ajax({
-            url: '/bibliography/biblist/',
-            data: {
-                'owner_id': documentOwnerId,
-                'last_modified': lastModified,
-                'number_of_entries': numberOfEntries,
-            },
-            type: 'POST',
-            dataType: 'json',
-            success: function (response, textStatus, jqXHR) {
-
-                bibliographyHelpers.addBibCategoryList(response.bibCategories);
-                if (response.hasOwnProperty('bibList')) {
-                    bibliographyHelpers.addBibList(response.bibList);
-                    try {
-                        localStorage.setItem('biblist', JSON.stringify(response.bibList));
-                        localStorage.setItem('last_modified_biblist', response.last_modified);
-                        localStorage.setItem('number_of_entries', response.number_of_entries);
-                        localStorage.setItem('version', FW_LOCALSTORAGE_VERSION);
-                    } catch (error) {
-                        // The local storage was likely too small
-                    }
-                } else {
-                    var bibList = JSON.parse(localStorage.getItem('biblist'));
-                    bibliographyHelpers.addBibList(bibList);
-                }
-
-                jQuery(document.body).trigger("bibliography_ready");
-                if (callback) {
-                    callback();
-                }
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                $.addAlert('error', jqXHR.responseText);
-            },
-            complete: function () {
-                $.deactivateWait();
-            }
-        });
-    };
     /** Stop the interactive parts of the bibliography table.
      * @function stopBibliographyTable
      * @memberof bibliographyHelpers
@@ -1444,6 +1175,77 @@ var FW_LOCALSTORAGE_VERSION = "1.0";
         });
 
     };
+
+    /* These are temporal functions to replace the old getBibDB function.
+    TODO: These functions should be entirely replaced when converting to ES6.
+    */
+    bibliographyHelpers.getBibDB = function(callback) {
+        window.BibDB = {}
+        window.BibCategories = []
+
+        if (typeof (theEditor) === 'undefined') {
+            docOwnerId = 0;
+        } else {
+            docOwnerId = theEditor.doc.owner.id;
+        }
+
+        window.theBibliographyDB = new BibliographyDB(docOwnerId, true, window.BibDB, window.BibCategories);
+
+        theBibliographyDB.getBibDB(function(bibPks, bibCats){
+
+            bibliographyHelpers.addBibCategoryList(bibCats);
+            bibliographyHelpers.addBibList(bibPks);
+            jQuery(document.body).trigger("bibliography_ready");
+            if (callback) {
+                callback()
+            }
+        })
+    }
+
+    bibliographyHelpers.getABibDB = function(docOwnerId, callback) {
+        let aBibDB = new BibliographyDB(docOwnerId, false, false, false)
+        aBibDB.getBibDB(function(bibPks, bibCats) {
+            if (callback) {
+                callback(aBibDB.bibDB)
+            }
+        })
+    }
+
+    bibliographyHelpers.createBibEntry = function(bibEntryData) {
+        theBibliographyDB.createBibEntry(bibEntryData, function(newBibPks) {
+             bibliographyHelpers.addBibList(newBibPks);
+             jQuery("#createbook").dialog('close');
+        });
+    }
+
+    bibliographyHelpers.createCategory = function(cats) {
+        theBibliographyDB.createCategory(cats, function(bibCats){
+            while (theBibliographyDB.bibCategories.length > 0) {
+                theBibliographyDB.bibCategories.pop();
+            }
+
+            jQuery('#bib-category-list li').not(':first').remove();
+            bibliographyHelpers.addBibCategoryList(bibCats);
+        });
+    }
+
+    bibliographyHelpers.deleteCategory = function(cats) {
+        theBibliographyDB.createCategory(cats);
+    }
+
+    bibliographyHelpers.deleteBibEntry = function(ids) {
+        theBibliographyDB.deleteBibEntry(ids, function(ids){
+            bibliographyHelpers.stopBibliographyTable();
+            var elements_id = '#Entry_' + ids.join(', #Entry_');
+            jQuery(elements_id).detach();
+            bibliographyHelpers.startBibliographyTable();
+        })
+    }
+
+
+
+    /* END ES-6 temporary functions. */
+
 
     bibliographyHelpers.initiate = function () {
 

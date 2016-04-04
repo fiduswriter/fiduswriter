@@ -1,5 +1,5 @@
 import {getMissingDocumentListData} from "../../documents/tools"
-import {BibliographyDB} from "../../bibliography/bibliographyDB"
+import {BibliographyDB} from "../../bibliography/database"
 
 export let getMissingChapterData = function (aBook, documentList, callback) {
     let bookDocuments = []

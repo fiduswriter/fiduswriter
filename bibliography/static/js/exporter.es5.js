@@ -1305,10 +1305,10 @@ var _biblatex = require("./es6_modules/bibliography/exporter/biblatex");
 
 var _biblatex2 = require("./es6_modules/bibliography/importer/biblatex");
 
-var _bibliographyDB = require("./es6_modules/bibliography/bibliographyDB");
+var _database = require("./es6_modules/bibliography/database");
 
 window.BibLatexExporter = _biblatex.BibLatexExporter;
 window.BibLatexImporter = _biblatex2.BibLatexImporter;
-window.BibliographyDB = _bibliographyDB.BibliographyDB;
+window.BibliographyDB = _database.BibliographyDB;
 
-},{"./es6_modules/bibliography/bibliographyDB":1,"./es6_modules/bibliography/exporter/biblatex":2,"./es6_modules/bibliography/importer/biblatex":4}]},{},[10]);
+},{"./es6_modules/bibliography/database":1,"./es6_modules/bibliography/exporter/biblatex":2,"./es6_modules/bibliography/importer/biblatex":4}]},{},[10]);

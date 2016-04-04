@@ -6802,7 +6802,7 @@ var _native = require("./native");
 
 var _native2 = require("../importer/native");
 
-var _bibliographyDB = require("../bibliography/bibliographyDB");
+var _database = require("../bibliography/database");
 
 var afterCopy = function afterCopy(noErrors, returnValue, editor, callback) {
     $.deactivateWait();
@@ -6847,7 +6847,7 @@ var savecopy = exports.savecopy = function savecopy(aDocument, editor, user, cal
             importAsUser(aDocument, shrunkImageDB, shrunkBibDB, images, editor, user, callback);
         });
     } else {
-        var bibGetter = new _bibliographyDB.BibliographyDB(aDocument.owner.id, false, false, false);
+        var bibGetter = new _database.BibliographyDB(aDocument.owner.id, false, false, false);
         bibGetter.getBibDB(function (bibDB, bibCats) {
             usermediaHelpers.getAnImageDB(aDocument.owner.id, function (anImageDB) {
                 (0, _native.exportNative)(aDocument, anImageDB, bibDB, function (aDocument, shrunkImageDB, shrunkBibDB, images) {
@@ -6858,7 +6858,7 @@ var savecopy = exports.savecopy = function savecopy(aDocument, editor, user, cal
     }
 };
 
-},{"../bibliography/bibliographyDB":2,"../importer/native":67,"./native":62}],55:[function(require,module,exports){
+},{"../bibliography/database":2,"../importer/native":67,"./native":62}],55:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7373,7 +7373,7 @@ var _zip = require("./zip");
 
 var _htmlTemplates = require("./html-templates");
 
-var _bibliographyDB = require("../bibliography/bibliographyDB");
+var _database = require("../bibliography/database");
 
 var _base = require("./base");
 
@@ -7504,7 +7504,7 @@ var HTMLExporter = exports.HTMLExporter = (function (_BaseHTMLExporter) {
             _this2.exportOne();
         } else {
             (function () {
-                var bibGetter = new _bibliographyDB.BibliographyDB(doc.owner.id, false, false, false);
+                var bibGetter = new _database.BibliographyDB(doc.owner.id, false, false, false);
                 bibGetter.getBibDB(function () {
                     that.bibDB = bibGetter.bibDB;
                     that.exportOne();
@@ -7590,7 +7590,7 @@ var HTMLExporter = exports.HTMLExporter = (function (_BaseHTMLExporter) {
     return HTMLExporter;
 })(BaseHTMLExporter);
 
-},{"../bibliography/bibliographyDB":2,"../citations/format":5,"./base":53,"./html-templates":58,"./json":60,"./tools":63,"./zip":66,"katex":70}],60:[function(require,module,exports){
+},{"../bibliography/database":2,"../citations/format":5,"./base":53,"./html-templates":58,"./json":60,"./tools":63,"./zip":66,"katex":70}],60:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7687,7 +7687,7 @@ var _base = require("./base");
 
 var _biblatex = require("../bibliography/exporter/biblatex");
 
-var _bibliographyDB = require("../bibliography/bibliographyDB");
+var _database = require("../bibliography/database");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -8071,7 +8071,7 @@ var LatexExporter = exports.LatexExporter = (function (_BaseLatexExporter) {
             _this2.exportOne();
         } else {
             (function () {
-                var bibGetter = new _bibliographyDB.BibliographyDB(doc.owner.id, false, false, false);
+                var bibGetter = new _database.BibliographyDB(doc.owner.id, false, false, false);
                 bibGetter.getBibDB(function () {
                     that.bibDB = bibGetter.bibDB;
                     that.exportOne();
@@ -8119,7 +8119,7 @@ var LatexExporter = exports.LatexExporter = (function (_BaseLatexExporter) {
     return LatexExporter;
 })(BaseLatexExporter);
 
-},{"../bibliography/bibliographyDB":2,"../bibliography/exporter/biblatex":3,"./base":53,"./json":60,"./tools":63,"./zip":66}],62:[function(require,module,exports){
+},{"../bibliography/database":2,"../bibliography/exporter/biblatex":3,"./base":53,"./json":60,"./tools":63,"./zip":66}],62:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8133,7 +8133,7 @@ var _tools = require("./tools");
 
 var _zip = require("./zip");
 
-var _bibliographyDB = require("../bibliography/bibliographyDB");
+var _database = require("../bibliography/database");
 
 /** The current Fidus Writer filetype version.
  * The importer will not import from a different version and the exporter
@@ -8160,12 +8160,12 @@ var downloadNative = exports.downloadNative = function downloadNative(aDocument,
             exportNative(aDocument, imageDB, bibDB, exportNativeFile);
         });
     } else if (imageDB) {
-        var bibGetter = new _bibliographyDB.BibliographyDB(aDocument.owner.id, false, false, false);
+        var bibGetter = new _database.BibliographyDB(aDocument.owner.id, false, false, false);
         bibGetter.getBibDB(function (bibDB, bibCats) {
             exportNative(aDocument, imageDB, bibDB, exportNativeFile);
         });
     } else {
-        var bibGetter = new _bibliographyDB.BibliographyDB(aDocument.owner.id, false, false, false);
+        var bibGetter = new _database.BibliographyDB(aDocument.owner.id, false, false, false);
         bibGetter.getBibDB(function (bibDB, bibCats) {
             usermediaHelpers.getAnImageDB(aDocument.owner.id, function (imageDB) {
                 exportNative(aDocument, imageDB, bibDB, exportNativeFile);
@@ -8233,7 +8233,7 @@ var exportNativeFile = function exportNativeFile(aDocument, shrunkImageDB, shrun
     (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools.createSlug)(aDocument.title) + '.fidus', 'application/fidus+zip', false, upload, editor);
 };
 
-},{"../bibliography/bibliographyDB":2,"./json":60,"./tools":63,"./zip":66}],63:[function(require,module,exports){
+},{"../bibliography/database":2,"./json":60,"./tools":63,"./zip":66}],63:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

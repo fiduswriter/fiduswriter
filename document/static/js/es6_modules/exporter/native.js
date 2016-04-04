@@ -1,7 +1,7 @@
 import {obj2Node} from "./json"
 import {createSlug, findImages} from "./tools"
 import {zipFileCreator} from "./zip"
-import {BibliographyDB} from "../bibliography/bibliographyDB"
+import {BibliographyDB} from "../bibliography/database"
 
 /** The current Fidus Writer filetype version.
  * The importer will not import from a different version and the exporter

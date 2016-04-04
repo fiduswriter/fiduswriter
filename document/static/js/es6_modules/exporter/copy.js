@@ -1,6 +1,6 @@
 import {exportNative} from "./native"
 import {ImportNative} from "../importer/native"
-import {BibliographyDB} from "../bibliography/bibliographyDB"
+import {BibliographyDB} from "../bibliography/database"
 
 let afterCopy = function(noErrors, returnValue, editor, callback) {
     $.deactivateWait();

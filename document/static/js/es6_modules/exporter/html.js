@@ -1,7 +1,7 @@
 import {createSlug, findImages} from "./tools"
 import {zipFileCreator} from "./zip"
 import {htmlExportTemplate} from "./html-templates"
-import {BibliographyDB} from "../bibliography/bibliographyDB"
+import {BibliographyDB} from "../bibliography/database"
 import {BaseExporter} from "./base"
 import {obj2Node} from "./json"
 import {formatCitations} from "../citations/format"

@@ -1195,21 +1195,11 @@
 
             bibliographyHelpers.addBibCategoryList(bibCats);
             bibliographyHelpers.addBibList(bibPks);
-            jQuery(document.body).trigger("bibliography_ready");
             if (callback) {
                 callback()
             }
         })
     }
-
-    /*bibliographyHelpers.getABibDB = function(docOwnerId, callback) {
-        let aBibDB = new BibliographyDB(docOwnerId, false, false, false)
-        aBibDB.getBibDB(function(bibPks, bibCats) {
-            if (callback) {
-                callback(aBibDB.bibDB)
-            }
-        })
-    }*/
 
     bibliographyHelpers.createBibEntry = function(bibEntryData) {
         theBibliographyDB.createBibEntry(bibEntryData, function(newBibPks) {
@@ -1256,10 +1246,12 @@
             jQuery(document).trigger("bibliography_ready");
         });
     };
+
+
     /** Bind the init function to jQuery(document).ready.
      * @function bind
-     * @memberof bibliographyHelpers
      */
+    // Only on bibliography page
     bibliographyHelpers.bind = function () {
         jQuery(document).ready(function () {
             bibliographyHelpers.bindEvents();

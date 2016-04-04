@@ -2504,7 +2504,7 @@ exports.uniqueObjects = exports.getImageAndBibDB = exports.getMissingChapterData
 
 var _tools = require("../../documents/tools");
 
-var _bibliographyDB = require("../../bibliography/bibliographyDB");
+var _database = require("../../bibliography/database");
 
 var getMissingChapterData = exports.getMissingChapterData = function getMissingChapterData(aBook, documentList, callback) {
     var bookDocuments = [];
@@ -2530,7 +2530,7 @@ var getImageAndBibDB = exports.getImageAndBibDB = function getImageAndBibDB(aBoo
     documentOwners = _.unique(documentOwners).join(',');
 
     usermediaHelpers.getAnImageDB(documentOwners, function (anImageDB) {
-        var bibGetter = new _bibliographyDB.BibliographyDB(documentOwners, false, false, false);
+        var bibGetter = new _database.BibliographyDB(documentOwners, false, false, false);
         bibGetter.getBibDB(function (bibDB, bibCats) {
             callback(anImageDB, bibDB);
         });
@@ -2556,7 +2556,7 @@ var uniqueObjects = exports.uniqueObjects = function uniqueObjects(array) {
     return results;
 };
 
-},{"../../bibliography/bibliographyDB":2,"../../documents/tools":18}],15:[function(require,module,exports){
+},{"../../bibliography/database":2,"../../documents/tools":18}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3814,7 +3814,7 @@ var _zip = require("./zip");
 
 var _htmlTemplates = require("./html-templates");
 
-var _bibliographyDB = require("../bibliography/bibliographyDB");
+var _database = require("../bibliography/database");
 
 var _base = require("./base");
 
@@ -3945,7 +3945,7 @@ var HTMLExporter = exports.HTMLExporter = (function (_BaseHTMLExporter) {
             _this2.exportOne();
         } else {
             (function () {
-                var bibGetter = new _bibliographyDB.BibliographyDB(doc.owner.id, false, false, false);
+                var bibGetter = new _database.BibliographyDB(doc.owner.id, false, false, false);
                 bibGetter.getBibDB(function () {
                     that.bibDB = bibGetter.bibDB;
                     that.exportOne();
@@ -4031,7 +4031,7 @@ var HTMLExporter = exports.HTMLExporter = (function (_BaseHTMLExporter) {
     return HTMLExporter;
 })(BaseHTMLExporter);
 
-},{"../bibliography/bibliographyDB":2,"../citations/format":17,"./base":19,"./html-templates":23,"./json":25,"./tools":27,"./zip":30,"katex":32}],25:[function(require,module,exports){
+},{"../bibliography/database":2,"../citations/format":17,"./base":19,"./html-templates":23,"./json":25,"./tools":27,"./zip":30,"katex":32}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4128,7 +4128,7 @@ var _base = require("./base");
 
 var _biblatex = require("../bibliography/exporter/biblatex");
 
-var _bibliographyDB = require("../bibliography/bibliographyDB");
+var _database = require("../bibliography/database");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -4512,7 +4512,7 @@ var LatexExporter = exports.LatexExporter = (function (_BaseLatexExporter) {
             _this2.exportOne();
         } else {
             (function () {
-                var bibGetter = new _bibliographyDB.BibliographyDB(doc.owner.id, false, false, false);
+                var bibGetter = new _database.BibliographyDB(doc.owner.id, false, false, false);
                 bibGetter.getBibDB(function () {
                     that.bibDB = bibGetter.bibDB;
                     that.exportOne();
@@ -4560,7 +4560,7 @@ var LatexExporter = exports.LatexExporter = (function (_BaseLatexExporter) {
     return LatexExporter;
 })(BaseLatexExporter);
 
-},{"../bibliography/bibliographyDB":2,"../bibliography/exporter/biblatex":3,"./base":19,"./json":25,"./tools":27,"./zip":30}],27:[function(require,module,exports){
+},{"../bibliography/database":2,"../bibliography/exporter/biblatex":3,"./base":19,"./json":25,"./tools":27,"./zip":30}],27:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {

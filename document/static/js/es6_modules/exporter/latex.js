@@ -3,7 +3,7 @@ import {createSlug, findImages} from "./tools"
 import {zipFileCreator} from "./zip"
 import {BaseExporter} from "./base"
 import {BibLatexExporter} from "../bibliography/exporter/biblatex"
-import {BibliographyDB} from "../bibliography/bibliographyDB"
+import {BibliographyDB} from "../bibliography/database"
 
 export class BaseLatexExporter extends BaseExporter {
 

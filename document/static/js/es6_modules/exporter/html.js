@@ -6,8 +6,98 @@ import {BaseExporter} from "./base"
 
 import {render as katexRender} from "katex"
 
-export class HTMLExporter extends BaseHTMLExporter{
+export class BaseHTMLExporter extends BaseExporter{
+    joinDocumentPart() {
+        let contents = document.createElement('div')
+        if (this.doc.contents) {
+            let tempNode = obj2Node(this.doc.contents)
+            while (tempNode.firstChild) {
+                contents.appendChild(tempNode.firstChild)
+            }
+        }
 
+        if (this.doc.settings['metadata-keywords'] && this.doc.metadata.keywords) {
+            let tempNode = obj2Node(this.doc.metadata.keywords)
+            if (tempNode.textContent.length > 0) {
+                tempNode.id = 'keywords'
+                contents.insertBefore(tempNode, contents.firstChild)
+            }
+        }
+
+        if (this.doc.settings['metadata-authors'] && this.doc.metadata.authors) {
+            let tempNode = obj2Node(this.doc.metadata.authors)
+            if (tempNode.textContent.length > 0) {
+                tempNode.id = 'authors'
+                contents.insertBefore(tempNode, contents.firstChild)
+            }
+        }
+
+        if (this.doc.settings['metadata-abstract'] && this.doc.metadata.abstract) {
+            let tempNode = obj2Node(this.doc.metadata.abstract)
+            if (tempNode.textContent.length > 0) {
+                tempNode.id = 'abstract'
+                contents.insertBefore(tempNode, contents.firstChild)
+            }
+        }
+
+        if (this.doc.settings['metadata-subtitle'] && this.doc.metadata.subtitle) {
+            let tempNode = obj2Node(this.doc.metadata.subtitle)
+            if (tempNode.textContent.length > 0) {
+                tempNode.id = 'subtitle'
+                contents.insertBefore(tempNode, contents.firstChild)
+            }
+        }
+
+        if (this.doc.title) {
+            let tempNode = document.createElement('h1')
+            tempNode.classList.add('title')
+            tempNode.textContent = this.doc.title
+            contents.insertBefore(tempNode, contents.firstChild)
+        }
+
+        let bibliography = formatCitations(contents,
+            this.doc.settings.citationstyle,
+            this.bibDB)
+
+        if (bibliography.length > 0) {
+            let tempNode = document.createElement('div')
+            tempNode.innerHTML = bibliography
+            while (tempNode.firstChild) {
+                contents.appendChild(tempNode.firstChild)
+            }
+        }
+
+        contents = this.cleanHTML(contents)
+        return contents
+    }
+
+    addFigureNumbers(htmlCode) {
+
+        jQuery(htmlCode).find('figcaption .figure-cat-figure').each(
+            function(index) {
+                this.innerHTML += ' ' + (index + 1) + ': '
+            })
+
+        jQuery(htmlCode).find('figcaption .figure-cat-photo').each(function(
+            index) {
+            this.innerHTML += ' ' + (index + 1) + ': '
+        })
+
+        jQuery(htmlCode).find('figcaption .figure-cat-table').each(function(
+            index) {
+            this.innerHTML += ' ' + (index + 1) + ': '
+        })
+        return htmlCode
+
+    }
+    replaceImgSrc(htmlString) {
+        htmlString = htmlString.replace(/<(img|IMG) data-src([^>]+)>/gm,
+            "<$1 src$2>")
+        return htmlString
+    }
+}
+
+export class HTMLExporter extends BaseHTMLExporter{
     constructor(doc, bibDB) {
         super()
         let that = this
@@ -94,103 +184,5 @@ export class HTMLExporter extends BaseHTMLExporter{
                 title) +
             '.html.zip', false, includeZips)
     }
-
-}
-
-export class BaseHTMLExporter extends BaseExporter{
-
-    joinDocumentPart() {
-
-        let contents = document.createElement('div')
-
-        if (this.doc.contents) {
-            let tempNode = obj2Node(this.doc.contents)
-
-            while (tempNode.firstChild) {
-                contents.appendChild(tempNode.firstChild)
-            }
-        }
-
-        if (this.doc.settings['metadata-keywords'] && this.doc.metadata.keywords) {
-            let tempNode = obj2Node(this.doc.metadata.keywords)
-            if (tempNode.textContent.length > 0) {
-                tempNode.id = 'keywords'
-                contents.insertBefore(tempNode, contents.firstChild)
-            }
-        }
-
-        if (this.doc.settings['metadata-authors'] && this.doc.metadata.authors) {
-            let tempNode = obj2Node(this.doc.metadata.authors)
-            if (tempNode.textContent.length > 0) {
-                tempNode.id = 'authors'
-                contents.insertBefore(tempNode, contents.firstChild)
-            }
-        }
-
-        if (this.doc.settings['metadata-abstract'] && this.doc.metadata.abstract) {
-            let tempNode = obj2Node(this.doc.metadata.abstract)
-            if (tempNode.textContent.length > 0) {
-                tempNode.id = 'abstract'
-                contents.insertBefore(tempNode, contents.firstChild)
-            }
-        }
-
-        if (this.doc.settings['metadata-subtitle'] && this.doc.metadata.subtitle) {
-            let tempNode = obj2Node(this.doc.metadata.subtitle)
-            if (tempNode.textContent.length > 0) {
-                tempNode.id = 'subtitle'
-                contents.insertBefore(tempNode, contents.firstChild)
-            }
-        }
-
-        if (this.doc.title) {
-            let tempNode = document.createElement('h1')
-            tempNode.classList.add('title')
-            tempNode.textContent = this.doc.title
-            contents.insertBefore(tempNode, contents.firstChild)
-        }
-
-        let bibliography = formatCitations(contents,
-            this.doc.settings.citationstyle,
-            this.bibDB)
-
-        if (bibliography.length > 0) {
-            let tempNode = document.createElement('div')
-            tempNode.innerHTML = bibliography
-            while (tempNode.firstChild) {
-                contents.appendChild(tempNode.firstChild)
-            }
-        }
-
-        contents = this.cleanHTML(contents)
-        return contents
-    }
-
-    addFigureNumbers(htmlCode) {
-
-        jQuery(htmlCode).find('figcaption .figure-cat-figure').each(
-            function(index) {
-                this.innerHTML += ' ' + (index + 1) + ': '
-            })
-
-        jQuery(htmlCode).find('figcaption .figure-cat-photo').each(function(
-            index) {
-            this.innerHTML += ' ' + (index + 1) + ': '
-        })
-
-        jQuery(htmlCode).find('figcaption .figure-cat-table').each(function(
-            index) {
-            this.innerHTML += ' ' + (index + 1) + ': '
-        })
-        return htmlCode
-
-    }
-
-    replaceImgSrc(htmlString) {
-        htmlString = htmlString.replace(/<(img|IMG) data-src([^>]+)>/gm,
-            "<$1 src$2>")
-        return htmlString
-    }
-
 
 }

@@ -5,60 +5,6 @@ import {BaseExporter} from "./base"
 import {BibLatexExporter} from "../bibliography/exporter/biblatex"
 import {BibliographyDB} from "../bibliography/bibliographyDB"
 
-export class LatexExporter extends BaseLatexExporter {
-    constructor(doc, bibDB) {
-        super()
-        let that = this
-        this.doc = doc
-        if (bibDB) {
-            this.bibDB = bibDB // the bibliography has already been loaded for some other purpose. We reuse it.
-        } else {
-            let bibGetter = new BibliographyDB(doc.owner, false, false, false)
-            bibGetter.getBibDB(function() {
-                that.bibDB = bibGetter.bibDB
-                that.exportOne()
-            })
-        }
-    }
-
-    exportOne() {
-        let title = this.doc.title
-
-        $.addAlert('info', title + ': ' + gettext(
-            'Latex export has been initiated.'))
-
-        let contents = document.createElement('div')
-
-        let tempNode = obj2Node(this.doc.contents)
-
-        while (tempNode.firstChild) {
-            contents.appendChild(tempNode.firstChild)
-        }
-
-        let httpOutputList = findImages(contents)
-
-        let latexCode = this.htmlToLatex(title, this.doc.owner.name, contents,
-            this.doc.settings, this.doc.metadata)
-
-        let outputList = [{
-            filename: 'document.tex',
-            contents: latexCode.latex
-        }]
-
-        if (latexCode.bibtex.length > 0) {
-            outputList.push({
-                filename: 'bibliography.bib',
-                contents: latexCode.bibtex
-            })
-        }
-
-        zipFileCreator(outputList, httpOutputList, createSlug(
-                title) +
-            '.latex.zip')
-    }
-}
-
-
 export class BaseLatexExporter extends BaseExporter {
 
     findLatexDocumentFeatures(htmlCode, title, author,
@@ -468,5 +414,59 @@ export class BaseLatexExporter extends BaseExporter {
             returnObject.bibtex = bibExport.bibtex_str
         }
         return returnObject
+    }
+}
+
+
+export class LatexExporter extends BaseLatexExporter {
+    constructor(doc, bibDB) {
+        super()
+        let that = this
+        this.doc = doc
+        if (bibDB) {
+            this.bibDB = bibDB // the bibliography has already been loaded for some other purpose. We reuse it.
+        } else {
+            let bibGetter = new BibliographyDB(doc.owner, false, false, false)
+            bibGetter.getBibDB(function() {
+                that.bibDB = bibGetter.bibDB
+                that.exportOne()
+            })
+        }
+    }
+
+    exportOne() {
+        let title = this.doc.title
+
+        $.addAlert('info', title + ': ' + gettext(
+            'Latex export has been initiated.'))
+
+        let contents = document.createElement('div')
+
+        let tempNode = obj2Node(this.doc.contents)
+
+        while (tempNode.firstChild) {
+            contents.appendChild(tempNode.firstChild)
+        }
+
+        let httpOutputList = findImages(contents)
+
+        let latexCode = this.htmlToLatex(title, this.doc.owner.name, contents,
+            this.doc.settings, this.doc.metadata)
+
+        let outputList = [{
+            filename: 'document.tex',
+            contents: latexCode.latex
+        }]
+
+        if (latexCode.bibtex.length > 0) {
+            outputList.push({
+                filename: 'bibliography.bib',
+                contents: latexCode.bibtex
+            })
+        }
+
+        zipFileCreator(outputList, httpOutputList, createSlug(
+                title) +
+            '.latex.zip')
     }
 }

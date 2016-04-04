@@ -42,6 +42,8 @@ export class Editor {
             'changed': false
         }
         this.doc = {}
+        this.bibDB = {}
+        this.imageDB = {}
         this.user = false
         new ModSettings(this)
         new ModNodeConvert(this)
@@ -61,7 +63,7 @@ export class Editor {
     startEditor() {
         let that = this
         this.pm = this.makeEditor(document.getElementById('document-editable'))
-        this.currentPm = this.pm // The editor that is currently being edited in -- main or footnote editor 
+        this.currentPm = this.pm // The editor that is currently being edited in -- main or footnote editor
         new ModFootnotes(this)
         new ModCitations(this)
         new ModMenus(this)
@@ -185,6 +187,12 @@ export class Editor {
         this.mod.comments.store.on("mustSend", function() {
             that.mod.collab.docChanges.sendToCollaborators()
         })
+        this.getBibDB(this.doc.owner.id, function(){
+
+        })
+        this.getImageDB(this.doc.owner.id, function(){
+
+        })
         this.enableUI()
         this.waitingForDocument = false
     }
@@ -199,10 +207,47 @@ export class Editor {
         })
     }
 
+    removeBibDB() {
+        this.bibDB = {}
+    }
 
+    getBibDB(userId, callback) {
+        let that = this
+        if (_.isEmpty(this.bibDB)) { // Don't get the bibliography again if we already have it.
+            let bibGetter = new BibliographyDB(userId, true, false, false)
+            bibGetter.getBibDB(function(bibPks, bibCats){
+                that.bibDB = bibGetter.bibDB // We only need the bibDB...
+                that.bibCats = bibGetter.bibCats // ...and the bib categories.
+                bibliographyHelpers.addBibCategoryList(bibCats) // TODO: We need to be able to reset these!
+                bibliographyHelpers.addBibList(bibPks, that.bibDB)
+                that.mod.citations.layoutCitations()
+                jQuery(document).trigger("bibliography_ready") // TODO: get rid of this
+                if (callback) {
+                    callback()
+                }
+            })
+        } else {
+            callback()
+        }
+    }
+
+    removeImageDB() {
+        this.imageDB = {}
+    }
+
+    getImageDB(userId, callback) {
+        let that = this
+        if (_.isEmpty(this.imageDB)) {
+            usermediaHelpers.getAnImageDB(userId, function (imageDB) {
+                that.imageDB = imageDB
+                callback()
+            })
+        } else {
+            callback()
+        }
+    }
 
     enableUI() {
-        bibliographyHelpers.initiate()
 
         this.mod.citations.layoutCitations()
 

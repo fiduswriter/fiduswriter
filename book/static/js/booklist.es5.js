@@ -201,14 +201,13 @@ var BibliographyDB = exports.BibliographyDB = (function () {
     }, {
         key: 'displayCreateBibEntryError',
         value: function displayCreateBibEntryError(errors) {
-            var noError = true,
-                e_key;
-            for (e_key in errors) {
-                e_msg = '<div class="warning">' + errors[e_key] + '</div>';
-                if ('error' == e_key) {
-                    jQuery('#createbook').prepend(e_msg);
+            var noError = true;
+            for (var eKey in errors) {
+                eMsg = '<div class="warning">' + errors[eKey] + '</div>';
+                if ('error' == eKey) {
+                    jQuery('#createbook').prepend(eMsg);
                 } else {
-                    jQuery('#id_' + e_key).after(e_msg);
+                    jQuery('#id_' + eKey).after(eMsg);
                 }
                 noError = false;
             }

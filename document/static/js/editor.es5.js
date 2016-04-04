@@ -202,14 +202,13 @@ var BibliographyDB = exports.BibliographyDB = (function () {
     }, {
         key: 'displayCreateBibEntryError',
         value: function displayCreateBibEntryError(errors) {
-            var noError = true,
-                e_key;
-            for (e_key in errors) {
-                e_msg = '<div class="warning">' + errors[e_key] + '</div>';
-                if ('error' == e_key) {
-                    jQuery('#createbook').prepend(e_msg);
+            var noError = true;
+            for (var eKey in errors) {
+                eMsg = '<div class="warning">' + errors[eKey] + '</div>';
+                if ('error' == eKey) {
+                    jQuery('#createbook').prepend(eMsg);
                 } else {
-                    jQuery('#id_' + e_key).after(e_msg);
+                    jQuery('#id_' + eKey).after(eMsg);
                 }
                 noError = false;
             }
@@ -1097,7 +1096,7 @@ var ModCitations = exports.ModCitations = (function () {
             var emptyCitations = document.querySelectorAll('#paper-editable span.citation:empty');
             if (emptyCitations.length > 0) {
                 var bibliographyHTML = (0, _format.formatCitations)(document.getElementById('paper-editable'), // TODO: Should we point this to somewhere else?
-                this.editor.doc.settings.citationstyle, window.BibDB);
+                this.editor.doc.settings.citationstyle, this.editor.bibDB);
                 document.getElementById('document-bibliography').innerHTML = bibliographyHTML;
             }
         }
@@ -2562,6 +2561,8 @@ var Editor = exports.Editor = (function () {
             'changed': false
         };
         this.doc = {};
+        this.bibDB = {};
+        this.imageDB = {};
         this.user = false;
         new _mod6.ModSettings(this);
         new _nodeConvert.ModNodeConvert(this);
@@ -2719,6 +2720,8 @@ var Editor = exports.Editor = (function () {
             this.mod.comments.store.on("mustSend", function () {
                 that.mod.collab.docChanges.sendToCollaborators();
             });
+            this.getBibDB(this.doc.owner.id, function () {});
+            this.getImageDB(this.doc.owner.id, function () {});
             this.enableUI();
             this.waitingForDocument = false;
         }
@@ -2734,9 +2737,55 @@ var Editor = exports.Editor = (function () {
             });
         }
     }, {
+        key: "removeBibDB",
+        value: function removeBibDB() {
+            this.bibDB = {};
+        }
+    }, {
+        key: "getBibDB",
+        value: function getBibDB(userId, callback) {
+            var that = this;
+            if (_.isEmpty(this.bibDB)) {
+                (function () {
+                    // Don't get the bibliography again if we already have it.
+                    var bibGetter = new BibliographyDB(userId, true, false, false);
+                    bibGetter.getBibDB(function (bibPks, bibCats) {
+                        that.bibDB = bibGetter.bibDB; // We only need the bibDB...
+                        that.bibCats = bibGetter.bibCats; // ...and the bib categories.
+                        bibliographyHelpers.addBibCategoryList(bibCats); // TODO: We need to be able to reset these!
+                        bibliographyHelpers.addBibList(bibPks, that.bibDB);
+                        that.mod.citations.layoutCitations();
+                        jQuery(document).trigger("bibliography_ready"); // TODO: get rid of this
+                        if (callback) {
+                            callback();
+                        }
+                    });
+                })();
+            } else {
+                callback();
+            }
+        }
+    }, {
+        key: "removeImageDB",
+        value: function removeImageDB() {
+            this.imageDB = {};
+        }
+    }, {
+        key: "getImageDB",
+        value: function getImageDB(userId, callback) {
+            var that = this;
+            if (_.isEmpty(this.imageDB)) {
+                usermediaHelpers.getAnImageDB(userId, function (imageDB) {
+                    that.imageDB = imageDB;
+                    callback();
+                });
+            } else {
+                callback();
+            }
+        }
+    }, {
         key: "enableUI",
         value: function enableUI() {
-            bibliographyHelpers.initiate();
 
             this.mod.citations.layoutCitations();
 
@@ -3523,7 +3572,39 @@ var ModMenusActions = exports.ModMenusActions = (function () {
             var that = this;
             that.mod.editor.getUpdates(function () {
                 that.mod.editor.sendDocumentUpdate(function () {
-                    (0, _copy.savecopy)(that.mod.editor.doc, that.mod.editor, that.mod.editor.user, false);
+                    if (that.mod.editor.doc.owner.id === that.mod.editor.user.id) {
+                        // We are copying from and to the same user. We don't need different databases for this.
+                        (0, _copy.savecopy)(that.mod.editor.doc, that.mod.editor.bibDB, that.mod.editor.imageDB, that.mod.editor.bibDB, that.mod.editor.imageDB, that.mod.editor.user, function (doc, docInfo) {
+                            that.mod.editor.doc = doc;
+                            that.mod.editor.docInfo = docInfo;
+                            window.history.pushState("", "", "/document/" + that.mod.editor.doc.id + "/");
+                        });
+                    } else {
+                        (function () {
+                            // We copy from one user to another. So we first load one set of databases, and then the other
+                            var oldBibDB = that.mod.editor.bibDB;
+                            var oldImageDB = that.mod.editor.imageDB;
+                            that.mod.editor.removeBibDB();
+                            that.mod.editor.removeImageDB();
+                            the.mod.editor.getBibDB(that.mod.editor.user.id, function () {
+                                the.mod.editor.getImageDB(that.mod.editor.user.id, function () {
+                                    (0, _copy.savecopy)(that.mod.editor.doc, oldBibDB, oldImageDB, that.mod.editor.bibDB, that.mod.editor.imageDB, that.mod.editor.user, function (doc, docInfo) {
+                                        if (that.mod.editor.docInfo.rights === 'r') {
+                                            /* We only had right access to the document,
+                                            so the editing elements won't show. We therefore need to reload the page to get them.
+                                            TODO: Find out if this restriction still is true.
+                                            */
+                                            window.location = '/document/' + doc.id + '/';
+                                        } else {
+                                            that.mod.editor.doc = doc;
+                                            that.mod.editor.docInfo = docInfo;
+                                            window.history.pushState("", "", "/document/" + that.mod.editor.doc.id + "/");
+                                        }
+                                    });
+                                });
+                            });
+                        })();
+                    }
                 });
             });
         }
@@ -3533,7 +3614,7 @@ var ModMenusActions = exports.ModMenusActions = (function () {
             var that = this;
             that.mod.editor.getUpdates(function () {
                 that.mod.editor.sendDocumentUpdate(function () {
-                    (0, _native.downloadNative)(that.mod.editor.doc, window.BibDB);
+                    new _native.NativeExporter(that.mod.editor.doc, that.mod.editor.bibDB, that.mod.editor.imageDB);
                 });
             });
         }
@@ -3543,7 +3624,7 @@ var ModMenusActions = exports.ModMenusActions = (function () {
             var that = this;
             that.mod.editor.getUpdates(function () {
                 that.mod.editor.sendDocumentUpdate(function () {
-                    new _latex.LatexExporter(that.mod.editor.doc, window.BibDB);
+                    new _latex.LatexExporter(that.mod.editor.doc, that.mod.editor.bibDB);
                 });
             });
         }
@@ -3553,7 +3634,7 @@ var ModMenusActions = exports.ModMenusActions = (function () {
             var that = this;
             that.mod.editor.getUpdates(function () {
                 that.mod.editor.sendDocumentUpdate(function () {
-                    new _epub.EpubExporter(that.mod.editor.doc, window.BibDB);
+                    new _epub.EpubExporter(that.mod.editor.doc, that.mod.editor.bibDB);
                 });
             });
         }
@@ -3563,7 +3644,7 @@ var ModMenusActions = exports.ModMenusActions = (function () {
             var that = this;
             that.mod.editor.getUpdates(function () {
                 that.mod.editor.sendDocumentUpdate(function () {
-                    new _html.HTMLExporter(that.mod.editor.doc, window.BibDB);
+                    new _html.HTMLExporter(that.mod.editor.doc, that.mod.editor.bibDB);
                 });
             });
         }
@@ -4111,7 +4192,7 @@ var bindCite = exports.bindCite = function bindCite(mod) {
             return true;
         }
 
-        _.each(BibDB, function (bib, index) {
+        _.each(editor.bibDB, function (bib, index) {
             var bibEntry = {
                 'id': index,
                 'type': bib.entry_type,
@@ -6804,58 +6885,29 @@ var _native2 = require("../importer/native");
 
 var _database = require("../bibliography/database");
 
-var afterCopy = function afterCopy(noErrors, returnValue, editor, callback) {
+var afterCopy = function afterCopy(noErrors, returnValue, callback) {
     $.deactivateWait();
     if (noErrors) {
         var aDocument = returnValue.aDocument;
         var aDocInfo = returnValue.aDocumentValues;
         jQuery.addAlert('info', aDocument.title + gettext(' successfully copied.'));
-        if (editor) {
-            if (editor.docInfo.rights === 'r') {
-                // We only had right access to the document, so the editing elements won't show. We therefore need to reload the page to get them.
-                window.location = '/document/' + aDocument.id + '/';
-            } else {
-                editor.doc = aDocument;
-                editor.docInfo = aDocInfo;
-                window.history.pushState("", "", "/document/" + editor.doc.id + "/");
-            }
-        }
         if (callback) {
-            callback(returnValue);
+            callback(aDocument, aDocInfo);
         }
     } else {
         jQuery.addAlert('error', returnValue);
     }
 };
 
-var importAsUser = function importAsUser(aDocument, shrunkImageDB, shrunkBibDB, images, editor, user, callback) {
-    // switch to user's own ImageDB and BibDB:
-    if (editor) {
-        editor.doc.owner = editor.user;
-        delete window.ImageDB;
-        delete window.BibDB;
-    }
-
-    new _native2.ImportNative(aDocument, shrunkBibDB, shrunkImageDB, images, user, function (noErrors, returnValue) {
-        afterCopy(noErrors, returnValue, editor, callback);
+/* Saves a copy of the document. The owner may change in that process, if the
+  old document was owned by someone else than the current user.
+*/
+var savecopy = exports.savecopy = function savecopy(doc, oldBibDB, oldImageDB, newBibDB, newImageDB, newUser, callback) {
+    (0, _native.exportNative)(doc, oldImageDB, oldBibDB, function (doc, shrunkImageDB, shrunkBibDB, images) {
+        new _native2.ImportNative(doc, shrunkBibDB, shrunkImageDB, newBibDB, newImageDB, images, newUser, function (noErrors, returnValue) {
+            afterCopy(noErrors, returnValue, callback);
+        });
     });
-};
-
-var savecopy = exports.savecopy = function savecopy(aDocument, editor, user, callback) {
-    if (editor) {
-        (0, _native.exportNative)(aDocument, ImageDB, BibDB, function (aDocument, shrunkImageDB, shrunkBibDB, images) {
-            importAsUser(aDocument, shrunkImageDB, shrunkBibDB, images, editor, user, callback);
-        });
-    } else {
-        var bibGetter = new _database.BibliographyDB(aDocument.owner.id, false, false, false);
-        bibGetter.getBibDB(function (bibDB, bibCats) {
-            usermediaHelpers.getAnImageDB(aDocument.owner.id, function (anImageDB) {
-                (0, _native.exportNative)(aDocument, anImageDB, bibDB, function (aDocument, shrunkImageDB, shrunkBibDB, images) {
-                    importAsUser(aDocument, shrunkImageDB, shrunkBibDB, images, false, user, callback);
-                });
-            });
-        });
-    }
 };
 
 },{"../bibliography/database":2,"../importer/native":67,"./native":62}],55:[function(require,module,exports){
@@ -8122,10 +8174,12 @@ var LatexExporter = exports.LatexExporter = (function (_BaseLatexExporter) {
 },{"../bibliography/database":2,"../bibliography/exporter/biblatex":3,"./base":53,"./json":60,"./tools":63,"./zip":66}],62:[function(require,module,exports){
 "use strict";
 
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.exportNative = exports.downloadNative = exports.uploadNative = undefined;
+exports.exportNative = exports.NativeExporter = exports.uploadNative = undefined;
 
 var _json = require("./json");
 
@@ -8134,6 +8188,8 @@ var _tools = require("./tools");
 var _zip = require("./zip");
 
 var _database = require("../bibliography/database");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /** The current Fidus Writer filetype version.
  * The importer will not import from a different version and the exporter
@@ -8152,29 +8208,60 @@ var uploadNative = exports.uploadNative = function uploadNative(editor) {
     });
 };
 
-var downloadNative = exports.downloadNative = function downloadNative(aDocument, bibDB, imageDB) {
-    if (bibDB && imageDB) {
-        exportNative(aDocument, imageDB, bibDB, exportNativeFile);
-    } else if (bibDB) {
-        usermediaHelpers.getAnImageDB(aDocument.owner, function (imageDB) {
-            exportNative(aDocument, imageDB, bibDB, exportNativeFile);
-        });
-    } else if (imageDB) {
-        var bibGetter = new _database.BibliographyDB(aDocument.owner.id, false, false, false);
-        bibGetter.getBibDB(function (bibDB, bibCats) {
-            exportNative(aDocument, imageDB, bibDB, exportNativeFile);
-        });
-    } else {
-        var bibGetter = new _database.BibliographyDB(aDocument.owner.id, false, false, false);
-        bibGetter.getBibDB(function (bibDB, bibCats) {
-            usermediaHelpers.getAnImageDB(aDocument.owner.id, function (imageDB) {
-                exportNative(aDocument, imageDB, bibDB, exportNativeFile);
-            });
-        });
+var NativeExporter = exports.NativeExporter = (function () {
+    function NativeExporter(doc, bibDB, imageDB) {
+        _classCallCheck(this, NativeExporter);
+
+        this.doc = doc;
+        this.bibDB = bibDB;
+        this.imageDB = imageDB;
+        this.init();
     }
-};
+
+    _createClass(NativeExporter, [{
+        key: "init",
+        value: function init() {
+            var that = this;
+            this.getBibDB(function () {
+                that.getImageDB(function () {
+                    exportNative(that.doc, that.imageDB, that.bibDB, exportNativeFile);
+                });
+            });
+        }
+    }, {
+        key: "getBibDB",
+        value: function getBibDB(callback) {
+            var that = this;
+            if (!this.bibDB) {
+                var bibGetter = new _database.BibliographyDB(this.doc.owner.id, false, false, false);
+                bibGetter.getBibDB(function (bibDB, bibCats) {
+                    that.bibDB = bibDB;
+                    callback();
+                });
+            } else {
+                callback();
+            }
+        }
+    }, {
+        key: "getImageDB",
+        value: function getImageDB(callback) {
+            var that = this;
+            if (!this.imageDB) {
+                usermediaHelpers.getAnImageDB(this.doc.owner.id, function (imageDB) {
+                    that.imageDB = imageDB;
+                    callback();
+                });
+            } else {
+                callback();
+            }
+        }
+    }]);
+
+    return NativeExporter;
+})();
 
 // used in copy
+
 var exportNative = exports.exportNative = function exportNative(aDocument, anImageDB, aBibDB, callback) {
     var shrunkBibDB = {},
         citeList = [];
@@ -8489,42 +8576,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var ImportNative = exports.ImportNative = (function () {
     /* Save document information into the database */
 
-    function ImportNative(aDocument, aBibDB, anImageDB, entries, user, callback) {
+    function ImportNative(aDocument, aBibDB, anImageDB, entries, user, bibDB, imageDB, callback) {
         _classCallCheck(this, ImportNative);
 
         this.aDocument = aDocument;
-        this.aBibDB = aBibDB;
-        this.anImageDB = anImageDB;
+        this.aBibDB = aBibDB; // These are new values
+        this.anImageDB = anImageDB; // These are new values
         this.entries = entries;
         this.user = user;
+        this.bibDB = bibDB; // These are values stored in the database
+        this.imageDB = imageDB; // These are values stored in the database
         this.callback = callback;
-        this.getDBs();
+        this.importNative();
     }
 
     _createClass(ImportNative, [{
-        key: 'getDBs',
-        value: function getDBs() {
-            var that = this;
-            // get BibDB and ImageDB if we don't have them already. Then invoke the native importer.
-            if ('undefined' === typeof BibDB) {
-                bibliographyHelpers.getBibDB(function () {
-                    if ('undefined' === typeof ImageDB) {
-                        usermediaHelpers.getImageDB(function () {
-                            that.importNative();
-                        });
-                    } else {
-                        that.importNative();
-                    }
-                });
-            } else if ('undefined' === typeof ImageDB) {
-                usermediaHelpers.getImageDB(function () {
-                    that.importNative();
-                });
-            } else {
-                that.importNative();
-            }
-        }
-    }, {
         key: 'importNative',
         value: function importNative() {
             var that = this;
@@ -8535,14 +8601,14 @@ var ImportNative = exports.ImportNative = (function () {
                 newImageEntries = [],
                 simplifiedShrunkImageDB = [];
 
-            // Add the id to each object in the BibDB to be able to look it up when comparing to this.aBibDB below
-            for (var key in BibDB) {
-                BibDB[key]['id'] = key;
+            // Add the id to each object in the this.bibDB to be able to look it up when comparing to this.aBibDB below
+            for (var key in this.bibDB) {
+                this.bibDB[key]['id'] = key;
             }
             for (var key in this.aBibDB) {
                 //this.aBibDB[key]['entry_type']=_.findWhere(BibEntryTypes,{name:this.aBibDB[key]['bibtype']}).id
                 //delete this.aBibDB[key].bibtype
-                var matchEntries = _.where(BibDB, this.aBibDB[key]);
+                var matchEntries = _.where(this.bibDB, this.aBibDB[key]);
 
                 if (0 === matchEntries.length) {
                     //create new
@@ -8566,8 +8632,8 @@ var ImportNative = exports.ImportNative = (function () {
             }
 
             // Remove the id values again
-            for (var key in BibDB) {
-                delete BibDB[key].id;
+            for (var key in this.bibDB) {
+                delete this.bibDB[key].id;
             }
 
             // We need to remove the pk from the entry in the this.anImageDB so that we also get matches with this.entries with other pk values.
@@ -8582,7 +8648,7 @@ var ImportNative = exports.ImportNative = (function () {
             }
 
             for (var key in shrunkImageDBObject) {
-                var matchEntries = _.where(ImageDB, shrunkImageDBObject[key]);
+                var matchEntries = _.where(this.imageDB, shrunkImageDBObject[key]);
                 if (0 === matchEntries.length) {
                     //create new
                     var sIDBEntry = _.findWhere(this.anImageDB, {
@@ -8741,7 +8807,7 @@ var ImportNative = exports.ImportNative = (function () {
                         type: 'POST',
                         dataType: 'json',
                         success: function success(response, textStatus, jqXHR) {
-                            ImageDB[response.values.pk] = response.values;
+                            that.imageDB[response.values.pk] = response.values;
                             var imageTranslation = {};
                             imageTranslation.oldUrl = newImageEntries[counter].oldUrl;
                             imageTranslation.oldId = newImageEntries[counter].oldId;
@@ -8806,7 +8872,7 @@ var ImportNative = exports.ImportNative = (function () {
                                 }).oldId;
                                 BibTranslationTable[oldID] = newID;
                             });
-                            bibliographyHelpers.addBibList(response.bibs);
+                            bibliographyHelpers.addBibList(response.bibs, that.bibDB);
                             that.translateReferenceIds(BibTranslationTable, ImageTranslationTable);
                         },
                         error: function error() {

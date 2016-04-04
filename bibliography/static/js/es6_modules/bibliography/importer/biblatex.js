@@ -5,7 +5,8 @@ import {importBibTemplate} from "./templates"
 
 export class BibLatexImporter {
 
-    constructor() {
+    constructor(bibDB) {
+        this.bibDB = bibDB
         this.openDialog()
     }
 
@@ -116,7 +117,7 @@ export class BibLatexImporter {
             dataType: 'json',
             success: function (response, textStatus, jqXHR) {
 
-                bibliographyHelpers.addBibList(response.bibs)
+                bibliographyHelpers.addBibList(response.bibs, that.bibDB)
                 let errors = response.errors,
                     warnings = response.warning,
                     len = errors.length

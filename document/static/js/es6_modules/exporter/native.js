@@ -20,31 +20,47 @@ export let uploadNative = function(editor) {
     })
 }
 
-export let downloadNative = function(aDocument, bibDB, imageDB) {
-    if (bibDB && imageDB) {
-        exportNative(aDocument, imageDB, bibDB, exportNativeFile)
-    } else if (bibDB) {
-        usermediaHelpers.getAnImageDB(aDocument.owner, function(imageDB) {
-            exportNative(aDocument, imageDB, bibDB,
-                exportNativeFile)
-        })
-    } else if (imageDB) {
-        let bibGetter = new BibliographyDB(aDocument.owner.id, false, false, false)
-        bibGetter.getBibDB(function(bibDB, bibCats) {
-            exportNative(aDocument,
-                imageDB,
-                bibDB, exportNativeFile)
-        })
-    } else {
-        let bibGetter = new BibliographyDB(aDocument.owner.id, false, false, false)
-        bibGetter.getBibDB(function(bibDB, bibCats) {
-            usermediaHelpers.getAnImageDB(aDocument.owner.id, function(imageDB) {
-                exportNative(aDocument, imageDB,
-                bibDB, exportNativeFile)
+export class NativeExporter {
+    constructor(doc, bibDB, imageDB) {
+        this.doc = doc
+        this.bibDB = bibDB
+        this.imageDB = imageDB
+        this.init()
+    }
+
+    init() {
+        let that = this
+        this.getBibDB(function(){
+            that.getImageDB(function(){
+                exportNative(that.doc, that.imageDB, that.bibDB, exportNativeFile)
             })
         })
     }
 
+    getBibDB(callback) {
+        let that = this
+        if (!this.bibDB) {
+            let bibGetter = new BibliographyDB(this.doc.owner.id, false, false, false)
+            bibGetter.getBibDB(function(bibDB, bibCats) {
+                that.bibDB = bibDB
+                callback()
+            })
+        } else {
+            callback()
+        }
+    }
+
+    getImageDB(callback) {
+        let that = this
+        if (!this.imageDB) {
+            usermediaHelpers.getAnImageDB(this.doc.owner.id, function(imageDB) {
+                that.imageDB = imageDB
+                callback()
+            })
+        } else {
+            callback()
+        }
+    }
 }
 
 // used in copy

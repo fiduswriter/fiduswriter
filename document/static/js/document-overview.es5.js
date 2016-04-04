@@ -199,14 +199,13 @@ var BibliographyDB = exports.BibliographyDB = (function () {
     }, {
         key: 'displayCreateBibEntryError',
         value: function displayCreateBibEntryError(errors) {
-            var noError = true,
-                e_key;
-            for (e_key in errors) {
-                e_msg = '<div class="warning">' + errors[e_key] + '</div>';
-                if ('error' == e_key) {
-                    jQuery('#createbook').prepend(e_msg);
+            var noError = true;
+            for (var eKey in errors) {
+                eMsg = '<div class="warning">' + errors[eKey] + '</div>';
+                if ('error' == eKey) {
+                    jQuery('#createbook').prepend(eMsg);
                 } else {
-                    jQuery('#id_' + e_key).after(e_msg);
+                    jQuery('#id_' + eKey).after(eMsg);
                 }
                 noError = false;
             }
@@ -1074,6 +1073,8 @@ var _file = require("../../importer/file");
 
 var _dialog = require("../revisions/dialog");
 
+var _database = require("../../bibliography/database");
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var DocumentOverviewActions = exports.DocumentOverviewActions = (function () {
@@ -1162,23 +1163,28 @@ var DocumentOverviewActions = exports.DocumentOverviewActions = (function () {
                     console.log('error', e.target.error.code);
                 };
 
-                new _file.ImportFidusFile(fidusFile, that.documentOverview.user, true, function (noErrors, returnValue) {
-                    $.deactivateWait();
-                    if (noErrors) {
-                        var aDocument = returnValue.aDocument;
-                        var aDocumentValues = returnValue.aDocumentValues;
-                        jQuery.addAlert('info', aDocument.title + gettext(' successfully imported.'));
-                        that.documentOverview.documentList.push(aDocument);
-                        that.documentOverview.stopDocumentTable();
-                        jQuery('#document-table tbody').append((0, _templates.documentsListItemTemplate)({
-                            aDocument: aDocument,
-                            user: that.documentOverview.user
-                        }));
-                        that.documentOverview.startDocumentTable();
-                    } else {
-                        jQuery.addAlert('error', returnValue);
-                    }
+                that.documentOverview.getBibDB(function () {
+                    that.documentOverview.getImageDB(function () {
+                        new _file.ImportFidusFile(fidusFile, that.documentOverview.user, true, that.documentOverview.bibDB, that.documentOverview.imageDB, function (noErrors, returnValue) {
+                            $.deactivateWait();
+                            if (noErrors) {
+                                var aDocument = returnValue.aDocument;
+                                var aDocumentValues = returnValue.aDocumentValues;
+                                jQuery.addAlert('info', aDocument.title + gettext(' successfully imported.'));
+                                that.documentOverview.documentList.push(aDocument);
+                                that.documentOverview.stopDocumentTable();
+                                jQuery('#document-table tbody').append((0, _templates.documentsListItemTemplate)({
+                                    aDocument: aDocument,
+                                    user: that.documentOverview.user
+                                }));
+                                that.documentOverview.startDocumentTable();
+                            } else {
+                                jQuery.addAlert('error', returnValue);
+                            }
+                        });
+                    });
                 });
+
                 //reader.onload = unzip
                 //reader.readAsText(fidusFile)
                 jQuery(this).dialog('close');
@@ -1213,17 +1219,57 @@ var DocumentOverviewActions = exports.DocumentOverviewActions = (function () {
         value: function copyFiles(ids) {
             var that = this;
             (0, _tools.getMissingDocumentListData)(ids, that.documentOverview.documentList, function () {
-                for (var i = 0; i < ids.length; i++) {
-                    (0, _copy.savecopy)(_.findWhere(that.documentOverview.documentList, {
-                        id: ids[i]
-                    }), false, that.documentOverview.user, function (returnValue) {
-                        var aDocument = returnValue.aDocument;
-                        that.documentOverview.documentList.push(aDocument);
-                        that.documentOverview.stopDocumentTable();
-                        jQuery('#document-table tbody').append((0, _templates.documentsListItemTemplate)({ aDocument: aDocument, user: that.documentOverview.user }));
-                        that.documentOverview.startDocumentTable();
+                that.documentOverview.getBibDB(function () {
+                    that.documentOverview.getImageDB(function () {
+                        var _loop = function _loop(i) {
+                            var doc = _.findWhere(that.documentOverview.documentList, {
+                                id: ids[i]
+                            });
+                            if (doc.owner.id === that.documentOverview.user.id) {
+                                // We are copying from and to the same user.
+                                (0, _copy.savecopy)(doc, that.documentOverview.bibDB, that.documentOverview.imageDB, that.documentOverview.bibDB, that.documentOverview.imageDB, that.documentOverview.user, function (doc, docInfo) {
+                                    that.documentOverview.documentList.push(doc);
+                                    that.documentOverview.stopDocumentTable();
+                                    jQuery('#document-table tbody').append((0, _templates.documentsListItemTemplate)({ doc: doc, user: that.documentOverview.user }));
+                                    that.documentOverview.startDocumentTable();
+                                });
+                            } else {
+                                that.getBibDB(function (oldBibDB) {
+                                    that.getImageDB(function (oldImageDB) {
+                                        /* We are copying from another user, so we are first loading
+                                         the databases from that user
+                                        */
+                                        (0, _copy.savecopy)(doc, oldBibDB, oldImageDB, that.documentOverview.bibDB, that.documentOverview.imageDB, that.documentOverview.user, function (doc, docInfo) {
+                                            that.documentOverview.documentList.push(doc);
+                                            that.documentOverview.stopDocumentTable();
+                                            jQuery('#document-table tbody').append((0, _templates.documentsListItemTemplate)({ doc: doc, user: that.documentOverview.user }));
+                                            that.documentOverview.startDocumentTable();
+                                        });
+                                    });
+                                });
+                            }
+                        };
+
+                        for (var i = 0; i < ids.length; i++) {
+                            _loop(i);
+                        }
                     });
-                }
+                });
+            });
+        }
+    }, {
+        key: "getBibDB",
+        value: function getBibDB(userId, callback) {
+            var bibGetter = new _database.BibliographyDB(userId, true, false, false);
+            bibGetter.getBibDB(function (bibPks, bibCats) {
+                callback(bibGetter.bibDB);
+            });
+        }
+    }, {
+        key: "getImageDB",
+        value: function getImageDB(userId, callback) {
+            usermediaHelpers.getAnImageDB(userId, function (imageDB) {
+                callback(imageDB);
             });
         }
     }, {
@@ -1232,9 +1278,9 @@ var DocumentOverviewActions = exports.DocumentOverviewActions = (function () {
             var that = this;
             (0, _tools.getMissingDocumentListData)(ids, that.documentOverview.documentList, function () {
                 for (var i = 0; i < ids.length; i++) {
-                    (0, _native.downloadNative)(_.findWhere(that.documentOverview.documentList, {
+                    new _native.NativeExporter(_.findWhere(that.documentOverview.documentList, {
                         id: ids[i]
-                    }), false);
+                    }), false, false);
                 }
             });
         }
@@ -1278,26 +1324,30 @@ var DocumentOverviewActions = exports.DocumentOverviewActions = (function () {
         key: "revisionsDialog",
         value: function revisionsDialog(documentId) {
             var that = this;
-            new _dialog.DocumentRevisionsDialog(documentId, that.documentOverview.documentList, that.documentOverview.user, function (actionObject) {
-                switch (actionObject.action) {
-                    case 'added-document':
-                        that.documentOverview.documentList.push(actionObject.doc);
-                        that.documentOverview.stopDocumentTable();
-                        jQuery('#document-table tbody').append((0, _templates.documentsListItemTemplate)({
-                            aDocument: actionObject.doc,
-                            user: that.documentOverview.user
-                        }));
-                        that.documentOverview.startDocumentTable();
-                        break;
-                    case 'deleted-revision':
-                        actionObject.doc.revisions = _.reject(actionObject.doc.revisions, function (revision) {
-                            return revision.pk == actionObject.id;
-                        });
-                        if (actionObject.doc.revisions.length === 0) {
-                            jQuery('#Text_' + actionObject.doc.id + ' .revisions').detach();
+            that.documentOverview.getBibDB(function () {
+                that.documentOverview.getImageDB(function () {
+                    new _dialog.DocumentRevisionsDialog(documentId, that.documentOverview.documentList, that.documentOverview.user, that.documentOverview.bibDB, that.documentOverview.imageDB, function (actionObject) {
+                        switch (actionObject.action) {
+                            case 'added-document':
+                                that.documentOverview.documentList.push(actionObject.doc);
+                                that.documentOverview.stopDocumentTable();
+                                jQuery('#document-table tbody').append((0, _templates.documentsListItemTemplate)({
+                                    aDocument: actionObject.doc,
+                                    user: that.documentOverview.user
+                                }));
+                                that.documentOverview.startDocumentTable();
+                                break;
+                            case 'deleted-revision':
+                                actionObject.doc.revisions = _.reject(actionObject.doc.revisions, function (revision) {
+                                    return revision.pk == actionObject.id;
+                                });
+                                if (actionObject.doc.revisions.length === 0) {
+                                    jQuery('#Text_' + actionObject.doc.id + ' .revisions').detach();
+                                }
+                                break;
                         }
-                        break;
-                }
+                    });
+                });
             });
         }
     }]);
@@ -1305,8 +1355,8 @@ var DocumentOverviewActions = exports.DocumentOverviewActions = (function () {
     return DocumentOverviewActions;
 })();
 
-},{"../../exporter/copy":16,"../../exporter/epub":19,"../../exporter/html":21,"../../exporter/latex":23,"../../exporter/native":24,"../../importer/file":29,"../revisions/dialog":12,"../tools":14,"./templates":11}],9:[function(require,module,exports){
-"use strict";
+},{"../../bibliography/database":2,"../../exporter/copy":16,"../../exporter/epub":19,"../../exporter/html":21,"../../exporter/latex":23,"../../exporter/native":24,"../../importer/file":29,"../revisions/dialog":12,"../tools":14,"./templates":11}],9:[function(require,module,exports){
+'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
@@ -1315,9 +1365,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.DocumentOverviewMenus = undefined;
 
-var _dialog = require("../access-rights/dialog");
-
-var _dialog2 = require("../revisions/dialog");
+var _dialog = require('../access-rights/dialog');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -1331,7 +1379,7 @@ var DocumentOverviewMenus = exports.DocumentOverviewMenus = (function () {
     }
 
     _createClass(DocumentOverviewMenus, [{
-        key: "bind",
+        key: 'bind',
         value: function bind() {
             var that = this;
             jQuery(document).ready(function () {
@@ -1414,7 +1462,7 @@ var DocumentOverviewMenus = exports.DocumentOverviewMenus = (function () {
     return DocumentOverviewMenus;
 })();
 
-},{"../access-rights/dialog":6,"../revisions/dialog":12}],10:[function(require,module,exports){
+},{"../access-rights/dialog":6}],10:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1429,6 +1477,8 @@ var _actions = require("./actions");
 var _menus = require("./menus");
 
 var _templates = require("./templates");
+
+var _database = require("../../bibliography/database");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -1457,6 +1507,39 @@ var DocumentOverview = exports.DocumentOverview = (function () {
             jQuery(document).ready(function () {
                 that.getDocumentListData();
             });
+        }
+    }, {
+        key: "getBibDB",
+        value: function getBibDB(callback) {
+            var _this = this;
+
+            // Get the bibliography database -- only executed if needed (when importing, etc.).
+            var that = this;
+            if (!this.bibDB) {
+                (function () {
+                    // Don't get the bibliography again if we already have it.
+                    var bibGetter = new _database.BibliographyDB(_this.user.id, true, false, false);
+                    bibGetter.getBibDB(function () {
+                        that.bibDB = bibGetter.bibDB; // We only need the bibliography database
+                        callback();
+                    });
+                })();
+            } else {
+                callback();
+            }
+        }
+    }, {
+        key: "getImageDB",
+        value: function getImageDB(callback) {
+            var that = this;
+            if (!this.imageDB) {
+                usermediaHelpers.getAnImageDB(this.user.id, function (imageDB) {
+                    that.imageDB = imageDB;
+                    callback();
+                });
+            } else {
+                callback();
+            }
         }
     }, {
         key: "getDocumentListData",
@@ -1543,7 +1626,7 @@ var DocumentOverview = exports.DocumentOverview = (function () {
     return DocumentOverview;
 })();
 
-},{"./actions":8,"./menus":9,"./templates":11}],11:[function(require,module,exports){
+},{"../../bibliography/database":2,"./actions":8,"./menus":9,"./templates":11}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1635,12 +1718,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  */
 
 var DocumentRevisionsDialog = exports.DocumentRevisionsDialog = (function () {
-    function DocumentRevisionsDialog(documentId, documentList, user, callback) {
+    function DocumentRevisionsDialog(documentId, documentList, user, bibDB, imageDB, callback) {
         _classCallCheck(this, DocumentRevisionsDialog);
 
         this.documentId = documentId; // documentId The id in documentList.
         this.documentList = documentList;
         this.user = user;
+        this.bibDB = bibDB;
+        this.imageDB = imageDB;
         this.callback = callback;
         this.createDialog();
     }
@@ -1721,7 +1806,7 @@ var DocumentRevisionsDialog = exports.DocumentRevisionsDialog = (function () {
                 if (this.readyState == 4 && this.status == 200) {
                     var fidusFile = this.response;
 
-                    new _file.ImportFidusFile(fidusFile, user, true, function (noErrors, returnValue) {
+                    new _file.ImportFidusFile(fidusFile, user, that.bibDB, that.imageDB, true, function (noErrors, returnValue) {
                         $.deactivateWait();
                         if (noErrors) {
                             var aDocument = returnValue.aDocument;
@@ -2013,58 +2098,29 @@ var _native2 = require("../importer/native");
 
 var _database = require("../bibliography/database");
 
-var afterCopy = function afterCopy(noErrors, returnValue, editor, callback) {
+var afterCopy = function afterCopy(noErrors, returnValue, callback) {
     $.deactivateWait();
     if (noErrors) {
         var aDocument = returnValue.aDocument;
         var aDocInfo = returnValue.aDocumentValues;
         jQuery.addAlert('info', aDocument.title + gettext(' successfully copied.'));
-        if (editor) {
-            if (editor.docInfo.rights === 'r') {
-                // We only had right access to the document, so the editing elements won't show. We therefore need to reload the page to get them.
-                window.location = '/document/' + aDocument.id + '/';
-            } else {
-                editor.doc = aDocument;
-                editor.docInfo = aDocInfo;
-                window.history.pushState("", "", "/document/" + editor.doc.id + "/");
-            }
-        }
         if (callback) {
-            callback(returnValue);
+            callback(aDocument, aDocInfo);
         }
     } else {
         jQuery.addAlert('error', returnValue);
     }
 };
 
-var importAsUser = function importAsUser(aDocument, shrunkImageDB, shrunkBibDB, images, editor, user, callback) {
-    // switch to user's own ImageDB and BibDB:
-    if (editor) {
-        editor.doc.owner = editor.user;
-        delete window.ImageDB;
-        delete window.BibDB;
-    }
-
-    new _native2.ImportNative(aDocument, shrunkBibDB, shrunkImageDB, images, user, function (noErrors, returnValue) {
-        afterCopy(noErrors, returnValue, editor, callback);
+/* Saves a copy of the document. The owner may change in that process, if the
+  old document was owned by someone else than the current user.
+*/
+var savecopy = exports.savecopy = function savecopy(doc, oldBibDB, oldImageDB, newBibDB, newImageDB, newUser, callback) {
+    (0, _native.exportNative)(doc, oldImageDB, oldBibDB, function (doc, shrunkImageDB, shrunkBibDB, images) {
+        new _native2.ImportNative(doc, shrunkBibDB, shrunkImageDB, newBibDB, newImageDB, images, newUser, function (noErrors, returnValue) {
+            afterCopy(noErrors, returnValue, callback);
+        });
     });
-};
-
-var savecopy = exports.savecopy = function savecopy(aDocument, editor, user, callback) {
-    if (editor) {
-        (0, _native.exportNative)(aDocument, ImageDB, BibDB, function (aDocument, shrunkImageDB, shrunkBibDB, images) {
-            importAsUser(aDocument, shrunkImageDB, shrunkBibDB, images, editor, user, callback);
-        });
-    } else {
-        var bibGetter = new _database.BibliographyDB(aDocument.owner.id, false, false, false);
-        bibGetter.getBibDB(function (bibDB, bibCats) {
-            usermediaHelpers.getAnImageDB(aDocument.owner.id, function (anImageDB) {
-                (0, _native.exportNative)(aDocument, anImageDB, bibDB, function (aDocument, shrunkImageDB, shrunkBibDB, images) {
-                    importAsUser(aDocument, shrunkImageDB, shrunkBibDB, images, false, user, callback);
-                });
-            });
-        });
-    }
 };
 
 },{"../bibliography/database":2,"../importer/native":30,"./native":24}],17:[function(require,module,exports){
@@ -3331,10 +3387,12 @@ var LatexExporter = exports.LatexExporter = (function (_BaseLatexExporter) {
 },{"../bibliography/database":2,"../bibliography/exporter/biblatex":3,"./base":15,"./json":22,"./tools":25,"./zip":28}],24:[function(require,module,exports){
 "use strict";
 
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.exportNative = exports.downloadNative = exports.uploadNative = undefined;
+exports.exportNative = exports.NativeExporter = exports.uploadNative = undefined;
 
 var _json = require("./json");
 
@@ -3343,6 +3401,8 @@ var _tools = require("./tools");
 var _zip = require("./zip");
 
 var _database = require("../bibliography/database");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /** The current Fidus Writer filetype version.
  * The importer will not import from a different version and the exporter
@@ -3361,29 +3421,60 @@ var uploadNative = exports.uploadNative = function uploadNative(editor) {
     });
 };
 
-var downloadNative = exports.downloadNative = function downloadNative(aDocument, bibDB, imageDB) {
-    if (bibDB && imageDB) {
-        exportNative(aDocument, imageDB, bibDB, exportNativeFile);
-    } else if (bibDB) {
-        usermediaHelpers.getAnImageDB(aDocument.owner, function (imageDB) {
-            exportNative(aDocument, imageDB, bibDB, exportNativeFile);
-        });
-    } else if (imageDB) {
-        var bibGetter = new _database.BibliographyDB(aDocument.owner.id, false, false, false);
-        bibGetter.getBibDB(function (bibDB, bibCats) {
-            exportNative(aDocument, imageDB, bibDB, exportNativeFile);
-        });
-    } else {
-        var bibGetter = new _database.BibliographyDB(aDocument.owner.id, false, false, false);
-        bibGetter.getBibDB(function (bibDB, bibCats) {
-            usermediaHelpers.getAnImageDB(aDocument.owner.id, function (imageDB) {
-                exportNative(aDocument, imageDB, bibDB, exportNativeFile);
-            });
-        });
+var NativeExporter = exports.NativeExporter = (function () {
+    function NativeExporter(doc, bibDB, imageDB) {
+        _classCallCheck(this, NativeExporter);
+
+        this.doc = doc;
+        this.bibDB = bibDB;
+        this.imageDB = imageDB;
+        this.init();
     }
-};
+
+    _createClass(NativeExporter, [{
+        key: "init",
+        value: function init() {
+            var that = this;
+            this.getBibDB(function () {
+                that.getImageDB(function () {
+                    exportNative(that.doc, that.imageDB, that.bibDB, exportNativeFile);
+                });
+            });
+        }
+    }, {
+        key: "getBibDB",
+        value: function getBibDB(callback) {
+            var that = this;
+            if (!this.bibDB) {
+                var bibGetter = new _database.BibliographyDB(this.doc.owner.id, false, false, false);
+                bibGetter.getBibDB(function (bibDB, bibCats) {
+                    that.bibDB = bibDB;
+                    callback();
+                });
+            } else {
+                callback();
+            }
+        }
+    }, {
+        key: "getImageDB",
+        value: function getImageDB(callback) {
+            var that = this;
+            if (!this.imageDB) {
+                usermediaHelpers.getAnImageDB(this.doc.owner.id, function (imageDB) {
+                    that.imageDB = imageDB;
+                    callback();
+                });
+            } else {
+                callback();
+            }
+        }
+    }]);
+
+    return NativeExporter;
+})();
 
 // used in copy
+
 var exportNative = exports.exportNative = function exportNative(aDocument, anImageDB, aBibDB, callback) {
     var shrunkBibDB = {},
         citeList = [];
@@ -3707,12 +3798,14 @@ var ImportFidusFile = exports.ImportFidusFile = (function () {
     /* Process a packaged Fidus File, either through user upload, or by reloading
       a saved revision which was saved in the same ZIP-baseformat. */
 
-    function ImportFidusFile(file, user, check, callback) {
+    function ImportFidusFile(file, user, check, bibDB, imageDB, callback) {
         _classCallCheck(this, ImportFidusFile);
 
         this.file = file;
         this.user = user;
         this.callback = callback;
+        this.bibDB = bibDB; // the user's current database object.
+        this.imageDB = imageDB; // the user's imageDB
         this.check = check; // Whether the file needs to be checked for compliance with ZIP-format
         this.init();
     }
@@ -3808,7 +3901,7 @@ var ImportFidusFile = exports.ImportFidusFile = (function () {
                     filename: 'document.json'
                 }).contents);
 
-                return new _native.ImportNative(aDocument, shrunkBibDB, shrunkImageDB, this.entries, this.user, this.callback);
+                return new _native.ImportNative(aDocument, shrunkBibDB, shrunkImageDB, this.entries, this.user, this.bibDB, this.imageDB, this.callback);
             } else {
                 // The file is not a Fidus Writer file.
                 this.callback(false, gettext('The uploaded file does not appear to be of the version used on this server: ') + FW_FILETYPE_VERSION);
@@ -3836,42 +3929,21 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 var ImportNative = exports.ImportNative = (function () {
     /* Save document information into the database */
 
-    function ImportNative(aDocument, aBibDB, anImageDB, entries, user, callback) {
+    function ImportNative(aDocument, aBibDB, anImageDB, entries, user, bibDB, imageDB, callback) {
         _classCallCheck(this, ImportNative);
 
         this.aDocument = aDocument;
-        this.aBibDB = aBibDB;
-        this.anImageDB = anImageDB;
+        this.aBibDB = aBibDB; // These are new values
+        this.anImageDB = anImageDB; // These are new values
         this.entries = entries;
         this.user = user;
+        this.bibDB = bibDB; // These are values stored in the database
+        this.imageDB = imageDB; // These are values stored in the database
         this.callback = callback;
-        this.getDBs();
+        this.importNative();
     }
 
     _createClass(ImportNative, [{
-        key: 'getDBs',
-        value: function getDBs() {
-            var that = this;
-            // get BibDB and ImageDB if we don't have them already. Then invoke the native importer.
-            if ('undefined' === typeof BibDB) {
-                bibliographyHelpers.getBibDB(function () {
-                    if ('undefined' === typeof ImageDB) {
-                        usermediaHelpers.getImageDB(function () {
-                            that.importNative();
-                        });
-                    } else {
-                        that.importNative();
-                    }
-                });
-            } else if ('undefined' === typeof ImageDB) {
-                usermediaHelpers.getImageDB(function () {
-                    that.importNative();
-                });
-            } else {
-                that.importNative();
-            }
-        }
-    }, {
         key: 'importNative',
         value: function importNative() {
             var that = this;
@@ -3882,14 +3954,14 @@ var ImportNative = exports.ImportNative = (function () {
                 newImageEntries = [],
                 simplifiedShrunkImageDB = [];
 
-            // Add the id to each object in the BibDB to be able to look it up when comparing to this.aBibDB below
-            for (var key in BibDB) {
-                BibDB[key]['id'] = key;
+            // Add the id to each object in the this.bibDB to be able to look it up when comparing to this.aBibDB below
+            for (var key in this.bibDB) {
+                this.bibDB[key]['id'] = key;
             }
             for (var key in this.aBibDB) {
                 //this.aBibDB[key]['entry_type']=_.findWhere(BibEntryTypes,{name:this.aBibDB[key]['bibtype']}).id
                 //delete this.aBibDB[key].bibtype
-                var matchEntries = _.where(BibDB, this.aBibDB[key]);
+                var matchEntries = _.where(this.bibDB, this.aBibDB[key]);
 
                 if (0 === matchEntries.length) {
                     //create new
@@ -3913,8 +3985,8 @@ var ImportNative = exports.ImportNative = (function () {
             }
 
             // Remove the id values again
-            for (var key in BibDB) {
-                delete BibDB[key].id;
+            for (var key in this.bibDB) {
+                delete this.bibDB[key].id;
             }
 
             // We need to remove the pk from the entry in the this.anImageDB so that we also get matches with this.entries with other pk values.
@@ -3929,7 +4001,7 @@ var ImportNative = exports.ImportNative = (function () {
             }
 
             for (var key in shrunkImageDBObject) {
-                var matchEntries = _.where(ImageDB, shrunkImageDBObject[key]);
+                var matchEntries = _.where(this.imageDB, shrunkImageDBObject[key]);
                 if (0 === matchEntries.length) {
                     //create new
                     var sIDBEntry = _.findWhere(this.anImageDB, {
@@ -4088,7 +4160,7 @@ var ImportNative = exports.ImportNative = (function () {
                         type: 'POST',
                         dataType: 'json',
                         success: function success(response, textStatus, jqXHR) {
-                            ImageDB[response.values.pk] = response.values;
+                            that.imageDB[response.values.pk] = response.values;
                             var imageTranslation = {};
                             imageTranslation.oldUrl = newImageEntries[counter].oldUrl;
                             imageTranslation.oldId = newImageEntries[counter].oldId;
@@ -4153,7 +4225,7 @@ var ImportNative = exports.ImportNative = (function () {
                                 }).oldId;
                                 BibTranslationTable[oldID] = newID;
                             });
-                            bibliographyHelpers.addBibList(response.bibs);
+                            bibliographyHelpers.addBibList(response.bibs, that.bibDB);
                             that.translateReferenceIds(BibTranslationTable, ImageTranslationTable);
                         },
                         error: function error() {

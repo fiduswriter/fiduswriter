@@ -27,7 +27,7 @@ export class ModCitations {
             let bibliographyHTML = formatCitations(
                 document.getElementById('paper-editable'), // TODO: Should we point this to somewhere else?
                 this.editor.doc.settings.citationstyle,
-                window.BibDB
+                this.editor.bibDB
             )
             document.getElementById('document-bibliography').innerHTML = bibliographyHTML
         }

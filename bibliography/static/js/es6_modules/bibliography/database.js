@@ -129,7 +129,7 @@ export class BibliographyDB {
      */
     createBibEntry(postData, callback) {
         let that = this
-        $.activateWait();
+        $.activateWait()
         $.ajax({
             url: '/bibliography/save/',
             data: postData,
@@ -164,19 +164,18 @@ export class BibliographyDB {
      * @param errors Errors to be displayed
      */
     displayCreateBibEntryError(errors) {
-        var noError = true,
-            e_key;
-        for (e_key in errors) {
-            e_msg = '<div class="warning">' + errors[e_key] + '</div>';
-            if ('error' == e_key) {
-                jQuery('#createbook').prepend(e_msg);
+        let noError = true
+        for (let eKey in errors) {
+            eMsg = '<div class="warning">' + errors[eKey] + '</div>'
+            if ('error' == eKey) {
+                jQuery('#createbook').prepend(eMsg)
             } else {
-                jQuery('#id_' + e_key).after(e_msg);
+                jQuery('#id_' + eKey).after(eMsg)
             }
-            noError = false;
+            noError = false
         }
-        return noError;
-    };
+        return noError
+    }
 
     /** Update or create new category
      * @function createCategory

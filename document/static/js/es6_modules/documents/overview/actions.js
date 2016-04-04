@@ -4,9 +4,10 @@ import {savecopy} from "../../exporter/copy"
 import {EpubExporter} from "../../exporter/epub"
 import {HTMLExporter} from "../../exporter/html"
 import {LatexExporter} from "../../exporter/latex"
-import {downloadNative} from "../../exporter/native"
+import {NativeExporter} from "../../exporter/native"
 import {ImportFidusFile} from "../../importer/file"
 import {DocumentRevisionsDialog} from "../revisions/dialog"
+import {BibliographyDB} from "../../bibliography/database"
 
 export class DocumentOverviewActions {
     constructor (documentOverview) {
@@ -95,30 +96,37 @@ export class DocumentOverviewActions {
                 console.log('error', e.target.error.code)
             }
 
-            new ImportFidusFile(
-                fidusFile,
-                that.documentOverview.user,
-                true,
-                function(noErrors, returnValue) {
-                    $.deactivateWait()
-                    if (noErrors) {
-                        let aDocument = returnValue.aDocument
-                        let aDocumentValues = returnValue.aDocumentValues
-                        jQuery.addAlert('info', aDocument.title + gettext(
-                                ' successfully imported.'))
-                        that.documentOverview.documentList.push(aDocument)
-                        that.documentOverview.stopDocumentTable()
-                        jQuery('#document-table tbody').append(
-                            documentsListItemTemplate({
-                                    aDocument,
-                                    user: that.documentOverview.user
-                                }))
-                        that.documentOverview.startDocumentTable()
-                    } else {
-                        jQuery.addAlert('error', returnValue)
-                    }
-                }
-            )
+            that.documentOverview.getBibDB(function(){
+                that.documentOverview.getImageDB(function(){
+                    new ImportFidusFile(
+                        fidusFile,
+                        that.documentOverview.user,
+                        true,
+                        that.documentOverview.bibDB,
+                        that.documentOverview.imageDB,
+                        function(noErrors, returnValue) {
+                            $.deactivateWait()
+                            if (noErrors) {
+                                let aDocument = returnValue.aDocument
+                                let aDocumentValues = returnValue.aDocumentValues
+                                jQuery.addAlert('info', aDocument.title + gettext(
+                                        ' successfully imported.'))
+                                that.documentOverview.documentList.push(aDocument)
+                                that.documentOverview.stopDocumentTable()
+                                jQuery('#document-table tbody').append(
+                                    documentsListItemTemplate({
+                                            aDocument,
+                                            user: that.documentOverview.user
+                                        }))
+                                that.documentOverview.startDocumentTable()
+                            } else {
+                                jQuery.addAlert('error', returnValue)
+                            }
+                        }
+                    )
+                })
+            })
+
             //reader.onload = unzip
             //reader.readAsText(fidusFile)
             jQuery(this).dialog('close')
@@ -158,18 +166,57 @@ export class DocumentOverviewActions {
     copyFiles(ids) {
         let that = this
         getMissingDocumentListData(ids, that.documentOverview.documentList, function () {
-            for (let i = 0; i < ids.length; i++) {
-                savecopy(_.findWhere(that.documentOverview.documentList, {
-                    id: ids[i]
-                }), false, that.documentOverview.user, function (returnValue) {
-                    let aDocument = returnValue.aDocument
-                    that.documentOverview.documentList.push(aDocument)
-                    that.documentOverview.stopDocumentTable()
-                    jQuery('#document-table tbody').append(
-                        documentsListItemTemplate({aDocument, user: that.documentOverview.user}))
-                    that.documentOverview.startDocumentTable()
+            that.documentOverview.getBibDB(function(){
+                that.documentOverview.getImageDB(function(){
+                    for (let i = 0; i < ids.length; i++) {
+                        let doc = _.findWhere(that.documentOverview.documentList, {
+                            id: ids[i]
+                        })
+                        if (doc.owner.id===that.documentOverview.user.id) {
+                            // We are copying from and to the same user.
+                            savecopy(doc, that.documentOverview.bibDB, that.documentOverview.imageDB,
+                            that.documentOverview.bibDB, that.documentOverview.imageDB,
+                            that.documentOverview.user, function (doc, docInfo) {
+                                that.documentOverview.documentList.push(doc)
+                                that.documentOverview.stopDocumentTable()
+                                jQuery('#document-table tbody').append(
+                                    documentsListItemTemplate({doc, user: that.documentOverview.user}))
+                                that.documentOverview.startDocumentTable()
+                            })
+                        } else {
+                            that.getBibDB(function(oldBibDB){that.getImageDB(function(oldImageDB){
+                                /* We are copying from another user, so we are first loading
+                                 the databases from that user
+                                */
+                                savecopy(doc, oldBibDB, oldImageDB,
+                                that.documentOverview.bibDB, that.documentOverview.imageDB,
+                                that.documentOverview.user, function (doc, docInfo) {
+                                    that.documentOverview.documentList.push(doc)
+                                    that.documentOverview.stopDocumentTable()
+                                    jQuery('#document-table tbody').append(
+                                        documentsListItemTemplate({doc, user: that.documentOverview.user}))
+                                    that.documentOverview.startDocumentTable()
+                                })
+                            })})
+                        }
+
+                    }
                 })
-            }
+            })
+
+        })
+    }
+
+    getBibDB(userId, callback) {
+        let bibGetter = new BibliographyDB(userId, true, false, false)
+        bibGetter.getBibDB(function(bibPks, bibCats){
+            callback(bibGetter.bibDB)
+        })
+    }
+
+    getImageDB(userId, callback) {
+        usermediaHelpers.getAnImageDB(userId, function (imageDB) {
+            callback(imageDB)
         })
     }
 
@@ -177,10 +224,10 @@ export class DocumentOverviewActions {
         let that = this
         getMissingDocumentListData(ids, that.documentOverview.documentList, function () {
             for (let i = 0; i < ids.length; i++) {
-                downloadNative(_.findWhere(
+                new NativeExporter(_.findWhere(
                     that.documentOverview.documentList, {
                         id: ids[i]
-                    }), false)
+                    }), false, false)
             }
         })
     }
@@ -223,29 +270,40 @@ export class DocumentOverviewActions {
 
     revisionsDialog(documentId) {
         let that = this
-        new DocumentRevisionsDialog(documentId, that.documentOverview.documentList, that.documentOverview.user, function (actionObject) {
-            switch(actionObject.action) {
-                case 'added-document':
-                    that.documentOverview.documentList.push(actionObject.doc)
-                    that.documentOverview.stopDocumentTable()
-                    jQuery('#document-table tbody').append(
-                        documentsListItemTemplate({
-                            aDocument: actionObject.doc,
-                            user: that.documentOverview.user
-                        }))
-                    that.documentOverview.startDocumentTable()
-                    break
-                case 'deleted-revision':
-                    actionObject.doc.revisions = _.reject(actionObject.doc.revisions, function(revision) {
-                        return (revision.pk == actionObject.id)
-                    })
-                    if (actionObject.doc.revisions.length === 0) {
-                        jQuery('#Text_' + actionObject.doc.id + ' .revisions').detach()
+        that.documentOverview.getBibDB(function(){
+            that.documentOverview.getImageDB(function(){
+                new DocumentRevisionsDialog(
+                  documentId,
+                  that.documentOverview.documentList,
+                  that.documentOverview.user,
+                  that.documentOverview.bibDB,
+                  that.documentOverview.imageDB,
+                  function (actionObject) {
+                    switch(actionObject.action) {
+                        case 'added-document':
+                            that.documentOverview.documentList.push(actionObject.doc)
+                            that.documentOverview.stopDocumentTable()
+                            jQuery('#document-table tbody').append(
+                                documentsListItemTemplate({
+                                    aDocument: actionObject.doc,
+                                    user: that.documentOverview.user
+                                }))
+                            that.documentOverview.startDocumentTable()
+                            break
+                        case 'deleted-revision':
+                            actionObject.doc.revisions = _.reject(actionObject.doc.revisions, function(revision) {
+                                return (revision.pk == actionObject.id)
+                            })
+                            if (actionObject.doc.revisions.length === 0) {
+                                jQuery('#Text_' + actionObject.doc.id + ' .revisions').detach()
+                            }
+                            break
                     }
-                    break
-            }
+                })
 
+            })
         })
+
     }
 
 

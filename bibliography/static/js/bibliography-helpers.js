@@ -198,12 +198,12 @@
      * @param bibList The list of bibliography items from the server.
      */
     // EXPORT
-    bibliographyHelpers.addBibList = function(pks) {
+    bibliographyHelpers.addBibList = function(pks, bibDB) {
 
         if (jQuery('#bibliography').length > 0) {
             bibliographyHelpers.stopBibliographyTable(); // KEEP
             for (let i = 0; i < pks.length; i++) {
-                bibliographyHelpers.appendToBibTable(pks[i], BibDB[pks[i]]); // KEEP
+                bibliographyHelpers.appendToBibTable(pks[i], bibDB[pks[i]]); // KEEP
             }
             bibliographyHelpers.startBibliographyTable(); // KEEP
         }
@@ -211,7 +211,7 @@
         if (window.theEditor && 0 < jQuery('#add-cite-book').size()) {
             // We are in the editor view
             for (let i = 0; i < pks.length; i++) {
-                theEditor.mod.menus.citation.appendToCitationDialog(pks[i], BibDB[pks[i]]);
+                theEditor.mod.menus.citation.appendToCitationDialog(pks[i], bibDB[pks[i]]);
             }
             jQuery("#cite-source-table").trigger("update");
         }
@@ -1144,7 +1144,7 @@
 
         //import a bib file
         jQuery('.import-bib').bind('click', function () {
-            new BibLatexImporter();
+            new BibLatexImporter(window.BibDB);
         });
 
         //submit entry actions
@@ -1183,18 +1183,13 @@
         window.BibDB = {}
         window.BibCategories = []
 
-        if (typeof (theEditor) === 'undefined') {
-            docOwnerId = 0;
-        } else {
-            docOwnerId = theEditor.doc.owner.id;
-        }
-
+        let docOwnerId = 0 // 0 = current user.
         window.theBibliographyDB = new BibliographyDB(docOwnerId, true, window.BibDB, window.BibCategories);
 
         theBibliographyDB.getBibDB(function(bibPks, bibCats){
 
             bibliographyHelpers.addBibCategoryList(bibCats);
-            bibliographyHelpers.addBibList(bibPks);
+            bibliographyHelpers.addBibList(bibPks, window.theBibliographyDB.bibDB);
             if (callback) {
                 callback()
             }
@@ -1203,7 +1198,7 @@
 
     bibliographyHelpers.createBibEntry = function(bibEntryData) {
         theBibliographyDB.createBibEntry(bibEntryData, function(newBibPks) {
-             bibliographyHelpers.addBibList(newBibPks);
+             bibliographyHelpers.addBibList(newBibPks, theBibliographyDB.bibDB);
              jQuery("#createbook").dialog('close');
         });
     }

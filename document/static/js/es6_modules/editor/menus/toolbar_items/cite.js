@@ -67,7 +67,7 @@ export let bindCite = function (mod) {
             return true
         }
 
-        _.each(BibDB, function(bib, index) {
+        _.each(editor.bibDB, function(bib, index) {
             let bibEntry = {
                     'id': index,
                     'type': bib.entry_type,

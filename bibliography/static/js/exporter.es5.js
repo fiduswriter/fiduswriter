@@ -190,14 +190,13 @@ var BibliographyDB = exports.BibliographyDB = (function () {
     }, {
         key: 'displayCreateBibEntryError',
         value: function displayCreateBibEntryError(errors) {
-            var noError = true,
-                e_key;
-            for (e_key in errors) {
-                e_msg = '<div class="warning">' + errors[e_key] + '</div>';
-                if ('error' == e_key) {
-                    jQuery('#createbook').prepend(e_msg);
+            var noError = true;
+            for (var eKey in errors) {
+                eMsg = '<div class="warning">' + errors[eKey] + '</div>';
+                if ('error' == eKey) {
+                    jQuery('#createbook').prepend(eMsg);
                 } else {
-                    jQuery('#id_' + e_key).after(e_msg);
+                    jQuery('#id_' + eKey).after(eMsg);
                 }
                 noError = false;
             }
@@ -921,9 +920,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  */
 
 var BibLatexImporter = exports.BibLatexImporter = (function () {
-    function BibLatexImporter() {
+    function BibLatexImporter(bibDB) {
         _classCallCheck(this, BibLatexImporter);
 
+        this.bibDB = bibDB;
         this.openDialog();
     }
 
@@ -1042,7 +1042,7 @@ var BibLatexImporter = exports.BibLatexImporter = (function () {
                 dataType: 'json',
                 success: function success(response, textStatus, jqXHR) {
 
-                    bibliographyHelpers.addBibList(response.bibs);
+                    bibliographyHelpers.addBibList(response.bibs, that.bibDB);
                     var errors = response.errors,
                         warnings = response.warning,
                         len = errors.length;

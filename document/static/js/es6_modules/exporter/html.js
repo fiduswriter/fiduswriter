@@ -3,11 +3,13 @@ import {zipFileCreator} from "./zip"
 import {htmlExportTemplate} from "./html-templates"
 import {BibliographyDB} from "../bibliography/bibliographyDB"
 import {BaseExporter} from "./base"
+import {obj2Node} from "./json"
+import {formatCitations} from "../citations/format"
 
 import {render as katexRender} from "katex"
 
 export class BaseHTMLExporter extends BaseExporter{
-    joinDocumentPart() {
+    joinDocumentParts() {
         let contents = document.createElement('div')
         if (this.doc.contents) {
             let tempNode = obj2Node(this.doc.contents)
@@ -104,8 +106,9 @@ export class HTMLExporter extends BaseHTMLExporter{
         this.doc = doc
         if (bibDB) {
             this.bibDB = bibDB // the bibliography has already been loaded for some other purpose. We reuse it.
+            this.exportOne()
         } else {
-            let bibGetter = new BibliographyDB(doc.owner, false, false, false)
+            let bibGetter = new BibliographyDB(doc.owner.id, false, false, false)
             bibGetter.getBibDB(function() {
                 that.bibDB = bibGetter.bibDB
                 that.exportOne()

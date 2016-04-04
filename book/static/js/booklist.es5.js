@@ -3233,18 +3233,13 @@ var getMissingDocumentListData = exports.getMissingDocumentListData = function g
 };
 
 },{}],19:[function(require,module,exports){
-"use strict";
+'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.BaseExporter = undefined;
-
-var _json = require("./json");
-
-var _format = require("../citations/format");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -3256,7 +3251,7 @@ var BaseExporter = exports.BaseExporter = (function () {
     }
 
     _createClass(BaseExporter, [{
-        key: "cleanHTML",
+        key: 'cleanHTML',
         value: function cleanHTML(htmlCode) {
 
             // Replace the footnotes with markers and the footnotes to the back of the
@@ -3304,7 +3299,7 @@ var BaseExporter = exports.BaseExporter = (function () {
     return BaseExporter;
 })();
 
-},{"../citations/format":17,"./json":25}],20:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3614,15 +3609,16 @@ var EpubExporter = exports.EpubExporter = (function (_BaseEpubExporter) {
         _this2.doc = doc;
         if (bibDB) {
             _this2.bibDB = bibDB; // the bibliography has already been loaded for some other purpose. We reuse it.
+            _this2.exportOne();
         } else {
-                (function () {
-                    var bibGetter = new BibliographyDB(doc.owner, false, false, false);
-                    bibGetter.getBibDB(function () {
-                        that.bibDB = bibGetter.bibDB;
-                        that.exportOne();
-                    });
-                })();
-            }
+            (function () {
+                var bibGetter = new BibliographyDB(doc.owner.id, false, false, false);
+                bibGetter.getBibDB(function () {
+                    that.bibDB = bibGetter.bibDB;
+                    that.exportOne();
+                });
+            })();
+        }
         return _this2;
     }
 
@@ -3822,6 +3818,10 @@ var _bibliographyDB = require("../bibliography/bibliographyDB");
 
 var _base = require("./base");
 
+var _json = require("./json");
+
+var _format = require("../citations/format");
+
 var _katex = require("katex");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -3840,18 +3840,18 @@ var BaseHTMLExporter = exports.BaseHTMLExporter = (function (_BaseExporter) {
     }
 
     _createClass(BaseHTMLExporter, [{
-        key: "joinDocumentPart",
-        value: function joinDocumentPart() {
+        key: "joinDocumentParts",
+        value: function joinDocumentParts() {
             var contents = document.createElement('div');
             if (this.doc.contents) {
-                var tempNode = obj2Node(this.doc.contents);
+                var tempNode = (0, _json.obj2Node)(this.doc.contents);
                 while (tempNode.firstChild) {
                     contents.appendChild(tempNode.firstChild);
                 }
             }
 
             if (this.doc.settings['metadata-keywords'] && this.doc.metadata.keywords) {
-                var tempNode = obj2Node(this.doc.metadata.keywords);
+                var tempNode = (0, _json.obj2Node)(this.doc.metadata.keywords);
                 if (tempNode.textContent.length > 0) {
                     tempNode.id = 'keywords';
                     contents.insertBefore(tempNode, contents.firstChild);
@@ -3859,7 +3859,7 @@ var BaseHTMLExporter = exports.BaseHTMLExporter = (function (_BaseExporter) {
             }
 
             if (this.doc.settings['metadata-authors'] && this.doc.metadata.authors) {
-                var tempNode = obj2Node(this.doc.metadata.authors);
+                var tempNode = (0, _json.obj2Node)(this.doc.metadata.authors);
                 if (tempNode.textContent.length > 0) {
                     tempNode.id = 'authors';
                     contents.insertBefore(tempNode, contents.firstChild);
@@ -3867,7 +3867,7 @@ var BaseHTMLExporter = exports.BaseHTMLExporter = (function (_BaseExporter) {
             }
 
             if (this.doc.settings['metadata-abstract'] && this.doc.metadata.abstract) {
-                var tempNode = obj2Node(this.doc.metadata.abstract);
+                var tempNode = (0, _json.obj2Node)(this.doc.metadata.abstract);
                 if (tempNode.textContent.length > 0) {
                     tempNode.id = 'abstract';
                     contents.insertBefore(tempNode, contents.firstChild);
@@ -3875,7 +3875,7 @@ var BaseHTMLExporter = exports.BaseHTMLExporter = (function (_BaseExporter) {
             }
 
             if (this.doc.settings['metadata-subtitle'] && this.doc.metadata.subtitle) {
-                var tempNode = obj2Node(this.doc.metadata.subtitle);
+                var tempNode = (0, _json.obj2Node)(this.doc.metadata.subtitle);
                 if (tempNode.textContent.length > 0) {
                     tempNode.id = 'subtitle';
                     contents.insertBefore(tempNode, contents.firstChild);
@@ -3889,7 +3889,7 @@ var BaseHTMLExporter = exports.BaseHTMLExporter = (function (_BaseExporter) {
                 contents.insertBefore(tempNode, contents.firstChild);
             }
 
-            var bibliography = formatCitations(contents, this.doc.settings.citationstyle, this.bibDB);
+            var bibliography = (0, _format.formatCitations)(contents, this.doc.settings.citationstyle, this.bibDB);
 
             if (bibliography.length > 0) {
                 var tempNode = document.createElement('div');
@@ -3942,15 +3942,16 @@ var HTMLExporter = exports.HTMLExporter = (function (_BaseHTMLExporter) {
         _this2.doc = doc;
         if (bibDB) {
             _this2.bibDB = bibDB; // the bibliography has already been loaded for some other purpose. We reuse it.
+            _this2.exportOne();
         } else {
-                (function () {
-                    var bibGetter = new _bibliographyDB.BibliographyDB(doc.owner, false, false, false);
-                    bibGetter.getBibDB(function () {
-                        that.bibDB = bibGetter.bibDB;
-                        that.exportOne();
-                    });
-                })();
-            }
+            (function () {
+                var bibGetter = new _bibliographyDB.BibliographyDB(doc.owner.id, false, false, false);
+                bibGetter.getBibDB(function () {
+                    that.bibDB = bibGetter.bibDB;
+                    that.exportOne();
+                });
+            })();
+        }
         return _this2;
     }
 
@@ -4030,7 +4031,7 @@ var HTMLExporter = exports.HTMLExporter = (function (_BaseHTMLExporter) {
     return HTMLExporter;
 })(BaseHTMLExporter);
 
-},{"../bibliography/bibliographyDB":2,"./base":19,"./html-templates":23,"./tools":27,"./zip":30,"katex":32}],25:[function(require,module,exports){
+},{"../bibliography/bibliographyDB":2,"../citations/format":17,"./base":19,"./html-templates":23,"./json":25,"./tools":27,"./zip":30,"katex":32}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4508,15 +4509,16 @@ var LatexExporter = exports.LatexExporter = (function (_BaseLatexExporter) {
         _this2.doc = doc;
         if (bibDB) {
             _this2.bibDB = bibDB; // the bibliography has already been loaded for some other purpose. We reuse it.
+            _this2.exportOne();
         } else {
-                (function () {
-                    var bibGetter = new _bibliographyDB.BibliographyDB(doc.owner, false, false, false);
-                    bibGetter.getBibDB(function () {
-                        that.bibDB = bibGetter.bibDB;
-                        that.exportOne();
-                    });
-                })();
-            }
+            (function () {
+                var bibGetter = new _bibliographyDB.BibliographyDB(doc.owner.id, false, false, false);
+                bibGetter.getBibDB(function () {
+                    that.bibDB = bibGetter.bibDB;
+                    that.exportOne();
+                });
+            })();
+        }
         return _this2;
     }
 

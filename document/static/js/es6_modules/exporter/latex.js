@@ -425,14 +425,16 @@ export class LatexExporter extends BaseLatexExporter {
         this.doc = doc
         if (bibDB) {
             this.bibDB = bibDB // the bibliography has already been loaded for some other purpose. We reuse it.
+            this.exportOne()
         } else {
-            let bibGetter = new BibliographyDB(doc.owner, false, false, false)
+            let bibGetter = new BibliographyDB(doc.owner.id, false, false, false)
             bibGetter.getBibDB(function() {
                 that.bibDB = bibGetter.bibDB
                 that.exportOne()
             })
         }
     }
+
 
     exportOne() {
         let title = this.doc.title

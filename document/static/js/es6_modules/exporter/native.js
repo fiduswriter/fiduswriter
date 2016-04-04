@@ -29,16 +29,16 @@ export let downloadNative = function(aDocument, bibDB, imageDB) {
                 exportNativeFile)
         })
     } else if (imageDB) {
-        let bibGetter = new BibliographyDB(aDocument.owner, false, false, false)
+        let bibGetter = new BibliographyDB(aDocument.owner.id, false, false, false)
         bibGetter.getBibDB(function(bibDB, bibCats) {
             exportNative(aDocument,
                 imageDB,
                 bibDB, exportNativeFile)
         })
     } else {
-        let bibGetter = new BibliographyDB(aDocument.owner, false, false, false)
+        let bibGetter = new BibliographyDB(aDocument.owner.id, false, false, false)
         bibGetter.getBibDB(function(bibDB, bibCats) {
-            usermediaHelpers.getAnImageDB(function(imageDB) {
+            usermediaHelpers.getAnImageDB(aDocument.owner.id, function(imageDB) {
                 exportNative(aDocument, imageDB,
                 bibDB, exportNativeFile)
             })

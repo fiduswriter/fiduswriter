@@ -1,7 +1,3 @@
-import {obj2Node} from "./json"
-import {formatCitations} from "../citations/format"
-
-
 /* Base exporter class */
 
 export class BaseExporter {

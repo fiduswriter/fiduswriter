@@ -11,7 +11,335 @@ purposes.*/
 var theBookList = new _booklist.BookList();
 window.theBookList = theBookList;
 
-},{"./es6_modules/books/booklist":6}],2:[function(require,module,exports){
+},{"./es6_modules/books/booklist":7}],2:[function(require,module,exports){
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var FW_LOCALSTORAGE_VERSION = "1.0";
+
+var BibliographyDB = exports.BibliographyDB = (function () {
+    function BibliographyDB(docOwnerId, useLocalStorage, oldBibDB, oldBibCats) {
+        _classCallCheck(this, BibliographyDB);
+
+        this.docOwnerId = docOwnerId; // theEditor.doc.owner.id || 0
+        this.useLocalStorage = useLocalStorage; // Whether to use local storage to cache result
+        if (oldBibDB) {
+            this.bibDB = oldBibDB;
+        } else {
+            this.bibDB = {};
+        }
+        if (oldBibCats) {
+            this.bibCats = oldBibCats;
+        } else {
+            this.bibCats = [];
+        }
+    }
+
+    // EXPORT
+    /** Get the bibliography from the server and create as window.BibDB.
+     * @function getBibDB
+     * @param callback Will be called afterward.
+     */
+
+    _createClass(BibliographyDB, [{
+        key: 'getBibDB',
+        value: function getBibDB(callback) {
+
+            var lastModified = -1,
+                numberOfEntries = -1,
+                that = this;
+
+            if (this.useLocalStorage) {
+                var _lastModified = parseInt(localStorage.getItem('last_modified_biblist')),
+                    _numberOfEntries = parseInt(localStorage.getItem('number_of_entries')),
+                    localStorageVersion = localStorage.getItem('version'),
+                    localStorageOwnerId = parseInt(localStorage.getItem('owner_id'));
+                that = this;
+
+                // A dictionary to look up bib fields by their fw type name. Needed for translation to CSL and Biblatex.
+                //jQuery('#bibliography').dataTable().fnDestroy()
+                //Fill BibDB
+
+                if (_.isNaN(_lastModified)) {
+                    _lastModified = -1;
+                }
+
+                if (_.isNaN(_numberOfEntries)) {
+                    _numberOfEntries = -1;
+                }
+
+                if (localStorageVersion != FW_LOCALSTORAGE_VERSION || localStorageOwnerId != this.docOwnerId) {
+                    _lastModified = -1;
+                    _numberOfEntries = -1;
+                }
+            }
+
+            $.activateWait();
+
+            $.ajax({
+                url: '/bibliography/biblist/',
+                data: {
+                    'owner_id': that.docOwnerId,
+                    'last_modified': lastModified,
+                    'number_of_entries': numberOfEntries
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function success(response, textStatus, jqXHR) {
+
+                    var newBibCats = response.bibCategories;
+                    newBibCats.forEach(function (bibCat) {
+                        that.bibCats.push(bibCat);
+                    });
+
+                    var bibList = [];
+
+                    if (that.useLocalStorage) {
+                        if (response.hasOwnProperty('bibList')) {
+                            bibList = response.bibList;
+                            try {
+                                localStorage.setItem('biblist', JSON.stringify(response.bibList));
+                                localStorage.setItem('last_modified_biblist', response.last_modified);
+                                localStorage.setItem('number_of_entries', response.number_of_entries);
+                                localStorage.setItem('owner_id', response.that.docOwnerId);
+                                localStorage.setItem('version', FW_LOCALSTORAGE_VERSION);
+                            } catch (error) {
+                                // The local storage was likely too small
+                            }
+                        } else {
+                                bibList = JSON.parse(localStorage.getItem('biblist'));
+                            }
+                    } else {
+                        bibList = response.bibList;
+                    }
+                    var newBibPks = [];
+                    for (var i = 0; i < bibList.length; i++) {
+                        newBibPks.push(that.serverBibItemToBibDB(bibList[i]));
+                    }
+                    if (callback) {
+                        callback(newBibPks, newBibCats);
+                    }
+                },
+                error: function error(jqXHR, textStatus, errorThrown) {
+                    $.addAlert('error', jqXHR.responseText);
+                },
+                complete: function complete() {
+                    $.deactivateWait();
+                }
+            });
+        }
+
+        /** Converts a bibliography item as it arrives from the server to a BibDB object.
+         * @function serverBibItemToBibDB
+         * @param item The bibliography item from the server.
+         */
+        // NO EXPORT!
+
+    }, {
+        key: 'serverBibItemToBibDB',
+        value: function serverBibItemToBibDB(item) {
+            var id = item['id'];
+            var aBibDBEntry = JSON.parse(item['fields']);
+            aBibDBEntry['entry_type'] = item['entry_type'];
+            aBibDBEntry['entry_key'] = item['entry_key'];
+            aBibDBEntry['entry_cat'] = item['entry_cat'];
+            this.bibDB[id] = aBibDBEntry;
+            return id;
+        }
+
+        /** Saves a bibliography entry to the database on the server.
+         * @function createBibEntry
+         * @param post_data The bibliography data to send to the server.
+         */
+
+    }, {
+        key: 'createBibEntry',
+        value: function createBibEntry(postData, callback) {
+            var that = this;
+            $.activateWait();
+            $.ajax({
+                url: '/bibliography/save/',
+                data: postData,
+                type: 'POST',
+                dataType: 'json',
+                success: function success(response, textStatus, jqXHR) {
+                    if (that.displayCreateBibEntryError(response.errormsg)) {
+                        $.addAlert('success', gettext('The bibliography has been updated'));
+                        var newBibPks = [];
+                        var bibList = response.values;
+                        for (var i = 0; i < bibList.length; i++) {
+                            newBibPks.push(that.serverBibItemToBibDB(bibList[i]));
+                        }
+                        if (callback) {
+                            callback(newBibPks);
+                        }
+                    } else {
+                        $.addAlert('error', gettext('Some errors are found. Please examine the form.'));
+                    }
+                },
+                error: function error(jqXHR, textStatus, errorThrown) {
+                    $.addAlert('error', errorThrown);
+                },
+                complete: function complete() {
+                    $.deactivateWait();
+                }
+            });
+        }
+
+        /** Displays an error on bibliography entry creation
+         * @function displayCreateBibEntryError
+         * @param errors Errors to be displayed
+         */
+
+    }, {
+        key: 'displayCreateBibEntryError',
+        value: function displayCreateBibEntryError(errors) {
+            var noError = true,
+                e_key;
+            for (e_key in errors) {
+                e_msg = '<div class="warning">' + errors[e_key] + '</div>';
+                if ('error' == e_key) {
+                    jQuery('#createbook').prepend(e_msg);
+                } else {
+                    jQuery('#id_' + e_key).after(e_msg);
+                }
+                noError = false;
+            }
+            return noError;
+        }
+
+        /** Update or create new category
+         * @function createCategory
+         * @param cats The category objects to add.
+         */
+
+    }, {
+        key: 'createCategory',
+        value: function createCategory(cats, callback) {
+            var that = this;
+            var postData = {
+                'ids[]': cats.ids,
+                'titles[]': cats.titles
+            };
+            $.activateWait();
+            $.ajax({
+                url: '/bibliography/save_category/',
+                data: postData,
+                type: 'POST',
+                dataType: 'json',
+                success: function success(response, textStatus, jqXHR) {
+                    if (jqXHR.status == 201) {
+                        var bibCats = response.entries; // We receive both existing and new categories.
+                        // Replace the old with the new categories, but don't lose the link to the array (so delete each, then add each).
+                        while (that.bibCats.length > 0) {
+                            that.bibCats.pop();
+                        }
+                        while (bibCats.length > 0) {
+                            that.bibCats.push(bibCats.pop());
+                        }
+
+                        $.addAlert('success', gettext('The categories have been updated'));
+                        if (callback) {
+                            callback(that.bibCats);
+                        }
+                    }
+                },
+                error: function error(jqXHR, textStatus, errorThrown) {
+                    $.addAlert('error', jqXHR.responseText);
+                },
+                complete: function complete() {
+                    $.deactivateWait();
+                }
+            });
+        }
+
+        /** Delete a categories
+         * @function deleteCategory
+         * @param ids A list of ids to delete.
+         */
+
+    }, {
+        key: 'deleteCategory',
+        value: function deleteCategory(ids, callback) {
+
+            var postData = {
+                'ids[]': ids
+            },
+                that = this;
+            $.ajax({
+                url: '/bibliography/delete_category/',
+                data: postData,
+                type: 'POST',
+                dataType: 'json',
+                success: function success(response, textStatus, jqXHR) {
+                    var deletedPks = ids.slice();
+                    var deletedBibCats = [];
+                    that.bibCats.forEach(function (bibCat) {
+                        if (ids.indexOf(bibCat.id) !== -1) {
+                            deletedBibCats.push(bibCat);
+                        }
+                    });
+                    deletedBibCats.forEach(function (bibCat) {
+                        var index = that.bibCats.indexOf(bibCat);
+                        that.bibCats.splice(index, 1);
+                    });
+                    if (callback) {
+                        callback(deletedPks);
+                    }
+                }
+            });
+        }
+
+        /** Delete a list of bibliography items both locally and on the server.
+         * @function deleteBibEntry
+         * @param ids A list of bibliography item ids that are to be deleted.
+         */
+
+    }, {
+        key: 'deleteBibEntry',
+        value: function deleteBibEntry(ids, callback) {
+            var that = this;
+            for (var i = 0; i < ids.length; i++) {
+                ids[i] = parseInt(ids[i]);
+            }
+            var postData = {
+                'ids[]': ids
+            };
+            $.activateWait();
+            $.ajax({
+                url: '/bibliography/delete/',
+                data: postData,
+                type: 'POST',
+                success: function success(response, textStatus, jqXHR) {
+                    for (var i = 0; i < ids.length; i++) {
+                        delete that.bibDB[ids[i]];
+                    }
+                    $.addAlert('success', gettext('The bibliography item(s) have been deleted'));
+                    if (callback) {
+                        callback(ids);
+                    }
+                },
+                error: function error(jqXHR, textStatus, errorThrown) {
+                    $.addAlert('error', jqXHR.responseText);
+                },
+                complete: function complete() {
+                    $.deactivateWait();
+                }
+            });
+        }
+    }]);
+
+    return BibliographyDB;
+})();
+
+},{}],3:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -209,7 +537,7 @@ var BibLatexExporter = exports.BibLatexExporter = (function () {
     return BibLatexExporter;
 })();
 
-},{"../../exporter/zip":28}],3:[function(require,module,exports){
+},{"../../exporter/zip":30}],4:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -367,7 +695,7 @@ var BookAccessRightsDialog = (function () {
     return BookAccessRightsDialog;
 })();
 
-},{"./templates":4}],4:[function(require,module,exports){
+},{"./templates":5}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -441,7 +769,7 @@ var bookCollaboratorsTemplate = exports.bookCollaboratorsTemplate = _.template('
         </tr>\
     <% }) %>');
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1110,7 +1438,7 @@ var BookActions = exports.BookActions = (function () {
     return BookActions;
 })();
 
-},{"./templates":14}],6:[function(require,module,exports){
+},{"./templates":15}],7:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1222,7 +1550,7 @@ var BookList = exports.BookList = (function () {
                                     id: ids[i]
                                 });
                                 $.addAlert('info', aBook.title + ': ' + gettext('Epub export has been initiated.'));
-                                (0, _epub.downloadEpubBook)(aBook, that.user, that.documentList);
+                                new _epub.EpubBookExporter(aBook, that.user, that.documentList);
                             }
                             break;
                         case 'latex':
@@ -1231,7 +1559,7 @@ var BookList = exports.BookList = (function () {
                                     id: ids[i]
                                 });
                                 $.addAlert('info', aBook.title + ': ' + gettext('Latex export has been initiated.'));
-                                (0, _latex.downloadLatexBook)(aBook, that.documentList);
+                                new _latex.LatexBookExporter(aBook, that.user, that.documentList);
                             }
                             break;
                         case 'html':
@@ -1240,7 +1568,7 @@ var BookList = exports.BookList = (function () {
                                     id: ids[i]
                                 });
                                 $.addAlert('info', aBook.title + ': ' + gettext('HTML export has been initiated.'));
-                                (0, _html.downloadHtmlBook)(aBook, that.user, that.documentList);
+                                new HTMLBookExporter(aBook, that.user, that.documentList);
                             }
                             break;
                         case 'copy':
@@ -1275,7 +1603,7 @@ var BookList = exports.BookList = (function () {
     return BookList;
 })();
 
-},{"./accessrights/dialog":3,"./actions":5,"./exporter/epub":8,"./exporter/html":10,"./exporter/latex":12,"./templates":14}],7:[function(require,module,exports){
+},{"./accessrights/dialog":4,"./actions":6,"./exporter/epub":9,"./exporter/html":11,"./exporter/latex":13,"./templates":15}],8:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1414,13 +1742,15 @@ var epubBookCopyrightTemplate = exports.epubBookCopyrightTemplate = _.template('
 </html>\
 ');
 
-},{"../../exporter/epub-templates":19}],8:[function(require,module,exports){
+},{"../../exporter/epub-templates":21}],9:[function(require,module,exports){
 "use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.downloadEpubBook = undefined;
+exports.EpubBookExporter = undefined;
 
 var _katex = require("katex");
 
@@ -1432,8 +1762,6 @@ var _opfIncludes = require("../../katex/opf-includes");
 
 var _epub = require("../../exporter/epub");
 
-var _html = require("../../exporter/html");
-
 var _epubTemplates2 = require("../../exporter/epub-templates");
 
 var _json = require("../../exporter/json");
@@ -1444,281 +1772,305 @@ var _zip = require("../../exporter/zip");
 
 var _format = require("../../citations/format");
 
-var downloadEpubBook = exports.downloadEpubBook = function downloadEpubBook(aBook, user, documentList) {
-    (0, _tools.getMissingChapterData)(aBook, documentList, function () {
-        (0, _tools.getImageAndBibDB)(aBook, documentList, function (anImageDB, aBibDB) {
-            epubBookExport(aBook, anImageDB, aBibDB, user, documentList);
-        });
-    });
-};
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var templates = { ncxTemplate: _epubTemplates2.ncxTemplate, ncxItemTemplate: _epubTemplates2.ncxItemTemplate, navTemplate: _epubTemplates2.navTemplate, navItemTemplate: _epubTemplates2.navItemTemplate };
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-var epubBookExport = function epubBookExport(aBook, anImageDB, aBibDB, user, documentList) {
-    var coverImage = false,
-        contentItems = [],
-        images = [],
-        chapters = [],
-        styleSheets = [],
-        outputList = [],
-        math = false;
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-    aBook.chapters = _.sortBy(aBook.chapters, function (chapter) {
-        return chapter.number;
-    });
+var EpubBookExporter = exports.EpubBookExporter = (function (_BaseEpubExporter) {
+    _inherits(EpubBookExporter, _BaseEpubExporter);
 
-    if (aBook.cover_image) {
-        coverImage = _.findWhere(anImageDB, {
-            pk: aBook.cover_image
-        });
-        images.push({
-            url: coverImage.image.split('?')[0],
-            filename: coverImage.image.split('/').pop().split('?')[0]
-        });
+    function EpubBookExporter(book, user, docList) {
+        _classCallCheck(this, EpubBookExporter);
 
-        outputList.push({
-            filename: 'EPUB/cover.xhtml',
-            contents: (0, _epubTemplates.epubBookCoverTemplate)({ aBook: aBook, coverImage: coverImage })
-        });
-        contentItems.push({
-            link: 'cover.xhtml#cover',
-            title: gettext('Cover'),
-            docNum: 0,
-            id: 0,
-            level: 0,
-            subItems: []
-        });
-    }
-    contentItems.push({
-        link: 'titlepage.xhtml#title',
-        title: gettext('Title page'),
-        docNum: 0,
-        id: 1,
-        level: 0,
-        subItems: []
-    });
+        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(EpubBookExporter).call(this));
 
-    for (var i = 0; i < aBook.chapters.length; i++) {
-
-        var aChapter = {};
-
-        aChapter.document = _.findWhere(documentList, {
-            id: aBook.chapters[i].text
-        });
-
-        var tempNode = (0, _json.obj2Node)(aChapter.document.contents);
-
-        var contents = document.createElement('body');
-
-        while (tempNode.firstChild) {
-            contents.appendChild(tempNode.firstChild);
-        }
-
-        var bibliography = (0, _format.formatCitations)(contents, aBook.settings.citationstyle, aBibDB);
-
-        if (bibliography.length > 0) {
-            contents.innerHTML += bibliography;
-        }
-
-        images = images.concat((0, _tools2.findImages)(contents));
-
-        var startHTML = '<h1 class="title">' + aChapter.document.title + '</h1>';
-
-        if (aChapter.document.settings && aChapter.document.settings['metadata-subtitle'] && aChapter.document.metadata.subtitle) {
-            tempNode = (0, _json.obj2Node)(aChapter.document.metadata.subtitle);
-            if (tempNode && tempNode.textContent.length > 0) {
-                startHTML += '<h2 class="subtitle">' + tempNode.textContent + '</h2>';
-            }
-        }
-        if (aChapter.document.settings && aChapter.document.settings['metadata-abstract'] && aChapter.document.metadata.abstract) {
-            tempNode = (0, _json.obj2Node)(aChapter.document.metadata.abstract);
-            if (tempNode && tempNode.textContent.length > 0) {
-                startHTML += '<div class="abstract">' + tempNode.textContent + '</div>';
-            }
-        }
-
-        contents.innerHTML = startHTML + contents.innerHTML;
-
-        contents = (0, _html.cleanHTML)(contents);
-
-        contents = (0, _html.addFigureNumbers)(contents);
-
-        aChapter.number = aBook.chapters[i].number;
-
-        aChapter.part = aBook.chapters[i].part;
-
-        var equations = contents.querySelectorAll('.equation');
-
-        var figureEquations = contents.querySelectorAll('.figure-equation');
-
-        if (equations.length > 0 || figureEquations.length > 0) {
-            aChapter.math = true;
-            math = true;
-        }
-
-        for (var _i = 0; _i < equations.length; _i++) {
-            var node = equations[_i];
-            var formula = node.getAttribute('data-equation');
-            (0, _katex.render)(formula, node);
-        }
-        for (var _i2 = 0; _i2 < figureEquations.length; _i2++) {
-            var node = figureEquations[_i2];
-            var formula = node.getAttribute('data-equation');
-            (0, _katex.render)(formula, node, {
-                displayMode: true
+        var that = _this;
+        _this.book = book;
+        _this.user = user;
+        _this.docList = docList;
+        (0, _tools.getMissingChapterData)(book, docList, function () {
+            (0, _tools.getImageAndBibDB)(book, docList, function (imageDB, bibDB) {
+                that.bibDB = bibDB;
+                that.imageDB = imageDB;
+                that.exportOne();
             });
-        }
+        });
+        return _this;
+    }
 
-        if (aBook.chapters[i].part && aBook.chapters[i].part != '') {
+    _createClass(EpubBookExporter, [{
+        key: "exportOne",
+        value: function exportOne() {
+            var coverImage = false,
+                contentItems = [],
+                images = [],
+                chapters = [],
+                styleSheets = [],
+                outputList = [],
+                math = false;
+
+            this.book.chapters = _.sortBy(this.book.chapters, function (chapter) {
+                return chapter.number;
+            });
+
+            if (this.book.cover_image) {
+                coverImage = _.findWhere(this.imageDB, {
+                    pk: this.book.cover_image
+                });
+                images.push({
+                    url: coverImage.image.split('?')[0],
+                    filename: coverImage.image.split('/').pop().split('?')[0]
+                });
+
+                outputList.push({
+                    filename: 'EPUB/cover.xhtml',
+                    contents: (0, _epubTemplates.epubBookCoverTemplate)({ aBook: this.book, coverImage: coverImage })
+                });
+                contentItems.push({
+                    link: 'cover.xhtml#cover',
+                    title: gettext('Cover'),
+                    docNum: 0,
+                    id: 0,
+                    level: 0,
+                    subItems: []
+                });
+            }
             contentItems.push({
-                link: 'document-' + aBook.chapters[i].number + '.xhtml',
-                title: aChapter.part,
-                docNum: aChapter.number,
-                id: 0,
-                level: -1,
+                link: 'titlepage.xhtml#title',
+                title: gettext('Title page'),
+                docNum: 0,
+                id: 1,
+                level: 0,
                 subItems: []
             });
+
+            for (var i = 0; i < this.book.chapters.length; i++) {
+
+                var aChapter = {};
+
+                aChapter.document = _.findWhere(this.docList, {
+                    id: this.book.chapters[i].text
+                });
+
+                var tempNode = (0, _json.obj2Node)(aChapter.document.contents);
+
+                var contents = document.createElement('body');
+
+                while (tempNode.firstChild) {
+                    contents.appendChild(tempNode.firstChild);
+                }
+
+                var bibliography = (0, _format.formatCitations)(contents, this.book.settings.citationstyle, this.bibDB);
+
+                if (bibliography.length > 0) {
+                    contents.innerHTML += bibliography;
+                }
+
+                images = images.concat((0, _tools2.findImages)(contents));
+
+                var startHTML = '<h1 class="title">' + aChapter.document.title + '</h1>';
+
+                if (aChapter.document.settings && aChapter.document.settings['metadata-subtitle'] && aChapter.document.metadata.subtitle) {
+                    tempNode = (0, _json.obj2Node)(aChapter.document.metadata.subtitle);
+                    if (tempNode && tempNode.textContent.length > 0) {
+                        startHTML += '<h2 class="subtitle">' + tempNode.textContent + '</h2>';
+                    }
+                }
+                if (aChapter.document.settings && aChapter.document.settings['metadata-abstract'] && aChapter.document.metadata.abstract) {
+                    tempNode = (0, _json.obj2Node)(aChapter.document.metadata.abstract);
+                    if (tempNode && tempNode.textContent.length > 0) {
+                        startHTML += '<div class="abstract">' + tempNode.textContent + '</div>';
+                    }
+                }
+
+                contents.innerHTML = startHTML + contents.innerHTML;
+
+                contents = this.cleanHTML(contents);
+
+                contents = this.addFigureNumbers(contents);
+
+                aChapter.number = this.book.chapters[i].number;
+
+                aChapter.part = this.book.chapters[i].part;
+
+                var equations = contents.querySelectorAll('.equation');
+
+                var figureEquations = contents.querySelectorAll('.figure-equation');
+
+                if (equations.length > 0 || figureEquations.length > 0) {
+                    aChapter.math = true;
+                    math = true;
+                }
+
+                for (var _i = 0; _i < equations.length; _i++) {
+                    var node = equations[_i];
+                    var formula = node.getAttribute('data-equation');
+                    (0, _katex.render)(formula, node);
+                }
+                for (var _i2 = 0; _i2 < figureEquations.length; _i2++) {
+                    var node = figureEquations[_i2];
+                    var formula = node.getAttribute('data-equation');
+                    (0, _katex.render)(formula, node, {
+                        displayMode: true
+                    });
+                }
+
+                if (this.book.chapters[i].part && this.book.chapters[i].part != '') {
+                    contentItems.push({
+                        link: 'document-' + this.book.chapters[i].number + '.xhtml',
+                        title: aChapter.part,
+                        docNum: aChapter.number,
+                        id: 0,
+                        level: -1,
+                        subItems: []
+                    });
+                }
+
+                // Make links to all H1-3 and create a TOC list of them
+                contentItems = contentItems.concat(this.setLinks(contents, aChapter.number));
+
+                //   aChapter.contents = this.styleEpubFootnotes(contents)
+
+                aChapter.contents = contents;
+
+                chapters.push(aChapter);
+            }
+
+            var includeZips = [],
+                httpOutputList = [];
+
+            for (var i = 0; i < chapters.length; i++) {
+
+                chapters[i].contents = this.styleEpubFootnotes(chapters[i].contents);
+
+                var xhtmlCode = (0, _epubTemplates2.xhtmlTemplate)({
+                    part: chapters[i].part,
+                    shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
+                    title: chapters[i].document.title,
+                    metadata: chapters[i].document.metadata,
+                    settings: chapters[i].document.settings,
+                    styleSheets: styleSheets,
+                    body: (0, _json.obj2Node)((0, _json.node2Obj)(chapters[i].contents), 'xhtml').innerHTML,
+                    math: chapters[i].math
+                });
+
+                xhtmlCode = this.replaceImgSrc(xhtmlCode);
+
+                outputList.push({
+                    filename: 'EPUB/document-' + chapters[i].number + '.xhtml',
+                    contents: xhtmlCode
+                });
+            }
+
+            contentItems.push({
+                link: 'copyright.xhtml#copyright',
+                title: gettext('Copyright'),
+                docNum: 0,
+                id: 2,
+                level: 0,
+                subItems: []
+            });
+
+            contentItems = this.orderLinks(contentItems);
+
+            var timestamp = this.getTimestamp();
+
+            images = (0, _tools.uniqueObjects)(images);
+
+            // mark cover image
+            if (coverImage) {
+                _.findWhere(images, {
+                    url: coverImage.image.split('?')[0]
+                }).coverImage = true;
+            }
+
+            var opfCode = (0, _epubTemplates.epubBookOpfTemplate)({
+                language: gettext('en-US'), // TODO: specify a document language rather than using the current users UI language
+                aBook: this.book,
+                idType: 'fidus',
+                date: timestamp.slice(0, 10), // TODO: the date should probably be the original document creation date instead
+                modified: timestamp,
+                styleSheets: styleSheets,
+                math: math,
+                images: images,
+                chapters: chapters,
+                coverImage: coverImage,
+                katexOpfIncludes: _opfIncludes.katexOpfIncludes,
+                user: this.user
+            });
+
+            var ncxCode = (0, _epubTemplates2.ncxTemplate)({
+                shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
+                title: this.book.title,
+                idType: 'fidus',
+                id: this.book.id,
+                contentItems: contentItems,
+                templates: { ncxTemplate: _epubTemplates2.ncxTemplate, ncxItemTemplate: _epubTemplates2.ncxItemTemplate }
+            });
+
+            var navCode = (0, _epubTemplates2.navTemplate)({
+                shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
+                contentItems: contentItems,
+                templates: { navTemplate: _epubTemplates2.navTemplate, navItemTemplate: _epubTemplates2.navItemTemplate }
+            });
+
+            outputList = outputList.concat([{
+                filename: 'META-INF/container.xml',
+                contents: (0, _epubTemplates2.containerTemplate)({})
+            }, {
+                filename: 'EPUB/document.opf',
+                contents: opfCode
+            }, {
+                filename: 'EPUB/document.ncx',
+                contents: ncxCode
+            }, {
+                filename: 'EPUB/document-nav.xhtml',
+                contents: navCode
+            }, {
+                filename: 'EPUB/titlepage.xhtml',
+                contents: (0, _epubTemplates.epubBookTitlepageTemplate)({
+                    aBook: this.book
+                })
+            }, {
+                filename: 'EPUB/copyright.xhtml',
+                contents: (0, _epubTemplates.epubBookCopyrightTemplate)({
+                    aBook: this.book,
+                    creator: this.user.name,
+                    language: gettext('English') //TODO: specify a book language rather than using the current users UI language
+                })
+            }]);
+
+            for (var i = 0; i < styleSheets.length; i++) {
+                outputList.push({
+                    filename: 'EPUB/' + styleSheets[i].filename,
+                    contents: styleSheets[i].contents
+                });
+            }
+
+            for (var i = 0; i < images.length; i++) {
+                httpOutputList.push({
+                    filename: 'EPUB/' + images[i].filename,
+                    url: images[i].url
+                });
+            }
+
+            if (math) {
+                includeZips.push({
+                    'directory': 'EPUB',
+                    'url': staticUrl + 'zip/katex-style.zip'
+                });
+            }
+
+            (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools2.createSlug)(this.book.title) + '.epub', 'application/epub+zip', includeZips);
         }
-
-        // Make links to all H1-3 and create a TOC list of them
-        contentItems = contentItems.concat((0, _epub.setLinks)(contents, aChapter.number));
-
-        //   aChapter.contents = styleEpubFootnotes(contents)
-
-        aChapter.contents = contents;
-
-        chapters.push(aChapter);
-    }
-
-    var includeZips = [],
-        httpOutputList = [];
-
-    for (var i = 0; i < chapters.length; i++) {
-
-        chapters[i].contents = (0, _epub.styleEpubFootnotes)(chapters[i].contents);
-
-        var xhtmlCode = (0, _epubTemplates2.xhtmlTemplate)({
-            part: chapters[i].part,
-            shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
-            title: chapters[i].document.title,
-            metadata: chapters[i].document.metadata,
-            settings: chapters[i].document.settings,
-            styleSheets: styleSheets,
-            body: (0, _json.obj2Node)((0, _json.node2Obj)(chapters[i].contents), 'xhtml').innerHTML,
-            math: chapters[i].math
-        });
-
-        xhtmlCode = (0, _html.replaceImgSrc)(xhtmlCode);
-
-        outputList.push({
-            filename: 'EPUB/document-' + chapters[i].number + '.xhtml',
-            contents: xhtmlCode
-        });
-    }
-
-    contentItems.push({
-        link: 'copyright.xhtml#copyright',
-        title: gettext('Copyright'),
-        docNum: 0,
-        id: 2,
-        level: 0,
-        subItems: []
-    });
-
-    contentItems = (0, _epub.orderLinks)(contentItems);
-
-    var timestamp = (0, _epub.getTimestamp)();
-
-    images = (0, _tools.uniqueObjects)(images);
-
-    // mark cover image
-    if (coverImage) {
-        _.findWhere(images, {
-            url: coverImage.image.split('?')[0]
-        }).coverImage = true;
-    }
-
-    var opfCode = (0, _epubTemplates.epubBookOpfTemplate)({
-        language: gettext('en-US'), // TODO: specify a document language rather than using the current users UI language
-        aBook: aBook,
-        idType: 'fidus',
-        date: timestamp.slice(0, 10), // TODO: the date should probably be the original document creation date instead
-        modified: timestamp,
-        styleSheets: styleSheets,
-        math: math,
-        images: images,
-        chapters: chapters,
-        coverImage: coverImage,
-        katexOpfIncludes: _opfIncludes.katexOpfIncludes,
-        user: user
-    });
-
-    var ncxCode = (0, _epubTemplates2.ncxTemplate)({
-        shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
-        title: aBook.title,
-        idType: 'fidus',
-        id: aBook.id,
-        contentItems: contentItems,
-        templates: templates
-    });
-
-    var navCode = (0, _epubTemplates2.navTemplate)({
-        shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
-        contentItems: contentItems,
-        templates: templates
-    });
-
-    outputList = outputList.concat([{
-        filename: 'META-INF/container.xml',
-        contents: (0, _epubTemplates2.containerTemplate)({})
-    }, {
-        filename: 'EPUB/document.opf',
-        contents: opfCode
-    }, {
-        filename: 'EPUB/document.ncx',
-        contents: ncxCode
-    }, {
-        filename: 'EPUB/document-nav.xhtml',
-        contents: navCode
-    }, {
-        filename: 'EPUB/titlepage.xhtml',
-        contents: (0, _epubTemplates.epubBookTitlepageTemplate)({
-            aBook: aBook
-        })
-    }, {
-        filename: 'EPUB/copyright.xhtml',
-        contents: (0, _epubTemplates.epubBookCopyrightTemplate)({
-            aBook: aBook,
-            creator: user.name,
-            language: gettext('English') //TODO: specify a book language rather than using the current users UI language
-        })
     }]);
 
-    for (var i = 0; i < styleSheets.length; i++) {
-        outputList.push({
-            filename: 'EPUB/' + styleSheets[i].filename,
-            contents: styleSheets[i].contents
-        });
-    }
+    return EpubBookExporter;
+})(_epub.BaseEpubExporter);
 
-    for (var i = 0; i < images.length; i++) {
-        httpOutputList.push({
-            filename: 'EPUB/' + images[i].filename,
-            url: images[i].url
-        });
-    }
-
-    if (math) {
-        includeZips.push({
-            'directory': 'EPUB',
-            'url': staticUrl + 'zip/katex-style.zip'
-        });
-    }
-
-    (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools2.createSlug)(aBook.title) + '.epub', 'application/epub+zip', includeZips);
-};
-
-},{"../../citations/format":16,"../../exporter/epub":20,"../../exporter/epub-templates":19,"../../exporter/html":22,"../../exporter/json":23,"../../exporter/tools":25,"../../exporter/zip":28,"../../katex/opf-includes":29,"./epub-templates":7,"./tools":13,"katex":30}],9:[function(require,module,exports){
+},{"../../citations/format":17,"../../exporter/epub":22,"../../exporter/epub-templates":21,"../../exporter/json":25,"../../exporter/tools":27,"../../exporter/zip":30,"../../katex/opf-includes":31,"./epub-templates":8,"./tools":14,"katex":32}],10:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1804,13 +2156,15 @@ var htmlBookIndexItemTemplate = exports.htmlBookIndexItemTemplate = _.template('
     <% } %>\
 </li>\n');
 
-},{}],10:[function(require,module,exports){
+},{}],11:[function(require,module,exports){
 "use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.downloadHtmlBook = undefined;
+exports.HTMLBookExporter = undefined;
 
 var _katex = require("katex");
 
@@ -1822,160 +2176,182 @@ var _json = require("../../exporter/json");
 
 var _epub = require("../../exporter/epub");
 
-var _html = require("../../exporter/html");
-
 var _tools2 = require("../../exporter/tools");
 
 var _zip = require("../../exporter/zip");
 
 var _format = require("../../citations/format");
 
-// Some templates need to be able to refer to these templates, so we hand the templates variable to such
-// templates.
-var templates = { htmlBookIndexItemTemplate: _htmlTemplates.htmlBookIndexItemTemplate };
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var downloadHtmlBook = exports.downloadHtmlBook = function downloadHtmlBook(aBook, user, documentList) {
-    (0, _tools.getMissingChapterData)(aBook, documentList, function () {
-        (0, _tools.getImageAndBibDB)(aBook, documentList, function (anImageDB, aBibDB) {
-            htmlBookExport(aBook, anImageDB, aBibDB, user, documentList);
-        });
-    });
-};
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-var htmlBookExport = function htmlBookExport(aBook, anImageDB, aBibDB, user, documentList) {
-    var math = false,
-        styleSheets = [],
-        chapters = [];
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-    aBook.chapters = _.sortBy(aBook.chapters, function (chapter) {
-        return chapter.number;
-    });
+var HTMLBookExporter = exports.HTMLBookExporter = (function (_BaseEpubExporter) {
+    _inherits(HTMLBookExporter, _BaseEpubExporter);
 
-    for (var i = 0; i < aBook.chapters.length; i++) {
+    // extension is correct. Neds orderLinks/setLinks methods from base epub exporter.
 
-        var aDocument = _.findWhere(documentList, {
-            id: aBook.chapters[i].text
-        });
+    function HTMLBookExporter(book, user, docList) {
+        _classCallCheck(this, HTMLBookExporter);
 
-        var contents = (0, _json.obj2Node)(aDocument.contents);
+        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(HTMLBookExporter).call(this));
 
-        var bibliography = (0, _format.formatCitations)(contents, aBook.settings.citationstyle, aBibDB);
-
-        if (bibliography.length > 0) {
-            contents.innerHTML += bibliography;
-        }
-
-        var equations = contents.querySelectorAll('.equation');
-
-        var figureEquations = contents.querySelectorAll('.figure-equation');
-
-        if (equations.length > 0 || figureEquations.length > 0) {
-            math = true;
-        }
-
-        for (var j = 0; j < equations.length; j++) {
-            var node = equations[j];
-            var formula = node.getAttribute('data-equation');
-            (0, _katex.render)(formula, node);
-        }
-        for (var j = 0; j < figureEquations.length; j++) {
-            var node = figureEquations[j];
-            var formula = node.getAttribute('data-equation');
-            (0, _katex.render)(formula, node, {
-                displayMode: true
+        var that = _this;
+        _this.book = book;
+        _this.user = user;
+        _this.docList = docList;
+        (0, _tools.getMissingChapterData)(book, docList, function () {
+            (0, _tools.getImageAndBibDB)(book, docList, function (imageDB, bibDB) {
+                that.bibDB = bibDB;
+                that.imageDB = imageDB;
+                that.exportOne();
             });
-        }
-
-        chapters.push({ document: aDocument, contents: contents });
+        });
+        return _this;
     }
 
-    var outputList = [],
-        images = [],
-        contentItems = [],
-        includeZips = [];
+    _createClass(HTMLBookExporter, [{
+        key: "exportOne",
+        value: function exportOne() {
+            var math = false,
+                styleSheets = [],
+                chapters = [];
 
-    for (var i = 0; i < chapters.length; i++) {
-
-        var contents = chapters[i].contents;
-
-        var aDocument = chapters[i].document;
-
-        var title = aDocument.title;
-
-        images = images.concat((0, _tools2.findImages)(contents));
-
-        contents = (0, _html.cleanHTML)(contents);
-
-        if (aBook.chapters[i].part && aBook.chapters[i].part != '') {
-            contentItems.push({
-                link: 'document-' + aBook.chapters[i].number + '.html',
-                title: aBook.chapters[i].part,
-                docNum: aBook.chapters[i].number,
-                id: 0,
-                level: -1,
-                subItems: []
+            this.book.chapters = _.sortBy(this.book.chapters, function (chapter) {
+                return chapter.number;
             });
+
+            for (var i = 0; i < this.book.chapters.length; i++) {
+
+                var aDocument = _.findWhere(this.docList, {
+                    id: this.book.chapters[i].text
+                });
+
+                var contents = (0, _json.obj2Node)(aDocument.contents);
+
+                var bibliography = (0, _format.formatCitations)(contents, this.book.settings.citationstyle, this.bibDB);
+
+                if (bibliography.length > 0) {
+                    contents.innerHTML += bibliography;
+                }
+
+                var equations = contents.querySelectorAll('.equation');
+
+                var figureEquations = contents.querySelectorAll('.figure-equation');
+
+                if (equations.length > 0 || figureEquations.length > 0) {
+                    math = true;
+                }
+
+                for (var j = 0; j < equations.length; j++) {
+                    var node = equations[j];
+                    var formula = node.getAttribute('data-equation');
+                    (0, _katex.render)(formula, node);
+                }
+                for (var j = 0; j < figureEquations.length; j++) {
+                    var node = figureEquations[j];
+                    var formula = node.getAttribute('data-equation');
+                    (0, _katex.render)(formula, node, {
+                        displayMode: true
+                    });
+                }
+
+                chapters.push({ document: aDocument, contents: contents });
+            }
+
+            var outputList = [],
+                images = [],
+                contentItems = [],
+                includeZips = [];
+
+            for (var i = 0; i < chapters.length; i++) {
+
+                var contents = chapters[i].contents;
+
+                var aDocument = chapters[i].document;
+
+                var title = aDocument.title;
+
+                images = images.concat((0, _tools2.findImages)(contents));
+
+                contents = this.cleanHTML(contents);
+
+                if (this.book.chapters[i].part && this.book.chapters[i].part != '') {
+                    contentItems.push({
+                        link: 'document-' + this.book.chapters[i].number + '.html',
+                        title: this.book.chapters[i].part,
+                        docNum: this.book.chapters[i].number,
+                        id: 0,
+                        level: -1,
+                        subItems: []
+                    });
+                }
+
+                contentItems.push({
+                    link: 'document-' + this.book.chapters[i].number + '.html',
+                    title: title,
+                    docNum: this.book.chapters[i].number,
+                    id: 0,
+                    level: 0,
+                    subItems: []
+                });
+
+                // Make links to all H1-3 and create a TOC list of them
+                contentItems = contentItems.concat(this.setLinks(contents, this.book.chapters[i].number));
+
+                var contentsCode = this.replaceImgSrc(contents.innerHTML);
+
+                var htmlCode = (0, _htmlTemplates.htmlBookExportTemplate)({
+                    part: this.book.chapters[i].part,
+                    title: title,
+                    metadata: aDocument.metadata,
+                    settings: aDocument.settings,
+                    styleSheets: styleSheets,
+                    contents: contentsCode,
+                    math: math,
+                    obj2Node: _json.obj2Node
+                });
+
+                outputList.push({
+                    filename: 'document-' + this.book.chapters[i].number + '.html',
+                    contents: htmlCode
+                });
+            }
+
+            contentItems = this.orderLinks(contentItems);
+
+            outputList = outputList.concat(styleSheets);
+
+            outputList.push({
+                filename: 'index.html',
+                contents: (0, _htmlTemplates.htmlBookIndexTemplate)({
+                    contentItems: contentItems,
+                    aBook: this.book,
+                    creator: this.user.name,
+                    language: gettext('English'), //TODO: specify a book language rather than using the current users UI language
+                    templates: { htmlBookIndexItemTemplate: _htmlTemplates.htmlBookIndexItemTemplate }
+                })
+            });
+
+            if (math) {
+                includeZips.push({
+                    'directory': '',
+                    'url': staticUrl + 'zip/katex-style.zip'
+                });
+            }
+
+            images = (0, _tools.uniqueObjects)(images);
+
+            (0, _zip.zipFileCreator)(outputList, images, (0, _tools2.createSlug)(this.book.title) + '.html.zip', false, includeZips);
         }
+    }]);
 
-        contentItems.push({
-            link: 'document-' + aBook.chapters[i].number + '.html',
-            title: title,
-            docNum: aBook.chapters[i].number,
-            id: 0,
-            level: 0,
-            subItems: []
-        });
+    return HTMLBookExporter;
+})(_epub.BaseEpubExporter);
 
-        // Make links to all H1-3 and create a TOC list of them
-        contentItems = contentItems.concat((0, _epub.setLinks)(contents, aBook.chapters[i].number));
-
-        var contentsCode = (0, _html.replaceImgSrc)(contents.innerHTML);
-
-        var htmlCode = (0, _htmlTemplates.htmlBookExportTemplate)({
-            part: aBook.chapters[i].part,
-            title: title,
-            metadata: aDocument.metadata,
-            settings: aDocument.settings,
-            styleSheets: styleSheets,
-            contents: contentsCode,
-            math: math,
-            obj2Node: _json.obj2Node
-        });
-
-        outputList.push({
-            filename: 'document-' + aBook.chapters[i].number + '.html',
-            contents: htmlCode
-        });
-    }
-
-    contentItems = (0, _epub.orderLinks)(contentItems);
-
-    outputList = outputList.concat(styleSheets);
-
-    outputList.push({
-        filename: 'index.html',
-        contents: (0, _htmlTemplates.htmlBookIndexTemplate)({
-            contentItems: contentItems,
-            aBook: aBook,
-            creator: user.name,
-            language: gettext('English'), //TODO: specify a book language rather than using the current users UI language
-            templates: templates
-        })
-    });
-
-    if (math) {
-        includeZips.push({
-            'directory': '',
-            'url': staticUrl + 'zip/katex-style.zip'
-        });
-    }
-
-    images = (0, _tools.uniqueObjects)(images);
-
-    (0, _zip.zipFileCreator)(outputList, images, (0, _tools2.createSlug)(aBook.title) + '.html.zip', false, includeZips);
-};
-
-},{"../../citations/format":16,"../../exporter/epub":20,"../../exporter/html":22,"../../exporter/json":23,"../../exporter/tools":25,"../../exporter/zip":28,"./html-templates":9,"./tools":13,"katex":30}],11:[function(require,module,exports){
+},{"../../citations/format":17,"../../exporter/epub":22,"../../exporter/json":25,"../../exporter/tools":27,"../../exporter/zip":30,"./html-templates":10,"./tools":14,"katex":32}],12:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1993,13 +2369,15 @@ var latexBookIndexTemplate = exports.latexBookIndexTemplate = _.template('\
     <%= latexEnd %>\
 ');
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 "use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.downloadLatexBook = undefined;
+exports.LatexBookExporter = undefined;
 
 var _tools = require("./tools");
 
@@ -2015,82 +2393,108 @@ var _zip = require("../../exporter/zip");
 
 var _biblatex = require("../../bibliography/exporter/biblatex");
 
-var downloadLatexBook = exports.downloadLatexBook = function downloadLatexBook(aBook, documentList) {
-    (0, _tools.getMissingChapterData)(aBook, documentList, function () {
-        (0, _tools.getImageAndBibDB)(aBook, documentList, function (anImageDB, aBibDB) {
-            latexBookExport(aBook, anImageDB, aBibDB, documentList);
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var LatexBookExporter = exports.LatexBookExporter = (function (_BaseLatexExporter) {
+    _inherits(LatexBookExporter, _BaseLatexExporter);
+
+    function LatexBookExporter(book, user, docList) {
+        _classCallCheck(this, LatexBookExporter);
+
+        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(LatexBookExporter).call(this));
+
+        var that = _this;
+        _this.book = book;
+        _this.user = user; // Not used, but we keep it for consistency
+        _this.docList = docList;
+        (0, _tools.getMissingChapterData)(book, docList, function () {
+            (0, _tools.getImageAndBibDB)(book, docList, function (imageDB, bibDB) {
+                that.bibDB = bibDB;
+                that.imageDB = imageDB; // Apparently not used
+                that.exportOne();
+            });
         });
-    });
-};
-
-var latexBookExport = function latexBookExport(aBook, anImageDB, aBibDB, documentList) {
-    var htmlCode = undefined,
-        outputList = [],
-        images = [],
-        listedWorksList = [],
-        allContent = document.createElement('div');
-
-    aBook.chapters = _.sortBy(aBook.chapters, function (chapter) {
-        return chapter.number;
-    });
-
-    for (var i = 0; i < aBook.chapters.length; i++) {
-
-        var aDocument = _.findWhere(documentList, {
-            id: aBook.chapters[i].text
-        });
-
-        var title = aDocument.title;
-
-        var contents = (0, _json.obj2Node)(aDocument.contents);
-
-        allContent.innerHTML += contents.innerHTML;
-
-        images = images.concat((0, _tools2.findImages)(contents));
-
-        var latexCode = (0, _latex.htmlToLatex)(title, aDocument.owner.name, contents, aBibDB, aDocument.settings, aDocument.metadata, true, listedWorksList);
-
-        listedWorksList = latexCode.listedWorksList;
-
-        outputList.push({
-            filename: 'chapter-' + aBook.chapters[i].number + '.tex',
-            contents: latexCode.latex
-        });
-    }
-    var author = aBook.owner_name;
-    if (aBook.metadata.author && aBook.metadata.author != '') {
-        author = aBook.metadata.author;
+        return _this;
     }
 
-    var documentFeatures = (0, _latex.findLatexDocumentFeatures)(allContent, aBook.title, author, aBook.metadata.subtitle, aBook.metadata.keywords, aBook.metadata.author, aBook.metadata, 'book');
+    _createClass(LatexBookExporter, [{
+        key: "exportOne",
+        value: function exportOne() {
+            var htmlCode = undefined,
+                outputList = [],
+                images = [],
+                listedWorksList = [],
+                allContent = document.createElement('div');
 
-    var latexStart = documentFeatures.latexStart;
-    var latexEnd = documentFeatures.latexEnd;
+            this.book.chapters = _.sortBy(this.book.chapters, function (chapter) {
+                return chapter.number;
+            });
 
-    outputList.push({
-        filename: (0, _tools2.createSlug)(aBook.title) + '.tex',
-        contents: (0, _latexTemplates.latexBookIndexTemplate)({
-            aBook: aBook,
-            latexStart: latexStart,
-            latexEnd: latexEnd
-        })
-    });
+            for (var i = 0; i < this.book.chapters.length; i++) {
 
-    var bibtex = new _biblatex.BibLatexExporter(listedWorksList, aBibDB, false);
+                var aDocument = _.findWhere(this.docList, {
+                    id: this.book.chapters[i].text
+                });
 
-    if (bibtex.bibtex_str.length > 0) {
-        outputList.push({
-            filename: 'bibliography.bib',
-            contents: bibtex.bibtex_str
-        });
-    }
+                var title = aDocument.title;
 
-    images = (0, _tools.uniqueObjects)(images);
+                var contents = (0, _json.obj2Node)(aDocument.contents);
 
-    (0, _zip.zipFileCreator)(outputList, images, (0, _tools2.createSlug)(aBook.title) + '.latex.zip');
-};
+                allContent.innerHTML += contents.innerHTML;
 
-},{"../../bibliography/exporter/biblatex":2,"../../exporter/json":23,"../../exporter/latex":24,"../../exporter/tools":25,"../../exporter/zip":28,"./latex-templates":11,"./tools":13}],13:[function(require,module,exports){
+                images = images.concat((0, _tools2.findImages)(contents));
+
+                var latexCode = this.htmlToLatex(title, aDocument.owner.name, contents, this.bibDB, aDocument.settings, aDocument.metadata, true, listedWorksList);
+
+                listedWorksList = latexCode.listedWorksList;
+
+                outputList.push({
+                    filename: 'chapter-' + this.book.chapters[i].number + '.tex',
+                    contents: latexCode.latex
+                });
+            }
+            var author = this.book.owner_name;
+            if (this.book.metadata.author && this.book.metadata.author != '') {
+                author = this.book.metadata.author;
+            }
+
+            var documentFeatures = this.findLatexDocumentFeatures(allContent, this.book.title, author, this.book.metadata.subtitle, this.book.metadata.keywords, this.book.metadata.author, this.book.metadata, 'book');
+
+            var latexStart = documentFeatures.latexStart;
+            var latexEnd = documentFeatures.latexEnd;
+
+            outputList.push({
+                filename: (0, _tools2.createSlug)(this.book.title) + '.tex',
+                contents: (0, _latexTemplates.latexBookIndexTemplate)({
+                    aBook: this.book,
+                    latexStart: latexStart,
+                    latexEnd: latexEnd
+                })
+            });
+
+            var bibtex = new _biblatex.BibLatexExporter(listedWorksList, this.bibDB, false);
+
+            if (bibtex.bibtex_str.length > 0) {
+                outputList.push({
+                    filename: 'bibliography.bib',
+                    contents: bibtex.bibtex_str
+                });
+            }
+
+            images = (0, _tools.uniqueObjects)(images);
+
+            (0, _zip.zipFileCreator)(outputList, images, (0, _tools2.createSlug)(this.book.title) + '.latex.zip');
+        }
+    }]);
+
+    return LatexBookExporter;
+})(_latex.BaseLatexExporter);
+
+},{"../../bibliography/exporter/biblatex":3,"../../exporter/json":25,"../../exporter/latex":26,"../../exporter/tools":27,"../../exporter/zip":30,"./latex-templates":12,"./tools":14}],14:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2099,6 +2503,8 @@ Object.defineProperty(exports, "__esModule", {
 exports.uniqueObjects = exports.getImageAndBibDB = exports.getMissingChapterData = undefined;
 
 var _tools = require("../../documents/tools");
+
+var _bibliographyDB = require("../../bibliography/bibliographyDB");
 
 var getMissingChapterData = exports.getMissingChapterData = function getMissingChapterData(aBook, documentList, callback) {
     var bookDocuments = [];
@@ -2124,8 +2530,9 @@ var getImageAndBibDB = exports.getImageAndBibDB = function getImageAndBibDB(aBoo
     documentOwners = _.unique(documentOwners).join(',');
 
     usermediaHelpers.getAnImageDB(documentOwners, function (anImageDB) {
-        bibliographyHelpers.getABibDB(documentOwners, function (aBibDB) {
-            callback(anImageDB, aBibDB);
+        var bibGetter = new _bibliographyDB.BibliographyDB(documentOwners, false, false, false);
+        bibGetter.getBibDB(function (bibDB, bibCats) {
+            callback(anImageDB, bibDB);
         });
     });
 };
@@ -2149,7 +2556,7 @@ var uniqueObjects = exports.uniqueObjects = function uniqueObjects(array) {
     return results;
 };
 
-},{"../../documents/tools":17}],14:[function(require,module,exports){
+},{"../../bibliography/bibliographyDB":2,"../../documents/tools":18}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2509,7 +2916,7 @@ var bookChapterDialogTemplate = exports.bookChapterDialogTemplate = _.template('
     </div>\
     ');
 
-},{}],15:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2560,7 +2967,7 @@ var citeprocSys = exports.citeprocSys = (function () {
     return citeprocSys;
 })();
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2776,7 +3183,7 @@ var yearFromDateString = function yearFromDateString(dateString) {
     }
 };
 
-},{"./citeproc-sys":15}],17:[function(require,module,exports){
+},{"./citeproc-sys":16}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2825,7 +3232,79 @@ var getMissingDocumentListData = exports.getMissingDocumentListData = function g
     }
 };
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.BaseExporter = undefined;
+
+var _json = require("./json");
+
+var _format = require("../citations/format");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/* Base exporter class */
+
+var BaseExporter = exports.BaseExporter = (function () {
+    function BaseExporter() {
+        _classCallCheck(this, BaseExporter);
+    }
+
+    _createClass(BaseExporter, [{
+        key: "cleanHTML",
+        value: function cleanHTML(htmlCode) {
+
+            // Replace the footnotes with markers and the footnotes to the back of the
+            // document, so they can survive the normalization that happens when
+            // assigning innerHTML.
+            // Also link the footnote marker with the footnote according to
+            // https://rawgit.com/essepuntato/rash/master/documentation/index.html#footnotes.
+            var footnotes = [].slice.call(htmlCode.querySelectorAll('.footnote'));
+            var footnotesContainer = document.createElement('section');
+            footnotesContainer.id = 'fnlist';
+            footnotesContainer.setAttribute('role', 'doc-footnotes');
+
+            footnotes.forEach(function (footnote, index) {
+                var footnoteMarker = document.createElement('a');
+                var counter = index + 1;
+                footnoteMarker.setAttribute('href', '#fn' + counter);
+                // RASH 0.5 doesn't mark the footnote markers, so we add this class
+                footnoteMarker.classList.add('fn');
+                footnote.parentNode.replaceChild(footnoteMarker, footnote);
+                var newFootnote = document.createElement('section');
+                newFootnote.id = 'fn' + counter;
+                newFootnote.setAttribute('role', 'doc-footnote');
+                while (footnote.firstChild) {
+                    newFootnote.appendChild(footnote.firstChild);
+                }
+                footnotesContainer.appendChild(newFootnote);
+            });
+            htmlCode.appendChild(footnotesContainer);
+
+            // Replace nbsp spaces with normal ones
+            htmlCode.innerHTML = htmlCode.innerHTML.replace(/&nbsp;/g, ' ');
+
+            jQuery(htmlCode).find('.comment').each(function () {
+                this.outerHTML = this.innerHTML;
+            });
+
+            jQuery(htmlCode).find('script').each(function () {
+                this.outerHTML = '';
+            });
+
+            return htmlCode;
+        }
+    }]);
+
+    return BaseExporter;
+})();
+
+},{"../citations/format":17,"./json":25}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2846,7 +3325,7 @@ var downloadFile = exports.downloadFile = function downloadFile(zipFilename, blo
     fakeDownloadLink.dispatchEvent(clickEvent);
 };
 
-},{}],19:[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2968,13 +3447,15 @@ var navItemTemplate = exports.navItemTemplate = _.template('\t\t\t\t<li><a href=
     <% } %>\
 </li>\n');
 
-},{}],20:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 "use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.orderLinks = exports.setLinks = exports.downloadEpub = exports.getTimestamp = exports.styleEpubFootnotes = undefined;
+exports.BaseEpubExporter = exports.EpubExporter = undefined;
 
 var _html = require("./html");
 
@@ -2990,281 +3471,319 @@ var _opfIncludes = require("../katex/opf-includes");
 
 var _katex = require("katex");
 
-var templates = { ncxTemplate: _epubTemplates.ncxTemplate, ncxItemTemplate: _epubTemplates.ncxItemTemplate, navTemplate: _epubTemplates.navTemplate, navItemTemplate: _epubTemplates.navItemTemplate };
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var styleEpubFootnotes = exports.styleEpubFootnotes = function styleEpubFootnotes(htmlCode) {
-    // Converts RASH style footnotes into epub footnotes.
-    var footnotes = [].slice.call(htmlCode.querySelectorAll('section#fnlist section[role=doc-footnote]'));
-    var footnoteCounter = 1;
-    footnotes.forEach(function (footnote) {
-        var newFootnote = document.createElement('aside');
-        newFootnote.setAttribute('epub:type', 'footnote');
-        newFootnote.id = footnote.id;
-        while (footnote.firstChild) {
-            newFootnote.appendChild(footnote.firstChild);
-        }
-        newFootnote.firstChild.innerHTML = footnoteCounter + ' ' + newFootnote.firstChild.innerHTML;
-        footnote.parentNode.replaceChild(newFootnote, footnote);
-        footnoteCounter++;
-    });
-    var footnoteMarkers = [].slice.call(htmlCode.querySelectorAll('a.fn'));
-    var footnoteMarkerCounter = 1;
-    footnoteMarkers.forEach(function (fnMarker) {
-        var newFnMarker = document.createElement('sup');
-        var newFnMarkerLink = document.createElement('a');
-        newFnMarkerLink.setAttribute('epub:type', 'noteref');
-        newFnMarkerLink.setAttribute('href', fnMarker.getAttribute('href'));
-        newFnMarkerLink.innerHTML = footnoteMarkerCounter;
-        newFnMarker.appendChild(newFnMarkerLink);
-        fnMarker.parentNode.replaceChild(newFnMarker, fnMarker);
-        footnoteMarkerCounter++;
-    });
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-    return htmlCode;
-};
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var getTimestamp = exports.getTimestamp = function getTimestamp() {
-    var today = new Date();
-    var second = today.getUTCSeconds();
-    var minute = today.getUTCMinutes();
-    var hour = today.getUTCHours();
-    var day = today.getUTCDate();
-    var month = today.getUTCMonth() + 1; //January is 0!
-    var year = today.getUTCFullYear();
+var EpubExporter = exports.EpubExporter = (function (_BaseEpubExporter) {
+    _inherits(EpubExporter, _BaseEpubExporter);
 
-    if (second < 10) {
-        second = '0' + second;
-    }
-    if (minute < 10) {
-        minute = '0' + minute;
-    }
-    if (hour < 10) {
-        hour = '0' + hour;
-    }
-    if (day < 10) {
-        day = '0' + day;
-    }
-    if (month < 10) {
-        month = '0' + month;
-    }
+    function EpubExporter(doc, bibDB) {
+        _classCallCheck(this, EpubExporter);
 
-    return year + '-' + month + '-' + day + 'T' + hour + ':' + minute + ':' + second + 'Z';
-};
+        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(EpubExporter).call(this));
 
-var downloadEpub = exports.downloadEpub = function downloadEpub(aDocument, inEditor) {
-    if (inEditor || window.hasOwnProperty('BibDB') && aDocument.is_owner) {
-        export1(aDocument, BibDB);
-    } else if (aDocument.is_owner) {
-        bibliographyHelpers.getBibDB(function () {
-            export1(aDocument, BibDB);
-        });
-    } else {
-        bibliographyHelpers.getABibDB(aDocument.owner, function (aBibDB) {
-            export1(aDocument, aBibDB);
-        });
-    }
-};
-
-var export1 = function export1(aDocument, aBibDB) {
-    var styleSheets = []; //TODO: fill style sheets with something meaningful.
-    var title = aDocument.title;
-
-    $.addAlert('info', title + ': ' + gettext('Epub export has been initiated.'));
-
-    var contents = (0, _html.joinDocumentParts)(aDocument, aBibDB);
-    contents = (0, _html.addFigureNumbers)(contents);
-
-    var images = (0, _tools.findImages)(contents);
-
-    var contentsBody = document.createElement('body');
-
-    while (contents.firstChild) {
-        contentsBody.appendChild(contents.firstChild);
-    }
-
-    var equations = contentsBody.querySelectorAll('.equation');
-
-    var figureEquations = contentsBody.querySelectorAll('.figure-equation');
-
-    var math = false;
-
-    if (equations.length > 0 || figureEquations.length > 0) {
-        math = true;
-    }
-
-    for (var i = 0; i < equations.length; i++) {
-        var node = equations[i];
-        var formula = node.getAttribute('data-equation');
-        (0, _katex.render)(formula, node);
-    }
-    for (var i = 0; i < figureEquations.length; i++) {
-        var node = figureEquations[i];
-        var formula = node.getAttribute('data-equation');
-        (0, _katex.render)(formula, node, {
-            displayMode: true
-        });
-    }
-
-    // Make links to all H1-3 and create a TOC list of them
-    var contentItems = orderLinks(setLinks(contentsBody));
-
-    var contentsBodyEpubPrepared = styleEpubFootnotes(contentsBody);
-
-    var xhtmlCode = (0, _epubTemplates.xhtmlTemplate)({
-        part: false,
-        shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
-        title: title,
-        styleSheets: styleSheets,
-        math: math,
-        body: (0, _json.obj2Node)((0, _json.node2Obj)(contentsBodyEpubPrepared), 'xhtml').innerHTML
-    });
-
-    xhtmlCode = (0, _html.replaceImgSrc)(xhtmlCode);
-
-    var containerCode = (0, _epubTemplates.containerTemplate)({});
-
-    var timestamp = getTimestamp();
-
-    var authors = [aDocument.owner.name];
-
-    if (aDocument.settings['metadata-authors'] && aDocument.metadata.authors) {
-        var tempNode = (0, _json.obj2Node)(aDocument.metadata.authors);
-        if (tempNode.textContent.length > 0) {
-            authors = jQuery.map(tempNode.textContent.split(","), jQuery.trim);
-        }
-    }
-
-    var keywords = [];
-
-    if (aDocument.settings['metadata-keywords'] && aDocument.metadata.keywords) {
-        var tempNode = (0, _json.obj2Node)(aDocument.metadata.keywords);
-        if (tempNode.textContent.length > 0) {
-            keywords = jQuery.map(tempNode.textContent.split(","), jQuery.trim);
-        }
-    }
-
-    var opfCode = (0, _epubTemplates.opfTemplate)({
-        language: gettext('en-US'), // TODO: specify a document language rather than using the current users UI language
-        title: title,
-        authors: authors,
-        keywords: keywords,
-        idType: 'fidus',
-        id: aDocument.id,
-        date: timestamp.slice(0, 10), // TODO: the date should probably be the original document creation date instead
-        modified: timestamp,
-        styleSheets: styleSheets,
-        math: math,
-        images: images,
-        katexOpfIncludes: _opfIncludes.katexOpfIncludes
-    });
-
-    var ncxCode = (0, _epubTemplates.ncxTemplate)({
-        shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
-        title: title,
-        idType: 'fidus',
-        id: aDocument.id,
-        contentItems: contentItems,
-        templates: templates
-    });
-
-    var navCode = (0, _epubTemplates.navTemplate)({
-        shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
-        contentItems: contentItems,
-        templates: templates
-    });
-
-    var outputList = [{
-        filename: 'META-INF/container.xml',
-        contents: containerCode
-    }, {
-        filename: 'EPUB/document.opf',
-        contents: opfCode
-    }, {
-        filename: 'EPUB/document.ncx',
-        contents: ncxCode
-    }, {
-        filename: 'EPUB/document-nav.xhtml',
-        contents: navCode
-    }, {
-        filename: 'EPUB/document.xhtml',
-        contents: xhtmlCode
-    }];
-
-    for (var i = 0; i < styleSheets.length; i++) {
-        var styleSheet = styleSheets[i];
-        outputList.push({
-            filename: 'EPUB/' + styleSheet.filename,
-            contents: styleSheet.contents
-        });
-    }
-
-    var httpOutputList = [];
-    for (var i = 0; i < images.length; i++) {
-        httpOutputList.push({
-            filename: 'EPUB/' + images[i].filename,
-            url: images[i].url
-        });
-    }
-    var includeZips = [];
-    if (math) {
-        includeZips.push({
-            'directory': 'EPUB',
-            'url': staticUrl + 'zip/katex-style.zip'
-        });
-    }
-
-    (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools.createSlug)(title) + '.epub', 'application/epub+zip', includeZips);
-};
-
-var setLinks = exports.setLinks = function setLinks(htmlCode, docNum) {
-    var contentItems = [],
-        title = undefined;
-
-    jQuery(htmlCode).find('h1,h2,h3').each(function () {
-        title = jQuery.trim(this.textContent);
-        if (title !== '') {
-            var contentItem = {};
-            contentItem.title = title;
-            contentItem.level = parseInt(this.tagName.substring(1, 2));
-            if (docNum) {
-                contentItem.docNum = docNum;
+        var that = _this;
+        _this.doc = doc;
+        if (bibDB) {
+            _this.bibDB = bibDB; // the bibliography has already been loaded for some other purpose. We reuse it.
+        } else {
+                (function () {
+                    var bibGetter = new BibliographyDB(doc.owner, false, false, false);
+                    bibGetter.getBibDB(function () {
+                        that.bibDB = bibGetter.bibDB;
+                        that.exportOne();
+                    });
+                })();
             }
-            if (this.classList.contains('title')) {
-                contentItem.level = 0;
+        return _this;
+    }
+
+    _createClass(EpubExporter, [{
+        key: "exportOne",
+        value: function exportOne() {
+            var styleSheets = []; //TODO: fill style sheets with something meaningful.
+            var title = this.doc.title;
+
+            $.addAlert('info', title + ': ' + gettext('Epub export has been initiated.'));
+
+            var contents = this.joinDocumentParts(this.doc, this.bibDB);
+            contents = this.addFigureNumbers(contents);
+
+            var images = (0, _tools.findImages)(contents);
+
+            var contentsBody = document.createElement('body');
+
+            while (contents.firstChild) {
+                contentsBody.appendChild(contents.firstChild);
             }
-            this.id = 'id' + contentItems.length;
 
-            contentItem.id = this.id;
-            contentItems.push(contentItem);
-        }
-    });
-    return contentItems;
-};
+            var equations = contentsBody.querySelectorAll('.equation');
 
-var orderLinks = exports.orderLinks = function orderLinks(contentItems) {
-    for (var i = 0; i < contentItems.length; i++) {
-        contentItems[i].subItems = [];
-        if (i > 0) {
-            for (var j = i - 1; j > -1; j--) {
-                if (contentItems[j].level < contentItems[i].level) {
-                    contentItems[j].subItems.push(contentItems[i]);
-                    contentItems[i].delete = true;
-                    break;
+            var figureEquations = contentsBody.querySelectorAll('.figure-equation');
+
+            var math = false;
+
+            if (equations.length > 0 || figureEquations.length > 0) {
+                math = true;
+            }
+
+            for (var i = 0; i < equations.length; i++) {
+                var node = equations[i];
+                var formula = node.getAttribute('data-equation');
+                (0, _katex.render)(formula, node);
+            }
+            for (var i = 0; i < figureEquations.length; i++) {
+                var node = figureEquations[i];
+                var formula = node.getAttribute('data-equation');
+                (0, _katex.render)(formula, node, {
+                    displayMode: true
+                });
+            }
+
+            // Make links to all H1-3 and create a TOC list of them
+            var contentItems = this.orderLinks(this.setLinks(contentsBody));
+
+            var contentsBodyEpubPrepared = this.styleEpubFootnotes(contentsBody);
+
+            var xhtmlCode = (0, _epubTemplates.xhtmlTemplate)({
+                part: false,
+                shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
+                title: title,
+                styleSheets: styleSheets,
+                math: math,
+                body: (0, _json.obj2Node)((0, _json.node2Obj)(contentsBodyEpubPrepared), 'xhtml').innerHTML
+            });
+
+            xhtmlCode = this.replaceImgSrc(xhtmlCode);
+
+            var containerCode = (0, _epubTemplates.containerTemplate)({});
+
+            var timestamp = this.getTimestamp();
+
+            var authors = [this.doc.owner.name];
+
+            if (this.doc.settings['metadata-authors'] && this.doc.metadata.authors) {
+                var tempNode = (0, _json.obj2Node)(this.doc.metadata.authors);
+                if (tempNode.textContent.length > 0) {
+                    authors = jQuery.map(tempNode.textContent.split(","), jQuery.trim);
                 }
             }
+
+            var keywords = [];
+
+            if (this.doc.settings['metadata-keywords'] && this.doc.metadata.keywords) {
+                var tempNode = (0, _json.obj2Node)(this.doc.metadata.keywords);
+                if (tempNode.textContent.length > 0) {
+                    keywords = jQuery.map(tempNode.textContent.split(","), jQuery.trim);
+                }
+            }
+
+            var opfCode = (0, _epubTemplates.opfTemplate)({
+                language: gettext('en-US'), // TODO: specify a document language rather than using the current users UI language
+                title: title,
+                authors: authors,
+                keywords: keywords,
+                idType: 'fidus',
+                id: this.doc.id,
+                date: timestamp.slice(0, 10), // TODO: the date should probably be the original document creation date instead
+                modified: timestamp,
+                styleSheets: styleSheets,
+                math: math,
+                images: images,
+                katexOpfIncludes: _opfIncludes.katexOpfIncludes
+            });
+
+            var ncxCode = (0, _epubTemplates.ncxTemplate)({
+                shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
+                title: title,
+                idType: 'fidus',
+                id: this.doc.id,
+                contentItems: contentItems,
+                templates: { ncxTemplate: _epubTemplates.ncxTemplate, ncxItemTemplate: _epubTemplates.ncxItemTemplate }
+            });
+
+            var navCode = (0, _epubTemplates.navTemplate)({
+                shortLang: gettext('en'), // TODO: specify a document language rather than using the current users UI language
+                contentItems: contentItems,
+                templates: { navTemplate: _epubTemplates.navTemplate, navItemTemplate: _epubTemplates.navItemTemplate }
+            });
+
+            var outputList = [{
+                filename: 'META-INF/container.xml',
+                contents: containerCode
+            }, {
+                filename: 'EPUB/document.opf',
+                contents: opfCode
+            }, {
+                filename: 'EPUB/document.ncx',
+                contents: ncxCode
+            }, {
+                filename: 'EPUB/document-nav.xhtml',
+                contents: navCode
+            }, {
+                filename: 'EPUB/document.xhtml',
+                contents: xhtmlCode
+            }];
+
+            for (var i = 0; i < styleSheets.length; i++) {
+                var styleSheet = styleSheets[i];
+                outputList.push({
+                    filename: 'EPUB/' + styleSheet.filename,
+                    contents: styleSheet.contents
+                });
+            }
+
+            var httpOutputList = [];
+            for (var i = 0; i < images.length; i++) {
+                httpOutputList.push({
+                    filename: 'EPUB/' + images[i].filename,
+                    url: images[i].url
+                });
+            }
+            var includeZips = [];
+            if (math) {
+                includeZips.push({
+                    'directory': 'EPUB',
+                    'url': staticUrl + 'zip/katex-style.zip'
+                });
+            }
+
+            (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools.createSlug)(title) + '.epub', 'application/epub+zip', includeZips);
         }
+    }]);
+
+    return EpubExporter;
+})(BaseEpubExporter);
+
+var BaseEpubExporter = exports.BaseEpubExporter = (function (_BaseHTMLExporter) {
+    _inherits(BaseEpubExporter, _BaseHTMLExporter);
+
+    function BaseEpubExporter() {
+        _classCallCheck(this, BaseEpubExporter);
+
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(BaseEpubExporter).apply(this, arguments));
     }
 
-    for (var i = contentItems.length; i > -1; i--) {
-        if (contentItems[i] && contentItems[i].delete) {
-            delete contentItems[i].delete;
-            contentItems.splice(i, 1);
-        }
-    }
-    return contentItems;
-};
+    _createClass(BaseEpubExporter, [{
+        key: "getTimestamp",
+        value: function getTimestamp() {
+            var today = new Date();
+            var second = today.getUTCSeconds();
+            var minute = today.getUTCMinutes();
+            var hour = today.getUTCHours();
+            var day = today.getUTCDate();
+            var month = today.getUTCMonth() + 1; //January is 0!
+            var year = today.getUTCFullYear();
 
-},{"../katex/opf-includes":29,"./epub-templates":19,"./html":22,"./json":23,"./tools":25,"./zip":28,"katex":30}],21:[function(require,module,exports){
+            if (second < 10) {
+                second = '0' + second;
+            }
+            if (minute < 10) {
+                minute = '0' + minute;
+            }
+            if (hour < 10) {
+                hour = '0' + hour;
+            }
+            if (day < 10) {
+                day = '0' + day;
+            }
+            if (month < 10) {
+                month = '0' + month;
+            }
+
+            return year + '-' + month + '-' + day + 'T' + hour + ':' + minute + ':' + second + 'Z';
+        }
+    }, {
+        key: "styleEpubFootnotes",
+        value: function styleEpubFootnotes(htmlCode) {
+            // Converts RASH style footnotes into epub footnotes.
+            var footnotes = [].slice.call(htmlCode.querySelectorAll('section#fnlist section[role=doc-footnote]'));
+            var footnoteCounter = 1;
+            footnotes.forEach(function (footnote) {
+                var newFootnote = document.createElement('aside');
+                newFootnote.setAttribute('epub:type', 'footnote');
+                newFootnote.id = footnote.id;
+                while (footnote.firstChild) {
+                    newFootnote.appendChild(footnote.firstChild);
+                }
+                newFootnote.firstChild.innerHTML = footnoteCounter + ' ' + newFootnote.firstChild.innerHTML;
+                footnote.parentNode.replaceChild(newFootnote, footnote);
+                footnoteCounter++;
+            });
+            var footnoteMarkers = [].slice.call(htmlCode.querySelectorAll('a.fn'));
+            var footnoteMarkerCounter = 1;
+            footnoteMarkers.forEach(function (fnMarker) {
+                var newFnMarker = document.createElement('sup');
+                var newFnMarkerLink = document.createElement('a');
+                newFnMarkerLink.setAttribute('epub:type', 'noteref');
+                newFnMarkerLink.setAttribute('href', fnMarker.getAttribute('href'));
+                newFnMarkerLink.innerHTML = footnoteMarkerCounter;
+                newFnMarker.appendChild(newFnMarkerLink);
+                fnMarker.parentNode.replaceChild(newFnMarker, fnMarker);
+                footnoteMarkerCounter++;
+            });
+
+            return htmlCode;
+        }
+    }, {
+        key: "setLinks",
+        value: function setLinks(htmlCode, docNum) {
+            var contentItems = [],
+                title = undefined;
+
+            jQuery(htmlCode).find('h1,h2,h3').each(function () {
+                title = jQuery.trim(this.textContent);
+                if (title !== '') {
+                    var contentItem = {};
+                    contentItem.title = title;
+                    contentItem.level = parseInt(this.tagName.substring(1, 2));
+                    if (docNum) {
+                        contentItem.docNum = docNum;
+                    }
+                    if (this.classList.contains('title')) {
+                        contentItem.level = 0;
+                    }
+                    this.id = 'id' + contentItems.length;
+
+                    contentItem.id = this.id;
+                    contentItems.push(contentItem);
+                }
+            });
+            return contentItems;
+        }
+    }, {
+        key: "orderLinks",
+        value: function orderLinks(contentItems) {
+            for (var i = 0; i < contentItems.length; i++) {
+                contentItems[i].subItems = [];
+                if (i > 0) {
+                    for (var j = i - 1; j > -1; j--) {
+                        if (contentItems[j].level < contentItems[i].level) {
+                            contentItems[j].subItems.push(contentItems[i]);
+                            contentItems[i].delete = true;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            for (var i = contentItems.length; i > -1; i--) {
+                if (contentItems[i] && contentItems[i].delete) {
+                    delete contentItems[i].delete;
+                    contentItems.splice(i, 1);
+                }
+            }
+            return contentItems;
+        }
+    }]);
+
+    return BaseEpubExporter;
+})(_html.BaseHTMLExporter);
+
+},{"../katex/opf-includes":31,"./epub-templates":21,"./html":24,"./json":25,"./tools":27,"./zip":30,"katex":32}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3283,15 +3802,15 @@ var htmlExportTemplate = exports.htmlExportTemplate = _.template('<!DOCTYPE html
         <% } %>\
         <%= contents %></body></html>');
 
-},{}],22:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 "use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.replaceImgSrc = exports.addFigureNumbers = exports.cleanHTML = exports.joinDocumentParts = exports.downloadHtml = undefined;
-
-var _json = require("./json");
+exports.BaseHTMLExporter = exports.HTMLExporter = undefined;
 
 var _tools = require("./tools");
 
@@ -3299,233 +3818,222 @@ var _zip = require("./zip");
 
 var _htmlTemplates = require("./html-templates");
 
-var _format = require("../citations/format");
+var _bibliographyDB = require("../bibliography/bibliographyDB");
+
+var _base = require("./base");
 
 var _katex = require("katex");
 
-var downloadHtml = exports.downloadHtml = function downloadHtml(aDocument, inEditor) {
-    if (inEditor || window.hasOwnProperty('BibDB') && aDocument.is_owner) {
-        export1(aDocument, BibDB);
-    } else if (aDocument.is_owner) {
-        bibliographyHelpers.getBibDB(function () {
-            export1(aDocument, BibDB);
-        });
-    } else {
-        bibliographyHelpers.getABibDB(aDocument.owner, function (aBibDB) {
-            export1(aDocument, aBibDB);
-        });
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var HTMLExporter = exports.HTMLExporter = (function (_BaseHTMLExporter) {
+    _inherits(HTMLExporter, _BaseHTMLExporter);
+
+    function HTMLExporter(doc, bibDB) {
+        _classCallCheck(this, HTMLExporter);
+
+        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(HTMLExporter).call(this));
+
+        var that = _this;
+        _this.doc = doc;
+        if (bibDB) {
+            _this.bibDB = bibDB; // the bibliography has already been loaded for some other purpose. We reuse it.
+        } else {
+                (function () {
+                    var bibGetter = new _bibliographyDB.BibliographyDB(doc.owner, false, false, false);
+                    bibGetter.getBibDB(function () {
+                        that.bibDB = bibGetter.bibDB;
+                        that.exportOne();
+                    });
+                })();
+            }
+        return _this;
     }
-};
 
-var joinDocumentParts = exports.joinDocumentParts = function joinDocumentParts(aDocument, aBibDB) {
+    _createClass(HTMLExporter, [{
+        key: "exportOne",
+        value: function exportOne() {
+            var styleSheets = [],
+                math = false;
 
-    var contents = document.createElement('div');
+            var title = this.doc.title;
 
-    if (aDocument.contents) {
-        var tempNode = (0, _json.obj2Node)(aDocument.contents);
+            $.addAlert('info', title + ': ' + gettext('HTML export has been initiated.'));
 
-        while (tempNode.firstChild) {
-            contents.appendChild(tempNode.firstChild);
+            var contents = this.joinDocumentParts();
+
+            var equations = contents.querySelectorAll('.equation');
+
+            var figureEquations = contents.querySelectorAll('.figure-equation');
+
+            if (equations.length > 0 || figureEquations.length > 0) {
+                math = true;
+                styleSheets.push({ filename: 'katex.min.css' });
+            }
+
+            for (var i = 0; i < equations.length; i++) {
+                var node = equations[i];
+                var formula = node.getAttribute('data-equation');
+                (0, _katex.render)(formula, node);
+            }
+            for (var i = 0; i < figureEquations.length; i++) {
+                var node = figureEquations[i];
+                var formula = node.getAttribute('data-equation');
+                (0, _katex.render)(formula, node, {
+                    displayMode: true
+                });
+            }
+
+            var includeZips = [];
+
+            var httpOutputList = (0, _tools.findImages)(contents);
+
+            contents = this.addFigureNumbers(contents);
+
+            var contentsCode = this.replaceImgSrc(contents.innerHTML);
+
+            var htmlCode = (0, _htmlTemplates.htmlExportTemplate)({
+                part: false,
+                title: title,
+                metadata: this.doc.metadata,
+                settings: this.doc.settings,
+                styleSheets: styleSheets,
+                contents: contentsCode
+            });
+
+            var outputList = [{
+                filename: 'document.html',
+                contents: htmlCode
+            }];
+
+            for (var i = 0; i < styleSheets.length; i++) {
+                var styleSheet = styleSheets[i];
+                if (styleSheet.contents) {
+                    outputList.push(styleSheet);
+                }
+            }
+
+            if (math) {
+                includeZips.push({
+                    'directory': '',
+                    'url': staticUrl + 'zip/katex-style.zip'
+                });
+            }
+            (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools.createSlug)(title) + '.html.zip', false, includeZips);
         }
+    }]);
+
+    return HTMLExporter;
+})(BaseHTMLExporter);
+
+var BaseHTMLExporter = exports.BaseHTMLExporter = (function (_BaseExporter) {
+    _inherits(BaseHTMLExporter, _BaseExporter);
+
+    function BaseHTMLExporter() {
+        _classCallCheck(this, BaseHTMLExporter);
+
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(BaseHTMLExporter).apply(this, arguments));
     }
 
-    if (aDocument.settings['metadata-keywords'] && aDocument.metadata.keywords) {
-        var tempNode = (0, _json.obj2Node)(aDocument.metadata.keywords);
-        if (tempNode.textContent.length > 0) {
-            tempNode.id = 'keywords';
-            contents.insertBefore(tempNode, contents.firstChild);
+    _createClass(BaseHTMLExporter, [{
+        key: "joinDocumentPart",
+        value: function joinDocumentPart() {
+
+            var contents = document.createElement('div');
+
+            if (this.doc.contents) {
+                var tempNode = obj2Node(this.doc.contents);
+
+                while (tempNode.firstChild) {
+                    contents.appendChild(tempNode.firstChild);
+                }
+            }
+
+            if (this.doc.settings['metadata-keywords'] && this.doc.metadata.keywords) {
+                var tempNode = obj2Node(this.doc.metadata.keywords);
+                if (tempNode.textContent.length > 0) {
+                    tempNode.id = 'keywords';
+                    contents.insertBefore(tempNode, contents.firstChild);
+                }
+            }
+
+            if (this.doc.settings['metadata-authors'] && this.doc.metadata.authors) {
+                var tempNode = obj2Node(this.doc.metadata.authors);
+                if (tempNode.textContent.length > 0) {
+                    tempNode.id = 'authors';
+                    contents.insertBefore(tempNode, contents.firstChild);
+                }
+            }
+
+            if (this.doc.settings['metadata-abstract'] && this.doc.metadata.abstract) {
+                var tempNode = obj2Node(this.doc.metadata.abstract);
+                if (tempNode.textContent.length > 0) {
+                    tempNode.id = 'abstract';
+                    contents.insertBefore(tempNode, contents.firstChild);
+                }
+            }
+
+            if (this.doc.settings['metadata-subtitle'] && this.doc.metadata.subtitle) {
+                var tempNode = obj2Node(this.doc.metadata.subtitle);
+                if (tempNode.textContent.length > 0) {
+                    tempNode.id = 'subtitle';
+                    contents.insertBefore(tempNode, contents.firstChild);
+                }
+            }
+
+            if (this.doc.title) {
+                var tempNode = document.createElement('h1');
+                tempNode.classList.add('title');
+                tempNode.textContent = this.doc.title;
+                contents.insertBefore(tempNode, contents.firstChild);
+            }
+
+            var bibliography = formatCitations(contents, this.doc.settings.citationstyle, this.bibDB);
+
+            if (bibliography.length > 0) {
+                var tempNode = document.createElement('div');
+                tempNode.innerHTML = bibliography;
+                while (tempNode.firstChild) {
+                    contents.appendChild(tempNode.firstChild);
+                }
+            }
+
+            contents = this.cleanHTML(contents);
+            return contents;
         }
-    }
+    }, {
+        key: "addFigureNumbers",
+        value: function addFigureNumbers(htmlCode) {
 
-    if (aDocument.settings['metadata-authors'] && aDocument.metadata.authors) {
-        var tempNode = (0, _json.obj2Node)(aDocument.metadata.authors);
-        if (tempNode.textContent.length > 0) {
-            tempNode.id = 'authors';
-            contents.insertBefore(tempNode, contents.firstChild);
+            jQuery(htmlCode).find('figcaption .figure-cat-figure').each(function (index) {
+                this.innerHTML += ' ' + (index + 1) + ': ';
+            });
+
+            jQuery(htmlCode).find('figcaption .figure-cat-photo').each(function (index) {
+                this.innerHTML += ' ' + (index + 1) + ': ';
+            });
+
+            jQuery(htmlCode).find('figcaption .figure-cat-table').each(function (index) {
+                this.innerHTML += ' ' + (index + 1) + ': ';
+            });
+            return htmlCode;
         }
-    }
-
-    if (aDocument.settings['metadata-abstract'] && aDocument.metadata.abstract) {
-        var tempNode = (0, _json.obj2Node)(aDocument.metadata.abstract);
-        if (tempNode.textContent.length > 0) {
-            tempNode.id = 'abstract';
-            contents.insertBefore(tempNode, contents.firstChild);
+    }, {
+        key: "replaceImgSrc",
+        value: function replaceImgSrc(htmlString) {
+            htmlString = htmlString.replace(/<(img|IMG) data-src([^>]+)>/gm, "<$1 src$2>");
+            return htmlString;
         }
-    }
+    }]);
 
-    if (aDocument.settings['metadata-subtitle'] && aDocument.metadata.subtitle) {
-        var tempNode = (0, _json.obj2Node)(aDocument.metadata.subtitle);
-        if (tempNode.textContent.length > 0) {
-            tempNode.id = 'subtitle';
-            contents.insertBefore(tempNode, contents.firstChild);
-        }
-    }
+    return BaseHTMLExporter;
+})(_base.BaseExporter);
 
-    if (aDocument.title) {
-        var tempNode = document.createElement('h1');
-        tempNode.classList.add('title');
-        tempNode.textContent = aDocument.title;
-        contents.insertBefore(tempNode, contents.firstChild);
-    }
-
-    var bibliography = (0, _format.formatCitations)(contents, aDocument.settings.citationstyle, aBibDB);
-
-    if (bibliography.length > 0) {
-        var tempNode = document.createElement('div');
-        tempNode.innerHTML = bibliography;
-        while (tempNode.firstChild) {
-            contents.appendChild(tempNode.firstChild);
-        }
-    }
-
-    contents = cleanHTML(contents);
-    return contents;
-};
-
-var export1 = function export1(aDocument, aBibDB) {
-    var styleSheets = [],
-        math = false;
-
-    var title = aDocument.title;
-
-    $.addAlert('info', title + ': ' + gettext('HTML export has been initiated.'));
-
-    var contents = joinDocumentParts(aDocument, aBibDB);
-
-    var equations = contents.querySelectorAll('.equation');
-
-    var figureEquations = contents.querySelectorAll('.figure-equation');
-
-    if (equations.length > 0 || figureEquations.length > 0) {
-        math = true;
-        styleSheets.push({ filename: 'katex.min.css' });
-    }
-
-    for (var i = 0; i < equations.length; i++) {
-        var node = equations[i];
-        var formula = node.getAttribute('data-equation');
-        (0, _katex.render)(formula, node);
-    }
-    for (var i = 0; i < figureEquations.length; i++) {
-        var node = figureEquations[i];
-        var formula = node.getAttribute('data-equation');
-        (0, _katex.render)(formula, node, {
-            displayMode: true
-        });
-    }
-
-    var includeZips = [];
-
-    var httpOutputList = (0, _tools.findImages)(contents);
-
-    contents = addFigureNumbers(contents);
-
-    var contentsCode = replaceImgSrc(contents.innerHTML);
-
-    var htmlCode = (0, _htmlTemplates.htmlExportTemplate)({
-        part: false,
-        title: title,
-        metadata: aDocument.metadata,
-        settings: aDocument.settings,
-        styleSheets: styleSheets,
-        contents: contentsCode
-    });
-
-    var outputList = [{
-        filename: 'document.html',
-        contents: htmlCode
-    }];
-
-    for (var i = 0; i < styleSheets.length; i++) {
-        var styleSheet = styleSheets[i];
-        if (styleSheet.contents) {
-            outputList.push(styleSheet);
-        }
-    }
-
-    if (math) {
-        includeZips.push({
-            'directory': '',
-            'url': staticUrl + 'zip/katex-style.zip'
-        });
-    }
-    (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools.createSlug)(title) + '.html.zip', false, includeZips);
-};
-
-var cleanHTML = exports.cleanHTML = function cleanHTML(htmlCode) {
-
-    // Replace the footnotes with markers and the footnotes to the back of the
-    // document, so they can survive the normalization that happens when
-    // assigning innerHTML.
-    // Also link the footnote marker with the footnote according to
-    // https://rawgit.com/essepuntato/rash/master/documentation/index.html#footnotes.
-    var footnotes = [].slice.call(htmlCode.querySelectorAll('.footnote'));
-    var footnotesContainer = document.createElement('section');
-    footnotesContainer.id = 'fnlist';
-    footnotesContainer.setAttribute('role', 'doc-footnotes');
-
-    footnotes.forEach(function (footnote, index) {
-        var footnoteMarker = document.createElement('a');
-        var counter = index + 1;
-        footnoteMarker.setAttribute('href', '#fn' + counter);
-        // RASH 0.5 doesn't mark the footnote markers, so we add this class
-        footnoteMarker.classList.add('fn');
-        footnote.parentNode.replaceChild(footnoteMarker, footnote);
-        var newFootnote = document.createElement('section');
-        newFootnote.id = 'fn' + counter;
-        newFootnote.setAttribute('role', 'doc-footnote');
-        while (footnote.firstChild) {
-            newFootnote.appendChild(footnote.firstChild);
-        }
-        footnotesContainer.appendChild(newFootnote);
-    });
-    htmlCode.appendChild(footnotesContainer);
-
-    // Replace nbsp spaces with normal ones
-    htmlCode.innerHTML = htmlCode.innerHTML.replace(/&nbsp;/g, ' ');
-
-    /* Related to tracked changes
-    jQuery(htmlCode).find('.del').each(function() {
-        this.outerHTML = ''
-    })
-     jQuery(htmlCode).find('.ins').each(function() {
-        this.outerHTML = this.innerHTML
-    })
-     END tracked changes */
-
-    jQuery(htmlCode).find('.comment').each(function () {
-        this.outerHTML = this.innerHTML;
-    });
-
-    jQuery(htmlCode).find('script').each(function () {
-        this.outerHTML = '';
-    });
-
-    return htmlCode;
-};
-
-var addFigureNumbers = exports.addFigureNumbers = function addFigureNumbers(htmlCode) {
-
-    jQuery(htmlCode).find('figcaption .figure-cat-figure').each(function (index) {
-        this.innerHTML += ' ' + (index + 1) + ': ';
-    });
-
-    jQuery(htmlCode).find('figcaption .figure-cat-photo').each(function (index) {
-        this.innerHTML += ' ' + (index + 1) + ': ';
-    });
-
-    jQuery(htmlCode).find('figcaption .figure-cat-table').each(function (index) {
-        this.innerHTML += ' ' + (index + 1) + ': ';
-    });
-    return htmlCode;
-};
-
-var replaceImgSrc = exports.replaceImgSrc = function replaceImgSrc(htmlString) {
-    htmlString = htmlString.replace(/<(img|IMG) data-src([^>]+)>/gm, "<$1 src$2>");
-    return htmlString;
-};
-
-},{"../citations/format":16,"./html-templates":21,"./json":23,"./tools":25,"./zip":28,"katex":30}],23:[function(require,module,exports){
+},{"../bibliography/bibliographyDB":2,"./base":19,"./html-templates":23,"./tools":27,"./zip":30,"katex":32}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3602,13 +4110,15 @@ var node2Obj = exports.node2Obj = function node2Obj(node) {
     return obj;
 };
 
-},{}],24:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 "use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.downloadLatex = exports.htmlToLatex = exports.findLatexDocumentFeatures = undefined;
+exports.BaseLatexExporter = exports.LatexExporter = undefined;
 
 var _json = require("./json");
 
@@ -3616,401 +4126,442 @@ var _tools = require("./tools");
 
 var _zip = require("./zip");
 
-var _html = require("./html");
+var _base = require("./base");
 
 var _biblatex = require("../bibliography/exporter/biblatex");
 
-var findLatexDocumentFeatures = exports.findLatexDocumentFeatures = function findLatexDocumentFeatures(htmlCode, title, author, subtitle, keywords, specifiedAuthors, metadata, documentClass) {
-    var documentEndCommands = '';
+var _bibliographyDB = require("../bibliography/bibliographyDB");
 
-    var includePackages = "\\usepackage[utf8]{luainputenc}";
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-    if (subtitle && metadata.subtitle) {
-        var tempNode = (0, _json.obj2Node)(metadata.subtitle);
-        if (tempNode.textContent.length > 0) {
-            includePackages += "\n\\usepackage{titling}                \n\\newcommand{\\subtitle}[1]{%                \n\t\\posttitle{%                \n\t\t\\par\\end{center}                \n\t\t\\begin{center}\\large#1\\end{center}                \n\t\t\\vskip 0.5em}%                \n}";
-        }
-    }
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-    if (keywords && metadata.keywords) {
-        var tempNode = (0, _json.obj2Node)(metadata.keywords);
-        if (tempNode.textContent.length > 0) {
-            includePackages += '\n\\def\\keywords{\\vspace{.5em}\
-                \n{\\textit{Keywords}:\\,\\relax%\
-                \n}}\
-                \n\\def\\endkeywords{\\par}';
-        }
-    }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-    if (jQuery(htmlCode).find('a').length > 0) {
-        includePackages += "\n\\usepackage{hyperref}";
-    }
-    if (jQuery(htmlCode).find('.citation').length > 0) {
-        includePackages += "\n\\usepackage[backend=biber,hyperref=false,citestyle=authoryear,bibstyle=authoryear]{biblatex}\n\\bibliography{bibliography}";
-        documentEndCommands += '\n\n\\printbibliography';
-    }
+var LatexExporter = exports.LatexExporter = (function (_BaseLatexExporter) {
+    _inherits(LatexExporter, _BaseLatexExporter);
 
-    if (jQuery(htmlCode).find('figure').length > 0) {
-        if (htmlCode.innerHTML.search('.svg">') !== -1) {
-            includePackages += "\n\\usepackage{svg}";
-        }
-        if (htmlCode.innerHTML.search('.png">') !== -1 || htmlCode.innerHTML.search('.jpg">') !== -1 || htmlCode.innerHTML.search('.jpeg">') !== -1) {
-            includePackages += "\n\\usepackage{graphicx}";
-            // The following scales graphics down to text width, but not scaling them up if they are smaller
-            includePackages += "\n\\usepackage{calc}\n\\newlength{\\imgwidth}\n\\newcommand\\scaledgraphics[1]{%\n\\settowidth{\\imgwidth}{\\includegraphics{#1}}%\n\\setlength{\\imgwidth}{\\minof{\\imgwidth}{\\textwidth}}%\n\\includegraphics[width=\\imgwidth,height=\\textheight,keepaspectratio]{#1}%\n}";
-        }
-    }
-    if (documentClass === 'book') {
-        //TODO: abstract environment should possibly only be included if used
-        includePackages += '\n\\newenvironment{abstract}{\\rightskip1in\\itshape}{}';
-    }
+    function LatexExporter(doc, bibDB) {
+        _classCallCheck(this, LatexExporter);
 
-    var latexStart = '\\documentclass{' + documentClass + '}\n' + includePackages + '\n\\begin{document}\n\n\\title{' + title + '}';
+        var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(LatexExporter).call(this));
 
-    if (specifiedAuthors && metadata.authors) {
-        var tempNode = (0, _json.obj2Node)(metadata.authors);
-        if (tempNode.textContent.length > 0) {
-            author = tempNode.textContent;
-        }
-    }
-
-    latexStart += '\n\\author{' + author + '}\n';
-
-    if (subtitle && metadata.subtitle) {
-        var tempNode = (0, _json.obj2Node)(metadata.subtitle);
-        if (tempNode.textContent.length > 0) {
-            latexStart += '\\subtitle{' + tempNode.textContent + '}\n';
-        }
-    }
-
-    latexStart += '\n\\maketitle\n\n';
-
-    if (keywords && metadata.keywords) {
-        var tempNode = (0, _json.obj2Node)(metadata.keywords);
-        if (tempNode.textContent.length > 0) {
-            latexStart += '\\begin{keywords}\n' + tempNode.textContent + '\\end{keywords}\n';
-        }
-    }
-
-    if (documentClass === 'book') {
-        if (metadata.publisher) {
-            var tempNode = (0, _json.obj2Node)(metadata.publisher);
-            if (tempNode.textContent.length > 0) {
-                latexStart += tempNode.textContent + '\n\n';
+        var that = _this;
+        _this.doc = doc;
+        if (bibDB) {
+            _this.bibDB = bibDB; // the bibliography has already been loaded for some other purpose. We reuse it.
+        } else {
+                (function () {
+                    var bibGetter = new _bibliographyDB.BibliographyDB(doc.owner, false, false, false);
+                    bibGetter.getBibDB(function () {
+                        that.bibDB = bibGetter.bibDB;
+                        that.exportOne();
+                    });
+                })();
             }
-        }
+        return _this;
+    }
 
-        if (metadata.copyright) {
-            var tempNode = (0, _json.obj2Node)(metadata.copyright);
-            if (tempNode.textContent.length > 0) {
-                latexStart += tempNode.textContent + '\n\n';
+    _createClass(LatexExporter, [{
+        key: "exportOne",
+        value: function exportOne() {
+            var title = this.doc.title;
+
+            $.addAlert('info', title + ': ' + gettext('Latex export has been initiated.'));
+
+            var contents = document.createElement('div');
+
+            var tempNode = (0, _json.obj2Node)(this.doc.contents);
+
+            while (tempNode.firstChild) {
+                contents.appendChild(tempNode.firstChild);
             }
-        }
 
-        latexStart += '\n\\tableofcontents';
-    }
+            var httpOutputList = (0, _tools.findImages)(contents);
 
-    var latexEnd = documentEndCommands + '\n\n\\end{document}';
+            var latexCode = this.htmlToLatex(title, this.doc.owner.name, contents, this.doc.settings, this.doc.metadata);
 
-    return {
-        latexStart: latexStart,
-        latexEnd: latexEnd
-    };
-};
+            var outputList = [{
+                filename: 'document.tex',
+                contents: latexCode.latex
+            }];
 
-var htmlToLatex = exports.htmlToLatex = function htmlToLatex(title, author, htmlCode, aBibDB, settings, metadata, isChapter, listedWorksList) {
-    var latexStart = '',
-        latexEnd = '';
-    if (!listedWorksList) {
-        listedWorksList = [];
-    }
-
-    // Remove sections that are marked as deleted
-    /*jQuery(htmlCode).find('.del').each(function() {
-        this.outerHTML = ''
-    })*/
-
-    if (isChapter) {
-        latexStart += '\\chapter{' + title + '}\n';
-        //htmlCode.innerHTML =  '<div class="title">' + title + '</div>' + htmlCode.innerHTML
-        if (settings['metadata-subtitle'] && metadata.subtitle) {
-            var tempNode = (0, _json.obj2Node)(metadata.subtitle);
-            if (tempNode.textContent.length > 0) {
-                latexStart += '\\section{' + tempNode.textContent + '}\n';
+            if (latexCode.bibtex.length > 0) {
+                outputList.push({
+                    filename: 'bibliography.bib',
+                    contents: latexCode.bibtex
+                });
             }
+
+            (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools.createSlug)(title) + '.latex.zip');
         }
-    } else {
-        var documentFeatures = findLatexDocumentFeatures(htmlCode, title, author, settings['metadata-subtitle'], settings['metadata-keywords'], settings['metadata-authors'], metadata, 'article');
-        latexStart += documentFeatures.latexStart;
-        latexEnd += documentFeatures.latexEnd;
+    }]);
+
+    return LatexExporter;
+})(BaseLatexExporter);
+
+var BaseLatexExporter = exports.BaseLatexExporter = (function (_BaseExporter) {
+    _inherits(BaseLatexExporter, _BaseExporter);
+
+    function BaseLatexExporter() {
+        _classCallCheck(this, BaseLatexExporter);
+
+        return _possibleConstructorReturn(this, Object.getPrototypeOf(BaseLatexExporter).apply(this, arguments));
     }
 
-    if (settings['metadata-abstract'] && metadata.abstract) {
-        var tempNode = (0, _json.obj2Node)(metadata.abstract);
-        if (tempNode.textContent.length > 0) {
-            tempNode.id = 'abstract';
-            htmlCode.insertBefore(tempNode, htmlCode.firstChild);
+    _createClass(BaseLatexExporter, [{
+        key: "findLatexDocumentFeatures",
+        value: function findLatexDocumentFeatures(htmlCode, title, author, subtitle, keywords, specifiedAuthors, metadata, documentClass) {
+            var documentEndCommands = '';
+
+            var includePackages = "\\usepackage[utf8]{luainputenc}";
+
+            if (subtitle && metadata.subtitle) {
+                var tempNode = (0, _json.obj2Node)(metadata.subtitle);
+                if (tempNode.textContent.length > 0) {
+                    includePackages += "\n\\usepackage{titling}                    \n\\newcommand{\\subtitle}[1]{%                    \n\t\\posttitle{%                    \n\t\t\\par\\end{center}                    \n\t\t\\begin{center}\\large#1\\end{center}                    \n\t\t\\vskip 0.5em}%                    \n}";
+                }
+            }
+
+            if (keywords && metadata.keywords) {
+                var tempNode = (0, _json.obj2Node)(metadata.keywords);
+                if (tempNode.textContent.length > 0) {
+                    includePackages += '\n\\def\\keywords{\\vspace{.5em}\
+                    \n{\\textit{Keywords}:\\,\\relax%\
+                    \n}}\
+                    \n\\def\\endkeywords{\\par}';
+                }
+            }
+
+            if (jQuery(htmlCode).find('a').length > 0) {
+                includePackages += "\n\\usepackage{hyperref}";
+            }
+            if (jQuery(htmlCode).find('.citation').length > 0) {
+                includePackages += "\n\\usepackage[backend=biber,hyperref=false,citestyle=authoryear,bibstyle=authoryear]{biblatex}\n\\bibliography{bibliography}";
+                documentEndCommands += '\n\n\\printbibliography';
+            }
+
+            if (jQuery(htmlCode).find('figure').length > 0) {
+                if (htmlCode.innerHTML.search('.svg">') !== -1) {
+                    includePackages += "\n\\usepackage{svg}";
+                }
+                if (htmlCode.innerHTML.search('.png">') !== -1 || htmlCode.innerHTML.search('.jpg">') !== -1 || htmlCode.innerHTML.search('.jpeg">') !== -1) {
+                    includePackages += "\n\\usepackage{graphicx}";
+                    // The following scales graphics down to text width, but not scaling them up if they are smaller
+                    includePackages += "    \n\\usepackage{calc}    \n\\newlength{\\imgwidth}    \n\\newcommand\\scaledgraphics[1]{%    \n\\settowidth{\\imgwidth}{\\includegraphics{#1}}%    \n\\setlength{\\imgwidth}{\\minof{\\imgwidth}{\\textwidth}}%    \n\\includegraphics[width=\\imgwidth,height=\\textheight,keepaspectratio]{#1}%    \n}";
+                }
+            }
+            if (documentClass === 'book') {
+                //TODO: abstract environment should possibly only be included if used
+                includePackages += '\n\\newenvironment{abstract}{\\rightskip1in\\itshape}{}';
+            }
+
+            var latexStart = '\\documentclass{' + documentClass + '}\n' + includePackages + '\n\\begin{document}\n\n\\title{' + title + '}';
+
+            if (specifiedAuthors && metadata.authors) {
+                var tempNode = (0, _json.obj2Node)(metadata.authors);
+                if (tempNode.textContent.length > 0) {
+                    author = tempNode.textContent;
+                }
+            }
+
+            latexStart += '\n\\author{' + author + '}\n';
+
+            if (subtitle && metadata.subtitle) {
+                var tempNode = (0, _json.obj2Node)(metadata.subtitle);
+                if (tempNode.textContent.length > 0) {
+                    latexStart += '\\subtitle{' + tempNode.textContent + '}\n';
+                }
+            }
+
+            latexStart += '\n\\maketitle\n\n';
+
+            if (keywords && metadata.keywords) {
+                var tempNode = (0, _json.obj2Node)(metadata.keywords);
+                if (tempNode.textContent.length > 0) {
+                    latexStart += '\\begin{keywords}\n' + tempNode.textContent + '\\end{keywords}\n';
+                }
+            }
+
+            if (documentClass === 'book') {
+                if (metadata.publisher) {
+                    var tempNode = (0, _json.obj2Node)(metadata.publisher);
+                    if (tempNode.textContent.length > 0) {
+                        latexStart += tempNode.textContent + '\n\n';
+                    }
+                }
+
+                if (metadata.copyright) {
+                    var tempNode = (0, _json.obj2Node)(metadata.copyright);
+                    if (tempNode.textContent.length > 0) {
+                        latexStart += tempNode.textContent + '\n\n';
+                    }
+                }
+
+                latexStart += '\n\\tableofcontents';
+            }
+
+            var latexEnd = documentEndCommands + '\n\n\\end{document}';
+
+            return {
+                latexStart: latexStart,
+                latexEnd: latexEnd
+            };
         }
-    }
+    }, {
+        key: "htmlToLatex",
+        value: function htmlToLatex(title, author, htmlCode, settings, metadata, isChapter, listedWorksList) {
+            var latexStart = '',
+                latexEnd = '',
+                that = this;
+            if (!listedWorksList) {
+                listedWorksList = [];
+            }
 
-    htmlCode = (0, _html.cleanHTML)(htmlCode);
-    // Replace the footnotes with markers and the footnotes to the back of the
-    // document, so they can survive the normalization that happens when
-    // assigning innerHTML.
-    /*let footnotes = [].slice.call(htmlCode.querySelectorAll('.footnote'))
-    let footnotesContainer = document.createElement('div')
-    footnotesContainer.id = 'footnotes-container'
-     footnotes.forEach(function(footnote) {
-        let footnoteMarker = document.createElement('span')
-        footnoteMarker.classList.add('footnote-marker')
-        footnote.parentNode.replaceChild(footnoteMarker, footnote)
-        footnotesContainer.appendChild(footnote)
-    })
-    htmlCode.appendChild(footnotesContainer)*/
+            // Remove sections that are marked as deleted
+            /*jQuery(htmlCode).find('.del').each(function() {
+                this.outerHTML = ''
+            })*/
 
-    /*let footnoteMarkersInHeaders = [].slice.call(htmlCode.querySelectorAll(
-      'h1 .footnote-marker, h2 .footnote-marker, h3 .footnote-marker, ul .footnote-marker, ol .footnote-marker'
-    )
-     footnoteMarkersInHeaders.forEach(function (marker) {
-        marker.classList.add('keep')
-    })*/
+            if (isChapter) {
+                latexStart += '\\chapter{' + title + '}\n';
+                //htmlCode.innerHTML =  '<div class="title">' + title + '</div>' + htmlCode.innerHTML
+                if (settings['metadata-subtitle'] && metadata.subtitle) {
+                    var tempNode = (0, _json.obj2Node)(metadata.subtitle);
+                    if (tempNode.textContent.length > 0) {
+                        latexStart += '\\section{' + tempNode.textContent + '}\n';
+                    }
+                }
+            } else {
+                var documentFeatures = this.findLatexDocumentFeatures(htmlCode, title, author, settings['metadata-subtitle'], settings['metadata-keywords'], settings['metadata-authors'], metadata, 'article');
+                latexStart += documentFeatures.latexStart;
+                latexEnd += documentFeatures.latexEnd;
+            }
 
-    // Replace nbsp spaces with normal ones
-    //htmlCode.innerHTML = htmlCode.innerHTML.replace(/&nbsp;/g, ' ')
+            if (settings['metadata-abstract'] && metadata.abstract) {
+                var tempNode = (0, _json.obj2Node)(metadata.abstract);
+                if (tempNode.textContent.length > 0) {
+                    tempNode.id = 'abstract';
+                    htmlCode.insertBefore(tempNode, htmlCode.firstChild);
+                }
+            }
 
-    // Remove line breaks
-    htmlCode.innerHTML = htmlCode.innerHTML.replace(/(\r\n|\n|\r)/gm, '');
+            htmlCode = this.cleanHTML(htmlCode);
+            // Replace the footnotes with markers and the footnotes to the back of the
+            // document, so they can survive the normalization that happens when
+            // assigning innerHTML.
+            /*let footnotes = [].slice.call(htmlCode.querySelectorAll('.footnote'))
+            let footnotesContainer = document.createElement('div')
+            footnotesContainer.id = 'footnotes-container'
+             footnotes.forEach(function(footnote) {
+                let footnoteMarker = document.createElement('span')
+                footnoteMarker.classList.add('footnote-marker')
+                footnote.parentNode.replaceChild(footnoteMarker, footnote)
+                footnotesContainer.appendChild(footnote)
+            })
+            htmlCode.appendChild(footnotesContainer)*/
 
-    // Escape characters that are protected in some way.
-    htmlCode.innerHTML = htmlCode.innerHTML.replace(/\\/g, '\\\\');
-    htmlCode.innerHTML = htmlCode.innerHTML.replace(/\{/g, '\{');
-    htmlCode.innerHTML = htmlCode.innerHTML.replace(/\}/g, '\}');
-    htmlCode.innerHTML = htmlCode.innerHTML.replace(/\$/g, '\\\$');
-    htmlCode.innerHTML = htmlCode.innerHTML.replace(/\#/g, '\\\#');
-    htmlCode.innerHTML = htmlCode.innerHTML.replace(/\%/g, '\\\%');
+            /*let footnoteMarkersInHeaders = [].slice.call(htmlCode.querySelectorAll(
+              'h1 .footnote-marker, h2 .footnote-marker, h3 .footnote-marker, ul .footnote-marker, ol .footnote-marker'
+            )
+             footnoteMarkersInHeaders.forEach(function (marker) {
+                marker.classList.add('keep')
+            })*/
 
-    jQuery(htmlCode).find('i').each(function () {
-        jQuery(this).replaceWith('\\emph{' + this.innerHTML + '}');
-    });
+            // Replace nbsp spaces with normal ones
+            //htmlCode.innerHTML = htmlCode.innerHTML.replace(/&nbsp;/g, ' ')
 
-    jQuery(htmlCode).find('b').each(function () {
-        jQuery(this).replaceWith('\\textbf{' + this.innerHTML + '}');
-    });
+            // Remove line breaks
+            htmlCode.innerHTML = htmlCode.innerHTML.replace(/(\r\n|\n|\r)/gm, '');
 
-    jQuery(htmlCode).find('h1').each(function () {
-        jQuery(this).replaceWith('<h1>\n\n\\section{' + this.innerHTML + '}\n</h1>');
-    });
-    jQuery(htmlCode).find('h2').each(function () {
-        jQuery(this).replaceWith('<h2>\n\n\\subsection{' + this.innerHTML + '}\n</h2>');
-    });
-    jQuery(htmlCode).find('h3').each(function () {
-        jQuery(this).replaceWith('<h3>\n\n\\subsubsection{' + this.textHTML + '}\n</h3>');
-    });
-    jQuery(htmlCode).find('p').each(function () {
-        jQuery(this).replaceWith('\n\n' + this.innerHTML + '\n');
-    });
-    jQuery(htmlCode).find('li').each(function () {
-        jQuery(this).replaceWith('\n\\item ' + this.innerHTML + '\n');
-    });
-    jQuery(htmlCode).find('ul').each(function () {
-        jQuery(this).replaceWith('<ul>\n\\begin{itemize}' + this.innerHTML + '\\end{itemize}\n</ul>');
-    });
-    jQuery(htmlCode).find('ol').each(function () {
-        jQuery(this).replaceWith('<ol>\n\\begin{enumerated}' + this.innerHTML + '\\end{enumerated}\n</ol>');
-    });
-    jQuery(htmlCode).find('code').each(function () {
-        jQuery(this).replaceWith('\n\\begin{code}\n\n' + this.innerHTML + '\n\n\\end{code}\n');
-    });
-    jQuery(htmlCode).find('div#abstract').each(function () {
-        jQuery(this).replaceWith('\n\\begin{abstract}\n\n' + this.innerHTML + '\n\n\\end{abstract}\n');
-    });
+            // Escape characters that are protected in some way.
+            htmlCode.innerHTML = htmlCode.innerHTML.replace(/\\/g, '\\\\');
+            htmlCode.innerHTML = htmlCode.innerHTML.replace(/\{/g, '\{');
+            htmlCode.innerHTML = htmlCode.innerHTML.replace(/\}/g, '\}');
+            htmlCode.innerHTML = htmlCode.innerHTML.replace(/\$/g, '\\\$');
+            htmlCode.innerHTML = htmlCode.innerHTML.replace(/\#/g, '\\\#');
+            htmlCode.innerHTML = htmlCode.innerHTML.replace(/\%/g, '\\\%');
 
-    // join code paragraphs that follow oneanother
-    htmlCode.innerHTML = htmlCode.innerHTML.replace(/\\end{code}\n\n\\begin{code}\n\n/g, '');
-    jQuery(htmlCode).find('blockquote').each(function () {
-        jQuery(this).replaceWith('\n\\begin{quote}\n\n' + this.innerHTML + '\n\n\\end{quote}\n');
-    });
-    // join quote paragraphs that follow oneanother
-    htmlCode.innerHTML = htmlCode.innerHTML.replace(/\\end{quote}\n\n\\begin{quote}\n\n/g, '');
-    // Replace links, except those for footnotes.
-    jQuery(htmlCode).find('a:not(.fn)').each(function () {
-        jQuery(this).replaceWith('\\href{' + this.href + '}{' + this.innerHTML + '}');
-    });
-    jQuery(htmlCode).find('.citation').each(function () {
-        var citationEntries = this.hasAttribute('data-bib-entry') ? this.getAttribute('data-bib-entry').split(',') : [],
-            citationBefore = this.hasAttribute('data-bib-before') ? this.getAttribute('data-bib-before').split(',') : [],
-            citationPage = this.hasAttribute('data-bib-page') ? this.getAttribute('data-bib-page').split(',') : [],
-            citationFormat = this.hasAttribute('data-bib-format') ? this.getAttribute('data-bib-format') : '',
-            citationCommand = '\\' + citationFormat;
+            jQuery(htmlCode).find('i').each(function () {
+                jQuery(this).replaceWith('\\emph{' + this.innerHTML + '}');
+            });
 
-        if (citationEntries.length > 1 && citationBefore.join('').length === 0 && citationPage.join('').length === 0) {
-            (function () {
-                // multi source citation without page numbers or text before.
-                var citationEntryKeys = [];
+            jQuery(htmlCode).find('b').each(function () {
+                jQuery(this).replaceWith('\\textbf{' + this.innerHTML + '}');
+            });
 
-                citationEntries.forEach(function (citationEntry) {
-                    if (aBibDB[citationEntry]) {
-                        citationEntryKeys.push(aBibDB[citationEntry].entry_key);
+            jQuery(htmlCode).find('h1').each(function () {
+                jQuery(this).replaceWith('<h1>\n\n\\section{' + this.innerHTML + '}\n</h1>');
+            });
+            jQuery(htmlCode).find('h2').each(function () {
+                jQuery(this).replaceWith('<h2>\n\n\\subsection{' + this.innerHTML + '}\n</h2>');
+            });
+            jQuery(htmlCode).find('h3').each(function () {
+                jQuery(this).replaceWith('<h3>\n\n\\subsubsection{' + this.textHTML + '}\n</h3>');
+            });
+            jQuery(htmlCode).find('p').each(function () {
+                jQuery(this).replaceWith('\n\n' + this.innerHTML + '\n');
+            });
+            jQuery(htmlCode).find('li').each(function () {
+                jQuery(this).replaceWith('\n\\item ' + this.innerHTML + '\n');
+            });
+            jQuery(htmlCode).find('ul').each(function () {
+                jQuery(this).replaceWith('<ul>\n\\begin{itemize}' + this.innerHTML + '\\end{itemize}\n</ul>');
+            });
+            jQuery(htmlCode).find('ol').each(function () {
+                jQuery(this).replaceWith('<ol>\n\\begin{enumerated}' + this.innerHTML + '\\end{enumerated}\n</ol>');
+            });
+            jQuery(htmlCode).find('code').each(function () {
+                jQuery(this).replaceWith('\n\\begin{code}\n\n' + this.innerHTML + '\n\n\\end{code}\n');
+            });
+            jQuery(htmlCode).find('div#abstract').each(function () {
+                jQuery(this).replaceWith('\n\\begin{abstract}\n\n' + this.innerHTML + '\n\n\\end{abstract}\n');
+            });
+
+            // join code paragraphs that follow oneanother
+            htmlCode.innerHTML = htmlCode.innerHTML.replace(/\\end{code}\n\n\\begin{code}\n\n/g, '');
+            jQuery(htmlCode).find('blockquote').each(function () {
+                jQuery(this).replaceWith('\n\\begin{quote}\n\n' + this.innerHTML + '\n\n\\end{quote}\n');
+            });
+            // join quote paragraphs that follow oneanother
+            htmlCode.innerHTML = htmlCode.innerHTML.replace(/\\end{quote}\n\n\\begin{quote}\n\n/g, '');
+            // Replace links, except those for footnotes.
+            jQuery(htmlCode).find('a:not(.fn)').each(function () {
+                jQuery(this).replaceWith('\\href{' + this.href + '}{' + this.innerHTML + '}');
+            });
+            jQuery(htmlCode).find('.citation').each(function () {
+                var citationEntries = this.hasAttribute('data-bib-entry') ? this.getAttribute('data-bib-entry').split(',') : [],
+                    citationBefore = this.hasAttribute('data-bib-before') ? this.getAttribute('data-bib-before').split(',') : [],
+                    citationPage = this.hasAttribute('data-bib-page') ? this.getAttribute('data-bib-page').split(',') : [],
+                    citationFormat = this.hasAttribute('data-bib-format') ? this.getAttribute('data-bib-format') : '',
+                    citationCommand = '\\' + citationFormat;
+
+                if (citationEntries.length > 1 && citationBefore.join('').length === 0 && citationPage.join('').length === 0) {
+                    (function () {
+                        // multi source citation without page numbers or text before.
+                        var citationEntryKeys = [];
+
+                        citationEntries.forEach(function (citationEntry) {
+                            if (that.bibDB[citationEntry]) {
+                                citationEntryKeys.push(that.bibDB[citationEntry].entry_key);
+                                if (listedWorksList.indexOf(citationEntry) === -1) {
+                                    listedWorksList.push(citationEntry);
+                                }
+                            }
+                        });
+
+                        citationCommand += '{' + citationEntryKeys.join(',') + '}';
+                    })();
+                } else {
+                    if (citationEntries.length > 1) {
+                        citationCommand += 's'; // Switching from \autocite to \autocites
+                    }
+
+                    citationEntries.forEach(function (citationEntry, index) {
+                        if (!that.bibDB[citationEntry]) {
+                            return false; // Not present in bibliography database, skip it.
+                        }
+
+                        if (citationBefore[index] && citationBefore[index].length > 0) {
+                            citationCommand += '[' + citationBefore[index] + ']';
+                            if (!citationPage[index] || citationPage[index].length === 0) {
+                                citationCommand += '[]';
+                            }
+                        }
+                        if (citationPage[index] && citationPage[index].length > 0) {
+                            citationCommand += '[' + citationPage[index] + ']';
+                        }
+                        citationCommand += '{';
+
+                        citationCommand += that.bibDB[citationEntry].entry_key;
+
                         if (listedWorksList.indexOf(citationEntry) === -1) {
                             listedWorksList.push(citationEntry);
                         }
-                    }
-                });
-
-                citationCommand += '{' + citationEntryKeys.join(',') + '}';
-            })();
-        } else {
-            if (citationEntries.length > 1) {
-                citationCommand += 's'; // Switching from \autocite to \autocites
-            }
-
-            citationEntries.forEach(function (citationEntry, index) {
-                if (!aBibDB[citationEntry]) {
-                    return false; // Not present in bibliography database, skip it.
+                        citationCommand += '}';
+                    });
                 }
 
-                if (citationBefore[index] && citationBefore[index].length > 0) {
-                    citationCommand += '[' + citationBefore[index] + ']';
-                    if (!citationPage[index] || citationPage[index].length === 0) {
-                        citationCommand += '[]';
-                    }
-                }
-                if (citationPage[index] && citationPage[index].length > 0) {
-                    citationCommand += '[' + citationPage[index] + ']';
-                }
-                citationCommand += '{';
-
-                citationCommand += aBibDB[citationEntry].entry_key;
-
-                if (listedWorksList.indexOf(citationEntry) === -1) {
-                    listedWorksList.push(citationEntry);
-                }
-                citationCommand += '}';
+                jQuery(this).replaceWith(citationCommand);
             });
-        }
 
-        jQuery(this).replaceWith(citationCommand);
-    });
+            jQuery(htmlCode).find('figure').each(function () {
+                var latexPackage = undefined;
+                var figureType = jQuery(this).find('figcaption')[0].firstChild.innerHTML;
+                // TODO: make use of figure type
+                var caption = jQuery(this).find('figcaption')[0].lastChild.innerHTML;
+                var filename = jQuery(this).find('img').attr('data-src');
+                if (filename) {
+                    // TODO: handle formula figures
+                    var filenameList = filename.split('.');
+                    if (filenameList[filenameList.length - 1] === 'svg') {
+                        latexPackage = 'includesvg';
+                    } else {
+                        latexPackage = 'scaledgraphics';
+                    }
+                    this.outerHTML = '\n\\begin{figure}\n\\' + latexPackage + '{' + filename + '}\n\\caption{' + caption + '}\n\\end{figure}\n';
+                }
+            });
 
-    jQuery(htmlCode).find('figure').each(function () {
-        var latexPackage = undefined;
-        var figureType = jQuery(this).find('figcaption')[0].firstChild.innerHTML;
-        // TODO: make use of figure type
-        var caption = jQuery(this).find('figcaption')[0].lastChild.innerHTML;
-        var filename = jQuery(this).find('img').attr('data-src');
-        if (filename) {
-            // TODO: handle formula figures
-            var filenameList = filename.split('.');
-            if (filenameList[filenameList.length - 1] === 'svg') {
-                latexPackage = 'includesvg';
+            jQuery(htmlCode).find('.equation, .figure-equation').each(function () {
+                var equation = jQuery(this).attr('data-equation');
+                // TODO: The string is for some reason escaped. The following line removes this.
+                equation = equation.replace(/\\/g, "*BACKSLASH*").replace(/\*BACKSLASH\*\*BACKSLASH\*/g, "\\").replace(/\*BACKSLASH\*/g, "");
+                this.outerHTML = '$' + equation + '$';
+            });
+
+            var footnotes = [].slice.call(htmlCode.querySelectorAll('section#fnlist section[role=doc-footnote]'));
+            var footnoteMarkers = [].slice.call(htmlCode.querySelectorAll('a.fn'));
+
+            footnoteMarkers.forEach(function (marker, index) {
+                // if the footnote is in one of these containers, we have to put the
+                // footnotetext after the containers. If there is no container, we put the
+                // footnote where the footnote marker is.
+                var containers = [].slice.call(jQuery(marker).parents('h1, h2, h3, ul, ol'));
+                if (containers.length > 0) {
+                    jQuery(marker).html('\\protect\\footnotemark');
+                    var lastContainer = containers.pop();
+                    if (!lastContainer.nextSibling || !jQuery(lastContainer.nextSibling).hasClass('footnote-counter-reset')) {
+                        var fnCounterReset = document.createElement('span');
+                        fnCounterReset.classList.add('footnote-counter-reset');
+                        lastContainer.parentNode.insertBefore(fnCounterReset, lastContainer.nextSibling);
+                    }
+                    var fnCounter = 1;
+                    var searchNode = lastContainer.nextSibling.nextSibling;
+                    while (searchNode && searchNode.nodeType === 1 && searchNode.hasAttribute('role') && searchNode.getAttribute('role') === 'doc-footnote') {
+                        searchNode = searchNode.nextSibling;
+                        fnCounter++;
+                    }
+                    footnotes[index].innerHTML = "\\stepcounter{footnote}\\footnotetext{" + footnotes[index].innerHTML.trim() + "}";
+                    lastContainer.parentNode.insertBefore(footnotes[index], searchNode);
+                    lastContainer.nextSibling.innerHTML = "\\addtocounter{footnote}{-" + fnCounter + "}";
+                } else {
+                    footnotes[index].innerHTML = "\\footnote{" + footnotes[index].innerHTML.trim() + "}";
+                    marker.appendChild(footnotes[index]);
+                }
+            });
+
+            /*jQuery(htmlCode).find('.footnote').each(function() {
+                jQuery(this).replaceWith('\\footnotext{' + this.innerHTML + '}')
+            })*/
+
+            var returnObject = {
+                latex: latexStart + htmlCode.textContent + latexEnd
+            };
+            if (isChapter) {
+                returnObject.listedWorksList = listedWorksList;
             } else {
-                latexPackage = 'scaledgraphics';
+                var bibExport = new _biblatex.BibLatexExporter(listedWorksList, that.bibDB, false);
+                returnObject.bibtex = bibExport.bibtex_str;
             }
-            this.outerHTML = '\n\\begin{figure}\n\\' + latexPackage + '{' + filename + '}\n\\caption{' + caption + '}\n\\end{figure}\n';
+            return returnObject;
         }
-    });
+    }]);
 
-    jQuery(htmlCode).find('.equation, .figure-equation').each(function () {
-        var equation = jQuery(this).attr('data-equation');
-        // TODO: The string is for some reason escaped. The following line removes this.
-        equation = equation.replace(/\\/g, "*BACKSLASH*").replace(/\*BACKSLASH\*\*BACKSLASH\*/g, "\\").replace(/\*BACKSLASH\*/g, "");
-        this.outerHTML = '$' + equation + '$';
-    });
+    return BaseLatexExporter;
+})(_base.BaseExporter);
 
-    var footnotes = [].slice.call(htmlCode.querySelectorAll('section#fnlist section[role=doc-footnote]'));
-    var footnoteMarkers = [].slice.call(htmlCode.querySelectorAll('a.fn'));
-
-    footnoteMarkers.forEach(function (marker, index) {
-        // if the footnote is in one of these containers, we have to put the
-        // footnotetext after the containers. If there is no container, we put the
-        // footnote where the footnote marker is.
-        var containers = [].slice.call(jQuery(marker).parents('h1, h2, h3, ul, ol'));
-        if (containers.length > 0) {
-            jQuery(marker).html('\\protect\\footnotemark');
-            var lastContainer = containers.pop();
-            if (!lastContainer.nextSibling || !jQuery(lastContainer.nextSibling).hasClass('footnote-counter-reset')) {
-                var fnCounterReset = document.createElement('span');
-                fnCounterReset.classList.add('footnote-counter-reset');
-                lastContainer.parentNode.insertBefore(fnCounterReset, lastContainer.nextSibling);
-            }
-            var fnCounter = 1;
-            var searchNode = lastContainer.nextSibling.nextSibling;
-            while (searchNode && searchNode.nodeType === 1 && searchNode.hasAttribute('role') && searchNode.getAttribute('role') === 'doc-footnote') {
-                searchNode = searchNode.nextSibling;
-                fnCounter++;
-            }
-            footnotes[index].innerHTML = "\\stepcounter{footnote}\\footnotetext{" + footnotes[index].innerHTML.trim() + "}";
-            lastContainer.parentNode.insertBefore(footnotes[index], searchNode);
-            lastContainer.nextSibling.innerHTML = "\\addtocounter{footnote}{-" + fnCounter + "}";
-        } else {
-            footnotes[index].innerHTML = "\\footnote{" + footnotes[index].innerHTML.trim() + "}";
-            marker.appendChild(footnotes[index]);
-        }
-    });
-
-    /*jQuery(htmlCode).find('.footnote').each(function() {
-        jQuery(this).replaceWith('\\footnotext{' + this.innerHTML + '}')
-    })*/
-
-    var returnObject = {
-        latex: latexStart + htmlCode.textContent + latexEnd
-    };
-    if (isChapter) {
-        returnObject.listedWorksList = listedWorksList;
-    } else {
-        var bibExport = new _biblatex.BibLatexExporter(listedWorksList, aBibDB, false);
-        returnObject.bibtex = bibExport.bibtex_str;
-    }
-    return returnObject;
-};
-
-var downloadLatex = exports.downloadLatex = function downloadLatex(aDocument, inEditor) {
-    if (inEditor || window.hasOwnProperty('BibDB') && aDocument.is_owner) {
-        export1(aDocument, BibDB);
-    } else if (aDocument.is_owner) {
-        bibliographyHelpers.getBibDB(function () {
-            export1(aDocument, BibDB);
-        });
-    } else {
-        bibliographyHelpers.getABibDB(aDocument.owner, function (aBibDB) {
-            export1(aDocument, aBibDB);
-        });
-    }
-};
-
-var export1 = function export1(aDocument, aBibDB) {
-    var title = aDocument.title;
-
-    $.addAlert('info', title + ': ' + gettext('Latex export has been initiated.'));
-
-    var contents = document.createElement('div');
-
-    var tempNode = (0, _json.obj2Node)(aDocument.contents);
-
-    while (tempNode.firstChild) {
-        contents.appendChild(tempNode.firstChild);
-    }
-
-    var httpOutputList = (0, _tools.findImages)(contents);
-
-    var latexCode = htmlToLatex(title, aDocument.owner.name, contents, aBibDB, aDocument.settings, aDocument.metadata);
-
-    var outputList = [{
-        filename: 'document.tex',
-        contents: latexCode.latex
-    }];
-
-    if (latexCode.bibtex.length > 0) {
-        outputList.push({
-            filename: 'bibliography.bib',
-            contents: latexCode.bibtex
-        });
-    }
-
-    (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools.createSlug)(title) + '.latex.zip');
-};
-
-},{"../bibliography/exporter/biblatex":2,"./html":22,"./json":23,"./tools":25,"./zip":28}],25:[function(require,module,exports){
+},{"../bibliography/bibliographyDB":2,"../bibliography/exporter/biblatex":3,"./base":19,"./json":25,"./tools":27,"./zip":30}],27:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4055,7 +4606,7 @@ var findImages = exports.findImages = function findImages(htmlCode) {
     return images;
 };
 
-},{}],26:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4065,7 +4616,7 @@ Object.defineProperty(exports, "__esModule", {
 var revisionDialogTemplate = exports.revisionDialogTemplate = _.template('\
 <div title="' + gettext('Revision description') + '"><p><input type="text" class="revision-note" placeholder="' + gettext('Description (optional)') + '"></p></div>');
 
-},{}],27:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4126,7 +4677,7 @@ var uploadFile = exports.uploadFile = function uploadFile(zipFilename, blob, edi
     });
 };
 
-},{"./upload-templates":26}],28:[function(require,module,exports){
+},{"./upload-templates":28}],30:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4249,7 +4800,7 @@ var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles,
     }
 };
 
-},{"./download":18,"./upload":27}],29:[function(require,module,exports){
+},{"./download":20,"./upload":29}],31:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4258,7 +4809,7 @@ Object.defineProperty(exports, "__esModule", {
 // This file is auto-generated. CHANGES WILL BE OVERWRITTEN! Re-generate by running ./manage.py bundle_katex.
 var katexOpfIncludes = exports.katexOpfIncludes = "\n<item id=\"katex-0\" href=\"katex.min.css\" media-type=\"text/css\" />\n<item id=\"katex-1\" href=\"fonts/KaTeX_Typewriter-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-2\" href=\"fonts/KaTeX_Main-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-3\" href=\"fonts/KaTeX_Fraktur-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-4\" href=\"fonts/KaTeX_SansSerif-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-5\" href=\"fonts/KaTeX_Main-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-6\" href=\"fonts/KaTeX_Main-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-7\" href=\"fonts/KaTeX_SansSerif-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-8\" href=\"fonts/KaTeX_AMS-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-9\" href=\"fonts/KaTeX_Caligraphic-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-10\" href=\"fonts/KaTeX_Size4-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-11\" href=\"fonts/KaTeX_Math-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-12\" href=\"fonts/KaTeX_Size1-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-13\" href=\"fonts/KaTeX_Math-BoldItalic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-14\" href=\"fonts/KaTeX_Script-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-15\" href=\"fonts/KaTeX_Main-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-16\" href=\"fonts/KaTeX_Math-BoldItalic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-17\" href=\"fonts/KaTeX_Fraktur-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-18\" href=\"fonts/KaTeX_Main-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-19\" href=\"fonts/KaTeX_Size1-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-20\" href=\"fonts/KaTeX_SansSerif-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-21\" href=\"fonts/KaTeX_Math-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-22\" href=\"fonts/KaTeX_Fraktur-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-23\" href=\"fonts/KaTeX_Script-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-24\" href=\"fonts/KaTeX_Fraktur-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-25\" href=\"fonts/KaTeX_Main-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-26\" href=\"fonts/KaTeX_Size1-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-27\" href=\"fonts/KaTeX_Size3-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-28\" href=\"fonts/KaTeX_SansSerif-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-29\" href=\"fonts/KaTeX_Script-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-30\" href=\"fonts/KaTeX_Main-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-31\" href=\"fonts/KaTeX_Math-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-32\" href=\"fonts/KaTeX_Main-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-33\" href=\"fonts/KaTeX_Typewriter-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-34\" href=\"fonts/KaTeX_Math-BoldItalic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-35\" href=\"fonts/KaTeX_AMS-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-36\" href=\"fonts/KaTeX_Size2-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-37\" href=\"fonts/KaTeX_Caligraphic-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-38\" href=\"fonts/KaTeX_Fraktur-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-39\" href=\"fonts/KaTeX_Typewriter-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-40\" href=\"fonts/KaTeX_Math-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-41\" href=\"fonts/KaTeX_SansSerif-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-42\" href=\"fonts/KaTeX_Script-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-43\" href=\"fonts/KaTeX_Caligraphic-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-44\" href=\"fonts/KaTeX_SansSerif-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-45\" href=\"fonts/KaTeX_AMS-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-46\" href=\"fonts/KaTeX_Caligraphic-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-47\" href=\"fonts/KaTeX_Fraktur-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-48\" href=\"fonts/KaTeX_Main-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-49\" href=\"fonts/KaTeX_SansSerif-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-50\" href=\"fonts/KaTeX_Size4-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-51\" href=\"fonts/KaTeX_Math-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-52\" href=\"fonts/KaTeX_SansSerif-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-53\" href=\"fonts/KaTeX_Size2-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-54\" href=\"fonts/KaTeX_Fraktur-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-55\" href=\"fonts/KaTeX_Size2-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-56\" href=\"fonts/KaTeX_SansSerif-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-57\" href=\"fonts/KaTeX_AMS-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-58\" href=\"fonts/KaTeX_Math-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-59\" href=\"fonts/KaTeX_SansSerif-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-60\" href=\"fonts/KaTeX_Main-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-61\" href=\"fonts/KaTeX_Typewriter-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-62\" href=\"fonts/KaTeX_Size3-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-63\" href=\"fonts/KaTeX_Main-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-64\" href=\"fonts/KaTeX_Caligraphic-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-65\" href=\"fonts/KaTeX_SansSerif-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-66\" href=\"fonts/KaTeX_Caligraphic-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-67\" href=\"fonts/KaTeX_Size4-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-68\" href=\"fonts/KaTeX_Main-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-69\" href=\"fonts/KaTeX_Math-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-70\" href=\"fonts/KaTeX_Size3-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-71\" href=\"fonts/KaTeX_Fraktur-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-72\" href=\"fonts/KaTeX_Caligraphic-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-73\" href=\"fonts/KaTeX_Size2-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-74\" href=\"fonts/KaTeX_Size1-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-75\" href=\"fonts/KaTeX_SansSerif-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-76\" href=\"fonts/KaTeX_Size4-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-77\" href=\"fonts/KaTeX_Size3-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-78\" href=\"fonts/KaTeX_Caligraphic-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-79\" href=\"fonts/KaTeX_Math-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-80\" href=\"fonts/KaTeX_Math-BoldItalic.woff\" media-type=\"application/octet-stream\" />\n";
 
-},{}],30:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 /**
  * This is the main entry point for KaTeX. Here, we expose functions for
  * rendering expressions either to DOM nodes or to markup strings.
@@ -4333,7 +4884,7 @@ module.exports = {
     ParseError: ParseError
 };
 
-},{"./src/ParseError":33,"./src/Settings":35,"./src/buildTree":40,"./src/parseTree":49,"./src/utils":51}],31:[function(require,module,exports){
+},{"./src/ParseError":35,"./src/Settings":37,"./src/buildTree":42,"./src/parseTree":51,"./src/utils":53}],33:[function(require,module,exports){
 /**
  * The Lexer class handles tokenizing the input in various ways. Since our
  * parser expects us to be able to backtrack, the lexer allows lexing from any
@@ -4529,7 +5080,7 @@ Lexer.prototype.lex = function(pos, mode) {
 
 module.exports = Lexer;
 
-},{"./ParseError":33,"match-at":52}],32:[function(require,module,exports){
+},{"./ParseError":35,"match-at":54}],34:[function(require,module,exports){
 /**
  * This file contains information about the options that the Parser carries
  * around with it while parsing. Data is held in an `Options` object, and when
@@ -4720,7 +5271,7 @@ Options.prototype.getColor = function() {
 
 module.exports = Options;
 
-},{}],33:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /**
  * This is the ParseError class, which is the main error thrown by KaTeX
  * functions when something has gone wrong. This is used to distinguish internal
@@ -4762,7 +5313,7 @@ ParseError.prototype.__proto__ = Error.prototype;
 
 module.exports = ParseError;
 
-},{}],34:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 var functions = require("./functions");
 var environments = require("./environments");
 var Lexer = require("./Lexer");
@@ -5484,7 +6035,7 @@ Parser.prototype.ParseNode = ParseNode;
 
 module.exports = Parser;
 
-},{"./Lexer":31,"./ParseError":33,"./environments":43,"./functions":46,"./parseData":48,"./symbols":50,"./utils":51}],35:[function(require,module,exports){
+},{"./Lexer":33,"./ParseError":35,"./environments":45,"./functions":48,"./parseData":50,"./symbols":52,"./utils":53}],37:[function(require,module,exports){
 /**
  * This is a module for storing settings passed into KaTeX. It correctly handles
  * default settings.
@@ -5514,7 +6065,7 @@ function Settings(options) {
 
 module.exports = Settings;
 
-},{}],36:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 /**
  * This file contains information and classes for the various kinds of styles
  * used in TeX. It provides a generic `Style` class, which holds information
@@ -5642,7 +6193,7 @@ module.exports = {
     SCRIPTSCRIPT: styles[SS]
 };
 
-},{}],37:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 /**
  * This module contains general functions that can be used for building
  * different kinds of domTree nodes in a consistent manner.
@@ -6091,7 +6642,7 @@ module.exports = {
     spacingFunctions: spacingFunctions
 };
 
-},{"./domTree":42,"./fontMetrics":44,"./symbols":50,"./utils":51}],38:[function(require,module,exports){
+},{"./domTree":44,"./fontMetrics":46,"./symbols":52,"./utils":53}],40:[function(require,module,exports){
 /**
  * This file does the main work of building a domTree structure from a parse
  * tree. The entry point is the `buildHTML` function, which takes a parse tree.
@@ -7455,7 +8006,7 @@ var buildHTML = function(tree, options) {
 
 module.exports = buildHTML;
 
-},{"./ParseError":33,"./Style":36,"./buildCommon":37,"./delimiter":41,"./domTree":42,"./fontMetrics":44,"./utils":51}],39:[function(require,module,exports){
+},{"./ParseError":35,"./Style":38,"./buildCommon":39,"./delimiter":43,"./domTree":44,"./fontMetrics":46,"./utils":53}],41:[function(require,module,exports){
 /**
  * This file converts a parse tree into a cooresponding MathML tree. The main
  * entry point is the `buildMathML` function, which takes a parse tree from the
@@ -7976,7 +8527,7 @@ var buildMathML = function(tree, texExpression, options) {
 
 module.exports = buildMathML;
 
-},{"./ParseError":33,"./buildCommon":37,"./fontMetrics":44,"./mathMLTree":47,"./symbols":50,"./utils":51}],40:[function(require,module,exports){
+},{"./ParseError":35,"./buildCommon":39,"./fontMetrics":46,"./mathMLTree":49,"./symbols":52,"./utils":53}],42:[function(require,module,exports){
 var buildHTML = require("./buildHTML");
 var buildMathML = require("./buildMathML");
 var buildCommon = require("./buildCommon");
@@ -8018,7 +8569,7 @@ var buildTree = function(tree, expression, settings) {
 
 module.exports = buildTree;
 
-},{"./Options":32,"./Settings":35,"./Style":36,"./buildCommon":37,"./buildHTML":38,"./buildMathML":39}],41:[function(require,module,exports){
+},{"./Options":34,"./Settings":37,"./Style":38,"./buildCommon":39,"./buildHTML":40,"./buildMathML":41}],43:[function(require,module,exports){
 /**
  * This file deals with creating delimiters of various sizes. The TeXbook
  * discusses these routines on page 441-442, in the "Another subroutine sets box
@@ -8559,7 +9110,7 @@ module.exports = {
     leftRightDelim: makeLeftRightDelim
 };
 
-},{"./ParseError":33,"./Style":36,"./buildCommon":37,"./fontMetrics":44,"./symbols":50,"./utils":51}],42:[function(require,module,exports){
+},{"./ParseError":35,"./Style":38,"./buildCommon":39,"./fontMetrics":46,"./symbols":52,"./utils":53}],44:[function(require,module,exports){
 /**
  * These objects store the data about the DOM nodes we create, as well as some
  * extra data. They can then be transformed into real DOM nodes with the
@@ -8830,7 +9381,7 @@ module.exports = {
     symbolNode: symbolNode
 };
 
-},{"./utils":51}],43:[function(require,module,exports){
+},{"./utils":53}],45:[function(require,module,exports){
 var fontMetrics = require("./fontMetrics");
 var parseData = require("./parseData");
 var ParseError = require("./ParseError");
@@ -9010,7 +9561,7 @@ module.exports = (function() {
     return exports;
 })();
 
-},{"./ParseError":33,"./fontMetrics":44,"./parseData":48}],44:[function(require,module,exports){
+},{"./ParseError":35,"./fontMetrics":46,"./parseData":50}],46:[function(require,module,exports){
 /* jshint unused:false */
 
 var Style = require("./Style");
@@ -9147,7 +9698,7 @@ module.exports = {
     getCharacterMetrics: getCharacterMetrics
 };
 
-},{"./Style":36,"./fontMetricsData":45}],45:[function(require,module,exports){
+},{"./Style":38,"./fontMetricsData":47}],47:[function(require,module,exports){
 module.exports = {
 "AMS-Regular": {
   "65": {"depth": 0.0, "height": 0.68889, "italic": 0.0, "skew": 0.0},
@@ -10900,7 +11451,7 @@ module.exports = {
   "8242": {"depth": 0.0, "height": 0.61111, "italic": 0.0, "skew": 0.0}
 }};
 
-},{}],46:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 var utils = require("./utils");
 var ParseError = require("./ParseError");
 
@@ -11531,7 +12082,7 @@ module.exports = {
     funcs: functions
 };
 
-},{"./ParseError":33,"./utils":51}],47:[function(require,module,exports){
+},{"./ParseError":35,"./utils":53}],49:[function(require,module,exports){
 /**
  * These objects store data about MathML nodes. This is the MathML equivalent
  * of the types in domTree.js. Since MathML handles its own rendering, and
@@ -11635,7 +12186,7 @@ module.exports = {
     TextNode: TextNode
 };
 
-},{"./utils":51}],48:[function(require,module,exports){
+},{"./utils":53}],50:[function(require,module,exports){
 /**
  * The resulting parse tree nodes of the parse tree.
  */
@@ -11660,7 +12211,7 @@ module.exports = {
 };
 
 
-},{}],49:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 /**
  * Provides a single function for parsing an expression using a Parser
  * TODO(emily): Remove this
@@ -11679,7 +12230,7 @@ var parseTree = function(toParse, settings) {
 
 module.exports = parseTree;
 
-},{"./Parser":34}],50:[function(require,module,exports){
+},{"./Parser":36}],52:[function(require,module,exports){
 /**
  * This file holds a list of all no-argument functions and single-character
  * symbols (like 'a' or ';').
@@ -14266,7 +14817,7 @@ for (var i = 0; i < letters.length; i++) {
 
 module.exports = symbols;
 
-},{}],51:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 /**
  * This file contains a list of utility functions which are useful in other
  * files.
@@ -14373,7 +14924,7 @@ module.exports = {
     clearNode: clearNode
 };
 
-},{}],52:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 /** @flow */
 
 "use strict";

@@ -1,6 +1,6 @@
-import {downloadHtmlBook} from "./exporter/html"
-import {downloadLatexBook} from "./exporter/latex"
-import {downloadEpubBook} from "./exporter/epub"
+import {HtmlBookExporter} from "./exporter/html"
+import {LatexBookExporter} from "./exporter/latex"
+import {EpubBookExporter} from "./exporter/epub"
 import {BookActions} from "./actions"
 import {BookAccessRightsDialog} from "./accessrights/dialog"
 import {bookListTemplate, bookBibliographyDataTemplate} from "./templates"
@@ -103,7 +103,7 @@ export class BookList {
                                 })
                             $.addAlert('info', aBook.title + ': ' + gettext(
                                 'Epub export has been initiated.'))
-                            downloadEpubBook(aBook, that.user, that.documentList)
+                            new EpubBookExporter(aBook, that.user, that.documentList)
                         }
                         break
                     case 'latex':
@@ -114,7 +114,7 @@ export class BookList {
                                 })
                             $.addAlert('info', aBook.title + ': ' + gettext(
                                 'Latex export has been initiated.'))
-                            downloadLatexBook(aBook, that.documentList)
+                            new LatexBookExporter(aBook, that.user, that.documentList)
                         }
                         break
                     case 'html':
@@ -125,7 +125,7 @@ export class BookList {
                                 })
                             $.addAlert('info', aBook.title + ': ' + gettext(
                                 'HTML export has been initiated.'))
-                            downloadHtmlBook(aBook, that.user, that.documentList)
+                            new HTMLBookExporter(aBook, that.user, that.documentList)
                         }
                         break
                     case 'copy':

@@ -1,8 +1,8 @@
 import {savecopy} from "../../exporter/copy"
 import {downloadNative, uploadNative} from "../../exporter/native"
-import {downloadLatex} from "../../exporter/latex"
-import {downloadHtml} from "../../exporter/html"
-import {downloadEpub} from "../../exporter/epub"
+import {LatexExporter} from "../../exporter/latex"
+import {HTMLExporter} from "../../exporter/html"
+import {EpubExporter} from "../../exporter/epub"
 
 export class ModMenusActions {
     constructor(mod) {
@@ -32,7 +32,7 @@ export class ModMenusActions {
         let that = this
         that.mod.editor.getUpdates(function() {
             that.mod.editor.sendDocumentUpdate(function (){
-                downloadNative(that.mod.editor.doc, true)
+                downloadNative(that.mod.editor.doc, window.BibDB)
             })
         })
     }
@@ -41,7 +41,7 @@ export class ModMenusActions {
         let that = this
         that.mod.editor.getUpdates(function() {
               that.mod.editor.sendDocumentUpdate(function () {
-                  downloadLatex(that.mod.editor.doc, true)
+                  new LatexExporter(that.mod.editor.doc, window.BibDB)
               })
         })
     }
@@ -50,7 +50,7 @@ export class ModMenusActions {
         let that = this
         that.mod.editor.getUpdates(function() {
             that.mod.editor.sendDocumentUpdate(function () {
-                downloadEpub(that.mod.editor.doc, true)
+                new EpubExporter(that.mod.editor.doc, window.BibDB)
             })
         })
     }
@@ -59,7 +59,7 @@ export class ModMenusActions {
         let that = this
         that.mod.editor.getUpdates(function() {
             that.mod.editor.sendDocumentUpdate(function () {
-                downloadHtml(that.mod.editor.doc, true)
+                new HTMLExporter(that.mod.editor.doc, window.BibDB)
             })
         })
     }

@@ -1,6 +1,6 @@
 import {exportNative} from "./native"
 import {ImportNative} from "../importer/native"
-
+import {BibliographyDB} from "../bibliography/bibliographyDB"
 
 let afterCopy = function(noErrors, returnValue, editor, callback) {
     $.deactivateWait();
@@ -47,13 +47,13 @@ export let savecopy = function(aDocument, editor, user, callback) {
             importAsUser(aDocument, shrunkImageDB, shrunkBibDB, images, editor, user, callback)
         })
     } else {
-
-        bibliographyHelpers.getABibDB(aDocument.owner.id, function(
-            aBibDB) {
+        let bibGetter = new BibliographyDB(aDocument.owner.id, false, false, false)
+        bibGetter.getBibDB(function(
+            bibDB, bibCats) {
             usermediaHelpers.getAnImageDB(aDocument.owner.id,
                 function(anImageDB) {
                     exportNative(aDocument, anImageDB,
-                        aBibDB, function(aDocument, shrunkImageDB, shrunkBibDB, images){
+                        bibDB, function(aDocument, shrunkImageDB, shrunkBibDB, images){
                             importAsUser(aDocument, shrunkImageDB, shrunkBibDB, images, false, user, callback)
                         })
                 })

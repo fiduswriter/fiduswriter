@@ -1,9 +1,9 @@
 import {getMissingDocumentListData} from "../tools"
 import {importFidusTemplate, documentsListItemTemplate} from "./templates"
 import {savecopy} from "../../exporter/copy"
-import {downloadEpub} from "../../exporter/epub"
-import {downloadHtml} from "../../exporter/html"
-import {downloadLatex} from "../../exporter/latex"
+import {EpubExporter} from "../../exporter/epub"
+import {HTMLExporter} from "../../exporter/html"
+import {LatexExporter} from "../../exporter/latex"
 import {downloadNative} from "../../exporter/native"
 import {ImportFidusFile} from "../../importer/file"
 import {DocumentRevisionsDialog} from "../revisions/dialog"
@@ -189,7 +189,7 @@ export class DocumentOverviewActions {
         let that = this
         getMissingDocumentListData(ids, that.documentOverview.documentList, function () {
             for (let i = 0; i < ids.length; i++) {
-                downloadHtml(_.findWhere(
+                new HTMLExporter(_.findWhere(
                     that.documentOverview.documentList, {
                         id: ids[i]
                     }), false)
@@ -201,7 +201,7 @@ export class DocumentOverviewActions {
         let that = this
         getMissingDocumentListData(ids, that.documentOverview.documentList, function () {
             for (let i = 0; i < ids.length; i++) {
-                downloadLatex(_.findWhere(
+                new LatexExporter(_.findWhere(
                     that.documentOverview.documentList, {
                         id: ids[i]
                     }), false)
@@ -213,7 +213,7 @@ export class DocumentOverviewActions {
         let that = this
         getMissingDocumentListData(ids, that.documentOverview.documentList, function () {
             for (let i = 0; i < ids.length; i++) {
-                downloadEpub(_.findWhere(
+                new EpubExporter(_.findWhere(
                     that.documentOverview.documentList, {
                         id: ids[i]
                     }), false)

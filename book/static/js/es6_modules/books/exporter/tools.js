@@ -1,4 +1,5 @@
 import {getMissingDocumentListData} from "../../documents/tools"
+import {BibliographyDB} from "../../bibliography/bibliographyDB"
 
 export let getMissingChapterData = function (aBook, documentList, callback) {
     let bookDocuments = []
@@ -24,9 +25,10 @@ export let getImageAndBibDB = function (aBook, documentList, callback) {
     documentOwners = _.unique(documentOwners).join(',')
 
     usermediaHelpers.getAnImageDB(documentOwners, function (anImageDB) {
-        bibliographyHelpers.getABibDB(documentOwners, function (
-            aBibDB) {
-            callback(anImageDB, aBibDB)
+        let bibGetter = new BibliographyDB(documentOwners, false, false, false)
+        bibGetter.getBibDB(function (
+            bibDB, bibCats) {
+            callback(anImageDB, bibDB)
         })
     })
 }

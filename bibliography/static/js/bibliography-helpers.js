@@ -1202,14 +1202,14 @@
         })
     }
 
-    bibliographyHelpers.getABibDB = function(docOwnerId, callback) {
+    /*bibliographyHelpers.getABibDB = function(docOwnerId, callback) {
         let aBibDB = new BibliographyDB(docOwnerId, false, false, false)
         aBibDB.getBibDB(function(bibPks, bibCats) {
             if (callback) {
                 callback(aBibDB.bibDB)
             }
         })
-    }
+    }*/
 
     bibliographyHelpers.createBibEntry = function(bibEntryData) {
         theBibliographyDB.createBibEntry(bibEntryData, function(newBibPks) {

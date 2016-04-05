@@ -28,7 +28,7 @@ var BibliographyDB = exports.BibliographyDB = (function () {
     function BibliographyDB(docOwnerId, useLocalStorage, oldBibDB, oldBibCats) {
         _classCallCheck(this, BibliographyDB);
 
-        this.docOwnerId = docOwnerId; // theEditor.doc.owner.id || 0
+        this.docOwnerId = docOwnerId;
         this.useLocalStorage = useLocalStorage; // Whether to use local storage to cache result
         if (oldBibDB) {
             this.bibDB = oldBibDB;

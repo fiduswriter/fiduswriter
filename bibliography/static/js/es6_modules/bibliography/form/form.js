@@ -22,11 +22,12 @@ import {
 
 
 export class BibEntryForm {
-    constructor(itemId, sourceType, bibDB, bibCats, callback) {
+    constructor(itemId, sourceType, bibDB, bibCats, ownerId, callback) {
         this.itemId = itemId // The id of the bibliography item (if available).
         this.sourceType = sourceType // The id of the type of source (a book, an article, etc.).
         this.bibDB = bibDB
         this.bibCats = bibCats
+        this.ownerId = ownerId
         this.callback = callback
         this.createBibEntryDialog()
     }
@@ -274,10 +275,10 @@ export class BibEntryForm {
             'id': id,
             'entrytype': jQuery('#id_entrytype').val()
         }
-
-        if (window.hasOwnProperty('theEditor') && !(theEditor.docInfo.is_owner)) {
-            formValues['owner_id'] = theEditor.doc.owner.id
+        if (this.ownerId) {
+            formValues['owner_id'] = this.ownerId
         }
+
         jQuery('.entryForm').each(function() {
             let $this = jQuery(this)
             let the_name = $this.attr('name') || $this.attr('data-field-name')

@@ -94,7 +94,8 @@ export let bindCite = function (mod) {
         diaButtons.push({
             text: gettext('Register new source'),
             click: function() {
-                new BibEntryForm(false, false, editor.bibDB.bibDB, editor.bibDB.bibCats, function(bibEntryData){
+                new BibEntryForm(false, false, editor.bibDB.bibDB, editor.bibDB.bibCats, editor.doc.owner.id,
+                        function(bibEntryData){
                     editor.bibDB.createBibEntry(bibEntryData, function(newBibPks) {
                         editor.mod.menus.citation.appendManyToCitationDialog(newBibPks)
                         jQuery('.fw-checkable').unbind('click')

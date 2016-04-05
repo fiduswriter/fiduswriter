@@ -32,34 +32,22 @@ export let bibtableTemplate = _.template('\
         <td width="235">\
             <span class="fw-document-table-title fw-inline">\
                 <i class="icon-book"></i>\
-                <% if ( allowEdit ){ %>\
-                    <span class="edit-bib fw-link-text fw-searchable" data-id="<%- id %>" data-type="<%- type %>">\
-                        <% if (title.length>0) { %>\
-                            <%- title %>\
-                        <% } else { %>\
-                            <i>'+gettext('Untitled')+'</i>\
-                        <% } %>\
-                    </span>\
-                <% } else { %>\
-                    <span class="fw-searchable">\
-                        <% if (title.length>0) { %>\
-                            <%- title %>\
-                        <% } else { %>\
-                            <i>'+gettext('Untitled')+'</i>\
-                        <% } %>\
-                    </span>\
-                <% } %>\
+                <span class="edit-bib fw-link-text fw-searchable" data-id="<%- id %>" data-type="<%- type %>">\
+                    <% if (title.length>0) { %>\
+                        <%- title %>\
+                    <% } else { %>\
+                        <i>'+gettext('Untitled')+'</i>\
+                    <% } %>\
+                </span>\
             </span>\
         </td>\
         <td width="170" class="type"><span class="fw-inline"><%- gettext(typetitle) %></span></td>\
         <td width="175" class="author"><span class="fw-inline fw-searchable"><%- author %></span></td>\
         <td width="100" class="publised"><span class="fw-inline"><%- published %></span></td>\
         <td width="50" align="center">\
-            <% if ( allowEdit ){ %>\
-                <span class="delete-bib fw-inline fw-link-text" data-id="<%- id %>" data-title="<%= title %>">\
-                    <i class="icon-trash"></i>\
-                </span>\
-            <% } %>\
+            <span class="delete-bib fw-inline fw-link-text" data-id="<%- id %>" data-title="<%= title %>">\
+                <i class="icon-trash"></i>\
+            </span>\
         </td>\
     </tr>')
 

@@ -29,7 +29,7 @@ var BibliographyDB = exports.BibliographyDB = (function () {
     function BibliographyDB(docOwnerId, useLocalStorage, oldBibDB, oldBibCats) {
         _classCallCheck(this, BibliographyDB);
 
-        this.docOwnerId = docOwnerId; // theEditor.doc.owner.id || 0
+        this.docOwnerId = docOwnerId;
         this.useLocalStorage = useLocalStorage; // Whether to use local storage to cache result
         if (oldBibDB) {
             this.bibDB = oldBibDB;
@@ -669,13 +669,14 @@ function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.const
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var BibEntryForm = exports.BibEntryForm = (function () {
-    function BibEntryForm(itemId, sourceType, bibDB, bibCats, callback) {
+    function BibEntryForm(itemId, sourceType, bibDB, bibCats, ownerId, callback) {
         _classCallCheck(this, BibEntryForm);
 
         this.itemId = itemId; // The id of the bibliography item (if available).
         this.sourceType = sourceType; // The id of the type of source (a book, an article, etc.).
         this.bibDB = bibDB;
         this.bibCats = bibCats;
+        this.ownerId = ownerId;
         this.callback = callback;
         this.createBibEntryDialog();
     }
@@ -930,10 +931,10 @@ var BibEntryForm = exports.BibEntryForm = (function () {
                 'id': id,
                 'entrytype': jQuery('#id_entrytype').val()
             };
-
-            if (window.hasOwnProperty('theEditor') && !theEditor.docInfo.is_owner) {
-                formValues['owner_id'] = theEditor.doc.owner.id;
+            if (this.ownerId) {
+                formValues['owner_id'] = this.ownerId;
             }
+
             jQuery('.entryForm').each(function () {
                 var $this = jQuery(this);
                 var the_name = $this.attr('name') || $this.attr('data-field-name');
@@ -5241,7 +5242,7 @@ var bindCite = exports.bindCite = function bindCite(mod) {
         diaButtons.push({
             text: gettext('Register new source'),
             click: function click() {
-                new _form.BibEntryForm(false, false, editor.bibDB.bibDB, editor.bibDB.bibCats, function (bibEntryData) {
+                new _form.BibEntryForm(false, false, editor.bibDB.bibDB, editor.bibDB.bibCats, editor.doc.owner.id, function (bibEntryData) {
                     editor.bibDB.createBibEntry(bibEntryData, function (newBibPks) {
                         editor.mod.menus.citation.appendManyToCitationDialog(newBibPks);
                         jQuery('.fw-checkable').unbind('click');

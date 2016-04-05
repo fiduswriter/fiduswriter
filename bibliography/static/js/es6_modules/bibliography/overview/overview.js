@@ -131,7 +131,7 @@ export class BibliographyOverview {
         jQuery('body').append('<div id="confirmdeletion" title="' + gettext(
             'Confirm deletion') + '"><p>' + gettext(
             'Delete the bibliography item(s)') + '?</p></div>')
-        diaButtons = {}
+        let diaButtons = {}
         diaButtons[gettext('Delete')] = function () {
             that.deleteBibEntry(ids)
             jQuery(this).dialog('close')
@@ -164,7 +164,6 @@ export class BibliographyOverview {
      * @param bib_info An object with the current information about the bibliography item.
      */
     appendToBibTable(pk, bib_info) {
-        let allowEdit
         let $tr = jQuery('#Entry_' + pk)
         //reform author field
         let bibauthor = bib_info.author || bib_info.editor
@@ -187,15 +186,6 @@ export class BibliographyOverview {
         // TODO: Such entries should likely not be accepted by the importer.
         if (typeof bib_info.title === 'undefined') bib_info.title = ''
 
-        // theEditor will be undefined (on the bibliography index page).
-        // Add edit options to bibliography table if the current user either is the owner of the
-        // current document or he is accessing his bibliography manager directly.
-
-        if (typeof (theEditor) === 'undefined' || theEditor.docInfo.is_owner) {
-            allowEdit = true
-        } else {
-            allowEdit = false
-        }
 
         if (0 < $tr.size()) { //if the entry exists, update
             $tr.replaceWith(bibtableTemplate({
@@ -205,8 +195,7 @@ export class BibliographyOverview {
                 'typetitle': BibEntryTypes[bib_info.entry_type]['title'],
                 'title': bib_info.title.replace(/[{}]/g, ''),
                 'author': bibauthor,
-                'published': formatDateString(bib_info.date),
-                'allowEdit': allowEdit
+                'published': formatDateString(bib_info.date)
             }))
         } else { //if this is the new entry, append
             jQuery('#bibliography > tbody').append(bibtableTemplate({
@@ -216,8 +205,7 @@ export class BibliographyOverview {
                 'typetitle': BibEntryTypes[bib_info.entry_type]['title'],
                 'title': bib_info.title.replace(/[{}]/g, ''),
                 'author': bibauthor,
-                'published': formatDateString(bib_info.date),
-                'allowEdit': allowEdit
+                'published': formatDateString(bib_info.date)
             }))
         }
     }
@@ -293,7 +281,7 @@ export class BibliographyOverview {
         jQuery(document).on('click', '.edit-bib', function () {
             let eID = jQuery(this).attr('data-id')
             let eType = jQuery(this).attr('data-type')
-            new BibEntryForm(eID, eType, that.db.bibDB, that.db.bibCats, function(bibEntryData){
+            new BibEntryForm(eID, eType, that.db.bibDB, that.db.bibCats, false, function(bibEntryData){
                 that.createBibEntry(bibEntryData)
             })
         })

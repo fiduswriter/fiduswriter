@@ -3,7 +3,7 @@ const FW_LOCALSTORAGE_VERSION = "1.0"
 
 export class BibliographyDB {
     constructor(docOwnerId, useLocalStorage, oldBibDB, oldBibCats) {
-        this.docOwnerId = docOwnerId // theEditor.doc.owner.id || 0
+        this.docOwnerId = docOwnerId
         this.useLocalStorage = useLocalStorage // Whether to use local storage to cache result
         if (oldBibDB) {
             this.bibDB = oldBibDB

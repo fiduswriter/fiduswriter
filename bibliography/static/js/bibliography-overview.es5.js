@@ -26,7 +26,7 @@ var BibliographyDB = exports.BibliographyDB = (function () {
     function BibliographyDB(docOwnerId, useLocalStorage, oldBibDB, oldBibCats) {
         _classCallCheck(this, BibliographyDB);
 
-        this.docOwnerId = docOwnerId; // theEditor.doc.owner.id || 0
+        this.docOwnerId = docOwnerId;
         this.useLocalStorage = useLocalStorage; // Whether to use local storage to cache result
         if (oldBibDB) {
             this.bibDB = oldBibDB;
@@ -355,13 +355,14 @@ function _typeof(obj) { return obj && typeof Symbol !== "undefined" && obj.const
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var BibEntryForm = exports.BibEntryForm = (function () {
-    function BibEntryForm(itemId, sourceType, bibDB, bibCats, callback) {
+    function BibEntryForm(itemId, sourceType, bibDB, bibCats, ownerId, callback) {
         _classCallCheck(this, BibEntryForm);
 
         this.itemId = itemId; // The id of the bibliography item (if available).
         this.sourceType = sourceType; // The id of the type of source (a book, an article, etc.).
         this.bibDB = bibDB;
         this.bibCats = bibCats;
+        this.ownerId = ownerId;
         this.callback = callback;
         this.createBibEntryDialog();
     }
@@ -616,10 +617,10 @@ var BibEntryForm = exports.BibEntryForm = (function () {
                 'id': id,
                 'entrytype': jQuery('#id_entrytype').val()
             };
-
-            if (window.hasOwnProperty('theEditor') && !theEditor.docInfo.is_owner) {
-                formValues['owner_id'] = theEditor.doc.owner.id;
+            if (this.ownerId) {
+                formValues['owner_id'] = this.ownerId;
             }
+
             jQuery('.entryForm').each(function () {
                 var $this = jQuery(this);
                 var the_name = $this.attr('name') || $this.attr('data-field-name');
@@ -1290,7 +1291,7 @@ var BibliographyOverview = exports.BibliographyOverview = (function () {
         value: function deleteBibEntryDialog(ids) {
             var that = this;
             jQuery('body').append('<div id="confirmdeletion" title="' + gettext('Confirm deletion') + '"><p>' + gettext('Delete the bibliography item(s)') + '?</p></div>');
-            diaButtons = {};
+            var diaButtons = {};
             diaButtons[gettext('Delete')] = function () {
                 that.deleteBibEntry(ids);
                 jQuery(this).dialog('close');
@@ -1323,7 +1324,6 @@ var BibliographyOverview = exports.BibliographyOverview = (function () {
     }, {
         key: "appendToBibTable",
         value: function appendToBibTable(pk, bib_info) {
-            var allowEdit = undefined;
             var $tr = jQuery('#Entry_' + pk);
             //reform author field
             var bibauthor = bib_info.author || bib_info.editor;
@@ -1346,16 +1346,6 @@ var BibliographyOverview = exports.BibliographyOverview = (function () {
             // TODO: Such entries should likely not be accepted by the importer.
             if (typeof bib_info.title === 'undefined') bib_info.title = '';
 
-            // theEditor will be undefined (on the bibliography index page).
-            // Add edit options to bibliography table if the current user either is the owner of the
-            // current document or he is accessing his bibliography manager directly.
-
-            if (typeof theEditor === 'undefined' || theEditor.docInfo.is_owner) {
-                allowEdit = true;
-            } else {
-                allowEdit = false;
-            }
-
             if (0 < $tr.size()) {
                 //if the entry exists, update
                 $tr.replaceWith((0, _templates.bibtableTemplate)({
@@ -1365,8 +1355,7 @@ var BibliographyOverview = exports.BibliographyOverview = (function () {
                     'typetitle': BibEntryTypes[bib_info.entry_type]['title'],
                     'title': bib_info.title.replace(/[{}]/g, ''),
                     'author': bibauthor,
-                    'published': (0, _tools.formatDateString)(bib_info.date),
-                    'allowEdit': allowEdit
+                    'published': (0, _tools.formatDateString)(bib_info.date)
                 }));
             } else {
                 //if this is the new entry, append
@@ -1377,8 +1366,7 @@ var BibliographyOverview = exports.BibliographyOverview = (function () {
                     'typetitle': BibEntryTypes[bib_info.entry_type]['title'],
                     'title': bib_info.title.replace(/[{}]/g, ''),
                     'author': bibauthor,
-                    'published': (0, _tools.formatDateString)(bib_info.date),
-                    'allowEdit': allowEdit
+                    'published': (0, _tools.formatDateString)(bib_info.date)
                 }));
             }
         }
@@ -1465,7 +1453,7 @@ var BibliographyOverview = exports.BibliographyOverview = (function () {
             jQuery(document).on('click', '.edit-bib', function () {
                 var eID = jQuery(this).attr('data-id');
                 var eType = jQuery(this).attr('data-type');
-                new _form.BibEntryForm(eID, eType, that.db.bibDB, that.db.bibCats, function (bibEntryData) {
+                new _form.BibEntryForm(eID, eType, that.db.bibDB, that.db.bibCats, false, function (bibEntryData) {
                     that.createBibEntry(bibEntryData);
                 });
             });
@@ -1606,34 +1594,22 @@ var bibtableTemplate = exports.bibtableTemplate = _.template('\
         <td width="235">\
             <span class="fw-document-table-title fw-inline">\
                 <i class="icon-book"></i>\
-                <% if ( allowEdit ){ %>\
-                    <span class="edit-bib fw-link-text fw-searchable" data-id="<%- id %>" data-type="<%- type %>">\
-                        <% if (title.length>0) { %>\
-                            <%- title %>\
-                        <% } else { %>\
-                            <i>' + gettext('Untitled') + '</i>\
-                        <% } %>\
-                    </span>\
-                <% } else { %>\
-                    <span class="fw-searchable">\
-                        <% if (title.length>0) { %>\
-                            <%- title %>\
-                        <% } else { %>\
-                            <i>' + gettext('Untitled') + '</i>\
-                        <% } %>\
-                    </span>\
-                <% } %>\
+                <span class="edit-bib fw-link-text fw-searchable" data-id="<%- id %>" data-type="<%- type %>">\
+                    <% if (title.length>0) { %>\
+                        <%- title %>\
+                    <% } else { %>\
+                        <i>' + gettext('Untitled') + '</i>\
+                    <% } %>\
+                </span>\
             </span>\
         </td>\
         <td width="170" class="type"><span class="fw-inline"><%- gettext(typetitle) %></span></td>\
         <td width="175" class="author"><span class="fw-inline fw-searchable"><%- author %></span></td>\
         <td width="100" class="publised"><span class="fw-inline"><%- published %></span></td>\
         <td width="50" align="center">\
-            <% if ( allowEdit ){ %>\
-                <span class="delete-bib fw-inline fw-link-text" data-id="<%- id %>" data-title="<%= title %>">\
-                    <i class="icon-trash"></i>\
-                </span>\
-            <% } %>\
+            <span class="delete-bib fw-inline fw-link-text" data-id="<%- id %>" data-title="<%= title %>">\
+                <i class="icon-trash"></i>\
+            </span>\
         </td>\
     </tr>');
 

@@ -1,5 +1,5 @@
 /* This file has been automatically generated. DO NOT EDIT IT. 
- Changes will be overwritten. Edit booklist.es6.js and run ./es6-compiler.sh */
+ Changes will be overwritten. Edit booklist.es6.js and run ./es6-transpile.sh */
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 
@@ -14,7 +14,7 @@ window.theBookList = theBookList;
 },{"./es6_modules/books/booklist":6}],2:[function(require,module,exports){
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -30,7 +30,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * @param pks A list of pks of the bibliography items that are to be exported.
  */
 
-var BibLatexExporter = exports.BibLatexExporter = function () {
+var BibLatexExporter = exports.BibLatexExporter = (function () {
     function BibLatexExporter(pks, aBibDB, asZip) {
         _classCallCheck(this, BibLatexExporter);
 
@@ -207,12 +207,12 @@ var BibLatexExporter = exports.BibLatexExporter = function () {
     }]);
 
     return BibLatexExporter;
-}();
+})();
 
-},{"../../exporter/zip":27}],3:[function(require,module,exports){
+},{"../../exporter/zip":28}],3:[function(require,module,exports){
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 var _templates = require('./templates');
 
@@ -222,7 +222,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 * Helper functions to deal with the book access rights dialog.
 */
 
-var BookAccessRightsDialog = function () {
+var BookAccessRightsDialog = (function () {
     function BookAccessRightsDialog(bookIds, accessRights, callback) {
         _classCallCheck(this, BookAccessRightsDialog);
 
@@ -365,7 +365,7 @@ var BookAccessRightsDialog = function () {
     }]);
 
     return BookAccessRightsDialog;
-}();
+})();
 
 },{"./templates":4}],4:[function(require,module,exports){
 'use strict';
@@ -444,7 +444,7 @@ var bookCollaboratorsTemplate = exports.bookCollaboratorsTemplate = _.template('
 },{}],5:[function(require,module,exports){
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -455,7 +455,7 @@ var _templates = require('./templates');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var BookActions = exports.BookActions = function () {
+var BookActions = exports.BookActions = (function () {
     function BookActions(bookList) {
         _classCallCheck(this, BookActions);
 
@@ -1108,12 +1108,12 @@ var BookActions = exports.BookActions = function () {
     }]);
 
     return BookActions;
-}();
+})();
 
 },{"./templates":14}],6:[function(require,module,exports){
 "use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -1134,7 +1134,7 @@ var _templates = require("./templates");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var BookList = exports.BookList = function () {
+var BookList = exports.BookList = (function () {
     // A class that contains everything that happens on the books page.
     // It is currently not possible to initialize more thna one editor class, as it
     // contains bindings to menu items, etc. that are uniquely defined.
@@ -1273,7 +1273,7 @@ var BookList = exports.BookList = function () {
     }]);
 
     return BookList;
-}();
+})();
 
 },{"./accessrights/dialog":3,"./actions":5,"./exporter/epub":8,"./exporter/html":10,"./exporter/latex":12,"./templates":14}],7:[function(require,module,exports){
 'use strict';
@@ -1414,7 +1414,7 @@ var epubBookCopyrightTemplate = exports.epubBookCopyrightTemplate = _.template('
 </html>\
 ');
 
-},{"../../exporter/epub-templates":18}],8:[function(require,module,exports){
+},{"../../exporter/epub-templates":19}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1718,7 +1718,7 @@ var epubBookExport = function epubBookExport(aBook, anImageDB, aBibDB, user, doc
     (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools2.createSlug)(aBook.title) + '.epub', 'application/epub+zip', includeZips);
 };
 
-},{"../../citations/format":15,"../../exporter/epub":19,"../../exporter/epub-templates":18,"../../exporter/html":21,"../../exporter/json":22,"../../exporter/tools":24,"../../exporter/zip":27,"../../katex/opf-includes":28,"./epub-templates":7,"./tools":13,"katex":29}],9:[function(require,module,exports){
+},{"../../citations/format":16,"../../exporter/epub":20,"../../exporter/epub-templates":19,"../../exporter/html":22,"../../exporter/json":23,"../../exporter/tools":25,"../../exporter/zip":28,"../../katex/opf-includes":29,"./epub-templates":7,"./tools":13,"katex":30}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1975,7 +1975,7 @@ var htmlBookExport = function htmlBookExport(aBook, anImageDB, aBibDB, user, doc
     (0, _zip.zipFileCreator)(outputList, images, (0, _tools2.createSlug)(aBook.title) + '.html.zip', false, includeZips);
 };
 
-},{"../../citations/format":15,"../../exporter/epub":19,"../../exporter/html":21,"../../exporter/json":22,"../../exporter/tools":24,"../../exporter/zip":27,"./html-templates":9,"./tools":13,"katex":29}],11:[function(require,module,exports){
+},{"../../citations/format":16,"../../exporter/epub":20,"../../exporter/html":22,"../../exporter/json":23,"../../exporter/tools":25,"../../exporter/zip":28,"./html-templates":9,"./tools":13,"katex":30}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2090,7 +2090,7 @@ var latexBookExport = function latexBookExport(aBook, anImageDB, aBibDB, documen
     (0, _zip.zipFileCreator)(outputList, images, (0, _tools2.createSlug)(aBook.title) + '.latex.zip');
 };
 
-},{"../../bibliography/exporter/biblatex":2,"../../exporter/json":22,"../../exporter/latex":23,"../../exporter/tools":24,"../../exporter/zip":27,"./latex-templates":11,"./tools":13}],13:[function(require,module,exports){
+},{"../../bibliography/exporter/biblatex":2,"../../exporter/json":23,"../../exporter/latex":24,"../../exporter/tools":25,"../../exporter/zip":28,"./latex-templates":11,"./tools":13}],13:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2149,7 +2149,7 @@ var uniqueObjects = exports.uniqueObjects = function uniqueObjects(array) {
     return results;
 };
 
-},{"../../documents/tools":16}],14:[function(require,module,exports){
+},{"../../documents/tools":17}],14:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2510,15 +2510,65 @@ var bookChapterDialogTemplate = exports.bookChapterDialogTemplate = _.template('
     ');
 
 },{}],15:[function(require,module,exports){
-'use strict';
+"use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/* Connects Fidus Writer citation system with citeproc */
+
+var citeprocSys = exports.citeprocSys = (function () {
+    function citeprocSys() {
+        _classCallCheck(this, citeprocSys);
+
+        this.abbreviations = {
+            "default": {}
+        };
+        this.abbrevsname = "default";
+    }
+
+    _createClass(citeprocSys, [{
+        key: "retrieveItem",
+        value: function retrieveItem(id) {
+            return CSLDB[id];
+        }
+    }, {
+        key: "retrieveLocale",
+        value: function retrieveLocale(lang) {
+            return citeproc.locals[lang];
+        }
+    }, {
+        key: "getAbbreviation",
+        value: function getAbbreviation(dummy, obj, jurisdiction, vartype, key) {
+            try {
+                if (this.abbreviations[this.abbrevsname][vartype][key]) {
+                    obj["default"][vartype][key] = this.abbreviations[this.abbrevsname][vartype][key];
+                } else {
+                    obj["default"][vartype][key] = "";
+                }
+            } catch (e) {
+                // There is breakage here that needs investigating.
+            }
+        }
+    }]);
+
+    return citeprocSys;
+})();
+
+},{}],16:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.formatCitations = undefined;
+
+var _citeprocSys = require('./citeproc-sys');
 
 /**
  * Functions to display citations and the bibliography.
@@ -2608,7 +2658,7 @@ var formatCitations = exports.formatCitations = function formatCitations(content
     //return bibliographyHTML.replace(/<\/div>/g, '</p>')
 };
 
-var citeprocSys = function () {
+var citeprocSys = (function () {
     function citeprocSys() {
         _classCallCheck(this, citeprocSys);
 
@@ -2644,7 +2694,7 @@ var citeprocSys = function () {
     }]);
 
     return citeprocSys;
-}();
+})();
 
 var getFormattedCitations = function getFormattedCitations(citations, citationStyle, citationFormats, aBibDB) {
     bibliographyHelpers.setCSLDB(aBibDB);
@@ -2658,7 +2708,7 @@ var getFormattedCitations = function getFormattedCitations(citations, citationSt
         }
     }
 
-    var citeprocInstance = new CSL.Engine(new citeprocSys(), citationStyle.definition);
+    var citeprocInstance = new CSL.Engine(new _citeprocSys.citeprocSys(), citationStyle.definition);
 
     var inText = citeprocInstance.cslXml.className === 'in-text';
 
@@ -2764,7 +2814,7 @@ var yearFromDateString = function yearFromDateString(dateString) {
     }
 };
 
-},{}],16:[function(require,module,exports){
+},{"./citeproc-sys":15}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2813,7 +2863,7 @@ var getMissingDocumentListData = exports.getMissingDocumentListData = function g
     }
 };
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2834,7 +2884,7 @@ var downloadFile = exports.downloadFile = function downloadFile(zipFilename, blo
     fakeDownloadLink.dispatchEvent(clickEvent);
 };
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2956,7 +3006,7 @@ var navItemTemplate = exports.navItemTemplate = _.template('\t\t\t\t<li><a href=
     <% } %>\
 </li>\n');
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3252,7 +3302,7 @@ var orderLinks = exports.orderLinks = function orderLinks(contentItems) {
     return contentItems;
 };
 
-},{"../katex/opf-includes":28,"./epub-templates":18,"./html":21,"./json":22,"./tools":24,"./zip":27,"katex":29}],20:[function(require,module,exports){
+},{"../katex/opf-includes":29,"./epub-templates":19,"./html":22,"./json":23,"./tools":25,"./zip":28,"katex":30}],21:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3271,7 +3321,7 @@ var htmlExportTemplate = exports.htmlExportTemplate = _.template('<!DOCTYPE html
         <% } %>\
         <%= contents %></body></html>');
 
-},{}],21:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3513,7 +3563,7 @@ var replaceImgSrc = exports.replaceImgSrc = function replaceImgSrc(htmlString) {
     return htmlString;
 };
 
-},{"../citations/format":15,"./html-templates":20,"./json":22,"./tools":24,"./zip":27,"katex":29}],22:[function(require,module,exports){
+},{"../citations/format":16,"./html-templates":21,"./json":23,"./tools":25,"./zip":28,"katex":30}],23:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3590,7 +3640,7 @@ var node2Obj = exports.node2Obj = function node2Obj(node) {
     return obj;
 };
 
-},{}],23:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3998,7 +4048,7 @@ var export1 = function export1(aDocument, aBibDB) {
     (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools.createSlug)(title) + '.latex.zip');
 };
 
-},{"../bibliography/exporter/biblatex":2,"./html":21,"./json":22,"./tools":24,"./zip":27}],24:[function(require,module,exports){
+},{"../bibliography/exporter/biblatex":2,"./html":22,"./json":23,"./tools":25,"./zip":28}],25:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4043,7 +4093,7 @@ var findImages = exports.findImages = function findImages(htmlCode) {
     return images;
 };
 
-},{}],25:[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4053,7 +4103,7 @@ Object.defineProperty(exports, "__esModule", {
 var revisionDialogTemplate = exports.revisionDialogTemplate = _.template('\
 <div title="' + gettext('Revision description') + '"><p><input type="text" class="revision-note" placeholder="' + gettext('Description (optional)') + '"></p></div>');
 
-},{}],26:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4114,7 +4164,7 @@ var uploadFile = exports.uploadFile = function uploadFile(zipFilename, blob, edi
     });
 };
 
-},{"./upload-templates":25}],27:[function(require,module,exports){
+},{"./upload-templates":26}],28:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4237,16 +4287,16 @@ var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles,
     }
 };
 
-},{"./download":17,"./upload":26}],28:[function(require,module,exports){
+},{"./download":18,"./upload":27}],29:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 // This file is auto-generated. CHANGES WILL BE OVERWRITTEN! Re-generate by running ./manage.py bundle_katex.
-var katexOpfIncludes = exports.katexOpfIncludes = "\n<item id=\"katex-0\" href=\"katex.min.css\" media-type=\"text/css\" />\n<item id=\"katex-1\" href=\"fonts/KaTeX_Size1-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-2\" href=\"fonts/KaTeX_Fraktur-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-3\" href=\"fonts/KaTeX_SansSerif-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-4\" href=\"fonts/KaTeX_Size3-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-5\" href=\"fonts/KaTeX_Math-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-6\" href=\"fonts/KaTeX_Typewriter-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-7\" href=\"fonts/KaTeX_Script-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-8\" href=\"fonts/KaTeX_Size1-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-9\" href=\"fonts/KaTeX_Fraktur-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-10\" href=\"fonts/KaTeX_Fraktur-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-11\" href=\"fonts/KaTeX_Fraktur-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-12\" href=\"fonts/KaTeX_Size2-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-13\" href=\"fonts/KaTeX_AMS-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-14\" href=\"fonts/KaTeX_Main-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-15\" href=\"fonts/KaTeX_Main-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-16\" href=\"fonts/KaTeX_SansSerif-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-17\" href=\"fonts/KaTeX_Size4-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-18\" href=\"fonts/KaTeX_Math-BoldItalic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-19\" href=\"fonts/KaTeX_Main-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-20\" href=\"fonts/KaTeX_Math-BoldItalic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-21\" href=\"fonts/KaTeX_Caligraphic-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-22\" href=\"fonts/KaTeX_Math-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-23\" href=\"fonts/KaTeX_Size3-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-24\" href=\"fonts/KaTeX_SansSerif-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-25\" href=\"fonts/KaTeX_Math-BoldItalic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-26\" href=\"fonts/KaTeX_SansSerif-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-27\" href=\"fonts/KaTeX_Caligraphic-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-28\" href=\"fonts/KaTeX_Typewriter-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-29\" href=\"fonts/KaTeX_Math-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-30\" href=\"fonts/KaTeX_Size3-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-31\" href=\"fonts/KaTeX_SansSerif-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-32\" href=\"fonts/KaTeX_Caligraphic-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-33\" href=\"fonts/KaTeX_Math-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-34\" href=\"fonts/KaTeX_Math-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-35\" href=\"fonts/KaTeX_Fraktur-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-36\" href=\"fonts/KaTeX_Size1-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-37\" href=\"fonts/KaTeX_AMS-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-38\" href=\"fonts/KaTeX_Caligraphic-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-39\" href=\"fonts/KaTeX_Size4-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-40\" href=\"fonts/KaTeX_Size4-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-41\" href=\"fonts/KaTeX_Caligraphic-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-42\" href=\"fonts/KaTeX_Size1-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-43\" href=\"fonts/KaTeX_Math-BoldItalic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-44\" href=\"fonts/KaTeX_Main-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-45\" href=\"fonts/KaTeX_AMS-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-46\" href=\"fonts/KaTeX_Typewriter-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-47\" href=\"fonts/KaTeX_Caligraphic-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-48\" href=\"fonts/KaTeX_SansSerif-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-49\" href=\"fonts/KaTeX_SansSerif-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-50\" href=\"fonts/KaTeX_Size2-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-51\" href=\"fonts/KaTeX_Script-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-52\" href=\"fonts/KaTeX_SansSerif-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-53\" href=\"fonts/KaTeX_Main-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-54\" href=\"fonts/KaTeX_Math-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-55\" href=\"fonts/KaTeX_Caligraphic-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-56\" href=\"fonts/KaTeX_Fraktur-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-57\" href=\"fonts/KaTeX_Fraktur-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-58\" href=\"fonts/KaTeX_Main-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-59\" href=\"fonts/KaTeX_Main-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-60\" href=\"fonts/KaTeX_SansSerif-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-61\" href=\"fonts/KaTeX_Main-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-62\" href=\"fonts/KaTeX_Math-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-63\" href=\"fonts/KaTeX_Caligraphic-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-64\" href=\"fonts/KaTeX_Fraktur-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-65\" href=\"fonts/KaTeX_Script-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-66\" href=\"fonts/KaTeX_SansSerif-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-67\" href=\"fonts/KaTeX_Main-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-68\" href=\"fonts/KaTeX_SansSerif-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-69\" href=\"fonts/KaTeX_Main-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-70\" href=\"fonts/KaTeX_Main-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-71\" href=\"fonts/KaTeX_Main-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-72\" href=\"fonts/KaTeX_Size2-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-73\" href=\"fonts/KaTeX_Size2-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-74\" href=\"fonts/KaTeX_Math-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-75\" href=\"fonts/KaTeX_Size4-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-76\" href=\"fonts/KaTeX_Size3-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-77\" href=\"fonts/KaTeX_Script-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-78\" href=\"fonts/KaTeX_Typewriter-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-79\" href=\"fonts/KaTeX_SansSerif-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-80\" href=\"fonts/KaTeX_AMS-Regular.woff2\" media-type=\"application/octet-stream\" />\n";
+var katexOpfIncludes = exports.katexOpfIncludes = "\n<item id=\"katex-0\" href=\"katex.min.css\" media-type=\"text/plain\" />\n<item id=\"katex-1\" href=\"fonts/KaTeX_Typewriter-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-2\" href=\"fonts/KaTeX_Main-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-3\" href=\"fonts/KaTeX_Fraktur-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-4\" href=\"fonts/KaTeX_SansSerif-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-5\" href=\"fonts/KaTeX_Main-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-6\" href=\"fonts/KaTeX_Main-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-7\" href=\"fonts/KaTeX_SansSerif-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-8\" href=\"fonts/KaTeX_AMS-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-9\" href=\"fonts/KaTeX_Caligraphic-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-10\" href=\"fonts/KaTeX_Size4-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-11\" href=\"fonts/KaTeX_Math-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-12\" href=\"fonts/KaTeX_Size1-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-13\" href=\"fonts/KaTeX_Math-BoldItalic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-14\" href=\"fonts/KaTeX_Script-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-15\" href=\"fonts/KaTeX_Main-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-16\" href=\"fonts/KaTeX_Math-BoldItalic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-17\" href=\"fonts/KaTeX_Fraktur-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-18\" href=\"fonts/KaTeX_Main-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-19\" href=\"fonts/KaTeX_Size1-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-20\" href=\"fonts/KaTeX_SansSerif-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-21\" href=\"fonts/KaTeX_Math-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-22\" href=\"fonts/KaTeX_Fraktur-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-23\" href=\"fonts/KaTeX_Script-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-24\" href=\"fonts/KaTeX_Fraktur-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-25\" href=\"fonts/KaTeX_Main-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-26\" href=\"fonts/KaTeX_Size1-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-27\" href=\"fonts/KaTeX_Size3-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-28\" href=\"fonts/KaTeX_SansSerif-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-29\" href=\"fonts/KaTeX_Script-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-30\" href=\"fonts/KaTeX_Main-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-31\" href=\"fonts/KaTeX_Math-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-32\" href=\"fonts/KaTeX_Main-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-33\" href=\"fonts/KaTeX_Typewriter-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-34\" href=\"fonts/KaTeX_Math-BoldItalic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-35\" href=\"fonts/KaTeX_AMS-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-36\" href=\"fonts/KaTeX_Size2-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-37\" href=\"fonts/KaTeX_Caligraphic-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-38\" href=\"fonts/KaTeX_Fraktur-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-39\" href=\"fonts/KaTeX_Typewriter-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-40\" href=\"fonts/KaTeX_Math-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-41\" href=\"fonts/KaTeX_SansSerif-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-42\" href=\"fonts/KaTeX_Script-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-43\" href=\"fonts/KaTeX_Caligraphic-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-44\" href=\"fonts/KaTeX_SansSerif-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-45\" href=\"fonts/KaTeX_AMS-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-46\" href=\"fonts/KaTeX_Caligraphic-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-47\" href=\"fonts/KaTeX_Fraktur-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-48\" href=\"fonts/KaTeX_Main-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-49\" href=\"fonts/KaTeX_SansSerif-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-50\" href=\"fonts/KaTeX_Size4-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-51\" href=\"fonts/KaTeX_Math-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-52\" href=\"fonts/KaTeX_SansSerif-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-53\" href=\"fonts/KaTeX_Size2-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-54\" href=\"fonts/KaTeX_Fraktur-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-55\" href=\"fonts/KaTeX_Size2-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-56\" href=\"fonts/KaTeX_SansSerif-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-57\" href=\"fonts/KaTeX_AMS-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-58\" href=\"fonts/KaTeX_Math-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-59\" href=\"fonts/KaTeX_SansSerif-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-60\" href=\"fonts/KaTeX_Main-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-61\" href=\"fonts/KaTeX_Typewriter-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-62\" href=\"fonts/KaTeX_Size3-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-63\" href=\"fonts/KaTeX_Main-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-64\" href=\"fonts/KaTeX_Caligraphic-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-65\" href=\"fonts/KaTeX_SansSerif-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-66\" href=\"fonts/KaTeX_Caligraphic-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-67\" href=\"fonts/KaTeX_Size4-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-68\" href=\"fonts/KaTeX_Main-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-69\" href=\"fonts/KaTeX_Math-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-70\" href=\"fonts/KaTeX_Size3-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-71\" href=\"fonts/KaTeX_Fraktur-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-72\" href=\"fonts/KaTeX_Caligraphic-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-73\" href=\"fonts/KaTeX_Size2-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-74\" href=\"fonts/KaTeX_Size1-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-75\" href=\"fonts/KaTeX_SansSerif-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-76\" href=\"fonts/KaTeX_Size4-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-77\" href=\"fonts/KaTeX_Size3-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-78\" href=\"fonts/KaTeX_Caligraphic-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-79\" href=\"fonts/KaTeX_Math-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-80\" href=\"fonts/KaTeX_Math-BoldItalic.woff\" media-type=\"application/octet-stream\" />\n";
 
-},{}],29:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 /**
  * This is the main entry point for KaTeX. Here, we expose functions for
  * rendering expressions either to DOM nodes or to markup strings.
@@ -4321,50 +4371,7 @@ module.exports = {
     ParseError: ParseError
 };
 
-},{"./src/ParseError":33,"./src/Settings":35,"./src/buildTree":40,"./src/parseTree":49,"./src/utils":51}],30:[function(require,module,exports){
-/** @flow */
-
-"use strict";
-
-function getRelocatable(re) {
-  // In the future, this could use a WeakMap instead of an expando.
-  if (!re.__matchAtRelocatable) {
-    // Disjunctions are the lowest-precedence operator, so we can make any
-    // pattern match the empty string by appending `|()` to it:
-    // https://people.mozilla.org/~jorendorff/es6-draft.html#sec-patterns
-    var source = re.source + "|()";
-
-    // We always make the new regex global.
-    var flags = "g" + (re.ignoreCase ? "i" : "") + (re.multiline ? "m" : "") + (re.unicode ? "u" : "")
-    // sticky (/.../y) doesn't make sense in conjunction with our relocation
-    // logic, so we ignore it here.
-    ;
-
-    re.__matchAtRelocatable = new RegExp(source, flags);
-  }
-  return re.__matchAtRelocatable;
-}
-
-function matchAt(re, str, pos) {
-  if (re.global || re.sticky) {
-    throw new Error("matchAt(...): Only non-global regexes are supported");
-  }
-  var reloc = getRelocatable(re);
-  reloc.lastIndex = pos;
-  var match = reloc.exec(str);
-  // Last capturing group is our sentinel that indicates whether the regex
-  // matched at the given location.
-  if (match[match.length - 1] == null) {
-    // Original regex matched.
-    match.length = match.length - 1;
-    return match;
-  } else {
-    return null;
-  }
-}
-
-module.exports = matchAt;
-},{}],31:[function(require,module,exports){
+},{"./src/ParseError":32,"./src/Settings":34,"./src/buildTree":39,"./src/parseTree":48,"./src/utils":50}],30:[function(require,module,exports){
 /**
  * The Lexer class handles tokenizing the input in various ways. Since our
  * parser expects us to be able to backtrack, the lexer allows lexing from any
@@ -4560,7 +4567,7 @@ Lexer.prototype.lex = function(pos, mode) {
 
 module.exports = Lexer;
 
-},{"./ParseError":33,"match-at":30}],32:[function(require,module,exports){
+},{"./ParseError":32,"match-at":51}],31:[function(require,module,exports){
 /**
  * This file contains information about the options that the Parser carries
  * around with it while parsing. Data is held in an `Options` object, and when
@@ -14404,4 +14411,47 @@ module.exports = {
     clearNode: clearNode
 };
 
+},{}],51:[function(require,module,exports){
+/** @flow */
+
+"use strict";
+
+function getRelocatable(re) {
+  // In the future, this could use a WeakMap instead of an expando.
+  if (!re.__matchAtRelocatable) {
+    // Disjunctions are the lowest-precedence operator, so we can make any
+    // pattern match the empty string by appending `|()` to it:
+    // https://people.mozilla.org/~jorendorff/es6-draft.html#sec-patterns
+    var source = re.source + "|()";
+
+    // We always make the new regex global.
+    var flags = "g" + (re.ignoreCase ? "i" : "") + (re.multiline ? "m" : "") + (re.unicode ? "u" : "")
+    // sticky (/.../y) doesn't make sense in conjunction with our relocation
+    // logic, so we ignore it here.
+    ;
+
+    re.__matchAtRelocatable = new RegExp(source, flags);
+  }
+  return re.__matchAtRelocatable;
+}
+
+function matchAt(re, str, pos) {
+  if (re.global || re.sticky) {
+    throw new Error("matchAt(...): Only non-global regexes are supported");
+  }
+  var reloc = getRelocatable(re);
+  reloc.lastIndex = pos;
+  var match = reloc.exec(str);
+  // Last capturing group is our sentinel that indicates whether the regex
+  // matched at the given location.
+  if (match[match.length - 1] == null) {
+    // Original regex matched.
+    match.length = match.length - 1;
+    return match;
+  } else {
+    return null;
+  }
+}
+
+module.exports = matchAt;
 },{}]},{},[1]);

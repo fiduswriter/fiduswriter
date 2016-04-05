@@ -18,7 +18,7 @@ export let bindCite = function (mod) {
             cited_pages,
             diaButtons = [],
             submit_button_text,
-            node = editor.pm.selection.node
+            node = editor.currentPm.selection.node
 
 
         if (node && node.type && node.type.name==='citation') {
@@ -63,7 +63,7 @@ export let bindCite = function (mod) {
                 return true
             }
 
-            editor.pm.execCommand('citation:insert', [bibFormat, bibEntry, bibBefore, bibPage])
+            editor.currentPm.execCommand('citation:insert', [bibFormat, bibEntry, bibBefore, bibPage])
             return true
         }
 
@@ -100,7 +100,7 @@ export let bindCite = function (mod) {
             diaButtons.push({
                 text: gettext('Remove'),
                 click: function() {
-                    editor.pm.execCommand('deleteSelection')
+                    editor.currentPm.execCommand('deleteSelection')
                     dialog.dialog('close')
                 },
                 class: 'fw-button fw-orange'

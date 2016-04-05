@@ -1,8 +1,10 @@
+import {citeprocSys} from "./citeproc-sys"
+
 /**
  * Functions to display citations and the bibliography.
  */
 
- export let formatCitations = function(contentElement, citationstyle, aBibDB) {
+export let formatCitations = function(contentElement, citationstyle, aBibDB) {
      let bibliographyHTML = '',
          allCitations = jQuery(contentElement).find('.citation'),
          listedWorksCounter = 0,
@@ -87,34 +89,6 @@
  }
 
 
-class citeprocSys {
-    constructor() {
-        this.abbreviations = {
-            "default": {}
-        }
-        this.abbrevsname = "default"
-    }
-
-    retrieveItem(id) {
-        return CSLDB[id]
-    }
-
-    retrieveLocale(lang) {
-        return citeproc.locals[lang]
-    }
-
-    getAbbreviation(dummy, obj, jurisdiction, vartype, key) {
-        try {
-            if (this.abbreviations[this.abbrevsname][vartype][key]) {
-                obj["default"][vartype][key] = this.abbreviations[this.abbrevsname][vartype][key]
-            } else {
-                obj["default"][vartype][key] = ""
-            }
-        } catch (e) {
-            // There is breakage here that needs investigating.
-        }
-    }
-}
 
 
 let getFormattedCitations = function (citations, citationStyle, citationFormats, aBibDB) {

@@ -3,20 +3,19 @@ import {ProseMirror} from "prosemirror/dist/edit/main"
 import {fromDOM} from "prosemirror/dist/format"
 import {serializeTo} from "prosemirror/dist/format"
 import "prosemirror/dist/collab"
-import {UpdateScheduler} from "prosemirror/dist/ui/update"
+import {scheduleDOMUpdate} from "prosemirror/dist/ui/update"
 //import "prosemirror/dist/menu/menubar"
 
 import {fidusSchema} from "./schema"
-import {updateUI} from "./update-ui"
 import {ModComments} from "./comments/mod"
 import {ModFootnotes} from "./footnotes/mod"
+import {ModCitations} from "./citations/mod"
 import {ModCollab} from "./collab/mod"
 import {ModTools} from "./tools/mod"
 import {ModSettings} from "./settings/mod"
 import {ModMenus} from "./menus/mod"
 import {ModServerCommunications} from "./server-communications"
 import {ModNodeConvert} from "./node-convert"
-import {formatCitations} from "../citations/format"
 import {node2Obj, obj2Node} from "../exporter/json"
 
 export class Editor {
@@ -62,18 +61,17 @@ export class Editor {
     startEditor() {
         let that = this
         this.pm = this.makeEditor(document.getElementById('document-editable'))
+        this.currentPm = this.pm // The editor that is currently being edited in -- main or footnote editor 
         new ModFootnotes(this)
+        new ModCitations(this)
         new ModMenus(this)
         new ModCollab(this)
         new ModTools(this)
-        new UpdateScheduler(this.pm, "selectionChange change activeMarkChange blur focus setDoc", function() {
-            updateUI(that)
-        })
+        new ModComments(this)
         this.pm.on("change", function(){that.docInfo.changed = true})
         this.pm.on("filterTransform", (transform) => {return that.onFilterTransform(transform)})
         this.pm.on("transform", (transform, options) => {that.onTransform(transform, true)})
         this.pm.mod.collab.on("collabTransform", (transform, options) => {that.onTransform(transform, false)})
-        new UpdateScheduler(this.pm, "change setDoc", () => {that.layoutCitations()})
         this.setSaveTimers()
     }
 
@@ -113,6 +111,16 @@ export class Editor {
         })
         pm.editor = this
         return pm
+    }
+
+    testingReturns() {
+        console.log('this is the first')
+        return function () {
+            console.log('this is the second')
+            return function () {
+                console.log('this is the third')
+            }
+        }
     }
 
     createDoc(aDocument) {
@@ -164,7 +172,7 @@ export class Editor {
             this.mod.collab.docChanges.applyDiff(diff)
         }
         this.doc.hash = this.getHash()
-        new ModComments(this, this.doc.comment_version)
+        this.mod.comments.store.setVersion(this.doc.comment_version)
         this.pm.mod.collab.on("mustSend", function() {
             that.mod.collab.docChanges.sendToCollaborators()
         })
@@ -191,23 +199,12 @@ export class Editor {
         })
     }
 
-    layoutCitations() {
-        let emptyCitations = document.querySelectorAll('#document-editable span.citation:empty')
-        if (emptyCitations.length > 0) {
-            let bibliographyHTML = formatCitations(
-                document.getElementById('document-editable'), // TODO: Should we point this to somewhere else?
-                this.doc.settings.citationstyle,
-                window.BibDB
-            )
-            document.getElementById('document-bibliography').innerHTML = bibliographyHTML
-        }
 
-    }
 
     enableUI() {
         bibliographyHelpers.initiate()
 
-        this.layoutCitations()
+        this.mod.citations.layoutCitations()
 
         jQuery('.savecopy, .download, .latex, .epub, .html, .print, .style, \
       .citationstyle, .tools-item, .papersize, .metadata-menu-item, \
@@ -363,16 +360,23 @@ export class Editor {
 
     // Things to be executed on every editor transform.
     onTransform(transform, local) {
-        let updateBibliography = false, updateTitle = false, that = this
+        let updateBibliography = false, updateTitle = false, commentIds = [], that = this
             // Check what area is affected
         transform.steps.forEach(function(step, index) {
             if (step.type === 'replace') {
                 if (step.from.cmp(step.to) !== 0) {
-                    transform.docs[index].inlineNodesBetween(step.from, step.to, function(node) {
+                    transform.docs[index].nodesBetween(step.from, step.to, function(node, path) {
                         if (node.type.name === 'citation') {
                             // A citation was replaced
                             updateBibliography = true
                         }
+                        if (local) {
+                            let commentId = that.mod.comments.layout.findCommentId(node)
+                            if (commentId !== false && commentIds.indexOf(commentId)===-1) {
+                                commentIds.push(commentId)
+                            }
+                        }
+
                     })
                 }
 
@@ -384,10 +388,7 @@ export class Editor {
 
         if (updateBibliography) {
             // Recreate the bibliography on next flush.
-            let formatCitations = new UpdateScheduler(this.pm, "flush", function() {
-                formatCitations.detach()
-                this.layoutCitations()
-            })
+            scheduleDOMUpdate(this.pm, () => {return that.mod.citations.resetCitations()})
         }
 
         if (updateTitle) {
@@ -400,6 +401,12 @@ export class Editor {
                     this.docInfo.titleChanged = true
                 }
             }
+        }
+        if (local && commentIds.length > 0) {
+            // Check if the deleted comment referrers still are somewhere else in the doc.
+            // If not, delete them.
+            // TODO: Is a timeout/scheduleDOMUpdate really needed here?
+            scheduleDOMUpdate(this.pm, () => {return that.mod.comments.store.checkAndDelete(commentIds)})
         }
 
     }

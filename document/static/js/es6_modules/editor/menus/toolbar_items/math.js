@@ -1,4 +1,5 @@
 import {mathDialogTemplate} from "./templates"
+import {FormulaEditor} from '../../tools/formula-editor'
 
 export let bindMath = function (editor) {
 
@@ -64,7 +65,6 @@ export let bindMath = function (editor) {
 
         dialog = jQuery(mathDialogTemplate({equation:equation}))
 
-
         dialog.dialog({
             buttons: dialogButtons,
             title: gettext('Latex equation'),
@@ -74,5 +74,6 @@ export let bindMath = function (editor) {
             }
         })
 
+        let mathQuill = new FormulaEditor($(dialog).children("span")[0])
     })
 }

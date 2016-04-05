@@ -7,19 +7,19 @@ export class ModMenusCitation {
         this.mod = mod
     }
 
-    appendToCitationDialog(pk, bib_info) {
+    appendToCitationDialog(pk, bibInfo) {
         // If neither author nor editor were registered, use an empty string instead of nothing.
         // TODO: Such entries should likely not be accepted by the importer.
-        let bibauthor = bib_info.editor || bib_info.author || ''
+        let bibauthor = bibInfo.editor || bibInfo.author || ''
 
         // If title is undefined, set it to an empty string.
         // TODO: Such entries should likely not be accepted by the importer.
-        if (typeof bib_info.title === 'undefined') bib_info.title = ''
+        if (typeof bibInfo.title === 'undefined') bibInfo.title = ''
 
         let citeItemData = {
             'id': pk,
-            'type': bib_info.entry_type,
-            'title': bib_info.title.replace(/[{}]/g, ''),
+            'type': bibInfo.entry_type,
+            'title': bibInfo.title.replace(/[{}]/g, ''),
             'author': bibauthor.replace(/[{}]/g, '')
         }
 
@@ -27,6 +27,15 @@ export class ModMenusCitation {
         jQuery('#cite-source-table').trigger('update')
         this.appendToCitedItems([citeItemData])
     }
+
+    appendManyToCitationDialog(pks) {
+        for (let i = 0; i < pks.length; i++) {
+            this.appendToCitationDialog(pks[i], this.mod.editor.bibDB[pks[i]])
+        }
+        jQuery('#cite-source-table').trigger('update')
+    }
+
+
 
     appendToCitedItems(books) {
         let len = books.length

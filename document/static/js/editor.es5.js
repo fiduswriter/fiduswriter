@@ -2869,10 +2869,8 @@ var Editor = exports.Editor = (function () {
                     // Don't get the bibliography again if we already have it.
                     var bibGetter = new BibliographyDB(userId, true, false, false);
                     bibGetter.getBibDB(function (bibPks, bibCats) {
-                        that.bibDB = bibGetter.bibDB; // We only need the bibDB...
-                        that.bibCats = bibGetter.bibCats; // ...and the bib categories.
-                        bibliographyHelpers.addBibCategoryList(bibCats); // TODO: We need to be able to reset these!
-                        bibliographyHelpers.addBibList(bibPks, that.bibDB);
+                        that.bibDB = bibGetter.bibDB; // We only need the bibDB.
+                        that.mod.menus.citation.appendManyToCitationDialog(bibPks); // TODO: We need to be able to reset these!
                         that.mod.citations.layoutCitations();
                         jQuery(document).trigger("bibliography_ready"); // TODO: get rid of this
                         if (callback) {
@@ -3696,7 +3694,7 @@ var ModMenusActions = exports.ModMenusActions = (function () {
                         (0, _copy.savecopy)(that.mod.editor.doc, that.mod.editor.bibDB, that.mod.editor.imageDB, that.mod.editor.bibDB, that.mod.editor.imageDB, that.mod.editor.user, function (doc, docInfo, newBibEntries) {
                             that.mod.editor.doc = doc;
                             that.mod.editor.docInfo = docInfo;
-                            bibliographyHelpers.addBibList(newBibEntries, that.mod.editor.bibDB);
+                            that.mod.citation.appendManyToCitationDialog(newBibEntries);
                             window.history.pushState("", "", "/document/" + that.mod.editor.doc.id + "/");
                         });
                     } else {
@@ -3718,7 +3716,7 @@ var ModMenusActions = exports.ModMenusActions = (function () {
                                         } else {
                                             that.mod.editor.doc = doc;
                                             that.mod.editor.docInfo = docInfo;
-                                            bibliographyHelpers.addBibList(newBibEntries, that.mod.editor.bibDB);
+                                            that.mod.citation.appendManyToCitationDialog(newBibEntries);
                                             window.history.pushState("", "", "/document/" + that.mod.editor.doc.id + "/");
                                         }
                                     });
@@ -3825,25 +3823,33 @@ var ModMenusCitation = exports.ModMenusCitation = (function () {
 
     _createClass(ModMenusCitation, [{
         key: 'appendToCitationDialog',
-        value: function appendToCitationDialog(pk, bib_info) {
+        value: function appendToCitationDialog(pk, bibInfo) {
             // If neither author nor editor were registered, use an empty string instead of nothing.
             // TODO: Such entries should likely not be accepted by the importer.
-            var bibauthor = bib_info.editor || bib_info.author || '';
+            var bibauthor = bibInfo.editor || bibInfo.author || '';
 
             // If title is undefined, set it to an empty string.
             // TODO: Such entries should likely not be accepted by the importer.
-            if (typeof bib_info.title === 'undefined') bib_info.title = '';
+            if (typeof bibInfo.title === 'undefined') bibInfo.title = '';
 
             var citeItemData = {
                 'id': pk,
-                'type': bib_info.entry_type,
-                'title': bib_info.title.replace(/[{}]/g, ''),
+                'type': bibInfo.entry_type,
+                'title': bibInfo.title.replace(/[{}]/g, ''),
                 'author': bibauthor.replace(/[{}]/g, '')
             };
 
             jQuery('#cite-source-table > tbody').append((0, _templates.citationItemTemplate)(citeItemData));
             jQuery('#cite-source-table').trigger('update');
             this.appendToCitedItems([citeItemData]);
+        }
+    }, {
+        key: 'appendManyToCitationDialog',
+        value: function appendManyToCitationDialog(pks) {
+            for (var i = 0; i < pks.length; i++) {
+                this.appendToCitationDialog(pks[i], this.mod.editor.bibDB[pks[i]]);
+            }
+            jQuery('#cite-source-table').trigger('update');
         }
     }, {
         key: 'appendToCitedItems',

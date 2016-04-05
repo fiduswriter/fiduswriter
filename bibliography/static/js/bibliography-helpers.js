@@ -111,13 +111,6 @@
             bibliographyHelpers.startBibliographyTable(); // KEEP
         }
 
-        if (window.theEditor && 0 < jQuery('#add-cite-book').size()) {
-            // We are in the editor view
-            for (let i = 0; i < pks.length; i++) {
-                theEditor.mod.menus.citation.appendToCitationDialog(pks[i], bibDB[pks[i]]);
-            }
-            jQuery("#cite-source-table").trigger("update");
-        }
     };
 
     /** Opens a dialog for editing categories.

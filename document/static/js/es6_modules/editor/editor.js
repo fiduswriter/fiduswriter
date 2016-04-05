@@ -216,10 +216,8 @@ export class Editor {
         if (_.isEmpty(this.bibDB)) { // Don't get the bibliography again if we already have it.
             let bibGetter = new BibliographyDB(userId, true, false, false)
             bibGetter.getBibDB(function(bibPks, bibCats){
-                that.bibDB = bibGetter.bibDB // We only need the bibDB...
-                that.bibCats = bibGetter.bibCats // ...and the bib categories.
-                bibliographyHelpers.addBibCategoryList(bibCats) // TODO: We need to be able to reset these!
-                bibliographyHelpers.addBibList(bibPks, that.bibDB)
+                that.bibDB = bibGetter.bibDB // We only need the bibDB.
+                that.mod.menus.citation.appendManyToCitationDialog(bibPks) // TODO: We need to be able to reset these!
                 that.mod.citations.layoutCitations()
                 jQuery(document).trigger("bibliography_ready") // TODO: get rid of this
                 if (callback) {

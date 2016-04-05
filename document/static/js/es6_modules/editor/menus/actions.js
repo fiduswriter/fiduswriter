@@ -30,7 +30,7 @@ export class ModMenusActions {
                         function(doc, docInfo, newBibEntries){
                             that.mod.editor.doc = doc
                             that.mod.editor.docInfo = docInfo
-                            bibliographyHelpers.addBibList(newBibEntries, that.mod.editor.bibDB)
+                            that.mod.citation.appendManyToCitationDialog(newBibEntries)
                             window.history.pushState("", "", "/document/"+that.mod.editor.doc.id+"/")
                     })
                 } else {
@@ -52,7 +52,7 @@ export class ModMenusActions {
                                 } else {
                                     that.mod.editor.doc = doc
                                     that.mod.editor.docInfo = docInfo
-                                    bibliographyHelpers.addBibList(newBibEntries, that.mod.editor.bibDB)
+                                    that.mod.citation.appendManyToCitationDialog(newBibEntries)
                                     window.history.pushState("", "", "/document/"+that.mod.editor.doc.id+"/")
                                 }
                             })

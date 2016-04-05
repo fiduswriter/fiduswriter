@@ -1,5 +1,5 @@
 import {citeprocSys} from "./citeproc-sys"
-
+import {CSLExporter} from "../bibliography/exporter/csl"
 /**
  * Functions to display citations and the bibliography.
  */
@@ -10,7 +10,11 @@ export let formatCitations = function(contentElement, citationstyle, aBibDB) {
          listedWorksCounter = 0,
          citeprocParams = [],
          bibFormats = [],
-         citationsIds = []
+         citationsIds = [],
+         cslGetter = new CSLExporter(aBibDB), // TODO: Figure out if this conversion should be done earlier and cached
+         cslDB = cslGetter.cslDB
+
+
 
      allCitations.each(function(i) {
          var entries = this.dataset.bibEntry ? this.dataset.bibEntry.split(',') : []
@@ -63,7 +67,7 @@ export let formatCitations = function(contentElement, citationstyle, aBibDB) {
          return ''
      }
 
-     let citeprocObj = getFormattedCitations(citeprocParams, citationstyle, bibFormats, aBibDB)
+     let citeprocObj = getFormattedCitations(citeprocParams, citationstyle, bibFormats, cslDB)
 
      for (let j = 0; j < citeprocObj.citations.length; j++) {
          var citationText = citeprocObj.citations[j][0][1]
@@ -91,8 +95,7 @@ export let formatCitations = function(contentElement, citationstyle, aBibDB) {
 
 
 
-let getFormattedCitations = function (citations, citationStyle, citationFormats, aBibDB) {
-    bibliographyHelpers.setCSLDB(aBibDB)
+let getFormattedCitations = function (citations, citationStyle, citationFormats, cslDB) {
 
     if (citeproc.styles.hasOwnProperty(citationStyle)) {
         citationStyle = citeproc.styles[citationStyle]
@@ -103,7 +106,7 @@ let getFormattedCitations = function (citations, citationStyle, citationFormats,
         }
     }
 
-    let citeprocInstance = new CSL.Engine(new citeprocSys(), citationStyle.definition)
+    let citeprocInstance = new CSL.Engine(new citeprocSys(cslDB), citationStyle.definition)
 
     let inText = citeprocInstance.cslXml.className === 'in-text'
 

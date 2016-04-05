@@ -25,10 +25,13 @@ export class ModMenusActions {
             that.mod.editor.sendDocumentUpdate(function (){
                 if (that.mod.editor.doc.owner.id === that.mod.editor.user.id) {
                     // We are copying from and to the same user. We don't need different databases for this.
-                    savecopy(that.mod.editor.doc, that.mod.editor.bibDB, that.mod.editor.imageDB, that.mod.editor.bibDB, that.mod.editor.imageDB, that.mod.editor.user, function(doc, docInfo){
-                        that.mod.editor.doc = doc
-                        that.mod.editor.docInfo = docInfo
-                        window.history.pushState("", "", "/document/"+that.mod.editor.doc.id+"/")
+                    savecopy(that.mod.editor.doc, that.mod.editor.bibDB, that.mod.editor.imageDB,
+                        that.mod.editor.bibDB, that.mod.editor.imageDB, that.mod.editor.user,
+                        function(doc, docInfo, newBibEntries){
+                            that.mod.editor.doc = doc
+                            that.mod.editor.docInfo = docInfo
+                            bibliographyHelpers.addBibList(newBibEntries, that.mod.editor.bibDB)
+                            window.history.pushState("", "", "/document/"+that.mod.editor.doc.id+"/")
                     })
                 } else {
                     // We copy from one user to another. So we first load one set of databases, and then the other
@@ -39,7 +42,7 @@ export class ModMenusActions {
                     the.mod.editor.getBibDB(that.mod.editor.user.id, function(){
                         the.mod.editor.getImageDB(that.mod.editor.user.id, function(){
                             savecopy(that.mod.editor.doc, oldBibDB, oldImageDB, that.mod.editor.bibDB,
-                                    that.mod.editor.imageDB, that.mod.editor.user, function(doc, docInfo){
+                                    that.mod.editor.imageDB, that.mod.editor.user, function(doc, docInfo, newBibEntries){
                                 if (that.mod.editor.docInfo.rights ==='r') {
                                     /* We only had right access to the document,
                                     so the editing elements won't show. We therefore need to reload the page to get them.
@@ -49,6 +52,7 @@ export class ModMenusActions {
                                 } else {
                                     that.mod.editor.doc = doc
                                     that.mod.editor.docInfo = docInfo
+                                    bibliographyHelpers.addBibList(newBibEntries, that.mod.editor.bibDB)
                                     window.history.pushState("", "", "/document/"+that.mod.editor.doc.id+"/")
                                 }
                             })

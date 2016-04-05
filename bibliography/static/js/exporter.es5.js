@@ -920,10 +920,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  */
 
 var BibLatexImporter = exports.BibLatexImporter = (function () {
-    function BibLatexImporter(bibDB) {
+    function BibLatexImporter(callback) {
         _classCallCheck(this, BibLatexImporter);
 
-        this.bibDB = bibDB;
+        this.callback = callback;
         this.openDialog();
     }
 
@@ -991,34 +991,33 @@ var BibLatexImporter = exports.BibLatexImporter = (function () {
             var bibData = new _biblatexParser.BibLatexParser();
             bibData.setInput(file);
             bibData.bibtex();
-            var bibEntries = bibData.getEntries();
+            this.bibEntries = bibData.getEntries();
             if (_.isEmpty(bibEntries)) {
                 $.deactivateWait();
                 $.addAlert('error', gettext('No bibliography entries could be found in import file.'));
                 return;
             } else {
-                (function () {
-                    var processChunk = function processChunk() {
-                        if (currentChunkNumber < totalChunks) {
-                            var currentChunk = {};
-                            for (var i = currentChunkNumber; i < currentChunkNumber + 50; i++) {
-                                currentChunk[bibKeylist[i]] = bibEntries[bibKeylist[i]];
-                            }
-                            that.sendChunk(currentChunk, function () {
-                                currentChunkNumber++;
-                                processChunk();
-                            });
-                        } else {
-                            $.deactivateWait();
-                        }
-                    };
-
-                    var bibKeylist = Object.keys(bibEntries);
-                    var totalChunks = Math.ceil(bibKeylist.length / 50);
-                    var currentChunkNumber = 0;
-
-                    processChunk();
-                })();
+                this.bibKeylist = Object.keys(bibEntries);
+                this.totalChunks = Math.ceil(this.bibKeylist.length / 50);
+                this.currentChunkNumber = 0;
+                this.processChunk();
+            }
+        }
+    }, {
+        key: "processChunk",
+        value: function processChunk() {
+            var that = this;
+            if (this.currentChunkNumber < this.totalChunks) {
+                var currentChunk = {};
+                for (var i = this.currentChunkNumber; i < this.currentChunkNumber + 50; i++) {
+                    currentChunk[this.bibKeylist[i]] = bibEntries[this.bibKeylist[i]];
+                }
+                this.sendChunk(currentChunk, function () {
+                    that.currentChunkNumber++;
+                    that.processChunk();
+                });
+            } else {
+                $.deactivateWait();
             }
         }
         /** Third step of the BibTeX file import. Takes lists of bibliography entries and sends them to the server.
@@ -1033,7 +1032,8 @@ var BibLatexImporter = exports.BibLatexImporter = (function () {
 
             var postData = {
                 'bibs': JSON.stringify(bibEntries)
-            };
+            },
+                that = this;
 
             $.ajax({
                 url: '/bibliography/import_bibtex/',
@@ -1041,8 +1041,7 @@ var BibLatexImporter = exports.BibLatexImporter = (function () {
                 data: postData,
                 dataType: 'json',
                 success: function success(response, textStatus, jqXHR) {
-
-                    bibliographyHelpers.addBibList(response.bibs, that.bibDB);
+                    that.callback(response.bibs);
                     var errors = response.errors,
                         warnings = response.warning,
                         len = errors.length;
@@ -1054,13 +1053,13 @@ var BibLatexImporter = exports.BibLatexImporter = (function () {
                     for (var i = 0; i < len; i++) {
                         $.addAlert('warning', warnings[i]);
                     }
+
+                    callback();
                 },
                 error: function error(jqXHR, textStatus, errorThrown) {
                     console.log(jqXHR.responseText);
                 },
-                complete: function complete() {
-                    callback();
-                }
+                complete: function complete() {}
             });
         }
     }]);

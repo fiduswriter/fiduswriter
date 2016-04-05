@@ -1047,7 +1047,9 @@
 
         //import a bib file
         jQuery('.import-bib').bind('click', function () {
-            new BibLatexImporter(window.BibDB);
+            new BibLatexImporter(function(bibs) {
+                bibliographyHelpers.addBibList(bibs, window.BibDB)
+            });
         });
 
         //submit entry actions

@@ -3693,9 +3693,10 @@ var ModMenusActions = exports.ModMenusActions = (function () {
                 that.mod.editor.sendDocumentUpdate(function () {
                     if (that.mod.editor.doc.owner.id === that.mod.editor.user.id) {
                         // We are copying from and to the same user. We don't need different databases for this.
-                        (0, _copy.savecopy)(that.mod.editor.doc, that.mod.editor.bibDB, that.mod.editor.imageDB, that.mod.editor.bibDB, that.mod.editor.imageDB, that.mod.editor.user, function (doc, docInfo) {
+                        (0, _copy.savecopy)(that.mod.editor.doc, that.mod.editor.bibDB, that.mod.editor.imageDB, that.mod.editor.bibDB, that.mod.editor.imageDB, that.mod.editor.user, function (doc, docInfo, newBibEntries) {
                             that.mod.editor.doc = doc;
                             that.mod.editor.docInfo = docInfo;
+                            bibliographyHelpers.addBibList(newBibEntries, that.mod.editor.bibDB);
                             window.history.pushState("", "", "/document/" + that.mod.editor.doc.id + "/");
                         });
                     } else {
@@ -3707,7 +3708,7 @@ var ModMenusActions = exports.ModMenusActions = (function () {
                             that.mod.editor.removeImageDB();
                             the.mod.editor.getBibDB(that.mod.editor.user.id, function () {
                                 the.mod.editor.getImageDB(that.mod.editor.user.id, function () {
-                                    (0, _copy.savecopy)(that.mod.editor.doc, oldBibDB, oldImageDB, that.mod.editor.bibDB, that.mod.editor.imageDB, that.mod.editor.user, function (doc, docInfo) {
+                                    (0, _copy.savecopy)(that.mod.editor.doc, oldBibDB, oldImageDB, that.mod.editor.bibDB, that.mod.editor.imageDB, that.mod.editor.user, function (doc, docInfo, newBibEntries) {
                                         if (that.mod.editor.docInfo.rights === 'r') {
                                             /* We only had right access to the document,
                                             so the editing elements won't show. We therefore need to reload the page to get them.
@@ -3717,6 +3718,7 @@ var ModMenusActions = exports.ModMenusActions = (function () {
                                         } else {
                                             that.mod.editor.doc = doc;
                                             that.mod.editor.docInfo = docInfo;
+                                            bibliographyHelpers.addBibList(newBibEntries, that.mod.editor.bibDB);
                                             window.history.pushState("", "", "/document/" + that.mod.editor.doc.id + "/");
                                         }
                                     });
@@ -7009,9 +7011,10 @@ var afterCopy = function afterCopy(noErrors, returnValue, callback) {
     if (noErrors) {
         var aDocument = returnValue.aDocument;
         var aDocInfo = returnValue.aDocumentValues;
+        var newBibEntries = returnValue.newBibEntries;
         jQuery.addAlert('info', aDocument.title + gettext(' successfully copied.'));
         if (callback) {
-            callback(aDocument, aDocInfo);
+            callback(aDocument, aDocInfo, newBibEntries);
         }
     } else {
         jQuery.addAlert('error', returnValue);
@@ -8706,6 +8709,7 @@ var ImportNative = exports.ImportNative = (function () {
         this.bibDB = bibDB; // These are values stored in the database
         this.imageDB = imageDB; // These are values stored in the database
         this.callback = callback;
+        this.newBibEntries = [];
         this.importNative();
     }
 
@@ -8991,7 +8995,7 @@ var ImportNative = exports.ImportNative = (function () {
                                 }).oldId;
                                 BibTranslationTable[oldID] = newID;
                             });
-                            bibliographyHelpers.addBibList(response.bibs, that.bibDB);
+                            that.newBibEntries = response.bibs;
                             that.translateReferenceIds(BibTranslationTable, ImageTranslationTable);
                         },
                         error: function error() {
@@ -9042,7 +9046,8 @@ var ImportNative = exports.ImportNative = (function () {
                     that.aDocument.revisions = [];
                     return that.callback(true, {
                         aDocument: that.aDocument,
-                        aDocumentValues: aDocumentValues
+                        aDocumentValues: aDocumentValues,
+                        newBibEntries: that.newBibEntries
                     });
                 },
                 error: function error() {

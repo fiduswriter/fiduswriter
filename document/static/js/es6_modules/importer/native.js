@@ -12,6 +12,7 @@ export class ImportNative {
         this.bibDB = bibDB // These are values stored in the database
         this.imageDB = imageDB // These are values stored in the database
         this.callback = callback
+        this.newBibEntries = []
         this.importNative()
     }
 
@@ -315,7 +316,7 @@ export class ImportNative {
                                 }).oldId
                             BibTranslationTable[oldID] = newID
                         })
-                        bibliographyHelpers.addBibList(response.bibs, that.bibDB)
+                        that.newBibEntries = response.bibs
                         that.translateReferenceIds(BibTranslationTable, ImageTranslationTable)
                     },
                     error: function() {
@@ -366,7 +367,8 @@ export class ImportNative {
                 that.aDocument.revisions = []
                 return that.callback(true, {
                     aDocument: that.aDocument,
-                    aDocumentValues
+                    aDocumentValues,
+                    newBibEntries: that.newBibEntries
                 })
             },
             error: function() {

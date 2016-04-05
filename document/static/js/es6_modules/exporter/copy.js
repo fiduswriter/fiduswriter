@@ -7,10 +7,11 @@ let afterCopy = function(noErrors, returnValue, callback) {
     if (noErrors) {
         let aDocument = returnValue.aDocument
         let aDocInfo = returnValue.aDocumentValues
+        let newBibEntries = returnValue.newBibEntries
         jQuery.addAlert('info', aDocument.title + gettext(
                 ' successfully copied.'));
         if (callback) {
-            callback(aDocument, aDocInfo)
+            callback(aDocument, aDocInfo, newBibEntries)
         }
     } else {
         jQuery.addAlert('error', returnValue)

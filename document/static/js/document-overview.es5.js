@@ -2222,9 +2222,10 @@ var afterCopy = function afterCopy(noErrors, returnValue, callback) {
     if (noErrors) {
         var aDocument = returnValue.aDocument;
         var aDocInfo = returnValue.aDocumentValues;
+        var newBibEntries = returnValue.newBibEntries;
         jQuery.addAlert('info', aDocument.title + gettext(' successfully copied.'));
         if (callback) {
-            callback(aDocument, aDocInfo);
+            callback(aDocument, aDocInfo, newBibEntries);
         }
     } else {
         jQuery.addAlert('error', returnValue);
@@ -4059,6 +4060,7 @@ var ImportNative = exports.ImportNative = (function () {
         this.bibDB = bibDB; // These are values stored in the database
         this.imageDB = imageDB; // These are values stored in the database
         this.callback = callback;
+        this.newBibEntries = [];
         this.importNative();
     }
 
@@ -4344,7 +4346,7 @@ var ImportNative = exports.ImportNative = (function () {
                                 }).oldId;
                                 BibTranslationTable[oldID] = newID;
                             });
-                            bibliographyHelpers.addBibList(response.bibs, that.bibDB);
+                            that.newBibEntries = response.bibs;
                             that.translateReferenceIds(BibTranslationTable, ImageTranslationTable);
                         },
                         error: function error() {
@@ -4395,7 +4397,8 @@ var ImportNative = exports.ImportNative = (function () {
                     that.aDocument.revisions = [];
                     return that.callback(true, {
                         aDocument: that.aDocument,
-                        aDocumentValues: aDocumentValues
+                        aDocumentValues: aDocumentValues,
+                        newBibEntries: that.newBibEntries
                     });
                 },
                 error: function error() {

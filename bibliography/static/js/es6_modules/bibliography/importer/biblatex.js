@@ -5,8 +5,8 @@ import {importBibTemplate} from "./templates"
 
 export class BibLatexImporter {
 
-    constructor(bibDB) {
-        this.bibDB = bibDB
+    constructor(callback) {
+        this.callback = callback
         this.openDialog()
     }
 
@@ -70,33 +70,34 @@ export class BibLatexImporter {
         let bibData = new BibLatexParser()
         bibData.setInput(file)
         bibData.bibtex()
-        let bibEntries = bibData.getEntries()
+        this.bibEntries = bibData.getEntries()
         if (_.isEmpty(bibEntries)) {
             $.deactivateWait()
             $.addAlert('error', gettext('No bibliography entries could be found in import file.'))
             return
         } else {
-            let bibKeylist = Object.keys(bibEntries)
-            let totalChunks = Math.ceil(bibKeylist.length / 50)
-            let currentChunkNumber = 0
-
-            function processChunk() {
-                if (currentChunkNumber < totalChunks) {
-                    let currentChunk = {}
-                    for (let i = currentChunkNumber; i < currentChunkNumber + 50; i++) {
-                        currentChunk[bibKeylist[i]] = bibEntries[bibKeylist[i]]
-                    }
-                    that.sendChunk(currentChunk, function () {
-                        currentChunkNumber++
-                        processChunk()
-                    })
-                } else {
-                    $.deactivateWait()
-                }
-            }
-            processChunk()
+            this.bibKeylist = Object.keys(bibEntries)
+            this.totalChunks = Math.ceil(this.bibKeylist.length / 50)
+            this.currentChunkNumber = 0
+            this.processChunk()
         }
 
+    }
+
+    processChunk() {
+        let that = this
+        if (this.currentChunkNumber < this.totalChunks) {
+            let currentChunk = {}
+            for (let i = this.currentChunkNumber; i < this.currentChunkNumber + 50; i++) {
+                currentChunk[this.bibKeylist[i]] = bibEntries[this.bibKeylist[i]]
+            }
+            this.sendChunk(currentChunk, function () {
+                that.currentChunkNumber++
+                that.processChunk()
+            })
+        } else {
+            $.deactivateWait()
+        }
     }
     /** Third step of the BibTeX file import. Takes lists of bibliography entries and sends them to the server.
      * @param bibEntries The list of bibEntries received from processFile.
@@ -108,7 +109,7 @@ export class BibLatexImporter {
 
         let postData = {
             'bibs': JSON.stringify(bibEntries)
-        }
+        }, that = this
 
         $.ajax({
             url: '/bibliography/import_bibtex/',
@@ -116,8 +117,7 @@ export class BibLatexImporter {
             data: postData,
             dataType: 'json',
             success: function (response, textStatus, jqXHR) {
-
-                bibliographyHelpers.addBibList(response.bibs, that.bibDB)
+                that.callback(response.bibs)
                 let errors = response.errors,
                     warnings = response.warning,
                     len = errors.length
@@ -130,12 +130,13 @@ export class BibLatexImporter {
                     $.addAlert('warning', warnings[i])
                 }
 
+                callback()
+
             },
             error: function (jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText)
             },
             complete: function () {
-                callback()
             }
         })
     }

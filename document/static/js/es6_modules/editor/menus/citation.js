@@ -30,7 +30,7 @@ export class ModMenusCitation {
 
     appendManyToCitationDialog(pks) {
         for (let i = 0; i < pks.length; i++) {
-            this.appendToCitationDialog(pks[i], this.mod.editor.bibDB[pks[i]])
+            this.appendToCitationDialog(pks[i], this.mod.editor.bibDB.bibDB[pks[i]])
         }
         jQuery('#cite-source-table').trigger('update')
     }

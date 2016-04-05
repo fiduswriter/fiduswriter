@@ -22,12 +22,16 @@ export class ModCitations {
     }
 
     layoutCitations() {
+        if (!this.editor.bibDB) {
+            // bibliography hasn't been loaded yet
+            return
+        }
         let emptyCitations = document.querySelectorAll('#paper-editable span.citation:empty')
         if (emptyCitations.length > 0) {
             let bibliographyHTML = formatCitations(
                 document.getElementById('paper-editable'), // TODO: Should we point this to somewhere else?
                 this.editor.doc.settings.citationstyle,
-                this.editor.bibDB
+                this.editor.bibDB.bibDB
             )
             document.getElementById('document-bibliography').innerHTML = bibliographyHTML
         }

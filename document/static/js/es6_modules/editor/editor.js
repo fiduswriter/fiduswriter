@@ -17,6 +17,7 @@ import {ModMenus} from "./menus/mod"
 import {ModServerCommunications} from "./server-communications"
 import {ModNodeConvert} from "./node-convert"
 import {node2Obj, obj2Node} from "../exporter/json"
+import {BibliographyDB} from "../bibliography/database"
 
 export class Editor {
     // A class that contains everything that happens on the editor page.
@@ -42,7 +43,6 @@ export class Editor {
             'changed': false
         }
         this.doc = {}
-        this.bibDB = {}
         this.imageDB = {}
         this.user = false
         new ModSettings(this)
@@ -56,7 +56,6 @@ export class Editor {
 
         jQuery(document).ready(function() {
             that.startEditor()
-            bibliographyHelpers.bindEvents()
         })
     }
 
@@ -113,16 +112,6 @@ export class Editor {
         })
         pm.editor = this
         return pm
-    }
-
-    testingReturns() {
-        console.log('this is the first')
-        return function () {
-            console.log('this is the second')
-            return function () {
-                console.log('this is the third')
-            }
-        }
     }
 
     createDoc(aDocument) {
@@ -208,16 +197,17 @@ export class Editor {
     }
 
     removeBibDB() {
-        this.bibDB = {}
+        delete this.bibDB
+        // TODO: Need to to remove all entries of citation dialog!
     }
 
     getBibDB(userId, callback) {
         let that = this
-        if (_.isEmpty(this.bibDB)) { // Don't get the bibliography again if we already have it.
+        if (!this.bibDB) { // Don't get the bibliography again if we already have it.
             let bibGetter = new BibliographyDB(userId, true, false, false)
             bibGetter.getBibDB(function(bibPks, bibCats){
-                that.bibDB = bibGetter.bibDB // We only need the bibDB.
-                that.mod.menus.citation.appendManyToCitationDialog(bibPks) // TODO: We need to be able to reset these!
+                that.bibDB = bibGetter
+                that.mod.menus.citation.appendManyToCitationDialog(bibPks)
                 that.mod.citations.layoutCitations()
                 jQuery(document).trigger("bibliography_ready") // TODO: get rid of this
                 if (callback) {

@@ -25,15 +25,9 @@
         <script type="text/javascript">
             zip.useWebWorkers = false;
         </script>
-
-        <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.es5.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/citation-helpers.es5.js"></script>
+>
         <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-statics.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-helpers.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-template-dialogs.js"></script>
-        <script type="text/javascript">
-            bibliographyHelpers.bind();
-        </script>
+        <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-overview.es5.js"></script>
     {% endcompress %}
 
 {% endblock %}

@@ -2,6 +2,7 @@
 #footnote-box-container {
     display: table-cell;
     width: 20vw;
+    vertical-align: top;
 }
 
 #footnote-box-container .footnote-container > *:first-child::before {
@@ -18,6 +19,10 @@
 .footnote-marker::before {
   counter-increment: footnote-marker-counter;
   content: counter(footnote-marker-counter);
+}
+
+.footnote-container {
+  margin-top: 10px;
 }
 
 

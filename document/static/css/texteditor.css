@@ -235,6 +235,7 @@ div#statusarea .error {
 
 #document-editable {
     display: table-cell;
+    vertical-align: top;
 }
 
 

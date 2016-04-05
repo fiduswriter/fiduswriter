@@ -55,7 +55,7 @@ do
   outfile="$dirname/$outfilename.es5.js"
   echo "Converting $file to $outfile"
   node_modules/.bin/browserify --outfile $outfile -t babelify $infile
-  sed -i "1i /* This file has been automatically generated. DO NOT EDIT IT. \n Changes will be overwritten. Edit $basename and run ./es6-compiler.sh */"  "$outfile"
+  sed -i "1i /* This file has been automatically generated. DO NOT EDIT IT. \n Changes will be overwritten. Edit $basename and run ./es6-transpile.sh */"  "$outfile"
 done
 
 rm -r es6-tmp

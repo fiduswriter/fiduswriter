@@ -3,6 +3,7 @@ import {ModMenusToolbar} from "./toolbar"
 import {ModMenusCitation} from "./citation"
 import {ModMenusKeyBindings} from "./key-bindings"
 import {ModMenusActions} from "./actions"
+import {ModMenusUpdateUI} from "./update-ui"
 
 /* Bindings for menus. */
 
@@ -15,6 +16,7 @@ export class ModMenus {
         new ModMenusCitation(this)
         new ModMenusActions(this)
         new ModMenusKeyBindings(this)
+        new ModMenusUpdateUI(this)
     }
 
 }

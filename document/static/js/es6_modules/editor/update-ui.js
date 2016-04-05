@@ -165,7 +165,7 @@ export function updateUI(editor) {
                 break
         }
     }
-    return true
+    return
 }
 
 
@@ -217,6 +217,7 @@ function calculatePlaceHolderCss(pm, selectedElement) {
     })
     if (placeHolderCss !== newPlaceHolderCss) {
         placeHolderCss = newPlaceHolderCss
-        jQuery('#placeholder-styles')[0].innerHTML = newPlaceHolderCss
+        document.getElementById('placeholder-styles').innerHTML = newPlaceHolderCss
     }
+
 }

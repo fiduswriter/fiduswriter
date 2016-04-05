@@ -6,27 +6,18 @@ import {eventMixin} from "prosemirror/dist/util/event"
 import {Transform} from "prosemirror/dist/transform"
 import {Pos} from "prosemirror/dist/model"
 import {CommentMark} from "../schema"
-import {UpdateScheduler} from "prosemirror/dist/ui/update"
-
-class Comment {
-    constructor(id, user, userName, userAvatar, date, comment, answers, isMajor) {
-        this.id = id
-        this.user = user
-        this.userName = userName
-        this.userAvatar = userAvatar
-        this.date = date
-        this.comment = comment
-        this.answers = answers
-        this['review:isMajor'] = isMajor
-    }
-}
+import {Comment} from "./comment"
 
 export class ModCommentStore {
-    constructor(mod, version) {
+    constructor(mod) {
         mod.store = this
         this.mod = mod
-        this.comments = Object.create(null)
+        this.setVersion(0)
+    }
+
+    setVersion(version) {
         this.version = version
+        this.comments = Object.create(null)
         this.unsent = []
     }
 
@@ -47,7 +38,7 @@ export class ModCommentStore {
         if (!this.comments[id]) {
             this.comments[id] = new Comment(id, user, userName, userAvatar, date, comment, answers, isMajor)
         }
-        //this.updateDisplay(true)
+        this.mod.layout.layoutComments()
     }
 
     updateComment(id, comment, commentIsMajor) {
@@ -64,17 +55,18 @@ export class ModCommentStore {
             this.comments[id].comment = comment
             this.comments[id]['review:isMajor'] = commentIsMajor
         }
-        this.updateDisplay(true)
+        this.mod.layout.layoutComments()
     }
 
     removeCommentMarks(id) {
-        this.mod.editor.pm.doc.inlineNodesBetween(false, false, ({
-            marks
-        }, path, start, end) => {
-            for (let mark of marks) {
+        this.mod.editor.pm.doc.nodesBetween(false, false, (node, path, parent) => {
+            let nodePath = path.slice()// Keep original
+            let nodeOffset = nodePath.pop()
+            for (let i =0; i < node.marks.length; i++) {
+                let mark = node.marks[i]
                 if (mark.type.name === 'comment' && parseInt(mark.attrs.id) === id) {
                     this.mod.editor.pm.apply(
-                        this.mod.editor.pm.tr.removeMark(new Pos(path, start), new Pos(path, end), CommentMark.type)
+                        this.mod.editor.pm.tr.removeMark(new Pos(nodePath, nodeOffset), new Pos(nodePath, nodeOffset + node.width), CommentMark.type)
                     )
                 }
             }
@@ -87,19 +79,41 @@ export class ModCommentStore {
             delete this.comments[id]
             return true
         }
-        this.updateDisplay(true)
+        this.mod.layout.layoutComments()
     }
 
-    deleteComment(id) {
+    // Removes the comment from store, optionally also removes marks from document.
+    deleteComment(id, removeMarks) {
         if (this.deleteLocalComment(id)) {
             this.unsent.push({
                 type: "delete",
                 id: id
             })
-            this.removeCommentMarks(id)
+            if (removeMarks) {
+                this.removeCommentMarks(id)
+            }
             this.signal("mustSend")
         }
     }
+
+    checkAndDelete(ids) {
+        let that = this
+        // Check if there is still a node referring to the comment IDs that were in the deleted content.
+        this.mod.editor.pm.doc.nodesBetween(null, null, function(node, path, parent) {
+            if (!node.isInline) {
+                return
+            }
+            let id = that.mod.layout.findCommentId(node)
+            if (id && ids.indexOf(id) !== -1) {
+                ids.splice(ids.indexOf(id),1)
+            }
+        })
+        // Remove all the comments that could not be found.
+        ids.forEach(function(id) {
+            that.deleteComment(id, false) // Delete comment from store
+        })
+    }
+
 
     addLocalAnswer(id, answer) {
         if (this.comments[id]) {
@@ -108,7 +122,7 @@ export class ModCommentStore {
             }
             this.comments[id].answers.push(answer)
         }
-        this.updateDisplay(false)
+        this.mod.layout.layoutComments()
     }
 
     addAnswer(id, answer) {
@@ -128,7 +142,7 @@ export class ModCommentStore {
                 return answer.id === answerId
             })
         }
-        this.updateDisplay(false)
+        this.mod.layout.layoutComments()
     }
 
     deleteAnswer(commentId, answerId) {
@@ -148,7 +162,7 @@ export class ModCommentStore {
             })
             answer.answer = answerText
         }
-        this.updateDisplay(false)
+        this.mod.layout.layoutComments()
     }
 
     updateAnswer(commentId, answerId, answerText) {
@@ -261,30 +275,6 @@ export class ModCommentStore {
 
     }
 
-    updateDisplay(waitForFlush) {
-        console.log('yuyu')
-        let that = this
-        if (waitForFlush) {
-            let layoutComments = new UpdateScheduler(this.mod.editor.pm, "flush", function() {
-                layoutComments.detach()
-                console.log('layouting comments')
-                that.mod.layout.layoutComments()
-            })
-        } else {
-            that.mod.layout.layoutComments()
-        }
-    }
-
-    findCommentsAt(pos) {
-        let found = [],
-            node = this.mod.editor.pm.doc.path(pos.path)
-
-        for (let mark in node.marks) {
-            if (mark.type.name === 'comment' && mark.attrs.id in this.comments)
-                found.push(this.comments[mark.attrs.id])
-        }
-        return found
-    }
 }
 
 eventMixin(ModCommentStore)

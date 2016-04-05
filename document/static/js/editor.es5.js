@@ -1,5 +1,5 @@
 /* This file has been automatically generated. DO NOT EDIT IT. 
- Changes will be overwritten. Edit editor.es6.js and run ./es6-compiler.sh */
+ Changes will be overwritten. Edit editor.es6.js and run ./es6-transpile.sh */
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 
@@ -12,7 +12,7 @@ access to it.*/
 var theEditor = new _editor.Editor();
 window.theEditor = theEditor;
 
-},{"./es6_modules/editor/editor":15}],2:[function(require,module,exports){
+},{"./es6_modules/editor/editor":18}],2:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -210,8 +210,8 @@ var BibLatexExporter = exports.BibLatexExporter = function () {
     return BibLatexExporter;
 }();
 
-},{"../../exporter/zip":60}],3:[function(require,module,exports){
-'use strict';
+},{"../../exporter/zip":64}],3:[function(require,module,exports){
+"use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -220,6 +220,56 @@ Object.defineProperty(exports, "__esModule", {
 });
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/* Connects Fidus Writer citation system with citeproc */
+
+var citeprocSys = exports.citeprocSys = function () {
+    function citeprocSys() {
+        _classCallCheck(this, citeprocSys);
+
+        this.abbreviations = {
+            "default": {}
+        };
+        this.abbrevsname = "default";
+    }
+
+    _createClass(citeprocSys, [{
+        key: "retrieveItem",
+        value: function retrieveItem(id) {
+            return CSLDB[id];
+        }
+    }, {
+        key: "retrieveLocale",
+        value: function retrieveLocale(lang) {
+            return citeproc.locals[lang];
+        }
+    }, {
+        key: "getAbbreviation",
+        value: function getAbbreviation(dummy, obj, jurisdiction, vartype, key) {
+            try {
+                if (this.abbreviations[this.abbrevsname][vartype][key]) {
+                    obj["default"][vartype][key] = this.abbreviations[this.abbrevsname][vartype][key];
+                } else {
+                    obj["default"][vartype][key] = "";
+                }
+            } catch (e) {
+                // There is breakage here that needs investigating.
+            }
+        }
+    }]);
+
+    return citeprocSys;
+}();
+
+},{}],4:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.formatCitations = undefined;
+
+var _citeprocSys = require('./citeproc-sys');
 
 /**
  * Functions to display citations and the bibliography.
@@ -309,44 +359,6 @@ var formatCitations = exports.formatCitations = function formatCitations(content
     //return bibliographyHTML.replace(/<\/div>/g, '</p>')
 };
 
-var citeprocSys = function () {
-    function citeprocSys() {
-        _classCallCheck(this, citeprocSys);
-
-        this.abbreviations = {
-            "default": {}
-        };
-        this.abbrevsname = "default";
-    }
-
-    _createClass(citeprocSys, [{
-        key: 'retrieveItem',
-        value: function retrieveItem(id) {
-            return CSLDB[id];
-        }
-    }, {
-        key: 'retrieveLocale',
-        value: function retrieveLocale(lang) {
-            return citeproc.locals[lang];
-        }
-    }, {
-        key: 'getAbbreviation',
-        value: function getAbbreviation(dummy, obj, jurisdiction, vartype, key) {
-            try {
-                if (this.abbreviations[this.abbrevsname][vartype][key]) {
-                    obj["default"][vartype][key] = this.abbreviations[this.abbrevsname][vartype][key];
-                } else {
-                    obj["default"][vartype][key] = "";
-                }
-            } catch (e) {
-                // There is breakage here that needs investigating.
-            }
-        }
-    }]);
-
-    return citeprocSys;
-}();
-
 var getFormattedCitations = function getFormattedCitations(citations, citationStyle, citationFormats, aBibDB) {
     bibliographyHelpers.setCSLDB(aBibDB);
 
@@ -359,7 +371,7 @@ var getFormattedCitations = function getFormattedCitations(citations, citationSt
         }
     }
 
-    var citeprocInstance = new CSL.Engine(new citeprocSys(), citationStyle.definition);
+    var citeprocInstance = new CSL.Engine(new _citeprocSys.citeprocSys(), citationStyle.definition);
 
     var inText = citeprocInstance.cslXml.className === 'in-text';
 
@@ -465,7 +477,7 @@ var yearFromDateString = function yearFromDateString(dateString) {
     }
 };
 
-},{}],4:[function(require,module,exports){
+},{"./citeproc-sys":3}],5:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -633,7 +645,7 @@ var DocumentAccessRightsDialog = exports.DocumentAccessRightsDialog = function (
     return DocumentAccessRightsDialog;
 }();
 
-},{"./templates":5}],5:[function(require,module,exports){
+},{"./templates":6}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -709,7 +721,64 @@ var collaboratorsTemplate = exports.collaboratorsTemplate = _.template('<% _.eac
         </tr>\
     <% }) %>');
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.ModCitations = undefined;
+
+var _format = require("../../citations/format");
+
+var _update = require("prosemirror/dist/ui/update");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ModCitations = exports.ModCitations = function () {
+    function ModCitations(editor) {
+        _classCallCheck(this, ModCitations);
+
+        editor.mod.citations = this;
+        this.editor = editor;
+        this.bindEvents();
+    }
+
+    _createClass(ModCitations, [{
+        key: "bindEvents",
+        value: function bindEvents() {
+            var that = this;
+            new _update.UpdateScheduler(this.editor.pm, "change setDoc", function () {
+                that.layoutCitations();
+            });
+        }
+    }, {
+        key: "resetCitations",
+        value: function resetCitations() {
+            var citations = [].slice.call(document.querySelectorAll('#paper-editable span.citation'));
+            citations.forEach(function (citation) {
+                citation.innerHTML = '';
+            });
+            this.layoutCitations();
+        }
+    }, {
+        key: "layoutCitations",
+        value: function layoutCitations() {
+            var emptyCitations = document.querySelectorAll('#paper-editable span.citation:empty');
+            if (emptyCitations.length > 0) {
+                var bibliographyHTML = (0, _format.formatCitations)(document.getElementById('paper-editable'), // TODO: Should we point this to somewhere else?
+                this.editor.doc.settings.citationstyle, window.BibDB);
+                document.getElementById('document-bibliography').innerHTML = bibliographyHTML;
+            }
+        }
+    }]);
+
+    return ModCitations;
+}();
+
+},{"../../citations/format":4,"prosemirror/dist/ui/update":135}],8:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -886,7 +955,7 @@ var ModCollabChat = exports.ModCollabChat = function () {
     return ModCollabChat;
 }();
 
-},{"./templates":9}],7:[function(require,module,exports){
+},{"./templates":11}],9:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -1098,7 +1167,7 @@ var ModCollabDocChanges = exports.ModCollabDocChanges = function () {
     return ModCollabDocChanges;
 }();
 
-},{"../schema":36,"prosemirror/dist/transform":121}],8:[function(require,module,exports){
+},{"../schema":41,"prosemirror/dist/transform":125}],10:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -1144,7 +1213,7 @@ var ModCollab = exports.ModCollab = function () {
     return ModCollab;
 }();
 
-},{"./chat":6,"./doc-changes":7}],9:[function(require,module,exports){
+},{"./chat":8,"./doc-changes":9}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1164,19 +1233,41 @@ var messageTemplate = exports.messageTemplate = _.template('\
 
 var participantListTemplate = exports.participantListTemplate = _.template('<% _.each(participants, function(participant) { %><img src="<%= participant.avatar %>" alt="<%- participant.name %>" title="<%- participant.name %>"><% }); %>');
 
-},{}],10:[function(require,module,exports){
-"use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /* Functions related to user interactions with comments */
+},{}],12:[function(require,module,exports){
+'use strict';
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.ModCommentInteractions = undefined;
-
-var _update = require("prosemirror/dist/ui/update");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var Comment = exports.Comment = function Comment(id, user, userName, userAvatar, date, comment, answers, isMajor) {
+    _classCallCheck(this, Comment);
+
+    this.id = id;
+    this.user = user;
+    this.userName = userName;
+    this.userAvatar = userAvatar;
+    this.date = date;
+    this.comment = comment;
+    this.answers = answers;
+    this['review:isMajor'] = isMajor;
+    this.hidden = false;
+};
+
+},{}],13:[function(require,module,exports){
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/* Functions related to user interactions with comments */
 
 var ModCommentInteractions = exports.ModCommentInteractions = function () {
     function ModCommentInteractions(mod) {
@@ -1199,12 +1290,7 @@ var ModCommentInteractions = exports.ModCommentInteractions = function () {
                 that.cancelSubmitComment(this);
             });
             jQuery(document).on("click", ".comment-box.inactive", function () {
-                var commentId = that.mod.layout.getCommentId(this);
-                that.mod.layout.activateComment(commentId);
-                that.mod.layout.layoutComments();
-            });
-            jQuery(document).on("click", ".comments-enabled .comment", function () {
-                var commentId = that.mod.layout.getCommentId(this);
+                var commentId = that.getCommentId(this);
                 that.mod.layout.activateComment(commentId);
                 that.mod.layout.layoutComments();
             });
@@ -1255,23 +1341,24 @@ var ModCommentInteractions = exports.ModCommentInteractions = function () {
     }, {
         key: "createNewComment",
         value: function createNewComment() {
-            var that = this;
             var id = this.mod.store.addComment(this.mod.editor.user.id, this.mod.editor.user.name, this.mod.editor.user.avatar, new Date().getTime(), '');
             this.mod.layout.deactivateAll();
             this.mod.layout.activeCommentId = id;
             this.mod.editor.docInfo.changed = true;
-            var layoutComments = new _update.UpdateScheduler(this.mod.editor.pm, "flush", function () {
-                layoutComments.detach();
-                that.mod.layout.layoutComments();
-            });
+            this.mod.layout.layoutComments();
+        }
+    }, {
+        key: "getCommentId",
+        value: function getCommentId(node) {
+            // Returns the value of the attributte data-id as an integer.
+            // This function can be used on both comment referrers and comment boxes.
+            return parseInt(node.getAttribute('data-id'), 10);
         }
     }, {
         key: "deleteComment",
         value: function deleteComment(id) {
             // Handle the deletion of a comment.
-            var comment = this.mod.layout.findComment(id); // TODO: We don't use this for anything. Should we?
-            this.mod.store.deleteComment(id);
-            //      TODO: make the markrange go away
+            this.mod.store.deleteComment(id, true);
             this.mod.editor.docInfo.changed = true;
             this.mod.layout.layoutComments();
         }
@@ -1290,7 +1377,7 @@ var ModCommentInteractions = exports.ModCommentInteractions = function () {
             var commentTextBox = jQuery(submitButton).siblings('.commentText')[0];
             var commentText = commentTextBox.value;
             var commentIsMajor = jQuery(submitButton).siblings('.comment-is-major').prop('checked');
-            var commentId = this.mod.layout.getCommentId(commentTextBox);
+            var commentId = this.getCommentId(commentTextBox);
             if (commentText.length > 0) {
                 this.updateComment(commentId, commentText, commentIsMajor);
             } else {
@@ -1303,7 +1390,7 @@ var ModCommentInteractions = exports.ModCommentInteractions = function () {
             // Handle a click on the cancel button of the comment submit form.
             var commentTextBox = jQuery(cancelButton).siblings('.commentText')[0];
             if (commentTextBox) {
-                var id = this.mod.layout.getCommentId(commentTextBox);
+                var id = this.getCommentId(commentTextBox);
                 if (this.mod.store.comments[id].comment.length === 0) {
                     this.deleteComment(id);
                 } else {
@@ -1332,6 +1419,15 @@ var ModCommentInteractions = exports.ModCommentInteractions = function () {
             var answerText = answerTextBox.value;
             var commentId = parseInt(commentWrapper.attr('data-id'));
             this.createNewAnswer(commentId, answerText);
+        }
+    }, {
+        key: "editAnswer",
+        value: function editAnswer(id, answerId) {
+            // Mark a specific answer to a comment as active, then layout the
+            // comments, which will make that answer editable.
+            this.activeCommentId = id;
+            this.activeCommentAnswerId = answerId;
+            this.layoutComments();
         }
     }, {
         key: "createNewAnswer",
@@ -1365,8 +1461,8 @@ var ModCommentInteractions = exports.ModCommentInteractions = function () {
     return ModCommentInteractions;
 }();
 
-},{"prosemirror/dist/ui/update":131}],11:[function(require,module,exports){
-'use strict';
+},{}],14:[function(require,module,exports){
+"use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
@@ -1375,7 +1471,13 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.ModCommentLayout = undefined;
 
-var _templates = require('./templates');
+var _templates = require("./templates");
+
+var _update = require("prosemirror/dist/ui/update");
+
+var _model = require("prosemirror/dist/model");
+
+var _comment = require("./comment");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -1387,13 +1489,24 @@ var ModCommentLayout = exports.ModCommentLayout = function () {
 
         mod.layout = this;
         this.mod = mod;
-        this.activeCommentId = -1;
-        this.activeCommentAnswerId = -1;
+        this.activeCommentId = false;
+        this.activeCommentAnswerId = false;
+        this.setup();
         this.bindEvents();
     }
 
     _createClass(ModCommentLayout, [{
-        key: 'bindEvents',
+        key: "setup",
+        value: function setup() {
+            // Add two elements to hold dynamic CSS info about comments.
+            var styleContainers = document.createElement('temp');
+            styleContainers.innerHTML = "\n        <style type=\"text/css\" id=\"active-comment-style\"></style>\n        <style type=\"text/css\" id=\"comment-placement-style\"></style>";
+            while (styleContainers.firstElementChild) {
+                document.head.appendChild(styleContainers.firstElementChild);
+            }
+        }
+    }, {
+        key: "bindEvents",
         value: function bindEvents() {
             var that = this;
 
@@ -1421,155 +1534,180 @@ var ModCommentLayout = exports.ModCommentLayout = function () {
                         break;
                 }
             });
+
+            new _update.UpdateScheduler(this.mod.editor.pm, "change setDoc", function () {
+                return that.updateDOM();
+            });
+            new _update.UpdateScheduler(this.mod.editor.pm, "selectionChange", function () {
+                return that.onSelectionChange();
+            });
         }
     }, {
-        key: 'activateComment',
+        key: "activateComment",
         value: function activateComment(id) {
             // Deactivate all comments, then mark the one related to the id as active.
             this.deactivateAll();
             this.activeCommentId = id;
         }
     }, {
-        key: 'deactivateAll',
+        key: "deactivateAll",
         value: function deactivateAll() {
             // Close the comment box and make sure no comment is marked as currently active.
-            this.activeCommentId = -1;
-            this.activeCommentAnswerId = -1;
+            this.activeCommentId = false;
+            this.activeCommentAnswerId = false;
         }
     }, {
-        key: 'layoutCommentsAvoidOverlap',
-        value: function layoutCommentsAvoidOverlap() {
-            // Avoid overlapping of comments.
-            var minOffsetTop, commentReferrer, lastOffsetTop, previousComments, nextComments, commentBox, initialCommentBox, foundComment, i;
-
-            if (-1 != this.activeCommentId) {
-                commentReferrer = this.findComment(this.activeCommentId);
-                initialCommentBox = this.findCommentBox(this.activeCommentId);
-                if (!initialCommentBox) {
-                    return false;
-                }
-                lastOffsetTop = initialCommentBox.offsetTop;
-                previousComments = [];
-                nextComments = jQuery.makeArray(jQuery('.comment'));
-                while (nextComments.length > 0) {
-                    foundComment = nextComments.shift();
-                    if (foundComment === commentReferrer) {
-                        break;
-                    } else {
-                        previousComments.unshift(foundComment);
-                    }
-                }
-
-                for (i = 0; i < previousComments.length; i++) {
-                    commentBox = this.findCommentBox(this.getCommentId(previousComments[i]));
-                    if (commentBox) {
-                        minOffsetTop = lastOffsetTop - commentBox.offsetHeight - 10;
-                        if (commentBox.offsetTop > minOffsetTop) {
-                            jQuery(commentBox).css('top', minOffsetTop + 'px');
-                        }
-                        lastOffsetTop = commentBox.offsetTop;
-                    }
-                }
-
-                minOffsetTop = initialCommentBox.offsetTop + initialCommentBox.offsetHeight + 10;
-            } else {
-                minOffsetTop = 0;
-                nextComments = jQuery('.comment');
+        key: "findCommentId",
+        value: function findCommentId(node) {
+            var found = false;
+            for (var i = 0; i < node.marks.length; i++) {
+                var mark = node.marks[i];
+                if (mark.type.name === 'comment' && mark.attrs.id) found = mark.attrs.id;
             }
-            for (i = 0; i < nextComments.length; i++) {
-                commentBox = this.findCommentBox(this.getCommentId(nextComments[i]));
-                if (commentBox) {
-                    if (commentBox.offsetTop < minOffsetTop) {
-                        jQuery(commentBox).css('top', minOffsetTop + 'px');
-                    }
-                    minOffsetTop = commentBox.offsetTop + commentBox.offsetHeight + 10;
-                }
-            }
+            return found;
         }
     }, {
-        key: 'layoutComments',
+        key: "findComment",
+        value: function findComment(id) {
+            var found = false;
+            if (id in this.mod.store.comments) {
+                found = this.mod.store.comments[id];
+            }
+            return found;
+        }
+    }, {
+        key: "findCommentsAt",
+        value: function findCommentsAt(node) {
+            var found = false;
+            var id = this.findCommentId(node);
+            return this.findComment(id);
+        }
+    }, {
+        key: "layoutComments",
         value: function layoutComments() {
-            // Handle the layout of the comments on the screen.
             var that = this;
-            var theCommentPointers = [].slice.call(jQuery('.comment')),
-                theComments = [],
-                ids = [];
-
-            theCommentPointers.forEach(function (commentNode) {
-                var id = parseInt(commentNode.getAttribute("data-id"));
-                if (ids.indexOf(id) !== -1) {
-                    // This is not the first occurence of this comment. So we ignore it.
-                    return;
-                }
-                ids.push(id);
-                if (that.mod.store.comments[id]) {
-                    theComments.push({
-                        id: id,
-                        referrer: commentNode,
-                        comment: that.mod.store.comments[id]['comment'],
-                        user: that.mod.store.comments[id]['user'],
-                        userName: that.mod.store.comments[id]['userName'],
-                        userAvatar: that.mod.store.comments[id]['userAvatar'],
-                        date: that.mod.store.comments[id]['date'],
-                        answers: that.mod.store.comments[id]['answers'],
-                        'review:isMajor': that.mod.store.comments[id]['review:isMajor']
-                    });
-                }
+            (0, _update.scheduleDOMUpdate)(this.mod.editor.pm, function () {
+                return that.updateDOM();
             });
+        }
+    }, {
+        key: "onSelectionChange",
+        value: function onSelectionChange() {
+            this.activateSelectedComment();
+            return this.updateDOM();
+        }
+    }, {
+        key: "activateSelectedComment",
+        value: function activateSelectedComment() {
+            var selection = this.mod.editor.pm.selection,
+                comment = false,
+                that = this;
 
-            jQuery('#comment-box-container').html((0, _templates.commentsTemplate)({
-                theComments: theComments,
-                that: that
-            }));
-            this.layoutCommentsAvoidOverlap();
-            var activeCommentStyle = '';
-            //jQuery('#active-comment-style').html('')
-            var activeCommentWrapper = jQuery('.comment-box.active');
-            if (0 < activeCommentWrapper.size()) {
-                that.activeCommentId = activeCommentWrapper.attr('data-id');
-
-                activeCommentStyle = '.comments-enabled .comment[data-id="' + that.activeCommentId + '"] {background-color: #fffacf;}';
-                activeCommentWrapper.find('.comment-answer-text').autoResize({
-                    'extraSpace': 0
+            if (selection.empty) {
+                var node = this.mod.editor.pm.doc.nodeAfter(selection.from);
+                if (node) {
+                    comment = this.findCommentsAt(node);
+                }
+            } else {
+                this.mod.editor.pm.doc.nodesBetween(selection.from, selection.to, function (node, path, parent) {
+                    if (!node.isInline) {
+                        return;
+                    }
+                    comment = comment ? comment : that.findCommentsAt(node);
                 });
             }
 
-            if (jQuery('#active-comment-style').html() != -activeCommentStyle) {
-                jQuery('#active-comment-style').html(activeCommentStyle);
+            if (comment) {
+                if (this.activeCommentId !== comment.id) {
+                    that.activateComment(comment.id);
+                }
+            } else {
+                that.deactivateAll();
             }
         }
     }, {
-        key: 'editAnswer',
-        value: function editAnswer(id, answerId) {
-            // Mark a specific answer to a comment as active, then layout the
-            // comments, which will make that answer editable.
-            this.activeCommentId = id;
-            this.activeCommentAnswerId = answerId;
-            this.layoutComments();
-        }
-    }, {
-        key: 'calculateCommentBoxOffset',
-        value: function calculateCommentBoxOffset(comment) {
-            return comment.referrer.getBoundingClientRect()['top'] + window.pageYOffset - 280;
-        }
-    }, {
-        key: 'findComment',
-        value: function findComment(id) {
-            // Return the comment element specified by the id
-            return jQuery('.comment[data-id=' + id + ']')[0];
-        }
-    }, {
-        key: 'findCommentBox',
-        value: function findCommentBox(id) {
-            // Return the comment box specified by the id
-            return jQuery('.comment-box[data-id=' + id + ']')[0];
-        }
-    }, {
-        key: 'getCommentId',
-        value: function getCommentId(node) {
-            // Returns the value of the attributte data-id as an integer.
-            // This function can be used on both comment referrers and comment boxes.
-            return parseInt(node.getAttribute('data-id'), 10);
+        key: "updateDOM",
+        value: function updateDOM() {
+            // Handle the layout of the comments on the screen.
+
+            // DOM write phase
+
+            var that = this;
+
+            var theComments = [],
+                referrers = [],
+                activeCommentStyle = '';
+
+            this.mod.editor.pm.doc.nodesBetween(null, null, function (node, path, parent) {
+                if (!node.isInline) {
+                    return;
+                }
+                var commentId = that.findCommentId(node);
+                if (!commentId) {
+                    return;
+                }
+                var comment = that.findComment(commentId);
+                if (!comment) {
+                    comment = new _comment.Comment(that.findCommentId(node));
+                    comment.hidden = true; // Comment is likely still being edited somewhere else. Don't show it.
+                }
+                if (theComments.indexOf(comment) !== -1) {
+                    // comment already placed
+                    return;
+                }
+                if (comment.hidden) {
+                    // Comment will not show by default.
+                } else if (comment.id === that.activeCommentId) {
+                        activeCommentStyle += '.comments-enabled .comment[data-id="' + comment.id + '"] {background-color: #fffacf;}';
+                    } else {
+                        activeCommentStyle += '.comments-enabled .comment[data-id="' + comment.id + '"] {background-color: #f2f2f2;}';
+                    }
+                theComments.push(comment);
+                referrers.push(path.slice()); // TODO: Check whether cloning is still needed with ProseMirror 0.6.0+
+            });
+
+            var commentsTemplateHTML = (0, _templates.commentsTemplate)({
+                theComments: theComments,
+                that: that
+            });
+            if (document.getElementById('comment-box-container').innerHTML !== commentsTemplateHTML) {
+                document.getElementById('comment-box-container').innerHTML = commentsTemplateHTML;
+            }
+
+            if (document.getElementById('active-comment-style').innerHTML != activeCommentStyle) {
+                document.getElementById('active-comment-style').innerHTML = activeCommentStyle;
+            }
+
+            return function () {
+                // DOM read phase
+                var totalOffset = document.getElementById('comment-box-container').getBoundingClientRect().top + 10,
+                    commentBoxes = document.querySelectorAll('#comment-box-container .comment-box'),
+                    commentPlacementStyle = '';
+                referrers.forEach(function (referrer, index) {
+                    var commentBox = commentBoxes[index];
+                    if (commentBox.classList.contains("hidden")) {
+                        return;
+                    }
+                    var commentBoxCoords = commentBox.getBoundingClientRect(),
+                        commentBoxHeight = commentBoxCoords.height,
+                        nodeOffset = referrer.pop(),
+                        commentPos = new _model.Pos(referrer, nodeOffset),
+                        referrerTop = that.mod.editor.pm.coordsAtPos(commentPos).top,
+                        topMargin = 10;
+
+                    if (referrerTop > totalOffset) {
+                        topMargin = parseInt(referrerTop - totalOffset);
+                        commentPlacementStyle += '.comment-box:nth-of-type(' + (index + 1) + ') {margin-top: ' + topMargin + 'px;}\n';
+                    }
+                    totalOffset += commentBoxHeight + topMargin;
+                });
+                return function () {
+                    //DOM write phase
+                    if (document.getElementById('comment-placement-style').innerHTML != commentPlacementStyle) {
+                        document.getElementById('comment-placement-style').innerHTML = commentPlacementStyle;
+                    }
+                };
+            };
         }
 
         /**
@@ -1577,7 +1715,7 @@ var ModCommentLayout = exports.ModCommentLayout = function () {
          */
 
     }, {
-        key: 'filterByUserType',
+        key: "filterByUserType",
         value: function filterByUserType(userType) {
             //filter by user role (reader, editor, reviewer etc)
             var userRoles = this.mod.editor.doc.access_rights;
@@ -1599,7 +1737,7 @@ var ModCommentLayout = exports.ModCommentLayout = function () {
             });
         }
     }, {
-        key: 'filterByUserDialog',
+        key: "filterByUserDialog",
         value: function filterByUserDialog() {
             //create array of roles + owner role
             var rolesCopy = this.mod.editor.doc.access_rights.slice();
@@ -1651,7 +1789,7 @@ var ModCommentLayout = exports.ModCommentLayout = function () {
     return ModCommentLayout;
 }();
 
-},{"./templates":14}],12:[function(require,module,exports){
+},{"./comment":12,"./templates":17,"prosemirror/dist/model":119,"prosemirror/dist/ui/update":135}],15:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -1667,20 +1805,23 @@ var _interactions = require("./interactions");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ModComments = exports.ModComments = function ModComments(editor, version) {
+var ModComments = exports.ModComments = function ModComments(editor) {
     _classCallCheck(this, ModComments);
 
     editor.mod.comments = this;
     this.editor = editor;
-    new _store.ModCommentStore(this, version);
+    new _store.ModCommentStore(this);
     new _layout.ModCommentLayout(this);
     new _interactions.ModCommentInteractions(this);
 };
 
-},{"./interactions":10,"./layout":11,"./store":13}],13:[function(require,module,exports){
+},{"./interactions":13,"./layout":14,"./store":16}],16:[function(require,module,exports){
 "use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /*
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     Functions related to the editing and sharing of comments.
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     based on https://github.com/ProseMirror/website/blob/master/src/client/collab/comment.js
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     */
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -1695,40 +1836,30 @@ var _model = require("prosemirror/dist/model");
 
 var _schema = require("../schema");
 
-var _update = require("prosemirror/dist/ui/update");
+var _comment = require("./comment");
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } } /*
-                                                                                                                                                          Functions related to the editing and sharing of comments.
-                                                                                                                                                          based on https://github.com/ProseMirror/website/blob/master/src/client/collab/comment.js
-                                                                                                                                                          */
-
-var Comment = function Comment(id, user, userName, userAvatar, date, comment, answers, isMajor) {
-    _classCallCheck(this, Comment);
-
-    this.id = id;
-    this.user = user;
-    this.userName = userName;
-    this.userAvatar = userAvatar;
-    this.date = date;
-    this.comment = comment;
-    this.answers = answers;
-    this['review:isMajor'] = isMajor;
-};
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var ModCommentStore = exports.ModCommentStore = function () {
-    function ModCommentStore(mod, version) {
+    function ModCommentStore(mod) {
         _classCallCheck(this, ModCommentStore);
 
         mod.store = this;
         this.mod = mod;
-        this.comments = Object.create(null);
-        this.version = version;
-        this.unsent = [];
+        this.setVersion(0);
     }
 
-    // Add a new comment to the comment database both remotely and locally.
-
     _createClass(ModCommentStore, [{
+        key: "setVersion",
+        value: function setVersion(version) {
+            this.version = version;
+            this.comments = Object.create(null);
+            this.unsent = [];
+        }
+
+        // Add a new comment to the comment database both remotely and locally.
+
+    }, {
         key: "addComment",
         value: function addComment(user, userName, userAvatar, date, comment, answers, isMajor) {
             var id = randomID();
@@ -1745,9 +1876,9 @@ var ModCommentStore = exports.ModCommentStore = function () {
         key: "addLocalComment",
         value: function addLocalComment(id, user, userName, userAvatar, date, comment, answers, isMajor) {
             if (!this.comments[id]) {
-                this.comments[id] = new Comment(id, user, userName, userAvatar, date, comment, answers, isMajor);
+                this.comments[id] = new _comment.Comment(id, user, userName, userAvatar, date, comment, answers, isMajor);
             }
-            //this.updateDisplay(true)
+            this.mod.layout.layoutComments();
         }
     }, {
         key: "updateComment",
@@ -1766,39 +1897,20 @@ var ModCommentStore = exports.ModCommentStore = function () {
                 this.comments[id].comment = comment;
                 this.comments[id]['review:isMajor'] = commentIsMajor;
             }
-            this.updateDisplay(true);
+            this.mod.layout.layoutComments();
         }
     }, {
         key: "removeCommentMarks",
         value: function removeCommentMarks(id) {
             var _this = this;
 
-            this.mod.editor.pm.doc.inlineNodesBetween(false, false, function (_ref, path, start, end) {
-                var marks = _ref.marks;
-                var _iteratorNormalCompletion = true;
-                var _didIteratorError = false;
-                var _iteratorError = undefined;
-
-                try {
-                    for (var _iterator = marks[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                        var mark = _step.value;
-
-                        if (mark.type.name === 'comment' && parseInt(mark.attrs.id) === id) {
-                            _this.mod.editor.pm.apply(_this.mod.editor.pm.tr.removeMark(new _model.Pos(path, start), new _model.Pos(path, end), _schema.CommentMark.type));
-                        }
-                    }
-                } catch (err) {
-                    _didIteratorError = true;
-                    _iteratorError = err;
-                } finally {
-                    try {
-                        if (!_iteratorNormalCompletion && _iterator.return) {
-                            _iterator.return();
-                        }
-                    } finally {
-                        if (_didIteratorError) {
-                            throw _iteratorError;
-                        }
+            this.mod.editor.pm.doc.nodesBetween(false, false, function (node, path, parent) {
+                var nodePath = path.slice(); // Keep original
+                var nodeOffset = nodePath.pop();
+                for (var i = 0; i < node.marks.length; i++) {
+                    var mark = node.marks[i];
+                    if (mark.type.name === 'comment' && parseInt(mark.attrs.id) === id) {
+                        _this.mod.editor.pm.apply(_this.mod.editor.pm.tr.removeMark(new _model.Pos(nodePath, nodeOffset), new _model.Pos(nodePath, nodeOffset + node.width), _schema.CommentMark.type));
                     }
                 }
             });
@@ -1811,19 +1923,43 @@ var ModCommentStore = exports.ModCommentStore = function () {
                 delete this.comments[id];
                 return true;
             }
-            this.updateDisplay(true);
+            this.mod.layout.layoutComments();
         }
+
+        // Removes the comment from store, optionally also removes marks from document.
+
     }, {
         key: "deleteComment",
-        value: function deleteComment(id) {
+        value: function deleteComment(id, removeMarks) {
             if (this.deleteLocalComment(id)) {
                 this.unsent.push({
                     type: "delete",
                     id: id
                 });
-                this.removeCommentMarks(id);
+                if (removeMarks) {
+                    this.removeCommentMarks(id);
+                }
                 this.signal("mustSend");
             }
+        }
+    }, {
+        key: "checkAndDelete",
+        value: function checkAndDelete(ids) {
+            var that = this;
+            // Check if there is still a node referring to the comment IDs that were in the deleted content.
+            this.mod.editor.pm.doc.nodesBetween(null, null, function (node, path, parent) {
+                if (!node.isInline) {
+                    return;
+                }
+                var id = that.mod.layout.findCommentId(node);
+                if (id && ids.indexOf(id) !== -1) {
+                    ids.splice(ids.indexOf(id), 1);
+                }
+            });
+            // Remove all the comments that could not be found.
+            ids.forEach(function (id) {
+                that.deleteComment(id, false); // Delete comment from store
+            });
         }
     }, {
         key: "addLocalAnswer",
@@ -1834,7 +1970,7 @@ var ModCommentStore = exports.ModCommentStore = function () {
                 }
                 this.comments[id].answers.push(answer);
             }
-            this.updateDisplay(false);
+            this.mod.layout.layoutComments();
         }
     }, {
         key: "addAnswer",
@@ -1856,7 +1992,7 @@ var ModCommentStore = exports.ModCommentStore = function () {
                     return answer.id === answerId;
                 });
             }
-            this.updateDisplay(false);
+            this.mod.layout.layoutComments();
         }
     }, {
         key: "deleteAnswer",
@@ -1878,7 +2014,7 @@ var ModCommentStore = exports.ModCommentStore = function () {
                 });
                 answer.answer = answerText;
             }
-            this.updateDisplay(false);
+            this.mod.layout.layoutComments();
         }
     }, {
         key: "updateAnswer",
@@ -1996,36 +2132,6 @@ var ModCommentStore = exports.ModCommentStore = function () {
                 _this2.version++;
             });
         }
-    }, {
-        key: "updateDisplay",
-        value: function updateDisplay(waitForFlush) {
-            var _this3 = this;
-
-            console.log('yuyu');
-            var that = this;
-            if (waitForFlush) {
-                (function () {
-                    var layoutComments = new _update.UpdateScheduler(_this3.mod.editor.pm, "flush", function () {
-                        layoutComments.detach();
-                        console.log('layouting comments');
-                        that.mod.layout.layoutComments();
-                    });
-                })();
-            } else {
-                that.mod.layout.layoutComments();
-            }
-        }
-    }, {
-        key: "findCommentsAt",
-        value: function findCommentsAt(pos) {
-            var found = [],
-                node = this.mod.editor.pm.doc.path(pos.path);
-
-            for (var mark in node.marks) {
-                if (mark.type.name === 'comment' && mark.attrs.id in this.comments) found.push(this.comments[mark.attrs.id]);
-            }
-            return found;
-        }
     }]);
 
     return ModCommentStore;
@@ -2037,119 +2143,27 @@ function randomID() {
     return Math.floor(Math.random() * 0xffffffff);
 }
 
-},{"../schema":36,"prosemirror/dist/model":115,"prosemirror/dist/transform":121,"prosemirror/dist/ui/update":131,"prosemirror/dist/util/event":133}],14:[function(require,module,exports){
-'use strict';
+},{"../schema":41,"./comment":12,"prosemirror/dist/model":119,"prosemirror/dist/transform":125,"prosemirror/dist/util/event":137}],17:[function(require,module,exports){
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 /** A template for an answer to a comment */
-var answerCommentTemplatePart = '<div class="comment-item">\
-        <div class="comment-user">\
-            <img class="comment-user-avatar" src="<%= answer.userAvatar %>">\
-            <h5 class="comment-user-name"><%= answer.userName %></h5>\
-            <p class="comment-date"><%= jQuery.localizeDate(answer.date) %></p>\
-        </div>\
-        <% if (active && answer.id===that.activeCommentAnswerId) { %>\
-            <div class="comment-text-wrapper">\
-                <div class="comment-answer-form">\
-                    <textarea class="commentAnswerText" data-id="<%= answer.commentId %>" data-answer="<%= answer.id %>" rows="3">\
-                    <%= answer.answer %></textarea>\
-                    <span class="submit-comment-answer-edit fw-button fw-dark">' + gettext("Edit") + '</span>\
-                    <span class="cancelSubmitComment fw-button fw-orange">' + gettext("Cancel") + '</span>\
-                </div>\
-           </div>\
-        <% } else { %>\
-                <div class="comment-text-wrapper">\
-                    <p class="comment-p"><%= answer.answer %></p>\
-                </div>\
-            <% if(active && (answer.user===that.mod.editor.user.id || that.mod.editor.docInfo.is_owner)) { %>\
-                <p class="comment-controls">\
-                    <span class="edit-comment-answer" data-id="<%= answer.commentId %>" data-answer="<%= answer.id %>">' + gettext("Edit") + '</span>\
-                    <span class="delete-comment-answer" data-id="<%= answer.commentId %>" data-answer="<%= answer.id %>">' + gettext("Delete") + '</span>\
-                </p>\
-            <% } %>\
-        <% } %>\
-    </div>';
+var answerCommentTemplatePart = "\n    <div class=\"comment-item\">\n        <div class=\"comment-user\">\n            <img class=\"comment-user-avatar\" src=\"<%= answer.userAvatar %>\">\n            <h5 class=\"comment-user-name\"><%= answer.userName %></h5>\n            <p class=\"comment-date\"><%= jQuery.localizeDate(answer.date) %></p>\n        </div>\n        <% if (active && answer.id===that.activeCommentAnswerId) { %>\n            <div class=\"comment-text-wrapper\">\n                <div class=\"comment-answer-form\">\n                    <textarea class=\"commentAnswerText\" data-id=\"<%= answer.commentId %>\" data-answer=\"<%= answer.id %>\" rows=\"3\">\n                    <%= answer.answer %></textarea>\n                    <span class=\"submit-comment-answer-edit fw-button fw-dark\">" + gettext("Edit") + "</span>\n                    <span class=\"cancelSubmitComment fw-button fw-orange\">" + gettext("Cancel") + "</span>\n                </div>\n           </div>\n        <% } else { %>\n                <div class=\"comment-text-wrapper\">\n                    <p class=\"comment-p\"><%= answer.answer %></p>\n                </div>\n            <% if(active && (answer.user===that.mod.editor.user.id || that.mod.editor.docInfo.is_owner)) { %>\n                <p class=\"comment-controls\">\n                    <span class=\"edit-comment-answer\" data-id=\"<%= answer.commentId %>\" data-answer=\"<%= answer.id %>\">" + gettext("Edit") + "</span>\n                    <span class=\"delete-comment-answer\" data-id=\"<%= answer.commentId %>\" data-answer=\"<%= answer.id %>\">" + gettext("Delete") + "</span>\n                </p>\n            <% } %>\n        <% } %>\n    </div>\n  ";
 
 /** A template to show one individual comment */
-var singleCommentTemplatePart = '<div class="comment-item">\
-        <div class="comment-user">\
-            <img class="comment-user-avatar" src="<%= comment.userAvatar %>">\
-            <h5 class="comment-user-name"><%= comment.userName %></h5>\
-            <p class="comment-date"><%= jQuery.localizeDate(comment.date) %></p>\
-        </div>\
-        <div class="comment-text-wrapper">\
-            <p class="comment-p"><%= comment.comment %></p>\
-            <div class="comment-form">\
-                <textarea class="commentText" data-id="<%= comment.id %>" rows="5"></textarea>\
-                <span class="submitComment fw-button fw-dark">' + gettext("Edit") + '</span>\
-                <span class="cancelSubmitComment fw-button fw-orange">' + gettext("Cancel") + '</span>\
-            </div>\
-        </div>\
-        <% if(active && comment.user===that.mod.editor.user.id) { %>\
-        <p class="comment-controls">\
-            <span class="edit-comment">' + gettext("Edit") + '</span>\
-            <span class="delete-comment" data-id="<%= comment.id %>">' + gettext("Delete") + '</span>\
-        </p>\
-        <% } %>\
-    </div>';
+var singleCommentTemplatePart = "\n    <div class=\"comment-item\">\n        <div class=\"comment-user\">\n            <img class=\"comment-user-avatar\" src=\"<%= comment.userAvatar %>\">\n            <h5 class=\"comment-user-name\"><%= comment.userName %></h5>\n            <p class=\"comment-date\"><%= jQuery.localizeDate(comment.date) %></p>\n        </div>\n        <div class=\"comment-text-wrapper\">\n            <p class=\"comment-p\"><%= comment.comment %></p>\n            <div class=\"comment-form\">\n                <textarea class=\"commentText\" data-id=\"<%= comment.id %>\" rows=\"5\"></textarea>\n                <span class=\"submitComment fw-button fw-dark\">" + gettext("Edit") + "</span>\n                <span class=\"cancelSubmitComment fw-button fw-orange\">" + gettext("Cancel") + "</span>\n            </div>\n        </div>\n        <% if(active && comment.user===that.mod.editor.user.id) { %>\n        <p class=\"comment-controls\">\n            <span class=\"edit-comment\">" + gettext("Edit") + "</span>\n            <span class=\"delete-comment\" data-id=\"<%= comment.id %>\">" + gettext("Delete") + "</span>\n        </p>\n        <% } %>\n    </div>\n    ";
 
 /** A template for the editor of a first comment before it has been saved (not an answer to a comment). */
-var firstCommentTemplatePart = '<div class="comment-item">\
-        <div class="comment-user">\
-            <img class="comment-user-avatar" src="<%= comment.userAvatar %>">\
-            <h5 class="comment-user-name"><%= comment.userName %></h5>\
-            <p class="comment-date"><%= jQuery.localizeDate(comment.date) %></p>\
-        </div>\
-        <div class="comment-text-wrapper">\
-            <textarea class="commentText" data-id="<%= comment.id %>" rows="5"></textarea>\
-            <input class="comment-is-major" type="checkbox" name="isMajor" value="0" />' + gettext("Is major") + '<br />\
-            <span class="submitComment fw-button fw-dark">' + gettext("Submit") + '</span>\
-            <span class="cancelSubmitComment fw-button fw-orange">' + gettext("Cancel") + '</span>\
-        </div>\
-    </div>';
+var firstCommentTemplatePart = "\n    <div class=\"comment-item\">\n        <div class=\"comment-user\">\n            <img class=\"comment-user-avatar\" src=\"<%= comment.userAvatar %>\">\n            <h5 class=\"comment-user-name\"><%= comment.userName %></h5>\n            <p class=\"comment-date\"><%= jQuery.localizeDate(comment.date) %></p>\n        </div>\n        <div class=\"comment-text-wrapper\">\n            <textarea class=\"commentText\" data-id=\"<%= comment.id %>\" rows=\"5\"></textarea>\n            <input class=\"comment-is-major\" type=\"checkbox\" name=\"isMajor\" value=\"0\" />" + gettext("Is major") + "<br />\n            <span class=\"submitComment fw-button fw-dark\">" + gettext("Submit") + "</span>\n            <span class=\"cancelSubmitComment fw-button fw-orange\">" + gettext("Cancel") + "</span>\n        </div>\n    </div>\n  ";
 
 /** A template to display all the comments */
-var commentsTemplate = exports.commentsTemplate = _.template('<% _.each(theComments,function(comment,key,list){ %>\
-        <div id="comment-box-<%= comment.id %>" data-id="<%= comment.id %>"  data-user-id="<%= comment.user %>" \
-        class="comment-box \
-            <% if(comment.id===that.activeCommentId) { %>active<% } else { %>inactive<% } %>\
-            <% if(comment["review:isMajor"] === true) { %>comment-is-major-bgc<% }%>\
-            " style="top:<%= that.calculateCommentBoxOffset(comment) %>px;">\
-            <% if (comment.id===that.activeCommentId || comment.comment.length > 0) { %>\
-            <% if(0 === comment.comment.length) { %>' + firstCommentTemplatePart + '<% } else { \
-               var active = (comment.id===that.activeCommentId);\
-              %>' + singleCommentTemplatePart + '<% } %>\
-            <% if (comment.answers && comment.answers.length) {\
-               for (var i=0;i < comment.answers.length; i++) { \
-                 var answer = comment.answers[i], active = (comment.id===that.activeCommentId)%>' + answerCommentTemplatePart + '<% }\
-            } %>\
-            <% if(comment.id===that.activeCommentId && 0 < comment.comment.length) { %>\
-            <div class="comment-answer">\
-                <textarea class="comment-answer-text" rows="1"></textarea>\
-                <div class="comment-answer-btns">\
-                    <button class="comment-answer-submit fw-button fw-dark" type="submit">' + gettext("Submit") + '</button>\
-                    <button class="cancelSubmitComment fw-button fw-orange" type="submit">' + gettext("Cancel") + '</button>\
-                </div>\
-            </div>\
-            <% } %>\
-            <% if(comment.id===that.activeCommentId && (comment.user===that.mod.editor.user.id || that.mod.editor.docInfo.is_owner)) { %>\
-                <span class="delete-comment-all delete-comment icon-cancel-circle" data-id="<%= comment.id %>"></span>\
-            <% } %>\
-            <% } %>\
-        </div>\
-    <% }); %>');
+var commentsTemplate = exports.commentsTemplate = _.template("\n    <% theComments.forEach(function(comment,index){ %>\n      <% if (comment.hidden) { %><div id=\"comment-box-<%= comment.id %>\" class=\"comment-box hidden\"></div><% } else { %>\n          <div id=\"comment-box-<%= comment.id %>\" data-id=\"<%= comment.id %>\"  data-user-id=\"<%= comment.user %>\"\n            class=\"comment-box\n                <% if(comment.id===that.activeCommentId) { %>active<% } else { %>inactive<% } %>\n                <% if(comment[\"review:isMajor\"] === true) { %>comment-is-major-bgc<% }%>\"\n            >\n                <% if(0 === comment.comment.length) { %>" + firstCommentTemplatePart + "<% } else {\n                   var active = (comment.id===that.activeCommentId);\n                  %>" + singleCommentTemplatePart + "<% } %>\n                <% if (comment.answers && comment.answers.length) {\n                   for (var i=0;i < comment.answers.length; i++) {\n                     var answer = comment.answers[i], active = (comment.id===that.activeCommentId)%>" + answerCommentTemplatePart + "<% }\n               } %>\n                <% if(comment.id===that.activeCommentId && 0 < comment.comment.length) { %>\n                <div class=\"comment-answer\">\n                    <textarea class=\"comment-answer-text\" rows=\"1\"></textarea>\n                    <div class=\"comment-answer-btns\">\n                        <button class=\"comment-answer-submit fw-button fw-dark\" type=\"submit\">" + gettext("Submit") + "</button>\n                        <button class=\"cancelSubmitComment fw-button fw-orange\" type=\"submit\">" + gettext("Cancel") + "</button>\n                    </div>\n                </div>\n                <% } %>\n                <% if(comment.id===that.activeCommentId && (comment.user===that.mod.editor.user.id\n                  || that.mod.editor.docInfo.is_owner)) { %>\n                    <span class=\"delete-comment-all delete-comment icon-cancel-circle\" data-id=\"<%= comment.id %>\"></span>\n                <% } %>\n            </div>\n        <% } %>\n    <% }); %>\n  ");
 
-var filterByUserBoxTemplate = exports.filterByUserBoxTemplate = _.template('<div id="comment-filter-byuser-box" title="' + gettext("Filter by user") + '">\
-        <select>\
-            <% _.each(users, function(user) { %>\
-                <option value="<%- user.user_id %>"><%- user.user_name %></option>\
-            <% }) %>\
-        </select>\
-    </div>');
+var filterByUserBoxTemplate = exports.filterByUserBoxTemplate = _.template("\n  <div id=\"comment-filter-byuser-box\" title=\"" + gettext("Filter by user") + "\">\n        <select>\n            <% _.each(users, function(user) { %>\n                <option value=\"<%- user.user_id %>\"><%- user.user_name %></option>\n            <% }) %>\n        </select>\n    </div>\n");
 
-},{}],15:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /* Functions for ProseMirror integration.*/
@@ -2171,25 +2185,23 @@ var _update = require("prosemirror/dist/ui/update");
 
 var _schema = require("./schema");
 
-var _updateUi = require("./update-ui");
-
 var _mod = require("./comments/mod");
 
 var _mod2 = require("./footnotes/mod");
 
-var _mod3 = require("./collab/mod");
+var _mod3 = require("./citations/mod");
 
-var _mod4 = require("./tools/mod");
+var _mod4 = require("./collab/mod");
 
-var _mod5 = require("./settings/mod");
+var _mod5 = require("./tools/mod");
 
-var _mod6 = require("./menus/mod");
+var _mod6 = require("./settings/mod");
+
+var _mod7 = require("./menus/mod");
 
 var _serverCommunications = require("./server-communications");
 
 var _nodeConvert = require("./node-convert");
-
-var _format2 = require("../citations/format");
 
 var _json = require("../exporter/json");
 
@@ -2223,7 +2235,7 @@ var Editor = exports.Editor = function () {
         };
         this.doc = {};
         this.user = false;
-        new _mod5.ModSettings(this);
+        new _mod6.ModSettings(this);
         new _nodeConvert.ModNodeConvert(this);
         new _serverCommunications.ModServerCommunications(this);
         this.init();
@@ -2244,13 +2256,13 @@ var Editor = exports.Editor = function () {
         value: function startEditor() {
             var that = this;
             this.pm = this.makeEditor(document.getElementById('document-editable'));
+            this.currentPm = this.pm; // The editor that is currently being edited in -- main or footnote editor
             new _mod2.ModFootnotes(this);
-            new _mod6.ModMenus(this);
-            new _mod3.ModCollab(this);
-            new _mod4.ModTools(this);
-            new _update.UpdateScheduler(this.pm, "selectionChange change activeMarkChange blur focus setDoc", function () {
-                (0, _updateUi.updateUI)(that);
-            });
+            new _mod3.ModCitations(this);
+            new _mod7.ModMenus(this);
+            new _mod4.ModCollab(this);
+            new _mod5.ModTools(this);
+            new _mod.ModComments(this);
             this.pm.on("change", function () {
                 that.docInfo.changed = true;
             });
@@ -2262,9 +2274,6 @@ var Editor = exports.Editor = function () {
             });
             this.pm.mod.collab.on("collabTransform", function (transform, options) {
                 that.onTransform(transform, false);
-            });
-            new _update.UpdateScheduler(this.pm, "change setDoc", function () {
-                that.layoutCitations();
             });
             this.setSaveTimers();
         }
@@ -2307,6 +2316,17 @@ var Editor = exports.Editor = function () {
             });
             pm.editor = this;
             return pm;
+        }
+    }, {
+        key: "testingReturns",
+        value: function testingReturns() {
+            console.log('this is the first');
+            return function () {
+                console.log('this is the second');
+                return function () {
+                    console.log('this is the third');
+                };
+            };
         }
     }, {
         key: "createDoc",
@@ -2360,7 +2380,7 @@ var Editor = exports.Editor = function () {
                 this.mod.collab.docChanges.applyDiff(diff);
             }
             this.doc.hash = this.getHash();
-            new _mod.ModComments(this, this.doc.comment_version);
+            this.mod.comments.store.setVersion(this.doc.comment_version);
             this.pm.mod.collab.on("mustSend", function () {
                 that.mod.collab.docChanges.sendToCollaborators();
             });
@@ -2386,21 +2406,11 @@ var Editor = exports.Editor = function () {
             });
         }
     }, {
-        key: "layoutCitations",
-        value: function layoutCitations() {
-            var emptyCitations = document.querySelectorAll('#document-editable span.citation:empty');
-            if (emptyCitations.length > 0) {
-                var bibliographyHTML = (0, _format2.formatCitations)(document.getElementById('document-editable'), // TODO: Should we point this to somewhere else?
-                this.doc.settings.citationstyle, window.BibDB);
-                document.getElementById('document-bibliography').innerHTML = bibliographyHTML;
-            }
-        }
-    }, {
         key: "enableUI",
         value: function enableUI() {
             bibliographyHelpers.initiate();
 
-            this.layoutCitations();
+            this.mod.citations.layoutCitations();
 
             jQuery('.savecopy, .download, .latex, .epub, .html, .print, .style, \
       .citationstyle, .tools-item, .papersize, .metadata-menu-item, \
@@ -2562,19 +2572,24 @@ var Editor = exports.Editor = function () {
     }, {
         key: "onTransform",
         value: function onTransform(transform, local) {
-            var _this = this;
-
             var updateBibliography = false,
                 updateTitle = false,
+                commentIds = [],
                 that = this;
             // Check what area is affected
             transform.steps.forEach(function (step, index) {
                 if (step.type === 'replace') {
                     if (step.from.cmp(step.to) !== 0) {
-                        transform.docs[index].inlineNodesBetween(step.from, step.to, function (node) {
+                        transform.docs[index].nodesBetween(step.from, step.to, function (node, path) {
                             if (node.type.name === 'citation') {
                                 // A citation was replaced
                                 updateBibliography = true;
+                            }
+                            if (local) {
+                                var commentId = that.mod.comments.layout.findCommentId(node);
+                                if (commentId !== false && commentIds.indexOf(commentId) === -1) {
+                                    commentIds.push(commentId);
+                                }
                             }
                         });
                     }
@@ -2586,13 +2601,10 @@ var Editor = exports.Editor = function () {
             });
 
             if (updateBibliography) {
-                (function () {
-                    // Recreate the bibliography on next flush.
-                    var formatCitations = new _update.UpdateScheduler(_this.pm, "flush", function () {
-                        formatCitations.detach();
-                        this.layoutCitations();
-                    });
-                })();
+                // Recreate the bibliography on next flush.
+                (0, _update.scheduleDOMUpdate)(this.pm, function () {
+                    return that.mod.citations.resetCitations();
+                });
             }
 
             if (updateTitle) {
@@ -2606,13 +2618,21 @@ var Editor = exports.Editor = function () {
                     }
                 }
             }
+            if (local && commentIds.length > 0) {
+                // Check if the deleted comment referrers still are somewhere else in the doc.
+                // If not, delete them.
+                // TODO: Is a timeout/scheduleDOMUpdate really needed here?
+                (0, _update.scheduleDOMUpdate)(this.pm, function () {
+                    return that.mod.comments.store.checkAndDelete(commentIds);
+                });
+            }
         }
     }]);
 
     return Editor;
 }();
 
-},{"../citations/format":3,"../exporter/json":54,"./collab/mod":8,"./comments/mod":12,"./footnotes/mod":18,"./menus/mod":23,"./node-convert":35,"./schema":36,"./server-communications":37,"./settings/mod":39,"./tools/mod":41,"./update-ui":47,"prosemirror/dist/collab":86,"prosemirror/dist/edit/main":100,"prosemirror/dist/format":107,"prosemirror/dist/ui/update":131}],16:[function(require,module,exports){
+},{"../exporter/json":58,"./citations/mod":7,"./collab/mod":10,"./comments/mod":15,"./footnotes/mod":22,"./menus/mod":27,"./node-convert":40,"./schema":41,"./server-communications":42,"./settings/mod":44,"./tools/mod":46,"prosemirror/dist/collab":90,"prosemirror/dist/edit/main":104,"prosemirror/dist/format":111,"prosemirror/dist/ui/update":135}],19:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -2738,7 +2758,106 @@ var ModFootnoteEditor = exports.ModFootnoteEditor = function () {
     return ModFootnoteEditor;
 }();
 
-},{"../schema":36,"prosemirror/dist/format":107,"prosemirror/dist/model":115,"prosemirror/dist/transform":121}],17:[function(require,module,exports){
+},{"../schema":41,"prosemirror/dist/format":111,"prosemirror/dist/model":119,"prosemirror/dist/transform":125}],20:[function(require,module,exports){
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.ModFootnoteLayout = undefined;
+
+var _update = require("prosemirror/dist/ui/update");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/* A class to make footnotes appear correctly off the side of their referrer. */
+
+var ModFootnoteLayout = exports.ModFootnoteLayout = function () {
+    function ModFootnoteLayout(mod) {
+        _classCallCheck(this, ModFootnoteLayout);
+
+        mod.layout = this;
+        this.mod = mod;
+        this.setup();
+        this.bindEvents();
+    }
+
+    _createClass(ModFootnoteLayout, [{
+        key: "setup",
+        value: function setup() {
+            // Add two elements to hold dynamic CSS info about comments.
+            var styleContainers = document.createElement('temp');
+            styleContainers.innerHTML = "<style type=\"text/css\" id=\"footnote-placement-style\"></style>";
+            while (styleContainers.firstElementChild) {
+                document.head.appendChild(styleContainers.firstElementChild);
+            }
+        }
+    }, {
+        key: "bindEvents",
+        value: function bindEvents() {
+            var that = this;
+            new _update.UpdateScheduler(this.mod.editor.pm, "change setDoc", function () {
+                return that.updateDOM();
+            });
+            new _update.UpdateScheduler(this.mod.fnPm, "change setDoc", function () {
+                return that.updateDOM();
+            });
+        }
+    }, {
+        key: "layoutFootnotes",
+        value: function layoutFootnotes() {
+            var that = this;
+            (0, _update.scheduleDOMUpdate)(this.mod.editor.pm, function () {
+                return that.updateDOM();
+            });
+        }
+    }, {
+        key: "updateDOM",
+        value: function updateDOM() {
+            // Handle the CSS layout of the footnotes on the screen.
+            // DOM write phase - nothing to do.
+            var that = this;
+
+            return function () {
+                // DOM read phase
+                var totalOffset = document.getElementById('footnote-box-container').getBoundingClientRect().top + 10,
+                    footnoteBoxes = document.querySelectorAll('#footnote-box-container .footnote-container'),
+                    footnotePlacementStyle = '',
+                    referrers = that.mod.footnotes;
+                if (referrers.length !== footnoteBoxes.length) {
+                    // Apparently not all footnote boxes have been drawn. Abort for now.
+                    return;
+                }
+                referrers.forEach(function (referrer, index) {
+                    var footnoteBox = footnoteBoxes[index];
+
+                    var footnoteBoxCoords = footnoteBox.getBoundingClientRect(),
+                        footnoteBoxHeight = footnoteBoxCoords.height,
+                        referrerTop = that.mod.editor.pm.coordsAtPos(referrer.from).top,
+                        topMargin = 10;
+
+                    if (referrerTop > totalOffset) {
+                        topMargin = parseInt(referrerTop - totalOffset);
+                        footnotePlacementStyle += '.footnote-container:nth-of-type(' + (index + 1) + ') {margin-top: ' + topMargin + 'px;}\n';
+                    }
+                    totalOffset += footnoteBoxHeight + topMargin;
+                });
+                return function () {
+                    //DOM write phase
+                    if (document.getElementById('footnote-placement-style').innerHTML != footnotePlacementStyle) {
+                        document.getElementById('footnote-placement-style').innerHTML = footnotePlacementStyle;
+                    }
+                };
+            };
+        }
+    }]);
+
+    return ModFootnoteLayout;
+}();
+
+},{"prosemirror/dist/ui/update":135}],21:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -2894,10 +3013,15 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = function () {
             var footnoteMarkers = [],
                 that = this;
 
-            this.mod.editor.pm.doc.inlineNodesBetween(fromPos, toPos, function (inlineNode, path, start, end, parent) {
-                if (inlineNode.type.name === 'footnote') {
+            this.mod.editor.pm.doc.nodesBetween(fromPos, toPos, function (node, path, parent) {
+                if (!node.isInline) {
+                    return;
+                }
+                if (node.type.name === 'footnote') {
                     (function () {
-                        var footnoteMarker = that.mod.editor.pm.markRange(new _model.Pos(path, start), new _model.Pos(path, end));
+                        var nodePath = path.slice(); // Make a copy to preserve original.
+                        var nodeOffset = nodePath.pop();
+                        var footnoteMarker = that.mod.editor.pm.markRange(new _model.Pos(nodePath, nodeOffset), new _model.Pos(nodePath, nodeOffset + node.width));
                         footnoteMarker.on('removed', function () {
                             that.mod.fnEditor.removeFootnote(footnoteMarker);
                         });
@@ -2917,18 +3041,20 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = function () {
             var count = 0,
                 passed = true,
                 that = this;
-            this.mod.editor.pm.doc.inlineNodesBetween(null, null, function (inlineNode, path, start, end, parent) {
-                if (inlineNode.type.name !== 'footnote') {
+            this.mod.editor.pm.doc.nodesBetween(null, null, function (node, path, parent) {
+                if (!node.isInline || node.type.name !== 'footnote') {
                     return;
                 }
                 if (that.mod.footnotes.length <= count) {
                     passed = false;
                 } else {
-                    var startPos = new _model.Pos(path, start);
+                    var nodePath = path.slice(); // Preserve original
+                    var nodeOffset = nodePath.pop();
+                    var startPos = new _model.Pos(nodePath, nodeOffset);
                     if (startPos.cmp(that.mod.footnotes[count].from) !== 0) {
                         passed = false;
                     }
-                    var endPos = new _model.Pos(path, end);
+                    var endPos = new _model.Pos(nodePath, nodeOffset + node.width);
                     if (endPos.cmp(that.mod.footnotes[count].to) !== 0) {
                         passed = false;
                     }
@@ -2957,7 +3083,7 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = function () {
     return ModFootnoteMarkers;
 }();
 
-},{"../schema":36,"prosemirror/dist/format":107,"prosemirror/dist/model":115}],18:[function(require,module,exports){
+},{"../schema":41,"prosemirror/dist/format":111,"prosemirror/dist/model":119}],22:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -2977,6 +3103,8 @@ var _editor = require("./editor");
 
 var _markers = require("./markers");
 
+var _layout = require("./layout");
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var ModFootnotes = exports.ModFootnotes = function () {
@@ -2987,8 +3115,10 @@ var ModFootnotes = exports.ModFootnotes = function () {
         this.editor = editor;
         this.footnotes = [];
         this.init();
+        this.bindEvents();
         new _editor.ModFootnoteEditor(this);
         new _markers.ModFootnoteMarkers(this);
+        new _layout.ModFootnoteLayout(this);
     }
 
     _createClass(ModFootnotes, [{
@@ -3002,12 +3132,24 @@ var ModFootnotes = exports.ModFootnotes = function () {
                 } // Version number does not matter much, as we do not verify it between users.
             });
         }
+    }, {
+        key: "bindEvents",
+        value: function bindEvents() {
+            var that = this;
+            // Set the current editor depending on where the focus currently is.
+            this.fnPm.on("focus", function () {
+                that.editor.currentPm = that.fnPm;
+            });
+            this.editor.pm.on("focus", function () {
+                that.editor.currentPm = that.editor.pm;
+            });
+        }
     }]);
 
     return ModFootnotes;
 }();
 
-},{"../schema":36,"./editor":16,"./markers":17,"prosemirror/dist/collab":86,"prosemirror/dist/edit/main":100}],19:[function(require,module,exports){
+},{"../schema":41,"./editor":19,"./layout":20,"./markers":21,"prosemirror/dist/collab":90,"prosemirror/dist/edit/main":104}],23:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -3127,7 +3269,7 @@ var ModMenusActions = exports.ModMenusActions = function () {
     return ModMenusActions;
 }();
 
-},{"../../exporter/copy":48,"../../exporter/epub":51,"../../exporter/html":53,"../../exporter/latex":55,"../../exporter/native":56}],20:[function(require,module,exports){
+},{"../../exporter/copy":52,"../../exporter/epub":55,"../../exporter/html":57,"../../exporter/latex":59,"../../exporter/native":60}],24:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -3193,7 +3335,7 @@ var ModMenusCitation = exports.ModMenusCitation = function () {
     return ModMenusCitation;
 }();
 
-},{"./toolbar_items/templates":33}],21:[function(require,module,exports){
+},{"./toolbar_items/templates":37}],25:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -3367,7 +3509,7 @@ var ModMenusHeader = exports.ModMenusHeader = function () {
     return ModMenusHeader;
 }();
 
-},{"../../documents/access-rights/dialog":4}],22:[function(require,module,exports){
+},{"../../documents/access-rights/dialog":5}],26:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -3431,7 +3573,7 @@ var ModMenusKeyBindings = exports.ModMenusKeyBindings = function () {
     return ModMenusKeyBindings;
 }();
 
-},{"prosemirror/dist/edit":98}],23:[function(require,module,exports){
+},{"prosemirror/dist/edit":102}],27:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3449,6 +3591,8 @@ var _keyBindings = require("./key-bindings");
 
 var _actions = require("./actions");
 
+var _updateUi = require("./update-ui");
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 /* Bindings for menus. */
@@ -3463,9 +3607,10 @@ var ModMenus = exports.ModMenus = function ModMenus(editor) {
     new _citation.ModMenusCitation(this);
     new _actions.ModMenusActions(this);
     new _keyBindings.ModMenusKeyBindings(this);
+    new _updateUi.ModMenusUpdateUI(this);
 };
 
-},{"./actions":19,"./citation":20,"./header":21,"./key-bindings":22,"./toolbar":24}],24:[function(require,module,exports){
+},{"./actions":23,"./citation":24,"./header":25,"./key-bindings":26,"./toolbar":28,"./update-ui":39}],28:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -3524,7 +3669,7 @@ var ModMenusToolbar = exports.ModMenusToolbar = function () {
     return ModMenusToolbar;
 }();
 
-},{"./toolbar_items/block_styles":25,"./toolbar_items/cite":26,"./toolbar_items/comment":27,"./toolbar_items/figure":28,"./toolbar_items/footnote":29,"./toolbar_items/inline_styles":30,"./toolbar_items/link":31,"./toolbar_items/math":32,"./toolbar_items/undo_redo":34}],25:[function(require,module,exports){
+},{"./toolbar_items/block_styles":29,"./toolbar_items/cite":30,"./toolbar_items/comment":31,"./toolbar_items/figure":32,"./toolbar_items/footnote":33,"./toolbar_items/inline_styles":34,"./toolbar_items/link":35,"./toolbar_items/math":36,"./toolbar_items/undo_redo":38}],29:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3546,15 +3691,15 @@ var bindBlockStyles = exports.bindBlockStyles = function bindBlockStyles(editor)
         },
             theCommand = commands[this.id.split('_')[0]];
 
-        editor.pm.execCommand(theCommand);
+        editor.currentPm.execCommand(theCommand);
     });
 
     jQuery(document).on('mousedown', '#button-ol', function (event) {
-        editor.pm.execCommand('ordered_list:wrap');
+        editor.currentPm.execCommand('ordered_list:wrap');
     });
 
     jQuery(document).on('mousedown', '#button-ul', function (event) {
-        editor.pm.execCommand('bullet_list:wrap');
+        editor.currentPm.execCommand('bullet_list:wrap');
     });
 
     jQuery(document).on('mousedown', '#button-blockquote', function (event) {
@@ -3562,7 +3707,7 @@ var bindBlockStyles = exports.bindBlockStyles = function bindBlockStyles(editor)
     });
 };
 
-},{}],26:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3590,7 +3735,7 @@ var bindCite = exports.bindCite = function bindCite(mod) {
             cited_pages = undefined,
             diaButtons = [],
             submit_button_text = undefined,
-            node = editor.pm.selection.node;
+            node = editor.currentPm.selection.node;
 
         if (node && node.type && node.type.name === 'citation') {
             bibFormatStart = node.attrs.bibFormat;
@@ -3634,7 +3779,7 @@ var bindCite = exports.bindCite = function bindCite(mod) {
                 return true;
             }
 
-            editor.pm.execCommand('citation:insert', [bibFormat, bibEntry, bibBefore, bibPage]);
+            editor.currentPm.execCommand('citation:insert', [bibFormat, bibEntry, bibBefore, bibPage]);
             return true;
         }
 
@@ -3671,7 +3816,7 @@ var bindCite = exports.bindCite = function bindCite(mod) {
             diaButtons.push({
                 text: gettext('Remove'),
                 click: function click() {
-                    editor.pm.execCommand('deleteSelection');
+                    editor.currentPm.execCommand('deleteSelection');
                     dialog.dialog('close');
                 },
                 class: 'fw-button fw-orange'
@@ -3790,7 +3935,7 @@ var bindCite = exports.bindCite = function bindCite(mod) {
     });
 };
 
-},{"./templates":33}],27:[function(require,module,exports){
+},{"./templates":37}],31:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3804,7 +3949,7 @@ var bindComment = exports.bindComment = function bindComment(editor) {
     });
 };
 
-},{}],28:[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3831,7 +3976,7 @@ var bindFigure = exports.bindFigure = function bindFigure(editor) {
             figureCategory = 'figure',
             equation = '',
             previewImage = undefined,
-            node = editor.pm.selection.node;
+            node = editor.currentPm.selection.node;
 
         event.preventDefault();
 
@@ -3853,7 +3998,7 @@ var bindFigure = exports.bindFigure = function bindFigure(editor) {
                 text: gettext('Remove'),
                 class: 'fw-button fw-orange',
                 click: function click() {
-                    editor.pm.execCommand('deleteSelection');
+                    editor.currentPm.execCommand('deleteSelection');
                     dialog.dialog('close');
                 }
             });
@@ -3879,7 +4024,7 @@ var bindFigure = exports.bindFigure = function bindFigure(editor) {
                 if (new RegExp(/^\s*$/).test(equation) && !image) {
                     // The math input is empty. Delete a math node if it exist. Then close the dialog.
                     if (insideFigure) {
-                        editor.pm.execCommand('deleteSelection');
+                        editor.currentPm.execCommand('deleteSelection');
                     }
                     dialog.dialog('close');
                     return false;
@@ -3891,7 +4036,7 @@ var bindFigure = exports.bindFigure = function bindFigure(editor) {
                     return false;
                 }
 
-                editor.pm.execCommand('figure:insert', [equation, image, figureCategory, caption]);
+                editor.currentPm.execCommand('figure:insert', [equation, image, figureCategory, caption]);
 
                 dialog.dialog('close');
                 return false;
@@ -4033,7 +4178,7 @@ var bindFigure = exports.bindFigure = function bindFigure(editor) {
     });
 };
 
-},{"./templates":33,"katex":63}],29:[function(require,module,exports){
+},{"./templates":37,"katex":67}],33:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4046,7 +4191,7 @@ var bindFootnote = exports.bindFootnote = function bindFootnote(editor) {
     });
 };
 
-},{}],30:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4057,15 +4202,15 @@ var bindInlineStyles = exports.bindInlineStyles = function bindInlineStyles(edit
     // inlinestyles
     // strong
     jQuery(document).on('mousedown', '#button-bold:not(.disabled)', function () {
-        editor.pm.execCommand('strong:toggle');
+        editor.currentPm.execCommand('strong:toggle');
     });
     // emph
     jQuery(document).on('mousedown', '#button-italic:not(.disabled)', function (event) {
-        editor.pm.execCommand('em:toggle');
+        editor.currentPm.execCommand('em:toggle');
     });
 };
 
-},{}],31:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4080,7 +4225,7 @@ var bindLink = exports.bindLink = function bindLink(editor) {
     // toolbar link
     jQuery(document).on('mousedown', '#button-link:not(.disabled)', function (event) {
 
-        if (!editor.pm.hasFocus()) {
+        if (!editor.currentPm.hasFocus()) {
             return false;
         }
 
@@ -4090,7 +4235,7 @@ var bindLink = exports.bindLink = function bindLink(editor) {
             linkTitle = '',
             defaultLink = 'http://',
             submitButtonText = 'Insert',
-            linkElement = _.find(editor.pm.activeMarks(), function (mark) {
+            linkElement = _.find(editor.currentPm.activeMarks(), function (mark) {
             return mark.type.name === 'link';
         });
 
@@ -4112,7 +4257,7 @@ var bindLink = exports.bindLink = function bindLink(editor) {
                 if (new RegExp(/^\s*$/).test(newLink) || newLink === defaultLink) {
                     // The link input is empty or hasn't been changed from the default value. Just close the dialog.
                     dialog.dialog('close');
-                    editor.pm.focus();
+                    editor.currentPm.focus();
                     return;
                 }
 
@@ -4121,8 +4266,8 @@ var bindLink = exports.bindLink = function bindLink(editor) {
                     linkText = link;
                 }
                 dialog.dialog('close');
-                editor.pm.execCommand('link:set', [newLink, linkTitle]);
-                editor.pm.focus();
+                editor.currentPm.execCommand('link:set', [newLink, linkTitle]);
+                editor.currentPm.focus();
                 return;
             }
         });
@@ -4132,7 +4277,7 @@ var bindLink = exports.bindLink = function bindLink(editor) {
             class: 'fw-button fw-orange',
             click: function click() {
                 dialog.dialog('close');
-                editor.pm.focus();
+                editor.currentPm.focus();
             }
         });
 
@@ -4151,7 +4296,7 @@ var bindLink = exports.bindLink = function bindLink(editor) {
     });
 };
 
-},{"./templates":33}],32:[function(require,module,exports){
+},{"./templates":37}],36:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4164,14 +4309,14 @@ var _templates = require('./templates');
 var bindMath = exports.bindMath = function bindMath(editor) {
 
     // toolbar math
-    jQuery(document).on('mousedown', '#button-math:not(.disabled), .equation', function (event) {
+    jQuery(document).on('mousedown', '#button-math:not(.disabled)', function (event) {
 
         var dialog = undefined,
             dialogButtons = [],
             submitMessage = gettext('Insert'),
             insideMath = false,
             equation = 'x=2*y',
-            node = editor.pm.selection.node;
+            node = editor.currentPm.selection.node;
 
         event.preventDefault();
 
@@ -4199,7 +4344,7 @@ var bindMath = exports.bindMath = function bindMath(editor) {
                 if (new RegExp(/^\s*$/).test(equation)) {
                     // The math input is empty. Delete a math node if it exist. Then close the dialog.
                     if (insideMath) {
-                        editor.pm.execCommand('deleteSelection');
+                        editor.currentPm.execCommand('deleteSelection');
                     }
                     dialog.dialog('close');
                     return;
@@ -4208,7 +4353,7 @@ var bindMath = exports.bindMath = function bindMath(editor) {
                     return;
                 }
 
-                editor.pm.execCommand('equation:insert', [equation]);
+                editor.currentPm.execCommand('equation:insert', [equation]);
 
                 dialog.dialog('close');
             }
@@ -4235,7 +4380,7 @@ var bindMath = exports.bindMath = function bindMath(editor) {
     });
 };
 
-},{"./templates":33}],33:[function(require,module,exports){
+},{"./templates":37}],37:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4404,7 +4549,7 @@ var selectedCitationTemplate = exports.selectedCitationTemplate = _.template('<t
       </table>\
   </td></tr>');
 
-},{}],34:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4423,7 +4568,278 @@ var bindHistory = exports.bindHistory = function bindHistory(editor) {
     });
 };
 
-},{}],35:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
+"use strict";
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.ModMenusUpdateUI = undefined;
+
+var _model = require("prosemirror/dist/model");
+
+var _update = require("prosemirror/dist/ui/update");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var BLOCK_LABELS = {
+    'paragraph': gettext('Normal Text'),
+    'heading_1': gettext('1st Heading'),
+    'heading_2': gettext('2nd Heading'),
+    'heading_3': gettext('3rd Heading'),
+    'heading_4': gettext('4th Heading'),
+    'heading_5': gettext('5th Heading'),
+    'heading_6': gettext('6th Heading'),
+    'code_block': gettext('Code'),
+    'figure': gettext('Figure')
+};
+
+var PART_LABELS = {
+    'title': gettext('Title'),
+    'metadatasubtitle': gettext('Subtitle'),
+    'metadataauthors': gettext('Authors'),
+    'metadataabstract': gettext('Abstract'),
+    'metadatakeywords': gettext('Keywords'),
+    'documentcontents': gettext('Body')
+};
+
+var ModMenusUpdateUI = exports.ModMenusUpdateUI = function () {
+    function ModMenusUpdateUI(mod) {
+        _classCallCheck(this, ModMenusUpdateUI);
+
+        mod.updateUI = this;
+        this.mod = mod;
+        this.placeHolderCss = '';
+        this.bindEvents();
+    }
+
+    _createClass(ModMenusUpdateUI, [{
+        key: "bindEvents",
+        value: function bindEvents() {
+            var that = this;
+            new _update.UpdateScheduler(this.mod.editor.pm, "selectionChange change activeMarkChange blur focus setDoc", function () {
+                return that.updateUI();
+            });
+            new _update.UpdateScheduler(this.mod.editor.mod.footnotes.fnPm, "selectionChange change activeMarkChange blur focus setDoc", function () {
+                return that.updateUI();
+            });
+        }
+    }, {
+        key: "updateUI",
+        value: function updateUI() {
+            var pm = this.mod.editor.pm,
+                fnPm = this.mod.editor.mod.footnotes.fnPm,
+                currentPm = this.mod.editor.currentPm;
+
+            // We count on the the title node being the first one in the document
+            var documentTitle = pm.doc.firstChild.type.name === 'title' && pm.doc.firstChild.textContent.length > 0 ? pm.doc.firstChild.textContent : gettext('Untitled Document');
+
+            jQuery('title').html('Fidus Writer - ' + documentTitle);
+            jQuery('#header h1').html(documentTitle);
+
+            var marks = currentPm.activeMarks();
+            var strong = marks.some(function (mark) {
+                return mark.type.name === 'strong';
+            });
+
+            if (strong) {
+                jQuery('#button-bold').addClass('ui-state-active');
+            } else {
+                jQuery('#button-bold').removeClass('ui-state-active');
+            }
+
+            var em = marks.some(function (mark) {
+                return mark.type.name === 'em';
+            });
+
+            if (em) {
+                jQuery('#button-italic').addClass('ui-state-active');
+            } else {
+                jQuery('#button-italic').removeClass('ui-state-active');
+            }
+
+            var link = marks.some(function (mark) {
+                return mark.type.name === 'link';
+            });
+
+            if (link) {
+                jQuery('#button-link').addClass('ui-state-active');
+            } else {
+                jQuery('#button-link').removeClass('ui-state-active');
+            }
+
+            if (pm.history.undoDepth > 0) {
+                jQuery('#button-undo').removeClass('disabled');
+            } else {
+                jQuery('#button-undo').addClass('disabled');
+            }
+
+            if (pm.history.redoDepth > 0) {
+                jQuery('#button-redo').removeClass('disabled');
+            } else {
+                jQuery('#button-redo').addClass('disabled');
+            }
+
+            var start = currentPm.selection.from.min(currentPm.selection.to);
+            var end = currentPm.selection.from.max(currentPm.selection.to);
+            if (start.path.length === 0 || end.path.length === 0) {
+                // The selection must be outermost elements. Do not go any further in
+                // analyzing things.
+                return;
+            }
+            var startElement = currentPm.doc.path([start.path[0]]);
+            var endElement = currentPm.doc.path([end.path[0]]);
+
+            if (startElement !== endElement) {
+                /* Selection goes across document parts or across footnotes */
+                this.calculatePlaceHolderCss(pm);
+                jQuery('.editortoolbar button').addClass('disabled');
+                jQuery('#block-style-label').html('');
+                jQuery('#current-position').html('');
+                if (pm.selection.empty) {
+                    jQuery('#button-comment').addClass('disabled');
+                } else {
+                    jQuery('#button-comment').removeClass('disabled');
+                }
+            } else {
+                if (currentPm === pm) {
+                    this.calculatePlaceHolderCss(pm, startElement);
+                    jQuery('#current-position').html(PART_LABELS[startElement.type.name]);
+
+                    switch (startElement.type.name) {
+                        case 'title':
+                        case 'metadatasubtitle':
+                        case 'metadataauthors':
+                        case 'metadatakeywords':
+                            jQuery('.edit-button').addClass('disabled');
+                            jQuery('#block-style-label').html('');
+                            if (pm.selection.empty) {
+                                jQuery('#button-comment').addClass('disabled');
+                            } else {
+                                jQuery('#button-comment').removeClass('disabled');
+                            }
+
+                            break;
+                        case 'metadataabstract':
+                        case 'documentcontents':
+                            jQuery('.edit-button').removeClass('disabled');
+
+                            if (pm.selection.empty) {
+                                jQuery('#button-link').addClass('disabled');
+                                jQuery('#button-comment').addClass('disabled');
+                            } else {
+                                jQuery('#button-comment').removeClass('disabled');
+                            }
+
+                            if (startElement.type.name === 'metadataabstract') {
+                                jQuery('#button-figure').addClass('disabled');
+                            }
+
+                            var blockNodeType = true;
+
+                            if (_(start.path).isEqual(end.path)) {
+                                // Selection within a single block.
+                                var blockNode = pm.doc.path(start.path);
+                                blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
+                                jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType]);
+                            } else {
+                                // The selection is crossing several blocks
+                                pm.doc.nodesBetween(start, end, function (node, path, parent) {
+                                    if (node.isTextblock) {
+                                        var nextBlockNodeType = node.type.name === 'heading' ? node.type.name + '_' + node.attrs.level : node.type.name;
+                                        if (blockNodeType === true) {
+                                            blockNodeType = nextBlockNodeType;
+                                        }
+                                        if (blockNodeType !== nextBlockNodeType) {
+                                            blockNodeType = false;
+                                        }
+                                    }
+                                });
+
+                                if (blockNodeType) {
+                                    jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType]);
+                                } else {
+                                    jQuery('#block-style-label').html('');
+                                }
+                            }
+                            break;
+                    }
+                } else {
+                    // In footnote editor
+                    jQuery('#current-position').html(gettext('Footnote'));
+                    var blockNode = fnPm.doc.path(start.path);
+                    blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
+                    jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType]);
+
+                    // Enable all editing buttons, except comment and footnote
+                    jQuery('.edit-button').removeClass('disabled');
+                    jQuery('#button-comment').addClass('disabled');
+                    jQuery('#button-footnote').addClass('disabled');
+                }
+            }
+            return;
+        }
+
+        /** Show or hide placeHolders ('Contents...', 'Title...', etc.) depending on
+        whether these elements are empty or not.
+        TODO: placeholder calculation should probably be somewhere else, not in the
+        updating procedures of the menus.
+        */
+
+    }, {
+        key: "calculatePlaceHolderCss",
+        value: function calculatePlaceHolderCss(pm, selectedElement) {
+            var newPlaceHolderCss = '',
+                i = 0,
+                placeHolders = [{
+                'type': 'title',
+                'selector': '#document-title',
+                'placeHolder': gettext('Title...')
+            }, {
+                'type': 'metadatasubtitle',
+                'selector': '#metadata-subtitle',
+                'placeHolder': gettext('Subtitle...')
+            }, {
+                'type': 'metadaauthors',
+                'selector': '#metadata-authors',
+                'placeHolder': gettext('Authors...')
+            }, {
+                'type': 'metadataabstract',
+                'selector': '#metadata-abstract',
+                'placeHolder': gettext('Abstract...')
+            }, {
+                'type': 'metadatakeywords',
+                'selector': '#metadata-keywords',
+                'placeHolder': gettext('Keywords...')
+            }, {
+                'type': 'documentcontents',
+                'selector': '#document-contents',
+                'placeHolder': gettext('Body...')
+            }];
+
+            placeHolders.forEach(function (elementType, index) {
+                var partElement = pm.doc.child(i);
+                if (partElement.type.name == !elementType.type) {
+                    return false;
+                }
+                if (partElement.textContent.length === 0 && (selectedElement != partElement || !pm.hasFocus())) {
+                    newPlaceHolderCss += elementType.selector + ':before {content: "' + elementType.placeHolder + '"}\n';
+                }
+                i++;
+            });
+            if (this.placeHolderCss !== newPlaceHolderCss) {
+                this.placeHolderCss = newPlaceHolderCss;
+                document.getElementById('placeholder-styles').innerHTML = newPlaceHolderCss;
+            }
+        }
+    }]);
+
+    return ModMenusUpdateUI;
+}();
+
+},{"prosemirror/dist/model":119,"prosemirror/dist/ui/update":135}],40:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -4496,7 +4912,7 @@ var ModNodeConvert = exports.ModNodeConvert = function () {
     return ModNodeConvert;
 }();
 
-},{}],36:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -4934,13 +5350,15 @@ Citation.register("parseDOM", "cite", {
 });
 
 Citation.prototype.serializeDOM = function (node, serializer) {
-    return serializer.renderAs(node, "span", {
+    var dom = serializer.renderAs(node, "span", {
         class: 'citation',
         'data-bib-format': node.attrs.bibFormat,
         'data-bib-entry': node.attrs.bibEntry,
         'data-bib-before': node.attrs.bibBefore,
         'data-bib-page': node.attrs.bibPage
     });
+    // TODO: Do the citation formatting here rather than centrally, maybe?
+    return dom;
 };
 
 Citation.register("command", "insert", {
@@ -5302,7 +5720,7 @@ var fidusFnSchema = exports.fidusFnSchema = new _model.Schema(_model.defaultSche
     comment: CommentMark
 }));
 
-},{"katex":63,"prosemirror/dist/model":115}],37:[function(require,module,exports){
+},{"katex":67,"prosemirror/dist/model":119}],42:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -5461,7 +5879,7 @@ var ModServerCommunications = exports.ModServerCommunications = function () {
     return ModServerCommunications;
 }();
 
-},{}],38:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -5523,7 +5941,9 @@ var ModSettingsLayout = exports.ModSettingsLayout = function () {
                 // for font loading.
                 setTimeout(function () {
                     that.mod.editor.mod.comments.layout.layoutComments();
-                }, 100);
+
+                    that.mod.editor.mod.footnotes.layout.layoutFootnotes();
+                }, 250);
             });
         }
 
@@ -5535,7 +5955,7 @@ var ModSettingsLayout = exports.ModSettingsLayout = function () {
         value: function displayCitationstyle() {
             jQuery("#header-navigation .citationstyle.selected").removeClass('selected');
             jQuery('span[data-citationstyle=' + this.mod.editor.doc.settings.citationstyle + ']').addClass('selected');
-            this.mod.editor.layoutCitations();
+            this.mod.editor.mod.citations.layoutCitations();
         }
 
         /** Display the document's paper size.
@@ -5570,7 +5990,7 @@ var ModSettingsLayout = exports.ModSettingsLayout = function () {
     return ModSettingsLayout;
 }();
 
-},{}],39:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5596,7 +6016,7 @@ var ModSettings = exports.ModSettings = function ModSettings(editor) {
     new _layout.ModSettingsLayout(this);
 };
 
-},{"./layout":38,"./set":40}],40:[function(require,module,exports){
+},{"./layout":43,"./set":45}],45:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -5661,7 +6081,7 @@ var ModSettingsSet = exports.ModSettingsSet = function () {
     return ModSettingsSet;
 }();
 
-},{}],41:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -5687,7 +6107,7 @@ var ModTools = exports.ModTools = function ModTools(editor) {
     new _showKeyBindings.ModToolsShowKeyBindings(this);
 };
 
-},{"./print":42,"./show-key-bindings":44,"./word-count":46}],42:[function(require,module,exports){
+},{"./print":47,"./show-key-bindings":49,"./word-count":51}],47:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -5771,7 +6191,7 @@ var ModToolsPrint = exports.ModToolsPrint = function () {
     return ModToolsPrint;
 }();
 
-},{}],43:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5816,7 +6236,7 @@ var showKeyBindingsTemplate = exports.showKeyBindingsTemplate = _.template('\
 </div>\
 ');
 
-},{}],44:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 "use strict";
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -5867,7 +6287,7 @@ var ModToolsShowKeyBindings = exports.ModToolsShowKeyBindings = function () {
     return ModToolsShowKeyBindings;
 }();
 
-},{"./show-key-bindings-templates":43}],45:[function(require,module,exports){
+},{"./show-key-bindings-templates":48}],50:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -5896,7 +6316,7 @@ var wordCounterDialogTemplate = exports.wordCounterDialogTemplate = _.template('
         </table>\
     </div>');
 
-},{}],46:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -5975,229 +6395,7 @@ var ModToolsWordCount = exports.ModToolsWordCount = function () {
     return ModToolsWordCount;
 }();
 
-},{"./word-count-templates":45}],47:[function(require,module,exports){
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-exports.updateUI = updateUI;
-
-var _model = require('prosemirror/dist/model');
-
-var BLOCK_LABELS = {
-    'paragraph': gettext('Normal Text'),
-    'heading_1': gettext('1st Heading'),
-    'heading_2': gettext('2nd Heading'),
-    'heading_3': gettext('3rd Heading'),
-    'heading_4': gettext('4th Heading'),
-    'heading_5': gettext('5th Heading'),
-    'heading_6': gettext('6th Heading'),
-    'code_block': gettext('Code'),
-    'figure': gettext('Figure')
-}; // Update UI (adapted from ProseMirror's src/menu/update.js)
-
-var PART_LABELS = {
-    'title': gettext('Title'),
-    'metadatasubtitle': gettext('Subtitle'),
-    'metadataauthors': gettext('Authors'),
-    'metadataabstract': gettext('Abstract'),
-    'metadatakeywords': gettext('Keywords'),
-    'documentcontents': gettext('Body')
-};
-
-function updateUI(editor) {
-    var pm = editor.pm;
-
-    // We count on the the title node being the first one in the document
-    var documentTitle = pm.doc.firstChild.type.name === 'title' && pm.doc.firstChild.textContent.length > 0 ? pm.doc.firstChild.textContent : gettext('Untitled Document');
-
-    jQuery('title').html('Fidus Writer - ' + documentTitle);
-    jQuery('#header h1').html(documentTitle);
-
-    var marks = pm.activeMarks();
-    var strong = marks.some(function (mark) {
-        return mark.type.name === 'strong';
-    });
-
-    if (strong) {
-        jQuery('#button-bold').addClass('ui-state-active');
-    } else {
-        jQuery('#button-bold').removeClass('ui-state-active');
-    }
-
-    var em = marks.some(function (mark) {
-        return mark.type.name === 'em';
-    });
-
-    if (em) {
-        jQuery('#button-italic').addClass('ui-state-active');
-    } else {
-        jQuery('#button-italic').removeClass('ui-state-active');
-    }
-
-    var link = marks.some(function (mark) {
-        return mark.type.name === 'link';
-    });
-
-    if (link) {
-        jQuery('#button-link').addClass('ui-state-active');
-    } else {
-        jQuery('#button-link').removeClass('ui-state-active');
-    }
-
-    if (pm.history.undoDepth > 0) {
-        jQuery('#button-undo').removeClass('disabled');
-    } else {
-        jQuery('#button-undo').addClass('disabled');
-    }
-
-    if (pm.history.redoDepth > 0) {
-        jQuery('#button-redo').removeClass('disabled');
-    } else {
-        jQuery('#button-redo').addClass('disabled');
-    }
-
-    var start = pm.selection.from.min(pm.selection.to);
-    var end = pm.selection.from.max(pm.selection.to);
-    if (start.path.length === 0 || end.path.length === 0) {
-        // The selection must be outermost elements. Do not go any further in
-        // analyzing things.
-        return;
-    }
-    var startElement = pm.doc.path([start.path[0]]);
-    var endElement = pm.doc.path([end.path[0]]);
-
-    if (startElement !== endElement) {
-        /* Selection goes across document parts */
-        calculatePlaceHolderCss(pm);
-        jQuery('.editortoolbar button').addClass('disabled');
-        jQuery('#block-style-label').html('');
-        jQuery('#current-position').html('');
-        if (pm.selection.empty) {
-            jQuery('#button-comment').addClass('disabled');
-        } else {
-            jQuery('#button-comment').removeClass('disabled');
-        }
-    } else {
-        calculatePlaceHolderCss(pm, startElement);
-        jQuery('#current-position').html(PART_LABELS[startElement.type.name]);
-
-        switch (startElement.type.name) {
-            case 'title':
-            case 'metadatasubtitle':
-            case 'metadataauthors':
-            case 'metadatakeywords':
-                jQuery('.edit-button').addClass('disabled');
-                jQuery('#block-style-label').html('');
-                if (pm.selection.empty) {
-                    jQuery('#button-comment').addClass('disabled');
-                } else {
-                    jQuery('#button-comment').removeClass('disabled');
-                }
-
-                break;
-            case 'metadataabstract':
-            case 'documentcontents':
-                jQuery('.edit-button').removeClass('disabled');
-
-                if (pm.selection.empty) {
-                    jQuery('#button-link').addClass('disabled');
-                    jQuery('#button-comment').addClass('disabled');
-                } else {
-                    jQuery('#button-comment').removeClass('disabled');
-                }
-
-                if (startElement.type.name === 'metadataabstract') {
-                    jQuery('#button-figure').addClass('disabled');
-                }
-
-                var blockNodeType = true,
-                    blockNode,
-                    nextBlockNodeType;
-
-                if (_(start.path).isEqual(end.path)) {
-                    // Selection within a single block.
-                    blockNode = pm.doc.path(start.path);
-                    blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
-                    jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType]);
-                } else {
-                    // The selection is crossing several blocks
-                    pm.doc.nodesBetween(start, end, function (node, path, parent) {
-                        if (node.isTextblock) {
-                            nextBlockNodeType = node.type.name === 'heading' ? node.type.name + '_' + node.attrs.level : node.type.name;
-                            if (blockNodeType === true) {
-                                blockNodeType = nextBlockNodeType;
-                            }
-                            if (blockNodeType !== nextBlockNodeType) {
-                                blockNodeType = false;
-                            }
-                        }
-                    });
-
-                    if (blockNodeType) {
-                        jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType]);
-                    } else {
-                        jQuery('#block-style-label').html('');
-                    }
-                }
-                break;
-        }
-    }
-    return true;
-}
-
-/** Show or hide placeHolders ('Contents...', 'Title...', etc.) depending on
-whether these elements are empty or not.*/
-
-var placeHolderCss = '';
-
-function calculatePlaceHolderCss(pm, selectedElement) {
-    var newPlaceHolderCss = '',
-        i = 0,
-        placeHolders = [{
-        'type': 'title',
-        'selector': '#document-title',
-        'placeHolder': gettext('Title...')
-    }, {
-        'type': 'metadatasubtitle',
-        'selector': '#metadata-subtitle',
-        'placeHolder': gettext('Subtitle...')
-    }, {
-        'type': 'metadaauthors',
-        'selector': '#metadata-authors',
-        'placeHolder': gettext('Authors...')
-    }, {
-        'type': 'metadataabstract',
-        'selector': '#metadata-abstract',
-        'placeHolder': gettext('Abstract...')
-    }, {
-        'type': 'metadatakeywords',
-        'selector': '#metadata-keywords',
-        'placeHolder': gettext('Keywords...')
-    }, {
-        'type': 'documentcontents',
-        'selector': '#document-contents',
-        'placeHolder': gettext('Body...')
-    }];
-
-    placeHolders.forEach(function (elementType, index) {
-        var partElement = pm.doc.child(i);
-        if (partElement.type.name == !elementType.type) {
-            return false;
-        }
-        if (partElement.textContent.length === 0 && (selectedElement != partElement || !pm.hasFocus())) {
-            newPlaceHolderCss += elementType.selector + ':before {content: "' + elementType.placeHolder + '"}\n';
-        }
-        i++;
-    });
-    if (placeHolderCss !== newPlaceHolderCss) {
-        placeHolderCss = newPlaceHolderCss;
-        jQuery('#placeholder-styles')[0].innerHTML = newPlaceHolderCss;
-    }
-}
-
-},{"prosemirror/dist/model":115}],48:[function(require,module,exports){
+},{"./word-count-templates":50}],52:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6263,7 +6461,7 @@ var savecopy = exports.savecopy = function savecopy(aDocument, editor, user, cal
     }
 };
 
-},{"../importer/native":61,"./native":56}],49:[function(require,module,exports){
+},{"../importer/native":65,"./native":60}],53:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6284,7 +6482,7 @@ var downloadFile = exports.downloadFile = function downloadFile(zipFilename, blo
     fakeDownloadLink.dispatchEvent(clickEvent);
 };
 
-},{}],50:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6406,7 +6604,7 @@ var navItemTemplate = exports.navItemTemplate = _.template('\t\t\t\t<li><a href=
     <% } %>\
 </li>\n');
 
-},{}],51:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6702,7 +6900,7 @@ var orderLinks = exports.orderLinks = function orderLinks(contentItems) {
     return contentItems;
 };
 
-},{"../katex/opf-includes":62,"./epub-templates":50,"./html":53,"./json":54,"./tools":57,"./zip":60,"katex":63}],52:[function(require,module,exports){
+},{"../katex/opf-includes":66,"./epub-templates":54,"./html":57,"./json":58,"./tools":61,"./zip":64,"katex":67}],56:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -6721,7 +6919,7 @@ var htmlExportTemplate = exports.htmlExportTemplate = _.template('<!DOCTYPE html
         <% } %>\
         <%= contents %></body></html>');
 
-},{}],53:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6963,7 +7161,7 @@ var replaceImgSrc = exports.replaceImgSrc = function replaceImgSrc(htmlString) {
     return htmlString;
 };
 
-},{"../citations/format":3,"./html-templates":52,"./json":54,"./tools":57,"./zip":60,"katex":63}],54:[function(require,module,exports){
+},{"../citations/format":4,"./html-templates":56,"./json":58,"./tools":61,"./zip":64,"katex":67}],58:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7040,7 +7238,7 @@ var node2Obj = exports.node2Obj = function node2Obj(node) {
     return obj;
 };
 
-},{}],55:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7448,7 +7646,7 @@ var export1 = function export1(aDocument, aBibDB) {
     (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools.createSlug)(title) + '.latex.zip');
 };
 
-},{"../bibliography/exporter/biblatex":2,"./html":53,"./json":54,"./tools":57,"./zip":60}],56:[function(require,module,exports){
+},{"../bibliography/exporter/biblatex":2,"./html":57,"./json":58,"./tools":61,"./zip":64}],60:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7569,7 +7767,7 @@ var exportNativeFile = function exportNativeFile(aDocument, shrunkImageDB, shrun
     (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools.createSlug)(aDocument.title) + '.fidus', 'application/fidus+zip', false, upload, editor);
 };
 
-},{"./json":54,"./tools":57,"./zip":60}],57:[function(require,module,exports){
+},{"./json":58,"./tools":61,"./zip":64}],61:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7614,7 +7812,7 @@ var findImages = exports.findImages = function findImages(htmlCode) {
     return images;
 };
 
-},{}],58:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7624,7 +7822,7 @@ Object.defineProperty(exports, "__esModule", {
 var revisionDialogTemplate = exports.revisionDialogTemplate = _.template('\
 <div title="' + gettext('Revision description') + '"><p><input type="text" class="revision-note" placeholder="' + gettext('Description (optional)') + '"></p></div>');
 
-},{}],59:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7685,7 +7883,7 @@ var uploadFile = exports.uploadFile = function uploadFile(zipFilename, blob, edi
     });
 };
 
-},{"./upload-templates":58}],60:[function(require,module,exports){
+},{"./upload-templates":62}],64:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -7808,7 +8006,7 @@ var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles,
     }
 };
 
-},{"./download":49,"./upload":59}],61:[function(require,module,exports){
+},{"./download":53,"./upload":63}],65:[function(require,module,exports){
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -8206,7 +8404,7 @@ var ImportNative = exports.ImportNative = function () {
     return ImportNative;
 }();
 
-},{"../exporter/json":54}],62:[function(require,module,exports){
+},{"../exporter/json":58}],66:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -8215,7 +8413,7 @@ Object.defineProperty(exports, "__esModule", {
 // This file is auto-generated. CHANGES WILL BE OVERWRITTEN! Re-generate by running ./manage.py bundle_katex.
 var katexOpfIncludes = exports.katexOpfIncludes = "\n<item id=\"katex-0\" href=\"katex.min.css\" media-type=\"text/css\" />\n<item id=\"katex-1\" href=\"fonts/KaTeX_Size1-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-2\" href=\"fonts/KaTeX_Fraktur-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-3\" href=\"fonts/KaTeX_SansSerif-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-4\" href=\"fonts/KaTeX_Size3-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-5\" href=\"fonts/KaTeX_Math-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-6\" href=\"fonts/KaTeX_Typewriter-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-7\" href=\"fonts/KaTeX_Script-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-8\" href=\"fonts/KaTeX_Size1-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-9\" href=\"fonts/KaTeX_Fraktur-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-10\" href=\"fonts/KaTeX_Fraktur-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-11\" href=\"fonts/KaTeX_Fraktur-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-12\" href=\"fonts/KaTeX_Size2-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-13\" href=\"fonts/KaTeX_AMS-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-14\" href=\"fonts/KaTeX_Main-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-15\" href=\"fonts/KaTeX_Main-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-16\" href=\"fonts/KaTeX_SansSerif-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-17\" href=\"fonts/KaTeX_Size4-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-18\" href=\"fonts/KaTeX_Math-BoldItalic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-19\" href=\"fonts/KaTeX_Main-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-20\" href=\"fonts/KaTeX_Math-BoldItalic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-21\" href=\"fonts/KaTeX_Caligraphic-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-22\" href=\"fonts/KaTeX_Math-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-23\" href=\"fonts/KaTeX_Size3-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-24\" href=\"fonts/KaTeX_SansSerif-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-25\" href=\"fonts/KaTeX_Math-BoldItalic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-26\" href=\"fonts/KaTeX_SansSerif-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-27\" href=\"fonts/KaTeX_Caligraphic-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-28\" href=\"fonts/KaTeX_Typewriter-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-29\" href=\"fonts/KaTeX_Math-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-30\" href=\"fonts/KaTeX_Size3-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-31\" href=\"fonts/KaTeX_SansSerif-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-32\" href=\"fonts/KaTeX_Caligraphic-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-33\" href=\"fonts/KaTeX_Math-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-34\" href=\"fonts/KaTeX_Math-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-35\" href=\"fonts/KaTeX_Fraktur-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-36\" href=\"fonts/KaTeX_Size1-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-37\" href=\"fonts/KaTeX_AMS-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-38\" href=\"fonts/KaTeX_Caligraphic-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-39\" href=\"fonts/KaTeX_Size4-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-40\" href=\"fonts/KaTeX_Size4-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-41\" href=\"fonts/KaTeX_Caligraphic-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-42\" href=\"fonts/KaTeX_Size1-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-43\" href=\"fonts/KaTeX_Math-BoldItalic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-44\" href=\"fonts/KaTeX_Main-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-45\" href=\"fonts/KaTeX_AMS-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-46\" href=\"fonts/KaTeX_Typewriter-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-47\" href=\"fonts/KaTeX_Caligraphic-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-48\" href=\"fonts/KaTeX_SansSerif-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-49\" href=\"fonts/KaTeX_SansSerif-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-50\" href=\"fonts/KaTeX_Size2-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-51\" href=\"fonts/KaTeX_Script-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-52\" href=\"fonts/KaTeX_SansSerif-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-53\" href=\"fonts/KaTeX_Main-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-54\" href=\"fonts/KaTeX_Math-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-55\" href=\"fonts/KaTeX_Caligraphic-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-56\" href=\"fonts/KaTeX_Fraktur-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-57\" href=\"fonts/KaTeX_Fraktur-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-58\" href=\"fonts/KaTeX_Main-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-59\" href=\"fonts/KaTeX_Main-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-60\" href=\"fonts/KaTeX_SansSerif-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-61\" href=\"fonts/KaTeX_Main-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-62\" href=\"fonts/KaTeX_Math-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-63\" href=\"fonts/KaTeX_Caligraphic-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-64\" href=\"fonts/KaTeX_Fraktur-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-65\" href=\"fonts/KaTeX_Script-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-66\" href=\"fonts/KaTeX_SansSerif-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-67\" href=\"fonts/KaTeX_Main-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-68\" href=\"fonts/KaTeX_SansSerif-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-69\" href=\"fonts/KaTeX_Main-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-70\" href=\"fonts/KaTeX_Main-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-71\" href=\"fonts/KaTeX_Main-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-72\" href=\"fonts/KaTeX_Size2-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-73\" href=\"fonts/KaTeX_Size2-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-74\" href=\"fonts/KaTeX_Math-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-75\" href=\"fonts/KaTeX_Size4-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-76\" href=\"fonts/KaTeX_Size3-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-77\" href=\"fonts/KaTeX_Script-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-78\" href=\"fonts/KaTeX_Typewriter-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-79\" href=\"fonts/KaTeX_SansSerif-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-80\" href=\"fonts/KaTeX_AMS-Regular.woff2\" media-type=\"application/octet-stream\" />\n";
 
-},{}],63:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 /**
  * This is the main entry point for KaTeX. Here, we expose functions for
  * rendering expressions either to DOM nodes or to markup strings.
@@ -8290,7 +8488,7 @@ module.exports = {
     ParseError: ParseError
 };
 
-},{"./src/ParseError":67,"./src/Settings":69,"./src/buildTree":74,"./src/parseTree":83,"./src/utils":85}],64:[function(require,module,exports){
+},{"./src/ParseError":71,"./src/Settings":73,"./src/buildTree":78,"./src/parseTree":87,"./src/utils":89}],68:[function(require,module,exports){
 /** @flow */
 
 "use strict";
@@ -8333,7 +8531,7 @@ function matchAt(re, str, pos) {
 }
 
 module.exports = matchAt;
-},{}],65:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 /**
  * The Lexer class handles tokenizing the input in various ways. Since our
  * parser expects us to be able to backtrack, the lexer allows lexing from any
@@ -8529,7 +8727,7 @@ Lexer.prototype.lex = function(pos, mode) {
 
 module.exports = Lexer;
 
-},{"./ParseError":67,"match-at":64}],66:[function(require,module,exports){
+},{"./ParseError":71,"match-at":68}],70:[function(require,module,exports){
 /**
  * This file contains information about the options that the Parser carries
  * around with it while parsing. Data is held in an `Options` object, and when
@@ -8720,7 +8918,7 @@ Options.prototype.getColor = function() {
 
 module.exports = Options;
 
-},{}],67:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 /**
  * This is the ParseError class, which is the main error thrown by KaTeX
  * functions when something has gone wrong. This is used to distinguish internal
@@ -8762,7 +8960,7 @@ ParseError.prototype.__proto__ = Error.prototype;
 
 module.exports = ParseError;
 
-},{}],68:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 var functions = require("./functions");
 var environments = require("./environments");
 var Lexer = require("./Lexer");
@@ -9484,7 +9682,7 @@ Parser.prototype.ParseNode = ParseNode;
 
 module.exports = Parser;
 
-},{"./Lexer":65,"./ParseError":67,"./environments":77,"./functions":80,"./parseData":82,"./symbols":84,"./utils":85}],69:[function(require,module,exports){
+},{"./Lexer":69,"./ParseError":71,"./environments":81,"./functions":84,"./parseData":86,"./symbols":88,"./utils":89}],73:[function(require,module,exports){
 /**
  * This is a module for storing settings passed into KaTeX. It correctly handles
  * default settings.
@@ -9514,7 +9712,7 @@ function Settings(options) {
 
 module.exports = Settings;
 
-},{}],70:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 /**
  * This file contains information and classes for the various kinds of styles
  * used in TeX. It provides a generic `Style` class, which holds information
@@ -9642,7 +9840,7 @@ module.exports = {
     SCRIPTSCRIPT: styles[SS]
 };
 
-},{}],71:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 /**
  * This module contains general functions that can be used for building
  * different kinds of domTree nodes in a consistent manner.
@@ -10091,7 +10289,7 @@ module.exports = {
     spacingFunctions: spacingFunctions
 };
 
-},{"./domTree":76,"./fontMetrics":78,"./symbols":84,"./utils":85}],72:[function(require,module,exports){
+},{"./domTree":80,"./fontMetrics":82,"./symbols":88,"./utils":89}],76:[function(require,module,exports){
 /**
  * This file does the main work of building a domTree structure from a parse
  * tree. The entry point is the `buildHTML` function, which takes a parse tree.
@@ -11455,7 +11653,7 @@ var buildHTML = function(tree, options) {
 
 module.exports = buildHTML;
 
-},{"./ParseError":67,"./Style":70,"./buildCommon":71,"./delimiter":75,"./domTree":76,"./fontMetrics":78,"./utils":85}],73:[function(require,module,exports){
+},{"./ParseError":71,"./Style":74,"./buildCommon":75,"./delimiter":79,"./domTree":80,"./fontMetrics":82,"./utils":89}],77:[function(require,module,exports){
 /**
  * This file converts a parse tree into a cooresponding MathML tree. The main
  * entry point is the `buildMathML` function, which takes a parse tree from the
@@ -11976,7 +12174,7 @@ var buildMathML = function(tree, texExpression, options) {
 
 module.exports = buildMathML;
 
-},{"./ParseError":67,"./buildCommon":71,"./fontMetrics":78,"./mathMLTree":81,"./symbols":84,"./utils":85}],74:[function(require,module,exports){
+},{"./ParseError":71,"./buildCommon":75,"./fontMetrics":82,"./mathMLTree":85,"./symbols":88,"./utils":89}],78:[function(require,module,exports){
 var buildHTML = require("./buildHTML");
 var buildMathML = require("./buildMathML");
 var buildCommon = require("./buildCommon");
@@ -12018,7 +12216,7 @@ var buildTree = function(tree, expression, settings) {
 
 module.exports = buildTree;
 
-},{"./Options":66,"./Settings":69,"./Style":70,"./buildCommon":71,"./buildHTML":72,"./buildMathML":73}],75:[function(require,module,exports){
+},{"./Options":70,"./Settings":73,"./Style":74,"./buildCommon":75,"./buildHTML":76,"./buildMathML":77}],79:[function(require,module,exports){
 /**
  * This file deals with creating delimiters of various sizes. The TeXbook
  * discusses these routines on page 441-442, in the "Another subroutine sets box
@@ -12559,7 +12757,7 @@ module.exports = {
     leftRightDelim: makeLeftRightDelim
 };
 
-},{"./ParseError":67,"./Style":70,"./buildCommon":71,"./fontMetrics":78,"./symbols":84,"./utils":85}],76:[function(require,module,exports){
+},{"./ParseError":71,"./Style":74,"./buildCommon":75,"./fontMetrics":82,"./symbols":88,"./utils":89}],80:[function(require,module,exports){
 /**
  * These objects store the data about the DOM nodes we create, as well as some
  * extra data. They can then be transformed into real DOM nodes with the
@@ -12830,7 +13028,7 @@ module.exports = {
     symbolNode: symbolNode
 };
 
-},{"./utils":85}],77:[function(require,module,exports){
+},{"./utils":89}],81:[function(require,module,exports){
 var fontMetrics = require("./fontMetrics");
 var parseData = require("./parseData");
 var ParseError = require("./ParseError");
@@ -13010,7 +13208,7 @@ module.exports = (function() {
     return exports;
 })();
 
-},{"./ParseError":67,"./fontMetrics":78,"./parseData":82}],78:[function(require,module,exports){
+},{"./ParseError":71,"./fontMetrics":82,"./parseData":86}],82:[function(require,module,exports){
 /* jshint unused:false */
 
 var Style = require("./Style");
@@ -13147,7 +13345,7 @@ module.exports = {
     getCharacterMetrics: getCharacterMetrics
 };
 
-},{"./Style":70,"./fontMetricsData":79}],79:[function(require,module,exports){
+},{"./Style":74,"./fontMetricsData":83}],83:[function(require,module,exports){
 module.exports = {
 "AMS-Regular": {
   "65": {"depth": 0.0, "height": 0.68889, "italic": 0.0, "skew": 0.0},
@@ -14900,7 +15098,7 @@ module.exports = {
   "8242": {"depth": 0.0, "height": 0.61111, "italic": 0.0, "skew": 0.0}
 }};
 
-},{}],80:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 var utils = require("./utils");
 var ParseError = require("./ParseError");
 
@@ -15531,7 +15729,7 @@ module.exports = {
     funcs: functions
 };
 
-},{"./ParseError":67,"./utils":85}],81:[function(require,module,exports){
+},{"./ParseError":71,"./utils":89}],85:[function(require,module,exports){
 /**
  * These objects store data about MathML nodes. This is the MathML equivalent
  * of the types in domTree.js. Since MathML handles its own rendering, and
@@ -15635,7 +15833,7 @@ module.exports = {
     TextNode: TextNode
 };
 
-},{"./utils":85}],82:[function(require,module,exports){
+},{"./utils":89}],86:[function(require,module,exports){
 /**
  * The resulting parse tree nodes of the parse tree.
  */
@@ -15660,7 +15858,7 @@ module.exports = {
 };
 
 
-},{}],83:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 /**
  * Provides a single function for parsing an expression using a Parser
  * TODO(emily): Remove this
@@ -15679,7 +15877,7 @@ var parseTree = function(toParse, settings) {
 
 module.exports = parseTree;
 
-},{"./Parser":68}],84:[function(require,module,exports){
+},{"./Parser":72}],88:[function(require,module,exports){
 /**
  * This file holds a list of all no-argument functions and single-character
  * symbols (like 'a' or ';').
@@ -18266,7 +18464,7 @@ for (var i = 0; i < letters.length; i++) {
 
 module.exports = symbols;
 
-},{}],85:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 /**
  * This file contains a list of utility functions which are useful in other
  * files.
@@ -18373,7 +18571,7 @@ module.exports = {
     clearNode: clearNode
 };
 
-},{}],86:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -18551,7 +18749,7 @@ var Collab = function () {
 }();
 
 (0, _event.eventMixin)(Collab);
-},{"../edit":98,"../transform":121,"../util/error":132,"../util/event":133,"./rebase":87}],87:[function(require,module,exports){
+},{"../edit":102,"../transform":125,"../util/error":136,"../util/event":137,"./rebase":91}],91:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -18579,7 +18777,7 @@ function rebaseSteps(doc, forward, steps, maps) {
   }
   return { doc: transform.doc, transform: transform, mapping: remap, positions: positions };
 }
-},{"../transform":121}],88:[function(require,module,exports){
+},{"../transform":125}],92:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -18658,7 +18856,7 @@ function ensureCSSAdded() {
     document.head.insertBefore(cssNode, document.head.firstChild);
   }
 }
-},{}],89:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19397,7 +19595,7 @@ baseCommands.redo = {
   },
   keys: ["Mod-Y", "Shift-Mod-Z"]
 };
-},{"../model":115,"../transform":121,"../util/error":132,"./char":91,"./dompos":95,"./selection":104}],90:[function(require,module,exports){
+},{"../model":119,"../transform":125,"../util/error":136,"./char":95,"./dompos":99,"./selection":108}],94:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19467,7 +19665,7 @@ var keys = {
 if (_dom.browser.mac) keys["Ctrl-F"] = keys["Ctrl-B"] = keys["Ctrl-P"] = keys["Ctrl-N"] = keys["Alt-F"] = keys["Alt-B"] = keys["Ctrl-A"] = keys["Ctrl-E"] = keys["Ctrl-V"] = keys["goPageUp"] = ensureSelection;
 
 var captureKeys = exports.captureKeys = new _browserkeymap2.default(keys);
-},{"../dom":88,"./dompos":95,"./selection":104,"browserkeymap":137}],91:[function(require,module,exports){
+},{"../dom":92,"./dompos":99,"./selection":108,"browserkeymap":141}],95:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19500,7 +19698,7 @@ function charCategory(ch) {
 function isExtendingChar(ch) {
   return ch.charCodeAt(0) >= 768 && extendingChar.test(ch);
 }
-},{}],92:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20109,13 +20307,13 @@ _model.NodeType.derivableCommands.insert = function (conf) {
     params: deriveParams(this, conf.params)
   };
 };
-},{"../dom":88,"../model":115,"../transform":121,"../util/error":132,"../util/obj":135,"../util/sortedinsert":136,"./base_commands":89,"browserkeymap":137}],93:[function(require,module,exports){
+},{"../dom":92,"../model":119,"../transform":125,"../util/error":136,"../util/obj":139,"../util/sortedinsert":140,"./base_commands":93,"browserkeymap":141}],97:[function(require,module,exports){
 "use strict";
 
 var _dom = require("../dom");
 
 (0, _dom.insertCSS)("\n\n.ProseMirror {\n  border: 1px solid silver;\n  position: relative;\n}\n\n.ProseMirror-content {\n  padding: 4px 8px 4px 14px;\n  white-space: pre-wrap;\n  line-height: 1.2;\n}\n\n.ProseMirror-drop-target {\n  position: absolute;\n  width: 1px;\n  background: #666;\n  display: none;\n}\n\n.ProseMirror-content ul.tight p, .ProseMirror-content ol.tight p {\n  margin: 0;\n}\n\n.ProseMirror-content ul, .ProseMirror-content ol {\n  padding-left: 30px;\n  cursor: default;\n}\n\n.ProseMirror-content blockquote {\n  padding-left: 1em;\n  border-left: 3px solid #eee;\n  margin-left: 0; margin-right: 0;\n}\n\n.ProseMirror-content pre {\n  white-space: pre-wrap;\n}\n\n.ProseMirror-selectednode {\n  outline: 2px solid #8cf;\n}\n\n.ProseMirror-nodeselection *::selection { background: transparent; }\n.ProseMirror-nodeselection *::-moz-selection { background: transparent; }\n\n.ProseMirror-content p:first-child,\n.ProseMirror-content h1:first-child,\n.ProseMirror-content h2:first-child,\n.ProseMirror-content h3:first-child,\n.ProseMirror-content h4:first-child,\n.ProseMirror-content h5:first-child,\n.ProseMirror-content h6:first-child {\n  margin-top: .3em;\n}\n\n/* Add space around the hr to make clicking it easier */\n\n.ProseMirror-content hr {\n  position: relative;\n  height: 6px;\n  border: none;\n}\n\n.ProseMirror-content hr:after {\n  content: \"\";\n  position: absolute;\n  left: 10px;\n  right: 10px;\n  top: 2px;\n  border-top: 2px solid silver;\n}\n\n.ProseMirror-content img {\n  cursor: default;\n}\n\n/* Make sure li selections wrap around markers */\n\n.ProseMirror-content li {\n  position: relative;\n  pointer-events: none; /* Don't do weird stuff with marker clicks */\n}\n.ProseMirror-content li > * {\n  pointer-events: auto;\n}\n\nli.ProseMirror-selectednode {\n  outline: none;\n}\n\nli.ProseMirror-selectednode:after {\n  content: \"\";\n  position: absolute;\n  left: -32px;\n  right: -2px; top: -2px; bottom: -2px;\n  border: 2px solid #8cf;\n  pointer-events: none;\n}\n\n");
-},{"../dom":88}],94:[function(require,module,exports){
+},{"../dom":92}],98:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20338,7 +20536,7 @@ function scanText(start, end) {
     cur = cur.firstChild || nodeAfter(cur);
   }
 }
-},{"../format":107,"../model":115,"../transform/tree":129,"./dompos":95,"./selection":104}],95:[function(require,module,exports){
+},{"../format":111,"../model":119,"../transform/tree":133,"./dompos":99,"./selection":108}],99:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20720,7 +20918,7 @@ function handleNodeClick(pm, type, event, direct) {
     }
   }
 }
-},{"../dom":88,"../model":115,"../util/error":132}],96:[function(require,module,exports){
+},{"../dom":92,"../model":119,"../util/error":136}],100:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20887,7 +21085,7 @@ function redraw(pm, dirty, doc, prev) {
   }
   scan(pm.content, doc, prev);
 }
-},{"../dom":88,"../format":107,"../model":115,"./dompos":95,"./main":100}],97:[function(require,module,exports){
+},{"../dom":92,"../format":111,"../model":119,"./dompos":99,"./main":104}],101:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -21539,7 +21737,7 @@ var History = exports.History = function () {
 
   return History;
 }();
-},{"../model":115,"../transform":121}],98:[function(require,module,exports){
+},{"../model":119,"../transform":125}],102:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -21634,7 +21832,7 @@ var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.Keymap = _browserkeymap2.default;
-},{"./base_commands":89,"./command":92,"./main":100,"./options":101,"./range":102,"./schema_commands":103,"./selection":104,"browserkeymap":137}],99:[function(require,module,exports){
+},{"./base_commands":93,"./command":96,"./main":104,"./options":105,"./range":106,"./schema_commands":107,"./selection":108,"browserkeymap":141}],103:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -22243,7 +22441,7 @@ handlers.blur = function (pm) {
   // Fired when the editor loses focus.
   pm.signal("blur");
 };
-},{"../dom":88,"../format":107,"../model":115,"./capturekeys":90,"./domchange":94,"./dompos":95,"./selection":104,"browserkeymap":137}],100:[function(require,module,exports){
+},{"../dom":92,"../format":111,"../model":119,"./capturekeys":94,"./domchange":98,"./dompos":99,"./selection":108,"browserkeymap":141}],104:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -23047,7 +23245,7 @@ var EditorTransform = function (_Transform) {
 
   return EditorTransform;
 }(_transform.Transform);
-},{"../dom":88,"../format":107,"../model":115,"../transform":121,"../util/error":132,"../util/event":133,"../util/map":134,"../util/sortedinsert":136,"./css":93,"./dompos":95,"./draw":96,"./history":97,"./input":99,"./options":101,"./range":102,"./selection":104,"browserkeymap":137}],101:[function(require,module,exports){
+},{"../dom":92,"../format":111,"../model":119,"../transform":125,"../util/error":136,"../util/event":137,"../util/map":138,"../util/sortedinsert":140,"./css":97,"./dompos":99,"./draw":100,"./history":101,"./input":103,"./options":105,"./range":106,"./selection":108,"browserkeymap":141}],105:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -23182,7 +23380,7 @@ function setOption(pm, name, value) {
   pm.options[name] = value;
   if (desc.update) desc.update(pm, value, old, false);
 }
-},{"../model":115,"../ui/prompt":130,"../util/error":132,"./command":92}],102:[function(require,module,exports){
+},{"../model":119,"../ui/prompt":134,"../util/error":136,"./command":96}],106:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -23382,7 +23580,7 @@ var RangeTracker = function () {
 
   return RangeTracker;
 }();
-},{"../util/event":133}],103:[function(require,module,exports){
+},{"../util/event":137}],107:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -23716,7 +23914,7 @@ _model.HorizontalRule.register("command", "insert", {
   keys: ["Mod-Shift--"],
   menu: { group: "insert", rank: 70, display: { type: "label", label: "Horizontal rule" } }
 });
-},{"../format":107,"../model":115,"./command":92}],104:[function(require,module,exports){
+},{"../format":111,"../model":119,"./command":96}],108:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24213,7 +24411,7 @@ function verticalMotionLeavesTextblock(pm, pos, dir) {
   }
   return true;
 }
-},{"../dom":88,"../model":115,"../util/error":132,"./dompos":95}],105:[function(require,module,exports){
+},{"../dom":92,"../model":119,"../util/error":136,"./dompos":99}],109:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24670,7 +24868,7 @@ _model.StrongMark.register("parseDOMStyle", "font-weight", {
 });
 
 _model.CodeMark.register("parseDOM", "code", { parse: "mark" });
-},{"../model":115,"../util/sortedinsert":136,"./register":108}],106:[function(require,module,exports){
+},{"../model":119,"../util/sortedinsert":140,"./register":112}],110:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24702,7 +24900,7 @@ function fromText(schema, text) {
 }
 
 (0, _register.defineSource)("text", fromText);
-},{"./register":108}],107:[function(require,module,exports){
+},{"./register":112}],111:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24801,7 +24999,7 @@ Object.defineProperty(exports, "toText", {
     return _to_text.toText;
   }
 });
-},{"./from_dom":105,"./from_text":106,"./register":108,"./to_dom":109,"./to_text":110}],108:[function(require,module,exports){
+},{"./from_dom":109,"./from_text":110,"./register":112,"./to_dom":113,"./to_text":114}],112:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24869,7 +25067,7 @@ function defineSource(format, func) {
 defineSource("json", function (schema, json) {
   return schema.nodeFromJSON(json);
 });
-},{"../util/error":132}],109:[function(require,module,exports){
+},{"../util/error":136}],113:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25157,7 +25355,7 @@ def(_model.LinkMark, function (mark, s) {
   return s.elt("a", { href: mark.attrs.href,
     title: mark.attrs.title });
 });
-},{"../model":115,"./register":108}],110:[function(require,module,exports){
+},{"../model":119,"./register":112}],114:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25201,7 +25399,7 @@ function toText(doc) {
 }
 
 (0, _register.defineTarget)("text", toText);
-},{"../model":115,"./register":108}],111:[function(require,module,exports){
+},{"../model":119,"./register":112}],115:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25638,7 +25836,7 @@ var defaultSpec = new _schema.SchemaSpec({
 // :: Schema
 // ProseMirror's default document schema.
 var defaultSchema = exports.defaultSchema = new _schema.Schema(defaultSpec);
-},{"./schema":119}],112:[function(require,module,exports){
+},{"./schema":123}],116:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25735,7 +25933,7 @@ function findDiffEnd(a, b) {
   }
   return { a: new _pos.Pos(pathA, offA), b: new _pos.Pos(pathB, offB) };
 }
-},{"./pos":118}],113:[function(require,module,exports){
+},{"./pos":122}],117:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25764,7 +25962,7 @@ var ModelError = exports.ModelError = function (_ProseMirrorError) {
 
   return ModelError;
 }(_error.ProseMirrorError);
-},{"../util/error":132}],114:[function(require,module,exports){
+},{"../util/error":136}],118:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -26476,7 +26674,7 @@ if (typeof Symbol != "undefined") {
     return this;
   };
 }
-},{"./error":113}],115:[function(require,module,exports){
+},{"./error":117}],119:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -26716,7 +26914,7 @@ Object.defineProperty(exports, "ModelError", {
                 return _error.ModelError;
         }
 });
-},{"./defaultschema":111,"./diff":112,"./error":113,"./fragment":114,"./mark":116,"./node":117,"./pos":118,"./schema":119}],116:[function(require,module,exports){
+},{"./defaultschema":115,"./diff":116,"./error":117,"./fragment":118,"./mark":120,"./node":121,"./pos":122,"./schema":123}],120:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -26848,7 +27046,7 @@ var Mark = exports.Mark = function () {
 }();
 
 var empty = [];
-},{}],117:[function(require,module,exports){
+},{}],121:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -27456,7 +27654,7 @@ function wrapMarks(marks, str) {
     str = marks[i].type.name + "(" + str + ")";
   }return str;
 }
-},{"./fragment":114,"./mark":116,"./pos":118,"./schema":119}],118:[function(require,module,exports){
+},{"./fragment":118,"./mark":120,"./pos":122,"./schema":123}],122:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -27680,7 +27878,7 @@ var Pos = exports.Pos = function () {
 
   return Pos;
 }();
-},{"./error":113}],119:[function(require,module,exports){
+},{"./error":117}],123:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -28715,7 +28913,7 @@ var Schema = function () {
 }();
 
 exports.Schema = Schema;
-},{"../util/error":132,"../util/obj":135,"./fragment":114,"./mark":116,"./node":117}],120:[function(require,module,exports){
+},{"../util/error":136,"../util/obj":139,"./fragment":118,"./mark":120,"./node":121}],124:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29001,7 +29199,7 @@ _transform.Transform.prototype.setNodeType = function (pos, type, attrs) {
   this.step("ancestor", new _model.Pos(path, 0), new _model.Pos(path, node.size), null, { depth: 1, types: [type], attrs: [attrs] });
   return this;
 };
-},{"../model":115,"./map":123,"./step":127,"./transform":128,"./tree":129}],121:[function(require,module,exports){
+},{"../model":119,"./map":127,"./step":131,"./transform":132,"./tree":133}],125:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29089,7 +29287,7 @@ require("./mark");
 require("./split");
 
 require("./replace");
-},{"./ancestor":120,"./join":122,"./map":123,"./mark":124,"./replace":125,"./split":126,"./step":127,"./transform":128}],122:[function(require,module,exports){
+},{"./ancestor":124,"./join":126,"./map":127,"./mark":128,"./replace":129,"./split":130,"./step":131,"./transform":132}],126:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29171,7 +29369,7 @@ _transform.Transform.prototype.join = function (at) {
   this.step("join", new _model.Pos(at.path.concat(at.offset - 1), parent.child(at.offset - 1).size), new _model.Pos(at.path.concat(at.offset), 0));
   return this;
 };
-},{"../model":115,"./map":123,"./step":127,"./transform":128}],123:[function(require,module,exports){
+},{"../model":119,"./map":127,"./step":131,"./transform":132}],127:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29491,7 +29689,7 @@ var Remapping = exports.Remapping = function () {
 
   return Remapping;
 }();
-},{"../model":115}],124:[function(require,module,exports){
+},{"../model":119}],128:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -29670,7 +29868,7 @@ _transform.Transform.prototype.clearMarkup = function (from, to, newParent) {
     this.step(delSteps[i]);
   }return this;
 };
-},{"../model":115,"./step":127,"./transform":128,"./tree":129}],125:[function(require,module,exports){
+},{"../model":119,"./step":131,"./transform":132,"./tree":133}],129:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29998,7 +30196,7 @@ _transform.Transform.prototype.insertText = function (pos, text) {
 _transform.Transform.prototype.insertInline = function (pos, node) {
   return this.insert(pos, node.mark(this.doc.marksAt(pos)));
 };
-},{"../model":115,"./map":123,"./step":127,"./transform":128,"./tree":129}],126:[function(require,module,exports){
+},{"../model":119,"./map":127,"./step":131,"./transform":132,"./tree":133}],130:[function(require,module,exports){
 "use strict";
 
 var _model = require("../model");
@@ -30087,7 +30285,7 @@ _transform.Transform.prototype.splitIfNeeded = function (pos) {
   }
   return this;
 };
-},{"../model":115,"./map":123,"./step":127,"./transform":128}],127:[function(require,module,exports){
+},{"../model":119,"./map":127,"./step":131,"./transform":132}],131:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30274,7 +30472,7 @@ var StepResult = exports.StepResult = function StepResult(doc) {
 };
 
 var steps = Object.create(null);
-},{"../model":115,"../util/error":132,"./map":123}],128:[function(require,module,exports){
+},{"../model":119,"../util/error":136,"./map":127}],132:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30379,7 +30577,7 @@ var Transform = function () {
 }();
 
 exports.Transform = Transform;
-},{"./map":123,"./step":127}],129:[function(require,module,exports){
+},{"./map":127,"./step":131}],133:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30473,7 +30671,7 @@ function samePathDepth(a, b) {
     if (i == a.path.length || i == b.path.length || a.path[i] != b.path[i]) return i;
   }
 }
-},{"../model":115}],130:[function(require,module,exports){
+},{"../model":119}],134:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30777,7 +30975,7 @@ function openPrompt(pm, content, options) {
 }
 
 (0, _dom.insertCSS)("\n.ProseMirror-prompt {\n  background: white;\n  padding: 2px 6px 2px 15px;\n  border: 1px solid silver;\n  position: absolute;\n  border-radius: 3px;\n  z-index: 11;\n}\n\n.ProseMirror-prompt h5 {\n  margin: 0;\n  font-weight: normal;\n  font-size: 100%;\n  color: #444;\n}\n\n.ProseMirror-prompt input[type=\"text\"],\n.ProseMirror-prompt textarea {\n  background: #eee;\n  border: none;\n  outline: none;\n}\n\n.ProseMirror-prompt input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n.ProseMirror-prompt-close {\n  position: absolute;\n  left: 2px; top: 1px;\n  color: #666;\n  border: none; background: transparent; padding: 0;\n}\n\n.ProseMirror-prompt-close:after {\n  content: \"✕\";\n  font-size: 12px;\n}\n\n.ProseMirror-invalid {\n  background: #ffc;\n  border: 1px solid #cc7;\n  border-radius: 4px;\n  padding: 5px 10px;\n  position: absolute;\n  min-width: 10em;\n}\n\n.ProseMirror-prompt-buttons {\n  margin-top: 5px;\n  display: none;\n}\n\n");
-},{"../dom":88,"../util/error":132}],131:[function(require,module,exports){
+},{"../dom":92,"../util/error":136}],135:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30937,7 +31135,7 @@ var UpdateScheduler = exports.UpdateScheduler = function () {
 
   return UpdateScheduler;
 }();
-},{}],132:[function(require,module,exports){
+},{}],136:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31019,7 +31217,7 @@ function functionName(f) {
   var match = /^function (\w+)/.exec(f.toString());
   return match && match[1];
 }
-},{}],133:[function(require,module,exports){
+},{}],137:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31142,7 +31340,7 @@ function eventMixin(ctor) {
     if (methods.hasOwnProperty(prop)) proto[prop] = methods[prop];
   }
 }
-},{}],134:[function(require,module,exports){
+},{}],138:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31198,7 +31396,7 @@ var Map = exports.Map = window.Map || function () {
 
   return _class;
 }();
-},{}],135:[function(require,module,exports){
+},{}],139:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31211,7 +31409,7 @@ function copyObj(obj, base) {
     copy[prop] = obj[prop];
   }return copy;
 }
-},{}],136:[function(require,module,exports){
+},{}],140:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31224,7 +31422,7 @@ function sortedInsert(array, elt, compare) {
     if (compare(array[i], elt) > 0) break;
   }array.splice(i, 0, elt);
 }
-},{}],137:[function(require,module,exports){
+},{}],141:[function(require,module,exports){
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
     module.exports = mod()

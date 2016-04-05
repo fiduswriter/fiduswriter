@@ -15,7 +15,7 @@ export let bindFigure = function (editor) {
             figureCategory = 'figure',
             equation = '',
             previewImage,
-            node = editor.pm.selection.node
+            node = editor.currentPm.selection.node
 
         event.preventDefault()
 
@@ -40,7 +40,7 @@ export let bindFigure = function (editor) {
                 text: gettext('Remove'),
                 class: 'fw-button fw-orange',
                 click: function () {
-                    editor.pm.execCommand('deleteSelection')
+                    editor.currentPm.execCommand('deleteSelection')
                     dialog.dialog('close')
                 }
             })
@@ -65,7 +65,7 @@ export let bindFigure = function (editor) {
                 if ((new RegExp(/^\s*$/)).test(equation) && (!image)) {
                     // The math input is empty. Delete a math node if it exist. Then close the dialog.
                     if (insideFigure) {
-                        editor.pm.execCommand('deleteSelection')
+                        editor.currentPm.execCommand('deleteSelection')
                     }
                     dialog.dialog('close')
                     return false
@@ -80,7 +80,7 @@ export let bindFigure = function (editor) {
                     return false
                 }
 
-                editor.pm.execCommand('figure:insert', [equation, image, figureCategory, caption])
+                editor.currentPm.execCommand('figure:insert', [equation, image, figureCategory, caption])
 
 
                 dialog.dialog('close')

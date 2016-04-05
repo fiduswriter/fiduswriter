@@ -5,7 +5,7 @@ export let bindLink = function (editor) {
 // toolbar link
     jQuery(document).on('mousedown', '#button-link:not(.disabled)', function(event) {
 
-        if (!editor.pm.hasFocus()) {
+        if (!editor.currentPm.hasFocus()) {
           return false
         }
 
@@ -15,7 +15,7 @@ export let bindLink = function (editor) {
             linkTitle = '',
             defaultLink = 'http://',
             submitButtonText = 'Insert',
-            linkElement = _.find(editor.pm.activeMarks(),function(mark){return (mark.type.name==='link')})
+            linkElement = _.find(editor.currentPm.activeMarks(),function(mark){return (mark.type.name==='link')})
 
 
         if (linkElement) {
@@ -36,7 +36,7 @@ export let bindLink = function (editor) {
                 if ((new RegExp(/^\s*$/)).test(newLink) || newLink === defaultLink) {
                     // The link input is empty or hasn't been changed from the default value. Just close the dialog.
                     dialog.dialog('close')
-                    editor.pm.focus()
+                    editor.currentPm.focus()
                     return
                 }
 
@@ -45,8 +45,8 @@ export let bindLink = function (editor) {
                     linkText = link
                 }
                 dialog.dialog('close')
-                editor.pm.execCommand('link:set',[newLink, linkTitle])
-                editor.pm.focus()
+                editor.currentPm.execCommand('link:set',[newLink, linkTitle])
+                editor.currentPm.focus()
                 return
 
             }
@@ -57,7 +57,7 @@ export let bindLink = function (editor) {
             class: 'fw-button fw-orange',
             click: function() {
                 dialog.dialog('close')
-                editor.pm.focus()
+                editor.currentPm.focus()
             }
         })
 

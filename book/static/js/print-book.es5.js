@@ -3,7 +3,7 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -149,47 +149,6 @@ var formatCitations = exports.formatCitations = function formatCitations(content
     //return bibliographyHTML.replace(/<\/div>/g, '</p>')
 };
 
-<<<<<<< HEAD
-=======
-var citeprocSys = (function () {
-    function citeprocSys() {
-        _classCallCheck(this, citeprocSys);
-
-        this.abbreviations = {
-            "default": {}
-        };
-        this.abbrevsname = "default";
-    }
-
-    _createClass(citeprocSys, [{
-        key: 'retrieveItem',
-        value: function retrieveItem(id) {
-            return CSLDB[id];
-        }
-    }, {
-        key: 'retrieveLocale',
-        value: function retrieveLocale(lang) {
-            return citeproc.locals[lang];
-        }
-    }, {
-        key: 'getAbbreviation',
-        value: function getAbbreviation(dummy, obj, jurisdiction, vartype, key) {
-            try {
-                if (this.abbreviations[this.abbrevsname][vartype][key]) {
-                    obj["default"][vartype][key] = this.abbreviations[this.abbrevsname][vartype][key];
-                } else {
-                    obj["default"][vartype][key] = "";
-                }
-            } catch (e) {
-                // There is breakage here that needs investigating.
-            }
-        }
-    }]);
-
-    return citeprocSys;
-})();
-
->>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 var getFormattedCitations = function getFormattedCitations(citations, citationStyle, citationFormats, aBibDB) {
     bibliographyHelpers.setCSLDB(aBibDB);
 
@@ -388,7 +347,7 @@ var node2Obj = exports.node2Obj = function node2Obj(node) {
 },{}],4:[function(require,module,exports){
 "use strict";
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -407,7 +366,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 * Helper functions for the book print page.
 */
 
-var PrintBook = exports.PrintBook = (function () {
+var PrintBook = exports.PrintBook = function () {
     // A class that contains everything that happens on the book print page.
     // It is currently not possible to initialize more thna one editor class, as it
     // contains bindings to menu items, etc. that are uniquely defined.
@@ -564,7 +523,7 @@ var PrintBook = exports.PrintBook = (function () {
     }]);
 
     return PrintBook;
-})();
+}();
 
 },{"../citations/format":2,"../exporter/json":3,"./templates":5}],5:[function(require,module,exports){
 'use strict';

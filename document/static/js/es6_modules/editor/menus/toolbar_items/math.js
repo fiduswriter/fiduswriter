@@ -9,7 +9,7 @@ export let bindMath = function (editor) {
         let dialog, dialogButtons = [],
             submitMessage = gettext('Insert'),
             insideMath = false,
-            equation = 'x=2*y',
+            equation = '\\$x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}',
             node = editor.currentPm.selection.node
 
         event.preventDefault()
@@ -34,7 +34,7 @@ export let bindMath = function (editor) {
             class: 'fw-button fw-dark',
             click: function () {
 
-                equation = dialog.find('input').val()
+                equation = dialog.find("p > span.math-latex").text()
 
                 if ((new RegExp(/^\s*$/)).test(equation)) {
                     // The math input is empty. Delete a math node if it exist. Then close the dialog.
@@ -63,7 +63,7 @@ export let bindMath = function (editor) {
             }
         })
 
-        dialog = jQuery(mathDialogTemplate({equation:equation}))
+        dialog = jQuery(mathDialogTemplate())
 
         dialog.dialog({
             buttons: dialogButtons,
@@ -74,6 +74,6 @@ export let bindMath = function (editor) {
             }
         })
 
-        let mathQuill = new FormulaEditor($(dialog))
+        let mathQuill = new FormulaEditor($(dialog), equation)
     })
 }

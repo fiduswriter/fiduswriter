@@ -4319,7 +4319,7 @@ var bindMath = exports.bindMath = function bindMath(editor) {
             dialogButtons = [],
             submitMessage = gettext('Insert'),
             insideMath = false,
-            equation = 'x=2*y',
+            equation = '\\$x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}',
             node = editor.currentPm.selection.node;
 
         event.preventDefault();
@@ -4343,7 +4343,7 @@ var bindMath = exports.bindMath = function bindMath(editor) {
             class: 'fw-button fw-dark',
             click: function click() {
 
-                equation = dialog.find('input').val();
+                equation = dialog.find("p > span.math-latex").text();
 
                 if (new RegExp(/^\s*$/).test(equation)) {
                     // The math input is empty. Delete a math node if it exist. Then close the dialog.
@@ -4371,7 +4371,7 @@ var bindMath = exports.bindMath = function bindMath(editor) {
             }
         });
 
-        dialog = jQuery((0, _templates.mathDialogTemplate)({ equation: equation }));
+        dialog = jQuery((0, _templates.mathDialogTemplate)());
 
         dialog.dialog({
             buttons: dialogButtons,
@@ -4382,7 +4382,7 @@ var bindMath = exports.bindMath = function bindMath(editor) {
             }
         });
 
-        var mathQuill = new _formulaEditor.FormulaEditor($(dialog));
+        var mathQuill = new _formulaEditor.FormulaEditor($(dialog), equation);
     });
 };
 
@@ -4401,9 +4401,8 @@ var linkDialogTemplate = exports.linkDialogTemplate = _.template('\
 
 var mathDialogTemplate = exports.mathDialogTemplate = _.template('\
     <div title="' + gettext("Math") + '">\
-        <input style="width: 250px;" class="math" type="text" name="math" value="<%- equation %>" />\
-        <p>Type formula here: <span style="width: 250px;" class="math-field" type="text" name="math" ><%- equation %></span></p>\
-        <p>LATEX result: <span class="math-latex"><%- equation %></span></p>\
+        <p><span class="math-field-header">Type formula here: </span><span class="math-field" type="text" name="math" ></span></p>\
+        <p><span class="math-field-header">LATEX result: </span><span class="math-latex"></span></p>\
     </div>\
 ');
 
@@ -6108,11 +6107,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * Class to initialize and manage MathQuill library inside editor dialog (math.js)
  */
 
-var FormulaEditor = exports.FormulaEditor = function FormulaEditor(mathDialog) {
+var FormulaEditor = exports.FormulaEditor = function FormulaEditor(mathDialog, equation) {
+    var _this = this;
+
     _classCallCheck(this, FormulaEditor);
 
-    mathField = mathDialog.children("span.math-field")[0];
-    latexField = mathDialog.children("span.math-latex")[0];
+    var mathField = mathDialog.find("p > span.math-field")[0];
+    var latexField = mathDialog.find("p > span.math-latex")[0];
 
     this.MQ = MathQuill.getInterface(2);
 
@@ -6120,10 +6121,12 @@ var FormulaEditor = exports.FormulaEditor = function FormulaEditor(mathDialog) {
         spaceBehavesLikeTab: true,
         handlers: {
             edit: function edit() {
-                latexField.textContent = this.mathField.latex();
+                latexField.textContent = _this.mathField.latex();
             }
         }
     });
+
+    this.mathField.latex(equation);
 };
 
 },{"node-mathquill/build/mathquill":91}],47:[function(require,module,exports){

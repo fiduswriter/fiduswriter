@@ -7,9 +7,8 @@ export let linkDialogTemplate = _.template('\
 
 export let mathDialogTemplate = _.template('\
     <div title="' + gettext("Math") + '">\
-        <input style="width: 250px;" class="math" type="text" name="math" value="<%- equation %>" />\
-        <p>Type formula here: <span style="width: 250px;" class="math-field" type="text" name="math" ><%- equation %></span></p>\
-        <p>LATEX result: <span class="math-latex"><%- equation %></span></p>\
+        <p><span class="math-field-header">Type formula here: </span><span class="math-field" type="text" name="math" ></span></p>\
+        <p><span class="math-field-header">LATEX result: </span><span class="math-latex"></span></p>\
     </div>\
 ')
 

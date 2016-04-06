@@ -11,6 +11,26 @@ export let mathDialogTemplate = _.template('\
     </div>\
 ')
 
+export let figureImageItemTemplate =  _.template('\
+<tr id="Image_<%- pk %>" class="<% _.each(cats, function(cat) { %>cat_<%- cat %> <% }) %>" >\
+     <td class="type" style="width:100px;">\
+        <% if (typeof thumbnail !== "undefined") { %>\
+            <img src="<%- thumbnail %>" style="max-heigth:30px;max-width:30px;">\
+        <% } else { %>\
+            <img src="<%- image %>" style="max-heigth:30px;max-width:30px;">\
+        <% } %>\
+    </td>\
+    <td class="title" style="width:212px;">\
+        <span class="fw-inline">\
+            <span class="edit-image fw-link-text icon-figure" data-id="<%- pk %>">\
+                <%- title %>\
+            </span>\
+        </span>\
+    </td>\
+    <td class="checkable" style="width:30px;">\
+    </td>\
+</tr>')
+
 /** A template to select images inside the figure configuration dialog in the editor. */
 export let figureImageTemplate = _.template('\
     <div>\
@@ -22,7 +42,7 @@ export let figureImageTemplate = _.template('\
                 </tr>\
             </thead>\
             <tbody class="fw-document-table-body fw-small">\
-                <% _.each(imageDB, function (anImage) { %> <%= tmp_usermedia_table(anImage) %> <% }); %>\
+                <% _.each(imageDB, function (anImage) { %> <%= figureImageItemTemplate(anImage) %> <% }); %>\
             </tbody>\
         </table>\
         <div class="dialogSubmit">\

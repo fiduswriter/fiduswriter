@@ -53,8 +53,9 @@ export class NativeExporter {
     getImageDB(callback) {
         let that = this
         if (!this.imageDB) {
-            usermediaHelpers.getAnImageDB(this.doc.owner.id, function(imageDB) {
-                that.imageDB = imageDB
+            let imageGetter = new ImageDB(this.doc.owner.id)
+            imageGetter.getDB(function(){
+                that.imageDB = imageGetter.db
                 callback()
             })
         } else {

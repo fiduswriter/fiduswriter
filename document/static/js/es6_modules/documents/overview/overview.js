@@ -2,6 +2,7 @@ import {DocumentOverviewActions} from "./actions"
 import {DocumentOverviewMenus} from "./menus"
 import {documentsListTemplate, documentsListItemTemplate} from "./templates"
 import {BibliographyDB} from "../../bibliography/database"
+import {ImageDB} from "../../images/database"
 /*
 * Helper functions for the document overview page.
 */
@@ -43,15 +44,15 @@ export class DocumentOverview {
     getImageDB(callback) {
         let that = this
         if (!this.imageDB) {
-            usermediaHelpers.getAnImageDB(this.user.id, function (imageDB) {
-                that.imageDB = imageDB
+            let imageGetter = new ImageDB(this.user.id)
+            imageGetter.getDB(function(){
+                that.imageDB = imageGetter.db
                 callback()
             })
         } else {
             callback()
         }
     }
-
 
     getDocumentListData(id) {
         let that = this

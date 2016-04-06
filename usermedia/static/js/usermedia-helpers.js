@@ -550,7 +550,9 @@
     };
 
     usermediaHelpers.startUsermediaTable = function () {
-        // The sortable table seems not to have an option to accept new data added to the DOM. Instead we destroy and recreate it.
+        /* The sortable table seems not to have an option to accept new data
+        added to the DOM. Instead we destroy and recreate it.
+        */
 
         var nonSortable = [0, 2];
 

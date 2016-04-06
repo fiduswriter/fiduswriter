@@ -8,6 +8,7 @@ import {NativeExporter} from "../../exporter/native"
 import {ImportFidusFile} from "../../importer/file"
 import {DocumentRevisionsDialog} from "../revisions/dialog"
 import {BibliographyDB} from "../../bibliography/database"
+import {ImageDB} from "../../images/database"
 
 export class DocumentOverviewActions {
     constructor (documentOverview) {
@@ -215,8 +216,9 @@ export class DocumentOverviewActions {
     }
 
     getImageDB(userId, callback) {
-        usermediaHelpers.getAnImageDB(userId, function (imageDB) {
-            callback(imageDB)
+        let imageGetter = new ImageDB(userId)
+        imageGetter.getDB(function(){
+            callback(imageGetter.db)
         })
     }
 

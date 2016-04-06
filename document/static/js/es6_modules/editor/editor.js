@@ -227,8 +227,6 @@ export class Editor {
             imageGetter.getDB(function(){
                 that.imageDB = imageGetter
                 that.schema.cached.imageDB = imageGetter // assign image DB to be used in schema.
-                window.ImageDB = imageGetter.db // TODO: get rid of the need for this
-                window.imageCategories = imageGetter.cats
                 callback()
             })
         } else {
@@ -263,7 +261,6 @@ export class Editor {
                 // bind the share dialog to the button if the user is the document owner
                 jQuery('.share').removeClass('disabled')
             }
-            usermediaHelpers.bindEvents()
         } else if (this.docInfo.rights === 'r') {
             // Try to disable contenteditable
             jQuery('.ProseMirror-content').attr('contenteditable', 'false')

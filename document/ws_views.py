@@ -25,7 +25,7 @@ class DocumentWS(BaseWebSocketHandler):
         if can_access:
             if doc_db.id in DocumentWS.sessions:
                 self.doc = DocumentWS.sessions[doc_db.id]
-                self.id = str(random.randint(1,1000))
+                self.id = str(random.randint(1, pow(2, 40)))
                 print "id when opened %s" % self.id
             else:
                 self.id = 0

@@ -1,14 +1,14 @@
 /* This file has been automatically generated. DO NOT EDIT IT. 
- Changes will be overwritten. Edit exporter.es6.js and run ./es6-compiler.sh */
+ Changes will be overwritten. Edit exporter.es6.js and run ./es6-transpile.sh */
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.BibLatexExporter = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _zip = require('../../exporter/zip');
 
@@ -198,7 +198,564 @@ var BibLatexExporter = exports.BibLatexExporter = function () {
     return BibLatexExporter;
 }();
 
-},{"../../exporter/zip":5}],2:[function(require,module,exports){
+},{"../../exporter/zip":8}],2:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/** Parses files in BibTeX/BibLaTeX format
+ * @function bibTexParser
+ */
+
+var MONTH_NAMES = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+var BibLatexParser = exports.BibLatexParser = function () {
+    function BibLatexParser() {
+        _classCallCheck(this, BibLatexParser);
+
+        this.pos = 0;
+        this.input = "";
+
+        this.entries = {};
+        this.strings = {
+            JAN: "January",
+            FEB: "February",
+            MAR: "March",
+            APR: "April",
+            MAY: "May",
+            JUN: "June",
+            JUL: "July",
+            AUG: "August",
+            SEP: "September",
+            OCT: "October",
+            NOV: "November",
+            DEC: "December"
+        };
+        this.currentKey = "";
+        this.currentEntry = "";
+        this.currentType = "";
+    }
+
+    _createClass(BibLatexParser, [{
+        key: "setInput",
+        value: function setInput(t) {
+            this.input = t;
+        }
+    }, {
+        key: "getEntries",
+        value: function getEntries() {
+            return this.entries;
+        }
+    }, {
+        key: "isWhitespace",
+        value: function isWhitespace(s) {
+            return s == ' ' || s == '\r' || s == '\t' || s == '\n';
+        }
+    }, {
+        key: "match",
+        value: function match(s) {
+            this.skipWhitespace();
+            if (this.input.substring(this.pos, this.pos + s.length) == s) {
+                this.pos += s.length;
+            } else {
+                console.log("Token mismatch, expected " + s + ", found " + this.input.substring(this.pos));
+            }
+            this.skipWhitespace();
+        }
+    }, {
+        key: "tryMatch",
+        value: function tryMatch(s) {
+            this.skipWhitespace();
+            if (this.input.substring(this.pos, this.pos + s.length) == s) {
+                return true;
+            } else {
+                return false;
+            }
+            this.skipWhitespace();
+        }
+    }, {
+        key: "skipWhitespace",
+        value: function skipWhitespace() {
+            while (this.isWhitespace(this.input[this.pos])) {
+                this.pos++;
+            }
+            if (this.input[this.pos] == "%") {
+                while (this.input[this.pos] != "\n") {
+                    this.pos++;
+                }
+                this.skipWhitespace();
+            }
+        }
+    }, {
+        key: "skipToNext",
+        value: function skipToNext() {
+            while (this.input.length > this.pos && this.input[this.pos] != "@") {
+                this.pos++;
+            }
+            if (this.input.length == this.pos) {
+                return false;
+            } else {
+                return true;
+            }
+        }
+        /*
+        reformNames(names) {
+            //reform name
+        }
+         reformDates(dates) {
+            //reform date
+        }*/
+
+    }, {
+        key: "valueBraces",
+        value: function valueBraces() {
+            var bracecount = 0;
+            this.match("{");
+            var start = this.pos;
+            while (true) {
+                if (this.input[this.pos] == '}' && this.input[this.pos - 1] != '\\') {
+                    if (bracecount > 0) {
+                        bracecount--;
+                    } else {
+                        var end = this.pos;
+                        this.match("}");
+                        return this.input.substring(start, end);
+                    }
+                } else if (this.input[this.pos] == '{' && this.input[this.pos - 1] != '\\') {
+                    bracecount++;
+                } else if (this.pos == this.input.length - 1) {
+                    console.log("Unterminated value");
+                }
+                this.pos++;
+            }
+        }
+    }, {
+        key: "valueQuotes",
+        value: function valueQuotes() {
+            this.match('"');
+            var start = this.pos;
+            while (true) {
+                if (this.input[this.pos] == '"' && this.input[this.pos - 1] != '\\') {
+                    var end = this.pos;
+                    this.match('"');
+                    return this.input.substring(start, end);
+                } else if (this.pos == this.input.length - 1) {
+                    console.log("Unterminated value:" + this.input.substring(start));
+                }
+                this.pos++;
+            }
+        }
+    }, {
+        key: "singleValue",
+        value: function singleValue() {
+            var start = this.pos;
+            if (this.tryMatch("{")) {
+                return this.valueBraces();
+            } else if (this.tryMatch('"')) {
+                return this.valueQuotes();
+            } else {
+                var k = this.key();
+                if (this.strings[k.toUpperCase()]) {
+                    return this.strings[k.toUpperCase()];
+                } else if (k.match("^[0-9]+$")) {
+                    return k;
+                } else {
+                    console.log("Value unexpected:" + this.input.substring(start));
+                }
+            }
+        }
+    }, {
+        key: "value",
+        value: function value() {
+            var values = [];
+            values.push(this.singleValue());
+            while (this.tryMatch("#")) {
+                this.match("#");
+                values.push(this.singleValue());
+            }
+            return values.join("");
+        }
+    }, {
+        key: "key",
+        value: function key() {
+            var start = this.pos;
+            while (true) {
+                if (this.pos == this.input.length) {
+                    console.log("Runaway key");
+                    return;
+                }
+                if (this.input[this.pos].match("[a-zA-Z0-9_:;`\\.\\\?+/-]")) {
+                    this.pos++;
+                } else {
+                    return this.input.substring(start, this.pos).toLowerCase();
+                }
+            }
+        }
+    }, {
+        key: "keyEqualsValue",
+        value: function keyEqualsValue() {
+            var key = this.key();
+            if (this.tryMatch("=")) {
+                this.match("=");
+                var val = this.value();
+                return [key, val];
+            } else {
+                console.log("... = value expected, equals sign missing: " + this.input.substring(this.pos));
+            }
+        }
+    }, {
+        key: "keyValueList",
+        value: function keyValueList() {
+            var kv = this.keyEqualsValue();
+            if (_.isUndefined(kv)) {
+                // Entry has no fields, so we delete it.
+                delete this.entries[this.currentEntry];
+                return;
+            }
+            this.entries[this.currentEntry][kv[0]] = this.scanBibtexString(kv[1]);
+            while (this.tryMatch(",")) {
+                this.match(",");
+                //fixes problems with commas at the end of a list
+                if (this.tryMatch("}")) {
+                    break;
+                }
+                kv = this.keyEqualsValue();
+                if (typeof kv === 'undefined') {
+                    $.addAlert('error', gettext('A variable could not be identified. Possible error in bibtex syntax.'));
+                    break;
+                }
+                var val = this.scanBibtexString(kv[1]);
+                switch (kv[0]) {
+                    case 'date':
+                    case 'month':
+                    case 'year':
+                        this.entries[this.currentEntry].date[kv[0]] = val;
+                        break;
+                    default:
+                        this.entries[this.currentEntry][kv[0]] = val;
+                }
+            }
+            var issued = this.entries[this.currentEntry].date.date;
+            var dateFormat = 'd.m.Y';
+            if ('undefined' == typeof issued || '' == issued) {
+                if ('undefined' == typeof this.entries[this.currentEntry].date.month) {
+                    issued = '';
+                    dateFormat = 'Y';
+                } else {
+                    issued = '-' + this.entries[this.currentEntry].date.month;
+                    dateFormat = 'm.Y';
+                }
+                if ('undefined' == typeof this.entries[this.currentEntry].date.year) {
+                    issued = '';
+                    dateFormat = '';
+                } else {
+                    issued = this.entries[this.currentEntry].date.year + issued;
+                }
+            } else {
+                if (issued.indexOf('/') !== -1) {
+                    // TODO: handle dates that have a from/to value
+                    issued = issued.split('/')[0];
+                }
+                var dateDividers = issued.match(/-/g);
+                if (!dateDividers) {
+                    dateFormat = 'Y';
+                } else if (1 === dateDividers.length) {
+                    dateFormat = 'm.Y';
+                }
+            }
+            issued = new Date(issued);
+            if ('Invalid Date' == issued) {
+                dateFormat = '';
+            } else {
+                dateFormat = dateFormat.replace('d', issued.getDate());
+                dateFormat = dateFormat.replace('m', MONTH_NAMES[issued.getMonth()]);
+                dateFormat = dateFormat.replace('Y', issued.getFullYear());
+            }
+            this.entries[this.currentEntry].date = dateFormat;
+            //TODO: check the value type and reform the value, if needed.
+            /*
+            let fType
+            for(let fKey in this.entries[this.currentEntry]) {
+                if('bibtype' == fKey)
+                    continue
+                fType = BibFieldtypes[fKey]
+                if('undefined' == typeof(fType)) {
+                    delete this.entries[this.currentEntry][fKey]
+                    continue
+                }
+                fValue = this.entries[this.currentEntry][fKey]
+                switch(fType) {
+                    case 'l_name':
+                        this.entries[this.currentEntry][fKey] = this.reformNames(fValue)
+                        break
+                    case 'f_date':
+                        this.entries[this.currentEntry][fKey] = this.reformDates(fValue)
+                        break
+                }
+            }
+            */
+        }
+    }, {
+        key: "entryBody",
+        value: function entryBody() {
+            this.currentEntry = this.key();
+
+            this.entries[this.currentEntry] = new Object();
+            this.entries[this.currentEntry].bibtype = this.currentType;
+            this.entries[this.currentEntry].date = {};
+            this.match(",");
+            this.keyValueList();
+        }
+    }, {
+        key: "directive",
+        value: function directive() {
+            this.match("@");
+            this.currentType = this.key();
+            return "@" + this.currentType;
+        }
+    }, {
+        key: "string",
+        value: function string() {
+            var kv = this.keyEqualsValue();
+            this.strings[kv[0].toUpperCase()] = kv[1];
+        }
+    }, {
+        key: "preamble",
+        value: function preamble() {
+            this.value();
+        }
+    }, {
+        key: "entry",
+        value: function entry() {
+            this.entryBody();
+        }
+    }, {
+        key: "scanBibtexString",
+        value: function scanBibtexString(value) {
+            var len = tex_special_chars.length;
+            for (var i = 0; i < len; i++) {
+                var specialChar = tex_special_chars[i];
+                while (-1 < value.indexOf(specialChar.tex)) {
+                    value = value.replace(specialChar.tex, specialChar.unicode);
+                }
+            }
+            // Delete multiple spaces
+            value = value.replace(/ +(?= )/g, '');
+            //value = value.replace(/\{(.*?)\}/g, '$1')
+            return value;
+        }
+    }, {
+        key: "bibtex",
+        value: function bibtex() {
+            while (this.skipToNext()) {
+                var d = this.directive();
+                this.match("{");
+                if (d == "@string") {
+                    this.string();
+                } else if (d == "@preamble") {
+                    this.preamble();
+                } else if (d == "@comment") {
+                    continue;
+                } else {
+                    this.entry();
+                }
+                this.match("}");
+            }
+        }
+    }]);
+
+    return BibLatexParser;
+}();
+
+},{}],3:[function(require,module,exports){
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.BibLatexImporter = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _biblatexParser = require("./biblatex-parser");
+
+var _templates = require("./templates");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/** First step of the BibTeX file import. Creates a dialog box to specify upload file.
+ */
+
+var BibLatexImporter = exports.BibLatexImporter = function () {
+    function BibLatexImporter() {
+        _classCallCheck(this, BibLatexImporter);
+
+        this.openDialog();
+    }
+
+    _createClass(BibLatexImporter, [{
+        key: "openDialog",
+        value: function openDialog() {
+            var that = this;
+            jQuery('body').append((0, _templates.importBibTemplate)());
+            var diaButtons = {};
+            diaButtons[gettext('Import')] = function () {
+                var bibFile = jQuery('#bib-uploader')[0].files;
+                if (0 == bibFile.length) {
+                    console.log('no file found');
+                    return false;
+                }
+                bibFile = bibFile[0];
+                if (10485760 < bibFile.size) {
+                    console.log('file too big');
+                    return false;
+                }
+                $.activateWait();
+                var reader = new FileReader();
+                reader.onerror = function (e) {
+                    console.log('error', e.target.error.code);
+                };
+                reader.onload = function (event) {
+                    that.processFile(event.target.result);
+                };
+                reader.readAsText(bibFile);
+                jQuery(this).dialog('close');
+            };
+            diaButtons[gettext('Cancel')] = function () {
+                jQuery(this).dialog('close');
+            };
+            jQuery("#importbibtex").dialog({
+                resizable: false,
+                height: 180,
+                modal: true,
+                buttons: diaButtons,
+                create: function create() {
+                    var theDialog = jQuery(this).closest(".ui-dialog");
+                    theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark");
+                    theDialog.find(".ui-button:last").addClass("fw-button fw-orange");
+                    jQuery('#bib-uploader').bind('change', function () {
+                        jQuery('#import-bib-name').html(jQuery(this).val().replace(/C:\\fakepath\\/i, ''));
+                    });
+                    jQuery('#import-bib-btn').bind('click', function () {
+                        jQuery('#bib-uploader').trigger('click');
+                    });
+                },
+                close: function close() {
+                    jQuery("#importbibtex").dialog('destroy').remove();
+                }
+            });
+        }
+
+        /** Second step of the BibTeX file import. Takes a BibTeX file object, processes client side and cuts into chunks to be uploaded to the server.
+         * @param e File object that is to be imported.
+         */
+
+    }, {
+        key: "processFile",
+        value: function processFile(file) {
+            var that = this;
+            var bibData = new _biblatexParser.BibLatexParser();
+            bibData.setInput(file);
+            bibData.bibtex();
+            var bibEntries = bibData.getEntries();
+            if (_.isEmpty(bibEntries)) {
+                $.deactivateWait();
+                $.addAlert('error', gettext('No bibliography entries could be found in import file.'));
+                return;
+            } else {
+                (function () {
+                    var processChunk = function processChunk() {
+                        if (currentChunkNumber < totalChunks) {
+                            var currentChunk = {};
+                            for (var i = currentChunkNumber; i < currentChunkNumber + 50; i++) {
+                                currentChunk[bibKeylist[i]] = bibEntries[bibKeylist[i]];
+                            }
+                            that.sendChunk(currentChunk, function () {
+                                currentChunkNumber++;
+                                processChunk();
+                            });
+                        } else {
+                            $.deactivateWait();
+                        }
+                    };
+
+                    var bibKeylist = Object.keys(bibEntries);
+                    var totalChunks = Math.ceil(bibKeylist.length / 50);
+                    var currentChunkNumber = 0;
+
+                    processChunk();
+                })();
+            }
+        }
+        /** Third step of the BibTeX file import. Takes lists of bibliography entries and sends them to the server.
+         * @param bibEntries The list of bibEntries received from processFile.
+         * @param callback Function to be called when import to server has finished.
+         *
+         */
+
+    }, {
+        key: "sendChunk",
+        value: function sendChunk(bibEntries, callback) {
+
+            var postData = {
+                'bibs': JSON.stringify(bibEntries)
+            };
+
+            $.ajax({
+                url: '/bibliography/import_bibtex/',
+                type: 'post',
+                data: postData,
+                dataType: 'json',
+                success: function success(response, textStatus, jqXHR) {
+
+                    bibliographyHelpers.addBibList(response.bibs);
+                    var errors = response.errors,
+                        warnings = response.warning,
+                        len = errors.length;
+
+                    for (var i = 0; i < len; i++) {
+                        $.addAlert('error', errors[i]);
+                    }
+                    len = warnings.length;
+                    for (var _i = 0; _i < len; _i++) {
+                        $.addAlert('warning', warnings[_i]);
+                    }
+                },
+                error: function error(jqXHR, textStatus, errorThrown) {
+                    console.log(jqXHR.responseText);
+                },
+                complete: function complete() {
+                    callback();
+                }
+            });
+        }
+    }]);
+
+    return BibLatexImporter;
+}();
+
+},{"./biblatex-parser":2,"./templates":4}],4:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+/** a template for the BibTeX import dialog */
+var importBibTemplate = exports.importBibTemplate = _.template('<div id="importbibtex" title="' + gettext('Import a BibTex library') + '">\
+        <form id="import-bib-form" method="post" enctype="multipart/form-data" class="ajax-upload">\
+            <input type="file" id="bib-uploader" name="bib" required />\
+            <span id="import-bib-btn" class="fw-button fw-white fw-large">' + gettext('Select a file') + '</span>\
+            <label id="import-bib-name" class="ajax-upload-label"></label>\
+        </form>\
+    </div>');
+
+},{}],5:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -219,7 +776,7 @@ var downloadFile = exports.downloadFile = function downloadFile(zipFilename, blo
     fakeDownloadLink.dispatchEvent(clickEvent);
 };
 
-},{}],3:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -229,7 +786,7 @@ Object.defineProperty(exports, "__esModule", {
 var revisionDialogTemplate = exports.revisionDialogTemplate = _.template('\
 <div title="' + gettext('Revision description') + '"><p><input type="text" class="revision-note" placeholder="' + gettext('Description (optional)') + '"></p></div>');
 
-},{}],4:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -290,7 +847,7 @@ var uploadFile = exports.uploadFile = function uploadFile(zipFilename, blob, edi
     });
 };
 
-},{"./upload-templates":3}],5:[function(require,module,exports){
+},{"./upload-templates":6}],8:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -315,7 +872,7 @@ var _upload = require("./upload");
 
 var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles, httpFiles, zipFileName, mimeType, includeZips, upload, editor) {
     var zipFs = new zip.fs.FS(),
-        zipDir = undefined;
+        zipDir = void 0;
 
     if (mimeType) {
         zipFs.root.addText('mimetype', mimeType);
@@ -329,9 +886,9 @@ var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles,
             zipFs.root.addText(textFiles[i].filename, textFiles[i].contents);
         }
 
-        for (var i = 0; i < httpFiles.length; i++) {
+        for (var _i = 0; _i < httpFiles.length; _i++) {
 
-            zipFs.root.addHttpContent(httpFiles[i].filename, httpFiles[i].url);
+            zipFs.root.addHttpContent(httpFiles[_i].filename, httpFiles[_i].url);
         }
 
         zip.createWriter(new zip.BlobWriter(mimeType), function (writer) {
@@ -413,11 +970,14 @@ var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles,
     }
 };
 
-},{"./download":2,"./upload":4}],6:[function(require,module,exports){
+},{"./download":5,"./upload":7}],9:[function(require,module,exports){
 "use strict";
 
 var _biblatex = require("./es6_modules/bibliography/exporter/biblatex");
 
-window.BibLatexExporter = _biblatex.BibLatexExporter;
+var _biblatex2 = require("./es6_modules/bibliography/importer/biblatex");
 
-},{"./es6_modules/bibliography/exporter/biblatex":1}]},{},[6]);
+window.BibLatexExporter = _biblatex.BibLatexExporter;
+window.BibLatexImporter = _biblatex2.BibLatexImporter;
+
+},{"./es6_modules/bibliography/exporter/biblatex":1,"./es6_modules/bibliography/importer/biblatex":3}]},{},[9]);

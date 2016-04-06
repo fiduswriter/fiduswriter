@@ -25,8 +25,6 @@
         </style>
         <style type="text/css" id="placeholder-styles">
         </style>
-        <style type="text/css" id="active-comment-style">
-        </style>
         <!-- KaTeX -->
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/libs/katex/katex.min.css" />
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/libs/mathquill/mathquill.min.css" />
@@ -438,26 +436,6 @@
                                 <i class="icon-comment-empty"></i>
                             </span>
                         </button>
-                    </div>
-                    <div id="ice-control" class="fw-button fw-light fw-large disabled" title="{% trans "Handle tracking of changes." %}">
-                        {% trans "Changes" %}
-                        <i class="icon-down-dir"></i>
-                        <div class="fw-pulldown fw-left">
-                            <ul>
-                                <li>
-                                    <span class="fw-pulldown-item ice-track icon-ok" title="{% trans "Turn tracking of changes on." %}">{% trans "Track" %}</span>
-                                </li>
-                                <li>
-                                    <span class="fw-pulldown-item ice-display icon-eye" title="{% trans "Show all changes that have been tracked in the entire document." %}">{% trans "Show" %}</span>
-                                </li>
-                                <li>
-                                    <span class="fw-pulldown-item ice-accept-all icon-acceptall" title="{% trans "Accept all changes that have been tracked in the entire document." %}">{% trans "Accept all" %}</span>
-                                </li>
-                                <li>
-                                    <span class="fw-pulldown-item ice-reject-all icon-rejectall" title="{% trans "Reject all changes that have been tracked in the entire document." %}">{% trans "Reject all" %}</span>
-                                </li>
-                            </ul>
-                        </div>
                     </div>
                     <div id="comments-display" class="fw-button fw-light fw-large" title="{% trans "Show/hide comments" %}">
                         {% trans "Comments" %}

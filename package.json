@@ -11,10 +11,9 @@
     "browserify": "*",
     "babelify": "*",
     "babel-preset-es2015": "*",
-    "prosemirror": "0.5.0",
+    "prosemirror": "0.5.1",
     "katex": "0.5.1",
-    "node-mathquill": "0.10.0",
-    "mathquill": "git://github.com/laughinghan/mathquill.git"
+    "node-mathquill": "0.10.0"
   },
   "browserify": {
     "transform": [

@@ -235,6 +235,7 @@ div#statusarea .error {
 
 #document-editable {
     display: table-cell;
+    vertical-align: top;
 }
 
 
@@ -402,9 +403,9 @@ span.delete {
 #document-title:focus, #document-contents:focus {
     outline: none;
 }
-#document-contents {
-    min-height: 400px;
-}
+/*#document-contents {*/
+    /*min-height: 400px;*/
+/*}*/
 
 .pagination-footnote-item {
     width: 100%;

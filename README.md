@@ -71,7 +71,7 @@ Advanced options
 
   2. Edit the lines that start with "EMAIL" uncommenting and adding your server configuration. Depending on your server setup you may also need to configure DEFAULT_FROM_EMAIL
 
-### Use a MySQL/PostGreSQL server instead of sqlite:
+### Use a MySQL server instead of sqlite:
 
   1. Install the libmysql development package. On Debian/Ubuntu, you can do this by executing:
 
@@ -81,9 +81,25 @@ Advanced options
 
     > `pip install -r mysql-requirements.txt`
 
-  3. Create a database and a user with access to it, making sure that the characterset of the database is set to UTF8. Check here http://www.debuntu.org/how-to-create-a-mysql-database-and-set-privileges-to-a-user/ for how to create a database and set up user priviliges. Make sure that when you create the database, you specify the characterset:
+  3. Create a database and a user with access to it, making sure that the characterset of the database is set to UTF8. Check here http://www.debuntu.org/how-to-create-a-mysql-database-and-set-privileges-to-a-user/ for how to create a database and set up user privileges. Make sure that when you create the database, you specify the characterset:
 
     > `create database DBNAME character set utf8;`
+
+  4. Copy configuration.py-default to configuration.py, uncomment and fill out the section entitled "DATABASES".
+
+### Use a PostgreSQL server instead of sqlite:
+
+  1. Install the PostgreSQL development package. On Debian/Ubuntu, you can do this by executing:
+
+    > `sudo apt-get install libpq-dev`
+
+  2. While inside your Fidus Writer virtualenv, install the python requirements specific to PostgreSQL:  
+
+    > `pip install -r postgresql-requirements.txt`
+
+  3. Create a database and a user with access to it, making sure that the encoding of the database is set to UTF8. Check http://www.postgresql.org/docs/9.4/static/sql-createrole.html and http://www.postgresql.org/docs/9.4/static/sql-createdatabase.html for how to create a user and a database. Make sure that when you create the database, you specify the encoding:
+
+    > `CREATE DATABASE dbname OWNER dbuser ENCODING 'utf8';`
 
   4. Copy configuration.py-default to configuration.py, uncomment and fill out the section entitled "DATABASES".
 

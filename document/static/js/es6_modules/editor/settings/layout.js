@@ -39,7 +39,9 @@ export class ModSettingsLayout {
             // for font loading.
             setTimeout(function() {
                 that.mod.editor.mod.comments.layout.layoutComments()
-            }, 100)
+
+                that.mod.editor.mod.footnotes.layout.layoutFootnotes()
+            }, 250)
         })
 
     }
@@ -51,7 +53,7 @@ export class ModSettingsLayout {
             'selected')
         jQuery('span[data-citationstyle=' + this.mod.editor.doc.settings.citationstyle + ']').addClass(
             'selected')
-        this.mod.editor.layoutCitations()
+        this.mod.editor.mod.citations.layoutCitations()
     }
 
     /** Display the document's paper size.

@@ -1,5 +1,6 @@
 import uuid
 import atexit
+import random
 
 from document.helpers.session_user_info import SessionUserInfo
 from document.helpers.filtering_comments import filter_comments_by_role
@@ -20,10 +21,12 @@ class DocumentWS(BaseWebSocketHandler):
         self.user_info = SessionUserInfo()
         doc_db, can_access = self.user_info.init_access(document_id, current_user)
 
+
         if can_access:
             if doc_db.id in DocumentWS.sessions:
                 self.doc = DocumentWS.sessions[doc_db.id]
                 self.id = max(self.doc['participants'])+1
+                print "id when opened %s" % self.id
             else:
                 self.id = 0
                 self.doc = dict()
@@ -74,6 +77,7 @@ class DocumentWS(BaseWebSocketHandler):
 
         #TODO: switch on filtering when choose workflow and have UI for assigning roles to users
         #filtered_comments = filter_comments_by_role(DocumentWS.sessions[self.user_info.document_id]["comments"], access_rights, 'editing', self.user_info)
+        print self.doc["comments"]
         response['document']['comments']=self.doc["comments"]
         #response['document']['comments'] = filtered_comments
         response['document']['comment_version']=self.doc["comment_version"]
@@ -178,7 +182,7 @@ class DocumentWS(BaseWebSocketHandler):
         chat = {
             "id": str(uuid.uuid4()),
             "body": parsed['body'],
-            "from": self.user.id,
+            "from": self.user_info.user.id,
             "type": 'chat'
             }
         DocumentWS.send_updates(chat, self.user_info.document_id)
@@ -217,7 +221,7 @@ class DocumentWS(BaseWebSocketHandler):
                                 self.doc["comments"][comment_id]["answers"].remove(answer)
                     elif cd["type"] == "update_answer":
                         comment_id = str(cd["commentId"])
-                        for answer in documenet["comments"][comment_id]["answers"]:
+                        for answer in self.doc["comments"][comment_id]["answers"]:
                             if answer["id"] == cd["id"]:
                                 answer["answer"] = cd["answer"]
                     self.doc['comment_version'] += 1

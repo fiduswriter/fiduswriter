@@ -14,16 +14,16 @@ jQuery(document).on('mousedown', '.toolbarheadings label', function (event) {
     },
     theCommand = commands[this.id.split('_')[0]]
 
-    editor.pm.execCommand(theCommand)
+    editor.currentPm.execCommand(theCommand)
 
 })
 
 jQuery(document).on('mousedown', '#button-ol', function (event) {
-    editor.pm.execCommand('ordered_list:wrap')
+    editor.currentPm.execCommand('ordered_list:wrap')
 })
 
 jQuery(document).on('mousedown', '#button-ul', function (event) {
-    editor.pm.execCommand('bullet_list:wrap')
+    editor.currentPm.execCommand('bullet_list:wrap')
 })
 
 jQuery(document).on('mousedown', '#button-blockquote', function (event) {

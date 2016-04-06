@@ -1,15 +1,65 @@
 /* This file has been automatically generated. DO NOT EDIT IT. 
- Changes will be overwritten. Edit print-book.es6.js and run ./es6-compiler.sh */
+ Changes will be overwritten. Edit print-book.es6.js and run ./es6-transpile.sh */
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-'use strict';
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+"use strict";
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/* Connects Fidus Writer citation system with citeproc */
+
+var citeprocSys = exports.citeprocSys = function () {
+    function citeprocSys() {
+        _classCallCheck(this, citeprocSys);
+
+        this.abbreviations = {
+            "default": {}
+        };
+        this.abbrevsname = "default";
+    }
+
+    _createClass(citeprocSys, [{
+        key: "retrieveItem",
+        value: function retrieveItem(id) {
+            return CSLDB[id];
+        }
+    }, {
+        key: "retrieveLocale",
+        value: function retrieveLocale(lang) {
+            return citeproc.locals[lang];
+        }
+    }, {
+        key: "getAbbreviation",
+        value: function getAbbreviation(dummy, obj, jurisdiction, vartype, key) {
+            try {
+                if (this.abbreviations[this.abbrevsname][vartype][key]) {
+                    obj["default"][vartype][key] = this.abbreviations[this.abbrevsname][vartype][key];
+                } else {
+                    obj["default"][vartype][key] = "";
+                }
+            } catch (e) {
+                // There is breakage here that needs investigating.
+            }
+        }
+    }]);
+
+    return citeprocSys;
+}();
+
+},{}],2:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.formatCitations = undefined;
+
+var _citeprocSys = require('./citeproc-sys');
 
 /**
  * Functions to display citations and the bibliography.
@@ -40,21 +90,22 @@ var formatCitations = exports.formatCitations = function formatCitations(content
             var pages = this.dataset.bibPage ? this.dataset.bibPage.split(',,,') : [],
                 prefixes = this.dataset.bibBefore ? this.dataset.bibBefore.split(',,,') : [],
 
+
             //suffixes = this.dataset.bibAfter.split(',,,'),
-            citationItem = undefined,
+            citationItem = void 0,
                 citationItems = [];
 
             listedWorksCounter += entries.length;
 
-            for (var j = 0; j < len; j++) {
+            for (var _j = 0; _j < len; _j++) {
                 citationItem = {
-                    id: entries[j]
+                    id: entries[_j]
                 };
-                if ('' != pages[j]) {
-                    citationItem.locator = pages[j];
+                if ('' != pages[_j]) {
+                    citationItem.locator = pages[_j];
                 }
-                if ('' != prefixes[j]) {
-                    citationItem.prefix = prefixes[j];
+                if ('' != prefixes[_j]) {
+                    citationItem.prefix = prefixes[_j];
                 }
                 //if('' != suffixes[j]) { citationItem.suffix = pages[j] }
                 citationItems.push(citationItem);
@@ -88,8 +139,8 @@ var formatCitations = exports.formatCitations = function formatCitations(content
     bibliographyHTML += '<h1>' + gettext('Bibliography') + '</h1>';
     // Add entry to bibliography
 
-    for (var j = 0; j < citeprocObj.bibliography[1].length; j++) {
-        bibliographyHTML += citeprocObj.bibliography[1][j];
+    for (var _j2 = 0; _j2 < citeprocObj.bibliography[1].length; _j2++) {
+        bibliographyHTML += citeprocObj.bibliography[1][_j2];
     }
 
     return bibliographyHTML;
@@ -98,44 +149,6 @@ var formatCitations = exports.formatCitations = function formatCitations(content
     //bibliographyHTML = bibliographyHTML.replace(/<div class="csl-entry">/g, '<p>')
     //return bibliographyHTML.replace(/<\/div>/g, '</p>')
 };
-
-var citeprocSys = function () {
-    function citeprocSys() {
-        _classCallCheck(this, citeprocSys);
-
-        this.abbreviations = {
-            "default": {}
-        };
-        this.abbrevsname = "default";
-    }
-
-    _createClass(citeprocSys, [{
-        key: 'retrieveItem',
-        value: function retrieveItem(id) {
-            return CSLDB[id];
-        }
-    }, {
-        key: 'retrieveLocale',
-        value: function retrieveLocale(lang) {
-            return citeproc.locals[lang];
-        }
-    }, {
-        key: 'getAbbreviation',
-        value: function getAbbreviation(dummy, obj, jurisdiction, vartype, key) {
-            try {
-                if (this.abbreviations[this.abbrevsname][vartype][key]) {
-                    obj["default"][vartype][key] = this.abbreviations[this.abbrevsname][vartype][key];
-                } else {
-                    obj["default"][vartype][key] = "";
-                }
-            } catch (e) {
-                // There is breakage here that needs investigating.
-            }
-        }
-    }]);
-
-    return citeprocSys;
-}();
 
 var getFormattedCitations = function getFormattedCitations(citations, citationStyle, citationFormats, aBibDB) {
     bibliographyHelpers.setCSLDB(aBibDB);
@@ -149,7 +162,7 @@ var getFormattedCitations = function getFormattedCitations(citations, citationSt
         }
     }
 
-    var citeprocInstance = new CSL.Engine(new citeprocSys(), citationStyle.definition);
+    var citeprocInstance = new CSL.Engine(new _citeprocSys.citeprocSys(), citationStyle.definition);
 
     var inText = citeprocInstance.cslXml.className === 'in-text';
 
@@ -255,7 +268,7 @@ var yearFromDateString = function yearFromDateString(dateString) {
     }
 };
 
-},{}],2:[function(require,module,exports){
+},{"./citeproc-sys":1}],3:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -263,7 +276,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 /** Same functionality as objToNode/nodeToObj in diffDOM.js, but also offers output in XHTML format (obj2Node) and without form support. */
 var obj2Node = exports.obj2Node = function obj2Node(obj, docType) {
-    var parser = undefined;
+    var parser = void 0;
     if (obj === undefined) {
         return false;
     }
@@ -274,7 +287,7 @@ var obj2Node = exports.obj2Node = function obj2Node(obj, docType) {
     }
 
     function inner(obj, insideSvg) {
-        var node = undefined;
+        var node = void 0;
         if (obj.hasOwnProperty('t')) {
             node = parser.createTextNode(obj.t);
         } else if (obj.hasOwnProperty('co')) {
@@ -295,8 +308,8 @@ var obj2Node = exports.obj2Node = function obj2Node(obj, docType) {
                 }
             }
             if (obj.c) {
-                for (var i = 0; i < obj.c.length; i++) {
-                    node.appendChild(inner(obj.c[i], insideSvg));
+                for (var _i = 0; _i < obj.c.length; _i++) {
+                    node.appendChild(inner(obj.c[_i], insideSvg));
                 }
             }
         }
@@ -322,9 +335,9 @@ var node2Obj = exports.node2Obj = function node2Obj(node) {
         }
         if (node.childNodes && node.childNodes.length > 0) {
             obj.c = [];
-            for (var i = 0; i < node.childNodes.length; i++) {
-                if (node.childNodes[i]) {
-                    obj.c.push(node2Obj(node.childNodes[i]));
+            for (var _i2 = 0; _i2 < node.childNodes.length; _i2++) {
+                if (node.childNodes[_i2]) {
+                    obj.c.push(node2Obj(node.childNodes[_i2]));
                 }
             }
         }
@@ -332,15 +345,15 @@ var node2Obj = exports.node2Obj = function node2Obj(node) {
     return obj;
 };
 
-},{}],3:[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 "use strict";
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
 exports.PrintBook = undefined;
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 var _templates = require("./templates");
 
@@ -513,7 +526,7 @@ var PrintBook = exports.PrintBook = function () {
     return PrintBook;
 }();
 
-},{"../citations/format":1,"../exporter/json":2,"./templates":4}],4:[function(require,module,exports){
+},{"../citations/format":2,"../exporter/json":3,"./templates":5}],5:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -568,7 +581,7 @@ var bookPrintTemplate = exports.bookPrintTemplate = _.template('\
 <% }); %>\
 ');
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 "use strict";
 
 var _printBook = require("./es6_modules/print-book/print-book");
@@ -579,4 +592,4 @@ purposes.*/
 var thePrintBook = new _printBook.PrintBook();
 window.thePrintBook = thePrintBook;
 
-},{"./es6_modules/print-book/print-book":3}]},{},[5]);
+},{"./es6_modules/print-book/print-book":4}]},{},[6]);

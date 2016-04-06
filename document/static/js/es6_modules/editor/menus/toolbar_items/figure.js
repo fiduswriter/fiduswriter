@@ -33,8 +33,8 @@ export let bindFigure = function (editor) {
             if ('' === image) {
                 image = false
             } else {
-                previewImage = ImageDB[image]
-                //TODO: Figure out what to do if the image has been deleted from ImageDB in the meantime.
+                previewImage = editor.imageDB.db[image]
+                //TODO: Figure out what to do if the image has been deleted from editor.imageDB.db in the meantime.
             }
             dialogButtons.push({
                 text: gettext('Remove'),
@@ -189,7 +189,7 @@ export let bindFigure = function (editor) {
                 if (jQuery(this).hasClass('disabled')) {
                     return
                 }
-                let imageDialog = jQuery(figureImageTemplate()).dialog({
+                let imageDialog = jQuery(figureImageTemplate({imageDB: editor.imageDB.db})).dialog({
                     width: 'auto',
                     height: 'auto',
                     title: gettext("Images"),
@@ -220,7 +220,7 @@ export let bindFigure = function (editor) {
                             jQuery('input[name=figure-math]').removeAttr(
                                 'disabled')
                         } else {
-                            previewImage = ImageDB[checkedImage[0].id.split(
+                            previewImage = editor.imageDB.db[checkedImage[0].id.split(
                                 '_')[1]]
                             image = previewImage.pk
                             layoutImagePreview()

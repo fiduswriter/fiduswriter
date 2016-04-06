@@ -22,7 +22,7 @@ export let figureImageTemplate = _.template('\
                 </tr>\
             </thead>\
             <tbody class="fw-document-table-body fw-small">\
-                <% _.each(ImageDB, function (anImage) { %> <%= tmp_usermedia_table(anImage) %> <% }); %>\
+                <% _.each(imageDB, function (anImage) { %> <%= tmp_usermedia_table(anImage) %> <% }); %>\
             </tbody>\
         </table>\
         <div class="dialogSubmit">\

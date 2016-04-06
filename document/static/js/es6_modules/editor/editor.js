@@ -18,6 +18,7 @@ import {ModServerCommunications} from "./server-communications"
 import {ModNodeConvert} from "./node-convert"
 import {node2Obj, obj2Node} from "../exporter/json"
 import {BibliographyDB} from "../bibliography/database"
+import {ImageDB} from "../images/database"
 
 export class Editor {
     // A class that contains everything that happens on the editor page.
@@ -42,8 +43,8 @@ export class Editor {
             'titleChanged': false,
             'changed': false
         }
+        this.schema = fidusSchema
         this.doc = {}
-        this.imageDB = {}
         this.user = false
         new ModSettings(this)
         new ModNodeConvert(this)
@@ -104,7 +105,7 @@ export class Editor {
     makeEditor(where) {
         let pm = new ProseMirror({
             place: where,
-            schema: fidusSchema,
+            schema: this.schema,
             //    menuBar: true,
             collab: {
                 version: 0
@@ -138,7 +139,7 @@ export class Editor {
         editorNode.appendChild(metadataKeywordsNode)
         editorNode.appendChild(documentContentsNode)
 
-        doc = fromDOM(fidusSchema, this.mod.nodeConvert.modelToEditorNode(editorNode), {
+        doc = fromDOM(this.schema, this.mod.nodeConvert.modelToEditorNode(editorNode), {
             preserveWhitespace: true
         })
         return doc
@@ -177,12 +178,8 @@ export class Editor {
             that.mod.collab.docChanges.sendToCollaborators()
         })
         this.getBibDB(this.doc.owner.id, function(){
-
+            that.enableUI()
         })
-        this.getImageDB(this.doc.owner.id, function(){
-
-        })
-        this.enableUI()
         this.waitingForDocument = false
     }
 
@@ -220,14 +217,18 @@ export class Editor {
     }
 
     removeImageDB() {
-        this.imageDB = {}
+        delete this.imageDB
     }
 
     getImageDB(userId, callback) {
         let that = this
-        if (_.isEmpty(this.imageDB)) {
-            usermediaHelpers.getAnImageDB(userId, function (imageDB) {
-                that.imageDB = imageDB
+        if (!this.imageDB) {
+            let imageGetter = new ImageDB(userId)
+            imageGetter.getDB(function(){
+                that.imageDB = imageGetter
+                that.schema.cached.imageDB = imageGetter // assign image DB to be used in schema.
+                window.ImageDB = imageGetter.db // TODO: get rid of the need for this
+                window.imageCategories = imageGetter.cats
                 callback()
             })
         } else {
@@ -262,6 +263,7 @@ export class Editor {
                 // bind the share dialog to the button if the user is the document owner
                 jQuery('.share').removeClass('disabled')
             }
+            usermediaHelpers.bindEvents()
         } else if (this.docInfo.rights === 'r') {
             // Try to disable contenteditable
             jQuery('.ProseMirror-content').attr('contenteditable', 'false')
@@ -294,7 +296,7 @@ export class Editor {
         } else {
             this.user = this.doc.owner
         }
-        usermediaHelpers.init(function(){
+        this.getImageDB(this.doc.owner.id, function(){
             that.update()
             that.mod.serverCommunications.send({
                 type: 'participant_update'

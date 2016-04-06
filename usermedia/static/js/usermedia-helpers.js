@@ -25,7 +25,7 @@
   * @namespace usermediaHelpers
   */
         usermediaHelpers = {};
-
+// NO Export
     usermediaHelpers.createImage = function (post_data) {
         $.activateWait();
         $.ajax({
@@ -595,8 +595,7 @@
 
 
 
-    usermediaHelpers.init = function (callback) {
-
+    usermediaHelpers.bindEvents = function () {
 
         jQuery(document).on('click', '.delete-image', function () {
             var ImageId = jQuery(this).attr('data-id');
@@ -658,8 +657,11 @@
                 break;
             }
         });
-        usermediaHelpers.getImageDB(callback);
+    };
 
+    usermediaHelpers.init = function(callback) {
+        usermediaHelpers.bindEvents();
+        usermediaHelpers.getImageDB(callback);
     };
 
     usermediaHelpers.bind = function () {

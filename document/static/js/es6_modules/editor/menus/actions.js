@@ -25,8 +25,8 @@ export class ModMenusActions {
             that.mod.editor.sendDocumentUpdate(function (){
                 if (that.mod.editor.doc.owner.id === that.mod.editor.user.id) {
                     // We are copying from and to the same user. We don't need different databases for this.
-                    savecopy(that.mod.editor.doc, that.mod.editor.bibDB.bibDB, that.mod.editor.imageDB,
-                        that.mod.editor.bibDB.bibDB, that.mod.editor.imageDB, that.mod.editor.user,
+                    savecopy(that.mod.editor.doc, that.mod.editor.bibDB.bibDB, that.mod.editor.imageDB.db,
+                        that.mod.editor.bibDB.bibDB, that.mod.editor.imageDB.db, that.mod.editor.user,
                         function(doc, docInfo, newBibEntries){
                             that.mod.editor.doc = doc
                             that.mod.editor.docInfo = docInfo
@@ -36,13 +36,13 @@ export class ModMenusActions {
                 } else {
                     // We copy from one user to another. So we first load one set of databases, and then the other
                     let oldBibDB = that.mod.editor.bibDB.bibDB
-                    let oldImageDB = that.mod.editor.imageDB
+                    let oldImageDB = that.mod.editor.imageDB.db
                     that.mod.editor.removeBibDB()
                     that.mod.editor.removeImageDB()
                     the.mod.editor.getBibDB(that.mod.editor.user.id, function(){
                         the.mod.editor.getImageDB(that.mod.editor.user.id, function(){
                             savecopy(that.mod.editor.doc, oldBibDB, oldImageDB, that.mod.editor.bibDB.bibDB,
-                                    that.mod.editor.imageDB, that.mod.editor.user,
+                                    that.mod.editor.imageDB.db, that.mod.editor.user,
                                     function(doc, docInfo, newBibEntries){
                                 if (that.mod.editor.docInfo.rights ==='r') {
                                     /* We only had right access to the document,
@@ -69,7 +69,7 @@ export class ModMenusActions {
         let that = this
         that.mod.editor.getUpdates(function() {
             that.mod.editor.sendDocumentUpdate(function (){
-                new NativeExporter(that.mod.editor.doc, that.mod.editor.bibDB.bibDB, that.mod.editor.imageDB)
+                new NativeExporter(that.mod.editor.doc, that.mod.editor.bibDB.bibDB, that.mod.editor.imageDB.db)
             })
         })
     }

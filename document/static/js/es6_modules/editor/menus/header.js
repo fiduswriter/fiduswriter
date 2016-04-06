@@ -162,12 +162,11 @@ export class ModMenusHeader {
               that.mod.actions.saveRevision()
           })
 
+    }
 
-          jQuery(document).bind("bibliography_ready", function(event) {
-              jQuery('.exporter-menu').each(function() {
-                  jQuery(this).removeClass('disabled')
-              })
-          })
-
+    enableExportMenu() {
+        jQuery('.exporter-menu').each(function() {
+            jQuery(this).removeClass('disabled')
+        })
     }
 }

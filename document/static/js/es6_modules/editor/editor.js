@@ -209,7 +209,7 @@ export class Editor {
                 that.bibDB = bibGetter
                 that.mod.menus.citation.appendManyToCitationDialog(bibPks)
                 that.mod.citations.layoutCitations()
-                jQuery(document).trigger("bibliography_ready") // TODO: get rid of this
+                that.mod.menus.header.enableExportMenu()
                 if (callback) {
                     callback()
                 }
@@ -239,7 +239,7 @@ export class Editor {
 
         this.mod.citations.layoutCitations()
 
-        jQuery('.savecopy, .download, .latex, .epub, .html, .print, .style, \
+        jQuery('.savecopy, .saverevision, .download, .latex, .epub, .html, .print, .style, \
       .citationstyle, .tools-item, .papersize, .metadata-menu-item, \
       #open-close-header').removeClass('disabled')
 

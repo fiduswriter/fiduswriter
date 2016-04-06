@@ -3769,7 +3769,7 @@ var Editor = exports.Editor = (function () {
                         that.bibDB = bibGetter;
                         that.mod.menus.citation.appendManyToCitationDialog(bibPks);
                         that.mod.citations.layoutCitations();
-                        jQuery(document).trigger("bibliography_ready"); // TODO: get rid of this
+                        that.mod.menus.header.enableExportMenu();
                         if (callback) {
                             callback();
                         }
@@ -3803,7 +3803,7 @@ var Editor = exports.Editor = (function () {
 
             this.mod.citations.layoutCitations();
 
-            jQuery('.savecopy, .download, .latex, .epub, .html, .print, .style, \
+            jQuery('.savecopy, .saverevision, .download, .latex, .epub, .html, .print, .style, \
       .citationstyle, .tools-item, .papersize, .metadata-menu-item, \
       #open-close-header').removeClass('disabled');
 
@@ -4930,11 +4930,12 @@ var ModMenusHeader = exports.ModMenusHeader = (function () {
             jQuery(document).on('mousedown', '.saverevision:not(.disabled)', function () {
                 that.mod.actions.saveRevision();
             });
-
-            jQuery(document).bind("bibliography_ready", function (event) {
-                jQuery('.exporter-menu').each(function () {
-                    jQuery(this).removeClass('disabled');
-                });
+        }
+    }, {
+        key: "enableExportMenu",
+        value: function enableExportMenu() {
+            jQuery('.exporter-menu').each(function () {
+                jQuery(this).removeClass('disabled');
             });
         }
     }]);

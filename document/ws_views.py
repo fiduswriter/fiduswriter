@@ -179,7 +179,7 @@ class DocumentWS(BaseWebSocketHandler):
         chat = {
             "id": str(uuid.uuid4()),
             "body": parsed['body'],
-            "from": self.user.id,
+            "from": self.user_info.user.id,
             "type": 'chat'
             }
         DocumentWS.send_updates(chat, self.user_info.document_id)
@@ -218,7 +218,7 @@ class DocumentWS(BaseWebSocketHandler):
                                 self.doc["comments"][comment_id]["answers"].remove(answer)
                     elif cd["type"] == "update_answer":
                         comment_id = str(cd["commentId"])
-                        for answer in documenet["comments"][comment_id]["answers"]:
+                        for answer in self.doc["comments"][comment_id]["answers"]:
                             if answer["id"] == cd["id"]:
                                 answer["answer"] = cd["answer"]
                     self.doc['comment_version'] += 1

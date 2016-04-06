@@ -15,7 +15,7 @@ window.theEditor = theEditor;
 },{"./es6_modules/editor/editor":18}],2:[function(require,module,exports){
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -31,7 +31,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * @param pks A list of pks of the bibliography items that are to be exported.
  */
 
-var BibLatexExporter = exports.BibLatexExporter = function () {
+var BibLatexExporter = exports.BibLatexExporter = (function () {
     function BibLatexExporter(pks, aBibDB, asZip) {
         _classCallCheck(this, BibLatexExporter);
 
@@ -208,12 +208,12 @@ var BibLatexExporter = exports.BibLatexExporter = function () {
     }]);
 
     return BibLatexExporter;
-}();
+})();
 
 },{"../../exporter/zip":64}],3:[function(require,module,exports){
 "use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -359,6 +359,47 @@ var formatCitations = exports.formatCitations = function formatCitations(content
     //return bibliographyHTML.replace(/<\/div>/g, '</p>')
 };
 
+<<<<<<< HEAD
+=======
+var citeprocSys = (function () {
+    function citeprocSys() {
+        _classCallCheck(this, citeprocSys);
+
+        this.abbreviations = {
+            "default": {}
+        };
+        this.abbrevsname = "default";
+    }
+
+    _createClass(citeprocSys, [{
+        key: 'retrieveItem',
+        value: function retrieveItem(id) {
+            return CSLDB[id];
+        }
+    }, {
+        key: 'retrieveLocale',
+        value: function retrieveLocale(lang) {
+            return citeproc.locals[lang];
+        }
+    }, {
+        key: 'getAbbreviation',
+        value: function getAbbreviation(dummy, obj, jurisdiction, vartype, key) {
+            try {
+                if (this.abbreviations[this.abbrevsname][vartype][key]) {
+                    obj["default"][vartype][key] = this.abbreviations[this.abbrevsname][vartype][key];
+                } else {
+                    obj["default"][vartype][key] = "";
+                }
+            } catch (e) {
+                // There is breakage here that needs investigating.
+            }
+        }
+    }]);
+
+    return citeprocSys;
+})();
+
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 var getFormattedCitations = function getFormattedCitations(citations, citationStyle, citationFormats, aBibDB) {
     bibliographyHelpers.setCSLDB(aBibDB);
 
@@ -480,7 +521,7 @@ var yearFromDateString = function yearFromDateString(dateString) {
 },{"./citeproc-sys":3}],5:[function(require,module,exports){
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -495,7 +536,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 * Functions for the document access rights dialog.
 */
 
-var DocumentAccessRightsDialog = exports.DocumentAccessRightsDialog = function () {
+var DocumentAccessRightsDialog = exports.DocumentAccessRightsDialog = (function () {
     function DocumentAccessRightsDialog(documentIds, accessRights, teamMembers) {
         _classCallCheck(this, DocumentAccessRightsDialog);
 
@@ -643,7 +684,7 @@ var DocumentAccessRightsDialog = exports.DocumentAccessRightsDialog = function (
     }]);
 
     return DocumentAccessRightsDialog;
-}();
+})();
 
 },{"./templates":6}],6:[function(require,module,exports){
 'use strict';
@@ -781,7 +822,7 @@ var ModCitations = exports.ModCitations = function () {
 },{"../../citations/format":4,"prosemirror/dist/ui/update":135}],8:[function(require,module,exports){
 "use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -796,7 +837,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 * Functions for chat between users who access a document simultaneously.
 */
 
-var ModCollabChat = exports.ModCollabChat = function () {
+var ModCollabChat = exports.ModCollabChat = (function () {
     function ModCollabChat(mod) {
         _classCallCheck(this, ModCollabChat);
 
@@ -953,12 +994,12 @@ var ModCollabChat = exports.ModCollabChat = function () {
     }]);
 
     return ModCollabChat;
-}();
+})();
 
 },{"./templates":11}],9:[function(require,module,exports){
 "use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -971,7 +1012,7 @@ var _schema = require("../schema");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ModCollabDocChanges = exports.ModCollabDocChanges = function () {
+var ModCollabDocChanges = exports.ModCollabDocChanges = (function () {
     function ModCollabDocChanges(mod) {
         _classCallCheck(this, ModCollabDocChanges);
 
@@ -1165,12 +1206,16 @@ var ModCollabDocChanges = exports.ModCollabDocChanges = function () {
     }]);
 
     return ModCollabDocChanges;
-}();
+})();
 
+<<<<<<< HEAD
 },{"../schema":41,"prosemirror/dist/transform":125}],10:[function(require,module,exports){
+=======
+},{"../schema":36,"prosemirror/dist/transform":122}],8:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -1183,7 +1228,7 @@ var _chat = require("./chat");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ModCollab = exports.ModCollab = function () {
+var ModCollab = exports.ModCollab = (function () {
     function ModCollab(editor) {
         _classCallCheck(this, ModCollab);
 
@@ -1211,7 +1256,7 @@ var ModCollab = exports.ModCollab = function () {
     }]);
 
     return ModCollab;
-}();
+})();
 
 },{"./chat":8,"./doc-changes":9}],11:[function(require,module,exports){
 'use strict';
@@ -1259,7 +1304,11 @@ var Comment = exports.Comment = function Comment(id, user, userName, userAvatar,
 },{}],13:[function(require,module,exports){
 "use strict";
 
+<<<<<<< HEAD
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+=======
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })(); /* Functions related to user interactions with comments */
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -1269,7 +1318,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /* Functions related to user interactions with comments */
 
+<<<<<<< HEAD
 var ModCommentInteractions = exports.ModCommentInteractions = function () {
+=======
+var ModCommentInteractions = exports.ModCommentInteractions = (function () {
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
     function ModCommentInteractions(mod) {
         _classCallCheck(this, ModCommentInteractions);
 
@@ -1459,12 +1512,17 @@ var ModCommentInteractions = exports.ModCommentInteractions = function () {
     }]);
 
     return ModCommentInteractions;
-}();
+})();
 
+<<<<<<< HEAD
 },{}],14:[function(require,module,exports){
 "use strict";
+=======
+},{"prosemirror/dist/ui/update":132}],11:[function(require,module,exports){
+'use strict';
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -1483,7 +1541,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /* Functions related to layouting of comments */
 
-var ModCommentLayout = exports.ModCommentLayout = function () {
+var ModCommentLayout = exports.ModCommentLayout = (function () {
     function ModCommentLayout(mod) {
         _classCallCheck(this, ModCommentLayout);
 
@@ -1787,7 +1845,7 @@ var ModCommentLayout = exports.ModCommentLayout = function () {
     }]);
 
     return ModCommentLayout;
-}();
+})();
 
 },{"./comment":12,"./templates":17,"prosemirror/dist/model":119,"prosemirror/dist/ui/update":135}],15:[function(require,module,exports){
 "use strict";
@@ -1818,10 +1876,14 @@ var ModComments = exports.ModComments = function ModComments(editor) {
 },{"./interactions":13,"./layout":14,"./store":16}],16:[function(require,module,exports){
 "use strict";
 
+<<<<<<< HEAD
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /*
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      Functions related to the editing and sharing of comments.
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      based on https://github.com/ProseMirror/website/blob/master/src/client/collab/comment.js
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+=======
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -1840,7 +1902,11 @@ var _comment = require("./comment");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+<<<<<<< HEAD
 var ModCommentStore = exports.ModCommentStore = function () {
+=======
+var ModCommentStore = exports.ModCommentStore = (function () {
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
     function ModCommentStore(mod) {
         _classCallCheck(this, ModCommentStore);
 
@@ -2135,7 +2201,7 @@ var ModCommentStore = exports.ModCommentStore = function () {
     }]);
 
     return ModCommentStore;
-}();
+})();
 
 (0, _event.eventMixin)(ModCommentStore);
 
@@ -2143,8 +2209,13 @@ function randomID() {
     return Math.floor(Math.random() * 0xffffffff);
 }
 
+<<<<<<< HEAD
 },{"../schema":41,"./comment":12,"prosemirror/dist/model":119,"prosemirror/dist/transform":125,"prosemirror/dist/util/event":137}],17:[function(require,module,exports){
 "use strict";
+=======
+},{"../schema":36,"prosemirror/dist/model":116,"prosemirror/dist/transform":122,"prosemirror/dist/ui/update":132,"prosemirror/dist/util/event":134}],14:[function(require,module,exports){
+'use strict';
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -2166,7 +2237,7 @@ var filterByUserBoxTemplate = exports.filterByUserBoxTemplate = _.template("\n  
 },{}],18:[function(require,module,exports){
 "use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /* Functions for ProseMirror integration.*/
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })(); /* Functions for ProseMirror integration.*/
 
 //import "prosemirror/dist/menu/menubar"
 
@@ -2207,7 +2278,7 @@ var _json = require("../exporter/json");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var Editor = exports.Editor = function () {
+var Editor = exports.Editor = (function () {
     // A class that contains everything that happens on the editor page.
     // It is currently not possible to initialize more thna one editor class, as it
     // contains bindings to menu items, etc. that are uniquely defined.
@@ -2630,12 +2701,16 @@ var Editor = exports.Editor = function () {
     }]);
 
     return Editor;
-}();
+})();
 
+<<<<<<< HEAD
 },{"../exporter/json":58,"./citations/mod":7,"./collab/mod":10,"./comments/mod":15,"./footnotes/mod":22,"./menus/mod":27,"./node-convert":40,"./schema":41,"./server-communications":42,"./settings/mod":44,"./tools/mod":46,"prosemirror/dist/collab":90,"prosemirror/dist/edit/main":104,"prosemirror/dist/format":111,"prosemirror/dist/ui/update":135}],19:[function(require,module,exports){
+=======
+},{"../citations/format":3,"../exporter/json":54,"./collab/mod":8,"./comments/mod":12,"./footnotes/mod":18,"./menus/mod":23,"./node-convert":35,"./schema":36,"./server-communications":37,"./settings/mod":39,"./tools/mod":41,"./update-ui":47,"prosemirror/dist/collab":87,"prosemirror/dist/edit/main":101,"prosemirror/dist/format":108,"prosemirror/dist/ui/update":132}],16:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -2654,7 +2729,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /* Functions related to the footnote editor instance */
 
-var ModFootnoteEditor = exports.ModFootnoteEditor = function () {
+var ModFootnoteEditor = exports.ModFootnoteEditor = (function () {
     function ModFootnoteEditor(mod) {
         _classCallCheck(this, ModFootnoteEditor);
 
@@ -2756,6 +2831,7 @@ var ModFootnoteEditor = exports.ModFootnoteEditor = function () {
     }]);
 
     return ModFootnoteEditor;
+<<<<<<< HEAD
 }();
 
 },{"../schema":41,"prosemirror/dist/format":111,"prosemirror/dist/model":119,"prosemirror/dist/transform":125}],20:[function(require,module,exports){
@@ -2858,9 +2934,14 @@ var ModFootnoteLayout = exports.ModFootnoteLayout = function () {
 }();
 
 },{"prosemirror/dist/ui/update":135}],21:[function(require,module,exports){
+=======
+})();
+
+},{"../schema":36,"prosemirror/dist/format":108,"prosemirror/dist/model":116,"prosemirror/dist/transform":122}],17:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -2877,7 +2958,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /* Functions related to footnote markers in the main editor */
 
-var ModFootnoteMarkers = exports.ModFootnoteMarkers = function () {
+var ModFootnoteMarkers = exports.ModFootnoteMarkers = (function () {
     function ModFootnoteMarkers(mod) {
         _classCallCheck(this, ModFootnoteMarkers);
 
@@ -3081,12 +3162,16 @@ var ModFootnoteMarkers = exports.ModFootnoteMarkers = function () {
     }]);
 
     return ModFootnoteMarkers;
-}();
+})();
 
+<<<<<<< HEAD
 },{"../schema":41,"prosemirror/dist/format":111,"prosemirror/dist/model":119}],22:[function(require,module,exports){
+=======
+},{"../schema":36,"prosemirror/dist/format":108,"prosemirror/dist/model":116}],18:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -3107,7 +3192,7 @@ var _layout = require("./layout");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ModFootnotes = exports.ModFootnotes = function () {
+var ModFootnotes = exports.ModFootnotes = (function () {
     function ModFootnotes(editor) {
         _classCallCheck(this, ModFootnotes);
 
@@ -3147,12 +3232,16 @@ var ModFootnotes = exports.ModFootnotes = function () {
     }]);
 
     return ModFootnotes;
-}();
+})();
 
+<<<<<<< HEAD
 },{"../schema":41,"./editor":19,"./layout":20,"./markers":21,"prosemirror/dist/collab":90,"prosemirror/dist/edit/main":104}],23:[function(require,module,exports){
+=======
+},{"../schema":36,"./editor":16,"./markers":17,"prosemirror/dist/collab":87,"prosemirror/dist/edit/main":101}],19:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -3171,7 +3260,7 @@ var _epub = require("../../exporter/epub");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ModMenusActions = exports.ModMenusActions = function () {
+var ModMenusActions = exports.ModMenusActions = (function () {
     function ModMenusActions(mod) {
         _classCallCheck(this, ModMenusActions);
 
@@ -3267,12 +3356,12 @@ var ModMenusActions = exports.ModMenusActions = function () {
     }]);
 
     return ModMenusActions;
-}();
+})();
 
 },{"../../exporter/copy":52,"../../exporter/epub":55,"../../exporter/html":57,"../../exporter/latex":59,"../../exporter/native":60}],24:[function(require,module,exports){
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -3285,7 +3374,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /* Functions for the Citation add dialog */
 
-var ModMenusCitation = exports.ModMenusCitation = function () {
+var ModMenusCitation = exports.ModMenusCitation = (function () {
     function ModMenusCitation(mod) {
         _classCallCheck(this, ModMenusCitation);
 
@@ -3333,12 +3422,12 @@ var ModMenusCitation = exports.ModMenusCitation = function () {
     }]);
 
     return ModMenusCitation;
-}();
+})();
 
 },{"./toolbar_items/templates":37}],25:[function(require,module,exports){
 "use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -3351,7 +3440,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /* Bindings for the header menu */
 
-var ModMenusHeader = exports.ModMenusHeader = function () {
+var ModMenusHeader = exports.ModMenusHeader = (function () {
     function ModMenusHeader(mod) {
         _classCallCheck(this, ModMenusHeader);
 
@@ -3507,12 +3596,12 @@ var ModMenusHeader = exports.ModMenusHeader = function () {
     }]);
 
     return ModMenusHeader;
-}();
+})();
 
 },{"../../documents/access-rights/dialog":5}],26:[function(require,module,exports){
 "use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -3523,7 +3612,7 @@ var _edit = require("prosemirror/dist/edit");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ModMenusKeyBindings = exports.ModMenusKeyBindings = function () {
+var ModMenusKeyBindings = exports.ModMenusKeyBindings = (function () {
     function ModMenusKeyBindings(mod) {
         _classCallCheck(this, ModMenusKeyBindings);
 
@@ -3571,9 +3660,13 @@ var ModMenusKeyBindings = exports.ModMenusKeyBindings = function () {
     }]);
 
     return ModMenusKeyBindings;
-}();
+})();
 
+<<<<<<< HEAD
 },{"prosemirror/dist/edit":102}],27:[function(require,module,exports){
+=======
+},{"prosemirror/dist/edit":99}],23:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -3613,7 +3706,7 @@ var ModMenus = exports.ModMenus = function ModMenus(editor) {
 },{"./actions":23,"./citation":24,"./header":25,"./key-bindings":26,"./toolbar":28,"./update-ui":39}],28:[function(require,module,exports){
 "use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -3642,7 +3735,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 /* Bindings for the toolbar menu */
 
-var ModMenusToolbar = exports.ModMenusToolbar = function () {
+var ModMenusToolbar = exports.ModMenusToolbar = (function () {
     function ModMenusToolbar(mod) {
         _classCallCheck(this, ModMenusToolbar);
 
@@ -3667,7 +3760,7 @@ var ModMenusToolbar = exports.ModMenusToolbar = function () {
     }]);
 
     return ModMenusToolbar;
-}();
+})();
 
 },{"./toolbar_items/block_styles":29,"./toolbar_items/cite":30,"./toolbar_items/comment":31,"./toolbar_items/figure":32,"./toolbar_items/footnote":33,"./toolbar_items/inline_styles":34,"./toolbar_items/link":35,"./toolbar_items/math":36,"./toolbar_items/undo_redo":38}],29:[function(require,module,exports){
 'use strict';
@@ -4178,7 +4271,11 @@ var bindFigure = exports.bindFigure = function bindFigure(editor) {
     });
 };
 
+<<<<<<< HEAD
 },{"./templates":37,"katex":67}],33:[function(require,module,exports){
+=======
+},{"./templates":33,"katex":64}],29:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4842,7 +4939,7 @@ var ModMenusUpdateUI = exports.ModMenusUpdateUI = function () {
 },{"prosemirror/dist/model":119,"prosemirror/dist/ui/update":135}],40:[function(require,module,exports){
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -4853,7 +4950,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 // In order to stick with the format used in Fidus Writer 1.1-2.0,
 // we do a few smaller modifications to the node before it is saved.
 
-var ModNodeConvert = exports.ModNodeConvert = function () {
+var ModNodeConvert = exports.ModNodeConvert = (function () {
     function ModNodeConvert(editor) {
         _classCallCheck(this, ModNodeConvert);
 
@@ -4910,12 +5007,12 @@ var ModNodeConvert = exports.ModNodeConvert = function () {
     }]);
 
     return ModNodeConvert;
-}();
+})();
 
 },{}],41:[function(require,module,exports){
 "use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -4932,7 +5029,7 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Doc = exports.Doc = function (_Block) {
+var Doc = exports.Doc = (function (_Block) {
     _inherits(Doc, _Block);
 
     function Doc() {
@@ -4959,9 +5056,9 @@ var Doc = exports.Doc = function (_Block) {
     }]);
 
     return Doc;
-}(_model.Block);
+})(_model.Block);
 
-var Title = function (_Textblock) {
+var Title = (function (_Textblock) {
     _inherits(Title, _Textblock);
 
     function Title() {
@@ -4981,7 +5078,7 @@ var Title = function (_Textblock) {
     }]);
 
     return Title;
-}(_model.Textblock);
+})(_model.Textblock);
 
 Title.register("parseDOM", "div", {
     rank: 26,
@@ -4998,7 +5095,7 @@ Title.prototype.serializeDOM = function (node, serializer) {
     });
 };
 
-var MetaDataSubtitle = function (_Textblock2) {
+var MetaDataSubtitle = (function (_Textblock2) {
     _inherits(MetaDataSubtitle, _Textblock2);
 
     function MetaDataSubtitle() {
@@ -5025,7 +5122,7 @@ var MetaDataSubtitle = function (_Textblock2) {
     }]);
 
     return MetaDataSubtitle;
-}(_model.Textblock);
+})(_model.Textblock);
 
 MetaDataSubtitle.register("parseDOM", "div", {
     parse: function parse(dom, state) {
@@ -5040,7 +5137,7 @@ MetaDataSubtitle.prototype.serializeDOM = function (node, serializer) {
     });
 };
 
-var MetaDataAuthors = function (_Textblock3) {
+var MetaDataAuthors = (function (_Textblock3) {
     _inherits(MetaDataAuthors, _Textblock3);
 
     function MetaDataAuthors() {
@@ -5067,7 +5164,7 @@ var MetaDataAuthors = function (_Textblock3) {
     }]);
 
     return MetaDataAuthors;
-}(_model.Textblock);
+})(_model.Textblock);
 
 MetaDataAuthors.register("parseDOM", "div", {
     parse: function parse(dom, state) {
@@ -5082,7 +5179,7 @@ MetaDataAuthors.prototype.serializeDOM = function (node, serializer) {
     });
 };
 
-var MetaDataAbstract = function (_Block2) {
+var MetaDataAbstract = (function (_Block2) {
     _inherits(MetaDataAbstract, _Block2);
 
     function MetaDataAbstract() {
@@ -5101,7 +5198,7 @@ var MetaDataAbstract = function (_Block2) {
     }]);
 
     return MetaDataAbstract;
-}(_model.Block);
+})(_model.Block);
 
 MetaDataAbstract.register("parseDOM", "div", {
     parse: function parse(dom, state) {
@@ -5116,7 +5213,7 @@ MetaDataAbstract.prototype.serializeDOM = function (node, serializer) {
     });
 };
 
-var MetaDataKeywords = function (_Textblock4) {
+var MetaDataKeywords = (function (_Textblock4) {
     _inherits(MetaDataKeywords, _Textblock4);
 
     function MetaDataKeywords() {
@@ -5143,7 +5240,7 @@ var MetaDataKeywords = function (_Textblock4) {
     }]);
 
     return MetaDataKeywords;
-}(_model.Textblock);
+})(_model.Textblock);
 
 MetaDataKeywords.register("parseDOM", "div", {
     parse: function parse(dom, state) {
@@ -5158,7 +5255,7 @@ MetaDataKeywords.prototype.serializeDOM = function (node, serializer) {
     });
 };
 
-var DocumentContents = function (_Block3) {
+var DocumentContents = (function (_Block3) {
     _inherits(DocumentContents, _Block3);
 
     function DocumentContents() {
@@ -5177,7 +5274,7 @@ var DocumentContents = function (_Block3) {
     }]);
 
     return DocumentContents;
-}(_model.Block);
+})(_model.Block);
 
 DocumentContents.register("parseDOM", "div", {
     parse: function parse(dom, state) {
@@ -5192,7 +5289,7 @@ DocumentContents.prototype.serializeDOM = function (node, serializer) {
     });
 };
 
-var Footnote = function (_Inline) {
+var Footnote = (function (_Inline) {
     _inherits(Footnote, _Inline);
 
     function Footnote() {
@@ -5213,7 +5310,7 @@ var Footnote = function (_Inline) {
     }]);
 
     return Footnote;
-}(_model.Inline);
+})(_model.Inline);
 
 Footnote.register("parseDOM", "footnote", {
     parse: function parse(dom, state) {
@@ -5259,7 +5356,7 @@ Footnote.register("command", "insert", {
     }
 });
 
-var FootnoteContainer = function (_Block4) {
+var FootnoteContainer = (function (_Block4) {
     _inherits(FootnoteContainer, _Block4);
 
     function FootnoteContainer() {
@@ -5281,7 +5378,7 @@ var FootnoteContainer = function (_Block4) {
     }]);
 
     return FootnoteContainer;
-}(_model.Block);
+})(_model.Block);
 
 FootnoteContainer.register("parseDOM", "div", {
     parse: function parse(dom, state) {
@@ -5296,7 +5393,7 @@ FootnoteContainer.prototype.serializeDOM = function (node, serializer) {
     });
 };
 
-var Citation = function (_Inline2) {
+var Citation = (function (_Inline2) {
     _inherits(Citation, _Inline2);
 
     function Citation() {
@@ -5324,7 +5421,7 @@ var Citation = function (_Inline2) {
     }]);
 
     return Citation;
-}(_model.Inline);
+})(_model.Inline);
 
 Citation.register("parseDOM", "span", {
     parse: function parse(dom, state) {
@@ -5388,7 +5485,7 @@ Citation.register("command", "insert", {
     }
 });
 
-var Equation = function (_Inline3) {
+var Equation = (function (_Inline3) {
     _inherits(Equation, _Inline3);
 
     function Equation() {
@@ -5409,7 +5506,7 @@ var Equation = function (_Inline3) {
     }]);
 
     return Equation;
-}(_model.Inline);
+})(_model.Inline);
 
 Equation.register("parseDOM", "span", {
     parse: function parse(dom, state) {
@@ -5448,7 +5545,7 @@ Equation.register("command", "insert", {
     }
 });
 
-var Figure = function (_Block5) {
+var Figure = (function (_Block5) {
     _inherits(Figure, _Block5);
 
     function Figure() {
@@ -5483,7 +5580,7 @@ var Figure = function (_Block5) {
     }]);
 
     return Figure;
-}(_model.Block);
+})(_model.Block);
 
 Figure.register("parseDOM", "figure", {
     parse: function parse(dom, state) {
@@ -5608,7 +5705,7 @@ function markActive(pm, type) {
     if (sel.empty) return type.isInSet(pm.activeMarks());else return pm.doc.rangeHasMark(sel.from, sel.to, type);
 }
 
-var CommentMark = exports.CommentMark = function (_MarkType) {
+var CommentMark = exports.CommentMark = (function (_MarkType) {
     _inherits(CommentMark, _MarkType);
 
     function CommentMark() {
@@ -5632,7 +5729,7 @@ var CommentMark = exports.CommentMark = function (_MarkType) {
     }]);
 
     return CommentMark;
-}(_model.MarkType);
+})(_model.MarkType);
 
 CommentMark.register("parseDOM", "span", {
     parse: function parse(dom, state) {
@@ -5720,10 +5817,14 @@ var fidusFnSchema = exports.fidusFnSchema = new _model.Schema(_model.defaultSche
     comment: CommentMark
 }));
 
+<<<<<<< HEAD
 },{"katex":67,"prosemirror/dist/model":119}],42:[function(require,module,exports){
+=======
+},{"katex":64,"prosemirror/dist/model":116}],37:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -5735,7 +5836,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   saving, collaboration, etc.).
  */
 
-var ModServerCommunications = exports.ModServerCommunications = function () {
+var ModServerCommunications = exports.ModServerCommunications = (function () {
     function ModServerCommunications(editor) {
         _classCallCheck(this, ModServerCommunications);
 
@@ -5877,12 +5978,12 @@ var ModServerCommunications = exports.ModServerCommunications = function () {
     }]);
 
     return ModServerCommunications;
-}();
+})();
 
 },{}],43:[function(require,module,exports){
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -5894,7 +5995,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
  * it (ie making it part of the DOM structure).
  */
 
-var ModSettingsLayout = exports.ModSettingsLayout = function () {
+var ModSettingsLayout = exports.ModSettingsLayout = (function () {
     function ModSettingsLayout(mod) {
         _classCallCheck(this, ModSettingsLayout);
 
@@ -5988,7 +6089,7 @@ var ModSettingsLayout = exports.ModSettingsLayout = function () {
     }]);
 
     return ModSettingsLayout;
-}();
+})();
 
 },{}],44:[function(require,module,exports){
 "use strict";
@@ -6019,7 +6120,7 @@ var ModSettings = exports.ModSettings = function ModSettings(editor) {
 },{"./layout":43,"./set":45}],45:[function(require,module,exports){
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -6027,7 +6128,7 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ModSettingsSet = exports.ModSettingsSet = function () {
+var ModSettingsSet = exports.ModSettingsSet = (function () {
     function ModSettingsSet(mod) {
         _classCallCheck(this, ModSettingsSet);
 
@@ -6079,7 +6180,7 @@ var ModSettingsSet = exports.ModSettingsSet = function () {
     }]);
 
     return ModSettingsSet;
-}();
+})();
 
 },{}],46:[function(require,module,exports){
 "use strict";
@@ -6110,7 +6211,7 @@ var ModTools = exports.ModTools = function ModTools(editor) {
 },{"./print":47,"./show-key-bindings":49,"./word-count":51}],47:[function(require,module,exports){
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -6118,7 +6219,7 @@ Object.defineProperty(exports, "__esModule", {
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ModToolsPrint = exports.ModToolsPrint = function () {
+var ModToolsPrint = exports.ModToolsPrint = (function () {
     function ModToolsPrint(mod) {
         _classCallCheck(this, ModToolsPrint);
 
@@ -6189,7 +6290,7 @@ var ModToolsPrint = exports.ModToolsPrint = function () {
     }]);
 
     return ModToolsPrint;
-}();
+})();
 
 },{}],48:[function(require,module,exports){
 'use strict';
@@ -6239,7 +6340,7 @@ var showKeyBindingsTemplate = exports.showKeyBindingsTemplate = _.template('\
 },{}],49:[function(require,module,exports){
 "use strict";
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -6254,7 +6355,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 * originally by Gabriel Lopez <gabriel.marcos.lopez@gmail.com>
 */
 
-var ModToolsShowKeyBindings = exports.ModToolsShowKeyBindings = function () {
+var ModToolsShowKeyBindings = exports.ModToolsShowKeyBindings = (function () {
     function ModToolsShowKeyBindings(mod) {
         _classCallCheck(this, ModToolsShowKeyBindings);
 
@@ -6285,7 +6386,7 @@ var ModToolsShowKeyBindings = exports.ModToolsShowKeyBindings = function () {
     }]);
 
     return ModToolsShowKeyBindings;
-}();
+})();
 
 },{"./show-key-bindings-templates":48}],50:[function(require,module,exports){
 'use strict';
@@ -6319,7 +6420,7 @@ var wordCounterDialogTemplate = exports.wordCounterDialogTemplate = _.template('
 },{}],51:[function(require,module,exports){
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -6330,7 +6431,7 @@ var _wordCountTemplates = require('./word-count-templates');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ModToolsWordCount = exports.ModToolsWordCount = function () {
+var ModToolsWordCount = exports.ModToolsWordCount = (function () {
     function ModToolsWordCount(mod) {
         _classCallCheck(this, ModToolsWordCount);
 
@@ -6393,9 +6494,235 @@ var ModToolsWordCount = exports.ModToolsWordCount = function () {
     }]);
 
     return ModToolsWordCount;
-}();
+})();
 
+<<<<<<< HEAD
 },{"./word-count-templates":50}],52:[function(require,module,exports){
+=======
+},{"./word-count-templates":45}],47:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.updateUI = updateUI;
+
+var _model = require('prosemirror/dist/model');
+
+var BLOCK_LABELS = {
+    'paragraph': gettext('Normal Text'),
+    'heading_1': gettext('1st Heading'),
+    'heading_2': gettext('2nd Heading'),
+    'heading_3': gettext('3rd Heading'),
+    'heading_4': gettext('4th Heading'),
+    'heading_5': gettext('5th Heading'),
+    'heading_6': gettext('6th Heading'),
+    'code_block': gettext('Code'),
+    'figure': gettext('Figure')
+}; // Update UI (adapted from ProseMirror's src/menu/update.js)
+
+var PART_LABELS = {
+    'title': gettext('Title'),
+    'metadatasubtitle': gettext('Subtitle'),
+    'metadataauthors': gettext('Authors'),
+    'metadataabstract': gettext('Abstract'),
+    'metadatakeywords': gettext('Keywords'),
+    'documentcontents': gettext('Body')
+};
+
+function updateUI(editor) {
+    var pm = editor.pm;
+
+    // We count on the the title node being the first one in the document
+    var documentTitle = pm.doc.firstChild.type.name === 'title' && pm.doc.firstChild.textContent.length > 0 ? pm.doc.firstChild.textContent : gettext('Untitled Document');
+
+    jQuery('title').html('Fidus Writer - ' + documentTitle);
+    jQuery('#header h1').html(documentTitle);
+
+    var marks = pm.activeMarks();
+    var strong = marks.some(function (mark) {
+        return mark.type.name === 'strong';
+    });
+
+    if (strong) {
+        jQuery('#button-bold').addClass('ui-state-active');
+    } else {
+        jQuery('#button-bold').removeClass('ui-state-active');
+    }
+
+    var em = marks.some(function (mark) {
+        return mark.type.name === 'em';
+    });
+
+    if (em) {
+        jQuery('#button-italic').addClass('ui-state-active');
+    } else {
+        jQuery('#button-italic').removeClass('ui-state-active');
+    }
+
+    var link = marks.some(function (mark) {
+        return mark.type.name === 'link';
+    });
+
+    if (link) {
+        jQuery('#button-link').addClass('ui-state-active');
+    } else {
+        jQuery('#button-link').removeClass('ui-state-active');
+    }
+
+    if (pm.history.undoDepth > 0) {
+        jQuery('#button-undo').removeClass('disabled');
+    } else {
+        jQuery('#button-undo').addClass('disabled');
+    }
+
+    if (pm.history.redoDepth > 0) {
+        jQuery('#button-redo').removeClass('disabled');
+    } else {
+        jQuery('#button-redo').addClass('disabled');
+    }
+
+    var start = pm.selection.from.min(pm.selection.to);
+    var end = pm.selection.from.max(pm.selection.to);
+    if (start.path.length === 0 || end.path.length === 0) {
+        // The selection must be outermost elements. Do not go any further in
+        // analyzing things.
+        return;
+    }
+    var startElement = pm.doc.path([start.path[0]]);
+    var endElement = pm.doc.path([end.path[0]]);
+
+    if (startElement !== endElement) {
+        /* Selection goes across document parts */
+        calculatePlaceHolderCss(pm);
+        jQuery('.editortoolbar button').addClass('disabled');
+        jQuery('#block-style-label').html('');
+        jQuery('#current-position').html('');
+        if (pm.selection.empty) {
+            jQuery('#button-comment').addClass('disabled');
+        } else {
+            jQuery('#button-comment').removeClass('disabled');
+        }
+    } else {
+        calculatePlaceHolderCss(pm, startElement);
+        jQuery('#current-position').html(PART_LABELS[startElement.type.name]);
+
+        switch (startElement.type.name) {
+            case 'title':
+            case 'metadatasubtitle':
+            case 'metadataauthors':
+            case 'metadatakeywords':
+                jQuery('.edit-button').addClass('disabled');
+                jQuery('#block-style-label').html('');
+                if (pm.selection.empty) {
+                    jQuery('#button-comment').addClass('disabled');
+                } else {
+                    jQuery('#button-comment').removeClass('disabled');
+                }
+
+                break;
+            case 'metadataabstract':
+            case 'documentcontents':
+                jQuery('.edit-button').removeClass('disabled');
+
+                if (pm.selection.empty) {
+                    jQuery('#button-link').addClass('disabled');
+                    jQuery('#button-comment').addClass('disabled');
+                } else {
+                    jQuery('#button-comment').removeClass('disabled');
+                }
+
+                if (startElement.type.name === 'metadataabstract') {
+                    jQuery('#button-figure').addClass('disabled');
+                }
+
+                var blockNodeType = true,
+                    blockNode,
+                    nextBlockNodeType;
+
+                if (_(start.path).isEqual(end.path)) {
+                    // Selection within a single block.
+                    blockNode = pm.doc.path(start.path);
+                    blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name;
+                    jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType]);
+                } else {
+                    // The selection is crossing several blocks
+                    pm.doc.nodesBetween(start, end, function (node, path, parent) {
+                        if (node.isTextblock) {
+                            nextBlockNodeType = node.type.name === 'heading' ? node.type.name + '_' + node.attrs.level : node.type.name;
+                            if (blockNodeType === true) {
+                                blockNodeType = nextBlockNodeType;
+                            }
+                            if (blockNodeType !== nextBlockNodeType) {
+                                blockNodeType = false;
+                            }
+                        }
+                    });
+
+                    if (blockNodeType) {
+                        jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType]);
+                    } else {
+                        jQuery('#block-style-label').html('');
+                    }
+                }
+                break;
+        }
+    }
+    return true;
+}
+
+/** Show or hide placeHolders ('Contents...', 'Title...', etc.) depending on
+whether these elements are empty or not.*/
+
+var placeHolderCss = '';
+
+function calculatePlaceHolderCss(pm, selectedElement) {
+    var newPlaceHolderCss = '',
+        i = 0,
+        placeHolders = [{
+        'type': 'title',
+        'selector': '#document-title',
+        'placeHolder': gettext('Title...')
+    }, {
+        'type': 'metadatasubtitle',
+        'selector': '#metadata-subtitle',
+        'placeHolder': gettext('Subtitle...')
+    }, {
+        'type': 'metadaauthors',
+        'selector': '#metadata-authors',
+        'placeHolder': gettext('Authors...')
+    }, {
+        'type': 'metadataabstract',
+        'selector': '#metadata-abstract',
+        'placeHolder': gettext('Abstract...')
+    }, {
+        'type': 'metadatakeywords',
+        'selector': '#metadata-keywords',
+        'placeHolder': gettext('Keywords...')
+    }, {
+        'type': 'documentcontents',
+        'selector': '#document-contents',
+        'placeHolder': gettext('Body...')
+    }];
+
+    placeHolders.forEach(function (elementType, index) {
+        var partElement = pm.doc.child(i);
+        if (partElement.type.name == !elementType.type) {
+            return false;
+        }
+        if (partElement.textContent.length === 0 && (selectedElement != partElement || !pm.hasFocus())) {
+            newPlaceHolderCss += elementType.selector + ':before {content: "' + elementType.placeHolder + '"}\n';
+        }
+        i++;
+    });
+    if (placeHolderCss !== newPlaceHolderCss) {
+        placeHolderCss = newPlaceHolderCss;
+        jQuery('#placeholder-styles')[0].innerHTML = newPlaceHolderCss;
+    }
+}
+
+},{"prosemirror/dist/model":116}],48:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -6900,7 +7227,11 @@ var orderLinks = exports.orderLinks = function orderLinks(contentItems) {
     return contentItems;
 };
 
+<<<<<<< HEAD
 },{"../katex/opf-includes":66,"./epub-templates":54,"./html":57,"./json":58,"./tools":61,"./zip":64,"katex":67}],56:[function(require,module,exports){
+=======
+},{"../katex/opf-includes":62,"./epub-templates":50,"./html":53,"./json":54,"./tools":57,"./zip":60,"katex":64}],52:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -7161,7 +7492,11 @@ var replaceImgSrc = exports.replaceImgSrc = function replaceImgSrc(htmlString) {
     return htmlString;
 };
 
+<<<<<<< HEAD
 },{"../citations/format":4,"./html-templates":56,"./json":58,"./tools":61,"./zip":64,"katex":67}],58:[function(require,module,exports){
+=======
+},{"../citations/format":3,"./html-templates":52,"./json":54,"./tools":57,"./zip":60,"katex":64}],54:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -8009,7 +8344,7 @@ var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles,
 },{"./download":53,"./upload":63}],65:[function(require,module,exports){
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
     value: true
@@ -8020,7 +8355,7 @@ var _json = require('../exporter/json');
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var ImportNative = exports.ImportNative = function () {
+var ImportNative = exports.ImportNative = (function () {
     /* Save document information into the database */
 
     function ImportNative(aDocument, aBibDB, anImageDB, entries, user, callback) {
@@ -8402,7 +8737,7 @@ var ImportNative = exports.ImportNative = function () {
     }]);
 
     return ImportNative;
-}();
+})();
 
 },{"../exporter/json":58}],66:[function(require,module,exports){
 "use strict";
@@ -8411,9 +8746,187 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 // This file is auto-generated. CHANGES WILL BE OVERWRITTEN! Re-generate by running ./manage.py bundle_katex.
+<<<<<<< HEAD
 var katexOpfIncludes = exports.katexOpfIncludes = "\n<item id=\"katex-0\" href=\"katex.min.css\" media-type=\"text/css\" />\n<item id=\"katex-1\" href=\"fonts/KaTeX_Size1-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-2\" href=\"fonts/KaTeX_Fraktur-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-3\" href=\"fonts/KaTeX_SansSerif-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-4\" href=\"fonts/KaTeX_Size3-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-5\" href=\"fonts/KaTeX_Math-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-6\" href=\"fonts/KaTeX_Typewriter-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-7\" href=\"fonts/KaTeX_Script-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-8\" href=\"fonts/KaTeX_Size1-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-9\" href=\"fonts/KaTeX_Fraktur-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-10\" href=\"fonts/KaTeX_Fraktur-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-11\" href=\"fonts/KaTeX_Fraktur-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-12\" href=\"fonts/KaTeX_Size2-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-13\" href=\"fonts/KaTeX_AMS-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-14\" href=\"fonts/KaTeX_Main-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-15\" href=\"fonts/KaTeX_Main-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-16\" href=\"fonts/KaTeX_SansSerif-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-17\" href=\"fonts/KaTeX_Size4-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-18\" href=\"fonts/KaTeX_Math-BoldItalic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-19\" href=\"fonts/KaTeX_Main-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-20\" href=\"fonts/KaTeX_Math-BoldItalic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-21\" href=\"fonts/KaTeX_Caligraphic-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-22\" href=\"fonts/KaTeX_Math-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-23\" href=\"fonts/KaTeX_Size3-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-24\" href=\"fonts/KaTeX_SansSerif-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-25\" href=\"fonts/KaTeX_Math-BoldItalic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-26\" href=\"fonts/KaTeX_SansSerif-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-27\" href=\"fonts/KaTeX_Caligraphic-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-28\" href=\"fonts/KaTeX_Typewriter-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-29\" href=\"fonts/KaTeX_Math-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-30\" href=\"fonts/KaTeX_Size3-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-31\" href=\"fonts/KaTeX_SansSerif-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-32\" href=\"fonts/KaTeX_Caligraphic-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-33\" href=\"fonts/KaTeX_Math-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-34\" href=\"fonts/KaTeX_Math-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-35\" href=\"fonts/KaTeX_Fraktur-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-36\" href=\"fonts/KaTeX_Size1-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-37\" href=\"fonts/KaTeX_AMS-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-38\" href=\"fonts/KaTeX_Caligraphic-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-39\" href=\"fonts/KaTeX_Size4-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-40\" href=\"fonts/KaTeX_Size4-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-41\" href=\"fonts/KaTeX_Caligraphic-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-42\" href=\"fonts/KaTeX_Size1-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-43\" href=\"fonts/KaTeX_Math-BoldItalic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-44\" href=\"fonts/KaTeX_Main-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-45\" href=\"fonts/KaTeX_AMS-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-46\" href=\"fonts/KaTeX_Typewriter-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-47\" href=\"fonts/KaTeX_Caligraphic-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-48\" href=\"fonts/KaTeX_SansSerif-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-49\" href=\"fonts/KaTeX_SansSerif-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-50\" href=\"fonts/KaTeX_Size2-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-51\" href=\"fonts/KaTeX_Script-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-52\" href=\"fonts/KaTeX_SansSerif-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-53\" href=\"fonts/KaTeX_Main-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-54\" href=\"fonts/KaTeX_Math-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-55\" href=\"fonts/KaTeX_Caligraphic-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-56\" href=\"fonts/KaTeX_Fraktur-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-57\" href=\"fonts/KaTeX_Fraktur-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-58\" href=\"fonts/KaTeX_Main-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-59\" href=\"fonts/KaTeX_Main-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-60\" href=\"fonts/KaTeX_SansSerif-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-61\" href=\"fonts/KaTeX_Main-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-62\" href=\"fonts/KaTeX_Math-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-63\" href=\"fonts/KaTeX_Caligraphic-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-64\" href=\"fonts/KaTeX_Fraktur-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-65\" href=\"fonts/KaTeX_Script-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-66\" href=\"fonts/KaTeX_SansSerif-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-67\" href=\"fonts/KaTeX_Main-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-68\" href=\"fonts/KaTeX_SansSerif-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-69\" href=\"fonts/KaTeX_Main-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-70\" href=\"fonts/KaTeX_Main-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-71\" href=\"fonts/KaTeX_Main-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-72\" href=\"fonts/KaTeX_Size2-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-73\" href=\"fonts/KaTeX_Size2-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-74\" href=\"fonts/KaTeX_Math-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-75\" href=\"fonts/KaTeX_Size4-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-76\" href=\"fonts/KaTeX_Size3-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-77\" href=\"fonts/KaTeX_Script-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-78\" href=\"fonts/KaTeX_Typewriter-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-79\" href=\"fonts/KaTeX_SansSerif-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-80\" href=\"fonts/KaTeX_AMS-Regular.woff2\" media-type=\"application/octet-stream\" />\n";
 
 },{}],67:[function(require,module,exports){
+=======
+var katexOpfIncludes = exports.katexOpfIncludes = "\n<item id=\"katex-0\" href=\"katex.min.css\" media-type=\"text/plain\" />\n<item id=\"katex-1\" href=\"fonts/KaTeX_Typewriter-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-2\" href=\"fonts/KaTeX_Main-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-3\" href=\"fonts/KaTeX_Fraktur-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-4\" href=\"fonts/KaTeX_SansSerif-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-5\" href=\"fonts/KaTeX_Main-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-6\" href=\"fonts/KaTeX_Main-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-7\" href=\"fonts/KaTeX_SansSerif-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-8\" href=\"fonts/KaTeX_AMS-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-9\" href=\"fonts/KaTeX_Caligraphic-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-10\" href=\"fonts/KaTeX_Size4-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-11\" href=\"fonts/KaTeX_Math-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-12\" href=\"fonts/KaTeX_Size1-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-13\" href=\"fonts/KaTeX_Math-BoldItalic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-14\" href=\"fonts/KaTeX_Script-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-15\" href=\"fonts/KaTeX_Main-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-16\" href=\"fonts/KaTeX_Math-BoldItalic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-17\" href=\"fonts/KaTeX_Fraktur-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-18\" href=\"fonts/KaTeX_Main-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-19\" href=\"fonts/KaTeX_Size1-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-20\" href=\"fonts/KaTeX_SansSerif-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-21\" href=\"fonts/KaTeX_Math-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-22\" href=\"fonts/KaTeX_Fraktur-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-23\" href=\"fonts/KaTeX_Script-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-24\" href=\"fonts/KaTeX_Fraktur-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-25\" href=\"fonts/KaTeX_Main-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-26\" href=\"fonts/KaTeX_Size1-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-27\" href=\"fonts/KaTeX_Size3-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-28\" href=\"fonts/KaTeX_SansSerif-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-29\" href=\"fonts/KaTeX_Script-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-30\" href=\"fonts/KaTeX_Main-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-31\" href=\"fonts/KaTeX_Math-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-32\" href=\"fonts/KaTeX_Main-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-33\" href=\"fonts/KaTeX_Typewriter-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-34\" href=\"fonts/KaTeX_Math-BoldItalic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-35\" href=\"fonts/KaTeX_AMS-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-36\" href=\"fonts/KaTeX_Size2-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-37\" href=\"fonts/KaTeX_Caligraphic-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-38\" href=\"fonts/KaTeX_Fraktur-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-39\" href=\"fonts/KaTeX_Typewriter-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-40\" href=\"fonts/KaTeX_Math-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-41\" href=\"fonts/KaTeX_SansSerif-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-42\" href=\"fonts/KaTeX_Script-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-43\" href=\"fonts/KaTeX_Caligraphic-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-44\" href=\"fonts/KaTeX_SansSerif-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-45\" href=\"fonts/KaTeX_AMS-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-46\" href=\"fonts/KaTeX_Caligraphic-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-47\" href=\"fonts/KaTeX_Fraktur-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-48\" href=\"fonts/KaTeX_Main-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-49\" href=\"fonts/KaTeX_SansSerif-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-50\" href=\"fonts/KaTeX_Size4-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-51\" href=\"fonts/KaTeX_Math-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-52\" href=\"fonts/KaTeX_SansSerif-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-53\" href=\"fonts/KaTeX_Size2-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-54\" href=\"fonts/KaTeX_Fraktur-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-55\" href=\"fonts/KaTeX_Size2-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-56\" href=\"fonts/KaTeX_SansSerif-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-57\" href=\"fonts/KaTeX_AMS-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-58\" href=\"fonts/KaTeX_Math-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-59\" href=\"fonts/KaTeX_SansSerif-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-60\" href=\"fonts/KaTeX_Main-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-61\" href=\"fonts/KaTeX_Typewriter-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-62\" href=\"fonts/KaTeX_Size3-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-63\" href=\"fonts/KaTeX_Main-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-64\" href=\"fonts/KaTeX_Caligraphic-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-65\" href=\"fonts/KaTeX_SansSerif-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-66\" href=\"fonts/KaTeX_Caligraphic-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-67\" href=\"fonts/KaTeX_Size4-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-68\" href=\"fonts/KaTeX_Main-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-69\" href=\"fonts/KaTeX_Math-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-70\" href=\"fonts/KaTeX_Size3-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-71\" href=\"fonts/KaTeX_Fraktur-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-72\" href=\"fonts/KaTeX_Caligraphic-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-73\" href=\"fonts/KaTeX_Size2-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-74\" href=\"fonts/KaTeX_Size1-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-75\" href=\"fonts/KaTeX_SansSerif-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-76\" href=\"fonts/KaTeX_Size4-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-77\" href=\"fonts/KaTeX_Size3-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-78\" href=\"fonts/KaTeX_Caligraphic-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-79\" href=\"fonts/KaTeX_Math-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-80\" href=\"fonts/KaTeX_Math-BoldItalic.woff\" media-type=\"application/octet-stream\" />\n";
+
+},{}],67:[function(require,module,exports){
+(function(mod) {
+  if (typeof exports == "object" && typeof module == "object") // CommonJS
+    module.exports = mod()
+  else if (typeof define == "function" && define.amd) // AMD
+    return define([], mod)
+  else // Plain browser env
+    (this || window).browserKeymap = mod()
+})(function() {
+  "use strict"
+
+  var mac = typeof navigator != "undefined" ? /Mac/.test(navigator.platform)
+          : typeof os != "undefined" ? os.platform() == "darwin" : false
+
+  // :: Object<string>
+  // A map from key codes to key names.
+  var keyNames = {
+    3: "Enter", 8: "Backspace", 9: "Tab", 13: "Enter", 16: "Shift", 17: "Ctrl", 18: "Alt",
+    19: "Pause", 20: "CapsLock", 27: "Esc", 32: "Space", 33: "PageUp", 34: "PageDown", 35: "End",
+    36: "Home", 37: "Left", 38: "Up", 39: "Right", 40: "Down", 44: "PrintScrn", 45: "Insert",
+    46: "Delete", 59: ";", 61: "=", 91: "Mod", 92: "Mod", 93: "Mod",
+    106: "*", 107: "=", 109: "-", 110: ".", 111: "/", 127: "Delete",
+    173: "-", 186: ";", 187: "=", 188: ",", 189: "-", 190: ".", 191: "/", 192: "`", 219: "[", 220: "\\",
+    221: "]", 222: "'", 63232: "Up", 63233: "Down", 63234: "Left", 63235: "Right", 63272: "Delete",
+    63273: "Home", 63275: "End", 63276: "PageUp", 63277: "PageDown", 63302: "Insert"
+  }
+
+  // Number keys
+  for (var i = 0; i < 10; i++) keyNames[i + 48] = keyNames[i + 96] = String(i)
+  // Alphabetic keys
+  for (var i = 65; i <= 90; i++) keyNames[i] = String.fromCharCode(i)
+  // Function keys
+  for (var i = 1; i <= 12; i++) keyNames[i + 111] = keyNames[i + 63235] = "F" + i
+
+  // :: (KeyboardEvent) → ?string
+  // Find a name for the given keydown event. If the keycode in the
+  // event is not known, this will return `null`. Otherwise, it will
+  // return a string like `"Shift-Cmd-Ctrl-Alt-Home"`. The parts before
+  // the dashes give the modifiers (always in that order, if present),
+  // and the last word gives the key name, which one of the names in
+  // `keyNames`.
+  //
+  // The convention for keypress events is to use the pressed character
+  // between single quotes. Due to limitations in the browser API,
+  // keypress events can not have modifiers.
+  function keyName(event) {
+    if (event.type == "keypress") return "'" + String.fromCharCode(event.charCode) + "'"
+
+    var base = keyNames[event.keyCode], name = base
+    if (name == null || event.altGraphKey) return null
+
+    if (event.altKey && base != "Alt") name = "Alt-" + name
+    if (event.ctrlKey && base != "Ctrl") name = "Ctrl-" + name
+    if (event.metaKey && base != "Cmd") name = "Cmd-" + name
+    if (event.shiftKey && base != "Shift") name = "Shift-" + name
+    return name
+  }
+
+  // :: (string) → bool
+  // Test whether the given key name refers to a modifier key.
+  function isModifierKey(name) {
+    name = /[^-]*$/.exec(name)[0]
+    return name == "Ctrl" || name == "Alt" || name == "Shift" || name == "Mod"
+  }
+
+  // :: (string) → string
+  // Normalize a sloppy key name, which may have modifiers in the wrong
+  // order or use shorthands for modifiers, to a properly formed key
+  // name. Used to normalize names provided in keymaps.
+  //
+  // Note that the modifier `mod` is a shorthand for `Cmd` on Mac, and
+  // `Ctrl` on other platforms.
+  function normalizeKeyName(name) {
+    var parts = name.split(/-(?!'?$)/), result = parts[parts.length - 1]
+    var alt, ctrl, shift, cmd
+    for (var i = 0; i < parts.length - 1; i++) {
+      var mod = parts[i]
+      if (/^(cmd|meta|m)$/i.test(mod)) cmd = true
+      else if (/^a(lt)?$/i.test(mod)) alt = true
+      else if (/^(c|ctrl|control)$/i.test(mod)) ctrl = true
+      else if (/^s(hift)$/i.test(mod)) shift = true
+      else if (/^mod$/i.test(mod)) { if (mac) cmd = true; else ctrl = true }
+      else throw new Error("Unrecognized modifier name: " + mod)
+    }
+    if (alt) result = "Alt-" + result
+    if (ctrl) result = "Ctrl-" + result
+    if (cmd) result = "Cmd-" + result
+    if (shift) result = "Shift-" + result
+    return result
+  }
+
+  // :: (Object, ?Object)
+  // A keymap binds a set of [key names](#keyName) to commands names
+  // or functions.
+  //
+  // Construct a keymap using the bindings in `keys`, whose properties
+  // should be [key names](#keyName) or space-separated sequences of
+  // key names. In the second case, the binding will be for a
+  // multi-stroke key combination.
+  //
+  // When `options` has a property `call`, this will be a programmatic
+  // keymap, meaning that instead of looking keys up in its set of
+  // bindings, it will pass the key name to `options.call`, and use
+  // the return value of that calls as the resolved binding.
+  //
+  // `options.name` can be used to give the keymap a name, making it
+  // easier to [remove](#ProseMirror.removeKeymap) from an editor.
+  function Keymap(keys, options) {
+    this.options = options || {}
+    this.bindings = Object.create(null)
+    if (keys) for (var keyname in keys) if (Object.prototype.hasOwnProperty.call(keys, keyname))
+      this.addBinding(keyname, keys[keyname])
+  }
+
+  Keymap.prototype = {
+    normalize: function(name) {
+      return this.options.multi !== false ? name.split(/ +(?!\'$)/).map(normalizeKeyName) : [normalizeKeyName(name)]
+    },
+
+    // :: (string, any)
+    // Add a binding for the given key or key sequence.
+    addBinding: function(keyname, value) {
+      var keys = this.normalize(keyname)
+      for (var i = 0; i < keys.length; i++) {
+        var name = keys.slice(0, i + 1).join(" ")
+        var val = i == keys.length - 1 ? value : "..."
+        var prev = this.bindings[name]
+        if (!prev) this.bindings[name] = val
+        else if (prev != val) throw new Error("Inconsistent bindings for " + name)
+      }
+    },
+
+    // :: (string)
+    // Remove the binding for the given key or key sequence.
+    removeBinding: function(keyname) {
+      var keys = this.normalize(keyname)
+      for (var i = keys.length - 1; i >= 0; i--) {
+        var name = keys.slice(0, i).join(" ")
+        var val = this.bindings[name]
+        if (val == "..." && !this.unusedMulti(name))
+          break
+        else if (val)
+          delete this.bindings[name]
+      }
+    },
+
+    unusedMulti: function(name) {
+      for (var binding in this.bindings)
+        if (binding.length > name && binding.indexOf(name) == 0 && binding.charAt(name.length) == " ")
+          return false
+      return true
+    },
+
+    // :: (string, ?any) → any
+    // Looks up the given key or key sequence in this keymap. Returns
+    // the value the key is bound to (which may be undefined if it is
+    // not bound), or the string `"..."` if the key is a prefix of a
+    // multi-key sequence that is bound by this keymap.
+    lookup: function(key, context) {
+      return this.options.call ? this.options.call(key, context) : this.bindings[key]
+    },
+
+    constructor: Keymap
+  }
+
+  Keymap.keyName = keyName
+  Keymap.isModifierKey = isModifierKey
+  Keymap.normalizeKeyName = normalizeKeyName
+
+  return Keymap
+})
+
+},{}],64:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 /**
  * This is the main entry point for KaTeX. Here, we expose functions for
  * rendering expressions either to DOM nodes or to markup strings.
@@ -8488,6 +9001,7 @@ module.exports = {
     ParseError: ParseError
 };
 
+<<<<<<< HEAD
 },{"./src/ParseError":71,"./src/Settings":73,"./src/buildTree":78,"./src/parseTree":87,"./src/utils":89}],68:[function(require,module,exports){
 /** @flow */
 
@@ -8532,6 +9046,9 @@ function matchAt(re, str, pos) {
 
 module.exports = matchAt;
 },{}],69:[function(require,module,exports){
+=======
+},{"./src/ParseError":67,"./src/Settings":69,"./src/buildTree":74,"./src/parseTree":83,"./src/utils":85}],65:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 /**
  * The Lexer class handles tokenizing the input in various ways. Since our
  * parser expects us to be able to backtrack, the lexer allows lexing from any
@@ -8727,7 +9244,11 @@ Lexer.prototype.lex = function(pos, mode) {
 
 module.exports = Lexer;
 
+<<<<<<< HEAD
 },{"./ParseError":71,"match-at":68}],70:[function(require,module,exports){
+=======
+},{"./ParseError":67,"match-at":86}],66:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 /**
  * This file contains information about the options that the Parser carries
  * around with it while parsing. Data is held in an `Options` object, and when
@@ -18572,6 +19093,52 @@ module.exports = {
 };
 
 },{}],90:[function(require,module,exports){
+<<<<<<< HEAD
+=======
+/** @flow */
+
+"use strict";
+
+function getRelocatable(re) {
+  // In the future, this could use a WeakMap instead of an expando.
+  if (!re.__matchAtRelocatable) {
+    // Disjunctions are the lowest-precedence operator, so we can make any
+    // pattern match the empty string by appending `|()` to it:
+    // https://people.mozilla.org/~jorendorff/es6-draft.html#sec-patterns
+    var source = re.source + "|()";
+
+    // We always make the new regex global.
+    var flags = "g" + (re.ignoreCase ? "i" : "") + (re.multiline ? "m" : "") + (re.unicode ? "u" : "")
+    // sticky (/.../y) doesn't make sense in conjunction with our relocation
+    // logic, so we ignore it here.
+    ;
+
+    re.__matchAtRelocatable = new RegExp(source, flags);
+  }
+  return re.__matchAtRelocatable;
+}
+
+function matchAt(re, str, pos) {
+  if (re.global || re.sticky) {
+    throw new Error("matchAt(...): Only non-global regexes are supported");
+  }
+  var reloc = getRelocatable(re);
+  reloc.lastIndex = pos;
+  var match = reloc.exec(str);
+  // Last capturing group is our sentinel that indicates whether the regex
+  // matched at the given location.
+  if (match[match.length - 1] == null) {
+    // Original regex matched.
+    match.length = match.length - 1;
+    return match;
+  } else {
+    return null;
+  }
+}
+
+module.exports = matchAt;
+},{}],87:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -18749,7 +19316,11 @@ var Collab = function () {
 }();
 
 (0, _event.eventMixin)(Collab);
+<<<<<<< HEAD
 },{"../edit":102,"../transform":125,"../util/error":136,"../util/event":137,"./rebase":91}],91:[function(require,module,exports){
+=======
+},{"../edit":99,"../transform":122,"../util/error":133,"../util/event":134,"./rebase":88}],88:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -18777,7 +19348,11 @@ function rebaseSteps(doc, forward, steps, maps) {
   }
   return { doc: transform.doc, transform: transform, mapping: remap, positions: positions };
 }
+<<<<<<< HEAD
 },{"../transform":125}],92:[function(require,module,exports){
+=======
+},{"../transform":122}],89:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -18856,7 +19431,11 @@ function ensureCSSAdded() {
     document.head.insertBefore(cssNode, document.head.firstChild);
   }
 }
+<<<<<<< HEAD
 },{}],93:[function(require,module,exports){
+=======
+},{}],90:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19595,7 +20174,11 @@ baseCommands.redo = {
   },
   keys: ["Mod-Y", "Shift-Mod-Z"]
 };
+<<<<<<< HEAD
 },{"../model":119,"../transform":125,"../util/error":136,"./char":95,"./dompos":99,"./selection":108}],94:[function(require,module,exports){
+=======
+},{"../model":116,"../transform":122,"../util/error":133,"./char":92,"./dompos":96,"./selection":105}],91:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19665,7 +20248,11 @@ var keys = {
 if (_dom.browser.mac) keys["Ctrl-F"] = keys["Ctrl-B"] = keys["Ctrl-P"] = keys["Ctrl-N"] = keys["Alt-F"] = keys["Alt-B"] = keys["Ctrl-A"] = keys["Ctrl-E"] = keys["Ctrl-V"] = keys["goPageUp"] = ensureSelection;
 
 var captureKeys = exports.captureKeys = new _browserkeymap2.default(keys);
+<<<<<<< HEAD
 },{"../dom":92,"./dompos":99,"./selection":108,"browserkeymap":141}],95:[function(require,module,exports){
+=======
+},{"../dom":89,"./dompos":96,"./selection":105,"browserkeymap":63}],92:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -19698,7 +20285,11 @@ function charCategory(ch) {
 function isExtendingChar(ch) {
   return ch.charCodeAt(0) >= 768 && extendingChar.test(ch);
 }
+<<<<<<< HEAD
 },{}],96:[function(require,module,exports){
+=======
+},{}],93:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20307,13 +20898,21 @@ _model.NodeType.derivableCommands.insert = function (conf) {
     params: deriveParams(this, conf.params)
   };
 };
+<<<<<<< HEAD
 },{"../dom":92,"../model":119,"../transform":125,"../util/error":136,"../util/obj":139,"../util/sortedinsert":140,"./base_commands":93,"browserkeymap":141}],97:[function(require,module,exports){
+=======
+},{"../dom":89,"../model":116,"../transform":122,"../util/error":133,"../util/obj":136,"../util/sortedinsert":137,"./base_commands":90,"browserkeymap":63}],94:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 var _dom = require("../dom");
 
 (0, _dom.insertCSS)("\n\n.ProseMirror {\n  border: 1px solid silver;\n  position: relative;\n}\n\n.ProseMirror-content {\n  padding: 4px 8px 4px 14px;\n  white-space: pre-wrap;\n  line-height: 1.2;\n}\n\n.ProseMirror-drop-target {\n  position: absolute;\n  width: 1px;\n  background: #666;\n  display: none;\n}\n\n.ProseMirror-content ul.tight p, .ProseMirror-content ol.tight p {\n  margin: 0;\n}\n\n.ProseMirror-content ul, .ProseMirror-content ol {\n  padding-left: 30px;\n  cursor: default;\n}\n\n.ProseMirror-content blockquote {\n  padding-left: 1em;\n  border-left: 3px solid #eee;\n  margin-left: 0; margin-right: 0;\n}\n\n.ProseMirror-content pre {\n  white-space: pre-wrap;\n}\n\n.ProseMirror-selectednode {\n  outline: 2px solid #8cf;\n}\n\n.ProseMirror-nodeselection *::selection { background: transparent; }\n.ProseMirror-nodeselection *::-moz-selection { background: transparent; }\n\n.ProseMirror-content p:first-child,\n.ProseMirror-content h1:first-child,\n.ProseMirror-content h2:first-child,\n.ProseMirror-content h3:first-child,\n.ProseMirror-content h4:first-child,\n.ProseMirror-content h5:first-child,\n.ProseMirror-content h6:first-child {\n  margin-top: .3em;\n}\n\n/* Add space around the hr to make clicking it easier */\n\n.ProseMirror-content hr {\n  position: relative;\n  height: 6px;\n  border: none;\n}\n\n.ProseMirror-content hr:after {\n  content: \"\";\n  position: absolute;\n  left: 10px;\n  right: 10px;\n  top: 2px;\n  border-top: 2px solid silver;\n}\n\n.ProseMirror-content img {\n  cursor: default;\n}\n\n/* Make sure li selections wrap around markers */\n\n.ProseMirror-content li {\n  position: relative;\n  pointer-events: none; /* Don't do weird stuff with marker clicks */\n}\n.ProseMirror-content li > * {\n  pointer-events: auto;\n}\n\nli.ProseMirror-selectednode {\n  outline: none;\n}\n\nli.ProseMirror-selectednode:after {\n  content: \"\";\n  position: absolute;\n  left: -32px;\n  right: -2px; top: -2px; bottom: -2px;\n  border: 2px solid #8cf;\n  pointer-events: none;\n}\n\n");
+<<<<<<< HEAD
 },{"../dom":92}],98:[function(require,module,exports){
+=======
+},{"../dom":89}],95:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20536,7 +21135,11 @@ function scanText(start, end) {
     cur = cur.firstChild || nodeAfter(cur);
   }
 }
+<<<<<<< HEAD
 },{"../format":111,"../model":119,"../transform/tree":133,"./dompos":99,"./selection":108}],99:[function(require,module,exports){
+=======
+},{"../format":108,"../model":116,"../transform/tree":130,"./dompos":96,"./selection":105}],96:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -20918,7 +21521,11 @@ function handleNodeClick(pm, type, event, direct) {
     }
   }
 }
+<<<<<<< HEAD
 },{"../dom":92,"../model":119,"../util/error":136}],100:[function(require,module,exports){
+=======
+},{"../dom":89,"../model":116,"../util/error":133}],97:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -21085,7 +21692,11 @@ function redraw(pm, dirty, doc, prev) {
   }
   scan(pm.content, doc, prev);
 }
+<<<<<<< HEAD
 },{"../dom":92,"../format":111,"../model":119,"./dompos":99,"./main":104}],101:[function(require,module,exports){
+=======
+},{"../dom":89,"../format":108,"../model":116,"./dompos":96,"./main":101}],98:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -21737,7 +22348,11 @@ var History = exports.History = function () {
 
   return History;
 }();
+<<<<<<< HEAD
 },{"../model":119,"../transform":125}],102:[function(require,module,exports){
+=======
+},{"../model":116,"../transform":122}],99:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -21832,7 +22447,11 @@ var _browserkeymap2 = _interopRequireDefault(_browserkeymap);
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.Keymap = _browserkeymap2.default;
+<<<<<<< HEAD
 },{"./base_commands":93,"./command":96,"./main":104,"./options":105,"./range":106,"./schema_commands":107,"./selection":108,"browserkeymap":141}],103:[function(require,module,exports){
+=======
+},{"./base_commands":90,"./command":93,"./main":101,"./options":102,"./range":103,"./schema_commands":104,"./selection":105,"browserkeymap":63}],100:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -22441,7 +23060,11 @@ handlers.blur = function (pm) {
   // Fired when the editor loses focus.
   pm.signal("blur");
 };
+<<<<<<< HEAD
 },{"../dom":92,"../format":111,"../model":119,"./capturekeys":94,"./domchange":98,"./dompos":99,"./selection":108,"browserkeymap":141}],104:[function(require,module,exports){
+=======
+},{"../dom":89,"../format":108,"../model":116,"./capturekeys":91,"./domchange":95,"./dompos":96,"./selection":105,"browserkeymap":63}],101:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -23245,7 +23868,11 @@ var EditorTransform = function (_Transform) {
 
   return EditorTransform;
 }(_transform.Transform);
+<<<<<<< HEAD
 },{"../dom":92,"../format":111,"../model":119,"../transform":125,"../util/error":136,"../util/event":137,"../util/map":138,"../util/sortedinsert":140,"./css":97,"./dompos":99,"./draw":100,"./history":101,"./input":103,"./options":105,"./range":106,"./selection":108,"browserkeymap":141}],105:[function(require,module,exports){
+=======
+},{"../dom":89,"../format":108,"../model":116,"../transform":122,"../util/error":133,"../util/event":134,"../util/map":135,"../util/sortedinsert":137,"./css":94,"./dompos":96,"./draw":97,"./history":98,"./input":100,"./options":102,"./range":103,"./selection":105,"browserkeymap":63}],102:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -23380,7 +24007,11 @@ function setOption(pm, name, value) {
   pm.options[name] = value;
   if (desc.update) desc.update(pm, value, old, false);
 }
+<<<<<<< HEAD
 },{"../model":119,"../ui/prompt":134,"../util/error":136,"./command":96}],106:[function(require,module,exports){
+=======
+},{"../model":116,"../ui/prompt":131,"../util/error":133,"./command":93}],103:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -23580,7 +24211,11 @@ var RangeTracker = function () {
 
   return RangeTracker;
 }();
+<<<<<<< HEAD
 },{"../util/event":137}],107:[function(require,module,exports){
+=======
+},{"../util/event":134}],104:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 var _model = require("../model");
@@ -23914,7 +24549,11 @@ _model.HorizontalRule.register("command", "insert", {
   keys: ["Mod-Shift--"],
   menu: { group: "insert", rank: 70, display: { type: "label", label: "Horizontal rule" } }
 });
+<<<<<<< HEAD
 },{"../format":111,"../model":119,"./command":96}],108:[function(require,module,exports){
+=======
+},{"../format":108,"../model":116,"./command":93}],105:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24411,7 +25050,11 @@ function verticalMotionLeavesTextblock(pm, pos, dir) {
   }
   return true;
 }
+<<<<<<< HEAD
 },{"../dom":92,"../model":119,"../util/error":136,"./dompos":99}],109:[function(require,module,exports){
+=======
+},{"../dom":89,"../model":116,"../util/error":133,"./dompos":96}],106:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24868,7 +25511,11 @@ _model.StrongMark.register("parseDOMStyle", "font-weight", {
 });
 
 _model.CodeMark.register("parseDOM", "code", { parse: "mark" });
+<<<<<<< HEAD
 },{"../model":119,"../util/sortedinsert":140,"./register":112}],110:[function(require,module,exports){
+=======
+},{"../model":116,"../util/sortedinsert":137,"./register":109}],107:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24900,7 +25547,11 @@ function fromText(schema, text) {
 }
 
 (0, _register.defineSource)("text", fromText);
+<<<<<<< HEAD
 },{"./register":112}],111:[function(require,module,exports){
+=======
+},{"./register":109}],108:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -24999,7 +25650,11 @@ Object.defineProperty(exports, "toText", {
     return _to_text.toText;
   }
 });
+<<<<<<< HEAD
 },{"./from_dom":109,"./from_text":110,"./register":112,"./to_dom":113,"./to_text":114}],112:[function(require,module,exports){
+=======
+},{"./from_dom":106,"./from_text":107,"./register":109,"./to_dom":110,"./to_text":111}],109:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25067,7 +25722,11 @@ function defineSource(format, func) {
 defineSource("json", function (schema, json) {
   return schema.nodeFromJSON(json);
 });
+<<<<<<< HEAD
 },{"../util/error":136}],113:[function(require,module,exports){
+=======
+},{"../util/error":133}],110:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25355,7 +26014,11 @@ def(_model.LinkMark, function (mark, s) {
   return s.elt("a", { href: mark.attrs.href,
     title: mark.attrs.title });
 });
+<<<<<<< HEAD
 },{"../model":119,"./register":112}],114:[function(require,module,exports){
+=======
+},{"../model":116,"./register":109}],111:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25399,7 +26062,11 @@ function toText(doc) {
 }
 
 (0, _register.defineTarget)("text", toText);
+<<<<<<< HEAD
 },{"../model":119,"./register":112}],115:[function(require,module,exports){
+=======
+},{"../model":116,"./register":109}],112:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25836,7 +26503,11 @@ var defaultSpec = new _schema.SchemaSpec({
 // :: Schema
 // ProseMirror's default document schema.
 var defaultSchema = exports.defaultSchema = new _schema.Schema(defaultSpec);
+<<<<<<< HEAD
 },{"./schema":123}],116:[function(require,module,exports){
+=======
+},{"./schema":120}],113:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25933,7 +26604,11 @@ function findDiffEnd(a, b) {
   }
   return { a: new _pos.Pos(pathA, offA), b: new _pos.Pos(pathB, offB) };
 }
+<<<<<<< HEAD
 },{"./pos":122}],117:[function(require,module,exports){
+=======
+},{"./pos":119}],114:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -25962,7 +26637,11 @@ var ModelError = exports.ModelError = function (_ProseMirrorError) {
 
   return ModelError;
 }(_error.ProseMirrorError);
+<<<<<<< HEAD
 },{"../util/error":136}],118:[function(require,module,exports){
+=======
+},{"../util/error":133}],115:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -26674,7 +27353,11 @@ if (typeof Symbol != "undefined") {
     return this;
   };
 }
+<<<<<<< HEAD
 },{"./error":117}],119:[function(require,module,exports){
+=======
+},{"./error":114}],116:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -26914,7 +27597,11 @@ Object.defineProperty(exports, "ModelError", {
                 return _error.ModelError;
         }
 });
+<<<<<<< HEAD
 },{"./defaultschema":115,"./diff":116,"./error":117,"./fragment":118,"./mark":120,"./node":121,"./pos":122,"./schema":123}],120:[function(require,module,exports){
+=======
+},{"./defaultschema":112,"./diff":113,"./error":114,"./fragment":115,"./mark":117,"./node":118,"./pos":119,"./schema":120}],117:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -27046,7 +27733,11 @@ var Mark = exports.Mark = function () {
 }();
 
 var empty = [];
+<<<<<<< HEAD
 },{}],121:[function(require,module,exports){
+=======
+},{}],118:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -27654,7 +28345,11 @@ function wrapMarks(marks, str) {
     str = marks[i].type.name + "(" + str + ")";
   }return str;
 }
+<<<<<<< HEAD
 },{"./fragment":118,"./mark":120,"./pos":122,"./schema":123}],122:[function(require,module,exports){
+=======
+},{"./fragment":115,"./mark":117,"./pos":119,"./schema":120}],119:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -27878,7 +28573,11 @@ var Pos = exports.Pos = function () {
 
   return Pos;
 }();
+<<<<<<< HEAD
 },{"./error":117}],123:[function(require,module,exports){
+=======
+},{"./error":114}],120:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -28913,7 +29612,11 @@ var Schema = function () {
 }();
 
 exports.Schema = Schema;
+<<<<<<< HEAD
 },{"../util/error":136,"../util/obj":139,"./fragment":118,"./mark":120,"./node":121}],124:[function(require,module,exports){
+=======
+},{"../util/error":133,"../util/obj":136,"./fragment":115,"./mark":117,"./node":118}],121:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29199,7 +29902,11 @@ _transform.Transform.prototype.setNodeType = function (pos, type, attrs) {
   this.step("ancestor", new _model.Pos(path, 0), new _model.Pos(path, node.size), null, { depth: 1, types: [type], attrs: [attrs] });
   return this;
 };
+<<<<<<< HEAD
 },{"../model":119,"./map":127,"./step":131,"./transform":132,"./tree":133}],125:[function(require,module,exports){
+=======
+},{"../model":116,"./map":124,"./step":128,"./transform":129,"./tree":130}],122:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29287,7 +29994,11 @@ require("./mark");
 require("./split");
 
 require("./replace");
+<<<<<<< HEAD
 },{"./ancestor":124,"./join":126,"./map":127,"./mark":128,"./replace":129,"./split":130,"./step":131,"./transform":132}],126:[function(require,module,exports){
+=======
+},{"./ancestor":121,"./join":123,"./map":124,"./mark":125,"./replace":126,"./split":127,"./step":128,"./transform":129}],123:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29369,7 +30080,11 @@ _transform.Transform.prototype.join = function (at) {
   this.step("join", new _model.Pos(at.path.concat(at.offset - 1), parent.child(at.offset - 1).size), new _model.Pos(at.path.concat(at.offset), 0));
   return this;
 };
+<<<<<<< HEAD
 },{"../model":119,"./map":127,"./step":131,"./transform":132}],127:[function(require,module,exports){
+=======
+},{"../model":116,"./map":124,"./step":128,"./transform":129}],124:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -29689,7 +30404,11 @@ var Remapping = exports.Remapping = function () {
 
   return Remapping;
 }();
+<<<<<<< HEAD
 },{"../model":119}],128:[function(require,module,exports){
+=======
+},{"../model":116}],125:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 var _model = require("../model");
@@ -29868,7 +30587,11 @@ _transform.Transform.prototype.clearMarkup = function (from, to, newParent) {
     this.step(delSteps[i]);
   }return this;
 };
+<<<<<<< HEAD
 },{"../model":119,"./step":131,"./transform":132,"./tree":133}],129:[function(require,module,exports){
+=======
+},{"../model":116,"./step":128,"./transform":129,"./tree":130}],126:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30196,7 +30919,11 @@ _transform.Transform.prototype.insertText = function (pos, text) {
 _transform.Transform.prototype.insertInline = function (pos, node) {
   return this.insert(pos, node.mark(this.doc.marksAt(pos)));
 };
+<<<<<<< HEAD
 },{"../model":119,"./map":127,"./step":131,"./transform":132,"./tree":133}],130:[function(require,module,exports){
+=======
+},{"../model":116,"./map":124,"./step":128,"./transform":129,"./tree":130}],127:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 var _model = require("../model");
@@ -30285,7 +31012,11 @@ _transform.Transform.prototype.splitIfNeeded = function (pos) {
   }
   return this;
 };
+<<<<<<< HEAD
 },{"../model":119,"./map":127,"./step":131,"./transform":132}],131:[function(require,module,exports){
+=======
+},{"../model":116,"./map":124,"./step":128,"./transform":129}],128:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30472,7 +31203,11 @@ var StepResult = exports.StepResult = function StepResult(doc) {
 };
 
 var steps = Object.create(null);
+<<<<<<< HEAD
 },{"../model":119,"../util/error":136,"./map":127}],132:[function(require,module,exports){
+=======
+},{"../model":116,"../util/error":133,"./map":124}],129:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30577,7 +31312,11 @@ var Transform = function () {
 }();
 
 exports.Transform = Transform;
+<<<<<<< HEAD
 },{"./map":127,"./step":131}],133:[function(require,module,exports){
+=======
+},{"./map":124,"./step":128}],130:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30671,7 +31410,11 @@ function samePathDepth(a, b) {
     if (i == a.path.length || i == b.path.length || a.path[i] != b.path[i]) return i;
   }
 }
+<<<<<<< HEAD
 },{"../model":119}],134:[function(require,module,exports){
+=======
+},{"../model":116}],131:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -30975,7 +31718,11 @@ function openPrompt(pm, content, options) {
 }
 
 (0, _dom.insertCSS)("\n.ProseMirror-prompt {\n  background: white;\n  padding: 2px 6px 2px 15px;\n  border: 1px solid silver;\n  position: absolute;\n  border-radius: 3px;\n  z-index: 11;\n}\n\n.ProseMirror-prompt h5 {\n  margin: 0;\n  font-weight: normal;\n  font-size: 100%;\n  color: #444;\n}\n\n.ProseMirror-prompt input[type=\"text\"],\n.ProseMirror-prompt textarea {\n  background: #eee;\n  border: none;\n  outline: none;\n}\n\n.ProseMirror-prompt input[type=\"text\"] {\n  padding: 0 4px;\n}\n\n.ProseMirror-prompt-close {\n  position: absolute;\n  left: 2px; top: 1px;\n  color: #666;\n  border: none; background: transparent; padding: 0;\n}\n\n.ProseMirror-prompt-close:after {\n  content: \"✕\";\n  font-size: 12px;\n}\n\n.ProseMirror-invalid {\n  background: #ffc;\n  border: 1px solid #cc7;\n  border-radius: 4px;\n  padding: 5px 10px;\n  position: absolute;\n  min-width: 10em;\n}\n\n.ProseMirror-prompt-buttons {\n  margin-top: 5px;\n  display: none;\n}\n\n");
+<<<<<<< HEAD
 },{"../dom":92,"../util/error":136}],135:[function(require,module,exports){
+=======
+},{"../dom":89,"../util/error":133}],132:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31135,7 +31882,11 @@ var UpdateScheduler = exports.UpdateScheduler = function () {
 
   return UpdateScheduler;
 }();
+<<<<<<< HEAD
 },{}],136:[function(require,module,exports){
+=======
+},{}],133:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31217,7 +31968,11 @@ function functionName(f) {
   var match = /^function (\w+)/.exec(f.toString());
   return match && match[1];
 }
+<<<<<<< HEAD
 },{}],137:[function(require,module,exports){
+=======
+},{}],134:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31340,7 +32095,11 @@ function eventMixin(ctor) {
     if (methods.hasOwnProperty(prop)) proto[prop] = methods[prop];
   }
 }
+<<<<<<< HEAD
 },{}],138:[function(require,module,exports){
+=======
+},{}],135:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31396,7 +32155,11 @@ var Map = exports.Map = window.Map || function () {
 
   return _class;
 }();
+<<<<<<< HEAD
 },{}],139:[function(require,module,exports){
+=======
+},{}],136:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31409,7 +32172,11 @@ function copyObj(obj, base) {
     copy[prop] = obj[prop];
   }return copy;
 }
+<<<<<<< HEAD
 },{}],140:[function(require,module,exports){
+=======
+},{}],137:[function(require,module,exports){
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -31422,6 +32189,7 @@ function sortedInsert(array, elt, compare) {
     if (compare(array[i], elt) > 0) break;
   }array.splice(i, 0, elt);
 }
+<<<<<<< HEAD
 },{}],141:[function(require,module,exports){
 (function(mod) {
   if (typeof exports == "object" && typeof module == "object") // CommonJS
@@ -31594,4 +32362,6 @@ function sortedInsert(array, elt, compare) {
   return Keymap
 })
 
+=======
+>>>>>>> 84cd2cb72817a4d306cf919401c9e0e590fdf32b
 },{}]},{},[1]);

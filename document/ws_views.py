@@ -1,5 +1,6 @@
 import uuid
 import atexit
+import random
 
 from document.helpers.session_user_info import SessionUserInfo
 from document.helpers.filtering_comments import filter_comments_by_role
@@ -20,10 +21,12 @@ class DocumentWS(BaseWebSocketHandler):
         self.user_info = SessionUserInfo()
         doc_db, can_access = self.user_info.init_access(document_id, current_user)
 
+
         if can_access:
             if doc_db.id in DocumentWS.sessions:
                 self.doc = DocumentWS.sessions[doc_db.id]
-                self.id = max(self.doc['participants'])+1
+                self.id = str(random.randint(1,1000))
+                print "id when opened %s" % self.id
             else:
                 self.id = 0
                 self.doc = dict()

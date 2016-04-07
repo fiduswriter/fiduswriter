@@ -3947,12 +3947,14 @@ var ImageDB = exports.ImageDB = (function () {
                 dataType: 'json',
                 success: function success(response, textStatus, jqXHR) {
                     that.cats = response.imageCategories;
+                    var pks = [];
                     for (var i = 0; i < response.images.length; i++) {
                         response.images[i].image = response.images[i].image.split('?')[0];
                         that.db[response.images[i]['pk']] = response.images[i];
+                        pks.push(response.images[i]['pk']);
                     }
                     if (callback) {
-                        callback();
+                        callback(pks);
                     }
                 },
                 error: function error(jqXHR, textStatus, errorThrown) {

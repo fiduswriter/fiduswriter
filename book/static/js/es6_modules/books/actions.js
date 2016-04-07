@@ -502,7 +502,7 @@ export class BookActions {
         jQuery(document).on('click', '#remove-cover-image-button', function () {
             delete theBook.cover_image
             jQuery('#figure-preview-row').html(bookEpubDataCoverTemplate({
-                'theBook': theBook
+                theBook
             }))
         })
 

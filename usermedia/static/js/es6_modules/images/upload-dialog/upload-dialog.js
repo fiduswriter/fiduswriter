@@ -14,10 +14,10 @@ export class ImageUploadDialog {
         let that = this
         let title, imageCat, thumbnail, image, action, longAction
         if (this.imageId) {
-            title = this.imageDB.db[id].title
-            thumbnail = this.imageDB.db[id].thumbnail
-            image = this.imageDB.db[id].image
-            imageCat = this.imageDB.db[id].cats
+            title = this.imageDB.db[this.imageId].title
+            thumbnail = this.imageDB.db[this.imageId].thumbnail
+            image = this.imageDB.db[this.imageId].image
+            imageCat = this.imageDB.db[this.imageId].cats
             action = gettext('Update')
             longAction = gettext('Update image')
         } else {

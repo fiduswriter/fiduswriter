@@ -1393,7 +1393,7 @@ var BookActions = exports.BookActions = (function () {
             jQuery(document).on('click', '#remove-cover-image-button', function () {
                 delete theBook.cover_image;
                 jQuery('#figure-preview-row').html((0, _templates.bookEpubDataCoverTemplate)({
-                    'theBook': theBook
+                    theBook: theBook
                 }));
             });
 
@@ -4883,12 +4883,14 @@ var ImageDB = exports.ImageDB = (function () {
                 dataType: 'json',
                 success: function success(response, textStatus, jqXHR) {
                     that.cats = response.imageCategories;
+                    var pks = [];
                     for (var i = 0; i < response.images.length; i++) {
                         response.images[i].image = response.images[i].image.split('?')[0];
                         that.db[response.images[i]['pk']] = response.images[i];
+                        pks.push(response.images[i]['pk']);
                     }
                     if (callback) {
-                        callback();
+                        callback(pks);
                     }
                 },
                 error: function error(jqXHR, textStatus, errorThrown) {
@@ -5207,10 +5209,10 @@ var ImageUploadDialog = exports.ImageUploadDialog = (function () {
                 action = undefined,
                 longAction = undefined;
             if (this.imageId) {
-                title = this.imageDB.db[id].title;
-                thumbnail = this.imageDB.db[id].thumbnail;
-                image = this.imageDB.db[id].image;
-                imageCat = this.imageDB.db[id].cats;
+                title = this.imageDB.db[this.imageId].title;
+                thumbnail = this.imageDB.db[this.imageId].thumbnail;
+                image = this.imageDB.db[this.imageId].image;
+                imageCat = this.imageDB.db[this.imageId].cats;
                 action = gettext('Update');
                 longAction = gettext('Update image');
             } else {

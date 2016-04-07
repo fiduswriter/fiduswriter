@@ -2,13 +2,14 @@ import uuid
 import atexit
 import random
 
+from django.core.exceptions import PermissionDenied
 from document.helpers.session_user_info import SessionUserInfo
 from document.helpers.filtering_comments import filter_comments_by_role
 from ws.base import BaseWebSocketHandler
 from logging import info, error
 from tornado.escape import json_decode, json_encode
 from tornado.websocket import WebSocketClosedError
-from document.models import AccessRight
+from document.models import AccessRight, COMMENT_ONLY
 from document.views import get_accessrights
 from avatar.templatetags.avatar_tags import avatar_url
 
@@ -20,7 +21,6 @@ class DocumentWS(BaseWebSocketHandler):
         current_user = self.get_current_user()
         self.user_info = SessionUserInfo()
         doc_db, can_access = self.user_info.init_access(document_id, current_user)
-
 
         if can_access:
             if doc_db.id in DocumentWS.sessions:
@@ -192,9 +192,19 @@ class DocumentWS(BaseWebSocketHandler):
             DocumentWS.sessions[self.user_info.document_id]['settings'][parsed['variable']] = parsed['value']
             DocumentWS.send_updates(message, self.user_info.document_id, self.id)
 
+    def validate_only_comment_role(self, parsed_diffs):
+        allowed_operations = ['addMark', 'removeMark']
+        for diff in parsed_diffs:
+            #TODO: add allowed actions
+            if diff['type'] not in allowed_operations:
+                raise PermissionDenied("Cannot write changes to document")
+
     def handle_diff(self, message, parsed):
         if self.user_info.document_id in DocumentWS.sessions:
             if parsed["diff_version"] == self.doc['diff_version'] and parsed["comment_version"] == self.doc['comment_version']:
+                if self.user_info.access_rights in COMMENT_ONLY:
+                    self.validate_only_comment_role(parsed['diff'])
+
                 self.doc["last_diffs"].extend(parsed["diff"])
                 self.doc['diff_version'] += len(parsed["diff"])
                 for cd in parsed["comments"]:
@@ -275,7 +285,7 @@ class DocumentWS(BaseWebSocketHandler):
             return
 
     def can_update_document(self):
-        return self.user_info.access_rights == 'w' or self.user_info.access_rights == 'a'
+        return self.user_info.access_rights == 'w' or self.user_info.access_rights == 'e' or self.user_info.access_rights == 'c'
 
     def on_close(self):
         print "Websocket closing"

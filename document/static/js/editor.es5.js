@@ -2426,7 +2426,7 @@ var Editor = exports.Editor = function () {
 
             this.mod.settings.layout.layoutMetadata();
 
-            if (this.docInfo.rights === 'w') {
+            if (this.docInfo.rights === 'w' || this.docInfo.rights === 'e' || this.docInfo.rights === 'c') {
                 jQuery('#editor-navigation').show();
                 jQuery('.metadata-menu-item, #open-close-header, .save, \
           .multibuttonsCover, .papersize-menu, .metadata-menu, \

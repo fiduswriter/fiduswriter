@@ -1,30 +1,11 @@
-/**
- * @file Templates for the Images overview page
- * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
- *
- * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
- *
- * @license This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
- *
- */
 /** A template to edit image categories. */
-var tmp_usermedia_editcategories = _.template('\
+export let usermediaEditcategoriesTemplate = _.template('\
     <div id="editCategories" title="<%- dialogHeader %>">\
         <table id="editCategoryList" class="fw-dialog-table"><tbody><%= categories %></tbody></table>\
-    </div>');
+    </div>')
+
 /** A template for the image category edit form. */
-var tmp_usermedia_categoryforms = _.template('\
+export let usermediaCategoryformsTemplate = _.template('\
     <% _.each(categories, function(cat) { %>\
     <tr id="categoryTr_<%- cat.id %>" class="fw-list-input">\
         <td>\
@@ -38,9 +19,10 @@ var tmp_usermedia_categoryforms = _.template('\
             <input type="text" class="category-form" />\
             <span class="fw-add-input icon-addremove"></span>\
         </td>\
-    </tr>');
+    </tr>')
+
 /** A template for image overview list. */
-var tmp_usermedia_table = _.template('\
+export let usermediaTableTemplate = _.template('\
                 <tr id="Image_<%- pk %>" class="<% _.each(cats, function(cat) { %>cat_<%- cat %> <% }) %>">\
                     <td width="30">\
                         <span class="fw-inline">\
@@ -69,11 +51,12 @@ var tmp_usermedia_table = _.template('\
                             <i class="icon-trash"></i>\
                         </span>\
                     </td>\
-                </tr>');
+                </tr>')
+
 /* A template for each image category list item */
-var tmp_usermedia_category_list_item = _.template('\
+export let usermediaCategoryListItemTemplate = _.template('\
     <li>\
         <span class="fw-pulldown-item" data-id="<%- iCat.id %>">\
             <%- iCat.category_title %>\
         </span>\
-    </li>');
+    </li>')

@@ -10,7 +10,7 @@ local_settings.py
 .settings
 media
 .elasticbeanstalk/
-bibliography/static/js/bibliography-statics.js
+bibliography/static/js/es6_modules/bibliography/statics.js
 *.mo
 node_modules/
 style/static/

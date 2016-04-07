@@ -20,6 +20,9 @@ import {
     inputTemplate
 } from "./templates"
 
+import {
+    LocalizationKeys, BibEntryTypes, BibFieldTypes
+} from "../statics.js"
 
 export class BibEntryForm {
     constructor(itemId, sourceType, bibDB, bibCats, ownerId, callback) {

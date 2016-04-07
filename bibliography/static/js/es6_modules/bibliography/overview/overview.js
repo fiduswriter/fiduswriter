@@ -3,7 +3,7 @@ import {BibEntryForm} from "../form/form"
 import {editCategoriesTemplate, categoryFormsTemplate, bibtableTemplate,
     bibliographyCategoryListItemTemplate} from "./templates"
 import {BibliographyDB} from "../database"
-
+import {BibEntryTypes} from "../statics"
 export class BibliographyOverview {
 
     constructor() {

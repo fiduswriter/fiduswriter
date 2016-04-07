@@ -22,7 +22,7 @@
 (function () {
     var exports = this,
     /**
-  * Helper functions for adding and removing contacts. TODO
+  * Helper functions for adding and removing contacts.
   * @namespace contactHelpers
   */
         contactHelpers = {};

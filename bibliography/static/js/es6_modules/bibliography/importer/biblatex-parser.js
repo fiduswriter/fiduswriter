@@ -1,3 +1,5 @@
+import {TexSpecialChars} from "../statics"
+
 /** Parses files in BibTeX/BibLaTeX format
  * @function bibTexParser
  */
@@ -333,9 +335,9 @@ export class BibLatexParser {
     }
 
     scanBibtexString(value) {
-        let len = tex_special_chars.length
+        let len = TexSpecialChars.length
         for (let i = 0; i < len; i++) {
-            let specialChar = tex_special_chars[i]
+            let specialChar = TexSpecialChars[i]
             while (-1 < value.indexOf(specialChar.tex)) {
                 value = value.replace(specialChar.tex, specialChar.unicode)
             }

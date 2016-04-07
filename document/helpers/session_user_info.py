@@ -1,6 +1,10 @@
 from document.models import AccessRight, Document
 
 class SessionUserInfo():
+    """
+    Class for string information about users in session
+    author: akorovin
+    """
     def __init__(self):
         self.user = None
         self.is_owner = False
@@ -10,6 +14,15 @@ class SessionUserInfo():
         self.access_rights = dict()
 
     def init_access(self, document_id, current_user):
+        """
+        Initializes access to document by id,
+        :param document_id:
+        :type document_id:
+        :param current_user:
+        :type current_user:
+        :return: Returns document and bool value that user can access
+        :rtype: tuple
+        """
         can_access = False
         self.user = current_user
         if int(document_id) == 0:

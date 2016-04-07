@@ -2,14 +2,27 @@ from document.models import RIGHTS_CHOICES
 from django.conf import settings
 
 def filter_comments_by_role(comments, access_rights, cur_phase, user_info):
+    """
+    Function for filtering comments using a user role
+    author: akorovin
+    :param comments: Comments of document
+    :type comments: dict
+    :param access_rights: Access rights of all users
+    :type access_rights: list
+    :param cur_phase: Current phase of workflow
+    :type cur_phase: string
+    :param user_info: Information about user
+    :type user_info: SessionUserInfo
+    :return: Filtered comments
+    :rtype: dict
+    """
+    #get access right of current user
     access_right = user_info.access_rights
     rights = dict((x, y) for x, y in RIGHTS_CHOICES)
     right_name = rights[access_right]
 
     visibility_role_dict = settings.VISIBILITY[right_name]
     access_rights_dict = dict((x['user_id'], x) for x in access_rights)
-    #comments_dict = json.loads(comments)
-    comments_dict = comments
 
     filtered_comments = dict()
     #TODO: return all comments without filtering if owner????
@@ -22,7 +35,7 @@ def filter_comments_by_role(comments, access_rights, cur_phase, user_info):
 
     #1) get from comment the role of user (rolename)
     #2) get from visibility dict instructions what to do. if always - add to filtered comments
-    for comment_id, comment in comments_dict.iteritems():
+    for comment_id, comment in comments.iteritems():
         user_id = comment['user']
 
         #own user always can see his own comment

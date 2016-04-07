@@ -195,10 +195,8 @@ class DocumentWS(BaseWebSocketHandler):
     def accept_only_comments(self, parsed_diffs):
         allowed_operations = ['addMark', 'removeMark']
         for diff in parsed_diffs:
-            #TODO: add allowed actions
             if diff['type'] in allowed_operations and diff['param']['_'] == 'comment':
                 self.doc["last_diffs"].extend([diff])
-                #raise PermissionDenied("Cannot write changes to document")
 
     def handle_diff(self, message, parsed):
         if self.user_info.document_id in DocumentWS.sessions:

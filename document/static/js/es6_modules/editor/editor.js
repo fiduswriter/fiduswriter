@@ -222,12 +222,20 @@ export class Editor {
 
         if (this.docInfo.rights === 'w' || this.docInfo.rights === 'e' || this.docInfo.rights === 'c') {
             jQuery('#editor-navigation').show()
-            jQuery('.metadata-menu-item, #open-close-header, .save, \
-          .multibuttonsCover, .papersize-menu, .metadata-menu, \
-          .documentstyle-menu, .citationstyle-menu').removeClass('disabled')
+
             if (this.docInfo.is_owner) {
                 // bind the share dialog to the button if the user is the document owner
                 jQuery('.share').removeClass('disabled')
+            }
+            if (this.docInfo.rights === 'e' || this.docInfo.rights === 'c') {
+                let toolbar = jQuery('.editortoolbar')
+                toolbar.find('.ui-buttonset').hide()
+                toolbar.find('.comment-only').show()
+            }
+            else {
+                jQuery('.metadata-menu-item, #open-close-header, .save, \
+              .multibuttonsCover, .papersize-menu, .metadata-menu, \
+              .documentstyle-menu, .citationstyle-menu').removeClass('disabled')
             }
         } else if (this.docInfo.rights === 'r') {
             // Try to disable contenteditable

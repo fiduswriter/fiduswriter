@@ -66,6 +66,9 @@ RIGHTS_CHOICES  = (
     ('c', 'reviewer')
 )
 
+#Editor and Reviewer can only comment and not edit document
+COMMENT_ONLY = ('e','c')
+
 #TODO: AccessRights - EMPTY. add when create document
 class AccessRight(models.Model):
     document = models.ForeignKey(Document)

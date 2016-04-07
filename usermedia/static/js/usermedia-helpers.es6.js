@@ -1,60 +1,12 @@
 import {ImageUploadDialog} from "./es6_modules/images/upload-dialog/upload-dialog"
-
+import {ImageDB} from "./es6_modules/images/database"
  /** Helper functions for user added images/SVGs.
   * @namespace usermediaHelpers
   */
-    let usermediaHelpers = {};
-// NO Export
-    usermediaHelpers.createImage = function (post_data) {
-        $.activateWait();
-        $.ajax({
-            url: '/usermedia/save/',
-            data: post_data,
-            type: 'POST',
-            dataType: 'json',
-            success: function (response, textStatus, jqXHR) {
-                if (usermediaHelpers.displayCreateImageError(response.errormsg)) {
-                    usermediaHelpers.stopUsermediaTable();
-                    ImageDB[response.values.pk] = response.values;
-                    usermediaHelpers.appendToImageTable(response.values.pk, ImageDB[response.values.pk]);
-                    $.addAlert('success', gettext('The image has been uploaded'));
-                    usermediaHelpers.startUsermediaTable();
-                    jQuery("#uploadimage").dialog('close');
-                } else {
-                    $.addAlert('error', gettext(
-                        'Some errors are found. Please examine the form.'
-                    ));
-                }
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                console.log(jqXHR.responseText);
-                $.addAlert('error', jqXHR.responseText);
-            },
-            complete: function () {
-                $.deactivateWait();
-            },
-            cache: false,
-            contentType: false,
-            processData: false
-        });
-    };
-
-    usermediaHelpers.displayCreateImageError = function (errors) {
-        var noError = true;
-        for (var e_key in errors) {
-            e_msg = '<div class="warning">' + errors[e_key] + '</div>';
-            if ('error' == e_key) {
-                jQuery('#createimage').prepend(e_msg);
-            } else {
-                jQuery('#id_' + e_key).after(e_msg);
-            }
-            noError = false;
-        }
-        return noError;
-    };
+    let usermediaHelpers = {}
+    let theImageOverview = {}
 
     //save changes or create a new category
-
     usermediaHelpers.createCategory = function (cats) {
         var post_data = {
             'ids[]': cats.ids,
@@ -157,139 +109,6 @@ import {ImageUploadDialog} from "./es6_modules/images/upload-dialog/upload-dialo
 
     };
 
-    usermediaHelpers.onCreateImageSubmitHandler = function (id) {
-        //when submitted, the values in form elements will be restored
-        var formValues = new FormData(),
-            checkboxValues = {};
-
-        formValues.append('id', id);
-
-        jQuery('.fw-media-form').each(function () {
-            var $this = jQuery(this);
-            var the_name = $this.attr('name') || $this.attr('data-field-name');
-            var the_type = $this.attr('type') || $this.attr('data-type');
-            var the_value = '';
-
-            switch (the_type) {
-                case 'checkbox':
-                    //if it is a checkbox, the value will be restored as an Array
-                    if (undefined == checkboxValues[the_name])
-                        checkboxValues[the_name] = [];
-                    if ($this.prop("checked")) {
-                        checkboxValues[the_name].push($this.val());
-                    }
-                    return;
-                case 'file':
-                    the_value = $this.get(0).files[0];
-                    break;
-                default:
-                    the_value = $this.val();
-            }
-
-            formValues.append(the_name, the_value);
-        });
-
-        // Add the values for check boxes
-        for (key in checkboxValues) {
-            formValues.append(key, checkboxValues[key].join(','));
-        }
-        usermediaHelpers.createImage(formValues);
-    };
-
-    //open a dialog for uploading an image
-    usermediaHelpers.createImageDialog = function (id) {
-        var title, imageCat, thumbnail, image, action, longAction;
-        if ('undefined' === typeof (id)) {
-            id = 0;
-            title = '';
-            imageCat = [];
-            thumbnail = false;
-            image = false;
-            action = gettext('Upload');
-            longAction = gettext('Upload image');
-        } else {
-            title = ImageDB[id].title;
-            thumbnail = ImageDB[id].thumbnail;
-            image = ImageDB[id].image;
-            imageCat = ImageDB[id].cats;
-            action = gettext('Update');
-            longAction = gettext('Update image');
-        }
-
-        var iCats = [];
-        jQuery.each(imageCategories, function (i, iCat) {
-            var len = iCats.length;
-            iCats[len] = {
-                'id': iCat.id,
-                'category_title': iCat.category_title
-            };
-            if (0 <= jQuery.inArray(String(iCat.id), imageCat)) {
-                iCats[len].checked = ' checked';cat
-            } else {
-                iCats[len].checked = '';
-            }
-        });
-
-        jQuery('body').append(tmp_usermedia_upload({
-            'action': longAction,
-            'title': title,
-            'thumbnail': thumbnail,
-            'image': image,
-            'categories': tmp_usermedia_upload_category({
-                'categories': iCats,
-                'fieldTitle': gettext('Select categories')
-            })
-        }));
-        let diaButtons = {};
-        diaButtons[action] = function () {
-            usermediaHelpers.onCreateImageSubmitHandler(id);
-        };
-        diaButtons[gettext('Cancel')] = function () {
-            jQuery(this).dialog('close');
-        };
-        jQuery("#uploadimage").dialog({
-            resizable: false,
-            height: 'auto',
-            width: 'auto',
-            modal: true,
-            buttons: diaButtons,
-            create: function () {
-                var $the_dialog = jQuery(this).closest(".ui-dialog");
-                $the_dialog.find(".ui-button:first-child").addClass("fw-button fw-dark");
-                $the_dialog.find(".ui-button:last").addClass("fw-button fw-orange");
-                usermediaHelpers.setMediaUploadEvents(jQuery('#uploadimage'));
-            },
-            close: function () {
-                jQuery("#uploadimage").dialog('destroy').remove();
-            }
-        });
-
-        jQuery('.fw-checkable-label').bind('click', function () {
-            $.setCheckableLabel(jQuery(this))
-        });
-    };
-
-    //add image upload events
-    usermediaHelpers.setMediaUploadEvents = function(wrapper) {
-        var select_button = wrapper.find('.fw-media-select-button'),
-            media_input = wrapper.find('.fw-media-file-input'),
-            media_previewer = wrapper.find('.figure-preview > div');
-
-        select_button.bind('click', function() {
-            media_input.trigger('click');
-        });
-
-        media_input.bind('change', function() {
-            var file = jQuery(this).prop('files')[0],
-                fr = new FileReader();
-
-            fr.onload = function() {
-                media_previewer.html('<img src="' + fr.result + '" />');
-            }
-            fr.readAsDataURL(file);
-        });
-    }
-
     //delete image
     usermediaHelpers.deleteImage = function (ids) {
         for (var i = 0; i < ids.length; i++) {
@@ -356,20 +175,13 @@ import {ImageUploadDialog} from "./es6_modules/images/upload-dialog/upload-dialo
         });
     };
 
-    usermediaHelpers.addImageList = function (images) {
-        var i, pks = [];
-        for (i = 0; i < images.length; i++) {
-            images[i].image = images[i].image.split('?')[0];
-            pks[i] = images[i]['pk'];
-            ImageDB[pks[i]] = images[i];
-        }
+    usermediaHelpers.addImageDB = function (imagePks) {
 
-        if (jQuery('#imagelist').length > 0) {
-            for (i = 0; i < pks.length; i++) {
-                usermediaHelpers.appendToImageTable(pks[i], ImageDB[pks[i]]);
-            }
-            usermediaHelpers.startUsermediaTable();
+        for (let i = 0; i < imagePks.length; i++) {
+            usermediaHelpers.appendToImageTable(imagePks[i], window.ImageDB[imagePks[i]]);
         }
+        usermediaHelpers.startUsermediaTable();
+
 
     };
 
@@ -450,34 +262,21 @@ import {ImageUploadDialog} from "./es6_modules/images/upload-dialog/upload-dialo
     };
 
     usermediaHelpers.getImageDB = function (callback) {
-
-        window.ImageDB = {};
-        window.imageCategories = [];
         //Fill ImageDB
 
-        $.activateWait();
+        let imageGetter = new ImageDB(0)
+        imageGetter.getDB(function(pks){
+            theImageOverview.imageDB = imageGetter
+            window.ImageDB = imageGetter.db
+            window.imageCategories = imageGetter.cats
+            usermediaHelpers.addImageCategoryList(imageGetter.cats);
 
-        $.ajax({
-            url: '/usermedia/images/',
-            data: {
-                'owner_id': 0
-            },
-            type: 'POST',
-            dataType: 'json',
-            success: function (response, textStatus, jqXHR) {
-                usermediaHelpers.addImageCategoryList(response.imageCategories);
-                usermediaHelpers.addImageList(response.images);
-                if (callback) {
-                    callback();
-                }
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                $.addAlert('error', jqXHR.responseText);
-            },
-            complete: function () {
-                $.deactivateWait();
+            usermediaHelpers.addImageDB(pks);
+            if (callback) {
+                callback();
             }
-        });
+        })
+
     };
 
     usermediaHelpers.stopUsermediaTable = function () {
@@ -533,10 +332,14 @@ import {ImageUploadDialog} from "./es6_modules/images/upload-dialog/upload-dialo
         });
 
         jQuery(document).on('click', '.edit-image', function () {
-            var iID = jQuery(this).attr('data-id');
-            var iType = jQuery(this).attr('data-type');
+            let iID = parseInt(jQuery(this).attr('data-id'))
+            let iType = jQuery(this).attr('data-type')
+            new ImageUploadDialog(theImageOverview.imageDB, iID, 0, function(imageId){
+                usermediaHelpers.stopUsermediaTable();
+                usermediaHelpers.appendToImageTable(imageId, theImageOverview.imageDB.db[imageId]);
+                usermediaHelpers.startUsermediaTable();
+            })
 
-            usermediaHelpers.createImageDialog(iID, iType);
         });
         jQuery('#edit-category').bind('click', usermediaHelpers.createCategoryDialog);
 
@@ -601,6 +404,4 @@ import {ImageUploadDialog} from "./es6_modules/images/upload-dialog/upload-dialo
 
         });
     };
-
-
     window.usermediaHelpers = usermediaHelpers;

@@ -23,12 +23,14 @@ export class ImageDB {
             dataType: 'json',
             success: function (response, textStatus, jqXHR) {
                 that.cats = response.imageCategories
+                let pks = []
                 for (let i = 0; i < response.images.length; i++) {
                     response.images[i].image = response.images[i].image.split('?')[0]
                     that.db[response.images[i]['pk']] = response.images[i]
+                    pks.push(response.images[i]['pk'])
                 }
                 if (callback) {
-                    callback()
+                    callback(pks)
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {

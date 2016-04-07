@@ -57,9 +57,10 @@ export class PrintBook {
         paginationConfig['pageHeight'] = this.pageSizes[this.theBook.settings.papersize].height
         paginationConfig['pageWidth'] = this.pageSizes[this.theBook.settings.papersize].width
 
-        bibliographyHelpers.getABibDB(this.documentOwners.join(','), function (
-                aBibDB) {
-                that.bibDB = aBibDB
+        let bibGetter = new BibliographyDB(this.documentOwners.join(','), false, false, false)
+        bibGetter.getBibDB(function (
+                bibDB) {
+                that.bibDB = bibDB
                 that.fillPrintPage()
             })
 

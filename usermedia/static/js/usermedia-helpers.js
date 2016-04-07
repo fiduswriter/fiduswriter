@@ -25,7 +25,7 @@
   * @namespace usermediaHelpers
   */
         usermediaHelpers = {};
-
+// NO Export
     usermediaHelpers.createImage = function (post_data) {
         $.activateWait();
         $.ajax({
@@ -550,7 +550,9 @@
     };
 
     usermediaHelpers.startUsermediaTable = function () {
-        // The sortable table seems not to have an option to accept new data added to the DOM. Instead we destroy and recreate it.
+        /* The sortable table seems not to have an option to accept new data
+        added to the DOM. Instead we destroy and recreate it.
+        */
 
         var nonSortable = [0, 2];
 
@@ -595,8 +597,7 @@
 
 
 
-    usermediaHelpers.init = function (callback) {
-
+    usermediaHelpers.bindEvents = function () {
 
         jQuery(document).on('click', '.delete-image', function () {
             var ImageId = jQuery(this).attr('data-id');
@@ -658,8 +659,11 @@
                 break;
             }
         });
-        usermediaHelpers.getImageDB(callback);
+    };
 
+    usermediaHelpers.init = function(callback) {
+        usermediaHelpers.bindEvents();
+        usermediaHelpers.getImageDB(callback);
     };
 
     usermediaHelpers.bind = function () {

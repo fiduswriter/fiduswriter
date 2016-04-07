@@ -393,25 +393,29 @@ Figure.prototype.serializeDOM = (node, serializer) => {
     })
     if (node.attrs.image) {
         dom.appendChild(serializer.elt("div"))
-        if (ImageDB[node.attrs.image] && ImageDB[node.attrs.image].image) {
-            dom.firstChild.appendChild(serializer.elt("img", {
-                "src": ImageDB[node.attrs.image].image
-            }))
-        } else {
-            /* The image was not present in the ImageDB. Try to reload the
-            ImageDB, but only once. If the image cannot be found in the updated
-            ImageDB, do not attempt at reloading the ImageDB if an image cannot be
-            found. */
-            if (!imageDBBroken) {
-                usermediaHelpers.getImageDB(function() {
-                    if (ImageDB[node.attrs.image] && ImageDB[node.attrs.image].image) {
-                        dom.firstChild.appendChild(serializer.elt("img", {
-                            "src": ImageDB[node.attrs.image].image
-                        }))
-                    } else {
-                        imageDBBroken = true
-                    }
-                })
+        if(node.type.schema.cached.imageDB) {
+            if(node.type.schema.cached.imageDB.db[node.attrs.image]
+                && node.type.schema.cached.imageDB.db[node.attrs.image].image) {
+                dom.firstChild.appendChild(serializer.elt("img", {
+                    "src": node.type.schema.cached.imageDB.db[node.attrs.image].image
+                }))
+            } else {
+                /* The image was not present in the imageDB -- possibly because a collaborator just added ut.
+                Try to reload the imageDB, but only once. If the image cannot be found in the updated
+                imageDB, do not attempt at reloading the imageDB if an image cannot be
+                found. */
+                if (!imageDBBroken) {
+                    node.type.schema.cached.imageDB.getDB(function() {
+                        if (node.type.schema.cached.imageDB.db[node.attrs.image]
+                                && node.type.schema.cached.imageDB.db[node.attrs.image].image) {
+                            dom.firstChild.appendChild(serializer.elt("img", {
+                                "src": node.type.schema.cached.imageDB.db[node.attrs.image].image
+                            }))
+                        } else {
+                            imageDBBroken = true
+                        }
+                    })
+                }
             }
         }
     } else {

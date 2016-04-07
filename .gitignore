@@ -24,3 +24,4 @@ base/static/js/es6_modules/katex/opf-includes.js
 chromedriver
 testing.py
 es6-tmp/
+*.es5.js

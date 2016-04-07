@@ -1,4 +1,4 @@
-import {addTeammemberTemplate, teammemberTemplate} from "./templates"
+import {addTeammemberTemplate, teammemberTemplate, accessRightTrTemplate, collaboratorsTemplate} from "./templates"
 
 /**
 * Sets up the contacts management. Helper functions for adding and removing contacts.
@@ -27,9 +27,9 @@ let addMember = function(user_string) {
                         'rights': 'r'
                     }
 
-                    jQuery('#my-contacts .fw-document-table-body').append(tmp_access_right_tr({'contacts': [response.member]}))
-                    jQuery('#share-member table tbody').append(tmp_collaborators({'collaborators': [member_data]}))
-                    //accessrightsHelpers.collaboratorFunctionsEvent() TODO: FIgure out what is happening here. This event disappeared with conversion to ES6.
+                    jQuery('#my-contacts .fw-document-table-body').append(accessRightTrTemplate({'contacts': [response.member]}))
+                    jQuery('#share-member table tbody').append(collaboratorsTemplate({'collaborators': [member_data]}))
+                    //accessrightsHelpers.collaboratorFunctionsEvent() TODO: Figure out what is happening here. This event disappeared with conversion to ES6.
                 } else {
                     jQuery('#team-table tbody').append(
                         teammemberTemplate({

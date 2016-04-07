@@ -882,7 +882,7 @@ var bookCollaboratorsTemplate = exports.bookCollaboratorsTemplate = _.template('
     <% }) %>');
 
 },{}],7:[function(require,module,exports){
-'use strict';
+"use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
@@ -891,7 +891,11 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.BookActions = undefined;
 
-var _templates = require('./templates');
+var _templates = require("./templates");
+
+var _database = require("../images/database");
+
+var _selectionDialog = require("../images/selection-dialog/selection-dialog");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -904,7 +908,7 @@ var BookActions = exports.BookActions = (function () {
     }
 
     _createClass(BookActions, [{
-        key: 'deleteBook',
+        key: "deleteBook",
         value: function deleteBook(id) {
             var that = this;
             var postData = {};
@@ -925,12 +929,12 @@ var BookActions = exports.BookActions = (function () {
             });
         }
     }, {
-        key: 'stopBookTable',
+        key: "stopBookTable",
         value: function stopBookTable() {
             jQuery('#book-table').dataTable().fnDestroy();
         }
     }, {
-        key: 'startBookTable',
+        key: "startBookTable",
         value: function startBookTable() {
             // The sortable table seems not to have an option to accept new data added to the DOM. Instead we destroy and recreate it.
             jQuery('#book-table').dataTable({
@@ -967,7 +971,7 @@ var BookActions = exports.BookActions = (function () {
             });
         }
     }, {
-        key: 'deleteBookDialog',
+        key: "deleteBookDialog",
         value: function deleteBookDialog(ids) {
             jQuery('body').append('<div id="confirmdeletion" title="' + gettext('Confirm deletion') + '"><p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>' + gettext('Delete the book(s)?') + '</p></div>');
             diaButtons = {};
@@ -999,7 +1003,7 @@ var BookActions = exports.BookActions = (function () {
             });
         }
     }, {
-        key: 'unpackBooks',
+        key: "unpackBooks",
         value: function unpackBooks(booksFromServer) {
             // metadata and settings are stored as a json stirng in a text field on the server, so they need to be unpacked before being available.
             for (var i = 0; i < booksFromServer.length; i++) {
@@ -1009,7 +1013,7 @@ var BookActions = exports.BookActions = (function () {
             return booksFromServer;
         }
     }, {
-        key: 'getBookListData',
+        key: "getBookListData",
         value: function getBookListData(id) {
             var that = this;
             $.ajax({
@@ -1036,65 +1040,7 @@ var BookActions = exports.BookActions = (function () {
             });
         }
     }, {
-        key: 'selectCoverImageDialog',
-        value: function selectCoverImageDialog(theBook, anImageDB) {
-            var dialogHeader = gettext('Select cover image'),
-                dialogBody = (0, _templates.bookCoverImageSelectionTemplate)({
-                theBook: theBook,
-                anImageDB: anImageDB
-            });
-
-            jQuery(document).on('click', '#imagelist tr', function () {
-                if (jQuery(this).hasClass('checked')) {
-                    jQuery(this).removeClass('checked');
-                } else {
-                    jQuery('#imagelist tr.checked').removeClass('checked');
-                    jQuery(this).addClass('checked');
-                }
-            });
-
-            jQuery('body').append(dialogBody);
-
-            if (theBook.cover_image) {
-                jQuery('#Image_' + theBook.cover_image).addClass('checked');
-            }
-
-            jQuery('#cancelImageFigureButton').bind('click', function () {
-                jQuery('#book-cover-image-selection').dialog('close');
-            });
-
-            jQuery('#selectImageFigureButton').bind('click', function () {
-                if (jQuery('#imagelist tr.checked').length === 0) {
-                    delete theBook.cover_image;
-                } else {
-                    theBook.cover_image = parseInt(jQuery('#imagelist tr.checked')[0].id.substring(6));
-                }
-                jQuery('#figure-preview-row').html((0, _templates.bookEpubDataCoverTemplate)({
-                    'anImageDB': anImageDB,
-                    'theBook': theBook
-                }));
-                jQuery('#book-cover-image-selection').dialog('close');
-            });
-
-            jQuery('#book-cover-image-selection').dialog({
-                draggable: false,
-                resizable: false,
-                top: 10,
-                width: 'auto',
-                height: 'auto',
-                modal: true,
-                buttons: {},
-                create: function create() {},
-                close: function close() {
-                    jQuery(document).off('click', '#imagelist tr');
-                    jQuery('#selectImageFigureButton').unbind('click');
-                    jQuery('#cancelImageFigureButton').unbind('click');
-                    jQuery('#book-cover-image-selection').dialog('destroy').remove();
-                }
-            });
-        }
-    }, {
-        key: 'editChapterDialog',
+        key: "editChapterDialog",
         value: function editChapterDialog(aChapter, theBook) {
             var that = this;
             var aDocument = _.findWhere(that.bookList.documentList, {
@@ -1143,7 +1089,7 @@ var BookActions = exports.BookActions = (function () {
             });
         }
     }, {
-        key: 'saveBook',
+        key: "saveBook",
         value: function saveBook(theBook, theOldBook, currentDialog) {
             var that = this;
             $.ajax({
@@ -1179,7 +1125,7 @@ var BookActions = exports.BookActions = (function () {
             });
         }
     }, {
-        key: 'copyBook',
+        key: "copyBook",
         value: function copyBook(theOldBook) {
             var that = this;
             var theBook = jQuery.extend(true, {}, theOldBook);
@@ -1201,27 +1147,24 @@ var BookActions = exports.BookActions = (function () {
             }
         }
     }, {
-        key: 'prepareCopyCoverImage',
+        key: "prepareCopyCoverImage",
         value: function prepareCopyCoverImage(coverImage, userId, callback) {
             var that = this;
-            if ('undefined' === typeof ImageDB) {
-                usermediaHelpers.getImageDB(function () {
-                    that.prepareCopyCoverImage(coverImage, userId, callback);
-                    return;
+
+            this.bookList.getImageDB(function () {
+                that.getImageDB(userId, function (imageDB) {
+                    var coverImageImage = imageDB[coverImage];
+                    that.copyCoverImage(coverImageImage, callback);
                 });
-            } else {
-                usermediaHelpers.getAnImageDB(userId, function (anImageDB) {
-                    that.copyCoverImage(anImageDB[coverImage], callback);
-                });
-            }
+            });
         }
     }, {
-        key: 'copyCoverImage',
+        key: "copyCoverImage",
         value: function copyCoverImage(oldImageObject, callback) {
             var newImageEntry = false,
                 imageTranslation = false;
 
-            matchEntries = _.where(ImageDB, {
+            matchEntries = _.where(this.bookList.imageDB.db, {
                 checksum: oldImageObject.checksum
             });
             if (0 === matchEntries.length) {
@@ -1253,8 +1196,10 @@ var BookActions = exports.BookActions = (function () {
                 callback(oldImageObject.pk);
             }
         }
+        // TODO: Should we not be able to call a method from
+
     }, {
-        key: 'createNewImage',
+        key: "createNewImage",
         value: function createNewImage(imageEntry, callback) {
             var xhr = new XMLHttpRequest();
             xhr.open('GET', imageEntry.oldUrl, true);
@@ -1271,31 +1216,17 @@ var BookActions = exports.BookActions = (function () {
                     formValues.append('title', imageEntry.title);
                     formValues.append('imageCats', '');
                     formValues.append('image', imageFile, imageEntry.oldUrl.split('/').pop());
-                    formValues.append('checksum', imageEntry.checksum), jQuery.ajax({
-                        url: '/usermedia/save/',
-                        data: formValues,
-                        type: 'POST',
-                        dataType: 'json',
-                        success: function success(response, textStatus, jqXHR) {
-                            ImageDB[response.values.pk] = response.values;
-                            callback(response.values.pk);
-                        },
-                        error: function error() {
-                            jQuery.addAlert('error', gettext('Could not save ') + imageEntry.title);
-                        },
-                        complete: function complete() {},
-                        cache: false,
-                        contentType: false,
-                        processData: false
+                    formValues.append('checksum', imageEntry.checksum);
+                    that.bookList.imageDB.createImage(formValues, function (response) {
+                        callback(response);
                     });
-                    return;
                 }
             };
 
             xhr.send();
         }
     }, {
-        key: 'createBookDialog',
+        key: "createBookDialog",
         value: function createBookDialog(bookId, anImageDB) {
             var dialogHeader = undefined,
                 theBook = undefined,
@@ -1326,24 +1257,6 @@ var BookActions = exports.BookActions = (function () {
                 });
                 theBook = jQuery.extend(true, {}, theOldBook);
                 dialogHeader = gettext('Edit Book');
-            }
-
-            if ('undefined' === typeof anImageDB) {
-                if ('undefined' === typeof ImageDB && theBook.is_owner) {
-                    // load the ImageDB if it is not available yet. Once done, load this function.
-                    usermediaHelpers.init(function () {
-                        that.createBookDialog(bookId, ImageDB);
-                    });
-                    return;
-                } else if (!theBook.is_owner) {
-                    usermediaHelpers.getAnImageDB(theBook.owner, function (anImageDB) {
-                        that.createBookDialog(bookId, anImageDB);
-                    });
-                    return;
-                } else {
-                    that.createBookDialog(bookId, ImageDB);
-                    return;
-                }
             }
 
             var dialogBody = (0, _templates.bookDialogTemplate)({
@@ -1462,8 +1375,19 @@ var BookActions = exports.BookActions = (function () {
             });
 
             jQuery(document).on('click', '#select-cover-image-button', function () {
-                that.selectCoverImageDialog(theBook, anImageDB);
-                usermediaHelpers.startUsermediaTable();
+                new _selectionDialog.ImageSelectionDialog(anImageDB, theBook.cover_image, theBook.owner, function (imageId) {
+                    console.log(imageId);
+                    console.log(anImageDB);
+                    if (!imageId) {
+                        delete theBook.cover_image;
+                    } else {
+                        theBook.cover_image = imageId;
+                    }
+                    jQuery('#figure-preview-row').html((0, _templates.bookEpubDataCoverTemplate)({
+                        anImageDB: anImageDB,
+                        theBook: theBook
+                    }));
+                });
             });
 
             jQuery(document).on('click', '#remove-cover-image-button', function () {
@@ -1550,7 +1474,7 @@ var BookActions = exports.BookActions = (function () {
     return BookActions;
 })();
 
-},{"./templates":16}],8:[function(require,module,exports){
+},{"../images/database":32,"../images/selection-dialog/selection-dialog":33,"./templates":16}],8:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1572,6 +1496,8 @@ var _dialog = require("./accessrights/dialog");
 
 var _templates = require("./templates");
 
+var _database = require("../images/database");
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var BookList = exports.BookList = (function () {
@@ -1583,17 +1509,42 @@ var BookList = exports.BookList = (function () {
         _classCallCheck(this, BookList);
 
         this.mod = {};
-        new _actions.BookActions(this);
-
         this.bookList = [];
         this.documentList = [];
         this.teamMembers = [];
         this.accessRights = [];
         this.user = {};
+        new _actions.BookActions(this);
         this.bindEvents();
     }
 
     _createClass(BookList, [{
+        key: "getImageDB",
+        value: function getImageDB(callback) {
+            var _this = this;
+
+            var that = this;
+            if (!this.imageDB) {
+                (function () {
+                    var imageGetter = new _database.ImageDB(_this.user.id);
+                    imageGetter.getDB(function () {
+                        that.imageDB = imageGetter;
+                        callback();
+                    });
+                })();
+            } else {
+                callback();
+            }
+        }
+    }, {
+        key: "getAnImageDB",
+        value: function getAnImageDB(userId, callback) {
+            var imageGetter = new _database.ImageDB(userId);
+            imageGetter.getDB(function () {
+                callback(imageGetter.db);
+            });
+        }
+    }, {
         key: "bindEvents",
         value: function bindEvents() {
             var that = this;
@@ -1701,12 +1652,23 @@ var BookList = exports.BookList = (function () {
                 });
 
                 jQuery('.create-new-book').bind('click', function () {
-                    that.mod.actions.createBookDialog(0);
+                    that.getImageDB(function () {
+                        that.mod.actions.createBookDialog(0, that.imageDB.db);
+                    });
                 });
 
                 jQuery(document).on('click', '.book-title', function () {
                     var bookId = parseInt(jQuery(this).attr('data-id'));
-                    that.mod.actions.createBookDialog(bookId);
+                    var book = _.findWhere(that.bookList, { id: bookId });
+                    if (book.is_owner) {
+                        that.getImageDB(function () {
+                            that.mod.actions.createBookDialog(bookId, that.imageDB);
+                        });
+                    } else {
+                        that.getAnImageDB(book.owner, function (anImageDB) {
+                            that.mod.actions.createBookDialog(bookId, anImageDB);
+                        });
+                    }
                 });
             });
         }
@@ -1715,7 +1677,7 @@ var BookList = exports.BookList = (function () {
     return BookList;
 })();
 
-},{"./accessrights/dialog":5,"./actions":7,"./exporter/epub":10,"./exporter/html":12,"./exporter/latex":14,"./templates":16}],9:[function(require,module,exports){
+},{"../images/database":32,"./accessrights/dialog":5,"./actions":7,"./exporter/epub":10,"./exporter/html":12,"./exporter/latex":14,"./templates":16}],9:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2182,7 +2144,7 @@ var EpubBookExporter = exports.EpubBookExporter = (function (_BaseEpubExporter) 
     return EpubBookExporter;
 })(_epub.BaseEpubExporter);
 
-},{"../../citations/format":18,"../../exporter/epub":23,"../../exporter/epub-templates":22,"../../exporter/json":26,"../../exporter/tools":28,"../../exporter/zip":31,"../../katex/opf-includes":32,"./epub-templates":9,"./tools":15,"katex":33}],11:[function(require,module,exports){
+},{"../../citations/format":18,"../../exporter/epub":23,"../../exporter/epub-templates":22,"../../exporter/json":26,"../../exporter/tools":28,"../../exporter/zip":31,"../../katex/opf-includes":37,"./epub-templates":9,"./tools":15,"katex":38}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2463,7 +2425,7 @@ var HTMLBookExporter = exports.HTMLBookExporter = (function (_BaseEpubExporter) 
     return HTMLBookExporter;
 })(_epub.BaseEpubExporter);
 
-},{"../../citations/format":18,"../../exporter/epub":23,"../../exporter/json":26,"../../exporter/tools":28,"../../exporter/zip":31,"./html-templates":11,"./tools":15,"katex":33}],13:[function(require,module,exports){
+},{"../../citations/format":18,"../../exporter/epub":23,"../../exporter/json":26,"../../exporter/tools":28,"../../exporter/zip":31,"./html-templates":11,"./tools":15,"katex":38}],13:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2618,6 +2580,8 @@ var _tools = require("../../documents/tools");
 
 var _database = require("../../bibliography/database");
 
+var _database2 = require("../../images/database");
+
 var getMissingChapterData = exports.getMissingChapterData = function getMissingChapterData(aBook, documentList, callback) {
     var bookDocuments = [];
 
@@ -2640,8 +2604,8 @@ var getImageAndBibDB = exports.getImageAndBibDB = function getImageAndBibDB(aBoo
     }
 
     documentOwners = _.unique(documentOwners).join(',');
-
-    usermediaHelpers.getAnImageDB(documentOwners, function (anImageDB) {
+    var imageGetter = new _database2.ImageDB(documentOwners);
+    imageGetter.getDB(function (anImageDB) {
         var bibGetter = new _database.BibliographyDB(documentOwners, false, false, false);
         bibGetter.getBibDB(function (bibDB, bibCats) {
             callback(anImageDB, bibDB);
@@ -2668,7 +2632,7 @@ var uniqueObjects = exports.uniqueObjects = function uniqueObjects(array) {
     return results;
 };
 
-},{"../../bibliography/database":2,"../../documents/tools":19}],16:[function(require,module,exports){
+},{"../../bibliography/database":2,"../../documents/tools":19,"../../images/database":32}],16:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2843,7 +2807,7 @@ var bookEpubDataCoverTemplate = exports.bookEpubDataCoverTemplate = _.template('
             <div class="figure-preview">\
                 <div id="inner-figure-preview">\
                     <% if (theBook.cover_image) {%>\
-                        <img src="<%= anImageDB[theBook.cover_image].image %>">\
+                        <img src="<%= anImageDB.db[theBook.cover_image].image %>">\
                     <% } %>\
                 </div>\
             </div>\
@@ -2860,44 +2824,6 @@ var bookEpubDataCoverTemplate = exports.bookEpubDataCoverTemplate = _.template('
                 <% } %>\
             </td>\
         <% } %>\
-');
-
-/** A template for the cover image selection for the epub version of a book. */
-var bookCoverImageSelectionTemplate = exports.bookCoverImageSelectionTemplate = _.template('\
-    <div id="book-cover-image-selection">\
-        <table id="imagelist" class="tablesorter fw-document-table" style="width:342px;">\
-            <thead class="fw-document-table-header">\
-                <tr>\
-                    <th width="50">' + gettext('Image') + '</th>\
-                    <th width="150">' + gettext('Title') + '</th>\
-                </tr>\
-            </thead>\
-            <tbody class="fw-document-table-body fw-small">\
-                <% _.each(anImageDB, function (image) { %>\
-                    <tr id="Image_<%- image.pk %>">\
-                        <td class="type" style="width:100px;">\
-                            <img src="<%- image.thumbnail %>" style="max-heigth:30px;max-width:30px;">\
-                        </td>\
-                        <td class="title" style="width:212px;">\
-                            <span class="fw-inline">\
-                                <span class="edit-image fw-link-text icon-figure" data-id="<%- image.pk %>">\
-                                    <%- image.title %>\
-                                </span>\
-                            </span>\
-                        </td>\
-                        <td class="checkable" style="width:30px;">\
-                        </td>\
-                    </tr>\
-                <% }) %>\
-            </tbody>\
-        </table>\
-        <div class="dialogSubmit">\
-            <button class="edit-image createNew fw-button fw-light">' + gettext('Upload new image') + '<span class="icon-plus-circle"></span>\
-            </button>\
-            <button type="button" id="selectImageFigureButton" class="fw-button fw-dark">' + gettext('Use selected image') + '</button>\
-                        <button type="button" id="cancelImageFigureButton" class="fw-button fw-orange">' + gettext('Cancel') + '</button>\
-        </div>\
-    </div>\
 ');
 
 /** A template for the book dialog. */
@@ -3897,7 +3823,7 @@ var EpubExporter = exports.EpubExporter = (function (_BaseEpubExporter) {
     return EpubExporter;
 })(BaseEpubExporter);
 
-},{"../katex/opf-includes":32,"./epub-templates":22,"./html":25,"./json":26,"./tools":28,"./zip":31,"katex":33}],24:[function(require,module,exports){
+},{"../katex/opf-includes":37,"./epub-templates":22,"./html":25,"./json":26,"./tools":28,"./zip":31,"katex":38}],24:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4149,7 +4075,7 @@ var HTMLExporter = exports.HTMLExporter = (function (_BaseHTMLExporter) {
     return HTMLExporter;
 })(BaseHTMLExporter);
 
-},{"../bibliography/database":2,"../citations/format":18,"./base":20,"./html-templates":24,"./json":26,"./tools":28,"./zip":31,"katex":33}],26:[function(require,module,exports){
+},{"../bibliography/database":2,"../citations/format":18,"./base":20,"./html-templates":24,"./json":26,"./tools":28,"./zip":31,"katex":38}],26:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4918,6 +4844,520 @@ var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles,
 };
 
 },{"./download":21,"./upload":30}],32:[function(require,module,exports){
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/* A class that holds information about images uploaded by the user. */
+
+var ImageDB = exports.ImageDB = (function () {
+    function ImageDB(userId) {
+        _classCallCheck(this, ImageDB);
+
+        this.userId = userId;
+        this.db = {};
+        this.cats = [];
+    }
+
+    _createClass(ImageDB, [{
+        key: 'getDB',
+        value: function getDB(callback) {
+            var that = this;
+            this.db = {};
+            this.cats = [];
+
+            $.activateWait();
+
+            $.ajax({
+                url: '/usermedia/images/',
+                data: {
+                    'owner_id': this.userId
+                },
+                type: 'POST',
+                dataType: 'json',
+                success: function success(response, textStatus, jqXHR) {
+                    that.cats = response.imageCategories;
+                    for (var i = 0; i < response.images.length; i++) {
+                        response.images[i].image = response.images[i].image.split('?')[0];
+                        that.db[response.images[i]['pk']] = response.images[i];
+                    }
+                    if (callback) {
+                        callback();
+                    }
+                },
+                error: function error(jqXHR, textStatus, errorThrown) {
+                    $.addAlert('error', jqXHR.responseText);
+                },
+                complete: function complete() {
+                    $.deactivateWait();
+                }
+            });
+        }
+    }, {
+        key: 'createImage',
+        value: function createImage(postData, callback) {
+            var that = this;
+            $.activateWait();
+            $.ajax({
+                url: '/usermedia/save/',
+                data: postData,
+                type: 'POST',
+                dataType: 'json',
+                success: function success(response, textStatus, jqXHR) {
+                    if (that.displayCreateImageError(response.errormsg)) {
+                        that.db[response.values.pk] = response.values;
+                        $.addAlert('success', gettext('The image has been uploaded'));
+                        callback(response.values.pk);
+                    } else {
+                        $.addAlert('error', gettext('Some errors are found. Please examine the form.'));
+                    }
+                },
+                error: function error(jqXHR, textStatus, errorThrown) {
+                    $.addAlert('error', jqXHR.responseText);
+                },
+                complete: function complete() {
+                    $.deactivateWait();
+                },
+                cache: false,
+                contentType: false,
+                processData: false
+            });
+        }
+    }, {
+        key: 'displayCreateImageError',
+        value: function displayCreateImageError(errors) {
+            var noError = true;
+            for (var e_key in errors) {
+                e_msg = '<div class="warning">' + errors[e_key] + '</div>';
+                if ('error' == e_key) {
+                    jQuery('#createimage').prepend(e_msg);
+                } else {
+                    jQuery('#id_' + e_key).after(e_msg);
+                }
+                noError = false;
+            }
+            return noError;
+        }
+    }]);
+
+    return ImageDB;
+})();
+
+},{}],33:[function(require,module,exports){
+"use strict";
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.ImageSelectionDialog = undefined;
+
+var _templates = require("./templates");
+
+var _uploadDialog = require("../upload-dialog/upload-dialog");
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ImageSelectionDialog = exports.ImageSelectionDialog = (function () {
+    function ImageSelectionDialog(imageDB, imageId, userId, callback) {
+        _classCallCheck(this, ImageSelectionDialog);
+
+        this.imageDB = imageDB;
+        this.imageId = imageId; // a preselected image
+        this.userId = userId;
+        this.callback = callback;
+        this.createImageSelectionDialog();
+    }
+
+    _createClass(ImageSelectionDialog, [{
+        key: "createImageSelectionDialog",
+        value: function createImageSelectionDialog() {
+            var that = this;
+            this.imageDialog = jQuery((0, _templates.usermediaImageSelectionTemplate)({
+                imageDB: this.imageDB.db, usermediaImageItemSelectionTemplate: _templates.usermediaImageItemSelectionTemplate
+            })).dialog({
+                width: 'auto',
+                height: 'auto',
+                title: gettext("Images"),
+                modal: true,
+                resizable: false,
+                draggable: false,
+                dialogClass: 'select-image-dialog',
+                close: function close() {
+                    jQuery(this).dialog('destroy').remove();
+                }
+            });
+
+            this.startImageTable();
+            this.bindEvents();
+            if (this.imageId) {
+                jQuery('#Image_' + this.imageId).addClass('checked');
+            }
+        }
+    }, {
+        key: "startImageTable",
+        value: function startImageTable() {
+            /* The sortable table seems not to have an option to accept new data
+            added to the DOM. Instead we destroy and recreate it.
+            */
+
+            var nonSortable = [0, 2];
+
+            jQuery('#select_imagelist').dataTable({
+                "bPaginate": false,
+                "bLengthChange": false,
+                "bFilter": true,
+                "bInfo": false,
+                "bAutoWidth": false,
+                "oLanguage": {
+                    "sSearch": ''
+                },
+                "aoColumnDefs": [{
+                    "bSortable": false,
+                    "aTargets": nonSortable
+                }]
+            });
+            jQuery('#select_imagelist_filter input').attr('placeholder', gettext('Search for Filename'));
+
+            jQuery('#select_imagelist_filter input').unbind('focus, blur');
+            jQuery('#select_imagelist_filter input').bind('focus', function () {
+                jQuery(this).parent().addClass('focus');
+            });
+            jQuery('#select-imagelist_filter input').bind('blur', function () {
+                jQuery(this).parent().removeClass('focus');
+            });
+
+            var autocomplete_tags = [];
+            jQuery('#imagelist .fw-searchable').each(function () {
+                autocomplete_tags.push(this.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''));
+            });
+            autocomplete_tags = _.uniq(autocomplete_tags);
+            jQuery("#select_imagelist_filter input").autocomplete({
+                source: autocomplete_tags
+            });
+        }
+    }, {
+        key: "bindEvents",
+        value: function bindEvents() {
+            var that = this;
+            jQuery('#selectImageSelectionButton').bind('click', function () {
+                that.callback(that.imageId);
+                that.imageDialog.dialog('close');
+            });
+
+            jQuery('#cancelImageSelectionButton').bind('click', function () {
+                that.imageDialog.dialog('close');
+            });
+
+            jQuery('#selectImageUploadButton').bind('click', function () {
+                new _uploadDialog.ImageUploadDialog(that.imageDB, false, that.ownerId, function (imageId) {
+                    that.imageId = imageId;
+                    that.imageDialog.dialog('close');
+                    that.createImageSelectionDialog();
+                });
+            });
+
+            // functions for the image selection dialog
+            jQuery('#select_imagelist tr').on('click', function () {
+                var checkedImage = jQuery('#select_imagelist tr.checked'),
+                    selecting = true;
+                if (checkedImage.length > 0 && this == checkedImage[0]) {
+                    selecting = false;
+                    that.imageId = false;
+                }
+                checkedImage.removeClass('checked');
+                if (selecting) {
+                    var elementId = jQuery(this).attr('id');
+                    that.imageId = parseInt(elementId.split('_')[1]);
+                    jQuery(this).addClass('checked');
+                }
+            });
+        }
+    }]);
+
+    return ImageSelectionDialog;
+})();
+
+},{"../upload-dialog/upload-dialog":36,"./templates":34}],34:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+/** Simpler image overview table for use in editor. */
+var usermediaImageItemSelectionTemplate = exports.usermediaImageItemSelectionTemplate = _.template('\
+<tr id="Image_<%- pk %>" class="<% _.each(cats, function(cat) { %>cat_<%- cat %> <% }) %>" >\
+     <td class="type" style="width:100px;">\
+        <% if (typeof thumbnail !== "undefined") { %>\
+            <img src="<%- thumbnail %>" style="max-heigth:30px;max-width:30px;">\
+        <% } else { %>\
+            <img src="<%- image %>" style="max-heigth:30px;max-width:30px;">\
+        <% } %>\
+    </td>\
+    <td class="title" style="width:212px;">\
+        <span class="fw-inline">\
+            <span class="edit-image fw-link-text icon-figure" data-id="<%- pk %>">\
+                <%- title %>\
+            </span>\
+        </span>\
+    </td>\
+    <td class="checkable" style="width:30px;">\
+    </td>\
+</tr>');
+
+/** A template to select images. */
+var usermediaImageSelectionTemplate = exports.usermediaImageSelectionTemplate = _.template('\
+    <div>\
+        <table id="select_imagelist" class="tablesorter fw-document-table" style="width:342px;">\
+            <thead class="fw-document-table-header">\
+                <tr>\
+                    <th width="50">' + gettext('Image') + '</th>\
+                    <th width="150">' + gettext('Title') + '</th>\
+                </tr>\
+            </thead>\
+            <tbody class="fw-document-table-body fw-small">\
+                <% _.each(imageDB, function (anImage) { %> <%= usermediaImageItemSelectionTemplate(anImage) %> <% }); %>\
+            </tbody>\
+        </table>\
+        <div class="dialogSubmit">\
+            <button id="selectImageUploadButton" class="fw-button fw-light">' + gettext('Upload') + '<span class="icon-plus-circle"></span>\
+            </button>\
+            <button type="button" id="selectImageSelectionButton" class="fw-button fw-dark">' + gettext('Use image') + '</button>\
+             <button type="button" id="cancelImageSelectionButton" class="fw-button fw-orange">' + gettext('Cancel') + '</button>\
+        </div>\
+    </div>\
+');
+
+},{}],35:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+/* A template for the form for the image upload dialog. */
+var usermediaUploadTemplate = exports.usermediaUploadTemplate = _.template('<div id="uploadimage" class="fw-media-uploader" title="<%- action %>">\
+    <form action="#" method="post" class="usermediaUploadForm">\
+        <div>\
+            <input name="title" class="fw-media-title fw-media-form" type="text" placeholder="' + gettext('Insert a title') + '" value="<%- title %>" />\
+            <button type="button" class="fw-media-select-button fw-button fw-light">' + gettext('Select a file') + '</button>\
+            <input name="image" type="file" class="fw-media-file-input fw-media-form">\
+        </div>\
+        <div class="figure-preview"><div>\
+            <% if(image) { %><img src="<%- image %>" /><% } %>\
+        </div></div>\
+        <%= categories %>\
+    </form></div>');
+
+/* A template for the image category selection of the image selection dialog. */
+var usermediaUploadCategoryTemplate = exports.usermediaUploadCategoryTemplate = _.template('<% if(0 < categories.length) { %>\
+        <div class="fw-media-category">\
+            <div><%- fieldTitle %></div>\
+            <% _.each(categories, function(cat) { %>\
+                <label class="fw-checkable fw-checkable-label<%- cat.checked %>" for="imageCat<%- cat.id %>">\
+                    <%- cat.category_title %>\
+                </label>\
+                <input class="fw-checkable-input fw-media-form entry-cat" type="checkbox"\
+                    id="imageCat<%- cat.id %>" name="imageCat" value="<%- cat.id %>"<%- cat.checked %>>\
+            <% }); %>\
+        </div>\
+    <% } %>');
+
+},{}],36:[function(require,module,exports){
+'use strict';
+
+var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.ImageUploadDialog = undefined;
+
+var _templates = require('./templates');
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+var ImageUploadDialog = exports.ImageUploadDialog = (function () {
+    function ImageUploadDialog(imageDB, imageId, ownerId, callback) {
+        _classCallCheck(this, ImageUploadDialog);
+
+        this.imageDB = imageDB;
+        this.imageId = imageId;
+        this.ownerId = ownerId;
+        this.callback = callback;
+        this.createImageUploadDialog();
+    }
+
+    //open a dialog for uploading an image
+
+    _createClass(ImageUploadDialog, [{
+        key: 'createImageUploadDialog',
+        value: function createImageUploadDialog() {
+            var that = this;
+            var title = undefined,
+                imageCat = undefined,
+                thumbnail = undefined,
+                image = undefined,
+                action = undefined,
+                longAction = undefined;
+            if (this.imageId) {
+                title = this.imageDB.db[id].title;
+                thumbnail = this.imageDB.db[id].thumbnail;
+                image = this.imageDB.db[id].image;
+                imageCat = this.imageDB.db[id].cats;
+                action = gettext('Update');
+                longAction = gettext('Update image');
+            } else {
+                this.imageId = 0;
+                title = '';
+                imageCat = [];
+                thumbnail = false;
+                image = false;
+                action = gettext('Upload');
+                longAction = gettext('Upload image');
+            }
+
+            var iCats = [];
+            jQuery.each(this.imageDB.cats, function (i, iCat) {
+                var len = iCats.length;
+                iCats[len] = {
+                    'id': iCat.id,
+                    'category_title': iCat.category_title
+                };
+                if (0 <= jQuery.inArray(String(iCat.id), imageCat)) {
+                    iCats[len].checked = ' checked';
+                } else {
+                    iCats[len].checked = '';
+                }
+            });
+
+            jQuery('body').append((0, _templates.usermediaUploadTemplate)({
+                'action': longAction,
+                'title': title,
+                'thumbnail': thumbnail,
+                'image': image,
+                'categories': (0, _templates.usermediaUploadCategoryTemplate)({
+                    'categories': iCats,
+                    'fieldTitle': gettext('Select categories')
+                })
+            }));
+            var diaButtons = {};
+            diaButtons[action] = function () {
+                that.onCreateImageSubmitHandler();
+            };
+            diaButtons[gettext('Cancel')] = function () {
+                jQuery(this).dialog('close');
+            };
+            jQuery("#uploadimage").dialog({
+                resizable: false,
+                height: 'auto',
+                width: 'auto',
+                modal: true,
+                buttons: diaButtons,
+                create: function create() {
+                    var $the_dialog = jQuery(this).closest(".ui-dialog");
+                    $the_dialog.find(".ui-button:first-child").addClass("fw-button fw-dark");
+                    $the_dialog.find(".ui-button:last").addClass("fw-button fw-orange");
+                    that.setMediaUploadEvents(jQuery('#uploadimage'));
+                },
+                close: function close() {
+                    jQuery("#uploadimage").dialog('destroy').remove();
+                }
+            });
+
+            jQuery('.fw-checkable-label').bind('click', function () {
+                $.setCheckableLabel(jQuery(this));
+            });
+        }
+
+        //add image upload events
+
+    }, {
+        key: 'setMediaUploadEvents',
+        value: function setMediaUploadEvents(wrapper) {
+            var select_button = wrapper.find('.fw-media-select-button'),
+                media_input = wrapper.find('.fw-media-file-input'),
+                media_previewer = wrapper.find('.figure-preview > div');
+
+            select_button.bind('click', function () {
+                media_input.trigger('click');
+            });
+
+            media_input.bind('change', function () {
+                var file = jQuery(this).prop('files')[0],
+                    fr = new FileReader();
+
+                fr.onload = function () {
+                    media_previewer.html('<img src="' + fr.result + '" />');
+                };
+                fr.readAsDataURL(file);
+            });
+        }
+    }, {
+        key: 'onCreateImageSubmitHandler',
+        value: function onCreateImageSubmitHandler() {
+            //when submitted, the values in form elements will be restored
+            var formValues = new FormData(),
+                checkboxValues = {};
+
+            formValues.append('id', this.imageId);
+
+            if (this.ownerId) {
+                formValues.append('owner_id', this.ownerId);
+            }
+
+            jQuery('.fw-media-form').each(function () {
+                var $this = jQuery(this);
+                var the_name = $this.attr('name') || $this.attr('data-field-name');
+                var the_type = $this.attr('type') || $this.attr('data-type');
+                var the_value = '';
+
+                switch (the_type) {
+                    case 'checkbox':
+                        //if it is a checkbox, the value will be restored as an Array
+                        if (undefined == checkboxValues[the_name]) checkboxValues[the_name] = [];
+                        if ($this.prop("checked")) {
+                            checkboxValues[the_name].push($this.val());
+                        }
+                        return;
+                    case 'file':
+                        the_value = $this.get(0).files[0];
+                        break;
+                    default:
+                        the_value = $this.val();
+                }
+
+                formValues.append(the_name, the_value);
+            });
+
+            // Add the values for check boxes
+            for (key in checkboxValues) {
+                formValues.append(key, checkboxValues[key].join(','));
+            }
+            this.createImage(formValues);
+        }
+    }, {
+        key: 'createImage',
+        value: function createImage(imageData) {
+            var that = this;
+            this.imageDB.createImage(imageData, function (imageId) {
+                jQuery("#uploadimage").dialog('close');
+                that.imageId = imageId;
+                that.callback(imageId);
+            });
+        }
+    }]);
+
+    return ImageUploadDialog;
+})();
+
+},{"./templates":35}],37:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4926,7 +5366,7 @@ Object.defineProperty(exports, "__esModule", {
 // This file is auto-generated. CHANGES WILL BE OVERWRITTEN! Re-generate by running ./manage.py bundle_katex.
 var katexOpfIncludes = exports.katexOpfIncludes = "\n<item id=\"katex-0\" href=\"katex.min.css\" media-type=\"text/css\" />\n<item id=\"katex-1\" href=\"fonts/KaTeX_Typewriter-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-2\" href=\"fonts/KaTeX_Main-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-3\" href=\"fonts/KaTeX_Fraktur-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-4\" href=\"fonts/KaTeX_SansSerif-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-5\" href=\"fonts/KaTeX_Main-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-6\" href=\"fonts/KaTeX_Main-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-7\" href=\"fonts/KaTeX_SansSerif-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-8\" href=\"fonts/KaTeX_AMS-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-9\" href=\"fonts/KaTeX_Caligraphic-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-10\" href=\"fonts/KaTeX_Size4-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-11\" href=\"fonts/KaTeX_Math-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-12\" href=\"fonts/KaTeX_Size1-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-13\" href=\"fonts/KaTeX_Math-BoldItalic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-14\" href=\"fonts/KaTeX_Script-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-15\" href=\"fonts/KaTeX_Main-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-16\" href=\"fonts/KaTeX_Math-BoldItalic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-17\" href=\"fonts/KaTeX_Fraktur-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-18\" href=\"fonts/KaTeX_Main-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-19\" href=\"fonts/KaTeX_Size1-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-20\" href=\"fonts/KaTeX_SansSerif-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-21\" href=\"fonts/KaTeX_Math-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-22\" href=\"fonts/KaTeX_Fraktur-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-23\" href=\"fonts/KaTeX_Script-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-24\" href=\"fonts/KaTeX_Fraktur-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-25\" href=\"fonts/KaTeX_Main-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-26\" href=\"fonts/KaTeX_Size1-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-27\" href=\"fonts/KaTeX_Size3-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-28\" href=\"fonts/KaTeX_SansSerif-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-29\" href=\"fonts/KaTeX_Script-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-30\" href=\"fonts/KaTeX_Main-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-31\" href=\"fonts/KaTeX_Math-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-32\" href=\"fonts/KaTeX_Main-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-33\" href=\"fonts/KaTeX_Typewriter-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-34\" href=\"fonts/KaTeX_Math-BoldItalic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-35\" href=\"fonts/KaTeX_AMS-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-36\" href=\"fonts/KaTeX_Size2-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-37\" href=\"fonts/KaTeX_Caligraphic-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-38\" href=\"fonts/KaTeX_Fraktur-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-39\" href=\"fonts/KaTeX_Typewriter-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-40\" href=\"fonts/KaTeX_Math-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-41\" href=\"fonts/KaTeX_SansSerif-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-42\" href=\"fonts/KaTeX_Script-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-43\" href=\"fonts/KaTeX_Caligraphic-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-44\" href=\"fonts/KaTeX_SansSerif-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-45\" href=\"fonts/KaTeX_AMS-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-46\" href=\"fonts/KaTeX_Caligraphic-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-47\" href=\"fonts/KaTeX_Fraktur-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-48\" href=\"fonts/KaTeX_Main-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-49\" href=\"fonts/KaTeX_SansSerif-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-50\" href=\"fonts/KaTeX_Size4-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-51\" href=\"fonts/KaTeX_Math-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-52\" href=\"fonts/KaTeX_SansSerif-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-53\" href=\"fonts/KaTeX_Size2-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-54\" href=\"fonts/KaTeX_Fraktur-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-55\" href=\"fonts/KaTeX_Size2-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-56\" href=\"fonts/KaTeX_SansSerif-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-57\" href=\"fonts/KaTeX_AMS-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-58\" href=\"fonts/KaTeX_Math-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-59\" href=\"fonts/KaTeX_SansSerif-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-60\" href=\"fonts/KaTeX_Main-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-61\" href=\"fonts/KaTeX_Typewriter-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-62\" href=\"fonts/KaTeX_Size3-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-63\" href=\"fonts/KaTeX_Main-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-64\" href=\"fonts/KaTeX_Caligraphic-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-65\" href=\"fonts/KaTeX_SansSerif-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-66\" href=\"fonts/KaTeX_Caligraphic-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-67\" href=\"fonts/KaTeX_Size4-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-68\" href=\"fonts/KaTeX_Main-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-69\" href=\"fonts/KaTeX_Math-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-70\" href=\"fonts/KaTeX_Size3-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-71\" href=\"fonts/KaTeX_Fraktur-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-72\" href=\"fonts/KaTeX_Caligraphic-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-73\" href=\"fonts/KaTeX_Size2-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-74\" href=\"fonts/KaTeX_Size1-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-75\" href=\"fonts/KaTeX_SansSerif-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-76\" href=\"fonts/KaTeX_Size4-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-77\" href=\"fonts/KaTeX_Size3-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-78\" href=\"fonts/KaTeX_Caligraphic-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-79\" href=\"fonts/KaTeX_Math-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-80\" href=\"fonts/KaTeX_Math-BoldItalic.woff\" media-type=\"application/octet-stream\" />\n";
 
-},{}],33:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 /**
  * This is the main entry point for KaTeX. Here, we expose functions for
  * rendering expressions either to DOM nodes or to markup strings.
@@ -5001,7 +5441,7 @@ module.exports = {
     ParseError: ParseError
 };
 
-},{"./src/ParseError":36,"./src/Settings":38,"./src/buildTree":43,"./src/parseTree":52,"./src/utils":54}],34:[function(require,module,exports){
+},{"./src/ParseError":41,"./src/Settings":43,"./src/buildTree":48,"./src/parseTree":57,"./src/utils":59}],39:[function(require,module,exports){
 /**
  * The Lexer class handles tokenizing the input in various ways. Since our
  * parser expects us to be able to backtrack, the lexer allows lexing from any
@@ -5197,7 +5637,7 @@ Lexer.prototype.lex = function(pos, mode) {
 
 module.exports = Lexer;
 
-},{"./ParseError":36,"match-at":55}],35:[function(require,module,exports){
+},{"./ParseError":41,"match-at":60}],40:[function(require,module,exports){
 /**
  * This file contains information about the options that the Parser carries
  * around with it while parsing. Data is held in an `Options` object, and when
@@ -5388,7 +5828,7 @@ Options.prototype.getColor = function() {
 
 module.exports = Options;
 
-},{}],36:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 /**
  * This is the ParseError class, which is the main error thrown by KaTeX
  * functions when something has gone wrong. This is used to distinguish internal
@@ -5430,7 +5870,7 @@ ParseError.prototype.__proto__ = Error.prototype;
 
 module.exports = ParseError;
 
-},{}],37:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 var functions = require("./functions");
 var environments = require("./environments");
 var Lexer = require("./Lexer");
@@ -6152,7 +6592,7 @@ Parser.prototype.ParseNode = ParseNode;
 
 module.exports = Parser;
 
-},{"./Lexer":34,"./ParseError":36,"./environments":46,"./functions":49,"./parseData":51,"./symbols":53,"./utils":54}],38:[function(require,module,exports){
+},{"./Lexer":39,"./ParseError":41,"./environments":51,"./functions":54,"./parseData":56,"./symbols":58,"./utils":59}],43:[function(require,module,exports){
 /**
  * This is a module for storing settings passed into KaTeX. It correctly handles
  * default settings.
@@ -6182,7 +6622,7 @@ function Settings(options) {
 
 module.exports = Settings;
 
-},{}],39:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 /**
  * This file contains information and classes for the various kinds of styles
  * used in TeX. It provides a generic `Style` class, which holds information
@@ -6310,7 +6750,7 @@ module.exports = {
     SCRIPTSCRIPT: styles[SS]
 };
 
-},{}],40:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 /**
  * This module contains general functions that can be used for building
  * different kinds of domTree nodes in a consistent manner.
@@ -6759,7 +7199,7 @@ module.exports = {
     spacingFunctions: spacingFunctions
 };
 
-},{"./domTree":45,"./fontMetrics":47,"./symbols":53,"./utils":54}],41:[function(require,module,exports){
+},{"./domTree":50,"./fontMetrics":52,"./symbols":58,"./utils":59}],46:[function(require,module,exports){
 /**
  * This file does the main work of building a domTree structure from a parse
  * tree. The entry point is the `buildHTML` function, which takes a parse tree.
@@ -8123,7 +8563,7 @@ var buildHTML = function(tree, options) {
 
 module.exports = buildHTML;
 
-},{"./ParseError":36,"./Style":39,"./buildCommon":40,"./delimiter":44,"./domTree":45,"./fontMetrics":47,"./utils":54}],42:[function(require,module,exports){
+},{"./ParseError":41,"./Style":44,"./buildCommon":45,"./delimiter":49,"./domTree":50,"./fontMetrics":52,"./utils":59}],47:[function(require,module,exports){
 /**
  * This file converts a parse tree into a cooresponding MathML tree. The main
  * entry point is the `buildMathML` function, which takes a parse tree from the
@@ -8644,7 +9084,7 @@ var buildMathML = function(tree, texExpression, options) {
 
 module.exports = buildMathML;
 
-},{"./ParseError":36,"./buildCommon":40,"./fontMetrics":47,"./mathMLTree":50,"./symbols":53,"./utils":54}],43:[function(require,module,exports){
+},{"./ParseError":41,"./buildCommon":45,"./fontMetrics":52,"./mathMLTree":55,"./symbols":58,"./utils":59}],48:[function(require,module,exports){
 var buildHTML = require("./buildHTML");
 var buildMathML = require("./buildMathML");
 var buildCommon = require("./buildCommon");
@@ -8686,7 +9126,7 @@ var buildTree = function(tree, expression, settings) {
 
 module.exports = buildTree;
 
-},{"./Options":35,"./Settings":38,"./Style":39,"./buildCommon":40,"./buildHTML":41,"./buildMathML":42}],44:[function(require,module,exports){
+},{"./Options":40,"./Settings":43,"./Style":44,"./buildCommon":45,"./buildHTML":46,"./buildMathML":47}],49:[function(require,module,exports){
 /**
  * This file deals with creating delimiters of various sizes. The TeXbook
  * discusses these routines on page 441-442, in the "Another subroutine sets box
@@ -9227,7 +9667,7 @@ module.exports = {
     leftRightDelim: makeLeftRightDelim
 };
 
-},{"./ParseError":36,"./Style":39,"./buildCommon":40,"./fontMetrics":47,"./symbols":53,"./utils":54}],45:[function(require,module,exports){
+},{"./ParseError":41,"./Style":44,"./buildCommon":45,"./fontMetrics":52,"./symbols":58,"./utils":59}],50:[function(require,module,exports){
 /**
  * These objects store the data about the DOM nodes we create, as well as some
  * extra data. They can then be transformed into real DOM nodes with the
@@ -9498,7 +9938,7 @@ module.exports = {
     symbolNode: symbolNode
 };
 
-},{"./utils":54}],46:[function(require,module,exports){
+},{"./utils":59}],51:[function(require,module,exports){
 var fontMetrics = require("./fontMetrics");
 var parseData = require("./parseData");
 var ParseError = require("./ParseError");
@@ -9678,7 +10118,7 @@ module.exports = (function() {
     return exports;
 })();
 
-},{"./ParseError":36,"./fontMetrics":47,"./parseData":51}],47:[function(require,module,exports){
+},{"./ParseError":41,"./fontMetrics":52,"./parseData":56}],52:[function(require,module,exports){
 /* jshint unused:false */
 
 var Style = require("./Style");
@@ -9815,7 +10255,7 @@ module.exports = {
     getCharacterMetrics: getCharacterMetrics
 };
 
-},{"./Style":39,"./fontMetricsData":48}],48:[function(require,module,exports){
+},{"./Style":44,"./fontMetricsData":53}],53:[function(require,module,exports){
 module.exports = {
 "AMS-Regular": {
   "65": {"depth": 0.0, "height": 0.68889, "italic": 0.0, "skew": 0.0},
@@ -11568,7 +12008,7 @@ module.exports = {
   "8242": {"depth": 0.0, "height": 0.61111, "italic": 0.0, "skew": 0.0}
 }};
 
-},{}],49:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 var utils = require("./utils");
 var ParseError = require("./ParseError");
 
@@ -12199,7 +12639,7 @@ module.exports = {
     funcs: functions
 };
 
-},{"./ParseError":36,"./utils":54}],50:[function(require,module,exports){
+},{"./ParseError":41,"./utils":59}],55:[function(require,module,exports){
 /**
  * These objects store data about MathML nodes. This is the MathML equivalent
  * of the types in domTree.js. Since MathML handles its own rendering, and
@@ -12303,7 +12743,7 @@ module.exports = {
     TextNode: TextNode
 };
 
-},{"./utils":54}],51:[function(require,module,exports){
+},{"./utils":59}],56:[function(require,module,exports){
 /**
  * The resulting parse tree nodes of the parse tree.
  */
@@ -12328,7 +12768,7 @@ module.exports = {
 };
 
 
-},{}],52:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 /**
  * Provides a single function for parsing an expression using a Parser
  * TODO(emily): Remove this
@@ -12347,7 +12787,7 @@ var parseTree = function(toParse, settings) {
 
 module.exports = parseTree;
 
-},{"./Parser":37}],53:[function(require,module,exports){
+},{"./Parser":42}],58:[function(require,module,exports){
 /**
  * This file holds a list of all no-argument functions and single-character
  * symbols (like 'a' or ';').
@@ -14934,7 +15374,7 @@ for (var i = 0; i < letters.length; i++) {
 
 module.exports = symbols;
 
-},{}],54:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 /**
  * This file contains a list of utility functions which are useful in other
  * files.
@@ -15041,7 +15481,7 @@ module.exports = {
     clearNode: clearNode
 };
 
-},{}],55:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 /** @flow */
 
 "use strict";

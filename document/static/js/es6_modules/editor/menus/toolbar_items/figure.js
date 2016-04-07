@@ -192,7 +192,7 @@ export class FigureDialog {
                 return
             }
 
-            new ImageSelectionDialog(that.imageDB, that.imageId, function(newImageId) {
+            new ImageSelectionDialog(that.imageDB, that.imageId, that.editor.doc.owner.id, function(newImageId) {
                 if (newImageId) {
                     that.imageId = newImageId
                     that.layoutImagePreview()

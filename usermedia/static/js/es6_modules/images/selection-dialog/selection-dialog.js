@@ -2,9 +2,10 @@ import {usermediaImageItemSelectionTemplate, usermediaImageSelectionTemplate} fr
 import {ImageUploadDialog} from "../upload-dialog/upload-dialog"
 
 export class ImageSelectionDialog {
-    constructor(imageDB, imageId, callback) {
+    constructor(imageDB, imageId, userId, callback) {
         this.imageDB = imageDB
         this.imageId = imageId // a preselected image
+        this.userId = userId
         this.callback = callback
         this.createImageSelectionDialog()
     }
@@ -90,7 +91,7 @@ export class ImageSelectionDialog {
             })
 
         jQuery('#selectImageUploadButton').bind('click', function() {
-            new ImageUploadDialog(that.imageDB, false, function(imageId) {
+            new ImageUploadDialog(that.imageDB, false, that.ownerId, function(imageId) {
                 that.imageId = imageId
                 that.imageDialog.dialog('close')
                 that.createImageSelectionDialog()

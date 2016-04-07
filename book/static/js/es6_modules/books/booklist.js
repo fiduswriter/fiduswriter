@@ -4,7 +4,7 @@ import {EpubBookExporter} from "./exporter/epub"
 import {BookActions} from "./actions"
 import {BookAccessRightsDialog} from "./accessrights/dialog"
 import {bookListTemplate, bookBibliographyDataTemplate} from "./templates"
-
+import {ImageDB} from "../images/database"
 
 export class BookList {
     // A class that contains everything that happens on the books page.
@@ -12,14 +12,33 @@ export class BookList {
     // contains bindings to menu items, etc. that are uniquely defined.
     constructor() {
         this.mod = {}
-        new BookActions(this)
-
         this.bookList = []
         this.documentList = []
         this.teamMembers = []
         this.accessRights = []
         this.user = {}
+        new BookActions(this)
         this.bindEvents()
+    }
+
+    getImageDB(callback) {
+        let that = this
+        if (!this.imageDB) {
+            let imageGetter = new ImageDB(this.user.id)
+            imageGetter.getDB(function(){
+                that.imageDB = imageGetter
+                callback()
+            })
+        } else {
+            callback()
+        }
+    }
+
+    getAnImageDB(userId, callback){
+        let imageGetter = new ImageDB(userId)
+        imageGetter.getDB(function(){
+            callback(imageGetter.db)
+        })
     }
 
     bindEvents() {
@@ -149,12 +168,25 @@ export class BookList {
                 })
 
             jQuery('.create-new-book').bind('click', function () {
-                that.mod.actions.createBookDialog(0)
+                that.getImageDB(function(){
+                    that.mod.actions.createBookDialog(0, that.imageDB.db)
+                })
             })
 
             jQuery(document).on('click', '.book-title', function () {
                 let bookId = parseInt(jQuery(this).attr('data-id'))
-                that.mod.actions.createBookDialog(bookId)
+                let book = _.findWhere(that.bookList,{id: bookId})
+                if (book.is_owner) {
+                    that.getImageDB(function(){
+                        that.mod.actions.createBookDialog(bookId, that.imageDB)
+                    })
+                } else {
+                    that.getAnImageDB(book.owner, function(anImageDB){
+                        that.mod.actions.createBookDialog(bookId, anImageDB)
+                    })
+
+                }
+
             })
         })
     }

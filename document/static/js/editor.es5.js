@@ -5575,7 +5575,7 @@ var FigureDialog = exports.FigureDialog = (function () {
                     return;
                 }
 
-                new _selectionDialog.ImageSelectionDialog(that.imageDB, that.imageId, function (newImageId) {
+                new _selectionDialog.ImageSelectionDialog(that.imageDB, that.imageId, that.editor.doc.owner.id, function (newImageId) {
                     if (newImageId) {
                         that.imageId = newImageId;
                         that.layoutImagePreview();
@@ -9665,11 +9665,12 @@ var _uploadDialog = require("../upload-dialog/upload-dialog");
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var ImageSelectionDialog = exports.ImageSelectionDialog = (function () {
-    function ImageSelectionDialog(imageDB, imageId, callback) {
+    function ImageSelectionDialog(imageDB, imageId, userId, callback) {
         _classCallCheck(this, ImageSelectionDialog);
 
         this.imageDB = imageDB;
         this.imageId = imageId; // a preselected image
+        this.userId = userId;
         this.callback = callback;
         this.createImageSelectionDialog();
     }
@@ -9755,7 +9756,7 @@ var ImageSelectionDialog = exports.ImageSelectionDialog = (function () {
             });
 
             jQuery('#selectImageUploadButton').bind('click', function () {
-                new _uploadDialog.ImageUploadDialog(that.imageDB, false, function (imageId) {
+                new _uploadDialog.ImageUploadDialog(that.imageDB, false, that.ownerId, function (imageId) {
                     that.imageId = imageId;
                     that.imageDialog.dialog('close');
                     that.createImageSelectionDialog();
@@ -9882,11 +9883,12 @@ var _templates = require('./templates');
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var ImageUploadDialog = exports.ImageUploadDialog = (function () {
-    function ImageUploadDialog(imageDB, imageId, callback) {
+    function ImageUploadDialog(imageDB, imageId, ownerId, callback) {
         _classCallCheck(this, ImageUploadDialog);
 
         this.imageDB = imageDB;
         this.imageId = imageId;
+        this.ownerId = ownerId;
         this.callback = callback;
         this.createImageUploadDialog();
     }
@@ -10005,10 +10007,8 @@ var ImageUploadDialog = exports.ImageUploadDialog = (function () {
 
             formValues.append('id', this.imageId);
 
-            if (theEditor && theEditor.doc && theEditor.doc.owner && theEditor.doc.owner.id) {
-                // If there is currently a document loaded, make the uploaded image
-                // belong to the owner of it.
-                formValues.append('owner_id', theEditor.doc.owner.id);
+            if (this.ownerId) {
+                formValues.append('owner_id', this.ownerId);
             }
 
             jQuery('.fw-media-form').each(function () {

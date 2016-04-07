@@ -1,9 +1,10 @@
 import {usermediaUploadCategoryTemplate, usermediaUploadTemplate} from "./templates"
 
 export class ImageUploadDialog {
-    constructor(imageDB, imageId, callback) {
+    constructor(imageDB, imageId, ownerId, callback) {
         this.imageDB = imageDB
         this.imageId = imageId
+        this.ownerId = ownerId
         this.callback = callback
         this.createImageUploadDialog()
     }
@@ -110,10 +111,8 @@ export class ImageUploadDialog {
 
         formValues.append('id', this.imageId)
 
-        if(theEditor && theEditor.doc && theEditor.doc.owner && theEditor.doc.owner.id) {
-            // If there is currently a document loaded, make the uploaded image
-            // belong to the owner of it.
-            formValues.append('owner_id', theEditor.doc.owner.id)
+        if(this.ownerId) {
+            formValues.append('owner_id', this.ownerId)
         }
 
         jQuery('.fw-media-form').each(function () {

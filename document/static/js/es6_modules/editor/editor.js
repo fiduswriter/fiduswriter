@@ -381,11 +381,16 @@ export class Editor {
     // filter transformations, disallowing all transformations going across document parts/footnotes.
     onFilterTransform(transform) {
         let prohibited = false
-        transform.steps.forEach(function(step, index) {
-            if(step.from && step.to && (step.from.path.length === 0 ||
-              step.to.path.length === 0 || step.from.path[0] !== step.to.path[0])) {
+        const docParts = ['title', 'metadatasubtitle', 'metadataauthors', 'metadataabstract',
+            'metadatakeywords', 'documentcontents']
+        let index = 0
+        transform.doc.forEach(function(childNode){
+            if (index > 5) {
+                prohibited = true
+            } else if (docParts[index] !== childNode.type.name) {
                 prohibited = true
             }
+            index++
         })
         return prohibited
     }

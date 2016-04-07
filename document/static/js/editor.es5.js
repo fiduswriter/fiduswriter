@@ -3956,10 +3956,15 @@ var Editor = exports.Editor = (function () {
         key: "onFilterTransform",
         value: function onFilterTransform(transform) {
             var prohibited = false;
-            transform.steps.forEach(function (step, index) {
-                if (step.from && step.to && (step.from.path.length === 0 || step.to.path.length === 0 || step.from.path[0] !== step.to.path[0])) {
+            var docParts = ['title', 'metadatasubtitle', 'metadataauthors', 'metadataabstract', 'metadatakeywords', 'documentcontents'];
+            var index = 0;
+            transform.doc.forEach(function (childNode) {
+                if (index > 5) {
+                    prohibited = true;
+                } else if (docParts[index] !== childNode.type.name) {
                     prohibited = true;
                 }
+                index++;
             });
             return prohibited;
         }

@@ -1,30 +1,9 @@
-/**
- * @file Sets up the user media page.
- * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
- *
- * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
- *
- * @license This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
- *
- */
+import {ImageUploadDialog} from "./es6_modules/images/upload-dialog/upload-dialog"
 
-(function () {
-    var exports = this,
- /** Helper functions for user added images/SVGs. TODO
+ /** Helper functions for user added images/SVGs.
   * @namespace usermediaHelpers
   */
-        usermediaHelpers = {};
+    let usermediaHelpers = {};
 // NO Export
     usermediaHelpers.createImage = function (post_data) {
         $.activateWait();
@@ -185,12 +164,6 @@
 
         formValues.append('id', id);
 
-        if(theEditor && theEditor.doc && theEditor.doc.owner && theEditor.doc.owner.id) {
-            // If there is currently a document loaded, make the uploaded image
-            // belong to the owner of it.
-            formValues.append('owner_id', theEditor.doc.owner.id);
-        }
-
         jQuery('.fw-media-form').each(function () {
             var $this = jQuery(this);
             var the_name = $this.attr('name') || $this.attr('data-field-name');
@@ -267,7 +240,7 @@
                 'fieldTitle': gettext('Select categories')
             })
         }));
-        diaButtons = {};
+        let diaButtons = {};
         diaButtons[action] = function () {
             usermediaHelpers.onCreateImageSubmitHandler(id);
         };
@@ -476,62 +449,24 @@
         }
     };
 
-    usermediaHelpers.getAnImageDB = function (ownerId, callback) {
-        // Get the ImageDB of one specific user and call the callback with it.
-        var anImageDB = {};
-        $.ajax({
-            url: '/usermedia/images/',
-            data: {
-                'owner_id': ownerId
-            },
-            type: 'POST',
-            dataType: 'json',
-            success: function (response, textStatus, jqXHR) {
-                for (i = 0; i < response.images.length; i++) {
-                    response.images[i].image = response.images[i].image.split('?')[0];
-                    anImageDB[response.images[i]['pk']] = response.images[
-                        i];
-                }
-                if (callback) {
-                    callback(anImageDB);
-                }
-            },
-            error: function (jqXHR, textStatus, errorThrown) {
-                $.addAlert('error', jqXHR.responseText);
-            },
-            complete: function () {
-                $.deactivateWait();
-            }
-        });
-
-    };
-
-
     usermediaHelpers.getImageDB = function (callback) {
-        var documentOwnerId;
 
         window.ImageDB = {};
         window.imageCategories = [];
         //Fill ImageDB
-        if (typeof (theEditor) === 'undefined') {
-            documentOwnerId = 0;
-        } else {
-            documentOwnerId = theEditor.doc.owner.id;
-        }
 
         $.activateWait();
 
         $.ajax({
             url: '/usermedia/images/',
             data: {
-                'owner_id': documentOwnerId
+                'owner_id': 0
             },
             type: 'POST',
             dataType: 'json',
             success: function (response, textStatus, jqXHR) {
                 usermediaHelpers.addImageCategoryList(response.imageCategories);
                 usermediaHelpers.addImageList(response.images);
-                jQuery(document.body).trigger("imagelist_ready");
                 if (callback) {
                     callback();
                 }
@@ -554,13 +489,6 @@
         added to the DOM. Instead we destroy and recreate it.
         */
 
-        var nonSortable = [0, 2];
-
-        // Only on the large usermedia table remove the 5th row sorting as well.
-        if (jQuery('#imagelist th').length > 2) {
-            nonSortable.push(4);
-        }
-
         jQuery('#imagelist').dataTable({
             "bPaginate": false,
             "bLengthChange": false,
@@ -572,7 +500,7 @@
             },
             "aoColumnDefs": [{
                 "bSortable": false,
-                "aTargets": nonSortable
+                "aTargets": [0, 2, 4]
             }],
         });
         jQuery('#imagelist_filter input').attr('placeholder', gettext('Search for Filename'));
@@ -607,6 +535,7 @@
         jQuery(document).on('click', '.edit-image', function () {
             var iID = jQuery(this).attr('data-id');
             var iType = jQuery(this).attr('data-type');
+
             usermediaHelpers.createImageDialog(iID, iType);
         });
         jQuery('#edit-category').bind('click', usermediaHelpers.createCategoryDialog);
@@ -674,6 +603,4 @@
     };
 
 
-    exports.usermediaHelpers = usermediaHelpers;
-
-}).call(this);
+    window.usermediaHelpers = usermediaHelpers;

@@ -1393,7 +1393,7 @@ var BookActions = exports.BookActions = (function () {
             jQuery(document).on('click', '#remove-cover-image-button', function () {
                 delete theBook.cover_image;
                 jQuery('#figure-preview-row').html((0, _templates.bookEpubDataCoverTemplate)({
-                    'theBook': theBook
+                    theBook: theBook
                 }));
             });
 

@@ -1,7 +1,6 @@
 import {Pos} from "prosemirror/dist/model"
 import {fromHTML} from "prosemirror/dist/format"
 import {Step} from "prosemirror/dist/transform"
-import {fidusFnSchema, Footnote} from "../schema"
 
 /* Functions related to the footnote editor instance */
 export class ModFootnoteEditor {
@@ -65,7 +64,7 @@ export class ModFootnoteEditor {
 
     applyDiffs(diffs) {
         console.log('applying footnote diff')
-        this.mod.fnPm.mod.collab.receive(diffs.map(j => Step.fromJSON(fidusFnSchema, j)))
+        this.mod.fnPm.mod.collab.receive(diffs.map(j => Step.fromJSON(this.mod.schema, j)))
     }
 
     renderAllFootnotes() {
@@ -94,7 +93,7 @@ export class ModFootnoteEditor {
     renderFootnote(contents, index = 0) {
         this.rendering = true
         let footnoteHTML = "<div class='footnote-container'>" + contents + "</div>"
-        let node = fromHTML(fidusFnSchema, footnoteHTML, {
+        let node = fromHTML(this.mod.schema, footnoteHTML, {
             preserveWhitespace: true
         }).firstChild
         this.mod.fnPm.tr.insert(new Pos([], index), node).apply({filter:false})

@@ -1,7 +1,5 @@
 import {Pos} from "prosemirror/dist/model"
 import {fromHTML, toHTML} from "prosemirror/dist/format"
-import {fidusFnSchema} from "../schema"
-
 
 /* Functions related to footnote markers in the main editor */
 export class ModFootnoteMarkers {

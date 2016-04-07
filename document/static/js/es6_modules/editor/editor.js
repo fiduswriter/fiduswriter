@@ -227,6 +227,7 @@ export class Editor {
             imageGetter.getDB(function(){
                 that.imageDB = imageGetter
                 that.schema.cached.imageDB = imageGetter // assign image DB to be used in schema.
+                that.mod.footnotes.schema.cached.imageDB = imageGetter // assign image DB to be used in footnote schema.
                 callback()
             })
         } else {

@@ -9,7 +9,7 @@ var theDocumentOverview = new _overview.DocumentOverview();
 
 window.theDocumentOverview = theDocumentOverview;
 
-},{"./es6_modules/documents/overview/overview":12}],2:[function(require,module,exports){
+},{"./es6_modules/documents/overview/overview":14}],2:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -536,7 +536,7 @@ var BibLatexExporter = exports.BibLatexExporter = (function () {
     return BibLatexExporter;
 })();
 
-},{"../../exporter/zip":30,"../statics":5}],4:[function(require,module,exports){
+},{"../../exporter/zip":32,"../statics":5}],4:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1337,6 +1337,188 @@ var yearFromDateString = function yearFromDateString(dateString) {
 },{"../bibliography/exporter/csl":4,"./citeproc-sys":6}],8:[function(require,module,exports){
 'use strict';
 
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+exports.deleteMemberDialog = exports.addMemberDialog = undefined;
+
+var _templates = require('./templates');
+
+/**
+* Sets up the contacts management. Helper functions for adding and removing contacts.
+*/
+
+//add a user to contact per ajax
+var addMember = function addMember(user_string) {
+    if (null == user_string || 'undefined' == typeof user_string) {
+        return false;
+    }
+
+    user_string = $.trim(user_string);
+    jQuery('#add-new-member .warning').detach();
+    if ('' == user_string) return false;
+    $.ajax({
+        url: '/account/teammember/add',
+        data: { 'user_string': user_string },
+        type: 'POST',
+        dataType: 'json',
+        success: function success(response, textStatus, jqXHR) {
+            if (jqXHR.status == 201) {
+                //user added to the contacts
+                if (jQuery('#access-rights-dialog').size()) {
+                    var member_data = {
+                        'user_id': response.member.id,
+                        'user_name': response.member.name,
+                        'avatar': response.member.avatar,
+                        'rights': 'r'
+                    };
+
+                    jQuery('#my-contacts .fw-document-table-body').append(tmp_access_right_tr({ 'contacts': [response.member] }));
+                    jQuery('#share-member table tbody').append(tmp_collaborators({ 'collaborators': [member_data] }));
+                    //accessrightsHelpers.collaboratorFunctionsEvent() TODO: FIgure out what is happening here. This event disappeared with conversion to ES6.
+                } else {
+                        jQuery('#team-table tbody').append((0, _templates.teammemberTemplate)({
+                            'members': [response.member]
+                        }));
+                    }
+                jQuery("#add-new-member").dialog('close');
+            } else {
+                //user not found
+                var responseHtml = undefined;
+
+                if (response.error === 1) {
+                    responseHtml = gettext('You cannot add yourself to your contacts!');
+                } else if (response.error === 2) {
+                    responseHtml = gettext('This person is already in your contacts');
+                } else if (user_string.indexOf('@') != -1 && user_string.indexOf('.') != -1) {
+                    responseHtml = gettext('No user is registered with the given email address.') + '<br />' + gettext('Please invite him/her ') + '<a target="_blank" href="mailto:' + user_string + '?subject=' + encodeURIComponent(gettext('Fidus Writer')) + '&body=' + encodeURIComponent(gettext('Hey, I would like you to sign up for a Fidus Writer account.') + "\n" + gettext('Please register at')) + ' ' + window.location.origin + '">' + gettext('by sending an email') + '</a>!';
+                } else {
+                    responseHtml = gettext('User is not registered.');
+                }
+                jQuery('#add-new-member').append('<div class="warning" style="padding: 8px;">' + responseHtml + '</div>');
+            }
+        },
+        error: function error(jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR.responseText);
+        }
+    });
+};
+
+//dialog for adding a user to contacts
+var addMemberDialog = exports.addMemberDialog = function addMemberDialog() {
+    var dialogHeader = gettext('Add a user to your contacts');
+    jQuery('body').append((0, _templates.addTeammemberTemplate)({
+        'dialogHeader': dialogHeader
+    }));
+
+    var diaButtons = {};
+    diaButtons[gettext('Submit')] = function () {
+        addMember(jQuery('#new-member-user-string').val());
+    };
+    diaButtons[gettext('Cancel')] = function () {
+        jQuery(this).dialog('close');
+    };
+
+    jQuery("#add-new-member").dialog({
+        resizable: false,
+        width: 350,
+        height: 250,
+        modal: true,
+        buttons: diaButtons,
+        create: function create() {
+            var $the_dialog = jQuery(this).closest(".ui-dialog");
+            $the_dialog.find(".ui-button:first-child").addClass("fw-button fw-dark");
+            $the_dialog.find(".ui-button:last").addClass("fw-button fw-orange");
+            jQuery('#new-member-user-string').css('width', 340);
+        },
+        close: function close() {
+            jQuery("#add-new-member").dialog('destroy').remove();
+        }
+    });
+};
+
+var deleteMember = function deleteMember(ids) {
+    $.ajax({
+        url: '/account/teammember/remove',
+        data: { 'members[]': ids },
+        type: 'POST',
+        dataType: 'json',
+        success: function success(response, textStatus, jqXHR) {
+            if (jqXHR.status == 200) {
+                //user added to the contacts
+                jQuery('#user-' + ids.join(', #user-')).remove();
+                jQuery("#confirmdeletion").dialog('close');
+            }
+        },
+        error: function error(jqXHR, textStatus, errorThrown) {
+            console.log(jqXHR.responseText);
+        }
+    });
+};
+
+//dialog for removing a user from contacts
+var deleteMemberDialog = exports.deleteMemberDialog = function deleteMemberDialog(memberIds) {
+    jQuery('body').append('<div id="confirmdeletion" title="' + gettext('Confirm deletion') + '"><p>' + gettext('Remove from the contacts') + '?</p></div>');
+    var diaButtons = {};
+    diaButtons[gettext('Delete')] = function () {
+        deleteMember(memberIds);
+    };
+    diaButtons[gettext('Cancel')] = function () {
+        jQuery(this).dialog('close');
+    };
+    jQuery("#confirmdeletion").dialog({
+        resizable: false,
+        height: 200,
+        modal: true,
+        buttons: diaButtons,
+        create: function create() {
+            var $the_dialog = jQuery(this).closest(".ui-dialog");
+            $the_dialog.find(".ui-button:first-child").addClass("fw-button fw-dark");
+            $the_dialog.find(".ui-button:last").addClass("fw-button fw-orange");
+        },
+        close: function close() {
+            jQuery("#confirmdeletion").dialog('destroy').remove();
+        }
+    });
+};
+
+},{"./templates":9}],9:[function(require,module,exports){
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+//template for the list of teammembers
+var teammemberTemplate = exports.teammemberTemplate = _.template('<% _.each(members, function(member) { %>\
+    <tr id="user-<%= member.id %>">\
+        <td width="30">\
+            <span class="fw-inline"><input type="checkbox" class="entry-select" data-id="<%= member.id %>"/></span>\
+        </td>\
+        <td width="350">\
+            <span><img class="fw-avatar" src="<%= member.avatar %>" /></span>\
+            <span class="fw-inline"><%- member.name %></span>\
+        </td>\
+        <td width="350">\
+            <span class="fw-inline"><%- member.email %></span>\
+        </td>\
+        <td width="50" align="center">\
+            <span class="fw-link-text delete-single-member fw-inline" data-id="<%= member.id %>">\
+                <i class="icon-trash"></i>\
+            </span>\
+        </td>\
+    </tr><% }) %>');
+
+//template for member adding dialog
+var addTeammemberTemplate = exports.addTeammemberTemplate = _.template('\
+    <div id="add-new-member" title="<%- dialogHeader %>">\
+        <table class="ui-dialog-content-table"><tbody><tr><td>\
+            <input type="text" name="user_string" id="new-member-user-string" placeholder="' + gettext('E-mail address or username') + '" />\
+        </td></tr></tbody></table>\
+    </div>');
+
+},{}],10:[function(require,module,exports){
+"use strict";
+
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 
 Object.defineProperty(exports, "__esModule", {
@@ -1344,7 +1526,9 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.DocumentAccessRightsDialog = undefined;
 
-var _templates = require('./templates');
+var _templates = require("./templates");
+
+var _manage = require("../../contacts/manage");
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -1363,7 +1547,7 @@ var DocumentAccessRightsDialog = exports.DocumentAccessRightsDialog = (function 
     }
 
     _createClass(DocumentAccessRightsDialog, [{
-        key: 'createAccessRightsDialog',
+        key: "createAccessRightsDialog",
         value: function createAccessRightsDialog() {
             var that = this;
             var dialogHeader = gettext('Share your document with others');
@@ -1396,7 +1580,7 @@ var DocumentAccessRightsDialog = exports.DocumentAccessRightsDialog = (function 
 
             var diaButtons = {};
             diaButtons[gettext('Add new contact')] = function () {
-                contactHelpers.addMemberDialog();
+                (0, _manage.addMemberDialog)();
             };
             diaButtons[gettext('Submit')] = function () {
                 //apply the current state to server
@@ -1460,7 +1644,7 @@ var DocumentAccessRightsDialog = exports.DocumentAccessRightsDialog = (function 
             that.collaboratorFunctionsEvent();
         }
     }, {
-        key: 'collaboratorFunctionsEvent',
+        key: "collaboratorFunctionsEvent",
         value: function collaboratorFunctionsEvent() {
             jQuery('.edit-right').unbind('click');
             jQuery('.edit-right').each(function () {
@@ -1475,7 +1659,7 @@ var DocumentAccessRightsDialog = exports.DocumentAccessRightsDialog = (function 
             });
         }
     }, {
-        key: 'submitAccessRight',
+        key: "submitAccessRight",
         value: function submitAccessRight(newCollaborators, newAccessRights) {
             var that = this;
             var postData = {
@@ -1502,7 +1686,7 @@ var DocumentAccessRightsDialog = exports.DocumentAccessRightsDialog = (function 
     return DocumentAccessRightsDialog;
 })();
 
-},{"./templates":9}],9:[function(require,module,exports){
+},{"../../contacts/manage":8,"./templates":11}],11:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -1578,7 +1762,7 @@ var collaboratorsTemplate = exports.collaboratorsTemplate = _.template('<% _.eac
         </tr>\
     <% }) %>');
 
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1891,7 +2075,7 @@ var DocumentOverviewActions = exports.DocumentOverviewActions = (function () {
     return DocumentOverviewActions;
 })();
 
-},{"../../bibliography/database":2,"../../exporter/copy":18,"../../exporter/epub":21,"../../exporter/html":23,"../../exporter/latex":25,"../../exporter/native":26,"../../images/database":31,"../../importer/file":32,"../revisions/dialog":14,"../tools":16,"./templates":13}],11:[function(require,module,exports){
+},{"../../bibliography/database":2,"../../exporter/copy":20,"../../exporter/epub":23,"../../exporter/html":25,"../../exporter/latex":27,"../../exporter/native":28,"../../images/database":33,"../../importer/file":34,"../revisions/dialog":16,"../tools":18,"./templates":15}],13:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -1998,7 +2182,7 @@ var DocumentOverviewMenus = exports.DocumentOverviewMenus = (function () {
     return DocumentOverviewMenus;
 })();
 
-},{"../access-rights/dialog":8}],12:[function(require,module,exports){
+},{"../access-rights/dialog":10}],14:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2169,7 +2353,7 @@ var DocumentOverview = exports.DocumentOverview = (function () {
     return DocumentOverview;
 })();
 
-},{"../../bibliography/database":2,"../../images/database":31,"./actions":10,"./menus":11,"./templates":13}],13:[function(require,module,exports){
+},{"../../bibliography/database":2,"../../images/database":33,"./actions":12,"./menus":13,"./templates":15}],15:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2238,7 +2422,7 @@ var importFidusTemplate = exports.importFidusTemplate = _.template('<div id="imp
         </form>\
     </div>');
 
-},{}],14:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2467,7 +2651,7 @@ var DocumentRevisionsDialog = exports.DocumentRevisionsDialog = (function () {
     return DocumentRevisionsDialog;
 })();
 
-},{"../../exporter/download":19,"../../importer/file":32,"./templates":15}],15:[function(require,module,exports){
+},{"../../exporter/download":21,"../../importer/file":34,"./templates":17}],17:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2511,7 +2695,7 @@ var documentrevisionsConfirmDeleteTemplate = exports.documentrevisionsConfirmDel
 <div id="confirmdeletion" title="' + gettext('Confirm deletion') + '">\
     <p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>' + gettext('Do you really want to delete the revision?') + '</p></div>');
 
-},{}],16:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2560,7 +2744,7 @@ var getMissingDocumentListData = exports.getMissingDocumentListData = function g
     }
 };
 
-},{}],17:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -2627,7 +2811,7 @@ var BaseExporter = exports.BaseExporter = (function () {
     return BaseExporter;
 })();
 
-},{}],18:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2667,7 +2851,7 @@ var savecopy = exports.savecopy = function savecopy(doc, oldBibDB, oldImageDB, n
     });
 };
 
-},{"../bibliography/database":2,"../importer/native":33,"./native":26}],19:[function(require,module,exports){
+},{"../bibliography/database":2,"../importer/native":35,"./native":28}],21:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -2688,7 +2872,7 @@ var downloadFile = exports.downloadFile = function downloadFile(zipFilename, blo
     fakeDownloadLink.dispatchEvent(clickEvent);
 };
 
-},{}],20:[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -2810,7 +2994,7 @@ var navItemTemplate = exports.navItemTemplate = _.template('\t\t\t\t<li><a href=
     <% } %>\
 </li>\n');
 
-},{}],21:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -3147,7 +3331,7 @@ var EpubExporter = exports.EpubExporter = (function (_BaseEpubExporter) {
     return EpubExporter;
 })(BaseEpubExporter);
 
-},{"../katex/opf-includes":34,"./epub-templates":20,"./html":23,"./json":24,"./tools":27,"./zip":30,"katex":35}],22:[function(require,module,exports){
+},{"../katex/opf-includes":36,"./epub-templates":22,"./html":25,"./json":26,"./tools":29,"./zip":32,"katex":37}],24:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3166,7 +3350,7 @@ var htmlExportTemplate = exports.htmlExportTemplate = _.template('<!DOCTYPE html
         <% } %>\
         <%= contents %></body></html>');
 
-},{}],23:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -3399,7 +3583,7 @@ var HTMLExporter = exports.HTMLExporter = (function (_BaseHTMLExporter) {
     return HTMLExporter;
 })(BaseHTMLExporter);
 
-},{"../bibliography/database":2,"../citations/format":7,"./base":17,"./html-templates":22,"./json":24,"./tools":27,"./zip":30,"katex":35}],24:[function(require,module,exports){
+},{"../bibliography/database":2,"../citations/format":7,"./base":19,"./html-templates":24,"./json":26,"./tools":29,"./zip":32,"katex":37}],26:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -3476,7 +3660,7 @@ var node2Obj = exports.node2Obj = function node2Obj(node) {
     return obj;
 };
 
-},{}],25:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -3928,7 +4112,7 @@ var LatexExporter = exports.LatexExporter = (function (_BaseLatexExporter) {
     return LatexExporter;
 })(BaseLatexExporter);
 
-},{"../bibliography/database":2,"../bibliography/exporter/biblatex":3,"./base":17,"./json":24,"./tools":27,"./zip":30}],26:[function(require,module,exports){
+},{"../bibliography/database":2,"../bibliography/exporter/biblatex":3,"./base":19,"./json":26,"./tools":29,"./zip":32}],28:[function(require,module,exports){
 "use strict";
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -4082,7 +4266,7 @@ var exportNativeFile = function exportNativeFile(aDocument, shrunkImageDB, shrun
     (0, _zip.zipFileCreator)(outputList, httpOutputList, (0, _tools.createSlug)(aDocument.title) + '.fidus', 'application/fidus+zip', false, upload, editor);
 };
 
-},{"../bibliography/database":2,"./json":24,"./tools":27,"./zip":30}],27:[function(require,module,exports){
+},{"../bibliography/database":2,"./json":26,"./tools":29,"./zip":32}],29:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4127,7 +4311,7 @@ var findImages = exports.findImages = function findImages(htmlCode) {
     return images;
 };
 
-},{}],28:[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 'use strict';
 
 Object.defineProperty(exports, "__esModule", {
@@ -4137,7 +4321,7 @@ Object.defineProperty(exports, "__esModule", {
 var revisionDialogTemplate = exports.revisionDialogTemplate = _.template('\
 <div title="' + gettext('Revision description') + '"><p><input type="text" class="revision-note" placeholder="' + gettext('Description (optional)') + '"></p></div>');
 
-},{}],29:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4198,7 +4382,7 @@ var uploadFile = exports.uploadFile = function uploadFile(zipFilename, blob, edi
     });
 };
 
-},{"./upload-templates":28}],30:[function(require,module,exports){
+},{"./upload-templates":30}],32:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4321,7 +4505,7 @@ var zipFileCreator = exports.zipFileCreator = function zipFileCreator(textFiles,
     }
 };
 
-},{"./download":19,"./upload":29}],31:[function(require,module,exports){
+},{"./download":21,"./upload":31}],33:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -4429,7 +4613,7 @@ var ImageDB = exports.ImageDB = (function () {
     return ImageDB;
 })();
 
-},{}],32:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -4569,7 +4753,7 @@ var ImportFidusFile = exports.ImportFidusFile = (function () {
     return ImportFidusFile;
 })();
 
-},{"./native":33}],33:[function(require,module,exports){
+},{"./native":35}],35:[function(require,module,exports){
 'use strict';
 
 var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
@@ -4948,7 +5132,7 @@ var ImportNative = exports.ImportNative = (function () {
     return ImportNative;
 })();
 
-},{"../exporter/json":24}],34:[function(require,module,exports){
+},{"../exporter/json":26}],36:[function(require,module,exports){
 "use strict";
 
 Object.defineProperty(exports, "__esModule", {
@@ -4957,7 +5141,7 @@ Object.defineProperty(exports, "__esModule", {
 // This file is auto-generated. CHANGES WILL BE OVERWRITTEN! Re-generate by running ./manage.py bundle_katex.
 var katexOpfIncludes = exports.katexOpfIncludes = "\n<item id=\"katex-0\" href=\"katex.min.css\" media-type=\"text/css\" />\n<item id=\"katex-1\" href=\"fonts/KaTeX_Typewriter-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-2\" href=\"fonts/KaTeX_Main-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-3\" href=\"fonts/KaTeX_Fraktur-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-4\" href=\"fonts/KaTeX_SansSerif-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-5\" href=\"fonts/KaTeX_Main-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-6\" href=\"fonts/KaTeX_Main-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-7\" href=\"fonts/KaTeX_SansSerif-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-8\" href=\"fonts/KaTeX_AMS-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-9\" href=\"fonts/KaTeX_Caligraphic-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-10\" href=\"fonts/KaTeX_Size4-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-11\" href=\"fonts/KaTeX_Math-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-12\" href=\"fonts/KaTeX_Size1-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-13\" href=\"fonts/KaTeX_Math-BoldItalic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-14\" href=\"fonts/KaTeX_Script-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-15\" href=\"fonts/KaTeX_Main-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-16\" href=\"fonts/KaTeX_Math-BoldItalic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-17\" href=\"fonts/KaTeX_Fraktur-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-18\" href=\"fonts/KaTeX_Main-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-19\" href=\"fonts/KaTeX_Size1-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-20\" href=\"fonts/KaTeX_SansSerif-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-21\" href=\"fonts/KaTeX_Math-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-22\" href=\"fonts/KaTeX_Fraktur-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-23\" href=\"fonts/KaTeX_Script-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-24\" href=\"fonts/KaTeX_Fraktur-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-25\" href=\"fonts/KaTeX_Main-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-26\" href=\"fonts/KaTeX_Size1-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-27\" href=\"fonts/KaTeX_Size3-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-28\" href=\"fonts/KaTeX_SansSerif-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-29\" href=\"fonts/KaTeX_Script-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-30\" href=\"fonts/KaTeX_Main-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-31\" href=\"fonts/KaTeX_Math-Italic.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-32\" href=\"fonts/KaTeX_Main-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-33\" href=\"fonts/KaTeX_Typewriter-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-34\" href=\"fonts/KaTeX_Math-BoldItalic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-35\" href=\"fonts/KaTeX_AMS-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-36\" href=\"fonts/KaTeX_Size2-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-37\" href=\"fonts/KaTeX_Caligraphic-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-38\" href=\"fonts/KaTeX_Fraktur-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-39\" href=\"fonts/KaTeX_Typewriter-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-40\" href=\"fonts/KaTeX_Math-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-41\" href=\"fonts/KaTeX_SansSerif-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-42\" href=\"fonts/KaTeX_Script-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-43\" href=\"fonts/KaTeX_Caligraphic-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-44\" href=\"fonts/KaTeX_SansSerif-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-45\" href=\"fonts/KaTeX_AMS-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-46\" href=\"fonts/KaTeX_Caligraphic-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-47\" href=\"fonts/KaTeX_Fraktur-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-48\" href=\"fonts/KaTeX_Main-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-49\" href=\"fonts/KaTeX_SansSerif-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-50\" href=\"fonts/KaTeX_Size4-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-51\" href=\"fonts/KaTeX_Math-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-52\" href=\"fonts/KaTeX_SansSerif-Italic.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-53\" href=\"fonts/KaTeX_Size2-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-54\" href=\"fonts/KaTeX_Fraktur-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-55\" href=\"fonts/KaTeX_Size2-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-56\" href=\"fonts/KaTeX_SansSerif-Bold.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-57\" href=\"fonts/KaTeX_AMS-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-58\" href=\"fonts/KaTeX_Math-Italic.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-59\" href=\"fonts/KaTeX_SansSerif-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-60\" href=\"fonts/KaTeX_Main-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-61\" href=\"fonts/KaTeX_Typewriter-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-62\" href=\"fonts/KaTeX_Size3-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-63\" href=\"fonts/KaTeX_Main-Bold.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-64\" href=\"fonts/KaTeX_Caligraphic-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-65\" href=\"fonts/KaTeX_SansSerif-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-66\" href=\"fonts/KaTeX_Caligraphic-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-67\" href=\"fonts/KaTeX_Size4-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-68\" href=\"fonts/KaTeX_Main-Bold.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-69\" href=\"fonts/KaTeX_Math-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-70\" href=\"fonts/KaTeX_Size3-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-71\" href=\"fonts/KaTeX_Fraktur-Regular.ttf\" media-type=\"application/x-font-ttf\" />\n<item id=\"katex-72\" href=\"fonts/KaTeX_Caligraphic-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-73\" href=\"fonts/KaTeX_Size2-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-74\" href=\"fonts/KaTeX_Size1-Regular.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-75\" href=\"fonts/KaTeX_SansSerif-Italic.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-76\" href=\"fonts/KaTeX_Size4-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-77\" href=\"fonts/KaTeX_Size3-Regular.woff2\" media-type=\"application/octet-stream\" />\n<item id=\"katex-78\" href=\"fonts/KaTeX_Caligraphic-Bold.woff\" media-type=\"application/octet-stream\" />\n<item id=\"katex-79\" href=\"fonts/KaTeX_Math-Regular.eot\" media-type=\"application/vnd.ms-fontobject\" />\n<item id=\"katex-80\" href=\"fonts/KaTeX_Math-BoldItalic.woff\" media-type=\"application/octet-stream\" />\n";
 
-},{}],35:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 /**
  * This is the main entry point for KaTeX. Here, we expose functions for
  * rendering expressions either to DOM nodes or to markup strings.
@@ -5032,7 +5216,7 @@ module.exports = {
     ParseError: ParseError
 };
 
-},{"./src/ParseError":38,"./src/Settings":40,"./src/buildTree":45,"./src/parseTree":54,"./src/utils":56}],36:[function(require,module,exports){
+},{"./src/ParseError":40,"./src/Settings":42,"./src/buildTree":47,"./src/parseTree":56,"./src/utils":58}],38:[function(require,module,exports){
 /**
  * The Lexer class handles tokenizing the input in various ways. Since our
  * parser expects us to be able to backtrack, the lexer allows lexing from any
@@ -5228,7 +5412,7 @@ Lexer.prototype.lex = function(pos, mode) {
 
 module.exports = Lexer;
 
-},{"./ParseError":38,"match-at":57}],37:[function(require,module,exports){
+},{"./ParseError":40,"match-at":59}],39:[function(require,module,exports){
 /**
  * This file contains information about the options that the Parser carries
  * around with it while parsing. Data is held in an `Options` object, and when
@@ -5419,7 +5603,7 @@ Options.prototype.getColor = function() {
 
 module.exports = Options;
 
-},{}],38:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 /**
  * This is the ParseError class, which is the main error thrown by KaTeX
  * functions when something has gone wrong. This is used to distinguish internal
@@ -5461,7 +5645,7 @@ ParseError.prototype.__proto__ = Error.prototype;
 
 module.exports = ParseError;
 
-},{}],39:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 var functions = require("./functions");
 var environments = require("./environments");
 var Lexer = require("./Lexer");
@@ -6183,7 +6367,7 @@ Parser.prototype.ParseNode = ParseNode;
 
 module.exports = Parser;
 
-},{"./Lexer":36,"./ParseError":38,"./environments":48,"./functions":51,"./parseData":53,"./symbols":55,"./utils":56}],40:[function(require,module,exports){
+},{"./Lexer":38,"./ParseError":40,"./environments":50,"./functions":53,"./parseData":55,"./symbols":57,"./utils":58}],42:[function(require,module,exports){
 /**
  * This is a module for storing settings passed into KaTeX. It correctly handles
  * default settings.
@@ -6213,7 +6397,7 @@ function Settings(options) {
 
 module.exports = Settings;
 
-},{}],41:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 /**
  * This file contains information and classes for the various kinds of styles
  * used in TeX. It provides a generic `Style` class, which holds information
@@ -6341,7 +6525,7 @@ module.exports = {
     SCRIPTSCRIPT: styles[SS]
 };
 
-},{}],42:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 /**
  * This module contains general functions that can be used for building
  * different kinds of domTree nodes in a consistent manner.
@@ -6790,7 +6974,7 @@ module.exports = {
     spacingFunctions: spacingFunctions
 };
 
-},{"./domTree":47,"./fontMetrics":49,"./symbols":55,"./utils":56}],43:[function(require,module,exports){
+},{"./domTree":49,"./fontMetrics":51,"./symbols":57,"./utils":58}],45:[function(require,module,exports){
 /**
  * This file does the main work of building a domTree structure from a parse
  * tree. The entry point is the `buildHTML` function, which takes a parse tree.
@@ -8154,7 +8338,7 @@ var buildHTML = function(tree, options) {
 
 module.exports = buildHTML;
 
-},{"./ParseError":38,"./Style":41,"./buildCommon":42,"./delimiter":46,"./domTree":47,"./fontMetrics":49,"./utils":56}],44:[function(require,module,exports){
+},{"./ParseError":40,"./Style":43,"./buildCommon":44,"./delimiter":48,"./domTree":49,"./fontMetrics":51,"./utils":58}],46:[function(require,module,exports){
 /**
  * This file converts a parse tree into a cooresponding MathML tree. The main
  * entry point is the `buildMathML` function, which takes a parse tree from the
@@ -8675,7 +8859,7 @@ var buildMathML = function(tree, texExpression, options) {
 
 module.exports = buildMathML;
 
-},{"./ParseError":38,"./buildCommon":42,"./fontMetrics":49,"./mathMLTree":52,"./symbols":55,"./utils":56}],45:[function(require,module,exports){
+},{"./ParseError":40,"./buildCommon":44,"./fontMetrics":51,"./mathMLTree":54,"./symbols":57,"./utils":58}],47:[function(require,module,exports){
 var buildHTML = require("./buildHTML");
 var buildMathML = require("./buildMathML");
 var buildCommon = require("./buildCommon");
@@ -8717,7 +8901,7 @@ var buildTree = function(tree, expression, settings) {
 
 module.exports = buildTree;
 
-},{"./Options":37,"./Settings":40,"./Style":41,"./buildCommon":42,"./buildHTML":43,"./buildMathML":44}],46:[function(require,module,exports){
+},{"./Options":39,"./Settings":42,"./Style":43,"./buildCommon":44,"./buildHTML":45,"./buildMathML":46}],48:[function(require,module,exports){
 /**
  * This file deals with creating delimiters of various sizes. The TeXbook
  * discusses these routines on page 441-442, in the "Another subroutine sets box
@@ -9258,7 +9442,7 @@ module.exports = {
     leftRightDelim: makeLeftRightDelim
 };
 
-},{"./ParseError":38,"./Style":41,"./buildCommon":42,"./fontMetrics":49,"./symbols":55,"./utils":56}],47:[function(require,module,exports){
+},{"./ParseError":40,"./Style":43,"./buildCommon":44,"./fontMetrics":51,"./symbols":57,"./utils":58}],49:[function(require,module,exports){
 /**
  * These objects store the data about the DOM nodes we create, as well as some
  * extra data. They can then be transformed into real DOM nodes with the
@@ -9529,7 +9713,7 @@ module.exports = {
     symbolNode: symbolNode
 };
 
-},{"./utils":56}],48:[function(require,module,exports){
+},{"./utils":58}],50:[function(require,module,exports){
 var fontMetrics = require("./fontMetrics");
 var parseData = require("./parseData");
 var ParseError = require("./ParseError");
@@ -9709,7 +9893,7 @@ module.exports = (function() {
     return exports;
 })();
 
-},{"./ParseError":38,"./fontMetrics":49,"./parseData":53}],49:[function(require,module,exports){
+},{"./ParseError":40,"./fontMetrics":51,"./parseData":55}],51:[function(require,module,exports){
 /* jshint unused:false */
 
 var Style = require("./Style");
@@ -9846,7 +10030,7 @@ module.exports = {
     getCharacterMetrics: getCharacterMetrics
 };
 
-},{"./Style":41,"./fontMetricsData":50}],50:[function(require,module,exports){
+},{"./Style":43,"./fontMetricsData":52}],52:[function(require,module,exports){
 module.exports = {
 "AMS-Regular": {
   "65": {"depth": 0.0, "height": 0.68889, "italic": 0.0, "skew": 0.0},
@@ -11599,7 +11783,7 @@ module.exports = {
   "8242": {"depth": 0.0, "height": 0.61111, "italic": 0.0, "skew": 0.0}
 }};
 
-},{}],51:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 var utils = require("./utils");
 var ParseError = require("./ParseError");
 
@@ -12230,7 +12414,7 @@ module.exports = {
     funcs: functions
 };
 
-},{"./ParseError":38,"./utils":56}],52:[function(require,module,exports){
+},{"./ParseError":40,"./utils":58}],54:[function(require,module,exports){
 /**
  * These objects store data about MathML nodes. This is the MathML equivalent
  * of the types in domTree.js. Since MathML handles its own rendering, and
@@ -12334,7 +12518,7 @@ module.exports = {
     TextNode: TextNode
 };
 
-},{"./utils":56}],53:[function(require,module,exports){
+},{"./utils":58}],55:[function(require,module,exports){
 /**
  * The resulting parse tree nodes of the parse tree.
  */
@@ -12359,7 +12543,7 @@ module.exports = {
 };
 
 
-},{}],54:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 /**
  * Provides a single function for parsing an expression using a Parser
  * TODO(emily): Remove this
@@ -12378,7 +12562,7 @@ var parseTree = function(toParse, settings) {
 
 module.exports = parseTree;
 
-},{"./Parser":39}],55:[function(require,module,exports){
+},{"./Parser":41}],57:[function(require,module,exports){
 /**
  * This file holds a list of all no-argument functions and single-character
  * symbols (like 'a' or ';').
@@ -14965,7 +15149,7 @@ for (var i = 0; i < letters.length; i++) {
 
 module.exports = symbols;
 
-},{}],56:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 /**
  * This file contains a list of utility functions which are useful in other
  * files.
@@ -15072,7 +15256,7 @@ module.exports = {
     clearNode: clearNode
 };
 
-},{}],57:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 /** @flow */
 
 "use strict";

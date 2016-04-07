@@ -192,20 +192,21 @@ class DocumentWS(BaseWebSocketHandler):
             DocumentWS.sessions[self.user_info.document_id]['settings'][parsed['variable']] = parsed['value']
             DocumentWS.send_updates(message, self.user_info.document_id, self.id)
 
-    def validate_only_comment_role(self, parsed_diffs):
+    def accept_only_comments(self, parsed_diffs):
         allowed_operations = ['addMark', 'removeMark']
         for diff in parsed_diffs:
             #TODO: add allowed actions
-            if diff['type'] not in allowed_operations:
-                raise PermissionDenied("Cannot write changes to document")
+            if diff['type'] in allowed_operations and diff['param']['_'] == 'comment':
+                self.doc["last_diffs"].extend([diff])
+                #raise PermissionDenied("Cannot write changes to document")
 
     def handle_diff(self, message, parsed):
         if self.user_info.document_id in DocumentWS.sessions:
             if parsed["diff_version"] == self.doc['diff_version'] and parsed["comment_version"] == self.doc['comment_version']:
                 if self.user_info.access_rights in COMMENT_ONLY:
-                    self.validate_only_comment_role(parsed['diff'])
-
-                self.doc["last_diffs"].extend(parsed["diff"])
+                    self.accept_only_comments(parsed['diff'])
+                else:
+                    self.doc["last_diffs"].extend(parsed["diff"])
                 self.doc['diff_version'] += len(parsed["diff"])
                 for cd in parsed["comments"]:
                     id = str(cd["id"])

@@ -1,5 +1,4 @@
 import {DocumentAccessRightsDialog} from "../access-rights/dialog"
-import {DocumentRevisionsDialog} from "../revisions/dialog"
 
 export class DocumentOverviewMenus {
     constructor (documentOverview) {

@@ -1,8 +1,10 @@
 import {bookListTemplate, bookBasicInfoTemplate, bookPrintDataTemplate,
-    bookCoverImageSelectionTemplate, bookDialogChaptersTemplate, bookDialogTemplate,
+    bookDialogChaptersTemplate, bookDialogTemplate,
     bookChapterListTemplate, bookDocumentListTemplate, bookChapterDialogTemplate,
     bookBibliographyDataTemplate, bookEpubDataTemplate, bookEpubDataCoverTemplate
   } from "./templates"
+import {ImageDB} from "../images/database"
+import {ImageSelectionDialog} from "../images/selection-dialog/selection-dialog"
 
 export class BookActions {
 
@@ -145,67 +147,6 @@ export class BookActions {
         })
     }
 
-
-    selectCoverImageDialog(theBook,anImageDB) {
-        let dialogHeader = gettext('Select cover image'),
-            dialogBody = bookCoverImageSelectionTemplate({
-                theBook: theBook,
-                anImageDB: anImageDB
-            })
-
-        jQuery(document).on('click', '#imagelist tr', function () {
-            if (jQuery(this).hasClass('checked')) {
-                jQuery(this).removeClass('checked')
-            } else {
-                jQuery('#imagelist tr.checked').removeClass('checked')
-                jQuery(this).addClass('checked')
-            }
-        })
-
-
-        jQuery('body').append(dialogBody)
-
-        if (theBook.cover_image) {
-            jQuery('#Image_' + theBook.cover_image).addClass('checked')
-        }
-
-        jQuery('#cancelImageFigureButton').bind('click', function () {
-            jQuery('#book-cover-image-selection').dialog('close')
-        })
-
-        jQuery('#selectImageFigureButton').bind('click', function () {
-            if (jQuery('#imagelist tr.checked').length === 0) {
-                delete theBook.cover_image
-            } else {
-                theBook.cover_image = parseInt(jQuery('#imagelist tr.checked')[0].id.substring(6))
-            }
-            jQuery('#figure-preview-row').html(bookEpubDataCoverTemplate({
-                'anImageDB': anImageDB,
-                'theBook': theBook
-            }))
-            jQuery('#book-cover-image-selection').dialog('close')
-        })
-
-
-        jQuery('#book-cover-image-selection').dialog({
-            draggable: false,
-            resizable: false,
-            top: 10,
-            width: 'auto',
-            height: 'auto',
-            modal: true,
-            buttons: {},
-            create: function () {},
-            close: function () {
-                jQuery(document).off('click', '#imagelist tr')
-                jQuery('#selectImageFigureButton').unbind('click')
-                jQuery('#cancelImageFigureButton').unbind('click')
-                jQuery('#book-cover-image-selection').dialog('destroy')
-                    .remove()
-            }
-        })
-    }
-
     editChapterDialog(aChapter, theBook) {
         let that = this
         let aDocument = _.findWhere(that.bookList.documentList, {
@@ -316,25 +257,21 @@ export class BookActions {
 
     prepareCopyCoverImage(coverImage, userId, callback) {
         let that = this
-        if ('undefined' === typeof (ImageDB)) {
-            usermediaHelpers.getImageDB(function () {
-                that.prepareCopyCoverImage(coverImage, userId,
-                    callback)
-                return
-            })
-        } else {
-            usermediaHelpers.getAnImageDB(userId, function (anImageDB) {
-                that.copyCoverImage(anImageDB[coverImage],
+
+        this.bookList.getImageDB(function(){
+            that.getImageDB(userId,function(imageDB){
+                let coverImageImage = imageDB[coverImage]
+                that.copyCoverImage(coverImageImage,
                     callback)
             })
-        }
+        })
     }
 
     copyCoverImage(oldImageObject, callback) {
         let newImageEntry = false,
             imageTranslation = false
 
-        matchEntries = _.where(ImageDB, {
+        matchEntries = _.where(this.bookList.imageDB.db, {
             checksum: oldImageObject.checksum
         })
         if (0 === matchEntries.length) {
@@ -368,7 +305,7 @@ export class BookActions {
         }
 
     }
-
+    // TODO: Should we not be able to call a method from
     createNewImage(imageEntry, callback) {
         let xhr = new XMLHttpRequest()
         xhr.open('GET', imageEntry.oldUrl, true)
@@ -386,28 +323,10 @@ export class BookActions {
                 formValues.append('imageCats', '')
                 formValues.append('image', imageFile,
                     imageEntry.oldUrl.split('/').pop())
-                formValues.append('checksum', imageEntry.checksum),
-
-                jQuery.ajax({
-                    url: '/usermedia/save/',
-                    data: formValues,
-                    type: 'POST',
-                    dataType: 'json',
-                    success: function (response, textStatus, jqXHR) {
-                        ImageDB[response.values.pk] = response.values
-                        callback(response.values.pk)
-                    },
-                    error: function () {
-                        jQuery.addAlert('error', gettext(
-                                'Could not save ') +
-                            imageEntry.title)
-                    },
-                    complete: function () {},
-                    cache: false,
-                    contentType: false,
-                    processData: false
+                formValues.append('checksum', imageEntry.checksum)
+                that.bookList.imageDB.createImage(formValues, function(response){
+                    callback(response)
                 })
-                return
             }
         }
 
@@ -445,24 +364,6 @@ export class BookActions {
         }
 
 
-        if ('undefined' === typeof (anImageDB)) {
-            if ('undefined' === typeof (ImageDB) && theBook.is_owner) {
-                // load the ImageDB if it is not available yet. Once done, load this function.
-                usermediaHelpers.init(function () {
-                    that.createBookDialog(bookId, ImageDB)
-                })
-                return
-            } else if (!theBook.is_owner) {
-                usermediaHelpers.getAnImageDB(theBook.owner, function (anImageDB) {
-                    that.createBookDialog(bookId, anImageDB)
-                })
-                return
-            } else {
-                that.createBookDialog(bookId, ImageDB)
-                return
-            }
-        }
-
         let dialogBody = bookDialogTemplate({
             dialogHeader: dialogHeader,
             basicInfo: bookBasicInfoTemplate({
@@ -479,17 +380,17 @@ export class BookActions {
                 })
             }),
             bibliographyData: bookBibliographyDataTemplate({
-                theBook: theBook
+                theBook
             }),
             printData: bookPrintDataTemplate({
-                theBook: theBook
+                theBook
             }),
             epubData: bookEpubDataTemplate({
                 theBook: theBook,
 
                 coverImage: bookEpubDataCoverTemplate({
-                    theBook: theBook,
-                    anImageDB: anImageDB
+                    theBook,
+                    anImageDB
                 })
             })
 
@@ -583,14 +484,25 @@ export class BookActions {
 
 
         jQuery(document).on('click', '#select-cover-image-button', function () {
-            that.selectCoverImageDialog(theBook,anImageDB)
-            usermediaHelpers.startUsermediaTable()
+            new ImageSelectionDialog(anImageDB, theBook.cover_image, theBook.owner, function(imageId){
+                console.log(imageId)
+                console.log(anImageDB)
+                if (!imageId) {
+                    delete theBook.cover_image
+                } else {
+                    theBook.cover_image = imageId
+                }
+                jQuery('#figure-preview-row').html(bookEpubDataCoverTemplate({
+                    anImageDB,
+                    theBook
+                }))
+            })
         })
 
         jQuery(document).on('click', '#remove-cover-image-button', function () {
             delete theBook.cover_image
             jQuery('#figure-preview-row').html(bookEpubDataCoverTemplate({
-                'theBook': theBook
+                theBook
             }))
         })
 

@@ -3,162 +3,169 @@ import {render as katexRender} from "katex"
 import {getMissingChapterData, getImageAndBibDB, uniqueObjects} from "./tools"
 import {htmlBookExportTemplate, htmlBookIndexTemplate, htmlBookIndexItemTemplate} from "./html-templates"
 import {obj2Node} from "../../exporter/json"
-import {setLinks, orderLinks} from "../../exporter/epub"
-import {cleanHTML, replaceImgSrc} from "../../exporter/html"
+import {BaseEpubExporter} from "../../exporter/epub"
 import {createSlug, findImages} from "../../exporter/tools"
 import {zipFileCreator} from "../../exporter/zip"
 import {formatCitations} from "../../citations/format"
 
-// Some templates need to be able to refer to these templates, so we hand the templates variable to such
-// templates.
-let templates = {htmlBookIndexItemTemplate}
 
-export let downloadHtmlBook = function (aBook, user, documentList) {
-    getMissingChapterData(aBook, documentList, function () {
-        getImageAndBibDB(aBook, documentList, function (anImageDB,
-            aBibDB) {
-            htmlBookExport(aBook, anImageDB, aBibDB, user, documentList)
-        })
-    })
-}
-
-let htmlBookExport = function (aBook, anImageDB, aBibDB, user, documentList) {
-    let math = false,
-        styleSheets = [],
-        chapters = []
-
-
-    aBook.chapters = _.sortBy(aBook.chapters, function (chapter) {
-        return chapter.number
-    })
-
-    for (let i = 0; i < aBook.chapters.length; i++) {
-
-        let aDocument = _.findWhere(documentList, {
-            id: aBook.chapters[i].text
-        })
-
-        let contents = obj2Node(aDocument.contents)
-
-        let bibliography = formatCitations(contents,
-            aBook.settings.citationstyle,
-            aBibDB)
-
-        if (bibliography.length > 0) {
-            contents.innerHTML += bibliography
-        }
-
-        let equations = contents.querySelectorAll('.equation')
-
-        let figureEquations = contents.querySelectorAll('.figure-equation')
-
-        if (equations.length > 0 || figureEquations.length > 0) {
-            math = true
-        }
-
-        for (let j = 0; j < equations.length; j++) {
-            let node = equations[j]
-            let formula = node.getAttribute('data-equation')
-            katexRender(formula, node)
-        }
-        for (let j = 0; j < figureEquations.length; j++) {
-            let node = figureEquations[j]
-            let formula = node.getAttribute('data-equation')
-            katexRender(formula, node, {
-                displayMode: true
+export class HTMLBookExporter extends BaseEpubExporter { // extension is correct. Neds orderLinks/setLinks methods from base epub exporter.
+    constructor(book, user, docList) {
+        super()
+        let that = this
+        this.book = book
+        this.user = user
+        this.docList = docList
+        getMissingChapterData(book, docList, function () {
+            getImageAndBibDB(book, docList, function (imageDB,
+                bibDB) {
+                that.bibDB = bibDB
+                that.imageDB = imageDB
+                that.exportOne()
             })
-        }
-
-        chapters.push({document:aDocument,contents:contents})
+        })
     }
 
-    let outputList = [],
-        images = [],
-        contentItems = [],
-        includeZips = []
+    exportOne() {
+        let math = false,
+            styleSheets = [],
+            chapters = []
 
-    for (let i=0; i < chapters.length; i++) {
 
-        let contents = chapters[i].contents
+        this.book.chapters = _.sortBy(this.book.chapters, function (chapter) {
+            return chapter.number
+        })
 
-        let aDocument = chapters[i].document
+        for (let i = 0; i < this.book.chapters.length; i++) {
 
-        let title = aDocument.title
+            let aDocument = _.findWhere(this.docList, {
+                id: this.book.chapters[i].text
+            })
 
-        images = images.concat(findImages(contents))
+            let contents = obj2Node(aDocument.contents)
 
-        contents = cleanHTML(contents)
+            let bibliography = formatCitations(contents,
+                this.book.settings.citationstyle,
+                this.bibDB)
 
-        if (aBook.chapters[i].part && aBook.chapters[i].part != '') {
+            if (bibliography.length > 0) {
+                contents.innerHTML += bibliography
+            }
+
+            let equations = contents.querySelectorAll('.equation')
+
+            let figureEquations = contents.querySelectorAll('.figure-equation')
+
+            if (equations.length > 0 || figureEquations.length > 0) {
+                math = true
+            }
+
+            for (let j = 0; j < equations.length; j++) {
+                let node = equations[j]
+                let formula = node.getAttribute('data-equation')
+                katexRender(formula, node)
+            }
+            for (let j = 0; j < figureEquations.length; j++) {
+                let node = figureEquations[j]
+                let formula = node.getAttribute('data-equation')
+                katexRender(formula, node, {
+                    displayMode: true
+                })
+            }
+
+            chapters.push({document:aDocument,contents:contents})
+        }
+
+        let outputList = [],
+            images = [],
+            contentItems = [],
+            includeZips = []
+
+        for (let i=0; i < chapters.length; i++) {
+
+            let contents = chapters[i].contents
+
+            let aDocument = chapters[i].document
+
+            let title = aDocument.title
+
+            images = images.concat(findImages(contents))
+
+            contents = this.cleanHTML(contents)
+
+            if (this.book.chapters[i].part && this.book.chapters[i].part != '') {
+                contentItems.push({
+                    link: 'document-' + this.book.chapters[i].number + '.html',
+                    title: this.book.chapters[i].part,
+                    docNum: this.book.chapters[i].number,
+                    id: 0,
+                    level: -1,
+                    subItems: [],
+                })
+            }
+
             contentItems.push({
-                link: 'document-' + aBook.chapters[i].number + '.html',
-                title: aBook.chapters[i].part,
-                docNum: aBook.chapters[i].number,
+                link: 'document-' + this.book.chapters[i].number + '.html',
+                title: title,
+                docNum: this.book.chapters[i].number,
                 id: 0,
-                level: -1,
+                level: 0,
                 subItems: [],
             })
+
+            // Make links to all H1-3 and create a TOC list of them
+            contentItems = contentItems.concat(this.setLinks(contents,
+                this.book.chapters[i].number))
+
+
+            let contentsCode = this.replaceImgSrc(contents.innerHTML)
+
+            let htmlCode = htmlBookExportTemplate({
+                part: this.book.chapters[i].part,
+                title,
+                metadata: aDocument.metadata,
+                settings: aDocument.settings,
+                styleSheets,
+                contents: contentsCode,
+                math,
+                obj2Node
+            })
+
+            outputList.push({
+                filename: 'document-' + this.book.chapters[i].number + '.html',
+                contents: htmlCode
+            })
+
         }
 
-        contentItems.push({
-            link: 'document-' + aBook.chapters[i].number + '.html',
-            title: title,
-            docNum: aBook.chapters[i].number,
-            id: 0,
-            level: 0,
-            subItems: [],
-        })
+        contentItems = this.orderLinks(contentItems)
 
-        // Make links to all H1-3 and create a TOC list of them
-        contentItems = contentItems.concat(setLinks(contents,
-            aBook.chapters[i].number))
-
-
-        let contentsCode = replaceImgSrc(contents.innerHTML)
-
-        let htmlCode = htmlBookExportTemplate({
-            part: aBook.chapters[i].part,
-            title,
-            metadata: aDocument.metadata,
-            settings: aDocument.settings,
-            styleSheets,
-            contents: contentsCode,
-            math,
-            obj2Node
-        })
+        outputList = outputList.concat(styleSheets)
 
         outputList.push({
-            filename: 'document-' + aBook.chapters[i].number + '.html',
-            contents: htmlCode
+            filename: 'index.html',
+            contents: htmlBookIndexTemplate({
+                contentItems,
+                aBook: this.book,
+                creator: this.user.name,
+                language: gettext('English'), //TODO: specify a book language rather than using the current users UI language
+                templates: {htmlBookIndexItemTemplate}
+            })
         })
 
+        if (math) {
+            includeZips.push({
+                'directory': '',
+                'url': staticUrl + 'zip/katex-style.zip'
+            })
+        }
+
+        images = uniqueObjects(images)
+
+        zipFileCreator(outputList, images, createSlug(
+                this.book.title) +
+            '.html.zip', false, includeZips)
     }
 
-    contentItems = orderLinks(contentItems)
 
-    outputList = outputList.concat(styleSheets)
-
-    outputList.push({
-        filename: 'index.html',
-        contents: htmlBookIndexTemplate({
-            contentItems,
-            aBook,
-            creator: user.name,
-            language: gettext('English'), //TODO: specify a book language rather than using the current users UI language
-            templates
-        })
-    })
-
-    if (math) {
-        includeZips.push({
-            'directory': '',
-            'url': staticUrl + 'zip/katex-style.zip'
-        })
-    }
-
-    images = uniqueObjects(images)
-
-    zipFileCreator(outputList, images, createSlug(
-            aBook.title) +
-        '.html.zip', false, includeZips)
 }

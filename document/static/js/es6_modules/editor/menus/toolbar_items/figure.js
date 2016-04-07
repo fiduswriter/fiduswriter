@@ -1,90 +1,112 @@
-import {figureImageTemplate, configureFigureTemplate} from "./templates"
+import {figureImageTemplate, figureImageItemTemplate, configureFigureTemplate} from "./templates"
+import {ImageSelectionDialog} from "../../../images/selection-dialog/selection-dialog"
+
 import {render as katexRender} from "katex"
 
-export let bindFigure = function (editor) {
-// toolbar figure
-    jQuery(document).on('mousedown', '#button-figure:not(.disabled)', function (event) {
+export class FigureDialog {
+    constructor(editor) {
+        this.editor = editor
+        this.imageDB = this.editor.imageDB
+        this.imageId = false
+        this.insideFigure = false,
+        this.figureNode = false,
+        this.contentNode = false,
+        this.caption = '',
+        this.figureCategory = 'figure',
+        this.equation = '',
+        this.node = editor.currentPm.selection.node
+        this.submitMessage = gettext('Insert')
+        this.dialog = false
+        this.createFigureDialog()
+    }
 
-        let dialog, submitMessage = gettext('Insert'),
-            dialogButtons = [],
-            insideFigure = false,
-            figureNode = false,
-            contentNode = false,
-            image = false,
-            caption = '',
-            figureCategory = 'figure',
-            equation = '',
-            previewImage,
-            node = editor.currentPm.selection.node
+    layoutMathPreview() {
+        let previewNode = document.getElementById('inner-figure-preview')
+        katexRender(this.equation, previewNode, {
+            displayMode: true
+        })
+    }
 
-        event.preventDefault()
+    layoutImagePreview() {
+        //TODO: Figure out what to do if the image has been deleted from imageDB.db in the meantime.
+        if (this.imageId && this.imageDB.db[this.imageId]) {
+            document.getElementById('inner-figure-preview').innerHTML =
+                '<img src="' +
+                this.imageDB.db[this.imageId].image +
+                '" style="max-width: 400px;max-height:220px">'
+        }
+    }
 
+    setFigureLabel() {
+        jQuery(
+            '#figure-category-btn label',
+            this.dialog).html(jQuery('#figure-category-' + this.figureCategory).text())
+    }
 
+    submitForm() {
+        let mathInput = jQuery('input[name=figure-math]', this.dialog)
+        let captionInput = jQuery('input[name=figure-caption]', this.dialog)
+        this.equation = mathInput.val()
+        this.caption = captionInput.val()
 
-
-        if (node && node.type && node.type.name==='figure') {
-            insideFigure = true
-            submitMessage = gettext('Update')
-            equation = node.attrs.equation
-            image = node.attrs.image
-            figureCategory = node.attrs.figureCategory
-            caption = node.attrs.caption
-
-            if ('' === image) {
-                image = false
-            } else {
-                previewImage = ImageDB[image]
-                //TODO: Figure out what to do if the image has been deleted from ImageDB in the meantime.
+        if ((new RegExp(/^\s*$/)).test(this.equation) && (!this.imageId)) {
+            // The math input is empty. Delete a math node if it exist. Then close the dialog.
+            if (this.insideFigure) {
+                this.editor.currentPm.execCommand('deleteSelection')
             }
+            this.dialog.dialog('close')
+            return false
+        }
+
+        if (this.insideFigure && this.equation === this.node.attrs.equation &&
+            (this.imageId === this.node.attrs.image) &&
+            this.caption === this.node.attrs.caption &&
+            this.figureCategory === this.node.attrs.figureCategory) {
+            // the figure has not been changed, just close the dialog
+            this.dialog.dialog('close')
+            return false
+        }
+
+        this.editor.currentPm.execCommand('figure:insert', [this.equation, this.imageId, this.figureCategory, this.caption])
+
+        this.dialog.dialog('close')
+    }
+
+    createFigureDialog() {
+    // toolbar figure
+        let that = this, dialogButtons = []
+
+        if (this.node && this.node.type && this.node.type.name==='figure') {
+            this.insideFigure = true
+            this.submitMessage = gettext('Update')
+            this.equation = this.node.attrs.equation
+            this.imageId = this.node.attrs.image
+            this.figureCategory = this.node.attrs.figureCategory
+            this.caption = this.node.attrs.caption
+
             dialogButtons.push({
                 text: gettext('Remove'),
                 class: 'fw-button fw-orange',
                 click: function () {
-                    editor.currentPm.execCommand('deleteSelection')
+                    that.editor.currentPm.execCommand('deleteSelection')
                     dialog.dialog('close')
                 }
             })
 
         }
 
-        dialog = jQuery(configureFigureTemplate({
-            equation: equation,
-            caption: caption,
-            image: image
+        this.dialog = jQuery(configureFigureTemplate({
+            equation: this.equation,
+            caption: this.caption,
+            image: this.imageId
         }))
 
         dialogButtons.push({
-            text: submitMessage,
+            text: this.submitMessage,
             class: 'fw-button fw-dark',
             mousedown: function (event) {
-                let figureCatNode, captionTextNode, captionNode
-                event.preventDefault()
-                equation = mathInput.val()
-                caption = captionInput.val()
-
-                if ((new RegExp(/^\s*$/)).test(equation) && (!image)) {
-                    // The math input is empty. Delete a math node if it exist. Then close the dialog.
-                    if (insideFigure) {
-                        editor.currentPm.execCommand('deleteSelection')
-                    }
-                    dialog.dialog('close')
-                    return false
-                }
-
-                if (insideFigure && equation === node.attrs.equation &&
-                    (image === node.attrs.image) &&
-                    caption === node.attrs.caption &&
-                    figureCategory === node.attrs.figureCategory) {
-                    // the figure has not been changed, just close the dialog
-                    dialog.dialog('close')
-                    return false
-                }
-
-                editor.currentPm.execCommand('figure:insert', [equation, image, figureCategory, caption])
-
-
-                dialog.dialog('close')
-                return false
+                //event.preventDefault()
+                that.submitForm()
             },
         })
 
@@ -92,7 +114,7 @@ export let bindFigure = function (editor) {
             text: gettext('Cancel'),
             class: 'fw-button fw-orange',
             click: function (event) {
-                dialog.dialog('close')
+                that.dialog.dialog('close')
             }
         })
 
@@ -107,15 +129,15 @@ export let bindFigure = function (editor) {
             buttons: dialogButtons,
             dialogClass: 'figure-dialog',
             close: function () {
-                jQuery(this).dialog('destroy').remove()
+                that.dialog.dialog('destroy').remove()
             },
         }
 
 
-        dialog.dialog(dialogOpts)
+        this.dialog.dialog(dialogOpts)
 
-        let mathInput = jQuery('input[name=figure-math]', dialog)
-        let captionInput = jQuery('input[name=figure-caption]', dialog)
+
+        let captionInput = jQuery('input[name=figure-caption]', this.dialog)
             .focus(function (
                 e) {
                 return this.select()
@@ -123,33 +145,14 @@ export let bindFigure = function (editor) {
 
         captionInput.focus()
 
-        function setFigureLabel() {
-            jQuery(
-                '#figure-category-btn label',
-                dialog).html(jQuery('#figure-category-' + figureCategory).text())
-        }
-        setFigureLabel()
 
-        function layoutMathPreview() {
-            let previewNode = document.getElementById('inner-figure-preview')
-            katexRender(equation, previewNode, {
-                displayMode: true
-            })
-        }
+        this.setFigureLabel()
 
-        function layoutImagePreview() {
-            document.getElementById('inner-figure-preview').innerHTML =
-                '<img src="' +
-                previewImage.image +
-                '" style="max-width: 400px;max-height:220px">'
+        if (this.equation) {
+            this.layoutMathPreview()
+        } else if (this.imageId) {
+            this.layoutImagePreview()
         }
-
-        if (equation) {
-            layoutMathPreview()
-        } else if (image) {
-            layoutImagePreview()
-        }
-
 
         $.addDropdownBox(jQuery('#figure-category-btn'), jQuery(
             '#figure-category-pulldown'))
@@ -157,8 +160,8 @@ export let bindFigure = function (editor) {
         jQuery('#figure-category-pulldown li span').bind(
             'mousedown', function (event) {
                 event.preventDefault()
-                figureCategory = this.id.split('-')[2]
-                setFigureLabel()
+                that.figureCategory = this.id.split('-')[2]
+                that.setFigureLabel()
             })
 
         jQuery('input[name=figure-math]').bind('focus',
@@ -179,79 +182,32 @@ export let bindFigure = function (editor) {
                         'disabled')
                         .removeAttr('disabled')
                 } else {
-                    equation = jQuery(this).val()
-                    layoutMathPreview()
+                    that.equation = jQuery(this).val()
+                    that.layoutMathPreview()
                 }
             })
 
-        jQuery('#insertFigureImage').bind('click',
-            function () {
-                if (jQuery(this).hasClass('disabled')) {
-                    return
+        jQuery('#insertFigureImage').bind('click', function () {
+            if (jQuery(this).hasClass('disabled')) {
+                return
+            }
+
+            new ImageSelectionDialog(that.imageDB, that.imageId, that.editor.doc.owner.id, function(newImageId) {
+                if (newImageId) {
+                    that.imageId = newImageId
+                    that.layoutImagePreview()
+                    jQuery('input[name=figure-math]').attr(
+                        'disabled',
+                        'disabled')
+                } else {
+                    that.imageId = false
+                    jQuery('#inner-figure-preview').html('')
+                    jQuery('input[name=figure-math]').removeAttr(
+                        'disabled')
                 }
-                let imageDialog = jQuery(figureImageTemplate()).dialog({
-                    width: 'auto',
-                    height: 'auto',
-                    title: gettext("Images"),
-                    modal: true,
-                    resizable: false,
-                    draggable: false,
-                    dialogClass: 'figureimage-dialog',
-                    close: function () {
-                        jQuery(this).dialog('destroy').remove()
-                    }
-                })
-
-                usermediaHelpers.startUsermediaTable()
-
-                if (image) {
-                    jQuery('#Image_' + image).addClass(
-                        'checked')
-                }
-
-                jQuery('#selectImageFigureButton').bind('click',
-                    function () {
-                        let checkedImage = jQuery(
-                            '#imagelist tr.checked')
-                        if (0 === checkedImage.length) {
-                            image = false
-                            jQuery('#inner-figure-preview')[0].innerHTML =
-                                ''
-                            jQuery('input[name=figure-math]').removeAttr(
-                                'disabled')
-                        } else {
-                            previewImage = ImageDB[checkedImage[0].id.split(
-                                '_')[1]]
-                            image = previewImage.pk
-                            layoutImagePreview()
-                            jQuery('input[name=figure-math]').attr(
-                                'disabled',
-                                'disabled')
-                        }
-                        imageDialog.dialog('close')
-                    })
-
-                jQuery('#cancelImageFigureButton').bind('click',
-                    function () {
-                        imageDialog.dialog('close')
-                    })
-
-
             })
 
-    })
-
-    // functions for the image selection dialog
-    jQuery(document).on('click', '#imagelist tr', function () {
-        let checkedImage = jQuery('#imagelist tr.checked'),
-            selecting = true
-        if (checkedImage.length > 0 && this == checkedImage[0]) {
-            selecting = false
-        }
-        checkedImage.removeClass('checked')
-        if (selecting) {
-            jQuery(this).addClass('checked')
-        }
-    })
+        })
+    }
 
 }

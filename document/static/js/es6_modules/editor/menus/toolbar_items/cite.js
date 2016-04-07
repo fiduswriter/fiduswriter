@@ -1,4 +1,6 @@
 import {configureCitationTemplate, citationItemTemplate, selectedCitationTemplate} from "./templates"
+import {BibEntryForm} from "../../../bibliography/form/form"
+
 
 export let bindCite = function (mod) {
 
@@ -58,7 +60,8 @@ export let bindCite = function (mod) {
             bibPage = cite_pages.join(',,,')
             bibBefore = cite_prefixes.join(',,,')
 
-            if (bibEntry === bibEntryStart && bibBefore === bibBeforeStart && bibPage == bibPageStart && bibFormat == bibFormatStart) {
+            if (bibEntry === bibEntryStart && bibBefore === bibBeforeStart && bibPage == bibPageStart
+                    && bibFormat == bibFormatStart) {
                 // Nothing has been changed, so we just close the dialog again
                 return true
             }
@@ -67,7 +70,7 @@ export let bindCite = function (mod) {
             return true
         }
 
-        _.each(BibDB, function(bib, index) {
+        _.each(editor.bibDB.bibDB, function(bib, index) {
             let bibEntry = {
                     'id': index,
                     'type': bib.entry_type,
@@ -91,7 +94,16 @@ export let bindCite = function (mod) {
         diaButtons.push({
             text: gettext('Register new source'),
             click: function() {
-                bibliographyHelpers.createBibEntryDialog()
+                new BibEntryForm(false, false, editor.bibDB.bibDB, editor.bibDB.bibCats, editor.doc.owner.id,
+                        function(bibEntryData){
+                    editor.bibDB.createBibEntry(bibEntryData, function(newBibPks) {
+                        editor.mod.menus.citation.appendManyToCitationDialog(newBibPks)
+                        jQuery('.fw-checkable').unbind('click')
+                        jQuery('.fw-checkable').bind('click', function() {
+                            $.setCheckableLabel($(this))
+                        })
+                    })
+                })
             },
             class: 'fw-button fw-light fw-add-button'
         })

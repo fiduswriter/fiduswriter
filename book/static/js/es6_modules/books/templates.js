@@ -174,7 +174,7 @@ export let bookEpubDataCoverTemplate = _.template('\
             <div class="figure-preview">\
                 <div id="inner-figure-preview">\
                     <% if (theBook.cover_image) {%>\
-                        <img src="<%= anImageDB[theBook.cover_image].image %>">\
+                        <img src="<%= anImageDB.db[theBook.cover_image].image %>">\
                     <% } %>\
                 </div>\
             </div>\
@@ -191,50 +191,6 @@ export let bookEpubDataCoverTemplate = _.template('\
                 <% } %>\
             </td>\
         <% } %>\
-')
-
-/** A template for the cover image selection for the epub version of a book. */
-export let bookCoverImageSelectionTemplate = _.template('\
-    <div id="book-cover-image-selection">\
-        <table id="imagelist" class="tablesorter fw-document-table" style="width:342px;">\
-            <thead class="fw-document-table-header">\
-                <tr>\
-                    <th width="50">'+gettext('Image')+'</th>\
-                    <th width="150">'+gettext('Title')+'</th>\
-                </tr>\
-            </thead>\
-            <tbody class="fw-document-table-body fw-small">\
-                <% _.each(anImageDB, function (image) { %>\
-                    <tr id="Image_<%- image.pk %>">\
-                        <td class="type" style="width:100px;">\
-                            <img src="<%- image.thumbnail %>" style="max-heigth:30px;max-width:30px;">\
-                        </td>\
-                        <td class="title" style="width:212px;">\
-                            <span class="fw-inline">\
-                                <span class="edit-image fw-link-text icon-figure" data-id="<%- image.pk %>">\
-                                    <%- image.title %>\
-                                </span>\
-                            </span>\
-                        </td>\
-                        <td class="checkable" style="width:30px;">\
-                        </td>\
-                    </tr>\
-                <% }) %>\
-            </tbody>\
-        </table>\
-        <div class="dialogSubmit">\
-            <button class="edit-image createNew fw-button fw-light">' +
-                gettext('Upload new image') +
-                '<span class="icon-plus-circle"></span>\
-            </button>\
-            <button type="button" id="selectImageFigureButton" class="fw-button fw-dark">' +
-                gettext('Use selected image') +
-            '</button>\
-                        <button type="button" id="cancelImageFigureButton" class="fw-button fw-orange">' +
-                gettext('Cancel') +
-            '</button>\
-        </div>\
-    </div>\
 ')
 
 /** A template for the book dialog. */

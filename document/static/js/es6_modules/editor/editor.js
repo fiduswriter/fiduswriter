@@ -392,6 +392,9 @@ export class Editor {
             }
             index++
         })
+        if (index < 5) {
+            prohibited = true
+        }
         return prohibited
     }
 

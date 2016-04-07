@@ -18,9 +18,28 @@ export class ModFootnoteEditor {
             that.footnoteEdit()
         })
         this.mod.fnPm.on("filterTransform", (transform) => {
-            return that.mod.editor.onFilterTransform(transform)
+            return that.onFilterTransform(transform)
         })
 
+    }
+
+    // filter transformations, disallowing all transformations going across document parts/footnotes.
+    onFilterTransform(transform) {
+        let prohibited = false
+
+        let index = 0
+        transform.docs[0].forEach(function(node){
+            index++
+        })
+        transform.doc.forEach(function(node){
+            index--
+        })
+
+        if (index !==0) {
+            prohibited = true
+        }
+
+        return prohibited
     }
 
 

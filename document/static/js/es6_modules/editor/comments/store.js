@@ -58,7 +58,7 @@ export class ModCommentStore {
     }
 
     removeCommentMarks(id) {
-        this.mod.editor.pm.doc.nodesBetween(false, false, (node, pos, parent) => {
+        this.mod.editor.pm.doc.descendants((node, pos, parent) => {
             let nodeStart = pos
             let nodeEnd = pos + node.nodeSize
             for (let i =0; i < node.marks.length; i++) {
@@ -98,7 +98,7 @@ export class ModCommentStore {
     checkAndDelete(ids) {
         let that = this
         // Check if there is still a node referring to the comment IDs that were in the deleted content.
-        this.mod.editor.pm.doc.nodesBetween(null, null, function(node, pos, parent) {
+        this.mod.editor.pm.doc.descendants(function(node, pos, parent) {
             if (!node.isInline) {
                 return
             }

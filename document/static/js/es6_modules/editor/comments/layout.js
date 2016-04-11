@@ -110,7 +110,7 @@ export class ModCommentLayout {
         let selection = this.mod.editor.pm.selection, comment = false, that = this
 
         if (selection.empty) {
-            let node = this.mod.editor.pm.doc.nodeAfter(selection.from).node
+            let node = this.mod.editor.pm.doc.nodeAt(selection.from)
             if (node) {
                 comment = this.findCommentsAt(node)
             }
@@ -142,7 +142,7 @@ export class ModCommentLayout {
         let theComments = [], referrers = [], activeCommentStyle = ''
 
 
-        this.mod.editor.pm.doc.nodesBetween(null, null, function(node, pos, parent) {
+        this.mod.editor.pm.doc.descendants(function(node, pos, parent) {
             if (!node.isInline) {
                 return
             }

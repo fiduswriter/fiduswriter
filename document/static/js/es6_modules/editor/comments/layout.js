@@ -1,6 +1,5 @@
 import {commentsTemplate, filterByUserBoxTemplate} from "./templates"
 import {UpdateScheduler, scheduleDOMUpdate} from "prosemirror/dist/ui/update"
-import {Pos} from "prosemirror/dist/model"
 import {Comment} from "./comment"
 
 /* Functions related to layouting of comments */
@@ -111,12 +110,12 @@ export class ModCommentLayout {
         let selection = this.mod.editor.pm.selection, comment = false, that = this
 
         if (selection.empty) {
-            let node = this.mod.editor.pm.doc.nodeAfter(selection.from)
+            let node = this.mod.editor.pm.doc.nodeAfter(selection.from).node
             if (node) {
                 comment = this.findCommentsAt(node)
             }
         } else {
-            this.mod.editor.pm.doc.nodesBetween(selection.from, selection.to, function(node, path, parent) {
+            this.mod.editor.pm.doc.nodesBetween(selection.from, selection.to, function(node, pos, parent) {
                 if (!node.isInline) {
                     return
                 }
@@ -143,7 +142,7 @@ export class ModCommentLayout {
         let theComments = [], referrers = [], activeCommentStyle = ''
 
 
-        this.mod.editor.pm.doc.nodesBetween(null, null, function(node, path, parent) {
+        this.mod.editor.pm.doc.nodesBetween(null, null, function(node, pos, parent) {
             if (!node.isInline) {
                 return
             }
@@ -168,7 +167,7 @@ export class ModCommentLayout {
                 activeCommentStyle += '.comments-enabled .comment[data-id="' + comment.id + '"] {background-color: #f2f2f2;}'
             }
             theComments.push(comment)
-            referrers.push(path.slice()) // TODO: Check whether cloning is still needed with ProseMirror 0.6.0+
+            referrers.push(pos)
         })
 
         let commentsTemplateHTML = commentsTemplate({
@@ -196,9 +195,7 @@ export class ModCommentLayout {
                 }
                 let commentBoxCoords = commentBox.getBoundingClientRect(),
                   commentBoxHeight = commentBoxCoords.height,
-                  nodeOffset = referrer.pop(),
-                  commentPos = new Pos(referrer, nodeOffset),
-                  referrerTop = that.mod.editor.pm.coordsAtPos(commentPos).top,
+                  referrerTop = that.mod.editor.pm.coordsAtPos(referrer).top,
                   topMargin = 10
 
                 if (referrerTop > totalOffset) {

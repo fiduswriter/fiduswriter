@@ -21,12 +21,12 @@ fi
 
 npm install
 
-# # Comment this part when using a release version of ProseMirror
-# cd node_modules/prosemirror/
-# npm install
-# npm run dist
-# cd ../..
-# # End comment
+# Comment this part when using a release version of ProseMirror
+cd node_modules/prosemirror/
+npm install
+npm run dist
+cd ../..
+# End comment
 
 fi
 

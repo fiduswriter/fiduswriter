@@ -1,4 +1,3 @@
-import {Pos} from "prosemirror/dist/model"
 import {fromHTML, toHTML} from "prosemirror/dist/format"
 
 /* Functions related to footnote markers in the main editor */
@@ -131,14 +130,15 @@ export class ModFootnoteMarkers {
         let footnoteMarkers = [],
             that = this
 
-        this.mod.editor.pm.doc.nodesBetween(fromPos, toPos, function(node, path, parent) {
+        this.mod.editor.pm.doc.nodesBetween(fromPos, toPos, function(node, pos, parent) {
+            console.log([node.type.name,node])
             if (!node.isInline) {
                 return
             }
             if (node.type.name === 'footnote') {
-                let nodePath = path.slice() // Make a copy to preserve original.
-                let nodeOffset = nodePath.pop()
-                let footnoteMarker = that.mod.editor.pm.markRange(new Pos(nodePath, nodeOffset), new Pos(nodePath, nodeOffset + node.width))
+                let startPos = pos
+                let endPos = pos + node.nodeSize
+                let footnoteMarker = that.mod.editor.pm.markRange(startPos, endPos)
                 footnoteMarker.on('removed', function() {
                     that.mod.fnEditor.removeFootnote(footnoteMarker)
                 })
@@ -156,21 +156,20 @@ export class ModFootnoteMarkers {
         let count = 0,
             passed = true,
             that = this
-        this.mod.editor.pm.doc.nodesBetween(null, null, function(node, path, parent) {
+        this.mod.editor.pm.doc.nodesBetween(null, null, function(node, pos, parent) {
+            console.log(node)
             if (!node.isInline || node.type.name !== 'footnote') {
                 return
             }
             if (that.mod.footnotes.length <= count) {
                 passed = false
             } else {
-                let nodePath = path.slice() // Preserve original
-                let nodeOffset = nodePath.pop()
-                let startPos = new Pos(nodePath, nodeOffset)
-                if (startPos.cmp(that.mod.footnotes[count].from) !== 0) {
+                let startPos = pos
+                if (startPos !== that.mod.footnotes[count].from) {
                     passed = false
                 }
-                let endPos = new Pos(nodePath, nodeOffset + node.width)
-                if (endPos.cmp(that.mod.footnotes[count].to) !== 0) {
+                let endPos = pos + node.nodeSize
+                if (endPos !== that.mod.footnotes[count].to) {
                     passed = false
                 }
             }

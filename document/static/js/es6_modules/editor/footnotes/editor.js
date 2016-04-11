@@ -1,4 +1,3 @@
-import {Pos} from "prosemirror/dist/model"
 import {fromHTML} from "prosemirror/dist/format"
 import {Step} from "prosemirror/dist/transform"
 
@@ -25,22 +24,23 @@ export class ModFootnoteEditor {
     // filter transformations, disallowing all transformations going across document parts/footnotes.
     onFilterTransform(transform) {
         let prohibited = false
-
-        let index = 0
-        transform.docs[0].forEach(function(node){
-            index++
-        })
-        transform.doc.forEach(function(node){
-            index--
-        })
-
-        if (index !==0) {
+        if (transform.docs[0].childCount !== transform.doc.childCount) {
             prohibited = true
         }
-
         return prohibited
     }
 
+
+    findPathIndex(pos, level) {
+        const resolvedPos = this.mod.fnPm.doc.resolve(pos)
+        const upperNode = resolvedPos.node(level)
+        const lowerNode = resolvedPos.node(level + 1)
+        let index = 0
+        while (upperNode.child(index) !== lowerNode) {
+            index++
+        }
+        return index
+    }
 
     footnoteEdit() {
         // Handle an edit in the footnote editor.
@@ -52,10 +52,10 @@ export class ModFootnoteEditor {
         console.log('footnote update')
         let length = this.mod.fnPm.mod.collab.unconfirmedSteps.length
         let lastStep = this.mod.fnPm.mod.collab.unconfirmedSteps[length - 1]
-        if (lastStep.from && lastStep.from.path && lastStep.from.path.length > 0) {
+        if (lastStep.from) {
             // We find the number of the last footnote that was updated by
-            // looking at the last step and seeing what path that change referred to.
-            let updatedFootnote = lastStep.from.path[0]
+            // looking at the last step and seeing footnote number that change referred to.
+            let updatedFootnote = this.findPathIndex(lastStep.from, 0)
             this.mod.markers.updateFootnoteMarker(updatedFootnote)
         } else {
             // TODO: Figure out if there are cases where this is really needed.
@@ -68,6 +68,7 @@ export class ModFootnoteEditor {
     }
 
     renderAllFootnotes() {
+        console.log('renderAllFootnotes')
         if (this.mod.markers.checkFootnoteMarkers()) {
             return false
         }
@@ -96,7 +97,11 @@ export class ModFootnoteEditor {
         let node = fromHTML(this.mod.schema, footnoteHTML, {
             preserveWhitespace: true
         }).firstChild
-        this.mod.fnPm.tr.insert(new Pos([], index), node).apply({filter:false})
+        let pos = 0
+        for (let i=0; i<index;i++) {
+            pos += this.mod.fnPm.doc.child(i).nodeSize
+        }
+        this.mod.fnPm.tr.insert(pos, node).apply({filter:false})
         this.rendering = false
     }
 
@@ -108,7 +113,12 @@ export class ModFootnoteEditor {
         this.mod.footnotes.splice(index, 1)
         if (!this.mod.editor.mod.collab.docChanges.receiving) {
             this.rendering = true
-            this.mod.fnPm.tr.delete(new Pos([], index), new Pos([], index + 1)).apply({filter:false})
+            let startPos = 0
+            for (let i=0;i<index;i++) {
+                startPos += this.mod.fnPm.doc.child(i).nodeSize
+            }
+            let endPos = startPos + this.mod.fnPm.doc.child(index).nodeSize
+            this.mod.fnPm.tr.delete(startPos, endPos).apply({filter:false})
             this.rendering = false
         }
     }

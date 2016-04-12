@@ -3,7 +3,7 @@ import {addMemberDialog, deleteMemberDialog} from "./manage"
 
 export let contactsOverview = function () {
     //intialize the teammember table
-    jQuery('#team-table tbody').append(teammemberTemplate({'members': teammembers}))
+    jQuery('#team-table tbody').append(teammemberTemplate({'members': window.teammembers}))
 
     //select all members
     jQuery('#select-all-entry').bind('change', function() {

@@ -14,8 +14,6 @@ export class Doc extends Block {
 }
 
 class Title extends Textblock {
-    //  get locked() { return true }
-    //  get selectable() { return false }
     get contains() {
         return NodeKind.text
     }

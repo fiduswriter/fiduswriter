@@ -30,18 +30,6 @@ export class ModFootnoteEditor {
         return prohibited
     }
 
-
-    findPathIndex(pos, level) {
-        const resolvedPos = this.mod.fnPm.doc.resolve(pos)
-        const upperNode = resolvedPos.node(level)
-        const lowerNode = resolvedPos.node(level + 1)
-        let index = 0
-        while (upperNode.child(index) !== lowerNode) {
-            index++
-        }
-        return index
-    }
-
     footnoteEdit() {
         // Handle an edit in the footnote editor.
         if (this.rendering) {
@@ -55,7 +43,7 @@ export class ModFootnoteEditor {
         if (lastStep.from) {
             // We find the number of the last footnote that was updated by
             // looking at the last step and seeing footnote number that change referred to.
-            let updatedFootnote = this.findPathIndex(lastStep.from, 0)
+            let updatedFootnote = this.mod.fnPm.doc.resolve(lastStep.from).index(0)
             this.mod.markers.updateFootnoteMarker(updatedFootnote)
         } else {
             // TODO: Figure out if there are cases where this is really needed.

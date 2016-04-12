@@ -262,15 +262,14 @@ Citation.register("parseDOM", "cite", {
 })
 
 Citation.prototype.serializeDOM = (node, serializer) => {
-    let dom = serializer.renderAs(node, "span", {
-        class: 'citation',
+    return serializer.elt("span", {
+        class: "citation",
         'data-bib-format': node.attrs.bibFormat,
         'data-bib-entry': node.attrs.bibEntry,
         'data-bib-before': node.attrs.bibBefore,
         'data-bib-page': node.attrs.bibPage
-      })
+    })
     // TODO: Do the citation formatting here rather than centrally, maybe?
-    return dom
 }
 
 Citation.register("command", "insert", {

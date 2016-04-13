@@ -45,6 +45,7 @@ do
   cp -R $directory/. $tmp_dir
 done
 
+
 for file in $sourcefiles
 do
   dirname=$(dirname "$file")
@@ -58,5 +59,6 @@ do
   #node_modules/.bin/browserify $infile --list --fast --detect-globals=false
   sed -i "1i /* This file has been automatically generated. DO NOT EDIT IT. \n Changes will be overwritten. Edit $basename and run ./es6-transpile.sh */"  "$outfile"
 done
+
 echo "Time spent: $SECONDS seconds"
 rm -r es6-tmp

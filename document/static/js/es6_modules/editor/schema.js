@@ -504,6 +504,9 @@ export class CommentMark extends MarkType {
             id: new Attribute
         }
     }
+    get inclusiveRight() {
+        return false
+    }
     static get rank() {
         return 54
     }

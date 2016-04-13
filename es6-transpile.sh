@@ -38,8 +38,15 @@ sourcefiles=$(find . -path ./node_modules -prune -o  -type f -name "*.es6.js" -p
 # This allows for the modules to import from oneanother, across Django Apps.
 # The temporary dir is a subfolder in the current directory and not a folder in
 # /tmp, because browserify doesn't allow operations in higher level folders.
-mkdir es6-tmp
+rm -fr es6-tmp/
+mkdir -p es6-tmp
 tmp_dir='./es6-tmp/'
+
+rm -fr static-es5/
+mkdir -p static-es5
+mkdir -p static-es5/js
+out_dir='./static-es5/js/'
+
 for directory in $(find . -type d -wholename '*static/js')
 do
   cp -R $directory/. $tmp_dir
@@ -53,7 +60,7 @@ do
   outfilename="${basename%.es6.js}"
   relative_dir=$(echo $dirname | awk 'BEGIN {FS="static/js"} {print $2}')
   infile="$tmp_dir$relative_dir$basename"
-  outfile="$dirname/$outfilename.es5.js"
+  outfile="$out_dir$relative_dir$outfilename.es5.js"
   echo "Converting $file to $outfile"
   node_modules/.bin/browserify --outfile $outfile -t babelify $infile
   #node_modules/.bin/browserify $infile --list --fast --detect-globals=false

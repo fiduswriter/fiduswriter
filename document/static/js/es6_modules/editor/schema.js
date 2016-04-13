@@ -14,8 +14,6 @@ export class Doc extends Block {
 }
 
 class Title extends Textblock {
-    //  get locked() { return true }
-    //  get selectable() { return false }
     get contains() {
         return NodeKind.text
     }
@@ -477,7 +475,7 @@ Figure.register("command", "insert", {
 
 /* From prosemirror/src/edit/commands.js */
 
-function markApplies(pm, type) {
+/*function markApplies(pm, type) {
     let {
         from,
         to
@@ -498,7 +496,7 @@ function markActive(pm, type) {
         return type.isInSet(pm.activeMarks())
     else
         return pm.doc.rangeHasMark(sel.from, sel.to, type)
-}
+}*/
 
 export class CommentMark extends MarkType {
     get attrs() {

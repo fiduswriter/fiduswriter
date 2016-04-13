@@ -2,6 +2,7 @@ import {configureCitationTemplate, citationItemTemplate, selectedCitationTemplat
 import {BibEntryForm} from "../../../bibliography/form/form"
 
 
+// TODO: turn into class (like FigureDialog)
 export let citationDialog = function (mod) {
 
     let editor = mod.editor,

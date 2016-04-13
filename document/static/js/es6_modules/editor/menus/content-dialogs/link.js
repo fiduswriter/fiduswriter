@@ -1,5 +1,6 @@
 import {linkDialogTemplate} from "./templates"
 
+// TODO: turn into class (like FigureDialog)
 export let linkDialog = function (mod) {
 
     let editor = mod.editor,

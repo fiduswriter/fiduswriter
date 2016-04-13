@@ -1,4 +1,9 @@
-import {citationItemTemplate, selectedCitationTemplate} from "./toolbar_items/templates"
+/* TODO: merge this into content-dialogs/citation and make the list of citation
+ * sources load every time the citation dialog is opened rather than keeping it
+ * constantly available.
+ */
+
+import {citationItemTemplate, selectedCitationTemplate} from "./content-dialogs/templates"
 
 /* Functions for the Citation add dialog */
 export class ModMenusCitation {
@@ -35,16 +40,15 @@ export class ModMenusCitation {
         jQuery('#cite-source-table').trigger('update')
     }
 
-
-
-    appendToCitedItems(books) {
-        let len = books.length
+    appendToCitedItems(items) {
+        let len = items.length
         for(let i = 0; i < len; i ++) {
-            $('#selected-cite-source-table .fw-document-table-body').append(selectedCitationTemplate({
-                'id': books[i].id,
-                'type': books[i].type,
-                'title': books[i].title,
-                'author': books[i].author,
+            let item = items[i]
+            jQuery('#selected-cite-source-table .fw-document-table-body').append(selectedCitationTemplate({
+                'id': item.id,
+                'type': item.type,
+                'title': item.title,
+                'author': item.author,
                 'page': '',
                 'prefix': ''
             }))

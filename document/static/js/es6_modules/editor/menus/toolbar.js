@@ -1,7 +1,7 @@
-import {citationDialog} from "./toolbar_items/cite"
-import {FigureDialog} from "./toolbar_items/figure"
-import {linkDialog} from "./toolbar_items/link"
-import {mathDialog} from "./toolbar_items/math"
+import {citationDialog} from "./content-dialogs/citation"
+import {FigureDialog} from "./content-dialogs/figure"
+import {linkDialog} from "./content-dialogs/link"
+import {mathDialog} from "./content-dialogs/math"
 
 /* Bindings for the toolbar menu */
 export class ModMenusToolbar {
@@ -115,7 +115,7 @@ export class ModMenusToolbar {
         })
         jQuery(document).on('mousedown', '#button-figure:not(.disabled)', function (event) {
             that.executeAction(event, function(){
-                new FigureDialog(that.mod.editor)
+                new FigureDialog(that.mod)
             })
         })
     }

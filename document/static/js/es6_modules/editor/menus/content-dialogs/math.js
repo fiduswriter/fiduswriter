@@ -1,5 +1,6 @@
 import {mathDialogTemplate} from "./templates"
 
+// TODO: turn into class (like FigureDialog)
 export let mathDialog = function (mod) {
 
     let editor = mod.editor,

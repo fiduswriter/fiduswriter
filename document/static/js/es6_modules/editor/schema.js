@@ -473,30 +473,6 @@ Figure.register("command", "insert", {
     }
 })
 
-/* From prosemirror/src/edit/commands.js */
-
-/*function markApplies(pm, type) {
-    let {
-        from,
-        to
-    } = pm.selection
-    let relevant = false
-    pm.doc.nodesBetween(from, to, node => {
-        if (node.isTextblock) {
-            if (node.type.canContainMark(type)) relevant = true
-            return false
-        }
-    })
-    return relevant
-}
-
-function markActive(pm, type) {
-    let sel = pm.selection
-    if (sel.empty)
-        return type.isInSet(pm.activeMarks())
-    else
-        return pm.doc.rangeHasMark(sel.from, sel.to, type)
-}*/
 
 export class CommentMark extends MarkType {
     get attrs() {

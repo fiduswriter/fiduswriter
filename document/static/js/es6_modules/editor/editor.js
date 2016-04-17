@@ -384,7 +384,12 @@ export class Editor {
         let prohibited = false
         const docParts = ['title', 'metadatasubtitle', 'metadataauthors', 'metadataabstract',
             'metadatakeywords', 'documentcontents']
-        if (transform.doc.childCount === 6) { // There should always be exactly 6 parts to the document
+        /* There should always be exactly 6 parts to the document (title,
+         * subtitle, authors, abstract, keywords & contents).
+         * If the output doc of the transform uses a different number of parts
+         * or the parts are of different types, we prohibit the transform.
+         */
+        if (transform.doc.childCount === 6) {
             let index = 0
             transform.doc.forEach(function(childNode){
                 if (docParts[index] !== childNode.type.name) {

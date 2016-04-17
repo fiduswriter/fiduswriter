@@ -1,4 +1,3 @@
-import {Pos} from "prosemirror/dist/model"
 import {TextSelection} from "prosemirror/dist/edit/selection"
 /**
  * Helper functions for testing FidusWriter with Selenium.
@@ -37,10 +36,8 @@ testCaret.setCaret = function setCaret(caret) {
  * @returns {Selection}
  */
 testCaret.setSelection = function setSelection(caretOne, caretTwo) {
-    let posOne = new Pos(caretOne.path, caretOne.offset)
-    let posTwo = new Pos(caretTwo.path, caretTwo.offset)
 
-    let selection = new TextSelection(posOne, posTwo)
+    let selection = new TextSelection(caretOne, caretTwo)
 
     theEditor.pm.setSelection(selection)
     theEditor.pm.focus()

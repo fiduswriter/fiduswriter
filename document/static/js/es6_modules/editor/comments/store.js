@@ -4,7 +4,6 @@ based on https://github.com/ProseMirror/website/blob/master/src/client/collab/co
 */
 import {eventMixin} from "prosemirror/dist/util/event"
 import {Transform} from "prosemirror/dist/transform"
-import {Pos} from "prosemirror/dist/model"
 import {CommentMark} from "../schema"
 import {Comment} from "./comment"
 
@@ -59,14 +58,14 @@ export class ModCommentStore {
     }
 
     removeCommentMarks(id) {
-        this.mod.editor.pm.doc.nodesBetween(false, false, (node, path, parent) => {
-            let nodePath = path.slice()// Keep original
-            let nodeOffset = nodePath.pop()
+        this.mod.editor.pm.doc.descendants((node, pos, parent) => {
+            let nodeStart = pos
+            let nodeEnd = pos + node.nodeSize
             for (let i =0; i < node.marks.length; i++) {
                 let mark = node.marks[i]
                 if (mark.type.name === 'comment' && parseInt(mark.attrs.id) === id) {
                     this.mod.editor.pm.apply(
-                        this.mod.editor.pm.tr.removeMark(new Pos(nodePath, nodeOffset), new Pos(nodePath, nodeOffset + node.width), CommentMark.type)
+                        this.mod.editor.pm.tr.removeMark(nodeStart, nodeEnd, CommentMark.type)
                     )
                 }
             }
@@ -99,7 +98,7 @@ export class ModCommentStore {
     checkAndDelete(ids) {
         let that = this
         // Check if there is still a node referring to the comment IDs that were in the deleted content.
-        this.mod.editor.pm.doc.nodesBetween(null, null, function(node, path, parent) {
+        this.mod.editor.pm.doc.descendants(function(node, pos, parent) {
             if (!node.isInline) {
                 return
             }

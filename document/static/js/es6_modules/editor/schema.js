@@ -14,8 +14,6 @@ export class Doc extends Block {
 }
 
 class Title extends Textblock {
-    //  get locked() { return true }
-    //  get selectable() { return false }
     get contains() {
         return NodeKind.text
     }
@@ -262,15 +260,14 @@ Citation.register("parseDOM", "cite", {
 })
 
 Citation.prototype.serializeDOM = (node, serializer) => {
-    let dom = serializer.renderAs(node, "span", {
-        class: 'citation',
+    return serializer.elt("span", {
+        class: "citation",
         'data-bib-format': node.attrs.bibFormat,
         'data-bib-entry': node.attrs.bibEntry,
         'data-bib-before': node.attrs.bibBefore,
         'data-bib-page': node.attrs.bibPage
-      })
+    })
     // TODO: Do the citation formatting here rather than centrally, maybe?
-    return dom
 }
 
 Citation.register("command", "insert", {
@@ -393,25 +390,29 @@ Figure.prototype.serializeDOM = (node, serializer) => {
     })
     if (node.attrs.image) {
         dom.appendChild(serializer.elt("div"))
-        if (ImageDB[node.attrs.image] && ImageDB[node.attrs.image].image) {
-            dom.firstChild.appendChild(serializer.elt("img", {
-                "src": ImageDB[node.attrs.image].image
-            }))
-        } else {
-            /* The image was not present in the ImageDB. Try to reload the
-            ImageDB, but only once. If the image cannot be found in the updated
-            ImageDB, do not attempt at reloading the ImageDB if an image cannot be
-            found. */
-            if (!imageDBBroken) {
-                usermediaHelpers.getImageDB(function() {
-                    if (ImageDB[node.attrs.image] && ImageDB[node.attrs.image].image) {
-                        dom.firstChild.appendChild(serializer.elt("img", {
-                            "src": ImageDB[node.attrs.image].image
-                        }))
-                    } else {
-                        imageDBBroken = true
-                    }
-                })
+        if(node.type.schema.cached.imageDB) {
+            if(node.type.schema.cached.imageDB.db[node.attrs.image]
+                && node.type.schema.cached.imageDB.db[node.attrs.image].image) {
+                dom.firstChild.appendChild(serializer.elt("img", {
+                    "src": node.type.schema.cached.imageDB.db[node.attrs.image].image
+                }))
+            } else {
+                /* The image was not present in the imageDB -- possibly because a collaborator just added ut.
+                Try to reload the imageDB, but only once. If the image cannot be found in the updated
+                imageDB, do not attempt at reloading the imageDB if an image cannot be
+                found. */
+                if (!imageDBBroken) {
+                    node.type.schema.cached.imageDB.getDB(function() {
+                        if (node.type.schema.cached.imageDB.db[node.attrs.image]
+                                && node.type.schema.cached.imageDB.db[node.attrs.image].image) {
+                            dom.firstChild.appendChild(serializer.elt("img", {
+                                "src": node.type.schema.cached.imageDB.db[node.attrs.image].image
+                            }))
+                        } else {
+                            imageDBBroken = true
+                        }
+                    })
+                }
             }
         }
     } else {
@@ -472,36 +473,15 @@ Figure.register("command", "insert", {
     }
 })
 
-/* From prosemirror/src/edit/commands.js */
-
-function markApplies(pm, type) {
-    let {
-        from,
-        to
-    } = pm.selection
-    let relevant = false
-    pm.doc.nodesBetween(from, to, node => {
-        if (node.isTextblock) {
-            if (node.type.canContainMark(type)) relevant = true
-            return false
-        }
-    })
-    return relevant
-}
-
-function markActive(pm, type) {
-    let sel = pm.selection
-    if (sel.empty)
-        return type.isInSet(pm.activeMarks())
-    else
-        return pm.doc.rangeHasMark(sel.from, sel.to, type)
-}
 
 export class CommentMark extends MarkType {
     get attrs() {
         return {
             id: new Attribute
         }
+    }
+    get inclusiveRight() {
+        return false
     }
     static get rank() {
         return 54

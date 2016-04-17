@@ -1,92 +1,103 @@
 import {getMissingChapterData, getImageAndBibDB, uniqueObjects} from "./tools"
 import {latexBookIndexTemplate} from "./latex-templates"
 import {obj2Node} from "../../exporter/json"
-import {findLatexDocumentFeatures, htmlToLatex} from "../../exporter/latex"
+import {BaseLatexExporter} from "../../exporter/latex"
 import {createSlug, findImages} from "../../exporter/tools"
 import {zipFileCreator} from "../../exporter/zip"
 import {BibLatexExporter} from "../../bibliography/exporter/biblatex"
 
-export let downloadLatexBook = function (aBook, documentList) {
-    getMissingChapterData(aBook, documentList, function () {
-        getImageAndBibDB(aBook, documentList, function (anImageDB,
-            aBibDB) {
-            latexBookExport(aBook, anImageDB, aBibDB, documentList)
+
+export class LatexBookExporter extends BaseLatexExporter {
+    constructor(book, user, docList) {
+        super()
+        let that = this
+        this.book = book
+        this.user = user // Not used, but we keep it for consistency
+        this.docList = docList
+        getMissingChapterData(book, docList, function () {
+            getImageAndBibDB(book, docList, function (imageDB,
+                bibDB) {
+                that.bibDB = bibDB
+                that.imageDB = imageDB // Apparently not used
+                that.exportOne()
+            })
         })
-    })
-}
-
-let latexBookExport = function (aBook, anImageDB, aBibDB, documentList) {
-    let htmlCode, outputList = [],
-        images = [],
-        listedWorksList = [],
-        allContent = document.createElement('div')
+    }
 
 
-    aBook.chapters = _.sortBy(aBook.chapters, function (chapter) {
-        return chapter.number
-    })
+    exportOne() {
+        let htmlCode, outputList = [],
+            images = [],
+            listedWorksList = [],
+            allContent = document.createElement('div')
 
-    for (let i = 0; i < aBook.chapters.length; i++) {
 
-        let aDocument = _.findWhere(documentList, {
-            id: aBook.chapters[i].text
+        this.book.chapters = _.sortBy(this.book.chapters, function (chapter) {
+            return chapter.number
         })
 
-        let title = aDocument.title
+        for (let i = 0; i < this.book.chapters.length; i++) {
 
-        let contents = obj2Node(aDocument.contents)
+            let aDocument = _.findWhere(this.docList, {
+                id: this.book.chapters[i].text
+            })
 
-        allContent.innerHTML += contents.innerHTML
+            let title = aDocument.title
 
-        images = images.concat(findImages(contents))
+            let contents = obj2Node(aDocument.contents)
 
-        let latexCode = htmlToLatex(title, aDocument.owner.name, contents, aBibDB,
-            aDocument.settings, aDocument.metadata, true,
-            listedWorksList)
+            allContent.innerHTML += contents.innerHTML
 
-        listedWorksList = latexCode.listedWorksList
+            images = images.concat(findImages(contents))
+
+            let latexCode = this.htmlToLatex(title, aDocument.owner.name, contents, this.bibDB,
+                aDocument.settings, aDocument.metadata, true,
+                listedWorksList)
+
+            listedWorksList = latexCode.listedWorksList
+
+            outputList.push({
+                filename: 'chapter-' + this.book.chapters[i].number + '.tex',
+                contents: latexCode.latex
+            })
+
+        }
+        let author = this.book.owner_name
+        if (this.book.metadata.author && this.book.metadata.author != '') {
+            author = this.book.metadata.author
+        }
+
+        let documentFeatures = this.findLatexDocumentFeatures(
+            allContent, this.book.title, author, this.book.metadata.subtitle, this.book.metadata.keywords, this.book.metadata.author, this.book.metadata, 'book')
+
+
+        let latexStart = documentFeatures.latexStart
+        let latexEnd = documentFeatures.latexEnd
 
         outputList.push({
-            filename: 'chapter-' + aBook.chapters[i].number + '.tex',
-            contents: latexCode.latex
+            filename: createSlug(
+                this.book.title) + '.tex',
+            contents: latexBookIndexTemplate({
+                aBook: this.book,
+                latexStart: latexStart,
+                latexEnd: latexEnd
+            })
         })
 
+        let bibtex = new BibLatexExporter(listedWorksList,
+            this.bibDB, false)
+
+        if (bibtex.bibtex_str.length > 0) {
+            outputList.push({
+                filename: 'bibliography.bib',
+                contents: bibtex.bibtex_str
+            })
+        }
+
+        images = uniqueObjects(images)
+
+        zipFileCreator(outputList, images, createSlug(
+                this.book.title) +
+            '.latex.zip')
     }
-    let author = aBook.owner_name
-    if (aBook.metadata.author && aBook.metadata.author != '') {
-        author = aBook.metadata.author
-    }
-
-    let documentFeatures = findLatexDocumentFeatures(
-        allContent, aBook.title, author, aBook.metadata.subtitle, aBook.metadata.keywords, aBook.metadata.author, aBook.metadata, 'book')
-
-
-    let latexStart = documentFeatures.latexStart
-    let latexEnd = documentFeatures.latexEnd
-
-    outputList.push({
-        filename: createSlug(
-            aBook.title) + '.tex',
-        contents: latexBookIndexTemplate({
-            aBook: aBook,
-            latexStart: latexStart,
-            latexEnd: latexEnd
-        })
-    })
-
-    let bibtex = new BibLatexExporter(listedWorksList,
-        aBibDB, false)
-
-    if (bibtex.bibtex_str.length > 0) {
-        outputList.push({
-            filename: 'bibliography.bib',
-            contents: bibtex.bibtex_str
-        })
-    }
-
-    images = uniqueObjects(images)
-
-    zipFileCreator(outputList, images, createSlug(
-            aBook.title) +
-        '.latex.zip')
 }

@@ -1,6 +1,7 @@
 import {obj2Node} from "./json"
 import {createSlug, findImages} from "./tools"
 import {zipFileCreator} from "./zip"
+import {BibliographyDB} from "../bibliography/database"
 
 /** The current Fidus Writer filetype version.
  * The importer will not import from a different version and the exporter
@@ -19,46 +20,51 @@ export let uploadNative = function(editor) {
     })
 }
 
-export let downloadNative = function(aDocument, inEditor) {
-    if (inEditor) {
-        exportNative(aDocument, ImageDB, BibDB, exportNativeFile)
-    } else {
-        if (aDocument.is_owner) {
-            if ('undefined' === typeof(BibDB)) {
-                bibliographyHelpers.getBibDB(function() {
-                    if ('undefined' === typeof(ImageDB)) {
-                        usermediaHelpers.getImageDB(function() {
-                            exportNative(aDocument,
-                                ImageDB,
-                                BibDB, exportNativeFile)
-                        })
-                    } else {
-                        exportNative(aDocument, ImageDB,
-                            BibDB,
-                            exportNativeFile)
-                    }
-                })
-            } else if ('undefined' === typeof(ImageDB)) {
-                usermediaHelpers.getImageDB(function() {
-                    exportNative(aDocument, ImageDB, BibDB,
-                        exportNativeFile)
-                })
-            } else {
-                exportNative(aDocument, ImageDB, BibDB, exportNativeFile)
-            }
-        } else {
-            bibliographyHelpers.getABibDB(aDocument.owner, function(
-                aBibDB) {
-                usermediaHelpers.getAnImageDB(aDocument.owner,
-                    function(anImageDB) {
-                        exportNative(aDocument, anImageDB,
-                            aBibDB, exportNativeFile)
-                    })
+export class NativeExporter {
+    constructor(doc, bibDB, imageDB) {
+        this.doc = doc
+        this.bibDB = bibDB
+        this.imageDB = imageDB
+        this.init()
+    }
+
+    init() {
+        let that = this
+        this.getBibDB(function(){
+            that.getImageDB(function(){
+                exportNative(that.doc, that.imageDB, that.bibDB, exportNativeFile)
             })
+        })
+    }
+
+    getBibDB(callback) {
+        let that = this
+        if (!this.bibDB) {
+            let bibGetter = new BibliographyDB(this.doc.owner.id, false, false, false)
+            bibGetter.getBibDB(function(bibDB, bibCats) {
+                that.bibDB = bibDB
+                callback()
+            })
+        } else {
+            callback()
+        }
+    }
+
+    getImageDB(callback) {
+        let that = this
+        if (!this.imageDB) {
+            let imageGetter = new ImageDB(this.doc.owner.id)
+            imageGetter.getDB(function(){
+                that.imageDB = imageGetter.db
+                callback()
+            })
+        } else {
+            callback()
         }
     }
 }
 
+// used in copy
 export let exportNative = function(aDocument, anImageDB, aBibDB, callback) {
     let shrunkBibDB = {},
         citeList = []

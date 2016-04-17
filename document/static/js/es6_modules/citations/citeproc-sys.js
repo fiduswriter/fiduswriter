@@ -1,7 +1,8 @@
 /* Connects Fidus Writer citation system with citeproc */
 
 export class citeprocSys {
-    constructor() {
+    constructor(cslDB) {
+        this.cslDB = cslDB
         this.abbreviations = {
             "default": {}
         }
@@ -9,7 +10,7 @@ export class citeprocSys {
     }
 
     retrieveItem(id) {
-        return CSLDB[id]
+        return this.cslDB[id]
     }
 
     retrieveLocale(lang) {

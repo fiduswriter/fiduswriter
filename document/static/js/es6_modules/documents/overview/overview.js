@@ -1,7 +1,8 @@
 import {DocumentOverviewActions} from "./actions"
 import {DocumentOverviewMenus} from "./menus"
 import {documentsListTemplate, documentsListItemTemplate} from "./templates"
-
+import {BibliographyDB} from "../../bibliography/database"
+import {ImageDB} from "../../images/database"
 /*
 * Helper functions for the document overview page.
 */
@@ -25,6 +26,32 @@ export class DocumentOverview {
             that.getDocumentListData()
         })
 
+    }
+
+    getBibDB(callback) { // Get the bibliography database -- only executed if needed (when importing, etc.).
+        let that = this
+        if (!this.bibDB) { // Don't get the bibliography again if we already have it.
+            let bibGetter = new BibliographyDB(this.user.id, true, false, false)
+            bibGetter.getBibDB(function(){
+                that.bibDB = bibGetter.bibDB // We only need the bibliography database
+                callback()
+            })
+        } else {
+            callback()
+        }
+    }
+
+    getImageDB(callback) {
+        let that = this
+        if (!this.imageDB) {
+            let imageGetter = new ImageDB(this.user.id)
+            imageGetter.getDB(function(){
+                that.imageDB = imageGetter.db
+                callback()
+            })
+        } else {
+            callback()
+        }
     }
 
     getDocumentListData(id) {

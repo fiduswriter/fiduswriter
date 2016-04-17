@@ -14,7 +14,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from document.models import Document
-from test.helpers import testCaretJS
+from test.mock.helpers import testCaretJS
 from test.testcases import LiveTornadoTestCase
 from test.mock.document_contents import *
 
@@ -34,18 +34,6 @@ LONG_LOREM = (
     " mollit anim id est laborum."
 )
 
-
-# DATA
-class Caret(dict):
-    """
-    Caret is {path: List, offset: Integer}
-    Represents the position of a caret in the document
-        path is the path of the node in which the caret resides, according to ProseMirror's definition.
-        offset is position of the caret inside the node
-    """
-    # not using a namedtuple, because they don't get converted properly to
-    # objects when passed as javascript arguments
-    pass
 
 CaretTestCase = namedtuple(
     'CaretTestCase', [
@@ -298,119 +286,71 @@ class MovementInSingleChildParagraph(CaretPositionTest):
             'name': 'leftFromOneAfterDocStart',
             'description': "left arrow decrements caret offset",
             'givenContents': None,
-            'givenCaret': Caret(
-                path= [5,0],
-                offset=1 + 0,
-            ),
+            'givenCaret': 10 + 1,
             'givenKeys': Keys.ARROW_LEFT,
-            'expectedCaret': Caret(
-                path = [5,0],
-                offset=0,
-            )
+            'expectedCaret': 10
         }),
         CaretTestCase(**{
             'name': 'leftFromDocStart',
             'description': "left arrow does nothing when caret is at start of"
                            " document",
             'givenContents': None,
-            'givenCaret': Caret(
-                path = [5,0],
-                offset=0,
-            ),
+            'givenCaret': 0,
             'givenKeys': Keys.ARROW_LEFT,
-            'expectedCaret': Caret(
-                path = [5,0],
-                offset=0,
-            )
+            'expectedCaret': 0
         }),
         CaretTestCase(**{
             'name': 'rightFromOneBeforeDocEnd',
             'description': "right arrow increments caret offset",
             'givenContents': None,
-            'givenCaret': Caret(
-                path = [5,0],
-                offset=(-1) + len(SHORT_LOREM),
-            ),
+            'givenCaret': 14 + len(SHORT_LOREM),
             'givenKeys': Keys.ARROW_RIGHT,
-            'expectedCaret': Caret(
-                path = [5,0],
-                offset=len(SHORT_LOREM),
-            )
+            'expectedCaret': 14 +len(SHORT_LOREM),
         }),
         CaretTestCase(**{
             'name': 'rightFromDocEnd',
             'description': "right arrow does nothing when caret is at end of"
                            " document",
             'givenContents': None,
-            'givenCaret': Caret(
-                path = [5,0],
-                offset=len(SHORT_LOREM),
-            ),
+            'givenCaret': 14,
             'givenKeys': Keys.ARROW_RIGHT,
-            'expectedCaret': Caret(
-                path = [5,0],
-                offset=len(SHORT_LOREM),
-            )
+            'expectedCaret': 10
         }),
         CaretTestCase(**{
             'name': 'upArrowFromMidFirstDocLine',
             'description': "up arrow moves caret from within first line of"
                            " document to beginning of document",
             'givenContents': None,
-            'givenCaret': Caret(
-                path = [5, 0],
-                offset=(5) + 0,
-            ),
+            'givenCaret': 14,
             'givenKeys': Keys.ARROW_UP,
-            'expectedCaret': Caret(
-                path = [5, 0],
-                offset=0,
-            )
+            'expectedCaret': 0
         }),
         CaretTestCase(**{
             'name': 'upArrowFromDocStart',
             'description': "up arrow does nothing when caret is at start of"
                            " document",
             'givenContents': None,
-            'givenCaret': Caret(
-                path = [5,0],
-                offset=0,
-            ),
+            'givenCaret': 14,
             'givenKeys': Keys.ARROW_UP,
-            'expectedCaret': Caret(
-                path = [5,0],
-                offset=0,
-            )
+            'expectedCaret': 0
         }),
         CaretTestCase(**{
             'name': 'downFromMidLastDocLine',
             'description': "down arrow moves caret from within last line of"
                            " document to end of document",
             'givenContents': None,
-            'givenCaret': Caret(
-                path = [5,0],
-                offset=(-7) + len(SHORT_LOREM),
-            ),
+            'givenCaret': 20,
             'givenKeys': Keys.ARROW_DOWN,
-            'expectedCaret': Caret(
-                path = [5,0],
-                offset=len(SHORT_LOREM),
-            )
+            'expectedCaret': 20 + len(SHORT_LOREM),
         }),
         CaretTestCase(**{
             'name': 'downFromDocEnd',
             'description': "down arrow does nothing when caret is at end of"
                            " document",
             'givenContents': None,
-            'givenCaret': Caret(
-                path = [5,0],
-                offset=len(SHORT_LOREM),
-            ),
+            'givenCaret': 14 + len(SHORT_LOREM),
             'givenKeys': Keys.ARROW_DOWN,
-            'expectedCaret': Caret(
-                path = [5,0],
-                offset=len(SHORT_LOREM),
-            )
+            'expectedCaret': 14 + len(SHORT_LOREM),
         }),
     ]
     movement_within_long = [
@@ -421,15 +361,9 @@ class MovementInSingleChildParagraph(CaretPositionTest):
             'description': "up arrow moves caret from second line to first"
                            " at equal offset relative to line start",
             'givenContents': None,
-            'givenCaret': Caret(
-                path = [5,0],
-                offset=None,
-            ),
+            'givenCaret': 0,
             'givenKeys': Keys.ARROW_UP,
-            'expectedCaret': Caret(
-                path = [5,0],
-                offset=None,
-            )
+            'expectedCaret': 14
         }),
         CaretTestCase(**{
             # !!!
@@ -438,15 +372,9 @@ class MovementInSingleChildParagraph(CaretPositionTest):
             'description': "down arrow moves caret from first line to second,"
                            " at equal offset relative to line start",
             'givenContents': None,
-            'givenCaret': Caret(
-                path = [5,0],
-                offset=None,
-            ),
+            'givenCaret': 0,
             'givenKeys': Keys.ARROW_DOWN,
-            'expectedCaret': Caret(
-                path = [5,0],
-                offset=None,
-            )
+            'expectedCaret': 14
         }),
     ]
     # !!!
@@ -541,34 +469,19 @@ class InsertionOfLink(LiveTornadoTestCase, Manipulator):
             'description': 'caret at start of paragraph turns start of text'
             ' into link',
             'givenContents': Contents(Paragraph(Text(SHORT_LOREM))),
-            'givenCaretStart': Caret(
-                path = [5,0],
-                offset = 0
-            ),
-            'givenCaretEnd': Caret(
-                path = [5,0],
-                offset = len('Lo')
-            ),
+            'givenCaretStart': 14,
+            'givenCaretEnd': 14 + len('Lo'),
             'expectedContents': Contents(
                 Paragraph(Link('Lo', linkAddress, linkTitle), Text(SHORT_LOREM[len('Lo'):]))
             ),
-            'expectedCaret': Caret(
-                path = [5,0],
-                offset=0
-            ),
+            'expectedCaret': 14,
         }),
         InsertionTestCase(**{
             'name': 'linkInsideBold',
             'description': 'caret within Bold creates link within Bold',
             'givenContents': Contents(Paragraph(BoldText(SHORT_LOREM))),
-            'givenCaretStart': Caret(
-                path = [5,0],
-                offset=len('Lorem'),
-            ),
-            'givenCaretEnd': Caret(
-                path = [5,0],
-                offset=len('Lorem ipsum'),
-            ),
+            'givenCaretStart': 14 + len('Lorem'),
+            'givenCaretEnd': 14 + len('Lorem ipsum'),
             'expectedContents': Contents(
                 Paragraph(
                     Bold(
@@ -578,10 +491,7 @@ class InsertionOfLink(LiveTornadoTestCase, Manipulator):
                     ),
                 )
             ),
-            'expectedCaret': Caret(
-                path = [5,0],
-                offset=len('Lorem'),
-            ),
+            'expectedCaret': 14 + len('Lorem'),
         }),
     ]
 

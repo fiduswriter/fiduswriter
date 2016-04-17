@@ -17,6 +17,8 @@ import {ModMenus} from "./menus/mod"
 import {ModServerCommunications} from "./server-communications"
 import {ModNodeConvert} from "./node-convert"
 import {node2Obj, obj2Node} from "../exporter/json"
+import {BibliographyDB} from "../bibliography/database"
+import {ImageDB} from "../images/database"
 
 export class Editor {
     // A class that contains everything that happens on the editor page.
@@ -41,6 +43,7 @@ export class Editor {
             'titleChanged': false,
             'changed': false
         }
+        this.schema = fidusSchema
         this.doc = {}
         this.user = false
         new ModSettings(this)
@@ -54,14 +57,13 @@ export class Editor {
 
         jQuery(document).ready(function() {
             that.startEditor()
-            bibliographyHelpers.bindEvents()
         })
     }
 
     startEditor() {
         let that = this
         this.pm = this.makeEditor(document.getElementById('document-editable'))
-        this.currentPm = this.pm // The editor that is currently being edited in -- main or footnote editor 
+        this.currentPm = this.pm // The editor that is currently being edited in -- main or footnote editor
         new ModFootnotes(this)
         new ModCitations(this)
         new ModMenus(this)
@@ -103,7 +105,7 @@ export class Editor {
     makeEditor(where) {
         let pm = new ProseMirror({
             place: where,
-            schema: fidusSchema,
+            schema: this.schema,
             //    menuBar: true,
             collab: {
                 version: 0
@@ -111,16 +113,6 @@ export class Editor {
         })
         pm.editor = this
         return pm
-    }
-
-    testingReturns() {
-        console.log('this is the first')
-        return function () {
-            console.log('this is the second')
-            return function () {
-                console.log('this is the third')
-            }
-        }
     }
 
     createDoc(aDocument) {
@@ -147,7 +139,7 @@ export class Editor {
         editorNode.appendChild(metadataKeywordsNode)
         editorNode.appendChild(documentContentsNode)
 
-        doc = fromDOM(fidusSchema, this.mod.nodeConvert.modelToEditorNode(editorNode), {
+        doc = fromDOM(this.schema, this.mod.nodeConvert.modelToEditorNode(editorNode), {
             preserveWhitespace: true
         })
         return doc
@@ -185,7 +177,9 @@ export class Editor {
         this.mod.comments.store.on("mustSend", function() {
             that.mod.collab.docChanges.sendToCollaborators()
         })
-        this.enableUI()
+        this.getBibDB(this.doc.owner.id, function(){
+            that.enableUI()
+        })
         this.waitingForDocument = false
     }
 
@@ -199,14 +193,53 @@ export class Editor {
         })
     }
 
+    removeBibDB() {
+        delete this.bibDB
+        // TODO: Need to to remove all entries of citation dialog!
+    }
 
+    getBibDB(userId, callback) {
+        let that = this
+        if (!this.bibDB) { // Don't get the bibliography again if we already have it.
+            let bibGetter = new BibliographyDB(userId, true, false, false)
+            bibGetter.getBibDB(function(bibPks, bibCats){
+                that.bibDB = bibGetter
+                that.mod.menus.citation.appendManyToCitationDialog(bibPks)
+                that.mod.citations.layoutCitations()
+                that.mod.menus.header.enableExportMenu()
+                if (callback) {
+                    callback()
+                }
+            })
+        } else {
+            callback()
+        }
+    }
+
+    removeImageDB() {
+        delete this.imageDB
+    }
+
+    getImageDB(userId, callback) {
+        let that = this
+        if (!this.imageDB) {
+            let imageGetter = new ImageDB(userId)
+            imageGetter.getDB(function(){
+                that.imageDB = imageGetter
+                that.schema.cached.imageDB = imageGetter // assign image DB to be used in schema.
+                that.mod.footnotes.schema.cached.imageDB = imageGetter // assign image DB to be used in footnote schema.
+                callback()
+            })
+        } else {
+            callback()
+        }
+    }
 
     enableUI() {
-        bibliographyHelpers.initiate()
 
         this.mod.citations.layoutCitations()
 
-        jQuery('.savecopy, .download, .latex, .epub, .html, .print, .style, \
+        jQuery('.savecopy, .saverevision, .download, .latex, .epub, .html, .print, .style, \
       .citationstyle, .tools-item, .papersize, .metadata-menu-item, \
       #open-close-header').removeClass('disabled')
 
@@ -269,7 +302,7 @@ export class Editor {
         } else {
             this.user = this.doc.owner
         }
-        usermediaHelpers.init(function(){
+        this.getImageDB(this.doc.owner.id, function(){
             that.update()
             that.mod.serverCommunications.send({
                 type: 'participant_update'
@@ -357,12 +390,19 @@ export class Editor {
     // filter transformations, disallowing all transformations going across document parts/footnotes.
     onFilterTransform(transform) {
         let prohibited = false
-        transform.steps.forEach(function(step, index) {
-            if(step.from && step.to && (step.from.path.length === 0 ||
-              step.to.path.length === 0 || step.from.path[0] !== step.to.path[0])) {
-                prohibited = true
-            }
-        })
+        const docParts = ['title', 'metadatasubtitle', 'metadataauthors', 'metadataabstract',
+            'metadatakeywords', 'documentcontents']
+        if (transform.doc.childCount === 6) { // There should always be exactly 6 parts to the document
+            let index = 0
+            transform.doc.forEach(function(childNode){
+                if (docParts[index] !== childNode.type.name) {
+                    prohibited = true
+                }
+                index++
+            })
+        } else {
+            prohibited = true
+        }
         return prohibited
     }
 
@@ -372,8 +412,8 @@ export class Editor {
             // Check what area is affected
         transform.steps.forEach(function(step, index) {
             if (step.type === 'replace') {
-                if (step.from.cmp(step.to) !== 0) {
-                    transform.docs[index].nodesBetween(step.from, step.to, function(node, path) {
+                if (step.from !== step.to) {
+                    transform.docs[index].nodesBetween(step.from, step.to, function(node, pos, parent) {
                         if (node.type.name === 'citation') {
                             // A citation was replaced
                             updateBibliography = true
@@ -388,7 +428,7 @@ export class Editor {
                     })
                 }
 
-                if (step.from.path[0] === 0) {
+                if (that.pm.doc.resolve(step.from).node(1).type.name === 'title') {
                     updateTitle = true
                 }
             }

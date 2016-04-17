@@ -461,8 +461,11 @@ figure img {
     max-width: 100%
 }
 
-#flow {
+#paper-editable {
     counter-reset: figure-cat-0 figure-cat-1 figure-cat-2;
+}
+
+#flow {
     background-color: white;
 }
 

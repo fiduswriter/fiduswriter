@@ -12,10 +12,12 @@ export class ImportFidusFile {
     /* Process a packaged Fidus File, either through user upload, or by reloading
       a saved revision which was saved in the same ZIP-baseformat. */
 
-    constructor(file, user, check, callback) {
+    constructor(file, user, check, bibDB, imageDB, callback) {
         this.file = file
         this.user = user
         this.callback = callback
+        this.bibDB = bibDB // the user's current database object.
+        this.imageDB = imageDB // the user's imageDB
         this.check = check // Whether the file needs to be checked for compliance with ZIP-format
         this.init()
     }
@@ -113,7 +115,7 @@ export class ImportFidusFile {
                 filename: 'document.json'
             }).contents)
 
-            return new ImportNative(aDocument, shrunkBibDB, shrunkImageDB, this.entries, this.user, this.callback)
+            return new ImportNative(aDocument, shrunkBibDB, shrunkImageDB, this.entries, this.user, this.bibDB, this.imageDB, this.callback)
 
         } else {
             // The file is not a Fidus Writer file.

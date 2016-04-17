@@ -1,3 +1,5 @@
+import {BibEntryTypes, BibFieldTypes} from "../statics"
+
 /** Converts a BibDB to a DB of the CSL type.
  * @param bibDB The bibliography database to convert.
  */

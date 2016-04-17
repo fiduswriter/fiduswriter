@@ -14,8 +14,6 @@ export class Doc extends Block {
 }
 
 class Title extends Textblock {
-    //  get locked() { return true }
-    //  get selectable() { return false }
     get contains() {
         return NodeKind.text
     }
@@ -262,15 +260,14 @@ Citation.register("parseDOM", "cite", {
 })
 
 Citation.prototype.serializeDOM = (node, serializer) => {
-    let dom = serializer.renderAs(node, "span", {
-        class: 'citation',
+    return serializer.elt("span", {
+        class: "citation",
         'data-bib-format': node.attrs.bibFormat,
         'data-bib-entry': node.attrs.bibEntry,
         'data-bib-before': node.attrs.bibBefore,
         'data-bib-page': node.attrs.bibPage
-      })
+    })
     // TODO: Do the citation formatting here rather than centrally, maybe?
-    return dom
 }
 
 Citation.register("command", "insert", {
@@ -476,36 +473,15 @@ Figure.register("command", "insert", {
     }
 })
 
-/* From prosemirror/src/edit/commands.js */
-
-function markApplies(pm, type) {
-    let {
-        from,
-        to
-    } = pm.selection
-    let relevant = false
-    pm.doc.nodesBetween(from, to, node => {
-        if (node.isTextblock) {
-            if (node.type.canContainMark(type)) relevant = true
-            return false
-        }
-    })
-    return relevant
-}
-
-function markActive(pm, type) {
-    let sel = pm.selection
-    if (sel.empty)
-        return type.isInSet(pm.activeMarks())
-    else
-        return pm.doc.rangeHasMark(sel.from, sel.to, type)
-}
 
 export class CommentMark extends MarkType {
     get attrs() {
         return {
             id: new Attribute
         }
+    }
+    get inclusiveRight() {
+        return false
     }
     static get rank() {
         return 54

@@ -1,5 +1,5 @@
 import {accessRightOverviewTemplate, accessRightTrTemplate, collaboratorsTemplate} from "./templates"
-
+import {addMemberDialog} from "../../contacts/manage"
 /**
 * Functions for the document access rights dialog.
 */
@@ -52,7 +52,7 @@ export class DocumentAccessRightsDialog {
 
         let diaButtons = {}
         diaButtons[gettext('Add new contact')] = function () {
-            contactHelpers.addMemberDialog()
+            addMemberDialog()
         }
         diaButtons[gettext('Submit')] = function () {
             //apply the current state to server

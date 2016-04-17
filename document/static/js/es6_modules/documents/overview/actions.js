@@ -78,7 +78,7 @@ export class DocumentOverviewActions {
     importFidus() {
         let that = this
         jQuery('body').append(importFidusTemplate())
-        diaButtons = {}
+        let diaButtons = {}
         diaButtons[gettext('Import')] = function () {
             let fidusFile = jQuery('#fidus-uploader')[0].files
             if (0 == fidusFile.length) {

@@ -227,6 +227,7 @@ export class Editor {
             imageGetter.getDB(function(){
                 that.imageDB = imageGetter
                 that.schema.cached.imageDB = imageGetter // assign image DB to be used in schema.
+                that.mod.footnotes.schema.cached.imageDB = imageGetter // assign image DB to be used in footnote schema.
                 callback()
             })
         } else {
@@ -383,15 +384,17 @@ export class Editor {
         let prohibited = false
         const docParts = ['title', 'metadatasubtitle', 'metadataauthors', 'metadataabstract',
             'metadatakeywords', 'documentcontents']
-        let index = 0
-        transform.doc.forEach(function(childNode){
-            if (index > 5) {
-                prohibited = true
-            } else if (docParts[index] !== childNode.type.name) {
-                prohibited = true
-            }
-            index++
-        })
+        if (transform.doc.childCount === 6) { // There should always be exactly 6 parts to the document
+            let index = 0
+            transform.doc.forEach(function(childNode){
+                if (docParts[index] !== childNode.type.name) {
+                    prohibited = true
+                }
+                index++
+            })
+        } else {
+            prohibited = true
+        }
         return prohibited
     }
 
@@ -401,8 +404,8 @@ export class Editor {
             // Check what area is affected
         transform.steps.forEach(function(step, index) {
             if (step.type === 'replace') {
-                if (step.from.cmp(step.to) !== 0) {
-                    transform.docs[index].nodesBetween(step.from, step.to, function(node, path) {
+                if (step.from !== step.to) {
+                    transform.docs[index].nodesBetween(step.from, step.to, function(node, pos, parent) {
                         if (node.type.name === 'citation') {
                             // A citation was replaced
                             updateBibliography = true
@@ -417,7 +420,7 @@ export class Editor {
                     })
                 }
 
-                if (step.from.path[0] === 0) {
+                if (that.pm.doc.resolve(step.from).node(1).type.name === 'title') {
                     updateTitle = true
                 }
             }

@@ -1,4 +1,3 @@
-import {Pos} from "prosemirror/dist/model"
 import {UpdateScheduler} from "prosemirror/dist/ui/update"
 
 
@@ -98,15 +97,19 @@ export class ModMenusUpdateUI {
             jQuery('#button-redo').addClass('disabled')
         }
 
-        const start = currentPm.selection.from.min(currentPm.selection.to)
-        const end = currentPm.selection.from.max(currentPm.selection.to)
-        if (start.path.length === 0 || end.path.length === 0) {
+        const rawStart = Math.min(currentPm.selection.from, currentPm.selection.to)
+        const start = currentPm.doc.resolve(rawStart)
+        const rawEnd = Math.max(currentPm.selection.from, currentPm.selection.to)
+        const end = currentPm.doc.resolve(rawEnd)
+
+        if (start.depth === 0 || end.depth === 0) {
             // The selection must be outermost elements. Do not go any further in
             // analyzing things.
             return
         }
-        const startElement = currentPm.doc.path([start.path[0]])
-        const endElement = currentPm.doc.path([end.path[0]])
+
+        const startElement = start.node(1)
+        const endElement = end.node(1)
 
         if (startElement !== endElement) {
             /* Selection goes across document parts or across footnotes */
@@ -155,14 +158,14 @@ export class ModMenusUpdateUI {
 
                         let blockNodeType = true
 
-                        if (_(start.path).isEqual(end.path)) {
+                        if (start.parent === end.parent) {
                             // Selection within a single block.
-                            let blockNode = pm.doc.path(start.path)
+                            let blockNode = start.parent
                             blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name
                             jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType])
                         } else {
                             // The selection is crossing several blocks
-                            pm.doc.nodesBetween(start, end, function(node, path, parent) {
+                            pm.doc.nodesBetween(rawStart, rawEnd, function(node, pos, parent) {
                                 if (node.isTextblock) {
                                     let nextBlockNodeType = node.type.name === 'heading' ? node.type.name + '_' + node.attrs.level : node.type.name
                                     if (blockNodeType === true) {
@@ -188,8 +191,9 @@ export class ModMenusUpdateUI {
             } else {
                 // In footnote editor
                 jQuery('#current-position').html(gettext('Footnote'))
-                let blockNode = fnPm.doc.path(start.path)
-                blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name + '_' + blockNode.attrs.level : blockNode.type.name
+                let blockNode = start.parent
+                blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name
+                    + '_' + blockNode.attrs.level : blockNode.type.name
                 jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType])
 
                 // Enable all editing buttons, except comment and footnote

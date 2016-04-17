@@ -1,1 +1,1 @@
-testCaretJS = open('test/static/js/test-caret.es5.js', 'r').read()
+testCaretJS = open('static-es5/js/test-caret.es5.js', 'r').read()

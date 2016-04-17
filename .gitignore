@@ -10,7 +10,7 @@ local_settings.py
 .settings
 media
 .elasticbeanstalk/
-bibliography/static/js/bibliography-statics.js
+bibliography/static/js/es6_modules/bibliography/statics.js
 *.mo
 node_modules/
 style/static/
@@ -24,3 +24,5 @@ base/static/js/es6_modules/katex/opf-includes.js
 chromedriver
 testing.py
 es6-tmp/
+static-es5/
+*.es5.js

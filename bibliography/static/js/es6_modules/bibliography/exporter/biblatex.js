@@ -1,4 +1,5 @@
 import {zipFileCreator} from "../../exporter/zip"
+import {BibEntryTypes, BibFieldTypes, TexSpecialChars} from "../statics"
 
 /** Export a list of bibliography items to bibLateX and serve the file to the user as a ZIP-file.
  * @class BibLatexExporter
@@ -126,10 +127,10 @@ export class BibLatexExporter {
         if ('string' != typeof (the_value)) {
             console.log(the_value, pk)
         }
-        let len = tex_special_chars.length
+        let len = TexSpecialChars.length
         for (let i = 0; i < len; i++) {
-            the_value = the_value.replace(tex_special_chars[i].unicode,
-                tex_special_chars[i].tex)
+            the_value = the_value.replace(TexSpecialChars[i].unicode,
+                TexSpecialChars[i].tex)
         }
         return the_value
     }

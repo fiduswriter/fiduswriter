@@ -119,7 +119,7 @@ export class ImportNative {
 
         if (newBibEntries.length !== 0 || newImageEntries.length !== 0) {
             // We need to create new entries in the DB for images and/or bibliography items.
-            getImageData(that.aDocument,
+            this.getImageData(this.aDocument,
                 BibTranslationTable, ImageTranslationTable, newBibEntries,
                 newImageEntries, this.entries)
         } else if (!(jQuery.isEmptyObject(BibTranslationTable)) || !(jQuery.isEmptyObject(

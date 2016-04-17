@@ -390,8 +390,23 @@ export class Editor {
     // filter transformations, disallowing all transformations going across document parts/footnotes.
     onFilterTransform(transform) {
         let prohibited = false
+        const allowed_comment_only = ["addMark", "removeMark"]
         const docParts = ['title', 'metadatasubtitle', 'metadataauthors', 'metadataabstract',
             'metadatakeywords', 'documentcontents']
+
+        //Check for comment-only role. If role editor or reviewer
+        if (transform.constructor.name === "EditorTransform" && (this.docInfo.rights === "e" || this.docInfo.rights === "c")) {
+            //Check all transformation steps. If step type not allowed = prohibit
+            prohibited = !(transform.steps.every(function(step) {
+                //check if in allowed array. if false - exit loop
+                return jQuery.inArray(step.type, allowed_comment_only) !== -1
+            }))
+
+            if (prohibited) {
+                return prohibited
+            }
+        }
+
         if (transform.doc.childCount === 6) { // There should always be exactly 6 parts to the document
             let index = 0
             transform.doc.forEach(function(childNode){

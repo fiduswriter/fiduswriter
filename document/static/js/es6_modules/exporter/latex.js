@@ -12,6 +12,8 @@ export class BaseLatexExporter extends BaseExporter {
         metadata, documentClass) {
         let documentEndCommands = ''
 
+        let latexAfterAbstract = ''
+
         let includePackages = '\\usepackage[utf8]{luainputenc}'
 
         if (subtitle && metadata.subtitle) {
@@ -102,7 +104,7 @@ export class BaseLatexExporter extends BaseExporter {
         if (keywords && metadata.keywords) {
             let tempNode = obj2Node(metadata.keywords)
             if (tempNode.textContent.length > 0) {
-                latexStart += '\\begin{keywords}\n' + tempNode.textContent + '\\end{keywords}\n'
+                latexAfterAbstract += '\\begin{keywords}\n' + tempNode.textContent + '\n\\end{keywords}\n'
             }
         }
 
@@ -130,16 +132,13 @@ export class BaseLatexExporter extends BaseExporter {
 
 
 
-        return {
-            latexStart: latexStart,
-            latexEnd: latexEnd
-        }
+        return {latexStart, latexAfterAbstract, latexEnd}
     }
 
     htmlToLatex(title, author, htmlCode,
         settings, metadata, isChapter, listedWorksList) {
         let latexStart = '',
-            latexEnd = '', that = this
+            latexEnd = '', latexAfterAbstract = '', that = this
         if (!listedWorksList) {
             listedWorksList = []
         }
@@ -165,6 +164,7 @@ export class BaseLatexExporter extends BaseExporter {
                 'article')
             latexStart += documentFeatures.latexStart
             latexEnd += documentFeatures.latexEnd
+            latexAfterAbstract += documentFeatures.latexAfterAbstract
         }
 
 
@@ -177,31 +177,6 @@ export class BaseLatexExporter extends BaseExporter {
         }
 
         htmlCode = this.cleanHTML(htmlCode)
-        // Replace the footnotes with markers and the footnotes to the back of the
-        // document, so they can survive the normalization that happens when
-        // assigning innerHTML.
-        /*let footnotes = [].slice.call(htmlCode.querySelectorAll('.footnote'))
-        let footnotesContainer = document.createElement('div')
-        footnotesContainer.id = 'footnotes-container'
-
-        footnotes.forEach(function(footnote) {
-            let footnoteMarker = document.createElement('span')
-            footnoteMarker.classList.add('footnote-marker')
-            footnote.parentNode.replaceChild(footnoteMarker, footnote)
-            footnotesContainer.appendChild(footnote)
-        })
-        htmlCode.appendChild(footnotesContainer)*/
-
-        /*let footnoteMarkersInHeaders = [].slice.call(htmlCode.querySelectorAll(
-          'h1 .footnote-marker, h2 .footnote-marker, h3 .footnote-marker, ul .footnote-marker, ol .footnote-marker'
-        )
-
-        footnoteMarkersInHeaders.forEach(function (marker) {
-            marker.classList.add('keep')
-        })*/
-
-        // Replace nbsp spaces with normal ones
-        //htmlCode.innerHTML = htmlCode.innerHTML.replace(/&nbsp;/g, ' ')
 
         // Remove line breaks
         htmlCode.innerHTML = htmlCode.innerHTML.replace(
@@ -259,9 +234,9 @@ export class BaseLatexExporter extends BaseExporter {
                 '\n\n\\end{code}\n')
         })
         jQuery(htmlCode).find('div#abstract').each(function() {
-            jQuery(this).replaceWith('\n\\begin{abstract}\n\n' +
+            jQuery(this).replaceWith('<div id="abstract">\n\\begin{abstract}\n\n' +
                 this.innerHTML +
-                '\n\n\\end{abstract}\n')
+                '\n\n\\end{abstract}\n</div>')
         })
 
         // join code paragraphs that follow oneanother
@@ -402,6 +377,14 @@ export class BaseLatexExporter extends BaseExporter {
         /*jQuery(htmlCode).find('.footnote').each(function() {
             jQuery(this).replaceWith('\\footnotext{' + this.innerHTML + '}')
         })*/
+
+        // Add LaTeX that will appear after the abstract
+        if (latexAfterAbstract.length > 0) {
+            let tempNode = document.createElement('div')
+            tempNode.innerHTML = latexAfterAbstract
+            let abstractNode = jQuery(htmlCode).find('div#abstract')[0]
+            htmlCode.insertBefore(tempNode, abstractNode.nextSibling)
+        }
 
         let returnObject = {
             latex: latexStart + htmlCode.textContent + latexEnd,

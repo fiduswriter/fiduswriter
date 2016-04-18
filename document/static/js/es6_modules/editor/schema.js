@@ -442,7 +442,13 @@ Figure.prototype.serializeDOM = (node, serializer) => {
 
         captionNode.appendChild(captionTextNode)
     }
-    dom.appendChild(captionNode)
+    // Add table captions above the table, other captions below.
+    if (node.attrs.figureCategory === 'table') {
+        dom.insertBefore(captionNode, dom.lastChild)
+    } else {
+        dom.appendChild(captionNode)
+    }
+
     return dom
 }
 

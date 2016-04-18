@@ -378,12 +378,19 @@ export class BaseLatexExporter extends BaseExporter {
             jQuery(this).replaceWith('\\footnotext{' + this.innerHTML + '}')
         })*/
 
-        // Add LaTeX that will appear after the abstract
+        /* Add LaTeX that will appear after the abstract, if there is an
+         * abstract. Otherwise at start of document.
+         */
         if (latexAfterAbstract.length > 0) {
             let tempNode = document.createElement('div')
             tempNode.innerHTML = latexAfterAbstract
             let abstractNode = jQuery(htmlCode).find('div#abstract')[0]
-            htmlCode.insertBefore(tempNode, abstractNode.nextSibling)
+            if (abstractNode) {
+                htmlCode.insertBefore(tempNode, abstractNode.nextSibling)
+            } else {
+                htmlCode.insertBefore(tempNode, htmlCode.firstChild)
+            }
+
         }
 
         let returnObject = {

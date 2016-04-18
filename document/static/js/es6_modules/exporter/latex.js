@@ -191,6 +191,12 @@ export class BaseLatexExporter extends BaseExporter {
         htmlCode.innerHTML = htmlCode.innerHTML.replace(/\#/g, '\\\#')
         htmlCode.innerHTML = htmlCode.innerHTML.replace(/\%/g, '\\\%')
 
+        // Remove control characters that somehow have ended up in the document
+        htmlCode.innerHTML = htmlCode.innerHTML.replace(/\u000B/g, '')
+        htmlCode.innerHTML = htmlCode.innerHTML.replace(/\u000C/g, '')
+        htmlCode.innerHTML = htmlCode.innerHTML.replace(/\u000E/g, '')
+        htmlCode.innerHTML = htmlCode.innerHTML.replace(/\u000F/g, '')
+
         jQuery(htmlCode).find('i').each(function() {
             jQuery(this).replaceWith('\\emph{' + this.innerHTML +
                 '}')
@@ -313,21 +319,27 @@ export class BaseLatexExporter extends BaseExporter {
 
         jQuery(htmlCode).find('figure').each(function() {
             let latexPackage
-            let figureType = jQuery(this).find('figcaption')[0].firstChild
-                .innerHTML
-            // TODO: make use of figure type
+            let figureType = jQuery(this).attr('data-figure-category')
             let caption = jQuery(this).find('figcaption')[0].lastChild.innerHTML
             let filename = jQuery(this).find('img').attr('data-src')
-            if (filename) { // TODO: handle formula figures
-                let filenameList = filename.split('.')
-                if (filenameList[filenameList.length - 1] === 'svg') {
+            let innerFigure = ''
+            if (filename) {
+                if (filename.split('.').pop() === 'svg') {
                     latexPackage = 'includesvg'
                 } else {
                     latexPackage = 'scaledgraphics'
                 }
-                this.outerHTML = '\n\\begin{figure}\n\\' + latexPackage +
-                    '{' + filename + '}\n\\caption{' + caption +
-                    '}\n\\end{figure}\n'
+                innerFigure += '\\' + latexPackage + '{' + filename + '}\n'
+            } else {
+                let formula = jQuery(this).attr('data-equation')
+                innerFigure += '\\begin{displaymath}\n'+formula+'\n\\end{displaymath}\n'
+            }
+            if (figureType==='table') {
+                this.outerHTML = '\n\\begin{table}\n\\caption{' + caption +
+                    '}\n' + innerFigure + '\\end{table}\n'
+            } else { // TODO: handle photo figure types
+                this.outerHTML = '\n\\begin{figure}\n' + innerFigure +
+                    '\\caption{' + caption + '}\n\\end{figure}\n'
             }
         })
 

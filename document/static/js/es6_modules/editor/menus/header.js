@@ -126,7 +126,9 @@ export class ModMenusHeader {
           jQuery(document).on('mousedown', '.share:not(.disabled)', function() {
               new DocumentAccessRightsDialog([
                   that.mod.editor.doc.id
-              ], that.mod.editor.doc.access_rights, that.mod.editor.doc.owner.team_members)
+              ], that.mod.editor.doc.access_rights, that.mod.editor.doc.owner.team_members, function(newAccessRights) {
+                  that.mod.editor.doc.access_rights = newAccessRights
+              })
           })
 
           //open and close header

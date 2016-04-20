@@ -6,7 +6,7 @@ export class ModCollabCaretLayout {
     }
 
     updateCaret(positionUser){
-        let colorId = this.mod.mod.editor.mod.collab.colorIds[positionUser.id]
+        let colorId = this.mod.mod.colorIds[positionUser.id]
         let posFrom = positionUser.posFrom
         let posTo = positionUser.posTo
         // Delete an old marked range for the same session, if there is one.

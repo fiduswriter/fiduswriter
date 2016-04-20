@@ -1,6 +1,6 @@
 import {ModCollabDocChanges} from "./doc-changes"
 import {ModCollabChat} from "./chat"
-import {ModCollabCarets} from "./carets/mod"
+import {ModCollabCarets} from "./carets"
 
 export class ModCollab {
     constructor(editor) {

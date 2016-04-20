@@ -1,6 +1,7 @@
 import {ProseMirror} from "prosemirror/dist/edit/main"
 import {fidusFnSchema} from "../schema"
 import "prosemirror/dist/collab"
+import {Doc} from "prosemirror/dist/model"
 
 import {ModFootnoteEditor} from "./editor"
 import {ModFootnoteMarkers} from "./markers"
@@ -22,6 +23,7 @@ export class ModFootnotes {
     init() {
         this.fnPm = new ProseMirror({
             place: document.getElementById('footnote-box-container'),
+            //doc: new Doc(),
             schema: this.schema,
             collab: {
                 version: 0

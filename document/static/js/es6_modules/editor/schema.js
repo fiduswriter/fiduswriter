@@ -1,7 +1,7 @@
 import {Schema, defaultSchema, Block, Textblock, Inline, Attribute, MarkType, NodeKind} from "prosemirror/dist/model"
 import {render as katexRender} from "katex"
 
-export class Doc extends Block {
+/*export class Doc extends Block {
     get kind() {
         return null
     }
@@ -11,7 +11,7 @@ export class Doc extends Block {
     get selectable() {
         return false
     }
-}
+}*/
 
 class Title extends Textblock {
     get contains() {
@@ -550,7 +550,6 @@ CommentMark.register("command", "unset", {
 })
 
 export const fidusSchema = new Schema(defaultSchema.spec.update({
-    doc: Doc,
     title: Title,
     metadatasubtitle: MetaDataSubtitle,
     metadataauthors: MetaDataAuthors,
@@ -566,7 +565,6 @@ export const fidusSchema = new Schema(defaultSchema.spec.update({
 }))
 
 export const fidusFnSchema = new Schema(defaultSchema.spec.update({
-    doc: Doc,
     title: Title,
     metadatasubtitle: MetaDataSubtitle,
     metadataauthors: MetaDataAuthors,

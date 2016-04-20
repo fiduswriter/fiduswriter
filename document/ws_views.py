@@ -179,7 +179,7 @@ class DocumentWS(BaseWebSocketHandler):
         chat = {
             "id": str(uuid.uuid4()),
             "body": parsed['body'],
-            "from": self.user.id,
+            "from": self.user_info.user.id,
             "type": 'chat'
             }
         DocumentWS.send_updates(chat, self.user_info.document_id)

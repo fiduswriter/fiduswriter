@@ -4,8 +4,8 @@ import {ImageSelectionDialog} from "../../../images/selection-dialog/selection-d
 import {render as katexRender} from "katex"
 
 export class FigureDialog {
-    constructor(editor) {
-        this.editor = editor
+    constructor(mod) {
+        this.editor = mod.editor
         this.imageDB = this.editor.imageDB
         this.imageId = false
         this.insideFigure = false,
@@ -14,7 +14,7 @@ export class FigureDialog {
         this.caption = '',
         this.figureCategory = 'figure',
         this.equation = '',
-        this.node = editor.currentPm.selection.node
+        this.node = this.editor.currentPm.selection.node
         this.submitMessage = gettext('Insert')
         this.dialog = false
         this.createFigureDialog()

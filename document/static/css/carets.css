@@ -1,0 +1,16 @@
+.cursor-user-0 {
+    border: 1px solid rgba(255,0,0,1);
+    background: rgba(255,0,0,0.2);
+}
+
+.cursor-user-1 {
+    border: 1px solid rgba(0,255,0,1);
+    background: rgba(0,255,0,0.2);
+}
+
+.cursor-user-2 {
+    border: 1px solid rgba(0,0,255,1);
+    background: rgba(0,0,255,0.2);
+}
+
+/* More colors should be added here! */

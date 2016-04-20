@@ -87,6 +87,7 @@ export class ModCollabDocChanges {
                 diff_version: this.mod.editor.pm.mod.collab.version,
                 diff: toSend.steps.map(s => s.toJSON()),
                 footnote_diff: fnToSend.steps.map(s => s.toJSON()),
+                currentPosition:this.mod.editor.mod.carets.interactions.caretPosition(),
                 comments: this.mod.editor.mod.comments.store.unsentEvents(),
                 comment_version: this.mod.editor.mod.comments.store.version,
                 request_id: request_id,
@@ -132,6 +133,9 @@ export class ModCollabDocChanges {
         }
         if (data.footnote_diff && data.footnote_diff.length) {
             this.mod.editor.mod.footnotes.fnEditor.applyDiffs(data.footnote_diff)
+        }
+        if (data.currentPosition && data.currentPosition.length) {
+                this.mod.editor.mod.carets.layout.updateCaret(data.currentPosition);
         }
         if (data.reject_request_id) {
             this.rejectDiff(data.reject_request_id)

@@ -38,7 +38,7 @@ export class ModCitations {
             if (citationFormatter.citationType==='note') {
                 // The citations have not been filled, so we do so manually.
                 emptyCitations.forEach(function(emptyCitation) {
-                    emptyCitation.innerHTML = '&thinsp;'
+                    emptyCitation.innerHTML = '<span class="citation-footnote-marker"></span>'
                 })
                 let citationsHTML = ''
                 citationFormatter.citationTexts.forEach(function(citationText){

@@ -21,7 +21,7 @@
 
 /* footnotes in main editor */
 
-.footnote-marker::before {
+.footnote-marker::before, .citation-footnote-marker::before {
   counter-increment: footnote-marker-counter;
   content: counter(footnote-marker-counter);
 }

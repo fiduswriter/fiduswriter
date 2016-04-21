@@ -7,12 +7,20 @@ export class ModCollabCarets {
 
     // Create a new caret as the current user
     caretPosition() {
-        let selection = this.mod.editor.pm.selection
+        let selectionFrom = this.mod.editor.pm.selection.from
+        let selectionTo = this.mod.editor.pm.selection.to
+
+        if (selectionFrom===selectionTo) {
+            /* Workaround to allow for an empty marked range.
+             * See https://github.com/ProseMirror/prosemirror/issues/313
+             */
+            selectionTo += 0.1
+        }
         let selectionUser = {
             id: this.mod.editor.user.id,
             sessionId: this.mod.editor.docInfo.session_id,
-            posFrom:selection.from -1, // Teporary while ProseMirror is being fixed. Should be without "-1"
-            posTo:selection.to
+            posFrom: selectionFrom,
+            posTo: selectionTo
         }
         return selectionUser
     }

@@ -8,6 +8,7 @@ export class ModCollab {
         this.editor = editor
         this.participants = []
         this.colorIds = {}
+        this.sessionIds = []
         this.newColor = 0
         this.collaborativeMode = false
         new ModCollabDocChanges(this)
@@ -17,17 +18,28 @@ export class ModCollab {
 
     updateParticipantList(participants) {
         let that = this
+
+        let allSessionIds = []
         this.participants = _.map(_.groupBy(participants,
             'id'), function (entries) {
-            let keys = []
-            // Collect all keys
+            let sessionIds = []
+            // Collect all Session IDs.
             entries.forEach(function(entry){
-                keys.push(entry.key)
-                delete entry.key
+                sessionIds.push(entry.session_id)
+                allSessionIds.push(entry.session_id)
+                delete entry.session_id
             })
-            entries[0].keys = keys
+            entries[0].sessionIds = sessionIds
             return entries[0]
         })
+        // Check if each of the old session IDs is still present in last update.
+        // If not, remove the corresponding marked range, if any.
+        this.sessionIds.forEach(function(sessionId) {
+            if (allSessionIds.indexOf(sessionId) === -1) {
+                that.carets.removeSelection(sessionId)
+            }
+        })
+        this.sessionIds = allSessionIds
         if (participants.length > 1) {
             this.collaborativeMode = true
         } else if (participants.length === 1) {

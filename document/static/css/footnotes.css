@@ -46,7 +46,7 @@
   display: none;
 }
 
-.footnote-marker {
+.footnote-marker, .citation-footnote-marker {
   font-size: 75%;
   /*line-height: 0;*/
   position: relative;

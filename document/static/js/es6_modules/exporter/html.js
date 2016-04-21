@@ -57,13 +57,15 @@ export class BaseHTMLExporter extends BaseExporter{
             contents.insertBefore(tempNode, contents.firstChild)
         }
 
-        let bibliography = new FormatCitations(contents,
+        let citationFormatter = new FormatCitations(contents,
             this.doc.settings.citationstyle,
             this.bibDB)
+            
+        let bibliographyHTML = citationFormatter.bibliographyHTML
 
-        if (bibliography.length > 0) {
+        if (bibliographyHTML.length > 0) {
             let tempNode = document.createElement('div')
-            tempNode.innerHTML = bibliography
+            tempNode.innerHTML = bibliographyHTML
             while (tempNode.firstChild) {
                 contents.appendChild(tempNode.firstChild)
             }

@@ -26,14 +26,20 @@ export class ModCitations {
             // bibliography hasn't been loaded yet
             return
         }
-        let emptyCitations = document.querySelectorAll('#paper-editable span.citation:empty')
+        let emptyCitations = [].slice.call(document.querySelectorAll('#paper-editable span.citation:empty'))
         if (emptyCitations.length > 0) {
-            let bibliographyHTML = new FormatCitations(
+            let citationFormatter = new FormatCitations(
                 document.getElementById('paper-editable'), // TODO: Should we point this to somewhere else?
                 this.editor.doc.settings.citationstyle,
-                this.editor.bibDB.bibDB
+                this.editor.bibDB.bibDB, false
             )
-            document.getElementById('document-bibliography').innerHTML = bibliographyHTML
+            document.getElementById('document-bibliography').innerHTML = citationFormatter.bibliographyHTML
+            if (citationFormatter.citationType==='note') {
+                // The citations have not been filled, so we do so manually.
+                emptyCitations.forEach(function(emptyCitation) {
+                    emptyCitation.innerHTML = '&thinsp;'
+                })
+            }
         }
 
     }

@@ -93,12 +93,12 @@ export class EpubBookExporter extends BaseEpubExporter {
                 contents.appendChild(tempNode.firstChild)
             }
 
-            let bibliography = new FormatCitations(contents,
+            let citationFormatter = new FormatCitations(contents,
                 this.book.settings.citationstyle,
                 this.bibDB)
 
-            if (bibliography.length > 0) {
-                contents.innerHTML += bibliography
+            if (citationFormatter.bibliographyHTML.length > 0) {
+                contents.innerHTML += citationFormatter.bibliographyHTML
             }
 
             images = images.concat(findImages(contents))

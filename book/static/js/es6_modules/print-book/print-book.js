@@ -123,8 +123,8 @@ export class PrintBook {
             obj2Node
         })
 
-
-        jQuery(bibliography).html(new FormatCitations(document.body, this.theBook.settings.citationstyle, this.bibDB))
+        let citationFormatter = new FormatCitations(document.body, this.theBook.settings.citationstyle, this.bibDB)
+        jQuery(bibliography).html(citationFormatter.bibliographyHTML)
 
         if (jQuery(bibliography).text().trim().length===0) {
             jQuery(bibliography).parent().remove()

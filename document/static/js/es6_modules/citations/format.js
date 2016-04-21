@@ -27,7 +27,6 @@ export class FormatCitations {
             this.renderCitations()
         }
         this.renderBibliography()
-        return this.bibliographyHTML
     }
 
     init() {

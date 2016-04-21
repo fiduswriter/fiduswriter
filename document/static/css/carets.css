@@ -3,14 +3,26 @@
     background: rgba(255,0,0,0.2);
 }
 
+.cursor-user-right-0 {
+    border-right: 2px solid rgba(255,0,0,1);
+}
+
 .cursor-user-1 {
     border: 1px solid rgba(0,255,0,1);
     background: rgba(0,255,0,0.2);
 }
 
+.cursor-user-right-1 {
+    border-right: 2px solid rgba(0,255,0,1);
+}
+
 .cursor-user-2 {
     border: 1px solid rgba(0,0,255,1);
     background: rgba(0,0,255,0.2);
+}
+
+.cursor-user-right-2 {
+    border-right: 2px solid rgba(0,0,255,1);
 }
 
 /* More colors should be added here! */

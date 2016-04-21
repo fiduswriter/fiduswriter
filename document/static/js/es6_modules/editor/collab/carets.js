@@ -7,20 +7,12 @@ export class ModCollabCarets {
 
     // Create a new caret as the current user
     caretPosition() {
-        let selectionFrom = this.mod.editor.pm.selection.from
-        let selectionTo = this.mod.editor.pm.selection.to
 
-        if (selectionFrom===selectionTo) {
-            /* Workaround to allow for an empty marked range.
-             * See https://github.com/ProseMirror/prosemirror/issues/313
-             */
-            selectionTo += 0.1
-        }
         let selectionUser = {
             id: this.mod.editor.user.id,
             sessionId: this.mod.editor.docInfo.session_id,
-            posFrom: selectionFrom,
-            posTo: selectionTo
+            posFrom: this.mod.editor.pm.selection.from,
+            posTo: this.mod.editor.pm.selection.to
         }
         return selectionUser
     }
@@ -40,12 +32,30 @@ export class ModCollabCarets {
             posTo = map.map(posTo)
         })
 
+        let className = 'cursor-user-' + colorId
+
+        /* Workaround to allow for an empty marked range in some cases.
+         * See https://github.com/ProseMirror/prosemirror/issues/313
+         */
+        if (posFrom===posTo) {
+            let rp = this.mod.editor.pm.doc.resolve(posFrom)
+            if (rp.nodeAfter) {
+                posTo += 0.1
+            } else if (rp.nodeBefore) {
+                posFrom -= 1
+                className = 'cursor-user-right-' + colorId
+            } else {
+                // The caret is likely in an empty paragraph.
+                // TODO: Figure out what to do.
+            }
+        }
+
         this.markedSelectionUser[selectionUser.sessionId] = this.mod.editor.pm.markRange(
             posFrom,
             posTo,
             {
                 removeWhenEmpty: false,
-                className: 'cursor-user-' + colorId
+                className
             }
         )
     }

@@ -8,7 +8,6 @@ import {scheduleDOMUpdate} from "prosemirror/dist/ui/update"
 
 import {fidusSchema} from "./schema"
 import {ModComments} from "./comments/mod"
-import {ModCarets} from "./carets/mod"
 import {ModFootnotes} from "./footnotes/mod"
 import {ModCitations} from "./citations/mod"
 import {ModCollab} from "./collab/mod"
@@ -71,7 +70,6 @@ export class Editor {
         new ModCollab(this)
         new ModTools(this)
         new ModComments(this)
-        new ModCarets(this)
         this.pm.on("change", function(){that.docInfo.changed = true})
         this.pm.on("filterTransform", (transform) => {return that.onFilterTransform(transform)})
         this.pm.on("transform", (transform, options) => {that.onTransform(transform, true)})

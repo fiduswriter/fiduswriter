@@ -6,7 +6,7 @@ import {obj2Node} from "../../exporter/json"
 import {BaseEpubExporter} from "../../exporter/epub"
 import {createSlug, findImages} from "../../exporter/tools"
 import {zipFileCreator} from "../../exporter/zip"
-import {formatCitations} from "../../citations/format"
+import {FormatCitations} from "../../citations/format"
 
 
 export class HTMLBookExporter extends BaseEpubExporter { // extension is correct. Neds orderLinks/setLinks methods from base epub exporter.
@@ -44,7 +44,7 @@ export class HTMLBookExporter extends BaseEpubExporter { // extension is correct
 
             let contents = obj2Node(aDocument.contents)
 
-            let bibliography = formatCitations(contents,
+            let bibliography = new FormatCitations(contents,
                 this.book.settings.citationstyle,
                 this.bibDB)
 

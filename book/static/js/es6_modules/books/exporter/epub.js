@@ -10,7 +10,7 @@ import {ncxTemplate, ncxItemTemplate, navTemplate, navItemTemplate,
 import {node2Obj, obj2Node} from "../../exporter/json"
 import {createSlug, findImages} from "../../exporter/tools"
 import {zipFileCreator} from "../../exporter/zip"
-import {formatCitations} from "../../citations/format"
+import {FormatCitations} from "../../citations/format"
 
 
 export class EpubBookExporter extends BaseEpubExporter {
@@ -93,7 +93,7 @@ export class EpubBookExporter extends BaseEpubExporter {
                 contents.appendChild(tempNode.firstChild)
             }
 
-            let bibliography = formatCitations(contents,
+            let bibliography = new FormatCitations(contents,
                 this.book.settings.citationstyle,
                 this.bibDB)
 

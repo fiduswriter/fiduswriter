@@ -1,6 +1,6 @@
 import {bookPrintStartTemplate, bookPrintTemplate} from "./templates"
 import {obj2Node} from "../exporter/json"
-import {formatCitations} from "../citations/format"
+import {FormatCitations} from "../citations/format"
 
 /**
 * Helper functions for the book print page.
@@ -124,7 +124,7 @@ export class PrintBook {
         })
 
 
-        jQuery(bibliography).html(formatCitations(document.body, this.theBook.settings.citationstyle, this.bibDB))
+        jQuery(bibliography).html(new FormatCitations(document.body, this.theBook.settings.citationstyle, this.bibDB))
 
         if (jQuery(bibliography).text().trim().length===0) {
             jQuery(bibliography).parent().remove()

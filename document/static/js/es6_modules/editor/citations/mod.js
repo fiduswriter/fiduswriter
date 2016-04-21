@@ -1,4 +1,4 @@
-import {formatCitations} from "../../citations/format"
+import {FormatCitations} from "../../citations/format"
 import {UpdateScheduler} from "prosemirror/dist/ui/update"
 
 export class ModCitations {
@@ -28,7 +28,7 @@ export class ModCitations {
         }
         let emptyCitations = document.querySelectorAll('#paper-editable span.citation:empty')
         if (emptyCitations.length > 0) {
-            let bibliographyHTML = formatCitations(
+            let bibliographyHTML = new FormatCitations(
                 document.getElementById('paper-editable'), // TODO: Should we point this to somewhere else?
                 this.editor.doc.settings.citationstyle,
                 this.editor.bibDB.bibDB

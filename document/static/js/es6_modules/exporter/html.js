@@ -4,7 +4,7 @@ import {htmlExportTemplate} from "./html-templates"
 import {BibliographyDB} from "../bibliography/database"
 import {BaseExporter} from "./base"
 import {obj2Node} from "./json"
-import {formatCitations} from "../citations/format"
+import {FormatCitations} from "../citations/format"
 
 import {render as katexRender} from "katex"
 
@@ -57,7 +57,7 @@ export class BaseHTMLExporter extends BaseExporter{
             contents.insertBefore(tempNode, contents.firstChild)
         }
 
-        let bibliography = formatCitations(contents,
+        let bibliography = new FormatCitations(contents,
             this.doc.settings.citationstyle,
             this.bibDB)
 

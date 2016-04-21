@@ -34,11 +34,23 @@ export class ModCitations {
                 this.editor.bibDB.bibDB, false
             )
             document.getElementById('document-bibliography').innerHTML = citationFormatter.bibliographyHTML
+            let citationsContainer = document.getElementById('citation-footnote-box-container')
             if (citationFormatter.citationType==='note') {
                 // The citations have not been filled, so we do so manually.
                 emptyCitations.forEach(function(emptyCitation) {
                     emptyCitation.innerHTML = '&thinsp;'
                 })
+                let citationsHTML = ''
+                citationFormatter.citationTexts.forEach(function(citationText){
+                    citationsHTML += '<div class="footnote-citation">'+citationText+'</div>'
+                })
+                if (citationsContainer.innerHTML !== citationsHTML) {
+                    citationsContainer.innerHTML = citationsHTML
+                }
+            } else {
+                if (citationsContainer.innerHTML !== '') {
+                    citationsContainer.innerHTML = ''
+                }
             }
         }
 

@@ -6,10 +6,11 @@ import {addMemberDialog} from "../../contacts/manage"
 
 export class DocumentAccessRightsDialog {
 
-    constructor(documentIds, accessRights, teamMembers) {
+    constructor(documentIds, accessRights, teamMembers, callback) {
         this.documentIds = documentIds
         this.accessRights = accessRights
         this.teamMembers = teamMembers
+        this.callback = callback
         this.createAccessRightsDialog()
     }
 
@@ -149,6 +150,7 @@ export class DocumentAccessRightsDialog {
             dataType: 'json',
             success: function (response) {
                 that.accessRights = response.access_rights
+                that.callback(that.accessRights)
                 $.addAlert('success', gettext(
                     'Access rights have been saved'))
             },

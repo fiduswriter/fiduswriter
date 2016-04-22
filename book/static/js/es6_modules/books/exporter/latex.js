@@ -71,7 +71,7 @@ export class LatexBookExporter extends BaseLatexExporter {
             allContent, this.book.title, author, this.book.metadata.subtitle, this.book.metadata.keywords, this.book.metadata.author, this.book.metadata, 'book')
 
 
-        let latexStart = documentFeatures.latexStart
+        let latexStart = documentFeatures.latexStart + documentFeatures.latexAfterAbstract
         let latexEnd = documentFeatures.latexEnd
 
         outputList.push({

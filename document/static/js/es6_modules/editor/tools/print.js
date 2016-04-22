@@ -40,10 +40,24 @@ export class ModToolsPrint {
         let footnoteMarkers = [].slice.call(flowCopy.querySelectorAll('.footnote-marker'))
 
         footnoteMarkers.forEach(function(fnMarker, index) {
+            while (fnMarker.firstChild) {
+                fnMarker.removeChild(fnMarker.firstChild)
+            }
             while (footnotes[index].firstChild) {
                 fnMarker.appendChild(footnotes[index].firstChild)
             }
         })
+        let footnoteCitations = footnoteBox.querySelectorAll('.footnote-citation')
+        let footnoteCitationMarkers = [].slice.call(flowCopy.querySelectorAll('.citation-footnote-marker'))
+
+        footnoteCitationMarkers.forEach(function(fnCitationMarker, index) {
+            let fnCitation = footnoteCitations[index]
+            fnCitation.classList.remove('footnote-citation')
+            fnCitationMarker.appendChild(fnCitation)
+            fnCitationMarker.classList.remove('citation-footnote-marker')
+            fnCitationMarker.classList.add('footnote-marker')
+        })
+
 
         window.flowCopy = flowCopy
         jQuery(flowTo).show()

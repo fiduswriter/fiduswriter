@@ -5,6 +5,11 @@
     vertical-align: top;
 }
 
+#citation-footnote-box-container {
+    position: absolute;
+    width: 20vw;
+}
+
 #footnote-box-container .footnote-container > *:first-child::before {
   counter-increment: footnote-counter;
   content: counter(footnote-counter) ' ';
@@ -16,12 +21,12 @@
 
 /* footnotes in main editor */
 
-.footnote-marker::before {
+.footnote-marker::before, .citation-footnote-marker::before {
   counter-increment: footnote-marker-counter;
   content: counter(footnote-marker-counter);
 }
 
-.footnote-container {
+.footnote-container, .footnote-citation {
   margin-top: 10px;
 }
 
@@ -41,7 +46,7 @@
   display: none;
 }
 
-.footnote-marker {
+.footnote-marker, .citation-footnote-marker {
   font-size: 75%;
   /*line-height: 0;*/
   position: relative;

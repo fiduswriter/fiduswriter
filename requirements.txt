@@ -1,4 +1,4 @@
-Django==1.9
+Django==1.9.5
 Pillow==3.0.0
 backports.ssl-match-hostname==3.5.0.1
 certifi==2015.11.20.1

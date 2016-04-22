@@ -24,6 +24,12 @@ export class ModFootnoteEditor {
     // filter transformations, disallowing all transformations going across document parts/footnotes.
     onFilterTransform(transform) {
         let prohibited = false
+
+        if (this.mod.editor.docInfo.rights === "e" || this.mod.editor.docInfo.rights === "c") {
+            prohibited = true
+            return prohibited
+        }
+
         if (transform.docs[0].childCount !== transform.doc.childCount) {
             prohibited = true
         }

@@ -26,7 +26,7 @@
   content: counter(footnote-marker-counter);
 }
 
-.footnote-container {
+.footnote-container, .footnote-citation {
   margin-top: 10px;
 }
 

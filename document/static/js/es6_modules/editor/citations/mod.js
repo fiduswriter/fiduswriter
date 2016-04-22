@@ -43,7 +43,7 @@ export class ModCitations {
             // bibliography hasn't been loaded yet
             return
         }
-
+        let needFootnoteLayout = false
         let emptyCitations = [].slice.call(document.querySelectorAll('#paper-editable span.citation:empty'))
         if (emptyCitations.length > 0) {
             let citationFormatter = new FormatCitations(
@@ -51,6 +51,10 @@ export class ModCitations {
                 this.editor.doc.settings.citationstyle,
                 this.editor.bibDB.bibDB, false
             )
+            if (this.citationType !== citationFormatter.citationType) {
+                // The citation format has changed, so we need to relayout the footnotes as well
+                needFootnoteLayout = true
+            }
             this.citationType = citationFormatter.citationType
 
             document.getElementById('document-bibliography').innerHTML = citationFormatter.bibliographyHTML
@@ -76,6 +80,9 @@ export class ModCitations {
             }
         }
         this.footnoteNumberOverride()
+        if (needFootnoteLayout) {
+            this.editor.mod.footnotes.layout.layoutFootnotes()
+        }
     }
 
     footnoteNumberOverride() {

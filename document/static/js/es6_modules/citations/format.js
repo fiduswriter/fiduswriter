@@ -101,7 +101,7 @@ export class FormatCitations {
 
     renderBibliography() {
 
-        this.bibliographyHTML += '<h1 id="bibliograhy-header"></h1>'
+        this.bibliographyHTML += '<h1 id="bibliography-header"></h1>'
             // Add entry to bibliography
 
         for (let j = 0; j < this.bibliography[1].length; j++) {

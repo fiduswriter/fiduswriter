@@ -74,7 +74,6 @@ class DocumentWS(BaseWebSocketHandler):
 
         #TODO: switch on filtering when choose workflow and have UI for assigning roles to users
         #filtered_comments = filter_comments_by_role(DocumentWS.sessions[self.user_info.document_id]["comments"], access_rights, 'editing', self.user_info)
-        print self.doc["comments"]
         response['document']['comments']=self.doc["comments"]
         #response['document']['comments'] = filtered_comments
         response['document']['comment_version']=self.doc["comment_version"]

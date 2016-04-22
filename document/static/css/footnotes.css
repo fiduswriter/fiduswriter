@@ -7,7 +7,6 @@
 
 #citation-footnote-box-container {
     position: absolute;
-    width: 20vw;
 }
 
 #footnote-box-container .footnote-container > *:first-child::before {

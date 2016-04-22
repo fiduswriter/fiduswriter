@@ -60,17 +60,26 @@ export class ModCitations {
             document.getElementById('document-bibliography').innerHTML = citationFormatter.bibliographyHTML
             let citationsContainer = document.getElementById('citation-footnote-box-container')
             if (this.citationType==='note') {
-                // The citations have not been filled, so we do so manually.
-                emptyCitations.forEach(function(emptyCitation) {
-                    emptyCitation.innerHTML = '<span class="citation-footnote-marker"></span>'
-                })
+                // Find all the citations in the main body text (not footnotes)
+                let emptyBodyCitations = [].slice.call(document.querySelectorAll('#document-editable span.citation:empty'))
+
                 let citationsHTML = ''
-                citationFormatter.citationTexts.forEach(function(citationText){
+                // The citations have not been filled, so we do so manually.
+                emptyBodyCitations.forEach(function(emptyCitation, index) {
+                    emptyCitation.innerHTML = '<span class="citation-footnote-marker"></span>'
+                    let citationText = citationFormatter.citationTexts[index][0][1]
                     citationsHTML += '<div class="footnote-citation">'+citationText[0][1]+'</div>'
                 })
                 if (citationsContainer.innerHTML !== citationsHTML) {
                     citationsContainer.innerHTML = citationsHTML
                 }
+                // Iterate over remainign citations (these must be in footnotes) and lay them out directly
+                for(let index=emptyBodyCitations.length;index<emptyCitations.length;index++) {
+                    let citationText = citationFormatter.citationTexts[index][0][1]
+                    let emptyCitation = emptyCitations[index]
+                    emptyCitation.innerHTML = citationText
+                }
+
 
 
             } else {

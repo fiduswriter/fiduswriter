@@ -297,7 +297,7 @@ class DocumentWS(BaseWebSocketHandler):
             participant_list = []
             for waiter in cls.sessions[document_id]['participants'].keys():
                 participant_list.append({
-                    'key':waiter,
+                    'session_id':waiter,
                     'id':cls.sessions[document_id]['participants'][waiter].user_info.user.id,
                     'name':cls.sessions[document_id]['participants'][waiter].user_info.user.readable_name,
                     'avatar':avatar_url(cls.sessions[document_id]['participants'][waiter].user_info.user,80)

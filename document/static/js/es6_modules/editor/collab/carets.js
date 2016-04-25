@@ -1,10 +1,10 @@
-import {UpdateScheduler} from "prosemirror/dist/ui/update"
+import {UpdateScheduler, scheduleDOMUpdate} from "prosemirror/dist/ui/update"
 
 export class ModCollabCarets {
     constructor(mod) {
         mod.carets = this
         this.mod = mod
-        this.markedSelectionUser = {}
+        this.caretPositions = {}
         this.caretContainer = false
         this.caretPlacementStyle =-false
         this.setup()
@@ -29,11 +29,17 @@ export class ModCollabCarets {
         let that = this
         new UpdateScheduler(this.mod.editor.pm, "change", () => {return that.updatePositionCSS()})
         new UpdateScheduler(this.mod.editor.mod.footnotes.fnPm, "change", () => {return that.updatePositionCSS()})
+        this.mod.editor.pm.on("selectionChange", function() {
+            that.sendSelectionChange()
+        })
+        this.mod.editor.mod.footnotes.fnPm.on("selectionChange", function() {
+            that.sendSelectionChange()
+        })
     }
 
     // Create a new caret as the current user
-    caretPosition() {
-        let selectionUser = {
+    getCaretPosition() {
+        let caretPosition = {
             id: this.mod.editor.user.id,
             sessionId: this.mod.editor.docInfo.session_id,
             from: this.mod.editor.currentPm.selection.from,
@@ -43,19 +49,32 @@ export class ModCollabCarets {
             // Whether the selection is in the footnote or the main editor
             pm: this.mod.editor.currentPm === this.mod.editor.pm ? 'pm' : 'fnPm'
         }
-        return selectionUser
+        console.log(caretPosition)
+        return caretPosition
+    }
+
+    sendSelectionChange() {
+        this.mod.editor.mod.serverCommunications.send({
+            type: 'selection_change',
+            caret_position: this.getCaretPosition(),
+            diff_version: this.mod.editor.pm.mod.collab.version
+        })
+    }
+
+    receiveSelectionChange(data) {
+        let that = this
+        this.updateCaret(data.caret_position)
+        let pm = data.caret_position.pm === 'pm' ? this.mod.editor.pm : this.mod.editor.mod.footnotes.fnPm
+        scheduleDOMUpdate(pm, function(){return that.updatePositionCSS()})
     }
 
     // Update the position of a collaborator's caret
-    updateCaret(selectionUser){
-        let colorId = this.mod.colorIds[selectionUser.id]
-        let posFrom = selectionUser.from
-        let posTo = selectionUser.to
-        let posAnchor = selectionUser.anchor
-        let pm = selectionUser.pm === 'pm' ? this.mod.editor.pm : this.mod.editor.mod.footnotes.fnPm
-
-        // Delete an old marked range for the same session, if there is one.
-        this.removeSelection(selectionUser.sessionId)
+    updateCaret(caretPosition){
+        let colorId = this.mod.colorIds[caretPosition.id]
+        let posFrom = caretPosition.from
+        let posTo = caretPosition.to
+        let posAnchor = caretPosition.anchor
+        let pm = caretPosition.pm === 'pm' ? this.mod.editor.pm : this.mod.editor.mod.footnotes.fnPm
 
         // Map the positions through all still unconfirmed changes
         pm.mod.collab.unconfirmedMaps.forEach(function(map){
@@ -64,7 +83,8 @@ export class ModCollabCarets {
             posAnchor = map.map(posAnchor)
         })
 
-        let className = 'cursor-user-' + colorId
+        // Delete an old marked range for the same session, if there is one.
+        this.removeSelection(caretPosition.sessionId)
 
         let range = false
 
@@ -74,7 +94,7 @@ export class ModCollabCarets {
                 posTo,
                 {
                     removeWhenEmpty: true,
-                    className
+                    className: 'selection-user-' + colorId
                 }
             )
         }
@@ -89,29 +109,34 @@ export class ModCollabCarets {
 
 
         let anchorNode = document.createElement('div')
-        anchorNode.id = 'caret-' + selectionUser.sessionId
+        let className = 'cursor-user-'+colorId
+        anchorNode.id = 'caret-' + caretPosition.sessionId
         anchorNode.classList.add('caret')
         anchorNode.classList.add(className)
         anchorNode.innerHTML = '<div class="caret-head"></div>'
         anchorNode.firstChild.classList.add(className)
-        let tooltip = _.findWhere(this.mod.participants,{id:selectionUser.id}).name
+        let participant = _.findWhere(this.mod.participants,{id:caretPosition.id})
+        let tooltip  = ''
+        if (participant) {
+            tooltip = participant.name
+        }
         anchorNode.title = tooltip
         anchorNode.firstChild.title = tooltip
         this.caretContainer.appendChild(anchorNode)
-        this.markedSelectionUser[selectionUser.sessionId] = {pm, range, anchorRange, anchorNode}
+        this.caretPositions[caretPosition.sessionId] = {pm, range, anchorRange, anchorNode}
     }
 
     removeSelection(sessionId) {
-        if (sessionId in this.markedSelectionUser) {
-            let selectionUser = this.markedSelectionUser[sessionId]
-            if (_.isFinite(selectionUser.range)) {
-                this.mod.editor[selectionUser.pm].removeRange(selectionUser.range)
+        if (sessionId in this.caretPositions) {
+            let caretPosition = this.caretPositions[sessionId]
+            if (_.isFinite(caretPosition.range.from)) {
+                caretPosition.pm.removeRange(caretPosition.range)
             }
-            if (_.isFinite(selectionUser.anchorRange)) {
-                this.mod.editor[selectionUser.pm].removeRange(selectionUser.anchorRange)
+            if (_.isFinite(caretPosition.anchorRange.from)) {
+                caretPosition.pm.removeRange(caretPosition.anchorRange)
             }
-            selectionUser.anchorNode.parentNode.removeChild(selectionUser.anchorNode)
-            delete this.markedSelectionUser[sessionId]
+            caretPosition.anchorNode.parentNode.removeChild(caretPosition.anchorNode)
+            delete this.caretPositions[sessionId]
         }
     }
 
@@ -129,9 +154,9 @@ export class ModCollabCarets {
                 return function () {
                     // 2nd read phase
                     let positionCSS = ''
-                    for (let sessionId in that.markedSelectionUser) {
-                        let selectionUser = that.markedSelectionUser[sessionId]
-                        let coords = selectionUser.pm.coordsAtPos(selectionUser.anchorRange.from)
+                    for (let sessionId in that.caretPositions) {
+                        let caretPosition = that.caretPositions[sessionId]
+                        let coords = caretPosition.pm.coordsAtPos(caretPosition.anchorRange.from)
                         let offsets = that.caretContainer.getBoundingClientRect()
                         let height = coords.bottom - coords.top
                         let top = coords.top - offsets.top

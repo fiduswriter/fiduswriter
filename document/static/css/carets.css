@@ -19,104 +19,187 @@ div.caret-head {
 
 .cursor-user-0 {
     border: 1px solid rgba(255,0,0,1);
+}
+
+.selection-user-0 {
     background: rgba(255,0,0,0.2);
+}
+
+.profile-user-0 {
+    border-bottom: 4px solid rgba(255,0,0,1);
 }
 
 .cursor-user-1 {
     border: 1px solid rgba(0,255,255,1);
+}
+
+.selection-user-1 {
     background: rgba(0,255,255,0.2);
+}
+
+.profile-user-1 {
+    border-bottom: 4px solid rgba(0,255,255,1);
 }
 
 .cursor-user-2 {
     border: 1px solid rgba(0,0,255,1);
+}
+
+.selection-user-2 {
     background: rgba(0,0,255,0.2);
+}
+
+.profile-user-2 {
+    border-bottom: 4px solid rgba(0,0,255,1);
 }
 
 .cursor-user-3 {
     border: 1px rgba(0,0,160,1);
+}
+
+.selection-user-3 {
     background: rgba(0,0,160,0.2);
 }
 
+.profile-user-3 {
+    border-bottom: 4px solid rgba(0,0,160,1);
+}
+
+/* TODO: add more .profile-user-X */
+
 .cursor-user-4 {
     border: 1px solid rgba(173,216,230,1);
+}
+
+.selection-user-4 {
     background: rgba(173,216,230,0.2);
 }
 
 .cursor-user-5 {
     border: 1px solid rgba(128,0,128,1);
+}
+
+.selection-user-5 {
     background: rgba(128,0,128,0.2);
 }
+
 .cursor-user-6 {
     border: 1px solid rgba(255,255,0,1);
+}
+
+.selection-user-6 {
     background: rgba(255,255,0,0.2);
 }
 
 .cursor-user-7 {
     border: 1px solid rgba(0,255,0,1);
+}
+
+.selection-user-7 {
     background: rgba(0,255,0,0.2);
 }
 
 .cursor-user-8 {
     border: 1px solid rgba(255,0,255,1);
+}
+
+.selection-user-8 {
     background: rgba(255,0,255,0.2);
 }
 
 .cursor-user-9 {
     border: 1px solid rgba(128,128,128,1);
+}
+
+.selection-user-9 {
     background: rgba(128,128,128,0.2);
 }
+
 .cursor-user-10 {
     border: 1px solid rgba(255,165,0,1);
+}
+
+.selection-user-10 {
     background: rgba(255,165,0,0.2);
 }
 
 .cursor-user-11 {
     border: 1px solid rgba(165,42,42,1);
+}
+
+.selection-user-11 {
     background: rgba(165,42,42,0.2);
 }
 
 .cursor-user-12 {
     border: 1px solid rgba(0,128,0,1);
+}
+
+.selection-user-12 {
     background: rgba(0,128,0,0.2);
 }
+
 .cursor-user-13 {
     border: 1px solid rgba(255,203,164,1);
+}
+
+.selection-user-13 {
     background: rgba(255,203,164,0.2);
 }
 
 .cursor-user-14 {
     border: 1px solid rgba(247,93,89,1);
+}
+
+.selection-user-14 {
     background: rgba(247,93,89,0.2);
 }
 
 .cursor-user-15 {
     border: 1px solid rgba(125,5,82,1);
+}
+
+.selection-user-15 {
     background: rgba(125,5,82,0.2);
 }
 
 .cursor-user-16 {
     border: 1px solid rgba(252,223,255,1);
+}
+
+.selection-user-16 {
     background: rgba(252,223,255,0.2);
 }
 
 .cursor-user-17 {
     border: 1px solid rgba(70,199,199,1);
+}
+
+.selection-user-17 {
     background: rgba(70,199,199,0.2);
 }
 
 .cursor-user-18 {
     border: 1px solid rgba(106,251,146,1);
+}
+
+.selection-user-18 {
     background: rgba(106,251,146,0.2);
 }
 
 .cursor-user-19 {
     border: 1px solid rgba(115,106,255,1);
+}
+
+.selection-user-19 {
     background: rgba(115,106,255,0.2);
 }
 
 .cursor-user-20 {
     border: 1px solid rgba(245,40,135,1);
-    background: rgba(245,40,135,0.2);
 }
 
+.selection-user-20 {
+    background: rgba(245,40,135,0.2);
+}
 /* More colors should be added here! */

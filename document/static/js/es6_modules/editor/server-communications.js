@@ -119,6 +119,14 @@ export class ModServerCommunications {
                 }
                 this.editor.mod.collab.docChanges.enableDiffSending()
                 break
+            case 'selection_change':
+                this.editor.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
+                if (data.diff_version !== this.editor.pm.mod.collab.version) {
+                    this.editor.mod.collab.checkDiffVersion()
+                    return
+                }
+                this.editor.mod.collab.carets.receiveSelectionChange(data)
+                break
             case 'diff':
                 this.editor.mod.collab.docChanges.receiveFromCollaborators(data)
                 break

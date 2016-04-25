@@ -8,21 +8,113 @@
 }
 
 .cursor-user-1 {
-    border: 1px solid rgba(0,255,0,1);
+    border: 1px solid #00FFFF;
     background: rgba(0,255,0,0.2);
 }
 
 .cursor-user-right-1 {
-    border-right: 2px solid rgba(0,255,0,1);
+    border-right: 2px solid #00FFFF;
 }
 
 .cursor-user-2 {
-    border: 1px solid rgba(0,0,255,1);
+    border: 1px solid #0000FF;
     background: rgba(0,0,255,0.2);
 }
 
 .cursor-user-right-2 {
-    border-right: 2px solid rgba(0,0,255,1);
+    border-right: 2px solid #0000FF;
 }
 
+.cursor-user-3 {
+    border: 1px solid #0000A0;
+    background: rgba(0,0,255,0.2);
+}
+
+.cursor-user-right-3 {
+    border-right: 2px solid #0000A0;
+}
+
+.cursor-user-4 {
+    border: 1px solid #ADD8E6;
+    background: rgba(0,0,255,0.2);
+}
+
+.cursor-user-right-4 {
+    border-right: 2px solid #ADD8E6;
+}
+
+.cursor-user-5 {
+    border: 1px solid #800080);
+    background: rgba(0,0,255,0.2);
+}
+
+.cursor-user-right-5 {
+    border-right: 2px solid #800080;
+}
+
+.cursor-user-6 {
+    border: 1px solid #FFFF00;
+    background: rgba(0,0,255,0.2);
+}
+
+.cursor-user-right-6 {
+    border-right: 2px solid #FFFF00;
+}
+
+.cursor-user-7 {
+    border: 1px solid #00FF00;
+    background: rgba(0,0,255,0.2);
+}
+
+.cursor-user-right-7 {
+    border-right: 2px solid #00FF00;
+}
+
+.cursor-user-8 {
+    border: 1px solid #FF00FF;
+    background: rgba(0,0,255,0.2);
+}
+
+.cursor-user-right-8 {
+    border-right: 2px solid #FF00FF;
+}
+
+.cursor-user-9 {
+    border: 1px solid #808080;
+    background: rgba(0,0,255,0.2);
+}
+
+.cursor-user-right-9 {
+    border-right: 2px solid #808080;
+}
+
+.cursor-user-10 {
+    border: 1px solid #FFA500;
+    background: rgba(0,0,255,0.2);
+}
+
+.cursor-user-right-10 {
+    border-right: 2px solid #FFA500;
+}
+
+.cursor-user-11 {
+    border: 1px solid #A52A2A;
+    background: rgba(0,0,255,0.2);
+}
+
+.cursor-user-right-11 {
+    border-right: 2px solid #A52A2A;
+}
+
+.cursor-user-12 {
+    border: 1px solid #008000;
+    background: rgba(0,0,255,0.2);
+}
+
+.cursor-user-right-12 {
+    border-right: 2px solid #008000;
+}
+
+
 /* More colors should be added here! */
+

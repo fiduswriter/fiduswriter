@@ -54,7 +54,7 @@ export class ModCollabCarets {
             posFrom,
             posTo,
             {
-                removeWhenEmpty: false,
+                removeWhenEmpty: true,
                 className
             }
         )

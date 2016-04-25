@@ -49,7 +49,6 @@ export class ModCollabCarets {
             // Whether the selection is in the footnote or the main editor
             pm: this.mod.editor.currentPm === this.mod.editor.pm ? 'pm' : 'fnPm'
         }
-        console.log(caretPosition)
         return caretPosition
     }
 
@@ -70,6 +69,11 @@ export class ModCollabCarets {
 
     // Update the position of a collaborator's caret
     updateCaret(caretPosition){
+        let participant = _.findWhere(this.mod.participants,{id:caretPosition.id})
+        if (!participant) {
+            // participant (still unknown). Ignore.
+            return
+        }
         let colorId = this.mod.colorIds[caretPosition.id]
         let posFrom = caretPosition.from
         let posTo = caretPosition.to
@@ -115,11 +119,7 @@ export class ModCollabCarets {
         anchorNode.classList.add(className)
         anchorNode.innerHTML = '<div class="caret-head"></div>'
         anchorNode.firstChild.classList.add(className)
-        let participant = _.findWhere(this.mod.participants,{id:caretPosition.id})
-        let tooltip  = ''
-        if (participant) {
-            tooltip = participant.name
-        }
+        let tooltip = participant.name
         anchorNode.title = tooltip
         anchorNode.firstChild.title = tooltip
         this.caretContainer.appendChild(anchorNode)

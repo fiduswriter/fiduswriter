@@ -25,7 +25,7 @@ div.caret-head {
     background: rgba(255,0,0,0.2);
 }
 
-.profile-user-0 {
+.avatar-user-0 {
     border-bottom: 4px solid rgba(255,0,0,1);
 }
 
@@ -37,7 +37,7 @@ div.caret-head {
     background: rgba(0,255,255,0.2);
 }
 
-.profile-user-1 {
+.avatar-user-1 {
     border-bottom: 4px solid rgba(0,255,255,1);
 }
 
@@ -49,7 +49,7 @@ div.caret-head {
     background: rgba(0,0,255,0.2);
 }
 
-.profile-user-2 {
+.avatar-user-2 {
     border-bottom: 4px solid rgba(0,0,255,1);
 }
 
@@ -61,11 +61,11 @@ div.caret-head {
     background: rgba(0,0,160,0.2);
 }
 
-.profile-user-3 {
+.avatar-user-3 {
     border-bottom: 4px solid rgba(0,0,160,1);
 }
 
-/* TODO: add more .profile-user-X */
+/* TODO: add more .avatar-user-X */
 
 .cursor-user-4 {
     border: 1px solid rgba(173,216,230,1);

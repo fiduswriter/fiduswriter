@@ -92,6 +92,11 @@ export class ModCollabCarets {
         anchorNode.id = 'caret-' + selectionUser.sessionId
         anchorNode.classList.add('caret')
         anchorNode.classList.add(className)
+        anchorNode.innerHTML = '<div class="caret-head"></div>'
+        anchorNode.firstChild.classList.add(className)
+        let tooltip = _.findWhere(this.mod.participants,{id:selectionUser.id}).name
+        anchorNode.title = tooltip
+        anchorNode.firstChild.title = tooltip
         this.caretContainer.appendChild(anchorNode)
         this.markedSelectionUser[selectionUser.sessionId] = {pm, range, anchorRange, anchorNode}
     }

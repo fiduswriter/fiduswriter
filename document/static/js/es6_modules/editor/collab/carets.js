@@ -53,6 +53,12 @@ export class ModCollabCarets {
     }
 
     sendSelectionChange() {
+        if (this.mod.editor.currentPm.mod.collab.unconfirmedMaps.length > 0) {
+            // TODO: Positions really need to be reverse-mapped through all
+            // unconfirmed maps. As long as we don't do this, we just don't send 
+            // anything if there are unconfirmed maps to avoid potential problems.
+            return
+        }
         this.mod.editor.mod.serverCommunications.send({
             type: 'selection_change',
             caret_position: this.getCaretPosition(),

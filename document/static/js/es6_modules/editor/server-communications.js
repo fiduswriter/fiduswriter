@@ -114,7 +114,7 @@ export class ModServerCommunications {
             case 'confirm_diff_version':
                 this.editor.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
                 if (data.diff_version !== this.editor.pm.mod.collab.version) {
-                    this.editor.mod.collab.checkDiffVersion()
+                    this.editor.mod.collab.docChanges.checkDiffVersion()
                     return
                 }
                 this.editor.mod.collab.docChanges.enableDiffSending()
@@ -122,7 +122,7 @@ export class ModServerCommunications {
             case 'selection_change':
                 this.editor.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
                 if (data.diff_version !== this.editor.pm.mod.collab.version) {
-                    this.editor.mod.collab.checkDiffVersion()
+                    this.editor.mod.collab.docChanges.checkDiffVersion()
                     return
                 }
                 this.editor.mod.collab.carets.receiveSelectionChange(data)

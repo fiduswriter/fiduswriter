@@ -1,7 +1,7 @@
 export let messageTemplate = _.template(
     `<div class="message" id="m<%= message.id %>">
         <div class="comment-user">
-            <img class="comment-user-avatar avatar-user-<%= theChatter.colorId %>" src="<%= theChatter.avatar %>">
+            <img class="comment-user-avatar" src="<%= theChatter.avatar %>">
             <h5 class="comment-user-name"><%= theChatter.name %></h5>
             <p class="comment-date"><%= jQuery.localizeDate(new Date()) %></p>
         </div>

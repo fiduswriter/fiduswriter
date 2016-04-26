@@ -44,8 +44,8 @@ export class ModCollabCarets {
             sessionId: this.mod.editor.docInfo.session_id,
             from: this.mod.editor.currentPm.selection.from,
             to: this.mod.editor.currentPm.selection.to,
-            anchor: this.mod.editor.currentPm.selection.anchor ?
-                this.mod.editor.currentPm.selection.anchor : this.mod.editor.currentPm.selection.from,
+            head: _.isFinite(this.mod.editor.currentPm.selection.head) ?
+                this.mod.editor.currentPm.selection.head : this.mod.editor.currentPm.selection.to,
             // Whether the selection is in the footnote or the main editor
             pm: this.mod.editor.currentPm === this.mod.editor.pm ? 'pm' : 'fnPm'
         }
@@ -55,7 +55,7 @@ export class ModCollabCarets {
     sendSelectionChange() {
         if (this.mod.editor.currentPm.mod.collab.unconfirmedMaps.length > 0) {
             // TODO: Positions really need to be reverse-mapped through all
-            // unconfirmed maps. As long as we don't do this, we just don't send 
+            // unconfirmed maps. As long as we don't do this, we just don't send
             // anything if there are unconfirmed maps to avoid potential problems.
             return
         }
@@ -83,14 +83,14 @@ export class ModCollabCarets {
         let colorId = this.mod.colorIds[caretPosition.id]
         let posFrom = caretPosition.from
         let posTo = caretPosition.to
-        let posAnchor = caretPosition.anchor
+        let posHead = caretPosition.head
         let pm = caretPosition.pm === 'pm' ? this.mod.editor.pm : this.mod.editor.mod.footnotes.fnPm
 
         // Map the positions through all still unconfirmed changes
         pm.mod.collab.unconfirmedMaps.forEach(function(map){
             posFrom = map.map(posFrom)
             posTo = map.map(posTo)
-            posAnchor = map.map(posAnchor)
+            posHead = map.map(posHead)
         })
 
         // Delete an old marked range for the same session, if there is one.
@@ -109,27 +109,27 @@ export class ModCollabCarets {
             )
         }
 
-        let anchorRange = pm.markRange(
-            posAnchor,
-            posAnchor,
+        let headRange = pm.markRange(
+            posHead,
+            posHead,
             {
                 removeWhenEmpty: false
             }
         )
 
 
-        let anchorNode = document.createElement('div')
+        let headNode = document.createElement('div')
         let className = 'cursor-user-'+colorId
-        anchorNode.id = 'caret-' + caretPosition.sessionId
-        anchorNode.classList.add('caret')
-        anchorNode.classList.add(className)
-        anchorNode.innerHTML = '<div class="caret-head"></div>'
-        anchorNode.firstChild.classList.add(className)
+        headNode.id = 'caret-' + caretPosition.sessionId
+        headNode.classList.add('caret')
+        headNode.classList.add(className)
+        headNode.innerHTML = '<div class="caret-head"></div>'
+        headNode.firstChild.classList.add(className)
         let tooltip = participant.name
-        anchorNode.title = tooltip
-        anchorNode.firstChild.title = tooltip
-        this.caretContainer.appendChild(anchorNode)
-        this.caretPositions[caretPosition.sessionId] = {pm, range, anchorRange, anchorNode}
+        headNode.title = tooltip
+        headNode.firstChild.title = tooltip
+        this.caretContainer.appendChild(headNode)
+        this.caretPositions[caretPosition.sessionId] = {pm, range, headRange, headNode}
     }
 
     removeSelection(sessionId) {
@@ -138,10 +138,10 @@ export class ModCollabCarets {
             if (_.isFinite(caretPosition.range.from)) {
                 caretPosition.pm.removeRange(caretPosition.range)
             }
-            if (_.isFinite(caretPosition.anchorRange.from)) {
-                caretPosition.pm.removeRange(caretPosition.anchorRange)
+            if (_.isFinite(caretPosition.headRange.from)) {
+                caretPosition.pm.removeRange(caretPosition.headRange)
             }
-            caretPosition.anchorNode.parentNode.removeChild(caretPosition.anchorNode)
+            caretPosition.headNode.parentNode.removeChild(caretPosition.headNode)
             delete this.caretPositions[sessionId]
         }
     }
@@ -162,7 +162,7 @@ export class ModCollabCarets {
                     let positionCSS = ''
                     for (let sessionId in that.caretPositions) {
                         let caretPosition = that.caretPositions[sessionId]
-                        let coords = caretPosition.pm.coordsAtPos(caretPosition.anchorRange.from)
+                        let coords = caretPosition.pm.coordsAtPos(caretPosition.headRange.from)
                         let offsets = that.caretContainer.getBoundingClientRect()
                         let height = coords.bottom - coords.top
                         let top = coords.top - offsets.top

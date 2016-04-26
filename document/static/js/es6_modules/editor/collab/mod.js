@@ -53,6 +53,7 @@ export class ModCollab {
                 that.colorIds[participant.id] = that.newColor
                 that.newColor++
             }
+            participant.colorId = that.colorIds[participant.id]
         })
         this.chat.updateParticipantList(participants)
     }

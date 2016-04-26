@@ -74,7 +74,6 @@ class DocumentWS(BaseWebSocketHandler):
 
         #TODO: switch on filtering when choose workflow and have UI for assigning roles to users
         #filtered_comments = filter_comments_by_role(DocumentWS.sessions[self.user_info.document_id]["comments"], access_rights, 'editing', self.user_info)
-        print self.doc["comments"]
         response['document']['comments']=self.doc["comments"]
         #response['document']['comments'] = filtered_comments
         response['document']['comment_version']=self.doc["comment_version"]
@@ -129,6 +128,8 @@ class DocumentWS(BaseWebSocketHandler):
             self.handle_chat(parsed)
         elif parsed["type"]=='check_diff_version':
             self.check_diff_version(parsed)
+        elif parsed["type"]=='selection_change':
+            self.handle_selection_change(message, parsed)
         elif parsed["type"]=='update_document' and self.can_update_document():
             self.handle_document_update(parsed)
         elif parsed["type"]=='update_title' and self.can_update_document():
@@ -183,6 +184,11 @@ class DocumentWS(BaseWebSocketHandler):
             "type": 'chat'
             }
         DocumentWS.send_updates(chat, self.user_info.document_id)
+
+    def handle_selection_change(self, message, parsed):
+        if self.user_info.document_id in DocumentWS.sessions and parsed["diff_version"] == self.doc['diff_version']:
+            DocumentWS.send_updates(message, self.user_info.document_id, self.id)
+
 
     def handle_settings_change(self, message, parsed):
         if self.user_info.document_id in DocumentWS.sessions:

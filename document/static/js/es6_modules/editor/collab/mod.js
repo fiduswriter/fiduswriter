@@ -1,7 +1,7 @@
 import {ModCollabDocChanges} from "./doc-changes"
 import {ModCollabChat} from "./chat"
 import {ModCollabCarets} from "./carets"
-
+import {ModCollabColors} from "./colors"
 export class ModCollab {
     constructor(editor) {
         editor.mod.collab = this
@@ -14,6 +14,7 @@ export class ModCollab {
         new ModCollabDocChanges(this)
         new ModCollabChat(this)
         new ModCollabCarets(this)
+        new ModCollabColors(this)
     }
 
     updateParticipantList(participants) {
@@ -55,6 +56,7 @@ export class ModCollab {
             }
             participant.colorId = that.colorIds[participant.id]
         })
+        this.colors.provideUserColorStyles(this.newColor)
         this.chat.updateParticipantList(participants)
     }
 }

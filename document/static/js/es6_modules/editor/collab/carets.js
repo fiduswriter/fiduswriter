@@ -39,7 +39,7 @@ export class ModCollabCarets {
 
     // Create a new caret as the current user
     getCaretPosition() {
-        let caretPosition = {
+        return {
             id: this.mod.editor.user.id,
             sessionId: this.mod.editor.docInfo.session_id,
             from: this.mod.editor.currentPm.selection.from,
@@ -49,7 +49,6 @@ export class ModCollabCarets {
             // Whether the selection is in the footnote or the main editor
             pm: this.mod.editor.currentPm === this.mod.editor.pm ? 'pm' : 'fnPm'
         }
-        return caretPosition
     }
 
     sendSelectionChange() {

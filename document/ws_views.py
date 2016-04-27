@@ -128,6 +128,8 @@ class DocumentWS(BaseWebSocketHandler):
             self.handle_chat(parsed)
         elif parsed["type"]=='check_diff_version':
             self.check_diff_version(parsed)
+        elif parsed["type"]=='selection_change':
+            self.handle_selection_change(message, parsed)
         elif parsed["type"]=='update_document' and self.can_update_document():
             self.handle_document_update(parsed)
         elif parsed["type"]=='update_title' and self.can_update_document():
@@ -214,6 +216,11 @@ class DocumentWS(BaseWebSocketHandler):
             }
         DocumentWS.send_updates(chat, self.user_info.document_id)
 
+    def handle_selection_change(self, message, parsed):
+        if self.user_info.document_id in DocumentWS.sessions and parsed["diff_version"] == self.doc['diff_version']:
+            DocumentWS.send_updates(message, self.user_info.document_id, self.id)
+
+
     def handle_settings_change(self, message, parsed):
         DocumentWS.sessions[self.user_info.document_id]['settings'][parsed['variable']] = parsed['value']
         DocumentWS.send_updates(message, self.user_info.document_id, self.id)
@@ -299,7 +306,7 @@ class DocumentWS(BaseWebSocketHandler):
             participant_list = []
             for waiter in cls.sessions[document_id]['participants'].keys():
                 participant_list.append({
-                    'key':waiter,
+                    'session_id':waiter,
                     'id':cls.sessions[document_id]['participants'][waiter].user_info.user.id,
                     'name':cls.sessions[document_id]['participants'][waiter].user_info.user.readable_name,
                     'avatar':avatar_url(cls.sessions[document_id]['participants'][waiter].user_info.user,80)

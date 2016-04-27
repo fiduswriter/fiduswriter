@@ -6,7 +6,7 @@ export class ModCollabCarets {
         this.mod = mod
         this.caretPositions = {}
         this.caretContainer = false
-        this.caretPlacementStyle =-false
+        this.caretPlacementStyle = false
         this.setup()
         this.bindEvents()
     }
@@ -103,7 +103,7 @@ export class ModCollabCarets {
                 posTo,
                 {
                     removeWhenEmpty: true,
-                    className: 'selection-user-' + colorId
+                    className: 'user-bg-' + colorId
                 }
             )
         }
@@ -118,7 +118,7 @@ export class ModCollabCarets {
 
 
         let headNode = document.createElement('div')
-        let className = 'cursor-user-'+colorId
+        let className = 'user-'+colorId
         headNode.id = 'caret-' + caretPosition.sessionId
         headNode.classList.add('caret')
         headNode.classList.add(className)

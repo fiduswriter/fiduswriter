@@ -52,7 +52,9 @@ export class ModFootnoteEditor {
 
     applyDiffs(diffs) {
         console.log('applying footnote diff')
-        this.mod.fnPm.mod.collab.receive(diffs.map(j => Step.fromJSON(this.mod.schema, j)))
+        let steps = diffs.map(j => Step.fromJSON(this.mod.schema, j))
+        let client_ids = diffs.map(j => j.client_id)
+        this.mod.fnPm.mod.collab.receive(steps, client_ids)
     }
 
     renderAllFootnotes() {

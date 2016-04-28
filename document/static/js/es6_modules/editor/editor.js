@@ -237,7 +237,7 @@ export class Editor {
 
     enableUI() {
 
-        this.mod.citations.layoutCitations()
+        //this.mod.citations.layoutCitations()
 
         jQuery('.savecopy, .saverevision, .download, .latex, .epub, .html, .print, .style, \
       .citationstyle, .tools-item, .papersize, .metadata-menu-item, \

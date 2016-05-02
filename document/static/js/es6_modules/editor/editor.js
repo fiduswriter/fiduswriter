@@ -94,12 +94,10 @@ export class Editor {
         this.sendDocumentTitleTimer = setInterval(function() {
             if (that.docInfo && that.docInfo.titleChanged) {
                 that.docInfo.titleChanged = false
-                if (that.docInfo.control) {
-                    that.mod.serverCommunications.send({
-                        type: 'update_title',
-                        title: that.doc.title
-                    });
-                }
+                that.mod.serverCommunications.send({
+                    type: 'update_title',
+                    title: that.doc.title
+                })
             }
         }, 10000)
     }

@@ -19,6 +19,8 @@ export class DocumentOverviewMenus {
                 let documentId = parseInt(jQuery(this).attr('data-id'))
                 new DocumentAccessRightsDialog([documentId], that.documentOverview.accessRights, that.documentOverview.teamMembers, function (newAccessRights) {
                     that.documentOverview.accessRights = newAccessRights
+                }, function(memberDetails){
+                    that.documentOverview.teamMembers.push(memberDetails)
                 })
             })
 

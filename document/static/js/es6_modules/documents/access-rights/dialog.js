@@ -6,11 +6,12 @@ import {addMemberDialog} from "../../contacts/manage"
 
 export class DocumentAccessRightsDialog {
 
-    constructor(documentIds, accessRights, teamMembers, callback) {
+    constructor(documentIds, accessRights, teamMembers, callback, createContactCallback) {
         this.documentIds = documentIds
         this.accessRights = accessRights
         this.teamMembers = teamMembers
         this.callback = callback
+        this.createContactCallback = createContactCallback
         this.createAccessRightsDialog()
     }
 
@@ -53,7 +54,19 @@ export class DocumentAccessRightsDialog {
 
         let diaButtons = {}
         diaButtons[gettext('Add new contact')] = function () {
-            addMemberDialog()
+            addMemberDialog(function(memberData){
+                jQuery('#my-contacts .fw-document-table-body').append(accessRightTrTemplate({'contacts': [memberData]}))
+                jQuery('#share-member table tbody').append(collaboratorsTemplate({'collaborators': [{
+                    'user_id': memberData.id,
+                    'user_name': memberData.name,
+                    'avatar': memberData.avatar,
+                    'rights': 'r'
+                }]}))
+                that.collaboratorFunctionsEvent()
+                if (that.createContactCallback) {
+                    that.createContactCallback(memberData)
+                }
+            })
         }
         diaButtons[gettext('Submit')] = function () {
             //apply the current state to server
@@ -89,9 +102,13 @@ export class DocumentAccessRightsDialog {
                 jQuery('#access-rights-dialog').dialog('destroy').remove()
             }
         })
-        jQuery('.fw-checkable').bind('click', function () {
-            $.setCheckableLabel(jQuery(this))
-        })
+        this.bindDialogEvents()
+        this.collaboratorFunctionsEvent()
+    }
+
+    bindDialogEvents() {
+        let that = this
+        jQuery('#add-share-member').unbind('click')
         jQuery('#add-share-member').bind('click', function () {
             let selectedMembers = jQuery('#my-contacts .fw-checkable.checked')
             let selectedData = []
@@ -116,10 +133,13 @@ export class DocumentAccessRightsDialog {
             }))
             that.collaboratorFunctionsEvent()
         })
-        that.collaboratorFunctionsEvent()
     }
 
     collaboratorFunctionsEvent() {
+        jQuery('.fw-checkable').unbind('click')
+        jQuery('.fw-checkable').bind('click', function () {
+            $.setCheckableLabel(jQuery(this))
+        })
         jQuery('.edit-right').unbind('click')
         jQuery('.edit-right').each(function () {
             $.addDropdownBox(jQuery(this), jQuery(this).siblings('.fw-pulldown'))

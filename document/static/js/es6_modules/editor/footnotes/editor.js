@@ -79,14 +79,19 @@ export class ModFootnoteEditor {
         this.bindEvents()
     }
 
+    // Convert the footnote HTML stored with the marker to a PM node representation of the footnote.
+    htmlTofootnoteNode(contents) {
+        let footnoteHTML = "<div class='footnote-container'>" + contents + "</div>"
+        return fromHTML(this.mod.schema, footnoteHTML, {
+            preserveWhitespace: true
+        }).firstChild
+    }
 
 
     renderFootnote(contents, index = 0) {
         this.rendering = true
-        let footnoteHTML = "<div class='footnote-container'>" + contents + "</div>"
-        let node = fromHTML(this.mod.schema, footnoteHTML, {
-            preserveWhitespace: true
-        }).firstChild
+
+        let node = this.htmlTofootnoteNode(contents)
         let pos = 0
         for (let i=0; i<index;i++) {
             pos += this.mod.fnPm.doc.child(i).nodeSize

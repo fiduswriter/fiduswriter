@@ -85,7 +85,6 @@ export class ModCollabDocChanges {
             let aPackage = {
                 type: 'diff',
                 diff_version: this.mod.editor.pm.mod.collab.version,
-                caret_position: this.mod.carets.getCaretPosition(),
                 diff: toSend.steps.map(s => {
                     let step = s.toJSON()
                     step.client_id = this.mod.editor.pm.mod.collab.clientID
@@ -141,9 +140,6 @@ export class ModCollabDocChanges {
         }
         if (data.footnote_diff && data.footnote_diff.length) {
             this.mod.editor.mod.footnotes.fnEditor.applyDiffs(data.footnote_diff)
-        }
-        if (data.caret_position) {
-                this.mod.carets.updateCaret(data.caret_position)
         }
         if (data.reject_request_id) {
             this.rejectDiff(data.reject_request_id)

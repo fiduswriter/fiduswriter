@@ -29,12 +29,13 @@ export class ModCollabCarets {
         let that = this
         new UpdateScheduler(this.mod.editor.pm, "change", () => {return that.updatePositionCSS()})
         new UpdateScheduler(this.mod.editor.mod.footnotes.fnPm, "change", () => {return that.updatePositionCSS()})
-        this.mod.editor.pm.on("selectionChange", function() {
+        // Limit sending of selection to once every 250 ms. This is also important to work correctly
+        // with editing, which otherwise triggers three selection changes that result in an incorrect caret placement
+        let sendSelection = _.debounce(function(){
             that.sendSelectionChange()
-        })
-        this.mod.editor.mod.footnotes.fnPm.on("selectionChange", function() {
-            that.sendSelectionChange()
-        })
+        }, 250)
+        this.mod.editor.pm.on("selectionChange", sendSelection)
+        this.mod.editor.mod.footnotes.fnPm.on("selectionChange", sendSelection)
     }
 
     // Create a new caret as the current user
@@ -52,10 +53,12 @@ export class ModCollabCarets {
     }
 
     sendSelectionChange() {
+        let that = this
         if (this.mod.editor.currentPm.mod.collab.unconfirmedMaps.length > 0) {
             // TODO: Positions really need to be reverse-mapped through all
             // unconfirmed maps. As long as we don't do this, we just don't send
             // anything if there are unconfirmed maps to avoid potential problems.
+            setTimeout(function(){that.sendSelectionChange()},500)
             return
         }
         this.mod.editor.mod.serverCommunications.send({

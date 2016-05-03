@@ -69,6 +69,8 @@ export class ModCommentLayout {
         // Close the comment box and make sure no comment is marked as currently active.
         this.activeCommentId = false
         this.activeCommentAnswerId = false
+        // If there is a comment currently under creation, remove it.
+        this.mod.store.removeCommentDuringCreation()
     }
 
     findCommentId(node) {
@@ -106,7 +108,12 @@ export class ModCommentLayout {
         return this.updateDOM()
     }
 
+    // Activate the comments included in the selection or the comment where the
+    // caret is placed, if the editor is in focus.
     activateSelectedComment() {
+        if (!this.mod.editor.pm.hasFocus()) {
+            return
+        }
         let selection = this.mod.editor.pm.selection, comment = false, that = this
 
         if (selection.empty) {
@@ -141,7 +148,6 @@ export class ModCommentLayout {
 
         let theComments = [], referrers = [], activeCommentStyle = ''
 
-
         this.mod.editor.pm.doc.descendants(function(node, pos, parent) {
             if (!node.isInline) {
                 return
@@ -152,16 +158,19 @@ export class ModCommentLayout {
             }
             let comment = that.findComment(commentId)
             if (!comment) {
-                comment = new Comment(that.findCommentId(node))
-                comment.hidden = true // Comment is likely still being edited somewhere else. Don't show it.
+                // We have no comment with this ID. Ignore the referrer.
+                return;
+            //    comment = new Comment(that.findCommentId(node))
+            //    comment.hidden = true // There is no comment with this . Don't show it.
             }
             if (theComments.indexOf(comment) !== -1) {
                 // comment already placed
                 return
             }
-            if (comment.hidden) {
+            //if (comment.hidden) {
                 // Comment will not show by default.
-            } else if (comment.id === that.activeCommentId) {
+            //} else
+            if (comment.id === that.activeCommentId) {
                 activeCommentStyle += '.comments-enabled .comment[data-id="' + comment.id + '"] {background-color: #fffacf;}'
             } else {
                 activeCommentStyle += '.comments-enabled .comment[data-id="' + comment.id + '"] {background-color: #f2f2f2;}'
@@ -169,6 +178,21 @@ export class ModCommentLayout {
             theComments.push(comment)
             referrers.push(pos)
         })
+
+        // Add a comment that is currently under construction to the list.
+        if(this.mod.store.commentDuringCreation) {
+            let pos = this.mod.store.commentDuringCreation.referrer.from
+            let comment = this.mod.store.commentDuringCreation.comment
+            let index = 0
+            // We need the position of the new comment in relation to the other
+            // comments in order to insert it in the right place
+            while (referrers[index] < pos) {
+                index++
+            }
+            theComments.splice(index, 0, comment)
+            referrers.splice(index, 0, pos)
+            activeCommentStyle += '.comments-enabled .active-comment {background-color: #fffacf;}'
+        }
 
         let commentsTemplateHTML = commentsTemplate({
             theComments,

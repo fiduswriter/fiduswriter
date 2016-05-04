@@ -1,7 +1,7 @@
 import {citationDialog} from "./content-dialogs/citation"
 import {FigureDialog} from "./content-dialogs/figure"
 import {linkDialog} from "./content-dialogs/link"
-import {mathDialog} from "./content-dialogs/math"
+import {MathDialog} from "./content-dialogs/math"
 
 /* Bindings for the toolbar menu */
 export class ModMenusToolbar {
@@ -24,7 +24,7 @@ export class ModMenusToolbar {
         // toolbar math
         jQuery(document).on('mousedown', '#button-math:not(.disabled)', function (event) {
             that.executeAction(event, function(){
-                mathDialog(that.mod)
+                new MathDialog(that.mod)
             })
         })
 

@@ -43,20 +43,70 @@ export class ModFootnoteLayout {
                 // Apparently not all footnote boxes have been drawn. Abort for now.
                 return
             }
-            referrers.forEach(function(referrer, index) {
-                let footnoteBox = footnoteBoxes[index]
+            if (that.mod.editor.mod.citations.citationType==='note') {
+                /* Citations are also in footnotes, so both citation footnotes
+                 * and editor footnotes have to be placed. They shoudl eb placed
+                 * in the order the markers appear in the content, even though
+                 * editor footnotes and citations footnotes are separated in the DOM.
+                */
+                let citationFootnotes = document.querySelectorAll('#citation-footnote-box-container .footnote-citation'),
+                editorFootnoteIndex = 0, citationFootnoteIndex = 0, totalEditorOffset = totalOffset,
+                totalCitationOffset = totalOffset
+                that.mod.editor.pm.doc.descendants(function(node, pos){
+                    if (node.isInline && (node.type.name === 'footnote' || node.type.name === 'citation')) {
+                        let topMargin = 10
+                        if (node.type.name === 'footnote') {
+                            let footnoteBox = footnoteBoxes[editorFootnoteIndex],
+                                selector = '.footnote-container:nth-of-type('+(editorFootnoteIndex+1)+')',
+                                footnoteBoxCoords = footnoteBox.getBoundingClientRect(),
+                                footnoteBoxHeight = footnoteBoxCoords.height,
+                                referrerTop = that.mod.editor.pm.coordsAtPos(pos).top
+                            editorFootnoteIndex++
+                            if (referrerTop > totalEditorOffset || totalEditorOffset < (totalCitationOffset + topMargin)) {
+                                topMargin = parseInt(Math.max(referrerTop - totalEditorOffset, totalCitationOffset - totalEditorOffset + topMargin))
+                                footnotePlacementStyle += selector + ' {margin-top: ' + topMargin + 'px;}\n'
+                            }
+                            totalEditorOffset += footnoteBoxHeight + topMargin
+                        } else {
+                            let footnoteBox = citationFootnotes[citationFootnoteIndex],
+                                selector = '.footnote-citation:nth-of-type('+(citationFootnoteIndex+1)+')',
+                                footnoteBoxCoords = footnoteBox.getBoundingClientRect(),
+                                footnoteBoxHeight = footnoteBoxCoords.height,
+                                referrerTop = that.mod.editor.pm.coordsAtPos(pos).top
+                            citationFootnoteIndex++
+                            if (referrerTop > totalCitationOffset || totalCitationOffset < (totalEditorOffset + topMargin)) {
+                                topMargin = parseInt(Math.max(referrerTop - totalCitationOffset, totalEditorOffset - totalCitationOffset + topMargin))
+                                footnotePlacementStyle += selector + ' {margin-top: ' + topMargin + 'px;}\n'
+                            }
+                            totalCitationOffset += footnoteBoxHeight + topMargin
+                        }
 
-                let footnoteBoxCoords = footnoteBox.getBoundingClientRect(),
-                  footnoteBoxHeight = footnoteBoxCoords.height,
-                  referrerTop = that.mod.editor.pm.coordsAtPos(referrer.from).top,
-                  topMargin = 10
 
-                if (referrerTop > totalOffset) {
-                    topMargin = parseInt(referrerTop - totalOffset)
-                    footnotePlacementStyle += '.footnote-container:nth-of-type('+(index+1)+') {margin-top: ' + topMargin + 'px;}\n'
-                }
-                totalOffset += footnoteBoxHeight + topMargin
-            })
+                    }
+                })
+
+            } else {
+                /* Only editor footnotes (no citation footnotes) need to be layouted.
+                 * We use the existing footnote markers referrers to find the
+                 * placement.
+                 */
+                referrers.forEach(function(referrer, index) {
+                    let footnoteBox = footnoteBoxes[index]
+
+                    let footnoteBoxCoords = footnoteBox.getBoundingClientRect(),
+                      footnoteBoxHeight = footnoteBoxCoords.height,
+                      referrerTop = that.mod.editor.pm.coordsAtPos(referrer.from).top,
+                      topMargin = 10
+
+                    if (referrerTop > totalOffset) {
+                        topMargin = parseInt(referrerTop - totalOffset)
+                        footnotePlacementStyle += '.footnote-container:nth-of-type('+(index+1)+') {margin-top: ' + topMargin + 'px;}\n'
+                    }
+                    totalOffset += footnoteBoxHeight + topMargin
+                })
+            }
+
+
             return function () {
                 //DOM write phase
                 if (document.getElementById('footnote-placement-style').innerHTML != footnotePlacementStyle) {

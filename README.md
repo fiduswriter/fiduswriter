@@ -55,13 +55,17 @@ The following are instructions working on Ubuntu 14.04. Make adjustments as need
 
   > `python manage.py createsuperuser`
 
-9. Run the Fidus Writer server by typing:
+9. Transpile Javascript from ES6 to ES5 (takes a while):
+
+  > `./es6-transpile.sh`
+
+10. Run the Fidus Writer server by typing:
 
   > `python manage.py runserver`
 
-10. In your browser, navigate to http://localhost:8000/ and log in.
+11. In your browser, navigate to http://localhost:8000/ and log in.
 
-11. Notice that emails sent to the user appear in the console until an SMTP backend is configured (see below).
+12. Notice that emails sent to the user appear in the console until an SMTP backend is configured (see below).
 
 Advanced options
 ----

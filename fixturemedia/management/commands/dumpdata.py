@@ -18,10 +18,15 @@ pre_dump = django.dispatch.Signal(providing_args=('instance',))
 
 class Command(django.core.management.commands.dumpdata.Command):
 
-    option_list = django.core.management.commands.dumpdata.Command.option_list + (
-        make_option('--outfile', dest='outfile',
-            help='Specifies the file to write the serialized items to (required)'),
-    )
+    def add_arguments(self, parser):
+        super(Command, self).add_arguments(parser)
+        parser.add_argument('--outfile', dest='outfile',
+            help='Specifies the file to write the serialized items to (required).')
+
+#    option_list = django.core.management.commands.dumpdata.Command.option_list + (
+#        make_option('--outfile', dest='outfile',
+#            help='Specifies the file to write the serialized items to (required)'),
+#    )
 
     def save_images_for_signal(self, sender, **kwargs):
         instance = kwargs['instance']

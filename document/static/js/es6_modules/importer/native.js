@@ -3,36 +3,17 @@ import {obj2Node,node2Obj} from "../exporter/json"
 export class ImportNative {
     /* Save document information into the database */
 
-    constructor(aDocument, aBibDB, anImageDB, entries, user, callback) {
+    constructor(aDocument, aBibDB, anImageDB, entries, user, bibDB, imageDB, callback) {
         this.aDocument = aDocument
-        this.aBibDB = aBibDB
-        this.anImageDB = anImageDB
+        this.aBibDB = aBibDB // These are new values
+        this.anImageDB = anImageDB // These are new values
         this.entries = entries
         this.user = user
+        this.bibDB = bibDB // These are values stored in the database
+        this.imageDB = imageDB // These are values stored in the database
         this.callback = callback
-        this.getDBs()
-    }
-
-    getDBs() {
-        let that = this
-            // get BibDB and ImageDB if we don't have them already. Then invoke the native importer.
-        if ('undefined' === typeof(BibDB)) {
-            bibliographyHelpers.getBibDB(function() {
-                if ('undefined' === typeof(ImageDB)) {
-                    usermediaHelpers.getImageDB(function() {
-                        that.importNative()
-                    })
-                } else {
-                    that.importNative()
-                }
-            })
-        } else if ('undefined' === typeof(ImageDB)) {
-            usermediaHelpers.getImageDB(function() {
-                that.importNative()
-            })
-        } else {
-            that.importNative()
-        }
+        this.newBibEntries = []
+        this.importNative()
     }
 
     importNative() {
@@ -44,14 +25,14 @@ export class ImportNative {
             newImageEntries = [],
             simplifiedShrunkImageDB = []
 
-        // Add the id to each object in the BibDB to be able to look it up when comparing to this.aBibDB below
-        for (let key in BibDB) {
-            BibDB[key]['id'] = key
+        // Add the id to each object in the this.bibDB to be able to look it up when comparing to this.aBibDB below
+        for (let key in this.bibDB) {
+            this.bibDB[key]['id'] = key
         }
         for (let key in this.aBibDB) {
             //this.aBibDB[key]['entry_type']=_.findWhere(BibEntryTypes,{name:this.aBibDB[key]['bibtype']}).id
             //delete this.aBibDB[key].bibtype
-            let matchEntries = _.where(BibDB, this.aBibDB[key])
+            let matchEntries = _.where(this.bibDB, this.aBibDB[key])
 
             if (0 === matchEntries.length) {
                 //create new
@@ -76,8 +57,8 @@ export class ImportNative {
         }
 
         // Remove the id values again
-        for (let key in BibDB) {
-            delete BibDB[key].id
+        for (let key in this.bibDB) {
+            delete this.bibDB[key].id
         }
 
         // We need to remove the pk from the entry in the this.anImageDB so that we also get matches with this.entries with other pk values.
@@ -94,7 +75,7 @@ export class ImportNative {
         }
 
         for (let key in shrunkImageDBObject) {
-            let matchEntries = _.where(ImageDB, shrunkImageDBObject[key])
+            let matchEntries = _.where(this.imageDB, shrunkImageDBObject[key])
             if (0 === matchEntries.length) {
                 //create new
                 let sIDBEntry = _.findWhere(this.anImageDB, {
@@ -138,7 +119,7 @@ export class ImportNative {
 
         if (newBibEntries.length !== 0 || newImageEntries.length !== 0) {
             // We need to create new entries in the DB for images and/or bibliography items.
-            getImageData(that.aDocument,
+            this.getImageData(this.aDocument,
                 BibTranslationTable, ImageTranslationTable, newBibEntries,
                 newImageEntries, this.entries)
         } else if (!(jQuery.isEmptyObject(BibTranslationTable)) || !(jQuery.isEmptyObject(
@@ -269,7 +250,7 @@ export class ImportNative {
                         type: 'POST',
                         dataType: 'json',
                         success: function(response, textStatus, jqXHR) {
-                            ImageDB[response.values.pk] = response.values
+                            that.imageDB[response.values.pk] = response.values
                             let imageTranslation = {}
                             imageTranslation.oldUrl = newImageEntries[counter].oldUrl
                             imageTranslation.oldId = newImageEntries[counter].oldId
@@ -335,7 +316,7 @@ export class ImportNative {
                                 }).oldId
                             BibTranslationTable[oldID] = newID
                         })
-                        bibliographyHelpers.addBibList(response.bibs)
+                        that.newBibEntries = response.bibs
                         that.translateReferenceIds(BibTranslationTable, ImageTranslationTable)
                     },
                     error: function() {
@@ -386,7 +367,8 @@ export class ImportNative {
                 that.aDocument.revisions = []
                 return that.callback(true, {
                     aDocument: that.aDocument,
-                    aDocumentValues
+                    aDocumentValues,
+                    newBibEntries: that.newBibEntries
                 })
             },
             error: function() {

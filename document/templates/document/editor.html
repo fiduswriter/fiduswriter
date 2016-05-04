@@ -60,6 +60,8 @@
 
             <!-- Editor -->
             <link rel="stylesheet" href="{{ STATIC_URL }}css/texteditor.css" type="text/css">
+            <!-- Collaboration mode -->
+            <link rel="stylesheet" href="{{ STATIC_URL }}css/carets.css" type="text/css">
             <!-- Comments -->
             <link rel="stylesheet" href="{{ STATIC_URL }}css/comments.css" type="text/css">
             <!-- Footnotes -->
@@ -143,18 +145,6 @@
             <script type="text/javascript">
                 zip.useWebWorkers = false;
             </script>
-
-            <!-- Functions to modify bibliography -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.es5.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-statics.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-helpers.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-template-dialogs.js"></script>
-            <!-- contact functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/contact-helpers.js"></script>
-            <!-- Usermedia functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/usermedia-helpers.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/usermedia-template-dialogs.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/usermedia-simplelist-template-dialogs.js"></script>
 
         {% endcompress %}
         <!-- Editor  -->
@@ -484,7 +474,9 @@
             <div id="flow" class="comments-enabled CT-hide">
                 <div id="paper-editable">
                     <div id="document-editable" class="user-contents"></div>
-                    <div id="footnote-box-container"></div>
+                    <div id="footnote-box-container">
+                        <div id="citation-footnote-box-container"></div>
+                    </div>
                 </div>
                 <div id="document-bibliography" class="user-contents"></div>
             </div>

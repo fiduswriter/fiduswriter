@@ -6,10 +6,12 @@ import {downloadFile} from "../../exporter/download"
  * Functions for the recovering previously created document revisions.
  */
 export class DocumentRevisionsDialog {
-    constructor(documentId, documentList, user, callback) {
+    constructor(documentId, documentList, user, bibDB, imageDB, callback) {
         this.documentId = documentId // documentId The id in documentList.
         this.documentList = documentList
         this.user = user
+        this.bibDB = bibDB
+        this.imageDB = imageDB
         this.callback = callback
         this.createDialog()
     }
@@ -90,6 +92,8 @@ export class DocumentRevisionsDialog {
                 new ImportFidusFile(
                     fidusFile,
                     user,
+                    that.bibDB,
+                    that.imageDB,
                     true,
                     function(noErrors, returnValue) {
                         $.deactivateWait()

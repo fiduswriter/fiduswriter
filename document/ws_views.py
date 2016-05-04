@@ -21,12 +21,10 @@ class DocumentWS(BaseWebSocketHandler):
         self.user_info = SessionUserInfo()
         doc_db, can_access = self.user_info.init_access(document_id, current_user)
 
-
         if can_access:
             if doc_db.id in DocumentWS.sessions:
                 self.doc = DocumentWS.sessions[doc_db.id]
                 self.id = max(self.doc['participants'])+1
-                print "id when opened %s" % self.id
             else:
                 self.id = 0
                 self.doc = dict()
@@ -132,6 +130,8 @@ class DocumentWS(BaseWebSocketHandler):
             self.handle_chat(parsed)
         elif parsed["type"]=='check_diff_version':
             self.check_diff_version(parsed)
+        elif parsed["type"]=='selection_change':
+            self.handle_selection_change(message, parsed)
         elif parsed["type"]=='update_document' and self.can_update_document():
             self.handle_document_update(parsed)
         elif parsed["type"]=='update_title' and self.can_update_document():
@@ -161,6 +161,37 @@ class DocumentWS(BaseWebSocketHandler):
     def update_title(self, title):
         self.doc['title'] = title
 
+    def update_comments(self, comments_updates):
+        for cd in comments_updates:
+            id = str(cd["id"])
+            if cd["type"] == "create":
+                del cd["type"]
+                self.doc["comments"][id] = cd
+            elif cd["type"] == "delete":
+                del self.doc["comments"][id]
+            elif cd["type"] == "update":
+                self.doc["comments"][id]["comment"] = cd["comment"]
+                if "review:isMajor" in cd:
+                    self.doc["comments"][id]["review:isMajor"] = cd["review:isMajor"]
+            elif cd["type"] == "add_answer":
+                comment_id = str(cd["commentId"])
+                if not "answers" in self.doc["comments"][comment_id]:
+                    self.doc["comments"][comment_id]["answers"] = []
+                del cd["type"]
+                self.doc["comments"][comment_id]["answers"].append(cd)
+            elif cd["type"] == "delete_answer":
+                comment_id = str(cd["commentId"])
+                for answer in self.doc["comments"][comment_id]["answers"]:
+                    if answer["id"] == cd["id"]:
+                        self.doc["comments"][comment_id]["answers"].remove(answer)
+            elif cd["type"] == "update_answer":
+                comment_id = str(cd["commentId"])
+                for answer in documenet["comments"][comment_id]["answers"]:
+                    if answer["id"] == cd["id"]:
+                        answer["answer"] = cd["answer"]
+            self.doc['comment_version'] += 1
+
+
     def handle_participant_update(self):
         DocumentWS.send_participant_list(self.user_info.document_id)
 
@@ -187,69 +218,45 @@ class DocumentWS(BaseWebSocketHandler):
             }
         DocumentWS.send_updates(chat, self.user_info.document_id)
 
-    def handle_settings_change(self, message, parsed):
-        if self.user_info.document_id in DocumentWS.sessions:
-            DocumentWS.sessions[self.user_info.document_id]['settings'][parsed['variable']] = parsed['value']
+    def handle_selection_change(self, message, parsed):
+        if self.user_info.document_id in DocumentWS.sessions and parsed["diff_version"] == self.doc['diff_version']:
             DocumentWS.send_updates(message, self.user_info.document_id, self.id)
 
+
+    def handle_settings_change(self, message, parsed):
+        DocumentWS.sessions[self.user_info.document_id]['settings'][parsed['variable']] = parsed['value']
+        DocumentWS.send_updates(message, self.user_info.document_id, self.id)
+
     def handle_diff(self, message, parsed):
-        if self.user_info.document_id in DocumentWS.sessions:
-            if parsed["diff_version"] == self.doc['diff_version'] and parsed["comment_version"] == self.doc['comment_version']:
-                self.doc["last_diffs"].extend(parsed["diff"])
-                self.doc['diff_version'] += len(parsed["diff"])
-                for cd in parsed["comments"]:
-                    id = str(cd["id"])
-                    if cd["type"] == "create":
-                        del cd["type"]
-                        self.doc["comments"][id] = cd
-                    elif cd["type"] == "delete":
-                        del self.doc["comments"][id]
-                    elif cd["type"] == "update":
-                        self.doc["comments"][id]["comment"] = cd["comment"]
-                        if "review:isMajor" in cd:
-                            self.doc["comments"][id]["review:isMajor"] = cd["review:isMajor"]
-                    elif cd["type"] == "add_answer":
-                        comment_id = str(cd["commentId"])
-                        if not "answers" in self.doc["comments"][comment_id]:
-                            self.doc["comments"][comment_id]["answers"] = []
-                        del cd["type"]
-                        self.doc["comments"][comment_id]["answers"].append(cd)
-                    elif cd["type"] == "delete_answer":
-                        comment_id = str(cd["commentId"])
-                        for answer in self.doc["comments"][comment_id]["answers"]:
-                            if answer["id"] == cd["id"]:
-                                self.doc["comments"][comment_id]["answers"].remove(answer)
-                    elif cd["type"] == "update_answer":
-                        comment_id = str(cd["commentId"])
-                        for answer in self.doc["comments"][comment_id]["answers"]:
-                            if answer["id"] == cd["id"]:
-                                answer["answer"] = cd["answer"]
-                    self.doc['comment_version'] += 1
-                self.confirm_diff(parsed["request_id"])
-                DocumentWS.send_updates(message, self.user_info.document_id, self.id)
-            elif parsed["diff_version"] != self.doc['diff_version']:
-                if parsed["diff_version"] < (self.doc['diff_version'] - len(self.doc["last_diffs"])):
-                    print "unfixable"
-                    # Client has a version that is too old
-                    self.send_document()
-                elif parsed["diff_version"] < self.doc['diff_version']:
-                    print "can fix it"
-                    number_requested_diffs = self.doc['diff_version'] - parsed["diff_version"]
-                    response = {
-                        "type": "diff",
-                        "diff_version": parsed["diff_version"],
-                        "diff": self.doc["last_diffs"][-number_requested_diffs:],
-                        "reject_request_id": parsed["request_id"],
-                        }
-                    self.write_message(response)
-                else:
-                    print "unfixable"
-                    # Client has a version that is too old
-                    self.send_document()
+        if parsed["diff_version"] == self.doc['diff_version'] and parsed["comment_version"] == self.doc['comment_version']:
+            self.doc["last_diffs"].extend(parsed["diff"])
+            self.doc['diff_version'] += len(parsed["diff"])
+            self.update_comments(parsed["comments"])
+            self.confirm_diff(parsed["request_id"])
+            DocumentWS.send_updates(message, self.user_info.document_id, self.id)
+        elif parsed["diff_version"] != self.doc['diff_version']:
+            if parsed["diff_version"] < (self.doc['diff_version'] - len(self.doc["last_diffs"])):
+                print "unfixable"
+                # Client has a version that is too old
+                self.send_document()
+            elif parsed["diff_version"] < self.doc['diff_version']:
+                print "can fix it"
+                number_requested_diffs = self.doc['diff_version'] - parsed["diff_version"]
+                response = {
+                    "type": "diff",
+                    "diff_version": parsed["diff_version"],
+                    "diff": self.doc["last_diffs"][-number_requested_diffs:],
+                    "reject_request_id": parsed["request_id"],
+                    }
+                self.write_message(response)
             else:
-                print "comment_version incorrect!"
-                print parsed["comment_version"]
-                print self.doc['comment_version']
+                print "unfixable"
+                # Client has a version that is too old
+                self.send_document()
+        else:
+            print "comment_version incorrect!"
+            print parsed["comment_version"]
+            print self.doc['comment_version']
 
     def check_diff_version(self, parsed):
         if parsed["diff_version"] == self.doc['diff_version']:
@@ -301,7 +308,7 @@ class DocumentWS(BaseWebSocketHandler):
             participant_list = []
             for waiter in cls.sessions[document_id]['participants'].keys():
                 participant_list.append({
-                    'key':waiter,
+                    'session_id':waiter,
                     'id':cls.sessions[document_id]['participants'][waiter].user_info.user.id,
                     'name':cls.sessions[document_id]['participants'][waiter].user_info.user.readable_name,
                     'avatar':avatar_url(cls.sessions[document_id]['participants'][waiter].user_info.user,80)

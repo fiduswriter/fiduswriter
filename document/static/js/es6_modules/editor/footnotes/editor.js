@@ -1,7 +1,5 @@
-import {Pos} from "prosemirror/dist/model"
 import {fromHTML} from "prosemirror/dist/format"
 import {Step} from "prosemirror/dist/transform"
-import {fidusFnSchema, Footnote} from "../schema"
 
 /* Functions related to the footnote editor instance */
 export class ModFootnoteEditor {
@@ -18,11 +16,19 @@ export class ModFootnoteEditor {
             that.footnoteEdit()
         })
         this.mod.fnPm.on("filterTransform", (transform) => {
-            return that.mod.editor.onFilterTransform(transform)
+            return that.onFilterTransform(transform)
         })
 
     }
 
+    // filter transformations, disallowing all transformations going across document parts/footnotes.
+    onFilterTransform(transform) {
+        let prohibited = false
+        if (transform.docs[0].childCount !== transform.doc.childCount) {
+            prohibited = true
+        }
+        return prohibited
+    }
 
     footnoteEdit() {
         // Handle an edit in the footnote editor.
@@ -34,10 +40,10 @@ export class ModFootnoteEditor {
         console.log('footnote update')
         let length = this.mod.fnPm.mod.collab.unconfirmedSteps.length
         let lastStep = this.mod.fnPm.mod.collab.unconfirmedSteps[length - 1]
-        if (lastStep.from && lastStep.from.path && lastStep.from.path.length > 0) {
+        if (lastStep.from) {
             // We find the number of the last footnote that was updated by
-            // looking at the last step and seeing what path that change referred to.
-            let updatedFootnote = lastStep.from.path[0]
+            // looking at the last step and seeing footnote number that change referred to.
+            let updatedFootnote = this.mod.fnPm.doc.resolve(lastStep.from).index(0)
             this.mod.markers.updateFootnoteMarker(updatedFootnote)
         } else {
             // TODO: Figure out if there are cases where this is really needed.
@@ -46,10 +52,13 @@ export class ModFootnoteEditor {
 
     applyDiffs(diffs) {
         console.log('applying footnote diff')
-        this.mod.fnPm.mod.collab.receive(diffs.map(j => Step.fromJSON(fidusFnSchema, j)))
+        let steps = diffs.map(j => Step.fromJSON(this.mod.schema, j))
+        let client_ids = diffs.map(j => j.client_id)
+        this.mod.fnPm.mod.collab.receive(steps, client_ids)
     }
 
     renderAllFootnotes() {
+        console.log('renderAllFootnotes')
         if (this.mod.markers.checkFootnoteMarkers()) {
             return false
         }
@@ -61,7 +70,7 @@ export class ModFootnoteEditor {
         console.log('redrawing all footnotes')
         this.mod.fnPm.setContent('', 'html')
         this.mod.footnotes.forEach((footnote, index) => {
-            let node = that.mod.editor.pm.doc.nodeAfter(footnote.from)
+            let node = that.mod.editor.pm.doc.nodeAt(footnote.from)
             that.renderFootnote(node.attrs.contents, index)
         })
         this.mod.fnPm.setOption("collab", {
@@ -70,15 +79,24 @@ export class ModFootnoteEditor {
         this.bindEvents()
     }
 
+    // Convert the footnote HTML stored with the marker to a PM node representation of the footnote.
+    htmlTofootnoteNode(contents) {
+        let footnoteHTML = "<div class='footnote-container'>" + contents + "</div>"
+        return fromHTML(this.mod.schema, footnoteHTML, {
+            preserveWhitespace: true
+        }).firstChild
+    }
 
 
     renderFootnote(contents, index = 0) {
         this.rendering = true
-        let footnoteHTML = "<div class='footnote-container'>" + contents + "</div>"
-        let node = fromHTML(fidusFnSchema, footnoteHTML, {
-            preserveWhitespace: true
-        }).firstChild
-        this.mod.fnPm.tr.insert(new Pos([], index), node).apply({filter:false})
+
+        let node = this.htmlTofootnoteNode(contents)
+        let pos = 0
+        for (let i=0; i<index;i++) {
+            pos += this.mod.fnPm.doc.child(i).nodeSize
+        }
+        this.mod.fnPm.tr.insert(pos, node).apply({filter:false})
         this.rendering = false
     }
 
@@ -90,7 +108,12 @@ export class ModFootnoteEditor {
         this.mod.footnotes.splice(index, 1)
         if (!this.mod.editor.mod.collab.docChanges.receiving) {
             this.rendering = true
-            this.mod.fnPm.tr.delete(new Pos([], index), new Pos([], index + 1)).apply({filter:false})
+            let startPos = 0
+            for (let i=0;i<index;i++) {
+                startPos += this.mod.fnPm.doc.child(i).nodeSize
+            }
+            let endPos = startPos + this.mod.fnPm.doc.child(index).nodeSize
+            this.mod.fnPm.tr.delete(startPos, endPos).apply({filter:false})
             this.rendering = false
         }
     }

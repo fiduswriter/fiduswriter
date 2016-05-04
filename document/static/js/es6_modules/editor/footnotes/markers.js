@@ -1,7 +1,4 @@
-import {Pos} from "prosemirror/dist/model"
-import {fromHTML, toHTML} from "prosemirror/dist/format"
-import {fidusFnSchema} from "../schema"
-
+import {toHTML} from "prosemirror/dist/format"
 
 /* Functions related to footnote markers in the main editor */
 export class ModFootnoteMarkers {
@@ -58,13 +55,13 @@ export class ModFootnoteMarkers {
             if (newFootnotes.length > 0) {
                 let firstFootNoteStart = newFootnotes[0].from
                 let index = 0
-                while (that.mod.footnotes.length > index && firstFootNoteStart.cmp(that.mod.footnotes[index].from) > 0) {
+                while (that.mod.footnotes.length > index && firstFootNoteStart > that.mod.footnotes[index].from) {
                     index++
                 }
                 newFootnotes.forEach(function(footnote) {
                     that.mod.footnotes.splice(index, 0, footnote)
                     if (renderFootnote) {
-                        let node = that.mod.editor.pm.doc.nodeAfter(footnote.from)
+                        let node = that.mod.editor.pm.doc.nodeAt(footnote.from)
                         that.mod.fnEditor.renderFootnote(node.attrs.contents, index)
                     }
                     index++
@@ -83,7 +80,7 @@ export class ModFootnoteMarkers {
             if (step.type == "replace") {
                 let index = 0
 
-                while (index < (ranges.length - 1) && step.from.cmp(ranges[index].from) < 0) {
+                while (index < (ranges.length - 1) && step.from < ranges[index].from) {
                     index++
                 }
                 if (ranges.length === 0) {
@@ -92,8 +89,8 @@ export class ModFootnoteMarkers {
                         to: step.to
                     }]
                 } else {
-                    if (step.from.cmp(ranges[index].from) === 0) {
-                        if (step.to.cmp(ranges[index].to) > 0) {
+                    if (step.from === ranges[index].from) {
+                        if (step.to > ranges[index].to) {
                             // This range has an endpoint further down than the
                             // range that was found previously.
                             // We replace the old range with the newly found
@@ -104,7 +101,7 @@ export class ModFootnoteMarkers {
                             }
                         }
                     } else {
-                        if (step.to.cmp(ranges[index].from) > -1) {
+                        if (step.to >= ranges[index].from) {
                             ranges[index] = {
                                 from: step.from,
                                 to: ranges[index].to
@@ -120,8 +117,8 @@ export class ModFootnoteMarkers {
             }
             for (let j = 0; j < ranges.length; j++) {
                 let range = ranges[j]
-                range.from = map.map(range.from, -1).pos
-                range.to = map.map(range.from, 1).pos
+                range.from = map.map(range.from, -1)
+                range.to = map.map(range.from, 1)
             }
         }
         return ranges
@@ -129,18 +126,17 @@ export class ModFootnoteMarkers {
 
 
 
-    findFootnoteMarkers(fromPos, toPos) {
+    findFootnoteMarkers(fromPos = 0, toPos = this.mod.editor.pm.doc.content.size) {
         let footnoteMarkers = [],
             that = this
-
-        this.mod.editor.pm.doc.nodesBetween(fromPos, toPos, function(node, path, parent) {
+        this.mod.editor.pm.doc.nodesBetween(fromPos, toPos, function(node, pos, parent) {
             if (!node.isInline) {
                 return
             }
             if (node.type.name === 'footnote') {
-                let nodePath = path.slice() // Make a copy to preserve original.
-                let nodeOffset = nodePath.pop()
-                let footnoteMarker = that.mod.editor.pm.markRange(new Pos(nodePath, nodeOffset), new Pos(nodePath, nodeOffset + node.width))
+                let startPos = pos
+                let endPos = pos + node.nodeSize
+                let footnoteMarker = that.mod.editor.pm.markRange(startPos, endPos)
                 footnoteMarker.on('removed', function() {
                     that.mod.fnEditor.removeFootnote(footnoteMarker)
                 })
@@ -158,37 +154,39 @@ export class ModFootnoteMarkers {
         let count = 0,
             passed = true,
             that = this
-        this.mod.editor.pm.doc.nodesBetween(null, null, function(node, path, parent) {
+        this.mod.editor.pm.doc.descendants(function(node, pos, parent) {
+
             if (!node.isInline || node.type.name !== 'footnote') {
                 return
             }
             if (that.mod.footnotes.length <= count) {
                 passed = false
             } else {
-                let nodePath = path.slice() // Preserve original
-                let nodeOffset = nodePath.pop()
-                let startPos = new Pos(nodePath, nodeOffset)
-                if (startPos.cmp(that.mod.footnotes[count].from) !== 0) {
+                let startPos = pos
+                if (startPos !== that.mod.footnotes[count].from) {
                     passed = false
                 }
-                let endPos = new Pos(nodePath, nodeOffset + node.width)
-                if (endPos.cmp(that.mod.footnotes[count].to) !== 0) {
+                let endPos = pos + node.nodeSize
+                if (endPos !== that.mod.footnotes[count].to) {
                     passed = false
                 }
             }
             count++
         })
+
         if (count !== that.mod.footnotes.length) {
             passed = false
         }
         return passed
     }
 
+
     updateFootnoteMarker(index) {
         this.updating = true
         let footnoteContents = toHTML(this.mod.fnPm.doc.child(index))
+
         let footnote = this.mod.footnotes[index]
-        let node = this.mod.editor.pm.doc.nodeAfter(footnote.from)
+        let node = this.mod.editor.pm.doc.nodeAt(footnote.from)
         this.mod.editor.pm.tr.setNodeType(footnote.from, node.type, {
             contents: footnoteContents
         }).apply()

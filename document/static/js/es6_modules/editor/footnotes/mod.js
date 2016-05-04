@@ -10,6 +10,7 @@ export class ModFootnotes {
     constructor(editor) {
         editor.mod.footnotes = this
         this.editor = editor
+        this.schema = fidusFnSchema
         this.footnotes = []
         this.init()
         this.bindEvents()
@@ -21,7 +22,7 @@ export class ModFootnotes {
     init() {
         this.fnPm = new ProseMirror({
             place: document.getElementById('footnote-box-container'),
-            schema: fidusFnSchema,
+            schema: this.schema,
             collab: {
                 version: 0
             } // Version number does not matter much, as we do not verify it between users.

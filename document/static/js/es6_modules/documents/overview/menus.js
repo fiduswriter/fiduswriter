@@ -1,5 +1,4 @@
 import {DocumentAccessRightsDialog} from "../access-rights/dialog"
-import {DocumentRevisionsDialog} from "../revisions/dialog"
 
 export class DocumentOverviewMenus {
     constructor (documentOverview) {
@@ -18,7 +17,11 @@ export class DocumentOverviewMenus {
 
             jQuery(document).on('mousedown', '.owned-by-user .rights', function () {
                 let documentId = parseInt(jQuery(this).attr('data-id'))
-                new DocumentAccessRightsDialog([documentId], that.documentOverview.accessRights, that.documentOverview.teamMembers)
+                new DocumentAccessRightsDialog([documentId], that.documentOverview.accessRights, that.documentOverview.teamMembers, function (newAccessRights) {
+                    that.documentOverview.accessRights = newAccessRights
+                }, function(memberDetails){
+                    that.documentOverview.teamMembers.push(memberDetails)
+                })
             })
 
             jQuery(document).on('mousedown', '.revisions', function () {
@@ -70,7 +73,9 @@ export class DocumentOverviewMenus {
                         that.documentOverview.mod.actions.deleteDocumentDialog(ids)
                         break
                     case 'share':
-                        new DocumentAccessRightsDialog(ids, that.documentOverview.accessRights, that.documentOverview.teamMembers)
+                        new DocumentAccessRightsDialog(ids, that.documentOverview.accessRights, that.documentOverview.teamMembers, function (newAccessRights) {
+                            that.documentOverview.accessRights = newAccessRights
+                        })
                         break
                     case 'epub':
                         that.documentOverview.mod.actions.downloadEpubFiles(ids)

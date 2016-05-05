@@ -1,6 +1,9 @@
 import {mathDialogTemplate} from "./templates"
 import {FormulaEditor} from '../../tools/formula-editor'
 
+/**
+ * Class to work with formula dialog
+ */
 export class MathDialog {
     constructor(mod) {
         this.editor = mod.editor
@@ -10,13 +13,15 @@ export class MathDialog {
         this.isMathInside = false
         this.submitMessage = gettext('Insert')
         this.defaultEquation = '\\$x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}'
-        //this.isRawLatexMode = false
 
         this.equation = this.defaultEquation
         this.node = null
         this.mathQuill = null
     }
 
+    /**
+     * Initializes dialog buttons
+     */
     initializeButtons() {
         if (this.isFormulaAlreadyInBox()) {
             this.initRemoveButtonOnFormulaUpdate()
@@ -90,6 +95,9 @@ export class MathDialog {
         return this.node && this.node.type && this.node.type.name==='equation'
     }
 
+    /**
+     * Clear resources
+     */
     destroy() {
         if (this.isDialogInitialized) {
             this.dialog.dialog('destroy').remove()
@@ -98,20 +106,25 @@ export class MathDialog {
     }
 
     show() {
+        //get selected node
         this.node = this.editor.currentPm.selection.node
+        //if dialog is initialized destroy
         this.destroy()
         this.initializeButtons()
+        //initialize dialog and open it
         this.dialog.dialog({
             buttons: this.dialogButtons,
             title: gettext('Latex equation'),
             modal: true,
             close: () => {
+                //clear resources
                 this.destroy()
                 this.isDialogInitialized = false
                 this.mathQuill.destroy()
             }
         })
 
+        //initialize advanced formula editor using mathquill
         this.mathQuill = new FormulaEditor(jQuery(this.dialog), this.equation)
         this.isDialogInitialized = true
     }

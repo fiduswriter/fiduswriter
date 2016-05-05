@@ -3,26 +3,40 @@
  */
 
 import "node-mathquill/build/mathquill"
+import {render as katexRender} from "katex"
+import {renderMathInElement} from "katex/dist/contrib/auto-render.min"
 
 /**
  * Class to initialize and manage MathQuill library inside editor dialog (math.js)
  */
 export class FormulaEditor {
     constructor(mathDialog, equation) {
-        let mathField = mathDialog.find("p > span.math-field")[0]
-        let latexField = mathDialog.find("p > span.math-latex")[0]
+        this.dialog = mathDialog
+
+        this.mathFieldDOM = mathDialog.find("p > span.math-field")
+        this.latexFieldDOM = mathDialog.find("p > span.math-latex")
 
         this.MQ = MathQuill.getInterface(2)
 
-        this.mathField = this.MQ.MathField(mathField, {
+        this.mathField = this.MQ.MathField(this.mathFieldDOM[0], {
             spaceBehavesLikeTab: true,
             handlers : {
                 edit: () => {
-                    latexField.textContent = this.mathField.latex()
+                    this.latexFieldDOM.text(this.mathField.latex())
                 }
             }
         })
 
         this.mathField.latex(equation)
+    }
+
+    switchToRawLatexMode() {
+        this.mathField = null
+        this.mathFieldDOM.replaceWith('<input class="math-field" type="text" name="math" >'+ this.latexFieldDOM.text() +'</input>')
+        renderMathInElement(this.getLatex(), this.latexFieldDOM[0])
+    }
+
+    getLatex() {
+        return jQuery(this.latexFieldDOM).text()
     }
 }

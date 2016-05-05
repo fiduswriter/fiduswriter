@@ -7,6 +7,7 @@ import {MathDialog} from "./content-dialogs/math"
 export class ModMenusToolbar {
     constructor(mod) {
         mod.toolbar = this
+        this.mathDialog = new MathDialog(mod)
         this.mod = mod
         this.bindEvents()
     }
@@ -22,9 +23,11 @@ export class ModMenusToolbar {
         let that = this
 
         // toolbar math
-        jQuery(document).on('mousedown', '#button-math:not(.disabled)', function (event) {
-            that.executeAction(event, function(){
-                new MathDialog(that.mod)
+        jQuery(document).on('mousedown', '#button-math:not(.disabled)', (event) => {
+            this.executeAction(event, () => {
+                event.preventDefault()
+                this.mathDialog.show()
+                //let dialog = new MathDialog(that.mod)
             })
         })
 

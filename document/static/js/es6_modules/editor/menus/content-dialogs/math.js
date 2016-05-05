@@ -5,24 +5,16 @@ export class MathDialog {
     constructor(mod) {
         this.editor = mod.editor
         this.dialog = jQuery(mathDialogTemplate())
+        this.isDialogInitialized = false
         this.dialogButtons = []
         this.isMathInside = false
         this.submitMessage = gettext('Insert')
         this.defaultEquation = '\\$x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}'
+        //this.isRawLatexMode = false
 
         this.equation = this.defaultEquation
-        this.node = this.editor.currentPm.selection.node
-
-        this.bindEvents()
-    }
-
-    bindEvents() {
-        jQuery(document).on('mousedown', '#button-math:not(.disabled)', (event) => {
-            event.preventDefault()
-            this.initializeButtons()
-            this.startDialog()
-            let mathQuill = new FormulaEditor(jQuery(this.dialog), this.equation)
-        })
+        this.node = null
+        this.mathQuill = null
     }
 
     initializeButtons() {
@@ -31,6 +23,7 @@ export class MathDialog {
         }
         this.initializeSubmitButton()
         this.initializeCancelButton()
+        this.initRawLatexButton()
     }
 
     initializeCancelButton() {
@@ -48,7 +41,7 @@ export class MathDialog {
             text: this.submitMessage,
             class: 'fw-button fw-dark',
             click: () => {
-                this.equation = this.dialog.find("p > span.math-latex").text()
+                this.equation = this.mathQuill.getLatex()
 
                 if ((new RegExp(/^\s*$/)).test(this.equation)) {
                     // The math input is empty. Delete a math node if it exist. Then close the dialog.
@@ -83,18 +76,42 @@ export class MathDialog {
         })
     }
 
+    initRawLatexButton() {
+        this.dialogButtons.push({
+            text: gettext('Raw'),
+            class: 'fw-button fw-white',
+            click: () => {
+                this.mathQuill.switchToRawLatexMode()
+            }
+        })
+    }
+
     isFormulaAlreadyInBox() {
         return this.node && this.node.type && this.node.type.name==='equation'
     }
 
-    startDialog() {
+    destroy() {
+        if (this.isDialogInitialized) {
+            this.dialog.dialog('destroy').remove()
+        }
+        this.dialogButtons = []
+    }
+
+    show() {
+        this.node = this.editor.currentPm.selection.node
+        this.destroy()
+        this.initializeButtons()
         this.dialog.dialog({
             buttons: this.dialogButtons,
             title: gettext('Latex equation'),
             modal: true,
-            close: function () {
-                jQuery(this).dialog('destroy').remove()
+            close: () => {
+                this.destroy()
+                this.isDialogInitialized = false
             }
         })
+
+        this.mathQuill = new FormulaEditor(jQuery(this.dialog), this.equation)
+        this.isDialogInitialized = true
     }
 }

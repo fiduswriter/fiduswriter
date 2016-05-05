@@ -108,6 +108,7 @@ export class MathDialog {
             close: () => {
                 this.destroy()
                 this.isDialogInitialized = false
+                this.mathQuill.destroy()
             }
         })
 

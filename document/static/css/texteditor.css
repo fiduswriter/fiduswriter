@@ -630,3 +630,14 @@ margin-left: 1em;
     font-size: 113%;
     font-weight: 400;
 }
+
+.math-error {
+    margin: 10px 0px;
+    padding:12px;
+    color: #D8000C;
+    background-color: #FFBABA;
+    font-size:2em;
+    vertical-align:middle;
+    display: none;
+}
+

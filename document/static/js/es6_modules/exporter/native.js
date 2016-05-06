@@ -78,9 +78,8 @@ export let exportNative = function(aDocument, anImageDB, aBibDB, callback) {
     let imageUrls = _.pluck(images, 'url')
 
 
-    let shrunkImageDB = _.filter(anImageDB, function(image) {
-        return (imageUrls.indexOf(image.image.split('?').shift()) !== -
-            1)
+    let shrunkImageDB = _.filter(anImageDB, function(anImage) {
+        return (imageUrls.indexOf(anImage.image.split('?').shift()) !== -1)
     })
 
     jQuery(contents).find('.citation').each(function() {
@@ -89,6 +88,8 @@ export let exportNative = function(aDocument, anImageDB, aBibDB, callback) {
 
     citeList = _.uniq(citeList.join(',').split(','))
 
+    // If the number of cited items is 1 and that one item is an empty string,
+    // there are no cited items at all.
     if (citeList.length === 1 && citeList[0] === '') {
         citeList = []
     }
@@ -102,12 +103,7 @@ export let exportNative = function(aDocument, anImageDB, aBibDB, callback) {
 }
 
 let exportNativeFile = function(aDocument, shrunkImageDB,
-    shrunkBibDB,
-    images, upload, editor) {
-
-    if ('undefined' === typeof upload) {
-        upload = false
-    }
+    shrunkBibDB, images, upload = false, editor) {
 
     let httpOutputList = images
 

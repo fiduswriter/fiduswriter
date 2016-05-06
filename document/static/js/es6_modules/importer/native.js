@@ -61,7 +61,8 @@ export class ImportNative {
             delete this.bibDB[key].id
         }
 
-        // We need to remove the pk from the entry in the this.anImageDB so that we also get matches with this.entries with other pk values.
+        // We need to remove the pk from the entry in the this.anImageDB so that
+        // we also get matches with this.entries with other pk values.
         // We therefore convert to an associative array/object.
         for (let key in this.anImageDB) {
             simplifiedShrunkImageDB.push(_.omit(this.anImageDB[key], 'image',
@@ -102,7 +103,8 @@ export class ImportNative {
                 if (!(_.findWhere(matchEntries, {
                         pk: parseInt(key)
                     }))) {
-                    // There are several matches, and none of the matches have the same id as the key in this.anImageDB.
+                    // There are several matches, and none of the matches have
+                    // the same id as the key in this.anImageDB.
                     // We now pick the first match.
                     // TODO: Figure out if this behavior is correct.
                     ImageTranslationTable.push({
@@ -118,9 +120,9 @@ export class ImportNative {
         }
 
         if (newBibEntries.length !== 0 || newImageEntries.length !== 0) {
-            // We need to create new entries in the DB for images and/or bibliography items.
-            this.getImageData(this.aDocument,
-                BibTranslationTable, ImageTranslationTable, newBibEntries,
+            // We need to create new entries in the DB for images and/or
+            // bibliography items.
+            this.getImageData(BibTranslationTable, ImageTranslationTable, newBibEntries,
                 newImageEntries, this.entries)
         } else if (!(jQuery.isEmptyObject(BibTranslationTable)) || !(jQuery.isEmptyObject(
                 ImageTranslationTable))) {
@@ -128,8 +130,10 @@ export class ImportNative {
             translateReferenceIds(BibTranslationTable,
                 ImageTranslationTable)
         } else {
-            // We are good to go. All the used images and bibliography entries exist in the DB for this user with the same numbers.
-            // We can go ahead and create the new document entry in the bibliography without any changes.
+            // We are good to go. All the used images and bibliography entries
+            // exist in the DB for this user with the same numbers.
+            // We can go ahead and create the new document entry in the
+            // bibliography without any changes.
             this.createNewDocument()
         }
 

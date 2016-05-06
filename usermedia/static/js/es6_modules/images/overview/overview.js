@@ -9,7 +9,7 @@ export class ImageOverview {
     constructor() {
         this.mod = {}
         new ImageOverviewCategories(this)
-        this.init()
+        this.bind()
     }
 
     //delete image
@@ -205,7 +205,6 @@ export class ImageOverview {
 
         })
         jQuery('#edit-category').bind('click', that.mod.categories.createCategoryDialog)
-
         //open dropdown for image category
         $.addDropdownBox(jQuery('#image-category-btn'), jQuery(
             '#image-category-pulldown'))

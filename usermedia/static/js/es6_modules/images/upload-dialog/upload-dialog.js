@@ -68,9 +68,9 @@ export class ImageUploadDialog {
             modal: true,
             buttons: diaButtons,
             create: function () {
-                let $the_dialog = jQuery(this).closest(".ui-dialog")
-                $the_dialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
-                $the_dialog.find(".ui-button:last").addClass("fw-button fw-orange")
+                let theDialog = jQuery(this).closest(".ui-dialog")
+                theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
+                theDialog.find(".ui-button:last").addClass("fw-button fw-orange")
                 that.setMediaUploadEvents(jQuery('#uploadimage'))
             },
             close: function () {
@@ -85,20 +85,20 @@ export class ImageUploadDialog {
 
     //add image upload events
     setMediaUploadEvents(wrapper) {
-        let select_button = wrapper.find('.fw-media-select-button'),
-            media_input = wrapper.find('.fw-media-file-input'),
-            media_previewer = wrapper.find('.figure-preview > div')
+        let selectButton = wrapper.find('.fw-media-select-button'),
+            mediaInput = wrapper.find('.fw-media-file-input'),
+            mediaPreviewer = wrapper.find('.figure-preview > div')
 
-        select_button.bind('click', function() {
-            media_input.trigger('click')
+        selectButton.bind('click', function() {
+            mediaInput.trigger('click')
         })
 
-        media_input.bind('change', function() {
+        mediaInput.bind('change', function() {
             let file = jQuery(this).prop('files')[0],
                 fr = new FileReader()
 
             fr.onload = function() {
-                media_previewer.html('<img src="' + fr.result + '" />')
+                mediaPreviewer.html('<img src="' + fr.result + '" />')
             }
             fr.readAsDataURL(file)
         })
@@ -117,27 +117,27 @@ export class ImageUploadDialog {
 
         jQuery('.fw-media-form').each(function () {
             let $this = jQuery(this)
-            let the_name = $this.attr('name') || $this.attr('data-field-name')
-            let the_type = $this.attr('type') || $this.attr('data-type')
-            let the_value = ''
+            let theName = $this.attr('name') || $this.attr('data-field-name')
+            let theType = $this.attr('type') || $this.attr('data-type')
+            let theValue = ''
 
-            switch (the_type) {
+            switch (theType) {
                 case 'checkbox':
                     //if it is a checkbox, the value will be restored as an Array
-                    if (undefined == checkboxValues[the_name])
-                        checkboxValues[the_name] = []
+                    if (undefined == checkboxValues[theName])
+                        checkboxValues[theName] = []
                     if ($this.prop("checked")) {
-                        checkboxValues[the_name].push($this.val())
+                        checkboxValues[theName].push($this.val())
                     }
                     return
                 case 'file':
-                    the_value = $this.get(0).files[0]
+                    theValue = $this.get(0).files[0]
                     break
                 default:
-                    the_value = $this.val()
+                    theValue = $this.val()
             }
 
-            formValues.append(the_name, the_value)
+            formValues.append(theName, theValue)
         })
 
         // Add the values for check boxes

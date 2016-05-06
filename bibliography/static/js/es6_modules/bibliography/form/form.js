@@ -144,10 +144,10 @@ export class BibEntryForm {
             //position: ['center', 80],
             buttons: diaButtons,
             create: function() {
-                let $the_dialog = jQuery(this).closest(".ui-dialog")
-                $the_dialog.find(".ui-dialog-buttonpane").addClass('createbook')
-                $the_dialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
-                $the_dialog.find(".ui-button:last").addClass("fw-button fw-orange")
+                let theDialog = jQuery(this).closest(".ui-dialog")
+                theDialog.find(".ui-dialog-buttonpane").addClass('createbook')
+                theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
+                theDialog.find(".ui-button:last").addClass("fw-button fw-orange")
             },
             close: function() {
                 jQuery("#createbook").dialog('destroy').remove()

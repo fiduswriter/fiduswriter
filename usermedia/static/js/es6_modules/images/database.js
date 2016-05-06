@@ -76,12 +76,12 @@ export class ImageDB {
 
     displayCreateImageError(errors) {
         let noError = true
-        for (let e_key in errors) {
-            let eMsg = '<div class="warning">' + errors[e_key] + '</div>'
-            if ('error' == e_key) {
+        for (let eKey in errors) {
+            let eMsg = '<div class="warning">' + errors[eKey] + '</div>'
+            if ('error' == eKey) {
                 jQuery('#createimage').prepend(eMsg)
             } else {
-                jQuery('#id_' + e_key).after(eMsg)
+                jQuery('#id_' + eKey).after(eMsg)
             }
             noError = false
         }

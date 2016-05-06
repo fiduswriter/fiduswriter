@@ -11,7 +11,7 @@
     "browserify": "*",
     "babelify": "*",
     "babel-preset-es2015": "*",
-    "prosemirror": "git://github.com/ProseMirror/prosemirror.git#6450c7aefb9e1abf7b41f916c9c89c291f6864a8",
+    "prosemirror": "git://github.com/fiduswriter/prosemirror.git#484e72e982a8eadfcd333661769b555dce12a735",
     "katex": "0.5.1",
     "object-hash": "1.1.2"
   },

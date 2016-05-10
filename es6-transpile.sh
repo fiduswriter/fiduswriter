@@ -67,5 +67,17 @@ do
   sed -i "1i /* This file has been automatically generated. DO NOT EDIT IT. \n Changes will be overwritten. Edit $basename and run ./es6-transpile.sh */"  "$outfile"
 done
 
+# Copy CSS files
+mkdir -p static-es5/css
+mkdir -p static-es5/css/libs
+# mathquill
+mkdir -p static-es5/css/libs/mathquill
+cp ./node_modules/mathquill/build/mathquill.css ./static-es5/css/libs/mathquill
+cp -R ./node_modules/mathquill/build/font ./static-es5/css/libs/mathquill
+# katex
+mkdir -p static-es5/css/libs/katex
+cp ./node_modules/katex/dist/katex.min.css ./static-es5/css/libs/katex
+cp -R ./node_modules/katex/dist/fonts ./static-es5/css/libs/katex
+
 echo "Time spent: $SECONDS seconds"
 rm -r es6-tmp

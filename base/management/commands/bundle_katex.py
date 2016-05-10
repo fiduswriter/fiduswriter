@@ -42,7 +42,7 @@ class Command(BaseCommand):
         if os.path.exists(zip_file_path):
             os.remove(zip_file_path)
         zip_file = zipfile.ZipFile(zip_file_path, 'w', zipfile.ZIP_DEFLATED)
-        in_dir = os.path.dirname(PROJECT_PATH+'/base/static/css/libs/katex/')
+        in_dir = os.path.dirname(PROJECT_PATH+'/static-es5/css/libs/katex/')
         file_paths = zip_folder(in_dir, zip_file)
         zip_file.close()
 

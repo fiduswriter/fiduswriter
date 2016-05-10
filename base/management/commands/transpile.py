@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 from subprocess import call, check_output
-from os import path
+from os import path, makedirs
 from distutils.spawn import find_executable
 import filecmp
 import json
@@ -23,7 +23,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         start = time.time()
         shutil.os.chdir(PROJECT_PATH)
-        if not (path.exists(path.join(PROJECT_PATH, "node_modules/.bin/browserify")) and
+        if not (path.exists(path.join(PROJECT_PATH, "node_modules")) and
+                path.exists(path.join(PROJECT_PATH, "node_modules/.bin")) and
+                path.exists(path.join(PROJECT_PATH, "node_modules/.bin/browserifyinc")) and
                 path.exists(path.join(PROJECT_PATH, "node_modules/package.json")) and
                 filecmp.cmp(path.join(PROJECT_PATH, "package.json"), path.join(PROJECT_PATH, "node_modules/package.json"))):
             if path.exists(path.join(PROJECT_PATH, "node_modules")):
@@ -47,15 +49,12 @@ class Command(BaseCommand):
                 shutil.os.chdir(path.join(PROJECT_PATH))
         # Collect all javascript in a temporary dir (similar to ./manage.py collectstatic).
         # This allows for the modules to import from oneanother, across Django Apps.
-        # The temporary dir is a subfolder in the current directory and not a folder in
-        # /tmp, because browserify doesn't allow operations in higher level folders.
 
-        # Remove any previous tmp dir for collecting JavaScript files
-        if path.exists(path.join(PROJECT_PATH, "es6-tmp")):
-            shutil.rmtree("es6-tmp")
+
         # Create a tmp dir for collecting JavaScript files
-        shutil.os.mkdir("es6-tmp")
-        tmp_dir = "./es6-tmp/"
+        if not path.exists(path.join(PROJECT_PATH, "es6-cache")):
+            shutil.os.mkdir("es6-cache")
+        tmp_dir = "./es6-cache/"
 
         # Remove any previously created static output dirs
         if path.exists(path.join(PROJECT_PATH, "static-es5")):
@@ -68,25 +67,35 @@ class Command(BaseCommand):
         with open("./static-es5/README.txt",'w') as f:
             f.write("These files have been automatically generated. DO NOT EDIT THEM! \n Changes will be overwritten. Edit the original files in one of the django apps, and run manage.py transpile.")
 
-        sourcefiles = check_output(["find",".","-path","./node_modules", "-prune", "-o", "-type", "f", "-name", "*.es6.js", "-print"]).split("\n")[:-1]
+        mainfiles = check_output(["find",".", "-type", "f", "-name", "*.es6.js", "-print"]).split("\n")[:-1]
+        mainfiles = [item for item in mainfiles if not ("node_modules" in item or "es6-cache" in item)]
 
-        directories = check_output(["find",".","-type","d","-wholename","*static/js"]).split("\n")[:-1]
-
-        for directory in directories:
-            call(["cp","-R", directory+"/.", tmp_dir])
+        sourcefiles = check_output(["find",".","-type","f","-wholename","*static/js/*js"]).split("\n")[:-1]
+        sourcefiles = [item for item in sourcefiles if not ("node_modules" in item or "es6-cache" in item)]
 
         for sourcefile in sourcefiles:
+            relative_path = sourcefile.split('static/js/')[1]
+            outfile = path.join(tmp_dir, relative_path)
+            dirname = path.dirname(outfile)
+            if not path.exists(dirname):
+                makedirs(dirname)
+                shutil.copyfile(sourcefile, outfile)
+            elif not path.isfile(outfile):
+                shutil.copyfile(sourcefile, outfile)
+            elif path.getmtime(outfile) < path.getmtime(sourcefile):
+                shutil.copyfile(sourcefile, outfile)
+
+        for sourcefile in mainfiles:
             dirname = path.dirname(sourcefile)
             basename = path.basename(sourcefile)
             outfilename = basename.split('.')[0] + ".es5.js"
+            cachefile = path.join(tmp_dir, basename.split('.')[0] + ".cache.json")
             relative_dir = dirname.split('static/js')[1]
             infile = path.join(tmp_dir, relative_dir, basename)
             outfile = path.join(out_dir, relative_dir, outfilename)
             print("Transpiling " + sourcefile + " to " + outfile)
-            call(["node_modules/.bin/browserify", "--outfile", outfile, "-t", "babelify", infile])
+            call(["node_modules/.bin/browserifyinc", "--cachefile", cachefile, "--outfile", outfile, "-t", "babelify", infile])
 
-        # Remove tmp dir
-        shutil.rmtree("es6-tmp")
 
         # Copy CSS files
         shutil.os.mkdir("static-es5/css")
@@ -103,4 +112,4 @@ class Command(BaseCommand):
         call(["cp", "-R", "node_modules/katex/dist/fonts", "static-es5/css/libs/katex"])
 
         end = time.time()
-        print("Time spent transpiling: "+ str(int(round(end-start))))
+        print("Time spent transpiling: "+ str(int(round(end-start))) + " seconds")

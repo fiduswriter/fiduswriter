@@ -8,7 +8,7 @@
   "license": "AGPL",
   "private": true,
   "dependencies": {
-    "browserify": "*",
+    "browserify-incremental": "*",
     "babelify": "*",
     "babel-preset-es2015": "*",
     "prosemirror": "git://github.com/fiduswriter/prosemirror.git#394626719ccfa2774333a73bb5ab0f98fc412136",

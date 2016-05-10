@@ -7,16 +7,21 @@ import {FormulaEditor} from '../../tools/formula-editor'
 export class MathDialog {
     constructor(mod) {
         this.editor = mod.editor
-        this.dialog = jQuery(mathDialogTemplate())
-        this.isDialogInitialized = false
         this.dialogButtons = []
-        this.isMathInside = false
-        this.submitMessage = gettext('Insert')
         this.defaultEquation = '\\$x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}'
 
-        this.equation = this.defaultEquation
+        this.setToDefault()
+
         this.node = null
         this.mathQuill = null
+    }
+
+    setToDefault() {
+        this.submitMessage = gettext('Insert')
+        this.equation = this.defaultEquation
+        this.isMathInside = false
+        this.isDialogInitialized = false
+        this.dialog = jQuery(mathDialogTemplate())
     }
 
     /**
@@ -45,7 +50,13 @@ export class MathDialog {
         this.dialogButtons.push({
             text: this.submitMessage,
             class: 'fw-button fw-dark',
-            click: () => {
+            click: (event) => {
+                event.preventDefault()
+
+                if (!this.isDialogInitialized) {
+                    return
+                }
+
                 this.equation = this.mathQuill.getLatex()
 
                 if ((new RegExp(/^\s*$/)).test(this.equation)) {
@@ -84,8 +95,9 @@ export class MathDialog {
     initRawLatexButton() {
         this.dialogButtons.push({
             text: gettext('Raw'),
-            class: 'fw-button fw-white',
-            click: () => {
+            class: 'fw-button fw-dark',
+            click: (e) => {
+                jQuery(e.currentTarget).hide()
                 this.mathQuill.switchToRawLatexMode()
             }
         })
@@ -101,6 +113,7 @@ export class MathDialog {
     destroy() {
         if (this.isDialogInitialized) {
             this.dialog.dialog('destroy').remove()
+            this.setToDefault()
         }
         this.dialogButtons = []
     }
@@ -119,7 +132,6 @@ export class MathDialog {
             close: () => {
                 //clear resources
                 this.destroy()
-                this.isDialogInitialized = false
                 this.mathQuill.destroy()
             }
         })

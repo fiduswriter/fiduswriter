@@ -323,6 +323,7 @@ Equation.prototype.serializeDOM = (node, serializer) => {
         'data-equation': node.attrs.equation
     })
     katexRender(node.attrs.equation, dom)
+    dom.setAttribute('contenteditable', 'false')
     return dom
 }
 

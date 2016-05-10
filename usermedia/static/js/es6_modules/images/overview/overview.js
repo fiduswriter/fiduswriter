@@ -9,7 +9,7 @@ export class ImageOverview {
     constructor() {
         this.mod = {}
         new ImageOverviewCategories(this)
-        this.init()
+        this.bind()
     }
 
     //delete image
@@ -18,13 +18,13 @@ export class ImageOverview {
         for (let i = 0; i < ids.length; i++) {
             ids[i] = parseInt(ids[i])
         }
-        let post_data = {
+        let postData = {
             'ids[]': ids
         }
         $.activateWait()
         $.ajax({
             url: '/usermedia/delete/',
-            data: post_data,
+            data: postData,
             type: 'POST',
             success: function (response, textStatus, jqXHR) {
 
@@ -33,8 +33,8 @@ export class ImageOverview {
                 for (let i = 0; i < len; i++) {
                     delete that.imageDB[ids[i]]
                 }
-                let elements_id = '#Image_' + ids.join(', #Image_')
-                jQuery(elements_id).detach()
+                let elementsId = '#Image_' + ids.join(', #Image_')
+                jQuery(elementsId).detach()
                 that.startUsermediaTable()
                 $.addAlert('success', gettext('The image(s) have been deleted'))
             },
@@ -67,10 +67,10 @@ export class ImageOverview {
             modal: true,
             buttons: diaButtons,
             create: function () {
-                let $the_dialog = jQuery(this).closest(".ui-dialog")
-                $the_dialog.find(".ui-button:first-child").addClass(
+                let theDialog = jQuery(this).closest(".ui-dialog")
+                theDialog.find(".ui-button:first-child").addClass(
                     "fw-button fw-dark")
-                $the_dialog.find(".ui-button:last").addClass(
+                theDialog.find(".ui-button:last").addClass(
                     "fw-button fw-orange")
             },
             close: function () {
@@ -89,39 +89,39 @@ export class ImageOverview {
     }
 
     appendToImageTable(pk) {
-        let image_info = this.imageDB.db[pk]
+        let imageInfo = this.imageDB.db[pk]
         let $tr = jQuery('#Image_' + pk),
-            file_type = image_info.file_type.split('/')
+            fileType = imageInfo.file_type.split('/')
 
-        if(1 < file_type.length) {
-            file_type = file_type[1].toUpperCase()
+        if(1 < fileType.length) {
+            fileType = fileType[1].toUpperCase()
         } else {
-            file_type = file_type[0].toUpperCase()
+            fileType = fileType[0].toUpperCase()
         }
 
         if (0 < $tr.size()) { //if the image entry exists, update
             $tr.replaceWith(usermediaTableTemplate({
                 'pk': pk,
-                'cats': image_info.cats,
-                'file_type': file_type,
-                'title': image_info.title,
-                'thumbnail': image_info.thumbnail,
-                'image': image_info.image,
-                'height': image_info.height,
-                'width': image_info.width,
-                'added': image_info.added
+                'cats': imageInfo.cats,
+                'file_type': fileType,
+                'title': imageInfo.title,
+                'thumbnail': imageInfo.thumbnail,
+                'image': imageInfo.image,
+                'height': imageInfo.height,
+                'width': imageInfo.width,
+                'added': imageInfo.added
             }))
         } else { //if this is the new image, append
             jQuery('#imagelist > tbody').append(usermediaTableTemplate({
                 'pk': pk,
-                'cats': image_info.cats,
-                'file_type': file_type,
-                'title': image_info.title,
-                'thumbnail': image_info.thumbnail,
-                'image': image_info.image,
-                'height': image_info.height,
-                'width': image_info.width,
-                'added': image_info.added
+                'cats': imageInfo.cats,
+                'file_type': fileType,
+                'title': imageInfo.title,
+                'thumbnail': imageInfo.thumbnail,
+                'image': imageInfo.image,
+                'height': imageInfo.height,
+                'width': imageInfo.width,
+                'added': imageInfo.added
             }))
         }
     }
@@ -175,13 +175,13 @@ export class ImageOverview {
             jQuery(this).parent().removeClass('focus')
         })
 
-        let autocomplete_tags = []
+        let autocompleteTags = []
         jQuery('#imagelist .fw-searchable').each(function() {
-            autocomplete_tags.push(this.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''))
+            autocompleteTags.push(this.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''))
         })
-        autocomplete_tags = _.uniq(autocomplete_tags)
+        autocompleteTags = _.uniq(autocompleteTags)
         jQuery("#imagelist_filter input").autocomplete({
-            source: autocomplete_tags
+            source: autocompleteTags
         })
     }
 
@@ -205,7 +205,6 @@ export class ImageOverview {
 
         })
         jQuery('#edit-category').bind('click', that.mod.categories.createCategoryDialog)
-
         //open dropdown for image category
         $.addDropdownBox(jQuery('#image-category-btn'), jQuery(
             '#image-category-pulldown'))
@@ -217,21 +216,21 @@ export class ImageOverview {
             })
         //filtering function for the list of images
         jQuery('#image-category').bind('change', function () {
-            let cat_val = jQuery(this).val()
-            if (0 == cat_val) {
+            let catVal = jQuery(this).val()
+            if (0 == catVal) {
                 jQuery('#imagelist > tbody > tr').show()
             } else {
                 jQuery('#imagelist > tbody > tr').hide()
-                jQuery('#imagelist > tbody > tr.cat_' + cat_val).show()
+                jQuery('#imagelist > tbody > tr.cat_' + catVal).show()
             }
         })
         //select all entries
         jQuery('#select-all-entry').bind('change', function () {
-            let new_bool = false
+            let newBool = false
             if (jQuery(this).prop("checked"))
-                new_bool = true
+                newBool = true
             jQuery('.entry-select').each(function () {
-                this.checked = new_bool
+                this.checked = newBool
             })
         })
         //open dropdown for selecting action
@@ -239,16 +238,16 @@ export class ImageOverview {
             '#action-selection-pulldown'))
         //submit image actions
         jQuery('#action-selection-pulldown li > span').bind('mousedown', function () {
-            let action_name = jQuery(this).attr('data-action'),
+            let actionName = jQuery(this).attr('data-action'),
                 ids = []
-            if ('' == action_name || 'undefined' == typeof (action_name))
+            if ('' == actionName || 'undefined' == typeof (actionName))
                 return
             jQuery('.entry-select:checked').each(function () {
                 ids[ids.length] = jQuery(this).attr('data-id')
             })
             if (0 == ids.length)
                 return
-            switch (action_name) {
+            switch (actionName) {
             case 'delete':
                 that.deleteImageDialog(ids)
                 break

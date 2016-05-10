@@ -125,7 +125,7 @@ export class BibliographyDB {
 
     /** Saves a bibliography entry to the database on the server.
      * @function createBibEntry
-     * @param post_data The bibliography data to send to the server.
+     * @param postData The bibliography data to send to the server.
      */
     createBibEntry(postData, callback) {
         let that = this

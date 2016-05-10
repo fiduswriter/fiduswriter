@@ -72,9 +72,9 @@ export let addMemberDialog = function(callback) {
         modal : true,
         buttons : diaButtons,
         create : function () {
-            let $the_dialog = jQuery(this).closest(".ui-dialog")
-            $the_dialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
-            $the_dialog.find(".ui-button:last").addClass("fw-button fw-orange")
+            let theDialog = jQuery(this).closest(".ui-dialog")
+            theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
+            theDialog.find(".ui-button:last").addClass("fw-button fw-orange")
             jQuery('#new-member-user-string').css('width', 340)
         },
         close : function() { jQuery("#add-new-member").dialog('destroy').remove() },
@@ -111,9 +111,9 @@ export let deleteMemberDialog = function(memberIds) {
         modal : true,
         buttons : diaButtons,
         create : function() {
-            let $the_dialog = jQuery(this).closest(".ui-dialog")
-            $the_dialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
-            $the_dialog.find(".ui-button:last").addClass("fw-button fw-orange")
+            let theDialog = jQuery(this).closest(".ui-dialog")
+            theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
+            theDialog.find(".ui-button:last").addClass("fw-button fw-orange")
         },
         close : function() { jQuery("#confirmdeletion").dialog('destroy').remove() }
     })

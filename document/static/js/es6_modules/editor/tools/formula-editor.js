@@ -2,7 +2,7 @@
  * Created by alex on 30.03.16.
  */
 
-import "node-mathquill/build/mathquill"
+import "mathquill/build/mathquill"
 import {render as katexRender} from "katex"
 
 /**

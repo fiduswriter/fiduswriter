@@ -21,6 +21,7 @@ import {ModNodeConvert} from "./node-convert"
 import {node2Obj, obj2Node} from "../exporter/json"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
+import {PasteHandler} from "./paste"
 
 export class Editor {
     // A class that contains everything that happens on the editor page.
@@ -75,6 +76,10 @@ export class Editor {
         this.pm.on("change", function(){that.docInfo.changed = true})
         this.pm.on("filterTransform", (transform) => {return that.onFilterTransform(transform)})
         this.pm.on("transform", (transform, options) => {that.onTransform(transform, true)})
+        this.pm.on("transformPastedHTML", (inHTML) => {
+            let ph = new PasteHandler(inHTML, "main")
+            return ph.outHTML
+        })
         this.pm.mod.collab.on("collabTransform", (transform, options) => {that.onTransform(transform, false)})
         this.setSaveTimers()
     }

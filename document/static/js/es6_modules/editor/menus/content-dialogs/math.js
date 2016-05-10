@@ -96,7 +96,8 @@ export class MathDialog {
         this.dialogButtons.push({
             text: gettext('Raw'),
             class: 'fw-button fw-dark',
-            click: () => {
+            click: (e) => {
+                jQuery(e.currentTarget).hide()
                 this.mathQuill.switchToRawLatexMode()
             }
         })

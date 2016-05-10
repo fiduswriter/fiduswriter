@@ -1,5 +1,6 @@
 import {fromHTML} from "prosemirror/dist/format"
 import {Step} from "prosemirror/dist/transform"
+import {PasteHandler} from "../paste"
 
 /* Functions related to the footnote editor instance */
 export class ModFootnoteEditor {
@@ -18,7 +19,10 @@ export class ModFootnoteEditor {
         this.mod.fnPm.on("filterTransform", (transform) => {
             return that.onFilterTransform(transform)
         })
-
+        this.mod.fnPm.on("transformPastedHTML", (inHTML) => {
+            let ph = new PasteHandler(inHTML, "footnote")
+            return ph.outHTML
+        })
     }
 
     // filter transformations, disallowing all transformations going across document parts/footnotes.

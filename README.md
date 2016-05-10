@@ -43,21 +43,23 @@ The following are instructions working on Ubuntu 14.04. Make adjustments as need
 
 6. Install the requirements for running Fidus Writer by typing:
 
-  > `pip install -U setuptools`
-
   > `pip install -r requirements.txt`
 
 7. Initialize the Fidus Writer site and create a super user by typing:
 
-  > `python manage.py init`
+  > `./manage.py init`
 
 8. Set up an admin user by typing:
 
-  > `python manage.py createsuperuser`
+  > `./manage.py createsuperuser`
 
-9. In your browser, navigate to http://localhost:8000/ and log in.
+9. Start the Fidus Writer server by typing:
 
-10. Notice that emails sent to the user appear in the console until an SMTP backend is configured (see below).
+  > `./manage.py runserver`
+
+10. In your browser, navigate to http://localhost:8000/ and log in.
+
+11. Notice that emails sent to the user appear in the console until an SMTP backend is configured (see below).
 
 Advanced options
 ----

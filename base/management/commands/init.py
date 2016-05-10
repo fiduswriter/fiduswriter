@@ -32,7 +32,7 @@ class Command(BaseCommand):
             call_command("migrate", fake=True)
         else:
             call_command("migrate")
-        call_command("bundle_katex")
+        #call_command("bundle_katex")
         call_command("loaddata", "bibliography/fixtures/initial_bib_rules.json")
         call_command("create_bibliography_js")
         call_command("loaddata", "style/fixtures/initial_styles.json")

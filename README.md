@@ -47,7 +47,7 @@ The following are instructions working on Ubuntu 14.04. Make adjustments as need
 
   > `pip install -r requirements.txt`
 
-7. Initialize the Fidus Writer site and create a super user by typing:
+7. Initialize the Fidus Writer site:
 
   > `python manage.py init`
 
@@ -59,13 +59,17 @@ The following are instructions working on Ubuntu 14.04. Make adjustments as need
 
   > `./es6-transpile.sh`
 
-10. Run the Fidus Writer server by typing:
+10. Bundle KaTeX for epubs:
+
+  > `python manage.py bundle_katex`
+
+11. Run the Fidus Writer server by typing:
 
   > `python manage.py runserver`
 
-11. In your browser, navigate to http://localhost:8000/ and log in.
+12. In your browser, navigate to http://localhost:8000/ and log in.
 
-12. Notice that emails sent to the user appear in the console until an SMTP backend is configured (see below).
+13. Notice that emails sent to the user appear in the console until an SMTP backend is configured (see below).
 
 Advanced options
 ----

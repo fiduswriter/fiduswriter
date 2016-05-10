@@ -12,8 +12,9 @@
     "babelify": "*",
     "babel-preset-es2015": "*",
     "prosemirror": "git://github.com/fiduswriter/prosemirror.git#394626719ccfa2774333a73bb5ab0f98fc412136",
-    "katex": "0.5.1",
-    "object-hash": "1.1.2"
+    "katex": "0.6.0",
+    "object-hash": "1.1.2",
+    "mathquill": "0.10.1-b"
   },
   "browserify": {
     "transform": [

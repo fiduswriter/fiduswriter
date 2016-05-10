@@ -47,7 +47,7 @@ The following are instructions working on Ubuntu 14.04. Make adjustments as need
 
   > `pip install -r requirements.txt`
 
-7. Initialize the Fidus Writer site:
+7. Initialize the Fidus Writer site and create a super user by typing:
 
   > `python manage.py init`
 
@@ -55,21 +55,9 @@ The following are instructions working on Ubuntu 14.04. Make adjustments as need
 
   > `python manage.py createsuperuser`
 
-9. Transpile Javascript from ES6 to ES5 (takes a while):
+9. In your browser, navigate to http://localhost:8000/ and log in.
 
-  > `./es6-transpile.sh`
-
-10. Bundle KaTeX for epubs:
-
-  > `python manage.py bundle_katex`
-
-11. Run the Fidus Writer server by typing:
-
-  > `python manage.py runserver`
-
-12. In your browser, navigate to http://localhost:8000/ and log in.
-
-13. Notice that emails sent to the user appear in the console until an SMTP backend is configured (see below).
+10. Notice that emails sent to the user appear in the console until an SMTP backend is configured (see below).
 
 Advanced options
 ----
@@ -137,3 +125,15 @@ Advanced options
     > `python manage.py collectstatic`
 
   6. Restart your server.
+
+### Development/upgrade:
+
+  If you change the source code of Fidus Writer, notice the following:
+
+  1. If there are changes to the JavaScript files written in ES6 or to any of the JavaScript dependencies, you need to run:
+
+    > `python manage.py transpile`
+
+  2. If there are changes to KaTeX, you need to run:
+
+    > `python manage.py bundle_katex`

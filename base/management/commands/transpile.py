@@ -1,7 +1,7 @@
 from django.core.management.base import BaseCommand
 from subprocess import call, check_output
-from os import path, makedirs
 from distutils.spawn import find_executable
+import os
 import filecmp
 import json
 import shutil
@@ -23,12 +23,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         start = time.time()
         shutil.os.chdir(PROJECT_PATH)
-        if not (path.exists(path.join(PROJECT_PATH, "node_modules")) and
-                path.exists(path.join(PROJECT_PATH, "node_modules/.bin")) and
-                path.exists(path.join(PROJECT_PATH, "node_modules/.bin/browserifyinc")) and
-                path.exists(path.join(PROJECT_PATH, "node_modules/package.json")) and
-                filecmp.cmp(path.join(PROJECT_PATH, "package.json"), path.join(PROJECT_PATH, "node_modules/package.json"))):
-            if path.exists(path.join(PROJECT_PATH, "node_modules")):
+        if not (os.path.exists(os.path.join(PROJECT_PATH, "node_modules/.bin/browserifyinc")) and
+                os.path.exists(os.path.join(PROJECT_PATH, "node_modules/package.json")) and
+                filecmp.cmp(os.path.join(PROJECT_PATH, "package.json"), os.path.join(PROJECT_PATH, "node_modules/package.json"))):
+            if os.path.exists(os.path.join(PROJECT_PATH, "node_modules")):
                 shutil.rmtree("node_modules")
             if not find_executable("nodeenv"):
                 call(["pip", "install", "nodeenv"])
@@ -38,31 +36,31 @@ class Command(BaseCommand):
             # Copy the package.json file to node_modules, so we can compare it to
             # the current version next time we run it.
             call(["cp", "package.json", "node_modules"])
-            package_contents = open(path.join(PROJECT_PATH, "package.json"))
+            package_contents = open(os.path.join(PROJECT_PATH, "package.json"))
             package_json = json.load(package_contents)
             # Check if we have a git version of prosemirror. In that case, transpile it.
             if package_json["dependencies"]["prosemirror"][:3] == "git":
                 print("Installing ProseMirror dependencies")
-                shutil.os.chdir(path.join(PROJECT_PATH, "node_modules/prosemirror"))
+                shutil.os.chdir(os.path.join(PROJECT_PATH, "node_modules/prosemirror"))
                 call(["npm","install"])
                 call(["npm","run","dist"])
-                shutil.os.chdir(path.join(PROJECT_PATH))
+                shutil.os.chdir(os.path.join(PROJECT_PATH))
         # Collect all javascript in a temporary dir (similar to ./manage.py collectstatic).
         # This allows for the modules to import from oneanother, across Django Apps.
 
 
         # Create a tmp dir for collecting JavaScript files
-        if not path.exists(path.join(PROJECT_PATH, "es6-cache")):
-            shutil.os.mkdir("es6-cache")
+        tmp_path = os.path.join(PROJECT_PATH, "es6-cache")
+        if not os.path.exists(tmp_path):
+            os.makedirs(tmp_path)
         tmp_dir = "./es6-cache/"
 
         # Remove any previously created static output dirs
-        if path.exists(path.join(PROJECT_PATH, "static-es5")):
+        if os.path.exists(os.path.join(PROJECT_PATH, "static-es5")):
             shutil.rmtree("static-es5")
 
         # Create a static output dir
-        shutil.os.mkdir("static-es5")
-        shutil.os.mkdir("static-es5/js")
+        os.makedirs("static-es5/js")
         out_dir = "./static-es5/js"
         with open("./static-es5/README.txt",'w') as f:
             f.write("These files have been automatically generated. DO NOT EDIT THEM! \n Changes will be overwritten. Edit the original files in one of the django apps, and run manage.py transpile.")
@@ -75,41 +73,32 @@ class Command(BaseCommand):
 
         for sourcefile in sourcefiles:
             relative_path = sourcefile.split('static/js/')[1]
-            outfile = path.join(tmp_dir, relative_path)
-            dirname = path.dirname(outfile)
-            if not path.exists(dirname):
-                makedirs(dirname)
+            outfile = os.path.join(tmp_dir, relative_path)
+            dirname = os.path.dirname(outfile)
+            if not os.path.exists(dirname):
+                os.makedirs(dirname)
                 shutil.copyfile(sourcefile, outfile)
-            elif not path.isfile(outfile):
+            elif not os.path.isfile(outfile):
                 shutil.copyfile(sourcefile, outfile)
-            elif path.getmtime(outfile) < path.getmtime(sourcefile):
+            elif os.path.getmtime(outfile) < os.path.getmtime(sourcefile):
                 shutil.copyfile(sourcefile, outfile)
 
         for sourcefile in mainfiles:
-            dirname = path.dirname(sourcefile)
-            basename = path.basename(sourcefile)
+            dirname = os.path.dirname(sourcefile)
+            basename = os.path.basename(sourcefile)
             outfilename = basename.split('.')[0] + ".es5.js"
-            cachefile = path.join(tmp_dir, basename.split('.')[0] + ".cache.json")
+            cachefile = os.path.join(tmp_dir, basename.split('.')[0] + ".cache.json")
             relative_dir = dirname.split('static/js')[1]
-            infile = path.join(tmp_dir, relative_dir, basename)
-            outfile = path.join(out_dir, relative_dir, outfilename)
+            infile = os.path.join(tmp_dir, relative_dir, basename)
+            outfile = os.path.join(out_dir, relative_dir, outfilename)
             print("Transpiling " + sourcefile + " to " + outfile)
             call(["node_modules/.bin/browserifyinc", "--cachefile", cachefile, "--outfile", outfile, "-t", "babelify", infile])
 
 
-        # Copy CSS files
-        shutil.os.mkdir("static-es5/css")
-        shutil.os.mkdir("static-es5/css/libs")
-
         # Copy mathquill CSS
-        shutil.os.mkdir("static-es5/css/libs/mathquill")
+        os.makedirs("static-es5/css/libs/mathquill")
         call(["cp", "node_modules/mathquill/build/mathquill.css", "static-es5/css/libs/mathquill"])
         call(["cp", "-R", "node_modules/mathquill/build/font", "static-es5/css/libs/mathquill"])
-
-        # Copy KaTeX CSS
-        shutil.os.mkdir("static-es5/css/libs/katex")
-        call(["cp", "node_modules/katex/dist/katex.min.css", "static-es5/css/libs/katex"])
-        call(["cp", "-R", "node_modules/katex/dist/fonts", "static-es5/css/libs/katex"])
 
         end = time.time()
         print("Time spent transpiling: "+ str(int(round(end-start))) + " seconds")

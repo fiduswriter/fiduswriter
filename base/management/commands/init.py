@@ -20,8 +20,8 @@ class Command(BaseCommand):
         call_command("create_citation_styles")
         call_command("loaddata", "base/fixtures/initial_terms.json")
         call_command("compilemessages")
-        call_command("transpile")
         call_command("bundle_katex")
+        call_command("transpile")
         try:
             call_command("compress")
         except:

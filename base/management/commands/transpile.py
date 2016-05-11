@@ -1,4 +1,5 @@
 from django.core.management.base import BaseCommand
+from django.core.management import call_command
 from subprocess import call, check_output
 from distutils.spawn import find_executable
 import os
@@ -26,6 +27,12 @@ class Command(BaseCommand):
         if not (os.path.exists(os.path.join(PROJECT_PATH, "node_modules/.bin/browserifyinc")) and
                 os.path.exists(os.path.join(PROJECT_PATH, "node_modules/package.json")) and
                 filecmp.cmp(os.path.join(PROJECT_PATH, "package.json"), os.path.join(PROJECT_PATH, "node_modules/package.json"))):
+            # Find the old katex version to determine if bundle_katex needs to be run
+            old_katex_version = False
+            if os.path.exists(os.path.join(PROJECT_PATH, "node_modules/package.json")):
+                old_package_contents = open(os.path.join(PROJECT_PATH, "node_modules/package.json"))
+                old_package_json = json.load(old_package_contents)
+                old_katex_version = old_package_json["dependencies"]["katex"]
             if os.path.exists(os.path.join(PROJECT_PATH, "node_modules")):
                 shutil.rmtree("node_modules")
             if not find_executable("nodeenv"):
@@ -45,15 +52,19 @@ class Command(BaseCommand):
                 call(["npm","install"])
                 call(["npm","run","dist"])
                 shutil.os.chdir(os.path.join(PROJECT_PATH))
+
+            if package_json["dependencies"]["katex"] != old_katex_version:
+                # Katex has been updated!
+                call_command("bundle_katex")
         # Collect all javascript in a temporary dir (similar to ./manage.py collectstatic).
         # This allows for the modules to import from oneanother, across Django Apps.
 
 
-        # Create a tmp dir for collecting JavaScript files
-        tmp_path = os.path.join(PROJECT_PATH, "es6-cache")
-        if not os.path.exists(tmp_path):
-            os.makedirs(tmp_path)
-        tmp_dir = "./es6-cache/"
+        # Create a cache dir for collecting JavaScript files
+        cache_path = os.path.join(PROJECT_PATH, "es6-cache")
+        if not os.path.exists(cache_path):
+            os.makedirs(cache_path)
+        cache_dir = "./es6-cache/"
 
         # Remove any previously created static output dirs
         if os.path.exists(os.path.join(PROJECT_PATH, "static-es5")):
@@ -73,7 +84,7 @@ class Command(BaseCommand):
 
         for sourcefile in sourcefiles:
             relative_path = sourcefile.split('static/js/')[1]
-            outfile = os.path.join(tmp_dir, relative_path)
+            outfile = os.path.join(cache_dir, relative_path)
             dirname = os.path.dirname(outfile)
             if not os.path.exists(dirname):
                 os.makedirs(dirname)
@@ -87,9 +98,9 @@ class Command(BaseCommand):
             dirname = os.path.dirname(sourcefile)
             basename = os.path.basename(sourcefile)
             outfilename = basename.split('.')[0] + ".es5.js"
-            cachefile = os.path.join(tmp_dir, basename.split('.')[0] + ".cache.json")
+            cachefile = os.path.join(cache_dir, basename.split('.')[0] + ".cache.json")
             relative_dir = dirname.split('static/js')[1]
-            infile = os.path.join(tmp_dir, relative_dir, basename)
+            infile = os.path.join(cache_dir, relative_dir, basename)
             outfile = os.path.join(out_dir, relative_dir, outfilename)
             print("Transpiling " + sourcefile + " to " + outfile)
             call(["node_modules/.bin/browserifyinc", "--cachefile", cachefile, "--outfile", outfile, "-t", "babelify", infile])

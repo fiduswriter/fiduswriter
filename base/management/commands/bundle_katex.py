@@ -36,12 +36,13 @@ class Command(BaseCommand):
     help = 'Create a zip file containing the katex style files to be bundled with EPUB and HTML exports'
 
     def handle(self, *args, **options):
+        print("Bundling KaTeX")
         # Copy KaTeX CSS
-        katex_css_path = os.path.join(PROJECT_PATH, "static-es5/css/libs/katex/")
+        katex_css_path = os.path.join(PROJECT_PATH, "base/static/css/libs/katex/")
         if not os.path.exists(katex_css_path):
             os.makedirs(katex_css_path)
-        call(["cp", "node_modules/katex/dist/katex.min.css", "static-es5/css/libs/katex"])
-        call(["cp", "-R", "node_modules/katex/dist/fonts", "static-es5/css/libs/katex"])
+        call(["cp", "node_modules/katex/dist/katex.min.css", "base/static/css/libs/katex"])
+        call(["cp", "-R", "node_modules/katex/dist/fonts", "base/static/css/libs/katex"])
         zip_file_path = os.path.join(PROJECT_PATH, 'base/static/zip/katex-style.zip')
         zip_dir = os.path.dirname(zip_file_path)
         if not os.path.exists(zip_dir):

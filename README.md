@@ -45,9 +45,11 @@ The following are instructions working on Ubuntu 14.04. Make adjustments as need
 
   > `pip install -r requirements.txt`
 
-7. Initialize the Fidus Writer site and create a super user by typing:
+7. Initialize the Fidus Writer site by typing:
 
   > `./manage.py init`
+
+  This will take a while.
 
 8. Set up an admin user by typing:
 
@@ -130,12 +132,10 @@ Advanced options
 
 ### Development/upgrade:
 
-  If you change the source code of Fidus Writer, notice the following:
+  If there are changes to the JavaScript source code of Fidus Writer, you need to run:
 
-  1. If there are changes to the JavaScript files written in ES6 or to any of the JavaScript dependencies, you need to run:
+    > `./manage.py transpile`
 
-    > `python manage.py transpile`
+  If there are changes to the database models, you need to run:
 
-  2. If there are changes to KaTeX, you need to run:
-
-    > `python manage.py bundle_katex`
+    > `./manage.py migrate`

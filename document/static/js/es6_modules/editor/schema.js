@@ -1,22 +1,10 @@
-import {Schema, defaultSchema, Block, Textblock, Inline, Attribute, MarkType, NodeKind} from "prosemirror/dist/model"
+import {Schema, Block, Textblock, Inline, Text, MarkType, Attribute, NodeKind,
+        Doc, BlockQuote, OrderedList, BulletList, ListItem, HorizontalRule,
+        Paragraph, Heading, CodeBlock, Image, HardBreak, CodeMark, EmMark,
+        StrongMark, LinkMark} from "prosemirror/dist/model"
 import {render as katexRender} from "katex"
 
-/*export class Doc extends Block {
-    get kind() {
-        return null
-    }
-    get locked() {
-        return true
-    }
-    get selectable() {
-        return false
-    }
-}*/
-
 class Title extends Textblock {
-    get contains() {
-        return NodeKind.text
-    }
 }
 
 Title.register("parseDOM", "div", {
@@ -33,112 +21,103 @@ Title.prototype.serializeDOM = (node, serializer) => serializer.renderAs(node, "
     id: 'document-title'
 })
 
-class MetaDataSubtitle extends Textblock {
+class Subtitle extends Textblock {
     get locked() {
         return true
     }
     get selectable() {
         return false
     }
-    get contains() {
-        return NodeKind.text
-    }
 }
 
-MetaDataSubtitle.register("parseDOM", "div", {
+Subtitle.register("parseDOM", "div", {
     parse: function(dom, state) {
         if (dom.id !== 'metadata-subtitle') return false
         state.wrapIn(dom, this)
     }
 })
 
-MetaDataSubtitle.prototype.serializeDOM = (node, serializer) =>
+Subtitle.prototype.serializeDOM = (node, serializer) =>
     serializer.renderAs(node, "div", {
         id: 'metadata-subtitle'
     })
 
-class MetaDataAuthors extends Textblock {
+class Authors extends Textblock {
     get locked() {
         return true
     }
     get selectable() {
         return false
     }
-    get contains() {
-        return NodeKind.text
-    }
 }
 
-MetaDataAuthors.register("parseDOM", "div", {
+Authors.register("parseDOM", "div", {
     parse: function(dom, state) {
         if (dom.id !== 'metadata-authors') return false
         state.wrapIn(dom, this)
     }
 })
 
-MetaDataAuthors.prototype.serializeDOM = (node, serializer) =>
+Authors.prototype.serializeDOM = (node, serializer) =>
     serializer.renderAs(node, "div", {
         id: 'metadata-authors'
     })
 
-class MetaDataAbstract extends Block {
+class Abstract extends Block {
     //  get locked() { return true }
     get selectable() {
         return false
     }
 }
 
-MetaDataAbstract.register("parseDOM", "div", {
+Abstract.register("parseDOM", "div", {
     parse: function(dom, state) {
         if (dom.id !== 'metadata-abstract') return false
         state.wrapIn(dom, this)
     }
 })
 
-MetaDataAbstract.prototype.serializeDOM = (node, serializer) =>
+Abstract.prototype.serializeDOM = (node, serializer) =>
     serializer.renderAs(node, "div", {
         id: 'metadata-abstract'
     })
 
-class MetaDataKeywords extends Textblock {
+class Keywords extends Textblock {
     get locked() {
         return true
     }
     get selectable() {
         return false
     }
-    get contains() {
-        return NodeKind.text
-    }
 }
 
-MetaDataKeywords.register("parseDOM", "div", {
+Keywords.register("parseDOM", "div", {
     parse: function(dom, state) {
         if (dom.id !== 'metadata-keywords') return false
         state.wrapIn(dom, this)
     }
 })
 
-MetaDataKeywords.prototype.serializeDOM = (node, serializer) =>
+Keywords.prototype.serializeDOM = (node, serializer) =>
     serializer.renderAs(node, "div", {
         id: 'metadata-keywords'
     })
 
-class DocumentContents extends Block {
+class Body extends Block {
     //  get locked() { return true }
     get selectable() {
         return false
     }
 }
 
-DocumentContents.register("parseDOM", "div", {
+Body.register("parseDOM", "div", {
     parse: function(dom, state) {
         if (dom.id !== 'document-contents') return false
         state.wrapIn(dom, this)
     }
 })
 
-DocumentContents.prototype.serializeDOM = (node, serializer) =>
+Body.prototype.serializeDOM = (node, serializer) =>
     serializer.renderAs(node, "div", {
         id: 'document-contents'
     })
@@ -364,9 +343,6 @@ class Figure extends Block {
             })
         }
     }
-    get contains() {
-        return null
-    }
 }
 
 Figure.register("parseDOM", "figure", {
@@ -513,69 +489,82 @@ CommentMark.prototype.serializeDOM = (mark, serializer) => {
         'data-id': mark.attrs.id
     })
 }
-/*
-const commentIcon = {
-    type: "icon", // TODO: use real comment icon
-    width: 951,
-    height: 1024,
-    path: "M832 694q0-22-16-38l-118-118q-16-16-38-16-24 0-41 18 1 1 10 10t12 12 8 10 7 14 2 15q0 22-16 38t-38 16q-8 0-15-2t-14-7-10-8-12-12-10-10q-18 17-18 41 0 22 16 38l117 118q15 15 38 15 22 0 38-14l84-83q16-16 16-38zM430 292q0-22-16-38l-117-118q-16-16-38-16-22 0-38 15l-84 83q-16 16-16 38 0 22 16 38l118 118q15 15 38 15 24 0 41-17-1-1-10-10t-12-12-8-10-7-14-2-15q0-22 16-38t38-16q8 0 15 2t14 7 10 8 12 12 10 10q18-17 18-41zM941 694q0 68-48 116l-84 83q-47 47-116 47-69 0-116-48l-117-118q-47-47-47-116 0-70 50-119l-50-50q-49 50-118 50-68 0-116-48l-118-118q-48-48-48-116t48-116l84-83q47-47 116-47 69 0 116 48l117 118q47 47 47 116 0 70-50 119l50 50q49-50 118-50 68 0 116 48l118 118q48 48 48 116z"
-}
 
-CommentMark.register("command", "set", {
-    derive: {
-        inverseSelect: true,
-        params: [{
-            label: "ID",
-            attr: "id"
-        }]
-    },
-    label: "Add comment",
-    menu: {
-        group: "inline",
-        rank: 35,
-        display: commentIcon
-    }
+export const fidusSchema = new Schema({
+  nodes: {
+    doc: {type: Doc, content: "title subtitle authors abstract keywords body"},
+
+    title: {type: Title, content: "text*"},
+    subtitle: {type: Subtitle, content: "text*"},
+    authors: {type: Authors, content: "text*"},
+    abstract: {type: Abstract, content: "block+"},
+    keywords: {type: Keywords, content: "text*"},
+    body: {type: Body, content: "block+"},
+
+    blockquote: {type: BlockQuote, content: "block+"},
+    ordered_list: {type: OrderedList, content: "list_item+"},
+    bullet_list: {type: BulletList, content: "list_item+"},
+    list_item: {type: ListItem, content: "block+"},
+    horizontal_rule: {type: HorizontalRule},
+    figure: {type: Figure},
+
+    paragraph: {type: Paragraph, content: "inline[_]*"},
+    heading: {type: Heading, content: "inline[_]*"},
+    code_block: {type: CodeBlock, content: "text*"},
+
+    text: {type: Text},
+    hard_break: {type: HardBreak},
+    footnote: {type: Footnote},
+    citation: {type: Citation},
+    equation: {type: Equation}
+  },
+
+  groups: {
+    block: ["paragraph", "blockquote", "ordered_list", "bullet_list", "heading", "code_block", "horizontal_rule", "figure"],
+    inline: ["text", "hard_break", "footnote", "citation", "equation"]
+  },
+
+  marks: {
+    em: EmMark,
+    strong: StrongMark,
+    link: LinkMark,
+    code: CodeMark,
+    comment: CommentMark
+  }
 })
 
-CommentMark.register("command", "unset", {
-    derive: true,
-    label: "Remove comment",
-    menu: {
-        group: "inline",
-        rank: 35,
-        display: commentIcon
-    },
-    active() {
-        return true
-    }
-})
-*/
-export const fidusSchema = new Schema(defaultSchema.spec.update({
-    title: Title,
-    metadatasubtitle: MetaDataSubtitle,
-    metadataauthors: MetaDataAuthors,
-    metadataabstract: MetaDataAbstract,
-    metadatakeywords: MetaDataKeywords,
-    documentcontents: DocumentContents,
-    footnote: Footnote,
-    citation: Citation,
-    equation: Equation,
-    figure: Figure
-}, {
-    comment: CommentMark
-}))
+export const fidusFnSchema = new Schema({
+  nodes: {
+    doc: {type: Doc, content: "footnotecontainer*"},
 
-export const fidusFnSchema = new Schema(defaultSchema.spec.update({
-    title: Title,
-    metadatasubtitle: MetaDataSubtitle,
-    metadataauthors: MetaDataAuthors,
-    metadataabstract: MetaDataAbstract,
-    metadatakeywords: MetaDataKeywords,
-    documentcontents: DocumentContents,
-    footnotecontainer: FootnoteContainer,
-    citation: Citation,
-    equation: Equation,
-    figure: Figure
-}, {
-    comment: CommentMark
-}))
+    footnotecontainer: {type: Title, content: "block+"},
+
+    blockquote: {type: BlockQuote, content: "block+"},
+    ordered_list: {type: OrderedList, content: "list_item+"},
+    bullet_list: {type: BulletList, content: "list_item+"},
+    list_item: {type: ListItem, content: "block+"},
+    horizontal_rule: {type: HorizontalRule},
+    figure: {type: Figure},
+
+    paragraph: {type: Paragraph, content: "inline[_]*"},
+    heading: {type: Heading, content: "inline[_]*"},
+    code_block: {type: CodeBlock, content: "text*"},
+
+    text: {type: Text},
+    hard_break: {type: HardBreak},
+    citation: {type: Citation},
+    equation: {type: Equation}
+  },
+
+  groups: {
+    block: ["paragraph", "blockquote", "ordered_list", "bullet_list", "heading", "code_block", "horizontal_rule", "figure"],
+    inline: ["text", "hard_break", "citation", "equation"]
+  },
+
+  marks: {
+    em: EmMark,
+    strong: StrongMark,
+    link: LinkMark,
+    code: CodeMark
+  }
+})

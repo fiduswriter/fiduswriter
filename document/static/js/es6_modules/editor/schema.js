@@ -22,12 +22,6 @@ Title.prototype.serializeDOM = (node, serializer) => serializer.renderAs(node, "
 })
 
 class Subtitle extends Textblock {
-    get locked() {
-        return true
-    }
-    get selectable() {
-        return false
-    }
 }
 
 Subtitle.register("parseDOM", "div", {
@@ -43,12 +37,6 @@ Subtitle.prototype.serializeDOM = (node, serializer) =>
     })
 
 class Authors extends Textblock {
-    get locked() {
-        return true
-    }
-    get selectable() {
-        return false
-    }
 }
 
 Authors.register("parseDOM", "div", {
@@ -64,10 +52,6 @@ Authors.prototype.serializeDOM = (node, serializer) =>
     })
 
 class Abstract extends Block {
-    //  get locked() { return true }
-    get selectable() {
-        return false
-    }
 }
 
 Abstract.register("parseDOM", "div", {
@@ -83,12 +67,6 @@ Abstract.prototype.serializeDOM = (node, serializer) =>
     })
 
 class Keywords extends Textblock {
-    get locked() {
-        return true
-    }
-    get selectable() {
-        return false
-    }
 }
 
 Keywords.register("parseDOM", "div", {
@@ -104,10 +82,6 @@ Keywords.prototype.serializeDOM = (node, serializer) =>
     })
 
 class Body extends Block {
-    //  get locked() { return true }
-    get selectable() {
-        return false
-    }
 }
 
 Body.register("parseDOM", "div", {
@@ -178,12 +152,6 @@ Footnote.register("command", "insert", {
 })
 
 class FootnoteContainer extends Block {
-    get locked() {
-        return true
-    }
-    get selectable() {
-        return false
-    }
 }
 
 FootnoteContainer.register("parseDOM", "div", {

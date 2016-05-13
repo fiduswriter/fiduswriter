@@ -36,6 +36,9 @@ export class ModCitations {
         citations.forEach(function(citation){
             citation.innerHTML = ''
         })
+        if (document.getElementById('document-bibliography').innerHTML !== '') {
+            document.getElementById('document-bibliography').innerHTML = ''
+        }
         this.layoutCitations()
     }
 

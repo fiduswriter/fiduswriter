@@ -77,7 +77,7 @@ export class ModFootnoteMarkers {
         for (let i = 0; i < transform.steps.length; i++) {
             let step = transform.steps[i],
                 map = transform.maps[i]
-            if (step.jsonID == "replace") {
+            if (step.jsonID === "replace" || step.jsonID === "replaceWrap") {
                 let index = 0
 
                 while (index < (ranges.length - 1) && step.from < ranges[index].from) {

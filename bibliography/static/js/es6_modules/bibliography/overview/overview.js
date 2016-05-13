@@ -4,6 +4,8 @@ import {editCategoriesTemplate, categoryFormsTemplate, bibtableTemplate,
     bibliographyCategoryListItemTemplate} from "./templates"
 import {BibliographyDB} from "../database"
 import {BibEntryTypes} from "../statics"
+import {BibLatexImporter} from "../importer/biblatex"
+
 export class BibliographyOverview {
 
     constructor() {
@@ -320,8 +322,8 @@ export class BibliographyOverview {
 
         //import a bib file
         jQuery('.import-bib').bind('click', function () {
-            new BibLatexImporter(function(bibs) {
-                that.addBibList(bibs)
+            new BibLatexImporter(that.db, function(bibEntries) {
+                that.addBibList(bibEntries)
             })
         })
 

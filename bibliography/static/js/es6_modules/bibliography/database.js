@@ -112,7 +112,6 @@ export class BibliographyDB {
      * @function serverBibItemToBibDB
      * @param item The bibliography item from the server.
      */
-    // NO EXPORT!
     serverBibItemToBibDB(item) {
         let id = item['id']
         let aBibDBEntry = JSON.parse(item['fields'])

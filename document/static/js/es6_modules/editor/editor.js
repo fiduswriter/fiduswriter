@@ -398,7 +398,7 @@ export class Editor {
         let updateBibliography = false, updateTitle = false, commentIds = [], that = this
             // Check what area is affected
         transform.steps.forEach(function(step, index) {
-            if (step.type === 'replace') {
+            if (step.jsonID === 'replace') {
                 if (step.from !== step.to) {
                     transform.docs[index].nodesBetween(step.from, step.to, function(node, pos, parent) {
                         if (node.type.name === 'citation') {

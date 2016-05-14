@@ -109,11 +109,11 @@ Advanced options
 
   Instead of starting the server with:
 
-  > `python manage.py runserver`
+  > `./manage.py runserver`
 
   Specify the port number like this:
 
-  > `python manage.py runserver 9000`
+  > `./manage.py runserver 9000`
 
   9000 is the port number that this server listens on.
 
@@ -124,11 +124,11 @@ Advanced options
   3. Add one or several new document styles. Insert the CSS definition and select all the fonts required by the style.
   4. In your console, interrupt the server and run:
 
-    > `python manage.py create_document_styles`
+    > `./manage.py create_document_styles`
 
   5. Depending on your server setup, you may also have to run:
 
-    > `python manage.py collectstatic`
+    > `./manage.py collectstatic`
 
   6. Restart your server.
 
@@ -136,8 +136,16 @@ Advanced options
 
   If there are changes to the JavaScript source code of Fidus Writer, you need to run:
 
-    > `./manage.py transpile`
+  > `./manage.py transpile`
+  
+  If there are changes to translations, you need to run:
+  
+  > `./manage.py compilemessages`
 
   If there are changes to the database models, you need to run:
 
-    > `./manage.py migrate`
+  > `./manage.py migrate`
+  
+  On a production server additionally:
+  
+  > `./manage.py collectstatic`  

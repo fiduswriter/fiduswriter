@@ -63,11 +63,14 @@ RIGHTS_CHOICES  = (
     ('r', 'reader'),
     ('w', 'author'),
     ('e', 'editor'),
-    ('c', 'reviewer')
+    ('c', 'reviewer'),
+    ('o', 'comment_only')
 )
 
 #Editor and Reviewer can only comment and not edit document
-COMMENT_ONLY = ('e','c')
+COMMENT_ONLY = ('e','c', 'o')
+
+CAN_UPDATE_DOCUMENT = ['w', 'e', 'c', 'o']
 
 #TODO: AccessRights - EMPTY. add when create document
 class AccessRight(models.Model):

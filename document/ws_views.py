@@ -9,7 +9,7 @@ from ws.base import BaseWebSocketHandler
 from logging import info, error
 from tornado.escape import json_decode, json_encode
 from tornado.websocket import WebSocketClosedError
-from document.models import AccessRight, COMMENT_ONLY
+from document.models import AccessRight, COMMENT_ONLY, CAN_UPDATE_DOCUMENT
 from document.views import get_accessrights
 from avatar.templatetags.avatar_tags import avatar_url
 
@@ -294,7 +294,7 @@ class DocumentWS(BaseWebSocketHandler):
             return
 
     def can_update_document(self):
-        return self.user_info.access_rights == 'w' or self.user_info.access_rights == 'e' or self.user_info.access_rights == 'c'
+        return self.user_info.access_rights in CAN_UPDATE_DOCUMENT
 
     def on_close(self):
         print "Websocket closing"

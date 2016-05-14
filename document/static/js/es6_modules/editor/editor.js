@@ -22,6 +22,7 @@ import {node2Obj, obj2Node} from "../exporter/json"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {PasteHandler} from "./paste"
+import {COMMENT_ONLY_ROLES} from "./footnotes/editor"
 
 export class Editor {
     // A class that contains everything that happens on the editor page.
@@ -33,6 +34,8 @@ export class Editor {
         // initially so that diffs that arrive before document has been loaded are not
         // dealt with.
         this.waitingForDocument = true
+
+
 
         this.docInfo = {
             'sentHash': false,
@@ -258,7 +261,8 @@ export class Editor {
 
         this.mod.settings.layout.layoutMetadata()
 
-        if (this.docInfo.rights === 'w' || this.docInfo.rights === 'e' || this.docInfo.rights === 'c') {
+
+        if (this.docInfo.rights === 'w' || (COMMENT_ONLY_ROLES.indexOf(this.docInfo.rights) > -1)) {
             jQuery('#editor-navigation').show()
             jQuery('.metadata-menu-item, #open-close-header, .save, \
           .multibuttonsCover, .papersize-menu, .metadata-menu, \
@@ -267,7 +271,7 @@ export class Editor {
                 // bind the share dialog to the button if the user is the document owner
                 jQuery('.share').removeClass('disabled')
             }
-            if (this.docInfo.rights === 'e' || this.docInfo.rights === 'c') {
+            if (COMMENT_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {
                 let toolbar = jQuery('.editortoolbar')
                 toolbar.find('.ui-buttonset').hide()
                 toolbar.find('.comment-only').show()
@@ -404,7 +408,7 @@ export class Editor {
             'metadatakeywords', 'documentcontents']
 
         //Check for comment-only role. If role editor or reviewer
-        if (this.docInfo.rights === "e" || this.docInfo.rights === "c") {
+        if (COMMENT_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {
             if (transform.constructor.name === "EditorTransform") {
                 //Check all transformation steps. If step type not allowed = prohibit
                 prohibited = !(transform.steps.every(function(step) {

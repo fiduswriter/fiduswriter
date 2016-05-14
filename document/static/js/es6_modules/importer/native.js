@@ -1,4 +1,5 @@
 import {obj2Node,node2Obj} from "../exporter/json"
+import {BibEntryTypes} from "../bibliography/statics"
 
 export class ImportNative {
     /* Save document information into the database */

@@ -9,6 +9,7 @@ export let mathDialogTemplate = _.template('\
     <div title="' + gettext("Math") + '">\
         <p><span class="math-field-header">Type formula here: </span><span class="math-field" type="text" name="math" ></span></p>\
         <p><span class="math-field-header">LATEX result: </span><span class="math-latex"></span></p>\
+        <div class="math-error"></div>\
     </div>\
 ')
 

@@ -181,7 +181,7 @@ export class DocumentOverviewActions {
                                 that.documentOverview.documentList.push(doc)
                                 that.documentOverview.stopDocumentTable()
                                 jQuery('#document-table tbody').append(
-                                    documentsListItemTemplate({doc, user: that.documentOverview.user}))
+                                    documentsListItemTemplate({aDocument: doc, user: that.documentOverview.user}))
                                 that.documentOverview.startDocumentTable()
                             })
                         } else {
@@ -195,7 +195,7 @@ export class DocumentOverviewActions {
                                     that.documentOverview.documentList.push(doc)
                                     that.documentOverview.stopDocumentTable()
                                     jQuery('#document-table tbody').append(
-                                        documentsListItemTemplate({doc, user: that.documentOverview.user}))
+                                        documentsListItemTemplate({aDocument: doc, user: that.documentOverview.user}))
                                     that.documentOverview.startDocumentTable()
                                 })
                             })})

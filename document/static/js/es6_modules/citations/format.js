@@ -4,210 +4,222 @@ import {CSLExporter} from "../bibliography/exporter/csl"
  * Functions to display citations and the bibliography.
  */
 
-export let formatCitations = function(contentElement, citationstyle, aBibDB) {
-     let bibliographyHTML = '',
-         allCitations = jQuery(contentElement).find('.citation'),
-         listedWorksCounter = 0,
-         citeprocParams = [],
-         bibFormats = [],
-         citationsIds = [],
-         cslGetter = new CSLExporter(aBibDB), // TODO: Figure out if this conversion should be done earlier and cached
-         cslDB = cslGetter.cslDB
-
-
-
-     allCitations.each(function(i) {
-         var entries = this.dataset.bibEntry ? this.dataset.bibEntry.split(',') : []
-         let allCitationsListed = true
-
-         let len = entries.length
-         for (let j = 0; j < len; j++) {
-             if (aBibDB.hasOwnProperty(entries[j])) {
-                 continue
-             }
-             allCitationsListed = false
-             break
-         }
-
-         if (allCitationsListed) {
-             let pages = this.dataset.bibPage ? this.dataset.bibPage.split(',,,') : [],
-                 prefixes = this.dataset.bibBefore ? this.dataset.bibBefore.split(',,,') : [],
-                 //suffixes = this.dataset.bibAfter.split(',,,'),
-                 citationItem,
-                 citationItems = []
-
-             listedWorksCounter += entries.length
-
-             for (let j = 0; j < len; j++) {
-                 citationItem = {
-                     id: entries[j]
-                 }
-                 if ('' != pages[j]) {
-                     citationItem.locator = pages[j]
-                 }
-                 if ('' != prefixes[j]) {
-                     citationItem.prefix = prefixes[j]
-                 }
-                 //if('' != suffixes[j]) { citationItem.suffix = pages[j] }
-                 citationItems.push(citationItem)
-             }
-
- //            bibFormats.push(i)
-             bibFormats.push(this.dataset.bibFormat)
-             citeprocParams.push({
-                 citationItems: citationItems,
-                 properties: {
-                     noteIndex: bibFormats.length
-                 }
-             })
-         }
-     })
-
-     if (listedWorksCounter == 0) {
-         return ''
-     }
-
-     let citeprocObj = getFormattedCitations(citeprocParams, citationstyle, bibFormats, cslDB)
-
-     for (let j = 0; j < citeprocObj.citations.length; j++) {
-         var citationText = citeprocObj.citations[j][0][1]
-         if ('note' == citeprocObj.citationtype) {
-             citationText = '<span class="pagination-footnote"><span><span>' + citationText + '</span></span></span>'
-         }
-         allCitations[j].innerHTML = citationText
-     }
-
-
-     bibliographyHTML += '<h1>' + gettext('Bibliography') + '</h1>'
-         // Add entry to bibliography
-
-     for (let j = 0; j < citeprocObj.bibliography[1].length; j++) {
-         bibliographyHTML += citeprocObj.bibliography[1][j]
-     }
-
-     return bibliographyHTML
-         // Delete entries that are exactly the same
-         //bibliographyHTML = _.unique(bibliographyHTML.split('<p>')).join('<p>')
-         //bibliographyHTML = bibliographyHTML.replace(/<div class="csl-entry">/g, '<p>')
-         //return bibliographyHTML.replace(/<\/div>/g, '</p>')
- }
-
-
-
-
-let getFormattedCitations = function (citations, citationStyle, citationFormats, cslDB) {
-
-    if (citeproc.styles.hasOwnProperty(citationStyle)) {
-        citationStyle = citeproc.styles[citationStyle]
-    } else {
-        for (styleName in citeproc.styles) {
-            citationStyle = citeproc.styles[styleName]
-            break
+export class FormatCitations {
+    constructor(contentElement, citationStyle, bibDB, renderNoteCitations = true) {
+        this.contentElement = contentElement
+        this.citationStyle = citationStyle
+        this.bibDB = bibDB
+        this.renderNoteCitations = renderNoteCitations
+        this.bibliographyHTML = ''
+        this.listedWorksCounter = 0
+        this.citations = []
+        this.bibFormats = []
+        //this.citationIds = []
+        this.citationTexts = []
+        this.citationType = ''
+        this.bibliography = ''
+        this.allCitations = []
+        this.cslDB = false
+        this.init()
+        this.formatAllCitations()
+        this.getFormattedCitations()
+        if (this.renderNoteCitations || 'note' !== this.citationType) {
+            this.renderCitations()
         }
+        this.renderBibliography()
     }
 
-    let citeprocInstance = new CSL.Engine(new citeprocSys(cslDB), citationStyle.definition)
+    init() {
+        this.allCitations = jQuery(this.contentElement).find('.citation')
+        let cslGetter = new CSLExporter(this.bibDB) // TODO: Figure out if this conversion should be done earlier and cached
+        this.cslDB = cslGetter.cslDB
+    }
 
-    let inText = citeprocInstance.cslXml.className === 'in-text'
+    formatAllCitations() {
+        let that = this
+        this.allCitations.each(function(i) {
+            var entries = this.dataset.bibEntry ? this.dataset.bibEntry.split(',') : []
+            let allCitationsListed = true
 
-    let len = citations.length
-
-    let citationTexts = []
-
-    for (let i = 0; i < len; i++) {
-        let citation = citations[i],
-            citationText = citeprocInstance.appendCitationCluster(citation)
-
-        if (inText && 'textcite' == citationFormats[i]) {
-            let newCiteText = '',
-                items = citation.citationItems,
-                len2 = items.length
-
-            for (let j = 0; j < len2; j++) {
-                let onlyNameOption = [{
-                    id: items[j].id,
-                    "author-only": 1
-                }]
-
-                let onlyDateOption = [{
-                    id: items[j].id,
-                    "suppress-author": 1
-                }]
-
-                if (items[j].locator) {
-                    onlyDateOption[0].locator = items[j].locator
+            let len = entries.length
+            for (let j = 0; j < len; j++) {
+                if (that.bibDB.hasOwnProperty(entries[j])) {
+                    continue
                 }
-
-                if (items[j].label) {
-                    onlyDateOption[0].label = items[j].label
-                }
-
-                if (items[j].prefix) {
-                    onlyDateOption[0].prefix = items[j].prefix
-                }
-
-                if (items[j].suffix) {
-                    onlyDateOption[0].suffix = items[j].suffix
-                }
-
-                if (0 < j) {
-                    newCiteText += '; '
-                }
-                newCiteText += citeprocInstance.makeCitationCluster(onlyNameOption)
-                newCiteText += ' ' + citeprocInstance.makeCitationCluster(onlyDateOption)
+                allCitationsListed = false
+                break
             }
 
-            citationText[0][1] = newCiteText
+            if (allCitationsListed) {
+                let pages = this.dataset.bibPage ? this.dataset.bibPage.split(',,,') : [],
+                    prefixes = this.dataset.bibBefore ? this.dataset.bibBefore.split(',,,') : [],
+                    //suffixes = this.dataset.bibAfter.split(',,,'),
+                    citationItem,
+                    citationItems = []
+
+                that.listedWorksCounter += entries.length
+
+                for (let j = 0; j < len; j++) {
+                    citationItem = {
+                        id: entries[j]
+                    }
+                    if ('' != pages[j]) {
+                        citationItem.locator = pages[j]
+                    }
+                    if ('' != prefixes[j]) {
+                        citationItem.prefix = prefixes[j]
+                    }
+                    //if('' != suffixes[j]) { citationItem.suffix = pages[j] }
+                    citationItems.push(citationItem)
+                }
+
+    //            that.bibFormats.push(i)
+                that.bibFormats.push(this.dataset.bibFormat)
+                that.citations.push({
+                    citationItems,
+                    properties: {
+                        noteIndex: that.bibFormats.length
+                    }
+                })
+            }
+        })
+
+        if (this.listedWorksCounter == 0) {
+            return ''
+        }
+    }
+
+    renderCitations() {
+        for (let j = 0; j < this.citationTexts.length; j++) {
+            let citationText = this.citationTexts[j][0][1]
+            if ('note' == this.citationType) {
+                citationText = '<span class="pagination-footnote"><span><span>' + citationText + '</span></span></span>'
+            }
+            this.allCitations[j].innerHTML = citationText
+        }
+    }
+
+    renderBibliography() {
+
+        this.bibliographyHTML += '<h1 id="bibliography-header"></h1>'
+            // Add entry to bibliography
+
+        for (let j = 0; j < this.bibliography[1].length; j++) {
+            this.bibliographyHTML += this.bibliography[1][j]
         }
 
-        citationTexts.push(citationText)
     }
 
-    return {
-        'citations': citationTexts,
-        'bibliography': citeprocInstance.makeBibliography(),
-        'citationtype': citeprocInstance.cslXml.className
-    }
-}
+    getFormattedCitations() {
 
-let stripValues = function(bibValue) {
-    return bibValue.replace(/[\{\}]/g, '')
-}
-
-let getAuthor = function(bibData) {
-    let author = bibData.author,
-        returnObject = {}
-    if ('' == author || 'undefined' == typeof(author)) {
-        author = bibData.editor
-    }
-    let splitAuthor = author.split("{")
-    if (splitAuthor.length > 2) {
-        returnObject.firstName = author.split("{")[1].replace(/[\{\}]/g, '').replace(/^\s\s*/, '').replace(/\s\s*$/, '')
-        returnObject.lastName = author.split("{")[2].replace(/[\{\}]/g, '').replace(/^\s\s*/, '').replace(/\s\s*$/, '')
-    } else {
-        returnObject.firstName = ''
-        returnObject.lastName = author.split("{")[1].replace(/[\{\}]/g, '').replace(/^\s\s*/, '').replace(/\s\s*$/, '')
-    }
-    return returnObject
-}
-
-let yearFromDateString = function(dateString) {
-    // This mirrors the formatting of the date as returned by Python in bibliography/models.py
-    let dates = dateString.split('/')
-    let newValue = []
-    for (let x = 0; x < dates.length; x++) {
-        let dateParts = dates[x].split('-')
-            // Only make use of the first value (to/from years), discarding month and day values
-        if (isNaN(dateParts[0])) {
-            break
+        if (citeproc.styles.hasOwnProperty(this.citationStyle)) {
+            this.citationStyle = citeproc.styles[this.citationStyle]
+        } else {
+            for (styleName in citeproc.styles) {
+                this.citationStyle = citeproc.styles[styleName]
+                break
+            }
         }
-        newValue.push(dateParts[0])
+
+        let citeprocInstance = new CSL.Engine(new citeprocSys(this.cslDB), this.citationStyle.definition)
+
+        let inText = citeprocInstance.cslXml.className === 'in-text'
+
+        let len = this.citations.length
+
+        for (let i = 0; i < len; i++) {
+            let citation = this.citations[i],
+                citationText = citeprocInstance.appendCitationCluster(citation)
+
+            if (inText && 'textcite' == this.bibFormats[i]) {
+                let newCiteText = '',
+                    items = citation.citationItems,
+                    len2 = items.length
+
+                for (let j = 0; j < len2; j++) {
+                    let onlyNameOption = [{
+                        id: items[j].id,
+                        "author-only": 1
+                    }]
+
+                    let onlyDateOption = [{
+                        id: items[j].id,
+                        "suppress-author": 1
+                    }]
+
+                    if (items[j].locator) {
+                        onlyDateOption[0].locator = items[j].locator
+                    }
+
+                    if (items[j].label) {
+                        onlyDateOption[0].label = items[j].label
+                    }
+
+                    if (items[j].prefix) {
+                        onlyDateOption[0].prefix = items[j].prefix
+                    }
+
+                    if (items[j].suffix) {
+                        onlyDateOption[0].suffix = items[j].suffix
+                    }
+
+                    if (0 < j) {
+                        newCiteText += '; '
+                    }
+                    newCiteText += citeprocInstance.makeCitationCluster(onlyNameOption)
+                    newCiteText += ' ' + citeprocInstance.makeCitationCluster(onlyDateOption)
+                }
+
+                citationText[0][1] = newCiteText
+            }
+
+            this.citationTexts.push(citationText)
+        }
+
+        this.citationType = citeprocInstance.cslXml.className
+        this.bibliography = citeprocInstance.makeBibliography()
     }
-    if (newValue.length === 0) {
-        return 'Unpublished'
-    } else if (newValue.length === 1) {
-        return newValue[0]
-    } else {
-        return newValue[0] + '-' + newValue[1]
+/*
+    stripValues(bibValue) {
+        return bibValue.replace(/[\{\}]/g, '')
     }
+
+    getAuthor(bibData) {
+        let author = bibData.author,
+            returnObject = {}
+        if ('' == author || 'undefined' == typeof(author)) {
+            author = bibData.editor
+        }
+        let splitAuthor = author.split("{")
+        if (splitAuthor.length > 2) {
+            returnObject.firstName = author.split("{")[1].replace(/[\{\}]/g, '').replace(/^\s\s*REMOVE/, '').replace(/\s\s*$/, '')
+            returnObject.lastName = author.split("{")[2].replace(/[\{\}]/g, '').replace(/^\s\s*REMOVE/, '').replace(/\s\s*$/, '')
+        } else {
+            returnObject.firstName = ''
+            returnObject.lastName = author.split("{")[1].replace(/[\{\}]/g, '').replace(/^\s\s*REMOVE/, '').replace(/\s\s*$/, '')
+        } // Remove strings "REMOVE" when reenabling this section
+        return returnObject
+    }*/
+
+    /*yearFromDateString(dateString) {
+        // This mirrors the formatting of the date as returned by Python in bibliography/models.py
+        let dates = dateString.split('/')
+        let newValue = []
+        for (let x = 0; x < dates.length; x++) {
+            let dateParts = dates[x].split('-')
+                // Only make use of the first value (to/from years), discarding month and day values
+            if (isNaN(dateParts[0])) {
+                break
+            }
+            newValue.push(dateParts[0])
+        }
+        if (newValue.length === 0) {
+            return 'Unpublished'
+        } else if (newValue.length === 1) {
+            return newValue[0]
+        } else {
+            return newValue[0] + '-' + newValue[1]
+        }
+    }*/
+
 }

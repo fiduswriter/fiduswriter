@@ -18,7 +18,13 @@ export let contactsOverview = function () {
         })
 
         jQuery('.add-contact').bind('click', function(){
-            addMemberDialog()
+            addMemberDialog(function(memberData){
+                jQuery('#team-table tbody').append(
+                    teammemberTemplate({
+                        'members': [memberData]
+                    })
+                )
+            })
         })
 
         $.addDropdownBox(jQuery('#select-action-dropdown'), jQuery('#action-selection-pulldown'))

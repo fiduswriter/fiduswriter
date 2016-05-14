@@ -2,6 +2,7 @@ import {obj2Node} from "./json"
 import {createSlug, findImages} from "./tools"
 import {zipFileCreator} from "./zip"
 import {BibliographyDB} from "../bibliography/database"
+import {ImageDB} from "../images/database"
 
 /** The current Fidus Writer filetype version.
  * The importer will not import from a different version and the exporter
@@ -14,8 +15,7 @@ let FW_FILETYPE_VERSION = "1.2"
  * @param aDocument The document to turn into a Fidus Writer document and upload.
  */
 export let uploadNative = function(editor) {
-    let doc = editor.doc
-    exportNative(doc, ImageDB, BibDB, function(doc, shrunkImageDB, shrunkBibDB, images) {
+    exportNative(editor.doc, editor.imageDB.db, editor.bibDB.bibDB, function(doc, shrunkImageDB, shrunkBibDB, images) {
         exportNativeFile(editor.doc, shrunkImageDB, shrunkBibDB, images, true, editor)
     })
 }
@@ -78,9 +78,8 @@ export let exportNative = function(aDocument, anImageDB, aBibDB, callback) {
     let imageUrls = _.pluck(images, 'url')
 
 
-    let shrunkImageDB = _.filter(anImageDB, function(image) {
-        return (imageUrls.indexOf(image.image.split('?').shift()) !== -
-            1)
+    let shrunkImageDB = _.filter(anImageDB, function(anImage) {
+        return (imageUrls.indexOf(anImage.image.split('?').shift()) !== -1)
     })
 
     jQuery(contents).find('.citation').each(function() {
@@ -89,6 +88,8 @@ export let exportNative = function(aDocument, anImageDB, aBibDB, callback) {
 
     citeList = _.uniq(citeList.join(',').split(','))
 
+    // If the number of cited items is 1 and that one item is an empty string,
+    // there are no cited items at all.
     if (citeList.length === 1 && citeList[0] === '') {
         citeList = []
     }
@@ -102,12 +103,7 @@ export let exportNative = function(aDocument, anImageDB, aBibDB, callback) {
 }
 
 let exportNativeFile = function(aDocument, shrunkImageDB,
-    shrunkBibDB,
-    images, upload, editor) {
-
-    if ('undefined' === typeof upload) {
-        upload = false
-    }
+    shrunkBibDB, images, upload = false, editor) {
 
     let httpOutputList = images
 

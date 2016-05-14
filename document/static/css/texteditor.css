@@ -468,7 +468,7 @@ figure img {
 #flow {
     background-color: white;
 }
-
+/*
 body {counter-reset: pagination-footnote pagination-footnote-reference;}
 #flow .pagination-footnote::before {
     counter-increment: pagination-footnote-reference;
@@ -486,7 +486,7 @@ body {counter-reset: pagination-footnote pagination-footnote-reference;}
     right: calc(-20vw - 10px);
     width: 20vw;
 }
-
+*/
 
 .figure-cat-figure::after {
     counter-increment: figure-cat-0;
@@ -629,4 +629,14 @@ margin-left: 1em;
 .math-field-header {
     font-size: 113%;
     font-weight: 400;
+}
+
+.math-error {
+    margin: 10px 0px;
+    padding:12px;
+    color: #D8000C;
+    background-color: #FFBABA;
+    font-size:2em;
+    vertical-align:middle;
+    display: none;
 }

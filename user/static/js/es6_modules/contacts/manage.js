@@ -1,41 +1,26 @@
-import {addTeammemberTemplate, teammemberTemplate, accessRightTrTemplate, collaboratorsTemplate} from "./templates"
+import {addTeammemberTemplate, teammemberTemplate} from "./templates"
 
 /**
 * Sets up the contacts management. Helper functions for adding and removing contacts.
 */
 
 //add a user to contact per ajax
-let addMember = function(user_string) {
-    if(null == user_string || 'undefined' == typeof(user_string)) { return false }
+let addMember = function(userString, callback) {
+    if(null == userString || 'undefined' == typeof(userString)) { return false }
 
-    user_string = $.trim(user_string)
+    userString = $.trim(userString)
     jQuery('#add-new-member .warning').detach()
-    if('' == user_string)
+    if('' == userString)
         return false
     $.ajax({
         url : '/account/teammember/add',
-        data : {'user_string': user_string},
+        data : {'user_string': userString},
         type : 'POST',
         dataType : 'json',
         success : function(response, textStatus, jqXHR) {
             if(jqXHR.status == 201) {//user added to the contacts
-                if(jQuery('#access-rights-dialog').size()) {
-                    let member_data = {
-                        'user_id': response.member.id,
-                        'user_name': response.member.name,
-                        'avatar': response.member.avatar,
-                        'rights': 'r'
-                    }
-
-                    jQuery('#my-contacts .fw-document-table-body').append(accessRightTrTemplate({'contacts': [response.member]}))
-                    jQuery('#share-member table tbody').append(collaboratorsTemplate({'collaborators': [member_data]}))
-                    //accessrightsHelpers.collaboratorFunctionsEvent() TODO: Figure out what is happening here. This event disappeared with conversion to ES6.
-                } else {
-                    jQuery('#team-table tbody').append(
-                        teammemberTemplate({
-                            'members': [response.member]
-                        })
-                    )
+                if (callback) {
+                    callback(response.member)
                 }
                 jQuery("#add-new-member").dialog('close')
             } else {//user not found
@@ -45,11 +30,11 @@ let addMember = function(user_string) {
 		responseHtml = gettext('You cannot add yourself to your contacts!')
 	    } else if (response.error === 2) {
 	        responseHtml = gettext('This person is already in your contacts')
-	    } else if (user_string.indexOf('@') != -1 && user_string.indexOf('.') != -1) {
+	    } else if (userString.indexOf('@') != -1 && userString.indexOf('.') != -1) {
 		responseHtml = gettext('No user is registered with the given email address.') +
 		    '<br />'
 		    + gettext('Please invite him/her ') +
-		    '<a target="_blank" href="mailto:' + user_string + '?subject='
+		    '<a target="_blank" href="mailto:' + userString + '?subject='
                         + encodeURIComponent(gettext('Fidus Writer')) + '&body='
                             + encodeURIComponent(gettext('Hey, I would like you to sign up for a Fidus Writer account.') + "\n"
                                 + gettext('Please register at')) + ' ' +
@@ -70,14 +55,14 @@ let addMember = function(user_string) {
 }
 
 //dialog for adding a user to contacts
-export let addMemberDialog = function() {
+export let addMemberDialog = function(callback) {
     let dialogHeader = gettext('Add a user to your contacts')
     jQuery('body').append(addTeammemberTemplate({
         'dialogHeader': dialogHeader
     }))
 
     let diaButtons = {}
-    diaButtons[gettext('Submit')] = function() { addMember(jQuery('#new-member-user-string').val()) }
+    diaButtons[gettext('Submit')] = function() { addMember(jQuery('#new-member-user-string').val(), callback) }
     diaButtons[gettext('Cancel')] = function() { jQuery(this).dialog('close') }
 
     jQuery("#add-new-member").dialog({
@@ -87,9 +72,9 @@ export let addMemberDialog = function() {
         modal : true,
         buttons : diaButtons,
         create : function () {
-            let $the_dialog = jQuery(this).closest(".ui-dialog")
-            $the_dialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
-            $the_dialog.find(".ui-button:last").addClass("fw-button fw-orange")
+            let theDialog = jQuery(this).closest(".ui-dialog")
+            theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
+            theDialog.find(".ui-button:last").addClass("fw-button fw-orange")
             jQuery('#new-member-user-string').css('width', 340)
         },
         close : function() { jQuery("#add-new-member").dialog('destroy').remove() },
@@ -103,7 +88,7 @@ let deleteMember = function(ids) {
         type : 'POST',
         dataType : 'json',
         success : function(response, textStatus, jqXHR) {
-            if(jqXHR.status == 200) {//user added to the contacts
+            if(jqXHR.status == 200) {//user removed from contacts
                 jQuery('#user-' + ids.join(', #user-')).remove()
                 jQuery("#confirmdeletion").dialog('close')
             }
@@ -126,9 +111,9 @@ export let deleteMemberDialog = function(memberIds) {
         modal : true,
         buttons : diaButtons,
         create : function() {
-            let $the_dialog = jQuery(this).closest(".ui-dialog")
-            $the_dialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
-            $the_dialog.find(".ui-button:last").addClass("fw-button fw-orange")
+            let theDialog = jQuery(this).closest(".ui-dialog")
+            theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
+            theDialog.find(".ui-button:last").addClass("fw-button fw-orange")
         },
         close : function() { jQuery("#confirmdeletion").dialog('destroy').remove() }
     })

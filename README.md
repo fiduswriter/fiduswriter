@@ -7,6 +7,8 @@ Fidus Writer is an online collaborative editor especially made for academics who
 Contributing
 ----
 
+[![Bountysource](https://www.bountysource.com/badge/tracker?tracker_id=328497)](https://www.bountysource.com/trackers/328497-fiduswriter?utm_source=328497&utm_medium=shield&utm_campaign=TRACKER_BADGE)
+
 For details on contributing, please check http://fiduswriter.org/help-us/
 
 
@@ -43,29 +45,25 @@ The following are instructions working on Ubuntu 14.04. Make adjustments as need
 
 6. Install the requirements for running Fidus Writer by typing:
 
-  > `pip install -U setuptools`
-
   > `pip install -r requirements.txt`
 
-7. Initialize the Fidus Writer site and create a super user by typing:
+7. Initialize the Fidus Writer site by typing:
 
-  > `python manage.py init`
+  > `./manage.py init`
+
+  This will take a while.
 
 8. Set up an admin user by typing:
 
-  > `python manage.py createsuperuser`
+  > `./manage.py createsuperuser`
 
-9. Transpile Javascript from ES6 to ES5 (takes a while):
+9. Start the Fidus Writer server by typing:
 
-  > `./es6-transpile.sh`
+  > `./manage.py runserver`
 
-10. Run the Fidus Writer server by typing:
+10. In your browser, navigate to http://localhost:8000/ and log in.
 
-  > `python manage.py runserver`
-
-11. In your browser, navigate to http://localhost:8000/ and log in.
-
-12. Notice that emails sent to the user appear in the console until an SMTP backend is configured (see below).
+11. Notice that emails sent to the user appear in the console until an SMTP backend is configured (see below).
 
 Advanced options
 ----
@@ -111,11 +109,11 @@ Advanced options
 
   Instead of starting the server with:
 
-  > `python manage.py runserver`
+  > `./manage.py runserver`
 
   Specify the port number like this:
 
-  > `python manage.py runserver 9000`
+  > `./manage.py runserver 9000`
 
   9000 is the port number that this server listens on.
 
@@ -126,10 +124,28 @@ Advanced options
   3. Add one or several new document styles. Insert the CSS definition and select all the fonts required by the style.
   4. In your console, interrupt the server and run:
 
-    > `python manage.py create_document_styles`
+    > `./manage.py create_document_styles`
 
   5. Depending on your server setup, you may also have to run:
 
-    > `python manage.py collectstatic`
+    > `./manage.py collectstatic`
 
   6. Restart your server.
+
+### Development/upgrade:
+
+  If there are changes to the JavaScript source code of Fidus Writer, you need to run:
+
+  > `./manage.py transpile`
+  
+  If there are changes to translations, you need to run:
+  
+  > `./manage.py compilemessages`
+
+  If there are changes to the database models, you need to run:
+
+  > `./manage.py migrate`
+  
+  On a production server additionally:
+  
+  > `./manage.py collectstatic`  

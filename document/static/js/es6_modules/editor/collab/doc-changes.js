@@ -85,8 +85,16 @@ export class ModCollabDocChanges {
             let aPackage = {
                 type: 'diff',
                 diff_version: this.mod.editor.pm.mod.collab.version,
-                diff: toSend.steps.map(s => s.toJSON()),
-                footnote_diff: fnToSend.steps.map(s => s.toJSON()),
+                diff: toSend.steps.map(s => {
+                    let step = s.toJSON()
+                    step.client_id = this.mod.editor.pm.mod.collab.clientID
+                    return step
+                }),
+                footnote_diff: fnToSend.steps.map(s => {
+                    let step = s.toJSON()
+                    step.client_id = this.mod.editor.mod.footnotes.fnPm.mod.collab.clientID
+                    return step
+                }),
                 comments: this.mod.editor.mod.comments.store.unsentEvents(),
                 comment_version: this.mod.editor.mod.comments.store.version,
                 request_id: request_id,
@@ -94,8 +102,8 @@ export class ModCollabDocChanges {
             }
         this.mod.editor.mod.serverCommunications.send(aPackage)
         this.unconfirmedSteps[request_id] = {
-            diffs: toSend,
-            footnote_diffs: fnToSend,
+            diffs: toSend.steps,
+            footnote_diffs: fnToSend.steps,
             comments: this.mod.editor.mod.comments.store.hasUnsentEvents()
         }
         this.disableDiffSending()
@@ -148,12 +156,17 @@ export class ModCollabDocChanges {
     }
 
     confirmDiff(request_id) {
+        let that = this
         console.log('confirming steps')
         let sentSteps = this.unconfirmedSteps[request_id]["diffs"]
-        this.mod.editor.pm.mod.collab.confirmSteps(sentSteps)
+        this.mod.editor.pm.mod.collab.receive(sentSteps, sentSteps.map(function(step){
+            return that.mod.editor.pm.mod.collab.clientID
+        }))
 
         let sentFnSteps = this.unconfirmedSteps[request_id]["footnote_diffs"]
-        this.mod.editor.mod.footnotes.fnPm.mod.collab.confirmSteps(sentFnSteps)
+        this.mod.editor.mod.footnotes.fnPm.mod.collab.receive(sentFnSteps, sentFnSteps.map(function(step){
+            return that.mod.editor.mod.footnotes.fnPm.mod.collab.clientID
+        }))
 
         let sentComments = this.unconfirmedSteps[request_id]["comments"]
         this.mod.editor.mod.comments.store.eventsSent(sentComments)
@@ -172,7 +185,8 @@ export class ModCollabDocChanges {
     applyDiff(diff) {
         this.receiving = true
         let steps = [diff].map(j => Step.fromJSON(fidusSchema, j))
-        this.mod.editor.pm.mod.collab.receive(steps)
+        let client_ids = [diff].map(j => j.client_id)
+        this.mod.editor.pm.mod.collab.receive(steps, client_ids)
         this.receiving = false
     }
 

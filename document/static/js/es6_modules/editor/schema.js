@@ -1,7 +1,7 @@
 import {Schema, defaultSchema, Block, Textblock, Inline, Attribute, MarkType, NodeKind} from "prosemirror/dist/model"
 import {render as katexRender} from "katex"
 
-export class Doc extends Block {
+/*export class Doc extends Block {
     get kind() {
         return null
     }
@@ -11,7 +11,7 @@ export class Doc extends Block {
     get selectable() {
         return false
     }
-}
+}*/
 
 class Title extends Textblock {
     get contains() {
@@ -323,6 +323,7 @@ Equation.prototype.serializeDOM = (node, serializer) => {
         'data-equation': node.attrs.equation
     })
     katexRender(node.attrs.equation, dom)
+    dom.setAttribute('contenteditable', 'false')
     return dom
 }
 
@@ -442,7 +443,13 @@ Figure.prototype.serializeDOM = (node, serializer) => {
 
         captionNode.appendChild(captionTextNode)
     }
-    dom.appendChild(captionNode)
+    // Add table captions above the table, other captions below.
+    if (node.attrs.figureCategory === 'table') {
+        dom.insertBefore(captionNode, dom.lastChild)
+    } else {
+        dom.appendChild(captionNode)
+    }
+
     return dom
 }
 
@@ -474,7 +481,7 @@ Figure.register("command", "insert", {
 })
 
 
-export class CommentMark extends MarkType {
+class CommentMark extends MarkType {
     get attrs() {
         return {
             id: new Attribute
@@ -506,7 +513,7 @@ CommentMark.prototype.serializeDOM = (mark, serializer) => {
         'data-id': mark.attrs.id
     })
 }
-
+/*
 const commentIcon = {
     type: "icon", // TODO: use real comment icon
     width: 951,
@@ -542,9 +549,8 @@ CommentMark.register("command", "unset", {
         return true
     }
 })
-
+*/
 export const fidusSchema = new Schema(defaultSchema.spec.update({
-    doc: Doc,
     title: Title,
     metadatasubtitle: MetaDataSubtitle,
     metadataauthors: MetaDataAuthors,
@@ -560,7 +566,6 @@ export const fidusSchema = new Schema(defaultSchema.spec.update({
 }))
 
 export const fidusFnSchema = new Schema(defaultSchema.spec.update({
-    doc: Doc,
     title: Title,
     metadatasubtitle: MetaDataSubtitle,
     metadataauthors: MetaDataAuthors,

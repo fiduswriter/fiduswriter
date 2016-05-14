@@ -27,7 +27,8 @@
         </style>
         <!-- KaTeX -->
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/libs/katex/katex.min.css" />
-        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/libs/mathquill/mathquill.min.css" />
+        <!-- MathQuill -->
+        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/libs/mathquill/mathquill.css" />
         <!--  Translations -->
         <script type="text/javascript" src="/jsi18n/"></script>
         <!-- document style -->
@@ -60,6 +61,8 @@
 
             <!-- Editor -->
             <link rel="stylesheet" href="{{ STATIC_URL }}css/texteditor.css" type="text/css">
+            <!-- Collaboration mode -->
+            <link rel="stylesheet" href="{{ STATIC_URL }}css/carets.css" type="text/css">
             <!-- Comments -->
             <link rel="stylesheet" href="{{ STATIC_URL }}css/comments.css" type="text/css">
             <!-- Footnotes -->
@@ -472,7 +475,9 @@
             <div id="flow" class="comments-enabled CT-hide">
                 <div id="paper-editable">
                     <div id="document-editable" class="user-contents"></div>
-                    <div id="footnote-box-container"></div>
+                    <div id="footnote-box-container">
+                        <div id="citation-footnote-box-container"></div>
+                    </div>
                 </div>
                 <div id="document-bibliography" class="user-contents"></div>
             </div>

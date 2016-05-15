@@ -35,7 +35,7 @@ export let bookListTemplate = _.template('\
        </td>\
        <td width="60" align="center">\
            <span class="rights fw-inline" data-id="<%- aBook.id %>">\
-               <i data-id="<%- aBook.id %>" class="icon-access-right <%- aBook.rights %>"></i>\
+               <i data-id="<%- aBook.id %>" class="icon-access-right icon-access-<%- aBook.rights %>"></i>\
            </span>\
        </td>\
         <td width="40" align="center">\
@@ -63,7 +63,7 @@ export let bookBasicInfoTemplate = _.template('\
             <h4 class="fw-tablerow-title">'+gettext("Title")+'</h4>\
         </th>\
         <td>\
-            <input class="entryForm" type="text" id="book-title" value="<%- theBook.title %>" <% if (theBook.rights==="r") {print("disabled=disabled")} %> >\
+            <input class="entryForm" type="text" id="book-title" value="<%- theBook.title %>" <% if (theBook.rights==="read") {print("disabled=disabled")} %> >\
         </td>\
     </tr>\
     <tr>\
@@ -71,7 +71,7 @@ export let bookBasicInfoTemplate = _.template('\
             <h4 class="fw-tablerow-title">'+gettext("Author")+'</h4>\
         </th>\
         <td>\
-            <input class="entryForm" type="text" id="book-metadata-author" value="<%- theBook.metadata.author %>" <% if (theBook.rights==="r") {print("disabled=disabled")} %> >\
+            <input class="entryForm" type="text" id="book-metadata-author" value="<%- theBook.metadata.author %>" <% if (theBook.rights==="read") {print("disabled=disabled")} %> >\
         </td>\
     </tr>\
     <tr>\
@@ -79,7 +79,7 @@ export let bookBasicInfoTemplate = _.template('\
             <h4 class="fw-tablerow-title">'+gettext("Subtitle")+'</h4>\
         </th>\
         <td>\
-            <input class="entryForm" type="text" id="book-metadata-subtitle" value="<%- theBook.metadata.subtitle %>" <% if (theBook.rights==="r") {print("disabled=disabled")} %> >\
+            <input class="entryForm" type="text" id="book-metadata-subtitle" value="<%- theBook.metadata.subtitle %>" <% if (theBook.rights==="read") {print("disabled=disabled")} %> >\
         </td>\
     </tr>\
     <tr>\
@@ -87,7 +87,7 @@ export let bookBasicInfoTemplate = _.template('\
             <h4 class="fw-tablerow-title">'+gettext("Publisher")+'</h4>\
         </th>\
         <td>\
-            <input class="entryForm" type="text" id="book-metadata-publisher" value="<%- theBook.metadata.publisher %>" <% if (theBook.rights==="r") {print("disabled=disabled")} %> >\
+            <input class="entryForm" type="text" id="book-metadata-publisher" value="<%- theBook.metadata.publisher %>" <% if (theBook.rights==="read") {print("disabled=disabled")} %> >\
         </td>\
     </tr>\
     <tr>\
@@ -95,7 +95,7 @@ export let bookBasicInfoTemplate = _.template('\
             <h4 class="fw-tablerow-title">'+gettext("Copyright notice")+'</h4>\
         </th>\
         <td>\
-            <input class="entryForm" type="text" id="book-metadata-copyright" value="<%- theBook.metadata.copyright %>" <% if (theBook.rights==="r") {print("disabled=disabled")} %> >\
+            <input class="entryForm" type="text" id="book-metadata-copyright" value="<%- theBook.metadata.copyright %>" <% if (theBook.rights==="read") {print("disabled=disabled")} %> >\
         </td>\
     </tr>\
     <tr>\
@@ -103,7 +103,7 @@ export let bookBasicInfoTemplate = _.template('\
             <h4 class="fw-tablerow-title" title="'+gettext("Comma separated keywords")+'">'+gettext("Keywords")+'</h4>\
         </th>\
         <td>\
-            <input class="entryForm" type="text" id="book-metadata-keywords" value="<%- theBook.metadata.keywords %>" <% if (theBook.rights==="r") {print("disabled=disabled")} %> >\
+            <input class="entryForm" type="text" id="book-metadata-keywords" value="<%- theBook.metadata.keywords %>" <% if (theBook.rights==="read") {print("disabled=disabled")} %> >\
         </td>\
     </tr>\
 ')
@@ -115,7 +115,7 @@ export let bookBibliographyDataTemplate = _.template('\
             <h4 class="fw-tablerow-title">'+gettext("Citation style")+'</h4>\
         </th>\
         <td>\
-        <select class="entryForm dk" name="book-settings-citationstyle" id="book-settings-citationstyle" <% if (theBook.rights==="r") {print("disabled=disabled")} %> >\
+        <select class="entryForm dk" name="book-settings-citationstyle" id="book-settings-citationstyle" <% if (theBook.rights==="read") {print("disabled=disabled")} %> >\
             <% _.each(citeproc.styles, function(citationstyle, key) { %>\
                 <option value="<%= key %>"<% if(key == theBook.settings.citationstyle) { %> selected<%} %>><%= citeproc.styles[key].name %></option>\
             <% }) %>\
@@ -131,7 +131,7 @@ export let bookPrintDataTemplate = _.template('\
             <h4 class="fw-tablerow-title">'+gettext("Document style")+'</h4>\
         </th>\
         <td>\
-        <select class="entryForm dk" name="book-settings-documentstyle" id="book-settings-documentstyle" <% if (theBook.rights==="r") {print("disabled=disabled")} %> >\
+        <select class="entryForm dk" name="book-settings-documentstyle" id="book-settings-documentstyle" <% if (theBook.rights==="read") {print("disabled=disabled")} %> >\
             <% _.each(documentStyleList, function(documentstyle) { %>\
                 <option value="<%= documentstyle.filename %>"<% if(documentstyle.filename == theBook.settings.documentstyle) { %> selected<%} %>><%= documentstyle.title %></option>\
             <% }) %>\
@@ -143,7 +143,7 @@ export let bookPrintDataTemplate = _.template('\
             <h4 class="fw-tablerow-title">'+gettext("Paper size")+'</h4>\
         </th>\
         <td>\
-        <select class="entryForm dk" name="book-settings-papersize" id="book-settings-papersize" <% if (theBook.rights==="r") {print("disabled=disabled")} %> >\
+        <select class="entryForm dk" name="book-settings-papersize" id="book-settings-papersize" <% if (theBook.rights==="read") {print("disabled=disabled")} %> >\
             <% _.each([["folio","'
             +gettext("Folio (15 x 12 inch)")+'"],["quarto","'
             +gettext("Quarto (12 × 9 inch)")+'"],["octavo","'
@@ -179,7 +179,7 @@ export let bookEpubDataCoverTemplate = _.template('\
                 </div>\
             </div>\
         </td>\
-        <% if (theBook.rights==="w") { %>\
+        <% if (theBook.rights==="write") { %>\
             <td class="figure-preview-row">\
                 <button type="button" class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only fw-button fw-dark" id="select-cover-image-button" role="button" aria-disabled="false">\
                     <span class="ui-button-text">'+gettext('Select Image')+'</span>\
@@ -214,7 +214,7 @@ export let bookDialogTemplate = _.template('\
 
 /** A template for the chapter pane of the book dialog. */
 export let bookDialogChaptersTemplate = _.template('\
-    <% if (theBook.rights==="w") { %>\
+    <% if (theBook.rights==="write") { %>\
         <div class="fw-ar-container">\
             <h3 class="fw-green-title">' + gettext("My documents") + '</h3>\
             <table class="fw-document-table">\
@@ -230,7 +230,7 @@ export let bookDialogChaptersTemplate = _.template('\
             <h3 class="fw-green-title">' + gettext("Book chapters") + '</h3>\
             <table class="fw-document-table">\
                 <thead class="fw-document-table-header"><tr><th width="242">' + gettext("Title") + '</th>\
-                <% if (theBook.rights==="w") { %>\
+                <% if (theBook.rights==="write") { %>\
                     <th width="30">' + gettext("Sort") + '</th><th width="50">' + gettext("Delete") + '</th></tr></thead>\
                 <% } %>\
                 <tbody class="fw-document-table-body fw-small" id="book-chapter-list">\
@@ -260,7 +260,7 @@ export let bookChapterListTemplate = _.template('\
                         <%- documentTitle %>\
                     </span>\
                 </td>\
-                <% if (theBook.rights==="w") { %>\
+                <% if (theBook.rights==="write") { %>\
                     <td width="30" data-id="<%- aChapter.text %>" class="edit-chapter">\
                         <i class="icon-edit fw-link-text"></i>\
                     </td>\

@@ -1,6 +1,7 @@
 import {fromHTML} from "prosemirror/dist/format"
 import {Step} from "prosemirror/dist/transform"
 import {PasteHandler} from "../paste"
+import {COMMENT_ONLY_ROLES} from "../editor"
 
 /* Functions related to the footnote editor instance */
 export class ModFootnoteEditor {
@@ -28,6 +29,11 @@ export class ModFootnoteEditor {
     // filter transformations, disallowing all transformations going across document parts/footnotes.
     onFilterTransform(transform) {
         let prohibited = false
+
+        if (COMMENT_ONLY_ROLES.indexOf(this.mod.editor.docInfo.right) > -1) {
+            prohibited = true
+        }
+
         if (transform.docs[0].childCount !== transform.doc.childCount) {
             prohibited = true
         }

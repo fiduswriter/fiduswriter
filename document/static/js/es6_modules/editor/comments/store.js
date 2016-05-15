@@ -50,7 +50,7 @@ export class ModCommentStore {
     // Add a new comment to the comment database both remotely and locally.
     addComment(user, userName, userAvatar, date, comment, isMajor, posFrom, posTo) {
         let id = randomID()
-        this.addLocalComment(id, user, userName, userAvatar, date, comment, false, isMajor)
+        this.addLocalComment(id, user, userName, userAvatar, date, comment, [], isMajor)
         this.unsent.push({
             type: "create",
             id: id
@@ -287,7 +287,7 @@ export class ModCommentStore {
             if (event.type == "delete") {
                 this.deleteLocalComment(event.id)
             } else if (event.type == "create") {
-                this.addLocalComment(event.id, event.user, event.userName, event.userAvatar, event.date, event.comment, event['review:isMajor'])
+                this.addLocalComment(event.id, event.user, event.userName, event.userAvatar, event.date, event.comment, [], event['review:isMajor'])
             } else if (event.type == "update") {
                 this.updateLocalComment(event.id, event.comment, event['review:isMajor'])
             } else if (event.type == "add_answer") {

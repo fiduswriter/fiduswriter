@@ -57,7 +57,6 @@
 .icon-ccw:before { content: '\27f2'; } /* '⟲' */
 .icon-cw:before { content: '\27f3'; } /* '⟳' */
 .icon-info-circle:before { content: '\e705'; } /* '' */
-.icon-eye:before { content: '\e70a'; } /* '' */
 .icon-export:before { content: '\e715'; } /* '' */
 .icon-print:before { content: '\e716'; } /* '' */
 .icon-trash:before { content: '\e729'; } /* '' */
@@ -106,7 +105,10 @@
 .es .icon-bold:before { content: '\4b'; } /* 'N' */
 .es .icon-italic:before { content: '\4e'; } /* 'K' */
 
-
+/* User rights */
+.icon-editor:before {content: '\27bf'; } /* ➿ */
+.icon-eye:before { content: '\e70a'; } /* '' */
+.icon-comment-only:before { content: '\274E'; } /* 💬 */
 /* Animation for spinners
  *
  * TODO: make work with CSS Regions. Most likely just wait for a fix as browser code seems broken.

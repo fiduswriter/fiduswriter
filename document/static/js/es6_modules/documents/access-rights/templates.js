@@ -58,7 +58,7 @@ export let collaboratorsTemplate = _.template('<% _.each(collaborators, function
                             </li>\
                             <li>\
                                 <span class="fw-pulldown-item" data-right="o">\
-                                    <i class="icon-user">' + gettext("Comment only") + '</i>\
+                                    <i class="icon-comment-only">' + gettext("Comment only") + '</i>\
                                 </span>\
                             </li>\
                         </ul>\

@@ -115,6 +115,16 @@
     content: '\e70a';
 }
 
+.icon-access-right.o:before,
+.collaborator-tr.o .icon-access-right:before {
+    content: '\274E';
+}
+
+.icon-access-right.e:before,
+.collaborator-tr.e .icon-access-right:before {
+    content: '\27bf'; /* ➿ */
+}
+
 .collaborator-tr.d {
     display: none;
 }

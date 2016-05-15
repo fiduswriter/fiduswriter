@@ -2,13 +2,14 @@ import uuid
 import atexit
 import random
 
+from django.core.exceptions import PermissionDenied
 from document.helpers.session_user_info import SessionUserInfo
 from document.helpers.filtering_comments import filter_comments_by_role
 from ws.base import BaseWebSocketHandler
 from logging import info, error
 from tornado.escape import json_decode, json_encode
 from tornado.websocket import WebSocketClosedError
-from document.models import AccessRight
+from document.models import AccessRight, COMMENT_ONLY, CAN_UPDATE_DOCUMENT
 from document.views import get_accessrights
 from avatar.templatetags.avatar_tags import avatar_url
 
@@ -21,10 +22,12 @@ class DocumentWS(BaseWebSocketHandler):
         self.user_info = SessionUserInfo()
         doc_db, can_access = self.user_info.init_access(document_id, current_user)
 
+
         if can_access:
             if doc_db.id in DocumentWS.sessions:
                 self.doc = DocumentWS.sessions[doc_db.id]
                 self.id = max(self.doc['participants'])+1
+                print "id when opened %s" % self.id
             else:
                 self.id = 0
                 self.doc = dict()
@@ -227,7 +230,19 @@ class DocumentWS(BaseWebSocketHandler):
         DocumentWS.sessions[self.user_info.document_id]['settings'][parsed['variable']] = parsed['value']
         DocumentWS.send_updates(message, self.user_info.document_id, self.id)
 
+    # Checks if the diff only contains changes to comments.
+    def only_comments(self, parsed_diffs):
+        allowed_operations = ['addMark', 'removeMark']
+        only_comment = True
+        for diff in parsed_diffs:
+            if not (diff['type'] in allowed_operations and diff['param']['_'] == 'comment'):
+                only_comment = False
+        return only_comment
+
     def handle_diff(self, message, parsed):
+        if self.user_info.access_rights in COMMENT_ONLY and not self.only_comments(parsed['diff']):
+            print("received non-comment diff from comment-only collaborator. Discarding.")
+            return
         if parsed["diff_version"] == self.doc['diff_version'] and parsed["comment_version"] == self.doc['comment_version']:
             self.doc["last_diffs"].extend(parsed["diff"])
             self.doc['diff_version'] += len(parsed["diff"])
@@ -282,7 +297,7 @@ class DocumentWS(BaseWebSocketHandler):
             return
 
     def can_update_document(self):
-        return self.user_info.access_rights == 'w' or self.user_info.access_rights == 'a'
+        return self.user_info.access_rights in CAN_UPDATE_DOCUMENT
 
     def on_close(self):
         print "Websocket closing"

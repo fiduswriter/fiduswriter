@@ -23,6 +23,8 @@ import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {PasteHandler} from "./paste"
 
+export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
+
 export class Editor {
     // A class that contains everything that happens on the editor page.
     // It is currently not possible to initialize more thna one editor class, as it
@@ -33,6 +35,8 @@ export class Editor {
         // initially so that diffs that arrive before document has been loaded are not
         // dealt with.
         this.waitingForDocument = true
+
+
 
         this.docInfo = {
             'sentHash': false,
@@ -242,8 +246,6 @@ export class Editor {
 
     enableUI() {
 
-        //this.mod.citations.layoutCitations()
-
         jQuery('.savecopy, .saverevision, .download, .latex, .epub, .html, .print, .style, \
       .citationstyle, .tools-item, .papersize, .metadata-menu-item, \
       #open-close-header').removeClass('disabled')
@@ -258,7 +260,13 @@ export class Editor {
 
         this.mod.settings.layout.layoutMetadata()
 
-        if (this.docInfo.rights === 'w') {
+
+        if (this.docInfo.rights === 'read') {
+            jQuery('#editor-navigation').hide()
+            jQuery('.metadata-menu-item, #open-close-header, .save, \
+          .multibuttonsCover, .papersize-menu, .metadata-menu, \
+          .documentstyle-menu, .citationstyle-menu').addClass('disabled')
+        } else {
             jQuery('#editor-navigation').show()
             jQuery('.metadata-menu-item, #open-close-header, .save, \
           .multibuttonsCover, .papersize-menu, .metadata-menu, \
@@ -267,9 +275,16 @@ export class Editor {
                 // bind the share dialog to the button if the user is the document owner
                 jQuery('.share').removeClass('disabled')
             }
-        } else if (this.docInfo.rights === 'r') {
-            // Try to disable contenteditable
-            jQuery('.ProseMirror-content').attr('contenteditable', 'false')
+            if (COMMENT_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {
+                let toolbar = jQuery('.editortoolbar')
+                toolbar.find('.ui-buttonset').hide()
+                toolbar.find('.comment-only').show()
+            }
+            else {
+                jQuery('.metadata-menu-item, #open-close-header, .save, \
+              .multibuttonsCover, .papersize-menu, .metadata-menu, \
+              .documentstyle-menu, .citationstyle-menu').removeClass('disabled')
+            }
         }
     }
 
@@ -389,14 +404,25 @@ export class Editor {
     // filter transformations, disallowing all transformations going across document parts/footnotes.
     onFilterTransform(transform) {
         let prohibited = false
+        if (this.docInfo.rights === 'read') {
+            // User only has read access. Don't allow anything.
+            prohibited = true
+        } else if (COMMENT_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {
+            //User has a comment-only role (commentator, editor or reviewer)
+
+            //Check all transformation steps. If step type not allowed = prohibit
+            if (!transform.steps.every(function(step) {
+                //check if in allowed array. if false - exit loop
+                return (step.type === 'addMark' || step.type === 'removeMark') && step.param.type.name === 'comment'
+            })) {
+                prohibited = true
+            }
+        }
+
         const docParts = ['title', 'metadatasubtitle', 'metadataauthors', 'metadataabstract',
             'metadatakeywords', 'documentcontents']
-        /* There should always be exactly 6 parts to the document (title,
-         * subtitle, authors, abstract, keywords & contents).
-         * If the output doc of the transform uses a different number of parts
-         * or the parts are of different types, we prohibit the transform.
-         */
-        if (transform.doc.childCount === 6) {
+
+        if (transform.doc.childCount === 6) { // There should always be exactly 6 parts to the document
             let index = 0
             transform.doc.forEach(function(childNode){
                 if (docParts[index] !== childNode.type.name) {

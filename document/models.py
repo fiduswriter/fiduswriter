@@ -1,20 +1,3 @@
-#
-# This file is part of Fidus Writer <http://www.fiduswriter.org>
-#
-# Copyright (C) 2013 Takuto Kojima, Johannes Wilm
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as
-# published by the Free Software Foundation, either version 3 of the
-# License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.contrib.auth.models import User
@@ -60,17 +43,22 @@ class Document(models.Model):
         return "/document/%i/" % self.id
 
 RIGHTS_CHOICES  = (
-    ('r', 'reader'),
-    ('w', 'author'),
-    ('e', 'editor'),
-    ('c', 'reviewer')
+    ('read', 'Reader'),
+    ('write', 'Writer'),
+    ('edit', 'Editor'), # Editor as in "Editor of Journal X"
+    ('review', 'Reviewer'),
+    ('comment', 'Commentator')
 )
 
-#TODO: AccessRights - EMPTY. add when create document
+#Editor and Reviewer can only comment and not edit document
+COMMENT_ONLY = ('edit','review', 'comment')
+
+CAN_UPDATE_DOCUMENT = ['write', 'edit', 'review', 'comment']
+
 class AccessRight(models.Model):
     document = models.ForeignKey(Document)
     user = models.ForeignKey(User)
-    rights = models.CharField(max_length=1, choices=RIGHTS_CHOICES, blank=False)
+    rights = models.CharField(max_length=7, choices=RIGHTS_CHOICES, blank=False)
 
     class Meta:
         unique_together = (("document", "user"),)

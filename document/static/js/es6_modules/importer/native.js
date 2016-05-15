@@ -355,7 +355,7 @@ export class ImportNative {
                 let aDocumentValues = {
                     last_diffs: [],
                     is_owner: true,
-                    rights: 'w',
+                    rights: 'write',
                     changed: false,
                     titleChanged: false
                 }

@@ -118,7 +118,7 @@ def documents_list(request):
     documents = Document.objects.filter(Q(owner=request.user) | Q(accessright__user=request.user)).order_by('-updated')
     output_list=[]
     for document in documents :
-        access_right = 'w' if document.owner == request.user else AccessRight.objects.get(user=request.user,document=document).rights
+        access_right = 'write' if document.owner == request.user else AccessRight.objects.get(user=request.user,document=document).rights
         revisions = DocumentRevision.objects.filter(document=document)
         revision_list = []
         for revision in revisions:
@@ -215,7 +215,7 @@ def delete_js(request):
         status=status
     )
 
-def send_share_notification(request, doc_id, collaborator_id, tgt_right):
+def send_share_notification(request, doc_id, collaborator_id, right):
     owner = request.user.readable_name
     document = Document.objects.get(id=doc_id)
     collaborator = User.objects.get(id=collaborator_id)
@@ -224,9 +224,6 @@ def send_share_notification(request, doc_id, collaborator_id, tgt_right):
     document_title = document.title
     if len(document_title)==0:
         document_title = _('Untitled')
-    right = 'read'
-    if tgt_right == 'w':
-        right = 'read and write'
     link = HttpRequest.build_absolute_uri(request, document.get_absolute_url())
     message_body = _('Hey %(collaborator_name)s,\n%(owner)s has shared the document \'%(document)s\' with you and given you %(right)s access rights. \nAccess the document through this link: %(link)s') % {'owner': owner, 'right': right, 'collaborator_name': collaborator_name, 'link': link, 'document': document_title}
     send_mail(_('Document shared:')+' '+document_title, message_body, settings.DEFAULT_FROM_EMAIL,
@@ -265,9 +262,9 @@ def access_right_save_js(request):
                 try:
                     tgt_right = tgt_rights[x]
                 except IndexError:
-                    tgt_right = 'r'
-                if tgt_right == 'd':
-                    # Status 'd' means the access right is marked for deletion.
+                    tgt_right = 'read'
+                if tgt_right == 'delete':
+                    # Status 'delete' means the access right is marked for deletion.
                     try:
                         access_right = AccessRight.objects.get(document_id = doc_id, user_id = collaborator_id)
                         access_right.delete()
@@ -278,7 +275,7 @@ def access_right_save_js(request):
                         access_right = AccessRight.objects.get(document_id = doc_id, user_id = collaborator_id)
                         if access_right.rights != tgt_right:
                             access_right.rights = tgt_right
-                            if tgt_right == 'w':
+                            if tgt_right == 'write':
                                 send_share_upgrade_notification(request, doc_id, collaborator_id)
                     except ObjectDoesNotExist:
                         access_right = AccessRight.objects.create(
@@ -332,7 +329,7 @@ def upload_js(request):
                 can_save = True
             else:
                 access_rights = AccessRight.objects.filter(document=document, user=request.user)
-                if len(access_rights) > 0 and access_rights[0].rights == 'w':
+                if len(access_rights) > 0 and access_rights[0].rights == 'write':
                     can_save = True
         if can_save:
             status = 201

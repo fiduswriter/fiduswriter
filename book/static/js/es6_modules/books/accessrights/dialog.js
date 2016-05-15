@@ -4,9 +4,10 @@ import {bookCollaboratorsTemplate, bookAccessRightOverviewTemplate} from "./temp
 * Helper functions to deal with the book access rights dialog.
 */
 
-class BookAccessRightsDialog {
-      constructor(bookIds, accessRights, callback) {
+export class BookAccessRightsDialog {
+      constructor(bookIds, teamMembers, accessRights, callback) {
           this.bookIds = bookIds
+          this.teamMembers = teamMembers
           this.accessRights = accessRights
           this.callback = callback
           this.createAccessRightsDialog()
@@ -30,7 +31,7 @@ class BookAccessRightsDialog {
                       if (bookCollaborators[this.accessRights[i].user_id].rights !=
                           this.accessRights[i].rights)
                       bookCollaborators[this.accessRights[i].user_id].rights =
-                          'r'
+                          'read'
                       bookCollaborators[this.accessRights[i].user_id].count +=
                           1
                   }
@@ -100,11 +101,11 @@ class BookAccessRightsDialog {
                           'user_id': memberId,
                           'user_name': jQuery(this).attr('data-name'),
                           'avatar': jQuery(this).attr('data-avatar'),
-                          'rights': 'r'
+                          'rights': 'read'
                       }
-                  } else if ('d' == collaborator.attr('data-right')) {
-                      collaborator.removeClass('d').addClass('r').attr(
-                          'data-right', 'r')
+                  } else if ('delete' == collaborator.attr('data-right')) {
+                      collaborator.removeClass('delete').addClass('read').attr(
+                          'data-right', 'read')
                   }
               })
               jQuery('#my-contacts .checkable-label.checked').removeClass(

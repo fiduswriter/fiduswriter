@@ -131,7 +131,7 @@ def get_booklist_js(request):
         books = Book.objects.filter(Q(owner=request.user) | Q(bookaccessright__user=request.user)).order_by('-updated')
         response['books']=[]
         for book in books :
-            access_right = 'w' if book.owner == request.user else BookAccessRight.objects.get(user=request.user,book=book).rights
+            access_right = 'write' if book.owner == request.user else BookAccessRight.objects.get(user=request.user,book=book).rights
             date_format = '%d/%m/%Y'
             date_obj = dateutil.parser.parse(str(book.added))
             added = date_obj.strftime(date_format)
@@ -190,13 +190,13 @@ def add_chapters(book_instance, chapters, status, this_user):
                     AccessRight.objects.create(
                                 document_id = new_chapter.text.id,
                                 user_id = bar.user.id,
-                                rights= 'r',
+                                rights= 'read',
                             )
             if this_user != book_instance.owner and len(new_chapter.text.accessright_set.filter(user=book_instance.owner))==0:
                 AccessRight.objects.create(
                                 document_id = new_chapter.text.id,
                                 user_id = book_instance.owner.id,
-                                rights= 'r',
+                                rights= 'read',
                             )
     return status
 
@@ -253,7 +253,7 @@ def save_js(request):
             else:
                 # We are not dealing with the owner, so we need to check if the
                 # current user has the right to save the book
-                if len(book.bookaccessright_set.filter(user=request.user,rights=u'w'))>0:
+                if len(book.bookaccessright_set.filter(user=request.user,rights=u'write'))>0:
                     form = BookForm(the_book,instance=book)
                     if form.is_valid():
                         form.save()
@@ -288,7 +288,7 @@ def delete_js(request):
         status=status
     )
 
-def send_share_notification(request, book_id, collaborator_id, tgt_right):
+def send_share_notification(request, book_id, collaborator_id, right):
     owner = request.user.readable_name
     book = Book.objects.get(id=book_id)
     collaborator = User.objects.get(id=collaborator_id)
@@ -297,9 +297,6 @@ def send_share_notification(request, book_id, collaborator_id, tgt_right):
     book_title = book.title
     if len(book_title)==0:
         book_title = _('Untitled')
-    right = 'read'
-    if tgt_right == 'w':
-        right = 'read and write'
     link = HttpRequest.build_absolute_uri(request, '/book/')
     message_body = _('Hey %(collaborator_name)s,\n%(owner)s has shared the book \'%(book)s\' on Fidus Writer with you and given you %(right)s access rights.\nFind the book in your book overview: %(link)s') % {'owner': owner, 'right': right, 'collaborator_name': collaborator_name, 'link': link, 'book': book_title}
     send_mail(_('Book shared:')+' '+book_title, message_body, settings.DEFAULT_FROM_EMAIL,
@@ -338,9 +335,9 @@ def access_right_save_js(request):
                 try:
                     tgt_right = tgt_rights[x]
                 except IndexError:
-                    tgt_right = 'r'
-                if tgt_right == 'd':
-                # Status 'd' means the access right is marked for deletion.
+                    tgt_right = 'read'
+                if tgt_right == 'delete':
+                # Status 'delete' means the access right is marked for deletion.
                     try:
                         access_right = BookAccessRight.objects.get(book_id = book_id, user_id = collaborator_id)
                         access_right.delete()
@@ -351,13 +348,13 @@ def access_right_save_js(request):
                         access_right = BookAccessRight.objects.get(book_id = book_id, user_id = collaborator_id)
                         if access_right.rights != tgt_right:
                             access_right.rights = tgt_right
-                            if tgt_right == 'w':
+                            if tgt_right == 'write':
                                 send_share_upgrade_notification(request, book_id, collaborator_id)
                     except ObjectDoesNotExist:
                         access_right = BookAccessRight.objects.create(
                             book_id = book_id,
                             user_id = collaborator_id,
-                            rights= tgt_right,
+                            rights = tgt_right,
                         )
                         send_share_notification(request, book_id, collaborator_id, tgt_right)
                     access_right.save()
@@ -368,7 +365,7 @@ def access_right_save_js(request):
                             AccessRight.objects.create(
                                 document_id = text.id,
                                 user_id = collaborator_id,
-                                rights= 'r',
+                                rights= 'read',
                             )
                 x += 1
         response['access_rights'] = get_accessrights(BookAccessRight.objects.filter(book__owner=request.user))

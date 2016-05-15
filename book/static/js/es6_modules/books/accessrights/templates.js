@@ -46,12 +46,12 @@ export let bookCollaboratorsTemplate = _.template('\
                     <div class="fw-pulldown fw-left">\
                         <ul>\
                             <li>\
-                                <span class="fw-pulldown-item" data-right="w">\
+                                <span class="fw-pulldown-item" data-right="write">\
                                     <i class="icon-access-write" >' + gettext("Write") + '</i>\
                                 </span>\
                             </li>\
                             <li>\
-                                <span class="fw-pulldown-item" data-right="r">\
+                                <span class="fw-pulldown-item" data-right="read">\
                                     <i class="icon-access-read">' + gettext("Read") + '</i>\
                                 </span>\
                             </li>\
@@ -60,7 +60,7 @@ export let bookCollaboratorsTemplate = _.template('\
                 </div>\
             </td>\
             <td width="50" align="center">\
-                <span class="delete-collaborator fw-inline" data-right="d">\
+                <span class="delete-collaborator fw-inline" data-right="delete">\
                     <i class="icon-trash fw-link-text"></i>\
                 </span>\
             </td>\

@@ -42,14 +42,14 @@ class Chapter(models.Model):
     part = models.CharField(max_length=128, blank=True, default='')
 
 RIGHTS_CHOICES  = (
-    ('r', 'read'),
-    ('w', 'read/write'),
+    ('read', 'Reader'),
+    ('write', 'Writer'),
 )
 
 class BookAccessRight(models.Model):
     book = models.ForeignKey(Book)
     user = models.ForeignKey(User)
-    rights = models.CharField(max_length=1, choices=RIGHTS_CHOICES, blank=False)
+    rights = models.CharField(max_length=5, choices=RIGHTS_CHOICES, blank=False)
 
     class Meta:
         unique_together = (("book", "user"),)

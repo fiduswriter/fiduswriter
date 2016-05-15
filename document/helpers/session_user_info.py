@@ -8,7 +8,7 @@ class SessionUserInfo():
     def __init__(self):
         self.user = None
         self.is_owner = False
-        self.access_rights = 'r'
+        self.access_rights = 'read'
         self.is_new = False
         self.document_id = 0
         self.access_rights = dict()
@@ -28,7 +28,7 @@ class SessionUserInfo():
         if int(document_id) == 0:
             can_access = True
             self.is_owner = True
-            self.access_rights = 'w'
+            self.access_rights = 'write'
             self.is_new = True
             document = Document.objects.create(owner_id=self.user.id)
             self.document_id = document.id
@@ -39,7 +39,7 @@ class SessionUserInfo():
                 document = document[0]
                 self.document_id = document.id
                 if document.owner == self.user:
-                    self.access_rights = 'w'
+                    self.access_rights = 'write'
                     self.is_owner = True
                     can_access = True
                 else:

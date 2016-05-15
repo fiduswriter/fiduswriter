@@ -43,23 +43,22 @@ class Document(models.Model):
         return "/document/%i/" % self.id
 
 RIGHTS_CHOICES  = (
-    ('r', 'reader'),
-    ('w', 'author'),
-    ('e', 'editor'),
-    ('c', 'reviewer'),
-    ('o', 'comment_only')
+    ('read', 'Reader'),
+    ('write', 'Writer'),
+    ('edit', 'Editor'), # Editor as in "Editor of Journal X"
+    ('review', 'Reviewer'),
+    ('comment', 'Commentator')
 )
 
 #Editor and Reviewer can only comment and not edit document
-COMMENT_ONLY = ('e','c', 'o')
+COMMENT_ONLY = ('edit','review', 'comment')
 
-CAN_UPDATE_DOCUMENT = ['w', 'e', 'c', 'o']
+CAN_UPDATE_DOCUMENT = ['write', 'edit', 'review', 'comment']
 
-#TODO: AccessRights - EMPTY. add when create document
 class AccessRight(models.Model):
     document = models.ForeignKey(Document)
     user = models.ForeignKey(User)
-    rights = models.CharField(max_length=1, choices=RIGHTS_CHOICES, blank=False)
+    rights = models.CharField(max_length=7, choices=RIGHTS_CHOICES, blank=False)
 
     class Meta:
         unique_together = (("document", "user"),)

@@ -106,7 +106,7 @@
 }
 
 /* A deleted access rights row */
-.collaborator-tr[data-right=d] {
+.collaborator-tr[data-right=delete] {
     display: none;
 }
 

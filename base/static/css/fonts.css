@@ -103,9 +103,9 @@
 
 
 /* User rights */
-.icon-access-w:before, .icon-access-write:before {content: '\270e'; } /* '✎' */
-.icon-access-r:before, .icon-access-read:before { content: '\e70a'; } /* '' */
-.icon-access-o:before, .icon-access-comment:before { content: '\f0e5'; } /* '' */
+.icon-access-write:before {content: '\270e'; } /* '✎' */
+.icon-access-read:before { content: '\e70a'; } /* '' */
+.icon-access-comment:before { content: '\f0e5'; } /* '' */
 
 /*
  * styles for Lato

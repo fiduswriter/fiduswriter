@@ -230,18 +230,21 @@ class DocumentWS(BaseWebSocketHandler):
         DocumentWS.sessions[self.user_info.document_id]['settings'][parsed['variable']] = parsed['value']
         DocumentWS.send_updates(message, self.user_info.document_id, self.id)
 
-    def accept_only_comments(self, parsed_diffs):
+    # Checks if the diff only contains changes to comments.
+    def only_comments(self, parsed_diffs):
         allowed_operations = ['addMark', 'removeMark']
+        only_comment = True
         for diff in parsed_diffs:
-            if diff['type'] in allowed_operations and diff['param']['_'] == 'comment':
-                self.doc["last_diffs"].extend([diff])
+            if not (diff['type'] in allowed_operations and diff['param']['_'] == 'comment'):
+                only_comment = False
+        return only_comment
 
     def handle_diff(self, message, parsed):
+        if self.user_info.access_rights in COMMENT_ONLY and not self.only_comments(parsed['diff']):
+            print("received non-comment diff from comment-only collaborator. Discarding.")
+            return
         if parsed["diff_version"] == self.doc['diff_version'] and parsed["comment_version"] == self.doc['comment_version']:
-            if self.user_info.access_rights in COMMENT_ONLY:
-                self.accept_only_comments(parsed['diff'])
-            else:
-                self.doc["last_diffs"].extend(parsed["diff"])
+            self.doc["last_diffs"].extend(parsed["diff"])
             self.doc['diff_version'] += len(parsed["diff"])
             self.update_comments(parsed["comments"])
             self.confirm_diff(parsed["request_id"])
@@ -320,7 +323,7 @@ class DocumentWS(BaseWebSocketHandler):
             participant_list = []
             for waiter in cls.sessions[document_id]['participants'].keys():
                 participant_list.append({
-                    'key':waiter,
+                    'session_id':waiter,
                     'id':cls.sessions[document_id]['participants'][waiter].user_info.user.id,
                     'name':cls.sessions[document_id]['participants'][waiter].user_info.user.readable_name,
                     'avatar':avatar_url(cls.sessions[document_id]['participants'][waiter].user_info.user,80)

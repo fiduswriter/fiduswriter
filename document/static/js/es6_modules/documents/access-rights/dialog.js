@@ -33,7 +33,7 @@ export class DocumentAccessRightsDialog {
                     if (documentCollaborators[that.accessRights[i].user_id].rights !=
                         that.accessRights[i].rights)
                     documentCollaborators[that.accessRights[i].user_id].rights =
-                        'r'
+                        'read'
                     documentCollaborators[that.accessRights[i].user_id].count +=
                         1
                 }
@@ -60,7 +60,7 @@ export class DocumentAccessRightsDialog {
                     'user_id': memberData.id,
                     'user_name': memberData.name,
                     'avatar': memberData.avatar,
-                    'rights': 'r'
+                    'rights': 'read'
                 }]}))
                 that.collaboratorFunctionsEvent()
                 if (that.createContactCallback) {
@@ -120,11 +120,11 @@ export class DocumentAccessRightsDialog {
                         'user_id': memberId,
                         'user_name': jQuery(this).attr('data-name'),
                         'avatar': jQuery(this).attr('data-avatar'),
-                        'rights': 'r'
+                        'rights': 'read'
                     }
-                } else if ('d' == collaborator.attr('data-right')) {
-                    collaborator.removeClass('d').addClass('r').attr(
-                        'data-right', 'r')
+                } else if ('delete' == collaborator.attr('data-right')) {
+                    collaborator.removeClass('delete').addClass('read').attr(
+                        'data-right', 'read')
                 }
             })
             jQuery('#my-contacts .checkable-label.checked').removeClass('checked')

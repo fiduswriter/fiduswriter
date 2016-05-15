@@ -23,7 +23,7 @@ import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {PasteHandler} from "./paste"
 
-export const COMMENT_ONLY_ROLES = ["e", "c", "o"]
+export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 
 export class Editor {
     // A class that contains everything that happens on the editor page.
@@ -246,8 +246,6 @@ export class Editor {
 
     enableUI() {
 
-        //this.mod.citations.layoutCitations()
-
         jQuery('.savecopy, .saverevision, .download, .latex, .epub, .html, .print, .style, \
       .citationstyle, .tools-item, .papersize, .metadata-menu-item, \
       #open-close-header').removeClass('disabled')
@@ -263,7 +261,12 @@ export class Editor {
         this.mod.settings.layout.layoutMetadata()
 
 
-        if (this.docInfo.rights === 'w' || (COMMENT_ONLY_ROLES.indexOf(this.docInfo.rights) > -1)) {
+        if (this.docInfo.rights === 'read') {
+            jQuery('#editor-navigation').hide()
+            jQuery('.metadata-menu-item, #open-close-header, .save, \
+          .multibuttonsCover, .papersize-menu, .metadata-menu, \
+          .documentstyle-menu, .citationstyle-menu').addClass('disabled')
+        } else {
             jQuery('#editor-navigation').show()
             jQuery('.metadata-menu-item, #open-close-header, .save, \
           .multibuttonsCover, .papersize-menu, .metadata-menu, \
@@ -282,9 +285,6 @@ export class Editor {
               .multibuttonsCover, .papersize-menu, .metadata-menu, \
               .documentstyle-menu, .citationstyle-menu').removeClass('disabled')
             }
-        } else if (this.docInfo.rights === 'r') {
-            // Try to disable contenteditable
-            //jQuery('.ProseMirror-content').attr('contenteditable', 'false')
         }
     }
 
@@ -404,14 +404,16 @@ export class Editor {
     // filter transformations, disallowing all transformations going across document parts/footnotes.
     onFilterTransform(transform) {
         let prohibited = false
-        const allowedCommentOnly = ["addMark", "removeMark"]
+        if (this.docInfo.rights === 'read') {
+            // User only has read access. Don't allow anything.
+            prohibited = true
+        } else if (COMMENT_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {
+            //User has a comment-only role (commentator, editor or reviewer)
 
-        //Check for comment-only role. If role editor or reviewer
-        if (COMMENT_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {
             //Check all transformation steps. If step type not allowed = prohibit
-            if (transform.steps.every(function(step) {
+            if (!transform.steps.every(function(step) {
                 //check if in allowed array. if false - exit loop
-                return (step.type === "addMark" || step.type === "removeMark") && step.param.type.name === 'comment'
+                return (step.type === 'addMark' || step.type === 'removeMark') && step.param.type.name === 'comment'
             })) {
                 prohibited = true
             }

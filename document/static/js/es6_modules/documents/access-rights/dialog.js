@@ -149,10 +149,10 @@ export class DocumentAccessRightsDialog {
         spans.unbind('mousedown')
         spans.bind('mousedown', function () {
             let newRight = jQuery(this).attr('data-right')
-            jQuery(this).closest('.collaborator-tr').attr('class',
-                'collaborator-tr ' + newRight)
-            jQuery(this).closest('.collaborator-tr').attr('data-right',
-                newRight)
+            let colRow = jQuery(this).closest('.collaborator-tr')
+            colRow.attr('data-right', newRight)
+            colRow.find('.icon-access-right').attr('class',
+                'icon-access-right icon-access-' + newRight)
         })
     }
 

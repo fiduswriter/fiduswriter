@@ -1,8 +1,7 @@
 import {fromHTML} from "prosemirror/dist/format"
 import {Step} from "prosemirror/dist/transform"
 import {PasteHandler} from "../paste"
-
-export const COMMENT_ONLY_ROLES = ["e", "c", "o"]
+import {COMMENT_ONLY_ROLES} from "../editor"
 
 /* Functions related to the footnote editor instance */
 export class ModFootnoteEditor {
@@ -33,7 +32,6 @@ export class ModFootnoteEditor {
 
         if (COMMENT_ONLY_ROLES.indexOf(this.mod.editor.docInfo.right) > -1) {
             prohibited = true
-            return prohibited
         }
 
         if (transform.docs[0].childCount !== transform.doc.childCount) {

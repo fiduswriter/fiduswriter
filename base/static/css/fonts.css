@@ -105,10 +105,11 @@
 .es .icon-bold:before { content: '\4b'; } /* 'N' */
 .es .icon-italic:before { content: '\4e'; } /* 'K' */
 
+
 /* User rights */
-.icon-editor:before {content: '\27bf'; } /* ➿ */
-.icon-eye:before { content: '\e70a'; } /* '' */
-.icon-comment-only:before { content: '\274E'; } /* 💬 */
+.icon-access-w:before, .icon-access-write:before {content: '\270e'; } /* '✎' */
+.icon-access-r:before, .icon-access-read:before { content: '\e70a'; } /* '' */
+.icon-access-o:before, .icon-access-comment:before { content: '\f0e5'; } /* '' */
 /* Animation for spinners
  *
  * TODO: make work with CSS Regions. Most likely just wait for a fix as browser code seems broken.
@@ -184,4 +185,4 @@
   font-style: italic;
   font-weight: 400;
   src: local('Lato Italic'), local('Lato-Italic'), url(../fonts/lato/Lato-Italic.woff) format('woff');
-} 
+}

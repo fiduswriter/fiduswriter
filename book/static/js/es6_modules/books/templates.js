@@ -35,7 +35,7 @@ export let bookListTemplate = _.template('\
        </td>\
        <td width="60" align="center">\
            <span class="rights fw-inline" data-id="<%- aBook.id %>">\
-               <i data-id="<%- aBook.id %>" class="icon-access-right <%- aBook.rights %>"></i>\
+               <i data-id="<%- aBook.id %>" class="icon-access-right icon-access-<%- aBook.rights %>"></i>\
            </span>\
        </td>\
         <td width="40" align="center">\

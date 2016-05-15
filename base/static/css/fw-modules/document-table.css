@@ -105,27 +105,8 @@
     color: #2c2723;
 }
 
-.icon-access-right.w:before,
-.collaborator-tr.w .icon-access-right:before {
-    content: '\270e';
-}
-
-.icon-access-right.r:before,
-.collaborator-tr.r .icon-access-right:before {
-    content: '\e70a';
-}
-
-.icon-access-right.o:before,
-.collaborator-tr.o .icon-access-right:before {
-    content: '\274E';
-}
-
-.icon-access-right.e:before,
-.collaborator-tr.e .icon-access-right:before {
-    content: '\27bf'; /* ➿ */
-}
-
-.collaborator-tr.d {
+/* A deleted access rights row */
+.collaborator-tr[data-right=d] {
     display: none;
 }
 

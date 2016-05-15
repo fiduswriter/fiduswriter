@@ -22,7 +22,8 @@ import {node2Obj, obj2Node} from "../exporter/json"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {PasteHandler} from "./paste"
-import {COMMENT_ONLY_ROLES} from "./footnotes/editor"
+
+export const COMMENT_ONLY_ROLES = ["e", "c", "o"]
 
 export class Editor {
     // A class that contains everything that happens on the editor page.
@@ -283,7 +284,7 @@ export class Editor {
             }
         } else if (this.docInfo.rights === 'r') {
             // Try to disable contenteditable
-            jQuery('.ProseMirror-content').attr('contenteditable', 'false')
+            //jQuery('.ProseMirror-content').attr('contenteditable', 'false')
         }
     }
 
@@ -404,27 +405,20 @@ export class Editor {
     onFilterTransform(transform) {
         let prohibited = false
         const allowedCommentOnly = ["addMark", "removeMark"]
-        const docParts = ['title', 'metadatasubtitle', 'metadataauthors', 'metadataabstract',
-            'metadatakeywords', 'documentcontents']
 
         //Check for comment-only role. If role editor or reviewer
         if (COMMENT_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {
-            if (transform.constructor.name === "EditorTransform") {
-                //Check all transformation steps. If step type not allowed = prohibit
-                prohibited = !(transform.steps.every(function(step) {
-                    //check if in allowed array. if false - exit loop
-                    return allowedCommentOnly.indexOf(step.type) !== -1 && step.param.type.name === 'comment'
-                }))
-
-                if (prohibited) {
-                    return prohibited
-                }
-            }
-            else {
+            //Check all transformation steps. If step type not allowed = prohibit
+            if (transform.steps.every(function(step) {
+                //check if in allowed array. if false - exit loop
+                return (step.type === "addMark" || step.type === "removeMark") && step.param.type.name === 'comment'
+            })) {
                 prohibited = true
-                return prohibited;
             }
         }
+
+        const docParts = ['title', 'metadatasubtitle', 'metadataauthors', 'metadataabstract',
+            'metadatakeywords', 'documentcontents']
 
         if (transform.doc.childCount === 6) { // There should always be exactly 6 parts to the document
             let index = 0

@@ -43,14 +43,11 @@ class DocumentWS(BaseWebSocketHandler):
                 self.doc['comment_version'] = doc_db.comment_version
                 self.doc['title'] = doc_db.title
                 self.doc['id'] = doc_db.id
-                self.doc['in_control'] = self.id
                 DocumentWS.sessions[doc_db.id]=self.doc
             self.doc['participants'][self.id] = self
             response = dict()
             response['type'] = 'welcome'
             self.write_message(response)
-
-            #DocumentWS.send_participant_list(self.document.id)
 
     def confirm_diff(self, request_id):
         response = dict()
@@ -114,8 +111,8 @@ class DocumentWS(BaseWebSocketHandler):
             response['user']['id']=self.user_info.user.id
             response['user']['name']=self.user_info.user.readable_name
             response['user']['avatar']=avatar_url(self.user_info.user,80)
-        if self.doc['in_control'] == self.id:
-            response['document_values']['control']=True
+#        if self.doc['in_control'] == self.id:
+#            response['document_values']['control']=True
         response['document_values']['session_id']= self.id
         self.write_message(response)
 
@@ -301,21 +298,15 @@ class DocumentWS(BaseWebSocketHandler):
 
     def on_close(self):
         print "Websocket closing"
-        if hasattr(self.user_info, 'document_id') and self.user_info.document_id in DocumentWS.sessions and self.id in DocumentWS.sessions[self.user_info.document_id]['participants']:
+        if (hasattr(self.user_info, 'document_id') and
+                self.user_info.document_id in DocumentWS.sessions and
+                hasattr(self, 'id') and
+                self.id in DocumentWS.sessions[self.user_info.document_id]['participants']):
             del self.doc['participants'][self.id]
-            if self.doc['in_control']==self.id:
-                if len(self.doc['participants'].keys()) > 0:
-                    message = {
-                        "type": 'take_control'
-                        }
-                    new_controller = self.doc['participants'][min(self.doc['participants'])]
-                    self.doc['in_control'] = new_controller.id
-                    new_controller.write_message(message)
-                    DocumentWS.send_participant_list(self.user_info.document_id)
-                else:
-                    DocumentWS.save_document(self.user_info.document_id)
-                    del DocumentWS.sessions[self.user_info.document_id]
-                    print "noone left"
+            if len(self.doc['participants'].keys()) == 0:
+                DocumentWS.save_document(self.user_info.document_id)
+                del DocumentWS.sessions[self.user_info.document_id]
+                print "noone left"
 
     @classmethod
     def send_participant_list(cls, document_id):

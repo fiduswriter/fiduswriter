@@ -39,11 +39,7 @@ export class Editor {
 
 
         this.docInfo = {
-            'sentHash': false,
             'rights': '',
-            // In collaborative mode, only the first client to connect will have
-            // this.editor.docInfo.control set to true.
-            'control': false,
             'last_diffs': [],
             'is_owner': false,
             'is_new': false,
@@ -92,7 +88,7 @@ export class Editor {
         let that = this
         // Set Auto-save to send the document every two minutes, if it has changed.
         this.sendDocumentTimer = setInterval(function() {
-            if (that.docInfo && that.docInfo.changed) {
+            if (that.docInfo && that.docInfo.changed && that.docInfo.rights !== 'read') {
                 that.getUpdates(function() {
                     that.sendDocumentUpdate()
                 })
@@ -101,7 +97,7 @@ export class Editor {
 
         // Set Auto-save to send the title every 5 seconds, if it has changed.
         this.sendDocumentTitleTimer = setInterval(function() {
-            if (that.docInfo && that.docInfo.titleChanged) {
+            if (that.docInfo && that.docInfo.titleChanged && that.docInfo.rights !== 'read') {
                 that.docInfo.titleChanged = false
                 that.mod.serverCommunications.send({
                     type: 'update_title',
@@ -349,14 +345,6 @@ export class Editor {
                 "/");
             delete this.docInfo.is_new
         }
-    }
-
-    // This client was participating in collaborative editing of this document
-    // but not as the cleint that was in charge of saving. This has now changed
-    // so that the current user is being asked to save the document.
-    takeControl() {
-        this.docInfo.control = true
-        this.docInfo.sentHash = false
     }
 
     updateComments(comments, comment_version) {

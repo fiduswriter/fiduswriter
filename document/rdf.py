@@ -1,10 +1,9 @@
-"""Class for creating RDF output. Can be used to interconnect (integrate) different applications"""
+"""Class for creating RDF output. Can be used to interconnect (integrate)
+different applications"""
 
-from rdflib import BNode, Literal, URIRef, Graph, plugin
-from rdflib.namespace import RDF, FOAF, DC, DCTERMS, NamespaceManager, Namespace
+from rdflib import BNode, Literal, URIRef, Graph
+from rdflib.namespace import RDF, FOAF, NamespaceManager, Namespace
 from datetime import datetime
-from django.conf import settings
-
 
 BASE_FIDUS_URI = 'http://fiduswriter.org/'
 
@@ -19,7 +18,8 @@ class RDFBuilder(object):
         self._graph = Graph()
         self._ns_manager = NamespaceManager(self._graph)
         self._initialize_prefixes()
-        self._namespaces = dict((x,Namespace(y)) for x, y in self._ns_manager.namespaces())
+        self._namespaces = dict((x, Namespace(y))
+                                for x, y in self._ns_manager.namespaces())
         self._host_url = host_url
 
     def _initialize_prefixes(self):
@@ -29,13 +29,18 @@ class RDFBuilder(object):
         :rtype: None
         """
         oaNs = Namespace('http://www.w3.org/ns/oa#')
-        reviewNs = Namespace('http://eis.iai.uni-bonn.de/Projects/OSCOSS/reviews/')
+        reviewNs = Namespace(
+            'http://eis.iai.uni-bonn.de/Projects/OSCOSS/reviews/')
 
         self._ns_manager.bind('oa', oaNs)
         self._ns_manager.bind('review', reviewNs)
         self._ns_manager.bind('foaf', FOAF)
 
-    def _add_comments_to_rdf_graph(self, comments_content, document_node, document):
+    def _add_comments_to_rdf_graph(
+            self,
+            comments_content,
+            document_node,
+            document):
         """
         Private method for adding comments to graph
         :param comments_content: Filtered comments
@@ -49,20 +54,42 @@ class RDFBuilder(object):
         oa_ns = self._namespaces['oa']
 
         for comment_index, cur_comment_json in comments_content.iteritems():
-            cur_comment_node = URIRef(document_node.toPython() + '/comments/' + comment_index)
+            cur_comment_node = URIRef(
+                document_node.toPython() +
+                '/comments/' +
+                comment_index)
             self._graph.add((cur_comment_node, RDF.type, oa_ns.Annotation))
-            self._graph.add((cur_comment_node, oa_ns.annotateAt, Literal(datetime.fromtimestamp(cur_comment_json['date']/1000))))
-            self._graph.add((cur_comment_node, oa_ns.hasBody, Literal(cur_comment_json['comment'])))
-            self._graph.add((cur_comment_node, oa_ns.annotatedBy, Literal(cur_comment_json['userName'])))
+            self._graph.add(
+                (cur_comment_node,
+                 oa_ns.annotateAt,
+                 Literal(
+                     datetime.fromtimestamp(
+                         cur_comment_json['date'] /
+                         1000))))
+            self._graph.add(
+                (cur_comment_node, oa_ns.hasBody, Literal(
+                    cur_comment_json['comment'])))
+            self._graph.add(
+                (cur_comment_node, oa_ns.annotatedBy, Literal(
+                    cur_comment_json['userName'])))
 
-            self._add_target_for_comment(cur_comment_node, document_node, oa_ns, document)
+            self._add_target_for_comment(
+                cur_comment_node, document_node, oa_ns, document)
             if 'review:isMajor' in cur_comment_json.keys():
-                self._graph.add((cur_comment_node, is_major_predicate, Literal(cur_comment_json['review:isMajor'])))
+                self._graph.add(
+                    (cur_comment_node, is_major_predicate, Literal(
+                        cur_comment_json['review:isMajor'])))
 
-    def _add_target_for_comment(self, cur_comment_node, document_node, oa_ns, document):
+    def _add_target_for_comment(
+            self,
+            cur_comment_node,
+            document_node,
+            oa_ns,
+            document):
         target_bnode = BNode()
 
-        self._graph.add((cur_comment_node, oa_ns.hasTarget, target_bnode)) #TODO: this is lazy solution. need to add range
+        # TODO: this is lazy solution. need to add range
+        self._graph.add((cur_comment_node, oa_ns.hasTarget, target_bnode))
 
         self._graph.add((target_bnode, RDF.type, oa_ns.SpecificResource))
         self._graph.add((target_bnode, oa_ns.hasSource, document_node))
@@ -71,12 +98,16 @@ class RDFBuilder(object):
         self._graph.add((target_bnode, oa_ns.hasSelector, selector_bnode))
 
         self._graph.add((selector_bnode, RDF.type, oa_ns.TextPositionSelector))
-        #TODO: add real start and end. Probably not possible to implement Text Position Selector.
+        # TODO: add real start and end. Probably not possible to implement Text
+        # Position Selector.
         self._graph.add((selector_bnode, oa_ns.end, Literal(7)))
         self._graph.add((selector_bnode, oa_ns.start, Literal(4)))
 
-
-    def get_comments_by_document(self, document, comments_content, format='turtle'):
+    def get_comments_by_document(
+            self,
+            document,
+            comments_content,
+            format='turtle'):
         """
         Getting rdf comments by document id
         :param request: Incoming request
@@ -95,15 +126,24 @@ class RDFBuilder(object):
         document_node = URIRef(self._host_url + "document/" + str(document_id))
 
         self._graph.add((document_node, RDF.type, FOAF.Document))
-        self._add_comments_to_rdf_graph(comments_content, document_node, document)
+        self._add_comments_to_rdf_graph(
+            comments_content, document_node, document)
 
-        #TODO: support json -ld
-        #context = {"@vocab": BASE_FIDUS_URI + "oscoss.jsonld", "@language": "en"}
-        #graph_json = graph.serialize(format='json-ld', context=context, indent=4)
+        # TODO: support json -ld
+        # context = {
+        #     "@vocab": BASE_FIDUS_URI + "oscoss.jsonld",
+        #     "@language": "en"
+        # }
+        # graph_json = graph.serialize(
+        #     format='json-ld',
+        #     context=context,
+        #     indent=4
+        # )
         graph = self._graph.serialize(format=format)
         self._remove_root_graph(document_node)
         return graph
-        #return HttpResponse(json.dumps(graph_json), content_type='application/json')
+        # return HttpResponse(json.dumps(graph_json),
+        # content_type='application/json')
 
     def _remove_root_graph(self, document_node):
         """
@@ -114,7 +154,3 @@ class RDFBuilder(object):
         :rtype: None
         """
         self._graph.remove((document_node, None, None))
-
-
-
-

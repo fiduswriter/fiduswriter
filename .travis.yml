@@ -9,8 +9,10 @@ before_install:
 install:
   - pip install -r requirements.txt
   - pip install coverage
+  - pip install flake8
 
 script:
+  - flake8
   - coverage run manage.py init
 
 after_success:

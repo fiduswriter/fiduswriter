@@ -25,9 +25,8 @@ def index(request):
     response.update(csrf(request))
     return render(request, 'usermedia/index.html', response)
 
+
 # save changes or create a new entry
-
-
 @login_required
 def save_js(request):
     response = {}
@@ -108,9 +107,8 @@ def check_access_rights(other_user_id, this_user):
         has_access = True
     return has_access
 
+
 # returns list of images
-
-
 @login_required
 def images_js(request):
     response = {}
@@ -157,9 +155,8 @@ def images_js(request):
         status=status
     )
 
+
 # save changes or create a new category
-
-
 @login_required
 def save_category_js(request):
     status = 405

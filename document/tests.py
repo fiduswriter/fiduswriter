@@ -57,7 +57,7 @@ InsertionTestCase = namedtuple(
         'givenContents',    # DocumentContents string
         'givenCaretStart',  # start of selection at start of test
         'givenCaretEnd',    # end of selection at start of test
-        'expectedContents', # expected document contents at end of test
+        'expectedContents',  # expected document contents at end of test
         'expectedCaret',    # expected caret position at end of test
     ]
 
@@ -206,6 +206,7 @@ class CaretPositionTest(LiveTornadoTestCase, Manipulator):
     Base for all tests that check that Caret is at an expected position after
     entering a given series of keys.
     """
+
     def setUp(self):
         self.createAndLoginUser()
 
@@ -227,7 +228,7 @@ class CaretPositionTest(LiveTornadoTestCase, Manipulator):
             self.getCaret()
         )
         # test browser-side, in case caret grabbing is buggy
-        #self.assertTrue(self.caretIsAt(expectedCaret))
+        # self.assertTrue(self.caretIsAt(expectedCaret))
 
 
 # TEST MODULE SETUP
@@ -305,7 +306,7 @@ class MovementInSingleChildParagraph(CaretPositionTest):
             'givenContents': None,
             'givenCaret': 14 + len(SHORT_LOREM),
             'givenKeys': Keys.ARROW_RIGHT,
-            'expectedCaret': 14 +len(SHORT_LOREM),
+            'expectedCaret': 14 + len(SHORT_LOREM),
         }),
         CaretTestCase(**{
             'name': 'rightFromDocEnd',
@@ -426,8 +427,8 @@ class MovementInSingleChildParagraph(CaretPositionTest):
 
     # each case will be passed into self.runCheck
     cases = chain(
-        #movement_in_text,
-        #movement_in_bold,
+        # movement_in_text,
+        # movement_in_bold,
         # movement_in_italic,
         # movement_in_link,
     )
@@ -456,12 +457,13 @@ class MovementInMultiChildParagraph(CaretTestCase):
         # movement_between_link_link,
     )
 
+
 class InsertionOfLink(LiveTornadoTestCase, Manipulator):
     __metaclass__ = DataCasesToTestMethodsMeta
     linkTitle = 'all the ipsums'
     linkAddressWithoutHTTP = 'www.example.com'
     linkAddress = 'http://' + linkAddressWithoutHTTP
-    expectedLink = Link('',linkAddress,linkTitle)
+    expectedLink = Link('', linkAddress, linkTitle)
 
     cases = [
         InsertionTestCase(**{
@@ -505,17 +507,17 @@ class InsertionOfLink(LiveTornadoTestCase, Manipulator):
 
         self.injectHelpers()
 
-        self.setSelection(case.givenCaretStart,case.givenCaretEnd)
+        self.setSelection(case.givenCaretStart, case.givenCaretEnd)
 
         (DRIVER.find_element_by_id('button-link')
                .click())
         WebDriverWait(DRIVER, 10).until(
             EC.presence_of_element_located((By.XPATH,
-                '//span['
-                    '@class="ui-dialog-title"'
-                    ' and text()="Link"'
-                ']'
-            ))
+                                            '//span['
+                                            '@class="ui-dialog-title"'
+                                            ' and text()="Link"'
+                                            ']'
+                                            ))
         )
 
         (DRIVER.find_element_by_css_selector('input.linktitle')

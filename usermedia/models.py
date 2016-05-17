@@ -23,30 +23,40 @@ from django.contrib.auth.models import User
 
 from django.db import IntegrityError
 
-ALLOWED_FILETYPES = ['image/jpeg','image/png','image/svg+xml']
-ALLOWED_EXTENSIONS = ['jpeg','jpg','png','svg']
+ALLOWED_FILETYPES = ['image/jpeg', 'image/png', 'image/svg+xml']
+ALLOWED_EXTENSIONS = ['jpeg', 'jpg', 'png', 'svg']
 
 import uuid
+
+
 def get_file_path(instance, filename):
     ext = filename.split('.')[-1].lower()
-    if not ext in ALLOWED_EXTENSIONS:
+    if ext not in ALLOWED_EXTENSIONS:
         raise IntegrityError
     filename = "%s.%s" % (uuid.uuid4(), ext)
     return os.path.join('images', filename)
 
+
 class Image(models.Model):
     title = models.CharField(max_length=128)
-    uploader = models.ForeignKey(User,related_name='image_uploader')
-    owner = models.ForeignKey(User,related_name='image_owner',blank=True,null=True)
+    uploader = models.ForeignKey(User, related_name='image_uploader')
+    owner = models.ForeignKey(
+        User,
+        related_name='image_owner',
+        blank=True,
+        null=True)
     added = models.DateTimeField(auto_now_add=True)
     image = models.FileField(upload_to=get_file_path)
-    thumbnail = models.ImageField(upload_to='image_thumbnails',max_length=500,blank=True,null=True)
+    thumbnail = models.ImageField(
+        upload_to='image_thumbnails',
+        max_length=500,
+        blank=True,
+        null=True)
     image_cat = models.CharField(max_length=255, default='')
-    file_type = models.CharField(max_length=20,blank=True,null=True)
-    height = models.IntegerField(blank=True,null=True)
-    width = models.IntegerField(blank=True,null=True)
+    file_type = models.CharField(max_length=20, blank=True, null=True)
+    height = models.IntegerField(blank=True, null=True)
+    width = models.IntegerField(blank=True, null=True)
     checksum = models.BigIntegerField(default=0)
-
 
     def __unicode__(self):
         return self.title
@@ -55,7 +65,8 @@ class Image(models.Model):
         if self.checksum == 0:
             from time import time
             if hasattr(self.image.file, 'size'):
-                self.checksum = int(str(self.image.file.size) + str(time()).split('.')[0])
+                self.checksum = int(
+                    str(self.image.file.size) + str(time()).split('.')[0])
             else:
                 self.checksum = time()
 
@@ -65,7 +76,7 @@ class Image(models.Model):
         if not hasattr(self.image.file, 'content_type'):
             return
 
-        if not self.image.file.content_type in ALLOWED_FILETYPES:
+        if self.image.file.content_type not in ALLOWED_FILETYPES:
             raise IntegrityError
 
     def create_thumbnail(self):
@@ -77,7 +88,7 @@ class Image(models.Model):
         if not self.image:
             return
         if not hasattr(self.image.file, 'content_type'):
-           return
+            return
 
         from PIL import Image as PilImage
         from cStringIO import StringIO
@@ -106,7 +117,7 @@ class Image(models.Model):
 
         self.width, self.height = image.size
 
-        #cropping the thumbnail to exactly 60 x 60 px
+        # cropping the thumbnail to exactly 60 x 60 px
         src_width, src_height = image.size
         dst_width = dst_height = 60
 
@@ -119,7 +130,13 @@ class Image(models.Model):
             x_offset = int(float(src_width - crop_width) / 2)
             y_offset = 0
 
-        image = image.crop((x_offset, y_offset, x_offset+int(crop_width), y_offset+int(crop_height)))
+        image = image.crop(
+            (x_offset,
+             y_offset,
+             x_offset +
+             int(crop_width),
+                y_offset +
+                int(crop_height)))
 
         # Convert to RGB if necessary
         # Thanks to Limodou on DjangoSnippets.org
@@ -127,7 +144,7 @@ class Image(models.Model):
         #
         # I commented this part since it messes up my png files
         #
-        #if image.mode not in ('L', 'RGB'):
+        # if image.mode not in ('L', 'RGB'):
         #    image = image.convert('RGB')
 
         # We use our PIL Image object to create the thumbnail, which already
@@ -143,11 +160,16 @@ class Image(models.Model):
 
         # Save image to a SimpleUploadedFile which can be saved into
         # ImageField
-        suf = SimpleUploadedFile(os.path.split(self.image.name)[-1], temp_handle.read(), content_type=DJANGO_TYPE)
+        suf = SimpleUploadedFile(os.path.split(
+            self.image.name)[-1], temp_handle.read(), content_type=DJANGO_TYPE)
         # Save SimpleUploadedFile into image field
-        self.thumbnail.save('%s_thumbnail.%s'%(os.path.splitext(suf.name)[0],FILE_EXTENSION), suf, save=False)
-
-
+        self.thumbnail.save(
+            '%s_thumbnail.%s' %
+            (os.path.splitext(
+                suf.name)[0],
+                FILE_EXTENSION),
+            suf,
+            save=False)
 
     def save(self):
         # create a thumbnail
@@ -158,7 +180,7 @@ class Image(models.Model):
         super(Image, self).save()
 
 
-#category
+# category
 class ImageCategory(models.Model):
     category_title = models.CharField(max_length=100)
     category_owner = models.ForeignKey(User)

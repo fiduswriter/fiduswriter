@@ -13,7 +13,7 @@ class UserForm(ModelForm):
 class UserProfileForm(ModelForm):
     class Meta:
         model = UserProfile
-        fields = ('about')
+        fields = ('about',)
 
 
 class TeamMemberForm(ModelForm):

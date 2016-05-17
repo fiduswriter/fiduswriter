@@ -1,26 +1,3 @@
-#
-# This file is part of Fidus Writer <http://www.fiduswriter.org>
-#
-# Copyright (C) 2013 Takuto Kojima, Johannes Wilm
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as
-# published by the Free Software Foundation, either version 3 of the
-# License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-#############################################
-# Django settings for Fidus Writer project. #
-#############################################
-
-
 import os
 
 # If you want to show debug messages, set DEBUG to True.
@@ -28,17 +5,17 @@ import os
 DEBUG = True
 
 SERVER_INFO = {
-    # This determines whether the server is used for testing and will let the users
-    # upon signup know that their documents may disappear.
+    # This determines whether the server is used for testing and will let the
+    # users upon signup know that their documents may disappear.
     'TEST_SERVER': True,
-    # This is the contact email that will be shown in various places all over the site.
-    # It will also be used to forward feedback messages.
+    # This is the contact email that will be shown in various places all over
+    # the site. It will also be used to forward feedback messages.
     'CONTACT_EMAIL': 'mail@email.com',
     'WS_PORT': False
 }
 
 ADMINS = (
-     ('Your Name', 'your_email@example.com'),
+    ('Your Name', 'your_email@example.com'),
 )
 
 MANAGERS = ADMINS
@@ -56,12 +33,12 @@ DATABASES = {
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # Or send emails using an SMTP server
-#EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-#EMAIL_HOST = 'localhost'
-#EMAIL_HOST_USER = ''
-#EMAIL_HOST_PASSWORD = ''
-#EMAIL_PORT = 25
-#EMAIL_SUBJECT_PREFIX = '[Fidus Writer]'
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'localhost'
+# EMAIL_HOST_USER = ''
+# EMAIL_HOST_PASSWORD = ''
+# EMAIL_PORT = 25
+# EMAIL_SUBJECT_PREFIX = '[Fidus Writer]'
 
 
 # Local time zone for this installation. Choices can be found here:
@@ -134,7 +111,7 @@ LOGIN_URL = '/account/login/'
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
-    #'django.contrib.staticfiles.finders.DefaultStorageFinder',
+    # 'django.contrib.staticfiles.finders.DefaultStorageFinder',
     'compressor.finders.CompressorFinder',
 )
 
@@ -142,7 +119,6 @@ COMPRESS_OUTPUT_DIR = '.'
 
 # Make this unique, and don't share it with anybody. Change the default string.
 SECRET_KEY = '2ouq2zgw5y-@w+t6!#zf#-z1inigg7$lg3p%8e3kkob1bf$#p4'
-
 
 
 # These middleware classes is what Fidus Writer needs in its standard setup.
@@ -224,15 +200,15 @@ INSTALLED_APPS = (
     # If you want to enable one or several of the social network login options
     # below, make sure you add the authorization keys at:
     # http://SERVER.COM/admin/socialaccount/socialapp/
-    #'allauth.socialaccount.providers.facebook',
-    #'allauth.socialaccount.providers.google',
-    #'allauth.socialaccount.providers.twitter',
-    #'allauth.socialaccount.providers.github',
-    #'allauth.socialaccount.providers.linkedin',
-    #'allauth.socialaccount.providers.openid',
-    #'allauth.socialaccount.providers.persona',
-    #'allauth.socialaccount.providers.soundcloud',
-    #'allauth.socialaccount.providers.stackexchange',
+    # 'allauth.socialaccount.providers.facebook',
+    # 'allauth.socialaccount.providers.google',
+    # 'allauth.socialaccount.providers.twitter',
+    # 'allauth.socialaccount.providers.github',
+    # 'allauth.socialaccount.providers.linkedin',
+    # 'allauth.socialaccount.providers.openid',
+    # 'allauth.socialaccount.providers.persona',
+    # 'allauth.socialaccount.providers.soundcloud',
+    # 'allauth.socialaccount.providers.stackexchange',
 )
 
 
@@ -282,7 +258,10 @@ LOGGING = {
     },
     'formatters': {
         'verbose': {
-            'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s'
+            'format': (
+                '%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d '
+                '%(message)s'
+            )
         },
         'simple': {
             'format': '\033[22;32m%(levelname)s\033[0;0m %(message)s'
@@ -298,7 +277,7 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'simple'
-            },
+        },
     },
     'loggers': {
         'django.request': {
@@ -320,15 +299,16 @@ AVATAR_GRAVATAR_BACKUP = False
 AVATAR_DEFAULT_URL = 'img/default_avatar.png'
 AVATAR_MAX_AVATARS_PER_USER = 1
 
-# Location of commonly used Js libraries. Here the local version is given. For deployment a version on the net is better.
+# Location of commonly used Js libraries. Here the local version is given.
+# For deployment a version on the net is better.
 JS_LOCATIONS = {
     'JQUERY_URL': STATIC_URL + 'js/libs/jquery-2.2.0.js',
     'JQUERYUI_URL': STATIC_URL + 'js/libs/jquery-ui-1.11.4.js',
     'UNDERSCOREJS_URL': STATIC_URL + 'js/libs/underscore-1.8.3.js',
-    }
+}
 
 CSS_LOCATIONS = {
-    }
+}
 
 try:
     exec open(os.path.join(PROJECT_PATH, 'configuration.py')) in globals()

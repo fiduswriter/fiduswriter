@@ -1,0 +1,19 @@
+language: python
+python:
+  - "2.7"
+
+before_install:
+  - sudo apt-get -qq update
+  - sudo apt-get install -y libjpeg-dev python-dev python-virtualenv gettext zlib1g-dev git
+
+install:
+  - pip install -r requirements.txt
+  - pip install coverage
+  - ./manage.py init
+
+script:
+  - coverage run manage.py test
+
+after_success:
+  - coverage report
+  - coveralls

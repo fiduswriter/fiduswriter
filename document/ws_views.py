@@ -171,6 +171,7 @@ class DocumentWS(BaseWebSocketHandler):
             remaining_diffs = 1000 + \
                 self.doc['diff_version'] - changes['version']
             self.doc['last_diffs'] = self.doc['last_diffs'][-remaining_diffs:]
+        self.doc['title'] = changes['title']
         self.doc['contents'] = changes['contents']
         self.doc['metadata'] = changes['metadata']
         self.doc['version'] = changes['version']

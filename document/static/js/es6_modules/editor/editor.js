@@ -89,9 +89,7 @@ export class Editor {
         // Set Auto-save to send the document every two minutes, if it has changed.
         this.sendDocumentTimer = setInterval(function() {
             if (that.docInfo && that.docInfo.changed && that.docInfo.rights !== 'read') {
-                that.getUpdates(function() {
-                    that.sendDocumentUpdate()
-                })
+                that.save()
             }
         }, 120000)
 
@@ -284,24 +282,6 @@ export class Editor {
         }
     }
 
-
-    getUpdates(callback) {
-        let outputNode = this.mod.nodeConvert.editorToModelNode(serializeTo(this.pm.mod.collab.versionDoc, 'dom'))
-        this.doc.title = this.pm.mod.collab.versionDoc.firstChild.textContent
-        this.doc.version = this.pm.mod.collab.version
-        this.doc.metadata.title = node2Obj(outputNode.getElementById('document-title'))
-        this.doc.metadata.subtitle = node2Obj(outputNode.getElementById('metadata-subtitle'))
-        this.doc.metadata.authors = node2Obj(outputNode.getElementById('metadata-authors'))
-        this.doc.metadata.abstract = node2Obj(outputNode.getElementById('metadata-abstract'))
-        this.doc.metadata.keywords = node2Obj(outputNode.getElementById('metadata-keywords'))
-        this.doc.contents = node2Obj(outputNode.getElementById('document-contents'))
-        this.doc.hash = this.getHash()
-        this.doc.comments = this.mod.comments.store.comments
-        if (callback) {
-            callback()
-        }
-    }
-
     receiveDocument(data) {
         let that = this
         this.receiveDocumentValues(data.document, data.document_values)
@@ -368,8 +348,40 @@ export class Editor {
         return objectHash.MD5(JSON.parse(JSON.stringify(doc.toJSON())), {unorderedArrays: true})
     }
 
+    // Get updates to document and then send updates to the server
+    save(callback) {
+        let that = this
+        this.getUpdates(function() {
+            that.sendDocumentUpdate(function(){
+                if (callback) {
+                    callback()
+                }
+            })
+        })
+    }
+
+    // Collects updates of the document from ProseMirror and saves it under this.doc
+    getUpdates(callback) {
+        let outputNode = this.mod.nodeConvert.editorToModelNode(serializeTo(this.pm.mod.collab.versionDoc, 'dom'))
+        this.doc.title = this.pm.mod.collab.versionDoc.firstChild.textContent
+        this.doc.version = this.pm.mod.collab.version
+        this.doc.metadata.title = node2Obj(outputNode.getElementById('document-title'))
+        this.doc.metadata.subtitle = node2Obj(outputNode.getElementById('metadata-subtitle'))
+        this.doc.metadata.authors = node2Obj(outputNode.getElementById('metadata-authors'))
+        this.doc.metadata.abstract = node2Obj(outputNode.getElementById('metadata-abstract'))
+        this.doc.metadata.keywords = node2Obj(outputNode.getElementById('metadata-keywords'))
+        this.doc.contents = node2Obj(outputNode.getElementById('document-contents'))
+        this.doc.hash = this.getHash()
+        this.doc.comments = this.mod.comments.store.comments
+        if (callback) {
+            callback()
+        }
+    }
+
+    // Send changes to the document to the server
     sendDocumentUpdate(callback) {
         let documentData = {
+            title: this.doc.title,
             metadata: this.doc.metadata,
             contents: this.doc.contents,
             version: this.doc.version,

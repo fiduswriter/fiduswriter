@@ -2,10 +2,10 @@ import {usermediaImageItemSelectionTemplate, usermediaImageSelectionTemplate} fr
 import {ImageUploadDialog} from "../upload-dialog/upload-dialog"
 
 export class ImageSelectionDialog {
-    constructor(imageDB, imageId, userId, callback) {
+    constructor(imageDB, imageId, ownerId, callback) {
         this.imageDB = imageDB
         this.imageId = imageId // a preselected image
-        this.userId = userId
+        this.ownerId = ownerId
         this.callback = callback
         this.createImageSelectionDialog()
     }

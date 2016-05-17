@@ -17,7 +17,7 @@ export class BibLatexImporter {
         let diaButtons = {}
         diaButtons[gettext('Import')] = function () {
             let bibFile = jQuery('#bib-uploader')[0].files
-            if (0 == bibFile.length) {
+            if (0 === bibFile.length) {
                 console.log('no file found')
                 return false
             }

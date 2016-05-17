@@ -53,7 +53,7 @@ export class ImportFidusFile {
 
                 if (entries.length) {
                     that.entries = entries
-
+                    that.counter = 0
                     that.textFiles = [{
                         filename: 'mimetype'
                     }, {
@@ -66,23 +66,7 @@ export class ImportFidusFile {
                         filename: 'bibliography.json'
                     }]
 
-                    let counter = 0
-
-                    function getEntry() {
-                        if (counter < that.textFiles.length) {
-                            _.findWhere(entries, that.textFiles[counter]).getData(
-                                new zip.TextWriter(),
-                                function(text) {
-                                    that.textFiles[counter]['contents'] = text
-                                    counter++
-                                    getEntry()
-                                })
-                        } else {
-                            that.processFidusFile()
-                        }
-                    }
-
-                    getEntry()
+                    that.getEntry()
 
                 }
             })
@@ -90,6 +74,21 @@ export class ImportFidusFile {
         }, function(error) {
             this.callback(false, gettext('An error occured during file read.'))
         })
+    }
+
+    getEntry() {
+        let that = this
+        if (this.counter < this.textFiles.length) {
+            _.findWhere(this.entries, this.textFiles[this.counter]).getData(
+                new zip.TextWriter(),
+                function(text) {
+                    that.textFiles[counter]['contents'] = text
+                    that.counter++
+                    that.getEntry()
+                })
+        } else {
+            this.processFidusFile()
+        }
     }
 
     processFidusFile() {

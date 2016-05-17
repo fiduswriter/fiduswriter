@@ -244,8 +244,8 @@ export class BibLatexParser {
         }
         let issued = this.entries[this.currentEntry].date.date
         let dateFormat = 'd.m.Y'
-        if ('undefined' == typeof (issued) || '' == issued) {
-            if ('undefined' == typeof (this.entries[this.currentEntry].date
+        if ('undefined' === typeof (issued) || '' === issued) {
+            if ('undefined' === typeof (this.entries[this.currentEntry].date
                 .month)) {
                 issued = ''
                 dateFormat = 'Y'
@@ -308,7 +308,7 @@ export class BibLatexParser {
     entryBody() {
         this.currentEntry = this.key()
 
-        this.entries[this.currentEntry] = new Object()
+        this.entries[this.currentEntry] = {}
         this.entries[this.currentEntry].bibtype = this.currentType
         this.entries[this.currentEntry].date = {}
         this.match(",")

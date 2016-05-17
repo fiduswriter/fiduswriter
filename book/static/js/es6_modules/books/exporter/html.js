@@ -94,7 +94,7 @@ export class HTMLBookExporter extends BaseEpubExporter { // extension is correct
 
             contents = this.cleanHTML(contents)
 
-            if (this.book.chapters[i].part && this.book.chapters[i].part != '') {
+            if (this.book.chapters[i].part && this.book.chapters[i].part !== '') {
                 contentItems.push({
                     link: 'document-' + this.book.chapters[i].number + '.html',
                     title: this.book.chapters[i].part,

@@ -63,7 +63,7 @@ export class LatexBookExporter extends BaseLatexExporter {
 
         }
         let author = this.book.owner_name
-        if (this.book.metadata.author && this.book.metadata.author != '') {
+        if (this.book.metadata.author && this.book.metadata.author !== '') {
             author = this.book.metadata.author
         }
 

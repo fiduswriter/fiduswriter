@@ -123,7 +123,7 @@ let saveProfile = function() {
         data : {'form_data': JSON.stringify(postData)},
         type : 'POST',
         error: function (jqXHR, textStatus, errorThrown) {
-            if(422 == jqXHR.status) {
+            if(422 === jqXHR.status) {
                 jQuery('#edit_user').removeAttr("disabled")
                 let response = $.parseJSON(jqXHR.responseText)
                 $.each(response.errors, function(fieldname, errmsg) {
@@ -176,12 +176,12 @@ let changePwdDialog = function() {
 
         jQuery('#fw-password-change-error').html('')
 
-        if('' == oldPwd || '' == newPwd1 || '' == newPwd2) {
+        if('' === oldPwd || '' === newPwd1 || '' === newPwd2) {
             jQuery('#fw-password-change-error').html(gettext('All fields are required!'))
             return
         }
 
-        if(newPwd1 != newPwd2) {
+        if(newPwd1 !== newPwd2) {
             jQuery('#fw-password-change-error').html(gettext('Please confirm the new password!'))
             return
         }
@@ -197,7 +197,7 @@ let changePwdDialog = function() {
             contentType: false,
             dataType : 'json',
             success : function(response, textStatus, jqXHR) {
-                if(200 == jqXHR.status) {
+                if(200 === jqXHR.status) {
                     jQuery("#fw-change-pwd-dialog").dialog('close')
                     alert(gettext('The password has been changed.'))
                 } else {
@@ -245,7 +245,7 @@ let addEmailDialog = function() {
 
         jQuery('#fw-add-email-error').html('')
 
-        if('' == newEmail) {
+        if('' === newEmail) {
             jQuery('#fw-add-email-error').html(gettext('New email address is required!'))
             return
         }
@@ -293,7 +293,7 @@ let addEmailDialog = function() {
 }
 
 let deleteEmailDialog = function() {
-    let thisTr = jQuery(this).parent().parent()
+    let thisTr = jQuery(this).parent().parent(),
         email = jQuery(this).data('email'),
         diaButtons = {}
 

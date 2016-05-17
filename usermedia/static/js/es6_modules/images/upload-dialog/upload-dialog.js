@@ -124,7 +124,7 @@ export class ImageUploadDialog {
             switch (theType) {
                 case 'checkbox':
                     //if it is a checkbox, the value will be restored as an Array
-                    if (undefined == checkboxValues[theName])
+                    if (undefined === checkboxValues[theName])
                         checkboxValues[theName] = []
                     if ($this.prop("checked")) {
                         checkboxValues[theName].push($this.val())
@@ -141,7 +141,7 @@ export class ImageUploadDialog {
         })
 
         // Add the values for check boxes
-        for (key in checkboxValues) {
+        for (let key in checkboxValues) {
             formValues.append(key, checkboxValues[key].join(','))
         }
         this.createImage(formValues)

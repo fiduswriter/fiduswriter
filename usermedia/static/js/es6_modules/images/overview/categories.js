@@ -87,10 +87,10 @@ export class ImageOverviewCategories {
                 let thisVal = jQuery.trim(jQuery(this).val())
                 let thisId = jQuery(this).attr('data-id')
                 if ('undefined' == typeof (thisId)) thisId = 0
-                if ('' != thisVal) {
+                if ('' !== thisVal) {
                     newCat.ids.push(thisId)
                     newCat.titles.push(thisVal)
-                } else if ('' == thisVal && 0 < thisId) {
+                } else if ('' === thisVal && 0 < thisId) {
                     deletedCats.push(thisId)
                 }
             })
@@ -126,7 +126,7 @@ export class ImageOverviewCategories {
         //add and remove name list field
         jQuery('.fw-add-input').bind('click', function () {
             let parent = jQuery(this).parents('.fw-list-input')
-            if (0 == parent.next().size()) {
+            if (0 === parent.next().size()) {
                 let parentClone = parent.clone(true)
                 parentClone.find('input, select').val('').removeAttr(
                     'data-id')

@@ -81,7 +81,7 @@ export class DocumentOverviewActions {
         let diaButtons = {}
         diaButtons[gettext('Import')] = function () {
             let fidusFile = jQuery('#fidus-uploader')[0].files
-            if (0 == fidusFile.length) {
+            if (0 === fidusFile.length) {
                 console.log('no file found')
                 return false
             }

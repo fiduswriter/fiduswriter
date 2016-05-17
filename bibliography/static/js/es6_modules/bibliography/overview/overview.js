@@ -86,10 +86,10 @@ export class BibliographyOverview {
                 let this_val = jQuery.trim(jQuery(this).val())
                 let this_id = jQuery(this).attr('data-id')
                 if ('undefined' == typeof (this_id)) this_id = 0
-                if ('' != this_val) {
+                if ('' !== this_val) {
                     new_cat.ids.push(this_id)
                     new_cat.titles.push(this_val)
-                } else if ('' == this_val && 0 < this_id) {
+                } else if ('' === this_val && 0 < this_id) {
                     that.deleted_cat[that.deleted_cat
                         .length] = this_id
                 }
@@ -299,7 +299,7 @@ export class BibliographyOverview {
         //filtering function for the list of bib entries
         jQuery('#bib-category').bind('change', function () {
             let cat_val = jQuery(this).val()
-            if (0 == cat_val) {
+            if (0 === cat_val) {
                 jQuery('#bibliography > tbody > tr').show()
             } else {
                 jQuery('#bibliography > tbody > tr').hide()
@@ -332,7 +332,7 @@ export class BibliographyOverview {
             let action_name = jQuery(this).attr('data-action'),
                 ids = []
 
-            if ('' == action_name || 'undefined' == typeof (action_name)) {
+            if ('' === action_name || 'undefined' == typeof (action_name)) {
                 return
             }
 
@@ -340,7 +340,7 @@ export class BibliographyOverview {
                 ids[ids.length] = jQuery(this).attr('data-id')
             })
 
-            if (0 == ids.length) {
+            if (0 === ids.length) {
                 return
             }
 

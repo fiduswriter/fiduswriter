@@ -244,12 +244,11 @@ export class BookActions {
         theBook.owner = that.bookList.user.id
         theBook.rights = 'write'
         if (theOldBook.owner != theBook.owner) {
-            function setCoverImage(id) {
-                theBook.cover_image = id
-                that.saveBook(theBook)
-            }
             that.prepareCopyCoverImage(theBook.cover_image,
-                theOldBook.owner, setCoverImage)
+                theOldBook.owner, function(id) {
+                    theBook.cover_image = id
+                    that.saveBook(theBook)
+                })
         } else {
             that.saveBook(theBook)
         }

@@ -153,7 +153,7 @@ export class EpubBookExporter extends BaseEpubExporter {
                 })
             }
 
-            if (this.book.chapters[i].part && this.book.chapters[i].part != '') {
+            if (this.book.chapters[i].part && this.book.chapters[i].part !== '') {
                 contentItems.push({
                     link: 'document-' + this.book.chapters[i].number + '.xhtml',
                     title: aChapter.part,

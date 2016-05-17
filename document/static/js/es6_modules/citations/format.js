@@ -63,10 +63,10 @@ export class FormatCitations {
                     citationItem = {
                         id: entries[j]
                     }
-                    if ('' != pages[j]) {
+                    if ('' !== pages[j]) {
                         citationItem.locator = pages[j]
                     }
-                    if ('' != prefixes[j]) {
+                    if ('' !== prefixes[j]) {
                         citationItem.prefix = prefixes[j]
                     }
                     //if('' != suffixes[j]) { citationItem.suffix = pages[j] }
@@ -84,7 +84,7 @@ export class FormatCitations {
             }
         })
 
-        if (this.listedWorksCounter == 0) {
+        if (this.listedWorksCounter === 0) {
             return ''
         }
     }
@@ -115,7 +115,7 @@ export class FormatCitations {
         if (citeproc.styles.hasOwnProperty(this.citationStyle)) {
             this.citationStyle = citeproc.styles[this.citationStyle]
         } else {
-            for (styleName in citeproc.styles) {
+            for (let styleName in citeproc.styles) {
                 this.citationStyle = citeproc.styles[styleName]
                 break
             }

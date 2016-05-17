@@ -83,7 +83,7 @@ jQuery.extend({
             'success': 'icon-ok'
         };
         var $alert_box = jQuery('<li class="alerts-' + alert_type + ' ' + icon_names[alert_type] + '">' + alert_msg + '</li>');
-        if(0 == jQuery('#alerts-outer-wrapper').size())
+        if(0 === jQuery('#alerts-outer-wrapper').size())
             jQuery('body').append('<div id="alerts-outer-wrapper"><ul id="alerts-wrapper"></ul></div>');
         jQuery('#alerts-wrapper').append($alert_box);
         $alert_box.fadeTo(fade_speed, 1, function() {

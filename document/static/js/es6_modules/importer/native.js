@@ -101,9 +101,7 @@ export class ImportNative {
                     newUrl: matchEntries[0].image
                 })
             } else if (1 < matchEntries.length) {
-                if (!(_.findWhere(matchEntries, {
-                        pk: parseInt(key)
-                    }))) {
+                if (!(_.findWhere(matchEntries, {pk: parseInt(key)}))) {
                     // There are several matches, and none of the matches have
                     // the same id as the key in this.anImageDB.
                     // We now pick the first match.
@@ -247,33 +245,35 @@ export class ImportNative {
                 formValues.append('imageCats', '')
                 formValues.append('image', newImageEntries[counter].file,
                     newImageEntries[counter].oldUrl.split('/').pop())
-                formValues.append('checksum', newImageEntries[counter].checksum),
-
-                    jQuery.ajax({
-                        url: '/usermedia/save/',
-                        data: formValues,
-                        type: 'POST',
-                        dataType: 'json',
-                        success: function(response, textStatus, jqXHR) {
-                            that.imageDB[response.values.pk] = response.values
-                            let imageTranslation = {}
-                            imageTranslation.oldUrl = newImageEntries[counter].oldUrl
-                            imageTranslation.oldId = newImageEntries[counter].oldId
-                            imageTranslation.newUrl = response.values.image
-                            imageTranslation.newId = response.values.pk
-                            ImageTranslationTable.push(imageTranslation)
-                            counter++
-                            sendImage()
-                        },
-                        error: function() {
-                            jQuery.addAlert('error', gettext('Could not save ') +
-                                newImageEntries[counter].title)
-                        },
-                        complete: function() {},
-                        cache: false,
-                        contentType: false,
-                        processData: false
-                    })
+                formValues.append(
+                    'checksum',
+                    newImageEntries[counter].checksum
+                )
+                jQuery.ajax({
+                    url: '/usermedia/save/',
+                    data: formValues,
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function(response, textStatus, jqXHR) {
+                        that.imageDB[response.values.pk] = response.values
+                        let imageTranslation = {}
+                        imageTranslation.oldUrl = newImageEntries[counter].oldUrl
+                        imageTranslation.oldId = newImageEntries[counter].oldId
+                        imageTranslation.newUrl = response.values.image
+                        imageTranslation.newId = response.values.pk
+                        ImageTranslationTable.push(imageTranslation)
+                        counter++
+                        sendImage()
+                    },
+                    error: function() {
+                        jQuery.addAlert('error', gettext('Could not save ') +
+                            newImageEntries[counter].title)
+                    },
+                    complete: function() {},
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                })
             } else {
                 sendBibItems()
             }

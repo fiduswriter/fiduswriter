@@ -225,7 +225,8 @@ TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 # Define available languages
 # You only need to change this in very advanced setups.
-gettext = lambda s: s
+def gettext(s): return s
+
 LANGUAGES = (
     ('en', gettext('English')),
     ('bg', gettext('Bulgarian')),

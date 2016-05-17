@@ -1,4 +1,3 @@
-from optparse import make_option
 import os
 from os.path import abspath, dirname, exists, join
 

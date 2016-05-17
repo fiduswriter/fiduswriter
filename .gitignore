@@ -28,3 +28,4 @@ es6-cache/
 static-es5/
 *.es5.js
 base/static/css/libs/
+.coverage

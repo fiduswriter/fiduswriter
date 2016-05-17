@@ -1,7 +1,5 @@
-from django.core.exceptions import ObjectDoesNotExist
 from django.db import models
 from django.contrib.auth.models import User
-from django.utils import timezone
 
 from datetime import timedelta
 
@@ -17,20 +15,21 @@ class Document(models.Model):
     metadata = models.TextField(default='{}')  # json object of metadata
     version = models.PositiveIntegerField(default=0)
     # The version number corresponds to the last full HTML/JSON copy of the
-    # document that was sent in by a browser. Such full copies are sent in every
-    # 2 minutes automatically or when specific actions are executed by the user
-    # (such as exporting the document).
+    # document that was sent in by a browser. Such full copies are sent in
+    # every 2 minutes automatically or when specific actions are executed by
+    # the user (such as exporting the document).
     last_diffs = models.TextField(default='[]')
     # The last few diffs that were received and approved. The number of stored
     # diffs should always be equivalent to or more than all the diffs since the
     # last full save of the document.
     diff_version = models.PositiveIntegerField(default=0)
-    # The diff version is the latest version for which diffs have been accepted.
-    # This version should always be the same or higher than the version attribute.
-    # To obtain the very last approved version of the document, one needs to take
-    # the HTML/JSON version of the document (in the fields title, contents,
-    # metadata and version) and apply N of the last last_diffs, where N is
-    # diff_version - version.
+    # The diff version is the latest version for which diffs have been
+    # accepted. This version should always be the same or higher than the
+    # version attribute.
+    # To obtain the very last approved version of the document, one needs to
+    # take the HTML/JSON version of the document (in the fields title,
+    # contents, metadata and version) and apply N of the last last_diffs, where
+    # N is diff_version - version.
     settings = models.TextField(default='{}')  # json object of settings
     owner = models.ForeignKey(User, related_name='owner')
     added = models.DateTimeField(auto_now_add=True)
@@ -70,7 +69,7 @@ class AccessRight(models.Model):
         unique_together = (("document", "user"),)
 
     # def __unicode__(self):
-     #   return self.user.username+' ('+self.rights+') on '+self.document.title
+    #    return self.user.username+' ('+self.rights+') on '+self.document.title
         # return self.user.readable_name+' ('+self.rights+') on
         # '+self.document.title
 

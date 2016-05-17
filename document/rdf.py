@@ -1,10 +1,9 @@
-"""Class for creating RDF output. Can be used to interconnect (integrate) different applications"""
+"""Class for creating RDF output. Can be used to interconnect (integrate)
+different applications"""
 
-from rdflib import BNode, Literal, URIRef, Graph, plugin
-from rdflib.namespace import RDF, FOAF, DC, DCTERMS, NamespaceManager, Namespace
+from rdflib import BNode, Literal, URIRef, Graph
+from rdflib.namespace import RDF, FOAF, NamespaceManager, Namespace
 from datetime import datetime
-from django.conf import settings
-
 
 BASE_FIDUS_URI = 'http://fiduswriter.org/'
 
@@ -131,8 +130,15 @@ class RDFBuilder(object):
             comments_content, document_node, document)
 
         # TODO: support json -ld
-        #context = {"@vocab": BASE_FIDUS_URI + "oscoss.jsonld", "@language": "en"}
-        #graph_json = graph.serialize(format='json-ld', context=context, indent=4)
+        # context = {
+        #     "@vocab": BASE_FIDUS_URI + "oscoss.jsonld",
+        #     "@language": "en"
+        # }
+        # graph_json = graph.serialize(
+        #     format='json-ld',
+        #     context=context,
+        #     indent=4
+        # )
         graph = self._graph.serialize(format=format)
         self._remove_root_graph(document_node)
         return graph

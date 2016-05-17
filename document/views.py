@@ -1,25 +1,6 @@
-#
-# This file is part of Fidus Writer <http://www.fiduswriter.org>
-#
-# Copyright (C) 2013 Takuto Kojima, Johannes Wilm
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as
-# published by the Free Software Foundation, either version 3 of the
-# License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import re
-from django.contrib.sites.models import Site
-
-from django.contrib.sites.shortcuts import get_current_site
-from django.http.response import Http404
+import json
+import time
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.contrib.auth.decorators import login_required
@@ -30,22 +11,17 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.core.mail import send_mail
-from document.models import Document, AccessRight, DocumentRevision
+from django.core.exceptions import PermissionDenied
+from django.db.models import Q
+from django.core.serializers.python import Serializer
 
 from avatar.util import get_primary_avatar, get_default_avatar_url
 from avatar.templatetags.avatar_tags import avatar_url
 
-from django.db.models import Q
-
-from django.core.serializers.python import Serializer
+from document.models import Document, AccessRight, DocumentRevision
 from document.rdf import RDFBuilder
 from document.helpers.filtering_comments import filter_comments_by_role
 from document.helpers.session_user_info import SessionUserInfo
-
-import json
-import urlparse
-
-from django.core.exceptions import PermissionDenied
 
 
 class SimpleSerializer(Serializer):
@@ -116,14 +92,13 @@ def get_documentlist_extra_js(request):
         ids = request.POST['ids'].split(',')
         documents = Document.objects.filter(Q(owner=request.user) | Q(
             accessright__user=request.user)).filter(id__in=ids)
-        #documents = Document.objects.filter(id__in=ids)
+        # documents = Document.objects.filter(id__in=ids)
         response['documents'] = serializer.serialize(
             documents, fields=('contents', 'id', 'settings', 'metadata'))
     return JsonResponse(
         response,
         status=status
     )
-import time
 
 
 def documents_list(request):
@@ -131,8 +106,13 @@ def documents_list(request):
         accessright__user=request.user)).order_by('-updated')
     output_list = []
     for document in documents:
-        access_right = 'write' if document.owner == request.user else AccessRight.objects.get(
-            user=request.user, document=document).rights
+        if document.owner == request.user:
+            access_right = 'write'
+        else:
+            access_right = AccessRight.objects.get(
+                user=request.user,
+                document=document
+            ).rights
         revisions = DocumentRevision.objects.filter(document=document)
         revision_list = []
         for revision in revisions:
@@ -249,8 +229,17 @@ def send_share_notification(request, doc_id, collaborator_id, right):
     if len(document_title) == 0:
         document_title = _('Untitled')
     link = HttpRequest.build_absolute_uri(request, document.get_absolute_url())
-    message_body = _('Hey %(collaborator_name)s,\n%(owner)s has shared the document \'%(document)s\' with you and given you %(right)s access rights. \nAccess the document through this link: %(link)s') % {
-        'owner': owner, 'right': right, 'collaborator_name': collaborator_name, 'link': link, 'document': document_title}
+    message_body = _(
+        ('Hey %(collaborator_name)s,\n%(owner)s has shared the document '
+         '\'%(document)s\' with you and given you %(right)s access rights. '
+         '\nAccess the document through this link: %(link)s')
+    ) % {
+        'owner': owner,
+        'right': right,
+        'collaborator_name': collaborator_name,
+        'link': link,
+        'document': document_title
+    }
     send_mail(
         _('Document shared:') +
         ' ' +
@@ -268,8 +257,15 @@ def send_share_upgrade_notification(request, doc_id, collaborator_id):
     collaborator_name = collaborator.readable_name
     collaborator_email = collaborator.email
     link = HttpRequest.build_absolute_uri(request, document.get_absolute_url())
-    message_body = _('Hey %(collaborator_name)s,\n%(owner)s has given you write access rights to a Fidus Writer document.\nAccess the document through this link: %(link)s') % {
-        'owner': owner, 'collaborator_name': collaborator_name, 'link': link}
+    message_body = _(
+        ('Hey %(collaborator_name)s,\n%(owner)s has given you write access '
+         'rights to a Fidus Writer document.\nAccess the document through '
+         'this link: %(link)s')
+    ) % {
+        'owner': owner,
+        'collaborator_name': collaborator_name,
+        'link': link
+    }
     send_mail(
         _('Fidus Writer document write access'),
         message_body,
@@ -290,7 +286,7 @@ def access_right_save_js(request):
         for tgt_doc in tgt_documents:
             doc_id = int(tgt_doc)
             try:
-                the_doc = Document.objects.get(pk=doc_id, owner=request.user)
+                Document.objects.get(pk=doc_id, owner=request.user)
             except ObjectDoesNotExist:
                 continue
             x = 0
@@ -404,11 +400,11 @@ def download_js(request):
             document = revision.document
             if document.owner == request.user:
                 can_access = True
-            else:
-                access_rights = AccessRight.objects.filter(
-                    document=document, user=request.user)
-                if len(access_rights) > 0:
-                    can_save = True
+            # else:
+            #    access_rights = AccessRight.objects.filter(
+            #        document=document, user=request.user)
+                # if len(access_rights) > 0:
+                #     can_save = True
         if can_access:
             response = {}
             http_response = HttpResponse(
@@ -428,7 +424,7 @@ def download_js(request):
 @login_required
 def delete_revision_js(request):
     response = {}
-    can_save = False
+    # can_save = False
     status = 405
     if request.is_ajax() and request.method == 'POST':
         revision_id = request.POST['id']

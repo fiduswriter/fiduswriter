@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from collections import namedtuple
 from itertools import chain
-from unittest import skip
 
 from allauth.account.models import EmailAddress
 from django.contrib.auth.hashers import make_password
@@ -16,9 +15,16 @@ from selenium.webdriver.support import expected_conditions as EC
 from document.models import Document
 from test.mock.helpers import testCaretJS
 from test.testcases import LiveTornadoTestCase
-from test.mock.document_contents import *
+from test.mock.document_contents import (
+    Contents,
+    Paragraph,
+    Text,
+    Bold,
+    BoldText,
+    ItalicText,
+    Link
+)
 
-import time
 # GLOBALS
 global DRIVER
 
@@ -474,7 +480,16 @@ class InsertionOfLink(LiveTornadoTestCase, Manipulator):
             'givenCaretStart': 14,
             'givenCaretEnd': 14 + len('Lo'),
             'expectedContents': Contents(
-                Paragraph(Link('Lo', linkAddress, linkTitle), Text(SHORT_LOREM[len('Lo'):]))
+                Paragraph(
+                    Link(
+                        'Lo',
+                        linkAddress,
+                        linkTitle
+                    ),
+                    Text(
+                        SHORT_LOREM[len('Lo'):]
+                    )
+                )
             ),
             'expectedCaret': 14,
         }),

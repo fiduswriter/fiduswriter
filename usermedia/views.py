@@ -101,7 +101,10 @@ def check_access_rights(other_user_id, this_user):
         has_access = True
     elif other_user_id == this_user.id:
         has_access = True
-    elif AccessRight.objects.filter(document__owner=other_user_id, user=this_user).count() > 0:
+    elif AccessRight.objects.filter(
+        document__owner=other_user_id,
+        user=this_user
+    ).count() > 0:
         has_access = True
     return has_access
 

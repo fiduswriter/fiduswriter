@@ -1,14 +1,12 @@
 import os
+import uuid
 
 from django.db import models
 from django.contrib.auth.models import User
-
 from django.db import IntegrityError
 
 ALLOWED_FILETYPES = ['image/jpeg', 'image/png', 'image/svg+xml']
 ALLOWED_EXTENSIONS = ['jpeg', 'jpg', 'png', 'svg']
-
-import uuid
 
 
 def get_file_path(instance, filename):
@@ -78,7 +76,7 @@ class Image(models.Model):
         import os
 
         # Set our max thumbnail size in a tuple (max width, max height)
-        #THUMBNAIL_SIZE = (170,200)
+        # THUMBNAIL_SIZE = (170,200)
 
         DJANGO_TYPE = self.image.file.content_type
 

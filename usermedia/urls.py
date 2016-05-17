@@ -8,5 +8,9 @@ urlpatterns = [
     url('^delete/$', views.delete_js, name='delete_js'),
     url('^images/$', views.images_js, name='images_js'),
     url('^save_category/$', views.save_category_js, name='save_category_js'),
-    url('^delete_category/$', views.delete_category_js, name='delete_category_js')
+    url(
+        '^delete_category/$',
+        views.delete_category_js,
+        name='delete_category_js'
+    )
 ]

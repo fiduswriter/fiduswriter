@@ -1,10 +1,8 @@
 import uuid
 import atexit
-import random
 
-from django.core.exceptions import PermissionDenied
 from document.helpers.session_user_info import SessionUserInfo
-from document.helpers.filtering_comments import filter_comments_by_role
+# from document.helpers.filtering_comments import filter_comments_by_role
 from ws.base import BaseWebSocketHandler
 from logging import info, error
 from tornado.escape import json_decode, json_encode
@@ -76,11 +74,17 @@ class DocumentWS(BaseWebSocketHandler):
                 document__owner=document_owner))
         response['document']['access_rights'] = access_rights
 
-        # TODO: switch on filtering when choose workflow and have UI for assigning roles to users
-        #filtered_comments = filter_comments_by_role(DocumentWS.sessions[self.user_info.document_id]["comments"], access_rights, 'editing', self.user_info)
+        # TODO: switch on filtering when choose workflow and have UI for
+        # assigning roles to users
+        # filtered_comments = filter_comments_by_role(
+        #     DocumentWS.sessions[self.user_info.document_id]["comments"],
+        #     access_rights,
+        #     'editing',
+        #     self.user_info
+        # )
         print self.doc["comments"]
         response['document']['comments'] = self.doc["comments"]
-        #response['document']['comments'] = filtered_comments
+        # response['document']['comments'] = filtered_comments
         response['document']['comment_version'] = self.doc["comment_version"]
         response['document']['access_rights'] = get_accessrights(
             AccessRight.objects.filter(document__owner=document_owner))
@@ -138,7 +142,10 @@ class DocumentWS(BaseWebSocketHandler):
             self.check_diff_version(parsed)
         elif parsed["type"] == 'selection_change':
             self.handle_selection_change(message, parsed)
-        elif parsed["type"] == 'update_document' and self.can_update_document():
+        elif (
+            parsed["type"] == 'update_document' and
+            self.can_update_document()
+        ):
             self.handle_document_update(parsed)
         elif parsed["type"] == 'update_title' and self.can_update_document():
             self.handle_title_update(parsed)
@@ -151,7 +158,10 @@ class DocumentWS(BaseWebSocketHandler):
         if changes['version'] == self.doc['version']:
             # Document hasn't changed, return.
             return
-        elif changes['version'] > self.doc['diff_version'] or changes['version'] < self.doc['version']:
+        elif (
+            changes['version'] > self.doc['diff_version'] or
+            changes['version'] < self.doc['version']
+        ):
             # The version number is too high. Possibly due to server restart.
             # Do not accept it, and send a document instead.
             self.send_document()
@@ -184,7 +194,7 @@ class DocumentWS(BaseWebSocketHandler):
                         "review:isMajor"] = cd["review:isMajor"]
             elif cd["type"] == "add_answer":
                 comment_id = str(cd["commentId"])
-                if not "answers" in self.doc["comments"][comment_id]:
+                if "answers" not in self.doc["comments"][comment_id]:
                     self.doc["comments"][comment_id]["answers"] = []
                 del cd["type"]
                 self.doc["comments"][comment_id]["answers"].append(cd)
@@ -196,7 +206,7 @@ class DocumentWS(BaseWebSocketHandler):
                             "answers"].remove(answer)
             elif cd["type"] == "update_answer":
                 comment_id = str(cd["commentId"])
-                for answer in document["comments"][comment_id]["answers"]:
+                for answer in self.doc["comments"][comment_id]["answers"]:
                     if answer["id"] == cd["id"]:
                         answer["answer"] = cd["answer"]
             self.doc['comment_version'] += 1
@@ -250,9 +260,16 @@ class DocumentWS(BaseWebSocketHandler):
         return only_comment
 
     def handle_diff(self, message, parsed):
-        if self.user_info.access_rights in COMMENT_ONLY and not self.only_comments(parsed[
-                                                                                   'diff']):
-            print("received non-comment diff from comment-only collaborator. Discarding.")
+        if (
+            self.user_info.access_rights in COMMENT_ONLY and
+            not self.only_comments(parsed['diff'])
+        ):
+            print(
+                (
+                    'received non-comment diff from comment-only '
+                    'collaborator. Discarding.'
+                )
+            )
             return
         if parsed["diff_version"] == self.doc['diff_version'] and parsed[
                 "comment_version"] == self.doc['comment_version']:
@@ -289,16 +306,17 @@ class DocumentWS(BaseWebSocketHandler):
             print self.doc['comment_version']
 
     def check_diff_version(self, parsed):
-        if parsed["diff_version"] == self.doc['diff_version']:
+        pdv = parsed["diff_version"]
+        ddv = self.doc['diff_version']
+        if pdv == ddv:
             response = {
                 "type": "confirm_diff_version",
-                "diff_version": parsed["diff_version"],
+                "diff_version": pdv,
             }
             self.write_message(response)
             return
-        elif parsed["diff_version"] + len(self.doc["last_diffs"]) >= self.doc["diff_version"]:
-            number_requested_diffs = self.doc[
-                'diff_version'] - parsed["diff_version"]
+        elif pdv + len(self.doc["last_diffs"]) >= ddv:
+            number_requested_diffs = ddv - pdv
             response = {
                 "type": "diff",
                 "diff_version": parsed["diff_version"],
@@ -317,10 +335,14 @@ class DocumentWS(BaseWebSocketHandler):
 
     def on_close(self):
         print "Websocket closing"
-        if (hasattr(self.user_info, 'document_id') and
-                self.user_info.document_id in DocumentWS.sessions and
-                hasattr(self, 'id') and
-                self.id in DocumentWS.sessions[self.user_info.document_id]['participants']):
+        if (
+            hasattr(self.user_info, 'document_id') and
+            self.user_info.document_id in DocumentWS.sessions and
+            hasattr(self, 'id') and
+            self.id in DocumentWS.sessions[
+                self.user_info.document_id
+            ]['participants']
+        ):
             del self.doc['participants'][self.id]
             if len(self.doc['participants'].keys()) == 0:
                 DocumentWS.save_document(self.user_info.document_id)
@@ -334,9 +356,15 @@ class DocumentWS(BaseWebSocketHandler):
             for waiter in cls.sessions[document_id]['participants'].keys():
                 participant_list.append({
                     'session_id': waiter,
-                    'id': cls.sessions[document_id]['participants'][waiter].user_info.user.id,
-                    'name': cls.sessions[document_id]['participants'][waiter].user_info.user.readable_name,
-                    'avatar': avatar_url(cls.sessions[document_id]['participants'][waiter].user_info.user, 80)
+                    'id': cls.sessions[document_id]['participants'][
+                        waiter
+                    ].user_info.user.id,
+                    'name': cls.sessions[document_id]['participants'][
+                        waiter
+                    ].user_info.user.readable_name,
+                    'avatar': avatar_url(cls.sessions[document_id][
+                        'participants'
+                    ][waiter].user_info.user, 80)
                 })
             message = {
                 "participant_list": participant_list,
@@ -369,7 +397,8 @@ class DocumentWS(BaseWebSocketHandler):
         doc_db.settings = json_encode(doc['settings'])
         doc_db.last_diffs = json_encode(doc['last_diffs'])
         doc_db.comments = json_encode(doc['comments'])
-        print "saving document #" + str(doc_db.id) + ", version " + str(doc_db.version)
+        print("saving document #" + str(doc_db.id))
+        print("version " + str(doc_db.version))
         doc_db.save()
 
     @classmethod

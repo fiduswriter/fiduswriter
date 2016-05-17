@@ -1,5 +1,6 @@
 from document.models import AccessRight, Document
 
+
 class SessionUserInfo():
     """
     Class for string information about users in session
@@ -44,7 +45,10 @@ class SessionUserInfo():
                     can_access = True
                 else:
                     self.is_owner = False
-                    access_rights = AccessRight.objects.filter(document=document, user=self.user)
+                    access_rights = AccessRight.objects.filter(
+                        document=document,
+                        user=self.user
+                    )
                     if len(access_rights) > 0:
                         self.access_rights = access_rights[0].rights
                         can_access = True

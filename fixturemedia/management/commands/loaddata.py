@@ -1,4 +1,4 @@
-from os.path import dirname, exists, isdir, join, relpath
+from os.path import dirname, isdir, join
 
 from django.conf import settings
 import django.core.management.commands.loaddata
@@ -11,8 +11,10 @@ from django.utils._os import upath
 try:
     from django.apps import apps
     get_models = apps.get_models
-    get_apps = lambda: filter(
-        None, [a.models_module for a in apps.get_app_configs()])
+
+    def get_apps(): return filter(
+        None, [a.models_module for a in apps.get_app_configs()]
+    )
 
     def get_modelclasses():
         for modelclass in get_models():
@@ -56,7 +58,10 @@ class Command(django.core.management.commands.loaddata.Command):
                         default_storage.save(path.name, f)
                 except file_not_found_error:
                     self.stderr.write(
-                        "Expected file at {} doesn't exist, skipping".format(filepath))
+                        (
+                            "Expected file at {} doesn't exist, skipping"
+                        ).format(filepath)
+                    )
                     continue
 
     def handle(self, *fixture_labels, **options):

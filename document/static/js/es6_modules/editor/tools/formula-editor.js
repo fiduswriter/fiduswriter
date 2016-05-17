@@ -3,7 +3,7 @@
  */
 
 import "mathquill/build/mathquill"
-import {render as katexRender} from "katex"
+import {katexRender} from "../../katex/katex"
 
 /**
  * Class to initialize and manage MathQuill library inside editor dialog (math.js)
@@ -45,7 +45,7 @@ export class FormulaEditor {
         this.mathFieldDOM = this.dialog.find("p > input.math-field")
 
         //render latex formula using katex
-        katexRender(this.getLatex(), this.latexFieldDOM[0])
+        katexRender(this.getLatex(), this.latexFieldDOM[0], {throwOnError: false})
 
         //live-update of katex rendering
         this.mathFieldDOM.on('input', () => {

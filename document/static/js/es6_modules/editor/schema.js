@@ -2,7 +2,7 @@ import {Schema, Block, Textblock, Inline, Text, MarkType, Attribute, NodeKind,
         Doc, BlockQuote, OrderedList, BulletList, ListItem, HorizontalRule,
         Paragraph, Heading, CodeBlock, Image, HardBreak, CodeMark, EmMark,
         StrongMark, LinkMark} from "prosemirror/dist/model"
-import {render as katexRender} from "katex"
+import {katexRender} from "../katex/katex"
 
 class Title extends Textblock {
 }
@@ -269,7 +269,8 @@ Equation.prototype.serializeDOM = (node, serializer) => {
         class: 'equation',
         'data-equation': node.attrs.equation
     })
-    katexRender(node.attrs.equation, dom)
+    window.katexRender = katexRender
+    katexRender(node.attrs.equation, dom, {throwOnError: false})
     dom.setAttribute('contenteditable', 'false')
     return dom
 }
@@ -366,7 +367,8 @@ Figure.prototype.serializeDOM = (node, serializer) => {
             'data-equation': node.attrs.equation
         })
         katexRender(node.attrs.equation, domEquation, {
-            displayMode: true
+            displayMode: true,
+            throwOnError: false
         })
         dom.appendChild(domEquation)
     }

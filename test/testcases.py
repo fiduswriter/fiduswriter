@@ -1,44 +1,12 @@
-# Copyright (c) Django Software Foundation and individual contributors.
-# All rights reserved.
-#
-# Redistribution and use in source and binary forms, with or without
-# modification, are permitted provided that the following conditions are met:
-#
-#     1. Redistributions of source code must retain the above copyright notice,
-#        this list of conditions and the following disclaimer.
-#
-#     2. Redistributions in binary form must reproduce the above copyright
-#        notice, this list of conditions and the following disclaimer in the
-#        documentation and/or other materials provided with the distribution.
-#
-#     3. Neither the name of Django nor the names of its contributors may be
-#        used to endorse or promote products derived from this software without
-#        specific prior written permission.
-#
-# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-# IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
-# ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
-# LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
-# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-# INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
-# CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
-# ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
-# POSSIBILITY OF SUCH DAMAGE.
-
 import errno
 import os
 import socket
 import sys
 import threading
-import unittest
 from unittest import skipIf         # NOQA: Imported here for backward compatibility
 
-from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured
 
-from django.core.servers.basehttp import WSGIRequestHandler, WSGIServer
+from django.core.exceptions import ImproperlyConfigured
 from django.db import connections
 from django.utils import six
 from django.test.testcases import TransactionTestCase
@@ -53,7 +21,11 @@ class LiveTornadoThread(threading.Thread):
     Thread for running a live http server while the tests are running.
     """
 
-    def __init__(self, host, possible_ports, static_handler, connections_override=None):
+    def __init__(self,
+                 host,
+                 possible_ports,
+                 static_handler,
+                 connections_override=None):
         self.host = host
         self.port = None
         self.possible_ports = possible_ports
@@ -134,8 +106,8 @@ class LiveTornadoTestCase(TransactionTestCase):
         for conn in connections.all():
             # If using in-memory sqlite databases, pass the connections to
             # the server thread.
-            if (conn.vendor == 'sqlite'
-                    and conn.settings_dict['NAME'] == ':memory:'):
+            if (conn.vendor == 'sqlite' and
+                    conn.settings_dict['NAME'] == ':memory:'):
                 # Explicitly enable thread-shareability for this connection
                 conn.allow_thread_sharing = True
                 connections_override[conn.alias] = conn
@@ -163,7 +135,11 @@ class LiveTornadoTestCase(TransactionTestCase):
                         possible_ports.append(port)
         except Exception:
             msg = 'Invalid address ("%s") for live server.' % specified_address
-            six.reraise(ImproperlyConfigured, ImproperlyConfigured(msg), sys.exc_info()[2])
+            six.reraise(
+                ImproperlyConfigured,
+                ImproperlyConfigured(msg),
+                sys.exc_info()[2]
+            )
         cls.server_thread = LiveTornadoThread(
             host,
             possible_ports,
@@ -176,8 +152,8 @@ class LiveTornadoTestCase(TransactionTestCase):
         # Wait for the live server to be ready
         cls.server_thread.is_ready.wait()
         if cls.server_thread.error:
-            # Clean up behind ourselves, since tearDownClass won't get called in
-            # case of errors.
+            # Clean up behind ourselves, since tearDownClass won't get called
+            # in case of errors.
             cls._tearDownClassInternal()
             raise cls.server_thread.error
 
@@ -194,8 +170,8 @@ class LiveTornadoTestCase(TransactionTestCase):
 
         # Restore sqlite connections' non-shareability
         for conn in connections.all():
-            if (conn.vendor == 'sqlite'
-                    and conn.settings_dict['NAME'] == ':memory:'):
+            if (conn.vendor == 'sqlite' and
+                    conn.settings_dict['NAME'] == ':memory:'):
                 conn.allow_thread_sharing = False
 
     @classmethod

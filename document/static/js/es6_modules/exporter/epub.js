@@ -173,13 +173,14 @@ export class EpubExporter extends BaseEpubExporter {
         for (let i = 0; i < equations.length; i++) {
             let node = equations[i]
             let formula = node.getAttribute('data-equation')
-            katexRender(formula, node)
+            katexRender(formula, node, {throwOnError: false})
         }
         for (let i = 0; i < figureEquations.length; i++) {
             let node = figureEquations[i]
             let formula = node.getAttribute('data-equation')
             katexRender(formula, node, {
-                displayMode: true
+                displayMode: true,
+                throwOnError: false
             })
         }
 

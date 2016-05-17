@@ -1,21 +1,3 @@
-#
-# This file is part of Fidus Writer <http://www.fiduswriter.org>
-#
-# Copyright (C) 2013 Takuto Kojima, Johannes Wilm
-#
-# This program is free software: you can redistribute it and/or modify
-# it under the terms of the GNU Affero General Public License as
-# published by the Free Software Foundation, either version 3 of the
-# License, or (at your option) any later version.
-#
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU Affero General Public License for more details.
-#
-# You should have received a copy of the GNU Affero General Public License
-# along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 from datetime import datetime, timedelta
 
 from django.conf import settings
@@ -31,22 +13,26 @@ class HelloHandler(RequestHandler):
     def get(self):
         self.write('Hello from tornado')
 
+
 class RobotsHandler(RequestHandler):
 
     def head(self):
         self.finish()
 
     def get(self):
-        self.write('User-agent: *\nDisallow: /document/\nDisallow: /bibliography/\nDisallow: /usermedia/\nDisallow: /book/')
+        self.write(
+            (
+                'User-agent: *\nDisallow: /document/\nDisallow: /bibliography/'
+                '\nDisallow: /usermedia/\nDisallow: /book/'
+            )
+        )
+
 
 class DjangoStaticFilesHandler(StaticFileHandler):
 
-    #settings = None
-
     def initialize(self, default_filename=None):
         super(DjangoStaticFilesHandler, self).initialize(None,
-                default_filename=None)
-        #self.settings = settings
+                                                         default_filename=None)
 
     def validate_absolute_path(self, root, absolute_path):
         return absolute_path
@@ -71,5 +57,5 @@ class DjangoStaticFilesHandler(StaticFileHandler):
     def set_extra_headers(self, path):
         self.set_header('Cache-Control', 'no-cache, must-revalidate')
         self.set_header('Expires', '0')
-        expiration = datetime.now() - timedelta(days = 366)
+        expiration = datetime.now() - timedelta(days=366)
         self.set_header('Last-Modified', expiration)

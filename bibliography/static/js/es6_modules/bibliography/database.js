@@ -165,7 +165,7 @@ export class BibliographyDB {
     displayCreateBibEntryError(errors) {
         let noError = true
         for (let eKey in errors) {
-            eMsg = '<div class="warning">' + errors[eKey] + '</div>'
+            let eMsg = '<div class="warning">' + errors[eKey] + '</div>'
             if ('error' == eKey) {
                 jQuery('#createbook').prepend(eMsg)
             } else {

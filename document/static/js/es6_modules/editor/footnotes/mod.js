@@ -25,7 +25,7 @@ export class ModFootnotes {
         this.fnPm = new ProseMirror({
             place: document.getElementById('footnote-box-container'),
             schema: this.schema,
-            content: contentNode,
+            //content: contentNode,
             collab: {
                 version: 0
             } // Version number does not matter much, as we do not verify it between users.

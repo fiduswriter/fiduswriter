@@ -192,7 +192,7 @@ export class ModMenusUpdateUI {
                 // In footnote editor
                 jQuery('#current-position').html(gettext('Footnote'))
                 let blockNode = start.parent
-                blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name +
+                let blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name +
                     '_' + blockNode.attrs.level : blockNode.type.name
                 jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType])
 

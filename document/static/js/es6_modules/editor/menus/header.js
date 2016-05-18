@@ -1,5 +1,6 @@
 import {DocumentAccessRightsDialog} from "../../documents/access-rights/dialog"
-
+import {documentStyleList} from "../../style/documentstyle-list"
+import {citationDefinitions} from "../../style/citation-definitions"
 /* Bindings for the header menu */
 export class ModMenusHeader {
     constructor(mod) {
@@ -32,12 +33,12 @@ export class ModMenusHeader {
 
               documentStyleMenu.appendChild(newMenuItem)
           }
-          for (let j in citeproc.styles) {
+          for (let j in citationDefinitions.styles) {
               let newMenuItem = document.createElement("li")
               newMenuItem.innerHTML =
                 "<span class='fw-pulldown-item citationstyle' data-citationstyle='" +
-                j + "' title='" + citeproc.styles[j].name + "'>" +
-                citeproc.styles[j].name + "</span>"
+                j + "' title='" + citationDefinitions.styles[j].name + "'>" +
+                citationDefinitions.styles[j].name + "</span>"
 
               citationStyleMenu.appendChild(newMenuItem)
           }

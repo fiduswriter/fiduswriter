@@ -5,6 +5,7 @@ import {editCategoriesTemplate, categoryFormsTemplate, bibtableTemplate,
 import {BibliographyDB} from "../database"
 import {BibEntryTypes} from "../statics"
 import {BibLatexImporter} from "../importer/biblatex"
+import {BibLatexExporter} from "../exporter/biblatex"
 
 export class BibliographyOverview {
 

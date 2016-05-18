@@ -5,7 +5,7 @@ export let obj2Node = function(obj, docType) {
         return false
     }
     if (docType === 'xhtml') {
-        parser = new DOMParser().parseFromString('<xml/>', "text/xml")
+        parser = new window.DOMParser().parseFromString('<xml/>', "text/xml")
     } else {
         parser = document
     }

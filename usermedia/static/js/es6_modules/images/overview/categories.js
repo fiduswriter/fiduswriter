@@ -21,7 +21,7 @@ export class ImageOverviewCategories {
             success: function (response, textStatus, jqXHR) {
                 if (jqXHR.status == 201) {
                     // TODO: Why do we reload the entire list when one new category is created?
-                    imageCategories = []
+                    that.imageOverview.imageDB.cats = response.entries
                     jQuery('#image-category-list li').not(':first').remove()
                     that.addImageCategoryList(response.entries)
 
@@ -71,8 +71,8 @@ export class ImageOverviewCategories {
         let dialogHeader = gettext('Edit Categories')
         let dialogBody = usermediaEditcategoriesTemplate({
             'dialogHeader': dialogHeader,
-            'categories': tmpUsermediaCategoryforms({
-                'categories': imageCategories
+            'categories': usermediaCategoryformsTemplate({
+                'categories': this.imageOverview.imageDB.cats
             })
         })
         jQuery('body').append(dialogBody)
@@ -134,9 +134,10 @@ export class ImageOverviewCategories {
             } else {
                 let thePrev = jQuery(this).prev()
                 if (thePrev.hasClass("category-form")) {
-                    let thisId = thePrev.attr('data-id')
-                    if ('undefined' != typeof (thisId))
-                        deleted_cat[deleted_cat.length] = thisId
+                    // TODO: Figure out what this was about
+                    //let thisId = thePrev.attr('data-id')
+                    //if (undefined !== thisId)
+                    //    deleted_cat[deleted_cat.length] = thisId
                 }
                 parent.remove()
             }

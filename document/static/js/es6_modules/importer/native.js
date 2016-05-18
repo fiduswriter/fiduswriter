@@ -126,7 +126,7 @@ export class ImportNative {
         } else if (!(jQuery.isEmptyObject(BibTranslationTable)) || !(jQuery.isEmptyObject(
                 ImageTranslationTable))) {
             // We need to change some reference numbers in the document contents
-            translateReferenceIds(BibTranslationTable,
+            this.translateReferenceIds(BibTranslationTable,
                 ImageTranslationTable)
         } else {
             // We are good to go. All the used images and bibliography entries
@@ -173,7 +173,7 @@ export class ImportNative {
                 xhr.onload = function(e) {
                     if (this.status == 200) {
                         // Note: .response instead of .responseText
-                        newImageEntries[counter]['file'] = new Blob([this.response], {
+                        newImageEntries[counter]['file'] = new window.Blob([this.response], {
                             type: newImageEntries[counter].file_type
                         })
                         counter++
@@ -324,7 +324,7 @@ export class ImportNative {
                         that.newBibEntries = response.bibs
                         that.translateReferenceIds(BibTranslationTable, ImageTranslationTable)
                     },
-                    error: function() {
+                    error: function(jqXHR, textStatus, errorThrown) {
                         console.log(jqXHR.responseText)
                     },
                     complete: function() {}

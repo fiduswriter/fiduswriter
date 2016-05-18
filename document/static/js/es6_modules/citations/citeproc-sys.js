@@ -1,4 +1,5 @@
 /* Connects Fidus Writer citation system with citeproc */
+import {citationDefinitions} from "../style/citation-definitions"
 
 export class citeprocSys {
     constructor(cslDB) {
@@ -14,7 +15,7 @@ export class citeprocSys {
     }
 
     retrieveLocale(lang) {
-        return citeproc.locals[lang]
+        return citationDefinitions.locals[lang]
     }
 
     getAbbreviation(dummy, obj, jurisdiction, vartype, key) {

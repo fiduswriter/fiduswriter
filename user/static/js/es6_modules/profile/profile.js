@@ -127,7 +127,7 @@ let saveProfile = function() {
                 jQuery('#edit_user').removeAttr("disabled")
                 let response = $.parseJSON(jqXHR.responseText)
                 $.each(response.errors, function(fieldname, errmsg) {
-                    firstError = '<span class="form-error-msg">'+errmsg[0]+'</span>'
+                    let firstError = '<span class="form-error-msg">'+errmsg[0]+'</span>'
                     jQuery('#'+fieldname).after(firstError)
                 })
                 let eMsg = gettext("Please check the above errors")

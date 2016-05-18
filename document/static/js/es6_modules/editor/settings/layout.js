@@ -29,9 +29,9 @@ export class ModSettingsLayout {
         // Remove previous style.
         documentStyleLink.parentElement.removeChild(documentStyleLink.previousElementSibling)
 
-        stylesheet = loadCSS(staticUrl + 'css/document/' + this.mod.editor.doc.settings.documentstyle + '.css', documentStyleLink)
+        stylesheet = window.loadCSS(window.staticUrl + 'css/document/' + this.mod.editor.doc.settings.documentstyle + '.css', documentStyleLink)
 
-        onloadCSS(stylesheet, function() {
+        window.onloadCSS(stylesheet, function() {
             // We layout the comments 100 ms after the stylesheet has been loaded.
             // This should usually be enough to make the layout work correctly.
             //
@@ -63,7 +63,7 @@ export class ModSettingsLayout {
             'selected')
         jQuery('span[data-paperheight=' + this.mod.editor.doc.settings.papersize +
             ']').addClass('selected')
-        paginationConfig['pageHeight'] = this.mod.editor.doc.settings.papersize
+        window.paginationConfig['pageHeight'] = this.mod.editor.doc.settings.papersize
     }
 
 

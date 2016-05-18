@@ -90,7 +90,7 @@ export class FigureDialog {
                 class: 'fw-button fw-orange',
                 click: function () {
                     that.editor.currentPm.execCommand('deleteSelection')
-                    dialog.dialog('close')
+                    that.dialog.dialog('close')
                 }
             })
 

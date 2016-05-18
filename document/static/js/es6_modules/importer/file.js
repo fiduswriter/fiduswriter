@@ -82,7 +82,7 @@ export class ImportFidusFile {
             _.findWhere(this.entries, this.textFiles[this.counter]).getData(
                 new zip.TextWriter(),
                 function(text) {
-                    that.textFiles[counter]['contents'] = text
+                    that.textFiles[that.counter]['contents'] = text
                     that.counter++
                     that.getEntry()
                 })

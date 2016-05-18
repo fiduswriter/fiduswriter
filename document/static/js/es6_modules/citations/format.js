@@ -1,5 +1,6 @@
 import {citeprocSys} from "./citeproc-sys"
 import {CSLExporter} from "../bibliography/exporter/csl"
+import {citationDefinitions} from "../style/citation-definitions"
 /**
  * Functions to display citations and the bibliography.
  */
@@ -112,11 +113,11 @@ export class FormatCitations {
 
     getFormattedCitations() {
 
-        if (citeproc.styles.hasOwnProperty(this.citationStyle)) {
-            this.citationStyle = citeproc.styles[this.citationStyle]
+        if (citationDefinitions.styles.hasOwnProperty(this.citationStyle)) {
+            this.citationStyle = citationDefinitions.styles[this.citationStyle]
         } else {
-            for (let styleName in citeproc.styles) {
-                this.citationStyle = citeproc.styles[styleName]
+            for (let styleName in citationDefinitions.styles) {
+                this.citationStyle = citationDefinitions.styles[styleName]
                 break
             }
         }

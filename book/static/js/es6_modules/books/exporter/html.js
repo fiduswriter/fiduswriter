@@ -157,7 +157,7 @@ export class HTMLBookExporter extends BaseEpubExporter { // extension is correct
         if (math) {
             includeZips.push({
                 'directory': '',
-                'url': staticUrl + 'zip/katex-style.zip'
+                'url': window.staticUrl + 'zip/katex-style.zip'
             })
         }
 

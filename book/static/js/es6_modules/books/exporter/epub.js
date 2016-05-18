@@ -282,17 +282,12 @@ export class EpubBookExporter extends BaseEpubExporter {
             })
         }])
 
-
-
-
         for (let i = 0; i < styleSheets.length; i++) {
             outputList.push({
                 filename: 'EPUB/' + styleSheets[i].filename,
                 contents: styleSheets[i].contents
             })
         }
-
-
 
         for (let i = 0; i < images.length; i++) {
             httpOutputList.push({
@@ -304,7 +299,7 @@ export class EpubBookExporter extends BaseEpubExporter {
         if (math) {
             includeZips.push({
                 'directory': 'EPUB',
-                'url': staticUrl + 'zip/katex-style.zip'
+                'url': window.staticUrl + 'zip/katex-style.zip'
             })
         }
 

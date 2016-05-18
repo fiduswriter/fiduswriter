@@ -242,7 +242,7 @@ export class BookActions {
         theBook.owner_avatar = that.bookList.user.avatar
         theBook.owner_name = that.bookList.user.name
         theBook.owner = that.bookList.user.id
-        theBook.rights = 'w'
+        theBook.rights = 'write'
         if (theOldBook.owner != theBook.owner) {
             function setCoverImage(id) {
                 theBook.cover_image = id
@@ -347,7 +347,7 @@ export class BookActions {
                 owner_avatar: that.bookList.user.avatar,
                 owner_name: that.bookList.user.name,
                 owner: that.bookList.user.id,
-                rights: 'w',
+                rights: 'write',
                 metadata: {},
                 settings: {
                     citationstyle: 'apa',
@@ -537,7 +537,7 @@ export class BookActions {
             }
         })
         let diaButtons = {}
-        if (theBook.rights === "w") {
+        if (theBook.rights === 'write') {
             diaButtons[gettext('Submit')] = function () {
                 getFormData()
 

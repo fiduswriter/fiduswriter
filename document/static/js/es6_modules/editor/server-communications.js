@@ -101,9 +101,6 @@ export class ModServerCommunications {
                 break
             case 'connections':
                 this.editor.mod.collab.updateParticipantList(data.participant_list)
-                if (this.editor.docInfo.control) {
-                    this.editor.docInfo.sentHash = false
-                }
                 break
             case 'welcome':
                 this.activateConnection()
@@ -135,9 +132,6 @@ export class ModServerCommunications {
                 break
             case 'setting_change':
                 this.editor.mod.settings.set.setSetting(data.variable, data.value, false)
-                break
-            case 'take_control':
-                this.editor.takeControl()
                 break
             case 'check_hash':
                 this.editor.mod.collab.docChanges.checkHash(data.diff_version, data.hash)

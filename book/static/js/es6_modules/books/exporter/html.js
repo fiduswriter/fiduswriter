@@ -1,4 +1,4 @@
-import {render as katexRender} from "katex"
+import {katexRender} from "../../katex/katex"
 
 import {getMissingChapterData, getImageAndBibDB, uniqueObjects} from "./tools"
 import {htmlBookExportTemplate, htmlBookIndexTemplate, htmlBookIndexItemTemplate} from "./html-templates"
@@ -63,13 +63,14 @@ export class HTMLBookExporter extends BaseEpubExporter { // extension is correct
             for (let j = 0; j < equations.length; j++) {
                 let node = equations[j]
                 let formula = node.getAttribute('data-equation')
-                katexRender(formula, node)
+                katexRender(formula, node, {throwOnError: false})
             }
             for (let j = 0; j < figureEquations.length; j++) {
                 let node = figureEquations[j]
                 let formula = node.getAttribute('data-equation')
                 katexRender(formula, node, {
-                    displayMode: true
+                    displayMode: true,
+                    throwOnError: false
                 })
             }
 

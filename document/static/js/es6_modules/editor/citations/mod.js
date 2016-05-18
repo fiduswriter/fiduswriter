@@ -27,7 +27,8 @@ export class ModCitations {
 
     bindEvents () {
         let that = this
-        new UpdateScheduler(this.editor.pm, "change setDoc", () => {that.layoutCitations()})
+        new UpdateScheduler(this.editor.pm, "flush", () => {that.layoutCitations()})
+        new UpdateScheduler(this.editor.mod.footnotes.fnPm, "flush", () => {that.layoutCitations()})
     }
 
     resetCitations() {

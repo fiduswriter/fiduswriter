@@ -128,6 +128,8 @@ export class ModMenusHeader {
                   that.mod.editor.doc.id
               ], that.mod.editor.doc.access_rights, that.mod.editor.doc.owner.team_members, function(newAccessRights) {
                   that.mod.editor.doc.access_rights = newAccessRights
+              }, function(memberData) {
+                  that.mod.editor.user.team_members.push(memberData)
               })
           })
 

@@ -1,3 +1,5 @@
+import * as objectHash from "object-hash/dist/object_hash"
+
 /* Functions for ProseMirror integration.*/
 import {ProseMirror} from "prosemirror/dist/edit/main"
 import {fromDOM} from "prosemirror/dist/format"
@@ -19,6 +21,9 @@ import {ModNodeConvert} from "./node-convert"
 import {node2Obj, obj2Node} from "../exporter/json"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
+import {PasteHandler} from "./paste"
+
+export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 
 export class Editor {
     // A class that contains everything that happens on the editor page.
@@ -31,12 +36,10 @@ export class Editor {
         // dealt with.
         this.waitingForDocument = true
 
+
+
         this.docInfo = {
-            'sentHash': false,
             'rights': '',
-            // In collaborative mode, only the first client to connect will have
-            // this.editor.docInfo.control set to true.
-            'control': false,
             'last_diffs': [],
             'is_owner': false,
             'is_new': false,
@@ -73,6 +76,10 @@ export class Editor {
         this.pm.on("change", function(){that.docInfo.changed = true})
         this.pm.on("filterTransform", (transform) => {return that.onFilterTransform(transform)})
         this.pm.on("transform", (transform, options) => {that.onTransform(transform, true)})
+        this.pm.on("transformPastedHTML", (inHTML) => {
+            let ph = new PasteHandler(inHTML, "main")
+            return ph.outHTML
+        })
         this.pm.mod.collab.on("collabTransform", (transform, options) => {that.onTransform(transform, false)})
         this.setSaveTimers()
     }
@@ -81,7 +88,7 @@ export class Editor {
         let that = this
         // Set Auto-save to send the document every two minutes, if it has changed.
         this.sendDocumentTimer = setInterval(function() {
-            if (that.docInfo && that.docInfo.changed) {
+            if (that.docInfo && that.docInfo.changed && that.docInfo.rights !== 'read') {
                 that.getUpdates(function() {
                     that.sendDocumentUpdate()
                 })
@@ -90,14 +97,12 @@ export class Editor {
 
         // Set Auto-save to send the title every 5 seconds, if it has changed.
         this.sendDocumentTitleTimer = setInterval(function() {
-            if (that.docInfo && that.docInfo.titleChanged) {
+            if (that.docInfo && that.docInfo.titleChanged && that.docInfo.rights !== 'read') {
                 that.docInfo.titleChanged = false
-                if (that.docInfo.control) {
-                    that.mod.serverCommunications.send({
-                        type: 'update_title',
-                        title: that.doc.title
-                    });
-                }
+                that.mod.serverCommunications.send({
+                    type: 'update_title',
+                    title: that.doc.title
+                })
             }
         }, 10000)
     }
@@ -237,8 +242,6 @@ export class Editor {
 
     enableUI() {
 
-        this.mod.citations.layoutCitations()
-
         jQuery('.savecopy, .saverevision, .download, .latex, .epub, .html, .print, .style, \
       .citationstyle, .tools-item, .papersize, .metadata-menu-item, \
       #open-close-header').removeClass('disabled')
@@ -253,7 +256,13 @@ export class Editor {
 
         this.mod.settings.layout.layoutMetadata()
 
-        if (this.docInfo.rights === 'w') {
+
+        if (this.docInfo.rights === 'read') {
+            jQuery('#editor-navigation').hide()
+            jQuery('.metadata-menu-item, #open-close-header, .save, \
+          .multibuttonsCover, .papersize-menu, .metadata-menu, \
+          .documentstyle-menu, .citationstyle-menu').addClass('disabled')
+        } else {
             jQuery('#editor-navigation').show()
             jQuery('.metadata-menu-item, #open-close-header, .save, \
           .multibuttonsCover, .papersize-menu, .metadata-menu, \
@@ -262,9 +271,16 @@ export class Editor {
                 // bind the share dialog to the button if the user is the document owner
                 jQuery('.share').removeClass('disabled')
             }
-        } else if (this.docInfo.rights === 'r') {
-            // Try to disable contenteditable
-            jQuery('.ProseMirror-content').attr('contenteditable', 'false')
+            if (COMMENT_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {
+                let toolbar = jQuery('.editortoolbar')
+                toolbar.find('.ui-buttonset').hide()
+                toolbar.find('.comment-only').show()
+            }
+            else {
+                jQuery('.metadata-menu-item, #open-close-header, .save, \
+              .multibuttonsCover, .papersize-menu, .metadata-menu, \
+              .documentstyle-menu, .citationstyle-menu').removeClass('disabled')
+            }
         }
     }
 
@@ -331,31 +347,25 @@ export class Editor {
         }
     }
 
-    // This client was participating in collaborative editing of this document
-    // but not as the cleint that was in charge of saving. This has now changed
-    // so that the current user is being asked to save the document.
-    takeControl() {
-        this.docInfo.control = true
-        this.docInfo.sentHash = false
-    }
-
     updateComments(comments, comment_version) {
         console.log('receiving comment update')
         this.mod.comments.store.receive(comments, comment_version)
     }
 
+    // Creates a hash value for the entire document so that we can compare with other clients if
+    // we really have the same contents
     getHash() {
-        let string = JSON.stringify(this.pm.mod.collab.versionDoc)
-        let len = string.length
-        var hash = 0,
-            char, i
-        if (len == 0) return hash
-        for (i = 0; i < len; i++) {
-            char = string.charCodeAt(i)
-            hash = ((hash << 5) - hash) + char
-            hash = hash & hash
-        }
-        return hash
+        let doc = this.pm.mod.collab.versionDoc.copy()
+        // We need to convert the footnotes from HTML to PM nodes and from that
+        // to JavaScript objects, to ensure that the attribute order of everything
+        // within the footnote will be the same in all browsers, so that the
+        // resulting checksums are the same.
+        doc.descendants(function(node){
+            if (node.type.name==='footnote') {
+                node.attr.contents = this.mod.footnotes.fnEditor.htmlTofootnoteNode(node.attr.contents)
+            }
+        })
+        return objectHash.MD5(JSON.parse(JSON.stringify(doc.toJSON())), {unorderedArrays: true})
     }
 
     sendDocumentUpdate(callback) {
@@ -382,14 +392,25 @@ export class Editor {
     // filter transformations, disallowing all transformations going across document parts/footnotes.
     onFilterTransform(transform) {
         let prohibited = false
+        if (this.docInfo.rights === 'read') {
+            // User only has read access. Don't allow anything.
+            prohibited = true
+        } else if (COMMENT_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {
+            //User has a comment-only role (commentator, editor or reviewer)
+
+            //Check all transformation steps. If step type not allowed = prohibit
+            if (!transform.steps.every(function(step) {
+                //check if in allowed array. if false - exit loop
+                return (step.type === 'addMark' || step.type === 'removeMark') && step.param.type.name === 'comment'
+            })) {
+                prohibited = true
+            }
+        }
+
         const docParts = ['title', 'metadatasubtitle', 'metadataauthors', 'metadataabstract',
             'metadatakeywords', 'documentcontents']
-        /* There should always be exactly 6 parts to the document (title,
-         * subtitle, authors, abstract, keywords & contents).
-         * If the output doc of the transform uses a different number of parts
-         * or the parts are of different types, we prohibit the transform.
-         */
-        if (transform.doc.childCount === 6) {
+
+        if (transform.doc.childCount === 6) { // There should always be exactly 6 parts to the document
             let index = 0
             transform.doc.forEach(function(childNode){
                 if (docParts[index] !== childNode.type.name) {

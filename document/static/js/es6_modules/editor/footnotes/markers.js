@@ -1,4 +1,4 @@
-import {fromHTML, toHTML} from "prosemirror/dist/format"
+import {toHTML} from "prosemirror/dist/format"
 
 /* Functions related to footnote markers in the main editor */
 export class ModFootnoteMarkers {
@@ -180,9 +180,11 @@ export class ModFootnoteMarkers {
         return passed
     }
 
+
     updateFootnoteMarker(index) {
         this.updating = true
         let footnoteContents = toHTML(this.mod.fnPm.doc.child(index))
+
         let footnote = this.mod.footnotes[index]
         let node = this.mod.editor.pm.doc.nodeAt(footnote.from)
         this.mod.editor.pm.tr.setNodeType(footnote.from, node.type, {

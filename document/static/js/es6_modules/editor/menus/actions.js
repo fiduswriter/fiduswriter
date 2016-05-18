@@ -39,23 +39,18 @@ export class ModMenusActions {
                     let oldImageDB = that.mod.editor.imageDB.db
                     that.mod.editor.removeBibDB()
                     that.mod.editor.removeImageDB()
-                    the.mod.editor.getBibDB(that.mod.editor.user.id, function(){
-                        the.mod.editor.getImageDB(that.mod.editor.user.id, function(){
+                    that.mod.editor.getBibDB(that.mod.editor.user.id, function(){
+                        that.mod.editor.getImageDB(that.mod.editor.user.id, function(){
                             savecopy(that.mod.editor.doc, oldBibDB, oldImageDB, that.mod.editor.bibDB.bibDB,
                                     that.mod.editor.imageDB.db, that.mod.editor.user,
                                     function(doc, docInfo, newBibEntries){
-                                if (that.mod.editor.docInfo.rights ==='r') {
-                                    /* We only had right access to the document,
-                                    so the editing elements won't show. We therefore need to reload the page to get them.
-                                    TODO: Find out if this restriction still is true.
-                                    */
-                                    window.location = '/document/'+doc.id+'/'
-                                } else {
-                                    that.mod.editor.doc = doc
-                                    that.mod.editor.docInfo = docInfo
-                                    that.mod.citation.appendManyToCitationDialog(newBibEntries)
-                                    window.history.pushState("", "", "/document/"+that.mod.editor.doc.id+"/")
-                                }
+                                that.mod.editor.doc = doc
+                                that.mod.editor.docInfo = docInfo
+                                that.mod.citation.appendManyToCitationDialog(newBibEntries)
+                                window.history.pushState("", "", "/document/"+that.mod.editor.doc.id+"/")
+                                // Reenable ui as access rights may have changed.
+                                that.mod.editor.enableUI()
+
                             })
                         })
                     })

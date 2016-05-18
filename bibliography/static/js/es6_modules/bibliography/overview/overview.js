@@ -4,6 +4,8 @@ import {editCategoriesTemplate, categoryFormsTemplate, bibtableTemplate,
     bibliographyCategoryListItemTemplate} from "./templates"
 import {BibliographyDB} from "../database"
 import {BibEntryTypes} from "../statics"
+import {BibLatexImporter} from "../importer/biblatex"
+
 export class BibliographyOverview {
 
     constructor() {
@@ -107,9 +109,9 @@ export class BibliographyOverview {
             modal: true,
             buttons: diaButtons,
             create: function () {
-                let $the_dialog = jQuery(this).closest(".ui-dialog")
-                $the_dialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
-                $the_dialog.find(".ui-button:last").addClass("fw-button fw-orange")
+                let theDialog = jQuery(this).closest(".ui-dialog")
+                theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
+                theDialog.find(".ui-button:last").addClass("fw-button fw-orange")
             },
             close: function () {
                 jQuery("#editCategories").dialog('destroy').remove()
@@ -145,10 +147,10 @@ export class BibliographyOverview {
             modal: true,
             buttons: diaButtons,
             create: function () {
-                let $the_dialog = jQuery(this).closest(".ui-dialog")
-                $the_dialog.find(".ui-button:first-child").addClass(
+                let theDialog = jQuery(this).closest(".ui-dialog")
+                theDialog.find(".ui-button:first-child").addClass(
                     "fw-button fw-dark")
-                $the_dialog.find(".ui-button:last").addClass(
+                theDialog.find(".ui-button:last").addClass(
                     "fw-button fw-orange")
             },
             close: function () {
@@ -320,8 +322,8 @@ export class BibliographyOverview {
 
         //import a bib file
         jQuery('.import-bib').bind('click', function () {
-            new BibLatexImporter(function(bibs) {
-                that.addBibList(bibs)
+            new BibLatexImporter(that.db, function(bibEntries) {
+                that.addBibList(bibEntries)
             })
         })
 

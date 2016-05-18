@@ -1,5 +1,7 @@
 import {fromHTML} from "prosemirror/dist/format"
 import {Step} from "prosemirror/dist/transform"
+import {PasteHandler} from "../paste"
+import {COMMENT_ONLY_ROLES} from "../editor"
 
 /* Functions related to the footnote editor instance */
 export class ModFootnoteEditor {
@@ -18,12 +20,20 @@ export class ModFootnoteEditor {
         this.mod.fnPm.on("filterTransform", (transform) => {
             return that.onFilterTransform(transform)
         })
-
+        this.mod.fnPm.on("transformPastedHTML", (inHTML) => {
+            let ph = new PasteHandler(inHTML, "footnote")
+            return ph.outHTML
+        })
     }
 
     // filter transformations, disallowing all transformations going across document parts/footnotes.
     onFilterTransform(transform) {
         let prohibited = false
+
+        if (COMMENT_ONLY_ROLES.indexOf(this.mod.editor.docInfo.right) > -1) {
+            prohibited = true
+        }
+
         if (transform.docs[0].childCount !== transform.doc.childCount) {
             prohibited = true
         }
@@ -52,7 +62,9 @@ export class ModFootnoteEditor {
 
     applyDiffs(diffs) {
         console.log('applying footnote diff')
-        this.mod.fnPm.mod.collab.receive(diffs.map(j => Step.fromJSON(this.mod.schema, j)))
+        let steps = diffs.map(j => Step.fromJSON(this.mod.schema, j))
+        let client_ids = diffs.map(j => j.client_id)
+        this.mod.fnPm.mod.collab.receive(steps, client_ids)
     }
 
     renderAllFootnotes() {
@@ -77,14 +89,19 @@ export class ModFootnoteEditor {
         this.bindEvents()
     }
 
+    // Convert the footnote HTML stored with the marker to a PM node representation of the footnote.
+    htmlTofootnoteNode(contents) {
+        let footnoteHTML = "<div class='footnote-container'>" + contents + "</div>"
+        return fromHTML(this.mod.schema, footnoteHTML, {
+            preserveWhitespace: true
+        }).firstChild
+    }
 
 
     renderFootnote(contents, index = 0) {
         this.rendering = true
-        let footnoteHTML = "<div class='footnote-container'>" + contents + "</div>"
-        let node = fromHTML(this.mod.schema, footnoteHTML, {
-            preserveWhitespace: true
-        }).firstChild
+
+        let node = this.htmlTofootnoteNode(contents)
         let pos = 0
         for (let i=0; i<index;i++) {
             pos += this.mod.fnPm.doc.child(i).nodeSize

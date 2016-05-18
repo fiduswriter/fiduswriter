@@ -1,7 +1,7 @@
 import {bookPrintStartTemplate, bookPrintTemplate} from "./templates"
 import {obj2Node} from "../exporter/json"
 import {FormatCitations} from "../citations/format"
-
+import {BibliographyDB} from "../bibliography/database"
 /**
 * Helper functions for the book print page.
 */
@@ -58,9 +58,9 @@ export class PrintBook {
         paginationConfig['pageWidth'] = this.pageSizes[this.theBook.settings.papersize].width
 
         let bibGetter = new BibliographyDB(this.documentOwners.join(','), false, false, false)
-        bibGetter.getBibDB(function (
-                bibDB) {
-                that.bibDB = bibDB
+
+        bibGetter.getBibDB(function (bibPks, bibCats) {
+                that.bibDB = bibGetter.bibDB
                 that.fillPrintPage()
             })
 
@@ -122,7 +122,7 @@ export class PrintBook {
             modelToViewNode: this.modelToViewNode,
             obj2Node
         })
-
+        
         let citationFormatter = new FormatCitations(document.body, this.theBook.settings.citationstyle, this.bibDB)
         jQuery(bibliography).html(citationFormatter.bibliographyHTML)
 

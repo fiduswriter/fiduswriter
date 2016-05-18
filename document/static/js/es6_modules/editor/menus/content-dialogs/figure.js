@@ -1,7 +1,7 @@
 import {figureImageTemplate, figureImageItemTemplate, configureFigureTemplate} from "./templates"
 import {ImageSelectionDialog} from "../../../images/selection-dialog/selection-dialog"
 
-import {render as katexRender} from "katex"
+import {katexRender} from "../../../katex/katex"
 
 export class FigureDialog {
     constructor(mod) {
@@ -23,7 +23,8 @@ export class FigureDialog {
     layoutMathPreview() {
         let previewNode = document.getElementById('inner-figure-preview')
         katexRender(this.equation, previewNode, {
-            displayMode: true
+            displayMode: true,
+            throwOnError: false
         })
     }
 

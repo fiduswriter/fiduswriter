@@ -5,7 +5,8 @@ import {importBibTemplate} from "./templates"
 
 export class BibLatexImporter {
 
-    constructor(callback) {
+    constructor(db, callback) {
+        this.db = db
         this.callback = callback
         this.openDialog()
     }
@@ -62,7 +63,8 @@ export class BibLatexImporter {
         })
     }
 
-    /** Second step of the BibTeX file import. Takes a BibTeX file object, processes client side and cuts into chunks to be uploaded to the server.
+    /** Second step of the BibTeX file import. Takes a BibTeX file object,
+     * processes client side and cuts into chunks to be uploaded to the server.
      * @param e File object that is to be imported.
      */
     processFile(file) {
@@ -71,12 +73,12 @@ export class BibLatexImporter {
         bibData.setInput(file)
         bibData.bibtex()
         this.bibEntries = bibData.getEntries()
-        if (_.isEmpty(bibEntries)) {
+        if (_.isEmpty(this.bibEntries)) {
             $.deactivateWait()
             $.addAlert('error', gettext('No bibliography entries could be found in import file.'))
             return
         } else {
-            this.bibKeylist = Object.keys(bibEntries)
+            this.bibKeylist = Object.keys(this.bibEntries)
             this.totalChunks = Math.ceil(this.bibKeylist.length / 50)
             this.currentChunkNumber = 0
             this.processChunk()
@@ -88,8 +90,10 @@ export class BibLatexImporter {
         let that = this
         if (this.currentChunkNumber < this.totalChunks) {
             let currentChunk = {}
-            for (let i = this.currentChunkNumber; i < this.currentChunkNumber + 50; i++) {
-                currentChunk[this.bibKeylist[i]] = bibEntries[this.bibKeylist[i]]
+            let fromNumber = this.currentChunkNumber * 50
+            let toNumber = fromNumber + 50
+            for (let i = fromNumber; i < toNumber; i++) {
+                currentChunk[this.bibKeylist[i]] = this.bibEntries[this.bibKeylist[i]]
             }
             this.sendChunk(currentChunk, function () {
                 that.currentChunkNumber++
@@ -117,7 +121,14 @@ export class BibLatexImporter {
             data: postData,
             dataType: 'json',
             success: function (response, textStatus, jqXHR) {
-                that.callback(response.bibs)
+                let ids = []
+                response.bibs.forEach(function(bibEntry) {
+                    that.db.serverBibItemToBibDB(bibEntry)
+                    ids.push(bibEntry.id)
+                })
+                if (that.callback) {
+                    that.callback(ids)
+                }
                 let errors = response.errors,
                     warnings = response.warning,
                     len = errors.length

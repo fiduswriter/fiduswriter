@@ -6,13 +6,13 @@ let changeAvatarDialog = function() {
     jQuery('body').append(changeAvatarDialogTemplate)
     let diaButtons = {}
     diaButtons[gettext('Upload')] = function() {
-        let $form, f_data
+        let $form, fData
         $.activateWait()
         $form = jQuery('#avatar-uploader-form')
-        f_data = new FormData($form[0])
+        fData = new FormData($form[0])
         $.ajax({
             url : '/account/avatar/upload/',
-            data: f_data,
+            data: fData,
             type : 'POST',
             processData: false,
             contentType: false,
@@ -34,9 +34,9 @@ let changeAvatarDialog = function() {
         modal : true,
         buttons : diaButtons,
         create : function() {
-            let $the_dialog = jQuery(this).closest(".ui-dialog")
-            $the_dialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
-            $the_dialog.find(".ui-button:last").addClass("fw-button fw-orange")
+            let theDialog = jQuery(this).closest(".ui-dialog")
+            theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
+            theDialog.find(".ui-button:last").addClass("fw-button fw-orange")
             jQuery('#avatar-uploader').bind('change', function() {
                 jQuery('#uploaded-avatar-name').html(jQuery(this).val().replace(/C:\\fakepath\\/i, ''))
             })
@@ -101,9 +101,9 @@ let deleteAvatarDialog = function() {
         modal : true,
         buttons : diaButtons,
         create : function() {
-            let $the_dialog = jQuery(this).closest(".ui-dialog")
-            $the_dialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
-            $the_dialog.find(".ui-button:last").addClass("fw-button fw-orange")
+            let theDialog = jQuery(this).closest(".ui-dialog")
+            theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
+            theDialog.find(".ui-button:last").addClass("fw-button fw-orange")
         },
         close : function() { jQuery("#confirmdeletion").dialog('destroy').remove() }
     })
@@ -111,7 +111,7 @@ let deleteAvatarDialog = function() {
 
 let saveProfile = function() {
     $.activateWait()
-    let post_data = {
+    let postData = {
         'user': {
             'username': jQuery('#username').val(),
             'first_name': jQuery('#first_name').val(),
@@ -120,7 +120,7 @@ let saveProfile = function() {
     }
     $.ajax({
         url : '/account/save/',
-        data : {'form_data': JSON.stringify(post_data)},
+        data : {'form_data': JSON.stringify(postData)},
         type : 'POST',
         error: function (jqXHR, textStatus, errorThrown) {
             if(422 == jqXHR.status) {
@@ -130,8 +130,8 @@ let saveProfile = function() {
                     firstError = '<span class="form-error-msg">'+errmsg[0]+'</span>'
                     jQuery('#'+fieldname).after(firstError)
                 })
-                let e_msg = gettext("Please check the above errors")
-                jQuery('#emsg').text( e_msg ).fadeIn('slow')
+                let eMsg = gettext("Please check the above errors")
+                jQuery('#emsg').text( eMsg ).fadeIn('slow')
             } else {
                 console.log(jqXHR.responseText)
             }
@@ -158,9 +158,9 @@ let deleteUserDialog = function() {
         modal : true,
         buttons : diaButtons,
         create : function() {
-            let $the_dialog = jQuery(this).closest(".ui-dialog")
-            $the_dialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
-            $the_dialog.find(".ui-button:last").addClass("fw-button fw-orange")
+            let theDialog = jQuery(this).closest(".ui-dialog")
+            theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
+            theDialog.find(".ui-button:last").addClass("fw-button fw-orange")
         },
         close : function() { jQuery(this).dialog('destroy').remove() }
     })
@@ -170,28 +170,28 @@ let changePwdDialog = function() {
     jQuery('body').append(changePwdDialogTemplate)
     let diaButtons = {}
     diaButtons[gettext('Submit')] = function() {
-        let old_pwd = jQuery('#old-password-input').val(),
-            new_pwd1 = jQuery('#new-password-input1').val(),
-            new_pwd2 = jQuery('#new-password-input2').val()
+        let oldPwd = jQuery('#old-password-input').val(),
+            newPwd1 = jQuery('#new-password-input1').val(),
+            newPwd2 = jQuery('#new-password-input2').val()
 
         jQuery('#fw-password-change-error').html('')
 
-        if('' == old_pwd || '' == new_pwd1 || '' == new_pwd2) {
+        if('' == oldPwd || '' == newPwd1 || '' == newPwd2) {
             jQuery('#fw-password-change-error').html(gettext('All fields are required!'))
             return
         }
 
-        if(new_pwd1 != new_pwd2) {
+        if(newPwd1 != newPwd2) {
             jQuery('#fw-password-change-error').html(gettext('Please confirm the new password!'))
             return
         }
 
-        let form_data = new FormData(document.getElementById('fw-password-change-form'))
+        let formData = new FormData(document.getElementById('fw-password-change-form'))
 
         $.activateWait()
         $.ajax({
             url : '/account/passwordchange/',
-            data: form_data,
+            data: formData,
             type : 'POST',
             processData: false,
             contentType: false,
@@ -201,17 +201,17 @@ let changePwdDialog = function() {
                     jQuery("#fw-change-pwd-dialog").dialog('close')
                     alert(gettext('The password has been changed.'))
                 } else {
-                    let error_msg
+                    let eMsg
                     if(response.msg.hasOwnProperty('old_password')) {
-                        error_msg = response.msg['old_password'][0]
+                        eMsg = response.msg['old_password'][0]
                     } else if(response.msg.hasOwnProperty('new_password1')) {
-                        error_msg = response.msg['new_password1'][0]
+                        eMsg = response.msg['new_password1'][0]
                     } else if(response.msg.hasOwnProperty('new_password2')) {
-                        error_msg = response.msg['new_password2'][0]
+                        eMsg = response.msg['new_password2'][0]
                     } else {
-                        error_msg = gettext('The password could not be changed!')
+                        eMsg = gettext('The password could not be changed!')
                     }
-                    jQuery('#fw-password-change-error').html(error_msg)
+                    jQuery('#fw-password-change-error').html(eMsg)
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -228,9 +228,9 @@ let changePwdDialog = function() {
         modal : true,
         buttons : diaButtons,
         create : function() {
-            let $the_dialog = jQuery(this).closest(".ui-dialog")
-            $the_dialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
-            $the_dialog.find(".ui-button:last").addClass("fw-button fw-orange")
+            let theDialog = jQuery(this).closest(".ui-dialog")
+            theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
+            theDialog.find(".ui-button:last").addClass("fw-button fw-orange")
         },
         close : function() { jQuery(this).dialog('destroy').remove() }
     })
@@ -240,23 +240,23 @@ let addEmailDialog = function() {
     jQuery('body').append(changeEmailDialogTemplate)
     let diaButtons = {}
     diaButtons[gettext('Submit')] = function() {
-        let new_email = jQuery('#new-profile-email').val()
-        new_email = new_email.replace(/(^\s+)|(\s+$)/g, "")
+        let newEmail = jQuery('#new-profile-email').val()
+        newEmail = newEmail.replace(/(^\s+)|(\s+$)/g, "")
 
         jQuery('#fw-add-email-error').html('')
 
-        if('' == new_email) {
+        if('' == newEmail) {
             jQuery('#fw-add-email-error').html(gettext('New email address is required!'))
             return
         }
 
-        jQuery('#new-profile-email').val(new_email)
+        jQuery('#new-profile-email').val(newEmail)
 
-        let form_data = new FormData(document.getElementById('fw-add-email-form'))
+        let formData = new FormData(document.getElementById('fw-add-email-form'))
         $.activateWait()
         $.ajax({
             url : '/account/emailadd/',
-            data: form_data,
+            data: formData,
             type : 'POST',
             processData: false,
             contentType: false,
@@ -264,10 +264,10 @@ let addEmailDialog = function() {
             success : function(response, textStatus, jqXHR) {
                 if(200 == jqXHR.status) {
                     jQuery('#fw-add-email-dialog').dialog('close')
-                    alert(gettext('Confirmation e-mail sent to ' + new_email))
+                    alert(gettext('Confirmation e-mail sent to ' + newEmail))
                 } else {
-                    let error_msg = response.msg['email'][0]
-                    jQuery('#fw-add-email-error').html(error_msg)
+                    let eMsg = response.msg['email'][0]
+                    jQuery('#fw-add-email-error').html(eMsg)
                 }
             },
             error: function(jqXHR, textStatus, errorThrown) {
@@ -284,16 +284,16 @@ let addEmailDialog = function() {
         modal : true,
         buttons : diaButtons,
         create : function() {
-            let $the_dialog = jQuery(this).closest(".ui-dialog")
-            $the_dialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
-            $the_dialog.find(".ui-button:last").addClass("fw-button fw-orange")
+            let theDialog = jQuery(this).closest(".ui-dialog")
+            theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
+            theDialog.find(".ui-button:last").addClass("fw-button fw-orange")
         },
         close : function() { jQuery(this).dialog('destroy').remove() }
     })
 }
 
 let deleteEmailDialog = function() {
-    let this_tr = jQuery(this).parent().parent()
+    let thisTr = jQuery(this).parent().parent()
         email = jQuery(this).data('email'),
         diaButtons = {}
 
@@ -303,20 +303,20 @@ let deleteEmailDialog = function() {
     }))
 
     diaButtons[gettext('Remove')] = function() {
-        let form_data = new FormData()
-        form_data.append('email', email)
+        let formData = new FormData()
+        formData.append('email', email)
 
         $.activateWait()
         $.ajax({
             url : '/account/emaildelete/',
-            data: form_data,
+            data: formData,
             type : 'POST',
             processData: false,
             contentType: false,
             dataType : 'json',
             success : function(response, textStatus, jqXHR) {
                 if(200 == jqXHR.status) {
-                    this_tr.remove()
+                    thisTr.remove()
                 }
                 jQuery('#fw-confirm-email-dialog').dialog('close')
                 alert(gettext(response.msg))
@@ -336,33 +336,33 @@ let deleteEmailDialog = function() {
         modal : true,
         buttons : diaButtons,
         create : function() {
-            let $the_dialog = jQuery(this).closest(".ui-dialog")
-            $the_dialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
-            $the_dialog.find(".ui-button:last").addClass("fw-button fw-orange")
+            let theDialog = jQuery(this).closest(".ui-dialog")
+            theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
+            theDialog.find(".ui-button:last").addClass("fw-button fw-orange")
         },
         close : function() { jQuery(this).dialog('destroy').remove() }
     })
 }
 
 let changePrimaryEmailDialog = function() {
-    let prim_email_radio = jQuery('.primary-email-radio:checked'),
-        prim_email_wrapper = prim_email_radio.parent().parent(),
-        prim_email = prim_email_radio.val(),
+    let primEmailRadio = jQuery('.primary-email-radio:checked'),
+        primEmailErapper = primEmailRadio.parent().parent(),
+        primEmail = primEmailRadio.val(),
         diaButtons = {}
 
     jQuery('body').append(deleteEmailDialogTemplate({
         'title': gettext('Confirm set primary'),
-        'text':  gettext('Set the email address primary') + ': ' + prim_email + '?'
+        'text':  gettext('Set the email address primary') + ': ' + primEmail + '?'
     }))
 
     diaButtons[gettext('Submit')] = function() {
-        let form_data = new FormData()
-        form_data.append('email', prim_email)
+        let formData = new FormData()
+        formData.append('email', primEmail)
 
         $.activateWait()
         $.ajax({
             url : '/account/emailprimary/',
-            data: form_data,
+            data: formData,
             type : 'POST',
             processData: false,
             contentType: false,
@@ -370,7 +370,7 @@ let changePrimaryEmailDialog = function() {
             success : function(response, textStatus, jqXHR) {
                 if(200 == jqXHR.status) {
                     jQuery('tr.primary-email-tr span.disabled').attr('class', 'delete-email fw-link-text')
-                    prim_email_wrapper.find('span.delete-email.fw-link-text').attr('class', 'disabled')
+                    primEmailErapper.find('span.delete-email.fw-link-text').attr('class', 'disabled')
                 } else {
                     jQuery('tr.primary-email-tr .primary-email-radio').prop("checked", true)
                 }
@@ -396,9 +396,9 @@ let changePrimaryEmailDialog = function() {
         modal : true,
         buttons : diaButtons,
         create : function() {
-            let $the_dialog = jQuery(this).closest(".ui-dialog")
-            $the_dialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
-            $the_dialog.find(".ui-button:last").addClass("fw-button fw-orange")
+            let theDialog = jQuery(this).closest(".ui-dialog")
+            theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
+            theDialog.find(".ui-button:last").addClass("fw-button fw-orange")
         },
         close : function() { jQuery(this).dialog('destroy').remove() }
     })

@@ -41,7 +41,7 @@ export let documentsListItemTemplate = _.template('\
                 </td>\
                 <td width="60"  class="td-icon">\
                     <span class="rights fw-inline" data-id="<%- aDocument.id %>">\
-                        <i data-id="<%- aDocument.id %>" class="icon-access-right <%- aDocument.rights %>"></i>\
+                        <i data-id="<%- aDocument.id %>" class="icon-access-right icon-access-<%- aDocument.rights %>"></i>\
                     </span>\
                 </td>\
                  <td width="40"  class="td-icon">\

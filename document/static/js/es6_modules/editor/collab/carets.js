@@ -95,7 +95,7 @@ export class ModCollabCarets {
             posHead = map.map(posHead)
         })
 
-        // Delete an old marked range for the same session, if there is one.
+        //   Delete an old marked range for the same session, if there is one.
         this.removeSelection(caretPosition.sessionId)
 
         let range = false

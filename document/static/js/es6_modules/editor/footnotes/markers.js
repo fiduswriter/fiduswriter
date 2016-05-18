@@ -55,7 +55,8 @@ export class ModFootnoteMarkers {
             if (newFootnotes.length > 0) {
                 let firstFootNoteStart = newFootnotes[0].from
                 let index = 0
-                while (that.mod.footnotes.length > index && firstFootNoteStart > that.mod.footnotes[index].from) {
+                while (that.mod.footnotes.length > index &&
+                    firstFootNoteStart > that.mod.footnotes[index].from) {
                     index++
                 }
                 newFootnotes.forEach(function(footnote) {
@@ -141,7 +142,6 @@ export class ModFootnoteMarkers {
                     that.mod.fnEditor.removeFootnote(footnoteMarker)
                 })
                 footnoteMarkers.push(footnoteMarker)
-
 
             }
         })

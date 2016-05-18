@@ -478,8 +478,8 @@ export const fidusSchema = new Schema({
     horizontal_rule: {type: HorizontalRule},
     figure: {type: Figure},
 
-    paragraph: {type: Paragraph, content: "inline[_]*"},
-    heading: {type: Heading, content: "inline[_]*"},
+    paragraph: {type: Paragraph, content: "inline<_>*"},
+    heading: {type: Heading, content: "inline<_>*"},
     code_block: {type: CodeBlock, content: "text*"},
 
     text: {type: Text},
@@ -507,7 +507,7 @@ export const fidusFnSchema = new Schema({
   nodes: {
     doc: {type: Doc, content: "footnotecontainer*"},
 
-    footnotecontainer: {type: Title, content: "block+"},
+    footnotecontainer: {type: FootnoteContainer, content: "block+"},
 
     blockquote: {type: BlockQuote, content: "block+"},
     ordered_list: {type: OrderedList, content: "list_item+"},
@@ -516,8 +516,8 @@ export const fidusFnSchema = new Schema({
     horizontal_rule: {type: HorizontalRule},
     figure: {type: Figure},
 
-    paragraph: {type: Paragraph, content: "inline[_]*"},
-    heading: {type: Heading, content: "inline[_]*"},
+    paragraph: {type: Paragraph, content: "inline<_>*"},
+    heading: {type: Heading, content: "inline<_>*"},
     code_block: {type: CodeBlock, content: "text*"},
 
     text: {type: Text},

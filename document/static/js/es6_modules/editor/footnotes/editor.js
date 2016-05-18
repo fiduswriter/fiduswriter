@@ -92,9 +92,12 @@ export class ModFootnoteEditor {
     // Convert the footnote HTML stored with the marker to a PM node representation of the footnote.
     htmlTofootnoteNode(contents) {
         let footnoteHTML = "<div class='footnote-container'>" + contents + "</div>"
-        return fromHTML(this.mod.schema, footnoteHTML, {
-            preserveWhitespace: true
-        }).firstChild
+        let node = fromHTML(this.mod.schema, footnoteHTML, {
+            preserveWhitespace: true,
+            topNode: false
+        })
+
+        return node.firstChild
     }
 
 
@@ -106,6 +109,7 @@ export class ModFootnoteEditor {
         for (let i=0; i<index;i++) {
             pos += this.mod.fnPm.doc.child(i).nodeSize
         }
+
         this.mod.fnPm.tr.insert(pos, node).apply({filter:false})
         this.rendering = false
     }

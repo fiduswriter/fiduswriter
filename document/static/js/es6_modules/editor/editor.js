@@ -417,7 +417,7 @@ export class Editor {
             //Check all transformation steps. If step type not allowed = prohibit
             if (!transform.steps.every(function(step) {
                 //check if in allowed array. if false - exit loop
-                return (step.type === 'addMark' || step.type === 'removeMark') && step.param.type.name === 'comment'
+                return (step.jsonID === 'addMark' || step.jsonID === 'removeMark') && step.mark.type.name === 'comment'
             })) {
                 prohibited = true
             }

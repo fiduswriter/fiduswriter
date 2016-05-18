@@ -30,7 +30,7 @@ export class ModCollabCarets {
         new UpdateScheduler(this.mod.editor.pm, "change", () => {return that.updatePositionCSS()})
         new UpdateScheduler(this.mod.editor.mod.footnotes.fnPm, "change", () => {return that.updatePositionCSS()})
         // Limit sending of selection to once every 250 ms. This is also important to work correctly
-        //  with editing, which otherwise triggers three selection changes that result in an incorrect caret placement
+        // with editing, which otherwise triggers three selection changes that result in an incorrect caret placement
         let sendSelection = _.debounce(function(){
             that.sendSelectionChange()
         }, 250)

@@ -8,6 +8,9 @@ import "prosemirror/dist/collab"
 import {scheduleDOMUpdate} from "prosemirror/dist/ui/update"
 //import "prosemirror/dist/menu/menubar"
 
+import {defaultDocumentStyle} from "../style/documentstyle-list"
+import {defaultCitationStyle} from "../style/citation-definitions"
+
 import {fidusSchema} from "./schema"
 import {ModComments} from "./comments/mod"
 import {ModFootnotes} from "./footnotes/mod"
@@ -307,8 +310,8 @@ export class Editor {
 
         let defaultSettings = [
             ['papersize', 1117],
-            ['citationstyle', 'apa'], // TODO: make this calculated. Not everyone will have apa installed
-            ['documentstyle', window.defaultDocumentStyle]
+            ['citationstyle', defaultCitationStyle],
+            ['documentstyle', defaultDocumentStyle]
         ]
 
 

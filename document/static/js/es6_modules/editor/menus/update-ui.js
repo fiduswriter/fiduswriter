@@ -192,8 +192,8 @@ export class ModMenusUpdateUI {
                 // In footnote editor
                 jQuery('#current-position').html(gettext('Footnote'))
                 let blockNode = start.parent
-                blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name
-                    + '_' + blockNode.attrs.level : blockNode.type.name
+                let blockNodeType = blockNode.type.name === 'heading' ? blockNode.type.name +
+                    '_' + blockNode.attrs.level : blockNode.type.name
                 jQuery('#block-style-label').html(BLOCK_LABELS[blockNodeType])
 
                 // Enable all editing buttons, except comment and footnote
@@ -244,7 +244,7 @@ export class ModMenusUpdateUI {
 
         placeHolders.forEach(function(elementType, index) {
             let partElement = pm.doc.child(i)
-            if (partElement.type.name == !elementType.type) {
+            if (partElement.type.name !== elementType.type) {
                 return false
             }
             if (partElement.textContent.length === 0 &&

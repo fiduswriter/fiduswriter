@@ -15,9 +15,9 @@ export let bookListTemplate = _.template('\
                <span class="book-title fw-link-text fw-searchable" data-id="<%- aBook.id %>">\
                    <%  if (aBook.title.length > 0) { %>\
                        <%- aBook.title %>\
-                   <% } else { %>\
-                       '+gettext('Untitled')+'\
-                   <% } %>\
+                   <% } else { %>' +
+                       gettext('Untitled') +
+                   '<% } %>\
                </span>\
            </span>\
        </td>\
@@ -144,12 +144,12 @@ export let bookPrintDataTemplate = _.template('\
         </th>\
         <td>\
         <select class="entryForm dk" name="book-settings-papersize" id="book-settings-papersize" <% if (theBook.rights==="read") {print("disabled=disabled")} %> >\
-            <% _.each([["folio","'
-            +gettext("Folio (15 x 12 inch)")+'"],["quarto","'
-            +gettext("Quarto (12 × 9 inch)")+'"],["octavo","'
-            +gettext("Octavo (9 x 6 inch)")+'"],["a5","'
-            +gettext("A5")+'"],["a4","'
-            +gettext("A4")+
+            <% _.each([["folio","' +
+            gettext("Folio (15 x 12 inch)") + '"],["quarto","' +
+            gettext("Quarto (12 × 9 inch)") + '"],["octavo","' +
+            gettext("Octavo (9 x 6 inch)") + '"],["a5","' +
+            gettext("A5") + '"],["a4","' +
+            gettext("A4") +
             '"]], function(papersize) { %>\
                 <option value="<%= papersize[0] %>"<% if(papersize[0] == theBook.settings.papersize) { %> selected<%} %>><%= papersize[1] %></option>\
             <% }) %>\

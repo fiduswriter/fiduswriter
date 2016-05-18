@@ -172,7 +172,7 @@ class Citation extends Inline {
             bibFormat: new Attribute({
                 default: ""
             }),
-            bibEntry: new Attribute,
+            bibEntry: new Attribute(),
             bibBefore: new Attribute({
                 default: ""
             }),
@@ -337,8 +337,8 @@ Figure.prototype.serializeDOM = (node, serializer) => {
     if (node.attrs.image) {
         dom.appendChild(serializer.elt("div"))
         if(node.type.schema.cached.imageDB) {
-            if(node.type.schema.cached.imageDB.db[node.attrs.image]
-                && node.type.schema.cached.imageDB.db[node.attrs.image].image) {
+            if(node.type.schema.cached.imageDB.db[node.attrs.image] &&
+                node.type.schema.cached.imageDB.db[node.attrs.image].image) {
                 dom.firstChild.appendChild(serializer.elt("img", {
                     "src": node.type.schema.cached.imageDB.db[node.attrs.image].image
                 }))
@@ -349,8 +349,8 @@ Figure.prototype.serializeDOM = (node, serializer) => {
                 found. */
                 if (!imageDBBroken) {
                     node.type.schema.cached.imageDB.getDB(function() {
-                        if (node.type.schema.cached.imageDB.db[node.attrs.image]
-                                && node.type.schema.cached.imageDB.db[node.attrs.image].image) {
+                        if (node.type.schema.cached.imageDB.db[node.attrs.image] &&
+                                node.type.schema.cached.imageDB.db[node.attrs.image].image) {
                             dom.firstChild.appendChild(serializer.elt("img", {
                                 "src": node.type.schema.cached.imageDB.db[node.attrs.image].image
                             }))
@@ -430,7 +430,7 @@ Figure.register("command", "insert", {
 class CommentMark extends MarkType {
     get attrs() {
         return {
-            id: new Attribute
+            id: new Attribute()
         }
     }
     get inclusiveRight() {

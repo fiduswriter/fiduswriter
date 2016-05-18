@@ -217,7 +217,7 @@ export class ImageOverview {
         //filtering function for the list of images
         jQuery('#image-category').bind('change', function () {
             let catVal = jQuery(this).val()
-            if (0 == catVal) {
+            if (0 === catVal) {
                 jQuery('#imagelist > tbody > tr').show()
             } else {
                 jQuery('#imagelist > tbody > tr').hide()
@@ -240,12 +240,12 @@ export class ImageOverview {
         jQuery('#action-selection-pulldown li > span').bind('mousedown', function () {
             let actionName = jQuery(this).attr('data-action'),
                 ids = []
-            if ('' == actionName || 'undefined' == typeof (actionName))
+            if ('' === actionName || 'undefined' == typeof (actionName))
                 return
             jQuery('.entry-select:checked').each(function () {
                 ids[ids.length] = jQuery(this).attr('data-id')
             })
-            if (0 == ids.length)
+            if (0 === ids.length)
                 return
             switch (actionName) {
             case 'delete':

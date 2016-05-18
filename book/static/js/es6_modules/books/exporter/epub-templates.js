@@ -36,11 +36,11 @@ export let epubBookOpfTemplate = _.template('<?xml version="1.0" encoding="UTF-8
     <% }); %>\
     \t\t<item id="nav" href="document-nav.xhtml" properties="nav" media-type="application/xhtml+xml" />\n\
         <item id="copyright" href="copyright.xhtml" media-type="application/xhtml+xml"/>\
-        <% _.each(images,function(item, index){ %>'
-            + opfImageItemTemplatePart +
+        <% _.each(images,function(item, index){ %>' +
+            opfImageItemTemplatePart +
         '<% }); %>\
-        <% _.each(styleSheets,function(item, index){ %>'
-            + opfCssItemTemplatePart +
+        <% _.each(styleSheets,function(item, index){ %>' +
+            opfCssItemTemplatePart +
         '<% }); %>\
         <% if (math) { %> <%= katexOpfIncludes %><% }%>\
     \t\t<!-- ncx included for 2.0 reading system compatibility: -->\n\

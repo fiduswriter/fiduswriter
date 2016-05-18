@@ -28,7 +28,7 @@ export class ModFootnoteMarkers {
         let unconfirmedMaps = this.mod.editor.pm.mod.collab.unconfirmedMaps
         let unconfirmedSteps = this.mod.editor.pm.mod.collab.unconfirmedSteps
         let doc = this.mod.editor.pm.mod.versionDoc
-        maps = transform.maps.concat(unconfirmedMaps)
+        transform.maps = transform.maps.concat(unconfirmedMaps)
         unconfirmedSteps.forEach(function(step) {
             // We add pseudo steps for all the unconfirmed steps so that the
             // unconfirmed maps will be applied when handling the transform

@@ -1,4 +1,4 @@
-import {HtmlBookExporter} from "./exporter/html"
+import {HTMLBookExporter} from "./exporter/html"
 import {LatexBookExporter} from "./exporter/latex"
 import {EpubBookExporter} from "./exporter/epub"
 import {BookActions} from "./actions"
@@ -85,7 +85,7 @@ export class BookList {
                 function () {
                     let actionName = jQuery(this).attr('data-action'),
                         ids = []
-                    if ('' == actionName || 'undefined' == typeof (actionName))
+                    if ('' === actionName || 'undefined' == typeof (actionName))
                         return
                     jQuery('.entry-select:checked').not(':disabled').each(function () {
                         if (that.user.id != jQuery(this).attr('data-owner') && (
@@ -94,7 +94,7 @@ export class BookList {
                             let theTitle = jQuery(this).parent().parent().parent()
                                 .find(
                                     '.book-title').text()
-                            theTitle = $.trim(the_title).replace(/[\t\n]/g, '')
+                            theTitle = $.trim(theTitle).replace(/[\t\n]/g, '')
                             $.addAlert('error', gettext(
                                 'You cannot delete or share: ') + theTitle)
                             //return true
@@ -103,7 +103,7 @@ export class BookList {
                                 'data-id'))
                         }
                     })
-                    if (0 == ids.length)
+                    if (0 === ids.length)
                         return
                     switch (actionName) {
                     case 'delete':

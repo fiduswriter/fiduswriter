@@ -97,17 +97,17 @@ export let commentsTemplate = _.template(`
                 <% if(comment.id===that.activeCommentId) { %>active<% } else { %>inactive<% } %>
                 <% if(comment["review:isMajor"] === true) { %>comment-is-major-bgc<% }%>"
             >
-                <% if(0 === comment.comment.length) { %>`
-                      + firstCommentTemplatePart +
+                <% if(0 === comment.comment.length) { %>` +
+                      firstCommentTemplatePart +
                 `<% } else {
                    var active = (comment.id===that.activeCommentId);
-                  %>`
-                    + singleCommentTemplatePart +
+                  %>` +
+                    singleCommentTemplatePart +
                 `<% } %>
                 <% if (comment.answers && comment.answers.length) {
                    for (var i=0;i < comment.answers.length; i++) {
-                     var answer = comment.answers[i], active = (comment.id===that.activeCommentId)%>`
-                    + answerCommentTemplatePart +
+                     var answer = comment.answers[i], active = (comment.id===that.activeCommentId)%>` +
+                    answerCommentTemplatePart +
                  `<% }
                } %>
                 <% if(comment.id===that.activeCommentId && 0 < comment.comment.length) { %>

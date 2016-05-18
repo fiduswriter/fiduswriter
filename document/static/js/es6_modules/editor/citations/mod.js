@@ -72,7 +72,7 @@ export class ModCitations {
                 emptyBodyCitations.forEach(function(emptyCitation, index) {
                     emptyCitation.innerHTML = '<span class="citation-footnote-marker"></span>'
                     let citationText = citationFormatter.citationTexts[index][0][1]
-                    citationsHTML += '<div class="footnote-citation">'+citationText[0][1]+'</div>'
+                    citationsHTML += '<div class="footnote-citation">'+citationText+'</div>'
                 })
                 if (citationsContainer.innerHTML !== citationsHTML) {
                     citationsContainer.innerHTML = citationsHTML

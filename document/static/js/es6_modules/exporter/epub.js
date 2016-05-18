@@ -1,5 +1,6 @@
 import {BaseHTMLExporter} from "./html"
 import {obj2Node, node2Obj} from "./json"
+import {BibliographyDB} from "../bibliography/database"
 import {createSlug, findImages} from "./tools"
 import {zipFileCreator} from "./zip"
 import {opfTemplate, containerTemplate, ncxTemplate, ncxItemTemplate, navTemplate,
@@ -292,7 +293,7 @@ export class EpubExporter extends BaseEpubExporter {
         if (math) {
             includeZips.push({
                 'directory': 'EPUB',
-                'url': staticUrl + 'zip/katex-style.zip'
+                'url': window.staticUrl + 'zip/katex-style.zip'
             })
         }
 

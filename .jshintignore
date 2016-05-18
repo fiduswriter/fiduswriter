@@ -1,0 +1,4 @@
+static-es5/
+es6-cache/
+node_modules/
+**/js/libs/

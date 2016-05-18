@@ -1,5 +1,6 @@
 import {DocumentAccessRightsDialog} from "../../documents/access-rights/dialog"
-
+import {documentStyleList} from "../../style/documentstyle-list"
+import {citationDefinitions} from "../../style/citation-definitions"
 /* Bindings for the header menu */
 export class ModMenusHeader {
     constructor(mod) {
@@ -25,19 +26,19 @@ export class ModMenusHeader {
           for (let i = 0; i < documentStyleList.length; i++) {
               let newMenuItem = document.createElement("li")
               newMenuItem.innerHTML =
-                "<span class='fw-pulldown-item style' data-style='"
-                + documentStyleList[i].filename + "' title='"
-                + documentStyleList[i].title + "'>"
-                + documentStyleList[i].title + "</span>"
+                "<span class='fw-pulldown-item style' data-style='" +
+                documentStyleList[i].filename + "' title='" +
+                documentStyleList[i].title + "'>" +
+                documentStyleList[i].title + "</span>"
 
               documentStyleMenu.appendChild(newMenuItem)
           }
-          for (let j in citeproc.styles) {
+          for (let j in citationDefinitions.styles) {
               let newMenuItem = document.createElement("li")
               newMenuItem.innerHTML =
-                "<span class='fw-pulldown-item citationstyle' data-citationstyle='" + j
-                + "' title='" + citeproc.styles[j].name + "'>"
-                + citeproc.styles[j].name + "</span>"
+                "<span class='fw-pulldown-item citationstyle' data-citationstyle='" +
+                j + "' title='" + citationDefinitions.styles[j].name + "'>" +
+                citationDefinitions.styles[j].name + "</span>"
 
               citationStyleMenu.appendChild(newMenuItem)
           }
@@ -135,26 +136,26 @@ export class ModMenusHeader {
 
           //open and close header
           jQuery(document).on('click', '#open-close-header:not(.disabled)', function() {
-              let header_top = -92,
-                  toolnav_top = 0,
-                  content_top = 108
+              let headerTop = -92,
+                  toolnavTop = 0,
+                  contentTop = 108
               if (jQuery(this).hasClass('header-closed')) {
                   jQuery(this).removeClass('header-closed')
-                  header_top = 0,
-                      toolnav_top = 92,
-                      content_top = 200
+                  headerTop = 0
+                  toolnavTop = 92
+                  contentTop = 200
               } else {
                   jQuery(this).addClass('header-closed')
               }
               jQuery('#header').stop().animate({
-                  'top': header_top
+                  'top': headerTop
               })
               jQuery('#editor-navigation').stop().animate({
-                  'top': toolnav_top
+                  'top': toolnavTop
               })
               jQuery('#pagination-layout').stop()
                   .animate({
-                      'top': content_top
+                      'top': contentTop
                   }, {
                       'complete': function() {
                           that.mod.editor.mod.comments.layout.layoutComments()

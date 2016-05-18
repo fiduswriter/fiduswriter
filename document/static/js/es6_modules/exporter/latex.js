@@ -371,8 +371,9 @@ export class BaseLatexExporter extends BaseExporter {
                 }
                 let fnCounter = 1
                 let searchNode = lastContainer.nextSibling.nextSibling
-                while(searchNode && searchNode.nodeType === 1
-                  && searchNode.hasAttribute('role') && searchNode.getAttribute('role') === 'doc-footnote') {
+                while(searchNode && searchNode.nodeType === 1 &&
+                    searchNode.hasAttribute('role') &&
+                    searchNode.getAttribute('role') === 'doc-footnote') {
                     searchNode = searchNode.nextSibling
                     fnCounter++
                 }

@@ -28,5 +28,32 @@
         }
       ]
     ]
+  },
+  "jshintConfig": {
+    "esversion": 6,
+    "loopfunc": true,
+    "asi": true,
+    "multistr": true,
+    "sub": true,
+    "undef": true,
+    "predef": [
+      "jQuery",
+	  "gettext",
+	  "_",
+	  "window",
+	  "$",
+	  "document",
+	  "console",
+	  "FileReader",
+	  "FormData",
+	  "alert",
+	  "setTimeout",
+	  "zip",
+      "setInterval",
+      "clearInterval",
+      "clearTimeout",
+      "CSL",
+      "XMLHttpRequest"
+    ]
   }
 }

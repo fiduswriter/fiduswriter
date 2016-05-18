@@ -21,7 +21,7 @@ export class ImageOverviewCategories {
             success: function (response, textStatus, jqXHR) {
                 if (jqXHR.status == 201) {
                     // TODO: Why do we reload the entire list when one new category is created?
-                    imageCategories = []
+                    that.imageOverview.imageDB.cats = response.entries
                     jQuery('#image-category-list li').not(':first').remove()
                     that.addImageCategoryList(response.entries)
 
@@ -71,8 +71,8 @@ export class ImageOverviewCategories {
         let dialogHeader = gettext('Edit Categories')
         let dialogBody = usermediaEditcategoriesTemplate({
             'dialogHeader': dialogHeader,
-            'categories': tmpUsermediaCategoryforms({
-                'categories': imageCategories
+            'categories': usermediaCategoryformsTemplate({
+                'categories': this.imageOverview.imageDB.cats
             })
         })
         jQuery('body').append(dialogBody)
@@ -87,10 +87,10 @@ export class ImageOverviewCategories {
                 let thisVal = jQuery.trim(jQuery(this).val())
                 let thisId = jQuery(this).attr('data-id')
                 if ('undefined' == typeof (thisId)) thisId = 0
-                if ('' != thisVal) {
+                if ('' !== thisVal) {
                     newCat.ids.push(thisId)
                     newCat.titles.push(thisVal)
-                } else if ('' == thisVal && 0 < thisId) {
+                } else if ('' === thisVal && 0 < thisId) {
                     deletedCats.push(thisId)
                 }
             })
@@ -126,7 +126,7 @@ export class ImageOverviewCategories {
         //add and remove name list field
         jQuery('.fw-add-input').bind('click', function () {
             let parent = jQuery(this).parents('.fw-list-input')
-            if (0 == parent.next().size()) {
+            if (0 === parent.next().size()) {
                 let parentClone = parent.clone(true)
                 parentClone.find('input, select').val('').removeAttr(
                     'data-id')
@@ -134,9 +134,10 @@ export class ImageOverviewCategories {
             } else {
                 let thePrev = jQuery(this).prev()
                 if (thePrev.hasClass("category-form")) {
-                    let thisId = thePrev.attr('data-id')
-                    if ('undefined' != typeof (thisId))
-                        deleted_cat[deleted_cat.length] = thisId
+                    // TODO: Figure out what this was about
+                    //let thisId = thePrev.attr('data-id')
+                    //if (undefined !== thisId)
+                    //    deleted_cat[deleted_cat.length] = thisId
                 }
                 parent.remove()
             }

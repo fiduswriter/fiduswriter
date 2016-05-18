@@ -24,11 +24,11 @@ export let opfTemplate = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
     \t<manifest>\n\
     \t\t<item id="t1" href="document.xhtml" media-type="application/xhtml+xml" />\n\
     \t\t<item id="nav" href="document-nav.xhtml" properties="nav" media-type="application/xhtml+xml" />\n\
-        <% _.each(images,function(item, index){ %>'
-            + opfImageItemTemplatePart +
+        <% _.each(images,function(item, index){ %>' +
+            opfImageItemTemplatePart +
         '<% }); %>\
-        <% _.each(styleSheets,function(item, index){ %>'
-            + opfCssItemTemplatePart +
+        <% _.each(styleSheets,function(item, index){ %>' +
+            opfCssItemTemplatePart +
         '<% }); %>\
         <% if (math) {%> <%= katexOpfIncludes %><% } %>\
     \t\t<!-- ncx included for 2.0 reading system compatibility: -->\n\
@@ -85,8 +85,8 @@ export let xhtmlTemplate = _.template('<?xml version="1.0" encoding="UTF-8"?>\n\
     <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="<%= shortLang %>" lang="<%= shortLang %>"\
         xmlns:epub="http://www.idpf.org/2007/ops">\n<head><title><%= title %></title>\
         <% if(math){ %><link rel="stylesheet" type="text/css" href="katex.min.css" /><% } %>\
-        <% _.each(styleSheets,function(item){ %>'
-            + xhtmlCssItemTemplatePart +
+        <% _.each(styleSheets,function(item){ %>' +
+            xhtmlCssItemTemplatePart +
         '<% }); %>\
         </head><body>\
         <% if (part && part !="") {%>\

@@ -54,8 +54,8 @@ export class PrintBook {
         this.theBook = aBook
         this.setDocumentStyle(this.theBook.settings.documentstyle)
 
-        paginationConfig['pageHeight'] = this.pageSizes[this.theBook.settings.papersize].height
-        paginationConfig['pageWidth'] = this.pageSizes[this.theBook.settings.papersize].width
+        window.paginationConfig['pageHeight'] = this.pageSizes[this.theBook.settings.papersize].height
+        window.paginationConfig['pageWidth'] = this.pageSizes[this.theBook.settings.papersize].width
 
         let bibGetter = new BibliographyDB(this.documentOwners.join(','), false, false, false)
 
@@ -122,7 +122,7 @@ export class PrintBook {
             modelToViewNode: this.modelToViewNode,
             obj2Node
         })
-        
+
         let citationFormatter = new FormatCitations(document.body, this.theBook.settings.citationstyle, this.bibDB)
         jQuery(bibliography).html(citationFormatter.bibliographyHTML)
 
@@ -130,12 +130,12 @@ export class PrintBook {
             jQuery(bibliography).parent().remove()
         }
 
-        paginationConfig['frontmatterContents'] = bookPrintStartTemplate({theBook: this.theBook})
+        window.paginationConfig['frontmatterContents'] = bookPrintStartTemplate({theBook: this.theBook})
 
 
         // TODO: render equations
-        pagination.initiate()
-        pagination.applyBookLayout()
+        window.pagination.initiate()
+        window.pagination.applyBookLayout()
         jQuery("#pagination-contents").addClass('user-contents')
         jQuery('head title').html(jQuery('#document-title').text())
 
@@ -149,7 +149,7 @@ export class PrintBook {
         newDocumentStyleLink.setAttribute("rel", "stylesheet")
         newDocumentStyleLink.setAttribute("type", "text/css")
         newDocumentStyleLink.setAttribute("id", "document-style-link")
-        newDocumentStyleLink.setAttribute("href", staticUrl+'css/document/'+theValue+'.css')
+        newDocumentStyleLink.setAttribute("href", window.staticUrl+'css/document/'+theValue+'.css')
 
         documentStyleLink.parentElement.replaceChild(newDocumentStyleLink, documentStyleLink)
     }

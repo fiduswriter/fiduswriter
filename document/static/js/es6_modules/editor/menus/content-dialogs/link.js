@@ -36,8 +36,8 @@ export let linkDialog = function (mod) {
             }
 
             if ((new RegExp(/^\s*$/)).test(linkTitle)) {
-                // The link text is empty. Make it the same as the link itself.
-                linkText = link
+                // The link title is empty. Make it the same as the link itself.
+                linkTitle = newLink
             }
             dialog.dialog('close')
             editor.currentPm.execCommand('link:set',[newLink, linkTitle])

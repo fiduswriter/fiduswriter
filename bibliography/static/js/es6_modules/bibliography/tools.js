@@ -32,7 +32,7 @@ export let formatDateString = function(dateString) {
 export let addRemoveListHandler = function () {
     jQuery('.fw-add-input').bind('click', function () {
         let $parent = jQuery(this).parents('.fw-list-input')
-        if (0 == $parent.next().size()) {
+        if (0 === $parent.next().size()) {
             let $parent_clone = $parent.clone(true)
             $parent_clone.find('input, select').val('').removeAttr(
                 'data-id')

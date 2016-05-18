@@ -30,7 +30,7 @@ export let contactsOverview = function () {
         $.addDropdownBox(jQuery('#select-action-dropdown'), jQuery('#action-selection-pulldown'))
         jQuery('#action-selection-pulldown span').bind('mousedown', function() {
             let ids = [], action_name = jQuery(this).attr('data-action')
-            if('' == action_name || 'undefined' == typeof(action_name))
+            if('' === action_name || 'undefined' == typeof(action_name))
                 return
             jQuery('.entry-select:checked').each(function() {
                 ids[ids.length] = parseInt(jQuery(this).attr('data-id'))

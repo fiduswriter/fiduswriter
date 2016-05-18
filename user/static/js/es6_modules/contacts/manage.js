@@ -6,11 +6,11 @@ import {addTeammemberTemplate, teammemberTemplate} from "./templates"
 
 //add a user to contact per ajax
 let addMember = function(userString, callback) {
-    if(null == userString || 'undefined' == typeof(userString)) { return false }
+    if(null === userString || 'undefined' == typeof(userString)) { return false }
 
     userString = $.trim(userString)
     jQuery('#add-new-member .warning').detach()
-    if('' == userString)
+    if('' === userString)
         return false
     $.ajax({
         url : '/account/teammember/add',
@@ -32,15 +32,15 @@ let addMember = function(userString, callback) {
 	        responseHtml = gettext('This person is already in your contacts')
 	    } else if (userString.indexOf('@') != -1 && userString.indexOf('.') != -1) {
 		responseHtml = gettext('No user is registered with the given email address.') +
-		    '<br />'
-		    + gettext('Please invite him/her ') +
-		    '<a target="_blank" href="mailto:' + userString + '?subject='
-                        + encodeURIComponent(gettext('Fidus Writer')) + '&body='
-                            + encodeURIComponent(gettext('Hey, I would like you to sign up for a Fidus Writer account.') + "\n"
-                                + gettext('Please register at')) + ' ' +
+		    '<br />' +
+		    gettext('Please invite him/her ') +
+		    '<a target="_blank" href="mailto:' + userString + '?subject=' +
+                encodeURIComponent(gettext('Fidus Writer')) + '&body=' +
+                    encodeURIComponent(gettext('Hey, I would like you to sign up for a Fidus Writer account.') +
+                    "\n" + gettext('Please register at')) + ' ' +
 			    window.location.origin +
-		    '">'
-			+ gettext('by sending an email') +
+		    '">' +
+			gettext('by sending an email') +
 		    '</a>!'
 	    } else {
 		responseHtml = gettext('User is not registered.')

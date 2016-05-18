@@ -40,8 +40,8 @@ jQuery.extend({
     'closeDropdownBox': function(e) {
         e.preventDefault();
         jQuery(document).off('mousedown', $.closeDropdownBox);
-        if(e.data.box.hasOwnProperty('type'))
-            e.data.box = box.data.box;
+        //if(e.data.box.hasOwnProperty('type'))
+        //    e.data.box = box.data.box;
         e.data.box.hide();
         $.isDropdownBoxOpen = false;
     },
@@ -50,7 +50,7 @@ jQuery.extend({
      * @param label The node who's parent has to be checked or unchecked.
      */
     'setCheckableLabel': function(label) {
-        checkbox = label.parent().find('input[type=checkbox]');
+        var checkbox = label.parent().find('input[type=checkbox]');
         if(label.hasClass('checked')) {
             label.removeClass('checked');
         } else {
@@ -83,7 +83,7 @@ jQuery.extend({
             'success': 'icon-ok'
         };
         var $alert_box = jQuery('<li class="alerts-' + alert_type + ' ' + icon_names[alert_type] + '">' + alert_msg + '</li>');
-        if(0 == jQuery('#alerts-outer-wrapper').size())
+        if(0 === jQuery('#alerts-outer-wrapper').size())
             jQuery('body').append('<div id="alerts-outer-wrapper"><ul id="alerts-wrapper"></ul></div>');
         jQuery('#alerts-wrapper').append($alert_box);
         $alert_box.fadeTo(fade_speed, 1, function() {

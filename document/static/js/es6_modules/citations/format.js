@@ -1,5 +1,6 @@
 import {citeprocSys} from "./citeproc-sys"
 import {CSLExporter} from "../bibliography/exporter/csl"
+import {citationDefinitions} from "../style/citation-definitions"
 /**
  * Functions to display citations and the bibliography.
  */
@@ -63,10 +64,10 @@ export class FormatCitations {
                     citationItem = {
                         id: entries[j]
                     }
-                    if ('' != pages[j]) {
+                    if ('' !== pages[j]) {
                         citationItem.locator = pages[j]
                     }
-                    if ('' != prefixes[j]) {
+                    if ('' !== prefixes[j]) {
                         citationItem.prefix = prefixes[j]
                     }
                     //if('' != suffixes[j]) { citationItem.suffix = pages[j] }
@@ -84,7 +85,7 @@ export class FormatCitations {
             }
         })
 
-        if (this.listedWorksCounter == 0) {
+        if (this.listedWorksCounter === 0) {
             return ''
         }
     }
@@ -112,11 +113,11 @@ export class FormatCitations {
 
     getFormattedCitations() {
 
-        if (citeproc.styles.hasOwnProperty(this.citationStyle)) {
-            this.citationStyle = citeproc.styles[this.citationStyle]
+        if (citationDefinitions.styles.hasOwnProperty(this.citationStyle)) {
+            this.citationStyle = citationDefinitions.styles[this.citationStyle]
         } else {
-            for (styleName in citeproc.styles) {
-                this.citationStyle = citeproc.styles[styleName]
+            for (let styleName in citationDefinitions.styles) {
+                this.citationStyle = citationDefinitions.styles[styleName]
                 break
             }
         }

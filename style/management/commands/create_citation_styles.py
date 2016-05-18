@@ -20,7 +20,6 @@ class Command(BaseCommand):
             'citation style menus. \n This file is automatically created '
             'using ./manage.py create_citation_styles\n*/\n'
         )
-        #output_js += u'(function () {\n'
         output_js += u'export let citationDefinitions = {\n'
 
         output_js += u'    locals: {\n'
@@ -38,10 +37,10 @@ class Command(BaseCommand):
 
         output_js += '    styles: {\n'
 
-        first_citation_style = False
+        first_cs = False
         for cs in CitationStyle.objects.order_by('short_title'):
-            if not first_citation_style:
-                first_citation_style = cs
+            if not first_cs:
+                first_cs = cs
             output_js += '        "' + cs.short_title + '": {\n'
             output_js += '            definition: "' + \
                 cs.contents.replace(
@@ -56,11 +55,9 @@ class Command(BaseCommand):
         output_js += '}'
         output_js += '\n'
 
-        if first_citation_style:
-            output_js += 'export let defaultCitationStyle = "' + first_citation_style.short_title + '"'
-
-#        output_js += '    exports.citeproc = citeproc;\n'
-#        output_js += '}).call(this);'
+        if first_cs:
+            cs = first_cs.short_title
+            output_js += 'export let defaultCitationStyle = "' + cs + '"'
 
         d = os.path.dirname(
             PROJECT_PATH +

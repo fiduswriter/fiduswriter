@@ -77,8 +77,9 @@ class Command(BaseCommand):
         if (default_document_style):
             dds = default_document_style
             output_js += u'export let defaultDocumentStyle = "' + dds + '"'
-        d = os.path.dirname(PROJECT_PATH +
-                            '/style/static/js/es6_modules/style/documentstyle-list.js')
+        d = os.path.dirname(
+            PROJECT_PATH +
+            '/style/static/js/es6_modules/style/documentstyle-list.js')
         if not os.path.exists(d):
             os.makedirs(d)
         js_file = open(

@@ -8,12 +8,12 @@ export class FigureDialog {
         this.editor = mod.editor
         this.imageDB = this.editor.imageDB
         this.imageId = false
-        this.insideFigure = false,
-        this.figureNode = false,
-        this.contentNode = false,
-        this.caption = '',
-        this.figureCategory = 'figure',
-        this.equation = '',
+        this.insideFigure = false
+        this.figureNode = false
+        this.contentNode = false
+        this.caption = ''
+        this.figureCategory = 'figure'
+        this.equation = ''
         this.node = this.editor.currentPm.selection.node
         this.submitMessage = gettext('Insert')
         this.dialog = false
@@ -90,7 +90,7 @@ export class FigureDialog {
                 class: 'fw-button fw-orange',
                 click: function () {
                     that.editor.currentPm.execCommand('deleteSelection')
-                    dialog.dialog('close')
+                    that.dialog.dialog('close')
                 }
             })
 

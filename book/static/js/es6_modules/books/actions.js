@@ -5,6 +5,9 @@ import {bookListTemplate, bookBasicInfoTemplate, bookPrintDataTemplate,
   } from "./templates"
 import {ImageDB} from "../images/database"
 import {ImageSelectionDialog} from "../images/selection-dialog/selection-dialog"
+import {defaultDocumentStyle, documentStyleList} from "../style/documentstyle-list"
+import {defaultCitationStyle} from "../style/citation-definitions"
+
 
 export class BookActions {
 
@@ -74,14 +77,15 @@ export class BookActions {
     }
 
     deleteBookDialog(ids) {
+        let that = this
         jQuery('body').append('<div id="confirmdeletion" title="' + gettext(
                 'Confirm deletion') +
             '"><p><span class="ui-icon ui-icon-alert" style="float:left; margin:0 7px 20px 0;"></span>' +
             gettext('Delete the book(s)?') + '</p></div>')
-        diaButtons = {}
+        let diaButtons = {}
         diaButtons[gettext('Delete')] = function () {
             for (let i = 0; i < ids.length; i++) {
-                deleteBook(ids[i])
+                that.deleteBook(ids[i])
             }
             jQuery(this).dialog("close")
             $.addAlert('success', gettext('The book(s) have been deleted'))
@@ -244,12 +248,11 @@ export class BookActions {
         theBook.owner = that.bookList.user.id
         theBook.rights = 'write'
         if (theOldBook.owner != theBook.owner) {
-            function setCoverImage(id) {
-                theBook.cover_image = id
-                that.saveBook(theBook)
-            }
             that.prepareCopyCoverImage(theBook.cover_image,
-                theOldBook.owner, setCoverImage)
+                theOldBook.owner, function(id) {
+                    theBook.cover_image = id
+                    that.saveBook(theBook)
+                })
         } else {
             that.saveBook(theBook)
         }
@@ -271,7 +274,7 @@ export class BookActions {
         let newImageEntry = false,
             imageTranslation = false
 
-        matchEntries = _.where(this.bookList.imageDB.db, {
+        let matchEntries = _.where(this.bookList.imageDB.db, {
             checksum: oldImageObject.checksum
         })
         if (0 === matchEntries.length) {
@@ -307,14 +310,14 @@ export class BookActions {
     }
     // TODO: Should we not be able to call a method from
     createNewImage(imageEntry, callback) {
-        let xhr = new XMLHttpRequest()
+        let xhr = new XMLHttpRequest(), that = this
         xhr.open('GET', imageEntry.oldUrl, true)
         xhr.responseType = 'blob'
 
         xhr.onload = function (e) {
             if (this.status == 200) {
                 // Note: .response instead of .responseText
-                let imageFile = new Blob([this.response], {
+                let imageFile = new window.Blob([this.response], {
                     type: imageEntry.file_type
                 })
                 let formValues = new FormData()
@@ -350,7 +353,7 @@ export class BookActions {
                 rights: 'write',
                 metadata: {},
                 settings: {
-                    citationstyle: 'apa',
+                    citationstyle: defaultCitationStyle,
                     documentstyle: defaultDocumentStyle,
                     papersize: 'octavo'
                 }
@@ -383,7 +386,8 @@ export class BookActions {
                 theBook
             }),
             printData: bookPrintDataTemplate({
-                theBook
+                theBook,
+                documentStyleList
             }),
             epubData: bookEpubDataTemplate({
                 theBook: theBook,

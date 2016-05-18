@@ -13,7 +13,7 @@ let testCaret = {}
  * @returns {Caret}
  */
 testCaret.getCaret = function getCaret() {
-    return theEditor.pm.selection.from.toJSON()
+    return window.theEditor.pm.selection.from.toJSON()
 }
 
 /**
@@ -39,8 +39,8 @@ testCaret.setSelection = function setSelection(caretOne, caretTwo) {
 
     let selection = new TextSelection(caretOne, caretTwo)
 
-    theEditor.pm.setSelection(selection)
-    theEditor.pm.focus()
+    window.theEditor.pm.setSelection(selection)
+    window.theEditor.pm.focus()
 
     return selection
 }

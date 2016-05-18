@@ -11,17 +11,18 @@ export class ModServerCommunications {
         this.connected = false
             /* Whether the connection is established for the first time. */
         this.firstTimeConnection = true
+        this.docId = 0
         this.init()
     }
 
     init() {
         let that = this
         let pathnameParts = window.location.pathname.split('/')
-        window.documentId = parseInt(pathnameParts[pathnameParts.length -
+        this.docId = parseInt(pathnameParts[pathnameParts.length -
             2], 10)
 
-        if (isNaN(documentId)) {
-            documentId = 0
+        if (isNaN(this.docId)) {
+            this.docId = 0
         }
 
         jQuery(document).ready(function() {
@@ -36,8 +37,8 @@ export class ModServerCommunications {
         let that = this
 
         try {
-            this.ws = new WebSocket('ws://' + websocketServer + ':' + websocketPort +
-                '/ws/doc/' + documentId)
+            this.ws = new window.WebSocket('ws://' + window.websocketServer + ':' + window.websocketPort +
+                '/ws/doc/' + this.docId)
             this.ws.onopen = function() {
                 console.log('connection open')
                 jQuery('#unobtrusive_messages').html('')

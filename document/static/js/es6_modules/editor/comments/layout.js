@@ -279,7 +279,7 @@ export class ModCommentLayout {
         let diaButtons = {}
         diaButtons[gettext('Filter')] = function() {
             let id = jQuery(this).children("select").val()
-            if (id == undefined) {
+            if (id === undefined) {
                 return
             }
 

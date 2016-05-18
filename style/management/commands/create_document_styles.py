@@ -19,7 +19,7 @@ class Command(BaseCommand):
             './manage.py create_document_styles\n*/\n'
         )
 
-        output_js += 'var documentStyleList = [\n'
+        output_js += 'export let documentStyleList = [\n'
 
         default_document_style = False
 
@@ -73,17 +73,18 @@ class Command(BaseCommand):
             css_file.write(output_css.encode('utf8'))
 
             css_file.close()
-        output_js += u'];\n'
+        output_js += u']\n'
         if (default_document_style):
             dds = default_document_style
-            output_js += u'var defaultDocumentStyle = "' + dds + '";'
-        d = os.path.dirname(PROJECT_PATH +
-                            '/style/static/js/document/stylelist.js')
+            output_js += u'export let defaultDocumentStyle = "' + dds + '"'
+        d = os.path.dirname(
+            PROJECT_PATH +
+            '/style/static/js/es6_modules/style/documentstyle-list.js')
         if not os.path.exists(d):
             os.makedirs(d)
         js_file = open(
             PROJECT_PATH +
-            '/style/static/js/document/stylelist.js',
+            '/style/static/js/es6_modules/style/documentstyle-list.js',
             "w")
         js_file.write(output_js.encode('utf8'))
 

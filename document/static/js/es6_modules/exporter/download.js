@@ -4,7 +4,7 @@
  * @param {blob} blob The contents of the file.
  */
 export let downloadFile = function(zipFilename, blob) {
-    let blobURL = URL.createObjectURL(blob)
+    let blobURL = window.URL.createObjectURL(blob)
     let fakeDownloadLink = document.createElement('a')
     let clickEvent = document.createEvent("MouseEvent")
     clickEvent.initMouseEvent("click", true, true, window,

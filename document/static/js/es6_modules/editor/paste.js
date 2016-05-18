@@ -42,9 +42,9 @@ export class PasteHandler {
             this.neutralizeInlineNode(node)
         }
         // LibreOffice footnote markers (only in main pm instance):
-        if (node.tagName === 'A'
-            && node.classList.contains("sdfootnoteanc")
-            && this.pmInstance === "main") {
+        if (node.tagName === 'A' &&
+            node.classList.contains("sdfootnoteanc") &&
+            this.pmInstance === "main") {
             let fnSelector = node.getAttribute("href")
             // Remove "sym" at the end of the selector
             fnSelector = fnSelector.substring(0, fnSelector.length - 3)

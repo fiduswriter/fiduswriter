@@ -14,6 +14,8 @@ install:
 script:
   - flake8
   - coverage run manage.py init
+  - npm install -g jshint
+  - jshint .
 
 after_success:
   - coverage report

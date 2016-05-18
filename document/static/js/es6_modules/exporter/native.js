@@ -103,7 +103,7 @@ export let exportNative = function(aDocument, anImageDB, aBibDB, callback) {
 }
 
 let exportNativeFile = function(aDocument, shrunkImageDB,
-    shrunkBibDB, images, upload = false, editor) {
+    shrunkBibDB, images, upload = false, editor = false) {
 
     let httpOutputList = images
 

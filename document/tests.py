@@ -32,7 +32,7 @@ global DRIVER
 # TEST MODULE SETUP
 # DRIVER initialized in setUpModule isn't visible outside setUpModule
 
-if os.getenv("TRAVIS_BUILD_NUMBER"):
+if os.getenv("SAUCE_USERNAME"):
     username = os.environ["SAUCE_USERNAME"]
     access_key = os.environ["SAUCE_ACCESS_KEY"]
     capabilities = {}

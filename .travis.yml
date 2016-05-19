@@ -6,8 +6,8 @@ addons:
   sauce_connect: true
 
 before_install:
-  - true && `x='ba';echo $x"se64 -d"` <<< U0FVQ0VfVVNFUk5BTUU9ZmlkdXM=
-  - true && `x='ba';echo $x"se64 -d"` <<< U0FVQ0VfQUNDRVNTX0tFWT05ZTlkYmQ3Ny00MjA4LTQ4MzktOTBjYi0xNmQzYzk4NTFkYzA=
+  - x="bas";`"$x"e64 -d <<< ZXhwb3J0IFNBVUNFX1VTRVJOQU1FPWZpZHVz`
+  - x="bas";`"$x"e64 -d <<< ZXhwb3J0IFNBVUNFX0FDQ0VTU19LRVk9OWU5ZGJkNzctNDIwOC00ODM5LTkwY2ItMTZkM2M5ODUxZGMw`
   - sudo apt-get -qq update
   - sudo apt-get install -y libjpeg-dev python-dev python-virtualenv gettext zlib1g-dev git
 

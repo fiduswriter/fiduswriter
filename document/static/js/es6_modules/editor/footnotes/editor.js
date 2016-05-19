@@ -78,7 +78,7 @@ export class ModFootnoteEditor {
         this.mod.footnotes = footnotes
         this.mod.fnPm.setOption("collab", null)
         console.log('redrawing all footnotes')
-        this.mod.fnPm.setContent('', 'html')
+        this.mod.fnPm.setContent('<div><hr></div>', 'html')
         this.mod.footnotes.forEach((footnote, index) => {
             let node = that.mod.editor.pm.doc.nodeAt(footnote.from)
             that.renderFootnote(node.attrs.contents, index)
@@ -92,9 +92,12 @@ export class ModFootnoteEditor {
     // Convert the footnote HTML stored with the marker to a PM node representation of the footnote.
     htmlTofootnoteNode(contents) {
         let footnoteHTML = "<div class='footnote-container'>" + contents + "</div>"
-        return fromHTML(this.mod.schema, footnoteHTML, {
-            preserveWhitespace: true
-        }).firstChild
+        let node = fromHTML(this.mod.schema, footnoteHTML, {
+            preserveWhitespace: true,
+            topNode: false
+        })
+
+        return node.firstChild
     }
 
 
@@ -106,6 +109,7 @@ export class ModFootnoteEditor {
         for (let i=0; i<index;i++) {
             pos += this.mod.fnPm.doc.child(i).nodeSize
         }
+
         this.mod.fnPm.tr.insert(pos, node).apply({filter:false})
         this.rendering = false
     }

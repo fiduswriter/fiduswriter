@@ -15,11 +15,11 @@ const BLOCK_LABELS = {
 
 const PART_LABELS = {
     'title': gettext('Title'),
-    'metadatasubtitle': gettext('Subtitle'),
-    'metadataauthors': gettext('Authors'),
-    'metadataabstract': gettext('Abstract'),
-    'metadatakeywords': gettext('Keywords'),
-    'documentcontents': gettext('Body')
+    'subtitle': gettext('Subtitle'),
+    'authors': gettext('Authors'),
+    'abstract': gettext('Abstract'),
+    'keywords': gettext('Keywords'),
+    'body': gettext('Body')
 }
 
 export class ModMenusUpdateUI {
@@ -129,9 +129,9 @@ export class ModMenusUpdateUI {
 
                 switch (startElement.type.name) {
                     case 'title':
-                    case 'metadatasubtitle':
-                    case 'metadataauthors':
-                    case 'metadatakeywords':
+                    case 'subtitle':
+                    case 'authors':
+                    case 'keywords':
                         jQuery('.edit-button').addClass('disabled')
                         jQuery('#block-style-label').html('')
                         if (pm.selection.empty) {
@@ -141,8 +141,8 @@ export class ModMenusUpdateUI {
                         }
 
                         break
-                    case 'metadataabstract':
-                    case 'documentcontents':
+                    case 'abstract':
+                    case 'body':
                         jQuery('.edit-button').removeClass('disabled')
 
                         if (pm.selection.empty) {
@@ -152,7 +152,7 @@ export class ModMenusUpdateUI {
                             jQuery('#button-comment').removeClass('disabled')
                         }
 
-                        if (startElement.type.name === 'metadataabstract') {
+                        if (startElement.type.name === 'abstract') {
                             jQuery('#button-figure').addClass('disabled')
                         }
 
@@ -221,23 +221,23 @@ export class ModMenusUpdateUI {
                 'selector': '#document-title',
                 'placeHolder': gettext('Title...')
             }, {
-                'type': 'metadatasubtitle',
+                'type': 'subtitle',
                 'selector': '#metadata-subtitle',
                 'placeHolder': gettext('Subtitle...')
             }, {
-                'type': 'metadaauthors',
+                'type': 'authors',
                 'selector': '#metadata-authors',
                 'placeHolder': gettext('Authors...')
             }, {
-                'type': 'metadataabstract',
+                'type': 'abstract',
                 'selector': '#metadata-abstract',
                 'placeHolder': gettext('Abstract...')
             }, {
-                'type': 'metadatakeywords',
+                'type': 'keywords',
                 'selector': '#metadata-keywords',
                 'placeHolder': gettext('Keywords...')
             }, {
-                'type': 'documentcontents',
+                'type': 'body',
                 'selector': '#document-contents',
                 'placeHolder': gettext('Body...')
             }]

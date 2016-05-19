@@ -5,6 +5,13 @@
     vertical-align: top;
 }
 
+/* Make the <hr> at the end of the footnote editor not show. It is only there
+because PM needs some content. */
+
+#footnote-box-container > div.ProseMirror > div.ProseMirror-content > div:last-child > hr {
+    display: none
+}
+
 #citation-footnote-box-container {
     position: absolute;
 }

@@ -42,6 +42,8 @@ class Image(models.Model):
         return self.title
 
     def create_checksum(self):
+        if not self.image:
+            return
         if self.checksum == 0:
             from time import time
             if hasattr(self.image.file, 'size'):

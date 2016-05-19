@@ -204,7 +204,7 @@ export class ImageOverview {
             })
 
         })
-        jQuery('#edit-category').bind('click', that.mod.categories.createCategoryDialog)
+        jQuery('#edit-category').bind('click', function(){that.mod.categories.createCategoryDialog()})
         //open dropdown for image category
         $.addDropdownBox(jQuery('#image-category-btn'), jQuery(
             '#image-category-pulldown'))
@@ -217,7 +217,7 @@ export class ImageOverview {
         //filtering function for the list of images
         jQuery('#image-category').bind('change', function () {
             let catVal = jQuery(this).val()
-            if (0 === catVal) {
+            if ('0' === catVal) {
                 jQuery('#imagelist > tbody > tr').show()
             } else {
                 jQuery('#imagelist > tbody > tr').hide()

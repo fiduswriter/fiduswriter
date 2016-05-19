@@ -39,7 +39,10 @@ class Image(models.Model):
     checksum = models.BigIntegerField(default=0)
 
     def __unicode__(self):
-        return self.title
+        if len(self.title) > 0:
+            return self.title
+        else:
+            return str(self.pk)
 
     def create_checksum(self):
         if not self.image:

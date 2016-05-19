@@ -79,24 +79,24 @@ export class BibliographyOverview {
         jQuery('body').append(dialogBody)
         let diaButtons = {}
         diaButtons[gettext('Submit')] = function () {
-            let new_cat = {
+            let newCat = {
                 'ids': [],
                 'titles': []
             }
             jQuery('#editCategories .category-form').each(function () {
-                let this_val = jQuery.trim(jQuery(this).val())
-                let this_id = jQuery(this).attr('data-id')
-                if ('undefined' == typeof (this_id)) this_id = 0
-                if ('' !== this_val) {
-                    new_cat.ids.push(this_id)
-                    new_cat.titles.push(this_val)
-                } else if ('' === this_val && 0 < this_id) {
-                    that.deleted_cat[that.deleted_cat
-                        .length] = this_id
+                let thisVal = jQuery.trim(jQuery(this).val())
+                let thisId = jQuery(this).attr('data-id')
+                if ('undefined' == typeof (thisId)) thisId = 0
+                if ('' !== thisVal) {
+                    newCat.ids.push(thisId)
+                    newCat.titles.push(thisVal)
+                } else if ('' === thisVal && 0 < thisId) {
+                    that.deletedCat[that.deletedCat
+                        .length] = thisId
                 }
             })
-            that.db.deleteCategory(that.deleted_cat)
-            that.createCategory(new_cat)
+            that.db.deleteCategory(that.deletedCat)
+            that.createCategory(newCat)
             jQuery(this).dialog('close')
         }
         diaButtons[gettext('Cancel')] = function () {
@@ -119,7 +119,7 @@ export class BibliographyOverview {
             },
         })
 
-        this.deleted_cat = []
+        this.deletedCat = []
         addRemoveListHandler()
 
     }
@@ -164,12 +164,12 @@ export class BibliographyOverview {
     /** Add or update an item in the bibliography table (HTML).
      * @function appendToBibTable
           * @param pk The pk specifying the bibliography item.
-     * @param bib_info An object with the current information about the bibliography item.
+     * @param bibInfo An object with the current information about the bibliography item.
      */
-    appendToBibTable(pk, bib_info) {
+    appendToBibTable(pk, bibInfo) {
         let $tr = jQuery('#Entry_' + pk)
         //reform author field
-        let bibauthor = bib_info.author || bib_info.editor
+        let bibauthor = bibInfo.author || bibInfo.editor
         // If neither author nor editor were registered, use an empty string instead of nothing.
         // TODO: Such entries should likely not be accepted by the importer.
         if (typeof bibauthor === 'undefined') bibauthor = ''
@@ -187,28 +187,28 @@ export class BibliographyOverview {
         bibauthor += and_others
         // If title is undefined, set it to an empty string.
         // TODO: Such entries should likely not be accepted by the importer.
-        if (typeof bib_info.title === 'undefined') bib_info.title = ''
+        if (typeof bibInfo.title === 'undefined') bibInfo.title = ''
 
 
         if (0 < $tr.size()) { //if the entry exists, update
             $tr.replaceWith(bibtableTemplate({
                 'id': pk,
-                'cats': bib_info.entry_cat.split(','),
-                'type': bib_info.entry_type,
-                'typetitle': BibEntryTypes[bib_info.entry_type]['title'],
-                'title': bib_info.title.replace(/[{}]/g, ''),
+                'cats': bibInfo.entry_cat.split(','),
+                'type': bibInfo.entry_type,
+                'typetitle': BibEntryTypes[bibInfo.entry_type]['title'],
+                'title': bibInfo.title.replace(/[{}]/g, ''),
                 'author': bibauthor,
-                'published': formatDateString(bib_info.date)
+                'published': formatDateString(bibInfo.date)
             }))
         } else { //if this is the new entry, append
             jQuery('#bibliography > tbody').append(bibtableTemplate({
                 'id': pk,
-                'cats': bib_info.entry_cat.split(','),
-                'type': bib_info.entry_type,
-                'typetitle': BibEntryTypes[bib_info.entry_type]['title'],
-                'title': bib_info.title.replace(/[{}]/g, ''),
+                'cats': bibInfo.entry_cat.split(','),
+                'type': bibInfo.entry_type,
+                'typetitle': BibEntryTypes[bibInfo.entry_type]['title'],
+                'title': bibInfo.title.replace(/[{}]/g, ''),
                 'author': bibauthor,
-                'published': formatDateString(bib_info.date)
+                'published': formatDateString(bibInfo.date)
             }))
         }
     }
@@ -291,7 +291,7 @@ export class BibliographyOverview {
 
         //open dropdown for bib category
         $.addDropdownBox(jQuery('#bib-category-btn'), jQuery('#bib-category-pulldown'))
-        jQuery(document).on('click', '#bib-category-pulldown li > span', function () {
+        jQuery(document).on('mousedown', '#bib-category-pulldown li > span', function () {
             jQuery('#bib-category-btn > label').html(jQuery(this).html())
             jQuery('#bib-category').val(jQuery(this).attr('data-id'))
             jQuery('#bib-category').trigger('change')
@@ -299,22 +299,22 @@ export class BibliographyOverview {
 
         //filtering function for the list of bib entries
         jQuery('#bib-category').bind('change', function () {
-            let cat_val = jQuery(this).val()
-            if (0 === cat_val) {
+            let catVal = jQuery(this).val()
+            if ('0' === catVal) {
                 jQuery('#bibliography > tbody > tr').show()
             } else {
                 jQuery('#bibliography > tbody > tr').hide()
-                jQuery('#bibliography > tbody > tr.cat_' + cat_val).show()
+                jQuery('#bibliography > tbody > tr.cat_' + catVal).show()
             }
         })
 
         //select all entries
         jQuery('#select-all-entry').bind('change', function () {
-            let new_bool = false
+            let newBool = false
             if (jQuery(this).prop("checked"))
-                new_bool = true
+                newBool = true
             jQuery('.entry-select').each(function () {
-                this.checked = new_bool
+                this.checked = newBool
             })
         })
 
@@ -330,10 +330,10 @@ export class BibliographyOverview {
 
         //submit entry actions
         jQuery('#action-selection-pulldown li > span').bind('mousedown', function () {
-            let action_name = jQuery(this).attr('data-action'),
+            let actionName = jQuery(this).attr('data-action'),
                 ids = []
 
-            if ('' === action_name || 'undefined' == typeof (action_name)) {
+            if ('' === actionName || 'undefined' == typeof (actionName)) {
                 return
             }
 
@@ -345,12 +345,12 @@ export class BibliographyOverview {
                 return
             }
 
-            switch (action_name) {
+            switch (actionName) {
             case 'delete':
                 that.deleteBibEntryDialog(ids)
                 break
             case 'export':
-                new BibLatexExporter(ids, window.BibDB, true)
+                new BibLatexExporter(ids, that.db.bibDB, true)
                 break
             }
         })
@@ -370,8 +370,8 @@ export class BibliographyOverview {
         let that = this
         this.db.deleteBibEntry(ids, function(ids){
             that.stopBibliographyTable()
-            let elements_id = '#Entry_' + ids.join(', #Entry_')
-            jQuery(elements_id).detach()
+            let elementsId = '#Entry_' + ids.join(', #Entry_')
+            jQuery(elementsId).detach()
             that.startBibliographyTable()
         })
     }

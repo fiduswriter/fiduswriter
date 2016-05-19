@@ -41,8 +41,8 @@ def save_js(request):
                     return False
         else:
             owner_id = request.user.id
-
-        image = Image.objects.filter(pk=the_id, uploader=request.user)
+        # We only allow owners to change their images.
+        image = Image.objects.filter(pk=the_id, owner=request.user)
         if image.exists():
             image = image[0]
             status = 200

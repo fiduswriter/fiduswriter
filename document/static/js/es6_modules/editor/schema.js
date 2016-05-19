@@ -498,9 +498,10 @@ export const fidusSchema = new Schema({
 
 export const fidusFnSchema = new Schema({
   nodes: {
-    doc: {type: Doc, content: "footnotecontainer*"},
+    doc: {type: Doc, content: "part+"},
 
-    footnotecontainer: {type: FootnoteContainer, content: "block+"},
+    footnote_end: {type: HorizontalRule, group: "part"},
+    footnotecontainer: {type: FootnoteContainer, content: "block+", group: "part"},
 
     paragraph: {type: Paragraph, content: "inline<_>*", group: "block"},
     heading: {type: Heading, content: "inline<_>*", group: "block"},

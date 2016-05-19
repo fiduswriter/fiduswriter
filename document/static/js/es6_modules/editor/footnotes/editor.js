@@ -78,7 +78,7 @@ export class ModFootnoteEditor {
         this.mod.footnotes = footnotes
         this.mod.fnPm.setOption("collab", null)
         console.log('redrawing all footnotes')
-        this.mod.fnPm.setContent('', 'html')
+        this.mod.fnPm.setContent('<div><hr></div>', 'html')
         this.mod.footnotes.forEach((footnote, index) => {
             let node = that.mod.editor.pm.doc.nodeAt(footnote.from)
             that.renderFootnote(node.attrs.contents, index)

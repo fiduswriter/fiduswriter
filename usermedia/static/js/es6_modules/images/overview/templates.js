@@ -35,7 +35,7 @@ export let usermediaTableTemplate = _.template('\
                         </span>\
                         <span class="fw-inline fw-usermedia-title">\
                             <span class="edit-image fw-link-text fw-searchable" data-id="<%- pk %>">\
-                                <%- title %>\
+                                <%- title !== "" ? title : "'+gettext('Untitled')+'" %>\
                             </span>\
                             <span class="fw-usermedia-type"><%- file_type %></span>\
                         </span>\

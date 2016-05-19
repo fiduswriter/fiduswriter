@@ -1,4 +1,4 @@
-import {Schema, Block, Textblock, Inline, Text, MarkType, Attribute, NodeKind,
+import {Schema, Block, Textblock, Inline, Text, MarkType, Attribute,
         Doc, BlockQuote, OrderedList, BulletList, ListItem, HorizontalRule,
         Paragraph, Heading, CodeBlock, Image, HardBreak, CodeMark, EmMark,
         StrongMark, LinkMark} from "prosemirror/dist/model"
@@ -436,9 +436,6 @@ class CommentMark extends MarkType {
     get inclusiveRight() {
         return false
     }
-    static get rank() {
-        return 54
-    }
 }
 
 
@@ -462,36 +459,32 @@ CommentMark.prototype.serializeDOM = (mark, serializer) => {
 
 export const fidusSchema = new Schema({
   nodes: {
+    //doc: {type: Doc, content: "part+"},
     doc: {type: Doc, content: "title subtitle authors abstract keywords body"},
+    title: {type: Title, content: "text*", group: "part"},
+    subtitle: {type: Subtitle, content: "text*", group: "part"},
+    authors: {type: Authors, content: "text*", group: "part"},
+    abstract: {type: Abstract, content: "block+", group: "part"},
+    keywords: {type: Keywords, content: "text*", group: "part"},
+    body: {type: Body, content: "block+", group: "part"},
 
-    title: {type: Title, content: "text*"},
-    subtitle: {type: Subtitle, content: "text*"},
-    authors: {type: Authors, content: "text*"},
-    abstract: {type: Abstract, content: "block+"},
-    keywords: {type: Keywords, content: "text*"},
-    body: {type: Body, content: "block+"},
+    paragraph: {type: Paragraph, content: "inline<_>*", group: "block"},
+    blockquote: {type: BlockQuote, content: "block+", group: "block"},
+    ordered_list: {type: OrderedList, content: "list_item+", group: "block"},
+    bullet_list: {type: BulletList, content: "list_item+", group: "block"},
+    list_item: {type: ListItem, content: "block+", group: "block"},
+    horizontal_rule: {type: HorizontalRule, group: "block"},
+    figure: {type: Figure, group: "block"},
 
-    blockquote: {type: BlockQuote, content: "block+"},
-    ordered_list: {type: OrderedList, content: "list_item+"},
-    bullet_list: {type: BulletList, content: "list_item+"},
-    list_item: {type: ListItem, content: "block+"},
-    horizontal_rule: {type: HorizontalRule},
-    figure: {type: Figure},
+    heading: {type: Heading, content: "inline<_>*", group: "block"},
+    code_block: {type: CodeBlock, content: "text*", group: "block"},
 
-    paragraph: {type: Paragraph, content: "inline<_>*"},
-    heading: {type: Heading, content: "inline<_>*"},
-    code_block: {type: CodeBlock, content: "text*"},
+    text: {type: Text, group: "inline"},
+    hard_break: {type: HardBreak, group: "inline"},
+    citation: {type: Citation, group: "inline"},
+    equation: {type: Equation, group: "inline"},
+    footnote: {type: Footnote, group: "inline"}
 
-    text: {type: Text},
-    hard_break: {type: HardBreak},
-    footnote: {type: Footnote},
-    citation: {type: Citation},
-    equation: {type: Equation}
-  },
-
-  groups: {
-    block: ["paragraph", "blockquote", "ordered_list", "bullet_list", "heading", "code_block", "horizontal_rule", "figure"],
-    inline: ["text", "hard_break", "footnote", "citation", "equation"]
   },
 
   marks: {
@@ -509,26 +502,21 @@ export const fidusFnSchema = new Schema({
 
     footnotecontainer: {type: FootnoteContainer, content: "block+"},
 
-    blockquote: {type: BlockQuote, content: "block+"},
-    ordered_list: {type: OrderedList, content: "list_item+"},
-    bullet_list: {type: BulletList, content: "list_item+"},
-    list_item: {type: ListItem, content: "block+"},
-    horizontal_rule: {type: HorizontalRule},
-    figure: {type: Figure},
+    paragraph: {type: Paragraph, content: "inline<_>*", group: "block"},
+    heading: {type: Heading, content: "inline<_>*", group: "block"},
+    code_block: {type: CodeBlock, content: "text*", group: "block"},
 
-    paragraph: {type: Paragraph, content: "inline<_>*"},
-    heading: {type: Heading, content: "inline<_>*"},
-    code_block: {type: CodeBlock, content: "text*"},
+    blockquote: {type: BlockQuote, content: "block+", group: "block"},
+    ordered_list: {type: OrderedList, content: "list_item+", group: "block"},
+    bullet_list: {type: BulletList, content: "list_item+", group: "block"},
+    list_item: {type: ListItem, content: "block+", group: "block"},
+    horizontal_rule: {type: HorizontalRule, group: "block"},
+    figure: {type: Figure, group: "block"},
 
-    text: {type: Text},
-    hard_break: {type: HardBreak},
-    citation: {type: Citation},
-    equation: {type: Equation}
-  },
-
-  groups: {
-    block: ["paragraph", "blockquote", "ordered_list", "bullet_list", "heading", "code_block", "horizontal_rule", "figure"],
-    inline: ["text", "hard_break", "citation", "equation"]
+    text: {type: Text, group: "inline"},
+    hard_break: {type: HardBreak, group: "inline"},
+    citation: {type: Citation, group: "inline"},
+    equation: {type: Equation, group: "inline"}
   },
 
   marks: {

@@ -39,8 +39,6 @@ export class Editor {
         // dealt with.
         this.waitingForDocument = true
 
-
-
         this.docInfo = {
             'rights': '',
             'last_diffs': [],
@@ -432,7 +430,7 @@ export class Editor {
             // Check what area is affected
 
         transform.steps.forEach(function(step, index) {
-            if (step.jsonID === 'replace' || step.jsonID === 'replaceWrap') {
+            if (step.jsonID === 'replace' || step.jsonID === 'replaceAround') {
                 if (step.from !== step.to) {
                     transform.docs[index].nodesBetween(step.from, step.to, function(node, pos, parent) {
                         if (node.type.name === 'citation') {

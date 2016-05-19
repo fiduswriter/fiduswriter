@@ -35,12 +35,16 @@ global DRIVER
 if os.getenv("TRAVIS_BUILD_NUMBER"):
     username = os.environ["SAUCE_USERNAME"]
     access_key = os.environ["SAUCE_ACCESS_KEY"]
+    capabilities = {}
     capabilities["build"] = os.environ["TRAVIS_BUILD_NUMBER"]
     capabilities["tags"] = [os.environ["TRAVIS_PYTHON_VERSION"], "CI"]
     capabilities["tunnel-identifier"] = os.environ["TRAVIS_JOB_NUMBER"]
     capabilities["browserName"] = "chrome"
     hub_url = "%s:%s@localhost:4445" % (username, access_key)
-    DRIVER = webdriver.Remote(desired_capabilities=capabilities, command_executor="http://%s/wd/hub" % hub_url)
+    DRIVER = webdriver.Remote(
+        desired_capabilities=capabilities,
+        command_executor="http://%s/wd/hub" % hub_url
+    )
 else:
     DRIVER = webdriver.Chrome()
 

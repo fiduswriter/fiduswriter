@@ -175,16 +175,16 @@ export class BibliographyOverview {
         if (typeof bibauthor === 'undefined') bibauthor = ''
         let bibauthors = bibauthor.split('} and {')
         //if there are more authors, add "and others" behind.
-        let and_others = (1 < bibauthors.length) ? gettext(' and others') : ''
+        let andOthers = (1 < bibauthors.length) ? gettext(' and others') : ''
         bibauthor = bibauthors[0]
-        let bibauthor_list = bibauthor.split('} {')
-        if (1 < bibauthor_list.length) {
-            bibauthor = bibauthor_list[1] + ', ' + bibauthor_list[0]
+        let bibauthorList = bibauthor.split('} {')
+        if (1 < bibauthorList.length) {
+            bibauthor = bibauthorList[1] + ', ' + bibauthorList[0]
         } else {
-            bibauthor = bibauthor_list[0]
+            bibauthor = bibauthorList[0]
         }
         bibauthor = bibauthor.replace(/[{}]/g, '')
-        bibauthor += and_others
+        bibauthor += andOthers
         // If title is undefined, set it to an empty string.
         // TODO: Such entries should likely not be accepted by the importer.
         if (typeof bibInfo.title === 'undefined') bibInfo.title = ''
@@ -248,13 +248,13 @@ export class BibliographyOverview {
             jQuery(this).parent().removeClass('focus')
         })
 
-        let autocomplete_tags = []
+        let autocompleteTags = []
         jQuery('#bibliography .fw-searchable').each(function () {
-            autocomplete_tags.push(this.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''))
+            autocompleteTags.push(this.textContent.replace(/^\s+/g, '').replace(/\s+$/g, ''))
         })
-        autocomplete_tags = _.uniq(autocomplete_tags)
+        autocompleteTags = _.uniq(autocompleteTags)
         jQuery("#bibliography_filter input").autocomplete({
-            source: autocomplete_tags
+            source: autocompleteTags
         })
     }
     /** Bind the init function to jQuery(document).ready.

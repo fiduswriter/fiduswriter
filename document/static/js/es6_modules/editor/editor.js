@@ -1,3 +1,5 @@
+import * as objectHash from "object-hash/dist/object_hash"
+
 /* Functions for ProseMirror integration.*/
 import {ProseMirror} from "prosemirror/dist/edit/main"
 import {fromDOM} from "prosemirror/dist/format"
@@ -5,6 +7,9 @@ import {serializeTo} from "prosemirror/dist/format"
 import "prosemirror/dist/collab"
 import {scheduleDOMUpdate} from "prosemirror/dist/ui/update"
 //import "prosemirror/dist/menu/menubar"
+
+import {defaultDocumentStyle} from "../style/documentstyle-list"
+import {defaultCitationStyle} from "../style/citation-definitions"
 
 import {fidusSchema} from "./schema"
 import {ModComments} from "./comments/mod"
@@ -19,6 +24,9 @@ import {ModNodeConvert} from "./node-convert"
 import {node2Obj, obj2Node} from "../exporter/json"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
+import {PasteHandler} from "./paste"
+
+export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 
 export class Editor {
     // A class that contains everything that happens on the editor page.
@@ -32,11 +40,7 @@ export class Editor {
         this.waitingForDocument = true
 
         this.docInfo = {
-            'sentHash': false,
             'rights': '',
-            // In collaborative mode, only the first client to connect will have
-            // this.editor.docInfo.control set to true.
-            'control': false,
             'last_diffs': [],
             'is_owner': false,
             'is_new': false,
@@ -73,6 +77,10 @@ export class Editor {
         this.pm.on("change", function(){that.docInfo.changed = true})
         this.pm.on("filterTransform", (transform) => {return that.onFilterTransform(transform)})
         this.pm.on("transform", (transform, options) => {that.onTransform(transform, true)})
+        this.pm.on("transformPastedHTML", (inHTML) => {
+            let ph = new PasteHandler(inHTML, "main")
+            return ph.outHTML
+        })
         this.pm.mod.collab.on("collabTransform", (transform, options) => {that.onTransform(transform, false)})
         this.setSaveTimers()
     }
@@ -81,23 +89,19 @@ export class Editor {
         let that = this
         // Set Auto-save to send the document every two minutes, if it has changed.
         this.sendDocumentTimer = setInterval(function() {
-            if (that.docInfo && that.docInfo.changed) {
-                that.getUpdates(function() {
-                    that.sendDocumentUpdate()
-                })
+            if (that.docInfo && that.docInfo.changed && that.docInfo.rights !== 'read') {
+                that.save()
             }
         }, 120000)
 
         // Set Auto-save to send the title every 5 seconds, if it has changed.
         this.sendDocumentTitleTimer = setInterval(function() {
-            if (that.docInfo && that.docInfo.titleChanged) {
+            if (that.docInfo && that.docInfo.titleChanged && that.docInfo.rights !== 'read') {
                 that.docInfo.titleChanged = false
-                if (that.docInfo.control) {
-                    that.mod.serverCommunications.send({
-                        type: 'update_title',
-                        title: that.doc.title
-                    });
-                }
+                that.mod.serverCommunications.send({
+                    type: 'update_title',
+                    title: that.doc.title
+                })
             }
         }, 10000)
     }
@@ -237,8 +241,6 @@ export class Editor {
 
     enableUI() {
 
-        this.mod.citations.layoutCitations()
-
         jQuery('.savecopy, .saverevision, .download, .latex, .epub, .html, .print, .style, \
       .citationstyle, .tools-item, .papersize, .metadata-menu-item, \
       #open-close-header').removeClass('disabled')
@@ -253,7 +255,13 @@ export class Editor {
 
         this.mod.settings.layout.layoutMetadata()
 
-        if (this.docInfo.rights === 'w') {
+
+        if (this.docInfo.rights === 'read') {
+            jQuery('#editor-navigation').hide()
+            jQuery('.metadata-menu-item, #open-close-header, .save, \
+          .multibuttonsCover, .papersize-menu, .metadata-menu, \
+          .documentstyle-menu, .citationstyle-menu').addClass('disabled')
+        } else {
             jQuery('#editor-navigation').show()
             jQuery('.metadata-menu-item, #open-close-header, .save, \
           .multibuttonsCover, .papersize-menu, .metadata-menu, \
@@ -262,27 +270,16 @@ export class Editor {
                 // bind the share dialog to the button if the user is the document owner
                 jQuery('.share').removeClass('disabled')
             }
-        } else if (this.docInfo.rights === 'r') {
-            // Try to disable contenteditable
-            jQuery('.ProseMirror-content').attr('contenteditable', 'false')
-        }
-    }
-
-
-    getUpdates(callback) {
-        let outputNode = this.mod.nodeConvert.editorToModelNode(serializeTo(this.pm.mod.collab.versionDoc, 'dom'))
-        this.doc.title = this.pm.mod.collab.versionDoc.firstChild.textContent
-        this.doc.version = this.pm.mod.collab.version
-        this.doc.metadata.title = node2Obj(outputNode.getElementById('document-title'))
-        this.doc.metadata.subtitle = node2Obj(outputNode.getElementById('metadata-subtitle'))
-        this.doc.metadata.authors = node2Obj(outputNode.getElementById('metadata-authors'))
-        this.doc.metadata.abstract = node2Obj(outputNode.getElementById('metadata-abstract'))
-        this.doc.metadata.keywords = node2Obj(outputNode.getElementById('metadata-keywords'))
-        this.doc.contents = node2Obj(outputNode.getElementById('document-contents'))
-        this.doc.hash = this.getHash()
-        this.doc.comments = this.mod.comments.store.comments
-        if (callback) {
-            callback()
+            if (COMMENT_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {
+                let toolbar = jQuery('.editortoolbar')
+                toolbar.find('.ui-buttonset').hide()
+                toolbar.find('.comment-only').show()
+            }
+            else {
+                jQuery('.metadata-menu-item, #open-close-header, .save, \
+              .multibuttonsCover, .papersize-menu, .metadata-menu, \
+              .documentstyle-menu, .citationstyle-menu').removeClass('disabled')
+            }
         }
     }
 
@@ -311,8 +308,8 @@ export class Editor {
 
         let defaultSettings = [
             ['papersize', 1117],
-            ['citationstyle', 'apa'], // TODO: make this calculated. Not everyone will have apa installed
-            ['documentstyle', window.defaultDocumentStyle]
+            ['citationstyle', defaultCitationStyle],
+            ['documentstyle', defaultDocumentStyle]
         ]
 
 
@@ -331,35 +328,61 @@ export class Editor {
         }
     }
 
-    // This client was participating in collaborative editing of this document
-    // but not as the cleint that was in charge of saving. This has now changed
-    // so that the current user is being asked to save the document.
-    takeControl() {
-        this.docInfo.control = true
-        this.docInfo.sentHash = false
-    }
-
     updateComments(comments, comment_version) {
         console.log('receiving comment update')
         this.mod.comments.store.receive(comments, comment_version)
     }
 
+    // Creates a hash value for the entire document so that we can compare with other clients if
+    // we really have the same contents
     getHash() {
-        let string = JSON.stringify(this.pm.mod.collab.versionDoc)
-        let len = string.length
-        var hash = 0,
-            char, i
-        if (len == 0) return hash
-        for (i = 0; i < len; i++) {
-            char = string.charCodeAt(i)
-            hash = ((hash << 5) - hash) + char
-            hash = hash & hash
-        }
-        return hash
+        let doc = this.pm.mod.collab.versionDoc.copy()
+        // We need to convert the footnotes from HTML to PM nodes and from that
+        // to JavaScript objects, to ensure that the attribute order of everything
+        // within the footnote will be the same in all browsers, so that the
+        // resulting checksums are the same.
+        doc.descendants(function(node){
+            if (node.type.name==='footnote') {
+                node.attr.contents = this.mod.footnotes.fnEditor.htmlTofootnoteNode(node.attr.contents)
+            }
+        })
+        return objectHash.MD5(JSON.parse(JSON.stringify(doc.toJSON())), {unorderedArrays: true})
     }
 
+    // Get updates to document and then send updates to the server
+    save(callback) {
+        let that = this
+        this.getUpdates(function() {
+            that.sendDocumentUpdate(function(){
+                if (callback) {
+                    callback()
+                }
+            })
+        })
+    }
+
+    // Collects updates of the document from ProseMirror and saves it under this.doc
+    getUpdates(callback) {
+        let outputNode = this.mod.nodeConvert.editorToModelNode(serializeTo(this.pm.mod.collab.versionDoc, 'dom'))
+        this.doc.title = this.pm.mod.collab.versionDoc.firstChild.textContent
+        this.doc.version = this.pm.mod.collab.version
+        this.doc.metadata.title = node2Obj(outputNode.getElementById('document-title'))
+        this.doc.metadata.subtitle = node2Obj(outputNode.getElementById('metadata-subtitle'))
+        this.doc.metadata.authors = node2Obj(outputNode.getElementById('metadata-authors'))
+        this.doc.metadata.abstract = node2Obj(outputNode.getElementById('metadata-abstract'))
+        this.doc.metadata.keywords = node2Obj(outputNode.getElementById('metadata-keywords'))
+        this.doc.contents = node2Obj(outputNode.getElementById('document-contents'))
+        this.doc.hash = this.getHash()
+        this.doc.comments = this.mod.comments.store.comments
+        if (callback) {
+            callback()
+        }
+    }
+
+    // Send changes to the document to the server
     sendDocumentUpdate(callback) {
         let documentData = {
+            title: this.doc.title,
             metadata: this.doc.metadata,
             contents: this.doc.contents,
             version: this.doc.version,
@@ -379,27 +402,25 @@ export class Editor {
         return true
     }
 
-    // filter transformations, disallowing all transformations going across document parts/footnotes.
+    // filter transformations.
     onFilterTransform(transform) {
         let prohibited = false
-        const docParts = ['title', 'metadatasubtitle', 'metadataauthors', 'metadataabstract',
-            'metadatakeywords', 'documentcontents']
-        /* There should always be exactly 6 parts to the document (title,
-         * subtitle, authors, abstract, keywords & contents).
-         * If the output doc of the transform uses a different number of parts
-         * or the parts are of different types, we prohibit the transform.
-         */
-        if (transform.doc.childCount === 6) {
-            let index = 0
-            transform.doc.forEach(function(childNode){
-                if (docParts[index] !== childNode.type.name) {
-                    prohibited = true
-                }
-                index++
-            })
-        } else {
+
+        if (this.docInfo.rights === 'read') {
+            // User only has read access. Don't allow anything.
             prohibited = true
+        } else if (COMMENT_ONLY_ROLES.indexOf(this.docInfo.rights) > -1) {
+            //User has a comment-only role (commentator, editor or reviewer)
+
+            //Check all transformation steps. If step type not allowed = prohibit
+            if (!transform.steps.every(function(step) {
+                //check if in allowed array. if false - exit loop
+                return (step.jsonID === 'addMark' || step.jsonID === 'removeMark') && step.mark.type.name === 'comment'
+            })) {
+                prohibited = true
+            }
         }
+
         return prohibited
     }
 
@@ -407,8 +428,9 @@ export class Editor {
     onTransform(transform, local) {
         let updateBibliography = false, updateTitle = false, commentIds = [], that = this
             // Check what area is affected
+
         transform.steps.forEach(function(step, index) {
-            if (step.type === 'replace') {
+            if (step.jsonID === 'replace' || step.jsonID === 'replaceAround') {
                 if (step.from !== step.to) {
                     transform.docs[index].nodesBetween(step.from, step.to, function(node, pos, parent) {
                         if (node.type.name === 'citation') {

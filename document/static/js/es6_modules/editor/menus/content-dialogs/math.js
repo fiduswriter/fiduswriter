@@ -1,75 +1,143 @@
 import {mathDialogTemplate} from "./templates"
+import {FormulaEditor} from '../../tools/formula-editor'
 
-// TODO: turn into class (like FigureDialog)
-export let mathDialog = function (mod) {
+/**
+ * Class to work with formula dialog
+ */
+export class MathDialog {
+    constructor(mod) {
+        this.editor = mod.editor
+        this.dialogButtons = []
+        this.defaultEquation = '\\$x=\\frac{-b\\pm\\sqrt{b^2-4ac}}{2a}'
 
-    let editor = mod.editor,
-        dialog, dialogButtons = [],
-        submitMessage = gettext('Insert'),
-        insideMath = false,
-        equation = 'x=2*y',
-        node = editor.currentPm.selection.node
+        this.setToDefault()
 
+        this.node = null
+        this.mathQuill = null
+    }
 
-    if (node && node.type && node.type.name==='equation') {
-        insideMath = true
-        equation = node.attrs.equation
-        submitMessage = gettext('Update')
-        dialogButtons.push({
-            text: gettext('Remove'),
+    setToDefault() {
+        this.submitMessage = gettext('Insert')
+        this.equation = this.defaultEquation
+        this.isMathInside = false
+        this.isDialogInitialized = false
+        this.dialog = jQuery(mathDialogTemplate())
+    }
+
+    /**
+     * Initializes dialog buttons
+     */
+    initializeButtons() {
+        if (this.isFormulaAlreadyInBox()) {
+            this.initRemoveButtonOnFormulaUpdate()
+        }
+        this.initializeSubmitButton()
+        this.initializeCancelButton()
+        this.initRawLatexButton()
+    }
+
+    initializeCancelButton() {
+        this.dialogButtons.push({
+            text: gettext('Cancel'),
             class: 'fw-button fw-orange',
-            click: function () {
-                insideMath = false
-                dialog.dialog('close')
+            click: () => {
+                this.dialog.dialog('close')
             }
         })
     }
 
-    dialogButtons.push({
-        text: submitMessage,
-        class: 'fw-button fw-dark',
-        click: function () {
+    initializeSubmitButton() {
+        this.dialogButtons.push({
+            text: this.submitMessage,
+            class: 'fw-button fw-dark',
+            click: (event) => {
+                event.preventDefault()
 
-            equation = dialog.find('input').val()
-
-            if ((new RegExp(/^\s*$/)).test(equation)) {
-                // The math input is empty. Delete a math node if it exist. Then close the dialog.
-                if (insideMath) {
-                    editor.currentPm.execCommand('deleteSelection')
+                if (!this.isDialogInitialized) {
+                    return
                 }
-                dialog.dialog('close')
-                return
-            } else if (insideMath && equation === node.attrs.equation) {
-                dialog.dialog('close')
-                return
+
+                this.equation = this.mathQuill.getLatex()
+
+                if ((new RegExp(/^\s*$/)).test(this.equation)) {
+                    // The math input is empty. Delete a math node if it exist. Then close the dialog.
+                    if (this.isMathInside) {
+                        this.editor.currentPm.execCommand('deleteSelection')
+                    }
+                    this.dialog.dialog('close')
+                    return
+                } else if (this.isMathInside && this.equation === this.node.attrs.equation) {
+                    this.dialog.dialog('close')
+                    return
+                }
+
+                this.editor.currentPm.execCommand('equation:insert', [this.equation])
+
+                this.dialog.dialog('close')
             }
+        })
+    }
 
-            editor.currentPm.execCommand('equation:insert', [equation])
+    initRemoveButtonOnFormulaUpdate() {
+        this.isMathInside = true
+        this.equation = this.node.attrs.equation
+        this.submitMessage = gettext('Update')
+        this.dialogButtons.push({
+            text: gettext('Remove'),
+            class: 'fw-button fw-orange',
+            click: () => {
+                this.isMathInside = false
+                this.dialog.dialog('close')
+            }
+        })
+    }
 
-            dialog.dialog('close')
+    initRawLatexButton() {
+        this.dialogButtons.push({
+            text: gettext('Raw'),
+            class: 'fw-button fw-dark',
+            click: (e) => {
+                jQuery(e.currentTarget).hide()
+                this.mathQuill.switchToRawLatexMode()
+            }
+        })
+    }
+
+    isFormulaAlreadyInBox() {
+        return this.node && this.node.type && this.node.type.name==='equation'
+    }
+
+    /**
+     * Clear resources
+     */
+    destroy() {
+        if (this.isDialogInitialized) {
+            this.dialog.dialog('destroy').remove()
+            this.setToDefault()
         }
-    })
+        this.dialogButtons = []
+    }
 
+    show() {
+        //get selected node
+        this.node = this.editor.currentPm.selection.node
+        //if dialog is initialized destroy
+        this.destroy()
+        this.initializeButtons()
+        //initialize dialog and open it
+        this.dialog.dialog({
+            buttons: this.dialogButtons,
+            title: gettext('Latex equation'),
+            modal: true,
+            close: () => {
+                //clear resources
+                this.destroy()
+                this.mathQuill.destroy()
+            }
+        })
 
-    dialogButtons.push({
-        text: gettext('Cancel'),
-        class: 'fw-button fw-orange',
-        click: function () {
-            dialog.dialog('close')
-        }
-    })
-
-    dialog = jQuery(mathDialogTemplate({equation:equation}))
-
-
-    dialog.dialog({
-        buttons: dialogButtons,
-        title: gettext('Latex equation'),
-        modal: true,
-        close: function () {
-            jQuery(this).dialog('destroy').remove()
-        }
-    })
-
-
+        //initialize advanced formula editor using mathquill
+        this.mathQuill = new FormulaEditor(jQuery(this.dialog), this.equation)
+        this.isDialogInitialized = true
+    }
 }

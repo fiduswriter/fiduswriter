@@ -27,7 +27,8 @@ export class ModCitations {
 
     bindEvents () {
         let that = this
-        new UpdateScheduler(this.editor.pm, "change setDoc", () => {that.layoutCitations()})
+        new UpdateScheduler(this.editor.pm, "flush", () => {that.layoutCitations()})
+        new UpdateScheduler(this.editor.mod.footnotes.fnPm, "flush", () => {that.layoutCitations()})
     }
 
     resetCitations() {
@@ -35,6 +36,9 @@ export class ModCitations {
         citations.forEach(function(citation){
             citation.innerHTML = ''
         })
+        if (document.getElementById('document-bibliography').innerHTML !== '') {
+            document.getElementById('document-bibliography').innerHTML = ''
+        }
         this.layoutCitations()
     }
 
@@ -68,7 +72,7 @@ export class ModCitations {
                 emptyBodyCitations.forEach(function(emptyCitation, index) {
                     emptyCitation.innerHTML = '<span class="citation-footnote-marker"></span>'
                     let citationText = citationFormatter.citationTexts[index][0][1]
-                    citationsHTML += '<div class="footnote-citation">'+citationText[0][1]+'</div>'
+                    citationsHTML += '<div class="footnote-citation">'+citationText+'</div>'
                 })
                 if (citationsContainer.innerHTML !== citationsHTML) {
                     citationsContainer.innerHTML = citationsHTML

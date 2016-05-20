@@ -45,7 +45,7 @@ export class ImageDB {
 
     createImage(postData, callback) {
         let that = this
-        $.activateWait();
+        $.activateWait()
         $.ajax({
             url: '/usermedia/save/',
             data: postData,
@@ -54,38 +54,38 @@ export class ImageDB {
             success: function (response, textStatus, jqXHR) {
                 if (that.displayCreateImageError(response.errormsg)) {
                     that.db[response.values.pk] = response.values
-                    $.addAlert('success', gettext('The image has been uploaded'));
+                    $.addAlert('success', gettext('The image has been uploaded'))
                     callback(response.values.pk)
                 } else {
                     $.addAlert('error', gettext(
                         'Some errors are found. Please examine the form.'
-                    ));
+                    ))
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                $.addAlert('error', jqXHR.responseText);
+                $.addAlert('error', jqXHR.responseText)
             },
             complete: function () {
-                $.deactivateWait();
+                $.deactivateWait()
             },
             cache: false,
             contentType: false,
             processData: false
-        });
+        })
     }
 
     displayCreateImageError(errors) {
-        let noError = true;
-        for (let e_key in errors) {
-            e_msg = '<div class="warning">' + errors[e_key] + '</div>';
-            if ('error' == e_key) {
-                jQuery('#createimage').prepend(e_msg);
+        let noError = true
+        for (let eKey in errors) {
+            let eMsg = '<div class="warning">' + errors[eKey] + '</div>'
+            if ('error' == eKey) {
+                jQuery('#createimage').prepend(eMsg)
             } else {
-                jQuery('#id_' + e_key).after(e_msg);
+                jQuery('#id_' + eKey).after(eMsg)
             }
-            noError = false;
+            noError = false
         }
-        return noError;
+        return noError
     }
 
 }

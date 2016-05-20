@@ -4,13 +4,13 @@ based on https://github.com/ProseMirror/website/blob/master/src/client/collab/co
 */
 import {eventMixin} from "prosemirror/dist/util/event"
 import {Transform} from "prosemirror/dist/transform"
-import {CommentMark} from "../schema"
 import {Comment} from "./comment"
 
 export class ModCommentStore {
     constructor(mod) {
         mod.store = this
         this.mod = mod
+        this.commentDuringCreation = false // a comment object for a comment that is still udner construction
         this.setVersion(0)
     }
 
@@ -19,18 +19,45 @@ export class ModCommentStore {
         this.comments = Object.create(null)
         this.unsent = []
     }
+    // Create a new temporary comment. This one is not going into the store yet,
+    // as it is empty, shouldn't be shared and if canceled, it should go away
+    // entirely.
+    addCommentDuringCreation() {
+        let id = -1
+        this.commentDuringCreation = {
+            comment: new Comment(
+                id,
+                this.mod.editor.user.id,
+                this.mod.editor.user.name,
+                this.mod.editor.user.avatar,
+                new Date().getTime(),
+                ''),
+            referrer: this.mod.editor.pm.markRange(
+                this.mod.editor.pm.selection.from,
+                this.mod.editor.pm.selection.to,
+                {className: 'active-comment'}
+            )
+        }
+    }
+
+    removeCommentDuringCreation() {
+        if (this.commentDuringCreation) {
+            this.mod.editor.pm.removeRange(this.commentDuringCreation.referrer)
+            this.commentDuringCreation = false
+        }
+    }
 
     // Add a new comment to the comment database both remotely and locally.
-    addComment(user, userName, userAvatar, date, comment, answers, isMajor) {
+    addComment(user, userName, userAvatar, date, comment, isMajor, posFrom, posTo) {
         let id = randomID()
-        this.addLocalComment(id, user, userName, userAvatar, date, comment, answers, isMajor)
+        this.addLocalComment(id, user, userName, userAvatar, date, comment, [], isMajor)
         this.unsent.push({
             type: "create",
             id: id
         })
-        this.mod.editor.pm.execCommand('comment:set', [id])
+        let markType = this.mod.editor.pm.schema.marks.comment.create({id})
+        this.mod.editor.pm.tr.addMark(posFrom, posTo, markType).apply()
         this.signal("mustSend")
-        return id
     }
 
     addLocalComment(id, user, userName, userAvatar, date, comment, answers, isMajor) {
@@ -64,8 +91,9 @@ export class ModCommentStore {
             for (let i =0; i < node.marks.length; i++) {
                 let mark = node.marks[i]
                 if (mark.type.name === 'comment' && parseInt(mark.attrs.id) === id) {
+                    let markType = this.mod.editor.pm.schema.marks.comment.create({id})
                     this.mod.editor.pm.apply(
-                        this.mod.editor.pm.tr.removeMark(nodeStart, nodeEnd, CommentMark.type)
+                        this.mod.editor.pm.tr.removeMark(nodeStart, nodeEnd, markType)
                     )
                 }
             }
@@ -259,7 +287,7 @@ export class ModCommentStore {
             if (event.type == "delete") {
                 this.deleteLocalComment(event.id)
             } else if (event.type == "create") {
-                this.addLocalComment(event.id, event.user, event.userName, event.userAvatar, event.date, event.comment, event['review:isMajor'])
+                this.addLocalComment(event.id, event.user, event.userName, event.userAvatar, event.date, event.comment, [], event['review:isMajor'])
             } else if (event.type == "update") {
                 this.updateLocalComment(event.id, event.comment, event['review:isMajor'])
             } else if (event.type == "add_answer") {

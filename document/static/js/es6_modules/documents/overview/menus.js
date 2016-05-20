@@ -19,6 +19,8 @@ export class DocumentOverviewMenus {
                 let documentId = parseInt(jQuery(this).attr('data-id'))
                 new DocumentAccessRightsDialog([documentId], that.documentOverview.accessRights, that.documentOverview.teamMembers, function (newAccessRights) {
                     that.documentOverview.accessRights = newAccessRights
+                }, function(memberDetails){
+                    that.documentOverview.teamMembers.push(memberDetails)
                 })
             })
 
@@ -46,7 +48,7 @@ export class DocumentOverviewMenus {
                 function () {
                     let actionName = jQuery(this).attr('data-action'),
                         ids = []
-                    if ('' == actionName || 'undefined' == typeof (actionName))
+                    if ('' === actionName || 'undefined' == typeof (actionName))
                         return
                     jQuery('.entry-select:checked').not(':disabled').each(function () {
                         if (that.documentOverview.user.id != jQuery(this).attr('data-owner') && (
@@ -64,7 +66,7 @@ export class DocumentOverviewMenus {
                                 'data-id'))
                         }
                     })
-                    if (0 == ids.length)
+                    if (0 === ids.length)
                         return
                     switch (actionName) {
                     case 'delete':

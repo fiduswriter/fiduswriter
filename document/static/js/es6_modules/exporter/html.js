@@ -60,7 +60,7 @@ export class BaseHTMLExporter extends BaseExporter{
         let citationFormatter = new FormatCitations(contents,
             this.doc.settings.citationstyle,
             this.bibDB)
-            
+
         let bibliographyHTML = citationFormatter.bibliographyHTML
 
         if (bibliographyHTML.length > 0) {
@@ -140,13 +140,14 @@ export class HTMLExporter extends BaseHTMLExporter{
         for (let i = 0; i < equations.length; i++) {
             let node = equations[i]
             let formula = node.getAttribute('data-equation')
-            katexRender(formula, node)
+            katexRender(formula, node, {throwOnError: false})
         }
         for (let i = 0; i < figureEquations.length; i++) {
             let node = figureEquations[i]
             let formula = node.getAttribute('data-equation')
             katexRender(formula, node, {
-                displayMode: true
+                displayMode: true,
+                throwOnError: false
             })
         }
 
@@ -182,7 +183,7 @@ export class HTMLExporter extends BaseHTMLExporter{
         if (math) {
             includeZips.push({
                 'directory': '',
-                'url': staticUrl + 'zip/katex-style.zip',
+                'url': window.staticUrl + 'zip/katex-style.zip',
             })
         }
         zipFileCreator(outputList, httpOutputList, createSlug(

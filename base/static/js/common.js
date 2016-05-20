@@ -1,24 +1,3 @@
-/**
- * @file Basic functions for all Fidus Writer pages.
- * @copyright This file is part of <a href='http://www.fiduswriter.org'>Fidus Writer</a>.
- *
- * Copyright (C) 2013 Takuto Kojima, Johannes Wilm.
- *
- * @license This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as
- * published by the Free Software Foundation, either version 3 of the
- * License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <a href='http://www.gnu.org/licenses'>http://www.gnu.org/licenses</a>.
- *
- */
-
 /** Extend jQuery for common functions
  * @namespace jQuery
  */
@@ -61,8 +40,8 @@ jQuery.extend({
     'closeDropdownBox': function(e) {
         e.preventDefault();
         jQuery(document).off('mousedown', $.closeDropdownBox);
-        if(e.data.box.hasOwnProperty('type'))
-            e.data.box = box.data.box;
+        //if(e.data.box.hasOwnProperty('type'))
+        //    e.data.box = box.data.box;
         e.data.box.hide();
         $.isDropdownBoxOpen = false;
     },
@@ -71,7 +50,7 @@ jQuery.extend({
      * @param label The node who's parent has to be checked or unchecked.
      */
     'setCheckableLabel': function(label) {
-        checkbox = label.parent().find('input[type=checkbox]');
+        var checkbox = label.parent().find('input[type=checkbox]');
         if(label.hasClass('checked')) {
             label.removeClass('checked');
         } else {
@@ -104,7 +83,7 @@ jQuery.extend({
             'success': 'icon-ok'
         };
         var $alert_box = jQuery('<li class="alerts-' + alert_type + ' ' + icon_names[alert_type] + '">' + alert_msg + '</li>');
-        if(0 == jQuery('#alerts-outer-wrapper').size())
+        if(0 === jQuery('#alerts-outer-wrapper').size())
             jQuery('body').append('<div id="alerts-outer-wrapper"><ul id="alerts-wrapper"></ul></div>');
         jQuery('#alerts-wrapper').append($alert_box);
         $alert_box.fadeTo(fade_speed, 1, function() {

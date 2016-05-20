@@ -74,7 +74,7 @@ export class BibEntryForm {
             //template function from underscore.js
 
         let typeTitle = ''
-        if ('' == type || typeof(type) === 'undefined') {
+        if ('' === type || typeof(type) === 'undefined') {
             typeTitle = gettext('Select source type')
         } else {
             typeTitle = BibEntryTypes[type]['title']
@@ -115,7 +115,7 @@ export class BibEntryForm {
         //when the entry type is changed, the whole form has to be updated
         jQuery('#id_entrytype').bind('change', function() {
             let thisVal = jQuery(this).val()
-            if ('' != thisVal) {
+            if ('' !== thisVal) {
                 that.updateBibEntryDialog(id, thisVal)
                 type = thisVal
             }
@@ -144,10 +144,10 @@ export class BibEntryForm {
             //position: ['center', 80],
             buttons: diaButtons,
             create: function() {
-                let $the_dialog = jQuery(this).closest(".ui-dialog")
-                $the_dialog.find(".ui-dialog-buttonpane").addClass('createbook')
-                $the_dialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
-                $the_dialog.find(".ui-button:last").addClass("fw-button fw-orange")
+                let theDialog = jQuery(this).closest(".ui-dialog")
+                theDialog.find(".ui-dialog-buttonpane").addClass('createbook')
+                theDialog.find(".ui-button:first-child").addClass("fw-button fw-dark")
+                theDialog.find(".ui-button:last").addClass("fw-button fw-orange")
             },
             close: function() {
                 jQuery("#createbook").dialog('destroy').remove()
@@ -159,7 +159,7 @@ export class BibEntryForm {
 
         // resize dialog height
         jQuery('#createbook .ui-tabs-panel').css('height', dia_height - 256)
-        if ('' == jQuery('#id_entrytype').val())
+        if ('' === jQuery('#id_entrytype').val())
             jQuery('#bookoptionsTab').hide()
         jQuery('.fw-checkable-label').bind('click', function() {
             $.setCheckableLabel(jQuery(this))
@@ -175,7 +175,7 @@ export class BibEntryForm {
 
     getFieldForms(fields, eitheror, id) {
         let that = this
-        if (null == eitheror || undefined == eitheror) {
+        if (null === eitheror || undefined === eitheror) {
             eitheror = []
         }
         let ret = ''
@@ -220,7 +220,7 @@ export class BibEntryForm {
                 //if the field has value, get html with template function of underscore.js
                 if (0 !== id) {
                     let current_val = that.bibDB[id][this.name]
-                    if (null != current_val && 'undefined' != typeof(current_val) && '' != current_val) {
+                    if (null !== current_val && 'undefined' !== typeof(current_val) && '' !== current_val) {
                         selected_field = this
                         return false
                     }
@@ -304,7 +304,7 @@ export class BibEntryForm {
             dataTypeSwitch: switch (the_type) {
                 case 'fieldkeys':
                     let selected_key_item = $this.find('.fw-pulldown-item.selected')
-                    if (0 == selected_key_item.size()) {
+                    if (0 === selected_key_item.size()) {
                         selected_key_item = $this.find('.fw-pulldown-item:eq(0)')
                     }
                     the_value = selected_key_item.data('value')
@@ -323,7 +323,7 @@ export class BibEntryForm {
                         required_dates,
                         required_values,
                         date_objs = [],
-                        i, len
+                        len
 
                     switch (date_format) {
                         case 'y':
@@ -359,15 +359,15 @@ export class BibEntryForm {
                     }
 
                     len = required_values.length
-                    for (i = 0; i < len; i++) {
-                        if ('undefined' === typeof(required_values[i]) || null == required_values[i] || '' == required_values[i]) {
+                    for (let i = 0; i < len; i++) {
+                        if ('undefined' === typeof(required_values[i]) || null === required_values[i] || '' === required_values[i]) {
                             the_value = ''
                             break dataTypeSwitch
                         }
                     }
 
                     len = required_dates.length
-                    for (i = 0; i < len; i++) {
+                    for (let i = 0; i < len; i++) {
                         let date_obj = new Date(required_dates[i])
                         if ('Invalid Date' == date_obj) {
                             the_value = ''
@@ -397,18 +397,18 @@ export class BibEntryForm {
                         let last_name = jQuery.trim($tr.find(
                             '.fw-name-input.fw-last').val())
                         let full_name = ''
-                        if ('' == first_name && '' == last_name) {
+                        if ('' === first_name && '' === last_name) {
                             return true
-                        } else if ('' == last_name) {
+                        } else if ('' === last_name) {
                             full_name = '{' + first_name + '}'
-                        } else if ('' == first_name) {
+                        } else if ('' === first_name) {
                             full_name = '{' + last_name + '}'
                         } else {
                             full_name = '{' + first_name + '} {' + last_name + '}'
                         }
                         the_value[the_value.length] = full_name
                     })
-                    if (0 == the_value.length) {
+                    if (0 === the_value.length) {
                         the_value = ''
                     } else {
                         the_name += '[]'
@@ -418,10 +418,10 @@ export class BibEntryForm {
                     the_value = []
                     $this.find('.fw-list-input').each(function() {
                         let input_val = jQuery.trim(jQuery(this).find('.fw-input').val())
-                        if ('' == input_val) return true
+                        if ('' === input_val) return true
                         the_value[the_value.length] = '{' + input_val + '}'
                     })
-                    if (0 == the_value.length) {
+                    if (0 === the_value.length) {
                         the_value = ''
                     } else {
                         the_name += '[]'
@@ -430,7 +430,7 @@ export class BibEntryForm {
                 case 'checkbox':
                     //if it is a checkbox, the value will be restored as an Array
                     the_name = the_name + '[]'
-                    if (undefined == formValues[the_name]) formValues[the_name] = []
+                    if (undefined === formValues[the_name]) formValues[the_name] = []
                     if ($this.prop("checked")) formValues[the_name][formValues[
                         the_name].length] = $this.val()
                     return
@@ -438,7 +438,7 @@ export class BibEntryForm {
                     the_value = $this.val().replace(/(^\s+)|(\s+$)/g, "")
             }
 
-            if (isMust && (undefined == the_value || '' == the_value)) {
+            if (isMust && (undefined === the_value || '' === the_value)) {
                 the_value = 'null'
             }
             formValues[the_name] = the_value
@@ -553,7 +553,7 @@ export class BibEntryForm {
                     }
                 }
 
-                if (0 == name_values.length) {
+                if (0 === name_values.length) {
                     name_values[0] = {
                         'first': '',
                         'last': ''
@@ -575,7 +575,7 @@ export class BibEntryForm {
                     literal_values[literal_values.length] = literals[i].replace('{',
                         '').replace('}', '')
                 }
-                if (0 == literal_values.length)
+                if (0 === literal_values.length)
                     literal_values[0] = ''
                 return listInputTemplate({
                     'filedType': 'literallist',

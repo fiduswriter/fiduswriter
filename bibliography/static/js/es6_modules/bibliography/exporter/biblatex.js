@@ -44,12 +44,12 @@ export class BibLatexExporter {
             let f_values = {}
             for (let f_key in bib) {
                 if ('entry_key' == f_key || 'id' == f_key || 'entry_type' ==
-                    f_key || 'entry_owner' == f_key || 0 == f_key.indexOf(
+                    f_key || 'entry_owner' == f_key || 0 === f_key.indexOf(
                         'bibtype') ||
                     'entry_cat' == f_key)
                     continue
                 let f_value = bib[f_key]
-                if ("" == f_value)
+                if ("" === f_value)
                     continue
                 let f_type = BibFieldTypes[f_key]['type']
                 if ('f_date' == f_type) {

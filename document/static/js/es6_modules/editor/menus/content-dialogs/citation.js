@@ -58,8 +58,8 @@ export let citationDialog = function (mod) {
         bibPage = cite_pages.join(',,,')
         bibBefore = cite_prefixes.join(',,,')
 
-        if (bibEntry === bibEntryStart && bibBefore === bibBeforeStart && bibPage == bibPageStart
-                && bibFormat == bibFormatStart) {
+        if (bibEntry === bibEntryStart && bibBefore === bibBeforeStart &&
+            bibPage == bibPageStart && bibFormat == bibFormatStart) {
             // Nothing has been changed, so we just close the dialog again
             return true
         }

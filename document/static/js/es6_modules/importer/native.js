@@ -1,4 +1,5 @@
 import {obj2Node,node2Obj} from "../exporter/json"
+import {BibEntryTypes} from "../bibliography/statics"
 
 export class ImportNative {
     /* Save document information into the database */
@@ -61,7 +62,8 @@ export class ImportNative {
             delete this.bibDB[key].id
         }
 
-        // We need to remove the pk from the entry in the this.anImageDB so that we also get matches with this.entries with other pk values.
+        // We need to remove the pk from the entry in the this.anImageDB so that
+        // we also get matches with this.entries with other pk values.
         // We therefore convert to an associative array/object.
         for (let key in this.anImageDB) {
             simplifiedShrunkImageDB.push(_.omit(this.anImageDB[key], 'image',
@@ -99,10 +101,9 @@ export class ImportNative {
                     newUrl: matchEntries[0].image
                 })
             } else if (1 < matchEntries.length) {
-                if (!(_.findWhere(matchEntries, {
-                        pk: parseInt(key)
-                    }))) {
-                    // There are several matches, and none of the matches have the same id as the key in this.anImageDB.
+                if (!(_.findWhere(matchEntries, {pk: parseInt(key)}))) {
+                    // There are several matches, and none of the matches have
+                    // the same id as the key in this.anImageDB.
                     // We now pick the first match.
                     // TODO: Figure out if this behavior is correct.
                     ImageTranslationTable.push({
@@ -118,18 +119,20 @@ export class ImportNative {
         }
 
         if (newBibEntries.length !== 0 || newImageEntries.length !== 0) {
-            // We need to create new entries in the DB for images and/or bibliography items.
-            this.getImageData(this.aDocument,
-                BibTranslationTable, ImageTranslationTable, newBibEntries,
+            // We need to create new entries in the DB for images and/or
+            // bibliography items.
+            this.getImageData(BibTranslationTable, ImageTranslationTable, newBibEntries,
                 newImageEntries, this.entries)
         } else if (!(jQuery.isEmptyObject(BibTranslationTable)) || !(jQuery.isEmptyObject(
                 ImageTranslationTable))) {
             // We need to change some reference numbers in the document contents
-            translateReferenceIds(BibTranslationTable,
+            this.translateReferenceIds(BibTranslationTable,
                 ImageTranslationTable)
         } else {
-            // We are good to go. All the used images and bibliography entries exist in the DB for this user with the same numbers.
-            // We can go ahead and create the new document entry in the bibliography without any changes.
+            // We are good to go. All the used images and bibliography entries
+            // exist in the DB for this user with the same numbers.
+            // We can go ahead and create the new document entry in the
+            // bibliography without any changes.
             this.createNewDocument()
         }
 
@@ -170,7 +173,7 @@ export class ImportNative {
                 xhr.onload = function(e) {
                     if (this.status == 200) {
                         // Note: .response instead of .responseText
-                        newImageEntries[counter]['file'] = new Blob([this.response], {
+                        newImageEntries[counter]['file'] = new window.Blob([this.response], {
                             type: newImageEntries[counter].file_type
                         })
                         counter++
@@ -242,33 +245,35 @@ export class ImportNative {
                 formValues.append('imageCats', '')
                 formValues.append('image', newImageEntries[counter].file,
                     newImageEntries[counter].oldUrl.split('/').pop())
-                formValues.append('checksum', newImageEntries[counter].checksum),
-
-                    jQuery.ajax({
-                        url: '/usermedia/save/',
-                        data: formValues,
-                        type: 'POST',
-                        dataType: 'json',
-                        success: function(response, textStatus, jqXHR) {
-                            that.imageDB[response.values.pk] = response.values
-                            let imageTranslation = {}
-                            imageTranslation.oldUrl = newImageEntries[counter].oldUrl
-                            imageTranslation.oldId = newImageEntries[counter].oldId
-                            imageTranslation.newUrl = response.values.image
-                            imageTranslation.newId = response.values.pk
-                            ImageTranslationTable.push(imageTranslation)
-                            counter++
-                            sendImage()
-                        },
-                        error: function() {
-                            jQuery.addAlert('error', gettext('Could not save ') +
-                                newImageEntries[counter].title)
-                        },
-                        complete: function() {},
-                        cache: false,
-                        contentType: false,
-                        processData: false
-                    })
+                formValues.append(
+                    'checksum',
+                    newImageEntries[counter].checksum
+                )
+                jQuery.ajax({
+                    url: '/usermedia/save/',
+                    data: formValues,
+                    type: 'POST',
+                    dataType: 'json',
+                    success: function(response, textStatus, jqXHR) {
+                        that.imageDB[response.values.pk] = response.values
+                        let imageTranslation = {}
+                        imageTranslation.oldUrl = newImageEntries[counter].oldUrl
+                        imageTranslation.oldId = newImageEntries[counter].oldId
+                        imageTranslation.newUrl = response.values.image
+                        imageTranslation.newId = response.values.pk
+                        ImageTranslationTable.push(imageTranslation)
+                        counter++
+                        sendImage()
+                    },
+                    error: function() {
+                        jQuery.addAlert('error', gettext('Could not save ') +
+                            newImageEntries[counter].title)
+                    },
+                    complete: function() {},
+                    cache: false,
+                    contentType: false,
+                    processData: false
+                })
             } else {
                 sendBibItems()
             }
@@ -319,7 +324,7 @@ export class ImportNative {
                         that.newBibEntries = response.bibs
                         that.translateReferenceIds(BibTranslationTable, ImageTranslationTable)
                     },
-                    error: function() {
+                    error: function(jqXHR, textStatus, errorThrown) {
                         console.log(jqXHR.responseText)
                     },
                     complete: function() {}
@@ -350,7 +355,7 @@ export class ImportNative {
                 let aDocumentValues = {
                     last_diffs: [],
                     is_owner: true,
-                    rights: 'w',
+                    rights: 'write',
                     changed: false,
                     titleChanged: false
                 }

@@ -1,5 +1,6 @@
 import {BaseHTMLExporter} from "./html"
 import {obj2Node, node2Obj} from "./json"
+import {BibliographyDB} from "../bibliography/database"
 import {createSlug, findImages} from "./tools"
 import {zipFileCreator} from "./zip"
 import {opfTemplate, containerTemplate, ncxTemplate, ncxItemTemplate, navTemplate,
@@ -173,13 +174,14 @@ export class EpubExporter extends BaseEpubExporter {
         for (let i = 0; i < equations.length; i++) {
             let node = equations[i]
             let formula = node.getAttribute('data-equation')
-            katexRender(formula, node)
+            katexRender(formula, node, {throwOnError: false})
         }
         for (let i = 0; i < figureEquations.length; i++) {
             let node = figureEquations[i]
             let formula = node.getAttribute('data-equation')
             katexRender(formula, node, {
-                displayMode: true
+                displayMode: true,
+                throwOnError: false
             })
         }
 
@@ -291,7 +293,7 @@ export class EpubExporter extends BaseEpubExporter {
         if (math) {
             includeZips.push({
                 'directory': 'EPUB',
-                'url': staticUrl + 'zip/katex-style.zip'
+                'url': window.staticUrl + 'zip/katex-style.zip'
             })
         }
 

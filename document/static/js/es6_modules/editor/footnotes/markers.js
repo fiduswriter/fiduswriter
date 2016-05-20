@@ -1,4 +1,4 @@
-import {fromHTML, toHTML} from "prosemirror/dist/format"
+import {toHTML} from "prosemirror/dist/format"
 
 /* Functions related to footnote markers in the main editor */
 export class ModFootnoteMarkers {
@@ -28,7 +28,7 @@ export class ModFootnoteMarkers {
         let unconfirmedMaps = this.mod.editor.pm.mod.collab.unconfirmedMaps
         let unconfirmedSteps = this.mod.editor.pm.mod.collab.unconfirmedSteps
         let doc = this.mod.editor.pm.mod.versionDoc
-        maps = transform.maps.concat(unconfirmedMaps)
+        transform.maps = transform.maps.concat(unconfirmedMaps)
         unconfirmedSteps.forEach(function(step) {
             // We add pseudo steps for all the unconfirmed steps so that the
             // unconfirmed maps will be applied when handling the transform
@@ -55,7 +55,8 @@ export class ModFootnoteMarkers {
             if (newFootnotes.length > 0) {
                 let firstFootNoteStart = newFootnotes[0].from
                 let index = 0
-                while (that.mod.footnotes.length > index && firstFootNoteStart > that.mod.footnotes[index].from) {
+                while (that.mod.footnotes.length > index &&
+                    firstFootNoteStart > that.mod.footnotes[index].from) {
                     index++
                 }
                 newFootnotes.forEach(function(footnote) {
@@ -77,7 +78,7 @@ export class ModFootnoteMarkers {
         for (let i = 0; i < transform.steps.length; i++) {
             let step = transform.steps[i],
                 map = transform.maps[i]
-            if (step.type == "replace") {
+            if (step.jsonID === "replace" || step.jsonID === "replaceWrap") {
                 let index = 0
 
                 while (index < (ranges.length - 1) && step.from < ranges[index].from) {
@@ -142,7 +143,6 @@ export class ModFootnoteMarkers {
                 })
                 footnoteMarkers.push(footnoteMarker)
 
-
             }
         })
         return footnoteMarkers
@@ -180,9 +180,11 @@ export class ModFootnoteMarkers {
         return passed
     }
 
+
     updateFootnoteMarker(index) {
         this.updating = true
         let footnoteContents = toHTML(this.mod.fnPm.doc.child(index))
+
         let footnote = this.mod.footnotes[index]
         let node = this.mod.editor.pm.doc.nodeAt(footnote.from)
         this.mod.editor.pm.tr.setNodeType(footnote.from, node.type, {

@@ -18,7 +18,7 @@ export class BibliographyDB {
     }
 
     // EXPORT
-    /** Get the bibliography from the server and create as window.BibDB.
+    /** Get the bibliography from the server and create as this.bibDB.
      * @function getBibDB
      * @param callback Will be called afterward.
      */
@@ -28,10 +28,10 @@ export class BibliographyDB {
         let lastModified = -1, numberOfEntries = -1, that = this
 
         if (this.useLocalStorage) {
-            let lastModified = parseInt(localStorage.getItem('last_modified_biblist')),
-                numberOfEntries = parseInt(localStorage.getItem('number_of_entries')),
-                localStorageVersion = localStorage.getItem('version'),
-                localStorageOwnerId = parseInt(localStorage.getItem('owner_id'))
+            let lastModified = parseInt(window.localStorage.getItem('last_modified_biblist')),
+                numberOfEntries = parseInt(window.localStorage.getItem('number_of_entries')),
+                localStorageVersion = window.localStorage.getItem('version'),
+                localStorageOwnerId = parseInt(window.localStorage.getItem('owner_id'))
                 that = this
 
             // A dictionary to look up bib fields by their fw type name. Needed for translation to CSL and Biblatex.
@@ -77,16 +77,16 @@ export class BibliographyDB {
                     if (response.hasOwnProperty('bibList')) {
                         bibList = response.bibList
                         try {
-                            localStorage.setItem('biblist', JSON.stringify(response.bibList))
-                            localStorage.setItem('last_modified_biblist', response.last_modified)
-                            localStorage.setItem('number_of_entries', response.number_of_entries)
-                            localStorage.setItem('owner_id', response.that.docOwnerId)
-                            localStorage.setItem('version', FW_LOCALSTORAGE_VERSION)
+                            window.localStorage.setItem('biblist', JSON.stringify(response.bibList))
+                            window.localStorage.setItem('last_modified_biblist', response.last_modified)
+                            window.localStorage.setItem('number_of_entries', response.number_of_entries)
+                            window.localStorage.setItem('owner_id', response.that.docOwnerId)
+                            window.localStorage.setItem('version', FW_LOCALSTORAGE_VERSION)
                         } catch (error) {
                             // The local storage was likely too small
                         }
                     } else {
-                        bibList = JSON.parse(localStorage.getItem('biblist'))
+                        bibList = JSON.parse(window.localStorage.getItem('biblist'))
                     }
                 } else {
                     bibList = response.bibList
@@ -112,7 +112,6 @@ export class BibliographyDB {
      * @function serverBibItemToBibDB
      * @param item The bibliography item from the server.
      */
-    // NO EXPORT!
     serverBibItemToBibDB(item) {
         let id = item['id']
         let aBibDBEntry = JSON.parse(item['fields'])
@@ -125,7 +124,7 @@ export class BibliographyDB {
 
     /** Saves a bibliography entry to the database on the server.
      * @function createBibEntry
-     * @param post_data The bibliography data to send to the server.
+     * @param postData The bibliography data to send to the server.
      */
     createBibEntry(postData, callback) {
         let that = this
@@ -166,7 +165,7 @@ export class BibliographyDB {
     displayCreateBibEntryError(errors) {
         let noError = true
         for (let eKey in errors) {
-            eMsg = '<div class="warning">' + errors[eKey] + '</div>'
+            let eMsg = '<div class="warning">' + errors[eKey] + '</div>'
             if ('error' == eKey) {
                 jQuery('#createbook').prepend(eMsg)
             } else {

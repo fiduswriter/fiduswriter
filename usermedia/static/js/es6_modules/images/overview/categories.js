@@ -8,20 +8,20 @@ export class ImageOverviewCategories {
     }
     //save changes or create a new category
     createCategory(cats) {
-        let post_data = {
+        let postData = {
             'ids[]': cats.ids,
             'titles[]': cats.titles
         }, that = this
         $.activateWait()
         $.ajax({
             url: '/usermedia/save_category/',
-            data: post_data,
+            data: postData,
             type: 'POST',
             dataType: 'json',
             success: function (response, textStatus, jqXHR) {
                 if (jqXHR.status == 201) {
                     // TODO: Why do we reload the entire list when one new category is created?
-                    imageCategories = []
+                    that.imageOverview.imageDB.cats = response.entries
                     jQuery('#image-category-list li').not(':first').remove()
                     that.addImageCategoryList(response.entries)
 
@@ -54,12 +54,12 @@ export class ImageOverviewCategories {
     //delete an image category
 
     deleteCategory(ids) {
-        let post_data = {
+        let postData = {
             'ids[]': ids
         }
         $.ajax({
             url: '/usermedia/delete_category/',
-            data: post_data,
+            data: postData,
             type: 'POST',
             dataType: 'json'
         })
@@ -71,31 +71,31 @@ export class ImageOverviewCategories {
         let dialogHeader = gettext('Edit Categories')
         let dialogBody = usermediaEditcategoriesTemplate({
             'dialogHeader': dialogHeader,
-            'categories': tmpUsermediaCategoryforms({
-                'categories': imageCategories
+            'categories': usermediaCategoryformsTemplate({
+                'categories': this.imageOverview.imageDB.cats
             })
         })
         jQuery('body').append(dialogBody)
         let diaButtons = {}
         diaButtons[gettext('Submit')] = function () {
-            let new_cat = {
+            let newCat = {
                 'ids': [],
                 'titles': []
             }
             let deletedCats = []
             jQuery('#editCategories .category-form').each(function () {
-                let this_val = jQuery.trim(jQuery(this).val())
-                let this_id = jQuery(this).attr('data-id')
-                if ('undefined' == typeof (this_id)) this_id = 0
-                if ('' != this_val) {
-                    new_cat.ids.push(this_id)
-                    new_cat.titles.push(this_val)
-                } else if ('' == this_val && 0 < this_id) {
-                    deletedCats.push(this_id)
+                let thisVal = jQuery.trim(jQuery(this).val())
+                let thisId = jQuery(this).attr('data-id')
+                if ('undefined' == typeof (thisId)) thisId = 0
+                if ('' !== thisVal) {
+                    newCat.ids.push(thisId)
+                    newCat.titles.push(thisVal)
+                } else if ('' === thisVal && 0 < thisId) {
+                    deletedCats.push(thisId)
                 }
             })
             that.deleteCategory(deletedCats)
-            that.createCategory(new_cat)
+            that.createCategory(newCat)
             jQuery(this).dialog('close')
         }
         diaButtons[gettext('Cancel')] = function () {
@@ -108,10 +108,10 @@ export class ImageOverviewCategories {
             modal: true,
             buttons: diaButtons,
             create: function () {
-                let $the_dialog = jQuery(this).closest(".ui-dialog")
-                $the_dialog.find(".ui-button:first-child").addClass(
+                let theDialog = jQuery(this).closest(".ui-dialog")
+                theDialog.find(".ui-button:first-child").addClass(
                     "fw-button fw-dark")
-                $the_dialog.find(".ui-button:last").addClass(
+                theDialog.find(".ui-button:last").addClass(
                     "fw-button fw-orange")
             },
             close: function () {
@@ -125,20 +125,21 @@ export class ImageOverviewCategories {
     addRemoveListHandler() {
         //add and remove name list field
         jQuery('.fw-add-input').bind('click', function () {
-            let $parent = jQuery(this).parents('.fw-list-input')
-            if (0 == $parent.next().size()) {
-                let $parent_clone = $parent.clone(true)
-                $parent_clone.find('input, select').val('').removeAttr(
+            let parent = jQuery(this).parents('.fw-list-input')
+            if (0 === parent.next().size()) {
+                let parentClone = parent.clone(true)
+                parentClone.find('input, select').val('').removeAttr(
                     'data-id')
-                $parent_clone.insertAfter($parent)
+                parentClone.insertAfter(parent)
             } else {
-                let $the_prev = jQuery(this).prev()
-                if ($the_prev.hasClass("category-form")) {
-                    let this_id = $the_prev.attr('data-id')
-                    if ('undefined' != typeof (this_id))
-                        deleted_cat[deleted_cat.length] = this_id
+                let thePrev = jQuery(this).prev()
+                if (thePrev.hasClass("category-form")) {
+                    // TODO: Figure out what this was about
+                    //let thisId = thePrev.attr('data-id')
+                    //if (undefined !== thisId)
+                    //    deleted_cat[deleted_cat.length] = thisId
                 }
-                $parent.remove()
+                parent.remove()
             }
         })
         jQuery('.dk').dropkick()

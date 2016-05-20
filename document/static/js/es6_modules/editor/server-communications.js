@@ -11,24 +11,23 @@ export class ModServerCommunications {
         this.connected = false
             /* Whether the connection is established for the first time. */
         this.firstTimeConnection = true
+        this.docId = 0
         this.init()
     }
 
     init() {
         let that = this
         let pathnameParts = window.location.pathname.split('/')
-        window.documentId = parseInt(pathnameParts[pathnameParts.length -
+        this.docId = parseInt(pathnameParts[pathnameParts.length -
             2], 10)
 
-        if (isNaN(documentId)) {
-            documentId = 0
+        if (isNaN(this.docId)) {
+            this.docId = 0
         }
 
         jQuery(document).ready(function() {
             that.createWSConnection()
         })
-
-
 
     }
 
@@ -36,8 +35,8 @@ export class ModServerCommunications {
         let that = this
 
         try {
-            this.ws = new WebSocket('ws://' + websocketServer + ':' + websocketPort +
-                '/ws/doc/' + documentId)
+            this.ws = new window.WebSocket('ws://' + window.websocketServer + ':' + window.websocketPort +
+                '/ws/doc/' + this.docId)
             this.ws.onopen = function() {
                 console.log('connection open')
                 jQuery('#unobtrusive_messages').html('')
@@ -101,9 +100,6 @@ export class ModServerCommunications {
                 break
             case 'connections':
                 this.editor.mod.collab.updateParticipantList(data.participant_list)
-                if (this.editor.docInfo.control) {
-                    this.editor.docInfo.sentHash = false
-                }
                 break
             case 'welcome':
                 this.activateConnection()
@@ -114,10 +110,18 @@ export class ModServerCommunications {
             case 'confirm_diff_version':
                 this.editor.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
                 if (data.diff_version !== this.editor.pm.mod.collab.version) {
-                    this.editor.mod.collab.checkDiffVersion()
+                    this.editor.mod.collab.docChanges.checkDiffVersion()
                     return
                 }
                 this.editor.mod.collab.docChanges.enableDiffSending()
+                break
+            case 'selection_change':
+                this.editor.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
+                if (data.diff_version !== this.editor.pm.mod.collab.version) {
+                    this.editor.mod.collab.docChanges.checkDiffVersion()
+                    return
+                }
+                this.editor.mod.collab.carets.receiveSelectionChange(data)
                 break
             case 'diff':
                 this.editor.mod.collab.docChanges.receiveFromCollaborators(data)
@@ -127,9 +131,6 @@ export class ModServerCommunications {
                 break
             case 'setting_change':
                 this.editor.mod.settings.set.setSetting(data.variable, data.value, false)
-                break
-            case 'take_control':
-                this.editor.takeControl()
                 break
             case 'check_hash':
                 this.editor.mod.collab.docChanges.checkHash(data.diff_version, data.hash)

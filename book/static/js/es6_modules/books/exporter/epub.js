@@ -1,4 +1,4 @@
-import {render as katexRender} from "katex"
+import {katexRender} from "../../katex/katex"
 
 import {getMissingChapterData, getImageAndBibDB, uniqueObjects} from "./tools"
 import {epubBookOpfTemplate, epubBookCoverTemplate, epubBookTitlepageTemplate,
@@ -142,17 +142,18 @@ export class EpubBookExporter extends BaseEpubExporter {
             for (let i = 0; i < equations.length; i++) {
                 let node = equations[i]
                 let formula = node.getAttribute('data-equation')
-                katexRender(formula, node)
+                katexRender(formula, node, {throwOnError: false})
             }
             for (let i = 0; i < figureEquations.length; i++) {
                 let node = figureEquations[i]
                 let formula = node.getAttribute('data-equation')
                 katexRender(formula, node, {
-                    displayMode: true
+                    displayMode: true,
+                    throwOnError: false
                 })
             }
 
-            if (this.book.chapters[i].part && this.book.chapters[i].part != '') {
+            if (this.book.chapters[i].part && this.book.chapters[i].part !== '') {
                 contentItems.push({
                     link: 'document-' + this.book.chapters[i].number + '.xhtml',
                     title: aChapter.part,
@@ -281,17 +282,12 @@ export class EpubBookExporter extends BaseEpubExporter {
             })
         }])
 
-
-
-
         for (let i = 0; i < styleSheets.length; i++) {
             outputList.push({
                 filename: 'EPUB/' + styleSheets[i].filename,
                 contents: styleSheets[i].contents
             })
         }
-
-
 
         for (let i = 0; i < images.length; i++) {
             httpOutputList.push({
@@ -303,7 +299,7 @@ export class EpubBookExporter extends BaseEpubExporter {
         if (math) {
             includeZips.push({
                 'directory': 'EPUB',
-                'url': staticUrl + 'zip/katex-style.zip'
+                'url': window.staticUrl + 'zip/katex-style.zip'
             })
         }
 

@@ -3,8 +3,8 @@ export let usermediaUploadTemplate = _.template('<div id="uploadimage" class="fw
     <form action="#" method="post" class="usermediaUploadForm">\
         <div>\
             <input name="title" class="fw-media-title fw-media-form" type="text" placeholder="' + gettext('Insert a title') + '" value="<%- title %>" />\
-            <button type="button" class="fw-media-select-button fw-button fw-light">'
-                + gettext('Select a file') +
+            <button type="button" class="fw-media-select-button fw-button fw-light">' +
+                gettext('Select a file') +
             '</button>\
             <input name="image" type="file" class="fw-media-file-input fw-media-form">\
         </div>\

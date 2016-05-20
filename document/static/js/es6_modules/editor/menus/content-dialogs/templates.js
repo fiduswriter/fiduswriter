@@ -7,7 +7,9 @@ export let linkDialogTemplate = _.template('\
 
 export let mathDialogTemplate = _.template('\
     <div title="' + gettext("Math") + '">\
-        <input style="width: 250px;" class="math" type="text" name="math" value="<%- equation %>" />\
+        <p><span class="math-field-header">Type formula here: </span><span class="math-field" type="text" name="math" ></span></p>\
+        <p><span class="math-field-header">LATEX result: </span><span class="math-latex"></span></p>\
+        <div class="math-error"></div>\
     </div>\
 ')
 
@@ -64,10 +66,10 @@ export let figureImageTemplate = _.template('\
 export let configureFigureTemplate = _.template('\
     <div class="fw-media-uploader">\
             <div>\
-                <input class="fw-media-title figure-math" type="text" name="figure-math" placeholder="'
-                    + gettext('Insert formula') + '" value="<%- equation %>" <%if (image) {%>disabled=disabled<%} %>/>\
-                <button type="button" id="insertFigureImage" class="fw-button fw-light<%if (equation!=="") {%> disabled<%} %>">'
-                    + gettext('Insert image') + ' <i class="icon-figure"></i>\
+                <input class="fw-media-title figure-math" type="text" name="figure-math" placeholder="' +
+                    gettext('Insert formula') + '" value="<%- equation %>" <%if (image) {%>disabled=disabled<%} %>/>\
+                <button type="button" id="insertFigureImage" class="fw-button fw-light<%if (equation!=="") {%> disabled<%} %>">' +
+                    gettext('Insert image') + ' <i class="icon-figure"></i>\
                 </button>\
             </div>\
             <input type="hidden" id="figure-category">\
@@ -122,22 +124,22 @@ export let configureCitationTemplate = _.template('\
             <h3 class="fw-green-title">' + gettext("Citation format") + '</h3>\
             <div id="citation-style-selector" class="fw-pulldown-select">\
                 <div id="citation-style-label" class="fw-pulldown-select-label" data-style="<%= citeFormat %>"><label>\
-                <% if("textcite" == citeFormat){ %>'
-                    + gettext("Author (1998)") +
-                '<% } else { %>'
-                    + gettext("(Author, 1998)") +
+                <% if("textcite" == citeFormat){ %>' +
+                    gettext("Author (1998)") +
+                '<% } else { %>' +
+                    gettext("(Author, 1998)") +
                 '<% } %>\
                 </label></div>\
                 <div id="citation-style-pulldown" class="fw-pulldown fw-left">\
                     <ul>\
                         <li>\
-                            <span class="fw-pulldown-item" data-style="autocite">'
-                                + gettext("(Author, 1998)") +
+                            <span class="fw-pulldown-item" data-style="autocite">' +
+                                gettext("(Author, 1998)") +
                             '</span>\
                         </li>\
                         <li>\
-                            <span class="fw-pulldown-item" data-style="textcite">'
-                                + gettext("Author (1998)") +
+                            <span class="fw-pulldown-item" data-style="textcite">' +
+                                gettext("Author (1998)") +
                             '</span>\
                         </li>\
                     </ul>\

@@ -6,7 +6,7 @@ dateutils==0.6.6
 distribute==0.7.3
 django-allauth==0.24.1
 django-appconf==1.0.1
-git+git://github.com/fiduswriter/django-avatar.git@2.1.2dev0#egg=django-avatar
+django-avatar==2.2.1
 django-compressor==1.6
 django-forms-bootstrap==3.0.1
 django-jsonfield==0.9.15

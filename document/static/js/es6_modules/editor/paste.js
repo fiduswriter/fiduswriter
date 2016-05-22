@@ -2,9 +2,10 @@
 // We are looking at the paste output of MsWord, LibreOffice and Google Docs
 // and try to convert it to make sense.
 
+const BLOCK_NODE_TAGS = ['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'DIV', 'FIGURE', 'HR', 'CODE', 'BLOCKQUOTE', 'UL', 'META']
+
 export class PasteHandler {
     constructor(inHTML, pmInstance) {
-//        console.log(inHTML)
         this.inHTML = inHTML
         this.pmInstance = pmInstance
         this.footnoteMarkers = []
@@ -16,22 +17,82 @@ export class PasteHandler {
     // over each node in the pasted content.
     convert() {
         this.dom = document.createElement('div')
-        this.dom.innerHTML = this.inHTML
+        this.setDOM()
+        this.normInHTML = this.dom.innerHTML
         this.iterateNode(this.dom)
+        this.cleanDOM()
         this.convertFootnotes()
         this.outHTML = this.dom.innerHTML
-        //console.log(this.inHTML)
-        //console.log(this.outHTML)
     }
 
+    // set the contents of the dom. Use outerHTMl to avoid normalization
+    setDOM() {
+        this.dom.innerHTML = "<div></div>"
+        this.dom.firstChild.outerHTML = this.inHTML
+
+    }
+
+    // Remove unused content
+    cleanDOM() {
+        let removableElements = [].slice.call(this.dom.querySelectorAll(
+            // Separator lines for footnotes in Microsoft Word 2016
+            'div[style*="mso-element:footnote-list"]'
+        ))
+
+        removableElements.forEach(function(el){
+            el.parentNode.removeChild(el)
+        })
+
+    }
     // Iterate over pasted nodes and their children
     iterateNode(node) {
-        if (node.nodeType === 1) {
-            for (let i = 0; i < node.childNodes.length; i++) {
-                this.iterateNode(node.childNodes[i])
+        if (node.tagName==="STYLE" || node.tagName==="XML" || node.tagName==="LINK" ||
+                (node.tagName==="P" &! node.firstChild)) {
+            node.parentNode.removeChild(node)
+            return true
+        } else if (node.nodeType===8) {
+            node.parentNode.removeChild(node)
+
+            if (node.textContent==="EndFragment") {
+                // End of paste content of Microsoft Word 2016. Do not process any further.
+                return false
+            } else {
+                return true
+            }
+        } else if (node.nodeType === 1) {
+            let childNode = node.firstChild
+            while (childNode) {
+                let nextChildNode = childNode.nextSibling
+                if (this.iterateNode(childNode)) {
+                    childNode = nextChildNode
+                } else {
+                    childNode = false
+                }
             }
             this.convertNode(node)
         }
+        // Temporary paste fix, see issue https://github.com/ProseMirror/prosemirror/issues/342
+        if (node.nodeType===3 || BLOCK_NODE_TAGS.indexOf(node.tagName) === -1) { // This is a text or inline node
+            // Determine if the node has any block level siblings
+            let checkNode = node.parentNode.firstChild
+            let foundBlock = false
+            while (checkNode) {
+                if (BLOCK_NODE_TAGS.indexOf(checkNode.tagName) !== -1) {
+                    foundBlock = true
+                }
+                checkNode = checkNode.nextSibling
+            }
+            if (foundBlock) {
+                if (node.nodeType === 3 && node.nodeValue.trim()==='') {
+                    node.parentNode.removeChild(node)
+                } else {
+                    let par = document.createElement('p')
+                    node.parentNode.replaceChild(par, node)
+                    par.appendChild(node)
+                }
+            }
+        }
+        return true
     }
 
     // Convert an existing node to a different node, if needed.
@@ -110,7 +171,6 @@ export class PasteHandler {
             //footnoteContents = footnoteContents.replace(/(\r\n|\n|\r)/gm,"")
             // Turn multiple white spaces into single space
             footnoteContents = footnoteContents.replace(/\s+/g, ' ')
-            console.log(footnoteContents)
             newFnM.setAttribute('contents', footnoteContents)
             fnM.parentNode.replaceChild(newFnM, fnM)
         })

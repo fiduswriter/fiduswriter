@@ -1,6 +1,6 @@
 import {fromHTML} from "prosemirror/dist/format"
 import {Step} from "prosemirror/dist/transform"
-import {PasteHandler} from "../paste"
+import {Paste} from "../paste/paste"
 import {COMMENT_ONLY_ROLES} from "../editor"
 
 /* Functions related to the footnote editor instance */
@@ -21,7 +21,7 @@ export class ModFootnoteEditor {
             return that.onFilterTransform(transform)
         })
         this.mod.fnPm.on("transformPastedHTML", (inHTML) => {
-            let ph = new PasteHandler(inHTML, "footnote")
+            let ph = new Paste(inHTML, "footnote")
             return ph.outHTML
         })
     }

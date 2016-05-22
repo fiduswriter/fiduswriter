@@ -24,7 +24,7 @@ import {ModNodeConvert} from "./node-convert"
 import {node2Obj, obj2Node} from "../exporter/json"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
-import {PasteHandler} from "./paste"
+import {Paste} from "./paste/paste"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 
@@ -78,8 +78,8 @@ export class Editor {
         this.pm.on("filterTransform", (transform) => {return that.onFilterTransform(transform)})
         this.pm.on("transform", (transform, options) => {that.onTransform(transform, true)})
         this.pm.on("transformPastedHTML", (inHTML) => {
-            let ph = new PasteHandler(inHTML, "main")
-            return ph.outHTML
+            let ph = new Paste(inHTML, "main")
+            return ph.getOutput()
         })
         this.pm.mod.collab.on("collabTransform", (transform, options) => {that.onTransform(transform, false)})
         this.setSaveTimers()

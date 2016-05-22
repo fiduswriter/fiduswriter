@@ -4,6 +4,7 @@
 
 export class PasteHandler {
     constructor(inHTML, pmInstance) {
+//        console.log(inHTML)
         this.inHTML = inHTML
         this.pmInstance = pmInstance
         this.footnoteMarkers = []
@@ -53,6 +54,32 @@ export class PasteHandler {
                 let footnoteCounter = footnote.querySelector('a.sdfootnotesym')
                 if (footnoteCounter) {
                     footnoteCounter.parentNode.removeChild(footnoteCounter)
+                }
+                this.footnoteMarkers.push(node)
+                this.footnotes.push(footnote)
+            }
+        }
+        // Microsoft Word 2016 footnote markers (only in main pm instance):
+        if (node.tagName === 'A' &&
+            node.firstChild && node.firstChild.tagName === 'SPAN' &&
+            node.firstChild.classList.contains("MsoFootnoteReference") &&
+            this.pmInstance === "main") {
+            // Remove "#_ftn" from the selector (#_ftn1)
+            let fnSelector = node.getAttribute("href")
+            let fnNumber = node.getAttribute(
+                "href"
+            ).substring(5, fnSelector.length)
+            let footnote = this.dom.querySelector("#ftn" + fnNumber)
+            if (footnote) {
+                let footnoteCounter = footnote.querySelector('a[href="#_ftnref' + fnNumber + '"]')
+                if (footnoteCounter) {
+                    let followingNode = footnoteCounter.nextSibling
+                    footnoteCounter.parentNode.removeChild(footnoteCounter)
+                    if (followingNode && followingNode.nodeType === 3) {
+                        // If there is a text string right after the footnote
+                        // marker, remove any leading spaces.
+                        followingNode.nodeValue = followingNode.nodeValue.replace(/^\s+/,"")
+                    }
                 }
                 this.footnoteMarkers.push(node)
                 this.footnotes.push(footnote)

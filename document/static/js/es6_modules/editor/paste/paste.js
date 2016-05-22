@@ -22,7 +22,7 @@ export class Paste {
     }
 
     parseHTML() {
-        let parser = new DOMParser()
+        let parser = new window.DOMParser()
         this.htmlDoc = parser.parseFromString(this.inHTML, "text/html").getElementsByTagName('html')[0]
     }
 

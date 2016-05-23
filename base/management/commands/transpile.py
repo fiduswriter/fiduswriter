@@ -64,8 +64,7 @@ class Command(BaseCommand):
                 old_katex_version = old_package_json["dependencies"]["katex"]
             if os.path.exists(os.path.join(PROJECT_PATH, "node_modules")):
                 shutil.rmtree("node_modules")
-            if not find_executable("nodeenv"):
-                call(["pip", "install", "nodeenv"])
+            if not find_executable("npm"):
                 call(["nodeenv", "-p"])
             print("Installing dependencies")
             call(["npm", "install"])

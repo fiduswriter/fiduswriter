@@ -9,7 +9,7 @@ export class ModFootnoteEditor {
         mod.fnEditor = this
         this.mod = mod
         this.rendering = false
-        this.bindEvents(
+        this.bindEvents()
     }
 
     bindEvents() {

@@ -16,7 +16,7 @@ class DocumentWS(BaseWebSocketHandler):
     sessions = dict()
 
     def open(self, document_id):
-        print 'Websocket opened'
+        print('Websocket opened')
         current_user = self.get_current_user()
         self.user_info = SessionUserInfo()
         doc_db, can_access = self.user_info.init_access(
@@ -61,7 +61,7 @@ class DocumentWS(BaseWebSocketHandler):
         response['document']['id'] = self.doc['id']
         response['document']['version'] = self.doc['version']
         if self.doc['diff_version'] < self.doc['version']:
-            print "!!!diff version issue!!!"
+            print('!!!diff version issue!!!')
             self.doc['diff_version'] = self.doc['version']
             self.doc["last_diffs"] = []
         response['document']['title'] = self.doc['title']
@@ -82,7 +82,6 @@ class DocumentWS(BaseWebSocketHandler):
         #     'editing',
         #     self.user_info
         # )
-        print self.doc["comments"]
         response['document']['comments'] = self.doc["comments"]
         # response['document']['comments'] = filtered_comments
         response['document']['comment_version'] = self.doc["comment_version"]
@@ -105,7 +104,7 @@ class DocumentWS(BaseWebSocketHandler):
         response['document_values']['is_owner'] = self.user_info.is_owner
         response['document_values']['rights'] = self.user_info.access_rights
         if self.doc['version'] > self.doc['diff_version']:
-            print "!!!diff version issue!!!"
+            print('!!!diff version issue!!!')
             self.doc['diff_version'] = self.doc['version']
             self.doc["last_diffs"] = []
         elif self.doc['diff_version'] > self.doc['version']:
@@ -128,10 +127,10 @@ class DocumentWS(BaseWebSocketHandler):
 
     def on_message(self, message):
         if self.user_info.document_id not in DocumentWS.sessions:
-            print "receiving message for closed document"
+            print('receiving message for closed document')
             return
         parsed = json_decode(message)
-        print parsed["type"]
+        print(parsed["type"])
         if parsed["type"] == 'get_document':
             self.send_document()
         elif parsed["type"] == 'participant_update':
@@ -172,6 +171,7 @@ class DocumentWS(BaseWebSocketHandler):
             remaining_diffs = 1000 + \
                 self.doc['diff_version'] - changes['version']
             self.doc['last_diffs'] = self.doc['last_diffs'][-remaining_diffs:]
+        self.doc['title'] = changes['title']
         self.doc['contents'] = changes['contents']
         self.doc['metadata'] = changes['metadata']
         self.doc['version'] = changes['version']
@@ -282,7 +282,7 @@ class DocumentWS(BaseWebSocketHandler):
         elif parsed["diff_version"] != self.doc['diff_version']:
             if parsed["diff_version"] < (
                     self.doc['diff_version'] - len(self.doc["last_diffs"])):
-                print "unfixable"
+                print('unfixable')
                 # Client has a version that is too old
                 self.send_document()
             elif parsed["diff_version"] < self.doc['diff_version']:
@@ -297,13 +297,13 @@ class DocumentWS(BaseWebSocketHandler):
                 }
                 self.write_message(response)
             else:
-                print "unfixable"
+                print('unfixable')
                 # Client has a version that is too old
                 self.send_document()
         else:
-            print "comment_version incorrect!"
-            print parsed["comment_version"]
-            print self.doc['comment_version']
+            print('comment_version incorrect!')
+            print(parsed["comment_version"])
+            print(self.doc['comment_version'])
 
     def check_diff_version(self, parsed):
         pdv = parsed["diff_version"]
@@ -325,7 +325,7 @@ class DocumentWS(BaseWebSocketHandler):
             self.write_message(response)
             return
         else:
-            print "unfixable"
+            print('unfixable')
             # Client has a version that is too old
             self.send_document()
             return
@@ -334,7 +334,7 @@ class DocumentWS(BaseWebSocketHandler):
         return self.user_info.access_rights in CAN_UPDATE_DOCUMENT
 
     def on_close(self):
-        print "Websocket closing"
+        print('Websocket closing')
         if (
             hasattr(self.user_info, 'document_id') and
             self.user_info.document_id in DocumentWS.sessions and
@@ -397,8 +397,8 @@ class DocumentWS(BaseWebSocketHandler):
         doc_db.settings = json_encode(doc['settings'])
         doc_db.last_diffs = json_encode(doc['last_diffs'])
         doc_db.comments = json_encode(doc['comments'])
-        print("saving document #" + str(doc_db.id))
-        print("version " + str(doc_db.version))
+        print('saving document #' + str(doc_db.id))
+        print('version ' + str(doc_db.version))
         doc_db.save()
 
     @classmethod

@@ -18,7 +18,7 @@ export class BibliographyDB {
     }
 
     // EXPORT
-    /** Get the bibliography from the server and create as window.BibDB.
+    /** Get the bibliography from the server and create as this.bibDB.
      * @function getBibDB
      * @param callback Will be called afterward.
      */

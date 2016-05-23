@@ -55,7 +55,8 @@ export class ModFootnoteMarkers {
             if (newFootnotes.length > 0) {
                 let firstFootNoteStart = newFootnotes[0].from
                 let index = 0
-                while (that.mod.footnotes.length > index && firstFootNoteStart > that.mod.footnotes[index].from) {
+                while (that.mod.footnotes.length > index &&
+                    firstFootNoteStart > that.mod.footnotes[index].from) {
                     index++
                 }
                 newFootnotes.forEach(function(footnote) {
@@ -77,7 +78,7 @@ export class ModFootnoteMarkers {
         for (let i = 0; i < transform.steps.length; i++) {
             let step = transform.steps[i],
                 map = transform.maps[i]
-            if (step.type == "replace") {
+            if (step.jsonID === "replace" || step.jsonID === "replaceWrap") {
                 let index = 0
 
                 while (index < (ranges.length - 1) && step.from < ranges[index].from) {
@@ -141,7 +142,6 @@ export class ModFootnoteMarkers {
                     that.mod.fnEditor.removeFootnote(footnoteMarker)
                 })
                 footnoteMarkers.push(footnoteMarker)
-
 
             }
         })

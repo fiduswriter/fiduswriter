@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from collections import namedtuple
 from itertools import chain
+import os
 
 from allauth.account.models import EmailAddress
 from django.contrib.auth.hashers import make_password
@@ -27,6 +28,25 @@ from test.mock.document_contents import (
 
 # GLOBALS
 global DRIVER
+
+# TEST MODULE SETUP
+# DRIVER initialized in setUpModule isn't visible outside setUpModule
+
+if os.getenv("SAUCE_USERNAME"):
+    username = os.environ["SAUCE_USERNAME"]
+    access_key = os.environ["SAUCE_ACCESS_KEY"]
+    capabilities = {}
+    capabilities["build"] = os.environ["TRAVIS_BUILD_NUMBER"]
+    capabilities["tags"] = [os.environ["TRAVIS_PYTHON_VERSION"], "CI"]
+    capabilities["tunnel-identifier"] = os.environ["TRAVIS_JOB_NUMBER"]
+    capabilities["browserName"] = "chrome"
+    hub_url = "%s:%s@localhost:4445" % (username, access_key)
+    DRIVER = webdriver.Remote(
+        desired_capabilities=capabilities,
+        command_executor="http://%s/wd/hub" % hub_url
+    )
+else:
+    DRIVER = webdriver.Chrome()
 
 
 # CONSTANTS
@@ -235,11 +255,6 @@ class CaretPositionTest(LiveTornadoTestCase, Manipulator):
         )
         # test browser-side, in case caret grabbing is buggy
         # self.assertTrue(self.caretIsAt(expectedCaret))
-
-
-# TEST MODULE SETUP
-# DRIVER initialized in setUpModule isn't visible outside setUpModule
-DRIVER = webdriver.Chrome()
 
 
 def tearDownModule():

@@ -29,8 +29,6 @@ export class ModServerCommunications {
             that.createWSConnection()
         })
 
-
-
     }
 
     createWSConnection() {

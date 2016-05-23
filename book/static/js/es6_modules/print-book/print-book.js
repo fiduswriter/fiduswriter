@@ -2,6 +2,7 @@ import {bookPrintStartTemplate, bookPrintTemplate} from "./templates"
 import {obj2Node} from "../exporter/json"
 import {FormatCitations} from "../citations/format"
 import {BibliographyDB} from "../bibliography/database"
+
 /**
 * Helper functions for the book print page.
 */

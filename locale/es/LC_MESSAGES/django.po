@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-03-23 11:23-0500\n"
+"POT-Creation-Date: 2016-05-19 03:24-0500\n"
 "PO-Revision-Date: 2013-03-03 12:18-0700\n"
 "Last-Translator: Ana Vera Resquín <ani.tavr77@gmail.com>\n"
 "Language-Team: Spanish <ani.tavr77@gmail.com>\n"
@@ -59,7 +59,7 @@ msgid "Edit profile"
 msgstr "Edita tu perfil"
 
 #: base/templates/base.html:110
-#: user/templates/account/list_team_members.html:61
+#: user/templates/account/list_team_members.html:60
 msgid "Contacts"
 msgstr "Contactos"
 
@@ -89,61 +89,61 @@ msgstr ""
 msgid "Bibliography Manager"
 msgstr "Administrador de Bibliografía"
 
-#: bibliography/templates/bibliography/index.html:52
-#: book/templates/book/index.html:75 document/templates/document/index.html:84
-#: user/templates/account/list_team_members.html:43
-#: usermedia/templates/usermedia/index.html:39
+#: bibliography/templates/bibliography/index.html:42
+#: book/templates/book/index.html:53 document/templates/document/index.html:48
+#: user/templates/account/list_team_members.html:42
+#: usermedia/templates/usermedia/index.html:33
 msgid "Delete selected"
 msgstr "Borrar lo seleccionado"
 
-#: bibliography/templates/bibliography/index.html:57
+#: bibliography/templates/bibliography/index.html:47
 msgid "Export selected"
 msgstr "Exportar lo seleccionado"
 
-#: bibliography/templates/bibliography/index.html:66
-#: bibliography/templates/bibliography/index.html:73
-#: usermedia/templates/usermedia/index.html:48
-#: usermedia/templates/usermedia/index.html:55
+#: bibliography/templates/bibliography/index.html:56
+#: bibliography/templates/bibliography/index.html:63
+#: usermedia/templates/usermedia/index.html:42
+#: usermedia/templates/usermedia/index.html:49
 msgid "All categories"
 msgstr "Todas las categorías"
 
-#: bibliography/templates/bibliography/index.html:81
-#: usermedia/templates/usermedia/index.html:63
+#: bibliography/templates/bibliography/index.html:71
+#: usermedia/templates/usermedia/index.html:57
 msgid "Edit categories"
 msgstr "Editar categorías"
 
-#: bibliography/templates/bibliography/index.html:87
+#: bibliography/templates/bibliography/index.html:77
 msgid "Register new source"
 msgstr "Registrar nueva fuente"
 
-#: bibliography/templates/bibliography/index.html:93
+#: bibliography/templates/bibliography/index.html:83
 msgid "Import Bibtex Library"
 msgstr "Importar archivo Bibtex"
 
-#: bibliography/templates/bibliography/index.html:103
-#: book/templates/book/index.html:129
-#: document/templates/document/index.html:138
+#: bibliography/templates/bibliography/index.html:93
+#: book/templates/book/index.html:107
+#: document/templates/document/index.html:102
 msgid "Title"
 msgstr "Título"
 
-#: bibliography/templates/bibliography/index.html:104
+#: bibliography/templates/bibliography/index.html:94
 msgid "Sourcetype"
 msgstr "Tipo de fuente"
 
-#: bibliography/templates/bibliography/index.html:105
+#: bibliography/templates/bibliography/index.html:95
 msgid "Author"
 msgstr "Autor"
 
-#: bibliography/templates/bibliography/index.html:106
+#: bibliography/templates/bibliography/index.html:96
 msgid "Published"
 msgstr "Publicado"
 
-#: bibliography/templates/bibliography/index.html:107
-#: book/templates/book/index.html:134
-#: document/templates/document/index.html:144
-#: user/templates/account/list_team_members.html:63
-#: user/templates/account/show_profile.html:87
-#: usermedia/templates/usermedia/index.html:82
+#: bibliography/templates/bibliography/index.html:97
+#: book/templates/book/index.html:112
+#: document/templates/document/index.html:108
+#: user/templates/account/list_team_members.html:62
+#: user/templates/account/show_profile.html:86
+#: usermedia/templates/usermedia/index.html:76
 msgid "Delete"
 msgstr "Borrar"
 
@@ -151,175 +151,155 @@ msgstr "Borrar"
 msgid "Book Overview"
 msgstr "Lista de Libros"
 
-#: book/templates/book/index.html:80 document/templates/document/index.html:89
+#: book/templates/book/index.html:58 document/templates/document/index.html:53
 msgid "Share selected"
 msgstr "Compartir lo seleccionado"
 
-#: book/templates/book/index.html:85 document/templates/document/index.html:94
+#: book/templates/book/index.html:63 document/templates/document/index.html:58
 msgid "Copy selected"
 msgstr "Copiar lo seleccionado"
 
-#: book/templates/book/index.html:90 document/templates/document/index.html:99
+#: book/templates/book/index.html:68 document/templates/document/index.html:63
 msgid "Export selected as Epub"
 msgstr "Exportar lo seleccionado a Epub"
 
-#: book/templates/book/index.html:95
-#: document/templates/document/index.html:104
+#: book/templates/book/index.html:73 document/templates/document/index.html:68
 msgid "Export selected as HTML"
 msgstr "Exportar lo seleccionado a HTML"
 
-#: book/templates/book/index.html:100
-#: document/templates/document/index.html:109
+#: book/templates/book/index.html:78 document/templates/document/index.html:73
 msgid "Export selected as LaTeX"
 msgstr "Exportar lo seleccionado a LaTeX"
 
-#: book/templates/book/index.html:105
+#: book/templates/book/index.html:83
 msgid "Export selected for Print/PDF"
 msgstr "Exportar lo seleccionado a Impresion/PDF"
 
-#: book/templates/book/index.html:113
+#: book/templates/book/index.html:91
 msgid "Create New Book"
 msgstr "Crear un Nuevo Libro"
 
-#: book/templates/book/index.html:119
+#: book/templates/book/index.html:97
 msgid "Upload Fidus Book"
 msgstr "Subir Libro Fidus"
 
-#: book/templates/book/index.html:130
-#: document/templates/document/index.html:140
+#: book/templates/book/index.html:108
+#: document/templates/document/index.html:104
 msgid "Created"
 msgstr "Creado"
 
-#: book/templates/book/index.html:131
-#: document/templates/document/index.html:141
+#: book/templates/book/index.html:109
+#: document/templates/document/index.html:105
 msgid "Last changed"
 msgstr "Último cambio"
 
-#: book/templates/book/index.html:132
-#: document/templates/document/index.html:142
+#: book/templates/book/index.html:110
+#: document/templates/document/index.html:106
 msgid "Owner"
 msgstr "Propietario"
 
-#: book/templates/book/index.html:133
-#: document/templates/document/index.html:143
+#: book/templates/book/index.html:111
+#: document/templates/document/index.html:107
 msgid "Rights"
 msgstr "Derechos"
 
-#: book/views.py:299 document/views.py:226
+#: book/views.py:319 document/views.py:230
 #, fuzzy
 msgid "Untitled"
 msgstr "Subtítulo"
 
-#: book/views.py:304
-#, python-format
-msgid ""
-"Hey %(collaborator_name)s,\n"
-"%(owner)s has shared the book '%(book)s' on Fidus Writer with you and given "
-"you %(right)s access rights.\n"
-"Find the book in your book overview: %(link)s"
-msgstr ""
-
-#: book/views.py:305
+#: book/views.py:335
 msgid "Book shared:"
 msgstr ""
 
-#: book/views.py:315
-#, python-format
-msgid ""
-"Hey %(collaborator_name)s,\n"
-"%(owner)s has given you write access rights to the book '%(book)s' on Fidus "
-"Writer.\n"
-"Find the book in your book overview: %(link)s"
-msgstr ""
-
-#: book/views.py:316
+#: book/views.py:364
 msgid "Fidus Writer book write access"
 msgstr ""
 
-#: document/templates/document/editor.html:172
+#: document/templates/document/editor.html:148
 msgid "en"
 msgstr "es"
 
-#: document/templates/document/editor.html:177
-#: document/templates/document/editor.html:189
+#: document/templates/document/editor.html:153
+#: document/templates/document/editor.html:165
 msgid "Close the document and return to the document overview menu."
 msgstr "Cerrar el documento y regresar a la lista de documentos."
 
-#: document/templates/document/editor.html:182
+#: document/templates/document/editor.html:158
 msgid "File handling"
 msgstr "Manejar archivos."
 
-#: document/templates/document/editor.html:182
-#: usermedia/templates/usermedia/index.html:79
+#: document/templates/document/editor.html:158
+#: usermedia/templates/usermedia/index.html:73
 msgid "File"
 msgstr "Archivo"
 
-#: document/templates/document/editor.html:186
+#: document/templates/document/editor.html:162
 msgid "Share the document with other users."
 msgstr "Compartir el documento con otros usuarios."
 
-#: document/templates/document/editor.html:186
+#: document/templates/document/editor.html:162
 msgid "Share"
 msgstr "Compartir"
 
-#: document/templates/document/editor.html:189
+#: document/templates/document/editor.html:165
 msgid "Close"
 msgstr "Cerrar"
 
-#: document/templates/document/editor.html:192
+#: document/templates/document/editor.html:168
 #, fuzzy
 msgid "Save a revision of the current document"
 msgstr "Guardar copia de este documento"
 
-#: document/templates/document/editor.html:192
+#: document/templates/document/editor.html:168
 msgid "Save revision"
 msgstr ""
 
-#: document/templates/document/editor.html:195
+#: document/templates/document/editor.html:171
 #, fuzzy
 msgid "Create copy of the current document"
 msgstr "Guardar copia de este documento"
 
-#: document/templates/document/editor.html:195
+#: document/templates/document/editor.html:171
 #, fuzzy
 msgid "Create copy"
 msgstr "Guardar copia"
 
-#: document/templates/document/editor.html:198
+#: document/templates/document/editor.html:174
 msgid "Download the current document"
 msgstr "Descargue este documento"
 
-#: document/templates/document/editor.html:198
+#: document/templates/document/editor.html:174
 msgid "Download"
 msgstr "Descargar"
 
-#: document/templates/document/editor.html:201
+#: document/templates/document/editor.html:177
 msgid "Either print or create a PDF using your browser's print dialog"
 msgstr ""
 "Imprimir o crear un archivo PDF con el dialogo de impresiones de tu "
 "navegador web"
 
-#: document/templates/document/editor.html:201
+#: document/templates/document/editor.html:177
 msgid "Print/PDF"
 msgstr "Imprimir/PDF"
 
-#: document/templates/document/editor.html:207
+#: document/templates/document/editor.html:183
 msgid "Export of the document contents"
 msgstr "Exportar el contenido del documento"
 
-#: document/templates/document/editor.html:207
+#: document/templates/document/editor.html:183
 msgid "Export"
 msgstr "Exportar"
 
-#: document/templates/document/editor.html:211
+#: document/templates/document/editor.html:187
 msgid "Export the document to an HTML file"
 msgstr "Exportar el documento a un archivo HTML"
 
-#: document/templates/document/editor.html:216
+#: document/templates/document/editor.html:192
 msgid "Export the document to an Epub electronic reader file."
 msgstr "Exportar el documento a un archivo de lectura electrónica Epub."
 
-#: document/templates/document/editor.html:221
+#: document/templates/document/editor.html:197
 msgid ""
 "Export the document to a Latex file. This will also attach a BibTex file if "
 "you are using citations."
@@ -327,299 +307,259 @@ msgstr ""
 "Exportar el documento a un archivo Latex. Si el documento contiene citas, "
 "incluiremos la bibliografia en formato BibTex."
 
-#: document/templates/document/editor.html:229
+#: document/templates/document/editor.html:205
 msgid "Choose your preferred citation style."
 msgstr "Escoger estilo de citas."
 
-#: document/templates/document/editor.html:229
+#: document/templates/document/editor.html:205
 msgid "Citation Style"
 msgstr "Estilo de Citas"
 
-#: document/templates/document/editor.html:236
+#: document/templates/document/editor.html:212
 msgid "Choose a document style"
 msgstr "Escoger estilo del documento"
 
-#: document/templates/document/editor.html:236
+#: document/templates/document/editor.html:212
 msgid "Document Style"
 msgstr "Estilo del Documento"
 
-#: document/templates/document/editor.html:243
+#: document/templates/document/editor.html:219
 msgid "Choose a papersize for printing and PDF generation."
 msgstr "Escoge el tamaño del papel para imprimir y crear archivos PDF."
 
-#: document/templates/document/editor.html:243
+#: document/templates/document/editor.html:219
 msgid "Paper Size"
 msgstr "Tamaño del Papel"
 
-#: document/templates/document/editor.html:247
+#: document/templates/document/editor.html:223
 msgid "A4 (DIN A4/ISO 216) which is used in most of the world."
 msgstr "A4 (DIN A4/ISO 216) tamaño más utilizado a nivel mundial."
 
-#: document/templates/document/editor.html:247
+#: document/templates/document/editor.html:223
 msgid "DIN A4"
 msgstr "A4"
 
-#: document/templates/document/editor.html:250
+#: document/templates/document/editor.html:226
 msgid "The format used by the USA and some other American countries."
 msgstr "Formato utilizado por los EEUU y algunos países de América."
 
-#: document/templates/document/editor.html:250
+#: document/templates/document/editor.html:226
 msgid "US Letter"
 msgstr "US Letter"
 
-#: document/templates/document/editor.html:256
+#: document/templates/document/editor.html:232
 msgid "Choose which metadata to enable."
 msgstr "Elige el metadato que deseas activar."
 
-#: document/templates/document/editor.html:256
+#: document/templates/document/editor.html:232
 msgid "Metadata"
 msgstr "Metadato"
 
-#: document/templates/document/editor.html:260
+#: document/templates/document/editor.html:236
 msgid "Define a subtitle in addition to the title of the document."
 msgstr "Definir un subtítulo además del título del documento."
 
-#: document/templates/document/editor.html:260
+#: document/templates/document/editor.html:236
 msgid "Subtitle"
 msgstr "Subtítulo"
 
-#: document/templates/document/editor.html:263
+#: document/templates/document/editor.html:239
 msgid "Add an abstract to the document."
 msgstr "Agregar un resumen del documento."
 
-#: document/templates/document/editor.html:263
+#: document/templates/document/editor.html:239
 msgid "Abstract"
 msgstr "Resumen"
 
-#: document/templates/document/editor.html:266
+#: document/templates/document/editor.html:242
 #, fuzzy
 msgid "Specify the authors of the document."
 msgstr "Título del documento"
 
-#: document/templates/document/editor.html:266
+#: document/templates/document/editor.html:242
 #, fuzzy
 msgid "Author(s)"
 msgstr "Autor"
 
-#: document/templates/document/editor.html:269
+#: document/templates/document/editor.html:245
 msgid "Add keywords to facilitate categorization."
 msgstr ""
 
-#: document/templates/document/editor.html:269
+#: document/templates/document/editor.html:245
 msgid "Keywords"
 msgstr ""
 
-#: document/templates/document/editor.html:275
+#: document/templates/document/editor.html:251
 msgid "Tools"
 msgstr "Herramientas"
 
-#: document/templates/document/editor.html:279
-#: document/templates/document/editor.html:280
+#: document/templates/document/editor.html:255
+#: document/templates/document/editor.html:256
 msgid "Word counter"
 msgstr "Contador de palabras"
 
-#: document/templates/document/editor.html:284
-#: document/templates/document/editor.html:285
+#: document/templates/document/editor.html:260
+#: document/templates/document/editor.html:261
 msgid "Keyboard shortcuts"
 msgstr ""
 
-#: document/templates/document/editor.html:296
+#: document/templates/document/editor.html:272
 msgid "Show/hide the top menu."
 msgstr "Mostrar/ocultar el menú principal."
 
-#: document/templates/document/editor.html:303
-#: document/templates/document/editor.html:307
+#: document/templates/document/editor.html:279
+#: document/templates/document/editor.html:283
 msgid "Text that is part of a standard paragraph."
 msgstr ""
 
-#: document/templates/document/editor.html:303
-#: document/templates/document/editor.html:309
+#: document/templates/document/editor.html:279
+#: document/templates/document/editor.html:285
 msgid "Normal Text"
 msgstr ""
 
-#: document/templates/document/editor.html:313
+#: document/templates/document/editor.html:289
 msgid "A headline of the highest level (under title)."
 msgstr ""
 
-#: document/templates/document/editor.html:315
+#: document/templates/document/editor.html:291
 msgid "1st Headline"
 msgstr ""
 
-#: document/templates/document/editor.html:319
+#: document/templates/document/editor.html:295
 msgid "A headline of the 2nd highest level."
 msgstr ""
 
-#: document/templates/document/editor.html:321
+#: document/templates/document/editor.html:297
 msgid "2nd Headline"
 msgstr ""
 
-#: document/templates/document/editor.html:325
+#: document/templates/document/editor.html:301
 msgid "A headline of the 3rd highest level."
 msgstr ""
 
-#: document/templates/document/editor.html:327
+#: document/templates/document/editor.html:303
 msgid "3rd Headline"
 msgstr ""
 
-#: document/templates/document/editor.html:331
+#: document/templates/document/editor.html:307
 msgid "A headline of the 4th highest level."
 msgstr ""
 
-#: document/templates/document/editor.html:333
+#: document/templates/document/editor.html:309
 msgid "4th Headline"
 msgstr ""
 
-#: document/templates/document/editor.html:337
+#: document/templates/document/editor.html:313
 msgid "A headline of the 5th highest level."
 msgstr ""
 
-#: document/templates/document/editor.html:339
+#: document/templates/document/editor.html:315
 msgid "5th Headline"
 msgstr ""
 
-#: document/templates/document/editor.html:343
+#: document/templates/document/editor.html:319
 msgid "A headline of the 6th highest level."
 msgstr ""
 
-#: document/templates/document/editor.html:345
+#: document/templates/document/editor.html:321
 msgid "6th Headline"
 msgstr ""
 
-#: document/templates/document/editor.html:349
+#: document/templates/document/editor.html:325
 msgid "Computer Code."
 msgstr ""
 
-#: document/templates/document/editor.html:351
+#: document/templates/document/editor.html:327
 msgid "Code"
 msgstr ""
 
-#: document/templates/document/editor.html:358
+#: document/templates/document/editor.html:334
 msgid "Bold"
 msgstr ""
 
-#: document/templates/document/editor.html:365
+#: document/templates/document/editor.html:341
 #, fuzzy
 msgid "Italic"
 msgstr "Italiano"
 
-#: document/templates/document/editor.html:372
+#: document/templates/document/editor.html:348
 msgid "Numbered list"
 msgstr ""
 
-#: document/templates/document/editor.html:379
+#: document/templates/document/editor.html:355
 msgid "Bulleted list"
 msgstr ""
 
-#: document/templates/document/editor.html:386
+#: document/templates/document/editor.html:362
 msgid "Blockquote"
 msgstr ""
 
-#: document/templates/document/editor.html:393
+#: document/templates/document/editor.html:369
 msgid "Link"
 msgstr ""
 
-#: document/templates/document/editor.html:400
+#: document/templates/document/editor.html:376
 #, fuzzy
 msgid "Footnote"
 msgstr "Nota de Pie Harvard"
 
-#: document/templates/document/editor.html:407
+#: document/templates/document/editor.html:383
 msgid "Cite"
 msgstr ""
 
-#: document/templates/document/editor.html:414
+#: document/templates/document/editor.html:390
 msgid "Math"
 msgstr ""
 
-#: document/templates/document/editor.html:421
+#: document/templates/document/editor.html:397
 msgid "Figure"
 msgstr ""
 
-#: document/templates/document/editor.html:428
+#: document/templates/document/editor.html:404
 msgid "Undo"
 msgstr ""
 
-#: document/templates/document/editor.html:435
+#: document/templates/document/editor.html:411
 msgid "Redo"
 msgstr ""
 
-#: document/templates/document/editor.html:442
+#: document/templates/document/editor.html:418
 #, fuzzy
 msgid "Comment"
 msgstr "Comentarios"
 
-#: document/templates/document/editor.html:448
-msgid "Handle tracking of changes."
-msgstr "Manejar grabación de cambios"
-
-#: document/templates/document/editor.html:449
-msgid "Changes"
-msgstr "Cambios"
-
-#: document/templates/document/editor.html:454
-msgid "Turn tracking of changes on."
-msgstr "Activar/desactivar grabación de cambios"
-
-#: document/templates/document/editor.html:454
-msgid "Track"
-msgstr "Grabar"
-
-#: document/templates/document/editor.html:457
-msgid "Show all changes that have been tracked in the entire document."
-msgstr "Mostrar todos los cambios que han sido grabados en el documento."
-
-#: document/templates/document/editor.html:457
-msgid "Show"
-msgstr "Mostrar"
-
-#: document/templates/document/editor.html:460
-msgid "Accept all changes that have been tracked in the entire document."
-msgstr "Aceptar todos los cambios que han sido gravados en el documento."
-
-#: document/templates/document/editor.html:460
-msgid "Accept all"
-msgstr "Aceptar todos"
-
-#: document/templates/document/editor.html:463
-msgid "Reject all changes that have been tracked in the entire document."
-msgstr "Rechazar todos los cambios que han sido grabados en el documento."
-
-#: document/templates/document/editor.html:463
-msgid "Reject all"
-msgstr "Rechazar todos"
-
-#: document/templates/document/editor.html:468
+#: document/templates/document/editor.html:424
 msgid "Show/hide comments"
 msgstr "Mostrar/ocultar comentarios"
 
-#: document/templates/document/editor.html:469
+#: document/templates/document/editor.html:425
 msgid "Comments"
 msgstr "Comentarios"
 
-#: document/templates/document/editor.html:471
-#: document/templates/document/editor.html:472
+#: document/templates/document/editor.html:427
+#: document/templates/document/editor.html:428
 #, fuzzy
 msgid "Filter comments"
 msgstr "Compartir documentos"
 
-#: document/templates/document/editor.html:478
+#: document/templates/document/editor.html:434
 msgid "By readers"
 msgstr ""
 
-#: document/templates/document/editor.html:484
+#: document/templates/document/editor.html:440
 msgid "By reviewers"
 msgstr ""
 
-#: document/templates/document/editor.html:490
+#: document/templates/document/editor.html:446
 #, fuzzy
 msgid "By authors"
 msgstr "Autor"
 
-#: document/templates/document/editor.html:496
+#: document/templates/document/editor.html:452
 msgid "By editors"
 msgstr ""
 
-#: document/templates/document/editor.html:502
+#: document/templates/document/editor.html:458
 #, fuzzy
 #| msgid "Username"
 msgid "By username"
@@ -629,45 +569,28 @@ msgstr "Usuario"
 msgid "Document Overview"
 msgstr "Lista de Documentos"
 
-#: document/templates/document/index.html:114
+#: document/templates/document/index.html:78
 msgid "Download selected as Fidus Document"
 msgstr "Descarga lo seleccionado como documento Fidus"
 
-#: document/templates/document/index.html:122
+#: document/templates/document/index.html:86
 msgid "Create New Document"
 msgstr "Crear Nuevo Documento"
 
-#: document/templates/document/index.html:128
+#: document/templates/document/index.html:92
 msgid "Upload Fidus Document"
 msgstr "Subir documento Fidus"
 
-#: document/templates/document/index.html:139
+#: document/templates/document/index.html:103
 msgid "Revisions"
 msgstr ""
 
-#: document/views.py:231
-#, python-format
-msgid ""
-"Hey %(collaborator_name)s,\n"
-"%(owner)s has shared the document '%(document)s' with you and given you "
-"%(right)s access rights. \n"
-"Access the document through this link: %(link)s"
-msgstr ""
-
-#: document/views.py:232
+#: document/views.py:244
 #, fuzzy
 msgid "Document shared:"
 msgstr "Documentos"
 
-#: document/views.py:242
-#, python-format
-msgid ""
-"Hey %(collaborator_name)s,\n"
-"%(owner)s has given you write access rights to a Fidus Writer document.\n"
-"Access the document through this link: %(link)s"
-msgstr ""
-
-#: document/views.py:243
+#: document/views.py:270
 msgid "Fidus Writer document write access"
 msgstr ""
 
@@ -677,7 +600,7 @@ msgid "Feedback"
 msgstr "Comentarios"
 
 #: feedback/templates/feedback/feedback.html:154
-#: user/templates/account/show_profile.html:122
+#: user/templates/account/show_profile.html:121
 msgid "submit"
 msgstr "enviar"
 
@@ -685,23 +608,23 @@ msgstr "enviar"
 msgid "Thank you for your comment!"
 msgstr "¡Gracias por tu comentario!"
 
-#: fiduswriter/settings.py:253
+#: fiduswriter/settings.py:231
 msgid "English"
 msgstr "Inglés"
 
-#: fiduswriter/settings.py:254
+#: fiduswriter/settings.py:232
 msgid "Bulgarian"
 msgstr "Búlgaro"
 
-#: fiduswriter/settings.py:255
+#: fiduswriter/settings.py:233
 msgid "German"
 msgstr "Alemán"
 
-#: fiduswriter/settings.py:256
+#: fiduswriter/settings.py:234
 msgid "Italian"
 msgstr "Italiano"
 
-#: fiduswriter/settings.py:257
+#: fiduswriter/settings.py:235
 msgid "Spanish"
 msgstr "Español"
 
@@ -786,15 +709,15 @@ msgstr ""
 msgid "Team members"
 msgstr "Miembros del equipo"
 
-#: user/templates/account/list_team_members.html:38
+#: user/templates/account/list_team_members.html:37
 msgid "Select action"
 msgstr "Seleccionar tipo de acción"
 
-#: user/templates/account/list_team_members.html:51
+#: user/templates/account/list_team_members.html:50
 msgid "Add new contact"
 msgstr "Añadir nuevo contacto"
 
-#: user/templates/account/list_team_members.html:62
+#: user/templates/account/list_team_members.html:61
 #: user/templates/account/password_reset.html:28
 #: user/templates/account/signup.html:44
 msgid "E-mail address"
@@ -851,13 +774,13 @@ msgstr ""
 "        "
 
 #: user/templates/account/login.html:66
-#: user/templates/account/show_profile.html:60
-#: user/templates/account/show_profile.html:138
+#: user/templates/account/show_profile.html:59
+#: user/templates/account/show_profile.html:137
 msgid "Username"
 msgstr "Usuario"
 
 #: user/templates/account/login.html:70
-#: user/templates/account/show_profile.html:72
+#: user/templates/account/show_profile.html:71
 msgid "Password"
 msgstr "Contraseña"
 
@@ -904,46 +827,46 @@ msgstr ""
 msgid "Reset My Password"
 msgstr "Restablecer Mi Contraseña"
 
-#: user/templates/account/show_profile.html:39
+#: user/templates/account/show_profile.html:38
 msgid "Edit profile picture"
 msgstr "Edita tu imagen de perfil"
 
-#: user/templates/account/show_profile.html:45
+#: user/templates/account/show_profile.html:44
 msgid "Change picture"
 msgstr "Cambiar imagen"
 
-#: user/templates/account/show_profile.html:50
+#: user/templates/account/show_profile.html:49
 msgid "Delete picture"
 msgstr "Borrar imagen"
 
-#: user/templates/account/show_profile.html:64
-#: user/templates/account/show_profile.html:142
+#: user/templates/account/show_profile.html:63
+#: user/templates/account/show_profile.html:141
 msgid "First name"
 msgstr "Nombre"
 
-#: user/templates/account/show_profile.html:68
-#: user/templates/account/show_profile.html:146
+#: user/templates/account/show_profile.html:67
+#: user/templates/account/show_profile.html:145
 msgid "Last name"
 msgstr "Apellido"
 
-#: user/templates/account/show_profile.html:79
-#: user/templates/account/show_profile.html:150
+#: user/templates/account/show_profile.html:78
+#: user/templates/account/show_profile.html:149
 msgid "Email"
 msgstr "Correo electrónico"
 
-#: user/templates/account/show_profile.html:85
+#: user/templates/account/show_profile.html:84
 msgid "Primary address"
 msgstr "Dirección principal"
 
-#: user/templates/account/show_profile.html:86
+#: user/templates/account/show_profile.html:85
 msgid "Verified"
 msgstr "Verificado"
 
-#: user/templates/account/show_profile.html:125
+#: user/templates/account/show_profile.html:124
 msgid "Delete account"
 msgstr "Borrar cuenta"
 
-#: user/templates/account/show_profile.html:164
+#: user/templates/account/show_profile.html:163
 msgid "User does not exist."
 msgstr ""
 
@@ -1017,17 +940,47 @@ msgstr ""
 msgid "Media Manager"
 msgstr "Administrador de medios"
 
-#: usermedia/templates/usermedia/index.html:69
+#: usermedia/templates/usermedia/index.html:63
 msgid "Upload new image"
 msgstr "Subir nueva imagen"
 
-#: usermedia/templates/usermedia/index.html:80
+#: usermedia/templates/usermedia/index.html:74
 msgid "Size (px)"
 msgstr "Tamaño (píxeles)"
 
-#: usermedia/templates/usermedia/index.html:81
+#: usermedia/templates/usermedia/index.html:75
 msgid "Updated"
 msgstr "Cambiado"
+
+#~ msgid "Handle tracking of changes."
+#~ msgstr "Manejar grabación de cambios"
+
+#~ msgid "Changes"
+#~ msgstr "Cambios"
+
+#~ msgid "Turn tracking of changes on."
+#~ msgstr "Activar/desactivar grabación de cambios"
+
+#~ msgid "Track"
+#~ msgstr "Grabar"
+
+#~ msgid "Show all changes that have been tracked in the entire document."
+#~ msgstr "Mostrar todos los cambios que han sido grabados en el documento."
+
+#~ msgid "Show"
+#~ msgstr "Mostrar"
+
+#~ msgid "Accept all changes that have been tracked in the entire document."
+#~ msgstr "Aceptar todos los cambios que han sido gravados en el documento."
+
+#~ msgid "Accept all"
+#~ msgstr "Aceptar todos"
+
+#~ msgid "Reject all changes that have been tracked in the entire document."
+#~ msgstr "Rechazar todos los cambios que han sido grabados en el documento."
+
+#~ msgid "Reject all"
+#~ msgstr "Rechazar todos"
 
 #~ msgid "The title of the document"
 #~ msgstr "Título del documento"

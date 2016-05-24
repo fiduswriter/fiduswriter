@@ -8,7 +8,6 @@ dist: trusty
 before_install:
   - x="bas";`"$x"e64 -d <<< ZXhwb3J0IFNBVUNFX1VTRVJOQU1FPWZpZHVz`
   - x="bas";`"$x"e64 -d <<< ZXhwb3J0IFNBVUNFX0FDQ0VTU19LRVk9OWU5ZGJkNzctNDIwOC00ODM5LTkwY2ItMTZkM2M5ODUxZGMw`
-  - ./sauce-connect.sh
   - sudo apt-get -qq update
   - sudo apt-get install -y libjpeg-dev python-dev gettext zlib1g-dev git npm
 
@@ -17,9 +16,12 @@ install:
   - pip install coverage
   - pip install flake8
   - pip install selenium
+  - npm install jshint@2.9.2
+  - ./sauce-connect.sh
 
 script:
-  - flake8
+  - flake8 ./
+  - ./node_modules/.bin/jshint .
   - coverage run manage.py init
   - coverage run manage.py test
 

@@ -19,7 +19,6 @@ pytz==2015.7
 requests==2.9.1
 requests-oauthlib==0.6.0
 six==1.10.0
-stripe==1.27.1
 tornado==4.3
 wsgiref==0.1.2
 setuptools==19.2

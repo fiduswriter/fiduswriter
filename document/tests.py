@@ -2,6 +2,7 @@
 from collections import namedtuple
 from itertools import chain
 import os
+import time
 
 from allauth.account.models import EmailAddress
 from django.contrib.auth.hashers import make_password
@@ -226,7 +227,6 @@ class Manipulator(object):
             """
         )
 
-
 class CaretPositionTest(LiveTornadoTestCase, Manipulator):
     """
     Base for all tests that check that Caret is at an expected position after
@@ -242,13 +242,13 @@ class CaretPositionTest(LiveTornadoTestCase, Manipulator):
         )
 
         self.injectHelpers()
-
         self.setCaret(caretCase.givenCaret)
-        (DRIVER.find_element_by_id('document-contents')
+        (DRIVER.find_element_by_css_selector('#document-editable .ProseMirror-content')
                .send_keys(caretCase.givenKeys))
         # grab caret from browser and compare in python,
         # to get more informative failure messages
-
+        # Wait one tenth of a second to let the JavaScript adjust the caret position.
+        time.sleep(0.1)
         self.assertEqual(
             caretCase.expectedCaret,
             self.getCaret()
@@ -308,18 +308,18 @@ class MovementInSingleChildParagraph(CaretPositionTest):
             'name': 'leftFromOneAfterDocStart',
             'description': "left arrow decrements caret offset",
             'givenContents': None,
-            'givenCaret': 10 + 1,
+            'givenCaret': 16,
             'givenKeys': Keys.ARROW_LEFT,
-            'expectedCaret': 10
+            'expectedCaret': 15
         }),
         CaretTestCase(**{
             'name': 'leftFromDocStart',
             'description': "left arrow does nothing when caret is at start of"
                            " document",
             'givenContents': None,
-            'givenCaret': 0,
+            'givenCaret': 1,
             'givenKeys': Keys.ARROW_LEFT,
-            'expectedCaret': 0
+            'expectedCaret': 1
         }),
         CaretTestCase(**{
             'name': 'rightFromOneBeforeDocEnd',
@@ -327,16 +327,16 @@ class MovementInSingleChildParagraph(CaretPositionTest):
             'givenContents': None,
             'givenCaret': 14 + len(SHORT_LOREM),
             'givenKeys': Keys.ARROW_RIGHT,
-            'expectedCaret': 14 + len(SHORT_LOREM),
+            'expectedCaret': 15 + len(SHORT_LOREM),
         }),
         CaretTestCase(**{
             'name': 'rightFromDocEnd',
             'description': "right arrow does nothing when caret is at end of"
                            " document",
             'givenContents': None,
-            'givenCaret': 14,
+            'givenCaret': 15 + len(SHORT_LOREM),
             'givenKeys': Keys.ARROW_RIGHT,
-            'expectedCaret': 10
+            'expectedCaret': 15 + len(SHORT_LOREM)
         }),
         CaretTestCase(**{
             'name': 'upArrowFromMidFirstDocLine',
@@ -345,72 +345,47 @@ class MovementInSingleChildParagraph(CaretPositionTest):
             'givenContents': None,
             'givenCaret': 14,
             'givenKeys': Keys.ARROW_UP,
-            'expectedCaret': 0
+            'expectedCaret': 1
         }),
         CaretTestCase(**{
             'name': 'upArrowFromDocStart',
             'description': "up arrow does nothing when caret is at start of"
                            " document",
             'givenContents': None,
-            'givenCaret': 14,
+            'givenCaret': 1,
             'givenKeys': Keys.ARROW_UP,
-            'expectedCaret': 0
+            'expectedCaret': 1
         }),
         CaretTestCase(**{
             'name': 'downFromMidLastDocLine',
             'description': "down arrow moves caret from within last line of"
                            " document to end of document",
             'givenContents': None,
-            'givenCaret': 20,
+            'givenCaret': 61,
             'givenKeys': Keys.ARROW_DOWN,
-            'expectedCaret': 20 + len(SHORT_LOREM),
+            'expectedCaret': 15 + len(SHORT_LOREM),
         }),
         CaretTestCase(**{
             'name': 'downFromDocEnd',
             'description': "down arrow does nothing when caret is at end of"
                            " document",
             'givenContents': None,
-            'givenCaret': 14 + len(SHORT_LOREM),
+            'givenCaret': 15 + len(SHORT_LOREM),
             'givenKeys': Keys.ARROW_DOWN,
-            'expectedCaret': 14 + len(SHORT_LOREM),
+            'expectedCaret': 15 + len(SHORT_LOREM),
         }),
     ]
-    movement_within_long = [
-        CaretTestCase(**{
-            # !!!
-            # I have no idea how to test this...
-            'name': 'upArrowFromSecondDocLine',
-            'description': "up arrow moves caret from second line to first"
-                           " at equal offset relative to line start",
-            'givenContents': None,
-            'givenCaret': 0,
-            'givenKeys': Keys.ARROW_UP,
-            'expectedCaret': 14
-        }),
-        CaretTestCase(**{
-            # !!!
-            # I have no idea how to test this...
-            'name': 'downFromMidLastDocLine',
-            'description': "down arrow moves caret from first line to second,"
-                           " at equal offset relative to line start",
-            'givenContents': None,
-            'givenCaret': 0,
-            'givenKeys': Keys.ARROW_DOWN,
-            'expectedCaret': 14
-        }),
+
+    movement_in_text = [
+        c._replace(
+            name=c.name + 'InText',
+            description=c.description + ' in text',
+            givenContents=Contents(Paragraph(
+                Text(SHORT_LOREM)
+            )),
+        )
+        for c in movement_within_short
     ]
-    # !!!
-    # raw text needs different parent selector
-    # movement_in_text = [
-    #     c._replace(
-    #         name=c.name + 'InText',
-    #         description=c.description + ' in text',
-    #         givenContents=Contents(Paragraph(
-    #             Text(SHORT_LOREM)
-    #         )),
-    #     )
-    #     for c in movement_within_short
-    # ]
     movement_in_bold = [
         c._replace(
             name=c.name + 'InBold',
@@ -437,7 +412,7 @@ class MovementInSingleChildParagraph(CaretPositionTest):
             description=c.description + ' in link',
             givenContents=Contents(Paragraph(
                 Link(
-                    'your source of examples on the world-wide-web',
+                    SHORT_LOREM,
                     'http://www.example.com',
                     'LinkTitle'
                 )
@@ -448,34 +423,10 @@ class MovementInSingleChildParagraph(CaretPositionTest):
 
     # each case will be passed into self.runCheck
     cases = chain(
-        # movement_in_text,
-        # movement_in_bold,
-        # movement_in_italic,
-        # movement_in_link,
-    )
-
-
-class MovementInMultiChildParagraph(CaretTestCase):
-    __metaclass__ = DataCasesToTestMethodsMeta
-
-    # each case will be passed into self.runCheck
-    cases = chain(
-        # movement_between_text_text,
-        # movement_between_text_bold,
-        # movement_between_text_italic,
-        # movement_between_text_link,
-        # movement_between_bold_text,
-        # movement_between_bold_bold,
-        # movement_between_bold_italic,
-        # movement_between_bold_link,
-        # movement_between_italic_text,
-        # movement_between_italic_bold,
-        # movement_between_italic_italic,
-        # movement_between_italic_link,
-        # movement_between_link_text,
-        # movement_between_link_bold,
-        # movement_between_link_italic,
-        # movement_between_link_link,
+        movement_in_text,
+        movement_in_bold,
+        movement_in_italic,
+        movement_in_link,
     )
 
 

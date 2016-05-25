@@ -227,6 +227,7 @@ class Manipulator(object):
             """
         )
 
+
 class CaretPositionTest(LiveTornadoTestCase, Manipulator):
     """
     Base for all tests that check that Caret is at an expected position after
@@ -243,12 +244,13 @@ class CaretPositionTest(LiveTornadoTestCase, Manipulator):
 
         self.injectHelpers()
         self.setCaret(caretCase.givenCaret)
-        (DRIVER.find_element_by_css_selector('#document-editable .ProseMirror-content')
-               .send_keys(caretCase.givenKeys))
+        (DRIVER.find_element_by_css_selector(
+            '#document-editable .ProseMirror-content'
+        ).send_keys(caretCase.givenKeys))
         # grab caret from browser and compare in python,
         # to get more informative failure messages
-        # Wait one tenth of a second to let the JavaScript adjust the caret position.
-        time.sleep(0.1)
+        # Wait one 1 second to let the JavaScript adjust the caret position.
+        time.sleep(1)
         self.assertEqual(
             caretCase.expectedCaret,
             self.getCaret()

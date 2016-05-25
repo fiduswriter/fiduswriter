@@ -247,10 +247,10 @@ class CaretPositionTest(LiveTornadoTestCase, Manipulator):
         (DRIVER.find_element_by_css_selector(
             '#document-editable .ProseMirror-content'
         ).send_keys(caretCase.givenKeys))
+        # Wait 0.1 second to let the JavaScript adjust the caret position.
+        time.sleep(0.1)
         # grab caret from browser and compare in python,
         # to get more informative failure messages
-        # Wait one 1 second to let the JavaScript adjust the caret position.
-        time.sleep(1)
         self.assertEqual(
             caretCase.expectedCaret,
             self.getCaret()
@@ -357,15 +357,6 @@ class MovementInSingleChildParagraph(CaretPositionTest):
             'givenCaret': 1,
             'givenKeys': Keys.ARROW_UP,
             'expectedCaret': 1
-        }),
-        CaretTestCase(**{
-            'name': 'downFromMidLastDocLine',
-            'description': "down arrow moves caret from within last line of"
-                           " document to end of document",
-            'givenContents': None,
-            'givenCaret': 61,
-            'givenKeys': Keys.ARROW_DOWN,
-            'expectedCaret': 15 + len(SHORT_LOREM),
         }),
         CaretTestCase(**{
             'name': 'downFromDocEnd',

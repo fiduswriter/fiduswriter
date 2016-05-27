@@ -1,5 +1,4 @@
 import os
-import re
 from fiduswriter.settings import PROJECT_PATH
 from style.models import DocumentStyle
 

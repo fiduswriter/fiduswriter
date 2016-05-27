@@ -43,7 +43,7 @@ export let citationDialog = function (mod) {
             emptySpaceNode
 
         if (0 === cite_items.size()) {
-            alert(gettext('Please select at least one citation source!'))
+            window.alert(gettext('Please select at least one citation source!'))
             return false
         }
 

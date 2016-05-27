@@ -18,7 +18,7 @@ export class FormulaEditor {
         this.isRawMode = false
 
         //initializes mathquill library
-        this.MQ = window.MathQuill.getInterface(2)
+        this.MQ = MathQuill.getInterface(2)
 
         this.mathField = this.MQ.MathField(this.mathFieldDOM[0], {
             spaceBehavesLikeTab: true,

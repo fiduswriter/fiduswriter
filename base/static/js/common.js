@@ -28,7 +28,7 @@ jQuery.extend({
      */
     'openDropdownBox': function(box) {
         box.show();
-        setTimeout(function() {
+        window.setTimeout(function() {
             jQuery(document).on('mousedown', {'box': box}, $.closeDropdownBox);
         }, 100);
         $.isDropdownBoxOpen = true;

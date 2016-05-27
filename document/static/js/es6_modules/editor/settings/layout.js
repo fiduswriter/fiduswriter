@@ -29,15 +29,18 @@ export class ModSettingsLayout {
         // Remove previous style.
         documentStyleLink.parentElement.removeChild(documentStyleLink.previousElementSibling)
 
-        stylesheet = window.loadCSS(window.staticUrl + 'css/document/' + this.mod.editor.doc.settings.documentstyle + '.css', documentStyleLink)
+        stylesheet = loadCSS(
+            staticUrl + 'css/document/' + this.mod.editor.doc.settings.documentstyle + '.css',
+            documentStyleLink
+        )
 
-        window.onloadCSS(stylesheet, function() {
+        onloadCSS(stylesheet, function() {
             // We layout the comments 100 ms after the stylesheet has been loaded.
             // This should usually be enough to make the layout work correctly.
             //
             // TODO: Find a way that is more reliable than a timeout to check
             // for font loading.
-            setTimeout(function() {
+            window.setTimeout(function() {
                 that.mod.editor.mod.comments.layout.layoutComments()
 
                 that.mod.editor.mod.footnotes.layout.layoutFootnotes()
@@ -63,7 +66,7 @@ export class ModSettingsLayout {
             'selected')
         jQuery('span[data-paperheight=' + this.mod.editor.doc.settings.papersize +
             ']').addClass('selected')
-        window.paginationConfig['pageHeight'] = this.mod.editor.doc.settings.papersize
+        paginationConfig['pageHeight'] = this.mod.editor.doc.settings.papersize
     }
 
 

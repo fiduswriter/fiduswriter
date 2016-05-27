@@ -88,14 +88,14 @@ export class Editor {
     setSaveTimers() {
         let that = this
         // Set Auto-save to send the document every two minutes, if it has changed.
-        this.sendDocumentTimer = setInterval(function() {
+        this.sendDocumentTimer = window.setInterval(function() {
             if (that.docInfo && that.docInfo.changed && that.docInfo.rights !== 'read') {
                 that.save()
             }
         }, 120000)
 
         // Set Auto-save to send the title every 5 seconds, if it has changed.
-        this.sendDocumentTitleTimer = setInterval(function() {
+        this.sendDocumentTitleTimer = window.setInterval(function() {
             if (that.docInfo && that.docInfo.titleChanged && that.docInfo.rights !== 'read') {
                 that.docInfo.titleChanged = false
                 that.mod.serverCommunications.send({

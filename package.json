@@ -48,13 +48,17 @@
 	  "FileReader",
 	  "FormData",
 	  "alert",
-	  "setTimeout",
+      "loadCSS",
 	  "zip",
-      "setInterval",
-      "clearInterval",
-      "clearTimeout",
       "CSL",
-      "XMLHttpRequest"
+      "MathQuill",
+      "staticUrl",
+      "XMLHttpRequest",
+      "onloadCSS",
+      "pagination",
+      "paginationConfig",
+      "websocketServer",
+      "websocketPort"
     ]
   }
 }

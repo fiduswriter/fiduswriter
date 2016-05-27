@@ -35,7 +35,7 @@ export class ModServerCommunications {
         let that = this
 
         try {
-            this.ws = new window.WebSocket('ws://' + window.websocketServer + ':' + window.websocketPort +
+            this.ws = new window.WebSocket('ws://' + websocketServer + ':' + websocketPort +
                 '/ws/doc/' + this.docId)
             this.ws.onopen = function() {
                 console.log('connection open')
@@ -52,14 +52,14 @@ export class ModServerCommunications {
         }
         this.ws.onclose = function(event) {
             that.connected = false
-            clearInterval(that.wsPinger)
-            setTimeout(function() {
+            window.clearInterval(that.wsPinger)
+            window.setTimeout(function() {
                 that.createWSConnection()
             }, 2000)
             console.log('attempting to reconnect')
             jQuery('#unobtrusive_messages').html(gettext('Disconnected. Attempting to reconnect...'))
         }
-        this.wsPinger = setInterval(function() {
+        this.wsPinger = window.setInterval(function() {
             that.send({
                 'type': 'ping'
             })

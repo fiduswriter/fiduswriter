@@ -366,6 +366,7 @@ class CaretPositionTest(LiveTornadoTestCase, Manipulator):
         - Equation
 """
 
+
 @on_platforms(browsers, RUN_LOCAL)
 class MovementInSingleChildParagraph(CaretPositionTest):
     __metaclass__ = DataCasesToTestMethodsMeta
@@ -487,6 +488,7 @@ class MovementInSingleChildParagraph(CaretPositionTest):
         movement_in_link,
     )
 
+
 @on_platforms(browsers, RUN_LOCAL)
 class InsertionOfLink(LiveTornadoTestCase, Manipulator):
     __metaclass__ = DataCasesToTestMethodsMeta
@@ -593,8 +595,7 @@ class InsertionOfLink(LiveTornadoTestCase, Manipulator):
 
         self.setSelection(case.givenCaretStart, case.givenCaretEnd)
 
-        (self.driver.find_element_by_id('button-link')
-               .click())
+        (self.driver.find_element_by_id('button-link').click())
         WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.XPATH,
                                             '//span['
@@ -604,13 +605,16 @@ class InsertionOfLink(LiveTornadoTestCase, Manipulator):
                                             ))
         )
 
-        (self.driver.find_element_by_css_selector('input.linktitle')
-               .send_keys(self.linkTitle))
-        (self.driver.find_element_by_css_selector('input.link')
-               .send_keys(self.linkAddressWithoutHTTP))
+        (self.driver.find_element_by_css_selector(
+            'input.linktitle'
+        ).send_keys(self.linkTitle))
+        (self.driver.find_element_by_css_selector(
+            'input.link'
+        ).send_keys(self.linkAddressWithoutHTTP))
 
-        (self.driver.find_element_by_xpath('//button/span[text()="Insert"]')
-               .click())
+        (self.driver.find_element_by_xpath(
+            '//button/span[text()="Insert"]'
+        ).click())
         self.assertEqual(
             str(case.expectedContents),
             self.getDocumentContents()

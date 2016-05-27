@@ -3,6 +3,7 @@ from collections import namedtuple
 from itertools import chain
 import os
 import time
+import sys
 
 from allauth.account.models import EmailAddress
 from django.contrib.auth.hashers import make_password
@@ -27,28 +28,49 @@ from test.mock.document_contents import (
     Link
 )
 
-# GLOBALS
-global DRIVER
+RUN_LOCAL = os.getenv("SAUCE_USERNAME", False) is False
 
-# TEST MODULE SETUP
-# DRIVER initialized in setUpModule isn't visible outside setUpModule
 
-if os.getenv("SAUCE_USERNAME"):
-    username = os.environ["SAUCE_USERNAME"]
-    access_key = os.environ["SAUCE_ACCESS_KEY"]
-    capabilities = {}
-    capabilities["build"] = os.environ["TRAVIS_BUILD_NUMBER"]
-    capabilities["tags"] = [os.environ["TRAVIS_PYTHON_VERSION"], "CI"]
-    capabilities["tunnel-identifier"] = os.environ["TRAVIS_JOB_NUMBER"]
-    capabilities["browserName"] = "chrome"
-    hub_url = "%s:%s@localhost:4445" % (username, access_key)
-    DRIVER = webdriver.Remote(
-        desired_capabilities=capabilities,
-        command_executor="http://%s/wd/hub" % hub_url
-    )
+if RUN_LOCAL:
+    # Only testing Chrome locally
+    browsers = ['Chrome']
 else:
-    DRIVER = webdriver.Chrome()
+    from sauceclient import SauceClient
+    USERNAME = os.environ.get('SAUCE_USERNAME')
+    ACCESS_KEY = os.environ.get('SAUCE_ACCESS_KEY')
+    sauce = SauceClient(USERNAME, ACCESS_KEY)
 
+    browsers = [
+        {"platform": "Linux",
+         "browserName": "chrome"},
+        {"platform": "Windows 10",
+         "browserName": "MicrosoftEdge"},
+        {"platform": "OS X 10.11",
+         "browserName": "safari"},
+        {"platform": "Linux",
+         "browserName": "firefox"}]
+
+
+def on_platforms(platforms, local):
+    if local:
+        def decorator(base_class):
+            module = sys.modules[base_class.__module__].__dict__
+            for i, platform in enumerate(platforms):
+                d = dict(base_class.__dict__)
+                d['browser'] = platform
+                name = "%s_%s" % (base_class.__name__, i + 1)
+                module[name] = type(name, (base_class,), d)
+            pass
+        return decorator
+
+    def decorator(base_class):
+        module = sys.modules[base_class.__module__].__dict__
+        for i, platform in enumerate(platforms):
+            d = dict(base_class.__dict__)
+            d['desired_capabilities'] = platform
+            name = "%s_%s" % (base_class.__name__, i + 1)
+            module[name] = type(name, (base_class,), d)
+    return decorator
 
 # CONSTANTS
 SHORT_LOREM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
@@ -160,54 +182,54 @@ class Manipulator(object):
 
     # drive browser
     def loginUser(self, username, passtext):
-        DRIVER.get('%s%s' % (
+        self.driver.get('%s%s' % (
             self.live_server_url,
             '/account/login/'
         ))
-        (DRIVER
+        (self.driver
             .find_element_by_id('id_login')
             .send_keys(username))
-        (DRIVER
+        (self.driver
             .find_element_by_id('id_password')
             .send_keys(passtext + Keys.RETURN))
-        WebDriverWait(DRIVER, 10).until(
+        WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.ID, 'user-preferences'))
         )
 
     def loadDocumentEditor(self, doc):
-        DRIVER.get("%s%s" % (
+        self.driver.get("%s%s" % (
             self.live_server_url,
             doc.get_absolute_url()
         ))
-        WebDriverWait(DRIVER, 10).until(
+        WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.ID, 'document-contents'))
         )
 
     # execute javascript
     def injectHelpers(self):
-        return DRIVER.execute_script(
+        return self.driver.execute_script(
             testCaretJS
         )
 
     def getCaret(self):
-        return DRIVER.execute_script(
+        return self.driver.execute_script(
             'return testCaret.getCaret();'
         )
 
     def setCaret(self, caret):
-        return DRIVER.execute_script(
+        return self.driver.execute_script(
             'testCaret.setCaret(arguments[0]);',
             caret
         )
 
     def setSelection(self, caret_one, caret_two):
-        return DRIVER.execute_script(
+        return self.driver.execute_script(
             'testCaret.setSelection(arguments[0], arguments[1]);',
             caret_one, caret_two
         )
 
     def caretIsAt(self, expectedCaret):
-        return DRIVER.execute_script(
+        return self.driver.execute_script(
             '''
             return testCaret.selectionsMatch(
                 arguments[0],
@@ -218,7 +240,7 @@ class Manipulator(object):
         )
 
     def getDocumentContents(self):
-        return DRIVER.execute_script(
+        return self.driver.execute_script(
             """
             // refresh theEditor.doc first
             theEditor.getUpdates();
@@ -235,7 +257,53 @@ class CaretPositionTest(LiveTornadoTestCase, Manipulator):
     """
 
     def setUp(self):
+        if RUN_LOCAL:
+            self.setUpLocal()
+        else:
+            self.setUpSauce()
         self.createAndLoginUser()
+
+    def tearDown(self):
+        if RUN_LOCAL:
+            self.tearDownLocal()
+        else:
+            self.tearDownSauce()
+
+    def setUpSauce(self):
+        self.desired_capabilities['name'] = self.id()
+        self.desired_capabilities['tunnel-identifier'] = \
+            os.getenv('TRAVIS_JOB_NUMBER', 0000)
+        self.desired_capabilities['build'] = \
+            os.getenv('TRAVIS_BUILD_NUMBER', 0000)
+        self.desired_capabilities['tags'] = \
+            [os.getenv('TRAVIS_PYTHON_VERSION', "2.x"), 'CI']
+
+        print self.desired_capabilities
+
+        sauce_url = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub"
+        self.driver = webdriver.Remote(
+            desired_capabilities=self.desired_capabilities,
+            command_executor=sauce_url % (USERNAME, ACCESS_KEY)
+        )
+        self.driver.implicitly_wait(5)
+
+    def setUpLocal(self):
+        self.driver = getattr(webdriver, self.browser)()
+        self.driver.implicitly_wait(3)
+
+    def tearDownLocal(self):
+        self.driver.quit()
+
+    def tearDownSauce(self):
+        print("\nLink to your job: \n "
+              "https://saucelabs.com/jobs/%s \n" % self.driver.session_id)
+        try:
+            if sys.exc_info() == (None, None, None):
+                sauce.jobs.update_job(self.driver.session_id, passed=True)
+            else:
+                sauce.jobs.update_job(self.driver.session_id, passed=False)
+        finally:
+            self.driver.quit()
 
     def runCheck(self, caretCase):
         self.loadDocumentEditor(
@@ -244,7 +312,7 @@ class CaretPositionTest(LiveTornadoTestCase, Manipulator):
 
         self.injectHelpers()
         self.setCaret(caretCase.givenCaret)
-        (DRIVER.find_element_by_css_selector(
+        (self.driver.find_element_by_css_selector(
             '#document-editable .ProseMirror-content'
         ).send_keys(caretCase.givenKeys))
         # Wait 0.1 second to let the JavaScript adjust the caret position.
@@ -258,9 +326,6 @@ class CaretPositionTest(LiveTornadoTestCase, Manipulator):
         # test browser-side, in case caret grabbing is buggy
         # self.assertTrue(self.caretIsAt(expectedCaret))
 
-
-def tearDownModule():
-    DRIVER.quit()
 
 # TESTS
 """ !!! temporary
@@ -301,7 +366,7 @@ def tearDownModule():
         - Equation
 """
 
-
+@on_platforms(browsers, RUN_LOCAL)
 class MovementInSingleChildParagraph(CaretPositionTest):
     __metaclass__ = DataCasesToTestMethodsMeta
     movement_within_short = [
@@ -422,7 +487,7 @@ class MovementInSingleChildParagraph(CaretPositionTest):
         movement_in_link,
     )
 
-
+@on_platforms(browsers, RUN_LOCAL)
 class InsertionOfLink(LiveTornadoTestCase, Manipulator):
     __metaclass__ = DataCasesToTestMethodsMeta
     linkTitle = 'all the ipsums'
@@ -472,7 +537,52 @@ class InsertionOfLink(LiveTornadoTestCase, Manipulator):
     ]
 
     def setUp(self):
+        if RUN_LOCAL:
+            self.setUpLocal()
+        else:
+            self.setUpSauce()
         self.createAndLoginUser()
+
+    def tearDown(self):
+        if RUN_LOCAL:
+            self.tearDownLocal()
+        else:
+            self.tearDownSauce()
+
+    def setUpSauce(self):
+        self.desired_capabilities['name'] = self.id()
+        self.desired_capabilities['tunnel-identifier'] = \
+            os.environ['TRAVIS_JOB_NUMBER']
+        self.desired_capabilities['build'] = os.environ['TRAVIS_BUILD_NUMBER']
+        self.desired_capabilities['tags'] = \
+            [os.environ['TRAVIS_PYTHON_VERSION'], 'CI']
+
+        print self.desired_capabilities
+
+        sauce_url = "http://%s:%s@ondemand.saucelabs.com:80/wd/hub"
+        self.driver = webdriver.Remote(
+            desired_capabilities=self.desired_capabilities,
+            command_executor=sauce_url % (USERNAME, ACCESS_KEY)
+        )
+        self.driver.implicitly_wait(5)
+
+    def setUpLocal(self):
+        self.driver = getattr(webdriver, self.browser)()
+        self.driver.implicitly_wait(3)
+
+    def tearDownLocal(self):
+        self.driver.quit()
+
+    def tearDownSauce(self):
+        print("\nLink to your job: \n "
+              "https://saucelabs.com/jobs/%s \n" % self.driver.session_id)
+        try:
+            if sys.exc_info() == (None, None, None):
+                sauce.jobs.update_job(self.driver.session_id, passed=True)
+            else:
+                sauce.jobs.update_job(self.driver.session_id, passed=False)
+        finally:
+            self.driver.quit()
 
     def runCheck(self, case):
         self.loadDocumentEditor(
@@ -483,9 +593,9 @@ class InsertionOfLink(LiveTornadoTestCase, Manipulator):
 
         self.setSelection(case.givenCaretStart, case.givenCaretEnd)
 
-        (DRIVER.find_element_by_id('button-link')
+        (self.driver.find_element_by_id('button-link')
                .click())
-        WebDriverWait(DRIVER, 10).until(
+        WebDriverWait(self.driver, 10).until(
             EC.presence_of_element_located((By.XPATH,
                                             '//span['
                                             '@class="ui-dialog-title"'
@@ -494,12 +604,12 @@ class InsertionOfLink(LiveTornadoTestCase, Manipulator):
                                             ))
         )
 
-        (DRIVER.find_element_by_css_selector('input.linktitle')
+        (self.driver.find_element_by_css_selector('input.linktitle')
                .send_keys(self.linkTitle))
-        (DRIVER.find_element_by_css_selector('input.link')
+        (self.driver.find_element_by_css_selector('input.link')
                .send_keys(self.linkAddressWithoutHTTP))
 
-        (DRIVER.find_element_by_xpath('//button/span[text()="Insert"]')
+        (self.driver.find_element_by_xpath('//button/span[text()="Insert"]')
                .click())
         self.assertEqual(
             str(case.expectedContents),

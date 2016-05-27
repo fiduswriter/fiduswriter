@@ -9,7 +9,7 @@ let changeAvatarDialog = function() {
         let $form, fData
         $.activateWait()
         $form = jQuery('#avatar-uploader-form')
-        fData = new FormData($form[0])
+        fData = new window.FormData($form[0])
         $.ajax({
             url : '/account/avatar/upload/',
             data: fData,
@@ -186,7 +186,7 @@ let changePwdDialog = function() {
             return
         }
 
-        let formData = new FormData(document.getElementById('fw-password-change-form'))
+        let formData = new window.FormData(document.getElementById('fw-password-change-form'))
 
         $.activateWait()
         $.ajax({
@@ -199,7 +199,7 @@ let changePwdDialog = function() {
             success : function(response, textStatus, jqXHR) {
                 if(200 === jqXHR.status) {
                     jQuery("#fw-change-pwd-dialog").dialog('close')
-                    alert(gettext('The password has been changed.'))
+                    window.alert(gettext('The password has been changed.'))
                 } else {
                     let eMsg
                     if(response.msg.hasOwnProperty('old_password')) {
@@ -252,7 +252,7 @@ let addEmailDialog = function() {
 
         jQuery('#new-profile-email').val(newEmail)
 
-        let formData = new FormData(document.getElementById('fw-add-email-form'))
+        let formData = new window.FormData(document.getElementById('fw-add-email-form'))
         $.activateWait()
         $.ajax({
             url : '/account/emailadd/',
@@ -264,7 +264,7 @@ let addEmailDialog = function() {
             success : function(response, textStatus, jqXHR) {
                 if(200 == jqXHR.status) {
                     jQuery('#fw-add-email-dialog').dialog('close')
-                    alert(gettext('Confirmation e-mail sent to ' + newEmail))
+                    window.alert(gettext('Confirmation e-mail sent to ' + newEmail))
                 } else {
                     let eMsg = response.msg['email'][0]
                     jQuery('#fw-add-email-error').html(eMsg)
@@ -303,7 +303,7 @@ let deleteEmailDialog = function() {
     }))
 
     diaButtons[gettext('Remove')] = function() {
-        let formData = new FormData()
+        let formData = new window.FormData()
         formData.append('email', email)
 
         $.activateWait()
@@ -319,11 +319,11 @@ let deleteEmailDialog = function() {
                     thisTr.remove()
                 }
                 jQuery('#fw-confirm-email-dialog').dialog('close')
-                alert(gettext(response.msg))
+                window.alert(gettext(response.msg))
             },
             error: function(jqXHR, textStatus, errorThrown) {
                 jQuery('#fw-confirm-email-dialog').dialog('close')
-                alert(gettext('The email could not be removed!'))
+                window.alert(gettext('The email could not be removed!'))
             },
             complete: function() { $.deactivateWait() }
         })
@@ -356,7 +356,7 @@ let changePrimaryEmailDialog = function() {
     }))
 
     diaButtons[gettext('Submit')] = function() {
-        let formData = new FormData()
+        let formData = new window.FormData()
         formData.append('email', primEmail)
 
         $.activateWait()
@@ -374,10 +374,10 @@ let changePrimaryEmailDialog = function() {
                 } else {
                     jQuery('tr.primary-email-tr .primary-email-radio').prop("checked", true)
                 }
-                alert(gettext(response.msg))
+                window.alert(gettext(response.msg))
             },
             error: function(jqXHR, textStatus, errorThrown) {
-                alert(gettext('The email could not be set primary!'))
+                window.alert(gettext('The email could not be set primary!'))
             },
             complete: function() {
                 jQuery('#fw-confirm-email-dialog').dialog('close')

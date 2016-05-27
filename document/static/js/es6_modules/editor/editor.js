@@ -366,12 +366,12 @@ export class Editor {
         let outputNode = this.mod.nodeConvert.editorToModelNode(serializeTo(this.pm.mod.collab.versionDoc, 'dom'))
         this.doc.title = this.pm.mod.collab.versionDoc.firstChild.textContent
         this.doc.version = this.pm.mod.collab.version
-        this.doc.metadata.title = node2Obj(outputNode.getElementById('document-title'))
-        this.doc.metadata.subtitle = node2Obj(outputNode.getElementById('metadata-subtitle'))
-        this.doc.metadata.authors = node2Obj(outputNode.getElementById('metadata-authors'))
-        this.doc.metadata.abstract = node2Obj(outputNode.getElementById('metadata-abstract'))
-        this.doc.metadata.keywords = node2Obj(outputNode.getElementById('metadata-keywords'))
-        this.doc.contents = node2Obj(outputNode.getElementById('document-contents'))
+        this.doc.metadata.title = node2Obj(outputNode.querySelector('#document-title'))
+        this.doc.metadata.subtitle = node2Obj(outputNode.querySelector('#metadata-subtitle'))
+        this.doc.metadata.authors = node2Obj(outputNode.querySelector('#metadata-authors'))
+        this.doc.metadata.abstract = node2Obj(outputNode.querySelector('#metadata-abstract'))
+        this.doc.metadata.keywords = node2Obj(outputNode.querySelector('#metadata-keywords'))
+        this.doc.contents = node2Obj(outputNode.querySelector('#document-contents'))
         this.doc.hash = this.getHash()
         this.doc.comments = this.mod.comments.store.comments
         if (callback) {

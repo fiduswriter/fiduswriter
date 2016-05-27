@@ -41,18 +41,7 @@ class Command(BaseCommand):
                 font_face += font.fontface_definition.replace(
                     '[URL]', font.font_file.url.split("?")[0])
                 font_face += u'\n}\n'
-                # adding extra font with Zero Space for MVS
-                font_face_mvs = re.sub(
-                    r'src:(.+);',
-                    (
-                        'src: url(../../fonts/zerospacemvs/zerospacemvs.svg) '
-                        'format("svg");\r\nunicode-range: "U+200B";'
-                    ),
-                    font_face
-                )
-
                 output_css += font_face
-                output_css += font_face_mvs
             output_css += ds.contents
 
             d = os.path.dirname(

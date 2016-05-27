@@ -6,7 +6,7 @@ import {bookListTemplate, bookBasicInfoTemplate, bookPrintDataTemplate,
 import {ImageDB} from "../images/database"
 import {ImageSelectionDialog} from "../images/selection-dialog/selection-dialog"
 import {defaultDocumentStyle, documentStyleList} from "../style/documentstyle-list"
-import {defaultCitationStyle} from "../style/citation-definitions"
+import {defaultCitationStyle, citationDefinitions} from "../style/citation-definitions"
 
 
 export class BookActions {
@@ -383,7 +383,8 @@ export class BookActions {
                 })
             }),
             bibliographyData: bookBibliographyDataTemplate({
-                theBook
+                theBook,
+                citationDefinitions
             }),
             printData: bookPrintDataTemplate({
                 theBook,

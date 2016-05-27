@@ -3,7 +3,7 @@ import {LatexBookExporter} from "./exporter/latex"
 import {EpubBookExporter} from "./exporter/epub"
 import {BookActions} from "./actions"
 import {BookAccessRightsDialog} from "./accessrights/dialog"
-import {bookListTemplate, bookBibliographyDataTemplate} from "./templates"
+import {bookListTemplate} from "./templates"
 import {ImageDB} from "../images/database"
 
 export class BookList {

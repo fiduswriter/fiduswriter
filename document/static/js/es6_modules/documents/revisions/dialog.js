@@ -83,8 +83,8 @@ export class DocumentRevisionsDialog {
 
     recreate(id, user) {
         let that = this
-            // Have to use XMLHttpRequest rather than jQuery.ajax as it's the only way to receive a blob.
-        let xhr = new XMLHttpRequest()
+            // Have to use window.XMLHttpRequest rather than jQuery.ajax as it's the only way to receive a blob.
+        let xhr = new window.XMLHttpRequest()
         xhr.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 let fidusFile = this.response
@@ -130,9 +130,9 @@ export class DocumentRevisionsDialog {
      */
 
     download(id, filename) {
-        // Have to use XMLHttpRequest rather than jQuery.ajax as it's the only way to receive a blob.
+        // Have to use window.XMLHttpRequest rather than jQuery.ajax as it's the only way to receive a blob.
 
-        let xhr = new XMLHttpRequest()
+        let xhr = new window.XMLHttpRequest()
         xhr.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 downloadFile(filename, this.response)

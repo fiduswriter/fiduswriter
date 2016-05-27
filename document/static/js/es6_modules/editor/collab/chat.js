@@ -26,9 +26,9 @@ export class ModCollabChat {
 
         this.currentlyFlashing = true
 
-        let changeDocumentTitle = setInterval(function () {
+        let changeDocumentTitle = window.setInterval(function () {
             if (this.focus) {
-                clearInterval(changeDocumentTitle)
+                window.clearInterval(changeDocumentTitle)
                 document.title = origTitle
                 that.currentlyFlashing = false
             }

@@ -32,7 +32,7 @@ export class ModCollabDocChanges {
 
     cancelCurrentlyCheckingVersion() {
         this.currentlyCheckingVersion = false
-        clearTimeout(this.enableCheckDiffVersion)
+        window.clearTimeout(this.enableCheckDiffVersion)
     }
 
     checkDiffVersion() {
@@ -41,7 +41,7 @@ export class ModCollabDocChanges {
             return
         }
         this.currentlyCheckingVersion = true
-        this.enableCheckDiffVersion = setTimeout(function() {
+        this.enableCheckDiffVersion = window.setTimeout(function() {
             that.currentlyCheckingVersion = false
         }, 1000)
         if (this.mod.editor.mod.serverCommunications.connected) {
@@ -57,7 +57,7 @@ export class ModCollabDocChanges {
         let that = this
         this.awaitingDiffResponse = true
             // If no answer has been received from the server within 2 seconds, check the version
-        this.checkDiffVersionTimer = setTimeout(function() {
+        this.checkDiffVersionTimer = window.setTimeout(function() {
             that.awaitingDiffResponse = false
             that.sendToCollaborators()
             that.checkDiffVersion()
@@ -65,7 +65,7 @@ export class ModCollabDocChanges {
     }
 
     enableDiffSending() {
-        clearTimeout(this.checkDiffVersionTimer)
+        window.clearTimeout(this.checkDiffVersionTimer)
         this.awaitingDiffResponse = false
         this.sendToCollaborators()
     }

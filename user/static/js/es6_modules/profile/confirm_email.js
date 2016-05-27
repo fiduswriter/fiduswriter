@@ -17,7 +17,7 @@ export let bind = function() {
             }
         })
         jQuery('#submit').bind('click',function() {
-            alert(gettext('Thanks for verifying! You can now log in.'))
+            window.alert(gettext('Thanks for verifying! You can now log in.'))
         })
     })
 }

@@ -310,7 +310,7 @@ export class BookActions {
     }
     // TODO: Should we not be able to call a method from
     createNewImage(imageEntry, callback) {
-        let xhr = new XMLHttpRequest(), that = this
+        let xhr = new window.XMLHttpRequest(), that = this
         xhr.open('GET', imageEntry.oldUrl, true)
         xhr.responseType = 'blob'
 
@@ -320,7 +320,7 @@ export class BookActions {
                 let imageFile = new window.Blob([this.response], {
                     type: imageEntry.file_type
                 })
-                let formValues = new FormData()
+                let formValues = new window.FormData()
                 formValues.append('id', 0)
                 formValues.append('title', imageEntry.title)
                 formValues.append('imageCats', '')

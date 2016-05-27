@@ -11,7 +11,7 @@ export let uploadFile = function(zipFilename, blob, editor) {
     let diaButtons = {}
 
     diaButtons[gettext("Save")] = function() {
-        let data = new FormData()
+        let data = new window.FormData()
 
         data.append('note', jQuery(this).find('.revision-note').val())
         data.append('file', blob, zipFilename)

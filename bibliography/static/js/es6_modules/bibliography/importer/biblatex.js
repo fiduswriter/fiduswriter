@@ -27,7 +27,7 @@ export class BibLatexImporter {
                 return false
             }
             $.activateWait()
-            let reader = new FileReader()
+            let reader = new window.FileReader()
             reader.onerror = function (e) {
                 console.log('error', e.target.error.code)
             }

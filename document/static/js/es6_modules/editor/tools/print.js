@@ -2,6 +2,7 @@ export class ModToolsPrint {
     constructor(mod) {
         mod.print = this
         this.mod = mod
+        this.flowCopy = false
     }
 
     printReady() {
@@ -9,7 +10,7 @@ export class ModToolsPrint {
         window.print()
         jQuery(flowTo).hide()
         jQuery(flowTo).html('')
-        delete window.flowCopy
+        delete this.flowCopy
     }
 
     changeAllIds(node) {
@@ -59,9 +60,9 @@ export class ModToolsPrint {
         })
 
 
-        window.flowCopy = flowCopy
+        this.flowCopy = flowCopy
         jQuery(flowTo).show()
-        window.pagination.applyBookLayoutWithoutDivision()
+        pagination.applyBookLayoutWithoutDivision()
     }
 
     print() {

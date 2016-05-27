@@ -38,23 +38,23 @@
     "sub": true,
     "undef": true,
     "predef": [
+      "window",
+      "document",
+      "console",
       "jQuery",
 	  "gettext",
 	  "_",
-	  "window",
 	  "$",
-	  "document",
-	  "console",
-	  "FileReader",
-	  "FormData",
-	  "alert",
-	  "setTimeout",
+      "loadCSS",
 	  "zip",
-      "setInterval",
-      "clearInterval",
-      "clearTimeout",
       "CSL",
-      "XMLHttpRequest"
+      "MathQuill",
+      "staticUrl",
+      "onloadCSS",
+      "pagination",
+      "paginationConfig",
+      "websocketServer",
+      "websocketPort"
     ]
   }
 }

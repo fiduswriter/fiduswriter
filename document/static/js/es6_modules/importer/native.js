@@ -166,7 +166,7 @@ export class ImportNative {
                 let getUrl = _.findWhere(entries, {
                     filename: newImageEntries[counter].oldUrl.split('/').pop()
                 }).url
-                let xhr = new XMLHttpRequest()
+                let xhr = new window.XMLHttpRequest()
                 xhr.open('GET', getUrl, true)
                 xhr.responseType = 'blob'
 
@@ -239,7 +239,7 @@ export class ImportNative {
 
         function sendImage() {
             if (counter < newImageEntries.length) {
-                let formValues = new FormData()
+                let formValues = new window.FormData()
                 formValues.append('id', 0)
                 formValues.append('title', newImageEntries[counter].title)
                 formValues.append('imageCats', '')

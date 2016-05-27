@@ -269,7 +269,6 @@ Equation.prototype.serializeDOM = (node, serializer) => {
         class: 'equation',
         'data-equation': node.attrs.equation
     })
-    window.katexRender = katexRender
     katexRender(node.attrs.equation, dom, {throwOnError: false})
     dom.setAttribute('contenteditable', 'false')
     return dom

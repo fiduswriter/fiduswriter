@@ -6,8 +6,7 @@
  * Please see pagination.js for usage instructions. Only basic options are available.
  */
 (function() {
-
-
+    'use strict';
 
     //    var exports = this,
     var pagination = {};
@@ -67,12 +66,7 @@
             };
             var stylesheet = document.createElement('style');
             // Small fix for Firefox to not print first two pages on top of oneanother.
-            stylesheet.innerHTML =
-                "\
-            .pagination-page:first-child {\
-                page-break-before: always;\
-            }\
-            ";
+            stylesheet.innerHTML = ".pagination-page:first-child {page-break-before: always;}";
             document.head.appendChild(stylesheet);
         } else {
             // Webkit + Chrome + Edge
@@ -104,60 +98,46 @@
          */
         var stylesheet = document.createElement('style'),
             footnoteSelector = pagination.config('footnoteSelector');
-        stylesheet.innerHTML = "\
-        .pagination-footnotes " +
-            footnoteSelector +
-            " {\
-            display: block;\
-        }\
-        .pagination-contents " +
-            footnoteSelector +
-            " > * {\
-            display:none;\
-        }\
-        .pagination-main-contents-container " +
-            footnoteSelector +
-            ", figure {\
-            -webkit-column-break-inside: avoid;\
-            page-break-inside: avoid;\
-        }\
-        body {\
-            counter-reset: pagination-footnote pagination-footnote-reference;\
-        }\
-        .pagination-contents " +
-            footnoteSelector +
-            "::before {\
-            counter-increment: pagination-footnote-reference;\
-            content: counter(pagination-footnote-reference);\
-        }\
-        " +
-            footnoteSelector +
-            " > * > *:first-child::before {\
-            counter-increment: pagination-footnote;\
-            content: counter(pagination-footnote);\
-        }\
-        .pagination-page {\
-            position: relative;\
-        }\
-        .pagination-page {\
-            page-break-after: always;\
-            page-break-before: always;\
-            margin-left: auto;\
-            margin-right: auto;\
-        }\
-        .pagination-page:first-child {\
-            page-break-before: avoid;\
-        }\
-        .pagination-page:last-child {\
-            page-break-after: avoid;\
-        }\
-        .pagination-main-contents-container, .pagination-pagenumber, .pagination-header {\
-            position: absolute;\
-        }\
-        li.hide {\
-          list-style-type: none;\
-        }\
-        ";
+        stylesheet.innerHTML = `
+.pagination-footnotes ${footnoteSelector} {display: block;}
+.pagination-contents ${footnoteSelector} > * {display:none;}
+.pagination-main-contents-container ${footnoteSelector}, figure {
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;
+}
+body {
+    counter-reset: pagination-footnote pagination-footnote-reference;
+}
+.pagination-contents ${footnoteSelector}::before {
+    counter-increment: pagination-footnote-reference;
+    content: counter(pagination-footnote-reference);
+}
+${footnoteSelector} > * > *:first-child::before {
+    counter-increment: pagination-footnote;
+    content: counter(pagination-footnote);
+}
+.pagination-page {
+    position: relative;
+}
+.pagination-page {
+    page-break-after: always;
+    page-break-before: always;
+    margin-left: auto;
+    margin-right: auto;
+}
+.pagination-page:first-child {
+    page-break-before: avoid;
+}
+.pagination-page:last-child {
+    page-break-after: avoid;
+}
+.pagination-main-contents-container, .pagination-pagenumber, .pagination-header {
+    position: absolute;
+}
+li.hide {
+    list-style-type: none;
+}
+        `;
         document.head.appendChild(stylesheet);
     };
 
@@ -186,68 +166,64 @@
             unit,
             headerTopMargin = pagination.config('headerTopMargin') +
             unit,
-            imageMaxHeight = contentsHeightNumber - .1 + unit,
-            imageMaxWidth = contentsWidthNumber - .1 + unit,
+            imageMaxHeight = contentsHeightNumber - 0.1 + unit,
+            imageMaxWidth = contentsWidthNumber - 0.1 + unit,
             footnoteSelector = pagination.config('footnoteSelector');
 
-        pagination.pageStyleSheet.innerHTML =
-            "\
-            .pagination-page {height:" + pageHeight +
-            "; width:" + pageWidth +
-            ";\
-            background-color: #fff;}\
-            @page {size:" +
-            pageWidth + " " + pageHeight +
-            ";}\
-            body {background-color: #efefef; margin:0;}\
-            @media screen{.pagination-page {border:solid 1px #000; margin-bottom:.2in;}} \
-            .pagination-main-contents-container {width:" +
-            contentsWidth + "; height:" + contentsHeight +
-            ";\
-                bottom:" + contentsBottomMargin +
-            ";} \
-            .pagination-contents-container {bottom:" +
-            contentsBottomMargin + ";\
-               height:" +
-            contentsHeight +
-            "}\
-            .pagination-contents {height:" +
-            contentsHeight + "; width:" + contentsWidth +
-            ";}\
-            img {max-height: " + imageMaxHeight +
-            "; max-width: 100%;}\
-            .pagination-pagenumber {bottom:" +
-            pagenumberBottomMargin +
-            ";}\
-            .pagination-header {top:" +
-            headerTopMargin +
-            ";}\
-            .pagination-page:nth-child(odd) .pagination-main-contents-container, \
-            .pagination-page:nth-child(odd) .pagination-pagenumber, \
-            .pagination-page:nth-child(odd) .pagination-header {right:" +
-            outerMargin + ";left:" + innerMargin +
-            ";}\
-            .pagination-page:nth-child(even) .pagination-main-contents-container, \
-            .pagination-page:nth-child(even) .pagination-pagenumber, \
-            .pagination-page:nth-child(even) .pagination-header {right:" +
-            innerMargin + ";left:" + outerMargin +
-            ";}\
-            .pagination-page:nth-child(odd) .pagination-pagenumber,\
-            .pagination-page:nth-child(odd) .pagination-header {text-align:right;}\
-            .pagination-page:nth-child(odd) .pagination-header-section {display:none;}\
-            .pagination-page:nth-child(even) .pagination-header-chapter {display:none;}\
-            .pagination-page:nth-child(even) .pagination-pagenumber,\
-            .pagination-page:nth-child(even) .pagination-header { text-align:left;}\
-            " +
-            footnoteSelector +
-            " > * > * {font-size: 0.7em; margin:.25em;}\
-            " +
-            footnoteSelector + " > * > *::before, " + footnoteSelector +
-            "::before \
-            {position: relative; top: -0.5em; font-size: 80%;}\
-            #pagination-toc-title:before {content:'Contents';}\
-            .pagination-toc-entry .pagination-toc-pagenumber {float:right;}\
-            ";
+        pagination.pageStyleSheet.innerHTML = `
+.pagination-page {height: ${pageHeight}; width: ${pageWidth};background-color: #fff;}
+@page {size:${pageWidth} ${pageHeight};}
+body {background-color: #efefef; margin:0;}
+@media screen{.pagination-page {border:solid 1px #000; margin-bottom:.2in;}}
+.pagination-main-contents-container {
+    width: ${contentsWidth};
+    height: ${contentsHeight};
+    bottom: ${contentsBottomMargin};
+}
+.pagination-contents-container {
+    bottom: ${contentsBottomMargin};
+    height: ${contentsHeight};
+}
+.pagination-contents {
+    height: ${contentsHeight};
+    width: ${contentsWidth};
+}
+img {max-height: ${imageMaxHeight}; max-width: 100%;}
+.pagination-pagenumber {
+    bottom: ${pagenumberBottomMargin};
+}
+.pagination-header {
+    top: ${headerTopMargin};
+}
+.pagination-page:nth-child(odd) .pagination-main-contents-container,
+.pagination-page:nth-child(odd) .pagination-pagenumber,
+.pagination-page:nth-child(odd) .pagination-header {
+    right: ${outerMargin};
+    left: ${innerMargin};
+}
+.pagination-page:nth-child(even) .pagination-main-contents-container,
+.pagination-page:nth-child(even) .pagination-pagenumber,
+.pagination-page:nth-child(even) .pagination-header {
+    right: ${innerMargin};
+    left: ${outerMargin};
+}
+.pagination-page:nth-child(odd) .pagination-pagenumber,
+.pagination-page:nth-child(odd) .pagination-header {text-align:right;}
+.pagination-page:nth-child(odd) .pagination-header-section {display:none;}
+.pagination-page:nth-child(even) .pagination-header-chapter {display:none;}
+.pagination-page:nth-child(even) .pagination-pagenumber,
+.pagination-page:nth-child(even) .pagination-header { text-align:left;}
+${footnoteSelector} > * > * {font-size: 0.7em; margin:.25em;}
+${footnoteSelector} > * > *::before, ${footnoteSelector}::before {
+    position: relative;
+    top: -0.5em;
+    font-size: 80%;
+}
+#pagination-toc-title:before {
+    content:'Contents';
+}
+.pagination-toc-entry .pagination-toc-pagenumber {float:right;}
+            `;
 
     };
 
@@ -484,7 +460,7 @@
         } else {
             return pagination.findPrevNode(node.parentElement);
         }
-    }
+    };
 
     // Go through a node (contents) and find the exact position where it goes lower than bottom.
     pagination.findPageBreak = function(contents, bottom) {
@@ -504,22 +480,21 @@
                         return found;
                     }
                 } else {
-                    return false
+                    return false;
                 }
             }
             prevNode = pagination.findPrevNode(contents);
             return {
                 node: prevNode,
-                offset: prevNode.length ? prevNode.length : prevNode.childNodes
-                    .length
-            }
+                offset: prevNode.length ? prevNode.length : prevNode.childNodes.length
+            };
 
         } else if (contents.nodeType === 3) {
             var range = document.createRange(),
                 offset = contents.length;
             range.setStart(contents, 0);
             range.setEnd(contents, offset);
-            var contentCoords = range.getBoundingClientRect();
+            contentCoords = range.getBoundingClientRect();
             if (contentCoords.bottom === contentCoords.top) {
                 // Some text node that doesn't have any output.
                 return false;
@@ -550,19 +525,18 @@
                 node: prevNode,
                 offset: prevNode.length ? prevNode.length : prevNode.childNodes
                     .length
-            }
+            };
         } else {
             return false;
         }
-    }
-
+    };
 
     pagination.cutToFit = function(contents) {
 
         var range, overflow, manualPageBreak,
             ignoreLastLIcut = false,
             cutLIs, pageBreak,
-            // ContentHeight = height of page - height of top floats - height of footnotes.
+            // contentHeight = height of page - height of top floats - height of footnotes.
             contentHeight = (contents.parentElement.clientHeight -
                 contents.previousSibling.clientHeight - contents.nextSibling
                 .clientHeight),
@@ -596,9 +570,9 @@
         // Set height to contentHeight
         contents.style.height = contentHeight + "px";
         // We find that the first item is an OL/UL which may have started on the previous page.
-        if (range.startContainer.nodeName === 'OL' || range.startContainer
-            .nodeName === 'UL' || range.startContainer.nodeName ===
-            '#text' &&
+        if (['OL','UL'].indexOf(range.startContainer.nodeName) !== -1 || range.startContainer.nodeName ===
+            '#text' && range.startContainer.parentNode &&
+            ['OL','UL'].indexOf(range.startContainer.parentNode.nodeName) !== -1 &&
             range.startContainer.length === range.startOffset) {
             // We are cutting from inside a List, don't touch the innermost list items.
             ignoreLastLIcut = true;
@@ -606,7 +580,7 @@
         range.setEndAfter(contents.lastChild);
         overflow = range.extractContents();
         cutLIs = countOLItemsAndFixLI(contents);
-        if (cutLIs.length > 0 && ignoreLastLIcut) {
+        if (ignoreLastLIcut) {
             // Because the cut happened exactly between two LI items, don't try to unify the two lowest level LIs.
             cutLIs[cutLIs.length - 1].hideFirstLI = false;
             if (cutLIs[cutLIs.length - 1].start) {
@@ -648,7 +622,7 @@
 
             if (pagination.currentChapter) {
 
-                chapterHeader = document.createElement('span');
+                var chapterHeader = document.createElement('span');
 
                 chapterHeader.classList.add('pagination-header-chapter');
                 chapterHeader.appendChild(pagination.currentChapter.cloneNode(
@@ -658,7 +632,7 @@
 
             if (pagination.currentSection) {
 
-                sectionHeader = document.createElement('span');
+                var sectionHeader = document.createElement('span');
                 sectionHeader.classList.add('pagination-header-section');
                 sectionHeader.appendChild(pagination.currentSection.cloneNode(
                     true));
@@ -703,7 +677,7 @@
             clonedNode = node.cloneNode(true),
             footnoteSelector = pagination.config('footnoteSelector'),
             topfloatSelector = pagination.config('topfloatSelector'),
-            topfloatsLength, topfloats,
+            topfloatsLength, topfloats, overflow,
             footnotes, footnotesLength, clonedFootnote, i, oldFn,
             fnHeightTotal;
 
@@ -762,8 +736,7 @@
 
 
         if (overflow.firstChild && overflow.firstChild.textContent.trim()
-            .length === 0 && (overflow.firstChild.nodeName === 'P' ||
-                overflow.firstChild.nodeName === 'DIV')) {
+            .length === 0 && ['P','DIV'].indexOf(overflow.firstChild.nodeName) !== -1) {
             overflow.removeChild(overflow.firstChild);
         }
 
@@ -783,12 +756,11 @@
         } else {
             pagination.finish(container, pageCounterStyle);
         }
-
     };
 
     pagination.paginateDivision = function(layoutDiv, pageCounterStyle) {
         if (++pagination.currentFragment < pagination.bodyFlowObjects.length) {
-            newContainer = document.createElement('div');
+            var newContainer = document.createElement('div');
             layoutDiv.appendChild(newContainer);
             newContainer.classList.add('pagination-body');
             newContainer.classList.add('pagination-body-' + pagination.currentFragment);
@@ -817,12 +789,12 @@
                     layoutDiv.firstChild);
                 layoutDiv.firstChild.classList.add(
                     'pagination-frontmatter');
-                tempNode = document.createElement('div');
+                var tempNode = document.createElement('div');
                 tempNode.innerHTML = pagination.config(
                     'frontmatterContents');
-                flowObject = {
+                var flowObject = {
                     fragment: document.createDocumentFragment(),
-                }
+                };
                 while (tempNode.firstChild) {
                     flowObject.fragment.appendChild(tempNode.firstChild);
                 }
@@ -979,6 +951,20 @@
 
     };
 
+    function incrementCounter(counter, len) {
+        counter++;
+        if (counter === len) {
+
+            if (pagination.config(
+                    'divideContents')) {
+                pagination.applyBookLayout();
+            } else {
+                pagination.applyBookLayoutWithoutDivision();
+            }
+        }
+        return counter;
+    }
+
     pagination.bindEvents = function() {
         document.addEventListener(
             "readystatechange",
@@ -989,33 +975,23 @@
                             len = imgs.length,
                             counter = 0;
 
-                        function incrementCounter() {
-                            counter++;
-                            if (counter === len) {
-
-                                if (pagination.config(
-                                        'divideContents')) {
-                                    pagination.applyBookLayout();
-                                } else {
-                                    pagination.applyBookLayoutWithoutDivision();
-                                }
-                            }
-                        }
-
                         [].forEach.call(imgs, function(img) {
                             img.addEventListener('load',
-                                incrementCounter, false
+                                function(){
+                                    counter = incrementCounter(counter, len);
+                                },
+                                false
                             );
                         });
                         if (len === 0) {
                             counter = -1;
-                            incrementCounter();
+                            counter = incrementCounter(counter, len);
                         }
                     }
                 }
             }
         );
-        exports = pagination;
+        var exports = pagination;
     };
 
     if (typeof exports !== 'undefined') {

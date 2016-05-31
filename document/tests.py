@@ -172,6 +172,10 @@ class Manipulator(object):
 
         return user
 
+    def deleteAllUsers(self):
+        User.objects.all().delete()
+        EmailAddress.objects.all().delete()
+
     def createDocument(self, contents):
         doc = Document.objects.create(
             owner=self.user,
@@ -268,6 +272,7 @@ class CaretPositionTest(LiveTornadoTestCase, Manipulator):
             self.tearDownLocal()
         else:
             self.tearDownSauce()
+        self.deleteAllUsers()
 
     def setUpSauce(self):
         self.desired_capabilities['name'] = self.id()
@@ -550,6 +555,7 @@ class InsertionOfLink(LiveTornadoTestCase, Manipulator):
             self.tearDownLocal()
         else:
             self.tearDownSauce()
+        self.deleteAllUsers()
 
     def setUpSauce(self):
         self.desired_capabilities['name'] = self.id()

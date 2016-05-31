@@ -3,7 +3,7 @@ import {ImageDB} from "../database"
 import {ImageOverviewCategories} from "./categories"
 import {addDropdownBox, activateWait, deactivateWait, addAlert, localizeDate} from "../../common/common"
 import {csrfToken} from "../../common/common"
-
+import {Menu} from "../../menu/menu"
 import {usermediaCategoryListItem, usermediaTableTemplate} from "./templates"
  /** Helper functions for user added images/SVGs.*/
 
@@ -11,6 +11,7 @@ export class ImageOverview {
     constructor() {
         this.mod = {}
         new ImageOverviewCategories(this)
+        new Menu("images")
         this.bind()
     }
 

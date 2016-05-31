@@ -42,9 +42,6 @@
         <script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
         <script type="text/javascript" src="{{ JQUERYUI_URL }}"></script>
 
-        {% compress js %}
-        <script type="text/javascript" src="{{ STATIC_URL }}js/menubase.js"></script>
-        {% endcompress %}
         {% block extraheaders %}{% endblock %}
     </head>
     <body{% block isRegistration %}{% endblock %}>
@@ -69,22 +66,22 @@
             <nav id="header-nav">
                 <div class="fw-container fw-nav-container">
                     <p class="fw-nav-item">
-                        <a class="fw-header-navigation-text" href="/" title="{% trans 'edit documents' %}">
+                        <a class="fw-header-navigation-text" href="/" title="{% trans 'edit documents' %}" data-item="documents">
                             {% trans "Documents" %}
                         </a>
                     </p>
                     <p class="fw-nav-item">
-                        <a class="fw-header-navigation-text" href="/bibliography/" title="{% trans 'manage bibliography library' %}">
+                        <a class="fw-header-navigation-text" href="/bibliography/" title="{% trans 'manage bibliography library' %}" data-item="bibliography">
                             {% trans "Bibliography" %}
                         </a>
                     </p>
                     <p class="fw-nav-item">
-                        <a class="fw-header-navigation-text" href="/usermedia/" title="{% trans 'manage image files' %}">
+                        <a class="fw-header-navigation-text" href="/usermedia/" title="{% trans 'manage image files' %}" data-item="images">
                             {% trans "Images" %}
                         </a>
                     </p>
                     <p class="fw-nav-item">
-                        <a class="fw-header-navigation-text" href="/book/" title="{% trans 'compose books' %}">
+                        <a class="fw-header-navigation-text" href="/book/" title="{% trans 'compose books' %}" data-item="books">
                             {% trans "Books" %}
                         </a>
                     </p>

@@ -4,6 +4,7 @@ import {documentsListTemplate, documentsListItemTemplate} from "./templates"
 import {BibliographyDB} from "../../bibliography/database"
 import {ImageDB} from "../../images/database"
 import {activateWait, deactivateWait, addAlert, localizeDate, csrfToken} from "../../common/common"
+import {Menu} from "../../menu/menu"
 /*
 * Helper functions for the document overview page.
 */
@@ -18,6 +19,7 @@ export class DocumentOverview {
         this.mod = {}
         new DocumentOverviewActions(this)
         new DocumentOverviewMenus(this)
+        new Menu("documents")
         this.bind()
     }
 

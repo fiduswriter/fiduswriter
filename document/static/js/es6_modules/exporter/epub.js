@@ -7,8 +7,7 @@ import {opfTemplate, containerTemplate, ncxTemplate, ncxItemTemplate, navTemplat
   navItemTemplate, xhtmlTemplate} from "./epub-templates"
 import {katexOpfIncludes} from "../katex/opf-includes"
 import {addAlert} from "../common/common"
-
-import {render as katexRender} from "katex"
+import {katexRender} from "../katex/katex"
 
 export class BaseEpubExporter extends BaseHTMLExporter {
     getTimestamp() {

@@ -92,8 +92,6 @@
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.autoresize.js"></script>
 
         {% compress js %}
-
-            <script type="text/javascript" src="{{ STATIC_URL }}js/menubase.js"></script>
             <!-- simplePagination.js -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/simplePagination.js"></script>
             <script type="text/javascript">
@@ -117,10 +115,6 @@
                     'lengthUnit': 'px',
                     'flowTo': 'document.getElementById("print")'
                 };
-            </script>
-            <script type="text/javascript">
-                // Prevent migrate messages. Currently only one message from hallo.js is being created.
-                jQuery.migrateMute = true;
             </script>
             <!-- jQuery tablesorter -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dataTables.min.js"></script>

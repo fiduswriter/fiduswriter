@@ -7,10 +7,12 @@ import {BibEntryTypes} from "../statics"
 import {BibLatexImporter} from "../importer/biblatex"
 import {BibLatexExporter} from "../exporter/biblatex"
 import {addDropdownBox} from "../../common/common"
+import {Menu} from "../../menu/menu"
 
 export class BibliographyOverview {
 
     constructor() {
+        new Menu("bibliography")
         this.getBibDB()
         this.bind()
     }

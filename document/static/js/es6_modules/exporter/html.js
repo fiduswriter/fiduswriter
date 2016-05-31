@@ -6,7 +6,7 @@ import {BaseExporter} from "./base"
 import {obj2Node} from "./json"
 import {FormatCitations} from "../citations/format"
 import {addAlert} from "../common/common"
-import {render as katexRender} from "katex"
+import {katexRender} from "../katex/katex"
 
 export class BaseHTMLExporter extends BaseExporter{
     joinDocumentParts() {

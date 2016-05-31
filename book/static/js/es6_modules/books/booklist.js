@@ -6,6 +6,7 @@ import {BookAccessRightsDialog} from "./accessrights/dialog"
 import {bookListTemplate} from "./templates"
 import {ImageDB} from "../images/database"
 import {addDropdownBox, addAlert} from "../common/common"
+import {Menu} from "../menu/menu"
 
 export class BookList {
     // A class that contains everything that happens on the books page.
@@ -19,6 +20,7 @@ export class BookList {
         this.accessRights = []
         this.user = {}
         new BookActions(this)
+        new Menu("books")
         this.bindEvents()
     }
 

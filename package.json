@@ -1,8 +1,10 @@
 {
   "name": "fidus-writer",
-  "version": "3.0.0-beta.3",
+  "version": "3.0.0-beta.4",
   "description": "Install dependencies for ES6 transpilation",
   "scripts": {
+      "js_check": "node_modules/.bin/jshint .",
+      "py_check": "flake8 ./"
   },
   "author": "Johannes Wilm",
   "license": "AGPL",
@@ -15,7 +17,10 @@
     "prosemirror": "0.7.0",
     "katex": "0.6.0",
     "object-hash": "1.1.2",
-    "mathquill": "0.10.1-b"
+    "mathquill": "0.10.1-b",
+    "bowser": "1.3.0",
+    "jshint": "2.9.2",
+    "fg-loadcss": "1.2.0"
   },
   "browserify": {
     "transform": [
@@ -45,12 +50,10 @@
 	  "gettext",
 	  "_",
 	  "$",
-      "loadCSS",
 	  "zip",
       "CSL",
       "MathQuill",
       "staticUrl",
-      "onloadCSS",
       "pagination",
       "paginationConfig",
       "websocketServer",

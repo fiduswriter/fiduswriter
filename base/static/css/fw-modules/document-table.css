@@ -22,11 +22,11 @@
 
 .fw-document-table-body.fw-large {
     width: 820px;
-    height: 300px;
+    height: calc(100vh - 320px);
 }
 .fw-document-table-body.fw-middle {
     width: 600px;
-    height: 300px;
+    height: calc(100vh - 320px);
 }
 
 .fw-document-table-body.fw-small {

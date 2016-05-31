@@ -1,2 +1,5 @@
 [run]
-omit = *migrations*
+omit = 
+	*migrations*
+	venv/*
+	*virtualenv*

@@ -3,6 +3,8 @@ import {DocumentOverviewMenus} from "./menus"
 import {documentsListTemplate, documentsListItemTemplate} from "./templates"
 import {BibliographyDB} from "../../bibliography/database"
 import {ImageDB} from "../../images/database"
+import {activateWait, deactivateWait, addAlert, localizeDate, csrfToken} from "../../common/common"
+import {Menu} from "../../menu/menu"
 /*
 * Helper functions for the document overview page.
 */
@@ -17,6 +19,7 @@ export class DocumentOverview {
         this.mod = {}
         new DocumentOverviewActions(this)
         new DocumentOverviewMenus(this)
+        new Menu("documents")
         this.bind()
     }
 
@@ -56,12 +59,16 @@ export class DocumentOverview {
 
     getDocumentListData(id) {
         let that = this
-        $.activateWait()
-        $.ajax({
+        activateWait()
+        jQuery.ajax({
             url: '/document/documentlist/',
             data: {},
             type: 'POST',
             dataType: 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success: function (response, textStatus, jqXHR) {
                 that.documentList = _.uniq(response.documents, true, function(obj) { return obj.id })
                 that.teamMembers = response.team_members
@@ -70,10 +77,10 @@ export class DocumentOverview {
                 that.layoutTable()
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                $.addAlert('error', jqXHR.responseText)
+                addAlert('error', jqXHR.responseText)
             },
             complete: function () {
-                $.deactivateWait()
+                deactivateWait()
             }
         })
     }
@@ -82,7 +89,8 @@ export class DocumentOverview {
         jQuery('#document-table tbody').html(documentsListTemplate({
             documentList: this.documentList,
             user: this.user,
-            documentsListItemTemplate
+            documentsListItemTemplate,
+            localizeDate
         }))
         this.startDocumentTable()
     }

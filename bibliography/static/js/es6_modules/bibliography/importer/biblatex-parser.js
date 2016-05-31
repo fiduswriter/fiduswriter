@@ -1,4 +1,5 @@
 import {TexSpecialChars} from "../statics"
+import {addAlert} from "../../common/common"
 
 /** Parses files in BibTeX/BibLaTeX format
  * @function bibTexParser
@@ -227,7 +228,7 @@ export class BibLatexParser {
             }
             kv = this.keyEqualsValue()
             if (typeof (kv) === 'undefined') {
-                $.addAlert('error', gettext('A variable could not be identified. Possible error in bibtex syntax.'))
+                addAlert('error', gettext('A variable could not be identified. Possible error in bibtex syntax.'))
                 break
             }
             let val = this.scanBibtexString(kv[1])

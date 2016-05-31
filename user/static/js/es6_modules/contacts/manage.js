@@ -1,5 +1,5 @@
 import {addTeammemberTemplate, teammemberTemplate} from "./templates"
-
+import {csrfToken} from "../common/common"
 /**
 * Sets up the contacts management. Helper functions for adding and removing contacts.
 */
@@ -8,15 +8,19 @@ import {addTeammemberTemplate, teammemberTemplate} from "./templates"
 let addMember = function(userString, callback) {
     if(null === userString || 'undefined' == typeof(userString)) { return false }
 
-    userString = $.trim(userString)
+    userString = jQuery.trim(userString)
     jQuery('#add-new-member .warning').detach()
     if('' === userString)
         return false
-    $.ajax({
+    jQuery.ajax({
         url : '/account/teammember/add',
         data : {'user_string': userString},
         type : 'POST',
         dataType : 'json',
+        crossDomain: false, // obviates need for sameOrigin test
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", csrfToken)
+        },
         success : function(response, textStatus, jqXHR) {
             if(jqXHR.status == 201) {//user added to the contacts
                 if (callback) {
@@ -82,11 +86,15 @@ export let addMemberDialog = function(callback) {
 }
 
 let deleteMember = function(ids) {
-    $.ajax({
+    jQuery.ajax({
         url : '/account/teammember/remove',
         data : {'members[]': ids},
         type : 'POST',
         dataType : 'json',
+        crossDomain: false, // obviates need for sameOrigin test
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", csrfToken)
+        },
         success : function(response, textStatus, jqXHR) {
             if(jqXHR.status == 200) {//user removed from contacts
                 jQuery('#user-' + ids.join(', #user-')).remove()

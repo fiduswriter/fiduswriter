@@ -140,7 +140,7 @@ export class ModCommentInteractions {
         let commentTextBox = jQuery(cancelButton).siblings('.commentText')[0]
         if (commentTextBox) {
             let id = this.getCommentId(commentTextBox)
-            if (this.mod.store.comments[id].comment.length === 0) {
+            if (id===-1 || this.mod.store.comments[id].comment.length === 0) {
                 this.deleteComment(id)
             } else {
                 this.mod.layout.deactivateAll()

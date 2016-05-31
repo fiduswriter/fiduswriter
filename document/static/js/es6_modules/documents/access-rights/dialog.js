@@ -1,5 +1,7 @@
 import {accessRightOverviewTemplate, accessRightTrTemplate, collaboratorsTemplate} from "./templates"
 import {addMemberDialog} from "../../contacts/manage"
+import {addDropdownBox, setCheckableLabel, addAlert} from "../../common/common"
+
 /**
 * Functions for the document access rights dialog.
 */
@@ -138,11 +140,11 @@ export class DocumentAccessRightsDialog {
     collaboratorFunctionsEvent() {
         jQuery('.fw-checkable').unbind('click')
         jQuery('.fw-checkable').bind('click', function () {
-            $.setCheckableLabel(jQuery(this))
+            setCheckableLabel(jQuery(this))
         })
         jQuery('.edit-right').unbind('click')
         jQuery('.edit-right').each(function () {
-            $.addDropdownBox(jQuery(this), jQuery(this).siblings('.fw-pulldown'))
+            addDropdownBox(jQuery(this), jQuery(this).siblings('.fw-pulldown'))
         })
         let spans = jQuery(
             '.edit-right-wrapper .fw-pulldown-item, .delete-collaborator')
@@ -171,7 +173,7 @@ export class DocumentAccessRightsDialog {
             success: function (response) {
                 that.accessRights = response.access_rights
                 that.callback(that.accessRights)
-                $.addAlert('success', gettext(
+                addAlert('success', gettext(
                     'Access rights have been saved'))
             },
             error: function (jqXHR, textStatus, errorThrown) {

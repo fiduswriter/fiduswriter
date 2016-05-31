@@ -1,5 +1,6 @@
 import {obj2Node,node2Obj} from "../exporter/json"
 import {BibEntryTypes} from "../bibliography/statics"
+import {addAlert, csrfToken} from "../common/common"
 
 export class ImportNative {
     /* Save document information into the database */
@@ -254,6 +255,10 @@ export class ImportNative {
                     data: formValues,
                     type: 'POST',
                     dataType: 'json',
+                    crossDomain: false, // obviates need for sameOrigin test
+                    beforeSend: function(xhr, settings) {
+                        xhr.setRequestHeader("X-CSRFToken", csrfToken)
+                    },
                     success: function(response, textStatus, jqXHR) {
                         that.imageDB[response.values.pk] = response.values
                         let imageTranslation = {}
@@ -266,7 +271,7 @@ export class ImportNative {
                         sendImage()
                     },
                     error: function() {
-                        jQuery.addAlert('error', gettext('Could not save ') +
+                        addAlert('error', gettext('Could not save ') +
                             newImageEntries[counter].title)
                     },
                     complete: function() {},
@@ -300,17 +305,21 @@ export class ImportNative {
                     },
                     type: 'POST',
                     dataType: 'json',
+                    crossDomain: false, // obviates need for sameOrigin test
+                    beforeSend: function(xhr, settings) {
+                        xhr.setRequestHeader("X-CSRFToken", csrfToken)
+                    },
                     success: function(response, textStatus, jqXHR) {
                         let errors = response.errors,
                             warnings = response.warning,
                             len = errors.length
 
                         for (let i = 0; i < len; i++) {
-                            $.addAlert('error', errors[i])
+                            addAlert('error', errors[i])
                         }
                         len = warnings.length
                         for (let i = 0; i < len; i++) {
-                            $.addAlert('warning', warnings[i])
+                            addAlert('warning', warnings[i])
                         }
                         _.each(response.key_translations, function(newKey, oldKey) {
                             let newID = _.findWhere(response.bibs, {
@@ -351,6 +360,10 @@ export class ImportNative {
             data: postData,
             type: 'POST',
             dataType: 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success: function(data, textStatus, jqXHR) {
                 let aDocumentValues = {
                     last_diffs: [],

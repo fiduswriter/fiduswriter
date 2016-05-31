@@ -35,8 +35,6 @@ urlpatterns = [
     # I18n manual language switcher
     url('^i18n/', include('django.conf.urls.i18n')),
 
-
-
     # I18n Javascript translations
     url('^jsi18n/$', i18n_javascript_catalog, js_info_dict),
 

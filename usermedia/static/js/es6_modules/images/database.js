@@ -1,3 +1,6 @@
+import {activateWait, deactivateWait, addAlert, csrfToken} from "../common/common"
+
+
 /* A class that holds information about images uploaded by the user. */
 
 export class ImageDB {
@@ -12,15 +15,19 @@ export class ImageDB {
         this.db = {}
         this.cats = []
 
-        $.activateWait()
+        activateWait()
 
-        $.ajax({
+        jQuery.ajax({
             url: '/usermedia/images/',
             data: {
                 'owner_id': this.userId
             },
             type: 'POST',
             dataType: 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success: function (response, textStatus, jqXHR) {
                 that.cats = response.imageCategories
                 let pks = []
@@ -34,10 +41,10 @@ export class ImageDB {
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                $.addAlert('error', jqXHR.responseText)
+                addAlert('error', jqXHR.responseText)
             },
             complete: function () {
-                $.deactivateWait()
+                deactivateWait()
             }
         })
 
@@ -45,28 +52,32 @@ export class ImageDB {
 
     createImage(postData, callback) {
         let that = this
-        $.activateWait()
-        $.ajax({
+        activateWait()
+        jQuery.ajax({
             url: '/usermedia/save/',
             data: postData,
             type: 'POST',
             dataType: 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success: function (response, textStatus, jqXHR) {
                 if (that.displayCreateImageError(response.errormsg)) {
                     that.db[response.values.pk] = response.values
-                    $.addAlert('success', gettext('The image has been uploaded'))
+                    addAlert('success', gettext('The image has been uploaded'))
                     callback(response.values.pk)
                 } else {
-                    $.addAlert('error', gettext(
+                    addAlert('error', gettext(
                         'Some errors are found. Please examine the form.'
                     ))
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                $.addAlert('error', jqXHR.responseText)
+                addAlert('error', jqXHR.responseText)
             },
             complete: function () {
-                $.deactivateWait()
+                deactivateWait()
             },
             cache: false,
             contentType: false,

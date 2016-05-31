@@ -5,6 +5,8 @@ import {BookActions} from "./actions"
 import {BookAccessRightsDialog} from "./accessrights/dialog"
 import {bookListTemplate} from "./templates"
 import {ImageDB} from "../images/database"
+import {addDropdownBox, addAlert} from "../common/common"
+import {Menu} from "../menu/menu"
 
 export class BookList {
     // A class that contains everything that happens on the books page.
@@ -18,6 +20,7 @@ export class BookList {
         this.accessRights = []
         this.user = {}
         new BookActions(this)
+        new Menu("books")
         this.bindEvents()
     }
 
@@ -77,7 +80,7 @@ export class BookList {
             })
 
             //open dropdown for selecting action
-            $.addDropdownBox(jQuery('#select-action-dropdown-books'), jQuery(
+            addDropdownBox(jQuery('#select-action-dropdown-books'), jQuery(
                 '#action-selection-pulldown-books'))
 
             //submit action for selected document
@@ -95,7 +98,7 @@ export class BookList {
                                 .find(
                                     '.book-title').text()
                             theTitle = $.trim(theTitle).replace(/[\t\n]/g, '')
-                            $.addAlert('error', gettext(
+                            addAlert('error', gettext(
                                 'You cannot delete or share: ') + theTitle)
                             //return true
                         } else {
@@ -120,7 +123,7 @@ export class BookList {
                                 that.bookList, {
                                     id: ids[i]
                                 })
-                            $.addAlert('info', aBook.title + ': ' + gettext(
+                            addAlert('info', aBook.title + ': ' + gettext(
                                 'Epub export has been initiated.'))
                             new EpubBookExporter(aBook, that.user, that.documentList)
                         }
@@ -131,7 +134,7 @@ export class BookList {
                                 that.bookList, {
                                     id: ids[i]
                                 })
-                            $.addAlert('info', aBook.title + ': ' + gettext(
+                            addAlert('info', aBook.title + ': ' + gettext(
                                 'Latex export has been initiated.'))
                             new LatexBookExporter(aBook, that.user, that.documentList)
                         }
@@ -142,7 +145,7 @@ export class BookList {
                                 that.bookList, {
                                     id: ids[i]
                                 })
-                            $.addAlert('info', aBook.title + ': ' + gettext(
+                            addAlert('info', aBook.title + ': ' + gettext(
                                 'HTML export has been initiated.'))
                             new HTMLBookExporter(aBook, that.user, that.documentList)
                         }

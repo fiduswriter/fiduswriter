@@ -1,6 +1,6 @@
 import {configureCitationTemplate, citationItemTemplate, selectedCitationTemplate} from "./templates"
 import {BibEntryForm} from "../../../bibliography/form/form"
-
+import {addDropdownBox, setCheckableLabel} from "../../../common/common"
 
 // TODO: turn into class (like FigureDialog)
 export let citationDialog = function (mod) {
@@ -98,7 +98,7 @@ export let citationDialog = function (mod) {
                     editor.mod.menus.citation.appendManyToCitationDialog(newBibPks)
                     jQuery('.fw-checkable').unbind('click')
                     jQuery('.fw-checkable').bind('click', function() {
-                        $.setCheckableLabel($(this))
+                        setCheckableLabel(jQuery(this))
                     })
                 })
             })
@@ -190,7 +190,7 @@ export let citationDialog = function (mod) {
 
             jQuery('#cite-source-table').trigger('update')
 
-            $.addDropdownBox(jQuery('#citation-style-label'), jQuery('#citation-style-pulldown'))
+            addDropdownBox(jQuery('#citation-style-label'), jQuery('#citation-style-pulldown'))
             jQuery('#citation-style-pulldown .fw-pulldown-item').bind('mousedown', function() {
                 jQuery('#citation-style-label label').html(jQuery(this).html())
                 jQuery('#citation-style-label').attr('data-style', jQuery(this).data('style'))
@@ -229,7 +229,7 @@ export let citationDialog = function (mod) {
     jQuery('input').blur()
 
     jQuery('.fw-checkable').bind('click', function() {
-        $.setCheckableLabel($(this))
+        setCheckableLabel(jQuery(this))
     })
 
 }

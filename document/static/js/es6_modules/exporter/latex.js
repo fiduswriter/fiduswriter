@@ -4,6 +4,8 @@ import {zipFileCreator} from "./zip"
 import {BaseExporter} from "./base"
 import {BibLatexExporter} from "../bibliography/exporter/biblatex"
 import {BibliographyDB} from "../bibliography/database"
+import {addAlert} from "../common/common"
+
 
 export class BaseLatexExporter extends BaseExporter {
 
@@ -442,7 +444,7 @@ export class LatexExporter extends BaseLatexExporter {
     exportOne() {
         let title = this.doc.title
 
-        $.addAlert('info', title + ': ' + gettext(
+        addAlert('info', title + ': ' + gettext(
             'Latex export has been initiated.'))
 
         let contents = document.createElement('div')

@@ -1,6 +1,7 @@
 import {commentsTemplate, filterByUserBoxTemplate} from "./templates"
 import {UpdateScheduler, scheduleDOMUpdate} from "prosemirror/dist/ui/update"
 import {Comment} from "./comment"
+import {localizeDate} from "../../common/common"
 
 /* Functions related to layouting of comments */
 export class ModCommentLayout {
@@ -196,6 +197,7 @@ export class ModCommentLayout {
 
         let commentsTemplateHTML = commentsTemplate({
             theComments,
+            localizeDate,
             that
         })
         if (document.getElementById('comment-box-container').innerHTML !== commentsTemplateHTML) {

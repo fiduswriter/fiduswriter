@@ -1,4 +1,5 @@
-//USED IN Books + documents list
+import {addAlert, csrfToken} from "../common/common"
+
 export let getMissingDocumentListData = function (ids, documentList, callback) {
     // get extra data for the documents identified by the ids and updates the
     // documentList correspondingly.
@@ -12,13 +13,17 @@ export let getMissingDocumentListData = function (ids, documentList, callback) {
         }
     }
     if (incompleteIds.length > 0) {
-        $.ajax({
+        jQuery.ajax({
             url: '/document/documentlist/extra/',
             data: {
                 ids: incompleteIds.join(',')
             },
             type: 'POST',
             dataType: 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success: function (response, textStatus, jqXHR) {
                 for (let i = 0; i < response.documents.length; i++) {
                     let aDocument = _.findWhere(documentList, {
@@ -35,7 +40,7 @@ export let getMissingDocumentListData = function (ids, documentList, callback) {
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                $.addAlert('error', jqXHR.responseText)
+                addAlert('error', jqXHR.responseText)
             },
         })
     } else {

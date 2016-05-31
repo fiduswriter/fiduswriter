@@ -1,6 +1,8 @@
 import {DocumentAccessRightsDialog} from "../../documents/access-rights/dialog"
 import {documentStyleList} from "../../style/documentstyle-list"
 import {citationDefinitions} from "../../style/citation-definitions"
+import {addDropdownBox} from "../../common/common"
+
 /* Bindings for the header menu */
 export class ModMenusHeader {
     constructor(mod) {
@@ -19,7 +21,7 @@ export class ModMenusHeader {
 
           //open dropdown for headermenu
           jQuery('.header-nav-item, .multibuttonsCover').each(function() {
-              $.addDropdownBox(jQuery(this), jQuery(this).siblings(
+              addDropdownBox(jQuery(this), jQuery(this).siblings(
                   '.fw-pulldown'))
           })
 

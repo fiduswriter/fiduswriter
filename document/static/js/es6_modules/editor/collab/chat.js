@@ -1,4 +1,5 @@
 import {messageTemplate, participantListTemplate} from "./templates"
+import {localizeDate} from "../../common/common"
 
 /*
 * Functions for chat between users who access a document simultaneously.
@@ -43,7 +44,7 @@ export class ModCollabChat {
         let existing = jQuery("#m" + message.id)
         if (existing.length > 0) return
         let theChatter = _.findWhere(this.mod.participants, {id:message.from})
-        let node = jQuery(messageTemplate({message,theChatter}))
+        let node = jQuery(messageTemplate({message, theChatter, localizeDate}))
         node.hide()
 
         let chatContainer = jQuery("#chat-container")

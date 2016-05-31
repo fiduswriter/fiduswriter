@@ -1,19 +1,24 @@
 import {changeAvatarDialogTemplate, confirmDeleteAvatarTemplate,
     deleteUserDialogTemplate, changePwdDialogTemplate, changeEmailDialogTemplate,
 deleteEmailDialogTemplate, } from "./templates"
+import {addDropdownBox, activateWait, deactivateWait, csrfToken} from "../common/common"
 
 let changeAvatarDialog = function() {
     jQuery('body').append(changeAvatarDialogTemplate)
     let diaButtons = {}
     diaButtons[gettext('Upload')] = function() {
         let $form, fData
-        $.activateWait()
+        activateWait()
         $form = jQuery('#avatar-uploader-form')
         fData = new window.FormData($form[0])
-        $.ajax({
+        jQuery.ajax({
             url : '/account/avatar/upload/',
             data: fData,
             type : 'POST',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             processData: false,
             contentType: false,
             dataType : 'json',
@@ -23,7 +28,7 @@ let changeAvatarDialog = function() {
             error: function(jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText)
             },
-            complete: function() { $.deactivateWait() }
+            complete: function() { deactivateWait() }
         })
         jQuery(this).dialog('close')
     }
@@ -51,39 +56,47 @@ let changeAvatarDialog = function() {
 }
 
 let deleteCurrentUser = function() {
-    $.activateWait()
-    $.ajax({
+    activateWait()
+    jQuery.ajax({
         url : '/account/delete/',
         data : {},
         type : 'POST',
         dataType : 'json',
+        crossDomain: false, // obviates need for sameOrigin test
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", csrfToken)
+        },
         success : function(response, textStatus, jqXHR) {
-            $.deactivateWait()
+            deactivateWait()
             window.location = '/logout/'
         },
         error: function(jqXHR, textStatus, errorThrown) {
-            $.deactivateWait()
+            deactivateWait()
             console.log(jqXHR.responseText)
         },
-        complete: function() { $.deactivateWait() }
+        complete: function() { deactivateWait() }
     })
 }
 
 
 let deleteAvatar = function() {
-    $.activateWait()
-    $.ajax({
+    activateWait()
+    jQuery.ajax({
         url : '/account/avatar/delete/',
         data : {},
         type : 'POST',
         dataType : 'json',
+        crossDomain: false, // obviates need for sameOrigin test
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", csrfToken)
+        },
         success : function(response, textStatus, jqXHR) {
             jQuery('#profile-avatar > img').attr('src', response.avatar)
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(jqXHR.responseText)
         },
-        complete: function() { $.deactivateWait() }
+        complete: function() { deactivateWait() }
     })
 }
 
@@ -110,7 +123,7 @@ let deleteAvatarDialog = function() {
 }
 
 let saveProfile = function() {
-    $.activateWait()
+    activateWait()
     let postData = {
         'user': {
             'username': jQuery('#username').val(),
@@ -118,10 +131,14 @@ let saveProfile = function() {
             'last_name': jQuery('#last_name').val()
         }
     }
-    $.ajax({
+    jQuery.ajax({
         url : '/account/save/',
         data : {'form_data': JSON.stringify(postData)},
         type : 'POST',
+        crossDomain: false, // obviates need for sameOrigin test
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", csrfToken)
+        },
         error: function (jqXHR, textStatus, errorThrown) {
             if(422 === jqXHR.status) {
                 jQuery('#edit_user').removeAttr("disabled")
@@ -136,7 +153,7 @@ let saveProfile = function() {
                 console.log(jqXHR.responseText)
             }
         },
-        complete: function() { $.deactivateWait() }
+        complete: function() { deactivateWait() }
     })
 }
 
@@ -188,14 +205,18 @@ let changePwdDialog = function() {
 
         let formData = new window.FormData(document.getElementById('fw-password-change-form'))
 
-        $.activateWait()
-        $.ajax({
+        activateWait()
+        jQuery.ajax({
             url : '/account/passwordchange/',
             data: formData,
             type : 'POST',
             processData: false,
             contentType: false,
             dataType : 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success : function(response, textStatus, jqXHR) {
                 if(200 === jqXHR.status) {
                     jQuery("#fw-change-pwd-dialog").dialog('close')
@@ -217,7 +238,7 @@ let changePwdDialog = function() {
             error: function(jqXHR, textStatus, errorThrown) {
                 jQuery('#fw-password-change-error').html(gettext('The password could not be changed!'))
             },
-            complete: function() { $.deactivateWait() }
+            complete: function() { deactivateWait() }
         })
     }
     diaButtons[gettext('Cancel')] = function() { jQuery(this).dialog('close') }
@@ -253,14 +274,18 @@ let addEmailDialog = function() {
         jQuery('#new-profile-email').val(newEmail)
 
         let formData = new window.FormData(document.getElementById('fw-add-email-form'))
-        $.activateWait()
-        $.ajax({
+        activateWait()
+        jQuery.ajax({
             url : '/account/emailadd/',
             data: formData,
             type : 'POST',
             processData: false,
             contentType: false,
             dataType : 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success : function(response, textStatus, jqXHR) {
                 if(200 == jqXHR.status) {
                     jQuery('#fw-add-email-dialog').dialog('close')
@@ -273,7 +298,7 @@ let addEmailDialog = function() {
             error: function(jqXHR, textStatus, errorThrown) {
                 jQuery('#fw-add-email-error').html(gettext('The email could not be added!'))
             },
-            complete: function() { $.deactivateWait() }
+            complete: function() { deactivateWait() }
         })
     }
     diaButtons[gettext('Cancel')] = function() { jQuery(this).dialog('close') }
@@ -306,14 +331,18 @@ let deleteEmailDialog = function() {
         let formData = new window.FormData()
         formData.append('email', email)
 
-        $.activateWait()
-        $.ajax({
+        activateWait()
+        jQuery.ajax({
             url : '/account/emaildelete/',
             data: formData,
             type : 'POST',
             processData: false,
             contentType: false,
             dataType : 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success : function(response, textStatus, jqXHR) {
                 if(200 == jqXHR.status) {
                     thisTr.remove()
@@ -325,7 +354,7 @@ let deleteEmailDialog = function() {
                 jQuery('#fw-confirm-email-dialog').dialog('close')
                 window.alert(gettext('The email could not be removed!'))
             },
-            complete: function() { $.deactivateWait() }
+            complete: function() { deactivateWait() }
         })
     }
     diaButtons[gettext('Cancel')] = function() { jQuery(this).dialog('close') }
@@ -359,14 +388,18 @@ let changePrimaryEmailDialog = function() {
         let formData = new window.FormData()
         formData.append('email', primEmail)
 
-        $.activateWait()
-        $.ajax({
+        activateWait()
+        jQuery.ajax({
             url : '/account/emailprimary/',
             data: formData,
             type : 'POST',
             processData: false,
             contentType: false,
             dataType : 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success : function(response, textStatus, jqXHR) {
                 if(200 == jqXHR.status) {
                     jQuery('tr.primary-email-tr span.disabled').attr('class', 'delete-email fw-link-text')
@@ -381,7 +414,7 @@ let changePrimaryEmailDialog = function() {
             },
             complete: function() {
                 jQuery('#fw-confirm-email-dialog').dialog('close')
-                jQuery.deactivateWait()
+                deactivateWait()
             }
         })
     }
@@ -406,7 +439,7 @@ let changePrimaryEmailDialog = function() {
 
 export let bind = function() {
     jQuery(document).ready(function() {
-        jQuery.addDropdownBox(jQuery('#edit-avatar-btn'), jQuery('#edit-avatar-pulldown'))
+        addDropdownBox(jQuery('#edit-avatar-btn'), jQuery('#edit-avatar-pulldown'))
         jQuery('.change-avatar').bind('mousedown', changeAvatarDialog)
         jQuery('.delete-avatar').bind('mousedown', deleteAvatarDialog)
         jQuery('#submit-profile').bind('click', saveProfile)

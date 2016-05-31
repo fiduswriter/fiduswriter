@@ -1,4 +1,5 @@
 import {usermediaUploadCategoryTemplate, usermediaUploadTemplate} from "./templates"
+import {setCheckableLabel} from "../../common/common"
 
 export class ImageUploadDialog {
     constructor(imageDB, imageId, ownerId, callback) {
@@ -79,7 +80,7 @@ export class ImageUploadDialog {
         })
 
         jQuery('.fw-checkable-label').bind('click', function () {
-            $.setCheckableLabel(jQuery(this))
+            setCheckableLabel(jQuery(this))
         })
     }
 

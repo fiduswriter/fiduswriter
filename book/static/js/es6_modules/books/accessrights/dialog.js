@@ -1,4 +1,5 @@
 import {bookCollaboratorsTemplate, bookAccessRightOverviewTemplate} from "./templates"
+import {addDropdownBox, setCheckableLabel, addAlert, csrfToken} from "../../common/common"
 
 /**
 * Helper functions to deal with the book access rights dialog.
@@ -86,7 +87,7 @@ export class BookAccessRightsDialog {
               }
           })
           jQuery('.fw-checkable').bind('click', function () {
-              $.setCheckableLabel(jQuery(this))
+              setCheckableLabel(jQuery(this))
           })
           jQuery('#add-share-member').bind('click', function () {
               let selectedMembers = jQuery(
@@ -121,7 +122,7 @@ export class BookAccessRightsDialog {
       collaboratorFunctionsEvent() {
           jQuery('.edit-right').unbind('click')
           jQuery('.edit-right').each(function () {
-              $.addDropdownBox(jQuery(this), jQuery(this).siblings('.fw-pulldown'))
+              addDropdownBox(jQuery(this), jQuery(this).siblings('.fw-pulldown'))
           })
           let spans = jQuery(
               '.edit-right-wrapper .fw-pulldown-item, .delete-collaborator')
@@ -142,14 +143,18 @@ export class BookAccessRightsDialog {
               'collaborators[]': collaborators,
               'rights[]': rights
           }
-          $.ajax({
+          jQuery.ajax({
               url: '/book/accessright/save/',
               data: postData,
               type: 'POST',
               dataType: 'json',
+              crossDomain: false, // obviates need for sameOrigin test
+              beforeSend: function(xhr, settings) {
+                  xhr.setRequestHeader("X-CSRFToken", csrfToken)
+              },
               success: function (response) {
                   that.callback(response.access_rights)
-                  $.addAlert('success', gettext(
+                  addAlert('success', gettext(
                       'Access rights have been saved'))
               },
               error: function (jqXHR, textStatus, errorThrown) {

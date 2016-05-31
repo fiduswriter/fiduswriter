@@ -2,6 +2,7 @@ import {ImageUploadDialog} from "../upload-dialog/upload-dialog"
 import {ImageDB} from "../database"
 import {ImageOverviewCategories} from "./categories"
 import {addDropdownBox, activateWait, deactivateWait, addAlert, localizeDate} from "../../common/common"
+import {csrfToken} from "../../common/common"
 
 import {usermediaCategoryListItem, usermediaTableTemplate} from "./templates"
  /** Helper functions for user added images/SVGs.*/
@@ -27,6 +28,10 @@ export class ImageOverview {
             url: '/usermedia/delete/',
             data: postData,
             type: 'POST',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success: function (response, textStatus, jqXHR) {
 
                 that.stopUsermediaTable()

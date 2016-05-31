@@ -1,4 +1,4 @@
-import {activateWait, deactivateWait, addAlert} from "../common/common"
+import {activateWait, deactivateWait, addAlert, csrfToken} from "../common/common"
 
 
 /* A class that holds information about images uploaded by the user. */
@@ -24,6 +24,10 @@ export class ImageDB {
             },
             type: 'POST',
             dataType: 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success: function (response, textStatus, jqXHR) {
                 that.cats = response.imageCategories
                 let pks = []
@@ -54,6 +58,10 @@ export class ImageDB {
             data: postData,
             type: 'POST',
             dataType: 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success: function (response, textStatus, jqXHR) {
                 if (that.displayCreateImageError(response.errormsg)) {
                     that.db[response.values.pk] = response.values

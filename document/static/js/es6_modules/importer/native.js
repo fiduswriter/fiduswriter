@@ -1,6 +1,6 @@
 import {obj2Node,node2Obj} from "../exporter/json"
 import {BibEntryTypes} from "../bibliography/statics"
-import {addAlert} from "../common/common"
+import {addAlert, csrfToken} from "../common/common"
 
 export class ImportNative {
     /* Save document information into the database */
@@ -255,6 +255,10 @@ export class ImportNative {
                     data: formValues,
                     type: 'POST',
                     dataType: 'json',
+                    crossDomain: false, // obviates need for sameOrigin test
+                    beforeSend: function(xhr, settings) {
+                        xhr.setRequestHeader("X-CSRFToken", csrfToken)
+                    },
                     success: function(response, textStatus, jqXHR) {
                         that.imageDB[response.values.pk] = response.values
                         let imageTranslation = {}
@@ -301,6 +305,10 @@ export class ImportNative {
                     },
                     type: 'POST',
                     dataType: 'json',
+                    crossDomain: false, // obviates need for sameOrigin test
+                    beforeSend: function(xhr, settings) {
+                        xhr.setRequestHeader("X-CSRFToken", csrfToken)
+                    },
                     success: function(response, textStatus, jqXHR) {
                         let errors = response.errors,
                             warnings = response.warning,
@@ -352,6 +360,10 @@ export class ImportNative {
             data: postData,
             type: 'POST',
             dataType: 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success: function(data, textStatus, jqXHR) {
                 let aDocumentValues = {
                     last_diffs: [],

@@ -1,4 +1,4 @@
-import {activateWait, deactivateWait, addAlert} from "../common/common"
+import {activateWait, deactivateWait, addAlert, csrfToken} from "../common/common"
 
 const FW_LOCALSTORAGE_VERSION = "1.0"
 
@@ -65,6 +65,10 @@ export class BibliographyDB {
             },
             type: 'POST',
             dataType: 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success: function (response, textStatus, jqXHR) {
 
                 let newBibCats = response.bibCategories
@@ -135,6 +139,10 @@ export class BibliographyDB {
             data: postData,
             type: 'POST',
             dataType: 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success: function (response, textStatus, jqXHR) {
                 if (that.displayCreateBibEntryError(response.errormsg)) {
                     addAlert('success', gettext('The bibliography has been updated'))
@@ -193,6 +201,10 @@ export class BibliographyDB {
             data: postData,
             type: 'POST',
             dataType: 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success: function (response, textStatus, jqXHR) {
                 if (jqXHR.status == 201) {
                     let bibCats = response.entries // We receive both existing and new categories.
@@ -228,11 +240,15 @@ export class BibliographyDB {
         let postData = {
             'ids[]': ids
         }, that = this
-        $.ajax({
+        jQuery.ajax({
             url: '/bibliography/delete_category/',
             data: postData,
             type: 'POST',
             dataType: 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success: function (response, textStatus, jqXHR) {
                 let deletedPks = ids.slice()
                 let deletedBibCats = []
@@ -269,6 +285,10 @@ export class BibliographyDB {
             url: '/bibliography/delete/',
             data: postData,
             type: 'POST',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success: function (response, textStatus, jqXHR) {
                 for (let i = 0; i < ids.length; i++) {
                     delete that.bibDB[ids[i]]

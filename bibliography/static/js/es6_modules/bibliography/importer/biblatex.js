@@ -1,6 +1,6 @@
 import {BibLatexParser} from "./biblatex-parser"
 import {importBibTemplate} from "./templates"
-import {activateWait, deactivateWait, addAlert} from "../../common/common"
+import {activateWait, deactivateWait, addAlert, csrfToken} from "../../common/common"
 
 /** First step of the BibTeX file import. Creates a dialog box to specify upload file.
  */
@@ -117,11 +117,15 @@ export class BibLatexImporter {
             'bibs': JSON.stringify(bibEntries)
         }, that = this
 
-        $.ajax({
+        jQuery.ajax({
             url: '/bibliography/import_bibtex/',
             type: 'post',
             data: postData,
             dataType: 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success: function (response, textStatus, jqXHR) {
                 let ids = []
                 response.bibs.forEach(function(bibEntry) {

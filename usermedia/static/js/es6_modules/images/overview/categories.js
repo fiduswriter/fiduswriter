@@ -1,5 +1,5 @@
 import {usermediaEditcategoriesTemplate, usermediaCategoryformsTemplate, usermediaCategoryListItemTemplate} from "./templates"
-import {activateWait, deactivateWait, addAlert} from "../../common/common"
+import {activateWait, deactivateWait, addAlert, csrfToken} from "../../common/common"
 
 export class ImageOverviewCategories {
 
@@ -19,6 +19,10 @@ export class ImageOverviewCategories {
             data: postData,
             type: 'POST',
             dataType: 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success: function (response, textStatus, jqXHR) {
                 if (jqXHR.status == 201) {
                     // TODO: Why do we reload the entire list when one new category is created?
@@ -58,11 +62,15 @@ export class ImageOverviewCategories {
         let postData = {
             'ids[]': ids
         }
-        $.ajax({
+        jQuery.ajax({
             url: '/usermedia/delete_category/',
             data: postData,
             type: 'POST',
-            dataType: 'json'
+            dataType: 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
         })
     }
 

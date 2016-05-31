@@ -1,7 +1,7 @@
 import {documentrevisionsTemplate, documentrevisionsConfirmDeleteTemplate} from "./templates"
 import {ImportFidusFile} from "../../importer/file"
 import {downloadFile} from "../../exporter/download"
-import {deactivateWait, addAlert, localizeDate} from "../../common/common"
+import {deactivateWait, addAlert, localizeDate, csrfToken} from "../../common/common"
 
 /**
  * Functions for the recovering previously created document revisions.
@@ -117,7 +117,7 @@ export class DocumentRevisionsDialog {
         xhr.open('POST', '/document/download/')
         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
         xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest")
-        xhr.setRequestHeader("X-CSRFToken", jQuery("input[name='csrfmiddlewaretoken']").val())
+        xhr.setRequestHeader("X-CSRFToken", csrfToken)
         xhr.responseType = 'blob'
         xhr.send("id=" + id)
 
@@ -143,7 +143,7 @@ export class DocumentRevisionsDialog {
         xhr.open('POST', '/document/download/')
         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
         xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest")
-        xhr.setRequestHeader("X-CSRFToken", jQuery("input[name='csrfmiddlewaretoken']").val())
+        xhr.setRequestHeader("X-CSRFToken", csrfToken)
         xhr.responseType = 'blob'
         xhr.send("id=" + id)
     }
@@ -165,6 +165,10 @@ export class DocumentRevisionsDialog {
                         id: id
                     },
                     type: 'POST',
+                    crossDomain: false, // obviates need for sameOrigin test
+                    beforeSend: function(xhr, settings) {
+                        xhr.setRequestHeader("X-CSRFToken", csrfToken)
+                    },
                     success: function() {
                         let thisTr = jQuery('tr.revision-' + id),
                             documentId = jQuery(thisTr).attr('data-document'),

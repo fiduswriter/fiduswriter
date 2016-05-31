@@ -1,5 +1,5 @@
 import {revisionDialogTemplate} from "./upload-templates"
-import {addAlert} from "../common/common"
+import {addAlert, csrfToken} from "../common/common"
 
 /** Uploads a Fidus Writer document to the server.
  * @function uploadFile
@@ -25,6 +25,10 @@ export let uploadFile = function(zipFilename, blob, editor) {
             cache: false,
             contentType: false,
             processData: false,
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success: function() {
                 addAlert('success', gettext('Revision saved'))
             },

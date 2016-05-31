@@ -7,7 +7,7 @@ import {ImageDB} from "../images/database"
 import {ImageSelectionDialog} from "../images/selection-dialog/selection-dialog"
 import {defaultDocumentStyle, documentStyleList} from "../style/documentstyle-list"
 import {defaultCitationStyle, citationDefinitions} from "../style/citation-definitions"
-import {deactivateWait, addAlert} from "../common/common"
+import {deactivateWait, addAlert, csrfToken} from "../common/common"
 
 
 export class BookActions {
@@ -21,11 +21,15 @@ export class BookActions {
         let that = this
         let postData = {}
         postData['id'] = id
-        $.ajax({
+        jQuery.ajax({
             url: '/book/delete/',
             data: postData,
             type: 'POST',
             dataType: 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success: function (data, textStatus, jqXHR) {
                 that.stopBookTable()
                 jQuery('#Book_' + id).detach()
@@ -128,11 +132,15 @@ export class BookActions {
 
     getBookListData(id) {
         let that = this
-        $.ajax({
+        jQuery.ajax({
             url: '/book/booklist/',
             data: {},
             type: 'POST',
             dataType: 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success: function (response, textStatus, jqXHR) {
                 that.bookList.bookList = that.unpackBooks(response.books)
                 that.bookList.documentList = response.documents
@@ -206,13 +214,17 @@ export class BookActions {
 
     saveBook(theBook, theOldBook, currentDialog) {
         let that = this
-        $.ajax({
+        jQuery.ajax({
             url: '/book/save/',
             data: {
                 the_book: JSON.stringify(theBook)
             },
             type: 'POST',
             dataType: 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success: function (response, textStatus, jqXHR) {
                 if (jqXHR.status == 201) {
                     theBook.id = response.id

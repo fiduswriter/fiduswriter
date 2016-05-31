@@ -1,5 +1,5 @@
 import {bookCollaboratorsTemplate, bookAccessRightOverviewTemplate} from "./templates"
-import {addDropdownBox, setCheckableLabel, addAlert} from "../../common/common"
+import {addDropdownBox, setCheckableLabel, addAlert, csrfToken} from "../../common/common"
 
 /**
 * Helper functions to deal with the book access rights dialog.
@@ -148,6 +148,10 @@ export class BookAccessRightsDialog {
               data: postData,
               type: 'POST',
               dataType: 'json',
+              crossDomain: false, // obviates need for sameOrigin test
+              beforeSend: function(xhr, settings) {
+                  xhr.setRequestHeader("X-CSRFToken", csrfToken)
+              },
               success: function (response) {
                   that.callback(response.access_rights)
                   addAlert('success', gettext(

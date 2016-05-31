@@ -1,7 +1,7 @@
 import {changeAvatarDialogTemplate, confirmDeleteAvatarTemplate,
     deleteUserDialogTemplate, changePwdDialogTemplate, changeEmailDialogTemplate,
 deleteEmailDialogTemplate, } from "./templates"
-import {addDropdownBox, activateWait, deactivateWait} from "../common/common"
+import {addDropdownBox, activateWait, deactivateWait, csrfToken} from "../common/common"
 
 let changeAvatarDialog = function() {
     jQuery('body').append(changeAvatarDialogTemplate)
@@ -11,10 +11,14 @@ let changeAvatarDialog = function() {
         activateWait()
         $form = jQuery('#avatar-uploader-form')
         fData = new window.FormData($form[0])
-        $.ajax({
+        jQuery.ajax({
             url : '/account/avatar/upload/',
             data: fData,
             type : 'POST',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             processData: false,
             contentType: false,
             dataType : 'json',
@@ -53,11 +57,15 @@ let changeAvatarDialog = function() {
 
 let deleteCurrentUser = function() {
     activateWait()
-    $.ajax({
+    jQuery.ajax({
         url : '/account/delete/',
         data : {},
         type : 'POST',
         dataType : 'json',
+        crossDomain: false, // obviates need for sameOrigin test
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", csrfToken)
+        },
         success : function(response, textStatus, jqXHR) {
             deactivateWait()
             window.location = '/logout/'
@@ -78,6 +86,10 @@ let deleteAvatar = function() {
         data : {},
         type : 'POST',
         dataType : 'json',
+        crossDomain: false, // obviates need for sameOrigin test
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", csrfToken)
+        },
         success : function(response, textStatus, jqXHR) {
             jQuery('#profile-avatar > img').attr('src', response.avatar)
         },
@@ -119,10 +131,14 @@ let saveProfile = function() {
             'last_name': jQuery('#last_name').val()
         }
     }
-    $.ajax({
+    jQuery.ajax({
         url : '/account/save/',
         data : {'form_data': JSON.stringify(postData)},
         type : 'POST',
+        crossDomain: false, // obviates need for sameOrigin test
+        beforeSend: function(xhr, settings) {
+            xhr.setRequestHeader("X-CSRFToken", csrfToken)
+        },
         error: function (jqXHR, textStatus, errorThrown) {
             if(422 === jqXHR.status) {
                 jQuery('#edit_user').removeAttr("disabled")
@@ -197,6 +213,10 @@ let changePwdDialog = function() {
             processData: false,
             contentType: false,
             dataType : 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success : function(response, textStatus, jqXHR) {
                 if(200 === jqXHR.status) {
                     jQuery("#fw-change-pwd-dialog").dialog('close')
@@ -262,6 +282,10 @@ let addEmailDialog = function() {
             processData: false,
             contentType: false,
             dataType : 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success : function(response, textStatus, jqXHR) {
                 if(200 == jqXHR.status) {
                     jQuery('#fw-add-email-dialog').dialog('close')
@@ -315,6 +339,10 @@ let deleteEmailDialog = function() {
             processData: false,
             contentType: false,
             dataType : 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success : function(response, textStatus, jqXHR) {
                 if(200 == jqXHR.status) {
                     thisTr.remove()
@@ -368,6 +396,10 @@ let changePrimaryEmailDialog = function() {
             processData: false,
             contentType: false,
             dataType : 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success : function(response, textStatus, jqXHR) {
                 if(200 == jqXHR.status) {
                     jQuery('tr.primary-email-tr span.disabled').attr('class', 'delete-email fw-link-text')

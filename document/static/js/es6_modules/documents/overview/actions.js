@@ -9,7 +9,7 @@ import {ImportFidusFile} from "../../importer/file"
 import {DocumentRevisionsDialog} from "../revisions/dialog"
 import {BibliographyDB} from "../../bibliography/database"
 import {ImageDB} from "../../images/database"
-import {activateWait, deactivateWait, addAlert, localizeDate} from "../../common/common"
+import {activateWait, deactivateWait, addAlert, localizeDate, csrfToken} from "../../common/common"
 
 export class DocumentOverviewActions {
     constructor (documentOverview) {
@@ -21,11 +21,15 @@ export class DocumentOverviewActions {
         let that = this
         let postData = {id}
 
-        $.ajax({
+        jQuery.ajax({
             url: '/document/delete/',
             data: postData,
             type: 'POST',
             dataType: 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success: function (data, textStatus, jqXHR) {
                 that.documentOverview.stopDocumentTable()
                 jQuery('#Text_' + id).detach()

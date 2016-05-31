@@ -109,3 +109,27 @@ export let localizeDate = function (milliseconds, sortable) {
         return ''
     }
 }
+
+/** Get cookie to set as part of the request header of all AJAX requests to the server.
+ * @param name The name of the token to look for in the cookie.
+ */
+let getCookie = function(name) {
+    let cookieValue = null
+    if (document.cookie && document.cookie !== '') {
+        let cookies = document.cookie.split(';')
+        for (let i = 0; i < cookies.length; i++) {
+            let cookie = jQuery.trim(cookies[i])
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) == (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1))
+                break
+            }
+        }
+    }
+    return cookieValue
+}
+
+/**
+ * The Cross Site Request Forgery (CSRF) token
+ */
+export let csrfToken = getCookie('csrftoken')

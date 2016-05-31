@@ -3,9 +3,6 @@
 export class Menu {
     constructor(activeItem) {
         this.activeItem = activeItem
-//        let currentURL = document.location.href.split('//')[1]
-//        let currentRelativeUrl = currentURL.substring(currentURL.indexOf('/'), currentURL.length)
-//        this.currentRelativeUrlCleaned = currentRelativeUrl.replace('#','')
         this.bind()
     }
 
@@ -18,17 +15,10 @@ export class Menu {
     }
 
     markCurrentlyActive() {
-        //let that = this
         // Mark currently active menu item
         let active = jQuery(`body > header a[data-item="${this.activeItem}"]`)
         active.addClass('active')
         active.parent().addClass('active-menu-wrapper')
-        /*jQuery('body > header a').each(function () {
-            //if (jQuery(this).attr('href') == that.currentRelativeUrlCleaned) {
-                jQuery(this).addClass('active')
-                jQuery(this).parent().addClass('active-menu-wrapper')
-            }
-        })*/
     }
 
     bindPreferencePullDown() {

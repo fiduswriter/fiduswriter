@@ -1,3 +1,5 @@
+import {loadCSS} from "fg-loadcss/src/loadCSS"
+
 
 /* Functions related to taking document data from this.mod.editor.doc.* and displaying
  * it (ie making it part of the DOM structure).
@@ -33,16 +35,14 @@ export class ModSettingsLayout {
             staticUrl + 'css/document/' + this.mod.editor.doc.settings.documentstyle + '.css',
             documentStyleLink
         )
-
-        onloadCSS(stylesheet, function() {
-            // We layout the comments 100 ms after the stylesheet has been loaded.
+        stylesheet.addEventListener( "load", function() {
+            // We layout the comments 250 ms after the stylesheet has been loaded.
             // This should usually be enough to make the layout work correctly.
             //
             // TODO: Find a way that is more reliable than a timeout to check
             // for font loading.
             window.setTimeout(function() {
                 that.mod.editor.mod.comments.layout.layoutComments()
-
                 that.mod.editor.mod.footnotes.layout.layoutFootnotes()
             }, 250)
         })

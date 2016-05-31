@@ -6,6 +6,7 @@ import {zipFileCreator} from "./zip"
 import {opfTemplate, containerTemplate, ncxTemplate, ncxItemTemplate, navTemplate,
   navItemTemplate, xhtmlTemplate} from "./epub-templates"
 import {katexOpfIncludes} from "../katex/opf-includes"
+import {addAlert} from "../common/common"
 
 import {render as katexRender} from "katex"
 
@@ -146,7 +147,7 @@ export class EpubExporter extends BaseEpubExporter {
         let styleSheets = [] //TODO: fill style sheets with something meaningful.
         let title = this.doc.title
 
-        $.addAlert('info', title + ': ' + gettext(
+        addAlert('info', title + ': ' + gettext(
             'Epub export has been initiated.'))
 
 

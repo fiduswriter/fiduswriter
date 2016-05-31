@@ -1,13 +1,14 @@
 import {changeAvatarDialogTemplate, confirmDeleteAvatarTemplate,
     deleteUserDialogTemplate, changePwdDialogTemplate, changeEmailDialogTemplate,
 deleteEmailDialogTemplate, } from "./templates"
+import {addDropdownBox, activateWait, deactivateWait} from "../common/common"
 
 let changeAvatarDialog = function() {
     jQuery('body').append(changeAvatarDialogTemplate)
     let diaButtons = {}
     diaButtons[gettext('Upload')] = function() {
         let $form, fData
-        $.activateWait()
+        activateWait()
         $form = jQuery('#avatar-uploader-form')
         fData = new window.FormData($form[0])
         $.ajax({
@@ -23,7 +24,7 @@ let changeAvatarDialog = function() {
             error: function(jqXHR, textStatus, errorThrown) {
                 console.log(jqXHR.responseText)
             },
-            complete: function() { $.deactivateWait() }
+            complete: function() { deactivateWait() }
         })
         jQuery(this).dialog('close')
     }
@@ -51,28 +52,28 @@ let changeAvatarDialog = function() {
 }
 
 let deleteCurrentUser = function() {
-    $.activateWait()
+    activateWait()
     $.ajax({
         url : '/account/delete/',
         data : {},
         type : 'POST',
         dataType : 'json',
         success : function(response, textStatus, jqXHR) {
-            $.deactivateWait()
+            deactivateWait()
             window.location = '/logout/'
         },
         error: function(jqXHR, textStatus, errorThrown) {
-            $.deactivateWait()
+            deactivateWait()
             console.log(jqXHR.responseText)
         },
-        complete: function() { $.deactivateWait() }
+        complete: function() { deactivateWait() }
     })
 }
 
 
 let deleteAvatar = function() {
-    $.activateWait()
-    $.ajax({
+    activateWait()
+    jQuery.ajax({
         url : '/account/avatar/delete/',
         data : {},
         type : 'POST',
@@ -83,7 +84,7 @@ let deleteAvatar = function() {
         error: function(jqXHR, textStatus, errorThrown) {
             console.log(jqXHR.responseText)
         },
-        complete: function() { $.deactivateWait() }
+        complete: function() { deactivateWait() }
     })
 }
 
@@ -110,7 +111,7 @@ let deleteAvatarDialog = function() {
 }
 
 let saveProfile = function() {
-    $.activateWait()
+    activateWait()
     let postData = {
         'user': {
             'username': jQuery('#username').val(),
@@ -136,7 +137,7 @@ let saveProfile = function() {
                 console.log(jqXHR.responseText)
             }
         },
-        complete: function() { $.deactivateWait() }
+        complete: function() { deactivateWait() }
     })
 }
 
@@ -188,8 +189,8 @@ let changePwdDialog = function() {
 
         let formData = new window.FormData(document.getElementById('fw-password-change-form'))
 
-        $.activateWait()
-        $.ajax({
+        activateWait()
+        jQuery.ajax({
             url : '/account/passwordchange/',
             data: formData,
             type : 'POST',
@@ -217,7 +218,7 @@ let changePwdDialog = function() {
             error: function(jqXHR, textStatus, errorThrown) {
                 jQuery('#fw-password-change-error').html(gettext('The password could not be changed!'))
             },
-            complete: function() { $.deactivateWait() }
+            complete: function() { deactivateWait() }
         })
     }
     diaButtons[gettext('Cancel')] = function() { jQuery(this).dialog('close') }
@@ -253,8 +254,8 @@ let addEmailDialog = function() {
         jQuery('#new-profile-email').val(newEmail)
 
         let formData = new window.FormData(document.getElementById('fw-add-email-form'))
-        $.activateWait()
-        $.ajax({
+        activateWait()
+        jQuery.ajax({
             url : '/account/emailadd/',
             data: formData,
             type : 'POST',
@@ -273,7 +274,7 @@ let addEmailDialog = function() {
             error: function(jqXHR, textStatus, errorThrown) {
                 jQuery('#fw-add-email-error').html(gettext('The email could not be added!'))
             },
-            complete: function() { $.deactivateWait() }
+            complete: function() { deactivateWait() }
         })
     }
     diaButtons[gettext('Cancel')] = function() { jQuery(this).dialog('close') }
@@ -306,8 +307,8 @@ let deleteEmailDialog = function() {
         let formData = new window.FormData()
         formData.append('email', email)
 
-        $.activateWait()
-        $.ajax({
+        activateWait()
+        jQuery.ajax({
             url : '/account/emaildelete/',
             data: formData,
             type : 'POST',
@@ -325,7 +326,7 @@ let deleteEmailDialog = function() {
                 jQuery('#fw-confirm-email-dialog').dialog('close')
                 window.alert(gettext('The email could not be removed!'))
             },
-            complete: function() { $.deactivateWait() }
+            complete: function() { deactivateWait() }
         })
     }
     diaButtons[gettext('Cancel')] = function() { jQuery(this).dialog('close') }
@@ -359,8 +360,8 @@ let changePrimaryEmailDialog = function() {
         let formData = new window.FormData()
         formData.append('email', primEmail)
 
-        $.activateWait()
-        $.ajax({
+        activateWait()
+        jQuery.ajax({
             url : '/account/emailprimary/',
             data: formData,
             type : 'POST',
@@ -381,7 +382,7 @@ let changePrimaryEmailDialog = function() {
             },
             complete: function() {
                 jQuery('#fw-confirm-email-dialog').dialog('close')
-                jQuery.deactivateWait()
+                deactivateWait()
             }
         })
     }
@@ -406,7 +407,7 @@ let changePrimaryEmailDialog = function() {
 
 export let bind = function() {
     jQuery(document).ready(function() {
-        jQuery.addDropdownBox(jQuery('#edit-avatar-btn'), jQuery('#edit-avatar-pulldown'))
+        addDropdownBox(jQuery('#edit-avatar-btn'), jQuery('#edit-avatar-pulldown'))
         jQuery('.change-avatar').bind('mousedown', changeAvatarDialog)
         jQuery('.delete-avatar').bind('mousedown', deleteAvatarDialog)
         jQuery('#submit-profile').bind('click', saveProfile)

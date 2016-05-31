@@ -5,7 +5,7 @@ import {BibliographyDB} from "../bibliography/database"
 import {BaseExporter} from "./base"
 import {obj2Node} from "./json"
 import {FormatCitations} from "../citations/format"
-
+import {addAlert} from "../common/common"
 import {render as katexRender} from "katex"
 
 export class BaseHTMLExporter extends BaseExporter{
@@ -123,7 +123,7 @@ export class HTMLExporter extends BaseHTMLExporter{
 
         let title = this.doc.title
 
-        $.addAlert('info', title + ': ' + gettext(
+        addAlert('info', title + ': ' + gettext(
             'HTML export has been initiated.'))
 
         let contents = this.joinDocumentParts()

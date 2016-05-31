@@ -14,7 +14,7 @@ export let documentrevisionsTemplate = _.template('\
     <tbody class="fw-document-table-body fw-middle">\
         <%_.each(_.sortBy(aDocument.revisions, function(revision){return 0-revision.date;}), function(revision) { %>\
             <tr class="revision-<%- revision.pk%>" data-document="<%= aDocument.id %>">\
-                <td width="80"><span class="fw-inline"><%- jQuery.localizeDate(revision.date*1000) %></span></td>\
+                <td width="80"><span class="fw-inline"><%- localizeDate(revision.date*1000) %></span></td>\
                 <td width="300"><span class="fw-inline"><%- revision.note %></span></td>\
                 <td width="50"><span class="fw-inline recreate-revision" data-id="<%- revision.pk%>"><i class="icon-download"></i></span></td>\
                 <td width="50"><span class="fw-inline download-revision" data-id="<%- revision.pk%>" data-filename="<%- revision.file_name %>"><i class="icon-download"></i></span></td>\

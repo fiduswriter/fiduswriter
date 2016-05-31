@@ -7,6 +7,7 @@ import {ImageDB} from "../images/database"
 import {ImageSelectionDialog} from "../images/selection-dialog/selection-dialog"
 import {defaultDocumentStyle, documentStyleList} from "../style/documentstyle-list"
 import {defaultCitationStyle, citationDefinitions} from "../style/citation-definitions"
+import {deactivateWait, addAlert} from "../common/common"
 
 
 export class BookActions {
@@ -88,7 +89,7 @@ export class BookActions {
                 that.deleteBook(ids[i])
             }
             jQuery(this).dialog("close")
-            $.addAlert('success', gettext('The book(s) have been deleted'))
+            addAlert('success', gettext('The book(s) have been deleted'))
         }
 
         diaButtons[gettext('Cancel')] = function () {
@@ -143,10 +144,10 @@ export class BookActions {
                 })
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                $.addAlert('error', jqXHR.responseText)
+                addAlert('error', jqXHR.responseText)
             },
             complete: function () {
-                $.deactivateWait()
+                deactivateWait()
             }
         })
     }
@@ -232,7 +233,7 @@ export class BookActions {
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                $.addAlert('error', jqXHR.responseText)
+                addAlert('error', jqXHR.responseText)
             },
             complete: function () {}
         })

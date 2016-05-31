@@ -1,6 +1,7 @@
 import {ImageUploadDialog} from "../upload-dialog/upload-dialog"
 import {ImageDB} from "../database"
 import {ImageOverviewCategories} from "./categories"
+import {addDropdownBox, activateWait, deactivateWait, addAlert, localizeDate} from "../../common/common"
 
 import {usermediaCategoryListItem, usermediaTableTemplate} from "./templates"
  /** Helper functions for user added images/SVGs.*/
@@ -21,8 +22,8 @@ export class ImageOverview {
         let postData = {
             'ids[]': ids
         }
-        $.activateWait()
-        $.ajax({
+        activateWait()
+        jQuery.ajax({
             url: '/usermedia/delete/',
             data: postData,
             type: 'POST',
@@ -36,13 +37,13 @@ export class ImageOverview {
                 let elementsId = '#Image_' + ids.join(', #Image_')
                 jQuery(elementsId).detach()
                 that.startUsermediaTable()
-                $.addAlert('success', gettext('The image(s) have been deleted'))
+                addAlert('success', gettext('The image(s) have been deleted'))
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                $.addAlert('error', jqXHR.responseText)
+                addAlert('error', jqXHR.responseText)
             },
             complete: function () {
-                $.deactivateWait()
+                deactivateWait()
             }
         })
     }
@@ -90,8 +91,8 @@ export class ImageOverview {
 
     appendToImageTable(pk) {
         let imageInfo = this.imageDB.db[pk]
-        let $tr = jQuery('#Image_' + pk),
-            fileType = imageInfo.file_type.split('/')
+        let $tr = jQuery('#Image_' + pk)
+        let fileType = imageInfo.file_type.split('/')
 
         if(1 < fileType.length) {
             fileType = fileType[1].toUpperCase()
@@ -101,27 +102,29 @@ export class ImageOverview {
 
         if (0 < $tr.size()) { //if the image entry exists, update
             $tr.replaceWith(usermediaTableTemplate({
-                'pk': pk,
+                pk,
                 'cats': imageInfo.cats,
-                'file_type': fileType,
+                fileType,
                 'title': imageInfo.title,
                 'thumbnail': imageInfo.thumbnail,
                 'image': imageInfo.image,
                 'height': imageInfo.height,
                 'width': imageInfo.width,
-                'added': imageInfo.added
+                'added': imageInfo.added,
+                localizeDate
             }))
         } else { //if this is the new image, append
             jQuery('#imagelist > tbody').append(usermediaTableTemplate({
-                'pk': pk,
+                pk,
                 'cats': imageInfo.cats,
-                'file_type': fileType,
+                fileType,
                 'title': imageInfo.title,
                 'thumbnail': imageInfo.thumbnail,
                 'image': imageInfo.image,
                 'height': imageInfo.height,
                 'width': imageInfo.width,
-                'added': imageInfo.added
+                'added': imageInfo.added,
+                localizeDate
             }))
         }
     }
@@ -206,7 +209,7 @@ export class ImageOverview {
         })
         jQuery('#edit-category').bind('click', function(){that.mod.categories.createCategoryDialog()})
         //open dropdown for image category
-        $.addDropdownBox(jQuery('#image-category-btn'), jQuery(
+        addDropdownBox(jQuery('#image-category-btn'), jQuery(
             '#image-category-pulldown'))
         jQuery(document).on('mousedown', '#image-category-pulldown li > span',
             function () {
@@ -234,7 +237,7 @@ export class ImageOverview {
             })
         })
         //open dropdown for selecting action
-        $.addDropdownBox(jQuery('#select-action-dropdown'), jQuery(
+        addDropdownBox(jQuery('#select-action-dropdown'), jQuery(
             '#action-selection-pulldown'))
         //submit image actions
         jQuery('#action-selection-pulldown li > span').bind('mousedown', function () {

@@ -1,4 +1,5 @@
 import {DocumentAccessRightsDialog} from "../access-rights/dialog"
+import {addDropdownBox, addAlert} from "../../common/common"
 
 export class DocumentOverviewMenus {
     constructor (documentOverview) {
@@ -40,7 +41,7 @@ export class DocumentOverviewMenus {
             })
 
             //open dropdown for selecting action
-            $.addDropdownBox(jQuery('#select-action-dropdown-documents'), jQuery(
+            addDropdownBox(jQuery('#select-action-dropdown-documents'), jQuery(
                 '#action-selection-pulldown-documents'))
 
             //submit action for selected document
@@ -58,7 +59,7 @@ export class DocumentOverviewMenus {
                                 .find(
                                     '.doc-title').text()
                             theTitle = $.trim(theTitle).replace(/[\t\n]/g, '')
-                            $.addAlert('error', gettext(
+                            addAlert('error', gettext(
                                 'You cannot delete or share: ') + theTitle)
                             //return true
                         } else {

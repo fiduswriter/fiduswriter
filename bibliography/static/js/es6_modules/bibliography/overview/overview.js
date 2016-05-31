@@ -6,6 +6,7 @@ import {BibliographyDB} from "../database"
 import {BibEntryTypes} from "../statics"
 import {BibLatexImporter} from "../importer/biblatex"
 import {BibLatexExporter} from "../exporter/biblatex"
+import {addDropdownBox} from "../../common/common"
 
 export class BibliographyOverview {
 
@@ -290,7 +291,7 @@ export class BibliographyOverview {
         })
 
         //open dropdown for bib category
-        $.addDropdownBox(jQuery('#bib-category-btn'), jQuery('#bib-category-pulldown'))
+        addDropdownBox(jQuery('#bib-category-btn'), jQuery('#bib-category-pulldown'))
         jQuery(document).on('mousedown', '#bib-category-pulldown li > span', function () {
             jQuery('#bib-category-btn > label').html(jQuery(this).html())
             jQuery('#bib-category').val(jQuery(this).attr('data-id'))
@@ -319,7 +320,7 @@ export class BibliographyOverview {
         })
 
         //open dropdown for selecting action
-        $.addDropdownBox(jQuery('#select-action-dropdown'), jQuery('#action-selection-pulldown'))
+        addDropdownBox(jQuery('#select-action-dropdown'), jQuery('#action-selection-pulldown'))
 
         //import a bib file
         jQuery('.import-bib').bind('click', function () {

@@ -9,6 +9,7 @@ import {ImportFidusFile} from "../../importer/file"
 import {DocumentRevisionsDialog} from "../revisions/dialog"
 import {BibliographyDB} from "../../bibliography/database"
 import {ImageDB} from "../../images/database"
+import {activateWait, deactivateWait, addAlert, localizeDate} from "../../common/common"
 
 export class DocumentOverviewActions {
     constructor (documentOverview) {
@@ -49,7 +50,7 @@ export class DocumentOverviewActions {
                 that.deleteDocument(ids[i])
             }
             jQuery(this).dialog("close")
-            $.addAlert('success', gettext(
+            addAlert('success', gettext(
                 'The document(s) have been deleted'))
         }
 
@@ -91,7 +92,7 @@ export class DocumentOverviewActions {
                 console.log('file too big')
                 return false
             }
-            $.activateWait()
+            activateWait()
             let reader = new window.FileReader()
             reader.onerror = function (e) {
                 console.log('error', e.target.error.code)
@@ -106,11 +107,11 @@ export class DocumentOverviewActions {
                         that.documentOverview.bibDB,
                         that.documentOverview.imageDB,
                         function(noErrors, returnValue) {
-                            $.deactivateWait()
+                            deactivateWait()
                             if (noErrors) {
                                 let aDocument = returnValue.aDocument
                                 let aDocumentValues = returnValue.aDocumentValues
-                                jQuery.addAlert('info', aDocument.title + gettext(
+                                addAlert('info', aDocument.title + gettext(
                                         ' successfully imported.'))
                                 that.documentOverview.documentList.push(aDocument)
                                 that.documentOverview.stopDocumentTable()
@@ -121,7 +122,7 @@ export class DocumentOverviewActions {
                                         }))
                                 that.documentOverview.startDocumentTable()
                             } else {
-                                jQuery.addAlert('error', returnValue)
+                                addAlert('error', returnValue)
                             }
                         }
                     )
@@ -195,7 +196,7 @@ export class DocumentOverviewActions {
                                     that.documentOverview.documentList.push(doc)
                                     that.documentOverview.stopDocumentTable()
                                     jQuery('#document-table tbody').append(
-                                        documentsListItemTemplate({aDocument: doc, user: that.documentOverview.user}))
+                                        documentsListItemTemplate({aDocument: doc, user: that.documentOverview.user, localizeDate}))
                                     that.documentOverview.startDocumentTable()
                                 })
                             })})
@@ -288,7 +289,8 @@ export class DocumentOverviewActions {
                             jQuery('#document-table tbody').append(
                                 documentsListItemTemplate({
                                     aDocument: actionObject.doc,
-                                    user: that.documentOverview.user
+                                    user: that.documentOverview.user,
+                                    localizeDate
                                 }))
                             that.documentOverview.startDocumentTable()
                             break

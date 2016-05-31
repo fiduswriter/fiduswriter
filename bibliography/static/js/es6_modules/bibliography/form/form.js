@@ -24,6 +24,8 @@ import {
     LocalizationKeys, BibEntryTypes, BibFieldTypes
 } from "../statics.js"
 
+import {addDropdownBox, setCheckableLabel} from "../../common/common"
+
 export class BibEntryForm {
     constructor(itemId, sourceType, bibDB, bibCats, ownerId, callback) {
         this.itemId = itemId // The id of the bibliography item (if available).
@@ -102,7 +104,7 @@ export class BibEntryForm {
         jQuery('body').append(dialogBody)
 
         //open dropdown for selecting source type
-        $.addDropdownBox(jQuery('#source-type-selection'), jQuery('#source-type-selection > .fw-pulldown'))
+        addDropdownBox(jQuery('#source-type-selection'), jQuery('#source-type-selection > .fw-pulldown'))
         jQuery('#source-type-selection .fw-pulldown-item').bind('mousedown', function() {
             let source_type_title = jQuery(this).html(),
                 source_type_id = jQuery(this).attr('data-value')
@@ -162,7 +164,7 @@ export class BibEntryForm {
         if ('' === jQuery('#id_entrytype').val())
             jQuery('#bookoptionsTab').hide()
         jQuery('.fw-checkable-label').bind('click', function() {
-            $.setCheckableLabel(jQuery(this))
+            setCheckableLabel(jQuery(this))
         })
     }
 

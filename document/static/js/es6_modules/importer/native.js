@@ -1,5 +1,6 @@
 import {obj2Node,node2Obj} from "../exporter/json"
 import {BibEntryTypes} from "../bibliography/statics"
+import {addAlert} from "../common/common"
 
 export class ImportNative {
     /* Save document information into the database */
@@ -266,7 +267,7 @@ export class ImportNative {
                         sendImage()
                     },
                     error: function() {
-                        jQuery.addAlert('error', gettext('Could not save ') +
+                        addAlert('error', gettext('Could not save ') +
                             newImageEntries[counter].title)
                     },
                     complete: function() {},
@@ -306,11 +307,11 @@ export class ImportNative {
                             len = errors.length
 
                         for (let i = 0; i < len; i++) {
-                            $.addAlert('error', errors[i])
+                            addAlert('error', errors[i])
                         }
                         len = warnings.length
                         for (let i = 0; i < len; i++) {
-                            $.addAlert('warning', warnings[i])
+                            addAlert('warning', warnings[i])
                         }
                         _.each(response.key_translations, function(newKey, oldKey) {
                             let newID = _.findWhere(response.bibs, {

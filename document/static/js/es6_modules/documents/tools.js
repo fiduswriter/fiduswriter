@@ -1,4 +1,5 @@
-//USED IN Books + documents list
+import {addAlert} from "../common/common"
+
 export let getMissingDocumentListData = function (ids, documentList, callback) {
     // get extra data for the documents identified by the ids and updates the
     // documentList correspondingly.
@@ -35,7 +36,7 @@ export let getMissingDocumentListData = function (ids, documentList, callback) {
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                $.addAlert('error', jqXHR.responseText)
+                addAlert('error', jqXHR.responseText)
             },
         })
     } else {

@@ -1,4 +1,5 @@
 import {usermediaEditcategoriesTemplate, usermediaCategoryformsTemplate, usermediaCategoryListItemTemplate} from "./templates"
+import {activateWait, deactivateWait, addAlert} from "../../common/common"
 
 export class ImageOverviewCategories {
 
@@ -12,8 +13,8 @@ export class ImageOverviewCategories {
             'ids[]': cats.ids,
             'titles[]': cats.titles
         }, that = this
-        $.activateWait()
-        $.ajax({
+        activateWait()
+        jQuery.ajax({
             url: '/usermedia/save_category/',
             data: postData,
             type: 'POST',
@@ -25,14 +26,14 @@ export class ImageOverviewCategories {
                     jQuery('#image-category-list li').not(':first').remove()
                     that.addImageCategoryList(response.entries)
 
-                    $.addAlert('success', gettext('The categories have been updated'))
+                    addAlert('success', gettext('The categories have been updated'))
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                $.addAlert('error', jqXHR.responseText)
+                addAlert('error', jqXHR.responseText)
             },
             complete: function () {
-                $.deactivateWait()
+                deactivateWait()
             }
         })
     }

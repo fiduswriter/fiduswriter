@@ -1,3 +1,4 @@
+import {activateWait, deactivateWait, addAlert} from "../common/common"
 
 const FW_LOCALSTORAGE_VERSION = "1.0"
 
@@ -53,9 +54,9 @@ export class BibliographyDB {
         }
 
 
-        $.activateWait()
+        activateWait()
 
-        $.ajax({
+        jQuery.ajax({
             url: '/bibliography/biblist/',
             data: {
                 'owner_id': that.docOwnerId,
@@ -100,10 +101,10 @@ export class BibliographyDB {
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                $.addAlert('error', jqXHR.responseText)
+                addAlert('error', jqXHR.responseText)
             },
             complete: function () {
-                $.deactivateWait()
+                deactivateWait()
             }
         })
     }
@@ -128,15 +129,15 @@ export class BibliographyDB {
      */
     createBibEntry(postData, callback) {
         let that = this
-        $.activateWait()
-        $.ajax({
+        activateWait()
+        jQuery.ajax({
             url: '/bibliography/save/',
             data: postData,
             type: 'POST',
             dataType: 'json',
             success: function (response, textStatus, jqXHR) {
                 if (that.displayCreateBibEntryError(response.errormsg)) {
-                    $.addAlert('success', gettext('The bibliography has been updated'))
+                    addAlert('success', gettext('The bibliography has been updated'))
                     let newBibPks = []
                     let bibList = response.values
                     for (let i = 0; i < bibList.length; i++) {
@@ -146,14 +147,14 @@ export class BibliographyDB {
                         callback(newBibPks)
                     }
                 } else {
-                    $.addAlert('error', gettext('Some errors are found. Please examine the form.'))
+                    addAlert('error', gettext('Some errors are found. Please examine the form.'))
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                $.addAlert('error', errorThrown)
+                addAlert('error', errorThrown)
             },
             complete: function () {
-                $.deactivateWait()
+                deactivateWait()
             }
         })
     }
@@ -186,8 +187,8 @@ export class BibliographyDB {
             'ids[]': cats.ids,
             'titles[]': cats.titles
         }
-        $.activateWait()
-        $.ajax({
+        activateWait()
+        jQuery.ajax({
             url: '/bibliography/save_category/',
             data: postData,
             type: 'POST',
@@ -203,17 +204,17 @@ export class BibliographyDB {
                         that.bibCats.push(bibCats.pop())
                     }
 
-                    $.addAlert('success', gettext('The categories have been updated'))
+                    addAlert('success', gettext('The categories have been updated'))
                     if (callback) {
                         callback(that.bibCats)
                     }
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                $.addAlert('error', jqXHR.responseText)
+                addAlert('error', jqXHR.responseText)
             },
             complete: function () {
-                $.deactivateWait()
+                deactivateWait()
             }
         })
     }
@@ -263,8 +264,8 @@ export class BibliographyDB {
         let postData = {
             'ids[]': ids
         }
-        $.activateWait()
-        $.ajax({
+        activateWait()
+        jQuery.ajax({
             url: '/bibliography/delete/',
             data: postData,
             type: 'POST',
@@ -272,17 +273,17 @@ export class BibliographyDB {
                 for (let i = 0; i < ids.length; i++) {
                     delete that.bibDB[ids[i]]
                 }
-                $.addAlert('success', gettext(
+                addAlert('success', gettext(
                     'The bibliography item(s) have been deleted'))
                 if (callback) {
                     callback(ids)
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                $.addAlert('error', jqXHR.responseText)
+                addAlert('error', jqXHR.responseText)
             },
             complete: function () {
-                $.deactivateWait()
+                deactivateWait()
             }
         })
     }

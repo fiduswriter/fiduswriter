@@ -20,13 +20,11 @@ jQuery(document).ready(function () {
         window.setTimeout(function() {
             jQuery(document).on('click', {'box': box}, closePreferencePulldown);
         }, 100);
-        $.isDropdownBoxOpen = true;
     }
 
     var closePreferencePulldown = function(e) {
         e.data.box.hide();
         jQuery(document).off('click', closePreferencePulldown);
-        $.isDropdownBoxOpen = false;
     }
 
     jQuery('#preferences-btn').bind('click', function() {

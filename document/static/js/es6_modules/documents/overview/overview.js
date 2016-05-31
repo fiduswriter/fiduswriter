@@ -3,6 +3,7 @@ import {DocumentOverviewMenus} from "./menus"
 import {documentsListTemplate, documentsListItemTemplate} from "./templates"
 import {BibliographyDB} from "../../bibliography/database"
 import {ImageDB} from "../../images/database"
+import {activateWait, deactivateWait, addAlert, localizeDate} from "../../common/common"
 /*
 * Helper functions for the document overview page.
 */
@@ -56,8 +57,8 @@ export class DocumentOverview {
 
     getDocumentListData(id) {
         let that = this
-        $.activateWait()
-        $.ajax({
+        activateWait()
+        jQuery.ajax({
             url: '/document/documentlist/',
             data: {},
             type: 'POST',
@@ -70,10 +71,10 @@ export class DocumentOverview {
                 that.layoutTable()
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                $.addAlert('error', jqXHR.responseText)
+                addAlert('error', jqXHR.responseText)
             },
             complete: function () {
-                $.deactivateWait()
+                deactivateWait()
             }
         })
     }
@@ -82,7 +83,8 @@ export class DocumentOverview {
         jQuery('#document-table tbody').html(documentsListTemplate({
             documentList: this.documentList,
             user: this.user,
-            documentsListItemTemplate
+            documentsListItemTemplate,
+            localizeDate
         }))
         this.startDocumentTable()
     }

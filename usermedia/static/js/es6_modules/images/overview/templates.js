@@ -37,14 +37,14 @@ export let usermediaTableTemplate = _.template('\
                             <span class="edit-image fw-link-text fw-searchable" data-id="<%- pk %>">\
                                 <%- title !== "" ? title : "'+gettext('Untitled')+'" %>\
                             </span>\
-                            <span class="fw-usermedia-type"><%- file_type %></span>\
+                            <span class="fw-usermedia-type"><%- fileType %></span>\
                         </span>\
                     </td>\
                     <td width="170" class="type ">\
                         <span class="fw-inline"><%- width %> x <%- height %></span>\
                     </td>\
                     <td width="170" class="file_type ">\
-                        <span class="fw-inline"><%= jQuery.localizeDate(added, true) %></span>\
+                        <span class="fw-inline"><%= localizeDate(added, true) %></span>\
                     </td>\
                     <td width="50" align="center">\
                         <span class="delete-image fw-inline fw-link-text" data-id="<%- pk %>" data-title="<%- title %>">\

@@ -1,4 +1,5 @@
 import {revisionDialogTemplate} from "./upload-templates"
+import {addAlert} from "../common/common"
 
 /** Uploads a Fidus Writer document to the server.
  * @function uploadFile
@@ -25,10 +26,10 @@ export let uploadFile = function(zipFilename, blob, editor) {
             contentType: false,
             processData: false,
             success: function() {
-                jQuery.addAlert('success', gettext('Revision saved'))
+                addAlert('success', gettext('Revision saved'))
             },
             error: function() {
-                jQuery.addAlert('error', gettext('Revision could not be saved.'))
+                addAlert('error', gettext('Revision could not be saved.'))
             }
         })
         jQuery(this).dialog("close")

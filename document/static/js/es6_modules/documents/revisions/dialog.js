@@ -1,6 +1,7 @@
 import {documentrevisionsTemplate, documentrevisionsConfirmDeleteTemplate} from "./templates"
 import {ImportFidusFile} from "../../importer/file"
 import {downloadFile} from "../../exporter/download"
+import {deactivateWait, addAlert, localizeDate} from "../../common/common"
 
 /**
  * Functions for the recovering previously created document revisions.
@@ -35,7 +36,7 @@ export class DocumentRevisionsDialog {
 
 
         jQuery(documentrevisionsTemplate({
-            aDocument: aDocument
+            aDocument, localizeDate
         })).dialog({
             draggable: false,
             resizable: false,
@@ -96,17 +97,17 @@ export class DocumentRevisionsDialog {
                     that.imageDB,
                     true,
                     function(noErrors, returnValue) {
-                        $.deactivateWait()
+                        deactivateWait()
                         if (noErrors) {
                             let aDocument = returnValue.aDocument
-                            jQuery.addAlert('info', aDocument.title + gettext(
+                            addAlert('info', aDocument.title + gettext(
                                 ' successfully imported.'))
                             that.callback({
                                 action: 'added-document',
                                 doc: aDocument
                             })
                         } else {
-                            jQuery.addAlert('error', returnValue)
+                            addAlert('error', returnValue)
                         }
                     }
                 )
@@ -171,7 +172,7 @@ export class DocumentRevisionsDialog {
                                 id: parseInt(documentId)
                             })
                         jQuery(thisTr).remove()
-                        jQuery.addAlert('success', gettext('Revision deleted'))
+                        addAlert('success', gettext('Revision deleted'))
                         that.callback({
                             action: 'deleted-revision',
                             id: id,
@@ -179,7 +180,7 @@ export class DocumentRevisionsDialog {
                         })
                     },
                     error: function() {
-                        jQuery.addAlert('error', gettext('Could not delete revision.'))
+                        addAlert('error', gettext('Could not delete revision.'))
                     }
                 })
             }

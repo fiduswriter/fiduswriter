@@ -1,5 +1,7 @@
 import {BibLatexParser} from "./biblatex-parser"
 import {importBibTemplate} from "./templates"
+import {activateWait, deactivateWait, addAlert} from "../../common/common"
+
 /** First step of the BibTeX file import. Creates a dialog box to specify upload file.
  */
 
@@ -26,7 +28,7 @@ export class BibLatexImporter {
                 console.log('file too big')
                 return false
             }
-            $.activateWait()
+            activateWait()
             let reader = new window.FileReader()
             reader.onerror = function (e) {
                 console.log('error', e.target.error.code)
@@ -74,8 +76,8 @@ export class BibLatexImporter {
         bibData.bibtex()
         this.bibEntries = bibData.getEntries()
         if (_.isEmpty(this.bibEntries)) {
-            $.deactivateWait()
-            $.addAlert('error', gettext('No bibliography entries could be found in import file.'))
+            deactivateWait()
+            addAlert('error', gettext('No bibliography entries could be found in import file.'))
             return
         } else {
             this.bibKeylist = Object.keys(this.bibEntries)
@@ -100,7 +102,7 @@ export class BibLatexImporter {
                 that.processChunk()
             })
         } else {
-            $.deactivateWait()
+            deactivateWait()
         }
     }
     /** Third step of the BibTeX file import. Takes lists of bibliography entries and sends them to the server.
@@ -134,11 +136,11 @@ export class BibLatexImporter {
                     len = errors.length
 
                 for (let i = 0; i < len; i++) {
-                    $.addAlert('error', errors[i])
+                    addAlert('error', errors[i])
                 }
                 len = warnings.length
                 for (let i = 0; i < len; i++) {
-                    $.addAlert('warning', warnings[i])
+                    addAlert('warning', warnings[i])
                 }
 
                 callback()

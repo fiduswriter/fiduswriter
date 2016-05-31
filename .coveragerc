@@ -2,3 +2,4 @@
 omit = 
 	*migrations*
 	venv/*
+	*virtualenv*

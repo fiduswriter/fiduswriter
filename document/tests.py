@@ -43,10 +43,11 @@ else:
     browsers = [
         {"platform": "Linux",
          "browserName": "chrome"},
-        {"platform": "Windows 10",
-         "browserName": "MicrosoftEdge"},
-        {"platform": "OS X 10.11",
-         "browserName": "safari"},
+        # SauceLabs has problems with websocket connections for Edge and Safari.
+        # {"platform": "Windows 10",
+        #  "browserName": "MicrosoftEdge"},
+        # {"platform": "OS X 10.11",
+        #  "browserName": "safari"},
         {"platform": "Linux",
          "browserName": "firefox"}]
 

@@ -113,7 +113,7 @@ export let localizeDate = function (milliseconds, sortable) {
 /** Get cookie to set as part of the request header of all AJAX requests to the server.
  * @param name The name of the token to look for in the cookie.
  */
-let getCookie = function(name) {
+export let getCookie = function(name) {
     let cookieValue = null
     if (document.cookie && document.cookie !== '') {
         let cookies = document.cookie.split(';')

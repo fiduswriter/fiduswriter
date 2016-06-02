@@ -1,4 +1,4 @@
-import {csrfToken} from "../common/common"
+import {csrfToken, getCookie} from "../common/common"
 import * as bowser from "bowser/bowser"
 
 // Creates the feedback tab. The tab is meant for user feedback to the developers while FW is still in
@@ -62,15 +62,6 @@ export class FeedbackTab {
           return false
     }
 
-    // Check if cookie value exists (don't worry about what it is)
-    checkCookie(name) {
-        return document.cookie.split(";").some(
-            function(cookie){
-                return cookie.split("=")[0].trim()===name
-            }
-        )
-    }
-
     // Add a cookie variable with name set to true
     setCookie(name) {
         document.cookie = `${name}=true`
@@ -78,11 +69,12 @@ export class FeedbackTab {
 
     // Verify that we are running one of the (semi)-verified browser.
     verifyBrowser() {
-        if (!(bowser.chrome||bowser.firefox||bowser.msedge||(bowser.safari && bowser.mac)) &! this.checkCookie('browsertest')) {
-            this.setCookie('browsertest')
-            let warning = gettext(`Please be aware that you are running a browser
-                that has not yet been tested with Fidus Writer so your mileage may vary.<br
-                We recommend using Google Chrome. Fidus Writer will currently not run on iOS.`)
+        if (!(bowser.chrome||bowser.firefox||bowser.msedge||(bowser.safari && bowser.mac)) &! getCookie('browsercheck')) {
+            this.setCookie('browsercheck')
+            let warning = gettext(`<p>Please be aware that you are running a browser
+                that has not yet been tested with Fidus Writer, so your mileage may vary.
+                Fidus Writer will currently not run on iOS or Internet Explorer.</p>
+                <p>We recommend using Google Chrome. </p>`)
             let diaButtons = {}
             diaButtons[gettext("OK")] = function() {
                 jQuery(this).dialog("close")
@@ -90,7 +82,13 @@ export class FeedbackTab {
             jQuery(`<div>${warning}</div>`).dialog({
                 modal: true,
                 title: gettext("Warning"),
-                buttons: diaButtons
+                minHeight: 250,
+                buttons: diaButtons,
+                create:function () {
+                    jQuery(this).closest(".ui-dialog")
+                    .find(".ui-dialog-buttonpane .ui-button:first")
+                    .addClass("fw-button fw-orange")
+                }
             })
         }
     }

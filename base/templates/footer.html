@@ -35,6 +35,15 @@
                 <option value="it"{% if 'it' == LANGUAGE_CODE %}{{ 'selected' }}{% endif %}>Italiano</option>
             </select>
         </form>
+        <div id="cookie-notification">
+            {% blocktrans %}
+            Fidus Writer saves small pieces of text information (cookies) on your device
+            in order to deliver better content and for statistical purposes. You
+            can disable the usage of cookies by changing the settings of your browser.
+            By browsing our website without changing the browser settings you grant
+            us permission to store that information on your device.
+            {% endblocktrans %}
+        </div>
     </div>
 </footer>
 <script>

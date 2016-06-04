@@ -19,18 +19,18 @@ def process_docstring(app, what, name, obj, options, lines):
     """
     # This causes import errors if left outside the function
     from django.db import models
-    #from django.apps import apps
+    # from django.apps import apps
 
     # Make sure we have loaded models,
     # otherwise related fields may end up
     # as strings
     models.get_models()
-    #apps.get_models()
+    # apps.get_models()
 
     # Only look at objects that inherit from Django's base model class
     if inspect.isclass(obj) and issubclass(obj, models.Model):
         # Grab the field list from the meta class
-        #fields = obj._meta.get_fields()
+        # fields = obj._meta.get_fields()
         fields = obj._meta.fields
         latelines = []
         for field in fields:

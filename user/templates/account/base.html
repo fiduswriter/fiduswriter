@@ -34,11 +34,10 @@
         {% endcompress %}
 
         <script type="text/javascript" src="{{ JQUERY_URL }}"></script>
+        <!-- jQuery UI -->
+        <script type="text/javascript" src="{{ JQUERYUI_URL }}"></script>
         <!-- JS error handling -->
         <script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
-        {% compress js %}
-        <script type="text/javascript" src="{{ STATIC_URL }}js/csrf.js"></script>
-        {% endcompress %}
         <script type="text/javascript" src="/jsi18n/"></script>
         {% block extraheaders %}{% endblock %}
     </head>

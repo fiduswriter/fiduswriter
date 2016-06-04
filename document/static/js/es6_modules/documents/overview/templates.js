@@ -1,5 +1,5 @@
 export let documentsListTemplate = _.template('\
-<% _.each(documentList,function(aDocument,key,list){%><%= documentsListItemTemplate({aDocument:aDocument, user:user})%><% }); %>')
+<% _.each(documentList,function(aDocument,key,list){%><%= documentsListItemTemplate({aDocument:aDocument, user:user, localizeDate:localizeDate})%><% }); %>')
 
 /** A template for each document overview list item. */
 export let documentsListItemTemplate = _.template('\
@@ -28,10 +28,10 @@ export let documentsListItemTemplate = _.template('\
                     <% } %>\
                 </td>\
                 <td width="80">\
-                    <span class="fw-inline"><%- jQuery.localizeDate(aDocument.added*1000, true) %></span>\
+                    <span class="fw-inline"><%- localizeDate(aDocument.added*1000, true) %></span>\
                 </td>\
                 <td width="80">\
-                    <span class="fw-inline"><%- jQuery.localizeDate(aDocument.updated*1000, true) %></span>\
+                    <span class="fw-inline"><%- localizeDate(aDocument.updated*1000, true) %></span>\
                 </td>\
                 <td width="170">\
                     <span>\

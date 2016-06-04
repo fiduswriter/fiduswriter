@@ -29,7 +29,7 @@ export class ImportFidusFile {
             this.initZipFileRead()
         }
         // use a BlobReader to read the zip from a Blob object
-        let reader = new FileReader()
+        let reader = new window.FileReader()
         reader.onloadend = function() {
             if (reader.result.length > 60 && reader.result.substring(0, 2) == 'PK') {
                 that.initZipFileRead()

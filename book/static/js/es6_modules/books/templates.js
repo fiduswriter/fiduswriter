@@ -116,8 +116,8 @@ export let bookBibliographyDataTemplate = _.template('\
         </th>\
         <td>\
         <select class="entryForm dk" name="book-settings-citationstyle" id="book-settings-citationstyle" <% if (theBook.rights==="read") {print("disabled=disabled")} %> >\
-            <% _.each(citeproc.styles, function(citationstyle, key) { %>\
-                <option value="<%= key %>"<% if(key == theBook.settings.citationstyle) { %> selected<%} %>><%= citeproc.styles[key].name %></option>\
+            <% _.each(citationDefinitions.styles, function(citationstyle, key) { %>\
+                <option value="<%= key %>"<% if(key == theBook.settings.citationstyle) { %> selected<%} %>><%= citationDefinitions.styles[key].name %></option>\
             <% }) %>\
         </select>\
         </td>\

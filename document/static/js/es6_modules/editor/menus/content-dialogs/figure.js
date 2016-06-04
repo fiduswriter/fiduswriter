@@ -1,6 +1,6 @@
 import {figureImageTemplate, figureImageItemTemplate, configureFigureTemplate} from "./templates"
 import {ImageSelectionDialog} from "../../../images/selection-dialog/selection-dialog"
-
+import {addDropdownBox} from "../../../common/common"
 import {katexRender} from "../../../katex/katex"
 
 export class FigureDialog {
@@ -155,7 +155,7 @@ export class FigureDialog {
             this.layoutImagePreview()
         }
 
-        $.addDropdownBox(jQuery('#figure-category-btn'), jQuery(
+        addDropdownBox(jQuery('#figure-category-btn'), jQuery(
             '#figure-category-pulldown'))
 
         jQuery('#figure-category-pulldown li span').bind(

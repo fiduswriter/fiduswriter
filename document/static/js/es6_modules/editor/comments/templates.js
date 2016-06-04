@@ -4,7 +4,7 @@ let answerCommentTemplatePart =`
         <div class="comment-user">
             <img class="comment-user-avatar" src="<%= answer.userAvatar %>">
             <h5 class="comment-user-name"><%= answer.userName %></h5>
-            <p class="comment-date"><%= jQuery.localizeDate(answer.date) %></p>
+            <p class="comment-date"><%= localizeDate(answer.date) %></p>
         </div>
         <% if (active && answer.id===that.activeCommentAnswerId) { %>
             <div class="comment-text-wrapper">
@@ -41,7 +41,7 @@ let singleCommentTemplatePart = `
         <div class="comment-user">
             <img class="comment-user-avatar" src="<%= comment.userAvatar %>">
             <h5 class="comment-user-name"><%= comment.userName %></h5>
-            <p class="comment-date"><%= jQuery.localizeDate(comment.date) %></p>
+            <p class="comment-date"><%= localizeDate(comment.date) %></p>
         </div>
         <div class="comment-text-wrapper">
             <p class="comment-p"><%= comment.comment %></p>
@@ -74,7 +74,7 @@ let firstCommentTemplatePart =`
         <div class="comment-user">
             <img class="comment-user-avatar" src="<%= comment.userAvatar %>">
             <h5 class="comment-user-name"><%= comment.userName %></h5>
-            <p class="comment-date"><%= jQuery.localizeDate(comment.date) %></p>
+            <p class="comment-date"><%= localizeDate(comment.date) %></p>
         </div>
         <div class="comment-text-wrapper">
             <textarea class="commentText" data-id="<%= comment.id %>" rows="5"></textarea>

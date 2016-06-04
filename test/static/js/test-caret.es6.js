@@ -13,7 +13,7 @@ let testCaret = {}
  * @returns {Caret}
  */
 testCaret.getCaret = function getCaret() {
-    return window.theEditor.pm.selection.from.toJSON()
+    return window.theEditor.pm.selection.from
 }
 
 /**
@@ -24,6 +24,7 @@ testCaret.getCaret = function getCaret() {
  * @returns {Selection}
  */
 testCaret.setCaret = function setCaret(caret) {
+    //return testCaret.setSelection(caret, caret)
     return testCaret.setSelection(caret, caret)
 }
 

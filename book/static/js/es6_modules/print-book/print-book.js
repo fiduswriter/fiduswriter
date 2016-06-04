@@ -2,6 +2,7 @@ import {bookPrintStartTemplate, bookPrintTemplate} from "./templates"
 import {obj2Node} from "../exporter/json"
 import {FormatCitations} from "../citations/format"
 import {BibliographyDB} from "../bibliography/database"
+import {deactivateWait, addAlert, csrfToken} from "../common/common"
 
 /**
 * Helper functions for the book print page.
@@ -96,21 +97,25 @@ export class PrintBook {
 
     getBookData(id) {
         let that = this
-        $.ajax({
+        jQuery.ajax({
             url: '/book/book/',
             data: {
                 'id': id
             },
             type: 'POST',
             dataType: 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success: function (response, textStatus, jqXHR) {
                 that.setTheBook(response.book)
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                $.addAlert('error', jqXHR.responseText)
+                addAlert('error', jqXHR.responseText)
             },
             complete: function () {
-                $.deactivateWait()
+                deactivateWait()
             }
         })
     }

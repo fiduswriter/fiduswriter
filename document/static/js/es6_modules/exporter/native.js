@@ -3,6 +3,7 @@ import {createSlug, findImages} from "./tools"
 import {zipFileCreator} from "./zip"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
+import {addAlert} from "../common/common"
 
 /** The current Fidus Writer filetype version.
  * The importer will not import from a different version and the exporter
@@ -69,7 +70,7 @@ export let exportNative = function(aDocument, anImageDB, aBibDB, callback) {
     let shrunkBibDB = {},
         citeList = []
 
-    $.addAlert('info', gettext('File export has been initiated.'))
+    addAlert('info', gettext('File export has been initiated.'))
 
     let contents = obj2Node(aDocument.contents)
 

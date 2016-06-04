@@ -61,7 +61,7 @@ export class ModToolsPrint {
 
         window.flowCopy = flowCopy
         jQuery(flowTo).show()
-        window.pagination.applyBookLayoutWithoutDivision()
+        pagination.applyBookLayoutWithoutDivision()
     }
 
     print() {

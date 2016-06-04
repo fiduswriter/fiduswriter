@@ -76,8 +76,6 @@
 
         {% endcompress %}
 
-        <!-- loadCSS -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/loadCSS-0.2.4.js"></script>
         <!-- jQuery -->
         <script type="text/javascript" src="{{ JQUERY_URL }}"></script>
         <!-- JS error handling -->
@@ -92,9 +90,6 @@
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.autoresize.js"></script>
 
         {% compress js %}
-
-            <script type="text/javascript" src="{{ STATIC_URL }}js/common.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/menubase.js"></script>
             <!-- simplePagination.js -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/simplePagination.js"></script>
             <script type="text/javascript">
@@ -119,12 +114,6 @@
                     'flowTo': 'document.getElementById("print")'
                 };
             </script>
-            <script type="text/javascript">
-                // Prevent migrate messages. Currently only one message from hallo.js is being created.
-                jQuery.migrateMute = true;
-            </script>
-            <!-- Django form submission code -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/csrf.js"></script>
             <!-- jQuery tablesorter -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dataTables.min.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.ui.potato.menu.js"></script>

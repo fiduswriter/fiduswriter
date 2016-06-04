@@ -4,7 +4,7 @@ backports.ssl-match-hostname==3.5.0.1
 certifi==2015.11.20.1
 dateutils==0.6.6
 distribute==0.7.3
-django-allauth==0.24.1
+django-allauth==0.25.2
 django-appconf==1.0.1
 django-avatar==2.2.1
 django-compressor==1.6
@@ -19,7 +19,6 @@ pytz==2015.7
 requests==2.9.1
 requests-oauthlib==0.6.0
 six==1.10.0
-stripe==1.27.1
 tornado==4.3
 wsgiref==0.1.2
 setuptools==19.2

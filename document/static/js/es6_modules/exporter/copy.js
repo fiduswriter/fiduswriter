@@ -1,20 +1,22 @@
 import {exportNative} from "./native"
 import {ImportNative} from "../importer/native"
 import {BibliographyDB} from "../bibliography/database"
+import {deactivateWait, addAlert} from "../common/common"
+
 
 let afterCopy = function(noErrors, returnValue, callback) {
-    $.deactivateWait();
+    deactivateWait()
     if (noErrors) {
         let aDocument = returnValue.aDocument
         let aDocInfo = returnValue.aDocumentValues
         let newBibEntries = returnValue.newBibEntries
-        jQuery.addAlert('info', aDocument.title + gettext(
-                ' successfully copied.'));
+        addAlert('info', aDocument.title + gettext(
+                ' successfully copied.'))
         if (callback) {
             callback(aDocument, aDocInfo, newBibEntries)
         }
     } else {
-        jQuery.addAlert('error', returnValue)
+        addAlert('error', returnValue)
     }
 }
 

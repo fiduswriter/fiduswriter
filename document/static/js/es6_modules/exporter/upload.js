@@ -1,4 +1,5 @@
 import {revisionDialogTemplate} from "./upload-templates"
+import {addAlert, csrfToken} from "../common/common"
 
 /** Uploads a Fidus Writer document to the server.
  * @function uploadFile
@@ -11,7 +12,7 @@ export let uploadFile = function(zipFilename, blob, editor) {
     let diaButtons = {}
 
     diaButtons[gettext("Save")] = function() {
-        let data = new FormData()
+        let data = new window.FormData()
 
         data.append('note', jQuery(this).find('.revision-note').val())
         data.append('file', blob, zipFilename)
@@ -24,11 +25,15 @@ export let uploadFile = function(zipFilename, blob, editor) {
             cache: false,
             contentType: false,
             processData: false,
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success: function() {
-                jQuery.addAlert('success', gettext('Revision saved'))
+                addAlert('success', gettext('Revision saved'))
             },
             error: function() {
-                jQuery.addAlert('error', gettext('Revision could not be saved.'))
+                addAlert('error', gettext('Revision could not be saved.'))
             }
         })
         jQuery(this).dialog("close")

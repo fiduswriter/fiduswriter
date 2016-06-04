@@ -1,6 +1,7 @@
 import {documentrevisionsTemplate, documentrevisionsConfirmDeleteTemplate} from "./templates"
 import {ImportFidusFile} from "../../importer/file"
 import {downloadFile} from "../../exporter/download"
+import {deactivateWait, addAlert, localizeDate, csrfToken} from "../../common/common"
 
 /**
  * Functions for the recovering previously created document revisions.
@@ -35,7 +36,7 @@ export class DocumentRevisionsDialog {
 
 
         jQuery(documentrevisionsTemplate({
-            aDocument: aDocument
+            aDocument, localizeDate
         })).dialog({
             draggable: false,
             resizable: false,
@@ -83,8 +84,8 @@ export class DocumentRevisionsDialog {
 
     recreate(id, user) {
         let that = this
-            // Have to use XMLHttpRequest rather than jQuery.ajax as it's the only way to receive a blob.
-        let xhr = new XMLHttpRequest()
+            // Have to use window.XMLHttpRequest rather than jQuery.ajax as it's the only way to receive a blob.
+        let xhr = new window.XMLHttpRequest()
         xhr.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 let fidusFile = this.response
@@ -96,17 +97,17 @@ export class DocumentRevisionsDialog {
                     that.imageDB,
                     true,
                     function(noErrors, returnValue) {
-                        $.deactivateWait()
+                        deactivateWait()
                         if (noErrors) {
                             let aDocument = returnValue.aDocument
-                            jQuery.addAlert('info', aDocument.title + gettext(
+                            addAlert('info', aDocument.title + gettext(
                                 ' successfully imported.'))
                             that.callback({
                                 action: 'added-document',
                                 doc: aDocument
                             })
                         } else {
-                            jQuery.addAlert('error', returnValue)
+                            addAlert('error', returnValue)
                         }
                     }
                 )
@@ -116,7 +117,7 @@ export class DocumentRevisionsDialog {
         xhr.open('POST', '/document/download/')
         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
         xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest")
-        xhr.setRequestHeader("X-CSRFToken", jQuery("input[name='csrfmiddlewaretoken']").val())
+        xhr.setRequestHeader("X-CSRFToken", csrfToken)
         xhr.responseType = 'blob'
         xhr.send("id=" + id)
 
@@ -130,9 +131,9 @@ export class DocumentRevisionsDialog {
      */
 
     download(id, filename) {
-        // Have to use XMLHttpRequest rather than jQuery.ajax as it's the only way to receive a blob.
+        // Have to use window.XMLHttpRequest rather than jQuery.ajax as it's the only way to receive a blob.
 
-        let xhr = new XMLHttpRequest()
+        let xhr = new window.XMLHttpRequest()
         xhr.onreadystatechange = function() {
             if (this.readyState == 4 && this.status == 200) {
                 downloadFile(filename, this.response)
@@ -142,7 +143,7 @@ export class DocumentRevisionsDialog {
         xhr.open('POST', '/document/download/')
         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded")
         xhr.setRequestHeader("X-Requested-With", "XMLHttpRequest")
-        xhr.setRequestHeader("X-CSRFToken", jQuery("input[name='csrfmiddlewaretoken']").val())
+        xhr.setRequestHeader("X-CSRFToken", csrfToken)
         xhr.responseType = 'blob'
         xhr.send("id=" + id)
     }
@@ -164,6 +165,10 @@ export class DocumentRevisionsDialog {
                         id: id
                     },
                     type: 'POST',
+                    crossDomain: false, // obviates need for sameOrigin test
+                    beforeSend: function(xhr, settings) {
+                        xhr.setRequestHeader("X-CSRFToken", csrfToken)
+                    },
                     success: function() {
                         let thisTr = jQuery('tr.revision-' + id),
                             documentId = jQuery(thisTr).attr('data-document'),
@@ -171,7 +176,7 @@ export class DocumentRevisionsDialog {
                                 id: parseInt(documentId)
                             })
                         jQuery(thisTr).remove()
-                        jQuery.addAlert('success', gettext('Revision deleted'))
+                        addAlert('success', gettext('Revision deleted'))
                         that.callback({
                             action: 'deleted-revision',
                             id: id,
@@ -179,7 +184,7 @@ export class DocumentRevisionsDialog {
                         })
                     },
                     error: function() {
-                        jQuery.addAlert('error', gettext('Could not delete revision.'))
+                        addAlert('error', gettext('Could not delete revision.'))
                     }
                 })
             }

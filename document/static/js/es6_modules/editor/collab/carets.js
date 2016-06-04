@@ -58,7 +58,7 @@ export class ModCollabCarets {
             // TODO: Positions really need to be reverse-mapped through all
             // unconfirmed maps. As long as we don't do this, we just don't send
             // anything if there are unconfirmed maps to avoid potential problems.
-            setTimeout(function(){that.sendSelectionChange()},500)
+            window.setTimeout(function(){that.sendSelectionChange()},500)
             return
         }
         this.mod.editor.mod.serverCommunications.send({

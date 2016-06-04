@@ -6,8 +6,8 @@ import {zipFileCreator} from "./zip"
 import {opfTemplate, containerTemplate, ncxTemplate, ncxItemTemplate, navTemplate,
   navItemTemplate, xhtmlTemplate} from "./epub-templates"
 import {katexOpfIncludes} from "../katex/opf-includes"
-
-import {render as katexRender} from "katex"
+import {addAlert} from "../common/common"
+import {katexRender} from "../katex/katex"
 
 export class BaseEpubExporter extends BaseHTMLExporter {
     getTimestamp() {
@@ -146,7 +146,7 @@ export class EpubExporter extends BaseEpubExporter {
         let styleSheets = [] //TODO: fill style sheets with something meaningful.
         let title = this.doc.title
 
-        $.addAlert('info', title + ': ' + gettext(
+        addAlert('info', title + ': ' + gettext(
             'Epub export has been initiated.'))
 
 
@@ -293,7 +293,7 @@ export class EpubExporter extends BaseEpubExporter {
         if (math) {
             includeZips.push({
                 'directory': 'EPUB',
-                'url': window.staticUrl + 'zip/katex-style.zip'
+                'url': staticUrl + 'zip/katex-style.zip'
             })
         }
 

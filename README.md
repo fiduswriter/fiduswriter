@@ -25,9 +25,9 @@ Simple install
 
 The following are instructions working on Ubuntu 14.04. Make adjustments as needed for other systems.
 
-1. Install the development packages of libjpeg, gettext, zlib, python and the python virtual environment creator by running:
+1. Install the development packages of libjpeg, gettext, zlib, python, npm and the python virtual environment creator by running:
 
-  > `sudo apt-get install libjpeg-dev python-dev python-virtualenv gettext zlib1g-dev git`
+  > `sudo apt-get install libjpeg-dev python-dev python-virtualenv gettext zlib1g-dev git npm nodejs nodejs-legacy`
 
 2. Download the Fidus Writer sources to your computer from github by running:
 

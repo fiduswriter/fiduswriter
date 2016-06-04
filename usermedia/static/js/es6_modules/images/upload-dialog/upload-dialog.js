@@ -1,4 +1,5 @@
 import {usermediaUploadCategoryTemplate, usermediaUploadTemplate} from "./templates"
+import {setCheckableLabel} from "../../common/common"
 
 export class ImageUploadDialog {
     constructor(imageDB, imageId, ownerId, callback) {
@@ -79,7 +80,7 @@ export class ImageUploadDialog {
         })
 
         jQuery('.fw-checkable-label').bind('click', function () {
-            $.setCheckableLabel(jQuery(this))
+            setCheckableLabel(jQuery(this))
         })
     }
 
@@ -95,7 +96,7 @@ export class ImageUploadDialog {
 
         mediaInput.bind('change', function() {
             let file = jQuery(this).prop('files')[0],
-                fr = new FileReader()
+                fr = new window.FileReader()
 
             fr.onload = function() {
                 mediaPreviewer.html('<img src="' + fr.result + '" />')
@@ -106,7 +107,7 @@ export class ImageUploadDialog {
 
     onCreateImageSubmitHandler() {
         //when submitted, the values in form elements will be restored
-        let formValues = new FormData(),
+        let formValues = new window.FormData(),
             checkboxValues = {}
 
         formValues.append('id', this.imageId)

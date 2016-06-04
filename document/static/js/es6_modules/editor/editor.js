@@ -24,7 +24,7 @@ import {ModNodeConvert} from "./node-convert"
 import {node2Obj, obj2Node} from "../exporter/json"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
-import {PasteHandler} from "./paste"
+import {Paste} from "./paste/paste"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 
@@ -78,8 +78,8 @@ export class Editor {
         this.pm.on("filterTransform", (transform) => {return that.onFilterTransform(transform)})
         this.pm.on("transform", (transform, options) => {that.onTransform(transform, true)})
         this.pm.on("transformPastedHTML", (inHTML) => {
-            let ph = new PasteHandler(inHTML, "main")
-            return ph.outHTML
+            let ph = new Paste(inHTML, "main")
+            return ph.getOutput()
         })
         this.pm.mod.collab.on("collabTransform", (transform, options) => {that.onTransform(transform, false)})
         this.setSaveTimers()
@@ -88,14 +88,14 @@ export class Editor {
     setSaveTimers() {
         let that = this
         // Set Auto-save to send the document every two minutes, if it has changed.
-        this.sendDocumentTimer = setInterval(function() {
+        this.sendDocumentTimer = window.setInterval(function() {
             if (that.docInfo && that.docInfo.changed && that.docInfo.rights !== 'read') {
                 that.save()
             }
         }, 120000)
 
         // Set Auto-save to send the title every 5 seconds, if it has changed.
-        this.sendDocumentTitleTimer = setInterval(function() {
+        this.sendDocumentTitleTimer = window.setInterval(function() {
             if (that.docInfo && that.docInfo.titleChanged && that.docInfo.rights !== 'read') {
                 that.docInfo.titleChanged = false
                 that.mod.serverCommunications.send({
@@ -366,12 +366,12 @@ export class Editor {
         let outputNode = this.mod.nodeConvert.editorToModelNode(serializeTo(this.pm.mod.collab.versionDoc, 'dom'))
         this.doc.title = this.pm.mod.collab.versionDoc.firstChild.textContent
         this.doc.version = this.pm.mod.collab.version
-        this.doc.metadata.title = node2Obj(outputNode.getElementById('document-title'))
-        this.doc.metadata.subtitle = node2Obj(outputNode.getElementById('metadata-subtitle'))
-        this.doc.metadata.authors = node2Obj(outputNode.getElementById('metadata-authors'))
-        this.doc.metadata.abstract = node2Obj(outputNode.getElementById('metadata-abstract'))
-        this.doc.metadata.keywords = node2Obj(outputNode.getElementById('metadata-keywords'))
-        this.doc.contents = node2Obj(outputNode.getElementById('document-contents'))
+        this.doc.metadata.title = node2Obj(outputNode.querySelector('#document-title'))
+        this.doc.metadata.subtitle = node2Obj(outputNode.querySelector('#metadata-subtitle'))
+        this.doc.metadata.authors = node2Obj(outputNode.querySelector('#metadata-authors'))
+        this.doc.metadata.abstract = node2Obj(outputNode.querySelector('#metadata-abstract'))
+        this.doc.metadata.keywords = node2Obj(outputNode.querySelector('#metadata-keywords'))
+        this.doc.contents = node2Obj(outputNode.querySelector('#document-contents'))
         this.doc.hash = this.getHash()
         this.doc.comments = this.mod.comments.store.comments
         if (callback) {

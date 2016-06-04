@@ -5,8 +5,8 @@ import {BibliographyDB} from "../bibliography/database"
 import {BaseExporter} from "./base"
 import {obj2Node} from "./json"
 import {FormatCitations} from "../citations/format"
-
-import {render as katexRender} from "katex"
+import {addAlert} from "../common/common"
+import {katexRender} from "../katex/katex"
 
 export class BaseHTMLExporter extends BaseExporter{
     joinDocumentParts() {
@@ -123,7 +123,7 @@ export class HTMLExporter extends BaseHTMLExporter{
 
         let title = this.doc.title
 
-        $.addAlert('info', title + ': ' + gettext(
+        addAlert('info', title + ': ' + gettext(
             'HTML export has been initiated.'))
 
         let contents = this.joinDocumentParts()
@@ -183,7 +183,7 @@ export class HTMLExporter extends BaseHTMLExporter{
         if (math) {
             includeZips.push({
                 'directory': '',
-                'url': window.staticUrl + 'zip/katex-style.zip',
+                'url': staticUrl + 'zip/katex-style.zip',
             })
         }
         zipFileCreator(outputList, httpOutputList, createSlug(

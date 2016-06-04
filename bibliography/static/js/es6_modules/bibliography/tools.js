@@ -1,3 +1,4 @@
+import {addDropdownBox} from "../common/common"
 
 export let formatDateString = function(dateString) {
     // This mirrors the formatting of the date as returned by Python in bibliography/models.py
@@ -54,7 +55,7 @@ export let addRemoveListHandler = function () {
 
     // init dropdown for eitheror field names
     jQuery('.fw-bib-field-pulldown').each(function () {
-        jQuery.addDropdownBox(jQuery(this), jQuery(this).children('.fw-pulldown'))
+        addDropdownBox(jQuery(this), jQuery(this).children('.fw-pulldown'))
     })
     jQuery('.fw-bib-field-pulldown .fw-pulldown-item').bind('mousedown', function () {
         let selected_title = jQuery(this).html(),
@@ -66,7 +67,7 @@ export let addRemoveListHandler = function () {
 
     // init dropdown for date format pulldown
     jQuery('.fw-data-format-pulldown').each(function () {
-        jQuery.addDropdownBox(jQuery(this), jQuery(this).children('.fw-pulldown'))
+        addDropdownBox(jQuery(this), jQuery(this).children('.fw-pulldown'))
     })
     jQuery('.fw-data-format-pulldown .fw-pulldown-item').bind('mousedown', function () {
         let selected_title = jQuery(this).html(),
@@ -79,7 +80,7 @@ export let addRemoveListHandler = function () {
 
     // nit dropdown for f_key selection
     jQuery('.fw-bib-select-pulldown').each(function () {
-        jQuery.addDropdownBox(jQuery(this), jQuery(this).children('.fw-pulldown'))
+        addDropdownBox(jQuery(this), jQuery(this).children('.fw-pulldown'))
     })
     jQuery('.fw-bib-select-pulldown .fw-pulldown-item').bind('mousedown', function () {
         let selected_title = jQuery(this).html(),

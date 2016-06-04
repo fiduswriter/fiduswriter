@@ -25,3 +25,4 @@ setuptools==19.2
 django-js-error-hook==0.4
 rdflib-jsonld==0.3
 python-magic==0.4.11
+sphinx==1.2.2

@@ -80,7 +80,7 @@ release = '3.0'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build']
+exclude_patterns = ['_build', '**/*.migrations.rst', 'test.mock.rst', 'test.rst', '**tests**', '**migrations**', '**static**','**templates**']
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -356,5 +356,7 @@ locale_dirs = ['../../lib/python2.7/site-packages/django/conf/locale/']
 
 def setup(app):
     from django_sphinx import process_docstring
+    from skip_modules import skip_modules
     # Register the docstring processor with sphinx
     app.connect('autodoc-process-docstring', process_docstring)
+    app.connect('autodoc-skip-member', skip_modules)

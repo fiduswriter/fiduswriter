@@ -2,6 +2,7 @@ import inspect
 from django.utils.html import strip_tags
 from django.utils.encoding import force_unicode
 
+
 def process_docstring(app, what, name, obj, options, lines):
     """
     Process docstrings to make more informative
@@ -20,7 +21,8 @@ def process_docstring(app, what, name, obj, options, lines):
     from django.db import models
     #from django.apps import apps
 
-    # Make sure we have loaded models, otherwise related fields may end up
+    # Make sure we have loaded models,
+    # otherwise related fields may end up
     # as strings
     models.get_models()
     #apps.get_models()
@@ -32,7 +34,8 @@ def process_docstring(app, what, name, obj, options, lines):
         fields = obj._meta.fields
         latelines = []
         for field in fields:
-            if not hasattr(field, 'attname') or isinstance(field, models.ForeignKey):
+            if not hasattr(field, 'attname') or \
+                    isinstance(field, models.ForeignKey):
                 field.attname = field.name
             # Decode and strip any html out of the field's help text
             try:
@@ -59,18 +62,26 @@ def process_docstring(app, what, name, obj, options, lines):
             # Add the field's type to the docstring
             if isinstance(field, models.ForeignKey):
                 to = field.rel.to
-                lines.append(u':type %s: %s to :class:`%s.%s`' % (field.attname, type(field).__name__, to.__module__, to.__name__))
+                lines.append(u':type %s: %s to :class:`%s.%s`'
+                             % (field.attname, type(field).__name__,
+                                to.__module__, to.__name__))
             elif isinstance(field, models.ManyToManyField):
                 to = field.rel.to
-                lines.append(u':type %s: %s to :class:`%s.%s`' % (field.attname, type(field).__name__, to.__module__, to.__name__))
+                lines.append(u':type %s: %s to :class:`%s.%s`'
+                             % (field.attname, type(field).__name__,
+                                to.__module__, to.__name__))
             elif isinstance(field, models.ManyToOneRel):
                 to = field.related_model
-                latelines.append(u'.. attribute:: %s' % (field.related_name or field.name + '_set'))
+                latelines.append(u'.. attribute:: %s'
+                                 % (field.related_name or field.name + '_set'))
                 latelines.append('')
-                latelines.append(u'   %s to :class:`%s.%s`' % (type(field).__name__, to.__module__, to.__name__))
+                latelines.append(u'   %s to :class:`%s.%s`'
+                                 % (type(field).__name__,
+                                    to.__module__, to.__name__))
                 latelines.append('')
             else:
-                lines.append(u':type %s: %s' % (field.attname, type(field).__name__))
+                lines.append(u':type %s: %s' % (field.attname,
+                                                type(field).__name__))
         lines.append('')
         lines += latelines
     # Return the extended docstring

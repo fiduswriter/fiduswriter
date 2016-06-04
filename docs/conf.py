@@ -18,23 +18,19 @@ import os
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#sys.path.insert(0, os.path.abspath('.'))
+# sys.path.insert(0, os.path.abspath('.'))
 
 from django.conf import settings
 sys.path.insert(0, os.path.abspath('../'))
 sys.path.append(os.path.abspath('.'))
-#sys.path.append(os.path.abspath('..'))
-#sys.path.append(os.path.abspath('../../lib/python2.7/site-packages/'))
-#sys.path.append(os.path.abspath('/home/alex/doc_Oscoss/fiduswriter/'))
-#sys.path.append(os.path.join(os.path.dirname(__name__), '..'))
+sys.path.append(os.path.abspath('../../lib/python2.7/site-packages/'))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tvwatcher.settings")
-#django.setup()
 settings.configure()
 
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
-#needs_sphinx = '1.0'
+# needs_sphinx = '1.0'
 
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
@@ -53,7 +49,7 @@ templates_path = ['_templates']
 source_suffix = '.rst'
 
 # The encoding of source files.
-#source_encoding = 'utf-8-sig'
+# source_encoding = 'utf-8-sig'
 
 # The master toctree document.
 master_doc = 'index'

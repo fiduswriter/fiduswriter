@@ -20,6 +20,22 @@ import os
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #sys.path.insert(0, os.path.abspath('.'))
 
+#VERSION 1
+# sys.path.insert(0, os.path.abspath('..'))
+# from django.conf import settings
+# settings.configure()
+
+#VERSION 2
+#import django
+from django.conf import settings
+sys.path.append(os.path.abspath('.'))
+sys.path.append(os.path.abspath('..'))
+sys.path.append(os.path.abspath('../../lib/python2.7/site-packages/'))
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tvwatcher.settings")
+#django.setup()
+settings.configure()
+
+
 # -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
@@ -32,6 +48,7 @@ extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.coverage',
     'sphinx.ext.viewcode',
+    'sphinx.ext.intersphinx',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -260,3 +277,20 @@ texinfo_documents = [
 
 # If true, do not generate a @detailmenu in the "Top" node's menu.
 #texinfo_no_detailmenu = False
+
+autodoc_member_order = 'bysource'
+
+autodoc_default_flags = ['members']
+
+intersphinx_mapping = {
+    'python': ('http://python.readthedocs.org/en/v2.7.2/', None),
+    'django': ('http://docs.djangoproject.com/en/1.8/', 'https://docs.djangoproject.com/en/1.8/_objects/'),
+    'sphinx': ('http://sphinx.readthedocs.org/en/latest/', None),
+    }
+
+locale_dirs = ['../../lib/python2.7/site-packages/django/conf/locale/']
+
+def setup(app):
+    from django_sphinx import process_docstring
+    # Register the docstring processor with sphinx
+    app.connect('autodoc-process-docstring', process_docstring)

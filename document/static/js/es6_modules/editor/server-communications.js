@@ -57,7 +57,12 @@ export class ModServerCommunications {
                 that.createWSConnection()
             }, 2000)
             console.log('attempting to reconnect')
-            jQuery('#unobtrusive_messages').html(gettext('Disconnected. Attempting to reconnect...'))
+            if (that.editor.pm.mod.collab.hasSendableSteps()) {
+                jQuery('#unobtrusive_messages').html(gettext('<span class="warn">Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect...</span>'))
+            } else {
+                jQuery('#unobtrusive_messages').html(gettext('Disconnected. Attempting to reconnect...'))
+            }
+
         }
         this.wsPinger = window.setInterval(function() {
             that.send({

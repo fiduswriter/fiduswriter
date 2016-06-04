@@ -534,6 +534,10 @@ body {counter-reset: pagination-footnote pagination-footnote-reference;}
   padding: 4px;
 }
 
+#unobtrusive_messages .warn {
+  color: #b73717;
+}
+
 #unobtrusive_messages:empty {
   display: none;
 }

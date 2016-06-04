@@ -3,6 +3,19 @@ from django.utils.html import strip_tags
 from django.utils.encoding import force_unicode
 
 def process_docstring(app, what, name, obj, options, lines):
+    """
+    Process docstrings to make more informative
+    Args:
+        app ():
+        what ():
+        name ():
+        obj ():
+        options ():
+        lines ():
+
+    Returns:
+
+    """
     # This causes import errors if left outside the function
     from django.db import models
     #from django.apps import apps

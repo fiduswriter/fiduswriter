@@ -21,9 +21,12 @@ import os
 #sys.path.insert(0, os.path.abspath('.'))
 
 from django.conf import settings
+sys.path.insert(0, os.path.abspath('../'))
 sys.path.append(os.path.abspath('.'))
-sys.path.append(os.path.abspath('..'))
-sys.path.append(os.path.abspath('../../lib/python2.7/site-packages/'))
+#sys.path.append(os.path.abspath('..'))
+#sys.path.append(os.path.abspath('../../lib/python2.7/site-packages/'))
+#sys.path.append(os.path.abspath('/home/alex/doc_Oscoss/fiduswriter/'))
+#sys.path.append(os.path.join(os.path.dirname(__name__), '..'))
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "tvwatcher.settings")
 #django.setup()
 settings.configure()
@@ -80,7 +83,9 @@ release = '3.0'
 
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
-exclude_patterns = ['_build', '**/*.migrations.rst', 'test.mock.rst', 'test.rst', '**tests**', '**migrations**', '**static**','**templates**']
+exclude_patterns = ['_build', '**/*.migrations.rst', '**admin**', '**urls**', 'test.mock.rst', 'test.rst', '**tests**',
+                    '**migrations**', '**static**','**templates**']
+
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.

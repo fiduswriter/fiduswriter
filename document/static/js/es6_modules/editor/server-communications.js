@@ -58,7 +58,7 @@ export class ModServerCommunications {
             }, 2000)
             console.log('attempting to reconnect')
             if (that.editor.pm.mod.collab.hasSendableSteps()) {
-                jQuery('#unobtrusive_messages').html(gettext('<span class="warn">Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect...</span>'))
+                jQuery('#unobtrusive_messages').html('<span class="warn">'+gettext('Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect...')+'</span>')
             } else {
                 jQuery('#unobtrusive_messages').html(gettext('Disconnected. Attempting to reconnect...'))
             }

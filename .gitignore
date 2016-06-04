@@ -29,3 +29,6 @@ static-es5/
 *.es5.js
 base/static/css/libs/
 .coverage
+
+#sphinx build folder
+docs/_build/

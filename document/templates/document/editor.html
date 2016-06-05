@@ -11,9 +11,9 @@
         <script type="text/javascript">
             var staticUrl = '{{ STATIC_URL }}';
             {% if WS_PORT %}
-                var websocketPort = {{WS_PORT}};
+                var websocketPort = ':'+{{WS_PORT}};
             {% else %}
-                var websocketPort = location.port.length>0?location.port:'80';
+                var websocketPort = location.port.length>0?':'+location.port:'';
             {% endif %}
             {% if WS_SERVER %}
                 var websocketServer = '{{ WS_SERVER }}';

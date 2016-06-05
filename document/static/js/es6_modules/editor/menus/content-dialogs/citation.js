@@ -92,7 +92,7 @@ export let citationDialog = function (mod) {
     diaButtons.push({
         text: gettext('Register new source'),
         click: function() {
-            new BibEntryForm(false, false, editor.bibDB.bibDB, editor.bibDB.bibCats, editor.doc.owner.id,
+            new BibEntryForm(false, '', editor.bibDB.bibDB, editor.bibDB.bibCats, editor.doc.owner.id,
                     function(bibEntryData){
                 editor.bibDB.createBibEntry(bibEntryData, function(newBibPks) {
                     editor.mod.menus.citation.appendManyToCitationDialog(newBibPks)

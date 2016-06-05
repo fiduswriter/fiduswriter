@@ -22,7 +22,7 @@ export let addDropdownBox = function(btn, box) {
 let openDropdownBox = function(box) {
     box.show()
     window.setTimeout(function() {
-        jQuery(document).on('mousedown', {'box': box}, closeDropdownBox)
+        jQuery(document).on('click', {'box': box}, closeDropdownBox)
     }, 100)
 }
 
@@ -32,7 +32,7 @@ let openDropdownBox = function(box) {
 
 let closeDropdownBox = function(e) {
     e.preventDefault()
-    jQuery(document).off('mousedown', closeDropdownBox)
+    jQuery(document).off('click', closeDropdownBox)
     e.data.box.hide()
 }
 

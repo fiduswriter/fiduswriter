@@ -52,7 +52,8 @@ MANAGERS = ADMINS
 # EMAIL_PORT = 25
 # EMAIL_SUBJECT_PREFIX = '[Fidus Writer]'
 # EMAIL_USE_TLS = False
-# DEFAULT_FROM_EMAIL = 'mail@email.com'
+# DEFAULT_FROM_EMAIL = 'mail@email.com' # For messages to end users
+# SERVER_EMAIL = 'mail@email.com' # For messages to server administrators
 
 
 # Make this unique, and don't share it with anybody. Change the default string.

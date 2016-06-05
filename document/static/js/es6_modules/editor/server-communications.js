@@ -33,10 +33,10 @@ export class ModServerCommunications {
 
     createWSConnection() {
         let that = this
+        let websocketProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
 
         try {
-            this.ws = new window.WebSocket('ws://' + websocketServer + ':' + websocketPort +
-                '/ws/doc/' + this.docId)
+            this.ws = new window.WebSocket(`${websocketProtocol}//${websocketServer}${websocketPort}/ws/doc/${this.docId}`)
             this.ws.onopen = function() {
                 console.log('connection open')
                 jQuery('#unobtrusive_messages').html('')

@@ -105,7 +105,7 @@ export class BibEntryForm {
 
         //open dropdown for selecting source type
         addDropdownBox(jQuery('#source-type-selection'), jQuery('#source-type-selection > .fw-pulldown'))
-        jQuery('#source-type-selection .fw-pulldown-item').bind('mousedown', function() {
+        jQuery('#source-type-selection .fw-pulldown-item').bind('click', function() {
             let source_type_title = jQuery(this).html(),
                 source_type_id = jQuery(this).attr('data-value')
             jQuery(this).parent().siblings('.selected').removeClass('selected')

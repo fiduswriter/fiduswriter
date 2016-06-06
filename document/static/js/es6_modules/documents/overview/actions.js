@@ -122,7 +122,8 @@ export class DocumentOverviewActions {
                                 jQuery('#document-table tbody').append(
                                     documentsListItemTemplate({
                                             aDocument,
-                                            user: that.documentOverview.user
+                                            user: that.documentOverview.user,
+                                            localizeDate
                                         }))
                                 that.documentOverview.startDocumentTable()
                             } else {
@@ -186,7 +187,11 @@ export class DocumentOverviewActions {
                                 that.documentOverview.documentList.push(doc)
                                 that.documentOverview.stopDocumentTable()
                                 jQuery('#document-table tbody').append(
-                                    documentsListItemTemplate({aDocument: doc, user: that.documentOverview.user}))
+                                    documentsListItemTemplate({
+                                        aDocument: doc,
+                                        user: that.documentOverview.user,
+                                        localizeDate
+                                    }))
                                 that.documentOverview.startDocumentTable()
                             })
                         } else {
@@ -200,7 +205,11 @@ export class DocumentOverviewActions {
                                     that.documentOverview.documentList.push(doc)
                                     that.documentOverview.stopDocumentTable()
                                     jQuery('#document-table tbody').append(
-                                        documentsListItemTemplate({aDocument: doc, user: that.documentOverview.user, localizeDate}))
+                                        documentsListItemTemplate({
+                                            aDocument: doc,
+                                            user: that.documentOverview.user,
+                                            localizeDate
+                                        }))
                                     that.documentOverview.startDocumentTable()
                                 })
                             })})

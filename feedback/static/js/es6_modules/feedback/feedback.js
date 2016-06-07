@@ -34,7 +34,6 @@ export class FeedbackTab {
             that.openFeedback()
         })
         this.verifyBrowser()
-        window.bowser = bowser
     }
 
     openFeedback() {

@@ -446,8 +446,8 @@ export class Editor {
 
                     })
                 }
-
-                if (that.pm.doc.resolve(step.from).node(1).type.name === 'title') {
+                let docPart = that.pm.doc.resolve(step.from).node(1)
+                if (docPart && docPart.type.name === 'title') {
                     updateTitle = true
                 }
             }

@@ -34,7 +34,6 @@ export class FeedbackTab {
             that.openFeedback()
         })
         this.verifyBrowser()
-        window.bowser = bowser
     }
 
     openFeedback() {
@@ -69,12 +68,12 @@ export class FeedbackTab {
 
     // Verify that we are running one of the (semi)-verified browser.
     verifyBrowser() {
-        if (!(bowser.chrome||bowser.firefox||bowser.msedge||(bowser.safari && bowser.mac)) &! getCookie('browsercheck')) {
+        if ((!(bowser.chrome||bowser.firefox||bowser.msedge||bowser.safari) || bowser.mobile || bowser.tablet) &! getCookie('browsercheck')) {
             this.setCookie('browsercheck')
             let warning = gettext(`<p>Please be aware that you are running a browser
                 that has not yet been tested with Fidus Writer, so your mileage may vary.
-                Fidus Writer will currently not run on iOS or Internet Explorer.</p>
-                <p>We recommend using Google Chrome. </p>`)
+                Fidus Writer will currently not run on mobile platforms or Internet Explorer.</p>
+                <p>We recommend using Google Chrome on a desktop computer. </p>`)
             let diaButtons = {}
             diaButtons[gettext("OK")] = function() {
                 jQuery(this).dialog("close")

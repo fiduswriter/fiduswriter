@@ -66,7 +66,7 @@ export class Editor {
 
     startEditor() {
         let that = this
-        this.pm = this.makeEditor(document.getElementById('document-editable'))
+        this.makeEditor()
         this.currentPm = this.pm // The editor that is currently being edited in -- main or footnote editor
         new ModFootnotes(this)
         new ModCitations(this)
@@ -106,17 +106,15 @@ export class Editor {
         }, 10000)
     }
 
-    makeEditor(where) {
-        let pm = new ProseMirror({
-            place: where,
+    makeEditor() {
+        this.pm = new ProseMirror({
+            place: document.getElementById('document-editable'),
             schema: this.schema,
             //    menuBar: true,
             collab: {
                 version: 0
             }
         })
-        pm.editor = this
-        return pm
     }
 
     createDoc(aDocument) {
@@ -446,8 +444,8 @@ export class Editor {
 
                     })
                 }
-
-                if (that.pm.doc.resolve(step.from).node(1).type.name === 'title') {
+                let docPart = that.pm.doc.resolve(step.from).node(1)
+                if (docPart && docPart.type.name === 'title') {
                     updateTitle = true
                 }
             }

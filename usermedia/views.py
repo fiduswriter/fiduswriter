@@ -5,9 +5,12 @@ from django.contrib.auth.decorators import login_required
 from django.template.context_processors import csrf
 from django.http import JsonResponse
 from django.core.serializers.python import Serializer
+from django.utils.translation import ugettext as _
 
 from document.models import AccessRight
 from usermedia.models import Image, ImageCategory
+
+from .models import ALLOWED_FILETYPES
 
 
 class SimpleSerializer(Serializer):
@@ -41,37 +44,46 @@ def save_js(request):
                     return False
         else:
             owner_id = request.user.id
-        # We only allow owners to change their images.
-        image = Image.objects.filter(pk=the_id, owner=request.user)
-        if image.exists():
-            image = image[0]
-            status = 200
+        if 'image' in request.FILES and \
+                request.FILES['image'].content_type not in ALLOWED_FILETYPES:
+            status = 200  # Not implemented
+            response['errormsg']['error'] = _('Filetype not supported')
         else:
-            image = Image()
-            image.uploader = request.user
-            image.owner_id = owner_id
-            status = 201
-            if 'checksum' in request.POST:
-                image.checksum = request.POST['checksum']
-        image.title = request.POST['title']
-        if 'imageCat' in request.POST:
-            image.image_cat = request.POST['imageCat']
-        if 'image' in request.FILES:
-            image.image = request.FILES['image']
-        image.save()
-        response['values'] = {
-            'pk': image.pk,
-            'title': image.title,
-            'image': image.image.url,
-            'file_type': image.file_type,
-            'added': mktime(image.added.timetuple()) * 1000,
-            'checksum': image.checksum,
-            'cats': image.image_cat.split(',')
-        }
-        if image.thumbnail:
-            response['values']['thumbnail'] = image.thumbnail.url
-            response['values']['height'] = image.height
-            response['values']['width'] = image.width
+            # We only allow owners to change their images.
+            image = Image.objects.filter(pk=the_id, owner=request.user)
+            if image.exists():
+                image = image[0]
+                status = 200
+            else:
+                image = Image()
+                image.uploader = request.user
+                image.owner_id = owner_id
+                status = 201
+                if 'checksum' in request.POST:
+                    image.checksum = request.POST['checksum']
+            image.title = request.POST['title']
+            if 'imageCat' in request.POST:
+                image.image_cat = request.POST['imageCat']
+            if 'image' in request.FILES:
+                image.image = request.FILES['image']
+            if status == 201 and 'image' not in request.FILES:
+                status = 200
+                response['errormsg']['error'] = _('No file uploaded')
+            else:
+                image.save()
+                response['values'] = {
+                    'pk': image.pk,
+                    'title': image.title,
+                    'image': image.image.url,
+                    'file_type': image.file_type,
+                    'added': mktime(image.added.timetuple()) * 1000,
+                    'checksum': image.checksum,
+                    'cats': image.image_cat.split(',')
+                }
+                if image.thumbnail:
+                    response['values']['thumbnail'] = image.thumbnail.url
+                    response['values']['height'] = image.height
+                    response['values']['width'] = image.width
     return JsonResponse(
         response,
         status=status
@@ -136,20 +148,21 @@ def images_js(request):
         if status == 200:
             response['images'] = []
             for image in images:
-                field_obj = {
-                    'pk': image.pk,
-                    'title': image.title,
-                    'image': image.image.url,
-                    'file_type': image.file_type,
-                    'added': mktime(image.added.timetuple()) * 1000,
-                    'checksum': image.checksum,
-                    'cats': image.image_cat.split(',')
-                }
-                if image.thumbnail:
-                    field_obj['thumbnail'] = image.thumbnail.url
-                    field_obj['height'] = image.height
-                    field_obj['width'] = image.width
-                response['images'].append(field_obj)
+                if image.image:
+                    field_obj = {
+                        'pk': image.pk,
+                        'title': image.title,
+                        'image': image.image.url,
+                        'file_type': image.file_type,
+                        'added': mktime(image.added.timetuple()) * 1000,
+                        'checksum': image.checksum,
+                        'cats': image.image_cat.split(',')
+                    }
+                    if image.thumbnail:
+                        field_obj['thumbnail'] = image.thumbnail.url
+                        field_obj['height'] = image.height
+                        field_obj['width'] = image.width
+                    response['images'].append(field_obj)
     return JsonResponse(
         response,
         status=status

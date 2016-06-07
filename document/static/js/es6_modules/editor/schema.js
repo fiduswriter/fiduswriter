@@ -5,96 +5,58 @@ import {Schema, Block, Textblock, Inline, Text, MarkType, Attribute,
 import {katexRender} from "../katex/katex"
 
 class Title extends Textblock {
-}
-
-Title.register("parseDOM", "div", {
-    rank: 26,
-    parse: function(dom, state) {
-        let id = dom.id
-        if (!id || id !== 'document-title') return false
-        state.wrapIn(dom, this)
+    get matchDOMTag() {
+        return {"div[id='document-title']": null}
     }
-})
-
-
-Title.prototype.serializeDOM = (node, serializer) => serializer.renderAs(node, "div", {
-    id: 'document-title'
-})
+    toDOM(node) {
+        return ["div", {id: 'document-title'}]
+    }
+}
 
 class Subtitle extends Textblock {
-}
-
-Subtitle.register("parseDOM", "div", {
-    parse: function(dom, state) {
-        if (dom.id !== 'metadata-subtitle') return false
-        state.wrapIn(dom, this)
+    get matchDOMTag() {
+        return {"div[id='metadata-subtitle']": null}
     }
-})
-
-Subtitle.prototype.serializeDOM = (node, serializer) =>
-    serializer.renderAs(node, "div", {
-        id: 'metadata-subtitle'
-    })
+    toDOM(node) {
+        return ["div", {id: 'metadata-subtitle'}]
+    }
+}
 
 class Authors extends Textblock {
-}
-
-Authors.register("parseDOM", "div", {
-    parse: function(dom, state) {
-        if (dom.id !== 'metadata-authors') return false
-        state.wrapIn(dom, this)
+    get matchDOMTag() {
+        return {"div[id='metadata-authors']": null}
     }
-})
-
-Authors.prototype.serializeDOM = (node, serializer) =>
-    serializer.renderAs(node, "div", {
-        id: 'metadata-authors'
-    })
+    toDOM(node) {
+        return ["div", {id: 'metadata-authors'}]
+    }
+}
 
 class Abstract extends Block {
-}
-
-Abstract.register("parseDOM", "div", {
-    parse: function(dom, state) {
-        if (dom.id !== 'metadata-abstract') return false
-        state.wrapIn(dom, this)
+    get matchDOMTag() {
+        return {"div[id='metadata-abstract']": null}
     }
-})
-
-Abstract.prototype.serializeDOM = (node, serializer) =>
-    serializer.renderAs(node, "div", {
-        id: 'metadata-abstract'
-    })
+    toDOM(node) {
+        return ["div", {id: 'metadata-abstract'}]
+    }
+}
 
 class Keywords extends Textblock {
-}
-
-Keywords.register("parseDOM", "div", {
-    parse: function(dom, state) {
-        if (dom.id !== 'metadata-keywords') return false
-        state.wrapIn(dom, this)
+    get matchDOMTag() {
+        return {"div[id='metadata-keywords']": null}
     }
-})
-
-Keywords.prototype.serializeDOM = (node, serializer) =>
-    serializer.renderAs(node, "div", {
-        id: 'metadata-keywords'
-    })
+    toDOM(node) {
+        return ["div", {id: 'metadata-keywords'}]
+    }
+}
 
 class Body extends Block {
-}
-
-Body.register("parseDOM", "div", {
-    parse: function(dom, state) {
-        if (dom.id !== 'document-contents') return false
-        state.wrapIn(dom, this)
+    get matchDOMTag() {
+        return {"div[id='document-contents']": null}
     }
-})
-
-Body.prototype.serializeDOM = (node, serializer) =>
-    serializer.renderAs(node, "div", {
-        id: 'document-contents'
-    })
+    toDOM(node) {
+        return ["div", {id: 'document-contents'}]
+    }
+}
 
 
 class Footnote extends Inline {
@@ -105,7 +67,24 @@ class Footnote extends Inline {
             }),
         }
     }
+    get matchDOMTag() {
+        return {
+            "footnote": dom => ({
+                contents: dom.innerHTML
+            }),
+            "span.footnote-marker": dom => ({
+                contents = dom.getAttribute('contents')
+            })
+        }
+    }
+    toDOM(node) {
+        return ["span", {
+            class: 'footnote-marker',
+            contents: node.attrs.contents
+        }, []] // TODO: ADD A &NBSP; STRING
+    }
 }
+// TODO: FIX from here downward!
 
 Footnote.register("parseDOM", "footnote", {
     parse: function(dom, state) {

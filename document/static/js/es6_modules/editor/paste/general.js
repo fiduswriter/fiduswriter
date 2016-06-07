@@ -50,11 +50,11 @@ export class GeneralPasteHandler {
             }
             node = this.convertNode(node)
         }
-        this.pasteFix(node)
+        //this.pasteFix(node)
     }
 
     // Temporary paste fix, see issue https://github.com/ProseMirror/prosemirror/issues/342
-    pasteFix(node) {
+    /*pasteFix(node) {
         if (node.nodeType===3 || BLOCK_NODE_TAGS.indexOf(node.tagName) === -1) { // This is a text or inline node
             // Determine if the node has any block level siblings
             let checkNode = node.parentNode.firstChild
@@ -75,7 +75,7 @@ export class GeneralPasteHandler {
                 }
             }
         }
-    }
+    }*/
 
 
     // Convert an existing node to a different node, if needed.

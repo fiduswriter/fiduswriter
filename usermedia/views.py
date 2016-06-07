@@ -12,6 +12,7 @@ from usermedia.models import Image, ImageCategory
 
 from .models import ALLOWED_FILETYPES
 
+
 class SimpleSerializer(Serializer):
 
     def end_object(self, obj):
@@ -44,8 +45,8 @@ def save_js(request):
         else:
             owner_id = request.user.id
         if 'image' in request.FILES and \
-            request.FILES['image'].content_type not in ALLOWED_FILETYPES:
-            status = 200 # Not implemented
+                request.FILES['image'].content_type not in ALLOWED_FILETYPES:
+            status = 200  # Not implemented
             response['errormsg']['error'] = _('Filetype not supported')
         else:
             # We only allow owners to change their images.
@@ -65,7 +66,7 @@ def save_js(request):
                 image.image_cat = request.POST['imageCat']
             if 'image' in request.FILES:
                 image.image = request.FILES['image']
-            if status == 201 and not 'image' in request.FILES:
+            if status == 201 and 'image' not in request.FILES:
                 status = 200
                 response['errormsg']['error'] = _('No file uploaded')
             else:

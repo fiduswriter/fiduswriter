@@ -79,13 +79,21 @@ export class ImportFidusFile {
     getEntry() {
         let that = this
         if (this.counter < this.textFiles.length) {
-            _.findWhere(this.entries, this.textFiles[this.counter]).getData(
-                new zip.TextWriter(),
-                function(text) {
-                    that.textFiles[that.counter]['contents'] = text
-                    that.counter++
-                    that.getEntry()
-                })
+            let entry = _.findWhere(this.entries, this.textFiles[this.counter])
+            if (entry) {
+                entry.getData(
+                    new zip.TextWriter(),
+                    function(text) {
+                        that.textFiles[that.counter]['contents'] = text
+                        that.counter++
+                        that.getEntry()
+                    })
+            } else {
+                // The file is a zip file, but not a Fidus Writer file.
+                that.callback(false, gettext('The uploaded file does not appear to be a Fidus Writer file.'))
+                return
+            }
+
         } else {
             this.processFidusFile()
         }

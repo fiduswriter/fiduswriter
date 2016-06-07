@@ -53,6 +53,9 @@ export class ImageDB {
     createImage(postData, callback) {
         let that = this
         activateWait()
+        // Remove old warning messages
+        jQuery('#uploadimage .warning').detach()
+        // Send to server
         jQuery.ajax({
             url: '/usermedia/save/',
             data: postData,
@@ -74,7 +77,9 @@ export class ImageDB {
                 }
             },
             error: function (jqXHR, textStatus, errorThrown) {
-                addAlert('error', jqXHR.responseText)
+                if (jqXHR && jqXHR.responseJSON && jqXHR.responseJSON.errormsg) {
+                    addAlert('error', jqXHR.responseJSON.errormsg)
+                }
             },
             complete: function () {
                 deactivateWait()
@@ -90,7 +95,7 @@ export class ImageDB {
         for (let eKey in errors) {
             let eMsg = '<div class="warning">' + errors[eKey] + '</div>'
             if ('error' == eKey) {
-                jQuery('#createimage').prepend(eMsg)
+                jQuery('#uploadimage').prepend(eMsg)
             } else {
                 jQuery('#id_' + eKey).after(eMsg)
             }

@@ -50,3 +50,10 @@
 #alerts-wrapper .alerts-success {
     background-color: rgba(109, 164, 147, 0.8);
 }
+/* A form wasn't filled out correctly and the warning was added to the form. */
+div.warning {
+    margin: 0 0 5px 0;
+    border: 1px solid rgba(200, 63, 27, 0.8);
+    background-color: rgba(200, 63, 27, 0.4);
+    padding: 6px;
+}

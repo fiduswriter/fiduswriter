@@ -1,10 +1,13 @@
 import {teammemberTemplate} from "./templates"
 import {addMemberDialog, deleteMemberDialog} from "./manage"
 import {addDropdownBox} from "../common/common"
+import {Menu} from "../menu/menu"
 
 export let contactsOverview = function () {
 
     jQuery(document).ready(function() {
+        new Menu("") // Nothing highlighted.
+
         //intialize the teammember table
         jQuery('#team-table tbody').append(teammemberTemplate({'members': window.teammembers}))
 

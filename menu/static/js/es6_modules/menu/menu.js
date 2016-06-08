@@ -1,3 +1,5 @@
+import {addDropdownBox} from "../common/common"
+
 // Bindings for the menu
 
 export class Menu {
@@ -22,34 +24,28 @@ export class Menu {
     }
 
     bindPreferencePullDown() {
-        let that = this
-        jQuery('#preferences-btn').bind('click', function() {
-            let menuBox = jQuery('#user-preferences-pulldown')
-            if('none' == menuBox.css('display')) {
-                that.openPreferencePulldown(menuBox)
-            }
-        })
-    }
+        let box = jQuery('#user-preferences-pulldown')
+        let button = jQuery('#preferences-btn')
+        addDropdownBox(button, box)
 
-    openPreferencePulldown(box) {
-        let btnOffset = jQuery('#preferences-btn').offset(), that = this
-        box.css({
-            'left': btnOffset.left - 52,
-            'top': btnOffset.top + 27
-        })
-        box.show()
-        window.setTimeout(function() {
-            jQuery(document).on('click', {'box': box}, function(event){
-                that.closePreferencePulldown(event)
+        // In addition to adding the dropdown, we also need to add some css
+        // values so that the dropdown is placed close to #preferences-btn
+        jQuery('#preferences-btn').bind('mousedown', function() {
+            let btnOffset = button.offset()
+            box.css({
+                'left': btnOffset.left - 52,
+                'top': btnOffset.top + 27
             })
-        }, 100)
-    }
-
-    closePreferencePulldown(e) {
-        let that = this
-        e.data.box.hide()
-        jQuery(document).off('click', function(box){
-            that.closePreferencePulldown(box)
+        })
+        // As a click will close the pulldown, we need to activate the link by means of a mousedown already.
+        jQuery(document).on('mousedown', '#user-preferences-pulldown a', function(event) {
+            event.preventDefault()
+            window.location = jQuery(this).attr('href')
+        })
+        // Same for form button
+        jQuery(document).on('mousedown', '#user-preferences-pulldown button[type="submit"]', function(event) {
+            event.preventDefault()
+            jQuery(this).closest('form').submit()
         })
     }
 }

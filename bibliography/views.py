@@ -136,8 +136,6 @@ def import_bibtex_js(request):
                     # restore date value like "date"
                     bib_date = BibDate(val)
                     val = bib_date.date
-                if isinstance(val, basestring):
-                    val = val.strip("{}")
                 if isinstance(val, list):
                     val = ' and '.join(val)
                 the_fields[field_type.field_name] = val

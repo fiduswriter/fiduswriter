@@ -35,7 +35,8 @@ export class CSLExporter {
                     cslOutput[BibFieldTypes[fKey]['csl']] = this._reformName(
                         bib[fKey])
                 } else {
-                    cslOutput[BibFieldTypes[fKey]['csl']] = bib[fKey]
+                    // Strip all braces from all other values
+                    cslOutput[BibFieldTypes[fKey]['csl']] = bib[fKey].replace(/[{}]/g, "")
                 }
             }
         }

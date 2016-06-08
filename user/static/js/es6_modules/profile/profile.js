@@ -2,6 +2,7 @@ import {changeAvatarDialogTemplate, confirmDeleteAvatarTemplate,
     deleteUserDialogTemplate, changePwdDialogTemplate, changeEmailDialogTemplate,
 deleteEmailDialogTemplate, } from "./templates"
 import {addDropdownBox, activateWait, deactivateWait, csrfToken} from "../common/common"
+import {Menu} from "../menu/menu"
 
 let changeAvatarDialog = function() {
     jQuery('body').append(changeAvatarDialogTemplate)
@@ -439,6 +440,7 @@ let changePrimaryEmailDialog = function() {
 
 export let bind = function() {
     jQuery(document).ready(function() {
+        new Menu("") // Nothing highlighted
         addDropdownBox(jQuery('#edit-avatar-btn'), jQuery('#edit-avatar-pulldown'))
         jQuery('.change-avatar').bind('mousedown', changeAvatarDialog)
         jQuery('.delete-avatar').bind('mousedown', deleteAvatarDialog)

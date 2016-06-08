@@ -53,6 +53,7 @@ class Persons(object):
             name_dict['last'] = ' '.join(_last)
 
         def find_pos(lst, pred):
+            i = -1
             for i, item in enumerate(lst):
                 if pred(item):
                     return i

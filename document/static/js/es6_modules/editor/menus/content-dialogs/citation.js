@@ -76,7 +76,8 @@ export let citationDialog = function (mod) {
                 'author': bib.author || bib.editor || ''
             },
             cited_id
-
+        // Hide most latex commands TODO: Remove when exchanging bibtex parser 
+        bibEntry.title = bibEntry.title.replace(/\\(?:[^a-zA-Z]|[a-zA-Z]+[*=']?)/g,'')
         bibEntry.title = bibEntry.title.replace(/[{}]/g, '')
         bibEntry.author = bibEntry.author.replace(/[{}]/g, '')
         citableItemsHTML += citationItemTemplate(bibEntry)

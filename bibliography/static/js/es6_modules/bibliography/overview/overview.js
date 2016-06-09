@@ -194,12 +194,16 @@ export class BibliographyOverview {
 
 
         if (0 < $tr.size()) { //if the entry exists, update
+            let bibtitle = bibInfo.title
+            // Hide most latex commands TODO: Remove when exchanging bibtex parser 
+            bibtitle = bibtitle.replace(/\\(?:[^a-zA-Z]|[a-zA-Z]+[*=']?)/g,'')
+            bibtitle = bibtitle.replace(/[{}]/g, '')
             $tr.replaceWith(bibtableTemplate({
                 'id': pk,
                 'cats': bibInfo.entry_cat.split(','),
                 'type': bibInfo.entry_type,
                 'typetitle': BibEntryTypes[bibInfo.entry_type]['title'],
-                'title': bibInfo.title.replace(/[{}]/g, ''),
+                'title': bibtitle,
                 'author': bibauthor,
                 'published': formatDateString(bibInfo.date)
             }))

@@ -186,10 +186,12 @@ export class ModFootnoteMarkers {
         let footnoteContents = toHTML(this.mod.fnPm.doc.child(index))
 
         let footnote = this.mod.footnotes[index]
-        let node = this.mod.editor.pm.doc.nodeAt(footnote.from)
-        this.mod.editor.pm.tr.setNodeType(footnote.from, node.type, {
-            contents: footnoteContents
-        }).apply()
+        if (footnote) {
+            let node = this.mod.editor.pm.doc.nodeAt(footnote.from)
+            this.mod.editor.pm.tr.setNodeType(footnote.from, node.type, {
+                contents: footnoteContents
+            }).apply()
+        }
         this.updating = false
     }
 }

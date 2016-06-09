@@ -240,44 +240,8 @@ div#statusarea .error {
 
 
 
-#menu1 .selected:before {
-    content: "✓ ";
-}
 div#layout {
     padding-top: 60px;
-}
-ul#menu2 {
-    clear: both;
-    width: 160px;
-    margin-top: 10px;
-}
-ul#menu1 > li.potato-menu-item {
-    border-radius: 6px;
-}
-li.potato-menu-item {
-    width: 160px;
-    font-size: 12px;
-    background-color: #EEEEEC;
-    /* background-color:#333;
-     background-color:rgba(0,0,0,0.9);*/
-}
-li.potato-menu-item a {
-    padding: 5px 20px 5px 12px;
-    color: black;
-}
-li.potato-menu-hover {
-    background-color: #ddd;
-}
-/*li.potato-menu-has-vertical > a {
- background: transparent url(/images/icons/fammini/arrow_down.gif) right no-repeat;
- }
- li.potato-menu-has-holizontal > a {
- background: transparent url(/images/icons/fammini/arrow_right.gif) right no-repeat;
- }*/
-li.potato-menu-item ul {
-
-    border-radius: 6px;
-    border: 1px solid #BABDB6;
 }
 /*
  * Dialog
@@ -291,55 +255,7 @@ li.potato-menu-item ul {
 input.required, error {
     border: 2px solid red;
 }
-/*!
- * jquery.ui.potato.menu
- *
- * Copyright (c) 2009-2010 makoto_kw, http://www.makotokw.com
- * Licensed under the MIT license.
- *
- * @author makoto_kw
- * @version 1.1
- */
-ul.potato-menu {
-    margin: 0;
-    padding: 0;
-    width: auto;
-    list-style: none;
-}
-.potato-menu:after {
-    content: " ";
-    display: block;
-    visibility: hidden;
-    clear: both;
-    height: 0.1px;
-    font-size: 0.1em;
-    line-height: 0;
-}
-ul.potato-menu li.potato-menu-item {
-    margin: 0;
-    padding: 0;
-    position: relative;
-    list-style: none;
-    list-style-position: outside;
-    display: inline;
-    float: left;
-}
-ul.potato-menu li.potato-menu-item a {
-    display: block;
-    text-decoration: none;
-    white-space: nowrap;
-    outline: 0;
-}
-ul.potato-menu ul.potato-menu-group {
-    margin: 0;
-    padding: 3px;
-    -webkit-padding-start: 0;
-    -webkit-padding-end: 0;
-    position: absolute;
-    display: none;
-    z-index: 1000;
-    background-color: #EEEEEC;
-}
+
 /* For print */
 
 @media print {

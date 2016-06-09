@@ -190,16 +190,19 @@ export class BibliographyOverview {
         bibauthor += andOthers
         // If title is undefined, set it to an empty string.
         // TODO: Such entries should likely not be accepted by the importer.
-        if (typeof bibInfo.title === 'undefined') bibInfo.title = ''
-
+        let bibtitle = typeof bibInfo.title === 'undefined' ? '' : bibInfo.title
+        // Hide most latex commands TODO: Remove when exchanging bibtex parser
+        bibtitle = bibtitle.replace(/\\(?:[^a-zA-Z]|[a-zA-Z]+[*=']?)/g,'')
+        bibtitle = bibtitle.replace(/[{}]/g, '')
 
         if (0 < $tr.size()) { //if the entry exists, update
+
             $tr.replaceWith(bibtableTemplate({
                 'id': pk,
                 'cats': bibInfo.entry_cat.split(','),
                 'type': bibInfo.entry_type,
                 'typetitle': BibEntryTypes[bibInfo.entry_type]['title'],
-                'title': bibInfo.title.replace(/[{}]/g, ''),
+                'title': bibtitle,
                 'author': bibauthor,
                 'published': formatDateString(bibInfo.date)
             }))
@@ -209,7 +212,7 @@ export class BibliographyOverview {
                 'cats': bibInfo.entry_cat.split(','),
                 'type': bibInfo.entry_type,
                 'typetitle': BibEntryTypes[bibInfo.entry_type]['title'],
-                'title': bibInfo.title.replace(/[{}]/g, ''),
+                'title': bibtitle,
                 'author': bibauthor,
                 'published': formatDateString(bibInfo.date)
             }))

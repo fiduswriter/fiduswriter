@@ -34,10 +34,12 @@ export class CSLExporter {
                 } else if ('l_name' == fType) {
                     cslOutput[BibFieldTypes[fKey]['csl']] = this._reformName(
                         bib[fKey])
-                } else {
-                    // Strip all braces from all other values
+                } else if ('f_literal' == fType) {
+                    // Allow formatting
                     cslOutput[BibFieldTypes[fKey]['csl']] = this._reformString(
                         bib[fKey])
+                } else {
+                    cslOutput[BibFieldTypes[fKey]['csl']] = bib[fKey]
                 }
             }
         }
@@ -116,7 +118,7 @@ export class CSLExporter {
                 ['\\textbf{', '<b>', '</b>'],
                 ['\\textit{', '<i>', '</i>'],
                 ['\\emph{', '<i>', '</i>'],
-                ['\\textsc{', '<span style="small-caps">', '</span>'],
+                ['\\textsc{', '<span style="font-variant:small-caps;">', '</span>'],
             ]
             parseString: while (i < len) {
                 if (theValue[i] === '\\') {
@@ -150,11 +152,6 @@ export class CSLExporter {
                     output =+ '<sup>'
                     braceClosings.push('</sup>')
                 }
-                // math env, just remove
-                if (theValue[i] === '$') {
-                    i++
-                    continue parseString
-                }
                 if (theValue[i] === '{') {
                     braceLevel++
                     output += '<span class="nocase">'
@@ -175,6 +172,21 @@ export class CSLExporter {
                     theValue = theValue.replace(/\}/g, '')
                     theValue = theValue.replace(/\{/g, '')
                     return theValue
+                }
+                // math env, just remove
+                if (theValue[i] === '$') {
+                    i++
+                    continue parseString
+                }
+                if (theValue[i] === '<') {
+                    output += "&lt;"
+                    i++
+                    continue parseString
+                }
+                if (theValue[i] === '>') {
+                    output += "&gt;"
+                    i++
+                    continue parseString
                 }
                 output += theValue[i]
                 i++

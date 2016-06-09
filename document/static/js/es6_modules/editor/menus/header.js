@@ -16,9 +16,6 @@ export class ModMenusHeader {
           let documentStyleMenu = document.getElementById("documentstyle-list"),
               citationStyleMenu = document.getElementById("citationstyle-list")
 
-          // Enable toolbar menu
-          jQuery('#menu1').ptMenu()
-
           //open dropdown for headermenu
           jQuery('.header-nav-item, .multibuttonsCover').each(function() {
               addDropdownBox(jQuery(this), jQuery(this).siblings(

@@ -29,10 +29,11 @@ class Command(BaseCommand):
         output_js += 'export let TexSpecialChars = [\n'
 
         for special_char in TexSpecialChar.objects.all():
-            tex_char = special_char.tex.replace('\\', '\\\\')
-            tex_char = tex_char.replace('"', '\\"')
-            output_js += '{ \'unicode\': "' + special_char.unicode + '", '
-            output_js += '\'tex\': "' + tex_char + '"},\n'
+            output_js += "    [%s,'%s'],\n" % (
+                json.dumps(special_char.tex),
+                special_char.unicode
+            )
+        output_js = output_js[:-2] + "\n"  # Remove last comma
         output_js += ']\n'
 
         # list of field types of Bibligraphy DB with lookup by field name

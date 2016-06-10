@@ -190,10 +190,7 @@ export class BibliographyOverview {
         bibauthor += andOthers
         // If title is undefined, set it to an empty string.
         // TODO: Such entries should likely not be accepted by the importer.
-        let bibtitle = typeof bibInfo.title === 'undefined' ? '' : bibInfo.title
-        // Hide most latex commands TODO: Remove when exchanging bibtex parser
-        bibtitle = bibtitle.replace(/\\(?:[^a-zA-Z]|[a-zA-Z]+[*=']?)/g,'')
-        bibtitle = bibtitle.replace(/[{}]/g, '')
+        let bibtitle = typeof(bibInfo.title) === 'undefined' ? '' : bibInfo.title
 
         if (0 < $tr.size()) { //if the entry exists, update
 

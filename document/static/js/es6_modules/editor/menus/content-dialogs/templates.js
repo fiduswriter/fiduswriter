@@ -159,11 +159,11 @@ export let configureCitationTemplate = _.template('\
     </div>')
 
 /** A template for each item that can be cited inside the citation configuration dialog of the editor. */
-export let citationItemTemplate = _.template('<tr class="fw-checkable fw-checkable-tr" data-id="<%- id %>" data-type="<%- type %>" data-title="<%= title %>" data-author="<%= author %>">\
+export let citationItemTemplate = _.template('<tr class="fw-checkable fw-checkable-tr" data-id="<%- id %>" data-type="<%- type %>" data-title="<%- title %>" data-author="<%= author %>">\
         <td width="162">\
             <span class="fw-document-table-title fw-inline">\
                 <i class="icon-book"></i>\
-                <span class="fw-searchable"><%- title %></span>\
+                <span class="fw-searchable"><%= title %></span>\
             </span>\
         </td>\
         <td width="163">\
@@ -179,7 +179,7 @@ export let selectedCitationTemplate = _.template('<tr id="selected-source-<%= id
                   <span class="fw-document-table-title fw-inline">\
                       <i class="icon-book"></i>\
                       <span data-id="<%- id %>" data-type="<%- type %>">\
-                          <%- title %>\
+                          <%= title %>\
                       </span>\
                   </span>\
               </td>\

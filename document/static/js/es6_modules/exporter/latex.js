@@ -145,11 +145,6 @@ export class BaseLatexExporter extends BaseExporter {
             listedWorksList = []
         }
 
-        // Remove sections that are marked as deleted
-        /*jQuery(htmlCode).find('.del').each(function() {
-            this.outerHTML = ''
-        })*/
-
 
         if (isChapter) {
             latexStart += '\\chapter{' + title + '}\n'
@@ -389,9 +384,6 @@ export class BaseLatexExporter extends BaseExporter {
             }
         })
 
-        /*jQuery(htmlCode).find('.footnote').each(function() {
-            jQuery(this).replaceWith('\\footnotext{' + this.innerHTML + '}')
-        })*/
 
         /* Add LaTeX that will appear after the abstract, if there is an
          * abstract. Otherwise at start of document.
@@ -416,7 +408,7 @@ export class BaseLatexExporter extends BaseExporter {
         } else {
             let bibExport = new BibLatexExporter(
                 listedWorksList, that.bibDB, false)
-            returnObject.bibtex = bibExport.bibtex_str
+            returnObject.bibtex = bibExport.bibtexStr
         }
         return returnObject
     }

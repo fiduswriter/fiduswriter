@@ -29,7 +29,10 @@ class Command(BaseCommand):
         output_js += 'export let TexSpecialChars = [\n'
 
         for special_char in TexSpecialChar.objects.all():
-            output_js += "    [%s,'%s'],\n" % (json.dumps(special_char.tex), special_char.unicode)
+            output_js += "    [%s,'%s'],\n" % (
+                json.dumps(special_char.tex),
+                special_char.unicode
+            )
         output_js = output_js[:-2] + "\n"  # Remove last comma
         output_js += ']\n'
 

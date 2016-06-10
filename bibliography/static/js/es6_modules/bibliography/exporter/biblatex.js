@@ -1,5 +1,30 @@
 import {zipFileCreator} from "../../exporter/zip"
-import {BibEntryTypes, BibFieldTypes, TexSpecialChars} from "../statics"
+import {BibEntryTypes, BibFieldTypes} from "../statics"
+
+
+const TexSpecialChars = [ // A much smaller list, as biblatex does understand utf8
+    [/\\/g, '\\textbackslash '],
+    [/\{/g, '\\{ '],
+    [/\}/g, '\\} '],
+    [/&/g, '{\\&}'],
+    [/%/g, '{\\%}'],
+    [/\$/g, '{\\$}'],
+    [/#/g, '{\\#}'],
+    [/_/g, '{\\_}'],
+    [/~/g, '{\\textasciitilde}'],
+    [/\^/g, '{\\textasciicircum}']
+]
+
+const TexSpecialCharsShort = [ // Same list, but without braces which are present in name fields. TODO: get rid of this!
+    [/\\/g, '\\textbackslash '],
+    [/&/g, '{\\&}'],
+    [/%/g, '{\\%}'],
+    [/\$/g, '{\\$}'],
+    [/#/g, '{\\#}'],
+    [/_/g, '{\\_}'],
+    [/~/g, '{\\textasciitilde}'],
+    [/\^/g, '{\\textasciicircum}']
+]
 
 /** Export a list of bibliography items to bibLateX and serve the file to the user as a ZIP-file.
  * @class BibLatexExporter
@@ -52,16 +77,22 @@ export class BibLatexExporter {
                 if ("" === fValue)
                     continue
                 let fType = BibFieldTypes[fKey]['type']
-                if ('f_date' == fType) {
-                    let dateParts = this._reformDate(fValue, fKey)
-                    for (let datePart in dateParts) {
-                        fValues[datePart] = dateParts[datePart]
-                    }
-                    continue
+                switch (fType) {
+                    case 'f_date':
+                        let dateParts = this._reformDate(fValue, fKey)
+                        for (let datePart in dateParts) {
+                            fValues[datePart] = dateParts[datePart]
+                        }
+                        break
+                    case 'f_literal':
+                        fValue = this._htmlToLatex(fValue)
+                        fValues[BibFieldTypes[fKey]['biblatex']] = fValue
+                        break
+                    default:
+                        fValue = this._escapeTexSpecialChars(fValue, true)
+                        fValues[BibFieldTypes[fKey]['biblatex']] = fValue
                 }
-                //fValue = this._escapeTexSpecialChars(fValue, pk)
-                fValue = this._cleanBraces(fValue, pk)
-                fValues[BibFieldTypes[fKey]['biblatex']] = fValue
+
             }
             bibEntry.values = fValues
             this.bibtexArray[this.bibtexArray.length] = bibEntry
@@ -123,50 +154,60 @@ export class BibLatexExporter {
         return valueList
     }
 
-    _escapeTexSpecialChars(theValue, pk) {
+    _escapeTexSpecialChars(theValue, short) {
         if ('string' != typeof (theValue)) {
             return false
         }
-        let len = TexSpecialChars.length
+        let texChars = short? TexSpecialCharsShort : TexSpecialChars
+        let len = texChars.length
         for (let i = 0; i < len; i++) {
-            theValue = theValue.replace(TexSpecialChars[i].unicode,
-                TexSpecialChars[i].tex)
+            theValue = theValue.replace(
+                texChars[i][0],
+                texChars[i][1]
+            )
         }
         return theValue
     }
 
 
-    _cleanBraces(theValue, pk) {
-        let openBraces = ((theValue.match(/\{/g) || []).length),
-            closeBraces = ((theValue.match(/\}/g) || []).length)
-        if (openBraces === 0 && closeBraces === 0) {
-            // There are no braces, return the original value
-            return theValue
-        } else if (openBraces != closeBraces) {
-            // There are different amount of open and close braces, so we delete them all.
-            theValue = theValue.replace(/}/g, '')
-            theValue = theValue.replace(/{/g, '')
-            return theValue
-        } else {
-            // There are the same amount of open and close braces, but we don't know if they are in the right order.
-            let braceLevel = 0, len = theValue.length
-            for (let i = 0; i < len; i++) {
-                if (theValue[i] === '{') {
-                    braceLevel++
-                }
-                if (theValue[i] === '}') {
-                    braceLevel--
-                }
-                if (braceLevel < 0) {
-                    // A brace was closed before it was opened. Abort and remove all the braces.
-                    theValue = theValue.replace(/\}/g, '')
-                    theValue = theValue.replace(/\{/g, '')
-                    return theValue
-                }
+    _htmlToLatex(theValue) {
+        let el = document.createElement('div')
+        el.innerHTML = theValue
+        let walker = this._htmlToLatexTreeWalker(el,"")
+        return walker
+    }
+
+
+    _htmlToLatexTreeWalker(el, outString) {
+        if (el.nodeType === 3) { // Text node
+            outString += this._escapeTexSpecialChars(el.nodeValue, false)
+        } else if (el.nodeType === 1) {
+            let braceEnd = ""
+            if (jQuery(el).is('i')) {
+                outString += "\\emph{"
+                braceEnd = "}"
+            } else if (jQuery(el).is('b')) {
+                outString += "\\textbf{"
+                braceEnd = "}"
+            } else if (jQuery(el).is('sup')) {
+                outString += "$^{"
+                braceEnd = "}$"
+            } else if (jQuery(el).is('sub')) {
+                outString += "$_{"
+                braceEnd = "}$"
+            } else if (jQuery(el).is('span[class*="nocase"]')) {
+                outString += "{{"
+                braceEnd = "}}"
+            } else if (jQuery(el).is('span[style*="small-caps"]')) {
+                outString += "\\textsc{"
+                braceEnd = "}"
             }
-            // Braces were accurate.
-            return theValue
+            for (let i = 0; i < el.childNodes.length; i++) {
+                outString = this._htmlToLatexTreeWalker(el.childNodes[i], outString)
+            }
+            outString += braceEnd
         }
+        return outString
     }
 
     _getBibtexString(biblist) {
@@ -185,8 +226,6 @@ export class BibLatexExporter {
         }
         return str
     }
-
-
 
 
 }

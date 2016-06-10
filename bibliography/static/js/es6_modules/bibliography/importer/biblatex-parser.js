@@ -1,4 +1,4 @@
-import {TexSpecialChars} from "../statics"
+import {TexSpecialChars, BibFieldTypes} from "../statics"
 import {addAlert} from "../../common/common"
 
 /** Parses files in BibTeX/BibLaTeX format
@@ -104,14 +104,6 @@ export class BibLatexParser {
             return true
         }
     }
-    /*
-    reformNames(names) {
-        //reform name
-    }
-
-    reformDates(dates) {
-        //reform date
-    }*/
 
     valueBraces() {
         let bracecount = 0
@@ -282,29 +274,156 @@ export class BibLatexParser {
             dateFormat = dateFormat.replace('Y', issued.getFullYear())
         }
         this.entries[this.currentEntry].date = dateFormat
-        //TODO: check the value type and reform the value, if needed.
-        /*
-        let fType
+
         for(let fKey in this.entries[this.currentEntry]) {
             if('bibtype' == fKey)
                 continue
-            fType = BibFieldtypes[fKey]
-            if('undefined' == typeof(fType)) {
+            let field = BibFieldTypes[fKey]
+
+            if('undefined' == typeof(field)) {
+                addAlert('error', fKey + gettext(' of ') +
+                    this.currentEntry +
+                    gettext(' cannot not be saved. Fidus Writer does not support the field.')
+                )
                 delete this.entries[this.currentEntry][fKey]
                 continue
             }
-            fValue = this.entries[this.currentEntry][fKey]
+            let fType = field['type']
+            let fValue = this.entries[this.currentEntry][fKey]
             switch(fType) {
                 case 'l_name':
-                    this.entries[this.currentEntry][fKey] = this.reformNames(fValue)
+                    this.entries[this.currentEntry][fKey] = this.reformName(fValue)
                     break
                 case 'f_date':
-                    this.entries[this.currentEntry][fKey] = this.reformDates(fValue)
+                    this.entries[this.currentEntry][fKey] = this.reformDate(fValue)
+                    break
+                case 'f_literal':
+                    this.entries[this.currentEntry][fKey] = this.reformLiteral(fValue)
                     break
             }
         }
-        */
+
     }
+
+    reformName(name) {
+        //reform name
+        return name
+    }
+
+    reformDate(date) {
+        //reform date
+        return date
+    }
+
+
+    reformLiteral(theValue) {
+        let openBraces = ((theValue.match(/\{/g) || []).length),
+            closeBraces = ((theValue.match(/\}/g) || []).length)
+        if (openBraces === 0 && closeBraces === 0) {
+            // There are no braces, return the original value
+            return theValue
+        } else if (openBraces != closeBraces) {
+            // There are different amount of open and close braces, so we return the original string.
+            return theValue
+        } else {
+            // There are the same amount of open and close braces, but we don't know if they are in the right order.
+            let braceLevel = 0, len = theValue.length, i = 0, output = '', braceClosings = [], inCasePreserve = false
+
+            const latexCommands = [
+                ['\\textbf{', '<b>', '</b>'],
+                ['\\textit{', '<i>', '</i>'],
+                ['\\emph{', '<i>', '</i>'],
+                ['\\textsc{', '<span style="font-variant:small-caps;">', '</span>'],
+            ]
+            parseString: while (i < len) {
+                if (theValue[i] === '\\') {
+
+                    for (let s of latexCommands) {
+                        if (theValue.substring(i, i + s[0].length) === s[0]) {
+                            braceLevel++
+                            i += s[0].length
+                            output += s[1]
+                            braceClosings.push(s[2])
+                            continue parseString
+                        }
+                    }
+
+                    if (i + 1 < len) {
+                        i+=2
+                        output += theValue[i+1]
+                        continue parseString
+                    }
+
+                }
+                if (theValue[i] === '_' && theValue.substring(i,i+2) === '_{') {
+                    braceLevel++
+                    i+=2
+                    output =+ '<sub>'
+                    braceClosings.push('</sub>')
+                }
+                if (theValue[i] === '^' && theValue.substring(i,i+2) === '^{') {
+                    braceLevel++
+                    i+=2
+                    output =+ '<sup>'
+                    braceClosings.push('</sup>')
+                }
+                if (theValue[i] === '{') {
+                    braceLevel++
+                    if (inCasePreserve) {
+                        // If already inside case preservation, do not add a second
+                        braceClosings.push('')
+                    } else {
+                        inCasePreserve = braceLevel
+                        output += '<span class="nocase">'
+                        braceClosings.push('</span>')
+                    }
+                    i++
+                    continue parseString
+                }
+                if (theValue[i] === '}') {
+                    if (inCasePreserve===braceLevel) {
+                        inCasePreserve = false
+                    }
+                    braceLevel--
+                    if (braceLevel > -1) {
+                        output += braceClosings.pop()
+                        i++
+                        continue parseString
+                    }
+                }
+                if (braceLevel < 0) {
+                    // A brace was closed before it was opened. Abort and return the original string.
+                    return theValue
+                }
+                // math env, just remove
+                if (theValue[i] === '$') {
+                    i++
+                    continue parseString
+                }
+                if (theValue[i] === '<') {
+                    output += "&lt;"
+                    i++
+                    continue parseString
+                }
+                if (theValue[i] === '>') {
+                    output += "&gt;"
+                    i++
+                    continue parseString
+                }
+                output += theValue[i]
+                i++
+            }
+
+            if (braceLevel > 0) {
+                // Too many opening braces, we return the original string.
+                return theValue
+            }
+            // Braces were accurate.
+            return output
+        }
+    }
+
+
 
     entryBody() {
         this.currentEntry = this.key()
@@ -338,10 +457,9 @@ export class BibLatexParser {
     scanBibtexString(value) {
         let len = TexSpecialChars.length
         for (let i = 0; i < len; i++) {
-            let specialChar = TexSpecialChars[i]
-            while (-1 < value.indexOf(specialChar.tex)) {
-                value = value.replace(specialChar.tex, specialChar.unicode)
-            }
+            let texChar = TexSpecialChars[i]
+            let texCharRegExp = new window.RegExp(texChar[0],'g')
+            value = value.replace(texCharRegExp, texChar[1])
         }
         // Delete multiple spaces
         value = value.replace(/ +(?= )/g, '')

@@ -34,7 +34,7 @@ export let bibtableTemplate = _.template('\
                 <i class="icon-book"></i>\
                 <span class="edit-bib fw-link-text fw-searchable" data-id="<%- id %>" data-type="<%- type %>">\
                     <% if (title.length>0) { %>\
-                        <%- title %>\
+                        <%= title %>\
                     <% } else { %>\
                         <i>'+gettext('Untitled')+'</i>\
                     <% } %>\
@@ -45,7 +45,7 @@ export let bibtableTemplate = _.template('\
         <td width="175" class="author"><span class="fw-inline fw-searchable"><%- author %></span></td>\
         <td width="100" class="publised"><span class="fw-inline"><%- published %></span></td>\
         <td width="50" align="center">\
-            <span class="delete-bib fw-inline fw-link-text" data-id="<%- id %>" data-title="<%= title %>">\
+            <span class="delete-bib fw-inline fw-link-text" data-id="<%- id %>" data-title="<%- title %>">\
                 <i class="icon-trash"></i>\
             </span>\
         </td>\

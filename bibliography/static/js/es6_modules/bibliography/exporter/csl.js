@@ -34,10 +34,6 @@ export class CSLExporter {
                 } else if ('l_name' == fType) {
                     cslOutput[BibFieldTypes[fKey]['csl']] = this._reformName(
                         bib[fKey])
-                } else if ('f_literal' == fType) {
-                    // Allow formatting
-                    cslOutput[BibFieldTypes[fKey]['csl']] = this._reformString(
-                        bib[fKey])
                 } else {
                     cslOutput[BibFieldTypes[fKey]['csl']] = bib[fKey]
                 }
@@ -97,102 +93,4 @@ export class CSLExporter {
         return namesValue
     }
 
-
-    // Adopted from _cleanBraces in biblatex exporter.
-    _reformString(theValue) {
-        let openBraces = ((theValue.match(/\{/g) || []).length),
-            closeBraces = ((theValue.match(/\}/g) || []).length)
-        if (openBraces === 0 && closeBraces === 0) {
-            // There are no braces, return the original value
-            return theValue
-        } else if (openBraces != closeBraces) {
-            // There are different amount of open and close braces, so we delete them all.
-            theValue = theValue.replace(/}/g, '')
-            theValue = theValue.replace(/{/g, '')
-            return theValue
-        } else {
-            // There are the same amount of open and close braces, but we don't know if they are in the right order.
-            let braceLevel = 0, len = theValue.length, i = 0, output = '', braceClosings = []
-
-            const latexCommands = [
-                ['\\textbf{', '<b>', '</b>'],
-                ['\\textit{', '<i>', '</i>'],
-                ['\\emph{', '<i>', '</i>'],
-                ['\\textsc{', '<span style="font-variant:small-caps;">', '</span>'],
-            ]
-            parseString: while (i < len) {
-                if (theValue[i] === '\\') {
-
-                    for (let s of latexCommands) {
-                        if (theValue.substring(i, i + s[0].length) === s[0]) {
-                            braceLevel++
-                            i += s[0].length
-                            output += s[1]
-                            braceClosings.push(s[2])
-                            continue parseString
-                        }
-                    }
-
-                    if (i + 1 < len) {
-                        i+=2
-                        output += theValue[i+1]
-                        continue parseString
-                    }
-
-                }
-                if (theValue[i] === '_' && theValue.substring(i,i+2) === '_{') {
-                    braceLevel++
-                    i+=2
-                    output =+ '<sub>'
-                    braceClosings.push('</sub>')
-                }
-                if (theValue[i] === '^' && theValue.substring(i,i+2) === '^{') {
-                    braceLevel++
-                    i+=2
-                    output =+ '<sup>'
-                    braceClosings.push('</sup>')
-                }
-                if (theValue[i] === '{') {
-                    braceLevel++
-                    output += '<span class="nocase">'
-                    braceClosings.push('</span>')
-                    i++
-                    continue parseString
-                }
-                if (theValue[i] === '}') {
-                    braceLevel--
-                    if (braceLevel > -1) {
-                        output += braceClosings.pop()
-                        i++
-                        continue parseString
-                    }
-                }
-                if (braceLevel < 0) {
-                    // A brace was closed before it was opened. Abort and remove all the braces.
-                    theValue = theValue.replace(/\}/g, '')
-                    theValue = theValue.replace(/\{/g, '')
-                    return theValue
-                }
-                // math env, just remove
-                if (theValue[i] === '$') {
-                    i++
-                    continue parseString
-                }
-                if (theValue[i] === '<') {
-                    output += "&lt;"
-                    i++
-                    continue parseString
-                }
-                if (theValue[i] === '>') {
-                    output += "&gt;"
-                    i++
-                    continue parseString
-                }
-                output += theValue[i]
-                i++
-            }
-            // Braces were accurate.
-            return output
-        }
-    }
 }

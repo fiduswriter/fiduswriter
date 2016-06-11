@@ -57,7 +57,9 @@ def save_bib_to_db(inserting_obj, suffix):
             inserting_obj['entry_key'] = new_entry_key
             return save_bib_to_db(inserting_obj, new_suffix)
         else:
-            return False
+            # At least one similar entry exists. Return the first match.
+            # This is important for BibTranslationTable on doc import
+            return similar[0]
 
 # bibtex file import
 

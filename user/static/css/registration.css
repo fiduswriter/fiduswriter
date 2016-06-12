@@ -25,6 +25,7 @@
 
 .fw-contents {
     top: 195px;
+    padding-bottom: 150px;
 }
 
 .fw-contents:after {

@@ -2,7 +2,6 @@
 
 {% load i18n %}
 {% load account %}
-{% load url from future %}
 
 {% block title %}{% trans "Log In" %}{% endblock %}
 {% block loginlabel %}{% trans "New here?" %}{% endblock %}
@@ -27,7 +26,9 @@
 <div class="fw-login-left">
     <h1 class="fw-login-title">{% trans "Log in" %}</h1>
 {% if not user.is_authenticated %}
-    {% if socialaccount.providers  %}
+    {% load socialaccount %}
+    {% get_providers as socialaccount_providers %}
+    {% if socialaccount_providers  %}
     <p>
         {% blocktrans with site.name as site_name %}
         If you are new here, please <a href="{{signup_url}}" title="Sign up for {{site_name}}">sign up</a> or use one of the login options below to create an account.
@@ -35,8 +36,7 @@
     </p>
     <div class="socialaccount_ballot">
         <ul class="socialaccount_providers">
-        {% load socialaccount %}
-        {% for provider in socialaccount.providers %}
+        {% for provider in socialaccount_providers %}
             <li>
                 <a title="{{provider.name}}" class="fw-button fw-socialaccount fw-{{provider.id}}"
                     href="{% provider_login_url provider.id %}">
@@ -84,4 +84,3 @@
     </form>
 </div>
 {% endblock %}
-

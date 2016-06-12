@@ -26,12 +26,10 @@ class Contents(list):
     # template = '{"nn":"DIV","a":[["id","document-contents"]],"c":[%s]}'
     template = ''.join([
         '{"nn":"DIV",',
-            '"a":[',
-                '["id","document-contents"],',
-                '["class","editable user-contents"],',
-                '["contenteditable","true"]',
-            '],',
-            '"c":[%s]',
+        '"a":[',
+        '["id","document-contents"]',
+        '],',
+        '"c":[%s]',
         '}',
     ])
 
@@ -64,6 +62,7 @@ class BlockContent(object):
 
 
 class ListOfInlineContent(list):
+
     def __init__(self, *manyInlineContents):
         for i in manyInlineContents:
             assert isinstance(i, InlineContent)
@@ -99,16 +98,20 @@ class Paragraph(BlockContent, ListOfInlineContent):
     ...     Footnote('also latin'),
     ...     Text('This was taken from'),
     ...     Citation(0, '', '122'),
-    ...     Link(text='about', address='/about/'),
+    ...     Link(text='about', address='/about/', title='About'),
     ... )) == Paragraph.template % ','.join([
     ...     Equation.template %  dict(formula='f(x) = x^2'),
-    ...     BoldText.template %  dict(contents='Nemo enim ipsam voluptatem quia voluptas,'),
+    ...     BoldText.template
+    ... %  dict(contents='Nemo enim ipsam voluptatem quia voluptas,'),
     ...     Footnote.template %  dict(text='latin'),
-    ...     ItalicText.template %  dict(contents='sed quia consequuntur magni dolores.'),
+    ...     ItalicText.template
+    ... %  dict(contents='sed quia consequuntur magni dolores.'),
     ...     Footnote.template %  dict(text='also latin'),
     ...     Text.template %  dict(contents='This was taken from'),
-    ...     Citation.template %  dict(bibliographyId=0, textBefore='', page='122'),
-    ...     Link.template %  dict(text='about', address='/about/'),
+    ...     Citation.template
+    ... %  dict(bibliographyId=0, textBefore='', page='122'),
+    ...     Link.template
+    ... %  dict(text='about', address='/about/', title='About'),
     ...     BR_ELEM_STRING,
     ... ])
     True
@@ -160,6 +163,7 @@ class ListBlock(list):
     ListBlock is [ListItem]
     interpretation: base class of NumberedList and BulletedList
     """
+
     def __init__(self, *manyListItems):
         for li in manyListItems:
             assert isinstance(li, ListItem)
@@ -224,6 +228,7 @@ class FlatInlineContent(InlineContent):
     interpretation: set of all InlineContent types which have a fixed number of
                     children
     """
+
     def __str__(self):
         return self.template % self.__dict__
 
@@ -252,31 +257,37 @@ class Bold(InlineContent, ListOfInlineContent):
             for ic in self
         ])
 
+
 class BoldText(Text):
     """
     BoldText is String
     interpretation: string formatted as bold text
     """
-    template = '{"nn":"B","c":[{"t":"%(contents)s"}]}'
+    template = '{"nn":"STRONG","c":[{"t":"%(contents)s"}]}'
+
 
 class ItalicText(Text):
     """
     ItalicText is String
     interpretation: string formatted as italic text
     """
-    template = '{"nn":"I","c":[{"t":"%(contents)s"}]}'
+    template = '{"nn":"EM","c":[{"t":"%(contents)s"}]}'
 
 
 class Link(FlatInlineContent):
     """
-    Link is (String, String)
+    Link is (String, String, String)
     interpretation: text formatted as a link, referencing the given address
     """
-    template = '{"nn":"A","a":[["href","%(address)s"]],"c":[{"t":"%(text)s"}]}'
+    template = (
+        '{"nn":"A","a":[["href","%(address)s"],["title","%(title)s"]],'
+        '"c":[{"t":"%(text)s"}]}'
+    )
 
-    def __init__(self, text, address):
+    def __init__(self, text, address, title):
         self.text = text
         self.address = address
+        self.title = title
 
     def __str__(self):
         return self.template % self.__dict__
@@ -289,8 +300,8 @@ class Footnote(FlatInlineContent):
     """
     template = ''.join([
         '{"nn":"SPAN", "a":[["class","footnote"]], "c":[',
-            '{"t":"%(text)s"},',
-            '{"nn":"BR"}',
+        '{"t":"%(text)s"},',
+        '{"nn":"BR"}',
         ']}',
     ])
 
@@ -305,11 +316,11 @@ class Citation(FlatInlineContent):
     """
     template = ''.join([
         '{"nn":"SPAN","a":[',
-            '["class","citation"],',
-            '["data-bib-entry","%(bibliographyId)i"],',
-            '["data-bib-before","%(textBefore)s"],',
-            '["data-bib-page","%(page)s"],',
-            '["data-bib-format","autocite"]',
+        '["class","citation"],',
+        '["data-bib-entry","%(bibliographyId)i"],',
+        '["data-bib-before","%(textBefore)s"],',
+        '["data-bib-page","%(page)s"],',
+        '["data-bib-format","autocite"]',
         ']}'
     ])
 
@@ -326,8 +337,8 @@ class Equation(FlatInlineContent):
     """
     template = ''.join([
         '{"nn":"SPAN","a":[',
-            '["class","equation"],',
-            '["data-equation","%(formula)s"]',
+        '["class","equation"],',
+        '["data-equation","%(formula)s"]',
         ']}',
     ])
 
@@ -343,28 +354,17 @@ class Comment(InlineContent, ListOfInlineContent):
     """
     template = ''.join([
         '{"nn":"SPAN",',
-            '"a":[',
-                '["class","comment"],',
-                '["id","%(id)s"],',
-                '["data-id","%(dataId)s"],',
-                '["data-user","%(user)s"],',
-                '["data-user-name","%(userName)s"],',
-                '["data-user-avatar","%(userAvatar)s"],',
-                '["data-date","%(date)s"],',
-                '["data-comment","%(text)s"]',
-            '],',
-            '"c":[%(children)s]',
+        '"a":[',
+        '["class","comment"],',
+        '["data-id","%(dataId)s"],',
+        '],',
+        '"c":[%(children)s]',
         '}',
     ])
 
-    def __init__(self, _id, dataId, user, userName, userAvatar, date, text, *children):
+    def __init__(self, _id, dataId, *children):
         self.id = _id
         self.dataId = dataId
-        self.user = user
-        self.userName = userName
-        self.userAvatar = userAvatar
-        self.date = date
-        self.text = text
         super(Comment, self).__init__(*children)
 
     def __str__(self):

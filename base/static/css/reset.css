@@ -64,11 +64,7 @@ a {
    color: #a9abaa;
    font-size: 14px;
 }
-:-moz-placeholder { /* Firefox 18- */
-   color: #a9abaa;
-   font-size: 14px;
-}
-::-moz-placeholder {  /* Firefox 19+ */
+::-moz-placeholder {
    color: #a9abaa;
    font-size: 14px;
 }

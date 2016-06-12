@@ -12,15 +12,15 @@
     overflow: scroll;
 }
 
-.ui-autocomplete li a {
+.ui-autocomplete li {
     display: block;
     padding: 10px;
     color: #2c2723;
     line-height: 1.2em;
 }
 
-.ui-autocomplete li a:hover,
-.ui-autocomplete li a:focus,
-.ui-autocomplete li a.ui-state-focus {
+.ui-autocomplete li:hover,
+.ui-autocomplete li:focus,
+.ui-autocomplete li.ui-state-focus {
     background-color: #fbf9d2;
 }

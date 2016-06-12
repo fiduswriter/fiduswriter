@@ -12,13 +12,14 @@ def delete_document_style(modeladmin, request, queryset):
             call_command("compress")
         except:
             pass
-        call_command("collectstatic", interactive=False)        
+        call_command("collectstatic", interactive=False)
 
 delete_document_style.short_description = "Delete selected document styles"
 
+
 class DocumentStyleAdmin(admin.ModelAdmin):
     actions = [delete_document_style]
-    
+
     def save_model(self, request, obj, form, change):
         obj.save()
         call_command("create_document_styles")
@@ -36,7 +37,7 @@ class DocumentStyleAdmin(admin.ModelAdmin):
         except:
             pass
         call_command("collectstatic", interactive=False)
-        
+
     def get_actions(self, request):
         actions = super(DocumentStyleAdmin, self).get_actions(request)
         del actions['delete_selected']
@@ -45,10 +46,12 @@ class DocumentStyleAdmin(admin.ModelAdmin):
 
 admin.site.register(models.DocumentStyle, DocumentStyleAdmin)
 
+
 class DocumentFontAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(models.DocumentFont, DocumentFontAdmin)
+
 
 def delete_citation_style(modeladmin, request, queryset):
     for obj in queryset:
@@ -58,7 +61,7 @@ def delete_citation_style(modeladmin, request, queryset):
             call_command("compress")
         except:
             pass
-        call_command("collectstatic", interactive=False)        
+        call_command("collectstatic", interactive=False)
 
 delete_citation_style.short_description = "Delete selected citation styles"
 
@@ -71,13 +74,14 @@ def delete_citation_locale(modeladmin, request, queryset):
             call_command("compress")
         except:
             pass
-        call_command("collectstatic", interactive=False)        
+        call_command("collectstatic", interactive=False)
 
 delete_citation_locale.short_description = "Delete selected citation locales"
 
+
 class CitationStyleAdmin(admin.ModelAdmin):
     actions = [delete_citation_style]
-    
+
     def save_model(self, request, obj, form, change):
         obj.save()
         call_command("create_citation_styles")
@@ -95,7 +99,7 @@ class CitationStyleAdmin(admin.ModelAdmin):
         except:
             pass
         call_command("collectstatic", interactive=False)
-        
+
     def get_actions(self, request):
         actions = super(CitationStyleAdmin, self).get_actions(request)
         del actions['delete_selected']
@@ -103,9 +107,10 @@ class CitationStyleAdmin(admin.ModelAdmin):
 
 admin.site.register(models.CitationStyle, CitationStyleAdmin)
 
+
 class CitationLocaleAdmin(admin.ModelAdmin):
     actions = [delete_citation_locale]
-    
+
     def save_model(self, request, obj, form, change):
         obj.save()
         call_command("create_citation_styles")
@@ -123,7 +128,7 @@ class CitationLocaleAdmin(admin.ModelAdmin):
         except:
             pass
         call_command("collectstatic", interactive=False)
-        
+
     def get_actions(self, request):
         actions = super(CitationLocaleAdmin, self).get_actions(request)
         del actions['delete_selected']

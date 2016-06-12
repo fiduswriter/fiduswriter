@@ -10,3 +10,25 @@ local_settings.py
 .settings
 media
 .elasticbeanstalk/
+bibliography/static/js/es6_modules/bibliography/statics.js
+*.mo
+node_modules/
+style/static/
+venv/
+.idea/
+configuration.py
+fidus.db
+deploy
+base/static/zip/katex-style.zip
+base/static/js/es6_modules/katex/opf-includes.js
+chromedriver
+testing.py
+es6-tmp/
+es6-cache/
+static-es5/
+*.es5.js
+base/static/css/libs/
+.coverage
+
+#sphinx build folder
+docs/_build/

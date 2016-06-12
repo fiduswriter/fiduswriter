@@ -160,12 +160,16 @@ CSL_CHROME.prototype.getAttributeName = function (attr) {
     return ret;
 }
 CSL_CHROME.prototype.getAttributeValue = function (myxml,name,namespace) {
-    var ret = "";
+    var ret = false;
     if (namespace) {
         name = namespace+":"+name;
     }
-    if (myxml && this.hasAttributes(myxml) && myxml.getAttribute(name)) {
-        ret = myxml.getAttribute(name);
+    if (myxml && this.hasAttributes(myxml)) {
+        if (myxml.getAttribute(name)) {
+            ret = myxml.getAttribute(name);
+        }
+    } else {
+        ret = "";
     }
     return ret;
 }
@@ -289,7 +293,7 @@ CSL_CHROME.prototype.insertPublisherAndPlace = function(myxml) {
                 if (skippers.indexOf(j) > -1) {
                     continue;
                 }
-                var child = node.childNodes.item(j);                    
+                var child = node.childNodes.item(j);
                 var subskippers = [];
                 for (var k = 0, klen = child.childNodes.length; k < klen; k += 1) {
                     if (child.childNodes.item(k).nodeType !== 1) {

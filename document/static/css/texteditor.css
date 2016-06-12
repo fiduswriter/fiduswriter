@@ -29,12 +29,12 @@ body {
     color: #fff;
     font-style: italic;
     padding-left: 108px;
-    background: url(../img/fidus_face.png) no-repeat 48px 0;
+    background: url(../img/fidus_face.png) no-repeat 68px 0;
     background-size: 17px 21px;
 }
 #header-navigation {
     position: relative;
-    margin: 20px 0 0 108px;
+    margin: 20px 0 0 68px;
     -webkit-user-select: none;
 }
 #header-navigation > div {
@@ -85,16 +85,14 @@ body {
 #editor-tools-wrapper {
     position: relative;
     padding: 12px 0;
-    width: 1000px;
+    width: 1250px;
 }
-#open-close-header,
-#ice-control,
-#comments-display {
+#open-close-header {
     position: absolute;
     z-index: 100;
 }
 #open-close-header {
-    left: 34px;
+    left: 14px;
     top: 12px;
     background: transparent;
     border-color: #f9f9f9;
@@ -126,7 +124,7 @@ body {
 }
 .editortoolbar {
     position: relative;
-    left: 108px;
+    left: 68px;
     width: auto !important;
 }
 .editortoolbar div.ui-buttonset {
@@ -137,13 +135,37 @@ body {
     margin-right: 7px;
 }
 
+.editortoolbar #current-position {
+  max-width: 90px;
+  min-width: 62px;
+  color: #000;
+  background-color: #f2f2f2;
+  text-shadow: none;
+  border-color: #c9c9c9;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 10px;
+  display: inline-block;
+  font-size: 14px;
+  border-style: solid;
+  border-width: 1px;
+  border-radius: 3px;
+  text-decoration: none;
+  box-shadow: none;
+  box-sizing: content-box;
+  white-space: nowrap;
+  margin-right: 7px;
+}
+
+
 .editortoolbar div.multiButtons {
     width: auto;
 }
 
 .editortoolbar div.multiButtons .multibuttonsCover {
     position: relative;
-    width: 120px;
+    min-width: 80px;
+    max-width: 120px;
     font-size: 11px;
     font-weight: 900;
 }
@@ -170,10 +192,6 @@ body {
     overflow: hidden;
 }
 
-#flow {
-    margin: .5in 0 0 108px !important;
-}
-
 div#statusarea {
     position: absolute;
     right: 50%;
@@ -192,54 +210,38 @@ div#statusarea .saved {
 div#statusarea .error {
     color: red;
 }
+#editor-content {
+    display: flex;
+    top: 200px;
+    bottom: 50px;
+    padding: .5in 68px 0 68px !important;
+    position: relative;
+    max-width: 1600px;
+}
 #flow #document-bibliography {
     background-color: lightgrey;
 }
-#document-editable .citation, .equation {
+#paper-editable .citation, .equation {
     cursor: pointer;
     background-color: lightgrey;
 }
-#document-editable .citation:hover, .equation:hover {
+#paper-editable .citation:hover, .equation:hover {
     background-color: grey;
 }
-#menu1 .selected:before {
-    content: "✓ ";
+#paper-editable {
+    display: table;
+    width: 100%;
 }
+
+#document-editable {
+    display: table-cell;
+    vertical-align: top;
+}
+
+
+
 div#layout {
     padding-top: 60px;
-}
-ul#menu2 {
-    clear: both;
-    width: 160px;
-    margin-top: 10px;
-}
-ul#menu1 > li.potato-menu-item {
-    border-radius: 6px;
-}
-li.potato-menu-item {
-    width: 160px;
-    font-size: 12px;
-    background-color: #EEEEEC;
-    /* background-color:#333;
-     background-color:rgba(0,0,0,0.9);*/
-}
-li.potato-menu-item a {
-    padding: 5px 20px 5px 12px;
-    color: black;
-}
-li.potato-menu-hover {
-    background-color: #ddd;
-}
-/*li.potato-menu-has-vertical > a {
- background: transparent url(/images/icons/fammini/arrow_down.gif) right no-repeat;
- }
- li.potato-menu-has-holizontal > a {
- background: transparent url(/images/icons/fammini/arrow_right.gif) right no-repeat;
- }*/
-li.potato-menu-item ul {
-
-    border-radius: 6px;
-    border: 1px solid #BABDB6;
 }
 /*
  * Dialog
@@ -253,55 +255,7 @@ li.potato-menu-item ul {
 input.required, error {
     border: 2px solid red;
 }
-/*!
- * jquery.ui.potato.menu
- *
- * Copyright (c) 2009-2010 makoto_kw, http://www.makotokw.com
- * Licensed under the MIT license.
- *
- * @author makoto_kw
- * @version 1.1
- */
-ul.potato-menu {
-    margin: 0;
-    padding: 0;
-    width: auto;
-    list-style: none;
-}
-.potato-menu:after {
-    content: " ";
-    display: block;
-    visibility: hidden;
-    clear: both;
-    height: 0.1px;
-    font-size: 0.1em;
-    line-height: 0;
-}
-ul.potato-menu li.potato-menu-item {
-    margin: 0;
-    padding: 0;
-    position: relative;
-    list-style: none;
-    list-style-position: outside;
-    display: inline;
-    float: left;
-}
-ul.potato-menu li.potato-menu-item a {
-    display: block;
-    text-decoration: none;
-    white-space: nowrap;
-    outline: 0;
-}
-ul.potato-menu ul.potato-menu-group {
-    margin: 0;
-    padding: 3px;
-    -webkit-padding-start: 0;
-    -webkit-padding-end: 0;
-    position: absolute;
-    display: none;
-    z-index: 1000;
-    background-color: #EEEEEC;
-}
+
 /* For print */
 
 @media print {
@@ -365,12 +319,10 @@ span.delete {
 #document-title:focus, #document-contents:focus {
     outline: none;
 }
-#document-contents {
-    min-height: 400px;
-}
-#flow .pagination-footnote > span {
-    width: 150px;
-}
+/*#document-contents {*/
+    /*min-height: 400px;*/
+/*}*/
+
 .pagination-footnote-item {
     width: 100%;
 }
@@ -400,10 +352,9 @@ span.delete {
 
 #flow {
     padding: 50px;
-    padding-right: 170px;
+/*    padding-right: calc(20vw + 10px);*/
     position: relative;
-    top: 200px;
-    width: 570px;
+    width: 100%;
     bottom: 50px;
 }
 
@@ -426,11 +377,14 @@ figure img {
     max-width: 100%
 }
 
-#flow {
+#paper-editable {
     counter-reset: figure-cat-0 figure-cat-1 figure-cat-2;
-    background-color: white;
 }
 
+#flow {
+    background-color: white;
+}
+/*
 body {counter-reset: pagination-footnote pagination-footnote-reference;}
 #flow .pagination-footnote::before {
     counter-increment: pagination-footnote-reference;
@@ -445,10 +399,10 @@ body {counter-reset: pagination-footnote pagination-footnote-reference;}
 #flow .pagination-footnote > * > *::before, .pagination-footnote::before {position: relative; top: -0.5em; font-size: 80%;}
 #flow .pagination-footnote > span {
     position: absolute;
-    right: 0in;
-    width: 1.5in;
+    right: calc(-20vw - 10px);
+    width: 20vw;
 }
-
+*/
 
 .figure-cat-figure::after {
     counter-increment: figure-cat-0;
@@ -471,4 +425,138 @@ body {counter-reset: pagination-footnote pagination-footnote-reference;}
 
 #document-editable {
     white-space: pre-wrap;
+}
+
+.ProseMirror {
+  border: none !important;
+}
+
+.ProseMirror-content {
+  padding: 0 !important;
+  line-height: inherit !important;
+}
+
+#comments-filter {
+    margin-left: 7px;
+}
+#unobtrusive_messages {
+  position: fixed;
+  bottom: 0;
+  left: 100px;
+  background-color: #f2f2f2;
+  border-top: 1px solid #c9c9c9;
+  border-right: 1px solid #c9c9c9;
+  border-left: 1px solid #c9c9c9;
+  padding: 4px;
+}
+
+#unobtrusive_messages .warn {
+  color: #b73717;
+}
+
+#unobtrusive_messages:empty {
+  display: none;
+}
+
+/* Show key bindings menu */
+
+.help-key {
+  float: none;
+  line-height: 1.5;
+  position: relative;
+  bottom: 4px;
+}
+
+
+.help-list-wrap {
+overflow: hidden;
+margin: 0 auto;
+-webkit-transition: width .2s linear;
+-moz-transition: width .2s linear;
+-o-transition: width .2s linear;
+transition: width .2s linear;
+}
+
+.help-list {
+list-style: none;
+margin: 0;
+padding: 0 0 10px 0;
+overflow: hidden;
+float: left;
+width: 330px;
+}
+
+.help-list li {
+  margin-right: 40px;
+}
+
+.help-key-unit {
+line-height: 1.8;
+margin-right: 2em;
+padding: 5px 0;
+}
+
+.help-key {
+min-width: 60px;
+float: left;
+clear: left;
+position: relative;
+bottom: 2px;
+}
+
+.help-key span {
+font-size: 15px;
+color: #555;
+display: inline-block;
+padding: 0 8px;
+text-align: center;
+background-color: #fff;
+background-repeat: repeat-x;
+background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f5f5f5), to(#eee));
+background-image: -webkit-linear-gradient(#f5f5f5 0%, #eee 100%);
+background-image: -moz-linear-gradient(#f5f5f5 0%, #eee 100%);
+background-image: -o-linear-gradient(#f5f5f5 0%, #eee 100%);
+background-image: linear-gradient(#f5f5f5 0%, #eee 100%);
+border: 1px solid #ccc;
+border-radius: 3px;
+-webkit-box-shadow: inset 0 1px 0 #fff, 0 1px 0 #ccc;
+box-shadow: inset 0 1px 0 #fff, 0 1px 0 #ccc;
+}
+
+.help-key-def {
+display: inline-block;
+margin-left: 1em;
+}
+
+/* MathQuill Editor Overwrite */
+.math-field {
+    min-width: 250px;
+    background-color: white;
+    margin: 9px 0 7px 0;
+    padding-left: 5px;
+    font-size: 20px;
+    display: block;
+}
+
+.math-latex {
+    display: block;
+    min-width: 250px;
+    margin: 5px 0 5px 0;
+    font-size: 18px;
+    padding-left: 5px;
+}
+
+.math-field-header {
+    font-size: 113%;
+    font-weight: 400;
+}
+
+.math-error {
+    margin: 10px 0px;
+    padding:12px;
+    color: #D8000C;
+    background-color: #FFBABA;
+    font-size:2em;
+    vertical-align:middle;
+    display: none;
 }

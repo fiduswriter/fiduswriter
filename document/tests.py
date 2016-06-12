@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from collections import namedtuple
 from itertools import chain
-from unittest import skip
+import os
+import time
 
 from allauth.account.models import EmailAddress
 from django.contrib.auth.hashers import make_password
@@ -14,12 +15,40 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 from document.models import Document
-from test.helpers import testCaretJS
+from test.mock.helpers import testCaretJS
 from test.testcases import LiveTornadoTestCase
-from test.mock.document_contents import *
+from test.mock.document_contents import (
+    Contents,
+    Paragraph,
+    Text,
+    Bold,
+    BoldText,
+    ItalicText,
+    Link
+)
 
 # GLOBALS
 global DRIVER
+
+# TEST MODULE SETUP
+# DRIVER initialized in setUpModule isn't visible outside setUpModule
+
+if os.getenv("SAUCE_USERNAME"):
+    username = os.environ["SAUCE_USERNAME"]
+    access_key = os.environ["SAUCE_ACCESS_KEY"]
+    capabilities = {}
+    capabilities["build"] = os.environ["TRAVIS_BUILD_NUMBER"]
+    capabilities["tags"] = [os.environ["TRAVIS_PYTHON_VERSION"], "CI"]
+    capabilities["tunnel-identifier"] = os.environ["TRAVIS_JOB_NUMBER"]
+    capabilities["browserName"] = "chrome"
+    hub_url = "%s:%s@localhost:4445" % (username, access_key)
+    DRIVER = webdriver.Remote(
+        desired_capabilities=capabilities,
+        command_executor="http://%s/wd/hub" % hub_url
+    )
+else:
+    DRIVER = webdriver.Chrome()
+
 
 # CONSTANTS
 SHORT_LOREM = "Lorem ipsum dolor sit amet, consectetur adipiscing elit."
@@ -32,20 +61,6 @@ LONG_LOREM = (
     " mollit anim id est laborum."
 )
 
-
-# DATA
-class Caret(dict):
-    """
-    Caret is {parent: String, node: Integer, offset: Integer}
-    Represents the position of a caret in the document
-        parent is a jQuery selector uniquely identifying the parent element of
-               the caret
-        node is index of the caret containing node inside the parent element
-        offset is position of the caret inside the node
-    """
-    # not using a namedtuple, because they don't get converted properly to
-    # objects when passed as javascript arguments
-    pass
 
 CaretTestCase = namedtuple(
     'CaretTestCase', [
@@ -67,8 +82,9 @@ InsertionTestCase = namedtuple(
         'description',      # string with a short description of what is
                             #   being tested
         'givenContents',    # DocumentContents string
-        'givenCaret',       # position of caret at start of test
-        'expectedContents', # expected document contents at end of test
+        'givenCaretStart',  # start of selection at start of test
+        'givenCaretEnd',    # end of selection at start of test
+        'expectedContents',  # expected document contents at end of test
         'expectedCaret',    # expected caret position at end of test
     ]
 
@@ -170,26 +186,32 @@ class Manipulator(object):
     # execute javascript
     def injectHelpers(self):
         return DRIVER.execute_script(
-            'window.testCaret = %s' % testCaretJS
+            testCaretJS
         )
 
     def getCaret(self):
         return DRIVER.execute_script(
-            'return testCaret.getCaret(rangy.getSelection());'
+            'return testCaret.getCaret();'
         )
 
     def setCaret(self, caret):
         return DRIVER.execute_script(
-            'testCaret.setCaret(rangy.getSelection(), arguments[0]);',
+            'testCaret.setCaret(arguments[0]);',
             caret
+        )
+
+    def setSelection(self, caret_one, caret_two):
+        return DRIVER.execute_script(
+            'testCaret.setSelection(arguments[0], arguments[1]);',
+            caret_one, caret_two
         )
 
     def caretIsAt(self, expectedCaret):
         return DRIVER.execute_script(
             '''
-            return testCaret.caretsMatch(
+            return testCaret.selectionsMatch(
                 arguments[0],
-                testCaret.getCaret(rangy.getSelection())
+                testCaret.getCaret()
             );
             ''',
             expectedCaret
@@ -198,10 +220,10 @@ class Manipulator(object):
     def getDocumentContents(self):
         return DRIVER.execute_script(
             """
-            // refresh theDocument first
-            editorHelpers.getUpdatesFromInputFields();
+            // refresh theEditor.doc first
+            theEditor.getUpdates();
 
-            return JSON.stringify(theDocument.contents);
+            return JSON.stringify(theEditor.doc.contents);
             """
         )
 
@@ -211,6 +233,7 @@ class CaretPositionTest(LiveTornadoTestCase, Manipulator):
     Base for all tests that check that Caret is at an expected position after
     entering a given series of keys.
     """
+
     def setUp(self):
         self.createAndLoginUser()
 
@@ -221,8 +244,11 @@ class CaretPositionTest(LiveTornadoTestCase, Manipulator):
 
         self.injectHelpers()
         self.setCaret(caretCase.givenCaret)
-        (DRIVER.find_element_by_id('document-contents')
-               .send_keys(caretCase.givenKeys))
+        (DRIVER.find_element_by_css_selector(
+            '#document-editable .ProseMirror-content'
+        ).send_keys(caretCase.givenKeys))
+        # Wait 0.1 second to let the JavaScript adjust the caret position.
+        time.sleep(0.1)
         # grab caret from browser and compare in python,
         # to get more informative failure messages
         self.assertEqual(
@@ -230,12 +256,7 @@ class CaretPositionTest(LiveTornadoTestCase, Manipulator):
             self.getCaret()
         )
         # test browser-side, in case caret grabbing is buggy
-        self.assertTrue(self.caretIsAt(caretCase.expectedCaret))
-
-
-# TEST MODULE SETUP
-# DRIVER initialized in setUpModule isn't visible outside setUpModule
-DRIVER = webdriver.Chrome()
+        # self.assertTrue(self.caretIsAt(expectedCaret))
 
 
 def tearDownModule():
@@ -289,189 +310,75 @@ class MovementInSingleChildParagraph(CaretPositionTest):
             'name': 'leftFromOneAfterDocStart',
             'description': "left arrow decrements caret offset",
             'givenContents': None,
-            'givenCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
-                offset=1 + 0,
-            ),
+            'givenCaret': 16,
             'givenKeys': Keys.ARROW_LEFT,
-            'expectedCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
-                offset=0,
-            )
+            'expectedCaret': 15
         }),
         CaretTestCase(**{
             'name': 'leftFromDocStart',
             'description': "left arrow does nothing when caret is at start of"
                            " document",
             'givenContents': None,
-            'givenCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
-                offset=0,
-            ),
+            'givenCaret': 1,
             'givenKeys': Keys.ARROW_LEFT,
-            'expectedCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
-                offset=0,
-            )
+            'expectedCaret': 1
         }),
         CaretTestCase(**{
             'name': 'rightFromOneBeforeDocEnd',
             'description': "right arrow increments caret offset",
             'givenContents': None,
-            'givenCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
-                offset=(-1) + len(SHORT_LOREM),
-            ),
+            'givenCaret': 14 + len(SHORT_LOREM),
             'givenKeys': Keys.ARROW_RIGHT,
-            'expectedCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
-                offset=len(SHORT_LOREM),
-            )
+            'expectedCaret': 15 + len(SHORT_LOREM),
         }),
         CaretTestCase(**{
             'name': 'rightFromDocEnd',
             'description': "right arrow does nothing when caret is at end of"
                            " document",
             'givenContents': None,
-            'givenCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
-                offset=len(SHORT_LOREM),
-            ),
+            'givenCaret': 15 + len(SHORT_LOREM),
             'givenKeys': Keys.ARROW_RIGHT,
-            'expectedCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
-                offset=len(SHORT_LOREM),
-            )
+            'expectedCaret': 15 + len(SHORT_LOREM)
         }),
         CaretTestCase(**{
             'name': 'upArrowFromMidFirstDocLine',
             'description': "up arrow moves caret from within first line of"
                            " document to beginning of document",
             'givenContents': None,
-            'givenCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
-                offset=(5) + 0,
-            ),
+            'givenCaret': 14,
             'givenKeys': Keys.ARROW_UP,
-            'expectedCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
-                offset=0,
-            )
+            'expectedCaret': 1
         }),
         CaretTestCase(**{
             'name': 'upArrowFromDocStart',
             'description': "up arrow does nothing when caret is at start of"
                            " document",
             'givenContents': None,
-            'givenCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
-                offset=0,
-            ),
+            'givenCaret': 1,
             'givenKeys': Keys.ARROW_UP,
-            'expectedCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
-                offset=0,
-            )
-        }),
-        CaretTestCase(**{
-            'name': 'downFromMidLastDocLine',
-            'description': "down arrow moves caret from within last line of"
-                           " document to end of document",
-            'givenContents': None,
-            'givenCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
-                offset=(-7) + len(SHORT_LOREM),
-            ),
-            'givenKeys': Keys.ARROW_DOWN,
-            'expectedCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
-                offset=len(SHORT_LOREM),
-            )
+            'expectedCaret': 1
         }),
         CaretTestCase(**{
             'name': 'downFromDocEnd',
             'description': "down arrow does nothing when caret is at end of"
                            " document",
             'givenContents': None,
-            'givenCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
-                offset=len(SHORT_LOREM),
-            ),
+            'givenCaret': 15 + len(SHORT_LOREM),
             'givenKeys': Keys.ARROW_DOWN,
-            'expectedCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
-                offset=len(SHORT_LOREM),
-            )
+            'expectedCaret': 15 + len(SHORT_LOREM),
         }),
     ]
-    movement_within_long = [
-        CaretTestCase(**{
-            # !!!
-            # I have no idea how to test this...
-            'name': 'upArrowFromSecondDocLine',
-            'description': "up arrow moves caret from second line to first"
-                           " at equal offset relative to line start",
-            'givenContents': None,
-            'givenCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
-                offset=None,
-            ),
-            'givenKeys': Keys.ARROW_UP,
-            'expectedCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
-                offset=None,
-            )
-        }),
-        CaretTestCase(**{
-            # !!!
-            # I have no idea how to test this...
-            'name': 'downFromMidLastDocLine',
-            'description': "down arrow moves caret from first line to second,"
-                           " at equal offset relative to line start",
-            'givenContents': None,
-            'givenCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
-                offset=None,
-            ),
-            'givenKeys': Keys.ARROW_DOWN,
-            'expectedCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
-                offset=None,
-            )
-        }),
+
+    movement_in_text = [
+        c._replace(
+            name=c.name + 'InText',
+            description=c.description + ' in text',
+            givenContents=Contents(Paragraph(
+                Text(SHORT_LOREM)
+            )),
+        )
+        for c in movement_within_short
     ]
-    # !!!
-    # raw text needs different parent selector
-    # movement_in_text = [
-    #     c._replace(
-    #         name=c.name + 'InText',
-    #         description=c.description + ' in text',
-    #         givenContents=Contents(Paragraph(
-    #             Text(SHORT_LOREM)
-    #         )),
-    #     )
-    #     for c in movement_within_short
-    # ]
     movement_in_bold = [
         c._replace(
             name=c.name + 'InBold',
@@ -498,8 +405,9 @@ class MovementInSingleChildParagraph(CaretPositionTest):
             description=c.description + ' in link',
             givenContents=Contents(Paragraph(
                 Link(
-                    'your source of examples on the world-wide-web',
-                    'http://www.example.com'
+                    SHORT_LOREM,
+                    'http://www.example.com',
+                    'LinkTitle'
                 )
             )),
         )
@@ -508,87 +416,58 @@ class MovementInSingleChildParagraph(CaretPositionTest):
 
     # each case will be passed into self.runCheck
     cases = chain(
-        #movement_in_text,
-        #movement_in_bold,
-        # movement_in_italic,
-        # movement_in_link,
+        movement_in_text,
+        movement_in_bold,
+        movement_in_italic,
+        movement_in_link,
     )
 
-
-class MovementInMultiChildParagraph(CaretTestCase):
-    __metaclass__ = DataCasesToTestMethodsMeta
-
-    # each case will be passed into self.runCheck
-    cases = chain(
-        # movement_between_text_text,
-        # movement_between_text_bold,
-        # movement_between_text_italic,
-        # movement_between_text_link,
-        # movement_between_bold_text,
-        # movement_between_bold_bold,
-        # movement_between_bold_italic,
-        # movement_between_bold_link,
-        # movement_between_italic_text,
-        # movement_between_italic_bold,
-        # movement_between_italic_italic,
-        # movement_between_italic_link,
-        # movement_between_link_text,
-        # movement_between_link_bold,
-        # movement_between_link_italic,
-        # movement_between_link_link,
-    )
 
 class InsertionOfLink(LiveTornadoTestCase, Manipulator):
     __metaclass__ = DataCasesToTestMethodsMeta
-    linkText = 'all the ipsums'
+    linkTitle = 'all the ipsums'
     linkAddressWithoutHTTP = 'www.example.com'
     linkAddress = 'http://' + linkAddressWithoutHTTP
-    expectedLink = Link(linkText, linkAddress)
+    expectedLink = Link('', linkAddress, linkTitle)
 
     cases = [
         InsertionTestCase(**{
             'name': 'atStartOfParagraph',
-            'description': 'caret at start of paragraph inserts link before'
-                           ' text',
+            'description': 'caret at start of paragraph turns start of text'
+            ' into link',
             'givenContents': Contents(Paragraph(Text(SHORT_LOREM))),
-            'givenCaret': Caret(
-                parent='#document-contents > :eq(0)',
-                node=0,
-                offset=0
-            ),
+            'givenCaretStart': 14,
+            'givenCaretEnd': 14 + len('Lo'),
             'expectedContents': Contents(
-                Paragraph(expectedLink, Text(SHORT_LOREM))
+                Paragraph(
+                    Link(
+                        'Lo',
+                        linkAddress,
+                        linkTitle
+                    ),
+                    Text(
+                        SHORT_LOREM[len('Lo'):]
+                    )
+                )
             ),
-            'expectedCaret': Caret(
-                parent='#document-contents > :eq(0)',
-                node=0,
-                offset=0
-            ),
+            'expectedCaret': 14,
         }),
         InsertionTestCase(**{
             'name': 'linkInsideBold',
-            'description': 'caret within Bold inserts Link between two'
-                           ' Bold',
+            'description': 'caret within Bold creates link within Bold',
             'givenContents': Contents(Paragraph(BoldText(SHORT_LOREM))),
-            'givenCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
-                offset=len('Lorem'),
-            ),
+            'givenCaretStart': 14 + len('Lorem'),
+            'givenCaretEnd': 14 + len('Lorem ipsum'),
             'expectedContents': Contents(
                 Paragraph(
                     Bold(
                         Text('Lorem'),
-                        expectedLink,
-                        Text(SHORT_LOREM[len('Lorem'):])
+                        Link(' ipsum', linkAddress, linkTitle),
+                        Text(SHORT_LOREM[len('Lorem ipsum'):])
                     ),
                 )
             ),
-            'expectedCaret': Caret(
-                parent='#document-contents > :eq(0) > :eq(0)',
-                node=0,
-                offset=len('Lorem'),
-            ),
+            'expectedCaret': 14 + len('Lorem'),
         }),
     ]
 
@@ -601,21 +480,22 @@ class InsertionOfLink(LiveTornadoTestCase, Manipulator):
         )
 
         self.injectHelpers()
-        self.setCaret(case.givenCaret)
+
+        self.setSelection(case.givenCaretStart, case.givenCaretEnd)
 
         (DRIVER.find_element_by_id('button-link')
                .click())
         WebDriverWait(DRIVER, 10).until(
             EC.presence_of_element_located((By.XPATH,
-                '//span['
-                    '@class="ui-dialog-title"'
-                    ' and text()="Link"'
-                ']'
-            ))
+                                            '//span['
+                                            '@class="ui-dialog-title"'
+                                            ' and text()="Link"'
+                                            ']'
+                                            ))
         )
 
-        (DRIVER.find_element_by_css_selector('input.linktext')
-               .send_keys(self.linkText))
+        (DRIVER.find_element_by_css_selector('input.linktitle')
+               .send_keys(self.linkTitle))
         (DRIVER.find_element_by_css_selector('input.link')
                .send_keys(self.linkAddressWithoutHTTP))
 

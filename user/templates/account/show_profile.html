@@ -2,7 +2,6 @@
 
 {% load i18n %}
 {% load compress %}
-{% load url from future %}
 {% load avatar_tags %}
 
 {% block title %}{{user.readable_name}}{% endblock %}
@@ -21,8 +20,7 @@
     {% endif %}
 
     {% compress js %}
-    <script src="{{ STATIC_URL }}js/profile-templates.js"></script>
-    <script src="{{ STATIC_URL }}js/show_profile.js"></script>
+    <script src="{{ STATIC_URL }}js/profile.es5.js"></script>
     {% endcompress %}
 
     {% compress css %}

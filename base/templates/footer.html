@@ -1,6 +1,6 @@
 {% load i18n %}
 <footer id="footer-menu">
-    <div class="fw-container">
+    <div class="fw-container">.
         <ul class="fw-footer-links">
             <li>
                 <a href="/terms/" target="_blank">
@@ -8,8 +8,8 @@
                 </a>
             </li>
             <li>
-                <a href="http://www.mathjax.org/" target="_blank">
-                    {% trans "Equations and Math by mathjax" %}
+                <a href="https://github.com/Khan/KaTeX" target="_blank">
+                    {% trans "Equations and Math by KaTeX" %}
                 </a>
             </li>
             <li>
@@ -18,7 +18,9 @@
                 </a>
             </li>
             <li>
-                {% trans "Requires Chrome/Chromium/Safari" %}
+                <a href="http://prosemirror.net" target="_blank">
+                    {% trans "Editing with ProseMirror" %}
+                </a>
             </li>
         </ul>
         <form name="setLangForm" action="/i18n/setlang/" method="post">
@@ -33,6 +35,15 @@
                 <option value="it"{% if 'it' == LANGUAGE_CODE %}{{ 'selected' }}{% endif %}>Italiano</option>
             </select>
         </form>
+        <div id="cookie-notification">
+            {% blocktrans %}
+            Fidus Writer saves small pieces of text information (cookies) on your device
+            in order to deliver better content and for statistical purposes. You
+            can disable the usage of cookies by changing the settings of your browser.
+            By browsing our website without changing the browser settings you grant
+            us permission to store that information on your device.
+            {% endblocktrans %}
+        </div>
     </div>
 </footer>
 <script>

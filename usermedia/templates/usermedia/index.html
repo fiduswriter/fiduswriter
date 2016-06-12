@@ -9,18 +9,12 @@
 {% compress js %}
 <!-- jQuery tablesorter -->
 <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dataTables.min.js"></script>
-<!-- jQuery json -->
-<script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.json-2.4.min.js"></script>
 <!-- jQuery Dropkick -->
 <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dropkick-1.1.0.js"></script>
 {% endcompress %}
 
 {% compress js %}
-<script type="text/javascript" src="{{ STATIC_URL }}js/usermedia-helpers.js"></script>
-<script type="text/javascript" src="{{ STATIC_URL }}js/usermedia-template-dialogs.js"></script>
-<script type="text/javascript">
-    usermediaHelpers.bind();
-</script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/images-overview.es5.js"></script>
 {% endcompress %}
 
 {% endblock %}

@@ -13,38 +13,10 @@
         <script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
         <!-- Underscore -->
         <script type="text/javascript" src="{{ UNDERSCOREJS_URL }}"></script>
-        <!-- Mathjax -->
-        <script type="text/x-mathjax-config">
-            MathJax.Hub.Config({
-                extensions: ["tex2jax.js"],
-                jax: ["input/TeX", "output/SVG"],
-                tex2jax: {
-                    inlineMath: [ ['[MATH]','[/MATH]']],
-                    displayMath: [ ['[DMATH]','[/DMATH]']],
-                    processEscapes: true
-                },
-                showMathMenu: false,
-                "SVG": {
-                    scale: 120
-                }
-            });
-        </script>
-        <script type="text/javascript" src="{{ MATHJAX_URL }}"></script>
     {% compress js %}
             <script type="text/javascript">
                 var staticUrl = '{{ STATIC_URL }}';
             </script>
-            <!-- DOM-diff -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/node-converter.js"></script>
-            <script type="text/javascript">
-                var isChrome = (window.hasOwnProperty('chrome')),
-                isSafari = (navigator.userAgent.indexOf('Safari/') > -1),
-                isFirefox = !(window.mozInnerScreenX == null);
-
-            </script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/csrf.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/common.js"></script>
             <script type="text/javascript">
                 // Config options for pagination
                 var paginationConfig = {
@@ -60,27 +32,13 @@
                     contentsBottomMargin: 1
                 };
             </script>
-            <script type="text/javascript"  src="{{ STATIC_URL }}js/math-helpers.js"></script>
             <!-- citeproc -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/xmldom.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/citeproc.js"></script>
-            <!-- Citation functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/citation-helpers.js"></script>
-            <!-- Citation definitions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/citation/definitions.js"></script>
-            <!-- Functions to modify bibliography -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-statics.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-helpers.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-template-dialogs.js"></script>
             <!-- Pagination -->
             <script type="text/javascript"  src="{{ STATIC_URL }}js/libs/simplePagination.js"></script>
             <!-- Moving of footnotes-->
-            <script type="text/javascript"  src="{{ STATIC_URL }}js/editor-escapes.js"></script>
-            <script type="text/javascript"  src="{{ STATIC_URL }}js/print-templates.js"></script>
-            <script type="text/javascript"  src="{{ STATIC_URL }}js/print-helpers.js"></script>
-            <script type="text/javascript">
-                printHelpers.bind();
-            </script>
+            <script type="text/javascript"  src="{{ STATIC_URL }}js/print-book.es5.js"></script>
     {% endcompress %}
 </head>
 <body class="tex2jax_ignore">

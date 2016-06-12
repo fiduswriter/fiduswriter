@@ -7,8 +7,9 @@ from django.db import connection
 from django.contrib import auth
 from logging import info, debug
 from django.conf import settings
-from django.utils.importlib import import_module
+from importlib import import_module
 from django.core.handlers.wsgi import WSGIRequest
+
 
 class BaseWebSocketHandler(WebSocketHandler):
 
@@ -32,10 +33,6 @@ class BaseWebSocketHandler(WebSocketHandler):
     def prepare(self):
         super(BaseWebSocketHandler, self).prepare()
 
-    # Prepare ORM connections
-
-        connection.queries = []
-
     def finish(self, chunk=None):
         super(BaseWebSocketHandler, self).finish(chunk=chunk)
 
@@ -43,11 +40,9 @@ class BaseWebSocketHandler(WebSocketHandler):
 
         connection.close()
         if False:
-            info('%d sql queries'
-                         % len(connection.queries))
+            info('%d sql queries' % len(connection.queries))
             for query in connection.queries:
-                debug('%s [%s seconds]' % (query['sql'],
-                              query['time']))
+                debug('%s [%s seconds]' % (query['sql'], query['time']))
 
     # Clean up after python-memcached
 
@@ -65,11 +60,9 @@ class BaseWebSocketHandler(WebSocketHandler):
         return self._session
 
     def get_current_user(self):
-
-    # get_user needs a django request object, but only looks at the session
+        # get_user needs a django request object, but only looks at the session
 
         class Dummy(object):
-
             pass
 
         django_request = Dummy()
@@ -78,19 +71,14 @@ class BaseWebSocketHandler(WebSocketHandler):
         if user.is_authenticated():
             return user
         else:
-
-      # try basic auth
-
-            if not self.request.headers.has_key('Authorization'):
+            # try basic auth
+            if 'Authorization' not in self.request.headers:
                 return None
-            (kind, data) = self.request.headers['Authorization'
-                    ].split(' ')
+            (kind, data) = self.request.headers['Authorization'].split(' ')
             if kind != 'Basic':
                 return None
-            (username, _, password) = data.decode('base64'
-                    ).partition(':')
-            user = auth.authenticate(username=username,
-                    password=password)
+            (username, _, password) = data.decode('base64').partition(':')
+            user = auth.authenticate(username=username, password=password)
             if user is not None and user.is_authenticated():
                 return user
             return None

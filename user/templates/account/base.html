@@ -1,4 +1,4 @@
-<!DOCTYPE html>{% load i18n %}{% load compress %}{% load url from future %}
+<!DOCTYPE html>{% load i18n %}{% load compress %}
 <html class="fw-basic-text">
     <head>
         <meta charset="utf-8" />
@@ -8,7 +8,6 @@
         <meta name="author" content="Fidus Writer" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.png" type="image/png"/>
-        <!--link rel="apple-touch-icon" href="/apple-touch-icon.png" /-->
 
         {% compress css %}
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/reset.css" />
@@ -34,25 +33,12 @@
         <link rel="stylesheet" href="{{ STATIC_URL }}css/registration.css" type="text/css" />
         {% endcompress %}
 
-        <!--script type="text/javascript" src="{{ MODERNIZR_URL }}"></script-->
         <script type="text/javascript" src="{{ JQUERY_URL }}"></script>
+        <!-- jQuery UI -->
+        <script type="text/javascript" src="{{ JQUERYUI_URL }}"></script>
         <!-- JS error handling -->
         <script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
-        {% compress js %}
-        <script type="text/javascript" src="{{ STATIC_URL }}js/csrf.js"></script>
-        {% endcompress %}
         <script type="text/javascript" src="/jsi18n/"></script>
-        <script>
-            if(window.chrome && navigator.appVersion.indexOf("Win") !== -1) {
-                // We are running Chrome on Windows. We will now load a special style file to make font rendering work.
-                    var link  = document.createElement('link');
-                    link.rel  = 'stylesheet';
-                    link.media = 'all';
-                    link.type = 'text/css';
-                    link.href = '{{ STATIC_URL }}css/windows-chrome-fonts.css';
-                    document.head.appendChild(link);
-            }
-        </script>
         {% block extraheaders %}{% endblock %}
     </head>
     <body>
@@ -79,6 +65,6 @@
         </div>
         {% include "footer.html" %}
         {% include "feedback/feedback.html" %}
-        
+
     </body>
 </html>

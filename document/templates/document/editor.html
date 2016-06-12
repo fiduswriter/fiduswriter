@@ -7,56 +7,34 @@
         <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.png" type="image/png">
         <title> Fidus Writer - {{document.title}} </title>
         <meta name="description" content="{% trans "The all in one solution for collaborative academic writing." %}">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script type="text/javascript">
-            var mathjaxZipUrl = '{{ STATIC_URL }}zip/mathjax.zip';
             var staticUrl = '{{ STATIC_URL }}';
             {% if WS_PORT %}
-                var websocketPort = {{WS_PORT}};
+                var websocketPort = ':'+{{WS_PORT}};
             {% else %}
-                var websocketPort = location.port.length>0?location.port:'80';
+                var websocketPort = location.port.length>0?':'+location.port:'';
             {% endif %}
             {% if WS_SERVER %}
                 var websocketServer = '{{ WS_SERVER }}';
             {% else %}
                 var websocketServer = location.host.split(':')[0];
             {% endif %}
-
-            var isChrome = (window.hasOwnProperty('chrome')),
-                isSafari = (navigator.userAgent.indexOf('Safari/') > -1),
-                isFirefox = !(window.mozInnerScreenX == null);
-
-            if(!(isChrome || isSafari)) {
-                var currentURL = location.href.substr(7);
-                var currentRelativeURL = currentURL.substr(currentURL.indexOf('/'));
-                if(currentRelativeURL != '/feedback/browser/') {
-                    window.location = '/feedback/browser';
-                }
-            }
         </script>
-        <style>
-            #metadata-subtitle:empty:not(:focus)::before, #metadata-subtitle:not(:focus) > p:first-child:only-child > br::before {
-                content: "{% trans "Subtitle" %}...";
-            }
-            #metadata-abstract:empty:not(:focus)::before, #metadata-abstract:not(:focus) > p:first-child:only-child > br::before {
-                content: "{% trans "Abstract" %}...";
-            }
-            #metadata-authors:empty:not(:focus)::before, #metadata-authors:not(:focus) > p:first-child:only-child > br::before {
-                content: "{% trans "Authors" %}...";
-            }
-            #metadata-keywords:empty:not(:focus)::before, #metadata-keywords:not(:focus) > p:first-child:only-child > br::before {
-                content: "{% trans "Keywords" %}...";
-            }
+        <style type="text/css" id="metadata-styles">
         </style>
-        <style type="text/css" id="placeholderStyles">
+        <style type="text/css" id="placeholder-styles">
         </style>
-        <style type="text/css" id="activeCommentStyle">
-        </style>
+        <!-- KaTeX -->
+        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/libs/katex/katex.min.css" />
+        <!-- MathQuill -->
+        <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/libs/mathquill/mathquill.css" />
         <!--  Translations -->
         <script type="text/javascript" src="/jsi18n/"></script>
         <!-- document style -->
+        <link rel="stylesheet" type="text/css">
         <link id="document-style-link" rel="stylesheet" type="text/css">
 
-        <!-- commons styles -->
         {% compress css %}
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/reset.css" />
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fonts.css" />
@@ -76,24 +54,21 @@
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/add-remove-dialog.css" />
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-modules/figure.css" />
 
-            <!-- question.mark.js -->
-            <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/question.mark.css" />
-
             <!-- layout styles -->
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/common.css" />
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/header-menu.css" />
             <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/bibliography.css" />
 
-            <!-- ICE -->
-            <link rel="stylesheet" href="{{ STATIC_URL }}css/ice.css" type="text/css">
             <!-- Editor -->
             <link rel="stylesheet" href="{{ STATIC_URL }}css/texteditor.css" type="text/css">
+            <!-- Collaboration mode -->
+            <link rel="stylesheet" href="{{ STATIC_URL }}css/carets.css" type="text/css">
             <!-- Comments -->
             <link rel="stylesheet" href="{{ STATIC_URL }}css/comments.css" type="text/css">
+            <!-- Footnotes -->
+            <link rel="stylesheet" href="{{ STATIC_URL }}css/footnotes.css" type="text/css">
             <!-- Chat -->
             <link rel="stylesheet" href="{{ STATIC_URL }}css/chat.css" type="text/css">
-            <!-- Tracking -->
-            <link rel="stylesheet" href="{{ STATIC_URL }}css/tracking.css" type="text/css">
             <!-- Access rights -->
             <link rel="stylesheet" href="{{ STATIC_URL }}css/access-rights-dialog.css" type="text/css">
             <!-- Citation dialog style -->
@@ -101,53 +76,19 @@
 
         {% endcompress %}
 
-
         <!-- jQuery -->
         <script type="text/javascript" src="{{ JQUERY_URL }}"></script>
-        <script type="text/javascript" src="{{ JQUERYMIGRATE_URL }}"></script>
         <!-- JS error handling -->
         <script type="text/javascript" src="{% url 'js-error-handler-js' %}"></script>
         <!-- jQuery UI -->
         <script type="text/javascript" src="{{ JQUERYUI_URL }}"></script>
         <!-- Underscore -->
         <script type="text/javascript" src="{{ UNDERSCOREJS_URL }}"></script>
-        <!-- Mathjax -->
-        <script type="text/x-mathjax-config">
-            MathJax.Hub.Config({
-                extensions: ["tex2jax.js"],
-                jax: ["input/TeX", "output/SVG"],
-                tex2jax: {
-                    inlineMath: [ ['[MATH]','[/MATH]']],
-                    displayMath: [ ['[DMATH]','[/DMATH]']],
-                    processEscapes: true
-                },
-                showMathMenu: false,
-                "SVG": {
-                    scale: 120
-                }
-            });
-        </script>
-        <script type="text/javascript" src="{{ MATHJAX_URL }}"></script>
         <!-- citeproc -->
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/xmldom.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/citeproc.js"></script>
-        <!-- Citation functions -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/citation-helpers.js"></script>
-        <!-- Citation definitions -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/citation/definitions.js"></script>
-        <!-- document styles -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/document/stylelist.js"></script>
-        <script type="text/javascript">
-            var document_style_folder_path = '{{ STATIC_URL }}css/document/';
-        </script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.autoresize.js"></script>
-        <!-- diff-match-patch -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/diff_match_patch.js"></script>
 
         {% compress js %}
-
-            <script type="text/javascript" src="{{ STATIC_URL }}js/common.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/menubase.js"></script>
             <!-- simplePagination.js -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/simplePagination.js"></script>
             <script type="text/javascript">
@@ -167,26 +108,15 @@
                     'headerTopMargin': 80,
                     'contentsBottomMargin': 80,
                     'pagenumberBottomMargin': 50,
+                    'footnoteSelector': '.footnote-marker',
                     'lengthUnit': 'px',
                     'flowTo': 'document.getElementById("print")'
                 };
             </script>
-            <script type="text/javascript">
-                // Prevent migrate messages. Currently only one message from hallo.js is being created.
-                jQuery.migrateMute = true;
-            </script>
-            <!-- diffDOM -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/diffDOM.js"></script>
-            <!-- Django form submission code -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/csrf.js"></script>
             <!-- jQuery tablesorter -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dataTables.min.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.ui.potato.menu.js"></script>
             <!-- Dropkick -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dropkick-1.1.0.js"></script>
-            <!-- Rangy -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/rangy-core-1.2.3.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/rangy-selectionsaverestore.js"></script>
             <!-- Zip.js -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/zip.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/deflate.js"></script>
@@ -197,102 +127,10 @@
                 zip.useWebWorkers = false;
             </script>
 
-            <!-- Question Mark -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/question.mark.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/question.mark.templates.js"></script>
-
-            <!-- ICE -->
-            <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/ice.js'></script>
-            <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/dom.js'></script>
-            <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/bookmark.js'></script>
-            <script type="text/javascript" src='{{ STATIC_URL }}js/libs/ice/selection.js'></script>
-
-            <!-- Functions to modify bibliography -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-statics.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-helpers.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-template-dialogs.js"></script>
-            <!-- contact functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/contact-helpers.js"></script>
-            <!-- tools functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/tools-templates.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/tools-helpers.js"></script>
-            <!-- Usermedia functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/usermedia-helpers.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/usermedia-template-dialogs.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/usermedia-simplelist-template-dialogs.js"></script>
-            <!-- Math functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/math-helpers.js"></script>
-            <!-- Editor toolbar buttons -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/highlight_buttons.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/blockstyles.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/bold.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/italic.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/link.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/footnote.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/cite.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/math.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/figure.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/undo_redo.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/comment.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/toolbar/templates.js"></script>
-            <!-- Editor insert functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/insert-element.js"></script>
-            <!-- Access rights dialog -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/document-accessrights-templates.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/document-accessrights-helpers.js"></script>
-            <!-- Comment functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/comment-templates.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/comment-helpers.js"></script>
-            <!-- Tracking functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/tracking-templates.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/tracking-helpers.js"></script>
-            <!-- File export functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/export-templates.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/exporter.js"></script>
-            <!-- File import -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/importer.js"></script>
-            <!-- Chat functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/chat-helpers.js"></script>
-            <script type="text/javascript">
-                chatHelpers.bind();
-            </script>
-            <!-- Moving of footnotes-->
-            <script type="text/javascript"  src="{{ STATIC_URL }}js/editor-escapes.js"></script>
-            <!-- Document related functions -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor-helpers.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/editor-setup.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/server-communications.js"></script>
-            <script type="text/javascript">
-                serverCommunications.bind();
-            </script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/diff-helpers.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/node-converter.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/dom.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/manual-edits.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/key-events.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/key-events-firefox.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/clean-HTML.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/cut.js"></script>
-            <script type="text/javascript" src="{{ STATIC_URL }}js/paste.js"></script>
         {% endcompress %}
+        <!-- Editor  -->
+        <script type="text/javascript" src="{{ STATIC_URL }}js/editor.es5.js"></script>
 
-        <script type="text/javascript">
-
-            if(window.chrome && navigator.appVersion.indexOf("Win") !== -1) {
-                // We are running Chrome on Windows. We will now load a special style file to make font rendering work.
-                    var link  = document.createElement('link');
-                    link.rel  = 'stylesheet';
-                    link.media = 'all';
-                    link.type = 'text/css';
-                    link.href = '{{ STATIC_URL }}css/windows-chrome-fonts.css';
-                    document.head.appendChild(link);
-            }
-        </script>
-        <script>
-            if (isFirefox) {
-                window.keyEvents = window.keyEventsFirefox;
-            }
-        </script>
     </head>
     <body class="{% trans "en" %} tex2jax_ignore">
         <div id="editor">
@@ -314,7 +152,7 @@
                                 <span class="fw-pulldown-item close icon-cancel-circle" title="{% trans "Close the document and return to the document overview menu." %}"> {% trans "Close" %} </span>
                             </li>
                             <li>
-                                <span class="fw-pulldown-item save icon-floppy" title="{% trans "Save a revision of the current document" %}"> {% trans "Save revision" %} </span>
+                                <span class="fw-pulldown-item saverevision icon-floppy" title="{% trans "Save a revision of the current document" %}"> {% trans "Save revision" %} </span>
                             </li>
                             <li>
                                 <span class="fw-pulldown-item savecopy disabled icon-floppy" title="{% trans "Create copy of the current document" %}"> {% trans "Create copy" %} </span>
@@ -329,7 +167,7 @@
                     </div>
                 </div>
                 <div>
-                    <span class="header-nav-item-disabled exporter-menu" title="{% trans "Export of the document contents" %}">{% trans "Export" %}</span>
+                    <span class="header-nav-item exporter-menu" title="{% trans "Export of the document contents" %}">{% trans "Export" %}</span>
                     <div class="fw-pulldown fw-left">
                         <ul>
                             <li>
@@ -351,7 +189,7 @@
                     </div>
                 </div>
                 <div>
-                    <span class="header-nav-item-disabled citationstyle-menu" title="{% trans "Choose your preferred citation style." %}">{% trans "Citation Style" %}</span>
+                    <span class="header-nav-item citationstyle-menu" title="{% trans "Choose your preferred citation style." %}">{% trans "Citation Style" %}</span>
                     <div class="fw-pulldown fw-left">
                         <ul id="citationstyle-list">
                         </ul>
@@ -422,32 +260,10 @@
                 <i class="icon-angle-double-up"></i>
             </span>
             <div id="editor-tools-wrapper">
-                <div id="ice-control" class="fw-button fw-light fw-large" title="{% trans "Handle tracking of changes." %}">
-                    {% trans "Changes" %}
-                    <i class="icon-down-dir"></i>
-                    <div class="fw-pulldown fw-left">
-                        <ul>
-                            <li>
-                                <span class="fw-pulldown-item ice-track icon-ok" title="{% trans "Turn tracking of changes on." %}">{% trans "Track" %}</span>
-                            </li>
-                            <li>
-                                <span class="fw-pulldown-item ice-display icon-eye" title="{% trans "Show all changes that have been tracked in the entire document." %}">{% trans "Show" %}</span>
-                            </li>
-                            <li>
-                                <span class="fw-pulldown-item ice-accept-all icon-acceptall" title="{% trans "Accept all changes that have been tracked in the entire document." %}">{% trans "Accept all" %}</span>
-                            </li>
-                            <li>
-                                <span class="fw-pulldown-item ice-reject-all icon-rejectall" title="{% trans "Reject all changes that have been tracked in the entire document." %}">{% trans "Reject all" %}</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-                <div id="comments-display" class="fw-button fw-light fw-large" title="{% trans "Show/hide comments" %}">
-                    {% trans "Comments" %}
-                </div>
                 <div class="editortoolbar" style="display: block;">
+                    <div id="current-position"></div>
                     <div class="toolbarheadings ui-buttonset multiButtons">
-                        <span class="multibuttonsCover fw-button fw-light fw-large" title="{% trans "Text that is part of a standard paragraph." %}" id="block-style-label">{% trans "Normal Text" %}</span>
+                        <span class="multibuttonsCover fw-button fw-light fw-large edit-button" title="{% trans "Text that is part of a standard paragraph." %}" id="block-style-label">{% trans "Normal Text" %}</span>
                         <div class="fw-pulldown fw-left" style="display: none;">
                             <ul>
                                 <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
@@ -475,9 +291,21 @@
                                     </span>
                                 </li>
                                 <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-                                    <span class="ui-button-text" title="{% trans "A longer quotation set as an indented block." %}">
+                                    <span class="ui-button-text" title="{% trans "A headline of the 4th highest level." %}">
                                         <input type="radio">
-                                        <label id="blockquote_button" class="fw-pulldown-item">{% trans "Block quote" %}</label>
+                                        <label id="h4_button" class="fw-pulldown-item">{% trans "4th Headline" %}</label>
+                                    </span>
+                                </li>
+                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                                    <span class="ui-button-text" title="{% trans "A headline of the 5th highest level." %}">
+                                        <input type="radio">
+                                        <label id="h5_button" class="fw-pulldown-item">{% trans "5th Headline" %}</label>
+                                    </span>
+                                </li>
+                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                                    <span class="ui-button-text" title="{% trans "A headline of the 6th highest level." %}">
+                                        <input type="radio">
+                                        <label id="h6_button" class="fw-pulldown-item">{% trans "6th Headline" %}</label>
                                     </span>
                                 </li>
                                 <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
@@ -486,79 +314,74 @@
                                         <label id="code_button" class="fw-pulldown-item">{% trans "Code" %}</label>
                                     </span>
                                 </li>
-                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-                                    <span class="ui-button-text" title="{% trans "An item in an ordered list." %}">
-                                        <input type="radio">
-                                        <label id="ol_button" class="fw-pulldown-item">{% trans "Numbered List" %}</label>
-                                    </span>
-                                </li>
-                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-                                    <span class="ui-button-text" title="{% trans "An item in an unordered list." %}">
-                                        <input type="radio">
-                                        <label id="ul_button" class="fw-pulldown-item">{% trans "Bulleted List" %}</label>
-                                    </span>
-                                </li>
                             </ul>
                         </div>
                     </div>
                     <div class="toolbarbold ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square" id="button-bold" title="{% trans "Bold" %}">
+                        <button class="fw-button fw-light fw-large fw-square edit-button" id="button-bold" title="{% trans "Bold" %}">
                             <span class="ui-button-text">
                                 <i class="icon-bold"></i>
                             </span>
                         </button>
                     </div>
                     <div class="toolbaritalic ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square" id="button-italic" title="{% trans "Italic" %}">
+                        <button class="fw-button fw-light fw-large fw-square edit-button" id="button-italic" title="{% trans "Italic" %}">
                             <span class="ui-button-text">
                                 <i class="icon-italic"></i>
                             </span>
                         </button>
                     </div>
                     <div class="toolbarol ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square" id="button-ol" title="{% trans "Numbered list" %}">
+                        <button class="fw-button fw-light fw-large fw-square edit-button" id="button-ol" title="{% trans "Numbered list" %}">
                             <span class="ui-button-text">
                                 <i class="icon-list-numbered"></i>
                             </span>
                         </button>
                     </div>
                     <div class="toolbarul ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square" id="button-ul" title="{% trans "Bulleted list" %}">
+                        <button class="fw-button fw-light fw-large fw-square edit-button" id="button-ul" title="{% trans "Bulleted list" %}">
                             <span class="ui-button-text">
                                 <i class="icon-list-bullet"></i>
                             </span>
                         </button>
                     </div>
+                    <div class="toolbarblockquote ui-buttonset">
+                        <button class="fw-button fw-light fw-large fw-square edit-button" id="button-blockquote" title="{% trans "Blockquote" %}">
+                            <span class="ui-button-text">
+                                <i class="icon-quote-right"></i>
+                            </span>
+                        </button>
+                    </div>
                     <div class="toolbarlink ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square" id="button-link" title="{% trans "Link" %}">
+                        <button class="fw-button fw-light fw-large fw-square edit-button" id="button-link" title="{% trans "Link" %}">
                             <span class="ui-button-text">
                                 <i class="icon-link"></i>
                             </span>
                         </button>
                     </div>
                     <div class="toolbarfootnote ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square" id="button-footnote" title="{% trans "Footnote" %}">
+                        <button class="fw-button fw-light fw-large fw-square edit-button" id="button-footnote" title="{% trans "Footnote" %}">
                             <span class="ui-button-text">
                                 <i class="icon-footnote"></i>
                             </span>
                         </button>
                     </div>
                     <div class="toolbarcite ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square" id="button-cite" title="{% trans "Cite" %}">
+                        <button class="fw-button fw-light fw-large fw-square edit-button" id="button-cite" title="{% trans "Cite" %}">
                             <span class="ui-button-text">
-                                <i class="icon-quote-right"></i>
+                                <i class="icon-book"></i>
                             </span>
                         </button>
                     </div>
                     <div class="toolbarmath ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square" id="button-math" title="{% trans "Math" %}">
+                        <button class="fw-button fw-light fw-large fw-square edit-button" id="button-math" title="{% trans "Math" %}">
                             <span class="ui-button-text">
                                 <i class="icon-math"></i>
                             </span>
                         </button>
                     </div>
                     <div class="toolbarfigure ui-buttonset">
-                        <button class="fw-button fw-light fw-large fw-square"  id="button-figure" title="{% trans "Figure" %}">
+                        <button class="fw-button fw-light fw-large fw-square edit-button"  id="button-figure" title="{% trans "Figure" %}">
                             <span class="ui-button-text">
                                 <i class="icon-figure"></i>
                             </span>
@@ -578,27 +401,70 @@
                             </span>
                         </button>
                     </div>
-                    <div class="toolbarcomment ui-buttonset">
+                    <div class="toolbarcomment ui-buttonset comment-only">
                         <button class="fw-button fw-light fw-large fw-square"  id="button-comment" title="{% trans "Comment" %}">
                             <span class="ui-button-text">
                                 <i class="icon-comment-empty"></i>
                             </span>
                         </button>
                     </div>
+                    <div id="comments-display" class="fw-button fw-light fw-large comment-only" title="{% trans "Show/hide comments" %}">
+                        {% trans "Comments" %}
+                    </div>
+                    <!-- <div id="comments-filter" class="ui-buttonset multiButtons" title="{% trans "Filter comments" %}">
+                        <span class="multibuttonsCover fw-button fw-light fw-large" title="{% trans "Filter comments" %}" id="comment-filter-dropdown">{% trans "Filter comments" %}</span>
+                        <div class="fw-pulldown fw-left">
+                            <ul>
+                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                                    <span class="ui-button-text" title="By readers">
+                                        <input type="radio" >
+                                        <label class="fw-pulldown-item" data-filter="r">{% trans "By readers" %}</label>
+                                    </span>
+                                </li>
+                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                                    <span class="ui-button-text" title="By reviewers">
+                                        <input type="radio" >
+                                        <label class="fw-pulldown-item" data-filter="c">{% trans "By reviewers" %}</label>
+                                    </span>
+                                </li>
+                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                                    <span class="ui-button-text" title="By authors">
+                                        <input type="radio" >
+                                        <label class="fw-pulldown-item" data-filter="w">{% trans "By authors" %}</label>
+                                    </span>
+                                </li>
+                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                                    <span class="ui-button-text" title="By editors">
+                                        <input type="radio" >
+                                        <label class="fw-pulldown-item" data-filter="e">{% trans "By editors" %}</label>
+                                    </span>
+                                </li>
+                                <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
+                                    <span class="ui-button-text" title="By username">
+                                        <input type="radio" >
+                                        <label class="fw-pulldown-item" data-filter="username">{% trans "By username" %}</label>
+                                    </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div> -->
                 </div>
             </div>
         </nav>
-
-        <div id="flow" class="comments-enabled CT-hide">
-            <div id="document-editable">
-                <div id="document-title" class="editable user-contents" title="{% trans "The title of the document" %}"></div>
-                <div id="document-metadata" class="user-contents"></div>
-                <div id="document-contents" class="editable user-contents"></div>
+        <div id="editor-content">
+            <div id="flow" class="comments-enabled CT-hide">
+                <div id="paper-editable">
+                    <div id="document-editable" class="user-contents"></div>
+                    <div id="footnote-box-container">
+                        <div id="citation-footnote-box-container"></div>
+                    </div>
+                </div>
+                <div id="document-bibliography" class="user-contents"></div>
             </div>
-            <div id="document-bibliography" class="user-contents"></div>
+
+            <div id="comment-box-container"></div>
+            <div id="tracking-box-container"></div>
         </div>
-        <div id="comment-box-container"></div><div id="tracking-box-container"></div>
-        {% include "feedback/feedback.html" %}
         <div id="chat">
             <i class="resize-button icon-angle-double-down"></i>
             <div id="chat-container"></div>
@@ -609,5 +475,7 @@
         </div>
         </div>
         <div id="print"></div>
+        <div id="unobtrusive_messages"></div>
+        {% include "feedback/feedback.html" %}
     </body>
 </html>

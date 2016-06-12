@@ -1,12 +1,7 @@
 /* Comments */
-.comments-enabled .comment {
-    background-color: #f2f2f2;
-}
-
 #comment-box-container {
-    position: absolute;
-    left: 914px;
-    top: -20px;
+    width: 240px;
+    padding-left: 20px;
 }
 
 #comment-box-container.hide {
@@ -20,9 +15,10 @@
 .comment-box {
     background-color: #fbfbfb;
     border: 1px solid #ccc;
-    position: absolute;
     width: 200px;
     padding: 9px;
+    margin-top: 10px;
+    position: relative;
 }
 .comment-box.active {
     background-color: #fffacf;
@@ -41,7 +37,9 @@
     color: #fffacf;
     text-shadow: -1px 0 1px #ccc;
 }
-
+.comment-box.hidden {
+    display: none;
+}
 .comment-item {
     margin-top: 10px;
     padding-top: 10px;
@@ -61,10 +59,10 @@
     background-position: center;
 }
 .comment-item.wait textarea {
-    background-size: 40px 40px;  
+    background-size: 40px 40px;
 }
 .comment-answer.wait .comment-answer-text {
-    background-size: 20px 20px;      
+    background-size: 20px 20px;
 }
 .comment-item.wait .submitComment, .comment-item.wait .cancelSubmitComment, .comment-answer.wait .comment-answer-btns {
     display: none;
@@ -138,4 +136,12 @@
     right: 5px;
     top: 8px;
     cursor: pointer;
+}
+
+.comment-is-major {
+    margin: 5px 5px 9px 3px;
+}
+
+.comment-is-major-bgc {
+    background-color: #f2dede;
 }

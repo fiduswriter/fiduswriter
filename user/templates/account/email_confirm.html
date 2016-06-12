@@ -1,6 +1,5 @@
 {% extends "account/base.html" %}
 
-{% load url from future %}
 {% load i18n %}
 {% load compress %}
 {% load account %}
@@ -8,7 +7,7 @@
 {% block head_title %}{% trans "Confirm E-mail Address" %}{% endblock %}
 {% block extraheaders %}
 {% compress js %}
-<script type="text/javascript" src="{{ STATIC_URL }}js/confirm_email.js" ></script>
+<script type="text/javascript" src="{{ STATIC_URL }}js/confirm_email.es5.js" ></script>
 {% endcompress %}
 {% endblock %}
 
@@ -41,12 +40,6 @@
             {% endblocktrans %}
         </p>
     {% endif %}
-
-    <p>
-        {% blocktrans %}
-        Please notice that Fidus Writer currently only works with the Google Chrome, Chromium or Apple Safari browsers.</p>
-        {% endblocktrans %}
-    </p>
 
     <form method="post" action="{% url 'account_confirm_email' confirmation.key %}">
         {% csrf_token %}

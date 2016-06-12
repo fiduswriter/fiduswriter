@@ -67,7 +67,7 @@
     color: #000;
 }
 
-.fw-button.fw-light:hover,
+.fw-button.fw-light:not(.disabled):hover,
 .fw-button.fw-light.ui-state-active {
     background-color: #c9c9c9;
     color: #000;
@@ -78,7 +78,7 @@
     background-color: #f9f9f9;
     color: #000;
 }
-.fw-button.fw-white:hover {
+.fw-button.fw-white:not(.disabled):hover {
     background-color: #f2f2f2;
     color: #000;
 }
@@ -87,7 +87,7 @@
     border-color: #7d948e;
     background-color: #76a698;
 }
-.fw-button.fw-green:hover {
+.fw-button.fw-green:not(.disabled):hover {
     background-color: #96c6b8;
 }
 
@@ -96,7 +96,7 @@
     background: -webkit-gradient(linear, left top, left bottom, from(#d3421c), to(#b13615));
     border-color: #7d331f;
 }
-.fw-button.fw-orange:hover {
+.fw-button.fw-orange:not(.disabled):hover {
     background: #b13615;
 }
 
@@ -106,7 +106,7 @@
     box-shadow: 0 1px 1px 0 #7f7f7f inset;
     border-color: #4f4d4f;
 }
-.fw-button.fw-dark:hover {
+.fw-button.fw-dark:not(.disabled):hover {
     background: #585858;
 }
 
@@ -325,4 +325,8 @@
     font-family: 'fontello';
     content: '\2795';
     margin-left: 10px;
+}
+
+#comment-filter-dropdown {
+    width: 100px;
 }

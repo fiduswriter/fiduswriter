@@ -30,6 +30,7 @@ export let getMissingDocumentListData = function (ids, documentList, callback) {
                         id: response.documents[i].id
                     })
                     aDocument.contents = JSON.parse(response.documents[i].contents)
+                    aDocument.comments = JSON.parse(response.documents[i].comments)
                     aDocument.metadata = JSON.parse(response.documents[
                         i].metadata)
                     aDocument.settings = JSON.parse(response.documents[

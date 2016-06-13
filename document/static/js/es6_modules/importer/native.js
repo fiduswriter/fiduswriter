@@ -32,9 +32,6 @@ export class ImportNative {
         }
 
         for (let key in this.aBibDB) {
-            //this.aBibDB[key]['entry_type']=_.findWhere(BibEntryTypes,{name:this.aBibDB[key]['bibtype']}).id
-            //delete this.aBibDB[key].bibtype
-            console.log([this.bibDB,this.aBibDB])
             let matchEntries = _.where(this.bibDB, this.aBibDB[key])
             if (0 === matchEntries.length) {
                 //create new

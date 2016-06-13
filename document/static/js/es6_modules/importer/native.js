@@ -54,7 +54,6 @@ export class ImportNative {
                 }
             }
         }
-
         // Remove the id values again
         for (let key in this.bibDB) {
             delete this.bibDB[key].id
@@ -115,7 +114,6 @@ export class ImportNative {
                 }
             }
         }
-
         if (newBibEntries.length !== 0 || newImageEntries.length !== 0) {
             // We need to create new entries in the DB for images and/or
             // bibliography items.
@@ -140,7 +138,6 @@ export class ImportNative {
         newImageEntries, entries) {
         let that = this,
             counter = 0
-
         function getImageZipEntry() {
             if (counter < newImageEntries.length) {
                 _.findWhere(entries, {
@@ -192,6 +189,9 @@ export class ImportNative {
             } else {
                 getImageZipEntry()
             }
+        } else {
+            this.sendNewImageAndBibEntries(BibTranslationTable, ImageTranslationTable, newBibEntries,
+                newImageEntries)
         }
 
     }

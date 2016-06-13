@@ -158,7 +158,6 @@ export class DocumentOverviewActions {
                             /C:\\fakepath\\/i, ''))
                 })
                 jQuery('#import-fidus-btn').bind('mousedown', function () {
-                    console.log('triggering')
                     jQuery('#fidus-uploader').trigger('click')
                 })
             },
@@ -195,24 +194,26 @@ export class DocumentOverviewActions {
                                 that.documentOverview.startDocumentTable()
                             })
                         } else {
-                            that.getBibDB(function(oldBibDB){that.getImageDB(function(oldImageDB){
-                                /* We are copying from another user, so we are first loading
-                                 the databases from that user
-                                */
-                                savecopy(doc, oldBibDB, oldImageDB,
-                                that.documentOverview.bibDB, that.documentOverview.imageDB,
-                                that.documentOverview.user, function (doc, docInfo) {
-                                    that.documentOverview.documentList.push(doc)
-                                    that.documentOverview.stopDocumentTable()
-                                    jQuery('#document-table tbody').append(
-                                        documentsListItemTemplate({
-                                            aDocument: doc,
-                                            user: that.documentOverview.user,
-                                            localizeDate
-                                        }))
-                                    that.documentOverview.startDocumentTable()
+                            that.getBibDB(doc.owner.id, function(oldBibDB){
+                                that.getImageDB(doc.owner.id, function(oldImageDB){
+                                    /* We are copying from another user, so we are first loading
+                                     the databases from that user
+                                    */
+                                    savecopy(doc, oldBibDB, oldImageDB,
+                                    that.documentOverview.bibDB, that.documentOverview.imageDB,
+                                    that.documentOverview.user, function (doc, docInfo) {
+                                        that.documentOverview.documentList.push(doc)
+                                        that.documentOverview.stopDocumentTable()
+                                        jQuery('#document-table tbody').append(
+                                            documentsListItemTemplate({
+                                                aDocument: doc,
+                                                user: that.documentOverview.user,
+                                                localizeDate
+                                            }))
+                                        that.documentOverview.startDocumentTable()
+                                    })
                                 })
-                            })})
+                            })
                         }
 
                     }
@@ -224,7 +225,7 @@ export class DocumentOverviewActions {
 
     getBibDB(userId, callback) {
         let bibGetter = new BibliographyDB(userId, true, false, false)
-        bibGetter.getBibDB(function(bibPks, bibCats){
+        bibGetter.getBibDB(function(){
             callback(bibGetter.bibDB)
         })
     }

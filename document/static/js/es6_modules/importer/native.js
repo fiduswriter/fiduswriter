@@ -4,7 +4,6 @@ import {addAlert, csrfToken} from "../common/common"
 
 export class ImportNative {
     /* Save document information into the database */
-
     constructor(aDocument, aBibDB, anImageDB, entries, user, bibDB, imageDB, callback) {
         this.aDocument = aDocument
         this.aBibDB = aBibDB // These are new values
@@ -33,8 +32,6 @@ export class ImportNative {
         }
 
         for (let key in this.aBibDB) {
-            //this.aBibDB[key]['entry_type']=_.findWhere(BibEntryTypes,{name:this.aBibDB[key]['bibtype']}).id
-            //delete this.aBibDB[key].bibtype
             let matchEntries = _.where(this.bibDB, this.aBibDB[key])
             if (0 === matchEntries.length) {
                 //create new

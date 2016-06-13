@@ -92,9 +92,15 @@ def get_documentlist_extra_js(request):
         ids = request.POST['ids'].split(',')
         documents = Document.objects.filter(Q(owner=request.user) | Q(
             accessright__user=request.user)).filter(id__in=ids)
-        # documents = Document.objects.filter(id__in=ids)
         response['documents'] = serializer.serialize(
-            documents, fields=('contents', 'id', 'settings', 'metadata'))
+            documents, fields=(
+                'contents',
+                'comments',
+                'id',
+                'settings',
+                'metadata'
+            )
+        )
     return JsonResponse(
         response,
         status=status

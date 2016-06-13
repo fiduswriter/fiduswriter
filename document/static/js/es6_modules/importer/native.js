@@ -352,6 +352,7 @@ export class ImportNative {
         let postData = {
             title: this.aDocument.title,
             contents: JSON.stringify(this.aDocument.contents),
+            comments: JSON.stringify(this.aDocument.comments),
             settings: JSON.stringify(this.aDocument.settings),
             metadata: JSON.stringify(this.aDocument.metadata)
         }

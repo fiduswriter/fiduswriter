@@ -341,6 +341,7 @@ def import_js(request):
         document = Document.objects.create(owner_id=request.user.pk)
         document.title = request.POST['title']
         document.contents = request.POST['contents']
+        document.comments = request.POST['comments']
         document.metadata = request.POST['metadata']
         document.settings = request.POST['settings']
         document.save()

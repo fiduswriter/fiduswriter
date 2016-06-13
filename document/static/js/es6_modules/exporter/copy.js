@@ -25,7 +25,7 @@ let afterCopy = function(noErrors, returnValue, callback) {
 */
 export let savecopy = function(doc, oldBibDB, oldImageDB, newBibDB, newImageDB, newUser, callback) {
     exportNative(doc, oldImageDB, oldBibDB, function(doc, shrunkImageDB, shrunkBibDB, images){
-        new ImportNative(doc, shrunkBibDB, shrunkImageDB, newBibDB, newImageDB, images, newUser,
+        new ImportNative(doc, shrunkBibDB, shrunkImageDB, images, newUser, newBibDB, newImageDB,
             function(noErrors, returnValue) {
                 afterCopy(noErrors, returnValue, callback)
             }

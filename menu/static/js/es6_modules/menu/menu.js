@@ -23,10 +23,10 @@ export class Menu {
 
     bindPreferencePullDown() {
         let that = this
-        jQuery('#preferences-btn').bind('click', function() {
-            let menuBox = jQuery('#user-preferences-pulldown')
+        jQuery('#preferences-btn').off('click').on('click', function() {
+            let menuBox = jQuery('#user-preferences-pulldown');
             if('none' == menuBox.css('display')) {
-                that.openPreferencePulldown(menuBox)
+                that.openPreferencePulldown(menuBox);
             }
         })
     }
@@ -37,19 +37,12 @@ export class Menu {
             'left': btnOffset.left - 52,
             'top': btnOffset.top + 27
         })
-        box.show()
+        box.show();
         window.setTimeout(function() {
-            jQuery(document).on('click', {'box': box}, function(event){
-                that.closePreferencePulldown(event)
-            })
-        }, 100)
-    }
-
-    closePreferencePulldown(e) {
-        let that = this
-        e.data.box.hide()
-        jQuery(document).off('click', function(box){
-            that.closePreferencePulldown(box)
-        })
+            jQuery(document).on('click', function(event){
+                box.hide();
+                jQuery(document).off('click');
+            });
+        }, 100);
     }
 }

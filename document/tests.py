@@ -122,7 +122,7 @@ class Manipulator(object):
     user = None
     username = 'Yeti'
     email = 'yeti@example.com'
-    passtext = 'otter'
+    passtext = 'otter1'
 
     # mixed
     def createAndLoginUser(self):

@@ -1,5 +1,3 @@
-import re
-import json
 import time
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse, HttpRequest
@@ -11,7 +9,6 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.core.mail import send_mail
-from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.core.serializers.python import Serializer
 
@@ -19,8 +16,6 @@ from avatar.util import get_primary_avatar, get_default_avatar_url
 from avatar.templatetags.avatar_tags import avatar_url
 
 from document.models import Document, AccessRight, DocumentRevision
-from document.helpers.filtering_comments import filter_comments_by_role
-from document.helpers.session_user_info import SessionUserInfo
 
 
 class SimpleSerializer(Serializer):
@@ -149,7 +144,6 @@ def get_documentlist_js(request):
         response,
         status=status
     )
-
 
 
 @login_required

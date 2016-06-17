@@ -181,8 +181,6 @@ def get_booklist_js(request):
 
 def add_chapters(book_instance, chapters, status, this_user):
     for chapter in chapters:
-        print chapter
-        print book_instance.id
         new_chapter = Chapter(
             book=book_instance,
             text_id=chapter['text'],

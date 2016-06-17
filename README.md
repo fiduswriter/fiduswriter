@@ -135,18 +135,6 @@ Advanced options
 
   6. Restart your server.
 
-### Regenerate the documentation:
-
-  1. Install documentation dependencies:
-
-    > `pip install -r doc-requirements.txt`
-
-  2. Run sphinx:
-
-    > `sphinx-apidoc -f -o ./docs/ ./`
-
-  3. You can find the output in the docs dir.
-
 ### Development/upgrade:
 
   If there are changes to the JavaScript source code of Fidus Writer, you need to run:

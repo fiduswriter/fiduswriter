@@ -26,7 +26,7 @@ class DocumentWS(BaseWebSocketHandler):
             if doc_db.id in DocumentWS.sessions:
                 self.doc = DocumentWS.sessions[doc_db.id]
                 self.id = max(self.doc['participants']) + 1
-                print "id when opened %s" % self.id
+                print("id when opened %s" % self.id)
             else:
                 self.id = 0
                 self.doc = dict()
@@ -286,7 +286,7 @@ class DocumentWS(BaseWebSocketHandler):
                 # Client has a version that is too old
                 self.send_document()
             elif parsed["diff_version"] < self.doc['diff_version']:
-                print "can fix it"
+                print("can fix it")
                 number_requested_diffs = self.doc[
                     'diff_version'] - parsed["diff_version"]
                 response = {
@@ -347,7 +347,7 @@ class DocumentWS(BaseWebSocketHandler):
             if len(self.doc['participants'].keys()) == 0:
                 DocumentWS.save_document(self.user_info.document_id)
                 del DocumentWS.sessions[self.user_info.document_id]
-                print "noone left"
+                print("noone left")
 
     @classmethod
     def send_participant_list(cls, document_id):

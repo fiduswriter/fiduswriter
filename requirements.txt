@@ -8,4 +8,3 @@ tornado==4.3
 python-dateutil==2.4.2
 python-magic==0.4.11
 setuptools==23.0.0
-rdflib-jsonld==0.3

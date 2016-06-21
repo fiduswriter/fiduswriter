@@ -231,6 +231,7 @@ LANGUAGES = (
     ('en', gettext('English')),
     ('bg', gettext('Bulgarian')),
     ('de', gettext('German')),
+    ('fr', gettext('French')),
     ('it', gettext('Italian')),
     ('es', gettext('Spanish')),
 )

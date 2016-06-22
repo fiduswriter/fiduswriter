@@ -32,7 +32,7 @@ export class Editor {
     // A class that contains everything that happens on the editor page.
     // It is currently not possible to initialize more thna one editor class, as it
     // contains bindings to menu items, etc. that are uniquely defined.
-    constructor() {
+    constructor(id) {
         this.mod = {}
         // Whether the editor is currently waiting for a document update. Set to true
         // initially so that diffs that arrive before document has been loaded are not
@@ -40,25 +40,26 @@ export class Editor {
         this.waitingForDocument = true
 
         this.docInfo = {
-            'rights': '',
-            'last_diffs': [],
-            'is_owner': false,
-            'is_new': false,
-            'titleChanged': false,
-            'changed': false
+            rights: '',
+            last_diffs: [],
+            is_owner: false,
+            is_new: false,
+            titleChanged: false,
+            changed: false,
         }
         this.schema = fidusSchema
-        this.doc = {}
+        this.doc = {
+            // Initially we only have the id.
+            id
+        }
         this.user = false
-        new ModSettings(this)
         new ModNodeConvert(this)
         new ModServerCommunications(this)
-        this.init()
     }
 
     init() {
         let that = this
-
+        new ModSettings(this)
         jQuery(document).ready(function() {
             that.startEditor()
         })
@@ -82,6 +83,7 @@ export class Editor {
             return ph.getOutput()
         })
         this.pm.mod.collab.on("collabTransform", (transform, options) => {that.onTransform(transform, false)})
+        this.mod.serverCommunications.init()
         this.setSaveTimers()
     }
 

@@ -11,24 +11,10 @@ export class ModServerCommunications {
         this.connected = false
             /* Whether the connection is established for the first time. */
         this.firstTimeConnection = true
-        this.docId = 0
-        this.init()
     }
 
     init() {
-        let that = this
-        let pathnameParts = window.location.pathname.split('/')
-        this.docId = parseInt(pathnameParts[pathnameParts.length -
-            2], 10)
-
-        if (isNaN(this.docId)) {
-            this.docId = 0
-        }
-
-        jQuery(document).ready(function() {
-            that.createWSConnection()
-        })
-
+        this.createWSConnection()
     }
 
     createWSConnection() {
@@ -36,7 +22,7 @@ export class ModServerCommunications {
         let websocketProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:'
 
         try {
-            this.ws = new window.WebSocket(`${websocketProtocol}//${websocketServer}${websocketPort}/ws/doc/${this.docId}`)
+            this.ws = new window.WebSocket(`${websocketProtocol}//${websocketServer}${websocketPort}/ws/doc/${this.editor.doc.id}`)
             this.ws.onopen = function() {
                 console.log('connection open')
                 jQuery('#unobtrusive_messages').html('')

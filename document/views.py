@@ -1,5 +1,3 @@
-import re
-import json
 import time
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse, HttpRequest
@@ -11,7 +9,6 @@ from django.contrib.auth.models import User
 from django.utils.translation import ugettext as _
 from django.conf import settings
 from django.core.mail import send_mail
-from django.core.exceptions import PermissionDenied
 from django.db.models import Q
 from django.core.serializers.python import Serializer
 
@@ -19,9 +16,6 @@ from avatar.util import get_primary_avatar, get_default_avatar_url
 from avatar.templatetags.avatar_tags import avatar_url
 
 from document.models import Document, AccessRight, DocumentRevision
-from document.rdf import RDFBuilder
-from document.helpers.filtering_comments import filter_comments_by_role
-from document.helpers.session_user_info import SessionUserInfo
 
 
 class SimpleSerializer(Serializer):
@@ -30,31 +24,6 @@ class SimpleSerializer(Serializer):
         self._current['id'] = obj._get_pk_val()
         self.objects.append(self._current)
 serializer = SimpleSerializer()
-
-
-def get_document__and_comments(document_id, user):
-    """
-    Function for getting document and filtered comments info
-    :param document_id: Id of document
-    :type document_id: int
-    :param user: Information about user
-    :type user: dict
-    :return document and filtered comments:
-    :rtype: tuple
-    """
-    user_info = SessionUserInfo()
-
-    document, can_access = user_info.init_access(document_id, user)
-    if not can_access:
-        raise PermissionDenied('User does not have enough permissions')
-
-    comments_content = json.loads(document.comments)
-    access_rights = get_accessrights(
-        AccessRight.objects.filter(
-            document__owner=document.owner))
-    filtered = filter_comments_by_role(
-        comments_content, access_rights, 'editing', user_info)
-    return (document, filtered)
 
 
 def get_accessrights(ars):
@@ -92,9 +61,15 @@ def get_documentlist_extra_js(request):
         ids = request.POST['ids'].split(',')
         documents = Document.objects.filter(Q(owner=request.user) | Q(
             accessright__user=request.user)).filter(id__in=ids)
-        # documents = Document.objects.filter(id__in=ids)
         response['documents'] = serializer.serialize(
-            documents, fields=('contents', 'id', 'settings', 'metadata'))
+            documents, fields=(
+                'contents',
+                'comments',
+                'id',
+                'settings',
+                'metadata'
+            )
+        )
     return JsonResponse(
         response,
         status=status
@@ -171,35 +146,9 @@ def get_documentlist_js(request):
     )
 
 
-def get_rdf_comments(request):
-    """
-    Getting rdf comments from RDF Builder
-    :param request:
-    :type request:
-    :return:
-    :rtype:
-    """
-
-    host_url = request.scheme + '://' + request.META['SERVER_NAME'] + '/'
-    res_url_match = re.match('\/document\/(\d+)\/', request.get_full_path())
-    document_id = int(res_url_match.group(1))
-
-    document, comments_content = get_document__and_comments(
-        document_id, request.user)
-    rdf = RDFBuilder(host_url)
-    return HttpResponse(
-        rdf.get_comments_by_document(
-            document, comments_content))
-
-
 @login_required
 def editor(request):
     response = {}
-
-    if 'CONTENT_TYPE' in request.META.keys() and request.META[
-            'CONTENT_TYPE'] == 'application/rdf+turtle':
-        return get_rdf_comments(request)
-
     return render(request, 'document/editor.html',
                   response)
 
@@ -341,6 +290,7 @@ def import_js(request):
         document = Document.objects.create(owner_id=request.user.pk)
         document.title = request.POST['title']
         document.contents = request.POST['contents']
+        document.comments = request.POST['comments']
         document.metadata = request.POST['metadata']
         document.settings = request.POST['settings']
         document.save()

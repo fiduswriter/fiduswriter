@@ -4,7 +4,6 @@ import {addAlert, csrfToken} from "../common/common"
 
 export class ImportNative {
     /* Save document information into the database */
-
     constructor(aDocument, aBibDB, anImageDB, entries, user, bibDB, imageDB, callback) {
         this.aDocument = aDocument
         this.aBibDB = aBibDB // These are new values
@@ -31,11 +30,9 @@ export class ImportNative {
         for (let key in this.bibDB) {
             this.bibDB[key]['id'] = key
         }
-        for (let key in this.aBibDB) {
-            //this.aBibDB[key]['entry_type']=_.findWhere(BibEntryTypes,{name:this.aBibDB[key]['bibtype']}).id
-            //delete this.aBibDB[key].bibtype
-            let matchEntries = _.where(this.bibDB, this.aBibDB[key])
 
+        for (let key in this.aBibDB) {
+            let matchEntries = _.where(this.bibDB, this.aBibDB[key])
             if (0 === matchEntries.length) {
                 //create new
                 newBibEntries.push({
@@ -43,21 +40,20 @@ export class ImportNative {
                     oldEntryKey: this.aBibDB[key].entry_key,
                     entry: this.aBibDB[key]
                 })
-            } else if (1 === matchEntries.length && parseInt(key) !==
+            } else if (1 === matchEntries.length && key !==
                 matchEntries[0].id) {
-                BibTranslationTable[parseInt(key)] = matchEntries[0].id
+                BibTranslationTable[key] = matchEntries[0].id
             } else if (1 < matchEntries.length) {
                 if (!(_.findWhere(matchEntries, {
-                        id: parseInt(key)
+                        id: key
                     }))) {
                     // There are several matches, and none of the matches have the same id as the key in this.aBibDB.
                     // We now pick the first match.
                     // TODO: Figure out if this behavior is correct.
-                    BibTranslationTable[parseInt(key)] = matchEntries[0].id
+                    BibTranslationTable[key] = matchEntries[0].id
                 }
             }
         }
-
         // Remove the id values again
         for (let key in this.bibDB) {
             delete this.bibDB[key].id
@@ -118,7 +114,6 @@ export class ImportNative {
                 }
             }
         }
-
         if (newBibEntries.length !== 0 || newImageEntries.length !== 0) {
             // We need to create new entries in the DB for images and/or
             // bibliography items.
@@ -143,7 +138,6 @@ export class ImportNative {
         newImageEntries, entries) {
         let that = this,
             counter = 0
-
         function getImageZipEntry() {
             if (counter < newImageEntries.length) {
                 _.findWhere(entries, {
@@ -195,6 +189,9 @@ export class ImportNative {
             } else {
                 getImageZipEntry()
             }
+        } else {
+            this.sendNewImageAndBibEntries(BibTranslationTable, ImageTranslationTable, newBibEntries,
+                newImageEntries)
         }
 
     }
@@ -352,6 +349,7 @@ export class ImportNative {
         let postData = {
             title: this.aDocument.title,
             contents: JSON.stringify(this.aDocument.contents),
+            comments: JSON.stringify(this.aDocument.comments),
             settings: JSON.stringify(this.aDocument.settings),
             metadata: JSON.stringify(this.aDocument.metadata)
         }

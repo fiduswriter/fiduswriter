@@ -301,7 +301,6 @@ export class BaseLatexExporter extends BaseExporter {
                     citationCommand += '{'
 
                     citationCommand += that.bibDB[citationEntry].entry_key
-
                     if (listedWorksList.indexOf(citationEntry) === -1) {
                         listedWorksList.push(citationEntry)
                     }

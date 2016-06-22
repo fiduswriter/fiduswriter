@@ -50,8 +50,8 @@ export class LatexBookExporter extends BaseLatexExporter {
 
             images = images.concat(findImages(contents))
 
-            let latexCode = this.htmlToLatex(title, aDocument.owner.name, contents, this.bibDB,
-                aDocument.settings, aDocument.metadata, true,
+            let latexCode = this.htmlToLatex(title, aDocument.owner.name,
+                contents, aDocument.settings, aDocument.metadata, true,
                 listedWorksList)
 
             listedWorksList = latexCode.listedWorksList
@@ -87,10 +87,10 @@ export class LatexBookExporter extends BaseLatexExporter {
         let bibtex = new BibLatexExporter(listedWorksList,
             this.bibDB, false)
 
-        if (bibtex.bibtex_str.length > 0) {
+        if (bibtex.bibtexStr.length > 0) {
             outputList.push({
                 filename: 'bibliography.bib',
-                contents: bibtex.bibtex_str
+                contents: bibtex.bibtexStr
             })
         }
 

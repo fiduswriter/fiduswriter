@@ -27,7 +27,7 @@ The following are instructions working on Ubuntu 14.04. Make adjustments as need
 
 1. Install the development packages of libjpeg, gettext, zlib, python, npm and the python virtual environment creator by running:
 
-  > `sudo apt-get install libjpeg-dev python-dev python-virtualenv gettext zlib1g-dev git npm nodejs nodejs-legacy python-sphinx`
+  > `sudo apt-get install libjpeg-dev python-dev python-virtualenv gettext zlib1g-dev git npm nodejs nodejs-legacy`
 
 2. Download the Fidus Writer sources to your computer from github by running:
 
@@ -67,8 +67,6 @@ The following are instructions working on Ubuntu 14.04. Make adjustments as need
 
 11. Notice that emails sent to the user appear in the console until an SMTP backend is configured (see below).
 
-12. To regenerate current Sphinx documentation (that is in docs folder) run:
-  > `sphinx-apidoc -f -o ./docs/ ./`
 
 Advanced options
 ----

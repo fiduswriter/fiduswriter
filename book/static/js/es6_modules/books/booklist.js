@@ -40,7 +40,7 @@ export class BookList {
     getAnImageDB(userId, callback){
         let imageGetter = new ImageDB(userId)
         imageGetter.getDB(function(){
-            callback(imageGetter.db)
+            callback(imageGetter)
         })
     }
 
@@ -172,7 +172,7 @@ export class BookList {
 
             jQuery('.create-new-book').bind('click', function () {
                 that.getImageDB(function(){
-                    that.mod.actions.createBookDialog(0, that.imageDB.db)
+                    that.mod.actions.createBookDialog(0, that.imageDB)
                 })
             })
 

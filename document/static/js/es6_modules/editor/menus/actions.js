@@ -25,10 +25,7 @@ export class ModMenusActions {
                 savecopy(that.mod.editor.doc, that.mod.editor.bibDB.bibDB, that.mod.editor.imageDB.db,
                     that.mod.editor.bibDB.bibDB, that.mod.editor.imageDB.db, that.mod.editor.user,
                     function(doc, docInfo, newBibEntries){
-                        that.mod.editor.doc = doc
-                        that.mod.editor.docInfo = docInfo
-                        that.mod.citation.appendManyToCitationDialog(newBibEntries)
-                        window.history.pushState("", "", "/document/"+that.mod.editor.doc.id+"/")
+                        window.location.href = `/document/${doc.id}/`
                 })
             } else {
                 // We copy from one user to another. So we first load one set of databases, and then the other
@@ -41,13 +38,7 @@ export class ModMenusActions {
                         savecopy(that.mod.editor.doc, oldBibDB, oldImageDB, that.mod.editor.bibDB.bibDB,
                                 that.mod.editor.imageDB.db, that.mod.editor.user,
                                 function(doc, docInfo, newBibEntries){
-                            that.mod.editor.doc = doc
-                            that.mod.editor.docInfo = docInfo
-                            that.mod.citation.appendManyToCitationDialog(newBibEntries)
-                            window.history.pushState("", "", "/document/"+that.mod.editor.doc.id+"/")
-                            // Reenable ui as access rights may have changed.
-                            that.mod.editor.enableUI()
-
+                            window.location.href = `/document/${doc.id}/`
                         })
                     })
                 })

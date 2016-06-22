@@ -1,6 +1,6 @@
 import {accessRightOverviewTemplate, accessRightTrTemplate, collaboratorsTemplate} from "./templates"
 import {addMemberDialog} from "../../contacts/manage"
-import {addDropdownBox, setCheckableLabel, addAlert} from "../../common/common"
+import {addDropdownBox, setCheckableLabel, addAlert, csrfToken} from "../../common/common"
 
 /**
 * Functions for the document access rights dialog.
@@ -165,11 +165,15 @@ export class DocumentAccessRightsDialog {
             'collaborators[]': newCollaborators,
             'rights[]': newAccessRights
         }
-        $.ajax({
+        jQuery.ajax({
             url: '/document/accessright/save/',
             data: postData,
             type: 'POST',
             dataType: 'json',
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
             success: function (response) {
                 that.accessRights = response.access_rights
                 that.callback(that.accessRights)

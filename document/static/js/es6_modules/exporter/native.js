@@ -42,8 +42,8 @@ export class NativeExporter {
         let that = this
         if (!this.bibDB) {
             let bibGetter = new BibliographyDB(this.doc.owner.id, false, false, false)
-            bibGetter.getBibDB(function(bibDB, bibCats) {
-                that.bibDB = bibDB
+            bibGetter.getBibDB(function() {
+                that.bibDB = bibGetter.bibDB
                 callback()
             })
         } else {
@@ -87,6 +87,7 @@ export let exportNative = function(aDocument, anImageDB, aBibDB, callback) {
         citeList.push(jQuery(this).attr('data-bib-entry'))
     })
 
+
     citeList = _.uniq(citeList.join(',').split(','))
 
     // If the number of cited items is 1 and that one item is an empty string,
@@ -94,6 +95,9 @@ export let exportNative = function(aDocument, anImageDB, aBibDB, callback) {
     if (citeList.length === 1 && citeList[0] === '') {
         citeList = []
     }
+
+    // Entries are stored as integers
+    citeList = citeList.map(window.Number)
 
     for (let i in citeList) {
         shrunkBibDB[citeList[i]] = aBibDB[citeList[i]]

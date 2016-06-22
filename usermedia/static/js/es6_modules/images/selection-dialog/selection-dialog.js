@@ -101,14 +101,17 @@ export class ImageSelectionDialog {
         // functions for the image selection dialog
         jQuery('#select_imagelist tr').on('click', function () {
             let checkedImage = jQuery('#select_imagelist tr.checked'),
-                selecting = true
+                selecting = true, elementId = jQuery(this).attr('id')
+            if (elementId === undefined) {
+                // Likely clicked on header
+                return
+            }
             if (checkedImage.length > 0 && this == checkedImage[0]) {
                 selecting = false
                 that.imageId = false
             }
             checkedImage.removeClass('checked')
             if (selecting) {
-                let elementId = jQuery(this).attr('id')
                 that.imageId = parseInt(elementId.split('_')[1])
                 jQuery(this).addClass('checked')
             }

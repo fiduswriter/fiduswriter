@@ -1,6 +1,6 @@
 {
   "name": "fidus-writer",
-  "version": "3.0.0-rc2",
+  "version": "3.0.0-rc3",
   "description": "Install dependencies for ES6 transpilation",
   "scripts": {
       "js_check": "node_modules/.bin/jshint .",

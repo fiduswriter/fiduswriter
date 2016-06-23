@@ -1,5 +1,5 @@
 import {ProseMirror} from "prosemirror/dist/edit/main"
-import {fidusFnSchema} from "../schema"
+import {fidusFnSchema} from "./schema"
 import "prosemirror/dist/collab"
 
 import {ModFootnoteEditor} from "./editor"

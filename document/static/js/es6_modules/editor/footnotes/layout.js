@@ -45,7 +45,7 @@ export class ModFootnoteLayout {
             }
             if (that.mod.editor.mod.citations.citationType==='note') {
                 /* Citations are also in footnotes, so both citation footnotes
-                 * and editor footnotes have to be placed. They shoudl eb placed
+                 * and editor footnotes have to be placed. They should be placed
                  * in the order the markers appear in the content, even though
                  * editor footnotes and citations footnotes are separated in the DOM.
                 */

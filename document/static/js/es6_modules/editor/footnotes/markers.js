@@ -44,7 +44,9 @@ export class ModFootnoteMarkers {
     }
 
     scanForFootnoteMarkers(transform, renderFootnote) {
-        /* Look through the ranges added through a transform for the presence of one or more footnote markers */
+        /* Look through the ranges added through a transform for the presence of
+         * one or more footnote markers.
+        */
         let that = this
         if (this.updating) {
             return false
@@ -73,7 +75,9 @@ export class ModFootnoteMarkers {
     }
 
     getAddedRanges(transform) {
-        /* find ranges of the current document that have been added by means of a transformation. */
+        /* find ranges of the current document that have been added by means of
+         * a transformation.
+         */
         let ranges = []
         for (let i = 0; i < transform.steps.length; i++) {
             let step = transform.steps[i],

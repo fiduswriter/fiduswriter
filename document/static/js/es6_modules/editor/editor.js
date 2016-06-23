@@ -2,15 +2,12 @@ import * as objectHash from "object-hash/dist/object_hash"
 
 /* Functions for ProseMirror integration.*/
 import {ProseMirror} from "prosemirror/dist/edit/main"
-import {fromDOM} from "prosemirror/dist/format"
-import {serializeTo} from "prosemirror/dist/format"
 import "prosemirror/dist/collab"
 import {scheduleDOMUpdate} from "prosemirror/dist/ui/update"
 //import "prosemirror/dist/menu/menubar"
 
 import {defaultDocumentStyle} from "../style/documentstyle-list"
 import {defaultCitationStyle} from "../style/citation-definitions"
-
 import {fidusSchema} from "./schema"
 import {ModComments} from "./comments/mod"
 import {ModFootnotes} from "./footnotes/mod"
@@ -20,8 +17,7 @@ import {ModTools} from "./tools/mod"
 import {ModSettings} from "./settings/mod"
 import {ModMenus} from "./menus/mod"
 import {ModServerCommunications} from "./server-communications"
-import {ModNodeConvert} from "./node-convert"
-import {node2Obj, obj2Node} from "../exporter/json"
+import {editorToModel, modelToEditor} from "./node-convert"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {Paste} from "./paste/paste"
@@ -53,7 +49,6 @@ export class Editor {
             id
         }
         this.user = false
-        new ModNodeConvert(this)
         new ModServerCommunications(this)
     }
 
@@ -119,36 +114,6 @@ export class Editor {
         })
     }
 
-    createDoc(aDocument) {
-        let editorNode = document.createElement('div'),
-            titleNode = aDocument.metadata.title ? obj2Node(aDocument.metadata.title) : document.createElement('div'),
-            documentContentsNode = obj2Node(aDocument.contents),
-            metadataSubtitleNode = aDocument.metadata.subtitle ? obj2Node(aDocument.metadata.subtitle) : document.createElement('div'),
-            metadataAuthorsNode = aDocument.metadata.authors ? obj2Node(aDocument.metadata.authors) : document.createElement('div'),
-            metadataAbstractNode = aDocument.metadata.abstract ? obj2Node(aDocument.metadata.abstract) : document.createElement('div'),
-            metadataKeywordsNode = aDocument.metadata.keywords ? obj2Node(aDocument.metadata.keywords) : document.createElement('div'),
-            doc
-
-        titleNode.id = 'document-title'
-        metadataSubtitleNode.id = 'metadata-subtitle'
-        metadataAuthorsNode.id = 'metadata-authors'
-        metadataAbstractNode.id = 'metadata-abstract'
-        metadataKeywordsNode.id = 'metadata-keywords'
-        documentContentsNode.id = 'document-contents'
-
-        editorNode.appendChild(titleNode)
-        editorNode.appendChild(metadataSubtitleNode)
-        editorNode.appendChild(metadataAuthorsNode)
-        editorNode.appendChild(metadataAbstractNode)
-        editorNode.appendChild(metadataKeywordsNode)
-        editorNode.appendChild(documentContentsNode)
-
-        doc = fromDOM(this.schema, this.mod.nodeConvert.modelToEditorNode(editorNode), {
-            preserveWhitespace: true
-        })
-        return doc
-    }
-
     update() {
         console.log('Updating editor')
         let that = this
@@ -157,9 +122,9 @@ export class Editor {
         if (this.mod.collab.docChanges.awaitingDiffResponse) {
             this.mod.collab.docChanges.enableDiffSending()
         }
-        let doc = this.createDoc(this.doc)
+        let pmDoc = modelToEditor(this.doc, this.schema)
         this.pm.setOption("collab", null)
-        this.pm.setContent(doc)
+        this.pm.setContent(pmDoc)
         this.pm.setOption("collab", {
             version: this.doc.version
         })
@@ -363,15 +328,11 @@ export class Editor {
 
     // Collects updates of the document from ProseMirror and saves it under this.doc
     getUpdates(callback) {
-        let outputNode = this.mod.nodeConvert.editorToModelNode(serializeTo(this.pm.mod.collab.versionDoc, 'dom'))
+        let tmpDoc = editorToModel(this.pm.mod.collab.versionDoc)
+        this.doc.contents = tmpDoc.contents
+        this.doc.metadata = tmpDoc.metadata
         this.doc.title = this.pm.mod.collab.versionDoc.firstChild.textContent
         this.doc.version = this.pm.mod.collab.version
-        this.doc.metadata.title = node2Obj(outputNode.querySelector('#document-title'))
-        this.doc.metadata.subtitle = node2Obj(outputNode.querySelector('#metadata-subtitle'))
-        this.doc.metadata.authors = node2Obj(outputNode.querySelector('#metadata-authors'))
-        this.doc.metadata.abstract = node2Obj(outputNode.querySelector('#metadata-abstract'))
-        this.doc.metadata.keywords = node2Obj(outputNode.querySelector('#metadata-keywords'))
-        this.doc.contents = node2Obj(outputNode.querySelector('#document-contents'))
         this.doc.hash = this.getHash()
         this.doc.comments = this.mod.comments.store.comments
         if (callback) {

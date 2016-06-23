@@ -5,96 +5,58 @@ import {Schema, Block, Textblock, Inline, Text, MarkType, Attribute,
 import {katexRender} from "../katex/katex"
 
 class Title extends Textblock {
-}
-
-Title.register("parseDOM", "div", {
-    rank: 26,
-    parse: function(dom, state) {
-        let id = dom.id
-        if (!id || id !== 'document-title') return false
-        state.wrapIn(dom, this)
+    get matchDOMTag() {
+        return {"div[id='document-title']": null}
     }
-})
-
-
-Title.prototype.serializeDOM = (node, serializer) => serializer.renderAs(node, "div", {
-    id: 'document-title'
-})
+    toDOM(node) {
+        return ["div", {id: 'document-title'}]
+    }
+}
 
 class Subtitle extends Textblock {
-}
-
-Subtitle.register("parseDOM", "div", {
-    parse: function(dom, state) {
-        if (dom.id !== 'metadata-subtitle') return false
-        state.wrapIn(dom, this)
+    get matchDOMTag() {
+        return {"div[id='metadata-subtitle']": null}
     }
-})
-
-Subtitle.prototype.serializeDOM = (node, serializer) =>
-    serializer.renderAs(node, "div", {
-        id: 'metadata-subtitle'
-    })
+    toDOM(node) {
+        return ["div", {id: 'metadata-subtitle'}]
+    }
+}
 
 class Authors extends Textblock {
-}
-
-Authors.register("parseDOM", "div", {
-    parse: function(dom, state) {
-        if (dom.id !== 'metadata-authors') return false
-        state.wrapIn(dom, this)
+    get matchDOMTag() {
+        return {"div[id='metadata-authors']": null}
     }
-})
-
-Authors.prototype.serializeDOM = (node, serializer) =>
-    serializer.renderAs(node, "div", {
-        id: 'metadata-authors'
-    })
+    toDOM(node) {
+        return ["div", {id: 'metadata-authors'}]
+    }
+}
 
 class Abstract extends Block {
-}
-
-Abstract.register("parseDOM", "div", {
-    parse: function(dom, state) {
-        if (dom.id !== 'metadata-abstract') return false
-        state.wrapIn(dom, this)
+    get matchDOMTag() {
+        return {"div[id='metadata-abstract']": null}
     }
-})
-
-Abstract.prototype.serializeDOM = (node, serializer) =>
-    serializer.renderAs(node, "div", {
-        id: 'metadata-abstract'
-    })
+    toDOM(node) {
+        return ["div", {id: 'metadata-abstract'}]
+    }
+}
 
 class Keywords extends Textblock {
-}
-
-Keywords.register("parseDOM", "div", {
-    parse: function(dom, state) {
-        if (dom.id !== 'metadata-keywords') return false
-        state.wrapIn(dom, this)
+    get matchDOMTag() {
+        return {"div[id='metadata-keywords']": null}
     }
-})
-
-Keywords.prototype.serializeDOM = (node, serializer) =>
-    serializer.renderAs(node, "div", {
-        id: 'metadata-keywords'
-    })
+    toDOM(node) {
+        return ["div", {id: 'metadata-keywords'}]
+    }
+}
 
 class Body extends Block {
-}
-
-Body.register("parseDOM", "div", {
-    parse: function(dom, state) {
-        if (dom.id !== 'document-contents') return false
-        state.wrapIn(dom, this)
+    get matchDOMTag() {
+        return {"div[id='document-contents']": null}
     }
-})
-
-Body.prototype.serializeDOM = (node, serializer) =>
-    serializer.renderAs(node, "div", {
-        id: 'document-contents'
-    })
+    toDOM(node) {
+        return ["div", {id: 'document-contents'}]
+    }
+}
 
 
 class Footnote extends Inline {
@@ -105,53 +67,23 @@ class Footnote extends Inline {
             }),
         }
     }
-}
-
-Footnote.register("parseDOM", "footnote", {
-    parse: function(dom, state) {
-        state.insert(this, {
-            contents: dom.innerHTML
-        })
-    }
-})
-
-Footnote.register("parseDOM", "span", {
-    parse: function(dom, state) {
-        if (!dom.classList.contains('footnote-marker')) return false
-        state.insert(this, {
-            contents: dom.getAttribute('contents')
-        })
-    }
-})
-
-Footnote.prototype.serializeDOM = (node, serializer) => {
-    let dom = serializer.elt("span", {
-        class: 'footnote-marker',
-        contents: node.attrs.contents
-    })
-    dom.innerHTML = '&nbsp;' // Needed to make editing work correctly.
-    return dom
-}
-
-Footnote.register("command", "insert", {
-    derive: {
-        params: [{
-            label: "Contents",
-            attr: "contents"
-        }, ]
-    },
-    label: "Insert footnote",
-    menu: {
-        group: "insert",
-        rank: 34,
-        display: {
-            type: "label",
-            label: "Footnote"
+    get matchDOMTag() {
+        return {
+            "footnote": dom => ({ // TODO: really used??
+                contents: dom.innerHTML
+            }),
+            "span.footnote-marker": dom => ({
+                contents: dom.getAttribute('contents')
+            })
         }
     }
-})
-
-
+    toDOM(node) {
+        return ["span", {
+            class: 'footnote-marker',
+            contents: node.attrs.contents
+        }, '&nbsp;']
+    }
+}
 
 export class Citation extends Inline {
     get attrs() {
@@ -168,68 +100,34 @@ export class Citation extends Inline {
             })
         }
     }
-}
-
-Citation.register("parseDOM", "span", {
-    parse: function(dom, state) {
-        if (!dom.classList.contains('citation')) return false
-        state.insert(this, {
-            bibFormat: dom.getAttribute('data-bib-format') || '',
-            bibEntry: dom.getAttribute('data-bib-entry') || '',
-            bibBefore: dom.getAttribute('data-bib-before') || '',
-            bibPage: dom.getAttribute('data-bib-page') || ''
-        })
-    }
-})
-
-Citation.register("parseDOM", "cite", {
-    parse: function(dom, state) {
-        state.insert(this, {
-            bibFormat: dom.getAttribute('data-bib-format') || '',
-            bibEntry: dom.getAttribute('data-bib-entry') || '',
-            bibBefore: dom.getAttribute('data-bib-before') || '',
-            bibPage: dom.getAttribute('data-bib-page') || ''
-        })
-    }
-})
-
-Citation.prototype.serializeDOM = (node, serializer) => {
-    return serializer.elt("span", {
-        class: "citation",
-        'data-bib-format': node.attrs.bibFormat,
-        'data-bib-entry': node.attrs.bibEntry,
-        'data-bib-before': node.attrs.bibBefore,
-        'data-bib-page': node.attrs.bibPage
-    })
-    // TODO: Do the citation formatting here rather than centrally, maybe?
-}
-
-Citation.register("command", "insert", {
-    derive: {
-        params: [{
-            label: "Bibliography Format",
-            attr: "bibFormat"
-        }, {
-            label: "Bibliography Entry",
-            attr: "bibEntry"
-        }, {
-            label: "Text Before",
-            attr: "bibBefore"
-        }, {
-            label: "Page number",
-            attr: "bibPage"
-        }]
-    },
-    label: "Insert citation",
-    menu: {
-        group: "insert",
-        rank: 42,
-        display: {
-            type: "label",
-            label: "Citation"
+    get matchDOMTag() {
+        return {
+            "span.citation": dom => ({
+                bibFormat: dom.getAttribute('data-bib-format') || '',
+                bibEntry: dom.getAttribute('data-bib-entry') || '',
+                bibBefore: dom.getAttribute('data-bib-before') || '',
+                bibPage: dom.getAttribute('data-bib-page') || ''
+            }),
+            "cite": dom => ({
+                bibFormat: dom.getAttribute('data-bib-format') || '',
+                bibEntry: dom.getAttribute('data-bib-entry') || '',
+                bibBefore: dom.getAttribute('data-bib-before') || '',
+                bibPage: dom.getAttribute('data-bib-page') || ''
+            })
         }
     }
-})
+    toDOM(node) {
+        return ["span", {
+            class: 'citation',
+            'data-bib-format': node.attrs.bibFormat,
+            'data-bib-entry': node.attrs.bibEntry,
+            'data-bib-before': node.attrs.bibBefore,
+            'data-bib-page': node.attrs.bibPage
+        }]
+        // TODO: Do the citation formatting here rather than centrally, maybe?
+    }
+}
+
 
 export class Equation extends Inline {
     get attrs() {
@@ -239,22 +137,23 @@ export class Equation extends Inline {
             })
         }
     }
-}
-
-
-Equation.register("parseDOM", "span", {
-    parse: function(dom, state) {
-        if (!dom.classList.contains('equation')) return false
-        state.insert(this, {
+    get matchDOMTag() {
+        return {"span.equation": dom => ({
             equation: dom.getAttribute('data-equation')
-        })
+        })l}
     }
-})
+    toDOM(node) {
+        return ["span", {
+            class: 'equation',
+            'data-equation': node.attrs.equation
+        }]
+    }
+}
 
 Equation.prototype.serializeDOM = (node, serializer) => {
     let dom = serializer.renderAs(node, "span", {
         class: 'equation',
-        'data-equation': node.attrs.equation
+
     })
     katexRender(node.attrs.equation, dom, {throwOnError: false})
     dom.setAttribute('contenteditable', 'false')

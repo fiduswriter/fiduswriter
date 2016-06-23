@@ -2,8 +2,6 @@ import * as objectHash from "object-hash/dist/object_hash"
 
 /* Functions for ProseMirror integration.*/
 import {ProseMirror} from "prosemirror/dist/edit/main"
-import {fromDOM} from "prosemirror/dist/format"
-import {serializeTo} from "prosemirror/dist/format"
 import "prosemirror/dist/collab"
 import {scheduleDOMUpdate} from "prosemirror/dist/ui/update"
 //import "prosemirror/dist/menu/menubar"
@@ -116,12 +114,6 @@ export class Editor {
         })
     }
 
-    createDoc(aDocument) {
-        return fromDOM(this.schema, modelToEditor(aDocument), {
-            preserveWhitespace: true
-        })
-    }
-
     update() {
         console.log('Updating editor')
         let that = this
@@ -130,9 +122,9 @@ export class Editor {
         if (this.mod.collab.docChanges.awaitingDiffResponse) {
             this.mod.collab.docChanges.enableDiffSending()
         }
-        let doc = this.createDoc(this.doc)
+        let pmDoc = modelToEditor(this.doc, this.schema)
         this.pm.setOption("collab", null)
-        this.pm.setContent(doc)
+        this.pm.setContent(pmDoc)
         this.pm.setOption("collab", {
             version: this.doc.version
         })
@@ -336,7 +328,7 @@ export class Editor {
 
     // Collects updates of the document from ProseMirror and saves it under this.doc
     getUpdates(callback) {
-        let tmpDoc = editorToModel(serializeTo(this.pm.mod.collab.versionDoc,'dom'))
+        let tmpDoc = editorToModel(this.pm.mod.collab.versionDoc)
         this.doc.contents = tmpDoc.contents
         this.doc.metadata = tmpDoc.metadata
         this.doc.title = this.pm.mod.collab.versionDoc.firstChild.textContent

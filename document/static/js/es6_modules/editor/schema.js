@@ -1,33 +1,35 @@
-import {Schema, Block, Textblock, Inline, Text, MarkType, Attribute,
+import {Schema, Block, Inline, Text, MarkType, Attribute,
         Doc, BlockQuote, OrderedList, BulletList, ListItem, HorizontalRule,
         Paragraph, Heading, CodeBlock, Image, HardBreak, CodeMark, EmMark,
         StrongMark, LinkMark} from "prosemirror/dist/model"
 import {katexRender} from "../katex/katex"
 
-class Title extends Textblock {
+import {elt} from "prosemirror/dist/util/dom"
+
+class Title extends Block {
     get matchDOMTag() {
         return {"div[id='document-title']": null}
     }
     toDOM(node) {
-        return ["div", {id: 'document-title'}]
+        return ["div", {id: 'document-title'}, 0]
     }
 }
 
-class Subtitle extends Textblock {
+class Subtitle extends Block {
     get matchDOMTag() {
         return {"div[id='metadata-subtitle']": null}
     }
     toDOM(node) {
-        return ["div", {id: 'metadata-subtitle'}]
+        return ["div", {id: 'metadata-subtitle'}, 0]
     }
 }
 
-class Authors extends Textblock {
+class Authors extends Block {
     get matchDOMTag() {
         return {"div[id='metadata-authors']": null}
     }
     toDOM(node) {
-        return ["div", {id: 'metadata-authors'}]
+        return ["div", {id: 'metadata-authors'}, 0]
     }
 }
 
@@ -36,16 +38,16 @@ class Abstract extends Block {
         return {"div[id='metadata-abstract']": null}
     }
     toDOM(node) {
-        return ["div", {id: 'metadata-abstract'}]
+        return ["div", {id: 'metadata-abstract'}, 0]
     }
 }
 
-class Keywords extends Textblock {
+class Keywords extends Block {
     get matchDOMTag() {
         return {"div[id='metadata-keywords']": null}
     }
     toDOM(node) {
-        return ["div", {id: 'metadata-keywords'}]
+        return ["div", {id: 'metadata-keywords'}, 0]
     }
 }
 
@@ -54,7 +56,7 @@ class Body extends Block {
         return {"div[id='document-contents']": null}
     }
     toDOM(node) {
-        return ["div", {id: 'document-contents'}]
+        return ["div", {id: 'document-contents'}, 0]
     }
 }
 
@@ -140,45 +142,17 @@ export class Equation extends Inline {
     get matchDOMTag() {
         return {"span.equation": dom => ({
             equation: dom.getAttribute('data-equation')
-        })l}
+        })}
     }
     toDOM(node) {
-        return ["span", {
-            class: 'equation',
-            'data-equation': node.attrs.equation
-        }]
+        let dom = elt('span', {
+            class: 'equation'
+        })
+        katexRender(node.attrs.equation, dom, {throwOnError: false})
+        dom.setAttribute('contenteditable', 'false')
+        return dom
     }
 }
-
-Equation.prototype.serializeDOM = (node, serializer) => {
-    let dom = serializer.renderAs(node, "span", {
-        class: 'equation',
-
-    })
-    katexRender(node.attrs.equation, dom, {throwOnError: false})
-    dom.setAttribute('contenteditable', 'false')
-    return dom
-}
-
-Equation.register("command", "insert", {
-    derive: {
-        params: [{
-            label: "Equation",
-            type: "text",
-            attr: "equation"
-        }]
-    },
-    label: "Insert equation",
-    menu: {
-        group: "insert",
-        rank: 33,
-        display: {
-            type: "label",
-            label: "Equation"
-        }
-    }
-})
-
 
 export class Figure extends Block {
     get attrs() {
@@ -197,119 +171,89 @@ export class Figure extends Block {
             })
         }
     }
-}
-
-Figure.register("parseDOM", "figure", {
-    parse: function(dom, state) {
-        state.insert(this, {
+    get matchDOMTag() {
+        return {"figure": dom => ({
             equation: dom.getAttribute('data-equation'),
             image: dom.getAttribute('data-image'),
             figureCategory: dom.getAttribute('data-figure-category'),
-            caption: dom.getAttribute('data-caption'),
-        })
+            caption: dom.getAttribute('data-caption')
+        })}
     }
-})
-
-let imageDBBroken = false
-
-Figure.prototype.serializeDOM = (node, serializer) => {
-    let dom = serializer.elt("figure", {
-        'data-equation': node.attrs.equation,
-        'data-image': node.attrs.image,
-        'data-figure-category': node.attrs.figureCategory,
-        'data-caption': node.attrs.caption
-    })
-    if (node.attrs.image) {
-        dom.appendChild(serializer.elt("div"))
-        if(node.type.schema.cached.imageDB) {
-            if(node.type.schema.cached.imageDB.db[node.attrs.image] &&
-                node.type.schema.cached.imageDB.db[node.attrs.image].image) {
-                dom.firstChild.appendChild(serializer.elt("img", {
-                    "src": node.type.schema.cached.imageDB.db[node.attrs.image].image
-                }))
-            } else {
-                /* The image was not present in the imageDB -- possibly because a collaborator just added ut.
-                Try to reload the imageDB, but only once. If the image cannot be found in the updated
-                imageDB, do not attempt at reloading the imageDB if an image cannot be
-                found. */
-                if (!imageDBBroken) {
-                    node.type.schema.cached.imageDB.getDB(function() {
-                        if (node.type.schema.cached.imageDB.db[node.attrs.image] &&
-                                node.type.schema.cached.imageDB.db[node.attrs.image].image) {
-                            dom.firstChild.appendChild(serializer.elt("img", {
-                                "src": node.type.schema.cached.imageDB.db[node.attrs.image].image
-                            }))
-                        } else {
-                            imageDBBroken = true
-                        }
-                    })
-                }
-            }
-        }
-    } else {
-        let domEquation = serializer.elt("div", {
-            class: 'figure-equation',
-            'data-equation': node.attrs.equation
-        })
-        katexRender(node.attrs.equation, domEquation, {
-            displayMode: true,
-            throwOnError: false
-        })
-        dom.appendChild(domEquation)
-    }
-    let captionNode = serializer.elt("figcaption")
-    if (node.attrs.figureCategory !== 'none') {
-        let figureCatNode = serializer.elt("span", {
-            class: 'figure-cat-' + node.attrs.figureCategory,
-            'data-figure-category': node.attrs.figureCategory
-        })
-        figureCatNode.innerHTML = node.attrs.figureCategory
-        captionNode.appendChild(figureCatNode)
-    }
-    if (node.attrs.caption !== '') {
-        let captionTextNode = serializer.elt("span", {
+    toDOM(node) {
+        let dom = elt('figure', {
+            'data-equation': node.attrs.equation,
+            'data-image': node.attrs.image,
+            'data-figure-category': node.attrs.figureCategory,
             'data-caption': node.attrs.caption
         })
-        captionTextNode.innerHTML = node.attrs.caption
+        if (node.attrs.image) {
+            dom.appendChild(serializer.elt("div"))
+            if(node.type.schema.cached.imageDB) {
+                if(node.type.schema.cached.imageDB.db[node.attrs.image] &&
+                    node.type.schema.cached.imageDB.db[node.attrs.image].image) {
+                    dom.firstChild.appendChild(serializer.elt("img", {
+                        "src": node.type.schema.cached.imageDB.db[node.attrs.image].image
+                    }))
+                } else {
+                    /* The image was not present in the imageDB -- possibly because a collaborator just added ut.
+                    Try to reload the imageDB, but only once. If the image cannot be found in the updated
+                    imageDB, do not attempt at reloading the imageDB if an image cannot be
+                    found. */
+                    if (!imageDBBroken) {
+                        node.type.schema.cached.imageDB.getDB(function() {
+                            if (node.type.schema.cached.imageDB.db[node.attrs.image] &&
+                                    node.type.schema.cached.imageDB.db[node.attrs.image].image) {
+                                dom.firstChild.appendChild(serializer.elt("img", {
+                                    "src": node.type.schema.cached.imageDB.db[node.attrs.image].image
+                                }))
+                            } else {
+                                imageDBBroken = true
+                            }
+                        })
+                    }
+                }
+            }
+        } else {
+            let domEquation = elt('div', {
+                class: 'figure-equation',
+                'data-equation': node.attrs.equation
+            })
 
-        captionNode.appendChild(captionTextNode)
-    }
-    // Add table captions above the table, other captions below.
-    if (node.attrs.figureCategory === 'table') {
-        dom.insertBefore(captionNode, dom.lastChild)
-    } else {
-        dom.appendChild(captionNode)
-    }
+            katexRender(node.attrs.equation, domEquation, {
+                displayMode: true,
+                throwOnError: false
+            })
+            dom.appendChild(domEquation)
+        }
+        let captionNode = elt("figcaption")
+        if (node.attrs.figureCategory !== 'none') {
+            let figureCatNode = elt('span', {
+                class: 'figure-cat-' + node.attrs.figureCategory,
+                'data-figure-category': node.attrs.figureCategory
+            })
+            figureCatNode.innerHTML = node.attrs.figureCategory
+            captionNode.appendChild(figureCatNode)
+        }
+        if (node.attrs.caption !== '') {
+            let captionTextNode = elt("span", {
+                'data-caption': node.attrs.caption
+            })
+            captionTextNode.innerHTML = node.attrs.caption
 
-    return dom
+            captionNode.appendChild(captionTextNode)
+        }
+        // Add table captions above the table, other captions below.
+        if (node.attrs.figureCategory === 'table') {
+            dom.insertBefore(captionNode, dom.lastChild)
+        } else {
+            dom.appendChild(captionNode)
+        }
+
+        return dom
+    }
 }
 
-Figure.register("command", "insert", {
-    derive: {
-        params: [{
-            label: "Equation",
-            attr: "equation"
-        }, {
-            label: "Image PK",
-            attr: "image"
-        }, {
-            label: "Category",
-            attr: "figureCategory"
-        }, {
-            label: "Caption",
-            attr: "caption"
-        }]
-    },
-    label: "Insert figure",
-    menu: {
-        group: "insert",
-        rank: 32,
-        display: {
-            type: "label",
-            label: "Figure"
-        }
-    }
-})
+let imageDBBroken = false
 
 
 class CommentMark extends MarkType {
@@ -321,25 +265,14 @@ class CommentMark extends MarkType {
     get inclusiveRight() {
         return false
     }
-}
-
-
-CommentMark.register("parseDOM", "span", {
-    parse: function(dom, state) {
-        if (!dom.classList.contains('comment')) return false
-        let id = dom.getAttribute("data-id")
-        if (!id) return false
-        state.wrapMark(dom, this.create({
-            id
-        }))
+    get matchDOMTag() {
+        return {"span.comment[data-id]": dom => ({
+            id: getAttribute("data-id"),
+        })}
     }
-})
-
-CommentMark.prototype.serializeDOM = (mark, serializer) => {
-    return serializer.elt("span", {
-        class: 'comment',
-        'data-id': mark.attrs.id
-    })
+    toDOM(node) {
+        return ['span', {class: 'comment', 'data-id': node.attrs.id}, 0]
+    }
 }
 
 export const fidusSchema = new Schema({
@@ -370,7 +303,6 @@ export const fidusSchema = new Schema({
     footnote: {type: Footnote, group: "inline"}
 
   },
-
   marks: {
     em: EmMark,
     strong: StrongMark,

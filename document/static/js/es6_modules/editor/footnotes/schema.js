@@ -5,19 +5,14 @@ import {Schema, Block, Text, Doc, BlockQuote, OrderedList, BulletList, ListItem,
 import {Figure, Citation, Equation} from "../schema"
 
 class FootnoteContainer extends Block {
+    get matchDOMTag() {
+        return {"div.footnote-container": null}
+    }
+    toDOM(node) {
+        return ['div',{class: 'footnote-container'}, 0]
+    }
 }
 
-FootnoteContainer.register("parseDOM", "div", {
-    parse: function(dom, state) {
-        if (!dom.classList.contains('footnote-container')) return false
-        state.wrapIn(dom, this)
-    }
-})
-
-FootnoteContainer.prototype.serializeDOM = (node, serializer) =>
-    serializer.renderAs(node, "div", {
-        class: 'footnote-container'
-    })
 
 export const fidusFnSchema = new Schema({
   nodes: {

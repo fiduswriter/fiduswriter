@@ -1,5 +1,5 @@
 import {commentsTemplate, filterByUserBoxTemplate} from "./templates"
-import {UpdateScheduler, scheduleDOMUpdate} from "prosemirror/dist/ui/update"
+import {UpdateScheduler} from "prosemirror/dist/edit/update"
 import {Comment} from "./comment"
 import {localizeDate} from "../../common/common"
 
@@ -101,7 +101,7 @@ export class ModCommentLayout {
 
     layoutComments() {
         let that = this
-        scheduleDOMUpdate(this.mod.editor.pm, () => {return that.updateDOM()})
+        this.mod.editor.pm.scheduleDOMUpdate(() => {return that.updateDOM()})
     }
 
     onSelectionChange() {

@@ -1,4 +1,4 @@
-import {UpdateScheduler, scheduleDOMUpdate} from "prosemirror/dist/ui/update"
+import {UpdateScheduler} from "prosemirror/dist/edit/update"
 
 export class ModCollabCarets {
     constructor(mod) {
@@ -72,7 +72,7 @@ export class ModCollabCarets {
         let that = this
         this.updateCaret(data.caret_position)
         let pm = data.caret_position.pm === 'pm' ? this.mod.editor.pm : this.mod.editor.mod.footnotes.fnPm
-        scheduleDOMUpdate(pm, function(){return that.updatePositionCSS()})
+        pm.scheduleDOMUpdate(function(){return that.updatePositionCSS()})
     }
 
     // Update the position of a collaborator's caret

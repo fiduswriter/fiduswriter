@@ -3,7 +3,6 @@ import * as objectHash from "object-hash/dist/object_hash"
 /* Functions for ProseMirror integration.*/
 import {ProseMirror} from "prosemirror/dist/edit/main"
 import "prosemirror/dist/collab"
-import {scheduleDOMUpdate} from "prosemirror/dist/ui/update"
 //import "prosemirror/dist/menu/menubar"
 
 import {defaultDocumentStyle} from "../style/documentstyle-list"
@@ -416,7 +415,7 @@ export class Editor {
 
         if (updateBibliography) {
             // Recreate the bibliography on next flush.
-            scheduleDOMUpdate(this.pm, () => {return that.mod.citations.resetCitations()})
+            this.pm.scheduleDOMUpdate(() => {return that.mod.citations.resetCitations()})
         }
 
         if (updateTitle) {
@@ -434,7 +433,7 @@ export class Editor {
             // Check if the deleted comment referrers still are somewhere else in the doc.
             // If not, delete them.
             // TODO: Is a timeout/scheduleDOMUpdate really needed here?
-            scheduleDOMUpdate(this.pm, () => {return that.mod.comments.store.checkAndDelete(commentIds)})
+            this.pm.scheduleDOMUpdate(() => {return that.mod.comments.store.checkAndDelete(commentIds)})
         }
 
     }

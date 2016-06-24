@@ -2,8 +2,8 @@
  We use the DOM import for ProseMirror as the JSON we store in the database is really jsonized HTML.
 */
 import {node2Obj, obj2Node} from "../exporter/json"
-import {serializeTo} from "prosemirror/dist/format"
-import {fromDOM} from "prosemirror/dist/format"
+import {nodeToDOM} from "prosemirror/dist/model/to_dom"
+import {parseDOM} from "prosemirror/dist/model/from_dom"
 
 export let modelToEditor = function(doc, schema) {
     // We start with a document of which we use the metadata and contents entries.
@@ -41,7 +41,7 @@ export let modelToEditor = function(doc, schema) {
           fnNodes[i].parentNode.replaceChild(newNode, fnNodes[i])
       }
 
-      let pmDoc = fromDOM(schema, editorNode, {
+      let pmDoc = parseDOM(schema, editorNode, {
           preserveWhitespace: true
       })
 
@@ -53,7 +53,7 @@ export let editorToModel = function(pmDoc) {
     // In order to stick with the format used in Fidus Writer 1.1-2.0,
     // we do a few smaller modifications to the node before it is saved.
 
-    let node = serializeTo(pmDoc, 'dom')
+    let node = nodeToDOM(pmDoc)
 
     let fnNodes = node.querySelectorAll('.footnote-marker')
 

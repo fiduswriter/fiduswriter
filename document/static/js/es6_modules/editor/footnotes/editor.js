@@ -1,7 +1,8 @@
-import {fromHTML} from "prosemirror/dist/format"
+import {parseDOM} from "prosemirror/dist/model/from_dom"
 import {Step} from "prosemirror/dist/transform"
 import {Paste} from "../paste/paste"
 import {COMMENT_ONLY_ROLES} from "../editor"
+import {elt} from "prosemirror/dist/util/dom"
 
 /* Functions related to the footnote editor instance */
 export class ModFootnoteEditor {
@@ -91,8 +92,11 @@ export class ModFootnoteEditor {
 
     // Convert the footnote HTML stored with the marker to a PM node representation of the footnote.
     htmlTofootnoteNode(contents) {
-        let footnoteHTML = "<div class='footnote-container'>" + contents + "</div>"
-        let node = fromHTML(this.mod.schema, footnoteHTML, {
+        let footnoteDOM = elt('div', {
+            class: 'footnote-container'
+        })
+        footnoteDOM.innerHTML = contents
+        let node = parseDOM(this.mod.schema, footnoteDOM, {
             preserveWhitespace: true,
             topNode: false
         })

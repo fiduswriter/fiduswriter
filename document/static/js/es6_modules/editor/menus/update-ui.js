@@ -1,4 +1,4 @@
-import {UpdateScheduler} from "prosemirror/dist/ui/update"
+import {UpdateScheduler} from "prosemirror/dist/edit/update"
 
 
 const BLOCK_LABELS = {

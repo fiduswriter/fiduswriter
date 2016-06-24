@@ -1,5 +1,5 @@
 import {FormatCitations} from "../../citations/format"
-import {UpdateScheduler} from "prosemirror/dist/ui/update"
+import {UpdateScheduler} from "prosemirror/dist/edit/update"
 
 export class ModCitations {
     constructor(editor) {

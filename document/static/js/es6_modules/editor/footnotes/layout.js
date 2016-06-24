@@ -1,4 +1,4 @@
-import {UpdateScheduler, scheduleDOMUpdate} from "prosemirror/dist/ui/update"
+import {UpdateScheduler} from "prosemirror/dist/edit/update"
 
 /* A class to make footnotes appear correctly off the side of their referrer. */
 export class ModFootnoteLayout {
@@ -26,7 +26,7 @@ export class ModFootnoteLayout {
 
     layoutFootnotes() {
         let that = this
-        scheduleDOMUpdate(this.mod.editor.pm, () => {return that.updateDOM()})
+        this.mod.editor.pm.scheduleDOMUpdate(() => {return that.updateDOM()})
     }
 
     updateDOM() {

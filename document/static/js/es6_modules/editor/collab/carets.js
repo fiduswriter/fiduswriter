@@ -1,5 +1,3 @@
-import {UpdateScheduler} from "prosemirror/dist/edit/update"
-
 export class ModCollabCarets {
     constructor(mod) {
         mod.carets = this
@@ -26,16 +24,17 @@ export class ModCollabCarets {
     }
 
     bindEvents() {
-        let that = this
-        new UpdateScheduler(this.mod.editor.pm, "change", () => {return that.updatePositionCSS()})
-        new UpdateScheduler(this.mod.editor.mod.footnotes.fnPm, "change", () => {return that.updatePositionCSS()})
+        let that = this, pm = this.mod.editor.pm
+        pm.updateScheduler([pm.on.change], () => {return that.updatePositionCSS()})
+        let fnPm = this.mod.editor.mod.footnotes.fnPm
+        fnPm.updateScheduler([fnPm.on.change], () => {return that.updatePositionCSS()})
         // Limit sending of selection to once every 250 ms. This is also important to work correctly
         // with editing, which otherwise triggers three selection changes that result in an incorrect caret placement
         let sendSelection = _.debounce(function(){
             that.sendSelectionChange()
         }, 250)
-        this.mod.editor.pm.on("selectionChange", sendSelection)
-        this.mod.editor.mod.footnotes.fnPm.on("selectionChange", sendSelection)
+        pm.on.selectionChange.add(sendSelection)
+        fnPm.on.selectionChange.add(sendSelection)
     }
 
     // Create a new caret as the current user
@@ -54,7 +53,7 @@ export class ModCollabCarets {
 
     sendSelectionChange() {
         let that = this
-        if (this.mod.editor.currentPm.mod.collab.unconfirmedMaps.length > 0) {
+        if (this.mod.editor.currentPmCollab.unconfirmedMaps.length > 0) {
             // TODO: Positions really need to be reverse-mapped through all
             // unconfirmed maps. As long as we don't do this, we just don't send
             // anything if there are unconfirmed maps to avoid potential problems.
@@ -64,7 +63,7 @@ export class ModCollabCarets {
         this.mod.editor.mod.serverCommunications.send({
             type: 'selection_change',
             caret_position: this.getCaretPosition(),
-            diff_version: this.mod.editor.pm.mod.collab.version
+            diff_version: this.mod.editor.pmCollab.version
         })
     }
 
@@ -87,9 +86,9 @@ export class ModCollabCarets {
         let posTo = caretPosition.to
         let posHead = caretPosition.head
         let pm = caretPosition.pm === 'pm' ? this.mod.editor.pm : this.mod.editor.mod.footnotes.fnPm
-
+        let pmCollab = caretPosition.pm === 'pm' ? this.mod.editor.pmCollab : this.mod.editor.mod.footnotes.fnPmCollab
         // Map the positions through all still unconfirmed changes
-        pm.mod.collab.unconfirmedMaps.forEach(function(map){
+        pmCollab.unconfirmedMaps.forEach(function(map){
             posFrom = map.map(posFrom)
             posTo = map.map(posTo)
             posHead = map.map(posHead)

@@ -12,21 +12,19 @@ export class ModFootnoteMarkers {
 
     bindEvents() {
         let that = this
-        this.mod.editor.pm.on('documentUpdated', function() {
-            that.mod.fnEditor.renderAllFootnotes()
-        })
-        this.mod.editor.pm.on('transform', function(transform, object) {
+
+        this.mod.editor.pm.on.transform.add(function(transform, object) {
             that.scanForFootnoteMarkers(transform, true)
         })
-        this.mod.editor.pm.mod.collab.on('collabTransform', function(transform, object) {
+        this.mod.editor.pmCollab.receivedTransform.add(function(transform, object) {
             that.remoteScanForFootnoteMarkers(transform)
         })
     }
 
     remoteScanForFootnoteMarkers(transform) {
         // We add unconfirmed local steps to the remote steps to make sure we map the ranges to current ranges.
-        let unconfirmedMaps = this.mod.editor.pm.mod.collab.unconfirmedMaps
-        let unconfirmedSteps = this.mod.editor.pm.mod.collab.unconfirmedSteps
+        let unconfirmedMaps = this.mod.editor.pmCollab.unconfirmedMaps
+        let unconfirmedSteps = this.mod.editor.pmCollab.unconfirmedSteps
         let doc = this.mod.editor.pm.mod.versionDoc
         transform.maps = transform.maps.concat(unconfirmedMaps)
         unconfirmedSteps.forEach(function(step) {
@@ -142,7 +140,7 @@ export class ModFootnoteMarkers {
                 let startPos = pos
                 let endPos = pos + node.nodeSize
                 let footnoteMarker = that.mod.editor.pm.markRange(startPos, endPos)
-                footnoteMarker.on('removed', function() {
+                footnoteMarker.on.removed.add(function() {
                     that.mod.fnEditor.removeFootnote(footnoteMarker)
                 })
                 footnoteMarkers.push(footnoteMarker)

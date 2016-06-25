@@ -1,5 +1,4 @@
 import {commentsTemplate, filterByUserBoxTemplate} from "./templates"
-import {UpdateScheduler} from "prosemirror/dist/edit/update"
 import {Comment} from "./comment"
 import {localizeDate} from "../../common/common"
 
@@ -54,9 +53,9 @@ export class ModCommentLayout {
             }
 
         })
-
-        new UpdateScheduler(this.mod.editor.pm, "change setDoc", () => {return that.updateDOM()})
-        new UpdateScheduler(this.mod.editor.pm, "selectionChange", () => {return that.onSelectionChange()})
+        let pm = this.mod.editor.pm
+        pm.updateScheduler([pm.on.change, pm.on.setDoc], () => {return that.updateDOM()})
+        pm.updateScheduler([pm.on.selectionChange], () => {return that.onSelectionChange()})
 
     }
 

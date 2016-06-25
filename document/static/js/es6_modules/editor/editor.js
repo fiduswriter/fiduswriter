@@ -2,7 +2,7 @@ import * as objectHash from "object-hash/dist/object_hash"
 
 /* Functions for ProseMirror integration.*/
 import {ProseMirror} from "prosemirror/dist/edit/main"
-import "prosemirror/dist/collab"
+import {collabEditing} from "prosemirror/dist/collab"
 //import "prosemirror/dist/menu/menubar"
 
 import {defaultDocumentStyle} from "../style/documentstyle-list"
@@ -63,20 +63,21 @@ export class Editor {
         let that = this
         this.makeEditor()
         this.currentPm = this.pm // The editor that is currently being edited in -- main or footnote editor
+        this.pmCollab = collabEditing.get(this.pm)
         new ModFootnotes(this)
         new ModCitations(this)
         new ModMenus(this)
         new ModCollab(this)
         new ModTools(this)
         new ModComments(this)
-        this.pm.on("change", function(){that.docInfo.changed = true})
-        this.pm.on("filterTransform", (transform) => {return that.onFilterTransform(transform)})
-        this.pm.on("transform", (transform, options) => {that.onTransform(transform, true)})
-        this.pm.on("transformPastedHTML", (inHTML) => {
+        this.pm.on.change.add(function(){that.docInfo.changed = true})
+        this.pm.on.filterTransform.add((transform) => {return that.onFilterTransform(transform)})
+        this.pm.on.transform.add((transform, options) => {that.onTransform(transform, true)})
+        this.pm.on.transformPastedHTML.add((inHTML) => {
             let ph = new Paste(inHTML, "main")
             return ph.getOutput()
         })
-        this.pm.mod.collab.on("collabTransform", (transform, options) => {that.onTransform(transform, false)})
+        this.pmCollab.receivedTransform.add((transform, options) => {that.onTransform(transform, false)})
         this.mod.serverCommunications.init()
         this.setSaveTimers()
     }
@@ -106,10 +107,11 @@ export class Editor {
         this.pm = new ProseMirror({
             place: document.getElementById('document-editable'),
             schema: this.schema,
+            plugins: [collabEditing.config({version: 0})]
             //    menuBar: true,
-            collab: {
-                version: 0
-            }
+        //    collab: {
+        //        version: 0
+        //    }
         })
     }
 
@@ -122,21 +124,21 @@ export class Editor {
             this.mod.collab.docChanges.enableDiffSending()
         }
         let pmDoc = modelToEditor(this.doc, this.schema)
-        this.pm.setOption("collab", null)
-        this.pm.setContent(pmDoc)
-        this.pm.setOption("collab", {
-            version: this.doc.version
-        })
+        collabEditing.detach(this.pm)
+        this.pm.setDoc(pmDoc)
+        //this.pm.setOption("collab", {
+        //    version: this.doc.version
+        //})
         while (this.docInfo.last_diffs.length > 0) {
             let diff = this.docInfo.last_diffs.shift()
             this.mod.collab.docChanges.applyDiff(diff)
         }
         this.doc.hash = this.getHash()
         this.mod.comments.store.setVersion(this.doc.comment_version)
-        this.pm.mod.collab.on("mustSend", function() {
+        this.pmCollab.mustSend.add(function() {
             that.mod.collab.docChanges.sendToCollaborators()
         })
-        this.pm.signal("documentUpdated")
+        this.mod.footnotes.fnEditor.renderAllFootnotes()
         _.each(this.doc.comments, function(comment) {
             that.mod.comments.store.addLocalComment(comment.id, comment.user,
                 comment.userName, comment.userAvatar, comment.date, comment.comment,
@@ -300,7 +302,7 @@ export class Editor {
     // Creates a hash value for the entire document so that we can compare with other clients if
     // we really have the same contents
     getHash() {
-        let doc = this.pm.mod.collab.versionDoc.copy()
+        let doc = this.pmCollab.versionDoc.copy()
         // We need to convert the footnotes from HTML to PM nodes and from that
         // to JavaScript objects, to ensure that the attribute order of everything
         // within the footnote will be the same in all browsers, so that the
@@ -327,11 +329,11 @@ export class Editor {
 
     // Collects updates of the document from ProseMirror and saves it under this.doc
     getUpdates(callback) {
-        let tmpDoc = editorToModel(this.pm.mod.collab.versionDoc)
+        let tmpDoc = editorToModel(this.pmCollab.versionDoc)
         this.doc.contents = tmpDoc.contents
         this.doc.metadata = tmpDoc.metadata
-        this.doc.title = this.pm.mod.collab.versionDoc.firstChild.textContent
-        this.doc.version = this.pm.mod.collab.version
+        this.doc.title = this.pmCollab.versionDoc.firstChild.textContent
+        this.doc.version = this.pmCollab.version
         this.doc.hash = this.getHash()
         this.doc.comments = this.mod.comments.store.comments
         if (callback) {

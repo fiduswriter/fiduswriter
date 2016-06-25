@@ -1,5 +1,3 @@
-import {UpdateScheduler} from "prosemirror/dist/edit/update"
-
 /* A class to make footnotes appear correctly off the side of their referrer. */
 export class ModFootnoteLayout {
     constructor(mod) {
@@ -19,9 +17,10 @@ export class ModFootnoteLayout {
     }
 
     bindEvents() {
-        let that = this
-        new UpdateScheduler(this.mod.editor.pm, "change setDoc", () => {return that.updateDOM()})
-        new UpdateScheduler(this.mod.fnPm, "change setDoc", () => {return that.updateDOM()})
+        let that = this, pm = this.mod.editor.pm
+        pm.updateScheduler([pm.on.change, pm.on.setDoc], () => {return that.updateDOM()})
+        let fnPm = this.mod.fnPm
+        fnPm.updateScheduler([fnPm.on.change, fnPm.on.setDoc], () => {return that.updateDOM()})
     }
 
     layoutFootnotes() {

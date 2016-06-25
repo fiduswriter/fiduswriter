@@ -1,10 +1,14 @@
-import {Schema, Block, Inline, Text, MarkType, Attribute,
-        Doc, BlockQuote, OrderedList, BulletList, ListItem, HorizontalRule,
+import {Doc, BlockQuote, OrderedList, BulletList, ListItem, HorizontalRule,
         Paragraph, Heading, CodeBlock, Image, HardBreak, CodeMark, EmMark,
-        StrongMark, LinkMark} from "prosemirror/dist/model"
-import {katexRender} from "../katex/katex"
+        StrongMark, LinkMark} from "prosemirror/dist/schema-basic"
+
+import {Schema, Block, Inline, Text, Attribute, MarkType} from "prosemirror/dist/model"
 
 import {elt} from "prosemirror/dist/util/dom"
+
+import {katexRender} from "../katex/katex"
+
+
 
 class Title extends Block {
     get matchDOMTag() {
@@ -291,14 +295,14 @@ export const fidusSchema = new Schema({
     bullet_list: {type: BulletList, content: "list_item+", group: "block"},
     list_item: {type: ListItem, content: "block+", group: "block"},
     horizontal_rule: {type: HorizontalRule, group: "block"},
-    figure: {type: Figure, group: "block"},
+    //figure: {type: Figure, group: "block"},
 
     heading: {type: Heading, content: "inline<_>*", group: "block"},
     code_block: {type: CodeBlock, content: "text*", group: "block"},
 
     text: {type: Text, group: "inline"},
     hard_break: {type: HardBreak, group: "inline"},
-    citation: {type: Citation, group: "inline"},
+    //citation: {type: Citation, group: "inline"},
     equation: {type: Equation, group: "inline"},
     footnote: {type: Footnote, group: "inline"}
 

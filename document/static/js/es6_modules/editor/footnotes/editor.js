@@ -3,6 +3,7 @@ import {Step} from "prosemirror/dist/transform"
 import {Paste} from "../paste/paste"
 import {COMMENT_ONLY_ROLES} from "../editor"
 import {elt} from "prosemirror/dist/util/dom"
+import {collabEditing} from "prosemirror/dist/collab"
 
 /* Functions related to the footnote editor instance */
 export class ModFootnoteEditor {
@@ -78,16 +79,14 @@ export class ModFootnoteEditor {
         let footnotes = this.mod.markers.findFootnoteMarkers()
 
         this.mod.footnotes = footnotes
-        this.mod.fnPm.setOption("collab", null)
+        collabEditing.detach(this.mod.fnPm)
         console.log('redrawing all footnotes')
-        this.mod.fnPm.setContent('<div><hr></div>', 'html')
+        this.mod.fnPm.setDoc(this.mod.fnPm.schema.nodeFromJSON({"type":"doc","content":[{"type": "footnote_end"}]}))
         this.mod.footnotes.forEach((footnote, index) => {
             let node = that.mod.editor.pm.doc.nodeAt(footnote.from)
             that.renderFootnote(node.attrs.contents, index)
         })
-        this.mod.fnPm.setOption("collab", {
-            version: 0
-        })
+        collabEditing.config({version: 0}).attach(this.mod.fnPm)
         this.bindEvents()
     }
 

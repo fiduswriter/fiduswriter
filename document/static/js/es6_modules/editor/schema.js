@@ -84,10 +84,12 @@ class Footnote extends Inline {
         }
     }
     toDOM(node) {
-        return ["span", {
+        let dom = elt("span", {
             class: 'footnote-marker',
             contents: node.attrs.contents
-        }, '&nbsp;']
+        })
+        dom.innerHTML = '&nbsp;'
+        return dom
     }
 }
 

@@ -42,11 +42,9 @@ export class ModFootnotes {
         // Set the current editor depending on where the focus currently is.
         this.fnPm.on.focus.add(function(){
             that.editor.currentPm = that.fnPm
-            that.editor.currentPmCollab = that.fnPmCollab
         })
         this.editor.pm.on.focus.add(function(){
             that.editor.currentPm = that.editor.pm
-            that.editor.currentPmCollab = that.editor.pmCollab
         })
     }
 }

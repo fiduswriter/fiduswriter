@@ -139,9 +139,10 @@ export class ModFootnoteMarkers {
             if (node.type.name === 'footnote') {
                 let startPos = pos
                 let endPos = pos + node.nodeSize
-                let footnoteMarker = that.mod.editor.pm.markRange(startPos, endPos)
-                footnoteMarker.on.removed.add(function() {
-                    that.mod.fnEditor.removeFootnote(footnoteMarker)
+                let footnoteMarker = that.mod.editor.pm.markRange(startPos, endPos, {
+                    onRemove: function() {
+                        that.mod.fnEditor.removeFootnote(footnoteMarker)
+                    }
                 })
                 footnoteMarkers.push(footnoteMarker)
 

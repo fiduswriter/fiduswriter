@@ -126,6 +126,7 @@ export class Editor {
         let pmDoc = modelToEditor(this.doc, this.schema)
         collabEditing.detach(this.pm)
         this.pm.setDoc(pmDoc)
+        collabEditing.config({version: this.doc.version}).attach(this.pm)
         //this.pm.setOption("collab", {
         //    version: this.doc.version
         //})

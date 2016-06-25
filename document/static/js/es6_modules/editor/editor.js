@@ -127,9 +127,7 @@ export class Editor {
         collabEditing.detach(this.pm)
         this.pm.setDoc(pmDoc)
         collabEditing.config({version: this.doc.version}).attach(this.pm)
-        //this.pm.setOption("collab", {
-        //    version: this.doc.version
-        //})
+        this.pmCollab = this.pm.plugin.Collab
         while (this.docInfo.last_diffs.length > 0) {
             let diff = this.docInfo.last_diffs.shift()
             this.mod.collab.docChanges.applyDiff(diff)
@@ -137,6 +135,7 @@ export class Editor {
         this.doc.hash = this.getHash()
         this.mod.comments.store.setVersion(this.doc.comment_version)
         this.pmCollab.mustSend.add(function() {
+            console.log('seding')
             that.mod.collab.docChanges.sendToCollaborators()
         })
         this.mod.footnotes.fnEditor.renderAllFootnotes()

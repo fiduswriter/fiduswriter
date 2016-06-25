@@ -25,7 +25,7 @@ export class ModFootnoteMarkers {
         // We add unconfirmed local steps to the remote steps to make sure we map the ranges to current ranges.
         let unconfirmedMaps = this.mod.editor.pmCollab.unconfirmedMaps
         let unconfirmedSteps = this.mod.editor.pmCollab.unconfirmedSteps
-        let doc = this.mod.editor.pm.mod.versionDoc
+        let doc = this.mod.editor.pmCollab.versionDoc
         transform.maps = transform.maps.concat(unconfirmedMaps)
         unconfirmedSteps.forEach(function(step) {
             // We add pseudo steps for all the unconfirmed steps so that the

@@ -131,7 +131,6 @@ export class Editor {
         this.doc.hash = this.getHash()
         this.mod.comments.store.setVersion(this.doc.comment_version)
         this.pmCollab.mustSend.add(function() {
-            console.log('seding')
             that.mod.collab.docChanges.sendToCollaborators()
         })
         this.mod.footnotes.fnEditor.renderAllFootnotes()

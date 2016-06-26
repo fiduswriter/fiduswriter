@@ -16,7 +16,6 @@ export class ModFootnoteEditor {
 
     bindEvents() {
         let that = this
-        console.log(this.mod)
         this.mod.fnPmCollab.mustSend.add(function() {
             that.footnoteEdit()
         })

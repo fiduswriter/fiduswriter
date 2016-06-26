@@ -193,11 +193,11 @@ export class Figure extends Block {
             'data-caption': node.attrs.caption
         })
         if (node.attrs.image) {
-            dom.appendChild(serializer.elt("div"))
+            dom.appendChild(elt("div"))
             if(node.type.schema.cached.imageDB) {
                 if(node.type.schema.cached.imageDB.db[node.attrs.image] &&
                     node.type.schema.cached.imageDB.db[node.attrs.image].image) {
-                    dom.firstChild.appendChild(serializer.elt("img", {
+                    dom.firstChild.appendChild(elt("img", {
                         "src": node.type.schema.cached.imageDB.db[node.attrs.image].image
                     }))
                 } else {
@@ -209,7 +209,7 @@ export class Figure extends Block {
                         node.type.schema.cached.imageDB.getDB(function() {
                             if (node.type.schema.cached.imageDB.db[node.attrs.image] &&
                                     node.type.schema.cached.imageDB.db[node.attrs.image].image) {
-                                dom.firstChild.appendChild(serializer.elt("img", {
+                                dom.firstChild.appendChild(elt("img", {
                                     "src": node.type.schema.cached.imageDB.db[node.attrs.image].image
                                 }))
                             } else {
@@ -273,7 +273,7 @@ class CommentMark extends MarkType {
     }
     get matchDOMTag() {
         return {"span.comment[data-id]": dom => ({
-            id: getAttribute("data-id"),
+            id: dom.getAttribute("data-id")
         })}
     }
     toDOM(node) {

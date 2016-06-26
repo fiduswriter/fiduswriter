@@ -52,8 +52,8 @@ export let modelToEditor = function(doc, schema) {
 export let editorToModel = function(pmDoc) {
     // In order to stick with the format used in Fidus Writer 1.1-2.0,
     // we do a few smaller modifications to the node before it is saved.
-
-    let node = nodeToDOM(pmDoc)
+    console.log(pmDoc)
+    let node = pmDoc.toDOM()
 
     let fnNodes = node.querySelectorAll('.footnote-marker')
 

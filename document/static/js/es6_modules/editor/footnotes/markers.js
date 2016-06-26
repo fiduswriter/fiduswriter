@@ -1,5 +1,3 @@
-import {nodeToDOM} from "prosemirror/dist/model/to_dom"
-
 /* Functions related to footnote markers in the main editor */
 export class ModFootnoteMarkers {
     constructor(mod) {
@@ -186,13 +184,14 @@ export class ModFootnoteMarkers {
 
     updateFootnoteMarker(index) {
         this.updating = true
-        let footnoteContents = nodeToDOM(this.mod.fnPm.doc.child(index)).outerHTML
 
+        let fnContents = this.mod.fnPm.doc.child(index)
+        let fnHTML = fnContents.toDOM().innerHTML
         let footnote = this.mod.footnotes[index]
         if (footnote) {
             let node = this.mod.editor.pm.doc.nodeAt(footnote.from)
             this.mod.editor.pm.tr.setNodeType(footnote.from, node.type, {
-                contents: footnoteContents
+                contents: fnHTML
             }).apply()
         }
         this.updating = false

@@ -108,10 +108,6 @@ export class Editor {
             place: document.getElementById('document-editable'),
             schema: this.schema,
             plugins: [collabEditing.config({version: 0})]
-            //    menuBar: true,
-        //    collab: {
-        //        version: 0
-        //    }
         })
     }
 

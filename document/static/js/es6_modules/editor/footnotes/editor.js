@@ -87,6 +87,7 @@ export class ModFootnoteEditor {
             that.renderFootnote(node.attrs.contents, index)
         })
         collabEditing.config({version: 0}).attach(this.mod.fnPm)
+        this.mod.fnPmCollab = this.mod.fnPm.plugin.Collab
         this.bindEvents()
     }
 

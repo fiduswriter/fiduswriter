@@ -99,8 +99,8 @@ export class ModMenusToolbar {
 
         jQuery(document).on('mousedown', '#button-footnote:not(.disabled)', function (event) {
             that.executeAction(event, function(){
-                let node = that.mod.editor.currentPm.schema.nodes['node']
-                that.mod.editor.pm.execCommand('footnote:insert', [''])
+                let nodeType = that.mod.editor.currentPm.schema.nodes['footnote']
+                that.mod.editor.pm.tr.replaceSelection(nodeType.createAndFill({contents:'<p></p>'})).apply()
             })
         })
         // strong/bold
@@ -122,13 +122,13 @@ export class ModMenusToolbar {
 
         jQuery(document).on('mousedown', '#button-undo:not(.disabled)', function (event) {
             that.executeAction(event, function(){
-                that.mod.editor.pm.history.undo()
+                commands.undo(that.mod.editor.currentPm, true)
             })
         })
 
         jQuery(document).on('mousedown', '#button-redo:not(.disabled)', function (event) {
             that.executeAction(event, function(){
-                that.mod.editor.pm.history.redo()
+                commands.redo(that.mod.editor.currentPm, true)
             })
         })
         jQuery(document).on('mousedown', '#button-figure:not(.disabled)', function (event) {

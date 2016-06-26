@@ -63,8 +63,13 @@ export let citationDialog = function (mod) {
             // Nothing has been changed, so we just close the dialog again
             return true
         }
-
-        editor.currentPm.execCommand('citation:insert', [bibFormat, bibEntry, bibBefore, bibPage])
+        let nodeType = editor.currentPm.schema.nodes['citation']
+        editor.currentPm.tr.replaceSelection(nodeType.createAndFill({
+            bibFormat,
+            bibEntry,
+            bibBefore,
+            bibPage
+        })).apply()
         return true
     }
 
@@ -108,7 +113,7 @@ export let citationDialog = function (mod) {
         diaButtons.push({
             text: gettext('Remove'),
             click: function() {
-                editor.currentPm.execCommand('deleteSelection')
+                editor.currentPm.tr.deleteSelection().apply()
                 dialog.dialog('close')
             },
             class: 'fw-button fw-orange'

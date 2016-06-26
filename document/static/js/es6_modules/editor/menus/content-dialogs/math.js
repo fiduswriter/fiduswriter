@@ -62,7 +62,7 @@ export class MathDialog {
                 if ((new RegExp(/^\s*$/)).test(this.equation)) {
                     // The math input is empty. Delete a math node if it exist. Then close the dialog.
                     if (this.isMathInside) {
-                        this.editor.currentPm.execCommand('deleteSelection')
+                        this.editor.currentPm.tr.deleteSelection().apply()
                     }
                     this.dialog.dialog('close')
                     return
@@ -70,8 +70,10 @@ export class MathDialog {
                     this.dialog.dialog('close')
                     return
                 }
-
-                this.editor.currentPm.execCommand('equation:insert', [this.equation])
+                let nodeType = this.editor.currentPm.schema.nodes['equation']
+                this.editor.currentPm.tr.replaceSelection(nodeType.createAndFill({
+                    equation: this.equation,
+                })).apply()
 
                 this.dialog.dialog('close')
             }

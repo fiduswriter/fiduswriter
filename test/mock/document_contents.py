@@ -56,7 +56,7 @@ class BlockContent(object):
     - BulletedList
     - Figure
     interpretation: superset type of types which can be direct children of
-                    document-contents
+    document-contents
     """
     pass
 
@@ -182,7 +182,7 @@ class NumberedList(BlockContent, ListBlock):
     """
     NumberedList is ListBlock
     interpretation: inline content organized into items and styled as a
-                    numbered list
+    numbered list
     """
     pass
 
@@ -191,7 +191,7 @@ class BulletedList(BlockContent, ListBlock):
     """
     BulletedList is ListBlock
     interpretation: inline content organized into items and styled as a
-                    bulleted list
+    bulleted list
     """
     pass
 
@@ -226,7 +226,7 @@ class FlatInlineContent(InlineContent):
     - Citation
     - Equation
     interpretation: set of all InlineContent types which have a fixed number of
-                    children
+    children
     """
 
     def __str__(self):
@@ -350,7 +350,7 @@ class Comment(InlineContent, ListOfInlineContent):
     """
     Comment is [FlatInlineContent]
     interpretation: list of FlatInlineContent formatted as commented, with
-                    associated comment data
+    associated comment data
     """
     template = ''.join([
         '{"nn":"SPAN",',

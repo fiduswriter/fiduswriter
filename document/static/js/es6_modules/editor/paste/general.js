@@ -50,33 +50,7 @@ export class GeneralPasteHandler {
             }
             node = this.convertNode(node)
         }
-        //this.pasteFix(node)
     }
-
-    // Temporary paste fix, see issue https://github.com/ProseMirror/prosemirror/issues/342
-    /*pasteFix(node) {
-        if (node.nodeType===3 || BLOCK_NODE_TAGS.indexOf(node.tagName) === -1) { // This is a text or inline node
-            // Determine if the node has any block level siblings
-            let checkNode = node.parentNode.firstChild
-            let foundBlock = false
-            while (checkNode) {
-                if (BLOCK_NODE_TAGS.indexOf(checkNode.tagName) !== -1) {
-                    foundBlock = true
-                }
-                checkNode = checkNode.nextSibling
-            }
-            if (foundBlock) {
-                if (node.nodeType === 3 && node.nodeValue.trim()==='') {
-                    node.parentNode.removeChild(node)
-                } else {
-                    let par = document.createElement('p')
-                    node.parentNode.replaceChild(par, node)
-                    par.appendChild(node)
-                }
-            }
-        }
-    }*/
-
 
     // Convert an existing node to a different node, if needed.
     convertNode(node) {

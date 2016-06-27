@@ -51,7 +51,7 @@ const methods = {
     let arr = getHandlers(this, type)
     for (let i = 0; i < arr.length; ++i) {
       let result = arr[i](...args)
-      if (result != null) return result
+      if (result !== null) return result
     }
   },
 

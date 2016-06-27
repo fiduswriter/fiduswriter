@@ -59,7 +59,6 @@ export class ModFootnoteMarkers {
                 }
                 newFootnotes.forEach(function(footnote) {
                     that.mod.footnotes.splice(index, 0, footnote)
-                    console.log(footnote)
                     if (renderFootnote) {
                         let node = that.mod.editor.pm.doc.nodeAt(footnote.from)
                         that.mod.fnEditor.renderFootnote(node.attrs.contents, index)

@@ -78,8 +78,6 @@ export class ModFootnoteEditor {
         let footnotes = this.mod.markers.findFootnoteMarkers()
 
         this.mod.footnotes = footnotes
-        //collabEditing.detach(this.mod.fnPm)
-        console.log('redrawing all footnotes')
         this.mod.fnPm.setDoc(this.mod.fnPm.schema.nodeFromJSON({"type":"doc","content":[{"type": "footnote_end"}]}))
         this.mod.footnotes.forEach((footnote, index) => {
             let node = that.mod.editor.pm.doc.nodeAt(footnote.from)
@@ -89,7 +87,6 @@ export class ModFootnoteEditor {
         collab.versionDoc = this.mod.fnPm.doc
         collab.unconfirmedSteps = []
         collab.unconfirmedMaps = []
-        //collabEditing.config({version: 0}).attach(this.mod.fnPm)
         this.bindEvents()
     }
 

@@ -41,7 +41,7 @@ export let linkDialog = function (mod) {
                 linkTitle = newLink
             }
             dialog.dialog('close')
-            let mark = that.mod.editor.currentPm.schema.marks['link']
+            let mark = editor.currentPm.schema.marks['link']
             let command = commands.toggleMark(mark, {href: newLink, title: linkTitle})
             command(editor.currentPm, true)
             editor.currentPm.focus()

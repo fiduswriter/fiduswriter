@@ -93,6 +93,7 @@ class Footnote extends Inline {
     }
 }
 
+
 export class Citation extends Inline {
     get attrs() {
         return {

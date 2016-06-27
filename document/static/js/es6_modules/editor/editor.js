@@ -147,7 +147,7 @@ export class Editor {
         this.mod.comments.store.setVersion(this.doc.comment_version)
         this.pm.mod.collab.mustSend.add(function() {
             that.mod.collab.docChanges.sendToCollaborators()
-        })
+        }, 0) // priority : 0 so that other things cna be scheduled before this.
         this.pm.mod.collab.receivedTransform.add((transform, options) => {that.onTransform(transform, false)})
         this.mod.footnotes.fnEditor.renderAllFootnotes()
         _.each(this.doc.comments, function(comment) {

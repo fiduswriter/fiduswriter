@@ -13,7 +13,7 @@ export class ModFootnoteMarkers {
 
         this.mod.editor.pm.on.transform.add(function(transform, object) {
             that.scanForFootnoteMarkers(transform, true)
-        })
+        }, 1) // priority 1 to be triggered before collab related functions
         this.mod.editor.pm.mod.collab.receivedTransform.add(function(transform, object) {
             that.remoteScanForFootnoteMarkers(transform, false)
         })

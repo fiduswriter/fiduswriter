@@ -76,7 +76,7 @@ export class Editor {
             let ph = new Paste(inHTML, "main")
             return ph.getOutput()
         })
-        this.pm.plugin.Collab.receivedTransform.add((transform, options) => {that.onTransform(transform, false)})
+        this.pm.mod.collab.receivedTransform.add((transform, options) => {that.onTransform(transform, false)})
         this.mod.serverCommunications.init()
         this.setSaveTimers()
     }
@@ -103,14 +103,27 @@ export class Editor {
     }
 
     makeEditor() {
+        let that = this
         this.pm = new ProseMirror({
             place: document.getElementById('document-editable'),
             schema: this.schema,
             plugins: [collabEditing.config({version: 0})]
         })
+        // add mod to give us simple access to internals removed in PM 0.8.0
+        this.pm.mod = {}
+        this.pm.mod.collab = collabEditing.get(this.pm)
         // Ignore setDoc
-        //this.pm.on.beforeSetDoc.remove(this.pm.plugin.Collab.onSetDoc)
-        //this.pm.plugin.Collab.onSetDoc = function (){}
+        this.pm.on.beforeSetDoc.remove(this.pm.mod.collab.onSetDoc)
+        this.pm.mod.collab.onSetDoc = function (){}
+        // Trigger reset on setDoc
+        this.pm.mod.collab.afterSetDoc = function (){
+            // Reset all collab values and set document version
+            let collab = that.pm.mod.collab
+            collab.versionDoc = that.pm.doc
+            collab.unconfirmedSteps = []
+            collab.unconfirmedMaps = []
+        }
+        this.pm.on.setDoc.add(this.pm.mod.collab.afterSetDoc)
     }
 
     update() {
@@ -122,19 +135,20 @@ export class Editor {
             this.mod.collab.docChanges.enableDiffSending()
         }
         let pmDoc = modelToEditor(this.doc, this.schema)
-        collabEditing.detach(this.pm)
+        //collabEditing.detach(this.pm)
         this.pm.setDoc(pmDoc)
-        collabEditing.config({version: this.doc.version}).attach(this.pm)
+        that.pm.mod.collab.version = this.doc.version
+        //collabEditing.config({version: this.doc.version}).attach(this.pm)
         while (this.docInfo.last_diffs.length > 0) {
             let diff = this.docInfo.last_diffs.shift()
             this.mod.collab.docChanges.applyDiff(diff)
         }
         this.doc.hash = this.getHash()
         this.mod.comments.store.setVersion(this.doc.comment_version)
-        this.pm.plugin.Collab.mustSend.add(function() {
+        this.pm.mod.collab.mustSend.add(function() {
             that.mod.collab.docChanges.sendToCollaborators()
         })
-        this.pm.plugin.Collab.receivedTransform.add((transform, options) => {that.onTransform(transform, false)})
+        this.pm.mod.collab.receivedTransform.add((transform, options) => {that.onTransform(transform, false)})
         this.mod.footnotes.fnEditor.renderAllFootnotes()
         _.each(this.doc.comments, function(comment) {
             that.mod.comments.store.addLocalComment(comment.id, comment.user,
@@ -299,7 +313,7 @@ export class Editor {
     // Creates a hash value for the entire document so that we can compare with other clients if
     // we really have the same contents
     getHash() {
-        let doc = this.pm.plugin.Collab.versionDoc.copy()
+        let doc = this.pm.mod.collab.versionDoc.copy()
         // We need to convert the footnotes from HTML to PM nodes and from that
         // to JavaScript objects, to ensure that the attribute order of everything
         // within the footnote will be the same in all browsers, so that the
@@ -326,11 +340,11 @@ export class Editor {
 
     // Collects updates of the document from ProseMirror and saves it under this.doc
     getUpdates(callback) {
-        let tmpDoc = editorToModel(this.pm.plugin.Collab.versionDoc)
+        let tmpDoc = editorToModel(this.pm.mod.collab.versionDoc)
         this.doc.contents = tmpDoc.contents
         this.doc.metadata = tmpDoc.metadata
-        this.doc.title = this.pm.plugin.Collab.versionDoc.firstChild.textContent
-        this.doc.version = this.pm.plugin.Collab.version
+        this.doc.title = this.pm.mod.collab.versionDoc.firstChild.textContent
+        this.doc.version = this.pm.mod.collab.version
         this.doc.hash = this.getHash()
         this.doc.comments = this.mod.comments.store.comments
         if (callback) {

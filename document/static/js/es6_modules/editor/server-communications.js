@@ -43,7 +43,7 @@ export class ModServerCommunications {
                 that.createWSConnection()
             }, 2000)
             console.log('attempting to reconnect')
-            if (that.editor.pm.plugin.Collab.hasSendableSteps()) {
+            if (that.editor.pm.mod.collab.hasSendableSteps()) {
                 jQuery('#unobtrusive_messages').html('<span class="warn">'+gettext('Warning! Not all your changes have been saved! You could suffer data loss. Attempting to reconnect...')+'</span>')
             } else {
                 jQuery('#unobtrusive_messages').html(gettext('Disconnected. Attempting to reconnect...'))
@@ -100,7 +100,7 @@ export class ModServerCommunications {
                 break
             case 'confirm_diff_version':
                 this.editor.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
-                if (data.diff_version !== this.editor.pm.plugin.Collab.version) {
+                if (data.diff_version !== this.editor.pm.mod.collab.version) {
                     this.editor.mod.collab.docChanges.checkDiffVersion()
                     return
                 }
@@ -108,7 +108,7 @@ export class ModServerCommunications {
                 break
             case 'selection_change':
                 this.editor.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
-                if (data.diff_version !== this.editor.pm.plugin.Collab.version) {
+                if (data.diff_version !== this.editor.pm.mod.collab.version) {
                     this.editor.mod.collab.docChanges.checkDiffVersion()
                     return
                 }

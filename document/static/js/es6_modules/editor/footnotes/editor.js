@@ -16,7 +16,7 @@ export class ModFootnoteEditor {
 
     bindEvents() {
         let that = this
-        this.mod.fnPm.plugin.Collab.mustSend.add(function() {
+        this.mod.fnPm.mod.collab.mustSend.add(function() {
             that.footnoteEdit()
         })
         this.mod.fnPm.on.filterTransform.add((transform) => {
@@ -50,8 +50,8 @@ export class ModFootnoteEditor {
             return false
         }
         console.log('footnote update')
-        let length = this.mod.fnPm.plugin.Collab.unconfirmedSteps.length
-        let lastStep = this.mod.fnPm.plugin.Collab.unconfirmedSteps[length - 1]
+        let length = this.mod.fnPm.mod.collab.unconfirmedSteps.length
+        let lastStep = this.mod.fnPm.mod.collab.unconfirmedSteps[length - 1]
         if (lastStep.from) {
             // We find the number of the last footnote that was updated by
             // looking at the last step and seeing footnote number that change referred to.
@@ -66,7 +66,7 @@ export class ModFootnoteEditor {
         console.log('applying footnote diff')
         let steps = diffs.map(j => Step.fromJSON(this.mod.schema, j))
         let client_ids = diffs.map(j => j.client_id)
-        this.mod.fnPm.plugin.Collab.receive(steps, client_ids)
+        this.mod.fnPm.mod.collab.receive(steps, client_ids)
     }
 
     renderAllFootnotes() {
@@ -78,14 +78,18 @@ export class ModFootnoteEditor {
         let footnotes = this.mod.markers.findFootnoteMarkers()
 
         this.mod.footnotes = footnotes
-        collabEditing.detach(this.mod.fnPm)
+        //collabEditing.detach(this.mod.fnPm)
         console.log('redrawing all footnotes')
         this.mod.fnPm.setDoc(this.mod.fnPm.schema.nodeFromJSON({"type":"doc","content":[{"type": "footnote_end"}]}))
         this.mod.footnotes.forEach((footnote, index) => {
             let node = that.mod.editor.pm.doc.nodeAt(footnote.from)
             that.renderFootnote(node.attrs.contents, index)
         })
-        collabEditing.config({version: 0}).attach(this.mod.fnPm)
+        let collab = this.mod.fnPm.mod.collab
+        collab.versionDoc = this.mod.fnPm.doc
+        collab.unconfirmedSteps = []
+        collab.unconfirmedMaps = []
+        //collabEditing.config({version: 0}).attach(this.mod.fnPm)
         this.bindEvents()
     }
 
@@ -114,7 +118,12 @@ export class ModFootnoteEditor {
         }
 
         this.mod.fnPm.tr.insert(pos, node).apply({filter:false})
+        // Most changes to the footnotes are followed by a change to the main editor,
+        // so changes are sent to collaborators automatically. When footnotes are added/deleted,
+        // the change is reverse, so we need to inform collabs manually.
+        this.mod.editor.mod.collab.docChanges.sendToCollaborators()
         this.rendering = false
+
     }
 
     removeFootnote(footnote) {
@@ -131,6 +140,10 @@ export class ModFootnoteEditor {
             }
             let endPos = startPos + this.mod.fnPm.doc.child(index).nodeSize
             this.mod.fnPm.tr.delete(startPos, endPos).apply({filter:false})
+            // Most changes to the footnotes are followed by a change to the main editor,
+            // so changes are sent to collaborators automatically. When footnotes are added/deleted,
+            // the change is reverse, so we need to inform collabs manually.
+            this.mod.editor.mod.collab.docChanges.sendToCollaborators()
             this.rendering = false
         }
     }

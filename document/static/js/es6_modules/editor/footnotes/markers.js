@@ -14,16 +14,16 @@ export class ModFootnoteMarkers {
         this.mod.editor.pm.on.transform.add(function(transform, object) {
             that.scanForFootnoteMarkers(transform, true)
         })
-        this.mod.editor.pm.plugin.Collab.receivedTransform.add(function(transform, object) {
-            that.remoteScanForFootnoteMarkers(transform)
+        this.mod.editor.pm.mod.collab.receivedTransform.add(function(transform, object) {
+            that.remoteScanForFootnoteMarkers(transform, false)
         })
     }
 
     remoteScanForFootnoteMarkers(transform) {
         // We add unconfirmed local steps to the remote steps to make sure we map the ranges to current ranges.
-        let unconfirmedMaps = this.mod.editor.pm.plugin.Collab.unconfirmedMaps
-        let unconfirmedSteps = this.mod.editor.pm.plugin.Collab.unconfirmedSteps
-        let doc = this.mod.editor.pm.plugin.Collab.versionDoc
+        let unconfirmedMaps = this.mod.editor.pm.mod.collab.unconfirmedMaps
+        let unconfirmedSteps = this.mod.editor.pm.mod.collab.unconfirmedSteps
+        let doc = this.mod.editor.pm.mod.collab.versionDoc
         transform.maps = transform.maps.concat(unconfirmedMaps)
         unconfirmedSteps.forEach(function(step) {
             // We add pseudo steps for all the unconfirmed steps so that the
@@ -59,6 +59,7 @@ export class ModFootnoteMarkers {
                 }
                 newFootnotes.forEach(function(footnote) {
                     that.mod.footnotes.splice(index, 0, footnote)
+                    console.log(footnote)
                     if (renderFootnote) {
                         let node = that.mod.editor.pm.doc.nodeAt(footnote.from)
                         that.mod.fnEditor.renderFootnote(node.attrs.contents, index)

@@ -24,9 +24,9 @@ export class ModFootnotes {
         this.fnPm = new ProseMirror({
             place: document.getElementById('footnote-box-container'),
             schema: this.schema,
+            doc: this.schema.nodeFromJSON({"type":"doc","content":[{"type": "footnote_end"}]}),
             plugins: [collabEditing.config({version: 0})] // Version doesn't matter, as we don't track it
         })
-        this.fnPmCollab = collabEditing.get(this.fnPm)
         // TODO: get rid of stopped once Pm doesn't have a bug that requires it.
         //let stopper = elt('div')
         //stopper.appendChild(elt('hr'))

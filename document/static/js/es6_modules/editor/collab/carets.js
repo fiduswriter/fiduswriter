@@ -63,7 +63,7 @@ export class ModCollabCarets {
         this.mod.editor.mod.serverCommunications.send({
             type: 'selection_change',
             caret_position: this.getCaretPosition(),
-            diff_version: this.mod.editor.pmCollab.version
+            diff_version: this.mod.editor.pm.plugin.Collab.version
         })
     }
 
@@ -86,9 +86,8 @@ export class ModCollabCarets {
         let posTo = caretPosition.to
         let posHead = caretPosition.head
         let pm = caretPosition.pm === 'pm' ? this.mod.editor.pm : this.mod.editor.mod.footnotes.fnPm
-        let pmCollab = caretPosition.pm === 'pm' ? this.mod.editor.pmCollab : this.mod.editor.mod.footnotes.fnPmCollab
         // Map the positions through all still unconfirmed changes
-        pmCollab.unconfirmedMaps.forEach(function(map){
+        pm.plugin.Collab.unconfirmedMaps.forEach(function(map){
             posFrom = map.map(posFrom)
             posTo = map.map(posTo)
             posHead = map.map(posHead)

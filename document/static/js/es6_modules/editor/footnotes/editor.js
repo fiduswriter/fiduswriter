@@ -16,7 +16,7 @@ export class ModFootnoteEditor {
 
     bindEvents() {
         let that = this
-        this.mod.fnPmCollab.mustSend.add(function() {
+        this.mod.fnPm.plugin.Collab.mustSend.add(function() {
             that.footnoteEdit()
         })
         this.mod.fnPm.on.filterTransform.add((transform) => {
@@ -50,8 +50,8 @@ export class ModFootnoteEditor {
             return false
         }
         console.log('footnote update')
-        let length = this.mod.fnPmCollab.unconfirmedSteps.length
-        let lastStep = this.mod.fnPmCollab.unconfirmedSteps[length - 1]
+        let length = this.mod.fnPm.plugin.Collab.unconfirmedSteps.length
+        let lastStep = this.mod.fnPm.plugin.Collab.unconfirmedSteps[length - 1]
         if (lastStep.from) {
             // We find the number of the last footnote that was updated by
             // looking at the last step and seeing footnote number that change referred to.
@@ -66,7 +66,7 @@ export class ModFootnoteEditor {
         console.log('applying footnote diff')
         let steps = diffs.map(j => Step.fromJSON(this.mod.schema, j))
         let client_ids = diffs.map(j => j.client_id)
-        this.mod.fnPmCollab.receive(steps, client_ids)
+        this.mod.fnPm.plugin.Collab.receive(steps, client_ids)
     }
 
     renderAllFootnotes() {
@@ -86,7 +86,6 @@ export class ModFootnoteEditor {
             that.renderFootnote(node.attrs.contents, index)
         })
         collabEditing.config({version: 0}).attach(this.mod.fnPm)
-        this.mod.fnPmCollab = this.mod.fnPm.plugin.Collab
         this.bindEvents()
     }
 

@@ -1,6 +1,3 @@
-import {UpdateScheduler} from "prosemirror/dist/ui/update"
-
-
 const BLOCK_LABELS = {
     'paragraph': gettext('Normal Text'),
     'heading_1': gettext('1st Heading'),
@@ -32,11 +29,12 @@ export class ModMenusUpdateUI {
     }
 
     bindEvents() {
-        let that = this
-        new UpdateScheduler(this.mod.editor.pm, "selectionChange change activeMarkChange blur focus setDoc", function() {
+        let that = this, pm = this.mod.editor.pm
+        pm.updateScheduler([pm.on.selectionChange,pm.on.change,pm.on.activeMarkChange,pm.on.blur,pm.on.focus,pm.on.setDoc], function() {
             return that.updateUI()
         })
-        new UpdateScheduler(this.mod.editor.mod.footnotes.fnPm, "selectionChange change activeMarkChange blur focus setDoc", function() {
+        let fnPm = this.mod.editor.mod.footnotes.fnPm
+        fnPm.updateScheduler([fnPm.on.selectionChange, fnPm.on.change, fnPm.on.activeMarkChange, fnPm.on.blur, fnPm.on.focus, fnPm.on.setDoc], function() {
             return that.updateUI()
         })
     }

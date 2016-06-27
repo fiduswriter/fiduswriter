@@ -2,6 +2,8 @@ import {citationDialog} from "./content-dialogs/citation"
 import {FigureDialog} from "./content-dialogs/figure"
 import {linkDialog} from "./content-dialogs/link"
 import {MathDialog} from "./content-dialogs/math"
+//import  {wrapIn, setBlockType, chainCommands, newlineInCode, toggleMark} from "prosemirror/dist/commands"
+import  {commands} from "prosemirror/dist/edit/commands"
 
 /* Bindings for the toolbar menu */
 export class ModMenusToolbar {
@@ -53,67 +55,80 @@ export class ModMenusToolbar {
 
         // blockstyle paragraph, h1 - h3, lists
         jQuery(document).on('mousedown', '.toolbarheadings label', function (event) {
-            let commands = {
-              'p': 'paragraph:make',
-              'h1': 'heading:make1',
-              'h2': 'heading:make2',
-              'h3': 'heading:make3',
-              'h4': 'heading:make4',
-              'h5': 'heading:make5',
-              'h6': 'heading:make6',
-              'code': 'code_block:make'
+            const blockTypes = {
+              'p': ['paragraph'],
+              'h1': ['heading',{level: 1}],
+              'h2': ['heading',{level: 2}],
+              'h3': ['heading',{level: 3}],
+              'h4': ['heading',{level: 4}],
+              'h5': ['heading',{level: 5}],
+              'h6': ['heading',{level: 6}],
+              'code': ['code_block']
             },
-            theCommand = commands[this.id.split('_')[0]]
+            blockType = blockTypes[this.id.split('_')[0]]
             that.executeAction(event, function(){
-                that.mod.editor.currentPm.execCommand(theCommand)
+                let block = that.mod.editor.currentPm.schema.nodes[blockType[0]]
+                let command = commands.setBlockType(block, blockType[1])
+                command(that.mod.editor.currentPm, true)
             })
         })
 
         jQuery(document).on('mousedown', '#button-ol', function (event) {
             that.executeAction(event, function(){
-                that.mod.editor.currentPm.execCommand('ordered_list:wrap')
+                let node = that.mod.editor.currentPm.schema.nodes['ordered_list']
+                let command = commands.wrapInList(node)
+                command(that.mod.editor.currentPm, true)
             })
         })
 
         jQuery(document).on('mousedown', '#button-ul', function (event) {
             that.executeAction(event, function(){
-                that.mod.editor.currentPm.execCommand('bullet_list:wrap')
+                let node = that.mod.editor.currentPm.schema.nodes['bullet_list']
+                let command = commands.wrapInList(node)
+                command(that.mod.editor.currentPm, true)
             })
         })
 
         jQuery(document).on('mousedown', '#button-blockquote', function (event) {
             that.executeAction(event, function(){
-                that.mod.editor.pm.execCommand('blockquote:wrap')
+                let node = that.mod.editor.currentPm.schema.nodes['blockquote']
+                let command = commands.wrapIn(node)
+                command(that.mod.editor.currentPm, true)
             })
         })
 
         jQuery(document).on('mousedown', '#button-footnote:not(.disabled)', function (event) {
             that.executeAction(event, function(){
-                that.mod.editor.pm.execCommand('footnote:insert', [''])
+                let nodeType = that.mod.editor.currentPm.schema.nodes['footnote']
+                that.mod.editor.pm.tr.replaceSelection(nodeType.createAndFill({contents:'<p></p>'})).apply()
             })
         })
         // strong/bold
         jQuery(document).on('mousedown', '#button-bold:not(.disabled)', function (event) {
             that.executeAction(event, function(){
-                that.mod.editor.currentPm.execCommand('strong:toggle')
+                let mark = that.mod.editor.currentPm.schema.marks['strong']
+                let command = commands.toggleMark(mark)
+                command(that.mod.editor.currentPm, true)
             })
         })
         // emph/italics
         jQuery(document).on('mousedown', '#button-italic:not(.disabled)', function (event) {
             that.executeAction(event, function(){
-                that.mod.editor.currentPm.execCommand('em:toggle')
+                let mark = that.mod.editor.currentPm.schema.marks['em']
+                let command = commands.toggleMark(mark)
+                command(that.mod.editor.currentPm, true)
             })
         })
 
         jQuery(document).on('mousedown', '#button-undo:not(.disabled)', function (event) {
             that.executeAction(event, function(){
-                that.mod.editor.pm.execCommand("undo")
+                commands.undo(that.mod.editor.currentPm, true)
             })
         })
 
         jQuery(document).on('mousedown', '#button-redo:not(.disabled)', function (event) {
             that.executeAction(event, function(){
-                that.mod.editor.pm.execCommand("redo")
+                commands.redo(that.mod.editor.currentPm, true)
             })
         })
         jQuery(document).on('mousedown', '#button-figure:not(.disabled)', function (event) {

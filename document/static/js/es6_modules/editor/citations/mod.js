@@ -1,5 +1,4 @@
 import {FormatCitations} from "../../citations/format"
-import {UpdateScheduler} from "prosemirror/dist/ui/update"
 
 export class ModCitations {
     constructor(editor) {
@@ -26,9 +25,10 @@ export class ModCitations {
     }
 
     bindEvents () {
-        let that = this
-        new UpdateScheduler(this.editor.pm, "flush", () => {that.layoutCitations()})
-        new UpdateScheduler(this.editor.mod.footnotes.fnPm, "flush", () => {that.layoutCitations()})
+        let that = this, pm = this.editor.pm
+        pm.updateScheduler([pm.on.flush], () => {that.layoutCitations()})
+        let fnPm = this.editor.mod.footnotes.fnPm
+        fnPm.updateScheduler([fnPm.on.flush], () => {that.layoutCitations()})
     }
 
     resetCitations() {

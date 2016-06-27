@@ -1,7 +1,9 @@
-import {fromHTML} from "prosemirror/dist/format"
+import {parseDOM} from "prosemirror/dist/model/from_dom"
 import {Step} from "prosemirror/dist/transform"
 import {Paste} from "../paste/paste"
 import {COMMENT_ONLY_ROLES} from "../editor"
+import {elt} from "prosemirror/dist/util/dom"
+import {collabEditing} from "prosemirror/dist/collab"
 
 /* Functions related to the footnote editor instance */
 export class ModFootnoteEditor {
@@ -14,13 +16,13 @@ export class ModFootnoteEditor {
 
     bindEvents() {
         let that = this
-        this.mod.fnPm.mod.collab.on("mustSend", function() {
+        this.mod.fnPm.mod.collab.mustSend.add(function() {
             that.footnoteEdit()
         })
-        this.mod.fnPm.on("filterTransform", (transform) => {
+        this.mod.fnPm.on.filterTransform.add((transform) => {
             return that.onFilterTransform(transform)
         })
-        this.mod.fnPm.on("transformPastedHTML", (inHTML) => {
+        this.mod.fnPm.on.transformPastedHTML.add((inHTML) => {
             let ph = new Paste(inHTML, "footnote")
             return ph.outHTML
         })
@@ -76,23 +78,25 @@ export class ModFootnoteEditor {
         let footnotes = this.mod.markers.findFootnoteMarkers()
 
         this.mod.footnotes = footnotes
-        this.mod.fnPm.setOption("collab", null)
-        console.log('redrawing all footnotes')
-        this.mod.fnPm.setContent('<div><hr></div>', 'html')
+        this.mod.fnPm.setDoc(this.mod.fnPm.schema.nodeFromJSON({"type":"doc","content":[{"type": "footnote_end"}]}))
         this.mod.footnotes.forEach((footnote, index) => {
             let node = that.mod.editor.pm.doc.nodeAt(footnote.from)
             that.renderFootnote(node.attrs.contents, index)
         })
-        this.mod.fnPm.setOption("collab", {
-            version: 0
-        })
+        let collab = this.mod.fnPm.mod.collab
+        collab.versionDoc = this.mod.fnPm.doc
+        collab.unconfirmedSteps = []
+        collab.unconfirmedMaps = []
         this.bindEvents()
     }
 
     // Convert the footnote HTML stored with the marker to a PM node representation of the footnote.
     htmlTofootnoteNode(contents) {
-        let footnoteHTML = "<div class='footnote-container'>" + contents + "</div>"
-        let node = fromHTML(this.mod.schema, footnoteHTML, {
+        let footnoteDOM = elt('div', {
+            class: 'footnote-container'
+        })
+        footnoteDOM.innerHTML = contents
+        let node = parseDOM(this.mod.schema, footnoteDOM, {
             preserveWhitespace: true,
             topNode: false
         })
@@ -111,7 +115,12 @@ export class ModFootnoteEditor {
         }
 
         this.mod.fnPm.tr.insert(pos, node).apply({filter:false})
+        // Most changes to the footnotes are followed by a change to the main editor,
+        // so changes are sent to collaborators automatically. When footnotes are added/deleted,
+        // the change is reverse, so we need to inform collabs manually.
+        this.mod.editor.mod.collab.docChanges.sendToCollaborators()
         this.rendering = false
+
     }
 
     removeFootnote(footnote) {
@@ -128,6 +137,10 @@ export class ModFootnoteEditor {
             }
             let endPos = startPos + this.mod.fnPm.doc.child(index).nodeSize
             this.mod.fnPm.tr.delete(startPos, endPos).apply({filter:false})
+            // Most changes to the footnotes are followed by a change to the main editor,
+            // so changes are sent to collaborators automatically. When footnotes are added/deleted,
+            // the change is reverse, so we need to inform collabs manually.
+            this.mod.editor.mod.collab.docChanges.sendToCollaborators()
             this.rendering = false
         }
     }

@@ -1,4 +1,5 @@
 import {linkDialogTemplate} from "./templates"
+import  {commands} from "prosemirror/dist/edit/commands"
 
 // TODO: turn into class (like FigureDialog)
 export let linkDialog = function (mod) {
@@ -40,7 +41,9 @@ export let linkDialog = function (mod) {
                 linkTitle = newLink
             }
             dialog.dialog('close')
-            editor.currentPm.execCommand('link:set',[newLink, linkTitle])
+            let mark = editor.currentPm.schema.marks['link']
+            let command = commands.toggleMark(mark, {href: newLink, title: linkTitle})
+            command(editor.currentPm, true)
             editor.currentPm.focus()
             return
 

@@ -51,8 +51,6 @@ export class MicrosoftWordPasteHandler extends GeneralPasteHandler {
             node = this.convertNode(node)
         }
 
-        this.pasteFix(node)
-
         return true
     }
 

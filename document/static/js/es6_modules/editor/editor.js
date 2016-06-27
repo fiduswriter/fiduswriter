@@ -2,8 +2,7 @@ import * as objectHash from "object-hash/dist/object_hash"
 
 /* Functions for ProseMirror integration.*/
 import {ProseMirror} from "prosemirror/dist/edit/main"
-import "prosemirror/dist/collab"
-import {scheduleDOMUpdate} from "prosemirror/dist/ui/update"
+import {collabEditing} from "prosemirror/dist/collab"
 //import "prosemirror/dist/menu/menubar"
 
 import {defaultDocumentStyle} from "../style/documentstyle-list"
@@ -70,14 +69,14 @@ export class Editor {
         new ModCollab(this)
         new ModTools(this)
         new ModComments(this)
-        this.pm.on("change", function(){that.docInfo.changed = true})
-        this.pm.on("filterTransform", (transform) => {return that.onFilterTransform(transform)})
-        this.pm.on("transform", (transform, options) => {that.onTransform(transform, true)})
-        this.pm.on("transformPastedHTML", (inHTML) => {
+        this.pm.on.change.add(function(){that.docInfo.changed = true})
+        this.pm.on.filterTransform.add((transform) => {return that.onFilterTransform(transform)})
+        this.pm.on.transform.add((transform, options) => {that.onTransform(transform, true)})
+        this.pm.on.transformPastedHTML.add((inHTML) => {
             let ph = new Paste(inHTML, "main")
             return ph.getOutput()
         })
-        this.pm.mod.collab.on("collabTransform", (transform, options) => {that.onTransform(transform, false)})
+        this.pm.mod.collab.receivedTransform.add((transform, options) => {that.onTransform(transform, false)})
         this.mod.serverCommunications.init()
         this.setSaveTimers()
     }
@@ -104,14 +103,27 @@ export class Editor {
     }
 
     makeEditor() {
+        let that = this
         this.pm = new ProseMirror({
             place: document.getElementById('document-editable'),
             schema: this.schema,
-            //    menuBar: true,
-            collab: {
-                version: 0
-            }
+            plugins: [collabEditing.config({version: 0})]
         })
+        // add mod to give us simple access to internals removed in PM 0.8.0
+        this.pm.mod = {}
+        this.pm.mod.collab = collabEditing.get(this.pm)
+        // Ignore setDoc
+        this.pm.on.beforeSetDoc.remove(this.pm.mod.collab.onSetDoc)
+        this.pm.mod.collab.onSetDoc = function (){}
+        // Trigger reset on setDoc
+        this.pm.mod.collab.afterSetDoc = function (){
+            // Reset all collab values and set document version
+            let collab = that.pm.mod.collab
+            collab.versionDoc = that.pm.doc
+            collab.unconfirmedSteps = []
+            collab.unconfirmedMaps = []
+        }
+        this.pm.on.setDoc.add(this.pm.mod.collab.afterSetDoc)
     }
 
     update() {
@@ -123,21 +135,21 @@ export class Editor {
             this.mod.collab.docChanges.enableDiffSending()
         }
         let pmDoc = modelToEditor(this.doc, this.schema)
-        this.pm.setOption("collab", null)
-        this.pm.setContent(pmDoc)
-        this.pm.setOption("collab", {
-            version: this.doc.version
-        })
+        //collabEditing.detach(this.pm)
+        this.pm.setDoc(pmDoc)
+        that.pm.mod.collab.version = this.doc.version
+        //collabEditing.config({version: this.doc.version}).attach(this.pm)
         while (this.docInfo.last_diffs.length > 0) {
             let diff = this.docInfo.last_diffs.shift()
             this.mod.collab.docChanges.applyDiff(diff)
         }
         this.doc.hash = this.getHash()
         this.mod.comments.store.setVersion(this.doc.comment_version)
-        this.pm.mod.collab.on("mustSend", function() {
+        this.pm.mod.collab.mustSend.add(function() {
             that.mod.collab.docChanges.sendToCollaborators()
-        })
-        this.pm.signal("documentUpdated")
+        }, 0) // priority : 0 so that other things cna be scheduled before this.
+        this.pm.mod.collab.receivedTransform.add((transform, options) => {that.onTransform(transform, false)})
+        this.mod.footnotes.fnEditor.renderAllFootnotes()
         _.each(this.doc.comments, function(comment) {
             that.mod.comments.store.addLocalComment(comment.id, comment.user,
                 comment.userName, comment.userAvatar, comment.date, comment.comment,
@@ -416,7 +428,7 @@ export class Editor {
 
         if (updateBibliography) {
             // Recreate the bibliography on next flush.
-            scheduleDOMUpdate(this.pm, () => {return that.mod.citations.resetCitations()})
+            this.pm.scheduleDOMUpdate(() => {return that.mod.citations.resetCitations()})
         }
 
         if (updateTitle) {
@@ -434,7 +446,7 @@ export class Editor {
             // Check if the deleted comment referrers still are somewhere else in the doc.
             // If not, delete them.
             // TODO: Is a timeout/scheduleDOMUpdate really needed here?
-            scheduleDOMUpdate(this.pm, () => {return that.mod.comments.store.checkAndDelete(commentIds)})
+            this.pm.scheduleDOMUpdate(() => {return that.mod.comments.store.checkAndDelete(commentIds)})
         }
 
     }

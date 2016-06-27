@@ -1,5 +1,3 @@
-import {UpdateScheduler, scheduleDOMUpdate} from "prosemirror/dist/ui/update"
-
 export class ModCollabCarets {
     constructor(mod) {
         mod.carets = this
@@ -26,16 +24,17 @@ export class ModCollabCarets {
     }
 
     bindEvents() {
-        let that = this
-        new UpdateScheduler(this.mod.editor.pm, "change", () => {return that.updatePositionCSS()})
-        new UpdateScheduler(this.mod.editor.mod.footnotes.fnPm, "change", () => {return that.updatePositionCSS()})
+        let that = this, pm = this.mod.editor.pm
+        pm.updateScheduler([pm.on.change], () => {return that.updatePositionCSS()})
+        let fnPm = this.mod.editor.mod.footnotes.fnPm
+        fnPm.updateScheduler([fnPm.on.change], () => {return that.updatePositionCSS()})
         // Limit sending of selection to once every 250 ms. This is also important to work correctly
         // with editing, which otherwise triggers three selection changes that result in an incorrect caret placement
         let sendSelection = _.debounce(function(){
             that.sendSelectionChange()
         }, 250)
-        this.mod.editor.pm.on("selectionChange", sendSelection)
-        this.mod.editor.mod.footnotes.fnPm.on("selectionChange", sendSelection)
+        pm.on.selectionChange.add(sendSelection)
+        fnPm.on.selectionChange.add(sendSelection)
     }
 
     // Create a new caret as the current user
@@ -72,7 +71,7 @@ export class ModCollabCarets {
         let that = this
         this.updateCaret(data.caret_position)
         let pm = data.caret_position.pm === 'pm' ? this.mod.editor.pm : this.mod.editor.mod.footnotes.fnPm
-        scheduleDOMUpdate(pm, function(){return that.updatePositionCSS()})
+        pm.scheduleDOMUpdate(function(){return that.updatePositionCSS()})
     }
 
     // Update the position of a collaborator's caret
@@ -87,7 +86,6 @@ export class ModCollabCarets {
         let posTo = caretPosition.to
         let posHead = caretPosition.head
         let pm = caretPosition.pm === 'pm' ? this.mod.editor.pm : this.mod.editor.mod.footnotes.fnPm
-
         // Map the positions through all still unconfirmed changes
         pm.mod.collab.unconfirmedMaps.forEach(function(map){
             posFrom = map.map(posFrom)

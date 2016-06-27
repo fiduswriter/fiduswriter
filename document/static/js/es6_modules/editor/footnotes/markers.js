@@ -1,5 +1,3 @@
-import {toHTML} from "prosemirror/dist/format"
-
 /* Functions related to footnote markers in the main editor */
 export class ModFootnoteMarkers {
     constructor(mod) {
@@ -12,14 +10,12 @@ export class ModFootnoteMarkers {
 
     bindEvents() {
         let that = this
-        this.mod.editor.pm.on('documentUpdated', function() {
-            that.mod.fnEditor.renderAllFootnotes()
-        })
-        this.mod.editor.pm.on('transform', function(transform, object) {
+
+        this.mod.editor.pm.on.transform.add(function(transform, object) {
             that.scanForFootnoteMarkers(transform, true)
-        })
-        this.mod.editor.pm.mod.collab.on('collabTransform', function(transform, object) {
-            that.remoteScanForFootnoteMarkers(transform)
+        }, 1) // priority 1 to be triggered before collab related functions
+        this.mod.editor.pm.mod.collab.receivedTransform.add(function(transform, object) {
+            that.remoteScanForFootnoteMarkers(transform, false)
         })
     }
 
@@ -27,7 +23,7 @@ export class ModFootnoteMarkers {
         // We add unconfirmed local steps to the remote steps to make sure we map the ranges to current ranges.
         let unconfirmedMaps = this.mod.editor.pm.mod.collab.unconfirmedMaps
         let unconfirmedSteps = this.mod.editor.pm.mod.collab.unconfirmedSteps
-        let doc = this.mod.editor.pm.mod.versionDoc
+        let doc = this.mod.editor.pm.mod.collab.versionDoc
         transform.maps = transform.maps.concat(unconfirmedMaps)
         unconfirmedSteps.forEach(function(step) {
             // We add pseudo steps for all the unconfirmed steps so that the
@@ -141,9 +137,10 @@ export class ModFootnoteMarkers {
             if (node.type.name === 'footnote') {
                 let startPos = pos
                 let endPos = pos + node.nodeSize
-                let footnoteMarker = that.mod.editor.pm.markRange(startPos, endPos)
-                footnoteMarker.on('removed', function() {
-                    that.mod.fnEditor.removeFootnote(footnoteMarker)
+                let footnoteMarker = that.mod.editor.pm.markRange(startPos, endPos, {
+                    onRemove: function() {
+                        that.mod.fnEditor.removeFootnote(footnoteMarker)
+                    }
                 })
                 footnoteMarkers.push(footnoteMarker)
 
@@ -187,13 +184,14 @@ export class ModFootnoteMarkers {
 
     updateFootnoteMarker(index) {
         this.updating = true
-        let footnoteContents = toHTML(this.mod.fnPm.doc.child(index))
 
+        let fnContents = this.mod.fnPm.doc.child(index)
+        let fnHTML = fnContents.toDOM().innerHTML
         let footnote = this.mod.footnotes[index]
         if (footnote) {
             let node = this.mod.editor.pm.doc.nodeAt(footnote.from)
             this.mod.editor.pm.tr.setNodeType(footnote.from, node.type, {
-                contents: footnoteContents
+                contents: fnHTML
             }).apply()
         }
         this.updating = false

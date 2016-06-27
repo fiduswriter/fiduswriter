@@ -53,7 +53,7 @@ export class FigureDialog {
         if ((new RegExp(/^\s*$/)).test(this.equation) && (!this.imageId)) {
             // The math input is empty. Delete a math node if it exist. Then close the dialog.
             if (this.insideFigure) {
-                this.editor.currentPm.execCommand('deleteSelection')
+                this.editor.currentPm.tr.deleteSelection().apply()
             }
             this.dialog.dialog('close')
             return false
@@ -67,8 +67,13 @@ export class FigureDialog {
             this.dialog.dialog('close')
             return false
         }
-
-        this.editor.currentPm.execCommand('figure:insert', [this.equation, this.imageId, this.figureCategory, this.caption])
+        let nodeType = this.editor.currentPm.schema.nodes['figure']
+        this.editor.currentPm.tr.replaceSelection(nodeType.createAndFill({
+            equation: this.equation,
+            image: this.imageId,
+            figureCategory: this.figureCategory,
+            caption: this.caption
+        })).apply()
 
         this.dialog.dialog('close')
     }
@@ -89,7 +94,7 @@ export class FigureDialog {
                 text: gettext('Remove'),
                 class: 'fw-button fw-orange',
                 click: function () {
-                    that.editor.currentPm.execCommand('deleteSelection')
+                    that.editor.currentPm.tr.deleteSelection().apply()
                     that.dialog.dialog('close')
                 }
             })

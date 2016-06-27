@@ -278,7 +278,7 @@ class CommentMark extends MarkType {
         })}
     }
     toDOM(node) {
-        return ['span', {class: 'comment', 'data-id': node.attrs.id}, 0]
+        return ['span', {class: 'comment', 'data-id': node.attrs.id}]
     }
 }
 

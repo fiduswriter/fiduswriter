@@ -24,7 +24,6 @@ testCaret.getCaret = function getCaret() {
  * @returns {Selection}
  */
 testCaret.setCaret = function setCaret(caret) {
-    //return testCaret.setSelection(caret, caret)
     return testCaret.setSelection(caret, caret)
 }
 
@@ -37,8 +36,9 @@ testCaret.setCaret = function setCaret(caret) {
  * @returns {Selection}
  */
 testCaret.setSelection = function setSelection(caretOne, caretTwo) {
-
-    let selection = new TextSelection(caretOne, caretTwo)
+    let caretOneRes = window.theEditor.pm.doc.resolve(caretOne)
+    let caretTwoRes = window.theEditor.pm.doc.resolve(caretTwo)
+    let selection = new TextSelection(caretOneRes, caretTwoRes)
 
     window.theEditor.pm.setSelection(selection)
     window.theEditor.pm.focus()

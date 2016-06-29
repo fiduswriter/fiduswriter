@@ -47,15 +47,11 @@ export class ModCommentInteractions {
 
         jQuery(document).on('click', '.submit-comment-answer-edit',
             function() {
-                let textArea = jQuery(this).prev()
-                let commentId = parseInt(textArea.attr('data-id'))
-                let answerId = parseInt(textArea.attr('data-answer'))
-                let theValue = textArea.val()
-                that.submitAnswerUpdate(commentId, answerId, theValue)
+                that.submitAnswerEdit(jQuery(this).prev())
             })
 
         jQuery(document).on("click", ".comment-answer-submit", function() {
-            that.submitAnswer();
+            that.submitAnswer()
         })
 
         jQuery(document).on('click', '.delete-comment', function() {
@@ -171,9 +167,9 @@ export class ModCommentInteractions {
     editAnswer(id, answerId) {
         // Mark a specific answer to a comment as active, then layout the
         // comments, which will make that answer editable.
-        this.activeCommentId = id
-        this.activeCommentAnswerId = answerId
-        this.layoutComments()
+        this.mod.layout.activeCommentId = id
+        this.mod.layout.activeCommentAnswerId = answerId
+        this.mod.layout.layoutComments()
     }
 
     createNewAnswer(commentId, answerText) {
@@ -192,6 +188,14 @@ export class ModCommentInteractions {
         this.mod.layout.deactivateAll()
         this.mod.layout.layoutComments()
         this.mod.editor.docInfo.changed = true
+    }
+
+    submitAnswerEdit(textArea) {
+        let commentId = parseInt(textArea.attr('data-id'))
+        let answerId = parseInt(textArea.attr('data-answer'))
+        let theValue = textArea.val()
+
+        this.submitAnswerUpdate(commentId, answerId, theValue)
     }
 
     submitAnswerUpdate(commentId, answerId, commentText) {

@@ -9,8 +9,7 @@ let answerCommentTemplatePart =`
         <% if (active && answer.id===that.activeCommentAnswerId) { %>
             <div class="comment-text-wrapper">
                 <div class="comment-answer-form">
-                    <textarea class="commentAnswerText" data-id="<%= answer.commentId %>" data-answer="<%= answer.id %>" rows="3">
-                    <%= answer.answer %></textarea>
+                    <textarea class="commentAnswerText" data-id="<%= answer.commentId %>" data-answer="<%= answer.id %>" rows="3"><%= answer.answer %></textarea>
                     <span class="submit-comment-answer-edit fw-button fw-dark">` +
     gettext("Edit") +
     `</span>
@@ -46,7 +45,9 @@ let singleCommentTemplatePart = `
         <div class="comment-text-wrapper">
             <p class="comment-p"><%= comment.comment %></p>
             <div class="comment-form">
-                <textarea class="commentText" data-id="<%= comment.id %>" rows="5"></textarea>
+                <textarea class="commentText" data-id="<%= comment.id %>" rows="5"> </textarea>
+                <% %>
+                <input class="comment-is-major" type="checkbox" name="isMajor" <%= comment['review:isMajor'] ? 'checked' : '' %> />`+gettext("Is major")+`<br />
                 <span class="submitComment fw-button fw-dark">` +
     gettext("Edit") +
     `</span>

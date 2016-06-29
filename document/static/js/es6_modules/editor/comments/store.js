@@ -50,7 +50,7 @@ export class ModCommentStore {
     // Add a new comment to the comment database both remotely and locally.
     addComment(user, userName, userAvatar, date, comment, isMajor, posFrom, posTo) {
         let id = randomID()
-        this.addLocalComment(id, user, userName, userAvatar, date, comment, [], isMajor)
+        this.addLocalComment(id, user, userName, userAvatar, date, comment, [], isMajor, true)
         this.unsent.push({
             type: "create",
             id: id
@@ -60,15 +60,17 @@ export class ModCommentStore {
         this.signal("mustSend")
     }
 
-    addLocalComment(id, user, userName, userAvatar, date, comment, answers, isMajor) {
+    addLocalComment(id, user, userName, userAvatar, date, comment, answers, isMajor, local) {
         if (!this.comments[id]) {
             this.comments[id] = new Comment(id, user, userName, userAvatar, date, comment, answers, isMajor)
         }
-        this.mod.layout.layoutComments()
+        if (local || (!this.mod.layout.isCurrentlyEditing())) {
+            this.mod.layout.layoutComments()
+        }
     }
 
     updateComment(id, comment, commentIsMajor) {
-        this.updateLocalComment(id, comment, commentIsMajor)
+        this.updateLocalComment(id, comment, commentIsMajor, true)
         this.unsent.push({
             type: "update",
             id: id
@@ -76,12 +78,14 @@ export class ModCommentStore {
         this.signal("mustSend")
     }
 
-    updateLocalComment(id, comment, commentIsMajor) {
+    updateLocalComment(id, comment, commentIsMajor, local) {
         if (this.comments[id]) {
             this.comments[id].comment = comment
             this.comments[id]['review:isMajor'] = commentIsMajor
         }
-        this.mod.layout.layoutComments()
+        if (local || (!this.mod.layout.isCurrentlyEditing())) {
+            this.mod.layout.layoutComments()
+        }
     }
 
     removeCommentMarks(id) {
@@ -100,18 +104,20 @@ export class ModCommentStore {
         })
     }
 
-    deleteLocalComment(id) {
+    deleteLocalComment(id, local) {
         let found = this.comments[id]
         if (found) {
             delete this.comments[id]
             return true
         }
-        this.mod.layout.layoutComments()
+        if (local || (!this.mod.layout.isCurrentlyEditing())) {
+            this.mod.layout.layoutComments()
+        }
     }
 
     // Removes the comment from store, optionally also removes marks from document.
     deleteComment(id, removeMarks) {
-        if (this.deleteLocalComment(id)) {
+        if (this.deleteLocalComment(id, true)) {
             this.unsent.push({
                 type: "delete",
                 id: id
@@ -142,19 +148,21 @@ export class ModCommentStore {
     }
 
 
-    addLocalAnswer(id, answer) {
+    addLocalAnswer(id, answer, local) {
         if (this.comments[id]) {
             if (!this.comments[id].answers) {
                 this.comments[id].answers = []
             }
             this.comments[id].answers.push(answer)
         }
-        this.mod.layout.layoutComments()
+        if (local || (!this.mod.layout.isCurrentlyEditing())) {
+            this.mod.layout.layoutComments()
+        }
     }
 
     addAnswer(id, answer) {
         answer.id = randomID()
-        this.addLocalAnswer(id, answer)
+        this.addLocalAnswer(id, answer, true)
         this.unsent.push({
             type: "add_answer",
             id: id,
@@ -163,17 +171,19 @@ export class ModCommentStore {
         this.signal("mustSend")
     }
 
-    deleteLocalAnswer(commentId, answerId) {
+    deleteLocalAnswer(commentId, answerId, local) {
         if (this.comments[commentId] && this.comments[commentId].answers) {
             this.comments[commentId].answers = _.reject(this.comments[commentId].answers, function(answer) {
                 return answer.id === answerId
             })
         }
-        this.mod.layout.layoutComments()
+        if (local || (!this.mod.layout.isCurrentlyEditing())) {
+            this.mod.layout.layoutComments()
+        }
     }
 
     deleteAnswer(commentId, answerId) {
-        this.deleteLocalAnswer(commentId, answerId)
+        this.deleteLocalAnswer(commentId, answerId, true)
         this.unsent.push({
             type: "delete_answer",
             commentId: commentId,
@@ -182,18 +192,20 @@ export class ModCommentStore {
         this.signal("mustSend")
     }
 
-    updateLocalAnswer(commentId, answerId, answerText) {
+    updateLocalAnswer(commentId, answerId, answerText, local) {
         if (this.comments[commentId] && this.comments[commentId].answers) {
             let answer = _.findWhere(this.comments[commentId].answers, {
                 id: answerId
             })
             answer.answer = answerText
         }
-        this.mod.layout.layoutComments()
+        if (local || (!this.mod.layout.isCurrentlyEditing())) {
+            this.mod.layout.layoutComments()
+        }
     }
 
     updateAnswer(commentId, answerId, answerText) {
-        this.updateLocalAnswer(commentId, answerId, answerText)
+        this.updateLocalAnswer(commentId, answerId, answerText, true)
         this.unsent.push({
             type: "update_answer",
             commentId: commentId,
@@ -285,17 +297,17 @@ export class ModCommentStore {
     receive(events, version) {
         events.forEach(event => {
             if (event.type == "delete") {
-                this.deleteLocalComment(event.id)
+                this.deleteLocalComment(event.id, false)
             } else if (event.type == "create") {
-                this.addLocalComment(event.id, event.user, event.userName, event.userAvatar, event.date, event.comment, [], event['review:isMajor'])
+                this.addLocalComment(event.id, event.user, event.userName, event.userAvatar, event.date, event.comment, [], event['review:isMajor'], false)
             } else if (event.type == "update") {
-                this.updateLocalComment(event.id, event.comment, event['review:isMajor'])
+                this.updateLocalComment(event.id, event.comment, event['review:isMajor'], false)
             } else if (event.type == "add_answer") {
-                this.addLocalAnswer(event.commentId, event)
+                this.addLocalAnswer(event.commentId, event, false)
             } else if (event.type == "remove_answer") {
-                this.deleteLocalAnswer(event.commentId, event)
+                this.deleteLocalAnswer(event.commentId, event, false)
             } else if (event.type == "update_answer") {
-                this.updateLocalAnswer(event.commentId, event.id, event.answer)
+                this.updateLocalAnswer(event.commentId, event.id, event.answer, false)
             }
             this.version++
         })

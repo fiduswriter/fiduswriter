@@ -53,20 +53,19 @@ export class ModCommentLayout {
             }
 
         })
+
         let pm = this.mod.editor.pm
-        pm.updateScheduler([pm.on.change, pm.on.setDoc], () => {return that.updateDOM()})
+        pm.updateScheduler([pm.on.change, pm.on.setDoc], () => {return that.onChange()})
         pm.updateScheduler([pm.on.selectionChange], () => {return that.onSelectionChange()})
 
     }
 
     activateComment(id) {
-        // Deactivate all comments, then mark the one related to the id as active.
         this.deactivateAll()
         this.activeCommentId = id
     }
 
     deactivateAll() {
-        // Close the comment box and make sure no comment is marked as currently active.
         this.activeCommentId = false
         this.activeCommentAnswerId = false
         // If there is a comment currently under creation, remove it.
@@ -103,17 +102,55 @@ export class ModCommentLayout {
         this.mod.editor.pm.scheduleDOMUpdate(() => {return that.updateDOM()})
     }
 
+    isCurrentlyEditing() {
+        // Returns true if
+        // A) a comment form is currently open
+        // B) the comment answer edit form is currently open
+        // C) part of a new answer has been written
+        // D) the focus is currently in new answer text area of a comment
+        if (this.activeCommentId !== false) {
+            if (jQuery('.commentText:visible').length > 0) {
+                // a comment form is currently open
+                return true
+            }
+            if (jQuery('.submit-comment-answer-edit').length > 0) {
+                // a comment answer edit form is currently open
+                return true
+            }
+            let answerForm = jQuery('.comment-answer-text:visible')
+            if (answerForm.length > 0 && answerForm.val().length > 0) {
+                // Part of an answer to a comment has been entered.
+                return true
+            }
+            if (answerForm.length > 0 && answerForm.is(':focus')) {
+                // There is currently focus in the comment answer form
+                return true
+            }
+        }
+        return false
+    }
+
     onSelectionChange() {
+        // Give up if the user is currently editing a comment.
+        if (this.isCurrentlyEditing()) {
+            return false
+        }
         this.activateSelectedComment()
+        return this.updateDOM()
+    }
+
+    onChange() {
+        // Give up if the user is currently editing a comment.
+        if (this.isCurrentlyEditing()) {
+            return false
+        }
         return this.updateDOM()
     }
 
     // Activate the comments included in the selection or the comment where the
     // caret is placed, if the editor is in focus.
     activateSelectedComment() {
-        if (!this.mod.editor.pm.hasFocus()) {
-            return
-        }
+
         let selection = this.mod.editor.pm.selection, comment = false, that = this
 
         if (selection.empty) {
@@ -141,7 +178,6 @@ export class ModCommentLayout {
 
     updateDOM() {
         // Handle the layout of the comments on the screen.
-
         // DOM write phase
 
         let that = this
@@ -160,16 +196,11 @@ export class ModCommentLayout {
             if (!comment) {
                 // We have no comment with this ID. Ignore the referrer.
                 return;
-            //    comment = new Comment(that.findCommentId(node))
-            //    comment.hidden = true // There is no comment with this . Don't show it.
             }
             if (theComments.indexOf(comment) !== -1) {
                 // comment already placed
                 return
             }
-            //if (comment.hidden) {
-                // Comment will not show by default.
-            //} else
             if (comment.id === that.activeCommentId) {
                 activeCommentStyle += '.comments-enabled .comment[data-id="' + comment.id + '"] {background-color: #fffacf;}'
             } else {

@@ -55,8 +55,8 @@ export let documentsListItemTemplate = _.template('\
 /** A template for the Fidus Writer document import dialog */
 export let importFidusTemplate = _.template('<div id="importfidus" title="' + gettext('Import a Fidus file') + '">\
         <form id="import-fidus-form" method="post" enctype="multipart/form-data" class="ajax-upload">\
-            <input type="file" id="fidus-uploader" name="fidus" required />\
-            <span id="import-fidus-btn" class="fw-button fw-white fw-large">' + gettext('Select a file') + '</span>\
+            <input type="file" id="fidus-uploader" name="fidus" accept=".fidus" required />\
+            <button id="import-fidus-btn" class="fw-button fw-white fw-large">' + gettext('Select a file') + '</button>\
             <label id="import-fidus-name" class="ajax-upload-label"></label>\
         </form>\
     </div>')

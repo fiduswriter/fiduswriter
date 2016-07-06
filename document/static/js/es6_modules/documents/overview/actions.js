@@ -157,8 +157,9 @@ export class DocumentOverviewActions {
                         .replace(
                             /C:\\fakepath\\/i, ''))
                 })
-                jQuery('#import-fidus-btn').bind('mousedown', function () {
+                jQuery('#import-fidus-btn').bind('click', function (event) {
                     jQuery('#fidus-uploader').trigger('click')
+                    event.preventDefault()
                 })
             },
             close: function () {

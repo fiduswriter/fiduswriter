@@ -41,6 +41,7 @@ export class Menu {
         jQuery(document).on('mousedown', '#user-preferences-pulldown a', function(event) {
             event.preventDefault()
             window.location = jQuery(this).attr('href')
+
         })
         // Same for form button
         jQuery(document).on('mousedown', '#user-preferences-pulldown button[type="submit"]', function(event) {

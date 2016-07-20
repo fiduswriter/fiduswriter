@@ -11,12 +11,23 @@ export let selectJournal = function(editor) {
         diaButtons[gettext("Submit")] = function() {
             //alert(jQuery("input[type='radio'][name='journalList']:checked").val())
             let data = new window.FormData()
+            data.append('username', editor.user.id)
+            //data.append('title', editor.doc.title)
+            data.append('title', "dfsdfsdfTitle")
 
-            //data.append('username', editor.user.id)
-            data.append('journal_id', jQuery("input[type='radio'][name='rate']:checked").val())
-            data.append('article_url', 'http://10.6.13.146:8000/document/'+editor.doc.id)
+            data.append('first_name', editor.user.first_name)
+            data.append('last_name', editor.user.last_name)
+            data.append('email', editor.user.email)
+            data.append('affiliation', "sample affiliation")
+            data.append('author_url', "sample author_url")
+            data.append('journal_id',  '1')
+            //data.append('file_name',  'http://localhost:8100/document/'+editor.doc.id)
+            //data.append('journal_id', jQuery("input[type='radio'][name='rate']:checked").val())
+            //data.append('article_url', 'http://localhost:8100/document/'+editor.doc.id)
+                data.append('file_name', "sample author_url")
+                data.append('article_url', "sample author_url")
             jQuery.ajax({
-                url: 'http://10.6.13.146/index.php/index/gateway/plugin/RestApiGatewayPlugin/articles',
+                url: 'http://localhost:8000/ojs/index.php/index/gateway/plugin/RestApiGatewayPlugin/articles',
                 data: data,
                 type: 'POST',
                 cache: false,
@@ -43,7 +54,7 @@ export let selectJournal = function(editor) {
         jQuery.ajax({
                 type: "GET",
                 dataType: "json",
-                url:'http://10.6.13.146/index.php/mda/gateway/plugin/RestApiGatewayPlugin/journals',
+                url:'http://localhost:8000/ojs/index.php/index/gateway/plugin/RestApiGatewayPlugin/journals',
                 success: function (result) {
                     list =result['journals']
                     let journal = null

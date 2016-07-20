@@ -1,5 +1,6 @@
 import {journalDialogTemplate} from "./journal-templates"
 import {addAlert, csrfToken} from "../common/common"
+import {ojs_path} from "./ojs-path"
 
 /** get the list of ojournal in ojs.
  * @function selectJournal
@@ -27,7 +28,7 @@ export let selectJournal = function(editor) {
                 data.append('file_name', "sample author_url")
                 data.append('article_url', "sample author_url")
             jQuery.ajax({
-                url: 'http://localhost:8000/ojs/index.php/index/gateway/plugin/RestApiGatewayPlugin/articles',
+                url: ojs_path+'/index.php/index/gateway/plugin/RestApiGatewayPlugin/articles',
                 data: data,
                 type: 'POST',
                 cache: false,
@@ -54,7 +55,7 @@ export let selectJournal = function(editor) {
         jQuery.ajax({
                 type: "GET",
                 dataType: "json",
-                url:'http://localhost:8000/ojs/index.php/index/gateway/plugin/RestApiGatewayPlugin/journals',
+                url:ojs_path + '/index.php/index/gateway/plugin/RestApiGatewayPlugin/journals',
                 success: function (result) {
                     list =result['journals']
                     let journal = null

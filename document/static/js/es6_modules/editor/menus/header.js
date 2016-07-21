@@ -73,7 +73,8 @@ export class ModMenusHeader {
           })
 
           jQuery(document).on('mousedown', '.submitOjs:not(.disabled)', function() {
-              that.mod.actions.submitOjs()
+              if (that.mod.editor.doc.owner.id === that.mod.editor.user.id)
+                that.mod.actions.submitOjs()
           })
           // Document Style switching
           jQuery(document).on('mousedown', "#header-navigation .style:not(.disabled)", function() {

@@ -334,6 +334,27 @@ def upload_js(request):
         response,
         status=status
     )
+@login_required
+
+def profile_js(request):
+    response = {}
+    status = 405
+    if request.is_ajax() and request.method == 'POST':
+        username = request.POST["username"]
+        the_user = User.objects.filter(username=username)
+        if len(the_user) > 0:
+            response['user'] = {}
+            response['user']['id'] = the_user[0].id
+            response['user']['first_name'] = the_user[0].first_name
+            response['user']['last_name'] = the_user[0].last_name
+            response['user']['email'] = the_user[0].email
+            status = 200
+        else:
+            status = 201
+    return JsonResponse(
+        response,
+        status=status
+    )
 
 # Download a revision that was previously uploaded
 

@@ -18,6 +18,7 @@ urlpatterns = [
     url('^delete/$', views.delete_js, name='delete_js'),
     url('^import/$', views.import_js, name='import_js'),
     url('^upload/$', views.upload_js, name='upload_js'),
+    url('^profile/$', views.profile_js, name='profile_js'),
     url('^download/$', views.download_js, name='download_js'),
     url(
         '^delete_revision/$',

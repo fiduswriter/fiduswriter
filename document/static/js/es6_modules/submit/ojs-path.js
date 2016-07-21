@@ -1,1 +1,1 @@
-export let ojs_path= 'http://localhost:8000/ojs'
+export let ojs_path= 'http://10.6.13.146'

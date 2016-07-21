@@ -9,24 +9,43 @@ import {ojs_path} from "./ojs-path"
 export let selectJournal = function(editor) {
         let list = null
         let diaButtons = {}
+        let userProfile = {}
+        let data1 = new window.FormData()
+        data1.append('username', editor.user.name)
+        jQuery.ajax({
+            url: '/document/profile/',
+            data: data1,
+            type: 'POST',
+            cache: false,
+            contentType: false,
+            processData: false,
+            crossDomain: false, // obviates need for sameOrigin test
+            beforeSend: function(xhr, settings) {
+                xhr.setRequestHeader("X-CSRFToken", csrfToken)
+            },
+            success: function(result) {
+                userProfile = result['user']
+            },
+            error: function() {
+                addAlert('error', 'can not get the user information')
+            }
+        })
+
         diaButtons[gettext("Submit")] = function() {
             //alert(jQuery("input[type='radio'][name='journalList']:checked").val())
+            console.log(userProfile["email"])
             let data = new window.FormData()
-            data.append('username', editor.user.id)
-            //data.append('title', editor.doc.title)
-            data.append('title', "dfsdfsdfTitle")
-
-            data.append('first_name', editor.user.first_name)
-            data.append('last_name', editor.user.last_name)
-            data.append('email', editor.user.email)
+            data.append('username', editor.user.name)
+                //data.append('title', "dfsdfsdfTitle")
+            data.append('title', editor.doc.title)
+            data.append('first_name', userProfile["first_name"])
+            data.append('last_name', userProfile["last_name"])
+            data.append('email', userProfile["email"])
             data.append('affiliation', "sample affiliation")
             data.append('author_url', "sample author_url")
-            data.append('journal_id',  '1')
-            //data.append('file_name',  'http://localhost:8100/document/'+editor.doc.id)
-            //data.append('journal_id', jQuery("input[type='radio'][name='rate']:checked").val())
-            //data.append('article_url', 'http://localhost:8100/document/'+editor.doc.id)
-                data.append('file_name', "sample author_url")
-                data.append('article_url', "sample author_url")
+            data.append('journal_id', jQuery("input[type='radio'][name='journalList']:checked").val())
+            data.append('file_name', editor.doc.title)
+            data.append('article_url', window.location.origin+"/document/" + editor.doc.id)
             jQuery.ajax({
                 url: ojs_path+'/index.php/index/gateway/plugin/RestApiGatewayPlugin/articles',
                 data: data,
@@ -38,7 +57,7 @@ export let selectJournal = function(editor) {
                 beforeSend: function(xhr, settings) {
                     xhr.setRequestHeader("X-CSRFToken", csrfToken)
                 },
-                 success: function() {
+                success: function() {
                     addAlert('success','The paper was submitted to ojs')
                 },
                 error: function() {

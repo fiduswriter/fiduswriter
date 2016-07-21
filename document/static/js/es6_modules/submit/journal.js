@@ -32,11 +32,8 @@ export let selectJournal = function(editor) {
         })
 
         diaButtons[gettext("Submit")] = function() {
-            //alert(jQuery("input[type='radio'][name='journalList']:checked").val())
-            console.log(userProfile["email"])
             let data = new window.FormData()
             data.append('username', editor.user.name)
-                //data.append('title', "dfsdfsdfTitle")
             data.append('title', editor.doc.title)
             data.append('first_name', userProfile["first_name"])
             data.append('last_name', userProfile["last_name"])

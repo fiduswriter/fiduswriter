@@ -340,11 +340,12 @@ def profile_js(request):
     response = {}
     status = 405
     if request.is_ajax() and request.method == 'POST':
-        username = request.POST["username"]
-        the_user = User.objects.filter(username=username)
+        id = request.POST["id"]
+        the_user = User.objects.filter(id=id)
         if len(the_user) > 0:
             response['user'] = {}
             response['user']['id'] = the_user[0].id
+            response['user']['username'] = the_user[0].username
             response['user']['first_name'] = the_user[0].first_name
             response['user']['last_name'] = the_user[0].last_name
             response['user']['email'] = the_user[0].email

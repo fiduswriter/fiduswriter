@@ -11,7 +11,7 @@ export let selectJournal = function(editor) {
         let diaButtons = {}
         let userProfile = {}
         let data1 = new window.FormData()
-        data1.append('username', editor.user.name)
+        data1.append('id', editor.user.id)
         jQuery.ajax({
             url: '/document/profile/',
             data: data1,
@@ -25,6 +25,7 @@ export let selectJournal = function(editor) {
             },
             success: function(result) {
                 userProfile = result['user']
+                console.log(userProfile)
             },
             error: function() {
                 addAlert('error', 'can not get the user information')
@@ -33,7 +34,7 @@ export let selectJournal = function(editor) {
 
         diaButtons[gettext("Submit")] = function() {
             let data = new window.FormData()
-            data.append('username', editor.user.name)
+            data.append('username', userProfile["username"])
             data.append('title', editor.doc.title)
             data.append('first_name', userProfile["first_name"])
             data.append('last_name', userProfile["last_name"])

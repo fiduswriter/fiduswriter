@@ -42,7 +42,7 @@ export let selectJournal = function(editor) {
             data.append('affiliation', "sample affiliation")
             data.append('author_url', "sample author_url")
             data.append('journal_id', jQuery("input[type='radio'][name='journalList']:checked").val())
-            data.append('file_name', editor.doc.title)
+            data.append('file_name',window.location.origin+"/document/" + editor.doc.id)
             data.append('article_url', window.location.origin+"/document/" + editor.doc.id)
             jQuery.ajax({
                 url: ojs_path+'/index.php/index/gateway/plugin/RestApiGatewayPlugin/articles',

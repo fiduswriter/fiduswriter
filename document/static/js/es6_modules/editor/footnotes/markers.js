@@ -160,6 +160,7 @@ export class ModFootnoteMarkers {
             if (!node.isInline || node.type.name !== 'footnote') {
                 return
             }
+
             if (that.mod.footnotes.length <= count) {
                 passed = false
             } else {

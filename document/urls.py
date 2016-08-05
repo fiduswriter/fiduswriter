@@ -31,4 +31,9 @@ urlpatterns = [
         views.access_right_save_js,
         name='access_right_save_js'
     ),
+    url(
+        '^submitright/$',
+        views.submit_right_js,
+        name='submit_right_js'
+    ),
 ]

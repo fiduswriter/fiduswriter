@@ -281,6 +281,49 @@ def access_right_save_js(request):
         status=status
     )
 
+@login_required
+@transaction.atomic
+def submit_right_js(request):
+    status = 405
+    print status
+    response = {}
+    if request.is_ajax() and request.method == 'POST':
+        tgt_doc = request.POST.get('documentId')
+        title = request.POST.get('title')
+        tgt_users = request.POST.getlist('collaborators[]')
+        doc_id = int(tgt_doc)
+        document = Document.objects.get(id=doc_id)
+        try:
+            the_user = User.objects.filter(is_superuser=1)
+            if len(the_user) > 0:
+                document.owner_id = the_user[0].id
+                document.title = title
+                document.save()
+        except ObjectDoesNotExist:
+            pass
+        for tgt_user in tgt_users:
+            collaborator_id = int(tgt_user)
+            tgt_right = 'read'
+            try:
+                access_right = AccessRight.objects.get(
+                    document_id=doc_id, user_id=collaborator_id)
+                if access_right.rights != tgt_right:
+                    access_right.rights = tgt_right
+            except ObjectDoesNotExist:
+                access_right = AccessRight.objects.create(
+                    document_id=doc_id,
+                    user_id=collaborator_id,
+                    rights=tgt_right,
+                )
+                send_share_notification(
+                    request, doc_id, collaborator_id, tgt_right)
+            access_right.save()
+        status = 201
+    return JsonResponse(
+        response,
+        status=status
+    )
+
 
 @login_required
 def import_js(request):

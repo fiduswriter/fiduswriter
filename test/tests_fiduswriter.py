@@ -941,8 +941,7 @@ class SelectDeleteUndoRedo(unittest.TestCase):
 
 
 class AddFootnote(unittest.TestCase):
-    start_character = 5
-    end_character = 10
+    position = 5
     em_or_span_or_strong = 'span' # PROCESS WILL PERSORM ON THIS TAG
     tag_number = 2  # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE ELEMENT THAT YOU WANT )
     button_id = "button-comment"
@@ -1022,7 +1021,7 @@ class AddFootnote(unittest.TestCase):
         """
 
         try:
-            self.driver.execute_script(script, self.start_character, self.end_character, self.em_or_span_or_strong,
+            self.driver.execute_script(script, self.position, self.em_or_span_or_strong,
                                        self.tag_number)
             time.sleep(2)
         except Exception as e:
@@ -1047,8 +1046,7 @@ class AddFootnote(unittest.TestCase):
 
 
 class InsertMath(unittest.TestCase):
-    start_character = 5
-    end_character = 10
+    position = 5
     em_or_span_or_strong = 'span' # PROCESS WILL PERSORM ON THIS TAG
     tag_number = 1  # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE ELEMENT THAT YOU WANT )
     button_id = "button-math"
@@ -1130,8 +1128,7 @@ class InsertMath(unittest.TestCase):
         """
 
         try:
-            self.driver.execute_script(script, self.start_character, self.end_character, self.em_or_span_or_strong,
-                                       self.tag_number)
+            self.driver.execute_script(script, self.position, self.em_or_span_or_strong, self.tag_number)
             time.sleep(2)
         except Exception as e:
             print e
@@ -1167,10 +1164,9 @@ class InsertMath(unittest.TestCase):
 
 
 class InsertImage(unittest.TestCase):
-    start_character = 5
-    end_character = 10
+    position = 0
     em_or_span_or_strong = 'span'  # PROCESS WILL PERSORM ON THIS TAG
-    tag_number = 3  # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE ELEMENT THAT YOU WANT )
+    tag_number = 0  # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE ELEMENT THAT YOU WANT )
 
     def setUp(self):
         self.driver = webdriver.Chrome()
@@ -1245,8 +1241,7 @@ class InsertImage(unittest.TestCase):
             }
         """
         try:
-            self.driver.execute_script(script, self.start_character, self.end_character, self.em_or_span_or_strong,
-                                       self.tag_number)
+            self.driver.execute_script(script, self.position, self.em_or_span_or_strong, self.tag_number)
             time.sleep(2)
         except Exception as e:
             print e
@@ -1264,9 +1259,11 @@ class InsertImage(unittest.TestCase):
         button.click()
         time.sleep(2)
 
+
         image = self.driver.find_element_by_xpath('//*[@id="Image_1"]/td[1]/img')
         image.click()
         time.sleep(2)
+
 
         self.driver.find_element_by_xpath('//*[@id="{}"]'.format("selectImageSelectionButton")).click()
         time.sleep(2)
@@ -1280,10 +1277,9 @@ class InsertImage(unittest.TestCase):
 
 
 class AddCite(unittest.TestCase):
-    start_character = 5
-    end_character = 10
+    position = 5
     em_or_span_or_strong = 'span'  # PROCESS WILL PERSORM ON THIS TAG
-    tag_number = 3  # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE ELEMENT THAT YOU WANT )
+    tag_number = 0  # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE ELEMENT THAT YOU WANT )
 
 
     def setUp(self):
@@ -1359,8 +1355,7 @@ class AddCite(unittest.TestCase):
             }
         """
         try:
-            self.driver.execute_script(script, self.start_character, self.end_character, self.em_or_span_or_strong,
-                                       self.tag_number)
+            self.driver.execute_script(script, self.position, self.em_or_span_or_strong, self.tag_number)
             time.sleep(2)
         except Exception as e:
             print e

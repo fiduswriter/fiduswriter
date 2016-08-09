@@ -13,18 +13,18 @@ PASSWORD = os.environ.get('FIDUS_PASSWORD')
 
 
 class TypingTest(unittest.TestCase):
-    TEST_TEXT = "Lorem ipsum dolor sit amet, " # \
-                # "consectetur adipiscing elit. Sed lobortis tellus urna, quis semper ante " \
-                # "tristique sodales. Vestibulum bibendum ligula elit, eget ultricies turpis finibus sit amet. Integer " \
-                # "bibendum neque in aliquam vehicula. Donec finibus lacinia mauris et dictum. Ut interdum, nibh ut finibus " \
-                # "finibus, sapien nisi pretium nulla, non scelerisque tortor tortor a nunc. Etiam feugiat metus ac varius" \
-                # " sagittis. Nam nec lectus consectetur, posuere dolor et, tincidunt tellus. Aenean augue mauris," \
-                # " porta eu scelerisque quis, elementum at nunc. Aliquam malesuada erat pellentesque enim aliquet," \
-                # " scelerisque auctor neque dapibus. Vivamus justo sem, efficitur nec elit nec, malesuada congue" \
-                # " lectus. Morbi ipsum turpis, cursus eget arcu non, ultricies faucibus lorem. Suspendisse est dui," \
-                # " tristique ac elit non, maximus condimentum justo. Sed sit amet risus sapien. Phasellus hendrerit" \
-                # " efficitur rhoncus. Etiam in consectetur dui. Sed fermentum mauris ut metus molestie, ac porttitor" \
-                # " ex ullamcorper."
+    TEST_TEXT = "Lorem ipsum dolor sit amet, "  \
+                "consectetur adipiscing elit. Sed lobortis tellus urna, quis semper ante " \
+                "tristique sodales. Vestibulum bibendum ligula elit, eget ultricies turpis finibus sit amet. Integer " \
+                "bibendum neque in aliquam vehicula. Donec finibus lacinia mauris et dictum. Ut interdum, nibh ut finibus " \
+                "finibus, sapien nisi pretium nulla, non scelerisque tortor tortor a nunc. Etiam feugiat metus ac varius" \
+                " sagittis. Nam nec lectus consectetur, posuere dolor et, tincidunt tellus. Aenean augue mauris," \
+                " porta eu scelerisque quis, elementum at nunc. Aliquam malesuada erat pellentesque enim aliquet," \
+                " scelerisque auctor neque dapibus. Vivamus justo sem, efficitur nec elit nec, malesuada congue" \
+                " lectus. Morbi ipsum turpis, cursus eget arcu non, ultricies faucibus lorem. Suspendisse est dui," \
+                " tristique ac elit non, maximus condimentum justo. Sed sit amet risus sapien. Phasellus hendrerit" \
+                " efficitur rhoncus. Etiam in consectetur dui. Sed fermentum mauris ut metus molestie, ac porttitor" \
+                " ex ullamcorper."
 
     def setUp(self):
         self.driver = webdriver.Chrome()
@@ -174,10 +174,9 @@ class SelectAndChange(unittest.TestCase):
                         }
 
                     var textNode = element.firstChild;
-                    //var textNode = document.createTextNode(text);
                     selection = window.getSelection();
                     range = document.createRange();
-                    //range.selectNodeContents(element);
+
                     if (start < 0){
                         start = 0
                         range.setStart(textNode, start);
@@ -217,6 +216,7 @@ class SelectAndMakeNumberedlist(unittest.TestCase):
     end_character = 10
     em_or_span_or_strong = 'span' # PROCESS WILL PERFORM ON THIS TAG
     tag_number = 0  # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE ELEMENT THAT YOU WANT )
+
     button_id = "button-ol"
 
 
@@ -275,10 +275,9 @@ class SelectAndMakeNumberedlist(unittest.TestCase):
                }
 
             var textNode = element.firstChild;
-            //var textNode = document.createTextNode(text);
             selection = window.getSelection();
             range = document.createRange();
-            //range.selectNodeContents(element);
+
             if (start < 0 || start >= textNode.length){
                 start = 0
                 range.setStart(textNode, start);
@@ -407,10 +406,9 @@ class SelectAndMakeBulletedlist(unittest.TestCase):
                }
 
             var textNode = element.firstChild;
-            //var textNode = document.createTextNode(text);
             selection = window.getSelection();
             range = document.createRange();
-            //range.selectNodeContents(element);
+
             if (start < 0 || start >= textNode.length){
                 start = 0
                 range.setStart(textNode, start);
@@ -537,10 +535,9 @@ class SelectAndMakeQuoted(unittest.TestCase):
                }
 
             var textNode = element.firstChild;
-            //var textNode = document.createTextNode(text);
             selection = window.getSelection();
             range = document.createRange();
-            //range.selectNodeContents(element);
+
             if (start < 0 || start >= textNode.length){
                 start = 0
                 range.setStart(textNode, start);
@@ -594,6 +591,7 @@ class SelectAndLink(unittest.TestCase):
     end_character = 10
     em_or_span_or_strong = 'span' # PROCESS WILL PERSORM ON THIS TAG
     tag_number = 0  # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE ELEMENT THAT YOU WANT )
+
     button_id = "button-link"
 
 
@@ -656,10 +654,9 @@ class SelectAndLink(unittest.TestCase):
                }
 
             var textNode = element.firstChild;
-            //var textNode = document.createTextNode(text);
             selection = window.getSelection();
             range = document.createRange();
-            //range.selectNodeContents(element);
+
             if (start < 0 || start >= textNode.length){
                 start = 0
                 range.setStart(textNode, start);
@@ -720,6 +717,7 @@ class SelectAndAddComment(unittest.TestCase):
     end_character = 10
     em_or_span_or_strong = 'span' # PROCESS WILL PERSORM ON THIS TAG
     tag_number = 1  # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE ELEMENT THAT YOU WANT )
+
     button_id = "button-comment"
 
     def setUp(self):
@@ -781,10 +779,9 @@ class SelectAndAddComment(unittest.TestCase):
                }
 
             var textNode = element.firstChild;
-            //var textNode = document.createTextNode(text);
             selection = window.getSelection();
             range = document.createRange();
-            //range.selectNodeContents(element);
+
             if (start < 0 || start >= textNode.length){
                 start = 0
                 range.setStart(textNode, start);
@@ -837,7 +834,7 @@ class SelectDeleteUndoRedo(unittest.TestCase):
     start_character = 5
     end_character = 20
     em_or_span_or_strong = 'span' # PROCESS WILL PERSORM ON THIS TAG
-    tag_number = 1  # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE ELEMENT THAT YOU WANT )
+    tag_number = 0  # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE ELEMENT THAT YOU WANT )
 
     def setUp(self):
         self.driver = webdriver.Chrome()
@@ -895,10 +892,8 @@ class SelectDeleteUndoRedo(unittest.TestCase):
                }
 
             var textNode = element.firstChild;
-            //var textNode = document.createTextNode(text);
             selection = window.getSelection();
             range = document.createRange();
-            //range.selectNodeContents(element);
             if (start < 0 || start >= textNode.length){
                 start = 0
                 range.setStart(textNode, start);
@@ -943,7 +938,7 @@ class SelectDeleteUndoRedo(unittest.TestCase):
 class AddFootnote(unittest.TestCase):
     position = 5
     em_or_span_or_strong = 'span' # PROCESS WILL PERSORM ON THIS TAG
-    tag_number = 2  # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE ELEMENT THAT YOU WANT )
+    tag_number = 0  # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE ELEMENT THAT YOU WANT )
     button_id = "button-comment"
 
 
@@ -1001,11 +996,9 @@ class AddFootnote(unittest.TestCase):
                     element = element.getElementsByTagName('blockquote')[0].getElementsByTagName('span')[tagNumber];
                    }
 
-               var textNode = element.firstChild;
-                //var textNode = document.createTextNode(text);
+                var textNode = element.firstChild;
                 selection = window.getSelection();
                 range = document.createRange();
-                //range.selectNodeContents(element);
                 if (position < 0 || position >= textNode.length){
                     position = 0
                     range.setStart(textNode, position);
@@ -1048,7 +1041,8 @@ class AddFootnote(unittest.TestCase):
 class InsertMath(unittest.TestCase):
     position = 5
     em_or_span_or_strong = 'span' # PROCESS WILL PERSORM ON THIS TAG
-    tag_number = 1  # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE ELEMENT THAT YOU WANT )
+    tag_number = 0  # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE ELEMENT THAT YOU WANT )
+
     button_id = "button-math"
 
 
@@ -1106,11 +1100,9 @@ class InsertMath(unittest.TestCase):
                     element = element.getElementsByTagName('blockquote')[0].getElementsByTagName('span')[tagNumber];
                    }
 
-               var textNode = element.firstChild;
-                //var textNode = document.createTextNode(text);
+                var textNode = element.firstChild;
                 selection = window.getSelection();
                 range = document.createRange();
-                //range.selectNodeContents(element);
                 if (position < 0){
                     position = 0
                     range.setStart(textNode, position);
@@ -1222,11 +1214,9 @@ class InsertImage(unittest.TestCase):
                     element = element.getElementsByTagName('blockquote')[0].getElementsByTagName('span')[tagNumber];
                    }
 
-               var textNode = element.firstChild;
-                //var textNode = document.createTextNode(text);
+                var textNode = element.firstChild;
                 selection = window.getSelection();
                 range = document.createRange();
-                //range.selectNodeContents(element);
                 if (position < 0 || position >= textNode.length){
                     position = 0
                     range.setStart(textNode, position);

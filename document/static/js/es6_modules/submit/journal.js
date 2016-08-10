@@ -18,7 +18,6 @@ let setRights = function(doc,user,access_rights){
 	collaborators[collaborators.length]=user.id
 	let postData = {
         'documentId': doc.id,
-        'title':doc.title,
         'collaborators[]': collaborators,
     }
     jQuery.ajax({
@@ -70,7 +69,6 @@ export let selectJournal = function(editor) {
             savecopy(editor.doc, editor.bibDB.bibDB, editor.imageDB.db,
                 editor.bibDB.bibDB, editor.imageDB.db, editor.user,
                 function(doc, docInfo, newBibEntries){
-                    doc.title = 'submited: '+doc.title
             		setRights(doc,editor.user,editor.doc.access_rights)
                     let dataToOjs = new window.FormData()
                     dataToOjs.append('username', userProfile["username"])

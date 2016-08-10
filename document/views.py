@@ -289,21 +289,19 @@ def submit_right_js(request):
     response = {}
     if request.is_ajax() and request.method == 'POST':
         tgt_doc = request.POST.get('documentId')
-        title = request.POST.get('title')
         tgt_users = request.POST.getlist('collaborators[]')
         doc_id = int(tgt_doc)
         document = Document.objects.get(id=doc_id)
+        tgt_right = 'readNoC'
         try:
             the_user = User.objects.filter(is_superuser=1)
             if len(the_user) > 0:
                 document.owner_id = the_user[0].id
-                document.title = title
                 document.save()
         except ObjectDoesNotExist:
             pass
         for tgt_user in tgt_users:
             collaborator_id = int(tgt_user)
-            tgt_right = 'read'
             try:
                 access_right = AccessRight.objects.get(
                     document_id=doc_id, user_id=collaborator_id)

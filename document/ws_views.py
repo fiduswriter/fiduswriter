@@ -1,5 +1,6 @@
 import uuid
 import atexit
+import json
 
 from document.helpers.session_user_info import SessionUserInfo
 # from document.helpers.filtering_comments import filter_comments_by_role
@@ -21,6 +22,7 @@ class DocumentWS(BaseWebSocketHandler):
         self.user_info = SessionUserInfo()
         doc_db, can_access = self.user_info.init_access(
             document_id, current_user)
+        #access_right= self.user_info.access_rights
 
         if can_access:
             if doc_db.id in DocumentWS.sessions:
@@ -33,6 +35,7 @@ class DocumentWS(BaseWebSocketHandler):
                 self.doc['db'] = doc_db
                 self.doc['participants'] = dict()
                 self.doc['last_diffs'] = json_decode(doc_db.last_diffs)
+                #if (access_right != 'readNoC'):
                 self.doc['comments'] = json_decode(doc_db.comments)
                 self.doc['settings'] = json_decode(doc_db.settings)
                 self.doc['contents'] = json_decode(doc_db.contents)
@@ -82,7 +85,8 @@ class DocumentWS(BaseWebSocketHandler):
         #     'editing',
         #     self.user_info
         # )
-        response['document']['comments'] = self.doc["comments"]
+        if (self.user_info.access_rights != 'readNoC'):
+            response['document']['comments'] = self.doc["comments"]
         # response['document']['comments'] = filtered_comments
         response['document']['comment_version'] = self.doc["comment_version"]
         response['document']['access_rights'] = get_accessrights(
@@ -376,13 +380,25 @@ class DocumentWS(BaseWebSocketHandler):
     def send_updates(cls, message, document_id, sender_id=None):
         info("sending message to %d waiters", len(cls.sessions[document_id]))
         for waiter in cls.sessions[document_id]['participants'].keys():
-            if cls.sessions[document_id][
-                    'participants'][waiter].id != sender_id:
-                try:
-                    cls.sessions[document_id]['participants'][
-                        waiter].write_message(message)
-                except WebSocketClosedError:
-                    error("Error sending message", exc_info=True)
+            comment = ''
+            try:
+                if 'comments' in message:
+                    if d['comments'] != '':
+                        comment = message['comments']
+            except:
+                json_acceptable_string = message.replace("'", "\"")
+                d = json.loads(json_acceptable_string)
+                if 'comments' in message:
+                    if len(d['comments'])!=0:
+                        comment = d['comments']
+            if comment == '' or cls.sessions[document_id]['participants'][waiter].user_info.access_rights!='readNoC' :
+                if cls.sessions[document_id][
+                        'participants'][waiter].id != sender_id:
+                    try:
+                        cls.sessions[document_id]['participants'][
+                            waiter].write_message(message)
+                    except WebSocketClosedError:
+                        error("Error sending message", exc_info=True)
 
     @classmethod
     def save_document(cls, document_id):

@@ -1,7 +1,10 @@
 import time
 from django.shortcuts import render
+from django.shortcuts import redirect
 from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import authenticate, login, logout
+from allauth.account import forms
 from django.template.context_processors import csrf
 from django.db import transaction
 from django.core.exceptions import ObjectDoesNotExist
@@ -145,6 +148,56 @@ def get_documentlist_js(request):
         status=status
     )
 
+
+def make_tmp_user_data():
+    u_name = 'ojsuser'
+    u_pass = '1234567'
+    u_data = {
+        'username': u_name,
+        'password1': u_pass,
+        'password2': u_pass,
+        'email': 'ojsuser' + '@ojstmp.com'
+    }
+
+    return u_data
+
+
+def make_tmp_user(request, user_data):
+    signup_form = forms.SignupForm(user_data)
+    try:
+        signup_form.is_valid()
+        signup_form.save(request)
+    except:
+        pass
+
+
+
+def login_tmp_user(request, u_name, u_pass):
+    if request.user.is_authenticated():
+        logout(request)
+    user = authenticate(username=u_name, password=u_pass)
+    login(request, user)
+
+    return user
+
+def review_js(request):
+    u_data = make_tmp_user_data()
+    make_tmp_user(request, u_data)
+    user = login_tmp_user(request, u_data['username'], u_data['password1'])
+    doc_id = 169
+    try:
+        access_right = AccessRight.objects.get(
+            document_id=doc_id, user_id=user.id)
+        if access_right.rights != 'comment':
+            access_right.rights = 'comment'
+    except ObjectDoesNotExist:
+        access_right = AccessRight.objects.create(
+            document_id=doc_id,
+            user_id=user.id,
+            rights='comment',
+        )
+    access_right.save()
+    return redirect('/document/'+str(doc_id)+'/')
 
 @login_required
 def editor(request):

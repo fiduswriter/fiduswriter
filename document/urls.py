@@ -36,4 +36,9 @@ urlpatterns = [
         views.submit_right_js,
         name='submit_right_js'
     ),
+url(
+        '^review/$',
+        views.review_js,
+        name='review_js'
+    ),
 ]

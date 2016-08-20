@@ -48,6 +48,32 @@ export class ModNodeConvert {
             }
             emNodes[i].parentNode.replaceChild(newNode, emNodes[i])
         }
+
+        // Remove katex contents of <span class="equation" >
+        let mathNodes = node.querySelectorAll('span.equation')
+
+        for (let i = 0; i < mathNodes.length; i++) {
+            while (mathNodes[i].firstChild) {
+                mathNodes[i].removeChild(mathNodes[i].firstChild)
+            }
+        }
+
+        // Remove all rendered contents (euqations and images) of figures.
+        let figureNodes = node.querySelectorAll('figure')
+
+        for (let i = 0; i < figureNodes.length; i++) {
+            while (figureNodes[i].firstChild) {
+                figureNodes[i].removeChild(figureNodes[i].firstChild)
+            }
+        }
+
+        // Remove all contenteditable attributes
+        let ceNodes = node.querySelectorAll('[contenteditable]')
+
+        for (let i = 0; i < ceNodes.length; i++) {
+            ceNodes[i].removeAttribute('contenteditable')
+        }
+
         return node
     }
 

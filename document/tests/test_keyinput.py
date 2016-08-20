@@ -227,9 +227,6 @@ class Manipulator(object):
             """
         )
 
-    def tearDownModule():
-        DRIVER.quit()
-
 
 class CaretPositionTest(LiveTornadoTestCase, Manipulator):
     """

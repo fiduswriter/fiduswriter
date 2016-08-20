@@ -183,7 +183,6 @@ class SimpleTypingTest(LiveTornadoTestCase, Manipulator):
             document_input2.send_keys(char)
             time.sleep(randrange(1, 10) / 20.0)
 
-
         self.assertEqual(
             len(self.TEST_TEXT) * 2,
             len(self.get_contents(self.driver))

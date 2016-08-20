@@ -153,7 +153,8 @@ export class Equation extends Inline {
     }
     toDOM(node) {
         let dom = elt('span', {
-            class: 'equation'
+            class: 'equation',
+            'data-equation': node.attrs.equation
         })
         katexRender(node.attrs.equation, dom, {throwOnError: false})
         dom.setAttribute('contenteditable', 'false')

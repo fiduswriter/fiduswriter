@@ -101,6 +101,10 @@ class Manipulator(object):
 
 
 class SimpleTypingTest(LiveTornadoTestCase, Manipulator):
+    """
+    Test typing in collaborative mode with one user using browser windows
+    with the user typing separately at small, random intervals.
+    """
     TEST_TEXT = "Lorem ipsum dolor sit amet."
 
     def setUp(self):
@@ -195,6 +199,10 @@ class SimpleTypingTest(LiveTornadoTestCase, Manipulator):
 
 
 class ThreadedTypingTest(LiveTornadoTestCase, Manipulator):
+    """
+    Test typing in collaborative mode with one user using browser windows
+    with the user typing simultaneously in two different threads.
+    """
     TEST_TEXT = "Lorem ipsum dolor sit amet."
 
     def setUp(self):

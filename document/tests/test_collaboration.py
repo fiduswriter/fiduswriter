@@ -160,6 +160,11 @@ class SimpleTypingTest(LiveTornadoTestCase, Manipulator):
             len(self.get_title(self.driver))
         )
 
+        self.assertEqual(
+            self.get_title(self.driver2),
+            self.get_title(self.driver)
+        )
+
         # Chrome with selenium has problem with focusing elements, so we use
         # the ProseMirror internal methods for this.
         # Original document length was 16 (1 for each start/end tag of fields
@@ -178,9 +183,15 @@ class SimpleTypingTest(LiveTornadoTestCase, Manipulator):
             document_input2.send_keys(char)
             time.sleep(randrange(1, 10) / 20.0)
 
+
         self.assertEqual(
             len(self.TEST_TEXT) * 2,
             len(self.get_contents(self.driver))
+        )
+
+        self.assertEqual(
+            self.get_contents(self.driver2),
+            self.get_contents(self.driver)
         )
 
 
@@ -250,9 +261,17 @@ class ThreadedTypingTest(LiveTornadoTestCase, Manipulator):
         p1.join()
         p2.join()
 
+        # Wait for the two editors to be synched
+        time.sleep(1)
+
         self.assertEqual(
             16,
             len(self.get_title(self.driver))
+        )
+
+        self.assertEqual(
+            self.get_title(self.driver2),
+            self.get_title(self.driver)
         )
 
         # Chrome with selenium has problem with focusing elements, so we use
@@ -280,7 +299,15 @@ class ThreadedTypingTest(LiveTornadoTestCase, Manipulator):
         p1.join()
         p2.join()
 
+        # Wait for the two editors to be synched
+        time.sleep(1)
+
         self.assertEqual(
             len(self.TEST_TEXT) * 2,
             len(self.get_contents(self.driver))
+        )
+
+        self.assertEqual(
+            self.get_contents(self.driver2),
+            self.get_contents(self.driver)
         )

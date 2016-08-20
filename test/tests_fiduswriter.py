@@ -36,7 +36,8 @@ class TypingTest(unittest.TestCase):
         user_pw = self.driver.find_element_by_id('id_password')
         user_id.send_keys(USERNAME)
         user_pw.send_keys(PASSWORD)
-        login_button = self.driver.find_element_by_css_selector('button[type="submit"]')
+        login_button = self.driver.find_element_by_css_selector(
+            'button[type="submit"]')
         login_button.click()
         time.sleep(1)
         try:
@@ -48,10 +49,12 @@ class TypingTest(unittest.TestCase):
         # create_new_button = driver.find_element_by_class_name('createNew') # IT WILL CATCH THE CREATE NEW DOCUMENT BUTTON
         # create_new_button.click()
 
-        shared_doc_button = self.driver.find_element_by_class_name('doc-title')  # IT WILL CATCH FIRST DOCUMENT IN THE TABLE
+        shared_doc_button = self.driver.find_element_by_class_name(
+            'doc-title')  # IT WILL CATCH FIRST DOCUMENT IN THE TABLE
         shared_doc_button.click()
         time.sleep(3)
-        document_title = self.driver.find_element_by_xpath('//*[@class="ProseMirror-content"]')
+        document_title = self.driver.find_element_by_xpath(
+            '//*[@class="ProseMirror-content"]')
         # document_title.click()
         self.driver.execute_script(
             'document.getElementsByClassName("ProseMirror-content")[0].click();')  # <- This one works better
@@ -60,9 +63,11 @@ class TypingTest(unittest.TestCase):
         time.sleep(2)
         # Just delete the current title and type new one
         try:
-            title_size = int(self.driver.find_element_by_xpath('//*[@id="document-title"]/span').get_attribute("pm-size"))
+            title_size = int(self.driver.find_element_by_xpath(
+                '//*[@id="document-title"]/span').get_attribute("pm-size"))
             print "Number of characters in title = ", title_size
-            title = self.driver.find_element_by_xpath('//*[@id="document-title"]/span').text
+            title = self.driver.find_element_by_xpath(
+                '//*[@id="document-title"]/span').text
 
             for i in range(title_size):
                 document_title.send_keys(Keys.ARROW_RIGHT)
@@ -82,7 +87,8 @@ class TypingTest(unittest.TestCase):
 
         try:
             # document_contents = driver.find_element_by_xpath('//*[@id="document-contents"]/p/span')
-            content_size = len(self.driver.find_element_by_xpath('//*[@id="document-contents"]').text)
+            content_size = len(self.driver.find_element_by_xpath(
+                '//*[@id="document-contents"]').text)
             # content_size = int(document_contents.get_attribute("pm-size"))
             print "content_size = ", content_size
             document_contents = document_title
@@ -99,7 +105,6 @@ class TypingTest(unittest.TestCase):
             time.sleep(randrange(1, 20) / 10.0)
         time.sleep(5)  # Let the user actually see something!
 
-
     def tearDown(self):
         self.driver.quit()
 
@@ -107,11 +112,12 @@ class TypingTest(unittest.TestCase):
 class SelectAndChange(unittest.TestCase):
     start_character = 5
     end_character = 10
-    em_or_span_or_strong = 'span' # PROCESS WILL PERFORM ON THIS TAG
-    tag_number = 0  # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE ELEMENT THAT YOU WANT )
+    em_or_span_or_strong = 'span'  # PROCESS WILL PERFORM ON THIS TAG
+    # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE
+    # ELEMENT THAT YOU WANT )
+    tag_number = 0
     button_id = "button-italic"
     #button_id = "button-bold"
-
 
     def setUp(self):
         self.driver = webdriver.Chrome()
@@ -122,7 +128,8 @@ class SelectAndChange(unittest.TestCase):
         user_pw = self.driver.find_element_by_id('id_password')
         user_id.send_keys(userName)
         user_pw.send_keys(password)
-        login_button = self.driver.find_element_by_css_selector('button[type="submit"]')
+        login_button = self.driver.find_element_by_css_selector(
+            'button[type="submit"]')
         login_button.click()
         time.sleep(1)
         userIdFromPage = self.driver.find_element_by_class_name("fw-name").text
@@ -141,7 +148,8 @@ class SelectAndChange(unittest.TestCase):
         except:
             print("There is no pop up!")
 
-        shared_doc_button = self.driver.find_element_by_class_name('doc-title')  # IT WILL CATCH FIRST DOCUMENT IN THE TABLE
+        shared_doc_button = self.driver.find_element_by_class_name(
+            'doc-title')  # IT WILL CATCH FIRST DOCUMENT IN THE TABLE
         shared_doc_button.click()
         time.sleep(3)
         script = """
@@ -194,18 +202,23 @@ class SelectAndChange(unittest.TestCase):
                 }
             """
         try:
-            self.driver.execute_script(script, self.start_character, self.end_character, self.em_or_span_or_strong, self.tag_number)
+            self.driver.execute_script(
+                script,
+                self.start_character,
+                self.end_character,
+                self.em_or_span_or_strong,
+                self.tag_number)
             time.sleep(2)
         except Exception as e:
             print e
             self.driver.close()
 
-        button = self.driver.find_element_by_xpath('//*[@id="{}"]'.format(self.button_id))
+        button = self.driver.find_element_by_xpath(
+            '//*[@id="{}"]'.format(self.button_id))
         button.click()
         time.sleep(2)
         self.driver.find_element_by_id('document-contents').click()
         time.sleep(10)
-
 
     def tearDown(self):
         self.driver.quit()
@@ -214,11 +227,12 @@ class SelectAndChange(unittest.TestCase):
 class SelectAndMakeNumberedlist(unittest.TestCase):
     start_character = 5
     end_character = 10
-    em_or_span_or_strong = 'span' # PROCESS WILL PERFORM ON THIS TAG
-    tag_number = 0  # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE ELEMENT THAT YOU WANT )
+    em_or_span_or_strong = 'span'  # PROCESS WILL PERFORM ON THIS TAG
+    # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE
+    # ELEMENT THAT YOU WANT )
+    tag_number = 0
 
     button_id = "button-ol"
-
 
     def setUp(self):
         self.driver = webdriver.Chrome()
@@ -229,7 +243,8 @@ class SelectAndMakeNumberedlist(unittest.TestCase):
         user_pw = self.driver.find_element_by_id('id_password')
         user_id.send_keys(userName)
         user_pw.send_keys(password)
-        login_button = self.driver.find_element_by_css_selector('button[type="submit"]')
+        login_button = self.driver.find_element_by_css_selector(
+            'button[type="submit"]')
         login_button.click()
         time.sleep(1)
         userIdFromPage = self.driver.find_element_by_class_name("fw-name").text
@@ -296,19 +311,23 @@ class SelectAndMakeNumberedlist(unittest.TestCase):
         """
 
         try:
-            self.driver.execute_script(script, self.start_character, self.end_character, self.em_or_span_or_strong,
-                                       self.tag_number)
+            self.driver.execute_script(
+                script,
+                self.start_character,
+                self.end_character,
+                self.em_or_span_or_strong,
+                self.tag_number)
             time.sleep(2)
         except Exception as e:
             print e
             self.driver.close()
 
-        button = self.driver.find_element_by_xpath('//*[@id="{}"]'.format(self.button_id))
+        button = self.driver.find_element_by_xpath(
+            '//*[@id="{}"]'.format(self.button_id))
         button.click()
         time.sleep(2)
         self.driver.find_element_by_id('document-contents').click()
         time.sleep(5)
-
 
         # print 'Execute for second time it should remove the tag ????!!!!'
         # self.driver.find_element_by_id('document-contents').click()
@@ -324,7 +343,8 @@ class SelectAndMakeNumberedlist(unittest.TestCase):
         # button.click()
         # time.sleep(2)
 
-        document_title = self.driver.find_element_by_xpath('//*[@class="ProseMirror-content"]')
+        document_title = self.driver.find_element_by_xpath(
+            '//*[@class="ProseMirror-content"]')
         self.driver.execute_script(
             'document.getElementsByClassName("ProseMirror-content")[0].click();')
 
@@ -333,11 +353,14 @@ class SelectAndMakeNumberedlist(unittest.TestCase):
         time.sleep(5)
 
         try:
-            numberedLists = self.driver.find_element_by_id('document-contents').find_element_by_tag_name(
-            'ol').find_elements_by_tag_name('li')
+            numberedLists = self.driver.find_element_by_id(
+                'document-contents').find_element_by_tag_name('ol').find_elements_by_tag_name('li')
         except:
             self.assertRaises("can not find element")
-        self.assertEqual(len(numberedLists), 2, "There Should be 2  ( <li> element! )")
+        self.assertEqual(
+            len(numberedLists),
+            2,
+            "There Should be 2  ( <li> element! )")
 
     def tearDown(self):
         self.driver.quit()
@@ -346,10 +369,11 @@ class SelectAndMakeNumberedlist(unittest.TestCase):
 class SelectAndMakeBulletedlist(unittest.TestCase):
     start_character = 5
     end_character = 10
-    em_or_span_or_strong = 'span' # PROCESS WILL PERFORM ON THIS TAG
-    tag_number = 0  # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE ELEMENT THAT YOU WANT )
+    em_or_span_or_strong = 'span'  # PROCESS WILL PERFORM ON THIS TAG
+    # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE
+    # ELEMENT THAT YOU WANT )
+    tag_number = 0
     button_id = "button-ul"
-
 
     def setUp(self):
         self.driver = webdriver.Chrome()
@@ -360,7 +384,8 @@ class SelectAndMakeBulletedlist(unittest.TestCase):
         user_pw = self.driver.find_element_by_id('id_password')
         user_id.send_keys(userName)
         user_pw.send_keys(password)
-        login_button = self.driver.find_element_by_css_selector('button[type="submit"]')
+        login_button = self.driver.find_element_by_css_selector(
+            'button[type="submit"]')
         login_button.click()
         time.sleep(1)
         userIdFromPage = self.driver.find_element_by_class_name("fw-name").text
@@ -378,7 +403,8 @@ class SelectAndMakeBulletedlist(unittest.TestCase):
         except:
             print("There is no pop up!")
 
-        shared_doc_button = self.driver.find_element_by_class_name('doc-title') # IT WILL CATCH FIRST DOCUMENT IN THE TABLE
+        shared_doc_button = self.driver.find_element_by_class_name(
+            'doc-title')  # IT WILL CATCH FIRST DOCUMENT IN THE TABLE
         shared_doc_button.click()
         time.sleep(3)
         script = """
@@ -427,18 +453,22 @@ class SelectAndMakeBulletedlist(unittest.TestCase):
         """
 
         try:
-            self.driver.execute_script(script, self.start_character, self.end_character, self.em_or_span_or_strong,
-                                       self.tag_number)
+            self.driver.execute_script(
+                script,
+                self.start_character,
+                self.end_character,
+                self.em_or_span_or_strong,
+                self.tag_number)
             time.sleep(2)
         except Exception as e:
             print e
             self.driver.close()
 
-        self.driver.find_element_by_xpath('//*[@id="{}"]'.format(self.button_id)).click()
+        self.driver.find_element_by_xpath(
+            '//*[@id="{}"]'.format(self.button_id)).click()
         time.sleep(2)
         self.driver.find_element_by_id('document-contents').click()
         time.sleep(10)
-
 
         # ==============================
         # print 'Execute for second time it should remove the tag BUT???!!!'
@@ -455,18 +485,21 @@ class SelectAndMakeBulletedlist(unittest.TestCase):
         # button.click()
         # time.sleep(2)
         # ============================
-        document_title = self.driver.find_element_by_xpath('//*[@class="ProseMirror-content"]')
+        document_title = self.driver.find_element_by_xpath(
+            '//*[@class="ProseMirror-content"]')
         self.driver.execute_script(
             'document.getElementsByClassName("ProseMirror-content")[0].click();')
 
         document_title.send_keys(Keys.ARROW_RIGHT)
         document_title.send_keys(Keys.ENTER)
         time.sleep(5)
-        numberedLists = self.driver.find_element_by_id('document-contents').find_element_by_tag_name(
-            'ul').find_elements_by_tag_name('li')
+        numberedLists = self.driver.find_element_by_id(
+            'document-contents').find_element_by_tag_name('ul').find_elements_by_tag_name('li')
 
-        self.assertEqual(len(numberedLists), 2, "There Should be 2 bullet ( <li> element! )")
-
+        self.assertEqual(
+            len(numberedLists),
+            2,
+            "There Should be 2 bullet ( <li> element! )")
 
     def tearDown(self):
         self.driver.quit()
@@ -475,8 +508,10 @@ class SelectAndMakeBulletedlist(unittest.TestCase):
 class SelectAndMakeQuoted(unittest.TestCase):
     start_character = 5
     end_character = 10
-    em_or_span_or_strong = 'span' # PROCESS WILL PERFORM ON THIS TAG
-    tag_number = 0  # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE ELEMENT THAT YOU WANT )
+    em_or_span_or_strong = 'span'  # PROCESS WILL PERFORM ON THIS TAG
+    # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE
+    # ELEMENT THAT YOU WANT )
+    tag_number = 0
     button_id = "button-blockquote"
 
     def setUp(self):
@@ -488,7 +523,8 @@ class SelectAndMakeQuoted(unittest.TestCase):
         user_pw = self.driver.find_element_by_id('id_password')
         user_id.send_keys(userName)
         user_pw.send_keys(password)
-        login_button = self.driver.find_element_by_css_selector('button[type="submit"]')
+        login_button = self.driver.find_element_by_css_selector(
+            'button[type="submit"]')
         login_button.click()
         time.sleep(1)
         userIdFromPage = self.driver.find_element_by_class_name("fw-name").text
@@ -556,20 +592,26 @@ class SelectAndMakeQuoted(unittest.TestCase):
         """
 
         try:
-            self.driver.execute_script(script, self.start_character, self.end_character, self.em_or_span_or_strong,
-                                       self.tag_number)
+            self.driver.execute_script(
+                script,
+                self.start_character,
+                self.end_character,
+                self.em_or_span_or_strong,
+                self.tag_number)
             time.sleep(2)
         except Exception as e:
             print e
             self.driver.close()
 
-        button = self.driver.find_element_by_xpath('//*[@id="{}"]'.format(self.button_id))
+        button = self.driver.find_element_by_xpath(
+            '//*[@id="{}"]'.format(self.button_id))
         button.click()
         time.sleep(3)
 
         # ==== CHECK THE LIMITATION OF TOTAL NUMBER OF CLICK ON QUOTE BUTTON
         print "Check the limitation..."
-        button = self.driver.find_element_by_xpath('//*[@id="{}"]'.format(self.button_id))
+        button = self.driver.find_element_by_xpath(
+            '//*[@id="{}"]'.format(self.button_id))
         numberOfRepeat = 20
         for _ in range(numberOfRepeat):
             button.click()
@@ -579,8 +621,12 @@ class SelectAndMakeQuoted(unittest.TestCase):
         self.driver.find_element_by_id('document-contents').click()
         time.sleep(5)
 
-        blockquoteList = self.driver.find_element_by_id("document-contents").find_elements_by_tag_name("blockquote")
-        self.assertLess(len(blockquoteList), numberOfRepeat, "There is no limitation for number of BlockQuotes!")
+        blockquoteList = self.driver.find_element_by_id(
+            "document-contents").find_elements_by_tag_name("blockquote")
+        self.assertLess(
+            len(blockquoteList),
+            numberOfRepeat,
+            "There is no limitation for number of BlockQuotes!")
 
     def tearDown(self):
         self.driver.quit()
@@ -589,11 +635,12 @@ class SelectAndMakeQuoted(unittest.TestCase):
 class SelectAndLink(unittest.TestCase):
     start_character = 5
     end_character = 10
-    em_or_span_or_strong = 'span' # PROCESS WILL PERSORM ON THIS TAG
-    tag_number = 0  # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE ELEMENT THAT YOU WANT )
+    em_or_span_or_strong = 'span'  # PROCESS WILL PERSORM ON THIS TAG
+    # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE
+    # ELEMENT THAT YOU WANT )
+    tag_number = 0
 
     button_id = "button-link"
-
 
     def setUp(self):
         self.driver = webdriver.Chrome()
@@ -604,7 +651,8 @@ class SelectAndLink(unittest.TestCase):
         user_pw = self.driver.find_element_by_id('id_password')
         user_id.send_keys(userName)
         user_pw.send_keys(password)
-        login_button = self.driver.find_element_by_css_selector('button[type="submit"]')
+        login_button = self.driver.find_element_by_css_selector(
+            'button[type="submit"]')
         login_button.click()
         time.sleep(1)
         userIdFromPage = self.driver.find_element_by_class_name("fw-name").text
@@ -627,7 +675,8 @@ class SelectAndLink(unittest.TestCase):
         shared_doc_button.click()
         time.sleep(3)
 
-        old_links = self.driver.find_element_by_id('document-contents').find_elements_by_tag_name('a')
+        old_links = self.driver.find_element_by_id(
+            'document-contents').find_elements_by_tag_name('a')
 
         script = """
         start = arguments[0];
@@ -675,14 +724,19 @@ class SelectAndLink(unittest.TestCase):
         """
 
         try:
-            self.driver.execute_script(script, self.start_character, self.end_character, self.em_or_span_or_strong,
-                                       self.tag_number)
+            self.driver.execute_script(
+                script,
+                self.start_character,
+                self.end_character,
+                self.em_or_span_or_strong,
+                self.tag_number)
             time.sleep(2)
         except Exception as e:
             print e
             self.driver.close()
 
-        button = self.driver.find_element_by_xpath('//*[@id="{}"]'.format(self.button_id))
+        button = self.driver.find_element_by_xpath(
+            '//*[@id="{}"]'.format(self.button_id))
         button.click()
         time.sleep(2)
 
@@ -698,14 +752,17 @@ class SelectAndLink(unittest.TestCase):
         for char in "example.com":
             link.send_keys(char)
             time.sleep(randrange(1, 20) / 10.0)
-        self.driver.find_element_by_xpath("/html/body/div[5]/div[3]/div/button[1]").click()
+        self.driver.find_element_by_xpath(
+            "/html/body/div[5]/div[3]/div/button[1]").click()
 
         self.driver.find_element_by_id('document-contents').click()
         time.sleep(10)
 
-        links = self.driver.find_element_by_id('document-contents').find_elements_by_tag_name('a')
+        links = self.driver.find_element_by_id(
+            'document-contents').find_elements_by_tag_name('a')
 
-        self.assertEqual(len(links), len(old_links)+1, "There should be one more <a> tag in text!")
+        self.assertEqual(len(links), len(old_links) +
+                         1, "There should be one more <a> tag in text!")
         # TODO: Remove the added link
 
     def tearDown(self):
@@ -715,8 +772,10 @@ class SelectAndLink(unittest.TestCase):
 class SelectAndAddComment(unittest.TestCase):
     start_character = 5
     end_character = 10
-    em_or_span_or_strong = 'span' # PROCESS WILL PERSORM ON THIS TAG
-    tag_number = 1  # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE ELEMENT THAT YOU WANT )
+    em_or_span_or_strong = 'span'  # PROCESS WILL PERSORM ON THIS TAG
+    # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE
+    # ELEMENT THAT YOU WANT )
+    tag_number = 1
 
     button_id = "button-comment"
 
@@ -729,7 +788,8 @@ class SelectAndAddComment(unittest.TestCase):
         user_pw = self.driver.find_element_by_id('id_password')
         user_id.send_keys(userName)
         user_pw.send_keys(password)
-        login_button = self.driver.find_element_by_css_selector('button[type="submit"]')
+        login_button = self.driver.find_element_by_css_selector(
+            'button[type="submit"]')
         login_button.click()
         time.sleep(1)
         userIdFromPage = self.driver.find_element_by_class_name("fw-name").text
@@ -800,14 +860,19 @@ class SelectAndAddComment(unittest.TestCase):
         """
 
         try:
-            self.driver.execute_script(script, self.start_character, self.end_character, self.em_or_span_or_strong,
-                                       self.tag_number)
+            self.driver.execute_script(
+                script,
+                self.start_character,
+                self.end_character,
+                self.em_or_span_or_strong,
+                self.tag_number)
             time.sleep(2)
         except Exception as e:
             print e
             self.driver.close()
 
-        button = self.driver.find_element_by_xpath('//*[@id="{}"]'.format(self.button_id))
+        button = self.driver.find_element_by_xpath(
+            '//*[@id="{}"]'.format(self.button_id))
         button.click()
         time.sleep(2)
 
@@ -823,8 +888,12 @@ class SelectAndAddComment(unittest.TestCase):
         self.driver.find_element_by_id('document-contents').click()
         time.sleep(10)
 
-        comments = self.driver.find_element_by_id('document-contents').find_elements_by_class_name('comment')
-        self.assertEqual(len(comments), len(old_comments)+1, "There should be one more comment in text!")
+        comments = self.driver.find_element_by_id(
+            'document-contents').find_elements_by_class_name('comment')
+        self.assertEqual(
+            len(comments),
+            len(old_comments) + 1,
+            "There should be one more comment in text!")
 
     def tearDown(self):
         self.driver.quit()
@@ -833,8 +902,10 @@ class SelectAndAddComment(unittest.TestCase):
 class SelectDeleteUndoRedo(unittest.TestCase):
     start_character = 5
     end_character = 20
-    em_or_span_or_strong = 'span' # PROCESS WILL PERSORM ON THIS TAG
-    tag_number = 0  # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE ELEMENT THAT YOU WANT )
+    em_or_span_or_strong = 'span'  # PROCESS WILL PERSORM ON THIS TAG
+    # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE
+    # ELEMENT THAT YOU WANT )
+    tag_number = 0
 
     def setUp(self):
         self.driver = webdriver.Chrome()
@@ -845,7 +916,8 @@ class SelectDeleteUndoRedo(unittest.TestCase):
         user_pw = self.driver.find_element_by_id('id_password')
         user_id.send_keys(userName)
         user_pw.send_keys(password)
-        login_button = self.driver.find_element_by_css_selector('button[type="submit"]')
+        login_button = self.driver.find_element_by_css_selector(
+            'button[type="submit"]')
         login_button.click()
         time.sleep(1)
         userIdFromPage = self.driver.find_element_by_class_name("fw-name").text
@@ -912,8 +984,12 @@ class SelectDeleteUndoRedo(unittest.TestCase):
         """
 
         try:
-            self.driver.execute_script(script, self.start_character, self.end_character, self.em_or_span_or_strong,
-                                       self.tag_number)
+            self.driver.execute_script(
+                script,
+                self.start_character,
+                self.end_character,
+                self.em_or_span_or_strong,
+                self.tag_number)
             time.sleep(2)
         except Exception as e:
             print e
@@ -923,11 +999,13 @@ class SelectDeleteUndoRedo(unittest.TestCase):
         element.send_keys(Keys.BACKSPACE)
         time.sleep(3)
 
-        button = self.driver.find_element_by_xpath('//*[@id="{}"]'.format("button-undo"))
+        button = self.driver.find_element_by_xpath(
+            '//*[@id="{}"]'.format("button-undo"))
         button.click()
         time.sleep(3)
 
-        button = self.driver.find_element_by_xpath('//*[@id="{}"]'.format("button-redo"))
+        button = self.driver.find_element_by_xpath(
+            '//*[@id="{}"]'.format("button-redo"))
         button.click()
         time.sleep(3)
 
@@ -937,10 +1015,11 @@ class SelectDeleteUndoRedo(unittest.TestCase):
 
 class AddFootnote(unittest.TestCase):
     position = 5
-    em_or_span_or_strong = 'span' # PROCESS WILL PERSORM ON THIS TAG
-    tag_number = 0  # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE ELEMENT THAT YOU WANT )
+    em_or_span_or_strong = 'span'  # PROCESS WILL PERSORM ON THIS TAG
+    # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE
+    # ELEMENT THAT YOU WANT )
+    tag_number = 0
     button_id = "button-comment"
-
 
     def setUp(self):
         self.driver = webdriver.Chrome()
@@ -951,7 +1030,8 @@ class AddFootnote(unittest.TestCase):
         user_pw = self.driver.find_element_by_id('id_password')
         user_id.send_keys(userName)
         user_pw.send_keys(password)
-        login_button = self.driver.find_element_by_css_selector('button[type="submit"]')
+        login_button = self.driver.find_element_by_css_selector(
+            'button[type="submit"]')
         login_button.click()
         time.sleep(1)
         userIdFromPage = self.driver.find_element_by_class_name("fw-name").text
@@ -1014,25 +1094,29 @@ class AddFootnote(unittest.TestCase):
         """
 
         try:
-            self.driver.execute_script(script, self.position, self.em_or_span_or_strong,
-                                       self.tag_number)
+            self.driver.execute_script(
+                script,
+                self.position,
+                self.em_or_span_or_strong,
+                self.tag_number)
             time.sleep(2)
         except Exception as e:
             print e
             self.driver.close()
 
-        button = self.driver.find_element_by_xpath('//*[@id="{}"]'.format("button-footnote"))
+        button = self.driver.find_element_by_xpath(
+            '//*[@id="{}"]'.format("button-footnote"))
         button.click()
         time.sleep(3)
 
         footnote_box = self.driver.find_element_by_id('footnote-box-container')
-        footnote = footnote_box.find_element_by_class_name('ProseMirror-content')
+        footnote = footnote_box.find_element_by_class_name(
+            'ProseMirror-content')
         footnote.click()
 
         for char in "This is a footnote Text.":
             footnote.send_keys(char)
             time.sleep(randrange(1, 20) / 10.0)
-
 
     def tearDown(self):
         self.driver.quit()
@@ -1040,11 +1124,12 @@ class AddFootnote(unittest.TestCase):
 
 class InsertMath(unittest.TestCase):
     position = 5
-    em_or_span_or_strong = 'span' # PROCESS WILL PERSORM ON THIS TAG
-    tag_number = 0  # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE ELEMENT THAT YOU WANT )
+    em_or_span_or_strong = 'span'  # PROCESS WILL PERSORM ON THIS TAG
+    # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE
+    # ELEMENT THAT YOU WANT )
+    tag_number = 0
 
     button_id = "button-math"
-
 
     def setUp(self):
         self.driver = webdriver.Chrome()
@@ -1055,7 +1140,8 @@ class InsertMath(unittest.TestCase):
         user_pw = self.driver.find_element_by_id('id_password')
         user_id.send_keys(userName)
         user_pw.send_keys(password)
-        login_button = self.driver.find_element_by_css_selector('button[type="submit"]')
+        login_button = self.driver.find_element_by_css_selector(
+            'button[type="submit"]')
         login_button.click()
         time.sleep(1)
         userIdFromPage = self.driver.find_element_by_class_name("fw-name").text
@@ -1120,21 +1206,28 @@ class InsertMath(unittest.TestCase):
         """
 
         try:
-            self.driver.execute_script(script, self.position, self.em_or_span_or_strong, self.tag_number)
+            self.driver.execute_script(
+                script,
+                self.position,
+                self.em_or_span_or_strong,
+                self.tag_number)
             time.sleep(2)
         except Exception as e:
             print e
             self.driver.close()
 
-        button = self.driver.find_element_by_xpath('//*[@id="{}"]'.format(self.button_id))
+        button = self.driver.find_element_by_xpath(
+            '//*[@id="{}"]'.format(self.button_id))
         button.click()
         time.sleep(2)
 
         try:
-            raw = self.driver.find_element_by_class_name("ui-dialog-buttnset").find_element_by_link_text("Raw")
+            raw = self.driver.find_element_by_class_name(
+                "ui-dialog-buttnset").find_element_by_link_text("Raw")
             raw.click()
         except:
-            raw = self.driver.find_element_by_class_name("ui-dialog-buttonset").find_elements_by_tag_name("button")[2]
+            raw = self.driver.find_element_by_class_name(
+                "ui-dialog-buttonset").find_elements_by_tag_name("button")[2]
             raw.click()
 
         input_math = self.driver.find_element_by_class_name("math-field")
@@ -1143,10 +1236,12 @@ class InsertMath(unittest.TestCase):
         time.sleep(3)
 
         try:
-            insert_btn = self.driver.find_element_by_class_name("ui-dialog-buttnset").find_element_by_link_text("Insert")
+            insert_btn = self.driver.find_element_by_class_name(
+                "ui-dialog-buttnset").find_element_by_link_text("Insert")
             insert_btn.click()
         except:
-            insert_btn = self.driver.find_element_by_class_name("ui-dialog-buttonset").find_element_by_tag_name("button")
+            insert_btn = self.driver.find_element_by_class_name(
+                "ui-dialog-buttonset").find_element_by_tag_name("button")
             insert_btn.click()
 
         time.sleep(5)
@@ -1158,7 +1253,9 @@ class InsertMath(unittest.TestCase):
 class InsertImage(unittest.TestCase):
     position = 0
     em_or_span_or_strong = 'span'  # PROCESS WILL PERSORM ON THIS TAG
-    tag_number = 0  # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE ELEMENT THAT YOU WANT )
+    # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE
+    # ELEMENT THAT YOU WANT )
+    tag_number = 0
 
     def setUp(self):
         self.driver = webdriver.Chrome()
@@ -1169,7 +1266,8 @@ class InsertImage(unittest.TestCase):
         user_pw = self.driver.find_element_by_id('id_password')
         user_id.send_keys(userName)
         user_pw.send_keys(password)
-        login_button = self.driver.find_element_by_css_selector('button[type="submit"]')
+        login_button = self.driver.find_element_by_css_selector(
+            'button[type="submit"]')
         login_button.click()
         time.sleep(1)
         userIdFromPage = self.driver.find_element_by_class_name("fw-name").text
@@ -1231,13 +1329,18 @@ class InsertImage(unittest.TestCase):
             }
         """
         try:
-            self.driver.execute_script(script, self.position, self.em_or_span_or_strong, self.tag_number)
+            self.driver.execute_script(
+                script,
+                self.position,
+                self.em_or_span_or_strong,
+                self.tag_number)
             time.sleep(2)
         except Exception as e:
             print e
             self.driver.close()
 
-        button = self.driver.find_element_by_xpath('//*[@id="{}"]'.format("button-figure"))
+        button = self.driver.find_element_by_xpath(
+            '//*[@id="{}"]'.format("button-figure"))
         button.click()
         time.sleep(3)
 
@@ -1245,22 +1348,23 @@ class InsertImage(unittest.TestCase):
         caption.send_keys("My figure")
         time.sleep(2)
 
-        button = self.driver.find_element_by_xpath('//*[@id="{}"]'.format("insertFigureImage"))
+        button = self.driver.find_element_by_xpath(
+            '//*[@id="{}"]'.format("insertFigureImage"))
         button.click()
         time.sleep(2)
 
-
-        image = self.driver.find_element_by_xpath('//*[@id="Image_1"]/td[1]/img')
+        image = self.driver.find_element_by_xpath(
+            '//*[@id="Image_1"]/td[1]/img')
         image.click()
         time.sleep(2)
 
-
-        self.driver.find_element_by_xpath('//*[@id="{}"]'.format("selectImageSelectionButton")).click()
+        self.driver.find_element_by_xpath(
+            '//*[@id="{}"]'.format("selectImageSelectionButton")).click()
         time.sleep(2)
 
-        self.driver.find_element_by_xpath('/html/body/div[5]/div[3]/div/button[1]').click()
+        self.driver.find_element_by_xpath(
+            '/html/body/div[5]/div[3]/div/button[1]').click()
         time.sleep(10)
-
 
     def tearDown(self):
         self.driver.quit()
@@ -1269,8 +1373,9 @@ class InsertImage(unittest.TestCase):
 class AddCite(unittest.TestCase):
     position = 5
     em_or_span_or_strong = 'span'  # PROCESS WILL PERSORM ON THIS TAG
-    tag_number = 0  # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE ELEMENT THAT YOU WANT )
-
+    # 0 IS THE FIRST SELECTED TAG ( PLEASE CHECK THE PAGE SOURCE TO PICK THE
+    # ELEMENT THAT YOU WANT )
+    tag_number = 0
 
     def setUp(self):
         self.driver = webdriver.Chrome()
@@ -1281,7 +1386,8 @@ class AddCite(unittest.TestCase):
         user_pw = self.driver.find_element_by_id('id_password')
         user_id.send_keys(userName)
         user_pw.send_keys(password)
-        login_button = self.driver.find_element_by_css_selector('button[type="submit"]')
+        login_button = self.driver.find_element_by_css_selector(
+            'button[type="submit"]')
         login_button.click()
         time.sleep(1)
         userIdFromPage = self.driver.find_element_by_class_name("fw-name").text
@@ -1345,23 +1451,30 @@ class AddCite(unittest.TestCase):
             }
         """
         try:
-            self.driver.execute_script(script, self.position, self.em_or_span_or_strong, self.tag_number)
+            self.driver.execute_script(
+                script,
+                self.position,
+                self.em_or_span_or_strong,
+                self.tag_number)
             time.sleep(2)
         except Exception as e:
             print e
             self.driver.close()
 
-        button = self.driver.find_element_by_xpath('//*[@id="{}"]'.format("button-cite"))
+        button = self.driver.find_element_by_xpath(
+            '//*[@id="{}"]'.format("button-cite"))
         button.click()
         time.sleep(3)
 
-        self.driver.find_element_by_class_name('fw-document-table-title').click()
+        self.driver.find_element_by_class_name(
+            'fw-document-table-title').click()
         time.sleep(2)
 
         self.driver.find_element_by_xpath('//*[@id="add-cite-book"]').click()
         time.sleep(2)
 
-        self.driver.find_element_by_xpath('/html/body/div[5]/div[3]/div/button[2]').click()
+        self.driver.find_element_by_xpath(
+            '/html/body/div[5]/div[3]/div/button[2]').click()
 
         time.sleep(5)
 

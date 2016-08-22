@@ -137,6 +137,16 @@ export class BaseLatexExporter extends BaseExporter {
         return {latexStart, latexAfterAbstract, latexEnd}
     }
 
+    // Replace all instances of the before string in all descendant textnodes of
+    // node.
+    replaceText(node, before, after) {
+        if (node.nodeType === 1) {
+            [].forEach.call(node.childNodes, child => this.replaceText(child, before, after))
+        } else if (node.nodeType === 3) {
+            node.textContent = node.textContent.replace(window.RegExp(before, 'g'), after)
+        }
+    }
+
     htmlToLatex(title, author, htmlCode,
         settings, metadata, isChapter, listedWorksList) {
         let latexStart = '',
@@ -181,18 +191,23 @@ export class BaseLatexExporter extends BaseExporter {
             '')
 
         // Escape characters that are protected in some way.
-        htmlCode.innerHTML = htmlCode.innerHTML.replace(/\\/g, '\\\\')
-        htmlCode.innerHTML = htmlCode.innerHTML.replace(/\{/g, '\{')
-        htmlCode.innerHTML = htmlCode.innerHTML.replace(/\}/g, '\}')
-        htmlCode.innerHTML = htmlCode.innerHTML.replace(/\$/g, '\\\$')
-        htmlCode.innerHTML = htmlCode.innerHTML.replace(/\#/g, '\\\#')
-        htmlCode.innerHTML = htmlCode.innerHTML.replace(/\%/g, '\\\%')
+        this.replaceText(htmlCode, '\\\\', '\\textbackslash')
+        this.replaceText(htmlCode, '{', '\\{')
+        this.replaceText(htmlCode, '}', '\\}')
+        this.replaceText(htmlCode, '\\\\textbackslash', '\\textbackslash{}')
+        this.replaceText(htmlCode, '\\^', '\\textasciicircum{}')
+        this.replaceText(htmlCode, '\\$', '\\$')
+        this.replaceText(htmlCode, '\\_', '\\_')
+        this.replaceText(htmlCode, '\\~', '\\textasciitilde{}')
+        this.replaceText(htmlCode, '#', '\\#')
+        this.replaceText(htmlCode, '%', '\\%')
+        this.replaceText(htmlCode, '&', '\\&')
 
         // Remove control characters that somehow have ended up in the document
-        htmlCode.innerHTML = htmlCode.innerHTML.replace(/\u000B/g, '')
-        htmlCode.innerHTML = htmlCode.innerHTML.replace(/\u000C/g, '')
-        htmlCode.innerHTML = htmlCode.innerHTML.replace(/\u000E/g, '')
-        htmlCode.innerHTML = htmlCode.innerHTML.replace(/\u000F/g, '')
+        this.replaceText(htmlCode, '\u000B', '')
+        this.replaceText(htmlCode, '\u000C', '')
+        this.replaceText(htmlCode, '\u000E', '')
+        this.replaceText(htmlCode, '\u000F', '')
 
         jQuery(htmlCode).find('i').each(function() {
             jQuery(this).replaceWith('\\emph{' + this.innerHTML +
@@ -342,10 +357,6 @@ export class BaseLatexExporter extends BaseExporter {
         jQuery(htmlCode).find('.equation, .figure-equation').each(
             function() {
                 let equation = jQuery(this).attr('data-equation')
-                // TODO: The string is for some reason escaped. The following line removes this.
-                equation = equation.replace(/\\/g, "*BACKSLASH*").replace(
-                    /\*BACKSLASH\*\*BACKSLASH\*/g, "\\").replace(
-                    /\*BACKSLASH\*/g, "")
                 this.outerHTML = '$' + equation + '$'
             })
 

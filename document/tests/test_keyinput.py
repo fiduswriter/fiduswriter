@@ -259,49 +259,6 @@ class CaretPositionTest(LiveTornadoTestCase, Manipulator):
         # self.assertTrue(self.caretIsAt(expectedCaret))
 
 
-def tearDownModule():
-    DRIVER.quit()
-
-# TESTS
-""" !!! temporary
-    ? What are the possible single-element actions?
-      movement
-        - within node
-        - within node with selection
-        - between nodes
-        - between nodes with selection
-      insertion
-        - insert text within node
-        - insert node within node
-        - insert text with selection within node
-        - insert text with selection across nodes
-        - insert node with selection within node
-        - insert node with selection across nodes
-        - pasting rich text?
-        - pasting non-text contents?
-      deletion
-        - delete next within node
-        - delete next at end of node
-        - delete previous within node
-        - delete previous at start of node
-      updating
-        - change text style within inline token
-        - change text style with selection across nodes
-        - change type of element
-
-    ? Where can the caret move within the main editor?
-        + Text
-        + BoldText
-        + ItalicText
-        + Link
-
-    ? Where should the caret not be able to move to in the main editor?
-        - Footnote
-        - Citation
-        - Equation
-"""
-
-
 class MovementInSingleChildParagraph(CaretPositionTest):
     __metaclass__ = DataCasesToTestMethodsMeta
     movement_within_short = [

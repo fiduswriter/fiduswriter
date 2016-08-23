@@ -100,10 +100,229 @@ class Manipulator(object):
         )
 
 
-class SimpleTypingTest(LiveTornadoTestCase, Manipulator):
+# class SimpleTypingTest(LiveTornadoTestCase, Manipulator):
+#     """
+#     Test typing in collaborative mode with one user using browser windows
+#     with the user typing separately at small, random intervals.
+#     """
+#     TEST_TEXT = "Lorem ipsum dolor sit amet."
+#
+#     def setUp(self):
+#         self.getDrivers()
+#         self.user = self.createUser()
+#         self.loginUser(self.driver)
+#         self.loginUser(self.driver2)
+#         self.doc = self.createNewDocument()
+#
+#     def tearDown(self):
+#         self.driver.quit()
+#         self.driver2.quit()
+#
+#     def get_title(self, driver):
+#         # Title is child 0.
+#         return driver.execute_script(
+#             'return window.theEditor.pm.doc.content.content[0].textContent;'
+#         )
+#
+#     def get_contents(self, driver):
+#         # Contents is child 5.
+#         return driver.execute_script(
+#             'return window.theEditor.pm.doc.content.content[5].textContent;'
+#         )
+#
+#     def test_typing(self):
+#         self.loadDocumentEditor(self.driver, self.doc)
+#         self.loadDocumentEditor(self.driver2, self.doc)
+#
+#         document_input = self.driver.find_element_by_xpath(
+#             '//*[@class="ProseMirror-content"]'
+#         )
+#         document_input2 = self.driver2.find_element_by_xpath(
+#             '//*[@class="ProseMirror-content"]'
+#         )
+#
+#         # Chrome with selenium has problem with focusing elements, so we use
+#         # the ProseMirror internal methods for this.
+#         # First start tag is length 1, so placing after first start tag is
+#         # position 1
+#         self.driver.execute_script(
+#             'window.theEditor.pm.setTextSelection(1,1)')
+#         self.driver2.execute_script(
+#             'window.theEditor.pm.setTextSelection(1,1)')
+#
+#         first_part = "Here is "
+#         second_part = "my title"
+#
+#         for i in range(8):
+#             document_input.send_keys(second_part[i])
+#             time.sleep(randrange(1, 10) / 20.0)
+#             document_input2.send_keys(first_part[i])
+#             time.sleep(randrange(1, 10) / 20.0)
+#
+#         self.assertEqual(
+#             16,
+#             len(self.get_title(self.driver))
+#         )
+#
+#         self.assertEqual(
+#             self.get_title(self.driver2),
+#             self.get_title(self.driver)
+#         )
+#
+#         # Chrome with selenium has problem with focusing elements, so we use
+#         # the ProseMirror internal methods for this.
+#         # Original document length was 16 (1 for each start/end tag of fields
+#         # with plaintext and 2 for richtext fields - abstract and contents).
+#         # Cursor needs to be in last element, so -2 for last end tag.
+#         # Added content is 16 characters long, so + 16.
+#         # Total: 30.
+#         self.driver.execute_script(
+#             'window.theEditor.pm.setTextSelection(30,30)')
+#         self.driver2.execute_script(
+#             'window.theEditor.pm.setTextSelection(30,30)')
+#
+#         for char in self.TEST_TEXT:
+#             document_input.send_keys(char)
+#             time.sleep(randrange(1, 10) / 20.0)
+#             document_input2.send_keys(char)
+#             time.sleep(randrange(1, 10) / 20.0)
+#
+#         self.assertEqual(
+#             len(self.TEST_TEXT) * 2,
+#             len(self.get_contents(self.driver))
+#         )
+#
+#         self.assertEqual(
+#             self.get_contents(self.driver2),
+#             self.get_contents(self.driver)
+#         )
+#
+#
+# class ThreadedTypingTest(LiveTornadoTestCase, Manipulator):
+#     """
+#     Test typing in collaborative mode with one user using browser windows
+#     with the user typing simultaneously in two different threads.
+#     """
+#     TEST_TEXT = "Lorem ipsum dolor sit amet."
+#
+#     def setUp(self):
+#         self.getDrivers()
+#         self.user = self.createUser()
+#         self.loginUser(self.driver)
+#         self.loginUser(self.driver2)
+#         self.doc = self.createNewDocument()
+#
+#     def tearDown(self):
+#         self.driver.quit()
+#         self.driver2.quit()
+#
+#     def get_title(self, driver):
+#         # Title is child 0.
+#         return driver.execute_script(
+#             'return window.theEditor.pm.doc.content.content[0].textContent;'
+#         )
+#
+#     def get_contents(self, driver):
+#         # Contents is child 5.
+#         return driver.execute_script(
+#             'return window.theEditor.pm.doc.content.content[5].textContent;'
+#         )
+#
+#     def input_text(self, document_input, text):
+#         for char in text:
+#             document_input.send_keys(char)
+#             time.sleep(randrange(1, 20) / 20.0)
+#
+#     def test_typing(self):
+#         self.loadDocumentEditor(self.driver, self.doc)
+#         self.loadDocumentEditor(self.driver2, self.doc)
+#
+#         document_input = self.driver.find_element_by_xpath(
+#             '//*[@class="ProseMirror-content"]'
+#         )
+#         document_input2 = self.driver2.find_element_by_xpath(
+#             '//*[@class="ProseMirror-content"]'
+#         )
+#         # Chrome with selenium has problem with focusing elements, so we use
+#         # the ProseMirror internal methods for this.
+#         # First start tag is length 1, so placing after first start tag is
+#         # position 1
+#         self.driver.execute_script(
+#             'window.theEditor.pm.setTextSelection(1,1)')
+#         self.driver2.execute_script(
+#             'window.theEditor.pm.setTextSelection(1,1)')
+#
+#         first_part = "Here is "
+#         second_part = "my title"
+#
+#         p1 = multiprocessing.Process(
+#             target=self.input_text,
+#             args=(document_input, second_part)
+#         )
+#         p2 = multiprocessing.Process(
+#             target=self.input_text,
+#             args=(document_input2, first_part)
+#         )
+#         p1.start()
+#         p2.start()
+#         p1.join()
+#         p2.join()
+#
+#         # Wait for the two editors to be synched
+#         time.sleep(1)
+#
+#         self.assertEqual(
+#             16,
+#             len(self.get_title(self.driver))
+#         )
+#
+#         self.assertEqual(
+#             self.get_title(self.driver2),
+#             self.get_title(self.driver)
+#         )
+#
+#         # Chrome with selenium has problem with focusing elements, so we use
+#         # the ProseMirror internal methods for this.
+#         # Original document length was 16 (1 for each start/end tag of fields
+#         # with plaintext and 2 for richtext fields - abstract and contents).
+#         # Cursor needs to be in last element, so -2 for last end tag.
+#         # Added content is 16 characters long, so + 16.
+#         # Total: 30.
+#         self.driver.execute_script(
+#             'window.theEditor.pm.setTextSelection(30,30)')
+#         self.driver2.execute_script(
+#             'window.theEditor.pm.setTextSelection(30,30)')
+#
+#         p1 = multiprocessing.Process(
+#             target=self.input_text,
+#             args=(document_input, self.TEST_TEXT)
+#         )
+#         p2 = multiprocessing.Process(
+#             target=self.input_text,
+#             args=(document_input2, self.TEST_TEXT)
+#         )
+#         p1.start()
+#         p2.start()
+#         p1.join()
+#         p2.join()
+#
+#         # Wait for the two editors to be synched
+#         time.sleep(1)
+#
+#         self.assertEqual(
+#             len(self.TEST_TEXT) * 2,
+#             len(self.get_contents(self.driver))
+#         )
+#
+#         self.assertEqual(
+#             self.get_contents(self.driver2),
+#             self.get_contents(self.driver)
+#         )
+
+class ThreadedSelectAndBoldTest(LiveTornadoTestCase, Manipulator):
     """
-    Test typing in collaborative mode with one user using browser windows
-    with the user typing separately at small, random intervals.
+    Test typing in collaborative mode with one user typing and
+    another user bold some part of the text in two different threads.
     """
     TEST_TEXT = "Lorem ipsum dolor sit amet."
 
@@ -117,123 +336,26 @@ class SimpleTypingTest(LiveTornadoTestCase, Manipulator):
     def tearDown(self):
         self.driver.quit()
         self.driver2.quit()
-
-    def get_title(self, driver):
-        # Title is child 0.
-        return driver.execute_script(
-            'return window.theEditor.pm.doc.content.content[0].textContent;'
-        )
-
-    def get_contents(self, driver):
-        # Contents is child 5.
-        return driver.execute_script(
-            'return window.theEditor.pm.doc.content.content[5].textContent;'
-        )
-
-    def test_typing(self):
-        self.loadDocumentEditor(self.driver, self.doc)
-        self.loadDocumentEditor(self.driver2, self.doc)
-
-        document_input = self.driver.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
-        )
-        document_input2 = self.driver2.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
-        )
-
-        # Chrome with selenium has problem with focusing elements, so we use
-        # the ProseMirror internal methods for this.
-        # First start tag is length 1, so placing after first start tag is
-        # position 1
-        self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(1,1)')
-        self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(1,1)')
-
-        first_part = "Here is "
-        second_part = "my title"
-
-        for i in range(8):
-            document_input.send_keys(second_part[i])
-            time.sleep(randrange(1, 10) / 20.0)
-            document_input2.send_keys(first_part[i])
-            time.sleep(randrange(1, 10) / 20.0)
-
-        self.assertEqual(
-            16,
-            len(self.get_title(self.driver))
-        )
-
-        self.assertEqual(
-            self.get_title(self.driver2),
-            self.get_title(self.driver)
-        )
-
-        # Chrome with selenium has problem with focusing elements, so we use
-        # the ProseMirror internal methods for this.
-        # Original document length was 16 (1 for each start/end tag of fields
-        # with plaintext and 2 for richtext fields - abstract and contents).
-        # Cursor needs to be in last element, so -2 for last end tag.
-        # Added content is 16 characters long, so + 16.
-        # Total: 30.
-        self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(30,30)')
-        self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(30,30)')
-
-        for char in self.TEST_TEXT:
-            document_input.send_keys(char)
-            time.sleep(randrange(1, 10) / 20.0)
-            document_input2.send_keys(char)
-            time.sleep(randrange(1, 10) / 20.0)
-
-        self.assertEqual(
-            len(self.TEST_TEXT) * 2,
-            len(self.get_contents(self.driver))
-        )
-
-        self.assertEqual(
-            self.get_contents(self.driver2),
-            self.get_contents(self.driver)
-        )
-
-
-class ThreadedTypingTest(LiveTornadoTestCase, Manipulator):
-    """
-    Test typing in collaborative mode with one user using browser windows
-    with the user typing simultaneously in two different threads.
-    """
-    TEST_TEXT = "Lorem ipsum dolor sit amet."
-
-    def setUp(self):
-        self.getDrivers()
-        self.user = self.createUser()
-        self.loginUser(self.driver)
-        self.loginUser(self.driver2)
-        self.doc = self.createNewDocument()
-
-    def tearDown(self):
-        self.driver.quit()
-        self.driver2.quit()
-
-    def get_title(self, driver):
-        # Title is child 0.
-        return driver.execute_script(
-            'return window.theEditor.pm.doc.content.content[0].textContent;'
-        )
-
-    def get_contents(self, driver):
-        # Contents is child 5.
-        return driver.execute_script(
-            'return window.theEditor.pm.doc.content.content[5].textContent;'
-        )
 
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
             time.sleep(randrange(1, 20) / 20.0)
 
-    def test_typing(self):
+    def make_bold(self, driver):
+        button = driver.find_element_by_xpath(
+            '//*[@id="button-bold"]')
+        button.click()
+
+    def get_boldtext(self, driver):
+        btext = driver.find_element_by_xpath(
+            '//*[@id="document-contents"]/p/strong')
+        return btext.text
+        # return driver.execute_script(
+        #     'window.theEditor.pm.doc.content.content[5].content.content[0].content.content[0].text;'
+        # )
+
+    def test_select_and_bold(self):
         self.loadDocumentEditor(self.driver, self.doc)
         self.loadDocumentEditor(self.driver2, self.doc)
 
@@ -243,78 +365,60 @@ class ThreadedTypingTest(LiveTornadoTestCase, Manipulator):
         document_input2 = self.driver2.find_element_by_xpath(
             '//*[@class="ProseMirror-content"]'
         )
-        # Chrome with selenium has problem with focusing elements, so we use
-        # the ProseMirror internal methods for this.
-        # First start tag is length 1, so placing after first start tag is
-        # position 1
+
         self.driver.execute_script(
             'window.theEditor.pm.setTextSelection(1,1)')
         self.driver2.execute_script(
             'window.theEditor.pm.setTextSelection(1,1)')
 
-        first_part = "Here is "
-        second_part = "my title"
+        second_part = "My title"
 
         p1 = multiprocessing.Process(
             target=self.input_text,
             args=(document_input, second_part)
         )
-        p2 = multiprocessing.Process(
-            target=self.input_text,
-            args=(document_input2, first_part)
-        )
         p1.start()
-        p2.start()
         p1.join()
-        p2.join()
 
-        # Wait for the two editors to be synched
-        time.sleep(1)
-
-        self.assertEqual(
-            16,
-            len(self.get_title(self.driver))
-        )
-
-        self.assertEqual(
-            self.get_title(self.driver2),
-            self.get_title(self.driver)
-        )
-
-        # Chrome with selenium has problem with focusing elements, so we use
-        # the ProseMirror internal methods for this.
-        # Original document length was 16 (1 for each start/end tag of fields
-        # with plaintext and 2 for richtext fields - abstract and contents).
-        # Cursor needs to be in last element, so -2 for last end tag.
-        # Added content is 16 characters long, so + 16.
-        # Total: 30.
+        # Total: 30
         self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(30,30)')
-        self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(30,30)')
+            'window.theEditor.pm.setTextSelection(22,22)')
+
 
         p1 = multiprocessing.Process(
             target=self.input_text,
             args=(document_input, self.TEST_TEXT)
         )
-        p2 = multiprocessing.Process(
-            target=self.input_text,
-            args=(document_input2, self.TEST_TEXT)
-        )
         p1.start()
+
+        # Wait for first processor to write some text
+        time.sleep(3)
+
+        # without clicking on content the buttons will not work
+        content = self.driver2.find_element_by_xpath(
+            '//*[@class="ProseMirror-content"]'
+        )
+        content.click()
+
+        self.driver2.execute_script(
+            'window.theEditor.pm.setTextSelection(22,26)')
+
+        p2 = multiprocessing.Process(
+            target=self.make_bold,
+            args=(self.driver2,)
+        )
         p2.start()
         p1.join()
         p2.join()
 
-        # Wait for the two editors to be synched
-        time.sleep(1)
-
         self.assertEqual(
-            len(self.TEST_TEXT) * 2,
-            len(self.get_contents(self.driver))
+            4,
+            len(self.get_boldtext(self.driver2))
         )
 
         self.assertEqual(
-            self.get_contents(self.driver2),
-            self.get_contents(self.driver)
+            len(self.get_boldtext(self.driver)),
+            len(self.get_boldtext(self.driver2))
         )
+
+

@@ -58,14 +58,15 @@ export class ModNodeConvert {
             }
         }
 
-        // Remove all rendered contents (euqations and images) of figures.
-        let figureNodes = node.querySelectorAll('figure')
-
-        for (let i = 0; i < figureNodes.length; i++) {
-            while (figureNodes[i].firstChild) {
-                figureNodes[i].removeChild(figureNodes[i].firstChild)
-            }
-        }
+        // TODO: Possibly enable this, but only for saving on server, not for exports.
+        // Remove all rendered contents (equations and images) of figures.
+        //let figureNodes = node.querySelectorAll('figure')
+        //
+        //for (let i = 0; i < figureNodes.length; i++) {
+        //    while (figureNodes[i].firstChild) {
+        //        figureNodes[i].removeChild(figureNodes[i].firstChild)
+        //    }
+        //}
 
         // Remove all contenteditable attributes
         let ceNodes = node.querySelectorAll('[contenteditable]')

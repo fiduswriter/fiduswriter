@@ -1057,3 +1057,106 @@ class ThreadedAddFootnoteTest(LiveTornadoTestCase, Manipulator):
             len(self.get_footnote(self.driver)),
             len(self.get_footnote(self.driver2))
         )
+
+
+class ThreadedSelectDeleteUndoTest(LiveTornadoTestCase, Manipulator):
+    """
+    Test typing in collaborative mode with one user typing and
+    another user delete and undo some part of the text in two different threads.
+    """
+    TEST_TEXT = "Lorem ipsum dolor sit amet."
+
+    def setUp(self):
+        self.getDrivers()
+        self.user = self.createUser()
+        self.loginUser(self.driver)
+        self.loginUser(self.driver2)
+        self.doc = self.createNewDocument()
+
+    def tearDown(self):
+        self.driver.quit()
+        self.driver2.quit()
+
+    def input_text(self, document_input, text):
+        for char in text:
+            document_input.send_keys(char)
+            time.sleep(randrange(1, 20) / 20.0)
+
+    def perform_delete_undo(self, driver):
+        element = driver.find_element_by_class_name('ProseMirror-content')
+        element.send_keys(Keys.BACKSPACE)
+
+        time.sleep(5)
+
+        button = driver.find_element_by_xpath(
+            '//*[@id="button-undo"]')
+        button.click()
+
+    def get_undo(self, driver):
+        content = driver.find_element_by_xpath(
+            '//*[@id="document-contents"]'
+        )
+
+        return content.text
+
+    def test_delete_undo(self):
+        self.loadDocumentEditor(self.driver, self.doc)
+        self.loadDocumentEditor(self.driver2, self.doc)
+
+        document_input = self.driver.find_element_by_xpath(
+            '//*[@class="ProseMirror-content"]'
+        )
+
+        self.driver.execute_script(
+            'window.theEditor.pm.setTextSelection(1,1)')
+        self.driver2.execute_script(
+            'window.theEditor.pm.setTextSelection(1,1)')
+
+        second_part = "My title"
+
+        p1 = multiprocessing.Process(
+            target=self.input_text,
+            args=(document_input, second_part)
+        )
+        p1.start()
+        p1.join()
+
+        # Total: 22
+        self.driver.execute_script(
+            'window.theEditor.pm.setTextSelection(22,22)')
+
+        p1 = multiprocessing.Process(
+            target=self.input_text,
+            args=(document_input, self.TEST_TEXT)
+        )
+        p1.start()
+
+        # Wait for the first processor to write some text
+        time.sleep(3)
+
+        # without clicking on content the buttons will not work
+        content = self.driver2.find_element_by_xpath(
+            '//*[@class="ProseMirror-content"]'
+        )
+        content.click()
+
+        self.driver2.execute_script(
+            'window.theEditor.pm.setTextSelection(22,27)')
+
+        p2 = multiprocessing.Process(
+            target=self.perform_delete_undo,
+            args=(self.driver2,)
+        )
+        p2.start()
+        p1.join()
+        p2.join()
+
+        self.assertEqual(
+            self.TEST_TEXT,
+            self.get_undo(self.driver2)
+        )
+
+        self.assertEqual(
+            self.get_undo(self.driver),
+            self.get_undo(self.driver2)
+        )

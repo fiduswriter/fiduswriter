@@ -1,6 +1,7 @@
 import {citationDialog} from "./content-dialogs/citation"
 import {FigureDialog} from "./content-dialogs/figure"
 import {linkDialog} from "./content-dialogs/link"
+import {tableDialog} from "./content-dialogs/table"
 import {MathDialog} from "./content-dialogs/math"
 //import  {wrapIn, setBlockType, chainCommands, newlineInCode, toggleMark} from "prosemirror/dist/commands"
 import  {commands} from "prosemirror/dist/edit/commands"
@@ -38,7 +39,7 @@ export class ModMenusToolbar {
                 linkDialog(that.mod)
             })
         })
-
+        
         jQuery(document).on('mousedown', '#button-cite:not(.disabled)', function(event) {
             that.executeAction(event, function(){
                 citationDialog(that.mod)
@@ -134,6 +135,11 @@ export class ModMenusToolbar {
         jQuery(document).on('mousedown', '#button-figure:not(.disabled)', function (event) {
             that.executeAction(event, function(){
                 new FigureDialog(that.mod)
+            })
+        })
+        jQuery(document).on('mousedown', '#button-table:not(.disabled)', function(event) {
+            that.executeAction(event, function(){
+                tableDialog(that.mod)
             })
         })
     }

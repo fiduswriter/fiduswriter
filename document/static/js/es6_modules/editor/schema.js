@@ -7,7 +7,7 @@ import {Schema, Block, Inline, Text, Attribute, MarkType} from "prosemirror/dist
 import {elt} from "prosemirror/dist/util/dom"
 
 import {katexRender} from "../katex/katex"
-
+const {addTableNodes} = require("prosemirror/dist/schema-table")
 
 
 class Title extends Block {
@@ -283,7 +283,7 @@ class CommentMark extends MarkType {
     }
 }
 
-export const fidusSchema = new Schema({
+export const fidusSchemaWithoutTables = new Schema({
   nodes: {
     doc: {type: Doc, content: "title subtitle authors abstract keywords body"},
     title: {type: Title, content: "text*", group: "part"},
@@ -319,3 +319,8 @@ export const fidusSchema = new Schema({
     comment: CommentMark
   }
 })
+//Adding the table nodes to the fidus schema
+export const fidusSchema= new Schema({
+              nodes: addTableNodes(fidusSchemaWithoutTables.nodeSpec, "block+", "block"),
+              marks: fidusSchemaWithoutTables.markSpec
+              })

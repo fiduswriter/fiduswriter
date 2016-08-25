@@ -524,7 +524,7 @@ class ThreadedSelectAndItalicTest(LiveTornadoTestCase, Manipulator):
 class ThreadedMakeNumberedlistTest(LiveTornadoTestCase, Manipulator):
     """
         Test typing in collaborative mode with one user typing and
-        another user bold some part of the text in two different threads.
+        another user use numbered list button in two different threads.
         """
     TEST_TEXT = "Lorem ipsum\ndolor sit amet."
 
@@ -640,7 +640,7 @@ class ThreadedMakeNumberedlistTest(LiveTornadoTestCase, Manipulator):
 class ThreadedMakeBulletlistTest(LiveTornadoTestCase, Manipulator):
     """
         Test typing in collaborative mode with one user typing and
-        another user bold some part of the text in two different threads.
+        another user use bullet list button in two different threads.
         """
     TEST_TEXT = "Lorem ipsum\ndolor sit amet lorem ipsum."
 
@@ -751,7 +751,7 @@ class ThreadedMakeBulletlistTest(LiveTornadoTestCase, Manipulator):
 class ThreadedMakeBlockqouteTest(LiveTornadoTestCase, Manipulator):
     """
         Test typing in collaborative mode with one user typing and
-        another user bold some part of the text in two different threads.
+        another user use block qoute button in two different threads.
         """
     TEST_TEXT = "Lorem ipsum dolor sit amet."
 
@@ -846,7 +846,8 @@ class ThreadedMakeBlockqouteTest(LiveTornadoTestCase, Manipulator):
 class ThreadedAddLinkTest(LiveTornadoTestCase, Manipulator):
     """
     Test typing in collaborative mode with one user typing and
-    another user italic some part of the text in two different threads.
+    another user select some part of the text and add link
+    in two different threads.
     """
     TEST_TEXT = "Lorem ipsum dolor sit amet."
 
@@ -954,7 +955,7 @@ class ThreadedAddLinkTest(LiveTornadoTestCase, Manipulator):
 class ThreadedAddFootnoteTest(LiveTornadoTestCase, Manipulator):
     """
     Test typing in collaborative mode with one user typing and
-    another user italic some part of the text in two different threads.
+    another user add a footnote in two different threads.
     """
     TEST_TEXT = "Lorem ipsum dolor sit amet."
 
@@ -1159,4 +1160,112 @@ class ThreadedSelectDeleteUndoTest(LiveTornadoTestCase, Manipulator):
         self.assertEqual(
             self.get_undo(self.driver),
             self.get_undo(self.driver2)
+        )
+
+class ThreadedAddMathEquationTest(LiveTornadoTestCase, Manipulator):
+    """
+    Test typing in collaborative mode with one user typing and
+    another user insert math equation some part of the text in two different threads.
+    """
+    TEST_TEXT = "Lorem ipsum dolor sit amet."
+
+    def setUp(self):
+        self.getDrivers()
+        self.user = self.createUser()
+        self.loginUser(self.driver)
+        self.loginUser(self.driver2)
+        self.doc = self.createNewDocument()
+
+    def tearDown(self):
+        self.driver.quit()
+        self.driver2.quit()
+
+    def input_text(self, document_input, text):
+        for char in text:
+            document_input.send_keys(char)
+            time.sleep(randrange(1, 20) / 20.0)
+
+    def make_mathequation(self, driver):
+        button = driver.find_element_by_xpath(
+            '//*[@id="button-math"]')
+        button.click()
+
+        # wait to load popup
+        time.sleep(2)
+
+        #input_math = driver.find_element_by_class_name("math-field")
+        #input_math.clear()
+        #input_math.send_keys('\$x=\frac{-b\pm{b^2-4ac}}{2a}')
+
+        insert_btn = driver.find_element_by_xpath('/html/body/div[5]/div[3]/div/button[1]')
+        insert_btn.click()
+
+    def get_mathequation(self, driver):
+        math = driver.find_element_by_xpath(
+            '//*[@id="document-contents"]/p[1]/span[2]'
+            # OR '//*[@class="equation"]'
+        )
+
+        return math.text
+
+    def test_mathequation(self):
+        self.loadDocumentEditor(self.driver, self.doc)
+        self.loadDocumentEditor(self.driver2, self.doc)
+
+        document_input = self.driver.find_element_by_xpath(
+            '//*[@class="ProseMirror-content"]'
+        )
+
+        self.driver.execute_script(
+            'window.theEditor.pm.setTextSelection(1,1)')
+        self.driver2.execute_script(
+            'window.theEditor.pm.setTextSelection(1,1)')
+
+        second_part = "My title"
+
+        p1 = multiprocessing.Process(
+            target=self.input_text,
+            args=(document_input, second_part)
+        )
+        p1.start()
+        p1.join()
+
+        # Total: 22
+        self.driver.execute_script(
+            'window.theEditor.pm.setTextSelection(22,22)')
+
+        p1 = multiprocessing.Process(
+            target=self.input_text,
+            args=(document_input, self.TEST_TEXT)
+        )
+        p1.start()
+
+        # Wait for the first processor to write some text
+        time.sleep(3)
+
+        # without clicking on content the buttons will not work
+        content = self.driver2.find_element_by_xpath(
+            '//*[@class="ProseMirror-content"]'
+        )
+        content.click()
+
+        self.driver2.execute_script(
+            'window.theEditor.pm.setTextSelection(27,27)')
+
+        p2 = multiprocessing.Process(
+            target=self.make_mathequation,
+            args=(self.driver2,)
+        )
+        p2.start()
+        p1.join()
+        p2.join()
+
+        self.assertEqual(
+            55,
+            len(self.get_mathequation(self.driver2))
+        )
+
+        self.assertEqual(
+            len(self.get_mathequation(self.driver)),
+            len(self.get_mathequation(self.driver2))
         )

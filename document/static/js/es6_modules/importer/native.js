@@ -140,16 +140,14 @@ export class ImportNative {
             counter = 0
         function getImageZipEntry() {
             if (counter < newImageEntries.length) {
-                _.findWhere(entries, {
+                let fc = _.findWhere(entries, {
                     filename: newImageEntries[counter].oldUrl.split('/').pop()
-                }).getData(
-                    new zip.BlobWriter(newImageEntries[counter].file_type),
-                    function(
-                        file) {
-                        newImageEntries[counter]['file'] = file
-                        counter++
-                        getImageZipEntry()
-                    })
+                }).contents
+                newImageEntries[counter]['file'] = new window.Blob([fc], {
+                    type: newImageEntries[counter].file_type
+                })
+                counter++
+                getImageZipEntry()
             } else {
                 that.sendNewImageAndBibEntries(BibTranslationTable, ImageTranslationTable, newBibEntries,
                     newImageEntries)

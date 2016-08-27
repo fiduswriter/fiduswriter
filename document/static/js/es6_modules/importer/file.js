@@ -8,6 +8,8 @@ const FW_FILETYPE_VERSION = 1.2,
     MIN_FW_FILETYPE_VERSION = 1.1,
     MAX_FW_FILETYPE_VERSION = 1.2
 
+const TEXT_FILENAMES = ['mimetype', 'filetype-version', 'document.json', 'images.json', 'bibliography.json']
+
 export class ImportFidusFile {
 
     /* Process a packaged Fidus File, either through user upload, or by reloading
@@ -20,17 +22,9 @@ export class ImportFidusFile {
         this.bibDB = bibDB // the user's current database object.
         this.imageDB = imageDB // the user's imageDB
         this.check = check // Whether the file needs to be checked for compliance with ZIP-format
-        this.textFiles = [{
-            filename: 'mimetype'
-        }, {
-            filename: 'filetype-version'
-        }, {
-            filename: 'document.json'
-        }, {
-            filename: 'images.json'
-        }, {
-            filename: 'bibliography.json'
-        }]
+
+        this.textFiles = []
+        this.otherFiles = []
         this.init()
     }
 
@@ -57,27 +51,44 @@ export class ImportFidusFile {
     initZipFileRead() {
         // Extract all the files that can be found in every fidus-file (not images)
         let that = this
-        console.log(that.file)
         let zipfs = new JSZip()
         zipfs.loadAsync(that.file).then(function(){
-            let j = 0
-            let fileReadLoop = function() {
-                if (j === that.textFiles.length) {
-                    that.processFidusFile()
-                } else {
-                    if (that.textFiles[j].filename in zipfs.files) {
-                        zipfs.files[that.textFiles[j].filename].async('string').then(function(contents){
-                            that.textFiles[j].contents = contents
-                            j++
-                            fileReadLoop()
-                        })
-                    } else {
-                        // The file is a zip file, but not a Fidus Writer file.
-                        that.callback(false, gettext('The uploaded file does not appear to be a Fidus Writer file.'))
-                    }
+            let filenames = [], p = [], validFile = true
+
+            zipfs.forEach(function(filename){
+                filenames.push(filename)
+            })
+
+            TEXT_FILENAMES.forEach(function(filename){
+                if (filenames.indexOf(filename) === -1) {
+                    validFile = false
                 }
+            })
+            if (!validFile) {
+                that.callback(false, gettext('The uploaded file does not appear to be a Fidus Writer file.'))
+                return false
             }
-            fileReadLoop()
+
+            filenames.forEach(function(filename){
+                p.push(new window.Promise(function(resolve){
+                    let fileType, fileList
+                    if (TEXT_FILENAMES.indexOf(filename) !== -1) {
+                        fileType = 'string'
+                        fileList = that.textFiles
+                    } else {
+                        fileType = 'blob',
+                        fileList = that.otherFiles
+                    }
+                    zipfs.files[filename].async(fileType).then(function(contents){
+                        fileList.push({filename, contents})
+                        resolve()
+                    })
+                }))
+            })
+
+            window.Promise.all(p).then(function(){
+                that.processFidusFile()
+            })
         })
     }
 
@@ -104,7 +115,7 @@ export class ImportFidusFile {
                 filename: 'document.json'
             }).contents)
 
-            return new ImportNative(aDocument, shrunkBibDB, shrunkImageDB, this.entries, this.user, this.bibDB, this.imageDB, this.callback)
+            return new ImportNative(aDocument, shrunkBibDB, shrunkImageDB, this.otherFiles, this.user, this.bibDB, this.imageDB, this.callback)
 
         } else {
             // The file is not a Fidus Writer file.

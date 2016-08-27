@@ -20,6 +20,17 @@ export class ImportFidusFile {
         this.bibDB = bibDB // the user's current database object.
         this.imageDB = imageDB // the user's imageDB
         this.check = check // Whether the file needs to be checked for compliance with ZIP-format
+        this.textFiles = [{
+            filename: 'mimetype'
+        }, {
+            filename: 'filetype-version'
+        }, {
+            filename: 'document.json'
+        }, {
+            filename: 'images.json'
+        }, {
+            filename: 'bibliography.json'
+        }]
         this.init()
     }
 
@@ -46,58 +57,28 @@ export class ImportFidusFile {
     initZipFileRead() {
         // Extract all the files that can be found in every fidus-file (not images)
         let that = this
-
-        zip.createReader(new zip.BlobReader(that.file), function(reader) {
-            // get all entries from the zip
-
-            reader.getEntries(function(entries) {
-
-                if (entries.length) {
-                    that.entries = entries
-                    that.counter = 0
-                    that.textFiles = [{
-                        filename: 'mimetype'
-                    }, {
-                        filename: 'filetype-version'
-                    }, {
-                        filename: 'document.json'
-                    }, {
-                        filename: 'images.json'
-                    }, {
-                        filename: 'bibliography.json'
-                    }]
-
-                    that.getEntry()
-
+        console.log(that.file)
+        let zipfs = new JSZip()
+        zipfs.loadAsync(that.file).then(function(){
+            let j = 0
+            let fileReadLoop = function() {
+                if (j === that.textFiles.length) {
+                    that.processFidusFile()
+                } else {
+                    if (that.textFiles[j].filename in zipfs.files) {
+                        zipfs.files[that.textFiles[j].filename].async('string').then(function(contents){
+                            that.textFiles[j].contents = contents
+                            j++
+                            fileReadLoop()
+                        })
+                    } else {
+                        // The file is a zip file, but not a Fidus Writer file.
+                        that.callback(false, gettext('The uploaded file does not appear to be a Fidus Writer file.'))
+                    }
                 }
-            })
-
-        }, function(error) {
-            this.callback(false, gettext('An error occured during file read.'))
-        })
-    }
-
-    getEntry() {
-        let that = this
-        if (this.counter < this.textFiles.length) {
-            let entry = _.findWhere(this.entries, this.textFiles[this.counter])
-            if (entry) {
-                entry.getData(
-                    new zip.TextWriter(),
-                    function(text) {
-                        that.textFiles[that.counter]['contents'] = text
-                        that.counter++
-                        that.getEntry()
-                    })
-            } else {
-                // The file is a zip file, but not a Fidus Writer file.
-                that.callback(false, gettext('The uploaded file does not appear to be a Fidus Writer file.'))
-                return
             }
-
-        } else {
-            this.processFidusFile()
-        }
+            fileReadLoop()
+        })
     }
 
     processFidusFile() {

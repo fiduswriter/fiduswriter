@@ -61,26 +61,9 @@ export let zipFileCreator = function(textFiles, httpFiles, zipFileName,
                     zipDir = zipFs.folder(includeZips[i].directory)
                 }
                 JSZipUtils.getBinaryContent(includeZips[i].url, function(err, contents) {
-                    JSZip.loadAsync(contents).then(function (importedZip) {
-                        let files = []
-                        importedZip.forEach(function(zip){
-                            files.push(zip)
-                        })
-                        let j = 0
-                        let includeFileLoop = function() {
-                            if (j === files.length) {
-                                i++
-                                includeZipLoop()
-                            } else  {
-                                importedZip.files[files[j]].async('base64').then(function(data){
-                                    zipDir.file(files[j], data, {base64: true, compression: 'DEFLATE'})
-                                    j++
-                                    includeFileLoop()
-                                })
-                            }
-
-                        }
-                        includeFileLoop()
+                    zipDir.loadAsync(contents).then(function (importedZip) {
+                        i++
+                        includeZipLoop()
                     })
                 })
             }

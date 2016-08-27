@@ -3,6 +3,7 @@ import {NativeExporter, uploadNative} from "../../exporter/native"
 import {LatexExporter} from "../../exporter/latex"
 import {HTMLExporter} from "../../exporter/html"
 import {EpubExporter} from "../../exporter/epub"
+import {WordExporter} from "../../exporter/word"
 
 export class ModMenusActions {
     constructor(mod) {
@@ -50,6 +51,13 @@ export class ModMenusActions {
         let that = this
         that.mod.editor.save(function (){
             new NativeExporter(that.mod.editor.doc, that.mod.editor.bibDB.bibDB, that.mod.editor.imageDB.db)
+        })
+    }
+
+    downloadWord() {
+        let that = this
+        that.mod.editor.save(function() {
+            new WordExporter(that.mod.editor.doc, that.mod.editor.bibDB.bibDB)
         })
     }
 

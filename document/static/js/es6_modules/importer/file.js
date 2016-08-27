@@ -1,4 +1,5 @@
 import {ImportNative} from "./native"
+import JSZip from "jszip"
 
 /** The current Fidus Writer filetype version. The importer will not import from
  * a different version and the exporter will include this number in all exports.

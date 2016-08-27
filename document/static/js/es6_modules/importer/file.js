@@ -76,7 +76,7 @@ export class ImportFidusFile {
                         fileType = 'string'
                         fileList = that.textFiles
                     } else {
-                        fileType = 'blob',
+                        fileType = 'blob'
                         fileList = that.otherFiles
                     }
                     zipfs.files[filename].async(fileType).then(function(contents){

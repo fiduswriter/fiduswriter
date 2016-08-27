@@ -30,23 +30,31 @@ export let zipFileCreator = function(textFiles, httpFiles, zipFileName,
         for (let i = 0; i < textFiles.length; i++) {
             zipFs.file(textFiles[i].filename, textFiles[i].contents, {compression: 'DEFLATE'})
         }
-
+        let p = []
         for (let i = 0; i < httpFiles.length; i++) {
-            JSZipUtils.getBinaryContent(httpFiles[
-                i].url, function(err, contents) {
-                    zipFs.file(httpFiles[i].filename, contents, {binary: true, compression: 'DEFLATE'})
-                })
-        }
-
-        zipFs.generateAsync({type:"blob"})
-            .then(function(blob) {
-                if (upload) {
-                    uploadFile(zipFileName, blob, editor)
-                } else {
-                    downloadFile(zipFileName, blob)
+            p.push(new window.Promise(
+                function(resolve) {
+                    JSZipUtils.getBinaryContent(httpFiles[i].url, function(err, contents) {
+                        zipFs.file(httpFiles[i].filename, contents, {binary: true, compression: 'DEFLATE'})
+                        resolve()
+                    })
                 }
-        })
+            ))
 
+        }
+        window.Promise.all(p).then(
+            function(){
+                zipFs.generateAsync({type:"blob"})
+                    .then(function(blob) {
+                        if (upload) {
+                            uploadFile(zipFileName, blob, editor)
+                        } else {
+                            downloadFile(zipFileName, blob)
+                        }
+                })
+            }
+
+        )
     }
 
     if (includeZips) {

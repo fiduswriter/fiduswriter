@@ -1,5 +1,7 @@
 import {downloadFile} from "./download"
 import {uploadFile} from "./upload"
+import JSZip from "jszip"
+import JSZipUtils from "jszip-utils"
 
 /** Creates a zip file.
  * @function zipFileCreator
@@ -13,13 +15,12 @@ import {uploadFile} from "./upload"
  */
 
 export let zipFileCreator = function(textFiles, httpFiles, zipFileName,
-    mimeType,
-    includeZips, upload, editor) {
-    let zipFs = new zip.fs.FS(),
+    mimeType, includeZips, upload, editor) {
+    let zipFs = new JSZip(),
         zipDir
 
     if (mimeType) {
-        zipFs.root.addText('mimetype', mimeType)
+        zipFs.file('mimetype', mimeType, {compression: 'STORE'})
     } else {
         mimeType = 'application/zip'
     }
@@ -27,100 +28,52 @@ export let zipFileCreator = function(textFiles, httpFiles, zipFileName,
 
     let createZip = function() {
         for (let i = 0; i < textFiles.length; i++) {
-
-            zipFs.root.addText(textFiles[i].filename, textFiles[i].contents)
-
+            zipFs.file(textFiles[i].filename, textFiles[i].contents, {compression: 'DEFLATE'})
         }
-
+        let p = []
         for (let i = 0; i < httpFiles.length; i++) {
-
-            zipFs.root.addHttpContent(httpFiles[i].filename, httpFiles[
-                i].url)
+            p.push(new window.Promise(
+                function(resolve) {
+                    JSZipUtils.getBinaryContent(httpFiles[i].url, function(err, contents) {
+                        zipFs.file(httpFiles[i].filename, contents, {binary: true, compression: 'DEFLATE'})
+                        resolve()
+                    })
+                }
+            ))
 
         }
-
-
-        zip.createWriter(new zip.BlobWriter(mimeType), function(
-            writer) {
-
-
-            let currentIndex = 0
-
-            function process(zipWriter, entry, onend, onprogress,
-                totalSize) {
-                let childIndex = 0
-
-                function exportChild() {
-                    let child = entry.children[childIndex],
-                        level = 9, reader = null
-
-                    if (child) {
-                        if (child.getFullname() === 'mimetype') {
-                            level = 0 // turn compression off for mimetype file
+        window.Promise.all(p).then(
+            function(){
+                zipFs.generateAsync({type:"blob"})
+                    .then(function(blob) {
+                        if (upload) {
+                            uploadFile(zipFileName, blob, editor)
+                        } else {
+                            downloadFile(zipFileName, blob)
                         }
-                        if (child.hasOwnProperty('Reader')) {
-                            reader = new child.Reader(child.data)
-                        }
-
-                        zipWriter.add(child.getFullname(), reader,
-                            function() {
-                                currentIndex += child.uncompressedSize || 0
-                                process(zipWriter, child, function() {
-                                    childIndex++
-                                    exportChild()
-                                }, onprogress, totalSize)
-                            },
-                            function(index) {
-                                if (onprogress)
-                                    onprogress(currentIndex + index,
-                                        totalSize)
-                            }, {
-                                directory: child.directory,
-                                version: child.zipVersion,
-                                level: level
-                            })
-                    } else {
-                        onend()
-                    }
-                }
-
-                exportChild()
+                })
             }
 
-
-
-
-            process(writer, zipFs.root, function() {
-                writer.close(function(blob) {
-                    if (upload) {
-                        uploadFile(zipFileName, blob, editor)
-                    } else {
-                        downloadFile(zipFileName, blob)
-                    }
-                })
-            })
-
-
-        })
+        )
     }
 
     if (includeZips) {
         let i = 0
         let includeZipLoop = function() {
-            // for (i = 0; i < includeZips.length; i++) {
             if (i === includeZips.length) {
                 createZip()
             } else {
                 if (includeZips[i].directory === '') {
-                    zipDir = zipFs.root
+                    zipDir = zipFs
                 } else {
-                    zipDir = zipFs.root.addDirectory(includeZips[i].directory)
+                    zipDir = zipFs.folder(includeZips[i].directory)
                 }
-                zipDir.importHttpContent(includeZips[i].url, false,
-                    function() {
+                JSZipUtils.getBinaryContent(includeZips[i].url, function(err, contents) {
+                    zipDir.loadAsync(contents).then(function (importedZip) {
                         i++
                         includeZipLoop()
                     })
+                })
             }
 
         }

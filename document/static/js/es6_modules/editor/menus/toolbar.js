@@ -5,6 +5,7 @@ import {tableDialog} from "./content-dialogs/table"
 import {MathDialog} from "./content-dialogs/math"
 //import  {wrapIn, setBlockType, chainCommands, newlineInCode, toggleMark} from "prosemirror/dist/commands"
 import  {commands} from "prosemirror/dist/edit/commands"
+const {addColumnAfter,addColumnBefore, removeColumn,addRowBefore, addRowAfter, removeRow} = require("prosemirror/dist/schema-table")
 
 /* Bindings for the toolbar menu */
 export class ModMenusToolbar {
@@ -137,9 +138,41 @@ export class ModMenusToolbar {
                 new FigureDialog(that.mod)
             })
         })
-        jQuery(document).on('mousedown', '#button-table:not(.disabled)', function(event) {
+        
+//table manipulation 
+	jQuery(document).on('mousedown', '#button-table:not(.disabled)', function(event) {
             that.executeAction(event, function(){
                 tableDialog(that.mod)
+            })
+        })
+        jQuery(document).on('mousedown', '#row_after', function(event) {
+            that.executeAction(event, function(){
+                addRowAfter(that.mod.editor.currentPm,true)
+            })
+        })
+	jQuery(document).on('mousedown', '#row_before', function(event) {
+            that.executeAction(event, function(){
+                addRowBefore(that.mod.editor.currentPm,true)
+            })
+        })
+	jQuery(document).on('mousedown', '#col_after', function(event) {
+            that.executeAction(event, function(){
+                addColumnAfter(that.mod.editor.currentPm,true)
+            })
+        })
+	jQuery(document).on('mousedown', '#col_before', function(event) {
+            that.executeAction(event, function(){
+                addColumnBefore(that.mod.editor.currentPm,true)
+            })
+        })
+	jQuery(document).on('mousedown', '#col_remove', function(event) {
+            that.executeAction(event, function(){
+                removeColumn(that.mod.editor.currentPm,true)
+            })
+        })
+	jQuery(document).on('mousedown', '#row_remove', function(event) {
+            that.executeAction(event, function(){
+                removeRow(that.mod.editor.currentPm,true)
             })
         })
     }

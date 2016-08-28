@@ -1,20 +1,36 @@
 import {modelToEditor} from "../editor/node-convert"
 import {downloadFile} from "./download"
 import {createSlug} from "./tools"
+import {BibliographyDB} from "../bibliography/database"
+import {FormatCitations} from "../citations/format"
+import {fidusSchema} from "../editor/schema"
+
 import Docxtemplater from "docxtemplater"
 import JSZipUtils from "jszip-utils"
 
 export class WordExporter {
     constructor(doc, bibDB) {
+        let that = this
+        this.doc = doc
         // We use the doc in the pm format as this is what we will be using
         // throughout the application in the future.
-        this.pmDoc = modelToEditor(doc)
-        this.bibDB = bibDB
+        this.pmDoc = modelToEditor(this.doc)
         this.template = false
         this.wdoc = false
+        this.citInfos = []
+        this.citFm = false
+        this.pmCits = []
         this.docData = {}
-
-        this.exporter()
+        if (bibDB) {
+            this.bibDB = bibDB // the bibliography has already been loaded for some other purpose. We reuse it.
+            this.exporter()
+        } else {
+            let bibGetter = new BibliographyDB(doc.owner.id, false, false, false)
+            bibGetter.getBibDB(function() {
+                that.bibDB = bibGetter.bibDB
+                that.exporter()
+            })
+        }
     }
 
     getTemplate(callback) {
@@ -30,11 +46,46 @@ export class WordExporter {
 
     exporter() {
         let that = this
+        this.formatCitations()
+
         this.getTemplate(function(){
             that.wdoc = new Docxtemplater(that.template)
             that.getDocData()
             that.prepareAndDownload()
         })
+    }
+
+    // Citations are highly interdependent -- so we need to format them all
+    // together before laying out the document.
+    formatCitations() {
+        let that = this
+        this.pmDoc.descendants(
+            function(node){
+                if (node.type.name==='citation') {
+                    that.citInfos.push(node.attrs)
+                }
+            }
+        )
+        this.citFm = new FormatCitations(this.citInfos, this.doc.settings.citationstyle, this.bibDB)
+        this.citFm.init()
+        // There could be some formatting in the citations, so we parse them through the PM schema for final formatting.
+        // We need to put the citations each in a paragraph so that it works with
+        // the fiduswriter schema and so that the converter doesn't mash them together.
+        let citationsHTML = ''
+        this.citFm.citationTexts.forEach(function(ct){
+            citationsHTML += '<p>'+ct+'</p>'
+        })
+
+        // We create a standard document DOM node, add the citations
+        // into the last child (the body) and parse it back.
+        let dom = fidusSchema.parseDOM(document.createTextNode('')).toDOM()
+        dom.lastElementChild.innerHTML = citationsHTML
+        this.pmCits = fidusSchema.parseDOM(dom).lastChild.toJSON().content
+
+        // Now we do the same for the bibliography.
+        dom = fidusSchema.parseDOM(document.createTextNode('')).toDOM()
+        dom.lastElementChild.innerHTML = this.citFm.bibliographyHTML
+        this.pmBib = fidusSchema.parseDOM(dom).lastChild.toJSON()
     }
 
     getDocData() {
@@ -44,7 +95,8 @@ export class WordExporter {
             authors: this.pmDoc.child(2).textContent,
             abstract: this.transformRichtext(this.pmDoc.child(3).toJSON()),
             keywords: this.pmDoc.child(4).textContent,
-            body: this.transformRichtext(this.pmDoc.child(5).toJSON())
+            body: this.transformRichtext(this.pmDoc.child(5).toJSON()),
+            bibliography: this.transformRichtext(this.pmBib)
         }
     }
 
@@ -147,8 +199,15 @@ export class WordExporter {
                 end += '</w:t></w:r>'
                 content += this.escapeText(node.text)
                 break
+            case 'citation':
+                // We take the first citation from the stack and remove it.
+                let cit = this.pmCits.shift()
+                for (let i=0; i < cit.content.length; i++) {
+                    content += this.transformRichtext(cit.content[i], options)
+                }
+                break
             default:
-            console.warn('Unhandled node type:' + node.type)
+                console.warn('Unhandled node type:' + node.type)
                 break
         }
 

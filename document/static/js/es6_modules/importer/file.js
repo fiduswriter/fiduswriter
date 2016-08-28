@@ -27,6 +27,7 @@ export class ImportFidusFile {
         let that = this
         if (this.check === false) {
             this.initZipFileRead()
+            return
         }
         // use a BlobReader to read the zip from a Blob object
         let reader = new window.FileReader()

@@ -10,7 +10,7 @@ import {ncxTemplate, ncxItemTemplate, navTemplate, navItemTemplate,
 import {node2Obj, obj2Node} from "../../exporter/json"
 import {createSlug, findImages} from "../../exporter/tools"
 import {zipFileCreator} from "../../exporter/zip"
-import {FormatCitations} from "../../citations/format"
+import {RenderCitations} from "../../citations/render"
 
 
 export class EpubBookExporter extends BaseEpubExporter {
@@ -93,12 +93,13 @@ export class EpubBookExporter extends BaseEpubExporter {
                 contents.appendChild(tempNode.firstChild)
             }
 
-            let citationFormatter = new FormatCitations(contents,
+            let citRenderer = new RenderCitations(contents,
                 this.book.settings.citationstyle,
                 this.bibDB)
+            citRenderer.init()
 
-            if (citationFormatter.bibliographyHTML.length > 0) {
-                contents.innerHTML += citationFormatter.bibliographyHTML
+            if (citRenderer.fm.bibliographyHTML.length > 0) {
+                contents.innerHTML += citRenderer.fm.bibliographyHTML
             }
 
             images = images.concat(findImages(contents))

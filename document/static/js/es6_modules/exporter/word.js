@@ -8,6 +8,19 @@ import {fidusSchema} from "../editor/schema"
 import Docxtemplater from "docxtemplater"
 import JSZipUtils from "jszip-utils"
 
+/*
+Exporter to Microsoft Word.
+
+This exporter is *very* experimental. Do not count on using it unless you
+have the time to fix it.
+
+TODO:
+* figures
+* footnotes
+* equations
+* links
+*/
+
 export class WordExporter {
     constructor(doc, bibDB) {
         let that = this
@@ -85,7 +98,11 @@ export class WordExporter {
         // Now we do the same for the bibliography.
         dom = fidusSchema.parseDOM(document.createTextNode('')).toDOM()
         dom.lastElementChild.innerHTML = this.citFm.bibliographyHTML
+        // Remove empty bibliography header (used in web version)
+        dom.lastElementChild.removeChild(dom.lastElementChild.firstElementChild)
         this.pmBib = fidusSchema.parseDOM(dom).lastChild.toJSON()
+        // use the References style for the paragraphs in the bibliography
+        this.pmBib.type = 'bibliography'
     }
 
     getDocData() {
@@ -126,6 +143,10 @@ export class WordExporter {
             case 'abstract':
                 options = _.clone(options)
                 options.section = 'Abstract'
+                break
+            case 'bibliography':
+                options = _.clone(options)
+                options.section = 'References'
                 break
             case 'paragraph':
                 start += '<w:p w:rsidR="00A77427" w:rsidRDefault="007F1D13">'

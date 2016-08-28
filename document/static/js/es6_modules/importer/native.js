@@ -379,6 +379,7 @@ export class ImportNative {
                 that.aDocument.added = data['added']
                 that.aDocument.updated = data['updated']
                 that.aDocument.revisions = []
+                that.aDocument.rights = "write"
                 return that.callback(true, {
                     aDocument: that.aDocument,
                     aDocumentValues,

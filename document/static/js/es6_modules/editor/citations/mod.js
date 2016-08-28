@@ -1,4 +1,4 @@
-import {FormatCitations} from "../../citations/format"
+import {RenderCitations} from "../../citations/render"
 
 export class ModCitations {
     constructor(editor) {
@@ -50,18 +50,19 @@ export class ModCitations {
         let needFootnoteLayout = false
         let emptyCitations = [].slice.call(document.querySelectorAll('#paper-editable span.citation:empty'))
         if (emptyCitations.length > 0) {
-            let citationFormatter = new FormatCitations(
+            let citRenderer = new RenderCitations(
                 document.getElementById('paper-editable'), // TODO: Should we point this to somewhere else?
                 this.editor.doc.settings.citationstyle,
                 this.editor.bibDB.bibDB, false
             )
-            if (this.citationType !== citationFormatter.citationType) {
+            citRenderer.init()
+            if (this.citationType !== citRenderer.fm.citationType) {
                 // The citation format has changed, so we need to relayout the footnotes as well
                 needFootnoteLayout = true
             }
-            this.citationType = citationFormatter.citationType
+            this.citationType = citRenderer.fm.citationType
 
-            document.getElementById('document-bibliography').innerHTML = citationFormatter.bibliographyHTML
+            document.getElementById('document-bibliography').innerHTML = citRenderer.fm.bibliographyHTML
             let citationsContainer = document.getElementById('citation-footnote-box-container')
             if (this.citationType==='note') {
                 // Find all the citations in the main body text (not footnotes)
@@ -71,7 +72,7 @@ export class ModCitations {
                 // The citations have not been filled, so we do so manually.
                 emptyBodyCitations.forEach(function(emptyCitation, index) {
                     emptyCitation.innerHTML = '<span class="citation-footnote-marker"></span>'
-                    let citationText = citationFormatter.citationTexts[index][0][1]
+                    let citationText = citRenderer.fm.citationTexts[index][0][1]
                     citationsHTML += '<div class="footnote-citation">'+citationText+'</div>'
                 })
                 if (citationsContainer.innerHTML !== citationsHTML) {
@@ -79,7 +80,7 @@ export class ModCitations {
                 }
                 // Iterate over remainign citations (these must be in footnotes) and lay them out directly
                 for(let index=emptyBodyCitations.length;index<emptyCitations.length;index++) {
-                    let citationText = citationFormatter.citationTexts[index][0][1]
+                    let citationText = citRenderer.fm.citationTexts[index][0][1]
                     let emptyCitation = emptyCitations[index]
                     emptyCitation.innerHTML = citationText
                 }

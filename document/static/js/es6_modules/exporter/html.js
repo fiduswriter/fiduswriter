@@ -4,7 +4,7 @@ import {htmlExportTemplate} from "./html-templates"
 import {BibliographyDB} from "../bibliography/database"
 import {BaseExporter} from "./base"
 import {obj2Node} from "./json"
-import {FormatCitations} from "../citations/format"
+import {RenderCitations} from "../citations/render"
 import {addAlert} from "../common/common"
 import {katexRender} from "../katex/katex"
 
@@ -57,11 +57,12 @@ export class BaseHTMLExporter extends BaseExporter{
             contents.insertBefore(tempNode, contents.firstChild)
         }
 
-        let citationFormatter = new FormatCitations(contents,
+        let citRenderer = new RenderCitations(contents,
             this.doc.settings.citationstyle,
             this.bibDB)
+        citRenderer.init()
 
-        let bibliographyHTML = citationFormatter.bibliographyHTML
+        let bibliographyHTML = citRenderer.fm.bibliographyHTML
 
         if (bibliographyHTML.length > 0) {
             let tempNode = document.createElement('div')

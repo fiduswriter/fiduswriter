@@ -1,6 +1,6 @@
 import {bookPrintStartTemplate, bookPrintTemplate} from "./templates"
 import {obj2Node} from "../exporter/json"
-import {FormatCitations} from "../citations/format"
+import {RenderCitations} from "../citations/format"
 import {BibliographyDB} from "../bibliography/database"
 import {deactivateWait, addAlert, csrfToken} from "../common/common"
 
@@ -129,8 +129,9 @@ export class PrintBook {
             obj2Node
         })
 
-        let citationFormatter = new FormatCitations(document.body, this.theBook.settings.citationstyle, this.bibDB)
-        jQuery(bibliography).html(citationFormatter.bibliographyHTML)
+        let citRenderer = new RenderCitations(document.body, this.theBook.settings.citationstyle, this.bibDB)
+        citRenderer.init()
+        jQuery(bibliography).html(citRenderer.fm.bibliographyHTML)
 
         if (jQuery(bibliography).text().trim().length===0) {
             jQuery(bibliography).parent().remove()

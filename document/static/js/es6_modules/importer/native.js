@@ -375,8 +375,9 @@ export class ImportNative {
                     name: that.user.name,
                     avatar: that.user.avatar
                 }
-                that.aDocument.id = data['document_id'];
-                that.aDocument.version = 0;
+                that.aDocument.id = data['document_id']
+                that.aDocument.version = 0
+                that.aDocument.rights = 'write'
                 that.aDocument.comment_version = 0
                 that.aDocument.added = data['added']
                 that.aDocument.updated = data['updated']

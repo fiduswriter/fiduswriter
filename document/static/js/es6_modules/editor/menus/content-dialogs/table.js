@@ -16,9 +16,6 @@ export let tableDialog = function (mod) {
         class: 'fw-button fw-dark',
         click: function() 
         {    
-              //nodeType = tableSchema.nodes['table']
-	      console.log("nodetype")
-	      console.log(editor.currentPm.schema.nodes['table'])
 		let nodeType = editor.currentPm.schema.nodes['table'],
 		    rows = dialog.find('input.rows').val(),
 		    cols = dialog.find('input.cols').val()

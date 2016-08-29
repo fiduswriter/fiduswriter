@@ -7,8 +7,7 @@ import {Schema, Block, Inline, Text, Attribute, MarkType} from "prosemirror/dist
 import {elt} from "prosemirror/dist/util/dom"
 
 import {katexRender} from "../katex/katex"
-const {addTableNodes} = require("prosemirror/dist/schema-table")
-
+import {Table, TableRow, TableCell} from "prosemirror/dist/schema-table"
 
 class Title extends Block {
     get matchDOMTag() {
@@ -283,7 +282,7 @@ class CommentMark extends MarkType {
     }
 }
 
-export const fidusSchemaWithoutTables = new Schema({
+export const fidusSchema = new Schema({
   nodes: {
     doc: {type: Doc, content: "title subtitle authors abstract keywords body"},
     title: {type: Title, content: "text*", group: "part"},
@@ -308,7 +307,11 @@ export const fidusSchemaWithoutTables = new Schema({
     hard_break: {type: HardBreak, group: "inline"},
     citation: {type: Citation, group: "inline"},
     equation: {type: Equation, group: "inline"},
-    footnote: {type: Footnote, group: "inline"}
+    footnote: {type: Footnote, group: "inline"},
+
+    table: {type: Table, content: "table_row[columns=.columns]+", group:  "block"},
+    table_row: {type: TableRow, content: "table_cell{.columns}"},
+    table_cell: {type: TableCell, content: "block+"}
 
   },
   marks: {
@@ -319,8 +322,4 @@ export const fidusSchemaWithoutTables = new Schema({
     comment: CommentMark
   }
 })
-//Adding the table nodes to the fidus schema
-export const fidusSchema= new Schema({
-              nodes: addTableNodes(fidusSchemaWithoutTables.nodeSpec, "block+", "block"),
-              marks: fidusSchemaWithoutTables.markSpec
-              })
+

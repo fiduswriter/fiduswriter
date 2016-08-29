@@ -149,7 +149,15 @@ export class WordExporter {
                 options.section = 'References'
                 break
             case 'paragraph':
-                start += '<w:p w:rsidR="00A77427" w:rsidRDefault="007F1D13">'
+                // This should really be something like
+                // '<w:p w:rsidR="A437D321" w:rsidRDefault="2B935ADC">'
+                // See: https://blogs.msdn.microsoft.com/brian_jones/2006/12/11/whats-up-with-all-those-rsids/
+                // But tests with Word 2016/LibreOffice seem to indicate that it
+                // doesn't care if the attributes are missing.
+                // We may need to add them later, if it turns out this is a problem
+                // for other versions of Word. In that case we should also add
+                // it to settings.xml as described in above link.
+                start += '<w:p>'
                 start += '<w:pPr><w:pStyle w:val="'+options.section+'"/>'
                 if (options.list_type) {
                     start += '<w:numPr><w:ilvl w:val="'+options.list_depth+'"/>'
@@ -161,12 +169,12 @@ export class WordExporter {
                 end += '</w:p>'
                 break
             case 'heading':
-                start += '<w:p w:rsidR="00A77427" w:rsidRDefault="007F1D13">'
+                start += '<w:p>'
                 start += '<w:pPr><w:pStyle w:val="Heading'+node.attrs.level+'"/><w:rPr></w:rPr></w:pPr>'
                 end += '</w:p>'
                 break
             case 'code':
-                start += '<w:p w:rsidR="00A77427" w:rsidRDefault="007F1D13">'
+                start += '<w:p>'
                 start += '<w:pPr><w:pStyle w:val="Code"/><w:rPr></w:rPr></w:pPr>'
                 end += '</w:p>'
                 break

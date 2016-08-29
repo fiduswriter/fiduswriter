@@ -72,7 +72,7 @@ export class DocumentRevisionsDialog {
 
         jQuery('.delete-revision').on('mousedown', function() {
             let revisionId = parseInt(jQuery(this).attr('data-id'))
-            that.delete(revisionId, that.documentList)
+            that.delete(revisionId)
         })
     }
 

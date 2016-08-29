@@ -5,6 +5,7 @@ import {Doc, BlockQuote, OrderedList, BulletList, ListItem, HorizontalRule,
 import {Schema, Block, Inline, Text, Attribute, MarkType} from "prosemirror/dist/model"
 
 import {Figure, Citation, Equation} from "../schema"
+import {Table, TableRow, TableCell} from "prosemirror/dist/schema-table"
 
 class FootnoteContainer extends Block {
     get matchDOMTag() {
@@ -37,7 +38,11 @@ export const fidusFnSchema = new Schema({
     text: {type: Text, group: "inline"},
     hard_break: {type: HardBreak, group: "inline"},
     citation: {type: Citation, group: "inline"},
-    equation: {type: Equation, group: "inline"}
+    equation: {type: Equation, group: "inline"},
+
+    table: {type: Table, content: "table_row[columns=.columns]+", group:  "block"},
+    table_row: {type: TableRow, content: "table_cell{.columns}"},
+    table_cell: {type: TableCell, content: "block+"}
   },
 
   marks: {

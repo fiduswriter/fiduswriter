@@ -153,7 +153,8 @@ export class Equation extends Inline {
     }
     toDOM(node) {
         let dom = elt('span', {
-            class: 'equation'
+            class: 'equation',
+            'data-equation': node.attrs.equation
         })
         katexRender(node.attrs.equation, dom, {throwOnError: false})
         dom.setAttribute('contenteditable', 'false')
@@ -198,9 +199,11 @@ export class Figure extends Block {
             if(node.type.schema.cached.imageDB) {
                 if(node.type.schema.cached.imageDB.db[node.attrs.image] &&
                     node.type.schema.cached.imageDB.db[node.attrs.image].image) {
+                        let imgSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
                     dom.firstChild.appendChild(elt("img", {
                         "src": node.type.schema.cached.imageDB.db[node.attrs.image].image
                     }))
+                    dom.setAttribute('data-image-src', node.type.schema.cached.imageDB.db[node.attrs.image].image)
                 } else {
                     /* The image was not present in the imageDB -- possibly because a collaborator just added ut.
                     Try to reload the imageDB, but only once. If the image cannot be found in the updated
@@ -210,9 +213,11 @@ export class Figure extends Block {
                         node.type.schema.cached.imageDB.getDB(function() {
                             if (node.type.schema.cached.imageDB.db[node.attrs.image] &&
                                     node.type.schema.cached.imageDB.db[node.attrs.image].image) {
+                                let imgSrc = node.type.schema.cached.imageDB.db[node.attrs.image].image
                                 dom.firstChild.appendChild(elt("img", {
-                                    "src": node.type.schema.cached.imageDB.db[node.attrs.image].image
+                                    "src": imgSrc
                                 }))
+                                dom.setAttribute('data-image-src', node.type.schema.cached.imageDB.db[node.attrs.image].image)
                             } else {
                                 imageDBBroken = true
                             }

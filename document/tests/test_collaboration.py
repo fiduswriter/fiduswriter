@@ -1269,3 +1269,265 @@ class ThreadedAddMathEquationTest(LiveTornadoTestCase, Manipulator):
             len(self.get_mathequation(self.driver)),
             len(self.get_mathequation(self.driver2))
         )
+
+class ThreadedAddCommentTest(LiveTornadoTestCase, Manipulator):
+    """
+    Test typing in collaborative mode with one user typing and
+    another user insert math equation some part of the text in two different threads.
+    """
+    TEST_TEXT = "Lorem ipsum dolor sit amet."
+
+    def setUp(self):
+        self.getDrivers()
+        self.user = self.createUser()
+        self.loginUser(self.driver)
+        self.loginUser(self.driver2)
+        self.doc = self.createNewDocument()
+
+    def tearDown(self):
+        self.driver.quit()
+        self.driver2.quit()
+
+    def input_text(self, document_input, text):
+        for char in text:
+            document_input.send_keys(char)
+            time.sleep(randrange(1, 20) / 20.0)
+
+    def add_comment(self, driver):
+        button = driver.find_element_by_xpath(
+            '//*[@id="button-comment"]')
+        button.click()
+
+        # wait to load popup
+        time.sleep(2)
+
+        textArea = driver.find_element_by_class_name('commentText')
+        textArea.click()
+        self.input_text(textArea, "My comment")
+
+        driver.find_element_by_class_name("submitComment").click()
+
+    def get_mathequation(self, driver):
+        math = driver.find_element_by_xpath(
+            '//*[@class="comment-text-wrapper"]'
+        )
+
+        return math.text
+
+    def test_mathequation(self):
+        self.loadDocumentEditor(self.driver, self.doc)
+        self.loadDocumentEditor(self.driver2, self.doc)
+
+        document_input = self.driver.find_element_by_xpath(
+            '//*[@class="ProseMirror-content"]'
+        )
+
+        self.driver.execute_script(
+            'window.theEditor.pm.setTextSelection(1,1)')
+        self.driver2.execute_script(
+            'window.theEditor.pm.setTextSelection(1,1)')
+
+        second_part = "My title"
+
+        p1 = multiprocessing.Process(
+            target=self.input_text,
+            args=(document_input, second_part)
+        )
+        p1.start()
+        p1.join()
+
+        # Total: 22
+        self.driver.execute_script(
+            'window.theEditor.pm.setTextSelection(22,22)')
+
+        p1 = multiprocessing.Process(
+            target=self.input_text,
+            args=(document_input, self.TEST_TEXT)
+        )
+        p1.start()
+
+        # Wait for the first processor to write some text
+        time.sleep(6)
+
+        # without clicking on content the buttons will not work
+        content = self.driver2.find_element_by_xpath(
+            '//*[@class="ProseMirror-content"]'
+        )
+        content.click()
+
+        self.driver2.execute_script(
+            'window.theEditor.pm.setTextSelection(22,27)')
+
+        p2 = multiprocessing.Process(
+            target=self.add_comment,
+            args=(self.driver2,)
+        )
+        p2.start()
+        p1.join()
+        p2.join()
+
+        self.assertEqual(
+            10,
+            len(self.get_mathequation(self.driver2))
+        )
+
+        self.assertEqual(
+            len(self.get_mathequation(self.driver)),
+            len(self.get_mathequation(self.driver2))
+        )
+class ThreadedAddImageTest(LiveTornadoTestCase, Manipulator):
+    """
+    Test typing in collaborative mode with one user typing and
+    another user insert figure middle of the text in two different threads.
+    """
+    TEST_TEXT = "Lorem ipsum dolor sit amet."
+
+    def setUp(self):
+        self.getDrivers()
+        self.user = self.createUser()
+        self.loginUser(self.driver)
+        self.loginUser(self.driver2)
+        self.doc = self.createNewDocument()
+
+    def tearDown(self):
+        self.driver.quit()
+        self.driver2.quit()
+
+    def input_text(self, document_input, text):
+        for char in text:
+            document_input.send_keys(char)
+            time.sleep(randrange(1, 20) / 20.0)
+
+    def add_figure(self, driver):
+        button = driver.find_element_by_xpath(
+            '//*[@id="button-figure"]')
+        button.click()
+
+        # wait to load popup
+        time.sleep(2)
+
+        # add caption to the image
+        caption = driver.find_element_by_class_name('caption')
+        self.input_text(caption, "My figure")
+        time.sleep(1)
+
+        # click on 'Insert image' button
+        driver.find_element_by_xpath(
+            '//*[@id="insertFigureImage"]').click()
+        time.sleep(1)
+
+        # click on 'Upload +' button
+        driver.find_element_by_xpath(
+            '//*[@id="selectImageUploadButton"]').click()
+        time.sleep(1)
+
+        # image path
+        imagePath = os.getcwd() + "/document/tests/image.png"
+        print(imagePath)
+
+        # inorder to select the image we send the image path in the
+        # LOCAL MACHINE to the input tag
+        driver.find_element_by_xpath(
+            '//*[@id="uploadimage"]/form/div[1]/input[2]').send_keys(imagePath)
+        time.sleep(2)
+
+        # click on 'Upload' button
+        driver.find_element_by_xpath(
+            '/html/body/div[9]/div[3]/div/button[1]').click()
+        time.sleep(1)
+
+        # click on 'Use image' button
+        driver.find_element_by_xpath(
+            '//*[@id="selectImageSelectionButton"]').click()
+        time.sleep(1)
+
+        # click on 'Insert' button
+        driver.find_element_by_xpath(
+            '/html/body/div[5]/div[3]/div/button[1]').click()
+        time.sleep(10)
+
+    def get_image(self, driver):
+        figure = driver.find_element_by_xpath(
+            '//*[@id="document-contents"]/figure'
+        )
+        image = figure.find_elements_by_tag_name('img')
+
+        return image
+
+    def get_caption(self, driver):
+        caption = driver.find_element_by_xpath(
+            '//*[@id="document-contents"]/figure/figcaption/span[2]'
+        )
+
+        return caption.text
+
+    def test_insertFigure(self):
+        self.loadDocumentEditor(self.driver, self.doc)
+        self.loadDocumentEditor(self.driver2, self.doc)
+
+        document_input = self.driver.find_element_by_xpath(
+            '//*[@class="ProseMirror-content"]'
+        )
+
+        self.driver.execute_script(
+            'window.theEditor.pm.setTextSelection(1,1)')
+        self.driver2.execute_script(
+            'window.theEditor.pm.setTextSelection(1,1)')
+
+        second_part = "My title"
+
+        p1 = multiprocessing.Process(
+            target=self.input_text,
+            args=(document_input, second_part)
+        )
+        p1.start()
+        p1.join()
+
+        # Total: 22
+        self.driver.execute_script(
+            'window.theEditor.pm.setTextSelection(22,22)')
+
+        p1 = multiprocessing.Process(
+            target=self.input_text,
+            args=(document_input, self.TEST_TEXT)
+        )
+        p1.start()
+
+        # Wait for the first processor to write some text
+        time.sleep(6)
+
+        # without clicking on content the buttons will not work
+        content = self.driver2.find_element_by_xpath(
+            '//*[@class="ProseMirror-content"]'
+        )
+        content.click()
+
+        self.driver2.execute_script(
+            'window.theEditor.pm.setTextSelection(27,27)')
+
+        p2 = multiprocessing.Process(
+            target=self.add_figure,
+            args=(self.driver2,)
+        )
+        p2.start()
+        p1.join()
+        p2.join()
+
+        self.assertEqual(
+            1,
+            len(self.get_image(self.driver2))
+        )
+
+        self.assertEqual(
+            len(self.get_image(self.driver)),
+            len(self.get_image(self.driver2))
+        )
+
+        self.assertEqual(
+            9,
+            len(self.get_caption(self.driver2))
+        )
+        self.assertEqual(
+            len(self.get_caption(self.driver)),
+            len(self.get_caption(self.driver2))
+        )

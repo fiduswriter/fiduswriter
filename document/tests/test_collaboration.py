@@ -1375,6 +1375,7 @@ class ThreadedAddCommentTest(LiveTornadoTestCase, Manipulator):
             len(self.get_mathequation(self.driver)),
             len(self.get_mathequation(self.driver2))
         )
+
 class ThreadedAddImageTest(LiveTornadoTestCase, Manipulator):
     """
     Test typing in collaborative mode with one user typing and
@@ -1530,4 +1531,195 @@ class ThreadedAddImageTest(LiveTornadoTestCase, Manipulator):
         self.assertEqual(
             len(self.get_caption(self.driver)),
             len(self.get_caption(self.driver2))
+        )
+
+class ThreadedAddCiteTest(LiveTornadoTestCase, Manipulator):
+    """
+    Test typing in collaborative mode with one user typing and
+    another user add cite in two different threads.
+    """
+    TEST_TEXT = "Lorem ipsum dolor sit amet."
+
+    def setUp(self):
+        self.getDrivers()
+        self.user = self.createUser()
+        self.loginUser(self.driver)
+        self.loginUser(self.driver2)
+        self.doc = self.createNewDocument()
+
+    def tearDown(self):
+        self.driver.quit()
+        self.driver2.quit()
+
+    def input_text(self, document_input, text):
+        for char in text:
+            document_input.send_keys(char)
+            time.sleep(randrange(1, 20) / 20.0)
+
+    def add_comment(self, driver):
+        button = driver.find_element_by_xpath(
+            '//*[@id="button-cite"]')
+        button.click()
+
+        # wait to load popup
+        time.sleep(2)
+        # click on 'Register new source' button
+        driver.find_element_by_xpath(
+            '/html/body/div[5]/div[3]/div/button[1]').click()
+        time.sleep(1)
+
+        # select source
+        driver.find_element_by_xpath(
+            '//*[@id="source-type-selection"]').click()
+
+        # click on article
+        driver.find_element_by_xpath(
+            '//*[@id="source-type-selection"]/div/ul/li[1]/span').click()
+
+        # fill the values
+        title_of_publication = driver.find_element_by_xpath(
+            '//*[@id="id_eFieldjournaltitle"]')
+        title_of_publication.click()
+        title_of_publication.send_keys("My publication title")
+        time.sleep(1)
+
+        title = driver.find_element_by_xpath(
+            '//*[@id="id_eFieldtitle"]')
+        title.click()
+        title.send_keys("My title")
+        time.sleep(1)
+
+        author_firstName = driver.find_element_by_xpath(
+            '//*[@id="optionTab1"]/table/tbody/tr[3]/td/div/input[1]')
+        author_firstName.click()
+        author_firstName.send_keys("John")
+        time.sleep(1)
+
+        author_lastName = driver.find_element_by_xpath(
+            '//*[@id="optionTab1"]/table/tbody/tr[3]/td/div/input[2]')
+        author_lastName.click()
+        author_lastName.send_keys("Doe")
+
+        time.sleep(1)
+
+        publication_date = driver.find_element_by_xpath(
+            '//*[@id="optionTab1"]/table/tbody/tr[4]/td/table/tbody/tr/td[3]/input')
+        publication_date.click()
+        publication_date.send_keys("2012")
+        time.sleep(2)
+
+        # click on Submit button
+        driver.find_element_by_xpath(
+            '/html/body/div[7]/div[3]/div/button[1]/span').click()
+        time.sleep(3)
+        #-------- javascript way---
+        # driver.execute_script('document.getElementsByClassName("fw-name-input fw-first")[0].value = "fn"')
+        # driver.execute_script('document.getElementsByName("eFieldjournaltitle")[0].value = "e title"')
+        # driver.execute_script('document.getElementsByName("eFieldtitle")[0].value = "title"')
+        # driver.execute_script('document.getElementsByName("yeardate")[0].value = "2050"')
+        # driver.execute_script('document.getElementsByClassName("fw-name-input fw-last")[0].value = "ln"')
+        # time.sleep(5)
+        # driver.execute_script("""
+        #     var aTags = document.getElementsByTagName("button");
+        #     var searchText = "Submit";
+        #     var found;
+        #
+        #     for (var i = 0; i < aTags.length; i++) {
+        #       if (aTags[i].textContent == searchText) {
+        #         found = aTags[i]; found.click();
+        #         break;
+        #       }
+        #     }
+        # """)
+        # time.sleep(2)
+
+
+        # click on Insert button
+        driver.find_element_by_xpath(
+            '/html/body/div[5]/div[3]/div/button[2]').click()
+
+    def get_citation_within_text(self, driver):
+        cite_within_doc = driver.find_element_by_xpath(
+            '//*[@id="document-contents"]/p[1]/span[2]'
+        )
+        print(cite_within_doc.text)
+        return cite_within_doc.text
+
+    def get_citation_bib(self, driver):
+        cite_bib = driver.find_element_by_xpath(
+            '//*[@id="document-bibliography"]'
+        )
+        print(cite_bib.text)
+        return cite_bib.text
+
+    def test_citation(self):
+        self.loadDocumentEditor(self.driver, self.doc)
+        self.loadDocumentEditor(self.driver2, self.doc)
+
+        document_input = self.driver.find_element_by_xpath(
+            '//*[@class="ProseMirror-content"]'
+        )
+
+        self.driver.execute_script(
+            'window.theEditor.pm.setTextSelection(1,1)')
+        self.driver2.execute_script(
+            'window.theEditor.pm.setTextSelection(1,1)')
+
+        second_part = "My title"
+
+        p1 = multiprocessing.Process(
+            target=self.input_text,
+            args=(document_input, second_part)
+        )
+        p1.start()
+        p1.join()
+
+        # Total: 22
+        self.driver.execute_script(
+            'window.theEditor.pm.setTextSelection(22,22)')
+
+        p1 = multiprocessing.Process(
+            target=self.input_text,
+            args=(document_input, self.TEST_TEXT)
+        )
+        p1.start()
+
+        # Wait for the first processor to write some text
+        time.sleep(6)
+
+        # without clicking on content the buttons will not work
+        content = self.driver2.find_element_by_xpath(
+            '//*[@class="ProseMirror-content"]'
+        )
+        content.click()
+
+        self.driver2.execute_script(
+            'window.theEditor.pm.setTextSelection(27,27)')
+
+        p2 = multiprocessing.Process(
+            target=self.add_comment,
+            args=(self.driver2,)
+        )
+        p2.start()
+        p1.join()
+        p2.join()
+
+        self.assertEqual(
+            10,
+            len(self.get_citation_within_text(self.driver2))
+        )
+
+        self.assertEqual(
+            len(self.get_citation_within_text(self.driver)),
+            len(self.get_citation_within_text(self.driver2))
+        )
+
+        self.assertEqual(
+            10,
+            len(self.get_citation_bib(self.driver2))
+        )
+
+        self.assertEqual(
+            len(self.get_citation_bib(self.driver)),
+            len(self.get_citation_bib(self.driver2))
         )

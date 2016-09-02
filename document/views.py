@@ -180,32 +180,88 @@ def login_tmp_user(request, u_name, u_pass):
 
     return user
 
+
+def get_reviewer_for_post(request):
+    email = request.POST.get('email')
+    try:
+        reviewers = User.objects.filter(email=email)
+        reviewer = reviewers[0]
+    except ObjectDoesNotExist:
+        # "reviewer with this email does not exist so create it"
+        u_data = make_tmp_user_data()
+        u_data['email'] = email
+        make_tmp_user(request, u_data)
+        reviewer = login_tmp_user(request, u_data['username'], u_data['password1'])
+    return reviewer
+
+
+def get_reviewer_for_put(request):
+    reviewer = User.objects.get(id=int(request.PUT.get('user_id', 0)))
+    return reviewer
+
 @csrf_exempt
 def reviewer_js(request):
-    u_data = make_tmp_user_data()
-    make_tmp_user(request, u_data)
-    user = login_tmp_user(request, u_data['username'], u_data['password1'])
-    doc_id = 169
-    status = 500
-    response = {}
-    try:
-        access_right = AccessRight.objects.get(
-            document_id=doc_id, user_id=user.id)
-        if access_right.rights != 'comment':
-            access_right.rights = 'comment'
-    except ObjectDoesNotExist:
-        access_right = AccessRight.objects.create(
-            document_id=doc_id,
-            user_id=user.id,
-            rights='comment',
-        )
-    access_right.save()
-    status = 200
 
-    response['document_id'] = str(doc_id)
-    return JsonResponse(
-        response,
-        status=status)
+    response = {}
+    if request.method == 'POST':
+        doc_id = int(request.POST.get('doc_id', "0"))
+        if doc_id == 0:
+            response['error'] = 'doc_id with value: ' + str(doc_id) + ' does not exist'
+            status = 404
+            return JsonResponse(response, status=status)
+        reviewer = get_reviewer_for_post(request)
+        try:
+            access_right = AccessRight.objects.get(
+                document_id=doc_id, user_id=reviewer.id)
+            if access_right.rights != 'comment':
+                access_right.rights = 'comment'
+                access_right.save()
+                response['email'] = request.POST.get('email')
+                response['msg'] = 'comment rights given to the user'
+            else:
+                response['email'] = request.POST.get('email')
+                response['msg'] = 'no change on user right on document'
+            response['document_id'] = str(doc_id)
+            status = 200
+            return JsonResponse(response, status=status)
+        except ObjectDoesNotExist:
+            access_right = AccessRight.objects.create(
+                document_id=doc_id,
+                user_id=reviewer.id, rights='comment', )
+            access_right.save()
+            status = 200
+            response['email'] = request.POST.get('email')
+            response['msg'] = 'user created and comment rights given'
+            response['document_id'] = str(doc_id)
+            return JsonResponse(response, status=status)
+
+    if request.method == 'PUT':
+        try:
+            doc_id = int(request.PUT.get('doc_id', "0"))
+            if doc_id == 0:
+                response['msg'] = 'doc_id with value: ' + str(doc_id) + ' does not exist'
+                status = 500
+                return JsonResponse(response, status=status)
+            reviewer = get_reviewer_for_put(request)
+            try:
+                access_right = AccessRight.objects.get(
+                    document_id=doc_id, user_id=reviewer.id)
+                if access_right.rights == 'comment':
+                    access_right.rights = ''
+                    access_right.save()
+                    status = 200
+                    response['msg'] = 'user updated and comment rights removed'
+                    response['document_id'] = str(doc_id)
+                    return JsonResponse(response, status=status)
+            except ObjectDoesNotExist:
+                status = 404
+                return JsonResponse(response, status=status)
+
+        except ObjectDoesNotExist:
+            status = 404
+            response['error'] = "reviewer with this reviewer_id does not exist"
+            return JsonResponse(response, status=status)
+
 
 @login_required
 def editor(request):

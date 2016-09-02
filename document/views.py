@@ -19,7 +19,7 @@ from avatar.util import get_primary_avatar, get_default_avatar_url
 from avatar.templatetags.avatar_tags import avatar_url
 
 from document.models import Document, AccessRight, DocumentRevision
-
+from django.views.decorators.csrf import csrf_exempt
 
 class SimpleSerializer(Serializer):
 

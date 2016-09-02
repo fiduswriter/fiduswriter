@@ -186,6 +186,8 @@ def reviewer_js(request):
     make_tmp_user(request, u_data)
     user = login_tmp_user(request, u_data['username'], u_data['password1'])
     doc_id = 169
+    status = 500
+    response = {}
     try:
         access_right = AccessRight.objects.get(
             document_id=doc_id, user_id=user.id)
@@ -198,7 +200,12 @@ def reviewer_js(request):
             rights='comment',
         )
     access_right.save()
-    return redirect('/document/'+str(doc_id)+'/')
+    status = 200
+
+    response['document_id'] = str(doc_id)
+    return JsonResponse(
+        response,
+        status=status)
 
 @login_required
 def editor(request):

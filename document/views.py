@@ -180,7 +180,8 @@ def login_tmp_user(request, u_name, u_pass):
 
     return user
 
-def review_js(request):
+@csrf_exempt
+def reviewer_js(request):
     u_data = make_tmp_user_data()
     make_tmp_user(request, u_data)
     user = login_tmp_user(request, u_data['username'], u_data['password1'])

@@ -37,8 +37,8 @@ urlpatterns = [
         name='submit_right_js'
     ),
 url(
-        '^review/$',
-        views.review_js,
-        name='review_js'
+        '^reviewer/$',
+        views.reviewer_js,
+        name='reviewer_js'
     ),
 ]

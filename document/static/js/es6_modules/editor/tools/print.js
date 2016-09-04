@@ -27,7 +27,8 @@ export class ModToolsPrint {
         }
     }
 
-    preparePrint() {
+    print() {
+        let that = this
         let flowTo = document.getElementById('print')
 
         // This is a quick and dirty way of creating a cloned version of the node.
@@ -78,19 +79,12 @@ export class ModToolsPrint {
             'pagenumberBottomMargin': 50,
             'footnoteSelector': '.footnote-marker',
             'lengthUnit': 'px',
-            'flowToElement': document.getElementById("print")
+            'flowToElement': document.getElementById("print"),
+            'callback': function() {
+                that.printReady()
+            }
         })
         this.paginator.initiate()
-    }
-
-    print() {
-        let that = this
-        let listener = function(event) {
-            that.printReady()
-            document.removeEventListener('layoutFlowFinished', listener, false)
-        }
-        document.addEventListener('layoutFlowFinished', listener, false)
-        this.preparePrint()
     }
 
 }

@@ -13,6 +13,8 @@ from selenium.webdriver.support import expected_conditions as EC
 from allauth.account.models import EmailAddress
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import User
+from django.conf import settings
+
 
 from test.testcases import LiveTornadoTestCase
 from document.models import Document
@@ -1423,8 +1425,10 @@ class ThreadedAddImageTest(LiveTornadoTestCase, Manipulator):
         time.sleep(1)
 
         # image path
-        imagePath = os.getcwd() + "/document/tests/image.png"
+        imagePath = settings.STATIC_ROOT + 'test/image.png'
         print(imagePath)
+
+        # path = driver.execute_script("return window.staticUrl + 'test/image.png'")
 
         # inorder to select the image we send the image path in the
         # LOCAL MACHINE to the input tag

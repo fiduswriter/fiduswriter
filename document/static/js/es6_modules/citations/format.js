@@ -1,45 +1,38 @@
 import {citeprocSys} from "./citeproc-sys"
 import {CSLExporter} from "../bibliography/exporter/csl"
 import {citationDefinitions} from "../style/citation-definitions"
-/**
- * Functions to display citations and the bibliography.
- */
 
+
+/*
+* Use CSL and bibDB to format all citations for the given prosemirror json citation nodes
+*/
 export class FormatCitations {
-    constructor(contentElement, citationStyle, bibDB, renderNoteCitations = true) {
-        this.contentElement = contentElement
+    constructor(allCitationInfos, citationStyle, bibDB) {
+        this.allCitationInfos = allCitationInfos
         this.citationStyle = citationStyle
         this.bibDB = bibDB
-        this.renderNoteCitations = renderNoteCitations
         this.bibliographyHTML = ''
         this.listedWorksCounter = 0
         this.citations = []
         this.bibFormats = []
-        //this.citationIds = []
         this.citationTexts = []
         this.citationType = ''
         this.bibliography = ''
-        this.allCitations = []
         this.cslDB = false
-        this.init()
-        this.formatAllCitations()
-        this.getFormattedCitations()
-        if (this.renderNoteCitations || 'note' !== this.citationType) {
-            this.renderCitations()
-        }
-        this.renderBibliography()
     }
 
     init() {
-        this.allCitations = jQuery(this.contentElement).find('.citation')
         let cslGetter = new CSLExporter(this.bibDB) // TODO: Figure out if this conversion should be done earlier and cached
         this.cslDB = cslGetter.cslDB
+        this.formatAllCitations()
+        this.getFormattedCitations()
+        this.formatBibliography()
     }
 
     formatAllCitations() {
         let that = this
-        this.allCitations.each(function(i) {
-            var entries = this.dataset.bibEntry ? this.dataset.bibEntry.split(',') : []
+        this.allCitationInfos.forEach(function(cInfo) {
+            var entries = cInfo.bibEntry ? cInfo.bibEntry.split(',') : []
             let allCitationsListed = true
 
             let len = entries.length
@@ -52,9 +45,9 @@ export class FormatCitations {
             }
 
             if (allCitationsListed) {
-                let pages = this.dataset.bibPage ? this.dataset.bibPage.split(',,,') : [],
-                    prefixes = this.dataset.bibBefore ? this.dataset.bibBefore.split(',,,') : [],
-                    //suffixes = this.dataset.bibAfter.split(',,,'),
+                let pages = cInfo.bibPage ? cInfo.bibPage.split(',,,') : [],
+                    prefixes = cInfo.bibBefore ? cInfo.bibBefore.split(',,,') : [],
+                    //suffixes = cInfo.bibAfter.split(',,,'),
                     citationItem,
                     citationItems = []
 
@@ -75,7 +68,7 @@ export class FormatCitations {
                 }
 
     //            that.bibFormats.push(i)
-                that.bibFormats.push(this.dataset.bibFormat)
+                that.bibFormats.push(cInfo.bibFormat)
                 that.citations.push({
                     citationItems,
                     properties: {
@@ -90,25 +83,13 @@ export class FormatCitations {
         }
     }
 
-    renderCitations() {
-        for (let j = 0; j < this.citationTexts.length; j++) {
-            let citationText = this.citationTexts[j][0][1]
-            if ('note' == this.citationType) {
-                citationText = '<span class="pagination-footnote"><span><span>' + citationText + '</span></span></span>'
-            }
-            this.allCitations[j].innerHTML = citationText
-        }
-    }
-
-    renderBibliography() {
-
+    formatBibliography() {
         this.bibliographyHTML += '<h1 id="bibliography-header"></h1>'
             // Add entry to bibliography
 
         for (let j = 0; j < this.bibliography[1].length; j++) {
             this.bibliographyHTML += this.bibliography[1][j]
         }
-
     }
 
     getFormattedCitations() {

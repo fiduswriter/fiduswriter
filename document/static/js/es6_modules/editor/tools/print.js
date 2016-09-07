@@ -1,15 +1,19 @@
+import {PaginateForPrint} from "paginate-for-print/dist/paginate-for-print"
+
+
 export class ModToolsPrint {
     constructor(mod) {
         mod.print = this
         this.mod = mod
+        this.paginator = false
     }
 
     printReady() {
         let flowTo = document.getElementById('print')
         window.print()
+        this.paginator.tearDown()
+        this.paginator = false
         jQuery(flowTo).hide()
-        jQuery(flowTo).html('')
-        delete window.flowCopy
     }
 
     changeAllIds(node) {
@@ -23,7 +27,8 @@ export class ModToolsPrint {
         }
     }
 
-    preparePrint() {
+    print() {
+        let that = this
         let flowTo = document.getElementById('print')
 
         // This is a quick and dirty way of creating a cloned version of the node.
@@ -58,20 +63,28 @@ export class ModToolsPrint {
             fnCitationMarker.classList.add('footnote-marker')
         })
 
-
-        window.flowCopy = flowCopy
         jQuery(flowTo).show()
-        pagination.applyBookLayoutWithoutDivision()
-    }
-
-    print() {
-        let that = this
-        let listener = function(event) {
-            that.printReady()
-            document.removeEventListener('layoutFlowFinished', listener, false)
-        }
-        document.addEventListener('layoutFlowFinished', listener, false)
-        this.preparePrint()
+        this.paginator = new PaginateForPrint({
+            'flowFromElement' : flowCopy,
+            'enableFrontmatter' : false,
+            'alwaysEven' : false,
+            'autoStart': false,
+            'pageWidth': 790,
+            'pageHeight': this.mod.editor.doc.settings.papersize,
+            'outerMargin': 90,
+            'innerMargin': 90,
+            'contentsTopMargin': 80,
+            'headerTopMargin': 80,
+            'contentsBottomMargin': 80,
+            'pagenumberBottomMargin': 50,
+            'footnoteSelector': '.footnote-marker',
+            'lengthUnit': 'px',
+            'flowToElement': document.getElementById("print"),
+            'callback': function() {
+                that.printReady()
+            }
+        })
+        this.paginator.initiate()
     }
 
 }

@@ -89,30 +89,6 @@
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/citeproc.js"></script>
 
         {% compress js %}
-            <!-- simplePagination.js -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/simplePagination.js"></script>
-            <script type="text/javascript">
-                // Config options for pagination
-
-                var paginationConfig = {
-                    'flowElement' : "flowCopy",
-                    'enableFrontmatter' : false,
-                    'divideContents' : false,
-                    'alwaysEven' : false,
-                    'autoStart': false,
-                    'pageWidth': 790,
-                    'pageHeight': 1117, // A4 is standard size
-                    'outerMargin': 90,
-                    'innerMargin': 90,
-                    'contentsTopMargin': 80,
-                    'headerTopMargin': 80,
-                    'contentsBottomMargin': 80,
-                    'pagenumberBottomMargin': 50,
-                    'footnoteSelector': '.footnote-marker',
-                    'lengthUnit': 'px',
-                    'flowTo': 'document.getElementById("print")'
-                };
-            </script>
             <!-- jQuery tablesorter -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dataTables.min.js"></script>
             <!-- Dropkick -->

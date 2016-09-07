@@ -3,7 +3,7 @@ import {obj2Node} from "../exporter/json"
 import {RenderCitations} from "../citations/format"
 import {BibliographyDB} from "../bibliography/database"
 import {deactivateWait, addAlert, csrfToken} from "../common/common"
-
+import {PaginateForPrint} from "paginate-for-print/dist/paginate-for-print"
 /**
 * Helper functions for the book print page.
 */
@@ -36,6 +36,19 @@ export class PrintBook {
             }
         }
         this.documentOwners = []
+        this.printConfig = {
+            flowFromElement : document.getElementById('flow'),
+            enableFrontmatter : true,
+            sectionStartSelector: 'div.part',
+            sectionTitleSelector: 'h1',
+            chapterStartSelector: 'div.chapter',
+            chapterTitleSelector: 'h1',
+            alwaysEven: true,
+            autoStart: false,
+            topfloatSelector: 'figure',
+            contentsBottomMargin: 1
+        }
+
         this.bindEvents()
     }
 
@@ -56,8 +69,8 @@ export class PrintBook {
         this.theBook = aBook
         this.setDocumentStyle(this.theBook.settings.documentstyle)
 
-        window.paginationConfig['pageHeight'] = this.pageSizes[this.theBook.settings.papersize].height
-        window.paginationConfig['pageWidth'] = this.pageSizes[this.theBook.settings.papersize].width
+        this.printConfig['pageHeight'] = this.pageSizes[this.theBook.settings.papersize].height
+        this.printConfig['pageWidth'] = this.pageSizes[this.theBook.settings.papersize].width
 
         let bibGetter = new BibliographyDB(this.documentOwners.join(','), false, false, false)
 
@@ -137,12 +150,12 @@ export class PrintBook {
             jQuery(bibliography).parent().remove()
         }
 
-        window.paginationConfig['frontmatterContents'] = bookPrintStartTemplate({theBook: this.theBook})
+        this.printConfig['frontmatterContents'] = bookPrintStartTemplate({theBook: this.theBook})
 
 
         // TODO: render equations
-        window.pagination.initiate()
-        window.pagination.applyBookLayout()
+        let paginator = new PaginateForPrint(this.printConfig)
+        paginator.initiate()
         jQuery("#pagination-contents").addClass('user-contents')
         jQuery('head title').html(jQuery('#document-title').text())
 

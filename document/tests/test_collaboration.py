@@ -1543,6 +1543,8 @@ class ThreadedAddCiteTest(LiveTornadoTestCase, Manipulator):
     another user add cite in two different threads.
     """
     TEST_TEXT = "Lorem ipsum dolor sit amet."
+    # Load bibliography data
+    fixtures = ["initial_bib_rules.json",]
 
     def setUp(self):
         self.getDrivers()
@@ -1560,7 +1562,7 @@ class ThreadedAddCiteTest(LiveTornadoTestCase, Manipulator):
             document_input.send_keys(char)
             time.sleep(randrange(1, 20) / 20.0)
 
-    def add_comment(self, driver):
+    def add_citation(self, driver):
         button = driver.find_element_by_xpath(
             '//*[@id="button-cite"]')
         button.click()
@@ -1616,27 +1618,6 @@ class ThreadedAddCiteTest(LiveTornadoTestCase, Manipulator):
         driver.find_element_by_xpath(
             '/html/body/div[7]/div[3]/div/button[1]/span').click()
         time.sleep(3)
-        #-------- javascript way---
-        # driver.execute_script('document.getElementsByClassName("fw-name-input fw-first")[0].value = "fn"')
-        # driver.execute_script('document.getElementsByName("eFieldjournaltitle")[0].value = "e title"')
-        # driver.execute_script('document.getElementsByName("eFieldtitle")[0].value = "title"')
-        # driver.execute_script('document.getElementsByName("yeardate")[0].value = "2050"')
-        # driver.execute_script('document.getElementsByClassName("fw-name-input fw-last")[0].value = "ln"')
-        # time.sleep(5)
-        # driver.execute_script("""
-        #     var aTags = document.getElementsByTagName("button");
-        #     var searchText = "Submit";
-        #     var found;
-        #
-        #     for (var i = 0; i < aTags.length; i++) {
-        #       if (aTags[i].textContent == searchText) {
-        #         found = aTags[i]; found.click();
-        #         break;
-        #       }
-        #     }
-        # """)
-        # time.sleep(2)
-
 
         # click on Insert button
         driver.find_element_by_xpath(
@@ -1654,6 +1635,7 @@ class ThreadedAddCiteTest(LiveTornadoTestCase, Manipulator):
             '//*[@id="document-bibliography"]'
         )
         print(cite_bib.text)
+        print(len(cite_bib.text))
         return cite_bib.text
 
     def test_citation(self):
@@ -1701,13 +1683,14 @@ class ThreadedAddCiteTest(LiveTornadoTestCase, Manipulator):
             'window.theEditor.pm.setTextSelection(27,27)')
 
         p2 = multiprocessing.Process(
-            target=self.add_comment,
+            target=self.add_citation,
             args=(self.driver2,)
         )
         p2.start()
         p1.join()
         p2.join()
 
+        time.sleep(10)
         self.assertEqual(
             10,
             len(self.get_citation_within_text(self.driver2))
@@ -1720,7 +1703,7 @@ class ThreadedAddCiteTest(LiveTornadoTestCase, Manipulator):
 
         self.assertEqual(
             10,
-            len(self.get_citation_bib(self.driver2))
+            len(self.get_citation_bib(self.driver))
         )
 
         self.assertEqual(

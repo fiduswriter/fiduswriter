@@ -12,7 +12,7 @@ export class FormatCitations {
         this.citationStyle = citationStyle
         this.bibDB = bibDB
         this.cslDB = false
-        this.firstLoad = true // We only want to reload once, due to https://github.com/fiduswriter/fiduswriter/issues/284
+        this.allowReload = true // We only want to reload once, due to https://github.com/fiduswriter/fiduswriter/issues/284
         this.callback = callback
     }
 
@@ -38,24 +38,30 @@ export class FormatCitations {
         let that = this
         let foundAll = this.allCitationInfos.every(function(cInfo) {
             var entries = cInfo.bibEntry ? cInfo.bibEntry.split(',') : []
-            let allCitationsListed = true // Whether all citation entries are in the database
+            let missingCitationKey = false // Whether all citation entries are in the database
 
             let len = entries.length
             for (let j = 0; j < len; j++) {
                 if (that.bibDB.bibDB.hasOwnProperty(entries[j])) {
                     continue
                 }
-                allCitationsListed = false
+                missingCitationKey = entries[j]
                 break
             }
 
-            if (!allCitationsListed) {
+            if (missingCitationKey !== false) {
                 // Not all citations could be found in the database.
                 // Reload the database, but only do so once.
-                if (that.firstLoad) {
-                    that.firstLoad = false
+                if (that.allowReload) {
                     that.bibDB.getBibDB(function(){
-                        that.init()
+                        if (that.bibDB.bibDB.hasOwnProperty(missingCitationKey)) {
+                            that.init()
+                        } else {
+                            // The missing key was not in the update from the server
+                            // so it seems like this document is containing old
+                            // citation keys. Do not attempt further reloads.
+                            that.allowReload = false
+                        }
                     })
                     return false
                 }

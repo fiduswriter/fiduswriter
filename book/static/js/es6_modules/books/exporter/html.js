@@ -7,6 +7,7 @@ import {BaseEpubExporter} from "../../exporter/epub"
 import {createSlug, findImages} from "../../exporter/tools"
 import {zipFileCreator} from "../../exporter/zip"
 import {RenderCitations} from "../../citations/render"
+import {addAlert} from "../../common/common"
 
 
 export class HTMLBookExporter extends BaseEpubExporter { // extension is correct. Neds orderLinks/setLinks methods from base epub exporter.
@@ -16,6 +17,13 @@ export class HTMLBookExporter extends BaseEpubExporter { // extension is correct
         this.book = book
         this.user = user
         this.docList = docList
+        this.chapters = []
+        this.math = false
+        if (this.book.chapters.length === 0) {
+            addAlert('error', gettext('Book cannot be exported due to lack of chapters.'))
+            return false
+        }
+
         getMissingChapterData(book, docList, function () {
             getImageAndBibDB(book, docList, function (imageDB,
                 bibDB) {
@@ -27,10 +35,6 @@ export class HTMLBookExporter extends BaseEpubExporter { // extension is correct
     }
 
     exportOne() {
-        let math = false,
-            styleSheets = [],
-            chapters = []
-
 
         this.book.chapters = _.sortBy(this.book.chapters, function (chapter) {
             return chapter.number
@@ -38,27 +42,18 @@ export class HTMLBookExporter extends BaseEpubExporter { // extension is correct
 
         for (let i = 0; i < this.book.chapters.length; i++) {
 
-            let aDocument = _.findWhere(this.docList, {
+            let doc = _.findWhere(this.docList, {
                 id: this.book.chapters[i].text
             })
 
-            let contents = obj2Node(aDocument.contents)
-
-            let citRenderer = new RenderCitations(contents,
-                this.book.settings.citationstyle,
-                this.bibDB)
-            citRenderer.init()
-
-            if (citRenderer.fm.bibliographyHTML.length > 0) {
-                contents.innerHTML += citRenderer.fm.bibliographyHTML
-            }
+            let contents = obj2Node(doc.contents)
 
             let equations = contents.querySelectorAll('.equation')
 
             let figureEquations = contents.querySelectorAll('.figure-equation')
 
             if (equations.length > 0 || figureEquations.length > 0) {
-                math = true
+                this.math = true
             }
 
             for (let j = 0; j < equations.length; j++) {
@@ -75,21 +70,53 @@ export class HTMLBookExporter extends BaseEpubExporter { // extension is correct
                 })
             }
 
-            chapters.push({document:aDocument,contents:contents})
+            this.chapters.push({
+                doc,
+                contents
+            })
         }
+        this.exportTwo()
+    }
 
-        let outputList = [],
+    exportTwo(chapterNumber = 0) {
+        let that = this
+        // add bibliographies (asynchronously)
+        let citRenderer = new RenderCitations(
+            this.chapters[chapterNumber].contents,
+            this.book.settings.citationstyle,
+            this.bibDB,
+            true,
+            function() {
+                if (citRenderer.fm.bibliographyHTML.length > 0) {
+                    that.chapters[chapterNumber].contents.innerHTML += citRenderer.fm.bibliographyHTML
+                }
+                chapterNumber++
+                if (chapterNumber===that.chapters.length) {
+                    that.exportThree()
+                } else {
+                    that.exportTwo(chapterNumber)
+                }
+            })
+        citRenderer.init()
+
+    }
+
+    exportThree() {
+
+        let styleSheets = [],
+            outputList = [],
             images = [],
             contentItems = [],
-            includeZips = []
+            includeZips = [],
+            chapters = this.chapters
 
         for (let i=0; i < chapters.length; i++) {
 
             let contents = chapters[i].contents
 
-            let aDocument = chapters[i].document
+            let doc = chapters[i].doc
 
-            let title = aDocument.title
+            let title = doc.title
 
             images = images.concat(findImages(contents))
 
@@ -125,11 +152,11 @@ export class HTMLBookExporter extends BaseEpubExporter { // extension is correct
             let htmlCode = htmlBookExportTemplate({
                 part: this.book.chapters[i].part,
                 title,
-                metadata: aDocument.metadata,
-                settings: aDocument.settings,
+                metadata: doc.metadata,
+                settings: doc.settings,
                 styleSheets,
                 contents: contentsCode,
-                math,
+                math: this.math,
                 obj2Node
             })
 
@@ -155,7 +182,7 @@ export class HTMLBookExporter extends BaseEpubExporter { // extension is correct
             })
         })
 
-        if (math) {
+        if (this.math) {
             includeZips.push({
                 'directory': '',
                 'url': window.staticUrl + 'zip/katex-style.zip'

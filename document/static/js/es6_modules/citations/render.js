@@ -7,7 +7,7 @@ import {FormatCitations} from "./format"
  */
 
 export class RenderCitations {
-    constructor(contentElement, citationStyle, bibDB, renderNoteCitations = true) {
+    constructor(contentElement, citationStyle, bibDB, renderNoteCitations = true, callback = false) {
         this.contentElement = contentElement
         this.citationStyle = citationStyle
         this.bibDB = bibDB
@@ -15,6 +15,7 @@ export class RenderCitations {
         this.allCitationNodes = []
         this.allCitationInfos = []
         this.fm = false
+        this.callback = callback
     }
 
     init() {
@@ -23,12 +24,15 @@ export class RenderCitations {
         this.allCitationNodes.forEach(function(cElement){
             that.allCitationInfos.push(cElement.dataset)
         })
-        this.fm = new FormatCitations(this.allCitationInfos, this.citationStyle, this.bibDB)
+        this.fm = new FormatCitations(this.allCitationInfos, this.citationStyle, this.bibDB, function() {
+            if (that.renderNoteCitations || 'note' !== that.fm.citationType) {
+                that.renderCitations()
+            }
+        })
         this.fm.init()
-        if (this.renderNoteCitations || 'note' !== this.fm.citationType) {
-            this.renderCitations()
-        }
     }
+
+
 
     renderCitations() {
         for (let j = 0; j < this.fm.citationTexts.length; j++) {
@@ -37,6 +41,9 @@ export class RenderCitations {
                 citationText = '<span class="pagination-footnote"><span><span>' + citationText + '</span></span></span>'
             }
             this.allCitationNodes[j].innerHTML = citationText
+        }
+        if (this.callback) {
+            this.callback()
         }
     }
 

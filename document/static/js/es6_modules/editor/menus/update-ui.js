@@ -109,7 +109,14 @@ export class ModMenusUpdateUI {
         const startElement = start.node(1)
         const currentElement = start.node(2)
         const endElement = end.node(1)
-
+	if(start.depth >2)
+	{
+	   jQuery('#button-table').css('display','none')
+	}
+	else
+	{
+	   jQuery('#button-table').css('display','')
+	}
         if (startElement !== endElement) {
             /* Selection goes across document parts or across footnotes */
             this.calculatePlaceHolderCss(pm)

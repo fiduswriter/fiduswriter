@@ -21,9 +21,9 @@ export class BibliographyOverview {
     getBibDB(callback) {
         let that = this
         let docOwnerId = 0 // 0 = current user.
-        this.db = new BibliographyDB(docOwnerId, true, false, false)
+        this.bibDB = new BibliographyDB(docOwnerId, true, false, false)
 
-        this.db.getBibDB(function(bibPks, bibCats){
+        this.bibDB.getDB(function(bibPks, bibCats){
 
             that.addBibCategoryList(bibCats)
             that.addBibList(bibPks)
@@ -60,7 +60,7 @@ export class BibliographyOverview {
         //if (jQuery('#bibliography').length > 0) {
         this.stopBibliographyTable()
         for (let i = 0; i < pks.length; i++) {
-            this.appendToBibTable(pks[i], this.db.bibDB[pks[i]])
+            this.appendToBibTable(pks[i], this.bibDB.db[pks[i]])
         }
         this.startBibliographyTable()
         //}
@@ -76,7 +76,7 @@ export class BibliographyOverview {
         let dialogBody = editCategoriesTemplate({
             'dialogHeader': dialogHeader,
             'categories': categoryFormsTemplate({
-                'categories': this.db.bibCats
+                'categories': this.bibDB.cats
             })
         })
         jQuery('body').append(dialogBody)
@@ -98,7 +98,7 @@ export class BibliographyOverview {
                         .length] = thisId
                 }
             })
-            that.db.deleteCategory(that.deletedCat)
+            that.bibDB.deleteCategory(that.deletedCat)
             that.createCategory(newCat)
             jQuery(this).dialog('close')
         }
@@ -287,7 +287,7 @@ export class BibliographyOverview {
         jQuery(document).on('click', '.edit-bib', function () {
             let eID = jQuery(this).attr('data-id')
             let eType = jQuery(this).attr('data-type')
-            new BibEntryForm(eID, eType, that.db.bibDB, that.db.bibCats, false, function(bibEntryData){
+            new BibEntryForm(eID, eType, that.bibDB.db, that.bibDB.cats, false, function(bibEntryData){
                 that.createBibEntry(bibEntryData)
             })
         })
@@ -326,7 +326,7 @@ export class BibliographyOverview {
 
         //import a bib file
         jQuery('.import-bib').bind('click', function () {
-            new BibLatexImporter(that.db, function(bibEntries) {
+            new BibLatexImporter(that.bibDB, function(bibEntries) {
                 that.addBibList(bibEntries)
             })
         })
@@ -353,7 +353,7 @@ export class BibliographyOverview {
                 that.deleteBibEntryDialog(ids)
                 break
             case 'export':
-                new BibLatexExporter(ids, that.db.bibDB, true)
+                new BibLatexExporter(ids, that.bibDB.db, true)
                 break
             }
         })
@@ -363,7 +363,7 @@ export class BibliographyOverview {
 
     createCategory(cats) {
         let that = this
-        this.db.createCategory(cats, function(bibCats){
+        this.bibDB.createCategory(cats, function(bibCats){
             jQuery('#bib-category-list li').not(':first').remove()
             that.addBibCategoryList(bibCats)
         })
@@ -371,7 +371,7 @@ export class BibliographyOverview {
 
     deleteBibEntry(ids) {
         let that = this
-        this.db.deleteBibEntry(ids, function(ids){
+        this.bibDB.deleteBibEntry(ids, function(ids){
             that.stopBibliographyTable()
             let elementsId = '#Entry_' + ids.join(', #Entry_')
             jQuery(elementsId).detach()
@@ -381,7 +381,7 @@ export class BibliographyOverview {
 
     createBibEntry(bibEntryData) {
         let that = this
-        this.db.createBibEntry(bibEntryData, function(newBibPks) {
+        this.bibDB.createBibEntry(bibEntryData, function(newBibPks) {
              that.addBibList(newBibPks)
         })
     }

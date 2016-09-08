@@ -73,7 +73,7 @@ export let citationDialog = function (mod) {
         return true
     }
 
-    _.each(editor.bibDB.bibDB, function(bib, index) {
+    _.each(editor.bibDB.db, function(bib, index) {
         let bibEntry = {
                 'id': index,
                 'type': bib.entry_type,
@@ -95,7 +95,7 @@ export let citationDialog = function (mod) {
     diaButtons.push({
         text: gettext('Register new source'),
         click: function() {
-            new BibEntryForm(false, '', editor.bibDB.bibDB, editor.bibDB.bibCats, editor.doc.owner.id,
+            new BibEntryForm(false, '', editor.bibDB.db, editor.bibDB.cats, editor.doc.owner.id,
                     function(bibEntryData){
                 editor.bibDB.createBibEntry(bibEntryData, function(newBibPks) {
                     editor.mod.menus.citation.appendManyToCitationDialog(newBibPks)

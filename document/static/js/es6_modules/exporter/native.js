@@ -16,7 +16,7 @@ let FW_FILETYPE_VERSION = "1.2"
  * @param aDocument The document to turn into a Fidus Writer document and upload.
  */
 export let uploadNative = function(editor) {
-    exportNative(editor.doc, editor.imageDB.db, editor.bibDB.bibDB, function(doc, shrunkImageDB, shrunkBibDB, images) {
+    exportNative(editor.doc, editor.imageDB.db, editor.bibDB.db, function(doc, shrunkImageDB, shrunkBibDB, images) {
         exportNativeFile(editor.doc, shrunkImageDB, shrunkBibDB, images, true, editor)
     })
 }
@@ -33,7 +33,7 @@ export class NativeExporter {
         let that = this
         this.getBibDB(function(){
             that.getImageDB(function(){
-                exportNative(that.doc, that.imageDB, that.bibDB.bibDB, exportNativeFile)
+                exportNative(that.doc, that.imageDB, that.bibDB.db, exportNativeFile)
             })
         })
     }
@@ -42,7 +42,7 @@ export class NativeExporter {
         let that = this
         if (!this.bibDB) {
             this.bibDB = new BibliographyDB(this.doc.owner.id, false, false, false)
-            this.bibDB.getBibDB(function() {
+            this.bibDB.getDB(function() {
                 callback()
             })
         } else {

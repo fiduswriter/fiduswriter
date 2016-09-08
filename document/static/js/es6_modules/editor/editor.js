@@ -183,7 +183,7 @@ export class Editor {
         let that = this
         if (!this.bibDB) { // Don't get the bibliography again if we already have it.
             let bibGetter = new BibliographyDB(userId, true, false, false)
-            bibGetter.getBibDB(function(bibPks, bibCats){
+            bibGetter.getDB(function(bibPks, bibCats){
                 that.bibDB = bibGetter
                 that.mod.menus.citation.appendManyToCitationDialog(bibPks)
                 that.mod.citations.layoutCitations()

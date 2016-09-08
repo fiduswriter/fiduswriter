@@ -22,20 +22,20 @@ export class ModMenusActions {
         that.mod.editor.save(function() {
             if (that.mod.editor.doc.owner.id === that.mod.editor.user.id) {
                 // We are copying from and to the same user. We don't need different databases for this.
-                savecopy(that.mod.editor.doc, that.mod.editor.bibDB.bibDB, that.mod.editor.imageDB.db,
-                    that.mod.editor.bibDB.bibDB, that.mod.editor.imageDB.db, that.mod.editor.user,
+                savecopy(that.mod.editor.doc, that.mod.editor.bibDB.db, that.mod.editor.imageDB.db,
+                    that.mod.editor.bibDB.db, that.mod.editor.imageDB.db, that.mod.editor.user,
                     function(doc, docInfo, newBibEntries){
                         window.location.href = `/document/${doc.id}/`
                 })
             } else {
                 // We copy from one user to another. So we first load one set of databases, and then the other
-                let oldBibDB = that.mod.editor.bibDB.bibDB
+                let oldBibDB = that.mod.editor.bibDB.db
                 let oldImageDB = that.mod.editor.imageDB.db
                 that.mod.editor.removeBibDB()
                 that.mod.editor.removeImageDB()
                 that.mod.editor.getBibDB(that.mod.editor.user.id, function(){
                     that.mod.editor.getImageDB(that.mod.editor.user.id, function(){
-                        savecopy(that.mod.editor.doc, oldBibDB, oldImageDB, that.mod.editor.bibDB.bibDB,
+                        savecopy(that.mod.editor.doc, oldBibDB, oldImageDB, that.mod.editor.bibDB.db,
                                 that.mod.editor.imageDB.db, that.mod.editor.user,
                                 function(doc, docInfo, newBibEntries){
                             window.location.href = `/document/${doc.id}/`

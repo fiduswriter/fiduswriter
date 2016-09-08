@@ -25,7 +25,7 @@ export class FormatCitations {
         this.citationType = ''
         this.bibliography = ''
         // Convert bibDB to CSL format.
-        let cslGetter = new CSLExporter(this.bibDB.bibDB) // TODO: Figure out if this conversion should be done earlier and cached
+        let cslGetter = new CSLExporter(this.bibDB.db) // TODO: Figure out if this conversion should be done earlier and cached
         this.cslDB = cslGetter.cslDB
         if (this.formatAllCitations()) {
             this.getFormattedCitations()
@@ -42,7 +42,7 @@ export class FormatCitations {
 
             let len = entries.length
             for (let j = 0; j < len; j++) {
-                if (that.bibDB.bibDB.hasOwnProperty(entries[j])) {
+                if (that.bibDB.db.hasOwnProperty(entries[j])) {
                     continue
                 }
                 missingCitationKey = entries[j]
@@ -53,8 +53,8 @@ export class FormatCitations {
                 // Not all citations could be found in the database.
                 // Reload the database, but only do so once.
                 if (that.allowReload) {
-                    that.bibDB.getBibDB(function(){
-                        if (that.bibDB.bibDB.hasOwnProperty(missingCitationKey)) {
+                    that.bibDB.getDB(function(){
+                        if (that.bibDB.db.hasOwnProperty(missingCitationKey)) {
                             that.init()
                         } else {
                             // The missing key was not in the update from the server

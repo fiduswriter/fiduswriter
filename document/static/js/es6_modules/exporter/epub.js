@@ -140,7 +140,7 @@ export class EpubExporter extends BaseEpubExporter {
             this.exportOne()
         } else {
             this.bibDB = new BibliographyDB(doc.owner.id, false, false, false)
-            this.bibDB.getBibDB(function() {
+            this.bibDB.getDB(function() {
                 that.exportOne()
             })
         }

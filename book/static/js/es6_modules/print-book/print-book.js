@@ -74,7 +74,7 @@ export class PrintBook {
 
         this.bibDB = new BibliographyDB(this.documentOwners.join(','), false, false, false)
 
-        this.bibDB.getBibDB(function (bibPks, bibCats) {
+        this.bibDB.getDB(function (bibPks, bibCats) {
                 that.fillPrintPage()
             })
 

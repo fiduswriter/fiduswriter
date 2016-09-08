@@ -297,8 +297,8 @@ export class BaseLatexExporter extends BaseExporter {
                 let citationEntryKeys = []
 
                 citationEntries.forEach(function(citationEntry) {
-                    if (that.bibDB.bibDB[citationEntry]) {
-                        citationEntryKeys.push(that.bibDB.bibDB[citationEntry].entry_key)
+                    if (that.bibDB.db[citationEntry]) {
+                        citationEntryKeys.push(that.bibDB.db[citationEntry].entry_key)
                         if (listedWorksList.indexOf(citationEntry) === -1) {
                             listedWorksList.push(citationEntry)
                         }
@@ -312,7 +312,7 @@ export class BaseLatexExporter extends BaseExporter {
                 }
 
                 citationEntries.forEach(function(citationEntry, index) {
-                    if (!that.bibDB.bibDB[citationEntry]) {
+                    if (!that.bibDB.db[citationEntry]) {
                         return false // Not present in bibliography database, skip it.
                     }
 
@@ -327,7 +327,7 @@ export class BaseLatexExporter extends BaseExporter {
                     }
                     citationCommand += '{'
 
-                    citationCommand += that.bibDB.bibDB[citationEntry].entry_key
+                    citationCommand += that.bibDB.db[citationEntry].entry_key
                     if (listedWorksList.indexOf(citationEntry) === -1) {
                         listedWorksList.push(citationEntry)
                     }
@@ -430,7 +430,7 @@ export class BaseLatexExporter extends BaseExporter {
             returnObject.listedWorksList = listedWorksList
         } else {
             let bibExport = new BibLatexExporter(
-                listedWorksList, that.bibDB.bibDB, false)
+                listedWorksList, that.bibDB.db, false)
             returnObject.bibtex = bibExport.bibtexStr
         }
         return returnObject
@@ -448,7 +448,7 @@ export class LatexExporter extends BaseLatexExporter {
             this.exportOne()
         } else {
             this.bibDB = new BibliographyDB(doc.owner.id, false, false, false)
-            this.bibDB.getBibDB(function() {
+            this.bibDB.getDB(function() {
                 that.exportOne()
             })
         }

@@ -12,13 +12,16 @@
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/book.css" />
 
     {% endcompress %}
+
+    <!-- jQuery tablesorter -->
+    <script type="text/javascript" src="{{ DATATABLES_URL }}"></script>
+
     {% compress js %}
         <script type="text/javascript">
             var staticUrl = '{{ STATIC_URL }}';
         </script>
         <!-- jQuery Dropkick -->
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dropkick-1.1.0.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dataTables.min.js"></script>
 
         <!-- citeproc -->
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/xmldom.js"></script>

@@ -38,9 +38,8 @@ export class WordExporter {
             this.bibDB = bibDB // the bibliography has already been loaded for some other purpose. We reuse it.
             this.exporter()
         } else {
-            let bibGetter = new BibliographyDB(doc.owner.id, false, false, false)
-            bibGetter.getBibDB(function() {
-                that.bibDB = bibGetter.bibDB
+            this.bibDB = new BibliographyDB(doc.owner.id, false, false, false)
+            this.bibDB.getDB(function() {
                 that.exporter()
             })
         }

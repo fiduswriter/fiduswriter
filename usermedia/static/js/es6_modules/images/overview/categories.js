@@ -135,7 +135,7 @@ export class ImageOverviewCategories {
         //add and remove name list field
         jQuery('.fw-add-input').bind('click', function () {
             let parent = jQuery(this).parents('.fw-list-input')
-            if (0 === parent.next().size()) {
+            if (0 === parent.next().length) {
                 let parentClone = parent.clone(true)
                 parentClone.find('input, select').val('').removeAttr(
                     'data-id')

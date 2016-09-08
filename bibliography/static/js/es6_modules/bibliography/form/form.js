@@ -289,9 +289,9 @@ export class BibEntryForm {
             let the_name = $this.attr('name') || $this.attr('data-field-name')
             let the_type = $this.attr('type') || $this.attr('data-type')
             let the_value = ''
-            let isMust = (1 == $this.parents('#optionTab1').size())
+            let isMust = (1 == $this.parents('#optionTab1').length)
             let eitheror = $this.parents('.eitheror')
-            if (1 == eitheror.size()) {
+            if (1 == eitheror.length) {
                 //if it is a either-or-field
                 let field_names = eitheror.find('.field-names .fw-pulldown-item')
                 field_names.each(function() {
@@ -306,7 +306,7 @@ export class BibEntryForm {
             dataTypeSwitch: switch (the_type) {
                 case 'fieldkeys':
                     let selected_key_item = $this.find('.fw-pulldown-item.selected')
-                    if (0 === selected_key_item.size()) {
+                    if (0 === selected_key_item.length) {
                         selected_key_item = $this.find('.fw-pulldown-item:eq(0)')
                     }
                     the_value = selected_key_item.data('value')

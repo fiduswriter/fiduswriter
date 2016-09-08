@@ -9,23 +9,14 @@
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/fw-layouts/bibliography.css" />
     {% endcompress %}
 
-    {% compress js %}
-        <!-- jQuery tablesorter -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dataTables.min.js"></script>
-        <!-- jQuery Dropkick -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dropkick-1.1.0.js"></script>
-        <!-- Zip.js -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/zip.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/deflate.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/inflate.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/zip-fs.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/zip/zip-ext.js"></script>
-        <script type="text/javascript">
-            zip.useWebWorkers = false;
-        </script>
-    {% endcompress %}
+    <!-- jQuery tablesorter -->
+    <script type="text/javascript" src="{{ DATATABLES_URL }}"></script>
+    <!-- Dropkick JS -->
+    <script type="text/javascript" src="{{ DROPKICKJS_URL }}"></script>
 
     <script type="text/javascript" src="{{ STATIC_URL }}js/bibliography-overview.es5.js"></script>
+
+
 
 {% endblock %}
 

@@ -53,14 +53,26 @@ export class BaseLatexExporter extends BaseExporter {
                 '\n\\usepackage[backend=biber,hyperref=false,citestyle=authoryear,bibstyle=authoryear]{biblatex}\n\\bibliography{bibliography}'
             documentEndCommands += '\n\n\\printbibliography'
         }
+        let figures = [].slice.call(jQuery(htmlCode).find('figure'))
+        if (figures.length > 0) {
+            let includeSvg = false
+            let includeGraphicx = false
+            figures.forEach(function(figure) {
+                let imgSrc = figure.getAttribute('data-image-src')
+                if (imgSrc) {
+                    let filetype = imgSrc.split('.').pop().toLowerCase()
+                    if (filetype==='svg') {
+                        includeSvg = true
+                    } else if (['png','jpg','jpeg'].includes(filetype)) {
+                        includeGraphicx = true
+                    }
+                }
+            })
 
-        if (jQuery(htmlCode).find('figure').length > 0) {
-            if (htmlCode.innerHTML.search('.svg">') !== -1) {
+            if (includeSvg) {
                 includePackages += '\n\\usepackage{svg}'
             }
-            if (htmlCode.innerHTML.search('.png">') !== -1 || htmlCode.innerHTML
-                .search('.jpg">') !== -1 || htmlCode.innerHTML.search(
-                    '.jpeg">') !== -1) {
+            if (includeGraphicx) {
                 includePackages += '\n\\usepackage{graphicx}'
                 // The following scales graphics down to text width, but not scaling them up if they are smaller
                 includePackages +=
@@ -72,8 +84,8 @@ export class BaseLatexExporter extends BaseExporter {
     \n\\setlength{\\imgwidth}{\\minof{\\imgwidth}{\\textwidth}}%\
     \n\\includegraphics[width=\\imgwidth,height=\\textheight,keepaspectratio]{#1}%\
     \n}'
-
             }
+
         }
         if (documentClass === 'book') {
             //TODO: abstract environment should possibly only be included if used
@@ -285,8 +297,8 @@ export class BaseLatexExporter extends BaseExporter {
                 let citationEntryKeys = []
 
                 citationEntries.forEach(function(citationEntry) {
-                    if (that.bibDB[citationEntry]) {
-                        citationEntryKeys.push(that.bibDB[citationEntry].entry_key)
+                    if (that.bibDB.db[citationEntry]) {
+                        citationEntryKeys.push(that.bibDB.db[citationEntry].entry_key)
                         if (listedWorksList.indexOf(citationEntry) === -1) {
                             listedWorksList.push(citationEntry)
                         }
@@ -300,7 +312,7 @@ export class BaseLatexExporter extends BaseExporter {
                 }
 
                 citationEntries.forEach(function(citationEntry, index) {
-                    if (!that.bibDB[citationEntry]) {
+                    if (!that.bibDB.db[citationEntry]) {
                         return false // Not present in bibliography database, skip it.
                     }
 
@@ -315,7 +327,7 @@ export class BaseLatexExporter extends BaseExporter {
                     }
                     citationCommand += '{'
 
-                    citationCommand += that.bibDB[citationEntry].entry_key
+                    citationCommand += that.bibDB.db[citationEntry].entry_key
                     if (listedWorksList.indexOf(citationEntry) === -1) {
                         listedWorksList.push(citationEntry)
                     }
@@ -331,10 +343,11 @@ export class BaseLatexExporter extends BaseExporter {
         jQuery(htmlCode).find('figure').each(function() {
             let latexPackage
             let figureType = jQuery(this).attr('data-figure-category')
-            let caption = jQuery(this).find('figcaption')[0].lastChild.innerHTML
-            let filename = jQuery(this).find('img').attr('data-src')
+            let caption = jQuery(this).attr('data-caption')
+            let filePathName = jQuery(this).attr('data-image-src')
             let innerFigure = ''
-            if (filename) {
+            if (filePathName) {
+                let filename = filePathName.split('/').pop()
                 if (filename.split('.').pop() === 'svg') {
                     latexPackage = 'includesvg'
                 } else {
@@ -417,7 +430,7 @@ export class BaseLatexExporter extends BaseExporter {
             returnObject.listedWorksList = listedWorksList
         } else {
             let bibExport = new BibLatexExporter(
-                listedWorksList, that.bibDB, false)
+                listedWorksList, that.bibDB.db, false)
             returnObject.bibtex = bibExport.bibtexStr
         }
         return returnObject
@@ -434,9 +447,8 @@ export class LatexExporter extends BaseLatexExporter {
             this.bibDB = bibDB // the bibliography has already been loaded for some other purpose. We reuse it.
             this.exportOne()
         } else {
-            let bibGetter = new BibliographyDB(doc.owner.id, false, false, false)
-            bibGetter.getBibDB(function() {
-                that.bibDB = bibGetter.bibDB
+            this.bibDB = new BibliographyDB(doc.owner.id, false, false, false)
+            this.bibDB.getDB(function() {
                 that.exportOne()
             })
         }

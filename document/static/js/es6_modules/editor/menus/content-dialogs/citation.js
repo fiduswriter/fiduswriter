@@ -42,7 +42,7 @@ export let citationDialog = function (mod) {
             bibBefore,
             emptySpaceNode
 
-        if (0 === cite_items.size()) {
+        if (0 === cite_items.length) {
             window.alert(gettext('Please select at least one citation source!'))
             return false
         }
@@ -73,7 +73,7 @@ export let citationDialog = function (mod) {
         return true
     }
 
-    _.each(editor.bibDB.bibDB, function(bib, index) {
+    _.each(editor.bibDB.db, function(bib, index) {
         let bibEntry = {
                 'id': index,
                 'type': bib.entry_type,
@@ -95,7 +95,7 @@ export let citationDialog = function (mod) {
     diaButtons.push({
         text: gettext('Register new source'),
         click: function() {
-            new BibEntryForm(false, '', editor.bibDB.bibDB, editor.bibDB.bibCats, editor.doc.owner.id,
+            new BibEntryForm(false, '', editor.bibDB.db, editor.bibDB.cats, editor.doc.owner.id,
                     function(bibEntryData){
                 editor.bibDB.createBibEntry(bibEntryData, function(newBibPks) {
                     editor.mod.menus.citation.appendManyToCitationDialog(newBibPks)
@@ -204,7 +204,7 @@ export let citationDialog = function (mod) {
                     selectedItems = []
                 checkedElements.each(function() {
                     let id = jQuery(this).data('id')
-                    if (jQuery('#selected-source-' + id).size()) {
+                    if (jQuery('#selected-source-' + id).length) {
                         return
                     }
                     selectedItems.push({

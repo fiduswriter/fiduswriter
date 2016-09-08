@@ -96,7 +96,7 @@ export class BookAccessRightsDialog {
               selectedMembers.each(function () {
                   let memberId = jQuery(this).attr('data-id')
                   let collaborator = jQuery('#collaborator-' + memberId)
-                  if (0 === collaborator.size()) {
+                  if (0 === collaborator.length) {
                       selectedData[selectedData.length] = {
                           'user_id': memberId,
                           'user_name': jQuery(this).attr('data-name'),

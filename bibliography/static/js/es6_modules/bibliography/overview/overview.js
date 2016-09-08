@@ -192,7 +192,7 @@ export class BibliographyOverview {
         // TODO: Such entries should likely not be accepted by the importer.
         let bibtitle = typeof(bibInfo.title) === 'undefined' ? '' : bibInfo.title
 
-        if (0 < $tr.size()) { //if the entry exists, update
+        if (0 < $tr.length) { //if the entry exists, update
 
             $tr.replaceWith(bibtableTemplate({
                 'id': pk,
@@ -227,7 +227,7 @@ export class BibliographyOverview {
           */
     startBibliographyTable() {
         // The sortable table seems not to have an option to accept new data added to the DOM. Instead we destroy and recreate it.
-        jQuery('#bibliography').dataTable({
+        let table = jQuery('#bibliography').dataTable({
             "bPaginate": false,
             "bLengthChange": false,
             "bFilter": true,
@@ -241,6 +241,7 @@ export class BibliographyOverview {
                 "aTargets": [0, 5]
             }],
         })
+        console.log(table)
         jQuery('#bibliography_filter input').attr('placeholder', gettext('Search for Bibliography'))
 
         jQuery('#bibliography_filter input').unbind('focus, blur')

@@ -26,6 +26,7 @@ testing.py
 es6-tmp/
 es6-cache/
 static-es5/
+static-libs/
 *.es5.js
 base/static/css/libs/
 .coverage

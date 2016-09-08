@@ -322,6 +322,6 @@ CSS_LOCATIONS = {
 }
 
 try:
-    exec open(os.path.join(PROJECT_PATH, 'configuration.py')) in globals()
+    exec(open(os.path.join(PROJECT_PATH, 'configuration.py')), globals())
 except:
     pass

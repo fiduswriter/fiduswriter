@@ -321,6 +321,7 @@ class ThreadedTypingTest(LiveTornadoTestCase, Manipulator):
             self.get_contents(self.driver)
         )
 
+
 class ThreadedSelectAndBoldTest(LiveTornadoTestCase, Manipulator):
     """
     Test typing in collaborative mode with one user typing and
@@ -394,7 +395,7 @@ class ThreadedSelectAndBoldTest(LiveTornadoTestCase, Manipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(3)
+        time.sleep(6)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -494,7 +495,7 @@ class ThreadedSelectAndItalicTest(LiveTornadoTestCase, Manipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(3)
+        time.sleep(6)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -522,6 +523,7 @@ class ThreadedSelectAndItalicTest(LiveTornadoTestCase, Manipulator):
             len(self.get_boldtext(self.driver)),
             len(self.get_boldtext(self.driver2))
         )
+
 
 class ThreadedMakeNumberedlistTest(LiveTornadoTestCase, Manipulator):
     """
@@ -594,7 +596,7 @@ class ThreadedMakeNumberedlistTest(LiveTornadoTestCase, Manipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(3)
+        time.sleep(6)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -725,7 +727,7 @@ class ThreadedMakeBulletlistTest(LiveTornadoTestCase, Manipulator):
         p2.join()
 
         # Wait for the first processor to write some text and go to nex line
-        time.sleep(8)
+        time.sleep(6)
 
         self.driver2.execute_script(
             'window.theEditor.pm.setTextSelection(37,37)')
@@ -749,6 +751,7 @@ class ThreadedMakeBulletlistTest(LiveTornadoTestCase, Manipulator):
             len(self.get_bulletlist(self.driver)),
             len(self.get_bulletlist(self.driver2))
         )
+
 
 class ThreadedMakeBlockqouteTest(LiveTornadoTestCase, Manipulator):
     """
@@ -816,7 +819,7 @@ class ThreadedMakeBlockqouteTest(LiveTornadoTestCase, Manipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(3)
+        time.sleep(6)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -844,6 +847,7 @@ class ThreadedMakeBlockqouteTest(LiveTornadoTestCase, Manipulator):
             len(self.get_blockqoute(self.driver)),
             len(self.get_blockqoute(self.driver2))
         )
+
 
 class ThreadedAddLinkTest(LiveTornadoTestCase, Manipulator):
     """
@@ -925,7 +929,7 @@ class ThreadedAddLinkTest(LiveTornadoTestCase, Manipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(3)
+        time.sleep(6)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -953,6 +957,7 @@ class ThreadedAddLinkTest(LiveTornadoTestCase, Manipulator):
             len(self.get_link(self.driver)),
             len(self.get_link(self.driver2))
         )
+
 
 class ThreadedAddFootnoteTest(LiveTornadoTestCase, Manipulator):
     """
@@ -1032,7 +1037,7 @@ class ThreadedAddFootnoteTest(LiveTornadoTestCase, Manipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(3)
+        time.sleep(6)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -1135,7 +1140,7 @@ class ThreadedSelectDeleteUndoTest(LiveTornadoTestCase, Manipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(3)
+        time.sleep(6)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -1164,10 +1169,11 @@ class ThreadedSelectDeleteUndoTest(LiveTornadoTestCase, Manipulator):
             self.get_undo(self.driver2)
         )
 
+
 class ThreadedAddMathEquationTest(LiveTornadoTestCase, Manipulator):
     """
     Test typing in collaborative mode with one user typing and
-    another user insert math equation some part of the text in two different threads.
+    another user insert math equation in middle of the text in two different threads.
     """
     TEST_TEXT = "Lorem ipsum dolor sit amet."
 
@@ -1243,7 +1249,7 @@ class ThreadedAddMathEquationTest(LiveTornadoTestCase, Manipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(3)
+        time.sleep(6)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -1272,10 +1278,11 @@ class ThreadedAddMathEquationTest(LiveTornadoTestCase, Manipulator):
             len(self.get_mathequation(self.driver2))
         )
 
+
 class ThreadedAddCommentTest(LiveTornadoTestCase, Manipulator):
     """
     Test typing in collaborative mode with one user typing and
-    another user insert math equation some part of the text in two different threads.
+    another user add some comment in middle of the text in two different threads.
     """
     TEST_TEXT = "Lorem ipsum dolor sit amet."
 
@@ -1378,6 +1385,7 @@ class ThreadedAddCommentTest(LiveTornadoTestCase, Manipulator):
             len(self.get_mathequation(self.driver2))
         )
 
+
 class ThreadedAddImageTest(LiveTornadoTestCase, Manipulator):
     """
     Test typing in collaborative mode with one user typing and
@@ -1426,8 +1434,6 @@ class ThreadedAddImageTest(LiveTornadoTestCase, Manipulator):
 
         # image path
         imagePath = settings.STATIC_ROOT + 'test/image.png'
-        print(imagePath)
-
         # path = driver.execute_script("return window.staticUrl + 'test/image.png'")
 
         # inorder to select the image we send the image path in the
@@ -1537,6 +1543,7 @@ class ThreadedAddImageTest(LiveTornadoTestCase, Manipulator):
             len(self.get_caption(self.driver2))
         )
 
+
 class ThreadedAddCiteTest(LiveTornadoTestCase, Manipulator):
     """
     Test typing in collaborative mode with one user typing and
@@ -1627,15 +1634,12 @@ class ThreadedAddCiteTest(LiveTornadoTestCase, Manipulator):
         cite_within_doc = driver.find_element_by_xpath(
             '//*[@id="document-contents"]/p[1]/span[2]'
         )
-        print(cite_within_doc.text)
         return cite_within_doc.text
 
     def get_citation_bib(self, driver):
         cite_bib = driver.find_element_by_xpath(
             '//*[@id="document-bibliography"]'
         )
-        print(cite_bib.text)
-        print(len(cite_bib.text))
         return cite_bib.text
 
     def test_citation(self):

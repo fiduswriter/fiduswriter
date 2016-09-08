@@ -72,10 +72,9 @@ export class PrintBook {
         this.printConfig['pageHeight'] = this.pageSizes[this.theBook.settings.papersize].height
         this.printConfig['pageWidth'] = this.pageSizes[this.theBook.settings.papersize].width
 
-        let bibGetter = new BibliographyDB(this.documentOwners.join(','), false, false, false)
+        this.bibDB = new BibliographyDB(this.documentOwners.join(','), false, false, false)
 
-        bibGetter.getBibDB(function (bibPks, bibCats) {
-                that.bibDB = bibGetter.bibDB
+        this.bibDB.getBibDB(function (bibPks, bibCats) {
                 that.fillPrintPage()
             })
 
@@ -134,7 +133,7 @@ export class PrintBook {
     }
 
     fillPrintPage() {
-        let bibliography = jQuery('#bibliography')
+        let that = this
         jQuery(document.body).addClass(this.theBook.settings.documentstyle)
         jQuery('#book')[0].outerHTML = bookPrintTemplate({
             theBook: this.theBook,
@@ -142,9 +141,20 @@ export class PrintBook {
             obj2Node
         })
 
-        let citRenderer = new RenderCitations(document.body, this.theBook.settings.citationstyle, this.bibDB)
-        citRenderer.init()
-        jQuery(bibliography).html(citRenderer.fm.bibliographyHTML)
+        this.citRenderer = new RenderCitations(
+            document.body,
+            this.theBook.settings.citationstyle,
+            this.bibDB,
+            function() {
+                that.fillPrintPageTwo()
+            }
+        )
+        this.citRenderer.init()
+    }
+
+    fillPrintPageTwo() {
+        let bibliography = jQuery('#bibliography')
+        jQuery(bibliography).html(this.citRenderer.fm.bibliographyHTML)
 
         if (jQuery(bibliography).text().trim().length===0) {
             jQuery(bibliography).parent().remove()

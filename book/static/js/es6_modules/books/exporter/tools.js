@@ -29,7 +29,7 @@ export let getImageAndBibDB = function (aBook, documentList, callback) {
     imageGetter.getDB(function () {
         let bibGetter = new BibliographyDB(documentOwners, false, false, false)
         bibGetter.getBibDB(function () {
-            callback(imageGetter.db, bibGetter.bibDB)
+            callback(imageGetter.db, bibGetter)
         })
     })
 }

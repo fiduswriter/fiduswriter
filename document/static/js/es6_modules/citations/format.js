@@ -7,51 +7,66 @@ import {citationDefinitions} from "../style/citation-definitions"
 * Use CSL and bibDB to format all citations for the given prosemirror json citation nodes
 */
 export class FormatCitations {
-    constructor(allCitationInfos, citationStyle, bibDB) {
+    constructor(allCitationInfos, citationStyle, bibDB, callback) {
         this.allCitationInfos = allCitationInfos
         this.citationStyle = citationStyle
         this.bibDB = bibDB
+        this.cslDB = false
+        this.firstLoad = true // We only want to reload once, due to https://github.com/fiduswriter/fiduswriter/issues/284
+        this.callback = callback
+    }
+
+    init() {
         this.bibliographyHTML = ''
-        this.listedWorksCounter = 0
+        //this.listedWorksCounter = 0
         this.citations = []
         this.bibFormats = []
         this.citationTexts = []
         this.citationType = ''
         this.bibliography = ''
-        this.cslDB = false
-    }
-
-    init() {
-        let cslGetter = new CSLExporter(this.bibDB) // TODO: Figure out if this conversion should be done earlier and cached
+        // Convert bibDB to CSL format.
+        let cslGetter = new CSLExporter(this.bibDB.bibDB) // TODO: Figure out if this conversion should be done earlier and cached
         this.cslDB = cslGetter.cslDB
-        this.formatAllCitations()
-        this.getFormattedCitations()
-        this.formatBibliography()
+        if (this.formatAllCitations()) {
+            this.getFormattedCitations()
+            this.formatBibliography()
+            this.callback()
+        }
     }
 
     formatAllCitations() {
         let that = this
-        this.allCitationInfos.forEach(function(cInfo) {
+        let foundAll = this.allCitationInfos.every(function(cInfo) {
             var entries = cInfo.bibEntry ? cInfo.bibEntry.split(',') : []
-            let allCitationsListed = true
+            let allCitationsListed = true // Whether all citation entries are in the database
 
             let len = entries.length
             for (let j = 0; j < len; j++) {
-                if (that.bibDB.hasOwnProperty(entries[j])) {
+                if (that.bibDB.bibDB.hasOwnProperty(entries[j])) {
                     continue
                 }
                 allCitationsListed = false
                 break
             }
 
-            if (allCitationsListed) {
+            if (!allCitationsListed) {
+                // Not all citations could be found in the database.
+                // Reload the database, but only do so once.
+                if (that.firstLoad) {
+                    that.firstLoad = false
+                    that.bibDB.getBibDB(function(){
+                        that.init()
+                    })
+                    return false
+                }
+            } else {
                 let pages = cInfo.bibPage ? cInfo.bibPage.split(',,,') : [],
                     prefixes = cInfo.bibBefore ? cInfo.bibBefore.split(',,,') : [],
                     //suffixes = cInfo.bibAfter.split(',,,'),
                     citationItem,
                     citationItems = []
 
-                that.listedWorksCounter += entries.length
+                //that.listedWorksCounter += entries.length
 
                 for (let j = 0; j < len; j++) {
                     citationItem = {
@@ -67,7 +82,6 @@ export class FormatCitations {
                     citationItems.push(citationItem)
                 }
 
-    //            that.bibFormats.push(i)
                 that.bibFormats.push(cInfo.bibFormat)
                 that.citations.push({
                     citationItems,
@@ -76,11 +90,13 @@ export class FormatCitations {
                     }
                 })
             }
+            return true
         })
 
-        if (this.listedWorksCounter === 0) {
-            return ''
-        }
+        //if (this.listedWorksCounter === 0) {
+        //    return ''
+        //}
+        return foundAll
     }
 
     formatBibliography() {

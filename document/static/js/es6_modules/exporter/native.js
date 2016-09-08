@@ -33,7 +33,7 @@ export class NativeExporter {
         let that = this
         this.getBibDB(function(){
             that.getImageDB(function(){
-                exportNative(that.doc, that.imageDB, that.bibDB, exportNativeFile)
+                exportNative(that.doc, that.imageDB, that.bibDB.bibDB, exportNativeFile)
             })
         })
     }
@@ -41,9 +41,8 @@ export class NativeExporter {
     getBibDB(callback) {
         let that = this
         if (!this.bibDB) {
-            let bibGetter = new BibliographyDB(this.doc.owner.id, false, false, false)
-            bibGetter.getBibDB(function() {
-                that.bibDB = bibGetter.bibDB
+            this.bibDB = new BibliographyDB(this.doc.owner.id, false, false, false)
+            this.bibDB.getBibDB(function() {
                 callback()
             })
         } else {

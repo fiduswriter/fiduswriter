@@ -49,28 +49,28 @@ export class ModMenusActions {
     download() {
         let that = this
         that.mod.editor.save(function (){
-            new NativeExporter(that.mod.editor.doc, that.mod.editor.bibDB.bibDB, that.mod.editor.imageDB.db)
+            new NativeExporter(that.mod.editor.doc, that.mod.editor.bibDB, that.mod.editor.imageDB.db)
         })
     }
 
     downloadLatex() {
         let that = this
         that.mod.editor.save(function() {
-            new LatexExporter(that.mod.editor.doc, that.mod.editor.bibDB.bibDB)
+            new LatexExporter(that.mod.editor.doc, that.mod.editor.bibDB)
         })
     }
 
     downloadEpub() {
         let that = this
         that.mod.editor.save(function () {
-            new EpubExporter(that.mod.editor.doc, that.mod.editor.bibDB.bibDB)
+            new EpubExporter(that.mod.editor.doc, that.mod.editor.bibDB)
         })
     }
 
     downloadHtml() {
         let that = this
         that.mod.editor.save(function() {
-            new HTMLExporter(that.mod.editor.doc, that.mod.editor.bibDB.bibDB)
+            new HTMLExporter(that.mod.editor.doc, that.mod.editor.bibDB)
         })
     }
 

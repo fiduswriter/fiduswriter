@@ -499,7 +499,7 @@ class InsertionOfLink(LiveTornadoTestCase, Manipulator):
         (DRIVER.find_element_by_css_selector('input.link')
                .send_keys(self.linkAddressWithoutHTTP))
 
-        (DRIVER.find_element_by_xpath('//button/span[text()="Insert"]')
+        (DRIVER.find_element_by_xpath('//button[text()="Insert"]')
                .click())
         self.assertEqual(
             str(case.expectedContents),

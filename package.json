@@ -8,9 +8,11 @@
       "copy_underscore": "mkdir -p ./static-libs/js/libs/ && cp node_modules/underscore/underscore-min.js ./static-libs/js/libs/",
       "copy_datatables": "mkdir -p ./static-libs/js/libs/ && cp node_modules/datatables/media/js/jquery.dataTables.min.js ./static-libs/js/libs/",
       "copy_dropkickjs": "mkdir -p ./static-libs/js/libs/ && cp node_modules/dropkickjs/build/js/dropkick.min.js ./static-libs/js/libs/",
-      "postinstall": "npm run copy_jquery && npm run copy_jquery-ui && npm run copy_underscore && npm run copy_datatables && npm run copy_dropkickjs",
+      "copy_citeproc": "mkdir -p ./static-libs/js/libs/ && cp node_modules/citeproc/citeproc.js ./static-libs/js/libs/",
+      "postinstall": "npm run copy_jquery && npm run copy_jquery-ui && npm run copy_underscore && npm run copy_datatables && npm run copy_dropkickjs && npm run copy_citeproc",
       "check_js": "node_modules/.bin/jshint .",
-      "check_py": "flake8 ./"
+      "check_py": "flake8 ./",
+      "install": "napa"
   },
   "author": "Johannes Wilm",
   "license": "AGPL",
@@ -34,7 +36,11 @@
     "jquery-ui-dist": "1.12.0",
     "underscore": "1.8.3",
     "datatables": "1.10.12",
-    "dropkickjs": "2.1.10"
+    "dropkickjs": "2.1.10",
+    "napa": "2.3.0"
+  },
+  "napa": {
+    "citeproc": "Juris-M/citeproc-js#1.1.124"
   },
   "browserify": {
     "transform": [

@@ -84,16 +84,17 @@
         <script type="text/javascript" src="{{ JQUERYUI_URL }}"></script>
         <!-- Underscore -->
         <script type="text/javascript" src="{{ UNDERSCOREJS_URL }}"></script>
-        <!-- citeproc -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/xmldom.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/citeproc.js"></script>
+
         <!-- jQuery tablesorter -->
         <script type="text/javascript" src="{{ DATATABLES_URL }}"></script>
         <!-- Dropkick JS -->
         <script type="text/javascript" src="{{ DROPKICKJS_URL }}"></script>
-        <!-- Editor  -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/editor.es5.js"></script>
-
+        {% compress js %}
+            <!-- citeproc -->
+            <script type="text/javascript" src="{{ CITEPROC_URL }}"></script>
+            <!-- Editor  -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor.es5.js"></script>
+        {% endcompress %}
     </head>
     <body class="{% trans "en" %} tex2jax_ignore">
         <div id="editor">

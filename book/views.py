@@ -18,7 +18,7 @@ from book.forms import BookForm
 from document.models import AccessRight
 from document.views import documents_list
 
-from avatar.util import get_primary_avatar, get_default_avatar_url
+from avatar.utils import get_primary_avatar, get_default_avatar_url
 from avatar.templatetags.avatar_tags import avatar_url
 
 from django.core.serializers.python import Serializer

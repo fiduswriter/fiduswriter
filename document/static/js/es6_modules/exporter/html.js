@@ -68,7 +68,6 @@ export class BaseHTMLExporter extends BaseExporter{
             function(){
                 that.addBibliographyHTML(citRenderer.fm.bibliographyHTML)
                 that.contents = that.cleanHTML(that.contents)
-                console.log(callback)
                 callback()
             })
         citRenderer.init()

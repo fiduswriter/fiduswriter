@@ -2,6 +2,16 @@
 
 export class BaseExporter {
 
+    // Replace all instances of the before string in all descendant textnodes of
+    // node.
+    replaceText(node, before, after) {
+        if (node.nodeType === 1) {
+            [].forEach.call(node.childNodes, child => this.replaceText(child, before, after))
+        } else if (node.nodeType === 3) {
+            node.textContent = node.textContent.replace(window.RegExp(before, 'g'), after)
+        }
+    }
+
     cleanHTML(htmlCode) {
 
         // Replace the footnotes with markers and the footnotes to the back of the
@@ -32,14 +42,14 @@ export class BaseExporter {
         htmlCode.appendChild(footnotesContainer)
 
         // Replace nbsp spaces with normal ones
-        htmlCode.innerHTML = htmlCode.innerHTML.replace(/&nbsp;/g, ' ')
+        this.replaceText(htmlCode, '&nbsp;', ' ')
 
         jQuery(htmlCode).find('.comment').each(function() {
-           this.outerHTML = this.innerHTML
+           jQuery(this).replaceWith(this.innerHTML)
         })
 
         jQuery(htmlCode).find('script').each(function() {
-            this.outerHTML = ''
+            jQuery(this).replaceWith('')
         })
 
         return htmlCode

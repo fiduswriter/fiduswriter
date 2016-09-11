@@ -12,7 +12,7 @@ from django.core.mail import send_mail
 from django.db.models import Q
 from django.core.serializers.python import Serializer
 
-from avatar.util import get_primary_avatar, get_default_avatar_url
+from avatar.utils import get_primary_avatar, get_default_avatar_url
 from avatar.templatetags.avatar_tags import avatar_url
 
 from document.models import Document, AccessRight, DocumentRevision

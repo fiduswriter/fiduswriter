@@ -164,9 +164,9 @@ class SimpleTypingTest(LiveTornadoTestCase, Manipulator):
 
         for i in range(8):
             document_input.send_keys(second_part[i])
-            time.sleep(randrange(1, 10) / 20.0)
+            time.sleep(randrange(30, 40) / 200.0)
             document_input2.send_keys(first_part[i])
-            time.sleep(randrange(1, 10) / 20.0)
+            time.sleep(randrange(30, 40) / 200.0)
 
         self.assertEqual(
             16,
@@ -192,9 +192,9 @@ class SimpleTypingTest(LiveTornadoTestCase, Manipulator):
 
         for char in self.TEST_TEXT:
             document_input.send_keys(char)
-            time.sleep(randrange(1, 10) / 20.0)
+            time.sleep(randrange(30, 40) / 200.0)
             document_input2.send_keys(char)
-            time.sleep(randrange(1, 10) / 20.0)
+            time.sleep(randrange(30, 40) / 200.0)
 
         self.assertEqual(
             len(self.TEST_TEXT) * 2,
@@ -240,7 +240,7 @@ class ThreadedTypingTest(LiveTornadoTestCase, Manipulator):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
-            time.sleep(randrange(1, 20) / 20.0)
+            time.sleep(randrange(30, 40) / 200.0)
 
     def test_typing(self):
         self.loadDocumentEditor(self.driver, self.doc)
@@ -350,7 +350,7 @@ class ThreadedSelectAndBoldTest(LiveTornadoTestCase, Manipulator):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
-            time.sleep(randrange(1, 20) / 20.0)
+            time.sleep(randrange(30, 40) / 200.0)
 
     def make_bold(self, driver):
         button = driver.find_element_by_xpath(
@@ -449,7 +449,7 @@ class ThreadedSelectAndItalicTest(LiveTornadoTestCase, Manipulator):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
-            time.sleep(randrange(1, 20) / 20.0)
+            time.sleep(randrange(30, 40) / 200.0)
 
     def make_bold(self, driver):
         button = driver.find_element_by_xpath(
@@ -545,7 +545,7 @@ class ThreadedMakeNumberedlistTest(LiveTornadoTestCase, Manipulator):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
-            time.sleep(randrange(1, 20) / 20.0)
+            time.sleep(randrange(30, 40) / 200.0)
 
     def make_numberedlist(self, driver):
         button = driver.find_element_by_xpath(
@@ -767,7 +767,7 @@ class ThreadedMakeBlockqouteTest(LiveTornadoTestCase, Manipulator):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
-            time.sleep(randrange(1, 20) / 20.0)
+            time.sleep(randrange(30, 40) / 200.0)
 
     def make_blockqoute(self, driver):
         button = driver.find_element_by_xpath(
@@ -864,7 +864,7 @@ class ThreadedAddLinkTest(LiveTornadoTestCase, Manipulator):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
-            time.sleep(randrange(1, 20) / 20.0)
+            time.sleep(randrange(30, 40) / 200.0)
 
     def addlink(self, driver):
         button = driver.find_element_by_xpath(
@@ -973,7 +973,7 @@ class ThreadedAddFootnoteTest(LiveTornadoTestCase, Manipulator):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
-            time.sleep(randrange(1, 20) / 20.0)
+            time.sleep(randrange(30, 40) / 200.0)
 
     def make_footnote(self, driver):
         button = driver.find_element_by_xpath(
@@ -1082,7 +1082,7 @@ class ThreadedSelectDeleteUndoTest(LiveTornadoTestCase, Manipulator):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
-            time.sleep(randrange(1, 20) / 20.0)
+            time.sleep(randrange(30, 40) / 200.0)
 
     def perform_delete_undo(self, driver):
         element = driver.find_element_by_class_name('ProseMirror-content')
@@ -1186,7 +1186,7 @@ class ThreadedAddMathEquationTest(LiveTornadoTestCase, Manipulator):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
-            time.sleep(randrange(1, 20) / 20.0)
+            time.sleep(randrange(30, 40) / 200.0)
 
     def make_mathequation(self, driver):
         button = driver.find_element_by_xpath(
@@ -1298,7 +1298,7 @@ class ThreadedAddCommentTest(LiveTornadoTestCase, Manipulator):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
-            time.sleep(randrange(1, 20) / 20.0)
+            time.sleep(randrange(30, 40) / 200.0)
 
     def add_comment(self, driver):
         button = driver.find_element_by_xpath(
@@ -1405,7 +1405,7 @@ class ThreadedAddImageTest(LiveTornadoTestCase, Manipulator):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
-            time.sleep(randrange(1, 20) / 20.0)
+            time.sleep(randrange(30, 40) / 200.0)
 
     def add_figure(self, driver):
         button = driver.find_element_by_xpath(
@@ -1569,7 +1569,7 @@ class ThreadedAddCiteTest(LiveTornadoTestCase, Manipulator):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
-            time.sleep(randrange(1, 20) / 20.0)
+            time.sleep(randrange(30, 40) / 200.0)
 
     def add_citation(self, driver):
         button = driver.find_element_by_xpath(

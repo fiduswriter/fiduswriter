@@ -1,5 +1,6 @@
 import time
 import json
+from builtins import range
 
 from django.shortcuts import render
 from django.http import JsonResponse
@@ -412,7 +413,7 @@ def delete_js(request):
     if request.is_ajax() and request.method == 'POST':
         status = 201
         ids = request.POST.getlist('ids[]')
-        id_chunks = [ids[x:x + 100] for x in xrange(0, len(ids), 100)]
+        id_chunks = [ids[x:x + 100] for x in range(0, len(ids), 100)]
         for id_chunk in id_chunks:
             Entry.objects.filter(
                 pk__in=id_chunk,

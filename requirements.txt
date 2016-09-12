@@ -8,3 +8,4 @@ tornado==4.4.1
 python-dateutil==2.5.3
 python-magic==0.4.12
 setuptools==27.1.2
+future==0.15.2

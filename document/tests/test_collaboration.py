@@ -134,24 +134,24 @@ class ThreadManipulator(Manipulator):
             time.sleep(0.1)
             self.wait_for_doc_size(driver, size, seconds - 0.1)
 
-    def wait_for_doc_sync(self, driver1, driver2, seconds=10.0):
-        doc1_size = driver1.execute_script(
+    def wait_for_doc_sync(self, driver, driver2, seconds=10.0):
+        doc_size = driver.execute_script(
             'return window.theEditor.pm.doc.content.size')
         doc2_size = driver2.execute_script(
             'return window.theEditor.pm.doc.content.size')
-        if doc1_size > doc2_size:
-            self.wait_for_doc(driver2, doc1_size)
-        elif doc2_size > doc1_size:
-            self.wait_for_doc(driver1, doc2_size)
+        if doc_size > doc2_size:
+            self.wait_for_doc(driver2, doc_size)
+        elif doc2_size > doc_size:
+            self.wait_for_doc(driver, doc2_size)
         else:
-            doc1_str = driver1.execute_script(
+            doc_str = driver.execute_script(
                 'return window.theEditor.pm.doc.toString()')
             doc2_str = driver2.execute_script(
                 'return window.theEditor.pm.doc.toString()')
-            if (doc1_str != doc2_str):
+            if (doc_str != doc2_str):
                 # The strings don't match.
                 time.sleep(0.1)
-                self.wait_for_doc_sync(driver1, driver2, seconds - 0.1)
+                self.wait_for_doc_sync(driver, driver2, seconds - 0.1)
 
 
 class SimpleTypingTest(LiveTornadoTestCase, Manipulator):
@@ -318,7 +318,7 @@ class TypingTest(LiveTornadoTestCase, ThreadManipulator):
         p2.join()
 
         # Wait for the two editors to be synched
-        self.wait_for_doc_sync(self.driver1, self.driver2)
+        self.wait_for_doc_sync(self.driver, self.driver2)
 
         self.assertEqual(
             16,
@@ -356,7 +356,7 @@ class TypingTest(LiveTornadoTestCase, ThreadManipulator):
         p2.join()
 
         # Wait for the two editors to be synched
-        self.wait_for_doc_sync(self.driver1, self.driver2)
+        self.wait_for_doc_sync(self.driver, self.driver2)
 
         self.assertEqual(
             len(self.TEST_TEXT) * 2,
@@ -1243,7 +1243,7 @@ class AddCommentTest(LiveTornadoTestCase, ThreadManipulator):
         p1.join()
         p2.join()
 
-        self.wait_for_doc_sync(self.driver1, self.driver2)
+        self.wait_for_doc_sync(self.driver, self.driver2)
 
         self.assertEqual(
             10,
@@ -1536,7 +1536,7 @@ class AddCiteTest(LiveTornadoTestCase, ThreadManipulator):
         p1.join()
         p2.join()
 
-        self.wait_for_doc_sync(self.driver1, self.driver2)
+        self.wait_for_doc_sync(self.driver, self.driver2)
 
         self.assertEqual(
             10,

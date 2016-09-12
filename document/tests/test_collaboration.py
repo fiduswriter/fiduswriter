@@ -656,7 +656,7 @@ class ThreadedMakeBulletlistTest(LiveTornadoTestCase, Manipulator):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
-            time.sleep(randrange(1, 20) / 20.0)
+            time.sleep(randrange(300, 400) / 1000.0)
 
     def make_bulletlist(self, driver):
         button = driver.find_element_by_xpath(

@@ -1261,7 +1261,7 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
         # add caption to the image
         caption = driver.find_element_by_class_name('caption')
         self.input_text(caption, "My figure")
-        #time.sleep(1)
+        # time.sleep(1)
 
         # click on 'Insert image' button
         driver.find_element_by_xpath(

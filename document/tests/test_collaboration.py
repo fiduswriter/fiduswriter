@@ -624,6 +624,13 @@ class MakeBulletlistTest(LiveTornadoTestCase, ThreadManipulator):
             '//*[@id="document-contents"]//ul//li')
         return bulletTags
 
+    def wait_for_doc_size(self, driver, size):
+        doc_size = driver.execute_script(
+            'return window.theEditor.pm.doc.content.size')
+        if doc_size < size:
+            time.sleep(0.1)
+            self.wait_for_doc_size(driver, size)
+
     def test_bulletlist(self):
         self.loadDocumentEditor(self.driver, self.doc)
         self.loadDocumentEditor(self.driver2, self.doc)
@@ -663,8 +670,8 @@ class MakeBulletlistTest(LiveTornadoTestCase, ThreadManipulator):
         p2.start()
         p2.join()
 
-        # Wait for the first processor to write some text and go to next line
-        time.sleep(1.9)
+        # Wait for the first processor to write enough text and go to next line
+        self.wait_for_doc_size(self.driver2, 45)
 
         self.driver2.execute_script(
             'window.theEditor.pm.setTextSelection(40,40)')

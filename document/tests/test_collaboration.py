@@ -135,23 +135,14 @@ class ThreadManipulator(Manipulator):
             self.wait_for_doc_size(driver, size, seconds - 0.1)
 
     def wait_for_doc_sync(self, driver, driver2, seconds=10.0):
-        doc_size = driver.execute_script(
-            'return window.theEditor.pm.doc.content.size')
-        doc2_size = driver2.execute_script(
-            'return window.theEditor.pm.doc.content.size')
-        if doc_size > doc2_size:
-            self.wait_for_doc(driver2, doc_size)
-        elif doc2_size > doc_size:
-            self.wait_for_doc(driver, doc2_size)
-        else:
-            doc_str = driver.execute_script(
-                'return window.theEditor.pm.doc.toString()')
-            doc2_str = driver2.execute_script(
-                'return window.theEditor.pm.doc.toString()')
-            if (doc_str != doc2_str):
-                # The strings don't match.
-                time.sleep(0.1)
-                self.wait_for_doc_sync(driver, driver2, seconds - 0.1)
+        doc_str = driver.execute_script(
+            'return window.theEditor.pm.doc.toString()')
+        doc2_str = driver2.execute_script(
+            'return window.theEditor.pm.doc.toString()')
+        if (doc_str != doc2_str):
+            # The strings don't match.
+            time.sleep(0.1)
+            self.wait_for_doc_sync(driver, driver2, seconds - 0.1)
 
 
 class SimpleTypingTest(LiveTornadoTestCase, Manipulator):

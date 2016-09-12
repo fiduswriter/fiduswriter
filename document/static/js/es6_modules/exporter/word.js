@@ -78,8 +78,18 @@ export class WordExporter {
                 }
             }
         )
-        this.citFm = new FormatCitations(this.citInfos, this.doc.settings.citationstyle, this.bibDB)
+        this.citFm = new FormatCitations(
+            this.citInfos,
+            this.doc.settings.citationstyle,
+            this.bibDB,
+            function() {
+                that.formatCitationsTwo()
+            }
+        )
         this.citFm.init()
+    }
+
+    formatCitationsTwo() {
         // There could be some formatting in the citations, so we parse them through the PM schema for final formatting.
         // We need to put the citations each in a paragraph so that it works with
         // the fiduswriter schema and so that the converter doesn't mash them together.

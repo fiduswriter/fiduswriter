@@ -1174,14 +1174,14 @@ class AddCommentTest(LiveTornadoTestCase, ThreadManipulator):
 
         driver.find_element_by_class_name("submitComment").click()
 
-    def get_mathequation(self, driver):
-        math = driver.find_element_by_xpath(
+    def get_comment(self, driver):
+        comment = driver.find_element_by_xpath(
             '//*[@class="comment-text-wrapper"]'
         )
 
-        return math.text
+        return comment.text
 
-    def test_mathequation(self):
+    def test_comment(self):
         self.loadDocumentEditor(self.driver, self.doc)
         self.loadDocumentEditor(self.driver2, self.doc)
 
@@ -1202,13 +1202,16 @@ class AddCommentTest(LiveTornadoTestCase, ThreadManipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        self.wait_for_doc_size(self.driver2, 32)
+        self.wait_for_doc_size(self.driver2, 33)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
             '//*[@class="ProseMirror-content"]'
         )
         content.click()
+
+        self.driver2.execute_script(
+            'window.theEditor.pm.focus()')
 
         self.driver2.execute_script(
             'window.theEditor.pm.setTextSelection(22,27)')
@@ -1221,14 +1224,16 @@ class AddCommentTest(LiveTornadoTestCase, ThreadManipulator):
         p1.join()
         p2.join()
 
+        time.sleep(2)
+
         self.assertEqual(
             10,
-            len(self.get_mathequation(self.driver2))
+            len(self.get_comment(self.driver2))
         )
 
         self.assertEqual(
-            len(self.get_mathequation(self.driver)),
-            len(self.get_mathequation(self.driver2))
+            len(self.get_comment(self.driver)),
+            len(self.get_comment(self.driver2))
         )
 
 

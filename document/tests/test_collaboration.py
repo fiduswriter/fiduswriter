@@ -108,6 +108,7 @@ class Manipulator(object):
             EC.presence_of_element_located((By.ID, 'document-contents'))
         )
 
+
 class ThreadManipulator(Manipulator):
     """
     Common functions used in threaded tests
@@ -644,7 +645,7 @@ class MakeBulletlistTest(LiveTornadoTestCase, ThreadManipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(2.4)
+        time.sleep(1.0)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -663,7 +664,7 @@ class MakeBulletlistTest(LiveTornadoTestCase, ThreadManipulator):
         p2.join()
 
         # Wait for the first processor to write some text and go to next line
-        time.sleep(0.2)
+        time.sleep(1.9)
 
         self.driver2.execute_script(
             'window.theEditor.pm.setTextSelection(40,40)')

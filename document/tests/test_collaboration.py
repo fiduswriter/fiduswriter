@@ -127,6 +127,13 @@ class ThreadManipulator(Manipulator):
         )
         self.input_text(document_input, title)
 
+    def wait_for_doc_size(self, driver, size):
+        doc_size = driver.execute_script(
+            'return window.theEditor.pm.doc.content.size')
+        if doc_size < size:
+            time.sleep(0.1)
+            self.wait_for_doc_size(driver, size)
+
 
 class SimpleTypingTest(LiveTornadoTestCase, Manipulator):
     """
@@ -395,7 +402,7 @@ class SelectAndBoldTest(LiveTornadoTestCase, ThreadManipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(2)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -474,7 +481,7 @@ class SelectAndItalicTest(LiveTornadoTestCase, ThreadManipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(2)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -552,7 +559,7 @@ class MakeNumberedlistTest(LiveTornadoTestCase, ThreadManipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(2.4)
+        self.wait_for_doc_size(self.driver2, 28)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -571,7 +578,7 @@ class MakeNumberedlistTest(LiveTornadoTestCase, ThreadManipulator):
         p2.join()
 
         # Wait for the first processor to write some text and go to next line
-        time.sleep(2.4)
+        self.wait_for_doc_size(self.driver2, 45)
 
         self.driver2.execute_script(
             'window.theEditor.pm.setTextSelection(40,40)')
@@ -624,13 +631,6 @@ class MakeBulletlistTest(LiveTornadoTestCase, ThreadManipulator):
             '//*[@id="document-contents"]//ul//li')
         return bulletTags
 
-    def wait_for_doc_size(self, driver, size):
-        doc_size = driver.execute_script(
-            'return window.theEditor.pm.doc.content.size')
-        if doc_size < size:
-            time.sleep(0.1)
-            self.wait_for_doc_size(driver, size)
-
     def test_bulletlist(self):
         self.loadDocumentEditor(self.driver, self.doc)
         self.loadDocumentEditor(self.driver2, self.doc)
@@ -652,7 +652,7 @@ class MakeBulletlistTest(LiveTornadoTestCase, ThreadManipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(1.0)
+        self.wait_for_doc_size(self.driver2, 28)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -745,7 +745,7 @@ class MakeBlockqouteTest(LiveTornadoTestCase, ThreadManipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(2)
+        self.wait_for_doc_size(self.driver2, 25)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -838,7 +838,7 @@ class AddLinkTest(LiveTornadoTestCase, ThreadManipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(2)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -929,7 +929,7 @@ class AddFootnoteTest(LiveTornadoTestCase, ThreadManipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(2)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -1016,7 +1016,7 @@ class SelectDeleteUndoTest(LiveTornadoTestCase, ThreadManipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(2)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -1111,7 +1111,7 @@ class AddMathEquationTest(LiveTornadoTestCase, ThreadManipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(2)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -1202,7 +1202,7 @@ class AddCommentTest(LiveTornadoTestCase, ThreadManipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(2)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -1261,7 +1261,7 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
         # add caption to the image
         caption = driver.find_element_by_class_name('caption')
         self.input_text(caption, "My figure")
-        time.sleep(1)
+        #time.sleep(1)
 
         # click on 'Insert image' button
         driver.find_element_by_xpath(
@@ -1338,7 +1338,7 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(2)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -1493,7 +1493,7 @@ class AddCiteTest(LiveTornadoTestCase, ThreadManipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(2)
+        self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(

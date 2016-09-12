@@ -56,7 +56,9 @@ class Manipulator(object):
             )
         else:
             self.driver = webdriver.Chrome()
+            self.driver.set_window_size("1024", "768")
             self.driver2 = webdriver.Chrome()
+            self.driver2.set_window_size("1024", "768")
 
     # create django data
     def createUser(self):
@@ -350,7 +352,7 @@ class ThreadedSelectAndBoldTest(LiveTornadoTestCase, Manipulator):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
-            time.sleep(randrange(1, 20) / 20.0)
+            time.sleep(randrange(2, 10) / 20.0)
 
     def make_bold(self, driver):
         button = driver.find_element_by_xpath(
@@ -398,7 +400,7 @@ class ThreadedSelectAndBoldTest(LiveTornadoTestCase, Manipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(6)
+        time.sleep(3)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -449,7 +451,7 @@ class ThreadedSelectAndItalicTest(LiveTornadoTestCase, Manipulator):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
-            time.sleep(randrange(1, 20) / 20.0)
+            time.sleep(randrange(2, 10) / 20.0)
 
     def make_bold(self, driver):
         button = driver.find_element_by_xpath(
@@ -494,7 +496,7 @@ class ThreadedSelectAndItalicTest(LiveTornadoTestCase, Manipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(6)
+        time.sleep(3)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -545,7 +547,7 @@ class ThreadedMakeNumberedlistTest(LiveTornadoTestCase, Manipulator):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
-            time.sleep(randrange(1, 20) / 20.0)
+            time.sleep(randrange(2, 10) / 20.0)
 
     def make_numberedlist(self, driver):
         button = driver.find_element_by_xpath(
@@ -591,7 +593,7 @@ class ThreadedMakeNumberedlistTest(LiveTornadoTestCase, Manipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(6)
+        time.sleep(3)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -609,7 +611,7 @@ class ThreadedMakeNumberedlistTest(LiveTornadoTestCase, Manipulator):
         p2.start()
         p2.join()
 
-        # Wait for the first processor to write some text and go to nex line
+        # Wait for the first processor to write some text and go to next line
         time.sleep(10)
 
         self.driver2.execute_script(
@@ -656,7 +658,7 @@ class ThreadedMakeBulletlistTest(LiveTornadoTestCase, Manipulator):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
-            time.sleep(randrange(1, 20) / 20.0)
+            time.sleep(randrange(2, 10) / 20.0)
 
     def make_bulletlist(self, driver):
         button = driver.find_element_by_xpath(
@@ -720,8 +722,8 @@ class ThreadedMakeBulletlistTest(LiveTornadoTestCase, Manipulator):
         p2.start()
         p2.join()
 
-        # Wait for the first processor to write some text and go to nex line
-        time.sleep(6)
+        # Wait for the first processor to write some text and go to next line
+        time.sleep(10)
 
         self.driver2.execute_script(
             'window.theEditor.pm.setTextSelection(37,37)')
@@ -767,7 +769,7 @@ class ThreadedMakeBlockqouteTest(LiveTornadoTestCase, Manipulator):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
-            time.sleep(randrange(1, 20) / 20.0)
+            time.sleep(randrange(2, 10) / 20.0)
 
     def make_blockqoute(self, driver):
         button = driver.find_element_by_xpath(
@@ -812,7 +814,7 @@ class ThreadedMakeBlockqouteTest(LiveTornadoTestCase, Manipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(6)
+        time.sleep(3)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -864,7 +866,7 @@ class ThreadedAddLinkTest(LiveTornadoTestCase, Manipulator):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
-            time.sleep(randrange(1, 20) / 20.0)
+            time.sleep(randrange(2, 10) / 20.0)
 
     def addlink(self, driver):
         button = driver.find_element_by_xpath(
@@ -922,7 +924,7 @@ class ThreadedAddLinkTest(LiveTornadoTestCase, Manipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(6)
+        time.sleep(3)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -973,7 +975,7 @@ class ThreadedAddFootnoteTest(LiveTornadoTestCase, Manipulator):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
-            time.sleep(randrange(1, 20) / 20.0)
+            time.sleep(randrange(2, 10) / 20.0)
 
     def make_footnote(self, driver):
         button = driver.find_element_by_xpath(
@@ -1030,7 +1032,7 @@ class ThreadedAddFootnoteTest(LiveTornadoTestCase, Manipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(6)
+        time.sleep(3)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -1082,13 +1084,13 @@ class ThreadedSelectDeleteUndoTest(LiveTornadoTestCase, Manipulator):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
-            time.sleep(randrange(1, 20) / 20.0)
+            time.sleep(randrange(2, 10) / 20.0)
 
     def perform_delete_undo(self, driver):
         element = driver.find_element_by_class_name('ProseMirror-content')
         element.send_keys(Keys.BACKSPACE)
 
-        time.sleep(5)
+        time.sleep(2)
 
         button = driver.find_element_by_xpath(
             '//*[@id="button-undo"]')
@@ -1134,7 +1136,7 @@ class ThreadedSelectDeleteUndoTest(LiveTornadoTestCase, Manipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(6)
+        time.sleep(3)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -1186,7 +1188,7 @@ class ThreadedAddMathEquationTest(LiveTornadoTestCase, Manipulator):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
-            time.sleep(randrange(1, 20) / 20.0)
+            time.sleep(randrange(2, 10) / 20.0)
 
     def make_mathequation(self, driver):
         button = driver.find_element_by_xpath(
@@ -1207,11 +1209,11 @@ class ThreadedAddMathEquationTest(LiveTornadoTestCase, Manipulator):
 
     def get_mathequation(self, driver):
         math = driver.find_element_by_xpath(
-            '//*[@id="document-contents"]/p[1]/span[2]'
+            '//*[@id="document-contents"]/p/span[2]'
             # OR '//*[@class="equation"]'
         )
 
-        return math.text
+        return math.get_attribute('data-equation')
 
     def test_mathequation(self):
         self.loadDocumentEditor(self.driver, self.doc)
@@ -1246,7 +1248,7 @@ class ThreadedAddMathEquationTest(LiveTornadoTestCase, Manipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(6)
+        time.sleep(3)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -1266,7 +1268,7 @@ class ThreadedAddMathEquationTest(LiveTornadoTestCase, Manipulator):
         p2.join()
 
         self.assertEqual(
-            55,
+            34,
             len(self.get_mathequation(self.driver2))
         )
 
@@ -1298,7 +1300,7 @@ class ThreadedAddCommentTest(LiveTornadoTestCase, Manipulator):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
-            time.sleep(randrange(1, 20) / 20.0)
+            time.sleep(randrange(2, 10) / 20.0)
 
     def add_comment(self, driver):
         button = driver.find_element_by_xpath(
@@ -1354,7 +1356,7 @@ class ThreadedAddCommentTest(LiveTornadoTestCase, Manipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(6)
+        time.sleep(3)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -1405,7 +1407,7 @@ class ThreadedAddImageTest(LiveTornadoTestCase, Manipulator):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
-            time.sleep(randrange(1, 20) / 20.0)
+            time.sleep(randrange(2, 10) / 20.0)
 
     def add_figure(self, driver):
         button = driver.find_element_by_xpath(
@@ -1507,7 +1509,7 @@ class ThreadedAddImageTest(LiveTornadoTestCase, Manipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(6)
+        time.sleep(3)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -1569,7 +1571,7 @@ class ThreadedAddCiteTest(LiveTornadoTestCase, Manipulator):
     def input_text(self, document_input, text):
         for char in text:
             document_input.send_keys(char)
-            time.sleep(randrange(1, 20) / 20.0)
+            time.sleep(randrange(2, 10) / 20.0)
 
     def add_citation(self, driver):
         button = driver.find_element_by_xpath(
@@ -1679,7 +1681,7 @@ class ThreadedAddCiteTest(LiveTornadoTestCase, Manipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(6)
+        time.sleep(3)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(

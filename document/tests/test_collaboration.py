@@ -378,11 +378,11 @@ class ThreadedSelectAndBoldTest(LiveTornadoTestCase, Manipulator):
         self.driver2.execute_script(
             'window.theEditor.pm.setTextSelection(1,1)')
 
-        second_part = "My title"
+        title = "My title"
 
         p1 = multiprocessing.Process(
             target=self.input_text,
-            args=(document_input, second_part)
+            args=(document_input, title)
         )
         p1.start()
         p1.join()
@@ -474,11 +474,11 @@ class ThreadedSelectAndItalicTest(LiveTornadoTestCase, Manipulator):
         self.driver2.execute_script(
             'window.theEditor.pm.setTextSelection(1,1)')
 
-        second_part = "My title"
+        title = "My title"
 
         p1 = multiprocessing.Process(
             target=self.input_text,
-            args=(document_input, second_part)
+            args=(document_input, title)
         )
         p1.start()
         p1.join()
@@ -571,11 +571,11 @@ class ThreadedMakeNumberedlistTest(LiveTornadoTestCase, Manipulator):
         self.driver2.execute_script(
             'window.theEditor.pm.setTextSelection(1,1)')
 
-        second_part = "My title"
+        title = "My title"
 
         p1 = multiprocessing.Process(
             target=self.input_text,
-            args=(document_input, second_part)
+            args=(document_input, title)
         )
         p1.start()
         p1.join()
@@ -682,11 +682,11 @@ class ThreadedMakeBulletlistTest(LiveTornadoTestCase, Manipulator):
         self.driver2.execute_script(
             'window.theEditor.pm.setTextSelection(1,1)')
 
-        second_part = "My title"
+        title = "My title"
 
         p1 = multiprocessing.Process(
             target=self.input_text,
-            args=(document_input, second_part)
+            args=(document_input, title)
         )
         p1.start()
         p1.join()
@@ -792,11 +792,11 @@ class ThreadedMakeBlockqouteTest(LiveTornadoTestCase, Manipulator):
         self.driver2.execute_script(
             'window.theEditor.pm.setTextSelection(1,1)')
 
-        second_part = "My title"
+        title = "My title"
 
         p1 = multiprocessing.Process(
             target=self.input_text,
-            args=(document_input, second_part)
+            args=(document_input, title)
         )
         p1.start()
         p1.join()
@@ -902,11 +902,11 @@ class ThreadedAddLinkTest(LiveTornadoTestCase, Manipulator):
         self.driver2.execute_script(
             'window.theEditor.pm.setTextSelection(1,1)')
 
-        second_part = "My title"
+        title = "My title"
 
         p1 = multiprocessing.Process(
             target=self.input_text,
-            args=(document_input, second_part)
+            args=(document_input, title)
         )
         p1.start()
         p1.join()
@@ -1010,11 +1010,11 @@ class ThreadedAddFootnoteTest(LiveTornadoTestCase, Manipulator):
         self.driver2.execute_script(
             'window.theEditor.pm.setTextSelection(1,1)')
 
-        second_part = "My title"
+        title = "My title"
 
         p1 = multiprocessing.Process(
             target=self.input_text,
-            args=(document_input, second_part)
+            args=(document_input, title)
         )
         p1.start()
         p1.join()
@@ -1114,11 +1114,11 @@ class ThreadedSelectDeleteUndoTest(LiveTornadoTestCase, Manipulator):
         self.driver2.execute_script(
             'window.theEditor.pm.setTextSelection(1,1)')
 
-        second_part = "My title"
+        title = "My title"
 
         p1 = multiprocessing.Process(
             target=self.input_text,
-            args=(document_input, second_part)
+            args=(document_input, title)
         )
         p1.start()
         p1.join()
@@ -1226,11 +1226,11 @@ class ThreadedAddMathEquationTest(LiveTornadoTestCase, Manipulator):
         self.driver2.execute_script(
             'window.theEditor.pm.setTextSelection(1,1)')
 
-        second_part = "My title"
+        title = "My title"
 
         p1 = multiprocessing.Process(
             target=self.input_text,
-            args=(document_input, second_part)
+            args=(document_input, title)
         )
         p1.start()
         p1.join()
@@ -1334,11 +1334,11 @@ class ThreadedAddCommentTest(LiveTornadoTestCase, Manipulator):
         self.driver2.execute_script(
             'window.theEditor.pm.setTextSelection(1,1)')
 
-        second_part = "My title"
+        title = "My title"
 
         p1 = multiprocessing.Process(
             target=self.input_text,
-            args=(document_input, second_part)
+            args=(document_input, title)
         )
         p1.start()
         p1.join()
@@ -1487,11 +1487,11 @@ class ThreadedAddImageTest(LiveTornadoTestCase, Manipulator):
         self.driver2.execute_script(
             'window.theEditor.pm.setTextSelection(1,1)')
 
-        second_part = "My title"
+        title = "My title"
 
         p1 = multiprocessing.Process(
             target=self.input_text,
-            args=(document_input, second_part)
+            args=(document_input, title)
         )
         p1.start()
         p1.join()
@@ -1659,11 +1659,11 @@ class ThreadedAddCiteTest(LiveTornadoTestCase, Manipulator):
         self.driver2.execute_script(
             'window.theEditor.pm.setTextSelection(1,1)')
 
-        second_part = "My title"
+        title = "My title"
 
         p1 = multiprocessing.Process(
             target=self.input_text,
-            args=(document_input, second_part)
+            args=(document_input, title)
         )
         p1.start()
         p1.join()

@@ -108,6 +108,24 @@ class Manipulator(object):
             EC.presence_of_element_located((By.ID, 'document-contents'))
         )
 
+class ThreadManipulator(Manipulator):
+    """
+    Common functions used in threaded tests
+    """
+    def input_text(self, document_input, text):
+        for char in text:
+            document_input.send_keys(char)
+            time.sleep(randrange(30, 40) / 200.0)
+
+    def add_title(self, driver):
+        title = "My title"
+        driver.execute_script(
+            'window.theEditor.pm.setTextSelection(1,1)')
+        document_input = driver.find_element_by_xpath(
+            '//*[@class="ProseMirror-content"]'
+        )
+        self.input_text(document_input, title)
+
 
 class SimpleTypingTest(LiveTornadoTestCase, Manipulator):
     """
@@ -524,7 +542,7 @@ class ThreadedSelectAndItalicTest(LiveTornadoTestCase, Manipulator):
         )
 
 
-class ThreadedMakeNumberedlistTest(LiveTornadoTestCase, Manipulator):
+class ThreadedMakeNumberedlistTest(LiveTornadoTestCase, ThreadManipulator):
     """
         Test typing in collaborative mode with one user typing and
         another user use numbered list button in two different threads.
@@ -542,43 +560,24 @@ class ThreadedMakeNumberedlistTest(LiveTornadoTestCase, Manipulator):
         self.driver.quit()
         self.driver2.quit()
 
-    def input_text(self, document_input, text):
-        for char in text:
-            document_input.send_keys(char)
-            time.sleep(randrange(30, 40) / 200.0)
-
     def make_numberedlist(self, driver):
         button = driver.find_element_by_xpath(
             '//*[@id="button-ol"]')
         button.click()
 
     def get_numberedlist(self, driver):
-        olTags = driver.find_element_by_xpath(
-            '//*[@id="document-contents"]/ol')
-        numberedTags = olTags.find_elements_by_tag_name("li")
+        numberedTags = driver.find_elements_by_xpath(
+            '//*[@id="document-contents"]//ol//li')
         return numberedTags
 
     def test_numberedlist(self):
         self.loadDocumentEditor(self.driver, self.doc)
         self.loadDocumentEditor(self.driver2, self.doc)
+        self.add_title(self.driver)
 
         document_input = self.driver.find_element_by_xpath(
             '//*[@class="ProseMirror-content"]'
         )
-
-        self.driver.execute_script(
-            'window.theEditor.pm.setTextSelection(1,1)')
-        self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(1,1)')
-
-        title = "My title"
-
-        p1 = multiprocessing.Process(
-            target=self.input_text,
-            args=(document_input, title)
-        )
-        p1.start()
-        p1.join()
 
         # Total: 22
         self.driver.execute_script(
@@ -591,7 +590,7 @@ class ThreadedMakeNumberedlistTest(LiveTornadoTestCase, Manipulator):
         p1.start()
 
         # Wait for the first processor to write some text
-        time.sleep(6)
+        time.sleep(2.4)
 
         # without clicking on content the buttons will not work
         content = self.driver2.find_element_by_xpath(
@@ -609,11 +608,11 @@ class ThreadedMakeNumberedlistTest(LiveTornadoTestCase, Manipulator):
         p2.start()
         p2.join()
 
-        # Wait for the first processor to write some text and go to nex line
-        time.sleep(10)
+        # Wait for the first processor to write some text and go to next line
+        time.sleep(2.4)
 
         self.driver2.execute_script(
-            'window.theEditor.pm.setTextSelection(37,37)')
+            'window.theEditor.pm.setTextSelection(40,40)')
 
         p2 = multiprocessing.Process(
             target=self.make_numberedlist,

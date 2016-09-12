@@ -67,12 +67,12 @@ export class DocumentRevisionsDialog {
 
         jQuery('.recreate-revision').on('mousedown', function() {
             let revisionId = parseInt(jQuery(this).attr('data-id'))
-            that.recreate(revisionId, that.documentList, that.user)
+            that.recreate(revisionId, that.user)
         })
 
         jQuery('.delete-revision').on('mousedown', function() {
             let revisionId = parseInt(jQuery(this).attr('data-id'))
-            that.delete(revisionId, that.documentList)
+            that.delete(revisionId)
         })
     }
 
@@ -93,9 +93,9 @@ export class DocumentRevisionsDialog {
                 new ImportFidusFile(
                     fidusFile,
                     user,
+                    false,
                     that.bibDB,
                     that.imageDB,
-                    true,
                     function(noErrors, returnValue) {
                         deactivateWait()
                         if (noErrors) {

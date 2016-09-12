@@ -54,6 +54,8 @@ export let editorToModel = function(pmDoc) {
     // we do a few smaller modifications to the node before it is saved.
     let node = pmDoc.content.toDOM()
 
+    // Turn <span class='footnote-marker' contents='<p>...</p>'></span> into
+    // <span classs='footnote'><p>...</p></span>
     let fnNodes = node.querySelectorAll('.footnote-marker')
 
     for (let i = 0; i < fnNodes.length; i++) {
@@ -63,6 +65,7 @@ export let editorToModel = function(pmDoc) {
         fnNodes[i].parentNode.replaceChild(newNode, fnNodes[i])
     }
 
+    // Turn <strong>...</strong> into <b>...</b>
     let strongNodes = node.querySelectorAll('strong')
 
     for (let i = 0; i < strongNodes.length; i++) {
@@ -73,6 +76,7 @@ export let editorToModel = function(pmDoc) {
         strongNodes[i].parentNode.replaceChild(newNode, strongNodes[i])
     }
 
+    // Turn <em>...</em> into <i>...</i>
     let emNodes = node.querySelectorAll('em')
 
     for (let i = 0; i < emNodes.length; i++) {
@@ -81,6 +85,32 @@ export let editorToModel = function(pmDoc) {
             newNode.appendChild(emNodes[i].firstChild)
         }
         emNodes[i].parentNode.replaceChild(newNode, emNodes[i])
+    }
+
+    // Remove katex contents of <span class="equation" >
+    let mathNodes = node.querySelectorAll('span.equation')
+
+    for (let i = 0; i < mathNodes.length; i++) {
+        while (mathNodes[i].firstChild) {
+            mathNodes[i].removeChild(mathNodes[i].firstChild)
+        }
+    }
+
+    // TODO: Possibly enable this, but only for saving on server, not for exports.
+    // Remove all rendered contents (equations and images) of figures.
+    //let figureNodes = node.querySelectorAll('figure')
+    //
+    //for (let i = 0; i < figureNodes.length; i++) {
+    //    while (figureNodes[i].firstChild) {
+    //        figureNodes[i].removeChild(figureNodes[i].firstChild)
+    //    }
+    //}
+
+    // Remove all contenteditable attributes
+    let ceNodes = node.querySelectorAll('[contenteditable]')
+
+    for (let i = 0; i < ceNodes.length; i++) {
+        ceNodes[i].removeAttribute('contenteditable')
     }
 
     // We convert the node into a json object with two entries: metadata and contents

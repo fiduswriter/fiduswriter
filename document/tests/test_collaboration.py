@@ -34,9 +34,16 @@ class Manipulator(object):
             username = os.environ["SAUCE_USERNAME"]
             access_key = os.environ["SAUCE_ACCESS_KEY"]
             capabilities = {}
-            capabilities["build"] = os.environ["TRAVIS_BUILD_NUMBER"]
-            capabilities["tags"] = [os.environ["TRAVIS_PYTHON_VERSION"], "CI"]
-            capabilities["tunnel-identifier"] = os.environ["TRAVIS_JOB_NUMBER"]
+            if os.getenv("TRAVIS_BUILD_NUMBER"):
+                capabilities["build"] = os.environ["TRAVIS_BUILD_NUMBER"]
+                capabilities["tags"] = [
+                    os.environ["TRAVIS_PYTHON_VERSION"],
+                    "CI"
+                ]
+                capabilities["tunnel-identifier"] = os.environ[
+                    "TRAVIS_JOB_NUMBER"
+                ]
+
             capabilities["browserName"] = "chrome"
             hub_url = "%s:%s@localhost:4445" % (username, access_key)
             self.driver = webdriver.Remote(
@@ -365,9 +372,6 @@ class ThreadedSelectAndBoldTest(LiveTornadoTestCase, Manipulator):
         document_input = self.driver.find_element_by_xpath(
             '//*[@class="ProseMirror-content"]'
         )
-        document_input2 = self.driver2.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
-        )
 
         self.driver.execute_script(
             'window.theEditor.pm.setTextSelection(1,1)')
@@ -386,7 +390,6 @@ class ThreadedSelectAndBoldTest(LiveTornadoTestCase, Manipulator):
         # Total: 22
         self.driver.execute_script(
             'window.theEditor.pm.setTextSelection(22,22)')
-
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -465,9 +468,6 @@ class ThreadedSelectAndItalicTest(LiveTornadoTestCase, Manipulator):
         document_input = self.driver.find_element_by_xpath(
             '//*[@class="ProseMirror-content"]'
         )
-        document_input2 = self.driver2.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
-        )
 
         self.driver.execute_script(
             'window.theEditor.pm.setTextSelection(1,1)')
@@ -486,7 +486,6 @@ class ThreadedSelectAndItalicTest(LiveTornadoTestCase, Manipulator):
         # Total: 22
         self.driver.execute_script(
             'window.theEditor.pm.setTextSelection(22,22)')
-
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -566,9 +565,6 @@ class ThreadedMakeNumberedlistTest(LiveTornadoTestCase, Manipulator):
         document_input = self.driver.find_element_by_xpath(
             '//*[@class="ProseMirror-content"]'
         )
-        document_input2 = self.driver2.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
-        )
 
         self.driver.execute_script(
             'window.theEditor.pm.setTextSelection(1,1)')
@@ -587,7 +583,6 @@ class ThreadedMakeNumberedlistTest(LiveTornadoTestCase, Manipulator):
         # Total: 22
         self.driver.execute_script(
             'window.theEditor.pm.setTextSelection(22,22)')
-
 
         p1 = multiprocessing.Process(
             target=self.input_text,
@@ -628,7 +623,6 @@ class ThreadedMakeNumberedlistTest(LiveTornadoTestCase, Manipulator):
 
         p1.join()
         p2.join()
-
 
         self.assertEqual(
             2,
@@ -740,7 +734,6 @@ class ThreadedMakeBulletlistTest(LiveTornadoTestCase, Manipulator):
 
         p1.join()
         p2.join()
-
 
         self.assertEqual(
             2,
@@ -1070,7 +1063,8 @@ class ThreadedAddFootnoteTest(LiveTornadoTestCase, Manipulator):
 class ThreadedSelectDeleteUndoTest(LiveTornadoTestCase, Manipulator):
     """
     Test typing in collaborative mode with one user typing and
-    another user delete and undo some part of the text in two different threads.
+    another user delete and undo some part of the text in two different
+    threads.
     """
     TEST_TEXT = "Lorem ipsum dolor sit amet."
 
@@ -1173,7 +1167,8 @@ class ThreadedSelectDeleteUndoTest(LiveTornadoTestCase, Manipulator):
 class ThreadedAddMathEquationTest(LiveTornadoTestCase, Manipulator):
     """
     Test typing in collaborative mode with one user typing and
-    another user insert math equation in middle of the text in two different threads.
+    another user insert math equation in middle of the text in two different
+    threads.
     """
     TEST_TEXT = "Lorem ipsum dolor sit amet."
 
@@ -1201,11 +1196,13 @@ class ThreadedAddMathEquationTest(LiveTornadoTestCase, Manipulator):
         # wait to load popup
         time.sleep(2)
 
-        #input_math = driver.find_element_by_class_name("math-field")
-        #input_math.clear()
-        #input_math.send_keys('\$x=\frac{-b\pm{b^2-4ac}}{2a}')
+        # input_math = driver.find_element_by_class_name("math-field")
+        # input_math.clear()
+        # input_math.send_keys('\$x=\frac{-b\pm{b^2-4ac}}{2a}')
 
-        insert_btn = driver.find_element_by_xpath('/html/body/div[5]/div[3]/div/button[1]')
+        insert_btn = driver.find_element_by_xpath(
+            '/html/body/div[5]/div[3]/div/button[1]'
+        )
         insert_btn.click()
 
     def get_mathequation(self, driver):
@@ -1282,7 +1279,8 @@ class ThreadedAddMathEquationTest(LiveTornadoTestCase, Manipulator):
 class ThreadedAddCommentTest(LiveTornadoTestCase, Manipulator):
     """
     Test typing in collaborative mode with one user typing and
-    another user add some comment in middle of the text in two different threads.
+    another user add some comment in middle of the text in two different
+    threads.
     """
     TEST_TEXT = "Lorem ipsum dolor sit amet."
 
@@ -1433,9 +1431,13 @@ class ThreadedAddImageTest(LiveTornadoTestCase, Manipulator):
         time.sleep(1)
 
         # image path
-        imagePath = settings.STATIC_ROOT + 'test/image.png'
-        # path = driver.execute_script("return window.staticUrl + 'test/image.png'")
-
+        imagePath = os.path.join(
+            settings.PROJECT_PATH,
+            'document/tests/uploads/image.png'
+        )
+        # path = driver.execute_script(
+        #     "return window.staticUrl + 'test/image.png'"
+        # )
         # inorder to select the image we send the image path in the
         # LOCAL MACHINE to the input tag
         driver.find_element_by_xpath(
@@ -1444,7 +1446,7 @@ class ThreadedAddImageTest(LiveTornadoTestCase, Manipulator):
 
         # click on 'Upload' button
         driver.find_element_by_xpath(
-            '/html/body/div[9]/div[3]/div/button[1]').click()
+            '//*[contains(@class, "ui-button") and text()="Upload"]').click()
         time.sleep(1)
 
         # click on 'Use image' button
@@ -1455,7 +1457,7 @@ class ThreadedAddImageTest(LiveTornadoTestCase, Manipulator):
         # click on 'Insert' button
         driver.find_element_by_xpath(
             '/html/body/div[5]/div[3]/div/button[1]').click()
-        time.sleep(10)
+        time.sleep(2)
 
     def get_image(self, driver):
         figure = driver.find_element_by_xpath(
@@ -1551,7 +1553,7 @@ class ThreadedAddCiteTest(LiveTornadoTestCase, Manipulator):
     """
     TEST_TEXT = "Lorem ipsum dolor sit amet."
     # Load bibliography data
-    fixtures = ["initial_bib_rules.json",]
+    fixtures = ["initial_bib_rules.json", ]
 
     def setUp(self):
         self.getDrivers()
@@ -1616,14 +1618,16 @@ class ThreadedAddCiteTest(LiveTornadoTestCase, Manipulator):
         time.sleep(1)
 
         publication_date = driver.find_element_by_xpath(
-            '//*[@id="optionTab1"]/table/tbody/tr[4]/td/table/tbody/tr/td[3]/input')
+            '//*[@id="optionTab1"]/table/tbody' +
+            '/tr[4]/td/table/tbody/tr/td[3]/input'
+        )
         publication_date.click()
         publication_date.send_keys("2012")
         time.sleep(2)
 
         # click on Submit button
         driver.find_element_by_xpath(
-            '/html/body/div[7]/div[3]/div/button[1]/span').click()
+            '//*[contains(@class, "ui-button") and text()="Submit"]').click()
         time.sleep(3)
 
         # click on Insert button
@@ -1694,7 +1698,7 @@ class ThreadedAddCiteTest(LiveTornadoTestCase, Manipulator):
         p1.join()
         p2.join()
 
-        time.sleep(10)
+        time.sleep(1)
         self.assertEqual(
             10,
             len(self.get_citation_within_text(self.driver2))
@@ -1706,7 +1710,7 @@ class ThreadedAddCiteTest(LiveTornadoTestCase, Manipulator):
         )
 
         self.assertEqual(
-            10,
+            46,
             len(self.get_citation_bib(self.driver))
         )
 

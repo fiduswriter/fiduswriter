@@ -66,7 +66,6 @@ export class ModSettingsLayout {
             'selected')
         jQuery('span[data-paperheight=' + this.mod.editor.doc.settings.papersize +
             ']').addClass('selected')
-        paginationConfig['pageHeight'] = this.mod.editor.doc.settings.papersize
     }
 
 

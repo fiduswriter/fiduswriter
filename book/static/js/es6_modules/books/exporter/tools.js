@@ -28,8 +28,8 @@ export let getImageAndBibDB = function (aBook, documentList, callback) {
     let imageGetter = new ImageDB(documentOwners)
     imageGetter.getDB(function () {
         let bibGetter = new BibliographyDB(documentOwners, false, false, false)
-        bibGetter.getBibDB(function () {
-            callback(imageGetter.db, bibGetter.bibDB)
+        bibGetter.getDB(function () {
+            callback(imageGetter.db, bibGetter)
         })
     })
 }

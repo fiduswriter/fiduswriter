@@ -4,17 +4,20 @@ import {htmlExportTemplate} from "./html-templates"
 import {BibliographyDB} from "../bibliography/database"
 import {BaseExporter} from "./base"
 import {obj2Node} from "./json"
-import {FormatCitations} from "../citations/format"
+import {RenderCitations} from "../citations/render"
 import {addAlert} from "../common/common"
 import {katexRender} from "../katex/katex"
 
 export class BaseHTMLExporter extends BaseExporter{
-    joinDocumentParts() {
-        let contents = document.createElement('div')
+    joinDocumentParts(callback) {
+
+        let that = this
+
+        this.contents = document.createElement('div')
         if (this.doc.contents) {
             let tempNode = obj2Node(this.doc.contents)
             while (tempNode.firstChild) {
-                contents.appendChild(tempNode.firstChild)
+                this.contents.appendChild(tempNode.firstChild)
             }
         }
 
@@ -22,7 +25,7 @@ export class BaseHTMLExporter extends BaseExporter{
             let tempNode = obj2Node(this.doc.metadata.keywords)
             if (tempNode.textContent.length > 0) {
                 tempNode.id = 'keywords'
-                contents.insertBefore(tempNode, contents.firstChild)
+                this.contents.insertBefore(tempNode, this.contents.firstChild)
             }
         }
 
@@ -30,7 +33,7 @@ export class BaseHTMLExporter extends BaseExporter{
             let tempNode = obj2Node(this.doc.metadata.authors)
             if (tempNode.textContent.length > 0) {
                 tempNode.id = 'authors'
-                contents.insertBefore(tempNode, contents.firstChild)
+                this.contents.insertBefore(tempNode, this.contents.firstChild)
             }
         }
 
@@ -38,7 +41,7 @@ export class BaseHTMLExporter extends BaseExporter{
             let tempNode = obj2Node(this.doc.metadata.abstract)
             if (tempNode.textContent.length > 0) {
                 tempNode.id = 'abstract'
-                contents.insertBefore(tempNode, contents.firstChild)
+                this.contents.insertBefore(tempNode, this.contents.firstChild)
             }
         }
 
@@ -46,7 +49,7 @@ export class BaseHTMLExporter extends BaseExporter{
             let tempNode = obj2Node(this.doc.metadata.subtitle)
             if (tempNode.textContent.length > 0) {
                 tempNode.id = 'subtitle'
-                contents.insertBefore(tempNode, contents.firstChild)
+                this.contents.insertBefore(tempNode, this.contents.firstChild)
             }
         }
 
@@ -54,25 +57,31 @@ export class BaseHTMLExporter extends BaseExporter{
             let tempNode = document.createElement('h1')
             tempNode.classList.add('title')
             tempNode.textContent = this.doc.title
-            contents.insertBefore(tempNode, contents.firstChild)
+            this.contents.insertBefore(tempNode, this.contents.firstChild)
         }
 
-        let citationFormatter = new FormatCitations(contents,
+        let citRenderer = new RenderCitations(
+            this.contents,
             this.doc.settings.citationstyle,
-            this.bibDB)
+            this.bibDB,
+            true,
+            function(){
+                that.addBibliographyHTML(citRenderer.fm.bibliographyHTML)
+                that.contents = that.cleanHTML(that.contents)
+                console.log(callback)
+                callback()
+            })
+        citRenderer.init()
+    }
 
-        let bibliographyHTML = citationFormatter.bibliographyHTML
-
+    addBibliographyHTML(bibliographyHTML) {
         if (bibliographyHTML.length > 0) {
             let tempNode = document.createElement('div')
             tempNode.innerHTML = bibliographyHTML
             while (tempNode.firstChild) {
-                contents.appendChild(tempNode.firstChild)
+                this.contents.appendChild(tempNode.firstChild)
             }
         }
-
-        contents = this.cleanHTML(contents)
-        return contents
     }
 
     addFigureNumbers(htmlCode) {
@@ -110,23 +119,31 @@ export class HTMLExporter extends BaseHTMLExporter{
             this.bibDB = bibDB // the bibliography has already been loaded for some other purpose. We reuse it.
             this.exportOne()
         } else {
-            let bibGetter = new BibliographyDB(doc.owner.id, false, false, false)
-            bibGetter.getBibDB(function() {
-                that.bibDB = bibGetter.bibDB
+            this.bibDB = new BibliographyDB(doc.owner.id, false, false, false)
+            this.bibDB.getDB(function() {
                 that.exportOne()
             })
         }
     }
 
     exportOne() {
+        let that = this
+        addAlert('info', this.doc.title + ': ' + gettext(
+            'HTML export has been initiated.'))
+
+        this.joinDocumentParts(function(){
+            that.exportTwo()
+        })
+
+    }
+
+    exportTwo() {
+
         let styleSheets = [], math = false
 
         let title = this.doc.title
 
-        addAlert('info', title + ': ' + gettext(
-            'HTML export has been initiated.'))
-
-        let contents = this.joinDocumentParts()
+        let contents = this.contents
 
         let equations = contents.querySelectorAll('.equation')
 

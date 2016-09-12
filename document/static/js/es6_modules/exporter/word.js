@@ -95,7 +95,7 @@ export class WordExporter {
         // the fiduswriter schema and so that the converter doesn't mash them together.
         let citationsHTML = ''
         this.citFm.citationTexts.forEach(function(ct){
-            citationsHTML += '<p>'+ct+'</p>'
+            citationsHTML += '<p>'+ct[0][1]+'</p>'
         })
 
         // We create a standard document DOM node, add the citations

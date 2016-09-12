@@ -1,4 +1,4 @@
-from avatar.util import get_primary_avatar, get_default_avatar_url
+from avatar.utils import get_primary_avatar, get_default_avatar_url
 
 
 def get_user_avatar_url(user):

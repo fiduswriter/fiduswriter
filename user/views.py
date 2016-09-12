@@ -1,7 +1,7 @@
 import json
 
 from django.http import JsonResponse, HttpResponseRedirect
-from django.contrib.auth import logout
+from django.contrib.auth import logout, update_session_auth_hash
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -57,6 +57,9 @@ def password_change_js(request):
         if form.is_valid():
             status = 200
             form.save()
+            # Updating the password logs out all other sessions for the user
+            # except the current one.
+            update_session_auth_hash(request, form.user)
         else:
             response['msg'] = form.errors
             status = 201

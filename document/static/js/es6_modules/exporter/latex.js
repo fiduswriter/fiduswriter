@@ -149,16 +149,6 @@ export class BaseLatexExporter extends BaseExporter {
         return {latexStart, latexAfterAbstract, latexEnd}
     }
 
-    // Replace all instances of the before string in all descendant textnodes of
-    // node.
-    replaceText(node, before, after) {
-        if (node.nodeType === 1) {
-            [].forEach.call(node.childNodes, child => this.replaceText(child, before, after))
-        } else if (node.nodeType === 3) {
-            node.textContent = node.textContent.replace(window.RegExp(before, 'g'), after)
-        }
-    }
-
     htmlToLatex(title, author, htmlCode,
         settings, metadata, isChapter, listedWorksList) {
         let latexStart = '',
@@ -170,7 +160,7 @@ export class BaseLatexExporter extends BaseExporter {
 
         if (isChapter) {
             latexStart += '\\chapter{' + title + '}\n'
-            //htmlCode.innerHTML =  '<div class="title">' + title + '</div>' + htmlCode.innerHTML
+
             if (settings['metadata-subtitle'] && metadata.subtitle) {
                 let tempNode = obj2Node(metadata.subtitle)
                 if (tempNode.textContent.length > 0) {
@@ -198,10 +188,7 @@ export class BaseLatexExporter extends BaseExporter {
         htmlCode = this.cleanHTML(htmlCode)
 
         // Remove line breaks
-        htmlCode.innerHTML = htmlCode.innerHTML.replace(
-            /(\r\n|\n|\r)/gm,
-            '')
-
+        this.replaceText(htmlCode, '\r|\n', '')
         // Escape characters that are protected in some way.
         this.replaceText(htmlCode, '\\\\', '\\textbackslash')
         this.replaceText(htmlCode, '{', '\\{')
@@ -270,15 +257,14 @@ export class BaseLatexExporter extends BaseExporter {
         })
 
         // join code paragraphs that follow oneanother
-        htmlCode.innerHTML = htmlCode.innerHTML.replace(
-            /\\end{code}\n\n\\begin{code}\n\n/g, '')
+        this.replaceText(htmlCode, '\\end{code}\n\n\\begin{code}\n\n', '')
         jQuery(htmlCode).find('blockquote').each(function() {
             jQuery(this).replaceWith('\n\\begin{quote}\n\n' + this.innerHTML +
                 '\n\n\\end{quote}\n')
         })
         // join quote paragraphs that follow oneanother
-        htmlCode.innerHTML = htmlCode.innerHTML.replace(
-            /\\end{quote}\n\n\\begin{quote}\n\n/g, '')
+        this.replaceText(htmlCode, '\\end{quote}\n\n\\begin{quote}\n\n', '')
+
         // Replace links, except those for footnotes.
         jQuery(htmlCode).find('a:not(.fn)').each(function() {
             jQuery(this).replaceWith('\\href{' + this.href + '}{' +

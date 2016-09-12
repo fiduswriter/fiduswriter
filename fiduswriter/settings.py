@@ -98,10 +98,10 @@ STATIC_URL = '/static/'
 
 # Additional locations of static files
 STATICFILES_DIRS = (
-    # Put strings here, like "/home/html/static" or "C:/www/django/static".
-    # Always use forward slashes, even on Windows.
+    # Put strings here, like "/home/html/static".
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(PROJECT_PATH, 'static-es5'),
+    os.path.join(PROJECT_PATH, 'static-libs'),
 )
 
 LOGIN_URL = '/account/login/'
@@ -311,9 +311,12 @@ AVATAR_MAX_AVATARS_PER_USER = 1
 # Location of commonly used Js libraries. Here the local version is given.
 # For deployment a version on the net is better.
 JS_LOCATIONS = {
-    'JQUERY_URL': STATIC_URL + 'js/libs/jquery-2.2.0.js',
-    'JQUERYUI_URL': STATIC_URL + 'js/libs/jquery-ui-1.11.4.js',
-    'UNDERSCOREJS_URL': STATIC_URL + 'js/libs/underscore-1.8.3.js',
+    'JQUERY_URL': STATIC_URL + 'js/libs/jquery.min.js',
+    'JQUERYUI_URL': STATIC_URL + 'js/libs/jquery-ui.min.js',
+    'UNDERSCOREJS_URL': STATIC_URL + 'js/libs/underscore-min.js',
+    'DATATABLES_URL': STATIC_URL + 'js/libs/jquery.dataTables.min.js',
+    'DROPKICKJS_URL': STATIC_URL + 'js/libs/dropkick.min.js',
+    'CITEPROC_URL': STATIC_URL + 'js/libs/citeproc.js'
 }
 
 CSS_LOCATIONS = {

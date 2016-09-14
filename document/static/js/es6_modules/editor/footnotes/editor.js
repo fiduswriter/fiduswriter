@@ -24,7 +24,7 @@ export class ModFootnoteEditor {
         })
         this.mod.fnPm.on.transformPastedHTML.add((inHTML) => {
             let ph = new Paste(inHTML, "footnote")
-            return ph.outHTML
+            return ph.getOutput()
         })
     }
 
@@ -52,7 +52,7 @@ export class ModFootnoteEditor {
         console.log('footnote update')
         let length = this.mod.fnPm.mod.collab.unconfirmedSteps.length
         let lastStep = this.mod.fnPm.mod.collab.unconfirmedSteps[length - 1]
-        if (lastStep.from) {
+        if (lastStep.hasOwnProperty('from')) {
             // We find the number of the last footnote that was updated by
             // looking at the last step and seeing footnote number that change referred to.
             let updatedFootnote = this.mod.fnPm.doc.resolve(lastStep.from).index(0)

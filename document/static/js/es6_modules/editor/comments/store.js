@@ -36,7 +36,8 @@ export class ModCommentStore {
                 this.mod.editor.pm.selection.from,
                 this.mod.editor.pm.selection.to,
                 {className: 'active-comment'}
-            )
+            ),
+            inDOM: false
         }
     }
 

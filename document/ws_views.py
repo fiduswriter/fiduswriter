@@ -17,7 +17,12 @@ class DocumentWS(BaseWebSocketHandler):
 
     def open(self, document_id):
         print('Websocket opened')
+        response = dict()
         current_user = self.get_current_user()
+        if current_user == None:
+            response['type'] = 'access_denied'
+            self.write_message(response)
+            return
         self.user_info = SessionUserInfo()
         doc_db, can_access = self.user_info.init_access(
             document_id, current_user)
@@ -44,7 +49,6 @@ class DocumentWS(BaseWebSocketHandler):
                 self.doc['id'] = doc_db.id
                 DocumentWS.sessions[doc_db.id] = self.doc
             self.doc['participants'][self.id] = self
-            response = dict()
             response['type'] = 'welcome'
             self.write_message(response)
 
@@ -336,6 +340,7 @@ class DocumentWS(BaseWebSocketHandler):
     def on_close(self):
         print('Websocket closing')
         if (
+            hasattr(self, 'user_info') and
             hasattr(self.user_info, 'document_id') and
             self.user_info.document_id in DocumentWS.sessions and
             hasattr(self, 'id') and

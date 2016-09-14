@@ -19,7 +19,7 @@ class DocumentWS(BaseWebSocketHandler):
         print('Websocket opened')
         response = dict()
         current_user = self.get_current_user()
-        if current_user == None:
+        if current_user is None:
             response['type'] = 'access_denied'
             self.write_message(response)
             return
@@ -124,8 +124,6 @@ class DocumentWS(BaseWebSocketHandler):
             response['user']['id'] = self.user_info.user.id
             response['user']['name'] = self.user_info.user.readable_name
             response['user']['avatar'] = avatar_url(self.user_info.user, 80)
-#        if self.doc['in_control'] == self.id:
-#            response['document_values']['control']=True
         response['document_values']['session_id'] = self.id
         self.write_message(response)
 

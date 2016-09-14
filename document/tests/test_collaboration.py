@@ -129,8 +129,8 @@ class ThreadManipulator(Manipulator):
         )
         self.input_text(document_input, title)
 
-    def wait_for_doc_size(self, driver, size, seconds = None):
-        if seconds == None:
+    def wait_for_doc_size(self, driver, size, seconds=False):
+        if seconds is False:
             seconds = self.WAIT_TIME
         doc_size = driver.execute_script(
             'return window.theEditor.pm.doc.content.size')
@@ -138,8 +138,8 @@ class ThreadManipulator(Manipulator):
             time.sleep(0.1)
             self.wait_for_doc_size(driver, size, seconds - 0.1)
 
-    def wait_for_doc_sync(self, driver, driver2, seconds = None):
-        if seconds == None:
+    def wait_for_doc_sync(self, driver, driver2, seconds=False):
+        if seconds is False:
             seconds = self.WAIT_TIME
         doc_str = driver.execute_script(
             'return window.theEditor.pm.doc.toString()')

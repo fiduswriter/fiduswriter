@@ -24,7 +24,7 @@ export class ModFootnoteEditor {
         })
         this.mod.fnPm.on.transformPastedHTML.add((inHTML) => {
             let ph = new Paste(inHTML, "footnote")
-            return ph.outHTML
+            return ph.getOutput()
         })
     }
 

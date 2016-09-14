@@ -122,8 +122,8 @@ class ThreadManipulator(Manipulator):
         title = "My title"
         driver.execute_script(
             'window.theEditor.pm.setTextSelection(1,1)')
-        document_input = driver.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        document_input = self.driver.find_element_by_class_name(
+            'ProseMirror-content'
         )
         self.input_text(document_input, title)
 
@@ -179,11 +179,11 @@ class SimpleTypingTest(LiveTornadoTestCase, Manipulator):
         self.loadDocumentEditor(self.driver, self.doc)
         self.loadDocumentEditor(self.driver2, self.doc)
 
-        document_input = self.driver.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        document_input = self.driver.find_element_by_class_name(
+            'ProseMirror-content'
         )
-        document_input2 = self.driver2.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        document_input2 = self.driver2.find_element_by_class_name(
+            'ProseMirror-content'
         )
 
         # Chrome with selenium has problem with focusing elements, so we use
@@ -277,11 +277,11 @@ class TypingTest(LiveTornadoTestCase, ThreadManipulator):
         self.loadDocumentEditor(self.driver, self.doc)
         self.loadDocumentEditor(self.driver2, self.doc)
 
-        document_input = self.driver.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        document_input = self.driver.find_element_by_class_name(
+            'ProseMirror-content'
         )
-        document_input2 = self.driver2.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        document_input2 = self.driver2.find_element_by_class_name(
+            'ProseMirror-content'
         )
         # Chrome with selenium has problem with focusing elements, so we use
         # the ProseMirror internal methods for this.
@@ -379,8 +379,7 @@ class SelectAndBoldTest(LiveTornadoTestCase, ThreadManipulator):
         self.driver2.quit()
 
     def make_bold(self, driver):
-        button = driver.find_element_by_xpath(
-            '//*[@id="button-bold"]')
+        button = driver.find_element_by_id('button-bold')
         button.click()
 
     def get_boldtext(self, driver):
@@ -397,8 +396,8 @@ class SelectAndBoldTest(LiveTornadoTestCase, ThreadManipulator):
 
         self.add_title(self.driver)
 
-        document_input = self.driver.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        document_input = self.driver.find_element_by_class_name(
+            'ProseMirror-content'
         )
 
         # Total: 22
@@ -415,8 +414,8 @@ class SelectAndBoldTest(LiveTornadoTestCase, ThreadManipulator):
         self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        content = self.driver2.find_element_by_class_name(
+            'ProseMirror-content'
         )
         content.click()
 
@@ -461,8 +460,7 @@ class SelectAndItalicTest(LiveTornadoTestCase, ThreadManipulator):
         self.driver2.quit()
 
     def make_bold(self, driver):
-        button = driver.find_element_by_xpath(
-            '//*[@id="button-italic"]')
+        button = driver.find_element_by_id('button-italic')
         button.click()
 
     def get_boldtext(self, driver):
@@ -476,8 +474,8 @@ class SelectAndItalicTest(LiveTornadoTestCase, ThreadManipulator):
 
         self.add_title(self.driver)
 
-        document_input = self.driver.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        document_input = self.driver.find_element_by_class_name(
+            'ProseMirror-content'
         )
 
         # Total: 22
@@ -494,8 +492,8 @@ class SelectAndItalicTest(LiveTornadoTestCase, ThreadManipulator):
         self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        content = self.driver2.find_element_by_class_name(
+            'ProseMirror-content'
         )
         content.click()
 
@@ -540,8 +538,7 @@ class MakeNumberedlistTest(LiveTornadoTestCase, ThreadManipulator):
         self.driver2.quit()
 
     def make_numberedlist(self, driver):
-        button = driver.find_element_by_xpath(
-            '//*[@id="button-ol"]')
+        button = driver.find_element_by_id('button-ol')
         button.click()
 
     def get_numberedlist(self, driver):
@@ -554,8 +551,8 @@ class MakeNumberedlistTest(LiveTornadoTestCase, ThreadManipulator):
         self.loadDocumentEditor(self.driver2, self.doc)
         self.add_title(self.driver)
 
-        document_input = self.driver.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        document_input = self.driver.find_element_by_class_name(
+            'ProseMirror-content'
         )
 
         # Total: 22
@@ -572,8 +569,8 @@ class MakeNumberedlistTest(LiveTornadoTestCase, ThreadManipulator):
         self.wait_for_doc_size(self.driver2, 28)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        content = self.driver2.find_element_by_class_name(
+            'ProseMirror-content'
         )
         content.click()
 
@@ -632,8 +629,7 @@ class MakeBulletlistTest(LiveTornadoTestCase, ThreadManipulator):
         self.driver2.quit()
 
     def make_bulletlist(self, driver):
-        button = driver.find_element_by_xpath(
-            '//*[@id="button-ul"]')
+        button = driver.find_element_by_id('button-ul')
         button.click()
 
     def get_bulletlist(self, driver):
@@ -647,8 +643,8 @@ class MakeBulletlistTest(LiveTornadoTestCase, ThreadManipulator):
 
         self.add_title(self.driver)
 
-        document_input = self.driver.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        document_input = self.driver.find_element_by_class_name(
+            'ProseMirror-content'
         )
 
         # Total: 22
@@ -665,8 +661,8 @@ class MakeBulletlistTest(LiveTornadoTestCase, ThreadManipulator):
         self.wait_for_doc_size(self.driver2, 28)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        content = self.driver2.find_element_by_class_name(
+            'ProseMirror-content'
         )
         content.click()
 
@@ -725,8 +721,7 @@ class MakeBlockqouteTest(LiveTornadoTestCase, ThreadManipulator):
         self.driver2.quit()
 
     def make_blockqoute(self, driver):
-        button = driver.find_element_by_xpath(
-            '//*[@id="button-blockquote"]')
+        button = driver.find_element_by_id('button-blockquote')
         button.click()
 
     def get_blockqoute(self, driver):
@@ -740,8 +735,8 @@ class MakeBlockqouteTest(LiveTornadoTestCase, ThreadManipulator):
 
         self.add_title(self.driver)
 
-        document_input = self.driver.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        document_input = self.driver.find_element_by_class_name(
+            'ProseMirror-content'
         )
 
         # Total: 22
@@ -758,8 +753,8 @@ class MakeBlockqouteTest(LiveTornadoTestCase, ThreadManipulator):
         self.wait_for_doc_size(self.driver2, 25)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        content = self.driver2.find_element_by_class_name(
+            'ProseMirror-content'
         )
         content.click()
 
@@ -805,8 +800,7 @@ class AddLinkTest(LiveTornadoTestCase, ThreadManipulator):
         self.driver2.quit()
 
     def addlink(self, driver):
-        button = driver.find_element_by_xpath(
-            '//*[@id="button-link"]')
+        button = driver.find_element_by_id('button-link')
         button.click()
 
         # wait to load popup
@@ -833,8 +827,8 @@ class AddLinkTest(LiveTornadoTestCase, ThreadManipulator):
 
         self.add_title(self.driver)
 
-        document_input = self.driver.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        document_input = self.driver.find_element_by_class_name(
+            'ProseMirror-content'
         )
 
         # Total: 22
@@ -851,8 +845,8 @@ class AddLinkTest(LiveTornadoTestCase, ThreadManipulator):
         self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        content = self.driver2.find_element_by_class_name(
+            'ProseMirror-content'
         )
         content.click()
 
@@ -927,8 +921,8 @@ class AddFootnoteTest(LiveTornadoTestCase, ThreadManipulator):
 
         self.add_title(self.driver)
 
-        document_input = self.driver.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        document_input = self.driver.find_element_by_class_name(
+            'ProseMirror-content'
         )
 
         # Total: 22
@@ -945,8 +939,8 @@ class AddFootnoteTest(LiveTornadoTestCase, ThreadManipulator):
         self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        content = self.driver2.find_element_by_class_name(
+            'ProseMirror-content'
         )
         content.click()
 
@@ -995,14 +989,11 @@ class SelectDeleteUndoTest(LiveTornadoTestCase, ThreadManipulator):
         element = driver.find_element_by_class_name('ProseMirror-content')
         element.send_keys(Keys.BACKSPACE)
 
-        button = driver.find_element_by_xpath(
-            '//*[@id="button-undo"]')
+        button = driver.find_element_by_id('button-undo')
         button.click()
 
     def get_undo(self, driver):
-        content = driver.find_element_by_xpath(
-            '//*[@id="document-contents"]'
-        )
+        content = driver.find_element_by_id('document-contents')
 
         return content.text
 
@@ -1012,8 +1003,8 @@ class SelectDeleteUndoTest(LiveTornadoTestCase, ThreadManipulator):
 
         self.add_title(self.driver)
 
-        document_input = self.driver.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        document_input = self.driver.find_element_by_class_name(
+            'ProseMirror-content'
         )
 
         # Total: 22
@@ -1030,8 +1021,8 @@ class SelectDeleteUndoTest(LiveTornadoTestCase, ThreadManipulator):
         self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        content = self.driver2.find_element_by_class_name(
+            'ProseMirror-content'
         )
         content.click()
 
@@ -1100,8 +1091,8 @@ class AddMathEquationTest(LiveTornadoTestCase, ThreadManipulator):
 
         self.add_title(self.driver)
 
-        document_input = self.driver.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        document_input = self.driver.find_element_by_class_name(
+            'ProseMirror-content'
         )
 
         # Total: 22
@@ -1118,8 +1109,8 @@ class AddMathEquationTest(LiveTornadoTestCase, ThreadManipulator):
         self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        content = self.driver2.find_element_by_class_name(
+            'ProseMirror-content'
         )
         content.click()
 
@@ -1188,8 +1179,8 @@ class AddCommentTest(LiveTornadoTestCase, ThreadManipulator):
 
         self.add_title(self.driver)
 
-        document_input = self.driver.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        document_input = self.driver.find_element_by_class_name(
+            'ProseMirror-content'
         )
 
         # Total: 22
@@ -1206,8 +1197,8 @@ class AddCommentTest(LiveTornadoTestCase, ThreadManipulator):
         self.wait_for_doc_size(self.driver2, 33)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        content = self.driver2.find_element_by_class_name(
+            'ProseMirror-content'
         )
         content.click()
 
@@ -1254,8 +1245,7 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
         self.driver2.quit()
 
     def add_figure(self, driver):
-        button = driver.find_element_by_xpath(
-            '//*[@id="button-figure"]')
+        button = driver.find_element_by_id('button-figure')
         button.click()
 
         caption = WebDriverWait(driver, 10).until(
@@ -1265,8 +1255,7 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
         self.input_text(caption, "My figure")
 
         # click on 'Insert image' button
-        driver.find_element_by_xpath(
-            '//*[@id="insertFigureImage"]').click()
+        driver.find_element_by_id('insertFigureImage').click()
 
         upload_button = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, 'selectImageUploadButton'))
@@ -1300,8 +1289,7 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
             )
         )
 
-        driver.find_element_by_xpath(
-            '//*[@id="selectImageSelectionButton"]').click()
+        driver.find_element_by_id('selectImageSelectionButton').click()
 
         # click on 'Insert' button
         driver.find_element_by_xpath(
@@ -1328,8 +1316,8 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
 
         self.add_title(self.driver)
 
-        document_input = self.driver.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        document_input = self.driver.find_element_by_class_name(
+            'ProseMirror-content'
         )
 
         # Total: 22
@@ -1346,8 +1334,8 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
         self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        content = self.driver2.find_element_by_class_name(
+            'ProseMirror-content'
         )
         content.click()
 
@@ -1425,13 +1413,13 @@ class AddCiteTest(LiveTornadoTestCase, ThreadManipulator):
             '//*[@id="source-type-selection"]/div/ul/li[1]/span').click()
 
         # fill the values
-        title_of_publication = driver.find_element_by_xpath(
-            '//*[@id="id_eFieldjournaltitle"]')
+        title_of_publication = driver.find_element_by_id(
+            'id_eFieldjournaltitle'
+        )
         title_of_publication.click()
         title_of_publication.send_keys("My publication title")
 
-        title = driver.find_element_by_xpath(
-            '//*[@id="id_eFieldtitle"]')
+        title = driver.find_element_by_id('id_eFieldtitle')
         title.click()
         title.send_keys("My title")
 
@@ -1476,9 +1464,7 @@ class AddCiteTest(LiveTornadoTestCase, ThreadManipulator):
         return cite_within_doc.text
 
     def get_citation_bib(self, driver):
-        cite_bib = driver.find_element_by_xpath(
-            '//*[@id="document-bibliography"]'
-        )
+        cite_bib = driver.find_element_by_id('document-bibliography')
         return cite_bib.text
 
     def test_citation(self):
@@ -1487,8 +1473,8 @@ class AddCiteTest(LiveTornadoTestCase, ThreadManipulator):
 
         self.add_title(self.driver)
 
-        document_input = self.driver.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        document_input = self.driver.find_element_by_class_name(
+            'ProseMirror-content'
         )
 
         # Total: 22
@@ -1505,8 +1491,8 @@ class AddCiteTest(LiveTornadoTestCase, ThreadManipulator):
         self.wait_for_doc_size(self.driver2, 32)
 
         # without clicking on content the buttons will not work
-        content = self.driver2.find_element_by_xpath(
-            '//*[@class="ProseMirror-content"]'
+        content = self.driver2.find_element_by_class_name(
+            'ProseMirror-content'
         )
         content.click()
 

@@ -54,9 +54,11 @@ class Manipulator(object):
                 desired_capabilities=capabilities,
                 command_executor="http://%s/wd/hub" % hub_url
             )
+            self.WAIT_TIME = 25
         else:
             self.driver = webdriver.Chrome()
             self.driver2 = webdriver.Chrome()
+            self.WAIT_TIME = 3
 
     # create django data
     def createUser(self):
@@ -88,7 +90,7 @@ class Manipulator(object):
         (driver
             .find_element_by_id('id_password')
             .send_keys(self.passtext + Keys.RETURN))
-        WebDriverWait(driver, 10).until(
+        WebDriverWait(driver, self.WAIT_TIME).until(
             EC.presence_of_element_located((By.ID, 'user-preferences'))
         )
 
@@ -104,7 +106,7 @@ class Manipulator(object):
             self.live_server_url,
             doc.get_absolute_url()
         ))
-        WebDriverWait(driver, 10).until(
+        WebDriverWait(driver, self.WAIT_TIME).until(
             EC.presence_of_element_located((By.ID, 'document-contents'))
         )
 
@@ -127,14 +129,18 @@ class ThreadManipulator(Manipulator):
         )
         self.input_text(document_input, title)
 
-    def wait_for_doc_size(self, driver, size, seconds=10.0):
+    def wait_for_doc_size(self, driver, size, seconds = None):
+        if seconds == None:
+            seconds = self.WAIT_TIME
         doc_size = driver.execute_script(
             'return window.theEditor.pm.doc.content.size')
         if doc_size < size and seconds > 0:
             time.sleep(0.1)
             self.wait_for_doc_size(driver, size, seconds - 0.1)
 
-    def wait_for_doc_sync(self, driver, driver2, seconds=10.0):
+    def wait_for_doc_sync(self, driver, driver2, seconds = None):
+        if seconds == None:
+            seconds = self.WAIT_TIME
         doc_str = driver.execute_script(
             'return window.theEditor.pm.doc.toString()')
         doc2_str = driver2.execute_script(
@@ -804,7 +810,7 @@ class AddLinkTest(LiveTornadoTestCase, ThreadManipulator):
         button.click()
 
         # wait to load popup
-        linktitle = WebDriverWait(driver, 10).until(
+        linktitle = WebDriverWait(driver, self.WAIT_TIME).until(
             EC.presence_of_element_located((By.CLASS_NAME, "linktitle"))
         )
         linktitle.click()
@@ -895,7 +901,7 @@ class AddFootnoteTest(LiveTornadoTestCase, ThreadManipulator):
         button.click()
 
         # wait for footnote to be created
-        WebDriverWait(driver, 10).until(
+        WebDriverWait(driver, self.WAIT_TIME).until(
             EC.presence_of_element_located(
                 (By.CLASS_NAME, "footnote-container")
             )
@@ -1072,7 +1078,7 @@ class AddMathEquationTest(LiveTornadoTestCase, ThreadManipulator):
         button.click()
 
         # wait to load popup
-        insert_button = WebDriverWait(driver, 10).until(
+        insert_button = WebDriverWait(driver, self.WAIT_TIME).until(
             EC.presence_of_element_located((By.CLASS_NAME, "insert-math"))
         )
         insert_button.click()
@@ -1159,7 +1165,7 @@ class AddCommentTest(LiveTornadoTestCase, ThreadManipulator):
         button = driver.find_element_by_id('button-comment')
         button.click()
 
-        textArea = WebDriverWait(driver, 10).until(
+        textArea = WebDriverWait(driver, self.WAIT_TIME).until(
             EC.presence_of_element_located((By.CLASS_NAME, "commentText"))
         )
         textArea.click()
@@ -1248,7 +1254,7 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
         button = driver.find_element_by_id('button-figure')
         button.click()
 
-        caption = WebDriverWait(driver, 10).until(
+        caption = WebDriverWait(driver, self.WAIT_TIME).until(
             EC.presence_of_element_located((By.CLASS_NAME, "caption"))
         )
 
@@ -1257,7 +1263,7 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
         # click on 'Insert image' button
         driver.find_element_by_id('insertFigureImage').click()
 
-        upload_button = WebDriverWait(driver, 10).until(
+        upload_button = WebDriverWait(driver, self.WAIT_TIME).until(
             EC.presence_of_element_located((By.ID, 'selectImageUploadButton'))
         )
 
@@ -1271,7 +1277,7 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
 
         # inorder to select the image we send the image path in the
         # LOCAL MACHINE to the input tag
-        upload_image_url = WebDriverWait(driver, 10).until(
+        upload_image_url = WebDriverWait(driver, self.WAIT_TIME).until(
             EC.presence_of_element_located(
                 (By.XPATH, '//*[@id="uploadimage"]/form/div[1]/input[2]')
             )
@@ -1283,7 +1289,7 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
             '//*[contains(@class, "ui-button") and text()="Upload"]').click()
 
         # click on 'Use image' button
-        WebDriverWait(driver, 10).until(
+        WebDriverWait(driver, self.WAIT_TIME).until(
             EC.element_to_be_clickable(
                 (By.CSS_SELECTOR, '#select_imagelist tr.checked')
             )
@@ -1395,7 +1401,7 @@ class AddCiteTest(LiveTornadoTestCase, ThreadManipulator):
         button.click()
 
         # click on 'Register new source' button
-        register_new_source = WebDriverWait(driver, 10).until(
+        register_new_source = WebDriverWait(driver, self.WAIT_TIME).until(
             EC.presence_of_element_located(
                 (By.CLASS_NAME, 'register-new-bib-source')
             )
@@ -1403,7 +1409,7 @@ class AddCiteTest(LiveTornadoTestCase, ThreadManipulator):
         register_new_source.click()
 
         # select source
-        select_source = WebDriverWait(driver, 10).until(
+        select_source = WebDriverWait(driver, self.WAIT_TIME).until(
             EC.presence_of_element_located((By.ID, 'source-type-selection'))
         )
         select_source.click()
@@ -1445,7 +1451,7 @@ class AddCiteTest(LiveTornadoTestCase, ThreadManipulator):
             '//*[contains(@class, "ui-button") and text()="Submit"]').click()
 
         # Wait for source to be listed
-        WebDriverWait(driver, 10).until(
+        WebDriverWait(driver, self.WAIT_TIME).until(
             EC.element_to_be_clickable(
                 (
                     By.CSS_SELECTOR,

@@ -50,6 +50,9 @@ export class BaseEpubExporter extends BaseHTMLExporter {
             while(footnote.firstChild) {
                 newFootnote.appendChild(footnote.firstChild)
             }
+            if (!newFootnote.firstChild) {
+                newFootnote.innerHTML = '<p></p>'
+            }
             newFootnote.firstChild.innerHTML = footnoteCounter + ' ' + newFootnote.firstChild.innerHTML
             footnote.parentNode.replaceChild(newFootnote, footnote)
             footnoteCounter++

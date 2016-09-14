@@ -900,19 +900,20 @@ class AddFootnoteTest(LiveTornadoTestCase, ThreadManipulator):
         button = driver.find_element_by_id('button-footnote')
         button.click()
 
+        # wait for footnote to be created
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located(
+                (By.CLASS_NAME, "footnote-container")
+            )
+        )
+
         footnote_box = driver.find_element_by_id(
             'footnote-box-container')
         footnote_editor = footnote_box.find_element_by_class_name(
             'ProseMirror-content')
-
-        # wait for footnote to be created
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CLASS_NAME, "footnote-container"))
-        )
-
         footnote_editor.click()
 
-        self.input_text(footnote, "footnote Text")
+        self.input_text(footnote_editor, "footnote Text")
 
     def get_footnote(self, driver):
         atag = driver.find_element_by_xpath(
@@ -1269,11 +1270,9 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
 
         self.input_text(caption, "My figure")
 
-
         # click on 'Insert image' button
         driver.find_element_by_xpath(
             '//*[@id="insertFigureImage"]').click()
-
 
         upload_button = WebDriverWait(driver, 10).until(
             EC.presence_of_element_located((By.ID, 'selectImageUploadButton'))
@@ -1290,7 +1289,9 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
         # inorder to select the image we send the image path in the
         # LOCAL MACHINE to the input tag
         upload_image_url = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.XPATH, '//*[@id="uploadimage"]/form/div[1]/input[2]'))
+            EC.presence_of_element_located(
+                (By.XPATH, '//*[@id="uploadimage"]/form/div[1]/input[2]')
+            )
         )
         upload_image_url.send_keys(imagePath)
 
@@ -1300,9 +1301,11 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
 
         # click on 'Use image' button
         WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, '#select_imagelist tr.checked'))
+            EC.element_to_be_clickable(
+                (By.CSS_SELECTOR, '#select_imagelist tr.checked')
+            )
         )
-        #use_image.click()
+
         driver.find_element_by_xpath(
             '//*[@id="selectImageSelectionButton"]').click()
 
@@ -1411,7 +1414,9 @@ class AddCiteTest(LiveTornadoTestCase, ThreadManipulator):
 
         # click on 'Register new source' button
         register_new_source = WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.CLASS_NAME, 'register-new-bib-source'))
+            EC.presence_of_element_located(
+                (By.CLASS_NAME, 'register-new-bib-source')
+            )
         )
         register_new_source.click()
 
@@ -1459,7 +1464,12 @@ class AddCiteTest(LiveTornadoTestCase, ThreadManipulator):
 
         # Wait for source to be listed
         WebDriverWait(driver, 10).until(
-            EC.element_to_be_clickable((By.CSS_SELECTOR, '#selected-cite-source-table .selected-source'))
+            EC.element_to_be_clickable(
+                (
+                    By.CSS_SELECTOR,
+                    '#selected-cite-source-table .selected-source'
+                )
+            )
         )
 
         # click on Insert button

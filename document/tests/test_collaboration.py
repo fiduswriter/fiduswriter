@@ -810,10 +810,10 @@ class AddLinkTest(LiveTornadoTestCase, ThreadManipulator):
         button.click()
 
         # wait to load popup
-        time.sleep(2)
-
-        driver.find_element_by_class_name('linktitle').click()
-        linktitle = driver.find_element_by_class_name('linktitle')
+        linktitle = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "linktitle"))
+        )
+        linktitle.click()
         self.input_text(linktitle, "Test link")
 
         link = driver.find_element_by_class_name('link')
@@ -897,18 +897,20 @@ class AddFootnoteTest(LiveTornadoTestCase, ThreadManipulator):
         self.driver2.quit()
 
     def make_footnote(self, driver):
-        button = driver.find_element_by_xpath(
-            '//*[@id="button-footnote"]')
+        button = driver.find_element_by_id('button-footnote')
         button.click()
-
-        # wait to load popup
-        time.sleep(2)
 
         footnote_box = driver.find_element_by_id(
             'footnote-box-container')
-        footnote = footnote_box.find_element_by_class_name(
+        footnote_editor = footnote_box.find_element_by_class_name(
             'ProseMirror-content')
-        footnote.click()
+
+        # wait for footnote to be created
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "footnote-container"))
+        )
+
+        footnote_editor.click()
 
         self.input_text(footnote, "footnote Text")
 
@@ -992,8 +994,6 @@ class SelectDeleteUndoTest(LiveTornadoTestCase, ThreadManipulator):
         element = driver.find_element_by_class_name('ProseMirror-content')
         element.send_keys(Keys.BACKSPACE)
 
-        time.sleep(2)
-
         button = driver.find_element_by_xpath(
             '//*[@id="button-undo"]')
         button.click()
@@ -1076,21 +1076,14 @@ class AddMathEquationTest(LiveTornadoTestCase, ThreadManipulator):
         self.driver2.quit()
 
     def make_mathequation(self, driver):
-        button = driver.find_element_by_xpath(
-            '//*[@id="button-math"]')
+        button = driver.find_element_by_id('button-math')
         button.click()
 
         # wait to load popup
-        time.sleep(2)
-
-        # input_math = driver.find_element_by_class_name("math-field")
-        # input_math.clear()
-        # input_math.send_keys('\$x=\frac{-b\pm{b^2-4ac}}{2a}')
-
-        insert_btn = driver.find_element_by_xpath(
-            '/html/body/div[5]/div[3]/div/button[1]'
+        insert_button = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "insert-math"))
         )
-        insert_btn.click()
+        insert_button.click()
 
     def get_mathequation(self, driver):
         math = driver.find_element_by_xpath(
@@ -1175,11 +1168,11 @@ class AddCommentTest(LiveTornadoTestCase, ThreadManipulator):
             '//*[@id="button-comment"]')
         button.click()
 
-        # wait to load popup
-        time.sleep(2)
-
-        textArea = driver.find_element_by_class_name('commentText')
+        textArea = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "commentText"))
+        )
         textArea.click()
+
         self.input_text(textArea, "My comment")
 
         driver.find_element_by_class_name("submitComment").click()
@@ -1270,52 +1263,52 @@ class AddImageTest(LiveTornadoTestCase, ThreadManipulator):
             '//*[@id="button-figure"]')
         button.click()
 
-        # wait to load popup
-        time.sleep(2)
+        caption = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, "caption"))
+        )
 
-        # add caption to the image
-        caption = driver.find_element_by_class_name('caption')
         self.input_text(caption, "My figure")
-        # time.sleep(1)
+
 
         # click on 'Insert image' button
         driver.find_element_by_xpath(
             '//*[@id="insertFigureImage"]').click()
-        time.sleep(1)
 
-        # click on 'Upload +' button
-        driver.find_element_by_xpath(
-            '//*[@id="selectImageUploadButton"]').click()
-        time.sleep(1)
+
+        upload_button = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, 'selectImageUploadButton'))
+        )
+
+        upload_button.click()
 
         # image path
         imagePath = os.path.join(
             settings.PROJECT_PATH,
             'document/tests/uploads/image.png'
         )
-        # path = driver.execute_script(
-        #     "return window.staticUrl + 'test/image.png'"
-        # )
+
         # inorder to select the image we send the image path in the
         # LOCAL MACHINE to the input tag
-        driver.find_element_by_xpath(
-            '//*[@id="uploadimage"]/form/div[1]/input[2]').send_keys(imagePath)
-        time.sleep(2)
+        upload_image_url = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.XPATH, '//*[@id="uploadimage"]/form/div[1]/input[2]'))
+        )
+        upload_image_url.send_keys(imagePath)
 
         # click on 'Upload' button
         driver.find_element_by_xpath(
             '//*[contains(@class, "ui-button") and text()="Upload"]').click()
-        time.sleep(1)
 
         # click on 'Use image' button
+        WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, '#select_imagelist tr.checked'))
+        )
+        #use_image.click()
         driver.find_element_by_xpath(
             '//*[@id="selectImageSelectionButton"]').click()
-        time.sleep(1)
 
         # click on 'Insert' button
         driver.find_element_by_xpath(
             '/html/body/div[5]/div[3]/div/button[1]').click()
-        time.sleep(2)
 
     def get_image(self, driver):
         figure = driver.find_element_by_xpath(
@@ -1413,20 +1406,20 @@ class AddCiteTest(LiveTornadoTestCase, ThreadManipulator):
         self.driver2.quit()
 
     def add_citation(self, driver):
-        button = driver.find_element_by_xpath(
-            '//*[@id="button-cite"]')
+        button = driver.find_element_by_id('button-cite')
         button.click()
 
-        # wait to load popup
-        time.sleep(2)
         # click on 'Register new source' button
-        driver.find_element_by_xpath(
-            '/html/body/div[5]/div[3]/div/button[1]').click()
-        time.sleep(1)
+        register_new_source = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.CLASS_NAME, 'register-new-bib-source'))
+        )
+        register_new_source.click()
 
         # select source
-        driver.find_element_by_xpath(
-            '//*[@id="source-type-selection"]').click()
+        select_source = WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.ID, 'source-type-selection'))
+        )
+        select_source.click()
 
         # click on article
         driver.find_element_by_xpath(
@@ -1437,26 +1430,21 @@ class AddCiteTest(LiveTornadoTestCase, ThreadManipulator):
             '//*[@id="id_eFieldjournaltitle"]')
         title_of_publication.click()
         title_of_publication.send_keys("My publication title")
-        time.sleep(1)
 
         title = driver.find_element_by_xpath(
             '//*[@id="id_eFieldtitle"]')
         title.click()
         title.send_keys("My title")
-        time.sleep(1)
 
         author_firstName = driver.find_element_by_xpath(
             '//*[@id="optionTab1"]/table/tbody/tr[3]/td/div/input[1]')
         author_firstName.click()
         author_firstName.send_keys("John")
-        time.sleep(1)
 
         author_lastName = driver.find_element_by_xpath(
             '//*[@id="optionTab1"]/table/tbody/tr[3]/td/div/input[2]')
         author_lastName.click()
         author_lastName.send_keys("Doe")
-
-        time.sleep(1)
 
         publication_date = driver.find_element_by_xpath(
             '//*[@id="optionTab1"]/table/tbody' +
@@ -1464,16 +1452,18 @@ class AddCiteTest(LiveTornadoTestCase, ThreadManipulator):
         )
         publication_date.click()
         publication_date.send_keys("2012")
-        time.sleep(2)
 
         # click on Submit button
         driver.find_element_by_xpath(
             '//*[contains(@class, "ui-button") and text()="Submit"]').click()
-        time.sleep(3)
+
+        # Wait for source to be listed
+        WebDriverWait(driver, 10).until(
+            EC.element_to_be_clickable((By.CSS_SELECTOR, '#selected-cite-source-table .selected-source'))
+        )
 
         # click on Insert button
-        driver.find_element_by_xpath(
-            '/html/body/div[5]/div[3]/div/button[2]').click()
+        driver.find_element_by_css_selector('.insert-citation').click()
 
     def get_citation_within_text(self, driver):
         cite_within_doc = driver.find_element_by_xpath(

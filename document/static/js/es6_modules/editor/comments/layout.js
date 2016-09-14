@@ -108,6 +108,8 @@ export class ModCommentLayout {
         // B) the comment answer edit form is currently open
         // C) part of a new answer has been written
         // D) the focus is currently in new answer text area of a comment
+        // E) a new comment form is about to be displayed, but the updateDOM
+        // call has not yet been made.
         if (this.activeCommentId !== false) {
             if (jQuery('.commentText:visible').length > 0) {
                 // a comment form is currently open
@@ -124,6 +126,11 @@ export class ModCommentLayout {
             }
             if (answerForm.length > 0 && answerForm.is(':focus')) {
                 // There is currently focus in the comment answer form
+                return true
+            }
+            if (this.mod.store.commentDuringCreation.inDOM === false) {
+                // A new comment is about to be created, but it has not
+                // yet been added to the DOM.
                 return true
             }
         }
@@ -179,7 +186,6 @@ export class ModCommentLayout {
     updateDOM() {
         // Handle the layout of the comments on the screen.
         // DOM write phase
-
         let that = this
 
         let theComments = [], referrers = [], activeCommentStyle = ''
@@ -223,6 +229,7 @@ export class ModCommentLayout {
             theComments.splice(index, 0, comment)
             referrers.splice(index, 0, pos)
             activeCommentStyle += '.comments-enabled .active-comment {background-color: #fffacf;}'
+            this.mod.store.commentDuringCreation.inDOM = true
         }
 
         let commentsTemplateHTML = commentsTemplate({

@@ -1165,8 +1165,7 @@ class AddCommentTest(LiveTornadoTestCase, ThreadManipulator):
         self.driver2.quit()
 
     def add_comment(self, driver):
-        button = driver.find_element_by_xpath(
-            '//*[@id="button-comment"]')
+        button = driver.find_element_by_id('button-comment')
         button.click()
 
         textArea = WebDriverWait(driver, 10).until(
@@ -1179,9 +1178,7 @@ class AddCommentTest(LiveTornadoTestCase, ThreadManipulator):
         driver.find_element_by_class_name("submitComment").click()
 
     def get_comment(self, driver):
-        comment = driver.find_element_by_xpath(
-            '//*[@class="comment-text-wrapper"]'
-        )
+        comment = driver.find_element_by_class_name('comment-text-wrapper')
 
         return comment.text
 
@@ -1213,9 +1210,6 @@ class AddCommentTest(LiveTornadoTestCase, ThreadManipulator):
             '//*[@class="ProseMirror-content"]'
         )
         content.click()
-
-        self.driver2.execute_script(
-            'window.theEditor.pm.focus()')
 
         self.driver2.execute_script(
             'window.theEditor.pm.setTextSelection(22,27)')

@@ -268,12 +268,17 @@ def documentReview(request):
         doc_id = int(request.POST.get('doc_id', "0"))
         app_key = request.POST.get('app_key')
         email = request.POST.get('email')
-        reviewer = login_user(request, email, 'ojspass')
-        if len(reviewer) > 0:
-            return redirect('/document/' + str(doc_id) + '/')
+        response = {}
+        if (app_key == "d5PW586jwefjn!3fv"):
+            reviewer = login_user(request, email, 'ojspass')
+            if len(reviewer) > 0:
+                return redirect('/document/' + str(doc_id) + '/')
+            else:
+                response['error'] = "The reviewer is not valid"
+                status = 404
+                return JsonResponse(response, status=status)
         else:
-            response = {}
-            response['error'] = "reviewer is not valid"
+            response['error'] = "Reviewing the document is not defined for this reviewer"
             status = 404
             return JsonResponse(response, status=status)
 

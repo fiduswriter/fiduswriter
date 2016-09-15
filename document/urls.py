@@ -36,9 +36,15 @@ urlpatterns = [
         views.submit_right_js,
         name='submit_right_js'
     ),
-url(
+    url(
         '^reviewer/$',
         views.reviewer_js,
         name='reviewer_js'
     ),
+    url(
+        '^documentReview/$',
+        views.documentReview_js,
+        name='documentReview_js'
+    ),
+
 ]

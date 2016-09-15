@@ -149,35 +149,35 @@ def get_documentlist_js(request):
     )
 
 
-def make_tmp_user_data():
-    u_name = 'ojsuser'
-    u_pass = '1234567'
+def make_user_data(u_name,u_pass,u_email):
+    #u_name = 'ojsuser'
+    #u_pass = '1234567'
     u_data = {
         'username': u_name,
         'password1': u_pass,
         'password2': u_pass,
-        'email': 'ojsuser' + '@ojstmp.com'
+        'email': u_email
     }
 
     return u_data
 
 
-def make_tmp_user(request, user_data):
+def create_user(request, user_data):
     signup_form = forms.SignupForm(user_data)
     try:
         signup_form.is_valid()
         signup_form.save(request)
+        return true
     except:
-        pass
+        return false
 
 
 
-def login_tmp_user(request, u_name, u_pass):
+def login_user(request, u_name, u_pass):
     if request.user.is_authenticated():
         logout(request)
     user = authenticate(username=u_name, password=u_pass)
     login(request, user)
-
     return user
 
 
@@ -188,10 +188,10 @@ def get_reviewer_for_post(request):
         reviewer = reviewers[0]
     except ObjectDoesNotExist:
         # "reviewer with this email does not exist so create it"
-        u_data = make_tmp_user_data()
-        u_data['email'] = email
-        make_tmp_user(request, u_data)
-        reviewer = login_tmp_user(request, u_data['username'], u_data['password1'])
+        u_data = make_user_data(email,'ojspass',email)
+        create_user(request, u_data)
+        reviewers = User.objects.filter(email=email)
+        reviewer = reviewers[0]
     return reviewer
 
 
@@ -260,6 +260,21 @@ def reviewer_js(request):
         except ObjectDoesNotExist:
             status = 404
             response['error'] = "reviewer with this reviewer_id does not exist"
+            return JsonResponse(response, status=status)
+
+@csrf_exempt
+def documentReview(request):
+    if request.method == 'POST':
+        doc_id = int(request.POST.get('doc_id', "0"))
+        app_key = request.POST.get('app_key')
+        email = request.POST.get('email')
+        reviewer = login_user(request, email, 'ojspass')
+        if len(reviewer) > 0:
+            return redirect('/document/' + str(doc_id) + '/')
+        else:
+            response = {}
+            response['error'] = "reviewer is not valid"
+            status = 404
             return JsonResponse(response, status=status)
 
 

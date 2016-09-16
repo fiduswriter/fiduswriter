@@ -263,7 +263,7 @@ def reviewer_js(request):
             return JsonResponse(response, status=status)
 
 @csrf_exempt
-def documentReview(request):
+def documentReview_js(request):
     if request.method == 'POST':
         doc_id = int(request.POST.get('doc_id', "0"))
         app_key = request.POST.get('app_key')

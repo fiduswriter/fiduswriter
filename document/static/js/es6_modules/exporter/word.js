@@ -1,13 +1,12 @@
 import {modelToEditor} from "../editor/node-convert"
 import {downloadFile} from "./download"
-import {createSlug} from "./tools"
-import {BibliographyDB} from "../bibliography/database"
+import {createSlug, getDatabasesIfNeeded} from "./tools"
 import {FormatCitations} from "../citations/format"
 import {fidusSchema} from "../editor/schema"
 
 import Docxtemplater from "docxtemplater"
-import LinkModule from "docxtemplater-link-module"
 import LinkManager from "docxtemplater-link-module/src/linkManager"
+import ImgManager from "docxtemplater-image-module/es6/imgManager"
 import JSZipUtils from "jszip-utils"
 
 /*
@@ -23,7 +22,7 @@ TODO:
 */
 
 export class WordExporter {
-    constructor(doc, bibDB) {
+    constructor(doc, bibDB, imageDB) {
         let that = this
         this.doc = doc
         // We use the doc in the pm format as this is what we will be using
@@ -35,15 +34,12 @@ export class WordExporter {
         this.citFm = false
         this.pmCits = []
         this.docData = {}
-        if (bibDB) {
-            this.bibDB = bibDB // the bibliography has already been loaded for some other purpose. We reuse it.
-            this.exporter()
-        } else {
-            this.bibDB = new BibliographyDB(doc.owner.id, false, false, false)
-            this.bibDB.getDB(function() {
-                that.exporter()
-            })
-        }
+        this.bibDB = bibDB
+        this.imageDB = imageDB
+        this.imgIdTranslation = {}
+        getDatabasesIfNeeded(this, doc, function() {
+            that.exporter()
+        })
     }
 
     getTemplate(callback) {
@@ -64,12 +60,59 @@ export class WordExporter {
         this.getTemplate(function(){
             that.wdoc = new Docxtemplater(that.template)
             that.linkManager = new LinkManager(that.wdoc.zip, 'document')
-            // Load existing link refs
-            that.linkManager.loadLinkRels()
             // Add Hyperlink style to doc if it doesn't exist yet.
             that.linkManager.addLinkStyle()
-            that.getDocData()
-            that.prepareAndDownload()
+            that.imgManager = new ImgManager(that.wdoc.zip, 'document')
+            that.exportImages(function(){
+                that.getDocData()
+                that.prepareAndDownload()
+            })
+        })
+    }
+
+    // Find all images used in file and add these to the export zip.
+    exportImages(callback) {
+        let that = this, usedImgs = []
+
+        // Load existing image relations
+        this.imgManager.loadImageRels()
+
+        this.pmDoc.descendants(
+            function(node) {
+                if (node.type.name==='figure' && node.attrs.image) {
+                    console.log('found image')
+                    if (!(node.attrs.image in usedImgs)) {
+                        console.log(node.attrs.image)
+                        usedImgs.push(node.attrs.image)
+                    }
+                }
+            }
+        )
+
+        let p = []
+
+        usedImgs.forEach((image) => {
+            let imgDBEntry = that.imageDB.db[image]
+            p.push(
+                new window.Promise((resolve) => {
+                    JSZipUtils.getBinaryContent(
+                        imgDBEntry.image,
+                        function(err, imageFile) {
+                            console.log(imageFile)
+                            let wImgId = that.imgManager.addImageRels(
+                                imgDBEntry.image.split('/').pop(),
+                                imageFile
+                            )
+                            that.imgIdTranslation[image] = wImgId
+                            resolve()
+                        }
+                    )
+                })
+            )
+        })
+
+        window.Promise.all(p).then(function(){
+            callback()
         })
     }
 
@@ -121,6 +164,9 @@ export class WordExporter {
     }
 
     getDocData() {
+        // Load existing link refs. The link refs for images and links are the same,
+        // so the link refs have to be updated after the images have been added.
+        this.linkManager.loadLinkRels()
         this.docData = {
             title: this.pmDoc.child(0).textContent,
             subtitle: this.pmDoc.child(1).textContent,
@@ -272,6 +318,16 @@ export class WordExporter {
                     content += this.transformRichtext(cit.content[i], options)
                 }
                 break
+            case 'figure':
+                if(node.attrs.image) {
+                    let imgDBEntry = this.imageDB.db[node.attrs.image]
+                    let height = imgDBEntry.height * 9525 // height in EMU
+                    let width = imgDBEntry.width * 9525 // height in EMU
+                    let id = this.imgIdTranslation[node.attrs.image]
+                    
+                } else {
+                    console.warn('Unhandled node type: figure (equation)')
+                }
             default:
                 console.warn('Unhandled node type:' + node.type)
                 break

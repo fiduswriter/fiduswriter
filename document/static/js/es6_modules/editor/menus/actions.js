@@ -57,7 +57,7 @@ export class ModMenusActions {
     downloadWord() {
         let that = this
         that.mod.editor.save(function() {
-            new WordExporter(that.mod.editor.doc, that.mod.editor.bibDB)
+            new WordExporter(that.mod.editor.doc, that.mod.editor.bibDB, that.mod.editor.imageDB)
         })
     }
 

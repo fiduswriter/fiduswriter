@@ -7,7 +7,7 @@ Fidus Writer is an online collaborative editor especially made for academics who
 Contributing
 ----
 
-[![Coverage Status](https://coveralls.io/repos/github/fiduswriter/fiduswriter/badge.svg?branch=3.0)](https://coveralls.io/github/fiduswriter/fiduswriter?branch=3.0)
+[![Coverage Status](https://coveralls.io/repos/github/fiduswriter/fiduswriter/badge.svg?branch=3.1)](https://coveralls.io/github/fiduswriter/fiduswriter?branch=3.1)
 
 [![Bountysource](https://www.bountysource.com/badge/tracker?tracker_id=328497)](https://www.bountysource.com/trackers/328497-fiduswriter?utm_source=328497&utm_medium=shield&utm_campaign=TRACKER_BADGE)
 

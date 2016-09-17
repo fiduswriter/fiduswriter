@@ -126,6 +126,9 @@ export class ModServerCommunications {
             case 'check_hash':
                 this.editor.mod.collab.docChanges.checkHash(data.diff_version, data.hash)
                 break
+            case 'access_denied':
+                window.location.href = '/'
+                break
         }
     }
 

@@ -6,6 +6,8 @@ import {FormatCitations} from "../citations/format"
 import {fidusSchema} from "../editor/schema"
 
 import Docxtemplater from "docxtemplater"
+import LinkModule from "docxtemplater-link-module"
+import LinkManager from "docxtemplater-link-module/src/linkManager"
 import JSZipUtils from "jszip-utils"
 
 /*
@@ -18,7 +20,6 @@ TODO:
 * figures
 * footnotes
 * equations
-* links
 */
 
 export class WordExporter {
@@ -62,6 +63,8 @@ export class WordExporter {
 
         this.getTemplate(function(){
             that.wdoc = new Docxtemplater(that.template)
+            that.linkManager = new LinkManager(that.wdoc.zip, 'document')
+            that.linkManager.loadLinkRels()
             that.getDocData()
             that.prepareAndDownload()
         })
@@ -218,14 +221,36 @@ export class WordExporter {
                 // cases.
                 break
             case 'text':
-                start += '<w:r>'
+                // Check for hyperlink, bold/strong and italic/em
+                let hyperlink, strong, em
                 if (node.marks) {
+                    strong = _.findWhere(node.marks, {_:'strong'})
+                    em = _.findWhere(node.marks, {_:'em'})
+                    hyperlink = _.findWhere(node.marks, {_:'link'})
+                }
+
+                if (hyperlink) {
+                    let refId = this.linkManager.addLinkRels(
+                        hyperlink.title,
+                        hyperlink.href
+                    )
+                    start += `<w:hyperlink r:id="rId${refId}"><w:r>`
+                    end += '</w:t></w:r></w:hyperlink>'
+                } else {
+                    start += '<w:r>'
+                    end += '</w:t></w:r>'
+                }
+
+                if (hyperlink || strong || em) {
                     start += '<w:rPr>'
-                    if (_.findWhere(node.marks, {_:'strong'})) {
+                    if (strong) {
                         start += '<w:b/><w:bCs/>'
                     }
-                    if (_.findWhere(node.marks, {_:'em'})) {
+                    if (em) {
                         start += '<w:i/><w:iCs/>'
+                    }
+                    if (hyperlink) {
+                        start += '<w:rStyle w:val="Hyperlink"/>'
                     }
                     start += '</w:rPr>'
                 }
@@ -233,8 +258,8 @@ export class WordExporter {
                 if (node.text[0] === ' ' || node.text[node.text.length-1] === ' ') {
                     textAttr += 'xml:space="preserve"'
                 }
-                start += '<w:t '+textAttr+'>'
-                end += '</w:t></w:r>'
+                start += `<w:t ${textAttr}>`
+
                 content += this.escapeText(node.text)
                 break
             case 'citation':

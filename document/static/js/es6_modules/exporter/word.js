@@ -64,7 +64,10 @@ export class WordExporter {
         this.getTemplate(function(){
             that.wdoc = new Docxtemplater(that.template)
             that.linkManager = new LinkManager(that.wdoc.zip, 'document')
+            // Load existing link refs
             that.linkManager.loadLinkRels()
+            // Add Hyperlink style to doc if it doesn't exist yet.
+            that.linkManager.addLinkStyle()
             that.getDocData()
             that.prepareAndDownload()
         })

@@ -21,11 +21,13 @@ from avatar.templatetags.avatar_tags import avatar_url
 from document.models import Document, AccessRight, DocumentRevision
 from django.views.decorators.csrf import csrf_exempt
 
-class SimpleSerializer(Serializer):
 
+class SimpleSerializer(Serializer):
     def end_object(self, obj):
         self._current['id'] = obj._get_pk_val()
         self.objects.append(self._current)
+
+
 serializer = SimpleSerializer()
 
 
@@ -149,9 +151,9 @@ def get_documentlist_js(request):
     )
 
 
-def make_user_data(u_name,u_pass,u_email):
-    #u_name = 'ojsuser'
-    #u_pass = '1234567'
+def make_user_data(u_name, u_pass, u_email):
+    # u_name = 'ojsuser'
+    # u_pass = '1234567'
     u_data = {
         'username': u_name,
         'password1': u_pass,
@@ -166,11 +168,10 @@ def create_user(request, user_data):
     signup_form = forms.SignupForm(user_data)
     try:
         signup_form.is_valid()
-        signup_form.save(request)
-        return true
+        user = signup_form.save(request)
+        return user
     except:
         return false
-
 
 
 def login_user(request, u_name, u_pass):
@@ -183,27 +184,33 @@ def login_user(request, u_name, u_pass):
 
 def get_reviewer_for_post(request):
     email = request.POST.get('email')
+    print (email)
     try:
         reviewers = User.objects.filter(email=email)
-        reviewer = reviewers[0]
+        if len(reviewers) > 0:
+            reviewer = reviewers[0]
+        else:
+            # "reviewer with this email does not exist so create it"
+            u_data = make_user_data(email, 'ojspass', email)
+            reviewer = create_user(request, u_data)
+            reviewers = User.objects.filter(email=email)
+            reviewer = reviewers[0]
+            print (email)
+            print (reviewers)
+        return reviewer
     except ObjectDoesNotExist:
-        # "reviewer with this email does not exist so create it"
-        u_data = make_user_data(email,'ojspass',email)
-        create_user(request, u_data)
-        reviewers = User.objects.filter(email=email)
-        reviewer = reviewers[0]
-    return reviewer
-
+        print ("could not create user for email " + email)
 
 def get_reviewer_for_put(request):
     reviewer = User.objects.get(id=int(request.PUT.get('user_id', 0)))
     return reviewer
 
+
 @csrf_exempt
 def reviewer_js(request):
-
     response = {}
     if request.method == 'POST':
+        # print(request.body)
         doc_id = int(request.POST.get('doc_id', "0"))
         if doc_id == 0:
             response['error'] = 'doc_id with value: ' + str(doc_id) + ' does not exist'
@@ -218,9 +225,11 @@ def reviewer_js(request):
                 access_right.save()
                 response['email'] = request.POST.get('email')
                 response['msg'] = 'comment rights given to the user'
+                response['reviewer_id'] = reviewer.id
             else:
                 response['email'] = request.POST.get('email')
                 response['msg'] = 'no change on user right on document'
+                response['reviewer_id'] = reviewer.id
             response['document_id'] = str(doc_id)
             status = 200
             return JsonResponse(response, status=status)
@@ -232,6 +241,7 @@ def reviewer_js(request):
             status = 200
             response['email'] = request.POST.get('email')
             response['msg'] = 'user created and comment rights given'
+            response['reviewer_id'] = reviewer.id
             response['document_id'] = str(doc_id)
             return JsonResponse(response, status=status)
 
@@ -261,6 +271,7 @@ def reviewer_js(request):
             status = 404
             response['error'] = "reviewer with this reviewer_id does not exist"
             return JsonResponse(response, status=status)
+
 
 @csrf_exempt
 def documentReview_js(request):
@@ -320,12 +331,12 @@ def send_share_notification(request, doc_id, collaborator_id, right):
          '\'%(document)s\' with you and given you %(right)s access rights. '
          '\nAccess the document through this link: %(link)s')
     ) % {
-        'owner': owner,
-        'right': right,
-        'collaborator_name': collaborator_name,
-        'link': link,
-        'document': document_title
-    }
+                       'owner': owner,
+                       'right': right,
+                       'collaborator_name': collaborator_name,
+                       'link': link,
+                       'document': document_title
+                   }
     send_mail(
         _('Document shared:') +
         ' ' +
@@ -348,10 +359,10 @@ def send_share_upgrade_notification(request, doc_id, collaborator_id):
          'rights to a Fidus Writer document.\nAccess the document through '
          'this link: %(link)s')
     ) % {
-        'owner': owner,
-        'collaborator_name': collaborator_name,
-        'link': link
-    }
+                       'owner': owner,
+                       'collaborator_name': collaborator_name,
+                       'link': link
+                   }
     send_mail(
         _('Fidus Writer document write access'),
         message_body,
@@ -417,6 +428,7 @@ def access_right_save_js(request):
         response,
         status=status
     )
+
 
 @login_required
 @transaction.atomic
@@ -498,7 +510,7 @@ def upload_js(request):
                 access_rights = AccessRight.objects.filter(
                     document=document, user=request.user)
                 if len(access_rights) > 0 and access_rights[
-                        0].rights == 'write':
+                    0].rights == 'write':
                     can_save = True
         if can_save:
             status = 201
@@ -512,8 +524,9 @@ def upload_js(request):
         response,
         status=status
     )
-@login_required
 
+
+@login_required
 def profile_js(request):
     response = {}
     status = 405
@@ -535,6 +548,7 @@ def profile_js(request):
         status=status
     )
 
+
 # Download a revision that was previously uploaded
 
 
@@ -550,9 +564,9 @@ def download_js(request):
             document = revision.document
             if document.owner == request.user:
                 can_access = True
-            # else:
-            #    access_rights = AccessRight.objects.filter(
-            #        document=document, user=request.user)
+                # else:
+                #    access_rights = AccessRight.objects.filter(
+                #        document=document, user=request.user)
                 # if len(access_rights) > 0:
                 #     can_save = True
         if can_access:

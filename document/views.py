@@ -174,16 +174,34 @@ def create_user(request, user_data):
         return false
 
 
+from django.apps import apps
+
+
 def login_user(request, u_name, u_pass):
-    if request.user.is_authenticated():
-        logout(request)
-    user = authenticate(username=u_name, password=u_pass)
-    login(request, user)
-    return user
+    from django.contrib.auth import authenticate
+    try:
+        user = User.objects.get(username=u_name)
+        if (user and user.is_active and apps.is_installed('django.contrib.sessions')):
+            user = authenticate(username=u_name, password=u_pass)
+            login(request, user)
+            print (user)
+            return user
+        else:
+            return False
+        # if request.user.is_authenticated():
+        #  logout(request)
+        # user = authenticate(username=u_name, password=u_pass)
+        # if user is not None:
+        #    login(request, user)
+        # return user
+    except ObjectDoesNotExist:
+        return False
 
 
 def get_reviewer_for_post(request):
     email = request.POST.get('email')
+    u_name = request.POST.get('user_name')
+    print (u_name)
     print (email)
     try:
         reviewers = User.objects.filter(email=email)
@@ -191,18 +209,19 @@ def get_reviewer_for_post(request):
             reviewer = reviewers[0]
         else:
             # "reviewer with this email does not exist so create it"
-            u_data = make_user_data(email, 'ojspass', email)
+            u_data = make_user_data(u_name, 'ojspass', email)
             reviewer = create_user(request, u_data)
             reviewers = User.objects.filter(email=email)
             reviewer = reviewers[0]
-            print (email)
-            print (reviewers)
+            # print (email)
+            # print (reviewers)
         return reviewer
     except ObjectDoesNotExist:
         print ("could not create user for email " + email)
 
-def get_reviewer_for_put(request):
-    reviewer = User.objects.get(id=int(request.PUT.get('user_id', 0)))
+
+def get_existing_reviewer(request):
+    reviewer = User.objects.get(email=request.POST.get('email', "0"))
     return reviewer
 
 
@@ -210,7 +229,6 @@ def get_reviewer_for_put(request):
 def reviewer_js(request):
     response = {}
     if request.method == 'POST':
-        # print(request.body)
         doc_id = int(request.POST.get('doc_id', "0"))
         if doc_id == 0:
             response['error'] = 'doc_id with value: ' + str(doc_id) + ' does not exist'
@@ -228,7 +246,7 @@ def reviewer_js(request):
                 response['reviewer_id'] = reviewer.id
             else:
                 response['email'] = request.POST.get('email')
-                response['msg'] = 'no change on user right on document'
+                response['msg'] = 'User has already comment access right on the document'
                 response['reviewer_id'] = reviewer.id
             response['document_id'] = str(doc_id)
             status = 200
@@ -245,14 +263,19 @@ def reviewer_js(request):
             response['document_id'] = str(doc_id)
             return JsonResponse(response, status=status)
 
-    if request.method == 'PUT':
+
+@csrf_exempt
+def del_reviewer_js(request):
+    response = {}
+    if request.method == 'POST':
+        u_name = request.POST.get('user_name')
         try:
-            doc_id = int(request.PUT.get('doc_id', "0"))
+            doc_id = int(request.POST.get('doc_id', "0"))
             if doc_id == 0:
                 response['msg'] = 'doc_id with value: ' + str(doc_id) + ' does not exist'
                 status = 500
                 return JsonResponse(response, status=status)
-            reviewer = get_reviewer_for_put(request)
+            reviewer = get_existing_reviewer(request)
             try:
                 access_right = AccessRight.objects.get(
                     document_id=doc_id, user_id=reviewer.id)
@@ -274,16 +297,17 @@ def reviewer_js(request):
 
 
 @csrf_exempt
-def documentReview_js(request):
+def document_review_js(request):
     if request.method == 'POST':
         doc_id = int(request.POST.get('doc_id', "0"))
-        app_key = request.POST.get('app_key')
+        app_key = request.POST.get('key')
         email = request.POST.get('email')
+        u_name = request.POST.get('user_name')
         response = {}
         if (app_key == "d5PW586jwefjn!3fv"):
-            reviewer = login_user(request, email, 'ojspass')
-            if len(reviewer) > 0:
-                return redirect('/document/' + str(doc_id) + '/')
+            reviewer = login_user(request, u_name, 'ojspass')
+            if reviewer is not None:
+                return redirect('/document/' + str(doc_id) + '/', permanent=True)
             else:
                 response['error'] = "The reviewer is not valid"
                 status = 404

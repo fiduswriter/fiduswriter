@@ -41,10 +41,17 @@ urlpatterns = [
         views.reviewer_js,
         name='reviewer_js'
     ),
+
+    url(
+        '^delReviewer/$',
+        views.del_reviewer_js,
+        name='del_reviewer_js'
+    ),
+
     url(
         '^documentReview/$',
-        views.documentReview_js,
-        name='documentReview_js'
+        views.document_review_js,
+        name='document_review_js'
     ),
 
 ]

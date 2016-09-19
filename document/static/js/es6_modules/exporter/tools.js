@@ -1,4 +1,5 @@
 import {BibliographyDB} from "../bibliography/database"
+import {ImageDB} from "../images/database"
 
 export let createSlug = function(str) {
     if (str==='') {

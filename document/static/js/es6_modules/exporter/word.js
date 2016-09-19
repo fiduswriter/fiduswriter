@@ -16,10 +16,10 @@ This exporter is *very* experimental. Do not count on using it unless you
 have the time to fix it.
 
 TODO:
-* figures
 * footnotes
-* equations
+* equations (inline and figure)
 */
+
 
 export class WordExporter {
     constructor(doc, bibDB, imageDB) {
@@ -71,6 +71,7 @@ export class WordExporter {
     }
 
     // Find all images used in file and add these to the export zip.
+    // TODO: This will likely fail on image types docx doesn't support such as SVG. Try out and fix.
     exportImages(callback) {
         let that = this, usedImgs = []
 
@@ -80,9 +81,7 @@ export class WordExporter {
         this.pmDoc.descendants(
             function(node) {
                 if (node.type.name==='figure' && node.attrs.image) {
-                    console.log('found image')
                     if (!(node.attrs.image in usedImgs)) {
-                        console.log(node.attrs.image)
                         usedImgs.push(node.attrs.image)
                     }
                 }
@@ -98,7 +97,6 @@ export class WordExporter {
                     JSZipUtils.getBinaryContent(
                         imgDBEntry.image,
                         function(err, imageFile) {
-                            console.log(imageFile)
                             let wImgId = that.imgManager.addImageRels(
                                 imgDBEntry.image.split('/').pop(),
                                 imageFile
@@ -321,13 +319,83 @@ export class WordExporter {
             case 'figure':
                 if(node.attrs.image) {
                     let imgDBEntry = this.imageDB.db[node.attrs.image]
-                    let height = imgDBEntry.height * 9525 // height in EMU
-                    let width = imgDBEntry.width * 9525 // height in EMU
-                    let id = this.imgIdTranslation[node.attrs.image]
-                    
+                    let cx = imgDBEntry.width * 9525 // width in EMU
+                    let cy = imgDBEntry.height * 9525 // height in EMU
+                    // Shrink image if too large for paper.
+                    // 5900000/9000000 reoughyl corresponds to fullwidth/A4
+                    // TODO: make work with multi-column + US letter
+                    if (cx > 5900000) {
+                        let rel = cy/cx
+                        cx = 5900000
+                        cy = cx * rel
+                    }
+                    if (cy > 9000000) {
+                        let rel = cx/cy
+                        cy = 9000000
+                        cx = cy * rel
+                    }
+                    let rId = this.imgIdTranslation[node.attrs.image]
+                    start += `
+                    <w:p>
+            		  <w:pPr>
+            			<w:jc w:val="center"/>
+            		  </w:pPr>
+            		  <w:r>
+            			<w:rPr/>
+            			<w:drawing>
+            			  <wp:inline distT="0" distB="0" distL="0" distR="0">
+            				<wp:extent cx="${cx}" cy="${cy}"/>
+            				<wp:docPr id="0" name="Picture" descr=""/>
+            				<a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main">
+            				  <a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture">
+            					<pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture">
+            					  <pic:nvPicPr>
+            						<pic:cNvPr id="0" name="Picture" descr=""/>
+            						<pic:cNvPicPr>
+            						  <a:picLocks noChangeAspect="1" noChangeArrowheads="1"/>
+            						</pic:cNvPicPr>
+            					  </pic:nvPicPr>
+            					  <pic:blipFill>
+            						<a:blip r:embed="rId${rId}"/>
+            						<a:stretch>
+            						  <a:fillRect/>
+            						</a:stretch>
+            					  </pic:blipFill>
+            					  <pic:spPr bwMode="auto">
+            						<a:xfrm>
+            						  <a:off x="0" y="0"/>
+            						  <a:ext cx="${cx}" cy="${cy}"/>
+            						</a:xfrm>
+            						<a:prstGeom prst="rect">
+            						  <a:avLst/>
+            						</a:prstGeom>
+            						<a:noFill/>
+            						<a:ln w="9525">
+            						  <a:noFill/>
+            						  <a:miter lim="800000"/>
+            						  <a:headEnd/>
+            						  <a:tailEnd/>
+            						</a:ln>
+            					  </pic:spPr>
+            					</pic:pic>
+            				  </a:graphicData>
+            				</a:graphic>
+            			  </wp:inline>
+            			</w:drawing>
+            		  </w:r>
+            		</w:p>
+                    <w:p>
+                      <w:pPr><w:pStyle w:val="Caption"/><w:rPr></w:rPr></w:pPr>`
+                      // TODO: Add "Figure X:"/"Table X": before caption.
+                      content += this.transformRichtext({type: 'text', text: node.attrs.caption}, options)
+
+                      end += `
+                    </w:p>
+            		`
                 } else {
                     console.warn('Unhandled node type: figure (equation)')
                 }
+                break
             default:
                 console.warn('Unhandled node type:' + node.type)
                 break

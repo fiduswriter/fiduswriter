@@ -96,12 +96,12 @@ export class WordExporter {
             let pageMargins = par.querySelector('pgMar')
             let cols = par.querySelector('cols')
             if (pageSize && pageMargins && cols) { // Not sure if these all need to come together
-                let width = parseInt(pageSize.getAttribute('w:w'))
-                - parseInt(pageMargins.getAttribute('w:right'))
-                - parseInt(pageMargins.getAttribute('w:left'))
-                let height = parseInt(pageSize.getAttribute('w:h'))
-                - parseInt(pageMargins.getAttribute('w:bottom'))
-                - parseInt(pageMargins.getAttribute('w:top'))
+                let width = parseInt(pageSize.getAttribute('w:w')) -
+                parseInt(pageMargins.getAttribute('w:right'))
+                parseInt(pageMargins.getAttribute('w:left'))
+                let height = parseInt(pageSize.getAttribute('w:h')) -
+                parseInt(pageMargins.getAttribute('w:bottom')) -
+                parseInt(pageMargins.getAttribute('w:top'))
                 // We don't care about headers, footers, etc. for now
                 let colCount = parseInt(cols.getAttribute('w:num'))
                 if (colCount > 1) {

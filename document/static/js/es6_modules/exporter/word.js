@@ -59,7 +59,10 @@ export class WordExporter {
 
         this.getTemplate(function(){
             that.wdoc = new Docxtemplater(that.template)
+            that.columnSizes = that.findColumnSizes(['abstract', 'body', 'bibliography'])
+
             that.linkManager = new LinkManager(that.wdoc.zip, 'document')
+
             // Add Hyperlink style to doc if it doesn't exist yet.
             that.linkManager.addLinkStyle()
             that.imgManager = new ImgManager(that.wdoc.zip, 'document')
@@ -70,6 +73,55 @@ export class WordExporter {
         })
     }
 
+    // go through document.xml looking for section and global definitions
+    // of page/column sizes for teh given tags
+    findColumnSizes(tags) {
+        let returnObject = {}
+        let str = this.wdoc.zip.files["word/document.xml"].asText()
+        let parser = new window.DOMParser()
+        let xmlDoc = parser.parseFromString(str, "text/xml")
+        let pars = [].slice.call(xmlDoc.querySelectorAll('p,sectPr')) // Including global page definition at end
+        let currentTags = []
+
+        pars.forEach(function(par){
+            let text = par.textContent // Assuming there are no spaces outside of <w:t>...</w:t>
+            tags.forEach(function(tag){
+                if(text.indexOf('{@'+tag+'}') !== -1) {
+                    currentTags.push(tag)
+                    // We don't worry about the same tag appearing twice in the document,
+                    // as that would make no sense.
+                }
+            })
+            let pageSize = par.querySelector('pgSz')
+            let pageMargins = par.querySelector('pgMar')
+            let cols = par.querySelector('cols')
+            if (pageSize && pageMargins && cols) { // Not sure if these all need to come together
+                let width = parseInt(pageSize.getAttribute('w:w'))
+                - parseInt(pageMargins.getAttribute('w:right'))
+                - parseInt(pageMargins.getAttribute('w:left'))
+                let height = parseInt(pageSize.getAttribute('w:h'))
+                - parseInt(pageMargins.getAttribute('w:bottom'))
+                - parseInt(pageMargins.getAttribute('w:top'))
+                // We don't care about headers, footers, etc. for now
+                let colCount = parseInt(cols.getAttribute('w:num'))
+                if (colCount > 1) {
+                    let colSpace = parseInt(cols.getAttribute('w:space'))
+                    width = width - (colSpace * (colCount-1))
+                    width = width / colCount
+                }
+                while (currentTags.length) {
+                    let tag = currentTags.pop()
+                    returnObject[tag] = {
+                        width: width * 635, // convert to EMU
+                        height: height * 635 // convert to EMU
+                    }
+                }
+
+            }
+
+        })
+        return returnObject
+    }
     // Find all images used in file and add these to the export zip.
     // TODO: This will likely fail on image types docx doesn't support such as SVG. Try out and fix.
     exportImages(callback) {
@@ -169,10 +221,19 @@ export class WordExporter {
             title: this.pmDoc.child(0).textContent,
             subtitle: this.pmDoc.child(1).textContent,
             authors: this.pmDoc.child(2).textContent,
-            abstract: this.transformRichtext(this.pmDoc.child(3).toJSON()),
+            abstract: this.transformRichtext(this.pmDoc.child(3).toJSON(), {
+                maxWidth: this.columnSizes.abstract.width,
+                maxHeight: this.columnSizes.abstract.height
+            }),
             keywords: this.pmDoc.child(4).textContent,
-            body: this.transformRichtext(this.pmDoc.child(5).toJSON()),
-            bibliography: this.transformRichtext(this.pmBib)
+            body: this.transformRichtext(this.pmDoc.child(5).toJSON(), {
+                maxWidth: this.columnSizes.body.width,
+                maxHeight: this.columnSizes.body.height
+            }),
+            bibliography: this.transformRichtext(this.pmBib, {
+                maxWidth: this.columnSizes.bibliography.width,
+                maxHeight: this.columnSizes.bibliography.height
+            })
         }
     }
 
@@ -191,7 +252,7 @@ export class WordExporter {
 			.replace(/>/g, '&gt;')
     }
 
-    transformRichtext(node, options = {}) {
+    transformRichtext(node, options) {
         let start = '', content = '', end = ''
 
         switch(node.type) {
@@ -322,16 +383,14 @@ export class WordExporter {
                     let cx = imgDBEntry.width * 9525 // width in EMU
                     let cy = imgDBEntry.height * 9525 // height in EMU
                     // Shrink image if too large for paper.
-                    // 5900000/9000000 reoughyl corresponds to fullwidth/A4
-                    // TODO: make work with multi-column + US letter
-                    if (cx > 5900000) {
+                    if (cx > options.maxWidth) {
                         let rel = cy/cx
-                        cx = 5900000
+                        cx = options.maxWidth
                         cy = cx * rel
                     }
-                    if (cy > 9000000) {
+                    if (cy > options.maxHeight) {
                         let rel = cx/cy
-                        cy = 9000000
+                        cy = options.maxHeight
                         cx = cy * rel
                     }
                     let rId = this.imgIdTranslation[node.attrs.image]

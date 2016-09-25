@@ -3,7 +3,7 @@ import {downloadFile} from "./download"
 import {createSlug, getDatabasesIfNeeded} from "./tools"
 import {FormatCitations} from "../citations/format"
 import {fidusSchema} from "../editor/schema"
-
+import {noSpaceTmp} from "../common/common"
 import JSZip from "jszip"
 import JSZipUtils from "jszip-utils"
 
@@ -526,7 +526,7 @@ export class WordExporter {
                         cx = cy * rel
                     }
                     let rId = this.imgIdTranslation[node.attrs.image]
-                    start += `
+                    start += noSpaceTmp`
                     <w:p>
             		  <w:pPr>
             			<w:jc w:val="center"/>
@@ -579,8 +579,7 @@ export class WordExporter {
                       <w:pPr><w:pStyle w:val="Caption"/><w:rPr></w:rPr></w:pPr>`
                       // TODO: Add "Figure X:"/"Table X": before caption.
                       content += this.transformRichtext({type: 'text', text: node.attrs.caption}, options)
-
-                      end += `
+                      end += noSpaceTmp`
                     </w:p>
             		`
                 } else {

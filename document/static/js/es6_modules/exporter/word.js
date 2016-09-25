@@ -4,9 +4,7 @@ import {createSlug, getDatabasesIfNeeded} from "./tools"
 import {FormatCitations} from "../citations/format"
 import {fidusSchema} from "../editor/schema"
 
-import Docxtemplater from "docxtemplater"
-import LinkManager from "docxtemplater-link-module/src/linkManager"
-import ImgManager from "docxtemplater-image-module/es6/imgManager"
+import JSZip from "jszip"
 import JSZipUtils from "jszip-utils"
 
 /*
@@ -29,11 +27,14 @@ export class WordExporter {
         // throughout the application in the future.
         this.pmDoc = modelToEditor(this.doc)
         this.template = false
-        this.wdoc = false
+        this.zip = false
+        this.xmlDocs = {}
+        this.extraFiles = {}
+        this.maxRelId = {}
         this.citInfos = []
         this.citFm = false
         this.pmCits = []
-        this.docData = {}
+        this.docTitle = this.pmDoc.child(0).textContent
         this.bibDB = bibDB
         this.imageDB = imageDB
         this.imgIdTranslation = {}
@@ -58,51 +59,78 @@ export class WordExporter {
         this.formatCitations()
 
         this.getTemplate(function(){
-            that.wdoc = new Docxtemplater(that.template)
-            that.columnSizes = that.findColumnSizes(['abstract', 'body', 'bibliography'])
+            that.zip = new JSZip()
+            that.zip.loadAsync(that.template).then(function(){
+                let p = []
+                p.push(that.zipToXml("word/document.xml"))
+                p.push(that.zipToXml("word/_rels/document.xml.rels"))
+                p.push(that.zipToXml("[Content_Types].xml"))
+                window.Promise.all(p).then(function(){
 
-            that.linkManager = new LinkManager(that.wdoc.zip, 'document')
-
-            // Add Hyperlink style to doc if it doesn't exist yet.
-            that.linkManager.addLinkStyle()
-            that.imgManager = new ImgManager(that.wdoc.zip, 'document')
-            that.exportImages(function(){
-                that.getDocData()
-                that.prepareAndDownload()
+                    that.findMaxRelId("word/_rels/document.xml.rels")
+                    that.exportImages(function(){
+                        that.getTagData()
+                        that.render()
+                        that.prepareAndDownload()
+                    })
+                })
             })
+
         })
     }
 
-    // go through document.xml looking for section and global definitions
-    // of page/column sizes for teh given tags
-    findColumnSizes(tags) {
-        let returnObject = {}
-        let str = this.wdoc.zip.files["word/document.xml"].asText()
-        let parser = new window.DOMParser()
-        let xmlDoc = parser.parseFromString(str, "text/xml")
-        let pars = [].slice.call(xmlDoc.querySelectorAll('p,sectPr')) // Including global page definition at end
-        let currentTags = []
+    // Go through a rels xml file and file all the listed relations
+    findMaxRelId(filePath) {
+        let xml = this.xmlDocs[filePath]
+        let rels = [].slice.call(xml.querySelectorAll('Relationship'))
+        let maxId = 0
+
+        rels.forEach(function(rel){
+            let id = parseInt(rel.getAttribute("Id").replace(/\D/g,''))
+            if (id > maxId) {
+                maxId = id
+            }
+        })
+
+        this.maxRelId[filePath] = maxId
+
+    }
+
+    // go through document.xml looking for tags and replace them with the given
+    // replacements.
+    render() {
+
+        let pars = [].slice.call(this.xmlDocs['word/document.xml'].querySelectorAll('p,sectPr')) // Including global page definition at end
+        let currentTags = [], that = this
 
         pars.forEach(function(par){
-            let text = par.textContent // Assuming there are no spaces outside of <w:t>...</w:t>
-            tags.forEach(function(tag){
-                if(text.indexOf('{@'+tag+'}') !== -1) {
+            let text = par.textContent // Assuming there is nothing outside of <w:t>...</w:t>
+            that.tags.forEach(function(tag){
+                let tagString = tag.title
+                if (tag.type==='par') {
+                    tagString = '@' + tagString
+                }
+                if(text.indexOf('{'+tagString+'}') !== -1) {
                     currentTags.push(tag)
+                    tag.par = par
                     // We don't worry about the same tag appearing twice in the document,
                     // as that would make no sense.
                 }
             })
+
             let pageSize = par.querySelector('pgSz')
             let pageMargins = par.querySelector('pgMar')
             let cols = par.querySelector('cols')
             if (pageSize && pageMargins && cols) { // Not sure if these all need to come together
                 let width = parseInt(pageSize.getAttribute('w:w')) -
-                parseInt(pageMargins.getAttribute('w:right'))
+                parseInt(pageMargins.getAttribute('w:right')) -
                 parseInt(pageMargins.getAttribute('w:left'))
                 let height = parseInt(pageSize.getAttribute('w:h')) -
                 parseInt(pageMargins.getAttribute('w:bottom')) -
-                parseInt(pageMargins.getAttribute('w:top'))
-                // We don't care about headers, footers, etc. for now
+                parseInt(pageMargins.getAttribute('w:top')) -
+                parseInt(pageMargins.getAttribute('w:header')) -
+                parseInt(pageMargins.getAttribute('w:footer'))
+
                 let colCount = parseInt(cols.getAttribute('w:num'))
                 if (colCount > 1) {
                     let colSpace = parseInt(cols.getAttribute('w:space'))
@@ -111,7 +139,7 @@ export class WordExporter {
                 }
                 while (currentTags.length) {
                     let tag = currentTags.pop()
-                    returnObject[tag] = {
+                    tag.dimensions = {
                         width: width * 635, // convert to EMU
                         height: height * 635 // convert to EMU
                     }
@@ -120,15 +148,60 @@ export class WordExporter {
             }
 
         })
-        return returnObject
+        this.tags.forEach(function(tag){
+            if(tag.type==='inline') {
+                that.inlineRender(tag)
+            } else {
+                that.parRender(tag)
+            }
+        })
     }
+
+    // add an image to the ist of files
+    addImage(imgFileName, image, relFilePath) {
+        let rId = this.addImageRel(imgFileName, relFilePath)
+        this.addContentType(imgFileName.split('.').pop())
+        this.extraFiles[`word/media/${imgFileName}`] = image
+        return rId
+    }
+
+    // add a global contenttype declaration for an image type (if needed)
+    addContentType(fileEnding) {
+        let xml = this.xmlDocs['[Content_Types].xml']
+        let types = xml.querySelector('Types')
+        let contentDec = types.querySelector('Default[Extension='+fileEnding+']')
+        if (!contentDec) {
+            let string = `<Default ContentType="image/${fileEnding}" Extension="${fileEnding}"/>`
+            types.insertAdjacentHTML('beforeend', string)
+        }
+    }
+
+    // add a relationship for an image
+    addImageRel(imgFileName, xmlFilePath) {
+        let xml = this.xmlDocs[xmlFilePath]
+        let rels = xml.querySelector('Relationships')
+        let rId = this.maxRelId[xmlFilePath] + 1
+        let string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${imgFileName}"/>`
+        rels.insertAdjacentHTML('beforeend', string)
+        this.maxRelId[xmlFilePath] = rId
+        return rId
+    }
+
+    // Add a relationship for a link
+    addLinkRel(link, xmlFilePath) {
+        let xml = this.xmlDocs[xmlFilePath]
+        let rels = xml.querySelector('Relationships')
+        let rId = this.maxRelId[xmlFilePath] + 1
+        let string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="${link}" TargetMode="External"/>`
+        rels.insertAdjacentHTML('beforeend', string)
+        this.maxRelId[xmlFilePath] = rId
+        return rId
+    }
+
     // Find all images used in file and add these to the export zip.
     // TODO: This will likely fail on image types docx doesn't support such as SVG. Try out and fix.
     exportImages(callback) {
         let that = this, usedImgs = []
-
-        // Load existing image relations
-        this.imgManager.loadImageRels()
 
         this.pmDoc.descendants(
             function(node) {
@@ -149,9 +222,10 @@ export class WordExporter {
                     JSZipUtils.getBinaryContent(
                         imgDBEntry.image,
                         function(err, imageFile) {
-                            let wImgId = that.imgManager.addImageRels(
+                            let wImgId = that.addImage(
                                 imgDBEntry.image.split('/').pop(),
-                                imageFile
+                                imageFile,
+                                'word/_rels/document.xml.rels'
                             )
                             that.imgIdTranslation[image] = wImgId
                             resolve()
@@ -213,35 +287,106 @@ export class WordExporter {
         this.pmBib.type = 'bibliography'
     }
 
-    getDocData() {
-        // Load existing link refs. The link refs for images and links are the same,
-        // so the link refs have to be updated after the images have been added.
-        this.linkManager.loadLinkRels()
-        this.docData = {
-            title: this.pmDoc.child(0).textContent,
-            subtitle: this.pmDoc.child(1).textContent,
-            authors: this.pmDoc.child(2).textContent,
-            abstract: this.transformRichtext(this.pmDoc.child(3).toJSON(), {
-                maxWidth: this.columnSizes.abstract.width,
-                maxHeight: this.columnSizes.abstract.height
-            }),
-            keywords: this.pmDoc.child(4).textContent,
-            body: this.transformRichtext(this.pmDoc.child(5).toJSON(), {
-                maxWidth: this.columnSizes.body.width,
-                maxHeight: this.columnSizes.body.height
-            }),
-            bibliography: this.transformRichtext(this.pmBib, {
-                maxWidth: this.columnSizes.bibliography.width,
-                maxHeight: this.columnSizes.bibliography.height
-            })
-        }
+    zipToXml(filePath) {
+        const parser = new window.DOMParser(), that = this
+        return this.zip.file(filePath).async('string').then(
+            function(string) {
+                that.xmlDocs[filePath] = parser.parseFromString(string, "text/xml")
+            }
+        )
+
     }
 
+    xmlToZip(filePath) {
+	    const serializer = new window.XMLSerializer()
+	    const string = serializer.serializeToString(this.xmlDocs[filePath])
+        this.zip.file(filePath, string)
+    }
+
+    // Render Tags that only exchange inline content
+    inlineRender(tag) {
+        let texts = tag.par.textContent.split('{'+tag.title+'}')
+        let fullText = texts[0] + this.escapeText(tag.content) + texts[1]
+        let rs = [].slice.call(tag.par.querySelectorAll('r'))
+        while (rs.length > 1) {
+            rs[0].parentNode.removeChild(rs[0])
+            rs.shift()
+        }
+        let r = rs[0]
+        r.innerHTML = '<w:t>' + fullText + '</w:t>'
+    }
+
+    // Render tags that exchange paragraphs
+    parRender(tag) {
+        let outXML = this.transformRichtext(
+            tag.content,
+            {dimensions: tag.dimensions}
+        )
+        tag.par.insertAdjacentHTML('beforebegin', outXML)
+        // sectPr contains information about columns, etc. We need to move this
+        // to the last paragraph we will be adding.
+        let sectPr = tag.par.querySelector('sectPr')
+        if (sectPr) {
+            let pPr = tag.par.previousElementSibling.querySelector('pPr')
+            pPr.appendChild(sectPr)
+        }
+        tag.par.parentNode.removeChild(tag.par)
+    }
+
+
+    getTagData() {
+
+        this.tags = [
+            {
+                title: 'title',
+                content: this.pmDoc.child(0).textContent,
+                type: 'inline'
+            },
+            {
+                title: 'subtitle',
+                content: this.pmDoc.child(1).textContent,
+                type: 'inline'
+            },
+            {
+                title: 'authors',
+                content: this.pmDoc.child(2).textContent,
+                type: 'inline'
+            },
+            {
+                title: 'abstract',
+                content: this.pmDoc.child(3).toJSON(),
+                type: 'par'
+            },
+            {
+                title: 'keywords',
+                content: this.pmDoc.child(4).textContent,
+                type:'inline'
+            },
+            {
+                title: 'body',
+                content: this.pmDoc.child(5).toJSON(),
+                type: 'par'
+            },
+            {
+                title: 'bibliography',
+                content: this.pmBib,
+                type: 'par'
+            }
+        ]
+    }
+
+
     prepareAndDownload() {
-        this.wdoc.setData(this.docData)
-        this.wdoc.render()
-        let out = this.wdoc.getZip().generate({type:"blob"})
-        downloadFile(createSlug(this.docData.title)+'.docx', out)
+        let that = this
+        for (let fileName in this.xmlDocs) {
+            this.xmlToZip(fileName)
+        }
+        for (let fileName in this.extraFiles) {
+            this.zip.file(fileName, this.extraFiles[fileName])
+        }
+        this.zip.generateAsync({type:"blob"}).then(function(out){
+            downloadFile(createSlug(that.docTitle)+'.docx', out)
+        })
     }
 
     escapeText(text) {
@@ -338,10 +483,7 @@ export class WordExporter {
                 }
 
                 if (hyperlink) {
-                    let refId = this.linkManager.addLinkRels(
-                        hyperlink.title,
-                        hyperlink.href
-                    )
+                    let refId = this.addLinkRel(hyperlink.href, 'word/_rels/document.xml.rels')
                     start += `<w:hyperlink r:id="rId${refId}"><w:r>`
                     end += '</w:t></w:r></w:hyperlink>'
                 } else {
@@ -383,14 +525,14 @@ export class WordExporter {
                     let cx = imgDBEntry.width * 9525 // width in EMU
                     let cy = imgDBEntry.height * 9525 // height in EMU
                     // Shrink image if too large for paper.
-                    if (cx > options.maxWidth) {
+                    if (cx > options.dimensions.width) {
                         let rel = cy/cx
-                        cx = options.maxWidth
+                        cx = options.dimensions.width
                         cy = cx * rel
                     }
-                    if (cy > options.maxHeight) {
+                    if (cy > options.dimensions.height) {
                         let rel = cx/cy
-                        cy = options.maxHeight
+                        cy = options.dimensions.height
                         cx = cy * rel
                     }
                     let rId = this.imgIdTranslation[node.attrs.image]

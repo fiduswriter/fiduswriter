@@ -107,9 +107,6 @@ export class WordExporter {
             let text = par.textContent // Assuming there is nothing outside of <w:t>...</w:t>
             that.tags.forEach(function(tag){
                 let tagString = tag.title
-                if (tag.type==='par') {
-                    tagString = '@' + tagString
-                }
                 if(text.indexOf('{'+tagString+'}') !== -1) {
                     currentTags.push(tag)
                     tag.par = par
@@ -149,10 +146,10 @@ export class WordExporter {
 
         })
         this.tags.forEach(function(tag){
-            if(tag.type==='inline') {
-                that.inlineRender(tag)
-            } else {
+            if(tag.title[0]==='@') {
                 that.parRender(tag)
+            } else {
+                that.inlineRender(tag)
             }
         })
     }
@@ -339,38 +336,31 @@ export class WordExporter {
         this.tags = [
             {
                 title: 'title',
-                content: this.pmDoc.child(0).textContent,
-                type: 'inline'
+                content: this.pmDoc.child(0).textContent
             },
             {
                 title: 'subtitle',
-                content: this.pmDoc.child(1).textContent,
-                type: 'inline'
+                content: this.pmDoc.child(1).textContent
             },
             {
                 title: 'authors',
-                content: this.pmDoc.child(2).textContent,
-                type: 'inline'
+                content: this.pmDoc.child(2).textContent
             },
             {
-                title: 'abstract',
-                content: this.pmDoc.child(3).toJSON(),
-                type: 'par'
+                title: '@abstract', // The '@' triggers handling as block
+                content: this.pmDoc.child(3).toJSON()
             },
             {
                 title: 'keywords',
-                content: this.pmDoc.child(4).textContent,
-                type:'inline'
+                content: this.pmDoc.child(4).textContent
             },
             {
-                title: 'body',
-                content: this.pmDoc.child(5).toJSON(),
-                type: 'par'
+                title: '@body', // The '@' triggers handling as block
+                content: this.pmDoc.child(5).toJSON()
             },
             {
-                title: 'bibliography',
-                content: this.pmBib,
-                type: 'par'
+                title: '@bibliography', // The '@' triggers handling as block
+                content: this.pmBib
             }
         ]
     }

@@ -1,3 +1,5 @@
+import {escapeText} from "./tools"
+
 export class WordExporterRender {
     constructor(exporter) {
         this.exporter = exporter

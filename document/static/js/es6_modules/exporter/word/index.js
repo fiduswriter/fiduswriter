@@ -4,7 +4,6 @@ import {createSlug, getDatabasesIfNeeded} from "../tools"
 import JSZip from "jszip"
 import JSZipUtils from "jszip-utils"
 
-import {escapeText} from "./tools"
 import {WordExporterCitations} from "./citations"
 import {WordExporterImages} from "./images"
 import {WordExporterRender} from "./render"
@@ -44,10 +43,7 @@ export class WordExporter {
         this.rels = {
             'document': new WordExporterRels(this, 'document')
         }
-        let db = {
-            bibDB
-            imageDB
-        }
+        let db = {bibDB,imageDB}
         getDatabasesIfNeeded(db, doc, function() {
             that.images = new WordExporterImages(that, db.imageDB)
             that.citations = new WordExporterCitations(that, db.bibDB)

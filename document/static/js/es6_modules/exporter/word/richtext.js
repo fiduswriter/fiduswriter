@@ -6,17 +6,6 @@ export class WordExporterRichtext {
         this.exporter = exporter
     }
 
-    // Add a relationship for a link
-    addLinkRel(link, xmlFilePath) {
-        let xml = this.exporter.xml.docs[xmlFilePath]
-        let rels = xml.querySelector('Relationships')
-        let rId = this.exporter.maxRelId[xmlFilePath] + 1
-        let string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink" Target="${link}" TargetMode="External"/>`
-        rels.insertAdjacentHTML('beforeend', string)
-        this.exporter.maxRelId[xmlFilePath] = rId
-        return rId
-    }
-
     transformRichtext(node, options) {
         let start = '', content = '', end = ''
 
@@ -103,7 +92,7 @@ export class WordExporterRichtext {
                 }
 
                 if (hyperlink) {
-                    let refId = this.addLinkRel(hyperlink.href, 'word/_rels/document.xml.rels')
+                    let refId = this.exporter.rels['document'].addLinkRel(hyperlink.href)
                     start += `<w:hyperlink r:id="rId${refId}"><w:r>`
                     end += '</w:t></w:r></w:hyperlink>'
                 } else {

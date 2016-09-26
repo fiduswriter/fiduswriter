@@ -1,8 +1,17 @@
 export class WordExporterRender {
     constructor(exporter) {
         this.exporter = exporter
+        this.filePath = "word/document.xml"
     }
 
+    init() {
+        let that = this
+        return this.exporter.xml.fromZip(this.filePath).then(
+            function() {
+                that.xml = that.exporter.xml.docs['word/document.xml']
+            }
+        )
+    }
 
     // Define the tags that are to be looked for in the document
     getTagData() {
@@ -46,7 +55,7 @@ export class WordExporterRender {
     // replacements.
     render() {
 
-        let pars = [].slice.call(this.exporter.xml.docs['word/document.xml'].querySelectorAll('p,sectPr')) // Including global page definition at end
+        let pars = [].slice.call(this.xml.querySelectorAll('p,sectPr')) // Including global page definition at end
         let currentTags = [], that = this
 
         pars.forEach(function(par){

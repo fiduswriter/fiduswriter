@@ -7,9 +7,13 @@ export class WordExporterImages {
         this.imgIdTranslation = {}
     }
 
+    init() {
+        return this.exporter.xml.fromZip("[Content_Types].xml")
+    }
+
     // add an image to the ist of files
-    addImage(imgFileName, image, relFilePath) {
-        let rId = this.addImageRel(imgFileName, relFilePath)
+    addImage(imgFileName, image, docName) {
+        let rId = this.exporter.rels[docName].addImageRel(imgFileName)
         this.addContentType(imgFileName.split('.').pop())
         this.exporter.extraFiles[`word/media/${imgFileName}`] = image
         return rId
@@ -26,21 +30,9 @@ export class WordExporterImages {
         }
     }
 
-    // add a relationship for an image
-    addImageRel(imgFileName, xmlFilePath) {
-        let xml = this.exporter.xml.docs[xmlFilePath]
-        let rels = xml.querySelector('Relationships')
-        let rId = this.exporter.maxRelId[xmlFilePath] + 1
-        let string = `<Relationship Id="rId${rId}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/image" Target="media/${imgFileName}"/>`
-        rels.insertAdjacentHTML('beforeend', string)
-        this.exporter.maxRelId[xmlFilePath] = rId
-        return rId
-    }
-
-
     // Find all images used in file and add these to the export zip.
     // TODO: This will likely fail on image types docx doesn't support such as SVG. Try out and fix.
-    exportImages(callback) {
+    exportImages(docName, callback) {
         let that = this, usedImgs = []
 
         this.exporter.pmDoc.descendants(
@@ -65,7 +57,7 @@ export class WordExporterImages {
                             let wImgId = that.addImage(
                                 imgDBEntry.image.split('/').pop(),
                                 imageFile,
-                                'word/_rels/document.xml.rels'
+                                docName
                             )
                             that.imgIdTranslation[image] = wImgId
                             resolve()

@@ -10,6 +10,7 @@ import {WordExporterImages} from "./images"
 import {WordExporterRender} from "./render"
 import {WordExporterRichtext} from "./richtext"
 import {WordExporterXml} from "./xml"
+import {WordExporterRels} from "./rels"
 
 /*
 Exporter to Microsoft Word.
@@ -39,6 +40,10 @@ export class WordExporter {
         this.render = new WordExporterRender(this)
         this.richtext = new WordExporterRichtext(this)
         this.xml = new WordExporterXml(this)
+
+        this.rels = {
+            'document': new WordExporterRels(this, 'document')
+        }
         let db = {
             bibDB
             imageDB
@@ -65,17 +70,19 @@ export class WordExporter {
         let that = this
         this.citations.formatCitations()
 
+
+
         this.getTemplate(function(){
             that.zip = new JSZip()
             that.zip.loadAsync(that.template).then(function(){
                 let p = []
-                p.push(that.xml.fromZip("word/document.xml"))
-                p.push(that.xml.fromZip("word/_rels/document.xml.rels"))
-                p.push(that.xml.fromZip("[Content_Types].xml"))
+                p.push(that.render.init())
+                p.push(that.images.init())
+                p.push(that.rels['document'].init())
+
                 window.Promise.all(p).then(function(){
 
-                    that.findMaxRelId("word/_rels/document.xml.rels")
-                    that.images.exportImages(function(){
+                    that.images.exportImages('document', function(){
                         that.render.getTagData()
                         that.render.render()
                         that.prepareAndDownload()
@@ -85,22 +92,6 @@ export class WordExporter {
 
         })
     }
-
-    // Go through a rels xml file and file all the listed relations
-    findMaxRelId(filePath) {
-        let xml = this.xml.docs[filePath]
-        let rels = [].slice.call(xml.querySelectorAll('Relationship'))
-        let maxId = 0
-
-        rels.forEach(function(rel){
-            let id = parseInt(rel.getAttribute("Id").replace(/\D/g,''))
-            if (id > maxId) {
-                maxId = id
-            }
-        })
-        this.maxRelId[filePath] = maxId
-    }
-
 
 
     prepareAndDownload() {

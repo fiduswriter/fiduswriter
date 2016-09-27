@@ -10,6 +10,7 @@ import {WordExporterRender} from "./render"
 import {WordExporterRichtext} from "./richtext"
 import {WordExporterXml} from "./xml"
 import {WordExporterRels} from "./rels"
+import {WordExporterFootnotes} from "./footnotes"
 
 /*
 Exporter to Microsoft Word.
@@ -35,7 +36,7 @@ export class WordExporter {
         this.extraFiles = {}
         this.maxRelId = {}
         this.docTitle = this.pmDoc.child(0).textContent
-
+        this.footnotes = new WordExporterFootnotes(this)
         this.render = new WordExporterRender(this)
         this.richtext = new WordExporterRichtext(this)
         this.xml = new WordExporterXml(this)
@@ -45,48 +46,48 @@ export class WordExporter {
         }
         let db = {bibDB,imageDB}
         getDatabasesIfNeeded(db, doc, function() {
-            that.images = new WordExporterImages(that, db.imageDB)
+            that.images = new WordExporterImages(that, db.imageDB, that.rels['document'], that.pmDoc)
             that.citations = new WordExporterCitations(that, db.bibDB)
             that.exporter()
         })
     }
 
-    getTemplate(callback) {
+    getTemplate() {
         let that = this
-        JSZipUtils.getBinaryContent(
-            staticUrl + 'docx/template.docx',
-            function(err, template){
-                that.template = template
-                callback()
-            }
-        )
+        return new window.Promise((resolve) => {
+            JSZipUtils.getBinaryContent(
+                staticUrl + 'docx/template.docx',
+                function(err, template){
+                    that.template = template
+                    resolve()
+                }
+            )
+        })
     }
 
     exporter() {
         let that = this
         this.citations.formatCitations()
+        that.zip = new JSZip()
 
 
-
-        this.getTemplate(function(){
-            that.zip = new JSZip()
-            that.zip.loadAsync(that.template).then(function(){
-                let p = []
-                p.push(that.render.init())
-                p.push(that.images.init())
-                p.push(that.rels['document'].init())
-
-                window.Promise.all(p).then(function(){
-
-                    that.images.exportImages('document', function(){
-                        that.render.getTagData()
-                        that.render.render()
-                        that.prepareAndDownload()
-                    })
-                })
+        this.getTemplate().then(() => {
+                return that.zip.loadAsync(that.template)
+            }).then(() => {
+                return that.render.init()
+            }).then(() => {
+                return that.rels['document'].init()
+            }).then(() => {
+                return that.images.init()
+            }).then(() => {
+                return that.footnotes.init()
+            }).then(() => {
+                that.render.getTagData()
+                that.render.render()
+                that.prepareAndDownload()
             })
 
-        })
+
     }
 
 

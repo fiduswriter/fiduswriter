@@ -5,13 +5,30 @@ export class WordExporterXml {
     }
 
     // Open file at filePath from zip file and parse it as XML.
-    fromZip(filePath) {
-        const parser = new window.DOMParser(), that = this
-        return this.exporter.zip.file(filePath).async('string').then(
-            function(string) {
-                that.docs[filePath] = parser.parseFromString(string, "text/xml")
-            }
-        )
+    fromZip(filePath, defaultContents) {
+        let that = this
+        if (this.docs[filePath]) {
+            // file has been loaded already.
+            return window.Promise.resolve(true)
+        } else if (this.exporter.zip.files[filePath]) {
+            return this.exporter.zip.file(filePath).async('string').then(
+                function(string) {
+                    const parser = new window.DOMParser()
+                    that.docs[filePath] = parser.parseFromString(string, "text/xml")
+                }
+            )
+        } else if (defaultContents) {
+            return window.Promise.resolve(defaultContents).then(
+                function(string) {
+                    const parser = new window.DOMParser()
+                    that.docs[filePath] = parser.parseFromString(string, "text/xml")
+                }
+            )
+        } else {
+            // File couldn't be found and there was no default value.
+            return window.Promise.resolve(false)
+        }
+
     }
 
     // Put all currently open XML files into zip.

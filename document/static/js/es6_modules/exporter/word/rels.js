@@ -1,5 +1,9 @@
 // manages the .rels files. Need to initialize one for each of document.xml and footnotes.xml
 
+
+const DEFAULT_XML = `<?xml version="1.0" encoding="UTF-8"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>`
+
 export class WordExporterRels {
     constructor(exporter, docName) {
         this.exporter = exporter
@@ -11,7 +15,7 @@ export class WordExporterRels {
 
     init() {
         let that = this
-        return this.exporter.xml.fromZip(this.filePath).then(function(){
+        return this.exporter.xml.fromZip(this.filePath, DEFAULT_XML).then(function(){
             that.xml = that.exporter.xml.docs[that.filePath]
             that.findMaxRelId()
         })

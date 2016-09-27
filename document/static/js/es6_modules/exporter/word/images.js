@@ -1,19 +1,26 @@
 import JSZipUtils from "jszip-utils"
 
 export class WordExporterImages {
-    constructor(exporter, imageDB) {
+    constructor(exporter, imageDB, rels, pmDoc) {
         this.exporter = exporter
         this.imageDB = imageDB
+        this.rels = rels
+        this.pmDoc = pmDoc
         this.imgIdTranslation = {}
+        this.ctXml = false
     }
 
     init() {
-        return this.exporter.xml.fromZip("[Content_Types].xml")
+        let that = this
+        return this.exporter.xml.fromZip("[Content_Types].xml").then(function(){
+            that.ctXml = that.exporter.xml.docs['[Content_Types].xml']
+            return that.exportImages()
+        })
     }
 
     // add an image to the ist of files
-    addImage(imgFileName, image, docName) {
-        let rId = this.exporter.rels[docName].addImageRel(imgFileName)
+    addImage(imgFileName, image) {
+        let rId = this.rels.addImageRel(imgFileName)
         this.addContentType(imgFileName.split('.').pop())
         this.exporter.extraFiles[`word/media/${imgFileName}`] = image
         return rId
@@ -21,8 +28,7 @@ export class WordExporterImages {
 
     // add a global contenttype declaration for an image type (if needed)
     addContentType(fileEnding) {
-        let xml = this.exporter.xml.docs['[Content_Types].xml']
-        let types = xml.querySelector('Types')
+        let types = this.ctXml.querySelector('Types')
         let contentDec = types.querySelector('Default[Extension='+fileEnding+']')
         if (!contentDec) {
             let string = `<Default ContentType="image/${fileEnding}" Extension="${fileEnding}"/>`
@@ -32,10 +38,10 @@ export class WordExporterImages {
 
     // Find all images used in file and add these to the export zip.
     // TODO: This will likely fail on image types docx doesn't support such as SVG. Try out and fix.
-    exportImages(docName, callback) {
+    exportImages() {
         let that = this, usedImgs = []
 
-        this.exporter.pmDoc.descendants(
+        this.pmDoc.descendants(
             function(node) {
                 if (node.type.name==='figure' && node.attrs.image) {
                     if (!(node.attrs.image in usedImgs)) {
@@ -44,31 +50,31 @@ export class WordExporterImages {
                 }
             }
         )
+        return new window.Promise((resolveExportImages) => {
+            let p = []
 
-        let p = []
+            usedImgs.forEach((image) => {
+                let imgDBEntry = that.imageDB.db[image]
+                p.push(
+                    new window.Promise((resolve) => {
+                        JSZipUtils.getBinaryContent(
+                            imgDBEntry.image,
+                            function(err, imageFile) {
+                                let wImgId = that.addImage(
+                                    imgDBEntry.image.split('/').pop(),
+                                    imageFile
+                                )
+                                that.imgIdTranslation[image] = wImgId
+                                resolve()
+                            }
+                        )
+                    })
+                )
+            })
 
-        usedImgs.forEach((image) => {
-            let imgDBEntry = that.imageDB.db[image]
-            p.push(
-                new window.Promise((resolve) => {
-                    JSZipUtils.getBinaryContent(
-                        imgDBEntry.image,
-                        function(err, imageFile) {
-                            let wImgId = that.addImage(
-                                imgDBEntry.image.split('/').pop(),
-                                imageFile,
-                                docName
-                            )
-                            that.imgIdTranslation[image] = wImgId
-                            resolve()
-                        }
-                    )
-                })
-            )
-        })
-
-        window.Promise.all(p).then(function(){
-            callback()
+            window.Promise.all(p).then(function(){
+                resolveExportImages()
+            })
         })
     }
 

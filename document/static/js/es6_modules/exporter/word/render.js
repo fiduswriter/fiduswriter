@@ -19,7 +19,7 @@ export class WordExporterRender {
     getTagData() {
 
         let pmDoc = this.exporter.pmDoc
-        let pmBib = this.exporter.citations.pmBib
+        let pmBib = this.exporter.pmBib
 
         this.tags = [
             {

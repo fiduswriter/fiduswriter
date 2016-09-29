@@ -79,7 +79,13 @@ export class WordExporterFootnotes {
             this.convertFootnotes()
             this.rels = new WordExporterRels(this.exporter, 'footnotes')
             this.citations = new WordExporterCitations(this.exporter, this.exporter.bibDB, this.fnPmDoc)
-            this.citations.formatCitations()
+            // Get the citinfos from the main body document so that they will be
+            // used for calculating the bibliography as well
+            let origCitInfos = this.exporter.citations.citInfos
+            this.citations.formatCitations(origCitInfos)
+            // Replace the main bibliography with the new one that includes both citations in main document
+            // and in the footnotes.
+            this.exporter.pmBib = this.citations.pmBib
             this.images = new WordExporterImages(
                 this.exporter,
                 this.exporter.imageDB,

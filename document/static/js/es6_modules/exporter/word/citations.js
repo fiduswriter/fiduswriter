@@ -6,16 +6,25 @@ export class WordExporterCitations {
         this.exporter = exporter
         this.bibDB = bibDB
         this.pmDoc = pmDoc
-        this.pmCits = []
         this.citInfos = []
+        this.citationTexts = []
+        this.pmCits = []
         this.citFm = false
         this.pmBib = false
     }
 
     // Citations are highly interdependent -- so we need to format them all
     // together before laying out the document.
-    formatCitations() {
+    formatCitations(origCitInfos = []) {
         let that = this
+
+        if (origCitInfos.length) {
+            // Initial citInfos are taken from a previous run to include in bibliography,
+            // and they are removed before spitting out the citation entries for the given document.
+            // That way the bibliography should contain information from both.
+            this.citInfos = this.citInfos.concat(origCitInfos)
+        }
+
         this.pmDoc.descendants(
             function(node){
                 if (node.type.name==='citation') {
@@ -28,6 +37,11 @@ export class WordExporterCitations {
             this.exporter.doc.settings.citationstyle,
             this.bibDB,
             function() {
+                that.citationTexts = that.citFm.citationTexts
+                if (origCitInfos.length) {
+                    // Remove all citation texts originating from original starting citInfos
+                    that.citationTexts.splice(0, origCitInfos.length)
+                }
                 that.convertCitations()
             }
         )
@@ -39,7 +53,7 @@ export class WordExporterCitations {
         // We need to put the citations each in a paragraph so that it works with
         // the fiduswriter schema and so that the converter doesn't mash them together.
         let citationsHTML = ''
-        this.citFm.citationTexts.forEach(function(ct){
+        this.citationTexts.forEach(function(ct){
             citationsHTML += '<p>'+ct[0][1]+'</p>'
         })
 

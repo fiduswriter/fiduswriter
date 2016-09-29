@@ -35,6 +35,7 @@ export class WordExporter {
         this.zip = false
         this.extraFiles = {}
         this.maxRelId = {}
+        this.pmBib = false
         this.docTitle = this.pmDoc.child(0).textContent
         this.footnotes = new WordExporterFootnotes(this)
         this.render = new WordExporterRender(this)
@@ -66,6 +67,7 @@ export class WordExporter {
     exporter() {
         let that = this
         this.citations.formatCitations()
+        this.pmBib = this.citations.pmBib
         that.zip = new JSZip()
 
 

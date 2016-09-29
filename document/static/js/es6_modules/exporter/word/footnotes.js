@@ -5,15 +5,32 @@ import {WordExporterRichtext} from "./richtext"
 import {fidusFnSchema} from "../../schema/footnotes"
 import {noSpaceTmp} from "../../common/common"
 
-const DEFAULT_XML = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:footnotes xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape" xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing" xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml" mc:Ignorable="w14 wp14"><w:footnote w:id="0" w:type="separator"><w:p><w:r><w:separator/></w:r></w:p></w:footnote><w:footnote w:id="1" w:type="continuationSeparator"><w:p><w:r><w:continuationSeparator/></w:r></w:p></w:footnote></w:footnotes>`
+const DEFAULT_XML = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' + noSpaceTmp`
+    <w:footnotes xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape" xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing" xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml" mc:Ignorable="w14 wp14">
+        <w:footnote w:id="0" w:type="separator">
+            <w:p>
+                <w:r>
+                    <w:separator />
+                </w:r>
+            </w:p>
+        </w:footnote>
+        <w:footnote w:id="1" w:type="continuationSeparator">
+            <w:p>
+                <w:r>
+                    <w:continuationSeparator />
+                </w:r>
+            </w:p>
+        </w:footnote>
+    </w:footnotes>
+    `
 
 const DEFAULT_SETTINGS_XML = noSpaceTmp`
     <w:footnotePr>
         <w:numFmt w:val="decimal"/>
         <w:footnote w:id="0"/>
         <w:footnote w:id="1"/>
-    </w:footnotePr>`
+    </w:footnotePr>
+    `
 
 const DEFAULT_STYLE_FOOTNOTE = noSpaceTmp`
     <w:style w:type="paragraph" w:styleId="Footnote">
@@ -27,7 +44,8 @@ const DEFAULT_STYLE_FOOTNOTE = noSpaceTmp`
             <w:sz w:val="20" />
             <w:szCs w:val="20" />
         </w:rPr>
-    </w:style>`
+    </w:style>
+    `
 
 const DEFAULT_STYLE_FOOTNOTE_ANCHOR = noSpaceTmp`
     <w:style w:type="character" w:styleId="FootnoteAnchor">
@@ -35,7 +53,8 @@ const DEFAULT_STYLE_FOOTNOTE_ANCHOR = noSpaceTmp`
         <w:rPr>
             <w:vertAlign w:val="superscript" />
         </w:rPr>
-    </w:style>`
+    </w:style>
+    `
 
 
 export class WordExporterFootnotes {

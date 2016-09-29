@@ -1,7 +1,7 @@
 import {FormatCitations} from "../../citations/format"
 import {fidusSchema} from "../../schema/document"
 
-export class WordExporterCitations {
+export class DocxExporterCitations {
     constructor(exporter, bibDB, pmDoc) {
         this.exporter = exporter
         this.bibDB = bibDB

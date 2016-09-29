@@ -224,7 +224,7 @@ export class Editor {
 
     enableUI() {
 
-        jQuery('.savecopy, .saverevision, .download, .word, .latex, .epub, .html, .print, .style, \
+        jQuery('.savecopy, .saverevision, .download, .docx, .latex, .epub, .html, .print, .style, \
       .citationstyle, .tools-item, .papersize, .metadata-menu-item, \
       #open-close-header').removeClass('disabled')
 

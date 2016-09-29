@@ -4,7 +4,7 @@
 const DEFAULT_XML = `<?xml version="1.0" encoding="UTF-8"?>
 <Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"></Relationships>`
 
-export class WordExporterRels {
+export class DocxExporterRels {
     constructor(exporter, docName) {
         this.exporter = exporter
         this.docName = docName

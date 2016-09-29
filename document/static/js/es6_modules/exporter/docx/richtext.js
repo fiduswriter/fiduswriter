@@ -1,7 +1,7 @@
 import {escapeText} from "./tools"
 import {noSpaceTmp} from "../../common/common"
 
-export class WordExporterRichtext {
+export class DocxExporterRichtext {
     constructor(exporter, rels, citations, images) {
         this.exporter = exporter
         this.rels = rels
@@ -15,22 +15,6 @@ export class WordExporterRichtext {
 
         switch(node.type) {
             case 'doc':
-                break
-            case 'footnotecontainer':
-                options = _.clone(options)
-                options.section = 'Footnote'
-                start += `<w:footnote w:id="${this.fnCounter++}">`
-                end += '</w:footnote>'
-                options.footnoteRefMissing = true
-                break
-            case 'footnote':
-                content += noSpaceTmp`
-                    <w:r>
-                        <w:rPr>
-                            <w:rStyle w:val="FootnoteAnchor"/>
-                        </w:rPr>
-                        <w:footnoteReference w:id="${this.fnCounter++}"/>
-                    </w:r>`
                 break
             case 'body':
                 options = _.clone(options)
@@ -103,6 +87,22 @@ export class WordExporterRichtext {
                 // Word seems to lack complex nesting options. The styling is applied
                 // to child paragraphs. This will deliver correct results in most
                 // cases.
+                break
+            case 'footnotecontainer':
+                options = _.clone(options)
+                options.section = 'Footnote'
+                start += `<w:footnote w:id="${this.fnCounter++}">`
+                end += '</w:footnote>'
+                options.footnoteRefMissing = true
+                break
+            case 'footnote':
+                content += noSpaceTmp`
+                    <w:r>
+                        <w:rPr>
+                            <w:rStyle w:val="FootnoteAnchor"/>
+                        </w:rPr>
+                        <w:footnoteReference w:id="${this.fnCounter++}"/>
+                    </w:r>`
                 break
             case 'text':
                 // Check for hyperlink, bold/strong and italic/em

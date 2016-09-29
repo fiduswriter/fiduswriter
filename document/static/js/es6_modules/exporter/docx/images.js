@@ -1,6 +1,6 @@
 import JSZipUtils from "jszip-utils"
 
-export class WordExporterImages {
+export class DocxExporterImages {
     constructor(exporter, imageDB, rels, pmDoc) {
         this.exporter = exporter
         this.imageDB = imageDB

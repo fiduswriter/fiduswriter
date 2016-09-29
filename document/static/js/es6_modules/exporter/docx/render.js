@@ -1,6 +1,6 @@
 import {escapeText} from "./tools"
 
-export class WordExporterRender {
+export class DocxExporterRender {
     constructor(exporter) {
         this.exporter = exporter
         this.filePath = "word/document.xml"

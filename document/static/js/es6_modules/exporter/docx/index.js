@@ -4,13 +4,13 @@ import {createSlug, getDatabasesIfNeeded} from "../tools"
 import JSZip from "jszip"
 import JSZipUtils from "jszip-utils"
 
-import {WordExporterCitations} from "./citations"
-import {WordExporterImages} from "./images"
-import {WordExporterRender} from "./render"
-import {WordExporterRichtext} from "./richtext"
-import {WordExporterXml} from "./xml"
-import {WordExporterRels} from "./rels"
-import {WordExporterFootnotes} from "./footnotes"
+import {DocxExporterCitations} from "./citations"
+import {DocxExporterImages} from "./images"
+import {DocxExporterRender} from "./render"
+import {DocxExporterRichtext} from "./richtext"
+import {DocxExporterXml} from "./xml"
+import {DocxExporterRels} from "./rels"
+import {DocxExporterFootnotes} from "./footnotes"
 
 /*
 Exporter to Microsoft Word.
@@ -24,7 +24,7 @@ TODO:
 */
 
 
-export class WordExporter {
+export class DocxExporter {
     constructor(doc, bibDB, imageDB) {
         let that = this
         this.doc = doc
@@ -37,16 +37,16 @@ export class WordExporter {
         this.maxRelId = {}
         this.pmBib = false
         this.docTitle = this.pmDoc.child(0).textContent
-        this.footnotes = new WordExporterFootnotes(this)
-        this.render = new WordExporterRender(this)
+        this.footnotes = new DocxExporterFootnotes(this)
+        this.render = new DocxExporterRender(this)
 
-        this.xml = new WordExporterXml(this)
+        this.xml = new DocxExporterXml(this)
 
-        this.rels = new WordExporterRels(this, 'document')
+        this.rels = new DocxExporterRels(this, 'document')
         getDatabasesIfNeeded(this, doc, function() {
-            that.images = new WordExporterImages(that, that.imageDB, that.rels, that.pmDoc)
-            that.citations = new WordExporterCitations(that, that.bibDB, that.pmDoc)
-            that.richtext = new WordExporterRichtext(that, that.rels, that.citations, that.images)
+            that.images = new DocxExporterImages(that, that.imageDB, that.rels, that.pmDoc)
+            that.citations = new DocxExporterCitations(that, that.bibDB, that.pmDoc)
+            that.richtext = new DocxExporterRichtext(that, that.rels, that.citations, that.images)
             that.exporter()
         })
     }

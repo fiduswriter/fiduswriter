@@ -1,7 +1,7 @@
-import {WordExporterRels} from "./rels"
-import {WordExporterCitations} from "./citations"
-import {WordExporterImages} from "./images"
-import {WordExporterRichtext} from "./richtext"
+import {DocxExporterRels} from "./rels"
+import {DocxExporterCitations} from "./citations"
+import {DocxExporterImages} from "./images"
+import {DocxExporterRichtext} from "./richtext"
 import {fidusFnSchema} from "../../schema/footnotes"
 import {noSpaceTmp} from "../../common/common"
 
@@ -57,7 +57,7 @@ const DEFAULT_STYLE_FOOTNOTE_ANCHOR = noSpaceTmp`
     `
 
 
-export class WordExporterFootnotes {
+export class DocxExporterFootnotes {
     constructor(exporter) {
         this.exporter = exporter
         this.fnPmDoc = false
@@ -77,8 +77,8 @@ export class WordExporterFootnotes {
         this.findFootnotes()
         if (this.htmlFootnotes.length) {
             this.convertFootnotes()
-            this.rels = new WordExporterRels(this.exporter, 'footnotes')
-            this.citations = new WordExporterCitations(this.exporter, this.exporter.bibDB, this.fnPmDoc)
+            this.rels = new DocxExporterRels(this.exporter, 'footnotes')
+            this.citations = new DocxExporterCitations(this.exporter, this.exporter.bibDB, this.fnPmDoc)
             // Get the citinfos from the main body document so that they will be
             // used for calculating the bibliography as well
             let origCitInfos = this.exporter.citations.citInfos
@@ -86,7 +86,7 @@ export class WordExporterFootnotes {
             // Replace the main bibliography with the new one that includes both citations in main document
             // and in the footnotes.
             this.exporter.pmBib = this.citations.pmBib
-            this.images = new WordExporterImages(
+            this.images = new DocxExporterImages(
                 this.exporter,
                 this.exporter.imageDB,
                 this.rels,
@@ -168,7 +168,7 @@ export class WordExporterFootnotes {
 
     createXml() {
         let that = this
-        this.richtext = new WordExporterRichtext(this.exporter, this.rels, this.citations, this.images)
+        this.richtext = new DocxExporterExporterRichtext(this.exporter, this.rels, this.citations, this.images)
         this.fnXml = this.richtext.transformRichtext(this.fnPmDoc.toJSON()) // TODO: add max dimensions
         this.exporter.rels.addFootnoteRel()
         return this.exporter.xml.fromZip(this.filePath, DEFAULT_XML).then(function(){

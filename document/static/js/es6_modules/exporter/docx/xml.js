@@ -1,4 +1,4 @@
-export class WordExporterXml {
+export class DocxExporterXml {
     constructor(exporter) {
         this.exporter = exporter
         this.docs = {}

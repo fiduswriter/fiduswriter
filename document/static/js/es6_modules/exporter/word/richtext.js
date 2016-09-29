@@ -24,7 +24,13 @@ export class WordExporterRichtext {
                 options.footnoteRefMissing = true
                 break
             case 'footnote':
-                content += `<w:r><w:rPr><w:rStyle w:val="FootnoteAnchor"/></w:rPr><w:footnoteReference w:id="${this.fnCounter++}"/></w:r>`
+                content += noSpaceTmp`
+                    <w:r>
+                        <w:rPr>
+                            <w:rStyle w:val="FootnoteAnchor"/>
+                        </w:rPr>
+                        <w:footnoteReference w:id="${this.fnCounter++}"/>
+                    </w:r>`
                 break
             case 'body':
                 options = _.clone(options)

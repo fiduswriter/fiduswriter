@@ -32,7 +32,6 @@ export class ModFootnoteLayout {
         // Handle the CSS layout of the footnotes on the screen.
         // DOM write phase - nothing to do.
         let that = this
-
         return function () {
             // DOM read phase
             let totalOffset = document.getElementById('footnote-box-container').getBoundingClientRect().top + 10,

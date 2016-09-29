@@ -38,16 +38,14 @@ export class WordExporter {
         this.docTitle = this.pmDoc.child(0).textContent
         this.footnotes = new WordExporterFootnotes(this)
         this.render = new WordExporterRender(this)
-        this.richtext = new WordExporterRichtext(this)
+
         this.xml = new WordExporterXml(this)
 
-        this.rels = {
-            'document': new WordExporterRels(this, 'document')
-        }
-        let db = {bibDB,imageDB}
-        getDatabasesIfNeeded(db, doc, function() {
-            that.images = new WordExporterImages(that, db.imageDB, that.rels['document'], that.pmDoc)
-            that.citations = new WordExporterCitations(that, db.bibDB)
+        this.rels = new WordExporterRels(this, 'document')
+        getDatabasesIfNeeded(this, doc, function() {
+            that.images = new WordExporterImages(that, that.imageDB, that.rels, that.pmDoc)
+            that.citations = new WordExporterCitations(that, that.bibDB, that.pmDoc)
+            that.richtext = new WordExporterRichtext(that, that.rels, that.citations, that.images)
             that.exporter()
         })
     }
@@ -76,7 +74,7 @@ export class WordExporter {
             }).then(() => {
                 return that.render.init()
             }).then(() => {
-                return that.rels['document'].init()
+                return that.rels.init()
             }).then(() => {
                 return that.images.init()
             }).then(() => {

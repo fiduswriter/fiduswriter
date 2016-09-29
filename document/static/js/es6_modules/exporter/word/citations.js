@@ -1,10 +1,11 @@
 import {FormatCitations} from "../../citations/format"
-import {fidusSchema} from "../../editor/schema"
+import {fidusSchema} from "../../schema/document"
 
 export class WordExporterCitations {
-    constructor(exporter, bibDB) {
+    constructor(exporter, bibDB, pmDoc) {
         this.exporter = exporter
         this.bibDB = bibDB
+        this.pmDoc = pmDoc
         this.pmCits = []
         this.citInfos = []
         this.citFm = false
@@ -15,7 +16,7 @@ export class WordExporterCitations {
     // together before laying out the document.
     formatCitations() {
         let that = this
-        this.exporter.pmDoc.descendants(
+        this.pmDoc.descendants(
             function(node){
                 if (node.type.name==='citation') {
                     that.citInfos.push(node.attrs)
@@ -27,13 +28,13 @@ export class WordExporterCitations {
             this.exporter.doc.settings.citationstyle,
             this.bibDB,
             function() {
-                that.formatCitationsTwo()
+                that.convertCitations()
             }
         )
         this.citFm.init()
     }
 
-    formatCitationsTwo() {
+    convertCitations() {
         // There could be some formatting in the citations, so we parse them through the PM schema for final formatting.
         // We need to put the citations each in a paragraph so that it works with
         // the fiduswriter schema and so that the converter doesn't mash them together.

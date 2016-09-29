@@ -4,7 +4,7 @@
 import {node2Obj, obj2Node} from "../exporter/json"
 import {nodeToDOM} from "prosemirror/dist/model/to_dom"
 import {parseDOM} from "prosemirror/dist/model/from_dom"
-import {fidusSchema} from "./schema"
+import {fidusSchema} from "../schema/document"
 
 
 export let modelToEditor = function(doc) {

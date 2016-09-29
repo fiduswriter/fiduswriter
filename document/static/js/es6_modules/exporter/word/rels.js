@@ -9,15 +9,27 @@ export class WordExporterRels {
         this.exporter = exporter
         this.docName = docName
         this.xml = false
+        this.ctXml = false
         this.maxRelId = 0
         this.filePath = `word/_rels/${this.docName}.xml.rels`
+        this.ctFilePath = "[Content_Types].xml"
     }
 
     init() {
         let that = this
-        return this.exporter.xml.fromZip(this.filePath, DEFAULT_XML).then(function(){
+        return this.initCt().then(function(){
+            return that.exporter.xml.fromZip(that.filePath, DEFAULT_XML)}).then(function(){
             that.xml = that.exporter.xml.docs[that.filePath]
             that.findMaxRelId()
+        })
+    }
+
+    initCt() {
+        let that = this
+        return this.exporter.xml.fromZip(this.ctFilePath).then(function() {
+            that.ctXml = that.exporter.xml.docs[that.ctFilePath]
+            that.addRelsToCt()
+            return window.Promise.resolve()
         })
     }
 
@@ -34,6 +46,13 @@ export class WordExporterRels {
         })
     }
 
+    addRelsToCt() {
+        let override = this.ctXml.querySelector(`Override[PartName="/${this.filePath}"]`)
+        if (!override) {
+            let types = this.ctXml.querySelector('Types')
+            types.insertAdjacentHTML('beforeend', `<Override PartName="/${this.filePath}" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>`)
+        }
+    }
     // Add a relationship for a link
     addLinkRel(link) {
         let rels = this.xml.querySelector('Relationships')

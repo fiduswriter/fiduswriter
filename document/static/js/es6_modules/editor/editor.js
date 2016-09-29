@@ -7,7 +7,7 @@ import {collabEditing} from "prosemirror/dist/collab"
 
 import {defaultDocumentStyle} from "../style/documentstyle-list"
 import {defaultCitationStyle} from "../style/citation-definitions"
-import {fidusSchema} from "./schema"
+import {fidusSchema} from "../schema/document"
 import {ModComments} from "./comments/mod"
 import {ModFootnotes} from "./footnotes/mod"
 import {ModCitations} from "./citations/mod"

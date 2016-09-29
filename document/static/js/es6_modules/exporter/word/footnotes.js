@@ -1,19 +1,69 @@
 import {WordExporterRels} from "./rels"
+import {WordExporterCitations} from "./citations"
+import {WordExporterImages} from "./images"
+import {WordExporterRichtext} from "./richtext"
+import {fidusFnSchema} from "../../schema/footnotes"
+
+
+const DEFAULT_XML = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:footnotes xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape" xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing" xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml" mc:Ignorable="w14 wp14"><w:footnote w:id="0" w:type="separator"><w:p><w:r><w:separator/></w:r></w:p></w:footnote><w:footnote w:id="1" w:type="continuationSeparator"><w:p><w:r><w:continuationSeparator/></w:r></w:p></w:footnote></w:footnotes>`
 
 export class WordExporterFootnotes {
     constructor(exporter) {
         this.exporter = exporter
-        this.footnotes = []
+        this.fnPmDoc = false
+        this.images = false
+        this.citations = false
+        this.htmlFootnotes = [] // footnotes in HTML
+        this.fnXml = false
+        this.ctXml = false
+        this.filePath = 'word/footnotes.xml'
+        this.ctFilePath = "[Content_Types].xml"
     }
 
     init() {
+        let that = this
         this.findFootnotes()
-        if (this.footnotes.length) {
-            this.exporter.rels['footnotes'] = new WordExporterRels(this.exporter, 'footnotes')
-            return  this.exporter.rels['footnotes'].init()
+        if (this.htmlFootnotes.length) {
+            this.convertFootnotes()
+            this.rels = new WordExporterRels(this.exporter, 'footnotes')
+            this.citations = new WordExporterCitations(this.exporter, this.exporter.bibDB, this.fnPmDoc)
+            this.citations.formatCitations()
+            this.images = new WordExporterImages(
+                this.exporter,
+                this.exporter.imageDB,
+                this.rels,
+                this.fnPmDoc
+            )
+            return this.rels.init().then(function(){
+                return that.images.init()
+            }).then(function() {
+                return that.images.init()
+            }).then(function() {
+                return that.initCt()
+            }).then(function() {
+                return that.createXml()
+            })
         } else {
             // No footnotes were found.
             return window.Promise.resolve()
+        }
+    }
+
+    initCt() {
+        let that = this
+        return this.exporter.xml.fromZip(this.ctFilePath).then(function() {
+            that.ctXml = that.exporter.xml.docs[that.ctFilePath]
+            that.addRelsToCt()
+            return window.Promise.resolve()
+        })
+    }
+
+    addRelsToCt() {
+        let override = this.ctXml.querySelector(`Override[PartName="/${this.filePath}"]`)
+        if (!override) {
+            let types = this.ctXml.querySelector('Types')
+            types.insertAdjacentHTML('beforeend', `<Override PartName="/${this.filePath}" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.footnotes+xml"/>`)
         }
     }
 
@@ -22,9 +72,32 @@ export class WordExporterFootnotes {
         this.exporter.pmDoc.descendants(
             function(node) {
                 if (node.type.name==='footnote') {
-                    that.footnotes.push(node)
+                    that.htmlFootnotes.push(node.attrs.contents)
                 }
             }
         )
     }
+
+    convertFootnotes() {
+        let fnHTML = ''
+        this.htmlFootnotes.forEach(function(htmlFn){
+            fnHTML += `<div class='footnote-container'>${htmlFn}</div>`
+        })
+        let fnNode = document.createElement('div')
+        fnNode.innerHTML = fnHTML
+        this.fnPmDoc = fidusFnSchema.parseDOM(fnNode)
+    }
+
+    createXml() {
+        let that = this
+        this.richtext = new WordExporterRichtext(this.exporter, this.rels, this.citations, this.images)
+        this.fnXml = this.richtext.transformRichtext(this.fnPmDoc.toJSON()) // TODO: add max dimensions
+        return this.exporter.xml.fromZip(this.filePath, DEFAULT_XML).then(function(){
+            let xml = that.exporter.xml.docs[that.filePath]
+            let footnotesEl = xml.querySelector('footnotes')
+            footnotesEl.insertAdjacentHTML('beforeend', that.fnXml)
+            that.xml = xml
+        })
+    }
+
 }

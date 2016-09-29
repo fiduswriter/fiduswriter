@@ -2,14 +2,30 @@ import {escapeText} from "./tools"
 import {noSpaceTmp} from "../../common/common"
 
 export class WordExporterRichtext {
-    constructor(exporter) {
+    constructor(exporter, rels, citations, images) {
         this.exporter = exporter
+        this.rels = rels
+        this.citations = citations
+        this.images = images
+        this.fnCounter = 2 // footnotes 0 and 1 are occupied by separators by default.
     }
 
-    transformRichtext(node, options) {
+    transformRichtext(node, options = {}) {
         let start = '', content = '', end = ''
 
         switch(node.type) {
+            case 'doc':
+                break
+            case 'footnotecontainer':
+                options = _.clone(options)
+                options.section = 'Footnote'
+                start += `<w:footnote w:id="${this.fnCounter++}">`
+                end += '</w:footnote>'
+                options.footnoteRefMissing = true
+                break
+            case 'footnote':
+                content += `<w:r><w:rPr><w:rStyle w:val="FootnoteAnchor"/></w:rPr><w:footnoteReference w:id="${this.fnCounter++}"/></w:r>`
+                break
             case 'body':
                 options = _.clone(options)
                 options.section = 'Normal'
@@ -92,7 +108,7 @@ export class WordExporterRichtext {
                 }
 
                 if (hyperlink) {
-                    let refId = this.exporter.rels['document'].addLinkRel(hyperlink.href)
+                    let refId = this.rels.addLinkRel(hyperlink.href)
                     start += `<w:hyperlink r:id="rId${refId}"><w:r>`
                     end += '</w:t></w:r></w:hyperlink>'
                 } else {
@@ -113,6 +129,10 @@ export class WordExporterRichtext {
                     }
                     start += '</w:rPr>'
                 }
+                if (options.footnoteRefMissing) {
+                    start+= '<w:footnoteRef /><w:tab />'
+                    options.footnoteRefMissing = false
+                }
                 let textAttr = ''
                 if (node.text[0] === ' ' || node.text[node.text.length-1] === ' ') {
                     textAttr += 'xml:space="preserve"'
@@ -123,28 +143,30 @@ export class WordExporterRichtext {
                 break
             case 'citation':
                 // We take the first citation from the stack and remove it.
-                let cit = this.exporter.citations.pmCits.shift()
+                let cit = this.citations.pmCits.shift()
                 for (let i=0; i < cit.content.length; i++) {
                     content += this.transformRichtext(cit.content[i], options)
                 }
                 break
             case 'figure':
                 if(node.attrs.image) {
-                    let imgDBEntry = this.exporter.images.imageDB.db[node.attrs.image]
+                    let imgDBEntry = this.images.imageDB.db[node.attrs.image]
                     let cx = imgDBEntry.width * 9525 // width in EMU
                     let cy = imgDBEntry.height * 9525 // height in EMU
                     // Shrink image if too large for paper.
-                    if (cx > options.dimensions.width) {
-                        let rel = cy/cx
-                        cx = options.dimensions.width
-                        cy = cx * rel
+                    if (options.dimensions) {
+                        if (cx > options.dimensions.width) {
+                            let rel = cy/cx
+                            cx = options.dimensions.width
+                            cy = cx * rel
+                        }
+                        if (cy > options.dimensions.height) {
+                            let rel = cx/cy
+                            cy = options.dimensions.height
+                            cx = cy * rel
+                        }
                     }
-                    if (cy > options.dimensions.height) {
-                        let rel = cx/cy
-                        cy = options.dimensions.height
-                        cx = cy * rel
-                    }
-                    let rId = this.exporter.images.imgIdTranslation[node.attrs.image]
+                    let rId = this.images.imgIdTranslation[node.attrs.image]
                     start += noSpaceTmp`
                     <w:p>
                       <w:pPr>

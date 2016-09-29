@@ -1,5 +1,5 @@
 import {Step} from "prosemirror/dist/transform"
-import {fidusSchema} from "../schema"
+import {fidusSchema} from "../../schema/document"
 
 export class ModCollabDocChanges {
     constructor(mod) {

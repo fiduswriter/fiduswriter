@@ -11,7 +11,7 @@ import {DocxExporterRichtext} from "./richtext"
 import {DocxExporterXml} from "./xml"
 import {DocxExporterRels} from "./rels"
 import {DocxExporterFootnotes} from "./footnotes"
-
+import {DocxExporterMetadata} from "./metadata"
 /*
 Exporter to Microsoft Word.
 
@@ -34,6 +34,7 @@ export class DocxExporter {
         this.maxRelId = {}
         this.pmBib = false
         this.docTitle = this.pmDoc.child(0).textContent
+        this.metadata = new DocxExporterMetadata(this)
         this.footnotes = new DocxExporterFootnotes(this)
         this.render = new DocxExporterRender(this)
 
@@ -74,6 +75,8 @@ export class DocxExporter {
 
         this.getTemplate().then(() => {
                 return that.zip.loadAsync(that.template)
+            }).then(() => {
+                return that.metadata.init()
             }).then(() => {
                 return that.render.init()
             }).then(() => {

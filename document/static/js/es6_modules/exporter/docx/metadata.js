@@ -10,6 +10,7 @@ export class DocxExporterMetadata {
             keywords: '',
             title: ''
         }
+        this.docSettings = this.exporter.doc.settings
     }
 
     init() {
@@ -23,8 +24,8 @@ export class DocxExporterMetadata {
     }
 
     findMetadata() {
-        this.metadata.authors = this.exporter.pmDoc.child(2).textContent
-        this.metadata.keywords = this.exporter.pmDoc.child(4).textContent
+        this.metadata.authors = this.docSettings['metadata-authors'] ? this.exporter.pmDoc.child(2).textContent : ''
+        this.metadata.keywords = this.docSettings['metadata-keywords'] ? this.exporter.pmDoc.child(4).textContent : ''
         this.metadata.title = this.exporter.pmDoc.child(0).textContent
     }
 

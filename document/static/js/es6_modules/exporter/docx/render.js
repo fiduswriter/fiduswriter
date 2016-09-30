@@ -19,6 +19,7 @@ export class DocxExporterRender {
     getTagData() {
 
         let pmDoc = this.exporter.pmDoc
+        let docSettings = this.exporter.doc.settings
         let pmBib = this.exporter.pmBib
 
         this.tags = [
@@ -28,19 +29,19 @@ export class DocxExporterRender {
             },
             {
                 title: 'subtitle',
-                content: pmDoc.child(1).textContent
+                content: docSettings['metadata-subtitle'] ? pmDoc.child(1).textContent : ''
             },
             {
                 title: 'authors',
-                content: pmDoc.child(2).textContent
+                content: docSettings['metadata-authors'] ? pmDoc.child(2).textContent : ''
             },
             {
                 title: '@abstract', // The '@' triggers handling as block
-                content: pmDoc.child(3).toJSON()
+                content: docSettings['metadata-abstract'] ? pmDoc.child(3).toJSON() : {type: 'paragraph', contents: [{type:'text', text: ' '}]}
             },
             {
                 title: 'keywords',
-                content: pmDoc.child(4).textContent
+                content: docSettings['metadata-keywords'] ? pmDoc.child(4).textContent : ''
             },
             {
                 title: '@body', // The '@' triggers handling as block
@@ -48,7 +49,7 @@ export class DocxExporterRender {
             },
             {
                 title: '@bibliography', // The '@' triggers handling as block
-                content: pmBib ? pmBib : ''
+                content: pmBib ? pmBib : {type: 'paragraph', contents: [{type:'text', text: ' '}]}
             }
         ]
     }

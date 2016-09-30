@@ -25,9 +25,10 @@ export class DocxExporter {
     constructor(doc, bibDB, imageDB) {
         let that = this
         this.doc = doc
+        this.pmDoc = false
         // We use the doc in the pm format as this is what we will be using
         // throughout the application in the future.
-        this.pmDoc = modelToEditor(this.doc)
+        this.getPmDoc()
         this.template = false
         this.zip = false
         this.extraFiles = {}
@@ -52,6 +53,11 @@ export class DocxExporter {
             )
             that.createFile()
         })
+    }
+
+    getPmDoc() {
+        let pmDoc = modelToEditor(this.doc)
+        this.pmDoc = pmDoc
     }
 
     getTemplate() {

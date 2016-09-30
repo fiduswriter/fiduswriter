@@ -9,12 +9,13 @@ export class DocxExporterXml {
         let that = this
         if (this.docs[filePath]) {
             // file has been loaded already.
-            return window.Promise.resolve(true)
+            return window.Promise.resolve(this.docs[filePath])
         } else if (this.exporter.zip.files[filePath]) {
             return this.exporter.zip.file(filePath).async('string').then(
                 function(string) {
                     const parser = new window.DOMParser()
                     that.docs[filePath] = parser.parseFromString(string, "text/xml")
+                    return window.Promise.resolve(that.docs[filePath])
                 }
             )
         } else if (defaultContents) {
@@ -22,11 +23,12 @@ export class DocxExporterXml {
                 function(string) {
                     const parser = new window.DOMParser()
                     that.docs[filePath] = parser.parseFromString(string, "text/xml")
+                    return window.Promise.resolve(that.docs[filePath])
                 }
             )
         } else {
             // File couldn't be found and there was no default value.
-            return window.Promise.resolve(false)
+            return window.Promise.reject("File not found")
         }
 
     }

@@ -12,8 +12,8 @@ export class DocxExporterImages {
 
     init() {
         let that = this
-        return this.exporter.xml.fromZip("[Content_Types].xml").then(function(){
-            that.ctXml = that.exporter.xml.docs['[Content_Types].xml']
+        return this.exporter.xml.fromZip("[Content_Types].xml").then(function(ctXml){
+            that.ctXml = ctXml
             return that.exportImages()
         })
     }

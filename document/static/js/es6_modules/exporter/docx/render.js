@@ -9,8 +9,8 @@ export class DocxExporterRender {
     init() {
         let that = this
         return this.exporter.xml.fromZip(this.filePath).then(
-            function() {
-                that.xml = that.exporter.xml.docs['word/document.xml']
+            function(xml) {
+                that.xml = xml
             }
         )
     }

@@ -18,16 +18,16 @@ export class DocxExporterRels {
     init() {
         let that = this
         return this.initCt().then(function(){
-            return that.exporter.xml.fromZip(that.filePath, DEFAULT_XML)}).then(function(){
-            that.xml = that.exporter.xml.docs[that.filePath]
+            return that.exporter.xml.fromZip(that.filePath, DEFAULT_XML)}).then(function(xml){
+            that.xml = xml
             that.findMaxRelId()
         })
     }
 
     initCt() {
         let that = this
-        return this.exporter.xml.fromZip(this.ctFilePath).then(function() {
-            that.ctXml = that.exporter.xml.docs[that.ctFilePath]
+        return this.exporter.xml.fromZip(this.ctFilePath).then(function(ctXml) {
+            that.ctXml = ctXml
             that.addRelsToCt()
             return window.Promise.resolve()
         })

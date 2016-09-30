@@ -128,7 +128,10 @@ export class DocxExporterRender {
     parRender(tag) {
         let outXML = this.exporter.richtext.transformRichtext(
             tag.content,
-            {dimensions: tag.dimensions}
+            {
+                dimensions: tag.dimensions,
+                citationType: this.exporter.citations.citFm.citationType
+            }
         )
         tag.par.insertAdjacentHTML('beforebegin', outXML)
         // sectPr contains information about columns, etc. We need to move this

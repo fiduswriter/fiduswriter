@@ -75,7 +75,7 @@ export class DocxExporterFootnotes {
     init() {
         let that = this
         this.findFootnotes()
-        if (this.htmlFootnotes.length) {
+        if (this.htmlFootnotes.length || (this.exporter.citations.citFm.citationType==='note' && this.exporter.citations.citInfos.length)) {
             this.convertFootnotes()
             this.rels = new DocxExporterRels(this.exporter, 'footnotes')
             this.citations = new DocxExporterCitations(this.exporter, this.exporter.bibDB, this.fnPmDoc)
@@ -168,7 +168,7 @@ export class DocxExporterFootnotes {
 
     createXml() {
         let that = this
-        this.richtext = new DocxExporterExporterRichtext(this.exporter, this.rels, this.citations, this.images)
+        this.richtext = new DocxExporterRichtext(this.exporter, this.rels, this.citations, this.images)
         this.fnXml = this.richtext.transformRichtext(this.fnPmDoc.toJSON()) // TODO: add max dimensions
         this.exporter.rels.addFootnoteRel()
         return this.exporter.xml.fromZip(this.filePath, DEFAULT_XML).then(function(){

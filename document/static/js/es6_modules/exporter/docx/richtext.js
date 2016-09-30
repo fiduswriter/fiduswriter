@@ -148,10 +148,44 @@ export class DocxExporterRichtext {
                 content += escapeText(node.text)
                 break
             case 'citation':
+                let that = this
                 // We take the first citation from the stack and remove it.
                 let cit = this.citations.pmCits.shift()
-                for (let i=0; i < cit.content.length; i++) {
-                    content += this.transformRichtext(cit.content[i], options)
+                if (options.citationType && options.citationType === 'note') {
+                    // If the citations are in notes (footnotes), we need to
+                    // put the contents of this citation in a footnote.
+                    // We tthen add the footnote to the footnote file and
+                    // adjust the ids of all subsequent footnotes to be one higher
+                    // than what they were until now.
+                    content += noSpaceTmp`
+                        <w:r>
+                            <w:rPr>
+                                <w:rStyle w:val="FootnoteAnchor"/>
+                            </w:rPr>
+                            <w:footnoteReference w:id="${this.fnCounter}"/>
+                        </w:r>`
+                    let fnContents = this.transformRichtext(cit, {
+                        footnoteRefMissing: true,
+                        section: 'Footnote'
+                    })
+                    let fnXml = `<w:footnote w:id="${this.fnCounter}">${fnContents}</w:footnote>`
+                    let xml = this.exporter.footnotes.xml
+                    let lastId = this.fnCounter - 1
+                    let footnotes = [].slice.call(xml.querySelectorAll('footnote'))
+                    footnotes.forEach(function(footnote){
+                        let id = parseInt(footnote.getAttribute('w:id'))
+                        if (id >= that.fnCounter) {
+                            footnote.setAttribute('w:id', id+1)
+                        }
+                        if (id===lastId) {
+                            footnote.insertAdjacentHTML('afterend', fnXml)
+                        }
+                    })
+                    this.fnCounter++
+                } else {
+                    for (let i=0; i < cit.content.length; i++) {
+                        content += this.transformRichtext(cit.content[i], options)
+                    }
                 }
                 break
             case 'figure':

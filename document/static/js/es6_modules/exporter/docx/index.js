@@ -15,11 +15,9 @@ import {DocxExporterFootnotes} from "./footnotes"
 /*
 Exporter to Microsoft Word.
 
-This exporter is *very* experimental. Do not count on using it unless you
-have the time to fix it.
+This exporter is experimental.
 
 TODO:
-* footnotes
 * equations (inline and figure)
 */
 
@@ -46,8 +44,13 @@ export class DocxExporter {
         getDatabasesIfNeeded(this, doc, function() {
             that.images = new DocxExporterImages(that, that.imageDB, that.rels, that.pmDoc)
             that.citations = new DocxExporterCitations(that, that.bibDB, that.pmDoc)
-            that.richtext = new DocxExporterRichtext(that, that.rels, that.citations, that.images)
-            that.exporter()
+            that.richtext = new DocxExporterRichtext(
+                that,
+                that.rels,
+                that.citations,
+                that.images
+            )
+            that.createFile()
         })
     }
 
@@ -64,12 +67,11 @@ export class DocxExporter {
         })
     }
 
-    exporter() {
+    createFile() {
         let that = this
         this.citations.formatCitations()
         this.pmBib = this.citations.pmBib
-        that.zip = new JSZip()
-
+        this.zip = new JSZip()
 
         this.getTemplate().then(() => {
                 return that.zip.loadAsync(that.template)

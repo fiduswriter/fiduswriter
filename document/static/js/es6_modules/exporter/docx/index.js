@@ -21,7 +21,6 @@ TODO:
 * equations (inline and figure)
 */
 
-
 export class DocxExporter {
     constructor(doc, bibDB, imageDB) {
         let that = this
@@ -88,10 +87,7 @@ export class DocxExporter {
                 that.render.render()
                 that.prepareAndDownload()
             })
-
-
     }
-
 
     prepareAndDownload() {
         let that = this
@@ -105,6 +101,5 @@ export class DocxExporter {
             downloadFile(createSlug(that.docTitle)+'.docx', out)
         })
     }
-
 
 }

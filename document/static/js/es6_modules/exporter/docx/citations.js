@@ -1,11 +1,12 @@
 import {FormatCitations} from "../../citations/format"
 import {fidusSchema} from "../../schema/document"
+import {descendantNodes} from "./tools"
 
 export class DocxExporterCitations {
-    constructor(exporter, bibDB, pmDoc) {
+    constructor(exporter, bibDB, pmJSON) {
         this.exporter = exporter
         this.bibDB = bibDB
-        this.pmDoc = pmDoc
+        this.pmJSON = pmJSON
         this.citInfos = []
         this.citationTexts = []
         this.pmCits = []
@@ -25,9 +26,9 @@ export class DocxExporterCitations {
             this.citInfos = this.citInfos.concat(origCitInfos)
         }
 
-        this.pmDoc.descendants(
+        descendantNodes(this.pmJSON).forEach(
             function(node){
-                if (node.type.name==='citation') {
+                if (node.type==='citation') {
                     that.citInfos.push(node.attrs)
                 }
             }

@@ -4,6 +4,7 @@ import {DocxExporterImages} from "./images"
 import {DocxExporterRichtext} from "./richtext"
 import {fidusFnSchema} from "../../schema/footnotes"
 import {noSpaceTmp} from "../../common/common"
+import {descendantNodes} from "./tools"
 
 const DEFAULT_XML = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' + noSpaceTmp`
     <w:footnotes xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape" xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing" xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml" mc:Ignorable="w14 wp14">
@@ -58,9 +59,10 @@ const DEFAULT_STYLE_FOOTNOTE_ANCHOR = noSpaceTmp`
 
 
 export class DocxExporterFootnotes {
-    constructor(exporter) {
+    constructor(exporter, pmJSON) {
         this.exporter = exporter
-        this.fnPmDoc = false
+        this.pmJSON = pmJSON
+        this.fnPmJSON = false
         this.images = false
         this.citations = false
         this.htmlFootnotes = [] // footnotes in HTML
@@ -78,7 +80,7 @@ export class DocxExporterFootnotes {
         if (this.htmlFootnotes.length || (this.exporter.citations.citFm.citationType==='note' && this.exporter.citations.citInfos.length)) {
             this.convertFootnotes()
             this.rels = new DocxExporterRels(this.exporter, 'footnotes')
-            this.citations = new DocxExporterCitations(this.exporter, this.exporter.bibDB, this.fnPmDoc)
+            this.citations = new DocxExporterCitations(this.exporter, this.exporter.bibDB, this.fnPmJSON)
             // Get the citinfos from the main body document so that they will be
             // used for calculating the bibliography as well
             let origCitInfos = this.exporter.citations.citInfos
@@ -90,7 +92,7 @@ export class DocxExporterFootnotes {
                 this.exporter,
                 this.exporter.imageDB,
                 this.rels,
-                this.fnPmDoc
+                this.fnPmJSON
             )
             return this.rels.init().then(function(){
                 return that.images.init()
@@ -147,9 +149,9 @@ export class DocxExporterFootnotes {
 
     findFootnotes() {
         let that = this
-        this.exporter.pmDoc.descendants(
+        descendantNodes(this.pmJSON).forEach(
             function(node) {
-                if (node.type.name==='footnote') {
+                if (node.type==='footnote') {
                     that.htmlFootnotes.push(node.attrs.contents)
                 }
             }
@@ -163,13 +165,13 @@ export class DocxExporterFootnotes {
         })
         let fnNode = document.createElement('div')
         fnNode.innerHTML = fnHTML
-        this.fnPmDoc = fidusFnSchema.parseDOM(fnNode)
+        this.fnPmJSON = fidusFnSchema.parseDOM(fnNode).toJSON()
     }
 
     createXml() {
         let that = this
         this.richtext = new DocxExporterRichtext(this.exporter, this.rels, this.citations, this.images)
-        this.fnXml = this.richtext.transformRichtext(this.fnPmDoc.toJSON()) // TODO: add max dimensions
+        this.fnXml = this.richtext.transformRichtext(this.fnPmJSON) // TODO: add max dimensions
         this.exporter.rels.addFootnoteRel()
         return this.exporter.xml.fromZip(this.filePath, DEFAULT_XML).then(function(xml){
             let footnotesEl = xml.querySelector('footnotes')

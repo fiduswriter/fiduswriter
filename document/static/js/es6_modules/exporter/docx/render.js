@@ -1,9 +1,11 @@
-import {escapeText} from "./tools"
+import {escapeText, textContent} from "./tools"
 
 export class DocxExporterRender {
-    constructor(exporter) {
+    constructor(exporter, pmJSON) {
         this.exporter = exporter
+        this.pmJSON = pmJSON
         this.filePath = "word/document.xml"
+        this.xml = false
     }
 
     init() {
@@ -16,36 +18,32 @@ export class DocxExporterRender {
     }
 
     // Define the tags that are to be looked for in the document
-    getTagData() {
-
-        let pmDoc = this.exporter.pmDoc
-        let docSettings = this.exporter.doc.settings
-        let pmBib = this.exporter.pmBib
+    getTagData(pmBib) {
 
         this.tags = [
             {
                 title: 'title',
-                content: pmDoc.child(0).textContent
+                content: textContent(this.pmJSON.content[0])
             },
             {
                 title: 'subtitle',
-                content: docSettings['metadata-subtitle'] ? pmDoc.child(1).textContent : ''
+                content: textContent(this.pmJSON.content[1])
             },
             {
                 title: 'authors',
-                content: docSettings['metadata-authors'] ? pmDoc.child(2).textContent : ''
+                content: textContent(this.pmJSON.content[2])
             },
             {
                 title: '@abstract', // The '@' triggers handling as block
-                content: docSettings['metadata-abstract'] ? pmDoc.child(3).toJSON() : {type: 'paragraph', contents: [{type:'text', text: ' '}]}
+                content: this.pmJSON.content[3]
             },
             {
                 title: 'keywords',
-                content: docSettings['metadata-keywords'] ? pmDoc.child(4).textContent : ''
+                content: textContent(this.pmJSON.content[4])
             },
             {
                 title: '@body', // The '@' triggers handling as block
-                content: pmDoc.child(5).toJSON()
+                content: this.pmJSON.content[5]
             },
             {
                 title: '@bibliography', // The '@' triggers handling as block

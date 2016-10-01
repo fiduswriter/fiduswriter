@@ -1,33 +1,27 @@
-import {escapeText} from "./tools"
+import {escapeText, textContent} from "./tools"
 
 
 export class DocxExporterMetadata {
-    constructor(exporter) {
+    constructor(exporter, pmJSON) {
         this.exporter = exporter
+        this.pmJSON = pmJSON
         this.coreXml = false
         this.metadata = {
-            authors: '',
-            keywords: '',
-            title: ''
+            authors: textContent(this.pmJSON.content[2]),
+            keywords: textContent(this.pmJSON.content[4]),
+            title: textContent(this.pmJSON.content[0])
         }
-        this.docSettings = this.exporter.doc.settings
     }
 
     init() {
         let that = this
         return this.exporter.xml.fromZip("docProps/core.xml").then(function(coreXml){
             that.coreXml = coreXml
-            that.findMetadata()
             that.addMetadata()
             return window.Promise.resolve()
         })
     }
 
-    findMetadata() {
-        this.metadata.authors = this.docSettings['metadata-authors'] ? this.exporter.pmDoc.child(2).textContent : ''
-        this.metadata.keywords = this.docSettings['metadata-keywords'] ? this.exporter.pmDoc.child(4).textContent : ''
-        this.metadata.title = this.exporter.pmDoc.child(0).textContent
-    }
 
     addMetadata() {
         let corePropertiesEl = this.coreXml.querySelector('coreProperties')

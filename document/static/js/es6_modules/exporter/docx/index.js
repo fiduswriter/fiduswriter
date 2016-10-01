@@ -12,6 +12,7 @@ import {DocxExporterXml} from "./xml"
 import {DocxExporterRels} from "./rels"
 import {DocxExporterFootnotes} from "./footnotes"
 import {DocxExporterMetadata} from "./metadata"
+import {textContent} from "./tools"
 /*
 Exporter to Microsoft Word.
 
@@ -25,26 +26,25 @@ export class DocxExporter {
     constructor(doc, bibDB, imageDB) {
         let that = this
         this.doc = doc
-        this.pmDoc = false
         // We use the doc in the pm format as this is what we will be using
         // throughout the application in the future.
-        this.getPmDoc()
+        this.pmJSON = this.createPmJSON(this.doc)
         this.template = false
         this.zip = false
         this.extraFiles = {}
         this.maxRelId = {}
         this.pmBib = false
-        this.docTitle = this.pmDoc.child(0).textContent
-        this.metadata = new DocxExporterMetadata(this)
-        this.footnotes = new DocxExporterFootnotes(this)
-        this.render = new DocxExporterRender(this)
+        this.docTitle = textContent(this.pmJSON.content[0])
+        this.metadata = new DocxExporterMetadata(this, this.pmJSON)
+        this.footnotes = new DocxExporterFootnotes(this, this.pmJSON)
+        this.render = new DocxExporterRender(this, this.pmJSON)
 
         this.xml = new DocxExporterXml(this)
 
         this.rels = new DocxExporterRels(this, 'document')
         getDatabasesIfNeeded(this, doc, function() {
-            that.images = new DocxExporterImages(that, that.imageDB, that.rels, that.pmDoc)
-            that.citations = new DocxExporterCitations(that, that.bibDB, that.pmDoc)
+            that.images = new DocxExporterImages(that, that.imageDB, that.rels, that.pmJSON)
+            that.citations = new DocxExporterCitations(that, that.bibDB, that.pmJSON)
             that.richtext = new DocxExporterRichtext(
                 that,
                 that.rels,
@@ -55,9 +55,22 @@ export class DocxExporter {
         })
     }
 
-    getPmDoc() {
-        let pmDoc = modelToEditor(this.doc)
-        this.pmDoc = pmDoc
+    createPmJSON(doc) {
+        let pmJSON = modelToEditor(doc).toJSON()
+        // We remove those parts of the doc that are't enabled in the settings
+        if (!doc.settings['metadata-subtitle']) {
+            delete pmJSON.content[1].content
+        }
+        if (!doc.settings['metadata-authors']) {
+            delete pmJSON.content[2].content
+        }
+        if (!doc.settings['metadata-abstract']) {
+            delete pmJSON.content[3].content
+        }
+        if (!doc.settings['metadata-keywords']) {
+            delete pmJSON.content[4].content
+        }
+        return pmJSON
     }
 
     getTemplate() {
@@ -92,7 +105,7 @@ export class DocxExporter {
             }).then(() => {
                 return that.footnotes.init()
             }).then(() => {
-                that.render.getTagData()
+                that.render.getTagData(that.pmBib)
                 that.render.render()
                 that.prepareAndDownload()
             })

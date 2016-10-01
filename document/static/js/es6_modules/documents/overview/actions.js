@@ -332,14 +332,8 @@ export class DocumentOverviewActions {
                             break
                     }
                 })
-
             })
         })
-
     }
-
-
-
-
 
 }

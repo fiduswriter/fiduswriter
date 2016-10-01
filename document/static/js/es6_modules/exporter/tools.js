@@ -1,4 +1,10 @@
+import {BibliographyDB} from "../bibliography/database"
+import {ImageDB} from "../images/database"
+
 export let createSlug = function(str) {
+    if (str==='') {
+        str = gettext('Untitled')
+    }
     str = str.replace(/[^a-zA-Z0-9\s]/g, "")
     str = str.toLowerCase()
     str = str.replace(/\s/g, '-')
@@ -35,4 +41,28 @@ export let findImages = function(htmlCode) {
     })
 
     return images
+}
+
+export let getDatabasesIfNeeded = function(object, doc, callback) {
+    let p = []
+
+    if (!object.bibDB) {
+        p.push(
+            new window.Promise((resolve) => {
+                object.bibDB = new BibliographyDB(doc.owner.id, false, false, false)
+                object.bibDB.getDB(resolve)
+            })
+        )
+    }
+    if (!object.imageDB) {
+        p.push(
+            new window.Promise((resolve) => {
+                object.imageDB = new ImageDB(doc.owner.id)
+                object.imageDB.getDB(resolve)
+            })
+        )
+    }
+    window.Promise.all(p).then(function(){
+        callback()
+    })
 }

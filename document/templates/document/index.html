@@ -65,6 +65,13 @@
                         {% trans "Export selected as LaTeX" %}
                     </span>
                 </li>
+                {% if EXPERIMENTAL %}
+                    <li>
+                        <span class="fw-pulldown-item" data-action="docx">
+                            {% trans "Export selected as DOCX" %}
+                        </span>
+                    </li>
+                {% endif %}
                 <li>
                     <span class="fw-pulldown-item" data-action="native">
                         {% trans "Download selected as Fidus Document" %}

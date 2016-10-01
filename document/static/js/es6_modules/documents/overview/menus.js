@@ -84,6 +84,9 @@ export class DocumentOverviewMenus {
                     case 'latex':
                         that.documentOverview.mod.actions.downloadLatexFiles(ids)
                         break
+                    case 'docx':
+                        that.documentOverview.mod.actions.downloadDocxFiles(ids)
+                        break
                     case 'html':
                         that.documentOverview.mod.actions.downloadHtmlFiles(ids)
                         break

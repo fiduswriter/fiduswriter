@@ -4,7 +4,7 @@ import {Doc, BlockQuote, OrderedList, BulletList, ListItem, HorizontalRule,
 
 import {Schema, Block, Inline, Text, Attribute, MarkType} from "prosemirror/dist/model"
 
-import {Figure, Citation, Equation} from "../schema"
+import {Figure, Citation, Equation} from "./document"
 
 class FootnoteContainer extends Block {
     get matchDOMTag() {

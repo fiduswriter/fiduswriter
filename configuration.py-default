@@ -13,6 +13,9 @@ SERVER_INFO = {
     # This determines whether the server is used for testing and will let the
     # users know upon signup know that their documents may disappear.
     'TEST_SERVER': True,
+    # This determines whether experimental or unfinished features will be
+    # enabled.
+    'EXPERIMENTAL': False,
     # This is the contact email that will be shown in various places all over
     # the site.
     'CONTACT_EMAIL': 'mail@email.com',

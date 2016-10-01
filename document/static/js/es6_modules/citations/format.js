@@ -127,7 +127,7 @@ export class FormatCitations {
 
         let citeprocInstance = new CSL.Engine(new citeprocSys(this.cslDB), this.citationStyle.definition)
 
-        let inText = citeprocInstance.cslXml.className === 'in-text'
+        let inText = citeprocInstance.cslXml.dataObj.attrs.class === 'in-text'
 
         let len = this.citations.length
 
@@ -180,7 +180,7 @@ export class FormatCitations {
             this.citationTexts.push(citationText)
         }
 
-        this.citationType = citeprocInstance.cslXml.className
+        this.citationType = citeprocInstance.cslXml.dataObj.attrs.class
         this.bibliography = citeprocInstance.makeBibliography()
     }
 /*

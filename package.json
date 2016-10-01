@@ -40,7 +40,7 @@
     "napa": "2.3.0"
   },
   "napa": {
-    "citeproc": "Juris-M/citeproc-js#1.1.124"
+    "citeproc": "Juris-M/citeproc-js#1.1.136"
   },
   "browserify": {
     "transform": [

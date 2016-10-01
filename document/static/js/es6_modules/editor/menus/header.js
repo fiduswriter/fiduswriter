@@ -43,7 +43,7 @@ export class ModMenusHeader {
           }
 
           jQuery('.metadata-menu-item, #open-close-header, .saverevision, .multibuttonsCover, \
-          .savecopy, .download, .latex, .epub, .html, .print, .style, .citationstyle, \
+          .savecopy, .download, .docx, .latex, .epub, .html, .print, .style, .citationstyle, \
           .tools-item, .papersize, .metadata-menu-item, .share, #open-close-header, \
           .save, .papersize-menu, .metadata-menu, .documentstyle-menu, \
           .citationstyle-menu, .exporter-menu').addClass('disabled')
@@ -55,6 +55,9 @@ export class ModMenusHeader {
           })
           jQuery(document).on('mousedown', '.download:not(.disabled)', function() {
               that.mod.actions.download()
+          })
+          jQuery(document).on('mousedown', '.docx:not(.disabled)', function() {
+              that.mod.actions.downloadDocx()
           })
           jQuery(document).on('mousedown', '.latex:not(.disabled)', function() {
               that.mod.actions.downloadLatex()

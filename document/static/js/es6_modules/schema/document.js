@@ -1,4 +1,4 @@
-import {Doc, BlockQuote, OrderedList, BulletList, ListItem, HorizontalRule,
+import {BlockQuote, OrderedList, BulletList, ListItem, HorizontalRule,
         Paragraph, Heading, CodeBlock, Image, HardBreak, CodeMark, EmMark,
         StrongMark, LinkMark} from "prosemirror/dist/schema-basic"
 
@@ -8,7 +8,14 @@ import {elt} from "prosemirror/dist/util/dom"
 
 import {katexRender} from "../katex/katex"
 
-
+class Doc extends Block {
+    get matchDOMTag() {
+        return {"div.ProseMirror-content": null}
+    }
+    toDOM(node) {
+        return ["div", {class: 'ProseMirror-content'}, 0]
+    }
+}
 
 class Title extends Block {
     get matchDOMTag() {

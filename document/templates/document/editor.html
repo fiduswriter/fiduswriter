@@ -5,7 +5,7 @@
     <head>
         <meta charset="utf-8" />
         <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.png" type="image/png">
-        <title> Fidus Writer - {{document.title}} </title>
+        <title> Fidus Writer </title>
         <meta name="description" content="{% trans "The all in one solution for collaborative academic writing." %}">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script type="text/javascript">
@@ -149,6 +149,13 @@
                                     LaTeX
                                 </span>
                             </li>
+                            {% if EXPERIMENTAL %}
+                                <li>
+                                    <span class="fw-pulldown-item docx" title="{% trans "Export the document to a DOCX file." %}">
+                                        DOCX
+                                    </span>
+                                </li>
+                            {% endif %}
                         </ul>
                     </div>
                 </div>

@@ -7,7 +7,7 @@ import {collabEditing} from "prosemirror/dist/collab"
 
 import {defaultDocumentStyle} from "../style/documentstyle-list"
 import {defaultCitationStyle} from "../style/citation-definitions"
-import {fidusSchema} from "./schema"
+import {fidusSchema} from "../schema/document"
 import {ModComments} from "./comments/mod"
 import {ModFootnotes} from "./footnotes/mod"
 import {ModCitations} from "./citations/mod"
@@ -135,7 +135,7 @@ export class Editor {
         if (this.mod.collab.docChanges.awaitingDiffResponse) {
             this.mod.collab.docChanges.enableDiffSending()
         }
-        let pmDoc = modelToEditor(this.doc, this.schema)
+        let pmDoc = modelToEditor(this.doc)
         //collabEditing.detach(this.pm)
         this.pm.setDoc(pmDoc)
         that.pm.mod.collab.version = this.doc.version
@@ -224,7 +224,7 @@ export class Editor {
 
     enableUI() {
 
-        jQuery('.savecopy, .saverevision, .download, .latex, .epub, .html, .print, .style, \
+        jQuery('.savecopy, .saverevision, .download, .docx, .latex, .epub, .html, .print, .style, \
       .citationstyle, .tools-item, .papersize, .metadata-menu-item, \
       #open-close-header').removeClass('disabled')
 

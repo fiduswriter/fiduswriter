@@ -97,8 +97,6 @@ export class DocxExporterFootnotes {
             return this.rels.init().then(function(){
                 return that.images.init()
             }).then(function() {
-                return that.images.init()
-            }).then(function() {
                 return that.initCt()
             }).then(function() {
                 return that.setSettings()

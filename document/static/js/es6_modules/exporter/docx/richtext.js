@@ -70,7 +70,7 @@ export class DocxExporterRichtext {
                 if (options.list_depth === undefined) {
                     options.list_depth = 0
                 } else {
-                    options.list_depth = 1
+                    options.list_depth += 1
                 }
                 break
             case 'bullet_list':
@@ -80,7 +80,7 @@ export class DocxExporterRichtext {
                 if (options.list_depth === undefined) {
                     options.list_depth = 0
                 } else {
-                    options.list_depth = 1
+                    options.list_depth += 1
                 }
                 break
             case 'list_item':
@@ -154,7 +154,7 @@ export class DocxExporterRichtext {
                 if (options.citationType && options.citationType === 'note') {
                     // If the citations are in notes (footnotes), we need to
                     // put the contents of this citation in a footnote.
-                    // We tthen add the footnote to the footnote file and
+                    // We then add the footnote to the footnote file and
                     // adjust the ids of all subsequent footnotes to be one higher
                     // than what they were until now.
                     content += noSpaceTmp`

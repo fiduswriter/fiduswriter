@@ -4,6 +4,7 @@ import {LatexExporter} from "../../exporter/latex"
 import {HTMLExporter} from "../../exporter/html"
 import {EpubExporter} from "../../exporter/epub"
 import {DocxExporter} from "../../exporter/docx"
+import {OdtExporter} from "../../exporter/odt"
 
 export class ModMenusActions {
     constructor(mod) {
@@ -51,6 +52,13 @@ export class ModMenusActions {
         let that = this
         that.mod.editor.save(function (){
             new NativeExporter(that.mod.editor.doc, that.mod.editor.bibDB, that.mod.editor.imageDB.db)
+        })
+    }
+
+    downloadOdt() {
+        let that = this
+        that.mod.editor.save(function() {
+            new OdtExporter(that.mod.editor.doc, that.mod.editor.bibDB, that.mod.editor.imageDB)
         })
     }
 

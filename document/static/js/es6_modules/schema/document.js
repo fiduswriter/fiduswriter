@@ -201,7 +201,7 @@ export class Figure extends Block {
             'data-figure-category': node.attrs.figureCategory,
             'data-caption': node.attrs.caption
         })
-        if (node.attrs.image) {
+        if (node.attrs.image!=='false') {
             dom.appendChild(elt("div"))
             if(node.type.schema.cached.imageDB) {
                 if(node.type.schema.cached.imageDB.db[node.attrs.image] &&

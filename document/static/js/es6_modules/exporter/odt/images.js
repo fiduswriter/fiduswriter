@@ -18,10 +18,10 @@ export class OdtExporterImages {
         })
     }
 
-    // add an image to the ist of files
+    // add an image to the list of files
     addImage(imgFileName, image) {
         imgFileName = this.addFileToManifest(imgFileName)
-        this.exporter.xml.extraFiles[`Pictures/${imgFileName}`] = image
+        this.exporter.xml.addExtraFile(`Pictures/${imgFileName}`, image)
         return imgFileName
     }
 
@@ -38,7 +38,7 @@ export class OdtExporterImages {
             imgFileName = `${fileNameStart}_${counter++}.${fileNameEnding}`
             imgManifest = manifestEl.querySelector(`file-entry[*|full-path="Pictures/${imgFileName}"]`)
         }
-        let string = `<manifest:file-entry manifest:full-path="Pictures/${imgFileName}" manifest:media-type="image/${fileNameEnding}"/>`
+        let string = `  <manifest:file-entry manifest:full-path="Pictures/${imgFileName}" manifest:media-type="image/${fileNameEnding}"/>`
         manifestEl.insertAdjacentHTML('beforeend', string)
         return imgFileName
     }

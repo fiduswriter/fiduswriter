@@ -23,7 +23,7 @@ export class DocxExporterImages {
     addImage(imgFileName, image) {
         let rId = this.rels.addImageRel(imgFileName)
         this.addContentType(imgFileName.split('.').pop())
-        this.exporter.xml.extraFiles[`word/media/${imgFileName}`] = image
+        this.exporter.xml.addExtraFile(`word/media/${imgFileName}`, image)
         return rId
     }
 

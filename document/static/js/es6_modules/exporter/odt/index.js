@@ -9,13 +9,15 @@ import {OdtExporterRichtext} from "./richtext"
 import {OdtExporterFootnotes} from "./footnotes"
 import {OdtExporterMetadata} from "./metadata"
 import {OdtExporterStyles} from "./styles"
+import {OdtExporterMath} from "./math"
+
 /*
 Exporter to Open Document Text (LibreOffice)
 
 This exporter is experimental.
 
 TODO:
-* equations (inline and figure)
+* figure equations
 */
 
 
@@ -29,7 +31,7 @@ export class OdtExporter {
         this.pmBib = false
         this.pmJSON = false
         this.docTitle = false
-        
+
         getDatabasesIfNeeded(this, doc).then(function(){
             that.init()
         })
@@ -47,6 +49,7 @@ export class OdtExporter {
         this.footnotes = new OdtExporterFootnotes(this, this.pmJSON)
         this.render = new OdtExporterRender(this, this.pmJSON)
         this.styles = new OdtExporterStyles(this)
+        this.math = new OdtExporterMath(this)
         this.images = new OdtExporterImages(this, this.imageDB, that.pmJSON)
         this.citations = new OdtExporterCitations(this, this.bibDB, that.pmJSON)
         this.richtext = new OdtExporterRichtext(
@@ -61,6 +64,8 @@ export class OdtExporter {
                 return that.metadata.init()
             }).then(() => {
                 return that.styles.init()
+            }).then(() => {
+                return that.math.init()
             }).then(() => {
                 return that.render.init()
             }).then(() => {

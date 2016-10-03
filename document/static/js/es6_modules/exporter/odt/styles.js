@@ -108,6 +108,23 @@ export class OdtExporterStyles {
         }
     }
 
+    checkGraphicStyle(styleName) {
+        let stylesParStyle = this.stylesXml.querySelector(`style[*|name="${styleName}"]`)
+        let contentParStyle = this.contentXml.querySelector(`style[*|name="${styleName}"]`)
+        if ((!stylesParStyle) && (!contentParStyle)) {
+            let stylesEl = this.stylesXml.querySelector('styles')
+            stylesEl.insertAdjacentHTML(
+                'beforeend',
+                noSpaceTmp`
+                    <style:style style:name="${styleName}" style:family="graphic">
+                        <style:graphic-properties text:anchor-type="as-char" svg:y="0in" fo:margin-left="0.0791in" fo:margin-right="0.0791in" style:vertical-pos="middle" style:vertical-rel="text"/>
+                    </style:style>
+                `
+            )
+        }
+
+    }
+
     getBulletListStyleId() {
         if (this.bulletListStyleId[0]) {
             return this.bulletListStyleId

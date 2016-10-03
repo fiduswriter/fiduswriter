@@ -151,6 +151,16 @@ export class OdtExporterRichtext {
                     console.warn('Unhandled node type: figure (equation)')
                 }
                 break
+            case 'equation':
+                let latex = node.attrs.equation
+                let objectNumber = this.exporter.math.addMath(latex)
+                content += noSpaceTmp`
+                    <draw:frame draw:style-name="Formula" draw:name="Object${objectNumber}" text:anchor-type="as-char" draw:z-index="1">
+                        <draw:object xlink:href="./Object ${objectNumber}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/>
+                        <svg:desc>formula</svg:desc>
+                    </draw:frame>`
+                this.exporter.styles.checkGraphicStyle('Formula')
+                break
             default:
                 console.warn('Unhandled node type:' + node.type)
                 break

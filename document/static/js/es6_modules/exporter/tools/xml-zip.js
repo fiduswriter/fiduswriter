@@ -67,6 +67,16 @@ export class XmlZip {
 
     }
 
+    // Add an xml file at filepath without checking for previous version
+    addXmlFile(filePath, xmlContents) {
+        this.docs[filePath] = xmlContents
+    }
+
+    // Add extra file to be saved in zip later.
+    addExtraFile(filePath, fileContents) {
+        this.extraFiles[filePath] = fileContents
+    }
+
     // Put all currently open XML files into zip.
     allXMLToZip() {
         for (let fileName in this.docs) {

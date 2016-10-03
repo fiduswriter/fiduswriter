@@ -1,10 +1,10 @@
-Django==1.10.1
+Django==1.10.2
 Pillow==3.3.1
 django-allauth==0.27.0
 django-avatar==3.1.0
 django-compressor==2.1
 django-js-error-hook==0.4
-tornado==4.4.1
+tornado==4.4.2
 python-dateutil==2.5.3
 python-magic==0.4.12
 setuptools==27.1.2

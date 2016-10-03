@@ -1,4 +1,5 @@
-import {escapeText, textContent} from "./tools"
+import {textContent} from "../tools/pmJSON"
+import {escapeText} from "../tools/html"
 
 
 export class OdtExporterMetadata {
@@ -15,7 +16,7 @@ export class OdtExporterMetadata {
 
     init() {
         let that = this
-        return this.exporter.xml.fromZip("meta.xml").then(function(metaXml){
+        return this.exporter.xml.getXml("meta.xml").then(function(metaXml){
             that.metaXml = metaXml
             that.addMetadata()
             return window.Promise.resolve()

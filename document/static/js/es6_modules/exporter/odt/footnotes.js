@@ -3,7 +3,7 @@ import {OdtExporterImages} from "./images"
 import {OdtExporterRichtext} from "./richtext"
 import {fidusFnSchema} from "../../schema/footnotes"
 import {noSpaceTmp} from "../../common/common"
-import {descendantNodes} from "./tools"
+import {descendantNodes} from "../tools/pmJSON"
 
 
 const DEFAULT_STYLE_FOOTNOTE = noSpaceTmp`
@@ -66,7 +66,7 @@ export class OdtExporterFootnotes {
 
     addStyles() {
         let that = this
-        return this.exporter.xml.fromZip(this.styleFilePath).then(function(styleXml) {
+        return this.exporter.xml.getXml(this.styleFilePath).then(function(styleXml) {
             that.styleXml = styleXml
             that.addStyle('Footnote', DEFAULT_STYLE_FOOTNOTE)
             that.addStyle('Footnote_20_anchor', DEFAULT_STYLE_FOOTNOTE_ANCHOR)

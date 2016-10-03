@@ -1,6 +1,6 @@
 import {documentrevisionsTemplate, documentrevisionsConfirmDeleteTemplate} from "./templates"
 import {ImportFidusFile} from "../../importer/file"
-import {downloadFile} from "../../exporter/download"
+import {downloadFile} from "../../exporter/tools/file"
 import {deactivateWait, addAlert, localizeDate, csrfToken} from "../../common/common"
 
 /**

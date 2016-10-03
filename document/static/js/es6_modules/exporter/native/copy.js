@@ -1,7 +1,7 @@
-import {exportNative} from "./native"
-import {ImportNative} from "../importer/native"
-import {BibliographyDB} from "../bibliography/database"
-import {deactivateWait, addAlert} from "../common/common"
+import {exportNative} from "./index"
+import {ImportNative} from "../../importer/native"
+import {BibliographyDB} from "../../bibliography/database"
+import {deactivateWait, addAlert} from "../../common/common"
 
 
 let afterCopy = function(noErrors, returnValue, callback) {

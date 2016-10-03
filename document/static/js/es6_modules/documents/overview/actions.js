@@ -1,6 +1,6 @@
 import {getMissingDocumentListData} from "../tools"
 import {importFidusTemplate, documentsListItemTemplate} from "./templates"
-import {savecopy} from "../../exporter/copy"
+import {savecopy} from "../../exporter/native/copy"
 import {EpubExporter} from "../../exporter/epub"
 import {HTMLExporter} from "../../exporter/html"
 import {LatexExporter} from "../../exporter/latex"

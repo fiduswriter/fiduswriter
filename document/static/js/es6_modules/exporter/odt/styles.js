@@ -18,9 +18,9 @@ export class OdtExporterStyles {
 
     init() {
         let that = this
-        return this.exporter.xml.fromZip("styles.xml").then(function(stylesXml){
+        return this.exporter.xml.getXml("styles.xml").then(function(stylesXml){
             that.stylesXml = stylesXml
-            return that.exporter.xml.fromZip("content.xml")
+            return that.exporter.xml.getXml("content.xml")
         }).then(function(contentXml){
             that.contentXml = contentXml
             that.getStyleCounters()

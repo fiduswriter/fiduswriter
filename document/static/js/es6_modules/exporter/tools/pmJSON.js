@@ -1,11 +1,3 @@
-export let escapeText = function(text) {
-    return text
-        .replace(/"/g, '&quot;')
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-}
-
 export let descendantNodes = function(node) {
     let returnValue = [node]
     if (node.content) {

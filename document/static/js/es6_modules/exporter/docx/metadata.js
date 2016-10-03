@@ -1,4 +1,5 @@
-import {escapeText, textContent} from "./tools"
+import {textContent} from "../tools/pmJSON"
+import {escapeText} from "../tools/html"
 
 
 export class DocxExporterMetadata {
@@ -15,7 +16,7 @@ export class DocxExporterMetadata {
 
     init() {
         let that = this
-        return this.exporter.xml.fromZip("docProps/core.xml").then(function(coreXml){
+        return this.exporter.xml.getXml("docProps/core.xml").then(function(coreXml){
             that.coreXml = coreXml
             that.addMetadata()
             return window.Promise.resolve()

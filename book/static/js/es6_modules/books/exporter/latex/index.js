@@ -1,10 +1,11 @@
-import {getMissingChapterData, getImageAndBibDB, uniqueObjects} from "./tools"
-import {latexBookIndexTemplate} from "./latex-templates"
-import {obj2Node} from "../../exporter/json"
-import {BaseLatexExporter} from "../../exporter/latex"
-import {createSlug, findImages} from "../../exporter/tools"
-import {zipFileCreator} from "../../exporter/zip"
-import {BibLatexExporter} from "../../bibliography/exporter/biblatex"
+import {getMissingChapterData, getImageAndBibDB, uniqueObjects} from "../tools"
+import {latexBookIndexTemplate} from "./templates"
+import {obj2Node} from "../../../exporter/tools/json"
+import {BaseLatexExporter} from "../../../exporter/latex/base"
+import {createSlug} from "../../../exporter/tools/file"
+import {findImages} from "../../../exporter/tools/html"
+import {zipFileCreator} from "../../../exporter/tools/zip"
+import {BibLatexExporter} from "../../../bibliography/exporter/biblatex"
 
 
 export class LatexBookExporter extends BaseLatexExporter {

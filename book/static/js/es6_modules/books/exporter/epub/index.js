@@ -1,17 +1,18 @@
-import {katexRender} from "../../katex/katex"
+import {katexRender} from "../../../katex/katex"
 
-import {getMissingChapterData, getImageAndBibDB, uniqueObjects} from "./tools"
+import {getMissingChapterData, getImageAndBibDB, uniqueObjects} from "../tools"
 import {epubBookOpfTemplate, epubBookCoverTemplate, epubBookTitlepageTemplate,
-  epubBookCopyrightTemplate} from "./epub-templates"
-import {katexOpfIncludes} from "../../katex/opf-includes"
-import {BaseEpubExporter} from "../../exporter/epub"
+  epubBookCopyrightTemplate} from "./templates"
+import {katexOpfIncludes} from "../../../katex/opf-includes"
+import {BaseEpubExporter} from "../../../exporter/epub/base"
 import {ncxTemplate, ncxItemTemplate, navTemplate, navItemTemplate,
-  containerTemplate, xhtmlTemplate} from "../../exporter/epub-templates"
-import {node2Obj, obj2Node} from "../../exporter/json"
-import {createSlug, findImages} from "../../exporter/tools"
-import {zipFileCreator} from "../../exporter/zip"
-import {RenderCitations} from "../../citations/render"
-import {addAlert} from "../../common/common"
+  containerTemplate, xhtmlTemplate} from "../../../exporter/epub/templates"
+import {node2Obj, obj2Node} from "../../../exporter/tools/json"
+import {findImages} from "../../../exporter/tools/html"
+import {createSlug} from "../../../exporter/tools/file"
+import {zipFileCreator} from "../../../exporter/tools/zip"
+import {RenderCitations} from "../../../citations/render"
+import {addAlert} from "../../../common/common"
 
 
 export class EpubBookExporter extends BaseEpubExporter {

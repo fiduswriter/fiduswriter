@@ -1,4 +1,5 @@
-import {escapeText, textContent, domDescendantTexNodes} from "./tools"
+import {textContent} from "../tools/pmJSON"
+import {escapeText, domDescendantTexNodes} from "../tools/html"
 
 export class OdtExporterRender {
     constructor(exporter, pmJSON) {
@@ -10,7 +11,7 @@ export class OdtExporterRender {
 
     init() {
         let that = this
-        return this.exporter.xml.fromZip(this.filePath).then(
+        return this.exporter.xml.getXml(this.filePath).then(
             function(xml) {
                 that.xml = xml
                 return window.Promise.resolve()

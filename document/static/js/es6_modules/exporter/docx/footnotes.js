@@ -4,7 +4,7 @@ import {DocxExporterImages} from "./images"
 import {DocxExporterRichtext} from "./richtext"
 import {fidusFnSchema} from "../../schema/footnotes"
 import {noSpaceTmp} from "../../common/common"
-import {descendantNodes} from "./tools"
+import {descendantNodes} from "../tools/pmJSON"
 
 const DEFAULT_XML = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\n' + noSpaceTmp`
     <w:footnotes xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:w10="urn:schemas-microsoft-com:office:word" xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" xmlns:wps="http://schemas.microsoft.com/office/word/2010/wordprocessingShape" xmlns:wpg="http://schemas.microsoft.com/office/word/2010/wordprocessingGroup" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:wp14="http://schemas.microsoft.com/office/word/2010/wordprocessingDrawing" xmlns:w14="http://schemas.microsoft.com/office/word/2010/wordml" mc:Ignorable="w14 wp14">
@@ -113,7 +113,7 @@ export class DocxExporterFootnotes {
 
     initCt() {
         let that = this
-        return this.exporter.xml.fromZip(this.ctFilePath).then(function(ctXml) {
+        return this.exporter.xml.getXml(this.ctFilePath).then(function(ctXml) {
             that.ctXml = ctXml
             that.addRelsToCt()
             return window.Promise.resolve()
@@ -130,7 +130,7 @@ export class DocxExporterFootnotes {
 
     addStyles() {
         let that = this
-        return this.exporter.xml.fromZip(this.styleFilePath).then(function(styleXml) {
+        return this.exporter.xml.getXml(this.styleFilePath).then(function(styleXml) {
             that.styleXml = styleXml
             that.addStyle('Footnote', DEFAULT_STYLE_FOOTNOTE)
             that.addStyle('FootnoteAnchor', DEFAULT_STYLE_FOOTNOTE_ANCHOR)
@@ -171,7 +171,7 @@ export class DocxExporterFootnotes {
         this.richtext = new DocxExporterRichtext(this.exporter, this.rels, this.citations, this.images)
         this.fnXml = this.richtext.transformRichtext(this.fnPmJSON) // TODO: add max dimensions
         this.exporter.rels.addFootnoteRel()
-        return this.exporter.xml.fromZip(this.filePath, DEFAULT_XML).then(function(xml){
+        return this.exporter.xml.getXml(this.filePath, DEFAULT_XML).then(function(xml){
             let footnotesEl = xml.querySelector('footnotes')
             footnotesEl.insertAdjacentHTML('beforeend', that.fnXml)
             that.xml = xml
@@ -180,7 +180,7 @@ export class DocxExporterFootnotes {
 
     setSettings() {
         let that = this
-        return this.exporter.xml.fromZip(this.settingsFilePath).then(function(settingsXml){
+        return this.exporter.xml.getXml(this.settingsFilePath).then(function(settingsXml){
             let footnotePr = settingsXml.querySelector('footnotePr')
             if (!footnotePr) {
                 let settingsEl = settingsXml.querySelector('settings')

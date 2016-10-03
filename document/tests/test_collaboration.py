@@ -961,6 +961,8 @@ class AddFootnoteTest(LiveTornadoTestCase, ThreadManipulator):
         p1.join()
         p2.join()
 
+        self.wait_for_doc_sync(self.driver, self.driver2)
+
         self.assertEqual(
             13,
             len(self.get_footnote(self.driver2))

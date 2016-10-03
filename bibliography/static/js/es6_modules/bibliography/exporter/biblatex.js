@@ -1,4 +1,4 @@
-import {zipFileCreator} from "../../exporter/zip"
+import {zipFileCreator} from "../../exporter/tools/zip"
 import {BibEntryTypes, BibFieldTypes} from "../statics"
 
 

@@ -1,4 +1,4 @@
-import {downloadFile} from "./download"
+import {downloadFile} from "./file"
 import {uploadFile} from "./upload"
 import JSZip from "jszip"
 import JSZipUtils from "jszip-utils"

@@ -1,4 +1,5 @@
-import {escapeText, textContent} from "./tools"
+import {textContent} from "../tools/pmJSON"
+import {escapeText} from "../tools/html"
 
 export class DocxExporterRender {
     constructor(exporter, pmJSON) {
@@ -10,7 +11,7 @@ export class DocxExporterRender {
 
     init() {
         let that = this
-        return this.exporter.xml.fromZip(this.filePath).then(
+        return this.exporter.xml.getXml(this.filePath).then(
             function(xml) {
                 that.xml = xml
             }

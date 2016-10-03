@@ -1,5 +1,5 @@
 import JSZipUtils from "jszip-utils"
-import {descendantNodes} from "./tools"
+import {descendantNodes} from "../tools/pmJSON"
 
 export class OdtExporterImages {
     constructor(exporter, imageDB, pmJSON) {
@@ -12,7 +12,7 @@ export class OdtExporterImages {
 
     init() {
         let that = this
-        return this.exporter.xml.fromZip("META-INF/manifest.xml").then(function(manifestXml){
+        return this.exporter.xml.getXml("META-INF/manifest.xml").then(function(manifestXml){
             that.manifestXml = manifestXml
             return that.exportImages()
         })
@@ -21,7 +21,7 @@ export class OdtExporterImages {
     // add an image to the ist of files
     addImage(imgFileName, image) {
         imgFileName = this.addFileToManifest(imgFileName)
-        this.exporter.extraFiles[`Pictures/${imgFileName}`] = image
+        this.exporter.xml.extraFiles[`Pictures/${imgFileName}`] = image
         return imgFileName
     }
 

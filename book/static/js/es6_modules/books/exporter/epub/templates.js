@@ -1,4 +1,4 @@
-import {opfImageItemTemplatePart, opfCssItemTemplatePart} from "../../exporter/epub-templates"
+import {opfImageItemTemplatePart, opfCssItemTemplatePart} from "../../../exporter/epub/templates"
 
 
 /** A template to create the OPF file of book epubs. */

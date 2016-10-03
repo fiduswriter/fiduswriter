@@ -6,6 +6,7 @@ export class OdtExporterRichtext {
         this.exporter = exporter
         this.citations = citations
         this.images = images
+        this.imgCounter = 1
         this.fnCounter = 0 // real footnotes
         this.fnAlikeCounter = 0 // real footnotes and citations as footnotes
     }
@@ -129,15 +130,16 @@ export class OdtExporterRichtext {
                 content += this.transformRichtext({type:'paragraph', content:cit.content}, options)
                 break
             case 'figure':
-                if(node.attrs.image) {
+                if(node.attrs.image !== 'false') {
                     let imgDBEntry = this.images.imageDB.db[node.attrs.image]
                     let imgFileName = this.images.imgIdTranslation[node.attrs.image]
                     let height = imgDBEntry.height*3/4 // more or less px to point
                     let width = imgDBEntry.width*3/4 // more or less px to point
                     this.exporter.styles.checkParStyle('Caption')
+                    this.exporter.styles.checkGraphicStyle('Graphics')
                     start += noSpaceTmp`
                     <text:p>
-                        <draw:frame draw:style-name="fr1" draw:name="Image1" text:anchor-type="paragraph" style:rel-width="100%" style:rel-height="scale" svg:width="${width}pt" svg:height="${height}pt" draw:z-index="0">
+                        <draw:frame draw:style-name="Graphics" draw:name="Image${this.imgCounter++}" text:anchor-type="paragraph" style:rel-width="100%" style:rel-height="scale" svg:width="${width}pt" svg:height="${height}pt" draw:z-index="0">
                             <draw:image xlink:href="Pictures/${imgFileName}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/>
                         </draw:frame>
                     </text:p>
@@ -148,18 +150,34 @@ export class OdtExporterRichtext {
                     </text:p>
                     ` + end
                 } else {
-                    console.warn('Unhandled node type: figure (equation)')
+                    let latex = node.attrs.equation
+                    let objectNumber = this.exporter.math.addMath(latex)
+                    this.exporter.styles.checkParStyle('Caption')
+                    this.exporter.styles.checkGraphicStyle('Formula')
+                    start += noSpaceTmp`
+                    <text:p>
+                        <draw:frame draw:style-name="Formula" draw:name="Object${objectNumber}" text:anchor-type="as-char" draw:z-index="1">
+                            <draw:object xlink:href="./Object ${objectNumber}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/>
+                            <svg:desc>formula</svg:desc>
+                        </draw:frame>
+                    </text:p>
+                    <text:p text:style-name="Caption">`
+                      // TODO: Add "Figure X:"/"Table X": before caption.
+                      content += this.transformRichtext({type: 'text', text: node.attrs.caption}, options)
+                      end = noSpaceTmp`
+                    </text:p>
+                    ` + end
                 }
                 break
             case 'equation':
                 let latex = node.attrs.equation
                 let objectNumber = this.exporter.math.addMath(latex)
+                this.exporter.styles.checkGraphicStyle('Formula')
                 content += noSpaceTmp`
                     <draw:frame draw:style-name="Formula" draw:name="Object${objectNumber}" text:anchor-type="as-char" draw:z-index="1">
                         <draw:object xlink:href="./Object ${objectNumber}" xlink:type="simple" xlink:show="embed" xlink:actuate="onLoad"/>
                         <svg:desc>formula</svg:desc>
                     </draw:frame>`
-                this.exporter.styles.checkGraphicStyle('Formula')
                 break
             default:
                 console.warn('Unhandled node type:' + node.type)

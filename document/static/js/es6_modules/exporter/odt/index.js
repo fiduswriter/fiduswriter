@@ -16,8 +16,6 @@ Exporter to Open Document Text (LibreOffice)
 
 This exporter is experimental.
 
-TODO:
-* figure equations
 */
 
 

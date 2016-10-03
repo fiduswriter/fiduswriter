@@ -1,5 +1,16 @@
 import {noSpaceTmp} from "../../common/common"
 
+const GRAPHIC_STYLES = {
+    Formula: noSpaceTmp`
+        <style:style style:name="Formula" style:family="graphic">
+            <style:graphic-properties text:anchor-type="as-char" svg:y="0in" fo:margin-left="0.0791in" fo:margin-right="0.0791in" style:vertical-pos="middle" style:vertical-rel="text"/>
+        </style:style>`,
+    Graphics: noSpaceTmp`
+        <style:style style:name="Graphics" style:family="graphic">
+            <style:graphic-properties text:anchor-type="paragraph" svg:x="0in" svg:y="0in" style:wrap="dynamic" style:number-wrapped-paragraphs="no-limit" style:wrap-contour="false" style:vertical-pos="top" style:vertical-rel="paragraph" style:horizontal-pos="center" style:horizontal-rel="paragraph"/>
+        </style:style>`
+}
+
 
 export class OdtExporterStyles {
     constructor(exporter) {
@@ -115,11 +126,7 @@ export class OdtExporterStyles {
             let stylesEl = this.stylesXml.querySelector('styles')
             stylesEl.insertAdjacentHTML(
                 'beforeend',
-                noSpaceTmp`
-                    <style:style style:name="${styleName}" style:family="graphic">
-                        <style:graphic-properties text:anchor-type="as-char" svg:y="0in" fo:margin-left="0.0791in" fo:margin-right="0.0791in" style:vertical-pos="middle" style:vertical-rel="text"/>
-                    </style:style>
-                `
+                GRAPHIC_STYLES[styleName]
             )
         }
 

@@ -189,7 +189,7 @@ export class DocxExporterRichtext {
                 }
                 break
             case 'figure':
-                if(node.attrs.image) {
+                if(node.attrs.image !== 'false') {
                     let imgDBEntry = this.images.imageDB.db[node.attrs.image]
                     let cx = imgDBEntry.width * 9525 // width in EMU
                     let cy = imgDBEntry.height * 9525 // height in EMU

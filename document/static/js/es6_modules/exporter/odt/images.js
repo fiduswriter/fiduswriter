@@ -48,16 +48,16 @@ export class OdtExporterImages {
     exportImages() {
         let that = this, usedImgs = []
 
-
         descendantNodes(this.pmJSON).forEach(
             function(node) {
-                if (node.type==='figure' && node.attrs.image) {
+                if (node.type==='figure' && node.attrs.image !== 'false') {
                     if (!(node.attrs.image in usedImgs)) {
                         usedImgs.push(node.attrs.image)
                     }
                 }
             }
         )
+
         return new window.Promise((resolveExportImages) => {
             let p = []
 

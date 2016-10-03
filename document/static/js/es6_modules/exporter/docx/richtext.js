@@ -264,8 +264,20 @@ export class DocxExporterRichtext {
                     </w:p>
                     `
                 } else {
-                    console.warn('Unhandled node type: figure (equation)')
+                    let latex = node.attrs.equation
+                    let omml = this.exporter.math.getOmml(latex)
+                    start += noSpaceTmp`
+                        <w:p>${omml}</w:p>
+                        <w:p>
+                          <w:pPr><w:pStyle w:val="Caption"/><w:rPr></w:rPr></w:pPr>`
+                    content += this.transformRichtext({type: 'text', text: node.attrs.caption}, options)
+                    end += noSpaceTmp`
+                        </w:p>`
                 }
+                break
+            case 'equation':
+                let latex = node.attrs.equation
+                content += this.exporter.math.getOmml(latex)
                 break
             default:
                 console.warn('Unhandled node type:' + node.type)

@@ -1,6 +1,6 @@
 import JSZip from "jszip"
 import JSZipUtils from "jszip-utils"
-import {downloadFile} from "../tools/file"
+import {downloadFile} from "./file"
 // Handle a zip file containing XML files. Make sure files are only opened once,
 // and provide a mechanism to save the file.
 

@@ -3,13 +3,14 @@
   "version": "3.1.0-dev",
   "description": "Install dependencies for ES6 transpilation",
   "scripts": {
+      "get_mml2omml": "mkdir -p ./static-libs/xsl/ && wget https://raw.githubusercontent.com/AbiWord/abiword/14cbf144cb10a5a5ea6ee11275f7178ca4ff055a/plugins/openxml/omml_xslt/mml2omml.xsl -O ./static-libs/xsl/mml2omml.xsl",
       "copy_jquery": "mkdir -p ./static-libs/js/libs/ && cp node_modules/jquery/dist/jquery.min.js ./static-libs/js/libs/",
       "copy_jquery-ui": "mkdir -p ./static-libs/js/libs/ && cp node_modules/jquery-ui-dist/jquery-ui.min.js ./static-libs/js/libs/",
       "copy_underscore": "mkdir -p ./static-libs/js/libs/ && cp node_modules/underscore/underscore-min.js ./static-libs/js/libs/",
       "copy_datatables": "mkdir -p ./static-libs/js/libs/ && cp node_modules/datatables/media/js/jquery.dataTables.min.js ./static-libs/js/libs/",
       "copy_dropkickjs": "mkdir -p ./static-libs/js/libs/ && cp node_modules/dropkickjs/build/js/dropkick.min.js ./static-libs/js/libs/",
       "copy_citeproc": "mkdir -p ./static-libs/js/libs/ && cp node_modules/citeproc/citeproc.js ./static-libs/js/libs/",
-      "postinstall": "npm run copy_jquery && npm run copy_jquery-ui && npm run copy_underscore && npm run copy_datatables && npm run copy_dropkickjs && npm run copy_citeproc",
+      "postinstall": "npm run get_mml2omml && npm run copy_jquery && npm run copy_jquery-ui && npm run copy_underscore && npm run copy_datatables && npm run copy_dropkickjs && npm run copy_citeproc",
       "check_js": "node_modules/.bin/jshint .",
       "check_py": "flake8 ./",
       "install": "napa"

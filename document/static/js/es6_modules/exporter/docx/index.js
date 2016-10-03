@@ -9,14 +9,13 @@ import {DocxExporterRichtext} from "./richtext"
 import {DocxExporterRels} from "./rels"
 import {DocxExporterFootnotes} from "./footnotes"
 import {DocxExporterMetadata} from "./metadata"
+import {DocxExporterMath} from "./math"
 
 /*
 Exporter to Microsoft Word.
 
 This exporter is experimental.
 
-TODO:
-* equations (inline and figure)
 */
 
 export class DocxExporter {
@@ -41,6 +40,7 @@ export class DocxExporter {
         // throughout the application in the future.
         this.pmJSON = createPmJSON(this.doc)
         this.docTitle = textContent(this.pmJSON.content[0])
+        this.math = new DocxExporterMath(this)
         this.metadata = new DocxExporterMetadata(this, this.pmJSON)
         this.footnotes = new DocxExporterFootnotes(this, this.pmJSON)
         this.render = new DocxExporterRender(this, this.pmJSON)
@@ -59,6 +59,8 @@ export class DocxExporter {
 
         this.xml.init().then(() => {
                 return that.metadata.init()
+            }).then(() => {
+                return that.math.init()
             }).then(() => {
                 return that.render.init()
             }).then(() => {

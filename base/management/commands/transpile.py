@@ -150,8 +150,8 @@ class Command(BaseCommand):
             outfile = os.path.join(out_dir, relative_dir, outfilename)
             print("Transpiling " + sourcefile + " to " + outfile)
             call(["node_modules/.bin/browserifyinc", "--ignore-missing",
-                "--cachefile", cachefile, "--outfile", outfile, "-t",
-                "babelify", infile])
+                  "--cachefile", cachefile, "--outfile", outfile, "-t",
+                  "babelify", infile])
 
         # Copy mathquill CSS
         os.makedirs("static-es5/css/libs/mathquill")

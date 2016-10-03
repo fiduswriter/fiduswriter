@@ -1,5 +1,16 @@
 import {noSpaceTmp} from "../../common/common"
 
+const GRAPHIC_STYLES = {
+    Formula: noSpaceTmp`
+        <style:style style:name="Formula" style:family="graphic">
+            <style:graphic-properties text:anchor-type="as-char" svg:y="0in" fo:margin-left="0.0791in" fo:margin-right="0.0791in" style:vertical-pos="middle" style:vertical-rel="text"/>
+        </style:style>`,
+    Graphics: noSpaceTmp`
+        <style:style style:name="Graphics" style:family="graphic">
+            <style:graphic-properties text:anchor-type="paragraph" svg:x="0in" svg:y="0in" style:wrap="dynamic" style:number-wrapped-paragraphs="no-limit" style:wrap-contour="false" style:vertical-pos="top" style:vertical-rel="paragraph" style:horizontal-pos="center" style:horizontal-rel="paragraph"/>
+        </style:style>`
+}
+
 
 export class OdtExporterStyles {
     constructor(exporter) {
@@ -106,6 +117,19 @@ export class OdtExporterStyles {
                 `<style:style style:name="${styleName}" style:display-name="${displayName}" style:family="paragraph" style:parent-style-name="Standard" style:class="text" />`
             )
         }
+    }
+
+    checkGraphicStyle(styleName) {
+        let stylesParStyle = this.stylesXml.querySelector(`style[*|name="${styleName}"]`)
+        let contentParStyle = this.contentXml.querySelector(`style[*|name="${styleName}"]`)
+        if ((!stylesParStyle) && (!contentParStyle)) {
+            let stylesEl = this.stylesXml.querySelector('styles')
+            stylesEl.insertAdjacentHTML(
+                'beforeend',
+                GRAPHIC_STYLES[styleName]
+            )
+        }
+
     }
 
     getBulletListStyleId() {

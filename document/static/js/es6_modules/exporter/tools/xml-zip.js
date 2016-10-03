@@ -1,6 +1,6 @@
 import JSZip from "jszip"
 import JSZipUtils from "jszip-utils"
-import {downloadFile} from "../tools/file"
+import {downloadFile} from "./file"
 // Handle a zip file containing XML files. Make sure files are only opened once,
 // and provide a mechanism to save the file.
 
@@ -65,6 +65,16 @@ export class XmlZip {
             return window.Promise.reject("File not found")
         }
 
+    }
+
+    // Add an xml file at filepath without checking for previous version
+    addXmlFile(filePath, xmlContents) {
+        this.docs[filePath] = xmlContents
+    }
+
+    // Add extra file to be saved in zip later.
+    addExtraFile(filePath, fileContents) {
+        this.extraFiles[filePath] = fileContents
     }
 
     // Put all currently open XML files into zip.

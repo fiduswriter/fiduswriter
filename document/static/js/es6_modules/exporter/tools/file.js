@@ -28,7 +28,7 @@ export let downloadFile = function(zipFilename, blob) {
 }
 
 
-export let getDatabasesIfNeeded = function(object, doc, callback) {
+export let getDatabasesIfNeeded = function(object, doc) {
     let p = []
 
     if (!object.bibDB) {
@@ -47,7 +47,9 @@ export let getDatabasesIfNeeded = function(object, doc, callback) {
             })
         )
     }
-    window.Promise.all(p).then(function(){
-        callback()
+    return new window.Promise(function(resolve){
+        window.Promise.all(p).then(function(){
+            resolve()
+        })
     })
 }

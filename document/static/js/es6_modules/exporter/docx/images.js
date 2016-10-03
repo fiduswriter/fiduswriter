@@ -23,7 +23,7 @@ export class DocxExporterImages {
     addImage(imgFileName, image) {
         let rId = this.rels.addImageRel(imgFileName)
         this.addContentType(imgFileName.split('.').pop())
-        this.exporter.xml.extraFiles[`word/media/${imgFileName}`] = image
+        this.exporter.xml.addExtraFile(`word/media/${imgFileName}`, image)
         return rId
     }
 
@@ -45,7 +45,7 @@ export class DocxExporterImages {
 
         descendantNodes(this.pmJSON).forEach(
             function(node) {
-                if (node.type==='figure' && node.attrs.image) {
+                if (node.type==='figure' && node.attrs.image !== 'false') {
                     if (!(node.attrs.image in usedImgs)) {
                         usedImgs.push(node.attrs.image)
                     }

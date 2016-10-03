@@ -1,6 +1,6 @@
-import {modelToEditor} from "../../editor/node-convert"
 import {createSlug, getDatabasesIfNeeded} from "../tools/file"
 import {XmlZip} from "../tools/xml-zip"
+import {textContent, createPmJSON} from "../tools/pmJSON"
 
 import {OdtExporterCitations} from "./citations"
 import {OdtExporterImages} from "./images"
@@ -8,7 +8,6 @@ import {OdtExporterRender} from "./render"
 import {OdtExporterRichtext} from "./richtext"
 import {OdtExporterFootnotes} from "./footnotes"
 import {OdtExporterMetadata} from "./metadata"
-import {textContent} from "../tools/pmJSON"
 import {OdtExporterStyles} from "./styles"
 /*
 Exporter to Open Document Text (LibreOffice)
@@ -25,51 +24,36 @@ export class OdtExporter {
     constructor(doc, bibDB, imageDB) {
         let that = this
         this.doc = doc
+        this.bibDB = bibDB
+        this.imageDB = imageDB
+        this.pmBib = false
+        this.pmJSON = false
+        this.docTitle = false
+        
+        getDatabasesIfNeeded(this, doc).then(function(){
+            that.init()
+        })
+    }
+
+
+
+    init() {
+        let that = this
         // We use the doc in the pm format as this is what we will be using
         // throughout the application in the future.
-        this.pmJSON = this.createPmJSON(this.doc)
-        this.xml = false
-        this.maxRelId = {}
-        this.pmBib = false
+        this.pmJSON = createPmJSON(this.doc)
         this.docTitle = textContent(this.pmJSON.content[0])
         this.metadata = new OdtExporterMetadata(this, this.pmJSON)
         this.footnotes = new OdtExporterFootnotes(this, this.pmJSON)
         this.render = new OdtExporterRender(this, this.pmJSON)
         this.styles = new OdtExporterStyles(this)
-
-        getDatabasesIfNeeded(this, doc, function() {
-            that.images = new OdtExporterImages(that, that.imageDB, that.pmJSON)
-            that.citations = new OdtExporterCitations(that, that.bibDB, that.pmJSON)
-            that.richtext = new OdtExporterRichtext(
-                that,
-                that.citations,
-                that.images
-            )
-            that.createFile()
-        })
-    }
-
-    createPmJSON(doc) {
-        let pmJSON = modelToEditor(doc).toJSON()
-        // We remove those parts of the doc that are't enabled in the settings
-        if (!doc.settings['metadata-subtitle']) {
-            delete pmJSON.content[1].content
-        }
-        if (!doc.settings['metadata-authors']) {
-            delete pmJSON.content[2].content
-        }
-        if (!doc.settings['metadata-abstract']) {
-            delete pmJSON.content[3].content
-        }
-        if (!doc.settings['metadata-keywords']) {
-            delete pmJSON.content[4].content
-        }
-        return pmJSON
-    }
-
-
-    createFile() {
-        let that = this
+        this.images = new OdtExporterImages(this, this.imageDB, that.pmJSON)
+        this.citations = new OdtExporterCitations(this, this.bibDB, that.pmJSON)
+        this.richtext = new OdtExporterRichtext(
+            this,
+            this.citations,
+            this.images
+        )
         this.citations.formatCitations()
         this.pmBib = this.citations.pmBib
         this.xml = new XmlZip(createSlug(this.docTitle)+'.odt', staticUrl + 'odt/template.odt')

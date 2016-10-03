@@ -18,7 +18,7 @@ export class DocxExporterRels {
     init() {
         let that = this
         return this.initCt().then(function(){
-            return that.exporter.xml.fromZip(that.filePath, DEFAULT_XML)}).then(function(xml){
+            return that.exporter.xml.getXml(that.filePath, DEFAULT_XML)}).then(function(xml){
             that.xml = xml
             that.findMaxRelId()
         })
@@ -26,7 +26,7 @@ export class DocxExporterRels {
 
     initCt() {
         let that = this
-        return this.exporter.xml.fromZip(this.ctFilePath).then(function(ctXml) {
+        return this.exporter.xml.getXml(this.ctFilePath).then(function(ctXml) {
             that.ctXml = ctXml
             that.addRelsToCt()
             return window.Promise.resolve()

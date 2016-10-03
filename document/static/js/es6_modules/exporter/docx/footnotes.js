@@ -113,7 +113,7 @@ export class DocxExporterFootnotes {
 
     initCt() {
         let that = this
-        return this.exporter.xml.fromZip(this.ctFilePath).then(function(ctXml) {
+        return this.exporter.xml.getXml(this.ctFilePath).then(function(ctXml) {
             that.ctXml = ctXml
             that.addRelsToCt()
             return window.Promise.resolve()
@@ -130,7 +130,7 @@ export class DocxExporterFootnotes {
 
     addStyles() {
         let that = this
-        return this.exporter.xml.fromZip(this.styleFilePath).then(function(styleXml) {
+        return this.exporter.xml.getXml(this.styleFilePath).then(function(styleXml) {
             that.styleXml = styleXml
             that.addStyle('Footnote', DEFAULT_STYLE_FOOTNOTE)
             that.addStyle('FootnoteAnchor', DEFAULT_STYLE_FOOTNOTE_ANCHOR)
@@ -171,7 +171,7 @@ export class DocxExporterFootnotes {
         this.richtext = new DocxExporterRichtext(this.exporter, this.rels, this.citations, this.images)
         this.fnXml = this.richtext.transformRichtext(this.fnPmJSON) // TODO: add max dimensions
         this.exporter.rels.addFootnoteRel()
-        return this.exporter.xml.fromZip(this.filePath, DEFAULT_XML).then(function(xml){
+        return this.exporter.xml.getXml(this.filePath, DEFAULT_XML).then(function(xml){
             let footnotesEl = xml.querySelector('footnotes')
             footnotesEl.insertAdjacentHTML('beforeend', that.fnXml)
             that.xml = xml
@@ -180,7 +180,7 @@ export class DocxExporterFootnotes {
 
     setSettings() {
         let that = this
-        return this.exporter.xml.fromZip(this.settingsFilePath).then(function(settingsXml){
+        return this.exporter.xml.getXml(this.settingsFilePath).then(function(settingsXml){
             let footnotePr = settingsXml.querySelector('footnotePr')
             if (!footnotePr) {
                 let settingsEl = settingsXml.querySelector('settings')

@@ -11,7 +11,7 @@ export class DocxExporterRender {
 
     init() {
         let that = this
-        return this.exporter.xml.fromZip(this.filePath).then(
+        return this.exporter.xml.getXml(this.filePath).then(
             function(xml) {
                 that.xml = xml
             }

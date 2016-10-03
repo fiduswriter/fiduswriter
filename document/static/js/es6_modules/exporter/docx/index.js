@@ -1,13 +1,11 @@
 import {modelToEditor} from "../../editor/node-convert"
 import {createSlug, getDatabasesIfNeeded, downloadFile} from "../tools/file"
-import JSZip from "jszip"
-import JSZipUtils from "jszip-utils"
+import {XmlZip} from "../tools/xml-zip"
 
 import {DocxExporterCitations} from "./citations"
 import {DocxExporterImages} from "./images"
 import {DocxExporterRender} from "./render"
 import {DocxExporterRichtext} from "./richtext"
-import {DocxExporterXml} from "./xml"
 import {DocxExporterRels} from "./rels"
 import {DocxExporterFootnotes} from "./footnotes"
 import {DocxExporterMetadata} from "./metadata"
@@ -29,7 +27,6 @@ export class DocxExporter {
         // throughout the application in the future.
         this.pmJSON = this.createPmJSON(this.doc)
         this.template = false
-        this.zip = false
         this.extraFiles = {}
         this.maxRelId = {}
         this.pmBib = false
@@ -38,7 +35,7 @@ export class DocxExporter {
         this.footnotes = new DocxExporterFootnotes(this, this.pmJSON)
         this.render = new DocxExporterRender(this, this.pmJSON)
 
-        this.xml = new DocxExporterXml(this)
+        this.xml = false
 
         this.rels = new DocxExporterRels(this, 'document')
         getDatabasesIfNeeded(this, doc, function() {
@@ -72,28 +69,14 @@ export class DocxExporter {
         return pmJSON
     }
 
-    getTemplate() {
-        let that = this
-        return new window.Promise((resolve) => {
-            JSZipUtils.getBinaryContent(
-                staticUrl + 'docx/template.docx',
-                function(err, template){
-                    that.template = template
-                    resolve()
-                }
-            )
-        })
-    }
 
     createFile() {
         let that = this
         this.citations.formatCitations()
         this.pmBib = this.citations.pmBib
-        this.zip = new JSZip()
+        this.xml = new XmlZip(createSlug(this.docTitle)+'.docx', staticUrl + 'docx/template.docx')
 
-        this.getTemplate().then(() => {
-                return that.zip.loadAsync(that.template)
-            }).then(() => {
+        this.xml.init().then(() => {
                 return that.metadata.init()
             }).then(() => {
                 return that.render.init()
@@ -106,21 +89,8 @@ export class DocxExporter {
             }).then(() => {
                 that.render.getTagData(that.pmBib)
                 that.render.render()
-                that.prepareAndDownload()
+                that.xml.prepareAndDownload()
             })
-    }
-
-    prepareAndDownload() {
-        let that = this
-
-        this.xml.allToZip()
-
-        for (let fileName in this.extraFiles) {
-            this.zip.file(fileName, this.extraFiles[fileName])
-        }
-        this.zip.generateAsync({type:"blob"}).then(function(out){
-            downloadFile(createSlug(that.docTitle)+'.docx', out)
-        })
     }
 
 }

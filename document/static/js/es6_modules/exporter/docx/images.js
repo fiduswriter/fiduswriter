@@ -13,7 +13,7 @@ export class DocxExporterImages {
 
     init() {
         let that = this
-        return this.exporter.xml.fromZip("[Content_Types].xml").then(function(ctXml){
+        return this.exporter.xml.getXml("[Content_Types].xml").then(function(ctXml){
             that.ctXml = ctXml
             return that.exportImages()
         })
@@ -23,7 +23,7 @@ export class DocxExporterImages {
     addImage(imgFileName, image) {
         let rId = this.rels.addImageRel(imgFileName)
         this.addContentType(imgFileName.split('.').pop())
-        this.exporter.extraFiles[`word/media/${imgFileName}`] = image
+        this.exporter.xml.extraFiles[`word/media/${imgFileName}`] = image
         return rId
     }
 

@@ -1,13 +1,11 @@
 import {modelToEditor} from "../../editor/node-convert"
-import {createSlug, getDatabasesIfNeeded, downloadFile} from "../tools/file"
-import JSZip from "jszip"
-import JSZipUtils from "jszip-utils"
+import {createSlug, getDatabasesIfNeeded} from "../tools/file"
+import {XmlZip} from "../tools/xml-zip"
 
 import {OdtExporterCitations} from "./citations"
 import {OdtExporterImages} from "./images"
 import {OdtExporterRender} from "./render"
 import {OdtExporterRichtext} from "./richtext"
-import {OdtExporterXml} from "./xml"
 import {OdtExporterFootnotes} from "./footnotes"
 import {OdtExporterMetadata} from "./metadata"
 import {textContent} from "../tools/pmJSON"
@@ -21,6 +19,8 @@ TODO:
 * equations (inline and figure)
 */
 
+
+
 export class OdtExporter {
     constructor(doc, bibDB, imageDB) {
         let that = this
@@ -28,9 +28,7 @@ export class OdtExporter {
         // We use the doc in the pm format as this is what we will be using
         // throughout the application in the future.
         this.pmJSON = this.createPmJSON(this.doc)
-        this.template = false
-        this.zip = false
-        this.extraFiles = {}
+        this.xml = false
         this.maxRelId = {}
         this.pmBib = false
         this.docTitle = textContent(this.pmJSON.content[0])
@@ -38,7 +36,6 @@ export class OdtExporter {
         this.footnotes = new OdtExporterFootnotes(this, this.pmJSON)
         this.render = new OdtExporterRender(this, this.pmJSON)
         this.styles = new OdtExporterStyles(this)
-        this.xml = new OdtExporterXml(this)
 
         getDatabasesIfNeeded(this, doc, function() {
             that.images = new OdtExporterImages(that, that.imageDB, that.pmJSON)
@@ -70,28 +67,13 @@ export class OdtExporter {
         return pmJSON
     }
 
-    getTemplate() {
-        let that = this
-        return new window.Promise((resolve) => {
-            JSZipUtils.getBinaryContent(
-                staticUrl + 'odt/template.odt',
-                function(err, template){
-                    that.template = template
-                    resolve()
-                }
-            )
-        })
-    }
 
     createFile() {
         let that = this
         this.citations.formatCitations()
         this.pmBib = this.citations.pmBib
-        this.zip = new JSZip()
-
-        this.getTemplate().then(() => {
-                return that.zip.loadAsync(that.template)
-            }).then(() => {
+        this.xml = new XmlZip(createSlug(this.docTitle)+'.odt', staticUrl + 'odt/template.odt')
+        this.xml.init().then(() => {
                 return that.metadata.init()
             }).then(() => {
                 return that.styles.init()
@@ -104,21 +86,10 @@ export class OdtExporter {
             }).then(() => {
                 that.render.getTagData(that.pmBib)
                 that.render.render()
-                that.prepareAndDownload()
+                that.xml.prepareAndDownload()
             })
     }
 
-    prepareAndDownload() {
-        let that = this
 
-        this.xml.allToZip()
-
-        for (let fileName in this.extraFiles) {
-            this.zip.file(fileName, this.extraFiles[fileName])
-        }
-        this.zip.generateAsync({type:"blob"}).then(function(out){
-            downloadFile(createSlug(that.docTitle)+'.odt', out)
-        })
-    }
 
 }

@@ -16,7 +16,7 @@ export class DocxExporterMetadata {
 
     init() {
         let that = this
-        return this.exporter.xml.fromZip("docProps/core.xml").then(function(coreXml){
+        return this.exporter.xml.getXml("docProps/core.xml").then(function(coreXml){
             that.coreXml = coreXml
             that.addMetadata()
             return window.Promise.resolve()

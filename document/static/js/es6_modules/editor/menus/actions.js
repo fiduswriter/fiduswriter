@@ -1,4 +1,4 @@
-import {savecopy} from "../../exporter/copy"
+import {savecopy} from "../../exporter/native/copy"
 import {NativeExporter, uploadNative} from "../../exporter/native"
 import {LatexExporter} from "../../exporter/latex"
 import {HTMLExporter} from "../../exporter/html"

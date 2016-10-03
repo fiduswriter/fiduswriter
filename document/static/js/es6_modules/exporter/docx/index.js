@@ -1,6 +1,5 @@
 import {modelToEditor} from "../../editor/node-convert"
-import {downloadFile} from "../download"
-import {createSlug, getDatabasesIfNeeded} from "../tools"
+import {createSlug, getDatabasesIfNeeded, downloadFile} from "../tools/file"
 import JSZip from "jszip"
 import JSZipUtils from "jszip-utils"
 
@@ -12,7 +11,7 @@ import {DocxExporterXml} from "./xml"
 import {DocxExporterRels} from "./rels"
 import {DocxExporterFootnotes} from "./footnotes"
 import {DocxExporterMetadata} from "./metadata"
-import {textContent} from "./tools"
+import {textContent} from "../tools/pmJSON"
 /*
 Exporter to Microsoft Word.
 

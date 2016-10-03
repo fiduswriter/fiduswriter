@@ -1,4 +1,5 @@
-import {escapeText, textContent, domDescendantTexNodes} from "./tools"
+import {textContent} from "../tools/pmJSON"
+import {escapeText, domDescendantTexNodes} from "../tools/html"
 
 export class OdtExporterRender {
     constructor(exporter, pmJSON) {

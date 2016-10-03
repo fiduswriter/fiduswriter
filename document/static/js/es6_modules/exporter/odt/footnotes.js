@@ -3,7 +3,7 @@ import {OdtExporterImages} from "./images"
 import {OdtExporterRichtext} from "./richtext"
 import {fidusFnSchema} from "../../schema/footnotes"
 import {noSpaceTmp} from "../../common/common"
-import {descendantNodes} from "./tools"
+import {descendantNodes} from "../tools/pmJSON"
 
 
 const DEFAULT_STYLE_FOOTNOTE = noSpaceTmp`

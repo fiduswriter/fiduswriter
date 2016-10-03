@@ -1,4 +1,5 @@
-import {escapeText, textContent} from "./tools"
+import {textContent} from "../tools/pmJSON"
+import {escapeText} from "../tools/html"
 
 
 export class OdtExporterMetadata {

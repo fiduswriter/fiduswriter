@@ -1,5 +1,5 @@
 import JSZipUtils from "jszip-utils"
-import {descendantNodes} from "./tools"
+import {descendantNodes} from "../tools/pmJSON"
 
 export class DocxExporterImages {
     constructor(exporter, imageDB, rels, pmJSON) {

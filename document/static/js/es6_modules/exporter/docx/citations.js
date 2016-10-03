@@ -1,6 +1,6 @@
 import {FormatCitations} from "../../citations/format"
 import {fidusSchema} from "../../schema/document"
-import {descendantNodes} from "./tools"
+import {descendantNodes} from "../tools/pmJSON"
 
 export class DocxExporterCitations {
     constructor(exporter, bibDB, pmJSON) {

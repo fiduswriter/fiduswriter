@@ -1,13 +1,14 @@
-import {katexRender} from "../../katex/katex"
+import {katexRender} from "../../../katex/katex"
 
-import {getMissingChapterData, getImageAndBibDB, uniqueObjects} from "./tools"
-import {htmlBookExportTemplate, htmlBookIndexTemplate, htmlBookIndexItemTemplate} from "./html-templates"
-import {obj2Node} from "../../exporter/json"
-import {BaseEpubExporter} from "../../exporter/epub"
-import {createSlug, findImages} from "../../exporter/tools"
-import {zipFileCreator} from "../../exporter/zip"
-import {RenderCitations} from "../../citations/render"
-import {addAlert} from "../../common/common"
+import {getMissingChapterData, getImageAndBibDB, uniqueObjects} from "../tools"
+import {htmlBookExportTemplate, htmlBookIndexTemplate, htmlBookIndexItemTemplate} from "./templates"
+import {obj2Node} from "../../../exporter/tools/json"
+import {BaseEpubExporter} from "../../../exporter/epub/base"
+import {createSlug} from "../../../exporter/tools/file"
+import {findImages} from "../../../exporter/tools/html"
+import {zipFileCreator} from "../../../exporter/tools/zip"
+import {RenderCitations} from "../../../citations/render"
+import {addAlert} from "../../../common/common"
 
 
 export class HTMLBookExporter extends BaseEpubExporter { // extension is correct. Neds orderLinks/setLinks methods from base epub exporter.

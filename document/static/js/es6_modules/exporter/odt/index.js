@@ -1,6 +1,5 @@
 import {modelToEditor} from "../../editor/node-convert"
-import {downloadFile} from "../download"
-import {createSlug, getDatabasesIfNeeded} from "../tools"
+import {createSlug, getDatabasesIfNeeded, downloadFile} from "../tools/file"
 import JSZip from "jszip"
 import JSZipUtils from "jszip-utils"
 
@@ -11,7 +10,7 @@ import {OdtExporterRichtext} from "./richtext"
 import {OdtExporterXml} from "./xml"
 import {OdtExporterFootnotes} from "./footnotes"
 import {OdtExporterMetadata} from "./metadata"
-import {textContent} from "./tools"
+import {textContent} from "../tools/pmJSON"
 import {OdtExporterStyles} from "./styles"
 /*
 Exporter to Open Document Text (LibreOffice)

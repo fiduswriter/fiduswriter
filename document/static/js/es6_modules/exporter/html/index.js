@@ -1,14 +1,15 @@
-import {createSlug, findImages} from "./tools"
-import {zipFileCreator} from "./zip"
-import {htmlExportTemplate} from "./html-templates"
-import {BibliographyDB} from "../bibliography/database"
+import {createSlug} from "../tools/file"
+import {findImages} from "../tools/html"
+import {zipFileCreator} from "../tools/zip"
+import {htmlExportTemplate} from "./templates"
+import {BibliographyDB} from "../../bibliography/database"
 import {BaseExporter} from "./base"
-import {obj2Node} from "./json"
-import {RenderCitations} from "../citations/render"
-import {addAlert} from "../common/common"
-import {katexRender} from "../katex/katex"
+import {obj2Node} from "../tools/json"
+import {RenderCitations} from "../../citations/render"
+import {addAlert} from "../../common/common"
+import {katexRender} from "../../katex/katex"
 
-export class BaseHTMLExporter extends BaseExporter{
+export class BaseHTMLExporter extends BaseExporter {
     joinDocumentParts(callback) {
 
         let that = this

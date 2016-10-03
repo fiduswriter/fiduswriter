@@ -1,13 +1,14 @@
-import {BaseHTMLExporter} from "./html"
-import {obj2Node, node2Obj} from "./json"
-import {BibliographyDB} from "../bibliography/database"
-import {createSlug, findImages} from "./tools"
-import {zipFileCreator} from "./zip"
+import {BaseHTMLExporter} from "../html"
+import {obj2Node, node2Obj} from "../tools/json"
+import {BibliographyDB} from "../../bibliography/database"
+import {createSlug} from "../tools/file"
+import {findImages} from "../tools/html"
+import {zipFileCreator} from "../tools/zip"
 import {opfTemplate, containerTemplate, ncxTemplate, ncxItemTemplate, navTemplate,
-  navItemTemplate, xhtmlTemplate} from "./epub-templates"
-import {katexOpfIncludes} from "../katex/opf-includes"
-import {addAlert} from "../common/common"
-import {katexRender} from "../katex/katex"
+  navItemTemplate, xhtmlTemplate} from "./templates"
+import {katexOpfIncludes} from "../../katex/opf-includes"
+import {addAlert} from "../../common/common"
+import {katexRender} from "../../katex/katex"
 
 export class BaseEpubExporter extends BaseHTMLExporter {
     getTimestamp() {

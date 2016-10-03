@@ -1,16 +1,3 @@
-import {BibliographyDB} from "../bibliography/database"
-import {ImageDB} from "../images/database"
-
-export let createSlug = function(str) {
-    if (str==='') {
-        str = gettext('Untitled')
-    }
-    str = str.replace(/[^a-zA-Z0-9\s]/g, "")
-    str = str.toLowerCase()
-    str = str.replace(/\s/g, '-')
-    return str
-}
-
 export let findImages = function(htmlCode) {
     let imageLinks = jQuery(htmlCode).find('img'),
         images = []
@@ -43,26 +30,24 @@ export let findImages = function(htmlCode) {
     return images
 }
 
-export let getDatabasesIfNeeded = function(object, doc, callback) {
-    let p = []
+export let escapeText = function(text) {
+    return text
+        .replace(/"/g, '&quot;')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+}
 
-    if (!object.bibDB) {
-        p.push(
-            new window.Promise((resolve) => {
-                object.bibDB = new BibliographyDB(doc.owner.id, false, false, false)
-                object.bibDB.getDB(resolve)
-            })
-        )
-    }
-    if (!object.imageDB) {
-        p.push(
-            new window.Promise((resolve) => {
-                object.imageDB = new ImageDB(doc.owner.id)
-                object.imageDB.getDB(resolve)
-            })
-        )
-    }
-    window.Promise.all(p).then(function(){
-        callback()
+// all descendant text nodes for dom nodes
+export let domDescendantTexNodes = function(node) {
+    let returnValue = []
+    let childNodes = [].slice.call(node.childNodes)
+    childNodes.forEach(function(subNode){
+        if (subNode.nodeType===3) {
+            returnValue.push(subNode)
+        } else if (subNode.nodeType===1) {
+            returnValue = returnValue.concat(domDescendantTexNodes(subNode))
+        }
     })
+    return returnValue
 }

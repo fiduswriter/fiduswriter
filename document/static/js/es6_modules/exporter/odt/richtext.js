@@ -1,4 +1,4 @@
-import {escapeText} from "./tools"
+import {escapeText} from "../tools/html"
 import {noSpaceTmp} from "../../common/common"
 
 export class OdtExporterRichtext {

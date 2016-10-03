@@ -21,7 +21,7 @@ export class OdtExporterRender {
 
     // Define the tags that are to be looked for in the document
     getTagData(pmBib) {
-
+        
         this.tags = [
             {
                 title: 'title',

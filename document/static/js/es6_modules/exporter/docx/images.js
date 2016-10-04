@@ -19,7 +19,7 @@ export class DocxExporterImages {
         })
     }
 
-    // add an image to the ist of files
+    // add an image to the list of files
     addImage(imgFileName, image) {
         let rId = this.rels.addImageRel(imgFileName)
         this.addContentType(imgFileName.split('.').pop())

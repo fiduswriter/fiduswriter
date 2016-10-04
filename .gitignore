@@ -8,7 +8,7 @@ build
 .project
 local_settings.py
 .settings
-media
+/media/
 .elasticbeanstalk/
 bibliography/static/js/es6_modules/bibliography/statics.js
 *.mo

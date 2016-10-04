@@ -84,3 +84,27 @@ class DocumentRevision(models.Model):
     date = models.DateTimeField(auto_now=True)
     file_object = models.FileField(upload_to=revision_filename)
     file_name = models.CharField(max_length=255, default='', blank=True)
+
+TEMPLATE_CHOICES = (
+    ('docx', 'Docx'),
+    ('odt', 'ODT')
+)
+
+
+def template_filename(instance, filename):
+    return '/'.join(['export-templates', filename])
+
+
+class ExportTemplate(models.Model):
+    file_name = models.CharField(max_length=255, default='', blank=True)
+    file_type = models.CharField(
+        max_length=5,
+        choices=TEMPLATE_CHOICES,
+        blank=False)
+    template_file = models.FileField(upload_to=template_filename)
+
+    class Meta:
+        unique_together = (("file_name", "file_type"),)
+
+    def __unicode__(self):
+        return self.file_name + " (" + self.file_type + ")"

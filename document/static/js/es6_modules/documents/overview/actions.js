@@ -5,6 +5,7 @@ import {EpubExporter} from "../../exporter/epub"
 import {HTMLExporter} from "../../exporter/html"
 import {LatexExporter} from "../../exporter/latex"
 import {DocxExporter} from "../../exporter/docx"
+import {OdtExporter} from "../../exporter/odt"
 import {NativeExporter} from "../../exporter/native"
 import {ImportFidusFile} from "../../importer/file"
 import {DocumentRevisionsDialog} from "../revisions/dialog"
@@ -263,14 +264,22 @@ export class DocumentOverviewActions {
         })
     }
 
-    downloadDocxFiles(ids) {
+    downloadTemplateExportFiles(ids, templateUrl, templateType) {
         let that = this
         getMissingDocumentListData(ids, that.documentOverview.documentList, function () {
             for (let i = 0; i < ids.length; i++) {
-                new DocxExporter(_.findWhere(
-                    that.documentOverview.documentList, {
-                        id: ids[i]
-                    }), false, false)
+                if (templateType==='docx') {
+                    new DocxExporter(_.findWhere(
+                        that.documentOverview.documentList, {
+                            id: ids[i]
+                        }), templateUrl, false, false)
+                } else {
+                    new OdtExporter(_.findWhere(
+                        that.documentOverview.documentList, {
+                            id: ids[i]
+                        }), templateUrl, false, false)
+                }
+
             }
         })
     }

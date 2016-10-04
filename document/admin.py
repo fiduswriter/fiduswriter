@@ -19,3 +19,9 @@ class DocumentRevisionAdmin(admin.ModelAdmin):
     pass
 
 admin.site.register(models.DocumentRevision, DocumentRevisionAdmin)
+
+
+class ExportTemplateAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(models.ExportTemplate, ExportTemplateAdmin)

@@ -19,9 +19,10 @@ This exporter is experimental.
 */
 
 export class DocxExporter {
-    constructor(doc, bibDB, imageDB) {
+    constructor(doc, templateUrl, bibDB, imageDB) {
         let that = this
         this.doc = doc
+        this.templateUrl = templateUrl
         this.bibDB = bibDB
         this.imageDB = imageDB
         this.pmBib = false
@@ -55,7 +56,7 @@ export class DocxExporter {
         )
         this.citations.formatCitations()
         this.pmBib = this.citations.pmBib
-        this.xml = new XmlZip(createSlug(this.docTitle)+'.docx', staticUrl + 'docx/template.docx')
+        this.xml = new XmlZip(createSlug(this.docTitle)+'.docx', this.templateUrl)
 
         this.xml.init().then(() => {
                 return that.metadata.init()

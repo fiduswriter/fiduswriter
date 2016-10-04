@@ -128,7 +128,7 @@ export class Editor {
 
     // Removes all content from the editor and adds the contents of this.doc.
     update() {
-        console.log('Updating editor')
+        // Updating editor
         let that = this
         this.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
         this.mod.collab.docChanges.unconfirmedSteps = {}
@@ -224,7 +224,7 @@ export class Editor {
 
     enableUI() {
 
-        jQuery('.savecopy, .saverevision, .download, .docx, .odt, .latex, .epub, .html, .print, .style, \
+        jQuery('.savecopy, .saverevision, .download, .template-export, .latex, .epub, .html, .print, .style, \
       .citationstyle, .tools-item, .papersize, .metadata-menu-item, \
       #open-close-header').removeClass('disabled')
 
@@ -312,7 +312,6 @@ export class Editor {
     }
 
     updateComments(comments, comment_version) {
-        console.log('receiving comment update')
         this.mod.comments.store.receive(comments, comment_version)
     }
 

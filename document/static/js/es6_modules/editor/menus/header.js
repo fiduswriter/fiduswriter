@@ -43,7 +43,7 @@ export class ModMenusHeader {
           }
 
           jQuery('.metadata-menu-item, #open-close-header, .saverevision, .multibuttonsCover, \
-          .savecopy, .download, .docx, .odt, .latex, .epub, .html, .print, .style, .citationstyle, \
+          .savecopy, .download, .template-export, .latex, .epub, .html, .print, .style, .citationstyle, \
           .tools-item, .papersize, .metadata-menu-item, .share, #open-close-header, \
           .save, .papersize-menu, .metadata-menu, .documentstyle-menu, \
           .citationstyle-menu, .exporter-menu').addClass('disabled')
@@ -56,11 +56,10 @@ export class ModMenusHeader {
           jQuery(document).on('mousedown', '.download:not(.disabled)', function() {
               that.mod.actions.download()
           })
-          jQuery(document).on('mousedown', '.docx:not(.disabled)', function() {
-              that.mod.actions.downloadDocx()
-          })
-          jQuery(document).on('mousedown', '.odt:not(.disabled)', function() {
-              that.mod.actions.downloadOdt()
+          jQuery(document).on('mousedown', '.template-export:not(.disabled)', function() {
+              let fileType = jQuery(this).attr('data-filetype')
+              let templateUrl = jQuery(this).attr('data-template')
+              that.mod.actions.downloadTemplateExport(templateUrl, fileType)
           })
           jQuery(document).on('mousedown', '.latex:not(.disabled)', function() {
               that.mod.actions.downloadLatex()

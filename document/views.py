@@ -15,7 +15,8 @@ from django.core.serializers.python import Serializer
 from avatar.utils import get_primary_avatar, get_default_avatar_url
 from avatar.templatetags.avatar_tags import avatar_url
 
-from document.models import Document, AccessRight, DocumentRevision
+from document.models import Document, AccessRight, DocumentRevision, \
+    ExportTemplate
 
 
 class SimpleSerializer(Serializer):
@@ -47,6 +48,7 @@ def get_accessrights(ars):
 @login_required
 def index(request):
     response = {}
+    response['export_templates'] = ExportTemplate.objects.all()
     response.update(csrf(request))
     return render(request, 'document/index.html',
                   response)
@@ -149,6 +151,7 @@ def get_documentlist_js(request):
 @login_required
 def editor(request):
     response = {}
+    response['export_templates'] = ExportTemplate.objects.all()
     return render(request, 'document/editor.html',
                   response)
 

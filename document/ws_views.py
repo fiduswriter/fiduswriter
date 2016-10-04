@@ -256,8 +256,8 @@ class DocumentWS(BaseWebSocketHandler):
         allowed_operations = ['addMark', 'removeMark']
         only_comment = True
         for diff in parsed_diffs:
-            if not (diff['type'] in allowed_operations and diff[
-                    'param']['_'] == 'comment'):
+            if not (diff['stepType'] in allowed_operations and diff[
+                    'mark']['_'] == 'comment'):
                 only_comment = False
         return only_comment
 

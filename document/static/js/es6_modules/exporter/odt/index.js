@@ -21,9 +21,10 @@ This exporter is experimental.
 
 
 export class OdtExporter {
-    constructor(doc, bibDB, imageDB) {
+    constructor(doc, templateUrl, bibDB, imageDB) {
         let that = this
         this.doc = doc
+        this.templateUrl = templateUrl
         this.bibDB = bibDB
         this.imageDB = imageDB
         this.pmBib = false
@@ -57,7 +58,7 @@ export class OdtExporter {
         )
         this.citations.formatCitations()
         this.pmBib = this.citations.pmBib
-        this.xml = new XmlZip(createSlug(this.docTitle)+'.odt', staticUrl + 'odt/template.odt')
+        this.xml = new XmlZip(createSlug(this.docTitle)+'.odt', this.templateUrl)
         this.xml.init().then(() => {
                 return that.metadata.init()
             }).then(() => {

@@ -55,17 +55,15 @@ export class ModMenusActions {
         })
     }
 
-    downloadOdt() {
+    downloadTemplateExport(templateUrl, templateType) {
         let that = this
         that.mod.editor.save(function() {
-            new OdtExporter(that.mod.editor.doc, that.mod.editor.bibDB, that.mod.editor.imageDB)
-        })
-    }
+            if (templateType ==='docx') {
+                new DocxExporter(that.mod.editor.doc, templateUrl, that.mod.editor.bibDB, that.mod.editor.imageDB)
+            } else {
+                new OdtExporter(that.mod.editor.doc, templateUrl, that.mod.editor.bibDB, that.mod.editor.imageDB)
+            }
 
-    downloadDocx() {
-        let that = this
-        that.mod.editor.save(function() {
-            new DocxExporter(that.mod.editor.doc, that.mod.editor.bibDB, that.mod.editor.imageDB)
         })
     }
 

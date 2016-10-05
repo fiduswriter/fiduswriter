@@ -12,7 +12,6 @@ from django.core.management import call_command
 
 
 class Command(BaseCommand):
-    args = ''
     help = 'Load bibliography fixtures into DB.'
 
     def handle(self, *args, **options):

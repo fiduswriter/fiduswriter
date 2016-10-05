@@ -537,6 +537,14 @@ msgid "Comments"
 msgstr ""
 
 #: document/templates/document/editor.html:414
+msgid "submit the paper to ojs"
+msgstr ""
+
+#: document/templates/document/editor.html:415
+msgid "Submit paper"
+msgstr ""
+
+#: document/templates/document/editor.html:414
 #: document/templates/document/editor.html:415
 msgid "Filter comments"
 msgstr ""

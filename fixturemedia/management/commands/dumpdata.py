@@ -50,7 +50,7 @@ class Command(django.core.management.commands.dumpdata.Command):
             with open(target_path, 'wb') as out_file:
                 out_file.write(file_contents)
 
-    sdef set_up_serializer(self, ser_format):
+    def set_up_serializer(self, ser_format):
         try:
             super_serializer = django.core.serializers.get_serializer(
                 ser_format)

@@ -14,11 +14,11 @@ before_install:
 install:
   - pip install -r requirements.txt
   - pip install -r dev-requirements.txt
+  - flake8 ./
   - pip install coverage
   - pip install coveralls
   - pip install selenium
   - npm install
-  - npm run check_py
   - npm run check_js
   - ./travis/sauce-connect.sh
 

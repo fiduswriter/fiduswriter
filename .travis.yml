@@ -18,13 +18,13 @@ install:
   - pip install coveralls
   - pip install selenium
   - npm install
+  - npm run check_py
+  - npm run check_js
   - ./travis/sauce-connect.sh
 
 script:
-  - npm run check_py
-  - npm run check_js
   - coverage run manage.py init
-  - coverage run manage.py test
+  - travis_retry coverage run manage.py test
 
 after_success:
   - coverage report

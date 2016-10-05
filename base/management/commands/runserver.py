@@ -25,18 +25,25 @@ from django.conf import settings
 
 from base.servers.tornado_django_hybrid import run as run_server
 
-DEFAULT_PORT = "8000"
-
 
 class Command(BaseCommand):
-    args = '[optional port number]'
     help = 'Run django using the tornado server'
+    requires_migrations_checks = True
+    requires_system_checks = False
+    leave_locale_alone = True
+    default_port = '8000'
 
-    def handle(self, port=None, *args, **options):
-        if not port:
-            self.port = DEFAULT_PORT
+    def add_arguments(self, parser):
+        parser.add_argument(
+            'port', nargs='?',
+            help='Optional port number'
+        )
+
+    def handle(self, *args, **options):
+        if options['port']:
+            self.port = options['port']
         else:
-            self.port = port
+            self.port = self.default_port
         if not self.port.isdigit():
             raise CommandError("%r is not a valid port number." % self.port)
         if settings.DEBUG:

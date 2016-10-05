@@ -19,7 +19,6 @@ from fiduswriter.settings import PROJECT_PATH
 
 
 class Command(BaseCommand):
-    args = ''
     help = ('Transpile ES6 JavaScript to ES5 JavaScript + include NPM '
             'dependencies')
 

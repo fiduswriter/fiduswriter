@@ -71,7 +71,7 @@ export let addAlert = function(alertType, alertMsg) {
         'success': 'icon-ok'
     }
     let alertBox = jQuery('<li class="alerts-' + alertType + ' ' + iconNames[alertType] + '">' + alertMsg + '</li>')
-    if(0 === jQuery('#alerts-outer-wrapper').size())
+    if(0 === jQuery('#alerts-outer-wrapper').length)
         jQuery('body').append('<div id="alerts-outer-wrapper"><ul id="alerts-wrapper"></ul></div>')
     jQuery('#alerts-wrapper').append(alertBox)
     alertBox.fadeTo(fadeSpeed, 1, function() {

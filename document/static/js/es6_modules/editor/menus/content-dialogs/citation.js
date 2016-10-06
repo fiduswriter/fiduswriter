@@ -42,7 +42,7 @@ export let citationDialog = function (mod) {
             bibBefore,
             emptySpaceNode
 
-        if (0 === cite_items.size()) {
+        if (0 === cite_items.length) {
             window.alert(gettext('Please select at least one citation source!'))
             return false
         }
@@ -204,7 +204,7 @@ export let citationDialog = function (mod) {
                     selectedItems = []
                 checkedElements.each(function() {
                     let id = jQuery(this).data('id')
-                    if (jQuery('#selected-source-' + id).size()) {
+                    if (jQuery('#selected-source-' + id).length) {
                         return
                     }
                     selectedItems.push({

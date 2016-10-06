@@ -21,8 +21,8 @@ install:
   - ./travis/sauce-connect.sh
 
 script:
-  - npm run py_check
-  - npm run js_check
+  - npm run check_py
+  - npm run check_js
   - coverage run manage.py init
   - coverage run manage.py test
 

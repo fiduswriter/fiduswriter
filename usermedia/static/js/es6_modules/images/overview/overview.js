@@ -106,7 +106,7 @@ export class ImageOverview {
             fileType = fileType[0].toUpperCase()
         }
 
-        if (0 < $tr.size()) { //if the image entry exists, update
+        if (0 < $tr.length) { //if the image entry exists, update
             $tr.replaceWith(usermediaTableTemplate({
                 pk,
                 'cats': imageInfo.cats,

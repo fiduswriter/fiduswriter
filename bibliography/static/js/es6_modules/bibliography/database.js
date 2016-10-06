@@ -3,28 +3,28 @@ import {activateWait, deactivateWait, addAlert, csrfToken} from "../common/commo
 const FW_LOCALSTORAGE_VERSION = "1.0"
 
 export class BibliographyDB {
-    constructor(docOwnerId, useLocalStorage, oldBibDB, oldBibCats) {
+    constructor(docOwnerId, useLocalStorage, oldDB, oldCats) {
         this.docOwnerId = docOwnerId
         this.useLocalStorage = useLocalStorage // Whether to use local storage to cache result
-        if (oldBibDB) {
-            this.bibDB = oldBibDB
+        if (oldDB) {
+            this.db = oldDB
         } else {
-            this.bibDB = {}
+            this.db = {}
         }
-        if (oldBibCats) {
-            this.bibCats = oldBibCats
+        if (oldCats) {
+            this.cats = oldCats
         } else {
-            this.bibCats = []
+            this.cats = []
         }
     }
 
     // EXPORT
-    /** Get the bibliography from the server and create as this.bibDB.
-     * @function getBibDB
+    /** Get the bibliography from the server and create as this.db.
+     * @function getDB
      * @param callback Will be called afterward.
      */
 
-    getBibDB(callback) {
+    getDB(callback) {
 
         let lastModified = -1, numberOfEntries = -1, that = this
 
@@ -73,7 +73,7 @@ export class BibliographyDB {
 
                 let newBibCats = response.bibCategories
                 newBibCats.forEach(function(bibCat) {
-                    that.bibCats.push(bibCat)
+                    that.cats.push(bibCat)
                 })
 
                 let bibList = []
@@ -123,7 +123,7 @@ export class BibliographyDB {
         aBibDBEntry['entry_type'] = item['entry_type']
         aBibDBEntry['entry_key'] = item['entry_key']
         aBibDBEntry['entry_cat'] = item['entry_cat']
-        this.bibDB[id] = aBibDBEntry
+        this.db[id] = aBibDBEntry
         return id
     }
 
@@ -209,16 +209,16 @@ export class BibliographyDB {
                 if (jqXHR.status == 201) {
                     let bibCats = response.entries // We receive both existing and new categories.
                     // Replace the old with the new categories, but don't lose the link to the array (so delete each, then add each).
-                    while(that.bibCats.length > 0) {
-                        that.bibCats.pop()
+                    while(that.cats.length > 0) {
+                        that.cats.pop()
                     }
                     while(bibCats.length > 0) {
-                        that.bibCats.push(bibCats.pop())
+                        that.cats.push(bibCats.pop())
                     }
 
                     addAlert('success', gettext('The categories have been updated'))
                     if (callback) {
-                        callback(that.bibCats)
+                        callback(that.cats)
                     }
                 }
             },
@@ -252,14 +252,14 @@ export class BibliographyDB {
             success: function (response, textStatus, jqXHR) {
                 let deletedPks = ids.slice()
                 let deletedBibCats = []
-                that.bibCats.forEach(function(bibCat) {
+                that.cats.forEach(function(bibCat) {
                     if (ids.indexOf(bibCat.id) !== -1) {
                         deletedBibCats.push(bibCat)
                     }
                 })
                 deletedBibCats.forEach(function(bibCat) {
-                    let index = that.bibCats.indexOf(bibCat)
-                    that.bibCats.splice(index, 1)
+                    let index = that.cats.indexOf(bibCat)
+                    that.cats.splice(index, 1)
                 })
                 if (callback) {
                     callback(deletedPks)
@@ -291,7 +291,7 @@ export class BibliographyDB {
             },
             success: function (response, textStatus, jqXHR) {
                 for (let i = 0; i < ids.length; i++) {
-                    delete that.bibDB[ids[i]]
+                    delete that.db[ids[i]]
                 }
                 addAlert('success', gettext(
                     'The bibliography item(s) have been deleted'))

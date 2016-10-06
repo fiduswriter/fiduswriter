@@ -17,26 +17,9 @@
             <script type="text/javascript">
                 var staticUrl = '{{ STATIC_URL }}';
             </script>
-            <script type="text/javascript">
-                // Config options for pagination
-                var paginationConfig = {
-                    flowElement : "document.getElementById('flow')",
-                    enableFrontmatter : true,
-                    sectionStartMarker: 'div.part',
-                    sectionTitleMarker: 'h1',
-                    chapterStartMarker: 'div.chapter',
-                    chapterTitleMarker: 'h1',
-                    alwaysEven: true,
-                    autoStart: false,
-                    topfloatSelector: 'figure',
-                    contentsBottomMargin: 1
-                };
-            </script>
             <!-- citeproc -->
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/xmldom.js"></script>
             <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/citeproc.js"></script>
-            <!-- Pagination -->
-            <script type="text/javascript"  src="{{ STATIC_URL }}js/libs/simplePagination.js"></script>
     {% endcompress %}
 
     <!-- Moving of footnotes-->

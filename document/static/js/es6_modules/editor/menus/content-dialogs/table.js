@@ -1,8 +1,8 @@
 import {tableSchema} from "prosemirror/dist/schema-table"
-const {Table, TableRow, createTable, addTableNodes} = require("prosemirror/dist/schema-table")
+import {Table, TableRow, createTable, addTableNodes} from "prosemirror/dist/schema-table"
 import  {commands} from "prosemirror/dist/edit/commands"
 import {tableDialogTemplate} from "./templates"
-const {Schema} = require("prosemirror/dist/model")
+import {Schema} from "prosemirror/dist/model"
 
 
 export let tableDialog = function (mod) {

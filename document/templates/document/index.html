@@ -13,9 +13,11 @@
     <!-- citeproc -->
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/xmldom.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/citeproc.js"></script>
+    <!-- jQuery tablesorter -->
+    <script type="text/javascript" src="{{ DATATABLES_URL }}"></script>
+
     {% compress js %}
         <script type="text/javascript" src="{{ STATIC_URL }}js/document-overview.es5.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dataTables.min.js"></script>
 
         <script type="text/javascript">
             var staticUrl = '{{ STATIC_URL }}';

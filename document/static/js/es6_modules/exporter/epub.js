@@ -47,10 +47,15 @@ export class BaseEpubExporter extends BaseHTMLExporter {
             let newFootnote = document.createElement('aside')
             newFootnote.setAttribute('epub:type', 'footnote')
             newFootnote.id = footnote.id
-            while(footnote.firstChild) {
-                newFootnote.appendChild(footnote.firstChild)
+            if(footnote.firstChild) {
+                while(footnote.firstChild) {
+                    newFootnote.appendChild(footnote.firstChild)
+                }
+                newFootnote.firstChild.innerHTML = footnoteCounter + ' ' + newFootnote.firstChild.innerHTML
+            } else {
+                newFootnote.innerHTML = '<p>'+footnoteCounter+'</p>'
             }
-            newFootnote.firstChild.innerHTML = footnoteCounter + ' ' + newFootnote.firstChild.innerHTML
+
             footnote.parentNode.replaceChild(newFootnote, footnote)
             footnoteCounter++
         })
@@ -134,23 +139,30 @@ export class EpubExporter extends BaseEpubExporter {
             this.bibDB = bibDB // the bibliography has already been loaded for some other purpose. We reuse it.
             this.exportOne()
         } else {
-            let bibGetter = new BibliographyDB(doc.owner.id, false, false, false)
-            bibGetter.getBibDB(function() {
-                that.bibDB = bibGetter.bibDB
+            this.bibDB = new BibliographyDB(doc.owner.id, false, false, false)
+            this.bibDB.getDB(function() {
                 that.exportOne()
             })
         }
     }
 
     exportOne() {
-        let styleSheets = [] //TODO: fill style sheets with something meaningful.
-        let title = this.doc.title
-
-        addAlert('info', title + ': ' + gettext(
+        let that = this
+        addAlert('info', this.doc.title + ': ' + gettext(
             'Epub export has been initiated.'))
 
 
-        let contents = this.joinDocumentParts(this.doc, this.bibDB)
+        this.joinDocumentParts(function() {
+            that.exportTwo()
+        })
+    }
+
+    exportTwo() {
+        let styleSheets = [] //TODO: fill style sheets with something meaningful.
+        let title = this.doc.title
+
+        let contents = this.contents
+
         contents = this.addFigureNumbers(contents)
 
         let images = findImages(contents)

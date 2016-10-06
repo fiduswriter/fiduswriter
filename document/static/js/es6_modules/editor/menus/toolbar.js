@@ -5,7 +5,7 @@ import {tableDialog} from "./content-dialogs/table"
 import {MathDialog} from "./content-dialogs/math"
 //import  {wrapIn, setBlockType, chainCommands, newlineInCode, toggleMark} from "prosemirror/dist/commands"
 import  {commands} from "prosemirror/dist/edit/commands"
-const {addColumnAfter,addColumnBefore, removeColumn,addRowBefore, addRowAfter, removeRow} = require("prosemirror/dist/schema-table")
+import {addColumnAfter,addColumnBefore, removeColumn,addRowBefore, addRowAfter, removeRow} from "prosemirror/dist/schema-table"
 
 /* Bindings for the toolbar menu */
 export class ModMenusToolbar {

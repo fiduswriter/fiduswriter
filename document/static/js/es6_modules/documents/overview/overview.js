@@ -34,9 +34,8 @@ export class DocumentOverview {
     getBibDB(callback) { // Get the bibliography database -- only executed if needed (when importing, etc.).
         let that = this
         if (!this.bibDB) { // Don't get the bibliography again if we already have it.
-            let bibGetter = new BibliographyDB(this.user.id, true, false, false)
-            bibGetter.getBibDB(function(){
-                that.bibDB = bibGetter.bibDB // We only need the bibliography database
+            this.bibDB = new BibliographyDB(this.user.id, true, false, false)
+            this.bibDB.getDB(function(){
                 callback()
             })
         } else {

@@ -52,12 +52,34 @@
 
 .ui-dialog-titlebar-close {
     position: absolute;
+    right: .3em;
+    top: 50%;
+    width: 20px;
+    margin: -10px 0 0 0;
+    padding: 1px;
+    height: 20px;
+    /*position: absolute;
     right: 0;
-    top: 3px;
+    top: 3px;*/
 }
 
-.ui-dialog-titlebar-close .ui-button-text {
-    display: none;
+.ui-button-icon-only {
+    width: 2em;
+    box-sizing: border-box;
+    text-indent: -9999px;
+    white-space: nowrap;
+}
+
+.ui-button-icon-only .ui-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-top: -8px;
+    margin-left: -8px;
+}
+
+.ui-button-icon-only .ui-icon::before {
+    text-indent: 5019px;
 }
 
 .ui-dialog-titlebar-close:hover {

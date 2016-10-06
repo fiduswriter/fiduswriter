@@ -6,14 +6,13 @@
 
 {% block extraheaders %}
 
-{% compress js %}
 <!-- jQuery tablesorter -->
-<script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dataTables.min.js"></script>
-<!-- jQuery Dropkick -->
-<script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dropkick-1.1.0.js"></script>
-{% endcompress %}
+<script type="text/javascript" src="{{ DATATABLES_URL }}"></script>
+<!-- Dropkick JS -->
+<script type="text/javascript" src="{{ DROPKICKJS_URL }}"></script>
 
 <script type="text/javascript" src="{{ STATIC_URL }}js/images-overview.es5.js"></script>
+
 
 {% endblock %}
 

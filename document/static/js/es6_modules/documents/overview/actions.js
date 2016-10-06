@@ -108,7 +108,7 @@ export class DocumentOverviewActions {
                         fidusFile,
                         that.documentOverview.user,
                         true,
-                        that.documentOverview.bibDB,
+                        that.documentOverview.bibDB.db,
                         that.documentOverview.imageDB,
                         function(noErrors, returnValue) {
                             deactivateWait()
@@ -181,8 +181,8 @@ export class DocumentOverviewActions {
                         })
                         if (doc.owner.id===that.documentOverview.user.id) {
                             // We are copying from and to the same user.
-                            savecopy(doc, that.documentOverview.bibDB, that.documentOverview.imageDB,
-                            that.documentOverview.bibDB, that.documentOverview.imageDB,
+                            savecopy(doc, that.documentOverview.bibDB.db, that.documentOverview.imageDB,
+                            that.documentOverview.bibDB.db, that.documentOverview.imageDB,
                             that.documentOverview.user, function (doc, docInfo) {
                                 that.documentOverview.documentList.push(doc)
                                 that.documentOverview.stopDocumentTable()
@@ -201,7 +201,7 @@ export class DocumentOverviewActions {
                                      the databases from that user
                                     */
                                     savecopy(doc, oldBibDB, oldImageDB,
-                                    that.documentOverview.bibDB, that.documentOverview.imageDB,
+                                    that.documentOverview.bibDB.db, that.documentOverview.imageDB,
                                     that.documentOverview.user, function (doc, docInfo) {
                                         that.documentOverview.documentList.push(doc)
                                         that.documentOverview.stopDocumentTable()
@@ -226,8 +226,8 @@ export class DocumentOverviewActions {
 
     getBibDB(userId, callback) {
         let bibGetter = new BibliographyDB(userId, true, false, false)
-        bibGetter.getBibDB(function(){
-            callback(bibGetter.bibDB)
+        bibGetter.getDB(function(){
+            callback(bibGetter.db)
         })
     }
 

@@ -87,38 +87,10 @@
         <!-- citeproc -->
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/xmldom.js"></script>
         <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/citeproc.js"></script>
-
-        {% compress js %}
-            <!-- simplePagination.js -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/simplePagination.js"></script>
-            <script type="text/javascript">
-                // Config options for pagination
-
-                var paginationConfig = {
-                    'flowElement' : "flowCopy",
-                    'enableFrontmatter' : false,
-                    'divideContents' : false,
-                    'alwaysEven' : false,
-                    'autoStart': false,
-                    'pageWidth': 790,
-                    'pageHeight': 1117, // A4 is standard size
-                    'outerMargin': 90,
-                    'innerMargin': 90,
-                    'contentsTopMargin': 80,
-                    'headerTopMargin': 80,
-                    'contentsBottomMargin': 80,
-                    'pagenumberBottomMargin': 50,
-                    'footnoteSelector': '.footnote-marker',
-                    'lengthUnit': 'px',
-                    'flowTo': 'document.getElementById("print")'
-                };
-            </script>
-            <!-- jQuery tablesorter -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dataTables.min.js"></script>
-            <!-- Dropkick -->
-            <script type="text/javascript" src="{{ STATIC_URL }}js/libs/jquery.dropkick-1.1.0.js"></script>
-
-        {% endcompress %}
+        <!-- jQuery tablesorter -->
+        <script type="text/javascript" src="{{ DATATABLES_URL }}"></script>
+        <!-- Dropkick JS -->
+        <script type="text/javascript" src="{{ DROPKICKJS_URL }}"></script>
         <!-- Editor  -->
         <script type="text/javascript" src="{{ STATIC_URL }}js/editor.es5.js"></script>
 
@@ -411,9 +383,9 @@
                                     </span>
                                 </li>
 				<li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">
-                                    <span class="ui-button-text" title="{% trans "insert row below." %}">
+                                    <span class="ui-button-text" title="{% trans "insert row above." %}">
                                         <input type="radio" >
-                                        <label class="fw-pulldown-item" id="row_below">{% trans "insert row below" %}</label>
+                                        <label class="fw-pulldown-item" id="row_before">{% trans "insert row before" %}</label>
                                     </span>
                                 </li>
 <li class="ui-button ui-widget ui-state-default ui-corner-all ui-button-text-only" role="button" aria-disabled="false">

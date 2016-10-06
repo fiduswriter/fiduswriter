@@ -79,6 +79,11 @@ export class Editor {
         this.pm.mod.collab.receivedTransform.add((transform, options) => {that.onTransform(transform, false)})
         this.mod.serverCommunications.init()
         this.setSaveTimers()
+        window.addEventListener("beforeunload", function (event) {
+            if (that.docInfo && that.docInfo.changed && that.docInfo.rights !== 'read') {
+                that.save()
+            }
+        })
     }
 
     setSaveTimers() {
@@ -138,12 +143,25 @@ export class Editor {
         let pmDoc = modelToEditor(this.doc)
         //collabEditing.detach(this.pm)
         this.pm.setDoc(pmDoc)
-        that.pm.mod.collab.version = this.doc.version
+        this.pm.mod.collab.version = this.doc.version
         //collabEditing.config({version: this.doc.version}).attach(this.pm)
-        while (this.docInfo.last_diffs.length > 0) {
-            let diff = this.docInfo.last_diffs.shift()
-            this.mod.collab.docChanges.applyDiff(diff)
+        try{
+            // We only try because this fails if the PM diff format has changed
+            // again.
+            while (this.docInfo.last_diffs.length > 0) {
+                let diff = this.docInfo.last_diffs.shift()
+                this.mod.collab.docChanges.applyDiff(diff)
+            }
+        } catch (error) {
+            // We couldn't apply the diffs. They are likely corrupted.
+            // We set the original document, increase the version by one and
+            // save to the server.
+            this.pm.setDoc(pmDoc)
+            this.pm.mod.collab.version = this.doc.version + this.docInfo.last_diffs.length + 1
+            this.docInfo.last_diffs = []
+            this.save()
         }
+
         // Applying diffs through the receiving mechanism has also added all the
         // footnotes from diffs to list of footnotes without adding them to the
         // footnote editor. We therefore need to remove all markers so that they

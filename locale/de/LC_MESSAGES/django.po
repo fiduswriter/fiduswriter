@@ -551,6 +551,14 @@ msgid "Comments"
 msgstr "Anmerkungen"
 
 #: document/templates/document/editor.html:414
+msgid "submit the paper to ojs"
+msgstr "Das Paper einreichen"
+
+#: document/templates/document/editor.html:415
+msgid "Submit paper"
+msgstr "Einreichen"
+
+#: document/templates/document/editor.html:414
 #: document/templates/document/editor.html:415
 #, fuzzy
 msgid "Filter comments"

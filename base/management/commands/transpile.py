@@ -19,7 +19,6 @@ from fiduswriter.settings import PROJECT_PATH
 
 
 class Command(BaseCommand):
-    args = ''
     help = ('Transpile ES6 JavaScript to ES5 JavaScript + include NPM '
             'dependencies')
 
@@ -149,8 +148,9 @@ class Command(BaseCommand):
             infile = os.path.join(cache_dir, relative_dir, basename)
             outfile = os.path.join(out_dir, relative_dir, outfilename)
             print("Transpiling " + sourcefile + " to " + outfile)
-            call(["node_modules/.bin/browserifyinc", "--cachefile",
-                  cachefile, "--outfile", outfile, "-t", "babelify", infile])
+            call(["node_modules/.bin/browserifyinc", "--ignore-missing",
+                  "--cachefile", cachefile, "--outfile", outfile, "-t",
+                  "babelify", infile])
 
         # Copy mathquill CSS
         os.makedirs("static-es5/css/libs/mathquill")

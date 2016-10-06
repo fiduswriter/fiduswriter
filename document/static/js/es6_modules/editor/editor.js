@@ -6,7 +6,7 @@ import {collabEditing} from "prosemirror/dist/collab"
 //import "prosemirror/dist/menu/menubar"
 import {defaultDocumentStyle} from "../style/documentstyle-list"
 import {defaultCitationStyle} from "../style/citation-definitions"
-import {fidusSchema} from "./schema"
+import {fidusSchema} from "../schema/document"
 import {ModComments} from "./comments/mod"
 import {ModFootnotes} from "./footnotes/mod"
 import {ModCitations} from "./citations/mod"
@@ -126,15 +126,16 @@ export class Editor {
         this.pm.on.setDoc.add(this.pm.mod.collab.afterSetDoc)
     }
 
+    // Removes all content from the editor and adds the contents of this.doc.
     update() {
-        console.log('Updating editor')
+        // Updating editor
         let that = this
         this.mod.collab.docChanges.cancelCurrentlyCheckingVersion()
         this.mod.collab.docChanges.unconfirmedSteps = {}
         if (this.mod.collab.docChanges.awaitingDiffResponse) {
             this.mod.collab.docChanges.enableDiffSending()
         }
-        let pmDoc = modelToEditor(this.doc, this.schema)
+        let pmDoc = modelToEditor(this.doc)
         //collabEditing.detach(this.pm)
         this.pm.setDoc(pmDoc)
         that.pm.mod.collab.version = this.doc.version
@@ -143,6 +144,11 @@ export class Editor {
             let diff = this.docInfo.last_diffs.shift()
             this.mod.collab.docChanges.applyDiff(diff)
         }
+        // Applying diffs through the receiving mechanism has also added all the
+        // footnotes from diffs to list of footnotes without adding them to the
+        // footnote editor. We therefore need to remove all markers so that they
+        // will be found when footnotes are rendered.
+        this.mod.footnotes.markers.removeAllMarkers()
         this.doc.hash = this.getHash()
         this.mod.comments.store.setVersion(this.doc.comment_version)
         this.pm.mod.collab.mustSend.add(function() {
@@ -218,7 +224,7 @@ export class Editor {
 
     enableUI() {
 
-        jQuery('.savecopy, .saverevision, .download, .latex, .epub, .html, .print, .style, \
+        jQuery('.savecopy, .saverevision, .download, .template-export, .latex, .epub, .html, .print, .style, \
       .citationstyle, .tools-item, .papersize, .metadata-menu-item, \
       #open-close-header').removeClass('disabled')
 
@@ -306,7 +312,6 @@ export class Editor {
     }
 
     updateComments(comments, comment_version) {
-        console.log('receiving comment update')
         this.mod.comments.store.receive(comments, comment_version)
     }
 

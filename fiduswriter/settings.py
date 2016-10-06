@@ -8,6 +8,9 @@ SERVER_INFO = {
     # This determines whether the server is used for testing and will let the
     # users upon signup know that their documents may disappear.
     'TEST_SERVER': True,
+    # This determines whether experimental or unfinished features will be
+    # enabled.
+    'EXPERIMENTAL': False,
     # This is the contact email that will be shown in various places all over
     # the site. It will also be used to forward feedback messages.
     'CONTACT_EMAIL': 'mail@email.com',
@@ -315,13 +318,13 @@ JS_LOCATIONS = {
     'JQUERYUI_URL': STATIC_URL + 'js/libs/jquery-ui.min.js',
     'UNDERSCOREJS_URL': STATIC_URL + 'js/libs/underscore-min.js',
     'DATATABLES_URL': STATIC_URL + 'js/libs/jquery.dataTables.min.js',
-    'DROPKICKJS_URL': STATIC_URL + 'js/libs/dropkick.min.js'
+    'DROPKICKJS_URL': STATIC_URL + 'js/libs/dropkick.min.js',
+    'CITEPROC_URL': STATIC_URL + 'js/libs/citeproc.js'
 }
 
-CSS_LOCATIONS = {
-}
+CSS_LOCATIONS = {}
 
 try:
-    exec open(os.path.join(PROJECT_PATH, 'configuration.py')) in globals()
+    exec(open(os.path.join(PROJECT_PATH, 'configuration.py')), globals())
 except:
     pass

@@ -5,7 +5,7 @@
     <head>
         <meta charset="utf-8" />
         <link rel="shortcut icon" href="{{ STATIC_URL }}img/favicon.png" type="image/png">
-        <title> Fidus Writer - {{document.title}} </title>
+        <title> Fidus Writer </title>
         <meta name="description" content="{% trans "The all in one solution for collaborative academic writing." %}">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script type="text/javascript">
@@ -84,16 +84,17 @@
         <script type="text/javascript" src="{{ JQUERYUI_URL }}"></script>
         <!-- Underscore -->
         <script type="text/javascript" src="{{ UNDERSCOREJS_URL }}"></script>
-        <!-- citeproc -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/xmldom.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/citeproc.js"></script>
+
         <!-- jQuery tablesorter -->
         <script type="text/javascript" src="{{ DATATABLES_URL }}"></script>
         <!-- Dropkick JS -->
         <script type="text/javascript" src="{{ DROPKICKJS_URL }}"></script>
-        <!-- Editor  -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/editor.es5.js"></script>
-
+        {% compress js %}
+            <!-- citeproc -->
+            <script type="text/javascript" src="{{ CITEPROC_URL }}"></script>
+            <!-- Editor  -->
+            <script type="text/javascript" src="{{ STATIC_URL }}js/editor.es5.js"></script>
+        {% endcompress %}
     </head>
     <body class="{% trans "en" %} tex2jax_ignore">
         <div id="editor">
@@ -148,6 +149,15 @@
                                     LaTeX
                                 </span>
                             </li>
+                            {% if EXPERIMENTAL %}
+                                {% for export_template in export_templates %}
+                                    <li>
+                                        <span class="fw-pulldown-item template-export" data-filetype="{{ export_template.file_type }}" data-template="{{ export_template.template_file.url }}" title="{% trans "Export the document to a template:" %} {{ export_template.file_name }} ({{ export_template.file_type }})">
+                                            {{ export_template.file_name }} ({{ export_template.file_type }})
+                                        </span>
+                                    </li>
+                                {% endfor %}
+                            {% endif %}
                         </ul>
                     </div>
                 </div>

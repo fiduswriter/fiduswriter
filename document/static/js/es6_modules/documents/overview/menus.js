@@ -84,6 +84,11 @@ export class DocumentOverviewMenus {
                     case 'latex':
                         that.documentOverview.mod.actions.downloadLatexFiles(ids)
                         break
+                    case 'template-export':
+                        let fileType = jQuery(this).attr('data-filetype')
+                        let templateUrl = jQuery(this).attr('data-template')
+                        that.documentOverview.mod.actions.downloadTemplateExportFiles(ids, templateUrl, fileType)
+                        break
                     case 'html':
                         that.documentOverview.mod.actions.downloadHtmlFiles(ids)
                         break

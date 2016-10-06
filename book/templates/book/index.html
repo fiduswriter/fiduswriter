@@ -18,14 +18,15 @@
     <!-- Dropkick JS -->
     <script type="text/javascript" src="{{ DROPKICKJS_URL }}"></script>
 
+
+
     {% compress js %}
         <script type="text/javascript">
             var staticUrl = '{{ STATIC_URL }}';
         </script>
 
         <!-- citeproc -->
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/xmldom.js"></script>
-        <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/citeproc.js"></script>
+        <script type="text/javascript" src="{{ CITEPROC_URL }}"></script>
 
     {% endcompress %}
 

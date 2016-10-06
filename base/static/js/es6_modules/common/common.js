@@ -131,3 +131,29 @@ export let getCookie = function(name) {
  * The Cross Site Request Forgery (CSRF) token
  */
 export let csrfToken = getCookie('csrftoken')
+
+
+/**
+ * Turn string literals into single line, removing spaces at start of line
+ */
+
+ export let noSpaceTmp = function(strings) {
+     let values = [].slice.call(arguments)
+     let tmpStrings = [].slice.call(values.shift())
+
+     let combined = ""
+     while (tmpStrings.length > 0 || values.length > 0) {
+         if (tmpStrings.length > 0) {
+             combined += tmpStrings.shift()
+         }
+         if (values.length > 0) {
+             combined += values.shift()
+         }
+     }
+
+     let out = ""
+     combined.split('\n').forEach(function(line){
+         out += line.replace(/^\s*/g,'')
+     })
+     return out
+ }

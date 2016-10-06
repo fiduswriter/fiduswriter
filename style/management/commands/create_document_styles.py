@@ -6,7 +6,6 @@ from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
-    args = ''
     help = ('Creates CSS files with the style definitions of all the document '
             'styles')
 

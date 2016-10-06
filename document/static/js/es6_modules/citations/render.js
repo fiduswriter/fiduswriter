@@ -27,6 +27,8 @@ export class RenderCitations {
         this.fm = new FormatCitations(this.allCitationInfos, this.citationStyle, this.bibDB, function() {
             if (that.renderNoteCitations || 'note' !== that.fm.citationType) {
                 that.renderCitations()
+            } else if (that.callback) {
+                that.callback()
             }
         })
         this.fm.init()

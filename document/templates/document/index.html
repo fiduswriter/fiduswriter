@@ -10,14 +10,14 @@
         <link type="text/css" rel="stylesheet" href="{{ STATIC_URL }}css/access-rights-dialog.css" />
     {% endcompress %}
 
-    <!-- citeproc -->
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/xmldom.js"></script>
-    <script type="text/javascript" src="{{ STATIC_URL }}js/libs/citeproc/citeproc.js"></script>
+
     <!-- jQuery tablesorter -->
     <script type="text/javascript" src="{{ DATATABLES_URL }}"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/document-overview.es5.js"></script>
 
     {% compress js %}
-        <script type="text/javascript" src="{{ STATIC_URL }}js/document-overview.es5.js"></script>
+        <!-- citeproc -->
+        <script type="text/javascript" src="{{ CITEPROC_URL }}"></script>
 
         <script type="text/javascript">
             var staticUrl = '{{ STATIC_URL }}';
@@ -65,6 +65,15 @@
                         {% trans "Export selected as LaTeX" %}
                     </span>
                 </li>
+                {% if EXPERIMENTAL %}
+                    {% for export_template in export_templates %}
+                        <li>
+                            <span class="fw-pulldown-item" data-action="template-export" data-filetype="{{ export_template.file_type }}" data-template="{{ export_template.template_file.url }}">
+                                {{ export_template.file_name }} ({{ export_template.file_type }})
+                            </span>
+                        </li>
+                    {% endfor %}
+                {% endif %}
                 <li>
                     <span class="fw-pulldown-item" data-action="native">
                         {% trans "Download selected as Fidus Document" %}

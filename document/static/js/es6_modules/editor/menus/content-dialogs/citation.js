@@ -106,7 +106,7 @@ export let citationDialog = function (mod) {
                 })
             })
         },
-        class: 'fw-button fw-light fw-add-button'
+        class: 'fw-button fw-light fw-add-button register-new-bib-source'
     })
 
     if (node && node.type && node.type.name==='citation') {
@@ -120,16 +120,16 @@ export let citationDialog = function (mod) {
         })
     }
 
-    submit_button_text = (node && node.type && node.type.name==='citation') ? 'Update' : 'Insert'
+    submit_button_text = (node && node.type && node.type.name==='citation') ? gettext('Update') : gettext('Insert')
 
     diaButtons.push({
-        text: gettext(submit_button_text),
+        text: submit_button_text,
         click: function() {
             if (dialogSubmit()) {
                 dialog.dialog('close')
             }
         },
-        class: "fw-button fw-dark"
+        class: "fw-button fw-dark insert-citation"
     })
 
     diaButtons.push({

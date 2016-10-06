@@ -13,7 +13,6 @@ from django.core.management.base import BaseCommand
 
 
 class Command(BaseCommand):
-    args = ''
     help = ('Create a javascript file with the a conversion map of special '
             'symbols in latex to unicode and the list of field types of the '
             'Bibligraphy DB')

@@ -1,5 +1,5 @@
 import {bookPrintStartTemplate, bookPrintTemplate} from "./templates"
-import {obj2Node} from "../exporter/json"
+import {obj2Node} from "../exporter/tools/json"
 import {RenderCitations} from "../citations/format"
 import {BibliographyDB} from "../bibliography/database"
 import {deactivateWait, addAlert, csrfToken} from "../common/common"

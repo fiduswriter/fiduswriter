@@ -1,11 +1,13 @@
 /* To convert to and from how the document is stored in the database to how ProseMirror expects it.
  We use the DOM import for ProseMirror as the JSON we store in the database is really jsonized HTML.
 */
-import {node2Obj, obj2Node} from "../exporter/json"
+import {node2Obj, obj2Node} from "../exporter/tools/json"
 import {nodeToDOM} from "prosemirror/dist/model/to_dom"
 import {parseDOM} from "prosemirror/dist/model/from_dom"
+import {fidusSchema} from "../schema/document"
 
-export let modelToEditor = function(doc, schema) {
+
+export let modelToEditor = function(doc) {
     // We start with a document of which we use the metadata and contents entries.
     let editorNode = document.createElement('div'),
         titleNode = doc.metadata.title ? obj2Node(doc.metadata.title) : document.createElement('div'),
@@ -41,7 +43,7 @@ export let modelToEditor = function(doc, schema) {
           fnNodes[i].parentNode.replaceChild(newNode, fnNodes[i])
       }
 
-      let pmDoc = parseDOM(schema, editorNode, {
+      let pmDoc = parseDOM(fidusSchema, editorNode, {
           preserveWhitespace: true
       })
 

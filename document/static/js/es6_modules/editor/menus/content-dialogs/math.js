@@ -49,7 +49,7 @@ export class MathDialog {
     initializeSubmitButton() {
         this.dialogButtons.push({
             text: this.submitMessage,
-            class: 'fw-button fw-dark',
+            class: 'fw-button fw-dark insert-math',
             click: (event) => {
                 event.preventDefault()
 

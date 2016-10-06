@@ -17,7 +17,12 @@ class DocumentWS(BaseWebSocketHandler):
 
     def open(self, document_id):
         print('Websocket opened')
+        response = dict()
         current_user = self.get_current_user()
+        if current_user is None:
+            response['type'] = 'access_denied'
+            self.write_message(response)
+            return
         self.user_info = SessionUserInfo()
         doc_db, can_access = self.user_info.init_access(
             document_id, current_user)
@@ -44,7 +49,6 @@ class DocumentWS(BaseWebSocketHandler):
                 self.doc['id'] = doc_db.id
                 DocumentWS.sessions[doc_db.id] = self.doc
             self.doc['participants'][self.id] = self
-            response = dict()
             response['type'] = 'welcome'
             self.write_message(response)
 
@@ -120,8 +124,6 @@ class DocumentWS(BaseWebSocketHandler):
             response['user']['id'] = self.user_info.user.id
             response['user']['name'] = self.user_info.user.readable_name
             response['user']['avatar'] = avatar_url(self.user_info.user, 80)
-#        if self.doc['in_control'] == self.id:
-#            response['document_values']['control']=True
         response['document_values']['session_id'] = self.id
         self.write_message(response)
 
@@ -254,8 +256,8 @@ class DocumentWS(BaseWebSocketHandler):
         allowed_operations = ['addMark', 'removeMark']
         only_comment = True
         for diff in parsed_diffs:
-            if not (diff['type'] in allowed_operations and diff[
-                    'param']['_'] == 'comment'):
+            if not (diff['stepType'] in allowed_operations and diff[
+                    'mark']['_'] == 'comment'):
                 only_comment = False
         return only_comment
 
@@ -336,6 +338,7 @@ class DocumentWS(BaseWebSocketHandler):
     def on_close(self):
         print('Websocket closing')
         if (
+            hasattr(self, 'user_info') and
             hasattr(self.user_info, 'document_id') and
             self.user_info.document_id in DocumentWS.sessions and
             hasattr(self, 'id') and

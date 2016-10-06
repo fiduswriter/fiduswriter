@@ -72,7 +72,7 @@ export let configureFigureTemplate = _.template('\
     <div class="fw-media-uploader">\
             <div>\
                 <input class="fw-media-title figure-math" type="text" name="figure-math" placeholder="' +
-                    gettext('Insert formula') + '" value="<%- equation %>" <%if (image) {%>disabled=disabled<%} %>/>\
+                    gettext('Insert formula') + '" value="<%- equation %>" <%if (image && image !== "false") {%>disabled=disabled<%} %>/>\
                 <button type="button" id="insertFigureImage" class="fw-button fw-light<%if (equation!=="") {%> disabled<%} %>">' +
                     gettext('Insert image') + ' <i class="icon-figure"></i>\
                 </button>\

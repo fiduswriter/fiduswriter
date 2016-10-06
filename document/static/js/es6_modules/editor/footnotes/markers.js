@@ -197,4 +197,9 @@ export class ModFootnoteMarkers {
         }
         this.updating = false
     }
+
+    // Reset the list of footnotes.
+    removeAllMarkers() {
+        this.mod.footnotes.forEach(function(footnote){footnote.remove()})
+    }
 }

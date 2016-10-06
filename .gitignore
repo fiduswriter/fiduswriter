@@ -30,3 +30,4 @@ static-libs/
 *.es5.js
 base/static/css/libs/
 .coverage
+/npm-debug.log

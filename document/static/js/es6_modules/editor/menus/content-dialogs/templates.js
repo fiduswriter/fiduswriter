@@ -4,7 +4,12 @@ export let linkDialogTemplate = _.template('\
         <p><input class="link" type="text" value="<%- link  %>" placeholder="' + gettext("Link") + '"/></p>\
     </div>\
 ')
-
+export let tableDialogTemplate = _.template('\
+    <div title="' + gettext("table") + '">\
+        <p><input id="nrows" class="rows" type="number" min="1" title="Should be a positive integer" value="" placeholder="' + gettext("number of rows") + '"/></p>\
+        <p><input id="ncol" class="cols" type="number" min="1" title="Should be a positive integer" value="" placeholder="' + gettext("number of columns") + '"/></p>\
+    </div>\
+')
 export let mathDialogTemplate = _.template('\
     <div title="' + gettext("Math") + '">\
         <p><span class="math-field-header">Type formula here: </span><span class="math-field" type="text" name="math" ></span></p>\

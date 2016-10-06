@@ -1,6 +1,7 @@
 import {BlockQuote, OrderedList, BulletList, ListItem, HorizontalRule,
         Paragraph, Heading, CodeBlock, Image, HardBreak, CodeMark, EmMark,
         StrongMark, LinkMark} from "prosemirror/dist/schema-basic"
+import {Table, TableRow, TableCell} from "prosemirror/dist/schema-table"
 
 import {Schema, Block, Inline, Text, Attribute, MarkType} from "prosemirror/dist/model"
 
@@ -300,9 +301,9 @@ export const fidusSchema = new Schema({
     title: {type: Title, content: "text*", group: "part"},
     subtitle: {type: Subtitle, content: "text*", group: "part"},
     authors: {type: Authors, content: "text*", group: "part"},
-    abstract: {type: Abstract, content: "block+", group: "part"},
+    abstract: {type: Abstract, content: "(block | table_block)+", group: "part"},
     keywords: {type: Keywords, content: "text*", group: "part"},
-    body: {type: Body, content: "block+", group: "part"},
+    body: {type: Body, content: "(block | table_block)+", group: "part"},
 
     paragraph: {type: Paragraph, content: "inline<_>*", group: "block"},
     blockquote: {type: BlockQuote, content: "block+", group: "block"},
@@ -319,7 +320,11 @@ export const fidusSchema = new Schema({
     hard_break: {type: HardBreak, group: "inline"},
     citation: {type: Citation, group: "inline"},
     equation: {type: Equation, group: "inline"},
-    footnote: {type: Footnote, group: "inline"}
+    footnote: {type: Footnote, group: "inline"},
+
+    table: {type: Table, content: "table_row[columns=.columns]+", group:  "table_block"},
+    table_row: {type: TableRow, content: "table_cell{.columns}"},
+    table_cell: {type: TableCell, content: "block+"}
 
   },
   marks: {

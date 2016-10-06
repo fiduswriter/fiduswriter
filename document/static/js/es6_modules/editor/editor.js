@@ -4,7 +4,6 @@ import * as objectHash from "object-hash/dist/object_hash"
 import {ProseMirror} from "prosemirror/dist/edit/main"
 import {collabEditing} from "prosemirror/dist/collab"
 //import "prosemirror/dist/menu/menubar"
-
 import {defaultDocumentStyle} from "../style/documentstyle-list"
 import {defaultCitationStyle} from "../style/citation-definitions"
 import {fidusSchema} from "../schema/document"
@@ -20,6 +19,7 @@ import {editorToModel, modelToEditor} from "./node-convert"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {Paste} from "./paste/paste"
+
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 

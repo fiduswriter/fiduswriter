@@ -1,10 +1,12 @@
 import {Doc, BlockQuote, OrderedList, BulletList, ListItem, HorizontalRule,
         Paragraph, Heading, CodeBlock, Image, HardBreak, CodeMark, EmMark,
         StrongMark, LinkMark} from "prosemirror/dist/schema-basic"
+import {Table, TableRow, TableCell} from "prosemirror/dist/schema-table"
 
 import {Schema, Block, Inline, Text, Attribute, MarkType} from "prosemirror/dist/model"
 
 import {Figure, Citation, Equation} from "./document"
+
 
 class FootnoteContainer extends Block {
     get matchDOMTag() {
@@ -21,7 +23,7 @@ export const fidusFnSchema = new Schema({
     doc: {type: Doc, content: "part+"},
 
     footnote_end: {type: HorizontalRule, group: "part"},
-    footnotecontainer: {type: FootnoteContainer, content: "block+", group: "part"},
+    footnotecontainer: {type: FootnoteContainer, content: "(block|table_block)+", group: "part"},
 
     paragraph: {type: Paragraph, content: "inline<_>*", group: "block"},
     heading: {type: Heading, content: "inline<_>*", group: "block"},
@@ -37,7 +39,11 @@ export const fidusFnSchema = new Schema({
     text: {type: Text, group: "inline"},
     hard_break: {type: HardBreak, group: "inline"},
     citation: {type: Citation, group: "inline"},
-    equation: {type: Equation, group: "inline"}
+    equation: {type: Equation, group: "inline"},
+
+    table: {type: Table, content: "table_row[columns=.columns]+", group:  "table_block"},
+    table_row: {type: TableRow, content: "table_cell{.columns}"},
+    table_cell: {type: TableCell, content: "block+"}
   },
 
   marks: {

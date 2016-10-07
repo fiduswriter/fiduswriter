@@ -1,5 +1,4 @@
 import {TexSpecialChars, BibFieldTypes} from "../statics"
-import {addAlert} from "../../common/common"
 
 /** Parses files in BibTeX/BibLaTeX format
  * @function bibTexParser
@@ -44,6 +43,7 @@ export class BibLatexParser {
         this.currentKey = ""
         this.currentEntry = ""
         this.currentType = ""
+        this.errors = []
 
     }
 
@@ -220,7 +220,7 @@ export class BibLatexParser {
             }
             kv = this.keyEqualsValue()
             if (typeof (kv) === 'undefined') {
-                addAlert('error', gettext('A variable could not be identified. Possible error in bibtex syntax.'))
+                this.errors.push({type: 'variable_error'})
                 break
             }
             let val = this.scanBibtexString(kv[1])
@@ -281,10 +281,11 @@ export class BibLatexParser {
             let field = BibFieldTypes[fKey]
 
             if('undefined' == typeof(field)) {
-                addAlert('error', fKey + gettext(' of ') +
-                    this.currentEntry +
-                    gettext(' cannot not be saved. Fidus Writer does not support the field.')
-                )
+                this.errors.push({
+                    type: 'unknown_field',
+                    entry: this.currentEntry,
+                    field_name: fKey
+                })
                 delete this.entries[this.currentEntry][fKey]
                 continue
             }

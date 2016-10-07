@@ -79,11 +79,6 @@ export class Editor {
         this.pm.mod.collab.receivedTransform.add((transform, options) => {that.onTransform(transform, false)})
         this.mod.serverCommunications.init()
         this.setSaveTimers()
-        window.addEventListener("beforeunload", function (event) {
-            if (that.docInfo && that.docInfo.changed && that.docInfo.rights !== 'read') {
-                that.save()
-            }
-        })
     }
 
     setSaveTimers() {
@@ -105,6 +100,13 @@ export class Editor {
                 })
             }
         }, 10000)
+
+        // Auto save the document when the user leaves the page.
+        window.addEventListener("beforeunload", function (event) {
+            if (that.docInfo && that.docInfo.changed && that.docInfo.rights !== 'read') {
+                that.save()
+            }
+        })
     }
 
     makeEditor() {

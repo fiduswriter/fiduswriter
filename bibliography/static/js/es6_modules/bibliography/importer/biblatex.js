@@ -80,6 +80,19 @@ export class BibLatexImporter {
             addAlert('error', gettext('No bibliography entries could be found in import file.'))
             return
         } else {
+            bibData.errors.forEach(function(error){
+                switch (error.type) {
+                    case 'variable_error':
+                        addAlert('error', gettext('A variable could not be identified. Possible error in bibtex syntax.'))
+                        break
+                    case 'unknown_field':
+                        addAlert('error', error.field_name + gettext(' of ') +
+                            error.entry +
+                            gettext(' cannot not be saved. Fidus Writer does not support the field.')
+                        )
+                        break
+                }
+            })
             this.bibKeylist = Object.keys(this.bibEntries)
             this.totalChunks = Math.ceil(this.bibKeylist.length / 50)
             this.currentChunkNumber = 0

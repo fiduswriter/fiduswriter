@@ -1,7 +1,6 @@
-import {savecopy} from "../exporter/copy"
-import {journalDialogTemplate} from "./journal-templates"
+import {savecopy} from "../exporter/native/copy"
+import {journalDialogTemplate} from "./templates"
 import {addAlert, csrfToken} from "../common/common"
-
 
 
 let setRights = function(doc,user,access_rights){

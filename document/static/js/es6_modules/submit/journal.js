@@ -1,12 +1,8 @@
 import {savecopy} from "../exporter/copy"
 import {journalDialogTemplate} from "./journal-templates"
 import {addAlert, csrfToken} from "../common/common"
-import {ojs_path} from "./ojs-path"
 
-/** get the list of ojournal in ojs.
- * @function selectJournal
- * @param
-*/
+
 
 let setRights = function(doc,user,access_rights){
     let that = this
@@ -38,6 +34,11 @@ let setRights = function(doc,user,access_rights){
         }
     })
 }
+
+/** get the list of ojournal in ojs.
+ * @function selectJournal
+ * @param
+*/
 
 export let selectJournal = function(editor) {
         let list = null
@@ -81,9 +82,9 @@ export let selectJournal = function(editor) {
                     dataToOjs.append('journal_id', jQuery("input[type='radio'][name='journalList']:checked").val())
                     dataToOjs.append('file_name', editor.doc.title)
                     dataToOjs.append('article_url', window.location.origin+"/document/" + doc.id)
-                    
+
                     jQuery.ajax({
-                        url: ojs_path+'/index.php/index/gateway/plugin/RestApiGatewayPlugin/articles',
+                        url: window.ojsUrl+'/index.php/index/gateway/plugin/RestApiGatewayPlugin/articles',
                         data: dataToOjs,
                         type: 'POST',
                         cache: false,
@@ -111,7 +112,7 @@ export let selectJournal = function(editor) {
         jQuery.ajax({
                 type: "GET",
                 dataType: "json",
-                url:ojs_path + '/index.php/index/gateway/plugin/RestApiGatewayPlugin/journals',
+                url: window.ojsUrl + '/index.php/index/gateway/plugin/RestApiGatewayPlugin/journals',
                 success: function (result) {
                     list =result['journals']
                     let journal = null

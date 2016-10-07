@@ -77,7 +77,7 @@ export class ModMenusHeader {
               that.mod.actions.close()
           })
 
-          jQuery(document).on('mousedown', '.submitOjs:not(.disabled)', function() {
+          jQuery(document).on('mousedown', '.submit-ojs:not(.disabled)', function() {
               if (that.mod.editor.doc.owner.id === that.mod.editor.user.id)
                 that.mod.actions.submitOjs()
           })

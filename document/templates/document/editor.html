@@ -10,6 +10,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <script type="text/javascript">
             var staticUrl = '{{ STATIC_URL }}';
+            {% if OJS_URL %}
+                var ojsUrl = '{{ OJS_URL }}';
+            {% else %}
+                var ojsUrl = false;
+            {% endif %}
             {% if WS_PORT %}
                 var websocketPort = ':'+{{WS_PORT}};
             {% else %}
@@ -125,11 +130,13 @@
                                 <span class="fw-pulldown-item download icon-download" title="{% trans "Download the current document" %}"> {% trans "Download" %} </span>
                             </li>
                             <li>
-                                <span class="fw-pulldown-item print icon-print" title="{% trans "Either print or create a PDF using your browser's print dialog" %}"> {% trans "Print/PDF" %} </span>
+                                <span class="fw-pulldown-item print icon-print" title="{% trans "Either print or create a PDF using your browser print dialog" %}"> {% trans "Print/PDF" %} </span>
                             </li>
-							<li> 
-                                <span class="fw-pulldown-item submitOjs icon-search" title="{% trans "submit the paper to ojs" %}"> {% trans "Submit paper" %} </span>
-                            </li>
+                            {% if EXPERIMENTAL and OJS_URL %}
+                                <li>
+                                    <span class="fw-pulldown-item submit-ojs icon-search" title="{% trans "submit the paper to ojs" %}"> {% trans "Submit paper" %} </span>
+                                </li>
+                            {% endif %}
                         </ul>
                     </div>
                 </div>

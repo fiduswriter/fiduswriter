@@ -209,19 +209,18 @@ def get_reviewer_for_post(request):
             reviewer = reviewers[0]
         else:
             # "reviewer with this email does not exist so create it"
+            # TODO: Security issue - remove 'ojspass'
             u_data = make_user_data(u_name, 'ojspass', email)
             reviewer = create_user(request, u_data)
             reviewers = User.objects.filter(email=email)
             reviewer = reviewers[0]
-            # print (email)
-            # print (reviewers)
         return reviewer
     except ObjectDoesNotExist:
         print ("could not create user for email " + email)
 
 
 def get_existing_reviewer(request):
-    reviewer = User.objects.get(email=request.POST.get('email', "0"))
+    reviewer = User.objects.get(email=request.POST.get('email'))
     return reviewer
 
 
@@ -284,7 +283,12 @@ def del_reviewer_js(request):
                 access_right = AccessRight.objects.get(
                     document_id=doc_id, user_id=reviewer.id)
                 if access_right.rights == 'comment':
-                    access_right.rights = ''
+                    # access_right.rights = ''
+                    # TODO momenifi: There is no such thing as an empty access
+                    # rights in the list of possible rights in models.py.
+                    # Is it 'review' you meant here? OR should the access right
+                    # be deleted entirely?
+                    access_right.rights = 'review'
                     access_right.save()
                     status = 200
                     response['msg'] = 'user updated and comment rights removed'
@@ -473,7 +477,9 @@ def submit_right_js(request):
         tgt_users = request.POST.getlist('collaborators[]')
         doc_id = int(tgt_doc)
         document = Document.objects.get(id=doc_id)
-        tgt_right = 'readNoC'
+        # TODO momenifi: The rights that were in this field do not exit in the
+        # list of possible rights in models.py. Is it 'review' you meant here?
+        tgt_right = 'review'
         try:
             the_user = User.objects.filter(is_superuser=1)
             if len(the_user) > 0:

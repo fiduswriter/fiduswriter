@@ -1,1 +1,0 @@
-export let ojs_path= 'http://localhost:8000'

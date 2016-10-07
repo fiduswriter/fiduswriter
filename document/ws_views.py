@@ -1,6 +1,6 @@
 import uuid
 import atexit
-import json
+from copy import deepcopy
 
 from document.helpers.session_user_info import SessionUserInfo
 # from document.helpers.filtering_comments import filter_comments_by_role
@@ -86,7 +86,9 @@ class DocumentWS(BaseWebSocketHandler):
         #     'editing',
         #     self.user_info
         # )
-        if (self.user_info.access_rights != 'readNoC'):
+        # TODO momenifi: The rights that were in this field do not exit in the
+        # list of possible rights in models.py. Is it 'review' you meant here?
+        if (self.user_info.access_rights != 'review'):
             response['document']['comments'] = self.doc["comments"]
         # response['document']['comments'] = filtered_comments
         response['document']['comment_version'] = self.doc["comment_version"]
@@ -381,28 +383,29 @@ class DocumentWS(BaseWebSocketHandler):
     def send_updates(cls, message, document_id, sender_id=None):
         info("sending message to %d waiters", len(cls.sessions[document_id]))
         for waiter in cls.sessions[document_id]['participants'].keys():
-            comment = ''
-            try:
-                if 'comments' in message:
-                    # What are you trying to do here? The next line will always
-                    # throw an exception given that "d" isn't defined, right?
-                    if d['comments'] != '':
-                        comment = message['comments']
-            except:
-                json_acceptable_string = message.replace("'", "\"")
-                d = json.loads(json_acceptable_string)
-                if 'comments' in message:
-                    if len(d['comments']) != 0:
-                        comment = d['comments']
-            if comment == '' or cls.sessions[document_id][
-                  'participants'][waiter].user_info.access_rights != 'readNoC':
-                if cls.sessions[document_id][
-                        'participants'][waiter].id != sender_id:
-                    try:
-                        cls.sessions[document_id]['participants'][
-                            waiter].write_message(message)
-                    except WebSocketClosedError:
-                        error("Error sending message", exc_info=True)
+            # TODO momenifi: The rights that were in this field do not exit in
+            # the list of possible rights in models.py. Is it 'review' you
+            # meant here?
+            # And is the restructuring achieving what you are trying to do?
+            if cls.sessions[
+                document_id
+            ]['participants'][
+                waiter
+            ].user_info.access_rights == 'review' \
+              and len(message['comments']) > 0:
+                # The reviewer should not receive the comments update, so we
+                # remove the comments from the copy of the message sent to
+                # the reviewer. We still need to sned the rest of the message
+                # as it may contain other diff information.
+                message = deepcopy(message)
+                message['comments'] = []
+            if cls.sessions[document_id][
+                    'participants'][waiter].id != sender_id:
+                try:
+                    cls.sessions[document_id]['participants'][
+                        waiter].write_message(message)
+                except WebSocketClosedError:
+                    error("Error sending message", exc_info=True)
 
     @classmethod
     def save_document(cls, document_id, all_have_left):

@@ -10,7 +10,7 @@ import {addAlert} from "../../common/common"
  * The importer will not import from a different version and the exporter
   * will include this number in all exports.
  */
-let FW_FILETYPE_VERSION = "1.2"
+let FW_FILETYPE_VERSION = "1.3"
 
 /** Create a Fidus Writer document and upload it to the server as a backup.
  * @function uploadNative
@@ -66,13 +66,13 @@ export class NativeExporter {
 }
 
 // used in copy
-export let exportNative = function(aDocument, anImageDB, aBibDB, callback) {
+export let exportNative = function(doc, anImageDB, aBibDB, callback) {
     let shrunkBibDB = {},
         citeList = []
 
     addAlert('info', gettext('File export has been initiated.'))
 
-    let contents = obj2Node(aDocument.contents)
+    let contents = obj2Node(doc.contents)
 
     let images = findImages(contents)
 
@@ -103,7 +103,7 @@ export let exportNative = function(aDocument, anImageDB, aBibDB, callback) {
         shrunkBibDB[citeList[i]] = aBibDB[citeList[i]]
     }
 
-    callback(aDocument, shrunkImageDB, shrunkBibDB, images)
+    callback(doc, shrunkImageDB, shrunkBibDB, images)
 
 }
 

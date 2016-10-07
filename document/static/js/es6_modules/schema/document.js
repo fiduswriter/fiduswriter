@@ -83,7 +83,7 @@ class Footnote extends Inline {
     }
     get matchDOMTag() {
         return {
-            "footnote": dom => ({ // TODO: really used??
+            "span.footnote": dom => ({
                 contents: dom.innerHTML
             }),
             "span.footnote-marker": dom => ({
@@ -295,7 +295,7 @@ class CommentMark extends MarkType {
     }
 }
 
-export const fidusSchema = new Schema({
+export const docSchema = new Schema({
   nodes: {
     doc: {type: Doc, content: "title subtitle authors abstract keywords body"},
     title: {type: Title, content: "text*", group: "part"},

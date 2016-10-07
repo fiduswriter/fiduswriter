@@ -1,5 +1,5 @@
 import {FormatCitations} from "../../citations/format"
-import {fidusSchema} from "../../schema/document"
+import {docSchema} from "../../schema/document"
 import {descendantNodes} from "../tools/pmJSON"
 
 export class DocxExporterCitations {
@@ -60,16 +60,16 @@ export class DocxExporterCitations {
 
         // We create a standard document DOM node, add the citations
         // into the last child (the body) and parse it back.
-        let dom = fidusSchema.parseDOM(document.createTextNode('')).toDOM()
+        let dom = docSchema.parseDOM(document.createTextNode('')).toDOM()
         dom.lastElementChild.innerHTML = citationsHTML
-        this.pmCits = fidusSchema.parseDOM(dom).lastChild.toJSON().content
+        this.pmCits = docSchema.parseDOM(dom).lastChild.toJSON().content
 
         // Now we do the same for the bibliography.
-        dom = fidusSchema.parseDOM(document.createTextNode('')).toDOM()
+        dom = docSchema.parseDOM(document.createTextNode('')).toDOM()
         dom.lastElementChild.innerHTML = this.citFm.bibliographyHTML
         // Remove empty bibliography header (used in web version)
         dom.lastElementChild.removeChild(dom.lastElementChild.firstElementChild)
-        this.pmBib = fidusSchema.parseDOM(dom).lastChild.toJSON()
+        this.pmBib = docSchema.parseDOM(dom).lastChild.toJSON()
         // use the References style for the paragraphs in the bibliography
         this.pmBib.type = 'bibliography'
     }

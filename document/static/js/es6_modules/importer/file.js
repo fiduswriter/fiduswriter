@@ -1,12 +1,13 @@
 import {ImportNative} from "./native"
+import {updateDoc} from "../schema/convert"
 import JSZip from "jszip"
 
 /** The current Fidus Writer filetype version. The importer will not import from
  * a different version and the exporter will include this number in all exports.
  */
-const FW_FILETYPE_VERSION = 1.2,
+const FW_FILETYPE_VERSION = 1.3,
     MIN_FW_FILETYPE_VERSION = 1.1,
-    MAX_FW_FILETYPE_VERSION = 1.2
+    MAX_FW_FILETYPE_VERSION = 1.3
 
 const TEXT_FILENAMES = ['mimetype', 'filetype-version', 'document.json', 'images.json', 'bibliography.json']
 
@@ -111,9 +112,9 @@ export class ImportFidusFile {
             let shrunkImageDB = JSON.parse(_.findWhere(this.textFiles, {
                 filename: 'images.json'
             }).contents)
-            let aDocument = JSON.parse(_.findWhere(this.textFiles, {
+            let aDocument = updateDoc(JSON.parse(_.findWhere(this.textFiles, {
                 filename: 'document.json'
-            }).contents)
+            }).contents))
 
             return new ImportNative(aDocument, shrunkBibDB, shrunkImageDB, this.otherFiles, this.user, this.bibDB, this.imageDB, this.callback)
 

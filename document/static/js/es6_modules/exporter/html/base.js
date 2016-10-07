@@ -1,57 +1,104 @@
-/* Base exporter class */
+import {obj2Node} from "../tools/json"
+import {BaseDOMExporter} from "../tools/dom-export"
+import {RenderCitations} from "../../citations/render"
 
-export class BaseExporter {
+export class BaseHTMLExporter extends BaseDOMExporter {
+    joinDocumentParts(callback) {
 
-    // Replace all instances of the before string in all descendant textnodes of
-    // node.
-    replaceText(node, before, after) {
-        if (node.nodeType === 1) {
-            [].forEach.call(node.childNodes, child => this.replaceText(child, before, after))
-        } else if (node.nodeType === 3) {
-            node.textContent = node.textContent.replace(window.RegExp(before, 'g'), after)
+        let that = this
+
+        this.contents = document.createElement('div')
+        if (this.doc.contents) {
+            let tempNode = obj2Node(this.doc.contents)
+            while (tempNode.firstChild) {
+                this.contents.appendChild(tempNode.firstChild)
+            }
+        }
+
+        if (this.doc.settings['metadata-keywords'] && this.doc.metadata.keywords) {
+            let tempNode = obj2Node(this.doc.metadata.keywords)
+            if (tempNode.textContent.length > 0) {
+                tempNode.id = 'keywords'
+                this.contents.insertBefore(tempNode, this.contents.firstChild)
+            }
+        }
+
+        if (this.doc.settings['metadata-authors'] && this.doc.metadata.authors) {
+            let tempNode = obj2Node(this.doc.metadata.authors)
+            if (tempNode.textContent.length > 0) {
+                tempNode.id = 'authors'
+                this.contents.insertBefore(tempNode, this.contents.firstChild)
+            }
+        }
+
+        if (this.doc.settings['metadata-abstract'] && this.doc.metadata.abstract) {
+            let tempNode = obj2Node(this.doc.metadata.abstract)
+            if (tempNode.textContent.length > 0) {
+                tempNode.id = 'abstract'
+                this.contents.insertBefore(tempNode, this.contents.firstChild)
+            }
+        }
+
+        if (this.doc.settings['metadata-subtitle'] && this.doc.metadata.subtitle) {
+            let tempNode = obj2Node(this.doc.metadata.subtitle)
+            if (tempNode.textContent.length > 0) {
+                tempNode.id = 'subtitle'
+                this.contents.insertBefore(tempNode, this.contents.firstChild)
+            }
+        }
+
+        if (this.doc.title) {
+            let tempNode = document.createElement('h1')
+            tempNode.classList.add('title')
+            tempNode.textContent = this.doc.title
+            this.contents.insertBefore(tempNode, this.contents.firstChild)
+        }
+
+        let citRenderer = new RenderCitations(
+            this.contents,
+            this.doc.settings.citationstyle,
+            this.bibDB,
+            true,
+            function(){
+                that.addBibliographyHTML(citRenderer.fm.bibliographyHTML)
+                that.contents = that.cleanHTML(that.contents)
+                callback()
+            })
+        citRenderer.init()
+    }
+
+    addBibliographyHTML(bibliographyHTML) {
+        if (bibliographyHTML.length > 0) {
+            let tempNode = document.createElement('div')
+            tempNode.innerHTML = bibliographyHTML
+            while (tempNode.firstChild) {
+                this.contents.appendChild(tempNode.firstChild)
+            }
         }
     }
 
-    cleanHTML(htmlCode) {
+    addFigureNumbers(htmlCode) {
 
-        // Replace the footnotes with markers and the footnotes to the back of the
-        // document, so they can survive the normalization that happens when
-        // assigning innerHTML.
-        // Also link the footnote marker with the footnote according to
-        // https://rawgit.com/essepuntato/rash/master/documentation/index.html#footnotes.
-        let footnotes = [].slice.call(htmlCode.querySelectorAll('.footnote'))
-        let footnotesContainer = document.createElement('section')
-        footnotesContainer.id = 'fnlist'
-        footnotesContainer.setAttribute('role', 'doc-footnotes')
+        jQuery(htmlCode).find('figcaption .figure-cat-figure').each(
+            function(index) {
+                this.innerHTML += ' ' + (index + 1) + ': '
+            })
 
-        footnotes.forEach(function(footnote, index) {
-            let footnoteMarker = document.createElement('a')
-            let counter = index + 1
-            footnoteMarker.setAttribute('href','#fn'+counter)
-            // RASH 0.5 doesn't mark the footnote markers, so we add this class
-            footnoteMarker.classList.add('fn')
-            footnote.parentNode.replaceChild(footnoteMarker, footnote)
-            let newFootnote = document.createElement('section')
-            newFootnote.id = 'fn' + counter
-            newFootnote.setAttribute('role','doc-footnote')
-            while (footnote.firstChild) {
-                newFootnote.appendChild(footnote.firstChild)
-            }
-            footnotesContainer.appendChild(newFootnote)
-        })
-        htmlCode.appendChild(footnotesContainer)
-
-        // Replace nbsp spaces with normal ones
-        this.replaceText(htmlCode, '&nbsp;', ' ')
-
-        jQuery(htmlCode).find('.comment').each(function() {
-           jQuery(this).replaceWith(this.innerHTML)
+        jQuery(htmlCode).find('figcaption .figure-cat-photo').each(function(
+            index) {
+            this.innerHTML += ' ' + (index + 1) + ': '
         })
 
-        jQuery(htmlCode).find('script').each(function() {
-            jQuery(this).replaceWith('')
+        jQuery(htmlCode).find('figcaption .figure-cat-table').each(function(
+            index) {
+            this.innerHTML += ' ' + (index + 1) + ': '
         })
-
         return htmlCode
+
+    }
+    replaceImgSrc(htmlString) {
+        htmlString = htmlString.replace(/<(img|IMG) data-src([^>]+)>/gm,
+            "<$1 src$2>")
+        return htmlString
     }
 }

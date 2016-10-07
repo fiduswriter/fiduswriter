@@ -18,7 +18,7 @@ class FootnoteContainer extends Block {
 }
 
 
-export const fidusFnSchema = new Schema({
+export const fnSchema = new Schema({
   nodes: {
     doc: {type: Doc, content: "part+"},
 

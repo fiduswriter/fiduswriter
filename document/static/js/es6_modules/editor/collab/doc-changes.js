@@ -1,5 +1,5 @@
 import {Step} from "prosemirror/dist/transform"
-import {fidusSchema} from "../../schema/document"
+import {docSchema} from "../../schema/document"
 
 export class ModCollabDocChanges {
     constructor(mod) {
@@ -184,7 +184,7 @@ export class ModCollabDocChanges {
 
     applyDiff(diff) {
         this.receiving = true
-        let steps = [diff].map(j => Step.fromJSON(fidusSchema, j))
+        let steps = [diff].map(j => Step.fromJSON(docSchema, j))
         let client_ids = [diff].map(j => j.client_id)
         this.mod.editor.pm.mod.collab.receive(steps, client_ids)
         this.receiving = false

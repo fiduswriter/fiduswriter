@@ -1,4 +1,4 @@
-import {modelToEditor} from "../../editor/node-convert"
+import {modelToEditor} from "../../schema/convert"
 
 export let createPmJSON = function(doc) {
     let pmJSON = modelToEditor(doc).toJSON()

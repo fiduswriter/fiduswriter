@@ -2,7 +2,7 @@ import {DocxExporterRels} from "./rels"
 import {DocxExporterCitations} from "./citations"
 import {DocxExporterImages} from "./images"
 import {DocxExporterRichtext} from "./richtext"
-import {fidusFnSchema} from "../../schema/footnotes"
+import {fnSchema} from "../../schema/footnotes"
 import {noSpaceTmp} from "../../common/common"
 import {descendantNodes} from "../tools/pmJSON"
 
@@ -163,7 +163,7 @@ export class DocxExporterFootnotes {
         })
         let fnNode = document.createElement('div')
         fnNode.innerHTML = fnHTML
-        this.fnPmJSON = fidusFnSchema.parseDOM(fnNode).toJSON()
+        this.fnPmJSON = fnSchema.parseDOM(fnNode).toJSON()
     }
 
     createXml() {

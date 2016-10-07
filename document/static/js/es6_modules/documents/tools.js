@@ -1,4 +1,5 @@
 import {addAlert, csrfToken} from "../common/common"
+import {updateDoc} from "../schema/convert"
 
 export let getMissingDocumentListData = function (ids, documentList, callback) {
     // get extra data for the documents identified by the ids and updates the
@@ -29,12 +30,16 @@ export let getMissingDocumentListData = function (ids, documentList, callback) {
                     let aDocument = _.findWhere(documentList, {
                         id: response.documents[i].id
                     })
-                    aDocument.contents = JSON.parse(response.documents[i].contents)
-                    aDocument.comments = JSON.parse(response.documents[i].comments)
-                    aDocument.metadata = JSON.parse(response.documents[
-                        i].metadata)
-                    aDocument.settings = JSON.parse(response.documents[
-                        i].settings)
+                    let newDoc = updateDoc({
+                        contents: JSON.parse(response.documents[i].contents),
+                        metadata: JSON.parse(response.documents[i].metadata),
+                        comments: JSON.parse(response.documents[i].comments),
+                        settings: JSON.parse(response.documents[i].settings)
+                    })
+                    aDocument.contents = newDoc.contents
+                    aDocument.metadata = newDoc.metadata
+                    aDocument.comments = newDoc.comments
+                    aDocument.settings = newDoc.settings
                 }
                 if (callback) {
                     callback()

@@ -4,9 +4,8 @@ import * as objectHash from "object-hash/dist/object_hash"
 import {ProseMirror} from "prosemirror/dist/edit/main"
 import {collabEditing} from "prosemirror/dist/collab"
 //import "prosemirror/dist/menu/menubar"
-import {defaultDocumentStyle} from "../style/documentstyle-list"
-import {defaultCitationStyle} from "../style/citation-definitions"
-import {fidusSchema} from "../schema/document"
+
+import {docSchema} from "../schema/document"
 import {ModComments} from "./comments/mod"
 import {ModFootnotes} from "./footnotes/mod"
 import {ModCitations} from "./citations/mod"
@@ -15,7 +14,7 @@ import {ModTools} from "./tools/mod"
 import {ModSettings} from "./settings/mod"
 import {ModMenus} from "./menus/mod"
 import {ModServerCommunications} from "./server-communications"
-import {editorToModel, modelToEditor} from "./node-convert"
+import {editorToModel, modelToEditor, updateDoc} from "../schema/convert"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {Paste} from "./paste/paste"
@@ -42,7 +41,7 @@ export class Editor {
             titleChanged: false,
             changed: false,
         }
-        this.schema = fidusSchema
+        this.schema = docSchema
         this.doc = {
             // Initially we only have the id.
             id
@@ -288,7 +287,7 @@ export class Editor {
 
     receiveDocument(data) {
         let that = this
-        this.receiveDocumentValues(data.document, data.document_values)
+        this.receiveDocumentValues(data.doc, data.doc_info)
         if (data.hasOwnProperty('user')) {
             this.user = data.user
         } else {
@@ -302,25 +301,12 @@ export class Editor {
         })
     }
 
-    receiveDocumentValues(dataDoc, dataDocInfo) {
+    receiveDocumentValues(doc, docInfo) {
         let that = this
-        this.doc = dataDoc
-        this.docInfo = dataDocInfo
+        this.doc = updateDoc(doc)
+        this.docInfo = docInfo
         this.docInfo.changed = false
         this.docInfo.titleChanged = false
-
-        let defaultSettings = [
-            ['papersize', 1117],
-            ['citationstyle', defaultCitationStyle],
-            ['documentstyle', defaultDocumentStyle]
-        ]
-
-
-        defaultSettings.forEach(function(variable) {
-            if (that.doc.settings[variable[0]] === undefined) {
-                that.doc.settings[variable[0]] = variable[1]
-            }
-        })
 
 
         if (this.docInfo.is_new) {
@@ -379,17 +365,18 @@ export class Editor {
 
     // Send changes to the document to the server
     sendDocumentUpdate(callback) {
-        let documentData = {
+        let docData = {
             title: this.doc.title,
             metadata: this.doc.metadata,
+            settings: this.doc.settings,
             contents: this.doc.contents,
             version: this.doc.version,
             hash: this.doc.hash
         }
 
         this.mod.serverCommunications.send({
-            type: 'update_document',
-            document: documentData
+            type: 'update_doc',
+            document: docData
         })
 
         this.docInfo.changed = false

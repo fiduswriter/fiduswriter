@@ -241,7 +241,6 @@ export class BibliographyOverview {
                 "aTargets": [0, 5]
             }],
         })
-        console.log(table)
         jQuery('#bibliography_filter input').attr('placeholder', gettext('Search for Bibliography'))
 
         jQuery('#bibliography_filter input').unbind('focus, blur')

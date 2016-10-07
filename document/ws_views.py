@@ -172,7 +172,8 @@ class DocumentWS(BaseWebSocketHandler):
             return
         else:
             # The saved version does not contain all accepted diffs, so we keep
-            # the remaining ones + 1000
+            # the remaining ones + 1000 in case a client needs to reconnect and
+            # is missing some.
             remaining_diffs = 1000 + \
                 self.doc['diff_version'] - changes['version']
             self.doc['last_diffs'] = self.doc['last_diffs'][-remaining_diffs:]
@@ -221,7 +222,7 @@ class DocumentWS(BaseWebSocketHandler):
 
     def handle_document_update(self, parsed):
         self.update_document(parsed["document"])
-        DocumentWS.save_document(self.user_info.document_id)
+        DocumentWS.save_document(self.user_info.document_id, False)
         message = {
             "type": 'check_hash',
             "diff_version": parsed["document"]["version"],
@@ -231,7 +232,7 @@ class DocumentWS(BaseWebSocketHandler):
 
     def handle_title_update(self, parsed):
         self.update_title(parsed["title"])
-        DocumentWS.save_document(self.user_info.document_id)
+        DocumentWS.save_document(self.user_info.document_id, False)
 
     def handle_chat(self, parsed):
         chat = {
@@ -351,7 +352,7 @@ class DocumentWS(BaseWebSocketHandler):
         ):
             del self.doc['participants'][self.id]
             if len(self.doc['participants'].keys()) == 0:
-                DocumentWS.save_document(self.user_info.document_id)
+                DocumentWS.save_document(self.user_info.document_id, True)
                 del DocumentWS.sessions[self.user_info.document_id]
                 print("noone left")
 
@@ -403,7 +404,7 @@ class DocumentWS(BaseWebSocketHandler):
                         error("Error sending message", exc_info=True)
 
     @classmethod
-    def save_document(cls, document_id):
+    def save_document(cls, document_id, all_have_left):
         doc = cls.sessions[document_id]
         doc_db = doc['db']
         doc_db.title = doc['title']
@@ -413,6 +414,12 @@ class DocumentWS(BaseWebSocketHandler):
         doc_db.contents = json_encode(doc['contents'])
         doc_db.metadata = json_encode(doc['metadata'])
         doc_db.settings = json_encode(doc['settings'])
+        if all_have_left:
+            remaining_diffs = doc['diff_version'] - doc['version']
+            if remaining_diffs > 0:
+                doc['last_diffs'] = doc['last_diffs'][-remaining_diffs:]
+            else:
+                doc['last_diffs'] = []
         doc_db.last_diffs = json_encode(doc['last_diffs'])
         doc_db.comments = json_encode(doc['comments'])
         print('saving document #' + str(doc_db.id))
@@ -422,6 +429,6 @@ class DocumentWS(BaseWebSocketHandler):
     @classmethod
     def save_all_docs(cls):
         for document_id in cls.sessions:
-            cls.save_document(document_id)
+            cls.save_document(document_id, True)
 
 atexit.register(DocumentWS.save_all_docs)

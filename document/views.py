@@ -1,9 +1,10 @@
 import time
 from django.shortcuts import render
+from django.apps import apps
 from django.shortcuts import redirect
 from django.http import HttpResponse, JsonResponse, HttpRequest
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import login
 from allauth.account import forms
 from django.template.context_processors import csrf
 from django.views.decorators.csrf import csrf_exempt
@@ -21,7 +22,6 @@ from avatar.templatetags.avatar_tags import avatar_url
 
 from document.models import Document, AccessRight, DocumentRevision, \
     ExportTemplate
-
 
 
 class SimpleSerializer(Serializer):
@@ -174,20 +174,17 @@ def create_user(request, user_data):
         user = signup_form.save(request)
         return user
     except:
-        return false
-
-
-from django.apps import apps
+        return False
 
 
 def login_user(request, u_name, u_pass):
     from django.contrib.auth import authenticate
     try:
         user = User.objects.get(username=u_name)
-        if (user and user.is_active and apps.is_installed('django.contrib.sessions')):
+        if (user and user.is_active and apps.is_installed(
+              'django.contrib.sessions')):
             user = authenticate(username=u_name, password=u_pass)
             login(request, user)
-            print (user)
             return user
         else:
             return False
@@ -234,7 +231,8 @@ def reviewer_js(request):
     if request.method == 'POST':
         doc_id = int(request.POST.get('doc_id', "0"))
         if doc_id == 0:
-            response['error'] = 'doc_id with value: ' + str(doc_id) + ' does not exist'
+            response['error'] = 'doc_id with value: ' + str(doc_id) \
+              + ' does not exist'
             status = 404
             return JsonResponse(response, status=status)
         reviewer = get_reviewer_for_post(request)
@@ -249,7 +247,9 @@ def reviewer_js(request):
                 response['reviewer_id'] = reviewer.id
             else:
                 response['email'] = request.POST.get('email')
-                response['msg'] = 'User has already comment access right on the document'
+                response[
+                    'msg'
+                ] = 'User has already comment access right on the document'
                 response['reviewer_id'] = reviewer.id
             response['document_id'] = str(doc_id)
             status = 200
@@ -271,11 +271,12 @@ def reviewer_js(request):
 def del_reviewer_js(request):
     response = {}
     if request.method == 'POST':
-        u_name = request.POST.get('user_name')
+        # u_name = request.POST.get('user_name')
         try:
             doc_id = int(request.POST.get('doc_id', "0"))
             if doc_id == 0:
-                response['msg'] = 'doc_id with value: ' + str(doc_id) + ' does not exist'
+                response['msg'] = 'doc_id with value: ' \
+                  + str(doc_id) + ' does not exist'
                 status = 500
                 return JsonResponse(response, status=status)
             reviewer = get_existing_reviewer(request)
@@ -304,19 +305,22 @@ def document_review_js(request):
     if request.method == 'POST':
         doc_id = int(request.POST.get('doc_id', "0"))
         app_key = request.POST.get('key')
-        email = request.POST.get('email')
+        # email = request.POST.get('email')
         u_name = request.POST.get('user_name')
         response = {}
         if (app_key == "d5PW586jwefjn!3fv"):
             reviewer = login_user(request, u_name, 'ojspass')
             if reviewer is not None:
-                return redirect('/document/' + str(doc_id) + '/', permanent=True)
+                return redirect(
+                    '/document/' + str(doc_id) + '/', permanent=True
+                )
             else:
                 response['error'] = "The reviewer is not valid"
                 status = 404
                 return JsonResponse(response, status=status)
         else:
-            response['error'] = "Reviewing the document is not defined for this reviewer"
+            response['error'] = \
+              "Reviewing the document is not defined for this reviewer"
             status = 404
             return JsonResponse(response, status=status)
 
@@ -538,7 +542,8 @@ def upload_js(request):
                 access_rights = AccessRight.objects.filter(
                     document=document, user=request.user)
                 if len(access_rights) > 0 and access_rights[
-                    0].rights == 'write':
+                    0
+                ].rights == 'write':
                     can_save = True
         if can_save:
             status = 201

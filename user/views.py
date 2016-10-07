@@ -44,6 +44,7 @@ def show_profile(request, username):
         response['can_edit'] = False
     return render(request, 'account/show_profile.html', response)
 
+
 @login_required
 def password_change_js(request):
     '''

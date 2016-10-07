@@ -27,7 +27,6 @@ class DocumentWS(BaseWebSocketHandler):
         self.user_info = SessionUserInfo()
         doc_db, can_access = self.user_info.init_access(
             document_id, current_user)
-        access_right= self.user_info.access_rights
         if can_access:
             if doc_db.id in DocumentWS.sessions:
                 self.doc = DocumentWS.sessions[doc_db.id]
@@ -39,7 +38,6 @@ class DocumentWS(BaseWebSocketHandler):
                 self.doc['db'] = doc_db
                 self.doc['participants'] = dict()
                 self.doc['last_diffs'] = json_decode(doc_db.last_diffs)
-                #if (access_right != 'readNoC'):
                 self.doc['comments'] = json_decode(doc_db.comments)
                 self.doc['settings'] = json_decode(doc_db.settings)
                 self.doc['contents'] = json_decode(doc_db.contents)
@@ -386,15 +384,18 @@ class DocumentWS(BaseWebSocketHandler):
             comment = ''
             try:
                 if 'comments' in message:
+                    # What are you trying to do here? The next line will always
+                    # throw an exception given that "d" isn't defined, right?
                     if d['comments'] != '':
                         comment = message['comments']
             except:
                 json_acceptable_string = message.replace("'", "\"")
                 d = json.loads(json_acceptable_string)
                 if 'comments' in message:
-                    if len(d['comments'])!=0:
+                    if len(d['comments']) != 0:
                         comment = d['comments']
-            if comment == '' or cls.sessions[document_id]['participants'][waiter].user_info.access_rights!='readNoC' :
+            if comment == '' or cls.sessions[document_id][
+                  'participants'][waiter].user_info.access_rights != 'readNoC':
                 if cls.sessions[document_id][
                         'participants'][waiter].id != sender_id:
                     try:

@@ -3,8 +3,6 @@ import * as objectHash from "object-hash/dist/object_hash"
 /* Functions for ProseMirror integration.*/
 import {ProseMirror} from "prosemirror/dist/edit/main"
 import {collabEditing} from "prosemirror/dist/collab"
-//import "prosemirror/dist/menu/menubar"
-
 import {docSchema} from "../schema/document"
 import {ModComments} from "./comments/mod"
 import {ModFootnotes} from "./footnotes/mod"
@@ -18,7 +16,8 @@ import {editorToModel, modelToEditor, updateDoc} from "../schema/convert"
 import {BibliographyDB} from "../bibliography/database"
 import {ImageDB} from "../images/database"
 import {Paste} from "./paste/paste"
-
+import {defaultDocumentStyle} from "../style/documentstyle-list"
+import {defaultCitationStyle} from "../style/citation-definitions"
 
 export const COMMENT_ONLY_ROLES = ['edit', 'review', 'comment']
 
@@ -311,9 +310,22 @@ export class Editor {
 
         if (this.docInfo.is_new) {
             // If the document is new, change the url. Then forget that the document is new.
-            window.history.replaceState("", "", "/document/" + this.doc.id +
-                "/");
+            window.history.replaceState("", "", `/document/${this.doc.id}/`)
+
+            let defaultSettings = [
+                ['papersize', 1117],
+                ['citationstyle', defaultCitationStyle],
+                ['documentstyle', defaultDocumentStyle]
+            ]
+
+            defaultSettings.forEach(function(variable) {
+                if (this.doc.settings[variable[0]] === undefined) {
+                    this.doc.settings[variable[0]] = variable[1]
+                }
+            })
+
             delete this.docInfo.is_new
+            this.save()
         }
     }
 

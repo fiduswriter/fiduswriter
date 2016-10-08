@@ -319,8 +319,8 @@ export class Editor {
             ]
 
             defaultSettings.forEach(function(variable) {
-                if (this.doc.settings[variable[0]] === undefined) {
-                    this.doc.settings[variable[0]] = variable[1]
+                if (that.doc.settings[variable[0]] === undefined) {
+                    that.doc.settings[variable[0]] = variable[1]
                 }
             })
 

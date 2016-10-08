@@ -361,12 +361,12 @@ export class ImportNative {
                 xhr.setRequestHeader("X-CSRFToken", csrfToken)
             },
             success: function(data, textStatus, jqXHR) {
-                let aDocumentValues = {
-                    last_diffs: [],
+                let docInfo = {
+                    unapplied_diffs: [],
                     is_owner: true,
                     rights: 'write',
                     changed: false,
-                    titleChanged: false
+                    title_changed: false
                 }
                 that.aDocument.owner = {
                     id: that.user.id,
@@ -382,7 +382,7 @@ export class ImportNative {
                 that.aDocument.rights = "write"
                 return that.callback(true, {
                     aDocument: that.aDocument,
-                    aDocumentValues,
+                    aDocumentValues: docInfo,
                     newBibEntries: that.newBibEntries
                 })
             },

@@ -34,10 +34,9 @@ export class Editor {
 
         this.docInfo = {
             rights: '',
-            last_diffs: [],
+            unapplied_diffs: [],
             is_owner: false,
-            is_new: false,
-            titleChanged: false,
+            title_changed: false,
             changed: false,
         }
         this.schema = docSchema
@@ -90,8 +89,8 @@ export class Editor {
 
         // Set Auto-save to send the title every 5 seconds, if it has changed.
         this.sendDocumentTitleTimer = window.setInterval(function() {
-            if (that.docInfo && that.docInfo.titleChanged && that.docInfo.rights !== 'read') {
-                that.docInfo.titleChanged = false
+            if (that.docInfo && that.docInfo.title_changed && that.docInfo.rights !== 'read') {
+                that.docInfo.title_changed = false
                 that.mod.serverCommunications.send({
                     type: 'update_title',
                     title: that.doc.title
@@ -141,24 +140,29 @@ export class Editor {
             this.mod.collab.docChanges.enableDiffSending()
         }
         let pmDoc = modelToEditor(this.doc)
-        //collabEditing.detach(this.pm)
         this.pm.setDoc(pmDoc)
         this.pm.mod.collab.version = this.doc.version
-        //collabEditing.config({version: this.doc.version}).attach(this.pm)
-        try{
-            // We only try because this fails if the PM diff format has changed
-            // again.
-            while (this.docInfo.last_diffs.length > 0) {
-                let diff = this.docInfo.last_diffs.shift()
-                this.mod.collab.docChanges.applyDiff(diff)
+
+
+        if (this.docInfo.unapplied_diffs.length > 0) {
+            // We have unapplied diffs -- this hsould only happen if the last disconnect
+            // happened before we could save. We try to apply the diffs and then save
+            // immediately.
+            try{
+                // We only try because this fails if the PM diff format has changed
+                // again.
+                while (this.docInfo.unapplied_diffs.length > 0) {
+                    let diff = this.docInfo.unapplied_diffs.shift()
+                    this.mod.collab.docChanges.applyDiff(diff)
+                }
+            } catch (error) {
+                // We couldn't apply the diffs. They are likely corrupted.
+                // We set the original document, increase the version by one and
+                // save to the server.
+                this.pm.setDoc(pmDoc)
+                this.pm.mod.collab.version = this.doc.version + this.docInfo.unapplied_diffs.length + 1
+                this.docInfo.unapplied_diffs = []
             }
-        } catch (error) {
-            // We couldn't apply the diffs. They are likely corrupted.
-            // We set the original document, increase the version by one and
-            // save to the server.
-            this.pm.setDoc(pmDoc)
-            this.pm.mod.collab.version = this.doc.version + this.docInfo.last_diffs.length + 1
-            this.docInfo.last_diffs = []
             this.save()
         }
 
@@ -305,10 +309,10 @@ export class Editor {
         this.doc = updateDoc(doc)
         this.docInfo = docInfo
         this.docInfo.changed = false
-        this.docInfo.titleChanged = false
+        this.docInfo.title_changed = false
 
 
-        if (this.docInfo.is_new) {
+        if (this.doc.version === 0) {
             // If the document is new, change the url. Then forget that the document is new.
             window.history.replaceState("", "", `/document/${this.doc.id}/`)
 
@@ -324,8 +328,6 @@ export class Editor {
                 }
             })
 
-            delete this.docInfo.is_new
-            this.save()
         }
     }
 
@@ -388,7 +390,7 @@ export class Editor {
 
         this.mod.serverCommunications.send({
             type: 'update_doc',
-            document: docData
+            doc: docData
         })
 
         this.docInfo.changed = false
@@ -462,7 +464,7 @@ export class Editor {
             if (documentTitle.substring(0, 255) !== this.doc.title) {
                 this.doc.title = documentTitle.substring(0, 255)
                 if (local) {
-                    this.docInfo.titleChanged = true
+                    this.docInfo.title_changed = true
                 }
             }
         }

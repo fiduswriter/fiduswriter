@@ -87,7 +87,7 @@ class DocumentWS(BaseWebSocketHandler):
         #     self.user_info
         # )
         response['doc']['comments'] = self.doc["comments"]
-        # response['document']['comments'] = filtered_comments
+        # response['doc']['comments'] = filtered_comments
         response['doc']['comment_version'] = self.doc["comment_version"]
         response['doc']['access_rights'] = get_accessrights(
             AccessRight.objects.filter(document__owner=document_owner))
@@ -113,12 +113,11 @@ class DocumentWS(BaseWebSocketHandler):
             self.doc["last_diffs"] = []
         elif self.doc['diff_version'] > self.doc['version']:
             needed_diffs = self.doc['diff_version'] - self.doc['version']
-            response['doc_info']['last_diffs'] = self.doc[
+            # We only send those diffs needed by the receiver.
+            response['doc_info']['unapplied_diffs'] = self.doc[
                 "last_diffs"][-needed_diffs:]
         else:
-            response['doc_info']['last_diffs'] = []
-        if self.user_info.is_new:
-            response['doc_info']['is_new'] = True
+            response['doc_info']['unapplied_diffs'] = []
         if not self.user_info.is_owner:
             response['user'] = dict()
             response['user']['id'] = self.user_info.user.id
@@ -219,12 +218,12 @@ class DocumentWS(BaseWebSocketHandler):
         DocumentWS.send_participant_list(self.user_info.document_id)
 
     def handle_document_update(self, parsed):
-        self.update_document(parsed["document"])
+        self.update_document(parsed["doc"])
         DocumentWS.save_document(self.user_info.document_id, False)
         message = {
             "type": 'check_hash',
-            "diff_version": parsed["document"]["version"],
-            "hash": parsed["document"]["hash"]
+            "diff_version": parsed["doc"]["version"],
+            "hash": parsed["doc"]["hash"]
         }
         DocumentWS.send_updates(message, self.user_info.document_id, self.id)
 

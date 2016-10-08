@@ -290,7 +290,7 @@ export class Editor {
 
     receiveDocument(data) {
         let that = this
-        this.receiveDocumentValues(data.doc, data.doc_info)
+        this.updateData(data.doc, data.doc_info)
         if (data.hasOwnProperty('user')) {
             this.user = data.user
         } else {
@@ -304,7 +304,7 @@ export class Editor {
         })
     }
 
-    receiveDocumentValues(doc, docInfo) {
+    updateData(doc, docInfo) {
         let that = this
         this.doc = updateDoc(doc)
         this.docInfo = docInfo

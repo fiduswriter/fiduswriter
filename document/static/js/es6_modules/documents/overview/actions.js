@@ -115,15 +115,15 @@ export class DocumentOverviewActions {
                         function(noErrors, returnValue) {
                             deactivateWait()
                             if (noErrors) {
-                                let aDocument = returnValue.aDocument
-                                let aDocumentValues = returnValue.aDocumentValues
-                                addAlert('info', aDocument.title + gettext(
+                                let doc = returnValue.doc
+                                //let aDocumentValues = returnValue.docInfo
+                                addAlert('info', doc.title + gettext(
                                         ' successfully imported.'))
-                                that.documentOverview.documentList.push(aDocument)
+                                that.documentOverview.documentList.push(doc)
                                 that.documentOverview.stopDocumentTable()
                                 jQuery('#document-table tbody').append(
                                     documentsListItemTemplate({
-                                            aDocument,
+                                            aDocument: doc,
                                             user: that.documentOverview.user,
                                             localizeDate
                                         }))

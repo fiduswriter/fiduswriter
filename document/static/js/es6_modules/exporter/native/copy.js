@@ -7,13 +7,13 @@ import {deactivateWait, addAlert} from "../../common/common"
 let afterCopy = function(noErrors, returnValue, callback) {
     deactivateWait()
     if (noErrors) {
-        let aDocument = returnValue.aDocument
-        let aDocInfo = returnValue.aDocumentValues
+        let doc = returnValue.doc
+        let docInfo = returnValue.docInfo
         let newBibEntries = returnValue.newBibEntries
-        addAlert('info', aDocument.title + gettext(
+        addAlert('info', doc.title + gettext(
                 ' successfully copied.'))
         if (callback) {
-            callback(aDocument, aDocInfo, newBibEntries)
+            callback(doc, docInfo, newBibEntries)
         }
     } else {
         addAlert('error', returnValue)

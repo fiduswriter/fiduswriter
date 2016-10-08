@@ -381,8 +381,8 @@ export class ImportNative {
                 that.aDocument.revisions = []
                 that.aDocument.rights = "write"
                 return that.callback(true, {
-                    aDocument: that.aDocument,
-                    aDocumentValues: docInfo,
+                    doc: that.aDocument,
+                    docInfo,
                     newBibEntries: that.newBibEntries
                 })
             },

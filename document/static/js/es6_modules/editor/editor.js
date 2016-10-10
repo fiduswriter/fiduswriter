@@ -160,6 +160,7 @@ export class Editor {
                 // We set the original document, increase the version by one and
                 // save to the server.
                 this.pm.setDoc(pmDoc)
+                console.warn('Diffs could not be applied correctly!')
                 this.pm.mod.collab.version = this.doc.version + this.docInfo.unapplied_diffs.length + 1
                 this.docInfo.unapplied_diffs = []
             }

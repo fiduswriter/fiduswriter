@@ -223,7 +223,7 @@ class DocumentWS(BaseWebSocketHandler):
         message = {
             "type": 'check_hash',
             "diff_version": parsed["doc"]["version"],
-            "hash": parsed["doc"]["hash"]
+            "hash": parsed["hash"]
         }
         DocumentWS.send_updates(message, self.user_info.document_id, self.id)
 

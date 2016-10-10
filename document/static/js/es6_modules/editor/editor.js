@@ -171,7 +171,7 @@ export class Editor {
         // footnote editor. We therefore need to remove all markers so that they
         // will be found when footnotes are rendered.
         this.mod.footnotes.markers.removeAllMarkers()
-        this.doc.hash = this.getHash()
+        this.docInfo.hash = this.getHash()
         this.mod.comments.store.setVersion(this.doc.comment_version)
         this.pm.mod.collab.mustSend.add(function() {
             that.mod.collab.docChanges.sendToCollaborators()
@@ -370,7 +370,7 @@ export class Editor {
         this.doc.metadata = tmpDoc.metadata
         this.doc.title = this.pm.mod.collab.versionDoc.firstChild.textContent
         this.doc.version = this.pm.mod.collab.version
-        this.doc.hash = this.getHash()
+        this.docInfo.hash = this.getHash()
         this.doc.comments = this.mod.comments.store.comments
         if (callback) {
             callback()
@@ -379,18 +379,18 @@ export class Editor {
 
     // Send changes to the document to the server
     sendDocumentUpdate(callback) {
-        let docData = {
+        let doc = {
             title: this.doc.title,
             metadata: this.doc.metadata,
             settings: this.doc.settings,
             contents: this.doc.contents,
             version: this.doc.version,
-            hash: this.doc.hash
         }
 
         this.mod.serverCommunications.send({
             type: 'update_doc',
-            doc: docData
+            doc,
+            hash: this.docInfo.hash
         })
 
         this.docInfo.changed = false

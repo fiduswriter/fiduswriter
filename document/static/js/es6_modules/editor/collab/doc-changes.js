@@ -117,8 +117,8 @@ export class ModCollabDocChanges {
             return
         }
         let editorHash = this.mod.editor.getHash()
-        console.log('Incoming diff: version: '+data.diff_version+', hash: '+data.hash)
-        console.log('Editor: version: '+this.mod.editor.pm.mod.collab.version+', hash: '+editorHash)
+        console.log(`Incoming diff: version: ${data.diff_version}, hash: ${data.hash}`)
+        console.log(`Editor: version: ${this.mod.editor.pm.mod.collab.version}, hash: ${editorHash}`)
         if (data.diff_version !== this.mod.editor.pm.mod.collab.version) {
             console.warn('Something is not correct. The local and remote versions do not match.')
             this.checkDiffVersion()

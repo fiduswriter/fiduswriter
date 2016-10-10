@@ -66,20 +66,20 @@ export class ModFootnoteLayout {
                             }
                             totalEditorOffset += footnoteBoxHeight + topMargin
                         } else {
-                            let footnoteBox = citationFootnotes[citationFootnoteIndex],
-                                selector = '.footnote-citation:nth-of-type('+(citationFootnoteIndex+1)+')',
-                                footnoteBoxCoords = footnoteBox.getBoundingClientRect(),
-                                footnoteBoxHeight = footnoteBoxCoords.height,
-                                referrerTop = that.mod.editor.pm.coordsAtPos(pos).top
-                            citationFootnoteIndex++
-                            if (referrerTop > totalCitationOffset || totalCitationOffset < (totalEditorOffset + topMargin)) {
-                                topMargin = parseInt(Math.max(referrerTop - totalCitationOffset, totalEditorOffset - totalCitationOffset + topMargin))
-                                footnotePlacementStyle += selector + ' {margin-top: ' + topMargin + 'px;}\n'
+                            if (citationFootnotes.length > citationFootnoteIndex) {
+                                let footnoteBox = citationFootnotes[citationFootnoteIndex],
+                                    selector = '.footnote-citation:nth-of-type('+(citationFootnoteIndex+1)+')',
+                                    footnoteBoxCoords = footnoteBox.getBoundingClientRect(),
+                                    footnoteBoxHeight = footnoteBoxCoords.height,
+                                    referrerTop = that.mod.editor.pm.coordsAtPos(pos).top
+                                citationFootnoteIndex++
+                                if (referrerTop > totalCitationOffset || totalCitationOffset < (totalEditorOffset + topMargin)) {
+                                    topMargin = parseInt(Math.max(referrerTop - totalCitationOffset, totalEditorOffset - totalCitationOffset + topMargin))
+                                    footnotePlacementStyle += selector + ' {margin-top: ' + topMargin + 'px;}\n'
+                                }
+                                totalCitationOffset += footnoteBoxHeight + topMargin
                             }
-                            totalCitationOffset += footnoteBoxHeight + topMargin
                         }
-
-
                     }
                 })
 

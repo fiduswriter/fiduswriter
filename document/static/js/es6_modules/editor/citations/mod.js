@@ -39,6 +39,10 @@ export class ModCitations {
         if (document.getElementById('document-bibliography').innerHTML !== '') {
             document.getElementById('document-bibliography').innerHTML = ''
         }
+        let citationsContainer = document.getElementById('citation-footnote-box-container')
+        if (citationsContainer.innerHTML !== '') {
+            citationsContainer.innerHTML = ''
+        }
         this.layoutCitations()
     }
 
@@ -61,9 +65,6 @@ export class ModCitations {
             )
             this.citRenderer.init()
 
-        } else {
-            // TODO: find out if this is actually needed or if it onl;y applies when this.emptyCitations.length > 0
-            this.footnoteNumberOverride()
         }
 
     }
@@ -80,27 +81,26 @@ export class ModCitations {
         document.getElementById('document-bibliography').innerHTML = citRenderer.fm.bibliographyHTML
         let citationsContainer = document.getElementById('citation-footnote-box-container')
         if (this.citationType==='note') {
-            // Find all the citations in the main body text (not footnotes)
-            let emptyBodyCitations = [].slice.call(document.querySelectorAll('#document-editable span.citation:empty'))
 
-            let citationsHTML = ''
-            // The citations have not been filled, so we do so manually.
-            emptyBodyCitations.forEach(function(emptyCitation, index) {
-                emptyCitation.innerHTML = '<span class="citation-footnote-marker"></span>'
-                let citationText = citRenderer.fm.citationTexts[index][0][1]
-                citationsHTML += '<div class="footnote-citation">'+citationText+'</div>'
-            })
-            if (citationsContainer.innerHTML !== citationsHTML) {
-                citationsContainer.innerHTML = citationsHTML
+            // Check if there is an empty citation in the main body text (not footnotes)
+            let emptyBodyCitation = document.querySelector('#document-editable span.citation:empty')
+
+            if (emptyBodyCitation) {
+                // Find all the citations in the main body text (not footnotes)
+                let citationNodes = [].slice.call(document.querySelectorAll('#document-editable span.citation'))
+
+                let citationsHTML = ''
+                // The citations have not been filled, so we do so manually.
+                citationNodes.forEach(function(citationNode, index) {
+                    citationNode.innerHTML = '<span class="citation-footnote-marker"></span>'
+                    let citationText = citRenderer.fm.citationTexts[index][0][1]
+                    citationsHTML += '<div class="footnote-citation">'+citationText+'</div>'
+                })
+
+                if (citationsContainer.innerHTML !== citationsHTML) {
+                    citationsContainer.innerHTML = citationsHTML
+                }
             }
-            // Iterate over remainign citations (these must be in footnotes) and lay them out directly
-            for(let index=emptyBodyCitations.length; index < this.emptyCitations.length; index++) {
-                let citationText = citRenderer.fm.citationTexts[index][0][1]
-                let emptyCitation = this.emptyCitations[index]
-                emptyCitation.innerHTML = citationText
-            }
-
-
 
         } else {
             if (citationsContainer.innerHTML !== '') {
